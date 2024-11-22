@@ -1,155 +1,168 @@
-Return-Path: <linux-kernel+bounces-417929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 509139D5AE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:17:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB7A49D5AE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:18:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16FFD28504F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:17:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BD17285547
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FFF918595E;
-	Fri, 22 Nov 2024 08:17:26 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3697718A95E;
+	Fri, 22 Nov 2024 08:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="A86UuIKc"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4E01632C6
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 08:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8421918595E
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 08:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732263445; cv=none; b=n9BjRx9e3neFdXEewXC0QqDFhueHSW4XR4kagWwlXp6AWWIECug+rNHL1aMYcnkICKiRvCrBY5wXWJbvm3n1rVvM7yfXFyuXYVT3QQQxcrTtJ1e/4uyaA7GyBO3TSbXiPWvnchXQCtHlED6h4IJyuPEkJlllL8YUMd+3k67WVQY=
+	t=1732263473; cv=none; b=MACRPG40TvK1bWWR+PNH7xhwtrVcXfc8yBmMfi60myzoNJPMRxRFfe9a8onLimQxYTOCjbEByzbQyRy2TUnXbYZuL2XbARUk3JLa3QC5AEI8Y0Aa4v80LOWl4OuGxiBqMmxFYZv+78SwCHeWqvQnSIfg7zg2anc/7Vj4oR8rhCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732263445; c=relaxed/simple;
-	bh=3vFOxaKedha/59jJlm3ITFbYh7rb6koNnLB0+YGjGSM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kgbgqtNx2uAQdr8ZcfecQ89EmsQHjnUPBzkxVFBnSp7gaG2d2F+h6TClyIzF9k09FG9PgiNKyTZP4Uv/hdgIV9jZpFoUmXub5wm1aKDYsYr2+bq1GVlXvdDWq6eeQC5zpmqK4taJl8/yo7rh3YGwLeeEgRAnf7pH9hWcuNa+bZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83ab1b39ab1so212875539f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 00:17:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732263443; x=1732868243;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1732263473; c=relaxed/simple;
+	bh=boBUZED71KdfqGSGw6POXs81i1ZDX0l63rl2uX3ndUY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iNak9Nq0dwXDUfTQf+pokfuYkzM7UJ5QjsvkSUDZPYdqWqvYhAcuwiwUo7Yb3o4wI0IcbScpx1P+69n4RIbzN19VD6ePIo6ge5bTJomsbjkaj+FYuSCRa3+5yO7FNU3rpwO1W1tEH/xHUlRHP37gfspiPayR9e75WORiGHi/vn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=A86UuIKc; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43162cf1eaaso21333195e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 00:17:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1732263470; x=1732868270; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=0MRpk5xv2WCyhfmudvJroTTAQoMh7C7HH7zoi1D7/40=;
-        b=hHLwwDpwbjtv3XGZiVa+kyPQTuK+Wj5wxy3jg8phRc3o4/l5D+v6swUaEBPK0Pi0ub
-         GrDDvSaib+RK/N3AyEInEhgOG4/YMPSgm9L0YDfzLNaOj0DZBhXq3erOOVYIoPwPcVhP
-         vRBsWEWePHadOnjZEe+Wdm2xwUSF2Eg62mQGULtmMVkswIIjfmWy5K6KScuJnDIyqMiS
-         v6vCvk6uDLXPfhf709Nx53CSy+8vjXvNRKtL6aBIYUrQkctHgTza80jSkZZirQEDKuFW
-         /exD2+U8+7BGeNTqNDvmmvgDhThsIXtS5GU+DTEsgNy7WR4s5lJcRBzMx1dof/izDzMU
-         rAgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqfL8a2AIEGrmH5hL3Hg+3MKdD2crJrtOl+4BzRJ7Fk3hrVqvhXgVhCepWBjUSn0ivUBLh7J7C5nWFh50=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiBPU8aTILrCmzPHGfaqoZ7aco8n5IazmHjVRH6hwdqFBR7HrC
-	Hr09aaRy9EcrdkOy2/A7yjPSFJ4vizbjaCWnUMWBebqhrG1+d4nNrXiWQmaBDs/b7NIxg1zGkZO
-	+PM0/mhpBz2r+n+SyvY8fEPH+txCqHmYqe/yOqXlUiiLvHaYgGK1JfnU=
-X-Google-Smtp-Source: AGHT+IFyqxSDQPGumN/PWYl6igiz/SuS4VlxJER0NndOrSv5TpQoqo7daanfWoyQnCf/EEh56guJRdmlD4U0ynEIZsfF2j89dWgK
+        bh=3LYPzAVO9GrxpJTZAkUlAwOS3/mbRjtzYaoHCe2V1hE=;
+        b=A86UuIKcJOWnfh6BTs2k6URjFs6JPYkje4N9UR42Y5w6AeZjAJAIOyZ/HkCz06Oc/+
+         EDC77sO7/Cbre4vovx8E9Ti35Mi/AwAp6bgtudslxQ8UEZERUloWohDuus5/mTQ1XEbN
+         Y34K/fUwGzrP4XAfH06qY7xwO4VJjGDL8OJunFQ622uq6Oy46qdyQPAE+Iw6e9G2Phnm
+         1UKINkxuQAo62KkcMBl1UhDm9EvFKdh4Q9Kf4HKAv0cP2xM/Kk9RLj5qizSGqahz7l/P
+         fRwTeGnGPWPoiAHXzn6a+2Ya86EssNz3dBzggB5cnU/kRz3d+unpO/4Q4kLBUqRksCc2
+         J7qA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732263470; x=1732868270;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3LYPzAVO9GrxpJTZAkUlAwOS3/mbRjtzYaoHCe2V1hE=;
+        b=gi8rYqdqJ1BGG25ujNyEsXiV4D3mIWRASsC545OoDiL8vphlodjiwJp8K8iecMAd58
+         EiRSUpW0eQi9bjTWQ00gbPUQNmZfiGMcfxccmZmTeasQhgLrb9rdzeZ+MHgdITmS4728
+         BTC+0BHue2U4QCNpxPJNmfGnxyT0B3JfOsgK8CcFIPHnJpllEhG9v4j48zWOsEHTfCdg
+         +NCmD4IO8WsP4rAWs0Jg1FERMedVbG7EVUTT9AIG32QV50+8zD1pDQGTVv01j9pK5lE5
+         gkhhHkpekNIq5tJ1RjIPBsRChPM08SwAfpnSVVd1fGIzNAD7dRf3/baRUyfw1GVdghwh
+         /a1w==
+X-Forwarded-Encrypted: i=1; AJvYcCU0xhKW5pFiVODeYf2eSalogzUCfNIx2xJo3ke0AD7DxbHWhcfVx2/fdY4uEdF3I+1LhfdgrhMjcrPk6JQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOU2vRG3+Wj8KVUdRlIekb1gxM8ezwUeX+rqQg8AMXriUMgm7O
+	LGPBZqlJ2mxsPZe/drqzJixeeDUPAVuJcBZPa61ykDWDkhM6/2cFi8fFhSa79vU=
+X-Gm-Gg: ASbGncthL/6PyGCjsGVzeD1zN68n8l2jqBIgUBLFWIoy0KuRk/3gXqnjzlBwMXvCqH/
+	WNv5gYOZR/8UyqEH36fZaWWnmVcJHPFnAV3xnx5kCgFdYFAg4/Xv5sQzMfukEOXUNMijPe4b2yg
+	cKmWXtdx8ki6F7dZ/pbw4JJk1furz1ugtHu9Pc4rr0VKHfZxZBRM7aS4aeUO8kMMaOnNYOtYfsk
+	vwZ5/4SMxaXTOoZPYxaiEiYw4gKHUoUTf0lpoqH9ZeHfoRy7n7yuTlQFQ==
+X-Google-Smtp-Source: AGHT+IG24uth11H3seaGIlK86z9Idb5xroXboR3d9BNbuTnG7ATgertZjJsq4KPOn8S8cOPUQJ6gqw==
+X-Received: by 2002:a05:6000:2d02:b0:382:504d:31d with SMTP id ffacd0b85a97d-38260bc79f6mr1467237f8f.40.1732263469676;
+        Fri, 22 Nov 2024 00:17:49 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.28])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbc44f7sm1755264f8f.82.2024.11.22.00.17.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Nov 2024 00:17:49 -0800 (PST)
+Message-ID: <bf8aa2ca-8a5e-4484-8f93-c74b7c6e0db9@tuxon.dev>
+Date: Fri, 22 Nov 2024 10:17:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:19cd:b0:3a7:81a4:a558 with SMTP id
- e9e14a558f8ab-3a79ab7e7b6mr29532525ab.0.1732263443338; Fri, 22 Nov 2024
- 00:17:23 -0800 (PST)
-Date: Fri, 22 Nov 2024 00:17:23 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67403e13.050a0220.3c9d61.018d.GAE@google.com>
-Subject: [syzbot] [iommu?] WARNING in iommufd_device_unbind
-From: syzbot <syzbot+c92878e123785b1fa2db@syzkaller.appspotmail.com>
-To: iommu@lists.linux.dev, jgg@ziepe.ca, joro@8bytes.org, kevin.tian@intel.com, 
-	linux-kernel@vger.kernel.org, robin.murphy@arm.com, 
-	syzkaller-bugs@googlegroups.com, will@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/8] serial: sh-sci: Check if TX data was written to
+ device in .tx_empty()
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: geert+renesas@glider.be, magnus.damm@gmail.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
+ sboyd@kernel.org, jirislaby@kernel.org, p.zabel@pengutronix.de,
+ lethal@linux-sh.org, g.liakhovetski@gmx.de,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-serial@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
+References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241115134401.3893008-3-claudiu.beznea.uj@bp.renesas.com>
+ <2024112128-faceted-moonstone-027f@gregkh>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <2024112128-faceted-moonstone-027f@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Hi, Greg,
 
-syzbot found the following issue on:
+On 21.11.2024 23:32, Greg KH wrote:
+> On Fri, Nov 15, 2024 at 03:43:55PM +0200, Claudiu wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> On the Renesas RZ/G3S, when doing suspend to RAM, the uart_suspend_port()
+>> is called. The uart_suspend_port() calls 3 times the
+>> struct uart_port::ops::tx_empty() before shutting down the port.
+>>
+>> According to the documentation, the struct uart_port::ops::tx_empty()
+>> API tests whether the transmitter FIFO and shifter for the port is
+>> empty.
+>>
+>> The Renesas RZ/G3S SCIFA IP reports the number of data units stored in the
+>> transmit FIFO through the FDR (FIFO Data Count Register). The data units
+>> in the FIFOs are written in the shift register and transmitted from there.
+>> The TEND bit in the Serial Status Register reports if the data was
+>> transmitted from the shift register.
+>>
+>> In the previous code, in the tx_empty() API implemented by the sh-sci
+>> driver, it is considered that the TX is empty if the hardware reports the
+>> TEND bit set and the number of data units in the FIFO is zero.
+>>
+>> According to the HW manual, the TEND bit has the following meaning:
+>>
+>> 0: Transmission is in the waiting state or in progress.
+>> 1: Transmission is completed.
+>>
+>> It has been noticed that when opening the serial device w/o using it and
+>> then switch to a power saving mode, the tx_empty() call in the
+>> uart_port_suspend() function fails, leading to the "Unable to drain
+>> transmitter" message being printed on the console. This is because the
+>> TEND=0 if nothing has been transmitted and the FIFOs are empty. As the
+>> TEND=0 has double meaning (waiting state, in progress) we can't
+>> determined the scenario described above.
+>>
+>> Add a software workaround for this. This sets a variable if any data has
+>> been sent on the serial console (when using PIO) or if the DMA callback has
+>> been called (meaning something has been transmitted). In the tx_empty()
+>> API the status of the DMA transaction is also checked and if it is
+>> completed or in progress the code falls back in checking the hardware
+>> registers instead of relying on the software variable.
+>>
+>> Fixes: 73a19e4c0301 ("serial: sh-sci: Add DMA support.")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Why is this bug/regression fix burried in a long series?  It should be
+> sent individually so that it could be applied on its own as it is not
+> related to the other ones, right?
 
-HEAD commit:    c6d64479d609 Merge tag 'pull-statx' of git://git.kernel.or..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=129a0ae8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b3b3b2f3eaae51f9
-dashboard link: https://syzkaller.appspot.com/bug?extid=c92878e123785b1fa2db
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17da1bf7980000
+It is related to the suspend to RAM support added in this series.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9d212f6bb1af/disk-c6d64479.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/21a14342211b/vmlinux-c6d64479.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f96c41f3e4a6/bzImage-c6d64479.xz
+> 
+> Or are you ok with waiting for this to show up in 6.14-rc1?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c92878e123785b1fa2db@syzkaller.appspotmail.com
+I'll resend it individually.
 
-iommufd: Time out waiting for iommufd object to become free
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6050 at drivers/iommu/iommufd/iommufd_private.h:208 iommufd_object_destroy_user drivers/iommu/iommufd/iommufd_private.h:208 [inline]
-WARNING: CPU: 1 PID: 6050 at drivers/iommu/iommufd/iommufd_private.h:208 iommufd_device_unbind+0x81/0xa0 drivers/iommu/iommufd/device.c:280
-Modules linked in:
-CPU: 1 UID: 0 PID: 6050 Comm: syz.3.18 Not tainted 6.12.0-syzkaller-00239-gc6d64479d609 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-RIP: 0010:iommufd_object_destroy_user drivers/iommu/iommufd/iommufd_private.h:208 [inline]
-RIP: 0010:iommufd_device_unbind+0x81/0xa0 drivers/iommu/iommufd/device.c:280
-Code: 00 e8 83 76 01 00 89 c3 31 ff 89 c6 e8 b8 85 43 fc 85 db 75 0f e8 6f 81 43 fc 5b 41 5e 41 5f c3 cc cc cc cc e8 60 81 43 fc 90 <0f> 0b 90 eb eb 89 f9 80 e1 07 80 c1 03 38 c1 7c b8 e8 d9 44 aa fc
-RSP: 0018:ffffc90003017c38 EFLAGS: 00010293
-RAX: ffffffff85516f50 RBX: 00000000fffffff0 RCX: ffff88802c693c00
-RDX: 0000000000000000 RSI: 00000000fffffff0 RDI: 0000000000000000
-RBP: ffffc90003017d70 R08: ffffffff85516f38 R09: 1ffff11005b9b140
-R10: dffffc0000000000 R11: ffffed1005b9b141 R12: ffff888034149718
-R13: ffff888034149700 R14: ffff888028d2c400 R15: dffffc0000000000
-FS:  00007f2573c136c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000c001633e80 CR3: 0000000032fda000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- iommufd_selftest_destroy+0x95/0xe0 drivers/iommu/iommufd/selftest.c:1439
- iommufd_object_remove+0x3b6/0x530 drivers/iommu/iommufd/main.c:211
- iommufd_fops_ioctl+0x4d6/0x5a0 drivers/iommu/iommufd/main.c:424
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2572d7e759
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f2573c13038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f2572f36058 RCX: 00007f2572d7e759
-RDX: 0000000020000400 RSI: 0000000000003b80 RDI: 0000000000000003
-RBP: 00007f2572df175e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000001 R14: 00007f2572f36058 R15: 00007ffefd725ea8
- </TASK>
+Thank you,
+Claudiu Beznea
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> 
+> thanks,
+> 
+> greg k-h
 
