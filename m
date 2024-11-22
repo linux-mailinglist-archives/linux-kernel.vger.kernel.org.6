@@ -1,159 +1,180 @@
-Return-Path: <linux-kernel+bounces-418005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABCF79D5BB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:19:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 390E09D5BBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:19:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47511B222B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:19:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F33A2288399
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199281DF25D;
-	Fri, 22 Nov 2024 09:15:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE3218BBB8;
+	Fri, 22 Nov 2024 09:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O98FkhEa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="qFCbMxfi"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ABEE1DE8B6
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E045D15B149
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732266917; cv=none; b=pSZyGC3qWoAAjbc/6mokjWiVf9ck8/rmDsw4Dn7V9r+SsSyEFkzp1eicZHptKm+AjBRoETvGfzCMrMrdHUAXmg/qGZBeWcaitlrzYcxvc2eEdZvqvVF0WRDWIt5eqFjSneeB/QoD2dmEXP2+DdP5gm0502WlfumJq1fgnleUNaw=
+	t=1732266993; cv=none; b=f10KtIjAxX/fkge7kZfrkCcJJ511T8P21Y6+91UmABAy1Q8u/LA5v8B9xVGCUDDeF6xXFKns+roj0uTU2rqPXgqiRmuRVPKPE7d61suBjrmzXnFtVw+lvKMtHPaEu/htUbfxliTUvZPKZf9RYpCtFpVFqqHqYTNxksVb0H7zVjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732266917; c=relaxed/simple;
-	bh=R6maSGuuOMKhhf9sSnHx8qiK51scqKOLehJIOotIrMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nN9t114Y1KUV1WlvOGH1Fud0uWGh2+bVBnC60YnY8hRNcMXV49iujER5TLwRrCu/wowXJAM2uio1+X0lqxqzuLg0gRilQiIQaQzfgnEnO7TgRYsJ84EIOZTPLvNyLjCbXqIT8hs4w/vBrGKmkX9PltrtSQY9xr1Bs0hk3fE2Zig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O98FkhEa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71F25C4CEDF;
-	Fri, 22 Nov 2024 09:15:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732266916;
-	bh=R6maSGuuOMKhhf9sSnHx8qiK51scqKOLehJIOotIrMo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O98FkhEaQQs9rPvqF+c1qXRvM9FG3+cAOYMCXCC7iq4k5sppI9C/IqigYL39LWwnW
-	 DI0BcG7znPyh6z1SvNA1nEPwhZuZeshfmOo6bAjSA6qKKLXN5YnRKDRcD+VrjY5py+
-	 FfVXgYLnMi47knyttXkw9NHZe7NTXLjzxCAenvbjLkgyCfkX5aub8KVSiUv1Ccm2gU
-	 pQsc9+7tom/pdoQdV+c5NwgomdmK7eQETs7gQc4eVXfsCZ6J86qnr3OHHaAHPmr0Iw
-	 2/sjiGf2JSjwBur4jRB7mVt/oCuIO2NuIra9SxkDxog4Ihc8roGk7FjWQLVHFT345b
-	 kox4weqSIuDJQ==
-Date: Fri, 22 Nov 2024 10:15:14 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@kernel.org>, 
-	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Algea Cao <algea.cao@rock-chips.com>, 
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/rockchip: avoid 64-bit division
-Message-ID: <20241122-rebel-donkey-of-atheism-a0b8b6@houat>
-References: <20241018151016.3496613-1-arnd@kernel.org>
- <20241104172950.GA741087@thelio-3990X>
- <CAMuHMdXrrCiLm2sQmpegtVHV8X5AUp-8E5BejDxRpMbeAfHhvQ@mail.gmail.com>
+	s=arc-20240116; t=1732266993; c=relaxed/simple;
+	bh=o90CHZRpVvcY6X6OVN0QN/QQm/8RXj3aSZTwO4Uj74k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cyqsoJcchMw6KFJU/XxBfaCr4xVs55T26r3x2DQ3PsoSzZw2gkLugAFAyEP+Wi83V02ACD/MLwNQDbYWMkxg4/UQiGP1lvJH/bDEl7CiwGwXJV0/e12w5fwSW9ceFMfHf84un5XY77aE6bYOyOLdLBCm9HnQ8mbNsL8coXkkOFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=qFCbMxfi; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9ef275b980so299674066b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 01:16:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732266989; x=1732871789; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+cONwVFe9h3jPRUrTJqjZ38mmUsRgHE6KH95XCIxtkE=;
+        b=qFCbMxfipICqZznjHJJTi3JPVwQM1+rUoG1RoLhWVto/t6rg4iPOzxP7L/qE/ow0RG
+         20cknoJWApFdholFhQDMU5W74uQbR8BzA45Ncoz/xBMAZirzt7eNMKC0WgLl5kR6mkkM
+         Tc3gR09pi5IMce91UX3+psDpvWyG3WXBmQvz0kFIGdZm2JaWiR1v4Y1qOMuHuLf2ZX7a
+         FnOTeGUx8r0wvpFZNQit8M/otlCiu+o8TBERIT/n6lqKu5viH2YYs2qgQPl5nMRXxapi
+         kHvy+LGGSxoXFC+1b20VX0MDtXLAwmDIiIGx0CATQ0c2FzZth8xkCQXRRh7Lh00wekuY
+         4pIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732266989; x=1732871789;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+cONwVFe9h3jPRUrTJqjZ38mmUsRgHE6KH95XCIxtkE=;
+        b=OsALn7u7J4K8EjN7pqxn7jvKNGczTQSFOuOgrHj6aA07Aj7Tygmmiou8ScwvwIioeB
+         g/y1hFPRaG7i/MbUcFn2sVXbjibMuTPcU/7pae7na9Gi8lDvRT8M7wiw88AlK7q3CWjM
+         lYK7IbPnpLR0Ss6RI5EUSLB4g9tolC5E8tgkL1DJV053+L4k4CaKhZmco4Poy3995Dqv
+         ZlB8KXkxqepyG3DLdFM9veACiYF6d7Of41aVZXAx8v6iUx+YQnkQ2k5WHxYCcyn0sI/7
+         nDvitMNXAiRXYFPou4nAR9/TVybo+wW8Nuhua1q5mcb52HV2EZGO3p60Nu2QS3HKlYI4
+         3hAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYhEccu/dn6Y0tlrR3vpdXj2Np01DFRskot2OMb77NREa4niOyvu8Z1edP2QNx5cXBXQ23MCsM5CBvW5U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywlnl6Th/tp1BC70qvNcG6bJLfEk/atskFRor5bGfj1f5gmqfmR
+	jCpoHT/T09TKgztcrgd6e6yvGFSwiz8+w/zLkFsBl+tgCGW109WfP++R/AQ8ksMSG8cajVxspJ3
+	TJpgvrlRcUGFmc0hRwcH3d1lHo7O7vaTgTTxpAQ==
+X-Gm-Gg: ASbGncs4B0rI9QVSrlJ7KSuRgsouxOW57ybZoiCi0D3bB27KtpcXGSSkZCc2+4jc678
+	/koz9Xc7tnGthy2hM7rtzsT+ThKDqXw==
+X-Google-Smtp-Source: AGHT+IGBIJn2l6iW1Ximwej5Nomk1X6Bfwt6JsYUR9VUOC3nDn5WmX59qNhA/dgRca4VNr6bv6dLyhB1J1APS3de4mI=
+X-Received: by 2002:a17:906:3101:b0:a9a:dc3:c86e with SMTP id
+ a640c23a62f3a-aa50990b1aamr172667166b.11.1732266989281; Fri, 22 Nov 2024
+ 01:16:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="km5zocuqrx7s7sxg"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXrrCiLm2sQmpegtVHV8X5AUp-8E5BejDxRpMbeAfHhvQ@mail.gmail.com>
-
-
---km5zocuqrx7s7sxg
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20241121-add-mtk-isp-3-0-support-v7-0-b04dc9610619@baylibre.com>
+ <20241121-add-mtk-isp-3-0-support-v7-4-b04dc9610619@baylibre.com> <85ab1984c04b1eddbea71006ab5d95cb4333d838.camel@mediatek.com>
+In-Reply-To: <85ab1984c04b1eddbea71006ab5d95cb4333d838.camel@mediatek.com>
+From: Julien Stephan <jstephan@baylibre.com>
+Date: Fri, 22 Nov 2024 10:16:18 +0100
+Message-ID: <CAEHHSvaEzCGZt3GpKBNDGUphetR7JWfJ7SZfvAU=O-3M4WZY7w@mail.gmail.com>
+Subject: Re: [PATCH v7 4/5] media: platform: mediatek: isp: add mediatek
+ ISP3.0 camsv
+To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+Cc: "mchehab@kernel.org" <mchehab@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"robh@kernel.org" <robh@kernel.org>, =?UTF-8?B?QW5keSBIc2llaCAo6Kyd5pm655qTKQ==?= <Andy.Hsieh@mediatek.com>, 
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
+	"laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, 
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"paul.elder@ideasonboard.com" <paul.elder@ideasonboard.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"fsylvestre@baylibre.com" <fsylvestre@baylibre.com>, "pnguyen@baylibre.com" <pnguyen@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] drm/rockchip: avoid 64-bit division
-MIME-Version: 1.0
 
-On Fri, Nov 22, 2024 at 09:36:16AM +0100, Geert Uytterhoeven wrote:
-> On Mon, Nov 4, 2024 at 6:30=E2=80=AFPM Nathan Chancellor <nathan@kernel.o=
-rg> wrote:
-> > On Fri, Oct 18, 2024 at 03:10:10PM +0000, Arnd Bergmann wrote:
-> > > From: Arnd Bergmann <arnd@arndb.de>
-> > >
-> > > Dividing a 64-bit integer prevents building this for 32-bit targets:
-> > >
-> > > ERROR: modpost: "__aeabi_uldivmod" [drivers/gpu/drm/rockchip/rockchip=
-drm.ko] undefined!
-> > >
-> > > As this function is not performance criticial, just Use the div_u64()=
- helper.
-> > >
-> > > Fixes: 128a9bf8ace2 ("drm/rockchip: Add basic RK3588 HDMI output supp=
-ort")
-> > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Le ven. 22 nov. 2024 =C3=A0 08:54, CK Hu (=E8=83=A1=E4=BF=8A=E5=85=89) <ck.=
+hu@mediatek.com> a =C3=A9crit :
+>
+> Hi, Julien:
+>
+> On Thu, 2024-11-21 at 09:53 +0100, Julien Stephan wrote:
+> > External email : Please do not click links or open attachments until yo=
+u have verified the sender or the content.
 > >
-> > Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 > >
-> > Can someone please pick this up? It is still broken in next-20241104...
+> > From: Phi-bang Nguyen <pnguyen@baylibre.com>
 > >
-> > https://storage.tuxsuite.com/public/clangbuiltlinux/continuous-integrat=
-ion2/builds/2oNvJFRj8tkDieb6VfrMf4rh1Kn/build.log
+> > This driver provides a path to bypass the SoC ISP so that image data
+> > coming from the SENINF can go directly into memory without any image
+> > processing. This allows the use of an external ISP.
 > >
-> > > ---
-> > >  drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c b/drivers=
-/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
-> > > index 9c796ee4c303..c8b362cc2b95 100644
-> > > --- a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
-> > > +++ b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
-> > > @@ -82,7 +82,7 @@ static void dw_hdmi_qp_rockchip_encoder_enable(stru=
-ct drm_encoder *encoder)
-> > >                * comment in rk_hdptx_phy_power_on() from
-> > >                * drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-> > >                */
-> > > -             phy_set_bus_width(hdmi->phy, rate / 100);
-> > > +             phy_set_bus_width(hdmi->phy, div_u64(rate, 100));
-> > >       }
-> > >  }
->=20
-> noreply@ellerman.id.au has just told me this build issue is now upstream:
->=20
->     FAILED linus/m68k-allmodconfig/m68k-gcc8.1 Fri Nov 22, 05:34
->     http://kisskb.ellerman.id.au/kisskb/buildresult/15277242/
->=20
->     Commit:   Merge tag 'drm-next-2024-11-21' of
-> https://gitlab.freedesktop.org/drm/kernel
->               28eb75e178d389d325f1666e422bc13bbbb9804c
->     Compiler: m68k-linux-gcc (GCC) 8.1.0 / GNU ld (GNU Binutils) 2.30
->=20
->     ERROR: modpost: "__udivdi3"
-> [drivers/gpu/drm/rockchip/rockchipdrm.ko] undefined!
->=20
-> Applying this patch fixes it, so
-> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
->=20
-> Do we really need +5 weeks to apply a fix for a reported build issue?
+> > Signed-off-by: Phi-bang Nguyen <pnguyen@baylibre.com>
+> > Signed-off-by: Florian Sylvestre <fsylvestre@baylibre.com>
+> > [Paul Elder fix irq locking]
+> > Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+> > Co-developed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Co-developed-by: Julien Stephan <jstephan@baylibre.com>
+> > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> > ---
+>
+> [snip]
+>
+> > +static void mtk_cam_cmos_vf_enable(struct mtk_cam_dev *cam_dev,
+> > +                                  bool enable, bool pak_en)
+> > +{
+> > +       if (enable)
+> > +               cam_dev->hw_functions->mtk_cam_cmos_vf_hw_enable(cam_de=
+v);
+>
+> Directly call mtk_camsv30_cmos_vf_hw_enable().
+> This has discussed in previous version [1].
+>
+> [1] https://patchwork.kernel.org/project/linux-mediatek/patch/20240729-ad=
+d-mtk-isp-3-0-support-v6-4-c374c9e0c672@baylibre.com/#25966327
+>
 
-Do we really need that kind of comments?
+Hi CK,
 
-It was applied already, I made sure it's part of the next PR we send to
-Linus. And it should be in linux-next tomorrow.
+I forgot about that discussion sorry :/
+I guess you want me to completely remove the  mtk_cam_hw_functions struct?
+In that case, what do you prefer:
+- keep mtk_camsv30_hw.c and put signatures in mtkcamsv30_hw.h and
+include mtk_camsv30_hw.h in mtk_camsv_video.c
+- rename mtk_camsv30_hw.c to mtk_camsv_hw.c (and all functions) and
+put signatures in mtk_camsv_hw.h
 
-Maxime
+Cheers
+Julien
 
---km5zocuqrx7s7sxg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ0BLoQAKCRAnX84Zoj2+
-dvdpAYCvsOCxb45AeqggVGmNsnQVm/dPhE0CFCB0XgME96Ckt5GWCfvgvHHFGQ67
-DbeiNMsBfj0lX0BUOAJb43jsZ7t5pR3aQV2oQXOnvO4fBEweIdvhGYuMQ03s9rcE
-THskPa19zg==
-=YJ/Z
------END PGP SIGNATURE-----
-
---km5zocuqrx7s7sxg--
+> Regards,
+> CK
+>
+> > +       else
+> > +               cam_dev->hw_functions->mtk_cam_cmos_vf_hw_disable(cam_d=
+ev);
+> > +}
+> > +
+>
+> >
+>
+> ************* MEDIATEK Confidentiality Notice ********************
+> The information contained in this e-mail message (including any
+> attachments) may be confidential, proprietary, privileged, or otherwise
+> exempt from disclosure under applicable laws. It is intended to be
+> conveyed only to the designated recipient(s). Any use, dissemination,
+> distribution, printing, retaining or copying of this e-mail (including it=
+s
+> attachments) by unintended recipient(s) is strictly prohibited and may
+> be unlawful. If you are not an intended recipient of this e-mail, or beli=
+eve
+> that you have received this e-mail in error, please notify the sender
+> immediately (by replying to this e-mail), delete any and all copies of
+> this e-mail (including any attachments) from your system, and do not
+> disclose the content of this e-mail to any other person. Thank you!
 
