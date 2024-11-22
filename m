@@ -1,223 +1,138 @@
-Return-Path: <linux-kernel+bounces-418817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D4329D65DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:43:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 704629D65F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:50:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5206282952
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:43:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3059C286F8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88ED18C33A;
-	Fri, 22 Nov 2024 22:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nyCRRyr3"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314D81C8776;
+	Fri, 22 Nov 2024 22:48:27 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7678176FD2
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 22:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05DD1BD9E9
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 22:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732315431; cv=none; b=rBhz9l6AdhVQJQmpHIM9rKGl3FoaKC7lMauY/UDxrjBQq+YtWNdI334Tg/I8Dvg25irsYxZcif5y1gYKI3Qh2ZBqfGk7T+w6pzEi/MY5dLQPpFjodsDD65zY7Is0MF3ALK5V96WFeSxRVYkHmygOtrGAbwRoOvDIKWnq8btdY0I=
+	t=1732315706; cv=none; b=LNZQZkfjiDjyIE/Zc22WgESGO+dQ3x8vywIu+ZEWIQpGJdCO27AAFYRyv/NYmRWxtlB/Fux6AotdaK/Tv3CGW/+zjCjYpoNCObHXPhzpJ4sd/JyeWIPIltUEcsoWUOWWawhsC1m55nCAqAK/tKJe4ulP49Ki1N3IwHoodVo1p+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732315431; c=relaxed/simple;
-	bh=lqYVRUzCRXOYJL1sSEZW/Z88jOYbq8aQSd8shbMACzo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qUg7zaTg5wnGmx8pA2I0/5ebfkpkk7xX3k2hCdBSHwxDVrkwQ/zEN4bxz7bXC2RtKU4CLlkWDENXn/vskPJ+Vgibo9ImwU/cGath7P4YK38pFS+Q7kvZUbbaCoWpYyfbXN5mgSvu31COqgLHzWfgd7Ue673tO3bKc1hYuKRwWio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nyCRRyr3; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-460a8d1a9b7so25201cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:43:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732315428; x=1732920228; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OHORz47FiSIR9q+W9ZVN0yQsYQ1UBFTTA/DlKq9Xp9g=;
-        b=nyCRRyr3XWU64ifabsNfHZodQ0LJh71vDdkK2dHTYr9OM+pkbMS1FhlzrUUMeVYOOM
-         LulhcUSWqtYqeYbmEi+AR9DdIuNTDtTY5tQHAkaTO2YlxKXzoIK9caktAF0kxxLHMvTr
-         pF9pYEZygXUWz7V3TynBlzwyiCQfWLRoHwjqlU6Gxmv7nDypStulpMfJAuPQT6Bzd3cM
-         oIK68gPTytee+yYNbLS83QRhuIcWPU46uZCS7jFP8sv3lnr1rTvBIDRSuVA8/GUZPnPD
-         9XNXXkDbFmepMRQuCnN+0FoiWxkuIEr+86iaWqtpT7iQCudons9W5k5GBB7V+gXQw/YQ
-         Gzrw==
+	s=arc-20240116; t=1732315706; c=relaxed/simple;
+	bh=M+pXEzVAh+FfiomftgpSUO542zOsHza/XJ6X5aBG8MQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=F/lN7VRa3pUgQGU4TjxOBtzFtVNy20pKo2qG7yOmGR7O/rHtXi2tNaTNqc7rDlFlftm7hbTGUIuYzN32mX/PQwBmt9JDEOgnKcaHXMSGQJeZaKWbn6Nyde8QMLeSfGXWJ0n46/M524i/PlHKBHdRF6ZZLQeTZg9IJxZybqaU7rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a768b62268so28138195ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:48:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732315428; x=1732920228;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OHORz47FiSIR9q+W9ZVN0yQsYQ1UBFTTA/DlKq9Xp9g=;
-        b=bBXWOfpz7VPvqdobNfIOGYRugBzS2tW4FpqzwFf1BbpxDSGzAyHuRmyQw2muQjoz8o
-         gx9IN+GHv/Rb3EINWdeQwmsNGDXvcGs6MCDX2iqzemmYhufkHcHl8VC6xrJXcQfb8G9Z
-         eTEcHT1N+sym5YaBMdVXEOG5pV1psBA7pJjToj6WTs2U+DrEB7gRIJGGezSza7fFXb/S
-         UzVd3dP6ARiBA9m+AgADmTDvnTYV/o+RJ+LlJCS2RlDi8LyHFQqncGzeB2MrY7wGNz5Z
-         gaYsgFsHy9tXgszsjwGxL543saGVztS7cIuHxHfa1dqhxqjbZaHShzfcZjb8elVjiekb
-         gXvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWWn5xc38d1lZbOTJoE8SroW05U/wnJTc3t3AigdR/+2+8WeqJdQP+DB2CzrKPqCEiw1hiH4WlJjhd8YTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP31LumWQAZwgCBmMnRsywbivXvA4zGglHHEQwrgR9D7jAHm+B
-	eN/iXCkUtTikB8ATlDgS+L6Ju64WdDiJCO5GRBoUkHeJO3EwYvOaRWkZK4IhBWDiVFuqkEANcut
-	/zCfi/tSWDRs20DKBw9esC9JQksAvRH+ivPpO
-X-Gm-Gg: ASbGncvG0w1CebO4hwtfEU2Wt//73pkYu3LFjhNbULLU4PhR1CO8g8Yy2QA3bSVEsvJ
-	PtyUT+Ndq0/w/hRfCg61RI9X/ibv4s9Q=
-X-Google-Smtp-Source: AGHT+IEFX7LWkW1c39d4ISGOpA0oNTEkNboBSr8vIIy/woFz0x8Q9YCXC3T5nxjXIL6abvvQKd+D6KUVCI48zqhhqtY=
-X-Received: by 2002:a05:622a:8c6:b0:460:b4e3:49e with SMTP id
- d75a77b69052e-46673dacb95mr259451cf.9.1732315428171; Fri, 22 Nov 2024
- 14:43:48 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732315704; x=1732920504;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6dk8I5Y58Qn9xNhXYLDh8oA7Dj1xfAoj/QD4TuCLbCc=;
+        b=D52AMxjUwPenCsqpObBtZ1SdPfwJ20EWCruU33gIir/lr4Q8VTnXlAua3Jm7DJLM2L
+         OVjM8HrNidNUAYkkXmbhdGNwIBpFEh1W/1T06tyDpqKXMol54LLBzpCS0xACw955u32T
+         c1lxm2Uwktj3J4H4cJvM3/Sx/j+bwea5QytuvpGrOrE8J4u8o7CFObC2lmMJS5Xq1pxj
+         zT7eppPPAHhSk56JfbhI+wviJWzttQ7LC5yeF/L8wP9gAJ81tfpQISGGADhgfQ0WXNqi
+         A2tq3Eh8lWJpGYGHc97y8ycLT5QSjom5TMnp9j17o22FogOdmiiJG3aKWvVaeNekxxyL
+         Mphg==
+X-Forwarded-Encrypted: i=1; AJvYcCU03kSG5uXcDqTegQYLnwnoDyxto+e8uAvcAdks5YgCIcRU8iaJwBK2LnkfJDO0Lg+kj93bB/Zu3OSKjfM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzvow9DomgbhfUZc9zadzrdu23tli1b8LzIAUdzZyKG+KIsiLoG
+	3gAkgWC7DSTFCaF6nSjPeabOquoqo4o+LTR+sNDruFG4IjBQWsUYmvURnClWBYWcHB/xaeANF+s
+	tTZ7QfKOQBy+7QhQoFl4zJ6stJXxU/v14pa8iWAOROCc8vCn+e/he6+M=
+X-Google-Smtp-Source: AGHT+IFuwti6VEDQFJdUqneodNTCTrTmi9w4b5SxEsUGc1hbpqe1/+jzXZXJ/l8tlOolxd3Qy63yjKdIadRO3yqP89WvewyA3YDw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120000826.335387-1-surenb@google.com> <20241120000826.335387-5-surenb@google.com>
- <Zz1nRyMnIaCa0TL5@casper.infradead.org> <CAJuCfpFO3Hj+7f10e0Pnvf0U7-dHeYgvjK+4AFD8V=kmG4JA=w@mail.gmail.com>
-In-Reply-To: <CAJuCfpFO3Hj+7f10e0Pnvf0U7-dHeYgvjK+4AFD8V=kmG4JA=w@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 22 Nov 2024 14:43:37 -0800
-Message-ID: <CAJuCfpEuLR8a2jrV4pUQL7emzjSrFa5JHC75PCBdLWRSL0SmmQ@mail.gmail.com>
-Subject: Re: [PATCH v4 4/5] mm: make vma cache SLAB_TYPESAFE_BY_RCU
-To: Matthew Wilcox <willy@infradead.org>
-Cc: akpm@linux-foundation.org, liam.howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz, 
-	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
-	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, 
-	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, 
-	dhowells@redhat.com, hdanton@sina.com, hughd@google.com, minchan@google.com, 
-	jannh@google.com, shakeel.butt@linux.dev, souravpanda@google.com, 
-	pasha.tatashin@soleen.com, corbet@lwn.net, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@android.com
+X-Received: by 2002:a05:6e02:188f:b0:3a7:820e:3388 with SMTP id
+ e9e14a558f8ab-3a79afd6e87mr66934035ab.20.1732315703815; Fri, 22 Nov 2024
+ 14:48:23 -0800 (PST)
+Date: Fri, 22 Nov 2024 14:48:23 -0800
+In-Reply-To: <66f839ac.050a0220.aab67.0006.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67410a37.050a0220.363a1b.0150.GAE@google.com>
+Subject: Re: [syzbot] [kernel?] WARNING in enqueue_dl_entity
+From: syzbot <syzbot+00a022dc9979d67df050@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, bsegall@google.com, dietmar.eggemann@arm.com, 
+	juri.lelli@redhat.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	mgorman@suse.de, mingo@redhat.com, peterz@infradead.org, rostedt@goodmis.org, 
+	syzkaller-bugs@googlegroups.com, vincent.guittot@linaro.org, 
+	vschneid@redhat.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 19, 2024 at 10:37=E2=80=AFPM Suren Baghdasaryan <surenb@google.=
-com> wrote:
->
-> On Tue, Nov 19, 2024 at 8:36=E2=80=AFPM Matthew Wilcox <willy@infradead.o=
-rg> wrote:
-> >
-> > On Tue, Nov 19, 2024 at 04:08:25PM -0800, Suren Baghdasaryan wrote:
-> > > +static inline void vma_clear(struct vm_area_struct *vma)
-> > > +{
-> > > +     /* Preserve vma->vm_lock */
-> > > +     memset(vma, 0, VMA_BEFORE_LOCK);
-> > > +     memset(VMA_LOCK_END(vma), 0, VMA_AFTER_LOCK);
-> > > +}
-> >
-> > This isn't how you're supposed to handle constructors.  You've fixed
-> > the immediate problem rather than writing the code in the intended styl=
-e.
->
-> Yeah, I don't like this myself but the only alternative I can think of
-> is to set the struct members individually.
->
-> >
-> > > +static void vm_area_ctor(void *data)
-> > > +{
-> > > +     vma_lock_init(data);
-> > > +}
-> >
-> > After the ctor has run, the object should be in the same state as
-> > it is after it's freed.  If you want to memset the entire thing
-> > then you can do it in the ctor.  But there should be no need to
-> > do it in vma_init().
->
-> IIUC, your suggestion is to memset() the vma and initialize vm_lock
-> inside the ctor. Then when it's time to free the vma, we reset all
-> members except vm_lock before freeing the vma. As you mention later,
-> members like anon_vma_chain, which are already clear, also won't need
-> to be reset at this point. Am I understanding your proposal correctly?
->
-> BTW, if so, then vma_copy() will have to also copy vma members individual=
-ly.
->
-> >
-> > And there's lots of things you can move from vma_init() to the ctor.
-> > For example, at free time, anon_vma_chain should be an empty list.
-> > So if you init it in the ctor, you can avoid doing it in vma_init().
->
-> True.
->
-> > I'd suggest that vma_numab_state_free() should be the place which
-> > sets vma->numab_state to NULL and we can delete vma_numab_state_init()
-> > entirely.
->
-> Sounds good to me.
+syzbot has found a reproducer for the following issue on:
 
-I took a stab at it and the result does not look pretty...
-Couple notes:
-- vma_init() is used in other places to initialize VMAs allocated on
-the stack, so I left it alone for such cases. VMAs like that are not
-allocated from vm_area_cachep, can't be reused anyway, therefore we
-can override their vm_lock.
-- Since vma_init() has to stay, we can't retire vma_numab_state_init()
-because it's used in vma_init().
-- I think resetting members before freeing might not be such a good
-idea because after resetting the object might not be reused at all.
+HEAD commit:    28eb75e178d3 Merge tag 'drm-next-2024-11-21' of https://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1402175f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5606b6814de0f638
+dashboard link: https://syzkaller.appspot.com/bug?extid=00a022dc9979d67df050
+compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1016fec0580000
 
-Now, the main point:
-I moved initializations of several members into ctor but even with
-that the code looks roughly like this:
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/384ffdcca292/non_bootable_disk-28eb75e1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4053ed867efd/vmlinux-28eb75e1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/903039310aac/Image-28eb75e1.gz.xz
 
-static void vm_area_ctor(void *data)
-{
-    struct vm_area_struct *vma =3D (struct vm_area_struct *)data;
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+00a022dc9979d67df050@syzkaller.appspotmail.com
 
-    vma->detached =3D true;
-    INIT_LIST_HEAD(&vma->anon_vma_chain);
-    vma_lock_init(vma);
-}
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 10 at kernel/sched/deadline.c:1995 enqueue_dl_entity+0x478/0x58c kernel/sched/deadline.c:2029
+Modules linked in:
+CPU: 0 UID: 0 PID: 10 Comm: kworker/0:1 Not tainted 6.12.0-syzkaller-07749-g28eb75e178d3 #0
+Hardware name: linux,dummy-virt (DT)
+Workqueue:  0x0 (events)
+pstate: a14000c9 (NzCv daIF +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+pc : enqueue_dl_entity+0x478/0x58c kernel/sched/deadline.c:1995
+lr : dl_server_start+0x44/0x12c kernel/sched/deadline.c:1650
+sp : ffff800082b33a10
+x29: ffff800082b33a10 x28: fdf0000004e5dc00 x27: 0000000000000000
+x26: 0000000000000001 x25: 0000000000000000 x24: 0000000000000048
+x23: fff000007f8d7600 x22: 0000000000000001 x21: 000000000016e360
+x20: 0000000000000001 x19: fff000007f8d7f68 x18: 0000000000000000
+x17: 0000000000000004 x16: 0000000000000002 x15: 0000000000000000
+x14: 0000000000000142 x13: 00000000000003db x12: 0000000000000001
+x11: fff000007f8d7680 x10: 0000000000000284 x9 : 0000000000000048
+x8 : 0000000000100000 x7 : 0000000000000000 x6 : fdf0000004e5dbc0
+x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
+x2 : 0000000000000001 x1 : 0000000000000001 x0 : 0000000000000001
+Call trace:
+ enqueue_dl_entity+0x478/0x58c kernel/sched/deadline.c:2029 (P)
+ dl_server_start+0x44/0x12c kernel/sched/deadline.c:1650 (L)
+ dl_server_start+0x44/0x12c kernel/sched/deadline.c:1650
+ enqueue_task_fair+0x11c/0x3a4 kernel/sched/fair.c:7038
+ enqueue_task+0x3c/0xe4 kernel/sched/core.c:2061
+ activate_task+0x68/0x80 kernel/sched/core.c:2108
+ attach_task+0x4c/0x74 kernel/sched/fair.c:9635
+ attach_tasks kernel/sched/fair.c:9670 [inline]
+ sched_balance_rq+0x580/0xc74 kernel/sched/fair.c:11747
+ sched_balance_newidle.constprop.0+0x1b0/0x3e4 kernel/sched/fair.c:12789
+ pick_next_task_fair+0x50/0x320 kernel/sched/fair.c:8937
+ __pick_next_task kernel/sched/core.c:6023 [inline]
+ pick_next_task kernel/sched/core.c:6542 [inline]
+ __schedule+0x15c/0x900 kernel/sched/core.c:6709
+ __schedule_loop kernel/sched/core.c:6833 [inline]
+ schedule+0x34/0x104 kernel/sched/core.c:6848
+ worker_thread+0x19c/0x354 kernel/workqueue.c:3406
+ kthread+0x114/0x118 kernel/kthread.c:389
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
+---[ end trace 0000000000000000 ]---
 
-struct vm_area_struct *vm_area_alloc(struct mm_struct *mm)
-{
-    struct vm_area_struct *vma;
 
-    vma =3D kmem_cache_alloc(vm_area_cachep, GFP_KERNEL);
-    if (!vma)
-        return NULL;
-
-    vma->vm_mm =3D mm;
-    vma->vm_ops =3D &vma_dummy_vm_ops;
-    vma->vm_start =3D 0;
-    vma->vm_end =3D 0;
-    memset(&vma->vm_page_prot, 0, sizeof(vma->vm_page_prot));
-    vm_flags_init(vma, 0);
-    vma_numab_state_init(vma);
-    memset(&vma->shared, 0, sizeof(vma->shared));
-    vma->anon_vma =3D NULL;
-    vma->vm_pgoff =3D 0;
-    vma->vm_file =3D NULL;
-    vma->vm_private_data =3D NULL;
-    memset(&vma->vm_userfaultfd_ctx, 0, sizeof(vma->vm_userfaultfd_ctx));
-#ifdef CONFIG_ANON_VMA_NAME
-    vma->anon_name =3D NULL;
-#endif
-#ifdef CONFIG_SWAP
-    atomic_long_set(&vma->swap_readahead_info, 0);
-#endif
-#ifndef CONFIG_MMU
-    vma->vm_region =3D NULL;
-#endif
-#ifdef CONFIG_NUMA
-    vma->vm_policy =3D NULL;
-#endif
-#ifdef CONFIG_NUMA_BALANCING
-    vma->numab_state =3D NULL;
-#endif
-    return vma;
-}
-
-I can of course add helper functions and get rid of the #ifdef's but still.=
-..
-
-Matthew, want to double check if this looks like the solution you were
-proposing or am I completely off the target?
-
->
-> Please confirm if I correctly got your idea and I'll update this patch.
-> Thanks for the feedback!
->
-> >
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
