@@ -1,199 +1,326 @@
-Return-Path: <linux-kernel+bounces-418357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA4A29D60BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:48:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1882A9D60C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:49:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A7861F2152A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:48:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92C711F21B29
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D504138490;
-	Fri, 22 Nov 2024 14:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C89C12C484;
+	Fri, 22 Nov 2024 14:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fE92jn07"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="f4w9yxzb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D451A481C4;
-	Fri, 22 Nov 2024 14:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAB67580C;
+	Fri, 22 Nov 2024 14:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732286897; cv=none; b=dpAa+zr6X7C/wG5QQ9H0Bd0AaD92h8HxhhvraRZpAA5UyIa9/ASb+mFA0DZRzxn2UVo9JCPUeGkb13OnRan78frFdTo0HDu6CmLUvMrjKXhLpWdPFJRP70+qpo8nL0ckUNfbTlk9u71zITeoT6qp6fHqg7TmjlYeOSLpHpY2HzY=
+	t=1732286957; cv=none; b=NV/Dt7QzGvquWaT6JUQ8krl7kA80bo4eOCZNSvqeZHh6l6rsdjUfr+MdeDsaMdzjHA8M+K2nul6fjYTYTLtUcNoJWSd7QYgjlW0s0zxXx8MPEB24ro34hu+z1szFUcEhVAo2KyPyz7x8paFzIG78v4IepgHBn87BLK5f1/6Q54s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732286897; c=relaxed/simple;
-	bh=TObrhQKNEUiuXryF/VVXCnbuKWGFbmaoIBG5kOJEtIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V6nwhHgR6uoj6YPyZZj0xB+tkVP6tx7IziQ80z0hHt2OrTJ5zoKhK8cxjz58KIcpeBOPMP9lXUFiZ/qZ+LpGcvlCv+3/IJxBlZrujhu0mG1D5t2OWZ4MBMPmUpSJzWYl2tM9ZqbzttrBSxkcdJvtkX0MIalBSybiJRaImb0BiLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fE92jn07; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (93-46-82-201.ip106.fastwebnet.it [93.46.82.201])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id AC4BE514;
-	Fri, 22 Nov 2024 15:47:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732286874;
-	bh=TObrhQKNEUiuXryF/VVXCnbuKWGFbmaoIBG5kOJEtIU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fE92jn07FfcHM245KyQkhpg3e94a5DnYsUyqYHEawr0qIotNAkI/RDrm4SjJGXqYq
-	 RDU1RrCp/8hBtu+zFuS+jJSojpBzS7/E6oUiklKr/B833Xcgq8zlQoDzmKR+a2oAk1
-	 cPv40J0/fJ5aZoOZJ/t9MmHmgigd4y4EfBuO3seg=
-Date: Fri, 22 Nov 2024 15:48:11 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Naushir Patuck <naush@raspberrypi.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, linux-media@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH v1 5/5] drivers: media: bcm2835-unicam: Correctly handle
- FS + FE ISR condition
-Message-ID: <deremuh7mawzt6ke3c67fvzfyuksmuwon3dhorxbm5mr5rllmf@fbj2f5qvfpjd>
-References: <20241122084152.1841419-1-naush@raspberrypi.com>
- <20241122084152.1841419-6-naush@raspberrypi.com>
- <xy44zndazbw7ehpzbc6hexgptjymevvupjhuy2x6zxp54qtepm@vlbb6js62cq4>
- <CAEmqJPrrAhhukn2H4nUhe1njVi-dyW9q=u1h8YgafvJGbYRG6Q@mail.gmail.com>
- <xadxi6rjcnmgjiqhinqnawj3mgps4b3xp6ftozap4ps6q5xaz7@bsdwrrkyniwt>
+	s=arc-20240116; t=1732286957; c=relaxed/simple;
+	bh=MINB20Xz5XXO/Euq10IW5x9cXrD0fkbffYKT5UJ3WMc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hhUbpdLlyLoeSMdvf5PhSp3LrvBI2jlmfuooBdCLjn2x1CJuQseevrRzOCbKiYE+e3apf3dZAvd8NCBn7LlMupOZ0GphYiUKY5lCbob6uDuMtRvdyo5ISx4nJlVpNp/TeL0EQhVub0XW32SH+iYFZoj+stZkox6SSpUU0fSQp9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=f4w9yxzb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 249CAC4CECE;
+	Fri, 22 Nov 2024 14:49:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1732286957;
+	bh=MINB20Xz5XXO/Euq10IW5x9cXrD0fkbffYKT5UJ3WMc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=f4w9yxzbPnrQLYy7GGci/HcN3HFEKmJg2ZcEtfHoeeyId3YQte6sqowEaR3R3ur1o
+	 UHeCCJsvoiCNnhO2plHKMDMQhfqop1evWxKEy7XJusw3HRe55fJVDXq4NfeUwS4Lpy
+	 Ozh7mL0/WEVbZD1b+H3e7mxnaI2KWcex4h8MrXMA=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	torvalds@linux-foundation.org,
+	stable@vger.kernel.org
+Cc: lwn@lwn.net,
+	jslaby@suse.cz,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Linux 6.1.119
+Date: Fri, 22 Nov 2024 15:48:49 +0100
+Message-ID: <2024112249-ashes-coronary-334a@gregkh>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <xadxi6rjcnmgjiqhinqnawj3mgps4b3xp6ftozap4ps6q5xaz7@bsdwrrkyniwt>
+Content-Transfer-Encoding: 8bit
 
+I'm announcing the release of the 6.1.119 kernel.
 
-With Hans Sakari and Laurent in cc for real now
+All users of the 6.1 kernel series must upgrade.
 
-On Fri, Nov 22, 2024 at 03:41:31PM +0100, Jacopo Mondi wrote:
-> Hi Naush
->
-> On Fri, Nov 22, 2024 at 11:40:26AM +0000, Naushir Patuck wrote:
-> > Hi Jacopo,
-> >
-> > On Fri, 22 Nov 2024 at 11:16, Jacopo Mondi
-> > <jacopo.mondi@ideasonboard.com> wrote:
-> > >
-> > > Hi Naush
-> > >
-> > > On Fri, Nov 22, 2024 at 08:41:52AM +0000, Naushir Patuck wrote:
-> > > > This change aligns the FS/FE interrupt handling with the Raspberry Pi
-> > > > kernel downstream Unicam driver.
-> > > >
-> > > > If we get a simultaneous FS + FE interrupt for the same frame, it cannot
-> > > > be marked as completed and returned to userland as the framebuffer will
-> > > > be refilled by Unicam on the next sensor frame. Additionally, the
-> > > > timestamp will be set to 0 as the FS interrupt handling code will not
-> > > > have run yet.
-> > > >
-> > > > To avoid these problems, the frame is considered dropped in the FE
-> > > > handler, and will be returned to userland on the subsequent sensor frame.
-> > > >
-> > > > Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
-> > > > ---
-> > > >  .../media/platform/broadcom/bcm2835-unicam.c  | 39 +++++++++++++++++--
-> > > >  1 file changed, 35 insertions(+), 4 deletions(-)
-> > > >
-> > > > diff --git a/drivers/media/platform/broadcom/bcm2835-unicam.c b/drivers/media/platform/broadcom/bcm2835-unicam.c
-> > > > index f10064107d54..0d2aa25d483f 100644
-> > > > --- a/drivers/media/platform/broadcom/bcm2835-unicam.c
-> > > > +++ b/drivers/media/platform/broadcom/bcm2835-unicam.c
-> > > > @@ -773,10 +773,26 @@ static irqreturn_t unicam_isr(int irq, void *dev)
-> > > >                        * as complete, as the HW will reuse that buffer.
-> > > >                        */
-> > > >                       if (node->cur_frm && node->cur_frm != node->next_frm) {
-> > > > +                             /*
-> > > > +                              * This condition checks if FE + FS for the same
-> > > > +                              * frame has occurred. In such cases, we cannot
-> > > > +                              * return out the frame, as no buffer handling
-> > > > +                              * or timestamping has yet been done as part of
-> > > > +                              * the FS handler.
-> > > > +                              */
-> > > > +                             if (!node->cur_frm->vb.vb2_buf.timestamp) {
-> > > > +                                     dev_dbg(unicam->v4l2_dev.dev,
-> > > > +                                             "ISR: FE without FS, dropping frame\n");
-> > > > +                                     continue;
-> > > > +                             }
-> > > > +
-> > > >                               unicam_process_buffer_complete(node, sequence);
-> > > > +                             node->cur_frm = node->next_frm;
-> > > > +                             node->next_frm = NULL;
-> > > >                               inc_seq = true;
-> > > > +                     } else {
-> > > > +                             node->cur_frm = node->next_frm;
-> > > >                       }
-> > > > -                     node->cur_frm = node->next_frm;
-> > > >               }
-> > > >
-> > > >               /*
-> > > > @@ -812,10 +828,25 @@ static irqreturn_t unicam_isr(int irq, void *dev)
-> > > >                                       i);
-> > > >                       /*
-> > > >                        * Set the next frame output to go to a dummy frame
-> > > > -                      * if we have not managed to obtain another frame
-> > > > -                      * from the queue.
-> > > > +                      * if no buffer currently queued.
-> > > >                        */
-> > > > -                     unicam_schedule_dummy_buffer(node);
-> > > > +                     if (!node->next_frm ||
-> > > > +                         node->next_frm == node->cur_frm) {
-> > > > +                             unicam_schedule_dummy_buffer(node);
-> > > > +                     } else if (unicam->node[i].cur_frm) {
-> > > > +                             /*
-> > > > +                              * Repeated FS without FE. Hardware will have
-> > > > +                              * swapped buffers, but the cur_frm doesn't
-> > > > +                              * contain valid data. Return cur_frm to the
-> > > > +                              * queue.
-> > >
-> > > So the buffer gets silently recycled ? Or should it be returned with
-> > > errors to userspace ?
-> >
-> > The buffer silently gets recycled and we dequeue when we are sure it
-> > is valid and will not get overwritten.  If we were to return to
->
-> I haven't find in the v4l2 specs any reference to what the behaviour
-> should be.
->
-> If I can summarize it: When a frame capture is aborted after the DMA
-> transfer has already started, should the corresponding capture buffer
-> be returned to the user in error state or the frame drop can go
-> silently ignored ?
->
-> Cc-ing Hans Sakari and Laurent for opinions.
->
-> > userspace with an error, there is still a race condition on the name
-> > frame/buffer which will also have to return as error.
-> >
->
-> I'm sorry I didn't get this part :)
->
-> > Regards,
-> > Naush
-> >
-> >
-> > >
-> > > > +                              */
-> > > > +                             spin_lock(&node->dma_queue_lock);
-> > > > +                             list_add_tail(&node->cur_frm->list,
-> > > > +                                           &node->dma_queue);
-> > > > +                             spin_unlock(&node->dma_queue_lock);
-> > > > +                             node->cur_frm = node->next_frm;
-> > > > +                             node->next_frm = NULL;
-> > > > +                     }
-> > > >               }
-> > > >
-> > > >               unicam_queue_event_sof(unicam);
-> > > > --
-> > > > 2.34.1
-> > > >
-> > > >
-> >
+The updated 6.1.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-6.1.y
+and can be browsed at the normal kernel.org git web browser:
+	https://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Makefile                                                       |    2 
+ arch/arm/kernel/head.S                                         |    8 
+ arch/arm/mm/mmu.c                                              |   34 +-
+ arch/arm64/include/asm/mman.h                                  |   10 
+ arch/parisc/Kconfig                                            |    1 
+ arch/parisc/include/asm/cache.h                                |   11 
+ arch/x86/kvm/lapic.c                                           |   29 +
+ arch/x86/kvm/vmx/nested.c                                      |   30 +
+ arch/x86/kvm/vmx/vmx.c                                         |    6 
+ arch/x86/mm/ioremap.c                                          |    6 
+ drivers/block/null_blk/main.c                                  |   45 +-
+ drivers/char/xillybus/xillybus_class.c                         |    7 
+ drivers/char/xillybus/xillyusb.c                               |   22 +
+ drivers/cxl/core/pci.c                                         |    2 
+ drivers/gpu/drm/amd/amdgpu/nbio_v7_7.c                         |    6 
+ drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c                 |    3 
+ drivers/gpu/drm/bridge/tc358768.c                              |   21 +
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c                    |    8 
+ drivers/media/dvb-core/dvbdev.c                                |   15 
+ drivers/mmc/host/dw_mmc.c                                      |    4 
+ drivers/mmc/host/sunxi-mmc.c                                   |    6 
+ drivers/net/bonding/bond_main.c                                |   16 
+ drivers/net/bonding/bond_options.c                             |   82 ++++-
+ drivers/net/ethernet/freescale/fec_main.c                      |   26 -
+ drivers/net/ethernet/mellanox/mlx5/core/en/tc_ct.c             |    2 
+ drivers/net/ethernet/mellanox/mlx5/core/en_accel/ktls_tx.c     |    8 
+ drivers/net/ethernet/mellanox/mlx5/core/fs_core.c              |   15 
+ drivers/net/ethernet/vertexcom/mse102x.c                       |    4 
+ drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c  |   25 -
+ drivers/vdpa/mlx5/core/mr.c                                    |    8 
+ drivers/vdpa/virtio_pci/vp_vdpa.c                              |   10 
+ fs/9p/vfs_inode.c                                              |   23 -
+ fs/nfsd/netns.h                                                |    1 
+ fs/nfsd/nfs4proc.c                                             |   34 --
+ fs/nfsd/nfs4state.c                                            |    1 
+ fs/nfsd/xdr4.h                                                 |    1 
+ fs/nilfs2/btnode.c                                             |    2 
+ fs/nilfs2/gcinode.c                                            |    4 
+ fs/nilfs2/mdt.c                                                |    1 
+ fs/nilfs2/page.c                                               |    2 
+ fs/ntfs3/file.c                                                |   12 
+ fs/ocfs2/resize.c                                              |    2 
+ fs/ocfs2/super.c                                               |   13 
+ fs/smb/server/smb2misc.c                                       |   26 +
+ fs/smb/server/smb2pdu.c                                        |   48 +-
+ include/linux/mman.h                                           |    7 
+ include/linux/sockptr.h                                        |   27 +
+ include/net/bond_options.h                                     |    2 
+ lib/buildid.c                                                  |    2 
+ mm/internal.h                                                  |   19 +
+ mm/mmap.c                                                      |  120 +++----
+ mm/nommu.c                                                     |    9 
+ mm/page_alloc.c                                                |    3 
+ mm/shmem.c                                                     |    5 
+ mm/util.c                                                      |   33 ++
+ net/bluetooth/hci_core.c                                       |    2 
+ net/bluetooth/hci_event.c                                      |  163 ----------
+ net/bluetooth/iso.c                                            |   32 -
+ net/mptcp/pm_netlink.c                                         |   15 
+ net/mptcp/pm_userspace.c                                       |   77 +++-
+ net/mptcp/protocol.c                                           |   16 
+ net/netfilter/ipvs/ip_vs_ctl.c                                 |   10 
+ net/netlink/af_netlink.c                                       |   31 -
+ net/netlink/af_netlink.h                                       |    2 
+ net/nfc/llcp_sock.c                                            |   12 
+ net/sched/cls_u32.c                                            |   54 +--
+ net/sched/sch_taprio.c                                         |   10 
+ net/vmw_vsock/virtio_transport_common.c                        |    8 
+ samples/pktgen/pktgen_sample01_simple.sh                       |    2 
+ security/integrity/ima/ima_template_lib.c                      |   14 
+ sound/pci/hda/patch_realtek.c                                  |    3 
+ tools/testing/selftests/tc-testing/tc-tests/qdiscs/taprio.json |   22 +
+ 72 files changed, 759 insertions(+), 583 deletions(-)
+
+Alexandre Ferrieux (1):
+      net: sched: cls_u32: Fix u32's systematic failure to free IDR entries for hnodes.
+
+Andre Przywara (1):
+      mmc: sunxi-mmc: Fix A100 compatible description
+
+Andrew Morton (1):
+      mm: revert "mm: shmem: fix data-race in shmem_getattr()"
+
+Andy Yan (1):
+      drm/rockchip: vop: Fix a dereferenced before check warning
+
+Aurelien Jarno (1):
+      Revert "mmc: dw_mmc: Fix IDMAC operation with pages bigger than 4K"
+
+Baoquan He (1):
+      x86/mm: Fix a kdump kernel failure on SME system when CONFIG_IMA_KEXEC=y
+
+Chen Hanxiao (1):
+      ipvs: properly dereference pe in ip_vs_add_service
+
+Christophe JAILLET (1):
+      null_blk: Remove usage of the deprecated ida_simple_xx() API
+
+Chuck Lever (4):
+      NFSD: Async COPY result needs to return a write verifier
+      NFSD: Limit the number of concurrent async COPY operations
+      NFSD: Initialize struct nfsd4_copy earlier
+      NFSD: Never decrement pending_async_copies on error
+
+Dai Ngo (1):
+      NFSD: initialize copy->cp_clp early in nfsd4_copy for use by trace point
+
+Damien Le Moal (1):
+      null_blk: Fix return value of nullb_device_power_store()
+
+Dan Carpenter (1):
+      cxl/pci: fix error code in __cxl_hdm_decode_init()
+
+Dmitry Antipov (2):
+      ocfs2: uncache inode which has failed entering the group
+      ocfs2: fix UBSAN warning in ocfs2_verify_volume()
+
+Dragos Tatulea (1):
+      net/mlx5e: kTLS, Fix incorrect page refcounting
+
+Eli Billauer (2):
+      char: xillybus: Prevent use-after-free due to race condition
+      char: xillybus: Fix trivial bug with mutex
+
+Eric Dumazet (2):
+      net: add copy_safe_from_sockptr() helper
+      nfc: llcp: fix nfc_llcp_setsockopt() unsafe copies
+
+Eric Van Hensbergen (1):
+      fs/9p: fix uninitialized values during inode evict
+
+Francesco Dolcini (1):
+      drm/bridge: tc358768: Fix DSI command tx
+
+Geliang Tang (5):
+      mptcp: define more local variables sk
+      mptcp: add userspace_pm_lookup_addr_by_id helper
+      mptcp: update local address flags when setting it
+      mptcp: hold pm lock when deleting entry
+      mptcp: drop lookup_by_id in lookup_addr
+
+Greg Kroah-Hartman (1):
+      Linux 6.1.119
+
+Hangbin Liu (1):
+      bonding: add ns target multicast address to slave device
+
+Harith G (1):
+      ARM: 9419/1: mm: Fix kernel memory mapping for xip kernels
+
+Jakub Kicinski (1):
+      netlink: terminate outstanding dump on socket close
+
+Jinjiang Tu (1):
+      mm: fix NULL pointer dereference in alloc_pages_bulk_noprof
+
+Jiri Olsa (1):
+      lib/buildid: Fix build ID parsing logic
+
+Kailang Yang (1):
+      ALSA: hda/realtek - Fixed Clevo platform headset Mic issue
+
+Konstantin Komarov (1):
+      fs/ntfs3: Additional check in ntfs_file_release
+
+Lin.Cao (1):
+      drm/amd: check num of link levels when update pcie param
+
+Lorenzo Stoakes (4):
+      mm: avoid unsafe VMA hook invocation when error arises on mmap hook
+      mm: unconditionally close VMAs on error
+      mm: refactor arch_calc_vm_flag_bits() and arm64 MTE handling
+      mm: resolve faulty mmap_region() error path behaviour
+
+Luiz Augusto von Dentz (2):
+      Bluetooth: hci_core: Fix calling mgmt_device_connected
+      Bluetooth: ISO: Fix not validating setsockopt user input
+
+Lukas Bulwahn (1):
+      Bluetooth: hci_event: Remove code to removed CONFIG_BT_HS
+
+Maksym Glubokiy (1):
+      ALSA: hda/realtek: fix mute/micmute LEDs for a HP EliteBook 645 G10
+
+Mark Bloch (1):
+      net/mlx5: fs, lock FTE when checking if active
+
+Matthieu Baerts (NGI0) (1):
+      mptcp: pm: use _rcu variant under rcu_read_lock
+
+Mauro Carvalho Chehab (1):
+      media: dvbdev: fix the logic when DVB_DYNAMIC_MINORS is not set
+
+Michal Luczaj (2):
+      virtio/vsock: Fix accept_queue memory leak
+      net: Make copy_safe_from_sockptr() match documentation
+
+Mikulas Patocka (1):
+      parisc: fix a possible DMA corruption
+
+Moshe Shemesh (1):
+      net/mlx5e: CT: Fix null-ptr-deref in add rule err flow
+
+Namjae Jeon (2):
+      ksmbd: fix slab-out-of-bounds in smb_strndup_from_utf16()
+      ksmbd: fix potencial out-of-bounds when buffer offset is invalid
+
+Paolo Abeni (2):
+      mptcp: error out earlier on disconnect
+      mptcp: cope racing subflow creation in mptcp_rcv_space_adjust
+
+Pedro Tammela (1):
+      net/sched: cls_u32: replace int refcounts with proper refcounts
+
+Ryusuke Konishi (2):
+      nilfs2: fix null-ptr-deref in block_touch_buffer tracepoint
+      nilfs2: fix null-ptr-deref in block_dirty_buffer tracepoint
+
+Samasth Norway Ananda (1):
+      ima: fix buffer overrun in ima_eventdigest_init_common
+
+Sean Christopherson (3):
+      KVM: nVMX: Treat vpid01 as current if L2 is active, but with VPID disabled
+      KVM: x86: Unconditionally set irr_pending when updating APICv state
+      KVM: VMX: Bury Intel PT virtualization (guest/host mode) behind CONFIG_BROKEN
+
+Si-Wei Liu (1):
+      vdpa/mlx5: Fix PA offset with unaligned starting iotlb map
+
+Stefan Wahren (2):
+      net: vertexcom: mse102x: Fix tx_bytes calculation
+      staging: vchiq_arm: Get the rid off struct vchiq_2835_state
+
+Umang Jain (1):
+      staging: vchiq_arm: Use devm_kzalloc() for vchiq_arm_state allocation
+
+Vijendar Mukunda (1):
+      drm/amd: Fix initialization mistake for NBIO 7.7.0
+
+Vladimir Oltean (1):
+      net/sched: taprio: extend minimum interval restriction to entire cycle too
+
+Wei Fang (2):
+      samples: pktgen: correct dev to DEV
+      net: fec: remove .ndo_poll_controller to avoid deadlocks
+
+Xiaoguang Wang (1):
+      vp_vdpa: fix id_table array not null terminated error
+
+Yu Kuai (1):
+      null_blk: fix null-ptr-dereference while configuring 'power' and 'submit_queues'
+
 
