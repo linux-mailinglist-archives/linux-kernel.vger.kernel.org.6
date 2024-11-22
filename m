@@ -1,162 +1,148 @@
-Return-Path: <linux-kernel+bounces-417800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D249C9D5938
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:04:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 095B59D593F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:08:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46A5A283A74
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:04:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C3F3B22AB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DFA31632CD;
-	Fri, 22 Nov 2024 06:04:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACB4170A03;
+	Fri, 22 Nov 2024 06:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kftwLM9q"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U8BPAbAZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AAC376F1;
-	Fri, 22 Nov 2024 06:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145DC376F1;
+	Fri, 22 Nov 2024 06:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732255483; cv=none; b=qKATw9y6oDozjxepjNwzXToNGBWurILPonPoHTW4BwYccMnO5z+r5xmhDzBgmmrI4qxfhwjjHnUUEiMiXz7mVSu9oC8ThinKtPh8S1K6/2MSy4MFlqM6crN7zddg8mgahiFNY8BdM7y4BWqknAejsQAK01ErxvmiuY9ubg5UHh8=
+	t=1732255677; cv=none; b=Q3oY/7y9OGYoGM+frm/JGofGWR3ZtRMkWGCvYunlAyj3VBWBa2MHA0VIBi2dpfVT2ZLTZVb0KUN/Nx+bJlvf/pM/kswnLuxlyCpdbCzviH56leTArJVS9R3cIqE2Vud1Z0pIPHBhZ8k15YcyjQGkgaVPFYp5QtpO/icaq2V4H28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732255483; c=relaxed/simple;
-	bh=4oQX0c1EByNjVQB1iHBipF6Fb58FXhBJ8as9liVtmXQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Izy2dd0VjCpGrH+PleErvUzyIbZUzhwrtVhkM9ZwmFkhzsWGsvmgkJfk/x35f1XRc3WyGtWxkjv42GBpFxPXSdXkyDvkGsUn+ttkrpI2I1LoZq3yL6UBzb1m6dFk4NOZiPnVfKe4CU5b3Gp3hmgHqFAiMsw/wWX5m6rEzBBPdTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kftwLM9q; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM47gkK003077;
-	Fri, 22 Nov 2024 06:04:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5iJfs1aHZ2L1OICtRl5djU9l8geLwVizqEDFNAddcew=; b=kftwLM9qiUJqVpLI
-	Nd1WytzUyHvzvSrntY0gNAHsZOkjQWHhKQs3Nwqb8s/pI+QFSpy3blyvSfhByWsy
-	mBRIOGoQ/ACGdGTtCpmX5ZXMSDnrqnn4QU/4monwkb0gusdp8Eghi7LFajhu4u/O
-	p09rUZkiFW+stuDxkCLyCurrFKi1DdLx5fBsTUo4U8/5CLK4kSf9GDJ3lg3gID3B
-	GGVE7pMTlM7Pr94P+AH6HE2Kh8R6EFhn2P/fjcbpSO0Hx0brBUnGVGqy3Ar53iRJ
-	qSs6IqJ8uY0K+uWO0GBbkWWFbhb0jtfPRGynSvLCsmqAJBz63pAX8yTC8ZFg5hBM
-	rjkwdA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4326csa388-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 06:04:39 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AM64c7v025898
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 06:04:38 GMT
-Received: from [10.218.44.178] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
- 2024 22:04:34 -0800
-Message-ID: <b9ee3d42-d99d-4382-a0ed-1e3e2bdb1620@quicinc.com>
-Date: Fri, 22 Nov 2024 11:34:31 +0530
+	s=arc-20240116; t=1732255677; c=relaxed/simple;
+	bh=PdOiAaswSVXNtBFTnHQFz/h1L9gKw8twpWDYv8mq0J0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ls6FYXaP4Kcf5GWmfH1vCZQv2Mm5dNEws6GWiE30vf01F2Tkz2PZcjt0TXbmSO0BxZQjMDmFItM/xpBpNs+HLvMX1U5nbssQGauFKE/3ENQcjUaKKrA9YCHRK97CBKC00esbwidTtzQySSI962pvvDtTvPRU72jAkpnKVpG5GiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U8BPAbAZ; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732255676; x=1763791676;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PdOiAaswSVXNtBFTnHQFz/h1L9gKw8twpWDYv8mq0J0=;
+  b=U8BPAbAZNJMUEBSflHq/narLMvbKAD6AYqeG+FAO1LlHwkglMlL/zKsM
+   Q0S6ZDpuXOdqJH6Y95nxHCM4fIdMCdu6q9XzqY4gxHwgbPkpimhhRlPAD
+   oRGFsa7ErXaJT3yJBcVF8e/UWfPO4pl5YR58M/5GG/htb9vAHnEkcftnP
+   BTajXjzULNYVK/3GUimy+Kz1Phev/jChj1n0bGHafz6HnkFwI0L9g8LgD
+   rNklLtswF5p31j0PHRsb+qG4OpemGojeRZf50iTcGnnyhmSDkHOd6WHZM
+   Tc70ImIT4jyW3ONoe9eyF5QnmaZQAJO8IySNCoKzrT+VDENy1F5FD7SaW
+   w==;
+X-CSE-ConnectionGUID: Nqnqu38oSBKdXAPZpO81zA==
+X-CSE-MsgGUID: 8tlfL79STJa+T4SGotiddA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="43462466"
+X-IronPort-AV: E=Sophos;i="6.12,174,1728975600"; 
+   d="scan'208";a="43462466"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 22:07:54 -0800
+X-CSE-ConnectionGUID: PLNtIHXbSSW2pxH4jx++fA==
+X-CSE-MsgGUID: IgErV6zhTym+m/Np/FKfSw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,174,1728975600"; 
+   d="scan'208";a="90466297"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 21 Nov 2024 22:07:52 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tEMpZ-0003ih-15;
+	Fri, 22 Nov 2024 06:07:49 +0000
+Date: Fri, 22 Nov 2024 14:07:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org,
+	Jan Kara <jack@suse.com>
+Cc: oe-kbuild-all@lists.linux.dev, Ritesh Harjani <ritesh.list@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Baokun Li <libaokun1@huawei.com>
+Subject: Re: [PATCH v2 2/2] ext4: protect ext4_release_dquot against freezing
+Message-ID: <202411221326.eoWoxSKf-lkp@intel.com>
+References: <20241121123855.645335-3-ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: qcs9100: Update memory map for QCS9100
- Ride and QCS9100 Ride Rev3
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Pratyush Brahma
-	<quic_pbrahma@quicinc.com>
-CC: Bjorn Andersson <bjorn.andersson@example.com>,
-        Konrad Dybcio
-	<konrad.dybcio@example.com>,
-        Rob Herring <rob.herring@example.com>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski@example.com>,
-        Conor Dooley
-	<conor.dooley@example.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_tengfan@quicinc.com>,
-        <quic_shashim@quicinc.com>, <quic_kbajaj@quicinc.com>
-References: <20241119092501.31111-1-quic_pbrahma@quicinc.com>
- <30fda0e2-f314-49b8-8c1c-bf4fac87050d@quicinc.com>
- <rnrxb5e7xcgnjp4y4id5m5dyswii6xipry3bvtpit2f4c3iqfy@qghr42jz6oze>
- <f123a993-0cd5-4747-80fb-88acb2434880@quicinc.com>
- <lg5fszrlw7x6yamlyr2vck5ribdfddkjwi47t35qlxamrxd4nc@orwj6vafpnng>
-Content-Language: en-US
-From: Kuldeep Singh <quic_kuldsing@quicinc.com>
-In-Reply-To: <lg5fszrlw7x6yamlyr2vck5ribdfddkjwi47t35qlxamrxd4nc@orwj6vafpnng>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: FZDINiWU1LDqphfGpbvZz-Z1CDLD7fvj
-X-Proofpoint-ORIG-GUID: FZDINiWU1LDqphfGpbvZz-Z1CDLD7fvj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- malwarescore=0 phishscore=0 impostorscore=0 bulkscore=0 mlxlogscore=965
- adultscore=0 clxscore=1011 lowpriorityscore=0 spamscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411220049
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241121123855.645335-3-ojaswin@linux.ibm.com>
+
+Hi Ojaswin,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on tytso-ext4/dev]
+[also build test ERROR on brauner-vfs/vfs.all jack-fs/for_next linus/master v6.12 next-20241121]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ojaswin-Mujoo/quota-flush-quota_release_work-upon-quota-writeback/20241121-204331
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
+patch link:    https://lore.kernel.org/r/20241121123855.645335-3-ojaswin%40linux.ibm.com
+patch subject: [PATCH v2 2/2] ext4: protect ext4_release_dquot against freezing
+config: arc-randconfig-001-20241122 (https://download.01.org/0day-ci/archive/20241122/202411221326.eoWoxSKf-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241122/202411221326.eoWoxSKf-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411221326.eoWoxSKf-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   fs/ext4/super.c: In function 'ext4_acquire_dquot':
+>> fs/ext4/super.c:6912:13: error: 'freeze_protected' undeclared (first use in this function); did you mean 'freeze_processes'?
+    6912 |         if (freeze_protected)
+         |             ^~~~~~~~~~~~~~~~
+         |             freeze_processes
+   fs/ext4/super.c:6912:13: note: each undeclared identifier is reported only once for each function it appears in
 
 
+vim +6912 fs/ext4/super.c
 
-On 11/22/2024 12:20 AM, Dmitry Baryshkov wrote:
-> On Thu, Nov 21, 2024 at 05:08:22PM +0530, Pratyush Brahma wrote:
->>
->> On 11/20/2024 5:24 PM, Dmitry Baryshkov wrote:
->>> On Wed, Nov 20, 2024 at 01:41:03AM +0530, Kuldeep Singh wrote:
->>>>
->>>> On 11/19/2024 2:55 PM, Pratyush Brahma wrote:
->>>>> This patch series is based on Tengfei Fan's patches [1] which adds support
->>>>> for QCS9100 Ride and QCS9100 Ride Rev3 boards.
->>>>>
->>>>> Some new carveouts (viz. gunyah_md and a few pil dtb carveouts) have been
->>>>> introduced and the size and base addresses have been updated for
->>>>> a few of existing carveouts compared to SA8775P. Also, tz_ffi_mem carveout
->>>>> and its corresponding scm reference has been removed as it is not required
->>>>> for these boards. Incorporate these changes in the updated memory map
->>>>> for QCS9100 Ride and QCS9100 Rev3 boards.
->>>>>
->>>>> [1] https://lore.kernel.org/all/20240911-add_qcs9100_support-v2-4-e43a71ceb017@quicinc.com/
->>>>>
->>>>> Signed-off-by: Pratyush Brahma <quic_pbrahma@quicinc.com>
->>>> The memory map for qcs9100-ride-r3 and qcs9100-ride is exactly same.
->>>> A good churn you are first deleting(based on sa8775p) and then re-adding
->>>> for qcs9100-ride*.
->>>>
->>>> I think it's better to move common qcs9100-ride* to a common file ex:
->>>> qcs9100-ride.dtsi and keep specifics further to .dts files?
->>>>
->>>> This will ensure common entities are present at same place with no
->>>> duplicates.
->>> I'd second this proposal.
->> Ok then, I see that there are some thermal and gpu enablement changes as
->> well in the pipeline to be posted.
-> 
-> What kind of changes? It's really hard to make a judgement if you don't
-> describe what is happening>
->> Having a common dtsi file for these iot socs would help in reducing the
->> duplication at board
->> dts file level for all these changes. In that regard, does naming it
->> "sa8775-iot.dtsi" sound good? The board files can include this dtsi.
-> 
-> qcs9100.dtsi? 
-
-Looks good to me.
-If there are let's say below variants for qcs9100 in future as well.
-Ex: qcs9100-ride, qcs9100-ride-XX, qcs9100-ride-YY
-or qcs9100-XX, qcs9100-YY
-
-Then I think we can think of common filenames like qcs9100.dtsi,
-qcs9100-ride.dtsi etc.
+  6893	
+  6894	static int ext4_acquire_dquot(struct dquot *dquot)
+  6895	{
+  6896		int ret, err;
+  6897		handle_t *handle;
+  6898	
+  6899		handle = ext4_journal_start(dquot_to_inode(dquot), EXT4_HT_QUOTA,
+  6900					    EXT4_QUOTA_INIT_BLOCKS(dquot->dq_sb));
+  6901		if (IS_ERR(handle))
+  6902			return PTR_ERR(handle);
+  6903		ret = dquot_acquire(dquot);
+  6904		if (ret < 0)
+  6905			ext4_error_err(dquot->dq_sb, -ret,
+  6906				      "Failed to acquire dquot type %d",
+  6907				      dquot->dq_id.type);
+  6908		err = ext4_journal_stop(handle);
+  6909		if (!ret)
+  6910			ret = err;
+  6911	
+> 6912		if (freeze_protected)
+  6913			sb_end_intwrite(dquot->dq_sb);
+  6914	
+  6915		return ret;
+  6916	}
+  6917	
 
 -- 
-Regards
-Kuldeep
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
