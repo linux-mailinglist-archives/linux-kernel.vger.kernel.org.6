@@ -1,117 +1,85 @@
-Return-Path: <linux-kernel+bounces-418144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0775B9D5DC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:05:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F9C89D5DC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:06:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D6DCB254A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:05:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9FDC2825AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDED1DDC2B;
-	Fri, 22 Nov 2024 11:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFEDD1DE2AD;
+	Fri, 22 Nov 2024 11:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SFDqSxIK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W4ZslHOT"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC9718FDB4
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 11:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320971DE2A3
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 11:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732273549; cv=none; b=K4nKT9eS5Z07HbtG6cbzL2L/phf2cAXhmU0Po1J26vNfQKZbASDiQZXVBenv4l0uBKc/x560ZxzTntZZdXfUioh9AD/jR4qug41isF8n+tQP3RHmUA7wFoLTmsYo5oCEwNyP6luJHVFE3ANVCUBBZZZBINEf0AqhpFaR6sjPc3A=
+	t=1732273589; cv=none; b=rXyOnjivbNlW6AvG6rEUILGBRlKVbwXVSF8QS1suh8fXDwyantmycTcCE9OxCuZGA9XJs42PgcV9pxyps/lAqPee7Tu2byji3kPCjHJzASPjk+AlG8kmqmlAZJIyIM9DU6t/WPuc1AF3tuQUnggm2b+I6egNdqpskQ5FLeWicjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732273549; c=relaxed/simple;
-	bh=97OFr52T+2zclV5kEKwGrhQyXDAWRvs3IsvLsUTDp9o=;
+	s=arc-20240116; t=1732273589; c=relaxed/simple;
+	bh=IKAQMrZzl9npvXfj9svSIjgU5gamU+wIAP+aO0PLjUQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oZhA/J9i+bgI6U/ipIQ1wA0eeeoOTG9qgzNM+6HUlCZimj14qXlYfDU+OL/g++eqbwjZUuIL6we8xELTEE7BlPAH163Fxn+X4QKIXQ4RdaN9avMQsiDQOSOJvHI0LwwGjQ3LJKwpCr/5iKQK78jDfcUhVn1oB9x28AGNJT1Q6IU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SFDqSxIK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D42DC4CECE;
-	Fri, 22 Nov 2024 11:05:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732273548;
-	bh=97OFr52T+2zclV5kEKwGrhQyXDAWRvs3IsvLsUTDp9o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SFDqSxIKxOKQXpvyw6uCVVxymNd/EPsimBcaRh7127dzvE3nVqxGshFOjp7HINIJX
-	 mCqb1vQ3JJHd5oyuxfi60JN1XNKtYlI+FF9G4ZrrCv9kRSqnLUn3dmVhHr45DtY89t
-	 9ueStAoVTpLvUItnmoqfkxPRFTikY7EOCm31+CvstXntuxc/97vF2fxRrrZMljS4mr
-	 H5lUWqqyLTWBWKUezgEVYm3lBQuMLkHIU3BN5yJY8MdKH7/KCvt7X7nHpq2u29duFi
-	 llvXCExuxtyJV6e4RjgtZBu9VKKg8Ac+gq1qncHFpTGWjKBfGE7j/2p/4YTRc+pv5r
-	 cJLju+1NETsIA==
-Date: Fri, 22 Nov 2024 12:05:45 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Anthony Mallet <anthony.mallet@laas.fr>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	linux-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-	Marco Elver <elver@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: posix timer freeze after some random time, under pthread
- create/destroy load
-Message-ID: <Z0BliWkMHHzohMt3@pavilion.home>
-References: <26411.57288.238690.681680@gargle.gargle.HOWL>
- <Zz95qDPU2wcEp26r@localhost.localdomain>
- <20241122082407.GA14342@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rdT7SCQlHHO8dq9AqxNW06oSChSsalIOPdGJ06IqADpxjg3QCkhPoChONz0ba9mR5OmVKoFNnBKO9rDTD5ML6ha6eDntToMxe0rxs2cYa3aqYugnUM65ZMUVEHCUdFAYcQu7j1c+uaoxnAPtR3JHJnHg0uuTXauI7hDMNvdg+WQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W4ZslHOT; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=PK5XMeMWTKs+nqsPJkM2UEruSaQteTZxuGzB/+p61s8=; b=W4ZslHOTn2pVO1rAxLyQRhuNDU
+	5ee0NH5hOEfmpFPWrNTp4HwSAWB56/EUZxnhRIOv2NAlbhaGlGG5qXZuGyVhbzMNpGaispKDx0ucF
+	69V9/h83vSxpfpOU/AWfVpyv/KLk33aYAikD1IjYjyP8E4T9uWjhZpVL6oOAR5pIpgrdBTBl+Clpb
+	VvQZVpwdhBnXEMOWXBDLaro6kIVuvUobBqJodRiOKNTrJj9Z16JQbzIxx12uMfr0KFtd7rcfudYxm
+	jcTJG9ZMoI4B6RYIjBBpRfUCSIPTqzVIALm+EwGvnMV4rKg+bCHsoN6sMO455fOfI6qQRAs8DqQ60
+	cKQ14oxg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tERU6-00000000hH8-1UCi;
+	Fri, 22 Nov 2024 11:05:58 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1DCF430066A; Fri, 22 Nov 2024 12:05:57 +0100 (CET)
+Date: Fri, 22 Nov 2024 12:05:57 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, andrii@kernel.org, jannh@google.com,
+	Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
+	mhocko@kernel.org, shakeel.butt@linux.dev, hannes@cmpxchg.org,
+	david@redhat.com, willy@infradead.org, brauner@kernel.org,
+	oleg@redhat.com, arnd@arndb.de, richard.weiyang@gmail.com,
+	zhangpeng.00@bytedance.com, linmiaohe@huawei.com,
+	viro@zeniv.linux.org.uk, hca@linux.ibm.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] mm: introduce
+ mmap_lock_speculate_{try_begin|retry}
+Message-ID: <20241122110557.GO24774@noisy.programming.kicks-ass.net>
+References: <20241121162826.987947-1-surenb@google.com>
+ <20241121162826.987947-3-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241122082407.GA14342@redhat.com>
+In-Reply-To: <20241121162826.987947-3-surenb@google.com>
 
-Le Fri, Nov 22, 2024 at 09:24:07AM +0100, Oleg Nesterov a écrit :
-> On 11/21, Frederic Weisbecker wrote:
-> >
-> > I think this started with commit:
-> >
-> > bcb7ee79029d (posix-timers: Prefer delivery of signals to the current thread)
-> >
-> > The problem is that if the current task is exiting and has already been reaped,
-> > its sighand pointer isn't there anymore.
+On Thu, Nov 21, 2024 at 08:28:26AM -0800, Suren Baghdasaryan wrote:
+> Add helper functions to speculatively perform operations without
+> read-locking mmap_lock, expecting that mmap_lock will not be
+> write-locked and mm is not modified from under us.
 > 
-> Thanks...
-> 
-> This can only happen if the exiting task has already passed exit_notify() which
-> sets exit_state. So I'd suggest to check current->exit_state instead of PF_EXITING
-> in the patch below.
-> 
-> Oleg.
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 
-Right, I don't mind either way, though if it's past PF_EXITING,
-complete_signal() -> wants_signal() will defer to another thread anyway, right?
-Due to retarget_shared_pending() being called after the flag being set...
-
-Thanks.
-
-> 
-> > And so the signal is ignored even
-> > though it should be queued to and handled by the thread group that has other
-> > live threads to take care of it.
-> >
-> > Can you test the following patch? I'm cooking another patch with changelog for
-> > upstream that has seen recent changes in this area.
-> >
-> > diff --git a/kernel/signal.c b/kernel/signal.c
-> > index 8f6330f0e9ca..4cadee618d4b 100644
-> > --- a/kernel/signal.c
-> > +++ b/kernel/signal.c
-> > @@ -1984,7 +1984,8 @@ int send_sigqueue(struct sigqueue *q, struct pid *pid, enum pid_type type)
-> >  	t = pid_task(pid, type);
-> >  	if (!t)
-> >  		goto ret;
-> > -	if (type != PIDTYPE_PID && same_thread_group(t, current))
-> > +	if (type != PIDTYPE_PID && same_thread_group(t, current) &&
-> > +	    !(current->flags & PF_EXITING))
-> >  		t = current;
-> >  	if (!likely(lock_task_sighand(t, &flags)))
-> >  		goto ret;
-> >
-> >
-> 
+Thanks for these, you're okay with me taking these through tip/perf/core
+for the next cycle along with Andrii's uprobe patch?
 
