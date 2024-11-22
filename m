@@ -1,299 +1,334 @@
-Return-Path: <linux-kernel+bounces-417798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D236A9D5934
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:01:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AC0C9D5935
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:02:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5441FB218AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:01:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C101B22DCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4831B15FD16;
-	Fri, 22 Nov 2024 06:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDEA15B554;
+	Fri, 22 Nov 2024 06:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="RE7IoabQ"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2045.outbound.protection.outlook.com [40.107.241.45])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cPzKw/LF"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5E04C62E;
-	Fri, 22 Nov 2024 06:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732255285; cv=fail; b=hM4ObtRxJ4u6LPHbVpLUfEw1eiIE5fQhygnvsL2yoWOLC6k7NYTb+Z+MQ1uMN42lsK5+xTYptXJ3fDI4y4D6IXBRY0MN808ELXcEkNs98ujXrPquXoC/6y1QekCj8jmUopnj/9Iv5BHF1Tdo1GwESD7byFyuiZ742PFF99DH7d4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732255285; c=relaxed/simple;
-	bh=tfC7Ve9NVYZn4LjoL0FmjzczVUAxQKV9Bc+wjjNiJKE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=kDfnuuhISRB2kr8e3CyI8VNcvj1GfRny5GCJ93bIGFW2dBafZhcapl/2i+SoidhXaT8pAKPMHTy2Vuu6COkxFSUp7rslz1l2jLH/i/OBlU/G0LK4KmqY94BJLOyfoThyEc137Um8Jz7ecjEZ1F7ZQdGdnQ2TL4e6ZcMOkxL0+74=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=RE7IoabQ; arc=fail smtp.client-ip=40.107.241.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DlMRjDTWrz5VV4peLy+xRoVE6JP0N16LNqrjVy5uUtk0KjZLQ/rQO6FRT9A/u+6IhPXBdVcrnf2yLMnun3y1asI0J1/QKqNMlcbRZZ7BCdRCl1l5fnYgMadZ6jAAuDRDdCEHb4CeeYSwJNdg6lOGp5TZRAou3DQohEWoD8zFPjeliz81n03PuiCKCKVz17edOKqdWbZvJ94uS6QZGGzvNGkGPOPS9m9lV5sqqdCk5X9FF5sCezwW81ITGessF6FZJFZfuIq6ZMIMEnZYYnIeU2Pg1C7dkeVV6uTBby2om/1t698L5wb+X6YikUQLXSBPiif3LQqYRlP/vDOuNYFxpA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hUOoQelY5Ciga7HjBjjU0h0D2OgMtqJh5mXUl5Yl2OY=;
- b=TODjYo/vgqr4NJNA7wIysV5KQAEbuSBqqzvBMZqMrNc9JNSNwZAXycL8M0sW7XXY5NN4XWGpJ/cg7cffmYxGDzpcSMb3YUj2aKP3D+Ic62wNK0qc+ZgeIYnso1AMNmiZz53J9XsAjtL+9HtNIaRc82cNvXUjowz7m/fD5KviDcx4RrS9+Th1F6moytWqqvHDn+6ZgHQ2mBk7ZDDWLjcGjLpw4gg+axsLRk+upEd66ue9OBjBzOoYSeIYtLG7T2OZtBVBq0+RNann9KVgMv5UEz1UozPk4E5HxZe6OfoqzQCGXCDq4CnqnxM8SFXbGXZ/a4BvHA1WYoBenpws3IH6eA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hUOoQelY5Ciga7HjBjjU0h0D2OgMtqJh5mXUl5Yl2OY=;
- b=RE7IoabQKOsDtSUhMBZG0OAGbCpQOYplWr1V//meunMNGYiC5IdUbpgV15K++CZrH8KRFp4TCyqFSwQF9D6+zNA0z8FU39gi018Wp/ijAxxrm9jZhZGt1BaNRjqVyElXjUC5qxRk5H7WPL23z/220eAn03wWq2Pbd9a95ZK2/TcvKs+C7MlpgBhjvxLIyVsh6uH0if6w7hmMwm+uHSeQ83uVhGoJhFuA1eV4onVSGHlSVBTQYD12d+z87Y2lnjvt5pUEzm2Ioo1ZwBUG4cJyPTGXOwWiTp+T5p6Uzg4PQpPew/IZAjVdspXENS1W5QK1Gg1IWmbJYABYxSU/QFHAIA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by AM7PR04MB6789.eurprd04.prod.outlook.com (2603:10a6:20b:107::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.27; Fri, 22 Nov
- 2024 06:01:18 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%6]) with mapi id 15.20.8158.017; Fri, 22 Nov 2024
- 06:01:17 +0000
-Message-ID: <b98fdf46-3d09-4693-86fe-954fc723e3a6@nxp.com>
-Date: Fri, 22 Nov 2024 14:01:49 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] clk: Fix simple video pipelines on i.MX8
-To: Miquel Raynal <miquel.raynal@bootlin.com>, Abel Vesa
- <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Marek Vasut <marex@denx.de>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- linux-clk@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Abel Vesa <abel.vesa@linaro.org>,
- Herve Codina <herve.codina@bootlin.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Ian Ray <ian.ray@ge.com>,
- stable@vger.kernel.org
-References: <20241121-ge-ian-debug-imx8-clk-tree-v1-0-0f1b722588fe@bootlin.com>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <20241121-ge-ian-debug-imx8-clk-tree-v1-0-0f1b722588fe@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2PR01CA0018.apcprd01.prod.exchangelabs.com
- (2603:1096:4:191::7) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D364F5FDA7
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 06:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732255327; cv=none; b=sBoTdaSBqiPLrB7l3VQwQfnF2N0NhgHrHYgDHfaLqqA7uAeCbRDvrshSMTZqCI8FPeIquSLHzCAxdzmEte/RSPAUjQ3ZSHRyz114IKoygcpNxaJ6crHxSH3VSwWhL+26S1HbaZE6pUBZu67+O4URmtoc2xEatGDmcA1b8dij/7M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732255327; c=relaxed/simple;
+	bh=bbpHaFhdC89+/71jgDgtYoOOP46/TDSs9XEMfBFMGRU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UJ9rWtDtVPPmAEyC7owVF9ISq83F9iKPEzvIehxnIT1XIXm7sD5tERCJ2QwqFoCtqG/l/sHuvdcpmxdp9uTrN3NkBeFovJn1aZByznfy1kEg0SwBqvcyq5cLGEIvsbZzHN0g5dGlZHgdzM2r6XF3iMBcZ8hgtW2RmlwikOb+CQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cPzKw/LF; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 22 Nov 2024 01:01:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732255320;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=X4EMPRVihhBPZNDl50g/NPmL6MJ9oqSD9ufmkNM0nD8=;
+	b=cPzKw/LFWIQaj5ajckztxNHFugryjW5zSuBR1tsrbJsqT8S45xugDjOPOYBUhJG7g1PYzg
+	nMAB3aw9kyrqIRMb24gDn2VUrpi5wZPU/E1W5iet6+PYl77bZ2QxHsA+8viaIqt+Vy5JtT
+	bc0dxl/msmun1Ccr8Ov2qsF7mv+pzGo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs updates for 6.13, v2
+Message-ID: <rfsnkjlcyl3tsegoov2j5xvxaueeiza6yds75g4s4znxax5gmk@ufugcnldtbuk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AM7PR04MB6789:EE_
-X-MS-Office365-Filtering-Correlation-Id: 491e2ef9-fb75-49fb-9261-08dd0abb1486
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?RnErWjhVMzcrWndPWGNGdm1WeStWcElsa1lVQmtUL0J1MW9xbFBVK3hRRW02?=
- =?utf-8?B?RlYrSmlKQkY5YjdIUUpXUm5GakhPSGp1MkJVY0UxeGtXdlhERk91RWl6VHRE?=
- =?utf-8?B?QkFnRDRvOTd5SGNuV3V0V2F5MWRRaHh4bVJnL2M0cm93RElrUVlLU0taelBC?=
- =?utf-8?B?c21wWlB3b2lvKzIvd3RUNm1aTHlZTjFJS1Blc3F2RnM1UGswb20vTmJHTUxR?=
- =?utf-8?B?UU5XQVhuM29nVmoxU2tHNzQ3TkRPcDBRMUd1cTlTN1RvSStEY1BQUC9ndmFK?=
- =?utf-8?B?RGptWmNyVkpRa2ZrVGp3Nk4yU2dPWVpXNm83WnZ1OWZMajRyd2F0SWlTTnRw?=
- =?utf-8?B?Mk15RG5jUXI5bjlEUktLUlhiVmpZekRpcktTZGVEanlpR0wyMVZJSVZ2eEhC?=
- =?utf-8?B?M1FxTVYwY043VjYrdno5QzQ1REtCaHJkeXhaQXlhekZLaG9ObUJJdVR2blN1?=
- =?utf-8?B?QWtWdWtFcnM2QXFMUVhZbFg1cy94WGNlMjFqWitKckJZQjUvNjhzdVU2WnN3?=
- =?utf-8?B?UFFmbU5jWFFxd2tybXRCb0w3REdaVkxlWHRaSGhneE9DQ2NXVWdzSGZYZlZ1?=
- =?utf-8?B?bW8zZUNxeDZjYTJTUGREdVhBRlo0L3ErTDJUT0tRNWk3ang2TzI1Vm4wQmJR?=
- =?utf-8?B?NXVhdXRDbndtQUUweTBVemtlSE1GbWRWcVRyVDhVQnIvYUdPbXhPMEFYek1K?=
- =?utf-8?B?OVhWLzVKVjFCUE5IeVlzQ29HVElHUENyMDdteTVHSmgrNHVjcDNmamhDelhr?=
- =?utf-8?B?Y1MvOGRJZ0hoUng2TlFQY1Z3cVF2d3R3UThBZFhVUmw3cFlubWVVYWFUYjNh?=
- =?utf-8?B?RXFlWmpsRWFCZ25BRWNpSll0NGFJanhia0pZS292eUtNZDFLOVZrbjQ0VGRV?=
- =?utf-8?B?UklOWUtXanFRYlp5SUFMdTl0bkUzV1I2YnNFdVIzZWwrWC9HcjhqN09zZUhM?=
- =?utf-8?B?UFIxck1NK3htdDJsbGhlWjhIcDdDenU4ZFN4Zk1YbUdmWUxnMzEyaFdyWmZW?=
- =?utf-8?B?RU0vdmFnTXN6S1RsWjVQTFJ5YXlsUkdmeHhqWDRwb005ZjlQMmFlcUpsUzRS?=
- =?utf-8?B?SXB4Q0ZnN2JFaEdtR2NGZXhXbmpwekRlZjdWL2Y4ODg0U0V1K1cxZDFDUG5a?=
- =?utf-8?B?NnBGaTExTmxRek85OVNFSFJ2d2FlRW5jczRUQ0pkeVN6Si9NMU9jMS9wcW9U?=
- =?utf-8?B?RlYxa2M1TTBrYjlVL2NhWnNmYTJuL01lUkxpNmxLQVJSTHhSbEI2eEdRMnd0?=
- =?utf-8?B?Skk3RXR1T0pEa1dUYSsvbzVHaUFkays3czlCYnEyMDZCUXdDV3Flckp1a2pl?=
- =?utf-8?B?NG05WVBtV05zQURGM1FGS3JQQzE3R2l5M2JmOGI1RHd1Z3k3ZDhTMktaS25u?=
- =?utf-8?B?cXhPVmttQ2FDYklLeGdyQkpXeWZ6TzI4R2doZUt3aDlCRkY1bk1CdGpoQW11?=
- =?utf-8?B?VE1WSHVRVHN0RU9lZEFDV0RpR3IwYkM3dDNnU0RVTUlYblNwUTlWZk90YVJH?=
- =?utf-8?B?ZWJGUHBKYWxVb3FyNDkrUllrVDMyYk90UCtNTmRGREQ4bUlYK3dhZHZKbGdV?=
- =?utf-8?B?MmJxaFlzSkY3TDA2aEpqYjJVbzR3bno0c0Q2WWFhc25maW9lQnNrTVVNWVNO?=
- =?utf-8?B?em1NVW5CMFlhQ01EeG5rcm1UOUdad3U2SFA5UlNsYWpVL240MjY2VW45RTVw?=
- =?utf-8?B?aFFodXh1ZndWNmhiQklUd0kyZ25uN0Q3VU42SXR3SzRSM2hNMVNJaFpqTkVs?=
- =?utf-8?Q?Ju4d82YeHQRhCyHVBLqeCQ0lArtH7F+HzGJ53Jy?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?Nm5YcDBxazFzRmJxdzRkNURiblJ0UEVaUktIdzUxdUVkSU9Ua01mN3Z3Wm5I?=
- =?utf-8?B?ak4vVTd4bkJ1SjVlN0pWSE1vNHVCbjFiblgvV2pXUEN0aGZ1QUxaM3ViS0JU?=
- =?utf-8?B?cEplcDhTRHdOUVROR2pvdmF1NXRTdlhPeUxWY2xaYW4xRXF0VlVaZGMrMUlx?=
- =?utf-8?B?WEZIK2Q1RzE3TGNzblFsVXBxWGxneXJSeS84NkhjRVlvT2o5dGN6RDhTV1FR?=
- =?utf-8?B?aW90WWNEMzR5WWJxVjVwRVEyU0wzWWQ3Vi9NM3RQSjVZL1lKcHVFVnMwTG5t?=
- =?utf-8?B?WTNGNU1LVGxtcldTNFYzdlR1bXBnb2J2R25GMDNWdHJvUURVYXFoa29tSjlI?=
- =?utf-8?B?MVRFYmpESG5lVnk4cFV5NnlxdkZhTEwvVjVZY1dRdkVFSHZVTTlNYklBclNF?=
- =?utf-8?B?K2NXZUZuRHd6ZWQ0bGUzRG81Qlkyc3ZoYVROTFNFM0Flb3Brc0RLcVM0UmFm?=
- =?utf-8?B?V0VlU0c3R2llb1lNOUxValB3L05zV3E2bmttQjVMOG5xVDRzcVQxQXJqb3ZH?=
- =?utf-8?B?a1NJbkFZc3MxVG1uTDl2bERrdnFwc2JjTUk5ZTJBS2JibjFBTXQwUzg1TVYz?=
- =?utf-8?B?NW8zLzV1aDAzbXltQW1qNGZlbDd1UzhBMEllRW9UVS9walhUWWF3YlJkY1Ju?=
- =?utf-8?B?QU50anVNVzRqUWFuNGd0T3lrSkR1QVpudlkvS0QzdnNiZlEvcDJPK3RKQnU1?=
- =?utf-8?B?eG5KZ3pUeHVUVTNJVmhzTG8yRWFnSFlCTXIrTHdjRFM0MWMrbkQ1ZUNNVVVo?=
- =?utf-8?B?d1hmODlGNFpHMHZWV29mMi9vdG9JSEJUZTdVeVJlY083Mmx2SEw3dzlNS2pN?=
- =?utf-8?B?ckhLSDgwcTczZzVjRCtzK05zVUJVZjBiL2VOdXVtSFhmSHppVytHTkRtRS9Y?=
- =?utf-8?B?MG5HUE1uN1pGZ1Bsd0tYdG9BamhnTmFDRzhiVit4SnYrYWNhWXVJQVRTNUdL?=
- =?utf-8?B?eWIvbFcxVTVSVkdjS2hNSnRSZkZrTk9SMFExNG95Yzc2TitHM20yU1FTK1lw?=
- =?utf-8?B?V1BxQ2hYeDl1eFo0TXNUaW9hdmJia0xMdTRaWEJTK0cvUDl6NnpGR1ZKMUNp?=
- =?utf-8?B?OCtNbEVaQ1QxNGdydEhFZWZhQkFXb2h2SnJON0RJQmRKRUtncmNkT2hHQTlB?=
- =?utf-8?B?UmpBUDFROUp2bzF6aHJjZWw1blFDa2Vva1FxOVVtaTBBTVcxTzQyVWFqVmtm?=
- =?utf-8?B?cFpvdGo3aTdGNFp0ZDR6ek91QUVJN05BbU0raTY5S3I1MWJITTFjVjE2S2lR?=
- =?utf-8?B?RjNnVEltS0tOcEhTZ2R0bEtHbDRwbHRabTNNV0dyd3BxbHQ4OTRKUnhjeEQw?=
- =?utf-8?B?NmRwMUJkWlVJQUp1R2YvNmpNa0NrL1g5cHJwRkpMYkh4b2dpaXpsUS94U3J5?=
- =?utf-8?B?SjlWYmFPRUVLb29VUG1aV0gwOGV1azRmOTB4aWMrRENYcm9TY2dQRW8yOS8v?=
- =?utf-8?B?cURxdFRUeUVwZFJRYXRMQ0t2ay9RZy92RlBOcWUrM0tYNFQ5cEF4U1VKQSto?=
- =?utf-8?B?WnV4NmZGNlJ6YnBFUUZCdXAydkN4cGwrZ09IZmdLYzRmWFJscjJlQmJUdnJu?=
- =?utf-8?B?eXZaK2dOT3NROW9oNXhUOThTWCtSRDRERFlEQlFnYXdmRkg0WlAvelIzcjRa?=
- =?utf-8?B?SW92eU15M0xNR0NXVzhBTnFWSCtld0c0U0p2UlJ0OEZXaDkxNDRlSVRsdFJ4?=
- =?utf-8?B?Y2pVUjgxVm1MTHVta0lXdWxKWU81aktSVFIwT21ySGR2ZXZ6d1NsWkxBZ1Zu?=
- =?utf-8?B?N0pvMER0cFFWQXFLQjlFOXpKbGdiZDgycldaekt6bmZKWkdHckRNN3ZKY1dl?=
- =?utf-8?B?MTFsS1MxeXNmV0hxQlNTeERseTE0ZmhNbzdpK3VCUXhieHdTc0pxZ25pSzBz?=
- =?utf-8?B?cE8wQmFKaXNWREh1K09TUCt5R2xDdVQ3cU9QTXBDUDNVenVMRFlxL1hxUXlW?=
- =?utf-8?B?NmJaMldveGhpQW1jSlRxcW5ZN2tHSFRidlo4SGNzdDl0OTNSVVppYUZDSFNN?=
- =?utf-8?B?N1hBMXRGeXNhV1krcXU5MXIvNlRJT3RjSHJiVU01MnVzbnc2MTU2eS9XaUdD?=
- =?utf-8?B?Ykx5NUt2Y3NaUytCN3dHNisrcy9NYkNIYU9nUjluSm9DYTI3SVl5QVFRVU83?=
- =?utf-8?Q?eJwSrbhsM18mX5iLuzV26n28Q?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 491e2ef9-fb75-49fb-9261-08dd0abb1486
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2024 06:01:17.8662
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sKoQxzMQe6VlUIpj9hueA5P7P76mb3Ft4rmdrW7uVVnzkE9ZGKYfsnV3HON9RLPVzOt/zyVC1dnnOhrHeoA9qQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6789
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-Hi Miquel,
+Hi Linus, this just has a few additional fixes over the last pull
+request.
 
-On 11/22/2024, Miquel Raynal wrote:
-> Recent changes in the clock tree have set CLK_SET_RATE_PARENT to the two
-> LCDIF pixel clocks. The idea is, instead of using assigned-clock
-> properties to set upstream PLL rates to high frequencies and hoping that
-> a single divisor (namely media_disp[12]_pix) will be close enough in
-> most cases, we should tell the clock core to use the PLL to properly
-> derive an accurate pixel clock rate in the first place. Here is the
-> situation.
-> 
-> [Before ff06ea04e4cf ("clk: imx: clk-imx8mp: Allow media_disp pixel clock reconfigure parent rate")]
-> 
-> Before setting CLK_SET_RATE_PARENT to the media_disp[12]_pix clocks, the sequence of events was:
-> - PLL is assigned to a high rate,
-> - media_disp[12]_pix is set to approximately freq A by using a single divisor,
-> - media_ldb is set to approximately freq 7*A by using another single divisor.
-> => The display was working, but the pixel clock was inaccurate.
-> 
-> [After ff06ea04e4cf ("clk: imx: clk-imx8mp: Allow media_disp pixel clock reconfigure parent rate")]
-> 
-> After setting CLK_SET_RATE_PARENT to the media_disp[12]_pix clocks, the
-> sequence of events became:
-> - media_disp[12]_pix is set to freq A by using a divisor of 1 and
->   setting video_pll1 to freq A.
-> - media_ldb is trying to compute its divisor to set freq 7*A, but the
->   upstream PLL is to low, it does not recompute it, so it ends up
->   setting a divisor of 1 and being at freq A instead of 7*A.
-> => The display is sadly no longer working
-> 
-> [After applying PATCH "clk: imx: clk-imx8mp: Allow LDB serializer clock reconfigure parent rate"]
-> 
-> This is a commit from Marek, which is, I believe going in the right
-> direction, so I am including it. Just with this change, the situation is
-> slightly different, but the result is the same:
-> - media_disp[12]_pix is set to freq A by using a divisor of 1 and
->   setting video_pll1 to freq A.
-> - media_ldb is set to 7*A by using a divisor of 1 and setting video_pll1
->   to freq 7*A.
->   /!\ This as the side effect of changing media_disp[12]_pix from freq A
->   to freq 7*A.
+The following changes since commit 840c2fbcc5cd33ba8fab180f09da0bb7f354ea71:
 
-Although I'm not of a fan of setting CLK_SET_RATE_PARENT flag to the
-LDB clock and pixel clocks, would it work if the pixel clock rate is
-set after the LDB clock rate is set in fsl_ldb_atomic_enable()?  The
-pixel clock can be got from LDB's remote input LCDIF DT node by
-calling of_clk_get_by_name() in fsl_ldb_probe() like the below patch
-does. Similar to setting pixel clock rate, I think a chance is that
-pixel clock enablement can be moved from LCDIF driver to
-fsl_ldb_atomic_enable() to avoid on-the-fly division ratio change.
+  bcachefs: Fix assertion pop in bch2_ptr_swab() (2024-11-12 03:46:57 -0500)
 
-https://patchwork.kernel.org/project/linux-clk/patch/20241114065759.3341908-6-victor.liu@nxp.com/
+are available in the Git repository at:
 
-Actually, one sibling patch of the above patch reverts ff06ea04e4cf
-because I thought "fixed PLL rate" is the only solution, though I'm
-discussing any alternative solution of "dynamically changeable PLL
-rate" with Marek in the thread of the sibling patch.
+  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-11-22
 
-BTW, as you know the LDB clock rate is 3.5x faster than the pixel
-clock rate in dual-link LVDS use cases, the lowest PLL rate needs to
-be explicitly set to 7x faster than the pixel clock rate *before*
-LDB clock rate is set.  This way, the pixel clock would be derived
-from the PLL with integer division ratio = 7, not the unsupported
-3.5.
+for you to fetch changes up to b2cc9c6fcee366ba4988ba0eec63bb2932cccadd:
 
-pixel    LDB         PLL
-A        3.5*A       7*A      --> OK
-A        3.5*A       3.5*A    --> not OK
+  bcachefs: fix bp_pos_to_bucket_nodev_noerror (2024-11-21 20:11:29 -0500)
 
-> => The display is still not working
-> 
-> [After applying this series]
-> 
-> The goal of the following patches is to prevent clock subtree walks to
-> "just recalculate" the pixel clocks, ignoring the fact that they should
-> no longer change. They should adapt their divisors to the new upstream
-> rates instead. As a result, the display pipeline is working again.
-> 
-> Note: if more than one display is connected, we need the LDB driver to
-> act accordingly, thus the LDB driver must be adapted. Also, if accurate
-> pixel clocks are not possible with two different displays, we will still
-> need (at least for now) to make sure one of them is reparented to
-> another PLL, like the audio PLL (but audio PLL are of a different kind,
-> and are slightly less accurate).
-> 
-> So this series aims at fixing the i.MX8MP display pipeline for simple
-> setups. Said otherwise, returning to the same level of support as
-> before, but with (hopefully) more accurate frequencies. I believe this
-> approach manages to fix both Marek situation and all people using a
-> straightforward LCD based setup. For more complex setups, we need more
-> smartness from DRM and clk, but this is gonna take a bit of time.
-> 
-> ---
-> Marek Vasut (1):
->       clk: imx: clk-imx8mp: Allow LDB serializer clock reconfigure parent rate
-> 
-> Miquel Raynal (4):
->       clk: Add a helper to determine a clock rate
->       clk: Split clk_calc_subtree()
->       clk: Add flag to prevent frequency changes when walking subtrees
->       clk: imx: imx8mp: Prevent media clocks to be incompatibly changed
-> 
->  drivers/clk/clk.c            | 39 ++++++++++++++++++++++++++++++++-------
->  drivers/clk/imx/clk-imx8mp.c |  6 +++---
->  include/linux/clk-provider.h |  2 ++
->  3 files changed, 37 insertions(+), 10 deletions(-)
-> ---
-> base-commit: 62facaf164585923d081eedcb6871f4ff3c2e953
-> change-id: 20241121-ge-ian-debug-imx8-clk-tree-bd325aa866f1
-> 
-> Best regards,
+----------------------------------------------------------------
+bcachefs updates for 6.13 v2
 
--- 
-Regards,
-Liu Ying
+- Self healing work:
+  Allocator and reflink now run the exact same check/repair code that
+  fsck does at runtime, where applicable.
 
+  The long term goal here is to remove inconsistent() errors (that cause
+  us to go emergency read only) by lifting fsck code up to normal
+  runtime paths; we should only go emergency read-only if we detect an
+  inconsistency that was due to a runtime bug - or truly catastrophic
+  damage (corrupted btree roots/interior nodes).
+
+- Reflink repair no longer deletes reflink pointers: instead we flip an
+  error bit and log the error, and they can still be deleted by file
+  deletion. This means a temporary failure to find an indirect extent
+  (perhaps repaired later by btree node scan) won't result in
+  unnecessary data loss
+
+- Improvements to rebalance data path option handling: we can now
+  correctly apply changed filesystem-level io path options to pending
+  rebalance work, and soon we'll be able to apply file-level io path
+  option changes to indirect extents.
+
+Additions from last pull request:
+
+- Fixes for compression inconsistencies with superblock feature bits,
+  found by sizbot
+
+- Fix some O(n^2) issues in journal replay
+
+- Fix the evacuate_bucket tracepoint
+
+----------------------------------------------------------------
+Alan Huang (1):
+      bcachefs: Delete dead code
+
+Colin Ian King (1):
+      bcachefs: remove superfluous ; after statements
+
+Dennis Lam (1):
+      docs: filesystems: bcachefs: fixed some spelling mistakes in the bcachefs coding style page
+
+Eric Biggers (1):
+      bcachefs: Explicitly select CRYPTO from BCACHEFS_FS
+
+Hongbo Li (2):
+      bcachefs: remove write permission for gc_gens_pos sysfs interface
+      bcachefs: use attribute define helper for sysfs attribute
+
+Integral (1):
+      bcachefs: add support for true/false & yes/no in bool-type options
+
+Kent Overstreet (85):
+      bcachefs: kill retry_estale() in bch2_ioctl_subvolume_create()
+      Merge branch 'bcachefs-kill-retry-estale' into HEAD
+      bcachefs: Fix racy use of jiffies
+      bcachefs: bch2_inode_should_have_bp -> bch2_inode_should_have_single_bp
+      bcachefs: remove_backpointer() now uses dirent_get_by_pos()
+      bcachefs: __bch2_key_has_snapshot_overwrites uses for_each_btree_key_reverse_norestart()
+      bcachefs: rcu_pending: don't invoke __call_rcu() under lock
+      bcachefs: bch_verbose_ratelimited
+      bcachefs: Pull disk accounting hooks out of trans_commit.c
+      bcachefs: Remove unnecessary peek_slot()
+      bcachefs: kill btree_trans_restart_nounlock()
+      bcachefs: add more path idx debug asserts
+      bcachefs: bch2_run_explicit_recovery_pass() returns different error when not in recovery
+      bcachefs: lru, accounting are alloc btrees
+      bcachefs: Add locking for bch_fs.curr_recovery_pass
+      bcachefs: bch2_btree_lost_data() now uses run_explicit_rceovery_pass_persistent()
+      bcachefs: improved bkey_val_copy()
+      bcachefs: Factor out jset_entry_log_msg_bytes()
+      bcachefs: better error message in check_snapshot_tree()
+      bcachefs: Avoid bch2_btree_id_str()
+      bcachefs: Refactor new stripe path to reduce dependencies on ec_stripe_head
+      bcachefs: -o norecovery now bails out of recovery earlier
+      bcachefs: bch2_journal_meta() takes ref on c->writes
+      bcachefs: Fix warning about passing flex array member by value
+      bcachefs: Add block plugging to read paths
+      bcachefs: Add version check for bch_btree_ptr_v2.sectors_written validate
+      bcachefs: avoid 'unsigned flags'
+      bcachefs: use bch2_data_update_opts_to_text() in trace_move_extent_fail()
+      bcachefs: bch2_io_opts_fixups()
+      bcachefs: small cleanup for extent ptr bitmasks
+      bcachefs: kill bch2_bkey_needs_rebalance()
+      bcachefs: kill __bch2_bkey_sectors_need_rebalance()
+      bcachefs: rename bch_extent_rebalance fields to match other opts structs
+      bcachefs: io_opts_to_rebalance_opts()
+      bcachefs: Add bch_io_opts fields for indicating whether the opts came from the inode
+      bcachefs: copygc_enabled, rebalance_enabled now opts.h options
+      bcachefs: bch2_prt_csum_opt()
+      bcachefs: New bch_extent_rebalance fields
+      bcachefs: bch2_write_inode() now checks for changing rebalance options
+      bcachefs: get_update_rebalance_opts()
+      bcachefs: Simplify option logic in rebalance
+      bcachefs: Improve trace_rebalance_extent
+      bcachefs: Move bch_extent_rebalance code to rebalance.c
+      bcachefs: Add assert for use of journal replay keys for updates
+      bcachefs: Kill BCH_TRANS_COMMIT_lazy_rw
+      bcachefs: Improved check_topology() assert
+      bcachefs: Fix unhandled transaction restart in evacuate_bucket()
+      bcachefs: Assert we're not in a restart in bch2_trans_put()
+      bcachefs: Better in_restart error
+      bcachefs: bch2_trans_verify_not_unlocked_or_in_restart()
+      bcachefs: Assert that we're not violating key cache coherency rules
+      bcachefs: Rename btree_iter_peek_upto() -> btree_iter_peek_max()
+      bcachefs: Simplify btree_iter_peek() filter_snapshots
+      bcachefs: Kill unnecessary iter_rewind() in bkey_get_empty_slot()
+      bcachefs: Move fsck ioctl code to fsck.c
+      bcachefs: Add support for FS_IOC_GETFSUUID
+      bcachefs: Add support for FS_IOC_GETFSSYSFSPATH
+      bcachefs: Don't use page allocator for sb_read_scratch
+      bcachefs: Fix shutdown message
+      bcachefs: delete dead code
+      bcachefs: bch2_btree_bit_mod_iter()
+      bcachefs: Delete dead code from bch2_discard_one_bucket()
+      bcachefs: lru errors are expected when reconstructing alloc
+      bcachefs: Kill FSCK_NEED_FSCK
+      bcachefs: Reserve 8 bits in bch_reflink_p
+      bcachefs: Reorganize reflink.c a bit
+      bcachefs: Don't delete reflink pointers to missing indirect extents
+      bcachefs: kill inconsistent err in invalidate_one_bucket()
+      bcachefs: rework bch2_bucket_alloc_freelist() freelist iteration
+      bcachefs: try_alloc_bucket() now uses bch2_check_discard_freespace_key()
+      bcachefs: bch2_bucket_do_index(): inconsistent_err -> fsck_err
+      bcachefs: discard_one_bucket() now uses need_discard_or_freespace_err()
+      bcachefs: Implement bch2_btree_iter_prev_min()
+      bcachefs: peek_prev_min(): Search forwards for extents, snapshots
+      bcachefs: Delete backpointers check in try_alloc_bucket()
+      bcachefs: Kill bch2_get_next_backpointer()
+      bcachefs: add missing BTREE_ITER_intent
+      bcachefs: compression workspaces should be indexed by opt, not type
+      bcachefs: Don't use a shared decompress workspace mempool
+      bcachefs: Don't BUG_ON() when superblock feature wasn't set for compressed data
+      bcachefs: kill bch2_journal_entries_free()
+      bcachefs: journal keys: sort keys for interior nodes first
+      bcachefs: btree_and_journal_iter: don't iterate over too many whiteouts when prefetching
+      bcachefs: fix O(n^2) issue with whiteouts in journal keys
+      bcachefs: fix bp_pos_to_bucket_nodev_noerror
+
+Piotr Zalewski (1):
+      bcachefs: Fix evacuate_bucket tracepoint
+
+Thomas Bertschinger (1):
+      bcachefs: move bch2_xattr_handlers to .rodata
+
+Thorsten Blum (6):
+      bcachefs: Remove duplicate included headers
+      bcachefs: Use FOREACH_ACL_ENTRY() macro to iterate over acl entries
+      bcachefs: Use str_write_read() helper function
+      bcachefs: Use str_write_read() helper in ec_block_endio()
+      bcachefs: Use str_write_read() helper in write_super_endio()
+      bcachefs: Annotate struct bucket_gens with __counted_by()
+
+Youling Tang (4):
+      bcachefs: Correct the description of the '--bucket=size' options
+      bcachefs: Removes NULL pointer checks for __filemap_get_folio return values
+      bcachefs: Remove redundant initialization in bch2_vfs_inode_init()
+      bcachefs: Simplify code in bch2_dev_alloc()
+
+ Documentation/filesystems/bcachefs/CodingStyle.rst |   2 +-
+ fs/bcachefs/Kconfig                                |   1 +
+ fs/bcachefs/acl.c                                  |  11 +-
+ fs/bcachefs/alloc_background.c                     | 286 +++++-------
+ fs/bcachefs/alloc_background.h                     |   2 +
+ fs/bcachefs/alloc_foreground.c                     | 154 ++-----
+ fs/bcachefs/backpointers.c                         | 149 ++----
+ fs/bcachefs/backpointers.h                         |  13 +-
+ fs/bcachefs/bbpos.h                                |   2 +-
+ fs/bcachefs/bcachefs.h                             |  44 +-
+ fs/bcachefs/bcachefs_format.h                      |  15 +-
+ fs/bcachefs/btree_cache.c                          |  37 +-
+ fs/bcachefs/btree_cache.h                          |   3 +-
+ fs/bcachefs/btree_gc.c                             | 141 ++----
+ fs/bcachefs/btree_io.c                             |  13 +-
+ fs/bcachefs/btree_iter.c                           | 501 +++++++++++++--------
+ fs/bcachefs/btree_iter.h                           | 105 ++---
+ fs/bcachefs/btree_journal_iter.c                   | 237 ++++++++--
+ fs/bcachefs/btree_journal_iter.h                   |  22 +-
+ fs/bcachefs/btree_journal_iter_types.h             |  36 ++
+ fs/bcachefs/btree_key_cache.c                      |  13 +-
+ fs/bcachefs/btree_locking.h                        |   2 +-
+ fs/bcachefs/btree_node_scan.c                      |  10 +-
+ fs/bcachefs/btree_trans_commit.c                   |  79 +---
+ fs/bcachefs/btree_types.h                          |   3 +
+ fs/bcachefs/btree_update.c                         |  55 +--
+ fs/bcachefs/btree_update.h                         |  28 +-
+ fs/bcachefs/btree_update_interior.c                |  71 +--
+ fs/bcachefs/btree_update_interior.h                |   2 +-
+ fs/bcachefs/buckets.c                              |  43 +-
+ fs/bcachefs/buckets_types.h                        |   2 +-
+ fs/bcachefs/chardev.c                              | 219 +--------
+ fs/bcachefs/checksum.h                             |   2 +-
+ fs/bcachefs/compress.c                             |  96 ++--
+ fs/bcachefs/data_update.c                          |  67 ++-
+ fs/bcachefs/debug.c                                |   4 +-
+ fs/bcachefs/dirent.c                               |   4 +-
+ fs/bcachefs/disk_accounting.c                      |  13 +-
+ fs/bcachefs/disk_accounting.h                      |  38 ++
+ fs/bcachefs/ec.c                                   | 244 +++++-----
+ fs/bcachefs/errcode.h                              |   8 +-
+ fs/bcachefs/error.c                                |  28 +-
+ fs/bcachefs/error.h                                |  38 +-
+ fs/bcachefs/extent_update.c                        |   4 +-
+ fs/bcachefs/extents.c                              | 231 +++-------
+ fs/bcachefs/extents.h                              |   9 -
+ fs/bcachefs/extents_format.h                       |  15 +-
+ fs/bcachefs/fs-io-buffered.c                       |  26 +-
+ fs/bcachefs/fs-io-direct.c                         |   5 +
+ fs/bcachefs/fs-io-pagecache.c                      |   4 +-
+ fs/bcachefs/fs-io.c                                |  10 +-
+ fs/bcachefs/fs-ioctl.c                             |   7 +-
+ fs/bcachefs/fs.c                                   |  42 +-
+ fs/bcachefs/fsck.c                                 | 260 ++++++++++-
+ fs/bcachefs/fsck.h                                 |   3 +
+ fs/bcachefs/inode.c                                |  21 +-
+ fs/bcachefs/inode.h                                |  10 +-
+ fs/bcachefs/io_misc.c                              |  10 +-
+ fs/bcachefs/io_read.c                              |  55 +--
+ fs/bcachefs/io_read.h                              |  28 +-
+ fs/bcachefs/io_write.c                             |   7 +-
+ fs/bcachefs/journal.c                              |  27 +-
+ fs/bcachefs/journal_io.c                           |  10 +-
+ fs/bcachefs/journal_reclaim.c                      |   6 +-
+ fs/bcachefs/lru.c                                  |   2 +-
+ fs/bcachefs/move.c                                 | 126 +++---
+ fs/bcachefs/move.h                                 |   5 +-
+ fs/bcachefs/movinggc.c                             |   6 +-
+ fs/bcachefs/opts.c                                 |  26 +-
+ fs/bcachefs/opts.h                                 |  51 ++-
+ fs/bcachefs/rcu_pending.c                          |   2 +
+ fs/bcachefs/rebalance.c                            | 266 +++++++++--
+ fs/bcachefs/rebalance.h                            |  10 +
+ fs/bcachefs/rebalance_format.h                     |  53 +++
+ fs/bcachefs/rebalance_types.h                      |   2 -
+ fs/bcachefs/recovery.c                             | 103 +++--
+ fs/bcachefs/recovery.h                             |   2 +-
+ fs/bcachefs/recovery_passes.c                      |  90 +++-
+ fs/bcachefs/recovery_passes.h                      |   1 +
+ fs/bcachefs/reflink.c                              | 476 +++++++++++++++-----
+ fs/bcachefs/reflink.h                              |   7 +
+ fs/bcachefs/reflink_format.h                       |   5 +-
+ fs/bcachefs/sb-errors_format.h                     |   9 +-
+ fs/bcachefs/snapshot.c                             |  42 +-
+ fs/bcachefs/str_hash.h                             |   6 +-
+ fs/bcachefs/subvolume.c                            |   2 +-
+ fs/bcachefs/subvolume.h                            |  12 +-
+ fs/bcachefs/super-io.c                             |  10 +-
+ fs/bcachefs/super-io.h                             |   2 +
+ fs/bcachefs/super.c                                |  27 +-
+ fs/bcachefs/super.h                                |  10 -
+ fs/bcachefs/sysfs.c                                |  46 +-
+ fs/bcachefs/tests.c                                |  26 +-
+ fs/bcachefs/trace.h                                |  10 +-
+ fs/bcachefs/xattr.c                                |  11 +-
+ fs/bcachefs/xattr.h                                |   2 +-
+ fs/fs_parser.c                                     |   3 +-
+ include/linux/fs_parser.h                          |   2 +
+ 98 files changed, 2876 insertions(+), 2210 deletions(-)
+ create mode 100644 fs/bcachefs/btree_journal_iter_types.h
+ create mode 100644 fs/bcachefs/rebalance_format.h
 
