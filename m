@@ -1,144 +1,127 @@
-Return-Path: <linux-kernel+bounces-417826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFCA99D5976
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:42:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 130939D5979
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:43:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86006282663
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:42:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD4B21F22D18
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8211316BE0D;
-	Fri, 22 Nov 2024 06:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BE516C453;
+	Fri, 22 Nov 2024 06:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="Tk+f+zhq"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lMHFqkYF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD9E15ADA6;
-	Fri, 22 Nov 2024 06:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732257756; cv=pass; b=i6cNmmrKQzNaF8txLLVzfRltX2+V0K5pzRfaye6mO4YldYjLIt7VBDU/df0xjcu5xRfqYsOvFbDpRdg9pJhSXQQSZLxALWCioKCCD2g/zXQEj0dMy9kQ7vvcYrKVQyzgjsj/I/o5wMCs/pdsm/fe6+AwOkpq0uuZVSTSy1ZM5Fc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732257756; c=relaxed/simple;
-	bh=ccS5uzdA+NpcFx+0susH6B6MQETEJMM9B7dY3s7kHHI=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=XLF3LAmuPy/V8oZV1emVVd5TlbsOM+bFnsStHSwhiGYFCkIUywVX7fVJW3TYJ2lUZJ6+FO5jotF1n34uaThUPNNamPVavpIdSor29w4GzIarb6Efm09KCteGjMC3wkFczidNDC94WvMAbjHKOEMcdxFE3Gc6BeA1YSu/ecQ2xGs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=Tk+f+zhq; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732257718; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=F8V/3SxLThF4uDzf4ZAvZeYemCZQqLWvKE7O86BbdaSas5BI1JaVipBxql3N1hCskT9nGVQiFI4Q3r6TQbGMLNr/kc/skjtIf+wdiQ42e/kEiOkCMzqxi4j0hRbkSNNnyOKqWYkH3NFrBRZBqmHqLdaSYYxdE5EnJAHGs2UCVSY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732257718; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=TFCY7JSiulxOM4RxH9esu0nVAam2cJYGCZxPLxjBqtA=; 
-	b=oHD9rwDH97e103oeu3PuqbCQRWtZruQFfSomekaw4K4pK5vuNyIN4kgv8KhDTm+MTsDmJFy75VXuPspPq3faT5l6+1KpIEGZNP1WxeJjd9jg+MPsiDTRUVihMdWT79aip5Fx7GEC4vm/UGq6jhxwXs/MvMkpQNV3bG67BYEY4dw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732257718;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=TFCY7JSiulxOM4RxH9esu0nVAam2cJYGCZxPLxjBqtA=;
-	b=Tk+f+zhq15pZZrrE4rOVnbtihpKEp21LtWLzXr0KCNApHlb8S4xIrUVZYmQgSf05
-	A9xvkfErFI9U0n1HXgEgk3RMspL2yjgLkYq+mzXSDY7U1txrdTudOByMpv2hAa7RfhN
-	bCFFF/RJDz6QacuENO6hm6Sdy4vFDlB2FI6GBxeQ=
-Received: by mx.zohomail.com with SMTPS id 1732257715792597.6815558261044;
-	Thu, 21 Nov 2024 22:41:55 -0800 (PST)
-Message-ID: <8519e35a-c374-46a4-b814-cd8a19cda276@collabora.com>
-Date: Fri, 22 Nov 2024 11:41:50 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBAC1632DC;
+	Fri, 22 Nov 2024 06:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732257787; cv=none; b=HQc7gtAoGW/Ai6aWUiZX9vD6Q4u4slHOQcdbrNsKyUTIQYBlcUQI9WEoaGXHBmAnlE2fFtbWgMy2ObGuEobSyJLNoKX4h5ohAYpCdF0AcTUTmp8ucAcoZU1qoa5pxYCchbk5fpy49KnSL/ms6QQUhdwoICNauFUH9ZqF2Aw64W8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732257787; c=relaxed/simple;
+	bh=pPVeIRdsw+cjbZoONd4IcJExIcXvQWAidHNWx09Farg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DFRiB00e73cbFoEgoYddHIDGR8xaRZp4lGipCrdbh4ZdeShR7K0hkdULQgwZiffADMXuPZkRjs103cr9ngN7s6d+ap9fCMYiJctn7Huza7dSeLOD8jRTWFVHcNKX4igF8RmG7GE9PqGIlX3wONWmF6Uix82IolETRkOZNMFfXHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lMHFqkYF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B2CCC4CECE;
+	Fri, 22 Nov 2024 06:43:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732257786;
+	bh=pPVeIRdsw+cjbZoONd4IcJExIcXvQWAidHNWx09Farg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=lMHFqkYFyxq6EtTNZq+6yaHWeqE2296YK5w3CfryKOYNIdmg+F8FnAoOaDOmH+xxk
+	 lYvW6x9zBgbomfWLFEcLC5A07nfBj3fVzurs6hcz9HpJHVO8sk8+GrNMfuc8Yl6L0F
+	 XwaRSaqugr2xoBtX8auhP0EOBNVNKIVazGnWRQGqAmjhUTQ/FpMCGeLY1SI27LmwaF
+	 uNsauxRlGTUHSyay7CkWOmrJJX7cY4FrDBZ6DiqPpRshwM55iViLnUPDUyYarbe9Nr
+	 oz8H5fklewCliSl7tYFReDqi/Xe0RZkNDQjkAbpQ3xRejp4ESplMmnjmteCX5VFeGa
+	 FJiYTevqOtylQ==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539e8607c2aso1948993e87.3;
+        Thu, 21 Nov 2024 22:43:06 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWyFbbIRzEdmqE6rnsyNMwrzVIVksNirga4uixWQ81ZgfdTdccl8B8pPBWZh3h5oh5/BUwMIVYQQPqez+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSFwtqRTY2pD3/jwJoPkAsVJPCC7BHaOX/cQ7JAff2VGjt9jKW
+	XQmfPN2xzXoIvBdf7zpte9mxyLiW8iPHLdcBMmE2cAk4dIOzei1J808BUFMyjTsbTHnHVNka8r+
+	h1CMm9SVABrgXzhJHR0sCtAWChfM=
+X-Google-Smtp-Source: AGHT+IEZWa5ieH0Zuzv3oYICEkGpeEhHrre9AFb4UPBUadqbngvzxptEPjBajRge5GZCVY6QGK53EY3ePCPJHZwgYX4=
+X-Received: by 2002:a05:6512:1152:b0:53d:d461:80df with SMTP id
+ 2adb3069b0e04-53dd461831fmr379627e87.25.1732257784872; Thu, 21 Nov 2024
+ 22:43:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.11 000/107] 6.11.10-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-References: <20241120125629.681745345@linuxfoundation.org>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <20241120125629.681745345@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+References: <20241122045106.tzhvm2wrqvttub6k@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+In-Reply-To: <20241122045106.tzhvm2wrqvttub6k@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 22 Nov 2024 07:42:54 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGAuJSdDWvu7D5-PT6mSbNG9FeLObnYmpHeT08eNxaJWQ@mail.gmail.com>
+Message-ID: <CAMj1kXGAuJSdDWvu7D5-PT6mSbNG9FeLObnYmpHeT08eNxaJWQ@mail.gmail.com>
+Subject: Re: [Bug report] kernel BUG at include/linux/scatterlist.h
+To: Zorro Lang <zlang@redhat.com>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Herbert Xu <herbert@gondor.apana.org.au>
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/20/24 5:55 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.10 release.
-> There are 107 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 22 Nov 2024 12:56:14 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.10-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
-> -------------
-Hi,
+On Fri, 22 Nov 2024 at 05:51, Zorro Lang <zlang@redhat.com> wrote:
+>
+> Hi,
+>
+> I hit a kernel panic on aarch64 several times recently, when I tried to do a
+> fstests test. It's not related with fstests, due to I hit it when I boot the
+> latest mainline linux kernel (HEAD=fc39fb56917bb3cb53e99560ca3612a84456ada2).
+>
+> The console log looks like related with crypto things, I'm not familar with
+> it, so just send this email to linux-crypto@ and cc linux-kernel@.
+>
+> I hit this panic several times, I did nothing except building and installing
+> the latest kernel and then boot it, then it crash directly on booting time.
+> Looks like crash from:
+>
+>        183 static inline void sg_set_buf(struct scatterlist *sg, const void *buf,
+>        184                               unsigned int buflen)
+>        185 {
+>        186 #ifdef CONFIG_DEBUG_SG
+> ==>    187         BUG_ON(!virt_addr_valid(buf));
+>        188 #endif
+>        189         sg_set_page(sg, virt_to_page(buf), buflen, offset_in_page(buf));
+>        190 }
+>
+> If someone need, I can provide the big linux/.config file.
+>
 
-Please find the KernelCI report below :-
+Does this help?
 
-OVERVIEW
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -4300,12 +4300,14 @@
 
-        Builds: 37 passed, 0 failed
+ static int test_sig_one(struct crypto_sig *tfm, const struct sig_testvec *vecs)
+ {
++       const u8 *src __free(kfree);
+        u8 *ptr, *key __free(kfree);
+        int err, sig_size;
 
-    Boot tests: 504 passed, 1 failed
++       src = kmemdup_nul(vecs->c, vecs->c_size, GFP_KERNEL);
+        key = kmalloc(vecs->key_len + 2 * sizeof(u32) + vecs->param_len,
+                      GFP_KERNEL);
+-       if (!key)
++       if (!src || !key)
+                return -ENOMEM;
 
-    CI systems: broonie, maestro
-
-REVISION
-
-    Commit
-        name: v6.11.9-108-gc9b39c48bf4a
-        hash: c9b39c48bf4a40a9445a429ca741a25ba6961cca
-    Checked out from
-        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-
-
-BUILDS
-
-    No build failures found
-
-BOOT TESTS
-
-    Failures
-
-      arm64:(defconfig)
-      -mt8186-corsola-steelix-sku131072
-      CI system: maestro
-	[    9.936547] UBSAN: invalid-load in drivers/gpu/drm/drm_fbdev_dma.c:169:13
-	https://kcidb.kernelci.org/d/test/test?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=$__all&var-build_config_name=$__all&var-id=maestro:673df795923416c0c988c20b&from=now-100y&to=now&timezone=browser&var-test_path=&var-issue_presence=$__all
-
-
-See complete and up-to-date report at:
-
-    https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-git_commit_hash=c9b39c48bf4a40a9445a429ca741a25ba6961cca&var-patchset_hash=
-
-
-Tested-by: kernelci.org bot <bot@kernelci.org>
-
-Thanks,
-KernelCI team
+        /* ecrdsa expects additional parameters appended to the key */
+@@ -4326,7 +4328,7 @@
+         * Run asymmetric signature verification first
+         * (which does not require a private key)
+         */
+-       err = crypto_sig_verify(tfm, vecs->c, vecs->c_size,
++       err = crypto_sig_verify(tfm, src, vecs->c_size,
+                                vecs->m, vecs->m_size);
+        if (err) {
+                pr_err("alg: sig: verify test failed: err %d\n", err);
 
