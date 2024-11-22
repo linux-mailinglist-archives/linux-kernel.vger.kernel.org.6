@@ -1,169 +1,94 @@
-Return-Path: <linux-kernel+bounces-418627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17B049D6398
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:54:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A6A39D6395
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:53:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCE16282D94
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:54:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B670B2292D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EDB1DDA32;
-	Fri, 22 Nov 2024 17:54:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E6A16E88D;
+	Fri, 22 Nov 2024 17:53:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="KMe+EJFO"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="auVtE4b1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D96175A5;
-	Fri, 22 Nov 2024 17:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58CC2175A5
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 17:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732298044; cv=none; b=LKUVDMCiEL9HOiOWdwP5KRxSanzS9CGRqwNc5aBG7PV6220A2OX5JsfNcTArQx9LVZjGjSgtkibub5gS5CdcGBXxjpE58zK36Zm1itjgTmuCdaRKBfb4pmoYeN0dHHJFpHVXR2SyqnPfyesZFuIZHVApF5k4CAGy+idaKS4aVBM=
+	t=1732297984; cv=none; b=UR270/RGq2fIoTI+J7TzszNgMlIlIBrPfrj6K/0JEGLMmJHYcTusWvZizi0fMrRMqCDj0FadZ2/39GgBdv9nUWCgjS8B7u0gyxNKB6c7hBbIg+tyU8sI1FpXdEYt8Psal9TGKXC2HDdHjvVetVyjghamDQemQuU6n8FX04gVv4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732298044; c=relaxed/simple;
-	bh=cutVbZjFmescBiksgNvM2mBtDEqXhRIwdRT9749DYEQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bK8Wf7NN70qEWHNCGiNdGwlhL6lHpKKLoW6VHbkKxVRj7r9oUwsHqTbcFlun2U4YQSOy6O2I7Lcq72DHNcm05d3c3znKnISLtVCcMWsVQ6R/4HKhwQI4U7BI6g7m/w/gwh/f2h/Tr5+HfirHS8V8xpfMpathDLvXy3KPyBCKq2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=KMe+EJFO; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AMGMheB010521;
-	Fri, 22 Nov 2024 18:53:34 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=nJkjxzVfnCioMHZUj0mDGO
-	q0e4V+G6DBTikNsBt0udA=; b=KMe+EJFOLxo7ILBk5qRyzGa0a5Cyoe95ChTLSH
-	lj7lG+EIjbMLmaVEvmW+TBSoG/ELxj/q1Q9z0b7Q5lyCYZXeTbZMeCMmLKAO87g0
-	CoNiuuq8QHR/t+CB6O3hItNTqY9rJwiB837/zmtzmYieNPUICL4dXoHSzBz3ZCyx
-	meUAIgoA6RtXqQPKsXhWpKagdtTOSoTUMqcaL2qe02cBCx91FtIZg1tFm9anyILt
-	/QQ2+6uzXRUg4jMgQ6BpfN/MFUEDXUeNo5IaHi2f70HQdFtoVZ5ckSBLo4uVNqbo
-	ukeXlEEtSHdyDnwJX6pb+gGYeBNm8LwTZzzhCfObcYSKs4fg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42y77ntkbb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 18:53:34 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id BEE5F40047;
-	Fri, 22 Nov 2024 18:52:31 +0100 (CET)
-Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7052126EEE0;
-	Fri, 22 Nov 2024 18:51:36 +0100 (CET)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
- (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 22 Nov
- 2024 18:51:36 +0100
-Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 22 Nov
- 2024 18:51:35 +0100
-From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH] remoteproc: core: Fix ida_free call while not allocated
-Date: Fri, 22 Nov 2024 18:51:27 +0100
-Message-ID: <20241122175127.2188037-1-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1732297984; c=relaxed/simple;
+	bh=wsTkX6pJNyPokLpxfhwCoXSmd2PpmgMvlsBk/iZ2Z8Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QRgEA0NGPLc8fHdvhASFEnGdH1CzlsSl+mHlPwxwBn2vccwH0cg2anSRgwOygVZFt5F9CWIneVl2rFdGv/htUKJLI5GvwT4pZcc/K1+0KHAcMZXQv+9OhqUxt3XuoDWNPxJ//zhdYqPhMstk+d62ZQ7T89+NmAziKOWogs4Om5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=auVtE4b1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732297981;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RstFT4v1FTwGEZ6DtgUQEagwPEudbwO0pMDPcVbX3L4=;
+	b=auVtE4b10Y/gVx0PXAh5pawjYWaQqBltmEhZF1MXeA9dSog3mZhrLK6F0j4QqlQQNackr8
+	Gc8pKB4z+6/YMXJ3NHqhXXPLymj55AbgeRoWBtpsJykRow5hIM7OQ/RVdwJgS/cUXtT/DJ
+	QZPkaF49V7geRHBqSsdCQaoaCeoGPjM=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-74-RztWJB03Ok2WATAY3rE3eQ-1; Fri,
+ 22 Nov 2024 12:52:58 -0500
+X-MC-Unique: RztWJB03Ok2WATAY3rE3eQ-1
+X-Mimecast-MFC-AGG-ID: RztWJB03Ok2WATAY3rE3eQ
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3596019560AF;
+	Fri, 22 Nov 2024 17:52:55 +0000 (UTC)
+Received: from [10.22.81.129] (unknown [10.22.81.129])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1195119560A3;
+	Fri, 22 Nov 2024 17:52:51 +0000 (UTC)
+Message-ID: <4bd8f843-6dfa-4c66-9e42-cf4245166844@redhat.com>
+Date: Fri, 22 Nov 2024 12:52:51 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SAFCAS1NODE2.st.com (10.75.90.13) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] nvme: always enable multipath
+To: Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>
+Cc: Bryan Gurney <bgurney@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org, sagi@grimberg.me, axboe@kernel.dk,
+ mpe@ellerman.id.au, naveen@kernel.org, maddy@linux.ibm.com,
+ kernel@xen0n.name, bmarzins@redhat.com
+References: <20241121220321.40616-1-bgurney@redhat.com>
+ <20241122120925.GA25817@lst.de>
+ <Z0ClxgBJG_YBF-Ql@kbusch-mbp.dhcp.thefacebook.com>
+Content-Language: en-US
+From: John Meneghini <jmeneghi@redhat.com>
+Organization: RHEL Core Storge Team
+In-Reply-To: <Z0ClxgBJG_YBF-Ql@kbusch-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-In the rproc_alloc() function, on error, put_device(&rproc->dev) is
-called, leading to the call of the rproc_type_release() function.
-An error can occurs before ida_alloc is called.
+On 11/22/24 10:39, Keith Busch wrote:
+> Anyway, we only use the one physical function, so they're certainly not
+> multipath devices here. We disable the CONFIG option because while the
+> nvme multipath IO overhead is low, it's not zero.
 
-In such case in rproc_type_release(), the condition (rproc->index >= 0) is
-true as rproc->index has been  initialized to 0.
-ida_free() is called reporting a warning:
-[    4.181906] WARNING: CPU: 1 PID: 24 at lib/idr.c:525 ida_free+0x100/0x164
-[    4.186378] stm32-display-dsi 5a000000.dsi: Fixed dependency cycle(s) with /soc/dsi@5a000000/panel@0
-[    4.188854] ida_free called for id=0 which is not allocated.
-[    4.198256] mipi-dsi 5a000000.dsi.0: Fixed dependency cycle(s) with /soc/dsi@5a000000
-[    4.203556] Modules linked in: panel_orisetech_otm8009a dw_mipi_dsi_stm(+) gpu_sched dw_mipi_dsi stm32_rproc stm32_crc32 stm32_ipcc(+) optee(+)
-[    4.224307] CPU: 1 UID: 0 PID: 24 Comm: kworker/u10:0 Not tainted 6.12.0 #442
-[    4.231481] Hardware name: STM32 (Device Tree Support)
-[    4.236627] Workqueue: events_unbound deferred_probe_work_func
-[    4.242504] Call trace:
-[    4.242522]  unwind_backtrace from show_stack+0x10/0x14
-[    4.250218]  show_stack from dump_stack_lvl+0x50/0x64
-[    4.255274]  dump_stack_lvl from __warn+0x80/0x12c
-[    4.260134]  __warn from warn_slowpath_fmt+0x114/0x188
-[    4.265199]  warn_slowpath_fmt from ida_free+0x100/0x164
-[    4.270565]  ida_free from rproc_type_release+0x38/0x60
-[    4.275832]  rproc_type_release from device_release+0x30/0xa0
-[    4.281601]  device_release from kobject_put+0xc4/0x294
-[    4.286762]  kobject_put from rproc_alloc.part.0+0x208/0x28c
-[    4.292430]  rproc_alloc.part.0 from devm_rproc_alloc+0x80/0xc4
-[    4.298393]  devm_rproc_alloc from stm32_rproc_probe+0xd0/0x844 [stm32_rproc]
-[    4.305575]  stm32_rproc_probe [stm32_rproc] from platform_probe+0x5c/0xbc
+Do we know what the performance impact is?  Has anybody measured the difference?
 
-
-Calling ida_alloc earlier in rproc_alloc ensures that the rproc->index is
-properly set.
-
-Fixes: 08333b911f01 ("remoteproc: Directly use ida_alloc()/free()")
-
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
----
-Note for backporting to previous kernel versions: The SHA 08333b911f01
-seems to correspond to the last commit that updated IDA allocation.
-The issue existed before, but the fix could not be applied without some
-rework.
----
- drivers/remoteproc/remoteproc_core.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index f276956f2c5c..ef6febe35633 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2486,6 +2486,13 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	rproc->dev.driver_data = rproc;
- 	idr_init(&rproc->notifyids);
- 
-+	/* Assign a unique device index and name */
-+	rproc->index = ida_alloc(&rproc_dev_index, GFP_KERNEL);
-+	if (rproc->index < 0) {
-+		dev_err(dev, "ida_alloc failed: %d\n", rproc->index);
-+		goto put_device;
-+	}
-+
- 	rproc->name = kstrdup_const(name, GFP_KERNEL);
- 	if (!rproc->name)
- 		goto put_device;
-@@ -2496,13 +2503,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 	if (rproc_alloc_ops(rproc, ops))
- 		goto put_device;
- 
--	/* Assign a unique device index and name */
--	rproc->index = ida_alloc(&rproc_dev_index, GFP_KERNEL);
--	if (rproc->index < 0) {
--		dev_err(dev, "ida_alloc failed: %d\n", rproc->index);
--		goto put_device;
--	}
--
- 	dev_set_name(&rproc->dev, "remoteproc%d", rproc->index);
- 
- 	atomic_set(&rproc->power, 0);
-
-base-commit: adc218676eef25575469234709c2d87185ca223a
--- 
-2.25.1
+/John
 
 
