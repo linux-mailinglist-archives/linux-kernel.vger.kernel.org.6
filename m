@@ -1,62 +1,54 @@
-Return-Path: <linux-kernel+bounces-417862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B47BA9D59F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:25:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73B419D59F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:25:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F1F42837E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:25:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A155280ED1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E0F175D26;
-	Fri, 22 Nov 2024 07:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B401714D7;
+	Fri, 22 Nov 2024 07:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hWjePwgy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="kVRdLHZX"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869EB1465A0;
-	Fri, 22 Nov 2024 07:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FAB81465A0;
+	Fri, 22 Nov 2024 07:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732260302; cv=none; b=eRxQx1hekihVjS86Bbw569JuTKhSCvAMAsWNWKp1pCjzAgj9ZdhAIdl8Vn57Z7tEM16aq6dqLKc0HGQ5OlVY5gU/CgYSpDklil/fz+qsyv8csORwAIllxbwKm+u+IrzJrp29BDxNTMkVMqyCzCfEAe3KRvAMr+bRx/3PQrnWC0Y=
+	t=1732260340; cv=none; b=Zst1lfrYD8PmCaaK5SBSngZajSs/4LoykmL1wrNRjDjOmHl5mz0EXVrJrXW30/aXtiOOBNv+UOOsUear1xiu165vsh22nA6rvBf7YEEfssBhYFPVdYoq5WsrisJpLTSTr6ihXjRtrpgAVTo5HcdUItW2IxxIdaaLMcaiWPw/DiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732260302; c=relaxed/simple;
-	bh=7ESMhw6qWFkb1s9kF5O6ikkxZs/870Smg/4qvKVpSa4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=h+fgKwQ6CaoE4e6/H5RQ01kQ5H4bWwrBXNAbzQzc/mh8H8mYHpp793jcM40Sz93DUu1bCG7tKxrs6WUMscCbaKZY7+797ypviWkbZ5inM4YDVy56I88AsNa0ArMcTIHTFcSOtBqRrjzXm0uZi72vxjHJz2Jl0/azOmt2cm5yxdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hWjePwgy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALJPchJ019239;
-	Fri, 22 Nov 2024 07:24:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mZOchEo22wWGYZOOArnnZSYty6lEalNJAgJuZtAfWZs=; b=hWjePwgyCsJqiwkK
-	U0Aj8p4NjcIe00XL8JnXtIQJ0V5vF5aZbCGwpoi0ZZEZeqCGseW9FD+77ZI5awaB
-	lfwYOhnvMy4hWHW2y7RKR9XpGLKJnWXMmQ2uX9yBlMTlrkMieaHxybz/bWaJzWEF
-	AFKnv7wpmDnOBXHNzJWgfnmiDET8YCh2sERSt6s2Y/UVQvdTdXQKM20WBoGcNvP6
-	MgF1LXq2hiEcVF3E+m90vtRHZkGpX9d/vyeVdUfYjXfty+jZr0dooUl+z/yBiuvx
-	Uhosas6BrIoVf57dFZOFM4aO/XuLcGX7IcQA+YHPUKCyBneEMoEpzmVOquK6Jboh
-	+jKt/Q==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431c7hpm1y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 07:24:58 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AM7OwR7028349
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 07:24:58 GMT
-Received: from [10.216.2.20] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
- 2024 23:24:53 -0800
-Message-ID: <d0848961-f5d4-46eb-b1ab-99ae6a0e07e1@quicinc.com>
-Date: Fri, 22 Nov 2024 12:54:50 +0530
+	s=arc-20240116; t=1732260340; c=relaxed/simple;
+	bh=+3LBMIDU6kT+weG2QXrxqhvGNeFfqop4r0Rz1n+b0Wg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=bT1PyHdhqi6Gn7M2jl7KCzURqCYpa3U9kEGItudSmB8gwonv+fViNDnYqFxkFKWSbIubQtsO4iRFnVpiUBFDQQEiBKvXTewhuvpOkV7su3d7/rOEj6vS0559ZcI7IG/t42NMb5vRtiEcxJJf6+YmDyg6EU+wdtjCaI2W8Oj2G2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=kVRdLHZX; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1732260320; x=1732865120; i=markus.elfring@web.de;
+	bh=+3LBMIDU6kT+weG2QXrxqhvGNeFfqop4r0Rz1n+b0Wg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=kVRdLHZXeOJYxgPVmOTwa52pkShs38aywk/08k1lv/dN7mwUl1d4r4vMPH5PaLU0
+	 9K8HBFEEQWBd9HhCzAtGU7NrLd0Vnz8L5nqSTNOAXm0HxzNIg09MSH8zS5rTkifTT
+	 I1Iv1YVBB8s7tyix2h43wnX5HiBcfPUdLxI6M7Ems31C/EPr2jF/H2FKiy9OpNxbv
+	 s9ldA2MObAek3VTVgcTxtSDxwbSmdokH6ZfCPHOY9kRIRX6pQE8JIM/S1h6UO0NHl
+	 2z2TEzEjXDPnSLHnxCdaaSvDCJSCLnYLVYdzLssHNYo8MxRiy+X3lCn5zS8EovbNb
+	 NdAPV1FKMgobW/DUWw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MNwfU-1t3Rns0U3c-00MhTL; Fri, 22
+ Nov 2024 08:25:20 +0100
+Message-ID: <66f051cb-13c7-47c0-9985-4c7c034e186a@web.de>
+Date: Fri, 22 Nov 2024 08:25:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,86 +56,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 4/4] interconnect: qcom: osm-l3: Add epss compatibles
- for SA8775P SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>, Georgi Djakov <djakov@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Odelu Kukatla <quic_okukatla@quicinc.com>,
-        Mike Tipton
-	<quic_mdtipton@quicinc.com>,
-        Sibi Sankar <quic_sibis@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241121113006.28520-1-quic_rlaggysh@quicinc.com>
- <20241121113006.28520-5-quic_rlaggysh@quicinc.com>
- <51653aac-76e0-4da2-aea8-16d62b570155@kernel.org>
-Content-Language: en-US
-From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-In-Reply-To: <51653aac-76e0-4da2-aea8-16d62b570155@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: -HGI-8ePDZ8bgJxOYgPlSZJXtjCujxKl
-X-Proofpoint-GUID: -HGI-8ePDZ8bgJxOYgPlSZJXtjCujxKl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- phishscore=0 priorityscore=1501 malwarescore=0 bulkscore=0 spamscore=0
- mlxscore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411220060
+To: Johannes Berg <johannes@sipsolutions.net>, linux-wireless@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Benjamin Berg <benjamin.berg@intel.com>,
+ Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+ Kalle Valo <kvalo@kernel.org>,
+ Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+ Paolo Perego <pperego@suse.de>, Shaul Triebitz <shaul.triebitz@intel.com>,
+ Yedidya Benshimol <yedidya.ben.shimol@intel.com>
+References: <e37392a6a1fcb11db42646da2afe055416ca4cea.camel@sipsolutions.net>
+Subject: Re: wireless: Fix a dereference before null check issue
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <e37392a6a1fcb11db42646da2afe055416ca4cea.camel@sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:dpK8bG/CzWDruyDmwu/3fqpAzkWR3UwIBvkW97IsUOQaLHrthuJ
+ WdGsckxXYgWz0sy1gTq6e43oXLLAd4M/b5CXJYwm/uXv6KGKB4mHlx1QcPuGVY/YbrgqLfa
+ LEtsUDyrNJPR4PCQ6+Vs2rVOEO6yAg0hNGs0aIp92pAn8gxRu+EiiMTnksw2fnS4wyLuGKh
+ Z4G3TB+PQleh/mWMFY/vw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:F44GFq45A4g=;OiQbKRvC43YUNCgl3iSbgDHUUhF
+ usHXBKTHaGGEwSYh/FejfUreC3RMLS+I5M9La1HoZhNO8IwFbptm6XIjlXRgpuVVtHyYML59f
+ h26Kyst1yqnHI/EtCEYhpt12RbOuStRG9iV4+d3At7Tm4RDOY4Tlh/F0krLzcOZEAQsPYwM9l
+ mC1IYYWJOe53Whxjq2r0MyqSPt1CdRyqBP7/NI6KwOTeYzcIElD1l1Xk8BwslJejl6g7y9fd5
+ 4Qoi/mJwNe5BuxALWuExpBnz284+249K/WWwqaGVPFutTivhKwVUPCR3YbmNHRV1S7bC9UO1I
+ s3k+OlbKYsirZEWlIaoqHQ3k4vRS8FvxfPiYBSrqmxnjV1JumSZWBu6yJmfSiRINGbOE8Rw5D
+ pEJOoa3gM+1zfOoAh7PSeMya7OtXEhI0WiWfKogxtxFxnVRJP81Prsa2gWovxhDvxPhqseaQc
+ BzgNy6ADCEiGrfXe1QD0rrM5ShgEkFUtB63iwdVKBgBeVPwUxr7LWWArrG9qBV+VMtF2ogX0D
+ QFsDcOyN50xv9nsvC0zE2g/lId2AIrVW5p1Bhr7OliKkKZ7uUmq1NuIwLaIUwe8qMWcXAUo92
+ NxIq9ry7b3PiSrvxX/OoTlxN8FETPmesO/XKSBtn1VjZMwR3+F+re84fX1S5gGCaX3FSjsUkp
+ 8c+NuOqkCEwpXlv55PX7pXXCadRGS2syv2hal5sE1xhATgHUrsvQafjzt5txlhqDZ8gL4PGMh
+ RrLhQHFoU3BNzrjCt8op9imTvwosBeCo1P9Pp2uRZX7XkcRZw5anQyq4SNR0aZyU8lDHJRtjT
+ Lm5cecE/S0o/6XhdMN9bK7cZSgg9oVTAa4BB83QCgMP9H/Z1+0qeKqj8qovsjgUw87tmqg5Bx
+ 0h2fpIhypA3hOxMWl24YM1a0+MleArsAzS5lLvRcQyl2+giuJvmXyW4qM
 
+> This was reported before by smatch too, and Emmanuel just made a patch
+> to simply remove the NULL checks, because the pointers are statically
+> known to be not NULL. =E2=80=A6
 
+To which messages would you like to refer here?
 
-On 11/21/2024 5:21 PM, Krzysztof Kozlowski wrote:
-> On 21/11/2024 12:30, Raviteja Laggyshetty wrote:
->> The EPSS instance in SA8775P uses PERF_STATE register instead of
->> REG_L3_VOTE to scale L3 clocks.
->> Along with SoC specific compatible, add new generic compatible
->> "qcom,epss-l3-perf" for PERF_STATE register based L3 scaling.
->>
->> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
->> ---
->>  drivers/interconnect/qcom/osm-l3.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/interconnect/qcom/osm-l3.c b/drivers/interconnect/qcom/osm-l3.c
->> index a9405b7d251b..285afaa1f61e 100644
->> --- a/drivers/interconnect/qcom/osm-l3.c
->> +++ b/drivers/interconnect/qcom/osm-l3.c
->> @@ -318,6 +318,7 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
->>  
->>  static const struct of_device_id osm_l3_of_match[] = {
->>  	{ .compatible = "qcom,epss-l3", .data = &epss_l3_l3_vote },
->> +	{ .compatible = "qcom,epss-l3-perf", .data = &epss_l3_perf_state },
-> 
-> 
-> Hm? Why?
-> 
->>  	{ .compatible = "qcom,osm-l3", .data = &osm_l3 },
->>  	{ .compatible = "qcom,sc7180-osm-l3", .data = &osm_l3 },
->>  	{ .compatible = "qcom,sc7280-epss-l3", .data = &epss_l3_perf_state },
->> @@ -325,6 +326,7 @@ static const struct of_device_id osm_l3_of_match[] = {
->>  	{ .compatible = "qcom,sm8150-osm-l3", .data = &osm_l3 },
->>  	{ .compatible = "qcom,sc8180x-osm-l3", .data = &osm_l3 },
->>  	{ .compatible = "qcom,sm8250-epss-l3", .data = &epss_l3_perf_state },
->> +	{ .compatible = "qcom,sa8775p-epss-l3", .data = &epss_l3_perf_state },
-> 
-> 
-> So this is compatible with sm8250. Use that one. Don't grow this table
-> needlessly.
-> 
-Will make use of sm8250 compatible in next patch revision.
-> 
-> Best regards,
-> Krzysztof
-
+Regards,
+Markus
 
