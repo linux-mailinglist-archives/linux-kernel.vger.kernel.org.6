@@ -1,266 +1,141 @@
-Return-Path: <linux-kernel+bounces-418337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46279D6084
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:39:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA4EF9D608A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:40:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 950C1282A6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:39:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A8F128285B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E224F1E0E08;
-	Fri, 22 Nov 2024 14:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E6B148FE1;
+	Fri, 22 Nov 2024 14:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="r8HHBOBo"
-Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kk41hIxV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167431E04A1
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E7513632B;
+	Fri, 22 Nov 2024 14:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732286077; cv=none; b=bIk9utsY9R3Haef3iKYA4trYieR02r+Ie3pt0igiCHi+eDE4I8op8AxmA9LZw9Tv+l0o8NAGloQ7a22c0NAXCgxOxpykDHAvaCgyeApZcEF9y63jSYst8ITUH8GxmGmSoN/o2+ULoVA+fsV2SxYz6YmwOGR0hxBiash89t/Y65w=
+	t=1732286137; cv=none; b=j8K6KaphYMBYyn3kdsFMfRoFnzIRdEAcH2twHEYBOOuZXF99itsWuOy5j8fcvZhfZjB1zWokxzq4fdNRWlQ22rqvqemwEt9WTkEs7em1diJ2xXfw3hF+4l9FJIDXVd7e8H7TnmyK0d+V8S9h4YR/Kxf6SvCxZpFpSNdqyRPLbXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732286077; c=relaxed/simple;
-	bh=36b7Lyz3k8FScTc5AXG1dY/03AGd/FzjGBeIK5Rrh6o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Mn/kxtql3xe9RHmvFyhf87jqkMRZ0b8KF4StpC8+5jkdlg9fiI9lP/qI6dTMgRb7WcRE1frhRmizWf83Vi/CPprShxdK5JSfA1+j8RqFAf02ud9ZbgHwoVlsvvXDdQGrU6LncJIrKNdUsv3jKDcPjLc+6Lw3rpZst5veXS5jWLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=r8HHBOBo; arc=none smtp.client-ip=45.157.188.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XvyKh0XG5zj9g;
-	Fri, 22 Nov 2024 15:34:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1732286071;
-	bh=zplGSbTIB54PAhZp2mb0y83mOQueBGo/UaXX9cN25G4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=r8HHBOBoxJTalyzqRRUChQvrA0j19XWI4RyAyrcpebIx7xf4wESqk0DXKKZkl4LgQ
-	 1wGQ6ZyOWgHUsKYfI0cemIeuUpAY3dPntjxxGV0hi4kkd9zf/3jt5EUSHn+yKlTs77
-	 6j2YYaixRFk3IgNmNoHtaOACW/LkCzcjnLA84vcQ=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XvyKg2NbzzjZ6;
-	Fri, 22 Nov 2024 15:34:31 +0100 (CET)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Eric Paris <eparis@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	"Serge E . Hallyn" <serge@hallyn.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Ben Scarlato <akhna@google.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Charles Zaffery <czaffery@roblox.com>,
-	Francis Laniel <flaniel@linux.microsoft.com>,
-	James Morris <jmorris@namei.org>,
-	Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@google.com>,
-	Jorge Lucangeli Obes <jorgelo@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	Phil Sutter <phil@nwl.cc>,
-	Praveen K Paladugu <prapal@linux.microsoft.com>,
-	Robert Salvet <robert.salvet@roblox.com>,
-	Shervin Oloumi <enlightened@google.com>,
-	Song Liu <song@kernel.org>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	audit@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH v3 23/23] selftests/landlock: Add audit tests for ptrace
-Date: Fri, 22 Nov 2024 15:33:53 +0100
-Message-ID: <20241122143353.59367-24-mic@digikod.net>
-In-Reply-To: <20241122143353.59367-1-mic@digikod.net>
-References: <20241122143353.59367-1-mic@digikod.net>
+	s=arc-20240116; t=1732286137; c=relaxed/simple;
+	bh=P3LpHamRarxbPekIwfEOuKQjsioKyb0VI61LrbiusJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LHXt/7M8izQuwROVOGTiuJLkEOilvFm4+i9zEkcLJxWcEfRRv6EM23Zw+B/95GMhZLJHhIo7S9WqzqNOAHrwWU6khhFpWjgwzqB1B780ytOrfKXtCFrkLfIIiuedhFn5vB6tsIYQlkZb99Yv6QhfHwsHlKqEdUVluKUljX5NrLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kk41hIxV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AD89C4CECE;
+	Fri, 22 Nov 2024 14:35:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1732286136;
+	bh=P3LpHamRarxbPekIwfEOuKQjsioKyb0VI61LrbiusJU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kk41hIxVbqJi+HRvUxayl8qy4FydMVYORD+YncMsakBNAFYyJfpT76T5jLcN/DJzn
+	 k5X4+fLtDEDUyLpF8dPpVUkaDqDYfO5sH776WqA+LWucQ0G1OF8HlmHnAUP5NIYyPw
+	 WTP8gvTV6a2Edgu8k5sL0gk5uT8FbTMcA6Tw6OJA=
+Date: Fri, 22 Nov 2024 15:35:10 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, David Wang <00107082@163.com>,
+	brgl@bgdev.pl, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, geert@linux-m68k.org,
+	linux-hardening@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH] Fix a potential abuse of seq_printf() format string in
+ drivers
+Message-ID: <2024112259-bagful-commend-89ff@gregkh>
+References: <20241120053055.225195-1-00107082@163.com>
+ <CACRpkdZ0zwn0908LDqrfQJtF7M-WRcKA4qdJdwSXZNzm0L47CA@mail.gmail.com>
+ <202411201008.5262C14@keescook>
+ <2024112031-unreal-backslid-0c24@gregkh>
+ <8BEA1444-469F-4276-AB04-0CF7C324916D@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+In-Reply-To: <8BEA1444-469F-4276-AB04-0CF7C324916D@kernel.org>
 
-Add tests for all ptrace actions.  This improve all the ptrace tests by
-making sure that the restrictions comes from Landlock, and with the
-expected objects.  These are like enhanced errno checks.
+On Thu, Nov 21, 2024 at 08:38:27PM -0800, Kees Cook wrote:
+> 
+> 
+> On November 20, 2024 11:28:35 AM PST, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> >On Wed, Nov 20, 2024 at 10:12:40AM -0800, Kees Cook wrote:
+> >> On Wed, Nov 20, 2024 at 08:35:38AM +0100, Linus Walleij wrote:
+> >> > On Wed, Nov 20, 2024 at 6:31 AM David Wang <00107082@163.com> wrote:
+> >> > 
+> >> > > Using device name as format string of seq_printf() is proned to
+> >> > > "Format string attack", opens possibility for exploitation.
+> >> > > Seq_puts() is safer and more efficient.
+> >> > >
+> >> > > Signed-off-by: David Wang <00107082@163.com>
+> >> > 
+> >> > Okay better get Kees' eye on this, he looks after string vulnerabilities.
+> >> > (But I think you're right.)
+> >> 
+> >> Agreed, this may lead to kernel memory content exposures. seq_puts()
+> >> looks right.
+> >> 
+> >> Reviewed-by: Kees Cook <kees@kernel.org>
+> >
+> >Wait, userspace "shouldn't" be controlling a device name, but odds are
+> >there are some paths/subsystems that do this, ugh.
+> >
+> >> To defend against this, it might be interesting to detect
+> >> single-argument seq_printf() usage and aim it at seq_puts()
+> >> automatically...
+> >
+> >Yeah, that would be good to squash this type of issue.
+> >
+> >> > >  drivers/gpio/gpio-aspeed-sgpio.c            | 2 +-
+> >> > >  drivers/gpio/gpio-aspeed.c                  | 2 +-
+> >> > >  drivers/gpio/gpio-ep93xx.c                  | 2 +-
+> >> > >  drivers/gpio/gpio-hlwd.c                    | 2 +-
+> >> > >  drivers/gpio/gpio-mlxbf2.c                  | 2 +-
+> >> > >  drivers/gpio/gpio-omap.c                    | 2 +-
+> >> > >  drivers/gpio/gpio-pca953x.c                 | 2 +-
+> >> > >  drivers/gpio/gpio-pl061.c                   | 2 +-
+> >> > >  drivers/gpio/gpio-tegra.c                   | 2 +-
+> >> > >  drivers/gpio/gpio-tegra186.c                | 2 +-
+> >> > >  drivers/gpio/gpio-tqmx86.c                  | 2 +-
+> >> > >  drivers/gpio/gpio-visconti.c                | 2 +-
+> >> > >  drivers/gpio/gpio-xgs-iproc.c               | 2 +-
+> >> > >  drivers/irqchip/irq-gic.c                   | 2 +-
+> >> > >  drivers/irqchip/irq-mvebu-pic.c             | 2 +-
+> >> > >  drivers/irqchip/irq-versatile-fpga.c        | 2 +-
+> >> > >  drivers/pinctrl/bcm/pinctrl-iproc-gpio.c    | 2 +-
+> >> > >  drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 2 +-
+> >> > >  drivers/pinctrl/pinctrl-mcp23s08.c          | 2 +-
+> >> > >  drivers/pinctrl/pinctrl-stmfx.c             | 2 +-
+> >> > >  drivers/pinctrl/pinctrl-sx150x.c            | 2 +-
+> >> > >  drivers/pinctrl/renesas/pinctrl-rzg2l.c     | 2 +-
+> >> > 
+> >> > Can you split this in three patches per-subsystem?
+> >> > One for gpio, one for irqchip and one for pinctrl?
+> >> > 
+> >> > Then send to each subsystem maintainer and CC kees on
+> >> > each.
+> >> > 
+> >> > I'm just the pinctrl maintainer. The rest can be found with
+> >> > scripts/get_maintainer.pl.
+> >> 
+> >> Oof. That's a lot of work for a mechanical change like this. Perhaps
+> >> Greg KH can take it directly to the drivers tree instead?
+> >
+> >I can take it all, as-is, right now, if you want me to.  Just let me
+> >know.
+> 
+> Yes, please do. I will send a patch for making seq_printf more defensive separately.
 
-Test coverage for security/landlock is 93.3% of 1604 lines according to
-gcc/gcov-14.
+Great, now queued up, let's make sure 0-day is ok with it...
 
-Cc: Günther Noack <gnoack@google.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20241122143353.59367-24-mic@digikod.net
----
-
-Changes since v2:
-- New patch.
----
- .../testing/selftests/landlock/ptrace_test.c  | 62 +++++++++++++++++--
- 1 file changed, 58 insertions(+), 4 deletions(-)
-
-diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testing/selftests/landlock/ptrace_test.c
-index a19db4d0b3bd..592927059cc3 100644
---- a/tools/testing/selftests/landlock/ptrace_test.c
-+++ b/tools/testing/selftests/landlock/ptrace_test.c
-@@ -4,6 +4,7 @@
-  *
-  * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
-  * Copyright © 2019-2020 ANSSI
-+ * Copyright © 2024 Microsoft Corporation
-  */
- 
- #define _GNU_SOURCE
-@@ -17,6 +18,7 @@
- #include <sys/wait.h>
- #include <unistd.h>
- 
-+#include "audit.h"
- #include "common.h"
- 
- /* Copied from security/yama/yama_lsm.c */
-@@ -85,9 +87,27 @@ static int get_yama_ptrace_scope(void)
- 	return ret;
- }
- 
--/* clang-format off */
--FIXTURE(hierarchy) {};
--/* clang-format on */
-+static int matches_log_ptrace(struct __test_metadata *const _metadata,
-+			      struct audit_state *const state, const pid_t opid)
-+{
-+	static const char log_template[] = REGEX_LANDLOCK_PREFIX
-+		" blockers=ptrace opid=%d ocomm=\"ptrace_test\"$";
-+	char log_match[sizeof(log_template) + 10];
-+	int log_match_len;
-+
-+	log_match_len =
-+		snprintf(log_match, sizeof(log_match), log_template, opid);
-+	if (log_match_len > sizeof(log_match))
-+		return -E2BIG;
-+
-+	// TODO: return -errno with AUDIT_SYSCALL
-+	return !audit_match_record(state, AUDIT_LANDLOCK_DENY, log_match);
-+}
-+
-+FIXTURE(hierarchy)
-+{
-+	struct audit_state state;
-+};
- 
- FIXTURE_VARIANT(hierarchy)
- {
-@@ -245,10 +265,15 @@ FIXTURE_VARIANT_ADD(hierarchy, deny_with_forked_domain) {
- 
- FIXTURE_SETUP(hierarchy)
- {
-+	disable_caps(_metadata);
-+	set_cap(_metadata, CAP_AUDIT_CONTROL);
-+	EXPECT_EQ(0, audit_init(&self->state));
-+	clear_cap(_metadata, CAP_AUDIT_CONTROL);
- }
- 
--FIXTURE_TEARDOWN(hierarchy)
-+FIXTURE_TEARDOWN_PARENT(hierarchy)
- {
-+	EXPECT_EQ(0, audit_cleanup(NULL));
- }
- 
- /* Test PTRACE_TRACEME and PTRACE_ATTACH for parent and child. */
-@@ -261,6 +286,7 @@ TEST_F(hierarchy, trace)
- 	char buf_parent;
- 	long ret;
- 	bool can_read_child, can_trace_child, can_read_parent, can_trace_parent;
-+	struct audit_records records;
- 
- 	yama_ptrace_scope = get_yama_ptrace_scope();
- 	ASSERT_LE(0, yama_ptrace_scope);
-@@ -336,17 +362,26 @@ TEST_F(hierarchy, trace)
- 		err_proc_read = test_ptrace_read(parent);
- 		if (can_read_parent) {
- 			EXPECT_EQ(0, err_proc_read);
-+			EXPECT_EQ(0, matches_log_ptrace(_metadata, &self->state,
-+							parent));
- 		} else {
- 			EXPECT_EQ(EACCES, err_proc_read);
-+			EXPECT_EQ(1, matches_log_ptrace(_metadata, &self->state,
-+							parent));
- 		}
- 
- 		/* Tests PTRACE_ATTACH on the parent. */
- 		ret = ptrace(PTRACE_ATTACH, parent, NULL, 0);
- 		if (can_trace_parent) {
- 			EXPECT_EQ(0, ret);
-+			EXPECT_EQ(0, matches_log_ptrace(_metadata, &self->state,
-+							parent));
- 		} else {
- 			EXPECT_EQ(-1, ret);
- 			EXPECT_EQ(EPERM, errno);
-+			EXPECT_EQ(!can_read_parent,
-+				  matches_log_ptrace(_metadata, &self->state,
-+						     parent));
- 		}
- 		if (ret == 0) {
- 			ASSERT_EQ(parent, waitpid(parent, &status, 0));
-@@ -358,9 +393,15 @@ TEST_F(hierarchy, trace)
- 		ret = ptrace(PTRACE_TRACEME);
- 		if (can_trace_child) {
- 			EXPECT_EQ(0, ret);
-+			EXPECT_EQ(0, matches_log_ptrace(_metadata, &self->state,
-+							parent));
- 		} else {
- 			EXPECT_EQ(-1, ret);
- 			EXPECT_EQ(EPERM, errno);
-+			/* We should indeed see the parent process. */
-+			EXPECT_EQ(!can_read_child,
-+				  matches_log_ptrace(_metadata, &self->state,
-+						     parent));
- 		}
- 
- 		/*
-@@ -408,17 +449,25 @@ TEST_F(hierarchy, trace)
- 	err_proc_read = test_ptrace_read(child);
- 	if (can_read_child) {
- 		EXPECT_EQ(0, err_proc_read);
-+		EXPECT_EQ(0,
-+			  matches_log_ptrace(_metadata, &self->state, child));
- 	} else {
- 		EXPECT_EQ(EACCES, err_proc_read);
-+		EXPECT_EQ(1,
-+			  matches_log_ptrace(_metadata, &self->state, child));
- 	}
- 
- 	/* Tests PTRACE_ATTACH on the child. */
- 	ret = ptrace(PTRACE_ATTACH, child, NULL, 0);
- 	if (can_trace_child) {
- 		EXPECT_EQ(0, ret);
-+		EXPECT_EQ(0,
-+			  matches_log_ptrace(_metadata, &self->state, child));
- 	} else {
- 		EXPECT_EQ(-1, ret);
- 		EXPECT_EQ(EPERM, errno);
-+		EXPECT_EQ(!can_read_child,
-+			  matches_log_ptrace(_metadata, &self->state, child));
- 	}
- 
- 	if (ret == 0) {
-@@ -434,6 +483,11 @@ TEST_F(hierarchy, trace)
- 	if (WIFSIGNALED(status) || !WIFEXITED(status) ||
- 	    WEXITSTATUS(status) != EXIT_SUCCESS)
- 		_metadata->exit_code = KSFT_FAIL;
-+
-+	/* Makes sure there is no superfluous logged records. */
-+	audit_count_records(&self->state, &records);
-+	EXPECT_EQ(0, records.deny);
-+	EXPECT_EQ(0, records.info);
- }
- 
- TEST_HARNESS_MAIN
--- 
-2.47.0
-
+greg k-h
 
