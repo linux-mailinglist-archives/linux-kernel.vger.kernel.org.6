@@ -1,165 +1,301 @@
-Return-Path: <linux-kernel+bounces-418506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A009D6256
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:33:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6DE99D625A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:35:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DB97B26097
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:33:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 340A716087B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A161DE3BF;
-	Fri, 22 Nov 2024 16:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121801DE89A;
+	Fri, 22 Nov 2024 16:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HRl5QjNs"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kHmygZF8"
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE447E792;
-	Fri, 22 Nov 2024 16:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B2013C80C;
+	Fri, 22 Nov 2024 16:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732293202; cv=none; b=uTfB2izOFlEQmN5ZqTnbMFodGzijAFkSshzkzoeuAhf4D7zSQDWubU/QlxRDP6PH7yPP/Dh8dA/PMLWGkVl5Op7zmNwlIvgH0OzZ1nDqr9v8FI6AqnMUfynoMINLG3E5TNYmfxhMNbPdCZqL7QF5PIIKXTbpBBMdzYiaET4lNuk=
+	t=1732293304; cv=none; b=HbNbJQ6oyo3JS5a2uRIWq4OVLeFxJZwXTfkXQPjUiRGziDHoC6VLtpnCXlfJVK9EBoHMVzPLJt1wF/GdDd0PYNURt3bkriFtg/3IIMNE1Ay6UJa5NCs90q0BrQKxH5UbdjyIlPYh3b64MvvJegeJCQWU657ZUt585x8rOiSNHiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732293202; c=relaxed/simple;
-	bh=Sjz/K+NEFxUEEuCyvVpJZN+ShEYQCyzXT2OZtHPe+TI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L7Ti1jglINlScLEAtET5f68yQY94a5FEOzJdPd5MkevUBgLhyfeVzEAv9Gtl2F0oRye/59jKCA1wDdxTSme/wiWG9vQsMU4WeR24ihiZOVSQeEZOMW+j3X/nnhuz4iNqyuZc4K7dBy6t4W4gf1Ywg65k25VYuB/eJj/GNExLKX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HRl5QjNs; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732293201; x=1763829201;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Sjz/K+NEFxUEEuCyvVpJZN+ShEYQCyzXT2OZtHPe+TI=;
-  b=HRl5QjNsR6wFUbA+c8wIkJfIoqkNQWK1ktr2/r+w0KT2BA4zTuWmZ099
-   MsKPAN4eLJYHDrje5biYpBzkxVWs4WHkdvp3yYAU9yqwrWQKg8m6vpn/g
-   fzh1MuUOPcwG6ATA5HmBv+JhwgM6MFzA+ZB3udN5fFWlmqxKIEggd3xfF
-   b/XRD0eDjztrs63bQl2ReXfXtFpRSvmDgwVCjHZAF31zJ9lX4WQTC4MeE
-   JJmzvVMCAqq997Ry5qBbIReHth+yLcPDNDObCo78lA2hQvz5BYZfwCb7V
-   iEDZQsHjU8v0WCdCnPewfyB03dxbmhELnn/7d69ApCtRvc1mtdVAJW8p8
-   A==;
-X-CSE-ConnectionGUID: uTNDIZgfQ5Osw/C0tf6/RQ==
-X-CSE-MsgGUID: Vlm614KRRq2HAvkgSZ68eA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="36360139"
-X-IronPort-AV: E=Sophos;i="6.12,176,1728975600"; 
-   d="scan'208";a="36360139"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 08:33:20 -0800
-X-CSE-ConnectionGUID: qQKvWVu1Q8OBadhfyzyZBQ==
-X-CSE-MsgGUID: tdHek+NFSu+q55zuCfsfrg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,176,1728975600"; 
-   d="scan'208";a="95564880"
-Received: from bjrankin-mobl3.amr.corp.intel.com (HELO [10.124.220.110]) ([10.124.220.110])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 08:33:19 -0800
-Message-ID: <0226840c-a975-42a5-9ddf-a54da7ef8746@intel.com>
-Date: Fri, 22 Nov 2024 08:33:18 -0800
+	s=arc-20240116; t=1732293304; c=relaxed/simple;
+	bh=QmYCrbrZ0QjT4nfwEGLidKiS2Xq+j8XtbaNx/WThNd4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mikdsj14/WDHhsz2GV1VAqkfvcUXlKfSbqgJBtT0ND2+exJ4fIsQX5g1YEJmk/rAobQcJDrdt8x+J6eA5nd3nTnRARTJf5bIHd2IFwIMTS9pJcr433joG+nWBJA9A6VJ7f1kZ1Z9BGx+v4kKY0bvYbrQBr6w/vq2/fjZsNLJ89M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kHmygZF8; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-83abc039b25so80350739f.0;
+        Fri, 22 Nov 2024 08:35:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732293301; x=1732898101; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GReVTWBGYFw/FTP8yPSarz5HbeY1G9Mo/s/2dusNN00=;
+        b=kHmygZF83lUg6MxCWp2cdL+h5FMk9+/mBIgt+nkibD08g559paNPhGqMDGavaOsEet
+         99/Zr6eZ74ZsX2hlKMK5sqQdcTDTOHcCl3YuUVXWb8i0A09uFjyQWNU6HMYQ77k+xzAH
+         VfeCZUDPanDFCwZRUAKo7b7+zXV2oBEY5K1MBsSOmZYl8m74oTzrUKgApRdNn+WzR49o
+         HhqABLZJ8Z/FY9tQPUEhE4LdEJ27N6zNvksquRs8On5TSbA5kgFIxFlHUSjducatXlTP
+         X5E1OQTCuOBZkEXaOtCEZQbeQS+bryxwYLZ2CpMrWjZeJTG1HDhru8TsA2acFZN5UmpF
+         79zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732293301; x=1732898101;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GReVTWBGYFw/FTP8yPSarz5HbeY1G9Mo/s/2dusNN00=;
+        b=fdowpMNHopgjL9a+2qXwQTCN+C2QwLjQUwkFk/Gxer1YfdXpBesAaQvhmq4U/5uZy1
+         aJuvLVvIqzYl2ibR2YDnncXDTUYYqkCI/Cjf28hCUawQ4gb3bPhWJ+kVQSrg+6U/Fyfo
+         6pmdzouyfn2h0hxngsNTUTei2bmXTZJ5IYmwnkJaT/bK9QFsQEubZGrqxoMEfzWv6Sac
+         eFbU/0FZoM5/6wjWu52TTIU6HBOZ21MGz52BeIa7Mzjh+3EY7l3Mhzs0Tz8fAZbpzjMu
+         nnSZ4ysmkIUbqjIngvo7vQV6YV1KwYHHgOqsKbcddKU9OM7ljXkS1EgZ+TNyGrk1LYFa
+         Ouaw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0/BLL8iaNifa22q4V/Sb5jnTzNCdz6ULrS69Bz3Rh+4cFJkw6V/PgopkZpQH+xwHUMg+PLDAn/WOXnxoH@vger.kernel.org, AJvYcCVnXJEpHwYfB4EuSe7KonVxuwgpZ290rjBAkwfvsz5xQeSE7nJ/bBYLUUpj5JcxhavvB0BiU94iZH+xcaVM@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAU/fIM5Y9u/VsC3nMMKAR5+pi5u+t5M9VqQZ1vpIRui5btx5C
+	BiZ80djU0vVR6UBagWHtNyIi9VPsFInvfaiWV0mMIVROf/PfGwJ4gRcIX47XPw/tCMaRduRygWb
+	5s7G4/gRQPOfJEK+8wjsmiYSuexE=
+X-Gm-Gg: ASbGncsAmtyHPXSn/Roz8XK06fA8n1ven7AvvSNcQPoMHtxHLpltMA94/1ygbYkfL8K
+	NNvd4/PTPCu1T9L+dP6+idXoxHy2zk8aBKGE4dUAvfDAKRKw/K8fBMGU1uovXqQ==
+X-Google-Smtp-Source: AGHT+IHCczpv5MTe10j+ysaRXaFSBOv7fYB9EL4QC/DbZ6+Wyvs0DC3CMZrZNaNLbRff8uCbLJwlKESwT+n24Kb5K0A=
+X-Received: by 2002:a05:6602:3c8:b0:83d:e526:fde7 with SMTP id
+ ca18e2360f4ac-83ecdca5850mr480494439f.6.1732293300996; Fri, 22 Nov 2024
+ 08:35:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/7] x86/virt/tdx: Add SEAMCALL wrapper to enter/exit
- TDX guest
-To: Adrian Hunter <adrian.hunter@intel.com>, pbonzini@redhat.com,
- seanjc@google.com, kvm@vger.kernel.org, dave.hansen@linux.intel.com
-Cc: rick.p.edgecombe@intel.com, kai.huang@intel.com,
- reinette.chatre@intel.com, xiaoyao.li@intel.com,
- tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
- dmatlack@google.com, isaku.yamahata@intel.com, nik.borisov@suse.com,
- linux-kernel@vger.kernel.org, x86@kernel.org, yan.y.zhao@intel.com,
- chao.gao@intel.com, weijiang.yang@intel.com
-References: <20241121201448.36170-1-adrian.hunter@intel.com>
- <20241121201448.36170-2-adrian.hunter@intel.com>
- <fa817f29-e3ba-4c54-8600-e28cf6ab1953@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <fa817f29-e3ba-4c54-8600-e28cf6ab1953@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241114160721.1527934-1-quic_bibekkum@quicinc.com>
+ <20241114160721.1527934-4-quic_bibekkum@quicinc.com> <CAF6AEGuwWsAkRyF-h5Aj3KzM7iksb12HsfJ5Ks+-P8hv60MWFg@mail.gmail.com>
+ <CAF6AEGvVteuOOMod6yw9_6eOn2PxAx+BR8sVOHAHp7Ts8XigBw@mail.gmail.com> <5696afa2-c4ab-42fe-b29a-6ecee622fbb4@quicinc.com>
+In-Reply-To: <5696afa2-c4ab-42fe-b29a-6ecee622fbb4@quicinc.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Fri, 22 Nov 2024 08:34:49 -0800
+Message-ID: <CAF6AEGuMmdnOmATMy8f+YgGxfrYb5mkG_qgy870wZPebKaZjVQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND v17 3/5] iommu/arm-smmu: add support for PRR bit setup
+To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, jgg@ziepe.ca, 
+	jsnitsel@redhat.com, robh@kernel.org, krzysztof.kozlowski@linaro.org, 
+	quic_c_gdjako@quicinc.com, dmitry.baryshkov@linaro.org, iommu@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Connor Abbott <cwabbott0@gmail.com>, 
+	Rob Clark <robdclark@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/22/24 03:10, Adrian Hunter wrote:
-> +struct tdh_vp_enter_tdcall {
-> +	u64	reg_mask	: 32,
-> +		vm_idx		:  2,
-> +		reserved_0	: 30;
-> +	u64	data[TDX_ERR_DATA_PART_2];
-> +	u64	fn;	/* Non-zero for hypercalls, zero otherwise */
-> +	u64	subfn;
-> +	union {
-> +		struct tdh_vp_enter_vmcall 		vmcall;
-> +		struct tdh_vp_enter_gettdvmcallinfo	gettdvmcallinfo;
-> +		struct tdh_vp_enter_mapgpa		mapgpa;
-> +		struct tdh_vp_enter_getquote		getquote;
-> +		struct tdh_vp_enter_reportfatalerror	reportfatalerror;
-> +		struct tdh_vp_enter_cpuid		cpuid;
-> +		struct tdh_vp_enter_mmio		mmio;
-> +		struct tdh_vp_enter_hlt			hlt;
-> +		struct tdh_vp_enter_io			io;
-> +		struct tdh_vp_enter_rd			rd;
-> +		struct tdh_vp_enter_wr			wr;
-> +	};
-> +};
+On Fri, Nov 22, 2024 at 8:20=E2=80=AFAM Bibek Kumar Patro
+<quic_bibekkum@quicinc.com> wrote:
+>
+>
+>
+> On 11/21/2024 3:40 AM, Rob Clark wrote:
+> > On Wed, Nov 20, 2024 at 9:17=E2=80=AFAM Rob Clark <robdclark@gmail.com>=
+ wrote:
+> >>
+> >> On Thu, Nov 14, 2024 at 8:10=E2=80=AFAM Bibek Kumar Patro
+> >> <quic_bibekkum@quicinc.com> wrote:
+> >>>
+> >>> Add an adreno-smmu-priv interface for drm/msm to call
+> >>> into arm-smmu-qcom and initiate the PRR bit setup or reset
+> >>> sequence as per request.
+> >>>
+> >>> This will be used by GPU to setup the PRR bit and related
+> >>> configuration registers through adreno-smmu private
+> >>> interface instead of directly poking the smmu hardware.
+> >>>
+> >>> Suggested-by: Rob Clark <robdclark@gmail.com>
+> >>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+> >>> ---
+> >>>   drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 37 +++++++++++++++++++=
++++
+> >>>   drivers/iommu/arm/arm-smmu/arm-smmu.h      |  2 ++
+> >>>   include/linux/adreno-smmu-priv.h           | 14 ++++++++
+> >>>   3 files changed, 53 insertions(+)
+> >>>
+> >>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iom=
+mu/arm/arm-smmu/arm-smmu-qcom.c
+> >>> index d26f5aea248e..0e4f3fbda961 100644
+> >>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> >>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> >>> @@ -16,6 +16,8 @@
+> >>>
+> >>>   #define QCOM_DUMMY_VAL -1
+> >>>
+> >>> +#define GFX_ACTLR_PRR          (1 << 5)
+> >>> +
+> >>>   static struct qcom_smmu *to_qcom_smmu(struct arm_smmu_device *smmu)
+> >>>   {
+> >>>          return container_of(smmu, struct qcom_smmu, smmu);
+> >>> @@ -99,6 +101,32 @@ static void qcom_adreno_smmu_resume_translation(c=
+onst void *cookie, bool termina
+> >>>          arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_RESUME, reg)=
+;
+> >>>   }
+> >>>
+> >>> +static void qcom_adreno_smmu_set_prr_bit(const void *cookie, bool se=
+t)
+> >>> +{
+> >>> +       struct arm_smmu_domain *smmu_domain =3D (void *)cookie;
+> >>> +       struct arm_smmu_device *smmu =3D smmu_domain->smmu;
+> >>> +       struct arm_smmu_cfg *cfg =3D &smmu_domain->cfg;
+> >>> +       u32 reg =3D 0;
+> >>> +
+> >>> +       reg =3D  arm_smmu_cb_read(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR=
+);
+> >>> +       reg &=3D ~GFX_ACTLR_PRR;
+> >>> +       if (set)
+> >>> +               reg |=3D FIELD_PREP(GFX_ACTLR_PRR, 1);
+> >>> +       arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR, reg);
+> >>> +}
+> >>> +
+> >>> +static void qcom_adreno_smmu_set_prr_addr(const void *cookie, phys_a=
+ddr_t page_addr)
+> >>> +{
+> >>> +       struct arm_smmu_domain *smmu_domain =3D (void *)cookie;
+> >>> +       struct arm_smmu_device *smmu =3D smmu_domain->smmu;
+> >>> +
+> >>> +       writel_relaxed(lower_32_bits(page_addr),
+> >>> +                               smmu->base + ARM_SMMU_GFX_PRR_CFG_LAD=
+DR);
+> >>> +
+> >>> +       writel_relaxed(upper_32_bits(page_addr),
+> >>> +                               smmu->base + ARM_SMMU_GFX_PRR_CFG_UAD=
+DR);
+> >>> +}
+> >>> +
+> >>>   #define QCOM_ADRENO_SMMU_GPU_SID 0
+> >>>
+> >>>   static bool qcom_adreno_smmu_is_gpu_device(struct device *dev)
+> >>> @@ -210,6 +238,7 @@ static bool qcom_adreno_can_do_ttbr1(struct arm_s=
+mmu_device *smmu)
+> >>>   static int qcom_adreno_smmu_init_context(struct arm_smmu_domain *sm=
+mu_domain,
+> >>>                  struct io_pgtable_cfg *pgtbl_cfg, struct device *dev=
+)
+> >>>   {
+> >>> +       const struct device_node *np =3D smmu_domain->smmu->dev->of_n=
+ode;
+> >>>          struct adreno_smmu_priv *priv;
+> >>>
+> >>>          smmu_domain->cfg.flush_walk_prefer_tlbiasid =3D true;
+> >>> @@ -239,6 +268,14 @@ static int qcom_adreno_smmu_init_context(struct =
+arm_smmu_domain *smmu_domain,
+> >>>          priv->get_fault_info =3D qcom_adreno_smmu_get_fault_info;
+> >>>          priv->set_stall =3D qcom_adreno_smmu_set_stall;
+> >>>          priv->resume_translation =3D qcom_adreno_smmu_resume_transla=
+tion;
+> >>> +       priv->set_prr_bit =3D NULL;
+> >>> +       priv->set_prr_addr =3D NULL;
+> >>> +
+> >>> +       if (of_device_is_compatible(np, "qcom,smmu-500") &&
+> >>> +                       of_device_is_compatible(np, "qcom,adreno-smmu=
+")) {
+> >>
+> >> fwiw, it seems like PRR actually works on sc7180, which is _not_
+> >> mmu-500, so I guess the support actually goes back further.
+> >>
+> >> I'm curious if we can just rely on this being supported by any hw that
+> >> has a6xx or newer?
+> >
+> >
+> > Also, unrelated, but we can't assume the smmu is powered when drm
+> > driver calls set_prr_bit/addr, could you add in runpm get/put around
+> > the register access?
+> >
+>
+> I see, thanks for this observation.
+> It's surely a possible case, when they access these registers
+> SMMU state is off.
+> I will add the suggested runpm ops around the register access.
+>
+> > Otherwise Conner and I have vk sparse residency working now
+> >
+>
+> Sorry, could not get this. Did you mean that vk sparse residency
+> is working now using this patch?
 
-Let's say someone declares this:
+Yes, vk sparse residency is working with this patch (plus addition of
+runpm get/put, plus drm/msm patches plus turnip patches) ;-)
 
-struct tdh_vp_enter_mmio {
-	u64	size;
-	u64	mmio_addr;
-	u64	direction;
-	u64	value;
-};
+BR,
+-R
 
-How long is that going to take you to debug?
-
+> Thanks & regards,
+> Bibek
+>
+> > BR,
+> > -R
+> >
+> >>
+> >>> +               priv->set_prr_bit =3D qcom_adreno_smmu_set_prr_bit;
+> >>> +               priv->set_prr_addr =3D qcom_adreno_smmu_set_prr_addr;
+> >>> +       }
+> >>>
+> >>>          return 0;
+> >>>   }
+> >>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/ar=
+m/arm-smmu/arm-smmu.h
+> >>> index e2aeb511ae90..2dbf3243b5ad 100644
+> >>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
+> >>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
+> >>> @@ -154,6 +154,8 @@ enum arm_smmu_cbar_type {
+> >>>   #define ARM_SMMU_SCTLR_M               BIT(0)
+> >>>
+> >>>   #define ARM_SMMU_CB_ACTLR              0x4
+> >>> +#define ARM_SMMU_GFX_PRR_CFG_LADDR     0x6008
+> >>> +#define ARM_SMMU_GFX_PRR_CFG_UADDR     0x600C
+> >>>
+> >>>   #define ARM_SMMU_CB_RESUME             0x8
+> >>>   #define ARM_SMMU_RESUME_TERMINATE      BIT(0)
+> >>> diff --git a/include/linux/adreno-smmu-priv.h b/include/linux/adreno-=
+smmu-priv.h
+> >>> index c637e0997f6d..614665153b3e 100644
+> >>> --- a/include/linux/adreno-smmu-priv.h
+> >>> +++ b/include/linux/adreno-smmu-priv.h
+> >>> @@ -50,6 +50,18 @@ struct adreno_smmu_fault_info {
+> >>>    *                 the GPU driver must call resume_translation()
+> >>>    * @resume_translation: Resume translation after a fault
+> >>>    *
+> >>> + * *CAUTION* : PRR callbacks (set_prr_bit/set_prr_addr) are NULL ter=
+minated for
+> >>> + *             targets without PRR support. Exercise caution and ver=
+ify target
+> >>> + *             capabilities before invoking these callbacks to preve=
+nt potential
+> >>> + *             runtime errors or unexpected behavior.
+> >>> + *
+> >>> + * @set_prr_bit:   Extendible interface to be used by GPU to modify =
+the
+> >>> + *                ACTLR register bits, currently used to configure
+> >>> + *                Partially-Resident-Region (PRR) bit for feature's
+> >>> + *                setup and reset sequence as requested.
+> >>> + * @set_prr_addr:  Configure the PRR_CFG_*ADDR register with the
+> >>> + *                physical address of PRR page passed from
+> >>> + *                GPU driver.
+> >>>    *
+> >>>    * The GPU driver (drm/msm) and adreno-smmu work together for contr=
+olling
+> >>>    * the GPU's SMMU instance.  This is by necessity, as the GPU is di=
+rectly
+> >>> @@ -67,6 +79,8 @@ struct adreno_smmu_priv {
+> >>>       void (*get_fault_info)(const void *cookie, struct adreno_smmu_f=
+ault_info *info);
+> >>>       void (*set_stall)(const void *cookie, bool enabled);
+> >>>       void (*resume_translation)(const void *cookie, bool terminate);
+> >>> +    void (*set_prr_bit)(const void *cookie, bool set);
+> >>> +    void (*set_prr_addr)(const void *cookie, phys_addr_t page_addr);
+> >>>   };
+> >>>
+> >>>   #endif /* __ADRENO_SMMU_PRIV_H */
+> >>> --
+> >>> 2.34.1
+> >>>
+>
 
