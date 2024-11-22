@@ -1,180 +1,145 @@
-Return-Path: <linux-kernel+bounces-418638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA25B9D63B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 19:04:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 135A29D63D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 19:07:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42ADAB23999
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:04:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA59A28420A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221E81DF97F;
-	Fri, 22 Nov 2024 18:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BDg+Gqmf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210BB1E22EF;
+	Fri, 22 Nov 2024 18:05:08 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8AE570809;
-	Fri, 22 Nov 2024 18:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4B51E1C35;
+	Fri, 22 Nov 2024 18:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732298665; cv=none; b=c+kqg4GlvKvnEvzEPo1ImF4dgruLSR3ryhE4m/JcaWjc1FErJ5aHN3jucPgynr6IFOj1XCb2ymOqCtje0qhTwM4avf38ogZWn74z39D+MNSVrFKn42aQj2wo1X1LK726dY8+DFMfqyf2OkmKd/aE4TwH3P+lvg+2laDGC5uAzFg=
+	t=1732298707; cv=none; b=gV5rokdbF/ayReyP2EomwZPlCOFiZsWwPb0AmPWv/am+whDNbVhDDC0tK1NWXhj0v6l04u6IRoZVbMnKpFyD9xcdFIJGDBislodeNzAEJLLr66bA1Mn0qlcsCqs40UHzLyZnvYmEQF/U0sWzW2j7nbyFZVSQwtx3U8ukkcfMlUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732298665; c=relaxed/simple;
-	bh=5fdyHu+mVj81YDXP9szqeZG7VAo7sEaZDDuoEAjH5Zc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kskOI6anJMPKEY7JrATBsyXRlLcvM9BzRzTDJlJx4BWqFzmYwymvWDVI4PMX3ZsTiGLNKAfNLTM8BT4mjD7vuYcPDJdcHrC1xnKzE6PZ721+UXDsxPpHbkprPXa0L19KZKU4JCv6SpzDG5+CNNDNTGYW0cZMftzsm+Ch2ceXjPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BDg+Gqmf; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732298664; x=1763834664;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=5fdyHu+mVj81YDXP9szqeZG7VAo7sEaZDDuoEAjH5Zc=;
-  b=BDg+Gqmf88HKcvahbChsOq55SFSlliBX7JYhC6rubujqM/sw0es1yJ0N
-   0ZRnNSQGNh5qGlUIpPQ5UZJ3/fpMU4mvvjvNG6+eWNB8+Ohznz2WM8E95
-   dGdlTfnUFn24OzE4tP6+thg7/2NkTVE07sfM922+gQFpOCyfNDR+x4Qa7
-   Wsqcd9uRVBVGUS1PcdkfZhFOOlnnIVE7GJVyQ2nA1bn9mNUkaTcrJH4tq
-   gHKn7ydsks3zYzo4/nv94ay88nWoUIytgbXWExPF+MrVk/O4HXMwBGEZ2
-   edeOX6VAMliP20c9PPZ+PaLZwrtAOcbL19f+iecNJA3gcA2SbSWOgcJQQ
-   A==;
-X-CSE-ConnectionGUID: WZycwU88R/q1GbRDyuL8Dw==
-X-CSE-MsgGUID: LzAuAvQdQZCjhadOgGavGg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="43528543"
-X-IronPort-AV: E=Sophos;i="6.12,176,1728975600"; 
-   d="scan'208";a="43528543"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 10:04:08 -0800
-X-CSE-ConnectionGUID: OWtiQNibR46e3oQ+kvB95A==
-X-CSE-MsgGUID: GdN/y0T+TrqpvMi2L9/Cbw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,176,1728975600"; 
-   d="scan'208";a="95730016"
-Received: from bjrankin-mobl3.amr.corp.intel.com (HELO [10.124.220.110]) ([10.124.220.110])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 10:04:08 -0800
-Message-ID: <30d0cef5-82d5-4325-b149-0e99833b8785@intel.com>
-Date: Fri, 22 Nov 2024 10:04:06 -0800
+	s=arc-20240116; t=1732298707; c=relaxed/simple;
+	bh=3iO38idGHHnZIEDzBNblLTucqnxBukjeIC0P/Cfa3Ic=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CJf8NWEiu7YU/0ktueJfxlTaTAp75VTtjTMRxgAPUgsvae/VVnQJsS1GA2WhHBsvfqyH01pU+lanxm//MbzF3ofbMxaVRh5voQtD27iqpPcLbLZxWbGK/TgDBWVJL3I4keag91ZYNirWcB7Ob6MBDnEuLSuVXcT0VZxQOEmdUoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xw2xr2SQqz6K94W;
+	Sat, 23 Nov 2024 02:02:40 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (unknown [7.182.85.172])
+	by mail.maildlp.com (Postfix) with ESMTPS id A5FD314010C;
+	Sat, 23 Nov 2024 02:05:03 +0800 (CST)
+Received: from P_UKIT01-A7bmah.china.huawei.com (10.126.171.16) by
+ frapeml500007.china.huawei.com (7.182.85.172) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 22 Nov 2024 19:05:01 +0100
+From: <shiju.jose@huawei.com>
+To: <linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <bp@alien8.de>, <tony.luck@intel.com>, <rafael@kernel.org>,
+	<lenb@kernel.org>, <mchehab@kernel.org>, <dan.j.williams@intel.com>,
+	<dave@stgolabs.net>, <jonathan.cameron@huawei.com>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <david@redhat.com>, <Vilas.Sridharan@amd.com>,
+	<leo.duran@amd.com>, <Yazen.Ghannam@amd.com>, <rientjes@google.com>,
+	<jiaqiyan@google.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
+	<naoya.horiguchi@nec.com>, <james.morse@arm.com>, <jthoughton@google.com>,
+	<somasundaram.a@hpe.com>, <erdemaktas@google.com>, <pgonda@google.com>,
+	<duenwen@google.com>, <gthelen@google.com>, <wschwartz@amperecomputing.com>,
+	<dferguson@amperecomputing.com>, <wbs@os.amperecomputing.com>,
+	<nifan.cxl@gmail.com>, <yazen.ghannam@amd.com>, <tanxiaofei@huawei.com>,
+	<prime.zeng@hisilicon.com>, <roberto.sassu@huawei.com>,
+	<kangkang.shen@futurewei.com>, <wanghuiqiang@huawei.com>,
+	<linuxarm@huawei.com>, <shiju.jose@huawei.com>
+Subject: [PATCH v17 10/18] cxl: Add UUIDs for the CXL RAS features
+Date: Fri, 22 Nov 2024 18:04:07 +0000
+Message-ID: <20241122180416.1932-11-shiju.jose@huawei.com>
+X-Mailer: git-send-email 2.43.0.windows.1
+In-Reply-To: <20241122180416.1932-1-shiju.jose@huawei.com>
+References: <20241122180416.1932-1-shiju.jose@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/6] x86/virt/tdx: Add SEAMCALL wrappers for TDX KeyID
- management
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>, kvm@vger.kernel.org,
- pbonzini@redhat.com, seanjc@google.com
-Cc: isaku.yamahata@gmail.com, kai.huang@intel.com,
- linux-kernel@vger.kernel.org, tony.lindgren@linux.intel.com,
- xiaoyao.li@intel.com, yan.y.zhao@intel.com, x86@kernel.org,
- adrian.hunter@intel.com, Isaku Yamahata <isaku.yamahata@intel.com>,
- Binbin Wu <binbin.wu@linux.intel.com>, Yuan Yao <yuan.yao@intel.com>
-References: <20241115202028.1585487-1-rick.p.edgecombe@intel.com>
- <20241115202028.1585487-2-rick.p.edgecombe@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20241115202028.1585487-2-rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ frapeml500007.china.huawei.com (7.182.85.172)
 
-On 11/15/24 12:20, Rick Edgecombe wrote:
-> +struct tdx_td {
-> +	hpa_t tdr;
-> +	hpa_t *tdcs;
-> +};
+From: Dave Jiang <dave.jiang@intel.com>
 
-This is a step in the right direction because it gives the wrappers some
-more type safety.
+Add UUIDs for the CXL RAS features to a common file.
 
-But an hpa_t is _barely_ better than a u64.  If the 'tdr' is a page,
-then it needs to be _stored_ as a page:
+Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+---
+ include/cxl/features.h | 48 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+ create mode 100644 include/cxl/features.h
 
-	struct page *tdr_page;
+diff --git a/include/cxl/features.h b/include/cxl/features.h
+new file mode 100644
+index 000000000000..8a6c464ee571
+--- /dev/null
++++ b/include/cxl/features.h
+@@ -0,0 +1,48 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/* Copyright(c) 2024 Intel Corporation. */
++#ifndef __CXL_FEATS_H_
++#define __CXL_FEATS_H_
++
++#include <linux/uuid.h>
++
++/*
++ * Patrol scrub control CXL 3.1 Spec 8.2.9.9.11.1 Table 8-206
++ */
++#define CXL_FEAT_PATROL_SCRUB_UUID						\
++	UUID_INIT(0x96dad7d6, 0xfde8, 0x482b, 0xa7, 0x33, 0x75, 0x77, 0x4e,	\
++		  0x06, 0xdb, 0x8a)
++
++/*
++ * DDR5 ECS control CXL 3.1 Spec 8.2.9.9.11.2 Table 8-209
++ */
++#define CXL_FEAT_ECS_UUID							\
++	UUID_INIT(0xe5b13f22, 0x2328, 0x4a14, 0xb8, 0xba, 0xb9, 0x69, 0x1e,	\
++		  0x89, 0x33, 0x86)
++
++/*
++ * CXL maintenance operations CXL 3.1 Spec 8.2.9.7.2 Table 8-110
++ */
++#define CXL_FEAT_SPPR_UUID							\
++	UUID_INIT(0x892ba475, 0xfad8, 0x474e, 0x9d, 0x3e, 0x69, 0x2c, 0x91,	\
++		  0x75, 0x68, 0xbb)
++
++#define CXL_FEAT_HPPR_UUID							\
++	UUID_INIT(0x80ea4521, 0x786f, 0x4127, 0xaf, 0xb1, 0xec, 0x74, 0x59,	\
++		  0xfb, 0x0e, 0x24)
++
++#define CXL_FEAT_CACHELINE_SPARING_UUID						\
++	UUID_INIT(0x96C33386, 0x91dd, 0x44c7, 0x9e, 0xcb, 0xfd, 0xaf, 0x65,	\
++		  0x03, 0xba, 0xc4)
++
++#define CXL_FEAT_ROW_SPARING_UUID						\
++	UUID_INIT(0x450ebf67, 0xb135, 0x4f97, 0xa4, 0x98, 0xc2, 0xd5, 0x7f,	\
++		  0x27, 0x9b, 0xed)
++
++#define CXL_FEAT_BANK_SPARING_UUID						\
++	UUID_INIT(0x78b79636, 0x90ac, 0x4b64, 0xa4, 0xef, 0xfa, 0xac, 0x5d,	\
++		  0x18, 0xa8, 0x63)
++
++#define CXL_FEAT_RANK_SPARING_UUID						\
++	UUID_INIT(0x34dbaff5, 0x0552, 0x4281, 0x8f, 0x76, 0xda, 0x0b, 0x5e,	\
++		  0x7a, 0x76, 0xa7)
++#endif
+-- 
+2.43.0
 
-Also, please don't forget to spell these things out:
-
-	/* TD root structure: */
-	struct page *tdr_page;
-
-And the tdcs is an array of pages, right?  So it should be:
-
-	struct page **tdcs_pages;
-
-Or heck, I _think_ it can theoretically be defined as a variable-length
-array:
-
-	struct page *tdcs_pages[];
-
-and use the helpers that we have for that.
-
-Putting it all together, you would have this:
-
-struct tdx_td {
-	/* TD root structure: */
-	struct page *tdr_page;
-
-	int tdcs_nr_pages;
-	/* TD control structure: */
-	struct page *tdcs_pages[];
-};
-
-That's *MUCH* harder to misuse.  It's 100% obvious that you have a
-single page, plus a variable-length array of pages.  This is all from
-just looking at the structure definition.
-
-You know that 'tdr' is not just some random physical address.  It's a
-whole physical page.  It's page-aligned.  It was allocated, from the
-allocator.  It doesn't point to special memory.
-
-Ditto for "hpa_t *tdcs".  It's not obvious from the data structure that
-it's an array or if it's an array how it got allocated or how large it is.
 
