@@ -1,237 +1,782 @@
-Return-Path: <linux-kernel+bounces-417849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F84F9D59BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:04:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35F229D59BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:06:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7151B22214
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:04:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B65271F22EA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:06:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134DC16EC0E;
-	Fri, 22 Nov 2024 07:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB34F1632DC;
+	Fri, 22 Nov 2024 07:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qceSWXwZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nne92HF+"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A690230999;
-	Fri, 22 Nov 2024 07:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBFB215B554
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 07:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732259079; cv=none; b=SXmRzas7K98tH607kljZnp9bvSOoXtrebQIe7WHeHv+8zJCz2ZzjCBReVvXDkqkg08c+LqwOxXEVrDeOKeNG0947jGh/ndBDQvvS9EoMQqOBn6EA23yciHWmJv4plChUEpniim+K52rBa4Qg50G3JZPnbEOxrRJzvlgxN6GkT+Y=
+	t=1732259161; cv=none; b=gAsfc1HK0N0DnjktfyK2zfSad3cd8GMPRq7EX9h+vI6TtuXoqudjPcKGNwQPA8zBc/Lh0JRIpgYXTiADcvlCNQQ0xNbj9GAX5ZVbP1uIkCEWg1i/cIKz/M6I1VsFoQMb49ddc74R94B6v8JO41qSnUi6jMOOtfDW6QIFSXtt0Hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732259079; c=relaxed/simple;
-	bh=wXwjN6SWwb8tK8TltC9LInDSonKNvt9F2o/bm/x8k3I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LjVhfJ7gmbzMPNJOG8qP0j90946oD2GmtKlXMrCAkkKuyIiGNo6K11LqcmwFgvLferOZ2TEe7eL/z2ZCBQH1YfXtgA9gdOpbOSEcncWVvzhGFKrLffTTMUKFmvfywdyMu2HzoF4czSiqB0Tn4nuJyY8bW5YHRgRXFkz2CvXRPLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qceSWXwZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DF64C4CECE;
-	Fri, 22 Nov 2024 07:04:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732259078;
-	bh=wXwjN6SWwb8tK8TltC9LInDSonKNvt9F2o/bm/x8k3I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qceSWXwZ+LDXTxO8USb9/Vvs7KaZwYqyiCmdclP9SmSUMmCVBNv3sOba1xU9C5rtW
-	 5634eLtQREdQlGn1Jgd4sVraQJVZma6Cn5QjYJpmK6YgCGfV5U1C1gTfuRf+0VlLiz
-	 +klKyTFbi5kmtlTcsh/WAZccpfa3m3w6GKsF4h2TCKx1rQfi3b60AUJ9Zve0uQBEMx
-	 81XdjHAfWT9SqI3GHrb+deRCO5P42w95KDSDqPjcvB9Blz6rWv+3LUFW3h64WYvc5H
-	 /mjpQZXq5+4dsucu8/c6fFwDIY2Si+YCSJpy5Z6/+w7J4aFfYdHVgZroaIGqvM3071
-	 qhUXw7Pb6Xb4A==
-Message-ID: <f9b01690-8940-4f8b-b142-6c2ec4db3e83@kernel.org>
-Date: Fri, 22 Nov 2024 08:04:31 +0100
+	s=arc-20240116; t=1732259161; c=relaxed/simple;
+	bh=t8IvwuxpgKRtq+V9qxYsmMBZB0Q74biyQJ3KSyrNt88=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ejuT+aiJscMbpecKv1v7Es9E/R9KxxtsWe+j2DtZLwMda/3H/V75XFIc4TY+37KLu11P6pkL44WV1c0YV4gR2OGt5XiBKbdFIQyQvXltp6hkXTvrJAGPQPvmDaFfdtxrQ50YshwSwrmK+gOcaMOxfJ5u05rF3rlTMExAwFzcFZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Nne92HF+; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6d41b1e842aso9096436d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 23:05:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732259157; x=1732863957; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=g5RNQna4CZ9CliE9ms9S9SP9s6EuH+yqet8NWqjNOq8=;
+        b=Nne92HF+9XzaYLTDmIDhfc8s8hnB1HTvPKgsB0MMdy1l3vENPyTyw92ci0ulwvgmI8
+         7OcWQHUqkX2jAaz2E/WwMzspFwgQ+vpfp3vSGN6Lp0vtb/VcX+zBSdL++WIjNnQft82A
+         PeGXsgbwt7OnOYsdj9eN6R08JSD0riN4t3YDY9Z/B+2oNyAUNCqlT24Xb3STaYFB/bfh
+         q7pfskZ2Uh7cxOIbRiM5cUhxXVO2iYa9Fx0aDU2bKXqYgM3h7Eh9fmRUWLvzwSQ999lL
+         U0SQLwnJAsteUmq6Kc5MDHOBJb00VhgQzE7Qj9loJXji/SBGtE5iAQ+hmUng0BM7Rd6q
+         5WzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732259157; x=1732863957;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g5RNQna4CZ9CliE9ms9S9SP9s6EuH+yqet8NWqjNOq8=;
+        b=HGBbV8uS0Z47dtEvs2yUN/Bq/YPeOUipn2DWGmRz5CwhUen+iq3oVO83+Yl2X0Jzrl
+         T1Ubex4UWksBEj/MAMH5jnP12CGsasEtHjYgM/YnFm/eBIDbB9OIZCyyCRBxOPN0jlJo
+         W/oO2dl3fGrh0BvLbWg8pucjn+wacuK2d9124/KnYl/23+12eRbdMW7p7ie4DUmLJl9+
+         43UqiSQhxX/1WqW38Ab1zqP85PP693d0/u31ALnx4ljbg3YKSkMhx6cZQeSaoyK9s9yu
+         BGbn8j4xWuYpc5IbpAOOLhHDP3W0lUv5Sv2v27Brs6SDZOAHuvExIaFzZQHlp7cvcZMq
+         fxmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVI6DSx32MDZ9O3h7Agf9BykIpQo4Ux7+SzWXDtQ/FNa3swRpkRwC5sy5q2jhDGS2xAFMMe/wwX4agtLfU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8BqjeG9MhdGzhEhsEUs9nd2KQz7rp0vTeBjSLv4GtSWYjgdB6
+	4c/iqWrlduo1SJmG+vnUDSxmH0E8BlCnTrAeEkSyugTLhXnPQr5/kiqymcqqdJQyMw2vvkA0vQK
+	nASjVEgxdpuylSYirll1r1DmXn3b1pSAvmQSX
+X-Gm-Gg: ASbGncvLC8MdxKEH6WpU3xGxGmNCCFE7FMM7DQOZfbCw3ZODAK6FjrmwpKikOb5Wmu3
+	0lbOcNtbjaKMxoxB+xf/qL7M/ewRdOwoD
+X-Google-Smtp-Source: AGHT+IGSCeisDsKQ2mEZXtLxJ/5EuwkI4hzHduYj5bfwfU4nZ0aBwkG76/uZlLsL43QUHkzh9MGKiloxzep6kTXpo/w=
+X-Received: by 2002:ad4:5cce:0:b0:6d4:22be:9824 with SMTP id
+ 6a1803df08f44-6d450feb1eamr31931896d6.28.1732259156300; Thu, 21 Nov 2024
+ 23:05:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] arm64: dts: qcom: qcs615: add SDHC1 and SDHC2
-To: Yuanjie Yang <quic_yuanjiey@quicinc.com>, ulf.hansson@linaro.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- bhupesh.sharma@linaro.org, andersson@kernel.org, konradybcio@kernel.org
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- quic_tingweiz@quicinc.com
-References: <20241122065101.1918470-1-quic_yuanjiey@quicinc.com>
- <20241122065101.1918470-2-quic_yuanjiey@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241122065101.1918470-2-quic_yuanjiey@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241121145034.123367-1-john.ogness@linutronix.de>
+In-Reply-To: <20241121145034.123367-1-john.ogness@linutronix.de>
+From: David Gow <davidgow@google.com>
+Date: Fri, 22 Nov 2024 15:05:43 +0800
+Message-ID: <CABVgOSmn6EqcRZ+Rc047OJ5SQ9xdThuaUaPx40UgWgN+AjBfMA@mail.gmail.com>
+Subject: Re: [PATCH printk v1] printk: ringbuffer: Add KUnit test
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Brendan Higgins <brendanhiggins@google.com>, 
+	Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Yoann Congal <yoann.congal@smile.fr>, 
+	Alice Ryhl <aliceryhl@google.com>, Randy Dunlap <rdunlap@infradead.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Jens Axboe <axboe@kernel.dk>, 
+	Mark Rutland <mark.rutland@arm.com>, Jann Horn <jannh@google.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000b88aea06277b0370"
 
-On 22/11/2024 07:51, Yuanjie Yang wrote:
-> Add SDHC1 and SDHC2 support to the QCS615 Ride platform.
-> 
-> Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+--000000000000b88aea06277b0370
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, 21 Nov 2024 at 22:50, John Ogness <john.ogness@linutronix.de> wrote=
+:
+>
+> From: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+>
+> The KUnit test validates the correct operation of the ringbuffer.
+> A separate dedicated ringbuffer is used so that the global printk
+> ringbuffer is not touched.
+>
+> Co-developed-by: John Ogness <john.ogness@linutronix.de>
+> Signed-off-by: John Ogness <john.ogness@linutronix.de>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
 > ---
->  arch/arm64/boot/dts/qcom/qcs615.dtsi | 198 +++++++++++++++++++++++++++
->  1 file changed, 198 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> index 590beb37f441..37c6ab217c96 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> @@ -399,6 +399,65 @@ qfprom: efuse@780000 {
->  			#size-cells = <1>;
->  		};
->  
-> +		sdhc_1: mmc@7c4000 {
-> +			compatible = "qcom,qcs615-sdhci", "qcom,sdhci-msm-v5";
-> +			reg = <0x0 0x007c4000 0x0 0x1000>,
-> +			      <0x0 0x007c5000 0x0 0x1000>;
-> +			reg-names = "hc",
-> +				    "cqhci";
-> +
-> +			interrupts = <GIC_SPI 641 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 644 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "hc_irq",
-> +					  "pwr_irq";
-> +
-> +			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
-> +				 <&gcc GCC_SDCC1_APPS_CLK>,
-> +				 <&rpmhcc RPMH_CXO_CLK>,
-> +				 <&gcc GCC_SDCC1_ICE_CORE_CLK>;
-> +			clock-names = "iface",
-> +				      "core",
-> +				      "xo",
-> +				      "ice";
-> +
-> +			resets = <&gcc GCC_SDCC1_BCR>;
-> +
-> +			power-domains = <&rpmhpd RPMHPD_CX>;
-> +			operating-points-v2 = <&sdhc1_opp_table>;
-> +			iommus = <&apps_smmu 0x02c0 0x0>;
-> +			interconnects = <&aggre1_noc MASTER_SDCC_1 QCOM_ICC_TAG_ALWAYS
-> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-> +					 &config_noc SLAVE_SDCC_1 QCOM_ICC_TAG_ALWAYS>;
-> +			interconnect-names = "sdhc-ddr",
-> +					     "cpu-sdhc";
-> +
-> +			bus-width = <8>;
-> +			qcom,dll-config = <0x000f642c>;
-> +			qcom,ddr-config = <0x80040868>;
-> +			supports-cqe;
-> +			dma-coherent;
-> +			mmc-ddr-1_8v;
-> +			mmc-hs200-1_8v;
-> +			mmc-hs400-1_8v;
-> +			mmc-hs400-enhanced-strobe;
+> For those not familiar with KUnit, you can easily run this test
+> doing something like this:
+>
+> $ ./tools/testing/kunit/kunit.py run \
+>   --arch=3Dx86_64 \
+>   --qemu_args "-enable-kvm -smp 8" \
+>   --kunitconfig kernel/printk
+>
 
-These are properties of memory, not SoC. If the node is disabled, means
-memory is not attached to the SoC, right?
+Awesome -- I'm glad to see this make it as a KUnit test.
 
-> +			status = "disabled";
+It's a little unusual for a KUnit test -- particularly since it is
+time-based and uses lots of threads. This isn't a problem, but it's
+definitely a good thing that it's marked as slow. Additionally, KUnit
+doesn't track any extra threads spawned, so it requires a bit more
+care.
 
+There are a couple of issues (e.g., it crashes on non-SMP systems, a
+potential race, etc) and some minor suggestions below. In short, it'd
+be a good idea to move some of the initialisation and checks into the
+main test function, rather than the helper threads. Equally, it looks
+like there are a bunch of variables shared between kthreads =E2=80=94 do th=
+ese
+need to be checked with READ_ONCE()/WRITE_ONCE(), or made volatile, or
+something?
 
+In fact, I'm not sure why there's a separate start_test() and
+test_readerwriter() function -- or indeed, a separate kthread? Am I
+missing something, or could everything start_test() does be done from
+the main test function/kthread?
 
+Regardless, with a few of the tweaks below, this runs fine for me
+here, and it's great to see it.
 
-...
+>  init/Kconfig                           |  12 +
+>  kernel/printk/.kunitconfig             |   3 +
+>  kernel/printk/Makefile                 |   2 +
+>  kernel/printk/printk_ringbuffer.c      |   4 +
+>  kernel/printk/printk_ringbuffer_test.c | 350 +++++++++++++++++++++++++
+>  5 files changed, 371 insertions(+)
+>  create mode 100644 kernel/printk/.kunitconfig
+>  create mode 100644 kernel/printk/printk_ringbuffer_test.c
+>
+> diff --git a/init/Kconfig b/init/Kconfig
+> index 3b6ca7cce03b..46d144908191 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -1576,6 +1576,18 @@ config PRINTK
+>           very difficult to diagnose system problems, saying N here is
+>           strongly discouraged.
+>
+> +config PRINTK_RINGBUFFER_TEST
+> +       tristate "Test for the printk ringbuffer" if !KUNIT_ALL_TESTS
+> +       depends on PRINTK && KUNIT
+> +       default KUNIT_ALL_TESTS
+> +       help
+> +         This builds the printk ringbuffer KUnit test suite.
+> +
+> +         For more information on KUnit and unit tests in general, please=
+ refer
+> +         to the KUnit documentation.
+> +
+> +         If unsure, say N.
+> +
+>  config BUG
+>         bool "BUG() support" if EXPERT
+>         default y
+> diff --git a/kernel/printk/.kunitconfig b/kernel/printk/.kunitconfig
+> new file mode 100644
+> index 000000000000..8d31a5c19053
+> --- /dev/null
+> +++ b/kernel/printk/.kunitconfig
+> @@ -0,0 +1,3 @@
+> +CONFIG_KUNIT=3Dy
+> +CONFIG_SMP=3Dy
+> +CONFIG_PRINTK_RINGBUFFER_TEST=3Dy
+> diff --git a/kernel/printk/Makefile b/kernel/printk/Makefile
+> index 39a2b61c7232..edb5a4cacf67 100644
+> --- a/kernel/printk/Makefile
+> +++ b/kernel/printk/Makefile
+> @@ -7,3 +7,5 @@ obj-$(CONFIG_PRINTK_INDEX)      +=3D index.o
+>  obj-$(CONFIG_PRINTK)                 +=3D printk_support.o
+>  printk_support-y                    :=3D printk_ringbuffer.o
+>  printk_support-$(CONFIG_SYSCTL)             +=3D sysctl.o
+> +
+> +obj-$(CONFIG_PRINTK_RINGBUFFER_TEST) +=3D printk_ringbuffer_test.o
+> diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_rin=
+gbuffer.c
+> index 88e8f3a61922..57b80d262cb7 100644
+> --- a/kernel/printk/printk_ringbuffer.c
+> +++ b/kernel/printk/printk_ringbuffer.c
+> @@ -1,5 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>
+> +#include <kunit/visibility.h>
+>  #include <linux/kernel.h>
+>  #include <linux/irqflags.h>
+>  #include <linux/string.h>
+> @@ -1685,6 +1686,7 @@ bool prb_reserve(struct prb_reserved_entry *e, stru=
+ct printk_ringbuffer *rb,
+>         memset(r, 0, sizeof(*r));
+>         return false;
+>  }
+> +EXPORT_SYMBOL_IF_KUNIT(prb_reserve);
+>
+>  /* Commit the data (possibly finalizing it) and restore interrupts. */
+>  static void _prb_commit(struct prb_reserved_entry *e, unsigned long stat=
+e_val)
+> @@ -1759,6 +1761,7 @@ void prb_commit(struct prb_reserved_entry *e)
+>         if (head_id !=3D e->id)
+>                 desc_make_final(e->rb, e->id);
+>  }
+> +EXPORT_SYMBOL_IF_KUNIT(prb_commit);
+>
+>  /**
+>   * prb_final_commit() - Commit and finalize (previously reserved) data t=
+o
+> @@ -2181,6 +2184,7 @@ bool prb_read_valid(struct printk_ringbuffer *rb, u=
+64 seq,
+>  {
+>         return _prb_read_valid(rb, &seq, r, NULL);
+>  }
+> +EXPORT_SYMBOL_IF_KUNIT(prb_read_valid);
+>
+>  /**
+>   * prb_read_valid_info() - Non-blocking read of meta data for a requeste=
+d
+> diff --git a/kernel/printk/printk_ringbuffer_test.c b/kernel/printk/print=
+k_ringbuffer_test.c
+> new file mode 100644
+> index 000000000000..79331ea2b739
+> --- /dev/null
+> +++ b/kernel/printk/printk_ringbuffer_test.c
+> @@ -0,0 +1,350 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/delay.h>
+> +#include <linux/init.h>
+> +#include <linux/kthread.h>
+> +#include <linux/module.h>
+> +#include <linux/moduleparam.h>
+> +#include <linux/random.h>
+> +#include <linux/sched/clock.h>
+> +#include <linux/slab.h>
+> +#include <linux/wait.h>
+> +
+> +#include <kunit/test.h>
+> +
+> +#include "printk_ringbuffer.h"
+> +
+> +/*
+> + * This KUnit tests the data integrity of the lockless printk_ringbuffer=
+.
+> + * From multiple CPUs it writes messages of varying length and content w=
+hile
+> + * a reader validates the correctness of the messages.
+> + *
+> + * IMPORTANT: The more CPUs you can use for this KUnit, the better!
+> + *
+> + * The test works by starting "num_online_cpus() - 1" writer threads, ea=
+ch
+> + * pinned to their own CPU. Each writer thread loops, writing data of va=
+rying
+> + * length into a printk_ringbuffer as fast as possible. The data content=
+ is
+> + * an embedded data struct followed by string content repeating the byte=
+:
+> + *
+> + *      'A' + CPUID
+> + *
+> + * A reader thread is started on the remaining online CPU and ensures th=
+at
+> + * embedded struct content is consistent with the string and that the st=
+ring
+> + * is terminated and is composed of the same repeating byte as its first=
+ byte.
+> + *
+> + * Because the threads are running in such tight loops, they will call
+> + * schedule() from time to time so the system stays functional.
+> + *
+> + * If the reader encounters an error, the test is aborted and some
+> + * information about the error is provided via printk. The runtime of
+> + * the test can be configured with the runtime_ms module parameter.
+> + *
+> + * Note that the test is performed on a separate printk_ringbuffer insta=
+nce
+> + * and not the instance used by printk().
+> + */
+> +
+> +static unsigned long runtime_ms =3D 10000;
+> +module_param(runtime_ms, ulong, 0400);
+> +
+> +/* used by writers to signal reader of new records */
+> +static DECLARE_WAIT_QUEUE_HEAD(test_wait);
+> +
+> +/* test data structure */
+> +struct rbdata {
+> +       unsigned int len;
+> +       char text[] __counted_by(len);
+> +};
+> +
+> +#define MAX_RBDATA_LEN (0x7f + 1)
+> +#define MAX_RECORD_SIZE (sizeof(struct rbdata) + MAX_RBDATA_LEN + 1)
+> +
+> +static struct test_running {
+> +       int runstate;
+> +       unsigned long num;
+> +       struct kunit *test;
+> +} *test_running;
+> +static int halt_test;
+> +
+> +static void fail_record(struct kunit *test, struct rbdata *dat, u64 seq)
+> +{
+> +       char buf[MAX_RBDATA_LEN + 1];
+> +
+> +       snprintf(buf, sizeof(buf), "%s", dat->text);
+> +       buf[sizeof(buf) - 1] =3D 0;
+> +
+> +       KUNIT_FAIL(test, "BAD RECORD: seq=3D%llu len=3D%u text=3D%s\n",
+> +                  seq, dat->len, dat->len < sizeof(buf) ? buf : "<invali=
+d>");
+> +}
+> +
+> +static bool check_data(struct rbdata *dat)
+> +{
+> +       unsigned int len;
+> +
+> +       len =3D strnlen(dat->text, MAX_RBDATA_LEN + 1);
+> +
+> +       /* Sane length? */
+> +       if (len !=3D dat->len || !len || len > MAX_RBDATA_LEN)
+> +               return false;
+> +
+> +       /* String repeats with the same character? */
+> +       while (len) {
+> +               len--;
+> +               if (dat->text[len] !=3D dat->text[0])
+> +                       return false;
+> +       }
+> +
+> +       return true;
+> +}
+> +
+> +/* Equivalent to CONFIG_LOG_BUF_SHIFT=3D13 */
+> +DEFINE_PRINTKRB(test_rb, 8, 5);
+> +
+> +static int prbtest_writer(void *data)
+> +{
+> +       struct test_running *tr =3D data;
+> +       char text_id =3D 'A' + tr->num;
+> +       struct prb_reserved_entry e;
+> +       unsigned long count =3D 0;
+> +       struct printk_record r;
+> +       u64 min_ns =3D (u64)-1;
+> +       struct rbdata *dat;
+> +       u64 total_ns =3D 0;
+> +       u64 max_ns =3D 0;
+> +       u64 post_ns;
+> +       u64 pre_ns;
+> +       int len;
+> +
+> +       set_cpus_allowed_ptr(current, cpumask_of(tr->num));
+> +
+> +       kunit_info(tr->test, "start thread %03lu (writer)\n", tr->num);
+> +
+> +       tr->runstate =3D 1;
+> +
+> +       for (;;) {
+> +               /* +2 to ensure at least 1 character + terminator. */
+> +               len =3D sizeof(struct rbdata) + (get_random_u32() & 0x7f)=
+ + 2;
+> +
+> +               /* specify the text sizes for reservation */
+> +               prb_rec_init_wr(&r, len);
+> +
+> +               pre_ns =3D local_clock();
+> +
+> +               if (prb_reserve(&e, &test_rb, &r)) {
+> +                       r.info->text_len =3D len;
+> +
+> +                       len -=3D sizeof(struct rbdata) + 1;
+> +
+> +                       dat =3D (struct rbdata *)&r.text_buf[0];
+> +                       dat->len =3D len;
+> +                       memset(&dat->text[0], text_id, len);
+> +                       dat->text[len] =3D 0;
+> +
+> +                       prb_commit(&e);
+> +
+> +                       post_ns =3D local_clock();
+> +
+> +                       wake_up_interruptible(&test_wait);
+> +
+> +                       post_ns -=3D pre_ns;
+> +                       if (post_ns < min_ns)
+> +                               min_ns =3D post_ns;
+> +                       if (post_ns > max_ns)
+> +                               max_ns =3D post_ns;
+> +                       total_ns +=3D post_ns;
+> +               }
+> +
+> +               if ((count++ & 0x3fff) =3D=3D 0)
+> +                       schedule();
+> +
+> +               if (READ_ONCE(halt_test) =3D=3D 1)
+> +                       break;
+> +       }
+> +
+> +       kunit_info(tr->test, "end thread %03lu: wrote=3D%lu min_ns=3D%llu=
+ avg_ns=3D%llu max_ns=3D%llu\n",
+> +                  tr->num, count, min_ns, total_ns / (u64)count, max_ns)=
+;
+> +
+> +       tr->runstate =3D 2;
+> +
+> +       return 0;
+> +}
+> +
+> +static int prbtest_reader(void *data)
+> +{
+> +       struct test_running *tr =3D data;
+> +       char text_buf[MAX_RECORD_SIZE];
+> +       unsigned long total_lost =3D 0;
+> +       unsigned long max_lost =3D 0;
+> +       unsigned long count =3D 0;
+> +       struct printk_info info;
+> +       struct printk_record r;
+> +       int did_sched =3D 1;
+> +       u64 seq =3D 0;
+> +
+> +       set_cpus_allowed_ptr(current, cpumask_of(tr->num));
+> +
+> +       prb_rec_init_rd(&r, &info, &text_buf[0], sizeof(text_buf));
+> +
+> +       kunit_info(tr->test, "start thread %03lu (reader)\n", tr->num);
+> +
+> +       tr->runstate =3D 1;
+> +
+> +       while (!wait_event_interruptible(test_wait,
+> +                               kthread_should_stop() ||
+> +                               prb_read_valid(&test_rb, seq, &r))) {
+> +               bool error =3D false;
+> +
+> +               if (kthread_should_stop())
+> +                       break;
+> +               /* check/track the sequence */
+> +               if (info.seq < seq) {
+> +                       KUNIT_FAIL(tr->test, "BAD SEQ READ: request=3D%ll=
+u read=3D%llu\n",
+> +                                  seq, info.seq);
+> +                       error =3D true;
+> +               } else if (info.seq !=3D seq && !did_sched) {
+> +                       total_lost +=3D info.seq - seq;
+> +                       if (max_lost < info.seq - seq)
+> +                               max_lost =3D info.seq - seq;
+> +               }
+> +
+> +               if (!check_data((struct rbdata *)&r.text_buf[0])) {
+> +                       fail_record(tr->test, (struct rbdata *)&r.text_bu=
+f[0], info.seq);
+> +                       error =3D true;
+> +               }
+> +
+> +               if (error)
+> +                       WRITE_ONCE(halt_test, 1);
+> +
+> +               did_sched =3D 0;
+> +               if ((count++ & 0x3fff) =3D=3D 0) {
+> +                       did_sched =3D 1;
+> +                       schedule();
+> +               }
+> +
+> +               if (READ_ONCE(halt_test) =3D=3D 1)
+> +                       break;
+> +
+> +               seq =3D info.seq + 1;
+> +       }
+> +
+> +       kunit_info(tr->test,
+> +                  "end thread %03lu: read=3D%lu seq=3D%llu total_lost=3D=
+%lu max_lost=3D%lu\n",
+> +                  tr->num, count, info.seq, total_lost, max_lost);
+> +
+> +       while (!kthread_should_stop())
+> +               msleep(1000);
+> +       tr->runstate =3D 2;
+> +
+> +       return 0;
+> +}
+> +
+> +static int module_test_running;
+> +static struct task_struct *reader_thread;
+> +
+> +static int start_test(void *arg)
+> +{
+> +       struct kunit *test =3D arg;
+> +       struct task_struct *thread;
+> +       unsigned long i;
+> +       int num_cpus;
+> +
+> +       num_cpus =3D num_online_cpus();
+> +       if (num_cpus =3D=3D 1)
+> +               kunit_skip(test, "need >1 CPUs for at least one reader an=
+d writer");
+
+This check needs to be in the test_readerwriter() function to work
+(or, at least, in the same kthread). Otherwise:
+(a) KUnit doesn't know which thread to abort, and
+(b) the other threads will continue anyway.
 
 > +
-> +		sdhc_2: mmc@8804000 {
-> +			compatible = "qcom,qcs615-sdhci","qcom,sdhci-msm-v5";
-> +			reg = <0x0 0x08804000 0x0 0x1000>;
-> +			reg-names = "hc";
-> +
-> +			interrupts = <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "hc_irq",
-> +					  "pwr_irq";
-> +
-> +			clocks = <&gcc GCC_SDCC2_AHB_CLK>,
-> +				 <&gcc GCC_SDCC2_APPS_CLK>,
-> +				 <&rpmhcc RPMH_CXO_CLK>;
-> +			clock-names = "iface",
-> +				      "core",
-> +				      "xo";
-> +
-> +			power-domains = <&rpmhpd RPMHPD_CX>;
-> +			operating-points-v2 = <&sdhc2_opp_table>;
-> +			iommus = <&apps_smmu 0x02a0 0x0>;
-> +			resets = <&gcc GCC_SDCC2_BCR>;
-> +			interconnects = <&aggre1_noc MASTER_SDCC_2 QCOM_ICC_TAG_ALWAYS
-> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-> +					 &config_noc SLAVE_SDCC_2 QCOM_ICC_TAG_ALWAYS>;
-> +			interconnect-names = "sdhc-ddr",
-> +					     "cpu-sdhc";
-> +
-> +			bus-width = <4>;
+> +       test_running =3D kcalloc(num_cpus, sizeof(*test_running), GFP_KER=
+NEL);
+> +       KUNIT_ASSERT_NOT_NULL(test, test_running);
 
-Same comments.
+Can we allocate this in the main test_readerwriter() function. I think
+there can be a race otherwise. Equally, if we use something like
+kunit_kcalloc() instead, KUnit will clean up the allocation for us
+when the test exits (even if it fails).
 
-> +			qcom,dll-config = <0x0007642c>;
-> +			qcom,ddr-config = <0x80040868>;
-> +			dma-coherent;
-> +			status = "disabled";
 > +
-> +			sdhc2_opp_table: opp-table {
-> +				compatible = "operating-points-v2";
-> +
-> +				opp-100000000 {
-> +					opp-hz = /bits/ 64 <100000000>;
-> +					required-opps = <&rpmhpd_opp_low_svs>;
-> +				};
-> +
-> +				opp-202000000 {
-> +					opp-hz = /bits/ 64 <202000000>;
-> +					required-opps = <&rpmhpd_opp_nom>;
-> +				};
-> +			};
->  		};
->  
->  		dc_noc: interconnect@9160000 {
+> +       module_test_running =3D 1;
 
+Should this be WRITE_ONCE()?
 
-Best regards,
-Krzysztof
+> +
+> +       kunit_info(test, "starting test\n");
+> +
+> +       for (i =3D 0; i < num_cpus; i++) {
+> +               test_running[i].test =3D test;
+> +               test_running[i].num =3D i;
+> +               if (i < num_cpus - 1) {
+> +                       thread =3D kthread_run(prbtest_writer, &test_runn=
+ing[i],
+> +                                            "prbtest writer");
+> +               } else {
+> +                       thread =3D kthread_run(prbtest_reader, &test_runn=
+ing[i],
+> +                                            "prbtest reader");
+> +                       reader_thread =3D thread;
+> +               }
+> +               if (IS_ERR(thread)) {
+> +                       kunit_err(test, "unable to create thread %lu\n", =
+i);
+> +                       test_running[i].runstate =3D 2;
+
+Again, WRITE_ONCE()?
+
+> +               }
+> +       }
+> +
+> +       /* wait until all threads finish */
+> +       for (;;) {
+> +               msleep(1000);
+> +
+> +               for (i =3D 0; i < num_cpus; i++) {
+> +                       if (test_running[i].runstate < 2)
+
+Again, READ_ONCE()?
+
+> +                               break;
+> +               }
+> +               if (i =3D=3D num_cpus)
+> +                       break;
+> +       }
+> +
+> +       kunit_info(test, "completed test\n");
+> +
+> +       module_test_running =3D 0;
+
+This, too, _might_ need the WRITE_ONCE() treatment.
+
+> +
+> +       return 0;
+> +}
+> +
+> +static void test_readerwriter(struct kunit *test)
+> +{
+> +       static bool already_run;
+> +       int num_cpus;
+> +       int i;
+> +
+> +       if (already_run)
+> +               KUNIT_FAIL_AND_ABORT(test, "test can only be run once");
+> +       already_run =3D true;
+
+I'm not sure I fully understand why this couldn't be run multiple
+times. I definitely see why you wouldn't want to have it running
+concurrently with itself, but is there a way to have it 'reset' any
+state to allow it to be re-run without a reboot.
+
+Not a problem if it isn't, just curious. :-)
+
+> +
+> +       kunit_info(test, "running for %lu ms\n", runtime_ms);
+> +
+> +       kthread_run(start_test, test, "prbtest");
+> +
+> +       /* wait until all threads active */
+> +       num_cpus =3D num_online_cpus();
+> +       for (;;) {
+> +               msleep(1000);
+> +
+> +               for (i =3D 0; i < num_cpus; i++) {
+> +                       if (test_running[i].runstate =3D=3D 0)
+
+I don't think there's any guarantee that test_running has been
+allocated by this point.
+
+Of course, given the msleep() above, it's very likely that it would
+be, but it might make more sense to allocate it in this function
+before spinning off any extra threads.
+
+(As a bonus, you could then use kunit_kcalloc() to have it
+automatically cleaned up when the test exits, regardless of whether or
+not it succeeds.)
+
+Also, you might want to check test_running[i].runstate using
+READ_ONCE() or similar -- could a compiler perhaps "optimize out"
+further reads to it as-is: it doesn't seem to be 'volatile' or
+similar?
+
+> +                               break;
+> +               }
+> +               if (i =3D=3D num_cpus)
+> +                       break;
+> +       }
+> +
+> +       msleep(runtime_ms);
+> +
+> +       if (reader_thread && !IS_ERR(reader_thread))
+> +               kthread_stop(reader_thread);
+> +
+> +       WRITE_ONCE(halt_test, 1);
+> +
+> +       while (module_test_running)
+> +               msleep(1000);
+
+Again, should this be put under READ_ONCE() or an explicit atomic or
+something? Or check that the thread has terminated?
+
+> +       kfree(test_running);
+
+If the kunit_kzalloc() function is used above, this could be removed.
+
+> +}
+> +
+> +static struct kunit_case prb_test_cases[] =3D {
+> +       KUNIT_CASE_SLOW(test_readerwriter),
+> +       {}
+> +};
+> +
+> +static struct kunit_suite prb_test_suite =3D {
+> +       .name       =3D "printk-ringbuffer",
+> +       .test_cases =3D prb_test_cases,
+> +};
+> +kunit_test_suite(prb_test_suite);
+> +
+> +MODULE_IMPORT_NS(EXPORTED_FOR_KUNIT_TESTING);
+> +MODULE_AUTHOR("John Ogness <john.ogness@linutronix.de>");
+> +MODULE_DESCRIPTION("printk_ringbuffer test");
+> +MODULE_LICENSE("GPL");
+>
+> base-commit: 4022ef25504db2fb79a2acac0afe9bac934f8dd6
+> --
+> 2.39.5
+>
+
+Cheers,
+-- David
+
+--000000000000b88aea06277b0370
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIUqgYJKoZIhvcNAQcCoIIUmzCCFJcCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
+4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
+mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
+KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
+VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
+ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
+vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
+BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
+OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
+1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
+ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
+BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
+18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
+bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
+AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
+BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
+A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
+MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
+jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
+0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
+jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
+jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
+C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
+NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
+zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
+A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
+hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
+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
+erg7AgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
+/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFKFQnbTpSq0q
+cOYnlrbegXJIIvA6MFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
+BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
+MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
+LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
+bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
+FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQBR
+nRJBmUP+IpudtmSQ/R55Sv0qv8TO9zHTlIdsIf2Gc/zeCi0SamUQkFWb01d7Q+20kcpxNzwV6M7y
+hDRk5uuVFvtVxOrmbhflCo0uBpD9vz/symtfJYZLNyvSDi1PIVrwGNpyRrD0W6VQJxzzsBTwsO+S
+XWN3+x70+QDf7+zovW7KF0/y8QYD6PIN7Y9LRUXct0HKhatkHmO3w6MSJatnqSvsjffIwpNecUMo
+h10c6Etz17b7tbGdxdxLw8njN+UnfoFp3v4irrafB6jkArRfsR5TscZUUKej0ihl7mXEKUBmClkP
+ndcbXHFxS6WTkpjvl7Jjja8DdWJSJmdEWUnFjnQnDrqLqvYjeVMS/8IBF57eyT6yEPrMzA+Zd+f5
+hnM7HuBSGvVHv+c/rlHVp0S364DBGXj11obl7nKgL9D59QwC5/kNJ1whoKwsATUSepanzALdOTn3
+BavXUVE38e4c90il44T1bphqtLfmHZ1T5ZwxjtjzNMKy0Mb9j/jcFxfibCISYbnk661FBe38bhYj
+0DhqINx2fw0bwhpfFGADOZDe5DVhI7AIW/kEMHuIgAJ/HPgyn1+tldOPWiFLQbTNNBnfGv9sDPz0
+hWV2vSAXq35i+JS06BCkbGfE5ci6zFy4pt8fmqMGKFH/t3ELCTYo116lqUTDcVC8DAWN8E55aDGC
+AmowggJmAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
+BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAZ6Vqszmp/3gGFW0sCFu
+eDANBglghkgBZQMEAgEFAKCB1DAvBgkqhkiG9w0BCQQxIgQgKQv58/uSGKT6eKzlRivdGEG1U80p
+G5n6TBK46tUSrBgwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQx
+MTIyMDcwNTU3WjBpBgkqhkiG9w0BCQ8xXDBaMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
+YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBCjALBgkqhkiG9w0BAQcwCwYJYIZIAWUD
+BAIBMA0GCSqGSIb3DQEBAQUABIIBAEDn2vAg3BUfDudGcZQeroNg+Q8pZTZV1q0aPnuvYqOWuX+f
+Wk048AYIzNa8waUOeNnaoeeLtOBm0ZC7kvBtI/he74eSti/JwGSmmnRbPg3ywggBWTcCcAl+aTpR
+npdMbpDjqwT08cef2598Szsxv4TITl7SvWjEHE+8MXd8AovyqeYjZ2q/7wM1faTsQqcxhqyGdODM
+1siEOmPwZWs8C2CE1CEWKy6KMucRHwt4EloergNBrvR4igV+89BZtLkX01y5B1nvkBe2cL0K9LTN
+5BpPa/HZAhWp8AHJM7TXjrnzADEwlcyPOY+Bsyj0ZEIZoE8g9J5Ha4ooJKM1/sa31sU=
+--000000000000b88aea06277b0370--
 
