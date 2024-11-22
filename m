@@ -1,243 +1,121 @@
-Return-Path: <linux-kernel+bounces-418443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DFFC9D61A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:57:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA0D9D61AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:58:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB9D728330F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:57:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9AC7160480
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BE11DF275;
-	Fri, 22 Nov 2024 15:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XIlHG4uH"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3C11DDC16;
+	Fri, 22 Nov 2024 15:57:59 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95B537171;
-	Fri, 22 Nov 2024 15:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89ED13AA4E
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 15:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732291007; cv=none; b=rma75NXLPmXsxzXfDU12WPP1aPwASV41bxBDxVZTHRld7iSCfJAuX5zYtNcpPi7qXA+ffyf4YY5a7Z81hXIPECxI2xE+vH8JG0ZxSb3IL8dWpPvpXSQyUFTuMwu4cKZ3xq5GIpqyLf1Bhcdef4ekl6qo5/SEMlXZdRs16yuIhIk=
+	t=1732291079; cv=none; b=bYqC8hj+AV129gJJg+tjgUlWjdAyHuJueZr8+0WPXPxsKQQGTpmzlte9Fmlrw3hJRJDOQbyurEVOVTHssi4l4YVyZDoBd19ZS9Ato1OaVrUSLphPFj+Ief79ZTHJ45kFvebFcMmZy55bkqh8YPcPkzsZwaPxStIpMemIuHY12Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732291007; c=relaxed/simple;
-	bh=EHw2G0Pd/UNxCwsZJdFz6NHtFdWg9CVQuLCqWmE2GXQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=es78qCfeth/qC+473o8BG8auw/6L9AXd5HuCifwGbSgYFwInHoW6QKW+F4Z2EzxjZfPGMwtGZi7jkKtLpANokJqvg61yVZnhpaw2w5oWg3ihxX/DhtC0W82D+6lbubcdVh/Mfj/w6RPwVk6CWP3ABM5KyxYcpevUboXm96rwHlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XIlHG4uH; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AMCaj04009210;
-	Fri, 22 Nov 2024 15:56:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=c+e/lj
-	WQvX8wgyFeG3f1oC7z8bgSGGRKYwRnjF3j/+0=; b=XIlHG4uH2xPgYRPNw/G+57
-	vSbaIW1dlbUjsy7DVYKfmKc+OFacV4RJvuSuMxzNrdiBXrVGtMaZVNfU6FUiod3l
-	6o00CqwLA8ep9+eXPZtUvYFJxAgNziakfmbihj2Q+qTLkvseIQ7UYVetKtFbCbCX
-	XGpKvI1pFtbcl6lR7N/h8Puf7HZdeWb55WtjhPMvmUMcJw+gJydarNb0NMkB3eak
-	O32SpL5VhVS1HRFwdwDIsbXHOdDIZjRvIZEjHlrKB2Ay0nCfAkJXSsc5NixZKThk
-	m1XVoLncBmNNKdOKqoofOL0xwOB94aMtQQkWsyuvjCe0quz2/Tpjnyj8eHVT/SYg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 432fw24741-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 15:56:40 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AMFlgID004804;
-	Fri, 22 Nov 2024 15:56:40 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 432fw2473w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 15:56:40 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AMAYsWV021792;
-	Fri, 22 Nov 2024 15:56:39 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42y6qn3d5j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 15:56:39 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AMFuckU50069890
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 22 Nov 2024 15:56:38 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BCC4C58058;
-	Fri, 22 Nov 2024 15:56:38 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6622E5805D;
-	Fri, 22 Nov 2024 15:56:36 +0000 (GMT)
-Received: from [9.171.76.132] (unknown [9.171.76.132])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 22 Nov 2024 15:56:36 +0000 (GMT)
-Message-ID: <4c65cb7a-fcf3-4f24-9aaf-f270033db5db@linux.ibm.com>
-Date: Fri, 22 Nov 2024 16:56:35 +0100
+	s=arc-20240116; t=1732291079; c=relaxed/simple;
+	bh=BkNHdOwtRxxV/1UFkElNOkdEV8Nry+Af7z1Yd40Uxwk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=pXPJdiMUf4rn6g8ANLIGy3O8x/aqgom7W01ZWi8rMatp3aP4NenmpSJGc7UbChjc3ZYb6PkCZe9lefkq/miOA32qM5ZGNflv+D59zFn5piZ8BVl3uA0v0OoIUyfEGLYMNup38PDTUpAlPE46ZKZCBSCNqt2VfltHcfGMq62c9V8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83aa6bcd7b3so242047339f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 07:57:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732291077; x=1732895877;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VdbqCATNser9H9Uf4HlN1iqoL5ga46TbjKWuGc0QRdA=;
+        b=QJ0bCFPUkDlEq77wy8Eazddo6AQX5yIrm6ah8NxJQaQ6uDmhB2PvMZ64ta9V2yEpQf
+         LCotVxCyWyONTM44QCfgYs4zrJkm6cjoeiWSKn97NU0HZ76qMoA2jT88DjDsB9rjZUI0
+         s7dAe5pjeeKgct05WhiMDgOFY4UIwBqt46AWsX8BCpsLLfaBvtd6M8/G3dbY3eKtxmY/
+         xgWAxO7IqPVlsP6zM4/+RtIm7wCP3LVcCiqepJ00sBR/i186XjdAOZIkZ7gBo6acv3ZP
+         89XQaI3tUxA6x0GjAyFIcOaC5kmGjtsIoTWMlVd790UKjG4fxr+MUsELC6ml8HD3dSpf
+         IR2w==
+X-Gm-Message-State: AOJu0YxDAun1vMydm6uTGZNNMJck2/7D0EbxMyIkMKU+5qrgTVMkF1p0
+	+JBIgvR5imLUNoa0By/cEAr1FbIbhD8JBK/pBglq0UvcDAaMM/rhPcN6rR1sddxvct0tSF+aRlR
+	2XjgxINW1r6bC60g365jm7HlTYEV1gCruGABAWyXZCKzcJE8wj2bBROM=
+X-Google-Smtp-Source: AGHT+IFgX7UETAK6IAAON0XQhGY1LpVPqTwpWXpzMje/MCt4VNKfHYd5kWwhi82gvjTK+/GwT/JpmdMNm8BykCBp8oKN/qyteNRw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 2/2] net/smc: fix LGR and link use-after-free issue
-To: Wen Gu <guwen@linux.alibaba.com>, jaka@linux.ibm.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: alibuda@linux.alibaba.com, tonylu@linux.alibaba.com, horms@kernel.org,
-        linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241122071630.63707-1-guwen@linux.alibaba.com>
- <20241122071630.63707-3-guwen@linux.alibaba.com>
-Content-Language: en-US
-From: Wenjia Zhang <wenjia@linux.ibm.com>
-In-Reply-To: <20241122071630.63707-3-guwen@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: nakpSv9eAlAYPGjUMpV2GXecUl_Ao7sn
-X-Proofpoint-ORIG-GUID: -48pdM7AmCNb42iTpaXdxakSO8ajWG4W
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- adultscore=0 bulkscore=0 phishscore=0 spamscore=0 mlxscore=0
- lowpriorityscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=989
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411220130
+X-Received: by 2002:a05:6e02:1a83:b0:3a7:6d14:cc18 with SMTP id
+ e9e14a558f8ab-3a79af9ec8dmr41573565ab.23.1732291076894; Fri, 22 Nov 2024
+ 07:57:56 -0800 (PST)
+Date: Fri, 22 Nov 2024 07:57:56 -0800
+In-Reply-To: <673ef6a8.050a0220.3c9d61.016c.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6740aa04.050a0220.3c9d61.0192.GAE@google.com>
+Subject: Re: [syzbot] [syzbot] [ext4?] kernel BUG in ext4_write_inline_data (2)
+From: syzbot <syzbot+fe2a25dae02a207717a0@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
+***
 
-On 22.11.24 08:16, Wen Gu wrote:
-> We encountered a LGR/link use-after-free issue, which manifested as
-> the LGR/link refcnt reaching 0 early and entering the clear process,
-> making resource access unsafe.
->
+Subject: [syzbot] [ext4?] kernel BUG in ext4_write_inline_data (2)
+Author: bretznic@gmail.com
 
-How did you make sure that the refcount mentioned in the warning are the 
-LGR/link refcnt, not &sk->sk_refcnt?
+#syz test
 
->   refcount_t: addition on 0; use-after-free.
->   WARNING: CPU: 14 PID: 107447 at lib/refcount.c:25 refcount_warn_saturate+0x9c/0x140
->   Workqueue: events smc_lgr_terminate_work [smc]
->   Call trace:
->    refcount_warn_saturate+0x9c/0x140
->    __smc_lgr_terminate.part.45+0x2a8/0x370 [smc]
->    smc_lgr_terminate_work+0x28/0x30 [smc]
->    process_one_work+0x1b8/0x420
->    worker_thread+0x158/0x510
->    kthread+0x114/0x118
-> 
-> or
-> 
->   refcount_t: underflow; use-after-free.
->   WARNING: CPU: 6 PID: 93140 at lib/refcount.c:28 refcount_warn_saturate+0xf0/0x140
->   Workqueue: smc_hs_wq smc_listen_work [smc]
->   Call trace:
->    refcount_warn_saturate+0xf0/0x140
->    smcr_link_put+0x1cc/0x1d8 [smc]
->    smc_conn_free+0x110/0x1b0 [smc]
->    smc_conn_abort+0x50/0x60 [smc]
->    smc_listen_find_device+0x75c/0x790 [smc]
->    smc_listen_work+0x368/0x8a0 [smc]
->    process_one_work+0x1b8/0x420
->    worker_thread+0x158/0x510
->    kthread+0x114/0x118
-> 
-> It is caused by repeated release of LGR/link refcnt. One suspect is that
-> smc_conn_free() is called repeatedly because some smc_conn_free() are not
-> protected by sock lock.
-> 
-> Calls under socklock        | Calls not under socklock
-> -------------------------------------------------------
-> lock_sock(sk)               | smc_conn_abort
-> smc_conn_free               | \- smc_conn_free
-> \- smcr_link_put            |    \- smcr_link_put (duplicated)
-> release_sock(sk)
-> 
-> So make sure smc_conn_free() is called under the sock lock.
-> 
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 44b0d418143c..b9d128243286 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -3562,6 +3562,12 @@ extern int ext4_get_max_inline_size(struct inode *inode);
+ extern int ext4_find_inline_data_nolock(struct inode *inode);
+ extern int ext4_destroy_inline_data(handle_t *handle, struct inode *inode);
 
-If I understand correctly, the fix could only solve a part of the 
-problem, i.e. what the second call trace reported, right?
++static inline bool ext4_inline_possible(struct inode *inode,
++ loff_t pos, unsigned int len)
++{
++ return pos + len <= ext4_get_max_inline_size(inode);
++}
++
+ int ext4_readpage_inline(struct inode *inode, struct folio *folio);
+ extern int ext4_try_to_write_inline_data(struct address_space *mapping,
+  struct inode *inode,
+diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
+index 3536ca7e4fcc..ec25f066a2c2 100644
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -668,7 +668,7 @@ int ext4_try_to_write_inline_data(struct
+address_space *mapping,
+  struct folio *folio;
+  struct ext4_iloc iloc;
 
-> Fixes: 8cf3f3e42374 ("net/smc: use helper smc_conn_abort() in listen processing")
-> Co-developed-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-> Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-> Co-developed-by: Kai <KaiShen@linux.alibaba.com>
-> Signed-off-by: Kai <KaiShen@linux.alibaba.com>
-> Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
-> ---
->   net/smc/af_smc.c | 25 +++++++++++++++++++++----
->   1 file changed, 21 insertions(+), 4 deletions(-)
-> 
-> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
-> index ed6d4d520bc7..e0a7a0151b11 100644
-> --- a/net/smc/af_smc.c
-> +++ b/net/smc/af_smc.c
-> @@ -973,7 +973,8 @@ static int smc_connect_decline_fallback(struct smc_sock *smc, int reason_code,
->   	return smc_connect_fallback(smc, reason_code);
->   }
->   
-> -static void smc_conn_abort(struct smc_sock *smc, int local_first)
-> +static void __smc_conn_abort(struct smc_sock *smc, int local_first,
-> +			     bool locked)
->   {
->   	struct smc_connection *conn = &smc->conn;
->   	struct smc_link_group *lgr = conn->lgr;
-> @@ -982,11 +983,27 @@ static void smc_conn_abort(struct smc_sock *smc, int local_first)
->   	if (smc_conn_lgr_valid(conn))
->   		lgr_valid = true;
->   
-> -	smc_conn_free(conn);
-> +	if (!locked) {
-> +		lock_sock(&smc->sk);
-> +		smc_conn_free(conn);
-> +		release_sock(&smc->sk);
-> +	} else {
-> +		smc_conn_free(conn);
-> +	}
->   	if (local_first && lgr_valid)
->   		smc_lgr_cleanup_early(lgr);
->   }
->   
-> +static void smc_conn_abort(struct smc_sock *smc, int local_first)
-> +{
-> +	__smc_conn_abort(smc, local_first, false);
-> +}
-> +
-> +static void smc_conn_abort_locked(struct smc_sock *smc, int local_first)
-> +{
-> +	__smc_conn_abort(smc, local_first, true);
-> +}
-> +
->   /* check if there is a rdma device available for this connection. */
->   /* called for connect and listen */
->   static int smc_find_rdma_device(struct smc_sock *smc, struct smc_init_info *ini)
-> @@ -1352,7 +1369,7 @@ static int smc_connect_rdma(struct smc_sock *smc,
->   
->   	return 0;
->   connect_abort:
-> -	smc_conn_abort(smc, ini->first_contact_local);
-> +	smc_conn_abort_locked(smc, ini->first_contact_local);
->   	mutex_unlock(&smc_client_lgr_pending);
->   	smc->connect_nonblock = 0;
->   
-> @@ -1454,7 +1471,7 @@ static int smc_connect_ism(struct smc_sock *smc,
->   
->   	return 0;
->   connect_abort:
-> -	smc_conn_abort(smc, ini->first_contact_local);
-> +	smc_conn_abort_locked(smc, ini->first_contact_local);
->   	mutex_unlock(&smc_server_lgr_pending);
->   	smc->connect_nonblock = 0;
->   
+- if (pos + len > ext4_get_max_inline_size(inode))
++ if (!ext4_inline_possible(inode, pos, len))
+  goto convert;
 
-Why is smc_conn_abort_locked() only necessary for the smc_connect_work, 
-not for the smc_listen_work?
+  ret = ext4_get_inode_loc(inode, &iloc);
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 54bdd4884fe6..d4c0e0a42b8e 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3061,7 +3061,8 @@ static int ext4_da_write_end(struct file *file,
 
-Thanks,
-Wenjia
+  if (write_mode != CONVERT_INLINE_DATA &&
+      ext4_test_inode_state(inode, EXT4_STATE_MAY_INLINE_DATA) &&
+-     ext4_has_inline_data(inode))
++     ext4_has_inline_data(inode) &&
++     ext4_inline_possible(inode, pos, len))
+  return ext4_write_inline_data_end(inode, pos, len, copied,
+    folio);
 
