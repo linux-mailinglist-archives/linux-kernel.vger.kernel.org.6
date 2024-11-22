@@ -1,178 +1,208 @@
-Return-Path: <linux-kernel+bounces-418416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C43A9D6165
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:33:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 664AE9D6169
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:36:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D949EB2681F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:33:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2488B21406
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2241DE2A2;
-	Fri, 22 Nov 2024 15:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ACC2138490;
+	Fri, 22 Nov 2024 15:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="DPDBwdtB"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rtP+tBkP"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19AF86A332
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 15:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1218D5D477;
+	Fri, 22 Nov 2024 15:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732289625; cv=none; b=VVKxjg7JuEiHrT+Q4rjMnJDLZkK97KMu7V7i0pIDExo2lxtQ3gZ9THlQYTFr4uI+Mjiu9AwZ27Kxga4NUHX1+dWfP+jXJ9vWZvgQzF9CHqbuHIx42b741GnZqkEPWpa5J1DjjXBxIXO7cH1IHaX1nKNGxiyhVoPbuy5ShwnK31s=
+	t=1732289778; cv=none; b=oi0en6ajQT1XehnnMyTayl6vXMCBT0/g9764zxwLxKsGTojCNSuCRr4szDqV/mwq6n6ZMFG8bq0rf4r0BNUm8fJyEoRGCZ5/yeK16cd2qBZgjLM2ABbF+jLZH1ZB1NgqhSMKsz+37JSrNwBXugUIbdIiPLfQiRI9bqnrelO69cQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732289625; c=relaxed/simple;
-	bh=5/4mOCruP9LCg0HwglvqohMWx01ZFcFeJHiltZsn6Zs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WbWk8p2UWJ0VSSgRI7MeTKy9GaXoUTRQF8gCRmCnEI7fors0AnePwHIU+TpN4QhsUegnmrqwhJUJDvx/sSUJqSQc5+WxDm7Kxx/CB3DNlcRFLmERtEpomdajx0OqkYWrzCEUZ8J0PNpBO4V3ig0RgGOsYMiSI++0lTFrtkFaEhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=DPDBwdtB; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-460c2418e37so14536671cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 07:33:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1732289622; x=1732894422; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EOCWTCKBT/RmxXc7uytrHzl3RpOs2C/hy6YIYREc/Lg=;
-        b=DPDBwdtBRUA3evxTQe3BT7jm8vK1mahsr4wxYESKT0YL338iFFzvFUN6pBKr3xQytM
-         fvEeWLlVmERb67jMfHvxyoGz9vwL+mwoWLkmGIuvj5oqcbImX1jZVuOEYPwjGZl1LfJf
-         18neTU66RfhIxuzMD3Z4Lk9l3cZjRb0RE+odyanE+g4AGEkkJw0mKxjxdqJcD/EckRMp
-         z0MSXLhYtiJ+xH3nbnvV7PzYvXnnYMbOO7jYDL7uBEZV1pdFjsbtRFumEQ+WrnI8MWrS
-         mNtw/82RhY+w/piaO8hxJsf+2tk71tF7yXVXiBOxbu8PWV9eowJddZ+sswNNLTbnooGy
-         c4EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732289622; x=1732894422;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EOCWTCKBT/RmxXc7uytrHzl3RpOs2C/hy6YIYREc/Lg=;
-        b=RX0Rm0116tj+rI9drIo5jAwDzj16hpesnFlci5HmhaykrLCCFUyQ6qOeC8BMnuQ+3y
-         GV0pmlJ05TGzl8auf30kiZAm76UXwZGZVTiLIz+vKaPVsgpQYhqtaNspRBca265gAJG0
-         uvkR1/rXeXP4cReJHWQxELKXp4TU37syWkVy66MBioK99q3Zg6nGsRI3HIcEaA8Cd1p1
-         agInZI8Cz5JVjJd2FmBCVI2XIvGpd/foTGqvGys3Jakz9SVOgF/WmZRxPJFC+wM78ho7
-         D3wMCWX8QMs7h/LbBdksHZ1p3dIOhcHVMhHDmS0iCHl0D55Y+oc5LHpSMzkfEWJyHFJV
-         IN/A==
-X-Forwarded-Encrypted: i=1; AJvYcCW+ybHUXwz8w2Ze69xeZGOoQ0W44AFJfYTc7g7zuRgeXKWwMvCGyAV06d2VedtseFFCLJH70YDcGj+txaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+OK0l6LDRCqLpYOoyx9wzGgcSpecV3olpnoNrM+s2stwd6dA3
-	fMNSNUAguz76LpsVOICQEcxwH/766o4YKt9vsA2z23LNiNVBIBob16UABq674YpomrtBTD8/KGx
-	S
-X-Gm-Gg: ASbGncvMg0WR4EWtjgh004pTAFqCbh7egsxyiD2HrKZRbrZXTW4jTwgCBn2CnMr0Rmn
-	2qQu3Y9wI0+jhegQHowxS7c+H1rHZzMd+XXyMM26BoPUnjq5SYLG43Mzsp1WJQioqGZKkFYTKyR
-	NwQr2MHGVjgGxVvTiLc7vJDiK+bgBvI39BkenXEYi+QLh6CiRH6QoCrrdnlBpKR1qA7oXyK1rKV
-	SThWC7C9gi31RQ4YzWCk/d9S+8WJDxcJdcKfItifihPJ7q/eHYWxvnJbaoQcBvkRl1hSdLN12Zt
-	+ZlR5IqfflnYMgtQwJicYmw=
-X-Google-Smtp-Source: AGHT+IE/84E5Hy9Mt/fOujPHeev+IBUL62FBMMJZ/uhWKf39i8Fv9iytqMnfgjTl0nmjaLXsEb0oaw==
-X-Received: by 2002:a05:622a:388:b0:461:186b:6b9d with SMTP id d75a77b69052e-4653d568a95mr41065441cf.17.1732289621751;
-        Fri, 22 Nov 2024 07:33:41 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b514152bbasm95886085a.100.2024.11.22.07.33.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 07:33:40 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tEVfA-00000004Tw6-1J4a;
-	Fri, 22 Nov 2024 11:33:40 -0400
-Date: Fri, 22 Nov 2024 11:33:40 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: iommu@lists.linux.dev, kvm-riscv@lists.infradead.org,
-	kvm@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, tjeznach@rivosinc.com,
-	zong.li@sifive.com, joro@8bytes.org, will@kernel.org,
-	robin.murphy@arm.com, anup@brainfault.org, atishp@atishpatra.org,
-	tglx@linutronix.de, alex.williamson@redhat.com,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu
-Subject: Re: [RFC PATCH 08/15] iommu/riscv: Add IRQ domain for interrupt
- remapping
-Message-ID: <20241122153340.GC773835@ziepe.ca>
-References: <20241114161845.502027-17-ajones@ventanamicro.com>
- <20241114161845.502027-25-ajones@ventanamicro.com>
- <20241118184336.GB559636@ziepe.ca>
- <20241119-62ff49fc1eedba051838dba2@orel>
- <20241119140047.GC559636@ziepe.ca>
- <DE13E1DF-7C68-461D-ADCD-8141B1ACEA5E@ventanamicro.com>
- <20241119153622.GD559636@ziepe.ca>
- <20241121-4e637c492d554280dec3b077@orel>
+	s=arc-20240116; t=1732289778; c=relaxed/simple;
+	bh=FCVg4mD+ZMQntyAexx7LI4cGqvnCmlBVP459F+Up28s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mp0Th4ExEcPSG0SJVn6JSiONjPCIeYja0Yamtp6MRcVABsY3RVODdRV56WwNFMEpaIe/PSr0neDGlC1Slv6boDGwODw36bOZVZsxWppf4uuyNQrV2kxk2ac6ibp7H70f3r0FFeB/13yNiA4wtkvbVfcvARnEPxH53AHxI9N/OaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rtP+tBkP; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AMCdTu1001690;
+	Fri, 22 Nov 2024 15:36:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=LamO+f
+	g+OBy68MHR/w1W4Qh7wao/TePMWO+7K4ckiXY=; b=rtP+tBkPqG7Zvs4LRe2ekX
+	DygfR0R9THxCc85V1YI/PS+pScPfmr3lxutJIoRYKNXEDfsHusWGblIZPlN7Obnm
+	plju5cZfJUtQymxcsrMgwTj88IIPhK4iR3STRKpd4Ttd5qL9UXhXEWQtM6KUZ3Zj
+	z5GL0XVEPkDhl48l7hlfUjgYnHr2FkU/W8l/FoJAJWwsDVSJtjlWZXbbw8LBmgEQ
+	X0IfJ86ev7afzSi+C/z9hhUuGHK9hX7sf7eJ9mOLC4HGL2+LjlmyKvdz3DNYBZ7G
+	WbserEzhO438mR+GKlBu9C+529k9DBSyrQHDTgmtJPpUOrXeHMw3DdqCP6qSr6Fg
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4313gt0hbg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Nov 2024 15:36:02 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AMEPAE5000570;
+	Fri, 22 Nov 2024 15:36:01 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42y77n49em-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Nov 2024 15:36:00 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AMFZxZm55247294
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 22 Nov 2024 15:36:00 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DC91B5803F;
+	Fri, 22 Nov 2024 15:35:59 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7894D5804E;
+	Fri, 22 Nov 2024 15:35:58 +0000 (GMT)
+Received: from [9.152.212.119] (unknown [9.152.212.119])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 22 Nov 2024 15:35:58 +0000 (GMT)
+Message-ID: <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
+Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby	
+ <jirislaby@kernel.org>,
+        Ilpo =?ISO-8859-1?Q?J=E4rvinen?=	
+ <ilpo.jarvinen@linux.intel.com>,
+        linux-serial@vger.kernel.org, Arnd
+ Bergmann	 <arnd@kernel.org>,
+        Heiko Carstens <hca@linux.ibm.com>, linux-kernel@vger.kernel.org
+Date: Fri, 22 Nov 2024 16:35:57 +0100
+In-Reply-To: <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net>
+References: <20240405152924.252598-1-schnelle@linux.ibm.com>
+	 <20240405152924.252598-2-schnelle@linux.ibm.com>
+	 <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net>
+Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
+ keydata=mQINBGHm3M8BEAC+MIQkfoPIAKdjjk84OSQ8erd2OICj98+GdhMQpIjHXn/RJdCZLa58k
+ /ay5x0xIHkWzx1JJOm4Lki7WEzRbYDexQEJP0xUia0U+4Yg7PJL4Dg/W4Ho28dRBROoJjgJSLSHwc
+ 3/1pjpNlSaX/qg3ZM8+/EiSGc7uEPklLYu3gRGxcWV/944HdUyLcnjrZwCn2+gg9ncVJjsimS0ro/
+ 2wU2RPE4ju6NMBn5Go26sAj1owdYQQv9t0d71CmZS9Bh+2+cLjC7HvyTHKFxVGOznUL+j1a45VrVS
+ XQ+nhTVjvgvXR84z10bOvLiwxJZ/00pwNi7uCdSYnZFLQ4S/JGMs4lhOiCGJhJ/9FR7JVw/1t1G9a
+ UlqVp23AXwzbcoV2fxyE/CsVpHcyOWGDahGLcH7QeitN6cjltf9ymw2spBzpRnfFn80nVxgSYVG1d
+ w75ksBAuQ/3e+oTQk4GAa2ShoNVsvR9GYn7rnsDN5pVILDhdPO3J2PGIXa5ipQnvwb3EHvPXyzakY
+ tK50fBUPKk3XnkRwRYEbbPEB7YT+ccF/HioCryqDPWUivXF8qf6Jw5T1mhwukUV1i+QyJzJxGPh19
+ /N2/GK7/yS5wrt0Lwxzevc5g+jX8RyjzywOZGHTVu9KIQiG8Pqx33UxZvykjaqTMjo7kaAdGEkrHZ
+ dVHqoPZwhCsgQARAQABtChOaWtsYXMgU2NobmVsbGUgPHNjaG5lbGxlQGxpbnV4LmlibS5jb20+iQ
+ JXBBMBCABBAhsBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAhkBFiEEnbAAstJ1IDCl9y3cr+Q/Fej
+ CYJAFAmWVooIFCQWP+TMACgkQr+Q/FejCYJCmLg/+OgZD6wTjooE77/ZHmW6Egb5nUH6DU+2nMHMH
+ UupkE3dKuLcuzI4aEf/6wGG2xF/LigMRrbb1iKRVk/VG/swyLh/OBOTh8cJnhdmURnj3jhaefzslA
+ 1wTHcxeH4wMGJWVRAhOfDUpMMYV2J5XoroiA1+acSuppelmKAK5voVn9/fNtrVr6mgBXT5RUnmW60
+ UUq5z6a1zTMOe8lofwHLVvyG9zMgv6Z9IQJc/oVnjR9PWYDUX4jqFL3yO6DDt5iIQCN8WKaodlNP6
+ 1lFKAYujV8JY4Ln+IbMIV2h34cGpIJ7f76OYt2XR4RANbOd41+qvlYgpYSvIBDml/fT2vWEjmncm7
+ zzpVyPtCZlijV3npsTVerGbh0Ts/xC6ERQrB+rkUqN/fx+dGnTT9I7FLUQFBhK2pIuD+U1K+A+Egw
+ UiTyiGtyRMqz12RdWzerRmWFo5Mmi8N1jhZRTs0yAUn3MSCdRHP1Nu3SMk/0oE+pVeni3ysdJ69Sl
+ kCAZoaf1TMRdSlF71oT/fNgSnd90wkCHUK9pUJGRTUxgV9NjafZy7sx1Gz11s4QzJE6JBelClBUiF
+ 6QD4a+MzFh9TkUcpG0cPNsFfEGyxtGzuoeE86sL1tk3yO6ThJSLZyqFFLrZBIJvYK2UiD+6E7VWRW
+ 9y1OmPyyFBPBosOvmrkLlDtAtyfYInO0KU5pa2xhcyBTY2huZWxsZSA8bmlrbGFzLnNjaG5lbGxlQ
+ GlibS5jb20+iQJUBBMBCAA+AhsBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEEnbAAstJ1IDCl9y
+ 3cr+Q/FejCYJAFAmWVoosFCQWP+TMACgkQr+Q/FejCYJB7oxAAksHYU+myhSZD0YSuYZl3oLDUEFP
+ 3fm9m6N9zgtiOg/GGI0jHc+Tt8qiQaLEtVeP/waWKgQnje/emHJOEDZTb0AdeXZk+T5/ydrKRLmYC
+ 6rPge3ue1yQUCiA+T72O3WfjZILI2yOstNwd1f0epQ32YaAvM+QbKDloJSmKhGWZlvdVUDXWkS6/m
+ aUtUwZpddFY8InXBxsYCbJsqiKF3kPVD515/6keIZmZh1cTIFQ+Kc+UZaz0MxkhiCyWC4cH6HZGKR
+ fiXLhPlmmAyW9FiZK9pwDocTLemfgMR6QXOiB0uisdoFnjhXNfp6OHSy7w7LTIHzCsJoHk+vsyvSp
+ +fxkjCXgFzGRQaJkoX33QZwQj1mxeWl594QUfR4DIZ2KERRNI0OMYjJVEtB5jQjnD/04qcTrSCpJ5
+ ZPtiQ6Umsb1c9tBRIJnL7gIslo/OXBe/4q5yBCtCZOoD6d683XaMPGhi/F6+fnGvzsi6a9qDBgVvt
+ arI8ybayhXDuS6/StR8qZKCyzZ/1CUofxGVIdgkseDhts0dZ4AYwRVCUFQULeRtyoT4dKfEot7hPE
+ /4wjm9qZf2mDPRvJOqss6jObTNuw1YzGlpe9OvDYtGeEfHgcZqEmHbiMirwfGLaTG2xKDx4g2jd2z
+ Ocf83TCERFKJEhvZxB3tRiUQTd3dZ1TIaisv/o+y0K05pa2xhcyBTY2huZWxsZSA8bmlrbGFzLnNj
+ aG5lbGxlQGdtYWlsLmNvbT6JAlQEEwEIAD4CGwEFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AWIQSds
+ ACy0nUgMKX3Ldyv5D8V6MJgkAUCZZWiiwUJBY/5MwAKCRCv5D8V6MJgkNVuEACo12niyoKhnXLQFt
+ NaqxNZ+8p/MGA7g2XcVJ1bYMPoZ2Wh8zwX0sKX/dLlXVHIAeqelL5hIv6GoTykNqQGUN2Kqf0h/z7
+ b85o3tHiqMAQV0dAB0y6qdIwdiB69SjpPNK5KKS1+AodLzosdIVKb+LiOyqUFKhLnablni1hiKlqY
+ yDeD4k5hePeQdpFixf1YZclGZLFbKlF/A/0Q13USOHuAMYoA/iSgJQDMSUWkuC0mNxdhfVt/gVJnu
+ Kq+uKUghcHflhK+yodqezlxmmRxg6HrPVqRG4pZ6YNYO7YXuEWy9JiEH7MmFYcjNdgjn+kxx4IoYU
+ O0MJ+DjLpVCV1QP1ZvMy8qQxScyEn7pMpQ0aW6zfJBsvoV3EHCR1emwKYO6rJOfvtu1rElGCTe3sn
+ sScV9Z1oXlvo8pVNH5a2SlnsuEBQe0RXNXNJ4RAls8VraGdNSHi4MxcsYEgAVHVaAdTLfJcXZNCIU
+ cZejkOE+U2talW2n5sMvx+yURAEVsT/50whYcvomt0y81ImvCgUz4xN1axZ3PCjkgyhNiqLe+vzge
+ xq7B2Kx2++hxIBDCKLUTn8JUAtQ1iGBZL9RuDrBy2rR7xbHcU2424iSbP0zmnpav5KUg4F1JVYG12
+ vDCi5tq5lORCL28rjOQqE0aLHU1M1D2v51kjkmNuc2pgLDFzpvgLQhTmlrbGFzIFNjaG5lbGxlIDx
+ uaWtzQGtlcm5lbC5vcmc+iQJUBBMBCAA+AhsBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEEnbAA
+ stJ1IDCl9y3cr+Q/FejCYJAFAmWVoosFCQWP+TMACgkQr+Q/FejCYJAglRAAihbDxiGLOWhJed5cF
+ kOwdTZz6MyYgazbr+2sFrfAhX3hxPFoG4ogY/BzsjkN0cevWpSigb2I8Y1sQD7BFWJ2OjpEpVQd0D
+ sk5VbJBXEWIVDBQ4VMoACLUKgfrb0xiwMRg9C2h6KlwrPBlfgctfvrWWLBq7+oqx73CgxqTcGpfFy
+ tD87R4ovR9W1doZbh7pjsH5Ae9xX5PnQFHruib3y35zC8+tvSgvYWv3Eg/8H4QWlrjLHHy2AfZDVl
+ 9F5t5RfGL8NRsiTdVg9VFYg/GDdck9WPEgdO3L/qoq3Iuk0SZccGl+Nj8vtWYPKNlu2UvgYEbB8cl
+ UoWhg+SjjYQka7/p6tc+CCPZ8JUpkgkAdt7yXt6370wP1gct2VztS6SEGcmAE1qxtGhi5Kuln4ZJ/
+ UO2yxhPHgoW99OuZw3IRHe0+mNR67JbIpSuFWDFNjZ0nckQcU1taSEUi0euWs7i4MEkm0NsOsVhbs
+ 4D2vMiC6kO/FqWOPmWZeAjyJw/KRUG4PaJAr5zJUx57nhKWgeTniW712n4DwCUh77D/PHY0nqBTG/
+ B+QQCR/FYGpTFkO4DRVfapT8njDrsWyVpP9o64VNZP42S+DuRGWfUKCMAXsM/wPzRiDEVfnZMcUR9
+ vwLSHeoV7MiIFC0xIrp5ES9R00t4UFgqtGc36DV71qjR+66Im0=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241121-4e637c492d554280dec3b077@orel>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 79melbxdOZ92uyEM67pFkNoIiHAVpWhM
+X-Proofpoint-ORIG-GUID: 79melbxdOZ92uyEM67pFkNoIiHAVpWhM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
+ adultscore=0 mlxlogscore=790 mlxscore=0 malwarescore=0 spamscore=0
+ priorityscore=1501 phishscore=0 lowpriorityscore=0 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411220130
 
-On Fri, Nov 22, 2024 at 04:11:36PM +0100, Andrew Jones wrote:
+On Fri, 2024-11-22 at 07:18 -0800, Guenter Roeck wrote:
+> On Fri, Apr 05, 2024 at 05:29:24PM +0200, Niklas Schnelle wrote:
+> > In a future patch HAS_IOPORT=3Dn will disable inb()/outb() and friends =
+at
+> > compile time. We thus need to add HAS_IOPORT as dependency for those
+> > drivers using them unconditionally. For 8250 based drivers some support
+> > MMIO only use so fence only the parts requiring I/O ports.
+> >=20
+> > Co-developed-by: Arnd Bergmann <arnd@kernel.org>
+> > Signed-off-by: Arnd Bergmann <arnd@kernel.org>
+> > Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> ...
+> > @@ -422,10 +443,12 @@ static void set_io_from_upio(struct uart_port *p)
+> >  	up->dl_write =3D default_serial_dl_write;
+> > =20
+> > +	default:
+> > +		WARN(1, "Unsupported UART type %x\n", p->iotype);
+>=20
+> So, according to this patch, the serial uart on microblaze, nios2,
+> openrisc, xtensa, and possibly others is not or no longer supported.
+>=20
+> WARNING: CPU: 0 PID: 0 at drivers/tty/serial/8250/8250_port.c:470 serial8=
+250_set_defaults+0x1a8/0x22c
+> Unsupported UART type 0
+>=20
+> Any special reason ?
+>=20
+> Guenter
 
-> The reason is that the RISC-V IOMMU only checks the MSI table, i.e.
-> enables its support for MSI remapping, when the g-stage (second-stage)
-> page table is in use. However, the expected virtual memory scheme for an
-> OS to use for DMA would be to have s-stage (first-stage) in use and the
-> g-stage set to 'Bare' (not in use). 
+So according to the warning the p->iotype is 0 which is UPIO_PORT.
+For UPIO_PORT the switch above the WARN would pick io_serial_in() and
+io_serial_out() as handlers. These use inb() respectively outb() to
+access the serial so I don't see how they would work with !HAS_IOPORT
+and it most definitely won't work for s390.
 
-That isn't really a technical reason.
+Now for Microblaze Kconfig says to select HAS_IOPORT if PCI so I'd
+assume that it can use inb()/outb() and maybe the PCI requirement is
+not correct if this isn't a PCI device and it used to work with
+inb()/outb()? For nios2, openrisc, and xtensa they don't select
+HAS_IOPORT so either it really won't work anyway or they should select
+it. Can you tell us more about the devices involved where you saw this?
 
-> OIOW, it doesn't appear the spec authors expected MSI remapping to
-> be enabled for the host DMA use case.  That does make some sense,
-> since it's actually not necessary. For the host DMA use case,
-> providing mappings for each s-mode interrupt file which the device
-> is allowed to write to in the s-stage page table sufficiently
-> enables MSIs to be delivered.
+Thanks,
+Niklas
 
-Well, that seems to be the main problem here. You are grappling with a
-spec design that doesn't match the SW expecations. Since it has
-deviated from what everyone else has done you now have extra
-challenges to resolve in some way.
-
-Just always using interrupt remapping if the HW is capable of
-interrupt remapping and ignoring the spec "expectation" is a nice a
-simple way to make things work with existing Linux.
-
-> If "default VFIO" means VFIO without irqbypass, then it would work the
-> same as the DMA API, assuming all mappings for all necessary s-mode
-> interrupt files are created (something the DMA API needs as well).
-> However, VFIO would also need 'vfio_iommu_type1.allow_unsafe_interrupts=1'
-> to be set for this no-irqbypass configuration.
-
-Which isn't what anyone wants, you need to make the DMA API domain be
-fully functional so that VFIO works.
-
-> > That isn't ideal, the translation under the IRQs shouldn't really be
-> > changing as the translation under the IOMMU changes.
-> 
-> Unless the device is assigned to a guest, then the IRQ domain wouldn't
-> do anything at all (it'd just sit between the device and the device's
-> old MSI parent domain), but it also wouldn't come and go, risking issues
-> with anything sensitive to changes in the IRQ domain hierarchy.
-
-VFIO isn't restricted to such a simple use model. You have to support
-all the generality, which includes fully supporting changing the iommu
-translation on the fly.
-
-> > Further, VFIO assumes iommu_group_has_isolated_msi(), ie
-> > IRQ_DOMAIN_FLAG_ISOLATED_MSI, is fixed while it is is bound. Will that
-> > be true if the iommu is flapping all about? What will you do when VFIO
-> > has it attached to a blocked domain?
-> > 
-> > It just doesn't make sense to change something so fundamental as the
-> > interrupt path on an iommu domain attachement. :\
-> 
-> Yes, it does appear I should be doing this at iommu device probe time
-> instead. It won't provide any additional functionality to use cases which
-> aren't assigning devices to guests, but it also won't hurt, and it should
-> avoid the risks you point out.
-
-Even if you statically create the domain you can't change the value of
-IRQ_DOMAIN_FLAG_ISOLATED_MSI depending on what is currently attached
-to the IOMMU.
-
-What you are trying to do is not supported by the software stack right
-now. You need to make much bigger, more intrusive changes, if you
-really want to make interrupt remapping dynamic.
-
-Jason
 
