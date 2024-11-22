@@ -1,255 +1,127 @@
-Return-Path: <linux-kernel+bounces-418171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D709D5DFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:22:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C3F99D5DFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:23:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 680BA1F2142C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:22:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3466D1F21A71
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84FE1DE891;
-	Fri, 22 Nov 2024 11:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF451DE8A6;
+	Fri, 22 Nov 2024 11:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LJB67VJ0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="q2TeauU/";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="24PHf3oR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MiehijWU"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JqMiHbYv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD6F1CBE81;
-	Fri, 22 Nov 2024 11:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0338D18A6DE;
+	Fri, 22 Nov 2024 11:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732274554; cv=none; b=qxfzxhF7QG+SEqSVgo8rXCgdbgpk/smL12neOmNxur1jLBMiV9sZPFwuyPU6NZjqiFrb63som3w35thO0SszGYlJIIAdEoR45p0FWkJmZnM+FQ4FmDlqdBhA1B1I+mXGyUFXXLKd+709sgcyQzK3QChX6m3UpOsFC1k2RHhOBV8=
+	t=1732274595; cv=none; b=YYHzgFTSscK2V27f3vzcSwKE6rHdxbCA5+u3P+sMYgwX7nTUvyLAhwf1Sry1OLF27s1BOG9hZwWnsQH+9LXMWo7JIPnYsLZ+6B+Jsvq+qaJCvpbcl2FbHlj60xIZeFcChRlEk/u5n8NCOdBrErSbO8AJTzQYw3+hEq5pDt6FGIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732274554; c=relaxed/simple;
-	bh=+3elVARTpgPl0+TFsdMK74bMTLEELajCRkpQMlyPAWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZuiS06Bu5gORIUd4SYK5lu3B0uGxZQRvHao+dg8UwODIZCf+/W4iJ4KBEJQb7gehPnO6c0ekghJanOHaLO2Zhox+Xh9EdQkRzFsznS1e+nVDSmxC6BBt5UD8Gf6ilKeMwG2xBCDIfBS7pSWQbh6PPovzgnvmO2O9jjDALG6x4UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LJB67VJ0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=q2TeauU/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=24PHf3oR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MiehijWU; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 961F31F37E;
-	Fri, 22 Nov 2024 11:22:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732274549; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SnZ5fRolbcpG6gnZkZpzgdua/PNESxchKOKstewCQjM=;
-	b=LJB67VJ0vq2ag+ZczC4yc3MsJ8RushEOXnMeGaEJkP35dgkRRzXHL3SdY3826vhUjdqnBJ
-	mZlh/kvU0OdHZzJa2i3qghRlz1yH2ZAWQjifQqL7IKirV7wyoplODsHZKkrbk0IWb/McYD
-	97N56cprv9H/sWtznY5mMMLSodFFhEo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732274549;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SnZ5fRolbcpG6gnZkZpzgdua/PNESxchKOKstewCQjM=;
-	b=q2TeauU/lB/5UHzZuW8TcrPCdRxI6z0l8pwCai06ljY0rNqPrCrlXedux+zo0wKpcb/fkF
-	Ct9pXiaNyjQahlAA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=24PHf3oR;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=MiehijWU
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732274548; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SnZ5fRolbcpG6gnZkZpzgdua/PNESxchKOKstewCQjM=;
-	b=24PHf3oRVIk4BLr8c6z1pdCNCQreZqFLTWKojvv8Hi5uZVaFbREaHIRL12joIRaclUVnSQ
-	TPi/8NNJU16ngraNrGiygPVbxnk70Hm4kq9od0SYe3CW/sSDMilfmFyDgPWiRm5nT82V+A
-	POI3QQIGMaz5oEiIFQ0rbRgnI6DJU1w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732274548;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SnZ5fRolbcpG6gnZkZpzgdua/PNESxchKOKstewCQjM=;
-	b=MiehijWUcSRmbvxBnGVMtriWuT0PjoCJQqdoTGwr1l5yXVQ7xiKT9CIpBhgQqN2mcjhzOz
-	Zo7oe2BY4G82fBDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8637713998;
-	Fri, 22 Nov 2024 11:22:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id FgJuIHRpQGcyMQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 22 Nov 2024 11:22:28 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 285DDA08B8; Fri, 22 Nov 2024 12:22:28 +0100 (CET)
-Date: Fri, 22 Nov 2024 12:22:28 +0100
-From: Jan Kara <jack@suse.cz>
-To: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com, 21371365@buaa.edu.cn
-Subject: Re: [PATCH v2] fs: Fix data race in inode_set_ctime_to_ts
-Message-ID: <20241122112228.6him45jdtibue26s@quack3>
-References: <20241121113546.apvyb43pnuceae3g@quack3>
- <20241122035159.441944-1-zhenghaoran@buaa.edu.cn>
+	s=arc-20240116; t=1732274595; c=relaxed/simple;
+	bh=GJHZMDI2iJk8tkr/3YVQpA8tfSP7IWp9w/OqAk1Hxik=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AkpgYisXOwJs9q3+gKWFcYzTtHs6h+j1dCIdKNzDQsce5PJpS9o+5+oklg9/AYtEXWnPX+xJNt0L2jkEH875zSZskV9QRrtpQVieWnmkyxlxe7aYUqPmqmmx7fPiwiOQj2EwlAqcuNvc8vdfVAKUv+cqGeprJXqiEgDpykh9jrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JqMiHbYv; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732274593; x=1763810593;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=GJHZMDI2iJk8tkr/3YVQpA8tfSP7IWp9w/OqAk1Hxik=;
+  b=JqMiHbYv+OhdKmtoElOtvYiJ8wLweL/GzQ2Lq7jf+IUqRUOYOwvusek6
+   UPz1AVSnygZa4gTIKsRwCOazVwskuVWhiOFKCW+7ytUrAprxPkfJKTExw
+   FweRmZoL5tKnP9toxq/jr9xBlqDDox/h8dN0vSHv3QUfrnsBzv9gKXLxg
+   RAYwzLf7N759TAJh+/CBcQHNiWcG3DzPUY8EngvJWezonE+A8JdsD3gVe
+   aQHkvj41we4Y2UcVRCa0C+wYeYXu3L74mXSlBmBrDpnuex8egMj+z4ZRz
+   U7CS44mwho6WTapzFcav96nZ42mKqZQFlOaNCuG2y6QfK01EV317v9R9b
+   A==;
+X-CSE-ConnectionGUID: 8pddK4YQQyOkO6Bdcl3W3w==
+X-CSE-MsgGUID: TDOQ2RsURMSFFAM04OI3bA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="43074369"
+X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
+   d="scan'208";a="43074369"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 03:23:12 -0800
+X-CSE-ConnectionGUID: 6Krw7KkLR6GVn5UaKuPNZg==
+X-CSE-MsgGUID: jti2QNpMQ/SNkFZUHXuDdg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
+   d="scan'208";a="90532328"
+Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.157])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 03:23:00 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Andrzej Hajda
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Laurent Pinchart
+ <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi
+ Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+ <broonie@kernel.org>, Phong LE <ple@baylibre.com>, Inki Dae
+ <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin
+ Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Russell King
+ <linux@armlinux.org.uk>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?=
+ <heiko@sntech.de>, Andy
+ Yan <andy.yan@rock-chips.com>, Alain Volmat <alain.volmat@foss.st.com>,
+ Raphael Gallais-Pou <rgallaispou@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v4 3/7] drm/connector: implement generic HDMI codec helpers
+In-Reply-To: <20241122-drm-bridge-hdmi-connector-v4-3-b4d69d6e3bd9@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20241122-drm-bridge-hdmi-connector-v4-0-b4d69d6e3bd9@linaro.org>
+ <20241122-drm-bridge-hdmi-connector-v4-3-b4d69d6e3bd9@linaro.org>
+Date: Fri, 22 Nov 2024 13:22:53 +0200
+Message-ID: <87ed33zf5e.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241122035159.441944-1-zhenghaoran@buaa.edu.cn>
-X-Rspamd-Queue-Id: 961F31F37E
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,vger.kernel.org,gmail.com,buaa.edu.cn];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain
 
-On Fri 22-11-24 11:51:59, Hao-ran Zheng wrote:
-> V2:
-> Thanks for Honza's reply and suggestions. READ_ONCE should indeed
-> be added to the reading position. I added READ_ONCE to
-> `inode_get_ctime_sec()`. The new patch is as follows.
-> -----------------------------------------------------------------
-> V1:
-> A data race may occur when the function `inode_set_ctime_to_ts()` and
-> the function `inode_get_ctime_sec()` are executed concurrently. When
-> two threads call `aio_read` and `aio_write` respectively, they will
-> be distributed to the read and write functions of the corresponding
-> file system respectively. Taking the btrfs file system as an example,
-> the `btrfs_file_read_iter` and `btrfs_file_write_iter` functions are
-> finally called. These two functions created a data race when they
-> finally called `inode_get_ctime_sec()` and `inode_set_ctime_to_ns()`.
-> The specific call stack that appears during testing is as follows:
-
-Changelogs of the patch belong below the --- marker (so that they are not
-part of the final commit message). So this changelog should look like:
-
-A data race may occur when the function `inode_set_ctime_to_ts()` and
-the function `inode_get_ctime_sec()` are executed concurrently. When
-....
-
-Signed-off-by: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
-
----
-<diffstat here>
-
-changes since v1:
-  - ...
-
-<patch here>
-
-Please see 'The canonical patch format' chapter in
-Documentation/process/submitting-patches.rst for more details.
-
-> ```
-
-Also our changelogs are not in ReST or whatever other format. They are
-plain ASCII text. Hence quotes like above are pointless and mostly reducing
-readability.
-
-> ============DATA_RACE============
-> btrfs_delayed_update_inode+0x1f61/0x7ce0 [btrfs]
-> btrfs_update_inode+0x45e/0xbb0 [btrfs]
-> btrfs_dirty_inode+0x2b8/0x530 [btrfs]
-> btrfs_update_time+0x1ad/0x230 [btrfs]
-> touch_atime+0x211/0x440
-> filemap_read+0x90f/0xa20
-> btrfs_file_read_iter+0xeb/0x580 [btrfs]
-> aio_read+0x275/0x3a0
-> io_submit_one+0xd22/0x1ce0
-> __se_sys_io_submit+0xb3/0x250
-> do_syscall_64+0xc1/0x190
-> entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> ============OTHER_INFO============
-> btrfs_write_check+0xa15/0x1390 [btrfs]
-> btrfs_buffered_write+0x52f/0x29d0 [btrfs]
-> btrfs_do_write_iter+0x53d/0x1590 [btrfs]
-> btrfs_file_write_iter+0x41/0x60 [btrfs]
-> aio_write+0x41e/0x5f0
-> io_submit_one+0xd42/0x1ce0
-> __se_sys_io_submit+0xb3/0x250
-> do_syscall_64+0xc1/0x190
-> entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> ```
-> 
-> The call chain after traceability is as follows:
-> 
-> ```
-> Thread1:
-> btrfs_delayed_update_inode() ->
-> fill_stack_inode_item() ->
-> inode_get_ctime_sec()
-> 
-> Thread2:
-> btrfs_write_check() ->
-> update_time_for_write() ->
-> inode_set_ctime_to_ts()
-> ```
-
-No need to repeat the stack traces again here. The output from KCSAN above
-is enough.
-
-> To address this issue, it is recommended to
-> add WRITE_ONCE when writing the `inode->i_ctime_sec` variable.
-> --------------------------------------------------------------
-
-Also this line of '-' is really unexpected. Please just leave empty line
-here.
-
-> Signed-off-by: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
-> ---
->  include/linux/fs.h | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 3559446279c1..869ccfc9a787 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1655,7 +1655,7 @@ static inline struct timespec64 inode_set_mtime(struct inode *inode,
+On Fri, 22 Nov 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
+> diff --git a/drivers/gpu/drm/drm_internal.h b/drivers/gpu/drm/drm_internal.h
+> index b2b6a8e49dda46f1cb3b048ef7b28356dd3aaa4e..8ed58e482fac4662b659276e8bc17690e1fdb9b7 100644
+> --- a/drivers/gpu/drm/drm_internal.h
+> +++ b/drivers/gpu/drm/drm_internal.h
+> @@ -280,4 +280,9 @@ void drm_framebuffer_print_info(struct drm_printer *p, unsigned int indent,
+>  				const struct drm_framebuffer *fb);
+>  void drm_framebuffer_debugfs_init(struct drm_device *dev);
 >  
->  static inline time64_t inode_get_ctime_sec(const struct inode *inode)
->  {
-> -	return inode->i_ctime_sec;
-> +	return READ_ONCE(inode->i_ctime_sec);
->  }
+> +/* drm_connector_hdmi_codec.c */
+> +
+> +int drm_connector_hdmi_codec_init(struct drm_connector *connector);
+> +void drm_connector_hdmi_codec_cleanup(struct drm_connector *connector);
+> +
+>  #endif /* __DRM_INTERNAL_H__ */
 
-Good. But please fix inode_get_ctime_nsec() as well.
+Better fit in drm_crtc_internal.h or drm_crtc_helper_internal.h?
 
-								Honza
+Maybe we could use an internal header inside display/. Or just 1:1
+drm_foo_internal.h for every drm_foo.c to keep things simple and have
+fewer interdependencies.
+
+BR,
+Jani.
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Jani Nikula, Intel
 
