@@ -1,60 +1,67 @@
-Return-Path: <linux-kernel+bounces-418167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAA129D5DF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:20:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 673DC9D5DF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:21:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 069FFB26D25
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:20:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C52D7B26EA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E271DE891;
-	Fri, 22 Nov 2024 11:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1CD1DE4CC;
+	Fri, 22 Nov 2024 11:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="EL7V0rG5"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Yrv9iFPu"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1089E17E00E;
-	Fri, 22 Nov 2024 11:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138AF1DE4D3
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 11:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732274446; cv=none; b=B3og1pqWJcCeC7PVC4cdlKen19A9OD3klYpIYathfRpL4nlDOQkdlBVqWDKHACFEKlzFTKZy2T15s8yWXgEU809X7bhQMyXu9wm7Ut17+4580VUao2DpHVhr1i3ddUjtswq20Py5YOBnjjgluHIaJ+pOLuLjxT7vXVy1gXNTuE0=
+	t=1732274475; cv=none; b=lh96zLxAjSLKKvrxGBd/ZuE0EkDVtqtWWBOBnErlqRwJ0nmRmDnYJhvS3Cs72s4Djjww6Ik8KOEkZ27koH2qbHnjft3lePAei/5y0Qd9HD9z5nthzxhi9pqF109Vav4fP2FD03KQDzA7l53s89fK5PQaJzYXXdCcUU/Ig7tE0nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732274446; c=relaxed/simple;
-	bh=IRgrCb6NBNtdhKLpJ2c31xozwLFzsO9letozRyoDWbc=;
+	s=arc-20240116; t=1732274475; c=relaxed/simple;
+	bh=oV9sa8Zpps4KEvNcx09iJaE4EcBbRG+1df4HMJqVtSM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kU/3h+TEsf43DRG1pkrz6mpG4J8Lxh7t2xlVNQzw1VFZVZR2ah1fgZYDkbMOfBd+VUMyzHG9hl4GatkJqSCZn3lEYBnpfH3oQ3Wy0pdTqDzn1XunfI12P3KXd9dX3+B2bD5Q5zonOw33FQyo90ooenk20Y+XceCvrhpa7ICqtF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=EL7V0rG5; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (93-46-82-201.ip106.fastwebnet.it [93.46.82.201])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 524824C9;
-	Fri, 22 Nov 2024 12:20:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732274424;
-	bh=IRgrCb6NBNtdhKLpJ2c31xozwLFzsO9letozRyoDWbc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EL7V0rG55eLDxd2z3URajDlhIhfEpZiPoixLdd3Vl6MN9vGADzG/3TnbEWtB5XEZr
-	 lLAHX/8oX5/npsIaSdOvJePCe0A/7AFcuwBGJmr9nrGfMslDbA+9ejPAzAsknZA2n8
-	 PJJAQ1TXgxNmc+wHOlYsAVnfldxDPWE49dvjrbfY=
-Date: Fri, 22 Nov 2024 12:20:40 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Naushir Patuck <naush@raspberrypi.com>
-Cc: Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, linux-media@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, jacopo.mondi@ideasonboard.com, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH v1 4/5] drivers: media: bcm2835-unicam: Fix for possible
- dummy buffer overrun
-Message-ID: <vnl2px6zcb7pchhfp3k3lngicamsjvidu75sixvubrohqaudlr@h6r54mzr3daz>
-References: <20241122084152.1841419-1-naush@raspberrypi.com>
- <20241122084152.1841419-5-naush@raspberrypi.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BGKrNCNxAm65z5UD9/fBT6nQSk4Q3CzInaPVj3jLz1BpNNPx2Y1oKUpBWIGZkutpbnwjGIGqLchVfUXuFid5vLeazPbPEQptWqi84KvX3xjlX54NcxUbtjo0HCUMuizniV63qNAx1KMVNXGBL4IxGQ5JHgPVpTPR7mCsFy1Tn8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Yrv9iFPu; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=xlunDlLpKv69obk0KNd8vKwx7o+CIMbG84s+jMC3nFQ=; b=Yrv9iFPudjgwR50DGJ+0So1eXm
+	UY/8kvGasTdP1SbpjsbE+0mm7lsy5L/TS/FQjWRbH1jHaZnJhK/fvPpEPepPUH7QmQymUjhKW8LqJ
+	PTnhmbrh+JW3YxlpFuZlogO2TMyBc+VyvhFoNr7R7uOSh+HP+WBfDXPNYgwOi5e5nwCHLZYH84CrT
+	pNNjUCYUQtopTsO6Sf/lgHj1nfjqsxATKm9yYZNM5iYlx5ag/BWycut5CVDEApFfP6cqfbXRwlI1R
+	u5uq+Su0JX6WTlrNFNmlKt/x96Oe3qHEhh1azZtLjCofqARUmJs9u3z6Ke2lYcC4VFK9InSCucWmU
+	M3Am2ddg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tERij-00000007aid-3vs1;
+	Fri, 22 Nov 2024 11:21:07 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C8C0E30066A; Fri, 22 Nov 2024 12:21:06 +0100 (CET)
+Date: Fri, 22 Nov 2024 12:21:06 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Don <joshdon@google.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>,
+	Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+	Roman Gushchin <kfree@google.com>, torvalds@linux-foundation.org
+Subject: Re: [PATCH] sched: fix warning in sched_setaffinity
+Message-ID: <20241122112106.GU24774@noisy.programming.kicks-ass.net>
+References: <20241111182738.1832953-1-joshdon@google.com>
+ <CABk29NuO0awfERpRBHyEyRPaCcrKJ-Zx1fR9f8RgSrqpqNM_cg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,54 +70,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241122084152.1841419-5-naush@raspberrypi.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABk29NuO0awfERpRBHyEyRPaCcrKJ-Zx1fR9f8RgSrqpqNM_cg@mail.gmail.com>
 
-Hi Naush
+On Thu, Nov 21, 2024 at 04:09:16PM -0800, Josh Don wrote:
+> On Mon, Nov 11, 2024 at 10:27 AM Josh Don <joshdon@google.com> wrote:
+> >
+> > Commit 8f9ea86fdf99b added some logic to sched_setaffinity that included
+> > a WARN when a per-task affinity assignment races with a cpuset update.
+> >
+> > Specifically, we can have a race where a cpuset update results in the
+> > task affinity no longer being a subset of the cpuset. That's fine; we
+> > have a fallback to instead use the cpuset mask. However, we have a WARN
+> > set up that will trigger if the cpuset mask has no overlap at all with
+> > the requested task affinity. This shouldn't be a warning condition; its
+> > trivial to create this condition.
+> >
+> > Reproduced the warning by the following setup:
+> >
+> > - $PID inside a cpuset cgroup
+> > - another thread repeatedly switching the cpuset cpus from 1-2 to just 1
+> > - another thread repeatedly setting the $PID affinity (via taskset) to 2
+> >
+> > Fixes: 8f9ea86fdf99b ("sched: Always preserve the user requested cpumask")
+> > Signed-off-by: Josh Don <joshdon@google.com>
+> > Acked-by: Waiman Long <longman@redhat.com>
+> > Tested-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+> > Acked-and-tested-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > ---
+> >  kernel/sched/syscalls.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+> > index 4fae3cf25a3a..3a88f7c0cb69 100644
+> > --- a/kernel/sched/syscalls.c
+> > +++ b/kernel/sched/syscalls.c
+> > @@ -1321,7 +1321,7 @@ int __sched_setaffinity(struct task_struct *p, struct affinity_context *ctx)
+> >                         bool empty = !cpumask_and(new_mask, new_mask,
+> >                                                   ctx->user_mask);
+> >
+> > -                       if (WARN_ON_ONCE(empty))
+> > +                       if (empty)
+> >                                 cpumask_copy(new_mask, cpus_allowed);
+> >                 }
+> >                 __set_cpus_allowed_ptr(p, ctx);
+> > --
+> > 2.46.0.469.g59c65b2a67-goog
+> >
+> 
+> Hey,
+> 
+> I wanted to bump this one last time. It's a pretty simple change that
+> already has ACK's from 3 other folks, but has seemed to fall through
+> the cracks [1].
 
-On Fri, Nov 22, 2024 at 08:41:51AM +0000, Naushir Patuck wrote:
-> The Unicam hardware has been observed to cause a buffer overrun when
-> using the dummy buffer as a circular buffer. The conditions that cause
-> the overrun are not fully known, but it seems to occur when the memory
-> bus is heavily loaded.
->
-> To avoid the overrun, program the hardware with a buffer size of 0 when
-> using the dummy buffer. This will cause overrun into the allocated dummy
-> buffer, but avoid out of bounds writes.
->
-> Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
-> ---
->  drivers/media/platform/broadcom/bcm2835-unicam.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/media/platform/broadcom/bcm2835-unicam.c b/drivers/media/platform/broadcom/bcm2835-unicam.c
-> index 550eb1b064f1..f10064107d54 100644
-> --- a/drivers/media/platform/broadcom/bcm2835-unicam.c
-> +++ b/drivers/media/platform/broadcom/bcm2835-unicam.c
-> @@ -640,7 +640,14 @@ static inline void unicam_reg_write_field(struct unicam_device *unicam, u32 offs
->  static void unicam_wr_dma_addr(struct unicam_node *node,
->  			       struct unicam_buffer *buf)
->  {
-> -	dma_addr_t endaddr = buf->dma_addr + buf->size;
-> +	/*
-> +	 * Due to a HW bug causing buffer overruns in circular buffer mode under
-> +	 * certain (not yet fully known) conditions, the dummy buffer allocation
-> +	 * is set to a a single page size, but the hardware gets programmed with
-> +	 * a buffer size of 0.
-> +	 */
-> +	dma_addr_t endaddr = buf->dma_addr +
-> +			     (buf != &node->dummy_buf ? buf->size : 0);
-
-So the DMA engine doesn't actually write any data to dummy_buf
-anymore ?
-
-Does it still need to be allocated at all ? Or can we simply set the
-dma transfer size to 0 ?
-
->
->  	if (node->id == UNICAM_IMAGE_NODE) {
->  		unicam_reg_write(node->dev, UNICAM_IBSA0, buf->dma_addr);
-> --
-> 2.34.1
->
->
+Got it, I'll stick it in tip/sched/urgent post -rc1 or so.
 
