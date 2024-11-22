@@ -1,79 +1,57 @@
-Return-Path: <linux-kernel+bounces-417825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 028FA9D5975
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:41:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFCA99D5976
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:42:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE8F91F22A47
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:41:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86006282663
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED5E165EE3;
-	Fri, 22 Nov 2024 06:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8211316BE0D;
+	Fri, 22 Nov 2024 06:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RS3EArA5"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="Tk+f+zhq"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF861632D5;
-	Fri, 22 Nov 2024 06:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732257677; cv=none; b=mAXEjxl6bIwIVywL/N/bCVXp2xr1RPjUYtsbzC38tBM8rhN9hux2BlPfzn8hc1qYn7WT8G/rmTKww6d5URjQ5syQuMSDMH3p5LinV0zF4ZTFIDG4KWXB5wrm4jYvy9bA3Rhhpds4AHT/Pd24vz58zjPBxO8je4bSvkWhXMCORlo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732257677; c=relaxed/simple;
-	bh=qT67HFU+pJWSoX2UoORQ/o4FlFr0iWQDHlUBdbxNq4M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YkcavWvJBj3T3pgd3Fp04ZZX7AIw/lSTOG66hxrDSaumE/Rf16nYsfuVR8/E3MFdtScv6h6FwxJFfSRscuqVYLObmgdGoJn/3/HrJ9rRjksKBytwhduWJlXGm8fd1+se4GWpcEwhOUvG+UIe3paS1xsi3KfCe1dBjIaa/sXVq+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RS3EArA5; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43155abaf0bso15584865e9.0;
-        Thu, 21 Nov 2024 22:41:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732257674; x=1732862474; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pcddFwAK1YNeu0WgzYzncUvMDhmlBQjxzfSz1BY/lRs=;
-        b=RS3EArA5TGNWHR9r5GZ1z+rWweLT2TuUR8Rkgj9lDwIUmHKn6H8kkeyeEyGkgabkbV
-         F34JTZUIntgwgCKyzmMCtRQ2TGvlJqQ7fxqVS2m9H3VLCUoHLpABCF8H3qr83yEhu/4j
-         B4CXrVTvn6woadLEUuB/8OgmuXKQ/tzyVE/3e4TslcGceseN2qwa/wm/7Yzb+8b+ux5T
-         DvvGU8Wekn4AFJDhKPvQ3Pa7gBvZLAaHoNydzq1aZGsh9tJbtCoESDPgatKMS67lJE48
-         eTdgBVD0ZLj/0svVziOVtxZAXe2ms91vkYXBpTuGuHGN58NPy9IsnXYsIhmsG89LqFg0
-         DKAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732257674; x=1732862474;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pcddFwAK1YNeu0WgzYzncUvMDhmlBQjxzfSz1BY/lRs=;
-        b=lEo87qyAzlZ3qgIUvwAoPU9HlKP4vD83VpjvVGmgn1NeYTYlVtMHOwjrIB2KdrzIpL
-         ZN4Auinc/CE5y2K8/dwqdKpDZTmUnOHnwOhU2OaUpVVjGU5x5YLZfMlESH0fhKgHPwS6
-         4MYMUseSpiJ1OCl7wBNrPRWwA06Voq38cw9mHgtRa1fvuvy/bG574+kFhu9pMHZV0Yhu
-         E+3o1cY0un3b+YrWHWBZSDaPdQKDj8W+yO9rmy2Pu14PKTPdgRPyyJ03NaUIz2M6enRK
-         xKfDXvFEOAaVw08aHf4hCoInqNfP5w9L7JH1ZuVO65YwJmhHF684JezRvYsFiTnBEEmu
-         WSGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhZbbmR3pz6H/X2czV4moYWz3xog+PQBL/fUC0a2RhIj7RwCgIYwDJAk+2qjthiurflG5Bq6myYJVPxQQ3@vger.kernel.org, AJvYcCWohdSFwo2wqYDbSHpk8XdwAs2msDgxVmZXe0iWnSVWdTUjST37spOj612Yv0jduRh0k0tHJr5rPpU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOX/HHoS5xUNcXUPyXQxHKb8QqhByoPxIUHCbaGtt4Lrt9C/5/
-	O3xbyOoAV+QETDyznUXXZqzy7IrnsqoTrEvnvrpc2na31IW737j8a0TFtA==
-X-Gm-Gg: ASbGnctbehaVMgh7c2A7Rl8rE2Utw4GyG9jzQFgKVFafax6CSGq53Z9uO0uMxkPYV2/
-	vVZ2ujHwuFBKf/Csz3NoJJCS4idJQNHiEeRSRqU1DM42Hw4LC8p11/JB6q2/IBHmuPMcHKBIiYg
-	C2CT5vdC21Aw5JGcYRvYB97CjCerkpvDbha8DVwfZW7nCboKQiNTYyiIWyqX4S0G0pWMb0Ua3zH
-	HOY7MjzvxCsdVsL+I5KDoV2XlYhewck4uVKRzubtd7VIDQ8h0FQwDvTBf0qyc51IUlfRKpUMWcg
-	A4WXk1UNRPbexxgv+Av058Hu9MsTfOdVqQd+Kx0ZBVREbW5/lIIVpP6yLSUKqO21d1mgf1hksdN
-	g0r5h5yTCDfQ9YqRtHZjSxU/ygyDslLjYHW/54aurS+o=
-X-Google-Smtp-Source: AGHT+IEm1gNUblkdNOHfWlt9CjFBKocgwoXIVt1MTuEfZKG6whS1fDcjjyLGJ2ZGAyifUFzufrZ1bQ==
-X-Received: by 2002:a5d:47a3:0:b0:382:48ef:b41e with SMTP id ffacd0b85a97d-38260b6b168mr1349644f8f.24.1732257673717;
-        Thu, 21 Nov 2024 22:41:13 -0800 (PST)
-Received: from ?IPV6:2a02:8389:41cf:e200:182b:b217:1455:c275? (2a02-8389-41cf-e200-182b-b217-1455-c275.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:182b:b217:1455:c275])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fb36612sm1516126f8f.59.2024.11.21.22.41.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 22:41:13 -0800 (PST)
-Message-ID: <60096b9b-37ce-4b08-a519-3c607de71c0d@gmail.com>
-Date: Fri, 22 Nov 2024 07:41:12 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD9E15ADA6;
+	Fri, 22 Nov 2024 06:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732257756; cv=pass; b=i6cNmmrKQzNaF8txLLVzfRltX2+V0K5pzRfaye6mO4YldYjLIt7VBDU/df0xjcu5xRfqYsOvFbDpRdg9pJhSXQQSZLxALWCioKCCD2g/zXQEj0dMy9kQ7vvcYrKVQyzgjsj/I/o5wMCs/pdsm/fe6+AwOkpq0uuZVSTSy1ZM5Fc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732257756; c=relaxed/simple;
+	bh=ccS5uzdA+NpcFx+0susH6B6MQETEJMM9B7dY3s7kHHI=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XLF3LAmuPy/V8oZV1emVVd5TlbsOM+bFnsStHSwhiGYFCkIUywVX7fVJW3TYJ2lUZJ6+FO5jotF1n34uaThUPNNamPVavpIdSor29w4GzIarb6Efm09KCteGjMC3wkFczidNDC94WvMAbjHKOEMcdxFE3Gc6BeA1YSu/ecQ2xGs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=Tk+f+zhq; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1732257718; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=F8V/3SxLThF4uDzf4ZAvZeYemCZQqLWvKE7O86BbdaSas5BI1JaVipBxql3N1hCskT9nGVQiFI4Q3r6TQbGMLNr/kc/skjtIf+wdiQ42e/kEiOkCMzqxi4j0hRbkSNNnyOKqWYkH3NFrBRZBqmHqLdaSYYxdE5EnJAHGs2UCVSY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1732257718; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=TFCY7JSiulxOM4RxH9esu0nVAam2cJYGCZxPLxjBqtA=; 
+	b=oHD9rwDH97e103oeu3PuqbCQRWtZruQFfSomekaw4K4pK5vuNyIN4kgv8KhDTm+MTsDmJFy75VXuPspPq3faT5l6+1KpIEGZNP1WxeJjd9jg+MPsiDTRUVihMdWT79aip5Fx7GEC4vm/UGq6jhxwXs/MvMkpQNV3bG67BYEY4dw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732257718;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=TFCY7JSiulxOM4RxH9esu0nVAam2cJYGCZxPLxjBqtA=;
+	b=Tk+f+zhq15pZZrrE4rOVnbtihpKEp21LtWLzXr0KCNApHlb8S4xIrUVZYmQgSf05
+	A9xvkfErFI9U0n1HXgEgk3RMspL2yjgLkYq+mzXSDY7U1txrdTudOByMpv2hAa7RfhN
+	bCFFF/RJDz6QacuENO6hm6Sdy4vFDlB2FI6GBxeQ=
+Received: by mx.zohomail.com with SMTPS id 1732257715792597.6815558261044;
+	Thu, 21 Nov 2024 22:41:55 -0800 (PST)
+Message-ID: <8519e35a-c374-46a4-b814-cd8a19cda276@collabora.com>
+Date: Fri, 22 Nov 2024 11:41:50 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,32 +59,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] iio: bm1390: simplify using guard(mutex)
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1732193263.git.mazziesaccount@gmail.com>
- <a4c2f21189964132d245531b77fb0865562443a1.1732193263.git.mazziesaccount@gmail.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <a4c2f21189964132d245531b77fb0865562443a1.1732193263.git.mazziesaccount@gmail.com>
+Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.11 000/107] 6.11.10-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+References: <20241120125629.681745345@linuxfoundation.org>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <20241120125629.681745345@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On 21/11/2024 14:05, Matti Vaittinen wrote:
-> The BM1390 uses mutex for protecting the fifo read sequence. The clean-up
-> for a few of the functions can be slightly simplified by removing the
-> goto-based error handling/unlocking and by utilizing the guard(mutex)
-> scoped mutex handling instead.
+On 11/20/24 5:55 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.11.10 release.
+> There are 107 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Simplify driver by using the scoped mutexes.
+> Responses should be made by Fri, 22 Nov 2024 12:56:14 +0000.
+> Anything received after that time might be too late.
 > 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> ---
->  drivers/iio/pressure/rohm-bm1390.c | 78 ++++++++++++------------------
->  1 file changed, 30 insertions(+), 48 deletions(-)
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.10-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+> and the diffstat can be found below.
 > 
+> thanks,
+> 
+> greg k-h
+> 
+> -------------
+Hi,
 
-Reviewed-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Please find the KernelCI report below :-
+
+OVERVIEW
+
+        Builds: 37 passed, 0 failed
+
+    Boot tests: 504 passed, 1 failed
+
+    CI systems: broonie, maestro
+
+REVISION
+
+    Commit
+        name: v6.11.9-108-gc9b39c48bf4a
+        hash: c9b39c48bf4a40a9445a429ca741a25ba6961cca
+    Checked out from
+        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+
+
+BUILDS
+
+    No build failures found
+
+BOOT TESTS
+
+    Failures
+
+      arm64:(defconfig)
+      -mt8186-corsola-steelix-sku131072
+      CI system: maestro
+	[    9.936547] UBSAN: invalid-load in drivers/gpu/drm/drm_fbdev_dma.c:169:13
+	https://kcidb.kernelci.org/d/test/test?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=$__all&var-build_config_name=$__all&var-id=maestro:673df795923416c0c988c20b&from=now-100y&to=now&timezone=browser&var-test_path=&var-issue_presence=$__all
+
+
+See complete and up-to-date report at:
+
+    https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-git_commit_hash=c9b39c48bf4a40a9445a429ca741a25ba6961cca&var-patchset_hash=
+
+
+Tested-by: kernelci.org bot <bot@kernelci.org>
+
+Thanks,
+KernelCI team
 
