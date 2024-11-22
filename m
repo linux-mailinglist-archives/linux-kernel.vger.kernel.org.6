@@ -1,140 +1,148 @@
-Return-Path: <linux-kernel+bounces-418244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE2479D5F3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:48:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 311C19D5F3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:49:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A2DA1F23842
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:48:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1E341F239B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31971DE8A5;
-	Fri, 22 Nov 2024 12:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E65B1DE3D6;
+	Fri, 22 Nov 2024 12:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D1H01eL3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="agfKauXL"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE711DEFCF
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827F379C0
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732279686; cv=none; b=TSFt5/du2RyF3jDw4MuJue4sA5iA+wMt0SSfnr6l1UhtOCNGt/hdY+LfBu8KLfPDJdw1n5w4MAZTAH3irxoe97PiucHScdXceYa1liq2x0iDnwySknMAVBzhRTfg25lf8y+sgFn9olk3r/1T568RDoO3iIYWuZIYjF6ZIqOLsA8=
+	t=1732279765; cv=none; b=WYYJdlz3ZOoihvqKhOnQnJ8v0FefyXkEzc7Z9+hptR8pGFr/QMuz18eb9142HP8lPVMm98ACOc98v/KHSwmYORFfypaj3Mw8/HBDn83bQx6JVhJt0c1Oec3rZi873zX+w7jRHpGHEnNVEpyk1Psf/ELCbwZYOb4holkIBhZpFOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732279686; c=relaxed/simple;
-	bh=Pn9mI/dQRJTaJqS3r4xCnRL05yuMMT3XBgLbATZWtGQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JuZi1Kn5oeRkz95GJkvVTI0vmNhG65asDY7sjKLfg7zeFTVFS6e4sNjY0kwJD6xnqkwiTKo+t6XmIkQyod8u5yprLVaROJM4GPSUWnZSYqyNxfB4cT7Qi3HzAKWARK6yYwZBjoWEOJT3lrXy5p0K+s8NE/WiQnfwALkA0Qr0mgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D1H01eL3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732279683;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qNb3xWwgY1tmNqWYiqE8zMLxs0w6BlPv0Y++bDq5l+E=;
-	b=D1H01eL33mB0yPOKd7sfHDP+2+82IgXL56VsU65Kvn89s8zvPigAQunkLlJkyGjo2ix+QD
-	rOQoJOWUOcOUO3dH4UTVMRSrhpg6DOAxYNpLt41djnVKTLd5B6YLGZ1eWc/Q0H+q5fmAa9
-	x81rBS72AG/+hMFyO9RivtHcxyS8KVg=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-356-hztCC2EUO-CgUAaN05eGZg-1; Fri,
- 22 Nov 2024 07:48:00 -0500
-X-MC-Unique: hztCC2EUO-CgUAaN05eGZg-1
-X-Mimecast-MFC-AGG-ID: hztCC2EUO-CgUAaN05eGZg
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CDA571955EE8;
-	Fri, 22 Nov 2024 12:47:58 +0000 (UTC)
-Received: from bcodding.csb.redhat.com (unknown [10.22.74.7])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 44A2B19560A3;
-	Fri, 22 Nov 2024 12:47:57 +0000 (UTC)
-From: Benjamin Coddington <bcodding@redhat.com>
-To: Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>
-Cc: linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v3 2/2] nfs/blocklayout: Limit repeat device registration on failure
-Date: Fri, 22 Nov 2024 07:47:53 -0500
-Message-ID: <b7ec971b37e41c82c38f7dbb860d5e7009567db9.1732279560.git.bcodding@redhat.com>
-In-Reply-To: <cover.1732279560.git.bcodding@redhat.com>
-References: <cover.1732279560.git.bcodding@redhat.com>
+	s=arc-20240116; t=1732279765; c=relaxed/simple;
+	bh=xTRCGfdo9Stp0wOOB5Wca2fRGwtlSue6W54YyXL4pLY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LIjMrMc2PbhtquktZy9FL74HlhmtBVmggjWjnXhPTNKdjU1hkJxTSH6QlVzI6Q63A/5Ubn4P+YNaC4n4TKpPYulTSmMXC/azG7DTfqfj154HeyGaeGw7CZvqlXeqGD6AMaHjxdnpWnDxt8q8GDL9SZPl65zoTxeZsh3LguKP5wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=agfKauXL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AMB5fPK020148
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:49:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	REhoF/nwIa3Kpo75R8zIL3UghWzoKNPJpxarEg/VIoQ=; b=agfKauXLW0yly76D
+	6AU7ux7+iO0SQeiCkJSz3+m03P6/GwZVsdX+u+0siJUmCefobw0EcT+HI526zqui
+	TXXcYKa/0RCGx5YxIG/9CwSV5EjhBwOJ/X6OyMDQzyeLdqrzgg+2VFLlRgi7ygjA
+	HZVW5y9zZYKKOszkALtU7Mvzr+qTVZY/B+kNpfZ0GcGkIwYS2E8KuXb9REQd8+L0
+	FPNyhP9Ap9W9hEguiYZVjWdt9vN3D4a5V4zyTD/NbpJ0IbW5pPCkZkqlh+2ueyFJ
+	nOT5ReU2o+DonEU4FiLreGwZ/E+0PT2REqofFwcNmA8wFB0iHU566sgvKP9078n9
+	713VAQ==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431sv2n6p3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:49:23 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4609c883bb6so2272811cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 04:49:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732279762; x=1732884562;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=REhoF/nwIa3Kpo75R8zIL3UghWzoKNPJpxarEg/VIoQ=;
+        b=sl4OfPZWIkVkQ3FOatGRT5ARF5g9XRDS5RVznyunf7gr8I3vFC7Ve71+KekCanK6fe
+         bM9CSF9IX4PwmfRoptp6nN5pcLwUYFXQpbH5R9vpx8zieq3krn9F/Nmmu7lkWzkqpSHx
+         04KLCTOhR3qEugqQhKeyK019WTN2KsQoXKyTMccZhSxSGDFSQiV18+GTWXFU77cXPYVI
+         VMI2G1zWqVahL3A/8Fvni5cOKVIzVGQmjoa0IEirbkZzkDuy2c0CobZlLhrOTDdRFiRK
+         FS/YXbsdvhS4iKdKTctzMd/N8zfjV37hOaWeLUgrewpnG+2Nw8uTrwYZvpbrpG8f9l35
+         +jkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXquYP31eypA6QR/9um1Zbq6ziwJDrjp6IUsu/DtHdR525I+wA4747zmgjuyN9feSfyxdMvprPuzk7wn3Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+w1UMT4LCKXuopYGY1U1s1UjSkcwTLA6BJEypTHJrDhfi0T/A
+	tSxcVSEbgO2KzzOzCYI3V2msF17VadVNK99K4DHLrmIoWNfV51mhwZLZGSOGYy0nrmQm5B69nu4
+	5S/ioF75T3VaWJ6ZT0lieM5mJithB1QuJNl9XoFI+5Evtrm3VeL50wGbmJN5LpOI=
+X-Gm-Gg: ASbGnct0ify8934bhkbCctA96F32E6jEV01NmDCxGcjSxd5N48CMDwjlgWeCB5Nt0dp
+	AxLovxC/Ug53JCSithA3787+8erhDf6hGtLawiQsdY9Uk0uN3f+UJXwidUZs5yFK+22hc9acQcS
+	Vr5/NpN7m8oXR6qRGI95UVbvM6VuFS7BDPmvzuzRCLLT7Xill9aoJAI21DuNdl4biKyZ6sbku0t
+	6wolz8OKir6tY3M0WJC0ot1eU7bs6O4TxHrcltKj9hRt/9mGrYHyBK8+auu8AHpQ34n+Er9eixv
+	j3ICa4zBELfLtwyOTqbtCO5Hu6hkk2c=
+X-Received: by 2002:a05:622a:11d2:b0:462:fb51:7801 with SMTP id d75a77b69052e-4653d5abc5cmr15545011cf.8.1732279762607;
+        Fri, 22 Nov 2024 04:49:22 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGvTuofNSWDF4XHyk9KPOXen13nDRCblVw4oh2lWtCdhH+Pocb6lLIp0CaDfGr+jmXsdDiKKg==
+X-Received: by 2002:a05:622a:11d2:b0:462:fb51:7801 with SMTP id d75a77b69052e-4653d5abc5cmr15544761cf.8.1732279762160;
+        Fri, 22 Nov 2024 04:49:22 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b28fd44sm97378066b.26.2024.11.22.04.49.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Nov 2024 04:49:21 -0800 (PST)
+Message-ID: <083d53c7-58d9-4e36-93b1-36e5696dd495@oss.qualcomm.com>
+Date: Fri, 22 Nov 2024 13:49:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: bluetooth: add 'qcom,product-variant'
+To: Cheng Jiang <quic_chejiang@quicinc.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Rob Herring
+ <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
+        Rocky Liao <quic_rjliao@quicinc.com>, quic_zijuhu@quicinc.com
+Cc: linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        quic_mohamull@quicinc.com
+References: <20241120095428.1122935-1-quic_chejiang@quicinc.com>
+ <20241120095428.1122935-2-quic_chejiang@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241120095428.1122935-2-quic_chejiang@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: etCOLIoYSmgzhOzgDuFAL6QFDfdDXP53
+X-Proofpoint-ORIG-GUID: etCOLIoYSmgzhOzgDuFAL6QFDfdDXP53
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 clxscore=1015 bulkscore=0 adultscore=0 suspectscore=0
+ spamscore=0 malwarescore=0 mlxscore=0 mlxlogscore=992 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411220109
 
-Every pNFS SCSI IO wants to do LAYOUTGET, then within the layout find the
-device which can drive GETDEVINFO, then finally may need to prep the device
-with a reservation.  This slow work makes a mess of IO latencies if one of
-the later steps is going to fail for awhile.
+On 20.11.2024 10:54 AM, Cheng Jiang wrote:
+> Several Qualcomm projects will use the same Bluetooth chip, each
+> focusing on different features. For instance, consumer projects
+> prioritize the A2DP SRC feature, while IoT projects focus on the A2DP
+> SINK feature, which may have more optimizations for coexistence when
+> acting as a SINK. Due to the patch size, it is not feasible to include
+> all features in a single firmware.
+> 
+> Therefore, the 'product-variant' devicetree property is used to provide
+> product information for the Bluetooth driver to load the appropriate
+> firmware.
+> 
+> If this property is not defined, the default firmware will be loaded,
+> ensuring there are no backward compatibility issues with older
+> devicetrees.
+> 
+> The product-variant defines like this:
+>   0 - 15 (16 bits) are product line specific definitions
+>   16 - 23 (8 bits) are for the product line.
 
-If we're unable to register a SCSI device, ensure we mark the device as
-unavailable so that it will timeout and be re-added via GETDEVINFO.  This
-avoids repeated doomed attempts to register a device in the IO path.
+Product lines don't exist in the kernel. Please describe the actual
+differences between those files instead.
 
-Add some clarifying comments as well.
-
-Fixes: d869da91cccb ("nfs/blocklayout: Fix premature PR key unregistration")
-Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
----
- fs/nfs/blocklayout/blocklayout.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/fs/nfs/blocklayout/blocklayout.c b/fs/nfs/blocklayout/blocklayout.c
-index 0becdec12970..47189476b553 100644
---- a/fs/nfs/blocklayout/blocklayout.c
-+++ b/fs/nfs/blocklayout/blocklayout.c
-@@ -571,19 +571,32 @@ bl_find_get_deviceid(struct nfs_server *server,
- 	if (!node)
- 		return ERR_PTR(-ENODEV);
- 
-+	/*
-+	 * Devices that are marked unavailable are left in the cache with a
-+	 * timeout to avoid sending GETDEVINFO after every LAYOUTGET, or
-+	 * constantly attempting to register the device.  Once marked as
-+	 * unavailable they must be deleted and never reused.
-+	 */
- 	if (test_bit(NFS_DEVICEID_UNAVAILABLE, &node->flags)) {
- 		unsigned long end = jiffies;
- 		unsigned long start = end - PNFS_DEVICE_RETRY_TIMEOUT;
- 
- 		if (!time_in_range(node->timestamp_unavailable, start, end)) {
-+			/* Uncork subsequent GETDEVINFO operations for this device */
- 			nfs4_delete_deviceid(node->ld, node->nfs_client, id);
- 			goto retry;
- 		}
- 		goto out_put;
- 	}
- 
--	if (!bl_register_dev(container_of(node, struct pnfs_block_dev, node)))
-+	if (!bl_register_dev(container_of(node, struct pnfs_block_dev, node))) {
-+		/*
-+		 * If we cannot register, treat this device as transient:
-+		 * Make a negative cache entry for the device
-+		 */
-+		nfs4_mark_deviceid_unavailable(node);
- 		goto out_put;
-+	}
- 
- 	return node;
- 
--- 
-2.47.0
-
+Konrad
 
