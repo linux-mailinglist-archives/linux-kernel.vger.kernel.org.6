@@ -1,134 +1,261 @@
-Return-Path: <linux-kernel+bounces-418317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A33609D6053
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:33:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E73C9D6059
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:34:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5827A1F233D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:33:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E219028284C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52ABD70808;
-	Fri, 22 Nov 2024 14:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C5213D521;
+	Fri, 22 Nov 2024 14:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ix+QncUW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="DeNK0OEs"
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2FE2AF12;
-	Fri, 22 Nov 2024 14:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDED16A009
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732286023; cv=none; b=DoeY5spGuGNRQbYKD0ElD3/c1KIswqPVv2J7Su1AQUrn0MQasZJnSuFJ9gNRDUJ1XLh/ZMnTWKWLOWf5Synk9YbcVRmroKI7lHxtNvposuV+Fgn92RB2K4gcJyHJoSSEXaV1cn9CIeF5lykdKDNX/Dg0OhD+512iYh3Foned2LA=
+	t=1732286056; cv=none; b=fta81V+dHOJM8QvSU2x4V2DqsJIOnV3i0Oie6MmnmeVGYuIxGdWxUWRYShwyzO1jABIa+nOPAQrE710dmwlzNNZiEcJR3VHLTEB7OiJalKu4PwAJSZjf6VWg/yth4nUiBGVWcK91sJfR3VP9yxujap2K6ot5kMm6U8BZpdfVRFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732286023; c=relaxed/simple;
-	bh=36CxdThi0cT/QJPnfG6dSFlpyNfVpP3+IY6l53EPypA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YQjkKBhldPrsg/JhUPvCP8GUszKtiMAlW4BZEkz3yCSOL8BXq7mwOlOD8KbVDQUJXVVIXEyisUHEABJMdDGVQ89BjXGWZkmRpnODoy7d6RvIiGQhsvCDn00/K2sWdxkaYwMqP7wqCElA+fKAiPPbXp705K2cYdogyMUryOOSBwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ix+QncUW; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732286021; x=1763822021;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=36CxdThi0cT/QJPnfG6dSFlpyNfVpP3+IY6l53EPypA=;
-  b=ix+QncUWemUTwYDWKh4g2JpmKRsh1pAwcTJyKkMUy+zBEjihLZs8/itd
-   jvLPk8JHb5sZADGrgAjUwoyqpLX8YJebJSOXKkH/Piy8pf3Ud589t8lxE
-   pwvbkE5Ve/oelapnEZA7q02s2dDFz8yWwU6nIBg4Oh6Zpg7NyzO3DAV+p
-   quMbb+070fBJfT18nQ8avzclcivTfAbErUZSaxKCBIz5y6NaKSjZ4P1Ug
-   d5e4QluqsXz7FgGW7VIpc4EUkHI3wZpdmsIUqAq8gs9nP4t7rRE/IN/Jy
-   pSlgJfigVu77CaG/lX+qW7oth4R2RXiA/aSs36ZJ7RPoM8wVTpOhnf3MK
-   Q==;
-X-CSE-ConnectionGUID: oXkKMafqQE64t8DuG2wecA==
-X-CSE-MsgGUID: VbCpvwD2RvuhniRctBSU+Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="57845028"
-X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
-   d="scan'208";a="57845028"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 06:33:41 -0800
-X-CSE-ConnectionGUID: w80cp0sjRk+6MMoskNonKQ==
-X-CSE-MsgGUID: FN4WnogZSYWs57cJaVDkKg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
-   d="scan'208";a="91005889"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.115.59])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 06:33:36 -0800
-Message-ID: <837bbbc7-e7f3-4362-a745-310fe369f43d@intel.com>
-Date: Fri, 22 Nov 2024 16:33:27 +0200
+	s=arc-20240116; t=1732286056; c=relaxed/simple;
+	bh=0r4hABUh0acoMcyTkOf9Kg93ny5ffSH3S+RWZLxYoc4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VrSW7w6HLeVQxZFeMS2CuCRxefDUI95r8ufzZ2SRIHjROX+my1XLSHmsRjO/1FPrAkPFwd1pEypdjnM+IQXFq4Xi/cZzVs/0X8TuL2ty/R2cFgDBnTH7Kwr6ZEx3LGHfo5pqHbzs7WOwQOZ0iQu2k6L4+PXz8YuqNrKz+ILcG3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=DeNK0OEs; arc=none smtp.client-ip=45.157.188.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XvyK73Svgzcvg;
+	Fri, 22 Nov 2024 15:34:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1732286043;
+	bh=KfB8e4QyAyEvoTpGyqB4pJ7DknRbUlvg54KRTK/YOew=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DeNK0OEsrwwGnCtpdjh4Q5FPTDApccObAsIP/Fd3CL2s3dxPCd2BJMd7JDvJ4W9eG
+	 Oqpm8a3RLrW/X6UyV9zP9Jx4w+r5RcNPlK8iknr0lyhv9b9K8LCUka3Jjo+hbmWbLt
+	 oZ2X/CDpPQwG51+NGtTuKcp3r8eYh5/i1UF3nlJw=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XvyK54Sxczk4V;
+	Fri, 22 Nov 2024 15:34:01 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Eric Paris <eparis@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Ben Scarlato <akhna@google.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Charles Zaffery <czaffery@roblox.com>,
+	Francis Laniel <flaniel@linux.microsoft.com>,
+	James Morris <jmorris@namei.org>,
+	Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>,
+	Jorge Lucangeli Obes <jorgelo@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	Phil Sutter <phil@nwl.cc>,
+	Praveen K Paladugu <prapal@linux.microsoft.com>,
+	Robert Salvet <robert.salvet@roblox.com>,
+	Shervin Oloumi <enlightened@google.com>,
+	Song Liu <song@kernel.org>,
+	Tahera Fahimi <fahimitahera@gmail.com>,
+	audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v3 00/23] Landlock audit support
+Date: Fri, 22 Nov 2024 15:33:30 +0100
+Message-ID: <20241122143353.59367-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] KVM: TDX: Implement TDX vcpu enter/exit path
-To: Binbin Wu <binbin.wu@linux.intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
- pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
- dave.hansen@linux.intel.com
-Cc: rick.p.edgecombe@intel.com, kai.huang@intel.com,
- reinette.chatre@intel.com, tony.lindgren@linux.intel.com,
- dmatlack@google.com, isaku.yamahata@intel.com, nik.borisov@suse.com,
- linux-kernel@vger.kernel.org, x86@kernel.org, yan.y.zhao@intel.com,
- chao.gao@intel.com, weijiang.yang@intel.com
-References: <20241121201448.36170-1-adrian.hunter@intel.com>
- <20241121201448.36170-3-adrian.hunter@intel.com>
- <2f22aeeb-7109-4d3f-bcb7-58ef7f8e0d4c@intel.com>
- <91eccab3-2740-4bb7-ac3f-35dea506a0de@linux.intel.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <91eccab3-2740-4bb7-ac3f-35dea506a0de@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On 22/11/24 07:56, Binbin Wu wrote:
-> 
-> 
-> 
-> On 11/22/2024 1:23 PM, Xiaoyao Li wrote:
-> [...]
->>> +
->>> +fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediate_exit)
->>> +{
->>> +    struct vcpu_tdx *tdx = to_tdx(vcpu);
->>> +
->>> +    /* TDX exit handle takes care of this error case. */
->>> +    if (unlikely(tdx->state != VCPU_TD_STATE_INITIALIZED)) {
->>> +        /* Set to avoid collision with EXIT_REASON_EXCEPTION_NMI. */
->>
->> It seems the check fits better in tdx_vcpu_pre_run().
-> 
-> Indeed, it's cleaner to move the check to vcpu_pre_run.
-> Then no need to set the value to vp_enter_ret, and the comments are not
-> needed.
+Hi,
 
-And we can take out the same check in tdx_handle_exit()
-because it won't get there if ->vcpu_pre_run() fails.
+This patch series adds audit support to Landlock.
 
-> 
->>
->> And without the patch of how TDX handles Exit (i.e., how deal with vp_enter_ret), it's hard to review this comment.
->>
->>> +        tdx->vp_enter_ret = TDX_SW_ERROR;
->>> +        return EXIT_FASTPATH_NONE;
->>> +    }
->>> +
->>> +    trace_kvm_entry(vcpu, force_immediate_exit);
->>> +
->>> +    tdx_vcpu_enter_exit(vcpu);
->>> +
->>> +    vcpu->arch.regs_avail &= ~VMX_REGS_LAZY_LOAD_SET;
->>> +    trace_kvm_exit(vcpu, KVM_ISA_VMX);
->>> +
->>> +    return EXIT_FASTPATH_NONE;
->>> +}
->>> +
-> [...]
+Logging denied requests is useful for different use cases:
+- sysadmins: to look for users' issues
+- security experts: to detect attack attempts
+- power users: to understand denials
+- app developers: to ease and speed up sandboxing support
+
+To make logs useful, they need to contain the most relevant Landlock
+domain that denied an action, and the reason of such denial.  This
+translates to the latest nested domain and the related blockers: missing
+access rights or other kind of constraints (e.g. scoped domain).
+
+# Changes from previous version
+
+This third patch series reduces the amount of domain information
+records: instead of creating a record for a domain hierarchy, only the
+domain that denied the request is logged, which is enough.
+
+The log format for domain information don't include the parent anymore
+but the creation time instead, which is useful to know how old a domain
+is relative to a first denial.  We also now use hexadecimal numbers for
+domain IDs.
+
+Another major addition of this patch series are the new tests.  The new
+syscall flag is tested, and all the ptrace tests are extended to check
+the source of the denials (e.g. Landlock or Yama).  This greatly improve
+test consistency and I plan to extend all Landlock tests with these
+audit checks.
+
+The sandboxer sample is also updated to not generate logs by default.
+
+# Design
+
+Log records are created for any denied actions caused by a Landlock
+policy, which means that a well-sandboxed applications should not log
+anything except for unattended access requests that might be the result
+of attacks or bugs.
+
+However, sandbox tools creating restricted environments could lead to
+abundant log entries because the sandboxed processes may not be aware of
+the related restrictions.  To avoid log spam, the
+landlock_restrict_self(2) syscall gets a new
+LANDLOCK_RESTRICT_SELF_LOGLESS flag to not log denials related to this
+specific domain.  Except for well-understood exceptions, this flag
+should not be set.  Indeed, applications sandboxing themselves should
+only try to bypass their own sandbox if they are compromised, which
+should ring a bell thanks to log events.
+
+When an action is denied, the related Landlock domain ID is specified.
+If this domain was not previously described in a log record, one is
+created.  This record contains the domain ID, its creation time, and
+informations about the process that enforced the restriction (at the
+time of the call to landlock_restrict_self): PID, UID, executable path,
+and name (comm).
+
+This new approach also brings building blocks for an upcoming
+unprivileged introspection interface.  The unique Landlock IDs will be
+useful to tie audit log entries to running processes, and to get
+properties of the related Landlock domains.  This will replace the
+previously logged ruleset properties.
+
+# Samples
+
+Here are two examples of log events:
+
+$ LL_FS_RO=/ LL_FS_RW=/ LL_SCOPED=s LL_FORCE_LOG=1 ./sandboxer kill 1
+
+  type=UNKNOWN[1423] msg=audit(1732186800.268:30): domain=1a6fdc66f blockers=scope_signal opid=1 ocomm="systemd"
+  type=UNKNOWN[1424] msg=audit(1732186800.268:30): domain=1a6fdc66f creation=1732186800.264 pid=286 uid=0 exe="/root/sandboxer" comm="sandboxer"UID="root"
+  type=SYSCALL msg=audit(1732186800.268:30): arch=c000003e syscall=62 success=no exit=-1 [..] ppid=272 pid=286 auid=0 uid=0 gid=0 [...] comm="kill" [...]
+  type=PROCTITLE msg=audit(1732186800.268:30): proctitle=6B696C6C0031
+  type=UNKNOWN[1425] msg=audit(1732186800.324:31): domain=1a6fdc66f
+
+$ LL_FS_RO=/ LL_FS_RW=/tmp LL_FORCE_LOG=1 ./sandboxer sh -c "echo > /etc/passwd"
+
+  type=UNKNOWN[1423] msg=audit(1732186800.221:33): domain=1a6fdc679 blockers=fs_write_file path="/dev/tty" dev="devtmpfs" ino=9
+  type=UNKNOWN[1424] msg=audit(1732186800.221:33): domain=1a6fdc679 creation=1732186800.221 pid=289 uid=0 exe="/root/sandboxer" comm="sandboxer"UID="root"
+  type=SYSCALL msg=audit(1732186800.221:33): arch=c000003e syscall=257 success=no exit=-13 [...] ppid=272 pid=289 auid=0 uid=0 gid=0 [...] comm="sh" [...]
+  type=PROCTITLE msg=audit(1732186800.221:33): proctitle=7368002D63006563686F203E202F6574632F706173737764
+  type=UNKNOWN[1423] msg=audit(1732186800.221:34): domain=1a6fdc679 blockers=fs_write_file path="/etc/passwd" dev="vda2" ino=143821
+  type=SYSCALL msg=audit(1732186800.221:34): arch=c000003e syscall=257 success=no exit=-13 [...] ppid=272 pid=289 auid=0 uid=0 gid=0 [...] comm="sh" [...]
+  type=PROCTITLE msg=audit(1732186800.221:34): proctitle=7368002D63006563686F203E202F6574632F706173737764
+  type=UNKNOWN[1425] msg=audit(1732186800.261:35): domain=1a6fdc679
+
+# Future changes
+
+It would be interesting to enhance audit with the ability to filter on
+the executable path that created a sandbox, or to filter on a Landlock
+domain ID.
+
+
+Previous versions:
+v1: https://lore.kernel.org/r/20241022161009.982584-1-mic@digikod.net
+v1: https://lore.kernel.org/r/20230921061641.273654-1-mic@digikod.net
+
+Regards,
+
+Mickaël Salaün (23):
+  lsm: Only build lsm_audit.c if CONFIG_SECURITY and CONFIG_AUDIT are
+    set
+  lsm: Add audit_log_lsm_data() helper
+  landlock: Factor out check_access_path()
+  landlock: Add unique ID generator
+  landlock: Move access types
+  landlock: Simplify initially denied access rights
+  landlock: Move domain hierarchy management
+  landlock: Log ptrace denials
+  audit: Add a new audit_get_ctime() helper
+  landlock: Log domain properties and release
+  landlock: Log mount-related denials
+  landlock: Align partial refer access checks with final ones
+  selftests/landlock: Add test to check partial access in a mount tree
+  landlock: Optimize file path walks and prepare for audit support
+  landlock: Log file-related denials
+  landlock: Log truncate and ioctl denials
+  landlock: Log TCP bind and connect denials
+  landlock: Log scoped denials
+  landlock: Control log events with LANDLOCK_RESTRICT_SELF_LOGLESS
+  samples/landlock: Do not log denials from the sandboxer by default
+  selftests/landlock: Extend tests for landlock_restrict_self()'s flags
+  selftests/landlock: Add tests for audit
+  selftests/landlock: Add audit tests for ptrace
+
+ Documentation/userspace-api/landlock.rst      |   2 +-
+ include/linux/audit.h                         |   8 +
+ include/linux/lsm_audit.h                     |  22 +
+ include/uapi/linux/audit.h                    |   5 +-
+ include/uapi/linux/landlock.h                 |  14 +
+ kernel/auditsc.c                              |  21 +-
+ samples/landlock/sandboxer.c                  |  35 +-
+ security/Kconfig                              |   5 +
+ security/Makefile                             |   2 +-
+ security/landlock/.kunitconfig                |   2 +
+ security/landlock/Makefile                    |   2 +
+ security/landlock/access.h                    | 100 ++++
+ security/landlock/audit.c                     | 495 ++++++++++++++++++
+ security/landlock/audit.h                     |  76 +++
+ security/landlock/domain.c                    | 195 +++++++
+ security/landlock/domain.h                    | 117 +++++
+ security/landlock/fs.c                        | 279 +++++++---
+ security/landlock/fs.h                        |  10 +
+ security/landlock/id.c                        | 242 +++++++++
+ security/landlock/id.h                        |  25 +
+ security/landlock/net.c                       |  51 +-
+ security/landlock/ruleset.c                   |  35 +-
+ security/landlock/ruleset.h                   |  96 ++--
+ security/landlock/setup.c                     |   2 +
+ security/landlock/syscalls.c                  |  26 +-
+ security/landlock/task.c                      | 150 +++++-
+ security/lsm_audit.c                          |  27 +-
+ tools/testing/kunit/configs/all_tests.config  |   2 +
+ tools/testing/selftests/landlock/audit.h      | 308 +++++++++++
+ tools/testing/selftests/landlock/audit_test.c | 168 ++++++
+ tools/testing/selftests/landlock/base_test.c  |  18 +-
+ tools/testing/selftests/landlock/common.h     |   2 +
+ tools/testing/selftests/landlock/config       |   1 +
+ tools/testing/selftests/landlock/fs_test.c    |  54 +-
+ .../testing/selftests/landlock/ptrace_test.c  |  62 ++-
+ 35 files changed, 2454 insertions(+), 205 deletions(-)
+ create mode 100644 security/landlock/access.h
+ create mode 100644 security/landlock/audit.c
+ create mode 100644 security/landlock/audit.h
+ create mode 100644 security/landlock/domain.c
+ create mode 100644 security/landlock/domain.h
+ create mode 100644 security/landlock/id.c
+ create mode 100644 security/landlock/id.h
+ create mode 100644 tools/testing/selftests/landlock/audit.h
+ create mode 100644 tools/testing/selftests/landlock/audit_test.c
+
+
+base-commit: adc218676eef25575469234709c2d87185ca223a
+-- 
+2.47.0
 
 
