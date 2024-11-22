@@ -1,437 +1,136 @@
-Return-Path: <linux-kernel+bounces-417846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A4C09D59B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:00:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 836CD9D59B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:01:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17A1328300A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:00:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19912B21F3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A2D16EB5D;
-	Fri, 22 Nov 2024 07:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BB5166315;
+	Fri, 22 Nov 2024 07:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3sZ+fdNo"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DQ7c/grQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55FB16849F
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 06:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE68230999;
+	Fri, 22 Nov 2024 07:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732258800; cv=none; b=hQsANgcFNwUZd2I0VU1ABOQ3TIJ1Gog3J1UcW7EenatpKTr5YNO1XE0poo0gDGXDdmONBbsxXEn3R7eob8Jl6qVUvNRGf/hG8FO8SG1eEgv4qor7JgAZRZl/250N2ggv8iTKL6p5DLgf+vrC8rZhhtXQPHVzS50NpNOq/7ndpng=
+	t=1732258906; cv=none; b=hTlpQstyiyNmMPRDIbLuMwHS4P+UpG+dbyhrvPfhbEVrT44a7bfmEBndoaM7TUHXlhxiBf0/tIprVXOdkjAdnM42u/MW4ssMtnDUhQ1aMQzsyuKILwnX4VihQMF6KQhGZ7O4mGIqHH03X9z4SNFA+v/EUgwZdsf6dXwhrpOgo08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732258800; c=relaxed/simple;
-	bh=WkpwOMRy/XgsMV9wQ7PG8nx+9yo8XnDPBxdg7rRQrU0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UgEZwB43C5JrhVF7aZQhifVnb8y4vGpF2HfbG7f6CZoY5iLUMNZlPCjfVh0g5oMjTZAJgM4DmoUB4nrNIFdMUFlJPudYaJWmC0TsIIJm6PzoT9PTTyY413qM9efGOksg4KRP/uNvOWWnNstlSeHkMN47mQMuFssU4jv3frAffQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3sZ+fdNo; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a762686909so83045ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 22:59:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732258797; x=1732863597; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=248h8jTi5EiAlVYfxE9YjppYaI7J9lpk6fDXU7wm0KY=;
-        b=3sZ+fdNoYhKchVBj7+2ZtTAWLLU6+sbLn40AbbQkNGUTMxbNf4OUAuaruGyoqwIrfJ
-         7ZTRjtAytybz9fFnKjXMyLZI8VwMTVzbnMFhdMoldpPHxVdLxNbxPj2DQlCghBMc/jCs
-         xQvBhVyhwB2zQ8fz98RZOwFrUc7opsz9Gt+Bv8uRVIPLz836ZbIiDt15SGCc25YznGlJ
-         O9xNNYTXci4NYADC19zV7Jv3LxJjHAeOzOiu5yyVJgG4qYD6ovVFXUq+8rZ1C9SWwxbl
-         M6pZu4gRHyigj8i9Gh+NQezedqmSr7vaC+pol40hrvRCpldnC0w36voRzEgv8zR0ytSN
-         oudg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732258797; x=1732863597;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=248h8jTi5EiAlVYfxE9YjppYaI7J9lpk6fDXU7wm0KY=;
-        b=mVjLXIyygI/8VVq9Ai5qHaOi1Y8QXWiHWaU8sxQ5EdLzcjVYE7IdI9JhG1CTyuCCAO
-         Rh35OHK0DptukHRoseweU3rbZIoLaJva+7CGRO7PORs00wwhANxeZQWWgDPr+WXWO3cW
-         NIpgaINuLucmXkDydreejJD842QUxOsUBPtX0KCgjgyUPdXcgh+mGBVZl1GAujUnI+Go
-         DpdP13OpUqe7fsakCaGDFVElzf6OTSTX6PdofA8Ae8eqHqJtg+YA9sMAfo6lAMzE3twD
-         HW8SVQMcjpFfVF4afW575KDLjKc8DPpMSAYAi1mVYQHNSTWSjakAWQZVD1jelk4enS+6
-         Ky5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVRWXkqvUOffCGbzL6rWgB0SECaJQlZ75F1pFQBfDdZzd3vAuyTc/sa3JmwgxXPIGW/AUg9IWNchLyskIk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNpK6ETpqzmLPEfrngKSooWDMgoMSryG2Ps2TZKOIvMtmkPpKV
-	pg786eXa/h4wVQheujG4+Wcyo8lhQliuPqkni8Q0LQnnR/K+IGd+J8ENkmsETEvbH1xtWyeYOWB
-	5B8M2KcVlM+3N1O08f7M4k5OEqH2HJZX/h/Ye
-X-Gm-Gg: ASbGnctjOIRgzopIST+/G54FhjSSg+jxJY5l3vGMnuVXYLjLjES7SL+687u/7elpHu9
-	Zf78JZelq9xoEN1mk+9mAmXFLa+DvHX3V
-X-Google-Smtp-Source: AGHT+IFoL6sO8RkBSx3tj9bnAuVMZ+2/WNdHfooynGlQqT5wLOvDeSC88aSPZxscC8i+J6SjdUYzf2sEU5Q9wW8agyQ=
-X-Received: by 2002:a05:6e02:3708:b0:3a7:75b2:1f9e with SMTP id
- e9e14a558f8ab-3a79b20ca02mr2668165ab.8.1732258796748; Thu, 21 Nov 2024
- 22:59:56 -0800 (PST)
+	s=arc-20240116; t=1732258906; c=relaxed/simple;
+	bh=TC2ExaLW56ZU7QnSiNIXQcx02KM5tVtD/3GUuINRrto=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PljfCOvl3GTJouMdmektIRLZXSj1InL+wpwP+k4vpT1vgE/3w23dpCoet1LcXzrMRjNncW1DB0AFIoYadcwbVVl25Q1TwgU8Qlw5gGj6OIgLKfngMiMxtYt/nDHdjJxhfk+VL4KFCz4vVmSh/5/tm1/eCKH3kUrfrMqqNxtzUPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DQ7c/grQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60DD0C4CECE;
+	Fri, 22 Nov 2024 07:01:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732258905;
+	bh=TC2ExaLW56ZU7QnSiNIXQcx02KM5tVtD/3GUuINRrto=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DQ7c/grQlvZaJzysoCnYgZxoq1WFoXlSZ4WyZzVShlp18T1jPEvg/hecdmQV+AfNI
+	 f3T3agXY8L44SpjHqs57eMSbyLn9O6w47YURga21NOJ+cppFD8g/01ZAi9veLROJa1
+	 buwla/TjxYY1xBPwOmy7t+pQOcLJfny3gRPpQ0hXbpMatAg2SvNWMJYAOiEObQ/9WN
+	 FvafdRrFUFFALaKZxStQu676SFai/CSDZOdmnRZnlZRJFr0QGw61H/ZXzxnlHI/EgN
+	 rM0qGvnNyTd6V3ghiO9YJZnjD7eGy2Hx/FEpZZkbhXNfl4OYeYwWEQmxUbZ4haIbKo
+	 Bbes89A6HCcjg==
+Message-ID: <b3ef3855-f95f-43ad-9a2a-3803c1f00046@kernel.org>
+Date: Fri, 22 Nov 2024 08:01:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121000955.536930-1-irogers@google.com> <Zz9oKR3goFPP9_a9@x1>
- <Zz9sbNAuRsYjclAi@x1> <CAP-5=fXAitSZuRPppAjH=38Ua6BFyhou0sSj7xmfNakqPUQqPw@mail.gmail.com>
- <Zz-e4fMLIJmufgyl@x1>
-In-Reply-To: <Zz-e4fMLIJmufgyl@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 21 Nov 2024 22:59:45 -0800
-Message-ID: <CAP-5=fWE7VhNWm4Vo2EngQ3is7arfMq-m4MJEJZBGjd1p3m5Qg@mail.gmail.com>
-Subject: Re: [PATCH v1] perf tests: Fix hwmon parsing with PMU name test
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] media: mipi-csis: Add check for clk_enable()
+To: Jiasheng Jiang <jiashengjiangcool@gmail.com>,
+ sylvester.nawrocki@gmail.com, mchehab@kernel.org, dron0gus@gmail.com,
+ tomasz.figa@gmail.com, alim.akhtar@samsung.com, kyungmin.park@samsung.com,
+ laurent.pinchart@ideasonboard.com
+Cc: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241121210543.8190-1-jiashengjiangcool@gmail.com>
+ <20241121210543.8190-2-jiashengjiangcool@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241121210543.8190-2-jiashengjiangcool@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 21, 2024 at 12:58=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Thu, Nov 21, 2024 at 10:55:00AM -0800, Ian Rogers wrote:
-> > On Thu, Nov 21, 2024 at 9:22=E2=80=AFAM Arnaldo Carvalho de Melo
-> > <acme@kernel.org> wrote:
-> > >
-> > > On Thu, Nov 21, 2024 at 02:04:45PM -0300, Arnaldo Carvalho de Melo wr=
-ote:
-> > > > On Wed, Nov 20, 2024 at 04:09:55PM -0800, Ian Rogers wrote:
-> > > > > Incorrectly the hwmon with PMU name test didn't pass "true". Fix =
-and
-> > > > > address issue with hwmon_pmu__config_terms needing to load events=
- - a
-> > > > > load bearing assert fired. Also fix missing list deletion when pu=
-tting
-> > > > > the hwmon test PMU and lower some debug warnings to make the hwmo=
-n PMU
-> > > > > less spammy in verbose mode.
-> > >
-> > > > After applying this, with this series of patches on a Fedora 40 sys=
-tem,
-> > > > I get output from -v where before I needed, IIRC, to use -vv:
-> > > >
-> > > > f8244bb9bfa66f79 (HEAD -> perf-tools-next, x1/perf-tools-next) perf=
- tests: Fix hwmon parsing with PMU name test
-> > > > 9ae6c7a4bd02acbd perf hwmon_pmu: Ensure hwmon key union is zeroed b=
-efore use
-> > > > 3e37de098af38179 perf tests hwmon_pmu: Remove double evlist__delete=
-()
-> > > > 0565017a0ac824c2 perf test: Correct hwmon test PMU detection
-> > > > 85c60a01b85ee956 (perf-tools-next/tmp.perf-tools-next, perf-tools-n=
-ext/perf-tools-next) perf: Remove unused del_perf_probe_events()
-> > > > =E2=AC=A2 [acme@toolbox perf-tools-next]$
-> > >
-> > > <SNIP>
-> > >
-> > > > root@number:~# perf test -v 11
-> > > >  11: Hwmon PMU                                                     =
-  :
-> > > >  11.1: Basic parsing test                                          =
-  : Ok
-> > > > --- start ---
-> > > > test child forked, pid 1823259
-> > > > Testing 'temp_test_hwmon_event1'
-> > > > Using CPUID GenuineIntel-6-B7-1
-> > > > FAILED tests/hwmon_pmu.c:159 failed to parse event 'temp_test_hwmon=
-_event1', err 1
-> > > > event syntax error: 'temp_test_hwmon_event1'
-> > > >                      \___ Bad event name
-> > > >
-> > > > Unable to find event on a PMU of 'temp_test_hwmon_event1'
-> > >
-> > > In gdb it fails on the first call to do_test() from the first test__h=
-wmon_pmu()
-> > >
-> > > Starting program: /root/bin/perf test -F -vv 11
-> > > [Thread debugging using libthread_db enabled]
-> > > Using host libthread_db library "/lib64/libthread_db.so.1".
-> > > --- start ---
-> > > ---- end ----
-> > >  11.1: Basic parsing test                                            =
-: Ok
-> > > --- start ---
-> > >
-> > > Breakpoint 1, test__hwmon_pmu (with_pmu=3Dfalse) at tests/hwmon_pmu.c=
-:203
-> > > 203     {
-> > > (gdb) n
-> > > 205             struct perf_pmu *pmu =3D test_pmu_get(dir, sizeof(dir=
-));
-> > > (gdb) n
-> > > 206             int ret =3D TEST_OK;
-> > > (gdb) p pmu
-> > > $2 =3D (struct perf_pmu *) 0xf50450
-> > > (gdb) p *pmu
-> > > $3 =3D {name =3D 0xf50ac0 "hwmon_a_test_hwmon_pmu", alias_name =3D 0x=
-f50aa0 "hwmon1234", id =3D 0x0, type =3D 4294902994, selectable =3D false, =
-is_core =3D false, is_uncore =3D false, auxtrace =3D false,
-> > >   formats_checked =3D false, config_masks_present =3D false, config_m=
-asks_computed =3D false, max_precise =3D 0, perf_event_attr_init_default =
-=3D 0x0, cpus =3D 0xf4fbf0, format =3D {next =3D 0xf50488,
-> > >     prev =3D 0xf50488}, aliases =3D {next =3D 0xf50498, prev =3D 0xf5=
-0498}, events_table =3D 0x0, sysfs_aliases =3D 0, cpu_json_aliases =3D 0, s=
-ys_json_aliases =3D 0, sysfs_aliases_loaded =3D false,
-> > >   cpu_aliases_added =3D false, caps_initialized =3D false, nr_caps =
-=3D 0, caps =3D {next =3D 0xf504c8, prev =3D 0xf504c8}, list =3D {next =3D =
-0xedc090 <other_pmus>, prev =3D 0xedc090 <other_pmus>},
-> > >   config_masks =3D {0, 0, 0, 0}, missing_features =3D {exclude_guest =
-=3D false, checked =3D false}, mem_events =3D 0x0}
-> >
-> > Thanks for helping, I'm not able to repro this, so extra debugging
-> > would be useful for me. Here sysfs_aliases_loaded is false as we'll
-> > load the PMU aliases when there is a request to pmu__have_event. This
-> > looks pretty ordinary.
-> >
-> > > (gdb) s
-> > > 208             if (!pmu)
-> > > (gdb) s
-> > > 211             for (size_t i =3D 0; i < ARRAY_SIZE(test_events); i++=
-) {
-> > > (gdb) s
-> > > 212                     ret =3D do_test(i, with_pmu, /*with_alias=3D*=
-/false);
-> > > (gdb) s
-> > > do_test (i=3D0, with_pmu=3Dfalse, with_alias=3Dfalse) at tests/hwmon_=
-pmu.c:136
-> > > 136     {
-> > > (gdb) n
-> > > 137             const char *test_event =3D with_alias ? test_events[i=
-].alias : test_events[i].name;
-> > > (gdb) n
-> > > 138             struct evlist *evlist =3D evlist__new();
-> > > (gdb) n
-> > > 143             bool found =3D false;
-> > > (gdb) n
-> > > 145             if (!evlist) {
-> > > (gdb) n
-> > > 150             if (with_pmu)
-> > > (gdb) n
-> > > 153                     strlcpy(str, test_event, sizeof(str));
-> > > (gdb) n
-> > > 155             pr_debug("Testing '%s'\n", str);
-> > > (gdb) p str
-> > > $4 =3D "temp_test_hwmon_event1\000\000\004\000\000\000\000\000\000\00=
-0\274\204z\000\000\000\000\000=CE=84z\000\000\000\000\000\021\000\000\000\0=
-00\000\000\000 \305\377\377\377\177\000\000=DF=84z\000\000\000\000\000\353\=
-204z\000\000\000\000\000\376\204z\000\000\000\000\000\n\205z\000\000\000\00=
-0\000\021\205z\000\000\000\000\000\035\205z\000\000\000\000\0000\205z\000\0=
-00\000\000\000<\205z\000\000\000\000"
-> > > (gdb) n
-> > > Testing 'temp_test_hwmon_event1'
-> > > 156             parse_events_error__init(&err);
-> >
-> > So there was no parse event output like the expected:
-> > ```
-> > Attempt to add: hwmon_a_test_hwmon_pmu/temp_test_hwmon_event1/
-> > ..after resolving event: hwmon_a_test_hwmon_pmu/temp_test_hwmon_event1/
-> > ```
-> > The wildcard PMU lookup will call perf_pmu__have_event trying to find
-> > a PMU with the event:
-> > ```
-> > Breakpoint 1, perf_pmu__have_event (pmu=3D0x555556157f90,
-> >    name=3D0x5555560ce470 "temp_test_hwmon_event1") at util/pmu.c:1816
-> > 1816    {
-> > (gdb) bt
-> > #0  perf_pmu__have_event (pmu=3D0x555556157f90, name=3D0x5555560ce470
-> > "temp_test_hwmon_event1")
-> >    at util/pmu.c:1816
-> > #1  0x00005555557ab143 in parse_events_multi_pmu_add
-> > (parse_state=3D0x7fffffffbf00,
-> >    event_name=3D0x5555560ce470 "temp_test_hwmon_event1", hw_config=3D10=
-,
-> > const_parsed_terms=3D0x0,
-> >    listp=3D0x7fffffffa270, loc_=3D0x7fffffffb120) at util/parse-events.=
-c:1592
-> > #2  0x00005555558108cc in parse_events_parse
-> > (_parse_state=3D0x7fffffffbf00, scanner=3D0x555556138aa0)
-> >    at util/parse-events.y:293
-> > #3  0x00005555557abdc2 in parse_events__scanner (str=3D0x7fffffffc000
-> > "temp_test_hwmon_event1",
-> >    input=3D0x0, parse_state=3D0x7fffffffbf00) at util/parse-events.c:18=
-70
-> > #4  0x00005555557ac735 in __parse_events (evlist=3D0x55555613ca40,
-> >    str=3D0x7fffffffc000 "temp_test_hwmon_event1", pmu_filter=3D0x0,
-> > err=3D0x7fffffffbff0,
-> >    fake_pmu=3Dfalse, warn_if_reordered=3Dtrue, fake_tp=3Dfalse) at
-> > util/parse-events.c:2139
-> > #5  0x00005555557448ca in parse_events (evlist=3D0x55555613ca40,
-> >    str=3D0x7fffffffc000 "temp_test_hwmon_event1", err=3D0x7fffffffbff0)
-> >    at /home/irogers/kernel.org2/tools/perf/util/parse-events.h:41
-> > #6  0x0000555555744f6e in do_test (i=3D0, with_pmu=3Dfalse,
-> > with_alias=3Dfalse) at tests/hwmon_pmu.c:156
-> > #7  0x00005555557452dd in test__hwmon_pmu (with_pmu=3Dfalse) at
-> > tests/hwmon_pmu.c:212
-> > #8  0x000055555574538d in test__hwmon_pmu_without_pmu
-> > (test=3D0x5555560a3740 <suite.hwmon_pmu>,
-> >    subtest=3D1) at tests/hwmon_pmu.c:229
-> > #9  0x00005555556fc935 in start_test (test=3D0x5555560a3740
-> > <suite.hwmon_pmu>, i=3D10, subi=3D1,
-> >    child=3D0x55555613c528, width=3D64, pass=3D1) at tests/builtin-test.=
-c:424
-> > #10 0x00005555556fd014 in __cmd_test (suites=3D0x55555613c0f0, argc=3D1=
-,
-> > argv=3D0x7fffffffd9c0,
-> >    skiplist=3D0x0) at tests/builtin-test.c:571
-> > #11 0x00005555556fdb29 in cmd_test (argc=3D1, argv=3D0x7fffffffd9c0) at
-> > tests/builtin-test.c:773
-> > #12 0x000055555568043a in run_builtin (p=3D0x55555608f950 <commands+624=
->, argc=3D4,
-> >    argv=3D0x7fffffffd9c0) at perf.c:351
-> > #13 0x00005555556806e1 in handle_internal_command (argc=3D4,
-> > argv=3D0x7fffffffd9c0) at perf.c:404
-> > #14 0x000055555568083a in run_argv (argcp=3D0x7fffffffd7bc,
-> > argv=3D0x7fffffffd7b0) at perf.c:448
-> > #15 0x0000555555680b83 in main (argc=3D4, argv=3D0x7fffffffd9c0) at per=
-f.c:560
-> > (gdb) p pmu->name
-> > $1 =3D 0x5555560ce940 "cpu"
-> > ```
-> > Repeating this the test hwmon_a_test_hwmon_pmu test PMU should be teste=
-d:
-> > ```
-> > (gdb) c
-> > Continuing.
-> >
-> > (gdb) p pmu->name
-> > $2 =3D 0x5555560d6b20 "breakpoint"
-> > (gdb) c
-> > Continuing.
-> >
-> > Breakpoint 1, perf_pmu__have_event (pmu=3D0x555556158060,
-> >    name=3D0x5555560ce470 "temp_test_hwmon_event1") at util/pmu.c:1816
-> > 1816    {
-> > (gdb) p pmu->name
-> > $3 =3D 0x5555560d7ec0 "cstate_core"
-> > (gdb) c
-> > Continuing.
-> >
-> > Breakpoint 1, perf_pmu__have_event (pmu=3D0x555556158610,
-> >    name=3D0x5555560ce470 "temp_test_hwmon_event1") at util/pmu.c:1816
-> > 1816    {
-> > (gdb) p pmu->name
-> > $4 =3D 0x5555560c84b0 "cstate_pkg"
-> > (gdb) c
-> > Continuing.
-> >
-> > Breakpoint 1, perf_pmu__have_event (pmu=3D0x5555561360b0,
-> >    name=3D0x5555560ce470 "temp_test_hwmon_event1") at util/pmu.c:1816
-> > 1816    {
-> > (gdb) p pmu->name
-> > $5 =3D 0x5555560d46a0 "hwmon_a_test_hwmon_pmu"
-> > ```
-> > which should then go into the hwmon_pmu__have_event:
-> > ```
-> > (gdb) n
-> > 1817            if (!name)
-> > (gdb)
-> > 1819            if (perf_pmu__is_tool(pmu) && tool_pmu__skip_event(name=
-))
-> > (gdb)
-> > 1821            if (perf_pmu__is_hwmon(pmu))
-> > (gdb) n
-> > 1822                    return hwmon_pmu__have_event(pmu, name);
-> > (gdb) s
-> > hwmon_pmu__have_event (pmu=3D0x5555561360b0, name=3D0x5555560ce470
-> > "temp_test_hwmon_event1")
-> >    at util/hwmon_pmu.c:559
-> > ```
-> > hwmon_pmu__have_event should return true but it is either not getting
-> > called in your case or it is returning false. Not getting called I
-> > find hard to understand as your output shows the test PMU was created.
-> > It seems more likely reading the "events" and then doing the hashmap
-> > lookup in hwmon_pmu__have_event fails. This was failing for me with
-> > undefined behavior sanitizer because of the under initialized unions.
-> > But that should be fixed by: "perf hwmon_pmu: Ensure hwmon key union
-> > is zeroed before use". The particular event "temp_test_hwmon_event1"
-> > is going to search all events as it uses the "label" name, so that
-> > makes me think the bug is here:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
-t/tree/tools/perf/util/hwmon_pmu.c?h=3Dperf-tools-next#n584
-> > but I can't eye ball an issue and the test works for me even when
-> > trying to be aggressive with sanitizers. If you could help me look I'd
-> > appreciate it.
->
-> Where is that "temp_test_hwmon_event1" added?
+On 21/11/2024 22:05, Jiasheng Jiang wrote:
+> Add check for the return value of clk_enable() to gurantee the success.
+> 
+> Fixes: b5f1220d587d ("[media] v4l: Add v4l2 subdev driver for S5P/EXYNOS4 MIPI-CSI receivers")
+> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+> ---
+>  drivers/media/platform/samsung/exynos4-is/mipi-csis.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/samsung/exynos4-is/mipi-csis.c b/drivers/media/platform/samsung/exynos4-is/mipi-csis.c
+> index 63f3eecdd7e6..d1c938065475 100644
+> --- a/drivers/media/platform/samsung/exynos4-is/mipi-csis.c
+> +++ b/drivers/media/platform/samsung/exynos4-is/mipi-csis.c
+> @@ -940,7 +940,9 @@ static int s5pcsis_pm_resume(struct device *dev, bool runtime)
+>  					       state->supplies);
+>  			goto unlock;
+>  		}
+> -		clk_enable(state->clock[CSIS_CLK_GATE]);
+> +		ret = clk_enable(state->clock[CSIS_CLK_GATE]);
+> +		if (ret)
+> +			goto unlock;
 
-test_pmu_get creates the directory for the test PMU. The file
-temp1_label will be created with the contents "test hwmon event1",
-there is also a fake "input" file:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/tests/hwmon_pmu.c?h=3Dperf-tools-next#n62
-```
-{ "temp1_label", "test hwmon event1\n", },
-{ "temp1_input", "40000\n", },
-```
-So we will have an event called temp1 based on the type and number.
-Because we have a label there will be an alias of
-"temp_test_hwmon_event1" where temp is the type from the filename,
-"test_hwmon_event1" is the contents of the file "fixed" by removing
-escapes, spaces, etc. and making them underscores:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/util/hwmon_pmu.c?h=3Dperf-tools-next#n234
+You should unwind the work done, so power off the phy and disble regulators.
 
-These files are read and stored in a hashmap where the key is the
-type, so temp, and the number, so 1:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/util/hwmon_pmu.c?h=3Dperf-tools-next#n287
-The value associated with the key is just a bitmap saying what kinds
-of hwmon items (files) there are for this type+number as well as a
-cache of reading the file event's label file and of its "fixed" name
-to aid searching:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/util/hwmon_pmu.c?h=3Dperf-tools-next#n125
-The key is numeric but the failing event is a string and requires the
-whole map searching to check for presence by matching what is the name
-computed from the label file:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/util/hwmon_pmu.c?h=3Dperf-tools-next#n579
-
-```
-Breakpoint 1, hwmon_pmu__have_event (pmu=3D0x555556147f40,
-   name=3D0x5555560d8470 "temp_test_hwmon_event1") at util/hwmon_pmu.c:559
-559     {
-(gdb) n
-560             struct hwmon_pmu *hwm =3D container_of(pmu, struct
-hwmon_pmu, pmu);
-(gdb)
-563             union hwmon_pmu_event_key key =3D {};
-(gdb)
-567             if (!parse_hwmon_filename(name, &type, &number,
-/*item=3D*/NULL, /*is_alarm=3D*/NULL))
-(gdb)
-570             if (hwmon_pmu__read_events(hwm))
-(gdb)
-573             key.type =3D type;
-(gdb)
-574             key.num =3D number;
-(gdb)
-575             if (hashmap_find(&hwm->events, key.type_and_num,
-/*value=3D*/NULL))
-(gdb)
-577             if (key.num !=3D -1)
-(gdb)
-580             hashmap__for_each_entry((&hwm->events), cur, bkt) {
-(gdb) n
-581                     struct hwmon_pmu_event_value *value =3D cur->pvalue=
-;
-(gdb)
-583                     key.type_and_num =3D cur->key;
-(gdb)
-584                     if (key.type =3D=3D type && value->name &&
-!strcasecmp(name, value->name))
-(gdb) p value->name
-$1 =3D 0x5555560d0680 "temp_test_hwmon_event1"
-(gdb) n
-585                             return true;
-```
-The if here must be failing for you, but I fail to see why. I don't
-see the strcasecmp in your output and what we care about is why either
-the type is wrong or value->name is wrong, if you could help to log
-these it would be great.
-
-Thanks,
-Ian
+Best regards,
+Krzysztof
 
