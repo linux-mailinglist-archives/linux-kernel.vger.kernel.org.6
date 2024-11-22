@@ -1,140 +1,165 @@
-Return-Path: <linux-kernel+bounces-417882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 958F99D5A32
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:47:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD2969D5A30
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:46:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 427081F2344B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:47:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3006FB214BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCFD17333D;
-	Fri, 22 Nov 2024 07:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2114174EFA;
+	Fri, 22 Nov 2024 07:46:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="fnnwZchU"
-Received: from esa2.hc1455-7.c3s2.iphmx.com (esa2.hc1455-7.c3s2.iphmx.com [207.54.90.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NxLi/nQs"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DEA1531C8;
-	Fri, 22 Nov 2024 07:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.54.90.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D4C1531C8
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 07:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732261607; cv=none; b=W50SO/HXYSzP2F42mJgA15ntbHztZK4FskkO4X6j2wrmES7HUsRP4SSiyAUOBpwcQPXyb8Y1ZaWf9phEzroIGMz/VzzSgMmvG6TvUXxkLRt6x0eTEzAkxfJXs8dDJW/Qc4X3UCQU8d1Exr8GU2YRHdAU7tZqkHb8Vxe2yoY+1+U=
+	t=1732261597; cv=none; b=KXlMB6GU8RYDuCFKrsE6h6VMvCEWR3SZClp0PfDthqyrP6ZZB1RQDsbRCun/a/PBuCnymIYhl0vQYOoF3L02lL+6xiNYHgI67Fho5UPiBQWSsxxxiAj9VtV2WbQNFlNPXSpl5F8P/VyfxVZhEsY2Y6TKaXDYdO8DXWm0DnNcG/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732261607; c=relaxed/simple;
-	bh=2yClGXvJ9tZ66fmOJ9mXLhirKKRN07WvKtBEi4fP3GI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=td2+6F2hkIwpA2z8MknVSTlgbSGttvIw3ssxqnt+AMiviZxAe4EGxFQw9Tq+OXA/SXTU2XAHgSUC4I/HxtvFpXWCP+yOI4z/hF2UaewQRgfEyKrgjGo0RiHbMQ0FKJl3rL4+I5cYiw8y0o/xXfc58U/De75ZicboWT5gf4VzjE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=fnnwZchU; arc=none smtp.client-ip=207.54.90.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1732261606; x=1763797606;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=2yClGXvJ9tZ66fmOJ9mXLhirKKRN07WvKtBEi4fP3GI=;
-  b=fnnwZchU+m9UxXO+bXBYNy23REtB9ki7STGC58+54aI0h7L2orEA866a
-   XWGFu7Oz3VJ5OG8NACPa+7l5DbXQTIHVK2EXIwKaXxt6RaBYybuqU2VsB
-   tfD1qYVwHI4zfxCKAfFJrLvlyzXeKT8Otm9DJlL2PqPAMzIQ5C8vnNp5L
-   I2IajHM72M5yRTEndXRz3wr+SXY8awnxCfV3nPJkw0VOWqcl8E03bm9Nw
-   kQmSn1kz55WQY9MxJt4s/DZ7/YsZK6W5MkUoYuNHwCJOuK66lgpLVjWGg
-   uYVY7k6O4Vn6MyscT0Bqb9CJyGipvmMBja2VeAFEVfLvUlnncWZz0MfV9
-   A==;
-X-CSE-ConnectionGUID: 7fNRptklTyaKdwwc8dpzow==
-X-CSE-MsgGUID: 0sKaQtF9TcywXJuowoCF4g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="181346540"
-X-IronPort-AV: E=Sophos;i="6.12,175,1728918000"; 
-   d="scan'208";a="181346540"
-Received: from unknown (HELO oym-r2.gw.nic.fujitsu.com) ([210.162.30.90])
-  by esa2.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 16:45:34 +0900
-Received: from oym-m1.gw.nic.fujitsu.com (oym-nat-oym-m1.gw.nic.fujitsu.com [192.168.87.58])
-	by oym-r2.gw.nic.fujitsu.com (Postfix) with ESMTP id DE508D4C74;
-	Fri, 22 Nov 2024 16:45:31 +0900 (JST)
-Received: from kws-ab3.gw.nic.fujitsu.com (kws-ab3.gw.nic.fujitsu.com [192.51.206.21])
-	by oym-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id 7013FF6935;
-	Fri, 22 Nov 2024 16:45:31 +0900 (JST)
-Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
-	by kws-ab3.gw.nic.fujitsu.com (Postfix) with ESMTP id E79FC2007C3F3;
-	Fri, 22 Nov 2024 16:45:30 +0900 (JST)
-Received: from iaas-rdma.. (unknown [10.167.135.44])
-	by edo.cn.fujitsu.com (Postfix) with ESMTP id B77E51A000B;
-	Fri, 22 Nov 2024 15:45:28 +0800 (CST)
-From: Li Zhijian <lizhijian@fujitsu.com>
-To: linux-kselftest@vger.kernel.org
-Cc: shuah@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Li Zhijian <lizhijian@fujitsu.com>,
-	Donet Tom <donettom@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm@kvack.org
-Subject: [PATCH for-next v3] selftests/mm: Add a few missing gitignore files
-Date: Fri, 22 Nov 2024 15:46:12 +0800
-Message-ID: <20241122074612.1582161-1-lizhijian@fujitsu.com>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1732261597; c=relaxed/simple;
+	bh=ZEt3yoR0cr5/kASiXDyIBRVJ5cVFZ2AeNaZON5w/kHs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P4Zba9NS5YE35nuxNyiDRk865oXSeY1HjyMj7RYx0aES7HPamYL4J3WzhQNocRPIdWxQYzXtdklSL11cjcTzdKAFFaISIbNp7XGgiBotpOowfAiCL7A0rXSdUrXD9083B20v3wLkel0MzBwVPgC0nSl0z1edvIcTsVf9VsgIZik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NxLi/nQs; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7e9e38dd5f1so1440194a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 23:46:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732261594; x=1732866394; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rV7OUDMMlgxjwFF1dF4a3L3rrV3TIom9pYtmVzZiP3c=;
+        b=NxLi/nQszJxZ38c92b01yrWLzhHtKcsPUOe8GT7kd0ZGNeyaYNsAeh9nNF7/gxQZ5N
+         YhlIVG5IU620p5aerdElFuCdDFo0xAkgOxZHY/3Qhq0MSpNfy/VwIGA1E+KeaM0UsCAK
+         UaLsmhWceWL51KLmK709esK8UGhxIVh+m/S88=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732261594; x=1732866394;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rV7OUDMMlgxjwFF1dF4a3L3rrV3TIom9pYtmVzZiP3c=;
+        b=ePoP+0s/1HJRETRk4jjZrUhre7ykwViOqlXleh+086bShbjNCXZ66fCweA9XOqTUI0
+         iJ4SxhM0mbGiSigWxSfS7fDj9QGeB65yD/yCWdAtVhMBlxHaykrJ/IYbjcoX184O4/K5
+         xxEOHhxsv/KnTo+yDRtc3enLH1i7Lu6GNEL2y9mGNf35FsbRoQK4WKDa/PL8FUDeX3n2
+         8AbCi5KeHSDphW8W92TolkxiEEDK3AOgM58L2+xv6QlvlDxmM+PBmkprHcIeC44O0fsa
+         DQxpch+u3PD23Oql94SnwTpilNZzT3ojFunrKoXFpEOF+3PUZoj/GvrcdChrlBAyCrZx
+         DYGg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIouvuyfrZMJ5kvt9KyE6Olf06Kyn+hJ+NO1SaYVYjbDE5ODMN1NACLT9IBJItK3Fga/cjcNJ+5t02ILU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOUE+E7FKPeRiIAnyrImDuOZemPSniOd+DnDOi/YE+SuUCZdTU
+	3KbvqLtIRxJB3HVGAUZ5yldlFSS5bnv6xQMObI0+YoEaJG9HdrPbNDKW0iGJwtaqBjmCEScZ36k
+	=
+X-Gm-Gg: ASbGncs6bhKS6AZsIwLDMXAO77iGv7KDX8jB1nm02x36AeC+DIlGiO5l+2vlfrfltVB
+	GKREntKIl4eKjfXAUKvPHCC4tXOYsW5NecZ0KfBLAbpp2ZieVp5wydAN3pzzvmHE7byDfJXIG3j
+	TMebT2FO3VfOshwUzypjSwoguTNsCJvCqWM3i8T+eqUlR4GqgCpEQo3sGNJUevh9RdU868m2koC
+	SCSGSyWhDpMiqtwYNsC9pWGE506tC8WZ+XERRu+6hUz933cHYve5LkadP58MMxyfyPJc1LzuGju
+	jE9JeCT0w8FoWoly
+X-Google-Smtp-Source: AGHT+IHU/EqCb0NfZ84xapGc34LHfAq0RxCFAkvbQjgXufzm3819+LDc4BXSFHEsnMEjbLY6EirjmQ==
+X-Received: by 2002:a05:6a20:6a1d:b0:1d9:c6c5:70c with SMTP id adf61e73a8af0-1e09e3bcf3emr2391325637.5.1732261594481;
+        Thu, 21 Nov 2024 23:46:34 -0800 (PST)
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com. [209.85.215.176])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ead02eca46sm4464417a91.7.2024.11.21.23.46.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 23:46:33 -0800 (PST)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7fbc65f6c72so953647a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 23:46:33 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWAih5e+MLxocXEret+/BWhBa2l0OFzpfkWLIzz+Paw1kkHJ3uOhy1GZ+3mrRoNyYc/9qddJQH8DkwaC0s=@vger.kernel.org
+X-Received: by 2002:a05:6a20:3949:b0:1dc:2365:a114 with SMTP id
+ adf61e73a8af0-1e09e4b19b9mr2861897637.24.1732261593103; Thu, 21 Nov 2024
+ 23:46:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-28812.003
-X-TM-AS-User-Approved-Sender: Yes
-X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-28812.003
-X-TMASE-Result: 10--4.449200-10.000000
-X-TMASE-MatchedRID: I6rpFm0lrcMhiKpapiFQUqoXHZz/dXlxTJDl9FKHbrk/gf7afIrQU36y
-	x7OFE28QV89FgO/U4vBeAZpJlX3ct6Mqw1MrQ3Xs0e7jfBjhB8eBs03RHrzjMynNUH+OhiT8Ia7
-	NUssol05aJeWpsk0Y3hFBD6+ejtliL/tBTZzO5Q2qh5pv1eDPz685fLDYlgpSmyiLZetSf8nyb6
-	HMFK1qe11j5mhaIsibJ0RPnyOnrZJM/gWxOhfhjk+ZCSAmGiXG/he9Yb8sCsToIDZ/Lg2Lo2tT4
-	6nKrJH8mm+cAHmyOmAOlZGAOJkVuCjz+AKRf1mYkluEB//hNMbAYLx7rnbR8rDQ8m3TqgloelpC
-	XnG+JjvDGBZ1G8r1Sf2D6gx/0ozp
-X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
+References: <20241121-fix-processed-v1-1-4fae6770db30@chromium.org> <853def565622848427e6e5df8f073465fa52e76c.camel@linux.intel.com>
+In-Reply-To: <853def565622848427e6e5df8f073465fa52e76c.camel@linux.intel.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Fri, 22 Nov 2024 08:46:21 +0100
+X-Gmail-Original-Message-ID: <CANiDSCuV1zo0=wGLir26Bn0np+BbVj9aj-JK3ZMreOT78c73UQ@mail.gmail.com>
+Message-ID: <CANiDSCuV1zo0=wGLir26Bn0np+BbVj9aj-JK3ZMreOT78c73UQ@mail.gmail.com>
+Subject: Re: [PATCH] iio: hid-sensor-prox: Fix invalid read_raw for attention
+To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	linux-input@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Compiled binary files should be added to .gitignore
-'git status' complains:
-   Untracked files:
-   (use "git add <file>..." to include in what will be committed)
-         mm/hugetlb_dio
-         mm/pkey_sighandler_tests_32
-         mm/pkey_sighandler_tests_64
+On Thu, 21 Nov 2024 at 17:44, srinivas pandruvada
+<srinivas.pandruvada@linux.intel.com> wrote:
+>
+> On Thu, 2024-11-21 at 09:16 +0000, Ricardo Ribalda wrote:
+> > The attention channel is a IIO_CHAN_INFO_PROCESSED, not a
+> > IIO_CHAN_INFO_RAW.
+> >
+> > Modify prox_read_raw() to support it.
+> >
+> What is the sysfs entry to trigger this IIO_CHAN_INFO_PROCESSED read?
+> Don't you have an entry *_raw?
 
-Cc: Donet Tom <donettom@linux.ibm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Shuah Khan <shuah@kernel.org>
-Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
----
-Cc: linux-mm@kvack.org
----
-Hello,
-Cover letter is here.
+/sys/.../iio:deviceX/in_attention_input
 
-This patch set aims to make 'git status' clear after 'make' and 'make
-run_tests' for kselftests.
----
-V3:
-   nothing change, just resend it
-   (This .gitignore have not sorted, so I appended new files to the end)
-V2:
-  split as seperate patch from a small one [0]
-  [0] https://lore.kernel.org/linux-kselftest/20241015010817.453539-1-lizhijian@fujitsu.com/
----
- tools/testing/selftests/mm/.gitignore | 2 ++
- 1 file changed, 2 insertions(+)
+There is no _raw device for it.
 
-diff --git a/tools/testing/selftests/mm/.gitignore b/tools/testing/selftests/mm/.gitignore
-index da030b43e43b..2ac11b7fcb26 100644
---- a/tools/testing/selftests/mm/.gitignore
-+++ b/tools/testing/selftests/mm/.gitignore
-@@ -51,3 +51,5 @@ hugetlb_madv_vs_map
- mseal_test
- seal_elf
- droppable
-+hugetlb_dio
-+pkey_sighandler_tests*
+>
+>
+> Thanks,
+> Srinivas
+>
+> > Fixes: 596ef5cf654b ("iio: hid-sensor-prox: Add support for more
+> > channels")
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > ---
+> >  drivers/iio/light/hid-sensor-prox.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/iio/light/hid-sensor-prox.c
+> > b/drivers/iio/light/hid-sensor-prox.c
+> > index e8e7b2999b4c..8e5d0ad13a5f 100644
+> > --- a/drivers/iio/light/hid-sensor-prox.c
+> > +++ b/drivers/iio/light/hid-sensor-prox.c
+> > @@ -94,6 +94,7 @@ static int prox_read_raw(struct iio_dev *indio_dev,
+> >       *val2 = 0;
+> >       switch (mask) {
+> >       case IIO_CHAN_INFO_RAW:
+> > +     case IIO_CHAN_INFO_PROCESSED:
+> >               if (chan->scan_index >= prox_state->num_channels)
+> >                       return -EINVAL;
+> >               address = prox_state->channel2usage[chan-
+> > >scan_index];
+> > @@ -107,8 +108,7 @@ static int prox_read_raw(struct iio_dev
+> > *indio_dev,
+> >
+> > report_id,
+> >
+> > SENSOR_HUB_SYNC,
+> >                                                          min < 0);
+> > -             if (prox_state->channel2usage[chan->scan_index] ==
+> > -                 HID_USAGE_SENSOR_HUMAN_ATTENTION)
+> > +             if (mask == IIO_CHAN_INFO_PROCESSED)
+> >                       *val *= 100;
+> >               hid_sensor_power_state(&prox_state-
+> > >common_attributes, false);
+> >               ret_type = IIO_VAL_INT;
+> >
+> > ---
+> > base-commit: decc701f41d07481893fdea942c0ac6b226e84cd
+> > change-id: 20241121-fix-processed-ed1a95641e64
+> >
+> > Best regards,
+>
+
+
 -- 
-2.44.0
-
+Ricardo Ribalda
 
