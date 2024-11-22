@@ -1,123 +1,178 @@
-Return-Path: <linux-kernel+bounces-417900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DACB79D5A72
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:53:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 228EC9D5A66
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:52:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 840961F21035
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:53:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBF01281D0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E17018C32E;
-	Fri, 22 Nov 2024 07:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC02185936;
+	Fri, 22 Nov 2024 07:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Btt7fQQQ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wiheg3Yi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF93218A6CC;
-	Fri, 22 Nov 2024 07:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC3917B4E2
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 07:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732261939; cv=none; b=mw5tCxtPSsHv/cy61zWOr1eGHkQXWPEV3itRtToJ6krMJIEKiS4LzA0K3elBIAwvMb54qE2OR2T/MpHx+TvY5Jaiv/o/de0EAO4cMw1ZU288s6aizK2sTYeF3elXWjsfOT8lWqjAybEYAItVC98v5wIUqithr4kQ4sCXDWWdmZs=
+	t=1732261931; cv=none; b=iBYLn8fgf67vILWYteh3Jpb1Kuj7Cs6dBFYSQeYMA6BFQUUYsugWEHwry5bfnp3ATZBOnH4apYXLlxvoI4RfB3EpnR1+bGwu3nARjH19m+mpolGHcp7/tThbuiP1ItYMSeQfw6HuTgf0m6NqHu4rdzNP9xeHKkBMuPwg1oqQzmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732261939; c=relaxed/simple;
-	bh=edVSjzhoWUDOtk1q0JzE9bRTYE8O3Hs6haOSqgo0/KM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Rjgas4ArBXhvk68yY/h9Ni5cZHL6MFAxb2T+JQ2eCdlRZwpya8PqimAEQ2GLz0upk7ipEYFcRBfOqmf71zcXw5pODXI3hAUv1N+4YX2fntfZMCDlf/tThjSqXAyEHV1sB1O22g4RRqMVyR0yla9DmXckRdG1W1ldWGaSJkayvV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Btt7fQQQ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [127.0.1.1] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D35AE10B9;
-	Fri, 22 Nov 2024 08:51:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732261913;
-	bh=edVSjzhoWUDOtk1q0JzE9bRTYE8O3Hs6haOSqgo0/KM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Btt7fQQQ5ewajSSXr6hl/RT7nrckpdEUn6LFr82a6yzX3PshkBeKwVaVCwTJeM2Jq
-	 37hJx0yKjUxEEadnGPPGEdtudUrZYzDvoTbGClQyIeQhSn0eLKz7bHm4ks2vochQRc
-	 78dYNQ/m+La5G6DE3pW2BAMtHL2INZ507+LDaNxI=
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Date: Fri, 22 Nov 2024 09:51:40 +0200
-Subject: [PATCH 3/3] i2c: atr: Fix client detach
+	s=arc-20240116; t=1732261931; c=relaxed/simple;
+	bh=14gNrbZwr4FwtDxhLh5ypoXNB6/niQbMSNKxqDfxcFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S4fhfjWjpE8fl04LHkuA05onvgZmP6tOq+cRhdSTfur+LNCZIiGCNbvSHZBWhYYks3KzIyCChP/sffybhgqFNFwbdI7AFgq2kWq7866iXMPatYQKyVgiyasJ2K+2L7dHD4MlJNNXHubjIU+s3OSbmK+y1S3+8l7YhDuY8kyTxWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wiheg3Yi; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732261928;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D9p/amWDuKtYCK1WkCl/Fua58/N/1s7xV60ca3EpfR4=;
+	b=Wiheg3YiY59olp9GKjJlscHrxjYnBBWbPMk4DtspywipdtpULhGHGCPY5udWzsfN0iMF5m
+	y/24NH7BjmYRzMctp3QP7o32k6kwZR8QUFL5XcwEsIEBLAmc/lkEKFXp1yYhn+cdPOBBss
+	bJkMMTsvNKU/wHRq/xejZwDl4USy4b8=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-100-HBEew0p3NECkehH9sfpIIQ-1; Fri,
+ 22 Nov 2024 02:52:04 -0500
+X-MC-Unique: HBEew0p3NECkehH9sfpIIQ-1
+X-Mimecast-MFC-AGG-ID: HBEew0p3NECkehH9sfpIIQ
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 53B6E1955F3D;
+	Fri, 22 Nov 2024 07:52:01 +0000 (UTC)
+Received: from localhost (unknown [10.72.113.10])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4B9441955F43;
+	Fri, 22 Nov 2024 07:51:59 +0000 (UTC)
+Date: Fri, 22 Nov 2024 15:51:54 +0800
+From: Baoquan He <bhe@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Eric Farman <farman@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v1 07/11] fs/proc/vmcore: introduce
+ PROC_VMCORE_DEVICE_RAM to detect device RAM ranges in 2nd kernel
+Message-ID: <Z0A4Gl1dUINrTTUX@MiWiFi-R3L-srv>
+References: <20241025151134.1275575-1-david@redhat.com>
+ <20241025151134.1275575-8-david@redhat.com>
+ <Zz22ZidsMqkafYeg@MiWiFi-R3L-srv>
+ <4b07a3eb-aad6-4436-9591-289c6504bb92@redhat.com>
+ <Zz3sm+BhCrTO3bId@MiWiFi-R3L-srv>
+ <3ed18ba1-e4b1-461e-a3a7-5de2df59ca60@redhat.com>
+ <Zz63aGL7NcrONk+p@MiWiFi-R3L-srv>
+ <c353466b-6860-4ca2-a4fa-490648246ddc@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241122-i2c-atr-fixes-v1-3-62c51ce790be@ideasonboard.com>
-References: <20241122-i2c-atr-fixes-v1-0-62c51ce790be@ideasonboard.com>
-In-Reply-To: <20241122-i2c-atr-fixes-v1-0-62c51ce790be@ideasonboard.com>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Wolfram Sang <wsa+renesas@sang-engineering.com>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Wolfram Sang <wsa@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Cosmin Tanislav <demonsingur@gmail.com>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
- stable@vger.kernel.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1208;
- i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
- bh=y4zkY/aSb+oAW8wi1OZRGAkS9LvBKaab9mHJC6eDWH8=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnQDgpCjjz9QsI4cov2rGk+C52uzZuwgD5A6P6v
- EZQAg+wr/KJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ0A4KQAKCRD6PaqMvJYe
- 9af6EACHSWuHCtqDfVi0cQmEVDbXaLAHMAueafBaeYWAN9hNc03RnXuG71yuFrBQi0Hsr8pzyog
- DFe2m9PfxXj/Dda5ONKOnaQT1ueiptUpDBlZfeNZ6o3l7uYuBPg+JGu62GcxK2XoP5ZgiuGB1Id
- NtA38q+QL/D9Z9bCkNwOZ7RRoP41Gj3iagNZ1LHNE1heHn3ktMZixR8D5dsN9tN/xqxUuNxl5x8
- y31E/b5Gfy6lgaxCg9c59gI87byD2LD1E575FW8CReWNFTZj0Zj4NmsmnlN5fqnIdEB3+7pcaMt
- LGwkHxbhoJki0C6IqE/Xgevz5xyFnp8dDdhBJGJGmMMMJjEhmJ9v2LjTNIgY7hbCsWFNvhjL2zJ
- 4lXssQTPdnpB0K5mApoIRqFbsyje6lG39tRhYVuJlz5JQLWveviTDuItXl3sGZ4z4gs9tB9zrwW
- oTaG1wr0HV7ew8+iq3Wku175xoT83l+dkgELC2a1p68W+/XOS/ResVjvvAf1LVSEikLzuBAF7jc
- J4oJpOkb3ajy55yYbYWfZUUCFsW1XdINm7/9MT7HMGHfbYoOtdbeU/PjsyR7HHO1AVTQ2aJyyir
- V42yHWnAjuaijltC/q/TXfUer3Jxje8KgdPgnoqvazLIMNT8na16D6MA4W+DYjCb3Z9RiwosNa8
- XiTMR7GBY/mIY3w==
-X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c353466b-6860-4ca2-a4fa-490648246ddc@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+On 11/21/24 at 08:47pm, David Hildenbrand wrote:
+> > > 
+> > > That would work, but I don't completely like it.
+> > > 
+> > > (a) I want s390x to select NEED_PROC_VMCORE_DEVICE_RAM instead. Staring at a
+> > > bunch of similar cases (git grep "config NEED" | grep Kconfig, git grep
+> > > "config ARCH_WANTS" | grep Kconfig), "select" is the common way to do it.
+> > > 
+> > > So unless there is a pretty good reason, I'll keep
+> > > NEED_PROC_VMCORE_DEVICE_RAM as is.
+> > 
+> > That's easy to satify, see below:
+> 
+> Yes, this is mostly what I have right now, except
+> 
+> > 
+> > ============simple version=====
+> > fs/proc/Kconfig:
+> > config NEED_PROC_VMCORE_DEVICE_RAM
+> >          def n
+> 
+> using "bool" here like other code. (I assume you meant "def_bool n", "bool"
+> seems to achieve the same thing)
 
-i2c-atr catches the BUS_NOTIFY_DEL_DEVICE event on the bus and removes
-the translation by calling i2c_atr_detach_client().
+Yes, you are right. I didn't check it carefully.
 
-However, BUS_NOTIFY_DEL_DEVICE happens when the device is about to be
-removed from this bus, i.e. before removal, and thus before calling
-.remove() on the driver. If the driver happens to do any i2c
-transactions in its remove(), they will fail.
+> 
+> > 
+...... 
+> > ===================
+> > fs/proc/Kconfig:
+> > config PROVIDE_PROC_VMCORE_DEVICE_RAM
+> >          def_bool n
+> > 
+> > config NEED_PROC_VMCORE_DEVICE_RAM
+> >          def_bool n
+> > 
+> > config PROC_VMCORE_DEVICE_RAM
+> >          def_bool y
+> >          depends on PROC_VMCORE
+> >          depends on NEED_PROC_VMCORE_DEVICE_RAM
+> >          depends on PROVIDE_PROC_VMCORE_DEVICE_RAM
+> > 
+> > drivers/virtio/Kconfig:
+> > config VIRTIO_MEM
+> >          select PROVIDE_PROC_VMCORE_DEVICE_RAM if PROC_VMCORE
+> >                                                ~~~~~~~~~~~~~~
+> > 
+> > arch/s390/Kconfig:
+> > config S390
+> >          select NEED_PROC_VMCORE_DEVICE_RAM if PROC_VMCORE
+> >                                             ~~~~~~~~~~~~~~
+> > ========================
+> > 
+> > One last thing I haven't got well, If PROC_VMCORE_DEVICE_RAM has had
+> > dependency on PROC_VMCORE, can we take off the ' if PROC_VMCORE' when
+> > select PROVIDE_PROC_VMCORE_DEVICE_RAM and NEED_PROC_VMCORE_DEVICE_RAM?
+> 
+> We could; it would mean that in a .config file you would end up with
+> "NEED_PROC_VMCORE_DEVICE_RAM=y" with "#PROC_VMCORE" and no notion of
+> "PROC_VMCORE_DEVICE_RAM".
 
-Fix this by catching BUS_NOTIFY_REMOVED_DEVICE instead, thus removing
-the translation only after the device is actually removed.
+Fair enough. I didn't think of this. Then keeping it is obvisouly
+better. Thanks.
 
-Fixes: a076a860acae ("media: i2c: add I2C Address Translator (ATR) support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
----
- drivers/i2c/i2c-atr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> I don't particularly like that -- needing something that apparently does not
+> exist. Not sure if there is a best practice here, staring at some examples I
+> don't seem to find a consistent rule. I can just drop it, not the end of the
+> world.
+> 
+> 
+> Did you get to look at the other code changes in this patch set? Your
+> feedback would be highly appreciated!
 
-diff --git a/drivers/i2c/i2c-atr.c b/drivers/i2c/i2c-atr.c
-index 9bdbd94b5054..2ce12d42c24f 100644
---- a/drivers/i2c/i2c-atr.c
-+++ b/drivers/i2c/i2c-atr.c
-@@ -406,7 +406,7 @@ static int i2c_atr_bus_notifier_call(struct notifier_block *nb,
- 				dev_name(dev), ret);
- 		break;
- 
--	case BUS_NOTIFY_DEL_DEVICE:
-+	case BUS_NOTIFY_REMOVED_DEVICE:
- 		i2c_atr_detach_client(client->adapter, client);
- 		break;
- 
-
--- 
-2.43.0
+Will try. While I may not have valuable input about virtio-mem code.
 
 
