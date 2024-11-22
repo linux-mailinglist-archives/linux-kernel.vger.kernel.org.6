@@ -1,275 +1,165 @@
-Return-Path: <linux-kernel+bounces-418051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA5159D5C6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:52:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0644C9D5C76
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:52:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F9CA1F21157
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:52:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A65D81F21004
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B7F1DE4EE;
-	Fri, 22 Nov 2024 09:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06CD1DE8B8;
+	Fri, 22 Nov 2024 09:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="pn26vLy9"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JalwzHlU"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D7B1D86E8
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E981DE88A;
+	Fri, 22 Nov 2024 09:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732269072; cv=none; b=X0ceKxoIrCgwQiccYNol3cMlyseoGZPldaUA6YlUFgRwJLDyI4rpDxD4oJ1TyQKJDn0zD0a4r6GZYJtygj9GU+Y4zwhNOCjQUXw6wyd86J3s4UdWzAedBB57aTMgFnbJ2ICbS/TC5N4GyDU8MmSz1GpTttKzqQrrFivTyMXOee4=
+	t=1732269077; cv=none; b=JxUobY929ujSuTN1EQ3/sXep7sOKjSemZhppD6MMNTaoibMxtE0GOyvb//5aC3VgiCrzp7SxGD24rLdp36pYKEFx8eHYtJxnuEG79AHXERoojLqQmLgkzDyJQ/rgw/Z7y4o74RWkrugSkXCarrjnvqNoOAkTnBmuWU6UnV4WN50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732269072; c=relaxed/simple;
-	bh=VSxL2vXjFQHEkYh66t3x3efNNjrn4/60enBHM3LZn7c=;
+	s=arc-20240116; t=1732269077; c=relaxed/simple;
+	bh=CD3QMkeKwPJwplOb9+RxUlyJP3HAfLpfRmOmE5WErmI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LHNnJ5kywFMcB84dIBKIIl6ABKQBPTWbdQ59+xOer5ZQw66GNHvSzduuPUCze3FZm0FJv5Sl1pmRgRiQK9XQyBZgDFMdrUskSFadnY3eREJ7an7MWIr2vaHxgu7Rx3Sw2ApNmYN9xMKzWG90gwIa3PMrXmqeQv4mPoyyJSS6sDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=pn26vLy9; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5ced377447bso2465182a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 01:51:09 -0800 (PST)
+	 To:Cc:Content-Type; b=KNw3FPooODQJ4WD1kp1C+E+5EfqHdDqmU2MywFiuTZzIS3fZGZocyBluPw1djDgbigJ+YZfQnVcAHm8Z85BQ8MFDfBowsDw/sZPQxE6wK5XLvyUiivT8kRWXZE0y1fKtsWmPJTEGYOODjTxfGKvUyQXbMwgcB2+RUdbqO/GSGcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JalwzHlU; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6e2e41bd08bso24743437b3.2;
+        Fri, 22 Nov 2024 01:51:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732269068; x=1732873868; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732269074; x=1732873874; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8CB8WOobi0NsUlzpJw2qyuKbbHXDJo9rU7wn4TqR3oA=;
-        b=pn26vLy9XBOnIcpepV3I0+JeF2xLrDbzCBagHxLQWhHWU1g2f0pnw9K0bCqPPdAyyf
-         XS00YwbkH03Szi927+oNGwa7vAMTbK7nN05mRa6S3F9aqruLK2MfFqm4UGy4hVuoePGZ
-         eJs5jVOqOZCE3sgJOWpfhh3DAdS1WRKjzmlj0oGCAS2pNIMFx16FbtH8MmllHaof4Kvb
-         rXDi3+hrYRqz6Roguh5+3vDYJbsQFMjrWWwbKxLD1UuvMuoF022afCSOZQwAb+9U6qvi
-         27FpIMC64HKOIQaB9mqzLQuzA5mnZ6Jx/b0Zcxrqs2kMWY5p8kKOdwb+KzeRj8JysPks
-         qEPQ==
+        bh=3Rt7HhukuMOT/wZor/U1/vRsl6sRp7OR5MfA/Y7RLEM=;
+        b=JalwzHlUfpqIqd2ryWww20z5D3sPmuh4CobMYrOqTWAvWp2MFimdOR0OJQxRN/1ds+
+         wBS4Uasb0bIk7aov5oXJwhXwzASUx78fqMlkSwwyvjC0OB+vScfVArgrXtdY2fHxR0hr
+         Fc5EUyetFJRrpwVTRuaoaMWPPxABygyUpVfg45iGfD2+3G3H8bGqUPI4njDkS6l5pUoO
+         lWniiApHvojM02k7OETE5x3RDEhQVih0tm2oUH59gbIWYYNgKsP/uwUsp9DVxGDFc+HH
+         iu7TUE9vcR02wiVlt8f3qJYDpfK+JN8cxXJg/y/26wVUbIKEcx1HdAPJ6yqit8eTbo8C
+         lITw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732269068; x=1732873868;
+        d=1e100.net; s=20230601; t=1732269074; x=1732873874;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8CB8WOobi0NsUlzpJw2qyuKbbHXDJo9rU7wn4TqR3oA=;
-        b=ACFEXefMncOsBK/eQFwUTKtpmxrutO7d/TNkKV4qNevC8siqzyCl/jYIZlGj/+gr34
-         LhXNYPgglV0jokb/tDmByBzt4+i9mrmnfDcRWhYEgh1uVHnCZANfLTBIUYcwSlijf6E4
-         eL3S3RHNLmOtqB9wkeeBABEnbKcMjh3OaDSG7jUEUSg2vAubmbw5DICT7DTWM3/MAb57
-         i4wSJ3Jeit2YwWBiG6y2ZoypuRbwEOm6AMCkwnHvh5KghbGJfNOkD+Umzjdgne/g+l+S
-         VE6kgjZgpq7wpyFkAeCgV1v44FP5kW9N2A9j4t8+JcEJCqIOrYgaNqRF2akSx5nPUx4J
-         BRrg==
-X-Gm-Message-State: AOJu0YztaY0dwomlNOhifs5SlSygfBrM220KNdPP8xPWdeJAtCsghPzA
-	0rnvo6X+RyGAC0cLEx71/zmH1JjwAPrJc1B3UVSC9Aw2niaZ1StF2FIdhPFqF2zRsJOgs2NTCxl
-	9u1tva7eC1CbdgN6InI0vAtZ9tGid2da4hvnadw==
-X-Gm-Gg: ASbGncvEiIWVC0QAF7xGUKIgZys/aCZpxzKqeNtpcXLVjzTFBHhl4iBJMz0wHDVQ9eF
-	RPHx4Dd6xCRFZeYlCkmCxRrstQtPITg==
-X-Google-Smtp-Source: AGHT+IEkU0Mn40THI/AVHurhKWm5N7rlSNrjj7ZiLosKeFVer5SPt3gDYvZssurTE0nVTHMxqmXqPCZcZcDt8ABysRo=
-X-Received: by 2002:a17:907:771a:b0:a9a:5cf8:9e40 with SMTP id
- a640c23a62f3a-aa5099fb9f6mr154285266b.24.1732269068577; Fri, 22 Nov 2024
- 01:51:08 -0800 (PST)
+        bh=3Rt7HhukuMOT/wZor/U1/vRsl6sRp7OR5MfA/Y7RLEM=;
+        b=bGD44A3mZAw5iHGnha7Pqe9uqayXck6gN0CnrW/nO89zCml7KBWgN24pMr9acTSLxc
+         L9Mj5wtEcIuA+B2YXWPoekdYZBScU5syvYD1En7n/GoiWqYZsJyhfFemOkLLQUZG3Tf5
+         zq+FYAhHwL9b9tyYPl1Td+vOldUhLY2BSmjb3JW+bx4q1fFjngzSl5xuPasmFkwdTrdH
+         kcndi5kdas2jvUz5wRRnR3qnYrZDJDExiYqqPmPrOABkXe6d1jxCHewVc+OiLVLW/q6P
+         zDHdWgc4G7/qYz8uXN8xn7jFoeJ8LAUD9y4Kt9Bo6NPnkR3rxEtTVWDsPosaEEd+UNCL
+         lxHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEhQq1bnLHfSHNmxUcA8V5w0z4FshaWOSIKuMlVR223tI6pzOCjR+UV+vKNxsdGX4UOc0o3UoQ@vger.kernel.org, AJvYcCUc+i0kOdNpsBQ2DHJVM6qOvglEefJGtKdlvVJOQ3hwDfvuAl9EXIzj1sXBjHN9FvA2qvZfOlj+N9W1gQ==@vger.kernel.org, AJvYcCUxuKn9zYibzJp+aEoowRV8ZphIQdV71/kCuWpL+bZ6jfylONQ27HhcO4mGkY/RqzZE6nM5wKLdpHrpHYl5@vger.kernel.org, AJvYcCV23Pj6ipwNwTtLMYVQH9UtLudUrQFLf+iYFr9DvxXCNmoMnnCMIyi8GKzo9MIKZ8XA4h0nuWELSMqslG4=@vger.kernel.org, AJvYcCVM6NfegYh+uoLuKn81YEJZfEjkRtCFC/5f1uwkB9aCuEtsL4FZT95k2/ATRw3IqYG9fyAW7bfWgiFT@vger.kernel.org, AJvYcCXB0D74lMRpddlVaD6TE34rdhSpBQUSL3bfchjiBi8lP5AiJbjBIyiCC4CbtC5F9A8E5Ed7ttnjHWg+@vger.kernel.org, AJvYcCXGuJfigQjVf4aiPlB9PDn1IzK8VVbXiR5hpLzxXqCw668anSIZ5TRAFK3YP5c+q+VK2Fbuxq3xs/2QO9eeDg0=@vger.kernel.org, AJvYcCXoWw+sHqPgX7SmyBDh4k5SJVvOR+XhFYqI646Z7Ex1mqv2B+h9KkcP8aFkXx/9BPJPLBF2P0tTqIA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsS+u0Wex6HpQzrcGr6rqMeIlGjv2XC92GIArmekYvwgetLV1c
+	43iBe3bfUD36usHT0iVSVqUyAPhypODq1UZnUQDS0bfoFCy2cH1Q9gZEwLlN7sS3Flh2Q8K709i
+	Com2v1uU6OJrqkEk3n+BdnbyJwiY=
+X-Gm-Gg: ASbGncsVTBm+cXx6niwKCbf5OnbVOpWJx8qJVOPtXE8HF8qCY03zCRFnEhFC3TyilwK
+	d1k1S3ysS2N635AcTsh0oBBavbds3bDQ=
+X-Google-Smtp-Source: AGHT+IHNFF/GKbFCFULGPf7sWZKHfQpR06VsGIF9URj5G0bpXBz7ffdWhNp3VuNmFHIa5U4s+MVbE4ADk3JCewL8aHw=
+X-Received: by 2002:a05:6902:10c1:b0:e33:4341:28dd with SMTP id
+ 3f1490d57ef6-e38f8bdb861mr1785555276.38.1732269073985; Fri, 22 Nov 2024
+ 01:51:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121-add-mtk-isp-3-0-support-v7-0-b04dc9610619@baylibre.com>
- <20241121-add-mtk-isp-3-0-support-v7-4-b04dc9610619@baylibre.com>
- <767085562b5efb43f248e8528bb154a6c30d3999.camel@mediatek.com>
- <CAEHHSvaePj2MUg+zgmkpZF4HTj_F9ED0RxuzQr2oOAUJgOieng@mail.gmail.com> <bd73658d8ceac0ce236f08f31065350123056724.camel@mediatek.com>
-In-Reply-To: <bd73658d8ceac0ce236f08f31065350123056724.camel@mediatek.com>
-From: Julien Stephan <jstephan@baylibre.com>
-Date: Fri, 22 Nov 2024 10:50:57 +0100
-Message-ID: <CAEHHSvZLx3MqzK_qheiXm1UsB=i=8f2QbGTpXPkdU2aqUJtvww@mail.gmail.com>
-Subject: Re: [PATCH v7 4/5] media: platform: mediatek: isp: add mediatek
- ISP3.0 camsv
-To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"paul.elder@ideasonboard.com" <paul.elder@ideasonboard.com>, "mchehab@kernel.org" <mchehab@kernel.org>, 
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "robh@kernel.org" <robh@kernel.org>, 
-	=?UTF-8?B?QW5keSBIc2llaCAo6Kyd5pm655qTKQ==?= <Andy.Hsieh@mediatek.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
-	"laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "fsylvestre@baylibre.com" <fsylvestre@baylibre.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	"pnguyen@baylibre.com" <pnguyen@baylibre.com>
+References: <20241121064046.3724726-1-tmyu0@nuvoton.com> <20241121064046.3724726-5-tmyu0@nuvoton.com>
+ <08a91d47-ad78-4f7d-896f-b75d7418be1e@wanadoo.fr> <CAOoeyxVjBsmOr=-14iq7pQamJ90j_PBMhQK0Lo=xmvPyqqseGQ@mail.gmail.com>
+ <CAMZ6Rq+WePVM2aSk2HzXoa-t+ZE97yeqS6bndpGXUh+NuiM8sg@mail.gmail.com>
+In-Reply-To: <CAMZ6Rq+WePVM2aSk2HzXoa-t+ZE97yeqS6bndpGXUh+NuiM8sg@mail.gmail.com>
+From: Ming Yu <a0282524688@gmail.com>
+Date: Fri, 22 Nov 2024 17:51:02 +0800
+Message-ID: <CAOoeyxUaJwd5_tSLFxUJBB47G0y1p3dr4zeMx3Qkx3KVrQNa9A@mail.gmail.com>
+Subject: Re: [PATCH v2 4/7] can: Add Nuvoton NCT6694 CAN support
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, 
+	andi.shyti@kernel.org, mkl@pengutronix.de, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
+	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-rtc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Le ven. 22 nov. 2024 =C3=A0 10:49, CK Hu (=E8=83=A1=E4=BF=8A=E5=85=89) <ck.=
-hu@mediatek.com> a =C3=A9crit :
->
-> On Fri, 2024-11-22 at 10:25 +0100, Julien Stephan wrote:
-> > External email : Please do not click links or open attachments until yo=
-u have verified the sender or the content.
-> >
-> >
-> > Le ven. 22 nov. 2024 =C3=A0 09:41, CK Hu (=E8=83=A1=E4=BF=8A=E5=85=89) =
-<ck.hu@mediatek.com> a =C3=A9crit :
-> > >
-> > > Hi, Julien:
-> > >
-> > > On Thu, 2024-11-21 at 09:53 +0100, Julien Stephan wrote:
-> > > > External email : Please do not click links or open attachments unti=
-l you have verified the sender or the content.
-> > > >
-> > > >
-> > > > From: Phi-bang Nguyen <pnguyen@baylibre.com>
-> > > >
-> > > > This driver provides a path to bypass the SoC ISP so that image dat=
-a
-> > > > coming from the SENINF can go directly into memory without any imag=
-e
-> > > > processing. This allows the use of an external ISP.
-> > > >
-> > > > Signed-off-by: Phi-bang Nguyen <pnguyen@baylibre.com>
-> > > > Signed-off-by: Florian Sylvestre <fsylvestre@baylibre.com>
-> > > > [Paul Elder fix irq locking]
-> > > > Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
-> > > > Co-developed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.co=
-m>
-> > > > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > > Co-developed-by: Julien Stephan <jstephan@baylibre.com>
-> > > > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> > > > ---
-> > >
-> > > [snip]
-> > >
-> > > > +static irqreturn_t isp_irq_camsv30(int irq, void *data)
+Dear Vincent,
+
+Vincent Mailhol <mailhol.vincent@wanadoo.fr> =E6=96=BC 2024=E5=B9=B411=E6=
+=9C=8822=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=884:25=E5=AF=AB=E9=81=
+=93=EF=BC=9A
+> > > > +static int nct6694_canfd_start(struct net_device *ndev)
 > > > > +{
-> > > > +       struct mtk_cam_dev *cam_dev =3D (struct mtk_cam_dev *)data;
-> > > > +       struct mtk_cam_dev_buffer *buf;
-> > > > +       unsigned int irq_status;
-> > > > +
-> > > > +       spin_lock(&cam_dev->buf_list_lock);
-> > > > +
-> > > > +       irq_status =3D mtk_camsv30_read(cam_dev, CAMSV_INT_STATUS);
-> > > > +
-> > > > +       if (irq_status & INT_ST_MASK_CAMSV_ERR)
-> > > > +               dev_err(cam_dev->dev, "irq error 0x%lx\n",
-> > > > +                       irq_status & INT_ST_MASK_CAMSV_ERR);
-> > > > +
-> > > > +       /* De-queue frame */
-> > > > +       if (irq_status & CAMSV_IRQ_PASS1_DON) {
-> > > > +               cam_dev->sequence++;
-> > > > +
-> > > > +               buf =3D list_first_entry_or_null(&cam_dev->buf_list=
-,
-> > > > +                                              struct mtk_cam_dev_b=
-uffer,
-> > > > +                                              list);
-> > > > +               if (buf) {
-> > > > +                       buf->v4l2_buf.sequence =3D cam_dev->sequenc=
-e;
-> > > > +                       buf->v4l2_buf.vb2_buf.timestamp =3D
-> > > > +                               ktime_get_ns();
-> > > > +                       vb2_buffer_done(&buf->v4l2_buf.vb2_buf,
-> > > > +                                       VB2_BUF_STATE_DONE);
-> > > > +                       list_del(&buf->list);
-> > > > +               }
-> > > > +
-> > > > +               buf =3D list_first_entry_or_null(&cam_dev->buf_list=
-,
-> > > > +                                              struct mtk_cam_dev_b=
-uffer,
-> > > > +                                              list);
-> > > > +               if (buf)
-> > > > +                       mtk_camsv30_update_buffers_add(cam_dev, buf=
-);
+> > > > +     struct nct6694_canfd_priv *priv =3D netdev_priv(ndev);
+> > > > +     struct nct6694_can_cmd0 *buf =3D (struct nct6694_can_cmd0 *)p=
+riv->tx_buf;
 > > >
-> > > If buf =3D=3D NULL, so hardware would automatically stop DMA?
-> > > I don't know how this hardware work.
-> > > Below is my imagine about this hardware.
-> > >
-> > > 1. Software use CAMSV_IMGO_FBC_RCNT_INC to increase software buffer i=
-ndex.
-> > > 2. Hardware has a hardware buffer index. After hardware finish one fr=
-ame, hardware buffer index increase.
-> > > 3. After software buffer index increase, hardware start DMA.
-> > > 4. When hardware buffer index is equal to software buffer index, hard=
-ware automatically stop DMA.
-> > >
-> > > Does the hardware work as my imagine?
-> > > If hardware could automatically stop DMA, add comment to describe.
-> > > If hardware could not automatically stop DMA, software should do some=
-thing to stop DMA when buf =3D=3D NULL.
+> > > Give a more memorable name to buf, for example: bittiming_cmd.
 > > >
 > >
-> > You are right except that dma is not stopped but frames are
-> > automatically dropped by hardware until a new buffer is enqueued and
-> > software uses CAMSV_IMGO_FBC_RCNT_INC to increase the software buffer
-> > index.
-> >
-> > What about adding the following comment:
-> >
-> > /*
-> > * If there is no user buffer available, hardware will drop automaticall=
-y
-> > * frames until buf_queue is called
-> > */
+> > Got it. So, every buf that uses a command must be renamed similarly, ri=
+ght?
 >
-> You say DMA is not stopped. Do you mean hardware still write data into la=
-test buffer which would be dequeued to user space?
-> I think hardware should not write data into the buffer which has been tak=
-e away by user space.
-> I think software should do something to stop DMA. Maybe use mtk_camsv30_c=
-mos_vf_hw_disable() to stop DMA.
+> Yes. Note that you can use different names if you have a better idea.
+> It is just that generic names like "buf" or "cmd1" do not tell me what
+> this variable actually is. On the contrary, bittiming_cmd tells me
+> that this variable holds the payload for the command to set the device
+> bittiming. This way, suddenly, the code becomes easier to read and
+> understand. As long as your naming conveys this kind of information,
+> then I am fine with whatever you choose, just avoid the "buf" or
+> "cmd1" names.
 >
 
-No, I said frame is dropped.. It does not write any data.
+Understood. I will make the modifications in v3.
 
-> Regards,
-> CK
->
-> >
-> > Let me know if that works for you
-> >
-> > Cheers
-> > Julien
-> >
-> > > Regards,
-> > > CK
+> > > > +     const struct can_bittiming *n_bt =3D &priv->can.bittiming;
+> > > > +     const struct can_bittiming *d_bt =3D &priv->can.data_bittimin=
+g;
+...
+> > > > +static netdev_tx_t nct6694_canfd_start_xmit(struct sk_buff *skb,
+> > > > +                                         struct net_device *ndev)
+> > > > +{
+> > > > +     struct nct6694_canfd_priv *priv =3D netdev_priv(ndev);
+> > > > +
+> > > > +     if (priv->tx_skb || priv->tx_busy) {
+> > > > +             netdev_err(ndev, "hard_xmit called while tx busy\n");
+> > > > +             return NETDEV_TX_BUSY;
+> > > > +     }
+> > > > +
+> > > > +     if (can_dev_dropped_skb(ndev, skb))
+> > > > +             return NETDEV_TX_OK;
+> > > > +
+> > > > +     netif_stop_queue(ndev);
 > > >
-> > > > +       }
-> > > > +
-> > > > +       spin_unlock(&cam_dev->buf_list_lock);
-> > > > +
-> > > > +       return IRQ_HANDLED;
-> > > > +}
-> > > > +
+> > > Here, you are inconditionally stopping the queue. Does it mean that y=
+our
+> > > device is only able to manage one CAN frame at the time?
 > > >
-> > > ************* MEDIATEK Confidentiality Notice ********************
-> > > The information contained in this e-mail message (including any
-> > > attachments) may be confidential, proprietary, privileged, or otherwi=
-se
-> > > exempt from disclosure under applicable laws. It is intended to be
-> > > conveyed only to the designated recipient(s). Any use, dissemination,
-> > > distribution, printing, retaining or copying of this e-mail (includin=
-g its
-> > > attachments) by unintended recipient(s) is strictly prohibited and ma=
-y
-> > > be unlawful. If you are not an intended recipient of this e-mail, or =
-believe
-> > > that you have received this e-mail in error, please notify the sender
-> > > immediately (by replying to this e-mail), delete any and all copies o=
-f
-> > > this e-mail (including any attachments) from your system, and do not
-> > > disclose the content of this e-mail to any other person. Thank you!
+> >
+> > Yes, we designed it to manage a single CAN frame, so we stop the queue
+> > here until a TX event is received to wake queue.
 >
-> ************* MEDIATEK Confidentiality Notice ********************
-> The information contained in this e-mail message (including any
-> attachments) may be confidential, proprietary, privileged, or otherwise
-> exempt from disclosure under applicable laws. It is intended to be
-> conveyed only to the designated recipient(s). Any use, dissemination,
-> distribution, printing, retaining or copying of this e-mail (including it=
-s
-> attachments) by unintended recipient(s) is strictly prohibited and may
-> be unlawful. If you are not an intended recipient of this e-mail, or beli=
-eve
-> that you have received this e-mail in error, please notify the sender
-> immediately (by replying to this e-mail), delete any and all copies of
-> this e-mail (including any attachments) from your system, and do not
-> disclose the content of this e-mail to any other person. Thank you!
+> Do you mean that the device is designed to manage only one single CAN
+> frame or is the driver designed to only manage one single CAN frame?
+> If the device is capable of handling several CAN frames, your driver
+> should take advantage of this. Else the driver will slow down the
+> communication a lot whenever packets start to accumulate in the TX
+> queue.
+>
+
+I understand, but our device currently supports handling only one CAN frame=
+.
+
+Best regards,
+Ming
 
