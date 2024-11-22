@@ -1,114 +1,134 @@
-Return-Path: <linux-kernel+bounces-418315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2448F9D6050
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:33:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A33609D6053
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:33:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C578B1F22ADA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:33:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5827A1F233D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C0F83A14;
-	Fri, 22 Nov 2024 14:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52ABD70808;
+	Fri, 22 Nov 2024 14:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xFGrWXUQ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ISzpGTE9"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ix+QncUW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BCE2AF12;
-	Fri, 22 Nov 2024 14:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2FE2AF12;
+	Fri, 22 Nov 2024 14:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732285988; cv=none; b=irI6YEnvhlX9eZq2Kn0XVejqCM9kkkpJeA1pEf9yzkdpOwKBU2Db3JrdLn0GV/NZ9zlGjbd3qvv3FJGr2keTL9BTNMw0gvLuxl7AfO3NrPK2elJ6+oPSg72ksRdZ+3Wf7r33ZJBbM60ylrbadlZYe3BMHpoeSOHUz/C5CFS5tmA=
+	t=1732286023; cv=none; b=DoeY5spGuGNRQbYKD0ElD3/c1KIswqPVv2J7Su1AQUrn0MQasZJnSuFJ9gNRDUJ1XLh/ZMnTWKWLOWf5Synk9YbcVRmroKI7lHxtNvposuV+Fgn92RB2K4gcJyHJoSSEXaV1cn9CIeF5lykdKDNX/Dg0OhD+512iYh3Foned2LA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732285988; c=relaxed/simple;
-	bh=IoDKRnm6WI+kdxViKQuAgc5d+iwGCPkelkn80sMLbCM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rYx7Jgm4mH4qbPaSCj2REDtmklZCjuUA2L+/jRMvLmlcMuTG7FpUA1egQJY1xd/J+i9esAQrxkn/+byOW/urYzqL49Q8c3I9GYaQIWCr7oDA/CIfyOzTRoemj3zYFD6LUJRW+swMz0KQU8vsoCbEjZc74FA08qygv8y7grOXYX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xFGrWXUQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ISzpGTE9; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732285984;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IoDKRnm6WI+kdxViKQuAgc5d+iwGCPkelkn80sMLbCM=;
-	b=xFGrWXUQRtLSCrkA4+jB5McK+fc2ei9LNfjucr/AOHnXMasQ/RSfa2xg6ofp7EcRhjuIsE
-	c8nh0S5rqX/cNoY1c8O4gWpuB/V3nKfKsO1XGPr+okq3CZvG8DMQFL3bq8938WApddknXj
-	0msNhpcMIlpBD/XA2CQIj9HhFpC0zAqhKh0HmXFF82jF/cz6dFQWIw5p43apFJaOOeKp+S
-	SnoV/OdHL7lxdrOtsviHlAeNqAgpn3/B3Kx19lEgSZE7g0qkErtYoNFFSysre1rQDypVwY
-	bio1OjJj0CmXBMA1JnhP9NaHcesf5X/ktA4sVUd0oJFId74yaKaSxz1nuy29QQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732285984;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IoDKRnm6WI+kdxViKQuAgc5d+iwGCPkelkn80sMLbCM=;
-	b=ISzpGTE9sqvt2j4CvPbt1iG3MKj6GaQ4Y40WcVgaIn2YH75wmM1cMEtfURRTYoaKM+yKRc
-	QxAmxADBLYp2FxBg==
-To: David Gow <davidgow@google.com>
-Cc: Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky
- <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>, Brendan
- Higgins <brendanhiggins@google.com>, Rae Moar <rmoar@google.com>,
- linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
- linux-kernel@vger.kernel.org, Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
- <thomas.weissschuh@linutronix.de>, Masahiro Yamada <masahiroy@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>, Yoann Congal <yoann.congal@smile.fr>, Alice
- Ryhl <aliceryhl@google.com>, Randy Dunlap <rdunlap@infradead.org>, Roman
- Gushchin <roman.gushchin@linux.dev>, Jens Axboe <axboe@kernel.dk>, Mark
- Rutland <mark.rutland@arm.com>, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH printk v1] printk: ringbuffer: Add KUnit test
-In-Reply-To: <CABVgOSmn6EqcRZ+Rc047OJ5SQ9xdThuaUaPx40UgWgN+AjBfMA@mail.gmail.com>
-References: <20241121145034.123367-1-john.ogness@linutronix.de>
- <CABVgOSmn6EqcRZ+Rc047OJ5SQ9xdThuaUaPx40UgWgN+AjBfMA@mail.gmail.com>
-Date: Fri, 22 Nov 2024 15:39:03 +0106
-Message-ID: <84v7wf49uo.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1732286023; c=relaxed/simple;
+	bh=36CxdThi0cT/QJPnfG6dSFlpyNfVpP3+IY6l53EPypA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YQjkKBhldPrsg/JhUPvCP8GUszKtiMAlW4BZEkz3yCSOL8BXq7mwOlOD8KbVDQUJXVVIXEyisUHEABJMdDGVQ89BjXGWZkmRpnODoy7d6RvIiGQhsvCDn00/K2sWdxkaYwMqP7wqCElA+fKAiPPbXp705K2cYdogyMUryOOSBwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ix+QncUW; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732286021; x=1763822021;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=36CxdThi0cT/QJPnfG6dSFlpyNfVpP3+IY6l53EPypA=;
+  b=ix+QncUWemUTwYDWKh4g2JpmKRsh1pAwcTJyKkMUy+zBEjihLZs8/itd
+   jvLPk8JHb5sZADGrgAjUwoyqpLX8YJebJSOXKkH/Piy8pf3Ud589t8lxE
+   pwvbkE5Ve/oelapnEZA7q02s2dDFz8yWwU6nIBg4Oh6Zpg7NyzO3DAV+p
+   quMbb+070fBJfT18nQ8avzclcivTfAbErUZSaxKCBIz5y6NaKSjZ4P1Ug
+   d5e4QluqsXz7FgGW7VIpc4EUkHI3wZpdmsIUqAq8gs9nP4t7rRE/IN/Jy
+   pSlgJfigVu77CaG/lX+qW7oth4R2RXiA/aSs36ZJ7RPoM8wVTpOhnf3MK
+   Q==;
+X-CSE-ConnectionGUID: oXkKMafqQE64t8DuG2wecA==
+X-CSE-MsgGUID: VbCpvwD2RvuhniRctBSU+Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="57845028"
+X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
+   d="scan'208";a="57845028"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 06:33:41 -0800
+X-CSE-ConnectionGUID: w80cp0sjRk+6MMoskNonKQ==
+X-CSE-MsgGUID: FN4WnogZSYWs57cJaVDkKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
+   d="scan'208";a="91005889"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.115.59])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 06:33:36 -0800
+Message-ID: <837bbbc7-e7f3-4362-a745-310fe369f43d@intel.com>
+Date: Fri, 22 Nov 2024 16:33:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/7] KVM: TDX: Implement TDX vcpu enter/exit path
+To: Binbin Wu <binbin.wu@linux.intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
+ pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
+ dave.hansen@linux.intel.com
+Cc: rick.p.edgecombe@intel.com, kai.huang@intel.com,
+ reinette.chatre@intel.com, tony.lindgren@linux.intel.com,
+ dmatlack@google.com, isaku.yamahata@intel.com, nik.borisov@suse.com,
+ linux-kernel@vger.kernel.org, x86@kernel.org, yan.y.zhao@intel.com,
+ chao.gao@intel.com, weijiang.yang@intel.com
+References: <20241121201448.36170-1-adrian.hunter@intel.com>
+ <20241121201448.36170-3-adrian.hunter@intel.com>
+ <2f22aeeb-7109-4d3f-bcb7-58ef7f8e0d4c@intel.com>
+ <91eccab3-2740-4bb7-ac3f-35dea506a0de@linux.intel.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <91eccab3-2740-4bb7-ac3f-35dea506a0de@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi David,
+On 22/11/24 07:56, Binbin Wu wrote:
+> 
+> 
+> 
+> On 11/22/2024 1:23 PM, Xiaoyao Li wrote:
+> [...]
+>>> +
+>>> +fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediate_exit)
+>>> +{
+>>> +    struct vcpu_tdx *tdx = to_tdx(vcpu);
+>>> +
+>>> +    /* TDX exit handle takes care of this error case. */
+>>> +    if (unlikely(tdx->state != VCPU_TD_STATE_INITIALIZED)) {
+>>> +        /* Set to avoid collision with EXIT_REASON_EXCEPTION_NMI. */
+>>
+>> It seems the check fits better in tdx_vcpu_pre_run().
+> 
+> Indeed, it's cleaner to move the check to vcpu_pre_run.
+> Then no need to set the value to vp_enter_ret, and the comments are not
+> needed.
 
-On 2024-11-22, David Gow <davidgow@google.com> wrote:
-> It's a little unusual for a KUnit test -- particularly since it is
-> time-based and uses lots of threads. This isn't a problem, but it's
-> definitely a good thing that it's marked as slow. Additionally, KUnit
-> doesn't track any extra threads spawned, so it requires a bit more
-> care.
->
-> There are a couple of issues (e.g., it crashes on non-SMP systems, a
-> potential race, etc) and some minor suggestions below. In short, it'd
-> be a good idea to move some of the initialisation and checks into the
-> main test function, rather than the helper threads.
->
-> Equally, it looks like there are a bunch of variables shared between
-> kthreads =E2=80=94 do these need to be checked with READ_ONCE()/WRITE_ONC=
-E(),
-> or made volatile, or something?
+And we can take out the same check in tdx_handle_exit()
+because it won't get there if ->vcpu_pre_run() fails.
 
-Agreed.
+> 
+>>
+>> And without the patch of how TDX handles Exit (i.e., how deal with vp_enter_ret), it's hard to review this comment.
+>>
+>>> +        tdx->vp_enter_ret = TDX_SW_ERROR;
+>>> +        return EXIT_FASTPATH_NONE;
+>>> +    }
+>>> +
+>>> +    trace_kvm_entry(vcpu, force_immediate_exit);
+>>> +
+>>> +    tdx_vcpu_enter_exit(vcpu);
+>>> +
+>>> +    vcpu->arch.regs_avail &= ~VMX_REGS_LAZY_LOAD_SET;
+>>> +    trace_kvm_exit(vcpu, KVM_ISA_VMX);
+>>> +
+>>> +    return EXIT_FASTPATH_NONE;
+>>> +}
+>>> +
+> [...]
 
-> In fact, I'm not sure why there's a separate start_test() and
-> test_readerwriter() function -- or indeed, a separate kthread? Am I
-> missing something, or could everything start_test() does be done from
-> the main test function/kthread?
-
-You are not missing anything. It is definitely awkward, mostly because
-it was taken from parts of my own personal testing software. I will
-implement all your suggestions. Thanks for the detailed review!
-
-John
 
