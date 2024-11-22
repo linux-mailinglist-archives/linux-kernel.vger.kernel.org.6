@@ -1,138 +1,93 @@
-Return-Path: <linux-kernel+bounces-418413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863FB9D615B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:29:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 683B89D615E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:30:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25702B2096F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:29:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCB02160411
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89CF01DE3A5;
-	Fri, 22 Nov 2024 15:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="B2OLAuG6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZNbS6YZK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DD71DE3A8;
+	Fri, 22 Nov 2024 15:30:49 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA1FBA20;
-	Fri, 22 Nov 2024 15:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED25613AC1;
+	Fri, 22 Nov 2024 15:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732289351; cv=none; b=St66fQ99+zKJymFrMQRgDpWbku3onskZoHZgyZ8WepyoM8Hb42Wk0t9hIbEaE1S/SO2vIujzPbpgew/LXVRM1xPBXJfp2FSOdbC6v7RvlZVN+rKkxbhPro65rusya6Jo8ckT8f88ChCld092I3F/shHk87YuxSYVby3eoBX4n7Q=
+	t=1732289449; cv=none; b=G7QVSuSVHaczrpaHsgGKZzmtGMalqSUWot7P9Wy50aRM2r6g3L7mLDnYoN5c3L+Q9IGbSBP8jN/J88TQZP0cBZK/RjH32JNMFgUBE/3pdjczZ9tQGVoOMQQUcyIpVOHyrg336D7VZ3Akc1StSxvEf4Z4VN7BRYD6p1RHoLs1dFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732289351; c=relaxed/simple;
-	bh=C4QfKyBiDFviZgGZUHzzD8wU4kNwvmBCMv6qAIMm/oQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UMJnJyjiP+hMhD7yM7VbqLqpARncHzuiNFhOWbqrGigyMvJtjllg/eDOnxQf/XTZUZNFSRhqSZVPcqHG8I87k/rKkoFe/tVHWarARHgAhvXxWEAICiVnEz4c3HfBXUW9lbW8Zr41/vqA6THwL0nGEktHvp+42lIP5cUsDVKH0rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=B2OLAuG6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZNbS6YZK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 22 Nov 2024 16:29:05 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732289348;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X1Gjbn7bSatPmLMP7OcwtXOBlb5rE9gVl2DfyPsZLUU=;
-	b=B2OLAuG6VG1KlURRaOQwrhrXRIqNfawyjYGQC1kw4242Z477wws9vI2sxTvLZFZylkWoAF
-	cASIQp9m65nlLMjXkLyyafLvDf+EJFSaL/IuFRNQNGFC5gwdD7CK5TOYu5Gi074jcsCBc4
-	GWpHOmb9Z3i3NpxAGZNKHY17iwYCFrzv60YgW0nNa0ukR4epz0MZR8XmdjawL3f+I7f4vM
-	LTwRowOtXuT07PYxyvbM0Rcb3I5yEPoabRg2vrJbQG8jvTydXwjyS8MwefILBfBHc1Oz1R
-	zRe5TXrSS6JOA89bSBLxXW966V8BDLsJ8jrkBnW05H52XLzRomOe63/uac3aQg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732289348;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X1Gjbn7bSatPmLMP7OcwtXOBlb5rE9gVl2DfyPsZLUU=;
-	b=ZNbS6YZKwcTBvmOMUMJyOIS8J3Qs40yGMmEC+bJoPHH1KiSaWbmtaYw696eaaIi930pJan
-	WEbQiUPwLD7YuTDA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Marco Elver <elver@google.com>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	syzbot <syzbot+39f85d612b7c20d8db48@syzkaller.appspotmail.com>,
-	Liam.Howlett@oracle.com, akpm@linux-foundation.org,
-	jannh@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com, syzkaller-bugs@googlegroups.com,
-	kasan-dev <kasan-dev@googlegroups.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Waiman Long <longman@redhat.com>, dvyukov@google.com,
-	vincenzo.frascino@arm.com, paulmck@kernel.org, frederic@kernel.org,
-	neeraj.upadhyay@kernel.org, joel@joelfernandes.org,
-	josh@joshtriplett.org, boqun.feng@gmail.com, urezki@gmail.com,
-	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-	jiangshanlai@gmail.com, qiang.zhang1211@gmail.com, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, tj@kernel.org, cl@linux.com,
-	penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
-	Thomas Gleixner <tglx@linutronix.de>, roman.gushchin@linux.dev,
-	42.hyeyoo@gmail.com, rcu@vger.kernel.org
-Subject: Re: [PATCH] kasan: Remove kasan_record_aux_stack_noalloc().
-Message-ID: <20241122152905.iyjG97GS@linutronix.de>
-References: <67275485.050a0220.3c8d68.0a37.GAE@google.com>
- <ee48b6e9-3f7a-49aa-ae5b-058b5ada2172@suse.cz>
- <b9a674c1-860c-4448-aeb2-bf07a78c6fbf@suse.cz>
- <20241104114506.GC24862@noisy.programming.kicks-ass.net>
- <CANpmjNPmQYJ7pv1N3cuU8cP18u7PP_uoZD8YxwZd4jtbof9nVQ@mail.gmail.com>
- <20241119155701.GYennzPF@linutronix.de>
- <CA+fCnZfzJcbEy0Qmn5GPzPUx9diR+3qw+4ukHa2j5xzzQMF8Kw@mail.gmail.com>
- <20241122113210.QxE7YOwK@linutronix.de>
- <Z0CcyfbPqmxJ9uJH@elver.google.com>
+	s=arc-20240116; t=1732289449; c=relaxed/simple;
+	bh=sSPHFaEhpqcfSwvNTbLH7yXzLTvWt+R8ixkPNq3qPDg=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nTbsy5a0/QpsBSV93NpSeGRc/hdcFFLCyEsIpklxwOwEYT92C5YCTxt2B1KSB5gTwEliLUVF8aCUIrY7PzA+EgB+5ZF1Ek1C4q/cWUJ9APX3W42dqS5T1Dam6HcdDiS2vu+Y4TrbQOpNG8kNfye1U/j4spOVCWb3JeWTHLqcNmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XvzWl387hz6K8n6;
+	Fri, 22 Nov 2024 23:28:19 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 76476140A70;
+	Fri, 22 Nov 2024 23:30:42 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 22 Nov
+ 2024 16:30:41 +0100
+Date: Fri, 22 Nov 2024 15:30:40 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: Alistair Francis <alistair@alistair23.me>, <lukas@wunner.de>,
+	<linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+	<akpm@linux-foundation.org>, <bhelgaas@google.com>,
+	<linux-pci@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<bjorn3_gh@protonmail.com>, <ojeda@kernel.org>, <tmgross@umich.edu>,
+	<boqun.feng@gmail.com>, <benno.lossin@proton.me>, <a.hindborg@kernel.org>,
+	<wilfred.mallawa@wdc.com>, <alistair23@gmail.com>, <alex.gaynor@gmail.com>,
+	<gary@garyguo.net>, <aliceryhl@google.com>
+Subject: Re: [RFC 2/6] drivers: pci: Change CONFIG_SPDM to a dependency
+Message-ID: <20241122153040.00006791@huawei.com>
+In-Reply-To: <20241115175831.GA2046032@bhelgaas>
+References: <20241115054616.1226735-3-alistair@alistair23.me>
+	<20241115175831.GA2046032@bhelgaas>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z0CcyfbPqmxJ9uJH@elver.google.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 2024-11-22 16:01:29 [+0100], Marco Elver wrote:
-> > Do we need to update the comment saying that it must not be used from
-> > NMI or do we make it jump over the locked section in the NMI case?
-> 
-> Good point. It was meant to also be usable from NMI, because it's very
-> likely to succeed, and should just take the lock-less fast path once the
-> stack is in the depot.
-> 
-> But I think we need a fix like this for initial saving of a stack trace:
-> 
-> 
-> diff --git a/lib/stackdepot.c b/lib/stackdepot.c
-> index 5ed34cc963fc..245d5b416699 100644
-> --- a/lib/stackdepot.c
-> +++ b/lib/stackdepot.c
-> @@ -630,7 +630,15 @@ depot_stack_handle_t stack_depot_save_flags(unsigned long *entries,
->  			prealloc = page_address(page);
->  	}
->  
-> -	raw_spin_lock_irqsave(&pool_lock, flags);
-> +	if (in_nmi()) {
-> +		/* We can never allocate in NMI context. */
-> +		WARN_ON_ONCE(can_alloc);
-> +		/* Best effort; bail if we fail to take the lock. */
-> +		if (!raw_spin_trylock_irqsave(&pool_lock, flags))
-> +			goto exit;
-> +	} else {
-> +		raw_spin_lock_irqsave(&pool_lock, flags);
-> +	}
->  	printk_deferred_enter();
->  
->  	/* Try to find again, to avoid concurrently inserting duplicates. */
-> 
-> 
-> If that looks reasonable, I'll turn it into a patch.
 
-Yes, looks reasonable.
+> > diff --git a/lib/Kconfig b/lib/Kconfig
+> > index 68f46e4a72a6..4db9bc8e29f8 100644
+> > --- a/lib/Kconfig
+> > +++ b/lib/Kconfig
+> > @@ -739,6 +739,21 @@ config LWQ_TEST
+> >  	help
+> >            Run boot-time test of light-weight queuing.
+> >  
+> > +config SPDM
+> > +	bool "SPDM"  
+> 
+> If this appears in a menuconfig or similar menu, I think expanding
+> "SPDM" would be helpful to users.
 
-Sebastian
+Not sure it will!  Security Protocol and Data Model
+which to me is completely useless for hinting what it is ;)
+
+Definitely keep (SPDM) on end of expanded name as I suspect most
+people can't remember the terms (I had to look it up ;)
+
+Jonathan
+
+
 
