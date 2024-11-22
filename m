@@ -1,481 +1,103 @@
-Return-Path: <linux-kernel+bounces-418841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E5119D6630
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:00:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0DD19D6632
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:03:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FF062860A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:00:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BDFD282145
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC0F1B5ECB;
-	Fri, 22 Nov 2024 23:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A75C18A6AB;
+	Fri, 22 Nov 2024 23:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJs0KpGX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IqAzKgO5"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D651C9B62;
-	Fri, 22 Nov 2024 23:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1449750285;
+	Fri, 22 Nov 2024 23:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732316432; cv=none; b=rhJTMpYsfgyYoEMN6g/JHd4P/Uyhk+9qcqHze1Y5Idzslwt5xOPu1/myFI2CMSkBNgSt4wj7wkOS/WfTxLeAYrGSiZK+ZNIhiBYiEunbL7/TbXUqbRiT2MfPfZgtZaxQBfgQC2OF9rAo576PWIz20CDFtT3sSslVDnegvcnI+TY=
+	t=1732316621; cv=none; b=demhUdKyQXikadISZkzAIDCmIddqxIUj6kY9Uq5As22GrmwY+V8xO0GpOH1N8Ggi67orodK6oVpltU3BnM2UA00t8+j13nYPZBFBdSTYBk05/mRiVuSAOgf3PuYwwccdKELP5Qn8ft1xr8/32iW9BJ1pejPuPna1pvuMwrNLDrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732316432; c=relaxed/simple;
-	bh=BuhYsZwi2iNHCmyWPxhYoAlpjwVMhcIi7lqtpfzyLwI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RD10L+WNCLsJ3HW6j2mKFLKorwAv3ocEKaqhOf9C5r8NkP2u34awcoNGumkhaz/YfkOHO7AougO6b+L9LQ2aUftxK2X7AGMsidiqtQ2qsIFdzgjiFRi4dPG7BXt1ZsHibYSViITBMs+SJ9/VokgL4fFef8xiiFdCqYUdjix2b+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJs0KpGX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71269C4CECE;
-	Fri, 22 Nov 2024 23:00:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732316431;
-	bh=BuhYsZwi2iNHCmyWPxhYoAlpjwVMhcIi7lqtpfzyLwI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fJs0KpGX3MSaJBBq+ayaJ5702tBuCPvDK5Ccuwi9LNXT+/uJFNxslBMunCPk+lOky
-	 ktJ4txqvLAm40xJX+SHSWvKofOzKhZBuzHgY52kTPvQmy6llGscd2JwZ5M2BYmOcqj
-	 YXdins1suGJuypPoby9fdUzEjNaX5XusK8+QnJGVXPAeHbj0wbkHMEBcYKUFdVLzNl
-	 bZGSBfFi2MNj06FsM/Q1Fxn3P3AWRkRenkv4OPP/cXj3Gy3IEv2OTZmLPczY8BUrfa
-	 xmmXos0m1oApEe/4ksGd2cCuF3rVWGputi0M1xS3ErJVlYPp1G9FYVGpcDPnRFzDJF
-	 DNGp/P0ezrDHQ==
-From: Song Liu <song@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: kernel-team@meta.com,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	kpsingh@kernel.org,
-	mattbobrowski@google.com,
-	amir73il@gmail.com,
-	repnop@google.com,
-	jlayton@kernel.org,
-	josef@toxicpanda.com,
-	mic@digikod.net,
-	gnoack@google.com,
-	Song Liu <song@kernel.org>
-Subject: [PATCH v3 fanotify 2/2] samples/fanotify: Add a sample fanotify fiter
-Date: Fri, 22 Nov 2024 14:59:58 -0800
-Message-ID: <20241122225958.1775625-3-song@kernel.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241122225958.1775625-1-song@kernel.org>
-References: <20241122225958.1775625-1-song@kernel.org>
+	s=arc-20240116; t=1732316621; c=relaxed/simple;
+	bh=J7/SCpSmCjmhHvzCpvmulKjpJC4J84S29Rs0RZQr+PI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YX6NPKmR2bjzisOZfZ1xg85J4re85HiQUfKWo1WweD9fku9X+jRq799XeMotUjWYO1Of+ROrlqrejXW13INo3P5pXLAkonRNS9lltORscBxEQHZS0J4jt4nFEbAxupGc0Y74mAjjSenG09XH7kWgWDh8Woj1qnA4jxTK44i+5Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IqAzKgO5; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CB2E760003;
+	Fri, 22 Nov 2024 23:03:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1732316610;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JUXKXaBWyak1Ovx48ZLm1Tp4ygFFPbjUy27VTJe6Uic=;
+	b=IqAzKgO5pOmPzflHIs1J1k8Zsfj1GIGNWNInfEUBW13hfmgVuOmX8g1gpC5auPemL7YNGz
+	vmqjV1WTxJkekM6huSNqPLBOyhcpXV1yfLMEibSqMzbYt1C9utFSvGg66h895rAXeziLXo
+	pbFt7S1q27AVr0hUYX90T1Cpw9hfTy3cPfcXrvQSgzStvoWr22c1q6Syh58qdXJmEyJVZ6
+	/ehLBJcdI0NG30NwJNJ9vpzjtCrsj0Oc5Z0VO9upY6jE63OVLvuac2t+ZOofvYnj1GRU7t
+	g/bXvoUBI+NBTRnd1r68y98jHiEkoggwdDyrX7sWVUGPhPaj30AbKzOIRwqZcg==
+Date: Sat, 23 Nov 2024 00:03:29 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Finn Thain <fthain@linux-m68k.org>, Daniel Palmer <daniel@0x0f.com>,
+	Michael Pavone <pavone@retrodev.com>,
+	linux-m68k@lists.linux-m68k.org, linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] m68k: mvme147, mvme16x: Adopt rtc-m48t59 platform
+ driver
+Message-ID: <20241122230329128df024@mail.local>
+References: <cover.1731450735.git.fthain@linux-m68k.org>
+ <19a16bcc94c42ea9c5397b37b1918c2937e3faab.1731450735.git.fthain@linux-m68k.org>
+ <CAMuHMdVuv7wRud4jNt=t4Ac_s4ze6YYguUKLRt0hQ4gTqEWpEg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdVuv7wRud4jNt=t4Ac_s4ze6YYguUKLRt0hQ4gTqEWpEg@mail.gmail.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-This sample can run in two different mode: filter mode and block mode.
-In filter mode, the filter only sends events in a subtree to user space.
-To use it:
+On 22/11/2024 15:44:33+0100, Geert Uytterhoeven wrote:
+> On Tue, Nov 12, 2024 at 11:51 PM Finn Thain <fthain@linux-m68k.org> wrote:
+> > Both mvme147 and mvme16x platforms have their own RTC driver
+> > implementations that duplicate functionality provided by the rtc-m48t59
+> > driver. Adopt the rtc-m48t59 driver and remove the other ones.
+> >
+> > Tested-by: Daniel Palmer <daniel@0x0f.com>
+> > Signed-off-by: Finn Thain <fthain@linux-m68k.org>
+> > Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > ---
+> > This patch depends upon the m48t59 driver changes in the preceding patch.
+> >
+> > Changed since v1:
+> >  - Initialize yy_offset in struct m48t59_plat_data.
+> >
+> > Changed Since v3:
+> >  - Re-ordered defconfig symbols.
+> >  - Added reviewed-by tag from arch maintainer.
+> 
+> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> so it still can make it into v6.13-rc1 via RTC?
 
-[root] insmod ./filter-mod.ko
-[root] mkdir -p /tmp/a/b/c/d
-[root] ./filter-user /tmp/ /tmp/a/b &
-Running in filter mode
-[root] touch /tmp/xx      # Doesn't generate event
-[root]# touch /tmp/a/xxa  # Doesn't generate event
-[root]# touch /tmp/a/b/xxab      # Generates an event
-Accessing file xxab   # this is the output from filter-user
-[root@]# touch /tmp/a/b/c/xxabc  # Generates an event
-Accessing file xxabc  # this is the output from filter-user
+It is now applied, it is going to conflict with your tree as it didn't
+cleanly apply. I don't think this is going to cause issues but I'll let
+it sit in linux-next for a few days before sending to Linus.
 
-In block mode, the filter will block accesses to file in a subtree. To
-use it:
 
-[root] insmod ./filter-mod.ko
-[root] mkdir -p /tmp/a/b/c/d
-[root] ./filter-user /tmp/ /tmp/a/b block &
-Running in block mode
-[root]# dd if=/dev/zero of=/tmp/a/b/xx    # this will fail
-dd: failed to open '/tmp/a/b/xx': Operation not permitted
-
-Signed-off-by: Song Liu <song@kernel.org>
----
- MAINTAINERS                    |   1 +
- samples/Kconfig                |  20 ++++-
- samples/Makefile               |   2 +-
- samples/fanotify/.gitignore    |   1 +
- samples/fanotify/Makefile      |   5 +-
- samples/fanotify/filter-mod.c  | 105 ++++++++++++++++++++++++++
- samples/fanotify/filter-user.c | 131 +++++++++++++++++++++++++++++++++
- samples/fanotify/filter.h      |  19 +++++
- 8 files changed, 281 insertions(+), 3 deletions(-)
- create mode 100644 samples/fanotify/filter-mod.c
- create mode 100644 samples/fanotify/filter-user.c
- create mode 100644 samples/fanotify/filter.h
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7ad507f49324..8939a48b2d99 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8658,6 +8658,7 @@ S:	Maintained
- F:	fs/notify/fanotify/
- F:	include/linux/fanotify.h
- F:	include/uapi/linux/fanotify.h
-+F:	samples/fanotify/
- 
- FARADAY FOTG210 USB2 DUAL-ROLE CONTROLLER
- M:	Linus Walleij <linus.walleij@linaro.org>
-diff --git a/samples/Kconfig b/samples/Kconfig
-index b288d9991d27..9cc0a5cdf604 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -149,15 +149,33 @@ config SAMPLE_CONNECTOR
- 	  with it.
- 	  See also Documentation/driver-api/connector.rst
- 
-+config SAMPLE_FANOTIFY
-+	bool "Build fanotify monitoring sample"
-+	depends on FANOTIFY && CC_CAN_LINK && HEADERS_INSTALL
-+	help
-+	  When enabled, this builds samples for fanotify.
-+	  There multiple samples for fanotify. Please see the
-+	  following configs for more details of these
-+	  samples.
-+
- config SAMPLE_FANOTIFY_ERROR
- 	bool "Build fanotify error monitoring sample"
--	depends on FANOTIFY && CC_CAN_LINK && HEADERS_INSTALL
-+	depends on SAMPLE_FANOTIFY
- 	help
- 	  When enabled, this builds an example code that uses the
- 	  FAN_FS_ERROR fanotify mechanism to monitor filesystem
- 	  errors.
- 	  See also Documentation/admin-guide/filesystem-monitoring.rst.
- 
-+config SAMPLE_FANOTIFY_FILTER
-+	tristate "Build fanotify filter sample"
-+	depends on SAMPLE_FANOTIFY && m
-+	help
-+	  When enabled, this builds kernel module that contains a
-+	  fanotify filter handler.
-+	  The filter handler filters out certain filename
-+	  prefixes for the fanotify user.
-+
- config SAMPLE_HIDRAW
- 	bool "hidraw sample"
- 	depends on CC_CAN_LINK && HEADERS_INSTALL
-diff --git a/samples/Makefile b/samples/Makefile
-index b85fa64390c5..108360972626 100644
---- a/samples/Makefile
-+++ b/samples/Makefile
-@@ -6,7 +6,7 @@ subdir-$(CONFIG_SAMPLE_ANDROID_BINDERFS) += binderfs
- subdir-$(CONFIG_SAMPLE_CGROUP) += cgroup
- obj-$(CONFIG_SAMPLE_CONFIGFS)		+= configfs/
- obj-$(CONFIG_SAMPLE_CONNECTOR)		+= connector/
--obj-$(CONFIG_SAMPLE_FANOTIFY_ERROR)	+= fanotify/
-+obj-$(CONFIG_SAMPLE_FANOTIFY)		+= fanotify/
- subdir-$(CONFIG_SAMPLE_HIDRAW)		+= hidraw
- obj-$(CONFIG_SAMPLE_HW_BREAKPOINT)	+= hw_breakpoint/
- obj-$(CONFIG_SAMPLE_KDB)		+= kdb/
-diff --git a/samples/fanotify/.gitignore b/samples/fanotify/.gitignore
-index d74593e8b2de..df75eb5b8f95 100644
---- a/samples/fanotify/.gitignore
-+++ b/samples/fanotify/.gitignore
-@@ -1 +1,2 @@
- fs-monitor
-+filter-user
-diff --git a/samples/fanotify/Makefile b/samples/fanotify/Makefile
-index e20db1bdde3b..c33e9460772e 100644
---- a/samples/fanotify/Makefile
-+++ b/samples/fanotify/Makefile
-@@ -1,5 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0-only
--userprogs-always-y += fs-monitor
-+userprogs-always-$(CONFIG_SAMPLE_FANOTIFY_ERROR) += fs-monitor
- 
- userccflags += -I usr/include -Wall
- 
-+obj-$(CONFIG_SAMPLE_FANOTIFY_FILTER) += filter-mod.o
-+
-+userprogs-always-$(CONFIG_SAMPLE_FANOTIFY_FILTER) += filter-user
-diff --git a/samples/fanotify/filter-mod.c b/samples/fanotify/filter-mod.c
-new file mode 100644
-index 000000000000..eafe55b1840a
---- /dev/null
-+++ b/samples/fanotify/filter-mod.c
-@@ -0,0 +1,105 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+
-+#include <linux/fsnotify.h>
-+#include <linux/fanotify.h>
-+#include <linux/module.h>
-+#include <linux/path.h>
-+#include <linux/file.h>
-+#include "filter.h"
-+
-+struct fan_filter_sample_data {
-+	struct path subtree_path;
-+	enum fan_filter_sample_mode mode;
-+};
-+
-+static int sample_filter(struct fsnotify_group *group,
-+			 struct fanotify_filter_hook *filter_hook,
-+			 struct fanotify_filter_event *filter_event)
-+{
-+	struct fan_filter_sample_data *data;
-+	struct dentry *dentry;
-+
-+	dentry = fsnotify_data_dentry(filter_event->data, filter_event->data_type);
-+	if (!dentry)
-+		return FAN_FILTER_RET_SEND_TO_USERSPACE;
-+
-+	data = filter_hook->data;
-+
-+	if (is_subdir(dentry, data->subtree_path.dentry)) {
-+		if (data->mode == FAN_FILTER_SAMPLE_MODE_BLOCK)
-+			return -EPERM;
-+		return FAN_FILTER_RET_SEND_TO_USERSPACE;
-+	}
-+	return FAN_FILTER_RET_SKIP_EVENT;
-+}
-+
-+static int sample_filter_init(struct fsnotify_group *group,
-+			      struct fanotify_filter_hook *filter_hook,
-+			      void *argp)
-+{
-+	struct fan_filter_sample_args *args;
-+	struct fan_filter_sample_data *data;
-+	struct file *file;
-+	int fd;
-+
-+	args = (struct fan_filter_sample_args *)argp;
-+	fd = args->subtree_fd;
-+
-+	file = fget(fd);
-+	if (!file)
-+		return -EBADF;
-+	data = kzalloc(sizeof(struct fan_filter_sample_data), GFP_KERNEL);
-+	if (!data) {
-+		fput(file);
-+		return -ENOMEM;
-+	}
-+	path_get(&file->f_path);
-+	data->subtree_path = file->f_path;
-+	fput(file);
-+	data->mode = args->mode;
-+	filter_hook->data = data;
-+	return 0;
-+}
-+
-+static void sample_filter_free(struct fanotify_filter_hook *filter_hook)
-+{
-+	struct fan_filter_sample_data *data = filter_hook->data;
-+
-+	path_put(&data->subtree_path);
-+	kfree(data);
-+}
-+
-+static struct fanotify_filter_ops fan_filter_sample_ops = {
-+	.filter = sample_filter,
-+	.filter_init = sample_filter_init,
-+	.filter_free = sample_filter_free,
-+	.name = "monitor-subtree",
-+	.owner = THIS_MODULE,
-+	.flags = FAN_FILTER_F_SYS_ADMIN_ONLY,
-+	.init_args_size = sizeof(struct fan_filter_sample_args),
-+	.desc =
-+	"mode = 1: only emit events under a subtree\n"
-+	"mode = 2: block accesses under a subtree",
-+	.init_args =
-+	"struct fan_filter_sample_args {\n"
-+	"    int subtree_fd;\n"
-+	"    enum fan_filter_sample_mode mode;\n"
-+	"};",
-+};
-+
-+static int __init fanotify_filter_sample_init(void)
-+{
-+	return fanotify_filter_register(&fan_filter_sample_ops);
-+}
-+static void __exit fanotify_filter_sample_exit(void)
-+{
-+	fanotify_filter_unregister(&fan_filter_sample_ops);
-+}
-+
-+module_init(fanotify_filter_sample_init);
-+module_exit(fanotify_filter_sample_exit);
-+
-+MODULE_AUTHOR("Song Liu");
-+MODULE_DESCRIPTION("Example fanotify filter handler");
-+MODULE_LICENSE("GPL");
-diff --git a/samples/fanotify/filter-user.c b/samples/fanotify/filter-user.c
-new file mode 100644
-index 000000000000..8cdf8ff2bd6d
---- /dev/null
-+++ b/samples/fanotify/filter-user.c
-@@ -0,0 +1,131 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+
-+#define _GNU_SOURCE
-+#include <err.h>
-+#include <fcntl.h>
-+#include <stdio.h>
-+#include <string.h>
-+#include <sys/fanotify.h>
-+#include <unistd.h>
-+#include <sys/ioctl.h>
-+#include "filter.h"
-+
-+static int total_event_cnt;
-+
-+static void handle_notifications(char *buffer, int len)
-+{
-+	struct fanotify_event_metadata *event =
-+		(struct fanotify_event_metadata *) buffer;
-+	struct fanotify_event_info_header *info;
-+	struct fanotify_event_info_fid *fid;
-+	struct file_handle *handle;
-+	char *name;
-+	int off;
-+
-+	for (; FAN_EVENT_OK(event, len); event = FAN_EVENT_NEXT(event, len)) {
-+		for (off = sizeof(*event) ; off < event->event_len;
-+		     off += info->len) {
-+			info = (struct fanotify_event_info_header *)
-+				((char *) event + off);
-+			switch (info->info_type) {
-+			case FAN_EVENT_INFO_TYPE_DFID_NAME:
-+				fid = (struct fanotify_event_info_fid *) info;
-+				handle = (struct file_handle *)&fid->handle;
-+				name = (char *)handle + sizeof(*handle) + handle->handle_bytes;
-+
-+				printf("Accessing file %s\n", name);
-+				total_event_cnt++;
-+				break;
-+			default:
-+				break;
-+			}
-+		}
-+	}
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	struct fanotify_filter_args args = {
-+		.name = "monitor-subtree",
-+	};
-+	struct fan_filter_sample_args init_args;
-+	int fanotify_fd, subtree_fd;
-+	char buffer[BUFSIZ];
-+	const char *msg;
-+	__u64 mask;
-+	int flags;
-+
-+	if (argc < 3) {
-+		printf("Usage:\n"
-+		       "\t %s <mount point> <subtree to monitor>\n",
-+			argv[0]);
-+		return 1;
-+	}
-+
-+	subtree_fd = open(argv[2], O_RDONLY | O_CLOEXEC);
-+
-+	if (subtree_fd < 0)
-+		errx(1, "open subtree_fd");
-+
-+	init_args.subtree_fd = subtree_fd;
-+
-+	if (argc == 4 && strcmp(argv[3], "block") == 0)
-+		init_args.mode = FAN_FILTER_SAMPLE_MODE_BLOCK;
-+	else
-+		init_args.mode = FAN_FILTER_SAMPLE_MODE_FILTER;
-+
-+	args.init_args = (__u64)&init_args;
-+	args.init_args_size = sizeof(init_args);
-+
-+	flags = FAN_CLASS_NOTIF | FAN_REPORT_NAME | FAN_REPORT_DIR_FID;
-+	mask = FAN_OPEN | FAN_ONDIR | FAN_EVENT_ON_CHILD;
-+
-+	if (init_args.mode == FAN_FILTER_SAMPLE_MODE_BLOCK) {
-+		flags = FAN_CLASS_CONTENT;
-+		mask |= FAN_OPEN_PERM;
-+	}
-+
-+	fanotify_fd = fanotify_init(flags, O_RDWR);
-+	if (fanotify_fd < 0) {
-+		close(subtree_fd);
-+		errx(1, "fanotify_init");
-+	}
-+
-+
-+	if (fanotify_mark(fanotify_fd, FAN_MARK_ADD | FAN_MARK_FILESYSTEM,
-+			  mask, AT_FDCWD, argv[1])) {
-+		msg = "fanotify_mark";
-+		goto err_out;
-+	}
-+
-+	if (ioctl(fanotify_fd, FAN_IOC_ADD_FILTER, &args)) {
-+		msg = "ioctl";
-+		goto err_out;
-+	}
-+
-+	printf("Running in %s mode\n",
-+	       init_args.mode == FAN_FILTER_SAMPLE_MODE_BLOCK ? "block" : "filter");
-+
-+	while (total_event_cnt < 10) {
-+		int n = read(fanotify_fd, buffer, BUFSIZ);
-+
-+		if (n < 0) {
-+			msg = "read";
-+			goto err_out;
-+		}
-+
-+		handle_notifications(buffer, n);
-+	}
-+
-+	ioctl(fanotify_fd, FAN_IOC_DEL_FILTER);
-+	close(fanotify_fd);
-+	close(subtree_fd);
-+	return 0;
-+
-+err_out:
-+	close(fanotify_fd);
-+	close(subtree_fd);
-+	errx(1, msg);
-+	return 0;
-+}
-diff --git a/samples/fanotify/filter.h b/samples/fanotify/filter.h
-new file mode 100644
-index 000000000000..cdb97499019a
---- /dev/null
-+++ b/samples/fanotify/filter.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+
-+#ifndef _SAMPLES_FANOTIFY_FILTER_H
-+#define _SAMPLES_FANOTIFY_FILTER_H
-+
-+enum fan_filter_sample_mode {
-+	/* Only show event in the subtree */
-+	FAN_FILTER_SAMPLE_MODE_FILTER = 1,
-+	/* Block access to files in the subtree */
-+	FAN_FILTER_SAMPLE_MODE_BLOCK = 2,
-+};
-+
-+struct fan_filter_sample_args {
-+	int subtree_fd;
-+	enum fan_filter_sample_mode mode;
-+};
-+
-+#endif /* _SAMPLES_FANOTIFY_FILTER_H */
 -- 
-2.43.5
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
