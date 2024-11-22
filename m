@@ -1,165 +1,192 @@
-Return-Path: <linux-kernel+bounces-417881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD2969D5A30
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:46:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7464F9D5A33
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:47:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3006FB214BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:46:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECC571F2277D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2114174EFA;
-	Fri, 22 Nov 2024 07:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NxLi/nQs"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2936116F0EB;
+	Fri, 22 Nov 2024 07:47:35 +0000 (UTC)
+Received: from kawka3.in.waw.pl (kawka3.in.waw.pl [68.183.222.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D4C1531C8
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 07:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70AF1531C8
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 07:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.183.222.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732261597; cv=none; b=KXlMB6GU8RYDuCFKrsE6h6VMvCEWR3SZClp0PfDthqyrP6ZZB1RQDsbRCun/a/PBuCnymIYhl0vQYOoF3L02lL+6xiNYHgI67Fho5UPiBQWSsxxxiAj9VtV2WbQNFlNPXSpl5F8P/VyfxVZhEsY2Y6TKaXDYdO8DXWm0DnNcG/c=
+	t=1732261654; cv=none; b=jUms5Aws+MgM2ZLcSyYPPvatPWd3WZwRLNsJdI0tGlpsrduiRA+ZUmbMXKQJs/hy75KBw4M4jAP3gBbUbeFwWt7QJ9SUOpWvskAawuyojVDRO3LTMtGAlYq9N46MegTKQ88JLfgzRFcmUfvy87BV5dnE0jv4ABC1B9vytRJOV7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732261597; c=relaxed/simple;
-	bh=ZEt3yoR0cr5/kASiXDyIBRVJ5cVFZ2AeNaZON5w/kHs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P4Zba9NS5YE35nuxNyiDRk865oXSeY1HjyMj7RYx0aES7HPamYL4J3WzhQNocRPIdWxQYzXtdklSL11cjcTzdKAFFaISIbNp7XGgiBotpOowfAiCL7A0rXSdUrXD9083B20v3wLkel0MzBwVPgC0nSl0z1edvIcTsVf9VsgIZik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NxLi/nQs; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7e9e38dd5f1so1440194a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 23:46:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732261594; x=1732866394; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rV7OUDMMlgxjwFF1dF4a3L3rrV3TIom9pYtmVzZiP3c=;
-        b=NxLi/nQszJxZ38c92b01yrWLzhHtKcsPUOe8GT7kd0ZGNeyaYNsAeh9nNF7/gxQZ5N
-         YhlIVG5IU620p5aerdElFuCdDFo0xAkgOxZHY/3Qhq0MSpNfy/VwIGA1E+KeaM0UsCAK
-         UaLsmhWceWL51KLmK709esK8UGhxIVh+m/S88=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732261594; x=1732866394;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rV7OUDMMlgxjwFF1dF4a3L3rrV3TIom9pYtmVzZiP3c=;
-        b=ePoP+0s/1HJRETRk4jjZrUhre7ykwViOqlXleh+086bShbjNCXZ66fCweA9XOqTUI0
-         iJ4SxhM0mbGiSigWxSfS7fDj9QGeB65yD/yCWdAtVhMBlxHaykrJ/IYbjcoX184O4/K5
-         xxEOHhxsv/KnTo+yDRtc3enLH1i7Lu6GNEL2y9mGNf35FsbRoQK4WKDa/PL8FUDeX3n2
-         8AbCi5KeHSDphW8W92TolkxiEEDK3AOgM58L2+xv6QlvlDxmM+PBmkprHcIeC44O0fsa
-         DQxpch+u3PD23Oql94SnwTpilNZzT3ojFunrKoXFpEOF+3PUZoj/GvrcdChrlBAyCrZx
-         DYGg==
-X-Forwarded-Encrypted: i=1; AJvYcCVIouvuyfrZMJ5kvt9KyE6Olf06Kyn+hJ+NO1SaYVYjbDE5ODMN1NACLT9IBJItK3Fga/cjcNJ+5t02ILU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOUE+E7FKPeRiIAnyrImDuOZemPSniOd+DnDOi/YE+SuUCZdTU
-	3KbvqLtIRxJB3HVGAUZ5yldlFSS5bnv6xQMObI0+YoEaJG9HdrPbNDKW0iGJwtaqBjmCEScZ36k
-	=
-X-Gm-Gg: ASbGncs6bhKS6AZsIwLDMXAO77iGv7KDX8jB1nm02x36AeC+DIlGiO5l+2vlfrfltVB
-	GKREntKIl4eKjfXAUKvPHCC4tXOYsW5NecZ0KfBLAbpp2ZieVp5wydAN3pzzvmHE7byDfJXIG3j
-	TMebT2FO3VfOshwUzypjSwoguTNsCJvCqWM3i8T+eqUlR4GqgCpEQo3sGNJUevh9RdU868m2koC
-	SCSGSyWhDpMiqtwYNsC9pWGE506tC8WZ+XERRu+6hUz933cHYve5LkadP58MMxyfyPJc1LzuGju
-	jE9JeCT0w8FoWoly
-X-Google-Smtp-Source: AGHT+IHU/EqCb0NfZ84xapGc34LHfAq0RxCFAkvbQjgXufzm3819+LDc4BXSFHEsnMEjbLY6EirjmQ==
-X-Received: by 2002:a05:6a20:6a1d:b0:1d9:c6c5:70c with SMTP id adf61e73a8af0-1e09e3bcf3emr2391325637.5.1732261594481;
-        Thu, 21 Nov 2024 23:46:34 -0800 (PST)
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com. [209.85.215.176])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ead02eca46sm4464417a91.7.2024.11.21.23.46.33
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 23:46:33 -0800 (PST)
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7fbc65f6c72so953647a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 23:46:33 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWAih5e+MLxocXEret+/BWhBa2l0OFzpfkWLIzz+Paw1kkHJ3uOhy1GZ+3mrRoNyYc/9qddJQH8DkwaC0s=@vger.kernel.org
-X-Received: by 2002:a05:6a20:3949:b0:1dc:2365:a114 with SMTP id
- adf61e73a8af0-1e09e4b19b9mr2861897637.24.1732261593103; Thu, 21 Nov 2024
- 23:46:33 -0800 (PST)
+	s=arc-20240116; t=1732261654; c=relaxed/simple;
+	bh=au0BsQuRyF+qQkfLCM+mXhHc6K5HiLohtpBETlpVkd4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NAOCkYtn0GERVCFXENTxBEck4DeNxXKcLWULfn7Wxu2bAic+gyLAC/+vuI4lf8m58hSdx+Z+vo9m7eEfaxEXOp4NmnS4MWf+xdtzaU915nWh3w040cjjXZJusAMd8CfERr8ZFM+YoWcgCG1lTyy+KeUWhDk790a+GCzVAYnWK3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=in.waw.pl; spf=pass smtp.mailfrom=in.waw.pl; arc=none smtp.client-ip=68.183.222.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=in.waw.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=in.waw.pl
+Received: by kawka3.in.waw.pl (Postfix, from userid 1000)
+	id BABA55A4402; Fri, 22 Nov 2024 07:47:30 +0000 (UTC)
+Date: Fri, 22 Nov 2024 07:47:30 +0000
+From: Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Nir Lichtman <nir@lichtman.org>,
+	syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com,
+	Tycho Andersen <tandersen@netflix.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>
+Subject: Re: [GIT PULL] execve updates for v6.13-rc1
+Message-ID: <Z0A3EkxZZg19Dp9Q@kawka3.in.waw.pl>
+References: <202411190900.FE40FA5@keescook>
+ <CAHk-=wgB1L75+C89AU62n4jBEiwKs=e4dvBDOoLQ13rUwJLFXQ@mail.gmail.com>
+ <87jzcxv227.fsf@email.froward.int.ebiederm.org>
+ <CAHk-=wifNC+AAGVDN-B1gGNhKGqhnkoqWKCknAo6107oD0zGWA@mail.gmail.com>
+ <Zz9sTFBQQSe1P8AI@kawka3.in.waw.pl>
+ <87zflrsw1c.fsf@email.froward.int.ebiederm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121-fix-processed-v1-1-4fae6770db30@chromium.org> <853def565622848427e6e5df8f073465fa52e76c.camel@linux.intel.com>
-In-Reply-To: <853def565622848427e6e5df8f073465fa52e76c.camel@linux.intel.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 22 Nov 2024 08:46:21 +0100
-X-Gmail-Original-Message-ID: <CANiDSCuV1zo0=wGLir26Bn0np+BbVj9aj-JK3ZMreOT78c73UQ@mail.gmail.com>
-Message-ID: <CANiDSCuV1zo0=wGLir26Bn0np+BbVj9aj-JK3ZMreOT78c73UQ@mail.gmail.com>
-Subject: Re: [PATCH] iio: hid-sensor-prox: Fix invalid read_raw for attention
-To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	linux-input@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87zflrsw1c.fsf@email.froward.int.ebiederm.org>
 
-On Thu, 21 Nov 2024 at 17:44, srinivas pandruvada
-<srinivas.pandruvada@linux.intel.com> wrote:
+On Thu, Nov 21, 2024 at 10:59:59PM -0600, Eric W. Biederman wrote:
+> Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> writes:
+> 
+> > On Wed, Nov 20, 2024 at 06:23:55PM -0800, Linus Torvalds wrote:
+> >> On Wed, 20 Nov 2024 at 16:55, Eric W. Biederman <ebiederm@xmission.com> wrote:
+> >> >
+> >> > __set_task_comm cannot be called with bprm->file->f_dentry
+> >> > unconditionally.
+> >> 
+> >> No, no. Only for the "no path" case.
+> >> 
+> >> > The reason bprm->file->f_dentry.dentry was abandoned were concerns
+> >> > about breaking userspace.
+> >> 
+> >> There's no way it can break user space considering that right now
+> >> comm[] ends up being just garbage.
+> >
+> > It'll "break userspace" in the sense the the resulting program name
+> > visible in /proc/self/{comm,stat,status} would be different than the
+> > expected value.
+> 
+> This actually has not been shown.
+> 
+> In the general case of programs on linux it is indeed the case
+> we have multi-call binaries and symlinks to binaries.
+> 
+> Limiting things to just fexecve reduces the scope,
+> I didn't think about the scope reduction when you made this argument the
+> first time.
+> 
+> I do not see any evidence that there are daemons started by systemd
+> where systemd follows the name in /etc/alternatives on debian, or winds
+> up following a symlink on a multicall binary.  The way I understand
+> /etc/alternatives I don't think you would ever want to use it for the
+> name of a daemon that is put in a unit file.
+
+systemd-udevd is one example that ~everybody has installed.
+(Though it doesn't use comm, it uses argv[0] to decide behaviour.)
+
+We can certainly find more, on my Fedora system, 337/2252 files
+in /usr/sbin/ are symlinks, quite a few candidates.
+But even if we went through every one of those, it's not enough,
+because people have custom unit files and there's also systemd-run
+and run0.
+
+> All of these cases where you get a task->comm that would be different
+> with fexecve are rare oddball cases today.  I think it is quite likely
+> nothing systemd wants to start with fexecve will have this problem.
+> 
+> Further you can detect this problem before you get as far as starting
+> the application.  Just pass O_NOFOLLOW to open and you can refuse to
+> follow the potentially confusing symlinks.
+
+We'd have two choices: refuse the command, which is not really a great
+option, or fall back to execve(), an approach which I find really
+unappealing.
+
+> So short of finding real programs in the real world that actually care
+> it seems perfectly reasonable to do the cheap and easy thing.
 >
-> On Thu, 2024-11-21 at 09:16 +0000, Ricardo Ribalda wrote:
-> > The attention channel is a IIO_CHAN_INFO_PROCESSED, not a
-> > IIO_CHAN_INFO_RAW.
-> >
-> > Modify prox_read_raw() to support it.
-> >
-> What is the sysfs entry to trigger this IIO_CHAN_INFO_PROCESSED read?
-> Don't you have an entry *_raw?
+> Right now it feels like you are adopting a very cautious approach and
+> arguing for an expensive implementation simply because it is a lot of
+> work to figure out what programs you actually care about and see what
+> those programs are actually doing.
 
-/sys/.../iio:deviceX/in_attention_input
+So it's not really "programs" per se. For example, systemd itself
+doesn't care at all, because it uses cgroups to manage processes. I've
+been using systemd-with-fexecve for two years and apart from strange 'ps'
+listings, it's all fine. But we have administrators and scripts.
+For example, 'pgrep systemd-udevd' and 'pkill -HUP httpd' and a
+bazillion other calls that we cannot ever find or change.
 
-There is no _raw device for it.
+> On the system I am writing this on right now there are about 300
+> processes running and only about 17 whose parent is pid 1.  Most of
+> those process whose parent is pid 1 run as root.  Which means extra care
+> needs to be taken with them anyway.
 
->
->
-> Thanks,
-> Srinivas
->
-> > Fixes: 596ef5cf654b ("iio: hid-sensor-prox: Add support for more
-> > channels")
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > ---
-> >  drivers/iio/light/hid-sensor-prox.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/iio/light/hid-sensor-prox.c
-> > b/drivers/iio/light/hid-sensor-prox.c
-> > index e8e7b2999b4c..8e5d0ad13a5f 100644
-> > --- a/drivers/iio/light/hid-sensor-prox.c
-> > +++ b/drivers/iio/light/hid-sensor-prox.c
-> > @@ -94,6 +94,7 @@ static int prox_read_raw(struct iio_dev *indio_dev,
-> >       *val2 = 0;
-> >       switch (mask) {
-> >       case IIO_CHAN_INFO_RAW:
-> > +     case IIO_CHAN_INFO_PROCESSED:
-> >               if (chan->scan_index >= prox_state->num_channels)
-> >                       return -EINVAL;
-> >               address = prox_state->channel2usage[chan-
-> > >scan_index];
-> > @@ -107,8 +108,7 @@ static int prox_read_raw(struct iio_dev
-> > *indio_dev,
-> >
-> > report_id,
-> >
-> > SENSOR_HUB_SYNC,
-> >                                                          min < 0);
-> > -             if (prox_state->channel2usage[chan->scan_index] ==
-> > -                 HID_USAGE_SENSOR_HUMAN_ATTENTION)
-> > +             if (mask == IIO_CHAN_INFO_PROCESSED)
-> >                       *val *= 100;
-> >               hid_sensor_power_state(&prox_state-
-> > >common_attributes, false);
-> >               ret_type = IIO_VAL_INT;
-> >
-> > ---
-> > base-commit: decc701f41d07481893fdea942c0ac6b226e84cd
-> > change-id: 20241121-fix-processed-ed1a95641e64
-> >
-> > Best regards,
->
+This would also affect user process started by 'systemd --user',
+i.e. most of the graphical user session nowadays (under GNOME, KDE,
+etc.)
 
+> > Even if we end up copying a string from userspace unnecessarilly,
+> > does this matter? execve is a heavyweight operation and copying a
+> > a dozen bytes extra hardly matters.
+> 
+> Generally it is on the person arguing for making the kernel more
+> expensive to find a compelling case.  In this instance my imagination
+> fails me in finding a binary that systemd will start that will be
+> affected.  So I simply don't see the point in making the code
+> more expensive.
+> 
+> I was really hoping we could use the cheap bprm->file->f_dentry
+> to set task->comm in all cases as that would make the kernel
+> simpler and faster.
+> 
+> To me using bprm->file->f_dentry still seems to make more sense than a
+> field whose value (in the case of login shells) is documented as being
+> different from what you are looking for.
+> 
+> There is no solution that doesn't have down sides.  As such the kernel
+> might as well use a solution that is cheap and as close to how
+> task->comm has been calculated historically as possible.
 
--- 
-Ricardo Ribalda
+Right. It comes down to judgement / guesswork about the downsides of
+each approach.
+
+As I wrote before, the approach with bprm->file->f_dentry is _much_
+better than what we have now. So I'll take that over status quo.
+But from the POV of a distro maintainer, it's not ideal. Basically,
+with the patch that uses argv[0], I expect almost no user-visible
+change, so I can rebuild systemd with -Dfexecve=true in Fedora and
+maybe send a mail to fedora-devel with "hey, watch out, the way
+systemd starts processes has been changed, selinux could be affected,
+please report any errors".
+
+With the f_dentry version, we'll still do the transition, but we'll
+need to make an effort to warn users and do it much more visibly, and
+based on past experience with such things, there'll still inevitably
+be users who report that their favourite backup script that they call
+from the git checkout now doesn't terminate properly and stuff like
+that. Every kernel maintainer knows that any aspect of behaviour that
+is visibile to users starts being relied on…
+
+I think fexecve is a nice feature (as all the fd-based syscalls
+in general), but it need to be drop-in replacement if it's supposed
+to be adopted quickly.
+
+Zbyszek
 
