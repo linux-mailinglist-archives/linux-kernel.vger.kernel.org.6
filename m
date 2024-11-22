@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-418866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3824C9D667E
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:58:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65C299D667D
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:58:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABD96161143
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:58:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2481A28278D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4659D1D3629;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9DD1D3565;
 	Fri, 22 Nov 2024 23:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aqozgCdK"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="krqK/9q1"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5DE1C2337;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5576618C351;
 	Fri, 22 Nov 2024 23:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732319921; cv=none; b=cBroIWywK/KpGB5TEbzO9hN51qqurb87aBt+2Rqjglj1HYtxc1pTqV+FIhjYlrRvBbJMVNAZNasJPofULQlcI1dgUSO3Rs17j3436FDDYq6P3MgxPDHE4hJQ9VDRRJmlYFfg5wSVoM4q4cMXiuANeXDssoqFsa/myCC99ePm02I=
+	t=1732319921; cv=none; b=YJBfgMqBzzKyg/iH+aQvaWWXlA6ZBqihL0F6ngIniYStt8rFmO7VjJjlORLPF3Q+sI6fACq3wHmPIfu/emglLOIyNkhNkN8JlKD/GXQj/LonyucFsDbLLdaJLDNArwldICPHfygVSAFJnskRWqMuCbR1HA0fQx3jiFOGrllny+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732319921; c=relaxed/simple;
-	bh=DgdFQG7ogmZInC9WaL3dmKhljd5aCwuTH2jubE9qPbw=;
+	bh=i6OS/23JSfExyu1ilEdrupZOnJZBzfqFPJKgl+4PL6E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HyQ07ewCOQRBdSXZzVYAcwrF/ANa5X+r1vU1+aeygbf7lIOWbhFyD0bi7cgdiP011nHwsfVGgZUm/lk+y2ITHdQEJXhAknTulE35ButnIIUwFTt04AJAZ2nO88T4sJVlYI35Ry4YP8nFbxylx7qu8KDF8lR1FA3/LMYmKiv4U1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aqozgCdK; arc=none smtp.client-ip=198.175.65.18
+	 MIME-Version; b=kzIZ0VYLwxi+5RIDh7P0nldQsqS+fPOE1E96CzN4I1XO1zAb6LAJdABKfIYatkiThFk+z+Av/o5POKB6TINPEym3QtzmXQDSu1hjktLez55kE8Mx9qWub1JCuFAGZDZjYQ6NlMmzxIyX47fATd7nKTCV1iwEP3rQ6cwAKnv+U1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=krqK/9q1; arc=none smtp.client-ip=198.175.65.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,28 +35,28 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1732319920; x=1763855920;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=DgdFQG7ogmZInC9WaL3dmKhljd5aCwuTH2jubE9qPbw=;
-  b=aqozgCdKk/nJbD/chv8WbGdsqyxqV76eH9bCxnBTH8+w83T6UpGybywA
-   KMHTOAXlOKxr/zvoRpa9SVXSmXRmFrWfd8Y/CFgBxgkPpf4C/gNrbrqrZ
-   7DyopsZ+xzmxV5r4qX5yFY3koggygtxRNtRPPxK4baIeesQYxBzLS/Fn2
-   7h00akNhpg+xFb1/c8ddLHqXqWleXOscYm0olXvFIm4qHsL+IaW5PPBP0
-   ijNiQRj6d85fsyJInv4skmtYaXzFNnc/2w9A7iQMAIV0sKeNoat1sMSfP
-   RnufMMA2sGYekxwiEsUaCABmqR+Mo58YlLWITCzY4Q/EZuC3jYJXup3d5
+  bh=i6OS/23JSfExyu1ilEdrupZOnJZBzfqFPJKgl+4PL6E=;
+  b=krqK/9q1HfpwTscywe6vi5QllCY3oA7n06vyZF0mwfI4BK+q/OAQfYqr
+   sWzXpN1QfRFHdifIIBt32oE+DzwsnZC/DuTMS1/krLZfP3RDOmYUxQmpA
+   CZ2rXCjCZQWTMcLtSF9mQBb/ywTgsy3Ar2dEYuspGVVOig5e1DeVRdQRY
+   QtW1XBeLJzC4SblLNm48hRi6vWPaZQ+p1l2O1KihA/jJI/Gcg/78Uu76r
+   x6bkvvEGDSyRk8QpOxy6D+7eNHsYYkTdkqKjXsx0H/gbnIezoSdQm/Cy6
+   gFIkSJy7pTJfBXAYeMf8dAFdj++Qh7rf+J0yT/M3NXABnwIS1ZBXTRCuU
    Q==;
-X-CSE-ConnectionGUID: d0eY08AMQmGVi5n2PvrTuw==
-X-CSE-MsgGUID: H5WXtxLWQQaQIek3OaaFtg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="32642693"
+X-CSE-ConnectionGUID: IRuNfjI/T1G20IYl9ZCxjA==
+X-CSE-MsgGUID: 0tvF4n8aSTauTbyQjlyLOg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="32642703"
 X-IronPort-AV: E=Sophos;i="6.12,177,1728975600"; 
-   d="scan'208";a="32642693"
+   d="scan'208";a="32642703"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
   by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 15:58:38 -0800
-X-CSE-ConnectionGUID: QC6a06pMReubT/mxCz+Dkg==
-X-CSE-MsgGUID: M6apAD8YTCiOrgay/CremA==
+X-CSE-ConnectionGUID: SaNROrlqRlSk2QAlFdACHw==
+X-CSE-MsgGUID: fsxFkDZFRH2vfWy0DvrrDA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,177,1728975600"; 
-   d="scan'208";a="90850892"
+   d="scan'208";a="90850895"
 Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 15:58:37 -0800
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 15:58:38 -0800
 From: Tony Luck <tony.luck@intel.com>
 To: Fenghua Yu <fenghua.yu@intel.com>,
 	Reinette Chatre <reinette.chatre@intel.com>,
@@ -72,9 +72,9 @@ Cc: James Morse <james.morse@arm.com>,
 	linux-doc@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v10 1/8] x86/resctrl: Introduce resctrl_file_fflags_init() to initialize fflags
-Date: Fri, 22 Nov 2024 15:58:25 -0800
-Message-ID: <20241122235832.27498-2-tony.luck@intel.com>
+Subject: [PATCH v10 2/8] x86/resctrl: Prepare for per-CTRL_MON group mba_MBps control
+Date: Fri, 22 Nov 2024 15:58:26 -0800
+Message-ID: <20241122235832.27498-3-tony.luck@intel.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241122235832.27498-1-tony.luck@intel.com>
 References: <20241122235832.27498-1-tony.luck@intel.com>
@@ -86,112 +86,120 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Babu Moger <babu.moger@amd.com>
+Resctrl uses local memory bandwidth event as input to the feedback
+loop when the mba_MBps mount option is used. This means that this
+mount option cannot be used on systems that only support monitoring
+of total bandwidth.
 
-thread_throttle_mode_init() and mbm_config_rftype_init() both initialize
-fflags for resctrl files.
+Prepare to allow users to choose the input event independently for
+each CTRL_MON group by adding a global variable "mba_mbps_default_event"
+used to set the default event for each CTRL_MON group, and a new
+field "mba_mbps_event" in struct rdtgroup to track which event is
+used for each CTRL_MON group.
 
-Adding new files will involve adding another function to initialize
-the fflags. This can be simplified by adding a new function
-resctrl_file_fflags_init() and passing the file name and flags
-to be initialized.
+Notes:
+1) Both of these are only used when the user mounts the filesystm with
+the "mba_MBps" option.
+2) Only check for support of local bandwidth event when initializing
+mba_mbps_default_event. Support for total bandwidth event can be added
+after other routines in resctrl have been updated to handle total
+bandwidth event.
 
-Consolidate fflags initialization into resctrl_file_fflags_init() and
-remove thread_throttle_mode_init() and mbm_config_rftype_init().
-
-[Tony: Drop __init attribute so resctrl_file_fflags_init() can be used
-at run time]
-
-Signed-off-by: Babu Moger <babu.moger@amd.com>
 Signed-off-by: Tony Luck <tony.luck@intel.com>
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/kernel/cpu/resctrl/internal.h |  3 +--
- arch/x86/kernel/cpu/resctrl/core.c     |  4 +++-
- arch/x86/kernel/cpu/resctrl/monitor.c  |  6 ++++--
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 15 ++-------------
- 4 files changed, 10 insertions(+), 18 deletions(-)
+ include/linux/resctrl.h                |  2 ++
+ arch/x86/kernel/cpu/resctrl/internal.h |  2 ++
+ arch/x86/kernel/cpu/resctrl/core.c     |  3 +++
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 15 +++++++++++++++
+ 4 files changed, 22 insertions(+)
 
+diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
+index d94abba1c716..fd05b937e2f4 100644
+--- a/include/linux/resctrl.h
++++ b/include/linux/resctrl.h
+@@ -49,6 +49,8 @@ enum resctrl_event_id {
+ 	QOS_L3_MBM_LOCAL_EVENT_ID	= 0x03,
+ };
+ 
++extern enum resctrl_event_id mba_mbps_default_event;
++
+ /**
+  * struct resctrl_staged_config - parsed configuration to be applied
+  * @new_ctrl:		new ctrl value to be loaded
 diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index 955999aecfca..faaff9d64102 100644
+index faaff9d64102..485800055a7d 100644
 --- a/arch/x86/kernel/cpu/resctrl/internal.h
 +++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -647,8 +647,7 @@ void cqm_handle_limbo(struct work_struct *work);
- bool has_busy_rmid(struct rdt_mon_domain *d);
- void __check_limbo(struct rdt_mon_domain *d, bool force_free);
- void rdt_domain_reconfigure_cdp(struct rdt_resource *r);
--void __init thread_throttle_mode_init(void);
--void __init mbm_config_rftype_init(const char *config);
-+void resctrl_file_fflags_init(const char *config, unsigned long fflags);
- void rdt_staged_configs_clear(void);
- bool closid_allocated(unsigned int closid);
- int resctrl_find_cleanest_closid(void);
+@@ -283,6 +283,7 @@ struct pseudo_lock_region {
+  *				monitor only or ctrl_mon group
+  * @mon:			mongroup related data
+  * @mode:			mode of resource group
++ * @mba_mbps_event:		input monitoring event id when mba_sc is enabled
+  * @plr:			pseudo-locked region
+  */
+ struct rdtgroup {
+@@ -295,6 +296,7 @@ struct rdtgroup {
+ 	enum rdt_group_type		type;
+ 	struct mongroup			mon;
+ 	enum rdtgrp_mode		mode;
++	enum resctrl_event_id		mba_mbps_event;
+ 	struct pseudo_lock_region	*plr;
+ };
+ 
 diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index b681c2e07dbf..f3ee5859b69d 100644
+index f3ee5859b69d..94bf559966d6 100644
 --- a/arch/x86/kernel/cpu/resctrl/core.c
 +++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -234,7 +234,9 @@ static __init bool __get_mem_config_intel(struct rdt_resource *r)
- 		r->membw.throttle_mode = THREAD_THROTTLE_PER_THREAD;
- 	else
- 		r->membw.throttle_mode = THREAD_THROTTLE_MAX;
--	thread_throttle_mode_init();
+@@ -963,6 +963,9 @@ static __init bool get_rdt_mon_resources(void)
+ 	if (!rdt_mon_features)
+ 		return false;
+ 
++	if (is_mbm_local_enabled())
++		mba_mbps_default_event = QOS_L3_MBM_LOCAL_EVENT_ID;
 +
-+	resctrl_file_fflags_init("thread_throttle_mode",
-+				 RFTYPE_CTRL_INFO | RFTYPE_RES_MB);
- 
- 	r->alloc_capable = true;
- 
-diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-index 851b561850e0..7ef1a293cc13 100644
---- a/arch/x86/kernel/cpu/resctrl/monitor.c
-+++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-@@ -1223,11 +1223,13 @@ int __init rdt_get_mon_l3_config(struct rdt_resource *r)
- 
- 		if (rdt_cpu_has(X86_FEATURE_CQM_MBM_TOTAL)) {
- 			mbm_total_event.configurable = true;
--			mbm_config_rftype_init("mbm_total_bytes_config");
-+			resctrl_file_fflags_init("mbm_total_bytes_config",
-+						 RFTYPE_MON_INFO | RFTYPE_RES_CACHE);
- 		}
- 		if (rdt_cpu_has(X86_FEATURE_CQM_MBM_LOCAL)) {
- 			mbm_local_event.configurable = true;
--			mbm_config_rftype_init("mbm_local_bytes_config");
-+			resctrl_file_fflags_init("mbm_local_bytes_config",
-+						 RFTYPE_MON_INFO | RFTYPE_RES_CACHE);
- 		}
- 	}
+ 	return !rdt_get_mon_l3_config(r);
+ }
  
 diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index d7163b764c62..2b198ef95e1e 100644
+index 2b198ef95e1e..2d42d69ddbe5 100644
 --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
 +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -2020,24 +2020,13 @@ static struct rftype *rdtgroup_get_rftype_by_name(const char *name)
- 	return NULL;
- }
+@@ -65,6 +65,17 @@ static void rdtgroup_destroy_root(void);
  
--void __init thread_throttle_mode_init(void)
--{
--	struct rftype *rft;
--
--	rft = rdtgroup_get_rftype_by_name("thread_throttle_mode");
--	if (!rft)
--		return;
--
--	rft->fflags = RFTYPE_CTRL_INFO | RFTYPE_RES_MB;
--}
--
--void __init mbm_config_rftype_init(const char *config)
-+void resctrl_file_fflags_init(const char *config, unsigned long fflags)
- {
- 	struct rftype *rft;
+ struct dentry *debugfs_resctrl;
  
- 	rft = rdtgroup_get_rftype_by_name(config);
- 	if (rft)
--		rft->fflags = RFTYPE_MON_INFO | RFTYPE_RES_CACHE;
-+		rft->fflags = fflags;
- }
++/*
++ * Memory bandwidth monitoring event to use for the
++ * default CTRL_MON group and each new CTRL_MON
++ * group created by the user.
++ * Only relevant when the filesystem is mounted
++ * with the "mba_MBps" option so it does not matter
++ * that it remains uninitialized on systems that do
++ * not support the "mba_MBps" option.
++ */
++enum resctrl_event_id mba_mbps_default_event;
++
+ static bool resctrl_debug;
  
- /**
+ void rdt_last_cmd_clear(void)
+@@ -2353,6 +2364,8 @@ static int set_mba_sc(bool mba_sc)
+ 
+ 	r->membw.mba_sc = mba_sc;
+ 
++	rdtgroup_default.mba_mbps_event = mba_mbps_default_event;
++
+ 	list_for_each_entry(d, &r->ctrl_domains, hdr.list) {
+ 		for (i = 0; i < num_closid; i++)
+ 			d->mbps_val[i] = MBA_MAX_MBPS;
+@@ -3611,6 +3624,8 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
+ 			rdt_last_cmd_puts("kernfs subdir error\n");
+ 			goto out_del_list;
+ 		}
++		if (is_mba_sc(NULL))
++			rdtgrp->mba_mbps_event = mba_mbps_default_event;
+ 	}
+ 
+ 	goto out_unlock;
 -- 
 2.47.0
 
