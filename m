@@ -1,113 +1,96 @@
-Return-Path: <linux-kernel+bounces-418316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A047D9D6051
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:33:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 133149D6045
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:28:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 583BA1F2345D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:33:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC0352827FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5327135A4B;
-	Fri, 22 Nov 2024 14:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C1E70808;
+	Fri, 22 Nov 2024 14:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="EOA1thI+"
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MtKeHHIm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rhbD7aIj"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E287080E;
-	Fri, 22 Nov 2024 14:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FCC800
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732285988; cv=none; b=Q9zTEFytYaEz1wtiKm8kbFpv0ed+a0grIDW7kkgCER0PNySkPdGKGilIgHMEJMW4MaEocU6SfL+9CGUmYsyxLfzRN8UskbFXMM6hR3xbcP66z6hgwVHZHlIYyZKjUi5/0QR8xJL+JtE+q0ytDhttJS5235DFg9QsA70+w0+ls/8=
+	t=1732285691; cv=none; b=Lf0tWm8PeckRSDxbLLofSLyMGZPnpJ279eABqKrRW9mi2G4BlpWctpdp2/jBDOMycQyYTKedZjjSDN6BBObbAqOwToLXzwkT6uIfsT2A24Tn/67fFA1aYM5dBzkqfFABLAUL1TzQo7Y82mHpYQNgiYl1d90WJToA1XFeDCzvC70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732285988; c=relaxed/simple;
-	bh=0WjofnI+16r29wcpK2ZZb5qFASadH9xswLnIaUm7gbs=;
+	s=arc-20240116; t=1732285691; c=relaxed/simple;
+	bh=Ff+UZyO/JMj9DISe2UePaOTQblPds44n39t8KwMbeqY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OTarFsJT1yFEnF31gWmwep+Aq8CmzD1iOXlJR8SLZw/itmjVieLnzIslPOcGdTcgW8zyNe0hRST1kvnigw9p2fzvEXSRp5VlFrnIm8I0dnbuQRMcJOI19I0wtOPFASSLOohW96ltIrPRlRaE0VzL4XCCXKjH8UD2u9qxXedu/dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=EOA1thI+; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3A82F1483473;
-	Fri, 22 Nov 2024 15:25:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1732285556;
+	 Content-Type:Content-Disposition:In-Reply-To; b=PKLMSgiEhuaBMjGIKYqbE86TBl2bwIqPtiAwwxrCiiYFvSF6evkzArxKp1SBy+rzy2r8c2osgT5lw3ZlwvSQfz/BExNvKYYenOuPoWlwFB2j9HFB6/ogYrK/DHCsPSk67kqEPHVcTvUy3gN4lT0/QQW1ylfGl+DFDbdce9WvMXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MtKeHHIm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rhbD7aIj; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 22 Nov 2024 15:28:04 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732285686;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Ol/8URh2FBPj8F5l8LvLrhCsPIrfEw/h/Cx/SKJh1iY=;
-	b=EOA1thI+YywyhD5Gc55IqLdgcCKKbxGqZZj+jb0dI9j/OcuZiq3mB15Y6w7pUOyr/1FNlT
-	RQ1iCXHuqzYZoiZW6TSoJnZ+Igdj78Gl/5H2hQegRM4SEeGJ2tqJaxbTsfJpS4XXrp5jHT
-	AD9/e/GTTn9npk/iCtHCnIpbcOILTH4eqDb9a8+afFZCzEesWZdPw+VmweixTH2IpgXA6n
-	jw363d4z1sm7z91MARmC1W4Vo+GQylJzS1XR99KHidV3Kp2M1E9+qCiubbqAW8IZtzjMgS
-	DbHNs9xo8Ek9zqAbn2hdugLPdhV6TihSbADEaLuK/ReRUd17mYWwSiL9HHj/wQ==
-Date: Fri, 22 Nov 2024 15:25:47 +0100
-From: Alexander Dahl <ada@thorsis.com>
-To: =?iso-8859-1?B?Q3Pza+FzLA==?= Bence <csokas.bence@prolan.hu>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Subject: Re: [PATCH] spi: atmel-quadspi: Fix register name in verbose logging
- function
-Message-ID: <20241122-zips-module-d0e6c6a1e69b@thorsis.com>
-Mail-Followup-To: =?iso-8859-1?B?Q3Pza+FzLA==?= Bence <csokas.bence@prolan.hu>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>
-References: <20241122141302.2599636-1-csokas.bence@prolan.hu>
+	bh=g/PQb43MX+EV+Rlm4+ty7y06eu8hbzBoZm6Y4VLtEv4=;
+	b=MtKeHHIm9VHY92ZpQyya0e1vdNmhTlkQmeTDwV+gUV4O+yfCNqZhOqz65jZjyrg1ZdbBAp
+	AuJuotoiPLUV5KBKOa5Dj8ye3BZL/+4Sdu/l3aqtHipY5q19Q+7nZXEgIujAcL1ihKPzGu
+	Ui3QHUlxM8FYla1Pohuin4+QMQsG7TRdD8vhKOVe4GyjNYyYoGJS4s/DvSKsuNL9MNtpLb
+	8eYvG1gGRRnpkbroL7l6l/HRON58cPe5ATF8gUTzItd8hRSy6+FATfjMMJurPPUQGBmkR8
+	9E1+bBvhkmw7J/y2medn3/+yX7x6EF54eeyW8pVQ3yNn+4JiFrK9wIM65DeQlw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732285686;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g/PQb43MX+EV+Rlm4+ty7y06eu8hbzBoZm6Y4VLtEv4=;
+	b=rhbD7aIjM0vCtRns4Qvm6CwnmwS9g1he5tgJiJ14gdH4gbPbh27lHt99SZhPsuAoncrEST
+	d9UwfJha20VDQaDg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: Re: [RFC PATCH v3 5/9] futex: Track the futex hash bucket.
+Message-ID: <20241122142804.7tGirPjt@linutronix.de>
+References: <20241115172035.795842-6-bigeasy@linutronix.de>
+ <202411221706.c9d399d3-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241122141302.2599636-1-csokas.bence@prolan.hu>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <202411221706.c9d399d3-lkp@intel.com>
 
-Hello,
+On 2024-11-22 18:08:03 [+0800], kernel test robot wrote:
+> Hello,
+Hi,
 
-Am Fri, Nov 22, 2024 at 03:13:02PM +0100 schrieb Csókás, Bence:
-> `atmel_qspi_reg_name()` is used for pretty-printing register offsets
-> for verbose logging of register accesses. However, due to a typo
-> (likely a copy-paste error), QSPI_RD's offset prnts as "MR", the
-> name of the previous register. Fix this typo.
+> kernel test robot noticed "WARNING:at_lib/rcuref.c:#rcuref_put_slowpath" on:
 > 
-> Fixes: c528ecfbef04 ("spi: atmel-quadspi: Add verbose debug facilities to monitor register accesses")
-> Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
-> ---
->  drivers/spi/atmel-quadspi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/spi/atmel-quadspi.c b/drivers/spi/atmel-quadspi.c
-> index 91108ddfaef2..316bce577081 100644
-> --- a/drivers/spi/atmel-quadspi.c
-> +++ b/drivers/spi/atmel-quadspi.c
-> @@ -183,7 +183,7 @@ static const char *atmel_qspi_reg_name(u32 offset, char *tmp, size_t sz)
->  	case QSPI_MR:
->  		return "MR";
->  	case QSPI_RD:
-> -		return "MR";
-> +		return "RD";
->  	case QSPI_TD:
->  		return "TD";
->  	case QSPI_SR:
+> commit: 85bef61dcb6b15e3f68893e8bb8178f38ef4e58d ("[RFC PATCH v3 5/9] futex: Track the futex hash bucket.")
+> url: https://github.com/intel-lab-lkp/linux/commits/Sebastian-Andrzej-Siewior/futex-Create-helper-function-to-initialize-a-hash-slot/20241116-230708
+> base: https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git 3b49a347d751553b1d1be69c8619ae2e85fdc28d
+> patch link: https://lore.kernel.org/all/20241115172035.795842-6-bigeasy@linutronix.de/
+> patch subject: [RFC PATCH v3 5/9] futex: Track the futex hash bucket.
 
-Reviewed-by: Alexander Dahl <ada@thorsis.com>
+thank you for the report. There is a missing init which has been made
+visible by CONFIG_BASE_SMALL.
 
-Greets
-Alex
-
+Sebastian
 
