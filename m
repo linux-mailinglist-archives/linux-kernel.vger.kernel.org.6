@@ -1,286 +1,98 @@
-Return-Path: <linux-kernel+bounces-418575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D7509D632A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:31:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C3C69D632B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:31:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86F9D28167D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:31:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE4F6B25418
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 821DE1DF99F;
-	Fri, 22 Nov 2024 17:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21151DFDB3;
+	Fri, 22 Nov 2024 17:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AuByv+Y+"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVQyCy72"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5C51DDC24
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 17:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6052E40B;
+	Fri, 22 Nov 2024 17:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732296654; cv=none; b=SIiGLEk/HPatQUbW3Ed5P8rK+ZXAHnL6nG25+ViCRSCJm6x80Q1xs1StmagF1TAhxpI9wMaSBA1t3C2TOzdsS8r5ISg1Fsr0bxxLBtAYI+CoM8BL3/k8f/HzFesFIl3eBp/JbN0A1YIcf3fnQeApQLelaTmZ1RRvM5wmApWa78Y=
+	t=1732296666; cv=none; b=WnMVzIBkzc3RYRc04b6u3PUBKl4YVsvCRGPMfIVIf9eTeaVw4JkDt6mbcqJnLrWvYk6PtFfNk8pT1efbPvXyu1/LDjwv7sSV2RhCZSn52mUFqTB3BaS10cR9C7uQ3KtAyCoAD2RXT++F9Vt22aFbCynqmq+BwAnjVanPBKiUNco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732296654; c=relaxed/simple;
-	bh=DKN/V5woo6XbJQAgp7E1N7ZZsEZKiV9TMORBJQ9FKuM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bwqdRrSFm/Xv71DIT8pVwQleX/3zgl5CercLmjF6RaRZOPvM/nB11+KebVR16Wtp+sam3jZpzEV2nKERmHRa3YooQGSNT0dzHnzk9jZGeOF6xmPFowxIoAOkkn+Ea69YmbOkoqlzy+f6SqqivlJMmiEdr4gzaucaBC9rD2gYrS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AuByv+Y+; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <1247c0c6-10b2-45f3-b612-ee7d9b41ada3@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732296649;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GeLVjkYsiWEg1nEl0p6ScMRoXCYbWoFWWUG19cV0uQE=;
-	b=AuByv+Y+uzixbEg0yxQ3lRfmN77R1OkYzxC9yaIx66qVbuJ1wPnTVoMADDPSv3o0s7TUeu
-	w09X2xx82ehjpTNDXFWgh3mEqdN4s3Scgz4JmRKRly8xDSGuFb8Ua13PzlbkQQVAEnmx9Z
-	VggcRGPOLnkwtgJQqN6+ZjyGEuc9wCg=
-Date: Fri, 22 Nov 2024 09:30:42 -0800
+	s=arc-20240116; t=1732296666; c=relaxed/simple;
+	bh=wBRqCsItS+i4siZ71y2qQf0vBKXU+yZWPzOSfE5vasI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Z9rWNGqTmx0NeII3rSiH6OcpYsDUF+HgLq/H0ajAb5U+YoN7I0DXyTtmgekgh5hB5QsQHWoecfU/102zgqDqeD5tXcrYiiLnT79k/DLv7CnMwTTScocz6k6RMFhlwHTZfeWnQuqXTGT3A6IuxdBDWMnFKJT+qWoA3ATc+Jj+6Dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iVQyCy72; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DCA6C4CECE;
+	Fri, 22 Nov 2024 17:31:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732296665;
+	bh=wBRqCsItS+i4siZ71y2qQf0vBKXU+yZWPzOSfE5vasI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=iVQyCy72cBp9avZdk6ECaO5qzcYaRbUo93dTCfFgRAOpvJC5OuD5J9k856zUPzWo3
+	 rkE2Gay7Ouq2g5xK6wdZiUh+ILD4iVcHUdKk39ahO5k6EPyWOs3SH6XnjIBzAmTobN
+	 eD6mzCkcckM43848CDWacleG7MlU36PIuTlNNBX/mr5MjS4bocCLKMDq15cwboJLs/
+	 T2Im24O0AXExk9K7taMW/vps2eWMLZtBAv7IGWAZ0hJPCJ+6Zhg+XsyJqxl75NwOxy
+	 LSikWSe3K9PLvQ7C8mvC/GiOJhryWoPQ35021Ghn8t34TmFzrxur0kTZK543Pu1F/V
+	 aT/xttu/m6muQ==
+Date: Fri, 22 Nov 2024 11:31:04 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Alistair Francis <alistair@alistair23.me>
+Cc: lukas@wunner.de, Jonathan.Cameron@huawei.com,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	akpm@linux-foundation.org, bhelgaas@google.com,
+	linux-pci@vger.kernel.org, linux-cxl@vger.kernel.org,
+	bjorn3_gh@protonmail.com, ojeda@kernel.org, tmgross@umich.edu,
+	boqun.feng@gmail.com, benno.lossin@proton.me, a.hindborg@kernel.org,
+	wilfred.mallawa@wdc.com, alistair23@gmail.com,
+	alex.gaynor@gmail.com, gary@garyguo.net, aliceryhl@google.com
+Subject: Re: [RFC 3/6] lib: rspdm: Initial commit of Rust SPDM
+Message-ID: <20241122173104.GA2432309@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v2 03/21] motorcomm:yt6801: Implement the
- fxgmac_drv_probe function
-To: Frank Sae <Frank.Sae@motor-comm.com>, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- xiaogang.fan@motor-comm.com, fei.zhang@motor-comm.com, hua.sun@motor-comm.com
-References: <20241120105625.22508-1-Frank.Sae@motor-comm.com>
- <20241120105625.22508-4-Frank.Sae@motor-comm.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20241120105625.22508-4-Frank.Sae@motor-comm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115054616.1226735-4-alistair@alistair23.me>
 
-On 20/11/2024 02:56, Frank Sae wrote:
-> Implement the fxgmac_drv_probe function to init interrupts, register mdio and
-> netdev.
-> 
-> Signed-off-by: Frank Sae <Frank.Sae@motor-comm.com>
-> ---
->   .../ethernet/motorcomm/yt6801/yt6801_net.c    | 193 ++++++++++++++++++
->   1 file changed, 193 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/motorcomm/yt6801/yt6801_net.c b/drivers/net/ethernet/motorcomm/yt6801/yt6801_net.c
-> index 925bc1e7d..0cb2808b7 100644
-> --- a/drivers/net/ethernet/motorcomm/yt6801/yt6801_net.c
-> +++ b/drivers/net/ethernet/motorcomm/yt6801/yt6801_net.c
-> @@ -249,3 +249,196 @@ int fxgmac_net_powerdown(struct fxgmac_pdata *pdata, bool wake_en)
->   
->   	return 0;
->   }
-> +
-> +#ifdef CONFIG_PCI_MSI
-> +static void fxgmac_init_interrupt_scheme(struct fxgmac_pdata *pdata)
-> +{
-> +	struct pci_dev *pdev = to_pci_dev(pdata->dev);
-> +	u32 i, *flags = &pdata->int_flags;
-> +	int vectors, rc, req_vectors;
-> +
-> +	/* Since we have 4 channels, we must ensure the number of cpu core > 4
-> +	 * otherwise, just roll back to legacy
-> +	 *  0-3 for rx, 4 for tx, 5 for misc
-> +	 */
-> +	vectors = num_online_cpus();
-> +	if (vectors < FXGMAC_MAX_DMA_RX_CHANNELS)
-> +		goto enable_msi_interrupt;
-> +
-> +	req_vectors = FXGMAC_MSIX_INT_NUMS;
-> +	pdata->msix_entries =
-> +		kcalloc(req_vectors, sizeof(struct msix_entry), GFP_KERNEL);
-> +	if (!pdata->msix_entries)
-> +		goto enable_msi_interrupt;
-> +
-> +	for (i = 0; i < req_vectors; i++)
-> +		pdata->msix_entries[i].entry = i;
-> +
-> +	rc = pci_enable_msix_exact(pdev, pdata->msix_entries, req_vectors);
-> +	if (rc < 0) {
-> +		yt_err(pdata, "enable MSIx err, clear msix entries.\n");
-> +		/* Roll back to msi */
-> +		kfree(pdata->msix_entries);
-> +		pdata->msix_entries = NULL;
-> +		req_vectors = 0;
-> +		goto enable_msi_interrupt;
-> +	}
-> +
-> +	yt_dbg(pdata, "enable MSIx ok, cpu=%d,vectors=%d.\n", vectors,
-> +	       req_vectors);
-> +	fxgmac_set_bits(flags, FXGMAC_FLAG_INTERRUPT_POS,
-> +			FXGMAC_FLAG_INTERRUPT_LEN,
-> +			FXGMAC_FLAG_MSIX_ENABLED);
-> +	pdata->per_channel_irq = 1;
-> +	pdata->misc_irq = pdata->msix_entries[MSI_ID_PHY_OTHER].vector;
-> +	return;
-> +
-> +enable_msi_interrupt:
-> +	rc = pci_enable_msi(pdev);
-> +	if (rc < 0) {
-> +		fxgmac_set_bits(flags, FXGMAC_FLAG_INTERRUPT_POS,
-> +				FXGMAC_FLAG_INTERRUPT_LEN,
-> +				FXGMAC_FLAG_LEGACY_ENABLED);
-> +		yt_err(pdata, "MSI err, rollback to LEGACY.\n");
-> +	} else {
-> +		fxgmac_set_bits(flags, FXGMAC_FLAG_INTERRUPT_POS,
-> +				FXGMAC_FLAG_INTERRUPT_LEN,
-> +				FXGMAC_FLAG_MSI_ENABLED);
-> +		pdata->dev_irq = pdev->irq;
-> +		yt_dbg(pdata, "enable MSI ok, cpu=%d, irq=%d.\n", vectors,
-> +		       pdev->irq);
-> +	}
-> +}
-> +#endif
-> +
-> +static int fxgmac_mdio_write_reg(struct mii_bus *mii_bus, int phyaddr,
-> +				 int phyreg, u16 val)
-> +{
-> +	struct fxgmac_pdata *yt = mii_bus->priv;
-> +
-> +	if (phyaddr > 0)
-> +		return -ENODEV;
-> +
-> +	return yt->hw_ops.write_phy_reg(yt, phyreg, val);
-> +}
-> +
-> +static int fxgmac_mdio_read_reg(struct mii_bus *mii_bus, int phyaddr, int phyreg)
-> +{
-> +	struct fxgmac_pdata *yt = mii_bus->priv;
-> +
-> +	if (phyaddr > 0)
-> +		return -ENODEV;
-> +
-> +	return  yt->hw_ops.read_phy_reg(yt, phyreg);
-> +}
-> +
-> +static int fxgmac_mdio_register(struct fxgmac_pdata *pdata)
-> +{
-> +	struct pci_dev *pdev = to_pci_dev(pdata->dev);
-> +	struct phy_device *phydev;
-> +	struct mii_bus *new_bus;
-> +	int ret;
-> +
-> +	new_bus = devm_mdiobus_alloc(&pdev->dev);
-> +	if (!new_bus) {
-> +		yt_err(pdata, "devm_mdiobus_alloc err\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	new_bus->name = "yt6801";
-> +	new_bus->priv = pdata;
-> +	new_bus->parent = &pdev->dev;
-> +	new_bus->irq[0] = PHY_MAC_INTERRUPT;
-> +	snprintf(new_bus->id, MII_BUS_ID_SIZE, "yt6801-%x-%x",
-> +		 pci_domain_nr(pdev->bus), pci_dev_id(pdev));
-> +
-> +	new_bus->read = fxgmac_mdio_read_reg;
-> +	new_bus->write = fxgmac_mdio_write_reg;
-> +
-> +	ret = devm_mdiobus_register(&pdev->dev, new_bus);
-> +	if (ret < 0) {
-> +		yt_err(pdata, "devm_mdiobus_register err:%x\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	phydev = mdiobus_get_phy(new_bus, 0);
-> +	if (!phydev) {
-> +		yt_err(pdata, "mdiobus_get_phy err\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	pdata->phydev = phydev;
-> +	phydev->mac_managed_pm = true;
-> +	phy_support_asym_pause(phydev);
-> +
-> +	/* PHY will be woken up in rtl_open() */
-> +	phy_suspend(phydev);
-> +
-> +	return 0;
-> +}
-> +
-> +int fxgmac_drv_probe(struct device *dev, struct fxgmac_resources *res)
-> +{
-> +	struct fxgmac_hw_ops *hw_ops;
-> +	struct fxgmac_pdata *pdata;
-> +	struct net_device *netdev;
-> +	int ret;
-> +
-> +	netdev = alloc_etherdev_mq(sizeof(struct fxgmac_pdata),
-> +				   FXGMAC_MAX_DMA_RX_CHANNELS);
-> +	if (!netdev) {
-> +		dev_err(dev, "alloc_etherdev_mq err\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	SET_NETDEV_DEV(netdev, dev);
-> +	pdata = netdev_priv(netdev);
-> +
-> +	pdata->dev = dev;
-> +	pdata->netdev = netdev;
-> +	pdata->dev_irq = res->irq;
-> +	pdata->hw_addr = res->addr;
-> +	pdata->msg_enable = NETIF_MSG_DRV;
-> +	pdata->dev_state = FXGMAC_DEV_PROBE;
-> +
-> +	/* Default to legacy interrupt */
-> +	fxgmac_set_bits(&pdata->int_flags, FXGMAC_FLAG_INTERRUPT_POS,
-> +			FXGMAC_FLAG_INTERRUPT_LEN, FXGMAC_FLAG_LEGACY_ENABLED);
-> +	pdata->misc_irq = pdata->dev_irq;
-> +	pci_set_drvdata(to_pci_dev(pdata->dev), pdata);
-> +
-> +#ifdef CONFIG_PCI_MSI
-> +	fxgmac_init_interrupt_scheme(pdata);
-> +#endif
+On Fri, Nov 15, 2024 at 03:46:13PM +1000, Alistair Francis wrote:
+> This is the initial commit of the Rust SPDM library. It is based on and
+> compatible with the C SPDM library in the kernel (lib/spdm).
 
-No need to hide it behind the macros. Simple
+> +++ b/lib/Kconfig
+> @@ -754,6 +754,23 @@ config SPDM
+>  	  in .config.  Drivers selecting SPDM therefore need to also select
+>  	  any algorithms they deem mandatory.
+>  
+> +config RSPDM
+> +	bool "Rust SPDM"
+> +	select CRYPTO
+> +	select KEYS
+> +	select ASYMMETRIC_KEY_TYPE
+> +	select ASYMMETRIC_PUBLIC_KEY_SUBTYPE
+> +	select X509_CERTIFICATE_PARSER
+> +	depends on SPDM = "n"
+> +	help
+> +	  The Rust implementation of the Security Protocol and Data Model (SPDM)
+> +	  allows for device authentication, measurement, key exchange and
+> +	  encrypted sessions.
+> +
+> +	  Crypto algorithms negotiated with SPDM are limited to those enabled
+> +	  in .config.  Drivers selecting SPDM therefore need to also select
+> +	  any algorithms they deem mandatory.
 
-   if (IS_ENABLED(CONFIG_PCI_MSI) {}
+Maybe this (and config SPDM) should be tweaked to mention drivers that
+*depend* on SPDM or RSPDM, since they no longer use "select"?
 
-will make things work. pci_msi* functions are available even without
-PCI_MSI enabled in config.
-
-> +
-> +	ret = fxgmac_init(pdata, true);
-> +	if (ret < 0) {
-> +		yt_err(pdata, "fxgmac_init err:%d\n", ret);
-> +		goto err_free_netdev;
-> +	}
-> +
-> +	hw_ops = &pdata->hw_ops;
-> +	hw_ops->reset_phy(pdata);
-> +	hw_ops->release_phy(pdata);
-> +	ret = fxgmac_mdio_register(pdata);
-> +	if (ret < 0) {
-> +		yt_err(pdata, "fxgmac_mdio_register err:%d\n", ret);
-> +		goto err_free_netdev;
-> +	}
-> +
-> +	netif_carrier_off(netdev);
-> +	ret = register_netdev(netdev);
-> +	if (ret) {
-> +		yt_err(pdata, "register_netdev err:%d\n", ret);
-> +		goto err_free_netdev;
-> +	}
-> +	if (netif_msg_drv(pdata))
-> +		yt_dbg(pdata, "%s, netdev num_tx_q=%u\n", __func__,
-> +		       netdev->real_num_tx_queues);
-> +
-> +	return 0;
-> +
-> +err_free_netdev:
-> +	free_netdev(netdev);
-> +	return ret;
-> +}
-
+PCI_CMA, which currently depends on SPDM, doesn't really look like a
+"driver", so maybe it should say "users of SPDM" or "features
+depending on SPDM" or something?
 
