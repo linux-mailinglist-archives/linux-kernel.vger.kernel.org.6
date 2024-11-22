@@ -1,153 +1,163 @@
-Return-Path: <linux-kernel+bounces-417608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 558C59D5690
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 01:09:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7563F9D5691
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 01:12:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A8DF280CC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:09:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 013E2282B61
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B3F10E5;
-	Fri, 22 Nov 2024 00:09:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC3EEC4;
+	Fri, 22 Nov 2024 00:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jXJxG3Cy"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hPvBLq/t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A3F625
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 00:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65FD9625
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 00:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732234171; cv=none; b=BVxizlpkLCqokS5rwV2OrOcDQrXknk0MpaGnPatLqE+qAYTOvbbW1iT42Rr3AZ1zKJOjKuV+J7UD8/eBJ4koNBhi0OGyiyK03K6jhDBtgIZ61wg5JNJ56dFGHHqX9zHKIabg4HXuUUxX61opwjaHSQtEPaTlGoYRdOVqQqvLyjk=
+	t=1732234348; cv=none; b=fYqENsvmrMBe6K0ICxg/akWWtro3+F6+UffySd7YDvTuIYB1Fyd0JOkRKnV01i64SEdoGp9lumtr0g13HZZ/Z+QTr1sAh9N1YRyBwsgRXNlYC14mJQoWStII/UwWBb6O4qOrQFVS/zgfdawrNjwlsFelJr4g85OrJ13TGDiqKwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732234171; c=relaxed/simple;
-	bh=1d/tnel8OpAEGUunRv64WUCNjs7TwKyNdceW5M7PaJ0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BZw04fYjf/Bu25f3Q1+32Bog5hinoYejiH3AL8vAqpicfW1vrQ/d8S/+vpkyvuWcPo3Ypxm1HhddngWAyV3a2HaXfkHLdZGcMvpGcTzizH2JDujhtVHg1lKvp0Xpxb81/jpCEl7gEtglYaJO+L9ON1bFvGkhPHFte833MwvEs7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jXJxG3Cy; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5cfb81a0af9so4495a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 16:09:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732234168; x=1732838968; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BK4/KCXWB96ymSESeJdIEGwR7z31fMLlbynhd7TXEng=;
-        b=jXJxG3CyLpIsrJBz60h3QZDL1XUekkMamxDXgjWKr0oPtwKzEt8SWQZ8GO5ExI6Wy0
-         XJTFDlBje4uu2zftr5sEPtIVW8lkqHzOky8NKN5KLzIlC9LV/K0cj0bbD9l/kduiuXfQ
-         gDK6FhJpE3pZ7fXqFJOQT9Qp3ZGclpkEcKw/yC/N+pGXw3DkAsMWHn4MUqrH/aAxXPy2
-         ZCGiBOc7h8hBQzHy7DH7mCzYv+K0NxeoINFPn2lSUSFhl1lKKNg1oki7GrPOpAyHYbJE
-         9SD6Jup3dT1A3srh6RUmIDWGqjpfWnZ+ghNWuwtbywR2f2iGPp3UjwiHglcPMqeR7dbX
-         CnjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732234168; x=1732838968;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BK4/KCXWB96ymSESeJdIEGwR7z31fMLlbynhd7TXEng=;
-        b=duYUzO5xC6qagQn9aWWw8Qf6CGzTzIbSXtFpaL60iQgkSYL/v8XFO+1BZ88KcTSbog
-         Gs/Tx19eNM8frnj+psLURJIc7NsQqJRiQWzPiTSdxCIHgzmfXcPVKLQk3ZG2hLtf5/kD
-         AZAOkvmuyU5R/qjkk/eOT5giPY0eNEzVtuG4NuzaTMMBduzSqsOu1aMClgW3zNqkwtwa
-         MfWbDUcDNFNBqhUv06nKWYq13Hx4ol0xQfzXsosUBgYqFTqpp2RQqxPs76IWO+IIzXQG
-         0d5uc+ydv65U5pWzrYnMxDyJJC6HYj9zpLgAM+29VDFG3oRu1+AlONxILxomnGKTsm4D
-         /XyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4WKsJDkX69aCaOpXFs1mCBsHB6NFU55n+KbSTYqt0uUX1k743bKfG+Rqq04Oc7cvx8YXo2isBkXx2whk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw0JcDsvA4HLlM3RHjj9ogL9rOAnYEmivR2FZ8h2v10RAIeIRj
-	dgk/+bada0d1QA6Qrm4kFfx9OuWzrHjKIdvEjh/ctSe2fl3roEoGcFdOrS7NQVU9Lc7GKYIqfvS
-	J5RRfZhEiFrG8aP7FiWCH0IilY1SqK6glQWOb
-X-Gm-Gg: ASbGncv9MEHeR9rhMlAtjtd1xUwMrmECZiUwtIf46wbk5iTdfNiPYduU/hCnT0VCW/b
-	sekI4FLL4iQ0K2ElbdQejI+CKrQEYd+rE
-X-Google-Smtp-Source: AGHT+IFOeisSTtf3ETJm7V2kdKcjPzKq3mrsDw+Jx5dZpVqqKBpXIMKop81k5VMCEv0SRNmOsanBi5gd10EDjCe9AXA=
-X-Received: by 2002:a05:6402:945:b0:5cf:c93f:36f3 with SMTP id
- 4fb4d7f45d1cf-5d021787792mr10204a12.7.1732234167906; Thu, 21 Nov 2024
- 16:09:27 -0800 (PST)
+	s=arc-20240116; t=1732234348; c=relaxed/simple;
+	bh=2bFBvlIANNzsnG/eRsTTpVDynDBFhvmqfTYpO+NZfkU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lqvGtx1vkabP52smTVViHTnya6DNRBb8XAo/ambp5oC/QfFn8U93M32qV6Hj8I9LAEt7An8dx+fFmNXAueiNCAWEY744+jC6sebS2lvurgzp80+KJ0eGoZjFdhc4hw3kvnTXAUqG5asuzgu1HXcaOvGDRAVtlrfJ16bUtgdFSec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hPvBLq/t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DC93C4CECC;
+	Fri, 22 Nov 2024 00:12:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732234345;
+	bh=2bFBvlIANNzsnG/eRsTTpVDynDBFhvmqfTYpO+NZfkU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hPvBLq/tcrhkeqbB0/yVI/tV87vKr2sAGORr2D8/7v7r7psgNnkWrRvsPMYebv6B2
+	 15ElUn+MQL4/txvkJztS1pG4/PTqHZ25X7wEF75z0NtuJ8AhSqgxRgz/iNjTzVHmfj
+	 +7tCWlKvdv4+8JeotVLkfoKkXJ5C0a0rXTS6ySeSTjs4b4ZiSqvBgQ619jtBtkjAHt
+	 4YketKrp4iZOdc6kmaiMWZ92avl2P3NJdvei+7Bjmp69wv7cXYrVxtU9KxEbEIJzM9
+	 Oh11rkkHbJnHNHlktaJU8sn665wD8gti5WM3rn681061IaA3SISQH3bSasqZW4AxnE
+	 fgaZSQpXRci9A==
+Date: Thu, 21 Nov 2024 16:12:23 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Laight <David.Laight@aculab.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Waiman Long <longman@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	"Kirill A . Shutemov" <kirill@shutemov.name>
+Subject: Re: [PATCH v3 2/6] x86/uaccess: Avoid barrier_nospec() in 64-bit
+ __get_user()
+Message-ID: <20241122001223.t4uywacusrplpefq@jpoimboe>
+References: <cover.1730166635.git.jpoimboe@kernel.org>
+ <82cbb9983fef5ecf6f1cb33661e977172d40a7e6.1730166635.git.jpoimboe@kernel.org>
+ <20241029032735.pw3bg64bpneqnfhk@treble.attlocal.net>
+ <76bb85ceeb854e3ab68d87f846515306@AcuMS.aculab.com>
+ <20241115230653.hfvzyf3aqqntgp63@jpoimboe>
+ <CAHk-=wgLCzEwa=S4hZFGeOPjix-1_fDrsqR-QLaBcDM-fgkvhw@mail.gmail.com>
+ <20241121214011.iiup2fdwsys7hhts@jpoimboe>
+ <CAHk-=wigHm2J4LkUL1=y_H8zGwM0JsK2CrWyLNbz9fvXfbaBQA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111182738.1832953-1-joshdon@google.com>
-In-Reply-To: <20241111182738.1832953-1-joshdon@google.com>
-From: Josh Don <joshdon@google.com>
-Date: Thu, 21 Nov 2024 16:09:16 -0800
-Message-ID: <CABk29NuO0awfERpRBHyEyRPaCcrKJ-Zx1fR9f8RgSrqpqNM_cg@mail.gmail.com>
-Subject: Re: [PATCH] sched: fix warning in sched_setaffinity
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org, 
-	Waiman Long <longman@redhat.com>, Madadi Vineeth Reddy <vineethr@linux.ibm.com>, 
-	Roman Gushchin <kfree@google.com>, torvalds@linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wigHm2J4LkUL1=y_H8zGwM0JsK2CrWyLNbz9fvXfbaBQA@mail.gmail.com>
 
-On Mon, Nov 11, 2024 at 10:27=E2=80=AFAM Josh Don <joshdon@google.com> wrot=
-e:
->
-> Commit 8f9ea86fdf99b added some logic to sched_setaffinity that included
-> a WARN when a per-task affinity assignment races with a cpuset update.
->
-> Specifically, we can have a race where a cpuset update results in the
-> task affinity no longer being a subset of the cpuset. That's fine; we
-> have a fallback to instead use the cpuset mask. However, we have a WARN
-> set up that will trigger if the cpuset mask has no overlap at all with
-> the requested task affinity. This shouldn't be a warning condition; its
-> trivial to create this condition.
->
-> Reproduced the warning by the following setup:
->
-> - $PID inside a cpuset cgroup
-> - another thread repeatedly switching the cpuset cpus from 1-2 to just 1
-> - another thread repeatedly setting the $PID affinity (via taskset) to 2
->
-> Fixes: 8f9ea86fdf99b ("sched: Always preserve the user requested cpumask"=
-)
-> Signed-off-by: Josh Don <joshdon@google.com>
-> Acked-by: Waiman Long <longman@redhat.com>
-> Tested-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-> Acked-and-tested-by: Vincent Guittot <vincent.guittot@linaro.org>
-> ---
->  kernel/sched/syscalls.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
-> index 4fae3cf25a3a..3a88f7c0cb69 100644
-> --- a/kernel/sched/syscalls.c
-> +++ b/kernel/sched/syscalls.c
-> @@ -1321,7 +1321,7 @@ int __sched_setaffinity(struct task_struct *p, stru=
-ct affinity_context *ctx)
->                         bool empty =3D !cpumask_and(new_mask, new_mask,
->                                                   ctx->user_mask);
->
-> -                       if (WARN_ON_ONCE(empty))
-> +                       if (empty)
->                                 cpumask_copy(new_mask, cpus_allowed);
->                 }
->                 __set_cpus_allowed_ptr(p, ctx);
-> --
-> 2.46.0.469.g59c65b2a67-goog
->
+On Thu, Nov 21, 2024 at 02:16:12PM -0800, Linus Torvalds wrote:
+>     mov    %gs:0x0,%rax                 # current
+>     incl   0x1a9c(%rax)                 # current->pagefault_disable++
+>     movabs $0x123456789abcdef,%rcx      # magic virtual address size
+>     cmp    %rsi,%rcx                    # address masking
+>     sbb    %rcx,%rcx
+>     or     %rsi,%rcx
+>     stac                                # enable user space acccess
+>     mov    (%rcx),%ecx                  # get the value
+>     clac                                # disable user space access
+>     decl   0x1a9c(%rax)                 # current->pagefault_disable--
+>     mov    %ecx,(%rdi)                  # save the value
+>     xor    %eax,%eax                    # return 0
+>     ret
 
-Hey,
+The asm looks good, but the C exploded a bit... why not just have an
+inline get_user()?
 
-I wanted to bump this one last time. It's a pretty simple change that
-already has ACK's from 3 other folks, but has seemed to fall through
-the cracks [1].
+> If you can test this and verify that it actually help, I'll take it as
+> a patch. Consider it signed-off after testing.
 
-Best,
+Let me see if I can recreate the original report (or get the automatic
+testing to see the commit).
+
+> > Also, is there any harm in speeding up __get_user()?  It still has ~80
+> > callers and it's likely to be slowing down things we don't know about.
+> 
+> How would you speed it up?  We definitely can't replace the fence with
+> addressing tricks. So we can't just replace it with "get_user()",
+> because of those horrid architecture-specific kernel uses.
+
+I'm not sure if you saw the example code snippet I posted up-thread,
+here it is below.
+
+It adds a conditional branch to test if it's a user address.  If so, it
+does pointer masking.  If not, it does LFENCE.  So "bad" users get the
+slow path, and we could even add a WARN_ON().
+
+Yes, another conditional branch isn't ideal, but it's still much faster
+than the current code, and it would root out any bad users with a
+WARN_ON() so that eventually it can just become a get_user() alias.
+
+.macro __get_user_nocheck_nospec
+#ifdef CONFIG_X86_64
+	movq $0x0123456789abcdef, %rdx
+ 1:
+.pushsection runtime_ptr_USER_PTR_MAX, "a"
+	.long 1b - 8 - .
+.popsection
+	cmp %rax, %rdx
+	jb 10f
+	sbb %rdx, %rdx
+	or %rdx, %rax
+	jmp 11f
+10:	/*
+	 * Stop access_ok() branch misprediction -- both of them ;-)
+	 *
+	 * As a benefit this also punishes callers who intentionally call this
+	 * with a kernel address.  Once they're rooted out, __get_user() can
+	 * just become an alias of get_user().
+	 *
+	 * TODO: Add WARN_ON()
+	 */
+#endif
+	ASM_BARRIER_NOSPEC
+11:
+.endm
+
+/* .. and the same for __get_user, just without the range checks */
+SYM_FUNC_START(__get_user_nocheck_1)
+	__get_user_nocheck_nospec
+	ASM_STAC
+	UACCESS movzbl (%_ASM_AX),%edx
+	xor %eax,%eax
+	ASM_CLAC
+	RET
+SYM_FUNC_END(__get_user_nocheck_1)
+EXPORT_SYMBOL(__get_user_nocheck_1)
+
+-- 
 Josh
-
-[1] Timeline:
-Original patch sent Aug 29 and quickly got ACK'd:
-https://lkml.org/lkml/2024/8/29/1819
-Pinged on Sep 30: https://lkml.org/lkml/2024/9/30/1528
-Pinged on Oct 25: https://lkml.org/lkml/2024/10/25/1708
-Resent as a new message on Nov 11: https://lkml.org/lkml/2024/11/11/1125
 
