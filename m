@@ -1,58 +1,66 @@
-Return-Path: <linux-kernel+bounces-418339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA4EF9D608A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:40:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5653D9D608E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:40:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A8F128285B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:40:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0013F1F215E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E6B148FE1;
-	Fri, 22 Nov 2024 14:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033E61DD0E7;
+	Fri, 22 Nov 2024 14:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kk41hIxV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E7513632B;
-	Fri, 22 Nov 2024 14:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="H9pW8oao"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B67B18A6C4
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732286137; cv=none; b=j8K6KaphYMBYyn3kdsFMfRoFnzIRdEAcH2twHEYBOOuZXF99itsWuOy5j8fcvZhfZjB1zWokxzq4fdNRWlQ22rqvqemwEt9WTkEs7em1diJ2xXfw3hF+4l9FJIDXVd7e8H7TnmyK0d+V8S9h4YR/Kxf6SvCxZpFpSNdqyRPLbXo=
+	t=1732286183; cv=none; b=TMy0yR+hi3SiDx/tw5xD3FNCTTs87FV/LBy/h2Z8wsA/wk1oUv/3f1IJDsnSX7OBHJIR8XkeGDa9pcrFhszuvrobBeEgRvZfLXBf2ydquK3dM058YmWOblo7lkWvQt11wjoZtm45IGVUc3j6oWT6ePj0H1Yev7TGSlmBT2nagPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732286137; c=relaxed/simple;
-	bh=P3LpHamRarxbPekIwfEOuKQjsioKyb0VI61LrbiusJU=;
+	s=arc-20240116; t=1732286183; c=relaxed/simple;
+	bh=+uinDo0lwq6B8/fmThCcMntjzgH5HjwLRV2uQLD+tRo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LHXt/7M8izQuwROVOGTiuJLkEOilvFm4+i9zEkcLJxWcEfRRv6EM23Zw+B/95GMhZLJHhIo7S9WqzqNOAHrwWU6khhFpWjgwzqB1B780ytOrfKXtCFrkLfIIiuedhFn5vB6tsIYQlkZb99Yv6QhfHwsHlKqEdUVluKUljX5NrLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kk41hIxV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AD89C4CECE;
-	Fri, 22 Nov 2024 14:35:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1732286136;
-	bh=P3LpHamRarxbPekIwfEOuKQjsioKyb0VI61LrbiusJU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kk41hIxVbqJi+HRvUxayl8qy4FydMVYORD+YncMsakBNAFYyJfpT76T5jLcN/DJzn
-	 k5X4+fLtDEDUyLpF8dPpVUkaDqDYfO5sH776WqA+LWucQ0G1OF8HlmHnAUP5NIYyPw
-	 WTP8gvTV6a2Edgu8k5sL0gk5uT8FbTMcA6Tw6OJA=
-Date: Fri, 22 Nov 2024 15:35:10 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, David Wang <00107082@163.com>,
-	brgl@bgdev.pl, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, geert@linux-m68k.org,
-	linux-hardening@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH] Fix a potential abuse of seq_printf() format string in
- drivers
-Message-ID: <2024112259-bagful-commend-89ff@gregkh>
-References: <20241120053055.225195-1-00107082@163.com>
- <CACRpkdZ0zwn0908LDqrfQJtF7M-WRcKA4qdJdwSXZNzm0L47CA@mail.gmail.com>
- <202411201008.5262C14@keescook>
- <2024112031-unreal-backslid-0c24@gregkh>
- <8BEA1444-469F-4276-AB04-0CF7C324916D@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gKmlfTSapzGuqktcrx21/jWzWeNriMIm+abBsfP28x2YmFJDtZI57so6Cvs7YWZziEu6UhfSpvDghOPwXSRuZdsyymJYBfXHMO4UerBKJLdO80elc86VgGNaKxZ+VKnbLLf2lomumVKKTqqttPC7xaw3cFu8QPxyWMgMwAiy8tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=H9pW8oao; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id E1E2B14C1E1;
+	Fri, 22 Nov 2024 15:36:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1732286173;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w8v3+aQO1zVNTDKznW1DiFi9l9+YX7MeVTMpaVHPOvE=;
+	b=H9pW8oao5PKjueGtaVXyFvQ8wm/8qmT4yo9QeGkV5eRrBUvsTVNtF2Oqqy7rpW04CjGwiq
+	y9/5ObirE/rFJocrKksXYSnhCpP0FfhO6QwaIR92CiD2R8r45kdnGbjfkFDOuuIuoRqUV9
+	h6Wj8QVbhjQF/pcolpMhMNKrS3IlRV5PqjFapY528TnG9TaFOZkBRh1jhjuh/yodWfrA7B
+	+vBZdEFa2XLDDxNgBdoWvoFMcERcTn0tz5CQmOn0RSCmFHaVpTfWxICqiaUSL0XyEUSCWl
+	wCRswW2eU430Xw3NhFtdT5xTD+yOaj+4000L6gpSEvMosWAaqb+NLaqKNB4f0A==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id df0f998c;
+	Fri, 22 Nov 2024 14:36:08 +0000 (UTC)
+Date: Fri, 22 Nov 2024 23:35:53 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Cc: Alexander Merritt <alexander@edera.dev>, v9fs@lists.linux.dev,
+	linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Alex Zenla <alex@edera.dev>, Ariadne Conill <ariadne@ariadne.space>
+Subject: Re: [PATCH] 9p/xen: fix release of IRQ
+Message-ID: <Z0CWyXuMiifOv7HO@codewreck.org>
+References: <20241121225100.5736-1-alexander@edera.dev>
+ <Zz_F9wMda68xhvKa@codewreck.org>
+ <a6570b47-217c-4e92-a64c-16fc34494e3e@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,80 +70,47 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8BEA1444-469F-4276-AB04-0CF7C324916D@kernel.org>
+In-Reply-To: <a6570b47-217c-4e92-a64c-16fc34494e3e@suse.com>
 
-On Thu, Nov 21, 2024 at 08:38:27PM -0800, Kees Cook wrote:
+Jürgen Groß wrote on Fri, Nov 22, 2024 at 02:54:06PM +0100:
+> > (style) I don't recall seeing much `a = b = 0` in the kernel, and
+> > looking at it checkpatch seems to complain:
+> > CHECK: multiple assignments should be avoided
+> > #114: FILE: net/9p/trans_xen.c:290:
+> > +		priv->rings[i].evtchn = priv->rings[i].irq = 0;
+> > 
+> > Please run checkpatch on the patches you send (b4 can do it for you if
+> > you want to start using it)
+> > 
+> > 
+> > code-wise,
+> > I also don't see where unbinf_from_irqhandler would free the evtchn, so
+> > is it leaking here, or is it implicit from something else?
+> > We only free it explicitly on error binding the irq.
 > 
-> 
-> On November 20, 2024 11:28:35 AM PST, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> >On Wed, Nov 20, 2024 at 10:12:40AM -0800, Kees Cook wrote:
-> >> On Wed, Nov 20, 2024 at 08:35:38AM +0100, Linus Walleij wrote:
-> >> > On Wed, Nov 20, 2024 at 6:31 AM David Wang <00107082@163.com> wrote:
-> >> > 
-> >> > > Using device name as format string of seq_printf() is proned to
-> >> > > "Format string attack", opens possibility for exploitation.
-> >> > > Seq_puts() is safer and more efficient.
-> >> > >
-> >> > > Signed-off-by: David Wang <00107082@163.com>
-> >> > 
-> >> > Okay better get Kees' eye on this, he looks after string vulnerabilities.
-> >> > (But I think you're right.)
-> >> 
-> >> Agreed, this may lead to kernel memory content exposures. seq_puts()
-> >> looks right.
-> >> 
-> >> Reviewed-by: Kees Cook <kees@kernel.org>
-> >
-> >Wait, userspace "shouldn't" be controlling a device name, but odds are
-> >there are some paths/subsystems that do this, ugh.
-> >
-> >> To defend against this, it might be interesting to detect
-> >> single-argument seq_printf() usage and aim it at seq_puts()
-> >> automatically...
-> >
-> >Yeah, that would be good to squash this type of issue.
-> >
-> >> > >  drivers/gpio/gpio-aspeed-sgpio.c            | 2 +-
-> >> > >  drivers/gpio/gpio-aspeed.c                  | 2 +-
-> >> > >  drivers/gpio/gpio-ep93xx.c                  | 2 +-
-> >> > >  drivers/gpio/gpio-hlwd.c                    | 2 +-
-> >> > >  drivers/gpio/gpio-mlxbf2.c                  | 2 +-
-> >> > >  drivers/gpio/gpio-omap.c                    | 2 +-
-> >> > >  drivers/gpio/gpio-pca953x.c                 | 2 +-
-> >> > >  drivers/gpio/gpio-pl061.c                   | 2 +-
-> >> > >  drivers/gpio/gpio-tegra.c                   | 2 +-
-> >> > >  drivers/gpio/gpio-tegra186.c                | 2 +-
-> >> > >  drivers/gpio/gpio-tqmx86.c                  | 2 +-
-> >> > >  drivers/gpio/gpio-visconti.c                | 2 +-
-> >> > >  drivers/gpio/gpio-xgs-iproc.c               | 2 +-
-> >> > >  drivers/irqchip/irq-gic.c                   | 2 +-
-> >> > >  drivers/irqchip/irq-mvebu-pic.c             | 2 +-
-> >> > >  drivers/irqchip/irq-versatile-fpga.c        | 2 +-
-> >> > >  drivers/pinctrl/bcm/pinctrl-iproc-gpio.c    | 2 +-
-> >> > >  drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 2 +-
-> >> > >  drivers/pinctrl/pinctrl-mcp23s08.c          | 2 +-
-> >> > >  drivers/pinctrl/pinctrl-stmfx.c             | 2 +-
-> >> > >  drivers/pinctrl/pinctrl-sx150x.c            | 2 +-
-> >> > >  drivers/pinctrl/renesas/pinctrl-rzg2l.c     | 2 +-
-> >> > 
-> >> > Can you split this in three patches per-subsystem?
-> >> > One for gpio, one for irqchip and one for pinctrl?
-> >> > 
-> >> > Then send to each subsystem maintainer and CC kees on
-> >> > each.
-> >> > 
-> >> > I'm just the pinctrl maintainer. The rest can be found with
-> >> > scripts/get_maintainer.pl.
-> >> 
-> >> Oof. That's a lot of work for a mechanical change like this. Perhaps
-> >> Greg KH can take it directly to the drivers tree instead?
-> >
-> >I can take it all, as-is, right now, if you want me to.  Just let me
-> >know.
-> 
-> Yes, please do. I will send a patch for making seq_printf more defensive separately.
+> unbind_from_irqhandler()
+>   unbind_from_irq()
+>     __unbind_from_irq()
+>       close_evtchn()
 
-Great, now queued up, let's make sure 0-day is ok with it...
+Thank you, I didn't go far enough.
 
-greg k-h
+And also, bah; I just spent 30 minutes thinking why would setting irq to
+zero prevent anything, but the bulk of the patch was using the correct
+device for unbind (as the commit correctly says, I just saw double-free
+and setting something to 0 after free as being related)
+I'll just remove this darned line, as the free function can't walk a
+ring twice anyway.
+
+
+Also this made me notice xen_9pfs_front_init calls xen_9pfs_front_free()
+on error, but that init is part of a front_changed call and I'd bet
+xen_9pfs_front_remove() will still be called afterwards.
+If init failure ought to free then it probably should unset drvdata
+first like remove, and remove (and possibly many other dev_get_drvdata
+calls) should check for null; otherwise it's probably best to leave it
+to remove to call free exactly once...
+
+-- 
+Dominique Martinet | Asmadeus
 
