@@ -1,67 +1,65 @@
-Return-Path: <linux-kernel+bounces-418772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED0A9D6582
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:02:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59CFC9D6588
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:07:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FE62B228F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:02:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D34D1161067
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABF618C342;
-	Fri, 22 Nov 2024 22:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20FEA18BC15;
+	Fri, 22 Nov 2024 22:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TJjYLcuE"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XsRd9Cxv"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7592B188736
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 22:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1521176ADB
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 22:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732312934; cv=none; b=kPAn+wMgo5SKauMpETtDHe0Dpja7LyRGmaSTjUuZUacK1aTWiGpvD/O7Gak3B061P4FjGxtO6ydnXap16SMeHI2vKWgNvYDDZivu6lNv5IItpOXNKsv5mR34xr4hcWcNLgSQafCpQMWwcTw31qfi6kgFIn2M/qtzzXQNqKP2/VQ=
+	t=1732313234; cv=none; b=Ki9vh15QYn9aS9Exb+TrE4lgM+ca7jBTstHpsYPlDSMmIWTJvFWiHM98tjoqNlgd72aVSWUwDO5vhUtFy5tYFz4z1xMh8JfLJ/Tl3jdme3hbhR7luflh8HDr8hL2f3xfNWAjE0SO6ugMI8w6LLB8Kuh9/N5utxwLWCCLwjX8j3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732312934; c=relaxed/simple;
-	bh=3GYeIrBV2AhviVYKCufI9HReuGgZ8/tGhXDP17TkM1Q=;
+	s=arc-20240116; t=1732313234; c=relaxed/simple;
+	bh=PIN+jRJHphsVkVPazk7FABfbX5MCNhJGD6UExaxzGFU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gfG15zAuQeJA1OKBOfCbk4Od4VEwZLHQ4k2tLsMgKXg+uhtO4FVMyG32i1ieolKjrk3UjWCYZCEdp6zYtLtbZNK8ulMrywjDP2zLo+lop4RmfO4W9YixqISy1YVmd+kPP18V8JbzQqfbWIraYII1FpR6fh+ORhUs8tD+X8qRKxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TJjYLcuE; arc=none smtp.client-ip=91.218.175.184
+	 Content-Type:Content-Disposition:In-Reply-To; b=K2kykRujQ8VbG0Xg8H4DwIuS99TDsnY1qc2drPxSFs75sON6d0u2lnlkKNBCx0YmghewJGDxY7dIruDi3BpHEzXBrT8gG+SeMscStvHtEZ3rWB49/XPyXwJWyOg21Q5Q4AOYTTa6C/vNfjJXxyzrjwGkJphswg5RT0SPEoM1HKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XsRd9Cxv; arc=none smtp.client-ip=91.218.175.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 22 Nov 2024 17:02:00 -0500
+Date: Fri, 22 Nov 2024 14:07:00 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732312927;
+	t=1732313230;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7GPdysU3+ulwwEZym2gbb4LV2XNAsMZyaMxjoxUdvB0=;
-	b=TJjYLcuEehU9rXjjANl641dzAmpdwyRVnPXBAD3hi93j7iO70q+kZM0cRhqXky8BYbwpzs
-	vNEt9DhzO6PHrmTnqLmq6uLj7B800wnZRup6/7nRZjkbm6jQV3gSwa6p8+IMuVzdg442sz
-	uRH30CxPY04qAHyFUmghkytqv+J0G78=
+	bh=bfY0Pf/J5wwf39xKb8ImS4WjQmELRZS9FkgRQ+eWYnk=;
+	b=XsRd9CxvGwRA/R7tFTAPja+AHc49dwSaSCQfS4/qfNLc0xp0zLqF29aVLuwnLBhtmMOc8A
+	KEBEL1VXtEbRCnu9YEjzzkD2M22Xyypcc/DNWZOyO04ATG0OUhzecpwEVQ5Zou1seFbLfk
+	zVwvSjtSC9/2YOZ/N0rfUAq3aSsXqXk=
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
-	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, maintainers@linux.kernel.org
-Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <o5tbrrk4r3sxtvk7tjyua5h2qaa3fos7446dkxbjyxjwhp4odd@we5elwaeb7dv>
-References: <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
- <ZtBzstXltxowPOhR@dread.disaster.area>
- <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg>
- <ZtUFaq3vD+zo0gfC@dread.disaster.area>
- <nawltogcoffous3zv4kd2eerrrwhihbulz7pi2qyfjvslp6g3f@j3qkqftra2qm>
- <ZtV6OwlFRu4ZEuSG@tiehlicka>
- <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq>
- <ZtWH3SkiIEed4NDc@tiehlicka>
- <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
- <6740fc3aabec0_5eb129497@dwillia2-xfh.jf.intel.com.notmuch>
+From: Oliver Upton <oliver.upton@linux.dev>
+To: James Clark <james.clark@linaro.org>
+Cc: will@kernel.org, maz@kernel.org, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Dave Martin <Dave.Martin@arm.com>, Fuad Tabba <tabba@google.com>,
+	James Morse <james.morse@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Vincent Donnefort <vdonnefort@google.com>,
+	Quentin Perret <qperret@google.com>, linux-kernel@vger.kernel.org,
+	Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH] arm64: Fix usage of new shifted MDCR_EL2 values
+Message-ID: <Z0EAhCbhM1B_4vW9@linux.dev>
+References: <20241122164636.2944180-1-james.clark@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,164 +68,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6740fc3aabec0_5eb129497@dwillia2-xfh.jf.intel.com.notmuch>
+In-Reply-To: <20241122164636.2944180-1-james.clark@linaro.org>
 X-Migadu-Flow: FLOW_OUT
 
-On Fri, Nov 22, 2024 at 01:48:42PM -0800, Dan Williams wrote:
-> Kent Overstreet wrote:
-> > On Mon, Sep 02, 2024 at 11:39:41AM GMT, Michal Hocko wrote:
-> > > On Mon 02-09-24 04:52:49, Kent Overstreet wrote:
-> > > > On Mon, Sep 02, 2024 at 10:41:31AM GMT, Michal Hocko wrote:
-> > > > > On Sun 01-09-24 21:35:30, Kent Overstreet wrote:
-> [..]
++cc Paolo
+
+Ugh, sorry for the mess + thanks for the fix James.
+
+Paolo -- would you be able to apply this patch directly to your tree?
+This really should go in ASAP.
+
+Otherwise, I'll grab it + send another pull.
+
+On Fri, Nov 22, 2024 at 04:46:35PM +0000, James Clark wrote:
+> Since the linked fixes commit, these masks are already shifted so remove
+> the shifts. One issue that this fixes is SPE and TRBE not being
+> available anymore:
 > 
-> Kent,
+>  arm_spe_pmu arm,spe-v1: profiling buffer owned by higher exception level
 > 
-> The Code of Conduct Committee received reports about your conduct in
-> this email discussion.
-> 
-> Link to email where the violation took place:
-> 
-> https://lore.kernel.org/citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk
-> 
-> Our community works on trust and respect and has agreed to abide by the
-> Code of Conduct:
-> 
-> Reference: https://docs.kernel.org/process/code-of-conduct.html
-> 
-> The code of Conduct Committee has determined that your written abuse
-> of another community member required action on your part to repair the
-> damage to the individual and the community. You took insufficient action
-> to restore the community's faith in having otherwise productive technical
-> discussions without the fear of personal attacks.
-> 
-> Following the Code of Conduct Interpretation process the TAB has approved
-> has approved the following recommendation:
-> 
-> -- Restrict Kent Overstreet's participation in the kernel development
->    process during the Linux 6.13 kernel development cycle.
-> 
->        - Scope: Decline all pull requests from Kent Overstreet during
->          the Linux 6.13 kernel development cycle.
+> Fixes: 641630313e9c ("arm64: sysreg: Migrate MDCR_EL2 definition to table")
+> Signed-off-by: James Clark <james.clark@linaro.org>
 
-Ok.
+Acked-by: Oliver Upton <oliver.upton@linux.dev>
 
-Just to be clear on what this is about though, I'm going to post
-publically what I wrote Michal back in September.
-
-This is about a CoC board that on the one hand, doesn't wish to follow
-its own rules, and on the other - I can't even make sense of.
-
-From kent.overstreet@linux.dev Wed Sep  4 14:22:39 2024
-Date: Wed, 4 Sep 2024 14:22:39 -0400
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <5qukfetlxkadrdjp443xlzbyjhw26l3zzgcdlmfkxgbkpkrv65@hobl73hoc5ip>
-References: <20240827061543.1235703-1-mhocko@kernel.org>
- <Zs6jFb953AR2Raec@dread.disaster.area>
- <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
- <ZtBzstXltxowPOhR@dread.disaster.area>
- <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg>
- <ZtUFaq3vD+zo0gfC@dread.disaster.area>
- <nawltogcoffous3zv4kd2eerrrwhihbulz7pi2qyfjvslp6g3f@j3qkqftra2qm>
- <ZtV6OwlFRu4ZEuSG@tiehlicka>
- <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq>
- <ZtWH3SkiIEed4NDc@tiehlicka>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZtWH3SkiIEed4NDc@tiehlicka>
-Status: RO
-Content-Length: 4224
-Lines: 88
-
-On Mon, Sep 02, 2024 at 11:39:41AM GMT, Michal Hocko wrote:
-> On Mon 02-09-24 04:52:49, Kent Overstreet wrote:
-> > On Mon, Sep 02, 2024 at 10:41:31AM GMT, Michal Hocko wrote:
-> > > On Sun 01-09-24 21:35:30, Kent Overstreet wrote:
-> > > [...]
-> > > > But I am saying that kmalloc(__GFP_NOFAIL) _should_ fail and return NULL
-> > > > in the case of bugs, because that's going to be an improvement w.r.t.
-> > > > system robustness, in exactly the same way we don't use BUG_ON() if it's
-> > > > something that we can't guarantee won't happen in the wild - we WARN()
-> > > > and try to handle the error as best we can.
-> > > 
-> > > We have discussed that in a different email thread. And I have to say
-> > > that I am not convinced that returning NULL makes a broken code much
-> > > better. Why? Because we can expect that broken NOFAIL users will not have a
-> > > error checking path. Even valid NOFAIL users will not have one because
-> > > they _know_ they do not have a different than retry for ever recovery
-> > > path. 
-> > 
-> > You mean where I asked you for a link to the discussion and rationale
-> > you claimed had happened? Still waiting on that
-> 
-> I am not your assistent to be tasked and search through lore archives.
-> Find one if you need that.
-> 
-> Anyway, if you read the email and even tried to understand what is
-> written there rather than immediately started shouting a response then
-> you would have noticed I have put actual arguments here. You are free to
-> disagree with them and lay down your arguments. You have decided to
-> 
-> [...]
-> 
-> > Yeah, enough of this insanity.
-> 
-> so I do not think you are able to do that. Again...
-
-BTW - (after getting emails for three different people about this, heh)
-
-I do want to apologize for things getting this heated the other day, but
-I need to also tell you why I reacted the way I did.
-
-Firstly, it's nothing personal: I'm not axe grinding against you
-(although you were a major source of frustration for myself and Suren in
-the memory allocation profiling discussions, and I hope you can
-recognize that as well).
-
-But I do take correctness issues very seriously, and I will get frosty
-or genuinely angry if they're being ignored or brushed aside.
-
-The reality as that experience, and to be frank standards of
-professionalism, do vary within the kernel community, and I have had
-some _outrageous_ fights over things as bad as silent data corruption
-bugs (introduced in code I wrote by people who did not CC me, no less;
-it was _bad_, and yes it has happened more than once). So - I am _not_
-inclined to let things slide, even if it means being the asshole at
-times.
-
-Thankfully, most people aren't like that. Dave, Willy, Linus - we can be
-shouting at each other, but we still listen, and we know how not to take
-it personally and focus on the technical when there's something serious
-going on.
-
-Usually when one of us is shouting, you'll find there's a good reason
-and some history behind it, even if we also recognize the need to try to
-tone things down and not be _too_ much of an asshole. Linus was
-reminding me of that yesterday...
-
-So for the record: I'm not trying to roadblock you or anyone else, I'm
-just trying to make sure we all have shit that _works_.
-
-And I have been noticing you stepping up in discussions more, and I'd
-like to encourage that, if I may. MM has been lacking in strong
-technical leadership for a _long_ time - Andrew's great on the process
-side, he makes sure things move along, but we haven't had anyone who's
-trying to keep everything important in their heads, who's able to point
-out to people where their work fits in the larger picture, and there's
-been some messy things that have built up over time.
-
-And a word on technical leadership - it doesn't mean being the one who's
-"right" all the time, although it does involve a lot of saying "no" to
-people. The people who seem the smartest - it's not raw IQ that they've
-got (although that helps!), it's the ability to listen and quickly
-incorporate other people's ideas without drama or attachment, and the
-ability to maintain perspective; notice what people are blocked on,
-without getting stuck on it, and think about how it fits into the wider
-perspective.
-
-Cheers,
-Kent
+-- 
+Thanks,
+Oliver
 
