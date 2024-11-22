@@ -1,153 +1,202 @@
-Return-Path: <linux-kernel+bounces-417791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C04B9D591E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:35:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B4649D5926
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:41:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E163F1F22E15
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:35:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16AE91F224B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21BE158A00;
-	Fri, 22 Nov 2024 05:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D68158848;
+	Fri, 22 Nov 2024 05:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YIaAypHN"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nnrPIGb8"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7867230987;
-	Fri, 22 Nov 2024 05:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4FD230987
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 05:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732253726; cv=none; b=e/0/sDzur1kIUQ08tjOd05XxDVBY5sQ5kaWIKMiUP9IjD7r4gvugfifVUWEwWaV/gPpy551svprJ5RjHtuX/RtjE186pOoYZN0N3appOecOOfwoScLglbfwS5PYVvZdVDF5Uh/S3hvzt9mGSd4KFYW9i6P9zirieb/Oty9tIkhw=
+	t=1732254093; cv=none; b=LPlQUXoNH+JAUm7/hWjPdaEiDu4FRkwCeoMvEr1mBtvyD5/xsXNchOqvt2c3EDgDiBr+crfjm6XDf+VNdpBl8sbStq+Lx/FrAwR8l/cbjx0z1p/JcWQn0F8NKyb97vK0md25lbBxbqhtfLOk7uRGmvFmZzrE5EadYCwA1et93H8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732253726; c=relaxed/simple;
-	bh=1Fu/eyamRsY/3fVPW2wkEQufdbgIWranViouVkztNUE=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=MP1C15W4SaZzNw4KDVwcu29Er0Nc//CT7BHFMolzMRfxW8HFdPFoxi01kixQoFV1lAQWp+GqKZJd59vjQvrQ7Ksgv781rIxveuoa2jFEgaFrdxbyWeEDE4Vk/vI3gPltvTkPvoE+KqeuXmv014WpOjBrEmM/jVECukq4YG90MmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YIaAypHN; arc=none smtp.client-ip=209.85.215.179
+	s=arc-20240116; t=1732254093; c=relaxed/simple;
+	bh=YhukgqPa0lidX1eRWvWGHeJF9G8Hg0nDSas3lR0ceks=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hl2psr7gzRsuM/1w39Grs3yDr21H+iLzD6sjVg9Do/PpVTlkY/g/VSaxLRGlNG43/w2VAZHDJaa+nnZAohMJ0xJ89XmOKwLnr8aNmBxG3jHwX03AHWtnmriYb8p3kKzasRacYUrcLMbre+9L/xAigNcGjymKwR/JbXYYJYMWQOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nnrPIGb8; arc=none smtp.client-ip=209.85.216.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7eb0bc007edso1195293a12.3;
-        Thu, 21 Nov 2024 21:35:24 -0800 (PST)
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2ea78d164b3so1466982a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 21:41:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732253724; x=1732858524; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1732254090; x=1732858890; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HGzM6DaE5Htj1XwIKBV1/Zhn8wfqDRpnb+mP4W1uiLU=;
-        b=YIaAypHNYa/nPZ691vWWtxm14ekzu+c3tr1y+Wtx9HTUuNfOgbha9RPIS5T80x21FS
-         BtvKi7+uVh9uZ7pWlUvMXJGY+EJfTQbVMInv4cFws+ycHjBpzs3QOR108J0rRNFYlRi3
-         Sz0+dizwooomS3DZu3fYRPCsO//jw3SC0RQUsEDaPt9THhmebw5EsRZ1Aza9YDz5ssrF
-         3qu7CbXTBZKTW1KS7UwYB9Nc8gByMVOj4X81KcidtfqOU0X4SUGs6Gxk87fszeUeMLSW
-         0+1xRc+hKtyVd2pcwCeFFa77HD8bJ8SkopSiz0sCdt8lmiwIYCyLEpyAcCt0oMk5jFd7
-         GWWQ==
+        bh=jRLhlT6BUPUcyfB1wAf+ZRvTDTQX7bRCFvxCdNEhT0g=;
+        b=nnrPIGb8ThSnB2vRUjIEuxcYsHsOxpmoSBOduyW31PKkV2g1p3vTcUNaC4ldCYXy22
+         jF8zmSmN/K/dDkuBzue7q4x4qABpHhqzMOFp2tIPmex3a6zGLctY4oh4O6p5FYlRw4mO
+         2HusXVzC1a1D4VmN3rsrzfe3+dExevd6AYOkPXGUajTcC/uml1UxC4klKI4A5Wo3FwNk
+         MmVk9CPc+AHcRjBKCA5Ha1iNTQl7RAJ2J/UkgJtYBKXwHUXIw3MkqKWgd9Bl67A4tisH
+         tr16ZdB9pgPG/A1ls3LCJLBHryEZ7VyYmda43uynJWlFdrGaiE6/YZdyC0+ImScEEAam
+         /RtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732253724; x=1732858524;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HGzM6DaE5Htj1XwIKBV1/Zhn8wfqDRpnb+mP4W1uiLU=;
-        b=JQvWZIIdEMLGLcvT4voWGQpAiFw02EtNaGM0OutEuAj3WWoslfNQItEC2uus7Zi9uS
-         n5UQ75phqSplYaQ65YlPyl4QhYxkihmXdYNbv9kna+PsaHofi0w+h575M+sYw1Q5LEyd
-         Z5FngROF+bUQWYIKYlI2lxG7sTxed36J7h2LkSDLLifvJyAt+MUKKjRr8z1OUXKXwNZ3
-         21yWgUIlcVzWVBQ+Popojqb571aksUXPcLa0JppFaUIWghEiRAcz/EBu9NcEG37hiOjw
-         qJbNrnkMICkYdJd6+6EesEpaCJlQR7Y2MJs4Gr2cCVTjqTCNwiXxzBftOUVfVa8Q3QFj
-         XZHg==
-X-Forwarded-Encrypted: i=1; AJvYcCVH6uN8Py/MzL87XvVxRHT4MsVHrjSFnNl3MR6kLjIrpHC/g19qFfCGYDIAdb2TU2/nsjDAocB5oQlB72Os@vger.kernel.org, AJvYcCVttM+8MBxIZwF/Yt+n/OfRVIOY5PdO4XksKct/ghqJWyehyUXkzn/33eAFxFuBMBWNxBE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxna8IOE9wuGkrAjLAs0s+v2XDyUpou1B5+ntKtrb7JiZJ9Vyx
-	424nCxEQTvy6ZlSpPEjpcyaHEwnSad05CcsMjBbESs950T2wysqr
-X-Gm-Gg: ASbGncvBXPdhmjVZrsBlE8SzhBQ4NK9ReDM2rcpz6SAO8HXtq8I4AhYQipLSOoLctRr
-	Xj6oYiu0I9xaU9mbO7A5RmChl7vgFRirw7fQ3DxbwishWVSkrr1VebfoMfE2fWjioKhrfXupo/7
-	OoTU8p+gYYVYELNg586swzTxrkAV5MSzLR2SSse3pqdrh6ND2kkkOGTt2RuvIsVOeyNX7GEF6yb
-	E8epSdCpBcX1EcFq98L9ytufPvJfGM2vK5MT0jqqRuSV5vSyDw=
-X-Google-Smtp-Source: AGHT+IH82BF4oiF6x6mbKPnAS/dctapod3+sWPM6SVtP3hhv7rVeUlvGu1o00NB3LdLCryczi7M3oA==
-X-Received: by 2002:a05:6a20:2446:b0:1d9:11d0:1215 with SMTP id adf61e73a8af0-1e09e40fe3amr2551913637.13.1732253724052;
-        Thu, 21 Nov 2024 21:35:24 -0800 (PST)
-Received: from localhost ([98.97.39.253])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de53c38bsm726748b3a.95.2024.11.21.21.35.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 21:35:23 -0800 (PST)
-Date: Thu, 21 Nov 2024 21:35:22 -0800
-From: John Fastabend <john.fastabend@gmail.com>
-To: "Olson, Matthew" <matthew.olson@intel.com>, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Eduard Zingerman <eddyz87@gmail.com>, 
- bpf@vger.kernel.org
-Cc: Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, 
- KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, 
- Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, 
- linux-kernel@vger.kernel.org
-Message-ID: <6740181acbe77_86d22083@john.notmuch>
-In-Reply-To: <Zz_YBK3SWnZnze-n@bolson-desk>
-References: <Zz-uG3hligqOqAMe@bolson-desk>
- <Zz_YBK3SWnZnze-n@bolson-desk>
-Subject: Re: [PATCH v2 bpf-next] libbpf: Improve debug message when the base
- BTF cannot be found
+        d=1e100.net; s=20230601; t=1732254090; x=1732858890;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jRLhlT6BUPUcyfB1wAf+ZRvTDTQX7bRCFvxCdNEhT0g=;
+        b=U6YjWlpFJzvyZ2MrhsBQ2Zr7NMbMBmZkncjvLBIC4P4PTWl0ZAzSm+nH+0yTqtZS/1
+         +fGQnAUPNJvK94KwBJ6AmqhX7lTJqFIIUgWNj4xBxi3FgOfZ1exU6h86WGUH2mC4w5Yl
+         KEQbnX+gzssV6Lu62CCX/a9gzKhrLcnqDUWWazXMhr07THpUmCNh5BO58wpxpjHOag/L
+         /UvgmPTKIIXsvmX30t8fjhGcopnLzK20uCXhYWjCk4gY9nmLL1yKKrB7ShvBdfADBZOk
+         38czVrVSZJcRLusslQJQx4ay5Dx/Emb9nuXyxlZt+OlFZoe1tj7f3cD4ecAWh6B65P5l
+         95yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXXIBL+OvgldAJyph+0a4TIQMcZ0DVbPs0NaDpoW/Ni4hnfZLl3u6+D3nANdrnKTbs3l0wYR9KdwnewLwc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb/yIkGY7wvxQ4oK2UQiWhUUiTUGqQLikPd9iM7THQMuSiN/5u
+	8eQMuwDiCj0hqYWVp3zPtUZ4DS7u+v0trXoHrUC/KToeXjtgDp9chgIhM7foniC0/pvi5LObrgR
+	1KXPrZIUXILTHwmnSDlRV8+JAUwY=
+X-Gm-Gg: ASbGnctE0QsjEw7VQvorKV1lVzu7TDXuc/QWxAX5N+ao44RqMqma38zK6PVCjn9NRoJ
+	RIWGbaVHMdU0ZkF6kcd2H5I3SiLBd8Vs=
+X-Google-Smtp-Source: AGHT+IEyVCzMcdMryX0lgYESYDrmU9kzmvBbRGqC+o+udh2wOqUaYHFru/zgP8Lgukz/1J57KURts0G6RadctvD7ZfE=
+X-Received: by 2002:a17:90b:1b46:b0:2ea:5fed:4a2b with SMTP id
+ 98e67ed59e1d1-2eb0e2303e4mr2082476a91.15.1732254090490; Thu, 21 Nov 2024
+ 21:41:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20241114023528.181583-1-linchengming884@gmail.com>
+ <20241114023528.181583-2-linchengming884@gmail.com> <87a5dw25pl.fsf@bootlin.com>
+In-Reply-To: <87a5dw25pl.fsf@bootlin.com>
+From: Cheng Ming Lin <linchengming884@gmail.com>
+Date: Fri, 22 Nov 2024 13:39:08 +0800
+Message-ID: <CAAyq3SYMh+DDB6Wzh623-0YcBXQ8UoQq4nK5+g5wmy4HyCY1uQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] mtd: spi-nand: Add read retry support
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: vigneshr@ti.com, linux-mtd@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, richard@nod.at, alvinzhou@mxic.com.tw, 
+	leoyu@mxic.com.tw, Cheng Ming Lin <chengminglin@mxic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Olson, Matthew wrote:
-> From 22ed11ee2153fc921987eac7de24f564da9f9230 Mon Sep 17 00:00:00 2001
-> From: Ben Olson <matthew.olson@intel.com>
-> Date: Thu, 21 Nov 2024 11:26:35 -0600
-> Subject: [PATCH v2 bpf-next] libbpf: Improve debug message when the base BTF
->  cannot be found
-> 
-> When running `bpftool` on a kernel module installed in `/lib/modules...`,
-> this error is encountered if the user does not specify `--base-btf` to
-> point to a valid base BTF (e.g. usually in `/sys/kernel/btf/vmlinux`).
-> However, looking at the debug output to determine the cause of the error
-> simply says `Invalid BTF string section`, which does not point to the
-> actual source of the error. This just improves that debug message to tell
-> users what happened.
-> 
-> Signed-off-by: Ben Olson <matthew.olson@intel.com>
-> ---
+Hi Miquel,
 
+Miquel Raynal <miquel.raynal@bootlin.com> =E6=96=BC 2024=E5=B9=B411=E6=9C=
+=8818=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=886:31=E5=AF=AB=E9=81=93=
+=EF=BC=9A
+>
+>
+> Hi Cheng Ming,
+>
+> On 14/11/2024 at 10:35:27 +08, Cheng Ming Lin <linchengming884@gmail.com>=
+ wrote:
+>
+> > From: Cheng Ming Lin <chengminglin@mxic.com.tw>
+> >
+> > When the host ECC fails to correct the data error of NAND device,
+> > there's a special read for data recovery method which host setups
+>
+> Here is a suggestion for rewording the second part of your commit log:
+>
+> ... which can be setup by the host for the next read. There are several
+> retry levels that can be attempted until the lost data is recovered or
+> definitely assumed lost.
+>
 
-LGTM
+Thank you for your suggestion. I will make adjustments based on it.
 
-Acked-by: John Fastabend <john.fastabend@gmail.com>
+> > for the next read retry mode and may recover the lost data by host
+> > ECC again.
+> >
+> > Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
+> > ---
+> >  drivers/mtd/nand/spi/core.c | 35 +++++++++++++++++++++++++++++++++--
+> >  include/linux/mtd/spinand.h | 14 ++++++++++++++
+> >  2 files changed, 47 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
+> > index 4d76f9f71a0e..bd5339a308aa 100644
+> > --- a/drivers/mtd/nand/spi/core.c
+> > +++ b/drivers/mtd/nand/spi/core.c
+> > @@ -672,10 +672,14 @@ static int spinand_mtd_regular_page_read(struct m=
+td_info *mtd, loff_t from,
+> >       struct spinand_device *spinand =3D mtd_to_spinand(mtd);
+> >       struct nand_device *nand =3D mtd_to_nanddev(mtd);
+> >       struct nand_io_iter iter;
+> > +     struct mtd_ecc_stats old_stats;
+>
+> Reverse christmas tree is nicer :)
 
-> 
-> Changed in v2:
->   * Made error message better reflect the condition
-> 
->  tools/lib/bpf/btf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
-> index 12468ae0d573..a4ae2df68b91 100644
-> --- a/tools/lib/bpf/btf.c
-> +++ b/tools/lib/bpf/btf.c
-> @@ -283,7 +283,7 @@ static int btf_parse_str_sec(struct btf *btf)
->      return -EINVAL;
->    }
->    if (!btf->base_btf && start[0]) {
-> -    pr_debug("Invalid BTF string section\n");
-> +    pr_debug("Malformed BTF string section, did you forget to provide base BTF?\n");
->      return -EINVAL;
->    }
->    return 0;
-> --
-> 2.47.0
+Got it! I'll make the changes.
 
+>
+> >       bool disable_ecc =3D false;
+> >       bool ecc_failed =3D false;
+> > +     unsigned int retry_mode =3D 0;
+> >       int ret;
+> >
+> > +     old_stats =3D mtd->ecc_stats;
+> > +
+> >       if (ops->mode =3D=3D MTD_OPS_RAW || !mtd->ooblayout)
+> >               disable_ecc =3D true;
+> >
+> > @@ -687,18 +691,43 @@ static int spinand_mtd_regular_page_read(struct m=
+td_info *mtd, loff_t from,
+> >               if (ret)
+> >                       break;
+> >
+> > +read_retry:
+> >               ret =3D spinand_read_page(spinand, &iter.req);
+> >               if (ret < 0 && ret !=3D -EBADMSG)
+> >                       break;
+> >
+> > -             if (ret =3D=3D -EBADMSG)
+> > +             if (ret =3D=3D -EBADMSG && spinand->set_read_retry) {
+> > +                     if (spinand->read_retries && (++retry_mode < spin=
+and->read_retries)) {
+> > +                             ret =3D spinand->set_read_retry(spinand, =
+retry_mode);
+> > +                             if (ret < 0) {
+> > +                                     ecc_failed =3D true;
+> > +                                     break;
+>
+> What is this break gonna do? You're not in a loop. I don't think breaks
+> have any effect on if blocks.
 
+There's a nanddev_io_for_each_page iteration above, so the break
+was intended to terminate that loop. However, I realized that break
+should be replaced with return ret because if the set feature operation
+fails, it should return the error.
+
+>
+> > +                             }
+> > +
+> > +                             /* Reset ecc_stats; retry */
+> > +                             mtd->ecc_stats =3D old_stats;
+> > +                             goto read_retry;
+> > +                     } else {
+> > +                             /* No more retry modes; real failure */
+> > +                             ecc_failed =3D true;
+> > +                     }
+> > +             } else if (ret =3D=3D -EBADMSG) {
+> >                       ecc_failed =3D true;
+> > -             else
+> > +             } else {
+> >                       *max_bitflips =3D max_t(unsigned int, *max_bitfli=
+ps, ret);
+> > +             }
+> >
+>
+> Thanks,
+> Miqu=C3=A8l
+
+Thanks,
+Cheng Ming Lin
 
