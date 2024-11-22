@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-418501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C8F79D624C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:28:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA8D49D624D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:29:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A31116066D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:28:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B527160641
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D151DF973;
-	Fri, 22 Nov 2024 16:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188041DFDA2;
+	Fri, 22 Nov 2024 16:28:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="P3HKZDtA"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mDGtHAki"
 Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F2B15ADAB
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 16:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04191DF267
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 16:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732292893; cv=none; b=iAkS6rZC674GFFNZvhuqbI/bdwW67FbyYZSja73S9D9kzid57GDOaqX2KjvWZqUAbnCGz/myF68ScU2OwmN2vFn5EOz1P2tWddIo0aQv19iQdNm9bod8u3aIZqeJ9iq3QWKDD3U7KmtXL9J05wUX2D7b2os+K25Ng2G/ZnsN9Yc=
+	t=1732292895; cv=none; b=lW3shgdYIHYvlw+v5htR9J5vpyPpOGHiAvhX4mF2OZLE5jwTIETD8GMBfSXRyXL7gl5bxD8ol+A5Z0i7WQN3tVTeQDfPBOqkBsPzVJzkKBtjvxyvmUNJK7j9fj6AVuUiGLAP5Ug94x7ZWt4svRW4o3oolkeWjJu+e77FuNebHtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732292893; c=relaxed/simple;
-	bh=IeQtyAkoL+fPJOYGNUGaUHbisJKJpYsSLjkQcRf+0qY=;
+	s=arc-20240116; t=1732292895; c=relaxed/simple;
+	bh=xMEy8ARubcCf58SXzdc2VN3L872hkUPBgnkxnJ9Ick4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WUbP3CiIqQ/Ai1+OY8Msmh4K/7TxAsSe6U4FpbrYmjtLWjo4nRHAbaJPut/2eK+9NbbXom+nm9PqdgmU8AS5MF1zbhK7uVN4wIsmomv50awDyyvC9B0SsWVNIvn0/Ei/ifk1xKYbSBb31C0itZK8v4lRULlxOcLLdaMU7W4x+tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=P3HKZDtA; arc=none smtp.client-ip=217.70.183.199
+	 In-Reply-To:To:Cc; b=HoipbXa6NxzVgB+GijQhvI1OvDPeHJ9GYK/U+WmGFI2jXWxfxLJxgWKue2R2j7VnMMmkK2mflRhkyO4C8F1oQLKxZkp9vunJ24P2T1ju1DC1t1s09IhwpIHvt9tGLIulJZIm0AIHmjidQFu4R9keCM+T7qLh0B86PKrO+bdu7mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mDGtHAki; arc=none smtp.client-ip=217.70.183.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 759B1FF80D;
-	Fri, 22 Nov 2024 16:28:03 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 78A67FF805;
+	Fri, 22 Nov 2024 16:28:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732292884;
+	t=1732292885;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1+R80H/JRGfBTVoDp2ktoWF3096dmo8Cz+WCKV/JNeI=;
-	b=P3HKZDtAeF3p73ttTBvl7KN37/DgmHEjydvoPZBobuDHBDecrd26TAWNVLTMxAgk71cDWy
-	N2JRUuqE0VAcBdh3IJJG3ZsLW+0ojTFBSjJ7iTONVjRHkL3hIXEP+LvS8g5oGENqmaGwdz
-	k81oMDRK1sv9zwWk9NHKKfAyHr+exKwapFyZfZTqgJMg4UzwI2Uk2XxnIgGFM1OIfwAg53
-	hrZxiEcXngWM8Ujn/qqkEwA3IaUmmKJFyZ4Hss//cJzGwU6+q8RGT7tWPvGCHX2gGt6D3/
-	EaOCghLG5jhACc3Jjm86bnkLK/B+dnPjzs+nfj8p/IRD9KuDS4xa3HXbn5gMJA==
+	bh=KyRxWncRqDtfIEyzSLj62S6Zb1ebSov3BoKYihZ9vlU=;
+	b=mDGtHAkibMovrYUM1rEEwmChJisFbiy8mpm3moNI0TpKe8rbqsVbSmZ2cL1phKov8GmnSa
+	QUhvqDU4ivn8SQJqf51whAHiJbgrq/dbLr8dQZVundpRPJBG+7g7tFFbBCPnuDKEbHTrf3
+	0/Ta6v+9yp5C2s8D+m9001eFjyL5lwFGJHRVb4TKjZBKyNx9arhoebHciYegM1XVvg3e7E
+	mfgngSv5ulR4gJya0dV9wSNcUxhSEIHW2PNOlQnEV9BlqqcT+V8GB2xnZStMg7CPyFGcoV
+	LLyHhFMmSTKEtF1DcEegmUVAfRHwmXN+RKuQPe+4rrXKyQe/MEI6USReNs8Isg==
 From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Fri, 22 Nov 2024 17:27:58 +0100
-Subject: [PATCH v5 3/5] drm/vkms: Switch to managed for crtc
+Date: Fri, 22 Nov 2024 17:27:59 +0100
+Subject: [PATCH v5 4/5] drm: writeback: Introduce drm managed helpers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241122-google-vkms-managed-v5-3-1ab60403e960@bootlin.com>
+Message-Id: <20241122-google-vkms-managed-v5-4-1ab60403e960@bootlin.com>
 References: <20241122-google-vkms-managed-v5-0-1ab60403e960@bootlin.com>
 In-Reply-To: <20241122-google-vkms-managed-v5-0-1ab60403e960@bootlin.com>
 To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
@@ -72,101 +72,370 @@ Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
  seanpaul@google.com, nicolejadeyee@google.com, 
  Louis Chauvet <louis.chauvet@bootlin.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2754;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=12891;
  i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=IeQtyAkoL+fPJOYGNUGaUHbisJKJpYsSLjkQcRf+0qY=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBnQLEO7iec3QJLdf/6qBQy+AY+D3nvFCKHNjV66
- tOUMP8oH4KJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZ0CxDgAKCRAgrS7GWxAs
- 4mt3EADBKFj4a+geowtri1oJYj52IoFc11iL+oCYV+m7llgPtlZm0TRcqn21AKU6KBLiwYyr2Ap
- ImnZA2LS0jq8YhbULBbstgaaS7cfIo7nL20mlxaK4NP7RUO/cjGGKh3iyks0PUuo8oEzUW5FuX/
- tiKVB5s6VDXsVa+rJrhZAM+NeFFblW3F1Lna1QsyoVF9FD6xpgowUs4VfFPK0hhqx+VKwwGEm+m
- VBsPApdT/x9XIeayK7UaMtoYEGckEChQl7j8Q6iuGZOlC3PP28KqMtY00XMAWsX4Y5RLGDGg4CP
- sxtbYaJ42FKC8BywcXiux+eLtl36lXhQzB9ZvTj0HtlszEmldNNM1WwtJyWHEJtmTBxhJBftacm
- U06rS4nxI9d2uCASJZ/oTrLS6NkkX/VMuA1GTcc47tG//ygBNXifuuaQOY7U2ZiYnIzAzivTAXB
- 5PuIhHV4ENh22Umq17godTkyTy8698AJBF3wXChDe3coLCo0tCl2HXKuPIoOhyp7SGEFae/LXpQ
- brwzRXyVy2iSVaYtNzVsrAETd06+HhtzVha6rKCWBUsIAerw267+3sc62+qUnCnvWchPrOvxLWq
- gwqXMVAmho4aS2RMe5JF1WnbCurlXm1wyOvhRzE0kvygnXQvLtTwJ5UIWvcQo8EGeyt6WpTJGBb
- thH22oxbI2EDcyA==
+ bh=xMEy8ARubcCf58SXzdc2VN3L872hkUPBgnkxnJ9Ick4=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBnQLEOk7GLbLAuEgFjzBMXy6sWlC10VydWUIqCO
+ Q1jiBj6vTKJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZ0CxDgAKCRAgrS7GWxAs
+ 4i9OEAC3Kk4R8pb6gKRaBbdMJCyLGdNJlTT2vn1G5ESG/hwoRddM4pLRGMfSWJvpHpIF1UZpsS8
+ O4HLzfJuitSNOlvJax5Z7rjhgnz1ROWCnhmdLxTYgVtN7Rlh9agDDP7+jHoWK1yclvEdJmublW1
+ uitLIinbaouBkIumukBgC4Usbu3kdAZOXXsfXLsIIHdqZP4tjHZSco9iGYayAyyTWgUXI1z90h9
+ KhiXF9lXqoCnxOW+974bqgUe+he4XN3CuVyWsWQDqNl3WBes/q7Xfssgv3MyijJJqz4SImdg0DO
+ PMZ1+hyY6QWPy90n4lkveEscrS61f6LVB98W65/zOT+Fw/1+0GGubdGZMt2dysjf+4aaOEZXzNh
+ NWwW5YMoe792zLGJBx+CqGE8oLFgvNnr4229iqly+Fm2Ni5DdiUkhlUEZrJQwahxkAF3YXxrOdu
+ 8qytRMcMRITLutXZiw+GYjVCyNM6xiEimeewaDLX/mGQYlfKUz9BXSNyUsV1gcLiUSOqjqNt/CU
+ pYndDeIxDEo519tJtfQfqymsBIXji2t5IvF72aI+HiUVp1S49hFbMGaanQxwnm16wjEby6jk23Z
+ nFfpfflL+P5wlthcrj52sQjj8UTWCNRDMhiufVaceCcACeY36FRMpMVy7B/FCnYKfbc/im6xO5v
+ lSwCor9KlgxBrdg==
 X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
  fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
 X-GND-Sasl: louis.chauvet@bootlin.com
 
-The current VKMS driver uses managed function to create crtc, but
-don't use it to properly clean the crtc workqueue. It is not an
-issue yet, but in order to support multiple devices easily,
-convert this code to use drm and device managed helpers.
+Currently drm_writeback_connector are created by
+drm_writeback_connector_init or drm_writeback_connector_init_with_encoder.
+Both of the function uses drm_connector_init and drm_encoder_init, but
+there is no way to properly clean those structure from outside. By using
+drm managed variants, we can ensure that the writeback connector is
+properly cleaned.
+
+This patch introduce drmm_writeback_connector_init, an helper to initialize
+a writeback connector using drm managed helpers. This function allows the
+caller to use its own encoder.
 
 Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 ---
- drivers/gpu/drm/vkms/vkms_crtc.c | 14 ++++++++++++++
- drivers/gpu/drm/vkms/vkms_drv.c  |  9 ---------
- 2 files changed, 14 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/drm_connector.c |   4 +
+ drivers/gpu/drm/drm_writeback.c | 224 ++++++++++++++++++++++++++++++++++------
+ include/drm/drm_writeback.h     |  10 ++
+ 3 files changed, 208 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
-index 28a57ae109fcc05af3fe74f94518c462c09119e3..ace8d293f7da611110c1e117b6cf2f3c9e9b4381 100644
---- a/drivers/gpu/drm/vkms/vkms_crtc.c
-+++ b/drivers/gpu/drm/vkms/vkms_crtc.c
-@@ -6,6 +6,7 @@
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_probe_helper.h>
- #include <drm/drm_vblank.h>
-+#include <drm/drm_managed.h>
+diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
+index fc35f47e2849ed6786d6223ac9c69e1c359fc648..fe4c1967860a3f49b92622c96912c59c505a26ab 100644
+--- a/drivers/gpu/drm/drm_connector.c
++++ b/drivers/gpu/drm/drm_connector.c
+@@ -613,6 +613,7 @@ static void drm_mode_remove(struct drm_connector *connector,
+ 	drm_mode_destroy(connector->dev, mode);
+ }
  
- #include "vkms_drv.h"
++void drm_writeback_connector_cleanup(struct drm_device *dev, void *data);
+ /**
+  * drm_connector_cleanup - cleans up an initialised connector
+  * @connector: connector to cleanup
+@@ -631,6 +632,9 @@ void drm_connector_cleanup(struct drm_connector *connector)
+ 		    DRM_CONNECTOR_REGISTERED))
+ 		drm_connector_unregister(connector);
  
-@@ -270,6 +271,14 @@ static const struct drm_crtc_helper_funcs vkms_crtc_helper_funcs = {
- 	.atomic_disable	= vkms_crtc_atomic_disable,
- };
- 
-+static void vkms_crtc_destroy_workqueue(struct drm_device *dev,
-+					void *raw_vkms_out)
-+{
-+	struct vkms_output *vkms_out = raw_vkms_out;
++	if (connector->connector_type == DRM_MODE_CONNECTOR_WRITEBACK)
++		drm_writeback_connector_cleanup(dev, connector);
 +
-+	destroy_workqueue(vkms_out->composer_workq);
+ 	if (connector->privacy_screen) {
+ 		drm_privacy_screen_put(connector->privacy_screen);
+ 		connector->privacy_screen = NULL;
+diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
+index 33a3c98a962d1ec49ac4b353902036cf74290ae6..28f299ce8e10f5ee6078c759b76cff9034f010d8 100644
+--- a/drivers/gpu/drm/drm_writeback.c
++++ b/drivers/gpu/drm/drm_writeback.c
+@@ -15,6 +15,7 @@
+ #include <drm/drm_device.h>
+ #include <drm/drm_drv.h>
+ #include <drm/drm_framebuffer.h>
++#include <drm/drm_managed.h>
+ #include <drm/drm_modeset_helper_vtables.h>
+ #include <drm/drm_property.h>
+ #include <drm/drm_writeback.h>
+@@ -196,13 +197,12 @@ int drm_writeback_connector_init(struct drm_device *dev,
+ EXPORT_SYMBOL(drm_writeback_connector_init);
+ 
+ /**
+- * drm_writeback_connector_init_with_encoder - Initialize a writeback connector with
+- * a custom encoder
++ * __drm_writeback_connector_init - Common initialization code for writeback
++ * connector
+  *
+  * @dev: DRM device
+  * @wb_connector: Writeback connector to initialize
+  * @enc: handle to the already initialized drm encoder
+- * @con_funcs: Connector funcs vtable
+  * @formats: Array of supported pixel formats for the writeback engine
+  * @n_formats: Length of the formats array
+  *
+@@ -218,41 +218,32 @@ EXPORT_SYMBOL(drm_writeback_connector_init);
+  * assigning the encoder helper functions, possible_crtcs and any other encoder
+  * specific operation.
+  *
+- * Drivers should always use this function instead of drm_connector_init() to
+- * set up writeback connectors if they want to manage themselves the lifetime of the
+- * associated encoder.
+- *
+  * Returns: 0 on success, or a negative error code
+  */
+-int drm_writeback_connector_init_with_encoder(struct drm_device *dev,
+-		struct drm_writeback_connector *wb_connector, struct drm_encoder *enc,
+-		const struct drm_connector_funcs *con_funcs, const u32 *formats,
+-		int n_formats)
++static int __drm_writeback_connector_init(struct drm_device *dev,
++					  struct drm_writeback_connector *wb_connector,
++					  struct drm_encoder *enc,
++					  const u32 *formats, int n_formats)
+ {
+-	struct drm_property_blob *blob;
+ 	struct drm_connector *connector = &wb_connector->base;
+ 	struct drm_mode_config *config = &dev->mode_config;
+-	int ret = create_writeback_properties(dev);
+-
+-	if (ret != 0)
+-		return ret;
+-
+-	blob = drm_property_create_blob(dev, n_formats * sizeof(*formats),
+-					formats);
+-	if (IS_ERR(blob))
+-		return PTR_ERR(blob);
+-
++	struct drm_property_blob *blob;
++	int ret;
+ 
+ 	connector->interlace_allowed = 0;
+ 
+-	ret = drm_connector_init(dev, connector, con_funcs,
+-				 DRM_MODE_CONNECTOR_WRITEBACK);
++	ret = create_writeback_properties(dev);
+ 	if (ret)
+-		goto connector_fail;
++		return ret;
+ 
+ 	ret = drm_connector_attach_encoder(connector, enc);
+ 	if (ret)
+-		goto attach_fail;
++		return ret;
++
++	blob = drm_property_create_blob(dev, n_formats * sizeof(*formats),
++					formats);
++	if (IS_ERR(blob))
++		return PTR_ERR(blob);
+ 
+ 	INIT_LIST_HEAD(&wb_connector->job_queue);
+ 	spin_lock_init(&wb_connector->job_lock);
+@@ -275,15 +266,188 @@ int drm_writeback_connector_init_with_encoder(struct drm_device *dev,
+ 	wb_connector->pixel_formats_blob_ptr = blob;
+ 
+ 	return 0;
 +}
 +
- int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
- 		   struct drm_plane *primary, struct drm_plane *cursor)
- {
-@@ -300,5 +309,10 @@ int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
- 	if (!vkms_out->composer_workq)
- 		return -ENOMEM;
- 
-+	ret = drmm_add_action_or_reset(dev, vkms_crtc_destroy_workqueue,
-+				       vkms_out);
++/**
++ * drm_writeback_connector_init_with_encoder - Initialize a writeback connector with
++ * a custom encoder
++ *
++ * @dev: DRM device
++ * @wb_connector: Writeback connector to initialize
++ * @enc: handle to the already initialized drm encoder
++ * @con_funcs: Connector funcs vtable
++ * @formats: Array of supported pixel formats for the writeback engine
++ * @n_formats: Length of the formats array
++ *
++ * This function creates the writeback-connector-specific properties if they
++ * have not been already created, initializes the connector as
++ * type DRM_MODE_CONNECTOR_WRITEBACK, and correctly initializes the property
++ * values.
++ *
++ * This function assumes that the drm_writeback_connector's encoder has already been
++ * created and initialized before invoking this function.
++ *
++ * In addition, this function also assumes that callers of this API will manage
++ * assigning the encoder helper functions, possible_crtcs and any other encoder
++ * specific operation.
++ *
++ * Drivers should always use this function instead of drm_connector_init() to
++ * set up writeback connectors if they want to manage themselves the lifetime of the
++ * associated encoder.
++ *
++ * Returns: 0 on success, or a negative error code
++ */
++int drm_writeback_connector_init_with_encoder(struct drm_device *dev,
++					      struct drm_writeback_connector *wb_connector,
++					      struct drm_encoder *enc,
++					      const struct drm_connector_funcs *con_funcs,
++					      const u32 *formats, int n_formats)
++{
++	struct drm_connector *connector = &wb_connector->base;
++	int ret;
++
++	ret = drm_connector_init(dev, connector, con_funcs,
++				 DRM_MODE_CONNECTOR_WRITEBACK);
 +	if (ret)
 +		return ret;
 +
++	ret = __drm_writeback_connector_init(dev, wb_connector, enc, formats,
++					     n_formats);
++	if (ret)
++		drm_connector_cleanup(connector);
+ 
+-attach_fail:
+-	drm_connector_cleanup(connector);
+-connector_fail:
+-	drm_property_blob_put(blob);
  	return ret;
  }
-diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
-index fa3331f612e34e0a48cef34effc169dea46d77df..c54504e590a18ae8af07cc1cc48179c38c4e6c0f 100644
---- a/drivers/gpu/drm/vkms/vkms_drv.c
-+++ b/drivers/gpu/drm/vkms/vkms_drv.c
-@@ -54,14 +54,6 @@ MODULE_PARM_DESC(enable_overlay, "Enable/Disable overlay support");
+ EXPORT_SYMBOL(drm_writeback_connector_init_with_encoder);
  
- DEFINE_DRM_GEM_FOPS(vkms_driver_fops);
- 
--static void vkms_release(struct drm_device *dev)
--{
--	struct vkms_device *vkms = drm_device_to_vkms_device(dev);
--
--	if (vkms->output.composer_workq)
--		destroy_workqueue(vkms->output.composer_workq);
--}
--
- static void vkms_atomic_commit_tail(struct drm_atomic_state *old_state)
++/**
++ * drm_writeback_connector_cleanup - Cleanup the writeback connector
++ * @dev: DRM device
++ * @data: Opaque pointer to the connector
++ *
++ * This will decrement the reference counter of blobs and it will clean the
++ * remaining jobs in this writeback connector.
++ */
++void drm_writeback_connector_cleanup(struct drm_device *dev, void *data)
++{
++	struct drm_connector *connector = data;
++	struct drm_writeback_connector *wb_connector = container_of(connector,
++								    struct drm_writeback_connector,
++								    base);
++	unsigned long flags;
++	struct drm_writeback_job *pos, *n;
++
++	drm_property_blob_put(wb_connector->pixel_formats_blob_ptr);
++
++	spin_lock_irqsave(&wb_connector->job_lock, flags);
++	list_for_each_entry_safe(pos, n, &wb_connector->job_queue, list_entry) {
++		drm_writeback_cleanup_job(pos);
++		list_del(&pos->list_entry);
++	}
++	spin_unlock_irqrestore(&wb_connector->job_lock, flags);
++}
++
++/**
++ * __drmm_writeback_connector_init - Initialize a writeback connector with
++ * a custom encoder
++ *
++ * @dev: DRM device
++ * @wb_connector: Writeback connector to initialize
++ * @con_funcs: Connector funcs vtable
++ * @enc: handle to the already initialized drm encoder
++ * @formats: Array of supported pixel formats for the writeback engine
++ * @n_formats: Length of the formats array
++ *
++ * This function initialize a writeback connector and register its cleanup.
++ * It uses the common helper @__drm_writeback_connector_init to do the
++ * general initialization.
++ *
++ * This function assumes that @enc has already been created and initialized
++ * before invoking this function.
++ *
++ * In addition, this function also assumes that callers of this API will manage
++ * assigning the encoder helper functions, possible_crtcs and any other encoder
++ * specific operation.
++ *
++ * Returns: 0 on success, or a negative error code
++ */
++static int __drmm_writeback_connector_init(struct drm_device *dev,
++					   struct drm_writeback_connector *wb_connector,
++					   const struct drm_connector_funcs *con_funcs,
++					   struct drm_encoder *enc,
++					   const u32 *formats, int n_formats)
++{
++	struct drm_connector *connector = &wb_connector->base;
++	int ret;
++
++	ret = drmm_connector_init(dev, connector, con_funcs,
++				  DRM_MODE_CONNECTOR_WRITEBACK, NULL);
++	if (ret)
++		return ret;
++
++	ret = __drm_writeback_connector_init(dev, wb_connector, enc, formats,
++					     n_formats);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++/**
++ * drmm_writeback_connector_init - Initialize a writeback connector with
++ * a custom encoder
++ *
++ * @dev: DRM device
++ * @wb_connector: Writeback connector to initialize
++ * @con_funcs: Connector funcs vtable
++ * @enc: handle to the already initialized drm encoder, optional
++ * @enc_funcs: Encoder funcs vtable, optional, only used when @enc is NULL
++ * @formats: Array of supported pixel formats for the writeback engine
++ * @n_formats: Length of the formats array
++ * @possible_crtcs: if @enc is NULL, this will set the possible_crtc for the
++ *		    newly created encoder
++ *
++ * This function initialize a writeback connector and register its cleanup.
++ *
++ * This function creates the writeback-connector-specific properties if they
++ * have not been already created, initializes the connector as
++ * type DRM_MODE_CONNECTOR_WRITEBACK, and correctly initializes the property
++ * values.
++ *
++ * If @enc is NULL, this function will create a drm-managed encoder and will
++ * attach @enc_funcs on it. It will also attach the CRTC passed in
++ * @possible_crtcs
++ *
++ * Returns: 0 on success, or a negative error code
++ */
++int drmm_writeback_connector_init(struct drm_device *dev,
++				  struct drm_writeback_connector *wb_connector,
++				  const struct drm_connector_funcs *con_funcs,
++				  struct drm_encoder *enc,
++				  const struct drm_encoder_helper_funcs *enc_funcs,
++				  const u32 *formats, int n_formats,
++				  u32 possible_crtcs)
++{
++	int ret;
++
++	if (!enc) {
++		ret = drmm_encoder_init(dev, &wb_connector->encoder,
++					NULL, DRM_MODE_ENCODER_VIRTUAL, NULL);
++		if (ret)
++			return ret;
++
++		enc = &wb_connector->encoder;
++		enc->possible_crtcs |= possible_crtcs;
++		if (enc_funcs)
++			drm_encoder_helper_add(enc, enc_funcs);
++	}
++
++	return __drmm_writeback_connector_init(dev, wb_connector, con_funcs,
++					       &wb_connector->encoder, formats,
++					       n_formats);
++}
++EXPORT_SYMBOL(drmm_writeback_connector_init);
++
+ int drm_writeback_set_fb(struct drm_connector_state *conn_state,
+ 			 struct drm_framebuffer *fb)
  {
- 	struct drm_device *dev = old_state->dev;
-@@ -109,7 +101,6 @@ static const struct drm_debugfs_info vkms_config_debugfs_list[] = {
+diff --git a/include/drm/drm_writeback.h b/include/drm/drm_writeback.h
+index 17e576c80169a820e8d5587b229b2cc2ee369a18..5e5ff8dd9d9d8ab5e46ce028a752062b97e82e0f 100644
+--- a/include/drm/drm_writeback.h
++++ b/include/drm/drm_writeback.h
+@@ -161,6 +161,14 @@ int drm_writeback_connector_init_with_encoder(struct drm_device *dev,
+ 				const struct drm_connector_funcs *con_funcs, const u32 *formats,
+ 				int n_formats);
  
- static const struct drm_driver vkms_driver = {
- 	.driver_features	= DRIVER_MODESET | DRIVER_ATOMIC | DRIVER_GEM,
--	.release		= vkms_release,
- 	.fops			= &vkms_driver_fops,
- 	DRM_GEM_SHMEM_DRIVER_OPS,
- 	DRM_FBDEV_SHMEM_DRIVER_OPS,
++int drmm_writeback_connector_init(struct drm_device *dev,
++				  struct drm_writeback_connector *wb_connector,
++				  const struct drm_connector_funcs *con_funcs,
++				  struct drm_encoder *enc,
++				  const struct drm_encoder_helper_funcs *enc_funcs,
++				  const u32 *formats, int n_formats,
++				  u32 possible_crtcs);
++
+ int drm_writeback_set_fb(struct drm_connector_state *conn_state,
+ 			 struct drm_framebuffer *fb);
+ 
+@@ -175,6 +183,8 @@ void
+ drm_writeback_signal_completion(struct drm_writeback_connector *wb_connector,
+ 				int status);
+ 
++void drm_writeback_connector_cleanup(struct drm_device *dev, void *data);
++
+ struct dma_fence *
+ drm_writeback_get_out_fence(struct drm_writeback_connector *wb_connector);
+ #endif
 
 -- 
 2.47.0
