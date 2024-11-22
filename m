@@ -1,123 +1,120 @@
-Return-Path: <linux-kernel+bounces-418515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 599B59D6272
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:39:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2631D9D6277
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:43:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AB292815E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:39:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D6E8B21213
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF40D1DF260;
-	Fri, 22 Nov 2024 16:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JXlH+ds6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A4E1DED6A;
+	Fri, 22 Nov 2024 16:43:09 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF35D7E792;
-	Fri, 22 Nov 2024 16:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B1913635E
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 16:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732293574; cv=none; b=DC3rE9Dw5BuwWUJCGfjIr9SZu63RlfxrsPAIlZ/2zB0TRTfUNPK69t0+joTyntWbhp13FWAB0ZUCkeZg5HaKclxwi/TJYMxsrUpFicLeX0x6pFf7OjBvpQ2xs7+F1cevbrci+/DIquyRBSaiU4I2SPqMKB/ngf0KHLBtbm0TgpQ=
+	t=1732293789; cv=none; b=NBO1Z4ylDivrVBsymmOfAapkoT3To3vUu9ZoBtjK/dG9YotTF01oGgWbj1T9oN4DHYK/BlKRrova+wDEr3IKTnzKYmZbNzYhjF4tKudqQty54g1rUp2POp3HE5Wncpf5aYtrTsfskbAbI9Y3gQ0mWIXT3RlE2mmSxbU9VT1D77U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732293574; c=relaxed/simple;
-	bh=bVfmMZd++g9VWmMX2EizjlOyv67G/BQQFuNfEa0NLiE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lxyLvIDBWwGNTVVCmjotk45B6BevuNnRiYotr1SS3e8nMclnJYsqx0kqmKrBeHFWViuXHrdvGEiwhGPr6nTXfpMCuJ6sCil1u5SRUXAqvCu2jrM94S+9GZwWcTP//iKBmDMVe2+hp28PeZ4TFPFyG//EML41bzaaV0NK66KrFFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JXlH+ds6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1623C4CECE;
-	Fri, 22 Nov 2024 16:39:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732293573;
-	bh=bVfmMZd++g9VWmMX2EizjlOyv67G/BQQFuNfEa0NLiE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JXlH+ds6Bu4vcaxouVy9GHIJMQYhksn+5FEcsZbKwO1qG5QNztSK6Ejo6PzyTPdbl
-	 xPzR6GS/0CyoCC+O6m9Iq0iQl/W+6OHNKSUaxTMFB4aGA6OzTukQDHqlflA0NXysPe
-	 PAQI/8kjW+/XtNdbjEipZhEbBzuK3JoBGhZnOU3C+jWNHonND/cgmJunlqLeXnsaxT
-	 U7+onLtWXO9aMMcX3wJkkj+AmPt5zYAO3b3b0SW9M4rvHHlBs+DsBCC8erIs3gTlTJ
-	 oPI0TPO6JtfDzyFKtoMtWVESP9iQRt5PMh4J+3eHluJnyXJqyLhyAHHNQdwpwUWKWb
-	 na+zzTSqnxuKA==
-Date: Fri, 22 Nov 2024 17:39:30 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Guillaume Stols <gstols@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>, linux-pwm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-doc@vger.kernel.org, aardelean@baylibre.com, 
-	dlechner@baylibre.com, jstephan@baylibre.com, nuno.sa@analog.com, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v5 7/8] iio: adc: ad7606: Add iio-backend support
-Message-ID: <gmv5tncy7xwgbc64na7ib42hdthojsfrusauk4hez5zmc6hh2k@4jfk74vt2gcb>
-References: <20241015-ad7606_add_iio_backend_support-v5-0-654faf1ae08c@baylibre.com>
- <20241015-ad7606_add_iio_backend_support-v5-7-654faf1ae08c@baylibre.com>
+	s=arc-20240116; t=1732293789; c=relaxed/simple;
+	bh=U/5/TdAjVqD9GBTdBzh+yZQRkU9Z09R9+OF3uZAdjuc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=m2fkLS+iC0vZO2T0wEg2MmHRUVspR4f6etn9Zqww7fUfvAzr6VULeNpYPFTBIt/YGUSkFCRlX3M5dM/W9Xvn8YzTx/Y6cn5nCkVg+AtjKRcVD5a+VEXjif+hGk36qsutebUIRL3oZMr3PgwxPJzne9mitVNKMZWNIhwWKcWzwuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a6b9f3239dso27388765ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 08:43:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732293787; x=1732898587;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=po0ehGeqeCW4gAcbZwoNi2Bo3d6bm4Yz52TFjNvubiA=;
+        b=FRaVr4qSVKgu0KInmyNA6nQ3reFrNwsyndulC7wVef+wTVPv5WhO2v95RIOno+RAsZ
+         +Zpm5KecIycJ0GHgTSi30z/DG/18yExA1fsYkdteRzIkU4TPcQBrQG1kvRXN24ag2c+I
+         hhoDnQy4Std5TaTaOfZ0SQFsLX6iYjFb2RwCYHWSvJ55O273s/Y1wRYcIDUs+E2ilfSF
+         QOSH77ODk9zD1tpm/01h+ZJEXHj2WNBhYTuu91+GdHjdWBVIrijy0ampgMsTvaj+Na+B
+         8TP7xU/hWWUOJrkwdpquLvCA2d/9yKtQdwSLkSMoDoYw7hXtoH0cnAtoH69e3jrdISql
+         zRNg==
+X-Gm-Message-State: AOJu0Yyu9+NHuBnlFjfwTInwKUnVDXgbggeqaOrgxFWDO2JYNL5a0UIR
+	nXOXsyiVMdA3AbOLturzE/u84ysc5hoZ+wd/ONT7Jnggjsi2wlwKoq9ETyJxk142ebgJdQbAuYt
+	kD5yso/q1Cg4U7F37G94BELS9u4uqlhhL9DZgZQFxgw0Fj4pGimnEQQY=
+X-Google-Smtp-Source: AGHT+IHVzjLMKh4aQutWCzJB5sPZ1qW9jZ3102v5MZBxU+uAite0M3JI560y+V8zmeoRicDKVeOt4sAYZxx+VYFzr/vfVbmyUc8j
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="g6qhxoz5xykc4ajk"
-Content-Disposition: inline
-In-Reply-To: <20241015-ad7606_add_iio_backend_support-v5-7-654faf1ae08c@baylibre.com>
+X-Received: by 2002:a05:6e02:19ce:b0:3a0:9c99:32d6 with SMTP id
+ e9e14a558f8ab-3a79af6d1fcmr44653985ab.24.1732293787213; Fri, 22 Nov 2024
+ 08:43:07 -0800 (PST)
+Date: Fri, 22 Nov 2024 08:43:07 -0800
+In-Reply-To: <673ef6a8.050a0220.3c9d61.016c.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6740b49b.050a0220.363a1b.0147.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [ext4?] kernel BUG in ext4_write_inline_data
+ (2)
+From: syzbot <syzbot+fe2a25dae02a207717a0@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
---g6qhxoz5xykc4ajk
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 7/8] iio: adc: ad7606: Add iio-backend support
-MIME-Version: 1.0
+***
 
-On Tue, Oct 15, 2024 at 01:56:20PM +0000, Guillaume Stols wrote:
-> @@ -640,6 +665,14 @@ static int ad7606_read_raw(struct iio_dev *indio_dev,
->  	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
->  		*val =3D st->oversampling;
->  		return IIO_VAL_INT;
-> +	case IIO_CHAN_INFO_SAMP_FREQ:
-> +		/*
-> +		 * TODO: return the real frequency intead of the requested one once
-> +		 * pwm_get_state_hw comes upstream.
-> +		 */
-> +		pwm_get_state(st->cnvst_pwm, &cnvst_pwm_state);
-> +		*val =3D DIV_ROUND_CLOSEST_ULL(NSEC_PER_SEC, cnvst_pwm_state.period);
-> +		return IIO_VAL_INT;
->  	}
->  	return -EINVAL;
->  }
+Subject: Re: [syzbot] [ext4?] kernel BUG in ext4_write_inline_data (2)
+Author: bretznic@gmail.com
 
-Being late to the party as the patch is already applied:
+#syz test
 
-ad7606_set_sampling_freq() uses DIV_ROUND_UP_ULL to determine the period
-=66rom freq. So I guess you should a down-rounding div here to calculate
-freq from period.
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -3562,6 +3562,12 @@ extern int ext4_get_max_inline_size(struct inode *inode);
+ extern int ext4_find_inline_data_nolock(struct inode *inode);
+ extern int ext4_destroy_inline_data(handle_t *handle, struct inode *inode);
 
-Having said that, pwm_get_state_hw() is in mainline and will be included
-in v6.13-rc1.
++static inline bool ext4_inline_possible(struct inode *inode,
++ loff_t pos, unsigned int len)
++{
++ return pos + len <= ext4_get_max_inline_size(inode);
++}
++
+ int ext4_readpage_inline(struct inode *inode, struct folio *folio);
+ extern int ext4_try_to_write_inline_data(struct address_space *mapping,
+  struct inode *inode,
+diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
+index 3536ca7e4fcc..ec25f066a2c2 100644
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -668,7 +668,7 @@ int ext4_try_to_write_inline_data(struct
+address_space *mapping,
+  struct folio *folio;
+  struct ext4_iloc iloc;
 
-Best regards
-Uwe
+- if (pos + len > ext4_get_max_inline_size(inode))
++ if (!ext4_inline_possible(inode, pos, len))
+  goto convert;
 
---g6qhxoz5xykc4ajk
-Content-Type: application/pgp-signature; name="signature.asc"
+  ret = ext4_get_inode_loc(inode, &iloc);
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 54bdd4884fe6..d4c0e0a42b8e 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3061,7 +3061,8 @@ static int ext4_da_write_end(struct file *file,
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdAs78ACgkQj4D7WH0S
-/k5jlAgAirnhx9PpmZaNqFxVmISvdk94dasdcSLa7jDqkiXnNJ0oxpyUVc8lm0N6
-NNMqQZbz66q+mmza4KXN1Oz+TPgQqZApnnp58F6ECUpurA6vgB4anXwBqiN0v8PZ
-/zklo+JiCsfLuu3fkM9raKXBxRQh4xJm7PM7WTK15vzsfJCeMANwixBroV6qYtij
-qj2TqzB1yhXmvt7jk4Wk6saLFPB03OHxEbY1QFFOorBXvx6vatRfTaRKTRf2HT9i
-FAjJsluo4KiVaHYhHJwNebI0BiVzIeYKGcda4qTKoDabKW9Xu6Ikt/v2nOcAvuC9
-z5qCVuQ/q08owpk8L41RdCHFLS5W1g==
-=Cj6w
------END PGP SIGNATURE-----
-
---g6qhxoz5xykc4ajk--
+  if (write_mode != CONVERT_INLINE_DATA &&
+      ext4_test_inode_state(inode, EXT4_STATE_MAY_INLINE_DATA) &&
+-     ext4_has_inline_data(inode))
++     ext4_has_inline_data(inode) &&
++     ext4_inline_possible(inode, pos, len))
+  return ext4_write_inline_data_end(inode, pos, len, copied,
+    folio);
 
