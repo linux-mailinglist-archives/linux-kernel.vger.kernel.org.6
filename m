@@ -1,130 +1,230 @@
-Return-Path: <linux-kernel+bounces-418745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3623A9D64EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 21:34:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC089D64F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 21:42:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F07EE28338D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 20:34:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DD7716189B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 20:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC3B18870F;
-	Fri, 22 Nov 2024 20:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3E0189909;
+	Fri, 22 Nov 2024 20:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PuRTD8nP"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AzsDTPqT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XZz/Zwqu";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AzsDTPqT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XZz/Zwqu"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6ED18593A;
-	Fri, 22 Nov 2024 20:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BC317B428;
+	Fri, 22 Nov 2024 20:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732307677; cv=none; b=NujwqZLEzChh3GI/4Pv6uNb92wCyN+GgAYH3duX/58mntFRmBPBAxfqcUwgZgyNiUoCy2pw2D6Ge3SOyCctLP1xrTl7ujO9cSx/MoiOvJmex1PiRIm7jsDgci1rbELHySbxSxedh6i8SuWw2Dr7rhUvatPmYMHJjUvDHArF3Fd8=
+	t=1732308128; cv=none; b=gDxPfumSMyVPZGNmOi9wr0X++cmH7ykVh0/vqJMI1BgHWJhA+DgPlE4jqW2Axg9VJ7PK9T35LWrqb9J+DtInxjL4IslYT1vtSthBwCc56hiKuDUV8lHqr3cpjnhCU4DFv+4/DYLwMqtrWWjN7EHunsc6T9ot9I8dtI5YBuPv1aY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732307677; c=relaxed/simple;
-	bh=tyVliHYoWPxTSuVUMXN5P0bi34BX74mjEspyucHncgo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VLrm9mrzomkmL/gNsEK+UwmnQVkh4qM/1vi+17GdlXN7xuXpK35dJWi6ByjLC+mWWh7OMS1Lw46wCUe/qNzUHmyvXoxZlEIawbDv7cevNREwswXHKUuT+gN2w+t7MweVsk73wAhmXxuzlrgTun32abzbGu+80Oxt0l7xZF2hJRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PuRTD8nP; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539e8607c2aso2960334e87.3;
-        Fri, 22 Nov 2024 12:34:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732307674; x=1732912474; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=27/W48BXXkoR+L+LgIt1Vcffca5rx+DKUvYdFX1hBCs=;
-        b=PuRTD8nP98yOmGyvIGKcnR8n6AHLbCAVyVVkBRalFKsdf43gPRAZFcAErLS9MeCEtq
-         D+WaziEJAbyFI7YVuXJR/plnxMaohpFUFDhiY/8XrnneY8m5TDSdngzEoMKcpmTD2XuN
-         JTlSwPp3/mrmytILGeKdSGUfxpsITmnq2ZkAuoTCaZp1bNhgRW5AQ5Qz8S+dZaqaH0CG
-         lZWO9yHI/r95ZOZp4YqTaxzXYJkkPqIhSK1ViCw5V8MXhZKht5ykM+ZN3WtaDdxzI1yV
-         0UlSspCYeoDSiIonl+LMSt9McEdcgNsbGfI9w7dz0fvfDW7Oa+gYj7OfhjflPoh7XWY7
-         nAqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732307674; x=1732912474;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=27/W48BXXkoR+L+LgIt1Vcffca5rx+DKUvYdFX1hBCs=;
-        b=VUxhvyQdGL13woMmIARV2AaHBtyM94gcCcumUTVL8T5hvfFuWHG21m9/6QpZ/loacn
-         DpZgM7sVeEcKRT4tmDnM3Yu6zwoR0rjFRdSwurNmizjAbXB+eKQMEBIMssFZrXyVUhQ0
-         KlJf81hyNFCycG1PzgXYZulhw7FHffkbm4ge40ItO90CUHYPcY/BDsXgGpAD2YxeEWmM
-         lD12ugYACROKg9IFBNke/c67UaNwoLtai59CuUxCrUM0o+NuTCBQEBmUvKBSFkOtzMN+
-         +H/awQrwJfqvgjQPmhlOCNtuhUGSSmpaXwo6m9oOFSMh/SYj2j3q1oe6swfo30wz/Cfi
-         4pvA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzUqQs4dm7pd2OaxUOrZY+INzQp6oYK5/aiZboJnfalPGJ2tLfWIlPGzmPMyr3LZnyA9/QgUnLfAHUeJciORo=@vger.kernel.org, AJvYcCWsleRbtjhNlAJ5bzfvOSrJW3xobTDObSyhWtGy+ZWhyDpST+p6Ho7cc0TZyErps2Wol/ujNOUxDbMXy+y7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8f5p2FDRjqdbz9n3/r+8+NW1N5XZmM3ojy2USvFJ6YFvOEK/8
-	ACZ7dEzOacXLQ/dgVlEY6Bjm+sGwDiVpw7zy64DFvpXxlxmcRm0+21zdvT+cS2nApKUpfTVjS4I
-	BUdI1Ytssizqj0o2dITtNdf8pIrQ=
-X-Gm-Gg: ASbGncv45yW/yqEBr2qMLeh9LdTHRQ7ktp0lyoLMRX1xwj5Q0y9Nvmu3kvQjL8+nqOX
-	zMAEV8CIPMvIO12ZVSqSD7lG9KJ0WGn/p
-X-Google-Smtp-Source: AGHT+IHgCi72nGTNGWZ1pUQriMQ3jhYTMfVH+ysIEbPbyi+hsGaA6LLZnk0LjVwQWBBdL43JWP5pFRZBbtpZN0Kb1R0=
-X-Received: by 2002:a05:6512:e85:b0:53d:d605:f8cb with SMTP id
- 2adb3069b0e04-53dd605f911mr2471603e87.45.1732307673713; Fri, 22 Nov 2024
- 12:34:33 -0800 (PST)
+	s=arc-20240116; t=1732308128; c=relaxed/simple;
+	bh=KHKHQCXvuPqtS8zBtf2vIiBmq70MyYsvypTSAYgkiac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J4D3t3vjwVbVEInf70YFvXMazW/Rv1cc88n0patbhFMu/VO1hVtbUdFDg/+81pGcfmkJfmVilRNakmXj+JDmggZNPjvS8XxEGBErl5lLAdVGsJy6wV1slgPLWie8uj3naFBkD1ZWL7pdaSS7XvgWyP81GB4Im0mNtPWjoWzKTPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AzsDTPqT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XZz/Zwqu; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AzsDTPqT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XZz/Zwqu; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4270221240;
+	Fri, 22 Nov 2024 20:42:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732308124;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KHKHQCXvuPqtS8zBtf2vIiBmq70MyYsvypTSAYgkiac=;
+	b=AzsDTPqT7eoeHiGQhWEj4WP5gEbXkxHzIEV42sxL+XYjq1GcEtMKEkF9eTpm++y1OcS53L
+	NgTKC68IcUn8EdftJ9vPGZNPjgcZJpkQj4/fRow2065DaZqdJSyQsbPgzr1FRasW0UD7bf
+	PWhkcX5WaZRySP5fqFm7kMsF3sCxbOA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732308124;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KHKHQCXvuPqtS8zBtf2vIiBmq70MyYsvypTSAYgkiac=;
+	b=XZz/Zwqu27QgWYeUGgkJu5PLIx9ocmWILGpX51ZwduaMkHZ29nBQOgyXf0XF+TvouhrXj/
+	Q0c5l2DwC/5zDaDA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=AzsDTPqT;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="XZz/Zwqu"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732308124;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KHKHQCXvuPqtS8zBtf2vIiBmq70MyYsvypTSAYgkiac=;
+	b=AzsDTPqT7eoeHiGQhWEj4WP5gEbXkxHzIEV42sxL+XYjq1GcEtMKEkF9eTpm++y1OcS53L
+	NgTKC68IcUn8EdftJ9vPGZNPjgcZJpkQj4/fRow2065DaZqdJSyQsbPgzr1FRasW0UD7bf
+	PWhkcX5WaZRySP5fqFm7kMsF3sCxbOA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732308124;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KHKHQCXvuPqtS8zBtf2vIiBmq70MyYsvypTSAYgkiac=;
+	b=XZz/Zwqu27QgWYeUGgkJu5PLIx9ocmWILGpX51ZwduaMkHZ29nBQOgyXf0XF+TvouhrXj/
+	Q0c5l2DwC/5zDaDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E8A59138A7;
+	Fri, 22 Nov 2024 20:42:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 9uhuNpvsQGefVAAAD6G6ig
+	(envelope-from <pvorel@suse.cz>); Fri, 22 Nov 2024 20:42:03 +0000
+Date: Fri, 22 Nov 2024 21:41:57 +0100
+From: Petr Vorel <pvorel@suse.cz>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Rob Clark <robdclark@gmail.com>, linux-arm-msm@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kbuild@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] init/Kconfig: add python3 availability config
+Message-ID: <20241122204157.GA125569@pevik>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20241120204125.52644-1-pvorel@suse.cz>
+ <CAK7LNASYr+pjUs-W40d_Gc+vP67nX7NHXyE0AnOpXxXgxrCtqQ@mail.gmail.com>
+ <20241121011720.GA69389@pevik>
+ <CAF6AEGuzFNVd5fE+b+hKcC8xAOg7CrkPaYuWC6tCVmioutoOOw@mail.gmail.com>
+ <CAK7LNAQDMJUYUF7BaN10bwctW7fuHmSMrrAjMmn4s7P2ys5P+Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122191304.4182642-1-bjohannesmeyer@gmail.com> <20241122191304.4182642-2-bjohannesmeyer@gmail.com>
-In-Reply-To: <20241122191304.4182642-2-bjohannesmeyer@gmail.com>
-From: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
-Date: Fri, 22 Nov 2024 13:34:20 -0700
-Message-ID: <CAOZ5it34Gk_MU-gYzL5iuiHCx6fohQFSJFDp2AKj7waUCNzLyA@mail.gmail.com>
-Subject: Re: [RFC 1/1] swiotlb: Replace BUG_ON() with graceful error handling
-To: Tianyu Lan <Tianyu.Lan@microsoft.com>, Christoph Hellwig <hch@lst.de>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Cc: Raphael Isemann <teemperor@gmail.com>, Cristiano Giuffrida <giuffrida@cs.vu.nl>, Herbert Bos <h.j.bos@vu.nl>, 
-	Greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNAQDMJUYUF7BaN10bwctW7fuHmSMrrAjMmn4s7P2ys5P+Q@mail.gmail.com>
+X-Rspamd-Queue-Id: 4270221240
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.71 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	HAS_REPLYTO(0.30)[pvorel@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,linaro.org,linux-foundation.org,lists.freedesktop.org];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	REPLYTO_EQ_FROM(0.00)[]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.71
+X-Spam-Flag: NO
 
-On Fri, Nov 22, 2024 at 12:13=E2=80=AFPM Brian Johannesmeyer
-<bjohannesmeyer@gmail.com> wrote:
->
-> Replace the BUG_ON() assertion in swiotlb_release_slots() with a
-> conditional check and return. This change prevents a corrupted tlb_addr
-> from causing a kernel panic.
->
-> Co-developed-by: Raphael Isemann <teemperor@gmail.com>
-> Signed-off-by: Raphael Isemann <teemperor@gmail.com>
-> Signed-off-by: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
-> ---
->  kernel/dma/swiotlb.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-> index aa0a4a220719..54b4f9665772 100644
-> --- a/kernel/dma/swiotlb.c
-> +++ b/kernel/dma/swiotlb.c
-> @@ -834,7 +834,11 @@ static void swiotlb_release_slots(struct device *dev=
-, phys_addr_t tlb_addr)
->          * While returning the entries to the free list, we merge the ent=
-ries
->          * with slots below and above the pool being returned.
->          */
-> -       BUG_ON(aindex >=3D mem->nareas);
-> +       if (unlikely(aindex >=3D mem->nareas)) {
-> +               dev_err(dev, "%s: invalid area index (%d >=3D %d)\n", __f=
-unc__,
-> +                       aindex, mem->nareas);
-> +               return;
-> +       }
->
->         spin_lock_irqsave(&area->lock, flags);
->         if (index + nslots < ALIGN(index + 1, IO_TLB_SEGSIZE))
-> --
-> 2.34.1
->
+> On Thu, Nov 21, 2024 at 10:49 AM Rob Clark <robdclark@gmail.com> wrote:
 
-Whoops -- didn't send to the hardening mailing list. Adding it now.
+> > On Wed, Nov 20, 2024 at 5:17 PM Petr Vorel <pvorel@suse.cz> wrote:
 
--Brian
+> > > > On Thu, Nov 21, 2024 at 5:41 AM Petr Vorel <pvorel@suse.cz> wrote:
+
+> > > > > It will be used in the next commit for DRM_MSM.
+
+> > > > > Suggested-by: Rob Clark <robdclark@gmail.com>
+> > > > > Signed-off-by: Petr Vorel <pvorel@suse.cz>
+> > > > > ---
+> > > > > Changes v3->v4:
+> > > > > * Move definition to the end of the file
+
+
+> > > > I prefer to not check the tool.
+
+> > > Ack.
+
+> > > > Why don't you install python3?
+
+> > > Everybody installs it when it's required, the question is how to inform about
+> > > the dependency.
+
+> > > There build environments are minimal environments:
+> > > * chroot (e.g. cross compilation)
+> > > * container
+
+> > > These are used by both developers and distros.
+
+> > I don't think py3 is an _onerous_ dependency, but it has come up as a
+> > surprise in minimal distro build environments at least once.. so I'd
+> > be a fan of surfacing this dependency in a predictable/understandable
+> > way (ie. I'm in favor of this patchset)
+
+
+> "once" is a keyword here.
+
+> "/bin/sh: python3: not found" provides sufficient information
+> about why the compilation failed, and you know what to do
+> to fix the problem.
+> This is good.
+
+> If you hide CONFIG_DRM_MSM silently
+> due to missing python3, you may scratch your head
+> "why drm/msm was not compiled?".
+It's not on the list, but still visible in help (via search).
+
+> This is worse.
+
+I'm ok with this being refused. Yes, it's a trivial thing to find that python3
+is not installed. I wasn't sure myself if this is really better. Having
+something like "requires $(PYTHON3)" would be best solution (e.g. not disable
+the config, but exit before starting to build), but of course unless this
+feature is needed for many modules it does not make sense to have it.
+It's because kernel mostly contains everything (unless languages like python
+or any other dependency starts to be added). For this reason I like that
+mconf-cfg.sh warns when missing ncurses devel files (even suggesting package
+names).
+
+Just to explain what was my motivation. CONFIG_DRM_MSM in in arm64 defconfig,
+thus it will affect anybody who uses the defconfig (any distro will need to add
+it).
+
+It's needed only for Qualcomm arm64 devices only. But only for these devices
+which are mainlined enough to really use CONFIG_DRM_MSM (many of them aren't in
+that state).
+
+postmarketOS is the distribution which supports Qualcomm. It stores kernel
+config for each device and devices often have individual maintainer. E.g. 175x
+"once" :).
+
+Kind regards,
+Petr
 
