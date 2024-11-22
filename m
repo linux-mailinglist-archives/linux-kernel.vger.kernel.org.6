@@ -1,264 +1,203 @@
-Return-Path: <linux-kernel+bounces-417969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BDE89D5B59
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:55:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE69F9D5B5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:56:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5423B22C54
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:55:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7509F1F21948
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077E71C4A37;
-	Fri, 22 Nov 2024 08:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980371CD1E0;
+	Fri, 22 Nov 2024 08:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NjezCsCg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LRGwGbmY"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2059.outbound.protection.outlook.com [40.107.223.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7461BD9F5;
-	Fri, 22 Nov 2024 08:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732265736; cv=none; b=qViRGQsA3gQUX+NPN8XVr1v4915cmttbW6Mi6E0vxrlv59qMaCRRah3/rk5YfOloQVY1wkhb0jO0cHWLQc8o+RiaEnWWbQDBgzpuz8Ap3uBIzS53nAPNEOMkxpoCBL2JBNAvMJN7gsm8FPE/h8tWJnqsLyGeThVp9FkHThqgcPE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732265736; c=relaxed/simple;
-	bh=PIggoC4Qh9d2n40adshFVBIHZZFCQI5/5MeR1Q1P89M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jjhASW7HfzvtuQ2tlXpm/cIBMOfyMQe8saQjXxUL45X38PluuZsEo21U6wNQhf12ekSCEHdFkn4J5GaxrqI0IAv1MTUiKFUKAQk/DxQe2fD2bqD2mwik1lSxXXUlc+oOh2IVFzkEXqVigB8KeeCWQYZfuaMLwxLtI9crp4RB0Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NjezCsCg; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732265734; x=1763801734;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=PIggoC4Qh9d2n40adshFVBIHZZFCQI5/5MeR1Q1P89M=;
-  b=NjezCsCgFsFhxlBxBjMaxA2VLcwi80JFuHiU64av6mjY9Xa9NWIIqq6X
-   vySydy9e+QwUZjNKuMlb9ppLGdJAHJ6vWGN3EV0mVM5QXxu5W3GsRODFT
-   fBVvUi+09nK1AS/pu3ENuS4DBQMNoJuJq1NJ7NIrYne48TDB0cjc4PEMW
-   U+hA1bJV2/IVLHC/wVquGCBpcoq+DR/gi9zxzPn+hwxSo+HMjDXoEMfGg
-   rmtJcwplEJYLtf3svFldrjzio67he4cVRUZgFPgCmlXnY0/lEKJJtqCPN
-   Ue7vkbpI+Rx8JMEg1B6hfIDwV+VySSg+534y9tU3hroadu62WVdkNgRMr
-   A==;
-X-CSE-ConnectionGUID: DDP1p8H7RySeC5H4TooIHQ==
-X-CSE-MsgGUID: udZDXY4HQJ+HHvfqeyDpNQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="49833197"
-X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
-   d="scan'208";a="49833197"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 00:55:33 -0800
-X-CSE-ConnectionGUID: z5nclqM3SIaBNQ6kaP3ZBg==
-X-CSE-MsgGUID: oMNO8R79Rs62wZt9zBYD1g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
-   d="scan'208";a="90454969"
-Received: from apaszkie-mobl2.apaszkie-mobl2 (HELO wieczorr-mobl1.intel.com) ([10.245.245.234])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 00:55:30 -0800
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Shuah Khan <shuah@kernel.org>
-Cc: kirill@shutemov.name,
-	maciej.wieczor-retman@intel.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH v3] selftests/lam: Test get_user() LAM pointer handling
-Date: Fri, 22 Nov 2024 09:55:20 +0100
-Message-ID: <20241122085521.270802-1-maciej.wieczor-retman@intel.com>
-X-Mailer: git-send-email 2.46.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDF91CB32C;
+	Fri, 22 Nov 2024 08:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732265744; cv=fail; b=qmWTuunJiF8nGPmn0Aiib10QKZkGckYnJ6ujnTAq/IAZm9Hah2lBkLhywK23tFKg43ql3fDYza/W9mC+tva1rBU/la3poRPxeQS/WscCwQWEoPDJ5sIUOX+01NFBzzxLXFzfenfJ3d7qCUaojped1F35D2oPc153/MoajJQ/uV8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732265744; c=relaxed/simple;
+	bh=+1sSXpTImIAwg5fBSsLtg9XMr5+GjnOfxdAN2mu8dF4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=P7+81MG9zn9VA4WPDhgFWLWJqOc0VGJ6ot0cSrYGEQBALCPI5SQ8u142gjFQ2It7CD53EgWG38oPGtN3N/6p4p0L+KaFDvAMall8wsecz90g3HHD6bxhbl9HViopF5RkQukDYVcZuZEwgT/w+uVjaXVAC8Aw3mWdEBS6cyTZd2Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LRGwGbmY; arc=fail smtp.client-ip=40.107.223.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jXNNRTu3vQkl1PV7pH8pUALRIEFxH5UF9tori5DtfAZ0qbPNUujC6fBHwhTPN1ZCfmtTY6/Gnn6GqubKVqU5COtSrnurwYpmG3JP4OpGRwpviPii6g2UONIhvrYRjkN2aFVSiD7yVZHWzpUvmdjBrc5CX8wBbh0gf3vcBsB2XMpx7S0LWjSN5DDYCExqiMarLq7j5faZTg278joMGVLci4oDzDL8YdOvknAGT5QUdvFjqXnO3mPQJpkrQfglY5m/bSbBGW986ow8j11pSW9jjThPWodZA83YC30RTdxiCMsumKzkF2E3z0ltBD7C93Vtwb8Bftjq3lWc1hPZo2HjHQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pIUNVQWRdqcj/0h5Ud2eQHGAjn1z3l4AVqBWkBNdvDg=;
+ b=KtNvD2ll1GUgL3qNQww1DHyvRwCz4aBliya4uomk2d5WZcQhJ7WZwHGaSxcDM8iEJ3dAfegVcxm4s9a11AiWtCCdhXyU2pBFYsMUulVI36afOkaokKPJf7YoU6vA3op+j62dX/ccuvt8ZzzYPdJlF2qimjfllyn2Lbepk9IdPpkGG5mxbSeKRvFz2ZkHuz+6e89da3Poi9qzxKqWTnvlFTxEIXY3nmpqG0DC/6nTAOyezKK7f2gp8FVMCcvW9KStBPT/vIfQiMY4DmkkgEykQU1jRI3dxuBEb4n/rVqEeve/S1AmXUCqGD8Xag5j6NHRtYcSuIrgLDJRHB275WoWOQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.12) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pIUNVQWRdqcj/0h5Ud2eQHGAjn1z3l4AVqBWkBNdvDg=;
+ b=LRGwGbmYVffsp5YkdxNIUZqN9Vp5Km/m5NJb2iYIWtoh1OMZ3PdDe6Tz6aVWFw4mwF0TiiS6kB6iEGDqVfZTOvpbkErf63/8zpKu8o3ubDWZxtEqMLR7xiDDaL1eDcZJ4fmijnsGOMRnnrnnagTfL1Qf8lrxmZCZLZ40Z2Uj9YM=
+Received: from MN0PR05CA0004.namprd05.prod.outlook.com (2603:10b6:208:52c::10)
+ by DS0PR12MB9400.namprd12.prod.outlook.com (2603:10b6:8:1b6::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.15; Fri, 22 Nov
+ 2024 08:55:39 +0000
+Received: from MN1PEPF0000ECD5.namprd02.prod.outlook.com
+ (2603:10b6:208:52c:cafe::44) by MN0PR05CA0004.outlook.office365.com
+ (2603:10b6:208:52c::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.15 via Frontend
+ Transport; Fri, 22 Nov 2024 08:55:38 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.12)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.12 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.12; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.12) by
+ MN1PEPF0000ECD5.mail.protection.outlook.com (10.167.242.133) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8182.16 via Frontend Transport; Fri, 22 Nov 2024 08:55:38 +0000
+Received: from [10.136.35.206] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 22 Nov
+ 2024 02:55:31 -0600
+Message-ID: <12995871-3186-4265-b1f5-520252b9757f@amd.com>
+Date: Fri, 22 Nov 2024 14:25:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [sos-linux-ext-patches] [PATCH v2 1/6] sched/stats: Print domain
+ name in /proc/schedstat
+From: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
+To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<namhyung@kernel.org>, <irogers@google.com>, <james.clark@arm.com>
+CC: <ravi.bangoria@amd.com>, <yu.c.chen@intel.com>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<rostedt@goodmis.org>, <vincent.guittot@linaro.org>,
+	<adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
+	<gautham.shenoy@amd.com>, <kprateek.nayak@amd.com>, <juri.lelli@redhat.com>,
+	<yangjihong@bytedance.com>, <void@manifault.com>, <tj@kernel.org>,
+	<vineethr@linux.ibm.com>, <linux-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <santosh.shukla@amd.com>,
+	<ananth.narayan@amd.com>, <sandipan.das@amd.com>, James Clark
+	<james.clark@linaro.org>
+References: <20241122084452.1064968-1-swapnil.sapkal@amd.com>
+ <20241122084452.1064968-2-swapnil.sapkal@amd.com>
+Content-Language: en-US
+In-Reply-To: <20241122084452.1064968-2-swapnil.sapkal@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD5:EE_|DS0PR12MB9400:EE_
+X-MS-Office365-Filtering-Correlation-Id: b54ab267-f742-44de-bdee-08dd0ad36faf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|7416014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NUJ4Rm05M3Y4S3NuNHBxYUNJWWd4K3dYWEZBOUVLMEdnNG5mQzhYMXcrZjdN?=
+ =?utf-8?B?TWlZRFk0V3RVT1Qxc1NDZWY3RmIya1p3aktQUHBENUd5cjgzOENxNHFDbUtV?=
+ =?utf-8?B?MWZqclE1Zk9wSURNdVhMYitGWG5oVlNXWmlkU085UGxBSFMwNmJJQXIyb1p3?=
+ =?utf-8?B?SFc2R0VIZ29tN0JTTFJ1T0JEMU5MK2JISGllN3haeE10TytHbHN5eG1NcGp2?=
+ =?utf-8?B?SVZsZXJldHVENHVDNnluNnAvaTlqSXpDU3dPRHJEMmpLVDRkODZpSGxUd2ZF?=
+ =?utf-8?B?Q2pUTk1JblZSOWlkUTkwWXpkV0lpTkRGZiszYkc4NWpRaG1MTkhadEtvcDFv?=
+ =?utf-8?B?UFpGMGlJZTFHRncrRU5FUThWTVBpcGZ4bGIvRjJaaTVsc3E1V3M2Q1czNXRl?=
+ =?utf-8?B?ZFIydjJsTS9rTWIxaEN3TkJIakNrci9rY3J4bXEzeUdhWm9Fb0h4NkhXNHRQ?=
+ =?utf-8?B?a2VyZWpXVHZiNHJnYWxVNFBvaXg1YUJ3MzVwdEczMEg5NjNYRVc5OW9pa0NO?=
+ =?utf-8?B?RDdhUGJ5VnlwaDd6bGlsU292QTR3a2M4QlIvdlE5WEIrbVRMTjlteFMxR0xL?=
+ =?utf-8?B?OS9WTktJTTRsTmZzWXhTalhvMHoyRzlGYVByRjNzdkt2bkRPbmN6UkxzUGJr?=
+ =?utf-8?B?QWFZVW0wSGs4NmFMS0NPRENJUFZyWU1nbEdGRTJoTmVGcU84R081WTltWHlv?=
+ =?utf-8?B?L3ZUaERQVWZpclpZTWZFVzd1c0ZNZjAzcmhVNGczSGIyaVQrYzRzbkgrdlNn?=
+ =?utf-8?B?eHA3RzNGYmZVQ2FNMmhTUGhmZDRMSFJob2V4Q3RJbStoeGd0cEdVS3Zqb0U0?=
+ =?utf-8?B?Yk5UT0ErUFlBZnpxM2U2VWJBSGo1cnorYytkaFlhZmlEeVhBeldWUm1SWC9u?=
+ =?utf-8?B?UFd4azFMUHhNS0s2ZkEvVCsvMkNJWGdTcHBBQVhQRXJ6UVAzanJWRzZ5dGRO?=
+ =?utf-8?B?dkw0bEFjVnZLWVc5TzVEVU5PRDE2V2g5Q2ZtM0tlL3hVNGJlMndKb0FnZGlH?=
+ =?utf-8?B?anhHWWZOUzBJRWM4SHA2OGVOSFlmTjZ1VVhLRkl3eWJiOHBYY0dLUUZlNmcx?=
+ =?utf-8?B?NDNrWFVBNDZuc2tpaHJKSVEvOGhQYTkyeXU2V3U0STF1Z3pEL2h6bjFSZlRu?=
+ =?utf-8?B?Z3RUM0lBZTdFdlU2UEZSVGp3cHF0a1BsS0k5Q0hmRHUzUXVoa0lUMzllOFdW?=
+ =?utf-8?B?d0pwMDArTnRhY25wbE5WLzE3dUlRaW5YdE5HY1JMdnRFa21LUjNYa21wcmNE?=
+ =?utf-8?B?K29yMUliSC80RnJjQkRZLzIyOFRmcEU2TlphRFZjelZGZSs2a0llYzAyQ2Yz?=
+ =?utf-8?B?Wis0L2hqcGg3UENVVGRVT3JkS1dXMUtWK29KYUF5Y3RCYU1SZVFOMnZMdnVR?=
+ =?utf-8?B?VDhPR3NwN21RSElnL2ZXQmxBZjZJU1ZURUhxWk92aUdiR1p3MlN1VTdMSmdz?=
+ =?utf-8?B?b1U5STBTRUZITS9ZUnR0MHBzS0NNdElKR3BId2l0bjl1T04veWw5RDBmbXhR?=
+ =?utf-8?B?RzdJamkrN2J4WWQ0d2NZQ01TZTY2ZHJxbFpEaFhLaGI5MlJzWk8vN2c4aEo5?=
+ =?utf-8?B?Wk4vTko1eFV3WGpNclduSytBemFCdUo1aFdqNkVjRWFvK2dyUS9CekEyTTNY?=
+ =?utf-8?B?M0phaVpQSmU0NDZ2cWZDazFrckVwd0Y0bVdFUjV3NFlHZlU2QnQ1elJWUEFV?=
+ =?utf-8?B?MjZqV0xhN0wzeVpkS3UrYUp0TWI0ajk0SkpZWHZObWp0RWhJaDZBOHJiVy9T?=
+ =?utf-8?B?dE0vZFBRL2lpd1BqREFTZXJVUmsrY0RxUVc2NWFhSGlKUEtLTDZ5anJMQjBG?=
+ =?utf-8?B?ZlIvYVBBcHBScTFjSVRrdWdtSU5TTTNmaVE2amJVci91QVdxZHdIU0F1ZmpG?=
+ =?utf-8?B?Vk5GZnBwRDZpMGk3T0NhYmVuZFhGNE8yM2FWWXFlb0xlSXc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.12;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:atlvpn-bp.amd.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(7416014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2024 08:55:38.3862
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b54ab267-f742-44de-bdee-08dd0ad36faf
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.12];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000ECD5.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9400
 
-Recent change in how get_user() handles pointers [1] has a specific case
-for LAM. It assigns a different bitmask that's later used to check
-whether a pointer comes from userland in get_user().
+On 11/22/2024 2:14 PM, Swapnil Sapkal wrote:
+> From: K Prateek Nayak <kprateek.nayak@amd.com>
+> 
+> Currently, there does not exist a straightforward way to extract the
+> names of the sched domains and match them to the per-cpu domain entry in
+> /proc/schedstat other than looking at the debugfs files which are only
+> visible after enabling "verbose" debug after commit 34320745dfc9
+> ("sched/debug: Put sched/domains files under the verbose flag")
+> 
+> Since tools like `perf sched schedstat` require displaying per-domain
+> information in user friendly manner, display the names of sched domain,
+> alongside their level in /proc/schedstat if CONFIG_SCHED_DEBUG is enabled.
+> 
+> Domain names also makes the /proc/schedstat data unambiguous when some
+> of the cpus are offline. For example, on a 128 cpus AMD Zen3 machine
+> where CPU0 and CPU64 are SMT siblings and CPU64 is offline:
+> 
+> Before:
+>      cpu0 ...
+>      domain0 ...
+>      domain1 ...
+>      cpu1 ...
+>      domain0 ...
+>      domain1 ...
+>      domain2 ...
+> 
+> After:
+>      cpu0 ...
+>      domain0:MC ...
+>      domain1:PKG ...
+>      cpu1 ...
+>      domain0:SMT ...
+>      domain1:MC ...
+>      domain2:PKG ...
+> 
+> schedstat version has not been updated since this change merely adds
+> additional information to the domain name field and does not add a new
+> field altogether.
+> 
+> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
+> Tested-by: James Clark <james.clark@linaro.org>
 
-While currently commented out (until LASS [2] is merged into the kernel)
-it's worth making changes to the LAM selftest ahead of time.
-
-Add test case to LAM that utilizes a ioctl (FIOASYNC) syscall which uses
-get_user() in its implementation. Execute the syscall with differently
-tagged pointers to verify that valid user pointers are passing through
-and invalid kernel/non-canonical pointers are not.
-
-Code was tested on a Sierra Forest Xeon machine that's LAM capable. The
-test was ran without issues with both the LAM lines from [1] untouched
-and commented out. The test was also ran without issues with LAM_SUP
-both enabled and disabled.
-
-4/5 level pagetables code paths were also successfully tested in Simics
-on a 5-level capable machine.
-
-[1] https://lore.kernel.org/all/20241024013214.129639-1-torvalds@linux-foundation.org/
-[2] https://lore.kernel.org/all/20240710160655.3402786-1-alexander.shishkin@linux.intel.com/
-
-Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
----
-Changelog v3:
-- mmap the pointer passed to get_user to high address if 5 level paging
-  is enabled and to low address if 4 level paging is enabled.
-
-Changelog v2:
-- Use mmap with HIGH_ADDR to check if we're in 5 or 4 level pagetables.
-
- tools/testing/selftests/x86/lam.c | 110 ++++++++++++++++++++++++++++++
- 1 file changed, 110 insertions(+)
-
-diff --git a/tools/testing/selftests/x86/lam.c b/tools/testing/selftests/x86/lam.c
-index 0ea4f6813930..616a523c3262 100644
---- a/tools/testing/selftests/x86/lam.c
-+++ b/tools/testing/selftests/x86/lam.c
-@@ -4,6 +4,7 @@
- #include <stdlib.h>
- #include <string.h>
- #include <sys/syscall.h>
-+#include <sys/ioctl.h>
- #include <time.h>
- #include <signal.h>
- #include <setjmp.h>
-@@ -43,7 +44,15 @@
- #define FUNC_INHERITE           0x20
- #define FUNC_PASID              0x40
- 
-+/* get_user() pointer test cases */
-+#define GET_USER_USER           0
-+#define GET_USER_KERNEL_TOP     1
-+#define GET_USER_KERNEL_BOT     2
-+#define GET_USER_KERNEL         3
-+
- #define TEST_MASK               0x7f
-+#define L5_SIGN_EXT_MASK        (0xFFUL << 56)
-+#define L4_SIGN_EXT_MASK        (0x1FFFFUL << 47)
- 
- #define LOW_ADDR                (0x1UL << 30)
- #define HIGH_ADDR               (0x3UL << 48)
-@@ -370,6 +379,80 @@ static int handle_syscall(struct testcases *test)
- 	return ret;
- }
- 
-+static int get_user_syscall(struct testcases *test)
-+{
-+	uint64_t ptr_address, bitmask;
-+	void *p, *ptr;
-+	int ret = 0;
-+	int fd;
-+
-+	p = mmap((void *)HIGH_ADDR, 1, PROT_READ | PROT_WRITE,
-+		 MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
-+
-+	if (p == MAP_FAILED) {
-+		bitmask = L4_SIGN_EXT_MASK;
-+		ptr_address = LOW_ADDR;
-+
-+	} else {
-+		bitmask = L5_SIGN_EXT_MASK;
-+		ptr_address = HIGH_ADDR;
-+	}
-+
-+	munmap(p, 1);
-+
-+	ptr = mmap((void *)ptr_address, 1, PROT_READ | PROT_WRITE,
-+		   MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
-+
-+	if (ptr == MAP_FAILED) {
-+		perror("failed to map byte to pass into get_user");
-+		return 1;
-+	}
-+
-+	if (test->lam != 0) {
-+		if (set_lam(test->lam) != 0) {
-+			ret = 2;
-+			goto error;
-+		}
-+	}
-+
-+	fd = memfd_create("lam_ioctl", 0);
-+	if (fd == -1) {
-+		munmap(ptr, 1);
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	switch (test->later) {
-+	case GET_USER_USER:
-+		/* Control group - properly tagger user pointer */
-+		ptr = (void *)set_metadata((uint64_t)ptr, test->lam);
-+		break;
-+	case GET_USER_KERNEL_TOP:
-+		/* Kernel address with top bit cleared */
-+		bitmask &= (bitmask >> 1);
-+		ptr = (void *)((uint64_t)ptr | bitmask);
-+		break;
-+	case GET_USER_KERNEL_BOT:
-+		/* Kernel address with bottom sign-extension bit cleared */
-+		bitmask &= (bitmask << 1);
-+		ptr = (void *)((uint64_t)ptr | bitmask);
-+		break;
-+	case GET_USER_KERNEL:
-+		/* Try to pass a kernel address */
-+		ptr = (void *)((uint64_t)ptr | bitmask);
-+		break;
-+	default:
-+		printf("Invalid test case value passed!\n");
-+		break;
-+	}
-+
-+	if (ioctl(fd, FIOASYNC, ptr) != 0)
-+		ret = 1;
-+
-+error:
-+	munmap(ptr, 1);
-+	return ret;
-+}
-+
- int sys_uring_setup(unsigned int entries, struct io_uring_params *p)
- {
- 	return (int)syscall(__NR_io_uring_setup, entries, p);
-@@ -883,6 +966,33 @@ static struct testcases syscall_cases[] = {
- 		.test_func = handle_syscall,
- 		.msg = "SYSCALL:[Negative] Disable LAM. Dereferencing pointer with metadata.\n",
- 	},
-+	{
-+		.later = GET_USER_USER,
-+		.lam = LAM_U57_BITS,
-+		.test_func = get_user_syscall,
-+		.msg = "GET_USER: get_user() and pass a properly tagged user pointer.\n",
-+	},
-+	{
-+		.later = GET_USER_KERNEL_TOP,
-+		.expected = 1,
-+		.lam = LAM_U57_BITS,
-+		.test_func = get_user_syscall,
-+		.msg = "GET_USER:[Negative] get_user() with a kernel pointer and the top bit cleared.\n",
-+	},
-+	{
-+		.later = GET_USER_KERNEL_BOT,
-+		.expected = 1,
-+		.lam = LAM_U57_BITS,
-+		.test_func = get_user_syscall,
-+		.msg = "GET_USER:[Negative] get_user() with a kernel pointer and the bottom sign-extension bit cleared.\n",
-+	},
-+	{
-+		.later = GET_USER_KERNEL,
-+		.expected = 1,
-+		.lam = LAM_U57_BITS,
-+		.test_func = get_user_syscall,
-+		.msg = "GET_USER:[Negative] get_user() and pass a kernel pointer.\n",
-+	},
- };
- 
- static struct testcases mmap_cases[] = {
--- 
-2.46.2
-
+Signed-off-by: Swapnil Sapkal <swapnil.sapkal@amd.com>
 
