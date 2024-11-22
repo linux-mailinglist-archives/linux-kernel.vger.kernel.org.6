@@ -1,147 +1,103 @@
-Return-Path: <linux-kernel+bounces-417770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 116FE9D58EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:48:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ABE29D58EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:50:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0912284536
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:48:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76434B20DDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35B631632C6;
-	Fri, 22 Nov 2024 04:48:25 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0D92746D
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 04:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885E1166F1B;
+	Fri, 22 Nov 2024 04:50:29 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A9B1527A7
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 04:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732250904; cv=none; b=IlttWghkYFZYx5woQVnUjBk3TrAVCHTrW9I9EXVhis24kiADYiZuT533VzLIRj0NS9/c9yU1rxhmW4T4vN2edAnG9hLuHbIkY1VfTvkbNla8gAtidxgUaeYQCFUnzMRidQyv35NI9yCkOhBRbY5YDcqLh8Jzq/9zceloyZgsac8=
+	t=1732251029; cv=none; b=mYN2Kiqn85ZHiEALuInYOhQ2npCU3taJu04v0pKJ4slKsX9W7/7c3cnysuAm7tnMgFf/b7FyGYbLT7NTWImGuX6NoWXlbN5BoC/jmTuiB8jQ/c19eUGfFmj+Lfr9ckaTZIPqCOue0EVJOfQU1zEA99iIAvmMf6afP2OVoHHbQSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732250904; c=relaxed/simple;
-	bh=W17Eb99vA47L89/Zopwm69gA4mmWV0IPq2kmf9TqDAE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ER8RD7e4PA45/cujaTbURkIuK15o9gWnh1QrL0TMxgiS+MsJ50pf6Ko9tjhuW8/XBFN8r+mPvXkr06IlpN7iw12kukJe6fiOoksLCeU3X2T1PdvWeztms2yNVGD/ruWrLponmC/+ryfXPSy6H/qG99tEK0ySAzMVoc+2TpQV25Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a763f42b35so12799495ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 20:48:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732250902; x=1732855702;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o1RcO0TmnnkYqFobA3xcmpDmvpNzGA8a+TGdYVYOpIc=;
-        b=nzJ7EN4Gdd+jiHx+DwxabdnZ0cDimIki9jsnXvxDx4zvlpZvaRlGtnnjiZauxMZZmA
-         SesjE6oEByXqq0f59AU4HwRqhI+aAjtAtkbDNinKIPF7HruEJAUmh+zHvgpvJuMSfi/H
-         reDGEZ8SC+WgcxRZfxzdQs9+6kDVMOGLu86mXOTVyTikazdGNaaqdvXWWv14x/f1BAij
-         YNelMd8gIVO2mZr95E3gfHD5LI+ZrGEqg2aCeTYKsUUZTz0UULutVQd0RX6WBTLiAXjz
-         huKsnLq8XR6FF0lleW5iUL62Ii+6FLmNvU0kMsDTtCIllfHQgnsRM+UzJT//bM68B3EK
-         NZGw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9urdjsNCjF4U8I1Dwpo+WII/NDGwhHKMH/YNs7q+IqDWvMra9J+S/8MSKa4HmXWKTerjd6mP1ZeAQ2zU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3x8jSzjniOY/twefZnrhQAnlncXV4IpEqaenDFIROFV9oyXZg
-	sD360Z5RDCNm2XOR+eczR/cfhd41uML+1yQLMgRJdOG2sQC3FSEw5giUERp2MIai/VdyiFDQn7f
-	7AncViuVuknjts/+3D2ET/RBs9q3diipkNbu59iwyDWVaSATLzoXWE0U=
-X-Google-Smtp-Source: AGHT+IHcJ6BOXBImHbbr7PXDhYm+3gIjaqafqRTua3U0hxg2vwoo3B0OrmzmwP6A5yyut65uzRyPFvzMEjmyJ9pzfMI6s/7Xcx4O
+	s=arc-20240116; t=1732251029; c=relaxed/simple;
+	bh=JD5fhBPzeT0CyzSwrSAsbW9I9WzcrYZsAKX3gGjoAbU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mXPN1mdAqC10H2YAo9PWTC/8/RIts/ZqhkC0cq1Lj52AAfmUI7BUXqqDVveod85q1mU6/h+9pc8K9YkzsnecP9g7i70KzO2Z8Cq6M2UhDD4OFTHxIpkIhiqx5Xnglnd/gP8AlvMgHhYl5Z+1outvx/7SxY76gnP6OxqkuiO36+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8DxQK+JDUBn77xFAA--.46942S3;
+	Fri, 22 Nov 2024 12:50:17 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMCxdcCIDUBnIJJiAA--.33733S2;
+	Fri, 22 Nov 2024 12:50:17 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 00/10] Add jump table support for objtool on LoongArch
+Date: Fri, 22 Nov 2024 12:49:55 +0800
+Message-ID: <20241122045005.14617-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1809:b0:3a7:8208:b843 with SMTP id
- e9e14a558f8ab-3a79af53d8bmr17513955ab.23.1732250902474; Thu, 21 Nov 2024
- 20:48:22 -0800 (PST)
-Date: Thu, 21 Nov 2024 20:48:22 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67400d16.050a0220.363a1b.0132.GAE@google.com>
-Subject: [syzbot] [hfs?] KMSAN: uninit-value in hfs_read_inode
-From: syzbot <syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMCxdcCIDUBnIJJiAA--.33733S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj9xXoW7Xr48uFWUWF1rWF4DGr48uFX_yoWkKrc_ZF
+	yxWF95Gr4rXa45ta4xtas5urWjkFs5Jr45JFykXr12vF15Jr15WF42vr1DZrZ5Kry5ZFs8
+	tF4vkryxCwnrWosvyTuYvTs0mTUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUb7xYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	WUJVW8JwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
+	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AK
+	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64
+	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
+	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2I
+	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK
+	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
+	0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j1WlkUUUUU=
 
-Hello,
+This series is based on 6.12-rc7, tested with the latest upstream
+mainline Binutils, GCC and Clang, most of the patches are aim to
+handle the special cases compiled with Clang on LoongArch.
 
-syzbot found the following issue on:
+v4:
+  -- Avoid EM_LOONGARCH and R_LARCH_32_PCREL undeclared error
+     for various compiling environments.
 
-HEAD commit:    f66d6acccbc0 Merge tag 'x86_urgent_for_v6.12' of git://git..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1381b2e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=570f86970553dcd2
-dashboard link: https://syzkaller.appspot.com/bug?extid=2db3c7526ba68f4ea776
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1400bb5f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=162c8ac0580000
+  -- Remove the check condition "dest_insn->type == INSN_NOP"
+     for unreachable entry of rodata.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/83bb4f67b45d/disk-f66d6acc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/cb0cedffb310/vmlinux-f66d6acc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3af8c8949657/bzImage-f66d6acc.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/bfaab1c46dcf/mount_0.gz
+Tiezhu Yang (10):
+  objtool: Handle various symbol types of rodata
+  objtool: Handle special cases of dead end insn
+  objtool: Handle different entry size of rodata
+  objtool: Handle PC relative relocation type
+  objtool: Handle unreachable entry of rodata
+  objtool: Handle unsorted table offset of rodata
+  objtool/LoongArch: Get each table size of rodata
+  objtool/LoongArch: Add support for switch table
+  objtool/LoongArch: Add support for goto table
+  LoongArch: Enable jump table for objtool
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com
+ arch/loongarch/Kconfig                 |   3 +
+ arch/loongarch/Makefile                |   4 +
+ tools/objtool/arch/loongarch/special.c | 156 ++++++++++++++++++++++++-
+ tools/objtool/check.c                  |  75 +++++++++++-
+ tools/objtool/include/objtool/check.h  |   1 +
+ 5 files changed, 233 insertions(+), 6 deletions(-)
 
-loop0: detected capacity change from 0 to 64
-=====================================================
-BUG: KMSAN: uninit-value in hfs_inode_read_fork fs/hfs/inode.c:287 [inline]
-BUG: KMSAN: uninit-value in hfs_read_inode+0x10ae/0x1690 fs/hfs/inode.c:343
- hfs_inode_read_fork fs/hfs/inode.c:287 [inline]
- hfs_read_inode+0x10ae/0x1690 fs/hfs/inode.c:343
- inode_insert5+0x1dd/0x970 fs/inode.c:1281
- iget5_locked+0xfe/0x1d0 fs/inode.c:1338
- hfs_iget+0x121/0x240 fs/hfs/inode.c:403
- hfs_fill_super+0x2098/0x23c0 fs/hfs/super.c:431
- mount_bdev+0x39a/0x520 fs/super.c:1693
- hfs_mount+0x4d/0x60 fs/hfs/super.c:457
- legacy_get_tree+0x114/0x290 fs/fs_context.c:662
- vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
- do_new_mount+0x71f/0x15e0 fs/namespace.c:3507
- path_mount+0x742/0x1f10 fs/namespace.c:3834
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x722/0x810 fs/namespace.c:4034
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:4034
- x64_sys_call+0x255a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:166
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+-- 
+2.42.0
 
-Local variable rec created at:
- hfs_fill_super+0x67/0x23c0 fs/hfs/super.c:383
- mount_bdev+0x39a/0x520 fs/super.c:1693
-
-CPU: 1 UID: 0 PID: 5790 Comm: syz-executor415 Not tainted 6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
