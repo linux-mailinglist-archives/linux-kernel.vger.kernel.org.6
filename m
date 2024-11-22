@@ -1,191 +1,257 @@
-Return-Path: <linux-kernel+bounces-418067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 304149D5C99
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:58:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 669F19D5CBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:00:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4AF028284C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:58:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9796BB24E1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A632D1DE3AA;
-	Fri, 22 Nov 2024 09:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B83F1DE3B4;
+	Fri, 22 Nov 2024 09:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="famk3Dyq"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lLaU/E4e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD2C1D79BB;
-	Fri, 22 Nov 2024 09:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4694C1DE3A2;
+	Fri, 22 Nov 2024 09:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732269475; cv=none; b=c49Q0J+8N6+W86LAyGla4B6fGWLWh/2Qd5AwH9mOFK0Ohj69r97QV/mJ2meU54sUFQwQweSAsvVT4FH0h92mPk38dpl5ZjOIsXxA9K7H+R4vV5Tpbsr0Iu1fE7n18VSZJusI6SgckjKRucnPv0UezaGdRyKTaOKV2RAqb3oZ/ls=
+	t=1732269575; cv=none; b=e45hZagyMvm22vEDjV9fvvQ8PyRg6HtikMryqBaD2r3BdPaseL6lRmNwXsv0xFwY7mM9MczKwOpfjOLO6Qgk9Y9gUBVf0PaicOkKQoVWJVjBUoJ2p+WK5e5xcF78FDUOJuj9lJmPFzOW6mJ0kt9EOpr1BIxZMUHh2renTjJ9xvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732269475; c=relaxed/simple;
-	bh=DROrcZMktV46vS9hDs7wxjs4RZ7k0PD0goqABW4Ck0M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XM7wlG1gpMyi9oXNQIs2YXObqv2wyuMEyuAv0LGCT5hh8HiG7lXfN//xTdLcm6chIee2AaWjky4wBqksBandAH08T8NJFA+sObQWrMKSfB87fWaxs67loXk7Z7h0hHJvI7vhJc4CZwTCJcLXNk+NLd966Q2zNkwzleH6YIrSTWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=famk3Dyq; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9ef275b980so306199366b.0;
-        Fri, 22 Nov 2024 01:57:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732269471; x=1732874271; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=z1YNjxFnMu7YgunhEkueJiGg2Ls9YnMrEIaJQYBXqDw=;
-        b=famk3DyqqooLn+AVJMnuQTkk+x9k7D0uFoBEnTeOJmTUJf9X2LXcP6OK2/Qo+td7M4
-         p9N/7x9c+Awr41ewcmhutzILiAYyrBmp376FlQ58oU7Ds78evRqHQddtb0yjHiqOl+I4
-         FoWa7tIMEPp82PfDinHBgRK9RpUbZbo4YXXQnihA6z2cKsLmXFOKb3lzzLcKelUIgrnI
-         PgI33VoLqUak6j48B//Y7+WyoCpjyzgy/1qU1X+wCxHZtV5DR+WD+Ga2fsvtBayuRXvf
-         TqMoDKpcfpqpLxiKOmBsNvxuuJEjKy1+ctXkseWur3gqTuG2rAaXVMz7NAMkT51h1vQe
-         6m/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732269471; x=1732874271;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z1YNjxFnMu7YgunhEkueJiGg2Ls9YnMrEIaJQYBXqDw=;
-        b=f+Zl4hksWEXulQTu4LDeZLBeW7P3kLEqE74O7OMRENa50/jJ5E8dDL4VrW1pe+H7YY
-         0auwTRxlcGzjz19Czdb4sI8FH5uVZdeJ0anf6JOXUrO/gDxxkG4146DuCNIISIysqDti
-         vOg+palQmqC0yP69QWjNl6i5A4uHIDI0FEC+t5St+UTJcPfrRnKFq9Cd0PCbJPqspoRL
-         g7VKgt1xSBTwywQ8Z+EsoWPs8JokXCmAxlZSWFVKy98sRtwWGNL7v/gl6O+SUFAyCD4W
-         YW6sXTRE8m6zYr5ABosMgGDPZZFgH9p8qazyFliX/oqBwFt+NlbHuHEm4Ge2t1kKgJct
-         l6RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUM0P8N8uTrcbMAJ6Q/MPQPgr9qVqlWE+zD/excxYVDMGjKY2P2i56I3RQRHq2ZI4Rxkb7DYmMUuL1KGeqUZg==@vger.kernel.org, AJvYcCVOCuU21fN4PVEJbmaq5b24lgaMt4ei+7STrsRljg78eG37fCQXJh78OBE28+1VDBm8yYEvHxuvzyrv9qpW@vger.kernel.org, AJvYcCXetUxdz84lYpbepKVx4mAYLJHTfl0IhcS4n7mYigyN88otwZPaH+IhWT4mYVr5zDYGwh3YFInB0A1Kl+wE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+2BGdc1Qc7ljjXSM8hjhjxD0A4axJKI2UJ4T3SMQkQ/N/Ph3X
-	6to2SwGUVNGVr5CuSfzcVgPQlkvjIbvSnRmcKauTeyiLd4bpyilf
-X-Gm-Gg: ASbGncvvegx3n958xIVEiK47E+Ta60GgCK7GUWU3ZLusiyI6TGO0Hp6k2Ig1xPaNWrp
-	PMIUfn0BoaOsLNONfliqiXfikQBDfjNzHk7+lVMPRyMlfrr31VzWniZczpK7LnOZVPjz7Wtbf1G
-	CitCkfFlA3/B6cLibzW5exCcWlWJ4HRAvwEz0HTEUg2aKGR6Vv9aEe8cnRunRNRucNG5PEOkPIA
-	TpXmnnkmEmBsL2JyWsl4cYMuCrG8BF9xrKnvSmHDswYeULS+v3wf9SVEouwVtKM4EjaugljcLMi
-	R3LA+jraPZTDYKlzJYLIoUl/r2DbfOpcu4GYHUKqWsVQQnc=
-X-Google-Smtp-Source: AGHT+IGlXtYvtFI2fCcfNTMjkok1wT9AVTZQ1CDek+TBZjQJfwlcWeDAxmdNY1dtnE+KYuSIWXrzsQ==
-X-Received: by 2002:a17:907:2718:b0:a99:c075:6592 with SMTP id a640c23a62f3a-aa509c0d6dbmr192813266b.56.1732269471061;
-        Fri, 22 Nov 2024 01:57:51 -0800 (PST)
-Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b530aa0sm77567866b.115.2024.11.22.01.57.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 01:57:50 -0800 (PST)
-From: Amir Goldstein <amir73il@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org
-Subject: [GIT PULL] overlayfs updates for 6.13
-Date: Fri, 22 Nov 2024 10:57:46 +0100
-Message-Id: <20241122095746.198762-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1732269575; c=relaxed/simple;
+	bh=0ftWDSX41M/H1Xuk75QeX8CBR8oUnrbEjm0UfJzEf30=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gPg0kP8xQvT2heEWZNfEsnhdXjzSVo2x7F8O8bdNMSpJhoeVgKpfqo7v1JtENYNwNf7Cf0t2UyfYb6rf8sA+cIgAD8h1//HrNDvMq+exQvaBUWrV/3yykjGHp44sGNSQB9uC2AClzI9mG7yGgld/kSalOx5CCQgBZc0RVDzJh/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lLaU/E4e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26B23C4CED7;
+	Fri, 22 Nov 2024 09:59:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732269573;
+	bh=0ftWDSX41M/H1Xuk75QeX8CBR8oUnrbEjm0UfJzEf30=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lLaU/E4eB91C5DQq/cwO3HkPlxay7OZkwOSTa4d+Mzc0NC6prGZaSYqckUGJjWvQC
+	 kRbyEKtNdCNNio3/5r5gfrRb9vOlDlPj9uoewaO7KFVBsV1EecD1O02gMGSY4E4kWO
+	 CXKO4x2IY0U1XGHA1fKCW5840MPSMVcTSqdKzU1Or846i20CoBAY9+DGbroYkenMkM
+	 nALzxJi+4E2tg5Lv6LnqKWO+ApZ76wyx6W7VpI+VDACfAgaEw3tCNjXn2kFJEbWWv+
+	 7+rJ+LMn0DPKZpUD9pFHqFZPqgvZZ39clgtj35x+PMg7OGuDOBW89YtIQGJKx1G10a
+	 pr7XgGGBDj9Ng==
+Message-ID: <34f5e893-bb52-4e48-a854-0967b39cae28@kernel.org>
+Date: Fri, 22 Nov 2024 10:59:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] memory: mtk-smi: mt8188: Add SMI clamp function
+To: =?UTF-8?B?RnJpZGF5IFlhbmcgKOadqOmYsyk=?= <Friday.Yang@mediatek.com>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ =?UTF-8?B?WW9uZyBXdSAo5ZC05YuHKQ==?= <Yong.Wu@mediatek.com>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Project_Global_Chrome_Upstream_Group
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>
+References: <20241120063701.8194-1-friday.yang@mediatek.com>
+ <20241120063701.8194-3-friday.yang@mediatek.com>
+ <5bf3bdab-8614-4024-a9da-f7f58414c0af@kernel.org>
+ <e18bf1ba05c86b26fb4f18c444a19b391df29c55.camel@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <e18bf1ba05c86b26fb4f18c444a19b391df29c55.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+On 22/11/2024 10:41, Friday Yang (杨阳) wrote:
+> On Wed, 2024-11-20 at 08:49 +0100, Krzysztof Kozlowski wrote:
+>> External email : Please do not click links or open attachments until
+>> you have verified the sender or the content.
+>>
+>>
+>> On 20/11/2024 07:36, Friday Yang wrote:
+>>> In order to avoid handling glitch signal when MTCMOS on/off, SMI
+>>> need
+>>> clamp and reset operation. Parse power reset settings for LARBs
+>>> which
+>>> need to reset. Register genpd callback for SMI LARBs and apply
+>>> reset
+>>> operations in the callback.
+>>>
+>>> Signed-off-by: Friday Yang <friday.yang@mediatek.com>
+>>> ---
+>>>  drivers/memory/mtk-smi.c | 175
+>>> ++++++++++++++++++++++++++++++++++++++-
+>>>  1 file changed, 171 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
+>>> index 2bc034dff691..c7119f655350 100644
+>>> --- a/drivers/memory/mtk-smi.c
+>>> +++ b/drivers/memory/mtk-smi.c
+>>> @@ -10,15 +10,21 @@
+>>>  #include <linux/err.h>
+>>>  #include <linux/io.h>
+>>>  #include <linux/iopoll.h>
+>>> +#include <linux/mfd/syscon.h>
+>>
+>> Where do you use it?
+> 
+> device_node_to_regmap need this header file.
 
-Please pull overlayfs updates for 6.13.
+Ah, indeed, but then I wonder why you parse phandle instead of using
+standard syscon API: syscon_regmap_lookup_by_phandle().
 
-This pull request has some changes in code outside of fs/overlayfs:
 
-1. The backing_file API change touches fuse code - that was collaborated
-   with Miklos who authored this API change
+> 
+>>
+>>>  #include <linux/module.h>
+>>>  #include <linux/of.h>
+>>>  #include <linux/of_platform.h>
+>>>  #include <linux/platform_device.h>
+>>> +#include <linux/pm_domain.h>
+>>
+>> Where do you use it?
+> 
+> dev_pm_genpd_add_notifier need this header file.
 
-2. The additions of revert/override_creds_light() helpers in cred.{h,c}
-   were collaborated with Christian who has suggested those helpers
+ack
 
-There was also an overlayfs change in this cycle coming from Christian
-(file descriptors based layer setup).  His changes do not conflict with
-this branch and I have also tested his change along with the fs-next
-community test branch.
+> 
+>>
+>>>  #include <linux/pm_runtime.h>
+>>> +#include <linux/regmap.h>
+>>
+>> Where do you use it?
+> 
+> regmap_write need this header file.
 
-Most of this branch has been sitting in linux-next for over a week except
-for one syzbot issue fix that was added three days ago.
+ack
 
-The code has gone through the usual overlayfs test routines.
+> 
+>>
+>>> +#include <linux/reset.h>
+>>> +#include <linux/reset-controller.h>
+>>>  #include <linux/soc/mediatek/mtk_sip_svc.h>
+>>>  #include <soc/mediatek/smi.h>
+>>>  #include <dt-bindings/memory/mt2701-larb-port.h>
+>>>  #include <dt-bindings/memory/mtk-memory-port.h>
+>>> +#include <dt-bindings/reset/mt8188-resets.h>
+>>>
+>>
+>> ...
+> 
+> reset_control_reset/devm_reset_control_get need reset.h
+> But reset-controller.h could be removed.
+> MT8188_SMI_RST_LARB10 and other index need mt8188-resets.h 
+> 
+>>
+>>>
+>>> +static int mtk_smi_larb_parse_clamp_info(struct mtk_smi_larb
+>>> *larb)
+>>> +{
+>>> +     struct device *dev = larb->dev;
+>>> +     const struct mtk_smi_larb_gen *larb_gen = larb->larb_gen;
+>>> +     struct device_node *smi_node;
+>>> +     struct of_phandle_args args;
+>>> +     int ret, index;
+>>> +
+>>> +     /* Only SMI LARBs located in camera and image subsys need to
+>>
+>> Use Linux coding style.
+> 
+> Sorry for the mistake, I will fix it.
+> 
+>>
+>>> +      * apply clamp and reset operation, others can be skipped.
+>>> +      */
+>>> +     ret = of_parse_phandle_with_fixed_args(dev->of_node,
+>>> +                                            "resets", 1, 0,
+>>> &args);
+>>
+>> NAK
+>>
+>>> +     if (ret)
+>>> +             return 0;
+>>> +
+>>> +     smi_node = of_parse_phandle(dev->of_node, "mediatek,smi", 0);
+>>> +     if (!smi_node)
+>>> +             return -EINVAL;
+>>> +
+>>> +     index = args.args[0];
+>>
+>> That's reset, not clamp port. NAK.
+> 
+> I could change from 'clamp_port' to 'reset_port'.
+> This index is used for getting the port id from the array
+> 'mtk_smi_larb_clamp_port_mt8188 ' in SMI driver.
 
-The branch merges cleanly with master branch of the moment.
+Index is for reset, not for port ID.
 
-Thanks,
-Amir.
+> It could also be used for getting the reset signal in
+> SMI reset controller driver.
+> 
 
-----------------------------------------------------------------
-The following changes since commit 2d5404caa8c7bb5c4e0435f94b28834ae5456623:
+Look at my comments from previous version - they were not under reset
+property. The argument for reset is for reset provider, not this reset
+consumer.
 
-  Linux 6.12-rc7 (2024-11-10 14:19:35 -0800)
+BTW, when you link to previous versions of patchset, link to lore, not
+patchwork. Or just use b4.
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git ovl-update-6.13
-
-for you to fetch changes up to c8b359dddb418c60df1a69beea01d1b3322bfe83:
-
-  ovl: Filter invalid inodes with missing lookup function (2024-11-20 10:23:04 +0100)
-
-----------------------------------------------------------------
-overlayfs updates for 6.13
-
-- Fix a syzbot reported NULL pointer deref with bfs lower layers
-
-- Fix a copy up failure of large file from lower fuse fs
-
-- Followup cleanup of backing_file API from Miklos
-
-- Introduction and use of revert/override_creds_light() helpers, that were
-  suggested by Christian as a mitigation to cache line bouncing and false
-  sharing of fields in overlayfs creator_cred long lived struct cred copy.
-
-- Store up to two backing file references (upper and lower) in an ovl_file
-  container instead of storing a single backing file in file->private_data.
-
-  This is used to avoid the practice of opening a short lived backing file
-  for the duration of some file operations and to avoid the specialized use
-  of FDPUT_FPUT in such occasions, that was getting in the way of Al's
-  fd_file() conversions.
-
-----------------------------------------------------------------
-Amir Goldstein (6):
-      ovl: pass an explicit reference of creators creds to callers
-      ovl: do not open non-data lower file for fsync
-      ovl: allocate a container struct ovl_file for ovl private context
-      ovl: store upper real file in ovl_file struct
-      ovl: convert ovl_real_fdget_path() callers to ovl_real_file_path()
-      ovl: convert ovl_real_fdget() callers to ovl_real_file()
-
-Miklos Szeredi (1):
-      backing-file: clean up the API
-
-Oleksandr Tymoshenko (1):
-      ovl: properly handle large files in ovl_security_fileattr
-
-Vasiliy Kovalev (1):
-      ovl: Filter invalid inodes with missing lookup function
-
-Vinicius Costa Gomes (4):
-      cred: Add a light version of override/revert_creds()
-      fs/backing-file: Convert to revert/override_creds_light()
-      ovl: use wrapper ovl_revert_creds()
-      ovl: Optimize override/revert creds
-
- fs/backing-file.c            |  53 ++++---
- fs/fuse/passthrough.c        |  32 +++--
- fs/overlayfs/copy_up.c       |   2 +-
- fs/overlayfs/dir.c           |  68 ++++++---
- fs/overlayfs/file.c          | 327 +++++++++++++++++++++++++------------------
- fs/overlayfs/inode.c         |  27 ++--
- fs/overlayfs/namei.c         |  10 +-
- fs/overlayfs/overlayfs.h     |   4 +
- fs/overlayfs/readdir.c       |   8 +-
- fs/overlayfs/util.c          |  14 +-
- fs/overlayfs/xattrs.c        |   9 +-
- include/linux/backing-file.h |  11 +-
- include/linux/cred.h         |  18 +++
- kernel/cred.c                |   6 +-
- 14 files changed, 352 insertions(+), 237 deletions(-)
+Best regards,
+Krzysztof
 
