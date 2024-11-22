@@ -1,111 +1,125 @@
-Return-Path: <linux-kernel+bounces-418246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 439589D5F40
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:50:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4401B9D5F42
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:51:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED0821F2288C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:50:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08D9E28248B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0091F1DDA32;
-	Fri, 22 Nov 2024 12:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBC31DE2B8;
+	Fri, 22 Nov 2024 12:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="bLQX2zwK"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="CPPgOG8t"
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738E479FE
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0557215531A;
+	Fri, 22 Nov 2024 12:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732279825; cv=none; b=n4D39O+0BknqhMxKEUFzu7Hh1vBbi7BU68nWcXf9E1KK4cbe/vPGnYJfbf9VV1byrpKpo+2nwhRM/WuV375MGjFyAS7CFdN5gI4Glx7NKHREJjL1x1Kfy7pgLTzknnyTwufYpsRwHuA9azk4dFL3kixWa1Vvpbo29uhzpUsVhvA=
+	t=1732279855; cv=none; b=bPkgEcxGkt7B3ud3uThuWZpwb3wtWRJfr3NSeyoikRwBimVidlE06q0fke7OWRc5863UfmGi68M5Lvxnby1aC1xcaJW8bV3tZXh0SBelpaAr0UxZ2831EHyLOCX8T/WY3QQLxRdtFQXe3A5uvNHmDCtNsm9WoVjUS+vSfsjhNSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732279825; c=relaxed/simple;
-	bh=atb87RVlqbps10/eQPzMRbuCyy5wHD42O3IKfx9I7ro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iTj6hSxGbnoof2CUe8KJYxGYMBPhRLINgv++3WheQvKEuG9xCs17H+iRLPSJ7DTIb8Rn6C0vxR7194pc+CwKBxrdWZh0lCxINP2Mwrm3l6xESWNyUGp85B43xg0KzEsjdY8NmCQOjeayus5fzDv6qnJIqU1seWbawi6ZzRIBZRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=bLQX2zwK; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=bUFP
-	p322PNcA7L+056zakPx2ROmDJtwYS7dswWzCPkk=; b=bLQX2zwKeJfJuIvC+wJ8
-	KaYDdd7Ya3IJUrmSG1YIurjJaeahaDXH1T44ni5pe8ROGs+eOiRrIfrzFpnUIaMB
-	soEV3n5TcWZCzbuuoLvgajGyrpFQUdcJKwUwdlw5NIi5pusAgZZXlXzTAT26uuVo
-	rAfjoMPv6gvRkFbNdYDgAkMpe1Fq/Siphu2c3eeQR2nKaMwU6i01+jflpcAvqCMh
-	zEMX12epCwPGRnJOsxgqaLkKRsF2mxMar+QeBBiQEpDuTT3xwLvCJe8BZOJWlibM
-	AOciBlSNRQCR6qLmGnHVf2gt4UOn+CzoygZXshh74CMmmRt1KqRxk0cf++roBbwd
-	/w==
-Received: (qmail 1604655 invoked from network); 22 Nov 2024 13:50:17 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Nov 2024 13:50:17 +0100
-X-UD-Smtp-Session: l3s3148p1@6dIt038nAokujntT
-Date: Fri, 22 Nov 2024 13:50:17 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] i2c-host-fixes for v6.12
-Message-ID: <Z0B-CdrBfFMFMBTq@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	linux-i2c <linux-i2c@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-References: <detebsw5fdnjirwzai5ldvy2arsm2jgyzojulpw77m6gujn65o@mgfxsijpsjdg>
+	s=arc-20240116; t=1732279855; c=relaxed/simple;
+	bh=TXAXohnqcyJXs65CyDSlQGpIMn6HjE7TPDvTwM5Nxw8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YLdZLWOQTUmmaeKtyb5GqanX4MmOMnqKqJI3YYjcxn0WF6xJ+V4o+bKByQMV7P0DsUseblRTnimCoUNrBE7fxZOiOw/QnZerXfW7lslzW3z5QKPUK/Be+KklznQScRnVG77AiaAR2paVFVNuCroul3Bckc+cmOZ0JrpP6SXfy7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=CPPgOG8t; arc=none smtp.client-ip=80.12.242.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id ET7RtSoidpobeET7Rtd9ew; Fri, 22 Nov 2024 13:50:45 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1732279845;
+	bh=1PJEZdDmuvmngMqdpgv+5cohjiUYGlhnQ9eNLiHK038=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=CPPgOG8t7np+rZ9t/HZw0SZVSNAIzvSjlRCYhr3UOktPH2l9tOVNyWyvfAMkCijCW
+	 hvcYyYWsOK388Ue5LWgZCTCCgTSrCitQuO/SqVMgQ4m+V2bk4x3xdPz53sjdIRcHMo
+	 Th5CXbAI6oVgBGkIVs4m3nzejrm3yBWa2UP7SvY4V95edeNkDmDYGFuXAFsyup6H1s
+	 XtF8xec9dtUY6OCUoi9Tgh4/PowSlTd1Amrrd9miMNqmCOD8gkeBPoeE2TMXbk1Am8
+	 afD6Z2M4EGJjZhBsbyMD49chjb/dKHiwdgiZH7l4PE0rmDQ+wl8p02Z36yYOiHjL2o
+	 EcgctLlIhV+5g==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Fri, 22 Nov 2024 13:50:45 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <7815334a-940f-4ce5-86e6-9bd90465bb43@wanadoo.fr>
+Date: Fri, 22 Nov 2024 13:50:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="QkLNcp0BoAC2nUz8"
-Content-Disposition: inline
-In-Reply-To: <detebsw5fdnjirwzai5ldvy2arsm2jgyzojulpw77m6gujn65o@mgfxsijpsjdg>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] idr-test: ida_simple_get/remove are deprecated, so switch
+ to ida_alloc/free.
+To: zhangheng <zhangheng@kylinos.cn>, willy@infradead.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241122115425.3820230-1-zhangheng@kylinos.cn>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20241122115425.3820230-1-zhangheng@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+Le 22/11/2024 à 12:54, zhangheng a écrit :
+> Signed-off-by: zhangheng <zhangheng@kylinos.cn>
+> ---
+>   tools/testing/radix-tree/idr-test.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/testing/radix-tree/idr-test.c b/tools/testing/radix-tree/idr-test.c
+> index 84b8c3c92c79..7fb04a830a21 100644
+> --- a/tools/testing/radix-tree/idr-test.c
+> +++ b/tools/testing/radix-tree/idr-test.c
+> @@ -505,12 +505,12 @@ void ida_simple_get_remove_test(void)
+>   	unsigned long i;
+>   
+>   	for (i = 0; i < 10000; i++) {
+> -		assert(ida_simple_get(&ida, 0, 20000, GFP_KERNEL) == i);
+> +		assert(ida_alloc_range(&ida, 0, 19999, GFP_KERNEL) == i);
+>   	}
+> -	assert(ida_simple_get(&ida, 5, 30, GFP_KERNEL) < 0);
+> +	assert(ida_alloc_range(&ida, 5, 29, GFP_KERNEL) < 0);
+>   
+>   	for (i = 0; i < 10000; i++) {
+> -		ida_simple_remove(&ida, i);
+> +		ida_free(&ida, i);
+>   	}
+>   	assert(ida_is_empty(&ida));
+>   
+
+Hi,
+
+A more complete fix for this specific file is available at [0].
 
 
---QkLNcp0BoAC2nUz8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+please also see the serie at [1], resent at [2].
+It was delayed because another usage of the API was added, and then 
+fixed [3].
 
-Hi Andi,
+After that, drivers/gpio/gpio-mpsse.c also re-introduced another usage.
+The fix for this one was apparently never sent. This is now done. [4]
 
-> just a MAINTAINER's update for the fixes pull request.
+CJ
 
-There are no fixes during mergewindow :)
+[0]: 
+https://lore.kernel.org/linux-kernel/715cff763aa4b2c174cc649750e14e404db6e65b.1722853349.git.christophe.jaillet@wanadoo.fr/
 
-> Tomorrow morning I will send the second part of the merge window
-> pull request, I want to give it one more night test.
+[1]: 
+https://lore.kernel.org/linux-kernel/81f44a41b7ccceb26a802af473f931799445821a.1705683269.git.christophe.jaillet@wanadoo.fr/
 
-Can you put this patch into that part2, please?
+[2]: 
+https://lore.kernel.org/linux-kernel/cover.1722853349.git.christophe.jaillet@wanadoo.fr/
 
-Happy hacking and thanks,
+[3]: 
+https://lore.kernel.org/linux-kernel/df8bfbe2a603c596566a4f967e37d10d208bbc3f.1728507153.git.christophe.jaillet@wanadoo.fr/
 
-   Wolfram
-
-
---QkLNcp0BoAC2nUz8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmdAfgUACgkQFA3kzBSg
-KbZniQ//V2GSHsElMyv7bW60iz8C7qMis1gdz4y/FfCL/yKpTFgmalts4GdNBwNW
-1z9QWmFCg82Mvzvxfaf3EP3AbZ8iS4sowL5ogjfCZKkhX+EBxvNwDyxwA4SdNWd8
-eS37uG5/NFUQ9j3642fETb2pgVMOLrfn+HNQQ7iY00H5UCXavT3pGPZXujocPr7t
-tQbCgYK+ScBJCeNV6fgIC7xZVoDa1IAZMgYZA8Cz90EGwdZEyt3UXcXoFCAWxbh9
-KcAo+9WhK9sUY5SiInJJAQ6mzG3AWPyDtGyrVxJquFdM2MSvHA+K6WjVhwc6QYkk
-51Ocn2PbO9E4pg9t5oSI+ErNJMiTDOxOfd5WPAo2an3P5r3qK4M6oMYfx/8ujGaZ
-yvuc/odC8oCTRWCOdSBpZHQwEg0hQQ/6aYWGn6NyuxouJmaPmz9h8UrTCAl/G8fh
-UluBu3vf6ZyY5UYzPxiaYuyvC1adM3qQaFe3e8pXBAcLp1RAhA2YUGuKDil8QMIe
-DDpLIniAS5K3IwK0UXNH9sLQjSt1ZyaOtng07QOMHuYvljuuS5DutMglqIy4/CaE
-ejjF5rRGMNCMe8zLeQQB7n0yM6BikAVQHlHctEVE5cy2UcpSct5kBObrO74alF1n
-ijw+SF2T+N0ZuiK6f+LtWdZ4JJud7RRM0mzlr3QxLEfknfmlPBQ=
-=CWG7
------END PGP SIGNATURE-----
-
---QkLNcp0BoAC2nUz8--
+[4]: 
+https://lore.kernel.org/linux-kernel/2ce706d3242b9d3e4b9c20c0a7d9a8afcf8897ec.1729423829.git.christophe.jaillet@wanadoo.fr/
 
