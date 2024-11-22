@@ -1,85 +1,189 @@
-Return-Path: <linux-kernel+bounces-417865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 311739D59FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:31:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 525499D5A01
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:31:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D97C51F23492
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:31:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85E90B22282
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:31:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77ACD175D29;
-	Fri, 22 Nov 2024 07:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5434E170A37;
+	Fri, 22 Nov 2024 07:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="owF4NObT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZdxqzQol"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD98D1632F5;
-	Fri, 22 Nov 2024 07:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A5635885
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 07:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732260648; cv=none; b=gTQJ8Piuep2t8m7nComEgnxhfz6uqbKB+uAm58c9dT+ez6+nZWLqILEmHOoOalYXGUNpkVFbzl1Qdf3OiW4Zd5IcwhZY4JAYb7fj1ogzmM97II+3yfvhvisdO1omdYHP2C7Bjeg1GZ6NRlgOxjGWEjjKr/n4XMfGpNUiyflt+wc=
+	t=1732260694; cv=none; b=IMeHnxnX3G7IRNQOvyO42XTH98QsAZqgsiF5YkHdbw5HEqx2w10kklSb7t6w0FPv4I54y3mhzr4A+ULq0M0lOz5jJ6tUKyUAUO06fP3WrHZvZXwAOwhezUrVenvXtpDAmSCsrE2KsPH6qP+2lYLBWKfKkdFrrj8l5XWCOd/seeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732260648; c=relaxed/simple;
-	bh=9FHokJBvilp2Maa1P56wWPmPxjN1yEESCPlKt2evFuQ=;
+	s=arc-20240116; t=1732260694; c=relaxed/simple;
+	bh=HQvBfxRd8qJug47oyF/nl4DbLd5Lm22tQlEI+j4EkI8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=chGNZhdTaO1gzGx7hKxhfQAlTVxtvd+FhbSKHFwBUu0i/ShuH9IyR+yMN0U0bVIjr51VbijLmY17if7++uKNb1/s9oy9yu3KGLJyh1gUllCAKJaqmjj2yWpKPuDqH9PtqHLADeqH2TVUKyi8yJ17aLr7Mmb9fdTQn2glKAqoKEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=owF4NObT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99FAFC4CECE;
-	Fri, 22 Nov 2024 07:30:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732260648;
-	bh=9FHokJBvilp2Maa1P56wWPmPxjN1yEESCPlKt2evFuQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=owF4NObTxxbff9fN21+lqaNFdY4R8Lq9N0EZu8vaql89qNquvxf+h8ukmiXVtO57L
-	 gyHAfAQ8onWvTQCqdIUEQ0KlVm8K1XAyX/01Vo+pY04G4dl6GFYXfENh7GG7Nmm2B8
-	 jPX8+v/sgNqY6qZ5zfipSiIvCDsRUwS8yq78UbL/s5mrma4LR1yJ0pW+8UNR1X4U5m
-	 DKd2JudpOjuJURw+R57IsXb9c1cC8XOyYw2ZwVPPcVmAjkqwSojHOu3P9r+t+NsUUS
-	 /eLWFBsoqsbK3iJLIxOBTDIJ22dP9ThTZpDbp1sy004fz5F7c1bHstfS3kpY0INhN1
-	 YqShz/oCiMyyQ==
-Date: Fri, 22 Nov 2024 08:30:45 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Odelu Kukatla <quic_okukatla@quicinc.com>, Mike Tipton <quic_mdtipton@quicinc.com>, 
-	Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V5 1/4] dt-bindings: interconnect: Add EPSS L3 compatible
- for SA8775P
-Message-ID: <gxlgrgwscpz7fw57aj6cqbrcyr6ovv755bgb5ix656op6jr5h4@pnbx4ze4qv22>
-References: <20241121113006.28520-1-quic_rlaggysh@quicinc.com>
- <20241121113006.28520-2-quic_rlaggysh@quicinc.com>
- <bda810ab-68d8-4265-87c3-a6d021092e62@kernel.org>
- <10e4fd4e-559d-4164-ab94-d5f0a60ffc22@quicinc.com>
- <53876db8-4401-481d-8684-af7e135d481e@kernel.org>
- <82fc7b99-bc3e-4a9b-a472-c1b70671f21a@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AWhJQWw4y1UrHG4y0LoEM5ak3br4kTZ5Htz5l8Y61ZjRRNKNjT0zIJQ1uSFWLKzWyUlaE6sXBa9MxjRQkvm8+D+Z5R4xn4jXHDIa08gQJBIq0tzzdcYfyzCrMj+LkTMP/DFdHNeJo8z7i+NH16NbxFZ+E20DZaaIwuho7zQxhBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZdxqzQol; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732260691;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PXq9Wjiti00hPsb6uBFVS+EGZ67OZCcyDnwcfoAoCsg=;
+	b=ZdxqzQol/MDBgHc/osje2eoEJZ8FNHTUNyw70iAFXsJsWA9dhM6wY/ammKHPx6nkAajBF/
+	VLTROi29mW00gom9J5UfJr2mhhd6ULLsHicDG4pfJCOljAPr7XQ+/VrGnLqRwHSm1xniXI
+	pp+95igGRLHTPf2UUzDo6FEaltPEOyU=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-641-sLMKtwRkP9C3ZZ084QJlQw-1; Fri,
+ 22 Nov 2024 02:31:28 -0500
+X-MC-Unique: sLMKtwRkP9C3ZZ084QJlQw-1
+X-Mimecast-MFC-AGG-ID: sLMKtwRkP9C3ZZ084QJlQw
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E8D46195608A;
+	Fri, 22 Nov 2024 07:31:25 +0000 (UTC)
+Received: from localhost (unknown [10.72.113.10])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DA2AF19560A3;
+	Fri, 22 Nov 2024 07:31:23 +0000 (UTC)
+Date: Fri, 22 Nov 2024 15:31:19 +0800
+From: Baoquan He <bhe@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Eric Farman <farman@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v1 07/11] fs/proc/vmcore: introduce
+ PROC_VMCORE_DEVICE_RAM to detect device RAM ranges in 2nd kernel
+Message-ID: <Z0AzR2Yhl527wkbP@MiWiFi-R3L-srv>
+References: <20241025151134.1275575-1-david@redhat.com>
+ <20241025151134.1275575-8-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <82fc7b99-bc3e-4a9b-a472-c1b70671f21a@quicinc.com>
+In-Reply-To: <20241025151134.1275575-8-david@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Fri, Nov 22, 2024 at 12:46:37PM +0530, Raviteja Laggyshetty wrote:
-> > 
-> >> But received comment from konrad to add both SoC-specific and generic compatibles.
-> > 
-> > I went through the history and don't see anything like that. Point to
-> > the specific email please, if you disagree.
-> > 
-> https://patchwork.kernel.org/project/linux-pm/patch/20241026123058.28258-2-quic_rlaggysh@quicinc.com/#26104591
+On 10/25/24 at 05:11pm, David Hildenbrand wrote:
+......snip...
+> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+> index 3e90416ee54e..c332a9a4920b 100644
+> --- a/fs/proc/vmcore.c
+> +++ b/fs/proc/vmcore.c
+> @@ -69,6 +69,8 @@ static LIST_HEAD(vmcore_cb_list);
+>  /* Whether the vmcore has been opened once. */
+>  static bool vmcore_opened;
+>  
+> +static void vmcore_process_device_ram(struct vmcore_cb *cb);
+> +
+>  void register_vmcore_cb(struct vmcore_cb *cb)
+>  {
+>  	INIT_LIST_HEAD(&cb->next);
+> @@ -80,6 +82,8 @@ void register_vmcore_cb(struct vmcore_cb *cb)
+>  	 */
+>  	if (vmcore_opened)
+>  		pr_warn_once("Unexpected vmcore callback registration\n");
+> +	else if (cb->get_device_ram)
+> +		vmcore_process_device_ram(cb);
 
-I read this message and it does not say to use generic compatible.
+Global variable 'vmcore_opened' is used to indicate if /proc/vmcore is
+opened. With &vmcore_mutex, we don't need to worry about concurrent
+opening and modification. However, if people just open /proc/vmcore and
+close it after checking, then s390 will miss the vmcore dumping, is it
+acceptable?
 
-Best regards,
-Krzysztof
+>  	mutex_unlock(&vmcore_mutex);
+>  }
+>  EXPORT_SYMBOL_GPL(register_vmcore_cb);
+> @@ -1511,6 +1515,158 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
+......
+> +
+> +static void vmcore_process_device_ram(struct vmcore_cb *cb)
+> +{
+> +	unsigned char *e_ident = (unsigned char *)elfcorebuf;
+> +	struct vmcore_mem_node *first, *m;
+> +	LIST_HEAD(list);
+> +	int count;
+> +
+> +	if (cb->get_device_ram(cb, &list)) {
+> +		pr_err("Kdump: obtaining device ram ranges failed\n");
+> +		return;
+> +	}
+> +	count = list_count_nodes(&list);
+> +	if (!count)
+> +		return;
+> +
+> +	/* We only support Elf64 dumps for now. */
+> +	if (WARN_ON_ONCE(e_ident[EI_CLASS] != ELFCLASS64)) {
+> +		pr_err("Kdump: device ram ranges only support Elf64\n");
+> +		goto out_free;
+> +	}
+
+Only supporting Elf64 dumps seems to be a basic checking, do we need
+to put it at the beginning of function? Otherwise, we spend efforts to
+call cb->get_device_ram(), then fail.
+
+> +
+> +	/*
+> +	 * For some reason these ranges are already know? Might happen
+> +	 * with unusual register->unregister->register sequences; we'll simply
+> +	 * sanity check using the first range.
+> +	 */
+> +	first = list_first_entry(&list, struct vmcore_mem_node, list);
+> +	list_for_each_entry(m, &vmcore_list, list) {
+> +		unsigned long long m_end = m->paddr + m->size;
+> +		unsigned long long first_end = first->paddr + first->size;
+> +
+> +		if (first->paddr < m_end && m->paddr < first_end)
+> +			goto out_free;
+> +	}
+> +
+> +	/* If adding the mem nodes succeeds, they must not be freed. */
+> +	if (!vmcore_add_device_ram_elf64(&list, count))
+> +		return;
+> +out_free:
+> +	vmcore_free_mem_nodes(&list);
+> +}
+> +#else /* !CONFIG_PROC_VMCORE_DEVICE_RAM */
+> +static void vmcore_process_device_ram(struct vmcore_cb *cb)
+> +{
+> +}
+> +#endif /* CONFIG_PROC_VMCORE_DEVICE_RAM */
+> +
+>  /* Free all dumps in vmcore device dump list */
+>  static void vmcore_free_device_dumps(void)
+>  {
+> diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
+> index 722dbcff7371..8e581a053d7f 100644
+> --- a/include/linux/crash_dump.h
+> +++ b/include/linux/crash_dump.h
 
 
