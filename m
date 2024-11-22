@@ -1,105 +1,108 @@
-Return-Path: <linux-kernel+bounces-418340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCE799D608D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:40:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 073669D6049
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:29:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 957581F21BE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:40:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B08821F229D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529E314C588;
-	Fri, 22 Nov 2024 14:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="roa+NfXC"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5627762EF;
+	Fri, 22 Nov 2024 14:29:21 +0000 (UTC)
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FB37346F;
-	Fri, 22 Nov 2024 14:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9D2171D2;
+	Fri, 22 Nov 2024 14:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732286170; cv=none; b=Ppyye9cUjCS9a4JDwZfts9yE/1ip0mmvAT6kK9GyqxYsFe3zIFNp7ArZKpUFRVgEpjhqzVbOD3iTCsaUfxsE+x5lmsnwfZeJolX5pNqhtknDSONgr9z2VKCgbyqJjz3PEe4oDeNKGQRShlnC7BMpN34YrMqBbuAWZyITCpXhqOA=
+	t=1732285761; cv=none; b=Z5FqWT5UIhs+Of6eJP/BeNhD2ASdr+K1jLzQsjnJBLt63ORib4pk1cPoZKt2yDUa2MdrQWQixfeTj+gfUA/1E8l8n+QN2LpjDYo5uN4aU6X9WTOfM4+acHQoKJcD88ZdiTgk9y5343y7wpI4TvsXdz8qg/hiTWffH0TBuDI2skY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732286170; c=relaxed/simple;
-	bh=k0WoroNyi/hlpITMT7yy3bt5bPQ1vA9fwYVLc6J/xTk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KabP7nwPRvNjwrdfy2xMTUMv81svzkubmnISE+cWHpHyg3w+i9ePjg4N1SA6OKnkqqaZbWk/V+KgjpwDoMxKoALvsd+iXDBKLCBcksOTqTe439HTRPrT86HYYryBhl69DLuaJYwqi/F0E0sD/6zcz1m+2yZH62+T2jJ2DRFrJVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=roa+NfXC; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1732285728;
-	bh=k0WoroNyi/hlpITMT7yy3bt5bPQ1vA9fwYVLc6J/xTk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=roa+NfXCg6AxaYjHlMDwuS2nYji/5ps24qS82xY5WSZd7nmOfZ/VH/6n/YZJCRy/n
-	 MIPJEHDQJx6hd/Ls6CQByF/iij5YkBjaEuM8dZfUB3wxApJuWLn9h+ZjASA/j86Rgz
-	 NkE3uqrg05a+Oen0G3Ojk00i1oOB4V5eEspqjyKXd0Vp8jYc5zJ5zYtvqmeRSJK0US
-	 oopm2L38QHLm9saRXzibUudYda3EAcTzVD9vJMWEAtcLnaLqAtR+nTQODInapT0iOU
-	 G090jT+0xRxgozAqWD+6Jz7dtPHYMNLnQAeEhKzv6toQ4l7eploP5oxmpiYsgPKTFQ
-	 GYCWPHz+3gh2Q==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XvyC36RmVzHRj;
-	Fri, 22 Nov 2024 09:28:47 -0500 (EST)
-Message-ID: <452c869c-9ffa-4c34-834f-359b7ac6c2a8@efficios.com>
-Date: Fri, 22 Nov 2024 09:28:46 -0500
+	s=arc-20240116; t=1732285761; c=relaxed/simple;
+	bh=ALWtShgKlACg5peP3rjy/sBRWgmDv3+Kp9cFCaaIV7A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=A8Sao7HV8FO6tx3E/Jj90QK1ncuM2lrzDUTi9MyEgUMshwJg35fWspWqftm3CKYAqMad76Cgn5CRuwonVVUwdwX7Wm9rhUUY/oSxl3o3ua4WF0XQ2v9UMfN81fs+i7ysA5EJi5qKcQTrxwgG+2l83gTeLRMZoQcCmw7i0jdo94c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21288d3b387so16865515ad.1;
+        Fri, 22 Nov 2024 06:29:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732285759; x=1732890559;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ALWtShgKlACg5peP3rjy/sBRWgmDv3+Kp9cFCaaIV7A=;
+        b=mYO7Z73LoI/pyxzUv9UUK75M8s3m+SMwknJnp+bcC3+CCyWXish9CjakRwgrYBXI94
+         1E2k9L/9BRm5Lga2eVI8t8SHITRCAG7yRjiAVz9665vWRqGYDLaIHcuq0kgNf5yT91f5
+         vMopwnBwRyglFP96EKVHs8zkTbG58ZEGQY4jbasuf0rfp5V4QYJwlulQla3EDWvIPYH/
+         47W3aYg0OnAdqhWedctRc8Bl2bgozgpmTg5ubyqhM+R2UH1EUBQpHoo0o6gM9sLeSoYm
+         2dhkmsjUqeZQpt2xOY6L1hd/hrubvA5ATu6xWGXkYCsNJz7KtAzEMEoPt16z2YFD/fAF
+         aKeg==
+X-Forwarded-Encrypted: i=1; AJvYcCVVn9qztWX3E59Eq5UJEnayqjYX2/gxzu3hUanLCbKHHx9VgWXnVXBWJjC+4QRkvE4w9veafcA168rWJd4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZK+TxsbBSs6x+YGUk1rNLbngwkcNKtC520nALlIb4gEhttC1h
+	ALgkTDIBAOm9UyE6nq96q4Ocr8UubJipJdTPtx7ayqfN0i8vBSPRO3lb
+X-Gm-Gg: ASbGncvTvOZ7mDkqD61QVrNbps09ZRM7koxzg+nF0lwQY7nN498eggWluVSJlNFhqzs
+	L05AnFgDZojA6+2ZiOP3jabqMPWlsdRFIFydjnh6OSxbxp/S+L2/RWq0JrxbAWdeIvNTCOjHubM
+	ANstnV5oG8cTJBF+PvBTdGNIECJ1lWgyw0Npa0nUVE89FESAsqW3BGGyyqCjPFGeTzRUa7dFcUM
+	sjiduXBFjAYtENaPIzUB21bLh2IYc+remYBAZyU94OlAbJ/v+dGJKiXVGybQgM5+jcjT07P6W34
+	fSpbY0thtcH0xGqqLKfIN79Soh7JqWvVjHzEEgiHOCc=
+X-Google-Smtp-Source: AGHT+IHel6+PKEihHvZyFEe4e3RNy6kPKRotK4Z9syzvfzmS32VcpNb0Rz9EH0NPaRwp67vJtT6eOg==
+X-Received: by 2002:a17:902:d4cb:b0:212:996:3536 with SMTP id d9443c01a7336-2129f5c3cf0mr42291255ad.10.1732285758986;
+        Fri, 22 Nov 2024 06:29:18 -0800 (PST)
+Received: from leira.trondhjem.org (104-63-89-173.lightspeed.livnmi.sbcglobal.net. [104.63.89.173])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc207bbsm16542835ad.228.2024.11.22.06.29.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 06:29:18 -0800 (PST)
+Message-ID: <d7b2d246dfffb921f7d2c1e59fc0e6d847fcaf2f.camel@kernel.org>
+Subject: Re: [PATCH v3 0/2] two fixes for pNFS SCSI device handling
+From: Trond Myklebust <trondmy@kernel.org>
+To: Benjamin Coddington <bcodding@redhat.com>, Anna Schumaker
+ <anna@kernel.org>,  Chuck Lever <chuck.lever@oracle.com>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph
+ Hellwig	 <hch@lst.de>
+Date: Fri, 22 Nov 2024 09:29:15 -0500
+In-Reply-To: <cover.1732279560.git.bcodding@redhat.com>
+References: <cover.1732279560.git.bcodding@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Fixing Spelling Mistake in rculist_nulls.rst
-To: Vyshnav Ajith <puthen1977@gmail.com>, paulmck@kernel.org,
- frederic@kernel.org, neeraj.upadhyay@kernel.org, joel@joelfernandes.org,
- josh@joshtriplett.org, boqun.feng@gmail.com, urezki@gmail.com,
- rostedt@goodmis.org, jiangshanlai@gmail.com, qiang.zhang1211@gmail.com,
- corbet@lwn.net
-Cc: rcu@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241121232118.13507-1-puthen1977@gmail.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20241121232118.13507-1-puthen1977@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 2024-11-21 18:21, Vyshnav Ajith wrote:
-> NUll is a special marker and not maker I believe. Fixing typo with this patch.
+On Fri, 2024-11-22 at 07:47 -0500, Benjamin Coddington wrote:
+> A bit late for v6.13 perhaps, but here are two fresh corrections for
+> pNFS
+> SCSI device handling, and some comments as requested by Christoph.
+>=20
+> On v2: add full commit subject in 1/2, change the caller in 2/2.
+> On v3: add r-b for Chuck, tweak comments in 2/2.
+>=20
+> Benjamin Coddington (2):
+> =C2=A0 nfs/blocklayout: Don't attempt unregister for invalid block device
+> =C2=A0 nfs/blocklayout: Limit repeat device registration on failure
+>=20
+> =C2=A0fs/nfs/blocklayout/blocklayout.c | 15 ++++++++++++++-
+> =C2=A0fs/nfs/blocklayout/dev.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0 6 ++----
+> =C2=A02 files changed, 16 insertions(+), 5 deletions(-)
+>=20
+>=20
+> base-commit: adc218676eef25575469234709c2d87185ca223a
 
-Please fix the capitalization typo in the commit message. It should read
-"Null".
+Please make those patches be incremental against what is already in
+linux-next.
+--=20
+Trond Myklebust
+Linux NFS client maintainer, Hammerspace
+trond.myklebust@hammerspace.com
 
-Thanks,
-
-Mathieu
-
-> 
-> Signed-off-by: Vyshnav Ajith <puthen1977@gmail.com>
-> ---
->   Documentation/RCU/rculist_nulls.rst | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/RCU/rculist_nulls.rst b/Documentation/RCU/rculist_nulls.rst
-> index 21e40fcc08de..88bce14b3c37 100644
-> --- a/Documentation/RCU/rculist_nulls.rst
-> +++ b/Documentation/RCU/rculist_nulls.rst
-> @@ -13,7 +13,7 @@ Please read the basics in listRCU.rst.
->   Using 'nulls'
->   =============
->   
-> -Using special makers (called 'nulls') is a convenient way
-> +Using special markers (called 'nulls') is a convenient way
->   to solve following problem.
->   
->   Without 'nulls', a typical RCU linked list managing objects which are
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
 
 
