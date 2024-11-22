@@ -1,196 +1,130 @@
-Return-Path: <linux-kernel+bounces-417915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16EF99D5AAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:07:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 023589D5AA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:07:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB35D282F19
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:07:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94099B230C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E2A18BC1E;
-	Fri, 22 Nov 2024 08:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDC217DFE4;
+	Fri, 22 Nov 2024 08:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="edvwVN81"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2082.outbound.protection.outlook.com [40.107.223.82])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T/EABDjz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D401C18BC13;
-	Fri, 22 Nov 2024 08:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732262821; cv=fail; b=uh0HeYeVF0D09KaQ3PWsnMbyzsdqhz0KMQyj01P7E6MzJb5yMdz6oWGUi38/Zi+z/wi2MtPgnXX141tzsMY1WwLOsXixH3yX1s8MASvIv+aeXG5F0+3rI4wvFipadQHpStuttV7WLSRgdAZGzkXeQHwmZMtlP3diNAG5j8yOWWM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732262821; c=relaxed/simple;
-	bh=ERJnHrEivan+3bdtCK30fcRjAKL6mRWZLZ3zVbTvb+U=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=IxWqBwTazLdcUQ5prloY3Y+UMGkuJOpGPReqwiBNqwvnpmr7NlQUwBiJXfcs5izpxVfW1iPmk5Yl9T7aeXfxOz7MKy9QHSxf41Y52bFtlAvvP46/yxbb+gruRPktL7aGW7LBzPz+FRM3KlepsSiFo+5dGfBPiP8DsWdmJ2hjb54=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=edvwVN81; arc=fail smtp.client-ip=40.107.223.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=q/+JUyui4VpBYjgrpCLy6nlnChIZB7e41oIiaihZZx5rGN4UU6ltwXhs8wj2+ZpJMreAihKGPp4QRhZuWN2+maA9iQWQW0Vk3qIrWRhtW3eZGF8PnjJONScpyjLJWDkSCYkNbbKaxX0XJSB7I/7cIkxVkx+Uf0KK776d//z6GRIuENR7P65Df9xqYbPQwxJp8XCg850riditwFuhhH42clXFQSE1SJSCoDlkxuX73QB56NVKt/KRB1OODvgLumfPPiZlz1gJ1DxEekh7oZmgkUsINxbRnkS7BAm7mr8oreyBme1IHF7R98BshQs+EdDDPAumM0C4JV+XgjTyKj/B7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=h4VYLIb2sQjWaIWIrQXQgRnpBfqXxrx2zByIGKlK9Fs=;
- b=HxFOgli4z955dALKZNOX5e4r3WCkdqU9FdDZRSfZ0mIKUcRxGxyn5D2WimwVEqTxQN5sjeZ8wh1PdDp9H7fJB20sDTHNqpvHjt6jAbt3/Judb29TWJdy6BCLOCVbP83mRyzJV8JyUvYrr6Bdml7aW0/CpzYOTPDrYece508FP3OmvD/b8BnLlkqvbu/E+AFmxzrp5uxQwduLMfq4Gw8gA1X2q2Qy5U4uXs1COyKa4+be2ivzJj5/MgFr6ayuAoKdM2q9FYpF1Y4YlqzKXtlBv4UisD3OF6nxqPa+y6lJrTlV2ePJaEqmH6CdYpkGNVn0u1PZEQPoGmbv5MBEbHiYcw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h4VYLIb2sQjWaIWIrQXQgRnpBfqXxrx2zByIGKlK9Fs=;
- b=edvwVN81tiOISKCR4gDTgN+axMNgHbwlr/IvfNNgKQsdAJqUNFJ4FtgXsxNPHSn88LkHyJqj9IuTF3FiC99xL+9F1cr0/UXjj/goJWxi9xwYNWseC4UBxsGaKw+GzBRf6QOws8U8vjrEW6tr6KF2X0QkmiPnciiCnGMV/CKAOO2LW2RSolaqCLbgwESS6kCSgnTF3alNDWvliKahllvOfiQ0pRBegZZ8KsDq8QmWjNqZH5cmxkdutG4DxXKLLe9yxsW2pV8e8tS1O8xcfkFRzi3Ru5Fan8X4PpO1/LC0qBvWVHPTUgoW2Z8vxPxDDVPr2bgigtL2YPU7Ax3FtuSkzw==
-Received: from CH2PR04CA0027.namprd04.prod.outlook.com (2603:10b6:610:52::37)
- by CH2PR12MB4277.namprd12.prod.outlook.com (2603:10b6:610:ae::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Fri, 22 Nov
- 2024 08:06:56 +0000
-Received: from CH2PEPF0000013B.namprd02.prod.outlook.com
- (2603:10b6:610:52:cafe::fd) by CH2PR04CA0027.outlook.office365.com
- (2603:10b6:610:52::37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.15 via Frontend
- Transport; Fri, 22 Nov 2024 08:06:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- CH2PEPF0000013B.mail.protection.outlook.com (10.167.244.68) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8182.16 via Frontend Transport; Fri, 22 Nov 2024 08:06:55 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 22 Nov
- 2024 00:06:44 -0800
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 22 Nov 2024 00:06:44 -0800
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Fri, 22 Nov 2024 00:06:44 -0800
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.11 000/107] 6.11.10-rc1 review
-In-Reply-To: <20241120125629.681745345@linuxfoundation.org>
-References: <20241120125629.681745345@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D05418787C;
+	Fri, 22 Nov 2024 08:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732262815; cv=none; b=lSFjD7sKNFvWER1lF9wG9anvZWYALjAKDedQMlhpVbWvgzkPQjhDnkbcz9bhxP3mhQHd8F0Nt0Ax7IwWv7z1kHvijTmhXtWYdZFjjRUfyNJCjK14Tj3YqWLLDL3FUxyFRmchnObiKLhMPVPITh8qGXOOZ+1NdSs/sFIM0eLnypw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732262815; c=relaxed/simple;
+	bh=hEvXNFAbKlLA5ycugqwHzMWIE5TPFsHSStNQ7IozSjQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n4KALscDHlad1VO6ZeaaOKPtm76c2aKXIYrINurcJPTLLRqlyr+0bHbOnG9VqCUhnA7cIpPdQqijFUSNz+UGokiwOxtOSmb8Jpeyo3VS92vbhhPwLtVODTmw1Tq3BI2hmNH+gOVUYfBbKYcD4d4QZjN10Hv47CkmmTiW9YVKIx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T/EABDjz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31842C4CECE;
+	Fri, 22 Nov 2024 08:06:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732262814;
+	bh=hEvXNFAbKlLA5ycugqwHzMWIE5TPFsHSStNQ7IozSjQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T/EABDjzLiFjpLj+4JnD6M1QszY1n9gOuE/Oi96V2wbiUI5SBsZguKCgTGxZlT97x
+	 wLZ9jI808UVyxZyafkDmnkGaBnuq0a8Nild9305CxVDvDa4blb73Zjfsc2sLPAprRL
+	 B8DS0f0w+J72kDw+axG5LNTQ9H1w8965eHdFlb/oo2FlCZdmlb1TmdtlacfHTCop7R
+	 PSUPaZMJSM1DlhoHH8Dcyt5rKk1pl1F+z8phkk2AdGVn0C6bCMoDC3Zfg4cd4gc3td
+	 gamSq+Ehw75+gJ9RqsoR2uH/MZLWUn9Sva3oAesE3JKvam6yhnlROhIe728ebbOJ8c
+	 hBJ8XteHU7hHA==
+Date: Fri, 22 Nov 2024 09:06:52 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Javier Martinez Canillas <javierm@redhat.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Stefan Wahren <wahrenst@gmx.net>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	Dom Cobley <popcornmix@gmail.com>
+Subject: Re: [PATCH 00/37] drm/vc4: Add support for BCM2712 / Pi5 display
+ hardware
+Message-ID: <20241122-orthodox-mantis-of-reading-2dcdcf@houat>
+References: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
+ <CAPY8ntBM=34pTiQ=t-CjtYEE5Ax6D=EtiY-sLT1keUkUMXuLeA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <0ba6eac5-541a-44df-a234-842bbcc433b0@drhqmail201.nvidia.com>
-Date: Fri, 22 Nov 2024 00:06:44 -0800
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000013B:EE_|CH2PR12MB4277:EE_
-X-MS-Office365-Filtering-Correlation-Id: 18b603a6-06b3-414a-da17-08dd0acca1c4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|82310400026|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WDdoZFdUWWFTSHhYakgzOEVCb3FYQ3k5SzZ4bldLS3NlMFJBQmR5YkdTTzBx?=
- =?utf-8?B?NklRUGFOS3FPLzFDcCsxOVdDdnByc243ZUtpN2hzaUNzK0tEd3VPZ1FUQmxL?=
- =?utf-8?B?b3JKUnB2TFB3WWhzTVlrL3YyZnBaSmZ2RzZVampnQUhQN1l6dHlLMFdCTk5i?=
- =?utf-8?B?aTdLZ2RQWUV4aXlrWXFBQVlrK294bFg1SjNWd1FubXNmSW04TnhrYW8wY2V5?=
- =?utf-8?B?R1g2N1FkazgyZCsyOGFwR0phSTFOdzlqM0w1UHF6dmM1WjBuclNYbTFJeGhn?=
- =?utf-8?B?UmUzMWJsMzYyNUpLeGxrcXRQRG9DMzR2ZWc1NUxOdzhCSEtwaGEwVDBjdWJl?=
- =?utf-8?B?VEdjcWZESTFRRlhkWjkyWTcwOVJMMTRUMEJNRWJHNVRxYUIxWU5uR3JTZXUw?=
- =?utf-8?B?aUtvVitLclNmTVcxTVRVeWpuU3hNdFpEOWN5UjNvNlpabjRJdFRTUDZOZHh5?=
- =?utf-8?B?blI5ckRCaVJBVktYQkFxRm1SdnhXWnlyZWovaHdhVFdVR2lmYjA4MW9vWGhy?=
- =?utf-8?B?N2NtSXVvVFBBNDdCNW1qc2dwdThIaVNGaFFXVkZQNVdTaGZJamVwbTMzZnlu?=
- =?utf-8?B?SFQxRTBCMkQzbnQ2aVZjempBRmFkWnhCSTZRTFJkcEJWT3l1NUFVT0xMVnFO?=
- =?utf-8?B?MDFnNG1QeGpBL25CR2FMQ281Njh3eUEvc1NiTkcxMXRXRk1CUXVXdFVFSGpG?=
- =?utf-8?B?T0JUMUZ1aVZtQkpvOHB4TFYrRVdQVlpFRnJYVzBZNkJhWi9SZFVwMm1CRUIr?=
- =?utf-8?B?TUpsUDJIWVVKbVRxSHlLNmFzWmdhNExaYWdzRTZiOXlFQU5RMUdLeFFXVk5z?=
- =?utf-8?B?eUJBaGhSdm9mTkFJN3VFdEw3L29hZGRIUVJ5QVZjUnUrYlMrMndOZU5Eek16?=
- =?utf-8?B?a1hlT1F5VTVNWFltMFBSRWRZdElSc1lKaWVCRGlBeWtPYVNZOWM5NUkrUGZa?=
- =?utf-8?B?aENwMUlmYThqUzQ5OFZ2K2VIQk5WM0tkcVJpTlJMbnZ4SGprdXVEeXpleDFr?=
- =?utf-8?B?Nmhmc3FyTk9YYWRUQ0hQODJTcWVKazJyc1YyYTlpUlNQZjhDMW5iY1JPL3lI?=
- =?utf-8?B?M3VUS1VJQW9QbkE3NERFS2dJT0pHbUt1SkdsWUNJN25tWFErM0lNVjdKVFF2?=
- =?utf-8?B?ZGs4WnFVK0t1NEYyN1VkRWxMMkNTRGdzclJrSnFUNHQwbzdXTTlQV3c4RUJK?=
- =?utf-8?B?SVpUeVhQcmI1aSs1MlVOdjR6SmVLVTRLMm1HR1c5VEVUaVVDVmhnOFZvbE5X?=
- =?utf-8?B?b0xBRUJhS3JLQkxqU0ZMM1lTYVNHZ3E1b0JLczlyVXgyRWNVb3VnS2s0UHI4?=
- =?utf-8?B?SGdqcGYzVkJCK2V3RWRoMWZVN0x3U0hRVDFzMlh5c2tjVmttVm95VGU3YjhJ?=
- =?utf-8?B?MTRBREhIM1pnUm5OWmRSR3dGY0w3V0RVUXl1U1B6NWQzZDV2QlNEcS9nRUto?=
- =?utf-8?B?aUd5UXFhOTJwK21NZFg1eFdQMURhVHM3Qk9wS3l6d3lUSUdJUGJnUm1tTDU5?=
- =?utf-8?B?MWVOMnZkWDBtSWZNRjRkTlNiRy9nVlBrL3oybDNTQW52dlBZQXFhTGgxb290?=
- =?utf-8?B?NzV2MDFyQUl2OXA3MmtPclQ1bFNwOWlTdmoxazIxbm1VKzFZNW4xMEo2QmY5?=
- =?utf-8?B?aExUN2FCOGhUSThVYXJ4Y1VIMC9qOVRBVkJlc1RjalQ4QWVSZU52SGMyOGNK?=
- =?utf-8?B?OUJ4alpyMkNIUlZCWTdEYWZxTURlUjdtRFBHWnM0RmF4NmtoS0lGMFZ6cHda?=
- =?utf-8?B?S0x6bFV6Uzk0NFZkcmlpU0wxU0JOYlhoVk02WTQxVmNZbzk5eTR0NExFbzVr?=
- =?utf-8?B?R2hOT3lCUDZQQzArUHd4VUpjVTF1dlNQTU5jK3RrV3JtNW0rRkxMeVRqeHho?=
- =?utf-8?B?cWIra3dCTUVYc2FWdkhDR3BtVnhzZGVaNUN0dzlsZDVYZEE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2024 08:06:55.8554
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 18b603a6-06b3-414a-da17-08dd0acca1c4
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF0000013B.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4277
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="p4qucrakavsqq3j5"
+Content-Disposition: inline
+In-Reply-To: <CAPY8ntBM=34pTiQ=t-CjtYEE5Ax6D=EtiY-sLT1keUkUMXuLeA@mail.gmail.com>
 
-On Wed, 20 Nov 2024 13:55:35 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.10 release.
-> There are 107 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 22 Nov 2024 12:56:14 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.10-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-All tests passing for Tegra ...
+--p4qucrakavsqq3j5
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 00/37] drm/vc4: Add support for BCM2712 / Pi5 display
+ hardware
+MIME-Version: 1.0
 
-Test results for stable-v6.11:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    107 tests:	107 pass, 0 fail
+On Thu, Nov 21, 2024 at 03:37:00PM +0000, Dave Stevenson wrote:
+> On Wed, 23 Oct 2024 at 17:50, Dave Stevenson
+> <dave.stevenson@raspberrypi.com> wrote:
+> >
+> > This series adds the required DRM, clock, and DT changes
+> > required to support the display hardware on Pi5.
+> > There are a couple of minor fixes first before the main patches.
+> >
+> > Many of the patches were authored by Maxime whilst working
+> > for us, however there have been a number of fixes squashed
+> > into his original patches as issues have been found. I also
+> > reworked the way UBM allocations are done to avoid double
+> > buffering of the handles as they are quite a limited resource.
+> >
+> > There are 2 variants of the IP. Most Pi5's released to date
+> > have used the C1 step of the SoC, whilst the 2GB Pi5 released
+> > in August is using the D0 step, as will other boards in future.
+> >
+> > Due to various reasons the register map got reworked between
+> > the steps, so there is extra code to handle the differences.
+> > Which step is in use is read out of the hardware, so they
+> > share a compatible string.
+>=20
+> A gentle ping on the patches for clk-raspberrypi (patches 29-33) and
+> Broadcom DT (patches 34-36).
+>=20
+> All the DRM and dtbinding ones are reviewed or acked (thank you!).
 
-Linux version:	6.11.10-rc1-gc9b39c48bf4a
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+If the bindings and DRM patches are all merged, you can merge these at
+least.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Maxime
 
-Jon
+--p4qucrakavsqq3j5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ0A7lwAKCRAnX84Zoj2+
+doaCAYD4iZV09q1bBU7gjietZumaTJnk/0RYajiLIHHMerpOFe3il/ObO1rzaMBm
+mOT0urABgPae6EbuMjtidxyyV0XhCMisWgYstcv23glemnLPC9awB+uSoIJHPW1e
+2lHvcCHC6A==
+=RgkZ
+-----END PGP SIGNATURE-----
+
+--p4qucrakavsqq3j5--
 
