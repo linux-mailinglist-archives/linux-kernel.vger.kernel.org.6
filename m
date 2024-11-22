@@ -1,137 +1,190 @@
-Return-Path: <linux-kernel+bounces-418503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A02B9D624E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:30:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B60399D6252
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:31:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04769B25353
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:28:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42B782821C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64A71DFD9B;
-	Fri, 22 Nov 2024 16:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBDE1DED6A;
+	Fri, 22 Nov 2024 16:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="L0R5LLuX"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V9hytVXs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5A11DF73B
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 16:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15515BA20;
+	Fri, 22 Nov 2024 16:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732292895; cv=none; b=ID9ECzrfPhW0I09x92hmRTb+nB3/ZOsVXvu0+0YYV34SMaeFdGkiXxD31u6HSOtg3OGs28Fpkb4bij+BKvCd0OwPM7NxVZlEfzAsKuObh4J8kmAqxT4SM2sggm9hDY3M5ySFh84IIKnOIaoQ9v9WU7bIh1tAwOqVBT6voQW1V7w=
+	t=1732293098; cv=none; b=YhPY2ziVa8VhOCzeTT07LiKQ2n5f1WMm9wiqJsISOpxG+XEdxAcO2ajkDgjxSBK4hfAOjSm2fXOuvd6ME1HcD86Fqc4IvL3ClcnKKdc3k0ktBnX//IqN2sJgLNecrhpo9+thdgV2eHXJX+/llTj9fadUK36pt/txwWym6qoVQyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732292895; c=relaxed/simple;
-	bh=xbDbD69KZNScHlgCMisg2HJq8BICvN3NQAqTm8bzP/k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jJn3NljUyl5TY5rPwR9yxdpCuBXACS/D0PtN7O/Th8ydmGl2V2gjw3xM9bzpztl6cVLkQg3Qb4e7/v83ketJGNNYD09/OHcfZr5vzyufO4zUKpTJi5bBSiDYwp8YUG44STDgc/3n6firM1c3/sT6WNboDgCs3LI78GAIyco3XlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=L0R5LLuX; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7B9D6FF80C;
-	Fri, 22 Nov 2024 16:28:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732292886;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J7mrH4nMB6P5AeJ5Mz8Ak1miBGu6SgNHfqh2MFhH/Sk=;
-	b=L0R5LLuX33gt5SA18g0DlnbRhP05jPVopQIj9c8WQDAC/jFD7ycEhQNGsXnYZ0ns4uurRb
-	vDJzvl+isW0pX9tmJQ7Z3pXDuq6eD48AJFtvrapfR9RJTqKsZAWqiNofNikWzgish73YvB
-	jSKHYfpKwOeWEQ1RnVZ44yZcG4iHH6p3GoMcnVZ/jRgWj2+eib1Y9sKWf/KxHSxi1xcMge
-	ZG9x+QlBgP018yuR+/xDCx1FZipLzXsgcIZyEyb4YJgE3ayw/DlRslzveiziyUjmis73ry
-	EKcr4P8W0Ocm1TntOdPZSVRkA2ZpmyQ3EJdnoQcrc5hgHHEmeNd67Uj4yFhEIQ==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Fri, 22 Nov 2024 17:28:00 +0100
-Subject: [PATCH v5 5/5] drm/vkms: Switch to managed for writeback connector
+	s=arc-20240116; t=1732293098; c=relaxed/simple;
+	bh=5tLotF7QIpddNYPZIFxLjnodQOu60ssXf96rQ3eKJcM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Bguz8Xm4krEkkHXPLEODCSFDRdeZm7t8DVU6IMXtR0CvPUH123LjaMsIlb/6qBXSlvcl2dq8ntlRjSoZ+dvuJz7u3IFGUvVWyWeJo+PwH0jjT77OCx/hHKuPiSmgZCxm2wHm3neHlcida7ItsDzKh0dLa+W1Q5cqVZrYzZbW8tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V9hytVXs; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732293096; x=1763829096;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=5tLotF7QIpddNYPZIFxLjnodQOu60ssXf96rQ3eKJcM=;
+  b=V9hytVXshbo5ot12teoA8i3lnGgX38QeY7out3/CYNybjU/OcJyRALyv
+   dJ4XIwC8xwmrT5Z1ri4TGKvQWjx7UrAhzPs+qKC4jqdCVEiBFJXbWn5nt
+   UZhO4LiLHCWhS8nSTcSnkRvo9GQLkqcNT2MWSFlXgdiTVFXVf1+Osc352
+   trAdEI8q5wcj28SJ8vmEEHJimCt7gd0+4VZnmxdduz7H8gwixBH361hmM
+   66ydXSmOKT1gKdiZCURsfTTPdAvv9zJM3AGf3dj3WyPvSDD88UcJNxKW8
+   MhLvJygGqDM51ctu6zOz5XcSG0TrxOrEbUyud5cZ47LD0eNSqqUSChbmf
+   Q==;
+X-CSE-ConnectionGUID: i2UZGUFaS/aQ6giuFkKBLw==
+X-CSE-MsgGUID: 4KXLP9V1SiCUBrE+LsaFyQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="32510776"
+X-IronPort-AV: E=Sophos;i="6.12,176,1728975600"; 
+   d="scan'208";a="32510776"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 08:31:35 -0800
+X-CSE-ConnectionGUID: 9ocBxZz0RROlIvDRi8NJMQ==
+X-CSE-MsgGUID: oEuoMTQqT/e/DcW0PX2GRw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,176,1728975600"; 
+   d="scan'208";a="90784962"
+Received: from spandruv-desk1.amr.corp.intel.com ([10.125.110.49])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 08:31:35 -0800
+Message-ID: <f0a07dfddd690e1d7d62abf1f9c6e799331e4a8c.camel@linux.intel.com>
+Subject: Re: [PATCH] iio: hid-sensor-prox: Fix invalid read_raw for attention
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen
+	 <lars@metafoo.de>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	linux-input@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Fri, 22 Nov 2024 08:31:34 -0800
+In-Reply-To: <CANiDSCuV1zo0=wGLir26Bn0np+BbVj9aj-JK3ZMreOT78c73UQ@mail.gmail.com>
+References: <20241121-fix-processed-v1-1-4fae6770db30@chromium.org>
+	 <853def565622848427e6e5df8f073465fa52e76c.camel@linux.intel.com>
+	 <CANiDSCuV1zo0=wGLir26Bn0np+BbVj9aj-JK3ZMreOT78c73UQ@mail.gmail.com>
+Autocrypt: addr=srinivas.pandruvada@linux.intel.com; prefer-encrypt=mutual;
+ keydata=mQGNBGYHNAsBDAC7tv5u9cIsSDvdgBBEDG0/a/nTaC1GXOx5MFNEDL0LWia2p8Asl7igx
+ YrB68fyfPNLSIgtCmps0EbRUkPtoN5/HTbAEZeJUTL8Xdoe6sTywf8/6/DMheEUzprE4Qyjt0HheW
+ y1JGvdOA0f1lkxCnPXeiiDY4FUqQHr3U6X4FPqfrfGlrMmGvntpKzOTutlQl8eSAprtgZ+zm0Jiwq
+ NSiSBOt2SlbkGu9bBYx7mTsrGv+x7x4Ca6/BO9o5dIvwJOcfK/cXC/yxEkr1ajbIUYZFEzQyZQXrT
+ GUGn8j3/cXQgVvMYxrh3pGCq9Q0Q6PAwQYhm97ipXa86GcTpP5B2ip9xclPtDW99sihiL8euTWRfS
+ TUsEI+1YzCyz5DU32w3WiXr3ITicaMV090tMg9phIZsjfFbnR8hY03n0kRNWWFXi/ch2MsZCCqXIB
+ oY/SruNH9Y6mnFKW8HSH762C7On8GXBYJzH6giLGeSsbvis2ZmV/r+LmswwZ6ACcOKLlvvIukAEQE
+ AAbQ5U3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5j
+ b20+iQHRBBMBCAA7FiEEdki2SeUi0wlk2xcjOqtdDMJyisMFAmYHNAsCGwMFCwkIBwICIgIGFQoJC
+ AsCBBYCAwECHgcCF4AACgkQOqtdDMJyisMobAv+LLYUSKNuWhRN3wS7WocRPCi3tWeBml+qivCwyv
+ oZbmE2LcxYFnkcj6YNoS4N1CHJCr7vwefWTzoKTTDYqz3Ma0D0SbR1p/dH0nDgN34y41HpIHf0tx0
+ UxGMgOWJAInq3A7/mNkoLQQ3D5siG39X3bh9Ecg0LhMpYwP/AYsd8X1ypCWgo8SE0J/6XX/HXop2a
+ ivimve15VklMhyuu2dNWDIyF2cWz6urHV4jmxT/wUGBdq5j87vrJhLXeosueRjGJb8/xzl34iYv08
+ wOB0fP+Ox5m0t9N5yZCbcaQug3hSlgp9hittYRgIK4GwZtNO11bOzeCEMk+xFYUoa5V8JWK9/vxrx
+ NZEn58vMJ/nxoJzkb++iV7KBtsqErbs5iDwFln/TRJAQDYrtHJKLLFB9BGUDuaBOmFummR70Rbo55
+ J9fvUHc2O70qteKOt5A0zv7G8uUdIaaUHrT+VOS7o+MrbPQcSk+bl81L2R7TfWViCmKQ60sD3M90Y
+ oOfCQxricddC
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241122-google-vkms-managed-v5-5-1ab60403e960@bootlin.com>
-References: <20241122-google-vkms-managed-v5-0-1ab60403e960@bootlin.com>
-In-Reply-To: <20241122-google-vkms-managed-v5-0-1ab60403e960@bootlin.com>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
- Melissa Wen <melissa.srw@gmail.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
- Haneen Mohammed <hamohammed.sa@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Simona Vetter <simona.vetter@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net, 
- linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com, 
- miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com, 
- seanpaul@google.com, nicolejadeyee@google.com, 
- Louis Chauvet <louis.chauvet@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1671;
- i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=xbDbD69KZNScHlgCMisg2HJq8BICvN3NQAqTm8bzP/k=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBnQLEPFkspIJns27wzQHp2ZOPEZwLqsuzSD1Zw5
- l0evx6X0wyJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZ0CxDwAKCRAgrS7GWxAs
- 4ljQEACMYE8CiMHmW/LFkuycRe9+cFYBWwhAixe0AubRsW5P53/jwu2qWrHkWb60Xb85+uAAwm5
- Ob3U1y0Te1PtYzFxopxxl7Bw0NZzxjZkzyACVodyfDkAvBI6SdVfwLE0gruCaXNd5FigQq3C2DT
- cM9FQdH2LvnoRTW7uI5QTW+5RB5kvitp/TzSWx9umlBsk3ummiNj4lkvdMCuT9+5ucBhWVb8QCa
- 9GqqYu0SJGC+jhi5or065XHJ/iKhoyjHMil+XPJYnPhmEKMM5DV/g74jWUXPLNitDjeiylyFAUT
- f8iwL+UILfmK1i+nQe1GWMWAqkr8kDhkjD4JcBW5Op/pj/FF9PdiMLL6mpoVZuqu1GLI1/5zcew
- rW/VPJ4RMzKC0x/1OfRe2juj/eIF/xsnMlyjn6dXuu7jwwEsTQwL7KPaZ+qa9anzGvuDIV84WW/
- G86rgq5FUBDv177fa5WZWsCtUkAs5cX3ljlxttUjG3tycvY107SaGC/IzxXnOOMEfbAVoHDdmds
- q7sVF9C5yNl/PiljOEaGwQ+U/AyjckHHpTPEFESZXDqMdnRri9DZTzCk179RpCW16poFAVqZojH
- oElfpbVz9ZgTqQu6y5p6LtObOhyfbksL/iS88fxdD+a9doNHK7tQVtK2W861oPc1qvyC1iIeI/q
- yFEubUDCBY+XkdA==
-X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
- fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
-X-GND-Sasl: louis.chauvet@bootlin.com
 
-The current VKMS driver uses non-managed function to create
-writeback connectors. It is not an issue yet, but in order
-to support multiple devices easily, convert this code to
-use drm and device managed helpers.
+On Fri, 2024-11-22 at 08:46 +0100, Ricardo Ribalda wrote:
+> On Thu, 21 Nov 2024 at 17:44, srinivas pandruvada
+> <srinivas.pandruvada@linux.intel.com> wrote:
+> >=20
+> > On Thu, 2024-11-21 at 09:16 +0000, Ricardo Ribalda wrote:
+> > > The attention channel is a IIO_CHAN_INFO_PROCESSED, not a
+> > > IIO_CHAN_INFO_RAW.
+> > >=20
+> > > Modify prox_read_raw() to support it.
+> > >=20
+> > What is the sysfs entry to trigger this IIO_CHAN_INFO_PROCESSED
+> > read?
+> > Don't you have an entry *_raw?
+>=20
+> /sys/.../iio:deviceX/in_attention_input
+>=20
+> There is no _raw device for it.
+>=20
+OK.
 
-Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
----
- drivers/gpu/drm/vkms/vkms_writeback.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+> >=20
+> > > Fixes: 596ef5cf654b ("iio: hid-sensor-prox: Add support for more
+> > > channels")
+> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > > ---
+> > > =C2=A0drivers/iio/light/hid-sensor-prox.c | 4 ++--
+> > > =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
+> > >=20
+> > > diff --git a/drivers/iio/light/hid-sensor-prox.c
+> > > b/drivers/iio/light/hid-sensor-prox.c
+> > > index e8e7b2999b4c..8e5d0ad13a5f 100644
+> > > --- a/drivers/iio/light/hid-sensor-prox.c
+> > > +++ b/drivers/iio/light/hid-sensor-prox.c
+> > > @@ -94,6 +94,7 @@ static int prox_read_raw(struct iio_dev
+> > > *indio_dev,
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *val2 =3D 0;
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 switch (mask) {
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 case IIO_CHAN_INFO_RAW:
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0 case IIO_CHAN_INFO_PROCESSED:
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 if (chan->scan_index >=3D prox_state->num_channels)
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 address =3D prox_state->channel2usage[chan-
+> > > > scan_index];
+> > > @@ -107,8 +108,7 @@ static int prox_read_raw(struct iio_dev
+> > > *indio_dev,
+> > >=20
+> > > report_id,
+> > >=20
+> > > SENSOR_HUB_SYNC,
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 min <
+> > > 0);
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 if (prox_state->channel2usage[chan->scan_index] =3D=3D
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 HID_USAGE_SENSOR_HUMAN_ATTENTION)
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 if (mask =3D=3D IIO_CHAN_INFO_PROCESSED)
+Your original change is better. If someone adds a new channel which
+also requires IIO_CHAN_INFO_PROCESSED, then they need to change this
+line. So I don't think you need this change.
 
-diff --git a/drivers/gpu/drm/vkms/vkms_writeback.c b/drivers/gpu/drm/vkms/vkms_writeback.c
-index 79918b44fedd7ae2451d1d530fc6d5aabf2d99a3..f12417b2d24803a33e4ff56108cc89704a500faf 100644
---- a/drivers/gpu/drm/vkms/vkms_writeback.c
-+++ b/drivers/gpu/drm/vkms/vkms_writeback.c
-@@ -24,7 +24,6 @@ static const u32 vkms_wb_formats[] = {
- 
- static const struct drm_connector_funcs vkms_wb_connector_funcs = {
- 	.fill_modes = drm_helper_probe_single_connector_modes,
--	.destroy = drm_connector_cleanup,
- 	.reset = drm_atomic_helper_connector_reset,
- 	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
- 	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
-@@ -169,10 +168,10 @@ int vkms_enable_writeback_connector(struct vkms_device *vkmsdev)
- 
- 	drm_connector_helper_add(&wb->base, &vkms_wb_conn_helper_funcs);
- 
--	return drm_writeback_connector_init(&vkmsdev->drm, wb,
--					    &vkms_wb_connector_funcs,
--					    NULL,
--					    vkms_wb_formats,
--					    ARRAY_SIZE(vkms_wb_formats),
--					    1);
-+	return drmm_writeback_connector_init(&vkmsdev->drm, wb,
-+					     &vkms_wb_connector_funcs,
-+					     NULL, NULL,
-+					     vkms_wb_formats,
-+					     ARRAY_SIZE(vkms_wb_formats),
-+					     1);
- }
+Thanks,
+Srinivas
 
--- 
-2.47.0
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *val *=3D 100;
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 hid_sensor_power_state(&prox_state-
+> > > > common_attributes, false);
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 ret_type =3D IIO_VAL_INT;
+> > >=20
+> > > ---
+> > > base-commit: decc701f41d07481893fdea942c0ac6b226e84cd
+> > > change-id: 20241121-fix-processed-ed1a95641e64
+> > >=20
+> > > Best regards,
+> >=20
+>=20
+>=20
 
 
