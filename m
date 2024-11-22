@@ -1,289 +1,127 @@
-Return-Path: <linux-kernel+bounces-417908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB9F19D5A97
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:03:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02DD09D5A9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:04:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 491D3B23661
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:03:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBFB8282B66
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9914189F48;
-	Fri, 22 Nov 2024 08:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7703189F32;
+	Fri, 22 Nov 2024 08:04:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MY/KT9Ju"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jbtec3hm"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A335154454;
-	Fri, 22 Nov 2024 08:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB36518787C
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 08:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732262606; cv=none; b=a+GdzrqAWllz8mREuR2mjNfMDv64sdUpTlWrfdxwBOzQj0g3lHCOGzxIv5iuctYuBZKI6Tr7We6l7dl4mfJLmEvpi/E6rfcydJlBxHtzffiw6R25Rq/JtkAcaSAsQGV5QUs4FGnkWyAiaHmFMzL3jJ3AV2Hei2fllNQ+EKkA8MU=
+	t=1732262688; cv=none; b=WNiuJHOtAbvSYpNxT8YAcCB2YdD85iKuMEdS9EHHVZJ5hYrDJDbSyTTT5C7YoXgzVorU75W7ElB3vDdsgC5EyINNTeX6/Qt58xnBxkaE971+M2iyfBktIk+YKaNcPqEUfzCK1jURiR7m2z2YE5NTK5r4Neb23mx9e6uRCZlY0lM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732262606; c=relaxed/simple;
-	bh=Y+YUR2Fae+PwIeeUgv2c2m7+q5l/+vpmOpmbgPj/7R0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SYHU2H7xD9KF1NZLcGdHmmUeuT79RQLwtJwSqZKIP6sLXIraHIx8sa9TdjtiePzjjW78xY0REKjjNE5RYPwxbbMWqvYogaQdekYaQ+Vq4lxB9oCy1DjxrYU8x/HpJdMSj+3blYHLrGQgqXdOmw2L6Zcrb4uPViKObpDR7QqKx90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MY/KT9Ju; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e3839177651so1528357276.3;
-        Fri, 22 Nov 2024 00:03:24 -0800 (PST)
+	s=arc-20240116; t=1732262688; c=relaxed/simple;
+	bh=KMMNvpSUMBgpLJwpRYLirsu56PRoVQHdFKvZp8gukOs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=flytDhB7eyCSgiW6TC1P2Hs3su6/5UB68+sMxhB1w+LtDwi5m53mFd7qrN2Jk2bOtGHpORjL4D6qbjKTJ+wa6tMwSxUkMYh2P3ugZhBEzAeBJmZPd1O4jj8b1pbS7fQCtbrq72Xnrf2WkrLR8b3AgBS4iAukdzfnUvsSTRIEfZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jbtec3hm; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-460a415633fso10309851cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 00:04:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732262603; x=1732867403; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XRPajfXYamrE2oaZvDzqAyzECG0pqfiS5EVqNFRx9FY=;
-        b=MY/KT9JuYQS4Lsf7GcL4CSHsyhiEF72ybKV6d0d8xkCgUg/eO5/hM13hwFNyLnKBkG
-         ba4en7RhtGKkwIFvWger7hd83A4D8FiAf8gmrI5ehO5PGce7LKXGTuR+mhDdfWCdFm44
-         ih65BYf2YusVYPSaJd8IJ+AWRDQAdnQ5DcaxN7pdXPMSpB4qvGlkDAPaBSCxpPNvIwwJ
-         CEGPmzhLf+U4K7MMa/zyDgcPxWxg/FonH4Dy7iGO2+KKXFGlr5q+xhpDMXZi0yq4gPPF
-         9rhhDTYCe+EZFmOkp5e57LyT9Ml73wnHZsXS6Ldefe8rCueDUdEGJzDLTPG0OUZP81BB
-         FNDQ==
+        d=chromium.org; s=google; t=1732262686; x=1732867486; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nRSEsk+jnxtZC+QBMSM7CyE8fqgmSJ2RND/ZUIbuhQs=;
+        b=jbtec3hmvvub1DXKSDjT3ALLdVidIZKATxdhR5jYi5xnZ0KgYiK7D+fluKkEZyqG0z
+         5vC8tXUdhsx0ry1KAWnKkh0HlhcbuLfGcp0IzX8bHZff7yHmBSVrfG525RZbtO0C6dBR
+         mHNZEUdXxe2Tm3Lk1odHYbje7+YJuVM58VP4M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732262603; x=1732867403;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XRPajfXYamrE2oaZvDzqAyzECG0pqfiS5EVqNFRx9FY=;
-        b=QnSh0BZoYdTRefgY3WduUU/9eJAeKzgzbszqXiA7o6lkbSRQavRhLUV9RlyufEOYSq
-         u/5UqsMMZ/M10pL05IYoC+eaztctxs6oFfRPpqQrXRm12pbjdF311Ki3lPLoW2jlEhI7
-         NNMHgNHkRLCERGa9iSnMWXEpHYVoJNcrJB/6KrCofSgBoJb3NT4kaZBMwLPZa0+yzQn7
-         I9f++g2VAGWMan+dYOFsVuQpzwQexxt6VGfps+8WmJJaaA0tC4QklJk2mNgmwpeHgaV2
-         olYuNaypOTQRaqmRCJKEe0IVFgV2ZQIbFMak/yF6ABXLS44T2oxT5mI54EVEpN05Z7I3
-         C5RA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/sNugRBSCUR3Y4PvIdaUyg0WBdfzHVc53NT4qLc5kA5TbK1dqLI1BO7l1NyYK75Pf5yU8L/59leYE@vger.kernel.org, AJvYcCWJXv0AyI4cqj3oWB0M84o1WeQTfTZPS/KeMdgdtf54ivKmVIgPgH1vI1VIX3sAV8m7ZRMIUhcU@vger.kernel.org, AJvYcCWkOL9eIJB+LXWEX98qWlxdBnKdVDd5Xetu4YYefl01X+wGBpoNZB+fB7jcW/b3i6VaTj6vB1vo4xJFTA==@vger.kernel.org, AJvYcCWlox2L6RJX58qj9L3GDhOhRDVp1XOXYCeDRwEgpafKJn6KcoUcBGvbsvartAknbioL1syb5YaquxY=@vger.kernel.org, AJvYcCXJTWYp4rWhwcS4PaycJhMyAsUuJw5vLHA/XpE2U8GkKsaWPoWhq9w6nefqXOawzANMbi7z8vNeqa+z@vger.kernel.org, AJvYcCXRAJnbDwQkK1mZqWsza/AroHulJvq8UiqAtwWIDosdAFo4BtBh+UhBbjlTf4HYFkxAbv3LMso0oU4aKkkS@vger.kernel.org, AJvYcCXSjrXjCiPSsPvBDv0CJ8ym4hvW0Yf1OTy97ry35ODhvoh/3gtRA/uM3o5aptH41nYulqRuoBTQpCmuWX33R/g=@vger.kernel.org, AJvYcCXgCuEVxB/oCK8F4vaLohmISS/gnfOw5SZbI9nEw1rWdqpCbHwbsWHsUIa5euvZGPbaqoOiB3gFft95IFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQhfW0cXYEusrs63hdUm7xoQ45rTvuYJiNXA1BKsSvgrbSFvWt
-	uU5QP8ApEfrt1ozL7yi0sFKNkNa76eZa/sCBbiEf0yHiY7IzxpL6ELvkT42R/oBntg876ukXY0M
-	L0f2HtUqA8A/xxwNqPTsyv0n6ssE=
-X-Gm-Gg: ASbGncsk7q2drA0/DlBJi2X9TWOZmSeLmgCas0ib8d8crmuy1RgUz6IxKWwPrLMPiMu
-	c1BVB24g8YGjvZPkxCDAZ908c4yHsx3g=
-X-Google-Smtp-Source: AGHT+IFpxcWhp36ECFmdpGFa2DRQqPb5Q4aHwvEoDsWfHiMZDbVRDfnJZ32bdLPj9o2rmEZW07vf8an9iFpvdZIYOgI=
-X-Received: by 2002:a05:6902:20c3:b0:e38:cdff:830b with SMTP id
- 3f1490d57ef6-e38f8bdf359mr1613926276.38.1732262603464; Fri, 22 Nov 2024
- 00:03:23 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732262686; x=1732867486;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nRSEsk+jnxtZC+QBMSM7CyE8fqgmSJ2RND/ZUIbuhQs=;
+        b=Es29w6aCCvUIETvXDt04IzMVS2j4qwM0oHWEOkarDk7/SlS1jv5TwBXHfscziqzPfJ
+         6H/0zK1NVrPvcWn7NvT4d4AaVLDYFiFMIvQ18NXWdEPiFo4j3IJUw7+cpl/Hzz/5i4QX
+         0biMEDpFKR38RZJs08HvAkizgkmYsmMkwVDxxjMnc6zpTcGxiHTxNZEyaMqndx8GCCpm
+         Tc8520szu46pVRLu15kCy7zEdl9sX0ss5fwRDIwS0sCPsdoMi4Hfxy/3+cbwPXaf2h1N
+         uhPa3yTyzG/iZYAYglRHEY7PUWfRuW5fM0OX3D+q28tuYYuu15nGQ9iLVQP2Z7J0yR8f
+         Qqtw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTS2URsLhpfNYVbxqRM3+VEBwP9YK2XNAT912NWmiPZrFpi952Ktth1JIGUjzR/U9TfyPLRwL0iIjTS3Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0x386dE42b5HjtkpM38YVm0kIbzae4KWkhSl/GlUfjbC4GeSe
+	6nJE8yEmNzmpoMTX4Czun7KBC842w1n3PRus0AtZAperdroa4W60vj0r82r90A==
+X-Gm-Gg: ASbGncuEcszgKZnkzJR5Gc0+s8j4QoPK9sDG6wTR4xYhpV02eYtOVOIo1bXIuJGGFXU
+	U7uCFXf/GR79nW2epovEesle04FxlOKcjQHP5tvXxyNTWbln8ertoUWGtkySIW9/T93mKg2fDla
+	IWRWENXjoa9+HVa0SSFG7JE3FFuxrcHQouCQ3UMOKVE8GqLCDJgw/lZdV5HDwn0OsZLQBrcCEMF
+	htTEvHKTfRP5Pq3HHGQGQFV5k/41anGkkM0GmYeVrEhK2Lv25OINNXyYIgwdQltRSkhTPUOeKJ0
+	DzDs4LffvEmGQmGrqaJ10SMC
+X-Google-Smtp-Source: AGHT+IFRpRVmK/Ci1GiF9yVhFA6k4CWLrX0LrX2/0uhY5wmo4O/l6ydSGyOikiNPDsrYICpyDxTahg==
+X-Received: by 2002:a05:622a:4a86:b0:461:17e6:27ae with SMTP id d75a77b69052e-4653d5a6b9cmr29910881cf.24.1732262685728;
+        Fri, 22 Nov 2024 00:04:45 -0800 (PST)
+Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4653c3ee43esm8570451cf.22.2024.11.22.00.04.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 00:04:44 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Fri, 22 Nov 2024 08:04:42 +0000
+Subject: [PATCH] media: ipu-bridge: Fix smatch warning for COMPILE_TEST
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121064046.3724726-1-tmyu0@nuvoton.com> <20241121064046.3724726-5-tmyu0@nuvoton.com>
- <08a91d47-ad78-4f7d-896f-b75d7418be1e@wanadoo.fr>
-In-Reply-To: <08a91d47-ad78-4f7d-896f-b75d7418be1e@wanadoo.fr>
-From: Ming Yu <a0282524688@gmail.com>
-Date: Fri, 22 Nov 2024 16:03:12 +0800
-Message-ID: <CAOoeyxVjBsmOr=-14iq7pQamJ90j_PBMhQK0Lo=xmvPyqqseGQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/7] can: Add Nuvoton NCT6694 CAN support
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, 
-	andi.shyti@kernel.org, mkl@pengutronix.de, andrew+netdev@lunn.ch, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
-	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241122-fix-ipu-v1-1-246e254cb77c@chromium.org>
+X-B4-Tracking: v=1; b=H4sIABk7QGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQyMj3bTMCt3MglLdRKO0VCMLSwMLSzMTJaDqgqJUoBTYpOjY2loA18M
+ e/1kAAAA=
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>, linux-media@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-Dear Vincent,
+One of the quirks that we introduced to build with !ACPI && COMPILE_TEST
+throws the following warning:
+drivers/media/pci/intel/ipu-bridge.c:752 ipu_bridge_ivsc_is_ready() warn: iterator 'i' not incremented
 
-Thank you for your comments,
+Fix it by replacing the condition
 
-Vincent Mailhol <mailhol.vincent@wanadoo.fr> =E6=96=BC 2024=E5=B9=B411=E6=
-=9C=8821=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=883:47=E5=AF=AB=E9=81=
-=93=EF=BC=9A
-> > +
-> > +struct __packed nct6694_can_cmd0 {
->
-> Give more meaningfull names to your structures. For example:
->
->   /* cmd1 */
->   struct __packed nct6694_can_bittiming
->
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/r/202411221147.N6w23gDo-lkp@intel.com/
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+ drivers/media/pci/intel/ipu-bridge.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Understood. I will make the modifications in v3.
+diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
+index a0e9a71580b5..be82bc3e27d0 100644
+--- a/drivers/media/pci/intel/ipu-bridge.c
++++ b/drivers/media/pci/intel/ipu-bridge.c
+@@ -774,7 +774,7 @@ static int ipu_bridge_ivsc_is_ready(void)
+ 
+ 		for_each_acpi_dev_match(sensor_adev, cfg->hid, NULL, -1) {
+ #else
+-		while (true) {
++		while (false) {
+ 			sensor_adev = NULL;
+ #endif
+ 			if (!ACPI_PTR(sensor_adev->status.enabled))
 
-> > +     u32 nbr;
-> > +     u32 dbr;
-> > +     u32 active:8;
-> > +     u32 reserved:24;
-> > +     u16 ctrl1;
-> > +     u16 ctrl2;
-> > +     u32 nbtp;
-> > +     u32 dbtp;
-> > +};
-> Always use the specific endianess types in the structures that you are
-> sending to the device. e.g. replace u32 by __le32 (assuming little endian=
-).
->
-
-Okay, I'll fix it in v3.
-
-> > +struct __packed nct6694_can_cmd1 {
-...
-> > +
-> > +struct nct6694_canfd_priv {
->
-> Be consistent in your name space. Sometime you prefix your names with
-> nct6694_can and sometimes with nct6694_canfd for no apparent reasons.
->
-
-Understood. I will make the modifications in v3.
-
-> > +     struct can_priv can;    /* must be the first member */
-...
-> > +     } else {
-> > +             if (buf->flag & NCT6694_CAN_FLAG_BRS)
-> > +                     cf->flags |=3D CANFD_BRS;
-> > +
-> > +             for (i =3D 0; i < cf->len; i++)
-> > +                     cf->data[i] =3D buf->data[i];
->
-> Use memcpy().
->
-
-Okay, I'll fix it in v3.
-
-> > +     }
-> > +
-> > +     /* Remove the packet from FIFO */
-> > +     stats->rx_packets++;
-> > +     stats->rx_bytes +=3D cf->len;
->
-> Do not increment the rx_bytes if the frame is RTR.
->
-
-Okay, I'll fix it in v3.
-
-> > +     netif_receive_skb(skb);
-...
-> > +
-> > +     switch (new_state) {
-> > +     case CAN_STATE_ERROR_WARNING:
-> > +             /* error warning state */
->
-> Such comment can be removed. Here you are just paraphrasing the macro. I
-> can already see that CAN_STATE_ERROR_WARNING means the "error warning
-> state". The comments should add information.
->
-
-Okay, I will drop them in v3.
-
-> > +             cf->can_id |=3D CAN_ERR_CRTL;
-> > +             cf->data[1] =3D (bec.txerr > bec.rxerr) ? CAN_ERR_CRTL_TX=
-_WARNING :
-> > +                                                     CAN_ERR_CRTL_RX_W=
-ARNING;
-...
-> > +static int nct6694_canfd_start(struct net_device *ndev)
-> > +{
-> > +     struct nct6694_canfd_priv *priv =3D netdev_priv(ndev);
-> > +     struct nct6694_can_cmd0 *buf =3D (struct nct6694_can_cmd0 *)priv-=
->tx_buf;
->
-> Give a more memorable name to buf, for example: bittiming_cmd.
->
-
-Got it. So, every buf that uses a command must be renamed similarly, right?
-
-> > +     const struct can_bittiming *n_bt =3D &priv->can.bittiming;
-> > +     const struct can_bittiming *d_bt =3D &priv->can.data_bittiming;
-> > +     int ret;
-> > +
-> > +     guard(mutex)(&priv->lock);
-> > +
-> > +     memset(priv->tx_buf, 0, NCT6694_CAN_CMD0_LEN);
->
-> Remove those CMD*_LEN macros, instead, use sizeof() of your structures.
->
->   memset(buf, 0, sizeof(*buf));
->
-
-Understood. I will make the modifications in v3.
-
-> > +     buf->nbr =3D n_bt->bitrate;
-> > +     buf->dbr =3D d_bt->bitrate;
-...
-> > +static netdev_tx_t nct6694_canfd_start_xmit(struct sk_buff *skb,
-> > +                                         struct net_device *ndev)
-> > +{
-> > +     struct nct6694_canfd_priv *priv =3D netdev_priv(ndev);
-> > +
-> > +     if (priv->tx_skb || priv->tx_busy) {
-> > +             netdev_err(ndev, "hard_xmit called while tx busy\n");
-> > +             return NETDEV_TX_BUSY;
-> > +     }
-> > +
-> > +     if (can_dev_dropped_skb(ndev, skb))
-> > +             return NETDEV_TX_OK;
-> > +
-> > +     netif_stop_queue(ndev);
->
-> Here, you are inconditionally stopping the queue. Does it mean that your
-> device is only able to manage one CAN frame at the time?
->
-
-Yes, we designed it to manage a single CAN frame, so we stop the queue
-here until a TX event is received to wake queue.
-But It seems I lost the error handling code for the tx command in
-nct6694_canfd_tx(), I will fix it in the next patch.
-
-> > +     priv->tx_skb =3D skb;
-> > +     queue_work(priv->wq, &priv->tx_work);
-> > +
-> > +     return NETDEV_TX_OK;
-> > +}
-> > +
-> > +static void nct6694_canfd_tx(struct net_device *ndev, struct canfd_fra=
-me *cf)
-> > +{
-> > +     struct nct6694_canfd_priv *priv =3D netdev_priv(ndev);
-> > +     struct nct6694_can_cmd10_11 *buf =3D (struct nct6694_can_cmd10_11=
- *)priv->tx_buf;
-> > +     u32 txid =3D 0;
-> > +     int i;
-...
-> > +
-> > +     /* set data to buf */
-> > +     for (i =3D 0; i < cf->len; i++)
-> > +             buf->data[i] =3D cf->data[i];
-> > +
-> > +     nct6694_write_msg(priv->nct6694, NCT6694_CAN_MOD,
-> > +                       NCT6694_CAN_CMD10_OFFSET(1),
-> > +                       NCT6694_CAN_CMD10_LEN,
-> > +                       buf);
-
-I will add the error handling to wake the queue in the next patch.
-
-> > +}
-> > +
-...
-> > +static const struct net_device_ops nct6694_canfd_netdev_ops =3D {
-> > +     .ndo_open =3D nct6694_canfd_open,
-> > +     .ndo_stop =3D nct6694_canfd_stop,
-> > +     .ndo_start_xmit =3D nct6694_canfd_start_xmit,
-> > +     .ndo_change_mtu =3D can_change_mtu,
-> > +};
->
-> Also add a struct ethtool_ops for the default timestamps:
->
->   static const struct ethtool_ops nct6694_ethtool_ops =3D {
->           .get_ts_info =3D ethtool_op_get_ts_info,
->   };
->
-> This assumes that your device does not support hardware timestamps. If
-> you do have hardware timestamping support, please adjust accordingly.
->
-
-Understood. I will make the modifications in v3.
+---
+base-commit: 72ad4ff638047bbbdf3232178fea4bec1f429319
+change-id: 20241122-fix-ipu-a2fe28908964
 
 Best regards,
-Ming
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
+
 
