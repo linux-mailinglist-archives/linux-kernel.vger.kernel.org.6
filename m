@@ -1,91 +1,92 @@
-Return-Path: <linux-kernel+bounces-418749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF3859D650A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 21:46:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C69A99D6512
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:04:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E068B160682
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 20:46:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53E74161347
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 21:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6241DF98F;
-	Fri, 22 Nov 2024 20:46:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B408C188580;
+	Fri, 22 Nov 2024 21:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hJOPxT6D"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ce9fHwUB"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B152B189BAE;
-	Fri, 22 Nov 2024 20:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737A57E111;
+	Fri, 22 Nov 2024 21:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732308370; cv=none; b=nLCmPOg7yeJlKh8IOhv9bVZ5KF/oKtkDiJmAUJcME7rWHtrrWfEKVZnMWXU3AwRY0HJ/BjA4Oji7AH4lAsLhjjp99JXP5N+wUaccKP9CkjzFfOwAfX8dH8K/g/YtZJcjIMALWOxDmugFcT3q0FLWvEwHHPtW2a08OjOj2KHj13w=
+	t=1732309471; cv=none; b=sRNU4b16GLdXwneJOBa5//6F84+jkSA/Z+6AY7c7I3F1aboZ4O8UjaCIaMBQ/9gyC/pSdAmU+vGp8lUS5Zv+xLDs+8Jso1atl6MvR793D171mG+iPpKZBIdnkLcTVOigqYKiUn/5DCq6z1C1Ho4SOmMkfIoW8SUCKHJu30niy1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732308370; c=relaxed/simple;
-	bh=rfLGix8VQmuESlqsseWvC99WsyP4jvOiWI4xbdEeIFg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q1aQYLJQfD0+OxCuM5L+SuohXXBzS+qFI+kGdnDsQ51t4T0mwpE22yI6lb1dvh98x7nwt2IZ7cGxtfg5ayFweTCWM/yfZ1xB/BdzVbiiGOQlaySQ01JsP2vwpxlY93RkHVE9Yxq6epAnCuD/0Yo2ZrXGM1zSDewtQloigx7smA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hJOPxT6D; arc=none smtp.client-ip=209.85.160.176
+	s=arc-20240116; t=1732309471; c=relaxed/simple;
+	bh=F+v1Ru0uni2FPXIKtFvxarAFHqaEna9u93F4JIgKyaM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fEgZE/myTNaib2yOmmH6yJrGl+m9MhCE3ZW10j465HPetNxKC4RpziEmZhzZ1N8xkwEhBhud+Jr0r8lhNmZ2dtvSsmcuEZdmQFrIL27kobnAMfXi74pmzDiqTN9wYo4xMxb3tyO76ykUEMGHIaeedZ7Gv+qnORwds8Qymefm6BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ce9fHwUB; arc=none smtp.client-ip=209.85.208.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-460c2418e37so16706701cf.0;
-        Fri, 22 Nov 2024 12:46:07 -0800 (PST)
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ffa8092e34so14589431fa.1;
+        Fri, 22 Nov 2024 13:04:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732308366; x=1732913166; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732309467; x=1732914267; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KdfcoTAixo+mlxOpXRifnZy9GhI+cyrUE3VMtPIwmvg=;
-        b=hJOPxT6D/pvZL0guv9MUb0YNONDWlP694kHaF6eX8Mj8HMVoxgHdzJ/5k7czlZIPHp
-         410dXfiVVSHEf16+0WSHnFykA4+ip/9i0tQP6okPn/Y7rqGfyQiwaDnlym+hXEjvc0M/
-         5nuDDCl/BIy6fA9Rqpd6MNH1s4o7c0SvqVSOIScY+46motmYcTVtipRAymsdtCoA8gZL
-         NR+8ZKSRNCdIQgjJYHyWqlvsPB6IiEpj+wrK58EQVfz7YgQRzRI7yGU7ISXyOtOJMen/
-         WxunGnKYCaKddUGIgjntz6PIPaEc3A2fSohnRzPOO7Bnpb/+UEFo9N2gUon6xrfK3f2w
-         q8aA==
+        bh=c9ZyOhR/EEzpu2AnEc2F9Koo0OBv6NsVpKPmnIREooA=;
+        b=Ce9fHwUBXJRKrLuqcnugSfEJT0FmjzHjJ+DF8JwebgowCwpwY2NCkIpgOO1DV8CIIx
+         MwRo3H60Gt5YpGoBeVIvm7e3GoC5KeklHDddvaWRZXJjBmzNjA+iy1Ucz1X3nv3IEiQ3
+         NjvbRhAlopiGPxebB/D/BCW03dikG7G/EpqzB0uaua/ZyOLPjm4RxVPSRyfjnhtD90PA
+         ar24HEgq3pWmIdHm1/sBZ8m1u0FkEDKwukd2p5PdMKb8T74lMj+f8v94FRztnuBW/aMz
+         e+JKiglF/rSlOpCeldKt63+KuRAt2w7bHstzZcgNNbvtOndp/hwW1vpmdrsWsck5Xjng
+         71Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732308366; x=1732913166;
+        d=1e100.net; s=20230601; t=1732309467; x=1732914267;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=KdfcoTAixo+mlxOpXRifnZy9GhI+cyrUE3VMtPIwmvg=;
-        b=qFH+D5RWs9vXWabwrSzM3EaZ+f1Sr+CAnmJA7a7Em4qLC8b0kTnOPGG79eV8XmvgGK
-         aT0M8WgvF5W4puGYXXt4gyLRZTLD1MNE2UbF/Hx3fti9V9E6J8meG16R9Osj42fJyCSA
-         DcRIWcAAptv0WoHOBQW88AR9v8Uoy58OUeYrhDFKY5vkR36wwPHm0teNJpxaeitiY5k/
-         1dF1RLWjTepVpOioOOI4YkliZdaZMyQlHEbMbmXnp6OkXBdHmBxQpdjQufgfYD6NgVAG
-         FrUGkbz9pS84BFIj7mH76TNzIpmb+ynscdJDgqxVkP6W/bQ3LQJH+Ruv5BZsBo/VWJYd
-         2hHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJnnMeimHomPOBuJm8h2y7KzGKwFk9bqfmqUyi7bfAPO+qomYnlzECYC2gxUIpgIRBvD0/kaoAdRaLoVk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyC23T7NwNrVlTrNf66BHB+M2EFj9pahSKYkhJUW/PTSrMv10fE
-	MXVywjxZx6kg5vpgbXdz8DGJqloAq7pa73hT60H/dLY4KqgecAwn
-X-Gm-Gg: ASbGncsJVVFFsI3s4CwKbhN8JmsC9WGoV4iEk32A7G6AnmWJhj8X2G0bwtEvRHZLzud
-	nl20q1VUalO3XYGqIMVtH3AKtAlw9Fg2H/m8Bov2fLkFEePKxr/j0xqSDWW3IZpfMMyaX83Y4ib
-	Rgs1au9QGum23BDbtcRttoRUfZSnQb7fPmSbtH1bHiFNc0ybQ87UrAaoL/MuQLAKb9hVPKQbANU
-	p9wFJKZGWW7bX5/dTwr9b6sMO8xFxP5esnIzyNX3itkQ2qUsNvLHYqynagB1VqWl1LSXys6
-X-Google-Smtp-Source: AGHT+IEDZRkTO5+DQwSrlRCcw21oaJiFGCJZnGNbrmx62J2fNbuC3IdPrM/AFVV8d9sqgagVOv+RJg==
-X-Received: by 2002:ac8:7d92:0:b0:45d:9525:42ff with SMTP id d75a77b69052e-4653d632068mr45585081cf.54.1732308366553;
-        Fri, 22 Nov 2024 12:46:06 -0800 (PST)
-Received: from newman.cs.purdue.edu ([128.10.127.250])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4653c3ed111sm16082051cf.20.2024.11.22.12.46.05
+        bh=c9ZyOhR/EEzpu2AnEc2F9Koo0OBv6NsVpKPmnIREooA=;
+        b=fyaop8M8iHnfAPpkq7bh19TXw4SmsUgy3mdm6u14KYdRi+2T3+ZWNk906G/RTnyHuQ
+         bipXONDIuTolfR6nM1aJHCK4wTGmB/1iD9iQmPjrWBFleTLVWn7HxPQHrOsh5DqmPfpU
+         WY5obs+XiE9gvxBrZ8TEL5SAO00jq2zk8QZ1QTKigKDYNzv8ONzkRWFLzrXThsiyb0Z1
+         eQZhCuh5v8M6coKCstj2pDgFZqx3vHQdYXDkaNMXKTjX4WEeUsHQs4p6JryhIRkkSDOt
+         YwslM3GsKhV9pvKM4gHgg+c/pb/ypj24cv0lr5Icr8tlVYf+SxtNnSAOi61gKeNHGaYG
+         VQnA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3KGbTakCgxMtNr96IIwxwEH5Q6WX3gectrDPc569r3W0h1QYDHpiMebq4utXClaSx24eWKrB1n6JKe/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0ZAdzuxtXRKwvwX3QMbZLj/Bp2edT78yECURbQMg4Bty753TG
+	SAx61AOD2C8hOv/KGoKqO+htKrQJqMK+YpumcguR21hbPWhSSzWfUQ1+O6pVwmo=
+X-Gm-Gg: ASbGnct/M5nMjGU0OrmgG35DavQmWFcL3/HkFH1Eki+gn34AgZjMcDpSCad6DTd6A/C
+	Sjpy2pmQlyc6SHipdz/fDqISBtDgLq8jmuYDNa8WrmKEz8XrgQ4NlXJH4P2CT+URbBnDLrmHtvA
+	h4mBTMeepSEE9AYMfLJeoL0aLiHsiz0uKMHMs2rKd5B4ZYFekNFvZkyMreXbE03rpJIygSgKCbX
+	713wDpifaevOUzlxtxNmfJw5gukHZmokuR9Pk5kcnFrg9casue5/5GDNpo=
+X-Google-Smtp-Source: AGHT+IFgi7IRzgMOCobKQO08D1Yo0MM15YLhVt2WwafSJCD+NT8rwDNMGy4Kzx1yLRSvIfJ9sNo3Xg==
+X-Received: by 2002:ac2:5688:0:b0:53d:abc8:b6d3 with SMTP id 2adb3069b0e04-53dd35a53c8mr2834143e87.12.1732309467004;
+        Fri, 22 Nov 2024 13:04:27 -0800 (PST)
+Received: from alex3d.netup (team.netup.ru. [91.213.249.1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd2445850sm550072e87.41.2024.11.22.13.04.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 12:46:06 -0800 (PST)
-From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-To: mchehab@kernel.org,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	hverkuil@xs4all.nl,
-	u.kleine-koenig@baylibre.com,
-	neil.armstrong@linaro.org,
-	andrzejtp2010@gmail.com,
-	dillon.minfei@gmail.com
-Cc: linux-media@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Subject: [PATCH] media: platform: stm32: Add check for clk_enable()
-Date: Fri, 22 Nov 2024 20:46:03 +0000
-Message-Id: <20241122204603.44419-1-jiashengjiangcool@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Fri, 22 Nov 2024 13:04:26 -0800 (PST)
+From: Alex Shumsky <alexthreed@gmail.com>
+To: linux-wireless@vger.kernel.org
+Cc: Alex Shumsky <alexthreed@gmail.com>,
+	Alexey Berezhok <a@bayrepo.ru>,
+	=?UTF-8?q?Alvin=20=C5=A0ipraga?= <ALSI@bang-olufsen.dk>,
+	Arend van Spriel <arend.vanspriel@broadcom.com>,
+	Hector Martin <marcan@marcan.st>,
+	Janne Grunau <j@jannau.net>,
+	Kalle Valo <kvalo@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Neal Gompa <neal@gompa.dev>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	brcm80211-dev-list.pdl@broadcom.com,
+	brcm80211@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] brcmfmac: fix RSSI report in AP mode
+Date: Sat, 23 Nov 2024 00:03:46 +0300
+Message-Id: <20241122210346.2848578-1-alexthreed@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,29 +95,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add check for the return value of clk_enable() to gurantee the success.
+After commit 9a1590934d9a ("brcmfmac: correctly report average RSSI in
+station info") it is required from firmware to provide rx_lastpkt_rssi.
+If this field is not provided brcmfmac doesn't report any RSSI at all.
+Unfortunately some firmwares doesn't provide it. One example is firmware
+for BCM43455 found in Raspbberry Pi.
+See https://github.com/raspberrypi/linux/issues/4574
 
-Fixes: 002e8f0d5927 ("media: stm32-dma2d: STM32 DMA2D driver")
-Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Fix it by falling back to rssi field if rx_lastpkt_rssi is not provided
+(like it was before 9a1590934d9a).
+
+Fixes: 9a1590934d9a ("brcmfmac: correctly report average RSSI in station info")
+Signed-off-by: Alex Shumsky <alexthreed@gmail.com>
 ---
- drivers/media/platform/st/stm32/dma2d/dma2d.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/st/stm32/dma2d/dma2d.c b/drivers/media/platform/st/stm32/dma2d/dma2d.c
-index b6c8400fb92d..48fa781aab06 100644
---- a/drivers/media/platform/st/stm32/dma2d/dma2d.c
-+++ b/drivers/media/platform/st/stm32/dma2d/dma2d.c
-@@ -490,7 +490,8 @@ static void device_run(void *prv)
- 	dst->sequence = frm_cap->sequence++;
- 	v4l2_m2m_buf_copy_metadata(src, dst, true);
+ .../wireless/broadcom/brcm80211/brcmfmac/cfg80211.c  | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+index 349aa3439502..8fc10858e936 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -3125,6 +3125,7 @@ brcmf_cfg80211_get_station(struct wiphy *wiphy, struct net_device *ndev,
+ 	s32 total_rssi = 0;
+ 	s32 count_rssi = 0;
+ 	int rssi;
++	int rx_lastpkt_rssi;
+ 	u32 i;
  
--	clk_enable(dev->gate);
-+	if (clk_enable(dev->gate))
-+		goto end;
- 
- 	dma2d_config_fg(dev, frm_out,
- 			vb2_dma_contig_plane_dma_addr(&src->vb2_buf, 0));
+ 	brcmf_dbg(TRACE, "Enter, MAC %pM\n", mac);
+@@ -3190,15 +3191,16 @@ brcmf_cfg80211_get_station(struct wiphy *wiphy, struct net_device *ndev,
+ 			sinfo->rx_bytes = le64_to_cpu(sta_info_le.rx_tot_bytes);
+ 		}
+ 		for (i = 0; i < BRCMF_ANT_MAX; i++) {
+-			if (sta_info_le.rssi[i] == 0 ||
+-			    sta_info_le.rx_lastpkt_rssi[i] == 0)
++			if (sta_info_le.rssi[i] == 0)
+ 				continue;
++			rx_lastpkt_rssi = sta_info_le.rx_lastpkt_rssi[i] != 0 ?
++				sta_info_le.rx_lastpkt_rssi[i] :
++				sta_info_le.rssi[i];
+ 			sinfo->chains |= BIT(count_rssi);
+-			sinfo->chain_signal[count_rssi] =
+-				sta_info_le.rx_lastpkt_rssi[i];
++			sinfo->chain_signal[count_rssi] = rx_lastpkt_rssi;
+ 			sinfo->chain_signal_avg[count_rssi] =
+ 				sta_info_le.rssi[i];
+-			total_rssi += sta_info_le.rx_lastpkt_rssi[i];
++			total_rssi += rx_lastpkt_rssi;
+ 			total_rssi_avg += sta_info_le.rssi[i];
+ 			count_rssi++;
+ 		}
 -- 
-2.25.1
+2.34.1
 
 
