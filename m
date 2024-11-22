@@ -1,136 +1,111 @@
-Return-Path: <linux-kernel+bounces-418776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69A909D658E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:10:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FE059D658F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:12:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05500B2274B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:10:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A4DC28204C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDCF18BC13;
-	Fri, 22 Nov 2024 22:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OCf6HTb3"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A992918A6A0;
+	Fri, 22 Nov 2024 22:12:45 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D59612E4A
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 22:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519371DA5E
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 22:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732313442; cv=none; b=Jn4KbZ64A3AfonzsICpfYkFxiBsqYRbzfT/1G8MWThWnrHztCznCLn5RKQKIwx4z0i08uu1InfOd34zMlEUm3UnFYENRFHyKLRq5Jd0K0H3ZvawCahLS1WUfyEfATHjjfKYJrLdJvdxb3tUejSwF5VAvdEh+x9nPnc10w4M1+Yk=
+	t=1732313565; cv=none; b=dJxTS2QaWcpnTcNGqeeHGb2Ev4Mfybtna6QFeDWGe/Lsp2u9xajT95HyvoirEfNDJtrvj8ttkTDupH7LAwP12Y2tlROe4i2Q05ABZn18hEcV/SZ4vPpnOXexohEhZanwr8MQv3BdFwcHTtziclNUm9Xiybi6f8ipuVF5RKP3Mc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732313442; c=relaxed/simple;
-	bh=JZZeaLOPwWolDY9YeQvGEW4vFzp1CUFGGaoHcATQS+s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a3cAkS4CksGEbImDj5qKn8p9wev7Ew5HU6QP6xtz7QFHrF2Frw/uyKKfWOabWRTz+3fpf9lsyeRMPhf/wInFTTL78Zr3fn1s1ZHOh//7RAfM4uGQRV9Aq0DZyRI93Jxa4QcNxh6o8U+PQQblbBKAizf4uvqU2KVKsWa83tI5dVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OCf6HTb3; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4315a8cff85so5445e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:10:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732313439; x=1732918239; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JZZeaLOPwWolDY9YeQvGEW4vFzp1CUFGGaoHcATQS+s=;
-        b=OCf6HTb3BlfUZchsEjgfCt3k9KyLwDX2+0yD6JyNh7B/LGOkIGiSiKRf1vsemgxz5Q
-         ei/h3sIj7oDb5fxj5j9X4jmTPJDUwnjUtCOii6eIZl1YZWOCjrqJ7xqqehcEwlYFJ5Qj
-         4mCfcY/PbAeXJhELvz940ycZLqq0OZ851hY5QBua8ABy/5tmds2uUyPnMuRsAv9Ickhx
-         Bd72xZodUOgk1Fp+Hu1x/XIFGusqxYXqBznCSDGg7yU2NkOxde5bQrTSCJzAsRsUDbPL
-         GPubEQIQhu3OkrkrQ52FpUTqfTsiQFdMm0U7IHxJLOYps1cUUizCCD/xehkDIj2iY+k8
-         PjvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732313439; x=1732918239;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JZZeaLOPwWolDY9YeQvGEW4vFzp1CUFGGaoHcATQS+s=;
-        b=maYg43Mpak63XgSpyk5KmpRzpSNqOaEQuvB4oQKKZ5syufyDCcw1NuwH+/3bwjYRxx
-         GezPJXnDOxxCsxnDHefNamqk3Ee8tw3PXf5QQmZ8kIqZMKs6uUY1JVIWQDNRQF4Fg16V
-         RrmQ0/PqPZArIU3vypU2TTLXwj6RqSHgcKpNX1Mj60t/M94q4SbgN7Gy8EZFDxlAEgFo
-         2G8xchjXGHF2Jm6ESFUs0d+qQPNqmSVXygAGccmI55ZX7uCjHOd0QQOXbM20J4aJmOvp
-         A9WXn0Gg6K6bHks2TVIlSo7Bs4Zu/UIENZHSeg1/n3TSZre+EowG3x6YoZxo8jsdmpx6
-         69/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVwsvAEUAeswdBxFh4q+Y9J8XfN6+I3V3zn5lYhc2GLe1ILqpGSaBE85yEtk3IFXuBupV4bBPEnr0BpbAw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHnJy3Qpu3atJrLUN3q4QG9AvjuAYHJQcpfAVNOxdrZBmZXTKk
-	GKUJKUBSd+ApfVW0HsiRRUlsBU0aF1mswcVn/5M4kVNaWD/uMFKhcFOKEdrV64On2rWH2fyZ+f7
-	Co6FeQ6MVdcPVOQS3lAvverROuuh08mTHcMyC
-X-Gm-Gg: ASbGncuFgKA6iXFrj2vZ6e1W61qdJbEQohf5srFVQUIy2uui84sL7Wl55ZkmPzY6qBm
-	W93g/kARgO9xIeMVfpWBhuu66th9rKesMC903+xt+DH/XlfVKBQ6pBUnmNwcQ41CY
-X-Google-Smtp-Source: AGHT+IHn2hbKjIPF1ezTNxBktlxUIPal4HpKW8bNKzDZRuGjbsJ5nlIo3O6z2oBBfRs1YAwI2NOCc3Pjz55YD+M7Nrw=
-X-Received: by 2002:a05:600c:3550:b0:431:416b:9ecf with SMTP id
- 5b1f17b1804b1-4348be050b3mr350525e9.6.1732313439462; Fri, 22 Nov 2024
- 14:10:39 -0800 (PST)
+	s=arc-20240116; t=1732313565; c=relaxed/simple;
+	bh=Wc5Vj0VWpto2fI5F5wYnTXvKYPCv79RVVyw79IUC4DM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SaRtAGQV2JSh7d6xXkDRkDbw9hIEHgzBVBCMFPxmpzfbeVWRC3NsbXjVSG7CQIgSVLhH6e0Z9IicccDrWl0wH+0bArPvGF2ALe+rRmYKkJU8TRXOtMI0KxceyLrHmm8858615C0TpZan8UwJyS8TpDBMfIQXnQ/8+q44knbLCv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC0D5C4CECE;
+	Fri, 22 Nov 2024 22:12:42 +0000 (UTC)
+Date: Fri, 22 Nov 2024 17:13:23 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, Colin Ian King
+ <colin.i.king@gmail.com>, Jeff Xie <jeff.xie@linux.dev>, Jinjie Ruan
+ <ruanjinjie@huawei.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Justin Stitt
+ <justinstitt@google.com>, Levi Yun <yeoreum.yun@arm.com>, Li Chen
+ <chenl311@chinatelecom.cn>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Tatsuya S
+ <tatsuya.s2862@gmail.com>, Uros Bizjak <ubizjak@gmail.com>, Zheng Yejian
+ <zhengyejian@huaweicloud.com>, guoweikang <guoweikang.kernel@gmail.com>
+Subject: Re: [GIT PULL] tracing: Updates for v6.13
+Message-ID: <20241122171323.1dd0efc9@gandalf.local.home>
+In-Reply-To: <CAHk-=witPrLcu22dZ93VCyRQonS7+-dFYhQbna=KBa-TAhayMw@mail.gmail.com>
+References: <20241120214531.45d75a60@gandalf.local.home>
+	<CAHk-=witPrLcu22dZ93VCyRQonS7+-dFYhQbna=KBa-TAhayMw@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107212309.3097362-1-almasrymina@google.com>
- <20241107212309.3097362-5-almasrymina@google.com> <20241108141812.GL35848@ziepe.ca>
- <CAHS8izOVs+Tz2nFHMfiQ7=+hk6jKg46epO2f6Whfn07fNFOSRw@mail.gmail.com> <20241115015912.GA559636@ziepe.ca>
-In-Reply-To: <20241115015912.GA559636@ziepe.ca>
-From: Samiullah Khawaja <skhawaja@google.com>
-Date: Fri, 22 Nov 2024 14:10:28 -0800
-Message-ID: <CAAywjhRb0Lb9fJocWBU1r01521sy71hLOaH=92gqceXqUOGHJg@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 4/5] page_pool: disable sync for cpu for
- dmabuf memory provider
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org, 
-	Jakub Kicinski <kuba@kernel.org>, Pavel Begunkov <asml.silence@gmail.com>, 
-	Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>, linux-kernel@vger.kernel.org, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 14, 2024 at 5:59=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wrot=
-e:
->
-> On Fri, Nov 08, 2024 at 11:01:21AM -0800, Mina Almasry wrote:
->
-> > > If you do this you may want to block accepting dmabufs that have CPU
-> > > pages inside them.
+On Fri, 22 Nov 2024 13:54:49 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-I believe we should be following the dmabuf API for this purpose, if
-we really want to sync for CPU in. page_pool, and should not assume
-the behaviour of the backing memory.
+> And yes, it's a static conditional, but it's *STUPID*. And it makes
+> the code just harder to follow, for no good reason. The difference is
+> literally this magic
+> 
+>                         __DO_TRACE(name,                                \
+>                                 TP_ARGS(args),                          \
+>                                 TP_CONDITION(cond), 0);                 \
+> 
+> vs
+> 
+>                         __DO_TRACE(name,                                \
+>                                 TP_ARGS(args),                          \
+>                                 TP_CONDITION(cond), 1);                 \
 
-The dmabuf exporters are supposed to implement the begin_cpu_access
-(optional) and the sync for cpu is done based on the exporter
-implementation.
+Hmm, if we make a __DO_TRACE_SYSCALL(), I don't think it needs to even have
+that condition parameter. The TP_CONDITION() is to allow tracepoints to
+check a condition within the static_branch() portion of the tracepoint so
+the condition does not get called when tracepoints are disabled (and just a
+nop).  By default we have:
 
-For example udmabuf implementation calls `dma_sync_sg_for_cpu` on the
-underlying pages.
+#define DECLARE_TRACE_SYSCALL(name, proto, args)			\
+	__DECLARE_TRACE_SYSCALL(name, PARAMS(proto), PARAMS(args),	\
+				cpu_online(raw_smp_processor_id()),	\
+				PARAMS(void *__data, proto))
 
-I think following dmabuf APIs can be used to ensure the backing memory
-is synced:
 
-Before cpu access to sync for cpu
-`dma_buf_begin_cpu_access`
+Where the tracepoint has to at least be called when the current CPU is
+online. But is there every a case where a CPU is not online when a system
+call is entered or exited?
 
-After cpu access to be synced for device
-`dma_buf_end_cpu_access`
+And there isn't any use cases of calling the system call tracepoint with a
+condition. Hence, I think the __DO_TRACE_SYSCALL() doesn't even need to
+include the condition:
 
-Sami
-> > >
-> >
-> > How do I check if the dmabuf has CPU pages inside of it? The only way
-> > I can think to do that is to sg_page a scatterlist entry, then
-> > !is_zone_device_page() the page. Or something like that, but I thought
-> > calling sg_page() on the dmabuf scatterlist was banned now.
->
-> I don't know. Many dmabuf scenarios abuse scatter list and the CPU
-> list is invalid, so you can't reference sg_page().
->
-> I think you'd need to discuss with the dmabuf maintainers.
->
-> Jason
+#define __DO_TRACE_SYSCALL(name, args)					\
+	do {								\
+		int __maybe_unused __idx = 0;				\
+
+Oh, also the __idx isn't used since I removed the SRCU, so we can remove
+that too. Maybe make that a separate patch?
+
+		rcu_read_lock_trace();					\
+									\
+		__DO_TRACE_CALL(name, TP_ARGS(args));			\
+									\
+		rcu_read_unlock_trace();				\
+	} while (0)
+
+-- Steve
 
