@@ -1,188 +1,183 @@
-Return-Path: <linux-kernel+bounces-417852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A689D59CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:17:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A0C9D59D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:17:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 897C3B22067
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:17:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B692283711
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D111741E0;
-	Fri, 22 Nov 2024 07:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE98717D340;
+	Fri, 22 Nov 2024 07:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KbmIKtKr"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jpm+hlmx"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3343616BE01;
-	Fri, 22 Nov 2024 07:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA06176AAE;
+	Fri, 22 Nov 2024 07:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732259807; cv=none; b=gIKPNhyD1PinyPRc52QTGPobIanvfIzZjt6685ewBnJkh/kfaNufDxXjvKJccRswALR9SaPUWNRLwST4ecoooYwxc3dnWNxmDgCgb9OtS+HdcxW2nhbb2gsWinWd470vGnCGq5U0ytFP2gpTEFuo3TtTp9RHtOTvhkdb2Trcguw=
+	t=1732259810; cv=none; b=FUVM3GqCU8VOzKWa8+VY+mIUpzJpx+4DBnZFbkGbGC4sPUfPcdZbVVhmbI8B4igLiozCNjbOWFbYrq05iSXmV+fCmAhZKXzgR4KSjPMk/JnrmrDfNiW2NQzYGtI0ZGQRspK4pzlg5H68hBaVkiBz0zpudcn8F4yDUiSC68QEpjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732259807; c=relaxed/simple;
-	bh=2cSQxrteySvr13xOvnwTvI9SQX8fC71lvBVAvXlndMM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LW2J8syc8VxN7ITpdFUg2Mtukbgx1ZKmxVrzYw+MC3FrD0T1wZmBvvppyITo2j/04E2AgzY7z83FYbFHUMKdrhG3k4qhlHNJ64Yl560HFke9aorrdbZduEopu2T+VUnbssqAK4cwQX0nZjonDdzbRhIurenpyM51w6EyBKux6f4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KbmIKtKr; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1732259796; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=ijdPFqMJEXQyY7cj+GbQC+Q1McJItiVYA1uEbryR+DM=;
-	b=KbmIKtKrUjbelgN1+PZrVTI5HbgPeId/UAeBaJo998/EmwUhWxFUGOaxqL5SPSBrcucoU5iystuQgQ88dOTZGghWAqFhFq6mc0l8lvGfjacBtZ17XxYjKjYEm3963E5jXskt8zttdv0jrmUMsRRBeN4HTf6MGJSnyI+xQUWGreI=
-Received: from localhost(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0WJzhgeP_1732259794 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 22 Nov 2024 15:16:35 +0800
-From: Wen Gu <guwen@linux.alibaba.com>
-To: wenjia@linux.ibm.com,
-	jaka@linux.ibm.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: alibuda@linux.alibaba.com,
-	tonylu@linux.alibaba.com,
-	guwen@linux.alibaba.com,
-	horms@kernel.org,
-	linux-rdma@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net 2/2] net/smc: fix LGR and link use-after-free issue
-Date: Fri, 22 Nov 2024 15:16:30 +0800
-Message-Id: <20241122071630.63707-3-guwen@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
-In-Reply-To: <20241122071630.63707-1-guwen@linux.alibaba.com>
-References: <20241122071630.63707-1-guwen@linux.alibaba.com>
+	s=arc-20240116; t=1732259810; c=relaxed/simple;
+	bh=4sHOO51s1jATnfOtut1zLDZ8BCLU3WdBaeHgaCW3LJo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=G+UjjU6k9Pzf0zWqW2Sp9h/qT5m8OMYIw+YhjChT+6mvoK9ldzCvqgr5FzGUNy12aSXN3HWGh7aK+BN/S3BqKCraqW8GJrR5ulxkjyqDk7wxRxMDun6mHDBvyBD1tu+YCf2T96RiRWpmJFN0Y/l6F8vDrGyKubD43AyQuIxtZPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jpm+hlmx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM77Jcq015637;
+	Fri, 22 Nov 2024 07:16:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jXvsgXYeibjTq3pz62fi6/hRFtAf2bKrPnSHlgDAuMA=; b=jpm+hlmxSzOcks+5
+	hvcJsKGaYqZ5xRyy+P9L1IAaF6UkRvLUKcAaLkGcB4CEj3xZ0OT7URFas0RaQWXW
+	G9ZOfiaVFTiBWxzFTtlgoBPKvcVdV31i+cJcsbJv9fbSs1DgXipei+QbbMs6U3CP
+	abYZjShVzyTH8Yi8Fcn0xHZm0nilIfMEe9jU6epC6MPZspYiv3qsy1XivGD4e+rd
+	PToJl+iEBH2rAjQbEQexQKEhAB+k4EGmzOU7Y2sxE5Rhhm9BX0kbW0rrA6/0+byG
+	1zYRg9SoCksSFNL9YSnyXOya9jyqD7Ntxbyw3qL0HDKsSsbf+3UoJTF1l4fEuD7/
+	9BT0rQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4320y9kajj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Nov 2024 07:16:45 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AM7GjAR026282
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Nov 2024 07:16:45 GMT
+Received: from [10.216.2.20] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
+ 2024 23:16:40 -0800
+Message-ID: <82fc7b99-bc3e-4a9b-a472-c1b70671f21a@quicinc.com>
+Date: Fri, 22 Nov 2024 12:46:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V5 1/4] dt-bindings: interconnect: Add EPSS L3 compatible
+ for SA8775P
+To: Krzysztof Kozlowski <krzk@kernel.org>, Georgi Djakov <djakov@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: Odelu Kukatla <quic_okukatla@quicinc.com>,
+        Mike Tipton
+	<quic_mdtipton@quicinc.com>,
+        Sibi Sankar <quic_sibis@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241121113006.28520-1-quic_rlaggysh@quicinc.com>
+ <20241121113006.28520-2-quic_rlaggysh@quicinc.com>
+ <bda810ab-68d8-4265-87c3-a6d021092e62@kernel.org>
+ <10e4fd4e-559d-4164-ab94-d5f0a60ffc22@quicinc.com>
+ <53876db8-4401-481d-8684-af7e135d481e@kernel.org>
+Content-Language: en-US
+From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+In-Reply-To: <53876db8-4401-481d-8684-af7e135d481e@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: tpQHuPRYC9LisQ4lqI77GbTVtwFSu45O
+X-Proofpoint-ORIG-GUID: tpQHuPRYC9LisQ4lqI77GbTVtwFSu45O
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0
+ mlxlogscore=999 spamscore=0 mlxscore=0 malwarescore=0 clxscore=1015
+ adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411220059
 
-We encountered a LGR/link use-after-free issue, which manifested as
-the LGR/link refcnt reaching 0 early and entering the clear process,
-making resource access unsafe.
 
- refcount_t: addition on 0; use-after-free.
- WARNING: CPU: 14 PID: 107447 at lib/refcount.c:25 refcount_warn_saturate+0x9c/0x140
- Workqueue: events smc_lgr_terminate_work [smc]
- Call trace:
-  refcount_warn_saturate+0x9c/0x140
-  __smc_lgr_terminate.part.45+0x2a8/0x370 [smc]
-  smc_lgr_terminate_work+0x28/0x30 [smc]
-  process_one_work+0x1b8/0x420
-  worker_thread+0x158/0x510
-  kthread+0x114/0x118
 
-or
+On 11/21/2024 11:20 PM, Krzysztof Kozlowski wrote:
+> On 21/11/2024 18:43, Raviteja Laggyshetty wrote:
+>>
+>>
+>> On 11/21/2024 5:23 PM, Krzysztof Kozlowski wrote:
+>>> On 21/11/2024 12:30, Raviteja Laggyshetty wrote:
+>>>> Add Epoch Subsystem (EPSS) L3 interconnect provider binding on
+>>>> SA8775P SoCs.
+>>>
+>>> This we see from the diff. Explain the hardware, why adding epps-l3-perf.
+>>>
+>> The EPSS instance in SA8775P uses PERF_STATE register instead of REG_L3_VOTE to scale L3 clocks.Along with SoC specific compatible, add new generic compatible "qcom,epss-l3-perf" for PERF_STATE register based L3 scaling.
+> 
+> Pasting the same replies as you pasted to others won't solve the
+> problem. Solve the problem - fix the commit msg.
+> 
+>>
+>>>>
+>>>> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+>>>> ---
+>>>>  .../devicetree/bindings/interconnect/qcom,osm-l3.yaml         | 4 ++++
+>>>>  1 file changed, 4 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml b/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
+>>>> index 21dae0b92819..042ca44c32ec 100644
+>>>> --- a/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
+>>>> +++ b/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
+>>>> @@ -34,6 +34,10 @@ properties:
+>>>>                - qcom,sm8250-epss-l3
+>>>>                - qcom,sm8350-epss-l3
+>>>>            - const: qcom,epss-l3
+>>>> +      - items:
+>>>> +          - enum:
+>>>> +              - qcom,sa8775p-epss-l3
+>>>> +          - const: qcom,epss-l3-perf
+>>>
+>>> I don't understand this change in context of driver. These are the same.
+>>> Isn't this compatible with sm8250?
+>>>
+>>
+>> The intention for adding "qcom,epss-l3-perf" generic compatible is to use it for the chipsets which use perf state register for l3 scaling.
+>> Using generic compatible avoids the need for adding chipset specific compatible in match table.
+> 
+> 
+> Not true, specific compatibles used as fallback do the same and is a
+> preferred way.
+>
 
- refcount_t: underflow; use-after-free.
- WARNING: CPU: 6 PID: 93140 at lib/refcount.c:28 refcount_warn_saturate+0xf0/0x140
- Workqueue: smc_hs_wq smc_listen_work [smc]
- Call trace:
-  refcount_warn_saturate+0xf0/0x140
-  smcr_link_put+0x1cc/0x1d8 [smc]
-  smc_conn_free+0x110/0x1b0 [smc]
-  smc_conn_abort+0x50/0x60 [smc]
-  smc_listen_find_device+0x75c/0x790 [smc]
-  smc_listen_work+0x368/0x8a0 [smc]
-  process_one_work+0x1b8/0x420
-  worker_thread+0x158/0x510
-  kthread+0x114/0x118
-
-It is caused by repeated release of LGR/link refcnt. One suspect is that
-smc_conn_free() is called repeatedly because some smc_conn_free() are not
-protected by sock lock.
-
-Calls under socklock        | Calls not under socklock
--------------------------------------------------------
-lock_sock(sk)               | smc_conn_abort
-smc_conn_free               | \- smc_conn_free
-\- smcr_link_put            |    \- smcr_link_put (duplicated)
-release_sock(sk)
-
-So make sure smc_conn_free() is called under the sock lock.
-
-Fixes: 8cf3f3e42374 ("net/smc: use helper smc_conn_abort() in listen processing")
-Co-developed-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-Co-developed-by: Kai <KaiShen@linux.alibaba.com>
-Signed-off-by: Kai <KaiShen@linux.alibaba.com>
-Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
----
- net/smc/af_smc.c | 25 +++++++++++++++++++++----
- 1 file changed, 21 insertions(+), 4 deletions(-)
-
-diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
-index ed6d4d520bc7..e0a7a0151b11 100644
---- a/net/smc/af_smc.c
-+++ b/net/smc/af_smc.c
-@@ -973,7 +973,8 @@ static int smc_connect_decline_fallback(struct smc_sock *smc, int reason_code,
- 	return smc_connect_fallback(smc, reason_code);
- }
+Will make use of sm8250 compatibles for sa8775p in the next patch revision.
  
--static void smc_conn_abort(struct smc_sock *smc, int local_first)
-+static void __smc_conn_abort(struct smc_sock *smc, int local_first,
-+			     bool locked)
- {
- 	struct smc_connection *conn = &smc->conn;
- 	struct smc_link_group *lgr = conn->lgr;
-@@ -982,11 +983,27 @@ static void smc_conn_abort(struct smc_sock *smc, int local_first)
- 	if (smc_conn_lgr_valid(conn))
- 		lgr_valid = true;
+> 
+>> But received comment from konrad to add both SoC-specific and generic compatibles.
+> 
+> I went through the history and don't see anything like that. Point to
+> the specific email please, if you disagree.
+> 
+https://patchwork.kernel.org/project/linux-pm/patch/20241026123058.28258-2-quic_rlaggysh@quicinc.com/#26104591
+
+
+>> Dmitry has suggested to update generic comaptibles for sc7280 and sm8250 SoCs, which makes use of perf state registers. 
+> 
+> OK
+> 
+>> It will be done as separate patch series.
+> 
+> No. I expect to see full, correct picture, not half baked patches which
+> contradict what is in current code.
+> 
+>
+Ok, I will update the generic compatibles for sm8250, sc7280 SoCs in the 
+next patch revision and will include them along with sa8775p dt patch.
  
--	smc_conn_free(conn);
-+	if (!locked) {
-+		lock_sock(&smc->sk);
-+		smc_conn_free(conn);
-+		release_sock(&smc->sk);
-+	} else {
-+		smc_conn_free(conn);
-+	}
- 	if (local_first && lgr_valid)
- 		smc_lgr_cleanup_early(lgr);
- }
- 
-+static void smc_conn_abort(struct smc_sock *smc, int local_first)
-+{
-+	__smc_conn_abort(smc, local_first, false);
-+}
-+
-+static void smc_conn_abort_locked(struct smc_sock *smc, int local_first)
-+{
-+	__smc_conn_abort(smc, local_first, true);
-+}
-+
- /* check if there is a rdma device available for this connection. */
- /* called for connect and listen */
- static int smc_find_rdma_device(struct smc_sock *smc, struct smc_init_info *ini)
-@@ -1352,7 +1369,7 @@ static int smc_connect_rdma(struct smc_sock *smc,
- 
- 	return 0;
- connect_abort:
--	smc_conn_abort(smc, ini->first_contact_local);
-+	smc_conn_abort_locked(smc, ini->first_contact_local);
- 	mutex_unlock(&smc_client_lgr_pending);
- 	smc->connect_nonblock = 0;
- 
-@@ -1454,7 +1471,7 @@ static int smc_connect_ism(struct smc_sock *smc,
- 
- 	return 0;
- connect_abort:
--	smc_conn_abort(smc, ini->first_contact_local);
-+	smc_conn_abort_locked(smc, ini->first_contact_local);
- 	mutex_unlock(&smc_server_lgr_pending);
- 	smc->connect_nonblock = 0;
- 
--- 
-2.32.0.3.g01195cf9f
+> Best regards,
+> Krzysztof
 
 
