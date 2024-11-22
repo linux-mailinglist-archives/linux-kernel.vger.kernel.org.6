@@ -1,154 +1,115 @@
-Return-Path: <linux-kernel+bounces-418856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23B6A9D6665
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:33:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 176829D6656
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:30:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99DDAB21FED
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:33:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFA0C2822A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4515D1917FA;
-	Fri, 22 Nov 2024 23:33:19 +0000 (UTC)
-Received: from frickel.club (v2202101137437138133.supersrv.de [45.136.28.37])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D6D1CACF7;
+	Fri, 22 Nov 2024 23:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Eyz2BUuL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A373D15E5CA;
-	Fri, 22 Nov 2024 23:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.136.28.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C981017D341;
+	Fri, 22 Nov 2024 23:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732318398; cv=none; b=NJ4N3DJntBgojrN0OfDAVfg+dDlWdue1z0XFtKslCEekyzBNDRzHWeV/MCwpaK0ZCV4aedAffSPh1NmXPYhF27lEUku5pfZKpvi92mpAxenXzXMvVebCZ3ZVaT41IILYh2hbRAp6wW/WHsLhJRsR24YgsU87hYdq2is4D+IlMvk=
+	t=1732318236; cv=none; b=OuX3AMV1zp6ALvkAVwQQVZ5iwd772m8uwP1Kqw9BCxrnka8TIWFAPPur76+slVJxrqCNztceEmN5cfK4OCtovzwDiyVL68mA6ETLI8xyOZgF5PzYAxJedXPKAXtRgkePZ9ftXyM9yt6fjbDGU+86qLclXaJUWz9Xn4j6kj0bzkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732318398; c=relaxed/simple;
-	bh=t3f4EdLZ0yKHLzwaQv4afxfuzoev+wJiOIjHbtPgnsQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=W6BZaRb/WPsv/l6qZr0o0/y+yA+oquiL8+N8TJC7/PMVf7ZHWqy8g693KNsMd6hEbzo/7SKDkwzvJsr0vHmiV/u8cVLhj88iOnUTCzE/o/nw8TpuDd56F8L4ad/Viu+rL5c9WD5LOwBW9nexA+ft/olf9TNG1RP93BPeNiQ/TrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=frickel.club; spf=pass smtp.mailfrom=frickel.club; arc=none smtp.client-ip=45.136.28.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=frickel.club
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=frickel.club
-Received: by frickel.club (Postfix, from userid 182)
-	id EA05B267E76F; Fri, 22 Nov 2024 23:27:27 +0000 (UTC)
-X-Spam-Level: 
-Received: from [IPv6:2a02:8070:a482:2a00:8261:5fff:fe07:44d5] (unknown [IPv6:2a02:8070:a482:2a00:8261:5fff:fe07:44d5])
-	by frickel.club (Postfix) with ESMTPSA id 75BCF267E753;
-	Fri, 22 Nov 2024 23:27:19 +0000 (UTC)
-Message-ID: <a3889b8fd189246f439f429837c034bd75ccf307.camel@frickel.club>
-Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
-From: Niklas Schnelle <niks@frickel.club>
-To: Guenter Roeck <linux@roeck-us.net>, Niklas Schnelle
- <schnelle@linux.ibm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby	
- <jirislaby@kernel.org>, Ilpo =?ISO-8859-1?Q?J=E4rvinen?=	
- <ilpo.jarvinen@linux.intel.com>, linux-serial@vger.kernel.org, Arnd
- Bergmann	 <arnd@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
-	linux-kernel@vger.kernel.org
-Date: Sat, 23 Nov 2024 00:27:18 +0100
-In-Reply-To: <92c2c05a-be0d-4017-a766-62832668512d@roeck-us.net>
-References: <20240405152924.252598-1-schnelle@linux.ibm.com>
-	 <20240405152924.252598-2-schnelle@linux.ibm.com>
-	 <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net>
-	 <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
-	 <92c2c05a-be0d-4017-a766-62832668512d@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 
+	s=arc-20240116; t=1732318236; c=relaxed/simple;
+	bh=JjVNjErFpwfEM4XLRC33DIZITSXkrWQ7voUX19gT+pc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F6kzHuH97WrtlPuXyTbLWodbH+TGRDVJXETJIxEfvUq/7hi4WRsD8CLYyGb5AMyVatmoZ0gz0AZpvet4ZQmjubWeO795WBFpsOxzDw9dl66WE6QlMFs+SqxLCQn5ZSKGHa+CzL4/kf0AEhmI+nFSuC5nLn2TJV118dX+NaCeMHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Eyz2BUuL; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732318235; x=1763854235;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=JjVNjErFpwfEM4XLRC33DIZITSXkrWQ7voUX19gT+pc=;
+  b=Eyz2BUuLDABSo5LhyumzYUq76tBvGx+965oyOYBB9Vg9IydyM6xbY5tm
+   WA7w8VawRcOkGGnE4Gs1EsTsdo6csnONlodonZtj1Cd9qAJTLX8mPw9iC
+   s6TLU2T2qP29IQMcjYwCvH7xs9Q818duE9XDmBi3DPk+8n2vQJGcaHt6U
+   N7fYscYo6wGrAp5wozSTwLkKBaSXHuiG1//ff07LNmedDih4QIwXecxhO
+   mBp6TkdBn7LJIivlwvX/pVYP8RMouGoDnGYcGjhwGSaqdHKTpbjvitTuZ
+   00fTEkViGL8T1foQvTXd3Lw0QqfmKZDNoogL+Kk4+nTO777KrDfS7O2Ke
+   g==;
+X-CSE-ConnectionGUID: 2GAJ+3b+QUW3wb74gGakkA==
+X-CSE-MsgGUID: foySGTvESk6NNWOtMXdcVA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="43134417"
+X-IronPort-AV: E=Sophos;i="6.12,177,1728975600"; 
+   d="scan'208";a="43134417"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 15:30:34 -0800
+X-CSE-ConnectionGUID: 0zi4EtxZTaCAFYeYcXl6vQ==
+X-CSE-MsgGUID: 16iACC0PSF6gStte2cs7xw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,177,1728975600"; 
+   d="scan'208";a="95127787"
+Received: from fyu1.sc.intel.com ([172.25.103.126])
+  by fmviesa005.fm.intel.com with ESMTP; 22 Nov 2024 15:30:34 -0800
+From: Fenghua Yu <fenghua.yu@intel.com>
+To: "Vinod Koul" <vkoul@kernel.org>,
+	"Dave Jiang" <dave.jiang@intel.com>
+Cc: dmaengine@vger.kernel.org,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	Fenghua Yu <fenghua.yu@intel.com>
+Subject: [PATCH v2 0/5] Enable FLR for IDXD halt
+Date: Fri, 22 Nov 2024 15:30:23 -0800
+Message-Id: <20241122233028.2762809-1-fenghua.yu@intel.com>
+X-Mailer: git-send-email 2.37.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2024-11-22 at 09:07 -0800, Guenter Roeck wrote:
-> On 11/22/24 07:35, Niklas Schnelle wrote:
-> > On Fri, 2024-11-22 at 07:18 -0800, Guenter Roeck wrote:
-> > > On Fri, Apr 05, 2024 at 05:29:24PM +0200, Niklas Schnelle wrote:
-> > > > In a future patch HAS_IOPORT=3Dn will disable inb()/outb() and
-> > > > friends at
-> > > > compile time. We thus need to add HAS_IOPORT as dependency for
-> > > > those
-> > > > drivers using them unconditionally. For 8250 based drivers some
-> > > > support
-> > > > MMIO only use so fence only the parts requiring I/O ports.
-> > > >=20
-> > > > Co-developed-by: Arnd Bergmann <arnd@kernel.org>
-> > > > Signed-off-by: Arnd Bergmann <arnd@kernel.org>
-> > > > Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> > > ...
-> > > > @@ -422,10 +443,12 @@ static void set_io_from_upio(struct
-> > > > uart_port *p)
-> > > > =C2=A0=C2=A0	up->dl_write =3D default_serial_dl_write;
-> > > > =C2=A0=20
-> > > > +	default:
-> > > > +		WARN(1, "Unsupported UART type %x\n", p-
-> > > > >iotype);
-> > >=20
-> > > So, according to this patch, the serial uart on microblaze,
-> > > nios2,
-> > > openrisc, xtensa, and possibly others is not or no longer
-> > > supported.
-> > >=20
-> > > WARNING: CPU: 0 PID: 0 at drivers/tty/serial/8250/8250_port.c:470
-> > > serial8250_set_defaults+0x1a8/0x22c
-> > > Unsupported UART type 0
-> > >=20
-> > > Any special reason ?
-> > >=20
-> > > Guenter
-> >=20
-> > So according to the warning the p->iotype is 0 which is UPIO_PORT.
-> > For UPIO_PORT the switch above the WARN would pick io_serial_in()
-> > and
-> > io_serial_out() as handlers. These use inb() respectively outb() to
-> > access the serial so I don't see how they would work with
-> > !HAS_IOPORT
-> > and it most definitely won't work for s390.
-> >=20
-> > Now for Microblaze Kconfig says to select HAS_IOPORT if PCI so I'd
-> > assume that it can use inb()/outb() and maybe the PCI requirement
-> > is
-> > not correct if this isn't a PCI device and it used to work with
-> > inb()/outb()? For nios2, openrisc, and xtensa they don't select
-> > HAS_IOPORT so either it really won't work anyway or they should
-> > select
-> > it. Can you tell us more about the devices involved where you saw
-> > this?
-> >=20
->=20
-> This is seen when booting the affected architectures with qemu.
->=20
-> Logs:
->=20
-> https://kerneltests.org/builders/qemu-microblaze-master/builds/327/steps/=
-qemubuildcommand/logs/stdio
-> https://kerneltests.org/builders/qemu-nios2-master/builds/314/steps/qemub=
-uildcommand/logs/stdio
-> https://kerneltests.org/builders/qemu-openrisc-master/builds/301
-> https://kerneltests.org/builders/qemu-xtensa-master/builds/311/steps/qemu=
-buildcommand/logs/stdio
->=20
-> Guenter
+When IDXD device hits hardware errors, it enters halt state and triggers
+an interrupt to IDXD driver. Currently IDXD driver just prints an error
+message in the interrupt handler.
 
-Am I seeing it right that despite the warning and the code setting
-no_serial_in / no_serial_out the console=3DttyS0 in the above qemu boots
-still worked? Also for example in the nios2 case I see the warning 4
-times. So this makes me wonder since the warning is new is it possible
-that set_io_from_upio() has been called with an invalid / all
-zero port before but it was invisible.
+A better way to handle the interrupt is to do Function Level Reset (FLR)
+and recover the device's hardware and software configurations to its
+previous working state. The device and software can continue to run after
+the interrupt.
 
-The way I'm reading __serial8250_isa_init_ports() and in particular the
-first loop if nr_uarts is e.g. 5 in the nios case but only the first
-entry in serial8250_ports[] has the IOMEM 8250 it will still call
-serial8250_setup_port() on the 4 other unintalized/zero elements which
-would explain the iotype being 0. And as far as I can see nr_uarts is
-just set to the value of CONFIG_SERIAL_8250_RUNTIME_UARTS in
-8250_platform.c.
+This series enables this FLR handling for IDXD device whose WQs are all
+user type. FLR handling for IDXD device whose WQs are kernel type
+will be implemented in a future series.
 
-I may be totally off though this console_init() stuff has me a little
-confused and it's been a long day.
+Change log:
+v2:
+- Patch 3: Call a free helper to free all saved configs (Dave Jiang).
+- Patch 3: Replace defined bitmap free function with existing
+  bitmpa_free().
 
-Regards,
-Niklas
+v1:
+https://lore.kernel.org/lkml/20240705181519.4067507-1-fenghua.yu@intel.com/
+
+Fenghua Yu (5):
+  dmaengine: idxd: Add idxd_pci_probe_alloc() helper
+  dmaengine: idxd: Binding and unbinding IDXD device and driver
+  dmaengine: idxd: Add idxd_device_config_save() and
+    idxd_device_config_restore() helpers
+  dmaengine: idxd: Refactor halt handler
+  dmaengine: idxd: Enable Function Level Reset (FLR) for halt
+
+ drivers/dma/idxd/idxd.h |  13 ++
+ drivers/dma/idxd/init.c | 479 ++++++++++++++++++++++++++++++++++++----
+ drivers/dma/idxd/irq.c  |  85 ++++---
+ 3 files changed, 507 insertions(+), 70 deletions(-)
+
+-- 
+2.37.1
+
 
