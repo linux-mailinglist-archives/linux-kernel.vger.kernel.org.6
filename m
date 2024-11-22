@@ -1,107 +1,125 @@
-Return-Path: <linux-kernel+bounces-418305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AEFC9D6029
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:09:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 388909D602B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:10:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F328D1F22B5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:09:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5AD6B22F33
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294B0381AA;
-	Fri, 22 Nov 2024 14:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1C82E40B;
+	Fri, 22 Nov 2024 14:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oFJfOb37"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XUR/0TP5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423DE80604;
-	Fri, 22 Nov 2024 14:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DE5182D2
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732284581; cv=none; b=ieg5WGHzoflmFDia9ZCklzqc/sMFAJbmZcMEdeyj4G+KQo7PAf4dHLamTIIO4fDl4/qAqULo+bx7L3Re8EawcrkWDxaQEkyespO4/uuabX8tPxlyNRLBhPEwySyun62SM5ZlrNB0t1GioNS04evhdTuLgGVGCxCXf1TaGJ+WiBQ=
+	t=1732284631; cv=none; b=EwzgDY4cgWBVgJecwWU6UhW5Kaj9BvqSiyrm5V2s1IiPMTsDWaNsnD1aN47r3gFRawMpFc1HRrV/AShRbH3xP1hTDFM9ginZh4FUrJcJdhClOSJ6f6mJzY9W4O5ITQFtupwxua3GqGsHOl/bkB4n2fTufk6BehyTRcF+3lkGd0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732284581; c=relaxed/simple;
-	bh=8yzL4RefbyRilcnMt/6RHj2li1nlKEMv79iPDOsRWkM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IIPOXO+aBbn2VfV4g+bWMmq44kazamOPhQP9qzPGC2gk+0TGIBJdEaJm35YfuRTMJyIWAuOt47VYchQLPUMaZn/04KhJ8YKtzYwxem7nF4gRToPBJ5dM/dDkePFGPtHvjtDuUteFtM3ECi26Gn1XDD1DGrhdsKyCq1IEU1teGNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oFJfOb37; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732284581; x=1763820581;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8yzL4RefbyRilcnMt/6RHj2li1nlKEMv79iPDOsRWkM=;
-  b=oFJfOb37tkGlDim9YMR5+9jVE0nVfbRBxAhUHdnQnx5vINZ0/RP9s+7C
-   JvWgjS+9vivMbhGt+zJWdcPOSGZXEyMCr5Bz60CnjtHrfnHhQIrBD2a7m
-   wW+CwMvepESb+IShs6RpTSC4KDLBVSvIGFN2l5PljSqzIbmViMBM2kkfR
-   Ne+xugn4RbGaOTnYoZaT/+/VgudyneW3oPooBEkUlCGZfVMmzmsQvHhr1
-   h9icoUAs5tvX1Gilo7pZHNUxbwFUkNhZBoe6e+BGeRmcZEyqwFwGRzuWk
-   abCyXLo+wtqwGN52DUOwm5LnFyVJQMNBx9AAKkulsyMDM9eyTpHlw80CN
-   w==;
-X-CSE-ConnectionGUID: 1KTmeH2DQ9a01ZndBEvi0g==
-X-CSE-MsgGUID: eSIzhDkMRd+vVukGl0GXZQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="49860260"
-X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
-   d="scan'208";a="49860260"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 06:09:40 -0800
-X-CSE-ConnectionGUID: io0Y5A9JQt+m8ujAzjDt9Q==
-X-CSE-MsgGUID: oUWLO3FMQwaULxlztRCN3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
-   d="scan'208";a="90730534"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 06:09:38 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tEULm-0000000HR2B-31yr;
-	Fri, 22 Nov 2024 16:09:34 +0200
-Date: Fri, 22 Nov 2024 16:09:34 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Wolfram Sang <wsa@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Cosmin Tanislav <demonsingur@gmail.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Subject: Re: [PATCH v2 2/3] i2c: atr: Allow unmapped addresses from nested
- ATRs
-Message-ID: <Z0CQnqfkR_p53Fvf@smile.fi.intel.com>
-References: <20241122-i2c-atr-fixes-v2-0-0acd325b6916@ideasonboard.com>
- <20241122-i2c-atr-fixes-v2-2-0acd325b6916@ideasonboard.com>
+	s=arc-20240116; t=1732284631; c=relaxed/simple;
+	bh=SOPR0W+Fo1w/OFVtrjfKYGSHcnjhLgraMD5Xwu9ZsO8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PDa78AF3/NB0qH/2tQBYbWbTuwc4GB1B25yfV62QhsIT/vuABsDrmTQyRqDHuiFQQ6Xhs4si1zmGQE9u4b4XpFJ4k/foGFmzwQLDKrcHF9+vx0Dk8z3Ssm4nkU3es6S7WZQTJyETs5OBSBZE+0CagLnhx3elDPzIW7IyxQb7lSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XUR/0TP5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732284629;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NFXk9mqkVM9P4jO5qIAEBl+vinIgn7s7A2Iirsp1WlM=;
+	b=XUR/0TP5m7rIOhEA4DCbIwEU+GTnC8dP9iYOuEml3qEV4o4UvG+/x51iVz3CfsJQHd+mR+
+	nHl7rTKpdkVV5bqoqczMTf02MBBfOqjdLzZ+2ADjCHg4uiL1AGyMN4R6ucN/JOrfSM+8px
+	X6MIgHtWn/c3m2rNavvqSLMjsahh3o4=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-517-_hXRCg6-PfGqEPLgdA5rnA-1; Fri,
+ 22 Nov 2024 09:10:26 -0500
+X-MC-Unique: _hXRCg6-PfGqEPLgdA5rnA-1
+X-Mimecast-MFC-AGG-ID: _hXRCg6-PfGqEPLgdA5rnA
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1B9631955F41;
+	Fri, 22 Nov 2024 14:10:23 +0000 (UTC)
+Received: from [10.22.81.129] (unknown [10.22.81.129])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AC41B195E481;
+	Fri, 22 Nov 2024 14:10:19 +0000 (UTC)
+Message-ID: <a9c1329a-c5b3-4807-8536-810b45f0c6ef@redhat.com>
+Date: Fri, 22 Nov 2024 09:10:18 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241122-i2c-atr-fixes-v2-2-0acd325b6916@ideasonboard.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] nvme: always enable multipath
+To: Nilay Shroff <nilay@linux.ibm.com>, Bryan Gurney <bgurney@redhat.com>,
+ linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+ kbusch@kernel.org, hch@lst.de, sagi@grimberg.me, axboe@kernel.dk,
+ mpe@ellerman.id.au, naveen@kernel.org, maddy@linux.ibm.com, kernel@xen0n.name
+Cc: bmarzins@redhat.com
+References: <20241121220321.40616-1-bgurney@redhat.com>
+ <5bbfcfe6-6e7f-437c-9c0e-cb80578b0c87@linux.ibm.com>
+Content-Language: en-US
+From: John Meneghini <jmeneghi@redhat.com>
+Organization: RHEL Core Storge Team
+In-Reply-To: <5bbfcfe6-6e7f-437c-9c0e-cb80578b0c87@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Fri, Nov 22, 2024 at 02:26:19PM +0200, Tomi Valkeinen wrote:
+On 11/22/24 01:26, Nilay Shroff wrote:
+>  
+> On 11/22/24 03:33, Bryan Gurney wrote:
+> 
+> I applied the above changes to my kernel tree and ran the below blktests:
+> 
+> # ./check nvme/033 nvme/034 nvme/035 nvme/036 nvme/037 nvme/039
+> nvme/033 => nvme0n1 (tr=loop) (create and connect to an NVMeOF target with a passthru controller) [not run]
+>      /dev/nvme0n1 is a NVMe multipath device
+> nvme/034 => nvme0n1 (tr=loop) (run data verification fio job on an NVMeOF passthru controller) [not run]
+>      /dev/nvme0n1 is a NVMe multipath device
+> nvme/035 => nvme0n1 (tr=loop) (run mkfs and data verification fio job on an NVMeOF passthru controller) [not run]
+>      /dev/nvme0n1 is a NVMe multipath device
+> nvme/036 => nvme0n1 (tr=loop) (test NVMe reset command on an NVMeOF target with a passthru controller) [not run]
+>      /dev/nvme0n1 is a NVMe multipath device
+> nvme/037 => nvme0n1 (tr=loop) (test deletion of NVMeOF passthru controllers immediately after setup) [not run]
+>      /dev/nvme0n1 is a NVMe multipath device
+> nvme/039 => nvme0n1 (test error logging)                     [not run]
+>      /dev/nvme0n1 is a NVMe multipath device
+> 
+> As we can see here, the above tests were skipped because the test detects
+> that the device (/dev/nvme0n1) is a multipath device. However, in fact,
+> the test device is NOT a multipath. So I think we need to update the above
+> tests. We may submit another patch to blktest and update above tests once
+> your changes are merged upstream.
 
-...
+Nilay, what kind of device is /dev/nvme0n1 ?
 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Can you show us the output of
 
-SoB != committer.
+nvme id-ctrl /dev/nvme0 -H
+nvme id-ns /dev/nvme0n1 -H
 
-(Yes, I know what + means in the email there, but I don't know
- if it's a problem for all those checks or not)
+Thanks,
 
--- 
-With Best Regards,
-Andy Shevchenko
+/John
 
+> Otherwise, changes look good to me:
+> Reviewed-by: Nilay Shroff <nilay@linux.ibm.com>
+> 
 
 
