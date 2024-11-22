@@ -1,238 +1,257 @@
-Return-Path: <linux-kernel+bounces-418392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6616D9D6123
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:12:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD4199D6128
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:14:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B325B24EE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:12:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E3EE28239F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC5B1D9598;
-	Fri, 22 Nov 2024 15:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C917F14387B;
+	Fri, 22 Nov 2024 15:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Nk9cOUGK"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="L0wHfp6r";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="kAusPbT6"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14726A009
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 15:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732288301; cv=none; b=k7u8ldXJtzvqBseY6Aq58yCVyI2wtHxW5ZlRVlONlpXfvByNI4TtLF0GDoHXsNnWZ55YBDpBa/6vAeqeZ2ILrgwVSzqfZNdoFobRP8HHlehVMeAkkDHldwhSCyBrEiYsPi7NwzUCfA036dEclqs0q+MOS+MtmMBjkTPHwhpxBZg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732288301; c=relaxed/simple;
-	bh=Bz2c02l8ERcOrBWQwOujhwzOKgirMz3lVpfTP39zZ/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qCSGGQS7koLn7hSH68OoiXAcvkFbI8znbQBfWALibLBT1rGwpHgsi0FK8ruY/Kt4wwQUmCvprKlKaUAeHqiNEzpW3DXjhY/9nw03LKmBnkC62z/jBLNZoz8n1NNKGTi7HIFUgY943HI+PZkpa3Q7iLavT/9aXmWJOSkYo8ZbjcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Nk9cOUGK; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3825c05cc90so1303340f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 07:11:39 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D796A009
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 15:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732288480; cv=fail; b=IKyR684HuqRQMEQjNvWw0zSZK2nCKUlgIO/E1tM21T03n4MYBNogxRPXxVbypWb4kdHXiYg5me7YwbICjHHu1Feskv/ste5anuCJ9Bw6VlO896Qq/UIPXRHM1KbWrK44u1vLg4u+hDebbFRheqs9HqZLtu6tqPWoZHdqe8b9TdE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732288480; c=relaxed/simple;
+	bh=DWEcr0FsC0p/OnlHarXzuTYcz/ORGnF7NZtAhldXwQA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=S954bL8SMhvX4VKgEHl2jKXoKpLVweQg0S3u2CMplpg0qtfWfYTu4N71/U2BD3DyWBUss+yDxLWEvNgN+CHWK+4ht+FnQbBFXOGykTtlog6AmNbna4opgnohWQvFZ9Z4tKpl4VNrdfV6dDPIK4qmi6eY3MFuXAADD6LqzWhyK3A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=L0wHfp6r; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=kAusPbT6; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AMDFpAB019312;
+	Fri, 22 Nov 2024 15:13:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=Vdi2Urf42kW1pcrnMR
+	uJm1PrQ+2Cum6XhCtRTod31dM=; b=L0wHfp6ri+evMZgH/gFQ6D5l38r23f3N0N
+	niUJXzLg+PhjP1lYp7KJgUq9+KIozy9AqPw/GcwbHexE1+6ia7TFzD2KgKvsb4W5
+	J7OG4TBF4Kv2BL8EQWqCwBo4A/2/rlblEiO6x+gNumI+LUvvwsv+ugOk0M5+qQXT
+	lVOs/r/r8ByLDvuEaQ1KwxtnDXH0+fzFYhDBygwrHUDPFO6Nt0vHJuvvXUeZ+pc6
+	cnhNM6jhyOcDARSYYXP5HK8Elel+46L8Hr/gy0XQtYyqLgt6Kajvw9CfJilj0QHc
+	qTYwNrKGth9YBWFir/6oNPpd0A3GJK9mmnmpDH3ym/H4RdNwFAoA==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42xhtcc931-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 22 Nov 2024 15:13:57 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4AMDdHHK037121;
+	Fri, 22 Nov 2024 15:13:56 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2040.outbound.protection.outlook.com [104.47.58.40])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 42xhuddb48-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 22 Nov 2024 15:13:56 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Jk1qzA0C0+kzWaqGUfayIo/kLm+ZsWZxh1SLCOFND49WovwF1vTRzAWJtcZJmD+sghcGEjnN2BRYaG1iyjHBjVjH6Bz6AUkxqiZ2G6YjNX9opLOrjUqrPJ5Yuc0VEEnTfmIOF8lvChlkoKyGE2uZrxmhR6Rbz17VJEOX5mf8/d9GFmRAtQqPTSDwb2l9PvbfNoOoMS6Kl3huHofxLC0TyaP0MC7O9fI/h1FY4ZoqBQDyrHMP0Vz5QqKMcX8OUFcLdRcUZbQBn+rMeUXLImnax6WXK9WDpBFoJkyUgkrCNPS/o8gvYfZpn+gFvpbnh3hYKyL57OqSN/Cq5m5Ak+jWcg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Vdi2Urf42kW1pcrnMRuJm1PrQ+2Cum6XhCtRTod31dM=;
+ b=ODJiqw2T9KocHGNbWikc14ZD47+9obRDQqno6DhSCpAhTzIkf+GCBG/Hqnv2lnuGSXL5XM2bX+WjiZRYlojpVSUTCxjWfc4yPYcj+JkOxwqCbMlNoQhZ6e3gv2/Xkz8j6e6rAHWOW4PE5oFYRbVRoKbqjdoTqnRH3cRYr+TOYKTQ/BkXVnsdw4T/WHtod2I9coh02QGPehEvFsBPVpvanCpVS7NO/udr/DxNHxD69Pr6/QCQuNcxdIxIWpbrWgtkFh57ukaNyo48TznDEdYNMHAMyEZYBnAZDrx3ovroju/GiIfisBDOJfTMDIKGFCID2qPqOM4b2wIhWFmcmHmPdA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1732288298; x=1732893098; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2+yAcNB3wPLv50EszBtHoaBKj8Z5/OU1c68F3vdA3XI=;
-        b=Nk9cOUGKjfTFh0PRNuyASy7wSJh9j20Vbo/dXs7bjDJDFPZRqidSVV+8KTCiyquIhG
-         rHuJaJXGGACBZ6yeqFwut15YSYBSO7n5jVBw1DxyuAgiKFHiiw4biXInfhce2u3coC6b
-         4m7+fg/FAGYcvc6Vv7VdV85QEUoe1JrW6hgF9Emui6N0Vjz8mwuOeZwXMm25yaFDlIfG
-         8IPVEDjn0mgv1bBPhS8KiJtXv18f8LxQ4hn42CyPN6HS7SWkE3QaiocQQxof7T9VlknC
-         lX7W/dwD5FR0sSxpskt+Prs4lbJrYYK7CCesrLwWI+fAjNydwvNrLEEJUodbx3qAlZig
-         awsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732288298; x=1732893098;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2+yAcNB3wPLv50EszBtHoaBKj8Z5/OU1c68F3vdA3XI=;
-        b=UqdJUMSSZc3aGNP6V1xyEsm2rWJh4RLHZvvmdFAs/rZsE5A4Xsn3dZrZIkG03fQ3KC
-         4vUksYM+3MR3Cj5eC/04X01QO1vKrgFO57ZOzaJmz84scEaXnGK4uo/gG6D3KC3ofzC3
-         rwXVpL/3FzAJJvGR97+Vq6Q3h0Fs3JXvpiAmg8ji170L2m2ouD3TI90NlUi46EK48P5p
-         TNBuSYzNpu18q/P3THxY5Hm45PYx06lnAad9yZlxkuhuXR5QB+zcOeTTJUzOIIW55n/5
-         lZcoBq6EPQe7eTZYJ6KJQ/aA92qO49Ps+jKg5LH+RhTK81/cBB5T+GFIPIGoqYlASuik
-         RO8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVGX9dbcPjikh9gYRO71LkDxlz5/mikCoWjOSbEixh6k+pW9+qEx+1IICh7SxFmdRTtMBI7/BQe5s/eNSE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDcOz5fhb+qPm9Xd7CZzVfawMQQwGy4xfnixrdZ1lLm9LBtR/e
-	R2bB1hfyBpEtJaxCiyyOqX/nXzDGg+sLY94JdBAb3f5o2HP6uYgYcCVb23Xo1Rc=
-X-Gm-Gg: ASbGnct6qxYel4PsQagpwwBen3xjBbG4w6+52L2+k4DExodOKDfTqZ0IVOV1jsSlRvj
-	yCzlfnU9NnDPQySsjuZn3UW8nfNYhEO9Up/EwSnYUO2bxxcHQMUCPhLg4neli064nFWXE02+kU1
-	TUcow0/qBWH3TymFPwRGCooz5jSYxgCDY/VADEZ9FUE9ROkV0eem21hPyW+xzr883HbXEjWr/II
-	kphks1I3JT0a6fUpOGIdRuY5oW+UIY+EszDofZY0EMHUQBae3ZKg6UaZK6xEK1YSvuLZITfMREl
-	YT/WmsskL7a5UhX46EaRt+OBdxROfCRfbB0=
-X-Google-Smtp-Source: AGHT+IHb9Bmd0b73+vONmIkjjrmjPdTvZeeinULGXC1DO8MOvrqHzr0CJRYp4UVboJ7X3gZYYU2K6w==
-X-Received: by 2002:a05:6000:144c:b0:382:4f4e:1cd4 with SMTP id ffacd0b85a97d-38260bcf97dmr2659883f8f.42.1732288297448;
-        Fri, 22 Nov 2024 07:11:37 -0800 (PST)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fad60b8sm2624448f8f.17.2024.11.22.07.11.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 07:11:36 -0800 (PST)
-Date: Fri, 22 Nov 2024 16:11:36 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: iommu@lists.linux.dev, kvm-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	tjeznach@rivosinc.com, zong.li@sifive.com, joro@8bytes.org, will@kernel.org, 
-	robin.murphy@arm.com, anup@brainfault.org, atishp@atishpatra.org, tglx@linutronix.de, 
-	alex.williamson@redhat.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu
-Subject: Re: [RFC PATCH 08/15] iommu/riscv: Add IRQ domain for interrupt
- remapping
-Message-ID: <20241121-4e637c492d554280dec3b077@orel>
-References: <20241114161845.502027-17-ajones@ventanamicro.com>
- <20241114161845.502027-25-ajones@ventanamicro.com>
- <20241118184336.GB559636@ziepe.ca>
- <20241119-62ff49fc1eedba051838dba2@orel>
- <20241119140047.GC559636@ziepe.ca>
- <DE13E1DF-7C68-461D-ADCD-8141B1ACEA5E@ventanamicro.com>
- <20241119153622.GD559636@ziepe.ca>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Vdi2Urf42kW1pcrnMRuJm1PrQ+2Cum6XhCtRTod31dM=;
+ b=kAusPbT6IVwgPrYPFFpu0WhREhtuU834awldzYbUjUvRcjnnPPxFfCIJSJLy0sy75MLX2uf4Cfi2j+jLqw0YADnI4xN44gWnXwKfi1nHlS+WwohWfscsL8x0xJw9PvZqPhdBgVJE4hBoz2fCkfTMlPBvvU3bQfi4VD1gOVAc2Ck=
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
+ by CO1PR10MB4561.namprd10.prod.outlook.com (2603:10b6:303:9d::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.18; Fri, 22 Nov
+ 2024 15:13:53 +0000
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::75a8:21cc:f343:f68c%6]) with mapi id 15.20.8158.021; Fri, 22 Nov 2024
+ 15:13:53 +0000
+Date: Fri, 22 Nov 2024 10:13:49 -0500
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, peterz@infradead.org, andrii@kernel.org,
+        jannh@google.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
+        mhocko@kernel.org, shakeel.butt@linux.dev, hannes@cmpxchg.org,
+        david@redhat.com, willy@infradead.org, brauner@kernel.org,
+        oleg@redhat.com, arnd@arndb.de, richard.weiyang@gmail.com,
+        zhangpeng.00@bytedance.com, linmiaohe@huawei.com,
+        viro@zeniv.linux.org.uk, hca@linux.ibm.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] seqlock: add raw_seqcount_try_begin
+Message-ID: <p5nwzg7bbesjrto24g2ryk7kl6r43677e6ksdueysvaujpuibl@bwjk24zkesix>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, peterz@infradead.org, 
+	andrii@kernel.org, jannh@google.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz, 
+	mhocko@kernel.org, shakeel.butt@linux.dev, hannes@cmpxchg.org, david@redhat.com, 
+	willy@infradead.org, brauner@kernel.org, oleg@redhat.com, arnd@arndb.de, 
+	richard.weiyang@gmail.com, zhangpeng.00@bytedance.com, linmiaohe@huawei.com, 
+	viro@zeniv.linux.org.uk, hca@linux.ibm.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+References: <20241121162826.987947-1-surenb@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241121162826.987947-1-surenb@google.com>
+User-Agent: NeoMutt/20240425
+X-ClientProxiedBy: YT1PR01CA0083.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:2d::22) To PH0PR10MB5777.namprd10.prod.outlook.com
+ (2603:10b6:510:128::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241119153622.GD559636@ziepe.ca>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|CO1PR10MB4561:EE_
+X-MS-Office365-Filtering-Correlation-Id: eaf016c1-9737-423e-58c4-08dd0b0846a6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?UE8OYq3nnQQ1hiQYc0dIBU5gbuX0jhUNs47TdO3te+mPyeBaH3lrb7xHgDgt?=
+ =?us-ascii?Q?N1mXDfw1nKXTnaS9PACUErFAqW5Ul3JW3AMkcguO8koYEMB/VdcsH+M8dzvj?=
+ =?us-ascii?Q?/zvLiaX+5ZX8dCerBYjRU3xv7rLKx5L4ZOFQOg4hCJk6XAcKyEXeM+N+upH4?=
+ =?us-ascii?Q?RlQ00PrM7+v+iDB7VlXKaz47Shvqt88m5VSLiFm7lwtiNWD+iN5H0ibPJbNU?=
+ =?us-ascii?Q?wUklRXVjVSeZsJnYYKW6iTv2ck0cOTC7AxsuJU7um/9AS3NFiEqU0agVTRJs?=
+ =?us-ascii?Q?qtmmMIBNiSPygD4ESCqlgDRfQrq5T8++Hs0quTOnGJofU3IsVGUOx0QjC/v/?=
+ =?us-ascii?Q?ixq/pdrQkusGnb/vkC+iPWdhj8kwywQZGpYH58Sg/u1dWb04lEfqJChOEghQ?=
+ =?us-ascii?Q?5F4KVyYyBycbxfuQBYsNR33tcCkz45U9lRndSXGDz7n5bR7AYASTvMY97RAF?=
+ =?us-ascii?Q?VY8i2+nZK64iiAR1BF1LGsuL2ESiaMUszbxsxEDiPjzGzFXnjDzVsDdO5OpE?=
+ =?us-ascii?Q?5371BcTMa7hT1KdgCaveXEmzvdkTh0wZLBugU1K7Nrri14Lqoz4fsSD3UvWU?=
+ =?us-ascii?Q?+74psIm57pvTwrZRxbEiuTDlNKlmFP0B2MlhF6ou39DrWEWJq2oRRmy2yGry?=
+ =?us-ascii?Q?x2ECAk60n1DHeCm9fjK2DkMH/AkLJizTPhhESStLH4Ogv85dHBAjoLtbcpVs?=
+ =?us-ascii?Q?QsgNzWMa4IYZRcz+RhBYqfkQRFrQGZ6N5AniR9szfEd1I9wWblbsju1AYSYj?=
+ =?us-ascii?Q?BD8g5+5NCLHqISJgDjASiHp3/5L//1EIIbu6rLJSckcSzeZq+Bx2epe8JH5p?=
+ =?us-ascii?Q?lM3WiKGP9ttcbC/OeFdBRq9T1gd3n0U/9/itDe1gmJvkvBJimcR//u6ARo++?=
+ =?us-ascii?Q?QYrjXsXV8jBNLD3/BX89LsEeIPwyMKwYkWwoJb2k9zZV+UV3lBfRuBCDhl++?=
+ =?us-ascii?Q?pknwGOnWfMSXJlb9rJte3BNr5E97xNi9eyP8V9BY3/6ltGEAZ3cXhNCCdTym?=
+ =?us-ascii?Q?B4rW/0SMq/c+kUkRhgnn3Q8R23Pc+49tW2wTKJfn0bdyDjmt9vVBJ5XuraCw?=
+ =?us-ascii?Q?29429nSM81dVkFPdzY+HvjvZt14B0Sl8dvuPQr2PSRgxGA5mio/kUNcMwEKw?=
+ =?us-ascii?Q?XaIR6sUzaJTJIffQaN6YHGvx5enWPZAhndjqRPj4jy6oND+UnIrePZ3nLaR/?=
+ =?us-ascii?Q?ccmwsTbCs4Kv/i2ijugZzZU4atBAonfTXT/OH97VR5+q8vU9zEcMBKORg1yt?=
+ =?us-ascii?Q?wgAGtmzGE3wXHdBGS8gJFST7gEMCE96UuisaiQLuQZlrFDuH1nNfLtCtwzq4?=
+ =?us-ascii?Q?9DyhLNEGZ2JW+1ylQdi9Qn4H?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ROcMhGNSH2cQ6pqO1XC0RuUV901exoWglGuyXWpMtsgpEqTLCcJ//UxrVQxH?=
+ =?us-ascii?Q?UHlWIVnK0ghGfGMtN3oic+3fzOedSxeQ0QsEfWYHlUg4/nFCY8+GgPTbniAb?=
+ =?us-ascii?Q?yHbne5+vqXGO48RjvaLfmGFfoGpX3BOxNJCgVd6Q926FAYPXvbbYN3MslwLo?=
+ =?us-ascii?Q?MKlDoN/YEdFO2PWV+JfFBfCFnuZdfiNSwgh5M/Lr4Zlzas4pe1Ys1NbzovGd?=
+ =?us-ascii?Q?ASCl7h5GXFAVdaNgEMkGQa+OcfdWHFH+Q5+kH/c0Ww918zelbW14CLO6rF0e?=
+ =?us-ascii?Q?WUD1lkKXdKGbBIrhiJI5STDovkenIr68B/O0eS2pho9+58Z2jJugJZzF1yev?=
+ =?us-ascii?Q?mhb5cMktLQuomKdU2oj79cxwdiEBwS3mkmU0MDU4bhZavZhiLH5ZR6KRd9Mp?=
+ =?us-ascii?Q?bvQ/G9CQ2HLm4DrYHHKTRDx5LuDGqY+2lUqKAa1WJFpKI1Odojzj+t6mHl8G?=
+ =?us-ascii?Q?nWKstzSoT/Ed7KY2/WoPTrubT5oA48jzEaTip7rTRyxDuQy/OIm9QXa9jGVv?=
+ =?us-ascii?Q?Sv/zG38BiWzfPmURAupFsjo4BTYFqJefyAN1YTGbN4y6wncey5RtgC4y7+lu?=
+ =?us-ascii?Q?DRMHJBrLqD8IUGGudhyfalM94uamAjEFDFs6fYfl2Gk34EVxZXlukc42tc5Y?=
+ =?us-ascii?Q?GG5oE+Ko1iNyWeEN/R0iNVYbZR/dFIjl67Cd3koutuglSZmsixpS1fy+1Knn?=
+ =?us-ascii?Q?nXvCFVG9IxCIFpKIfVosCbAulls4LH1FR6urnxmuOfTRkFtJlkDUyODw8O+p?=
+ =?us-ascii?Q?/HqfCMQsMeP3209SftLIIV4xHRudNtqVt/AQ4NhKoRnS9dGRav4Q+2u87G4T?=
+ =?us-ascii?Q?hj3O9u1+R7LDizIrXeRuJx2N9Y8xPKrKCvImKvGNW5Lj1EKKZcLdDK6nyGNG?=
+ =?us-ascii?Q?oo2yV41NAYCO7mYkPHl18P8Ua6g1qgNDtqNcII+tNcECkFeg7X36++l1BzeH?=
+ =?us-ascii?Q?Af21AUfOk8EIh1Ex+26uz6/NAJdzJma7a3Y+x7k/6upbLmou/pGLu/tjRCMN?=
+ =?us-ascii?Q?364HnPbglbYJom2SRzgFkDT1J81nR51BOV41gKalS4SkTk1pKoi+cJel437U?=
+ =?us-ascii?Q?y7nCFrtH3bK8sQzIluykPKgiZkr89uEJA/tsByQQwqLb9Iu2jrao1uT82H5v?=
+ =?us-ascii?Q?67CsmMGJY07cIG6o/y6wnX8sMuxy3zeJVdwbgGGaTFrKUGGAOPjX2ilpY8xB?=
+ =?us-ascii?Q?jZOYyIgqaTKpz+aZx2s2XWjamGJUGefEc+cS/OsQBy3Pr0J6TuI3nf8chaIz?=
+ =?us-ascii?Q?RrKf3hsDGvzZBinCdvPZ5Gl89FYbR2Y3aZo1H30T7Akh9Ob8qJiiINHu8Gf+?=
+ =?us-ascii?Q?lJQ0pmJEWnMSErcVQRyBetlNj9H2OtGVQqRvKbAyJRTeL6eyPaqq+ZfSJyGk?=
+ =?us-ascii?Q?JHYKTGFWPI4XNwTGJV2Rt+TtX7Hjn2w8uXq73NedhivpwyuKLHNmcMz8k6aj?=
+ =?us-ascii?Q?hoC6kCc1q+VheSnSSeujaTgK0nLqdSRtTpi7p4riVFjMfleKy4QEwiq5/NpD?=
+ =?us-ascii?Q?cTZUBswjX05C3LHLm5bcrKDm1bnezpnnzvB6xkeUvMf2Am1sPay7V+VDovMv?=
+ =?us-ascii?Q?GQdB9jgG3DKYhdZqYm2kNg774ndbX2sn8X99i2pC?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	e0MColZT2dYmtbeq5rUzqvZebRXxIXIXAJDDtTGOtss0gj0y1s1ap+HknUIlUHYIcoK4ij6tGqECgVJjO/iYaI3d8LmMoujnIextLMBwOkB58n8rNuR23gBRtMCvaOsMV0Aeg820BjZTnVQ+uhGkIYTWBY5ipywCzoxxNSggDfrtuwHP1zb6bA31OTXi1vwWSZIrRzJIC8dN9zmVOSFCjVvGCmJzShN+HqqOa8JZhmctJMJf6Tprll1LQXdWGGINl0pbVKST/fTuGIjh0EAMs1UqFlJiQkod/RWDwu8FUKRB9IewdqiODz7+sckhbIF5iHaEkaW7aWKC/vwyM5V2OWaouYMT26/0eomJHhaxWM5k5VxixACLEuMtqQyJfxzi83GKC4mvhyCysrUyMG2V+fTkeU+qOGuiigwMv03LmYlCbYuY6xB/YQAYQCYOMdAwMjkxndNTKorIHkY0agJ0ZfdV1DT/lm4XADDBYSQFPq6pkrC2w5rWEEiypjZ8TwWFdP9VYku0wWqSLz4pOteDonOJbBQ9DcocVvUnnMD9vUJlKIL1jUe4XQ00YdZP5PJaHdBH/tUzU11YFz1M73c591xqHVu9YP+3KsMuOU65/2w=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eaf016c1-9737-423e-58c4-08dd0b0846a6
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2024 15:13:53.0848
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WKUaLXPrjJjqVVAVAUUV4nUitZYiupSOwkW0iuNLluRthHzLeR81ajtwpGRZaxn9BziC4vzlS65KHKu8AvKNFg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4561
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-22_07,2024-11-21_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 mlxlogscore=999
+ phishscore=0 spamscore=0 suspectscore=0 malwarescore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2411220128
+X-Proofpoint-GUID: ejatUO3xyMTmo5pcP-Ks7fSuHKAf1itz
+X-Proofpoint-ORIG-GUID: ejatUO3xyMTmo5pcP-Ks7fSuHKAf1itz
 
-On Tue, Nov 19, 2024 at 11:36:22AM -0400, Jason Gunthorpe wrote:
-> On Tue, Nov 19, 2024 at 04:03:05PM +0100, Andrew Jones wrote:
+* Suren Baghdasaryan <surenb@google.com> [241121 11:28]:
+> Add raw_seqcount_try_begin() to opens a read critical section of the given
+> seqcount_t if the counter is even. This enables eliding the critical
+> section entirely if the counter is odd, instead of doing the speculation
+> knowing it will fail.
 > 
-> > >This is the wrong thinking entirely. There is no such thing as a "VFIO
-> > >domain".
-> > >
-> > >Default VFIO created domains should act excatly the same as a DMA API
-> > >domain.
-> > >
-> > >If you want your system to have irq remapping, then it should be on by
-> > >default and DMA API gets remapping too. There would need to be a very
-> > >strong reason not to do that in order to make something special for
-> > >riscv. If so you'd need to add some kind of flag to select it.
-> > >
-> > >Until you reach nested translation there is no "need" for VFIO to use
-> > >any particular stage. The design is that default VFIO uses the same
-> > >stage as the DMA API because it is doing the same basic default
-> > >translation function.
-> > 
-> > The RISC-V IOMMU needs to use g-stage for device assignment, if we
-> > also want to enable irqbypass, because the IOMMU is specified to
-> > only look at the MSI table when g-stage is in use. This is actually
-> > another reason the irq domain only makes sense for device
-> > assignment.
-> 
-> Most HW has enablable interrupt remapping and typically Linux just
-> turns it always on.
-> 
-> Is there a reason the DMA API shouldn't use this translation mode too?
-> That seems to be the main issue here, you are trying to avoid
-> interrupt remapping for DMA API and use it only for VFIO, and haven't
-> explained why we need such complexity. Just use it always?
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 
-The reason is that the RISC-V IOMMU only checks the MSI table, i.e.
-enables its support for MSI remapping, when the g-stage (second-stage)
-page table is in use. However, the expected virtual memory scheme for an
-OS to use for DMA would be to have s-stage (first-stage) in use and the
-g-stage set to 'Bare' (not in use). OIOW, it doesn't appear the spec
-authors expected MSI remapping to be enabled for the host DMA use case.
-That does make some sense, since it's actually not necessary. For the
-host DMA use case, providing mappings for each s-mode interrupt file
-which the device is allowed to write to in the s-stage page table
-sufficiently enables MSIs to be delivered.
+Reviewed-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
 
+> ---
+> Applies over Linus' ToT
 > 
-> > >Nested translation has a control to select the stage, and you can
-> > >then force the g-stage for VFIO users at that point.
-> > 
-> > We could force riscv device assignment to always be nested, and when
-> > not providing an iommu to the guest, it will still be single-stage,
-> > but g-stage, but I don't think that's currently possible with VFIO,
-> > is it?
+>  include/linux/seqlock.h | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
 > 
-> That isn't what I mean, I mean you should not be forcing the kind of
-> domain being created until you get to special cases like nested.
+> diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
+> index 5298765d6ca4..22c2c48b4265 100644
+> --- a/include/linux/seqlock.h
+> +++ b/include/linux/seqlock.h
+> @@ -318,6 +318,28 @@ SEQCOUNT_LOCKNAME(mutex,        struct mutex,    true,     mutex)
+>  	__seq;								\
+>  })
+>  
+> +/**
+> + * raw_seqcount_try_begin() - begin a seqcount_t read critical section
+> + *                            w/o lockdep and w/o counter stabilization
+> + * @s: Pointer to seqcount_t or any of the seqcount_LOCKNAME_t variants
+> + *
+> + * Similar to raw_seqcount_begin(), except it enables eliding the critical
+> + * section entirely if odd, instead of doing the speculation knowing it will
+> + * fail.
+> + *
+> + * Useful when counter stabilization is more or less equivalent to taking
+> + * the lock and there is a slowpath that does that.
+> + *
+> + * If true, start will be set to the (even) sequence count read.
+> + *
+> + * Return: true when a read critical section is started.
+> + */
+> +#define raw_seqcount_try_begin(s, start)				\
+> +({									\
+> +	start = raw_read_seqcount(s);					\
+> +	!(start & 1);							\
+> +})
+> +
+>  /**
+>   * raw_seqcount_begin() - begin a seqcount_t read critical section w/o
+>   *                        lockdep and w/o counter stabilization
 > 
-> Default VFIO should work the same as the DMA API.
-
-If "default VFIO" means VFIO without irqbypass, then it would work the
-same as the DMA API, assuming all mappings for all necessary s-mode
-interrupt files are created (something the DMA API needs as well).
-However, VFIO would also need 'vfio_iommu_type1.allow_unsafe_interrupts=1'
-to be set for this no-irqbypass configuration.
-
+> base-commit: 43fb83c17ba2d63dfb798f0be7453ed55ca3f9c2
+> -- 
+> 2.47.0.338.g60cca15819-goog
 > 
-> > >> The IRQ domain will only be useful for device assignment, as that's when
-> > >> an MSI translation will be needed. I can't think of any problems that
-> > >> could arise from only creating the IRQ domain when probing assigned
-> > >> devices, but I could certainly be missing something. Do you have some
-> > >> potential problems in mind?
-> > >
-> > >I'm not an expert in the interrupt subsystem, but my understanding was
-> > >we expect the interrupt domains/etc to be static once a device driver
-> > >is probed. Changing things during iommu domain attach is after drivers
-> > >are probed. I don't really expect it to work correctly in all corner
-> > >cases.
-> > 
-> > With VFIO the iommu domain attach comes after an unbind/bind, so the
-> > new driver is probed.
-> 
-> That's the opposite of what I mean. The irq domain should be setup
-> *before* VFIO binds to the driver.
-> 
-> Changing the active irq_domain while VFIO is already probed to the
-> device is highly unlikely to work right in all cases.
-> 
-> > I think that's a safe time. However, if there
-> > could be cases where the attach does not follow an unbind/bind, then
-> > I agree that wouldn't be safe.
-> 
-> These cases exist.
-> 
-> > I'll consider always creating an IRQ
-> > domain, even if it won't provide any additional functionality unless
-> > the device is assigned.
-> 
-> That isn't ideal, the translation under the IRQs shouldn't really be
-> changing as the translation under the IOMMU changes.
-
-Unless the device is assigned to a guest, then the IRQ domain wouldn't
-do anything at all (it'd just sit between the device and the device's
-old MSI parent domain), but it also wouldn't come and go, risking issues
-with anything sensitive to changes in the IRQ domain hierarchy.
-
-> 
-> Further, VFIO assumes iommu_group_has_isolated_msi(), ie
-> IRQ_DOMAIN_FLAG_ISOLATED_MSI, is fixed while it is is bound. Will that
-> be true if the iommu is flapping all about? What will you do when VFIO
-> has it attached to a blocked domain?
-> 
-> It just doesn't make sense to change something so fundamental as the
-> interrupt path on an iommu domain attachement. :\
-
-Yes, it does appear I should be doing this at iommu device probe time
-instead. It won't provide any additional functionality to use cases which
-aren't assigning devices to guests, but it also won't hurt, and it should
-avoid the risks you point out.
-
-> 
-> > >VFIO is allowed to change the translation as it operates and we expect
-> > >that interrupts are not disturbed.
-> > 
-> > The IRQ domain stays the same during operation, the only changes are
-> > the mappings from what the guest believes are its s-mode interrupt
-> > files to the hypervisor selected guest interrupt files, and these
-> > changes are made possible by the IRQ domain's vcpu-affinity support.
-> 
-> That is only the case when talking about kvm, this all still has to
-> work fully for non-kvm VFIO uses cases too.
-> 
-
-I'll rework the irq domain creation to be at iommu device probe time for
-the next version.
-
-Thanks,
-drew
 
