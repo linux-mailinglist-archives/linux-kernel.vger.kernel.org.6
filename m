@@ -1,185 +1,86 @@
-Return-Path: <linux-kernel+bounces-418289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B80449D5FDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:43:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A0EF9D5FE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:46:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F27E282F39
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:43:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 123DD1F22E5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D8F4A01;
-	Fri, 22 Nov 2024 13:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ML4U6GSH"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81E8D70806;
+	Fri, 22 Nov 2024 13:45:57 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1D412E7F
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 13:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD9F38389;
+	Fri, 22 Nov 2024 13:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732282985; cv=none; b=Sp3l8rfBj1yHSiL06zni24CKsXnUKtiytLLEFDEF1MgoCBHxwOU8asBMlsbdcFrCDOYpagklXRgzAd8YLIroJjgcQFOxu/T/gFgXKef41rN/U0vj6L7HK17xfx4B7uiCJIg8A/ikb7GI/+qt0bDA6Bfi6YySv+A0l15o+ufaw5U=
+	t=1732283157; cv=none; b=PY+5YM620JZxrnWjOut5L+tHd4RkAonLm1IrQGnOsimXibed1doKEF3rZo0S3zPTMEh28xP0Aeornfco9d0vcGZGIvbuskdG1wUdOJv2FoZUXmTZK4FhvriV+bGMsmQpDKb/cjYfSsd9iW1IYIh0uk003xTQ84n3pEb5IbroFNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732282985; c=relaxed/simple;
-	bh=mUBMZZqal/zQohdwT6EZNdZQME9eFfnneurHUwJz3TQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DsgOr/NAjTtd14rJXkJz7lYxdbELnx5QkHLpxo0MUZSnZnzMYYJysZUVAqDVYi9djC3dsTgekDIVn1gDuSJrwHBJTTRfxauYPssReQnH/A4nlvDObpghW+Kc1EhPbG2O2XKwasw5kzk3HQR9mqlTpT4ZdtZLiZKk45TtbJ56OCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ML4U6GSH; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM3nk1q021660
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 13:43:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	I4jyN5sgIKsB6Ac+agW1/Q5Zjbq+xV9LLsj7FAcZutI=; b=ML4U6GSH7KJo9+Tw
-	F9GXRdZUv/op0bnfOvkSwFo0X4ry/+IvNlonZWWRAIfd1Usjg5s5n1tpsjLfPm6/
-	rTj7uZ8KOMfhmfzvTVfKz/pboODFFFpgtJGlmfiZ/IBg+cnimCw4nwu1T0FC/LN6
-	I8EbmDDRUoCRdzmIe3LbsZDW3HmpqBDqv4mag3pMzxPS9pXgGwJ+pJ92U/J1guWS
-	jHICk46wAJLHuCXZ6a2OLsrqTUxz7qdpxfaqEYOv0JhwtCwfgQxv63z2KnClapNH
-	jFBziL0CC5QeSfGvbD6GT9t62JfoxEG5bsPpvfR4JhfZeecGNjHNuaXVfm612gGt
-	Bzkccw==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4326atb845-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 13:43:02 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-460903fc1a1so5057311cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 05:43:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732282981; x=1732887781;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I4jyN5sgIKsB6Ac+agW1/Q5Zjbq+xV9LLsj7FAcZutI=;
-        b=IWeiq+eiD3Cnek9kXg9y2l5atFrb+mqfhJd4kky5wVsoLe3YHfEYTuG0APFwf/NXRH
-         XQPa0fFpQXyutwdpCGgblN1GqZYBE21x7Z10oBAUr56ctnu4YyC3MKsCCgpTGrT975CU
-         yxXrtu7Kl6u9EC9sLF4SaT2wzKggC1Pcojd5QknUCld8K0TQGJiApvpON2h6f61/qHQO
-         wYUOi9K4q8ioJGEg8uSXSVp16cSBf7BZ92E1jp1m5z89LtDljrJZu9yRFkahNtQ36Hib
-         GHSktPZBxxs53Pur6yKld8p5tdrG+yPrdIbDNQQ+HwB8VDGxeOcYMnR7DcKKF1T3b40x
-         sILw==
-X-Forwarded-Encrypted: i=1; AJvYcCWYXMZf6nE+7Z8FUJwySRFz0WtBqEn1l8NRw9BMDdnFQwaumqPbYzAquLHN+HPDZlfmLmFm4nZKvBdDH5s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwINWwrkS1ZTXGlMIYbbQT0plOlsjiWGSDnkIh4kFJDTD+nMtmV
-	lAI4EKNBeX+snqPn014bouye7oEP8zF/aajdB0eRUggIUHLnp0k7DkebKae3fkv18qAP3XD7Aej
-	uMXcHv3dv+1zeHNJODuKXJgzv4c741MCPw0FRqpmGjxicBuzj1eJC9xJdsZjlSXg=
-X-Gm-Gg: ASbGncs8VbDG2+/UMDSbkaUzD+C/hZZaPBXutpvRmjp7AUMnwQT8IGbk6Ez4wfzVgGE
-	a2DcATEud8IdtYGXlYgebDj8hm085IP9rrjg/xLOvzW9HQmVAysuZWtOl63A2H+tENpsmZAEx88
-	3xZke2P32AF8VH3opw3OGNmtydaEKTQct5RZjTjGO/GNZ8glGrPI74t+ts1HHWXoIm1ZSLGIw/G
-	JHQrO0z0BPnrjU4xBL+E1Rb7fZ/EvFUCHXEJwLxeQ+aioNj8xGRcKN8uT96Ywl/K0XfHCGqAyKO
-	LPLI5jDNPXbMZsosUG6xY0covpAWHAM=
-X-Received: by 2002:a05:620a:4593:b0:79f:70f:ee0b with SMTP id af79cd13be357-7b5144c18admr171825985a.6.1732282981143;
-        Fri, 22 Nov 2024 05:43:01 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE6qWdpFprMy+djvMsdCITWGkdx6i8r/hwcoEINJOKRyzD0W2OkpAMxFf70grZjlw3X3/R3nQ==
-X-Received: by 2002:a05:620a:4593:b0:79f:70f:ee0b with SMTP id af79cd13be357-7b5144c18admr171823385a.6.1732282980786;
-        Fri, 22 Nov 2024 05:43:00 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d41af2esm939297a12.84.2024.11.22.05.42.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Nov 2024 05:42:59 -0800 (PST)
-Message-ID: <8508988c-a74b-4f65-8060-30a0cb5afa64@oss.qualcomm.com>
-Date: Fri, 22 Nov 2024 14:42:56 +0100
+	s=arc-20240116; t=1732283157; c=relaxed/simple;
+	bh=my1Lv+AVAEzcHuOm7l1VgiwLutqzxS4skKNgNVfJ2s4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GAo2/tlTm0rHzRn64NegbZTHECr8bXaY8dNE+YMQ3c38uO/wWKV9pMfz3MxEW353Xz56yOjaXDyuc5b67KWV2JWUBugihaedV1L5/d7n20iPpZQboNUCyq8szw8Qyvn8PWx7nIHvCwXnVsjuKq1ps1wc2ZjoHrAyyZUdJ4oASZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+	(envelope-from <fw@strlen.de>)
+	id 1tETyT-0005kg-Hd; Fri, 22 Nov 2024 14:45:29 +0100
+Date: Fri, 22 Nov 2024 14:45:29 +0100
+From: Florian Westphal <fw@strlen.de>
+To: Pei Xiao <xiaopei01@kylinos.cn>
+Cc: pablo@netfilter.org, kadlec@netfilter.org, davem@davemloft.net,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	netfilter-devel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+84d0441b9860f0d63285@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] netfilter: nf_tables: Use get_cpu_ptr in nft_inner_eval
+Message-ID: <20241122134529.GB17061@breakpoint.cc>
+References: <673fca0e.050a0220.363a1b.012a.GAE@google.com>
+ <804e05fe4615cfd51f0cc72307f578ea34a701b4.1732281838.git.xiaopei01@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] i2c: i2c-qcom-geni: Enable i2c controller sharing
- between two subsystems
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
-        linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        conor+dt@kernel.org, agross@kernel.org, devicetree@vger.kernel.org,
-        vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org,
-        Frank.Li@nxp.com, konradybcio@kernel.org, bryan.odonoghue@linaro.org,
-        krzk+dt@kernel.org, robh@kernel.org
-Cc: quic_vdadhani@quicinc.com
-References: <20241113161413.3821858-1-quic_msavaliy@quicinc.com>
- <20241113161413.3821858-5-quic_msavaliy@quicinc.com>
- <37762281-4903-4b2d-8f44-3cc4d988558d@oss.qualcomm.com>
- <cbbb78c9-54ec-453a-92ec-6b174bd3d9cb@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <cbbb78c9-54ec-453a-92ec-6b174bd3d9cb@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: fM7qTdFQlA02iEqsdZRHYxIpJE0fBqJb
-X-Proofpoint-GUID: fM7qTdFQlA02iEqsdZRHYxIpJE0fBqJb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 clxscore=1015 mlxlogscore=999 lowpriorityscore=0
- phishscore=0 adultscore=0 priorityscore=1501 bulkscore=0 spamscore=0
- mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411220115
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <804e05fe4615cfd51f0cc72307f578ea34a701b4.1732281838.git.xiaopei01@kylinos.cn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On 18.11.2024 6:45 AM, Mukesh Kumar Savaliya wrote:
-> Thanks for the review konrad !
+Pei Xiao <xiaopei01@kylinos.cn> wrote:
+> syzbot complain about using smp_processor_id in preemptible.
+> use get_cpu_ptr to preempt_disable.
+
+> Reported-by: syzbot+84d0441b9860f0d63285@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=84d0441b9860f0d63285
+> Fixes: 0e795b37ba04 ("netfilter: nft_inner: add percpu inner context")
+> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+> ---
+>  net/netfilter/nft_inner.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> On 11/16/2024 12:58 AM, Konrad Dybcio wrote:
->> On 13.11.2024 5:14 PM, Mukesh Kumar Savaliya wrote:
->>> Add support to share I2C controller in multiprocessor system in a mutually
->>> exclusive way. Use "qcom,shared-se" flag in a particular i2c instance node
->>> if the usecase requires i2c controller to be shared.
->>
->> Can we read back some value from the registers to know whether such sharing
->> takes place?
-> Actually, HW register doesn't provide such mechanism, it's add on feature if SE is programmed for GSI mode.
+> diff --git a/net/netfilter/nft_inner.c b/net/netfilter/nft_inner.c
+> index 928312d01eb1..ae85851bab77 100644
+> --- a/net/netfilter/nft_inner.c
+> +++ b/net/netfilter/nft_inner.c
+> @@ -248,7 +248,7 @@ static bool nft_inner_parse_needed(const struct nft_inner *priv,
+>  static void nft_inner_eval(const struct nft_expr *expr, struct nft_regs *regs,
+>  			   const struct nft_pktinfo *pkt)
+>  {
+> -	struct nft_inner_tun_ctx *tun_ctx = this_cpu_ptr(&nft_pcpu_tun_ctx);
+> +	struct nft_inner_tun_ctx *tun_ctx = get_cpu_ptr(&nft_pcpu_tun_ctx);
+>  	const struct nft_inner *priv = nft_expr_priv(expr);
 
-So it's more of an unwritten contract between subsystems.. okay
+This can't be right, where is it re-enabled?
 
->>
->>> Sharing of I2C SE(Serial engine) is possible only for GSI mode as client
->>> from each processor can queue transfers over its own GPII Channel. For
->>> non GSI mode, we should force disable this feature even if set by user
->>> from DT by mistake.
->>
->> The DT is to be taken authoritatively
->>
-> To clarify - Does it mean i should not have SW disable this feature OR override  ? And let it continue in non GSI mode even it's not going to work ?
-
-If a configuration is invalid, you should return -EINVAL from probe,
-with an appropriate error message.
-
->>>
->>> I2C driver just need to mark first_msg and last_msg flag to help indicate
->>> GPI driver to take lock and unlock TRE there by protecting from concurrent
->>> access from other EE or Subsystem.
->>>
->>> gpi_create_i2c_tre() function at gpi.c will take care of adding Lock and
->>> Unlock TRE for the respective transfer operations.
->>>
->>> Since the GPIOs are also shared between two SS, do not unconfigure them
->>> during runtime suspend. This will allow other SS to continue to transfer
->>> the data without any disturbance over the IO lines.
->>>
->>> For example, Assume an I2C EEPROM device connected with an I2C controller.
->>> Each client from ADSP and APPS processor can perform i2c transactions
->>> without any disturbance from each other.
->>>
->>> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
->>> ---
->>
->> [...]
->>
->>>       } else {
->>>           gi2c->gpi_mode = false;
->>> +
->>> +        /* Force disable shared SE case for non GSI mode */
->>> +        gi2c->se.shared_geni_se = false;
->>
->> Doing this silently sounds rather odd..
-> we can have Some SW logging added ?
-
-Normally such overrides mandate a warning/notice, but as I said above,
-we should disallow such combinations altogether for sanity
-
-Konrad
+Not related to your patch:
+Why is this percpu?  How is this softirq safe?
 
