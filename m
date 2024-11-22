@@ -1,139 +1,120 @@
-Return-Path: <linux-kernel+bounces-418365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 628D89D60DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:52:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF469D60E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:53:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3080B27EBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:52:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6B9EB28391
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB97C1DE8A7;
-	Fri, 22 Nov 2024 14:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A37D14A4F7;
+	Fri, 22 Nov 2024 14:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ZxPR1yB/"
-Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="Xng8Dcjw"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7929113A878
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884EA7081B;
+	Fri, 22 Nov 2024 14:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732287068; cv=none; b=WItGUI3yHRYsrBN3fYokTuG+H1AA43f0zzpUF0sAir6PSCnwvnWDwz5+UiQ1N7hwaSpTHum4jDM7VuQSh7pV02UwZqHvAHutkDfCyQHhDiNtHcum93eqQg8V37gS6HTgbWiwB1S/e65zQTTxam8fxcCce8y0DoRmuFb1nVXn7s0=
+	t=1732287182; cv=none; b=KoakrB1xddmaj7qfo+WV61XbClLj7Wpdwf5BhV9iQlOVKKfFBJgglruf+p55dRm3Z+xKvh18PSM8OmDZ4tIDqH3MrST5PKs3LhVJo7swlcxePCU+xalgFGFCdXXVL1spqJvfii3lFvG28nJo3gMmDnmgfFAGe3JuNWAf2gRGXm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732287068; c=relaxed/simple;
-	bh=da/B3C3m95B9xDN7inCPJver2jyI9WY4gvWq4YtWhFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nOeQNWz5x/xGKi3AA/L+HEHBRtocUB/uGfZcLdu70Pm8bhaTJK11evpo/c8WuVACRIZGcBjVn83eqtUdZCxD9OHjGR0qGJXcBL+3fg9G8ySDCygt75NCaCbEeiRh1FTs73UGvTOcdMQcf4qxe/tzoCVEJj1JpXuGBuA3Twj+8fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ZxPR1yB/; arc=none smtp.client-ip=83.166.143.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Xvyhd0W8fzbr5;
-	Fri, 22 Nov 2024 15:50:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1732287056;
-	bh=Dw83SL5Y8yup9QeWhRY3Xv+H570yVpAemu+fQwUxJwQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZxPR1yB/99EMPpelBHdCWInnXjSxUxn8CxobKR87WOV/XW8j4P2i/WrLRNt3tk3Pm
-	 PwdepQSQuLCaAzIfcdHDKM5tasTYMdPYLpz5ZRscRNi4N8kGaH50/8TPen3EyKDgJ6
-	 Cu2uU2k/vW0zhArwJAuMwtubKMwDV38J+e5CnuqY=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Xvyhc0l95zs22;
-	Fri, 22 Nov 2024 15:50:56 +0100 (CET)
-Date: Fri, 22 Nov 2024 15:50:56 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, Alejandro Colomar <alx@kernel.org>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>, 
-	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
-	Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
-	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v21 6/6] samples/check-exec: Add an enlighten "inc"
- interpreter and 28 tests
-Message-ID: <20241122.ahY1pooz1ing@digikod.net>
-References: <20241112191858.162021-1-mic@digikod.net>
- <20241112191858.162021-7-mic@digikod.net>
- <d115a20889d01bc7b12dbd8cf99aad0be58cbc97.camel@linux.ibm.com>
+	s=arc-20240116; t=1732287182; c=relaxed/simple;
+	bh=hIZ/xDPyN/1QHmTijlYLd6msZPWHwDvrTt3hWM2PkCc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jmm+plPfPJBxnhPct9O6r2I/mu1a+WJ040UMqi0rmQ/u9cxInFJjneQsd+hDkzvPKfT9aNQkiyrsrzlJ/FE2Tipm/0MldUE4UCNKljxaxny4kZ2S/O9nwPP9BUoi194kGQf5Pm9YRilyLtvBprwF/3fAlZzpBEW0WNhq6g/3voA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=Xng8Dcjw; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References; bh=sqvgtVEOVfoQ6/LkzH6KDQcRvaoEUvwUSz00hqpnSEs=; b=Xn
+	g8Dcjw/fu959XMnoRvIRZTmyJdRXsW3DFe2v/CR1tlv+SpJC1RKHGxFUQni1FAbLNt3ZK/Oo4qyZB
+	sT+biwVHvAYPeHMiWmfnwU4JChP8K9R8QI+75bWfeWleELEaaXIoSgBbbLiD9bfucFji/KsVOZYPD
+	OWUZY2KRYlUYqxABcsZKeWrAmHig6Eik+ZzguAxKPsR+jjAMjevhEaGVxxo/YW2ZnwwLwMvbYwMlk
+	07Y0WZE5UnZgGLBZpiAvnDMbGDsNrkyvTtWMzBZVNHmZEhQfS7WAx//DLHCtyvp90tfg79i7mJhFO
+	f5SxAmxI2kZkVcHH/YaWjB5boGVOSZPA==;
+Received: from sslproxy03.your-server.de ([88.198.220.132])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sean@geanix.com>)
+	id 1tEV1W-000KIC-1U; Fri, 22 Nov 2024 15:52:42 +0100
+Received: from [185.17.218.86] (helo=zen.localdomain)
+	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sean@geanix.com>)
+	id 1tEV1V-000HFz-2d;
+	Fri, 22 Nov 2024 15:52:41 +0100
+From: Sean Nyekjaer <sean@geanix.com>
+Subject: [PATCH can-next v3 0/3] can: tcan4x5x/m_can: use standby mode when
+ down and in suspend
+Date: Fri, 22 Nov 2024 15:52:21 +0100
+Message-Id: <20241122-tcan-standby-v3-0-90bafaf5eccd@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d115a20889d01bc7b12dbd8cf99aad0be58cbc97.camel@linux.ibm.com>
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKWaQGcC/12NzQ7CIBAGX6XZsxh+WlFPvofxAHTbcpAaIISm6
+ buLeLEev8zO7AoBvcUA12YFj8kGO7syxKEBMyk3IrF92cApbxmjkkSjHAlRuV4vpMdBdGcpmeY
+ aivLyONhcc3f4HDrMER6FTDbE2S/1T2KVf5OM7ZOJEUqGixAStTKI6jaicjYfzfyspcR/7e7P5
+ sVuUdOCT5oLubO3bXsDFyKugfEAAAA=
+X-Change-ID: 20241107-tcan-standby-def358771b2b
+To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+ Marc Kleine-Budde <mkl@pengutronix.de>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Sean Nyekjaer <sean@geanix.com>
+X-Mailer: b4 0.14.2
+X-Authenticated-Sender: sean@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27465/Fri Nov 22 10:41:26 2024)
 
-On Thu, Nov 21, 2024 at 03:34:47PM -0500, Mimi Zohar wrote:
-> Hi Mickaël,
-> 
-> On Tue, 2024-11-12 at 20:18 +0100, Mickaël Salaün wrote:
-> > 
-> > +
-> > +/* Returns 1 on error, 0 otherwise. */
-> > +static int interpret_stream(FILE *script, char *const script_name,
-> > +			    char *const *const envp, const bool restrict_stream)
-> > +{
-> > +	int err;
-> > +	char *const script_argv[] = { script_name, NULL };
-> > +	char buf[128] = {};
-> > +	size_t buf_size = sizeof(buf);
-> > +
-> > +	/*
-> > +	 * We pass a valid argv and envp to the kernel to emulate a native
-> > +	 * script execution.  We must use the script file descriptor instead of
-> > +	 * the script path name to avoid race conditions.
-> > +	 */
-> > +	err = execveat(fileno(script), "", script_argv, envp,
-> > +		       AT_EMPTY_PATH | AT_EXECVE_CHECK);
-> 
-> At least with v20, the AT_CHECK always was being set, independent of whether
-> set-exec.c set it.  I'll re-test with v21.
+When downing the tcan4x5x there is no reason to keep the tcan4x5x in
+"normal" mode and waste power.
+So set standby mode when the interface is down and normal mode when
+interface is up.
 
-AT_EXECVE_CEHCK should always be set, only the interpretation of the
-result should be relative to securebits.  This is highlighted in the
-documentation.
+Also when going into suspend, set the tcan4x5x into standby mode. The
+tcan4x5x can still be used as a wake-source when in standby as low power
+rx is enabled.
 
-> 
-> thanks,
-> 
-> Mimi
-> 
-> > +	if (err && restrict_stream) {
-> > +		perror("ERROR: Script execution check");
-> > +		return 1;
-> > +	}
-> > +
-> > +	/* Reads script. */
-> > +	buf_size = fread(buf, 1, buf_size - 1, script);
-> > +	return interpret_buffer(buf, buf_size);
-> > +}
-> > +
-> 
-> 
+Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+---
+Changes in v3:
+- Run deinit in m_can_stop() in any case even if m_can_cccr_update_bits() fails
+- Link to v2: https://lore.kernel.org/r/20241115-tcan-standby-v2-0-4eb02026b237@geanix.com
+
+Changes in v2:
+- Reduced code in tcan4x5x_deinit()
+- Taken care of return values from deinit callback
+- Link to v1: https://lore.kernel.org/r/20241111-tcan-standby-v1-0-f9337ebaceea@geanix.com
+
+---
+Sean Nyekjaer (3):
+      can: m_can: add deinit callback
+      can: tcan4x5x: add deinit callback to set standby mode
+      can: m_can: call deinit/init callback when going into suspend/resume
+
+ drivers/net/can/m_can/m_can.c         | 22 ++++++++++++++++++----
+ drivers/net/can/m_can/m_can.h         |  1 +
+ drivers/net/can/m_can/tcan4x5x-core.c |  9 +++++++++
+ 3 files changed, 28 insertions(+), 4 deletions(-)
+---
+base-commit: e0b741bc53c94f9ae25d4140202557a0aa51b5a0
+change-id: 20241107-tcan-standby-def358771b2b
+
+Best regards,
+-- 
+Sean Nyekjaer <sean@geanix.com>
+
 
