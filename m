@@ -1,140 +1,153 @@
-Return-Path: <linux-kernel+bounces-418180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3D69D5E40
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:35:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 895E09D5E45
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:36:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3592E1F228D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:35:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 496B5281EAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F341DE8B3;
-	Fri, 22 Nov 2024 11:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3FE1DED5A;
+	Fri, 22 Nov 2024 11:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rGooyY9r"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="H7fNy+cL"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E590E1D0143
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 11:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7751D0143
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 11:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732275326; cv=none; b=oQk41nVbBvuc+PEmaj3djzY8iBBy9mD9r/7P8W92WLwNd+x1Ab9pEs1q8kZT06ZMAyzyZAP+/AoXIwpQ2nVIbmpHAWRk97PS2nsHSH9070c2Q4VOSohU5xqn5YeVZz71jbjY6B5Ogcl8p1p7nXO8llD8PwWKs+Ue8VOe8MCWEUE=
+	t=1732275399; cv=none; b=X20WrzFhZc3pP5pwfXmuOrK9Kj03o2S1PeADNhSXr9SwZ536k/mG1DH5Eca/WFQS364DLFhajxW4eOQbzVjjanSWn9QX3gUbLkK0JmMhLrBvarKmzcl5BfGgCvqfNqjsNOXgN1/4CEDEeofajjaHpCrgXjbW+ibdKg8oRdvyxmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732275326; c=relaxed/simple;
-	bh=6Xd7rJOb08RMaqyYb/dd6a9HoYlps8DyV1OZBY6cLOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YohLo4zc1kzNH7oOFw+wRDP32flh6IUNgcPo4oV8Ht0ELauES2WEbz/Whr2UUA6YmLCKniFC8hSSCQp4HesTO4NifkKbMVVGeuOvm0DUbLoUB+YenG4LiB+pTyOM9hHwXf3ZaL16l8nfe10R6bGPTSCQU46fcjVvFkKFhC2GeVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rGooyY9r; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539fb49c64aso3405213e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 03:35:24 -0800 (PST)
+	s=arc-20240116; t=1732275399; c=relaxed/simple;
+	bh=6JXoIT83nSYxTXOWHmaIE/r47HnugT4aXMkQeAn7dl4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DfFJi7gxnMm3eD7giU+DzdIIEdALJsVdemqfPrsZ/sh6eJe1DPdD7nTbEjzgVtI4CiBa3ZXVPGKbb+GvENHpbOZxK7HluNHk+7JZOCz7ckGxOPrB3jF0ZJ2EFM+IOSgG/3/sL47YV1b8WvsipTaYi6fSok7maGSFntCOn9z3H00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=H7fNy+cL; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6eea5763561so1636947b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 03:36:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732275323; x=1732880123; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=krxMhaTOFP6KQfuRozKR1NNs6wdGoTjqof+u9BiFDsk=;
-        b=rGooyY9rZyj2FYZ0mDfR0hvGn5g/BsiydIW6qk1ixiCTewn6or268/rpKR7n4XwRrr
-         GUY7fVFUHcvJWyeJg7HJBeI0mKxx63yVSELWcWt09g23PHMS12qOIwm7bkkRGTBg3o68
-         aBdxu0xsGW0NAo1mjcqtnPl/zGj12G06DQbEdXPMN2jYF+brA7krc9NE/VV7wosVstIz
-         GF2hIIDV+jfJL1a9cQfK6pWxz5j3kKIMZ8ASHMDqOCBEM2504eXDjy2XwomWRZza8lrc
-         jZalEHiPTEMP+CMf5kx4dnHCH5CHW/bfAMab4iJGdLmHcqcFAIs3f6wnP2Kdlyt0yK7F
-         iFRA==
+        d=raspberrypi.com; s=google; t=1732275395; x=1732880195; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0sBqcbK1efD2Qn0RLXgO+HABCeGcow4GsKIzdjiZraQ=;
+        b=H7fNy+cLO31G6MdhvOyI8a9EaoOeIsDYOwvqfkLshuyR5G6qFTXvirIEKD5iZDC4U2
+         oskuDCMXwEHkG5l3U60CR/dELwAtyS9VhPA0QPqosy+hXS7wdeAYZOWIk0O+2XJ3Rkyu
+         zuIevnmvKtzFw1Ac7edLtjeD5EWoGxdaFEBYVeb5cCyA7kKS2oMCZdAsouU7fJYNkqsm
+         u4/AU+l+xvjQ9N1Zls11LQnIRED7olX2GIXTWrnsUPm5Ck74+SaNcwgViBrOwOavW0N2
+         /m517r6gDusxWCHaYKIMJcxH4ytPJHhVAuY8scbK5gWBOzfBIJvFWWCHJs5DGpBNADVV
+         nWyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732275323; x=1732880123;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=krxMhaTOFP6KQfuRozKR1NNs6wdGoTjqof+u9BiFDsk=;
-        b=nrez7EkhAdXy2Zda/o8Xzv+yP5958HF3EE3/pGgvC90kSaSKEvKOU8MgaxdYRYuLgC
-         /WQZ51jJlrltgLFp+fA168RZYiuyrIKJYAu3KiDrIRlerxHpd51/UKk+rW4v82wK5DrP
-         PhArgJ9Xdl/FjFju9NrJB4UjSL+NPG/VQJF3PsBD01OzYXwDTLikW+819tGH40rO5cFX
-         u/PA5mAsa6PxYBNy8cUKLzyTAETjaURQJHosfC4qMn2xnwYhKXOj6PUOclzP3kyDsV72
-         Wnv5QJ+Mm67z1kMuAQp4Caj2Vd50Rk7wPqcyI60N7grQJSqn+hdEJbOWVyc+LLDny92F
-         YT7g==
-X-Forwarded-Encrypted: i=1; AJvYcCXepj+fdO5IXdKuODLemJuca4hK60r77bOuKwf+vhr5OzIP/hb1OA4/gzLudlA/cBsJjt3+mzm0vh2ETdM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC3OUX1mBAXPFytUbG6il/w6cDe+HPGAaIsphgqjycwHUb/9GQ
-	pO9Pwbs/xiObd6abMpXc5Ve1+ESgFyYArteHQN6Yxljm+wtXCXSQNPvxB7XSGE4=
-X-Gm-Gg: ASbGncva5vOdpneMk0bAbnatDj7afPaaLqQyFkp9Br2whIHU7cZjMtyz2kqmQPh43eZ
-	GUgPhSDY9koDSlVjeLNDBi7KDqUszyrrX/krZuR07dMh3G2caKPpI8EpZ9tIY45QdWRADG+ece/
-	avVHMtSpUwO4AC2ziskUxXBhI3xSxSaC0acfbt+Yt3H88Qnz30qktJgZAfNMZ53fB9OAhQRhjQA
-	QtTRS06/nqzDhtXZYk5R0b4ZR16Yca+6hjH8Bk24uYtQOojoRoJ333MImSCIlH9Jh1yLz5Ou5Ni
-	Hz/mE7tFud6l4RJZtsL7pgImSZ4icA==
-X-Google-Smtp-Source: AGHT+IHcS5D0tQAmLEPHu7UajYtNpfZvhiuBwDM25QDIUqbvD9w+ge3SD7yoJlUUHrhodq7JCz8ehA==
-X-Received: by 2002:ac2:5eda:0:b0:53d:d3ff:7874 with SMTP id 2adb3069b0e04-53dd3ff78e0mr1407682e87.29.1732275323001;
-        Fri, 22 Nov 2024 03:35:23 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd3f12809sm270502e87.38.2024.11.22.03.35.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 03:35:21 -0800 (PST)
-Date: Fri, 22 Nov 2024 13:35:19 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
-	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v4 3/7] drm/connector: implement generic HDMI codec
- helpers
-Message-ID: <altuhp26ntnpltvfdmikggdmibyizdwnrmwshte7sa2btmbgvj@mbhlvwb4xrzj>
-References: <20241122-drm-bridge-hdmi-connector-v4-0-b4d69d6e3bd9@linaro.org>
- <20241122-drm-bridge-hdmi-connector-v4-3-b4d69d6e3bd9@linaro.org>
- <87ed33zf5e.fsf@intel.com>
+        d=1e100.net; s=20230601; t=1732275395; x=1732880195;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0sBqcbK1efD2Qn0RLXgO+HABCeGcow4GsKIzdjiZraQ=;
+        b=pTyQgkRNVaYO5o8No5i8nZS0U7cgel0j3H8sJdwUdWLqWqzLge0z4fubmclagMMV7i
+         OkfBYQezMeCAf+KgvaFghEcEIkWWwomPDz6TQcmdX99fgsWkmBIeiButhMP1X1ax2QoD
+         1xyqVRA7dwXuM1wftKjPypKYjjeaL4XhZk4+90It3wcaDKYovEjRo4SdBsr3qsCWdC78
+         EJ8CmRxv3Yu7Q4ZL9nKPGYGohAZrO8xhBDOsP9SMrWraoLHproiHgTu1XdTFHv+mlbQ5
+         0L66kQ1Q21qwoXDCbKWhaiKQxYqFwG8Ip/k2cxmt8uxn3/bMTAh3S1jC53boNxmmbtNR
+         9amQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQxgdnp3Fk8KfLvb6vZtb8pS7NryJg9OgVRQyeo6I+6yv8AEH2+IMUiOgDu9xNhcTrMZE8eWPZR5bTqf0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAJdK2OtdgT0qpaL8YuCrGCHO97XN9r00lbuzOWOJq3RbLfc47
+	AxrlC9i3MhhbIZeBCrbIF6fuUEElnRbOQ6fFKObj18wdr2JOoHBemi36bNMeMwPYyhefO+IBkZS
+	1emmOYS0lV5Bwe8FWDKwu864J0BYZSSmuLWOO8A==
+X-Gm-Gg: ASbGncs9kkIPf6Ki3GwS39kZONvulO667P2oVX3hCs/CeWDu73e7ebSo3tJ+tZZd7tu
+	Yu75g3JhDPPY86lpmEsuKQmnKGCDdnjEm4VpBBGTumSWM+vn2cckj5KVDT4G1Dxk=
+X-Google-Smtp-Source: AGHT+IHsakElmZNZXg6tWaPdffed3q6eehdNBbS91/o+k90QEJ+G92HBPismmAOKH8alO8lyFFv7OZaI5ksBZxAF2lo=
+X-Received: by 2002:a05:690c:284a:b0:6c8:7827:f289 with SMTP id
+ 00721157ae682-6eee0a15571mr8183727b3.5.1732275395350; Fri, 22 Nov 2024
+ 03:36:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ed33zf5e.fsf@intel.com>
+References: <20241122084152.1841419-1-naush@raspberrypi.com>
+ <20241122084152.1841419-5-naush@raspberrypi.com> <vnl2px6zcb7pchhfp3k3lngicamsjvidu75sixvubrohqaudlr@h6r54mzr3daz>
+In-Reply-To: <vnl2px6zcb7pchhfp3k3lngicamsjvidu75sixvubrohqaudlr@h6r54mzr3daz>
+From: Naushir Patuck <naush@raspberrypi.com>
+Date: Fri, 22 Nov 2024 11:35:59 +0000
+Message-ID: <CAEmqJPrfGCB=hKN-+0cG3xFiZxS4BJ_FT=pXnt5U+48wk+A0sw@mail.gmail.com>
+Subject: Re: [PATCH v1 4/5] drivers: media: bcm2835-unicam: Fix for possible
+ dummy buffer overrun
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, linux-media@vger.kernel.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Dave Stevenson <dave.stevenson@raspberrypi.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 22, 2024 at 01:22:53PM +0200, Jani Nikula wrote:
-> On Fri, 22 Nov 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
-> > diff --git a/drivers/gpu/drm/drm_internal.h b/drivers/gpu/drm/drm_internal.h
-> > index b2b6a8e49dda46f1cb3b048ef7b28356dd3aaa4e..8ed58e482fac4662b659276e8bc17690e1fdb9b7 100644
-> > --- a/drivers/gpu/drm/drm_internal.h
-> > +++ b/drivers/gpu/drm/drm_internal.h
-> > @@ -280,4 +280,9 @@ void drm_framebuffer_print_info(struct drm_printer *p, unsigned int indent,
-> >  				const struct drm_framebuffer *fb);
-> >  void drm_framebuffer_debugfs_init(struct drm_device *dev);
-> >  
-> > +/* drm_connector_hdmi_codec.c */
-> > +
-> > +int drm_connector_hdmi_codec_init(struct drm_connector *connector);
-> > +void drm_connector_hdmi_codec_cleanup(struct drm_connector *connector);
-> > +
-> >  #endif /* __DRM_INTERNAL_H__ */
-> 
-> Better fit in drm_crtc_internal.h or drm_crtc_helper_internal.h?
-> 
-> Maybe we could use an internal header inside display/. Or just 1:1
-> drm_foo_internal.h for every drm_foo.c to keep things simple and have
-> fewer interdependencies.
+Hi Jacopo,
 
-Sounds like drm_connector_hdmi_codec_internal.h. Most likely we should
-also split or rename drm_crtc_*_internal.h, but that's a separate topic.
+On Fri, 22 Nov 2024 at 11:20, Jacopo Mondi
+<jacopo.mondi@ideasonboard.com> wrote:
+>
+> Hi Naush
+>
+> On Fri, Nov 22, 2024 at 08:41:51AM +0000, Naushir Patuck wrote:
+> > The Unicam hardware has been observed to cause a buffer overrun when
+> > using the dummy buffer as a circular buffer. The conditions that cause
+> > the overrun are not fully known, but it seems to occur when the memory
+> > bus is heavily loaded.
+> >
+> > To avoid the overrun, program the hardware with a buffer size of 0 when
+> > using the dummy buffer. This will cause overrun into the allocated dummy
+> > buffer, but avoid out of bounds writes.
+> >
+> > Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
+> > ---
+> >  drivers/media/platform/broadcom/bcm2835-unicam.c | 9 ++++++++-
+> >  1 file changed, 8 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/media/platform/broadcom/bcm2835-unicam.c b/drivers/media/platform/broadcom/bcm2835-unicam.c
+> > index 550eb1b064f1..f10064107d54 100644
+> > --- a/drivers/media/platform/broadcom/bcm2835-unicam.c
+> > +++ b/drivers/media/platform/broadcom/bcm2835-unicam.c
+> > @@ -640,7 +640,14 @@ static inline void unicam_reg_write_field(struct unicam_device *unicam, u32 offs
+> >  static void unicam_wr_dma_addr(struct unicam_node *node,
+> >                              struct unicam_buffer *buf)
+> >  {
+> > -     dma_addr_t endaddr = buf->dma_addr + buf->size;
+> > +     /*
+> > +      * Due to a HW bug causing buffer overruns in circular buffer mode under
+> > +      * certain (not yet fully known) conditions, the dummy buffer allocation
+> > +      * is set to a a single page size, but the hardware gets programmed with
+> > +      * a buffer size of 0.
+> > +      */
+> > +     dma_addr_t endaddr = buf->dma_addr +
+> > +                          (buf != &node->dummy_buf ? buf->size : 0);
+>
+> So the DMA engine doesn't actually write any data to dummy_buf
+> anymore ?
+>
+>
+> Does it still need to be allocated at all ? Or can we simply set the
+> dma transfer size to 0 ?
 
--- 
-With best wishes
-Dmitry
+The DMA engine does still write to the buffer, so the allocation needs
+to occur. The zero size programmed into the register is a quirk of the
+HW itself, and is used to ensure the write wrap correctly in the
+buffer.
+
+Naush
+
+>
+> >
+> >       if (node->id == UNICAM_IMAGE_NODE) {
+> >               unicam_reg_write(node->dev, UNICAM_IBSA0, buf->dma_addr);
+> > --
+> > 2.34.1
+> >
+> >
 
