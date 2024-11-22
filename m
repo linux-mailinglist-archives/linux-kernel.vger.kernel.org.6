@@ -1,218 +1,145 @@
-Return-Path: <linux-kernel+bounces-418348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 563E39D60A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:42:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0308E9D60AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:43:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADACCB271C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:42:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9180BB27421
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F9813B298;
-	Fri, 22 Nov 2024 14:42:31 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F57E14F9E9;
+	Fri, 22 Nov 2024 14:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="CK3Ozqry"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E95970808
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502CB70823;
+	Fri, 22 Nov 2024 14:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732286551; cv=none; b=TnBpGUSgU5hL6dWh6odLbqPpEf6SLCkJhh/6H9J29lSIvsfUsy7GNU+UWKPqS3MHYO3O0M9R4V7CQK9wfaO5ouYs8hUOqNKxir1Dzorv1XrH91FUkEjmhsYj65ROcmrTFJ9T3haMJqcc6dgRrdQxEbu30T2ovqoV2rGNIKZTbZo=
+	t=1732286559; cv=none; b=RSM3ZX5s/YZTZRYGW6QyxOKjRa8q2s2BJTrc1ddcx9jtGP3ahLHgcP0t27d2+HC7NyYyUW1N69I/+VYCqASMjAZGCF/cC1pWx9ap6W2f5OLslW+VXELgWFcu3HFxVjFqIG/XV8bukcKTXsqQqNBoDN1b4r+NIvMLaetZk0ABlv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732286551; c=relaxed/simple;
-	bh=BIEsS5LsD4by/EhQhvRWIE3r/czFlXo23B/i/vdCbG0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FDDuE4xUBRSgQnWRCqHAWA1gZb50k481m8pjRPA7cHa+txPEtdr63/LpBzwmwF1LgypZenbUZpDGVavGhP2slsmly0cgZYafSreIreNdVgusiB6b0AX5eBcJrMk3jkhA1ZjGOKYZgE76oIHdpzlHaQmHyg5h5U0+laWCqesz/6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a7932544c4so18043665ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 06:42:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732286548; x=1732891348;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HREFpr2frQJtKc/0gF+LMIRtVsh+wEdJTnHfyu0RbuM=;
-        b=egd20PKB3GONDX3+xMizzh5zeFVsaLHXogsuAzIcs+dgGaFza+BKgkVFVYZJKvyoTx
-         3nbgJxeyxQ1bWA9y+NPWfhW5Zi2vfnzl1cpG0ahqcEccNAhj7kCHTyo9r/JOkUxskRdf
-         htX0r5hvEwvJHYPkqZZFKb1k4FlFx8zt/foEAzqkz8XltSXVchkJkDubyUrib42FAetA
-         328to7aySjbOGY5V5SSn2h+zZIhwGbGTVcliyplvq7M7N8DYGS17trjXlowZG1SDObOL
-         BcFGSToOBWxFUqw/1996nrgzh7otUpEDztmh8KhDl0jei0fT+B+YkuyklJAdFDs5n6Si
-         sQUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVnoNrkhjnela7RO78F/d+sLtgD13MNQfBhlO67yHG4y08Uwb2llw6nNR8u+3/X3DwwvgHaL2tdN+pFZpc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZib/NKMB76VfHTXOoVNFxTCZDl011RjVRyozEsNsAjp1xZMTq
-	nQ7IkwUjzPAzoyNirgQjZzEWER2zKinDHe1FJeBfocuAU4DcXCI31aMg3yyJHfm9GrLIiSwpPVv
-	yE+NnoQFsx6ffXm6FWMCATKmXPw5ZeGIssbyAIgUbr6hCbIQYhQx/BR8=
-X-Google-Smtp-Source: AGHT+IGbXUYw3Kwjx0hw4KKuy2WKwNuZ+/BKDPjA2T2Hn3hL4ksW0iLcQ8/sjUrHRK/GuSqEy7KOeguwLdSbBxZe+35sIIIee0Es
+	s=arc-20240116; t=1732286559; c=relaxed/simple;
+	bh=yvoAZlYrp2lwBX78QCFhBDDhxQT+PbHSUgM1ZHLXPGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XQG/H5CbtI1xIGWWdx6npGQTEQR5p42tzziIJdxZHoBQbw6zL5xMod3nuywi3YDZX+FOCw9trLpqaWJYJnfK346PP7PvHJrFHqP6C72OOQyyI2xwVS38SvU1WV6XTfP95OJr5tlxJNZhhtGSDPvU3+4h9WM8vLCQU3ZRDXwr0lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=CK3Ozqry; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (93-46-82-201.ip106.fastwebnet.it [93.46.82.201])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5F09A514;
+	Fri, 22 Nov 2024 15:42:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732286536;
+	bh=yvoAZlYrp2lwBX78QCFhBDDhxQT+PbHSUgM1ZHLXPGI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CK3OzqryFp1iax8+Jbzb4kEAapp6Rg2+tYjAOV1za5rdXOekJdTOhZ5OY0Rfr2hba
+	 n5aJJuGhXW+KsvsZOBNEsIyoUrrrphhIe9kR0pjy3RGqRyl2OBkdpanLWvBuyAyd2A
+	 xy8y4A2pdhcXb+S256DPBZNHdKWCcTaovkd8XBQY=
+Date: Fri, 22 Nov 2024 15:42:33 +0100
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Naushir Patuck <naush@raspberrypi.com>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, linux-media@vger.kernel.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH v1 4/5] drivers: media: bcm2835-unicam: Fix for possible
+ dummy buffer overrun
+Message-ID: <whyu7ldlgfccyjpx6oqigfuska5nabfp2y6l7zha2unwlvipot@ouwgvjxovisx>
+References: <20241122084152.1841419-1-naush@raspberrypi.com>
+ <20241122084152.1841419-5-naush@raspberrypi.com>
+ <vnl2px6zcb7pchhfp3k3lngicamsjvidu75sixvubrohqaudlr@h6r54mzr3daz>
+ <CAEmqJPrfGCB=hKN-+0cG3xFiZxS4BJ_FT=pXnt5U+48wk+A0sw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:16c5:b0:3a7:87f2:b010 with SMTP id
- e9e14a558f8ab-3a79acf9b88mr40033755ab.5.1732286548639; Fri, 22 Nov 2024
- 06:42:28 -0800 (PST)
-Date: Fri, 22 Nov 2024 06:42:28 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67409854.050a0220.363a1b.013f.GAE@google.com>
-Subject: [syzbot] [netfilter?] KMSAN: uninit-value in ip6table_mangle_hook (3)
-From: syzbot <syzbot+6023ea32e206eef7920a@syzkaller.appspotmail.com>
-To: coreteam@netfilter.org, davem@davemloft.net, dsahern@kernel.org, 
-	edumazet@google.com, horms@kernel.org, kadlec@netfilter.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, pabeni@redhat.com, pablo@netfilter.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAEmqJPrfGCB=hKN-+0cG3xFiZxS4BJ_FT=pXnt5U+48wk+A0sw@mail.gmail.com>
 
-Hello,
+Hi Naush
 
-syzbot found the following issue on:
+On Fri, Nov 22, 2024 at 11:35:59AM +0000, Naushir Patuck wrote:
+> Hi Jacopo,
 
-HEAD commit:    2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of git://git.ker..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=105e0d87980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6fdf74cce377223b
-dashboard link: https://syzkaller.appspot.com/bug?extid=6023ea32e206eef7920a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=165d5d5f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=145e0d87980000
+Thanks for the explanation
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/08456e37db58/disk-2e1b3cc9.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/cc957f7ba80b/vmlinux-2e1b3cc9.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7579fe72ed89/bzImage-2e1b3cc9.xz
+>
+> On Fri, 22 Nov 2024 at 11:20, Jacopo Mondi
+> <jacopo.mondi@ideasonboard.com> wrote:
+> >
+> > Hi Naush
+> >
+> > On Fri, Nov 22, 2024 at 08:41:51AM +0000, Naushir Patuck wrote:
+> > > The Unicam hardware has been observed to cause a buffer overrun when
+> > > using the dummy buffer as a circular buffer. The conditions that cause
+> > > the overrun are not fully known, but it seems to occur when the memory
+> > > bus is heavily loaded.
+> > >
+> > > To avoid the overrun, program the hardware with a buffer size of 0 when
+> > > using the dummy buffer. This will cause overrun into the allocated dummy
+> > > buffer, but avoid out of bounds writes.
+> > >
+> > > Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6023ea32e206eef7920a@syzkaller.appspotmail.com
+Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 
-=====================================================
-BUG: KMSAN: uninit-value in ip6t_mangle_out net/ipv6/netfilter/ip6table_mangle.c:56 [inline]
-BUG: KMSAN: uninit-value in ip6table_mangle_hook+0x97d/0x9c0 net/ipv6/netfilter/ip6table_mangle.c:72
- ip6t_mangle_out net/ipv6/netfilter/ip6table_mangle.c:56 [inline]
- ip6table_mangle_hook+0x97d/0x9c0 net/ipv6/netfilter/ip6table_mangle.c:72
- nf_hook_entry_hookfn include/linux/netfilter.h:154 [inline]
- nf_hook_slow+0xf4/0x400 net/netfilter/core.c:626
- nf_hook include/linux/netfilter.h:269 [inline]
- __ip6_local_out+0x5ac/0x640 net/ipv6/output_core.c:143
- ip6_local_out+0x4c/0x210 net/ipv6/output_core.c:153
- ip6tunnel_xmit+0x129/0x460 include/net/ip6_tunnel.h:161
- ip6_tnl_xmit+0x341a/0x3860 net/ipv6/ip6_tunnel.c:1281
- __gre6_xmit+0x14b9/0x1550 net/ipv6/ip6_gre.c:815
- ip6gre_xmit_ipv4 net/ipv6/ip6_gre.c:839 [inline]
- ip6gre_tunnel_xmit+0x18f7/0x2030 net/ipv6/ip6_gre.c:922
- __netdev_start_xmit include/linux/netdevice.h:4928 [inline]
- netdev_start_xmit include/linux/netdevice.h:4937 [inline]
- xmit_one net/core/dev.c:3588 [inline]
- dev_hard_start_xmit+0x247/0xa20 net/core/dev.c:3604
- sch_direct_xmit+0x399/0xd40 net/sched/sch_generic.c:343
- __dev_xmit_skb net/core/dev.c:3825 [inline]
- __dev_queue_xmit+0x2fcf/0x56d0 net/core/dev.c:4398
- dev_queue_xmit include/linux/netdevice.h:3094 [inline]
- packet_xmit+0x9c/0x6c0 net/packet/af_packet.c:276
- packet_snd net/packet/af_packet.c:3145 [inline]
- packet_sendmsg+0x908b/0xa370 net/packet/af_packet.c:3177
- sock_sendmsg_nosec net/socket.c:729 [inline]
- __sock_sendmsg+0x30f/0x380 net/socket.c:744
- __sys_sendto+0x645/0x7f0 net/socket.c:2214
- __do_sys_sendto net/socket.c:2226 [inline]
- __se_sys_sendto net/socket.c:2222 [inline]
- __x64_sys_sendto+0x125/0x1d0 net/socket.c:2222
- x64_sys_call+0x3373/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:45
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Thanks
+  j
 
-Uninit was stored to memory at:
- ip6_tnl_xmit+0x34f7/0x3860 net/ipv6/ip6_tunnel.c:1277
- __gre6_xmit+0x14b9/0x1550 net/ipv6/ip6_gre.c:815
- ip6gre_xmit_ipv4 net/ipv6/ip6_gre.c:839 [inline]
- ip6gre_tunnel_xmit+0x18f7/0x2030 net/ipv6/ip6_gre.c:922
- __netdev_start_xmit include/linux/netdevice.h:4928 [inline]
- netdev_start_xmit include/linux/netdevice.h:4937 [inline]
- xmit_one net/core/dev.c:3588 [inline]
- dev_hard_start_xmit+0x247/0xa20 net/core/dev.c:3604
- sch_direct_xmit+0x399/0xd40 net/sched/sch_generic.c:343
- __dev_xmit_skb net/core/dev.c:3825 [inline]
- __dev_queue_xmit+0x2fcf/0x56d0 net/core/dev.c:4398
- dev_queue_xmit include/linux/netdevice.h:3094 [inline]
- packet_xmit+0x9c/0x6c0 net/packet/af_packet.c:276
- packet_snd net/packet/af_packet.c:3145 [inline]
- packet_sendmsg+0x908b/0xa370 net/packet/af_packet.c:3177
- sock_sendmsg_nosec net/socket.c:729 [inline]
- __sock_sendmsg+0x30f/0x380 net/socket.c:744
- __sys_sendto+0x645/0x7f0 net/socket.c:2214
- __do_sys_sendto net/socket.c:2226 [inline]
- __se_sys_sendto net/socket.c:2222 [inline]
- __x64_sys_sendto+0x125/0x1d0 net/socket.c:2222
- x64_sys_call+0x3373/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:45
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4091 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- __do_kmalloc_node mm/slub.c:4263 [inline]
- __kmalloc_node_track_caller_noprof+0x6c7/0xf90 mm/slub.c:4283
- kmalloc_reserve+0x23e/0x4a0 net/core/skbuff.c:609
- pskb_expand_head+0x226/0x1a60 net/core/skbuff.c:2275
- skb_realloc_headroom+0x140/0x2b0 net/core/skbuff.c:2355
- ip6_tnl_xmit+0x2106/0x3860 net/ipv6/ip6_tunnel.c:1227
- __gre6_xmit+0x14b9/0x1550 net/ipv6/ip6_gre.c:815
- ip6gre_xmit_ipv4 net/ipv6/ip6_gre.c:839 [inline]
- ip6gre_tunnel_xmit+0x18f7/0x2030 net/ipv6/ip6_gre.c:922
- __netdev_start_xmit include/linux/netdevice.h:4928 [inline]
- netdev_start_xmit include/linux/netdevice.h:4937 [inline]
- xmit_one net/core/dev.c:3588 [inline]
- dev_hard_start_xmit+0x247/0xa20 net/core/dev.c:3604
- sch_direct_xmit+0x399/0xd40 net/sched/sch_generic.c:343
- __dev_xmit_skb net/core/dev.c:3825 [inline]
- __dev_queue_xmit+0x2fcf/0x56d0 net/core/dev.c:4398
- dev_queue_xmit include/linux/netdevice.h:3094 [inline]
- packet_xmit+0x9c/0x6c0 net/packet/af_packet.c:276
- packet_snd net/packet/af_packet.c:3145 [inline]
- packet_sendmsg+0x908b/0xa370 net/packet/af_packet.c:3177
- sock_sendmsg_nosec net/socket.c:729 [inline]
- __sock_sendmsg+0x30f/0x380 net/socket.c:744
- __sys_sendto+0x645/0x7f0 net/socket.c:2214
- __do_sys_sendto net/socket.c:2226 [inline]
- __se_sys_sendto net/socket.c:2222 [inline]
- __x64_sys_sendto+0x125/0x1d0 net/socket.c:2222
- x64_sys_call+0x3373/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:45
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 1 UID: 0 PID: 5819 Comm: syz-executor359 Not tainted 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> > > ---
+> > >  drivers/media/platform/broadcom/bcm2835-unicam.c | 9 ++++++++-
+> > >  1 file changed, 8 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/media/platform/broadcom/bcm2835-unicam.c b/drivers/media/platform/broadcom/bcm2835-unicam.c
+> > > index 550eb1b064f1..f10064107d54 100644
+> > > --- a/drivers/media/platform/broadcom/bcm2835-unicam.c
+> > > +++ b/drivers/media/platform/broadcom/bcm2835-unicam.c
+> > > @@ -640,7 +640,14 @@ static inline void unicam_reg_write_field(struct unicam_device *unicam, u32 offs
+> > >  static void unicam_wr_dma_addr(struct unicam_node *node,
+> > >                              struct unicam_buffer *buf)
+> > >  {
+> > > -     dma_addr_t endaddr = buf->dma_addr + buf->size;
+> > > +     /*
+> > > +      * Due to a HW bug causing buffer overruns in circular buffer mode under
+> > > +      * certain (not yet fully known) conditions, the dummy buffer allocation
+> > > +      * is set to a a single page size, but the hardware gets programmed with
+> > > +      * a buffer size of 0.
+> > > +      */
+> > > +     dma_addr_t endaddr = buf->dma_addr +
+> > > +                          (buf != &node->dummy_buf ? buf->size : 0);
+> >
+> > So the DMA engine doesn't actually write any data to dummy_buf
+> > anymore ?
+> >
+> >
+> > Does it still need to be allocated at all ? Or can we simply set the
+> > dma transfer size to 0 ?
+>
+> The DMA engine does still write to the buffer, so the allocation needs
+> to occur. The zero size programmed into the register is a quirk of the
+> HW itself, and is used to ensure the write wrap correctly in the
+> buffer.
+>
+> Naush
+>
+> >
+> > >
+> > >       if (node->id == UNICAM_IMAGE_NODE) {
+> > >               unicam_reg_write(node->dev, UNICAM_IBSA0, buf->dma_addr);
+> > > --
+> > > 2.34.1
+> > >
+> > >
+>
 
