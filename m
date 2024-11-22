@@ -1,94 +1,126 @@
-Return-Path: <linux-kernel+bounces-418761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58C9C9D6561
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:28:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9251D9D6563
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:29:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8B4C16148C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 21:28:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63786161635
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 21:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0290185935;
-	Fri, 22 Nov 2024 21:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969F518787C;
+	Fri, 22 Nov 2024 21:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="fdw0eoSX"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E1654F95
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 21:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b="RRDbqHL5"
+Received: from bout3.ijzerbout.nl (bout3.ijzerbout.nl [136.144.140.114])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415DA54F95;
+	Fri, 22 Nov 2024 21:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.140.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732310895; cv=none; b=Fmd4XOhof6i9OiI2OP+ITzB6i7a5eHyp0gDE3wnpz4iTfaeUBbJ8rYF3ttEFJD+WEVCH0y7zp/MOg/a9X3Fgb15uWv2zVSXiFGeuTmZ1s40zAVzxMBDq4knoGOonBlswYmaONM+VR1KJA3jKztiCFqcSNVdC10pko9V1jf3gb5I=
+	t=1732310983; cv=none; b=D9oRZnbMF5kqjwOOxvSxoSPPyOXpPV3YnTMELto5V3HVnmWyNMz8pE5gAB1Jx3VCgRpLTQBQe0WrDWoLJH/FGgqN0ygu45ZfRE9foXIYK1+zGpG9tM+ix5bwxZbDHMnxyNweHioDoHApI+KwuWV6EaFV0dUdsb+mncv0uSMwelw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732310895; c=relaxed/simple;
-	bh=Inu1YrDiEoZiawEHsCIJ2vIR2WeRDwuWrAFeiKfr+Ko=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JZmMEQaxwOf8/9+aXed6iUvqw1QhqDGFJYKKXHXvbOYHYgkMi3hw/0AgKDzGeLuMxy5Uf/jQMPEmhrjigQQVxhg41UYCJpTEp78E8QvLO75UT6aLZTsfeK1e5q0hQhd/n3SjOgtcQ5Jz0O/9EV3Wfq0gNEw/FEeEeHxT1iCQu68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=fdw0eoSX; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3824709ee03so1860910f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 13:28:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1732310892; x=1732915692; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Inu1YrDiEoZiawEHsCIJ2vIR2WeRDwuWrAFeiKfr+Ko=;
-        b=fdw0eoSXmx+XjY0BUqpVz8HQUTdx/j2P/2mAyfre+Tdy5mV6GQEAaY2KS6Z3D46YAr
-         Z/WtAdFpSga3IHId16k0HYjm8J0ouuLCWEDJOS6ORQVRmuE07J6QLYHDyA5BSqKPU5ok
-         fKp/z964bh3rQIM4EDLso6Yed/IyCqYNRnp5E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732310892; x=1732915692;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Inu1YrDiEoZiawEHsCIJ2vIR2WeRDwuWrAFeiKfr+Ko=;
-        b=oskiwQWYLPNs6yxBshhqGxoJOq48FAMYtVO36fdlQlwoV0T2Y9GyaJluHf6M78fJW1
-         kXI8ckaOFbYW0DQ8F18Ck86KBhZPfFhhXoJZhLM3EJQcFnN33BOHJCSYjRq6iGgK9RKq
-         kIpP4cg/iMh+8BNr4qRasTYOj8RBv0y82HzkOMiF7qzbtEiZrJeXaioH9uGM6lNSf0aS
-         nrYKMlEB9oQcZeoGr02Oaa8iKhX074k+M4v1t4AmE4MwooqWI6EUOECCutga0V8WDiBs
-         JnN3YSDngnbkYdcgN7y4auiM+DUisBOUIj41FV63PJjwT9JCkdeGJP+Rqg7gvatfCDqt
-         idjA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/k/NTrtuoBl+YWffTlpCqpBwJ0WBBwL2RtOaEMw7XwY7JUmYol8purV+4v6LY+R5nRLpkPzjhE1/L1TQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwheKBT14L8YjxQ/65sN07R3WDJCK9z2l2TeEKyVg8RqqPznI5f
-	P1UT3anUcQ0cU7jGGktku1Tv+q1OmgA7skfv6oWOXcqfTelVj696MZvVW3kNjkl2KSsaBI1Nha8
-	UbPJuMnJPsbAo4Bm8yqyCoRJa9Q3iWidHnogC
-X-Gm-Gg: ASbGnctP5NqtWaKGPqMcQhMQzDh5Bsl/2cX0F3K0JU1nBQ3MUPUzwolM2BVlJObb/4i
-	2ZLsc0EltRK85cARvDHcOzuz5baJIegGY
-X-Google-Smtp-Source: AGHT+IGtMNuDYJLYRRIB6wP42xa6e1P3TgJSXUrfsr4yViA8LmGx95MOGbzji6uGfd8CrYJJGpyvLfDnTzZUTlzDhVA=
-X-Received: by 2002:a5d:5f55:0:b0:382:4b80:abdd with SMTP id
- ffacd0b85a97d-38260b73d1fmr3787505f8f.21.1732310891686; Fri, 22 Nov 2024
- 13:28:11 -0800 (PST)
+	s=arc-20240116; t=1732310983; c=relaxed/simple;
+	bh=6Dq/7a3W6K2nC9cc/WeXeaR3aIX83oR+/Zyz5Nsg+h0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s3WGPqV5lsD3G0R2jvZwCoGWj5rrdUP0/eIzsFusJO4sxNG32QtJ8SsEOcR6oYHho8+Qcas4tvg7dtYr3pb+pAZk7/OnsDC5RVM7BRPrapLa+prza7qYL80t/JRRtzF3qikRPS7iTAlgIi4nQ3amZD+93QFhIhLmFkCGdNMYOTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl; spf=pass smtp.mailfrom=ijzerbout.nl; dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b=RRDbqHL5; arc=none smtp.client-ip=136.144.140.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ijzerbout.nl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ijzerbout.nl; s=key;
+	t=1732310971; bh=6Dq/7a3W6K2nC9cc/WeXeaR3aIX83oR+/Zyz5Nsg+h0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RRDbqHL5Tu0vgOBzHI44XtGJkGz23xeJB82btI7ryKROpsyor4DFZYBINq+G6GP5a
+	 6kJdv/59eO0bH/a8+V4On/Scvh/0hTihoWTwXJ6m8gc4/IU/QtB2/2TYN3FRSliNa3
+	 4qp+4JBj6Zqrokf6ou2ZJaLcH8ZzrE5/7ta3Cxr9lSYnj9NIrtoljDGdD9rocgpi0p
+	 agLLlyQfR69uP5Jc9AMnA5Cy/fZ0wu9d2tAVrPSXMyz/zKFeBys/tSIT4IN+ipiRrE
+	 7D7mNBpn9m+DP9P6J2EoOWL1WgrBcU/34qroIa2VmAIlzOwFag9aIxSNWHG0ppNLEG
+	 j9EVW6/qrKgroxUbmQqqGgqOwY5KTTsjPtYEPdLnps/10dIAf7jo7VNgNSslFSmEMY
+	 2g6zfCLaahK6ZSSTeZy8Tvl29s+uTkmIQyVjvYogndHGLEYzAAuhG/gPoBzgA4Qe80
+	 VagJNHkP1Rpv1hkUFopa2jqIaF+BIdPk/2jqVokyaZ3X2gCRHcw7lIvxHRKUzv0CeH
+	 Jfc51Xpb1aSK+6ZMCWmgh3wYNjIivurxyzPNlyswk3xoo8ZXYRduj8+RG9Z+pIOloT
+	 ZHoiSwisic5dAT5BnJTvHdVo20UhtNlmXQug5B59+4b9iRM6gri1KwbS1Am8cqkeTj
+	 bR/XOFZ0xkOkzL7PLan6010c=
+Received: from [IPV6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a] (racer.ijzerbout.nl [IPv6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a])
+	by bout3.ijzerbout.nl (Postfix) with ESMTPSA id BE4CE18E0CC;
+	Fri, 22 Nov 2024 22:29:30 +0100 (CET)
+Message-ID: <d50b2caa-4d3a-4c1d-986c-6fb3c0a2f850@ijzerbout.nl>
+Date: Fri, 22 Nov 2024 22:29:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122-google-remove-crtc-index-from-parameter-v2-0-81540742535a@bootlin.com>
- <20241122-google-remove-crtc-index-from-parameter-v2-17-81540742535a@bootlin.com>
-In-Reply-To: <20241122-google-remove-crtc-index-from-parameter-v2-17-81540742535a@bootlin.com>
-From: Ian Forbes <ian.forbes@broadcom.com>
-Date: Fri, 22 Nov 2024 15:28:00 -0600
-Message-ID: <CAO6MGtiYbPZvL=2ycHb50ATaikUg+mR8xRcxGLyme7FcCTkDpg@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 17/18] drm/vkms: Introduce config for connector EDID
-To: Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: =?UTF-8?B?TWHDrXJhIENhbmFs?= <mairacanal@riseup.net>, 
-	Haneen Mohammed <hamohammed.sa@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Melissa Wen <melissa.srw@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, arthurgrillo@riseup.net, 
-	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com, 
-	thomas.petazzoni@bootlin.com, seanpaul@google.com, nicolejadeyee@google.com, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] i2c: xiic: Add atomic transfer support
+To: Manikanta Guntupalli <manikanta.guntupalli@amd.com>, git@amd.com,
+ michal.simek@amd.com, andi.shyti@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: radhey.shyam.pandey@amd.com, srinivas.goud@amd.com,
+ shubhrajyoti.datta@amd.com, manion05gk@gmail.com
+References: <20241011104131.733736-1-manikanta.guntupalli@amd.com>
+ <20241011104131.733736-3-manikanta.guntupalli@amd.com>
+Content-Language: en-US
+From: Kees Bakker <kees@ijzerbout.nl>
+In-Reply-To: <20241011104131.733736-3-manikanta.guntupalli@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-I didn't see a `drm_connector_attach_edid_property` call in this
-series. Did you forget this? Virtual connectors don't have this
-property by default.
+Op 11-10-2024 om 12:41 schreef Manikanta Guntupalli:
+> Rework the read and write code paths in the driver to support operation
+> in atomic contexts.
+>
+> Similar changes have been implemented in other drivers, including:
+> commit 3a5ee18d2a32 ("i2c: imx: implement master_xfer_atomic callback")
+> commit 445094c8a9fb ("i2c: exynos5: add support for atomic transfers")
+> commit ede2299f7101 ("i2c: tegra: Support atomic transfers")
+> commit fe402bd09049 ("i2c: meson: implement the master_xfer_atomic
+> callback")
+>
+> Signed-off-by: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
+> ---
+>   drivers/i2c/busses/i2c-xiic.c | 245 +++++++++++++++++++++++++++++-----
+>   1 file changed, 212 insertions(+), 33 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-xiic.c b/drivers/i2c/busses/i2c-xiic.c
+> index 052bae4fc664..e5e9a4993bd4 100644
+> --- a/drivers/i2c/busses/i2c-xiic.c
+> +++ b/drivers/i2c/busses/i2c-xiic.c
+> [...]
+> +static void xiic_recv_atomic(struct xiic_i2c *i2c)
+> +{
+> +	while (xiic_rx_space(i2c)) {
+Let's remind what xiic_rx_space is
+#define xiic_rx_space(i2c) ((i2c)->rx_msg->len - (i2c)->rx_pos)
 
-Ian,
+> +		if (xiic_getreg32(i2c, XIIC_IISR_OFFSET) & XIIC_INTR_RX_FULL_MASK) {
+> +			if (!i2c->rx_msg) {
+This check is suspicious. If i2c->rx_msg is NULL then the while
+above already dereferenced a NULL pointer.
+What is going on?
+> [...]
+> +}
+> [...]
+> +static void xiic_send_rem_atomic(struct xiic_i2c *i2c)
+> +{
+> +	if (!i2c->tx_msg)
+> +		goto send_atomic_out;
+> +	while (xiic_tx_space(i2c)) {
+> [...]
+> +	}
+> +send_atomic_out:
+> +	if (i2c->nmsgs > 1) {
+> +		i2c->nmsgs--;
+> +		i2c->tx_msg++;
+We can get here with i2c->tx_msg being NULL. See the first if
+in the function.
+> +		__xiic_start_xfer(i2c);
+> +	} else {
+> +		xiic_irq_dis(i2c, XIIC_INTR_TX_HALF_MASK);
+> +	}
+>   }
+> [...]
 
