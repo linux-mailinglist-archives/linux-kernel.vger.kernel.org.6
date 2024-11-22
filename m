@@ -1,301 +1,140 @@
-Return-Path: <linux-kernel+bounces-418507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6DE99D625A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:35:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D805C9D6261
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:35:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 340A716087B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:35:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD2D31608E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121801DE89A;
-	Fri, 22 Nov 2024 16:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA371DF250;
+	Fri, 22 Nov 2024 16:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kHmygZF8"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IiQIUBUJ"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B2013C80C;
-	Fri, 22 Nov 2024 16:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644A115E5B5
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 16:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732293304; cv=none; b=HbNbJQ6oyo3JS5a2uRIWq4OVLeFxJZwXTfkXQPjUiRGziDHoC6VLtpnCXlfJVK9EBoHMVzPLJt1wF/GdDd0PYNURt3bkriFtg/3IIMNE1Ay6UJa5NCs90q0BrQKxH5UbdjyIlPYh3b64MvvJegeJCQWU657ZUt585x8rOiSNHiU=
+	t=1732293317; cv=none; b=pCcWuX0kZgbCY36fWrYjtdYgfG7EgU89Zy2tYgNHvgN1w8euymTOiUpgtCYhD6F07DJTzQN0p5AECFYLVmW1ZIrO6Scr4RDdV8AZO+51H4jtbVgrb9wHQa5TOiFxO2RCQi8PL69CgATU53FIbfkpau6DZWnWOHCT4cW1hkc2jJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732293304; c=relaxed/simple;
-	bh=QmYCrbrZ0QjT4nfwEGLidKiS2Xq+j8XtbaNx/WThNd4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mikdsj14/WDHhsz2GV1VAqkfvcUXlKfSbqgJBtT0ND2+exJ4fIsQX5g1YEJmk/rAobQcJDrdt8x+J6eA5nd3nTnRARTJf5bIHd2IFwIMTS9pJcr433joG+nWBJA9A6VJ7f1kZ1Z9BGx+v4kKY0bvYbrQBr6w/vq2/fjZsNLJ89M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kHmygZF8; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-83abc039b25so80350739f.0;
-        Fri, 22 Nov 2024 08:35:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732293301; x=1732898101; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GReVTWBGYFw/FTP8yPSarz5HbeY1G9Mo/s/2dusNN00=;
-        b=kHmygZF83lUg6MxCWp2cdL+h5FMk9+/mBIgt+nkibD08g559paNPhGqMDGavaOsEet
-         99/Zr6eZ74ZsX2hlKMK5sqQdcTDTOHcCl3YuUVXWb8i0A09uFjyQWNU6HMYQ77k+xzAH
-         VfeCZUDPanDFCwZRUAKo7b7+zXV2oBEY5K1MBsSOmZYl8m74oTzrUKgApRdNn+WzR49o
-         HhqABLZJ8Z/FY9tQPUEhE4LdEJ27N6zNvksquRs8On5TSbA5kgFIxFlHUSjducatXlTP
-         X5E1OQTCuOBZkEXaOtCEZQbeQS+bryxwYLZ2CpMrWjZeJTG1HDhru8TsA2acFZN5UmpF
-         79zQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732293301; x=1732898101;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GReVTWBGYFw/FTP8yPSarz5HbeY1G9Mo/s/2dusNN00=;
-        b=fdowpMNHopgjL9a+2qXwQTCN+C2QwLjQUwkFk/Gxer1YfdXpBesAaQvhmq4U/5uZy1
-         aJuvLVvIqzYl2ibR2YDnncXDTUYYqkCI/Cjf28hCUawQ4gb3bPhWJ+kVQSrg+6U/Fyfo
-         6pmdzouyfn2h0hxngsNTUTei2bmXTZJ5IYmwnkJaT/bK9QFsQEubZGrqxoMEfzWv6Sac
-         eFbU/0FZoM5/6wjWu52TTIU6HBOZ21MGz52BeIa7Mzjh+3EY7l3Mhzs0Tz8fAZbpzjMu
-         nnSZ4ysmkIUbqjIngvo7vQV6YV1KwYHHgOqsKbcddKU9OM7ljXkS1EgZ+TNyGrk1LYFa
-         Ouaw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0/BLL8iaNifa22q4V/Sb5jnTzNCdz6ULrS69Bz3Rh+4cFJkw6V/PgopkZpQH+xwHUMg+PLDAn/WOXnxoH@vger.kernel.org, AJvYcCVnXJEpHwYfB4EuSe7KonVxuwgpZ290rjBAkwfvsz5xQeSE7nJ/bBYLUUpj5JcxhavvB0BiU94iZH+xcaVM@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAU/fIM5Y9u/VsC3nMMKAR5+pi5u+t5M9VqQZ1vpIRui5btx5C
-	BiZ80djU0vVR6UBagWHtNyIi9VPsFInvfaiWV0mMIVROf/PfGwJ4gRcIX47XPw/tCMaRduRygWb
-	5s7G4/gRQPOfJEK+8wjsmiYSuexE=
-X-Gm-Gg: ASbGncsAmtyHPXSn/Roz8XK06fA8n1ven7AvvSNcQPoMHtxHLpltMA94/1ygbYkfL8K
-	NNvd4/PTPCu1T9L+dP6+idXoxHy2zk8aBKGE4dUAvfDAKRKw/K8fBMGU1uovXqQ==
-X-Google-Smtp-Source: AGHT+IHCczpv5MTe10j+ysaRXaFSBOv7fYB9EL4QC/DbZ6+Wyvs0DC3CMZrZNaNLbRff8uCbLJwlKESwT+n24Kb5K0A=
-X-Received: by 2002:a05:6602:3c8:b0:83d:e526:fde7 with SMTP id
- ca18e2360f4ac-83ecdca5850mr480494439f.6.1732293300996; Fri, 22 Nov 2024
- 08:35:00 -0800 (PST)
+	s=arc-20240116; t=1732293317; c=relaxed/simple;
+	bh=5/hbZ+E9BqSb3A600Iqwyv3NoK2rcGUGx/rP095HNXA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=D6EI7virMDQy8yirqGunaH8HWwgNwWlXnP7bz31Kw4fpk0351qSOyQ+RaEHVhcWsaykCgylOyLVkiESArZepoKukAnIGJ7zXA7PIYGj984zzVbtWFwkGsVABg2neClD6pi8et2/jN4NNnsTxsCEMDhTbzKN5Oknk/G/b6ugfxcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IiQIUBUJ; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0B3D8E0006;
+	Fri, 22 Nov 2024 16:35:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1732293313;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=EU4DnaB/CA53h0OcQFrCX75CUQhx9xDEfk3liT83+mA=;
+	b=IiQIUBUJZfuwhDaagzN1rvoElRm17ZsDCI994fGk4ih6fjKYXieFtSRjAH+6j2ILusupUf
+	Du9BEzs7oxb4EBFBlrDf+799Kd7jpbYsNOCronuY8dNNFAWoZRcRrymup6Z76nFI49EXz0
+	rIOIUuLz4H14z4Y8NUXZEvighRXmxL5wka/5fJ4ErBK/KCoevhLFoxGVk5wp2gCZZDFviJ
+	XLQc/9El0GE26ezzk4rEzVA7mpuwXGyGmln56hBvcQ5x53Wiuem/zxyi24WTvHIoXBTOSn
+	hv+TIgZP2zWfwusFYesBGB4Kc8cLIdOoCweTPqaAVPYjjoTGqEtYBbgKXS8XuQ==
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Subject: [PATCH v2 0/4] drm/vkms: Switch to allocated for drm objects
+Date: Fri, 22 Nov 2024 17:35:08 +0100
+Message-Id: <20241122-b4-vkms-allocated-v2-0-ff7bddbf0bfb@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114160721.1527934-1-quic_bibekkum@quicinc.com>
- <20241114160721.1527934-4-quic_bibekkum@quicinc.com> <CAF6AEGuwWsAkRyF-h5Aj3KzM7iksb12HsfJ5Ks+-P8hv60MWFg@mail.gmail.com>
- <CAF6AEGvVteuOOMod6yw9_6eOn2PxAx+BR8sVOHAHp7Ts8XigBw@mail.gmail.com> <5696afa2-c4ab-42fe-b29a-6ecee622fbb4@quicinc.com>
-In-Reply-To: <5696afa2-c4ab-42fe-b29a-6ecee622fbb4@quicinc.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Fri, 22 Nov 2024 08:34:49 -0800
-Message-ID: <CAF6AEGuMmdnOmATMy8f+YgGxfrYb5mkG_qgy870wZPebKaZjVQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND v17 3/5] iommu/arm-smmu: add support for PRR bit setup
-To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, jgg@ziepe.ca, 
-	jsnitsel@redhat.com, robh@kernel.org, krzysztof.kozlowski@linaro.org, 
-	quic_c_gdjako@quicinc.com, dmitry.baryshkov@linaro.org, iommu@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Connor Abbott <cwabbott0@gmail.com>, 
-	Rob Clark <robdclark@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALyyQGcC/22PQW7DIBBFr2Kx7rRAcVSy6j2iLgZ77KAaSIGgV
+ JHv3omtLiqVFX8Qb96/i0LZUxHH7i4yNV98ihz0UyeGM8aZwI+chZbaSCstOAPtMxTAZUkDVhr
+ BTn0v3ybDBwX/u2Sa/G1jnj72nOnryui6D4XDQjCkEHw9dmMOEHwZXn4vEOlWH6BApeBmwEK8X
+ ymtYU5pXmh3CBj5fYTWgwSF7iCNfCV7kO8upbr4+MxLxMPh7EtN+Xur2dQmsTdS+p9GTTFPW3Q
+ OURmc7F/euq4/bJBrOjgBAAA=
+X-Change-ID: 20240909-b4-vkms-allocated-9f5508f4444a
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, 
+ Melissa Wen <melissa.srw@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Simona Vetter <simona.vetter@ffwll.ch>
+Cc: thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, Louis Chauvet <louis.chauvet@bootlin.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1983;
+ i=louis.chauvet@bootlin.com; h=from:subject:message-id;
+ bh=5/hbZ+E9BqSb3A600Iqwyv3NoK2rcGUGx/rP095HNXA=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBnQLK+FwJVDvWLWMSXnTlA1WdOzqsB3odboUWnl
+ sgdOkeP6jiJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZ0CyvgAKCRAgrS7GWxAs
+ 4l8WD/4rqL7I83iwPXi5DARD+/5Y8ahY9RxM4auBKuphvVgJ/UUGoq7UXFWLsXYMlIlvjgJD+Ly
+ S9w/4IoVdW4XNIpLJsSSTpfdHqaI8vyN/74TYbxTG64AsS2eUCHKFZFP7WUVUCsfEaqi5GwzhcS
+ 5yGf0vC0O5346goPJDoU2e/TwgrCpkZeOMc7CkIXxGvER1bCqt4trgo2Horw/ZE1fY7kkqQCYe6
+ hpYOAAqgmZI2uKqVz1nDKu9fJFvSXyjkYBtQnOBG6oNA0GTQXm2W4/7Xl5msvK3IqrnBCnByITX
+ JA6ukL2bhUdcvTDBPhVhOexrKzGvmozH430Jdsq6rAzhR+lp8sOdfWyxLVSIeL8o9Cxv9MQFeC0
+ wnHn8KCwJp15ef/7cZYds3nKEftffD36VPgfM2AN0QpRg8YBbGg+waugWwOJsi1D9kiXx/OQiwr
+ D5K+GYvCW7fmmEN2qanbdaYe3lvBMkJ0AqFWKmA275GmmhYlFoBBRESr0RS+eC/8p5x1GuaRyiy
+ DshZRPfuJCqkUjOrLWJx8/5No6pVTqhWslQLdW9oG9SCXIsmLYbjBcCJ3Y3JYHp21BLLjg2V9b7
+ p1kUvKySFJQsqwGJPOB23gEJnK6313WoD7Qu1+AEJcBMsqksVkxEmjbpd5FD5LCGCCJdxiMSnzd
+ 5Sg17qrSO5DkPhQ==
+X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
+ fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On Fri, Nov 22, 2024 at 8:20=E2=80=AFAM Bibek Kumar Patro
-<quic_bibekkum@quicinc.com> wrote:
->
->
->
-> On 11/21/2024 3:40 AM, Rob Clark wrote:
-> > On Wed, Nov 20, 2024 at 9:17=E2=80=AFAM Rob Clark <robdclark@gmail.com>=
- wrote:
-> >>
-> >> On Thu, Nov 14, 2024 at 8:10=E2=80=AFAM Bibek Kumar Patro
-> >> <quic_bibekkum@quicinc.com> wrote:
-> >>>
-> >>> Add an adreno-smmu-priv interface for drm/msm to call
-> >>> into arm-smmu-qcom and initiate the PRR bit setup or reset
-> >>> sequence as per request.
-> >>>
-> >>> This will be used by GPU to setup the PRR bit and related
-> >>> configuration registers through adreno-smmu private
-> >>> interface instead of directly poking the smmu hardware.
-> >>>
-> >>> Suggested-by: Rob Clark <robdclark@gmail.com>
-> >>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-> >>> ---
-> >>>   drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 37 +++++++++++++++++++=
-+++
-> >>>   drivers/iommu/arm/arm-smmu/arm-smmu.h      |  2 ++
-> >>>   include/linux/adreno-smmu-priv.h           | 14 ++++++++
-> >>>   3 files changed, 53 insertions(+)
-> >>>
-> >>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iom=
-mu/arm/arm-smmu/arm-smmu-qcom.c
-> >>> index d26f5aea248e..0e4f3fbda961 100644
-> >>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> >>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> >>> @@ -16,6 +16,8 @@
-> >>>
-> >>>   #define QCOM_DUMMY_VAL -1
-> >>>
-> >>> +#define GFX_ACTLR_PRR          (1 << 5)
-> >>> +
-> >>>   static struct qcom_smmu *to_qcom_smmu(struct arm_smmu_device *smmu)
-> >>>   {
-> >>>          return container_of(smmu, struct qcom_smmu, smmu);
-> >>> @@ -99,6 +101,32 @@ static void qcom_adreno_smmu_resume_translation(c=
-onst void *cookie, bool termina
-> >>>          arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_RESUME, reg)=
-;
-> >>>   }
-> >>>
-> >>> +static void qcom_adreno_smmu_set_prr_bit(const void *cookie, bool se=
-t)
-> >>> +{
-> >>> +       struct arm_smmu_domain *smmu_domain =3D (void *)cookie;
-> >>> +       struct arm_smmu_device *smmu =3D smmu_domain->smmu;
-> >>> +       struct arm_smmu_cfg *cfg =3D &smmu_domain->cfg;
-> >>> +       u32 reg =3D 0;
-> >>> +
-> >>> +       reg =3D  arm_smmu_cb_read(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR=
-);
-> >>> +       reg &=3D ~GFX_ACTLR_PRR;
-> >>> +       if (set)
-> >>> +               reg |=3D FIELD_PREP(GFX_ACTLR_PRR, 1);
-> >>> +       arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR, reg);
-> >>> +}
-> >>> +
-> >>> +static void qcom_adreno_smmu_set_prr_addr(const void *cookie, phys_a=
-ddr_t page_addr)
-> >>> +{
-> >>> +       struct arm_smmu_domain *smmu_domain =3D (void *)cookie;
-> >>> +       struct arm_smmu_device *smmu =3D smmu_domain->smmu;
-> >>> +
-> >>> +       writel_relaxed(lower_32_bits(page_addr),
-> >>> +                               smmu->base + ARM_SMMU_GFX_PRR_CFG_LAD=
-DR);
-> >>> +
-> >>> +       writel_relaxed(upper_32_bits(page_addr),
-> >>> +                               smmu->base + ARM_SMMU_GFX_PRR_CFG_UAD=
-DR);
-> >>> +}
-> >>> +
-> >>>   #define QCOM_ADRENO_SMMU_GPU_SID 0
-> >>>
-> >>>   static bool qcom_adreno_smmu_is_gpu_device(struct device *dev)
-> >>> @@ -210,6 +238,7 @@ static bool qcom_adreno_can_do_ttbr1(struct arm_s=
-mmu_device *smmu)
-> >>>   static int qcom_adreno_smmu_init_context(struct arm_smmu_domain *sm=
-mu_domain,
-> >>>                  struct io_pgtable_cfg *pgtbl_cfg, struct device *dev=
-)
-> >>>   {
-> >>> +       const struct device_node *np =3D smmu_domain->smmu->dev->of_n=
-ode;
-> >>>          struct adreno_smmu_priv *priv;
-> >>>
-> >>>          smmu_domain->cfg.flush_walk_prefer_tlbiasid =3D true;
-> >>> @@ -239,6 +268,14 @@ static int qcom_adreno_smmu_init_context(struct =
-arm_smmu_domain *smmu_domain,
-> >>>          priv->get_fault_info =3D qcom_adreno_smmu_get_fault_info;
-> >>>          priv->set_stall =3D qcom_adreno_smmu_set_stall;
-> >>>          priv->resume_translation =3D qcom_adreno_smmu_resume_transla=
-tion;
-> >>> +       priv->set_prr_bit =3D NULL;
-> >>> +       priv->set_prr_addr =3D NULL;
-> >>> +
-> >>> +       if (of_device_is_compatible(np, "qcom,smmu-500") &&
-> >>> +                       of_device_is_compatible(np, "qcom,adreno-smmu=
-")) {
-> >>
-> >> fwiw, it seems like PRR actually works on sc7180, which is _not_
-> >> mmu-500, so I guess the support actually goes back further.
-> >>
-> >> I'm curious if we can just rely on this being supported by any hw that
-> >> has a6xx or newer?
-> >
-> >
-> > Also, unrelated, but we can't assume the smmu is powered when drm
-> > driver calls set_prr_bit/addr, could you add in runpm get/put around
-> > the register access?
-> >
->
-> I see, thanks for this observation.
-> It's surely a possible case, when they access these registers
-> SMMU state is off.
-> I will add the suggested runpm ops around the register access.
->
-> > Otherwise Conner and I have vk sparse residency working now
-> >
->
-> Sorry, could not get this. Did you mean that vk sparse residency
-> is working now using this patch?
+Specific allocations for each DRM object is not strictly needed in VKMS 
+right now, but in order to implement dynamic configuration of VKMS 
+(configFS), it will be easier to have one allocation per DRM object.
 
-Yes, vk sparse residency is working with this patch (plus addition of
-runpm get/put, plus drm/msm patches plus turnip patches) ;-)
+There is no need for a dynamic allocation for the writeback connector as 
+there can only be one per CRTC
 
-BR,
--R
+No functionnal changes are intented in this series.
 
-> Thanks & regards,
-> Bibek
->
-> > BR,
-> > -R
-> >
-> >>
-> >>> +               priv->set_prr_bit =3D qcom_adreno_smmu_set_prr_bit;
-> >>> +               priv->set_prr_addr =3D qcom_adreno_smmu_set_prr_addr;
-> >>> +       }
-> >>>
-> >>>          return 0;
-> >>>   }
-> >>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/ar=
-m/arm-smmu/arm-smmu.h
-> >>> index e2aeb511ae90..2dbf3243b5ad 100644
-> >>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
-> >>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
-> >>> @@ -154,6 +154,8 @@ enum arm_smmu_cbar_type {
-> >>>   #define ARM_SMMU_SCTLR_M               BIT(0)
-> >>>
-> >>>   #define ARM_SMMU_CB_ACTLR              0x4
-> >>> +#define ARM_SMMU_GFX_PRR_CFG_LADDR     0x6008
-> >>> +#define ARM_SMMU_GFX_PRR_CFG_UADDR     0x600C
-> >>>
-> >>>   #define ARM_SMMU_CB_RESUME             0x8
-> >>>   #define ARM_SMMU_RESUME_TERMINATE      BIT(0)
-> >>> diff --git a/include/linux/adreno-smmu-priv.h b/include/linux/adreno-=
-smmu-priv.h
-> >>> index c637e0997f6d..614665153b3e 100644
-> >>> --- a/include/linux/adreno-smmu-priv.h
-> >>> +++ b/include/linux/adreno-smmu-priv.h
-> >>> @@ -50,6 +50,18 @@ struct adreno_smmu_fault_info {
-> >>>    *                 the GPU driver must call resume_translation()
-> >>>    * @resume_translation: Resume translation after a fault
-> >>>    *
-> >>> + * *CAUTION* : PRR callbacks (set_prr_bit/set_prr_addr) are NULL ter=
-minated for
-> >>> + *             targets without PRR support. Exercise caution and ver=
-ify target
-> >>> + *             capabilities before invoking these callbacks to preve=
-nt potential
-> >>> + *             runtime errors or unexpected behavior.
-> >>> + *
-> >>> + * @set_prr_bit:   Extendible interface to be used by GPU to modify =
-the
-> >>> + *                ACTLR register bits, currently used to configure
-> >>> + *                Partially-Resident-Region (PRR) bit for feature's
-> >>> + *                setup and reset sequence as requested.
-> >>> + * @set_prr_addr:  Configure the PRR_CFG_*ADDR register with the
-> >>> + *                physical address of PRR page passed from
-> >>> + *                GPU driver.
-> >>>    *
-> >>>    * The GPU driver (drm/msm) and adreno-smmu work together for contr=
-olling
-> >>>    * the GPU's SMMU instance.  This is by necessity, as the GPU is di=
-rectly
-> >>> @@ -67,6 +79,8 @@ struct adreno_smmu_priv {
-> >>>       void (*get_fault_info)(const void *cookie, struct adreno_smmu_f=
-ault_info *info);
-> >>>       void (*set_stall)(const void *cookie, bool enabled);
-> >>>       void (*resume_translation)(const void *cookie, bool terminate);
-> >>> +    void (*set_prr_bit)(const void *cookie, bool set);
-> >>> +    void (*set_prr_addr)(const void *cookie, phys_addr_t page_addr);
-> >>>   };
-> >>>
-> >>>   #endif /* __ADRENO_SMMU_PRIV_H */
-> >>> --
-> >>> 2.34.1
-> >>>
->
+This series requires [1] to switch vkms objects to drm-managed objects.
+
+[1]:https://lore.kernel.org/all/20241122-google-vkms-managed-v5-0-1ab60403e960@bootlin.com/
+
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+---
+Changes in v2:
+- Rebased on drm-misc-next
+- Apply comments from Jose
+- Link to v1: https://lore.kernel.org/r/20240912-b4-vkms-allocated-v1-0-29abbaa14af9@bootlin.com
+
+---
+Louis Chauvet (4):
+      drm/vkms: Switch to dynamic allocation for connector
+      drm/vkms: Switch to dynamic allocation for encoder
+      drm/vkms: Switch to dynamic allocation for CRTC
+      drm/vkms: Rename vkms_output to vkms_crtc
+
+ drivers/gpu/drm/vkms/vkms_composer.c  |  30 +++++-----
+ drivers/gpu/drm/vkms/vkms_crtc.c      | 100 ++++++++++++++++++----------------
+ drivers/gpu/drm/vkms/vkms_drv.h       |  21 ++++---
+ drivers/gpu/drm/vkms/vkms_output.c    |  41 +++++++++-----
+ drivers/gpu/drm/vkms/vkms_writeback.c |  25 +++++----
+ 5 files changed, 118 insertions(+), 99 deletions(-)
+---
+base-commit: 98efdd02e220fea84c1491012d7292749a71faeb
+change-id: 20240909-b4-vkms-allocated-9f5508f4444a
+prerequisite-message-id: 20241122-google-vkms-managed-v5-0-1ab60403e960@bootlin.com
+prerequisite-patch-id: b608594ad493a41000ee703792eac4b23f9e35dc
+prerequisite-patch-id: 5697aa87c44bbf3eda8a1ba424465dc792545d4c
+prerequisite-patch-id: 223d59c407ce28dacf3f563b5c0148d2398303f1
+prerequisite-patch-id: 720b75b21d06ce3d3f060fb9238f7903834da0e1
+prerequisite-patch-id: 30a1e033fa43241ca6a43006fd4f29f8e9217224
+
+Best regards,
+-- 
+Louis Chauvet <louis.chauvet@bootlin.com>
+
 
