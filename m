@@ -1,135 +1,95 @@
-Return-Path: <linux-kernel+bounces-417701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 497759D581B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:12:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D379D5823
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:15:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9C8F1F2397E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:12:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C14E1F23A07
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122AC70824;
-	Fri, 22 Nov 2024 02:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14EFA14F114;
+	Fri, 22 Nov 2024 02:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D+nTzj4E"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MktxFL6d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C2910E5
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 02:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DBD10E5;
+	Fri, 22 Nov 2024 02:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732241571; cv=none; b=TvkgpsUumyEpq1RHTMOgqcRYvhbqy+bqNPn0Z7HF04veEO0hPwyvfBteMP16hooKfHu6H2RiBbRtlQS+QHkzCCA26Uc+1fx1I/n9OHbPHirwMgTx6CVaLoGsaiXEShjJnn9ln+vAKGS5SIS5p4V5PNQs3zeRX4f2ZINCUwTCVIg=
+	t=1732241694; cv=none; b=XoXcQU6Q/XO/b0r6TrQDCxlfAbuNwEzOm2V4F9dCppLwFMH6JBG2SihwZOQzW1x3s0feaSIkUY7UWkCWw0WSu35g0WOgf0Ez9FwtP31636hNf2vN6F1pqizcFWCHJIIUzhtnewPODp3P/8nD+TeU4gV18Br4N1+unC1xrmNsvJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732241571; c=relaxed/simple;
-	bh=/84x71PtDL3f/SDsrlNVHTLfwfZbZ9HeZh5cdahrjlk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OitRgW4OxImJGPEk/QfqRxC7GBYtFZYAGkqCwj7EetcmKuUkAS1rwRleaoftCy1RnNEXzaRKOozOzNgDVqOyeqkyy5rFuwK2yUwYfWCvXflKK7hT64VZDbM/i5DKWfK+0/odiYHSZNZbMhtLOnx97J4gin818idY1mIYsYgBtYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D+nTzj4E; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539ee1acb86so1732731e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:12:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732241567; x=1732846367; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oMI4s7lzBu8TJFiDvywoRCBHF2QfQJqKCfHy3cjwvsY=;
-        b=D+nTzj4EjDu2KA7zM6r38A8KQLZWxheObzZGLxLq8wyLzcPBV4AMZGriQn0a2ic4v+
-         O9hEz5GWNSVPE7lh0wfdo7yoiXurdlei7rwXe7sOrmMbpw1dZQM5BW8pPR4MIziE0Khw
-         cB5G/Opjt+Cci+P5x475/xR5K/wLuFyPFByYZPBTztFCbhkXfPySr6ySX2UJ9zsSGZdZ
-         CzE8FGSktdMCZN1yXmYbeJkbDpuky0bepU/lTj8AvfuTC9wRcTC4I79HG8jQjYOwLEOD
-         18+i2NwEywuTwqOpnGA4lsO3JwkvKfqI9Bg55HvOnLQQBaS+Ozyoua+M6alJ7Ny6IkqC
-         QwqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732241567; x=1732846367;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oMI4s7lzBu8TJFiDvywoRCBHF2QfQJqKCfHy3cjwvsY=;
-        b=mDzoUOnjKj2el+777uEyyyhmv2AlNO+/0sPzNbSA1sqrUqXlctcoSIZIsBR8nwrzsV
-         ixSA5zTJ/NfmJQ+3ufQ3RnUdI62dqUUfmtfishFVEHncbL5Fxzmvo/2AenKZgbx/5Pte
-         jxcmFjS47LsjRIixrygG/RM9oNy2OyGn9B9grvxZLBzNy4drWGLmmJhj8jitqG5qdGlC
-         gubc2aCrOntgepWqp7Zzoh8gkhgRup1+pD4Bjj4pqehxH8HEULRzdWrSAgCOWtkg1Aqw
-         ugzZP6LSfWLMYMXpoeYPowqUTjoLRB7RA4f8agLb1QV3Lc2MhT+XXMXqZNyB18q2M28M
-         UNog==
-X-Forwarded-Encrypted: i=1; AJvYcCWKm9h4gxJzG3ID+qDJSDxFnJTuRXRQo8C25mxTcR4Fb/tN5esHFvCU3E5ock2TFz8yEr5FiF9e5xUaFS0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd01OveXPUEFiqikBqgLjG4pTuXtbvSnEO+v81JY3NVJsEGfCh
-	A4z3jtUnuhyF9v8jISWA5c0f/grC1OuJofngeMALHw+hfSefnzi9Hlsj35ax3BU=
-X-Gm-Gg: ASbGnct5LlrSERtxNgh8a5vFFbOTjd4Ev/vV0Vtx+URP1Go241xDY7YxvIheFX9+0Qr
-	9r5X1A23VNFo9KWN9BRv42I8LdN34IJT6C8AfcLXbTcsltuXlJKDqEUKVUwPupEsHxYAq/PC10Q
-	IFZMHzbvy0P2xc8fwKlGyVWcWmeSQE9fMP4dk476enlbHAsj+TOqv56pS67RuwB0lRzsnsFl88o
-	Peoz/mfJ7eZuY36kqD76yjxiToPh37MwPMe2ToR/SNWjI9Y0icxepqgxY3jrK0qnwp6q1/9RkIA
-	5Ez2vAU6Yy/HQybL2w5agEXOCjHfUA==
-X-Google-Smtp-Source: AGHT+IEdbkozKtzZQZRIlVS3sKJ9qwrOxEcPTavI+YkjKiS0bZynMaaIaHnjQe17X9/8rmJlZL6ztg==
-X-Received: by 2002:a05:6512:10ce:b0:53d:d0a5:aaa8 with SMTP id 2adb3069b0e04-53dd36a02c4mr432018e87.13.1732241567243;
-        Thu, 21 Nov 2024 18:12:47 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd2489d33sm161664e87.194.2024.11.21.18.12.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 18:12:45 -0800 (PST)
-Date: Fri, 22 Nov 2024 04:12:43 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Yongbang Shi <shiyongbang@huawei.com>
-Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
-	daniel@ffwll.ch, kong.kongxinwei@hisilicon.com, liangjian010@huawei.com, 
-	chenjianmin@huawei.com, lidongming5@huawei.com, libaihan@huawei.com, 
-	shenjian15@huawei.com, shaojijie@huawei.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 drm-dp 2/5] drm/hisilicon/hibmc: add dp link moduel in
- hibmc
-Message-ID: <pnzjjdau4nd43u46dxox5ii2cb3rpxjuoaggg7vjb3d6uk6vq6@vblt6diozau6>
-References: <20241118142805.3326443-1-shiyongbang@huawei.com>
- <20241118142805.3326443-3-shiyongbang@huawei.com>
+	s=arc-20240116; t=1732241694; c=relaxed/simple;
+	bh=0tGRsxZ2XKgKY9LtaQHWz1qmiXM7FaFhcCu0WBJJUTs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=A7tmRieGeE7UYpPkc/9ZcG2dluOeZ156QbZJtp53hg0A/6idqkjJ+ftG2vAaL8s1eS1zW8A0vk7x1MBQU62skBXDt7yLMrrCGzMtRbglQaCXrBt8n9/kTsSE07U50MfDRi90YzCFj56Pd1JnB/psx+mD0g60wSDg8SjKqCLIAXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MktxFL6d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 083A6C4CECC;
+	Fri, 22 Nov 2024 02:14:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732241693;
+	bh=0tGRsxZ2XKgKY9LtaQHWz1qmiXM7FaFhcCu0WBJJUTs=;
+	h=From:Subject:Date:To:Cc:From;
+	b=MktxFL6dSTI29O10YyiUXUUMPDu17xYdXmRyWtknJQYVFcL4u3k3PIec1hp4IdeOO
+	 rSf2a2uUl+xnK5/eemlkLoj7cXb4tiM1WZiCYrwSPWolar9IjVyF2+h7HRnMPSHIVj
+	 7YafVutVOws+82uQDKPVSw50Eb0nxALWJZPQJpjL6VoPuYNXJIFVSbLE0wShEdazsa
+	 gTTbVebIe6DETzK5oIKK7AltHQFeaI85F82TDX4sYe8rbYhebrXH+gBUSHhXg+m79B
+	 MBiePvwZNgxkEc9oOT2uFi1forMwrFF1SY1L+3xv+4zVy+OwDOKeOPGVkfvVy8O6aE
+	 qNOxl68ew2cBA==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Subject: [PATCH 0/3] More Surface Laptop 7 features
+Date: Fri, 22 Nov 2024 03:14:09 +0100
+Message-Id: <20241122-topic-sl7_feat2-v1-0-33e616be879b@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241118142805.3326443-3-shiyongbang@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPHoP2cC/x3MQQqAIBBA0avErBNyEsWuEhFiUw2EikYE0d2Tl
+ m/x/wOFMlOBoXkg08WFY6iQbQN+d2EjwUs1YIdKSkRxxsRelMPMK7kThTd26VFp67SCWqVMK9/
+ /cZze9wMqrxPmYQAAAA==
+X-Change-ID: 20241122-topic-sl7_feat2-c79d32469a64
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732241690; l=737;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=0tGRsxZ2XKgKY9LtaQHWz1qmiXM7FaFhcCu0WBJJUTs=;
+ b=Wu0liblFfEV7whjNjBGWMhlA1P4IqZvtb6lP2si5uPJnVd/36O3fVmM3/x0eq938A9VNgam/M
+ 3fB8cbi4EQPAFW10P3MFWWLhg9X/vAVUlJ5TXCzcRtmaMPNDYVyrrUb
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On Mon, Nov 18, 2024 at 10:28:02PM +0800, Yongbang Shi wrote:
-> From: baihan li <libaihan@huawei.com>
-> 
-> Add link training process functions in this moduel.
-> 
-> Signed-off-by: Baihan Li <libaihan@huawei.com>
-> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
-> ---
-> Changelog:
-> v3 -> v4:
->   - optimizing hibmc_dp_link_get_adjust_train() to delete for loop, suggested by Dmitry Baryshkov.
->   - changing ELNRNG to EIO error code, suggested by Dmitry Baryshkov.
->   - deleting meaningless macro, suggested by Dmitry Baryshkov.
->   - fixing build errors reported by kernel test robot <lkp@intel.com>
->     Closes: https://lore.kernel.org/oe-kbuild-all/202411041559.WIfxRN6n-lkp@intel.com/
-> v2 -> v3:
->   - using switchcase in dp_link_reduce_lane, suggested by Dmitry Baryshkov.
->   - deleting dp_link_pattern2dpcd function and using macros directly, suggested by Dmitry Baryshkov.
->   - deleting EFAULT error codes, suggested by Dmitry Baryshkov.
-> v1 -> v2:
->   - using drm_dp_* functions implement dp link training process, suggested by Jani Nikula.
->   - fix build errors reported by kernel test robot <lkp@intel.com>
->     Closes: https://lore.kernel.org/oe-kbuild-all/202410031735.8iRZZR6T-lkp@intel.com/
->   v1:https://lore.kernel.org/all/20240930100610.782363-1-shiyongbang@huawei.com/
-> ---
->  drivers/gpu/drm/hisilicon/hibmc/Makefile     |   2 +-
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h |  24 ++
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c | 339 +++++++++++++++++++
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h  |   8 +
->  4 files changed, 372 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c
-> 
+This series does the necessary plumbing for audio (alsa ucm & topology
+coming very soon), dual PS8830s and the PCIe3-mounted SD card reader.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+Konrad Dybcio (3):
+      arm64: dts: qcom: x1e80100-romulus: Configure audio
+      arm64: dts: qcom: x1e80100-romulus: Set up PCIe3 / SDCard reader
+      arm64: dts: qcom: x1e80100-romulus: Set up PS8830s
 
+ .../boot/dts/qcom/x1e80100-microsoft-romulus.dtsi  | 532 ++++++++++++++++++++-
+ 1 file changed, 526 insertions(+), 6 deletions(-)
+---
+base-commit: decc701f41d07481893fdea942c0ac6b226e84cd
+change-id: 20241122-topic-sl7_feat2-c79d32469a64
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
 
