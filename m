@@ -1,146 +1,265 @@
-Return-Path: <linux-kernel+bounces-418533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8952F9D62B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:07:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D306D9D62B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:07:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34162B23F90
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:07:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C910B218B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E611DF978;
-	Fri, 22 Nov 2024 17:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PkI1nmkF"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AF61DE8BE;
+	Fri, 22 Nov 2024 17:07:27 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA41C1DF971
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 17:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C52F13635C
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 17:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732295252; cv=none; b=esI64d5eOF6kIrWgQdPo9TEK4nCnDzW9SJschZfGm6II5nnxgpILoSIdqQEDlR/RbHq62BoLD0gsWyPwJlF/HFMWbP5ubfA59LlFQUMa+kknU+s4EoARA1amfr4Ck0pRY7FxkV9MULDZK4HQi9rpYHuT13gNJoc9qGdhxhrjYfM=
+	t=1732295247; cv=none; b=t+wBOw4py9ZA6lZ+sT/vnL38/IZ62Jn2SzoQmyZ3QBHC1yiNmlqCOvlBkR/WOjnAgxc8gIrjuXAPBTck8lAf/03CuIVXHgAWrAB7H0wUzF8zFS8RgXA1M1O8iYC2tlhdacQHAyd2civxwZus4+PQNbt3MDZ/VceS0Ruj0oGm/DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732295252; c=relaxed/simple;
-	bh=qHGeW+9YJHnoV8xlYG8Yntca2NxQVMAEhNoIhEt+6xM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JBdGOsU28UlxU7zvBoEsl2XamH9HTwF8Zbzjo31wtmxYGJdsbkcEd1fS9iNs7skFV9U4tH7HoN53G7O0CR6NmhLo4vW30dUf3GuZTA5Q31yjyJqmc/Cf4d58dXOhMXYphfmIkK26xVzpt/Nxspex+4WcnMtUp+p2g/nAJyq4N84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PkI1nmkF; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7240d93fffdso1936588b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:07:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732295250; x=1732900050; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0/2iR2t92OCH9/EybMxXNXRhh30tebsZGZl/G3WtQ4A=;
-        b=PkI1nmkFNbg40iAjHfbpK8fx/tPj5m3Sglq2emncXcuVpB+ur+6+vf1TAnWuhzV3tU
-         bWsMb99G6w6CIlxZCp8Fu0N1gyziWG2MPKCBVuStdw5dGBMH63tP0MUipwF5appfzShs
-         VKCLFlfuR+aTaNguGX/J80uPEXokG7qLwrIGH4K7zTonUi1cWvv6H9aYN8IQcRub+IgR
-         gYdGoxjYgKqyST98FvK7E9ebSOQZebSSGDf8Dd8ZXl5hamMqdChiSiumMHzbpsZ1PdTy
-         3mE1AQ0OwC1YquluK1kzLBXmmgVB1DnsnrUeXJ5VX1UwAfihzWfs/eGIrvPikv3bSNba
-         2AgQ==
+	s=arc-20240116; t=1732295247; c=relaxed/simple;
+	bh=wiisfid/sAxys2hN9FjrQ7oeWhDpvwgtJa37EyEL3E4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YXyVP3IVORr/j7heu+W1zb2ByBgDZ/o1TGE8S4pNSALQ6Zs2r1S1LzO4Axp4/Baml8yWaPBgMuV+TLLC2YSwLn6FkmvdTUtEM5Au/RZ9hqfgVTpeYKLUxoqYiPt+DR6+d+3k1LXPe3aIaiQpPKYYcwd4Qge1CCr7LvEc/DwgN7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83ab369a523so225726039f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:07:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732295250; x=1732900050;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0/2iR2t92OCH9/EybMxXNXRhh30tebsZGZl/G3WtQ4A=;
-        b=SaVxT4ONrC+jK0I62q/CwFyD5f8AUm0GY/7rESm8YygRLzDHLXOUSzEG/Ch+owR4Q/
-         aInfhhshBHoCwR7EM3pWMPWcUoe2QyfAN0v3v6tjfj1FDvVY5fPuYmAvfr/NLJTDPB3z
-         mvpTgcOVHZpxzSqAHSVtLMww6B6XeDZkGaLd2kekAKieZi9xRAY9s7X1W8zVYkaddj80
-         nU0lxqyWG/gfcRggvSTQ8TVQ02/q80jtnTNAfLVqc8Ng7IVnzcjLKYj9LibLcOqXFfz4
-         p9i+xaxaxi5/vEKXYMSdgEvdFhZy/gwMG4JGiC0mvd9vNZLdSQStxxTypQTlBoirg19l
-         O5gw==
-X-Forwarded-Encrypted: i=1; AJvYcCXpvDVifIpKmQGDkh2JU9riaCB0+cPhLqytT9Tqpn1xdp8/vuTzyUDm68/NCCdtxI7ntyAsas5oranE93w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwADGQCRT5eHz+qlfYbEPhNUnmClRwdopfbGWtZPbNNOxdycpz2
-	aI3RrzeZA9d702cA+jPqqhOKprFW/37BGcVERUJzFoaFkS6pxOGJL8IPANS02Q==
-X-Gm-Gg: ASbGnctBhJ8lDxVyXUmFioj1/43i9EVUPu6ZfNIGrRWTtpEwqLWknf6k+FPRD8CUWpB
-	ZiFYt6Q5Y10jUD/pmToJfVPXkQ0tP7JeKmbMbdZwbUHStIxN45o8bRj+joXD+VPg+45gQJfbskU
-	2dBqttkhfLMKL4ImiYYjozB4ne4DAEF9lX4fehI+QdPFolD8h9qfZzRRmhMEwCz+bKwKSy++4SH
-	UmW/ZDLWROsIgB8Ce2nRmCHFW9RiLpEt3ZZfmDTyuW8C82vpXNAhVRHSF2p
-X-Google-Smtp-Source: AGHT+IGZvDpaoKhSksqbzMsm60Yp0W7DGNYEnn4YmD/coS4PDUIKaXASCZ3cNh00dMOu8rfdsP6n3g==
-X-Received: by 2002:a17:902:d4c6:b0:20e:a2f7:8ab9 with SMTP id d9443c01a7336-2129f6ac33amr44650405ad.27.1732295250203;
-        Fri, 22 Nov 2024 09:07:30 -0800 (PST)
-Received: from thinkpad ([49.207.202.49])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dba1b40sm18541705ad.87.2024.11.22.09.07.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 09:07:29 -0800 (PST)
-Date: Fri, 22 Nov 2024 22:37:23 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Hongxing Zhu <hongxing.zhu@nxp.com>
-Cc: "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-	"bhelgaas@google.com" <bhelgaas@google.com>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"kw@linux.com" <kw@linux.com>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>,
-	Frank Li <frank.li@nxp.com>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 05/10] PCI: imx6: Make core reset assertion
- deassertion symmetric
-Message-ID: <20241122170723.s43eokayvnuhas4r@thinkpad>
-References: <20241101070610.1267391-1-hongxing.zhu@nxp.com>
- <20241101070610.1267391-6-hongxing.zhu@nxp.com>
- <20241115065221.scfb2chnoetpdzu6@thinkpad>
- <AS8PR04MB8676D25A87FBF45E2B1D26628C272@AS8PR04MB8676.eurprd04.prod.outlook.com>
+        d=1e100.net; s=20230601; t=1732295244; x=1732900044;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uV7/Z96y1t6ErxUYybbcDtRoUyJd7oaTIAGkutVr/lI=;
+        b=W7nq+IEg+2Dh/paAoJajVD/RgmH+I3NpC3eAx/nkxAl4wgSrt+U/jf1GtzZJL34T/z
+         pDTNSWgglKiFSz3obbGQ28ItERpCe8FpFFWBc/XHoAXtU4opH/rymX6l4J3htvLgQL5u
+         LTsTcuLm4vYYXekzrLvmH1J1kVP+St+ejrXh6RELAx+SNgML8ySp6qA8rveEUUy6Y15X
+         Ckl7fGNCUA9ra4y1mVN1CrkrjM6Z8mxJpZTFoShz4dzgzQcz/7J8ryIdAj355ryz2/wE
+         BTpgAC46bRMBU7zsRM3SdhInxCCRlwD/HqDnox6zKWNYjlAQ2f0YLSkoDhg8hXmUJ7vC
+         LHLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKAATDdFCrJkDBqAxtmOopH2y2J7wE3RgXNk4LExxduTKGak1voCOw8cSVM+zBjN44p0rr4v0lUENahxs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1wTBKGAxfiFJliZSGHQ0VlEbsmexbgmOVy3zGTckQtAsS1nF/
+	BiyzJMfPyoeSQlMImnhQd6Cw+75jiYfP6H7l4pr8Zc7hXIpzPVX++7P83DPPrpsX+/BtD1auuPh
+	MzSBMI4En8bWnNjKezcDsRm81HXR3zu8kBRCsxX026NQjzgpgpC35Dys=
+X-Google-Smtp-Source: AGHT+IEO2Qwpklw46E2RisBwxaxLX8+3w0q8X9eKHEyPRAgvIikBRH3uKvOG5LLFIj1iilDHGoD+rSpNy/ocYOzO5GmW0WSgo6aX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AS8PR04MB8676D25A87FBF45E2B1D26628C272@AS8PR04MB8676.eurprd04.prod.outlook.com>
+X-Received: by 2002:a05:6e02:12e7:b0:3a7:956c:61a4 with SMTP id
+ e9e14a558f8ab-3a79ad1078dmr46608975ab.10.1732295244532; Fri, 22 Nov 2024
+ 09:07:24 -0800 (PST)
+Date: Fri, 22 Nov 2024 09:07:24 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6740ba4c.050a0220.3c9d61.0194.GAE@google.com>
+Subject: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in l2cap_disconn_ind
+From: syzbot <syzbot+ee903ccb508953ef5998@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Nov 18, 2024 at 02:59:59AM +0000, Hongxing Zhu wrote:
-> > -----Original Message-----
-> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > Sent: 2024年11月15日 14:52
-> > To: Hongxing Zhu <hongxing.zhu@nxp.com>
-> > Cc: l.stach@pengutronix.de; bhelgaas@google.com; lpieralisi@kernel.org;
-> > kw@linux.com; robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
-> > shawnguo@kernel.org; Frank Li <frank.li@nxp.com>;
-> > s.hauer@pengutronix.de; festevam@gmail.com; imx@lists.linux.dev;
-> > kernel@pengutronix.de; linux-pci@vger.kernel.org;
-> > linux-arm-kernel@lists.infradead.org; devicetree@vger.kernel.org;
-> > linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH v6 05/10] PCI: imx6: Make core reset assertion
-> > deassertion symmetric
-> > 
-> > On Fri, Nov 01, 2024 at 03:06:05PM +0800, Richard Zhu wrote:
-> > > Add apps_reset deassertion in the imx_pcie_deassert_core_reset(). Let
-> > > it be symmetric with imx_pcie_assert_core_reset().
-> > >
-> > > In the commit first introduced apps_reset, apps_reset is asserted in
-> > > imx6_pcie_assert_core_reset(), but it is de-asserted in another place,
-> > > in
-> > 
-> > I'd suggest rewording like below to make it easy to understand,
-> > 
-> > "PCI: imx6: Deassert apps_reset in imx_pcie_assert_core_reset()
-> I'm very appreciate for your rewords. Should the imx_pcie_assert_core_reset()
->  be imx_pcie_deassert_core_reset()?
-> 
+Hello,
 
-Yeah!
+syzbot found the following issue on:
 
-- Mani
+HEAD commit:    fcc79e1714e8 Merge tag 'net-next-6.13' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14f006e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=275de99a754927af
+dashboard link: https://syzkaller.appspot.com/bug?extid=ee903ccb508953ef5998
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
--- 
-மணிவண்ணன் சதாசிவம்
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ccf5d85f3d45/disk-fcc79e17.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ad2e5fc1309d/vmlinux-fcc79e17.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9aa637b02b96/bzImage-fcc79e17.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ee903ccb508953ef5998@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-use-after-free in l2cap_disconn_ind+0x79/0xc0 net/bluetooth/l2cap_core.c:7289
+Read of size 1 at addr ffff88804b259ab0 by task kworker/u9:3/5854
+
+CPU: 1 UID: 0 PID: 5854 Comm: kworker/u9:3 Not tainted 6.12.0-syzkaller-05480-gfcc79e1714e8 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: hci2 hci_conn_timeout
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ l2cap_disconn_ind+0x79/0xc0 net/bluetooth/l2cap_core.c:7289
+ hci_proto_disconn_ind include/net/bluetooth/hci_core.h:2011 [inline]
+ hci_conn_timeout+0xd9/0x290 net/bluetooth/hci_conn.c:579
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+Allocated by task 9901:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:257 [inline]
+ __kmalloc_cache_noprof+0x19c/0x2c0 mm/slub.c:4295
+ kmalloc_noprof include/linux/slab.h:879 [inline]
+ kzalloc_noprof include/linux/slab.h:1015 [inline]
+ l2cap_conn_add+0xa9/0x8e0 net/bluetooth/l2cap_core.c:6860
+ l2cap_chan_connect+0x623/0xeb0 net/bluetooth/l2cap_core.c:7051
+ bt_6lowpan_connect net/bluetooth/6lowpan.c:894 [inline]
+ lowpan_control_write+0x568/0x850 net/bluetooth/6lowpan.c:1129
+ full_proxy_write+0x111/0x1b0 fs/debugfs/file.c:356
+ vfs_write+0x2a3/0xd30 fs/read_write.c:677
+ ksys_write+0x18f/0x2b0 fs/read_write.c:731
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 9032:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:230 [inline]
+ slab_free_hook mm/slub.c:2342 [inline]
+ slab_free mm/slub.c:4579 [inline]
+ kfree+0x1a0/0x440 mm/slub.c:4727
+ hci_disconn_cfm include/net/bluetooth/hci_core.h:2050 [inline]
+ hci_conn_hash_flush+0xff/0x240 net/bluetooth/hci_conn.c:2698
+ hci_dev_close_sync+0xa42/0x11c0 net/bluetooth/hci_sync.c:5212
+ hci_dev_do_close net/bluetooth/hci_core.c:483 [inline]
+ hci_unregister_dev+0x20b/0x510 net/bluetooth/hci_core.c:2698
+ vhci_release+0x80/0xd0 drivers/bluetooth/hci_vhci.c:664
+ __fput+0x23c/0xa50 fs/file_table.c:450
+ task_work_run+0x24f/0x310 kernel/task_work.c:239
+ exit_task_work include/linux/task_work.h:43 [inline]
+ do_exit+0xa2f/0x28e0 kernel/exit.c:938
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1087
+ __do_sys_exit_group kernel/exit.c:1098 [inline]
+ __se_sys_exit_group kernel/exit.c:1096 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1096
+ x64_sys_call+0x26a8/0x26b0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88804b259800
+ which belongs to the cache kmalloc-1k of size 1024
+The buggy address is located 688 bytes inside of
+ freed 1024-byte region [ffff88804b259800, ffff88804b259c00)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x4b258
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+ksm flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801ac41dc0 ffffea000089c000 dead000000000003
+raw: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
+head: 00fff00000000040 ffff88801ac41dc0 ffffea000089c000 dead000000000003
+head: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
+head: 00fff00000000003 ffffea00012c9601 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xf2820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_MEMALLOC), pid 7745, tgid 7745 (kworker/u8:13), ts 138751649852, free_ts 138600893157
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
+ prep_new_page mm/page_alloc.c:1564 [inline]
+ get_page_from_freelist+0x3649/0x3790 mm/page_alloc.c:3474
+ __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4751
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ alloc_slab_page+0x6a/0x140 mm/slub.c:2412
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2578
+ new_slab mm/slub.c:2631 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3818
+ __slab_alloc+0x58/0xa0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ __do_kmalloc_node mm/slub.c:4263 [inline]
+ __kmalloc_node_track_caller_noprof+0x281/0x440 mm/slub.c:4283
+ kmalloc_reserve+0x111/0x2a0 net/core/skbuff.c:609
+ __alloc_skb+0x1f3/0x440 net/core/skbuff.c:678
+ __netdev_alloc_skb+0x103/0xa00 net/core/skbuff.c:742
+ __netdev_alloc_skb_ip_align include/linux/skbuff.h:3422 [inline]
+ netdev_alloc_skb_ip_align include/linux/skbuff.h:3432 [inline]
+ batadv_iv_ogm_aggregate_new net/batman-adv/bat_iv_ogm.c:558 [inline]
+ batadv_iv_ogm_queue_add+0x6bc/0xc10 net/batman-adv/bat_iv_ogm.c:670
+ batadv_iv_ogm_schedule_buff net/batman-adv/bat_iv_ogm.c:849 [inline]
+ batadv_iv_ogm_schedule+0xc53/0x10a0 net/batman-adv/bat_iv_ogm.c:868
+ batadv_iv_send_outstanding_bat_ogm_packet+0x6fe/0x810 net/batman-adv/bat_iv_ogm.c:1712
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+page last free pid 9133 tgid 9133 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1127 [inline]
+ free_unref_page+0xdf9/0x1140 mm/page_alloc.c:2657
+ discard_slab mm/slub.c:2677 [inline]
+ __put_partials+0xeb/0x130 mm/slub.c:3145
+ put_cpu_partial+0x17c/0x250 mm/slub.c:3220
+ __slab_free+0x2ea/0x3d0 mm/slub.c:4449
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:247 [inline]
+ slab_post_alloc_hook mm/slub.c:4085 [inline]
+ slab_alloc_node mm/slub.c:4134 [inline]
+ kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
+ getname_flags+0xb7/0x540 fs/namei.c:139
+ do_sys_openat2+0xd2/0x1d0 fs/open.c:1392
+ do_sys_open fs/open.c:1413 [inline]
+ __do_sys_openat fs/open.c:1429 [inline]
+ __se_sys_openat fs/open.c:1424 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1424
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff88804b259980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88804b259a00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff88804b259a80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                     ^
+ ffff88804b259b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88804b259b80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
