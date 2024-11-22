@@ -1,147 +1,92 @@
-Return-Path: <linux-kernel+bounces-418101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4047C9D5D36
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:23:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F8439D5D2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:22:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D412CB21D40
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:23:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 569EA1F234C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8009C1DED6D;
-	Fri, 22 Nov 2024 10:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2762D1DDA34;
+	Fri, 22 Nov 2024 10:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="XAsBPS+0"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=skogtun.org header.i=@skogtun.org header.b="PtOfpKoO"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B66B1DE4E6;
-	Fri, 22 Nov 2024 10:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755B7171088
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 10:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732270933; cv=none; b=HmKtl6xun75JVJT4ydDh8oC1OhSXMkzLb4X2eDHQdwlTIZs4zgWp3Zjugu9gjzxVTojQl1rjkjuV/AiKh1m1R9zDqgCctFsLSX4f5Bfv973PEgwLmXOJJu2X279zeFpw6spLgdDL23xetjxdpBU+s4kJ3aQB2h3ywKLkL9WXx0o=
+	t=1732270929; cv=none; b=dAbg7QAo2dNU4G0YkgYZhWbFG/0cDCIzhiYptyqO0L1WwPHhndV3Bj4ZLOQhB19GgN0UGws7JGweIVFYwi4nKcJUNdOMPZzCqrd4hdakt/tgqjJOfVrRGvPaCI/IpBbGlxDFgzrRM85cTZECVYC2exvUnA1LoG1xpylbsXGf1UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732270933; c=relaxed/simple;
-	bh=C+YRHsOFK1u/oM6alxv8SMlBUc3rKX/6KNGEi7ylCKU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JGWlX4w3AK9wwSskKF95WebpDJ7wntaSLHmtBynkrdmJn7dp0BZIVpO+OJSE09V+rPluiFLCtHJrkaufGivpg1VrrBUlp6Mq0ctwbb1FTGk8mRF9/auu0MXx4bAOSN9bwI6XWzfSdSMIfCv2R+sG33N6y5tkYvIGaX5wf5BLup0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=XAsBPS+0; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1732270932; x=1763806932;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=C+YRHsOFK1u/oM6alxv8SMlBUc3rKX/6KNGEi7ylCKU=;
-  b=XAsBPS+0Te4Sqcw+LiWZlf61EgSqOpVNUo9O7JUcUMSmMC/D8O4x24z3
-   lwUuKR8mIhYFZizmvSOeKkexVOuuCirbecO00azJd2mwCuF89DSC4kKE5
-   2H1XJ10Rba7rKrQ96ouAN1YcdMJbVta1s08GXkb3RzpzcwjixDly/2Kx3
-   SHMNOW9UV3pvkJgnhxYHCYrxdWPB6/s5iC+dMgxZJNGRlkLm3yv18fBRT
-   o+eAqVfVF3DV33a1ZEg9pfo67iWvQdUDaWLOlGrDUwz5hlh/lH9h423Tz
-   YPLaPoEF73RSpBLeXqNcFJvsu+LamrwGaui4Qjw++y15IDFWvsipwX+Yk
-   Q==;
-X-CSE-ConnectionGUID: MRSRvnTqSAqJLUuhxew2Xw==
-X-CSE-MsgGUID: aygkIvAuRYqzHSOhFR2QSw==
-X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
-   d="scan'208";a="38251716"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Nov 2024 03:22:04 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 22 Nov 2024 03:21:50 -0700
-Received: from che-ll-i17164.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Fri, 22 Nov 2024 03:21:47 -0700
-From: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
-To: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>
-CC: <parthiban.veerasooran@microchip.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <UNGLinuxDriver@microchip.com>,
-	<jacob.e.keller@intel.com>
-Subject: [PATCH net v2 2/2] net: ethernet: oa_tc6: fix tx skb race condition between reference pointers
-Date: Fri, 22 Nov 2024 15:51:35 +0530
-Message-ID: <20241122102135.428272-3-parthiban.veerasooran@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241122102135.428272-1-parthiban.veerasooran@microchip.com>
-References: <20241122102135.428272-1-parthiban.veerasooran@microchip.com>
+	s=arc-20240116; t=1732270929; c=relaxed/simple;
+	bh=MG985j4h4TEB6vNdUcMB+J3tnWRBV2SkyDurD5EmC/E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k0k/inD1mG4ohuyC59TswCQ1+IhGnlsVy9LUmkosrwQItNAMh+1FdIMDb+v2Z3RUn2n0IB1LDgqYxiQOb0NqPCtiNLpTfiKsPURz5Q+wTUncJojWsADtzAGa2PG+MGrkM8vVIgCqnZgIz5gF+Ch+UgZYeSZ8TgwYQ2j1seBl8O8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=skogtun.org; spf=pass smtp.mailfrom=skogtun.org; dkim=pass (2048-bit key) header.d=skogtun.org header.i=@skogtun.org header.b=PtOfpKoO; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=skogtun.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=skogtun.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=skogtun.org
+	; s=ds202312; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:Sender:Reply-To:
+	Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+	References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+	List-Owner:List-Archive; bh=DEUzKWA6bADg0shRJcmS98hGe9HXD+YooKoL3Sweb+g=; b=P
+	tOfpKoOpK8UdKCWyZMjhBKw8kBRL61Hex82xixPPpyn/fKSHmRqZ7w0sLXoxkn2TAwWwVsehTTquP
+	uBtj2Mqktug2xHM5dFPkWl6XuT2b09W+VECjoiR6XwJx2GcUurQgAS2IrcdUuRg7VVI5sJeYd98kp
+	2jG28uAfvof0pszkgVtpK3Sb09rxfQ04V5F/doIRO0+sYhR+QLHKhTs/N0fyxuTzycaKTVxYxdLYT
+	HGFiaQcuHcpeXN5fk+6eRwQwQ0SrWi0NR6fmgELDzhqg51wARiTJC/vDs3RXJT+9kcusO8DhHMyh4
+	y+pKnNYOXasyN+HhrAMmX2Nqg74ZQBpFQ==;
+Received: from smtp
+	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	id 1tEQnY-00ACLt-AE;
+	Fri, 22 Nov 2024 11:22:00 +0100
+Message-ID: <b439fc9a-e0e7-4643-88be-6ffb85fc0136@skogtun.org>
+Date: Fri, 22 Nov 2024 11:21:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] execve updates for v6.13-rc1
+To: =?UTF-8?Q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+ "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-kernel@vger.kernel.org
+References: <202411190900.FE40FA5@keescook>
+ <CAHk-=wgB1L75+C89AU62n4jBEiwKs=e4dvBDOoLQ13rUwJLFXQ@mail.gmail.com>
+ <87jzcxv227.fsf@email.froward.int.ebiederm.org>
+ <CAHk-=wifNC+AAGVDN-B1gGNhKGqhnkoqWKCknAo6107oD0zGWA@mail.gmail.com>
+ <Zz9sTFBQQSe1P8AI@kawka3.in.waw.pl>
+ <87zflrsw1c.fsf@email.froward.int.ebiederm.org>
+ <Z0A3EkxZZg19Dp9Q@kawka3.in.waw.pl>
+Content-Language: en-US
+From: Harald Arnesen <linux@skogtun.org>
+In-Reply-To: <Z0A3EkxZZg19Dp9Q@kawka3.in.waw.pl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-There are two skb pointers to manage tx skb's enqueued from n/w stack.
-waiting_tx_skb pointer points to the tx skb which needs to be processed
-and ongoing_tx_skb pointer points to the tx skb which is being processed.
+Zbigniew Jędrzejewski-Szmek [2024-11-22 08:47:30]:
 
-SPI thread prepares the tx data chunks from the tx skb pointed by the
-ongoing_tx_skb pointer. When the tx skb pointed by the ongoing_tx_skb is
-processed, the tx skb pointed by the waiting_tx_skb is assigned to
-ongoing_tx_skb and the waiting_tx_skb pointer is assigned with NULL.
-Whenever there is a new tx skb from n/w stack, it will be assigned to
-waiting_tx_skb pointer if it is NULL. Enqueuing and processing of a tx skb
-handled in two different threads.
+>> I do not see any evidence that there are daemons started by systemd
+>> where systemd follows the name in /etc/alternatives on debian, or winds
+>> up following a symlink on a multicall binary.  The way I understand
+>> /etc/alternatives I don't think you would ever want to use it for the
+>> name of a daemon that is put in a unit file.
 
-Consider a scenario where the SPI thread processed an ongoing_tx_skb and
-it moves next tx skb from waiting_tx_skb pointer to ongoing_tx_skb pointer
-without doing any NULL check. At this time, if the waiting_tx_skb pointer
-is NULL then ongoing_tx_skb pointer is also assigned with NULL. After
-that, if a new tx skb is assigned to waiting_tx_skb pointer by the n/w
-stack and there is a chance to overwrite the tx skb pointer with NULL in
-the SPI thread. Finally one of the tx skb will be left as unhandled,
-resulting packet missing and memory leak.
+> systemd-udevd is one example that ~everybody has installed.
+> (Though it doesn't use comm, it uses argv[0] to decide behaviour.)
 
-To overcome the above issue, protect the moving of tx skb reference from
-waiting_tx_skb pointer to ongoing_tx_skb pointer so that the other thread
-can't access the waiting_tx_skb pointer until the current thread completes
-moving the tx skb reference safely.
-
-Fixes: 53fbde8ab21e ("net: ethernet: oa_tc6: implement transmit path to transfer tx ethernet frames")
-Signed-off-by: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
----
- drivers/net/ethernet/oa_tc6.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/net/ethernet/oa_tc6.c b/drivers/net/ethernet/oa_tc6.c
-index 4c8b0ca922b7..2ddb1faafe55 100644
---- a/drivers/net/ethernet/oa_tc6.c
-+++ b/drivers/net/ethernet/oa_tc6.c
-@@ -113,6 +113,7 @@ struct oa_tc6 {
- 	struct mii_bus *mdiobus;
- 	struct spi_device *spi;
- 	struct mutex spi_ctrl_lock; /* Protects spi control transfer */
-+	struct mutex tx_skb_lock; /* Protects tx skb handling */
- 	void *spi_ctrl_tx_buf;
- 	void *spi_ctrl_rx_buf;
- 	void *spi_data_tx_buf;
-@@ -1004,8 +1005,10 @@ static u16 oa_tc6_prepare_spi_tx_buf_for_tx_skbs(struct oa_tc6 *tc6)
- 	for (used_tx_credits = 0; used_tx_credits < tc6->tx_credits;
- 	     used_tx_credits++) {
- 		if (!tc6->ongoing_tx_skb) {
-+			mutex_lock(&tc6->tx_skb_lock);
- 			tc6->ongoing_tx_skb = tc6->waiting_tx_skb;
- 			tc6->waiting_tx_skb = NULL;
-+			mutex_unlock(&tc6->tx_skb_lock);
- 		}
- 		if (!tc6->ongoing_tx_skb)
- 			break;
-@@ -1240,6 +1243,7 @@ struct oa_tc6 *oa_tc6_init(struct spi_device *spi, struct net_device *netdev)
- 	tc6->netdev = netdev;
- 	SET_NETDEV_DEV(netdev, &spi->dev);
- 	mutex_init(&tc6->spi_ctrl_lock);
-+	mutex_init(&tc6->tx_skb_lock);
- 
- 	/* Set the SPI controller to pump at realtime priority */
- 	tc6->spi->rt = true;
+There are quite a few of us who do NOT have systemd-udevd (or anything 
+systemd) installed.
 -- 
-2.34.1
-
+Hilsen Harald
 
