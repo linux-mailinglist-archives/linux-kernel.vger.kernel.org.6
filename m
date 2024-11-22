@@ -1,239 +1,129 @@
-Return-Path: <linux-kernel+bounces-417922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1A239D5AC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:12:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5531E9D5ACE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:13:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 308F7B2386A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:12:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD099B218C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A84118A95F;
-	Fri, 22 Nov 2024 08:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bw21WrI0"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97ED18BBAB;
+	Fri, 22 Nov 2024 08:13:14 +0000 (UTC)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E623822075;
-	Fri, 22 Nov 2024 08:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A3018B473;
+	Fri, 22 Nov 2024 08:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732263124; cv=none; b=fwxost7CFCkk2ePBszawGvNdc+J5U0M+dBy3WPhlmmM30uosqr2yKnAvzIYBIRsIO9GH1nMjPngeJN1X19GXYFcDjEQNmoxoRF32qHm8bt3pbv8KoNJLiPeMcXuEr3gLp+/35Ae5t7FsaztEB54n0UkgtSXJdSmT8NZcz9AIYvg=
+	t=1732263194; cv=none; b=aySB6VEwcLEqWhSuTzKlvGvuC/32YjTesThlLawREm5KoJzkIh1AwC4EHG6iG6oieNDijYuD5JDIASBWmptGFCcP6GqmwvsovHvbA1fsQT0nLPYzasJ7b5r3V7MoXXzrhKLfrw/T8Li7bbFLUsqu5b3aoZr5cRVoopeArNX/vls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732263124; c=relaxed/simple;
-	bh=vfa73H59aXhR7J0Cv4I/H0vg//RnzL84g9+gABL6x10=;
+	s=arc-20240116; t=1732263194; c=relaxed/simple;
+	bh=LbOLFojxcfyzAklUw5cwO4zjy2rTwk4KEoNqXm6dc4s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VjO+/gde0yRgk5J0aUaiKsWwlH44rsw5b9nRL21NK/p33c9an/xSRDCBE/Mu1ZPSN91hmg2h5/SlkLOGmF4j/KPstg2tTzCUb0HmbEczELwhnXGvKMMNwz+xDzzKs7M6NTLGUpOYb7eIgVnS8WKC4wBzxuQ+/I4f4JIasWFCva8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bw21WrI0; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 To:Cc:Content-Type; b=UIApu7uUnNCOlN1ipKP01NfWt1xkqB3wVLL+fDi1J8e0N42Y0hEqRSsqOxSUeo6XoRgRx9ppDOt0kwS76JVy1xNcN/vrVyvdFyq08j1UDsShb2+D4SIMP/2Ud09kHM2ClWylWVkh6iZ3FpKtJeYtaZEGze87mWSMfDLxXqhURaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6ee7b886b5fso18413347b3.3;
-        Fri, 22 Nov 2024 00:12:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732263122; x=1732867922; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xBVVfxBZW2KFqRVvhdXWhW+v4WR7l4QlIwMPMmDHj5U=;
-        b=Bw21WrI0i24iZi/fSUe98oPj7BCAbL0gup0uqRjTO907lmxf0HPTv7a6r+i2kL0rDG
-         qD00C4U1svCzsPWKHL4/BBF8+mzssy/rNYhg5J9nb5YqpkAYl868mhGUyWJjve9bxwoC
-         83QG701GoBdLKEv0FSBSV8gmdGxheX1sl9fKeKMhlvLlXE/VdFA5+UU/gVYwdOMPKda4
-         1NicrZvTgMNhUhwC3p3uim+rijYVrl3s46ZqnFXdiDonEYB/TiH/w3nwLzwZdB0Tag0w
-         MwhkXW61rlp1jW6/cRUpVLdU3YCvps7dm2Ftm8rH0hOesKu+bBp8QgT6Pv2uGspLR8CI
-         IgNg==
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e34339d41bso16144597b3.0;
+        Fri, 22 Nov 2024 00:13:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732263122; x=1732867922;
+        d=1e100.net; s=20230601; t=1732263190; x=1732867990;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xBVVfxBZW2KFqRVvhdXWhW+v4WR7l4QlIwMPMmDHj5U=;
-        b=T3ew7zzvp4eKWU1uwfEgPkti2Btxn6ZExK8LnpN4nmDII4p6WqOQQm1LWBd+ph4F+R
-         p5/T7qJ6PVWpn9eYTB6cUmcNO8MEpFbQI0vJgEADW9pCZJKWL8UmVbMzliv/VyjscYgN
-         d6tdEqRxVlaB0eS76pTZuJfsIPI01x8I6Ks+Nnhr9G+uu0vTUrc/Sq3OfMTXjToI0GbJ
-         Q02X4YRyPc59ujdTwzoF/9Rra4kZPj3dHzwk8k5MyUv4yb1744biGnRkNlIK9/CTEZAL
-         Xp8d5emakCpEuDM7wL+HVYppQUIKCV3XMnCD/IzyxoPP0vXo9pWUU9JgahWY6K4M8KXZ
-         ucHA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1/nZrJjzneiQp8j+EwLzsxiq3lebEYfys7Jmk7MDz9vC/5+t/H9E7kpZ5dJIxo8uo91A5C2l3VerU@vger.kernel.org, AJvYcCU9fXGfTTGwtP+nL9GNjo1xX/FGrWf4RHrg8cg0DSHkpZed7jmsFa2zHNK5AU7KO2SKU1pUYFOkr3nVq1Bo@vger.kernel.org, AJvYcCUbGF3AeF4hNw6QwIa7Oa1PBKWwBo4n6ehIXQo7cOtZQU8V202ObXaOQ7s3B74JsJ2GUVnMwWiD@vger.kernel.org, AJvYcCUxI1CzXuxD//Gc7BMKN9oNPBXD72IABeRbf7n0MFTQ0JMSr8ZaFwh3NjMf/+vDlSKhDO/r4bJewQ4siw==@vger.kernel.org, AJvYcCVxYRO77xrX9fjFgP9tyJrV/kk811YXdhyn3AeAi2q6aXFuIE9iLHMMTUGWN+QE2amVjFALiLXElEZU@vger.kernel.org, AJvYcCW5eU4dwLo74n1lDGdxkJooS99q4Jo4elT25nC2hJ3hT9+TQMp1iz0RViP3Aw4pQ1r5VAN7GL4Tu2HxlqM=@vger.kernel.org, AJvYcCXdDsT5T4lekrQ18yTB7oq+ftCI7ZvQ/t3FfIaXTCdrCNLZg8Tu/pl47MXjRSKz4MTQ0fCa8GZbgUo=@vger.kernel.org, AJvYcCXokhqSfl446yC5RMoZa28aAR2OPoSKNb9vJR7tk60Q3CnVYVj1Efs/QRBP5J7mWuHPfxQDxMpsjGwv+fg1cC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ6XZ1bQdCxM5/smmLR+ZaJmEn9yA/o9ToOOQtTF+7hu5XF599
-	OPfz/7MnNxiYZJGwlwuOPJaayMUNrM2vYtKZ42p1YPSXsxv74ft2u/wqORUPihMxS9Ka3r4gvC+
-	opvhSMqs61qkHLEJXfAOOFTb4wrU=
-X-Gm-Gg: ASbGncuV3jmeFHdQmoQtUNcuStc0253+HDsWJwKBOOFYtWmXXCSOVuKinUiWCV6mJ3m
-	EUfs0vCbpxkOZ2ZiqfR684qfj9rrGsmQ=
-X-Google-Smtp-Source: AGHT+IGmgdSbiik8QuTUl0/67zUkXwlQddlW2hCReHsnX53P5ohf/5TneLt36igaRho14/sg+tTkQNogVtwDsPUozas=
-X-Received: by 2002:a05:6902:1245:b0:e38:f293:5b63 with SMTP id
- 3f1490d57ef6-e38f8bd97d6mr2235315276.33.1732263121799; Fri, 22 Nov 2024
- 00:12:01 -0800 (PST)
+        bh=mO9rZ5AY2OuRFdM9V5RIN4QlTmf1cSQXYB3CfBzBqgk=;
+        b=Cexi3roxMzzuQ/lwzo8SPV2VTg8OkD90ovXicWgPdOia9fsSpIJMxNDVHnulQ2hv6Z
+         i3gVWLB0xDEUOUvXyJddSPLwqLkRh5sFNosZKIwD4Ea3QDh0O/0ibdCM9bBwGs1S88sp
+         JWoFYVJyCw8D7OAILhQJxbD5x3U3Tbbk5UMaVaoXsX/gIwkm1/YziXBvbOIKxIlcLTfj
+         81t+CXa8cFdC84YAqs7oA7ek18YEsItz5utfIzqusPSzuClVmEWbotgbVxw2K3YSn8JY
+         XNSfZaJeR+1Z6ak7YG6EQ9O9tz1l50lC9jn9bJSA8ZNS1m+cNae6SIJnsAKCRUMStGdv
+         2f9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVm7KbZjggnNONHnIw7nlNC739TNIebxOPJchW2B7rI/ZgmPaiErC4Movswwgtee5aaSIu3Evu+d+v71g==@vger.kernel.org, AJvYcCXEMZ/bbO79PVrk2rWpVsEDMxRxI20hB8Ki0fdYaZXsz+x1i0AwpTSoKYBMMw9ZEyJZNUsSem+f6g==@vger.kernel.org, AJvYcCXQvFkI5hXEVuC2ykVE8zKkq1nCt1v8LeKwP2voeMDXvWdk1kjMIk5XquiK4tHZN8UiNEvsVuI2wPEelbzS@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQpVxDhXEBtDSTj863wn1cNS2mzwtjaIitfsz5yFIC0P6/y4r9
+	bRVRvomK5Dlm7Ac710oUxCO/SpM4uh4+GKLl0g/TxwDBKr4iintdiDqvAipa
+X-Gm-Gg: ASbGncsBgXcLI0rCk0yxdpOELM0aYopvvwii0v2ml2sCZlIFMpeTpKVeeKZ27Eh96Xz
+	HxZIQQq0Xr/Bu0ushFbid8TaX0YkwH7y2ZrI5QZmRORrBAs8LpiX4ZbfrxKYlK/g9KLwfP4csit
+	bYxadc8nZtze0q88YGwpEKJC1hX9ZA4ABxz2uhJSVFluRvvRWzJAOyAMCGKQRime6cqK3RBhLmx
+	p4h/AMwE03YIWNhfXbHs3yqmMAbuvIsZ6bZuaveEz6yBR5dD/OcO2HjCHBEd1GqQBB5kiWxp0ep
+	sCh7RSYt7YoXCiig
+X-Google-Smtp-Source: AGHT+IHvQV63gqcznecAKYSKlUuABKms1H72zXxSw2m7wHNvLxXzNNUXOP9hVkl8iTLIxyYaXAIMmA==
+X-Received: by 2002:a05:690c:690b:b0:6dd:bba1:b86d with SMTP id 00721157ae682-6eee089ef75mr26851067b3.10.1732263190596;
+        Fri, 22 Nov 2024 00:13:10 -0800 (PST)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eedfe4664csm3510037b3.55.2024.11.22.00.13.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Nov 2024 00:13:08 -0800 (PST)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6ea0b25695dso15951407b3.2;
+        Fri, 22 Nov 2024 00:13:08 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWSautDizF2dkcq5dksg9FqoB0QG+UeWhuDvOkolZG9nCTrEG3/WpcCfBNPhkVEb6p8fMgfxe2ETA==@vger.kernel.org, AJvYcCWkLJtnBHUoF3V8ea9YnUsOrfS5rU0mWsN/F0A6yS6HwmsbcyHH8gBjhRS0lzoTEpfoG3C0G7f1180D9Q==@vger.kernel.org, AJvYcCWpsH/h+Ahv01zLJHUc3GnDyKwL8YIDQSZhHJvWtf2SmEKZe41VX8DpsZ3GjqffBPi3zmDmyWf9sA1VgMJF@vger.kernel.org
+X-Received: by 2002:a0d:c2c1:0:b0:6ee:9052:8e18 with SMTP id
+ 00721157ae682-6eee087b79amr17900327b3.6.1732263187815; Fri, 22 Nov 2024
+ 00:13:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121064046.3724726-1-tmyu0@nuvoton.com> <20241121064046.3724726-6-tmyu0@nuvoton.com>
- <2d21093f-7efd-4356-a1f5-2ae3af4a0da3@roeck-us.net>
-In-Reply-To: <2d21093f-7efd-4356-a1f5-2ae3af4a0da3@roeck-us.net>
-From: Ming Yu <a0282524688@gmail.com>
-Date: Fri, 22 Nov 2024 16:11:50 +0800
-Message-ID: <CAOoeyxUMGhvNukqc0ufT1UrCi4WK60cNaOpyx1ngqOxm5OsT4Q@mail.gmail.com>
-Subject: Re: [PATCH v2 5/7] watchdog: Add Nuvoton NCT6694 WDT support
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, 
-	andi.shyti@kernel.org, mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org, jdelvare@suse.com, 
-	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-rtc@vger.kernel.org
+References: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
+ <4f70f8d3-4ba5-43dc-af1c-f8e207d27e9f@suse.cz> <2e704ffc-2e79-27f7-159e-8fe167d5a450@gentwo.org>
+ <CAMuHMdWQisrjqaPPd0xLgtSAxRwnxCPdsqnWSncMiPYLnre2MA@mail.gmail.com>
+ <693a6243-b2bd-7f2b-2b69-c7e2308d0f58@gentwo.org> <f602e322-af21-4bb3-86d4-52795a581354@roeck-us.net>
+ <858dbafa-6320-4603-82b9-38f586f18249@kernel.org>
+In-Reply-To: <858dbafa-6320-4603-82b9-38f586f18249@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 22 Nov 2024 09:12:55 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdX-wGB6QvYpUb+Qur85pnScyxo_aaQFxe6BSOEg+Eeogg@mail.gmail.com>
+Message-ID: <CAMuHMdX-wGB6QvYpUb+Qur85pnScyxo_aaQFxe6BSOEg+Eeogg@mail.gmail.com>
+Subject: Re: [PATCH] slab: Fix too strict alignment check in create_cache()
+To: Greg Ungerer <gerg@kernel.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, "Christoph Lameter (Ampere)" <cl@gentwo.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, 
+	Mike Rapoport <rppt@kernel.org>, Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Jann Horn <jannh@google.com>, linux-mm@kvack.org, io-uring@vger.kernel.org, 
+	linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Dear Guenter,
-
-Thank you for your comments,
-
-Guenter Roeck <linux@roeck-us.net> =E6=96=BC 2024=E5=B9=B411=E6=9C=8821=E6=
-=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=8810:15=E5=AF=AB=E9=81=93=EF=BC=
-=9A
-> > +config NCT6694_WATCHDOG
-> > +     tristate "Nuvoton NCT6694 watchdog support"
-> > +     depends on MFD_NCT6694
-> > +     select WATCHDOG_CORE
-> > +     help
-> > +       If you say yes to this option, support will be included for Nuv=
-oton
-> > +       NCT6694, a USB device to watchdog timer.
-> > +
+On Fri, Nov 22, 2024 at 1:23=E2=80=AFAM Greg Ungerer <gerg@kernel.org> wrot=
+e:
+> On 22/11/24 04:30, Guenter Roeck wrote:
+> > Do we really need to continue supporting nommu machines ? Is anyone
+> > but me even boot testing those ?
 >
-> It is a peripheral expander, not a "USB device to watchdog timer". Watchd=
-og is only
-> a small part of its functionality.
+> Yes. Across many architectures. And yes on every release, and for m68k bu=
+ilding
+> and testing on every rc for nommu at a minimum.
 >
+> I rarely hit build or testing problems on nonmmu targets. At least every =
+kernel
+> release I build and test armnommu (including thumb2 on cortex), m68k, RIS=
+C-V and
+> xtensa. They are all easy, qemu targets for them all. Thats just me. So I=
+ would
+> guess there are others building and testing too.
 
-Understood. I will make the modifications in v3.
+FTR, I do regular boot tests on K210 (SiPEED MAiX BiT RISC-V nommu).
+Getting harder, as 8 MiB of RAM is not much...
 
-> > +       This driver can also be built as a module. If so, the module wi=
-ll
-> > +       be called nct6694_wdt.
-...
-> > +     ret =3D nct6694_wdt_setting(wdev, wdev->timeout, NCT6694_ACTION_G=
-PO,
-> > +                               wdev->pretimeout, NCT6694_ACTION_GPO);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     dev_info(data->dev, "Setting WDT(%d): timeout =3D %d, pretimeout =
-=3D %d\n",
-> > +              data->wdev_idx, wdev->timeout, wdev->pretimeout);
-> > +
->
-> This is logging noise. Drop or set as debug message.
->
+Gr{oetje,eeting}s,
 
-Okay, I'll drop it in v3.
+                        Geert
 
-> > +     return ret;
-> > +}
-...
-> > +static int nct6694_wdt_set_timeout(struct watchdog_device *wdev,
-> > +                                unsigned int timeout)
-> > +{
-> > +     struct nct6694_wdt_data *data =3D watchdog_get_drvdata(wdev);
-> > +     int ret;
-> > +
-> > +     if (timeout < wdev->pretimeout) {
-> > +             dev_warn(data->dev, "pretimeout < timeout. Setting to zer=
-o\n");
-> > +             wdev->pretimeout =3D 0;
-> > +     }
-> > +
-> This is only necessary if the pretimeout was not validated during probe
-> since otherwise the watchdog core does the check. Please validate it ther=
-e.
->
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Understood. I will make the modifications in v3.
-
-> > +     ret =3D nct6694_wdt_setting(wdev, timeout, NCT6694_ACTION_GPO,
-> > +                               wdev->pretimeout, NCT6694_ACTION_GPO);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     wdev->timeout =3D timeout;
-> > +
-> > +     return ret;
->
-> ret =3D=3D 0 here, so return 0.
->
-
-Okay, fix it in v3.
-
-> > +}
-> > +
-> > +static int nct6694_wdt_set_pretimeout(struct watchdog_device *wdev,
-> > +                                   unsigned int pretimeout)
-> > +{
-> > +     int ret;
-> > +
-> > +     ret =3D nct6694_wdt_setting(wdev, wdev->timeout, NCT6694_ACTION_G=
-PO,
-> > +                               pretimeout, NCT6694_ACTION_GPO);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     wdev->pretimeout =3D pretimeout;
-> > +
-> > +     return ret;
->
-> ret =3D=3D 0 here, so return 0.
->
-
-Okay, fix it in v3.
-
-> > +}
-> > +
-> > +static unsigned int nct6694_wdt_get_time(struct watchdog_device *wdev)
-> > +{
-> > +     struct nct6694_wdt_data *data =3D watchdog_get_drvdata(wdev);
-> > +     struct nct6694_wdt_cmd0 *buf =3D (struct nct6694_wdt_cmd0 *)data-=
->xmit_buf;
-> > +     struct nct6694 *nct6694 =3D data->nct6694;
-> > +     unsigned int timeleft_ms;
-> > +     int ret;
-> > +
-> > +     guard(mutex)(&data->lock);
-> > +
-> > +     ret =3D nct6694_read_msg(nct6694, NCT6694_WDT_MOD,
-> > +                            NCT6694_WDT_CMD0_OFFSET(data->wdev_idx),
-> > +                            NCT6694_WDT_CMD0_LEN, buf);
-> > +     if (ret)
-> > +             return ret;
->
-> The function does not return an error code. Return 0 instead.
-
-Okay, fix it in v3.
-
-> > +
-> > +     timeleft_ms =3D le32_to_cpu(buf->countdown);
-> > +
-> > +     return timeleft_ms / 1000;
-> > +}
-...
-> > +     wdev =3D &data->wdev;
-> > +     wdev->info =3D &nct6694_wdt_info;
-> > +     wdev->ops =3D &nct6694_wdt_ops;
-> > +     wdev->timeout =3D timeout;
-> > +     wdev->pretimeout =3D pretimeout;
->
-> pretimeout should be validated here.
->
-
-Understood. I will make the modifications in v3.
-
-Best regards,
-Ming
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
