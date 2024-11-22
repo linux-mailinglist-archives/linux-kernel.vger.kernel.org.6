@@ -1,209 +1,272 @@
-Return-Path: <linux-kernel+bounces-418757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A4669D654D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:12:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCAB99D6550
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:15:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15602161936
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 21:12:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 056C1B231F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 21:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE8E1E009D;
-	Fri, 22 Nov 2024 21:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AAE418C009;
+	Fri, 22 Nov 2024 21:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M5BD0fz0"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kSE51Zl6"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961CE1DFE21;
-	Fri, 22 Nov 2024 21:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4344D18A6A0;
+	Fri, 22 Nov 2024 21:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732309913; cv=none; b=Boa4PKgPR60+RdQosrOV4X8wNdPByJHE+An2VUVmYQ2JFFCdacm3CJvfeCu6EiRuZgyzOlDlEcU6xjUBUvfzS16uZLzEayusEllNLVe1OFYKq6FtOyiEZyGwdM6p5J6VSZNgOsWin13YWWulAmMHSz1LeS14GRzINMhQG+7TMyk=
+	t=1732310120; cv=none; b=rhmoS5x7Cx+ICHCtQgAtZw6btiEmkwWms4HMwPFAF06Dyi1pv4Hi3KSumjNYzzYg++HfoahHlV6b6ONSpTPC0TApMcyYz19IDs6eUGqSrgvw5pUiHN8eZ1n4uPWgAr5pwODjk4bEHA2driW2odDqCUxqDuDMRT5rk9F+b4b2XXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732309913; c=relaxed/simple;
-	bh=U/ZT9qf7ZKkCSNGX+LQdpSzD1zHrMzhIdXfNFvInpZU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mvqc0oDR8FF2n8Q9Aycv2W1G+XSAsL3AGRmAVh3N7MStI9BMjW1w4RWZHctvUFq/JEmSJD0d2cbYf8FwdVOH51HVYa8K3/qddGpFMZepUkEZeqOxqpgE0EttrdCHOkJwikTFXWc4kO6CB58n8LxRY8v9Rr6LfNaC33kbD2++PEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M5BD0fz0; arc=none smtp.client-ip=209.85.221.48
+	s=arc-20240116; t=1732310120; c=relaxed/simple;
+	bh=4/YDe675pVnrrBlYEttfxz/L5BbHy6IRkdPgRnnpD6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CkFilwZaxj8m93Zb98+yWEVnhd8sQ4qejmRuisynI/KbDut0Q6ReKZ3moOw3KZhRW7QfCXxOSZZUpuLNqgnCzAb1uOQNqg18ss2DNI1a6xtFuRNZoaapbz2HiFjkh/GOAE/OIY8vYcxw2zuswTBI/Nsps+jMUbmWc1vc/17B9Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kSE51Zl6; arc=none smtp.client-ip=209.85.210.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-38246333e12so2355079f8f.1;
-        Fri, 22 Nov 2024 13:11:51 -0800 (PST)
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7246c8c9b1cso2124830b3a.3;
+        Fri, 22 Nov 2024 13:15:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732309910; x=1732914710; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TcgVp28W6926MpWbVahmMBx6XNYuxWBUeQ7ocOEgbMk=;
-        b=M5BD0fz0OooUux1s50QO5dblP5yZLeNX9a5+zrYWotyDvpKKNiQlniQdYbg2Ozg8Uv
-         l/YbcMUs/Mwu66hYHG42KNhXLYHJbFc5iBHaEiMl+7KeJyn3KHtrbWEWM8TntPw2dscX
-         SlUxntLNBPO5Le1bZyfeyLRzlJDo4UOx0VLDgU0ctZRVVo1lWKIZ4EkokijXJvDJen6G
-         /F6yzJc63WEtUB8oCOV1RZszYQ5NQj2iIu6jwv9i6/N/HZMv9Hq0IEUzF8WcD0bzxZtp
-         n+qsQr9QuNeOPEhOW+8BaabYKGZbACW3Ee/nHQEF14nVJmqRwTkfxIRR5kRlIF4aC0rF
-         kz3Q==
+        d=gmail.com; s=20230601; t=1732310117; x=1732914917; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jx2SCif3e101Gi5CwalnwFl0MPZKa7kOAbD7PkIQFes=;
+        b=kSE51Zl6tGf2t/+74o8Pcy112YkExhRviXY7hiU9hoJkTu1S0jfZJ5sFci8PvxDofQ
+         R5bEb54KRVbFzi0pxcdEUcLfjzGHgTrlmU+mspqEktLjU2843eRTofRVIynNTNWTaQWQ
+         UVZotO+AHQChNdhTAi7xzvU1mFUC9uavDafJ9xQi2Q6enNKeCpjd8NXXyvgHCSIJAk0h
+         ON2hCSd0+7/hNVJ1kJpKjmEhqL3RjqTTBjcug2GC0bp4ia2CQf1orAuYcG8ilPV7Kyrl
+         euTHNG8sZ+ne1x84SxITkiaJQLKfc0w8EszvbUEGgF2ztCNWC18trkSFXXFZup8f4jgG
+         93nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732309910; x=1732914710;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TcgVp28W6926MpWbVahmMBx6XNYuxWBUeQ7ocOEgbMk=;
-        b=eLcpRcsjLJa5SrRhL4fvPRXQ5DApJDXMnXVkbGv8NxKTSlyFukCweJ9qP4E/XqBnaa
-         5afUA+9B5r1Q2pJZDe/riY/O4y2ME75YPxUtZ3bagu+TB+Sr1eAC8KoGY9ptTTGi53L+
-         cDZ164tXt4yW7seILPy3TRFeWJNxCkmn+01xGa+66T8lnlKPC0okfNzpkXqP8GUSDg2Z
-         CaidehSCWyOxuSRE1XMZQROrgBzVaZkJ1yFn1TXaAbEsQvfJnW0qRv4AvPfN/qDW1p5s
-         JlUb+QG6H1X9MnOCrHkLTkjIz7GoV/5DbOReutWxw8qUNfODaRY3qAOduKe9BdeBUkqz
-         TT3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUlTiS1K4v85oMGN/co7vxizdYITAPZNI05w9k+IRw/9SbOL4k0ncXrPnWwzQ4mGwHt+u3RIu/Cfjx2wB1Ric0=@vger.kernel.org, AJvYcCW7VBDmOPcfZ8gnIBKdYLf05vUtgkPyoTKR/pMXbKhrPz4QC2uv6g3ArxA6cetLqugzZ3aWpbm51IDOuESC@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlB7kgkX8R+/aNWLK+6sStHcTpTWN1E8OoW4kG/NwOvX/PMVP1
-	QEhGSaT7GX2DwrWSY6v64gWlohsbUM2gFPW34Ba3G2EfPiOQP+I0
-X-Gm-Gg: ASbGnculE5vU38KuzawcK4Yk2KkcXqz8Oye80FfU35aE/neagqRuXWdxA2FwNofVOZG
-	jM0afBjKgUhGnXnUqZ0rFrx7+p0YKc2j1ulFTuK4w2EJtEXok1PCu/T86GPXtGg5AIYOD183r9A
-	ZsKURJljI4Q6Dtw742HUvmEbUODFQ6sludRIdHGqxpGL0810IR1XINraq5qNhibpjuYPc61w8QW
-	D0LDNRippKGh7LMVw6RjIqs3dDj6P3hPAb/lM13AUE8HOobqAaSC2nf5twnAYSSo5he13ltLhiI
-	VRw=
-X-Google-Smtp-Source: AGHT+IFSu94fAGe0a26RY9E0p3Dseadw4xr5xEPXQPPDLtYTllmCUrzyLNvFLTVBdweL0rlSUDFHig==
-X-Received: by 2002:a05:6000:154a:b0:382:3959:f429 with SMTP id ffacd0b85a97d-38260b3cebemr5197983f8f.5.1732309909675;
-        Fri, 22 Nov 2024 13:11:49 -0800 (PST)
-Received: from rex.hwlab.vusec.net (lab-4.lab.cs.vu.nl. [192.33.36.4])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d3a3d77sm1276636a12.7.2024.11.22.13.11.49
+        d=1e100.net; s=20230601; t=1732310117; x=1732914917;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jx2SCif3e101Gi5CwalnwFl0MPZKa7kOAbD7PkIQFes=;
+        b=c1QaKR425JqlmHWJhC1btfAs51ogWx57rznkNdRR1tVuOwfzpF7pKhwa7qALqHAzqw
+         LSwrpq1adxUn8xVcULN+Zj7PbO9UOUYFn1rT5IZdA7rHi8WzTe23uUDp9Iy9yrcdYrPR
+         W+G6PTN7L3vUIRrjtES38COvGpCfbXzHBoxj1lJEMQQdRRoxpuHczNqInU96i77/lglG
+         ZpqJkOPMb3sL6wfjzyIm0R6wvZwOZ0dtD5CQgxVmrKSOhH42+6g/TE7dHF5vV9p0Mwcv
+         nCn7GkzJWk1LXQUgOYc3zqaU2Fdby2druigDSYzAbWmiJ5WbuXn5zdgg9DgNKh7In0/M
+         cMgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV58j0629QYsynumHGsvfFAVEiYUpRM2kgv1x6f4hnZWd+foMJT7iZMth1eGQZ7QmMnegup/jtu/E5F@vger.kernel.org, AJvYcCVFAz7NEec662l3RHeE8GLOruRLqB2Nk6aGOV8Bizq29/L74q+Q/QdjxsjxvStfwooU60UMlVsBWSbI@vger.kernel.org, AJvYcCVNrdym3UeHM7M9Bm4YLWRtirCGg8YOO7Hin4rdrophu7kENgxtEb20JV4D3X77L81gwdjogcuYJUdeKoPP@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIo3IPskXu8Nywb2i4c/756KQhcylON+IIkJypWMmOMqL7q0w7
+	lsftm11qQbm+vaWF9pUJHf+KBDSg6utC38+zz7iP8bC/YBwToTqC
+X-Gm-Gg: ASbGncteCEjHafPZUpbCb2Xn1+EMafauHzZj6JFA4Ng2vrBjNa3HFYbH8xFI3bZFf2l
+	f+n9tX/WMeUS3ViPzaQkAvRMRm/PVtr17h4jh2rLPCQk/VIEA0B7h+2c9bxG6p5VrbAsjwqvVXC
+	YvPyYgJSGHGGsQclos7rbliShxno2h8VXRRCpcOZQZqBjbS6blrSjZ2uA+k/TGYG6YuKjZ9cgKq
+	ezvX970kRV9H4MYxpta3RH3xPi/QLXFTf95Ms7Mn/EZvKLQkshXTNFUCsvB
+X-Google-Smtp-Source: AGHT+IH7/jpBJ2OnVZ+XCy4Ja2Z9VdwiKqeRO4mlB65zIruYkBzxnBrS0QicPUPnrUa5VOlTC5QxYg==
+X-Received: by 2002:a17:902:f54a:b0:212:3f36:d992 with SMTP id d9443c01a7336-2129f611c49mr62202345ad.49.1732310117403;
+        Fri, 22 Nov 2024 13:15:17 -0800 (PST)
+Received: from localhost ([2804:30c:1618:9800:694b:286f:2b3a:5414])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129db8d478sm20764335ad.33.2024.11.22.13.15.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 13:11:49 -0800 (PST)
-From: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
-To: Keith Busch <kbusch@kernel.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Cc: Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
-	Raphael Isemann <teemperor@gmail.com>,
-	Cristiano Giuffrida <giuffrida@cs.vu.nl>,
-	Herbert Bos <h.j.bos@vu.nl>,
-	Greg KH <gregkh@linuxfoundation.org>
-Subject: [PATCH v3 0/3] dmapool: Mitigate dev-controllable mem. corruption
-Date: Fri, 22 Nov 2024 22:11:44 +0100
-Message-Id: <20241122211144.4186080-4-bjohannesmeyer@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241122211144.4186080-1-bjohannesmeyer@gmail.com>
-References: <20241122211144.4186080-1-bjohannesmeyer@gmail.com>
+        Fri, 22 Nov 2024 13:15:16 -0800 (PST)
+Date: Fri, 22 Nov 2024 18:15:39 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
+	Michael.Hennerich@analog.com, jic23@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: iio: adc: adi,ad4000: Add PulSAR
+Message-ID: <Z0D0e6mNKlVAXp0z@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1732020224.git.marcelo.schmitt@analog.com>
+ <dd7fd54585e1230d2da86b5e3d4ed770256b0af2.1732020224.git.marcelo.schmitt@analog.com>
+ <5kz6ghe56yiprlvhyduv7olcrajvejyvulcpjav6doiyvr6dcl@6qlt4nebp4gb>
+ <Z0CkOTGhGhfV18OG@debian-BULLSEYE-live-builder-AMD64>
+ <a311de1b-cd59-4f67-9bd1-61596a54c8cd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a311de1b-cd59-4f67-9bd1-61596a54c8cd@kernel.org>
 
-We discovered a security-related issue in the DMA pool allocator.
+On 11/22, Krzysztof Kozlowski wrote:
+> On 22/11/2024 16:33, Marcelo Schmitt wrote:
+> >>
+> >>> +      - items:
+> >>> +          - enum:
+> >>> +              - adi,ad7942
+> >>> +          - const: adi,ad7946
+> >>> +
+> >>> +      - const: adi,ad7983
+> >>> +      - items:
+> >>> +          - enum:
+> >>> +              - adi,ad7980
+> >>> +              - adi,ad7988-5
+> >>> +              - adi,ad7686
+> >>> +              - adi,ad7685
+> >>
+> >> Keep alphabetical order.
+> > 
+> > Do the fallbacks declared here have any impact on the match try order or on how
+> > the compatible list should be ordered?
+> 
+> I don't understand, we do not talk about fallbacks. I also do not
+> understand at all how this relates to my comment.
 
-V1 of our RFC was submitted to the Linux kernel security team. They
-recommended submitting it to the relevant subsystem maintainers and the
-hardening mailing list instead, as they did not consider this an explicit
-security issue. Their rationale was that Linux implicitly assumes hardware
-can be trusted.
+I was wondering if the arrangement in which compatible strings appear in dt doc
+could be used to suggest the sequence to add them to the compatible property of a
+device node in a dts. Apparently, the arrangement of compatible strings in dt doc
+has nothing to do with how they can appear in a dts file. Will sort them in
+alphabetical order.
 
-**Threat Model**: While Linux drivers typically trust their hardware, there
-may be specific drivers that do not operate under this assumption. Hence,
-this threat model assumes a malicious peripheral device capable of
-corrupting DMA data to exploit the kernel. In this scenario, the device
-manipulates kernel-initialized data (similar to the attack described in the
-Thunderclap paper [0]) to achieve arbitrary kernel memory corruption. 
+> 
+> > The only significant difference between each group of devices is the sample rate.
+> > A faster device can read at slower sample rates so if somebody knows to have
+> > a 16-bit pseudo-differential PulSAR but doesn't know about the exact model they
+> > could have a compatible like
+> >       compatible = "adi,ad7980", "adi,ad7988-5", "adi,ad7686", "adi,ad7685",
+> >                    "adi,ad7988-1", "adi,ad7983";
+> 
+> Can't you autodetect this?
 
-**DMA pool background**. A DMA pool aims to reduce the overhead of DMA
-allocations by creating a large DMA buffer --- the "pool" --- from which
-smaller buffers are allocated as needed. Fundamentally, a DMA pool
-functions like a heap: it is a structure composed of linked memory
-"blocks", which, in this context, are DMA buffers. When a driver employs a
-DMA pool, it grants the device access not only to these blocks but also to
-the pointers linking them.
+There is no way of detecting the maximum sample rate other than the compatible
+string or, maybe, running a data capture.
 
-**Vulnerability**. Similar to traditional heap corruption vulnerabilities
---- where a malicious program corrupts heap metadata to e.g., hijack
-control flow --- a malicious device may corrupt DMA pool metadata. This
-corruption can trivially lead to arbitrary kernel memory corruption from
-any driver that uses it. Indeed, because the DMA pool API is extensively
-used, this vulnerability is not confined to a single instance. In fact,
-every usage of the DMA pool API is potentially vulnerable. An exploit
-proceeds with the following steps:
+> 
+> > 
+> > to try from fastest to slowest device.
+> > The dt doc would indicate that order in the fallback list?
+> >       - items:
+> >           - enum:
+> >               - adi,ad7980    # Fastest 16-bit pseudo-differential ADC
+> >               - adi,ad7988-5  # 2nd fastest 16-bit pseudo-differential ADC
+> >               - adi,ad7686    # 3rd fastest 16-bit pseudo-differential ADC
+> >               - adi,ad7685    # 4th fastest 16-bit pseudo-differential ADC
+> >               - adi,ad7988-1  # 5th fastest 16-bit pseudo-differential ADC
+> >           - const: adi,ad7983 # Slowest 16-bit pseudo-differential ADC
+> 
+[...]
+> > 
+> > writing-bindings.rst says "DO use fallback compatibles when devices are the same
+> > as or a subset of prior implementations."
+> > But, how can we use fallbacks properly?
+> 
+> How DT spec and tutorials like elinux ask... What is exactly the problem
+> or question?
 
-1. The DMA `pool` initializes its list of blocks, then points to the first
-block.
-2. The malicious device overwrites the first 8 bytes of the first block ---
-which contain its `next_block` pointer --- to an arbitrary kernel address,
-`kernel_addr`.
-3. The driver makes its first call to `dma_pool_alloc()`, after which, the
-pool should point to the second block. However, it instead points to
-`kernel_addr`.
-4. The driver again calls `dma_pool_alloc()`, which incorrectly returns
-`kernel_addr`. Therefore, anytime the driver writes to this "block", it may
-corrupt sensitive kernel data.
+Never mind. Do the bellow follow the preferred syntax?
 
-I have a PDF document that illustrates how these steps work. Please let me
-know if you would like me to share it with you.
+      - items:
+          - enum:
+              - adi,ad7980
+              - adi,ad7685
+              - adi,ad7686
+              - adi,ad7988-1
+              - adi,ad7988-5
+          - const: adi,ad7983
 
-**Proposed mitigation**. To mitigate the corruption of DMA pool metadata
-(i.e., the pointers linking the blocks), the metadata should be moved into
-non-DMA memory, ensuring it cannot be altered by a device. I have included
-a patch series that implements this change. I have tested the patches with
-the `DMAPOOL_TEST` test and my own basic unit tests that ensure the DMA
-pool allocator is not vulnerable.
+      - items:
+          - enum:
+              - adi,ad7688
+              - adi,ad7693
+          - const: adi,ad7687
 
-**Performance**. I evaluated the patch set's performance by running the
-`DMAPOOL_TEST` test with/without the patches applied. Here is its output
-*without* the patches applied:
-```
-dmapool test: size:16   align:16   blocks:8192 time:11860
-dmapool test: size:64   align:64   blocks:8192 time:11951
-dmapool test: size:256  align:256  blocks:8192 time:12287
-dmapool test: size:1024 align:1024 blocks:2048 time:3134
-dmapool test: size:4096 align:4096 blocks:1024 time:1686
-dmapool test: size:68   align:32   blocks:8192 time:12050
-```
+      - items:
+          - enum:
+              - adi,ad7982
+              - adi,ad7984
+              - adi,ad7690
+          - const: adi,ad7691
 
-And here is its output *with* the patches applied:
-```
-dmapool test: size:16   align:16   blocks:8192 time:37954
-dmapool test: size:64   align:64   blocks:8192 time:40036
-dmapool test: size:256  align:256  blocks:8192 time:41942
-dmapool test: size:1024 align:1024 blocks:2048 time:10964
-dmapool test: size:4096 align:4096 blocks:1024 time:6101
-dmapool test: size:68   align:32   blocks:8192 time:41307
-```
+      - enum:
+          - adi,ad7942
+          - adi,ad7946
+          - adi,ad7984
 
-The patch set results in a 2.2x--2.6x runtime overhead, as demonstrated in
-the performance results. AFAICT, most of this overhead originates from the
-change in dma_pool_free()'s vaddr-to-block translation. Previously, the
-translation was a simple typecast, but with the patches applied, it now
-requires a lookup in an xarray. As Keith noted [1], achieving baseline
-performance would likely require changing the API.
+> 
+> > From Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml I'm
+> 
+> How LVDS bridge is related to this one here?
 
-**Changes**
-- V2 -> V3: (i) Use an xarray for vaddr-to-block translations, which
-  improves the
-performance of free operations. (ii) Remove the minimum DMA block size
-constraint, as it is no longer necessary.
-- V1 -> V2: Submit to public mailing lists.
+Aside from having compatible fallbacks, not related.
 
-Thanks,
+> 
+> > inferring only one fallback should be provided per group of devices.
+> > 
+> >>
+> >>> +              - adi,ad7988-1
+> >>> +          - const: adi,ad7983
+> >>> +
+> >>> +      - const: adi,ad7688
+> >>> +      - items:
+> >>> +          - enum:
+> >>> +              - adi,ad7693
+> >>> +              - adi,ad7687
+> >>> +          - const: adi,ad7688
+> >>> +
+> >>> +      - const: adi,ad7984
+> >>> +      - items:
+> >>> +          - enum:
+> >>> +              - adi,ad7982
+> >>> +              - adi,ad7690
+> >>> +              - adi,ad7691
+> >>> +          - const: adi,ad7984
+> >>> +
+> >>>    reg:
+> >>>      maxItems: 1
+> >>>  
+> >>> @@ -133,6 +178,32 @@ required:
+> >>>    - ref-supply
+> >>>  
+> >>>  allOf:
+> >>> +  # Single-channel PulSAR devices have SDI either tied to VIO, GND, or host CS.
+> >>> +  - if:
+> >>> +      properties:
+> >>> +        compatible:
+> >>> +          contains:
+> >>> +            enum:
+> >>> +              - adi,ad7685
+> >>
+> >> Why do you need this? It's fallback is already here.
+> > 
+> > So dtbs_check can provide an error message if for example compatible = "adi,ad7687";
+> > and adi,sdi-pin = "sdi";
+> 
+> 
+> I mean this compatible, not if clause.
 
-Brian Johannesmeyer
+dtbs_check don't show an error message if the allOf list only has the fallback
+compatible for adi,ad7685 and a device node has both 
+compatible = "adi,ad7685" and adi,sdi-pin = "sdi".
 
-[0] Link: https://www.csl.sri.com/~neumann/ndss-iommu.pdf
-[1] Link:
-https://patchwork.kernel.org/project/linux-mm/cover/20241119205529.3871048-1-bjohannesmeyer@gmail.com/#26130533
+The new set of devices that will be supported by this binding don't have a
+configuration register like the previous ones did. Because the PulSAR devices
+don't have a config reg, they don't support all features of AD4000-like devices
+and thus fewer IIO ABI interfaces are provided to user space. Though, AD4000
+devices also can be wired in a way that no reg access is possible, in which
+case they provide the same IIO interfaces that PulSAR devices do. The difference
+is on what is connected to the peripheral SDI pin. When AD4000 SDI is connected
+to SPI controller MOSI line, more interfaces are provided because the config
+reg can be accessed to set additional features. But that is not an option for
+PulSAR devices. Even if controller MOSI is connected to a PulSAR device, we
+cannot provide the additional interfaces because every attempt to use them would
+fail (the device has no register to configure). No datasheets mentions
+connecting a PulSAR device SDI pin to a SPI MOSI line. All datasheets show
+PulSAR SDI pin connected either to VIO (high), GND (low), or controller CS.
 
-Brian Johannesmeyer (3):
-  dmapool: Move pool metadata into non-DMA memory
-  dmapool: Use pool_find_block() in pool_block_err()
-  Use xarray for efficient vaddr-to-block translation
+IMHO, it would be nice to have dtbs_check warn about invalid SDI pin
+configuration otherwise it may only be noticed on driver probe.
+Anyway, I'm also fine keeping only the fallback compatibles in the allOf list
+if that makes dt maintainers happy.
 
- mm/dmapool.c | 92 ++++++++++++++++++++++++++++++++--------------------
- 1 file changed, 57 insertions(+), 35 deletions(-)
-
--- 
-2.34.1
-
+> 
+> 
+> 
+> 
+> Best regards,
+> Krzysztof
 
