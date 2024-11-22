@@ -1,189 +1,136 @@
-Return-Path: <linux-kernel+bounces-418256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD0A69D5F6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:59:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 443109D5F71
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:00:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CC802821AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:59:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A646DB221D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F891DE4D1;
-	Fri, 22 Nov 2024 12:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90EA51DA5E;
+	Fri, 22 Nov 2024 13:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C13fXD0L"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VPY66MkL"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0812555C29
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1221DEFD4
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 13:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732280359; cv=none; b=TbK03B7zZhpEKpg12DdSqix8b3xSZOvaepV5Df5ZP+3Rtfs38g1z4k5wP7GDoFSbElEfQLykJz2rWQzeVA3QAn0DLGRGKKG9YPfe81fgVfivgqoJPnN43TiOaTPYDDVOUCn2yK6qQGBJqtVklSux+7JdwuQ+XqJvIqSqAnTo33o=
+	t=1732280432; cv=none; b=dqoqSE6sslae5YXHhcasAboA6brGh6BTVY3HiQeZ1mF9Z3aFpXb0hWyu5Bpq50jy4/dzHlAXG2ZM2yjXpVmmdxC7WbRN+rZn6FoWRuIp2wGR83vVXoxrFIUsk66ZVQExDIqpNDJ3nDPv0ppW3lqrbaW63PpI8qfmmNIfyFiPUqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732280359; c=relaxed/simple;
-	bh=5LF0sWIal2U0+dbFhFwEhNmDs0IUJECe6wXw1MNkzQ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Q4xW5RxNLYS1RxTfUSQJUXd0y+pxFOJOd8rpyS+kG18zQFSIPYSuXBkFBBp4MKiqsZwsu9bFIfHQKKFerOqDk/bEjXZQWj3n3pwhHqUxzb8uUqHYR14DM3USlPhzmCUVdObTe38tIzV3Sdbq1odL6JZty27Ka3F1RY66BvdSV/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C13fXD0L; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43167ff0f91so18234345e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 04:59:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732280355; x=1732885155; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hxzSzzFQ3VEMlKbDZ1hYeOGML4eziB5ALghzzU7maks=;
-        b=C13fXD0LbHajnpR2AdcU3s9a9PV1hSCe4JqpgHEqESg6aBf6YdJpGD1lSgwBUqLXqj
-         I6FsyF5/pseuIww7H8CLRcvCLZXjHbO7LUP6iCVvOOZ2tDDZUwYOkoQgFVBi4p0kpMxP
-         423MRHu2GykmO+YdSJi6xqossuX9KMnQOgKqFJCaY4ew/X9Mpp974b9PeX62D6rEWj+F
-         5t5jtyk6tShweqbNasvi6mVuYdFuoKbuuEbHkQv7M02AyGUXqyWfTCuXexhgMirjyeCs
-         N3IQBtBrYKIg98jgwryaQkYDraPptPu1eldN2aka+T1lPzHjr9LyoBIK+o14iJAYk41G
-         n+cg==
+	s=arc-20240116; t=1732280432; c=relaxed/simple;
+	bh=OdrJvFkqb6bC+EloR79wkBi1bpd0qviV4hmO6yyAIR8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M70COdKCsv0Ft7zOH4ahjcBuyg9OAulQwC2B9kMgsKOfogFwbfx7oGMQcRlEOjcuTVedtGExfwa9JeXETNzNXNgESNeJ982QK9S2jdewvgaOmE8ME6b8X0N9LZQqpRKt+6VYDxunpJ6nmMScX/Kf4tOYVjdkVGPu45AQ4iZaVvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VPY66MkL; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM86MDr015290
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 13:00:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	LH+hnBu66kYZie3BVxH3uKx5YB7h/LfFrN1BKJMM4cQ=; b=VPY66MkLr9gAvTTg
+	rMiQzo5yOUErjsj+EEtMbw3XPcdGjxyx7OWHtBzfg7N2C3aHoq08VBOF7GuJIiuD
+	GOsneK3dPPbRT9tFinqrSopE+9MPytX1V+gPceK7cfL2W7rmMuuENZS2pWtD3Nwr
+	4hJeH46Z5Yw1lOF6qdN30FzqQgo8tGzcZfvSJdHl5COVwx3YWLTI0GP3c+ATP23g
+	OgaEEmBFWD8Ncrz6efqMXD91L9CWf8XLUdnJjo6/tvn3K5CsHnf8h258lPz3kXid
+	NlX0HhoyFxxkZEa3CilkYrHZZEXmOoiyX+ZVsOp6tJewJbkvUMT4dcuY/oIbY9v5
+	wSBNPg==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4320y9m6v8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 13:00:30 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-460a7a53e1cso4344171cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 05:00:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732280355; x=1732885155;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1732280429; x=1732885229;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hxzSzzFQ3VEMlKbDZ1hYeOGML4eziB5ALghzzU7maks=;
-        b=G1DgVMu0vt6n0kyfWPLwdlH8fMwTlDHL7CN8GzxG+QD1RdgSNwf/ZUGluEp8iUg37U
-         CKwwjbWNiM38XyY0ePn1cTjJh3e7K9U+no6ig4sttCe0XY2QIP36rbfQJT9QbDqe0wpK
-         gZr3TiwELjqpjwo/66RcVQgO0h44GFsUOXTd0zrzXLm9ATGn6w1ZZ/UVWGTPuH2IKAsE
-         U6+6SCjPidZoTBgkQIosUEXBY7lbczpjJlEWrZFSeF5wc6+gXRK+No9wWu4BMT2+V3oy
-         rez7CBoKeKi98rAmOcGXbkVvYmgthIM5PMP86HcSogaRvY5MVAVi3GjIK/mUTA+G7kEA
-         SoTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnm9wYlVB2e2xCGHIYjmfMptKVDVZ1/qBZ7z6IErpracMqmAOBAgyeWG2QovtwEnXd4/Gc8cCpF8QT6NQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoGmHPvv0b3TgLd7PP+gWy9cRdfvdbgO5dak9/rW/zRDZbz+pd
-	tYPxAYbLuIc3Tnak7l7F1cn42qTyHgQfJYF+RPce1kB2qtkegL+vqKHvymItXvI=
-X-Gm-Gg: ASbGncsYzMPxU9GUNQdBFaO8zT+1Gi0ksqtbc6G7gtuNDAEftDjqNcszz4j7vrBKjWr
-	Ue0YMIwjs8MRCyI66uJocukFKKbAzC39Wfy0vkhJEGZLnvuEKuD2EWEgyORhwJZ7vtwXSjsJ/Ee
-	ifszpGPxIqe12xejFsErtJPyHWQAU4x47Zz7NYSCUEHPe2qZnMXpzclYoBvqDRfGUAiR22Rb6NC
-	1WIN8wQCyYMRSpyJTyL1zfga6b7OTjGiTnY5f1V/cN3yJ20BBb8Gzs=
-X-Google-Smtp-Source: AGHT+IHgErHJJknZMEh23hRcjVwJIhKX7vQIjlso3cuza9wI0qkpqYqjlJKkMCE8wQ9ApjBOoThzTQ==
-X-Received: by 2002:a5d:64ce:0:b0:382:4f77:5bff with SMTP id ffacd0b85a97d-38260b83598mr2161069f8f.30.1732280355229;
-        Fri, 22 Nov 2024 04:59:15 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433cde98988sm26440415e9.42.2024.11.22.04.59.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 04:59:14 -0800 (PST)
-Date: Fri, 22 Nov 2024 15:59:10 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, "Darrick J. Wong" <djwong@kernel.org>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: fs/xfs/scrub/rtsummary.c:288 xchk_rtsum_compare() warn: missing
- error code? 'error'
-Message-ID: <c9a86317-aef1-407e-809b-466fef57d123@stanley.mountain>
+        bh=LH+hnBu66kYZie3BVxH3uKx5YB7h/LfFrN1BKJMM4cQ=;
+        b=KXAEv7IeBLEaaQj2MFSvwdkrP+6cSIVN89cpPI7n/NQCYDdCHy3qYGhZCRs8eDITLi
+         LsB7uqCWchMtlL4OahQ0XvjV2XikC6vxSxmwJfGcmk/IMT3dPAm5p1RNOeO/TS7D1LAX
+         4DtcnlO3COFJmepOTHrK6531bSrd9NAgId707Kh+BdbtK3OMtVPvN+F6ak0E6hCQUngr
+         SEmycivP6YwDvYJmjbokkICFyTt1Lw10kQxdIU2bqwhAvwcQGvWWNTC4XW672KEkPlHr
+         OW+FvFA7yXsVPVmGG5OTuExM686uDNpHfiVVq9A48uxZECZgkts8Ne4Zht6zUt20Jgrn
+         8MxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLFWhmdyGRo/DTGHbBthEVAphVlyEPLzMQwydV3bjpFrCcDufsWRt2tX1AbdebppdTKGMzCDpkoLFvigc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLrNgVAEPmomIN1NoZvzYQI0TiCAFpFbPLvFOItniJf4xZXBvA
+	nnKR9KKJqSTt0/nqxfYYbF5JWq06U85ZMSxcsLUzKYxOdhcejzXlQttc4f3GtrBaBrsoaDVw6oC
+	NRpoM8E+gXUIE9Kzb9EJZsOAcgn4hJYjgtzrNyrdK3xCQY2aXZ2mWL6vZPwUBwYo=
+X-Gm-Gg: ASbGncuXNvDc1j6g2qPIxR+ilmS1XXi8hvCTqaykQG5BPNFWMQ4S1XKw+YVksKq5eWY
+	AY+mJmAGwcS/T4Yza1jgI0B/bmrpWw+ZoQYFP4nnH8Stm/JJpw+V4kxQHaopiHgWcNbmwTraSVH
+	7LcU3/0hgq0mrazQYeEb0mKNhAe6nkbAKbDK6gFKS29GMXsR/UkTkN6PTdUWks56P5Ppn6VwgYr
+	vSNEDnz3xF/HUlSfk4ElsblWKrrgvpEANTfIToBHM66t+JLw9kyVCrWQ3d5xGfRKucbOUOPnwUV
+	VQXWX1wDslgFxZaFjRsPRtAqQAjHC8c=
+X-Received: by 2002:a05:620a:2684:b0:7b1:4840:d5d0 with SMTP id af79cd13be357-7b5143e3146mr145389185a.0.1732280428630;
+        Fri, 22 Nov 2024 05:00:28 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGZagaW1WN7Rqv4pENPxu3N+jG7jSkKgHtojYpFMpucDcbOsPAqZQVCoL0pN6ftBfX85gSRag==
+X-Received: by 2002:a05:620a:2684:b0:7b1:4840:d5d0 with SMTP id af79cd13be357-7b5143e3146mr145386885a.0.1732280428147;
+        Fri, 22 Nov 2024 05:00:28 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b28f6b3sm98954966b.23.2024.11.22.05.00.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Nov 2024 05:00:27 -0800 (PST)
+Message-ID: <0a9a0566-7c04-488e-a387-bc8aa2d314d8@oss.qualcomm.com>
+Date: Fri, 22 Nov 2024 14:00:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/2] arm64: dts: qcom: sa8775p-ride: Enable Display
+ Port
+To: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>, andersson@kernel.org,
+        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_riteshk@quicinc.com,
+        quic_vproddut@quicinc.com, quic_abhinavk@quicinc.com
+References: <20241121091401.20584-1-quic_mukhopad@quicinc.com>
+ <20241121091401.20584-3-quic_mukhopad@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241121091401.20584-3-quic_mukhopad@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: VNxLa1lauDP6DQCOXaI5jXukMftpal96
+X-Proofpoint-ORIG-GUID: VNxLa1lauDP6DQCOXaI5jXukMftpal96
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0
+ mlxlogscore=999 spamscore=0 mlxscore=0 malwarescore=0 clxscore=1015
+ adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411220109
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   28eb75e178d389d325f1666e422bc13bbbb9804c
-commit: 04f0c3269b41f28c041980a30514850453ded251 xfs: check rt summary file geometry more thoroughly
-config: x86_64-randconfig-r071-20241122 (https://download.01.org/0day-ci/archive/20241122/202411222034.c3kvpXzY-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+On 21.11.2024 10:14 AM, Soutrik Mukhopadhyay wrote:
+> The Qualcomm SA8775P platform comes with 2 DisplayPort controllers
+> for each mdss. edp0 and edp1 correspond to the DP controllers of
+> mdss0, whereas edp2 and edp3 correspond to the DP controllers of
+> mdss1. This change enables only the DP controllers, DPTX0 and DPTX1
+> alongside their corresponding PHYs of mdss0, which have been
+> validated.
+> 
+> Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+> ---
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202411222034.c3kvpXzY-lkp@intel.com/
+[...]
 
-smatch warnings:
-fs/xfs/scrub/rtsummary.c:288 xchk_rtsum_compare() warn: missing error code? 'error'
+> +&mdss0_dp0_phy {
+> +	status = "okay";
 
-vim +/error +288 fs/xfs/scrub/rtsummary.c
+Please make status the last property, like in other nodes
 
-526aab5f5790e2 Darrick J. Wong 2023-08-10  221  STATIC int
-526aab5f5790e2 Darrick J. Wong 2023-08-10  222  xchk_rtsum_compare(
-526aab5f5790e2 Darrick J. Wong 2023-08-10  223  	struct xfs_scrub	*sc)
-526aab5f5790e2 Darrick J. Wong 2023-08-10  224  {
-526aab5f5790e2 Darrick J. Wong 2023-08-10  225  	struct xfs_bmbt_irec	map;
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  226  	struct xfs_iext_cursor	icur;
-526aab5f5790e2 Darrick J. Wong 2023-08-10  227  
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  228  	struct xfs_mount	*mp = sc->mp;
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  229  	struct xfs_inode	*ip = sc->ip;
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  230  	struct xchk_rtsummary	*rts = sc->buf;
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  231  	xfs_fileoff_t		off = 0;
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  232  	xfs_fileoff_t		endoff;
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  233  	xfs_rtsumoff_t		sumoff = 0;
-526aab5f5790e2 Darrick J. Wong 2023-08-10  234  	int			error = 0;
-526aab5f5790e2 Darrick J. Wong 2023-08-10  235  
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  236  	rts->args.mp = sc->mp;
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  237  	rts->args.tp = sc->tp;
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  238  
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  239  	/* Mappings may not cross or lie beyond EOF. */
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  240  	endoff = XFS_B_TO_FSB(mp, ip->i_disk_size);
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  241  	if (xfs_iext_lookup_extent(ip, &ip->i_df, endoff, &icur, &map)) {
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  242  		xchk_fblock_set_corrupt(sc, XFS_DATA_FORK, endoff);
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  243  		return 0;
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  244  	}
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  245  
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  246  	while (off < endoff) {
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  247  		int		nmap = 1;
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  248  
-526aab5f5790e2 Darrick J. Wong 2023-08-10  249  		if (xchk_should_terminate(sc, &error))
-526aab5f5790e2 Darrick J. Wong 2023-08-10  250  			return error;
-526aab5f5790e2 Darrick J. Wong 2023-08-10  251  		if (sc->sm->sm_flags & XFS_SCRUB_OFLAG_CORRUPT)
-526aab5f5790e2 Darrick J. Wong 2023-08-10  252  			return 0;
-526aab5f5790e2 Darrick J. Wong 2023-08-10  253  
-526aab5f5790e2 Darrick J. Wong 2023-08-10  254  		/* Make sure we have a written extent. */
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  255  		error = xfs_bmapi_read(ip, off, endoff - off, &map, &nmap,
-526aab5f5790e2 Darrick J. Wong 2023-08-10  256  				XFS_DATA_FORK);
-526aab5f5790e2 Darrick J. Wong 2023-08-10  257  		if (!xchk_fblock_process_error(sc, XFS_DATA_FORK, off, &error))
-526aab5f5790e2 Darrick J. Wong 2023-08-10  258  			return error;
-526aab5f5790e2 Darrick J. Wong 2023-08-10  259  
-526aab5f5790e2 Darrick J. Wong 2023-08-10  260  		if (nmap != 1 || !xfs_bmap_is_written_extent(&map)) {
-526aab5f5790e2 Darrick J. Wong 2023-08-10  261  			xchk_fblock_set_corrupt(sc, XFS_DATA_FORK, off);
-526aab5f5790e2 Darrick J. Wong 2023-08-10  262  			return 0;
-526aab5f5790e2 Darrick J. Wong 2023-08-10  263  		}
-526aab5f5790e2 Darrick J. Wong 2023-08-10  264  
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  265  		off += map.br_blockcount;
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  266  	}
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  267  
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  268  	for (off = 0; off < endoff; off++) {
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  269  		union xfs_suminfo_raw	*ondisk_info;
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  270  
-526aab5f5790e2 Darrick J. Wong 2023-08-10  271  		/* Read a block's worth of ondisk rtsummary file. */
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  272  		error = xfs_rtsummary_read_buf(&rts->args, off);
-526aab5f5790e2 Darrick J. Wong 2023-08-10  273  		if (!xchk_fblock_process_error(sc, XFS_DATA_FORK, off, &error))
-526aab5f5790e2 Darrick J. Wong 2023-08-10  274  			return error;
-526aab5f5790e2 Darrick J. Wong 2023-08-10  275  
-526aab5f5790e2 Darrick J. Wong 2023-08-10  276  		/* Read a block's worth of computed rtsummary file. */
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  277  		error = xfsum_copyout(sc, sumoff, rts->words, mp->m_blockwsize);
-526aab5f5790e2 Darrick J. Wong 2023-08-10  278  		if (error) {
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  279  			xfs_rtbuf_cache_relse(&rts->args);
-526aab5f5790e2 Darrick J. Wong 2023-08-10  280  			return error;
-526aab5f5790e2 Darrick J. Wong 2023-08-10  281  		}
-526aab5f5790e2 Darrick J. Wong 2023-08-10  282  
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  283  		ondisk_info = xfs_rsumblock_infoptr(&rts->args, 0);
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  284  		if (memcmp(ondisk_info, rts->words,
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  285  					mp->m_blockwsize << XFS_WORDLOG) != 0) {
-526aab5f5790e2 Darrick J. Wong 2023-08-10  286  			xchk_fblock_set_corrupt(sc, XFS_DATA_FORK, off);
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  287  			xfs_rtbuf_cache_relse(&rts->args);
-04f0c3269b41f2 Darrick J. Wong 2023-12-15 @288  			return error;
-
-error is zero here.
-
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  289  		}
-526aab5f5790e2 Darrick J. Wong 2023-08-10  290  
-04f0c3269b41f2 Darrick J. Wong 2023-12-15  291  		xfs_rtbuf_cache_relse(&rts->args);
-526aab5f5790e2 Darrick J. Wong 2023-08-10  292  		sumoff += mp->m_blockwsize;
-526aab5f5790e2 Darrick J. Wong 2023-08-10  293  	}
-526aab5f5790e2 Darrick J. Wong 2023-08-10  294  
-526aab5f5790e2 Darrick J. Wong 2023-08-10  295  	return 0;
-526aab5f5790e2 Darrick J. Wong 2023-08-10  296  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+Konrad
 
