@@ -1,148 +1,109 @@
-Return-Path: <linux-kernel+bounces-418796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60AA89D65B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:19:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F9C79D659B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:16:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2B48B22738
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:19:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C25C51611B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773A51E0490;
-	Fri, 22 Nov 2024 22:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F781185935;
+	Fri, 22 Nov 2024 22:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="aBwHWpdB"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ij7m8Td7"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4431F1E0087
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 22:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C532615ADA6
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 22:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732313832; cv=none; b=qFYRzV0FRH8XXemu9Kp5Pct9o8fz0WxkMs5erjamJFt7hjxzHLmzrUlBt7iS92E5zXDWcTPGPoUBai6stELPyUEd2CkQATqMKTglhEfr/Fv1gU9Gm68gHJqexRW0QoWnI905wb19xpXlPpLzg9r4OMWvA0Bi3ao5m3QU7a+ZLnE=
+	t=1732313800; cv=none; b=nNwgzrdXB6nHJqz8ADfsrB3qDAkQWJ+GSO6WwjspI2FT9e/lvVFqA9NMkm3N1CCAWfa4va5vwRs109Dec2wCeWNT8ubY7H2Vpzi7b5rZsb7/P4HDOgjop04fRPVe/hla0OTlYEvvPDXKa4Du1OtQXE2AvySavHe2R76CxwE/Nlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732313832; c=relaxed/simple;
-	bh=UIfE/i9uNl2q+Mi+kE8Q7UwUe7PKkReqlrcUvsBIvQg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jjfWqxWDO1p2OFfhHPjkG3Q+vdvMUJGvCdRYTOO8bgd1Tk2lUX05J1InPDWxixRf4ZaTVP0UaWo6SZTeIWm8UMbLrPNPl6FGqxneVKm0POOiirYdOtfLMcEM3REjhPVkIdFP4oDojrBfFVrvxLAXbSOXIpz+rc+7r6RIUYKDDC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=aBwHWpdB; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53d9ff92ee9so3096755e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:17:11 -0800 (PST)
+	s=arc-20240116; t=1732313800; c=relaxed/simple;
+	bh=aOG6ClrY6lqefMk44UT4DZQKlYJU8tKP5/H9aVO6OZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XH1jx1xWPsrqz6Oa0S2i+Gsv0QoCYWJ/qTf9oANnbsBCrLJkA6DYWW2JoFd4J9tNh599kIB134ZA65yhqH3pn5Lfyq1GP0tzFxDkHsYbvpGuNnL3UJisocrYNGJewQ2WBKdi0PVaJZDDcjTWWYqYbHJZAJG8NBq/cSiXH3MsZjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ij7m8Td7; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53dd8eb55c4so1268473e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:16:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1732313829; x=1732918629; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sIjLTiSdjHPZdtn456NOY4iL8rLUfrRnErOspsYBZzw=;
-        b=aBwHWpdBYtOMzrVwIkcQU/deEsfrwLJVBYkTWRzhekbIQ0QvtOK+ZtBgEzkeW9521y
-         fRJPF1n9Avbc3VXYXDNuDMMELY2bPSwgDYoGUxr7Wvz++vYndKJcKhbRS7Pksu9cp5CO
-         0aaRgIsbvQEZutrle1DH36U+MIMwgh3c1tyB0=
+        d=linaro.org; s=google; t=1732313797; x=1732918597; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5NFj02jhNQNdIiYin2GDKXP53mu5BQwP426EP/zKK4E=;
+        b=Ij7m8Td7fNbHjeweGrfGRLoKLkmolfOZGfArAhCcmj7slaALn4LZvdjdRBPrN4ssFO
+         jxl7llYkbCdnJ8g9OGBqXfNZhloP+damFSiot3l8TxbEE9t3yLrBKKUf8GPLC2nfAtE4
+         42uUJZKX6e5cDuhMAKHKOyZMPWCzA2hBwBPCkOs/3Z8SLLY6iHQ6n4ifskWX4gPfY4R8
+         P4TSGSMzaITeCyRC3cVmuzZQJZsad2uHCR3V53sTpgp+Dh24xC+q2xlHemxi5bMJ53m4
+         QNnwpx2UluiA0smFKkyySXfXiu7+gFJGqpBjuFo3LEii8TPoglPYv0/QH0odqB5Rjk0y
+         6EmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732313829; x=1732918629;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sIjLTiSdjHPZdtn456NOY4iL8rLUfrRnErOspsYBZzw=;
-        b=jkYs3hQ+VsvbtYagEASuKpJ4kpOs4vzRyNGGgTiUtg/foLVFILp7KgVzf0zfvvaXN0
-         nu5YhGRMYTExLhHTYeDSZ02qtyppgIedZ3clzjbtWG2R3ffoKs9Aa7ziVoK8mzIIA2Sv
-         wTBRDMhoURVgvwEP4iLrFhT90vUYWJehc++wl/ccTK5G1Zbiu57EguNfp2u16xbbC+XR
-         wHXu6b71mKf+GhZB8cpewHIa4NNWuS4ofhBAkK0jsJOF17Y/q2jUYM8WNF3XgZX4RoZM
-         t2GrzUuZt+RfW/Mi9+P9TnmKUVwpN16HySM2VvA+UZ6u/qtXDIPWP7lSMZpOYHuKJf9N
-         AdRA==
-X-Gm-Message-State: AOJu0YyKQhQ1KGbeRddS639ovwN0wybl5nh0GB1Q1pxHWrpp/rdc/nBb
-	69GNnHvwvwAyvW/HlPUoJ174r8LH0SqjRI2+zjORPIYJl8RvMQwjCd6dAFStnQDVWTX+y0vy89F
-	S
-X-Gm-Gg: ASbGncvZqgfmh8Qkf13dapKelWIyIgK+x7w3TDksRsR+aum0LOhc8hcyLpppQNmrNTk
-	3H96MvNE1/WGnsELZu1FpjuYdKw6BkodVat99D+KrCrDvqg7KS5296Fa9PWK1RUlFc3o/ku0XKV
-	7FPPGV452DDZRblwT5xRHv9PkjzPV/xtWlkV7FJtyuKdIXLs/PjBWqFX8+2OB44mGNMZpSQqt6C
-	lDi9Tbl1e3LKIBgpYuWpFN6+UMSyT+fegktmxc6UhjwaPA2v7J97qxZYCJtCN2FtjsU/wTDrnY1
-	7hoea6Ya/8spKeAF9XsjiDcsL2b0ILPZ7sQEHyXB/8xt6bVQ3G3IdCaaVtZhSlUOU9AjbJ1+VfT
-	GOoGnTTGzdlZ7vBRv
-X-Google-Smtp-Source: AGHT+IFzF09O/6bEbltd8l52ut4lZtd8WfeN0mrpAjDZSWj2O9HkQlqmxkwqoiHxqAM9cuMjAuwfqg==
-X-Received: by 2002:ac2:51b5:0:b0:53d:d3ff:77f6 with SMTP id 2adb3069b0e04-53dd3ff77fdmr2299001e87.46.1732313829337;
-        Fri, 22 Nov 2024 14:17:09 -0800 (PST)
-Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-82-54-94-193.retail.telecomitalia.it. [82.54.94.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b52fcebsm148226466b.127.2024.11.22.14.17.08
+        d=1e100.net; s=20230601; t=1732313797; x=1732918597;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5NFj02jhNQNdIiYin2GDKXP53mu5BQwP426EP/zKK4E=;
+        b=AVNUMQOah1qj1I93n7ch5viMuI64+CWIt5ROK/AAzGSTbo8qSXvUcSOuLudb6niGfz
+         /Dj1fw+qO6A3Siurmy2ueJ7R7E3hFdqPG0WMLbOvgi+T12zLDklpVSXnfpjt+yW00EiA
+         eaDddeIcbOjNFrKyCKWiueWCy7gB8Yjz6rkBSfiP42xnPPeRbNU+PWWW4KFm7YyJOHU3
+         s+p4qxOrCX7biyxWNPo2KkcVX7nctc6Di5dhUAq9xYn30jkB3JOn4yw4f0eZTiJmfWYd
+         oS9XL4+neiWOd3chcnWkTS/T55lmqWv94i2mJyiy00XmhL9pxqcPyoQ7aRPBLx+rcdKq
+         nVBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOeyE86CNJPSmERz09eVCX/hVdWZknMhZP3nEiWsQTq4YuLnwnXWz5rop3JN6lfQlnUqe9yCG2Eiw5yYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxje2gBdXqsAnk0DpVKgCjipAY8KyIXaOZwRnqN0Ir4c/dj22Ny
+	fCSBVq73pbbc3enLznDyGV5cekkssJetshA26jXduen8h9LJb0KyXEhA6MEhLWI=
+X-Gm-Gg: ASbGnctfCiiYsEpGPF4+Yhgiw3XKTddyxoRnz/IxZN5YNlls12y/xEdsh4a4OnU8o8E
+	S5KFU4hN2eofJ2uIzp12khh2VFE8/AtOjnzFVwFMYez68VnCXMuv78YXgJG01+XFDGCgQP4QqxQ
+	bCm0aSgk51a64omCT9G3YQwbhDg3A66tIJR+lF1WtY6vPIyH/QkHGZEqOqJxEfiKOpRbcVzWEHz
+	Q2v5GZYi+HFZLNLdwuLcTVu3OHreg/qiYhdR6OsCA9t5Tg34sPdHQxnpFulx1035Ta8ZNsKdow1
+	qQhZejv5mJdjhA4Kl6wT4bNyPwZGGw==
+X-Google-Smtp-Source: AGHT+IGDdynUZU/f9IFLUQqvS6pNdTQ+VSJ+DMeR8Cru5dJY0qXDuv5b6VTt88UdQU0hNw5zRSNqgA==
+X-Received: by 2002:a05:6512:2382:b0:53d:c322:e782 with SMTP id 2adb3069b0e04-53dd389d3f5mr2814612e87.28.1732313795952;
+        Fri, 22 Nov 2024 14:16:35 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd248b40bsm575233e87.198.2024.11.22.14.16.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 14:17:09 -0800 (PST)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	"Ji-Ze Hong (Peter Hong)" <peter_hong@fintek.com.tw>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	linux-can@vger.kernel.org
-Subject: [PATCH v2 12/12] can: f81604: fix {rx,tx}_errors statistics
-Date: Fri, 22 Nov 2024 23:15:53 +0100
-Message-ID: <20241122221650.633981-13-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241122221650.633981-1-dario.binacchi@amarulasolutions.com>
-References: <20241122221650.633981-1-dario.binacchi@amarulasolutions.com>
+        Fri, 22 Nov 2024 14:16:35 -0800 (PST)
+Date: Sat, 23 Nov 2024 00:16:33 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] arm64: dts: qcom: sm8750: CDSP and modem
+Message-ID: <gt2kci6nntiq33fkcu5tmffsmsbjn4ivuiaxc24btjj72wp2ws@iumjaevtdgbc>
+References: <20241122-b4-sm8750-cdsp-v1-0-9a69a889d1b7@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241122-b4-sm8750-cdsp-v1-0-9a69a889d1b7@linaro.org>
 
-The f81604_handle_can_bus_errors() function only incremented the receive
-error counter and never the transmit error counter, even if the ECC_DIR
-flag reported that an error had occurred during transmission. Increment
-the receive/transmit error counter based on the value of the ECC_DIR
-flag.
+On Fri, Nov 22, 2024 at 04:26:47PM +0100, Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> Context of this depends on my audio patches:
+> https://lore.kernel.org/all/20241101-sm8750-audio-v1-0-730aec176459@linaro.org/
+> 
 
-Fixes: 88da17436973 ("can: usb: f81604: add Fintek F81604 support")
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+For the series:
 
----
 
-Changes in v2:
-- Fix patches 7 through 12 to ensure that statistics are updated even
-  if the allocation of skb fails.
-- Add five new patches (i. e. 1-5), created during the further analysis
-  of the code while correcting patches from the v1 series (i. e. 7-12).
-- Update statistics even if skb allocation fails
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
- drivers/net/can/usb/f81604.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/can/usb/f81604.c b/drivers/net/can/usb/f81604.c
-index bc0c8903fe77..e0cfa1460b0b 100644
---- a/drivers/net/can/usb/f81604.c
-+++ b/drivers/net/can/usb/f81604.c
-@@ -526,7 +526,6 @@ static void f81604_handle_can_bus_errors(struct f81604_port_priv *priv,
- 		netdev_dbg(netdev, "bus error interrupt\n");
- 
- 		priv->can.can_stats.bus_error++;
--		stats->rx_errors++;
- 
- 		if (skb) {
- 			cf->can_id |= CAN_ERR_PROT | CAN_ERR_BUSERROR;
-@@ -548,10 +547,15 @@ static void f81604_handle_can_bus_errors(struct f81604_port_priv *priv,
- 
- 			/* set error location */
- 			cf->data[3] = data->ecc & F81604_SJA1000_ECC_SEG;
-+		}
- 
--			/* Error occurred during transmission? */
--			if ((data->ecc & F81604_SJA1000_ECC_DIR) == 0)
-+		/* Error occurred during transmission? */
-+		if ((data->ecc & F81604_SJA1000_ECC_DIR) == 0) {
-+			stats->tx_errors++;
-+			if (skb)
- 				cf->data[2] |= CAN_ERR_PROT_TX;
-+		} else {
-+			stats->rx_errors++;
- 		}
- 
- 		set_bit(F81604_CLEAR_ECC, &priv->clear_flags);
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
