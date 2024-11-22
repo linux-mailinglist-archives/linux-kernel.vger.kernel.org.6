@@ -1,257 +1,284 @@
-Return-Path: <linux-kernel+bounces-418814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E95C9D65D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:34:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A2681615F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:34:22 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5833B189910;
-	Fri, 22 Nov 2024 22:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="g8RFOHnu"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0D219D65D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:38:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C0115B13B;
-	Fri, 22 Nov 2024 22:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2659EB20FDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:38:13 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82ECF18DF7F;
+	Fri, 22 Nov 2024 22:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a/I+0VL3"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247DA15B13B
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 22:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732314857; cv=none; b=CjZavJwNPYJ600G2Wr2DZf7kU/DT7kuZVLx/aaIFyvOo+iFZZSHvmBvRb7JSlv2dBbg2slyOCRKvV5KlQCcne6eVnxKTrjcgbJoqLTvPeNYR69DHKGe5esg8/JKWVi8JAE+Av13BFVjNqgkd+daWuuhqIDZIo9/0OD3+KjZcxig=
+	t=1732315083; cv=none; b=qaRTELrjfvlp6hFnqAxxsrH7QA6H6PPLyBZWpToy3DXekei18rtRIHuGhaO1Yb259V2NYbTcPPixvl0vrRwNgfi/LThlwTcIpzQx/gmLaX7D839jNapca/+EMj454EWzsC/uHEZJ3AbManOtj0Um/cPh7FNJhAi/UGSvBmXiCqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732314857; c=relaxed/simple;
-	bh=7GDB4mVXo9o75acMRcBwekBFkoslTUKg6uqrKU2SUvM=;
+	s=arc-20240116; t=1732315083; c=relaxed/simple;
+	bh=6GLmjpPY6EOrT6vmph0MIzerN19LbhQl4PfcSl2fDic=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j31QWSJ/5LWpNLlWoeasplvtva2f6eKZ8NI8TxZ9o/zuYk/Z/Tq4w6aMKN7h6NDmpxIZ2a4iaIA9ct/mhIKvtpG0tjrjW4idkbPSAa+gKXqnl3olaPG+LaxHmiq3BGEipEadDYqo3XZVIF8n+FF1VZrpy0IMhJVEPQT/ED+oE68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=g8RFOHnu; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=U1ogUfqtSeVaKTjdUIilLdBnxMGMcSKrq8zvZ+ildys=; b=g8RFOHnuYMsJPC7H2OvIRbeYgZ
-	duKcZjWqW2IoSwP9Ob033NJWa53Q5I32SjdP5zeUge4EL7EyQsD8Q7swrYFx2yBucxdFDGCMBu+jK
-	9Ga1z+T8ZviqfFzztPNZ01gGCDTA+COiZaAE/PfJLQ/aWdNt1jheb6Ha3cTH1wDn6pAw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tEcE3-00EAi9-UH; Fri, 22 Nov 2024 23:34:07 +0100
-Date: Fri, 22 Nov 2024 23:34:07 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Frank Sae <Frank.Sae@motor-comm.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, xiaogang.fan@motor-comm.com,
-	fei.zhang@motor-comm.com, hua.sun@motor-comm.com
-Subject: Re: [PATCH net-next v2 13/21] motorcomm:yt6801: Implement some
- ethtool_ops function
-Message-ID: <bd1c2858-c353-456f-865d-a9e85756e8f6@lunn.ch>
-References: <20241120105625.22508-1-Frank.Sae@motor-comm.com>
- <20241120105625.22508-14-Frank.Sae@motor-comm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tM7JyD3PsuInSHCwik5CoAD9X7sKGaRXI1iTshzKXTnzAejA5nK07JxP0tEmUHxBYqcj3pVMvaIBo2Hohx+qTBt5mvNzQKf+VXzBPzGxCAsYhLIbK76+k7NDs64F7O9w8g0C8KXMfXKzajf094ujQ8M90QbPZPXc+pY8ORArOJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a/I+0VL3; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-211f1b2bf2bso14295ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:38:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732315081; x=1732919881; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5kr5xL10rVafwH2QwXNIB2NX51MpVtbUlFWYreKeG40=;
+        b=a/I+0VL3LxFdYiNRFKss8cXJcBDrh5XqUBOytoHO3nFZBVAgYrYdXVg8AB7YytYDi7
+         Wi1AFloi060YQt7hi9FT8Gxod/0Ci3ztwnDP11radAneAB8iWr8csAH+qcNT0w433Tt3
+         2QvH7lPJFz8/VyyIbKVgMgcFykrtKU4lJkKqMoTAJUH396tSAgeBRmhqNBKjB3d8hqLi
+         7NI0RqoBJsN5aKyoKD5dYNsKUfV4emZ0COUEeLONOTsG4FDNWq3Ecy2WyHmD9sF1XG4J
+         lbFWSPgpeB/LV25Mhe1Y6kV4QXoPaFOLN1mykPy9rW9fM1vQw+njbJEq3ZcccixRyG/y
+         JRtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732315081; x=1732919881;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5kr5xL10rVafwH2QwXNIB2NX51MpVtbUlFWYreKeG40=;
+        b=u2sfa3MudGkd/L9vlhUgwhBDrAX74yBMOhCGvcNUeKPzxM3QUVB939vglV3oIIqWFq
+         PUpfzLiPQkHxaAjA32ntzelbIz+ZF9cWbh399z84+GLL70UE/wR5ZzR1VYLXP2tO9z9W
+         UYL0tJhQF6hwC1PwRjarvZq6CEF8QbP7LkwXORH2apnGQGSrgrj55+i6PJK1I9I4LwYX
+         1IGjFt7zLzo9fL6C06U5JPHiPVlBmWdii1RJSRgTnMQpXlJ0XRE0sVXFtkWIj3Hs369b
+         UA+MqBf2fkiD3pzfv5ERk5owPp4VKB0krvBZ/J7ox0yrVhnmSWI/3p7h2ngpdRM0LIWu
+         L7BA==
+X-Forwarded-Encrypted: i=1; AJvYcCUa+8UN4hkmNCzBBm/Y0lo/KgUYEBJpS/KM1NeOt2HDaYOeCR07En89m7H3aG4g2CZ2b4xEobVnqiPw3ac=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywv7Om1BF1ou+0JCbaZu/UjI+cyVbuaM6BxrL7vltt2hrM/lxPn
+	EfE8G2T/8zQYn9vsrcJ+HjaUYfCab3dEOnXagMXd85xpltcZhqHPFlCWyNE3sQ==
+X-Gm-Gg: ASbGnctvahTU2JxB7rYRg0STN49hB+nPudiGef9sHCCC9ZYBteqvce8mU7DxRpPpBzJ
+	P/FSMIOM5De5cL8DSN2FUEWn6WTmetyeao3PT1Cx7gb5teWINbBdOTGwtOfWBCNRddsx53uDc3x
+	g5844/N0EIVMTagIDps8Hjj4Tpm6Co0PvJQwNYDsg6/Yd4PBkZYwnaNe5j+3gLLdF3YzvQXetyM
+	HuCQV42coeCTqJGopBrGNf4umXldmNw46w8OyHRPIfZesvH2icdaiL80pFpykxFKq8vuGjqfkoi
+	sWqW0BX3
+X-Google-Smtp-Source: AGHT+IH7FcOLwqCX5Pk18qMpoAhw/6OPuccEjBkX6SjRRnRTGj+6abQWL8biM94lLtA5xkrz6/Cx9w==
+X-Received: by 2002:a17:902:d550:b0:20c:5cb1:de07 with SMTP id d9443c01a7336-2149e0a53c8mr239615ad.11.1732315081192;
+        Fri, 22 Nov 2024 14:38:01 -0800 (PST)
+Received: from google.com (60.89.247.35.bc.googleusercontent.com. [35.247.89.60])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcbfc0960sm1890512a12.11.2024.11.22.14.37.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 14:38:00 -0800 (PST)
+Date: Fri, 22 Nov 2024 14:37:56 -0800
+From: Vipin Sharma <vipinsh@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Andrew Jones <ajones@ventanamicro.com>, kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev, kvm-riscv@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Anup Patel <anup@brainfault.org>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/1] KVM selftests runner for running more than just
+ default
+Message-ID: <20241122223756.GA2112434.vipinsh@google.com>
+References: <20240821223012.3757828-1-vipinsh@google.com>
+ <CAHVum0eSxCTAme8=oV9a=cVaJ9Jzu3-W-3vgbubVZ2qAWVjfJA@mail.gmail.com>
+ <CAHVum0fWJW7V5ijtPcXQAtPSdoQSKjzYwMJ-XCRH2_sKs=Kg7g@mail.gmail.com>
+ <ZyuiH_CVQqJUoSB-@google.com>
+ <20241108-eaacad12f1eef31481cf0c6c@orel>
+ <ZzY2iAqNfeiiIGys@google.com>
+ <20241115211523.GB599524.vipinsh@google.com>
+ <Zz5-3A36cckhYu9K@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241120105625.22508-14-Frank.Sae@motor-comm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zz5-3A36cckhYu9K@google.com>
 
-> +static const struct fxgmac_stats_desc fxgmac_gstring_stats[] = {
-> +	/* MMC TX counters */
-> +	FXGMAC_STAT("tx_bytes", txoctetcount_gb),
-> +	FXGMAC_STAT("tx_bytes_good", txoctetcount_g),
-> +	FXGMAC_STAT("tx_packets", txframecount_gb),
-> +	FXGMAC_STAT("tx_packets_good", txframecount_g),
-> +	FXGMAC_STAT("tx_unicast_packets", txunicastframes_gb),
-> +	FXGMAC_STAT("tx_broadcast_packets", txbroadcastframes_gb),
-> +	FXGMAC_STAT("tx_broadcast_packets_good", txbroadcastframes_g),
-> +	FXGMAC_STAT("tx_multicast_packets", txmulticastframes_gb),
-> +	FXGMAC_STAT("tx_multicast_packets_good", txmulticastframes_g),
-> +	FXGMAC_STAT("tx_vlan_packets_good", txvlanframes_g),
-> +	FXGMAC_STAT("tx_64_byte_packets", tx64octets_gb),
-> +	FXGMAC_STAT("tx_65_to_127_byte_packets", tx65to127octets_gb),
-> +	FXGMAC_STAT("tx_128_to_255_byte_packets", tx128to255octets_gb),
-> +	FXGMAC_STAT("tx_256_to_511_byte_packets", tx256to511octets_gb),
-> +	FXGMAC_STAT("tx_512_to_1023_byte_packets", tx512to1023octets_gb),
-> +	FXGMAC_STAT("tx_1024_to_max_byte_packets", tx1024tomaxoctets_gb),
-> +	FXGMAC_STAT("tx_underflow_errors", txunderflowerror),
-> +	FXGMAC_STAT("tx_pause_frames", txpauseframes),
-> +	FXGMAC_STAT("tx_single_collision", txsinglecollision_g),
-> +	FXGMAC_STAT("tx_multiple_collision", txmultiplecollision_g),
-> +	FXGMAC_STAT("tx_deferred_frames", txdeferredframes),
-> +	FXGMAC_STAT("tx_late_collision_frames", txlatecollisionframes),
-> +	FXGMAC_STAT("tx_excessive_collision_frames",
-> +		    txexcessivecollisionframes),
-> +	FXGMAC_STAT("tx_carrier_error_frames", txcarriererrorframes),
-> +	FXGMAC_STAT("tx_excessive_deferral_error", txexcessivedeferralerror),
-> +	FXGMAC_STAT("tx_oversize_frames_good", txoversize_g),
+On 2024-11-20 16:29:16, Sean Christopherson wrote:
+> On Fri, Nov 15, 2024, Vipin Sharma wrote:
+> > On 2024-11-14 09:42:32, Sean Christopherson wrote:
+> > > On Fri, Nov 08, 2024, Andrew Jones wrote:
+> > > > On Wed, Nov 06, 2024 at 09:06:39AM -0800, Sean Christopherson wrote:
+> > > > > On Fri, Nov 01, 2024, Vipin Sharma wrote:
+> As discussed off-list, I think having one testcase per file is the way to go.
+> 
+>   - Very discoverable (literally files)
+>   - The user (or a shell script) can use regexes, globbing, etc., to select which
+>     tests to run
+>   - Creating "suites" is similarly easy, e.g. by having a list of files/testscase,
+>     or maybe by directory layout
+> 
+> Keeping track of testcases (and their content), e.g. to avoid duplicates, might
+> be an issue, but I think we can mitigate that by establishing and following
+> guidelines for naming, e.g. so that the name of a testcase gives the user a
+> decent idea of what it does.
+> 
+> > > > Could also use an environment variable to specify a file which contains
+> > > > a config in a test-specific format if parsing environment variables is
+> > > > insufficient or awkward for configuring a test.
+> > > 
+> > > There's no reason to use a environment variable for this.  If we want to support
+> > > "advanced" setup via a test configuration, then that can simply go in configuration
+> > > file that's passed to the runner.
+> > 
+> > Can you guys specify What does this test configuration file/directory
+> > will look like? Also, is it gonna be a one file for one test? This might
+> > become ugly soon.
+> 
+> As above, I like the idea of one file per testcase.  I'm not anticipating thousands
+> of tests.  Regardless of how we organize things, mentally keeping track of that
+> many tests would be extremely difficult.  E.g. testcases would likely bitrot and/or
+> we'd end up with a lot of overlap.  And if we do get anywhere near that number of
+> testcases, they'll need to be organzied in some way.
+> 
+> One idea would be create a directory per KVM selftest, and then put testcases for
+> that test in said directory.  We could even do something clever like fail the
+> build if a test doesn't have a corresponding directory (and a default testcase?).
+> 
+> E.g. tools/testing/selftests/kvm/testcases, with sub-directories following the
+> tests themsleves and separated by architecture as appropriate.
+> 
+> That us decent organization.  If each test has a testcase directory, it's easy to
+> get a list of testcases.  At that point, the name of the testcase can be used to
+> organize and describe, e.g. by tying the name to the (most interesting) parameters.
 
-Please look at the rmon group.
+Sounds good. Extending your example for testcases given below this what
+I am imagining ordering will be:
 
-> +static void fxgmac_ethtool_get_drvinfo(struct net_device *netdev,
-> +				       struct ethtool_drvinfo *drvinfo)
-> +{
-> +	struct fxgmac_pdata *pdata = netdev_priv(netdev);
-> +	u32 ver = pdata->hw_feat.version;
-> +	u32 sver, devid, userver;
-> +
-> +	strscpy(drvinfo->version, pdata->drv_ver, sizeof(drvinfo->version));
+testcases/
+├── aarch64
+│   └── arch_timer
+│       └── default
+├── memslot_modification_stress_test
+│   ├── 128gib.allvcpus.partitioned_memory_access
+│   ├── default
+│   └── x86_64
+│       └── disable_slot_zap_quirk
+├── riscv
+│   └── arch_timer
+│       └── default
+├── s390x
+├── steal_time
+│   └── default
+└── x86_64
+    ├── amx_test
+    │   └── default
+    └── private_mem_conversions_test
+        ├── 2vcpu.2memslots
+        └── default
 
-Please leave this blank, so the core fills it with the git hash of the
-kernel.
+1. Testcases will follow directory structure of the test source files.
+2. "default" will have just path of the test relative to
+   tools/testing/selftests/kvm directory and no arguments provided in it.
+3. Extra tests can be provided as separate files with meaningful names.
+4. Some tests (memslot_modification_stress_test) have arch specific
+   options. Those testcases will be under arch specific directory of
+   that specific testcase directory.
+5. Runner will be provided with a directory path and it will run all
+   files in that and their subdirectories recursively.
+6. Runner will also filter out testcases based on filepath. For example
+   if running on ARM platform it will ignore all filepaths which have
+   x86_64, s390, and riscv in their path anywhere.
+7. If user wants to save output of runner, then output dump will follow
+   the same directory structure.
 
-> +
-> +	/* S|SVER: MAC Version
-> +	 * D|DEVID: Indicates the Device family
-> +	 * U|USERVER: User-defined Version
-> +	 */
-> +	sver = FXGMAC_GET_BITS(ver, MAC_VR_SVER_POS, MAC_VR_SVER_LEN);
-> +	devid = FXGMAC_GET_BITS(ver, MAC_VR_DEVID_POS, MAC_VR_DEVID_LEN);
-> +	userver = FXGMAC_GET_BITS(ver, MAC_VR_USERVER_POS, MAC_VR_USERVER_LEN);
-> +
-> +	snprintf(drvinfo->fw_version, sizeof(drvinfo->fw_version),
-> +		 "S.D.U: %x.%x.%x", sver, devid, userver);
+> 
+> Hmm, and for collections of multiple testscases, what if we added a separate
+> "testsuites" directory, with different syntax?  E.g. one file per testuite, which
+> is basically a list of testcases.  Maybe with some magic to allow testsuites to
+> "include" arch specific info?
+> 
+> E.g. something like this
+> 
+> $ tree test*
+> testcases
+> └── max_guest_memory_test
+>     └── 128gib.allvcpus.test
+> testsuites
+> └── mmu.suite
+> 
+> 3 directories, 2 files
+> $ cat testsuites/mmu.suite 
+> $ARCH/mmu.suite
+> max_guest_memory_test/128gib.allvcpus.test
 
-You might want to consider devlink, which gives you more flexibility
-in reporting versions.
+This can be one option. For now lets table testsuites discussion. We will
+revisit if after Phase1 is completed.
 
-> +static void fxgmac_ethtool_set_msglevel(struct net_device *netdev, u32 msglevel)
-> +{
-> +	struct fxgmac_pdata *pdata = netdev_priv(netdev);
-> +
-> +	yt_dbg(pdata, "set msglvl from %08x to %08x\n", pdata->msg_enable,
-> +	       msglevel);
-> +	pdata->msg_enable = msglevel;
+> 
+> > This brings the question on how to handle the test execution when we are using
+> > different command line parameters for individual tests which need some
+> > specific environmnet?
+> > 
+> > Some parameters will need a very specific module or sysfs setting which
+> > might conflict with other tests. This is why I had "test_suite" in my
+> > json, which can provide some module, sysfs, or other host settings. But
+> > this also added cost of duplicating tests for each/few suites.
+> 
+> IMO, this should be handled by user, or their CI environment, not by the upstream
+> runner.  Reconfiguring module params or sysfs knobs is inherently environment
+> specific.  E.g. not all KVM module params are writable post-load, and so changing
+> a param might require stopping all VMs on the system, or even a full kernel reboot
+> if KVM is built-in.  There may also be knobs that require root access, that are
+> dependent on hardware and/or kernel config, etc.
+> 
+> I really don't want to build all that into the upstream test runner, certainly not
+> in the first few phases.  I 100% think the runner should be constructed in such a
+> way that people/organizations/CI pipeines can build infrastructure on top, I just
+> don't think it's a big need or a good fit for upstream.
 
-This is an example of a yt_dbg() which seems pointless now that you
-have debugged it. Maybe you did have a bug in the first version of
-this one line function, but it looks reasonably bug free now, so i
-don't see the need for the print.
+For phase 2 discussion, you responded:
+	> Phase 2: Environment setup via runner
+	>
+	> Current patch, allows to write "setup" commands at test suite and test
+	> level in the json config file to setup the environment needed by a
+	> test to run. This might not be ideal as some settings are exposed
+	> differently on different platforms.
+	>
+	> For example,
+	> To enable TDP:
+	> - Intel needs npt=Y
+	> - AMD needs ept=Y
+	> - ARM always on.
+	>
+	> To enable APIC virtualization
+	> - Intel needs enable_apicv=Y
+	> - AMD needs avic=Y
+	>
+	> To enable/disable nested, they both have the same file name "nested"
+	> in their module params directory which should be changed.
+	>
+	> These kinds of settings become more verbose and unnecessary on other
+	> platforms. Instead, runners should have some programming constructs
+	> (API, command line options, default) to enable these options in a
+	> generic way. For example, enable/disable nested can be exposed as a
+	> command line --enable_nested, then based on the platform, runner can
+	> update corresponding module param or ignore.
+	>
+	> This will easily extend to providing sane configuration on the
+	> corresponding platforms without lots of hardcoding in JSON. These
+	> individual constructs will provide a generic view/option to run a KVM
+	> feature, and under the hood will do things differently based on the
+	> platform it is running on like arm, x86-intel, x86-amd, s390, etc.
 
-> +static void fxgmac_get_regs(struct net_device *netdev,
-> +			    struct ethtool_regs *regs, void *p)
-> +{
-> +	struct fxgmac_pdata *pdata = netdev_priv(netdev);
-> +	u32 *regs_buff = p;
-> +
-> +	memset(p, 0, FXGMAC_PHY_REG_CNT * sizeof(u32));
-> +	for (u32 i = MII_BMCR; i < FXGMAC_PHY_REG_CNT; i++)
-> +		regs_buff[i] = phy_read(pdata->phydev, i);
+	My main input on this front is that the runner needs to configure module params
+	(and other environment settings) _on behalf of the user_, i.e. in response to a
+	command line option (to the runner), not in response to per-test configurations.
 
-A MAC driver should not be touching the PHY. There are other
-standardised ways of dumping PHY registers, which don't involve the
-MAC driver.
-
-> +static void fxgmac_get_pauseparam(struct net_device *dev,
-> +				  struct ethtool_pauseparam *data)
-> +{
-> +	struct fxgmac_pdata *yt = netdev_priv(dev);
-
-Please be consistent with your naming. The function above calls this
-pdata. I don't particularly like pdata, because that often means
-platform_data, which you don't have. priv is more common.
-
-> +	bool tx_pause, rx_pause;
-> +
-> +	phy_get_pause(yt->phydev, &tx_pause, &rx_pause);
-> +
-> +	data->autoneg = yt->phydev->autoneg;
-
-This is wrong. You can be doing autoneg in general,
-i.e. phydev->autoneg, but not using autoneg for pause. You should
-remember the value set in set_pauseparam().
-
-> +	data->tx_pause = tx_pause ? 1 : 0;
-> +	data->rx_pause = rx_pause ? 1 : 0;
-
-Why the ? 1: 0 ?
-
-> +
-> +	yt_dbg(yt, "%s, rx=%d, tx=%d\n", __func__, data->rx_pause,
-> +	       data->tx_pause);
-> +}
-> +
-> +static int fxgmac_set_pauseparam(struct net_device *dev,
-> +				 struct ethtool_pauseparam *data)
-> +{
-> +	struct fxgmac_pdata *yt = netdev_priv(dev);
-> +
-> +	if (dev->mtu > ETH_DATA_LEN)
-> +		return -EOPNOTSUPP;
-
-A comment about why jumbo packets breaks pause would be good. I also
-assume your set_mtu code disables pause when jumbo is enabled?
-get_pauseparam should also make it clear pause is disabled.
-
-> +	phy_set_asym_pause(yt->phydev, data->rx_pause, data->tx_pause);
-
-You are ignoring ethtool_pauseparam autoneg.
-
-> +static void fxgmac_ethtool_get_strings(struct net_device *netdev, u32 stringset,
-> +				       u8 *data)
-> +{
-> +	switch (stringset) {
-> +	case ETH_SS_STATS:
-> +		for (u32 i = 0; i < FXGMAC_STATS_COUNT; i++) {
-> +			memcpy(data, fxgmac_gstring_stats[i].stat_string,
-> +			       strlen(fxgmac_gstring_stats[i].stat_string));
-> +			data += ETH_GSTRING_LEN;
-> +		}
-> +		break;
-> +	default:
-> +		WARN_ON(1);
-
-You need to be careful with WARN_ON() particularly if it can be
-triggered from user space. Maybe build cause a WARN to result in a
-reboot.
-
-> +static int fxgmac_ethtool_reset(struct net_device *netdev, u32 *flag)
-> +{
-> +	struct fxgmac_pdata *pdata = netdev_priv(netdev);
-> +	int ret = 0;
-> +	u32 val;
-> +
-> +	val = *flag & (ETH_RESET_ALL | ETH_RESET_PHY);
-> +	if (!val) {
-> +		yt_err(pdata, "Operation not support.\n");
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	switch (*flag) {
-> +	case ETH_RESET_ALL:
-> +		fxgmac_restart(pdata);
-> +		*flag = 0;
-> +		break;
-> +	case ETH_RESET_PHY:
-> +		/* Power off and on the phy in order to properly
-> +		 * configure the MAC timing
-> +		 */
-> +		ret = phy_modify(pdata->phydev, MII_BMCR, BMCR_PDOWN,
-> +				 BMCR_PDOWN);
-> +		if (ret < 0)
-> +			return ret;
-> +		fsleep(9000);
-> +
-> +		ret = phy_modify(pdata->phydev, MII_BMCR, BMCR_PDOWN, 0);
-> +		if (ret < 0)
-> +			return ret;
-> +		*flag = 0;
-
-This is a bad idea, since depending on the PHY, you have thrown away
-all the configuration, and the PHY is now probably dead until you
-admin down/admin up the interface. In general a MAC driver should
-never directly touch the PHY, it should just use the API phylib
-exposes.
-
-    Andrew
-
----
-pw-bot: cr
+Should we still write code in runner for setting parameters which are
+writable/modifiable or just leave it? Our current plan is to provide
+some command line options to set those things but it is true that we
+might not be able to set everything via runner.
 
