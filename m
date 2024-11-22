@@ -1,126 +1,124 @@
-Return-Path: <linux-kernel+bounces-418373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 532DA9D60EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:55:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE5F29D60F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:59:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D88551F21B81
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:55:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 994AFB29A5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E1614A4C3;
-	Fri, 22 Nov 2024 14:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BA914C5B5;
+	Fri, 22 Nov 2024 14:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cT1w6Gys"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sx6T/T6p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A518BE7;
-	Fri, 22 Nov 2024 14:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6B8AD2F;
+	Fri, 22 Nov 2024 14:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732287331; cv=none; b=Z4NMZrJAKjKVW0IasFheX2b9iUJV3R+fiSn0y5WVqtVCbuwfMkmDYBStTfF4rYszcXQzBfF1s2SKjGS9DPD9d3JT1F7Emsk9Y5cOZBLow54oKXL5q4wRkcczr2woSP7kOGLc8v9x2PmYUG2po6tvtPOqY//tFL09YZCPyG47pFM=
+	t=1732287364; cv=none; b=P/k9zlguH2WdYmtbTNnt+RkErg9KqYQ95D+W5OqtVrC3ACgX5mh+psibE0SAOtgK01B/pzlS0XizZ/gatS2brVMzTXRHy0b+Ndp6QuWDst9vbWsazL7Osx0b/X4J6SdvTdCwuIAauaObVhi+3HkU3wOSj3Rj3khm6wEvUjlbaWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732287331; c=relaxed/simple;
-	bh=+S44ft8d786SjiySV8bWlVLcl+EEkcxPo3Z0bd1IgU4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GzW94nGp9SCBLPPxD69/2ogo9744JALb13V2eFyExdJ3VluFkgKnD3AxKm6WZ4RQDk2Wbc50ocPs7nNkraVbJhSzDIXm5qLnCKGUEykitCGwV0VYONqo3ZItcexicB53eAEz6rRDUP3kk/JEiY67s8XAWD5gthsKWgBjryNTD58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cT1w6Gys; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43155abaf0bso19687345e9.0;
-        Fri, 22 Nov 2024 06:55:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732287328; x=1732892128; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kcCj1LFENTDkwVOjlHzVjf9FNNGMMUic5s6igZTbt58=;
-        b=cT1w6GysEksxnoDMpmthVCCp+6mT9xSiGBnLKji0dL4Rv6hwOJiRo6a4alnVATUKxS
-         eJYCGodIyNt5QoOa6eLH02DD2+CG4FZT7eG31Kgq6V/V0zmkzmt6CCuyX+ag2xxilI/q
-         7nfUMSuTtBoV89YD5Cbf3rtJtCptxyAMYPjatqqvob7WMWNwOV8oK41iMLpigtFaK8Ur
-         Z+I6lX0xs+sU2Lf0+go2BFOM+SUEhWcePRT4tE3M6QkuwtHbn7I2bX7wFURGlAv//aUI
-         jCDXGXPNW75BrPGo5VrnXy1NcsBIaycWLjkPVWw/PvQM5LtbkcnmSWXoNF6jQjwY2oaS
-         x4kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732287328; x=1732892128;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kcCj1LFENTDkwVOjlHzVjf9FNNGMMUic5s6igZTbt58=;
-        b=PYPmjNSNxHEyJmUXZYHlBsLBYOuz6gnYDekSYMekXdyVZm1Kf1h8XkKmwL0SyE3vrK
-         7XleRbRnGwARAt8tQzBHAwMqhRjUw3W6XYz8KGnL19XLy7vcAUNm7m8roAMuyLl7Ojwk
-         z0vkDlM/1umDU0MS0Y/PkQkii+iJ1dJ7D1y2OttnvDExL2Arzdlo/lNzRmLhTeqw3OYb
-         OSAaCCLd8W2rr2OKDdGfl4wzitm5EYcerycBMH2YV9bgg0JKvftOPOjMhxbppQjtHXW0
-         KFpX3BwSgcRUBdQL9Vx5hSOZnYgF/iXcMRPJiddANGVl1CWRRoY0XdAYpyNc5TgzKNtJ
-         Ud6g==
-X-Forwarded-Encrypted: i=1; AJvYcCU9okIiVy4VOpl65yl3lr0nVr+oQ+omUN64zS4HCx7KSrxXIl5XLYdr55+NpTFKzqqdwvt9HpcdVteomE0=@vger.kernel.org, AJvYcCWpG01clOvoiamI5fwlYfPQq94aeu7SJj3JF/35oDxPVCyP9DbQOGEi55dhhhjrICsgstk3Dp8/yTwwhlI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz93oICkcBQA+GSyZaSzGB0ZYJOBlhDl/0swkG6Oj6VK8P/9aBW
-	rDpGXeyFysrEJxQkMjrYALjl5o9tt8nEj/G9hz4VOcKl7u7EC9TW
-X-Gm-Gg: ASbGncv20bWzWWw7lKsBlRHP2rKNSdPzPIxY5CHjEnh5UPaT6Wid6J7agTGyEFt7buM
-	2rJPe/1D83170jxvPmu3UpJ61a4wmI1mpSejfZ8TpQoNUP+Xxzocg2gp2Jozshcq7DmVGe0l+2F
-	yIADVKmTGUGjw3rLwccSRzf38xAsWCOkULZvg4d15gDkNr251V0KO6NwB4GONwRPwcB/PvzZdSd
-	ls4aMpLGoZme52D8B0/RrY2DjhtG6ZYJInbucedYadmb7kSvjDFEvwysnL2qBaX
-X-Google-Smtp-Source: AGHT+IFBeVUVnOoLJ80v0sm1WHosA0NVoRIjsNDSw2wcgu72rxQPKjOmdWXw46ZVlVUEpQMJg2jBFg==
-X-Received: by 2002:a05:600c:548b:b0:425:80d5:b8b2 with SMTP id 5b1f17b1804b1-433ce428fadmr32855075e9.16.1732287327350;
-        Fri, 22 Nov 2024 06:55:27 -0800 (PST)
-Received: from demon-pc.localdomain ([188.27.131.151])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433cde05949sm29780545e9.8.2024.11.22.06.55.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 06:55:26 -0800 (PST)
-From: Cosmin Tanislav <demonsingur@gmail.com>
-To: 
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Cosmin Tanislav <demonsingur@gmail.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] v4l2: mc: fix endpoint iteration
-Date: Fri, 22 Nov 2024 16:55:24 +0200
-Message-ID: <20241122145525.194253-1-demonsingur@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1732287364; c=relaxed/simple;
+	bh=AnkZTUQz7vtorDx0ojovaAGYdc5renUApP+5BRBaSs0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q1Ya5lLCeoUQ+4kwJCDJEY/rkgvID1zKPlX10ylRSr8c2aqkG81k7Izjbk3a9xbKlPqqdMFQ/W5uLaSPotTCymtUJipHHszkyVW6Eqi9sXjAi3Dc7yPqySCMAhBscQOiWk6gexYYX0PQdz8vnJ08uLFRAKcnINt+3LJqJSgPK2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sx6T/T6p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36262C4CECE;
+	Fri, 22 Nov 2024 14:56:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732287364;
+	bh=AnkZTUQz7vtorDx0ojovaAGYdc5renUApP+5BRBaSs0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sx6T/T6pHoEZndnERGer1DTSHRofdp2LWBvuft5Fz0fQgLxc2Uwh2QS8/UoXwFxCW
+	 o3JDrgnhAO70z5QjUXV+L3P5sGqnqbWZQb1+opdmAPQPOQZVx0WoB0u/4ex7pzxaCb
+	 +W/Gy2/ghsbgJXmM6S+hh5qu9rXmifjtmWgq5kfEo0Mv83XW96bRlOTX+s5zARdKAt
+	 bzldYCNbi8piZxxRsfEMTHuhZ3KwCVEA44Yh3mHZK73FgyLIPlK3A+oF9W7tDa9sKx
+	 HLkl+dY/DxQNNf/7PDh4DcR7gr7f12g8RgKGWZbPOss9WtQIwPF6O+94LllaZKYiwV
+	 HWnWaA5huKMbA==
+Message-ID: <bb2da224-2c0a-41de-b458-0c5314ecd90b@kernel.org>
+Date: Fri, 22 Nov 2024 15:55:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 2/2] arm64: dts: qcom: qcs8300: enable the inline
+ crypto engine
+To: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-crypto@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20241122132044.30024-1-quic_yrangana@quicinc.com>
+ <20241122132044.30024-3-quic_yrangana@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241122132044.30024-3-quic_yrangana@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When creating links from a subdev to a sink, the current logic tries to
-iterate over the endpoints of dev's fwnode.
+On 22/11/2024 14:20, Yuvaraj Ranganathan wrote:
+> Add an ICE node to qcs8300 SoC description and enable it by adding a
+> phandle to the UFS node.
+> 
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-This might not be correct when the subdev uses a different fwnode
-compared to the dev's fwnode.
+This did not happen. Provide a proof (lore link).
 
-If, when registering, the subdev's fwnode is not set, the code inside
-v4l2_async_register_subdev will set it to the dev's fwnode.
-
-To fix this, just use the subdev's fwnode.
-
-Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
-Fixes: 0d3c81e82da9 ("media: v4l2-mc: add v4l2_create_fwnode_links helpers")
----
- drivers/media/v4l2-core/v4l2-mc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/v4l2-core/v4l2-mc.c b/drivers/media/v4l2-core/v4l2-mc.c
-index 4bb91359e3a9a..937d358697e19 100644
---- a/drivers/media/v4l2-core/v4l2-mc.c
-+++ b/drivers/media/v4l2-core/v4l2-mc.c
-@@ -329,7 +329,7 @@ int v4l2_create_fwnode_links_to_pad(struct v4l2_subdev *src_sd,
- 	if (!(sink->flags & MEDIA_PAD_FL_SINK))
- 		return -EINVAL;
- 
--	fwnode_graph_for_each_endpoint(dev_fwnode(src_sd->dev), endpoint) {
-+	fwnode_graph_for_each_endpoint(src_sd->fwnode, endpoint) {
- 		struct fwnode_handle *remote_ep;
- 		int src_idx, sink_idx, ret;
- 		struct media_pad *src;
--- 
-2.47.0
-
+Best regards,
+Krzysztof
 
