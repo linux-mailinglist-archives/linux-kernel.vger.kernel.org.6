@@ -1,180 +1,79 @@
-Return-Path: <linux-kernel+bounces-418535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 825939D62BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:08:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B67B9D62BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:09:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42A4328248E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:08:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A5BC2822CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED401DF759;
-	Fri, 22 Nov 2024 17:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804E71DEFC7;
+	Fri, 22 Nov 2024 17:09:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="HjuZNr/w"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a2BO22uj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4220A1DED78
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 17:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA90C7080C;
+	Fri, 22 Nov 2024 17:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732295288; cv=none; b=WmrU+I8PiI5ZonWP97Ohw/D+0lCAHJnJnfuEj+OgOHbvg1b+EEOY4tH3Y7k9puQPCHw2cK4No6A1499sCBH+nAhCxpsP2zx+tIzFstDxeUCg1bkm9k5buZPbFjtHncxS1vHXbZ3wLPG87aUxb9Hbl0kcnHB2/uxIv10gIotw5yE=
+	t=1732295341; cv=none; b=b5QP+xPXhIZETMO81Y92UwqPvs+UU+W6fPKhFXvco/8gqIMmiudFV+EIOFprpnAoYQ//lUk3Li2RfJIt0uXXcS941VSvs6y4fX4/kSUgxi6X1zl209IGkO/iyfcEOkbSdqo2AZh5OBbvZYSey8pfwMKG1OmR82n4m93WCAYDANI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732295288; c=relaxed/simple;
-	bh=65Td0TnTUIzwe/pt9Jcl3ypj6q4zhZfthV5rP5mHkJs=;
+	s=arc-20240116; t=1732295341; c=relaxed/simple;
+	bh=1CfPCrbQSxmUjPMp+X9DvgffUWM1Ec0pXg1i9OP4r4o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LBz3MR5poeZmCLo08XDgR9s4ANsFCecbmzdbKZulgGmj7Fp/Ot2ZsA9pDcgAhcY84D0j6N04XGby7O85HF3xp7RZ/hdsC58rPGV3JdUZ0fSPLvnZ94PGrwa1Q5A7Nb21u6LuQAH65pWCUgAc9XbnX+HNq3iuso94dPsLqihb868=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=HjuZNr/w; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5d01db666ceso1381820a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:08:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1732295284; x=1732900084; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y0DOX93bw5phi/WY0MT30BO5hYdUtb3juzdM+PG5dKU=;
-        b=HjuZNr/w7GwLLQw3JTN1SRPr2ObOq8hPJ1nkhYgMRHOCGcaFfM5X/A2bw+Tgtv6HxA
-         1j9uoglZuOkEdMcsbHpSZ52R5qSWxrJN9VCMhfYtCNeJUcf7pMt/R2ERwgTk1OVSbiWA
-         r8gQG9haIP8ztX6n7cnZgJksqhp5xZ57Ya5VrpUIdg6Mo5VWGuskgaqPa1XPgzwUmHiV
-         MG0zSS9MbOzyR9rz9cY7cwiYDTLTAExO7Gg0RkDzAX5GLIeqJDnZ73mRoT4XgW6h9NCa
-         2oZjBpWmU6ytEguPTXJF43/Fg7a3oAeJW3HxJwjdM0T+VtYfStl1yuTMGMKhbL7ThHa9
-         OIsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732295284; x=1732900084;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y0DOX93bw5phi/WY0MT30BO5hYdUtb3juzdM+PG5dKU=;
-        b=FTPDI9LHZkdNX/sMY0dvIssIuixevyJldbCrYaGDxy4SnxlvNoVp858GDC9wRRH6Gk
-         jDT+227O9IyboIQf+QOs7BhOMTbmYwsHQ8IKXVOjmmz+wuDNKIZSqldTal2Ij3hHbSMI
-         9fmll/k8DXK7bEzyGW/CpvlGOvM8ph6NNjRhH0gCP4SQBg+e6TbwHqIrhBjG1r/lZAhy
-         YoGrEwcvAthuj1kx4UFtRxaMF/Yj8a86iKq/LOU6cHx3ng/n84VQAytjm2/6AUe/MHSj
-         vo92QbLVQWIFPNXwTkC2LhmeRfEcFlXYzgGN9fN9EfGmr5Z0+FA6WoUQmKOnWX0GHBjH
-         ovMw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0FMW9PbQ6v+u/KSB6aYtgY721gQ8OpglI0WbD9711mxzZVJTLJhS7urd1z32H80HZ/88n7oEyMkXzhfQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6z9dkuRgvA/9JWUW6MuJ1UMWfdExRq/PDQUC+/HKZH/whk7Ax
-	uEjY/jfDYils+w1MW4R9WshP+FIDGa35FCzvnXiCUzDTXbeA9jxmCrgP4wDo7E0=
-X-Gm-Gg: ASbGncuOq0N3fO+zHyN+X/1OSkBsw7mXWEb5LXO90ugNE9GCG+nJSLuQUrynD8DcKc+
-	YdlKdul3YiZGqBKjJy2q+9SZpLhy7acEF2jQxYO2PQDTJwqBTSsFdFBN2fj1ZoDb76dtkaFLPCD
-	KRq9RsACQ8D3Mt8baeJJ9K+HDlL8rVHjOezgYMJsnTh3ghScUYafOOCjVoODYSxXyKtRpVlrJIf
-	imf22vqiFv9tBkahWML7AJuWdU+pox9tCzdgkvc5WbVZwPfNtC2K8FQEDKyB9uTH7fOqCSxGjQe
-	5ahrFu/zoNHtODepbiT4T6+ajaAW0zs7ajk=
-X-Google-Smtp-Source: AGHT+IGtSa/c759tcXKL36hfS9NeLmo4AZHZNWZDIockuCHHkNSeQM+NVau/IABnZYXKpy1e8IALBA==
-X-Received: by 2002:a05:6402:510c:b0:5cf:9a8:2bca with SMTP id 4fb4d7f45d1cf-5d0207b9aedmr2507880a12.31.1732295282728;
-        Fri, 22 Nov 2024 09:08:02 -0800 (PST)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d3b032esm1100517a12.19.2024.11.22.09.08.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 09:08:01 -0800 (PST)
-Date: Fri, 22 Nov 2024 18:07:59 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: iommu@lists.linux.dev, kvm-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	tjeznach@rivosinc.com, zong.li@sifive.com, joro@8bytes.org, will@kernel.org, 
-	robin.murphy@arm.com, anup@brainfault.org, atishp@atishpatra.org, tglx@linutronix.de, 
-	alex.williamson@redhat.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu
-Subject: Re: [RFC PATCH 08/15] iommu/riscv: Add IRQ domain for interrupt
- remapping
-Message-ID: <20241122-8c00551e2383787346c5249f@orel>
-References: <20241114161845.502027-17-ajones@ventanamicro.com>
- <20241114161845.502027-25-ajones@ventanamicro.com>
- <20241118184336.GB559636@ziepe.ca>
- <20241119-62ff49fc1eedba051838dba2@orel>
- <20241119140047.GC559636@ziepe.ca>
- <DE13E1DF-7C68-461D-ADCD-8141B1ACEA5E@ventanamicro.com>
- <20241119153622.GD559636@ziepe.ca>
- <20241121-4e637c492d554280dec3b077@orel>
- <20241122153340.GC773835@ziepe.ca>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Km9ejHKoFUVcJPGvd9aXusncKhFT3BA/t72r6LgK1XOj62QX504JI+oxbb5y9wQtnzg+iW37KmshHww465o6DLEdQzsbAtj+Fl/IIcwJjYt0O0DT97yNSL8927WRuENjGhMnlxDHVcSo55iAAK5p4GWsFmqHqdwRM14M5aCRa8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a2BO22uj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EFC6C4CECE;
+	Fri, 22 Nov 2024 17:09:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732295340;
+	bh=1CfPCrbQSxmUjPMp+X9DvgffUWM1Ec0pXg1i9OP4r4o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a2BO22ujt7JRhNwqpoS7ukt9qktB24LEqlLsR7koU2zcx3Nz9ZqK8KXxgjmYiB589
+	 COor+H2gke1uqm5grSjNUgba5tmE6ueiGkeT/n+9FDqtnZxM/6CPTItGmStfZT1nnh
+	 8GU200xN0goFcB/gTkq9Iu+YhKVoK6CWDGmY8dHUxsE6iai8p+P8vJv3s1kznZzZcG
+	 yw+0tGB4Yi5tSJah9hoGhk49Fg8M5TxfHd++mqoRuL/OvQj1/bBGy9DY9TD2Zvh4R1
+	 65316DPCtRqlf3fCCKSJGnnr0NY/gLWibHJg5GiYI2NRtuL0HRCUIg+6vGrLPE4Ik3
+	 8M/MZGt8kGq9g==
+Date: Fri, 22 Nov 2024 09:08:58 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jeff King <peff@peff.net>,
+	Sean Christopherson <seanjc@google.com>
+Subject: Re: [PATCH v4] setlocalversion: work around "git describe"
+ performance
+Message-ID: <20241122170858.s5ij6346twiq2spt@jpoimboe>
+References: <20241122150037.1085800-1-linux@rasmusvillemoes.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241122153340.GC773835@ziepe.ca>
+In-Reply-To: <20241122150037.1085800-1-linux@rasmusvillemoes.dk>
 
-On Fri, Nov 22, 2024 at 11:33:40AM -0400, Jason Gunthorpe wrote:
-> On Fri, Nov 22, 2024 at 04:11:36PM +0100, Andrew Jones wrote:
+On Fri, Nov 22, 2024 at 04:00:37PM +0100, Rasmus Villemoes wrote:
+> v4:
 > 
-> > The reason is that the RISC-V IOMMU only checks the MSI table, i.e.
-> > enables its support for MSI remapping, when the g-stage (second-stage)
-> > page table is in use. However, the expected virtual memory scheme for an
-> > OS to use for DMA would be to have s-stage (first-stage) in use and the
-> > g-stage set to 'Bare' (not in use). 
+> - Switch the logic to make use of the return values from try_tag,
+>   instead of asking whether $count has been set.
 > 
-> That isn't really a technical reason.
+> - Update a comment.
 > 
-> > OIOW, it doesn't appear the spec authors expected MSI remapping to
-> > be enabled for the host DMA use case.  That does make some sense,
-> > since it's actually not necessary. For the host DMA use case,
-> > providing mappings for each s-mode interrupt file which the device
-> > is allowed to write to in the s-stage page table sufficiently
-> > enables MSIs to be delivered.
-> 
-> Well, that seems to be the main problem here. You are grappling with a
-> spec design that doesn't match the SW expecations. Since it has
-> deviated from what everyone else has done you now have extra
-> challenges to resolve in some way.
-> 
-> Just always using interrupt remapping if the HW is capable of
-> interrupt remapping and ignoring the spec "expectation" is a nice a
-> simple way to make things work with existing Linux.
-> 
-> > If "default VFIO" means VFIO without irqbypass, then it would work the
-> > same as the DMA API, assuming all mappings for all necessary s-mode
-> > interrupt files are created (something the DMA API needs as well).
-> > However, VFIO would also need 'vfio_iommu_type1.allow_unsafe_interrupts=1'
-> > to be set for this no-irqbypass configuration.
-> 
-> Which isn't what anyone wants, you need to make the DMA API domain be
-> fully functional so that VFIO works.
-> 
-> > > That isn't ideal, the translation under the IRQs shouldn't really be
-> > > changing as the translation under the IOMMU changes.
-> > 
-> > Unless the device is assigned to a guest, then the IRQ domain wouldn't
-> > do anything at all (it'd just sit between the device and the device's
-> > old MSI parent domain), but it also wouldn't come and go, risking issues
-> > with anything sensitive to changes in the IRQ domain hierarchy.
-> 
-> VFIO isn't restricted to such a simple use model. You have to support
-> all the generality, which includes fully supporting changing the iommu
-> translation on the fly.
-> 
-> > > Further, VFIO assumes iommu_group_has_isolated_msi(), ie
-> > > IRQ_DOMAIN_FLAG_ISOLATED_MSI, is fixed while it is is bound. Will that
-> > > be true if the iommu is flapping all about? What will you do when VFIO
-> > > has it attached to a blocked domain?
-> > > 
-> > > It just doesn't make sense to change something so fundamental as the
-> > > interrupt path on an iommu domain attachement. :\
-> > 
-> > Yes, it does appear I should be doing this at iommu device probe time
-> > instead. It won't provide any additional functionality to use cases which
-> > aren't assigning devices to guests, but it also won't hurt, and it should
-> > avoid the risks you point out.
-> 
-> Even if you statically create the domain you can't change the value of
-> IRQ_DOMAIN_FLAG_ISOLATED_MSI depending on what is currently attached
-> to the IOMMU.
-> 
-> What you are trying to do is not supported by the software stack right
-> now. You need to make much bigger, more intrusive changes, if you
-> really want to make interrupt remapping dynamic.
->
+> - Drop T-b tag from Josh as I think this changes the flow sufficiently
+>   from the version he tested. I have repeated my tests, with the same
+>   functional and performance result as indicated in the commit log.
 
-Let the fun begin. I'll look into this more. It also looks like I need to
-collect some test cases to ensure I can support all use cases with
-whatever I propose next. Pointers for those would be welcome.
+Tested-by: Josh Poimboeuf <jpoimboe@kernel.org>
 
-Thanks,
-drew
+-- 
+Josh
 
