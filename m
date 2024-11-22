@@ -1,92 +1,78 @@
-Return-Path: <linux-kernel+bounces-417872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CEC49D5A17
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:37:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37CDE9D5A16
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:36:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9319EB2221D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:37:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D931A1F2371E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3769170A37;
-	Fri, 22 Nov 2024 07:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E29171E55;
+	Fri, 22 Nov 2024 07:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="guTVK73O"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="XB+CUaik"
+Received: from esa12.hc1455-7.c3s2.iphmx.com (esa12.hc1455-7.c3s2.iphmx.com [139.138.37.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129941632E5
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 07:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A90C170A00;
+	Fri, 22 Nov 2024 07:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.138.37.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732261038; cv=none; b=sqo4WO97tcIQO3rG0evLBWV6u/Qu/OhQVM+qXdjTxWrJMZnhPkbK9UTPyGTizjqVUz7OUejS8i4wlQVd6cQAG9H3xliA8VGMKvDowmdh8jAV2oQE4vhDjTo3yd/PpwSV5KN6Zns612ANCfrNK2OmORSGdtsiuymEPLqBUlV5hiM=
+	t=1732261006; cv=none; b=g0RWylmjg9YwbEK5Wb2cy4qtXd71rgceDQ6jBFMdE53g11+DcW/LfHFC+6X16cpGGW9Vm+wb7eFo3Cow0TSLsh9lC5bCRTJwIoQeBBSa4jfUyvmqkxG6Ra9AdG0+iXsqq+b45nLez3oPCKhMkf0SoBZ7jQR/wo6o5vHT+5UD2CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732261038; c=relaxed/simple;
-	bh=GqDLA2aJbcyW2sNZqwXdHIKsQ4D2f2/gHOwOecSMJTk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lAytswnw4nqLY8eWR65oqEHreTJUVeVqqEvvSXI5STkn60Dx2bdmEfun48fFHuTlVRIClNAHs/f7oUuMNi2nedoOXrr4Mwl5qtNXnUNgi9BiiL/Y1WTN8XQcWUIaFaeyyJu5jU0BCHKPw93SR/B9CwTUwktS5k8pUk0qnkzx1Bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=guTVK73O; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-72061bfec2dso1545147b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 23:37:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1732261036; x=1732865836; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bV7gLq0Dv5b58r83fWTxkWC1hdPvA2dZ9u+ZCszo9Js=;
-        b=guTVK73OXWDS7csVHtxqcCTF0Ez1U9wX/DF7H7y6GRlwMctTY1+qhlAO7iF7ZRflkp
-         Wtq2YpKgRDZaGQIcOQFJu7v2hho5tiLjFXMjbgXkreZZTvjJtjC30s6o1YAv8QY53dRG
-         LsrdqfHSGNLrHvluZRs3KpErSp1pTrv8oZ5keiw2/Q1z8BKXo0q63q6UeofMtYBboxeg
-         EbNfw9HW9YBH471kxQuHg2rnVuftg2L8Vj7xiw+NZ2BET1+1fKbru1B60O3SZzPleuhW
-         kPhoLx7nm9j9QpKVu9RCbOSistTXAaVcxeAElankHdBscoabXKn1X9RrFfzMNKkE9s47
-         mjOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732261036; x=1732865836;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bV7gLq0Dv5b58r83fWTxkWC1hdPvA2dZ9u+ZCszo9Js=;
-        b=U8Dpi9wS6HNjPe6rw8uHJLXtv34FX4XPN4QsSL0uXi+PAwhHSOwGGqraMA07In46Zv
-         F5mu4l2hIH83hjiMvrHgYPZAFvOtZQZCRYJZjo8lw3kKkVUqXHLDrOUuaqrK5WxbhTEs
-         n+Ypb5dOf+s9SHJop1FfOj3fKGyjy8oauKk1knEWFnUH9mrtGDZtvLqSfMrJHPYP4Vtr
-         yTnb5wUWp6WS1w6w0zmJZZX+rB2KiUVQjQYeRlrFAx34jFkcjyE1BDX+zWUVo6EVMSW0
-         2wjoKJ5rl/ZstC2R4o7iBqyb+JY5fmus8dGEf1tHlK4CHkLfT1hcQpytOjjcLTouO5Or
-         Ss0A==
-X-Forwarded-Encrypted: i=1; AJvYcCX1wzVj7hNjZMOEKARljJmwU/7s2qjaQdh+RDPsozZaq7w5I+9wKPDu7Lt0kjc+/ODcWoJW+Zfyt5yuVK4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFLX8PEapq/LacX8i6NDYoLdjfrWlOdTNDe3A21fNPRMUWihXj
-	I/qb+wvyII7EE1eoFpE9ORWwixVqADPYwKXEG1wS/p/ljPwVd8Ac7Uqjloi5bq0=
-X-Gm-Gg: ASbGncvhq2sWZ4Xw6nfsSyVLr5WatyyVCr0XrLD5FK05taGEGAnYKrtAFp1OOxbVwpi
-	YzbJoJ0PyaEoQNdFkpkmUSnjmSprsPMLJRWpUZg4ORWBthBClfsx90Fkqo6qVoqzui6QvIKP8wd
-	MNwmkLQcoOZh+w1NahwUmGoHE3s2HFPgeTJyH7Ab79xdi/fcQGanqY1ax0kKwWOPAL/P9XUWTMF
-	zAwrExpZVhovyf4cceBkXAbG8ekSnFRLQ9SphGnSPTMrdF5ck8s+ILstntbVGUaTNS8B8JWZ3zU
-	B+B6A1AIRak2DQ==
-X-Google-Smtp-Source: AGHT+IEulizdJJtMylU5KZsgvUSMXtgdwGEw2Ghn/IeTkwaWvM2EMmiAvOUJ1bOFUVxdjfkLEjgd7A==
-X-Received: by 2002:a17:903:1c3:b0:212:51dc:3d51 with SMTP id d9443c01a7336-2129f56fb86mr19675655ad.27.1732261035313;
-        Thu, 21 Nov 2024 23:37:15 -0800 (PST)
-Received: from C02DW0BEMD6R.bytedance.net ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129db8cf09sm10084205ad.4.2024.11.21.23.37.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 23:37:14 -0800 (PST)
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-To: pasha.tatashin@soleen.com,
-	tongtiangen@huawei.com,
-	jannh@google.com,
-	lorenzo.stoakes@oracle.com,
-	david@redhat.com,
-	ryan.roberts@arm.com,
-	peterx@redhat.com,
-	jgg@ziepe.ca,
-	muchun.song@linux.dev,
-	akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
+	s=arc-20240116; t=1732261006; c=relaxed/simple;
+	bh=CgUx0IlOGrF/yLFV9BJb7HxBI9VBRO+yLhrTxkWGMMw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WLan7yjynIcwL2CDzDVCJZeH1pu+sq+vRA/FKQx+MzwxK0WQdmCyV3OKENnUIw+MpYY8v/d3iRcvIgjQAAmWhM5xav32tboBZhUr9LpRw8HsznLu4ShiwcdMJg5RVa1mPLL5eyHdaoIuYPVlUX/VI06TLhGizhQoJwT/2bLiFLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=XB+CUaik; arc=none smtp.client-ip=139.138.37.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
+  t=1732261004; x=1763797004;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=CgUx0IlOGrF/yLFV9BJb7HxBI9VBRO+yLhrTxkWGMMw=;
+  b=XB+CUaikg2dqWGkCxXH8ROFkYyfApcwV1BM4gVi3TJW6GSL2PjDtHup+
+   qlruYkyM+JfVjE51S7N6tv2BdW5I4+QAZMxhjkDjnMdTTUzrd7SgXLJKT
+   Mfd682GmEYa64HkeJrtrP5u3e/fLZQGsGLaDcmXbKDt+jUJoaumSVXOzA
+   6hqMh8VjWuGGizY0OUi7OrIwws+D+nYlwpIhn2gXQAWelIEGPo3JqzywF
+   QmpsmdyPSBeQfip2AvOC3M/cpNiO272F39KxnbhYTb1UY6uoVmLNkas6+
+   BB1HmCqxz2IrJEFBuJ2Ki8WtQWRDlsWlG9QY3Gy+jrKnflu2PxmARkIat
+   A==;
+X-CSE-ConnectionGUID: oGzjwGLkQVePIF+gFQl3Eg==
+X-CSE-MsgGUID: qosyJ1m1SRGufkrVzoYS6A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="160267502"
+X-IronPort-AV: E=Sophos;i="6.12,175,1728918000"; 
+   d="scan'208";a="160267502"
+Received: from unknown (HELO oym-r1.gw.nic.fujitsu.com) ([210.162.30.89])
+  by esa12.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 16:36:41 +0900
+Received: from oym-m1.gw.nic.fujitsu.com (oym-nat-oym-m1.gw.nic.fujitsu.com [192.168.87.58])
+	by oym-r1.gw.nic.fujitsu.com (Postfix) with ESMTP id 6DED8D4808;
+	Fri, 22 Nov 2024 16:36:39 +0900 (JST)
+Received: from kws-ab4.gw.nic.fujitsu.com (kws-ab4.gw.nic.fujitsu.com [192.51.206.22])
+	by oym-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id 00755C19B3;
+	Fri, 22 Nov 2024 16:36:39 +0900 (JST)
+Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
+	by kws-ab4.gw.nic.fujitsu.com (Postfix) with ESMTP id 8B355E2070;
+	Fri, 22 Nov 2024 16:36:38 +0900 (JST)
+Received: from iaas-rdma.. (unknown [10.167.135.44])
+	by edo.cn.fujitsu.com (Postfix) with ESMTP id C12A11A006C;
+	Fri, 22 Nov 2024 15:36:37 +0800 (CST)
+From: Li Zhijian <lizhijian@fujitsu.com>
+To: linux-kselftest@vger.kernel.org
+Cc: shuah@kernel.org,
 	linux-kernel@vger.kernel.org,
-	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v2] mm: pgtable: make ptep_clear() non-atomic
-Date: Fri, 22 Nov 2024 15:36:52 +0800
-Message-Id: <20241122073652.54030-1-zhengqi.arch@bytedance.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
+	Li Zhijian <lizhijian@fujitsu.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Miklos Szeredi <mszeredi@redhat.com>,
+	Josef Bacik <josef@toxicpanda.com>
+Subject: [PATCH for-next v3] selftests/filesystems: Add missing gitignore file
+Date: Fri, 22 Nov 2024 15:37:25 +0800
+Message-ID: <20241122073725.1531483-1-lizhijian@fujitsu.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,71 +80,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-28812.004
+X-TM-AS-User-Approved-Sender: Yes
+X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-28812.004
+X-TMASE-Result: 10--3.043400-10.000000
+X-TMASE-MatchedRID: 54gb2yeIOXQhiKpapiFQUqoXHZz/dXlxTJDl9FKHbrmwcSh5kytY+TxT
+	JjE+nPo2V89FgO/U4vBeAZpJlX3ct6Mqw1MrQ3Xs0e7jfBjhB8eBs03RHrzjM2oFlnxJu2+hOki
+	GGidO7I8i+t+0AiFaYs/zm2Wt1N8TKA89P2l9zZ6eAiCmPx4NwGmRqNBHmBveVDC1CbuJXmMqtq
+	5d3cxkNV6l++H8AVY9CZ85G8TivabAYDXpDgYC7C5BuXeFwSNKRf+ACC6LFtRCeKLNLAFgi0SFq
+	9xTvKXggn6P4mGbxT/rFBvKT5XxbAibYH2E0kJqFcUQf3Yp/ridO0/GUi4gFb0fOPzpgdcEKeJ/
+	HkAZ8Is=
+X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
 
-In the generic ptep_get_and_clear() implementation, it is just a simple
-combination of ptep_get() and pte_clear(). But for some architectures
-(such as x86 and arm64, etc), the hardware will modify the A/D bits of the
-page table entry, so the ptep_get_and_clear() needs to be overwritten
-and implemented as an atomic operation to avoid contention, which has a
-performance cost.
+Compiled binary files should be added to .gitignore
 
-The commit d283d422c6c4 ("x86: mm: add x86_64 support for page table
-check") adds the ptep_clear() on the x86, and makes it call
-ptep_get_and_clear() when CONFIG_PAGE_TABLE_CHECK is enabled. The page
-table check feature does not actually care about the A/D bits, so only
-ptep_get() + pte_clear() should be called. But considering that the page
-table check is a debug option, this should not have much of an impact.
+'git status' complains:
+Untracked files:
+(use "git add <file>..." to include in what will be committed)
+     filesystems/statmount/statmount_test_ns
 
-But then the commit de8c8e52836d ("mm: page_table_check: add hooks to
-public helpers") changed ptep_clear() to unconditionally call
-ptep_get_and_clear(), so that the CONFIG_PAGE_TABLE_CHECK check can be
-put into the page table check stubs (in include/linux/page_table_check.h).
-This also cause performance loss to the kernel without
-CONFIG_PAGE_TABLE_CHECK enabled, which doesn't make sense.
-
-Currently ptep_clear() is only used in debug code and in khugepaged
-collapse paths, which are fairly expensive. So the cost of an extra atomic
-RMW operation does not matter. But this may be used for other paths in the
-future. After all, for the present pte entry, we need to call ptep_clear()
-instead of pte_clear() to ensure that PAGE_TABLE_CHECK works properly.
-
-So to be more precise, just calling ptep_get() and pte_clear() in the
-ptep_clear().
-
-Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
-Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-Reviewed-by: Jann Horn <jannh@google.com>
-Reviewed-by: Muchun Song <muchun.song@linux.dev>
-Acked-by: David Hildenbrand <david@redhat.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Miklos Szeredi <mszeredi@redhat.com>
+Cc: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
 ---
-Changes in v2:
- - add a comment (suggested by David Hildenbrand)
- - collect Reviewed-bys and Acked-by
+Hello,
+Cover letter is here.
 
- include/linux/pgtable.h | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+This patch set aims to make 'git status' clear after 'make' and 'make
+run_tests' for kselftests.
+---
+V3:
+  sorted the ignored files
+V2:
+   split as a separate patch from a small one [0]
+   [0] https://lore.kernel.org/linux-kselftest/20241015010817.453539-1-lizhijian@fujitsu.com/
 
-diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index adef9d6e9b1ba..94d267d02372e 100644
---- a/include/linux/pgtable.h
-+++ b/include/linux/pgtable.h
-@@ -533,7 +533,14 @@ static inline void clear_young_dirty_ptes(struct vm_area_struct *vma,
- static inline void ptep_clear(struct mm_struct *mm, unsigned long addr,
- 			      pte_t *ptep)
- {
--	ptep_get_and_clear(mm, addr, ptep);
-+	pte_t pte = ptep_get(ptep);
-+
-+	pte_clear(mm, addr, ptep);
-+	/*
-+	 * No need for ptep_get_and_clear(): page table check doesn't care about
-+	 * any bits that could have been set by HW concurrently.
-+	 */
-+	page_table_check_pte_clear(mm, pte);
- }
- 
- #ifdef CONFIG_GUP_GET_PXX_LOW_HIGH
+Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+---
+ tools/testing/selftests/filesystems/statmount/.gitignore | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/testing/selftests/filesystems/statmount/.gitignore b/tools/testing/selftests/filesystems/statmount/.gitignore
+index 82a4846cbc4b..973363ad66a2 100644
+--- a/tools/testing/selftests/filesystems/statmount/.gitignore
++++ b/tools/testing/selftests/filesystems/statmount/.gitignore
+@@ -1,2 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++statmount_test_ns
+ /*_test
 -- 
-2.20.1
+2.44.0
 
 
