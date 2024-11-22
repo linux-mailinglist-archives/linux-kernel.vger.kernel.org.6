@@ -1,180 +1,148 @@
-Return-Path: <linux-kernel+bounces-418006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 390E09D5BBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:19:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11EA29D5BBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:19:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F33A2288399
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:19:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD78B1F236B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE3218BBB8;
-	Fri, 22 Nov 2024 09:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987701D7E35;
+	Fri, 22 Nov 2024 09:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="qFCbMxfi"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bu0ZAtnY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E045D15B149
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1391D7996
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732266993; cv=none; b=f10KtIjAxX/fkge7kZfrkCcJJ511T8P21Y6+91UmABAy1Q8u/LA5v8B9xVGCUDDeF6xXFKns+roj0uTU2rqPXgqiRmuRVPKPE7d61suBjrmzXnFtVw+lvKMtHPaEu/htUbfxliTUvZPKZf9RYpCtFpVFqqHqYTNxksVb0H7zVjU=
+	t=1732267020; cv=none; b=eW515cmD8veNJ+Kyq6JlqCi9fDD9BLHDfmDLR/qVpaDCRUaT3Q2DeX1zValZB6+rWu2g+SUx4SC3b/x5ZyJesvtgXDfa+FnivT6QjYL1r9I1VKQYYkvb/4IuO2jQ4M3KpDDga42cniuqQz88+ZZM4+Hfpp+fBnRrQcpDSZmLuE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732266993; c=relaxed/simple;
-	bh=o90CHZRpVvcY6X6OVN0QN/QQm/8RXj3aSZTwO4Uj74k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cyqsoJcchMw6KFJU/XxBfaCr4xVs55T26r3x2DQ3PsoSzZw2gkLugAFAyEP+Wi83V02ACD/MLwNQDbYWMkxg4/UQiGP1lvJH/bDEl7CiwGwXJV0/e12w5fwSW9ceFMfHf84un5XY77aE6bYOyOLdLBCm9HnQ8mbNsL8coXkkOFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=qFCbMxfi; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9ef275b980so299674066b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 01:16:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732266989; x=1732871789; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+cONwVFe9h3jPRUrTJqjZ38mmUsRgHE6KH95XCIxtkE=;
-        b=qFCbMxfipICqZznjHJJTi3JPVwQM1+rUoG1RoLhWVto/t6rg4iPOzxP7L/qE/ow0RG
-         20cknoJWApFdholFhQDMU5W74uQbR8BzA45Ncoz/xBMAZirzt7eNMKC0WgLl5kR6mkkM
-         Tc3gR09pi5IMce91UX3+psDpvWyG3WXBmQvz0kFIGdZm2JaWiR1v4Y1qOMuHuLf2ZX7a
-         FnOTeGUx8r0wvpFZNQit8M/otlCiu+o8TBERIT/n6lqKu5viH2YYs2qgQPl5nMRXxapi
-         kHvy+LGGSxoXFC+1b20VX0MDtXLAwmDIiIGx0CATQ0c2FzZth8xkCQXRRh7Lh00wekuY
-         4pIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732266989; x=1732871789;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+cONwVFe9h3jPRUrTJqjZ38mmUsRgHE6KH95XCIxtkE=;
-        b=OsALn7u7J4K8EjN7pqxn7jvKNGczTQSFOuOgrHj6aA07Aj7Tygmmiou8ScwvwIioeB
-         g/y1hFPRaG7i/MbUcFn2sVXbjibMuTPcU/7pae7na9Gi8lDvRT8M7wiw88AlK7q3CWjM
-         lYK7IbPnpLR0Ss6RI5EUSLB4g9tolC5E8tgkL1DJV053+L4k4CaKhZmco4Poy3995Dqv
-         ZlB8KXkxqepyG3DLdFM9veACiYF6d7Of41aVZXAx8v6iUx+YQnkQ2k5WHxYCcyn0sI/7
-         nDvitMNXAiRXYFPou4nAR9/TVybo+wW8Nuhua1q5mcb52HV2EZGO3p60Nu2QS3HKlYI4
-         3hAw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYhEccu/dn6Y0tlrR3vpdXj2Np01DFRskot2OMb77NREa4niOyvu8Z1edP2QNx5cXBXQ23MCsM5CBvW5U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywlnl6Th/tp1BC70qvNcG6bJLfEk/atskFRor5bGfj1f5gmqfmR
-	jCpoHT/T09TKgztcrgd6e6yvGFSwiz8+w/zLkFsBl+tgCGW109WfP++R/AQ8ksMSG8cajVxspJ3
-	TJpgvrlRcUGFmc0hRwcH3d1lHo7O7vaTgTTxpAQ==
-X-Gm-Gg: ASbGncs4B0rI9QVSrlJ7KSuRgsouxOW57ybZoiCi0D3bB27KtpcXGSSkZCc2+4jc678
-	/koz9Xc7tnGthy2hM7rtzsT+ThKDqXw==
-X-Google-Smtp-Source: AGHT+IGBIJn2l6iW1Ximwej5Nomk1X6Bfwt6JsYUR9VUOC3nDn5WmX59qNhA/dgRca4VNr6bv6dLyhB1J1APS3de4mI=
-X-Received: by 2002:a17:906:3101:b0:a9a:dc3:c86e with SMTP id
- a640c23a62f3a-aa50990b1aamr172667166b.11.1732266989281; Fri, 22 Nov 2024
- 01:16:29 -0800 (PST)
+	s=arc-20240116; t=1732267020; c=relaxed/simple;
+	bh=pfDeka+wDs610l+yfP6uYMmifgUfnr/ZLDWOPuzEEKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qZF5QhtDwfcwlsmSOOVbda82XagBcDl5ue/xWPcNb/70cw8QQFqpYuh8Q4McI9+CCnscegkzwqOqTsBoZIbFJxqaNHw6uzTzTMleihKT93tsghB6MeqDqIBdHH/9Knw+rpypCBgUdTa+zUlefy8O031QVDXzpJGP06irfPgWesc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bu0ZAtnY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732267016;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iTleGtvdq1osypVXWqisdoYoTofXyVXhiRbJdgp9AcQ=;
+	b=Bu0ZAtnYOXJRIvnQwAUvztvuGgDnzohIWetOjhNrjXEsOT19YRj0p9qnQ8u3CSudxIYQ+c
+	tsG5yJ8lU+2eS+pasxfC1K5D9tN80pk3d3MleG4kja5Fj5/mCoy94ubyaeY+fdQ0FV/QcH
+	Z/ifaOPYSCZrN+rsdZbHZE4NCQSjlRM=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-662-yqNZKyvGM92oYIoNe2PX8A-1; Fri,
+ 22 Nov 2024 04:16:55 -0500
+X-MC-Unique: yqNZKyvGM92oYIoNe2PX8A-1
+X-Mimecast-MFC-AGG-ID: yqNZKyvGM92oYIoNe2PX8A
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 23FF01955BF4;
+	Fri, 22 Nov 2024 09:16:52 +0000 (UTC)
+Received: from localhost (unknown [10.72.113.10])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E86D01955E9E;
+	Fri, 22 Nov 2024 09:16:49 +0000 (UTC)
+Date: Fri, 22 Nov 2024 17:16:45 +0800
+From: Baoquan He <bhe@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Eric Farman <farman@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v1 03/11] fs/proc/vmcore: disallow vmcore modifications
+ after the vmcore was opened
+Message-ID: <Z0BL/UopaH5Xg5jS@MiWiFi-R3L-srv>
+References: <20241025151134.1275575-1-david@redhat.com>
+ <20241025151134.1275575-4-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121-add-mtk-isp-3-0-support-v7-0-b04dc9610619@baylibre.com>
- <20241121-add-mtk-isp-3-0-support-v7-4-b04dc9610619@baylibre.com> <85ab1984c04b1eddbea71006ab5d95cb4333d838.camel@mediatek.com>
-In-Reply-To: <85ab1984c04b1eddbea71006ab5d95cb4333d838.camel@mediatek.com>
-From: Julien Stephan <jstephan@baylibre.com>
-Date: Fri, 22 Nov 2024 10:16:18 +0100
-Message-ID: <CAEHHSvaEzCGZt3GpKBNDGUphetR7JWfJ7SZfvAU=O-3M4WZY7w@mail.gmail.com>
-Subject: Re: [PATCH v7 4/5] media: platform: mediatek: isp: add mediatek
- ISP3.0 camsv
-To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
-Cc: "mchehab@kernel.org" <mchehab@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"robh@kernel.org" <robh@kernel.org>, =?UTF-8?B?QW5keSBIc2llaCAo6Kyd5pm655qTKQ==?= <Andy.Hsieh@mediatek.com>, 
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
-	"laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"paul.elder@ideasonboard.com" <paul.elder@ideasonboard.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"fsylvestre@baylibre.com" <fsylvestre@baylibre.com>, "pnguyen@baylibre.com" <pnguyen@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025151134.1275575-4-david@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Le ven. 22 nov. 2024 =C3=A0 08:54, CK Hu (=E8=83=A1=E4=BF=8A=E5=85=89) <ck.=
-hu@mediatek.com> a =C3=A9crit :
->
-> Hi, Julien:
->
-> On Thu, 2024-11-21 at 09:53 +0100, Julien Stephan wrote:
-> > External email : Please do not click links or open attachments until yo=
-u have verified the sender or the content.
-> >
-> >
-> > From: Phi-bang Nguyen <pnguyen@baylibre.com>
-> >
-> > This driver provides a path to bypass the SoC ISP so that image data
-> > coming from the SENINF can go directly into memory without any image
-> > processing. This allows the use of an external ISP.
-> >
-> > Signed-off-by: Phi-bang Nguyen <pnguyen@baylibre.com>
-> > Signed-off-by: Florian Sylvestre <fsylvestre@baylibre.com>
-> > [Paul Elder fix irq locking]
-> > Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
-> > Co-developed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > Co-developed-by: Julien Stephan <jstephan@baylibre.com>
-> > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> > ---
->
-> [snip]
->
-> > +static void mtk_cam_cmos_vf_enable(struct mtk_cam_dev *cam_dev,
-> > +                                  bool enable, bool pak_en)
-> > +{
-> > +       if (enable)
-> > +               cam_dev->hw_functions->mtk_cam_cmos_vf_hw_enable(cam_de=
-v);
->
-> Directly call mtk_camsv30_cmos_vf_hw_enable().
-> This has discussed in previous version [1].
->
-> [1] https://patchwork.kernel.org/project/linux-mediatek/patch/20240729-ad=
-d-mtk-isp-3-0-support-v6-4-c374c9e0c672@baylibre.com/#25966327
->
+On 10/25/24 at 05:11pm, David Hildenbrand wrote:
+......snip...
+> @@ -1482,6 +1470,10 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
+>  		return -EINVAL;
+>  	}
+>  
+> +	/* We'll recheck under lock later. */
+> +	if (data_race(vmcore_opened))
+> +		return -EBUSY;
 
-Hi CK,
+As I commented to patch 7, if vmcore is opened and closed after
+checking, do we need to give up any chance to add device dumping
+as below? 
 
-I forgot about that discussion sorry :/
-I guess you want me to completely remove the  mtk_cam_hw_functions struct?
-In that case, what do you prefer:
-- keep mtk_camsv30_hw.c and put signatures in mtkcamsv30_hw.h and
-include mtk_camsv30_hw.h in mtk_camsv_video.c
-- rename mtk_camsv30_hw.c to mtk_camsv_hw.c (and all functions) and
-put signatures in mtk_camsv_hw.h
+fd = open(/proc/vmcore);
+...do checking;
+close(fd);
 
-Cheers
-Julien
+quit any device dump adding;
 
-> Regards,
-> CK
->
-> > +       else
-> > +               cam_dev->hw_functions->mtk_cam_cmos_vf_hw_disable(cam_d=
-ev);
-> > +}
-> > +
->
-> >
->
-> ************* MEDIATEK Confidentiality Notice ********************
-> The information contained in this e-mail message (including any
-> attachments) may be confidential, proprietary, privileged, or otherwise
-> exempt from disclosure under applicable laws. It is intended to be
-> conveyed only to the designated recipient(s). Any use, dissemination,
-> distribution, printing, retaining or copying of this e-mail (including it=
-s
-> attachments) by unintended recipient(s) is strictly prohibited and may
-> be unlawful. If you are not an intended recipient of this e-mail, or beli=
-eve
-> that you have received this e-mail in error, please notify the sender
-> immediately (by replying to this e-mail), delete any and all copies of
-> this e-mail (including any attachments) from your system, and do not
-> disclose the content of this e-mail to any other person. Thank you!
+run makedumpfile on s390;
+  ->fd = open(/proc/vmcore);
+    -> try to dump;
+  ->close(fd);
+
+> +
+>  	if (!data || !strlen(data->dump_name) ||
+>  	    !data->vmcoredd_callback || !data->size)
+>  		return -EINVAL;
+> @@ -1515,12 +1507,16 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
+>  	dump->buf = buf;
+>  	dump->size = data_size;
+>  
+> -	/* Add the dump to driver sysfs list */
+> +	/* Add the dump to driver sysfs list and update the elfcore hdr */
+>  	mutex_lock(&vmcore_mutex);
+> -	list_add_tail(&dump->list, &vmcoredd_list);
+> -	mutex_unlock(&vmcore_mutex);
+> +	if (vmcore_opened) {
+> +		ret = -EBUSY;
+> +		goto out_err;
+> +	}
+>  
+> +	list_add_tail(&dump->list, &vmcoredd_list);
+>  	vmcoredd_update_size(data_size);
+> +	mutex_unlock(&vmcore_mutex);
+>  	return 0;
+>  
+>  out_err:
+> -- 
+> 2.46.1
+> 
+
 
