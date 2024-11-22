@@ -1,138 +1,128 @@
-Return-Path: <linux-kernel+bounces-418177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0946B9D5E15
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:32:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FBC49D5E21
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:33:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C307C28484C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:32:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F98A281130
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5414B1DDC39;
-	Fri, 22 Nov 2024 11:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63AE61DED6E;
+	Fri, 22 Nov 2024 11:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="k/c6S05b";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gxXo0Zpw"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="SJ5aoE3o"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5531DDC32;
-	Fri, 22 Nov 2024 11:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B3A1DE2D2;
+	Fri, 22 Nov 2024 11:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732275136; cv=none; b=qVaF76xJDQg7+bwQFumR3/bTvcWqlYBJfZwZkQohQJsfJsP+q8cxHTCaJRuSUuxacJDg0yZsRxvqyaL3uRcCx1xawSDq8+JLu82GC+7borcelo3DRk11m2QbWJSxpA4y9hkg3oneD7Y9cdOmT03gN2i3FsXgkMBW+dIUdQz+QdM=
+	t=1732275191; cv=none; b=B8laCzP2o3fyKtzdfkqiGoDK2Paf5F3HHqHwqfx9t9rGHdS/ZA/akRA7NCljpGtP9zfYpfNIVw8cNjQ9vwLFVFDN3LEo2Yhw5D40T6kaakv31fslaURE4XpcTprwPRtNiSj0cruZ1ktLwtUujjxPg/U3u1aNbKCx5W7i7Htro+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732275136; c=relaxed/simple;
-	bh=Xg+DaoAsALEyo18syRnOL6zaKvc5waW7/iMILZVGyaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=syDwyFcDoBIEr3kfKzk3tq14CJZRtFKpmAsT5apIxi4RRRUmM8xP/i6o7lrXZhyT6Brx/XEoHX85P1hXKFCLYBu8ylH96HZZMAry45KpLAnvl8ZT682wOlJqe8Hb3qFd3tMA5urQAHYc1kHwjzAReEVIqVao/Q2wxzzbPgwCTPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=k/c6S05b; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gxXo0Zpw; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 22 Nov 2024 12:32:10 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732275132;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qXjERXwGoyz9ImH0OMqUpjRgs/7YUUrAyzys/z/9r0k=;
-	b=k/c6S05bPuDrImjm8Fw2qYvcj4mTSjZ9qt6zOhnYnC/mGr0YO959GgXEX26faTyCFz4Nz+
-	Pem5zExC15Sg2I07wHAoCFMlb+V3bGY9L7bteS9f/PiRdZSCV3r58/Jzjfu2Wbnq/fLmtR
-	H1Pl3jx8N4xp00twLXnjB57bDvKEk6LxRORDGuk6J2lU1DwfYyAsGDfIiOXeVXYZ+0P6b5
-	hic4DPcoYR4PZQDlZdm/QzgJo2hamgJknpx5TkyP9ut319fveGdQ+W0FNIH5CTLtlM/QLB
-	ctAXFRgA10RqXhtkB9LQOucJn49BcljwAoBypGl6KgTlX2xg81Ijh4PSNqDcPA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732275132;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qXjERXwGoyz9ImH0OMqUpjRgs/7YUUrAyzys/z/9r0k=;
-	b=gxXo0ZpwlI393YrU+pT27Eb0NRpvEvxrhTtR0c4V04Uoryoueah5nEIxdBvaMlhIl6sX4X
-	h2YKQi/K542hcPBA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Marco Elver <elver@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	syzbot <syzbot+39f85d612b7c20d8db48@syzkaller.appspotmail.com>,
-	Liam.Howlett@oracle.com, akpm@linux-foundation.org,
-	jannh@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com, syzkaller-bugs@googlegroups.com,
-	kasan-dev <kasan-dev@googlegroups.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Waiman Long <longman@redhat.com>, dvyukov@google.com,
-	vincenzo.frascino@arm.com, paulmck@kernel.org, frederic@kernel.org,
-	neeraj.upadhyay@kernel.org, joel@joelfernandes.org,
-	josh@joshtriplett.org, boqun.feng@gmail.com, urezki@gmail.com,
-	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-	jiangshanlai@gmail.com, qiang.zhang1211@gmail.com, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, tj@kernel.org, cl@linux.com,
-	penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
-	Thomas Gleixner <tglx@linutronix.de>, roman.gushchin@linux.dev,
-	42.hyeyoo@gmail.com, rcu@vger.kernel.org
-Subject: Re: [PATCH] kasan: Remove kasan_record_aux_stack_noalloc().
-Message-ID: <20241122113210.QxE7YOwK@linutronix.de>
-References: <67275485.050a0220.3c8d68.0a37.GAE@google.com>
- <ee48b6e9-3f7a-49aa-ae5b-058b5ada2172@suse.cz>
- <b9a674c1-860c-4448-aeb2-bf07a78c6fbf@suse.cz>
- <20241104114506.GC24862@noisy.programming.kicks-ass.net>
- <CANpmjNPmQYJ7pv1N3cuU8cP18u7PP_uoZD8YxwZd4jtbof9nVQ@mail.gmail.com>
- <20241119155701.GYennzPF@linutronix.de>
- <CA+fCnZfzJcbEy0Qmn5GPzPUx9diR+3qw+4ukHa2j5xzzQMF8Kw@mail.gmail.com>
+	s=arc-20240116; t=1732275191; c=relaxed/simple;
+	bh=TeNwswg1hkcm5NrYEE4/qOtpl/kIp4I7ZBECogJ/1o8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MUh43XmofAUneTAQWHJxm6UMoQAySqBKR8AEhVD6jroAnyPCsX8sWJSTplhKKg92DvBJz6yBkta7JdURnW7W9FjiutTHdpjdctbBrM/rpIhnlsVa6Gk/Lmk+Mh1MW+mueh/OinMxZ9w6Ok750+Yj85E7x3L8ccn1PcMFhmLh+1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=SJ5aoE3o; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM6e4rO015518;
+	Fri, 22 Nov 2024 06:32:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=SFHUr+0ffpzpCmFD4QpoGc4xgUW
+	Bwn015YdQhBOwfMw=; b=SJ5aoE3oYPvgVAWUzZAgDdHrKJUSAM7SKLoBdEbfvtk
+	65C4HAP2wrfRkcF+dHK/F1KwfbIs6DWTKeY7bd5GfYksn2H0JzYLjX6wZDqfGDaQ
+	5BAs+1vWtS9PkIgt4/OZOCKMzlRjVT5BguOxeqMozpxm5eaKd6V6UsAnKKFB7TIq
+	OxA9cKM6vbVI6I4mtbyqMjHWp11pftz1WZ7BVuoNoaCvHilOxBBM+7K+dt5LJ1+c
+	WwIuSL75lJpY0LoN8ehfDZ3AaJ32ym5yTxIazm/HEntr8mFFhm+rEChtFKa0c/Ev
+	7h10PNoi/QDP7KbrVpLrvuCpNcKQmBe+RaftG1MpFxw==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 43170g56ug-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Nov 2024 06:32:54 -0500 (EST)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 4AMBWr3J054996
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 22 Nov 2024 06:32:53 -0500
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Fri, 22 Nov 2024 06:32:53 -0500
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Fri, 22 Nov 2024 06:32:53 -0500
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Fri, 22 Nov 2024 06:32:53 -0500
+Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.168])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4AMBWhjH011707;
+	Fri, 22 Nov 2024 06:32:45 -0500
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
+CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Subject: [PATCH 1/2] dt-bindings: iio: adf4371: add rdiv2 and doubler
+Date: Fri, 22 Nov 2024 13:32:13 +0200
+Message-ID: <20241122113226.49346-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CA+fCnZfzJcbEy0Qmn5GPzPUx9diR+3qw+4ukHa2j5xzzQMF8Kw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: llMGW39BNZAMSCuCIOeJsupQEczoVbLt
+X-Proofpoint-ORIG-GUID: llMGW39BNZAMSCuCIOeJsupQEczoVbLt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
+ mlxlogscore=999 priorityscore=1501 clxscore=1015 lowpriorityscore=0
+ bulkscore=0 malwarescore=0 mlxscore=0 suspectscore=0 spamscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411220098
 
-On 2024-11-19 20:36:56 [+0100], Andrey Konovalov wrote:
-> > diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
-> > index 6310a180278b6..b18b5944997f8 100644
-> > --- a/mm/kasan/generic.c
-> > +++ b/mm/kasan/generic.c
-> > @@ -521,7 +521,7 @@ size_t kasan_metadata_size(struct kmem_cache *cache=
-, bool in_object)
-> >                         sizeof(struct kasan_free_meta) : 0);
-> >  }
-> >
-> > -static void __kasan_record_aux_stack(void *addr, depot_flags_t depot_f=
-lags)
->=20
-> Could you add a comment here that notes the usage, something like:
->=20
-> "This function avoids dynamic memory allocations and thus can be
-> called from contexts that do not allow allocating memory."
->=20
-> > +void kasan_record_aux_stack(void *addr)
-> >  {
-=E2=80=A6
-Added but would prefer to add a pointer to stack_depot_save_flags()
-which has this Context: paragraph. Would that work?
-Now looking at it, it says:
-|  * Context: Any context, but setting STACK_DEPOT_FLAG_CAN_ALLOC is requir=
-ed if
-|  *          alloc_pages() cannot be used from the current context. Curren=
-tly
-|  *          this is the case for contexts where neither %GFP_ATOMIC nor
-|  *          %GFP_NOWAIT can be used (NMI, raw_spin_lock).
+Add support for reference doubler enable and reference divide by 2
+clock.
 
-If I understand this correctly then STACK_DEPOT_FLAG_CAN_ALLOC must not
-be specified if invoked from NMI. This will stop
-stack_depot_save_flags() from allocating memory the function will still
-acquire pool_lock, right?
-Do we need to update the comment saying that it must not be used from
-NMI or do we make it jump over the locked section in the NMI case?
+Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+---
+ .../devicetree/bindings/iio/frequency/adf4371.yaml    | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Sebastian
+diff --git a/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
+index 1cb2adaf66f9..ef241c38520c 100644
+--- a/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
++++ b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
+@@ -40,6 +40,17 @@ properties:
+       output stage will shut down until the ADF4371/ADF4372 achieves lock as
+       measured by the digital lock detect circuitry.
+ 
++  adi,reference-doubler-enable:
++    type: boolean
++    description:
++      If this property is present, the reference doubler block is enabled.
++
++  adi,adi,reference-div2-enable:
++    type: boolean
++    description:
++      If this property is present, the reference divide by 2 clock is enabled.
++      This feature can be used to provide a 50% duty cycle signal to the PFD.
++
+ required:
+   - compatible
+   - reg
+-- 
+2.47.0
+
 
