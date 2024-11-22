@@ -1,166 +1,106 @@
-Return-Path: <linux-kernel+bounces-417838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 314A99D599A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:51:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0130D9D59A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:52:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE1B01F21090
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:51:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87264B22E24
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB44716F287;
-	Fri, 22 Nov 2024 06:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDE317BB1E;
+	Fri, 22 Nov 2024 06:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YThdWZff"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UdvEOMQ/"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6741527A7;
-	Fri, 22 Nov 2024 06:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD631779BA
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 06:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732258303; cv=none; b=gARR4uCEuvw96Ek7jyoA4R5oqYx2Arr5fMMKU2LM4ylaYl7ZtaLDwYLKCGYzeaWQBFfB4PynsZj+KfbuiNK9C3ijTgosS/qINKwp/1Au1M91su4R1IpvAz3LC4VulLOpFXYLQi2iRdFZC0PxDdH4Wc90y/sDDw8cVzS39YG2E14=
+	t=1732258309; cv=none; b=mCCKWIreLgJ40YgsC5ajqdaEbS+3UwGlSDNGmlu0v+5kHd6BT7JkvJnlZA9xn3BbPU0eUjQrtzGdivf51jSKbV69Q+vbGS8T9JeYnE6boyflpsO5h6P14BMyOF20U76/Yy4ConQUOZ0/tb6pKiepb/6eEt7QTuC7s86SgriZ1hQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732258303; c=relaxed/simple;
-	bh=d9FgkX8sRWc6GVjPqzzDapvQlGKSVVVBoIMOOqg3yh4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=M+6RjPBuJExtMfxWQyYV25a002hAGe8u0Lm0V+uokFMXesCLFOCnFfLu/Q6o5DCFqeCX5NTMeYe/qVaEg7kOQtbtIohuyyajoax0sPX0rkN93NdwgnaupCLeog/hYZixwpnDo2OIRb9FvCEFIjOSMchyFrEB1wsFAWunx+YbMyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YThdWZff; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALHGRa7015290;
-	Fri, 22 Nov 2024 06:51:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=3054MTo/moP
-	LYYPFzHL4TpJLVqcLSu8FE5MTqtNj/AM=; b=YThdWZffAZT6Q9dwcyru5zJtTqk
-	sekc8QUHsw0T7SDI+IJpU/3K/EmM9eCLfhSN8Df9HrEGA2wQEpxzTXljrJF71XAc
-	DXUDDQER7LRAYxS5a+bZbvR7EoyokioywWRkBGO7HRy7QhIeNfyjqZsmEY6lArzv
-	IgK2f+tm5/FLvq5MYjAWa528DdnbDAUpmZU3VOiufEY4VRiDtQI+pisg/3fhUevM
-	r+8VUjg3nd+Og5xp02CCz/URxHu8oaOJRRqW3IG9qoO5pupADbXYOOKji6ai9Z0B
-	ec+JGzjZ4PjXVr2+CRXs8iWQ4PFlxdIVHemIq4Qaq9LV941n6r2d85QpvKA==
-Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4320y9k8p4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 06:51:37 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM6paos009934;
-	Fri, 22 Nov 2024 06:51:36 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 42xmfm4qhg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 06:51:36 +0000
-Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4AM6pZZS009920;
-	Fri, 22 Nov 2024 06:51:35 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 4AM6pZiS009918
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 06:51:35 +0000
-Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4571896)
-	id 4D3EE1809; Fri, 22 Nov 2024 14:51:34 +0800 (CST)
-From: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-To: ulf.hansson@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, bhupesh.sharma@linaro.org, andersson@kernel.org,
-        konradybcio@kernel.org
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        quic_tingweiz@quicinc.com, quic_yuanjiey@quicinc.com
-Subject: [PATCH v3 2/2] arm64: dts: qcom: qcs615-ride: enable SDHC1 and SDHC2
-Date: Fri, 22 Nov 2024 14:51:01 +0800
-Message-Id: <20241122065101.1918470-3-quic_yuanjiey@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241122065101.1918470-1-quic_yuanjiey@quicinc.com>
-References: <20241122065101.1918470-1-quic_yuanjiey@quicinc.com>
+	s=arc-20240116; t=1732258309; c=relaxed/simple;
+	bh=FksEp9kapCY4+YbOqxOtRfRJLC2TEUlIdnGiXK6I00c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JbuyMAkVheh5gBaqwlFatrjJij7VKZTyfT0e72g5ou03IVK8kebqxijPxmlKMuNeYgcuS5eDT7uPC6BoToESdvqwDHdI1fwgi4JCMbWdA0NgDlf3QPCF8uZCHORk55wjKbWpVdpu/SRR0xk5aKvC6tkbKIuSLOdNgIpLufKbiq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UdvEOMQ/; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 22 Nov 2024 01:51:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732258305;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rjgj1cBWl/+Hfb4W6G3LBJubD6GGLHSB/5rnaF15CvM=;
+	b=UdvEOMQ/ljA52aWMaj+kjBRg6rsV/9XN0YFltdXsWPGJxpTRb2F4HQUsQ6IlSBuFwfYcC3
+	jGx3uzQPKE2eIHvlo1ySZkNWszETq6lZ5yw4X1MiSCVbF5ZLe50pmGkzrCXVHwVLzBs1xE
+	ypy3uUPd8Wh2Tk8EEv4jpxiVGBl24fI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>, 
+	Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "conduct@kernel.org" <conduct@kernel.org>
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <grcqflezvbht4mqyaalavqoneqgo2yfnmbdhbizrllv27dlgrl@jq3reem4va7i>
+References: <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
+ <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
+ <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
+ <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
+ <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
+ <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
+ <v2ur4jcqvjc4cqdbllij5gh6inlsxp3vmyswyhhjiv6m6nerxq@mrekyulqghv2>
+ <20241120234759.GA3707860@mit.edu>
+ <20241121042558.GA20176@lst.de>
+ <39e8f416-d136-4307-989a-361bf729e688@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: H3HWk3OdQp5Wp4XsSGQiBySlUQEUWzZ2
-X-Proofpoint-ORIG-GUID: H3HWk3OdQp5Wp4XsSGQiBySlUQEUWzZ2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0
- mlxlogscore=875 spamscore=0 mlxscore=0 malwarescore=0 clxscore=1015
- adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411220056
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <39e8f416-d136-4307-989a-361bf729e688@linuxfoundation.org>
+X-Migadu-Flow: FLOW_OUT
 
-Enable SDHC1 and SDHC2 on the Qualcomm QCS615 Ride platform.
+On Thu, Nov 21, 2024 at 04:53:48PM -0700, Shuah Khan wrote:
+> On 11/20/24 21:25, Christoph Hellwig wrote:
+> > On Wed, Nov 20, 2024 at 03:47:59PM -0800, Theodore Ts'o wrote:
+> > > On Wed, Nov 20, 2024 at 05:55:03PM -0500, Kent Overstreet wrote:
+> > > > Shuah, would you be willing to entertain the notion of modifying your...
+> > > 
+> > > Kent, I'd like to gently remind you that Shuah is not speaking in her
+> > > personal capacity, but as a representative of the Code of Conduct
+> > > Committee[1], as she has noted in her signature.  The Code of Conduct
+> > > Committee is appointed by, and reports to, the TAB[2], which is an
+> > > elected body composed of kernel developers and maintainers.
+> > 
+> > FYI, without taking any stance on the issue under debate here, I find the
+> > language used by Shuah on behalf of the Code of Conduct committee
+> > extremely patronising and passive aggressive.  This might be because I
+> > do not have an American academic class background, but I would suggest
+> > that the code of conduct committee should educate itself about
+> > communicating without projecting this implicit cultural and class bias
+> > so blatantly.
+> 
+> I tend to use formal style when I speak on behalf of the Code of Conduct
+> committee. I would label it as very formal bordering on pedantic.
+> Would you prefer less formal style in the CoC communication?
 
-Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs615-ride.dts | 31 ++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+Personally, it's always easier to take requests from a human, than a
+faceless process that I have no input into.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-index ee6cab3924a6..308fd741a467 100644
---- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-@@ -5,6 +5,7 @@
- /dts-v1/;
- 
- #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-+#include <dt-bindings/gpio/gpio.h>
- #include "qcs615.dtsi"
- / {
- 	model = "Qualcomm Technologies, Inc. QCS615 Ride";
-@@ -12,6 +13,8 @@ / {
- 	chassis-type = "embedded";
- 
- 	aliases {
-+		mmc0 = &sdhc_1;
-+		mmc1 = &sdhc_2;
- 		serial0 = &uart0;
- 	};
- 
-@@ -210,6 +213,34 @@ &rpmhcc {
- 	clocks = <&xo_board_clk>;
- };
- 
-+&sdhc_1 {
-+	pinctrl-0 = <&sdc1_state_on>;
-+	pinctrl-1 = <&sdc1_state_off>;
-+	pinctrl-names = "default", "sleep";
-+
-+	vmmc-supply = <&vreg_l17a>;
-+	vqmmc-supply = <&vreg_s4a>;
-+
-+	non-removable;
-+	no-sd;
-+	no-sdio;
-+
-+	status = "okay";
-+};
-+
-+&sdhc_2 {
-+	pinctrl-0 = <&sdc2_state_on>;
-+	pinctrl-1 = <&sdc2_state_off>;
-+	pinctrl-names = "default", "sleep";
-+
-+	cd-gpios = <&tlmm 99 GPIO_ACTIVE_LOW>;
-+
-+	vmmc-supply = <&vreg_l10a>;
-+	vqmmc-supply = <&vreg_s4a>;
-+
-+	status = "okay";
-+};
-+
- &uart0 {
- 	status = "okay";
- };
--- 
-2.34.1
-
+I'll always rebell against the latter, but I'll always work to help out
+or make things right with people in the community.
 
