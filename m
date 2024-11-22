@@ -1,163 +1,179 @@
-Return-Path: <linux-kernel+bounces-418863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A2389D6673
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:55:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D3E9D6679
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:58:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A0EB161161
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:55:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B17416113E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B711BD9DF;
-	Fri, 22 Nov 2024 23:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220D31C8FD4;
+	Fri, 22 Nov 2024 23:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nE9586F9"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MH7NTbYh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE7A188580
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 23:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF80A186E40;
+	Fri, 22 Nov 2024 23:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732319718; cv=none; b=gXQjMT6QlhBl67vH3ajaiivGqfed1EWCcVhhtvMYc2471rnrvAaaha/ikKk58rZ5GlVmH9s79DRhMUPPV9l/tLAuhNevjbwmGy+UpHtiKWDis9U89vZxPU7rLq1uxk4mBSxelbCso4fSrFh4Yphte10t0MQTLWqP4NGpRBO/jDs=
+	t=1732319919; cv=none; b=dB+01ROCjZXY3109wxDwlwUUUhqcTH5n3+Z8SLry6DuvaQuwaGX5oAd4ept4fugnV23NnvgZfMYHn2bOaaSJOabUbj9+2/iz2K9aB0t7UnBHrbJ5sgGMP4tAzNaR6gvHYvD8Lpx/SB4wilmK2S4KMxiqMkBcaM38/LqwxL4BCoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732319718; c=relaxed/simple;
-	bh=pw3x9hAD0WOo8HOdzrqXesKQo4X2cv674KdS2DipRYY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OhwBV8Pk+XRq1II5ft4jk65VhPoi7mXqpfDhAndcZrj1DS11rpO8q2BcbI952LEkaz/4l2vV87taD+88uylFFT3m44bIrXCxHm2jpsDPsDkA4aEDXGANMAaOlm5MeMQ+KybQ5J4iJ/Tcwp1Vf4oxlxoKOHpOw1NOYlFkrkH3H+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nE9586F9; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7fbb11b2760so2319414a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 15:55:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732319716; x=1732924516; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0XJL5sSAhrBfkMi6De35B2rgA/UViYzgkz5Ikuv0m9M=;
-        b=nE9586F9U0scqT13I+rkRbtuweIyjhoitfqBagO3Ly4Y8OsfwPFuiwVc94KAjjsVor
-         t0nDFYqucJYnIxjUlaixn4/NaI7IebeflVUJCpvG3iUMgygcziehcSOECcbw+aN4NylQ
-         4lyG1F1QRubj0pBvJagR4/r2kHJhqLMoixpXbdA/NpFxD7Z9EpvwnkMnTSZoFUsZAaZc
-         3jVXHSP74MWbGSD1NQhyA0Vqd4HJU3Zt8dMuUSMGpWM20Fmsegx15o7egMY6BZskE5tZ
-         QuT2GW54EX3mWuJi4bb+pqraXPaFag1dLL5rDDPC5Aiw/ueTiXXjM+WuxifgxiGa2KWu
-         zMpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732319716; x=1732924516;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0XJL5sSAhrBfkMi6De35B2rgA/UViYzgkz5Ikuv0m9M=;
-        b=J8IvOlx0w6MgAXsVNfTINDjjfryH9O/d6iLSrhTeGOgpuGU3kxp9we/wQhlptJSA0o
-         0c4UAN3Vr2Awm+obFhrEldpcCrLW1r60hwaTJNgGnYNrJpZLUe05cktw/PEczZVguXaj
-         jNfSQghxC0422XQa/NKweGpnuijRXw1P4pxMvW2jaZejN+F6J/l3h5VSDo7v9vFXu4rO
-         7nfONb/X7SctPm74HKB/xMXzoW1OkRVBIZWXrPikZZWVIoWG0YeO6pYRw/w0C8jJfpo8
-         m/HGZlk+T7Me38JIwACgauNSHv1IsuLeowGh6DpCkP1QbhbIqVKyqa82QdT5YPuCLYhi
-         xDKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOATxkr+pDoWLj/0HQyJX2ZvIdtFsCG0JRe3vKJSUXSQxSqoBeg+Rzn9QmA5y43CoeF94EX5v8jx0bhts=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu3TqXgC58zui11n2pzwtftRggSTqpZs8yePr7/0zdbNtzRhGj
-	pZvbg+xGNGOeWuJ8PnQ4RYr00k7tG9FQi6gP/OHmPlnKO6Ae0/7FLzZ7tC2rppYzRmr/kMs3Wpd
-	R9w==
-X-Google-Smtp-Source: AGHT+IELmYFHxYVfYrq5YGLn/0N+oWNvd8W1zdiwji+uYYwHfaPfGMVNHe2y7x4hk8WK544QZR9KmfZ8+YE=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a65:568b:0:b0:7ea:68ab:6465 with SMTP id
- 41be03b00d2f7-7fbcccf5e73mr2487a12.9.1732319715941; Fri, 22 Nov 2024 15:55:15
- -0800 (PST)
-Date: Fri, 22 Nov 2024 15:55:14 -0800
-In-Reply-To: <30d0cef5-82d5-4325-b149-0e99833b8785@intel.com>
+	s=arc-20240116; t=1732319919; c=relaxed/simple;
+	bh=o+mwQMPsaauq5Ql/+1lz438tDG5xJU/RZpT/OtYWvjI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SXXshKsQ78Xij0kfTD4v+ZcVapmcOoutH2Hbe+gi1Mby3lzr3va9wnXW8P9yhT+fSc+XAiJVoDCl3HdnhV7Nu1Xhwdt2Mept81aRw8XS+bMpdM0oY2f7zGUildxue8TsOxoyCCikXCxr6uyfWTf6AM5dWxZaQa/FiULUCVf1yvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MH7NTbYh; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732319918; x=1763855918;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=o+mwQMPsaauq5Ql/+1lz438tDG5xJU/RZpT/OtYWvjI=;
+  b=MH7NTbYh6w4+HxX3gESayOKtTnOeFGeKQtGYqy2wZGiKYYzJW1UlJhSF
+   urv/4jle+a3+NA1ZYz1JVcFMkb42sYywigrhZZt5gi2hlQkHMrZAbkPsl
+   Dmw45+rxkB/bmDzuIouwp9ls0SCbGtY6szluviXfwbV8+ehtwyi1ba+Va
+   BDEfwyJsXKCtCw3lAsJlM6SUJfl4zpV921ooMaN5RV/ttftUmyGZ/MYoQ
+   3g9oe/Onc56iJx6Zxfk6v3bZ2p8QR/F6N4Ce3uReB/pW6/DqC8iaK3ZIK
+   JkXOI/8yGZX5Q8KCg/pknXsytGoTSqFAOA7YJQN7GxK7rYf7MMo8StWHB
+   g==;
+X-CSE-ConnectionGUID: ssxkjnU7RQunaG1D50cJ+A==
+X-CSE-MsgGUID: vaCBSqp9QOmp+AYxSIxYMw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="32642683"
+X-IronPort-AV: E=Sophos;i="6.12,177,1728975600"; 
+   d="scan'208";a="32642683"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 15:58:38 -0800
+X-CSE-ConnectionGUID: 3fxpL0GwQg6+YaryFbjgPQ==
+X-CSE-MsgGUID: 1utxzdK8RbWxoq1xurkgfw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,177,1728975600"; 
+   d="scan'208";a="90850888"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 15:58:37 -0800
+From: Tony Luck <tony.luck@intel.com>
+To: Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	x86@kernel.org
+Cc: James Morse <james.morse@arm.com>,
+	Jamie Iles <quic_jiles@quicinc.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH v10 0/8] x86/resctrl: mba_MBps enhancement
+Date: Fri, 22 Nov 2024 15:58:24 -0800
+Message-ID: <20241122235832.27498-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241115202028.1585487-1-rick.p.edgecombe@intel.com>
- <20241115202028.1585487-2-rick.p.edgecombe@intel.com> <30d0cef5-82d5-4325-b149-0e99833b8785@intel.com>
-Message-ID: <Z0EZ4gt2J8hVJz4x@google.com>
-Subject: Re: [RFC PATCH 1/6] x86/virt/tdx: Add SEAMCALL wrappers for TDX KeyID management
-From: Sean Christopherson <seanjc@google.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, kvm@vger.kernel.org, pbonzini@redhat.com, 
-	isaku.yamahata@gmail.com, kai.huang@intel.com, linux-kernel@vger.kernel.org, 
-	tony.lindgren@linux.intel.com, xiaoyao.li@intel.com, yan.y.zhao@intel.com, 
-	x86@kernel.org, adrian.hunter@intel.com, 
-	Isaku Yamahata <isaku.yamahata@intel.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
-	Yuan Yao <yuan.yao@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 22, 2024, Dave Hansen wrote:
-> On 11/15/24 12:20, Rick Edgecombe wrote:
-> > +struct tdx_td {
-> > +	hpa_t tdr;
-> > +	hpa_t *tdcs;
-> > +};
-> 
-> This is a step in the right direction because it gives the wrappers some
-> more type safety.
-> 
-> But an hpa_t is _barely_ better than a u64.  If the 'tdr' is a page,
-> then it needs to be _stored_ as a page:
-> 
-> 	struct page *tdr_page;
-> 
-> Also, please don't forget to spell these things out:
-> 
-> 	/* TD root structure: */
-> 	struct page *tdr_page;
-> 
-> And the tdcs is an array of pages, right?  So it should be:
-> 
-> 	struct page **tdcs_pages;
-> 
-> Or heck, I _think_ it can theoretically be defined as a variable-length
-> array:
-> 
-> 	struct page *tdcs_pages[];
-> 
-> and use the helpers that we have for that.
-> 
-> Putting it all together, you would have this:
-> 
-> struct tdx_td {
-> 	/* TD root structure: */
-> 	struct page *tdr_page;
-> 
-> 	int tdcs_nr_pages;
-> 	/* TD control structure: */
-> 	struct page *tdcs_pages[];
-> };
-> 
-> That's *MUCH* harder to misuse.  It's 100% obvious that you have a
-> single page, plus a variable-length array of pages.  This is all from
-> just looking at the structure definition.
+Background
+----------
 
-I don't know the full context, but working with "struct page" is a pain when every
-user just wants the physical address.  KVM SVM had a few cases where pointers were
-tracked as "struct page", and it was generally unpleasant to read and work with.
+The resctrl filesystem supports a mount option that allows users to
+specify a memory bandwidth limit in MiB/s for each domain of a CTRL_MON
+group.  The underlying implementation uses data collected from the local
+memory bandwidth monitoring event for the CTRL_MON group and all of
+its MON subgroups as input to a feedback loop that adjusts the memory
+bandwidth allocation control percentage up or down to keep the group
+within the limit set by the user.
 
-I also don't like conflating the kernel's "struct page" with the architecture's
-definition of a 4KiB page.
+Problem statement
+-----------------
 
-> You know that 'tdr' is not just some random physical address.  It's a
-> whole physical page.  It's page-aligned.  It was allocated, from the
-> allocator.  It doesn't point to special memory.
+Hard coding the local memory bandwidth monitoring event has the following
+issues:
 
-Oh, but it does point to special memory.  If it *didn't* point at special memory
-that is completely opaque and untouchable, then KVM could use a struct overlay,
-which would give contextual information and some amount of type safety.  E.g.
-an equivalent without TDX is "struct vmcs *".
+1) Some systems may support total memory bandwidth monitoring but
+not local.  The user cannot use this mount option on such systems.
 
-Rather than "struct page", what if we add an address_space (in the Sparse sense),
-and a typedef for a TDX pages?  Maybe __firmware?  E.g.
+2) For large workloads that span NUMA domains using local bandwidth
+monitoring will not throttle jobs correctly.
 
-  # define __firmware	__attribute__((noderef, address_space(__firmware)))
+3) Users may have a mix of large and small workloads and may want to
+use different input events per CTRL_MON group.
 
-  typedef u64 __firmware *tdx_page_t;
+Solution
+--------
 
-That doesn't give as much compile-time safety, but in some ways it provides more
-type safety since KVM (or whatever else cares) would need to make an explicit and
-ugly cast to misuse the pointer.
+A) Provide a new user interface to choose which event is used for each
+   CTRL_MON group.
 
-> Ditto for "hpa_t *tdcs".  It's not obvious from the data structure that
-> it's an array or if it's an array how it got allocated or how large it is.
+B) Allow systems that only support total memory bandwidth monitoring to
+   use total bandwidth event.
+
+Changes since v9
+Link: https://lore.kernel.org/all/20241114001712.80315-1-tony.luck@intel.com/
+
+Globally s/ctrl_mon/CTRL_MON/ in commit comments.
+
+Patch	Change
+1	* Moved "Reviewed-by:" tag after Signed-off-by tags
+	* Added comment that I dropped the __init attribute that
+	  was in Babu's original patch
+2	* More detail in commit comment
+	* Added block comment above definition of mba_mbps_default_event
+	  global variable
+	* Fixed bug reported by Reinette that changes to event used
+	  for default group persist across unmount/mount. Did this
+	  by moving initialization from rdtgroup_setup_default to
+	  set_mba_sc() to catch both mount and unmount.
+3	* Write commit commemt with problem & fix sections
+	* Add note to commit comment that check for is_mbm_local_enabled()
+	  is deleted by this patch.
+	* Delete redundant check of is_mbm_local_enabled()
+4	* Write commit commemt with problem & fix sections
+	* Reword legacy comment to avoid "we".
+5	* Merged old patch 9 into this patch
+	* Write commit commemt with problem & fix sections
+6	* Remove "historical" paragraph from commit comment
+	* Add note that "mba_MBps_event" file is only visible
+	  when the "mba_MBps" mount option is in use.
+7	* Remove "historical" paragraph from commit comment
+8	* No change
+
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+
+Babu Moger (1):
+  x86/resctrl: Introduce resctrl_file_fflags_init() to initialize fflags
+
+Tony Luck (7):
+  x86/resctrl: Prepare for per-CTRL_MON group mba_MBps control
+  x86/resctrl: Modify update_mba_bw() to use per CTRL_MON group event
+  x86/resctrl: Compute memory bandwidth for all supported events
+  x86/resctrl: Make mba_sc use total bandwidth if local is not supported
+  x86/resctrl: Add "mba_MBps_event" file to CTRL_MON directories
+  x86/resctrl: Add write option to "mba_MBps_event" file
+  x86/resctrl: Document the new "mba_MBps_event" file
+
+ Documentation/arch/x86/resctrl.rst        | 10 +++
+ include/linux/resctrl.h                   |  2 +
+ arch/x86/kernel/cpu/resctrl/internal.h    |  9 ++-
+ arch/x86/kernel/cpu/resctrl/core.c        |  9 ++-
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 70 +++++++++++++++++
+ arch/x86/kernel/cpu/resctrl/monitor.c     | 94 +++++++++++------------
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 45 +++++++----
+ 7 files changed, 173 insertions(+), 66 deletions(-)
+
+
+base-commit: adc218676eef25575469234709c2d87185ca223a
+-- 
+2.47.0
+
 
