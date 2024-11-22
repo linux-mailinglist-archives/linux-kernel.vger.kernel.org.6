@@ -1,121 +1,162 @@
-Return-Path: <linux-kernel+bounces-417906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 422139D5A89
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:01:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 527D09D5A88
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:01:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5775C283CF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:01:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCAC91F22700
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279AE17107F;
-	Fri, 22 Nov 2024 08:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D2E187321;
+	Fri, 22 Nov 2024 08:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HZk7vcO3"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z1gyijaH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A073618A6D3
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 08:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46166CDBA;
+	Fri, 22 Nov 2024 08:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732262483; cv=none; b=t1FszRgInIs2FLLjo8OG7YrKV7ehFvCCZRREx/ys9OYtRL0VLrU0wGuvhQZ2RKG6fnuEJBbbNSAh0rKLZ3FXtS6HEgHfZROZ/FVZzc811L7YsRGgq+9KIR8K/P1/JKgcExo0wMy4cFuEaARAxpOL27PQMvtE0roNWbK30RwEcYw=
+	t=1732262476; cv=none; b=M+5IXSMM+gsFbLoebxqBnqCjunoWDNsvPT+wQbkCAnLrlUq6EeIjztAUetLLxrkoMsZFgk/Mt7JvtdfuvnTvxnANwu+DG0H0n5J57s37tCoeBGbiqyf7xzfULa8UtTlAlkD2lrOv/4bZHOVKv2+pFmPw9fUE/akbF2DfgF2cce4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732262483; c=relaxed/simple;
-	bh=ciU29li+t6dJKfSucUNe8VRX908oVlTYsw1dnmQ3vLw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=vFm57E5nu4MhX3sA5GJy/6CPicEw7yYsNXmQoPGBLPa4NkgPRXHiB+g8T95oUZK3suWtJGXUrb4xh7XlPJttUVQ9gBWfBuTjWJlNOHVTW8SDXOpBTOcJsdAAYy0ZyKlI8cpIXG+Tm2rJdO65GM1o7mURZR4OzlbKbSj4aeIc6tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HZk7vcO3; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4AM80qim015202;
-	Fri, 22 Nov 2024 02:00:52 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1732262452;
-	bh=QJjoCW1qT2TYG2ypJf4/FVAqbU0v/j3s33/VLB1sBcQ=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=HZk7vcO3hEeilzGNc3Oz+lPJN6YbR2Dvggx6XUML0q/vwnvnPCzsAHwvPi5rXJc9U
-	 kDGUTSJN5CShzHqHzwZ3cr6JaguKr7pH15WCX3S+Itn0070cy5cPb7x7Q6iB6WT9j8
-	 jC2seGfZqsfSmk4aejpF6rex97FIKZv90Hb/RDTw=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4AM80qsL025322
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 22 Nov 2024 02:00:52 -0600
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 22
- Nov 2024 02:00:52 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 22 Nov 2024 02:00:52 -0600
-Received: from [172.24.227.193] (devarsht.dhcp.ti.com [172.24.227.193] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AM80m54055112;
-	Fri, 22 Nov 2024 02:00:49 -0600
-Message-ID: <315e2d6a-4d9f-fb91-6584-92f622c54d96@ti.com>
-Date: Fri, 22 Nov 2024 13:30:48 +0530
+	s=arc-20240116; t=1732262476; c=relaxed/simple;
+	bh=SI+Dvo5fG2wGvmS/CiWJVZivtu+gHtApg0XMcvj/EyY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dIM7E9P6GoMZB4A4420A3qPFkFiYddFzI/pqP1Cbv1DDXhjA346D+wrTEU4oHxggyWlVYKlttvTPRqhXWb2ecZgfxPY9FKp0AuFCP9ge+7Mub1rcLxnbWcZVMFWwjZI0bBglOKy8iuA47bn++sfPN1aTkkIOxTtqhyuTIAdRgJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z1gyijaH; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732262475; x=1763798475;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SI+Dvo5fG2wGvmS/CiWJVZivtu+gHtApg0XMcvj/EyY=;
+  b=Z1gyijaHxWQ7Nr096KAPNJ1ZpNvueQNh/7w36Po3szcNBHwGpZIYNpmq
+   kLPOytDiJk4ywWhGggkRoJx5co+aggmtOpjrAhoZZm11E/598jvxbPenZ
+   IxWOT9/rcGROofzgRuZ5oudC3SEKNvFKUfUjrKjaLPCIvvTxx1OpnfiF6
+   gD4PjxiJAQk6Kxzx+IvmahZ5FQsq1TV9aBcWK2MXs0e+YwQFzSpit+tf9
+   PCiw5KyCAZZCLX+si9GZ1ssf6YMJ87ndF36eLPKE/2+makyNZhP9cTS2a
+   Bt/PzN4fUU9ahbpdLpnNAYkPGolfGBBzbGrXaocDorBpnbJDkcqCXjdYA
+   Q==;
+X-CSE-ConnectionGUID: xzZXJIp6RsOtFckTfQYONA==
+X-CSE-MsgGUID: 72MIC3aZQ2mzovIfpVDFBA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="31799382"
+X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
+   d="scan'208";a="31799382"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 00:01:14 -0800
+X-CSE-ConnectionGUID: l+o41oNARJi79iIwRknaiQ==
+X-CSE-MsgGUID: GWB/6Qo0TbOl1iE4ZT80OQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
+   d="scan'208";a="90142818"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 00:01:12 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 72C3711F7E7;
+	Fri, 22 Nov 2024 10:01:09 +0200 (EET)
+Date: Fri, 22 Nov 2024 08:01:09 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: oe-kbuild@lists.linux.dev, Ricardo Ribalda <ribalda@chromium.org>,
+	lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org
+Subject: Re: drivers/media/pci/intel/ipu-bridge.c:752
+ ipu_bridge_ivsc_is_ready() warn: iterator 'i' not incremented
+Message-ID: <Z0A6Rc-HUPcsIw8z@kekkonen.localdomain>
+References: <54307d9c-a9bf-4bc1-b15d-60c5ba53d0ea@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 3/7] drm/tidss: Remove extra K2G check
-Content-Language: en-US
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Jyri Sarha
-	<jyri.sarha@iki.fi>
-CC: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Jonathan
- Cormier <jcormier@criticallink.com>
-References: <20241021-tidss-irq-fix-v1-0-82ddaec94e4a@ideasonboard.com>
- <20241021-tidss-irq-fix-v1-3-82ddaec94e4a@ideasonboard.com>
-From: Devarsh Thakkar <devarsht@ti.com>
-In-Reply-To: <20241021-tidss-irq-fix-v1-3-82ddaec94e4a@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <54307d9c-a9bf-4bc1-b15d-60c5ba53d0ea@stanley.mountain>
 
+Hi Dan,
 
-
-On 21/10/24 19:37, Tomi Valkeinen wrote:
-> We check if the platform is K2G in dispc_k3_clear_irqstatus(), and
-> return early if so. This cannot happen, as the _k3_ functions are never
-> called on K2G in the first place. So remove the check.
+On Fri, Nov 22, 2024 at 10:45:53AM +0300, Dan Carpenter wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   28eb75e178d389d325f1666e422bc13bbbb9804c
+> commit: 93da10eee90b2ffa4b496dd4a6ea276c57461fb6 media: intel/ipu6: Fix direct dependency Kconfig error
+> config: alpha-randconfig-r072-20241122 (https://download.01.org/0day-ci/archive/20241122/202411221147.N6w23gDo-lkp@intel.com/config)
+> compiler: alpha-linux-gcc (GCC) 14.2.0
 > 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-
-Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
-
-Regards
-Devarsh
-> ---
->  drivers/gpu/drm/tidss/tidss_dispc.c | 2 --
->  1 file changed, 2 deletions(-)
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> | Closes: https://lore.kernel.org/r/202411221147.N6w23gDo-lkp@intel.com/
 > 
-> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
-> index f81111067578..99a1138f3e69 100644
-> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
-> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-> @@ -789,8 +789,6 @@ void dispc_k3_clear_irqstatus(struct dispc_device *dispc, dispc_irq_t clearmask)
->  		if (clearmask & DSS_IRQ_PLANE_MASK(i))
->  			dispc_k3_vid_write_irqstatus(dispc, i, clearmask);
->  	}
-> -	if (dispc->feat->subrev == DISPC_K2G)
-> -		return;
->  
->  	/* always clear the top level irqstatus */
->  	dispc_write(dispc, DISPC_IRQSTATUS, dispc_read(dispc, DISPC_IRQSTATUS));
+> smatch warnings:
+> drivers/media/pci/intel/ipu-bridge.c:752 ipu_bridge_ivsc_is_ready() warn: iterator 'i' not incremented
 > 
+> vim +/i +752 drivers/media/pci/intel/ipu-bridge.c
+> 
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  745  static int ipu_bridge_ivsc_is_ready(void)
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  746  {
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  747  	struct acpi_device *sensor_adev, *adev;
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  748  	struct device *csi_dev;
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  749  	bool ready = true;
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  750  	unsigned int i;
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  751  
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03 @752  	for (i = 0; i < ARRAY_SIZE(ipu_supported_sensors); i++) {
+> 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  753  #if IS_ENABLED(CONFIG_ACPI)
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  754  		const struct ipu_sensor_config *cfg =
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  755  			&ipu_supported_sensors[i];
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  756  
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  757  		for_each_acpi_dev_match(sensor_adev, cfg->hid, NULL, -1) {
+> 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  758  #else
+> 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  759  		while (true) {
+>                                                                                                         ^^^^^^^^^^^^^^
+> 
+> 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  760  			sensor_adev = NULL;
+> 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  761  #endif
+> 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  762  			if (!ACPI_PTR(sensor_adev->status.enabled))
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  763  				continue;
+> 
+> 
+> These continues make sense in for_each_acpi_dev_match() but not in a while (true) {
+> loop.  We're stuck forever.
+
+The non-ACPI case is there just for the looks... I think what should be
+done is to make the entire loop conditional to CONFIG_ACPI. I can post a
+patch.
+
+> 
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  764  
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  765  			adev = ipu_bridge_get_ivsc_acpi_dev(sensor_adev);
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  766  			if (!adev)
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  767  				continue;
+>                                                                                                                         ^^^^^^^^
+> 
+> 
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  768  
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  769  			csi_dev = ipu_bridge_get_ivsc_csi_dev(adev);
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  770  			if (!csi_dev)
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  771  				ready = false;
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  772  
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  773  			put_device(csi_dev);
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  774  			acpi_dev_put(adev);
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  775  		}
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  776  	}
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  777  
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  778  	return ready;
+> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  779  }
+> 
+
+-- 
+Kind regards,
+
+Sakari Ailus
 
