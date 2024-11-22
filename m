@@ -1,121 +1,139 @@
-Return-Path: <linux-kernel+bounces-418872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C9089D6688
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:59:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08A891611F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:59:51 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B131DFE29;
-	Fri, 22 Nov 2024 23:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cJVs6z2K"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 131D29D668D
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 01:00:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF091DDA34;
-	Fri, 22 Nov 2024 23:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2B3BB22A3B
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:00:32 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DCE1D0E20;
+	Fri, 22 Nov 2024 23:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kTUsTqgm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAEAC1CB53D;
+	Fri, 22 Nov 2024 23:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732319925; cv=none; b=rvkYveSB297Vb8vQYsACESgwNxlYr2Pct4LXPzMPGve5BfEz7SWlRFd5Pk+/+BMCTibw5USYc0ruLquW0Nz6eC2RRL1Fl/XgmHtF0iZvAeedWTl9q0Rd35iKXDNIfr3VMIhs69ufu0m+T5IUzFKpnWYEEooFJe2pQgD7R6XVBro=
+	t=1732319974; cv=none; b=nGkUQtNb5Go2ol22P5E0LdRG3IEdSKZ30Covjcfjhi/MyNdpvehw6zoGkL+wazM0aJWA4QabiXYLHQDV7ZPUTGLqbWnxw99K9mXvaoq4whaxkVjiQcHzMFkegNPzyZ1aXXxPj6Nm2U8I3qsZ940Rmt6fAiRiEIqsGWgqi68GQ8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732319925; c=relaxed/simple;
-	bh=fDfCFpRA+LjYsiAD12YwWZsVIyVX7Go/gjuhBuSbHhw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZM2EOPmVQUrHi3lQvBbJEDDKnMb1z9PDFb3Eg9Lv28UgYUOSL5g7C9fMemTmb5sEqQpsfKw4MKpenM+xjnUSf+mR/dOqkaGeOctZJpUAt9+yXvMpyUgMqUWYriRcEdS+3WcsCwdoBjbmSrxn4JF2eKdpsWdOArv2h+AqIFde0F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cJVs6z2K; arc=none smtp.client-ip=198.175.65.18
+	s=arc-20240116; t=1732319974; c=relaxed/simple;
+	bh=zQ8oPOHE0A9rVjfuxBCRvmoFRvSn/3zXeYk8im7ZIQY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dw3DvRPWwD57Xh/nhrc39Z3Q175qtjPc1DzmKYOgEMolwMTTs/0kZ5U1pxrusFcq/ckgSid1vhPetZ3D9rd8cj9SPzqr+0yjxDETo39QzfWU6AAoL1ehiDKpy50hJK6imEOCbEUgUVJu3HqAAJ9WX9EQeZBtijLLZxueTls9dqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kTUsTqgm; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732319924; x=1763855924;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=fDfCFpRA+LjYsiAD12YwWZsVIyVX7Go/gjuhBuSbHhw=;
-  b=cJVs6z2KqDyOmheMrn2HYie0Zpf5Zf29JHEGM/FcMlv9qqnzAUpbblzg
-   /hxDvXqnMg6+d8IJGFt0FTxcFgwEKgATYxWdRX+UvOEcU+y5NHqfvZYoc
-   MQW8QdJZD85yG188kUrqW+i/0iSMEF1LkGZtToKAtGBHdu7A45sAppDLt
-   vaVQNq6JGsaMW9TZNVNBTzZVqkYZu6GiJLnYbuSOAAIlJkcVF4SDeZiqp
-   KwBKE/iJZBNTxs/VKv+UCFK14C32kXy+8fUyOtA1Dixi6LUhjTfGO27xZ
-   Az5gNeo2O9ecjxpqPbdkywYFIPDc1iah85Qs4yzuLCbxlxks8IMR3LPdr
-   A==;
-X-CSE-ConnectionGUID: qJl9lnLURcio6lRDjNcOiw==
-X-CSE-MsgGUID: v8+lscckRoK6rUVpLII0bQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="32642765"
+  t=1732319974; x=1763855974;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=zQ8oPOHE0A9rVjfuxBCRvmoFRvSn/3zXeYk8im7ZIQY=;
+  b=kTUsTqgmNoEGHcURrEqe1lkB2g6+95CB/W8TdBzktAefDrG3On3oS683
+   +u2HQBwrEb3c00JJmnNv/g4O06d7TpZdWqC1p2jN//xRVKM24jtGT/HCx
+   dYQjRd51YKm3J7C843pNBewWzCqKouXh/McCJlFP/xEn55XVqI+Hj6S96
+   ARImJd69QNVqI1AwbeVOX8qBat12DQqiyH25qfK8SPRUQFOLRBr/exwaT
+   PZUIVT5ei5RztLwa9LYeS6nAcTeI3E+N6Rv/7xHhJDlGRtAiyf8EN7n3A
+   kRsvfITjNpPisK67dKTMiIJixCEgNotGJBCWLG3mRz5BDgJsm/9wwskJ1
+   w==;
+X-CSE-ConnectionGUID: BPfwG2YXS3WUskbc0w89OA==
+X-CSE-MsgGUID: zS8pWwa/S9OR4FZgJkTzVA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="35346207"
 X-IronPort-AV: E=Sophos;i="6.12,177,1728975600"; 
-   d="scan'208";a="32642765"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 15:58:40 -0800
-X-CSE-ConnectionGUID: QRhHz35tSHyVzsmQTImAGg==
-X-CSE-MsgGUID: /aPj5Iq+SpG2br21mtPLsg==
+   d="scan'208";a="35346207"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 15:59:33 -0800
+X-CSE-ConnectionGUID: EmqQOnq3RDmIeIk8EbeJlA==
+X-CSE-MsgGUID: XolqvH29RsiWrDHLFhliMA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,177,1728975600"; 
-   d="scan'208";a="90850919"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 15:58:40 -0800
-From: Tony Luck <tony.luck@intel.com>
-To: Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	x86@kernel.org
-Cc: James Morse <james.morse@arm.com>,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	patches@lists.linux.dev,
-	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v10 8/8] x86/resctrl: Document the new "mba_MBps_event" file
-Date: Fri, 22 Nov 2024 15:58:32 -0800
-Message-ID: <20241122235832.27498-9-tony.luck@intel.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241122235832.27498-1-tony.luck@intel.com>
-References: <20241122235832.27498-1-tony.luck@intel.com>
+   d="scan'208";a="113995047"
+Received: from bjrankin-mobl3.amr.corp.intel.com (HELO [10.124.220.110]) ([10.124.220.110])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 15:59:32 -0800
+Message-ID: <bbf78f64-62c7-4a82-b85b-d5227d65e5d0@intel.com>
+Date: Fri, 22 Nov 2024 15:59:31 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/6] x86/virt/tdx: Add SEAMCALL wrappers for TDX KeyID
+ management
+To: Sean Christopherson <seanjc@google.com>
+Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, kvm@vger.kernel.org,
+ pbonzini@redhat.com, isaku.yamahata@gmail.com, kai.huang@intel.com,
+ linux-kernel@vger.kernel.org, tony.lindgren@linux.intel.com,
+ xiaoyao.li@intel.com, yan.y.zhao@intel.com, x86@kernel.org,
+ adrian.hunter@intel.com, Isaku Yamahata <isaku.yamahata@intel.com>,
+ Binbin Wu <binbin.wu@linux.intel.com>, Yuan Yao <yuan.yao@intel.com>
+References: <20241115202028.1585487-1-rick.p.edgecombe@intel.com>
+ <20241115202028.1585487-2-rick.p.edgecombe@intel.com>
+ <30d0cef5-82d5-4325-b149-0e99833b8785@intel.com>
+ <Z0EZ4gt2J8hVJz4x@google.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <Z0EZ4gt2J8hVJz4x@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add a section to document a new read/write file that shows/sets the memory
-bandwidth event used to control bandwidth used by each CTRL_MON group.
+On 11/22/24 15:55, Sean Christopherson wrote:
+>> You know that 'tdr' is not just some random physical address.  It's a
+>> whole physical page.  It's page-aligned.  It was allocated, from the
+>> allocator.  It doesn't point to special memory.
+> Oh, but it does point to special memory. 
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
- Documentation/arch/x86/resctrl.rst | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/Documentation/arch/x86/resctrl.rst b/Documentation/arch/x86/resctrl.rst
-index a824affd741d..6768fc1fad16 100644
---- a/Documentation/arch/x86/resctrl.rst
-+++ b/Documentation/arch/x86/resctrl.rst
-@@ -384,6 +384,16 @@ When monitoring is enabled all MON groups will also contain:
- 	Available only with debug option. The identifier used by hardware
- 	for the monitor group. On x86 this is the RMID.
- 
-+When the "mba_MBps" mount option is used all CTRL_MON groups will also contain:
-+
-+"mba_MBps_event":
-+	Reading this file shows which memory bandwidth event is used
-+	as input to the software feedback loop that keeps memory bandwidth
-+	below the value specified in the schemata file. Writing the
-+	name of one of the supported memory bandwidth events found in
-+	/sys/fs/resctrl/info/L3_MON/mon_features changes the input
-+	event.
-+
- Resource allocation rules
- -------------------------
- 
--- 
-2.47.0
-
+In this specific case I meant "special memory" as not RAM and not
+managed by the kernel.
 
