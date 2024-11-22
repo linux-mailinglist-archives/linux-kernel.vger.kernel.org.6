@@ -1,189 +1,140 @@
-Return-Path: <linux-kernel+bounces-418178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BE429D5E1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:33:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D3D69D5E40
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:35:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0AE0281266
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:33:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3592E1F228D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653A6171E6E;
-	Fri, 22 Nov 2024 11:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F341DE8B3;
+	Fri, 22 Nov 2024 11:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="qIHKOly+"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rGooyY9r"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B02110A3E;
-	Fri, 22 Nov 2024 11:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E590E1D0143
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 11:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732275189; cv=none; b=ATR9TPpblQgZ0mv4Wz9TR0PBw0UJmeWXnC07T0BDTEutXLhU2ApARxDNLcFhviUZxFKt/5vAidWFozLV77x4gHyqZsXfxuOv3fnNJJu2AcY8lxQ7bzXH2CUvjqZyWVGN4MkaZCvCGCKTlqFgvx3K/Me0F+dZW/4SujRJ9uWgW/8=
+	t=1732275326; cv=none; b=oQk41nVbBvuc+PEmaj3djzY8iBBy9mD9r/7P8W92WLwNd+x1Ab9pEs1q8kZT06ZMAyzyZAP+/AoXIwpQ2nVIbmpHAWRk97PS2nsHSH9070c2Q4VOSohU5xqn5YeVZz71jbjY6B5Ogcl8p1p7nXO8llD8PwWKs+Ue8VOe8MCWEUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732275189; c=relaxed/simple;
-	bh=5+fSa8A8qCcFrjh+ml+7X18cLR161OGeZHL6oHQGkCo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QNn1u6tQajypJUa4k0ElNKBvpFdidyyYFJZo/7S7DnEicIZ2nYsixyhLCBnLL3FuSsTWMgDm4Skl5wmqR0lrsJ4Vq8H9fs311YGrQ6F3wvlrXN1ut7g0QYWG+ivdsPI9rYRxdftpFib929/1fi+vexxbDkCM3pyn09tfFb6rxYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=qIHKOly+; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM7XIu1016463;
-	Fri, 22 Nov 2024 06:32:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=cjgm1
-	YWWHcKG7zB/59DmBjIGwBuw/9gSJ4mRUI6bPTc=; b=qIHKOly+9CMbfhbtMh580
-	6vdXZSB5DSgXdTuHdUmroVK1+oipwYH3d4xpY+F19DKA/4/jNFUXQ+bn0vxgnNlk
-	pOdxzU4BHNUHuB54PuD49pfQbuNs1inwfR3Wl/hl8vYX08Jwd4CmeDbd3HA//WgT
-	eQ5lXBpidigbVBgYSBkpKdd8O+E8WWJwO3+3HReI528Tb6n+P9qetesGLTw3DBVH
-	BR6UTtQ6Vtuxja2mNdMQGm9N72v+vW3/u3y5j2oGNlNEAiULO3fzzOqBAFVN47VF
-	KLD5yXAZxMTVMfDmw9yKRizmevczvshKCdnamlxr04J/gSIMcbXg7hj6O3MKPoxO
-	w==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 432h1kj673-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 06:32:53 -0500 (EST)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 4AMBWqj1044209
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 22 Nov 2024 06:32:52 -0500
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Fri, 22 Nov
- 2024 06:32:51 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Fri, 22 Nov 2024 06:32:51 -0500
-Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.168])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4AMBWhjI011707;
-	Fri, 22 Nov 2024 06:32:48 -0500
-From: Antoniu Miclaus <antoniu.miclaus@analog.com>
-To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
-CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Subject: [PATCH 2/2] iio: frequency: adf4371: add ref doubler and div2
-Date: Fri, 22 Nov 2024 13:32:14 +0200
-Message-ID: <20241122113226.49346-2-antoniu.miclaus@analog.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241122113226.49346-1-antoniu.miclaus@analog.com>
-References: <20241122113226.49346-1-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1732275326; c=relaxed/simple;
+	bh=6Xd7rJOb08RMaqyYb/dd6a9HoYlps8DyV1OZBY6cLOU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YohLo4zc1kzNH7oOFw+wRDP32flh6IUNgcPo4oV8Ht0ELauES2WEbz/Whr2UUA6YmLCKniFC8hSSCQp4HesTO4NifkKbMVVGeuOvm0DUbLoUB+YenG4LiB+pTyOM9hHwXf3ZaL16l8nfe10R6bGPTSCQU46fcjVvFkKFhC2GeVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rGooyY9r; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539fb49c64aso3405213e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 03:35:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732275323; x=1732880123; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=krxMhaTOFP6KQfuRozKR1NNs6wdGoTjqof+u9BiFDsk=;
+        b=rGooyY9rZyj2FYZ0mDfR0hvGn5g/BsiydIW6qk1ixiCTewn6or268/rpKR7n4XwRrr
+         GUY7fVFUHcvJWyeJg7HJBeI0mKxx63yVSELWcWt09g23PHMS12qOIwm7bkkRGTBg3o68
+         aBdxu0xsGW0NAo1mjcqtnPl/zGj12G06DQbEdXPMN2jYF+brA7krc9NE/VV7wosVstIz
+         GF2hIIDV+jfJL1a9cQfK6pWxz5j3kKIMZ8ASHMDqOCBEM2504eXDjy2XwomWRZza8lrc
+         jZalEHiPTEMP+CMf5kx4dnHCH5CHW/bfAMab4iJGdLmHcqcFAIs3f6wnP2Kdlyt0yK7F
+         iFRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732275323; x=1732880123;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=krxMhaTOFP6KQfuRozKR1NNs6wdGoTjqof+u9BiFDsk=;
+        b=nrez7EkhAdXy2Zda/o8Xzv+yP5958HF3EE3/pGgvC90kSaSKEvKOU8MgaxdYRYuLgC
+         /WQZ51jJlrltgLFp+fA168RZYiuyrIKJYAu3KiDrIRlerxHpd51/UKk+rW4v82wK5DrP
+         PhArgJ9Xdl/FjFju9NrJB4UjSL+NPG/VQJF3PsBD01OzYXwDTLikW+819tGH40rO5cFX
+         u/PA5mAsa6PxYBNy8cUKLzyTAETjaURQJHosfC4qMn2xnwYhKXOj6PUOclzP3kyDsV72
+         Wnv5QJ+Mm67z1kMuAQp4Caj2Vd50Rk7wPqcyI60N7grQJSqn+hdEJbOWVyc+LLDny92F
+         YT7g==
+X-Forwarded-Encrypted: i=1; AJvYcCXepj+fdO5IXdKuODLemJuca4hK60r77bOuKwf+vhr5OzIP/hb1OA4/gzLudlA/cBsJjt3+mzm0vh2ETdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC3OUX1mBAXPFytUbG6il/w6cDe+HPGAaIsphgqjycwHUb/9GQ
+	pO9Pwbs/xiObd6abMpXc5Ve1+ESgFyYArteHQN6Yxljm+wtXCXSQNPvxB7XSGE4=
+X-Gm-Gg: ASbGncva5vOdpneMk0bAbnatDj7afPaaLqQyFkp9Br2whIHU7cZjMtyz2kqmQPh43eZ
+	GUgPhSDY9koDSlVjeLNDBi7KDqUszyrrX/krZuR07dMh3G2caKPpI8EpZ9tIY45QdWRADG+ece/
+	avVHMtSpUwO4AC2ziskUxXBhI3xSxSaC0acfbt+Yt3H88Qnz30qktJgZAfNMZ53fB9OAhQRhjQA
+	QtTRS06/nqzDhtXZYk5R0b4ZR16Yca+6hjH8Bk24uYtQOojoRoJ333MImSCIlH9Jh1yLz5Ou5Ni
+	Hz/mE7tFud6l4RJZtsL7pgImSZ4icA==
+X-Google-Smtp-Source: AGHT+IHcS5D0tQAmLEPHu7UajYtNpfZvhiuBwDM25QDIUqbvD9w+ge3SD7yoJlUUHrhodq7JCz8ehA==
+X-Received: by 2002:ac2:5eda:0:b0:53d:d3ff:7874 with SMTP id 2adb3069b0e04-53dd3ff78e0mr1407682e87.29.1732275323001;
+        Fri, 22 Nov 2024 03:35:23 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd3f12809sm270502e87.38.2024.11.22.03.35.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 03:35:21 -0800 (PST)
+Date: Fri, 22 Nov 2024 13:35:19 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v4 3/7] drm/connector: implement generic HDMI codec
+ helpers
+Message-ID: <altuhp26ntnpltvfdmikggdmibyizdwnrmwshte7sa2btmbgvj@mbhlvwb4xrzj>
+References: <20241122-drm-bridge-hdmi-connector-v4-0-b4d69d6e3bd9@linaro.org>
+ <20241122-drm-bridge-hdmi-connector-v4-3-b4d69d6e3bd9@linaro.org>
+ <87ed33zf5e.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: HeTr84pVKyRpMuzmIc7ZHKwNy-0ul_SA
-X-Proofpoint-ORIG-GUID: HeTr84pVKyRpMuzmIc7ZHKwNy-0ul_SA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- bulkscore=0 spamscore=0 phishscore=0 mlxlogscore=999 adultscore=0
- clxscore=1015 malwarescore=0 lowpriorityscore=0 impostorscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411220098
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ed33zf5e.fsf@intel.com>
 
-Add support for the reference doubler and the reference divide by 2
-clock.
+On Fri, Nov 22, 2024 at 01:22:53PM +0200, Jani Nikula wrote:
+> On Fri, 22 Nov 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
+> > diff --git a/drivers/gpu/drm/drm_internal.h b/drivers/gpu/drm/drm_internal.h
+> > index b2b6a8e49dda46f1cb3b048ef7b28356dd3aaa4e..8ed58e482fac4662b659276e8bc17690e1fdb9b7 100644
+> > --- a/drivers/gpu/drm/drm_internal.h
+> > +++ b/drivers/gpu/drm/drm_internal.h
+> > @@ -280,4 +280,9 @@ void drm_framebuffer_print_info(struct drm_printer *p, unsigned int indent,
+> >  				const struct drm_framebuffer *fb);
+> >  void drm_framebuffer_debugfs_init(struct drm_device *dev);
+> >  
+> > +/* drm_connector_hdmi_codec.c */
+> > +
+> > +int drm_connector_hdmi_codec_init(struct drm_connector *connector);
+> > +void drm_connector_hdmi_codec_cleanup(struct drm_connector *connector);
+> > +
+> >  #endif /* __DRM_INTERNAL_H__ */
+> 
+> Better fit in drm_crtc_internal.h or drm_crtc_helper_internal.h?
+> 
+> Maybe we could use an internal header inside display/. Or just 1:1
+> drm_foo_internal.h for every drm_foo.c to keep things simple and have
+> fewer interdependencies.
 
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
----
- drivers/iio/frequency/adf4371.c | 37 +++++++++++++++++++++++++++++++--
- 1 file changed, 35 insertions(+), 2 deletions(-)
+Sounds like drm_connector_hdmi_codec_internal.h. Most likely we should
+also split or rename drm_crtc_*_internal.h, but that's a separate topic.
 
-diff --git a/drivers/iio/frequency/adf4371.c b/drivers/iio/frequency/adf4371.c
-index b27088464826..02d42652dfdd 100644
---- a/drivers/iio/frequency/adf4371.c
-+++ b/drivers/iio/frequency/adf4371.c
-@@ -41,6 +41,12 @@
- #define ADF4371_MOD2WORD_MSK		GENMASK(5, 0)
- #define ADF4371_MOD2WORD(x)		FIELD_PREP(ADF4371_MOD2WORD_MSK, x)
- 
-+/* ADF4371_REG22 */
-+#define ADF4371_REF_DOUB_MASK		BIT(5)
-+#define ADF4371_REF_DOUB(x)		FIELD_PREP(ADF4371_REF_DOUB_MASK, x)
-+#define ADF4371_RDIV2_MASK		BIT(4)
-+#define ADF4371_RDIV2(x)		FIELD_PREP(ADF4371_RDIV2_MASK, x)
-+
- /* ADF4371_REG24 */
- #define ADF4371_RF_DIV_SEL_MSK		GENMASK(6, 4)
- #define ADF4371_RF_DIV_SEL(x)		FIELD_PREP(ADF4371_RF_DIV_SEL_MSK, x)
-@@ -70,6 +76,9 @@
- #define ADF4371_MAX_FREQ_PFD		250000000UL /* Hz */
- #define ADF4371_MAX_FREQ_REFIN		600000000UL /* Hz */
- 
-+#define ADF4371_MIN_CLKIN_DOUB_FREQ	10000000ULL /* Hz */
-+#define ADF4371_MAX_CLKIN_DOUB_FREQ	125000000ULL /* Hz */
-+
- /* MOD1 is a 24-bit primary modulus with fixed value of 2^25 */
- #define ADF4371_MODULUS1		33554432ULL
- /* MOD2 is the programmable, 14-bit auxiliary fractional modulus */
-@@ -175,6 +184,8 @@ struct adf4371_state {
- 	unsigned int mod2;
- 	unsigned int rf_div_sel;
- 	unsigned int ref_div_factor;
-+	bool ref_doubler_en;
-+	bool ref_div2_en;
- 	u8 buf[10] __aligned(IIO_DMA_MINALIGN);
- };
- 
-@@ -497,22 +508,44 @@ static int adf4371_setup(struct adf4371_state *st)
- 			return ret;
- 	}
- 
-+	if (device_property_read_bool(&st->spi->dev,
-+				      "adi,reference-doubler-enable"))
-+		st->ref_doubler_en = true;
-+
-+	if (device_property_read_bool(&st->spi->dev,
-+				      "adi,reference-div2-enable"))
-+		st->ref_div2_en = true;
-+
- 	/* Set address in ascending order, so the bulk_write() will work */
- 	ret = regmap_update_bits(st->regmap, ADF4371_REG(0x0),
- 				 ADF4371_ADDR_ASC_MSK | ADF4371_ADDR_ASC_R_MSK,
- 				 ADF4371_ADDR_ASC(1) | ADF4371_ADDR_ASC_R(1));
- 	if (ret < 0)
- 		return ret;
-+
-+	if (st->ref_doubler_en &&
-+	    (st->clkin_freq > ADF4371_MAX_CLKIN_DOUB_FREQ ||
-+	     st->clkin_freq < ADF4371_MIN_CLKIN_DOUB_FREQ))
-+		st->ref_doubler_en = false;
-+
-+	ret = regmap_update_bits(st->regmap,  ADF4371_REG(0x22),
-+				 ADF4371_REF_DOUB_MASK |
-+				 ADF4371_RDIV2_MASK,
-+				 ADF4371_REF_DOUB(st->ref_doubler_en) |
-+				 ADF4371_RDIV2(st->ref_div2_en));
-+	if (ret < 0)
-+		return ret;
-+
- 	/*
- 	 * Calculate and maximize PFD frequency
- 	 * fPFD = REFIN × ((1 + D)/(R × (1 + T)))
- 	 * Where D is the REFIN doubler bit, T is the reference divide by 2,
- 	 * R is the reference division factor
--	 * TODO: it is assumed D and T equal 0.
- 	 */
- 	do {
- 		st->ref_div_factor++;
--		st->fpfd = st->clkin_freq / st->ref_div_factor;
-+		st->fpfd = (st->clkin_freq * (st->ref_doubler_en ? 2 : 1)) /
-+			   (st->ref_div_factor * (st->ref_div2_en ? 2 : 1));
- 	} while (st->fpfd > ADF4371_MAX_FREQ_PFD);
- 
- 	/* Calculate Timeouts */
 -- 
-2.47.0
-
+With best wishes
+Dmitry
 
