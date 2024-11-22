@@ -1,101 +1,209 @@
-Return-Path: <linux-kernel+bounces-418753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E5C9D653B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:09:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D3A19D654A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:12:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C163282BC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 21:09:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1A892835C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 21:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85EE185935;
-	Fri, 22 Nov 2024 21:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABD81DF98A;
+	Fri, 22 Nov 2024 21:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ioe1YIOO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PER1tzqh"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE6F4A0C
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 21:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6416E178CF6;
+	Fri, 22 Nov 2024 21:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732309748; cv=none; b=M5o9aI1Tx3Pd4+z9waTRUKPX6i19IxI4LYtJ7AV6mpb7l+OeVqSt3pENNvHbL1OHfL0mazETpZnKDUGPOtcKyBOXhv7gbhlzd0Tz5Gi2Aj1Pb8/20OXNRuioXSwHEN8uDCYAEj6odZSc1WdMENa/N8funIz5fk5Jtc4r/vBfZQI=
+	t=1732309909; cv=none; b=dLv27kOO4emKY/c/Z9YRbXI/ZyDAyhHGyclXadp3vGelT5owOY39nDsQln7VNNwquzF0n2fMsTnU3w6rkXKdzUQiPCOVIDh9w4fVf8bWtYL5M798PBZOKXwlBJQ8ihXpILlb2T+nXFqstyIVZIjwFd9HD3xvmScyOK0paV4ea60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732309748; c=relaxed/simple;
-	bh=zeo9E58IJwopEbyH4KMEk8UyvZ6VvHKNIKWK1GklwMU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IdgahHDG6We6qsfHAHDn87S6ZGw+5lXRPRnJEgy0BJvqSx0q9MTlXJcZaNDcYGFjbtYSOxLLkBh57a09CTiXmOy18JIFxYSpuFzY2Ewd83HSgui1A7KLAfn/7X3d7s/Q8+8PPPppSPKfQPACV1CJJp30WWb5j4JRgZoj2D07qJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ioe1YIOO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 996E2C4CECE;
-	Fri, 22 Nov 2024 21:09:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732309747;
-	bh=zeo9E58IJwopEbyH4KMEk8UyvZ6VvHKNIKWK1GklwMU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ioe1YIOOXk1orgEFpo+uwpfVdTnl2sYch4yvR51Lsno2C95n+JF0efE9X5WbFyfSM
-	 Rmq77Crh2KFozPb57/Eu4BLq/uwbdlu0hpP+mgfRc+inueyzz07nwhE3eS8AyRyxEs
-	 nV4ShmSTi7ESXIzbgZAGDGMKSiBQreqqcNEiZVFwn5fldvyOz7vXy/ue30A8eNI1Bq
-	 fDL27TdeuFXJe7KfAB4I8xPtfTd51yKEnJgNSB5TbNs0BXQcYsyA+tK+j4f5mK74F5
-	 VcprUrNxQV6Jt+2U32J9MfiUdEfvoEI4nC2CYZMKGrlq+XLNWvyRdyumcaAalTtoUO
-	 vtYOLqfdMLDrQ==
-Date: Fri, 22 Nov 2024 14:09:04 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>
-Cc: Paul Webb <paul.x.webb@oracle.com>, Christoph Hellwig <hch@lst.de>,
-	Jens Axboe <axboe@kernel.dk>, Phil Auld <pauld@redhat.com>,
-	Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	Ramanan Govindarajan <ramanan.govindarajan@oracle.com>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Nicky Veitch <nicky.veitch@oracle.com>
-Subject: Re: [External] : Re: [bug-report] 5-9% FIO randomwrite ext4 perf
- regression on 6.12.y kernel
-Message-ID: <Z0Dy8H0A3Wj45ZQn@kbusch-mbp.dhcp.thefacebook.com>
-References: <392209D9-5AC6-4FDE-8D84-FB8A82AD9AEF@oracle.com>
- <0cfbfcf6-08f5-4d1b-82c4-729db9198896@nvidia.com>
- <d6049cd0-5755-48ee-87af-eb928016f95b@kernel.dk>
- <20241121113058.GA394828@pauld.westford.csb>
- <a01ead6b-bd1d-4cd3-ade6-59ad905273e7@kernel.dk>
- <181bcb70-e0bf-4024-80b7-e79276d6eaf7@oracle.com>
- <20241122121304.GA25877@lst.de>
- <188e08f4-2eb3-41ad-a331-63fd5bb0e7f6@oracle.com>
- <14F95ECE-2AB7-4A50-AE45-C98EC426312C@oracle.com>
+	s=arc-20240116; t=1732309909; c=relaxed/simple;
+	bh=uatQ26xoa9JnUe6BtMBCf1GYdPKJDKcQaN4eKYx4P1I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=b3brPZ2fr2WCObECRZ8x48AXNgZukVeuaie+Czb7jKafUWRFfGu9liGSVlmLWQHt56lNu1LAngh/LeJlKMqbarZ2eavwY9q7NTSNfs9nEGMUzVfn6WQarSIx3Zpje3lNNztBu4+ZQ66V6PRwznVtZMVvQkL6gwMtghdbicUmRvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PER1tzqh; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5cfa90e04c2so2830636a12.1;
+        Fri, 22 Nov 2024 13:11:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732309906; x=1732914706; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=u+tcqNNysQkTc2dEl6EX4aObuUUjMDrPgVEtTOtJS3M=;
+        b=PER1tzqhRwjECp5aMBNF8X3DPS8zAv1hDfyM84xGVwr7TGwxvOW3nRU0hFLObNA4QM
+         YwDGkb1FccnLTWx8ngLkL8MhhFjnMu473jMAa7C3kacd/mR8mKfNrs+bvTRN0KVVzzME
+         YMNP6yz8jgnZr1nEr+FW52jNFXIwq1dY6erfqMZq3irs68o8iVkKPKR3XmtppFYuRnTF
+         oW8/1mW/u/wTHrborcgb/jH1n92KwbiJKyQduMyX8kBIqSeslxk1aFI0Sxx+yVS6Txdl
+         zsROriXIYWQU5cpvkIAFxJ1rF39LZtSP/qJw1gkxGQUYKGrJl960ZMGOrbcVoqfYHlzS
+         WFOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732309906; x=1732914706;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u+tcqNNysQkTc2dEl6EX4aObuUUjMDrPgVEtTOtJS3M=;
+        b=szc5HYX36Lp4VtldfEugWJN7uluAKC4UhPhaUM4YHLk8R4M7JmuyKrzukW7okyXU1M
+         X/VvXUVC3IXnyv87HiqT6wxhTpyYKfRroZqrRmcHUjEMCXQ2GkER952nUlWiWP4Tr5Nu
+         L3qKwtyC78ZBPIVwr280kBdXiZdbvPjj2TnJuPfUWftIiVwq+WDEzbI17J8vvg5nlYoV
+         m+ZDRWhRX0f6f8A/a6vW+KkUN517nH7b7AfyURxeq0SzzQ3CD5X4VK+Tmf3G+R0KR9xL
+         WXSdzK8ufqcDSt/qpZz/z88tyX0osI0XRtzCw0SbyvEuSnOu0n4V1CDVoon5kNmLaQVy
+         hbCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVtR/v2dH1rqZasv7GIC9me6k4noZgBRJ2tsorSeBkzC1sjqNmb6oKFRF2BfaolsBB9SUVNzmYCw5t3sP/0@vger.kernel.org, AJvYcCWIgme0BrHBzbwK1b93nYLwkTe4u0K8n5nBZIDaZdrfDKkzl7C+usBN2omp1CijPUHERY3hL+ZRp3k8OI/k4+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFCQniwmcoLyOVGTdTKSDmR46ddKEhRgLiBVRGTHSR1mnz0vwd
+	aqTRYnYy9dDxD9VaETKcwBcuP28gmkq0xwS0AMIn+TJuFCNI0Oyq
+X-Gm-Gg: ASbGncs2E9CuAsn6UiMcUU/TCa6XfyCObHYMmriKw1LN7GN5j5/5ohz6fdkn1w45HgQ
+	A9EOA3NLSUNehIK89TIEyTP5ZKppP/2IGKLGx846K2nshW+4rYzPyZenUaZnkY+RG6pBMBT+Ubv
+	K526F+NM0GaX4xzX5uMWlEJ4M66idn1hdH0o0gsSucIF/5ep/DQNtXtdp6BhGoDFQUrtboX7L2O
+	8OShCUxYWexBxJizSevFtuaP8g3sN0NKVXH0lk69+nKpMG6N1pMD6Zok1fLowDe4GGPnZmxLsiN
+	zOg=
+X-Google-Smtp-Source: AGHT+IGEeoVa+pVRYbHHLYkUM3zI+FvCZ/MKAJa4ua0+3IKCCAjUzBlQr/GgpjHTIBVkdjwu7BjCMw==
+X-Received: by 2002:a50:ef18:0:b0:5d0:224b:d585 with SMTP id 4fb4d7f45d1cf-5d0224bd6b7mr2968510a12.31.1732309905574;
+        Fri, 22 Nov 2024 13:11:45 -0800 (PST)
+Received: from rex.hwlab.vusec.net (lab-4.lab.cs.vu.nl. [192.33.36.4])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d3a3d77sm1276636a12.7.2024.11.22.13.11.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 13:11:45 -0800 (PST)
+From: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
+To: Keith Busch <kbusch@kernel.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Cc: Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
+	Raphael Isemann <teemperor@gmail.com>,
+	Cristiano Giuffrida <giuffrida@cs.vu.nl>,
+	Herbert Bos <h.j.bos@vu.nl>,
+	Greg KH <gregkh@linuxfoundation.org>
+Subject: [PATCH v3 3/3] dmapool: Use xarray for vaddr-to-block lookup
+Date: Fri, 22 Nov 2024 22:11:41 +0100
+Message-Id: <20241122211144.4186080-1-bjohannesmeyer@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <14F95ECE-2AB7-4A50-AE45-C98EC426312C@oracle.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 22, 2024 at 06:26:46PM +0000, Saeed Mirzamohammadi wrote:
-> FYI, Tried disabling write zeros but still getting the same errors:
-> [ 326.097275] operation not supported error, dev nvme2n1, sector 10624 op 0x9:(WRITE_ZEROES) flags 0x800 phys_seg 0 prio class 0
-> [ 338.496217] nvme0n1: Dataset Management(0x9) @ LBA 10928, 256 blocks, Invalid Command Opcode (sct 0x0 / sc 0x1) DNR
-> ... 
-> 
-> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> index d3bde17c818d5..ad2ce6008062e 100644
-> --- a/drivers/nvme/host/pci.c
-> +++ b/drivers/nvme/host/pci.c
-> @@ -3425,7 +3425,8 @@ static const struct pci_device_id nvme_id_table[] = {
->                 .driver_data = NVME_QUIRK_STRIPE_SIZE |
->                                 NVME_QUIRK_DEALLOCATE_ZEROES |
->                                 NVME_QUIRK_IGNORE_DEV_SUBNQN |
-> -                               NVME_QUIRK_BOGUS_NID, },
-> +                               NVME_QUIRK_BOGUS_NID |
-> +                               NVME_QUIRK_DISABLE_WRITE_ZEROES, },
->         { PCI_VDEVICE(INTEL, 0x0a55),   /* Dell Express Flash P4600 */
->                 .driver_data = NVME_QUIRK_STRIPE_SIZE |
->                                 NVME_QUIRK_DEALLOCATE_ZEROES, },
+Optimize the performance of `dma_pool_free()` by implementing an xarray to
+map a `vaddr` to its corresponding `block`. This eliminates the need to
+iterate through the entire `page_list` for vaddr-to-block translation,
+thereby improving performance.
 
-Could you instead try deleting the NVME_QUIRK_DEALLOCATE_ZEROES quirk
-for this device? The driver apparently uses this to assume you meant to
-do a Discard, but it sounds like the device wants an actual Write Zeroes
-command here.
+Performance results from the `DMAPOOL_TEST` test show the improvement.
+Before the patch:
+```
+dmapool test: size:16   align:16   blocks:8192 time:34432
+dmapool test: size:64   align:64   blocks:8192 time:62262
+dmapool test: size:256  align:256  blocks:8192 time:238137
+dmapool test: size:1024 align:1024 blocks:2048 time:61386
+dmapool test: size:4096 align:4096 blocks:1024 time:75342
+dmapool test: size:68   align:32   blocks:8192 time:88243
+```
+
+After the patch:
+```
+dmapool test: size:16   align:16   blocks:8192 time:37954
+dmapool test: size:64   align:64   blocks:8192 time:40036
+dmapool test: size:256  align:256  blocks:8192 time:41942
+dmapool test: size:1024 align:1024 blocks:2048 time:10964
+dmapool test: size:4096 align:4096 blocks:1024 time:6101
+dmapool test: size:68   align:32   blocks:8192 time:41307
+```
+
+This change reduces the runtime overhead, particularly for larger block
+sizes.
+
+Co-developed-by: Raphael Isemann <teemperor@gmail.com>
+Signed-off-by: Raphael Isemann <teemperor@gmail.com>
+Signed-off-by: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
+---
+ mm/dmapool.c | 28 +++++++++++-----------------
+ 1 file changed, 11 insertions(+), 17 deletions(-)
+
+diff --git a/mm/dmapool.c b/mm/dmapool.c
+index f2b96be25412..1cc2cc87ab93 100644
+--- a/mm/dmapool.c
++++ b/mm/dmapool.c
+@@ -35,6 +35,7 @@
+ #include <linux/string.h>
+ #include <linux/types.h>
+ #include <linux/wait.h>
++#include <linux/xarray.h>
+ 
+ #ifdef CONFIG_SLUB_DEBUG_ON
+ #define DMAPOOL_DEBUG 1
+@@ -59,6 +60,7 @@ struct dma_pool {		/* the pool */
+ 	unsigned int boundary;
+ 	char name[32];
+ 	struct list_head pools;
++	struct xarray block_map;
+ };
+ 
+ struct dma_page {		/* cacheable header for 'allocation' bytes */
+@@ -96,23 +98,7 @@ static DEVICE_ATTR_RO(pools);
+ 
+ static struct dma_block *pool_find_block(struct dma_pool *pool, void *vaddr)
+ {
+-	struct dma_page *page;
+-	size_t offset, index;
+-
+-	list_for_each_entry(page, &pool->page_list, page_list) {
+-		if (vaddr < page->vaddr)
+-			continue;
+-		offset = vaddr - page->vaddr;
+-		if (offset >= pool->allocation)
+-			continue;
+-
+-		index = offset / pool->size;
+-		if (index >= page->blocks_per_page)
+-			return NULL;
+-
+-		return &page->blocks[index];
+-	}
+-	return NULL;
++	return xa_load(&pool->block_map, (unsigned long)vaddr);
+ }
+ 
+ #ifdef DMAPOOL_DEBUG
+@@ -273,6 +259,7 @@ struct dma_pool *dma_pool_create(const char *name, struct device *dev,
+ 	retval->boundary = boundary;
+ 	retval->allocation = allocation;
+ 	INIT_LIST_HEAD(&retval->pools);
++	xa_init(&retval->block_map);
+ 
+ 	/*
+ 	 * pools_lock ensures that the ->dma_pools list does not get corrupted.
+@@ -324,6 +311,12 @@ static void pool_initialise_page(struct dma_pool *pool, struct dma_page *page)
+ 		block->dma = page->dma + offset;
+ 		block->next_block = NULL;
+ 
++		if (xa_err(xa_store(&pool->block_map, (unsigned long)block->vaddr,
++				    block, GFP_KERNEL))) {
++			pr_err("dma_pool: Failed to store block in xarray\n");
++			return;
++		}
++
+ 		if (last)
+ 			last->next_block = block;
+ 		else
+@@ -385,6 +378,7 @@ void dma_pool_destroy(struct dma_pool *pool)
+ 	if (unlikely(!pool))
+ 		return;
+ 
++	xa_destroy(&pool->block_map);
+ 	mutex_lock(&pools_reg_lock);
+ 	mutex_lock(&pools_lock);
+ 	list_del(&pool->pools);
+-- 
+2.34.1
+
 
