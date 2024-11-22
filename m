@@ -1,36 +1,36 @@
-Return-Path: <linux-kernel+bounces-417778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 314599D58F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:51:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BCD29D58F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:53:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3B29B23072
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:51:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6076286BB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A76017A922;
-	Fri, 22 Nov 2024 04:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301881714BC;
+	Fri, 22 Nov 2024 04:51:46 +0000 (UTC)
 Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAC71632E6
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 04:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E95615FD16
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 04:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732251031; cv=none; b=RjaU4c5ZxmZccdstAfMZfsVN365ff/zdFTYQSKm7SWfDlghQ5Jb+g7ct4O4HRwqBlJAsoFEgpVMGwPj5Aaj/e05yPyldF75yimYTNkl/OO8Yh7/Soi1MHNMTrOpOAyNOpE0/kETcmAVen4WT0rdgC1nqkNTllYPYwlGH5kSuYj0=
+	t=1732251105; cv=none; b=T4XaLp9jgUGjVTJ+4SpNwNckhaUE8Z0mqg375LqNPom9B4pY/hi78F4ko8PfdY8837Pc/DWMPSS0zcnCM1LvyppIQxgtQgB+oPZmoPi2gJ5NnnGZlZIkWiR2o2SKRDEL7CjMPj2dvMvMeZge6U9bFtpvSt9bwajd8Mmpe7OrzAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732251031; c=relaxed/simple;
-	bh=pZll4EsN3g1CnxWFPtzbSrUz+zKAT53GwKlq67qeI8E=;
+	s=arc-20240116; t=1732251105; c=relaxed/simple;
+	bh=U76I/hWykKRbyzMCtFBw6tfSwAXietSBOB/FdHQh8KY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VjFSkLTatqjcWt7ArQtQAOtZ3Kxv1p0zewTQHIvEWAq5ISyEpvs0Zr7UTOHv8xHFME96g4t/cG5P14cuqlUU8WFnlJ3IH05QKVYRye3LMOWfKzlJTht3kr6r3t+24Eu8bvVhYqmgvLCfdFN9+wR/myAD5B64hc8Bj3ZLNfDBlGc=
+	 MIME-Version; b=juAowMlZKYiWrBnE88ZQuF219QAkKkMuxS7bXiR4GfC+sO/KNqelD7Q7aBHeDqR4k7JnYv9rOGtmvqKeuUIKxqezxSk58DCTMO5V7cOKm2cJtFIJ10QaAsPD8LatfEAZzwhs8KuEn9ptLia3DHBosh2IXgDwIXlRZIxXTcRXbdA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
 Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8BxYa+NDUBnB71FAA--.6023S3;
+	by gateway (Coremail) with SMTP id _____8Bx++GNDUBnDL1FAA--.4891S3;
 	Fri, 22 Nov 2024 12:50:21 +0800 (CST)
 Received: from linux.localdomain (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMCxdcCIDUBnIJJiAA--.33733S8;
+	by front1 (Coremail) with SMTP id qMiowMCxdcCIDUBnIJJiAA--.33733S9;
 	Fri, 22 Nov 2024 12:50:21 +0800 (CST)
 From: Tiezhu Yang <yangtiezhu@loongson.cn>
 To: Huacai Chen <chenhuacai@kernel.org>,
@@ -38,9 +38,9 @@ To: Huacai Chen <chenhuacai@kernel.org>,
 	Peter Zijlstra <peterz@infradead.org>
 Cc: loongarch@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 06/10] objtool: Handle unsorted table offset of rodata
-Date: Fri, 22 Nov 2024 12:50:01 +0800
-Message-ID: <20241122045005.14617-7-yangtiezhu@loongson.cn>
+Subject: [PATCH v4 07/10] objtool/LoongArch: Get each table size of rodata
+Date: Fri, 22 Nov 2024 12:50:02 +0800
+Message-ID: <20241122045005.14617-8-yangtiezhu@loongson.cn>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <20241122045005.14617-1-yangtiezhu@loongson.cn>
 References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
@@ -51,11 +51,11 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCxdcCIDUBnIJJiAA--.33733S8
+X-CM-TRANSID:qMiowMCxdcCIDUBnIJJiAA--.33733S9
 X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7Cw18uFWfGrWfWFWfJr4kKrX_yoW8uF4xpF
-	15C3y8KrWYg34rKwnrt3WFg3y5Gw47GryxJr1xtry0q3sFvrnxtFZaka42kFWDX3y5W3WI
-	va9xKry8CFs2yFXCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+X-Coremail-Antispam: 1Uk129KBj93XoWxZryxuFyUJFWftF4Duw47Jrc_yoW5KF48pF
+	95C3s8trWYqFy5WF47AF4SyrW3Jw48WryxGr9rG3WFy343tr9Yqay2qasIk3Z5JrZ8Cr1S
+	qFWrKr1xuF4kArXCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
 	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
 	0xBIdaVrnRJUUU9Yb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
 	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
@@ -73,56 +73,108 @@ X-Coremail-Antispam: 1Uk129KBj93XoW7Cw18uFWfGrWfWFWfJr4kKrX_yoW8uF4xpF
 
 When compling with Clang on LoongArch, there are unsorted table offset
 of rodata if there exist many jump tables, it will get the wrong table
-end and find the wrong jump destination instructions in add_jump_table(),
-so it needs to check the table size of rodata to break the process when
-parsing the relocation section of rodata.
+end and find the wrong jump destination instructions in add_jump_table().
 
-This is preparation for later patch on LoongArch, there is no effect for
-the other archs with this patch.
+Sort the rodata table offset by parsing ".rela.discard.tablejump_annotate"
+and then get each table size of rodata corresponded with each table jump
+instruction, it is used to check the table end and will break the process
+when parsing ".rela.rodata" to avoid getting the wrong jump destination
+instructions.
 
 Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 ---
- tools/objtool/check.c                 | 7 +++++++
- tools/objtool/include/objtool/check.h | 1 +
- 2 files changed, 8 insertions(+)
+ tools/objtool/arch/loongarch/special.c | 72 ++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index b21e47d8d3d1..3b2d94c90011 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -2101,6 +2101,7 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
- 	struct alternative *alt;
- 	unsigned long offset;
- 	unsigned long rodata_entry_size;
-+	unsigned long rodata_table_size = insn->table_size;
+diff --git a/tools/objtool/arch/loongarch/special.c b/tools/objtool/arch/loongarch/special.c
+index 9bba1e9318e0..454bd01226a4 100644
+--- a/tools/objtool/arch/loongarch/special.c
++++ b/tools/objtool/arch/loongarch/special.c
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+ #include <objtool/special.h>
++#include <objtool/warn.h>
  
- 	/*
- 	 * Each @reloc is a switch table relocation which points to the target
-@@ -2112,6 +2113,12 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
- 		if (reloc != table && reloc == next_table)
- 			break;
+ bool arch_support_alt_relocation(struct special_alt *special_alt,
+ 				 struct instruction *insn,
+@@ -8,6 +9,77 @@ bool arch_support_alt_relocation(struct special_alt *special_alt,
+ 	return false;
+ }
  
-+		/* Handle the special cases compiled with Clang on LoongArch */
-+		if (file->elf->ehdr.e_machine == EM_LOONGARCH &&
-+		    reloc->sym->type == STT_SECTION && reloc != table &&
-+		    reloc_offset(reloc) == reloc_offset(table) + rodata_table_size)
-+			break;
++struct table_info {
++	struct list_head jump_info;
++	unsigned long insn_offset;
++	unsigned long rodata_offset;
++};
 +
- 		/* Handle the special cases compiled with Clang on LoongArch */
- 		if (file->elf->ehdr.e_machine == EM_LOONGARCH &&
- 		    reloc_type(reloc) == R_LARCH_32_PCREL)
-diff --git a/tools/objtool/include/objtool/check.h b/tools/objtool/include/objtool/check.h
-index daa46f1f0965..11aafcc7b0c7 100644
---- a/tools/objtool/include/objtool/check.h
-+++ b/tools/objtool/include/objtool/check.h
-@@ -46,6 +46,7 @@ struct instruction {
- 	struct section *sec;
- 	unsigned long offset;
- 	unsigned long immediate;
-+	unsigned long table_size;
- 
- 	u8 len;
- 	u8 prev_len;
++static void get_rodata_table_size_by_table_annotate(struct objtool_file *file,
++						    struct instruction *insn)
++{
++	struct section *rsec;
++	struct reloc *reloc;
++	struct list_head table_list;
++	struct table_info *orig_table;
++	struct table_info *next_table;
++	unsigned long tmp_insn_offset;
++	unsigned long tmp_rodata_offset;
++
++	rsec = find_section_by_name(file->elf, ".rela.discard.tablejump_annotate");
++	if (!rsec)
++		return;
++
++	INIT_LIST_HEAD(&table_list);
++
++	for_each_reloc(rsec, reloc) {
++		if (reloc->sym->type != STT_SECTION)
++			return;
++
++		orig_table = malloc(sizeof(struct table_info));
++		if (!orig_table) {
++			WARN("malloc failed");
++			return;
++		}
++
++		orig_table->insn_offset = reloc_addend(reloc);
++		reloc++;
++		orig_table->rodata_offset = reloc_addend(reloc);
++
++		list_add_tail(&orig_table->jump_info, &table_list);
++
++		if (reloc_idx(reloc) + 1 == sec_num_entries(rsec))
++			break;
++	}
++
++	list_for_each_entry(orig_table, &table_list, jump_info) {
++		next_table = list_next_entry(orig_table, jump_info);
++		list_for_each_entry_from(next_table, &table_list, jump_info) {
++			if (next_table->rodata_offset < orig_table->rodata_offset) {
++				tmp_insn_offset = next_table->insn_offset;
++				tmp_rodata_offset = next_table->rodata_offset;
++				next_table->insn_offset = orig_table->insn_offset;
++				next_table->rodata_offset = orig_table->rodata_offset;
++				orig_table->insn_offset = tmp_insn_offset;
++				orig_table->rodata_offset = tmp_rodata_offset;
++			}
++		}
++	}
++
++	list_for_each_entry(orig_table, &table_list, jump_info) {
++		if (insn->offset == orig_table->insn_offset) {
++			next_table = list_next_entry(orig_table, jump_info);
++			if (&next_table->jump_info == &table_list)
++				break;
++
++			while (next_table->rodata_offset == orig_table->rodata_offset)
++				next_table = list_next_entry(next_table, jump_info);
++
++			insn->table_size = next_table->rodata_offset - orig_table->rodata_offset;
++		}
++	}
++}
++
+ struct reloc *arch_find_switch_table(struct objtool_file *file,
+ 				     struct instruction *insn)
+ {
 -- 
 2.42.0
 
