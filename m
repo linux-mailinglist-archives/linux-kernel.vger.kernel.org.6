@@ -1,159 +1,104 @@
-Return-Path: <linux-kernel+bounces-418232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 529539D5EE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:38:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A1379D5EEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:40:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBE691F237B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:38:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50E13283501
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:40:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF541DE8AF;
-	Fri, 22 Nov 2024 12:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jWGDWJAm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B80D1DE8A5;
+	Fri, 22 Nov 2024 12:39:55 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9045818A6C4
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6696B1386D1;
+	Fri, 22 Nov 2024 12:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732279131; cv=none; b=OJnHWBVbYb9NWqh/BDfxL8sijZxIiJWF6UaFrOqyEM57/ErTgvdwYuhSAsY4EJYp16cU9hY/U5Suylwk2yMXWhmaYfXInNRrhqo/sT/TsOS50yB9e06irj/Z9KolRLz7YG8vXf9D6k0ynT/oz0+NUT+nNX9yiGEuVyHpxiDrZ64=
+	t=1732279194; cv=none; b=Ov0ZNsxMf8IRj0953zuz/vzAvWLFil5FDNSJRcGp+dD3T9/hf3z1id65eQHeNm7X/RAkSQdBObbiwpTjRDwCSpWznF0CxhdrDStGPN0eKiviq9mCEbkC477mgGUUNEzyTGG1g1FwbeHOjsc18VG1ee1ep+QZ2TjqQ19kH6qMD+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732279131; c=relaxed/simple;
-	bh=gQVEHKvau/xfbI1Aj9iTjy/Q5BenIDfUvJiRt2Fhd8k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pTQVNrifsTfbEmT28AqVa9IjGIMjlnEILZMyrY2y9OzP3oNJiSDd0RZuVXpLCrkAzV8bwtwbLdPn5EXQpSNCcSBHchz6l064cyH7JbOrqHLuWztzfZvx2fBMlI1qoW2WBCfHSlMRWPgkPsCUyl2GKwerhwtKuW8kqenVFrEt0eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jWGDWJAm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732279128;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pb+ff1D/0TtpaXGe7UWNVLwVnoQ25lXbKuGb4Qog/nc=;
-	b=jWGDWJAmtnoLv//shhCv15KXbUFmVZg+J/AjogZIb859YRSCWiQCzpTDhii8bWmSo23SW4
-	eAme/1EpX9YPiv77vXWf2haw97qJfW66hhhNweYIGze86M+cJczrGy9/GrnWUSCcvw0E1e
-	SCTH7YbStmkFVCS2nNT2P0jzSY9Tey4=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-443-ujmeOmmcMdyqbBElxd9-Gg-1; Fri,
- 22 Nov 2024 07:38:43 -0500
-X-MC-Unique: ujmeOmmcMdyqbBElxd9-Gg-1
-X-Mimecast-MFC-AGG-ID: ujmeOmmcMdyqbBElxd9-Gg
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	s=arc-20240116; t=1732279194; c=relaxed/simple;
+	bh=c66N3H3o4YHPm9fRMVCWFsvZ0TuP6FIx04Su66WqV2w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WgtpHZEPpebDtut05aN/jb1YJBPaEAPQIoFaoSxSVrAiajLJZt2giCAz1B55PPtZ0grCpEo5jMPc0xjPD2btESj516Ukk2wK0tURdvdAQje79Zbr7jxtWRc8QGNk/L9OJOyOWNQ8GQMEyXmb3Y3DtVDfNZr0LsQnKnBcN5MCV3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.224] (ip5f5aed53.dynamic.kabel-deutschland.de [95.90.237.83])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 89EC619560BD;
-	Fri, 22 Nov 2024 12:38:41 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.187])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id DEF9130000DF;
-	Fri, 22 Nov 2024 12:38:38 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 22 Nov 2024 13:38:21 +0100 (CET)
-Date: Fri, 22 Nov 2024 13:38:17 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Anthony Mallet <anthony.mallet@laas.fr>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	linux-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-	Marco Elver <elver@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: posix timer freeze after some random time, under pthread
- create/destroy load
-Message-ID: <20241122123817.GC24815@redhat.com>
-References: <26411.57288.238690.681680@gargle.gargle.HOWL>
- <Zz95qDPU2wcEp26r@localhost.localdomain>
- <20241122082407.GA14342@redhat.com>
- <Z0BliWkMHHzohMt3@pavilion.home>
- <20241122114949.GA24815@redhat.com>
- <Z0BylnuVaxwCNP9n@pavilion.home>
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 7BF8C61E5FE05;
+	Fri, 22 Nov 2024 13:39:16 +0100 (CET)
+Message-ID: <88cfa1e8-3e1f-4670-a8b5-0066079fc29a@molgen.mpg.de>
+Date: Fri, 22 Nov 2024 13:39:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z0BylnuVaxwCNP9n@pavilion.home>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tty: rfcomm: use sysfs_emit() instead of sprintf()
+To: zhangheng@kylinos.cn
+Cc: marcel@holtmann.org, johan.hedberg@gmail.com, luiz.dentz@gmail.com,
+ erick.archer@outlook.com, kees@kernel.org, geert@linux-m68k.org,
+ jirislaby@kernel.org, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241122111939.3799277-1-zhangheng@kylinos.cn>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20241122111939.3799277-1-zhangheng@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 11/22, Frederic Weisbecker wrote:
->
-> Le Fri, Nov 22, 2024 at 12:49:50PM +0100, Oleg Nesterov a écrit :
-> > On 11/22, Frederic Weisbecker wrote:
-> > >
-> > >
-> > > Right, I don't mind either way,
-> >
-> > Me too, so feel free to ignore,
-> >
-> > > though if it's past PF_EXITING,
-> > > complete_signal() -> wants_signal() will defer to another thread anyway, right?
-> >
-> > Right. So I think it would be better to rely on complete_signal() in this
-> > case even if the current logic is very simple and dumb.
->
-> Just to make sure I understand correctly, this means you'd prefer to keep
-> the PF_EXITING test?
+Dear Zhangheng,
 
-No, sorry for confusion ;)
 
-I'd prefer to check t->exit_state in send_sigqueue() and let complete_signal()
-pick another thread if "t->flags & PF_EXITING" is already set.
+Thank you for your patch.
 
-But I am fine either way, up to you.
+Am 22.11.24 um 12:19 schrieb zhangheng:
+> Follow the advice in Documentation/filesystems/sysfs.rst:
+> show() should only use sysfs_emit() or sysfs_emit_at() when formatting
+> the value to be returned to user space.
+> 
+> Signed-off-by: zhangheng <zhangheng@kylinos.cn>
 
-I guess we can even avoid the additional check altogether, something like below.
-Again, up to you. Your approach looks simpler and doesn't need more comments.
+Is zhangheng the official spelling of your name? If not, please update.
 
-Oleg.
+> ---
+>   net/bluetooth/rfcomm/tty.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/bluetooth/rfcomm/tty.c b/net/bluetooth/rfcomm/tty.c
+> index af80d599c337..21a5b5535ebc 100644
+> --- a/net/bluetooth/rfcomm/tty.c
+> +++ b/net/bluetooth/rfcomm/tty.c
+> @@ -201,14 +201,14 @@ static ssize_t address_show(struct device *tty_dev,
+>   			    struct device_attribute *attr, char *buf)
+>   {
+>   	struct rfcomm_dev *dev = dev_get_drvdata(tty_dev);
+> -	return sprintf(buf, "%pMR\n", &dev->dst);
+> +	return sysfs_emit(buf, "%pMR\n", &dev->dst);
+>   }
+>   
+>   static ssize_t channel_show(struct device *tty_dev,
+>   			    struct device_attribute *attr, char *buf)
+>   {
+>   	struct rfcomm_dev *dev = dev_get_drvdata(tty_dev);
+> -	return sprintf(buf, "%d\n", dev->channel);
+> +	return sysfs_emit(buf, "%d\n", dev->channel);
+>   }
+>   
+>   static DEVICE_ATTR_RO(address);
 
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -1966,7 +1966,7 @@ int send_sigqueue(struct sigqueue *q, struct pid *pid, enum pid_type type)
- {
- 	int sig = q->info.si_signo;
- 	struct sigpending *pending;
--	struct task_struct *t;
-+	struct task_struct *g, *t;
- 	unsigned long flags;
- 	int ret, result;
- 
-@@ -1989,12 +1989,12 @@ int send_sigqueue(struct sigqueue *q, struct pid *pid, enum pid_type type)
- 	 * the same thread group as the target process, which avoids
- 	 * unnecessarily waking up a potentially idle task.
- 	 */
--	t = pid_task(pid, type);
--	if (!t)
-+	g = t = pid_task(pid, type);
-+	if (!g)
- 		goto ret;
- 	if (type != PIDTYPE_PID && same_thread_group(t, current))
- 		t = current;
--	if (!likely(lock_task_sighand(t, &flags)))
-+	if (!likely(lock_task_sighand(g, &flags)))
- 		goto ret;
- 
- 	ret = 1; /* the signal is ignored */
-@@ -2022,7 +2022,7 @@ int send_sigqueue(struct sigqueue *q, struct pid *pid, enum pid_type type)
- 	result = TRACE_SIGNAL_DELIVERED;
- out:
- 	trace_signal_generate(sig, &q->info, t, type != PIDTYPE_PID, result);
--	unlock_task_sighand(t, &flags);
-+	unlock_task_sighand(g, &flags);
- ret:
- 	rcu_read_unlock();
- 	return ret;
 
+Kind regards,
+
+Paul
 
