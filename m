@@ -1,116 +1,213 @@
-Return-Path: <linux-kernel+bounces-418341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5653D9D608E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:40:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D75D99D6094
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:40:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0013F1F215E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:40:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97B3328242F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033E61DD0E7;
-	Fri, 22 Nov 2024 14:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0B61DE8A5;
+	Fri, 22 Nov 2024 14:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="H9pW8oao"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B67B18A6C4
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XX/f0VQ5"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB45070823;
+	Fri, 22 Nov 2024 14:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732286183; cv=none; b=TMy0yR+hi3SiDx/tw5xD3FNCTTs87FV/LBy/h2Z8wsA/wk1oUv/3f1IJDsnSX7OBHJIR8XkeGDa9pcrFhszuvrobBeEgRvZfLXBf2ydquK3dM058YmWOblo7lkWvQt11wjoZtm45IGVUc3j6oWT6ePj0H1Yev7TGSlmBT2nagPU=
+	t=1732286244; cv=none; b=dtoIYNQ8YCzZCpvVUrz75vKsO2pd1e6I0DYBK20WOwxKj45wO1Xd9Wpw0uf/cckRE8StFsUqASJgM7ODAoFVImiUZr9E7468krTDym8D10JPzQ0/sZsqjGskTZKS2WDs+48c7PgzsLNSUOFVakCDcsrymKi1WRwKTMl5YT3C1lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732286183; c=relaxed/simple;
-	bh=+uinDo0lwq6B8/fmThCcMntjzgH5HjwLRV2uQLD+tRo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gKmlfTSapzGuqktcrx21/jWzWeNriMIm+abBsfP28x2YmFJDtZI57so6Cvs7YWZziEu6UhfSpvDghOPwXSRuZdsyymJYBfXHMO4UerBKJLdO80elc86VgGNaKxZ+VKnbLLf2lomumVKKTqqttPC7xaw3cFu8QPxyWMgMwAiy8tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=H9pW8oao; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id E1E2B14C1E1;
-	Fri, 22 Nov 2024 15:36:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1732286173;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w8v3+aQO1zVNTDKznW1DiFi9l9+YX7MeVTMpaVHPOvE=;
-	b=H9pW8oao5PKjueGtaVXyFvQ8wm/8qmT4yo9QeGkV5eRrBUvsTVNtF2Oqqy7rpW04CjGwiq
-	y9/5ObirE/rFJocrKksXYSnhCpP0FfhO6QwaIR92CiD2R8r45kdnGbjfkFDOuuIuoRqUV9
-	h6Wj8QVbhjQF/pcolpMhMNKrS3IlRV5PqjFapY528TnG9TaFOZkBRh1jhjuh/yodWfrA7B
-	+vBZdEFa2XLDDxNgBdoWvoFMcERcTn0tz5CQmOn0RSCmFHaVpTfWxICqiaUSL0XyEUSCWl
-	wCRswW2eU430Xw3NhFtdT5xTD+yOaj+4000L6gpSEvMosWAaqb+NLaqKNB4f0A==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id df0f998c;
-	Fri, 22 Nov 2024 14:36:08 +0000 (UTC)
-Date: Fri, 22 Nov 2024 23:35:53 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Cc: Alexander Merritt <alexander@edera.dev>, v9fs@lists.linux.dev,
-	linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Alex Zenla <alex@edera.dev>, Ariadne Conill <ariadne@ariadne.space>
-Subject: Re: [PATCH] 9p/xen: fix release of IRQ
-Message-ID: <Z0CWyXuMiifOv7HO@codewreck.org>
-References: <20241121225100.5736-1-alexander@edera.dev>
- <Zz_F9wMda68xhvKa@codewreck.org>
- <a6570b47-217c-4e92-a64c-16fc34494e3e@suse.com>
+	s=arc-20240116; t=1732286244; c=relaxed/simple;
+	bh=Keu5NQHlbLPzIDkrS/72fIWaWqtR0crDA6PH58JVMqo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PRhMikJj7THPwByeU0daO2rlQBpfclRDCqz2OyOGQhGPdEH0+ERC5S0y+ez3Nl+yS1BgbEuhJbyz8U756xY3fA0xzs4Ap4OAe2eiGb21uGeYVBwkTukWnpW0zt+kGGLI8OVGIDH14WqzXKoOXQw81ho6QB5D/guRJN1rRl1suZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XX/f0VQ5; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43167ff0f91so19159655e9.1;
+        Fri, 22 Nov 2024 06:37:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732286241; x=1732891041; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BADAresG1EOtpwbTZcGXUhBjlqOEu21KZNXJtTjJmAw=;
+        b=XX/f0VQ5IgTzpqgLxq8XAQrnlbjbTyXypXPIOu+sqTbzqMhNzEOaO6Wx+QpEEqnwta
+         Rt53kKbB44KxyweerqdlfWG3zhU/0NwhOFLjS9jFu92g+fbrPPZpiqkgXRMLKwXGQgcN
+         MuJA8Z1ILaKRAubqhuAcsUkq6602BexuMpovsPV0wrOQaxCs3DbTSEQDlTmg6vj6BBr3
+         6TtA0n21Jj+OVFoYa8VuKhYZ+RAQRNbMq2wBn5bRr7p4rMin3E6eBXH8FSGqrqmYBCmj
+         mlRZqrxyqqaMU1CtKJyOFXCi8EjKMxXXTCcL+2WNZyhQCPlbzOJ0v+H6FuhF9HKsqw7P
+         9nbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732286241; x=1732891041;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BADAresG1EOtpwbTZcGXUhBjlqOEu21KZNXJtTjJmAw=;
+        b=es7QLoVeohhqJXTWR1Kg/qcNWp2mIEh4iaI0c5uz4e70204psM+r8CTTXOUS1yaXi4
+         +HhqGxWlX3MKYKtzjVk3OsOb3Hyv2E1spydRXH+uWS60xlh7VaSoifCChvU7UFS3ED9u
+         chewjiOiHjgtWQLAjhEZtLNr3eRfNDqQVVTc2a82KYu0Ec1ZwUFz3buybwkqTS8f7yxw
+         WU/hq2Qq5ELTLepDZEjb/dRTkcgBZdjwE2UNuA7wlwAFaajWGoYKzEmxu2Vc3I5LQDP9
+         13WLTyJObYQJpN0Vrbh85uSpzydk75JUKuM7vySTdjtkykXEQpPAvOh/EkGX5S+aqDGo
+         aM8g==
+X-Forwarded-Encrypted: i=1; AJvYcCWEin0qQv9+U+u2IGrWl4+VqjKEoXJvnW3oBOaShYQjB+6CwyEwzrZgXMrIDdReAIFwoEvs7JebQcleHHI=@vger.kernel.org, AJvYcCWPHFlwRtNuseBhvRKVlYDxhBpTJVXWnZnQaRSey9hBUmcjbqtjGW943fpv2Vawv4VSCfDQuK13OBw9KEw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxYDdxXAy5MQfueqN1Hz55j0kUGrQrWwZcsyLYg01VVgoGUjiU
+	fdy5M400Z8EqXXLhV+uvO7PcUvm0HVXYL/l5awR/HwiRAlVSa4NT
+X-Gm-Gg: ASbGnctKt7Nz/TIF5yRy5HFtZrTOzkuIEpk3vACh2ZDyijUBYu8urefL06pKd0lqtSO
+	/bLsDyWmmY5efpmJm+zuTkzKZTleSlxvs0xTv879QiZq9eFa1oqA4cgDSJfs0w0IfOr0xUbMRgj
+	0ozEwquwujA9XpJpB+tCbpuH+YfbMhl5XBiL+jliIZD1RA0qxk/cWp6EJu60C7bZZYOCsRacAoT
+	AzM9E1URp0A1zANinN0rkQkHlk4SMM0SfaXvJmdh4Kh/lzUEc6k7kSJoP2Y9C0g
+X-Google-Smtp-Source: AGHT+IESxIXB3LIDME4haolgtpRkBfVpIxS+jDSOSOJs5KwmgJCEscuIBBgh7ZxSiBwgOvnmi6Kn7w==
+X-Received: by 2002:a5d:59a3:0:b0:37d:354e:946a with SMTP id ffacd0b85a97d-38260bdfa76mr2661343f8f.50.1732286240836;
+        Fri, 22 Nov 2024 06:37:20 -0800 (PST)
+Received: from demon-pc.localdomain ([188.27.131.151])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b45bdafbsm92219825e9.17.2024.11.22.06.37.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 06:37:19 -0800 (PST)
+From: Cosmin Tanislav <demonsingur@gmail.com>
+To: 
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	=?UTF-8?q?Pawe=C5=82=20Anikiel?= <panikiel@google.com>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Cosmin Tanislav <demonsingur@gmail.com>
+Subject: [PATCH] media: v4l: subdev: Prevent NULL routes access
+Date: Fri, 22 Nov 2024 16:37:12 +0200
+Message-ID: <20241122143717.173344-1-demonsingur@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a6570b47-217c-4e92-a64c-16fc34494e3e@suse.com>
 
-Jürgen Groß wrote on Fri, Nov 22, 2024 at 02:54:06PM +0100:
-> > (style) I don't recall seeing much `a = b = 0` in the kernel, and
-> > looking at it checkpatch seems to complain:
-> > CHECK: multiple assignments should be avoided
-> > #114: FILE: net/9p/trans_xen.c:290:
-> > +		priv->rings[i].evtchn = priv->rings[i].irq = 0;
-> > 
-> > Please run checkpatch on the patches you send (b4 can do it for you if
-> > you want to start using it)
-> > 
-> > 
-> > code-wise,
-> > I also don't see where unbinf_from_irqhandler would free the evtchn, so
-> > is it leaking here, or is it implicit from something else?
-> > We only free it explicitly on error binding the irq.
-> 
-> unbind_from_irqhandler()
->   unbind_from_irq()
->     __unbind_from_irq()
->       close_evtchn()
+When using v4l2_subdev_set_routing to set a subdev's routing, and the
+passed routing.num_routes is 0, kmemdup is not called to populate the
+routes of the new routing (which is fine, since we wouldn't want to pass
+a possible NULL value to kmemdup).
 
-Thank you, I didn't go far enough.
+This results in subdev's routing.routes to be NULL.
 
-And also, bah; I just spent 30 minutes thinking why would setting irq to
-zero prevent anything, but the bulk of the patch was using the correct
-device for unbind (as the commit correctly says, I just saw double-free
-and setting something to 0 after free as being related)
-I'll just remove this darned line, as the free function can't walk a
-ring twice anyway.
+routing.routes is further used in some places without being guarded by
+the same num_routes non-zero condition.
 
+Fix it.
 
-Also this made me notice xen_9pfs_front_init calls xen_9pfs_front_free()
-on error, but that init is part of a front_changed call and I'd bet
-xen_9pfs_front_remove() will still be called afterwards.
-If init failure ought to free then it probably should unset drvdata
-first like remove, and remove (and possibly many other dev_get_drvdata
-calls) should check for null; otherwise it's probably best to leave it
-to remove to call free exactly once...
+Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+---
+ drivers/media/v4l2-core/v4l2-subdev.c | 46 +++++++++++++--------------
+ 1 file changed, 23 insertions(+), 23 deletions(-)
 
+diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
+index cde1774c9098d..4f0eecd7fd66f 100644
+--- a/drivers/media/v4l2-core/v4l2-subdev.c
++++ b/drivers/media/v4l2-core/v4l2-subdev.c
+@@ -605,6 +605,23 @@ subdev_ioctl_get_state(struct v4l2_subdev *sd, struct v4l2_subdev_fh *subdev_fh,
+ 			     v4l2_subdev_get_unlocked_active_state(sd);
+ }
+ 
++static void subdev_copy_krouting(struct v4l2_subdev_routing *routing,
++				 struct v4l2_subdev_krouting *krouting)
++{
++	memset(routing->reserved, 0, sizeof(routing->reserved));
++
++	if (!krouting->routes) {
++		routing->num_routes = 0;
++		return;
++	}
++
++	memcpy((struct v4l2_subdev_route *)(uintptr_t)routing->routes,
++	       krouting->routes,
++	       min(krouting->num_routes, routing->len_routes) *
++	       sizeof(*krouting->routes));
++	routing->num_routes = krouting->num_routes;
++}
++
+ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+ 			    struct v4l2_subdev_state *state)
+ {
+@@ -976,7 +993,6 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+ 
+ 	case VIDIOC_SUBDEV_G_ROUTING: {
+ 		struct v4l2_subdev_routing *routing = arg;
+-		struct v4l2_subdev_krouting *krouting;
+ 
+ 		if (!v4l2_subdev_enable_streams_api)
+ 			return -ENOIOCTLCMD;
+@@ -984,15 +1000,7 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+ 		if (!(sd->flags & V4L2_SUBDEV_FL_STREAMS))
+ 			return -ENOIOCTLCMD;
+ 
+-		memset(routing->reserved, 0, sizeof(routing->reserved));
+-
+-		krouting = &state->routing;
+-
+-		memcpy((struct v4l2_subdev_route *)(uintptr_t)routing->routes,
+-		       krouting->routes,
+-		       min(krouting->num_routes, routing->len_routes) *
+-		       sizeof(*krouting->routes));
+-		routing->num_routes = krouting->num_routes;
++		subdev_copy_krouting(routing, &state->routing);
+ 
+ 		return 0;
+ 	}
+@@ -1016,8 +1024,6 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+ 		if (routing->num_routes > routing->len_routes)
+ 			return -EINVAL;
+ 
+-		memset(routing->reserved, 0, sizeof(routing->reserved));
+-
+ 		for (i = 0; i < routing->num_routes; ++i) {
+ 			const struct v4l2_subdev_route *route = &routes[i];
+ 			const struct media_pad *pads = sd->entity.pads;
+@@ -1046,12 +1052,7 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+ 		 * the routing table.
+ 		 */
+ 		if (!v4l2_subdev_has_op(sd, pad, set_routing)) {
+-			memcpy((struct v4l2_subdev_route *)(uintptr_t)routing->routes,
+-			       state->routing.routes,
+-			       min(state->routing.num_routes, routing->len_routes) *
+-			       sizeof(*state->routing.routes));
+-			routing->num_routes = state->routing.num_routes;
+-
++			subdev_copy_krouting(routing, &state->routing);
+ 			return 0;
+ 		}
+ 
+@@ -1064,11 +1065,7 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+ 		if (rval < 0)
+ 			return rval;
+ 
+-		memcpy((struct v4l2_subdev_route *)(uintptr_t)routing->routes,
+-		       state->routing.routes,
+-		       min(state->routing.num_routes, routing->len_routes) *
+-		       sizeof(*state->routing.routes));
+-		routing->num_routes = state->routing.num_routes;
++		subdev_copy_krouting(routing, &state->routing);
+ 
+ 		return 0;
+ 	}
+@@ -1956,6 +1953,9 @@ struct v4l2_subdev_route *
+ __v4l2_subdev_next_active_route(const struct v4l2_subdev_krouting *routing,
+ 				struct v4l2_subdev_route *route)
+ {
++	if (!routing->routes)
++		return NULL;
++
+ 	if (route)
+ 		++route;
+ 	else
 -- 
-Dominique Martinet | Asmadeus
+2.47.0
+
 
