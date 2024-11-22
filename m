@@ -1,153 +1,227 @@
-Return-Path: <linux-kernel+bounces-418181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 895E09D5E45
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:36:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAFCF9D5E48
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:38:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 496B5281EAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:36:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D5601F228AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3FE1DED5A;
-	Fri, 22 Nov 2024 11:36:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FE01DED68;
+	Fri, 22 Nov 2024 11:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="H7fNy+cL"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sq/Zws1m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7751D0143
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 11:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF711D0143;
+	Fri, 22 Nov 2024 11:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732275399; cv=none; b=X20WrzFhZc3pP5pwfXmuOrK9Kj03o2S1PeADNhSXr9SwZ536k/mG1DH5Eca/WFQS364DLFhajxW4eOQbzVjjanSWn9QX3gUbLkK0JmMhLrBvarKmzcl5BfGgCvqfNqjsNOXgN1/4CEDEeofajjaHpCrgXjbW+ibdKg8oRdvyxmI=
+	t=1732275495; cv=none; b=tB7lUayHgMlRGBYy4HIolcuUypuQG3U5MP7bqY8sFZGgZmDeV08IbSKnvTgmX2bEF3t1EEnkQn6ioLTr1thaZ4oX+tpoyLnRLAQVg4CsWkAw5mi/iWyK+oE6yCHkktbxQlgzF1zIfkm7l+pnpbQzteqdYLlR1ZwiZ0ROtvExchE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732275399; c=relaxed/simple;
-	bh=6JXoIT83nSYxTXOWHmaIE/r47HnugT4aXMkQeAn7dl4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DfFJi7gxnMm3eD7giU+DzdIIEdALJsVdemqfPrsZ/sh6eJe1DPdD7nTbEjzgVtI4CiBa3ZXVPGKbb+GvENHpbOZxK7HluNHk+7JZOCz7ckGxOPrB3jF0ZJ2EFM+IOSgG/3/sL47YV1b8WvsipTaYi6fSok7maGSFntCOn9z3H00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=H7fNy+cL; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6eea5763561so1636947b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 03:36:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1732275395; x=1732880195; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0sBqcbK1efD2Qn0RLXgO+HABCeGcow4GsKIzdjiZraQ=;
-        b=H7fNy+cLO31G6MdhvOyI8a9EaoOeIsDYOwvqfkLshuyR5G6qFTXvirIEKD5iZDC4U2
-         oskuDCMXwEHkG5l3U60CR/dELwAtyS9VhPA0QPqosy+hXS7wdeAYZOWIk0O+2XJ3Rkyu
-         zuIevnmvKtzFw1Ac7edLtjeD5EWoGxdaFEBYVeb5cCyA7kKS2oMCZdAsouU7fJYNkqsm
-         u4/AU+l+xvjQ9N1Zls11LQnIRED7olX2GIXTWrnsUPm5Ck74+SaNcwgViBrOwOavW0N2
-         /m517r6gDusxWCHaYKIMJcxH4ytPJHhVAuY8scbK5gWBOzfBIJvFWWCHJs5DGpBNADVV
-         nWyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732275395; x=1732880195;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0sBqcbK1efD2Qn0RLXgO+HABCeGcow4GsKIzdjiZraQ=;
-        b=pTyQgkRNVaYO5o8No5i8nZS0U7cgel0j3H8sJdwUdWLqWqzLge0z4fubmclagMMV7i
-         OkfBYQezMeCAf+KgvaFghEcEIkWWwomPDz6TQcmdX99fgsWkmBIeiButhMP1X1ax2QoD
-         1xyqVRA7dwXuM1wftKjPypKYjjeaL4XhZk4+90It3wcaDKYovEjRo4SdBsr3qsCWdC78
-         EJ8CmRxv3Yu7Q4ZL9nKPGYGohAZrO8xhBDOsP9SMrWraoLHproiHgTu1XdTFHv+mlbQ5
-         0L66kQ1Q21qwoXDCbKWhaiKQxYqFwG8Ip/k2cxmt8uxn3/bMTAh3S1jC53boNxmmbtNR
-         9amQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQxgdnp3Fk8KfLvb6vZtb8pS7NryJg9OgVRQyeo6I+6yv8AEH2+IMUiOgDu9xNhcTrMZE8eWPZR5bTqf0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAJdK2OtdgT0qpaL8YuCrGCHO97XN9r00lbuzOWOJq3RbLfc47
-	AxrlC9i3MhhbIZeBCrbIF6fuUEElnRbOQ6fFKObj18wdr2JOoHBemi36bNMeMwPYyhefO+IBkZS
-	1emmOYS0lV5Bwe8FWDKwu864J0BYZSSmuLWOO8A==
-X-Gm-Gg: ASbGncs9kkIPf6Ki3GwS39kZONvulO667P2oVX3hCs/CeWDu73e7ebSo3tJ+tZZd7tu
-	Yu75g3JhDPPY86lpmEsuKQmnKGCDdnjEm4VpBBGTumSWM+vn2cckj5KVDT4G1Dxk=
-X-Google-Smtp-Source: AGHT+IHsakElmZNZXg6tWaPdffed3q6eehdNBbS91/o+k90QEJ+G92HBPismmAOKH8alO8lyFFv7OZaI5ksBZxAF2lo=
-X-Received: by 2002:a05:690c:284a:b0:6c8:7827:f289 with SMTP id
- 00721157ae682-6eee0a15571mr8183727b3.5.1732275395350; Fri, 22 Nov 2024
- 03:36:35 -0800 (PST)
+	s=arc-20240116; t=1732275495; c=relaxed/simple;
+	bh=oKtNeEnFrwFN8m26dW4XRnqFv2VmwvnXrV1YXsQ42DI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fo6Q4ZUGgs3GdOetAG5WiC2BVZ4cP0GWIpE69pBhO0CVu2x9LCcWQx1n7aobw28Yz1xKHsa84FLwYhH/0GA7fCSF9vMf5Z3kHsi84wXWBNUcJ6+ttRJjx5FKAwEx3F8QZ3rGfcYDo2U+2aGDXp0FtkkAF+iAUtZnVKWXjD17cX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sq/Zws1m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5686C4CECE;
+	Fri, 22 Nov 2024 11:38:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732275494;
+	bh=oKtNeEnFrwFN8m26dW4XRnqFv2VmwvnXrV1YXsQ42DI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Sq/Zws1mLJEcRyYZDx5I+LzFS/iSxrxjEWcga78S0p+dndq9aw8KHYGc8D8dO9ObM
+	 pnqkj37WOr6XCQe9ipIyAZmfvD5XXPcT5Tmg5bdoAnXVwuVk1BPLwZsLrXHagmc0d7
+	 +aaXM4seSE4cqVVEiCdVa1uQ0sviyFAAxE1xBRvNGyRzCGFenL58YucRPIh6E/lAhV
+	 oGbahnxjJx5oA9QVamCqSwS815Dt+FPNt5CdM7l4wLyWi8EwdNygtgIl1wZY/zDBJ8
+	 aST5+GmtiAZNYcc489NqLijN3xGgI/lwuGras8wBnu2pj/h0pPsFvSu0vPRwgr5x+0
+	 Oax+b6h4s6/8w==
+Date: Fri, 22 Nov 2024 12:38:05 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc: stsp2@yandex.ru, almasrymina@google.com, asml.silence@gmail.com, 
+	axboe@kernel.dk, cyphar@cyphar.com, davem@davemloft.net, edumazet@google.com, 
+	gouhao@uniontech.com, horms@kernel.org, kees@kernel.org, krisman@suse.de, 
+	kuba@kernel.org, kuniyu@amazon.com, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, mhal@rbox.co, netdev@vger.kernel.org, oleg@redhat.com, 
+	pabeni@redhat.com, quic_abchauha@quicinc.com, shuah@kernel.org, 
+	tandersen@netflix.com, viro@zeniv.linux.org.uk, willemb@google.com
+Subject: Re: [PATCH net-next v3] af_unix: pass pidfd flags via SCM_PIDFD cmsg
+Message-ID: <20241122-selbstsicher-wurschteln-fbf73aa9459c@brauner>
+References: <20241116101120.323174-1-stsp2@yandex.ru>
+ <20241121125732.88044-1-aleksandr.mikhalitsyn@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122084152.1841419-1-naush@raspberrypi.com>
- <20241122084152.1841419-5-naush@raspberrypi.com> <vnl2px6zcb7pchhfp3k3lngicamsjvidu75sixvubrohqaudlr@h6r54mzr3daz>
-In-Reply-To: <vnl2px6zcb7pchhfp3k3lngicamsjvidu75sixvubrohqaudlr@h6r54mzr3daz>
-From: Naushir Patuck <naush@raspberrypi.com>
-Date: Fri, 22 Nov 2024 11:35:59 +0000
-Message-ID: <CAEmqJPrfGCB=hKN-+0cG3xFiZxS4BJ_FT=pXnt5U+48wk+A0sw@mail.gmail.com>
-Subject: Re: [PATCH v1 4/5] drivers: media: bcm2835-unicam: Fix for possible
- dummy buffer overrun
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, linux-media@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Dave Stevenson <dave.stevenson@raspberrypi.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241121125732.88044-1-aleksandr.mikhalitsyn@canonical.com>
 
-Hi Jacopo,
+On Thu, Nov 21, 2024 at 01:57:32PM +0100, Alexander Mikhalitsyn wrote:
+> >Currently SCM_PIDFD cmsg cannot be sent via unix socket
+> >(returns -EINVAL) and SO_PASSPIDFD doesn't support flags.
+> >The created pidfd always has flags set to 0.
+> >
+> >This patch implements SCM_PIDFD cmsg in AF_UNIX socket, which
+> >can be used to send flags to SO_PASSPIDFD-enabled recipient.
+> >
+> >Self-test is added for the propagation of PIDFD_NONBLOCK flag.
+> 
+> >This is mainly needed for the future extensions, like eg this one:
+> >https://lore.kernel.org/lkml/8288a08e-448b-43c2-82dc-59f87d0d9072@yandex.ru/T/#me1237e46deba8574b77834b7704e63559ffef9cb
+> >where it was suggested to try solving the supplementary groups
+> >problem with pidfd.
+> >
+> >Changes in v3: specify target tree in patch subject
+> >Changes in v2: remove flags validation in scm_pidfd_recv(), as
+> >  suggested by Kuniyuki Iwashima <kuniyu@amazon.com>
+> >
+> >Signed-off-by: Stas Sergeev <stsp2@yandex.ru>
+> 
+> ...
+> 
+> >diff --git a/include/linux/pidfs.h b/include/linux/pidfs.h
+> >index 75bdf9807802..c4c5c1a0c2ad 100644
+> >--- a/include/linux/pidfs.h
+> >+++ b/include/linux/pidfs.h
+> >@@ -2,7 +2,16 @@
+> > #ifndef _LINUX_PID_FS_H
+> > #define _LINUX_PID_FS_H
+> > 
+> >+#include <uapi/linux/pidfd.h>
+> >+
+> > struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags);
+> > void __init pidfs_init(void);
+> > 
+> >+static inline int pidfd_validate_flags(unsigned int flags)
+> >+{
+> >+	if (flags & ~(PIDFD_NONBLOCK | PIDFD_THREAD))
+> >+		return -EINVAL;
+> >+	return 0;
+> >+}
+> >+
+> > #endif /* _LINUX_PID_FS_H */
+> >diff --git a/include/linux/socket.h b/include/linux/socket.h
+> >index d18cc47e89bd..ee27d391e5aa 100644
+> >--- a/include/linux/socket.h
+> >+++ b/include/linux/socket.h
+> >@@ -178,7 +178,7 @@ static inline size_t msg_data_left(struct msghdr *msg)
+> > #define	SCM_RIGHTS	0x01		/* rw: access rights (array of int) */
+> > #define SCM_CREDENTIALS 0x02		/* rw: struct ucred		*/
+> > #define SCM_SECURITY	0x03		/* rw: security label		*/
+> >-#define SCM_PIDFD	0x04		/* ro: pidfd (int)		*/
+> >+#define SCM_PIDFD	0x04		/* r: pidfd, w: pidfd_flags (int) */
+> > 
+> > struct ucred {
+> > 	__u32	pid;
+> >diff --git a/include/net/af_unix.h b/include/net/af_unix.h
+> >index 63129c79b8cb..4bc197548c2f 100644
+> >--- a/include/net/af_unix.h
+> >+++ b/include/net/af_unix.h
+> >@@ -62,6 +62,7 @@ struct unix_skb_parms {
+> > #ifdef CONFIG_SECURITY_NETWORK
+> > 	u32			secid;		/* Security ID		*/
+> > #endif
+> >+	u32			pidfd_flags;
+> > 	u32			consumed;
+> > } __randomize_layout;
+> > 
+> >diff --git a/include/net/scm.h b/include/net/scm.h
+> >index 0d35c7c77a74..1326edcacacb 100644
+> >--- a/include/net/scm.h
+> >+++ b/include/net/scm.h
+> >@@ -48,6 +48,7 @@ struct scm_cookie {
+> > #ifdef CONFIG_SECURITY_NETWORK
+> > 	u32			secid;		/* Passed security ID 	*/
+> > #endif
+> >+	u32			pidfd_flags;
+> > };
+> > 
+> > void scm_detach_fds(struct msghdr *msg, struct scm_cookie *scm);
+> >@@ -154,7 +155,7 @@ static __inline__ void scm_pidfd_recv(struct msghdr *msg, struct scm_cookie *scm
+> > 	if (!scm->pid)
+> > 		return;
+> > 
+> >-	pidfd = pidfd_prepare(scm->pid, 0, &pidfd_file);
+> >+	pidfd = pidfd_prepare(scm->pid, scm->pidfd_flags, &pidfd_file);
+> > 
+> > 	if (put_cmsg(msg, SOL_SOCKET, SCM_PIDFD, sizeof(int), &pidfd)) {
+> > 		if (pidfd_file) {
+> >diff --git a/kernel/pid.c b/kernel/pid.c
+> >index 2715afb77eab..b1100ae8ea63 100644
+> >--- a/kernel/pid.c
+> >+++ b/kernel/pid.c
+> >@@ -629,10 +629,12 @@ static int pidfd_create(struct pid *pid, unsigned int flags)
+> > SYSCALL_DEFINE2(pidfd_open, pid_t, pid, unsigned int, flags)
+> > {
+> > 	int fd;
+> >+	int err;
+> > 	struct pid *p;
+> > 
+> >-	if (flags & ~(PIDFD_NONBLOCK | PIDFD_THREAD))
+> >-		return -EINVAL;
+> >+	err = pidfd_validate_flags(flags);
+> >+	if (err)
+> >+		return err;
+> > 
+> > 	if (pid <= 0)
+> > 		return -EINVAL;
+> >diff --git a/net/core/scm.c b/net/core/scm.c
+> >index 4f6a14babe5a..3bcdecdacd7e 100644
+> >--- a/net/core/scm.c
+> >+++ b/net/core/scm.c
+> >@@ -23,6 +23,7 @@
+> > #include <linux/security.h>
+> > #include <linux/pid_namespace.h>
+> > #include <linux/pid.h>
+> >+#include <linux/pidfs.h>
+> > #include <linux/nsproxy.h>
+> > #include <linux/slab.h>
+> > #include <linux/errqueue.h>
+> >@@ -210,6 +211,19 @@ int __scm_send(struct socket *sock, struct msghdr *msg, struct scm_cookie *p)
+> > 			p->creds.gid = gid;
+> > 			break;
+> > 		}
+> >+		case SCM_PIDFD:
+> >+		{
+> >+			unsigned int flags;
+> >+
+> >+			if (cmsg->cmsg_len != CMSG_LEN(sizeof(flags)))
+> >
+> 
+> Hi Stas!
+> 
+> Hmm, it is a bit unusual that SCM_PIDFD message format is different in case
+> when you send it and when you read it.
+> 
+> I mean that when you read it (on the receiver side) you get pidfd file descriptor number,
+> while when you write it (on the sender side) you are only allowed to send one integer and this time it's
+> a pidfd file descriptor flags. I personally have nothing strictly against that but just found this
+> a bit unusual and probably confusing for userspace programmers.
+> 
+> Compare it with SCM_CREDENTIALS, for instance, where we read/write the same structure struct ucred.
+> 
+> >+				goto error;
+> >+			memcpy(&flags, CMSG_DATA(cmsg), sizeof(flags));
+> >+			err = pidfd_validate_flags(flags);
+> 
+> pidfd_validate_flags allows PIDFD_THREAD, but what's the idea behind this if
+> scm->pid is always a thread-group leader? (see maybe_add_creds() function).
+> 
+> Sorry if I misunderstand something just want to ensure that we are on the same page.
 
-On Fri, 22 Nov 2024 at 11:20, Jacopo Mondi
-<jacopo.mondi@ideasonboard.com> wrote:
->
-> Hi Naush
->
-> On Fri, Nov 22, 2024 at 08:41:51AM +0000, Naushir Patuck wrote:
-> > The Unicam hardware has been observed to cause a buffer overrun when
-> > using the dummy buffer as a circular buffer. The conditions that cause
-> > the overrun are not fully known, but it seems to occur when the memory
-> > bus is heavily loaded.
-> >
-> > To avoid the overrun, program the hardware with a buffer size of 0 when
-> > using the dummy buffer. This will cause overrun into the allocated dummy
-> > buffer, but avoid out of bounds writes.
-> >
-> > Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
-> > ---
-> >  drivers/media/platform/broadcom/bcm2835-unicam.c | 9 ++++++++-
-> >  1 file changed, 8 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/media/platform/broadcom/bcm2835-unicam.c b/drivers/media/platform/broadcom/bcm2835-unicam.c
-> > index 550eb1b064f1..f10064107d54 100644
-> > --- a/drivers/media/platform/broadcom/bcm2835-unicam.c
-> > +++ b/drivers/media/platform/broadcom/bcm2835-unicam.c
-> > @@ -640,7 +640,14 @@ static inline void unicam_reg_write_field(struct unicam_device *unicam, u32 offs
-> >  static void unicam_wr_dma_addr(struct unicam_node *node,
-> >                              struct unicam_buffer *buf)
-> >  {
-> > -     dma_addr_t endaddr = buf->dma_addr + buf->size;
-> > +     /*
-> > +      * Due to a HW bug causing buffer overruns in circular buffer mode under
-> > +      * certain (not yet fully known) conditions, the dummy buffer allocation
-> > +      * is set to a a single page size, but the hardware gets programmed with
-> > +      * a buffer size of 0.
-> > +      */
-> > +     dma_addr_t endaddr = buf->dma_addr +
-> > +                          (buf != &node->dummy_buf ? buf->size : 0);
->
-> So the DMA engine doesn't actually write any data to dummy_buf
-> anymore ?
->
->
-> Does it still need to be allocated at all ? Or can we simply set the
-> dma transfer size to 0 ?
+The sender will not be put in control of what flags the pidfd will be
+created on the receivers side. That's just an invitation for subtle
+bugs. The receiver can always toggle O_NONBLOCK via a fcntl() on the
+pidfd once it received it. The whole flag thing should be dropped.
 
-The DMA engine does still write to the buffer, so the allocation needs
-to occur. The zero size programmed into the register is a quirk of the
-HW itself, and is used to ensure the write wrap correctly in the
-buffer.
-
-Naush
-
->
-> >
-> >       if (node->id == UNICAM_IMAGE_NODE) {
-> >               unicam_reg_write(node->dev, UNICAM_IBSA0, buf->dma_addr);
-> > --
-> > 2.34.1
-> >
-> >
+The format change is also an api break which is another reason this
+won't happen.
 
