@@ -1,137 +1,96 @@
-Return-Path: <linux-kernel+bounces-418388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6F749D611B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:10:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D9F39D611D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:11:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A7872822D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:10:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B4F31F22378
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BEB1632C2;
-	Fri, 22 Nov 2024 15:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D183152517;
+	Fri, 22 Nov 2024 15:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QZot2vJs"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BaTELz4G"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2DC12CD88;
-	Fri, 22 Nov 2024 15:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC22E70807
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 15:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732288247; cv=none; b=DFg5A6anZumYwyEsl26Y3F3u95vT+1DyeyMxoFB/r5AZJ/2YqFL8q6G2rRpceDzqYaXJKPy6qhwmUftSXg/lMTqXPazlaPXJ+JKcppxIpkVE11UjvF5jmAr75/aW64uhhQhhwtULtRL/ZEcwjIa+LDT97pKGTd1R7EDwHabiwIw=
+	t=1732288283; cv=none; b=teYGL2tTyGFitmHHhgj79Te02XnfaaJdzJeLi0QcNERWqM3CB+j9Z2NTKVIiAONh68qD9xDkzWZe9KVV0qpbTh38Xtmti4TWVuRYPzjqGkIB0VxLqtB3q/bVf6Bzi0G3YFlu6dsc88ayGdncsOdT8uwFrCGmqLyMy4l9Dmzq+g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732288247; c=relaxed/simple;
-	bh=O8W8V2v3ggSNRbf/WtoNsYdZzZHeFWKhWoWdKWTGSXM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ax6yFyr0V5CsBbfiraeCuU/n3zAbOoSxNXFQ6CLvEEy/4iB3/Xpq0ETStqQ1JOaMWhrETYNdnX1XUU5ZQJivQ++IVKg3npwTuw8EuFVkMAoZktz3uLBXlyIlh2TEgv463NBnTGhVJ+HMMnc1GOmbby6gXh5U+gSUgdveurJpyYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QZot2vJs; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732288245; x=1763824245;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=O8W8V2v3ggSNRbf/WtoNsYdZzZHeFWKhWoWdKWTGSXM=;
-  b=QZot2vJs4lCCR5vKJV2Hn+waowr3Pj6cpy8IXNapPHOCLsyFXxRh80w4
-   u+xyL0QYu1aOS3ajNlA0G4xwE6wMz4PCGYEKMWBCdGslJ6gco7FjcVo4b
-   fJmdyw04ZXvJk9kAP4n0CttPSok03Ns/Wg2UVp56el1/iMN2/mpnQBmDL
-   i8m9qmdt+3nPD4fygJg1amlv5iFM7mAN8bFpAYRywY4fvV6dxFA+k+BlW
-   2qeXw+1MolrLfKp+np4maLnZiG8Kie6Gp44Vw+LxbpAE5HfjJGYCSiMU8
-   4qN62zdZNyQLZxCptEm9XLt+KLfr1wMSNpu99WkduTaXNXOYbtdbnY1gw
-   g==;
-X-CSE-ConnectionGUID: wgL+AVNbQAy+dPjevW6fsQ==
-X-CSE-MsgGUID: /otq5vtRSV2GI2DmmT9BRA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="49963259"
-X-IronPort-AV: E=Sophos;i="6.12,176,1728975600"; 
-   d="scan'208";a="49963259"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 07:10:44 -0800
-X-CSE-ConnectionGUID: SJBTruWmRNS5ScurZDldnw==
-X-CSE-MsgGUID: K2W/b0a/RQ+8fyEru8EmRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,176,1728975600"; 
-   d="scan'208";a="121551606"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 22 Nov 2024 07:10:40 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tEVIs-00040Z-0f;
-	Fri, 22 Nov 2024 15:10:38 +0000
-Date: Fri, 22 Nov 2024 23:09:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mikael Gonella-Bolduc via B4 Relay <devnull+mgonellabolduc.dimonoff.com@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Mikael Gonella-Bolduc <m.gonella.bolduc@gmail.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>
-Subject: Re: [PATCH 2/2] iio: light: Add APDS9160 ALS & Proximity sensor
- driver
-Message-ID: <202411222244.oAiveIHV-lkp@intel.com>
-References: <20241119-apds9160-driver-v1-2-fa00675b4ea4@dimonoff.com>
+	s=arc-20240116; t=1732288283; c=relaxed/simple;
+	bh=EmxuOCAstcHjb+AyjYkPAKLbSEefeeHjKTfwcB1VwNA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H1NOoraqmFweOEnbKT9m2Vbp67+maToZ3qoZoiX4OAeeOEJrijhSMCF1EKnDmhJqvSEeE0tfW4sSYzNYXNUmFHPb5XZDhYfhBSoEjRwOXxzX/0Mfmj/qFJ8ZoBIvl4r54mg1gRGrpskahB9tLz5JfIp2qNlgZzVTbKHRmgQPvKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BaTELz4G; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732288279;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gkrLDnQRXbiYmOpIL8sqh5yHPfjqFY6H4f66AvZUaU4=;
+	b=BaTELz4Gja2NGiVFpTF8tC1+uJr01OKXzT6115/K5qr02IblAkiYY8UvkNanJrm0CZeZsG
+	e0oKQrAI6Q8RM4zlBAEht1ZqEFLn18WoRo134SMg/vJ++tkybdFShr6LgiB/3I7sNYaq4h
+	t0eh1Pa4SKVrU6IXfGFULQZfh6Vg3oI=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-60-L8rMQoH7MbeBew-AgYsu9g-1; Fri,
+ 22 Nov 2024 10:11:16 -0500
+X-MC-Unique: L8rMQoH7MbeBew-AgYsu9g-1
+X-Mimecast-MFC-AGG-ID: L8rMQoH7MbeBew-AgYsu9g
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C23261955E87;
+	Fri, 22 Nov 2024 15:11:14 +0000 (UTC)
+Received: from bcodding.csb.redhat.com (unknown [10.22.74.7])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5213A19560A3;
+	Fri, 22 Nov 2024 15:11:13 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v4 0/2] two fixes for pNFS SCSI device handling
+Date: Fri, 22 Nov 2024 10:11:10 -0500
+Message-ID: <cover.1732288202.git.bcodding@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241119-apds9160-driver-v1-2-fa00675b4ea4@dimonoff.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hi Mikael,
+A bit late for v6.13 perhaps, but here are two fresh corrections for pNFS
+SCSI device handling, and some comments as requested by Christoph.
 
-kernel test robot noticed the following build warnings:
+On v2: add full commit subject in 1/2, change the caller in 2/2.
+On v3: add r-b for Chuck, tweak comments in 2/2.
+On v4: rebase on linux-next
 
-[auto build test WARNING on adc218676eef25575469234709c2d87185ca223a]
+Benjamin Coddington (2):
+  nfs/blocklayout: Don't attempt unregister for invalid block device
+  nfs/blocklayout: Limit repeat device registration on failure
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mikael-Gonella-Bolduc-via-B4-Relay/dt-bindings-iio-light-Add-APDS9160-binding/20241121-123509
-base:   adc218676eef25575469234709c2d87185ca223a
-patch link:    https://lore.kernel.org/r/20241119-apds9160-driver-v1-2-fa00675b4ea4%40dimonoff.com
-patch subject: [PATCH 2/2] iio: light: Add APDS9160 ALS & Proximity sensor driver
-config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20241122/202411222244.oAiveIHV-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241122/202411222244.oAiveIHV-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411222244.oAiveIHV-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/iio/light/apds9160.c:3: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-    * This file is part of the APDS9160 sensor driver.
->> drivers/iio/light/apds9160.c:565: warning: Function parameter or struct member 'data' not described in 'apds9160_set_ps_cancellation_level'
->> drivers/iio/light/apds9160.c:565: warning: Function parameter or struct member 'val' not described in 'apds9160_set_ps_cancellation_level'
->> drivers/iio/light/apds9160.c:565: warning: expecting prototype for The PS intelligent cancellation level register allows for an on(). Prototype was for apds9160_set_ps_cancellation_level() instead
-   drivers/iio/light/apds9160.c:585: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-    * This parameter determines the cancellation pulse duration in each of the PWM pulse.
-   drivers/iio/light/apds9160.c:609: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-    * Set the proximity sensor led current
+ fs/nfs/blocklayout/blocklayout.c | 15 ++++++++++++++-
+ fs/nfs/blocklayout/dev.c         |  6 ++----
+ 2 files changed, 16 insertions(+), 5 deletions(-)
 
 
-vim +3 drivers/iio/light/apds9160.c
-
-   > 3	 * This file is part of the APDS9160 sensor driver.
-     4	 * Chip is combined proximity and ambient light sensor.
-     5	 * Author: Mikael Gonella-Bolduc <m.gonella.bolduc@gmail.com>
-     6	 */
-     7	
-
+base-commit: cfba9f07a1d6aeca38f47f1f472cfb0ba133d341
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.0
+
 
