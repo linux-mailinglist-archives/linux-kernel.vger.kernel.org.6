@@ -1,91 +1,81 @@
-Return-Path: <linux-kernel+bounces-418016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47D859D5BDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:23:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41B099D5BDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:24:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D652281992
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:23:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E99461F220DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A790D183CAE;
-	Fri, 22 Nov 2024 09:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C564718A6C8;
+	Fri, 22 Nov 2024 09:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q6asVVv3"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nuQTa+Tr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA59175D29
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD901176AB6;
+	Fri, 22 Nov 2024 09:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732267415; cv=none; b=ay5T/fvFWr/RQxeH4cl6iPeRQ5PCWCJQTzXPc8PHb87n4WycI89tD4XVX2SKHYfWpOZ+TgNWw3F3TAuOqkOYTvnoUNNgJnXz8Ar51UgbrSc7dhxhoVQr1nWn0UEBHBlnGGYnongCUeKHynyvqWged7QStpV9pipeIVFnsKSNWMI=
+	t=1732267457; cv=none; b=dPja+C6dnkfTdXGIFH/n+O641U8/WsakEM+L67X1aQ/Pnt0Il70Ei4FTh1f2bKS6t5dwLsFMm/zvQNTxBvESjxk1KxC4dHhH0mj3WBANsANL7yfH0Emikx4yjt0w9CwbVW9bx3mm+mblzJjtZO0l8W+anytJ8zCNgbyAzQbio2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732267415; c=relaxed/simple;
-	bh=xFMZvabyNfUiA/8Wj48YsMRAw5ewZrh7Siydup+xXLY=;
+	s=arc-20240116; t=1732267457; c=relaxed/simple;
+	bh=GrhN2N+VS0zLdTr+L42oFMs3hix9wDSeBorbKU0YHyo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J//auo5Ld4DZSauMKPaHJqj4uVgKAtCYkzb8xkz3hEKBDWi40C1sGZ1Aymt+ZSk1bR/SCgqJ5sw/pwoaBzE8KdVouYkS+u9ihX2VI+LR1wm7uaYF1qg88vXA8H+63ticnAP27c8HkgJVPxqBy2H4u/GnkhWPpetwadWqMILpg8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q6asVVv3; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539f6e1f756so2061578e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 01:23:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732267411; x=1732872211; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uN6BAz+250rWr3QrVnp7fqpel9Dn0qE7RRFpgwycROI=;
-        b=q6asVVv33kZ+39YQR5Keun5in/539l+DF3QOOV9EwJ0Z6hmIEEmMjHDX0ydAEIfe0R
-         XG/SBA4zcgD69WzZeviQepXLe61HTHp+P7r435YXvoJ8el1RxM50HZFCYSM7HRHuqVfn
-         w+fQBr3CzZfiVL6E/5nJajrFqPhY7TwvgkM876oS1yWKq1WEpA2H4EtAMUb7DL1WGEmu
-         sOjLoCNR1OOSN5I/Z0YVwMBbR3xuGtC7wS5e8MH7pGd7mL+3MGBX4x4vdJxemSWTdvTP
-         /tF4qFwyIZ1afBB3XlenSOeDYppZlXAtrzMIFDF6huFHc9ff8DA6GTKsaT/yL9BbHnLj
-         2pCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732267411; x=1732872211;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uN6BAz+250rWr3QrVnp7fqpel9Dn0qE7RRFpgwycROI=;
-        b=bCVvOZMd6I8I8Ms+YHtFhN9jS25upOcahOPQ+HCEhhylAJGVrTV/k5orsrN91XoUtC
-         n9lAYEwGhkdtjA4yJYuM6N9n6XNaE3M5wm+QhtG2mikgsyRw1wSoCZLVuUzB6q0EkZLo
-         QSLmLIBIpJ36fTL+ayBxwWAMtiGwGJLeyheiOifldrg4qhRHWfZjKj8rh5npUch5naIT
-         PESNoQey1DkRombVn/z9dhZfRvvrB35vRXQBB4ew0TBMbMbpKR4W6G3eD6OF8jrYvH2v
-         uf4omjEeEUBoUuGO1IR8bRZZsneqiKHdw7BwijKz9j3kUzYQIK6lRxSVNKHOHC2S+QCo
-         5HEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXVQ/gj47JgW5hOgZ0QJ6PSG2Qag+q+J9Y0co4H3Ci0uXTrXXUDkMVqX1p3kz2XzrM05+Io3bGp7elrff0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzX/T8amzCNgKDWsV9ClDe0gIJxlkLKV01pGEC2hpT547VLKnu5
-	fN6Bm2LIqCUqh562G9esvuWD9Vn2EAtAlVjsCg0tX8Rm2zuhpQoDKuq5IQIJvi4=
-X-Gm-Gg: ASbGncvjWdjO3pf9HyMdrsQv69yDjYlbiYdyeAEJJgGzO1NSnOJhrzPsGsmLWBD6jeV
-	z70ijaEmaK1nJjDsoazZ/bBmkV3aX6Ham2sblMb1k3El/9tezCPysHIiFf+CNQaFcWwGyWckIhQ
-	ikboUpsTa8bVt8uBngvkWNma3W1rQoQ6EDiN6NXlX2rEQ+puCT2AMWif4fP3K3irj5OawHnrbEg
-	iL5q0yHo8Knzot+1ivqPOc5uxd0q8f8lk4BmSPe6Mpqj5v68HjDRlvJQ24rZ4tjHcTouuVtqZi1
-	6jtZOkSmZGd8ZQmIXly9TtcXzGLPhQ==
-X-Google-Smtp-Source: AGHT+IEy5OBr1xCpPRhgqUBV6HF76ekcP2Na1oRdF7zIBTe9ZiJib+9fvPBcZ7Vk0hs6xn28u4KMpA==
-X-Received: by 2002:a05:6512:1384:b0:53d:cee1:df89 with SMTP id 2adb3069b0e04-53dd36a07bdmr1088047e87.13.1732267411364;
-        Fri, 22 Nov 2024 01:23:31 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd248b7d2sm301855e87.221.2024.11.22.01.23.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 01:23:30 -0800 (PST)
-Date: Fri, 22 Nov 2024 11:23:27 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org, 
-	manivannan.sadhasivam@linaro.org, bhelgaas@google.com, kw@linux.com, lpieralisi@kernel.org, 
-	quic_qianyu@quicinc.com, conor+dt@kernel.org, neil.armstrong@linaro.org, 
-	andersson@kernel.org, konradybcio@kernel.org, quic_tsoni@quicinc.com, 
-	quic_shashim@quicinc.com, quic_kaushalk@quicinc.com, quic_tdas@quicinc.com, 
-	quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com, kernel@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-phy@lists.infradead.org, Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Subject: Re: [PATCH v2 3/6] dt-bindings: PCI: qcom: Document the QCS615 PCIe
- Controller
-Message-ID: <crjcmjgf6eab4p4m7y4wqh5mo3mv6z2mcoa3zn4wdnwjzh73rw@z6ksq3efbzoj>
-References: <20241122023314.1616353-1-quic_ziyuzhan@quicinc.com>
- <20241122023314.1616353-4-quic_ziyuzhan@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TeTKoUQcay/qkI4QCmYJ/9p81fVWD5DvisoJ5b7gTm1vArF1WElCtNrh/s2bqjjDz1nyAnyoPbrNH4S90AHlUyyf3eRbJrn+/qaYrM3wA9V8cKrKBlxOWp6PiwDwWb+7MVa4gUpOgdIzXHUKLvhYW8UOhQTYqCqvnnyson+uVSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nuQTa+Tr; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732267455; x=1763803455;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GrhN2N+VS0zLdTr+L42oFMs3hix9wDSeBorbKU0YHyo=;
+  b=nuQTa+TrJ7LfW2XFIkd3bywFMmUzr39qLHw4aRR2BA9RUzc/PYrG/Zwr
+   Z8V645wTeFX4xPpXB5WEAjK7w/ShMmjpnWfPHht8Mlo4oWDlBCcB8Rox/
+   ZWLmBxjpzNb3xc5Si3OmhEBabDP2Ks0Hm6BJXVZpqAtogbGix/cyfU7KD
+   3rpRlmN045AAX3XxNCogpPVraan2upf5vENxN/geHfIGV5FD/iqtZKPP/
+   VbnkVDdQFlZXGobUPzv0NOYLoWAL2mgV0zqz37OT14dSnuHJiU80aHQal
+   9om9on4TSBB4Eh/nbwbZ0evO09OuAh7xGOncbvxz7Ef+GpP91uTADgj3q
+   Q==;
+X-CSE-ConnectionGUID: j1GDBAoKSdeWMNYWcK2qLw==
+X-CSE-MsgGUID: A2ynviqjT1arqcJIW/5/Sw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="32659232"
+X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
+   d="scan'208";a="32659232"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 01:24:15 -0800
+X-CSE-ConnectionGUID: Jg+5ArcCQ/Ok6Ig2eIXLMw==
+X-CSE-MsgGUID: ZcNjBvGnSma6Ce2nhKCTFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
+   d="scan'208";a="90891419"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 01:24:13 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tEPta-0000000HMbv-1ftL;
+	Fri, 22 Nov 2024 11:24:10 +0200
+Date: Fri, 22 Nov 2024 11:24:10 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Wolfram Sang <wsa@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Cosmin Tanislav <demonsingur@gmail.com>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Subject: Re: [PATCH 2/3] i2c: atr: Fix lockdep for nested ATRs
+Message-ID: <Z0BNug5KZp74t4MA@smile.fi.intel.com>
+References: <20241122-i2c-atr-fixes-v1-0-62c51ce790be@ideasonboard.com>
+ <20241122-i2c-atr-fixes-v1-2-62c51ce790be@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,57 +84,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241122023314.1616353-4-quic_ziyuzhan@quicinc.com>
+In-Reply-To: <20241122-i2c-atr-fixes-v1-2-62c51ce790be@ideasonboard.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Nov 22, 2024 at 10:33:11AM +0800, Ziyue Zhang wrote:
-> From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+On Fri, Nov 22, 2024 at 09:51:39AM +0200, Tomi Valkeinen wrote:
+> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
 > 
-> Add dedicated schema for the PCIe controllers found on QCS615.
-> Due to qcs615's clock-names do not match any of the existing
-> dt-bindings, a new compatible for qcs615 is needed.
-> 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-> ---
->  .../bindings/pci/qcom,pcie-qcs615.yaml        | 161 ++++++++++++++++++
->  1 file changed, 161 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/qcom,pcie-qcs615.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-qcs615.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-qcs615.yaml
-> new file mode 100644
-> index 000000000000..8f7571538d23
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-qcs615.yaml
-> @@ -0,0 +1,161 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/qcom,pcie-qcs615.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm QCS615 PCI Express Root Complex
-> +
-> +maintainers:
-> +  - Bjorn Andersson <andersson@kernel.org>
-> +  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> +
-> +description:
-> +  Qualcomm QCS615 SoC (and compatible) PCIe root complex controller is based on
-> +  the Synopsys DesignWare PCIe IP.
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,pcie-qcs615
+> When we have an ATR, and another ATR as a subdevice of the first ATR,
+> we get lockdep warnings for the i2c_atr.lock and
+> i2c_atr_chan.orig_addrs_lock. This is because lockdep uses a static key
+> for the locks, and doesn't see the locks of the separate ATR instances
+> as separate.
 
-I thought that this should break qcom-soc.yaml.
+...
 
-> +
-> +  reg:
-> +    minItems: 6
-> +    maxItems: 6
-> +
+> +	lockdep_register_key(&atr->lock_key);
+>  	mutex_init(&atr->lock);
+> +	lockdep_set_class(&atr->lock, &atr->lock_key);
+
+mutext_init_with_key()
+
+...
+
+> +	lockdep_register_key(&chan->orig_addrs_lock_key);
+>  	mutex_init(&chan->orig_addrs_lock);
+> +	lockdep_set_class(&chan->orig_addrs_lock, &chan->orig_addrs_lock_key);
+
+Ditto.
 
 -- 
-With best wishes
-Dmitry
+With Best Regards,
+Andy Shevchenko
+
+
 
