@@ -1,227 +1,195 @@
-Return-Path: <linux-kernel+bounces-418182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAFCF9D5E48
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:38:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A69919D5E4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:41:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D5601F228AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:38:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67315282B87
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FE01DED68;
-	Fri, 22 Nov 2024 11:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABB117E00E;
+	Fri, 22 Nov 2024 11:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sq/Zws1m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="ANjxycDU"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF711D0143;
-	Fri, 22 Nov 2024 11:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C327D1DDC12
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 11:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732275495; cv=none; b=tB7lUayHgMlRGBYy4HIolcuUypuQG3U5MP7bqY8sFZGgZmDeV08IbSKnvTgmX2bEF3t1EEnkQn6ioLTr1thaZ4oX+tpoyLnRLAQVg4CsWkAw5mi/iWyK+oE6yCHkktbxQlgzF1zIfkm7l+pnpbQzteqdYLlR1ZwiZ0ROtvExchE=
+	t=1732275664; cv=none; b=KkAMiqbKJuf3yT2OpA52uUQ0BxBPtI2hqgYMtl5JKS7hc0h8DOuBuC9kpaWa4xl1AilQO/hA/iJMEgQS4NybXjxAG3E3Vv6242eECoWD1ITt70kiCJE38qSaau+Dbqfot14MYSwJfaZV7uAhXQHuie//S2w3LY2945jTyfZ6TQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732275495; c=relaxed/simple;
-	bh=oKtNeEnFrwFN8m26dW4XRnqFv2VmwvnXrV1YXsQ42DI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fo6Q4ZUGgs3GdOetAG5WiC2BVZ4cP0GWIpE69pBhO0CVu2x9LCcWQx1n7aobw28Yz1xKHsa84FLwYhH/0GA7fCSF9vMf5Z3kHsi84wXWBNUcJ6+ttRJjx5FKAwEx3F8QZ3rGfcYDo2U+2aGDXp0FtkkAF+iAUtZnVKWXjD17cX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sq/Zws1m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5686C4CECE;
-	Fri, 22 Nov 2024 11:38:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732275494;
-	bh=oKtNeEnFrwFN8m26dW4XRnqFv2VmwvnXrV1YXsQ42DI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Sq/Zws1mLJEcRyYZDx5I+LzFS/iSxrxjEWcga78S0p+dndq9aw8KHYGc8D8dO9ObM
-	 pnqkj37WOr6XCQe9ipIyAZmfvD5XXPcT5Tmg5bdoAnXVwuVk1BPLwZsLrXHagmc0d7
-	 +aaXM4seSE4cqVVEiCdVa1uQ0sviyFAAxE1xBRvNGyRzCGFenL58YucRPIh6E/lAhV
-	 oGbahnxjJx5oA9QVamCqSwS815Dt+FPNt5CdM7l4wLyWi8EwdNygtgIl1wZY/zDBJ8
-	 aST5+GmtiAZNYcc489NqLijN3xGgI/lwuGras8wBnu2pj/h0pPsFvSu0vPRwgr5x+0
-	 Oax+b6h4s6/8w==
-Date: Fri, 22 Nov 2024 12:38:05 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc: stsp2@yandex.ru, almasrymina@google.com, asml.silence@gmail.com, 
-	axboe@kernel.dk, cyphar@cyphar.com, davem@davemloft.net, edumazet@google.com, 
-	gouhao@uniontech.com, horms@kernel.org, kees@kernel.org, krisman@suse.de, 
-	kuba@kernel.org, kuniyu@amazon.com, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, mhal@rbox.co, netdev@vger.kernel.org, oleg@redhat.com, 
-	pabeni@redhat.com, quic_abchauha@quicinc.com, shuah@kernel.org, 
-	tandersen@netflix.com, viro@zeniv.linux.org.uk, willemb@google.com
-Subject: Re: [PATCH net-next v3] af_unix: pass pidfd flags via SCM_PIDFD cmsg
-Message-ID: <20241122-selbstsicher-wurschteln-fbf73aa9459c@brauner>
-References: <20241116101120.323174-1-stsp2@yandex.ru>
- <20241121125732.88044-1-aleksandr.mikhalitsyn@canonical.com>
+	s=arc-20240116; t=1732275664; c=relaxed/simple;
+	bh=lp1vi2Iq7ya/TuTEogBGxYG7jWeLrKl2kVVMsWCIOvE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bjU116wqGbkn2ju6CTTL0VcplUdfqmVLcwCDOqPowBU/zfabiIadzV5bbLMnXtz4dZILthyFQNVocom+KG3oYiRtFzfkzlJqba01y+ZuB13kWt2CdUuprmWIr8KAsiN8K9mFVV+FhycBEygcZRj8HRNcG/I2/5ht5KRAe+Z3j34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=ANjxycDU; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e382330ec4cso161486276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 03:41:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1732275662; x=1732880462; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jJAb2wfaEGwYjP5tGhyEnaRAxPwQNw0aCt1/mnNWsV8=;
+        b=ANjxycDUzqeTlyEr1M8CfjE0MHVN6/d9+raR+j0db13RmAdBh9cEXYRIujm3Uv2eh3
+         ArC4jqV1FaNo7ygUQkKyW0OAWvbUtRDiKfKcwtLLQvY7yb4hnCYIR6H/VwciH9jo5HKU
+         mvT4AdNdx+imcqF+3juBXphpKjJrYeoUilTMGoOszlO4c7YriAgO25uEmLaHowfvElw/
+         lut4a9bExpDNOuz5CUzj8C9Upqw2eOhNHHqHONfjQ6LVuYH9K1LWPTc2Jz2gqrthM+cR
+         IXXnpjrw6cbaYxfPt/kEsLnqVZPMZTv8lx6963XxlnivO5g0qY82QZZgCxLGZCMN+M0S
+         jvEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732275662; x=1732880462;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jJAb2wfaEGwYjP5tGhyEnaRAxPwQNw0aCt1/mnNWsV8=;
+        b=eK6vqMpNUXK0oSuIVMSpn4cKb0pk9+P/eJxxdwsD0/9lW66ifmNWl0Df26lM1/QxKY
+         9B+T/Iq16HAlMO4SN6ueRH6XmagOxw7Grcu2V3+HRbPgWVvIfbrnGiBmD09jF2FSxgoQ
+         blcfiM/U7oMw6R9UoqPE+F2S8+HYvIY1fT6fdsveLDUrrQdmAsL1k1lmAPsIP5+lR8Qc
+         WFH26kbkwhhyi68Qr+zXpQWe6lt3nfrJ5/I5rG8cTXuvpNaZd/WTO+e0b3FIJae1klLt
+         wfu9himrD6ICv1xLrZf9eAep3Gyj7nAsu8A6HqhPxtzcbqlK4uWhwG46v0AEKmrjdXqM
+         YjkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQpzlyzSRBWZbRzF3r6fXPDi6bhR8R3fgUiwXWERd6NdJjlIAqimbMjcbKNwPD6IDpFrNiE8SHJM1lkUE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3A1SK5a5+aRbEN0u5mIGAmLulIMEc7At67VgWeJzo89uyDp/X
+	YkkzHiV8IOiMQDqUzNGTD7Paen8rDyuq/UYdsoSGfHsaUBlR5f1HWS7nAbAZ8+ip6eW+mWXN/fn
+	m0BUsqsLBSAG/bmHXcFPR71nsfvtVrihy1IUMXQ==
+X-Gm-Gg: ASbGncuuaetrFbOSj1NKjDX8sVJBcSaB3FY14uj+Srut5IilWXw0EZIZrHQUJZucC1i
+	mxIx5YWHTAxhy6lIDBwUQ/U6iRBWJAixPJPWzr//CQK60JViTP07GkDODQ+LFi7w=
+X-Google-Smtp-Source: AGHT+IEi3ScDmwaL6BuNLPC9RVZ0SffHnlV2j182TkFRSvu6Ibvv0coqzDmjB1nUi4Vfhlt3vE6Ek0Qw1Jo4FhfXkvs=
+X-Received: by 2002:a05:690c:680d:b0:6dd:c828:485a with SMTP id
+ 00721157ae682-6eee0b67b47mr11613407b3.8.1732275661801; Fri, 22 Nov 2024
+ 03:41:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241121125732.88044-1-aleksandr.mikhalitsyn@canonical.com>
+References: <20241122084152.1841419-1-naush@raspberrypi.com>
+ <20241122084152.1841419-6-naush@raspberrypi.com> <xy44zndazbw7ehpzbc6hexgptjymevvupjhuy2x6zxp54qtepm@vlbb6js62cq4>
+In-Reply-To: <xy44zndazbw7ehpzbc6hexgptjymevvupjhuy2x6zxp54qtepm@vlbb6js62cq4>
+From: Naushir Patuck <naush@raspberrypi.com>
+Date: Fri, 22 Nov 2024 11:40:26 +0000
+Message-ID: <CAEmqJPrrAhhukn2H4nUhe1njVi-dyW9q=u1h8YgafvJGbYRG6Q@mail.gmail.com>
+Subject: Re: [PATCH v1 5/5] drivers: media: bcm2835-unicam: Correctly handle
+ FS + FE ISR condition
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, linux-media@vger.kernel.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Dave Stevenson <dave.stevenson@raspberrypi.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 21, 2024 at 01:57:32PM +0100, Alexander Mikhalitsyn wrote:
-> >Currently SCM_PIDFD cmsg cannot be sent via unix socket
-> >(returns -EINVAL) and SO_PASSPIDFD doesn't support flags.
-> >The created pidfd always has flags set to 0.
-> >
-> >This patch implements SCM_PIDFD cmsg in AF_UNIX socket, which
-> >can be used to send flags to SO_PASSPIDFD-enabled recipient.
-> >
-> >Self-test is added for the propagation of PIDFD_NONBLOCK flag.
-> 
-> >This is mainly needed for the future extensions, like eg this one:
-> >https://lore.kernel.org/lkml/8288a08e-448b-43c2-82dc-59f87d0d9072@yandex.ru/T/#me1237e46deba8574b77834b7704e63559ffef9cb
-> >where it was suggested to try solving the supplementary groups
-> >problem with pidfd.
-> >
-> >Changes in v3: specify target tree in patch subject
-> >Changes in v2: remove flags validation in scm_pidfd_recv(), as
-> >  suggested by Kuniyuki Iwashima <kuniyu@amazon.com>
-> >
-> >Signed-off-by: Stas Sergeev <stsp2@yandex.ru>
-> 
-> ...
-> 
-> >diff --git a/include/linux/pidfs.h b/include/linux/pidfs.h
-> >index 75bdf9807802..c4c5c1a0c2ad 100644
-> >--- a/include/linux/pidfs.h
-> >+++ b/include/linux/pidfs.h
-> >@@ -2,7 +2,16 @@
-> > #ifndef _LINUX_PID_FS_H
-> > #define _LINUX_PID_FS_H
-> > 
-> >+#include <uapi/linux/pidfd.h>
-> >+
-> > struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags);
-> > void __init pidfs_init(void);
-> > 
-> >+static inline int pidfd_validate_flags(unsigned int flags)
-> >+{
-> >+	if (flags & ~(PIDFD_NONBLOCK | PIDFD_THREAD))
-> >+		return -EINVAL;
-> >+	return 0;
-> >+}
-> >+
-> > #endif /* _LINUX_PID_FS_H */
-> >diff --git a/include/linux/socket.h b/include/linux/socket.h
-> >index d18cc47e89bd..ee27d391e5aa 100644
-> >--- a/include/linux/socket.h
-> >+++ b/include/linux/socket.h
-> >@@ -178,7 +178,7 @@ static inline size_t msg_data_left(struct msghdr *msg)
-> > #define	SCM_RIGHTS	0x01		/* rw: access rights (array of int) */
-> > #define SCM_CREDENTIALS 0x02		/* rw: struct ucred		*/
-> > #define SCM_SECURITY	0x03		/* rw: security label		*/
-> >-#define SCM_PIDFD	0x04		/* ro: pidfd (int)		*/
-> >+#define SCM_PIDFD	0x04		/* r: pidfd, w: pidfd_flags (int) */
-> > 
-> > struct ucred {
-> > 	__u32	pid;
-> >diff --git a/include/net/af_unix.h b/include/net/af_unix.h
-> >index 63129c79b8cb..4bc197548c2f 100644
-> >--- a/include/net/af_unix.h
-> >+++ b/include/net/af_unix.h
-> >@@ -62,6 +62,7 @@ struct unix_skb_parms {
-> > #ifdef CONFIG_SECURITY_NETWORK
-> > 	u32			secid;		/* Security ID		*/
-> > #endif
-> >+	u32			pidfd_flags;
-> > 	u32			consumed;
-> > } __randomize_layout;
-> > 
-> >diff --git a/include/net/scm.h b/include/net/scm.h
-> >index 0d35c7c77a74..1326edcacacb 100644
-> >--- a/include/net/scm.h
-> >+++ b/include/net/scm.h
-> >@@ -48,6 +48,7 @@ struct scm_cookie {
-> > #ifdef CONFIG_SECURITY_NETWORK
-> > 	u32			secid;		/* Passed security ID 	*/
-> > #endif
-> >+	u32			pidfd_flags;
-> > };
-> > 
-> > void scm_detach_fds(struct msghdr *msg, struct scm_cookie *scm);
-> >@@ -154,7 +155,7 @@ static __inline__ void scm_pidfd_recv(struct msghdr *msg, struct scm_cookie *scm
-> > 	if (!scm->pid)
-> > 		return;
-> > 
-> >-	pidfd = pidfd_prepare(scm->pid, 0, &pidfd_file);
-> >+	pidfd = pidfd_prepare(scm->pid, scm->pidfd_flags, &pidfd_file);
-> > 
-> > 	if (put_cmsg(msg, SOL_SOCKET, SCM_PIDFD, sizeof(int), &pidfd)) {
-> > 		if (pidfd_file) {
-> >diff --git a/kernel/pid.c b/kernel/pid.c
-> >index 2715afb77eab..b1100ae8ea63 100644
-> >--- a/kernel/pid.c
-> >+++ b/kernel/pid.c
-> >@@ -629,10 +629,12 @@ static int pidfd_create(struct pid *pid, unsigned int flags)
-> > SYSCALL_DEFINE2(pidfd_open, pid_t, pid, unsigned int, flags)
-> > {
-> > 	int fd;
-> >+	int err;
-> > 	struct pid *p;
-> > 
-> >-	if (flags & ~(PIDFD_NONBLOCK | PIDFD_THREAD))
-> >-		return -EINVAL;
-> >+	err = pidfd_validate_flags(flags);
-> >+	if (err)
-> >+		return err;
-> > 
-> > 	if (pid <= 0)
-> > 		return -EINVAL;
-> >diff --git a/net/core/scm.c b/net/core/scm.c
-> >index 4f6a14babe5a..3bcdecdacd7e 100644
-> >--- a/net/core/scm.c
-> >+++ b/net/core/scm.c
-> >@@ -23,6 +23,7 @@
-> > #include <linux/security.h>
-> > #include <linux/pid_namespace.h>
-> > #include <linux/pid.h>
-> >+#include <linux/pidfs.h>
-> > #include <linux/nsproxy.h>
-> > #include <linux/slab.h>
-> > #include <linux/errqueue.h>
-> >@@ -210,6 +211,19 @@ int __scm_send(struct socket *sock, struct msghdr *msg, struct scm_cookie *p)
-> > 			p->creds.gid = gid;
-> > 			break;
-> > 		}
-> >+		case SCM_PIDFD:
-> >+		{
-> >+			unsigned int flags;
-> >+
-> >+			if (cmsg->cmsg_len != CMSG_LEN(sizeof(flags)))
-> >
-> 
-> Hi Stas!
-> 
-> Hmm, it is a bit unusual that SCM_PIDFD message format is different in case
-> when you send it and when you read it.
-> 
-> I mean that when you read it (on the receiver side) you get pidfd file descriptor number,
-> while when you write it (on the sender side) you are only allowed to send one integer and this time it's
-> a pidfd file descriptor flags. I personally have nothing strictly against that but just found this
-> a bit unusual and probably confusing for userspace programmers.
-> 
-> Compare it with SCM_CREDENTIALS, for instance, where we read/write the same structure struct ucred.
-> 
-> >+				goto error;
-> >+			memcpy(&flags, CMSG_DATA(cmsg), sizeof(flags));
-> >+			err = pidfd_validate_flags(flags);
-> 
-> pidfd_validate_flags allows PIDFD_THREAD, but what's the idea behind this if
-> scm->pid is always a thread-group leader? (see maybe_add_creds() function).
-> 
-> Sorry if I misunderstand something just want to ensure that we are on the same page.
+Hi Jacopo,
 
-The sender will not be put in control of what flags the pidfd will be
-created on the receivers side. That's just an invitation for subtle
-bugs. The receiver can always toggle O_NONBLOCK via a fcntl() on the
-pidfd once it received it. The whole flag thing should be dropped.
+On Fri, 22 Nov 2024 at 11:16, Jacopo Mondi
+<jacopo.mondi@ideasonboard.com> wrote:
+>
+> Hi Naush
+>
+> On Fri, Nov 22, 2024 at 08:41:52AM +0000, Naushir Patuck wrote:
+> > This change aligns the FS/FE interrupt handling with the Raspberry Pi
+> > kernel downstream Unicam driver.
+> >
+> > If we get a simultaneous FS + FE interrupt for the same frame, it cannot
+> > be marked as completed and returned to userland as the framebuffer will
+> > be refilled by Unicam on the next sensor frame. Additionally, the
+> > timestamp will be set to 0 as the FS interrupt handling code will not
+> > have run yet.
+> >
+> > To avoid these problems, the frame is considered dropped in the FE
+> > handler, and will be returned to userland on the subsequent sensor frame.
+> >
+> > Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
+> > ---
+> >  .../media/platform/broadcom/bcm2835-unicam.c  | 39 +++++++++++++++++--
+> >  1 file changed, 35 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/media/platform/broadcom/bcm2835-unicam.c b/drivers/media/platform/broadcom/bcm2835-unicam.c
+> > index f10064107d54..0d2aa25d483f 100644
+> > --- a/drivers/media/platform/broadcom/bcm2835-unicam.c
+> > +++ b/drivers/media/platform/broadcom/bcm2835-unicam.c
+> > @@ -773,10 +773,26 @@ static irqreturn_t unicam_isr(int irq, void *dev)
+> >                        * as complete, as the HW will reuse that buffer.
+> >                        */
+> >                       if (node->cur_frm && node->cur_frm != node->next_frm) {
+> > +                             /*
+> > +                              * This condition checks if FE + FS for the same
+> > +                              * frame has occurred. In such cases, we cannot
+> > +                              * return out the frame, as no buffer handling
+> > +                              * or timestamping has yet been done as part of
+> > +                              * the FS handler.
+> > +                              */
+> > +                             if (!node->cur_frm->vb.vb2_buf.timestamp) {
+> > +                                     dev_dbg(unicam->v4l2_dev.dev,
+> > +                                             "ISR: FE without FS, dropping frame\n");
+> > +                                     continue;
+> > +                             }
+> > +
+> >                               unicam_process_buffer_complete(node, sequence);
+> > +                             node->cur_frm = node->next_frm;
+> > +                             node->next_frm = NULL;
+> >                               inc_seq = true;
+> > +                     } else {
+> > +                             node->cur_frm = node->next_frm;
+> >                       }
+> > -                     node->cur_frm = node->next_frm;
+> >               }
+> >
+> >               /*
+> > @@ -812,10 +828,25 @@ static irqreturn_t unicam_isr(int irq, void *dev)
+> >                                       i);
+> >                       /*
+> >                        * Set the next frame output to go to a dummy frame
+> > -                      * if we have not managed to obtain another frame
+> > -                      * from the queue.
+> > +                      * if no buffer currently queued.
+> >                        */
+> > -                     unicam_schedule_dummy_buffer(node);
+> > +                     if (!node->next_frm ||
+> > +                         node->next_frm == node->cur_frm) {
+> > +                             unicam_schedule_dummy_buffer(node);
+> > +                     } else if (unicam->node[i].cur_frm) {
+> > +                             /*
+> > +                              * Repeated FS without FE. Hardware will have
+> > +                              * swapped buffers, but the cur_frm doesn't
+> > +                              * contain valid data. Return cur_frm to the
+> > +                              * queue.
+>
+> So the buffer gets silently recycled ? Or should it be returned with
+> errors to userspace ?
 
-The format change is also an api break which is another reason this
-won't happen.
+The buffer silently gets recycled and we dequeue when we are sure it
+is valid and will not get overwritten.  If we were to return to
+userspace with an error, there is still a race condition on the name
+frame/buffer which will also have to return as error.
+
+Regards,
+Naush
+
+
+>
+> > +                              */
+> > +                             spin_lock(&node->dma_queue_lock);
+> > +                             list_add_tail(&node->cur_frm->list,
+> > +                                           &node->dma_queue);
+> > +                             spin_unlock(&node->dma_queue_lock);
+> > +                             node->cur_frm = node->next_frm;
+> > +                             node->next_frm = NULL;
+> > +                     }
+> >               }
+> >
+> >               unicam_queue_event_sof(unicam);
+> > --
+> > 2.34.1
+> >
+> >
 
