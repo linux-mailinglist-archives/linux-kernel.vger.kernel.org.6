@@ -1,548 +1,399 @@
-Return-Path: <linux-kernel+bounces-417963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A79B9D5B45
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:48:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F35B79D5B41
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:47:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6B98B240F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:48:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8377A1F231C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E1219E970;
-	Fri, 22 Nov 2024 08:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858AD1BD9C9;
+	Fri, 22 Nov 2024 08:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ctTE/qp2"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2042.outbound.protection.outlook.com [40.107.223.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qpTdVxqs"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFD7176231;
-	Fri, 22 Nov 2024 08:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732265302; cv=fail; b=uiU+pIvlc8/nu+lSWG94fUKjBLIeoJAw0KzJvNr3de9Jj9lZmT1XZ234t1OjggJOylve7DvrDMzX77qKFK5mWJqaBWELjpoVmAoj6e4wohLL8brXfXelP4i1Hz6j4d4ilo3z14FDhNfUuHyyePyNIG5NvdnZbb5Dwg5UBH3BrSM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732265302; c=relaxed/simple;
-	bh=VxEypGemKOEczqxt6cJg8viNuyfBrZnj1ZAPmuTMYsA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lQy4ORXkxoBc4KPzRutqAER9nZFV01VfdEwM+Yel1gO/eanzy5GbgGVexa3GNQg/q4MxJUkjUqXmKe4MH2SKiN/wPS7P0K0mjodg7lF7QseLGuFajjm+M5DW2lhcJz+cCuqq1kGxyfdRgG843ON3JHI85deZOgv2A91jxClDEYs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ctTE/qp2; arc=fail smtp.client-ip=40.107.223.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UpM1Nws5ijWhPKF+q44cC7al5r598M7DumJAjswqmkVJGoCuNLMCblZTNpJzf12EkO1yPQMGYaHji0kcNVehnTZOKUVZBb/ibp4g2YwxNB2/qCpMlBhAfHEftANYo0Ai48tWv2/MEe8448HIcttx8fK9izLH43x7tHdHh+hsjgtV4L+L/yd/PBqDRWOg0C2SWrPG0wQiNMYYHIuMrIQA5Zf2tFmGHqzM0zMJXpApgM3oJ144n+14aY19WJEbSLnPmRVEePoHniuyfperDScQq5sswAAIPfCCQ3nVV/aXt0eUY3MVwS3JgRK5ptGZhWfBpB0B+QIelIXP3icyy7mbCA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nsW8H/2p54qynLbu0UIh1gh0M+if7ZRs2yqKMdiHrH4=;
- b=cDSCoa/Q8yWUB8ZfFxH2LY/8u7N/uSqWFPPfid5MZljptzNLZfikibr13G4bcAkMeF28Bl8EB2wqgqc1EOP+Y4r4ADPv/Wng2denFe6noMaSOTPRJd5aMcUJJWVLDmtuFIvsUVr7VhR5m3sTp7hXGuCfZlJdu6WsCef4KgtWuTLa8HNNvEfcKuU1K6LcFQJc02r2ZxhDSFgJi7bKiMT3uOHO2Be5pOugurMzq52bqywgIYU6TsJBriE2kkeCUtG0w+xdqCbM6Rn5uqej88CKkdBFiD4E7Cba48TzKtBb0DiJPLSXMwvriV9tASedv2DPDpq1AECr9tE0GZDc0OS1uA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.12) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nsW8H/2p54qynLbu0UIh1gh0M+if7ZRs2yqKMdiHrH4=;
- b=ctTE/qp2I0md7ckDCu7d82i59sF/8d77pmLGWfIEvGeHntMoXY/518a0wHoT29TjmuMgudjTsuXFvYXLgNsWlakG6TfbY0eC/M/qwx59UQES1hGvFScIhminDaCGNkxx2XClrUTyYEKBE/wwbnRGboXPQGhkCXEjRKgMa9Zzxao=
-Received: from BN8PR07CA0031.namprd07.prod.outlook.com (2603:10b6:408:ac::44)
- by SA1PR12MB9472.namprd12.prod.outlook.com (2603:10b6:806:45b::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.22; Fri, 22 Nov
- 2024 08:48:13 +0000
-Received: from BN1PEPF0000468E.namprd05.prod.outlook.com
- (2603:10b6:408:ac:cafe::e0) by BN8PR07CA0031.outlook.office365.com
- (2603:10b6:408:ac::44) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23 via Frontend
- Transport; Fri, 22 Nov 2024 08:48:13 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.12)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.12 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.12; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.12) by
- BN1PEPF0000468E.mail.protection.outlook.com (10.167.243.139) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8182.16 via Frontend Transport; Fri, 22 Nov 2024 08:48:12 +0000
-Received: from tapi.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 22 Nov
- 2024 02:48:04 -0600
-From: Swapnil Sapkal <swapnil.sapkal@amd.com>
-To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-	<namhyung@kernel.org>, <irogers@google.com>, <james.clark@arm.com>
-CC: <ravi.bangoria@amd.com>, <yu.c.chen@intel.com>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<rostedt@goodmis.org>, <vincent.guittot@linaro.org>,
-	<adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
-	<gautham.shenoy@amd.com>, <kprateek.nayak@amd.com>, <juri.lelli@redhat.com>,
-	<yangjihong@bytedance.com>, <void@manifault.com>, <tj@kernel.org>,
-	<vineethr@linux.ibm.com>, <linux-kernel@vger.kernel.org>,
-	<linux-perf-users@vger.kernel.org>, <santosh.shukla@amd.com>,
-	<ananth.narayan@amd.com>, <sandipan.das@amd.com>, Swapnil Sapkal
-	<swapnil.sapkal@amd.com>
-Subject: [PATCH v2 6/6] perf sched stats: Add support for diff subcommand
-Date: Fri, 22 Nov 2024 08:44:52 +0000
-Message-ID: <20241122084452.1064968-7-swapnil.sapkal@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241122084452.1064968-1-swapnil.sapkal@amd.com>
-References: <20241122084452.1064968-1-swapnil.sapkal@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF64F18BBB8
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 08:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732265245; cv=none; b=diq0ydbYHTz6eiM/lFjGXAIpFkIJhqoWp0BVY99yApZHk1d6mHjHjoOprIsO7mSeoIwv7TZ28zSaSqlu0Lv5xP3F0qdLMG3DJUP2fx6VwQwmT6MNgKP3d1JVtZaky6QwYBiJOrXC3EJWj5QO96wvM6NvI81ALvwhSrpaxRlsR/4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732265245; c=relaxed/simple;
+	bh=G1MWk72mRw+h3WXJVy6ye3Av0MJhoR/tJE+3z6J2JrI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PQZXQWmflJ1Xta84kkWmCA/9D8F3l0xtuWYvyo1v6wTDZyoA2wAF6RW9KReln5pyuVIr6b5Rzlwxw0Do3Pk9VKHiZgPoNZyBnh4x7cY6CqLmGBns6etDS4qhML04Xf6qJjNGS/LQkLHbTCo+MJYuvmFXl7l92lf7BeKUhEN3zbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qpTdVxqs; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2ea68cd5780so1566968a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 00:47:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732265243; x=1732870043; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+03aBTnrura1c2YnF2cQX1TsVP1XdwjrS64S7vuMeqI=;
+        b=qpTdVxqs2UJNlw7T0qgbuzbp1AQG0fvZeqEvFROr+wkSrkk4MZjEyO13WaC2iRzuck
+         vjX4296U8ZeCwFJGeyq8ZnmbpdROPmgDavnQ64AodAculOVI3HdyfFqEm7Zu7JYXE52s
+         U5iiZ1F8ctYzvxUCIvo66HoAmfcQCf2XkVhu5MzCL3nHaj11ycQXZ/3fMbIOvYpjIicH
+         3u5loeQ+USRFQevKNDVKtYRHmeacRanRi1RHPw811/ue7qwfwJe+b2UQtJHk8LAHsF+M
+         da4mUoBYyhu/mV18hTJUyfob8Lc0m4kowXcMxl2cycMoDLqfw/LP5mBeBElQf1FzCMCG
+         q7uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732265243; x=1732870043;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+03aBTnrura1c2YnF2cQX1TsVP1XdwjrS64S7vuMeqI=;
+        b=YcEATAq1yORVlqkKMH6l6XCgys93vYWl47X9KfxZkMb3XHvVtb7FE4v75NlW1ic3pI
+         z/pmtTGjuwBAtTvX6VnrrrdiBJL8PMXuS2BkM6v1cMlnmWXjS92yVfXKgXP04M9hBuNk
+         MJGt7saXmHkLzOn2JvxadcbLIyIBjHHqO/xEtGGjPZ01c489KHmfivHZHxDlc+/LyYlG
+         0/5fsgzhuoyjr2xxZZ/fqoWdrBDSVCKxPET9rTOp5wkixA6BPzmSVj0dgMPOUJoadY2K
+         N5P1L3ydbsBCQdGittejxWUZNSLoPQNT60heTm4i2rzNmkl1+LJX90rSAFpQrvY64oAn
+         +LLw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhwT6GNA270/SFcjv2V9Pk5GrAwxaBqzMtCb4L+7qfyj0zSsXSv9tzgEFR5yzprFyM2hNEwsZcrYHe2xA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRHSneU/zVOntEoR/hpYA+DcPTkdpSbUJA36SO4E0HkidHt+55
+	wNYBn1aOArJf6AnmpO517ZZfWx9SxB6w43u46U6sWQcGcDnppsH+N7LHo2d0DSbG/kxYjiFv8p9
+	RMGBFxWsshqhhuXvcG5fyptLVbnmyitTltbds
+X-Gm-Gg: ASbGncub93MIYx67Eg3Lh0kyUlN1tAs8qthj9GIuAi/BC9FU3wxEin5SDxpAdMxcNNV
+	fFNY9UZSQaz4tfiOJeKkK8fUX+YmCZBe5
+X-Google-Smtp-Source: AGHT+IGpEJspEE1OibnEPSpHi4iqebk7O0m+JrAMMgFjlCrzoCa6aFob7IDclcbw3xcJu4gwEKGLXO3fgzsFKqhmXHo=
+X-Received: by 2002:a17:90b:33c5:b0:2ea:b2a5:932b with SMTP id
+ 98e67ed59e1d1-2eb0e5284c5mr2598825a91.17.1732265242815; Fri, 22 Nov 2024
+ 00:47:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF0000468E:EE_|SA1PR12MB9472:EE_
-X-MS-Office365-Filtering-Correlation-Id: 83684f61-af4b-4e6c-2431-08dd0ad26626
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|82310400026|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?NCarFj13KmKjrTBDu8lYW+QBJKAW62UHxrzQGiKCkrhjHNzz+YdXpC66rdh+?=
- =?us-ascii?Q?jTzcI1UcAbHlcQeZHUT3M0/tDBqs3yRCsg2g81nFEiy0TMcK/m7E8LHoqDS+?=
- =?us-ascii?Q?ugzjXTLOrgm6nSYLrdHqaELDMFBTm2f/80R7TxMUA/xgl1suZYpHtYBEuqH+?=
- =?us-ascii?Q?xdbr1902tHUrFluyeUPooxuoTszQ234i9tmgnLgXT1gRsxCDfm54eIvPszKH?=
- =?us-ascii?Q?/+RYaGMNll04alml6JjF7QovcRa8cTbkrsFlgzrhDMTSs4jQUX6utXMSfp3V?=
- =?us-ascii?Q?y0jpufNVxIYvYDGp3NT7Yyi8WM1+/14Y91mjHN1uH1B18rm3kAc9FnXHmvKD?=
- =?us-ascii?Q?4zv/mDMoKusPbBrgenQPvibyGKCfMxax560oB8b3/6B/5lShO8nyYVtObPNe?=
- =?us-ascii?Q?VkOzkHc1WIRjnKM1RSvM0YJc8js6AkNqPTODxYOGtBnzrxkKW0402BePDvck?=
- =?us-ascii?Q?1wUeYV0AvI0kvyxE19f+VW6AGrUbpq5HZFGTacRgpMzgv6f2VUHX6E/q+1UN?=
- =?us-ascii?Q?PrL3/UUDGMUAibeHh9xTve+d2KqM2mK05tyeiSti/q45xU7Zo5lCRwR8Iq7L?=
- =?us-ascii?Q?cKTFZ1cqTC0tylrhO8co7R1OpCl50q5oksB6vRypQwmBMyl5nqBlTGilqBf+?=
- =?us-ascii?Q?hcK7DevcpO12yHv7QOxOdYYhFvupMocWW4kU+bbdCG6AWIE37Ehp58iXdWwT?=
- =?us-ascii?Q?otkh3KsGtWLbt8tT3zKtqr8ekwzUZ55wQgS8RyrYLr7nN3tHiJiDCapkinD6?=
- =?us-ascii?Q?bQx/oZoOSQt0D2U0uqvxkVYGk+eSASEpiqUMIqfgPKVOm7ZzhV3SuJupj6IB?=
- =?us-ascii?Q?H6AG5gSMN2Ak2ZemD6tAOzDmLn9EUkgvAxnsM8lIfMMwp1wfXNHoPQJ8+ZMB?=
- =?us-ascii?Q?+Ad8HJ8EXi7BJwBVOburjYdOp1yrr4s4gl4qTymr1e5osrIRk1oXAsZ8ayPn?=
- =?us-ascii?Q?zABhEE6hIVxWJHsMM3lBTgWFuACAWcP9wCRWpcg8nUISM0mUI03GE93+4Mqj?=
- =?us-ascii?Q?v3jhk0tIaEBynIkOlmnyR5P00px8TA51hePIRtvah+EjqlkfDS4ekgrsp8Nf?=
- =?us-ascii?Q?hsY4l26TJoxmjjORd4eLcuMGlLbTLdUyKwFVASOSuIR9bZkOFtLsBbasjRsS?=
- =?us-ascii?Q?qmKH46QG/5l/Enm0eTZMYe7XOIiCZD3dGV6EYjYWGJYDbx2SSLe0OEPXX5Hh?=
- =?us-ascii?Q?kuiZh5NYrgeZkRz9A0rN9YFhu1dFqXvW6UAOX6SqpjkEDzTdoTKsl/DsN8T5?=
- =?us-ascii?Q?tgGX8TzyXCcLGlOYjetztBsle+w51n957/ht6c8uDdQakz3e+5iuR3Jcuh8o?=
- =?us-ascii?Q?SCb2uDr39KQeJI3TXRh4zewGBRvx8WjkJU4A+jfe6o2uyv974pX62DTgkNXz?=
- =?us-ascii?Q?yk8BerLKbmg0AHgG5mvW+JAcIeBYPESXR5GQtNtJEfc7vdfTWQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.12;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:atlvpn-bp.amd.com;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2024 08:48:12.8882
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83684f61-af4b-4e6c-2431-08dd0ad26626
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.12];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF0000468E.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB9472
+References: <20241122081257.1776925-1-dirk.behme@de.bosch.com>
+In-Reply-To: <20241122081257.1776925-1-dirk.behme@de.bosch.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 22 Nov 2024 09:47:09 +0100
+Message-ID: <CAH5fLghrgnr_ok5deSAi0JnbWFoWG-4de2K_Hg8qHytyEp_y7w@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 1/1] rust: Add bindings for device properties
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Rob Herring <robh@kernel.org>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-`perf sched stats diff` subcommand will take two perf.data files as an
-input and it will print the diff between the two perf.data files. The
-default input to this subcommnd is perf.data.old and perf.data.
+On Fri, Nov 22, 2024 at 9:13=E2=80=AFAM Dirk Behme <dirk.behme@de.bosch.com=
+> wrote:
+>
+> From: "Rob Herring (Arm)" <robh@kernel.org>
+>
+> The device property API is a firmware agnostic API for reading
+> properties from firmware (DT/ACPI) devices nodes and swnodes.
+>
+> While the C API takes a pointer to a caller allocated variable/buffer,
 
-Example usage:
+nit: "caller-allocated" or "to a variable/buffer allocated by the caller"
 
- # perf sched stats diff sample1.data sample2.data
+> the rust API is designed to return a value and can be used in struct
+> initialization. Rust generics are also utilized to support different
+> sizes of properties (e.g. u8, u16, u32).
+>
+> To build and run the Examples as `rustdoc` tests the kernel Kconfig
+> options `CONFIG_OF` and `CONFIG_OF_UNITTEST` need to be enabled
+> additionally. Besides the default `rustdoc` test options
+> `CONFIG_KUNIT` and `CONFIG_RUST_KERNEL_DOCTESTS`. This even works
+> on non-ARM architectures as a test device tree is built into the
+> kernel, then.
+>
+> The Integer trait is proposed by Alic Ryhl [1].
 
-Signed-off-by: Swapnil Sapkal <swapnil.sapkal@amd.com>
----
- tools/perf/builtin-sched.c | 270 +++++++++++++++++++++++++++++--------
- 1 file changed, 217 insertions(+), 53 deletions(-)
+typo ;)
 
-diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index 004ad0952338..d9a3412ed749 100644
---- a/tools/perf/builtin-sched.c
-+++ b/tools/perf/builtin-sched.c
-@@ -3924,26 +3924,42 @@ static void print_separator(size_t pre_dash_cnt, const char *s, size_t post_dash
- 	printf("\n");
- }
- 
--static inline void print_cpu_stats(struct perf_record_schedstat_cpu *cs)
-+#define PCT_CHNG(_x, _y)        ((_x) ? ((double)((double)(_y) - (_x)) / (_x)) * 100 : 0.0)
-+static inline void print_cpu_stats(struct perf_record_schedstat_cpu *cs1,
-+				   struct perf_record_schedstat_cpu *cs2)
- {
--	printf("%-65s %12s %12s\n", "DESC", "COUNT", "PCT_CHANGE");
-+	printf("%-65s ", "DESC");
-+	if (!cs2)
-+		printf("%12s %12s", "COUNT", "PCT_CHANGE");
-+	else
-+		printf("%12s %11s %12s %14s %10s", "COUNT1", "COUNT2", "PCT_CHANGE",
-+		       "PCT_CHANGE1", "PCT_CHANGE2");
-+
-+	printf("\n");
- 	print_separator(100, "", 0);
- 
- #define CALC_PCT(_x, _y)	((_y) ? ((double)(_x) / (_y)) * 100 : 0.0)
--
--#define CPU_FIELD(_type, _name, _desc, _format, _is_pct, _pct_of, _ver)		\
--	do {									\
--		printf("%-65s: " _format, _desc, cs->_ver._name);		\
--		if (_is_pct) {							\
--			printf("  ( %8.2lf%% )",				\
--			       CALC_PCT(cs->_ver._name, cs->_ver._pct_of));	\
--		}								\
--		printf("\n");							\
-+#define CPU_FIELD(_type, _name, _desc, _format, _is_pct, _pct_of, _ver)			\
-+	do {										\
-+		printf("%-65s: " _format, _desc, cs1->_ver._name);			\
-+		if (!cs2) {								\
-+			if (_is_pct)							\
-+				printf("  ( %8.2lf%% )",				\
-+				       CALC_PCT(cs1->_ver._name, cs1->_ver._pct_of));	\
-+		} else {								\
-+			printf("," _format "  | %8.2lf%% |", cs2->_ver._name,		\
-+			       PCT_CHNG(cs1->_ver._name, cs2->_ver._name));		\
-+			if (_is_pct)							\
-+				printf("  ( %8.2lf%%,  %8.2lf%% )",			\
-+				       CALC_PCT(cs1->_ver._name, cs1->_ver._pct_of),	\
-+				       CALC_PCT(cs2->_ver._name, cs2->_ver._pct_of));	\
-+		}									\
-+		printf("\n");								\
- 	} while (0)
- 
--	if (cs->version == 15) {
-+	if (cs1->version == 15) {
- #include <perf/schedstat-v15.h>
--	} else if (cs->version == 16) {
-+	} else if (cs1->version == 16) {
- #include <perf/schedstat-v16.h>
- 	}
- 
-@@ -3951,10 +3967,17 @@ static inline void print_cpu_stats(struct perf_record_schedstat_cpu *cs)
- #undef CALC_PCT
- }
- 
--static inline void print_domain_stats(struct perf_record_schedstat_domain *ds,
--				      __u64 jiffies)
-+static inline void print_domain_stats(struct perf_record_schedstat_domain *ds1,
-+				      struct perf_record_schedstat_domain *ds2,
-+				      __u64 jiffies1, __u64 jiffies2)
- {
--	printf("%-65s %12s %14s\n", "DESC", "COUNT", "AVG_JIFFIES");
-+	printf("%-65s ", "DESC");
-+	if (!ds2)
-+		printf("%12s %14s", "COUNT", "AVG_JIFFIES");
-+	else
-+		printf("%12s %11s %12s %16s %12s", "COUNT1", "COUNT2", "PCT_CHANGE",
-+		       "AVG_JIFFIES1", "AVG_JIFFIES2");
-+	printf("\n");
- 
- #define DOMAIN_CATEGORY(_desc)							\
- 	do {									\
-@@ -3968,25 +3991,52 @@ static inline void print_domain_stats(struct perf_record_schedstat_domain *ds,
- 
- #define DOMAIN_FIELD(_type, _name, _desc, _format, _is_jiffies, _ver)		\
- 	do {									\
--		printf("%-65s: " _format, _desc, ds->_ver._name);		\
--		if (_is_jiffies) {						\
--			printf("  $ %11.2Lf $",					\
--			       CALC_AVG(jiffies, ds->_ver._name));		\
-+		printf("%-65s: " _format, _desc, ds1->_ver._name);		\
-+		if (!ds2) {							\
-+			if (_is_jiffies)					\
-+				printf("  $ %11.2Lf $",				\
-+				       CALC_AVG(jiffies1, ds1->_ver._name));	\
-+		} else {							\
-+			printf("," _format "  | %8.2lf%% |", ds2->_ver._name,	\
-+			       PCT_CHNG(ds1->_ver._name, ds2->_ver._name));	\
-+			if (_is_jiffies)					\
-+				printf("  $ %11.2Lf, %11.2Lf $",		\
-+				       CALC_AVG(jiffies1, ds1->_ver._name),	\
-+				       CALC_AVG(jiffies2, ds2->_ver._name));	\
- 		}								\
- 		printf("\n");							\
- 	} while (0)
- 
- #define DERIVED_CNT_FIELD(_desc, _format, _x, _y, _z, _ver)			\
--	printf("*%-64s: " _format "\n", _desc,					\
--	       (ds->_ver._x) - (ds->_ver._y) - (ds->_ver._z))
-+	do {									\
-+		__u32 t1 = ds1->_ver._x - ds1->_ver._y - ds1->_ver._z;		\
-+		printf("*%-64s: " _format, _desc, t1);				\
-+		if (ds2) {							\
-+			__u32 t2 = ds2->_ver._x - ds2->_ver._y - ds2->_ver._z;	\
-+			printf("," _format "  | %8.2lf%% |", t2,		\
-+			       PCT_CHNG(t1, t2));				\
-+		}								\
-+		printf("\n");							\
-+	} while (0)
- 
- #define DERIVED_AVG_FIELD(_desc, _format, _x, _y, _z, _w, _ver)			\
--	printf("*%-64s: " _format "\n", _desc, CALC_AVG(ds->_ver._w,		\
--	       ((ds->_ver._x) - (ds->_ver._y) - (ds->_ver._z))))
-+	do {									\
-+		__u32 t1 = ds1->_ver._x - ds1->_ver._y - ds1->_ver._z;		\
-+		printf("*%-64s: " _format, _desc,				\
-+		       CALC_AVG(ds1->_ver._w, t1));				\
-+		if (ds2) {							\
-+			__u32 t2 = ds2->_ver._x - ds2->_ver._y - ds2->_ver._z;	\
-+			printf("," _format "  | %8.2Lf%% |",			\
-+			       CALC_AVG(ds2->_ver._w, t2),			\
-+			       PCT_CHNG(CALC_AVG(ds1->_ver._w, t1),		\
-+					CALC_AVG(ds2->_ver._w, t2)));		\
-+		}								\
-+		printf("\n");							\
-+	} while (0)
- 
--	if (ds->version == 15) {
-+	if (ds1->version == 15) {
- #include <perf/schedstat-v15.h>
--	} else if (ds->version == 16) {
-+	} else if (ds1->version == 16) {
- #include <perf/schedstat-v16.h>
- 	}
- 
-@@ -3996,6 +4046,7 @@ static inline void print_domain_stats(struct perf_record_schedstat_domain *ds,
- #undef CALC_AVG
- #undef DOMAIN_CATEGORY
- }
-+#undef PCT_CHNG
- 
- static void print_domain_cpu_list(struct perf_record_schedstat_domain *ds)
- {
-@@ -4148,12 +4199,12 @@ static void get_all_cpu_stats(struct schedstat_cpu **cptr)
- }
- 
- /* FIXME: The code fails (segfaults) when one or ore cpus are offline. */
--static void show_schedstat_data(struct schedstat_cpu *cptr)
-+static void show_schedstat_data(struct schedstat_cpu *cptr1, struct schedstat_cpu *cptr2)
- {
--	struct perf_record_schedstat_domain *ds = NULL;
--	struct perf_record_schedstat_cpu *cs = NULL;
--	__u64 jiffies = cptr->cpu_data->timestamp;
--	struct schedstat_domain *dptr = NULL;
-+	struct perf_record_schedstat_domain *ds1 = NULL, *ds2 = NULL;
-+	struct perf_record_schedstat_cpu *cs1 = NULL, *cs2 = NULL;
-+	struct schedstat_domain *dptr1 = NULL, *dptr2 = NULL;
-+	__u64 jiffies1 = 0, jiffies2 = 0;
- 	bool is_summary = true;
- 
- 	printf("Columns description\n");
-@@ -4164,50 +4215,82 @@ static void show_schedstat_data(struct schedstat_cpu *cptr)
- 	printf("AVG_JIFFIES\t\t-> Avg time in jiffies between two consecutive occurrence of event\n");
- 
- 	print_separator(100, "", 0);
--	printf("Time elapsed (in jiffies)                                        : %11llu\n",
--	       jiffies);
-+	printf("Time elapsed (in jiffies)                                        : ");
-+	jiffies1 = cptr1->cpu_data->timestamp;
-+	printf("%11llu", jiffies1);
-+	if (cptr2) {
-+		jiffies2 = cptr2->cpu_data->timestamp;
-+		printf(",%11llu", jiffies2);
-+	}
-+	printf("\n");
-+
- 	print_separator(100, "", 0);
- 
--	get_all_cpu_stats(&cptr);
-+	get_all_cpu_stats(&cptr1);
-+	if (cptr2)
-+		get_all_cpu_stats(&cptr2);
-+
-+	while (cptr1) {
-+		cs1 = cptr1->cpu_data;
-+		if (cptr2) {
-+			cs2 = cptr2->cpu_data;
-+			dptr2 = cptr2->domain_head;
-+		}
-+
-+		if (cs2 && cs1->cpu != cs2->cpu) {
-+			pr_err("Failed because matching cpus not found for diff\n");
-+			return;
-+		}
- 
--	while (cptr) {
--		cs = cptr->cpu_data;
- 		printf("\n");
- 		print_separator(100, "", 0);
- 		if (is_summary)
- 			printf("CPU <ALL CPUS SUMMARY>\n");
- 		else
--			printf("CPU %d\n", cs->cpu);
-+			printf("CPU %d\n", cs1->cpu);
- 
- 		print_separator(100, "", 0);
--		print_cpu_stats(cs);
-+		print_cpu_stats(cs1, cs2);
- 		print_separator(100, "", 0);
- 
--		dptr = cptr->domain_head;
-+		dptr1 = cptr1->domain_head;
-+
-+		while (dptr1) {
-+			ds1 = dptr1->domain_data;
-+
-+			if (dptr2)
-+				ds2 = dptr2->domain_data;
-+
-+			if (dptr2 && ds1->domain != ds2->domain) {
-+				pr_err("Failed because matching domain not found for diff\n");
-+				return;
-+			}
- 
--		while (dptr) {
--			ds = dptr->domain_data;
- 			if (is_summary)
--				if (ds->name[0])
--					printf("CPU <ALL CPUS SUMMARY>, DOMAIN %s\n", ds->name);
-+				if (ds1->name[0])
-+					printf("CPU <ALL CPUS SUMMARY>, DOMAIN %s\n", ds1->name);
- 				else
--					printf("CPU <ALL CPUS SUMMARY>, DOMAIN %d\n", ds->domain);
-+					printf("CPU <ALL CPUS SUMMARY>, DOMAIN %d\n", ds1->domain);
- 			else {
--				if (ds->name[0])
--					printf("CPU %d, DOMAIN %s CPUS ", cs->cpu, ds->name);
-+				if (ds1->name[0])
-+					printf("CPU %d, DOMAIN %s CPUS ", cs1->cpu, ds1->name);
- 				else
--					printf("CPU %d, DOMAIN %d CPUS ", cs->cpu, ds->domain);
-+					printf("CPU %d, DOMAIN %d CPUS ", cs1->cpu, ds1->domain);
- 
--				print_domain_cpu_list(ds);
-+				print_domain_cpu_list(ds1);
- 			}
- 			print_separator(100, "", 0);
--			print_domain_stats(ds, jiffies);
-+			print_domain_stats(ds1, ds2, jiffies1, jiffies2);
- 			print_separator(100, "", 0);
- 
--			dptr = dptr->next;
-+			dptr1 = dptr1->next;
-+			if (dptr2)
-+				dptr2 = dptr2->next;
- 		}
- 		is_summary = false;
--		cptr = cptr->next;
-+		cptr1 = cptr1->next;
-+		if (cptr2)
-+			cptr2 = cptr2->next;
- 	}
- }
- 
-@@ -4336,12 +4419,88 @@ static int perf_sched__schedstat_report(struct perf_sched *sched)
- 	perf_session__delete(session);
- 	if (!err) {
- 		setup_pager();
--		show_schedstat_data(cpu_head);
-+		show_schedstat_data(cpu_head, NULL);
- 		free_schedstat(cpu_head);
- 	}
- 	return err;
- }
- 
-+static int perf_sched__schedstat_diff(struct perf_sched *sched,
-+				      int argc, const char **argv)
-+{
-+	struct schedstat_cpu *cpu_head_ses0 = NULL, *cpu_head_ses1 = NULL;
-+	struct perf_session *session[2];
-+	struct perf_data data[2];
-+	int ret, err;
-+	static const char *defaults[] = {
-+		"perf.data.old",
-+		"perf.data",
-+	};
-+
-+	if (argc) {
-+		if (argc == 1)
-+			defaults[1] = argv[0];
-+		else if (argc == 2) {
-+			defaults[0] = argv[0];
-+			defaults[1] = argv[1];
-+		} else {
-+			pr_err("perf sched stats diff is not supported with more than 2 files.\n");
-+			goto out_ret;
-+		}
-+	}
-+
-+	sched->tool.schedstat_cpu = perf_sched__process_schedstat;
-+	sched->tool.schedstat_domain = perf_sched__process_schedstat;
-+
-+	data[0].path = defaults[0];
-+	data[0].mode  = PERF_DATA_MODE_READ;
-+	session[0] = perf_session__new(&data[0], &sched->tool);
-+	if (IS_ERR(session[0])) {
-+		ret = PTR_ERR(session[0]);
-+		pr_err("Failed to open %s\n", data[0].path);
-+		goto out_delete_ses0;
-+	}
-+
-+	err = perf_session__process_events(session[0]);
-+	if (err)
-+		goto out_delete_ses0;
-+
-+	cpu_head_ses0 = cpu_head;
-+	after_workload_flag = false;
-+	cpu_head = NULL;
-+
-+	data[1].path = defaults[1];
-+	data[1].mode  = PERF_DATA_MODE_READ;
-+	session[1] = perf_session__new(&data[1], &sched->tool);
-+	if (IS_ERR(session[1])) {
-+		ret = PTR_ERR(session[1]);
-+		pr_err("Failed to open %s\n", data[1].path);
-+		goto out_delete_ses1;
-+	}
-+
-+	err = perf_session__process_events(session[1]);
-+	if (err)
-+		goto out_delete_ses1;
-+
-+	cpu_head_ses1 = cpu_head;
-+	after_workload_flag = false;
-+	setup_pager();
-+	show_schedstat_data(cpu_head_ses0, cpu_head_ses1);
-+	free_schedstat(cpu_head_ses0);
-+	free_schedstat(cpu_head_ses1);
-+
-+out_delete_ses1:
-+	if (!IS_ERR(session[1]))
-+		perf_session__delete(session[1]);
-+
-+out_delete_ses0:
-+	if (!IS_ERR(session[0]))
-+		perf_session__delete(session[0]);
-+
-+out_ret:
-+	return ret;
-+}
-+
- static int process_synthesized_event_live(const struct perf_tool *tool __maybe_unused,
- 					  union perf_event *event,
- 					  struct perf_sample *sample __maybe_unused,
-@@ -4420,7 +4579,7 @@ static int perf_sched__schedstat_live(struct perf_sched *sched,
- 		goto out_target;
- 
- 	setup_pager();
--	show_schedstat_data(cpu_head);
-+	show_schedstat_data(cpu_head, NULL);
- 	free_schedstat(cpu_head);
- out_target:
- 	free(target);
-@@ -4747,6 +4906,11 @@ int cmd_sched(int argc, const char **argv)
- 				argc = parse_options(argc, argv, stats_options,
- 						     stats_usage, 0);
- 			return perf_sched__schedstat_report(&sched);
-+		} else if (argv[0] && !strcmp(argv[0], "diff")) {
-+			if (argc)
-+				argc = parse_options(argc, argv, stats_options,
-+						     stats_usage, 0);
-+			return perf_sched__schedstat_diff(&sched, argc, argv);
- 		}
- 		return perf_sched__schedstat_live(&sched, argc, argv);
- 	} else {
--- 
-2.43.0
+>
+> Link: https://lore.kernel.org/rust-for-linux/CAH5fLgiXPZqKpWSSNdx-Ww-E9h2=
+tOLcF3_8Y4C_JQ0eU8EMwFw@mail.gmail.com/ [1]
+> Co-developed-by: Dirk Behme <dirk.behme@de.bosch.com>
+> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>
+> This is an update of Rob's initial patch
+>
+> https://lore.kernel.org/rust-for-linux/20241025-rust-platform-dev-v1-0-0d=
+f8dcf7c20b@kernel.org/
+>
+> condensed in one patch (see below). Rob's initial cover
+> letter still stands, esp. the part regarding the dependency
+> on Danilo's PCI and platform device series [2].
+>
+> Changes in v2:
+>
+> * Move the major parts to property.rs
+> * Use the Integer Trait proposed by Alice
+> * Use MaybeUninit proposed by Alex
+> * Use Option<> to distinguish between optional and mandatory properties
+>   proposed by Rob
+> * Introduce a FwProperty trait. The prefix 'Fw' reads as 'Firmware'.
+>   Just 'Property' seems to be conflicting with existing.
+> * Add some rustdoc documentation and Examples (based on Danilo's
+>   platform sample module). With that I squashed the test device tree
+>   changes into this patch as we don't need to change Danilo's platform
+>   sample any more. That change is trivial. Please let me know if you
+>   rather like a separate patch for it.
+> * Some more I most probably missed to mention ;)
+>
+> It would be nice to get some improvement hints for the FIXMEs :)
 
+See below :)
+
+> Trying to use the assert_eq!() fails with
+>
+> error[E0425]: cannot find value `__DOCTEST_ANCHOR` in this scope
+>     --> rust/doctests_kernel_generated.rs:4252:102
+>      |
+> 4252 |             kernel::kunit_assert_eq!("rust_doctest_kernel_property=
+_rs_0", "rust/kernel/property.rs", __DOCTEST_ANCHOR - 150, $left, $right);
+>      |                                                                   =
+                                   ^^^^^^^^^^^^^^^^ not found in this scope
+> ...
+> 4369 | assert_eq!(idx, Ok(0)); // FIXME: How to build this?
+>      | ---------------------- in this macro invocation
+>      |
+>      =3D note: this error originates in the macro `assert_eq` (in Nightly=
+ builds, run with -Z macro-backtrace for more info)
+>
+>   CC      drivers/base/firmware_loader/main.o
+>   CC      kernel/module/main.o
+> error: aborting due to 1 previous error
+>
+> [2] https://lore.kernel.org/all/20241022213221.2383-1-dakr@kernel.org/
+
+I don't know about this one.
+
+> +/// A trait for integer types.
+> +///
+> +/// This trait limits [`FromBytes`] and [`AsBytes`] to integer types onl=
+y. Excluding the
+> +/// array types. The integer types are `u8`, `u16`, `u32`, `u64`, `usize=
+`, `i8`, `i16`,
+> +/// `i32`, `i64` and `isize`. Additionally, the size of these types is e=
+ncoded in the
+> +/// `IntSize` enum.
+> +trait Integer: FromBytes + AsBytes + Copy {
+> +    /// The size of the integer type.
+> +    const SIZE: IntSize;
+> +}
+
+This trait should be unsafe with a safety requirement saying that SIZE
+must be correct.
+
+Is it intentional that Integer is a private trait? I guess you're
+using it as an implementation detail of FwProperty? It would be nice
+to mention that 128-bit ints are intentionally not included here.
+
+> +/// The sizes of the integer types. Either 8, 16, 32 or 64 bits.
+> +enum IntSize {
+> +    /// 8 bits
+> +    S8,
+> +    /// 16 bits
+> +    S16,
+> +    /// 32 bits
+> +    S32,
+> +    /// 64 bits
+> +    S64,
+> +}
+> +
+> +macro_rules! impl_int {
+> +    ($($typ:ty),* $(,)?) =3D> {$(
+> +        impl Integer for $typ {
+> +            const SIZE: IntSize =3D match size_of::<Self>() {
+> +                1 =3D> IntSize::S8,
+> +                2 =3D> IntSize::S16,
+> +                4 =3D> IntSize::S32,
+> +                8 =3D> IntSize::S64,
+> +                _ =3D> panic!("invalid size"),
+> +            };
+> +        }
+> +    )*};
+> +}
+> +
+> +impl_int! {
+> +    u8, u16, u32, u64, usize,
+> +    i8, i16, i32, i64, isize,
+> +}
+> +
+> +/// Reads an array of integers from the device firmware.
+> +fn read_array<T: Integer>(
+> +    device: &Device,
+> +    name: &CStr,
+> +    val: Option<&mut [MaybeUninit<T>]>,
+> +) -> Result<usize> {
+> +    let (ptr, len) =3D match val {
+> +        // The read array data case.
+> +        Some(val) =3D> (val.as_mut_ptr(), val.len()),
+> +        // The read count case.
+> +        None =3D> (core::ptr::null_mut(), 0_usize),
+> +    };
+> +    let ret =3D match T::SIZE {
+> +        // SAFETY: `device_property_read_u8_array` is called with a vali=
+d device pointer and name.
+> +        IntSize::S8 =3D> unsafe {
+> +            bindings::device_property_read_u8_array(
+> +                device.as_raw(),
+> +                name.as_ptr() as *const i8,
+> +                ptr as *mut u8,
+> +                len,
+
+Instead of using the i8 type for the name, you should be using
+crate::ffi::c_char. Actually, in this case, you can also use
+`name.as_char_ptr()` instead, which requires no cast.
+
+> +        },
+> +        // SAFETY: `device_property_read_u16_array` is called with a val=
+id device pointer and name.
+> +        IntSize::S16 =3D> unsafe {
+> +            bindings::device_property_read_u16_array(
+> +                device.as_raw(),
+> +                name.as_ptr() as *const i8,
+> +                ptr as *mut u16,
+> +                len,
+> +            )
+> +        },
+> +        // SAFETY: `device_property_read_u32_array` is called with a val=
+id device pointer and name.
+> +        IntSize::S32 =3D> unsafe {
+> +            bindings::device_property_read_u32_array(
+> +                device.as_raw(),
+> +                name.as_ptr() as *const i8,
+> +                ptr as *mut u32,
+> +                len,
+> +            )
+> +        },
+> +        // SAFETY: `device_property_read_u64_array` is called with a val=
+id device pointer and name.
+> +        IntSize::S64 =3D> unsafe {
+> +            bindings::device_property_read_u64_array(
+> +                device.as_raw(),
+> +                name.as_ptr() as *const i8,
+> +                ptr as *mut u64,
+> +                len,
+> +            )
+> +        },
+> +    };
+> +    to_result(ret)?;
+> +    Ok(ret.try_into()?)
+> +}
+
+[...]
+
+> +/// *Note*: To build and run below examples as `rustdoc` tests the addit=
+ional kernel
+> +/// Kconfig options `CONFIG_OF` and `CONFIG_OF_UNITTEST` need to be enab=
+led. This
+> +/// even works on non-ARM architectures as a test device tree is built i=
+nto the
+> +/// kernel, then.
+
+Incomplete sentence?
+
+Does this mean that running kunit without those options enabled
+results in an error?
+
+> +/// The above examples intentionally don't print any error messages (e.g=
+. with `dev_err!()`).
+> +/// The called abstractions already print error messages if needed what =
+is considered to be
+> +/// sufficient. The goal is to be less verbose regarding error messages.
+
+typo: "if needed, which is"
+
+> +pub trait FwProperty: Sized {
+> +    /// Reads a property from the device.
+> +    fn read_property(device: &Device, name: &CStr, default: Option<Self>=
+) -> Result<Self>;
+> +
+> +    /// Gets the properties element count.
+> +    fn count_elem(device: &Device, name: &CStr) -> Result<usize>;
+> +
+> +    /// Returns if a firmware string property `name` has match for `matc=
+h_str`.
+> +    fn match_string(device: &Device, name: &CStr, match_str: &CStr) -> R=
+esult<usize> {
+
+As far as I can tell, you never override this implementation anywhere.
+In that case, it shouldn't be a trait method. You can just put its
+implementation directly in property_match_string.
+
+> +        // SAFETY: `device_property_match_string` is called with a valid=
+ device pointer and name.
+> +        let ret =3D unsafe {
+> +            bindings::device_property_match_string(
+> +                device.as_raw(),
+> +                name.as_ptr() as *const i8,
+> +                match_str.as_ptr() as *const i8,
+> +            )
+
+Ditto here about i8.
+
+> +    /// Gets the properties element count.
+> +    // FIXME: Could this be made to be a build time error?
+> +    fn count_elem(device: &Device, _name: &CStr) -> Result<usize> {
+
+Yes, you should create two traits:
+
+pub trait FwPropertyRead: Sized {
+    fn read_property(device: &Device, name: &CStr, default:
+Option<Self>) -> Result<Self>;
+}
+
+pub trait FwPropertyCount: Sized {
+    fn count_elem(device: &Device, name: &CStr) -> Result<usize>;
+}
+
+Then don't implement FwPropertyCount for types that can't be counted.
+
+I wonder if it also makes more sense to split FwPropertyRead into two trait=
+s:
+FwPropertyReadMandatory
+FwPropertyReadOptional
+to handle the boolean case?
+
+> +impl<T: Integer + Copy> FwProperty for T {
+> +    fn read_property(device: &Device, name: &CStr, default: Option<Self>=
+) -> Result<Self> {
+> +        let mut val: [MaybeUninit<T>; 1] =3D [const { MaybeUninit::unini=
+t() }; 1];
+> +        match read_array(device, name, Some(&mut val)) {
+> +            // SAFETY: `read_array` returns with valid data
+> +            Ok(_) =3D> Ok(unsafe { mem::transmute_copy(&val[0]) }),
+
+This can be simplified:
+
+fn read_property(device: &Device, name: &CStr, default: Option<Self>)
+-> Result<Self> {
+    let mut val: MaybeUninit<T> =3D MaybeUninit::uninit();
+    match read_array(device, name, Some(core::array::from_mut(&mut val))) {
+        // SAFETY: `read_array` returns with valid data
+        Ok(()) =3D> Ok(val.assume_init()),
+
+> +impl<T: Integer, const N: usize> FwProperty for [T; N] {
+> +    fn read_property(device: &Device, name: &CStr, default: Option<Self>=
+) -> Result<Self> {
+> +        let mut val: [MaybeUninit<T>; N] =3D [const { MaybeUninit::unini=
+t() }; N];
+> +        match read_array(device, name, Some(&mut val)) {
+> +            // SAFETY: `read_array` returns with valid data
+> +            Ok(_) =3D> Ok(unsafe { mem::transmute_copy(&val) }),
+
+I don't think this one can avoid transmute_copy, though.
+
+Alice
 
