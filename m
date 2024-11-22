@@ -1,124 +1,136 @@
-Return-Path: <linux-kernel+bounces-418433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BB499D6184
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:50:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95B899D618A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:52:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CC0E160436
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:50:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2146E1603FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D8C14D452;
-	Fri, 22 Nov 2024 15:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47235172BCE;
+	Fri, 22 Nov 2024 15:51:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VDMCPy3v"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nuos2NN1"
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4881D134A8
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 15:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4221B134A8;
+	Fri, 22 Nov 2024 15:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732290600; cv=none; b=ZWz/PMzgIcLDmyXEqZkkI2WdmvNc/0iaZxcIQhOdnGKW2wiuKg1mmOWkATPJSVQWMhiqimP1tl5gYDKy2vgypcrBhtth+MEfeVsAERwn1/5+SgXyDNmL96tnGXe7dwAGJfOPj/I2KRoJL6/kZZWKzb/eB1mpL1qzUivqZsTICvM=
+	t=1732290714; cv=none; b=u3XhW+7DGxtLzVpPeH++HvUNq4yJVUV+T+dAzgNuzG4th1nuH4uhPHHykx3hMQtLFD1V5EAO5VI3G60Ft2T/GdRxyRVpShu60zK+Wpg5tIvrE7Ptcwdamws+eIzJxdjWIgk23Hw9jokYC46fYnkinkqquksDFQTfqPcX73oJyls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732290600; c=relaxed/simple;
-	bh=9R+8ZOFgrk2QeFtVS2U2/gysj+B1H8MqJZNTjEXqaVc=;
+	s=arc-20240116; t=1732290714; c=relaxed/simple;
+	bh=8ZTRU8Cvc/aD30bdCV76uipoTv6sEgXfqla/dPLB2rk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rSAx9D03qXe1rBdlnkIYbtOvffpvHmrqxwlFebMj66Z5wyZvwdZ7hL2EG7RWLLA8oQuMNzcVT+lHvqI+4utoZf1P+HIi4jnd3W4fggeywHyO/7aQS1ErFeVVa376AMWzIbnxz0COEarLVcv10HEQmVwH5/pc9qj86du03sA7DBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VDMCPy3v; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4608dddaa35so345011cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 07:49:58 -0800 (PST)
+	 To:Cc:Content-Type; b=RPVLEDTzPSvOjTT3dHwkGMpMRfZ1RVBCI6wSb0RhERmm641vL1clN4huGyKMGUbMBbX+/4rDAPQC2UiiESfK6hEF1SSoNdzowH8MEC+Vy76c49PfGCOMxfkjet6jPbJTD6gkOCMYzMDLTnauXErPf7hXHopxjDN3UN8oAPbHZog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nuos2NN1; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-83abf71f244so67645939f.1;
+        Fri, 22 Nov 2024 07:51:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732290598; x=1732895398; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732290712; x=1732895512; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qtkHZaiA0q6bw9BqHvH90RAXE3nDrWJJ9ufpDzBYokA=;
-        b=VDMCPy3vRh0E2YIWLAUr8J0NTPHsm+jn+lk5RRqsYxudlqXgmPdg9b6rJJi6lNKQXE
-         GJwiftgNevpHpe4WOQsi8XpiHZWcAdJSNTDJ/VFtKK3pNuv3jx8dJ08oQWzJAX/zmlq3
-         jGIW/rWVSNkTUXO0ON2ut2J6IU3dxvghtHF6n32rXsKcRn6iTKtJcE9zXFWA3vpWLkeE
-         K78fKswOoU8FdsI1KBUB2Ma4e1qkY07vHDoQ0ctG2SAKTZRS4avYtB1US6fhSd2Swf6q
-         S0Ha+wowj4SSo/mPb8pMPw3QdjrrkZEbqbJQo9F2nX7F0KxGRYmV6EFfC2ZxwWYy9Oho
-         HKxQ==
+        bh=z3uDWbNNWfkF0p1VhsZQPfqHnOGEpm0encXAZ7Sy8g0=;
+        b=Nuos2NN1HCKjLhMifSxZ88xWqCO8C3m5gSVc3N21+XM82zNofjA4P4udDKzqDeEBte
+         5ehLCdANSiRJ/t3+2kQVhHovbMnNqThDlIBYyGgkGHCm4sIVg+2mUrlekplTKRJTpSvU
+         k5nJqoBbIPq9eNcWlLomUdjxBCS3u08DX2RiingMBi8pkohzrfbhLYEavChsT/ezovks
+         +ju+CaSzF8NSCjvncJm+OaHOJns0f4bGM0Bnd0Ffxg8CWiDZW+qoizd05fddOc78/EfK
+         3sLQpJVkaWHiMyHBPlTrJKTx3npAe7O/a/Rc57UWMZiXmOjkbnL9AZwXVzfINXvooCTX
+         qPpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732290598; x=1732895398;
+        d=1e100.net; s=20230601; t=1732290712; x=1732895512;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qtkHZaiA0q6bw9BqHvH90RAXE3nDrWJJ9ufpDzBYokA=;
-        b=sYunPTING/0s20WnqvkO5N/dLy/f0s5l/VHIqSwxztSHSnuF/B+bgbxDfrNIu8dGWK
-         QUeGmJkB+jG9vbdr7GIoToEIJAF/Gt9xBVQmObibK/zGveVvhoOGM4CISHZovWv8zZfc
-         DO1+YTuF3ArT0zZqW/FUJfZiZd7tz272oOUfw12Urlq8y+iRKmZURa5JO1ewFosORWWa
-         d9q/Ws2zkdrE10CbXMLA4rzMsHSL9wPWShEfWEiQmn57dW3ffy+KITdIq6G1Fr36sSxv
-         nK6jZZS90JPVxuZMpLzbIeGot0Vfelto4lWr9K+g3HqEr/4lzFLUO9QEPO53/NOaqhYh
-         1BRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfIQe+QDnldi+UcfCOuedm2tNSY/26VGtEvKzWG67zPwnHtx2vusF+lPFBhv97C30ulAchBUh1xyEhLBI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAd9t7HZzmBmyMYTqvFvZqedNmUAYHMY70Gf1Iu+/q3Yxdwa6D
-	5/9aTjpWX4B7cSai8QMDBFTjQXU3MO8swiP328iAEhPKY6FDEwBBhZMpzz7PKtlufzkqdmclVp9
-	TdBoZIcvEzs0R+2Xl/j4NiD+VZYC0v3vmUDSk
-X-Gm-Gg: ASbGncuCBDqjyihdIqeNfFlv1fcRatF3T3bfEoFLIsSxSYHUMQRModlrXx2tH7bwAnv
-	/L0kqvRCL+PKQtcimhjdDmme01gXHjR8=
-X-Google-Smtp-Source: AGHT+IG2Z2e0FeRW9KBZVkCKobWrPKQEssf0c2MmpiTdDbjLkpSF+QneeKKnJOs5ZYocVnc4jxMZ+EvtXaBJi8vXB4g=
-X-Received: by 2002:ac8:40c9:0:b0:465:bc11:c481 with SMTP id
- d75a77b69052e-465bc11c56fmr2400451cf.1.1732290597788; Fri, 22 Nov 2024
- 07:49:57 -0800 (PST)
+        bh=z3uDWbNNWfkF0p1VhsZQPfqHnOGEpm0encXAZ7Sy8g0=;
+        b=CtX5qN2w5gHLhzRwMNYiWibLr7XGYtQqSatAgdy/y62Z6FkdNddXW+mr8A74UsvXaH
+         F6cjeBcFrHs9fnn6BwcoG5xsa7RjiujwPageTwT3lrB73v0LhY3gcZvcXD7vr1eT/Vxa
+         Wt5738+1VZ1R5adGJuJluu0UcOeoXgun2fE20iClWeYFPMVoSlCMdS9URKKeqJG55xb9
+         KwH4ptzZaCJlBzzhlU/hZdlyUTfA7XV/DS/GYdHE0A876ttdPj5lMxKl5RB2CxSKw2LV
+         QTFpDGSjf1rZW92LoTsvwvaNKAYvy2at8WJYICrSxo/oxBkVdLHc2qVNww7mMTDVaTat
+         OHSg==
+X-Forwarded-Encrypted: i=1; AJvYcCU76yEnvMukPD3BQoK0NW3gUsfSqNJ34y+5Q32AkVMcjuu4dPIrVb5mdJxyxPdaI9j3QQ/sb8IUk3ngg9vJ@vger.kernel.org, AJvYcCXJl2+R5YQePvUfoLTCWIJbVhpkTTSRV6JyoOZnkFttfAxWVn5d3ZDQ6kz1rcUSP+q53ng9rihB9JipciDX@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzTtJQR4XHAFIP9uOux2g9BYbrHOMvjqAqby0XmcLgx+FdAnqW
+	8da/SrlaIGq+/iWkHUcaJIpcQ/sazW4fKy+eUahumE0+12+QD6MtcyH7iu56njVsBvW14iwaE/2
+	hqkQeu1InW1szgZ5/Bh9P44RFcVxn4SD8
+X-Gm-Gg: ASbGncu79YslBOGKCJEzYbpz1diHV1M575IM11hhA40F0GRCpTLc6rIbg6iaUC7kR3N
+	DUfEoVYT7ccDBL4MiAawKct2FmwbYOSz7wp4zSVbjqyg2rlnPn9qo+8jIgvvz6g==
+X-Google-Smtp-Source: AGHT+IEmliz4spJROdLvbi9Jn1TCz/7JIiW2hFkXxCknMwyZDt+D+vscIFSEGuewCzsuk6Df/rQ+Qukh9F3P0iKGWrs=
+X-Received: by 2002:a05:6602:2cd2:b0:83b:7164:ebb4 with SMTP id
+ ca18e2360f4ac-83ecdd13818mr362392539f.14.1732290712314; Fri, 22 Nov 2024
+ 07:51:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241119183250.3497547-1-cmllamas@google.com> <20241119183250.3497547-9-cmllamas@google.com>
-In-Reply-To: <20241119183250.3497547-9-cmllamas@google.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 22 Nov 2024 07:49:46 -0800
-Message-ID: <CAJuCfpGb_kT98GTmahG9ZOYadBMY0xPe-DSfEFWx9Rskq2vRrQ@mail.gmail.com>
-Subject: Re: [PATCH v4 8/9] binder: propagate vm_insert_page() errors
-To: Carlos Llamas <cmllamas@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	linux-kernel@vger.kernel.org, kernel-team@android.com
+References: <20241121164858.457921-1-robdclark@gmail.com> <54601d79-4156-41f4-b1b7-250c5c970641@oss.qualcomm.com>
+In-Reply-To: <54601d79-4156-41f4-b1b7-250c5c970641@oss.qualcomm.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Fri, 22 Nov 2024 07:51:40 -0800
+Message-ID: <CAF6AEGtafQM7-mYy163Krry3OHgPNH3e9A=9VEhBpiQTADtULQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm: UAPI error reporting
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org, Rob Clark <robdclark@chromium.org>, 
+	Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 19, 2024 at 10:33=E2=80=AFAM Carlos Llamas <cmllamas@google.com=
-> wrote:
+On Fri, Nov 22, 2024 at 4:21=E2=80=AFAM Konrad Dybcio
+<konrad.dybcio@oss.qualcomm.com> wrote:
 >
-> Instead of always overriding errors with -ENOMEM, propagate the specific
-> error code returned by vm_insert_page(). This allows for more accurate
-> error logs and handling.
+> On 21.11.2024 5:48 PM, Rob Clark wrote:
+> > From: Rob Clark <robdclark@chromium.org>
+> >
+> > Debugging incorrect UAPI usage tends to be a bit painful, so add a
+> > helper macro to make it easier to add debug logging which can be enable=
+d
+> > at runtime via drm.debug.
+> >
+> > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > ---
 >
-> Cc: Suren Baghdasaryan <surenb@google.com>
-> Signed-off-by: Carlos Llamas <cmllamas@google.com>
+> [...]
+>
+> > +/* Helper for returning a UABI error with optional logging which can m=
+ake
+> > + * it easier for userspace to understand what it is doing wrong.
+> > + */
+> > +#define UERR(err, drm, fmt, ...) \
+> > +     ({ DRM_DEV_DEBUG_DRIVER((drm)->dev, fmt, ##__VA_ARGS__); -(err); =
+})
+> > +
+> >  #define DBG(fmt, ...) DRM_DEBUG_DRIVER(fmt"\n", ##__VA_ARGS__)
+> >  #define VERB(fmt, ...) if (0) DRM_DEBUG_DRIVER(fmt"\n", ##__VA_ARGS__)
+>
+> I'm generally not a fan of adding driver-specific debug prints..
+>
+> Maybe that's something that could be pushed to the drm-common layer
+> or even deeper down the stack?
 
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+Even if we had something like DRM_DBG_UABI_ERROR() I'd probably still
+just #define UERR() to be a wrapper for it, since line length/wrapping
+tends to be a bit of a challenge.  And I have a fairly substantial
+patch stack on top of this adding sparse/vm_bind support.  (Debugging
+that was actually the motivation for this patch.)
 
-> ---
->  drivers/android/binder_alloc.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_allo=
-c.c
-> index f5dbaf1d7d65..aea35d475ee8 100644
-> --- a/drivers/android/binder_alloc.c
-> +++ b/drivers/android/binder_alloc.c
-> @@ -339,7 +339,6 @@ static int binder_install_single_page(struct binder_a=
-lloc *alloc,
->                 __free_page(page);
->                 pr_err("%d: %s failed to insert page at offset %lx with %=
-d\n",
->                        alloc->pid, __func__, addr - alloc->vm_start, ret)=
-;
-> -               ret =3D -ENOMEM;
->                 break;
->         }
->  out:
-> --
-> 2.47.0.338.g60cca15819-goog
->
+I noticed that xe has something similar, but slightly different shape,
+in the form of XE_IOCTL_DBG().. but that kinda just moves the line
+length problem into the if() conditional.  (And doesn't provide the
+benefit of being able to display the incorrect param.)
+
+BR,
+-R
 
