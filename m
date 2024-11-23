@@ -1,141 +1,104 @@
-Return-Path: <linux-kernel+bounces-419227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8E709D6B17
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 20:27:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01FF39D6B1B
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 20:30:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D5B0161694
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 19:26:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85D4EB21814
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 19:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32F619CCF9;
-	Sat, 23 Nov 2024 19:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eBSm2t6O"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FDA216130C;
+	Sat, 23 Nov 2024 19:30:52 +0000 (UTC)
+Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA7D27466;
-	Sat, 23 Nov 2024 19:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1979534545
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 19:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732390008; cv=none; b=aT8RO+NT/ru1MlLVFeZF4ktxtpz5a3f4Kde79lO0DexVsVZLH6Q+4qdKZzhJGyqPYYTaUvkKIKduJVv/71hbkNmh78MFowbpw9U8v2dG03M1gXRqSLBRU093gX8rnUA27BdlDODmyoCnFKhbWoUH16vxpblnNVw5nk5CN0Pe2GE=
+	t=1732390251; cv=none; b=tt+Wes/uWQqOoAtkn+A/UQrXExiLw5Pv2h/jU1Lz6wyHkDLyoNYIGFUxMfcf3bj0fBf7Bo8Mup7fTeRVNK5binwbfaDfzYpHii5q+VazANfnAa8GxeaBXjqgAmeXJb4yGIjD9GFR0cqUyZ6AAvu+CaR8ceV6vzP1uby1bOXf7a4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732390008; c=relaxed/simple;
-	bh=8C0Kv2tQGtcVzLErsh8vX7WrbQjr8sudBmB1xAP8Xf0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=grVRalJYKqRjKVpcSKUrLE4kz/HLPxEzmWZVcOEq2HkmqtwHVcNjevayWPjiiB1Ag0BtOqRvZTNNW9nEwUgg+KY5vggsPVOz1kDd5YUi3exX+Arpnn6jsNu3Q6R0Etu55vKDr0gHidXLUlLPdQy6dDAfGv8cQafcRvryjzN5k8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eBSm2t6O; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-723f37dd76cso3159051b3a.0;
-        Sat, 23 Nov 2024 11:26:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732390006; x=1732994806; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EKFqWwSN5qTyHdwloGljW7z+Rtw5u2QrsWqXju4EFjo=;
-        b=eBSm2t6O1a0AzHWhWuwPVa7+ug6nYWL2HuiXOarHiuXHShZTBEXKXwb+BNi2CWUj22
-         4o3+aNpPX//4kg8V7BTmIPYxbUGPnzLWfSSSgyfF3gK9oQQLGWOQXsAX2GuspzeqPzCu
-         eSncT4ly8lG3VOTnWeJqeKeLfqItwaTKULysIGP9h1WASLdLPx5NUcvTlLV5iKVRz3WE
-         xc72QnSsmHQM7aalRtLAhY/I2ltckXiOAFLMCBmqqVv1tVKuUGNZUMLCzyKnOfHJsg7q
-         m6aBfU0LvkfjvQyMuG7D+QtQ9nU2UMh0K8Xdcop3ET6eCVK7C2cfbPpe7SaEsBYwKkm2
-         PnJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732390006; x=1732994806;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EKFqWwSN5qTyHdwloGljW7z+Rtw5u2QrsWqXju4EFjo=;
-        b=LmOQE33vAr40w2oDHy8ksMdHKe+zPItVpTBXtkvXmqSd+H5MxdF1BILZEko1nBY6An
-         2oQ3y71tRDy8u/02p5TquqDdB1zWWWt2lYmUX3cGMV4NytCNySh9iMFVVqLlkiG6F9K8
-         /WppinO5l0Zv0kG7Cr5nyufLSm4KpPIxremH9wOQl0Ti0WYMvjUFr5DHUuBxl78ZfgZ8
-         3EDWRe5FyQl43o4X8GXP79tnvEDoQEY1nqgm1wrlRNOod3CY0v5VOZ4Bra950zkAArpW
-         XrhYCxcUropqN4/3g+1ECp5jsDiyughYg6JIoWxU+Za/TZ0BGmF1DlrhYu2jQqD+uuw4
-         wlXg==
-X-Forwarded-Encrypted: i=1; AJvYcCV/buSqaMGYIPZJDzTFicZ6s/MTV9ak5W+0o0KCHhxtnNuYpr98XCCgMeA9RVnOmv+J4jgkptulKf32@vger.kernel.org, AJvYcCX49Wtj/KYRrIHQqaOx34T6D5QzM0OBUqSyB1GEjZDPgPqNG2N+WS6VMBdciQo4a7989131gh5YZVFhdQ==@vger.kernel.org, AJvYcCXCkgnf652KvDxIKKQHlJslXp+5KCUdjz3+h57hvbPZ8A5JD5M0RbXot3G9KAFL6vFL/WDHabVfIWCRN4IjhEAd@vger.kernel.org, AJvYcCXKu0shkV3QO59aBFRDrY6rxVbYb0bbSmLjeXUBiLw7NK/LlrpUllvNRLa2lalsBdnwv88vG3cxOatVSavs@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws56yQtX+tihlgX1+8crGqj4C0TSNrY0tr+jyFJmIjiqWDPJLc
-	qxCMTKAXGdFMCUoJDZA0lk9pg81BanR+CmZOGGYJ/UNMZxvNV+qy
-X-Gm-Gg: ASbGncu4xvb0QbaNm8WJx4xoyT81nxS4Xc1wb0/TFSgXyy2h35LR+rkLB8GuS7k2t0q
-	anBa0Ch5enbL6MCdZ+hGC2s0c/5BKhb7Au/SeAqfdsqTsKaygVXmioSwMScUCx+WK+Cp1dyEPgC
-	h/kKsJxZ9bl5GGkuQ35wkPqfXUwKBTX/bVaaSclB/ptSvxXdnMZDZAC46zsLDWDVFXxhBaaeZ/i
-	AnAME9xjesn/Ua6EY3NzTlFKSDjJjJC4qJ6ZEolIDqTSuCIriGWo8eR9H2TVGoEIrTZdmZhn5Q=
-X-Google-Smtp-Source: AGHT+IHqe/epLud/t0Z0A5XPkXsAE+8YfobMQ1Kd10MhS+puwhDCWnm4VHQZFS7J5N/OC/pbwoUcwA==
-X-Received: by 2002:a05:6a21:33a2:b0:1db:de9a:bb01 with SMTP id adf61e73a8af0-1e09e5d90femr12799969637.40.1732390006051;
-        Sat, 23 Nov 2024 11:26:46 -0800 (PST)
-Received: from mighty.kangaroo-insen.ts.net ([45.64.12.174])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcc225e45sm3689734a12.42.2024.11.23.11.26.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Nov 2024 11:26:45 -0800 (PST)
-From: Mithil Bavishi <bavishimithil@gmail.com>
-To: andreas@kemnade.info
-Cc: Laurent.pinchart@ideasonboard.com,
-	aaro.koskinen@iki.fi,
-	airlied@gmail.com,
-	bavishimithil@gmail.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	jernej.skrabec@gmail.com,
-	jonas@kwiboo.se,
-	khilman@baylibre.com,
-	krzk+dt@kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	neil.armstrong@linaro.org,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	quic_jesszhan@quicinc.com,
-	rfoss@kernel.org,
-	robh@kernel.org,
-	rogerq@kernel.org,
-	simona@ffwll.ch,
-	thierry.reding@gmail.com,
-	tony@atomide.com,
-	tzimmermann@suse.de
-Subject: Re: [PATCH v3 10/10] ARM: dts: ti: omap: samsung-espresso10: Add initial support for Galaxy Tab 2 10.1
-Date: Sat, 23 Nov 2024 19:26:33 +0000
-Message-ID: <20241123192633.2049-1-bavishimithil@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241123200202.684d8bc5@akair>
-References: <20241123200202.684d8bc5@akair>
+	s=arc-20240116; t=1732390251; c=relaxed/simple;
+	bh=JC17rw+Hom8wSugYzI6RuOxpLgvkttMfUDPyeAFCHIE=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sj0941J5uU3/hxBBZLxPxTnp+uWusc4k3dCws1nu0KAIV0vMprIo0sKojvKjozjM6wOBQ1QuIKvKeZzu00KGUkSRj3G9ViLTErqNPPExsjqE9YCA6NFyLR0yk4gIMEMp1WmYX2/oJ7Zfpfu+wUZ7Gqv848Y491OkKK0OadO63Zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-25-143.elisa-laajakaista.fi [88.113.25.143])
+	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
+	id 470d06ed-a9d1-11ef-9b92-005056bd6ce9;
+	Sat, 23 Nov 2024 21:29:39 +0200 (EET)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 23 Nov 2024 21:29:37 +0200
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Gene Chen <gene_chen@richtek.com>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 00/18] leds: switch to device_for_each_child_node_scoped()
+Message-ID: <Z0ItIQWHOGL-GTi8@surfacebook.localdomain>
+References: <20240927-leds_device_for_each_child_node_scoped-v1-0-95c0614b38c8@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240927-leds_device_for_each_child_node_scoped-v1-0-95c0614b38c8@gmail.com>
 
-> well, look at the schematics and see how it is wired ;-)
+Fri, Sep 27, 2024 at 01:20:51AM +0200, Javier Carrasco kirjoitti:
+> This series switches from the device_for_each_child_node() macro to its
+> scoped variant, which in general makes the code more robust if new early
+> exits are added to the loops, because there is no need for explicit
+> calls to fwnode_handle_put(). Depending on the complexity of the loop
+> and its error handling, the code gets simplified and it gets easier to
+> follow.
+> 
+> The non-scoped variant of the macro is error-prone, and it has been the
+> source of multiple bugs where the child node refcount was not
+> decremented accordingly in error paths within the loops. The first patch
+> of this series is a good example, which fixes that kind of bug that is
+> regularly found in node iterators.
+> 
+> The uses of device_for_each_child_node() with no early exits have been
+> left untouched because their simpilicty justifies the non-scoped
+> variant.
+> 
+> Note that the child node is now declared in the macro, and therefore the
+> explicit declaration is no longer required.
+> 
+> The general functionality should not be affected by this modification.
+> If functional changes are found, please report them back as errors.
 
-Schematic mentions vddtx, vdda, vdd and vbus, so unsure about that.
-VDDTX is the one with 2.8V, VDD and VBUS are at 1.8V and VDDA is grounded,
-it just gets the input from GDNA from the same touch sensor.
 
-> As the vendor kernel seem to
-> set i2c to gpio mode, so probably because the vio-supply is powered
-> down according to the board file you posted.
-> So it might be vio-supply only or vio and vdd-supply combined.
-> In any case document what you have seen in the vendor kernel.
+Thank you for this series. It may now benefit from the next steps:
 
-https://github.com/Unlegacy-Android/android_kernel_ti_omap4/blob/3.4/common/arch/arm/mach-omap2/board-espresso-input.c
-This just makes it more confusing. Very confused on what is what now xD.
-reg_touch_ldo_en is 2.8V which goes to VDDTX, it is gpmc_nwp.gpio_54 - TSP_LDO_ON
-ldo6 is 1.8V presumably ldo6 (VAP_IO_1.8V) which goes to VDD, VBUS.
+1) converting to return dev_err_probe() or dev_warn_probe() directly since
+   the goto had been replaced by direct return, hence saving even more LoCs;
 
-> basically says that standard touchscreen properties are accepted below
-> rmi4-f11. 
+2) dropping or refactoring the complex conditions due to your nice series
+   being applied.
 
-But we do not use any of those properties. If you're talking about the
-touchscreen-size-x/y, even in the examples those are out of rmi4-f11, in
-the parent node.
+I'll comment individually on some to show what I meant by the above.
 
-Best Regards,
-Mithil
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
