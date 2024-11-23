@@ -1,83 +1,126 @@
-Return-Path: <linux-kernel+bounces-419217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 996F89D6AE8
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 19:52:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D85FE9D6AE9
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 19:53:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34B0AB20D4C
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 18:52:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CCF9161CD7
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 18:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF2D18628F;
-	Sat, 23 Nov 2024 18:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1EC1836D9;
+	Sat, 23 Nov 2024 18:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EFzjoxU1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IRIREZZL"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DE62FE33;
-	Sat, 23 Nov 2024 18:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966DAEADC;
+	Sat, 23 Nov 2024 18:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732387918; cv=none; b=R8GwPN4Sj4pbG98Rj+zO3KO5p6wx0CvK9317oUcbaAAT4lsgH3Q4uS0Ud4egjVurO2ac3w4Fp8flojXBIAWnK2Ch1f42M4ce0NExhpGOAMXdWsVasAFPQG3S94r1Y6PPYWlezCtfvFcLWdZGmFrU3L6D6L116dNdtZ6Pp/jBPFs=
+	t=1732387986; cv=none; b=VE0hF0PE73ut4vICPp9UOW/CzTamkyfhAX1MeJx2ZL1y7c6g7Ay+92ZgN0RZZgSd4cm02/hY//LJyfgSZSmAmaxXu1+C26XH2jYVuP6EuUw57l6TB+Vy/qaRHTEtRumJzr7OLFsMaAPB1a7qWdu+TY+PbJqU0liNL+tVx9iRGSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732387918; c=relaxed/simple;
-	bh=rN6eJiPKJkIM95ZTHaovy+TpATtWEdVFaV03crZ//Lk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a5fvUxSW7G4QyRkY316VNu/8fDsAVpo0IKQTpN2qLMP+xApyqrJMNuBvy+kZh1Iio3C2y87TOMYODnDbXU2Fe8EKsoq3xA+Foe4+XkBRKPNOZaJi9KHDASNJ7zx6k8+f57Kls58ZAwt6/gx624CMJ6SAJH92I7853BiQ5dRxlxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EFzjoxU1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2AFAC4CECD;
-	Sat, 23 Nov 2024 18:51:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732387918;
-	bh=rN6eJiPKJkIM95ZTHaovy+TpATtWEdVFaV03crZ//Lk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EFzjoxU1Kk3jEjTEmMv8zu9yJeo+MnsZuFW9zZ9Urk6ZQob+x6meG92fol0oZ+oap
-	 yDYfQOtXXDDHfm1Vkepkby7FIfV31jQ3K2HcTUQMVzfWvN6RIFOgXnG1eG3hKi/CKT
-	 qsdvWsSFGiuTHrCf+L4ewxF0bjmuC0Xrr2h4N9xofNSV4R99z5LMMGeu0oBZmdmHO2
-	 qI1dk5A7zdj12InJ0hPHS107ZQAhqS26dO0J2FPQ5HJWN9RzvePWCOord3wbYF1z6z
-	 5zuIj5/8Nc/Kzs5H1dH0nAc5HSm9kaU0bC6JRR1CEhnmtWMp1tz1nW0g7lg2ZPN90d
-	 EHKaeerTEJlKg==
-Message-ID: <a37d0a88-095a-4f18-b79e-16ee1927c953@kernel.org>
-Date: Sat, 23 Nov 2024 11:51:57 -0700
+	s=arc-20240116; t=1732387986; c=relaxed/simple;
+	bh=N/kdCp8Cukl2JF1zdvwDE0yC1vDgRr5jd/C661u4hmo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KawXJ1yZgrWAIyMZfsY/gy5lfZcYmBn6IATl5JA5ZZgG/AR5G5beUX8soyBd5LuCWClX8tNQxvsSvVF2zQhJdmbcnEfr25/Be2VSgU4x/N+BaK7AWNhtZP0DM+WvwiX3320740OHyvLst/+uZjt3PQHVarPnZa68QDMJ2CKuD3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IRIREZZL; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5cfcd99846fso4154250a12.1;
+        Sat, 23 Nov 2024 10:53:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732387983; x=1732992783; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G+P8IuRNOPnYl68Wr1phF57tcI/VLlzApQAJOR/FrHk=;
+        b=IRIREZZL9EWDvBvqtBqESz/knI0wBSLgK9mNwQRjxs2tzcaEZSyAzUXnQVC5kyXu3w
+         8hoNeCTyd876vZzHO5rmQwzXgAd/C9fu0potU6zXjzDgvNQxIjcDvhOZ4NtBYekEakvO
+         lpoStAK3i44x+Dzaw62kBp6Mrsbfgh4cnvJa+gEEu1F/67cBeMpUy3NTprcFxZZHRnKb
+         DJZYMT7GUnLe9neRgobRzCA1qrav+yAx0UTslQ4Rex84E4gBQYR3kBtturUowiTjaqVT
+         6XWw0R4LKBfrla52wV/WYwDPCDygYbtfT1GL3drKTnrZTKmF56jwt4Fx+eWHcMnPe8vX
+         Cugw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732387983; x=1732992783;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G+P8IuRNOPnYl68Wr1phF57tcI/VLlzApQAJOR/FrHk=;
+        b=eW+TW0ERmAuQKSQMmUkdygkILd5shtHUzW3tFVL9vU6e21fPjGAHY5jl1iomQ6Zsj0
+         Whi+KnKmw+KD4jB7XXpAhbxAR8bUQcISFfpFx4h2BqqoWhN9VHzmbwCiUobIHFJj7Ma8
+         mRfTGBvaoV0JTGXeoQ0+V+aJYt4d7YTtyOJAHYlp2KKqxyUTpc1v8KMJ6Tz0+7U77pV4
+         7M2bbA6LshJCRcwB5gfUrljgsYa4T/m01Ik8FwB87/F2ydVKoesqaywLMVmDyi8mANd7
+         Gdtg5H+KCNdctAWMD9VbghPZ7fMm53rZd6N5ESw8y3nDDahbgrWzPisXKSUTo9FlFSBV
+         J+9A==
+X-Forwarded-Encrypted: i=1; AJvYcCV6fFFqGtjGVk7Nw/s8315BNV7Y3C6HnRyf1EGUuZTgftXmobKyalC+BhCXS2XcZ/lq/HMTbME1WOSS@vger.kernel.org, AJvYcCVrKQU1bIelImErZz7hpVk5qmF+71wXtv9JF+zXqWq/RoaJBlgK39cFMg/uKgJyWbO6/iFfCUqaeQP3M9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycstgkCw0FUtCJJcTUvUSXrXpPiQp8hwrVq/eFAAWVUIOwMrfp
+	mpYReINAAqo45VPZhZE4tqg0YU0eO4aBhTQtuIFhhD2mBF20fTFLZLtUjl4DXa4HgJ4Xc725Hsg
+	RwnA58zKDggXOlD0Ohm3h6I0mAg/WDQ==
+X-Gm-Gg: ASbGncuiIsqHmsAbmk5zZq0K+0rEPJiBtBGTOWO9hf/bDGTaK9fv5m4ro/74Uyfq/Gb
+	oFUu7Ht8RCxngOHDqYB82eYr+DKUmJT0=
+X-Google-Smtp-Source: AGHT+IFV/1j7SFZZrVDwqT9kxWcHOutCC0ZE5Vf5FSesY1wixS8qSP57oJOeNWwZ4gfC/GimnirqXvzTBk7G+EqLPXk=
+X-Received: by 2002:a17:906:cc1:b0:aa5:2817:cd34 with SMTP id
+ a640c23a62f3a-aa52817cff6mr413960166b.57.1732387982610; Sat, 23 Nov 2024
+ 10:53:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 net 2/2] selftests/rtnetlink.sh: add mngtempaddr test
-Content-Language: en-US
-To: Hangbin Liu <liuhangbin@gmail.com>, netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Shuah Khan <shuah@kernel.org>, Sam Edwards <cfsworks@gmail.com>,
- =?UTF-8?Q?Maciej_=C5=BBenczykowski?= <maze@google.com>,
- Alex Henrie <alexhenrie24@gmail.com>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <20241120095108.199779-1-liuhangbin@gmail.com>
- <20241120095108.199779-3-liuhangbin@gmail.com>
-From: David Ahern <dsahern@kernel.org>
-In-Reply-To: <20241120095108.199779-3-liuhangbin@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241123075105.1082661-1-mjguzik@gmail.com> <20241123161955.GO1926309@frogsfrogsfrogs>
+In-Reply-To: <20241123161955.GO1926309@frogsfrogsfrogs>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Sat, 23 Nov 2024 19:52:50 +0100
+Message-ID: <CAGudoHEHSoFzadeNW3dhStCVy03G61X+Rd50SQKYt=aDRv6BYw@mail.gmail.com>
+Subject: Re: [PATCH] xfs: use inode_set_cached_link()
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: dchinner@redhat.com, cem@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/20/24 2:51 AM, Hangbin Liu wrote:
-> Add a test to check the temporary address could be added/removed
-> correctly when mngtempaddr is set or removed/unmanaged.
-> 
-> Signed-off-by: Sam Edwards <cfsworks@gmail.com>
-> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-> ---
->  tools/testing/selftests/net/rtnetlink.sh | 95 ++++++++++++++++++++++++
->  1 file changed, 95 insertions(+)
-> 
+On Sat, Nov 23, 2024 at 5:19=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
+>
+> On Sat, Nov 23, 2024 at 08:51:05AM +0100, Mateusz Guzik wrote:
+> > For cases where caching is applicable this dodges inode locking, memory
+> > allocation and memcpy + strlen.
+> >
+> > Throughput of readlink on Saphire Rappids (ops/s):
+> > before:       3641273
+> > after:        4009524 (+10%)
+> >
+> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > ---
+> >
+> > First a minor note that in the stock case strlen is called on the buffe=
+r
+> > and I verified that i_disk_size is the value which is computed.
+> >
+> > The important note is that I'm assuming the pointed to area is stable
+> > for the duration of the inode's lifetime -- that is if the read off
+> > symlink is fine *or* it was just created and is eligible caching, it
+> > wont get invalidated as long as the inode is in memory. If this does no=
+t
+> > hold then this submission is wrong and it would be nice(tm) to remedy
+> > it.
+>
+> It is not stable for the lifetime of the inode.  See commit
+> 7b7820b83f2300 ("xfs: don't expose internal symlink metadata buffers to
+> the vfs").  With parent pointers' ability to expand the symlink xattr
+> fork area sufficiently to bump the symlink target into a remote block
+> and online repair's ability to mess with the inode, direct vfs access of
+> if_data has only become more difficult.
+>
 
-Reviewed-by: David Ahern <dsahern@kernel.org>
+That's a bummer.
 
-
+Thanks for the review.
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
