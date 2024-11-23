@@ -1,73 +1,80 @@
-Return-Path: <linux-kernel+bounces-418964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F75B9D67DF
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 07:49:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F26F9D67E3
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 07:54:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F52B281BAA
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 06:49:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55BF7281A81
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 06:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B2A1662E7;
-	Sat, 23 Nov 2024 06:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BDQGY+Mf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C701779AE;
+	Sat, 23 Nov 2024 06:54:26 +0000 (UTC)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6670829405
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 06:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A9D13BC2F;
+	Sat, 23 Nov 2024 06:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732344560; cv=none; b=iiOp09i+Dh5PwasYYhQx2ISGx4JrKRbedzHWF4+7EdASl1olGFO2bb79bhU2GZibCZdZj/DBeugOLgV6wg7k0voNAIBvfyhVaLNiRVaJWuxtTm7BlIMTyAaIIEsWSwqjhNlaY04tPckH3FVPUIWrOS9S57J4f0ke8Vt1pqDOh7I=
+	t=1732344865; cv=none; b=EZ6aMvaZ+zmvCzrTDokx9kjHOm7qHr1w9L2+oDaIKwVP3ODdVqEPEROJj/yUlK8+h2YU/JpzqSzWuhFTXuU5boblGRjes4HCJ4w2SjGC7hLWrC3ROFY/JDUlFss1bMGnZn0uh4FdbI1fFG8IqlaYCmzYm+Yl/1dcDwseUUvjnNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732344560; c=relaxed/simple;
-	bh=gW35Ha7gO4QWdWA4k6QSSsjT4xbUXw7Vsyy31OFPbaI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=mXyfjXnmlYdNZhjFEwSuIfMT2tQKWhIifZrs7lRyOMZtWHc1v1DAovz4R4klQySY3I2pt/5pl3DRiKncIGA5V4VQgusk/6VYL+oCyj3m232WSZJciIK+cXZmhw3aJ13jA3zFGr2psF3H9kuzVhzCSjecYzgRnXCQdziq8fJu+A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BDQGY+Mf; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732344558; x=1763880558;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=gW35Ha7gO4QWdWA4k6QSSsjT4xbUXw7Vsyy31OFPbaI=;
-  b=BDQGY+MfnNytL4z4m7jREP6nDbSx1DkAlAujM7aFfu+BfU2zcJu/d8vY
-   cD2hDpgL7nhaLfHR9zQIGF8c84eF5Q0jSi/jkKoZzHlbBakPwQdO031cx
-   q0W93HXo/xxNkS/qEXBRge9npJWcVe6Cgm6xR1x6Hkz9Ix4LyEFakWCz6
-   N5w1uwArl+Bt1rKD7PAV6/EPWr9wp+ZSYLnYOWL5in4YEaNOSVvQMSPl0
-   vF6YQOGYa2aW+CPcaJF2wlafyRVhVUKfK6XaJyupAqV9E5yYK2lDWt9e8
-   ZuIAIOt78fMtAu9r6sb0T2K+eAs6CjaYtqmelmZT6Lxb/2JsuCsohSkc6
-   A==;
-X-CSE-ConnectionGUID: QLeBbaKvSwqnXHA+sJOdUw==
-X-CSE-MsgGUID: 5AyGCfTCQraBmI+o0qRbng==
-X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="43881146"
-X-IronPort-AV: E=Sophos;i="6.12,178,1728975600"; 
-   d="scan'208";a="43881146"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 22:49:17 -0800
-X-CSE-ConnectionGUID: oek+gPJvRvSoSUqK/U46UA==
-X-CSE-MsgGUID: 7Y+DKgPuTzuxS8XLpIdJcw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,178,1728975600"; 
-   d="scan'208";a="91210467"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 22 Nov 2024 22:49:16 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tEjxC-0004Tr-0p;
-	Sat, 23 Nov 2024 06:49:14 +0000
-Date: Sat, 23 Nov 2024 14:48:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Thangaraj Samynathan <thangaraj.s@microchip.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>
-Subject: drivers/spi/spi-pci1xxxx.c:373:9: sparse: sparse: incorrect type in
- argument 1 (different address spaces)
-Message-ID: <202411231439.49BinLEA-lkp@intel.com>
+	s=arc-20240116; t=1732344865; c=relaxed/simple;
+	bh=hG1Lmguo6Ylsxt9Mwo1Nm5xmwIWSme4uTQPZmWOWCIw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sn3qD0vt9zz1jykrORLeIoULWpPlxqD97ohpCOZ9s8nYiznCwWIyYtjbvSzR1220FILWNqNIQnfL5KEci+D199u1IdAnuazYGCYWQHWRAXwFmxNYYoTRNDvSE55cEKSm+ibz7GbK45aAG+jzumasWk5koAVy54dzkCjgVmQ/61w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; arc=none smtp.client-ip=92.121.34.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8F6B11A137C;
+	Sat, 23 Nov 2024 07:54:16 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8194C1A0273;
+	Sat, 23 Nov 2024 07:54:16 +0100 (CET)
+Received: from lsv051416.swis.nl-cdc01.nxp.com (lsv051416.swis.nl-cdc01.nxp.com [10.168.48.122])
+	by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 0D251202AF;
+	Sat, 23 Nov 2024 07:54:16 +0100 (CET)
+Date: Sat, 23 Nov 2024 07:54:16 +0100
+From: Jan Petrous <jan.petrous@oss.nxp.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Minda Chen <minda.chen@starfivetech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
+	Keyur Chudgar <keyur@os.amperecomputing.com>,
+	Quan Nguyen <quan@os.amperecomputing.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	NXP S32 Linux Team <s32@nxp.com>
+Subject: Re: [PATCH v5 07/16] net: dwmac-intel-plat: Use helper rgmii_clock
+Message-ID: <Z0F8GL2NnYmUuE/S@lsv051416.swis.nl-cdc01.nxp.com>
+References: <20241119-upstream_s32cc_gmac-v5-0-7dcc90fcffef@oss.nxp.com>
+ <20241119-upstream_s32cc_gmac-v5-7-7dcc90fcffef@oss.nxp.com>
+ <ZzzAe8s2UgPYHnkv@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,71 +83,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <ZzzAe8s2UgPYHnkv@shell.armlinux.org.uk>
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   2a163a4cea153348172e260a0c5b5569103a66a3
-commit: 9538edeb72c989a4b90964ae4bba107eaf21a791 spi: mchp-pci1xxxx: DMA support for copying data to and from SPI Buf
-date:   10 months ago
-config: sh-randconfig-r131-20241122 (https://download.01.org/0day-ci/archive/20241123/202411231439.49BinLEA-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20241123/202411231439.49BinLEA-lkp@intel.com/reproduce)
+On Tue, Nov 19, 2024 at 04:44:43PM +0000, Russell King (Oracle) wrote:
+> On Tue, Nov 19, 2024 at 04:00:13PM +0100, Jan Petrous via B4 Relay wrote:
+> > @@ -31,27 +31,15 @@ struct intel_dwmac_data {
+> >  static void kmb_eth_fix_mac_speed(void *priv, unsigned int speed, unsigned int mode)
+> >  {
+> >  	struct intel_dwmac *dwmac = priv;
+> > -	unsigned long rate;
+> > +	long rate;
+> >  	int ret;
+> 
+> So the following becomes:
+> 
+> >  
+> >  	rate = clk_get_rate(dwmac->tx_clk);
+> >  
+> > +	rate = rgmii_clock(speed);
+> > +	if (rate < 0) {
+> >  		dev_err(dwmac->dev, "Invalid speed\n");
+> > +		return;
+> >  	}
+> 
+> Now that I've removed the deleted lines, we can see that the
+> clk_get_rate() call there is now redundant. Please remove in
+> this change.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411231439.49BinLEA-lkp@intel.com/
+Funny I didn't notice that, thanks. I will remove it in v6.
 
-sparse warnings: (new ones prefixed by >>)
-   drivers/spi/spi-pci1xxxx.c:369:22: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
-   drivers/spi/spi-pci1xxxx.c:369:22: sparse:     expected void *base
-   drivers/spi/spi-pci1xxxx.c:369:22: sparse:     got void [noderef] __iomem *
-   drivers/spi/spi-pci1xxxx.c:371:22: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
-   drivers/spi/spi-pci1xxxx.c:371:22: sparse:     expected void *base
-   drivers/spi/spi-pci1xxxx.c:371:22: sparse:     got void [noderef] __iomem *
->> drivers/spi/spi-pci1xxxx.c:373:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *ptr @@     got void * @@
-   drivers/spi/spi-pci1xxxx.c:373:9: sparse:     expected void const volatile [noderef] __iomem *ptr
-   drivers/spi/spi-pci1xxxx.c:373:9: sparse:     got void *
-   drivers/spi/spi-pci1xxxx.c:374:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *ptr @@     got void * @@
-   drivers/spi/spi-pci1xxxx.c:374:9: sparse:     expected void const volatile [noderef] __iomem *ptr
-   drivers/spi/spi-pci1xxxx.c:374:9: sparse:     got void *
-   drivers/spi/spi-pci1xxxx.c:375:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *ptr @@     got void * @@
-   drivers/spi/spi-pci1xxxx.c:375:9: sparse:     expected void const volatile [noderef] __iomem *ptr
-   drivers/spi/spi-pci1xxxx.c:375:9: sparse:     got void *
-   drivers/spi/spi-pci1xxxx.c:376:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *ptr @@     got void * @@
-   drivers/spi/spi-pci1xxxx.c:376:9: sparse:     expected void const volatile [noderef] __iomem *ptr
-   drivers/spi/spi-pci1xxxx.c:376:9: sparse:     got void *
-   drivers/spi/spi-pci1xxxx.c:377:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *ptr @@     got void * @@
-   drivers/spi/spi-pci1xxxx.c:377:9: sparse:     expected void const volatile [noderef] __iomem *ptr
-   drivers/spi/spi-pci1xxxx.c:377:9: sparse:     got void *
-   drivers/spi/spi-pci1xxxx.c:379:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *ptr @@     got void * @@
-   drivers/spi/spi-pci1xxxx.c:379:9: sparse:     expected void const volatile [noderef] __iomem *ptr
-   drivers/spi/spi-pci1xxxx.c:379:9: sparse:     got void *
+Interesting the redundant clk_get_rate() is there from v5.10.0.
+I hope that there was no reason for the clock call, like any platform
+discrepancy requiring reading the clock before setting.
 
-vim +373 drivers/spi/spi-pci1xxxx.c
+BTW, I also removed Reviewed-by: Andrew as the patch was changed.
 
-   362	
-   363	static void pci1xxxx_spi_setup_dma_from_io(struct pci1xxxx_spi_internal *p,
-   364						   dma_addr_t dma_addr, u32 len)
-   365	{
-   366		void *base;
-   367	
-   368		if (!p->hw_inst)
- > 369			base = p->parent->dma_offset_bar + SPI_DMA_CH0_WR_BASE;
-   370		else
-   371			base = p->parent->dma_offset_bar + SPI_DMA_CH1_WR_BASE;
-   372	
- > 373		writel(DMA_INTR_EN, base + SPI_DMA_CH_CTL1_OFFSET);
-   374		writel(len, base + SPI_DMA_CH_XFER_LEN_OFFSET);
-   375		writel(lower_32_bits(dma_addr), base + SPI_DMA_CH_DAR_LO_OFFSET);
-   376		writel(upper_32_bits(dma_addr), base + SPI_DMA_CH_DAR_HI_OFFSET);
-   377		writel(lower_32_bits(SPI_PERI_ADDR_BASE + SPI_MST_RSP_BUF_OFFSET(p->hw_inst)),
-   378		       base + SPI_DMA_CH_SAR_LO_OFFSET);
-   379		writel(upper_32_bits(SPI_PERI_ADDR_BASE + SPI_MST_RSP_BUF_OFFSET(p->hw_inst)),
-   380		       base + SPI_DMA_CH_SAR_HI_OFFSET);
-   381	}
-   382	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+BR.
+/Jan
 
