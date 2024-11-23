@@ -1,101 +1,82 @@
-Return-Path: <linux-kernel+bounces-419159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 577589D6A1E
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:28:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58B069D6A23
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:28:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16AF8281C39
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:28:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDDC7B217F5
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C866813B2A8;
-	Sat, 23 Nov 2024 16:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60CA313A265;
+	Sat, 23 Nov 2024 16:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OdjP/2gm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EYZoh5n/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A13A7080E;
-	Sat, 23 Nov 2024 16:28:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6F142A91;
+	Sat, 23 Nov 2024 16:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732379285; cv=none; b=sUy7KAo+s2kds1Pwvo2cZb3rayyqxq2gLA41mbR0fsS4kfdSjVajyHxnTd4fr0dOODrKILu1ZDHFsT/R0Ln5S8thOyG2rBPR+q1db+m2/qlffLY0vffYLubRfYmTaOMCk+h6GVIMMl5b9CBXtyecnT/03AOZC9YVHYRB4mk37xI=
+	t=1732379326; cv=none; b=eYsUw0NAOgeEzB234LUy2wKmcn5w8QxrWR9/XvCS5fHtaxMr6ew95pCZMLV4gsLensXwgHFQk0iWcBSnPL7WdiKqiIdEETPI0ETgJNNhQ3U5s5Mwyc8WLDSXPT6w5IEH+DK31mXuIFuqrbOVuwO3lZiXK5ggFhugZTrIm/XsYRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732379285; c=relaxed/simple;
-	bh=4kW1hmaRcvlW822s40y2EmNJ6JjAbCgKF+oCMp92zm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JUW5av3YGKAPDZNZYXXCXDsrAgw9wGFKj9Z+LGuG1tsv9KeB4AbkTJ+o95LfNpjWQBpXFEa7ZMpIDHkgLp7ntLSY3UCthkz/p+Dx2JGRDDwwZ9qJUuRO7rwxs+1GU93pB2P55GhTy1/MPb0bV8Y2vJQYEO+91TDjmEGzgRyOXYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OdjP/2gm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17970C4CECD;
-	Sat, 23 Nov 2024 16:28:04 +0000 (UTC)
+	s=arc-20240116; t=1732379326; c=relaxed/simple;
+	bh=kySpFhbuDlK79L1DXJDJGSiLkLqr7ztdRw+nazqxhk4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jWIXbmuYbl726PPhtF5WdGcVurb0IhekNMwJwkkox9XNKGpy4s0s/t/NYyOHxcIkyjU7vAS8v46tGIKGohnag2t8Id9i61rP5yQCjWoncpqcYkwbPFLnbW3W9k2c+s1oaTk3EzuwbggwbrvM78i69xVk7Q0JUcuCnRKuXss0P1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EYZoh5n/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FD54C4CECD;
+	Sat, 23 Nov 2024 16:28:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732379284;
-	bh=4kW1hmaRcvlW822s40y2EmNJ6JjAbCgKF+oCMp92zm8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OdjP/2gm7hiTwtGDqfK0SBqJNDJFcKbVC0EY/2C+H0qYmNbeQAhvEUp+uf3cKSsFC
-	 zPn/BP7qIIsTA8dHcM9ToBBd5PpdR8mlERcZV1FK8mtkm46H4cPTY3y38RPRON6j/i
-	 qbY/RI3amOroUnQdw7QGiKrJH5usRR7lEYxY9NUhZ2IF89sE31ze9/tw1iLlv6ywVP
-	 NqbNZhFcWSDIgfIKczxfXRjY6HcGEWlev1BH+aFU4YowMy3oymW29pKSsOl1bXcoYQ
-	 dahDTEdSpMlH9U7qFuoZkvkmo4mnrPWaOyXUUluYTHg0HUrEXytlpLvRO8lcpLSnls
-	 gLqZpjYOC1OiA==
-Date: Sat, 23 Nov 2024 17:28:01 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Fange Zhang <quic_fangez@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krishna Manikandan <quic_mkrishn@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Li Liu <quic_lliu6@quicinc.com>, 
-	Xiangxu Yin <quic_xiangxuy@quicinc.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 2/9] dt-bindings: display/msm: dsi-controller-main:
- Document SM6150
-Message-ID: <grizxfiq3zlquijtufhtjnnwlq2cl264ouzxrglroafreoujoz@lk2rjcaa6lxy>
-References: <20241122-add-display-support-for-qcs615-platform-v3-0-35252e3a51fe@quicinc.com>
- <20241122-add-display-support-for-qcs615-platform-v3-2-35252e3a51fe@quicinc.com>
+	s=k20201202; t=1732379326;
+	bh=kySpFhbuDlK79L1DXJDJGSiLkLqr7ztdRw+nazqxhk4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EYZoh5n/6zejnro07l1COqZe5lFqSkOLB5y/Ykl2Pwp9Cr+nyXqlQumnXiPdax+Ax
+	 z03ZfNwkxgW6BVuozi5//n1UrWBn3mPUXR+MhvfC7i/HnnowJnLD7Qz+6GQWIYNR3Y
+	 0JAN/3RpgPU7t1Dwn57aRsaQUmhRofjcvSVPXAKz8lxs8V5OC+yVXmKvPW40nfmea1
+	 v9IMDF6LfgI3lzkaasW3avwjkH0D/sm1Ol2Kh7dTOPW0OWG8cPvPhLea2XMgG0vo1R
+	 /HM+vy05cKRsFc+/dbw3snjnxdzz9xpW9eYgdJyFircroL9Og06a8RmjZeEXvuoKXT
+	 AA1IpnsvdtMrQ==
+Date: Sat, 23 Nov 2024 16:28:38 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: <victor.duicu@microchip.com>
+Cc: <matteomartelli3@gmail.com>, <lars@metafoo.de>,
+ <andy.shevchenko@gmail.com>, <marius.cristea@microchip.com>,
+ <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v13] iio: adc: pac1921: Add ACPI support to Microchip
+ pac1921
+Message-ID: <20241123162838.1005e0f2@jic23-huawei>
+In-Reply-To: <20241115133436.13204-1-victor.duicu@microchip.com>
+References: <20241115133436.13204-1-victor.duicu@microchip.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241122-add-display-support-for-qcs615-platform-v3-2-35252e3a51fe@quicinc.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 22, 2024 at 05:56:45PM +0800, Fange Zhang wrote:
-> From: Li Liu <quic_lliu6@quicinc.com>
+On Fri, 15 Nov 2024 15:34:36 +0200
+<victor.duicu@microchip.com> wrote:
+
+> From: Victor Duicu <victor.duicu@microchip.com>
 > 
-> Document general compatibility of the DSI controller on SM6150.
+> This patch implements ACPI support to Microchip pac1921.
+> The driver can read the shunt resistor value and label from the ACPI table.
 > 
-> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
-> Signed-off-by: Fange Zhang <quic_fangez@quicinc.com>
-> ---
->  Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
-> index b0fd96b76ed1376e429a6168df7e7aaa7aeff2d3..a7fbb5af4b0583e88ebcad07dd004046c38f95ee 100644
-> --- a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
-> +++ b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
-> @@ -30,6 +30,7 @@ properties:
->                - qcom,sdm845-dsi-ctrl
->                - qcom,sm6115-dsi-ctrl
->                - qcom,sm6125-dsi-ctrl
-> +              - qcom,sm6150-dsi-ctrl
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Acked-by: Matteo Martelli <matteomartelli3@gmail.com>
+> Signed-off-by: Victor Duicu <victor.duicu@microchip.com>
 
-This is incomplete change. Where is the rest for clocks? See entire
-file.
+Looks good. Applied to the testing branch of iio.git which will be rebased after
+rc1 is available.
 
-Best regards,
-Krzysztof
+Thanks,
 
+Jonathan
 
