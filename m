@@ -1,345 +1,128 @@
-Return-Path: <linux-kernel+bounces-419258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D269D6B71
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 21:27:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A5E99D6B73
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 21:28:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 566F52829BC
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 20:27:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FDC2161DE4
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 20:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C221946BC;
-	Sat, 23 Nov 2024 20:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4AB61A01BE;
+	Sat, 23 Nov 2024 20:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RtvM2DLK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YF5uUcdX"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8D317BA6;
-	Sat, 23 Nov 2024 20:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB5117BA6;
+	Sat, 23 Nov 2024 20:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732393631; cv=none; b=eL1uSiWKI7BoYbFGZyAfZo/0np6R2aMOf1uEMT80eiJ9kRZB/h0KE+6cTXkAV4+1EXK0/iEZcbdlYmn8Io34BajAy69E+NmnZUXGJo3wrxRZqFD68RTePKlzAPpG1CTiVUJEgsoc7ZoDSe2ZROMA7W2kf8oP8K2h6FINDmeJW2g=
+	t=1732393680; cv=none; b=QNdg1O6pKJ7jg1YFmYu7lZgV8sKHo+sLWcZfpH2wXU3G84ZuTDPCP/s3w8cJ427ADNnxH0+7nlKYH3cg6Ei9grk3oMpIbC2KCq7ERZaMUieuE4IRqEJdM2SO/5uuEB5xP/zDzoqRZSaDQzdWfh1oUMYrXXHlvo/us6mxvbtGtxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732393631; c=relaxed/simple;
-	bh=bamuWqU7XIOoHx+0BrSVqnrXk1r+Qavb3qzS6YWWLb8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=P/zzgYmpCtIBwutBeZrZrqA2zSfQCOgLnreM7ns0V4wuOlP29YMenOo/CFaJJX+IiRsGRGZZ8j0YYTl97V5a3ep2AT/TUU7HxzyNSS/OCMedozSfcNDljYhNAGElMcFJaK2Qemtg8HlgKlO9ShbdJvzhUAlqtsqMzUd5aGikGuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RtvM2DLK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 76B8CC4CECD;
-	Sat, 23 Nov 2024 20:27:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732393630;
-	bh=bamuWqU7XIOoHx+0BrSVqnrXk1r+Qavb3qzS6YWWLb8=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=RtvM2DLKuLuk15/o315JVdqbSszKvPm+282JDRvNOkO0HP07L0eRJgYDyE4P605nB
-	 oy+uG8VgnWnYTKc5m0YrrHoVwUvv4PWbrjtbGFAba5DuBegIJ5O1ReqGDSp7CAl8dI
-	 Hj84gRSEif+081lFF04yhuyc51JmnGWf6AdpHUO+96pLTKdz5ijFuPadldHVaaDMgV
-	 8feh/xCQb3i7QvM0DLDCbPMs5jm5ESEHbiXtLWxzlmUSbleIcNTpH4NHW+JydLQLvj
-	 T84/Ez2ygHCHjYeMrVKV1tyO/vM4e0uLvYkzVo4WtdjV5uyxkYObi5SE3O6x51NpuE
-	 7dlrdanMXb+SA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C533E66884;
-	Sat, 23 Nov 2024 20:27:10 +0000 (UTC)
-From: Miroslav Ondra via B4 Relay <devnull+ondra.faster.cz@kernel.org>
-Date: Sat, 23 Nov 2024 21:26:51 +0100
-Subject: [PATCH] serial: amba-pl011: Fix RTS handling in RS485 mode
+	s=arc-20240116; t=1732393680; c=relaxed/simple;
+	bh=SEGoX0bHr13Xtp65WJRcTpnLvGjowmoEsWzmlpyXLhY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kJuhdTJvmDRjOJEZ/msAHfYZs3m/i9VNUqqO2fO01RhwfWcEPIaZ+Pni33JGRUeoPQrHwqn4bLDvF/oOW9JnH4TTt1VIhN2oIMn5clCrDrWLRsWQfq2n4vPxysxxkz2166MVQgPQil8RoSYYs2pmpeslT0PYT8QvlLY3GeC0++E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YF5uUcdX; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=257ZdKH+aJHSa1dbnLRZzHvINCigQhG1AP2blIFIDRU=; b=YF5uUcdXH9jLpzmqk7mrIr+sj4
+	BGQFq7nVL90ADw+i0YnylVO4Xyslr8X1LE54duXEWUbwMWcqTRvAPMSVvVyifPAuFSSbk2syg2SLh
+	IuSBqje1fLCx6zq4rXUfu6aiS75oD5KeqbNN0u0QqOIDhw3VLxIW7KTSBlrXTJ3IjISVDGER/tDsa
+	cw58bW6gF7p6i4WezVv6mYQK9Xv35xl3RO34vX3Xg5niHLyAQ5xNIkSN35A8/40U/QrID5rbRtS4w
+	5Gg6GsqzjJcGKrBHHepFnso0PtzIBrOu9YsNKWSb1b860OludckAAFG81ytsxAdx6xpmcdCmgA6Ca
+	9cNruIZw==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tEwjH-00000009bQJ-3RPK;
+	Sat, 23 Nov 2024 20:27:45 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 358FE300201; Sat, 23 Nov 2024 21:27:44 +0100 (CET)
+Date: Sat, 23 Nov 2024 21:27:44 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ruan Bonan <bonan.ruan@u.nus.edu>
+Cc: "mingo@redhat.com" <mingo@redhat.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"longman@redhat.com" <longman@redhat.com>,
+	"boqun.feng@gmail.com" <boqun.feng@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kpsingh@kernel.org" <kpsingh@kernel.org>,
+	"mattbobrowski@google.com" <mattbobrowski@google.com>,
+	"ast@kernel.org" <ast@kernel.org>,
+	"daniel@iogearbox.net" <daniel@iogearbox.net>,
+	"andrii@kernel.org" <andrii@kernel.org>,
+	"martin.lau@linux.dev" <martin.lau@linux.dev>,
+	"eddyz87@gmail.com" <eddyz87@gmail.com>,
+	"song@kernel.org" <song@kernel.org>,
+	"yonghong.song@linux.dev" <yonghong.song@linux.dev>,
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+	"sdf@fomichev.me" <sdf@fomichev.me>,
+	"haoluo@google.com" <haoluo@google.com>,
+	"jolsa@kernel.org" <jolsa@kernel.org>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"mhiramat@kernel.org" <mhiramat@kernel.org>,
+	"mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	Fu Yeqi <e1374359@u.nus.edu>
+Subject: Re: [BUG] possible deadlock in __schedule (with reproducer available)
+Message-ID: <20241123202744.GB20633@noisy.programming.kicks-ass.net>
+References: <24481522-69BF-4CE7-A05D-1E7398400D80@u.nus.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241123-master-v1-1-260194426ea3@faster.cz>
-X-B4-Tracking: v=1; b=H4sIAIo6QmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDQ0Nz3dzE4pLUIl3LlDQDE2OTNMNUAxMloOKCotS0zAqwQdGxtbUACRM
- cFlgAAAA=
-X-Change-ID: 20241117-master-9df0434f1e04
-To: Russell King <linux@armlinux.org.uk>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, 
- Lino Sanfilippo <l.sanfilippo@kunbus.com>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
- Miroslav Ondra <ondra@faster.cz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732393629; l=8548;
- i=ondra@faster.cz; s=20241119; h=from:subject:message-id;
- bh=FGGVW5Wr3Ep/j3Q0PJ6AIWBCLnyI3U2bwEdqouJvqso=;
- b=+ip2EURs9JzmLdINhzito+47c2qKB8YFdo4C3D+avTPf+774JAbut1s8OgOfCu+ejFX/ggJNJ
- usG/dNOJA/mCmNpZIfAeCkXtiXeVU53IveWzbYaiR77ZPRmdGdVC5sy
-X-Developer-Key: i=ondra@faster.cz; a=ed25519;
- pk=OgmjYvFJ0npSTnp6LOgY/siJeZ/6t3nOEs4jE9vm0Oc=
-X-Endpoint-Received: by B4 Relay for ondra@faster.cz/20241119 with
- auth_id=282
-X-Original-From: Miroslav Ondra <ondra@faster.cz>
-Reply-To: ondra@faster.cz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <24481522-69BF-4CE7-A05D-1E7398400D80@u.nus.edu>
 
-From: Miroslav Ondra <ondra@faster.cz>
+On Sat, Nov 23, 2024 at 03:39:45AM +0000, Ruan Bonan wrote:
 
-Use hrtimer instead of udelay and mdelay calls in interrupt
-handler to support shared interrupt lines.
-Replace simple bool variable rs485_tx_started by 4-state
-variable rs485_tx_state.
+>  </TASK>
+> FAULT_INJECTION: forcing a failure.
+> name fail_usercopy, interval 1, probability 0, space 0, times 0
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 6.12.0-rc7-00144-g66418447d27b #8 Not tainted
+> ------------------------------------------------------
+> syz-executor144/330 is trying to acquire lock:
+> ffffffffbcd2da38 ((console_sem).lock){....}-{2:2}, at: down_trylock+0x20/0xa0 kernel/locking/semaphore.c:139
+> 
+> but task is already holding lock:
+> ffff888065cbd718 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested kernel/sched/core.c:598 [inline]
+> ffff888065cbd718 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock kernel/sched/sched.h:1506 [inline]
+> ffff888065cbd718 (&rq->__lock){-.-.}-{2:2}, at: rq_lock kernel/sched/sched.h:1805 [inline]
+> ffff888065cbd718 (&rq->__lock){-.-.}-{2:2}, at: __schedule+0x140/0x1e70 kernel/sched/core.c:6592
+> 
+> which lock already depends on the new lock.
+> 
+>        _printk+0x7a/0xa0 kernel/printk/printk.c:2432
+>        fail_dump lib/fault-inject.c:46 [inline]
+>        should_fail_ex+0x3be/0x570 lib/fault-inject.c:154
+>        strncpy_from_user+0x36/0x230 lib/strncpy_from_user.c:118
+>        strncpy_from_user_nofault+0x71/0x140 mm/maccess.c:186
+>        bpf_probe_read_user_str_common kernel/trace/bpf_trace.c:215 [inline]
+>        ____bpf_probe_read_user_str kernel/trace/bpf_trace.c:224 [inline]
+>        bpf_probe_read_user_str+0x2a/0x70 kernel/trace/bpf_trace.c:221
+>        bpf_prog_bc7c5c6b9645592f+0x3e/0x40
+>        bpf_dispatcher_nop_func include/linux/bpf.h:1265 [inline]
+>        __bpf_prog_run include/linux/filter.h:701 [inline]
+>        bpf_prog_run include/linux/filter.h:708 [inline]
+>        __bpf_trace_run kernel/trace/bpf_trace.c:2316 [inline]
+>        bpf_trace_run4+0x30b/0x4d0 kernel/trace/bpf_trace.c:2359
+>        __bpf_trace_sched_switch+0x1c6/0x2c0 include/trace/events/sched.h:222
+>        trace_sched_switch+0x12a/0x190 include/trace/events/sched.h:222
 
-Signed-off-by: Miroslav Ondra <ondra@faster.cz>
----
-Data loss on serial line was observed during communication through
-serial ports ttyAMA1 and ttyAMA2 interconnected via RS485 transcievers.
-Both ports are in one BCM2711 (Compute Module CM40) and they share 
-the same interrupt line.
-
-The problem is caused by long waiting for tx queue flush in the function
-pl011_rs485_tx_stop. Udelay or mdelay are used to wait.
-The function is called from the interrupt handler. If multiple devices
-share a single interrupt line, late processing of pending interrupts
-and data loss may occur. When operation of both devices are synchronous,
-collisions are quite often.
-
-This rework is based on the method used in tty/serial/imx.c
-Use hrtimer instead of udelay and mdelay calls.
-Replace simple bool variable rs485_tx_started by 4-state variable
-rs485_tx_state.
----
- drivers/tty/serial/amba-pl011.c | 126 ++++++++++++++++++++++++++++++----------
- 1 file changed, 96 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
-index 69b7a3e1e418e200944b0b0429b6341d71ecff26..04212c823a91d5a343327292d8ffd95be1465473 100644
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -248,6 +248,13 @@ struct pl011_dmatx_data {
- 	bool			queued;
- };
- 
-+enum pl011_rs485_tx_state {
-+	OFF,
-+	WAIT_AFTER_RTS,
-+	SEND,
-+	WAIT_AFTER_SEND,
-+};
-+
- /*
-  * We wrap our port structure around the generic uart_port.
-  */
-@@ -261,8 +268,10 @@ struct uart_amba_port {
- 	unsigned int		fifosize;	/* vendor-specific */
- 	unsigned int		fixed_baud;	/* vendor-set fixed baud rate */
- 	char			type[12];
--	bool			rs485_tx_started;
--	unsigned int		rs485_tx_drain_interval; /* usecs */
-+	ktime_t			rs485_tx_drain_interval; /* nano */
-+	enum pl011_rs485_tx_state	rs485_tx_state;
-+	struct hrtimer		trigger_start_tx;
-+	struct hrtimer		trigger_stop_tx;
- #ifdef CONFIG_DMA_ENGINE
- 	/* DMA stuff */
- 	unsigned int		dmacr;		/* dma control reg */
-@@ -1260,30 +1269,31 @@ static inline bool pl011_dma_rx_running(struct uart_amba_port *uap)
- 
- static void pl011_rs485_tx_stop(struct uart_amba_port *uap)
- {
--	/*
--	 * To be on the safe side only time out after twice as many iterations
--	 * as fifo size.
--	 */
--	const int MAX_TX_DRAIN_ITERS = uap->port.fifosize * 2;
- 	struct uart_port *port = &uap->port;
--	int i = 0;
- 	u32 cr;
- 
--	/* Wait until hardware tx queue is empty */
--	while (!pl011_tx_empty(port)) {
--		if (i > MAX_TX_DRAIN_ITERS) {
--			dev_warn(port->dev,
--				 "timeout while draining hardware tx queue\n");
--			break;
--		}
-+	if (uap->rs485_tx_state == SEND)
-+		uap->rs485_tx_state = WAIT_AFTER_SEND;
- 
--		udelay(uap->rs485_tx_drain_interval);
--		i++;
-+	if (uap->rs485_tx_state == WAIT_AFTER_SEND) {
-+		/* Schedule hrtimer if tx queue not empty */
-+		if (!pl011_tx_empty(port)) {
-+			hrtimer_start(&uap->trigger_stop_tx,
-+				      uap->rs485_tx_drain_interval,
-+				      HRTIMER_MODE_REL);
-+			return;
-+		}
-+		if (port->rs485.delay_rts_after_send > 0) {
-+			hrtimer_start(&uap->trigger_stop_tx,
-+				      ms_to_ktime(port->rs485.delay_rts_after_send),
-+				      HRTIMER_MODE_REL);
-+			return;
-+		}
-+		/* Continue without any delay */
-+	} else if (uap->rs485_tx_state == WAIT_AFTER_RTS) {
-+		hrtimer_try_to_cancel(&uap->trigger_start_tx);
- 	}
- 
--	if (port->rs485.delay_rts_after_send)
--		mdelay(port->rs485.delay_rts_after_send);
--
- 	cr = pl011_read(uap, REG_CR);
- 
- 	if (port->rs485.flags & SER_RS485_RTS_AFTER_SEND)
-@@ -1296,7 +1306,7 @@ static void pl011_rs485_tx_stop(struct uart_amba_port *uap)
- 	cr |= UART011_CR_RXE;
- 	pl011_write(cr, uap, REG_CR);
- 
--	uap->rs485_tx_started = false;
-+	uap->rs485_tx_state = OFF;
- }
- 
- static void pl011_stop_tx(struct uart_port *port)
-@@ -1304,11 +1314,18 @@ static void pl011_stop_tx(struct uart_port *port)
- 	struct uart_amba_port *uap =
- 	    container_of(port, struct uart_amba_port, port);
- 
-+	if (port->rs485.flags & SER_RS485_ENABLED &&
-+	    uap->rs485_tx_state == WAIT_AFTER_RTS) {
-+		pl011_rs485_tx_stop(uap);
-+		return;
-+	}
-+
- 	uap->im &= ~UART011_TXIM;
- 	pl011_write(uap->im, uap, REG_IMSC);
- 	pl011_dma_tx_stop(uap);
- 
--	if ((port->rs485.flags & SER_RS485_ENABLED) && uap->rs485_tx_started)
-+	if (port->rs485.flags & SER_RS485_ENABLED &&
-+	    uap->rs485_tx_state != OFF)
- 		pl011_rs485_tx_stop(uap);
- }
- 
-@@ -1328,10 +1345,19 @@ static void pl011_rs485_tx_start(struct uart_amba_port *uap)
- 	struct uart_port *port = &uap->port;
- 	u32 cr;
- 
-+	if (uap->rs485_tx_state == WAIT_AFTER_RTS) {
-+		uap->rs485_tx_state = SEND;
-+		return;
-+	}
-+	if (uap->rs485_tx_state == WAIT_AFTER_SEND) {
-+		hrtimer_try_to_cancel(&uap->trigger_stop_tx);
-+		uap->rs485_tx_state = SEND;
-+		return;
-+	}
-+	/* uap->rs485_tx_state == OFF */
- 	/* Enable transmitter */
- 	cr = pl011_read(uap, REG_CR);
- 	cr |= UART011_CR_TXE;
--
- 	/* Disable receiver if half-duplex */
- 	if (!(port->rs485.flags & SER_RS485_RX_DURING_TX))
- 		cr &= ~UART011_CR_RXE;
-@@ -1343,10 +1369,14 @@ static void pl011_rs485_tx_start(struct uart_amba_port *uap)
- 
- 	pl011_write(cr, uap, REG_CR);
- 
--	if (port->rs485.delay_rts_before_send)
--		mdelay(port->rs485.delay_rts_before_send);
--
--	uap->rs485_tx_started = true;
-+	if (port->rs485.delay_rts_before_send > 0) {
-+		uap->rs485_tx_state = WAIT_AFTER_RTS;
-+		hrtimer_start(&uap->trigger_start_tx,
-+			      ms_to_ktime(port->rs485.delay_rts_before_send),
-+			      HRTIMER_MODE_REL);
-+	} else {
-+		uap->rs485_tx_state = SEND;
-+	}
- }
- 
- static void pl011_start_tx(struct uart_port *port)
-@@ -1355,13 +1385,44 @@ static void pl011_start_tx(struct uart_port *port)
- 	    container_of(port, struct uart_amba_port, port);
- 
- 	if ((uap->port.rs485.flags & SER_RS485_ENABLED) &&
--	    !uap->rs485_tx_started)
-+	    uap->rs485_tx_state != SEND) {
- 		pl011_rs485_tx_start(uap);
-+		if (uap->rs485_tx_state == WAIT_AFTER_RTS)
-+			return;
-+	}
- 
- 	if (!pl011_dma_tx_start(uap))
- 		pl011_start_tx_pio(uap);
- }
- 
-+static enum hrtimer_restart pl011_trigger_start_tx(struct hrtimer *t)
-+{
-+	struct uart_amba_port *uap =
-+	    container_of(t, struct uart_amba_port, trigger_start_tx);
-+	unsigned long flags;
-+
-+	uart_port_lock_irqsave(&uap->port, &flags);
-+	if (uap->rs485_tx_state == WAIT_AFTER_RTS)
-+		pl011_start_tx(&uap->port);
-+	uart_port_unlock_irqrestore(&uap->port, flags);
-+
-+	return HRTIMER_NORESTART;
-+}
-+
-+static enum hrtimer_restart pl011_trigger_stop_tx(struct hrtimer *t)
-+{
-+	struct uart_amba_port *uap =
-+	    container_of(t, struct uart_amba_port, trigger_stop_tx);
-+	unsigned long flags;
-+
-+	uart_port_lock_irqsave(&uap->port, &flags);
-+	if (uap->rs485_tx_state == WAIT_AFTER_SEND)
-+		pl011_rs485_tx_stop(uap);
-+	uart_port_unlock_irqrestore(&uap->port, flags);
-+
-+	return HRTIMER_NORESTART;
-+}
-+
- static void pl011_stop_rx(struct uart_port *port)
- {
- 	struct uart_amba_port *uap =
-@@ -1953,7 +2014,7 @@ static void pl011_shutdown(struct uart_port *port)
- 
- 	pl011_dma_shutdown(uap);
- 
--	if ((port->rs485.flags & SER_RS485_ENABLED) && uap->rs485_tx_started)
-+	if ((port->rs485.flags & SER_RS485_ENABLED && uap->rs485_tx_state != OFF))
- 		pl011_rs485_tx_stop(uap);
- 
- 	free_irq(uap->port.irq, uap);
-@@ -2098,7 +2159,7 @@ pl011_set_termios(struct uart_port *port, struct ktermios *termios,
- 	 * with the given baud rate. We use this as the poll interval when we
- 	 * wait for the tx queue to empty.
- 	 */
--	uap->rs485_tx_drain_interval = DIV_ROUND_UP(bits * 1000 * 1000, baud);
-+	uap->rs485_tx_drain_interval = ns_to_ktime(DIV_ROUND_UP(bits * NSEC_PER_SEC, baud));
- 
- 	pl011_setup_status_masks(port, termios);
- 
-@@ -2807,6 +2868,11 @@ static int pl011_probe(struct amba_device *dev, const struct amba_id *id)
- 		}
- 	}
- 
-+	hrtimer_init(&uap->trigger_start_tx, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-+	hrtimer_init(&uap->trigger_stop_tx, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-+	uap->trigger_start_tx.function = pl011_trigger_start_tx;
-+	uap->trigger_stop_tx.function = pl011_trigger_stop_tx;
-+
- 	ret = pl011_setup_port(&dev->dev, uap, &dev->res, portnr);
- 	if (ret)
- 		return ret;
-
----
-base-commit: cfba9f07a1d6aeca38f47f1f472cfb0ba133d341
-change-id: 20241117-master-9df0434f1e04
-
-Best regards,
--- 
-Miroslav Ondra <ondra@faster.cz>
-
-
+-EWONTFIX. Don't do stupid.
 
