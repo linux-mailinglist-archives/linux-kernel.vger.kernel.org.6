@@ -1,143 +1,104 @@
-Return-Path: <linux-kernel+bounces-419290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC2A09D6BCE
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 23:32:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A09A99D6BD7
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 23:36:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A14ED281EBF
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 22:32:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30B24B210F8
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 22:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16F119F110;
-	Sat, 23 Nov 2024 22:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BYC6/wFe"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11461A0BEE;
+	Sat, 23 Nov 2024 22:36:42 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60674137C37;
-	Sat, 23 Nov 2024 22:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493641632DE
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 22:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732401170; cv=none; b=ra+dNqughUUPRW+FH5+UHdbV99wSYrjZWqgIofoFc6Lw7TJZ2T55A77OYv84uq8RldNieHWoIQNdQxM7dgd+Sgz3iy5ZMm+hF2xUiqxzxAbG0iEPB3liT+lkueTTDw6rJskTbP9c/sJ0DHS3Pd7cHAIJMPP6X8OingTJtyG/tXI=
+	t=1732401402; cv=none; b=Mr9+oLePSwTKlj2mz/r0lREypP4spynLnVP8ODTmFDNutS9LdyShi30de2n9p+Zbr39vOT020sSFPmxsrigJlxP4peWjmpdxgmEuYR/0JchiqRsTpVDGJLgxN5cu1jZVqZb1p4HqYZzqxEETR6B5aIgCds+Z+R8hRGCgq8wpL9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732401170; c=relaxed/simple;
-	bh=Nk4VKU+4UkZZl7xiP/BV0EFMMFVeUg9V2zY8tgSiJcE=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=A6vJSahTeqFICYhz+DpGwQJ/eMWudNu5g7sKAoAkaq2lURWw1z3BO68VGV4Rde3Uk1VuOY8IzDHXOg0lK9O8YuSk86hGyR1n6cBtvkl5/KbVeUtUTs/xeUKkrk9OTMW1TudAN4mtulqVtGsGtubD76Wt/9SXNCTNMW4A2iDqEqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BYC6/wFe; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539ee1acb86so3744302e87.0;
-        Sat, 23 Nov 2024 14:32:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732401166; x=1733005966; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nk4VKU+4UkZZl7xiP/BV0EFMMFVeUg9V2zY8tgSiJcE=;
-        b=BYC6/wFeTvHn2BVEfp96GlV68wHq47r2S5oLE4MZhLVRB/Y+dq8VFgYfavPBOT80UX
-         Exnn2ilcfDuykw57IFrN4A/EPoO2P2xhqtHN8DYczb5qyrYVBQQQ7Kazepb84LxmVfJE
-         xkM/TTGwWzsQx8zrnMAw0Gby0tLO3sTgUSi1HvpDQ+tjhlh8cg7fAGmnd/L2b5yiijDb
-         1d4+lmBm61DFq5lIZJESDVNNb6x35ruNS5PPw0N1KZaMj/PSFR3hsm9CNr8Kr6bagZIO
-         hPYzkf0Wrp4zBkoxT1LJkmNc1DjhMvvuPCUSKWfY3uspbNF8wP97aQ+FQd/3WffWB8eH
-         25fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732401166; x=1733005966;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Nk4VKU+4UkZZl7xiP/BV0EFMMFVeUg9V2zY8tgSiJcE=;
-        b=atY4nfUIWbTSWiH8/kZl1morHJdp0IAkspNWHibCSUc4bswyDqnrSwVNWT0ZZ1HEI6
-         32sLF/JPk8IdsvFuiBrnotTrbSeNTunjwSNHz4tzPUBrDyTh8v8MJTlHQBwi6TNl3gAs
-         y7+Hrge6FK3PyO8tvPkdyf1djpDtdRKLbpWDR6seyBbXaYLRJp63g3eL1TrElxXDjYZ2
-         bfRdZAv552s4EOB7i3Lcvss1TCFA+q3WZGoMJqzdtmyR3hC4JWKkkselEIz7GKaMwizN
-         jVwoCp9zUVKbhezPHWOSjgSPbhV0EfgjXvncYHc/a2bPVyq0ypraoI0ft4ezIuGDNKm5
-         7STw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIac4pVN5mhgL9LlXU7mcQLMFZdnaMdb7FIbjYVmRCS1L0BPMkkkwfW199UQn0RPBZ5tIhW+8JVjqsiM1D@vger.kernel.org, AJvYcCWdez6fzXlYX23ueciuoRXPVDuWHijF45ohSjIk5bOmAiujqmHALwhCR7T2ib5lZps/y5dH0o6AlPaHt3cp@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJVAMejh7m+rPJHqxDcSEXXCJZ5mlF8hWBK2+8N4kHwXhcpQ58
-	xNyYC3Z8KxE/AqA+b55q94TVDTC4PDbZRpevfwSBkSHv93X5/mxY
-X-Gm-Gg: ASbGncuiD2LO4om0XdSgU5gkBUpDK6q/6YoVREVtztNV3jkCuBuK5zsa8m1UKVe/mza
-	iRedZXZ4U+Tfbwc5NPtJZYLpL5NxrVXoIbeppiToJRH/chsPSv6+0SWV7VeFWe+9GxGY4zhSTF/
-	vLr0NLlVPSgg5xsBf+sZ8SCV9BWarg8X7QCEcUg524XkBRikwf/CbwZ8/S1b1sZ/pAcatQzBT6L
-	yMDxEt4f5/8Xc7gk7mfWsJ4USf+Pj6BAN9+QvKBP/w91r3iFNxaFHG6OG09oE0YyPeFQmOLDL6t
-	BD7WoyXN5XMnpzaf7j0LFw==
-X-Google-Smtp-Source: AGHT+IGTZX1caXgox/FS6gjjWk+Y9HI77Uft+ZNVRiPY45h1eXn0pFbaPstf2x2zy2pf6Tod7cKVwQ==
-X-Received: by 2002:a05:6512:282b:b0:53d:c2f6:8399 with SMTP id 2adb3069b0e04-53dd39b5533mr3975249e87.53.1732401166140;
-        Sat, 23 Nov 2024 14:32:46 -0800 (PST)
-Received: from [192.168.68.111] (c83-253-44-175.bredband.tele2.se. [83.253.44.175])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd244571dsm1090310e87.46.2024.11.23.14.32.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 23 Nov 2024 14:32:45 -0800 (PST)
-Message-ID: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
-Date: Sat, 23 Nov 2024 23:32:41 +0100
+	s=arc-20240116; t=1732401402; c=relaxed/simple;
+	bh=Rw/YGV/uBDU1Hx/Uh2el0gZfZw5hKoxhjFSdgHKPlK4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=CPTqFzcU6s2iC/ch/AknH1tksxNoMze4oYnQBLksTx+ehjxpyt+xewCq6Wcfm5rE2SPfwnSBlGwc8WIfg+N2gIs3KvFoS/x21I/USAvY79nDRyqiUMrExEjUoMeyoXm/7D9cIMlMeU8ULAMAfQovVWrTPoN9GIxJfUoKe0hhpOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-240-Ujh_iHYmOAKK_3Kq6oXaSQ-1; Sat, 23 Nov 2024 22:36:37 +0000
+X-MC-Unique: Ujh_iHYmOAKK_3Kq6oXaSQ-1
+X-Mimecast-MFC-AGG-ID: Ujh_iHYmOAKK_3Kq6oXaSQ
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 23 Nov
+ 2024 22:36:34 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sat, 23 Nov 2024 22:36:34 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Linus Torvalds' <torvalds@linux-foundation.org>
+CC: Andrew Cooper <andrew.cooper3@citrix.com>, "bp@alien8.de" <bp@alien8.de>,
+	Josh Poimboeuf <jpoimboe@kernel.org>, "x86@kernel.org" <x86@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnd Bergmann
+	<arnd@kernel.org>, Mikel Rychliski <mikel@mikelr.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Dave Hansen
+	<dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+Subject: RE: [PATCH] x86: Allow user accesses to the base of the guard page
+Thread-Topic: [PATCH] x86: Allow user accesses to the base of the guard page
+Thread-Index: Ads91tEaZvh8m6sNQhyDMO+nmsu5/wAA3QOAAAboxyA=
+Date: Sat, 23 Nov 2024 22:36:34 +0000
+Message-ID: <e92823fee58d44b6a50a83fd27206857@AcuMS.aculab.com>
+References: <680c14b5af9d43d6bc70d2c1e9321e01@AcuMS.aculab.com>
+ <CAHk-=wgT4E+6YO0-SvdD=Gh6wSuUB3Bq_qOiErfZkobQ9gn6=Q@mail.gmail.com>
+In-Reply-To: <CAHk-=wgT4E+6YO0-SvdD=Gh6wSuUB3Bq_qOiErfZkobQ9gn6=Q@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: DdwqZgkdtL2C0IjvWCwesTfN8zawA_AuUf66antOegg_1732401396
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-To: Jan Kara <jack@suse.cz>, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-From: Anders Blomdell <anders.blomdell@gmail.com>
-Subject: Regression in NFS probably due to very large amounts of readahead
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
-we got terrible performance (lots of nfs: server x.x.x.x not responding).
-What triggered this problem was virtual machines with NFS-mounted qcow2 disks
-that often triggered large readaheads that generates long streaks of disk I/O
-of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache area of the
-machine.
-
-A git bisect gave the following suspect:
-
-git bisect start
-# status: waiting for both good and bad commits
-# bad: [8e24a758d14c0b1cd42ab0aea980a1030eea811f] Linux 6.11.3
-git bisect bad 8e24a758d14c0b1cd42ab0aea980a1030eea811f
-# status: waiting for good commit(s), bad commit known
-# good: [8a886bee7aa574611df83a028ab435aeee071e00] Linux 6.10.11
-git bisect good 8a886bee7aa574611df83a028ab435aeee071e00
-# good: [0c3836482481200ead7b416ca80c68a29cfdaabd] Linux 6.10
-git bisect good 0c3836482481200ead7b416ca80c68a29cfdaabd
-# good: [f669aac34c5f76b58e6cad1fef0643e5ae16d413] Merge tag 'trace-v6.11-2' of git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace
-git bisect good f669aac34c5f76b58e6cad1fef0643e5ae16d413
-# bad: [78eb4ea25cd5fdbdae7eb9fdf87b99195ff67508] sysctl: treewide: constify the ctl_table argument of proc_handlers
-git bisect bad 78eb4ea25cd5fdbdae7eb9fdf87b99195ff67508
-# good: [acc5965b9ff8a1889f5b51466562896d59c6e1b9] Merge tag 'char-misc-6.11-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc
-git bisect good acc5965b9ff8a1889f5b51466562896d59c6e1b9
-# good: [8e313211f7d46d42b6aa7601b972fe89dcc4a076] Merge tag 'pinctrl-v6.11-1' of git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl
-git bisect good 8e313211f7d46d42b6aa7601b972fe89dcc4a076
-# bad: [fbc90c042cd1dc7258ebfebe6d226017e5b5ac8c] Merge tag 'mm-stable-2024-07-21-14-50' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
-git bisect bad fbc90c042cd1dc7258ebfebe6d226017e5b5ac8c
-# good: [f416817197e102b9bc6118101c3be652dac01a44] kmsan: support SLAB_POISON
-git bisect good f416817197e102b9bc6118101c3be652dac01a44
-# bad: [f6a6de245fdb1dfb4307b0a80ce7fa35ba2c35a6] Docs/mm/damon/index: add links to admin-guide doc
-git bisect bad f6a6de245fdb1dfb4307b0a80ce7fa35ba2c35a6
-# bad: [a0b856b617c585b86a077aae5176c946e1462b7d] mm/ksm: optimize the chain()/chain_prune() interfaces
-git bisect bad a0b856b617c585b86a077aae5176c946e1462b7d
-# good: [b1a80f4be7691a1ea007e24ebb3c8ca2e4a20f00] kmsan: do not pass NULL pointers as 0
-git bisect good b1a80f4be7691a1ea007e24ebb3c8ca2e4a20f00
-# bad: [58540f5cde404f512c80fb7b868b12005f0e2747] readahead: simplify gotos in page_cache_sync_ra()
-git bisect bad 58540f5cde404f512c80fb7b868b12005f0e2747
-# bad: [7c877586da3178974a8a94577b6045a48377ff25] readahead: properly shorten readahead when falling back to do_page_cache_ra()
-git bisect bad 7c877586da3178974a8a94577b6045a48377ff25
-# good: [ee86814b0562f18255b55c5e6a01a022895994cf] mm/migrate: move NUMA hinting fault folio isolation + checks under PTL
-git bisect good ee86814b0562f18255b55c5e6a01a022895994cf
-# good: [901a269ff3d59c9ee0e6be35c6044dc4bf2c0fdf] filemap: fix page_cache_next_miss() when no hole found
-git bisect good 901a269ff3d59c9ee0e6be35c6044dc4bf2c0fdf
-# first bad commit: [7c877586da3178974a8a94577b6045a48377ff25] readahead: properly shorten readahead when falling back to do_page_cache_ra()
-
-I would much appreciate some guidance on how to proceed to track down what goes wrong.
-
-Best regards
-
-Anders Blomdell
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMjMgTm92ZW1iZXIgMjAyNCAxOTowMw0KPiAN
+Cj4gT24gU2F0LCAyMyBOb3YgMjAyNCBhdCAxMDo0OCwgRGF2aWQgTGFpZ2h0IDxEYXZpZC5MYWln
+aHRAYWN1bGFiLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBJbiB0aGF0IGNhc2UgYWNjZXNzX29rKHB0
+ciwgc2l6ZSkgd2lsbCBjaGVjayB0aGF0ICdwdHIgKyBzaXplJw0KPiA+IGlzIGEgdmFsaWQgdXNl
+ciBhZGRyZXNzIC0NCj4gDQo+IFRoZSBwb2ludCBvZiBVU0VSX1BUUl9NQVggaXMgdGhhdCB0aGUg
+c2l6ZSBuZXZlciBtYXR0ZXJzIGFuZCB3ZSBuZXZlcg0KPiBjaGVjayBpdC4gU28gdGhlICItMSIg
+aXMgYmFzaWNhbGx5IGp1c3QgdGhlIG1pbmltYWwgc2l6ZS4NCj4gDQo+IEFuZCB0aGUgY29kZSBk
+b2VzIGFjdHVhbGx5IGRlcGVuZCBvbiB0aGUgZmFjdCB0aGF0IHRoZSBhY2Nlc3MgaGFzIHRvDQo+
+IHN0YXJ0ICpiZWZvcmUqIHRoZSBib3VuZGFyeSB0byB3b3JrLg0KDQpUaGF0IGlzIHRoZSBib3Vu
+ZGFyeSBhdCB0aGUgZW5kIG9mIHRoZSBndWFyZCBwYWdlLg0KDQo+IE5vdywgd2UgZG8gaGF2ZSB0
+aGF0IHdob2xlICJhdCBsZWFzdCBQQUdFX1NJWkUgb2YgZ3VhcmQgcGFnZSIsIGFuZCBzbw0KPiB0
+aGUgMS1ieXRlIG1pbmltYWwgc2l6ZSBkb2Vzbid0IGFjdHVhbGx5IG1hdHRlciwgYnV0IEkgZG9u
+J3Qgc2VlIHRoZQ0KPiBwb2ludCBvZiB0aGUgY2hhbmdlLg0KPiANCj4gSW4gcGFydGljdWxhciwg
+SSBkb24ndCBzZWUgd2hlbiBpdCB3b3VsZCBtYXR0ZXIgdG8gZG8gYWNjZXNzX29rKHB0ciwNCj4g
+MCkgaW4gdGhlIGZpcnN0IHBsYWNlLiBXaG8gZG9lcyB0aGF0LCBhbmQgd2h5IHdvdWxkIGl0IG1h
+a2UgYW55IHNlbnNlPw0KDQpUaGUgcHJvYmxlbSBpcyB0aGF0IGl0IGlzIHZhbGlkIHRvIHBhc3Mg
+YSBidWZmZXIgdGhhdCBlbmRzIHJpZ2h0DQphdCB0aGUgZW5kIG9mIHZhbGlkIHVzZXIgbWVtb3J5
+Lg0KSW4gdGhhdCBjYXNlIHRoZSAncHRyICsgc2l6ZScgdGhhdCBhY2Nlc3Nfb2soKSBjaGVja3Mg
+aXMgZXF1YWwgdG8NCidUQVNLX1NJWkVfTUFYJyAtIGFuZCBjdXJyZW50bHkgZmFpbHMuDQoNClRo
+ZXJlIGlzIGFsc28gYW4gYWNjZXNzX29rKCkgY2hlY2sgaW4gaW92ZWNfaW1wb3J0IChvciBpcyBp
+dA0KaW1wb3J0X2lvdmVjKSB0aGF0IGRvZXMgYSBjaGVjayBvbiBldmVyeSBmcmFnbWVudC4NCkl0
+IGlzIGRlZmluaXRlbHkgdmFsaWQgdG8gcGFzcyBhIHplcm8gbGVuZ3RoIGJ1ZmZlciB0aGVyZS4N
+CihUaGF0IGNoZWNrIGlzIHByb2JhYmx5IHJlZHVuZGFudC4pDQoNClNvIGFjY2Vzc19vaygpIGNh
+bid0IGNoZWNrICdwdHIgKyBzaXplIC0gMScgd2l0aG91dCBhbiBleHRyYSBjaGVjaw0KZm9yIHpl
+cm8gbGVuZ3RoLg0KQW5kLCBpbiBhbnkgY2FzZSwgeW91IHdvdWxkbid0IHdhbnQgdG8gc3VidHJh
+Y3Qgb25lIGluIGV2ZXJ5IGFjY2Vzc19vaygpDQpjYWxsLg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0
+ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBL
+ZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
 
