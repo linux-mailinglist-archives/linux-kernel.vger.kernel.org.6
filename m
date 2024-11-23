@@ -1,235 +1,197 @@
-Return-Path: <linux-kernel+bounces-419004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F92B9D6845
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 10:01:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 245DD9D6852
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 10:22:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33D8028187F
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 09:01:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 318D2B21102
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 09:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F8B16EBEC;
-	Sat, 23 Nov 2024 09:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F9B15FA7B;
+	Sat, 23 Nov 2024 09:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vOoXWf9s"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3JtvMGh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024D9257D
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 09:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D3920E3
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 09:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732352483; cv=none; b=OR0vz4A8NjDQ3SqDv0LphdddXTE1GTOSzAfmdHQAdr2V6QG8gY/KyL8oM7nPrhPAmQHs7yD+6zxEgk2tl1kKjY44GljFmA37BFSlI+F/RyYgfryyWnaKuSDaLxHIuzQzTj8oPyor8EIMVZuue986GCtG1Vg8uMUrZutU8tmS9fM=
+	t=1732353745; cv=none; b=VXungluf52WkMS/1HAGx27BE4I78YeOx55ncAT3oRSTNMbHk0eBbvO92vWqqmc23fVl50AP7eZYin8IS61ayHi0O0pmCFWE3dFIGjir74qoWLJZniU+6XEvp3Z6USbKBZmxpH0GN634ma5pnLdVgOQO3PGs27NGK3Jky8sBtfI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732352483; c=relaxed/simple;
-	bh=YrxCZr/zol9fbcvDQahSobhoJ5+oSaDlVLvBp197B2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NsXITuqa1u/QuAKt3ROaiTwjdT/RZobYmrMl/Hr/93T8YGKMC8nNgOa0hwMypt7vUC6TwkazaSp8ZnqYYkU+NYaZTOBkbRnPzPPbs7U4f2ZJ7Ug0g0aZuV2iURDwF/rtF+7bII4XuVODBioat5jX6hxD6jMwYkqcc5KszYW31Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vOoXWf9s; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-21260cfc918so21435475ad.0
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 01:01:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732352481; x=1732957281; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=BBiKB3fBf+Bk4u52dSdkKE7lx9s1dAcTEPhof51kEoU=;
-        b=vOoXWf9sRH5ykOuEUMIWpCblSZ16I9TottUtP4tD3sFciGCUwD0ArJhMjszC7BeKam
-         fx/cZm4jOQcxQL0c23w4GBMjWa81MS7DHszaCwvQ7VKrVlm3e8ESW0kgeS6Kjk73090M
-         PTkdRHvbPosBN4SlsJN5OQXUdyLCz0WMT11d7PUqF+PiEe2OxwUmg3tnke+icU9Bu+FB
-         CCu5dqx5lTGQavSAOZAH7mbck8LIvGMtrUV/rpIaMWMomn1Gg2eoIo1XsaO/mMUySutc
-         Rf/Q6I3A3PwXhGr/rk3TK2+ISlSkAtFoEHqqGJwIHzct14g3tHRhJ+qrZss8CYE9VO+D
-         xmfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732352481; x=1732957281;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BBiKB3fBf+Bk4u52dSdkKE7lx9s1dAcTEPhof51kEoU=;
-        b=ebF1EMlvUSGlNJ+tkssPJ7Ok5ZFgGNQamERYbAVay0FqtEB6mzTBY0ueCkolqLEzu1
-         TGhNngbgVmEXB/DipDMq1BXoFeeXGDiNetleMHQjbUJhTevRouEKvIL0OGF6sXrqNj10
-         unjENtQlyl+jeswPH0mUD5utFKI/ej5+1xd9Sc26pPBBZKdvkY/AADyailAjQQcGGDs0
-         N2kXLmRTd/68VSiAZudPh10UdMdjTaZYl09ctMd6vA3+ow4F7n64vRlTDv7jT55F7xNT
-         q9kBtUlCHU3DZFxObCAhOEjMoizyID4B0XjE4ocJnhG/3iU4cSUJ9q8PdJBGo4UzUNHM
-         XrYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXcgJIqrOWRzT2KAcgTZFToT/vPUVEugRal+2S+H++jeigOrBICvosmPJQgVxQ3ZPnssEInX3G1H/Auoc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywmxy4uxPUVOiHDSB/BEkduacdV82RzOvYNO80PFL17/1uOxCo6
-	sFkYVG+ig5E99Sr5dZRMMHmHuag4JDkV2FUMLXa/8rxhJ6uRzywXEl9iRjtIyQ==
-X-Gm-Gg: ASbGncvq6oMMfbuaYiips/FkQ6qH8tV6EstmC+zQ1TkTFn/yWfUWaJFlbRYTyVKpB1k
-	LeoRGYDLtSK6gUJTZJVPwIaiTKEcTl9oJ0uFZQ4gcK8D9jUHcbIMQadcbLCvRtayNzrOw+eyp9U
-	qMLxEte23Eek9hFIf9Obh5BLD2y07bZQakQ5XU/kJilbSr87061H/LC7+C1iD/qgfCHi4SzLCVx
-	n9WkBld2235LHnLuDqfyacUunuslAbk3g1Ml8wsOjuXFJqIHcE3xiMVEVQrZV5+nA==
-X-Google-Smtp-Source: AGHT+IEXRKK5p3elatN9Cx1SAW9h5XDRG6j63BDSg8WgjcTkcpjwRut8X2gGXXHIdFCTSsoB7yX7Yg==
-X-Received: by 2002:a17:902:d2c5:b0:212:4751:ad7e with SMTP id d9443c01a7336-2129f7315dfmr69743785ad.8.1732352481266;
-        Sat, 23 Nov 2024 01:01:21 -0800 (PST)
-Received: from thinkpad ([2409:40f2:101e:13d7:85cf:a1c4:6490:6f75])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dbff380sm28769635ad.114.2024.11.23.01.01.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Nov 2024 01:01:20 -0800 (PST)
-Date: Sat, 23 Nov 2024 14:31:13 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, andersson@kernel.org,
-	konradybcio@kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] nvme-pci: Shutdown the device if D3Cold is allowed by
- the user
-Message-ID: <20241123090113.semecglxaqjvlmzp@thinkpad>
-References: <20241118082344.8146-1-manivannan.sadhasivam@linaro.org>
- <20241122222050.GA2444028@bhelgaas>
+	s=arc-20240116; t=1732353745; c=relaxed/simple;
+	bh=FrlEPiy9gU6yMxHh98nl205KP5/kI+RKPt5NCxX8nG4=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=sVOfQ8GspgwLk/PRYr9G0LrDonbqCoq37I8pLtTlYlA6NUe3eJT22vhzkiy5eG+PViUE6p0PmMPWpko7Bu5ybJRv0OKV11QxNzEW5wRsjJrQjUC7vheqsfI2h7i3+kFN7KB7SQmQnzhttpxUpDf+CjwplBkz2oNws2Vl8AnQNUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3JtvMGh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F512C4CED0;
+	Sat, 23 Nov 2024 09:22:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732353744;
+	bh=FrlEPiy9gU6yMxHh98nl205KP5/kI+RKPt5NCxX8nG4=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=P3JtvMGhu5BqfRY6Oc2BsbxeM8pMEjA2L3hEVUOWXLFjqMTt4Q/agVaJdQVIidIZ5
+	 lBrZrGEFn5MJUNmLuci0be8xe9cKtlGL+anUNpgxydCL+lwcKPLclVOI/shgNUki8c
+	 LbaYDIQgDdTTyARopa/Q8P96wY/GCBB2gkHY5ruooMN1gv/Z2iPPNbxzon1TKV4FZl
+	 1qESIOgAhaJT7SPHkN20NNdXVYoPpPItmhU5vgwt3F8GjLWSk8Xj80xQWPK/L+SLuf
+	 5+kIYt8AEeSqRxf+PmZ3HWvo0Zu3ut4Zl7LnDBLDWfgQwScG0rg2n0nGm3SpUckbTd
+	 3yZ5flyVJk5iw==
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 4DAFB1200066;
+	Sat, 23 Nov 2024 04:22:23 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Sat, 23 Nov 2024 04:22:23 -0500
+X-ME-Sender: <xms:z55BZ584rMme2vllu-BUmvzo20_gfHOqP6gKg1YdmeaXvu87KVvNVw>
+    <xme:z55BZ9sRvfWRXLCZK9Bb6cm45GsROE6ttpXGHXczNKZ30E5OgJscqY02wMrHsYgJn
+    df2oEAZTC17l_F8Ku8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgedugddtfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugeskhgvrhhnvghlrd
+    horhhgqeenucggtffrrghtthgvrhhnpeejjeffteetfeetkeeijedugeeuvdfgfeefiedt
+    udeikeeggeefkefhudfhlefhveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihht
+    hidquddvkeehudejtddvgedqvdekjedttddvieegqdgrrhhnugeppehkvghrnhgvlhdroh
+    hrghesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphho
+    uhhtpdhrtghpthhtohepjhhirhhishhlrggshieskhgvrhhnvghlrdhorhhgpdhrtghpth
+    htohepnhhikhhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehhtggrsehlihhnuhig
+    rdhisghmrdgtohhmpdhrtghpthhtohepshgthhhnvghllhgvsehlihhnuhigrdhisghmrd
+    gtohhmpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidr
+    ihhnthgvlhdrtghomhdprhgtphhtthhopehilhhpohdrjhgrrhhvihhnvghnsehlihhnuh
+    igrdhinhhtvghlrdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhn
+    uggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugiesrhhovggtkhdquhhsrdhnvg
+    htpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhg
+X-ME-Proxy: <xmx:z55BZ3C0z9ZqFVcixIbEnxMzllggytJERsZ2ZUG67RQCfwNTrTUPRg>
+    <xmx:z55BZ9ffr85VwP2AROrNdP4TKGqqDGwSy1YSIhleTzoA4H-LEBlNug>
+    <xmx:z55BZ-M8dQw2peAZyhMUgVo7fj07p9p34aAc6AlzSgXg4-uQvoeC7g>
+    <xmx:z55BZ_l6yR5wjj6ez_f5-4pCIR_W5_fDwXipwt6iVI-Z_ommN81SKg>
+    <xmx:z55BZ4ujbt6aJA4rlgoMHkHSQdxDJeax7LFsjVXN11jhZgj3WlJTeOcV>
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 0FD872220071; Sat, 23 Nov 2024 04:22:22 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241122222050.GA2444028@bhelgaas>
+Date: Sat, 23 Nov 2024 10:21:27 +0100
+From: "Arnd Bergmann" <arnd@kernel.org>
+To: "Niklas Schnelle" <niks@kernel.org>, "Guenter Roeck" <linux@roeck-us.net>,
+ "Niklas Schnelle" <schnelle@linux.ibm.com>
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Jiri Slaby" <jirislaby@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ linux-serial@vger.kernel.org, "Heiko Carstens" <hca@linux.ibm.com>,
+ linux-kernel@vger.kernel.org,
+ "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
+Message-Id: <f1d973ed-c830-47a0-aaa4-4d331b5e03b0@app.fastmail.com>
+In-Reply-To: <ddcbade39fb8a4dcac57c66c59fcc0b4d56dcaa6.camel@kernel.org>
+References: <20240405152924.252598-1-schnelle@linux.ibm.com>
+ <20240405152924.252598-2-schnelle@linux.ibm.com>
+ <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net>
+ <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
+ <92c2c05a-be0d-4017-a766-62832668512d@roeck-us.net>
+ <ddcbade39fb8a4dcac57c66c59fcc0b4d56dcaa6.camel@kernel.org>
+Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-+ Ulf (also interested in this topic)
+On Sat, Nov 23, 2024, at 00:34, Niklas Schnelle wrote:
+>
+> Am I seeing it right that despite the warning and the code setting
+> no_serial_in / no_serial_out the console=ttyS0 in the above qemu boots
+> still worked? Also for example in the nios2 case I see the warning 4
+> times. So this makes me wonder since the warning is new is it possible
+> that set_io_from_upio() has been called with an invalid / all
+> zero port before but it was invisible.
 
-On Fri, Nov 22, 2024 at 04:20:50PM -0600, Bjorn Helgaas wrote:
-> [+cc Rafael]
-> 
-> On Mon, Nov 18, 2024 at 01:53:44PM +0530, Manivannan Sadhasivam wrote:
-> > PCI core allows users to configure the D3Cold state for each PCI device
-> > through the sysfs attribute '/sys/bus/pci/devices/.../d3cold_allowed'. This
-> > attribute sets the 'pci_dev:d3cold_allowed' flag and could be used by users
-> > to allow/disallow the PCI devices to enter D3Cold during system suspend.
-> >
-> > So make use of this flag in the NVMe driver to shutdown the NVMe device
-> > during system suspend if the user has allowed D3Cold for the device.
-> > Existing checks in the NVMe driver decide whether to shut down the device
-> > (based on platform/device limitations), so use this flag as the last resort
-> > to keep the existing behavior.
-> > 
-> > The default behavior of the 'pci_dev:d3cold_allowed' flag is to allow
-> > D3Cold and the users can disallow it through sysfs if they want.
-> 
-> What problem does this solve?  I guess there must be a case where
-> suspend leaves NVMe in a higher power state than you want?
-> 
+Yes, that is certainly the case, sorry if I wasn't clear about this.
 
-Yeah, this is the case for all systems that doesn't fit into the existing checks
-in the NVMe suspend path:
+The warning shows that there is something wrong with the code,
+but that problem has likely existed for a long time. We can
+obviously just hide that warning again and ignore the underlying
+problem without causing any regressions to the previous state,
+but I hope we can improve it in some way that makes it less
+broken on non-x86 architectures.
 
-1. ACPI based platforms
-2. Controller doesn't support NPSS (hardware issue/limitation)
-3. ASPM not enabled
-4. Devices/systems setting NVME_QUIRK_SIMPLE_SUSPEND flag
+> The way I'm reading __serial8250_isa_init_ports() and in particular the
+> first loop if nr_uarts is e.g. 5 in the nios case but only the first
+> entry in serial8250_ports[] has the IOMEM 8250 it will still call
+> serial8250_setup_port() on the 4 other unintalized/zero elements which
+> would explain the iotype being 0. And as far as I can see nr_uarts is
+> just set to the value of CONFIG_SERIAL_8250_RUNTIME_UARTS in
+> 8250_platform.c.
 
-In my case, all the Qualcomm SoCs using Devicetree doesn't fall into the above
-checks. Hence, they were not fully powered down during system suspend and always
-in low power state. This means, I cannot achieve 'CX power collapse', a Qualcomm
-specific SoC powered down state that consumes just enough power to wake up the
-SoC. Since the controller driver keeps the PCI resource vote because of NVMe,
-the firmware in the Qualcomm SoCs cannot put the SoC into above mentioned low
-power state.
+The way I was reading the code, all five would be uninitialized
+at the time we call __serial8250_isa_init_ports(), and the first
+port only gets set later on.
 
-> What does it mean that this is the "last resort to keep the existing
-> behavior"?  All the checks are OR'd together and none have side
-> effects, so the order doesn't really matter.  It changes the existing
-> behavior *unless* the user has explicitly cleared d3cold_allowed via
-> sysfs.
-> 
+Another thing I see is that the 8250 driver ("serial") is the
+only one that ends up registering a lot of ports at boot time,
+while the other ones only register the ones they actually detect.
 
-Since the checks are ORed, this new check is not going to change the existing
-behavior for systems satisfying above checks i.e., even if the user changes the
-flag to forbid D3Cold, it won't affect them and it *shoudn't*.
+E.g. on my Apple workstation, I get
 
-> pdev->d3cold_allowed is set by default, so I guess this change means
-> that unless the user clears d3cold_allowed, we let the PCI core decide
-> the suspend state instead of managing it directly in nvme_suspend()?
-> 
+# head /proc/tty/driver/*
+==> /proc/tty/driver/IMX-uart <==
+serinfo:1.0 driver revision:
 
-If 'pdev->d3cold_allowed' is set, then NVMe driver will shutdown the device and
-the PCI controller driver can turn off all bus specific resources. Otherwise,
-NVMe driver will put the device into low power mode and the controller driver
-has to do something similar to retain the device power.
+==> /proc/tty/driver/fsl-linflexuart <==
+serinfo:1.0 driver revision:
 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  drivers/nvme/host/pci.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> > index 4b9fda0b1d9a..a4d4687854bf 100644
-> > --- a/drivers/nvme/host/pci.c
-> > +++ b/drivers/nvme/host/pci.c
-> > @@ -3287,7 +3287,8 @@ static int nvme_suspend(struct device *dev)
-> >  	 */
-> >  	if (pm_suspend_via_firmware() || !ctrl->npss ||
-> >  	    !pcie_aspm_enabled(pdev) ||
-> > -	    (ndev->ctrl.quirks & NVME_QUIRK_SIMPLE_SUSPEND))
-> > +	    (ndev->ctrl.quirks & NVME_QUIRK_SIMPLE_SUSPEND) ||
-> > +	    pdev->d3cold_allowed)
-> >  		return nvme_disable_prepare_reset(ndev, true);
-> 
-> I guess your intent is that if users prevent use of D3cold via sysfs,
-> we'll use the NVMe-specific power states, and otherwise, the PCI core
-> will decide?
-> 
+==> /proc/tty/driver/fsl-lpuart <==
+serinfo:1.0 driver revision:
 
-Not PCI core, but the controller drivers actually which takes care of powering
-down the PCI bus resources.
+==> /proc/tty/driver/msm_serial <==
+serinfo:1.0 driver revision:
 
-> I think returning 0 here means the PCI core decides what state to use
-> in the pci_pm_suspend_noirq() -> pci_prepare_to_sleep() path.  This
-> could be any state from D0 to D3cold depending on platform support and
-> wakeup considerations (see pci_target_state()).
-> 
-> I'm not sure the use of pdev->d3cold_allowed here really expresses
-> your underlying intent.  It suggests that you're really hoping for
-> D3cold, but that's only a possibility if firmware supports it, and we
-> have no visibility into that here.
-> 
+==> /proc/tty/driver/mvebu_serial <==
+serinfo:1.0 driver revision:
 
-I'm not relying on firmware to do anything here. If firmware has to decide the
-suspend state, it should already satisfy the pm_suspend_via_firmware() check in
-nvme_suspend(). Here, the controller driver takes care of putting the device
-into D3Cold. Currently, the controller drivers cannot do it (on DT platforms)
-because of NVMe driver's behavior.
+==> /proc/tty/driver/qcom_geni_console <==
+serinfo:1.0 driver revision:
 
-> It also seems contrary to the earlier comment that suggests we prefer
-> host managed nvme power settings:
-> 
->   * The platform does not remove power for a kernel managed suspend so
->   * use host managed nvme power settings for lowest idle power if
->   * possible. This should have quicker resume latency than a full device
->   * shutdown.  But if the firmware is involved after the suspend or the
->   * device does not support any non-default power states, shut down the
->   * device fully.
+==> /proc/tty/driver/qcom_geni_uart <==
+serinfo:1.0 driver revision:
 
-This above comment satisfies the ACPI platforms as the firmware controls the
-suspend state. On DT platforms, even though the firmware takes care of suspend
-state, it still relies on the controller driver to relinquish the votes for PCI
-resources. Only then, the firmware will put the whole SoC in power down mode
-a.k.a CX power collapse mode in Qcom SoCs.
+==> /proc/tty/driver/s3c2410_serial <==
+serinfo:1.0 driver revision:
+0: uart:APPLE S5L mmio:0x39B200000 irq:42 tx:0 rx:0 CTS|DSR|CD
 
-We did attempt so solve this problem in multiple ways, but the lesson learned
-was, kernel cannot decide the power mode without help from userspace. That's the
-reason I wanted to make use of this 'd3cold_allowed' sysfs attribute to allow
-userspace to override the D3Cold if it wants based on platform requirement.
+==> /proc/tty/driver/serial <==
+serinfo:1.0 driver revision:
+0: uart:unknown port:00000000 irq:0
+1: uart:unknown port:00000000 irq:0
+2: uart:unknown port:00000000 irq:0
+3: uart:unknown port:00000000 irq:0
+4: uart:unknown port:00000000 irq:0
+5: uart:unknown port:00000000 irq:0
+6: uart:unknown port:00000000 irq:0
+7: uart:unknown port:00000000 irq:0
+8: uart:unknown port:00000000 irq:0
 
-This is similar to how UFS allows users to configure power states of both the
-device and controller:
+==> /proc/tty/driver/tegra_hsuart <==
+serinfo:1.0 driver revision:
 
-/sys/bus/platform/drivers/ufshcd/*/spm_lvl
-/sys/bus/platform/devices/*.ufs/spm_lvl
+==> /proc/tty/driver/usbserial <==
+usbserinfo:1.0 driver:2.0
 
-If the 'd3cold_allowed' attribute is not a good fit for this usecase, then I'd
-like to introduce a new attribute similar to UFS.
+The way that this driver was meant to handle that originally
+is that /sbin/setserial can be used at runtime to configure
+any UART that is attached to an ISA bus even if it did not
+get detected at boot time, by setting the correct port and
+IRQ numbers from userspace. This may be required on i486
+systems with ISA cards providing additional non-PNP 8250
+on a nonstandard port number, but is likely not useful on
+anything other than x86-32.
 
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+      Arnd
 
