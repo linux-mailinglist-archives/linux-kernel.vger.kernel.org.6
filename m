@@ -1,78 +1,75 @@
-Return-Path: <linux-kernel+bounces-418905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 570379D670C
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 02:31:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3BCC9D670D
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 02:33:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C1E72819CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 01:31:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EFE31606F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 01:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1824A17ADE1;
-	Sat, 23 Nov 2024 01:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61D5364BA;
+	Sat, 23 Nov 2024 01:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+ordxF9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="COUITAv5"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68AE6176251;
-	Sat, 23 Nov 2024 01:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B91B14A91;
+	Sat, 23 Nov 2024 01:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732325456; cv=none; b=g9RQoFHdXCIRtMXX6QCOPuh2kB9lNL15rPTQaNuzTG57ggSVyQdVHwXqXUV1Uux57NMIHKn4aqfxdMR090TRMRhArSP+xfNEK4aQKtnmtBpJvLiRp0f7KJuJw4XY3xM26oy9dbiybvqIyVjlmY+CfYqrOvEiTkLPbpgccDvIluE=
+	t=1732325579; cv=none; b=plwF7y6zfrZaSj13U6fQD2jgRZ8zmEEMGsG8cpGMCljUHeoap9PstbMIAwSm0kmoVgs2z4+gHcw5T9XaA6IdhliiWo2haRX/7/4Yym2tldNYvOlAuKEIAPkZ0obRTAYCAI7DyOvyRIe1/NIyxvWwkgkOB6rYLzB+vthVtlZzmK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732325456; c=relaxed/simple;
-	bh=8T969XIIcDFf/7BVrCRMGt6fjJCAqzP0CkuHDz2awL8=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=RnMPN0i4ilpndGJhXym8SBpJJnMNGzIPF8uPG6lOTdIHVmu72AcH1KPYBUWCJtETbivBZxWTBnf7f7+4tIAfOmKADNB3iuVH6AJCRzzuEP2QPjmv9LbH2Tbb17OmXF3rIcWKQ98B3zLQ+dwmsTBnzJItRM1Otm9b4Wo3owK/Zbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+ordxF9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44C3DC4CED6;
-	Sat, 23 Nov 2024 01:30:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732325456;
-	bh=8T969XIIcDFf/7BVrCRMGt6fjJCAqzP0CkuHDz2awL8=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=O+ordxF9s3mFsD+lmF3L1huZ+htjhZ3leae2mnpTn+Mho5BFELFXWqx9IuRLn+m9O
-	 3KZ1jw8Ty7J2+1ZkX6sgvxeRDHzLY6E8b75VLeXPN4RLt3WiMlXi1H0l4h9+5bPC9H
-	 Qg9Sc25QJn8KfKd225rjXnAynR4pGN3415jcpTyfWQ0CyQyV8TxwLa3W2jS8fjhJzS
-	 AFNwn/ARb2Tob5e+oD/a/uajsbmXlRK9SUZlJ0gudnPDhsoxsFkzBSaYsiRxeCVOax
-	 vE7+6tULhxvzlJVOQO3Dir+NdBvCIuAKczlGsrBoGjz/PqZsloLAH49gBcONcgAdzj
-	 uuV056Cu367wA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADBFC3809A00;
-	Sat, 23 Nov 2024 01:31:09 +0000 (UTC)
-Subject: Re: [GIT PULL] clk changes for the merge window
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20241121224532.2065186-1-sboyd@kernel.org>
-References: <20241121224532.2065186-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20241121224532.2065186-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
-X-PR-Tracked-Commit-Id: 21a5352dc702d8e6dc874e0eb6ba6d81291a788a
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9f3a2ba62c7226a6604b8aaeb92b5ff906fa4e6b
-Message-Id: <173232546830.2863978.6700356092747446684.pr-tracker-bot@kernel.org>
-Date: Sat, 23 Nov 2024 01:31:08 +0000
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1732325579; c=relaxed/simple;
+	bh=Qhjd+yj4xOJOyXsRDetZco33mNnv7mlY44Cg6pvhjSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cpFZFolzeuxIrySniJVwSfR4vUDhL86ELQtRWEoXUgIKlxBLqtzGzP8v/u/fCSUQb5kxO6Wgaa6+HNpBeYmKuUgAQi5tA+UZhmGKPfATaMjNDpU1vcudR+D4PrUe2ZJBhSrrwj/gkf6skCuXKL4mCysVhyL0epOyEo2SWaZ+E4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=COUITAv5; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Qhjd+yj4xOJOyXsRDetZco33mNnv7mlY44Cg6pvhjSM=; b=COUITAv5LV9yRL4EOMeVgtXHsM
+	AupzkkydcbKaRa9UA1kuo2Pabfzr9+Ldoh+EuSM7DFRGvBMzY5Fg39O21/3/T8YH3H99w2zJ1fEv6
+	BD0t6NPZ+N/5+hE+v/S1V9v1t1SAThUE0LdV3vR1cOdfIO41gznUwjom1/Lfwuvr8HBvCvQ8ATn0L
+	0KrQ5JhPdQ87OjgDrDYH2sXJCo8ZfXO2TrQn/Mghrgw5fqR1jp3qMzt5YcITpBr038JW/XbbD28Cy
+	+uU38ITBSzPG908m9V3BMQmgZh3RRNm5Jq+kUuGLTs/VZuaExSekyCywlS1RcDewrbH+c+58LV5+i
+	jslPDVUQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tEf12-00000000Zl0-0tft;
+	Sat, 23 Nov 2024 01:32:52 +0000
+Date: Sat, 23 Nov 2024 01:32:52 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: almaz.alexandrovich@paragon-software.com, brauner@kernel.org,
+	jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev,
+	syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V5] fs/ntfs3: check if the inode is bad before creating
+ symlink
+Message-ID: <20241123013252.GQ3387508@ZenIV>
+References: <20241122074952.1585521-1-lizhi.xu@windriver.com>
+ <20241123010956.1590799-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241123010956.1590799-1-lizhi.xu@windriver.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-The pull request you sent on Thu, 21 Nov 2024 14:45:31 -0800:
+On Sat, Nov 23, 2024 at 09:09:56AM +0800, Lizhi Xu wrote:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+[snip]
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9f3a2ba62c7226a6604b8aaeb92b5ff906fa4e6b
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+hardlink, surely?
 
