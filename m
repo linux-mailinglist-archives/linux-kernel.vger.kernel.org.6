@@ -1,153 +1,99 @@
-Return-Path: <linux-kernel+bounces-419173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92E699D6A49
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:44:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0CBE9D6A4C
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:47:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59255281967
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:44:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DCC1B216E6
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B4E13D890;
-	Sat, 23 Nov 2024 16:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751B44EB50;
+	Sat, 23 Nov 2024 16:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dlnFaSdW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SDhvzgFm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24B217C2;
-	Sat, 23 Nov 2024 16:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3300566A;
+	Sat, 23 Nov 2024 16:47:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732380289; cv=none; b=LIRS1Hl6tRoMHaiuHqst3JRRUSz5qPTq2O+PivDKOVm0//y+NRzAtWAvsv51EnogaiYJdiXvQzZHXXq9nGEZL9noE3hIM/1EyWOzZH0FkaxptQALNm/TSgOpbqtkt4afuzpkRdlS9MonklCMxM3FdGj05aq7iNyRnRXnxvd0Ds8=
+	t=1732380420; cv=none; b=bVibc8oND5mKKyXa864zJg9Ljb2TtG9gSobdkbfcd+JV3BaJ1sl7sRwFnRKLh1HOeW63x3+JbsLLs4peqhGdoVDyDGdA0rk+fv0RNP05WPx8y/2BTepXX6ApG7B5RKIVN4raniJhQPUNonellhVB5/nc9wwIHvn8MxNpGBzBTiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732380289; c=relaxed/simple;
-	bh=CxtPnF3g926VPClgLAxkiaL7rxCiMryhQt3b8SJmi2E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KkY60ZHUWlnpv8XI6P1Ui8IAumgL5EAg7FhaAZwGsL/x3yxSgYUy3UBQ0QZgRcxRb4FTcBkI+FwjjAnWFFbcRu0XdqmVJqp0NfFxNdbdojdorLNxyU5nLdc0HXEwWz05SsqfuByHpG4wM/WJpe171fn7Azb31PdN+GzCxxfoV9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dlnFaSdW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80159C4CECD;
-	Sat, 23 Nov 2024 16:44:48 +0000 (UTC)
+	s=arc-20240116; t=1732380420; c=relaxed/simple;
+	bh=/mSPk4KVeH16EC5A2b6+i4e8AjUGk1JqjsAQAxsQFrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EHstTLLI+xwgXfqnOUBAHuDqrRCnSo6QcEaG0ZNBbEhgXfbI7GQnW35LUz23axJZU+viBVhTr64lLrqRcVJSlzxzWQuZbQgGSqPf7p7KIk1w/5nsp+omWxb29WtbzLgjQmTIFZzXiGT10OxpnqaCYQvGB7z8v9/rVxyPU1kWMGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SDhvzgFm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23751C4CECD;
+	Sat, 23 Nov 2024 16:46:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732380289;
-	bh=CxtPnF3g926VPClgLAxkiaL7rxCiMryhQt3b8SJmi2E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dlnFaSdW9JEjxAwPAHJUCJupCTXHpTwt+B9+fbki0tvkwRDIb6SEmEQMa8JNJJydi
-	 7Yk4VXWO5qB5vRtoFZ23oFkGh1AFlsjguuzQkLB3EkcEKyu0bBVcRwyXMwgROPmdlA
-	 6H5qPyTRumTU2N5w4tqtJ9pLVztxm3KVcCeFjSSzrlbipBfUFGO9ipneYz0fOfyOI7
-	 wnREmduLaTxFn4gYPsUTBYN+P9Y5ilULTKZG5v+M02D/rexdgCn7izahmpfnC5xatA
-	 ZfbYmTQCI3eF3E+H/SVMaxwyXs0GbKmZLWks9DmCQI3jjU8qyIKgR4iR0O90LSAnNM
-	 M5i3G/sn6qGWg==
-Date: Sat, 23 Nov 2024 17:44:46 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-edac@vger.kernel.org, git@amd.com, krzk@kernel.or, robh@kernel.org, 
-	conor+dt@kernel.org, bp@alien8.de, tony.luck@intel.com, james.morse@arm.com, 
-	mchehab@kernel.org, rric@kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: memory-controllers: Add support for
- Versal NET EDAC
-Message-ID: <uw5yvotdr4u5uau7bqjj2qdmkf5ay2bm7km3zhqunbixzljlw6@wi6cujvdhesk>
-References: <20241122100625.24571-1-shubhrajyoti.datta@amd.com>
- <20241122100625.24571-2-shubhrajyoti.datta@amd.com>
+	s=k20201202; t=1732380420;
+	bh=/mSPk4KVeH16EC5A2b6+i4e8AjUGk1JqjsAQAxsQFrA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SDhvzgFmV/BjkWTbVUiW86e8VpdDZlzMMwCCG0JaZAot9CVG8t5Uh9HYSABOHOh4/
+	 jnzQVCSIKHdb7lUH1mgWAav9cdyz/AZTcHP5RzRzLQDzi29+8W05P08etGc9FPv7CS
+	 uHBvWXNsE3N2dKQUwScATNBP2/qfhluj8Ek0pZqr87HcVrcEry0g806XsdHmvteMLz
+	 Ay18wRyJuqYB9dOKrQg9F6BLozhEDDesm64mCaZb9a5qU37VeF9jnBNDms41Ng2Ujm
+	 j3qFSYIId2P27LhjoaMsv7U1qi9YpEzIfFnY+AZ1ZU+sYyrR1ZT9aDPlaBauf7N3CG
+	 IPybnMq5iUjUg==
+Date: Sat, 23 Nov 2024 16:46:54 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] iio: Use __cleanup for a few ROHM sensors
+Message-ID: <20241123164654.72e309d3@jic23-huawei>
+In-Reply-To: <cover.1732193263.git.mazziesaccount@gmail.com>
+References: <cover.1732193263.git.mazziesaccount@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241122100625.24571-2-shubhrajyoti.datta@amd.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 22, 2024 at 03:36:23PM +0530, Shubhrajyoti Datta wrote:
-> Add device tree bindings for AMD Versal NET EDAC for DDR controller.
+On Thu, 21 Nov 2024 15:04:53 +0200
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+
+> Use __cleanup.
 > 
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+> The series converts the rest of the ROHM sensors (maintained by me) to
+> use guard(mutex). This simplifies the error paths.
+> 
+> As a note, kx022a accelerometer driver is handled in another series,
+> which also adds support for two new accelerometers. I did also patch the
+> driver for the BU27008 and BU27010 - but when I was testing the changes
+> I found that the BU27008 status is set to "obsolete". I'll try to dig
+> some information about the BU27010 and decide if having the driver
+> in-tree is still worth the effort, or if I should just send out patches
+> to drop it all. Hence patch to rohm-bu27008.c is not included in the
+> series. If someone is actually using the BU27008 or BU27010 and wants
+> to patch it - feel free to pick
+> 131315de97ff ("iio: bu27008: simplify using guard(mutex)")
+> from
+> https://github.com/M-Vaittinen/linux/tree/bu27008-cleanup
+> 
+Applied. Thanks,
+
+J
 > ---
 > 
-
-Use tools to create cc-list, like b4 or:
-https://github.com/krzk/tools/blob/master/linux/.bash_aliases_linux#L92
-so you won't make a typo in my email.
-
->  .../amd,versalnet-edac.yaml                   | 56 +++++++++++++++++++
->  1 file changed, 56 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/memory-controllers/amd,versalnet-edac.yaml
+> Matti Vaittinen (2):
+>   iio: bu27034: simplify using guard(mutex)
+>   iio: bm1390: simplify using guard(mutex)
 > 
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/amd,versalnet-edac.yaml b/Documentation/devicetree/bindings/memory-controllers/amd,versalnet-edac.yaml
-> new file mode 100644
-> index 000000000000..22a4669c46b6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/memory-controllers/amd,versalnet-edac.yaml
-> @@ -0,0 +1,56 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/memory-controllers/amd,versalnet-edac.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: AMD Versal NET EDAC
-
-s/EDAC/Memory Controller
-or something similar, I guess.
-
-> +
-> +maintainers:
-> +  - Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-> +
-> +description:
-> +  The integrated DDR Memory Controllers (DDRMCs) support both DDR4 and LPDDR4/
-> +  4X memory interfaces. Versal NET DDR memory controller has an optional ECC support
-> +  which correct single bit ECC errors and detect double bit ECC errors.
-> +  It also has support for reporting other errors like MMCM (Mixed-Mode Clock
-> +  Manager) errors and General software errors.
-> +
-> +properties:
-> +  compatible:
-> +    const: amd,versalnet-edac
-
-Why using different name than all others? Keep consistent stuff for
-your SoCs.
-
-Also, s/edac/memory-controller/, depending what this stuff really is.
-
-> +
-> +  amd,dwidth:
-> +    description:
-> +      DDR memory controller device width.
-
-Use existing properties.
-
-
-> +    enum: [16, 32]
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +  amd,num-chans:
-> +    description:
-> +      Number of channels.
-
-Use existing properties, e.g. some of the DDR schemas describing memory.
-Look how other bindings describe actual chips.
-
-> +    enum: [1, 2]
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +  amd,num-rank:
-> +    description:
-> +      Number of rank.
-> +    enum: [1, 2, 4]
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +required:
-> +  - compatible
-
-Eh, no resources? How do you talk with the hardware? This looks way too
-Linuxy...
-
-Best regards,
-Krzysztof
+>  drivers/iio/light/rohm-bu27034.c   | 73 ++++++++++------------------
+>  drivers/iio/pressure/rohm-bm1390.c | 78 ++++++++++++------------------
+>  2 files changed, 55 insertions(+), 96 deletions(-)
+> 
+> 
+> base-commit: adc218676eef25575469234709c2d87185ca223a
 
 
