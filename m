@@ -1,170 +1,137 @@
-Return-Path: <linux-kernel+bounces-419179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E70E79D6A66
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:54:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC9569D6A6B
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 18:00:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64C96B21AAE
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:54:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DDA7B21528
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353A7144D21;
-	Sat, 23 Nov 2024 16:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C1D14EC47;
+	Sat, 23 Nov 2024 17:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YJisVSQL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ntPQB099"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CAC5672;
-	Sat, 23 Nov 2024 16:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A8913B2A8;
+	Sat, 23 Nov 2024 17:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732380843; cv=none; b=DCjFRqHts1geTVPH5CsSiosIrg2n9BHzVlfTjEiq+4JwqMdSXJhyukLdFcJlWsbR+dqX/LiuQEPm3NX1BbB9DcXP1+VzjtGR/ZDmPHJ5u55Xb++wzH4TB//1/DqQq8pMJOTE2ys3hUQ968PaIVceOGvjmwlV0D5IerBtywJ3NNc=
+	t=1732381225; cv=none; b=Kdc6ze9ksjg7TjFzdY9183aVJUz88qxjNjjtid62qZMWsthdI6eFVIZt7Q0RAT0dnHf1OQFqFGiZ3fmuSsL29zkx9Up/+5pdPdgK8OgS0/v29OuRRhv1jJK+zQDlaBDu934ZXbi6wZ/txIWnhVC8LONDfIfbIXlxCB7xJoGM8L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732380843; c=relaxed/simple;
-	bh=Suk0Q33eYhTNEPnfKvTXzF3T2LKeb0Oa978tN5lPa40=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ifC/Yg0eUHc7a9HezLWHJv6XkfH4LqaV2vxxN32ev0puCdi+ig+aTvyAYKZ22zYUnwJyqpbU2mpIhhuEUs7QZkOKGe1kp33XrjbvA6P3P7UNHWNlm50i8fxIB4+DKnbDHOyUTN8LxtyA32wq+CcQ3hTIhGJ8tIjFROsbh+ugZ/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YJisVSQL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28BF2C4CECD;
-	Sat, 23 Nov 2024 16:53:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732380843;
-	bh=Suk0Q33eYhTNEPnfKvTXzF3T2LKeb0Oa978tN5lPa40=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YJisVSQLr/+4ArOwA61y2o+j5Pjw1KeaVRFNbfIVjVwNrH2AttqcDZ8FBRgJl0Otg
-	 Ry33rQhDMfctyrALvgE6mqWmDrKaNF747c4eXlr+2lRry6h6vASscYDYztjO4SW+2D
-	 RvZPcXQfIBCPt6FPHf1xJsfsYuN4l1Ii5E5varH6DLaUcNB9v2bJgdstXvESATmRVL
-	 ZsV2IkbEgD2IrWaYkMnClZygEgsXDKo5kX4C7jgVR1qWjI9Vzt9YmsMb8qG2jjihFs
-	 9WcRw9W5vHWHTs9o0dbIZZxFB9StJ4WovegCzmI5nI8AE7+0ypSLzbA+ma6BSoqv60
-	 XCOvZFEht9bVA==
-Date: Sat, 23 Nov 2024 16:53:54 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Tobias Sperling via B4 Relay
- <devnull+tobias.sperling.softing.com@kernel.org>
-Cc: tobias.sperling@softing.com, Lars-Peter Clausen <lars@metafoo.de>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: iio: adc: Introduce ADS7138
-Message-ID: <20241123165354.0763cc1f@jic23-huawei>
-In-Reply-To: <20241122-adc_ml-v1-1-0769f2e1bbc1@softing.com>
-References: <20241122-adc_ml-v1-0-0769f2e1bbc1@softing.com>
-	<20241122-adc_ml-v1-1-0769f2e1bbc1@softing.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732381225; c=relaxed/simple;
+	bh=DM4//eNbZfyM12Q86uc6Jzb8gKZsqYiM1dGZdtheaPA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d47ZbfEuqm1sdQUWTqtuMsWVsoFCUQzq7muFlTz+LYeGSn3+lur3xQBrfTebRvq2VsrsE6C2TPWH9/SiVU7wmbm/9MATJrMYvoM8n9kq88Ry0C+f/Vjy75U7eVVAxTqeQKbBSyNKozy6AdyiIVcsJ2oOyBFgnzrPD0FnY2XvS3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ntPQB099; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1732381216;
+	bh=DM4//eNbZfyM12Q86uc6Jzb8gKZsqYiM1dGZdtheaPA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ntPQB099Xe19Nq1wv7qUNrHaeM30rWPpT/0tCTr7/2/I1VxyUxq4dzUB3X/Qx2+Pr
+	 ssWMaXRb+iQ6kHWhEjHjuleGLSzpFBbUC+FqcjTQ7N/+8YPv/MwyCCkPBlHrSv/C8c
+	 dcxMeVjxDntGglRfxBlg25WvG5lXuWkGpnqo5zvf2bRkr6nH+uZSDgtMEUmULmZzgK
+	 p6nm3MDAnTgVKHJAMP3rpPvnY77VDQeP0VzNqgiVoXDjw1C+SWVhm5g878K8EGyqWe
+	 n4Mb1x0NV9FbimSGm3PcNTJuw3AepCY0p1ydHcr8G8gnBrGPDON0nBZINGEDV3qJlk
+	 NB7JO8wocAd/Q==
+Received: from [192.168.1.90] (unknown [86.120.21.57])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3840417E376B;
+	Sat, 23 Nov 2024 18:00:15 +0100 (CET)
+Message-ID: <2c7fc07c-b431-4384-8dc6-3ae77b18367e@collabora.com>
+Date: Sat, 23 Nov 2024 19:00:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v10,3/3] drm/rockchip: Add basic RK3588 HDMI output support
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Sandy Huang <hjc@rock-chips.com>,
+ =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Andy Yan <andy.yan@rock-chips.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Simona Vetter <simona@ffwll.ch>,
+ Simona Vetter <simona.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>,
+ Luis de Arquer <ldearquer@gmail.com>, Algea Cao <algea.cao@rock-chips.com>
+References: <20241016-b4-rk3588-bridge-upstream-v10-3-87ef92a6d14e@collabora.com>
+ <790091a1-00af-43bb-8cdf-814f4cc38d83@roeck-us.net>
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Content-Language: en-US
+In-Reply-To: <790091a1-00af-43bb-8cdf-814f4cc38d83@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Fri, 22 Nov 2024 16:15:36 +0100
-Tobias Sperling via B4 Relay <devnull+tobias.sperling.softing.com@kernel.org> wrote:
-
-> From: Tobias Sperling <tobias.sperling@softing.com>
+On 11/23/24 5:56 PM, Guenter Roeck wrote:
+> On Wed, Oct 16, 2024 at 11:06:53PM +0300, Cristian Ciocaltea wrote:
+>> The RK3588 SoC family integrates the newer Synopsys DesignWare HDMI 2.1
+>> Quad-Pixel (QP) TX controller IP and a HDMI/eDP TX Combo PHY based on a
+>> Samsung IP block.
+>>
+>> Add just the basic support for now, i.e. RGB output up to 4K@60Hz,
+>> without audio, CEC or any of the HDMI 2.1 specific features.
+>>
+>> Co-developed-by: Algea Cao <algea.cao@rock-chips.com>
+>> Signed-off-by: Algea Cao <algea.cao@rock-chips.com>
+>> Tested-by: Heiko Stuebner <heiko@sntech.de>
+>> Reviewed-by: Maxime Ripard <mripard@kernel.org>
+>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>> ---
+> [ ... ]
 > 
-> Add documentation for the driver of ADS7128 and ADS7138 12-bit, 8-channel
-> analog-to-digital converters. These ADCs have a wide operating range and
-> a wide feature set. Communication is based on the I2C interface.
+>> +static void dw_hdmi_qp_rockchip_encoder_enable(struct drm_encoder *encoder)
+>> +{
+>> +	struct rockchip_hdmi_qp *hdmi = to_rockchip_hdmi_qp(encoder);
+>> +	struct drm_crtc *crtc = encoder->crtc;
+>> +	unsigned long long rate;
+>> +
+>> +	/* Unconditionally switch to TMDS as FRL is not yet supported */
+>> +	gpiod_set_value(hdmi->enable_gpio, 1);
+>> +
+>> +	if (crtc && crtc->state) {
+>> +		rate = drm_hdmi_compute_mode_clock(&crtc->state->adjusted_mode,
+>> +						   8, HDMI_COLORSPACE_RGB);
+>> +		clk_set_rate(hdmi->ref_clk, rate);
+>> +		/*
+>> +		 * FIXME: Temporary workaround to pass pixel clock rate
+>> +		 * to the PHY driver until phy_configure_opts_hdmi
+>> +		 * becomes available in the PHY API. See also the related
+>> +		 * comment in rk_hdptx_phy_power_on() from
+>> +		 * drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+>> +		 */
+>> +		phy_set_bus_width(hdmi->phy, rate / 100);
 > 
-> Signed-off-by: Tobias Sperling <tobias.sperling@softing.com>
-Hi Tobias,
+> On 32-bit systems:
+> 
+> ERROR: modpost: "__udivdi3" [drivers/gpu/drm/rockchip/rockchipdrm.ko] undefined!
+> 
+> in the mainline kernel.
 
-Welcome to IIO.
-This should really have been a v2 to avoid confusion but good that b4-relay worked
-for you.
+Yeah, that's a known issue and has been already fixed:
 
-Add a little on the differences you mention below to the patch description.
-
-One comment inline.
+https://lore.kernel.org/lkml/20241018151016.3496613-1-arnd@kernel.org/
 
 Thanks,
-
-Jonathan
-
-> ---
->  .../devicetree/bindings/iio/adc/ti,ads7138.yaml    | 64 ++++++++++++++++++++++
->  1 file changed, 64 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/ti,ads7138.yaml b/Documentation/devicetree/bindings/iio/adc/ti,ads7138.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..367d3b27cec3bc5800aac42c8a07497da7de4c1b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/ti,ads7138.yaml
-> @@ -0,0 +1,64 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/adc/ti,ads7138.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Texas Instruments ADS7128/ADS7138 analog-to-digital converter (ADC)
-> +
-> +maintainers:
-> +  - Tobias Sperling <tobias.sperling@softing.com>
-> +
-> +description: |
-> +  The ADS7128 and ADS7138 chips are 12-bit, 8 channel analog-to-digital
-> +  converters (ADC) with build-in digital window comparator (DWC), using the
-> +  I2C interface.
-> +  ADS7128 differs in the addition of further hardware features, like a
-> +  root-mean-square (RMS) and a zero-crossing-detect (ZCD) module, which are
-> +  not yet supported by the driver.
-Don't mention the driver in a dt-binding. It's all about the hardware
-not so much what we support.
-So say what features it has, but not the bit about support.
-
-> +
-> +  Datasheets:
-> +    https://www.ti.com/product/ADS7128
-> +    https://www.ti.com/product/ADS7138
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - ti,ads7128
-> +      - ti,ads7138
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  avdd-supply:
-> +    description:
-> +      The regulator used as analog supply voltage as well as reference voltage.
-> +
-> +  interrupts:
-> +    description:
-> +      Interrupt on ALERT pin, triggers on low level.
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - avdd-supply
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        adc@10 {
-> +            compatible = "ti,ads7138";
-> +            reg = <0x10>;
-> +            avdd-supply = <&reg_stb_3v3>;
-> +            interrupt-parent = <&gpio2>;
-> +            interrupts = <12 IRQ_TYPE_LEVEL_LOW>;
-> +        };
-> +    };
-> +...
-> 
-
+Cristian
 
