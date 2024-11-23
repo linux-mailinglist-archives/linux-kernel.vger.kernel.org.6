@@ -1,326 +1,78 @@
-Return-Path: <linux-kernel+bounces-418934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B3CA9D676D
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 04:59:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B02C416169B
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 03:59:15 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B037DA66;
-	Sat, 23 Nov 2024 03:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="dSDCvDEL"
-Received: from xry111.site (xry111.site [89.208.246.23])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0E3A9D6770
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 05:10:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AA146BF;
-	Sat, 23 Nov 2024 03:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C39C2814CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 04:10:29 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E08745F2;
+	Sat, 23 Nov 2024 04:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uwc+SzGQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B2422098;
+	Sat, 23 Nov 2024 04:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732334352; cv=none; b=E5j/k1fvaq5EGpImk6P0vGtTogn0SvqIfpL5HdeOtpZAqqFMBqwbjE20ntiyor0rV0q/nnnxoMjjh/+pByytA52xjgwTBqCh/j94p1Y+bQ7Koe0TV1XJ+/WjRKwGOfx6oLmyQCw6MYFGtw0FoXNr79f6iui/XHoFYcT2NGVcqOg=
+	t=1732335027; cv=none; b=GRmOk+6uVpT07BY3Ae2ByH61QgSibEuDew0szdZ55PebcxLa6FNLfD0XTnpIUujIN5Ff9hQwsgX15KBCiPjBkdLLYwC8ugu8WDvCLKx0nQtbTO6O+31f3sodHPz9ph4cp+NQe9yDY60G5ysaU5gGaBB2h6EuPNirpd9h6y6JqYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732334352; c=relaxed/simple;
-	bh=qmQwjQMvRXA/d/ueVbokWMFZUHwHWn63WzKVHDaXqB4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KEvRi5uXYG+gb8+j+v6z7l0EjCIVbWdid7nKezDq5ccHebdJkBK50ytdQgx0ihbtiBd0qwQISsTFtV4rNhI280WMuEdjHhjIeUfQRwgVnRtbJYv/iXiX+gx1Cu2lDemEU1Dh1fl4OAhtFZxhlAxMXjZ4AQ3uh7r/JMhMM7GA2CE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=dSDCvDEL; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1732334340;
-	bh=3m6ZtMQPzOJszJqf0ZWZ4ZnY88ZlKomQ6zudX5AgoJ8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=dSDCvDELr9XzGuDeXbR1j2nMyu9jRkl/yf+xDYd/YgqqmmeAPTQZeJmdD21g0nwvQ
-	 CuLsgFX+83ocDTjsw3bONbsb76nZ9ykTHino5vHckguhuYAc/lj/pnsAe6OAj15ixA
-	 krBeQx8nRgP7prlQtPh59nzohiAPdQg3W3/VbTSQ=
-Received: from stargazer.. (unknown [IPv6:240e:358:11e8:1100:dc73:854d:832e:4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 76206670C1;
-	Fri, 22 Nov 2024 22:58:56 -0500 (EST)
-From: Xi Ruoyao <xry111@xry111.site>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Yanteng Si <si.yanteng@linux.dev>,
-	devicetree@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xi Ruoyao <xry111@xry111.site>
-Subject: [PATCH] MIPS: Loongson64: DTS: Really fix PCIe port nodes for ls7a
-Date: Sat, 23 Nov 2024 11:57:37 +0800
-Message-ID: <20241123035737.24722-1-xry111@xry111.site>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1732335027; c=relaxed/simple;
+	bh=2g2fz+QvrMBsZhGpk/t3yfafS2Zu36hBYldUo6FvJxw=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=tuyLV3ZY/DtK0ZCQxKRbW8owRq3Pts61vEtzBtP6Cc2iGFebTfRGD//LIkq7kZiN0mrBvXzz5LrgYyE8L085e0l3uqVPlfvR48wL0AdpahTsrPqZse9tZdIw/asfxvwWR/X/6/m2QfZw/vuL7sDFrgRMBbH4mXo6r0whPSGRH+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uwc+SzGQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEC14C4CECF;
+	Sat, 23 Nov 2024 04:10:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732335026;
+	bh=2g2fz+QvrMBsZhGpk/t3yfafS2Zu36hBYldUo6FvJxw=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=uwc+SzGQkfvcQbgo/OQnTplB9FTjwYiCj0CLiH+oqGv0fcyzC6BNN9jHqniPGTOq+
+	 65B8HyF2oVDmhC194KnzxQeJyOgNbnZQCYzekOjSFsDNXMCAvl6yLKisocEkMeeCgx
+	 2V/iR/7dbnkV4Gy9OILOWntg23Gv8zEdl2upN5fRDQdSpnZEfKol9KQ6MZqbYABRKb
+	 koIIR32y9/VxtS0R5ihtLJMs7J6d6TaY4J/3E/UmcDVk8kfmL+JR7hPN6+EHpMyPtd
+	 CMH8YZs9OGzN9+zFm+LSCm9hFH/wGUd1mjcX474GT8nL7UQEg4MsEhDlbG6gSfk964
+	 NRRrgj+kPe3qw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34D8D3809A01;
+	Sat, 23 Nov 2024 04:10:40 +0000 (UTC)
+Subject: Re: [git pull] IOMMU Updates for Linux v6.13
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <Z0A-K1MiL2CLa7Zd@8bytes.org>
+References: <Z0A-K1MiL2CLa7Zd@8bytes.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <Z0A-K1MiL2CLa7Zd@8bytes.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git tags/iommu-updates-v6.13
+X-PR-Tracked-Commit-Id: 42f0cbb2a253bcd7d4f20e80462014622f19d88e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ceba6f6f33f29ab838b23a567621b847e527d085
+Message-Id: <173233503896.2897203.13162187956093279400.pr-tracker-bot@kernel.org>
+Date: Sat, 23 Nov 2024 04:10:38 +0000
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org, iommu@lists.linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Fix the dtc warnings:
+The pull request you sent on Fri, 22 Nov 2024 09:17:47 +0100:
 
-    arch/mips/boot/dts/loongson/ls7a-pch.dtsi:68.16-416.5: Warning (interrupt_provider): /bus@10000000/pci@1a000000: '#interrupt-cells' found, but node is not an interrupt provider
-    arch/mips/boot/dts/loongson/ls7a-pch.dtsi:68.16-416.5: Warning (interrupt_provider): /bus@10000000/pci@1a000000: '#interrupt-cells' found, but node is not an interrupt provider
-    arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: Warning (interrupt_map): Failed prerequisite 'interrupt_provider'
+> git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git tags/iommu-updates-v6.13
 
-And a runtime warning introduced in commit 045b14ca5c36 ("of: WARN on
-deprecated #address-cells/#size-cells handling"):
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ceba6f6f33f29ab838b23a567621b847e527d085
 
-    WARNING: CPU: 0 PID: 1 at drivers/of/base.c:106 of_bus_n_addr_cells+0x9c/0xe0
-    Missing '#address-cells' in /bus@10000000/pci@1a000000/pci_bridge@9,0
+Thank you!
 
-The fix is similar to commit d89a415ff8d5 ("MIPS: Loongson64: DTS: Fix PCIe
-port nodes for ls7a"), which has fixed the issue for ls2k (despite its
-subject mentions ls7a).
-
-Signed-off-by: Xi Ruoyao <xry111@xry111.site>
----
- arch/mips/boot/dts/loongson/ls7a-pch.dtsi | 73 +++++++++++++++++++----
- 1 file changed, 60 insertions(+), 13 deletions(-)
-
-diff --git a/arch/mips/boot/dts/loongson/ls7a-pch.dtsi b/arch/mips/boot/dts/loongson/ls7a-pch.dtsi
-index cce9428afc41..ee71045883e7 100644
---- a/arch/mips/boot/dts/loongson/ls7a-pch.dtsi
-+++ b/arch/mips/boot/dts/loongson/ls7a-pch.dtsi
-@@ -70,7 +70,6 @@ pci@1a000000 {
- 			device_type = "pci";
- 			#address-cells = <3>;
- 			#size-cells = <2>;
--			#interrupt-cells = <2>;
- 			msi-parent = <&msi>;
- 
- 			reg = <0 0x1a000000 0 0x02000000>,
-@@ -234,7 +233,7 @@ phy1: ethernet-phy@1 {
- 				};
- 			};
- 
--			pci_bridge@9,0 {
-+			pcie@9,0 {
- 				compatible = "pci0014,7a19.1",
- 						   "pci0014,7a19",
- 						   "pciclass060400",
-@@ -244,12 +243,16 @@ pci_bridge@9,0 {
- 				interrupts = <32 IRQ_TYPE_LEVEL_HIGH>;
- 				interrupt-parent = <&pic>;
- 
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+				device_type = "pci";
- 				#interrupt-cells = <1>;
- 				interrupt-map-mask = <0 0 0 0>;
- 				interrupt-map = <0 0 0 0 &pic 32 IRQ_TYPE_LEVEL_HIGH>;
-+				ranges;
- 			};
- 
--			pci_bridge@a,0 {
-+			pcie@a,0 {
- 				compatible = "pci0014,7a09.1",
- 						   "pci0014,7a09",
- 						   "pciclass060400",
-@@ -259,12 +262,16 @@ pci_bridge@a,0 {
- 				interrupts = <33 IRQ_TYPE_LEVEL_HIGH>;
- 				interrupt-parent = <&pic>;
- 
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+				device_type = "pci";
- 				#interrupt-cells = <1>;
- 				interrupt-map-mask = <0 0 0 0>;
- 				interrupt-map = <0 0 0 0 &pic 33 IRQ_TYPE_LEVEL_HIGH>;
-+				ranges;
- 			};
- 
--			pci_bridge@b,0 {
-+			pcie@b,0 {
- 				compatible = "pci0014,7a09.1",
- 						   "pci0014,7a09",
- 						   "pciclass060400",
-@@ -274,12 +281,16 @@ pci_bridge@b,0 {
- 				interrupts = <34 IRQ_TYPE_LEVEL_HIGH>;
- 				interrupt-parent = <&pic>;
- 
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+				device_type = "pci";
- 				#interrupt-cells = <1>;
- 				interrupt-map-mask = <0 0 0 0>;
- 				interrupt-map = <0 0 0 0 &pic 34 IRQ_TYPE_LEVEL_HIGH>;
-+				ranges;
- 			};
- 
--			pci_bridge@c,0 {
-+			pcie@c,0 {
- 				compatible = "pci0014,7a09.1",
- 						   "pci0014,7a09",
- 						   "pciclass060400",
-@@ -289,12 +300,16 @@ pci_bridge@c,0 {
- 				interrupts = <35 IRQ_TYPE_LEVEL_HIGH>;
- 				interrupt-parent = <&pic>;
- 
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+				device_type = "pci";
- 				#interrupt-cells = <1>;
- 				interrupt-map-mask = <0 0 0 0>;
- 				interrupt-map = <0 0 0 0 &pic 35 IRQ_TYPE_LEVEL_HIGH>;
-+				ranges;
- 			};
- 
--			pci_bridge@d,0 {
-+			pcie@d,0 {
- 				compatible = "pci0014,7a19.1",
- 						   "pci0014,7a19",
- 						   "pciclass060400",
-@@ -304,12 +319,16 @@ pci_bridge@d,0 {
- 				interrupts = <36 IRQ_TYPE_LEVEL_HIGH>;
- 				interrupt-parent = <&pic>;
- 
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+				device_type = "pci";
- 				#interrupt-cells = <1>;
- 				interrupt-map-mask = <0 0 0 0>;
- 				interrupt-map = <0 0 0 0 &pic 36 IRQ_TYPE_LEVEL_HIGH>;
-+				ranges;
- 			};
- 
--			pci_bridge@e,0 {
-+			pcie@e,0 {
- 				compatible = "pci0014,7a09.1",
- 						   "pci0014,7a09",
- 						   "pciclass060400",
-@@ -319,12 +338,16 @@ pci_bridge@e,0 {
- 				interrupts = <37 IRQ_TYPE_LEVEL_HIGH>;
- 				interrupt-parent = <&pic>;
- 
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+				device_type = "pci";
- 				#interrupt-cells = <1>;
- 				interrupt-map-mask = <0 0 0 0>;
- 				interrupt-map = <0 0 0 0 &pic 37 IRQ_TYPE_LEVEL_HIGH>;
-+				ranges;
- 			};
- 
--			pci_bridge@f,0 {
-+			pcie@f,0 {
- 				compatible = "pci0014,7a29.1",
- 						   "pci0014,7a29",
- 						   "pciclass060400",
-@@ -334,12 +357,16 @@ pci_bridge@f,0 {
- 				interrupts = <40 IRQ_TYPE_LEVEL_HIGH>;
- 				interrupt-parent = <&pic>;
- 
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+				device_type = "pci";
- 				#interrupt-cells = <1>;
- 				interrupt-map-mask = <0 0 0 0>;
- 				interrupt-map = <0 0 0 0 &pic 40 IRQ_TYPE_LEVEL_HIGH>;
-+				ranges;
- 			};
- 
--			pci_bridge@10,0 {
-+			pcie@10,0 {
- 				compatible = "pci0014,7a19.1",
- 						   "pci0014,7a19",
- 						   "pciclass060400",
-@@ -349,12 +376,16 @@ pci_bridge@10,0 {
- 				interrupts = <41 IRQ_TYPE_LEVEL_HIGH>;
- 				interrupt-parent = <&pic>;
- 
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+				device_type = "pci";
- 				#interrupt-cells = <1>;
- 				interrupt-map-mask = <0 0 0 0>;
- 				interrupt-map = <0 0 0 0 &pic 41 IRQ_TYPE_LEVEL_HIGH>;
-+				ranges;
- 			};
- 
--			pci_bridge@11,0 {
-+			pcie@11,0 {
- 				compatible = "pci0014,7a29.1",
- 						   "pci0014,7a29",
- 						   "pciclass060400",
-@@ -364,12 +395,16 @@ pci_bridge@11,0 {
- 				interrupts = <42 IRQ_TYPE_LEVEL_HIGH>;
- 				interrupt-parent = <&pic>;
- 
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+				device_type = "pci";
- 				#interrupt-cells = <1>;
- 				interrupt-map-mask = <0 0 0 0>;
- 				interrupt-map = <0 0 0 0 &pic 42 IRQ_TYPE_LEVEL_HIGH>;
-+				ranges;
- 			};
- 
--			pci_bridge@12,0 {
-+			pcie@12,0 {
- 				compatible = "pci0014,7a19.1",
- 						   "pci0014,7a19",
- 						   "pciclass060400",
-@@ -379,12 +414,16 @@ pci_bridge@12,0 {
- 				interrupts = <43 IRQ_TYPE_LEVEL_HIGH>;
- 				interrupt-parent = <&pic>;
- 
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+				device_type = "pci";
- 				#interrupt-cells = <1>;
- 				interrupt-map-mask = <0 0 0 0>;
- 				interrupt-map = <0 0 0 0 &pic 43 IRQ_TYPE_LEVEL_HIGH>;
-+				ranges;
- 			};
- 
--			pci_bridge@13,0 {
-+			pcie@13,0 {
- 				compatible = "pci0014,7a29.1",
- 						   "pci0014,7a29",
- 						   "pciclass060400",
-@@ -394,12 +433,16 @@ pci_bridge@13,0 {
- 				interrupts = <38 IRQ_TYPE_LEVEL_HIGH>;
- 				interrupt-parent = <&pic>;
- 
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+				device_type = "pci";
- 				#interrupt-cells = <1>;
- 				interrupt-map-mask = <0 0 0 0>;
- 				interrupt-map = <0 0 0 0 &pic 38 IRQ_TYPE_LEVEL_HIGH>;
-+				ranges;
- 			};
- 
--			pci_bridge@14,0 {
-+			pcie@14,0 {
- 				compatible = "pci0014,7a19.1",
- 						   "pci0014,7a19",
- 						   "pciclass060400",
-@@ -409,9 +452,13 @@ pci_bridge@14,0 {
- 				interrupts = <39 IRQ_TYPE_LEVEL_HIGH>;
- 				interrupt-parent = <&pic>;
- 
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+				device_type = "pci";
- 				#interrupt-cells = <1>;
- 				interrupt-map-mask = <0 0 0 0>;
- 				interrupt-map = <0 0 0 0 &pic 39 IRQ_TYPE_LEVEL_HIGH>;
-+				ranges;
- 			};
- 		};
- 
 -- 
-2.47.0
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
