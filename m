@@ -1,120 +1,159 @@
-Return-Path: <linux-kernel+bounces-419107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 711789D6995
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:13:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C44149D6998
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:16:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDA3AB2147A
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 15:13:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07554B21163
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 15:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141823FB0E;
-	Sat, 23 Nov 2024 15:13:23 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1632029CFB;
+	Sat, 23 Nov 2024 15:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z+o6cKu4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09853BB24
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 15:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709A817583;
+	Sat, 23 Nov 2024 15:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732374802; cv=none; b=F5dS/fJ6iucS8Zwm1KFQ2GLKh3bcUkWPJ0+BwQBkY69+coEUfEfcU93KvWQ6OTPJn1oSAzx3b326FA3BoNrzaYIq0JAyPr0QvkkMyAsW/qJ7WZY/apMLqrKGPYz7rpPvOjxHWkw99YFS6yCgnBN7qekd8UH43/lkbwTmXq8kc88=
+	t=1732375000; cv=none; b=rRjfIQudWSBmHYeBlxn1BJhZrJer5S4s12mN3pJtEY5FMwBdnH/JwRMbfiy9sNYvXu3gXcHD3I91dqt6+ahw3B1IgBXRSrxl3Q3HO823ZO7q+0NGhKTzocKP+W1AfZSjqpfAPuqPdbAc6WbniEjYIynEtWznTRN6HnLch3kFHts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732374802; c=relaxed/simple;
-	bh=4wvubPOf9jW1pFpxkBhGsajdzo2sg3WLPpNhRgkXBp0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=VJcSVXZU/RSpR8cBYo6dvCLN5ZgPEwTrNylat0jSrZpOYzcDGB23A7b25+6k+8elOB7zQjrLBkVr0Ql02Xl5G2al+/LbEFxjd5LBj5/uu/csyiZaL0eiYoA1laNVVclzmirNOzc8y1EUfn0IaVy5xK/ivMJRNn3Bh2ymPjT0atg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-20-DIREUW6pN_yi7j3_wFxjqw-1; Sat, 23 Nov 2024 15:13:11 +0000
-X-MC-Unique: DIREUW6pN_yi7j3_wFxjqw-1
-X-Mimecast-MFC-AGG-ID: DIREUW6pN_yi7j3_wFxjqw
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 23 Nov
- 2024 15:13:09 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sat, 23 Nov 2024 15:13:09 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Mateusz Guzik' <mjguzik@gmail.com>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "bp@alien8.de" <bp@alien8.de>, "andy@kernel.org"
-	<andy@kernel.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>, Nathan Chancellor <nathan@kernel.org>
-Subject: RE: [PATCH 2/2] string: retire bcmp()
-Thread-Topic: [PATCH 2/2] string: retire bcmp()
-Thread-Index: AQHbPYzPSi+EdCwHIEmNTEknO+eDubLE+IsQ
-Date: Sat, 23 Nov 2024 15:13:09 +0000
-Message-ID: <5f510b8238824aa6b3534e755f965d85@AcuMS.aculab.com>
-References: <20241123094729.1099378-1-mjguzik@gmail.com>
- <20241123094729.1099378-3-mjguzik@gmail.com>
-In-Reply-To: <20241123094729.1099378-3-mjguzik@gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1732375000; c=relaxed/simple;
+	bh=Rs1AyLMmMT+EhiO+wBM0jD2Ma7zXw65IWJOajmuwmsg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y1XPxllDyIuBbqXj5zR6ySSQFnU0WlUuh3jgrqdthS2yG9AikRMMpL3/p3Iq4uVcnc+b6oRtWGym5k2G1bh+TQ23nHltmzJtXrRDVnP5JUmaGm0mau9JCO3w/VG9ciMnGxiP6O7jFQzdu/2konRBLPMAus7FQU6PkPtrfI8ZH+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z+o6cKu4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D208C4CECD;
+	Sat, 23 Nov 2024 15:16:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732374999;
+	bh=Rs1AyLMmMT+EhiO+wBM0jD2Ma7zXw65IWJOajmuwmsg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Z+o6cKu4jljn5oc2TMKqxEXy10E4zXZqii7XsKCQHFcrzw5KjWbBCuFI1B3PVGc6k
+	 57AN+wfXPDCTfIIY/j3WZlut5dejnVs5YlmdNWujftrF+UTepSxiBX3NreqdOHtAab
+	 gKq84SywNcbJ7lF6Tu/4m8tbDAQ9ycjvf7NhvpdcZtAb3nShKmE7WJFC22CN+Wl/4y
+	 +sKnXe1OE4IrHgDCn2wf0/cOdHyIOy/iyZcTICLMrKhIuYsJ0yiohbhGIj30rr7/PV
+	 kjaG62cjuBBfGmxCPamXAOMiJIN2Yph40CjY4Tv9+aFTcn/dk4MoJ1qk1CkJjPwlK0
+	 Mgw8Q2mQpyzGg==
+Date: Sat, 23 Nov 2024 15:16:34 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: light: veml6030: add support for triggered
+ buffer
+Message-ID: <20241123151634.303aa860@jic23-huawei>
+In-Reply-To: <20241110-veml6030_triggered_buffer-v2-1-ecda3b6ed77f@gmail.com>
+References: <20241110-veml6030_triggered_buffer-v2-1-ecda3b6ed77f@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: BASfZHZC5m7GSNozKLWg3CdT2rvF-jH7jIlNvehsNFY_1732374790
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Mateusz Guzik
-> Sent: 23 November 2024 09:47
->=20
-> While architectures could override it thanks to __HAVE_ARCH_BCMP, none
-> of them did. Instead it was implemented as a call to memcmp().
->=20
-> These routines differ in the API contract: memcmp()'s result indicates
-> which way the difference goes (making it usable for sorting), whereas
-> bcmp()'s result merely states whether the buffers differ in any way.
->=20
-> This means that a dedicated optimized bcmp() is cheaper to execute than
-> memcmp() for differing buffers as there is no need to compute the return
-> value.
->=20
-> However, per the above nobody bothered to write one and it is unclear if
-> it makes sense to do it.
->=20
-> Users which really want to compare stuff may want to handle it
-> differently (like e.g., the path lookup).
->=20
-> As there are no users and the code is merely a wrapper around memcmp(),
-> just whack it.
->=20
-...
->=20
-> -/*
-> - * Clang may lower `memcmp =3D=3D 0` to `bcmp =3D=3D 0`.
-> - */
-> -int bcmp(const void *s1, const void *s2, size_t len)
-> -{
-> -=09return memcmp(s1, s2, len);
-> -}
-> -
+On Sun, 10 Nov 2024 18:49:05 +0100
+Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
 
-As per the comment I thought that clang would sometimes generate
-calls to bcmp().
+> All devices supported by this driver (currently veml6030, veml6035
+> and veml7700) have two 16-bit channels, and can profit for the same
+> configuration to support data access via triggered buffers.
+> 
+> The measurements are stored in two 16-bit consecutive registers
+> (addresses 0x04 and 0x05) as little endian, unsigned data.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Hi Javier,
 
-So while the two symbols could refer to the same code I don't
-think it can be removed.
+We have to be a little careful with pushing data from the stack.
+Need to makes sure holes are zero filled.
 
-=09David
+Jonathan
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+> diff --git a/drivers/iio/light/veml6030.c b/drivers/iio/light/veml6030.c
+> index ccb43dfd5cf7..ce9af9a0e933 100644
+> --- a/drivers/iio/light/veml6030.c
+> +++ b/drivers/iio/light/veml6030.c
+
+>  
+>  static const struct regmap_config veml6030_regmap_config = {
+> @@ -889,6 +928,35 @@ static irqreturn_t veml6030_event_handler(int irq, void *private)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> +static irqreturn_t veml6030_trigger_handler(int irq, void *p)
+> +{
+> +	struct iio_poll_func *pf = p;
+> +	struct iio_dev *iio = pf->indio_dev;
+> +	struct veml6030_data *data = iio_priv(iio);
+> +	unsigned int reg;
+> +	int ch, ret, i = 0;
+> +	struct {
+> +		u16 chans[2];
+There is a hole here... 
+> +		aligned_s64 timestamp;
+> +	} scan;
+> +
+> +	iio_for_each_active_channel(iio, ch) {
+> +		ret = regmap_read(data->regmap, VEML6030_REG_DATA(ch),
+> +				  &reg);
+> +		if (ret)
+> +			goto done;
+> +
+> +		scan.chans[i++] = reg;
+This fills in at least 1 channel, but maybe not the second.
+> +	}
+> +
+So this leaks random stack data I think.
+
+Upshot, when holes are involved or not all the channels are set, need
+memset(&scan, 0, sizeof(scan));
+for the structure on the stack which will zero the holes as well as
+both channels.
+
+Ancient article on this: https://lwn.net/Articles/417989/
+
+We get away with it when they are in the iio_priv space because they are
+kzalloc + if we do leak data due to changes in configured channels it's
+just old sensor data which is (I think) never a security problem!
+
+> +	iio_push_to_buffers_with_timestamp(iio, &scan, pf->timestamp);
+> +
+> +done:
+> +	iio_trigger_notify_done(iio->trig);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+>  static int veml6030_set_info(struct iio_dev *indio_dev)
+>  {
+>  	struct veml6030_data *data = iio_priv(indio_dev);
+> @@ -1077,6 +1145,12 @@ static int veml6030_probe(struct i2c_client *client)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> +	ret = devm_iio_triggered_buffer_setup(&client->dev, indio_dev, NULL,
+> +					      veml6030_trigger_handler, NULL);
+> +	if (ret)
+> +		return dev_err_probe(&client->dev, ret,
+> +				     "Failed to register triggered buffer");
+> +
+>  	return devm_iio_device_register(&client->dev, indio_dev);
+>  }
+>  
+> 
+> ---
+> base-commit: 9dd2270ca0b38ee16094817f4a53e7ba78e31567
+> change-id: 20241106-veml6030_triggered_buffer-a38886ca4cce
+> 
+> Best regards,
 
 
