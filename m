@@ -1,139 +1,120 @@
-Return-Path: <linux-kernel+bounces-418893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D10739D66E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 01:53:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 916769D66E2
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 01:55:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F2D3B2237B
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:53:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D64D0B22494
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B337BA42;
-	Sat, 23 Nov 2024 00:53:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F204B65C;
+	Sat, 23 Nov 2024 00:55:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QU2tVmvz"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bqqP6ihl"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81007257D;
-	Sat, 23 Nov 2024 00:53:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AA7A29A1;
+	Sat, 23 Nov 2024 00:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732323220; cv=none; b=F38dRzGNUQvuB9YXZDkwMv8NXwXCanKsBLdTw17aoCcIS+M6P26MGqzbKQALnCW0Yx4wfJYjr7R+qWWErTe80V/AYRutrwMupbFg3bZDUjXgQDEPCBv3xT4BOHsgogHWhjlzaIajTxKe6V1CegtH9aPkpJvG3ZkTteixISBSw7k=
+	t=1732323317; cv=none; b=DeYASt/UaRMqwCRgCX9qvNvhCNVd0JhVVqCTn12RPh6k4/0oDG9mVavnL3jg4NZBCJshAxZjR9HcDlLJ8mpC1OlfqtGimb1F/mI/vgd/PqoR2qJ17MTTOLDIwRppswyd5nBUoAEOn8qhtkAmYgIa6O6RkwhxRkITFiARH45+0zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732323220; c=relaxed/simple;
-	bh=ZOzgDCszNpXOPabHGe4wYbuuBiKrW5VJPNfRwhtW3h8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bivi2hIgcb4gsgaCJVeGQmHEXHiO7b0IjRwE2H9ipxTUpLsV8Ju/eHYUX0ojZ9hd5tp3V1jtYOVCwv2s+vlRkEe9u5xkWWjywLDuKi3i0YqcEdBrVyYltG5Kb+RJC1/OXkqhdKBcAdGvEpHjSZH00yYwGY5AAALXJ+4k1pySuHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QU2tVmvz; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=MySxW6Yvv72K+z2FlW9SiPYONLnpcffXjHrq0N51mFU=; b=QU2tVmvz9D0LyQZn/2E6OR0PhY
-	KqXPwT+XvUFmnjhx5IsgFic9byvXjamh8g3lJVkl/jKjHX/h8Ggf7+w5Ghw4Lsdg5GIoWmsnqZm8D
-	ePaR9EfPcQPX34JQkfJmVVzE5ZIupnCRIXKH0w9Cn54RS3pY8r0/hB+sE7/0f+3W1WYsM8fEo8AFg
-	BRh4wa4LCvl8zk7i8GQXoG0u7/6solDBLYQ181K8Kg8OIy4rr4QMBbrE2+f4NwBdqvFtp5bs0iRPO
-	1IIaqwvExMrR54msJqJW+LFghYYaBHjDtNT7UZSRQDrevYXT/7znfak++IuQLvgyD86oKT27WPwRa
-	HPwW7zZw==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tEeOj-00000008XJ3-3vvj;
-	Sat, 23 Nov 2024 00:53:19 +0000
-Message-ID: <eac20e8d-d08c-4be7-a34f-b511798f0a57@infradead.org>
-Date: Fri, 22 Nov 2024 16:53:07 -0800
+	s=arc-20240116; t=1732323317; c=relaxed/simple;
+	bh=iDERunhSu03m5vAyZ4GljsZGsCR+M5m9RkipDCEHfU8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uBRaRdJWCGM3lqjIufl0Nrtl8GJNFQUwRQcxyueVrosUfkCiT0q+Rq8GzvJ2zcyzJwqmsqxhsA/ZsCEBdpSLYuDePh1ojX5BoMdbmuumW/GsSwHA3ik9vOgrJcUlUySDyb/m/89NecYk75gx6BTJ0cwqcVGKclFi9ND5JmpeWDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bqqP6ihl; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7ee6edc47abso2097113a12.3;
+        Fri, 22 Nov 2024 16:55:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732323316; x=1732928116; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wzZqsNFKcBl3d8anhqvd72az0uxGft7JpQJj7xlzeOM=;
+        b=bqqP6ihlCBIWy+epQmM0MoAxIrMwPYbH5AbyJZ/ImnCbSVkYQnsdOL6QGH0bkfBXmE
+         pEKlMJ5BRTQfS4206JNw5yMEuJu/s5J0ZAPKfoby2ObdITwRAOGJ3SVSIrRzNqpaBKHR
+         /lrJtrYrP5PFHAPZSfNnrmmA2Ub31Pau8krxvV0avFxSqUW7/iaKewsOzmau4x1CrFi+
+         kBD2qU1kr0q3GCNo/L0RGe74W9BSa5VhdIuJGub2ZIdcn9wHDqNCESB0Wy34IGPFx03C
+         j7pPkP6p5cLAMywMK9zbQbcKtFR+w/eqFOoIn+gMrOjOxXciNQ4gjZTW7QDuUs8CsQ5t
+         Ym/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732323316; x=1732928116;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wzZqsNFKcBl3d8anhqvd72az0uxGft7JpQJj7xlzeOM=;
+        b=nkW9ahZfHjLOMThYYH9VajprP//otwmv6KnhSHQmRhurXEpegdipmHFY4IyApbPYpb
+         55CkoIU8GtWDace3UTuUZLiaTDHkGyEzY1YR4rYQ+2RnoNIS1K0pNJ/TKm/m9/+MXte/
+         UJYM3zxWV+3PQKYVYahHFm0VhHslEWVO4+hCbQyYIS1OXxzLuoXup3h80fheE1oxiDmh
+         ddChd9MYgiQH+vNVZXuws226zKjtzS+NEfaNm51LgLGlIRJfNb7W6JuOGJaxHvqfP1ql
+         C1zJZB3pXVGyh4DsIDgpw1Q73FbQ8EGSryjQ7SlbEgNf6otsUS7bipprHof4DjEdKYfa
+         R5RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUO6XK1Po8mQJU9DrMhWAwQEEOOFAL15y9yWtPVffbRnfdLq8x1lHuT03+p9nXdbzi+JWSqJ30Ym/SBl2g=@vger.kernel.org, AJvYcCX7cPcF8nv8mJ4oZ/pkyo72/l5aArwfXhUY4t6SniSj+fXWiTUg5h6mJ/AMLEQQcYICIxohihiJbk6seZgD9N9EKA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDwNdagOm2Kfp9bUi2Wgb1wBDb9Qg1wivsB4OaCr2NGWD2xyq2
+	Dyh388cYSJqqHrZVSbyrKXo7+gbO0Zxm7dO+ZQcdu+cN7GZv91zI
+X-Gm-Gg: ASbGncvjomuhsDogDYC3lmN0KsUgxWmWv5x4YjIKdKlT3+QQUuGAZNfp0/vPQrBQMm4
+	7QTt4KVjiAWEp1GHDtZ9MUk8ucx2DY01/aLRQbEvb9g+dhy8Sw5I126BwMr4qYS2DS8oEW/N688
+	fPUEXgJLLGKJxYPyoFpa3MVqVbbNCLmYtyGbGkjWRMFkwVabFCwCwGJ1l++MXpyDtE2rdj83dIY
+	Te93H8BiKYkcV/elptVWqlkukZIlGrARtJYpwwP+A3L8GY2aO/2+Z48sw0Kzaq31dfQlAw6Ol9h
+	o9y1H46aTEY=
+X-Google-Smtp-Source: AGHT+IGgMXBR/fvbeNT5SZ8Ap4QH0+jFyiXo0foPjEy+Mgs7o6Ma+k9AlxhTMFDvYp5aDK+kNhSmgw==
+X-Received: by 2002:a05:6a20:a107:b0:1db:e509:c0a8 with SMTP id adf61e73a8af0-1e09e4575a1mr7038827637.21.1732323315536;
+        Fri, 22 Nov 2024 16:55:15 -0800 (PST)
+Received: from mbp.lan (c-67-174-206-244.hsd1.ca.comcast.net. [67.174.206.244])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724e0fca304sm2082867b3a.175.2024.11.22.16.55.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 16:55:15 -0800 (PST)
+From: Howard Chu <howardchu95@gmail.com>
+To: peterz@infradead.org
+Cc: mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Howard Chu <howardchu95@gmail.com>
+Subject: [PATCH v1 0/2] perf trace: Add tests for BTF general augmentation
+Date: Fri, 22 Nov 2024 16:55:09 -0800
+Message-ID: <20241123005512.342079-1-howardchu95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 3/5] modules: Allow extended modversions without basic
- MODVERSIONS
-To: Matthew Maurer <mmaurer@google.com>, Michael Ellerman
- <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, Masahiro Yamada <masahiroy@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Jonathan Corbet <corbet@lwn.net>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20241123-extended-modversions-v9-0-bc0403f054bf@google.com>
- <20241123-extended-modversions-v9-3-bc0403f054bf@google.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20241123-extended-modversions-v9-3-bc0403f054bf@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+The previous version of the perf trace BTF general augmentation tests
+didn't pass Shellcheck (thanks to Arnaldo Carvalho de Melo
+<acme@kernel.org> for pointing this out), this version uses bash instead
+of POSIX shell to pass Shellcheck.
 
+This patch series also adds documentation for the new option
+--force-btf, which is used in the tests.
 
-On 11/22/24 4:19 PM, Matthew Maurer wrote:
-> If you know that your kernel modules will only ever be loaded by a newer
-> kernel, you can disable BASIC_MODVERSIONS to save space. This also
-> allows easy creation of test modules to seee how tooling will respond to
-> modules that only have the new format.
-> 
-> Signed-off-by: Matthew Maurer <mmaurer@google.com>
-> ---
->  kernel/module/Kconfig    | 15 +++++++++++++++
->  scripts/Makefile.modpost |  1 +
->  scripts/mod/modpost.c    | 19 +++++++++++--------
->  3 files changed, 27 insertions(+), 8 deletions(-)
-> 
-> diff --git a/kernel/module/Kconfig b/kernel/module/Kconfig
-> index a31c617cd67d3d66b24d2fba34cbd5cc9c53ab78..f28b361494c4b4cc2446d683589f9452a0043b2b 100644
-> --- a/kernel/module/Kconfig
-> +++ b/kernel/module/Kconfig
-> @@ -161,6 +161,7 @@ config MODULE_UNLOAD_TAINT_TRACKING
->  config MODVERSIONS
->  	bool "Module versioning support"
->  	depends on !COMPILE_TEST
-> +	selects BASIC_MODVERSIONS
+Link: https://lore.kernel.org/linux-perf-users/Zt9yiQq-n-W6I274@x1/
 
-tested?  'selects' is not valid.
+Howard Chu (2):
+  perf trace: Add tests for BTF general augmentation
+  perf docs: Add documentation for --force-btf option
 
->  	help
->  	  Usually, you have to use modules compiled with your kernel.
->  	  Saying Y here makes it sometimes possible to use modules
-> @@ -218,6 +219,20 @@ config EXTENDED_MODVERSIONS
->  	  The most likely reason you would enable this is to enable Rust
->  	  support. If unsure, say N.
->  
-> +config BASIC_MODVERSIONS
-> +	bool "Basic Module Versioning Support"
-> +	depends on MODVERSIONS
-> +	help
-> +	  This enables basic MODVERSIONS support, allowing older tools or
-> +	  kernels to potentially load modules.
-> +
-> +	  Disabling this may cause older `modprobe` or `kmod` to be unable
-> +	  to read MODVERSIONS information from built modules. With this
-> +	  disabled, older kernels may treat this module as unversioned.
-> +
-> +	  This is enabled by default when MODVERSIONS are enabled.
-> +	  If unsure, say Y.
-> +
->  config MODULE_SRCVERSION_ALL
->  	bool "Source checksum for all modules"
->  	help
-
+ tools/perf/Documentation/perf-trace.txt     |  3 +
+ tools/perf/tests/shell/trace_btf_general.sh | 68 +++++++++++++++++++++
+ 2 files changed, 71 insertions(+)
+ create mode 100755 tools/perf/tests/shell/trace_btf_general.sh
 
 -- 
-~Randy
+2.43.0
 
 
