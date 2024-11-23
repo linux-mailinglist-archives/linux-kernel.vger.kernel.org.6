@@ -1,169 +1,150 @@
-Return-Path: <linux-kernel+bounces-418977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 885CE9D67FC
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 08:10:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5FF89D67FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 08:13:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09A2216118C
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 07:10:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ECAB1611C4
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 07:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA7B16EBE9;
-	Sat, 23 Nov 2024 07:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CA215B97D;
+	Sat, 23 Nov 2024 07:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Rol3+5rX"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="Jy+u+WtZ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AfYneGfg"
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5CF7E110;
-	Sat, 23 Nov 2024 07:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE30320E3
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 07:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732345839; cv=none; b=esGjYLpayGm6Tnj4PCKuhL4JYUTMuI5RnKXr1nJCdntidjiHPKTE0Oc/UxDcYm889DvLqMmcT/rIn4IZUKqWPkvTMfCX6DVq7RhsCIBP28bO46Yrp18DmsebkZ1rfyRLxZdS+Uh8tQXGLrMBCFBv8VxbbYa2LASpVuJFAMdehDc=
+	t=1732345994; cv=none; b=Hhm/wUDG1AsD+Xb2kanxU3I2K3xHObCGv6bvplIvVxZtsn031eczi3ACm1FwsmEP19vJGYfzj2O4PS+d1vIUIN8NlOCA/uxPjzFABiBxYZVnXq6cTF6C1JtPFFwD1CBl0/wkE4XGS8PzxIyoyTNuijjqWXSca6dRdc4s16ry0Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732345839; c=relaxed/simple;
-	bh=tcNGkFjzsdvzIwzgHfLMDwMCVCUfylTueMX/Jp294n4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X7/jmJiIYxWBMys6Tu5OYE/4LGtZ2YxHvI7lqqjIYGf8zogYcSmgUKdXRKa4CTT/H+MybwQmVLnyRbjV0WcEgzQo8J3aVM2tFB99Y+ePvoIZpJdWxMbAD81EZ9FeHMeDhdG3Rf+ScZ2RPxTUJk+s7Ho/yfy/y7Ig7T/pOiOrrYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Rol3+5rX; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 07c34cb6a96a11efbd192953cf12861f-20241123
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=of66qC7qugkiFYiLOj7X/DHcAAfucvWSwJFAEVz9WNw=;
-	b=Rol3+5rXBZ3kQSOzhKw9IQbt7Z5T129RQdbhWeZDI6lCDUoW4hDcTjApF1d5baqbz9+LllkFIJa5TTiVBZK1wc0qnyIzlRE8fFe0asXf8PSw1NX6gzO7hs76RYZyMuZxYBck8yFcyKWYwMIqzS5YionQb6qeUUpmLzJ25SR62c0=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.44,REQID:06d93a38-28e2-49a9-a1ce-af553d4d8d5b,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-25
-X-CID-META: VersionHash:464815b,CLOUDID:7c63aca0-f395-4dfc-8188-ce2682df7fd8,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 07c34cb6a96a11efbd192953cf12861f-20241123
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
-	(envelope-from <andy-ld.lu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 2066787923; Sat, 23 Nov 2024 15:10:33 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Sat, 23 Nov 2024 15:10:30 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Sat, 23 Nov 2024 15:10:30 +0800
-From: Andy-ld Lu <andy-ld.lu@mediatek.com>
-To: <ulf.hansson@linaro.org>, <angelogioacchino.delregno@collabora.com>,
-	<matthias.bgg@gmail.com>, <wenbin.mei@mediatek.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	Andy-ld Lu <andy-ld.lu@mediatek.com>
-Subject: [PATCH] mmc: mtk-sd: Add support for ignoring cmd response CRC
-Date: Sat, 23 Nov 2024 15:09:05 +0800
-Message-ID: <20241123071006.14294-1-andy-ld.lu@mediatek.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1732345994; c=relaxed/simple;
+	bh=fVheYrulJKEkYyRN1Unrr/oACThTD3uF9+LHtgL/lhk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Mik2oKuHb85kJW15ZmdstaL/Py+Vf/mGmGkS3kPNQI8vs1HjU274MSsKKBSeSoUf2t3BdTmSY6a4H4oYEnAE3gYQrtIEiDKm7RixJkIBG3eyEBISTullLCynsUblpgemDH4YhVcdYKctzmiK5v19j6wv9hYT2+kRm2ghigJMce4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=Jy+u+WtZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AfYneGfg; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id C323511401B8;
+	Sat, 23 Nov 2024 02:13:10 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Sat, 23 Nov 2024 02:13:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm1; t=1732345990; x=1732432390; bh=r8Jk4SM007zzUTmLbATlA
+	oJXOvMWyvGE29KVLkEPgKA=; b=Jy+u+WtZC6qJ7jFH1zvLZ1HlJCfQsizLR+gp7
+	7jZveAQpzuqqBhG5HD/jlCn3qRmuUvGOrXGcfRxjJVct4Y3YrXyYmW2+t0lxFn7J
+	bNiXT2uzLj2EBLlHU/EFh0zHPNQ+BuFs0mRDeE9qYPuhneq4B5IkdKcJGhtXUF0D
+	lggEE/w4BOIjeEqDBbeGeIEBSdlxK/sJ2+Cs7wCD+FxPGcf+zVBjexz3OSFCuivn
+	JbIV4DLCwrV2HloOINjNYrEsSi+hTGu8YY8uykzcJlKmB7zxUFXG9LomucQa6P1m
+	iKyWiJFEYpFzCFvLNLCmEhUKPVhUPUxbwieh08taV2aWMMThQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:message-id
+	:mime-version:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732345990; x=
+	1732432390; bh=r8Jk4SM007zzUTmLbATlAoJXOvMWyvGE29KVLkEPgKA=; b=A
+	fYneGfgS13w4johm7Zb9mGe4J1k9xesf1rtPS5od8r5EzkKF/JmPvLbJyBVrGzpo
+	SOOfUBr2n/W1xlW01MbzG6vsrek6FNqO4W1Hk34USAFHMpe1QF6QFzDzhcWJoSSG
+	OYHfuPzWZpVBiPl67W6bqRXmAKjQuCPh9eGcE0VwJMT38ihfYo0DvssJT1rZAOGW
+	yloQRZ9yD9OXRVEAwU0M70xxQzd2DG0sl92pmCzPAHWqb+FTHYYbP69FWsxsaSJa
+	BOEYj4EIJe/8XFynI1ODbc2Tn3fslcZnPEB9Z7LT3pcmIrxQ+gE/BHYIVNGlE3jL
+	e3vrQwFBYlrBZ8bw7QJZQ==
+X-ME-Sender: <xms:hoBBZ4ApWlMn0Akth3fqEsKM2iIvPi4tmDN1xbQq987v3O2e0egk9g>
+    <xme:hoBBZ6jHogjIvmloqr7kjfoJa0lACYv_2uL6oc8oc2GjNjHoGjtqq1OM674WQFtiB
+    IXJzh3tN-IZXrcWQjE>
+X-ME-Received: <xmr:hoBBZ7lK8KIz-MbWWvXRv6Yyfr4h7inBo5nS-5QbbcTX03XqZAbFGneicCZS0smB0vMI0X9VojwIciMojVkVootoufqBq4eSmQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgedtgddutdefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvve
+    fukfggtggusehttdertddttddvnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohht
+    ohcuoehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtth
+    gvrhhnpeetfeeiteefveegvdfggeffheetleejkeekleeugeffffdtgfdtteetkeevvddv
+    gfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhhotggt
+    hhhirdhjphdpnhgspghrtghpthhtohepfedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htohepthhorhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgt
+    phhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehlihhnuhigudefleegqdguvghvvghlsehlihhsthhsrdhsohhurhgtvghf
+    ohhrghgvrdhnvght
+X-ME-Proxy: <xmx:hoBBZ-xy4dg72mM4gvyqn1bo3hKauk_zP3wvjlyHQVmeFV8kffMmGw>
+    <xmx:hoBBZ9S6EbuI545aj449wKck_ATG82-8lnJSD45nlBuK8pipameudg>
+    <xmx:hoBBZ5agvSh96j1LEiY6Efgr7uWU007jRzGI5MGyjebAas2h6GlLkA>
+    <xmx:hoBBZ2S16UfUIwNDn_WRJtEQTXq1lNiNMVm7JAnyS0r2GNodXZpl8g>
+    <xmx:hoBBZ_dChUzOYINa_ULOeErJoLgsOq7i3I4FK5bl_BjNpuX-vILkK5bB>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 23 Nov 2024 02:13:09 -0500 (EST)
+Date: Sat, 23 Nov 2024 16:13:06 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux1394-devel@lists.sourceforge.net
+Subject: [GIT PULL] firewire updates for v6.13-rc1
+Message-ID: <20241123071306.GA108525@workstation.local>
+Mail-Followup-To: torvalds@linux-foundation.org,
+	linux-kernel@vger.kernel.org, linux1394-devel@lists.sourceforge.net
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--6.109900-8.000000
-X-TMASE-MatchedRID: Q3t+gDEGl+H7W7/9wscjdRuZoNKc6pl+ju+GX08gELBKda7Cp9A+Rm7T
-	iYn7+ZHjXers26Xj0FAkAzbREWz9m28aeniRmKw1H5YQyOg71ZZMkOX0UoduuQqiCYa6w8tv8rK
-	/0wUyv6DwLx34aly34aojHM/WIuK90rly6TajiUnuykw7cfAoIHE01tKb2rARmyiLZetSf8mfop
-	0ytGwvXiq2rl3dzGQ1HN3C0owwdL7VUQqweXw1HiKsnV6jwqhAS8V3+ghPHP094nqACUbvaA==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--6.109900-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	D2E444064FAB0EB55E14C3A892E9AA8715E06345789FCC8F6A380B8EA7050E592000:8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The current process flow does not handle MMC requests that are indicated
-to ignore the command response CRC. For instance, cmd12 and cmd48 from
-mmc_cqe_recovery() are marked to ignore CRC, but they are not matched to
-the appropriate response type in msdc_cmd_find_resp(). As a result, they
-are defaulted to 'MMC_RSP_NONE', which means no response is expected.
+Hi Linus,
 
-This commit adds a new flag 'MMC_RSP_R1B_NO_CRC' to work alongside the
-existing 'MMC_RSP_R1_NO_CRC' for the following process flow. It fixes the
-response type setting in msdc_cmd_find_resp() and adds the logic to ignore
-CRC in msdc_cmd_done().
+Please pull some updates for 6.13 from FireWire subsystem. The
+development activity has been relatively quiet, so only a few
+commits are included in this PR.
 
-Signed-off-by: Andy-ld Lu <andy-ld.lu@mediatek.com>
----
- drivers/mmc/host/mtk-sd.c | 11 +++++++++--
- include/linux/mmc/core.h  |  1 +
- 2 files changed, 10 insertions(+), 2 deletions(-)
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index efb0d2d5716b..5d669f985a82 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -1097,11 +1097,13 @@ static inline u32 msdc_cmd_find_resp(struct msdc_host *host,
- 	u32 resp;
- 
- 	switch (mmc_resp_type(cmd)) {
--		/* Actually, R1, R5, R6, R7 are the same */
-+	/* Actually, R1, R5, R6, R7 are the same */
- 	case MMC_RSP_R1:
-+	case MMC_RSP_R1_NO_CRC:
- 		resp = 0x1;
- 		break;
- 	case MMC_RSP_R1B:
-+	case MMC_RSP_R1B_NO_CRC:
- 		resp = 0x7;
- 		break;
- 	case MMC_RSP_R2:
-@@ -1305,6 +1307,7 @@ static bool msdc_cmd_done(struct msdc_host *host, int events,
- {
- 	bool done = false;
- 	bool sbc_error;
-+	bool ignore_crc = false;
- 	unsigned long flags;
- 	u32 *rsp;
- 
-@@ -1329,6 +1332,10 @@ static bool msdc_cmd_done(struct msdc_host *host, int events,
- 		return true;
- 	rsp = cmd->resp;
- 
-+	if (mmc_resp_type(cmd) == MMC_RSP_R1_NO_CRC ||
-+	    mmc_resp_type(cmd) == MMC_RSP_R1B_NO_CRC)
-+		ignore_crc = true;
-+
- 	sdr_clr_bits(host->base + MSDC_INTEN, cmd_ints_mask);
- 
- 	if (cmd->flags & MMC_RSP_PRESENT) {
-@@ -1351,7 +1358,7 @@ static bool msdc_cmd_done(struct msdc_host *host, int events,
- 			 * CRC error.
- 			 */
- 			msdc_reset_hw(host);
--		if (events & MSDC_INT_RSPCRCERR) {
-+		if (events & MSDC_INT_RSPCRCERR && !ignore_crc) {
- 			cmd->error = -EILSEQ;
- 			host->error |= REQ_CMD_EIO;
- 		} else if (events & MSDC_INT_CMDTMO) {
-diff --git a/include/linux/mmc/core.h b/include/linux/mmc/core.h
-index 56972bd78462..076e1c71a07e 100644
---- a/include/linux/mmc/core.h
-+++ b/include/linux/mmc/core.h
-@@ -66,6 +66,7 @@ struct mmc_command {
- 
- /* Can be used by core to poll after switch to MMC HS mode */
- #define MMC_RSP_R1_NO_CRC	(MMC_RSP_PRESENT|MMC_RSP_OPCODE)
-+#define MMC_RSP_R1B_NO_CRC	(MMC_RSP_PRESENT|MMC_RSP_OPCODE|MMC_RSP_BUSY)
- 
- #define mmc_resp_type(cmd)	((cmd)->flags & (MMC_RSP_PRESENT|MMC_RSP_136|MMC_RSP_CRC|MMC_RSP_BUSY|MMC_RSP_OPCODE))
- 
--- 
-2.34.1
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git tags/firewire-updates-6.13
+
+for you to fetch changes up to 4752e8cde8344cb8673abdefe0dd74e9a2fe23ad:
+
+  tools/firewire: Fix several incorrect format specifiers (2024-11-14 09:12:04 +0900)
+
+----------------------------------------------------------------
+firewire updates for v6.13
+
+A few updates for the 6.13 kernel, including some typo corrections in the
+software stack and some fixes for tools. Additionally, it includes a
+change resulting from the deprecation of a kernel API in the PCI
+subsystem.
+
+----------------------------------------------------------------
+Luo Yifan (1):
+      tools/firewire: Fix several incorrect format specifiers
+
+Philipp Stanner (1):
+      firewire: ohci: Replace deprecated PCI functions
+
+Shen Lichuan (1):
+      firewire: Correct some typos
+
+ drivers/firewire/core-topology.c |  2 +-
+ drivers/firewire/core.h          |  2 +-
+ drivers/firewire/ohci.c          | 11 +++++------
+ tools/firewire/decode-fcp.c      |  2 +-
+ tools/firewire/nosy-dump.c       |  6 +++---
+ 5 files changed, 11 insertions(+), 12 deletions(-)
+
+
+Regards
+
+Takashi Sakamoto
 
