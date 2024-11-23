@@ -1,187 +1,198 @@
-Return-Path: <linux-kernel+bounces-419263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF81B9D6B81
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 21:58:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D744A9D6B86
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 22:05:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ECE9281E02
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 20:58:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFD19161DC1
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 21:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FC72905;
-	Sat, 23 Nov 2024 20:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A46119D8AD;
+	Sat, 23 Nov 2024 21:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Zs4ipMsd"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HwhOaMv2"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13F014EC47
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 20:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A87156F45;
+	Sat, 23 Nov 2024 21:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732395491; cv=none; b=U2blVOY1HILijqrtEbAlSeJJs/ARhWYkYqfQfLsxfqkFBvRief+sY2GwZlrxE25MNiIB0okO3JCihJjbt5YF+bzbHXvKZhJjeRYcqZuvle1YDOAXJ04jU+CRjyNfyAjH46tUamcRiTgQlQ2lPvmbj521CZ8WQE3PW3ESQWSHJb4=
+	t=1732395924; cv=none; b=U10MMNf9QqUdan/mSd4dW6CiAtmcy/CxhwcSbeIcRUaehRWC0StAo6SutVXUss3OMxQKzX73W+xDPSUERB6z8YobZg8RdEWx3eg0P71WsB9oN11uhof+Nla+HtvvJLKY+WCokpYJ6TpSgk/0Cf86RgmWhJLmzalmnLmnDu4oizE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732395491; c=relaxed/simple;
-	bh=iw3IfVEeqVZCmmH63tfvSWnMGKuYlLAyyaHP7mGQh0c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eCHSK9jhR7dg7S6YTsZC3Z57hkTxhiTrj6+gkSlPPBVozjgx134Ib65HEnNr/b/tN9UMeAD12VsGSZYtqtcc+gAzs2QwVBwstYzgU0cxkCfmzwJB902Ip5XKJHva5BrME8txKD8TK3aWXQ9GbwSJp33eHt4nLvUdffPx5Gk2QBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Zs4ipMsd; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5cedf5fe237so3682836a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 12:58:09 -0800 (PST)
+	s=arc-20240116; t=1732395924; c=relaxed/simple;
+	bh=lFrmQIF99tvlGJBEwKu2+j83YqEYB7LOzIyhVFUlGPY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QWiFwr5AESlyjW1JjY+Czga2TrzpNq0qsHwjSc+jSZOgB44PbqhdIxXgtKtPDOfVQguWKEec+rYjYgwUnFuUBt4ihhJNhmUHyrK9dliCVuzb1oYX3Nfpe8lKGCWB8aIlxWdp6dVLYlIjkEcvfsBxIqQynbtIUsEnmoN/Nx3/0GI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HwhOaMv2; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3824a8a5c56so2217652f8f.3;
+        Sat, 23 Nov 2024 13:05:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732395488; x=1733000288; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PJ5jhlyw8xTwjUsLyo10AKJim5MXpC7F7k9xPJC+Ckg=;
-        b=Zs4ipMsd8oqlB8bQCaLcdH8UI5VGJgNlVgH6c1Kx8TYYhxvh83KEJv1Rd02hoO4uy/
-         5l64KO3qFagD2U0bx3usDYvxtkiCDFPwggl0zN/RXniSd4YrMZVaOT6jQeWlSgFOjqsC
-         VJO3qniHZyewaAntUoLxZJShVI/Z+WrwAQMUg=
+        d=gmail.com; s=20230601; t=1732395921; x=1733000721; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OwhHFRff8gph+NM7VDcWm8LJ5lFFl4p2wcgVr3VMUiQ=;
+        b=HwhOaMv2vwJ0Ut84zx/i4VXBztK8+uzZEXsTsb7kyjr45xJDM97MiIYbsD9c0e0wSB
+         71aVhJLMb9Jp/oqtIS8fX9WK47P9uKxzJUjHcKQ4EExxyZqpM66QMD/U9y0s8Z3VKibM
+         bXzRpdclA3iLZyl5W8lQXhcbL7ELV+Z+ueR9EqTrGn0A2jqy3zmQ+/YcRuA+rRT1omy4
+         1AqbHWjOBAaLMIrD8sH4SaqGVSzqNyQ8qxqf4gt0nDJ3ZoL3ahsVq+SWT5Z6dkbvc0mr
+         D8Vtj6KCBwzHtRJU+3bZNW1W5z1OMVwmPH/AFdGWJygNeaNmF284OXPekowKMk5E3Kwv
+         nDrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732395488; x=1733000288;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PJ5jhlyw8xTwjUsLyo10AKJim5MXpC7F7k9xPJC+Ckg=;
-        b=GWT3CMatgXAn3Ag641DxCS8glEUuNhGyMA793Pgt5CM/z4REgbgHfy3BU1I0aKcYCL
-         aoMoHGumRp2CX3y/KIDtzbwwv21u8OL+6QoLq6232+rkpfCxA+4GYKOXTiRKQxrMkDJL
-         eG2uKNhMk/ooqYk024rAz844h1wSa4T8BLofhv9xKFQZnzuhvEA5OHtqTcp4XExLoHBr
-         N2vpcsFLO8DB/OHIQyk66TlHqWRz1Jm9M0zuN7vUGmG7c8r5DQMxHj58A8W1VQyjHeCu
-         1s3pXUiBvJocKuzcqKQLNVv/m6tPtmK6fhHQWgrvA+M0EE+sNgfvzRRbnIN9eNYSpUBl
-         vGzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMDDQpbBv+KCItWWFoMLvNdvVam1G4N47pdMY9taFzJdFqAmvoLguggOx3SHLcpmQsTFXtFU/Gd+bdn8I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxeIbBK5ZMfsUQGPzfQlnkL849/FsA9UrFOfthXUimCp/ExsNY
-	efQZrK0mTSe4IuQgmhuJptuaRMHvOuSVxpV+yeFTu8PcrDWb018R+ANH6RYR8fP5zx62RSsUvFI
-	z141LuA==
-X-Gm-Gg: ASbGncsyy2qLUIMdGM25yatlRc29F8me9yJBqIbong0458GAXBpJWuXB222E0/3jRl0
-	iR795jdeZ1gt764AfkAVaC9GU9Hk2ttZu5TN2zIAqmLHAE486yJfCLRtZeF6sQhmi4Cs6C8itHv
-	ri6MJ/6+WLHiAfeJcpm4s0QWp1RrCX28ugEQ7xMPS12CrsUbLR2vKnvNckhkMlxJCuAgNYXFET9
-	zO+tsrUYTDd0ePWyYkxL6KVKiYfr2FNuexLegqOIzqpTYEGeEG1HjXjufupwP8r/pNmTWDikftX
-	aDBCLTe129sdR8RJ42X5ibtu
-X-Google-Smtp-Source: AGHT+IEfzW/taoTm7lFkixVpvPlm+5HzGWMHyX6Lu2jUGaX5jnpq9Rp/dIoCYoTZDRJNetbWsL0/DA==
-X-Received: by 2002:a17:906:310b:b0:aa5:2232:c8d2 with SMTP id a640c23a62f3a-aa52232c9a6mr470392266b.10.1732395488000;
-        Sat, 23 Nov 2024 12:58:08 -0800 (PST)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa524615e8fsm192148366b.182.2024.11.23.12.58.05
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1732395921; x=1733000721;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OwhHFRff8gph+NM7VDcWm8LJ5lFFl4p2wcgVr3VMUiQ=;
+        b=MdB9JfG/Ulcgi0l2CzRFtxF+NLypktJJT5buXZUhT9KV+km2xm9FINzsjrQCh3I6+r
+         jZlwu4mCUP4bM7qI8Ia2ve9linXa56PrQ3A0l9Lti0wQVnXglg2x007i0A3E4zjQR8kQ
+         0nAF16IyAOJEdn1DybUIBV2V4jOC7Nm9mVXUeHwQmaqHyzQ6mZ9eb9Y//Fise5ouHxpV
+         QS+ec/8oX4yrPxksDy/oerbXbDQzq2/OczCiqECLY2ohksuN8xhzXfgz4ntpKDRFBcP4
+         PrUGYijaKuSXTF3rGvrZk9ZeaOLjOKOvt8BuqxY7ESD4rOnCtilBe0Y46EfmDGYorT4m
+         +RXA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+UoRYgUFp2ZSjMJh7tyEzNmvQAcwfh7KL1UeUpYtBIHpsilPQ3U0vu7fUT44wy0dAfxyJmRWlZgVbvRE=@vger.kernel.org, AJvYcCXLMnKdbMw+TsfxNA+ZiT+Vb9ApTk2Q3aHoShxJ4nUSCxLpLHoTezhoMLOEaAny3hnBoA7Vgl5O@vger.kernel.org, AJvYcCXllU5FKkH8RshYffOZMLgyQmi30bJSYDE5TWCdxTHzK6uMxE8UAMJn06eGOBoBQCJGWzAOw2qCW72bODy++Y/4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe5pSeno2mQQPVM/mwWYn1IJsfFIHxGQlmVojLLhS6NwDWeEgq
+	vTkjkR4+wYuzR9+xT7Fv39AKB94ZVgeLBvxqLCC3mmLJaXD+CWcs
+X-Gm-Gg: ASbGncth0gqcBlRb80/Yc+6vYzNhEyQWY6Pwp096Bry7iXxtQGaGiQUqmcc2I34c9FV
+	GhSzYTcPcRCiRa3Am6OgdTHlvmnbNI+Sjahy30ExXnwAnwigwfyv+5gucEEW0ZHw2DFNl4lREz1
+	01ul1KGndPSWwu0CWrKScTkJhZwvYsW2qQLI1bQl1rk9PuG3+EHmT0U0Of53gHmrA4eP6nITxZl
+	k+c8cN0+Av/l7BMTkqAJKRUwqAvC2bLGBc+TeybWzM1MhXnEk4=
+X-Google-Smtp-Source: AGHT+IFl9uTIBNPR+FGLhcjSU/OABqXj/9lc0b55pXFjEcAbdgdPPy+tu6Ocfy/Nw+I/Z+CXrUESgg==
+X-Received: by 2002:a05:6000:1449:b0:382:2f62:bd3e with SMTP id ffacd0b85a97d-38260b6b641mr6574257f8f.27.1732395920715;
+        Sat, 23 Nov 2024 13:05:20 -0800 (PST)
+Received: from [192.168.0.2] ([69.6.8.124])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbe901esm6227213f8f.87.2024.11.23.13.05.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 23 Nov 2024 12:58:06 -0800 (PST)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa535eed875so94922266b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 12:58:05 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVzx+Vf7DE+Q3fqVD31jsCVlnk1DeBM3oV0lUPVnrp5UGJmm+Z/WOulYomvPJJ1WVsvHZ+sm8RiUP4B8hc=@vger.kernel.org
-X-Received: by 2002:a17:907:1b27:b0:a9e:c267:78c5 with SMTP id
- a640c23a62f3a-aa509c00bc8mr816450066b.55.1732395485506; Sat, 23 Nov 2024
- 12:58:05 -0800 (PST)
+        Sat, 23 Nov 2024 13:05:20 -0800 (PST)
+Message-ID: <a1d70ccf-9731-4ec1-b4c3-606ee7073c18@gmail.com>
+Date: Sat, 23 Nov 2024 23:05:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241118193001.6aefcadd7426feafedf824e1@linux-foundation.org>
- <ZzwVo0ZbuG37pHdR@casper.infradead.org> <20241121214229.8fe091954f9bf0d26f54ed88@linux-foundation.org>
- <fa398c31-7135-457e-b97d-366c12685688@redhat.com> <17c5420c-a89a-411b-9ecd-2e868195f0d1@nvidia.com>
-In-Reply-To: <17c5420c-a89a-411b-9ecd-2e868195f0d1@nvidia.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 23 Nov 2024 12:57:49 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whCgz0Kh3dGB-razGqgzM=spcO1fcyzD3vQd8PEO-bA0g@mail.gmail.com>
-Message-ID: <CAHk-=whCgz0Kh3dGB-razGqgzM=spcO1fcyzD3vQd8PEO-bA0g@mail.gmail.com>
-Subject: Re: [GIT PULL] MM updates for 6.13-rc1
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: David Hildenbrand <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, mm-commits@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v11 06/23] ovpn: introduce the ovpn_peer object
+To: Antonio Quartulli <antonio@openvpn.net>,
+ Sabrina Dubroca <sd@queasysnail.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-6-de4698c73a25@openvpn.net>
+ <b7d3ec11-afe4-409c-970e-8bc647364a08@gmail.com> <ZzORATd5hG614dta@hog>
+ <e543a3de-44f1-4a2d-90ef-1786e222f0d8@gmail.com> <ZzR5i9sO-xwoJcDB@hog>
+ <dc1b37b2-389a-466d-8559-14c496cc9583@gmail.com>
+ <52661fed-f521-4cdc-b9e1-b4f3fa292e78@openvpn.net>
+Content-Language: en-US
+From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+In-Reply-To: <52661fed-f521-4cdc-b9e1-b4f3fa292e78@openvpn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, 23 Nov 2024 at 12:30, John Hubbard <jhubbard@nvidia.com> wrote:
->
-> >
-> > ... not able to come up with good names though. folio_page0(), folio_first_page(), ... :(
->
-> Eh? You're doing great at coming up with good names, IMHO. Either of the
-> above would work nicely!
->
-> I'll put my vote in for folio_page0(), it's concise and yet crystal clear.
+On 21.11.2024 23:23, Antonio Quartulli wrote:
+> On 21/11/2024 00:22, Sergey Ryazanov wrote:
+>> On 13.11.2024 12:03, Sabrina Dubroca wrote:
+>>> 2024-11-13, 03:37:13 +0200, Sergey Ryazanov wrote:
+>>>> On 12.11.2024 19:31, Sabrina Dubroca wrote:
+>>>>> 2024-11-10, 15:38:27 +0200, Sergey Ryazanov wrote:
+>>>>>> On 29.10.2024 12:47, Antonio Quartulli wrote:
+>>>>>>> An ovpn_peer object holds the whole status of a remote peer
+>>>>>>> (regardless whether it is a server or a client).
+>>>>>>>
+>>>>>>> This includes status for crypto, tx/rx buffers, napi, etc.
+>>>>>>>
+>>>>>>> Only support for one peer is introduced (P2P mode).
+>>>>>>> Multi peer support is introduced with a later patch.
+>>>>>>
+>>>>>> Reviewing the peer creation/destroying code I came to a generic 
+>>>>>> question.
+>>>>>> Did you consider keeping a single P2P peer in the peers table as 
+>>>>>> well?
+>>>>>>
+>>>>>> Looks like such approach can greatly simply the code by dropping 
+>>>>>> all these
+>>>>>> 'switch (ovpn->mode)' checks and implementing a unified peer 
+>>>>>> management. The
+>>>>>> 'peer' field in the main private data structure can be kept to 
+>>>>>> accelerate
+>>>>>> lookups, still using peers table for management tasks like 
+>>>>>> removing all the
+>>>>>> peers on the interface teardown.
+>>>>>
+>>>>> It would save a few 'switch(mode)', but force every client to allocate
+>>>>> the hashtable for no reason at all. That tradeoff doesn't look very
+>>>>> beneficial to me, the P2P-specific code is really simple. And if you
+>>>>> keep ovpn->peer to make lookups faster, you're not removing that many
+>>>>> 'switch(mode)'.
+>>>>
+>>>> Looking at the done review, I can retrospectively conclude that I 
+>>>> personally
+>>>> do not like short 'switch' statements and special handlers :)
+>>>>
+>>>> Seriously, this module has a highest density of switches per KLOC 
+>>>> from what
+>>>> I have seen before and a major part of it dedicated to handle the 
+>>>> special
+>>>> case of P2P connection.
+>>>
+>>> I think it's fine. Either way there will be two implementations of
+>>> whatever mode-dependent operation needs to be done. switch doesn't
+>>> make it more complex than an ops structure.
+>>>
+>>> If you're reading the current version and find ovpn_peer_add, you see
+>>> directly that it'll do either ovpn_peer_add_mp or
+>>> ovpn_peer_add_p2p. With an ops structure, you'd have a call to
+>>> ovpn->ops->peer_add, and you'd have to look up all possible ops
+>>> structures to know that it can be either ovpn_peer_add_mp or
+>>> ovpn_peer_add_p2p. If there's an undefined number of implementations
+>>> living in different modules (like net_device_ops, or L4 protocols),
+>>> you don't have a choice.
+>>>
+>>> xfrm went the opposite way to what you're proposing a few years ago
+>>> (see commit 0c620e97b349 ("xfrm: remove output indirection from
+>>> xfrm_mode") and others), and it made the code simpler.
+>>
+>> I checked this. Florian did a nice rework. And the way of 
+>> implementation looks reasonable since there are more than two 
+>> encapsulation modes and handling is more complex than just selecting a 
+>> function to call.
+>>
+>> What I don't like about switches, that it requires extra lines of code 
+>> and pushes an author to introduce a default case with error handling. 
+>> It was mentioned that the module unlikely going to support more than 
+>> two modes. In this context shall we consider ternary operator usage. 
+>> E.g.:
+> 
+> the default case can actually be dropped. That way we can have the 
+> compiler warn when one of the enum values is not handled in the switch 
+> (should there be a new one at some point).
+> However, the default is just a sanity check against future code changes 
+> which may introduce a bug.
+> 
+>>
+>> next_run = ovpn->mode == OVPN_MODE_P2P ?
+>>             ovpn_peer_keepalive_work_p2p(...) :
+>>             ovpn_peer_keepalive_work_mp(...);
+> 
+> I find this ugly to read :-)
 
-I think all of this is completely missing the point.
+Yeah. Doesn't look pretty as well.
 
-The point is that "&folio->page" can be *compared* to a page pointer,
-even when "folio" itself is not a valid pointer itself.
+Just to conclude the discussion. Considering what we discussed here and 
+the Sabrina's point regarding the trampoline penalty for indirect 
+invocation, we do not have a better solution for now other than using 
+switches everywhere.
 
-Changing
-
-        if (&folio->page == page)
-
-to
-
-        if (folio_page0(folio) == page)
-
-doesn't actually help anything at all. It still makes confused people
-who do not understand pointer comparisons "oh, but if 'folio' is
-invalid, I can't do 'folio_page0(folio)'".
-
-See the problem, and see how you are not actually _fixing_ the confusion?
-
-The way to hopefully *fix* the confusion is to have the actual
-comparison itself inside the helper. Something like a
-
-   static __always_inline bool folio_is_page(struct folio *folio,
-struct page *page)
-  { return &folio->page == page; }
-
-and maybe even add a comment about how pointer comparisons are valid
-even when the pointers are NULL or entirely invalid error pointers.
-
-If you want to be extra fancy, you'd do something like
-
-  union page_or_folio {
-        struct page *page;
-        struct folio *folio;
-  };
-
-  static inline bool folio_match(union page_or_folio a,
-                                 union page_or_folio b)
-  {
-        return a.page == b.page;
-  }
-
-which doesn't care about argument ordering, and allows any combination
-of folio or page pointers (but unlike a 'void *' argument, accepts
-*only* folio or page pointers). So then you can do either
-"folio_match(folio, page)" or "folio_match(page, folio)" and they are
-the same thing.
-
-Of course, the above does depend on "&folio->page" being effectively a
-no-op (ie the page and folio pointers really are bitwise the same, ie
-the ->page entry is at offset zero).
-
-Which they are, and which all the FOLIO_MATCH things verify, but it
-might be worth clarifying.
-
-Honestly, I feel that we should use that "union page_or_folio" in more
-places to avoid duplicating some of the helper functions, when a
-function really doesn't care whether it gets a page or a folio. We
-have a fair number of unnecessarily duplicated functions, I feel (eg
-folio_mapping_flags() vs PageMappingFlags()), and I suspect some of
-the "convert to folio" work could have been simplified by having code
-that just happily accepts one or the other.
-
-It probably matters less today, though, since a lot of the folio
-conversion has been done.
-
-And yes, you can also use _Generic() to automatically handle either
-case, and that's particularly useful if you actually want to do
-different things for a folio vs a page. For example, you could have a
-"size" function that returns PAGE_SIZE for a 'struct page *', but
-folio_size() for a 'struct folio *'.
-
-Like the union argument trick, the _Generic() thing can be used to
-make conversions easier, when you have functions that simply
-JustWork(tm) and DoTheRightThing(tm) regardless of the type, and you
-don't necessarily have to convert everything in one go.
-
-              Linus
+--
+Sergey
 
