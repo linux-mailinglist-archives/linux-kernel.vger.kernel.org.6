@@ -1,127 +1,326 @@
-Return-Path: <linux-kernel+bounces-418933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C9B49D676A
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 04:55:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B3CA9D676D
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 04:59:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4810EB21ABB
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 03:55:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B02C416169B
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 03:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB1F47A5C;
-	Sat, 23 Nov 2024 03:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B037DA66;
+	Sat, 23 Nov 2024 03:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KnYfm+P5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="dSDCvDEL"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B9B817
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 03:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AA146BF;
+	Sat, 23 Nov 2024 03:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732334150; cv=none; b=ZP7qvTLRs5bRdBhb7ca9EHi9f8EnAJ0eFSbRUCQ4ehoQ8NXlFL+BF3fKcxttxSsHv8bhNP0JtEfsbPKeTaikxvhogeKx8d5+z/rQXk/8EW+QoJ4o9KCytJs2o6pKN9I6GYLC7e/zhAZoKxfZpthePf81n0xFI0PreJ4q8gXcL6o=
+	t=1732334352; cv=none; b=E5j/k1fvaq5EGpImk6P0vGtTogn0SvqIfpL5HdeOtpZAqqFMBqwbjE20ntiyor0rV0q/nnnxoMjjh/+pByytA52xjgwTBqCh/j94p1Y+bQ7Koe0TV1XJ+/WjRKwGOfx6oLmyQCw6MYFGtw0FoXNr79f6iui/XHoFYcT2NGVcqOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732334150; c=relaxed/simple;
-	bh=X5hu1MVm7T9lclXS5IawjFTKT7MQBuEM+MdzJtoFJeE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KG1OPaj7YMCNF09oW6e50bzXHWG8baIRkQmM+Sk8ZUzgECbgJyLXSbKbFvoEGPxZ5ZWkO+EVSfbGIkGsD2vLs5Z4Ht19g2UWlXEQa+s7KmybUxmvbMLEmCE4JgzOkdhVn+zLqVxwvitziiJLonLPoVJT557H05YslYfoPiItHlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KnYfm+P5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732334148;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X5hu1MVm7T9lclXS5IawjFTKT7MQBuEM+MdzJtoFJeE=;
-	b=KnYfm+P5C4/OVKFl6pAvf99+bw0VAO0/QMdvOlkflLTQ66YUgbMgNlsyP7lJUeLCciABV5
-	7VK04NBJfC7Ugtq7kcheVeq0uB2FApHOJrJ4sTaUgLMPXXeft6kvJ7cXFjYP9EAjMIe2sD
-	HcnOPhHnOg3bpBUI1C99EXEP03Ke0Ec=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-21-g4reo-yaOJiIZsdh9gVteg-1; Fri, 22 Nov 2024 22:55:41 -0500
-X-MC-Unique: g4reo-yaOJiIZsdh9gVteg-1
-X-Mimecast-MFC-AGG-ID: g4reo-yaOJiIZsdh9gVteg
-Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-53daaf10af1so2299169e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 19:55:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732334140; x=1732938940;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X5hu1MVm7T9lclXS5IawjFTKT7MQBuEM+MdzJtoFJeE=;
-        b=BNQTarQEgJAkNwzTg06NyPUh7JndvmDrdfeFdcP9Ntgo+XU8DxG+W3tnS3aWmQKsWW
-         D31iENNN/ZZwjqd3JLVGeZL4rGNjfSEgQEQc67DyIzmrLuHv0ccXVtHZPy59Qbm1HOv2
-         Dd7Yj+w4fmST+cx0Piokp7dkyx6zFBhKeNIk0z3Wf10ZtJdfjx0Kh6H6msWu1JDz/1+v
-         19JuzNhrloP6ciEKJrEWTZw1nAMFain76Oh80Nc3qDWOtwPXzNBkUnXWE7E5Jj91ayE1
-         9BFlRQxIe+xN6LrwubZ6y7tHd5HIZ4pGzoMdgdZgu/6mbffRL83rI3vKEbq7X135jHf9
-         Yu0w==
-X-Forwarded-Encrypted: i=1; AJvYcCX2dObPdh2Yq8GBUviA5xTsCa/mJGZIjlELXcOrnlrfz56Kku7fqC1xiiuZ3rE7vUWBEfM5YxrxhQQzCHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2eCsNrM09brUDLfd5+Kdt/2D+yNwqvbIJshvt8BGgT5XVChig
-	fyYZo+XAN4MGWjmFaJZedHQVs7jw78PQ1YuYRuigUErkCnL0U+Xfnh2sN1B872tbLGM/HB+SdXz
-	XUfhnk2p93sptAXVNRrzmtwQMKbQbq+LFV81Ef06hzLt+8zs31uIomIHgUZ4bx+3QJtTvv1N4fX
-	43mjHj5yZLSjqkJvbl88OpGThjP1qYHuysNhB+
-X-Gm-Gg: ASbGncvx3uEWpV+WmXfXvhx/N3EsKLwSKyNL9GuR/KRa9OKDuDSQNzgqxmPh2WQtQxO
-	3ahLxl2wmLlzumqFxxv088UxltiTmOfqa
-X-Received: by 2002:a05:6512:b93:b0:539:fd10:f07b with SMTP id 2adb3069b0e04-53dd3aafefemr3243573e87.55.1732334140032;
-        Fri, 22 Nov 2024 19:55:40 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGenoTOZDbDMjzO/mQJh3mBNjX4OIQpj51uXIgG+SecnhLJy4tqKW2g1ksKPMca0C9DJw4hVhPMJl+Tb7V7zzk=
-X-Received: by 2002:a05:6512:b93:b0:539:fd10:f07b with SMTP id
- 2adb3069b0e04-53dd3aafefemr3243565e87.55.1732334139666; Fri, 22 Nov 2024
- 19:55:39 -0800 (PST)
+	s=arc-20240116; t=1732334352; c=relaxed/simple;
+	bh=qmQwjQMvRXA/d/ueVbokWMFZUHwHWn63WzKVHDaXqB4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KEvRi5uXYG+gb8+j+v6z7l0EjCIVbWdid7nKezDq5ccHebdJkBK50ytdQgx0ihbtiBd0qwQISsTFtV4rNhI280WMuEdjHhjIeUfQRwgVnRtbJYv/iXiX+gx1Cu2lDemEU1Dh1fl4OAhtFZxhlAxMXjZ4AQ3uh7r/JMhMM7GA2CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=dSDCvDEL; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
+	s=default; t=1732334340;
+	bh=3m6ZtMQPzOJszJqf0ZWZ4ZnY88ZlKomQ6zudX5AgoJ8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dSDCvDELr9XzGuDeXbR1j2nMyu9jRkl/yf+xDYd/YgqqmmeAPTQZeJmdD21g0nwvQ
+	 CuLsgFX+83ocDTjsw3bONbsb76nZ9ykTHino5vHckguhuYAc/lj/pnsAe6OAj15ixA
+	 krBeQx8nRgP7prlQtPh59nzohiAPdQg3W3/VbTSQ=
+Received: from stargazer.. (unknown [IPv6:240e:358:11e8:1100:dc73:854d:832e:4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 76206670C1;
+	Fri, 22 Nov 2024 22:58:56 -0500 (EST)
+From: Xi Ruoyao <xry111@xry111.site>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Yanteng Si <si.yanteng@linux.dev>,
+	devicetree@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xi Ruoyao <xry111@xry111.site>
+Subject: [PATCH] MIPS: Loongson64: DTS: Really fix PCIe port nodes for ls7a
+Date: Sat, 23 Nov 2024 11:57:37 +0800
+Message-ID: <20241123035737.24722-1-xry111@xry111.site>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241118114157.355749-1-yukuai1@huaweicloud.com>
- <20241118114157.355749-6-yukuai1@huaweicloud.com> <CALTww28JrdXoNXQNPxx2Sg9L2iL20jZZ80Y-qZzqcyF780M1fg@mail.gmail.com>
- <e6843d53-c7f4-2e38-0a15-91b49afec8f1@huaweicloud.com> <CALTww28ZRFo6BwqzriVpoOuqbfygKrU0HuOhhUxLe9cBBDY-ZQ@mail.gmail.com>
- <e3319ea0-f9aa-6048-c620-4e72f2b10b31@huaweicloud.com>
-In-Reply-To: <e3319ea0-f9aa-6048-c620-4e72f2b10b31@huaweicloud.com>
-From: Xiao Ni <xni@redhat.com>
-Date: Sat, 23 Nov 2024 11:55:26 +0800
-Message-ID: <CALTww28kr5TzWoeMrS-W_etfhwQGQHDQ-DeakTEALUGDE9FNVA@mail.gmail.com>
-Subject: Re: [PATCH md-6.13 5/5] md/md-bitmap: move bitmap_{start, end}write
- to md upper layer
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: song@kernel.org, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 22, 2024 at 4:32=E2=80=AFPM Yu Kuai <yukuai1@huaweicloud.com> w=
-rote:
->
-> Hi,
->
-> =E5=9C=A8 2024/11/22 11:14, Xiao Ni =E5=86=99=E9=81=93:
-> >> Ok, one place that I found is that raid5 can do extra end write while
-> >> stripe->dev[].towrite is NULL, the null checking is missing. I'll
-> >> mention that in the next version.
-> > Does this can cause the deadlock?
->
-> Not deadlock, the bit counter will underflow and reach COUNTER_MAX, and
-> bitmap_startwrite() can wait forever for the counter.
+Fix the dtc warnings:
 
-Hi Kuai
+    arch/mips/boot/dts/loongson/ls7a-pch.dtsi:68.16-416.5: Warning (interrupt_provider): /bus@10000000/pci@1a000000: '#interrupt-cells' found, but node is not an interrupt provider
+    arch/mips/boot/dts/loongson/ls7a-pch.dtsi:68.16-416.5: Warning (interrupt_provider): /bus@10000000/pci@1a000000: '#interrupt-cells' found, but node is not an interrupt provider
+    arch/mips/boot/dts/loongson/loongson64g_4core_ls7a.dtb: Warning (interrupt_map): Failed prerequisite 'interrupt_provider'
 
-For normal io, endwrite is called in function
-handle_stripe_clean_event when sh->dev[i].written has value.
-For failed io, endwrite is called when bitmap_end has value.
-bitmap_end is set when sh->dev[i].to_write is not NULL.
-Which place does extra endwrite?
+And a runtime warning introduced in commit 045b14ca5c36 ("of: WARN on
+deprecated #address-cells/#size-cells handling"):
 
-Regards
-Xiao
->
-> Thanks,
-> Kuai
->
+    WARNING: CPU: 0 PID: 1 at drivers/of/base.c:106 of_bus_n_addr_cells+0x9c/0xe0
+    Missing '#address-cells' in /bus@10000000/pci@1a000000/pci_bridge@9,0
+
+The fix is similar to commit d89a415ff8d5 ("MIPS: Loongson64: DTS: Fix PCIe
+port nodes for ls7a"), which has fixed the issue for ls2k (despite its
+subject mentions ls7a).
+
+Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+---
+ arch/mips/boot/dts/loongson/ls7a-pch.dtsi | 73 +++++++++++++++++++----
+ 1 file changed, 60 insertions(+), 13 deletions(-)
+
+diff --git a/arch/mips/boot/dts/loongson/ls7a-pch.dtsi b/arch/mips/boot/dts/loongson/ls7a-pch.dtsi
+index cce9428afc41..ee71045883e7 100644
+--- a/arch/mips/boot/dts/loongson/ls7a-pch.dtsi
++++ b/arch/mips/boot/dts/loongson/ls7a-pch.dtsi
+@@ -70,7 +70,6 @@ pci@1a000000 {
+ 			device_type = "pci";
+ 			#address-cells = <3>;
+ 			#size-cells = <2>;
+-			#interrupt-cells = <2>;
+ 			msi-parent = <&msi>;
+ 
+ 			reg = <0 0x1a000000 0 0x02000000>,
+@@ -234,7 +233,7 @@ phy1: ethernet-phy@1 {
+ 				};
+ 			};
+ 
+-			pci_bridge@9,0 {
++			pcie@9,0 {
+ 				compatible = "pci0014,7a19.1",
+ 						   "pci0014,7a19",
+ 						   "pciclass060400",
+@@ -244,12 +243,16 @@ pci_bridge@9,0 {
+ 				interrupts = <32 IRQ_TYPE_LEVEL_HIGH>;
+ 				interrupt-parent = <&pic>;
+ 
++				#address-cells = <3>;
++				#size-cells = <2>;
++				device_type = "pci";
+ 				#interrupt-cells = <1>;
+ 				interrupt-map-mask = <0 0 0 0>;
+ 				interrupt-map = <0 0 0 0 &pic 32 IRQ_TYPE_LEVEL_HIGH>;
++				ranges;
+ 			};
+ 
+-			pci_bridge@a,0 {
++			pcie@a,0 {
+ 				compatible = "pci0014,7a09.1",
+ 						   "pci0014,7a09",
+ 						   "pciclass060400",
+@@ -259,12 +262,16 @@ pci_bridge@a,0 {
+ 				interrupts = <33 IRQ_TYPE_LEVEL_HIGH>;
+ 				interrupt-parent = <&pic>;
+ 
++				#address-cells = <3>;
++				#size-cells = <2>;
++				device_type = "pci";
+ 				#interrupt-cells = <1>;
+ 				interrupt-map-mask = <0 0 0 0>;
+ 				interrupt-map = <0 0 0 0 &pic 33 IRQ_TYPE_LEVEL_HIGH>;
++				ranges;
+ 			};
+ 
+-			pci_bridge@b,0 {
++			pcie@b,0 {
+ 				compatible = "pci0014,7a09.1",
+ 						   "pci0014,7a09",
+ 						   "pciclass060400",
+@@ -274,12 +281,16 @@ pci_bridge@b,0 {
+ 				interrupts = <34 IRQ_TYPE_LEVEL_HIGH>;
+ 				interrupt-parent = <&pic>;
+ 
++				#address-cells = <3>;
++				#size-cells = <2>;
++				device_type = "pci";
+ 				#interrupt-cells = <1>;
+ 				interrupt-map-mask = <0 0 0 0>;
+ 				interrupt-map = <0 0 0 0 &pic 34 IRQ_TYPE_LEVEL_HIGH>;
++				ranges;
+ 			};
+ 
+-			pci_bridge@c,0 {
++			pcie@c,0 {
+ 				compatible = "pci0014,7a09.1",
+ 						   "pci0014,7a09",
+ 						   "pciclass060400",
+@@ -289,12 +300,16 @@ pci_bridge@c,0 {
+ 				interrupts = <35 IRQ_TYPE_LEVEL_HIGH>;
+ 				interrupt-parent = <&pic>;
+ 
++				#address-cells = <3>;
++				#size-cells = <2>;
++				device_type = "pci";
+ 				#interrupt-cells = <1>;
+ 				interrupt-map-mask = <0 0 0 0>;
+ 				interrupt-map = <0 0 0 0 &pic 35 IRQ_TYPE_LEVEL_HIGH>;
++				ranges;
+ 			};
+ 
+-			pci_bridge@d,0 {
++			pcie@d,0 {
+ 				compatible = "pci0014,7a19.1",
+ 						   "pci0014,7a19",
+ 						   "pciclass060400",
+@@ -304,12 +319,16 @@ pci_bridge@d,0 {
+ 				interrupts = <36 IRQ_TYPE_LEVEL_HIGH>;
+ 				interrupt-parent = <&pic>;
+ 
++				#address-cells = <3>;
++				#size-cells = <2>;
++				device_type = "pci";
+ 				#interrupt-cells = <1>;
+ 				interrupt-map-mask = <0 0 0 0>;
+ 				interrupt-map = <0 0 0 0 &pic 36 IRQ_TYPE_LEVEL_HIGH>;
++				ranges;
+ 			};
+ 
+-			pci_bridge@e,0 {
++			pcie@e,0 {
+ 				compatible = "pci0014,7a09.1",
+ 						   "pci0014,7a09",
+ 						   "pciclass060400",
+@@ -319,12 +338,16 @@ pci_bridge@e,0 {
+ 				interrupts = <37 IRQ_TYPE_LEVEL_HIGH>;
+ 				interrupt-parent = <&pic>;
+ 
++				#address-cells = <3>;
++				#size-cells = <2>;
++				device_type = "pci";
+ 				#interrupt-cells = <1>;
+ 				interrupt-map-mask = <0 0 0 0>;
+ 				interrupt-map = <0 0 0 0 &pic 37 IRQ_TYPE_LEVEL_HIGH>;
++				ranges;
+ 			};
+ 
+-			pci_bridge@f,0 {
++			pcie@f,0 {
+ 				compatible = "pci0014,7a29.1",
+ 						   "pci0014,7a29",
+ 						   "pciclass060400",
+@@ -334,12 +357,16 @@ pci_bridge@f,0 {
+ 				interrupts = <40 IRQ_TYPE_LEVEL_HIGH>;
+ 				interrupt-parent = <&pic>;
+ 
++				#address-cells = <3>;
++				#size-cells = <2>;
++				device_type = "pci";
+ 				#interrupt-cells = <1>;
+ 				interrupt-map-mask = <0 0 0 0>;
+ 				interrupt-map = <0 0 0 0 &pic 40 IRQ_TYPE_LEVEL_HIGH>;
++				ranges;
+ 			};
+ 
+-			pci_bridge@10,0 {
++			pcie@10,0 {
+ 				compatible = "pci0014,7a19.1",
+ 						   "pci0014,7a19",
+ 						   "pciclass060400",
+@@ -349,12 +376,16 @@ pci_bridge@10,0 {
+ 				interrupts = <41 IRQ_TYPE_LEVEL_HIGH>;
+ 				interrupt-parent = <&pic>;
+ 
++				#address-cells = <3>;
++				#size-cells = <2>;
++				device_type = "pci";
+ 				#interrupt-cells = <1>;
+ 				interrupt-map-mask = <0 0 0 0>;
+ 				interrupt-map = <0 0 0 0 &pic 41 IRQ_TYPE_LEVEL_HIGH>;
++				ranges;
+ 			};
+ 
+-			pci_bridge@11,0 {
++			pcie@11,0 {
+ 				compatible = "pci0014,7a29.1",
+ 						   "pci0014,7a29",
+ 						   "pciclass060400",
+@@ -364,12 +395,16 @@ pci_bridge@11,0 {
+ 				interrupts = <42 IRQ_TYPE_LEVEL_HIGH>;
+ 				interrupt-parent = <&pic>;
+ 
++				#address-cells = <3>;
++				#size-cells = <2>;
++				device_type = "pci";
+ 				#interrupt-cells = <1>;
+ 				interrupt-map-mask = <0 0 0 0>;
+ 				interrupt-map = <0 0 0 0 &pic 42 IRQ_TYPE_LEVEL_HIGH>;
++				ranges;
+ 			};
+ 
+-			pci_bridge@12,0 {
++			pcie@12,0 {
+ 				compatible = "pci0014,7a19.1",
+ 						   "pci0014,7a19",
+ 						   "pciclass060400",
+@@ -379,12 +414,16 @@ pci_bridge@12,0 {
+ 				interrupts = <43 IRQ_TYPE_LEVEL_HIGH>;
+ 				interrupt-parent = <&pic>;
+ 
++				#address-cells = <3>;
++				#size-cells = <2>;
++				device_type = "pci";
+ 				#interrupt-cells = <1>;
+ 				interrupt-map-mask = <0 0 0 0>;
+ 				interrupt-map = <0 0 0 0 &pic 43 IRQ_TYPE_LEVEL_HIGH>;
++				ranges;
+ 			};
+ 
+-			pci_bridge@13,0 {
++			pcie@13,0 {
+ 				compatible = "pci0014,7a29.1",
+ 						   "pci0014,7a29",
+ 						   "pciclass060400",
+@@ -394,12 +433,16 @@ pci_bridge@13,0 {
+ 				interrupts = <38 IRQ_TYPE_LEVEL_HIGH>;
+ 				interrupt-parent = <&pic>;
+ 
++				#address-cells = <3>;
++				#size-cells = <2>;
++				device_type = "pci";
+ 				#interrupt-cells = <1>;
+ 				interrupt-map-mask = <0 0 0 0>;
+ 				interrupt-map = <0 0 0 0 &pic 38 IRQ_TYPE_LEVEL_HIGH>;
++				ranges;
+ 			};
+ 
+-			pci_bridge@14,0 {
++			pcie@14,0 {
+ 				compatible = "pci0014,7a19.1",
+ 						   "pci0014,7a19",
+ 						   "pciclass060400",
+@@ -409,9 +452,13 @@ pci_bridge@14,0 {
+ 				interrupts = <39 IRQ_TYPE_LEVEL_HIGH>;
+ 				interrupt-parent = <&pic>;
+ 
++				#address-cells = <3>;
++				#size-cells = <2>;
++				device_type = "pci";
+ 				#interrupt-cells = <1>;
+ 				interrupt-map-mask = <0 0 0 0>;
+ 				interrupt-map = <0 0 0 0 &pic 39 IRQ_TYPE_LEVEL_HIGH>;
++				ranges;
+ 			};
+ 		};
+ 
+-- 
+2.47.0
 
 
