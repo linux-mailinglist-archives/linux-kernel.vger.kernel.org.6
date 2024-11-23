@@ -1,142 +1,114 @@
-Return-Path: <linux-kernel+bounces-419248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B78779D6B55
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 20:59:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9456D9D6B57
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 21:03:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CCF2B2178E
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 19:59:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47F34282000
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 20:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5216D1990D3;
-	Sat, 23 Nov 2024 19:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8001C14EC47;
+	Sat, 23 Nov 2024 20:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fYCSFowO"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ISVv6ieq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630E413C9C4
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 19:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE99EADC;
+	Sat, 23 Nov 2024 20:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732391958; cv=none; b=jl8RqZ9US0ITykSAUsBA2mdSWg7LiZVDQKH707A6O0T5PrF8U7BHEY9cMB9X19YjPnZhtBQYfhgJJHhVX5wuuKXDBiIP8QGI6STTW5ZUjImnRj52uQiL0uVdcqaGYwMpKpeL3Kod9r2H/XinPkdOhkIuUczMdwoEvNf4NPJnx40=
+	t=1732392220; cv=none; b=Xg6xJeJ9DRkywwoYqiRJMzMwMA6LfCMpjcXXNoMkFSorRgaKFAKuLtLH5awbPnW7IGTtJdNL3GtjGdZ1mVNULznQTRcAfA0zjuK1wgJID/RWkwXJGUR6+tEiKCYaBLmgfVGomSUW7nbz/LSLNhebDyJ62Dj6hQyCEwzYf3f0jpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732391958; c=relaxed/simple;
-	bh=ppk6dUlKVq4vTfFNQ5pLZlqXaoNf/7pJprtxbyvpKfQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ALX8BRd3tcHjZsKVb3Rt1DnhwfUX4ofPI8TIxbPzNYAoHwvNp0xYcTMF34LqQpi3W/RqiFhze3dYcFHu2iIrBBtXwlS3T5GkjaFCpoddTD0X4Zp0eDb3NLGn4CocEbsN4CGtDRmFQiJxASSxjZQ4h0rLHJyKMTBAoezRrgncwmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fYCSFowO; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2124ccf03edso31285345ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 11:59:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732391956; x=1732996756; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iTd40TlAxinzrp4LL6DZMdpsXul9ShE3mjiH7jh5bSo=;
-        b=fYCSFowO/2kUiG7axs3n0CwjDu9EsBSNQktErkkxcdpegqRvv5suuI5bbqBlCxedAX
-         GBqNtjxC6xJxifmdBTIgQFKVib3ws2DvxADdCvsuVnGUby400Zv7u9y0LBn+GGeLwmv9
-         4aMVcyD9vHrHaVcx+ljWMlU9Vh7ys6YPjlOU07F/ZMndFC5xFlRuumPTavtntoruBr6L
-         2qCxvMoL76PXaKpcdnWywvyHCDw7Etss1GdMXb1RJBwePJixHvN0zJ60sGHK2lLeJh6x
-         +MZPQMoYvWkRRB3Txw89aeW9Tzoow4Bkp/+WRpsNWim2wF0gzFlYDaU1ike4O3vlo5EC
-         ma6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732391956; x=1732996756;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iTd40TlAxinzrp4LL6DZMdpsXul9ShE3mjiH7jh5bSo=;
-        b=M5y9jmPCibL/HHN8Y3srC30xNPiM3AQtJQYSecD+gjNKTHqsCEWB3U5VLbF9xRw/H8
-         D7Ar/48LI/gtUJsDrkPegSn/JkmsecDNbyH2ZUN6P4uM/GNhO4tsb5U/rD8zG8AGxIHk
-         TDkXOit93UhXoIuYir+3NY1Pe3ZK9xn5Ydb+jMW8YoD2ppweu5gmVcYZMg/MLQclxb+z
-         U6D/SxQ5l6CDuQ48OOvkEyyF/w5L6L7b6DRmsYD4+Hz7HoNlY8xldu8GmyDr2hS2sZ6o
-         88HWvt+vOpUi1DU9ojf6dMfN6X7Kc168eAB+eO+CM8STgYk2ga//Y8BkHeBt/8XWBAnr
-         CBfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVl56REgvIfQllCBz5PpkPxOsFz9qFnvW17rfwmOeVvEprdSOT6Tw2+8oxkAwZ4LKkAxgYOAM0Lk6UQ2tQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxDaJgqp7RuWclEQPZk9qf4/ZtLOqNfbefdFGqd/20FwMfRwNr
-	e/bDVIbNcGnLcLtLwdzB7RjsGV4gTNkgFE2Txx4rO50F+oQf+rdP
-X-Gm-Gg: ASbGncurhkIZBr9Zjt+4phY/nX4MbCeAkwitEgKNJJKMnqtmcrZiY5m5sGsOMUOiXKv
-	r6rCyvKbuyBzwv8IJ9mxnnwdT3WZuc9GmGE6Ang+47SEy8nYrRF5GbCA37XeXkF0y3ERLO/0n19
-	trrIO9aXh7z0c3+Swmw8pEviaFe22RIqOHvWCCWaavlXUtOJ4HvYLa70krKBeXM2tuf9irFldjs
-	OBiOQ5ZaY4dKtcCR3+cjGtk9L5Q5syCrMRp0mTTz+9/HvU3iNOXPZnQa/LPObDYMzGKAigggXYs
-	HZVV3Huftx93+g==
-X-Google-Smtp-Source: AGHT+IHmDjBvRFPJEqiINap153R0Kmft+Rw5KDn0MqKLa8tYfUTc2qMbUniCnDGG7L3zgGwso85yxg==
-X-Received: by 2002:a17:903:1c6:b0:211:f52d:4e03 with SMTP id d9443c01a7336-2129f799e5bmr84412135ad.27.1732391955525;
-        Sat, 23 Nov 2024 11:59:15 -0800 (PST)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([2409:40c0:103e:6828:c968:a0b4:c749:4c7a])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de454b5asm3738085b3a.27.2024.11.23.11.59.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Nov 2024 11:59:15 -0800 (PST)
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-To: jgg@ziepe.ca,
-	kevin.tian@intel.com,
-	joro@8bytes.org,
-	will@kernel.org,
-	robin.murphy@arm.com
-Cc: iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Suraj Sonawane <surajsonawane0215@gmail.com>,
-	syzbot+c92878e123785b1fa2db@syzkaller.appspotmail.com
-Subject: [PATCH] iommu: iommufd: fix WARNING in iommufd_device_unbind
-Date: Sun, 24 Nov 2024 01:29:00 +0530
-Message-Id: <20241123195900.3176-1-surajsonawane0215@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1732392220; c=relaxed/simple;
+	bh=awX1OHgdqsxsHC3kU5IcFhrvdjajWLHd4mnWWIWjVM4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Fd8CSBRJzfgRabin++uxNwP514ALpoL14VCkt3ugDkQE/vsgzmkxP5gJbCj8QRn+RSZBXmlTlnjLD+c3QpXlUN8VN4MFwNy/hOBWVfKjNLc4M9zAT+IkgwkDL8CsDDuSS+OAaEPNF2Sf1/U/pRq7vnlnLq+U3f2biJ8Y6oAiAiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ISVv6ieq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 111E0C4CECD;
+	Sat, 23 Nov 2024 20:03:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732392219;
+	bh=awX1OHgdqsxsHC3kU5IcFhrvdjajWLHd4mnWWIWjVM4=;
+	h=From:Date:Subject:To:Cc:From;
+	b=ISVv6ieqm/cuXatmH24O4oeGMpbRkgIXj/sg9WC+froq7CMPaE6Jzc0s+O9ZgXWtj
+	 qKLF0UUNR6NYTevejyQJ57ZoN6JnhlWwioZcIi0ppftJ76EptHxfzBTcMzsc5IRaYw
+	 HNvCc9/jXHVaJNEkKZ4E/kfd8RR/luHTRy061VuzI8flPDK2soZ8cQRA2WG/v+1us8
+	 l0siS5VUAap6D9fGc/oMuLWSglcHcmQJPfc4TbHRFW0PTIU4LpInHpRdi70/IVXbDq
+	 8gzisVMmGBhz7SUC8trpVauh/Lhy4a1wvv+1bqMT2aOxTq+rnePczy9gL1Dfa4XQno
+	 BOPdnIf6gsjhg==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Sat, 23 Nov 2024 13:03:25 -0700
+Subject: [PATCH] staging: gpib: Make GPIB_NI_PCI_ISA depend on HAS_IOPORT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241123-gpib-tnt4882-depends-on-has_ioport-v1-1-033c58b64751@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAAw1QmcC/x3NwQrCMAyA4VcZORuwsZPhq4hIt2RbLmlpighj7
+ 27x+F3+/wCXquLwGA6o8lHXbB3hMsCyJ9sElbuBrhRDoBtuRWds1uI0EbIUMXbMhnvyt+aSa8O
+ ZmSLfZUyyQA+VKqt+/5Pn6zx/W8aW5XQAAAA=
+X-Change-ID: 20241123-gpib-tnt4882-depends-on-has_ioport-bdd24d6e5aec
+To: Dave Penkler <dpenkler@gmail.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Arnd Bergmann <arnd@arndb.de>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1735; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=awX1OHgdqsxsHC3kU5IcFhrvdjajWLHd4mnWWIWjVM4=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDOlOplKzz33ilJr9wNL9XMLJebJ2M7IvduaEGGqWWn1M+
+ 5F1XM6so5SFQYyLQVZMkaX6sepxQ8M5ZxlvnJoEM4eVCWQIAxenAEyk8hMjw+VDB4OqAtll/S4x
+ KrAfCY7frbWz63Cup8+M85cFEr5N/cnI0H3OdGOItyYnT+qxye/bLHdP/PXT+d+3Lxdvhv046iT
+ WyAgA
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-Fix an issue detected by syzbot:
-WARNING in iommufd_device_unbind
-iommufd: Time out waiting for iommufd object to become free
+After commit 78ecb0375685 ("staging: gpib: make port I/O code
+conditional"), building tnt4882.ko on platforms without HAS_IOPORT (such
+as hexagon and s390) fails with:
 
-Resolve a warning in iommufd_device_unbind caused by a
-timeout while waiting for the shortterm_users reference
-count to reach zero. The existing 10-second timeout is
-insufficient in some scenarios, resulting in failures
-and the following warning:
+  ERROR: modpost: "inb_wrapper" [drivers/staging/gpib/tnt4882/tnt4882.ko] undefined!
+  ERROR: modpost: "inw_wrapper" [drivers/staging/gpib/tnt4882/tnt4882.ko] undefined!
+  ERROR: modpost: "nec7210_locking_ioport_write_byte" [drivers/staging/gpib/tnt4882/tnt4882.ko] undefined!
+  ERROR: modpost: "nec7210_locking_ioport_read_byte" [drivers/staging/gpib/tnt4882/tnt4882.ko] undefined!
+  ERROR: modpost: "outb_wrapper" [drivers/staging/gpib/tnt4882/tnt4882.ko] undefined!
+  ERROR: modpost: "outw_wrapper" [drivers/staging/gpib/tnt4882/tnt4882.ko] undefined!
 
-WARNING in iommufd_device_unbind
-iommufd: Time out waiting for iommufd object to become free
+Only allow tnt4882.ko to be built when CONFIG_HAS_IOPORT is set to avoid
+this build failure, as this driver unconditionally needs it.
 
-Increase the timeout in iommufd_object_dec_wait_shortterm
-from 10 seconds to 12 seconds (msecs_to_jiffies(12000))
-to allow sufficient time for the reference count to drop
-to zero. This change prevents premature timeouts and reduces
-the likelihood of warnings during iommufd_device_unbind.
-
-The fix has been tested and validated by syzbot. This patch
-closes the bug reported at the following syzkaller link.
-
-
-Reported-by: syzbot+c92878e123785b1fa2db@syzkaller.appspotmail.com 
-Closes: https://syzkaller.appspot.com/bug?extid=c92878e123785b1fa2db 
-Tested-by: syzbot+c92878e123785b1fa2db@syzkaller.appspotmail.com 
-Fixes: 6f9c4d8c468c ("iommufd: Do not UAF during iommufd_put_object") 
-Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+Fixes: 78ecb0375685 ("staging: gpib: make port I/O code conditional")
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 ---
- drivers/iommu/iommufd/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/gpib/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/iommu/iommufd/main.c b/drivers/iommu/iommufd/main.c
-index d2683ad82..954c021e9 100644
---- a/drivers/iommu/iommufd/main.c
-+++ b/drivers/iommu/iommufd/main.c
-@@ -104,7 +104,7 @@ static int iommufd_object_dec_wait_shortterm(struct iommufd_ctx *ictx,
- 	if (wait_event_timeout(ictx->destroy_wait,
- 				refcount_read(&to_destroy->shortterm_users) ==
- 					0,
--				msecs_to_jiffies(10000)))
-+				msecs_to_jiffies(12000)))
- 		return 0;
- 
- 	pr_crit("Time out waiting for iommufd object to become free\n");
+diff --git a/drivers/staging/gpib/Kconfig b/drivers/staging/gpib/Kconfig
+index 95308d15a55516de9118e7ae90a6103ee8c6c003..9ee4323164654916e7ed49190eaf5bb02ce7f045 100644
+--- a/drivers/staging/gpib/Kconfig
++++ b/drivers/staging/gpib/Kconfig
+@@ -62,6 +62,7 @@ config GPIB_CEC_PCI
+ config GPIB_NI_PCI_ISA
+ 	tristate "NI PCI/ISA compatible boards"
+ 	depends on ISA_BUS || PCI || PCMCIA
++	depends on HAS_IOPORT
+ 	select GPIB_COMMON
+ 	select GPIB_NEC7210
+ 	help
+
+---
+base-commit: 114eae3c9fde35220cca623840817a740a2eb7b3
+change-id: 20241123-gpib-tnt4882-depends-on-has_ioport-bdd24d6e5aec
+
+Best regards,
 -- 
-2.34.1
+Nathan Chancellor <nathan@kernel.org>
 
 
