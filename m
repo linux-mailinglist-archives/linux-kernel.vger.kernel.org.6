@@ -1,289 +1,124 @@
-Return-Path: <linux-kernel+bounces-419098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4C009D697C
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 15:48:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AB12161688
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 14:48:05 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFDB28E0F;
-	Sat, 23 Nov 2024 14:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jVmMe+aY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B52BF9D6980
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 15:57:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F171195;
-	Sat, 23 Nov 2024 14:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 434F8281BDD
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 14:57:31 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C0922EED;
+	Sat, 23 Nov 2024 14:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b="BMlztdYO"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20FA134AC;
+	Sat, 23 Nov 2024 14:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732373281; cv=none; b=CXEyIxbEKwhVE6xcNaOBj9XKajZIijGelGdqzjzRtXLg7YrWz2vZEjl4tvS2APsE7m85IP2XoeqEofzoGDCa6lN6cxFPWjfNShzqnwHHHzkVoflyQEwIFbV7+DuNsadlug/c5lv+GSW1dpcy314QQeWP2uv4zdG2H26j44D7x3g=
+	t=1732373846; cv=none; b=bNwuml3sMBc3UI6+LF/1/X44xr4Oe+cAujNpCUqP60BEyfo2xxzVTwkpD0FH64cOYaGVZW63MsaeBpEuJS2BDvbuDEsICRE9MQZMQeZPfrYznrwPEMMt4ba+TVC49qG6gjiyYSikLgpntfIm/KYerh3tv1aRmQYLyoo2lVc6hK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732373281; c=relaxed/simple;
-	bh=GX7YvZaT3/KO8mANa0y6U65yYYqqMMUzkhuc/FPkcKs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jb5i0den5RJ4XWRanhInf3TLVwbNjJdxs8ao2rzZj46we/uIME0ZVVkL/AoW6zckR4IxX6jesZwCN86qqVuUnTK3jsFRovYRm1NKK6NfUlDkTaTT8dUdBDbGqaiL8ii79qquP/kLeC2fKThMVHjmDoDR+UlXEMLBUqBVvY1qUi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jVmMe+aY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D960C4CECD;
-	Sat, 23 Nov 2024 14:47:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732373281;
-	bh=GX7YvZaT3/KO8mANa0y6U65yYYqqMMUzkhuc/FPkcKs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jVmMe+aYyAsPsljF2ajajb8lm7vuDc8/WySMMqeaCpAoEV2gxHm2N1VrCAeEKqaN6
-	 8ZwuUwTdlte5vhLxHoChScNC4IV0ijAHGUKzlqEpigM3nPOmnJNBkLWbTdS/Ah9CXe
-	 IHOFtNFtHQ70k1h0l4SXVjnUFpR/h8Or/ALQPTdKmRnE5x3IUGks/mJ3Vi3ZtA2ipo
-	 flub/uuPnrblen6kvqp/qFLdms8rNvfz/t4cWudleSvcyfdTYqslLJT/856Q8B/xT7
-	 FvVvAw25AQeUUa0zeHzV7jD7kmVxNgzrNkrVFY/oRDqKnO0eghKVp5KvproUacD8RP
-	 Co/DVWyv+bA6g==
-Date: Sat, 23 Nov 2024 14:47:50 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Yu-Hsian Yang <j2anfernee@gmail.com>
-Cc: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>, avifishman70@gmail.com,
- tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com,
- yuenn@google.com, benjaminfair@google.com, lars@metafoo.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- nuno.sa@analog.com, dlechner@baylibre.com, javier.carrasco.cruz@gmail.com,
- andy@kernel.org, marcelo.schmitt@analog.com, olivier.moysan@foss.st.com,
- mitrutzceclan@gmail.com, matteomartelli3@gmail.com, alisadariana@gmail.com,
- joao.goncalves@toradex.com, marius.cristea@microchip.com,
- mike.looijmans@topic.nl, chanh@os.amperecomputing.com, KWLIU@nuvoton.com,
- yhyang2@nuvoton.com, openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] dt-bindings: iio: adc: Add binding for Nuvoton
- NCT720x ADCs
-Message-ID: <20241123144750.43eaa1c5@jic23-huawei>
-In-Reply-To: <CA+4VgcJ=8wDWWnmgEt-UkEUfnfD8kGtHe44G5+dcRYt=KdwNfw@mail.gmail.com>
-References: <20241106023916.440767-1-j2anfernee@gmail.com>
-	<20241106023916.440767-2-j2anfernee@gmail.com>
-	<6c20875c-4145-4c91-b3b5-8f70ecb126f0@amperemail.onmicrosoft.com>
-	<CA+4VgcJD74ar9zQCj38M2w8FzGWpq+u5Z7ip9M7a1Lu7u8rojw@mail.gmail.com>
-	<20241109134228.4359d803@jic23-huawei>
-	<20241109142943.3d960742@jic23-huawei>
-	<CA+4VgcJ=8wDWWnmgEt-UkEUfnfD8kGtHe44G5+dcRYt=KdwNfw@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732373846; c=relaxed/simple;
+	bh=y+p2vfpAsDbdRXjWSxrNGSKpYiCle7orKliitpCbmcs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SeL6XYECcHE116l3zpaec7o9Gxf+b4FGmxrrVHYux+m5PSTvxtmIvjT5x/bC2SQQ9O+SXWTrPfHHINS2a5v3ZoXade6567PzZY+1nwCkxUQY9wS3+bo0O0G0sQEUJ5wbnv3/ot2U0Sn579m34oFtxWpRfgK5ZGw6OAGH5sEv1eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de; spf=pass smtp.mailfrom=t-8ch.de; dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b=BMlztdYO; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-8ch.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
+	t=1732373841; bh=y+p2vfpAsDbdRXjWSxrNGSKpYiCle7orKliitpCbmcs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BMlztdYO+WXtEIdUpDEt/ZO2l1mjjP1BLZS6b2pFtt6WM3SGoLT1t1D1F41jbAWvT
+	 C2f1+Z1w3txxsgUbw7/498uf69PDlinQSw8arJN6SHcVnyacDA1WP3z5L1rb72sm0c
+	 5st0GwKDLojuFmqMYlYUAFr/NZl2RW+0hln/sW4k=
+Date: Sat, 23 Nov 2024 15:57:20 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+To: Mirsad Todorovac <mtodorovac69@gmail.com>
+Cc: Linux Kernel Build System <linux-kbuild@vger.kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: Re: [PROBLEM] make bindeb-pkg: When just one source line in a single
+ driver is changed, all driver are rebuilt?
+Message-ID: <b21160de-8f12-4796-8df1-2188b5fc93e0@t-8ch.de>
+References: <f96d57c9-efda-4781-a395-a7c5fec7f2ad@gmail.com>
+ <9748bda4-0db8-4c70-a321-c7189d575cbc@t-8ch.de>
+ <f50cd6ae-0d99-4836-b268-c9c86da448d8@alu.unizg.hr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f50cd6ae-0d99-4836-b268-c9c86da448d8@alu.unizg.hr>
 
-On Mon, 11 Nov 2024 15:45:03 +0800
-Yu-Hsian Yang <j2anfernee@gmail.com> wrote:
+Hi Mirsad,
 
-> Dear Jonathan Cameron,
->=20
-> For property read-vin-data-size, we have a internal discussion.
->=20
-> For Nuvoton NCT7201/NCT7202 chip,
-> Take an example as to Vin1:
-> The VIN reading supports Byte read (One Byte) and Word read (Two Byte)
->=20
-> For Byte read:
-> First read Index 00h to get VIN1 MSB, then read Index 0Fh Bit 3~7 to
-> get VIN1 LSB.
-> Index 0Fh is a shared LSB for all VINs.
->=20
-> For Word read:
-> Read Index 00h and get 2 Byte (VIN1 MSB and VIN1 LSB).
->=20
-> We would refer your suggestion,
-> we  declare a property named "nvuoton,read-vin-data-size" with default va=
-lue 16
-> for user to use.
+On 2024-11-23 02:53:09+0100, Mirsad Todorovac wrote:
+> Hi, Mr. Weißschuh,
 
-Thanks for the info.  If the i2c controller allows word read
-then the right thing is to always use it.
+Call me Thomas, please :-)
 
-Just check for I2C_FUNC_SMBUS_READ_WORD_DATA with
-i2c_check_functionality()
+> On 11/21/24 22:43, Thomas Weißschuh wrote:
+> 
+> > On 2024-11-21 22:18:58+0100, Mirsad Todorovac wrote:
+> >> I am perplexed now at 6.12 stable vanilla tree, and I've noticed that after changing just one
+> >> line in ./drivers/gpu/drm/xe/tests/xe_migrate.c:226:5-11, all unrelated drivers are being BTF'd, SIGNED,
+> >> and INSTALL-ed:
+> >>
+> >>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/aht10.ko
+> >>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/coretemp.ko
+> >>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/atxp1.ko
+> >>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/corsair-cpro.ko
+> >>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/adt7475.ko
+> >>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/axi-fan-control.ko
+> >>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/as370-hwmon.ko
+> >>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/chipcap2.ko
+> >>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/aquacomputer_d5next.ko
+> >>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/coretemp.ko
+> >>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/applesmc.ko
+> >>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/corsair-psu.ko
+> >>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/corsair-cpro.ko
+> >>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/asus_rog_ryujin.ko
+> >>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/cros_ec_hwmon.ko
+> >>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/asc7621.ko
+> >>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/da9052-hwmon.ko
+> >>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/atxp1.ko
+> >>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/axi-fan-control.ko
+> >>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/corsair-psu.ko
+> >>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/da9055-hwmon.ko
+> >>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/chipcap2.ko
+> >>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/cros_ec_hwmon.ko
+> >>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/da9052-hwmon.ko
+> >>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/coretemp.ko
+> >>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/corsair-cpro.ko
+> >>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/dell-smm-hwmon.ko
+> > This happens when the vermagic is changed. The vermagic is linked into
+> > each module. And after relinking all the other steps also need to be
+> > done.
+> > Building the Debian package increases the build number which ends up in
+> > the vermagic and therefore all modules.
+> > Also there is CONFIG_LOCALVERSION_AUTO which may be involved.
+> 
+> Yes, I use CONFIG_LOCALVERSION_AUTO because it saves a lot of trouble in bisecting.
+> 
+> This vermagic manipulation is beyond my grasp. I understand that
+> modules must match kernel version, for internal ABI often changes. But
+> not between builds of the same source? Am I thinking right?
 
-If it's supported use i2c_smbus_read_word_swapped()
-if not, do the i2c_smbus_read_byte() approach.
+The ABI doesn't change between builds of the same source tree which is
+why there are no actual rebuilds ("CC") of all modules.
 
-We don't need to want this in DT as it is a property of the smbus
-controller, not this device.
+But your usage of bindeb-pkg bumps the version string
+(also without CONFIG_LOCALVERSION_AUTO) and this needs to end up in each
+module file which explains the LD/BTF/SIGN/INSTALL steps.
 
-Jonathan
-
-
-
-
->=20
-> Jonathan Cameron <jic23@kernel.org> =E6=96=BC 2024=E5=B9=B411=E6=9C=889=
-=E6=97=A5 =E9=80=B1=E5=85=AD =E4=B8=8B=E5=8D=8810:29=E5=AF=AB=E9=81=93=EF=
-=BC=9A
-> >
-> > On Sat, 9 Nov 2024 13:42:28 +0000
-> > Jonathan Cameron <jic23@kernel.org> wrote:
-> > =20
-> > > On Wed, 6 Nov 2024 17:22:35 +0800
-> > > Yu-Hsian Yang <j2anfernee@gmail.com> wrote:
-> > > =20
-> > > > Dear Chanh Nguyen,
-> > > >
-> > > > Thank you for your response.
-> > > >
-> > > > Chanh Nguyen <chanh@amperemail.onmicrosoft.com> =E6=96=BC 2024=E5=
-=B9=B411=E6=9C=886=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=8812:58=E5=
-=AF=AB=E9=81=93=EF=BC=9A =20
-> > > > >
-> > > > >
-> > > > >
-> > > > > On 06/11/2024 09:39, Eason Yang wrote: =20
-> > > > > > This adds a binding specification for the Nuvoton NCT7201/NCT72=
-02
-> > > > > > family of ADCs.
-> > > > > >
-> > > > > > Signed-off-by: Eason Yang <j2anfernee@gmail.com>
-> > > > > > ---
-> > > > > >   .../bindings/iio/adc/nuvoton,nct720x.yaml     | 47 ++++++++++=
-+++++++++
-> > > > > >   MAINTAINERS                                   |  1 +
-> > > > > >   2 files changed, 48 insertions(+)
-> > > > > >   create mode 100644 Documentation/devicetree/bindings/iio/adc/=
-nuvoton,nct720x.yaml
-> > > > > >
-> > > > > > diff --git a/Documentation/devicetree/bindings/iio/adc/nuvoton,=
-nct720x.yaml b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.ya=
-ml
-> > > > > > new file mode 100644
-> > > > > > index 000000000000..3052039af10e
-> > > > > > --- /dev/null
-> > > > > > +++ b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x=
-.yaml
-> > > > > > @@ -0,0 +1,47 @@
-> > > > > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > > > > > +%YAML 1.2
-> > > > > > +---
-> > > > > > +$id: http://devicetree.org/schemas/iio/adc/nuvoton,nct720x.yam=
-l#
-> > > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > > > +
-> > > > > > +title: Nuvoton nct7202 and similar ADCs
-> > > > > > +
-> > > > > > +maintainers:
-> > > > > > +  - Eason Yang <yhyang2@nuvoton.com>
-> > > > > > +
-> > > > > > +description: |
-> > > > > > +   Family of ADCs with i2c interface.
-> > > > > > +
-> > > > > > +properties:
-> > > > > > +  compatible:
-> > > > > > +    enum:
-> > > > > > +      - nuvoton,nct7201
-> > > > > > +      - nuvoton,nct7202
-> > > > > > +
-> > > > > > +  reg:
-> > > > > > +    maxItems: 1
-> > > > > > +
-> > > > > > +  read-vin-data-size: =20
-> > > > >
-> > > > > Is it generic property or vendor property? I tried to find in the
-> > > > > https://github.com/torvalds/linux/tree/master/Documentation/devic=
-etree/bindings
-> > > > > , but it seems this property hasn't been used on other devices.
-> > > > >
-> > > > > If it is vendor property, then I think it should include a vendor
-> > > > > prefix. For examples:
-> > > > >
-> > > > > https://github.com/torvalds/linux/blob/master/Documentation/devic=
-etree/bindings/iio/adc/adi%2Cad7780.yaml#L50
-> > > > > https://github.com/torvalds/linux/blob/master/Documentation/devic=
-etree/bindings/iio/adc/fsl%2Cvf610-adc.yaml#L42
-> > > > > https://github.com/torvalds/linux/blob/master/Documentation/devic=
-etree/bindings/iio/adc/st%2Cstmpe-adc.yaml#L22
-> > > > >
-> > > > > =20
-> > > >
-> > > > I would add a vendor prefix for it. =20
-> > >
-> > > Why do we want this at all?  Is this device sufficiently high
-> > > performance that Linux will ever want to trade of resolution against
-> > > sampling speed?
-> > >
-> > > If so that seems like a policy control that belongs in userspace. Note
-> > > that to support that in IIO I would want a strong justification for w=
-hy we dno't
-> > > just set it to 16 always. We just go for maximum resolution in the va=
-st majority
-> > > of drivers that support control of this. =20
-> > I'd misunderstood what this is. It's a control no what the i2c word siz=
-e is.
-> > Do we actually care about supporting rubbish i2c controllers?  How many
-> > can't do a word access?
-> >
-> > If you do it should be detected from the controller rather than in DT.
-> > =20
-> > >
-> > > =20
-> > > > =20
-> > > > > > +    description: number of data bits per read vin
-> > > > > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > > > > +    enum: [8, 16]
-> > > > > > +
-> > > > > > +required:
-> > > > > > +  - compatible
-> > > > > > +  - reg
-> > > > > > +  - read-vin-data-size
-> > > > > > +
-> > > > > > +additionalProperties: false
-> > > > > > +
-> > > > > > +examples:
-> > > > > > +  - |
-> > > > > > +    i2c {
-> > > > > > +        #address-cells =3D <1>;
-> > > > > > +        #size-cells =3D <0>;
-> > > > > > +
-> > > > > > +        nct7202@1d { =20
-> > > > >
-> > > > > I think the Node name should follow
-> > > > > https://devicetree-specification.readthedocs.io/en/latest/chapter=
-2-devicetree-basics.html#generic-names-recommendation
-> > > > >
-> > > > >
-> > > > > For some examples that were merged before
-> > > > >
-> > > > > https://github.com/torvalds/linux/blob/master/Documentation/devic=
-etree/bindings/iio/adc/adi%2Cad7091r5.yaml#L102
-> > > > > https://github.com/torvalds/linux/blob/master/Documentation/devic=
-etree/bindings/iio/adc/maxim%2Cmax1238.yaml#L73
-> > > > > https://github.com/torvalds/linux/blob/master/Documentation/devic=
-etree/bindings/iio/adc/ti%2Cadc081c.yaml#L49
-> > > > > =20
-> > > >
-> > > > I would change it for the node naming.
-> > > > =20
-> > > > > > +            compatible =3D "nuvoton,nct7202";
-> > > > > > +            reg =3D <0x1d>;
-> > > > > > +            read-vin-data-size =3D <8>;
-> > > > > > +        };
-> > > > > > +    };
-> > > > > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > > > > index 91d0609db61b..68570c58e7aa 100644
-> > > > > > --- a/MAINTAINERS
-> > > > > > +++ b/MAINTAINERS
-> > > > > > @@ -2746,6 +2746,7 @@ L:      openbmc@lists.ozlabs.org (moderat=
-ed for non-subscribers)
-> > > > > >   S:  Supported
-> > > > > >   F:  Documentation/devicetree/bindings/*/*/*npcm*
-> > > > > >   F:  Documentation/devicetree/bindings/*/*npcm*
-> > > > > > +F:   Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x=
-.yaml
-> > > > > >   F:  Documentation/devicetree/bindings/rtc/nuvoton,nct3018y.ya=
-ml
-> > > > > >   F:  arch/arm/boot/dts/nuvoton/nuvoton-npcm*
-> > > > > >   F:  arch/arm/mach-npcm/ =20
-> > > > > =20
-> > >
-> > > =20
-> > =20
-
+[..]
 
