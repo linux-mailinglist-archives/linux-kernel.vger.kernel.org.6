@@ -1,220 +1,114 @@
-Return-Path: <linux-kernel+bounces-419256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FD469D6B69
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 21:07:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7507A9D6B6A
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 21:08:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61BD8161D27
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 20:06:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07A2C161EFA
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 20:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACB31ABECF;
-	Sat, 23 Nov 2024 20:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D8A19B59F;
+	Sat, 23 Nov 2024 20:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YZWzLDo4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dOZ1ZFRG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A3B1A3047;
-	Sat, 23 Nov 2024 20:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623D3EADC;
+	Sat, 23 Nov 2024 20:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732392372; cv=none; b=VlXALqQknh5wHXVU3b14WFgrUagDvxUCOeznXYZpwlpHAyx3TX1msyXojptTV0yhWEnygXIYbe4V7hGcylCqpRwPRrIXhuxw9Ra/zmEn3KuuSuqsMErAOXUBbxyvUTiq5knUR73L24NSv5KXcawzAViXJIXxr/KazoiMiG5CCM4=
+	t=1732392520; cv=none; b=i0TgB+PzhZ7HyKddXbWlr3iSsD9aDOlS7DcfOynsbjw2nv0ssZ2zIniZs9uvGlm8bw7LF+cVBNNKVUHTkX3wUxzQ9fE8r1edeLbQ++8eJ3fhqwWaZ5LPrbG08gAEVfeJ1UX4tq/vIa9UA5r/yVXa32/TP1O7sOqXsf9yMKEMLZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732392372; c=relaxed/simple;
-	bh=++FE/7iFKI7NjgLLAi5nkL/mj98q5NwZkvRUtGH5+AI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UyDBPO5/MuoTQOKKfvz1HxO4QwFL5ED/lM2Q0BtFAK2oG5DCF15vp2MgkLxr5HQ7ijqW6bnKVAZby2ft050q8BZ5YpwDxq5zkXw9Rj60wQDJHe8LBfc6mPBNLD5LmsKAb/HM0baLKsw6Lgki3xQ21MmiYj01M/JF2YfWtqQxz6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=none smtp.mailfrom=ecsmtp.iind.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YZWzLDo4; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ecsmtp.iind.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732392371; x=1763928371;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=++FE/7iFKI7NjgLLAi5nkL/mj98q5NwZkvRUtGH5+AI=;
-  b=YZWzLDo4uznLcATZqS+bKSNvfmTF9y9dqC1W5P5c8QRX12qx2wa99toT
-   DfVvHqer4npjxll+SMWo5StTcyQhkIR5ER06Ic4eU2lKRrnFiiRN8H+Ab
-   9a3Ho3JwWjCQxWa6afBINO2sGGRQnMD59ZBnwVD93zCgSDdkD9WWv0FRh
-   Zsv2WekRt8X3RBMrXwaCacelSp2R9CY7PQMBs85J8ZOB3l2miLoNIK8xN
-   68+gBMjMXoyKByThd9Y/HBSDXF59XltRZYt04Hbku9DcRB6jwpVKxvoQa
-   GWS4/E8V3OmxiQYB1/IOtZ6+zL7EmS+UZqRJUurE3rmfXoHHZiB9XepEY
-   g==;
-X-CSE-ConnectionGUID: jSn91T7fSdyScDwBrtcbCw==
-X-CSE-MsgGUID: PGmtXOudRT6nLqxOI3T0rA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11265"; a="32678557"
-X-IronPort-AV: E=Sophos;i="6.12,179,1728975600"; 
-   d="scan'208";a="32678557"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2024 12:06:08 -0800
-X-CSE-ConnectionGUID: fhU+mkJvQ5CJ+KPPPODyZw==
-X-CSE-MsgGUID: kOVrtAkcT9erutaGHfsrNg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,179,1728975600"; 
-   d="scan'208";a="121737998"
-Received: from inesxmail01.iind.intel.com ([10.223.57.40])
-  by orviesa002.jf.intel.com with ESMTP; 23 Nov 2024 12:06:04 -0800
-Received: from inlubt0316.iind.intel.com (inlubt0316.iind.intel.com [10.191.20.213])
-	by inesxmail01.iind.intel.com (Postfix) with ESMTP id 2428D1CADC;
-	Sun, 24 Nov 2024 01:36:03 +0530 (IST)
-Received: by inlubt0316.iind.intel.com (Postfix, from userid 12101951)
-	id 098431600112; Sun, 24 Nov 2024 01:36:03 +0530 (IST)
-From: Raag Jadav <raag.jadav@intel.com>
-To: gregkh@linuxfoundation.org,
-	linus.walleij@linaro.org,
-	mika.westerberg@linux.intel.com,
-	andriy.shevchenko@linux.intel.com,
-	dmitry.torokhov@gmail.com,
-	broonie@kernel.org,
-	pierre-louis.bossart@linux.dev
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	Raag Jadav <raag.jadav@intel.com>
-Subject: [PATCH v1 5/5] ASoC: Intel: avs: use devm_kmemdup_array()
-Date: Sun, 24 Nov 2024 01:35:27 +0530
-Message-Id: <20241123200527.7830-6-raag.jadav@intel.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20241123200527.7830-1-raag.jadav@intel.com>
-References: <20241123200527.7830-1-raag.jadav@intel.com>
+	s=arc-20240116; t=1732392520; c=relaxed/simple;
+	bh=gfVpRsZjNItxoPS+78RWdge/qIyHkEylHh0Tg/HMZiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nfzkjihbygr/expuH0sfFIMTkyCzytxgm1wz6GrJqgV8sQfh7xQ461IhYWyxnMmUXt3Dpb/SR5tJODYk5Shv+l0XBaIcl7kPzM+JuB7fApnLgOZN8Q5R/D0qlWZcLBedaVO53AqlhITzA5rq0HF6UTV5flUwo1JIwG4LryI8s8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dOZ1ZFRG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3656C4CECD;
+	Sat, 23 Nov 2024 20:08:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732392519;
+	bh=gfVpRsZjNItxoPS+78RWdge/qIyHkEylHh0Tg/HMZiM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dOZ1ZFRGuRdFs4lQ5AzhvMHaW+xaM2ETie691pW+7rAqjoUXLnHNiJGC8OeNZyoNm
+	 uG4fg3Jptq6XkcTL7a60KYJHGJJrfqXSsmA4VsjelYZVWsD+lPvVV1u4oVs1yJdXYk
+	 62SDqd/NxNpSzaCyRzK3TzEC6fv1fFoN1HKPXEL4ph2YaWXJ+RobZ/7Zt0K6t98iQa
+	 MjiSXCDoizLE+VcZD1tPQoOFLyzfsXkXUAUlx7TzLzswseFw/H0jMTtht8f4Sz2LX1
+	 ceweDBUEwD4Fu8m85OvTD0FChiSpUXHXpdYy6352t4Tg8zwExMUbVe4I192Vc4VhKi
+	 SfgSpToXX2E0w==
+Date: Sat, 23 Nov 2024 21:08:35 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Asahi Lina <lina@asahilina.net>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Janne Grunau <j@jannau.net>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, asahi@lists.linux.dev
+Subject: Re: [PATCH] rust: alloc: Fix `ArrayLayout` allocations
+Message-ID: <Z0I2Q_vGErIQ0xdn@pollux.localdomain>
+References: <20241123-rust-fix-arraylayout-v1-1-197e64c95bd4@asahilina.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241123-rust-fix-arraylayout-v1-1-197e64c95bd4@asahilina.net>
 
-Convert to use devm_kmemdup_array() which is more robust.
+On Sat, Nov 23, 2024 at 07:29:38PM +0900, Asahi Lina wrote:
+> We were accidentally allocating a layout for the *square* of the object
+> size due to a variable shadowing mishap.
+> 
+> Fixes memory bloat and page allocation failures in drm/asahi.
+> 
+> Reported-by: Janne Grunau <j@jannau.net>
+> Fixes: 9e7bbfa18276 ("rust: alloc: introduce `ArrayLayout`")
+> Signed-off-by: Asahi Lina <lina@asahilina.net>
 
-Signed-off-by: Raag Jadav <raag.jadav@intel.com>
----
- sound/soc/intel/avs/boards/da7219.c  | 3 ++-
- sound/soc/intel/avs/boards/es8336.c  | 3 ++-
- sound/soc/intel/avs/boards/nau8825.c | 3 ++-
- sound/soc/intel/avs/boards/rt274.c   | 3 ++-
- sound/soc/intel/avs/boards/rt286.c   | 3 ++-
- sound/soc/intel/avs/boards/rt298.c   | 3 ++-
- sound/soc/intel/avs/boards/rt5663.c  | 3 ++-
- sound/soc/intel/avs/boards/rt5682.c  | 2 +-
- 8 files changed, 15 insertions(+), 8 deletions(-)
+Good catch!
 
-diff --git a/sound/soc/intel/avs/boards/da7219.c b/sound/soc/intel/avs/boards/da7219.c
-index 80c0a1a95654..1b8f58b611a4 100644
---- a/sound/soc/intel/avs/boards/da7219.c
-+++ b/sound/soc/intel/avs/boards/da7219.c
-@@ -113,7 +113,8 @@ static int avs_da7219_codec_init(struct snd_soc_pcm_runtime *runtime)
- 	}
- 
- 	num_pins = ARRAY_SIZE(card_headset_pins);
--	pins = devm_kmemdup(card->dev, card_headset_pins, sizeof(*pins) * num_pins, GFP_KERNEL);
-+	pins = devm_kmemdup_array(card->dev, card_headset_pins, num_pins,
-+				  sizeof(*pins), GFP_KERNEL);
- 	if (!pins)
- 		return -ENOMEM;
- 
-diff --git a/sound/soc/intel/avs/boards/es8336.c b/sound/soc/intel/avs/boards/es8336.c
-index c8522e2430f8..8103e539e08a 100644
---- a/sound/soc/intel/avs/boards/es8336.c
-+++ b/sound/soc/intel/avs/boards/es8336.c
-@@ -109,7 +109,8 @@ static int avs_es8336_codec_init(struct snd_soc_pcm_runtime *runtime)
- 	data = snd_soc_card_get_drvdata(card);
- 	num_pins = ARRAY_SIZE(card_headset_pins);
- 
--	pins = devm_kmemdup(card->dev, card_headset_pins, sizeof(*pins) * num_pins, GFP_KERNEL);
-+	pins = devm_kmemdup_array(card->dev, card_headset_pins, num_pins,
-+				  sizeof(*pins), GFP_KERNEL);
- 	if (!pins)
- 		return -ENOMEM;
- 
-diff --git a/sound/soc/intel/avs/boards/nau8825.c b/sound/soc/intel/avs/boards/nau8825.c
-index 6ea9058fdb2a..0945a539b364 100644
---- a/sound/soc/intel/avs/boards/nau8825.c
-+++ b/sound/soc/intel/avs/boards/nau8825.c
-@@ -88,7 +88,8 @@ static int avs_nau8825_codec_init(struct snd_soc_pcm_runtime *runtime)
- 	jack = snd_soc_card_get_drvdata(card);
- 	num_pins = ARRAY_SIZE(card_headset_pins);
- 
--	pins = devm_kmemdup(card->dev, card_headset_pins, sizeof(*pins) * num_pins, GFP_KERNEL);
-+	pins = devm_kmemdup_array(card->dev, card_headset_pins, num_pins,
-+				  sizeof(*pins), GFP_KERNEL);
- 	if (!pins)
- 		return -ENOMEM;
- 
-diff --git a/sound/soc/intel/avs/boards/rt274.c b/sound/soc/intel/avs/boards/rt274.c
-index 9fcce86c6eb4..bdf36c7c744a 100644
---- a/sound/soc/intel/avs/boards/rt274.c
-+++ b/sound/soc/intel/avs/boards/rt274.c
-@@ -98,7 +98,8 @@ static int avs_rt274_codec_init(struct snd_soc_pcm_runtime *runtime)
- 	jack = snd_soc_card_get_drvdata(card);
- 	num_pins = ARRAY_SIZE(card_headset_pins);
- 
--	pins = devm_kmemdup(card->dev, card_headset_pins, sizeof(*pins) * num_pins, GFP_KERNEL);
-+	pins = devm_kmemdup_array(card->dev, card_headset_pins, num_pins,
-+				  sizeof(*pins), GFP_KERNEL);
- 	if (!pins)
- 		return -ENOMEM;
- 
-diff --git a/sound/soc/intel/avs/boards/rt286.c b/sound/soc/intel/avs/boards/rt286.c
-index f157f2d19efb..f94382389430 100644
---- a/sound/soc/intel/avs/boards/rt286.c
-+++ b/sound/soc/intel/avs/boards/rt286.c
-@@ -59,7 +59,8 @@ static int avs_rt286_codec_init(struct snd_soc_pcm_runtime *runtime)
- 	jack = snd_soc_card_get_drvdata(card);
- 	num_pins = ARRAY_SIZE(card_headset_pins);
- 
--	pins = devm_kmemdup(card->dev, card_headset_pins, sizeof(*pins) * num_pins, GFP_KERNEL);
-+	pins = devm_kmemdup_array(card->dev, card_headset_pins, num_pins,
-+				  sizeof(*pins), GFP_KERNEL);
- 	if (!pins)
- 		return -ENOMEM;
- 
-diff --git a/sound/soc/intel/avs/boards/rt298.c b/sound/soc/intel/avs/boards/rt298.c
-index 1e85242c8dd2..985bfa977edb 100644
---- a/sound/soc/intel/avs/boards/rt298.c
-+++ b/sound/soc/intel/avs/boards/rt298.c
-@@ -70,7 +70,8 @@ static int avs_rt298_codec_init(struct snd_soc_pcm_runtime *runtime)
- 	jack = snd_soc_card_get_drvdata(card);
- 	num_pins = ARRAY_SIZE(card_headset_pins);
- 
--	pins = devm_kmemdup(card->dev, card_headset_pins, sizeof(*pins) * num_pins, GFP_KERNEL);
-+	pins = devm_kmemdup_array(card->dev, card_headset_pins, num_pins,
-+				  sizeof(*pins), GFP_KERNEL);
- 	if (!pins)
- 		return -ENOMEM;
- 
-diff --git a/sound/soc/intel/avs/boards/rt5663.c b/sound/soc/intel/avs/boards/rt5663.c
-index 44f857e90969..fd8b0c915efa 100644
---- a/sound/soc/intel/avs/boards/rt5663.c
-+++ b/sound/soc/intel/avs/boards/rt5663.c
-@@ -65,7 +65,8 @@ static int avs_rt5663_codec_init(struct snd_soc_pcm_runtime *runtime)
- 	jack = &priv->jack;
- 	num_pins = ARRAY_SIZE(card_headset_pins);
- 
--	pins = devm_kmemdup(card->dev, card_headset_pins, sizeof(*pins) * num_pins, GFP_KERNEL);
-+	pins = devm_kmemdup_array(card->dev, card_headset_pins, num_pins,
-+				  sizeof(*pins), GFP_KERNEL);
- 	if (!pins)
- 		return -ENOMEM;
- 
-diff --git a/sound/soc/intel/avs/boards/rt5682.c b/sound/soc/intel/avs/boards/rt5682.c
-index 0dcc6392a0cc..6d7022707ca7 100644
---- a/sound/soc/intel/avs/boards/rt5682.c
-+++ b/sound/soc/intel/avs/boards/rt5682.c
-@@ -102,7 +102,7 @@ static int avs_rt5682_codec_init(struct snd_soc_pcm_runtime *runtime)
- 	jack = snd_soc_card_get_drvdata(card);
- 	num_pins = ARRAY_SIZE(card_jack_pins);
- 
--	pins = devm_kmemdup(card->dev, card_jack_pins, sizeof(*pins) * num_pins, GFP_KERNEL);
-+	pins = devm_kmemdup_array(card->dev, card_jack_pins, num_pins, sizeof(*pins), GFP_KERNEL);
- 	if (!pins)
- 		return -ENOMEM;
- 
--- 
-2.35.3
+Acked-by: Danilo Krummrich <dakr@kernel.org>
 
+(I'm just back from moving and just starting to catch up on what was going on
+in the last few weeks.)
+
+Is this related to the performance regression that has been observed by Andreas?
+Or did it turn out to be a false positive?
+
+- Danilo
+
+> ---
+>  rust/kernel/alloc/layout.rs | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/rust/kernel/alloc/layout.rs b/rust/kernel/alloc/layout.rs
+> index 7e0c2f46157b772248450a77ff445091e17fdfd7..4b3cd7fdc816c158e63ac74014cbfc0794547e81 100644
+> --- a/rust/kernel/alloc/layout.rs
+> +++ b/rust/kernel/alloc/layout.rs
+> @@ -45,7 +45,7 @@ pub const fn empty() -> Self {
+>      /// When `len * size_of::<T>()` overflows or when `len * size_of::<T>() > isize::MAX`.
+>      pub const fn new(len: usize) -> Result<Self, LayoutError> {
+>          match len.checked_mul(core::mem::size_of::<T>()) {
+> -            Some(len) if len <= ISIZE_MAX => {
+> +            Some(size) if size <= ISIZE_MAX => {
+>                  // INVARIANT: We checked above that `len * size_of::<T>() <= isize::MAX`.
+>                  Ok(Self {
+>                      len,
+> 
+> ---
+> base-commit: b2603f8ac8217bc59f5c7f248ac248423b9b99cb
+> change-id: 20241123-rust-fix-arraylayout-0b1009d89fb7
+> 
+> Cheers,
+> ~~ Lina
+> 
 
