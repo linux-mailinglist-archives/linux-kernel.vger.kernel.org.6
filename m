@@ -1,365 +1,146 @@
-Return-Path: <linux-kernel+bounces-418963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D389D67DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 07:47:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F75B9D67DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 07:49:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B691D1613FC
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 06:47:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F52B281BAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 06:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9E916B3B7;
-	Sat, 23 Nov 2024 06:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B2A1662E7;
+	Sat, 23 Nov 2024 06:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CP58vpLh"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BDQGY+Mf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8050629405
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 06:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6670829405
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 06:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732344453; cv=none; b=hcllgbd/xXY9/Ua7X+BlumHTkQ7X+UCjSW5CwMrno26ZwOFLGM+lBzLFoQgpp/9MC3ylKJ8X0FZW8BNo1tDo9U1JyU3nV2acGIOePdssCcWq9L+0jvyP1eMXYktWd/SrCSWdvOpVeys04b1cSB367tCTnyHheg/iFJ/V9zAaUgQ=
+	t=1732344560; cv=none; b=iiOp09i+Dh5PwasYYhQx2ISGx4JrKRbedzHWF4+7EdASl1olGFO2bb79bhU2GZibCZdZj/DBeugOLgV6wg7k0voNAIBvfyhVaLNiRVaJWuxtTm7BlIMTyAaIIEsWSwqjhNlaY04tPckH3FVPUIWrOS9S57J4f0ke8Vt1pqDOh7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732344453; c=relaxed/simple;
-	bh=YVACDs1RtLKGWVhnz3UkHS1/ASXsfVYyPBlgFQOfk1Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AEpmQ0FczUfYHLLnYuv2Tf9c63MFhaYvx6iOj5gaZIBOMQW3BlkxUET6g70El7rse4UgAhyOXFpN2dK8AUzlobNOKB69iDGTV1kTKVNO5bPcQJBcjOrazml/uZU6CwB6Tk+xOUzAvQFP0af9rPDyx6F2po62xPwr3cVEt61WpSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CP58vpLh; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6d400ffb227so18914986d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 22:47:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732344450; x=1732949250; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ymgflkDUVyug1wPOQFiRQ2YqU/Q7TymF7PGNQguc3+A=;
-        b=CP58vpLhPzKcFU9UN4M+xmmxcxlg8aGEHXYHZbBmmHD0sPUbI6+lgfXgj29g2x0CFP
-         nAsff5HdIytDSZE9j3lLaH3r1rW18VbhR0cL6Az4hM/AvQ5pwf8Ify/9aOcpZiPEUHr9
-         TZNx3wHXk0aoKF9vV2VaczCpoubFS2jyC/mIXbKXATb1zpHcwurrAABvzCd7RTDwiPzD
-         ekjtlxCIzVkLtWuOVm8vDl5zKUn89WfF2gGUxo4D4Z4iT8avFelQJPN/wM5SD4I0TsAs
-         0t/SU8BHnUF70c3AfifbDTgdhYq1rcr8pNVsJKisHrQwFWHzb4Ro/lXsdfRn6a059Acd
-         os/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732344450; x=1732949250;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ymgflkDUVyug1wPOQFiRQ2YqU/Q7TymF7PGNQguc3+A=;
-        b=J6YK8zvP0sYrG7qy0teIVMJ62HxKsuQQ2wiZWJiA8bst+Tc9t1tvaWgtyIpKw1VyBV
-         l/YDuqutOvX8w9L8tBkCC0kHMARp8oLBDOnFWJY5zWqKLXBfd8nSphZx8VzB6RXRXHLm
-         Rl//2SVI9iR+O6Ftd5UIilXqJDFyWHbNtFEfKueCOzElpBSlw69Aa556fNAd+C6GG/qS
-         8tcdIHpvzk1AF8ft0650TRCfEsm1cZsGZ+vXaNyiPG9X/ozijhvjgkhYpehKjPxjSpwI
-         aRLQ+f+eKU1I8i3ZEbxJpKQYK4Wp3jjS/Y364mE1Gy5OVhtm9KmyMj45FeqO8SMYlmH2
-         I9zA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOzyxKua9s8IlcKmvImljLn+/pqTw3KrxyZHXtlFQZ5X1kBaloPrxnqxkxF/RJHqYMv7MAQZ2euHhcKh4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI9aZN8MZasTkFIq8Z2FBA9XBiZMnUn2S087GrBNEEySze60i5
-	5orcFIfpq7zmVrZpmru1QjZejhzJuFDGT0y2kGJBHc+/t914vX3QJmWqD58EgSi+QUc46g6naML
-	l98gooWIRFmGQ8B1osIsQcH0ubQcB4cYMJ4zSWUOfjeF3fLby+wI0
-X-Gm-Gg: ASbGncvMPqcpcBFZODcew9oqIFCHrpSjHLtBvFp9wwPFVxTUshrOLuw3FQakFpVLgja
-	Omi6d9L27XAeDW9MPN41jfqsOBb0D
-X-Google-Smtp-Source: AGHT+IEkDB9TYGxxMJwZU3/JVtCFBD87cfOIXWCVX3m/odh7EtLSO0xYG3/4XTBX7kGJq+bQhEf7xk72q9otkdJWVxs=
-X-Received: by 2002:a05:6214:410:b0:6d4:1bad:7405 with SMTP id
- 6a1803df08f44-6d450e6a990mr87224516d6.3.1732344450249; Fri, 22 Nov 2024
- 22:47:30 -0800 (PST)
+	s=arc-20240116; t=1732344560; c=relaxed/simple;
+	bh=gW35Ha7gO4QWdWA4k6QSSsjT4xbUXw7Vsyy31OFPbaI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mXyfjXnmlYdNZhjFEwSuIfMT2tQKWhIifZrs7lRyOMZtWHc1v1DAovz4R4klQySY3I2pt/5pl3DRiKncIGA5V4VQgusk/6VYL+oCyj3m232WSZJciIK+cXZmhw3aJ13jA3zFGr2psF3H9kuzVhzCSjecYzgRnXCQdziq8fJu+A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BDQGY+Mf; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732344558; x=1763880558;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=gW35Ha7gO4QWdWA4k6QSSsjT4xbUXw7Vsyy31OFPbaI=;
+  b=BDQGY+MfnNytL4z4m7jREP6nDbSx1DkAlAujM7aFfu+BfU2zcJu/d8vY
+   cD2hDpgL7nhaLfHR9zQIGF8c84eF5Q0jSi/jkKoZzHlbBakPwQdO031cx
+   q0W93HXo/xxNkS/qEXBRge9npJWcVe6Cgm6xR1x6Hkz9Ix4LyEFakWCz6
+   N5w1uwArl+Bt1rKD7PAV6/EPWr9wp+ZSYLnYOWL5in4YEaNOSVvQMSPl0
+   vF6YQOGYa2aW+CPcaJF2wlafyRVhVUKfK6XaJyupAqV9E5yYK2lDWt9e8
+   ZuIAIOt78fMtAu9r6sb0T2K+eAs6CjaYtqmelmZT6Lxb/2JsuCsohSkc6
+   A==;
+X-CSE-ConnectionGUID: QLeBbaKvSwqnXHA+sJOdUw==
+X-CSE-MsgGUID: 5AyGCfTCQraBmI+o0qRbng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="43881146"
+X-IronPort-AV: E=Sophos;i="6.12,178,1728975600"; 
+   d="scan'208";a="43881146"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 22:49:17 -0800
+X-CSE-ConnectionGUID: oek+gPJvRvSoSUqK/U46UA==
+X-CSE-MsgGUID: 7Y+DKgPuTzuxS8XLpIdJcw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,178,1728975600"; 
+   d="scan'208";a="91210467"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 22 Nov 2024 22:49:16 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tEjxC-0004Tr-0p;
+	Sat, 23 Nov 2024 06:49:14 +0000
+Date: Sat, 23 Nov 2024 14:48:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Thangaraj Samynathan <thangaraj.s@microchip.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>
+Subject: drivers/spi/spi-pci1xxxx.c:373:9: sparse: sparse: incorrect type in
+ argument 1 (different address spaces)
+Message-ID: <202411231439.49BinLEA-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241123060939.169978-1-shakeel.butt@linux.dev>
-In-Reply-To: <20241123060939.169978-1-shakeel.butt@linux.dev>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Fri, 22 Nov 2024 22:46:53 -0800
-Message-ID: <CAJD7tkYAch4TpO0JSpjmg6k3VVw-0x_acf2P2JBveaD3mXPxgA@mail.gmail.com>
-Subject: Re: [PATCH] mm: mmap_lock: optimize mmap_lock tracepoints
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Vlastimil Babka <vbabka@suse.cz>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, Nov 22, 2024 at 10:10=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.d=
-ev> wrote:
->
-> We are starting to deploy mmap_lock tracepoint monitoring across our
-> fleet and the early results showed that these tracepoints are consuming
-> significant amount of CPUs in kernfs_path_from_node when enabled.
->
-> It seems like the kernel is trying to resolved the cgroup path in the
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   2a163a4cea153348172e260a0c5b5569103a66a3
+commit: 9538edeb72c989a4b90964ae4bba107eaf21a791 spi: mchp-pci1xxxx: DMA support for copying data to and from SPI Buf
+date:   10 months ago
+config: sh-randconfig-r131-20241122 (https://download.01.org/0day-ci/archive/20241123/202411231439.49BinLEA-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20241123/202411231439.49BinLEA-lkp@intel.com/reproduce)
 
-s/resolved/resolve
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411231439.49BinLEA-lkp@intel.com/
 
-> fast path of the locking code path when the tracepoints are enabled. In
-> addition for some application their metrics are regressing when
-> monitoring is enabled.
->
-> The cgroup path resolution can be slow and should not be done in the
-> fast path. Most userspace tools, like bpftrace, provides functionality
-> to get the cgroup path from cgroup id, so let's just trace the cgroup
-> id and the users can use better tools to get the path in the slow path.
->
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> ---
->  include/linux/memcontrol.h       | 18 ++++++++++++
->  include/trace/events/mmap_lock.h | 32 ++++++++++----------
->  mm/mmap_lock.c                   | 50 ++------------------------------
->  3 files changed, 36 insertions(+), 64 deletions(-)
->
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 5502aa8e138e..d82f08cd70cd 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -1046,6 +1046,19 @@ static inline void memcg_memory_event_mm(struct mm=
-_struct *mm,
->
->  void split_page_memcg(struct page *head, int old_order, int new_order);
->
-> +static inline u64 memcg_id_from_mm(struct mm_struct *mm)
+sparse warnings: (new ones prefixed by >>)
+   drivers/spi/spi-pci1xxxx.c:369:22: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
+   drivers/spi/spi-pci1xxxx.c:369:22: sparse:     expected void *base
+   drivers/spi/spi-pci1xxxx.c:369:22: sparse:     got void [noderef] __iomem *
+   drivers/spi/spi-pci1xxxx.c:371:22: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
+   drivers/spi/spi-pci1xxxx.c:371:22: sparse:     expected void *base
+   drivers/spi/spi-pci1xxxx.c:371:22: sparse:     got void [noderef] __iomem *
+>> drivers/spi/spi-pci1xxxx.c:373:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *ptr @@     got void * @@
+   drivers/spi/spi-pci1xxxx.c:373:9: sparse:     expected void const volatile [noderef] __iomem *ptr
+   drivers/spi/spi-pci1xxxx.c:373:9: sparse:     got void *
+   drivers/spi/spi-pci1xxxx.c:374:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *ptr @@     got void * @@
+   drivers/spi/spi-pci1xxxx.c:374:9: sparse:     expected void const volatile [noderef] __iomem *ptr
+   drivers/spi/spi-pci1xxxx.c:374:9: sparse:     got void *
+   drivers/spi/spi-pci1xxxx.c:375:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *ptr @@     got void * @@
+   drivers/spi/spi-pci1xxxx.c:375:9: sparse:     expected void const volatile [noderef] __iomem *ptr
+   drivers/spi/spi-pci1xxxx.c:375:9: sparse:     got void *
+   drivers/spi/spi-pci1xxxx.c:376:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *ptr @@     got void * @@
+   drivers/spi/spi-pci1xxxx.c:376:9: sparse:     expected void const volatile [noderef] __iomem *ptr
+   drivers/spi/spi-pci1xxxx.c:376:9: sparse:     got void *
+   drivers/spi/spi-pci1xxxx.c:377:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *ptr @@     got void * @@
+   drivers/spi/spi-pci1xxxx.c:377:9: sparse:     expected void const volatile [noderef] __iomem *ptr
+   drivers/spi/spi-pci1xxxx.c:377:9: sparse:     got void *
+   drivers/spi/spi-pci1xxxx.c:379:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *ptr @@     got void * @@
+   drivers/spi/spi-pci1xxxx.c:379:9: sparse:     expected void const volatile [noderef] __iomem *ptr
+   drivers/spi/spi-pci1xxxx.c:379:9: sparse:     got void *
 
-The usage of memcg_id here and throughout the patch is a bit confusing
-because we have a member called 'id' in struct mem_cgroup, but this
-isn't it. This is the cgroup_id of the memcg. I admit it's hard to
-distinguish them during naming, but when I first saw the function I
-thought it was returning memcg->id.
+vim +373 drivers/spi/spi-pci1xxxx.c
 
-Maybe just cgroup_id_from_mm()? In cgroup v2, the cgroup id is the
-same regardless of the controller anyway, in cgroup v1, it's kinda
-natural that we return the cgroup id of the memcg.
+   362	
+   363	static void pci1xxxx_spi_setup_dma_from_io(struct pci1xxxx_spi_internal *p,
+   364						   dma_addr_t dma_addr, u32 len)
+   365	{
+   366		void *base;
+   367	
+   368		if (!p->hw_inst)
+ > 369			base = p->parent->dma_offset_bar + SPI_DMA_CH0_WR_BASE;
+   370		else
+   371			base = p->parent->dma_offset_bar + SPI_DMA_CH1_WR_BASE;
+   372	
+ > 373		writel(DMA_INTR_EN, base + SPI_DMA_CH_CTL1_OFFSET);
+   374		writel(len, base + SPI_DMA_CH_XFER_LEN_OFFSET);
+   375		writel(lower_32_bits(dma_addr), base + SPI_DMA_CH_DAR_LO_OFFSET);
+   376		writel(upper_32_bits(dma_addr), base + SPI_DMA_CH_DAR_HI_OFFSET);
+   377		writel(lower_32_bits(SPI_PERI_ADDR_BASE + SPI_MST_RSP_BUF_OFFSET(p->hw_inst)),
+   378		       base + SPI_DMA_CH_SAR_LO_OFFSET);
+   379		writel(upper_32_bits(SPI_PERI_ADDR_BASE + SPI_MST_RSP_BUF_OFFSET(p->hw_inst)),
+   380		       base + SPI_DMA_CH_SAR_HI_OFFSET);
+   381	}
+   382	
 
-I don't feel strongly, but I prefer that we use clearer naming, and
-either way a comment may help clarify things.
-
-> +{
-> +       struct mem_cgroup *memcg;
-> +       u64 id =3D 0;
-> +
-> +       rcu_read_lock();
-> +       memcg =3D mem_cgroup_from_task(rcu_dereference(mm->owner));
-> +       if (likely(memcg))
-> +               id =3D cgroup_id(memcg->css.cgroup);
-
-We return 0 if the memcg is NULL here, shouldn't we return the cgroup
-id of the root memcg instead? This is more consistent with
-get_mem_cgroup_from_mm(), and makes sure we always return the id of a
-valid cgroup.
-
-> +       rcu_read_unlock();
-> +       return id;
-> +}
-> +
->  #else /* CONFIG_MEMCG */
->
->  #define MEM_CGROUP_ID_SHIFT    0
-> @@ -1466,6 +1479,11 @@ void count_memcg_event_mm(struct mm_struct *mm, en=
-um vm_event_item idx)
->  static inline void split_page_memcg(struct page *head, int old_order, in=
-t new_order)
->  {
->  }
-> +
-> +static inline u64 memcg_id_from_mm(struct mm_struct *mm)
-> +{
-> +       return 0;
-> +}
->  #endif /* CONFIG_MEMCG */
->
->  /*
-> diff --git a/include/trace/events/mmap_lock.h b/include/trace/events/mmap=
-_lock.h
-> index bc2e3ad787b3..5529933d19c5 100644
-> --- a/include/trace/events/mmap_lock.h
-> +++ b/include/trace/events/mmap_lock.h
-> @@ -5,6 +5,7 @@
->  #if !defined(_TRACE_MMAP_LOCK_H) || defined(TRACE_HEADER_MULTI_READ)
->  #define _TRACE_MMAP_LOCK_H
->
-> +#include <linux/memcontrol.h>
->  #include <linux/tracepoint.h>
->  #include <linux/types.h>
->
-> @@ -12,64 +13,61 @@ struct mm_struct;
->
->  DECLARE_EVENT_CLASS(mmap_lock,
->
-> -       TP_PROTO(struct mm_struct *mm, const char *memcg_path, bool write=
-),
-> +       TP_PROTO(struct mm_struct *mm, bool write),
->
-> -       TP_ARGS(mm, memcg_path, write),
-> +       TP_ARGS(mm, write),
->
->         TP_STRUCT__entry(
->                 __field(struct mm_struct *, mm)
-> -               __string(memcg_path, memcg_path)
-> +               __field(u64, memcg_id)
->                 __field(bool, write)
->         ),
->
->         TP_fast_assign(
->                 __entry->mm =3D mm;
-> -               __assign_str(memcg_path);
-> +               __entry->memcg_id =3D memcg_id_from_mm(mm);
->                 __entry->write =3D write;
->         ),
->
->         TP_printk(
-> -               "mm=3D%p memcg_path=3D%s write=3D%s",
-> -               __entry->mm,
-> -               __get_str(memcg_path),
-> +               "mm=3D%p memcg_id=3D%llu write=3D%s",
-> +               __entry->mm, __entry->memcg_id,
->                 __entry->write ? "true" : "false"
->         )
->  );
->
->  #define DEFINE_MMAP_LOCK_EVENT(name)                                    =
-\
->         DEFINE_EVENT(mmap_lock, name,                                   \
-> -               TP_PROTO(struct mm_struct *mm, const char *memcg_path,  \
-> -                       bool write),                                    \
-> -               TP_ARGS(mm, memcg_path, write))
-> +               TP_PROTO(struct mm_struct *mm, bool write),             \
-> +               TP_ARGS(mm, write))
->
->  DEFINE_MMAP_LOCK_EVENT(mmap_lock_start_locking);
->  DEFINE_MMAP_LOCK_EVENT(mmap_lock_released);
->
->  TRACE_EVENT(mmap_lock_acquire_returned,
->
-> -       TP_PROTO(struct mm_struct *mm, const char *memcg_path, bool write=
-,
-> -               bool success),
-> +       TP_PROTO(struct mm_struct *mm, bool write, bool success),
->
-> -       TP_ARGS(mm, memcg_path, write, success),
-> +       TP_ARGS(mm, write, success),
->
->         TP_STRUCT__entry(
->                 __field(struct mm_struct *, mm)
-> -               __string(memcg_path, memcg_path)
-> +               __field(u64, memcg_id)
->                 __field(bool, write)
->                 __field(bool, success)
->         ),
->
->         TP_fast_assign(
->                 __entry->mm =3D mm;
-> -               __assign_str(memcg_path);
-> +               __entry->memcg_id =3D memcg_id_from_mm(mm);
->                 __entry->write =3D write;
->                 __entry->success =3D success;
->         ),
->
->         TP_printk(
-> -               "mm=3D%p memcg_path=3D%s write=3D%s success=3D%s",
-> +               "mm=3D%p memcg_id=3D%llu write=3D%s success=3D%s",
->                 __entry->mm,
-> -               __get_str(memcg_path),
-> +               __entry->memcg_id,
->                 __entry->write ? "true" : "false",
->                 __entry->success ? "true" : "false"
->         )
-> diff --git a/mm/mmap_lock.c b/mm/mmap_lock.c
-> index f186d57df2c6..e7dbaf96aa17 100644
-> --- a/mm/mmap_lock.c
-> +++ b/mm/mmap_lock.c
-> @@ -17,51 +17,7 @@ EXPORT_TRACEPOINT_SYMBOL(mmap_lock_start_locking);
->  EXPORT_TRACEPOINT_SYMBOL(mmap_lock_acquire_returned);
->  EXPORT_TRACEPOINT_SYMBOL(mmap_lock_released);
->
-> -#ifdef CONFIG_MEMCG
-> -
-> -/*
-> - * Size of the buffer for memcg path names. Ignoring stack trace support=
-,
-> - * trace_events_hist.c uses MAX_FILTER_STR_VAL for this, so we also use =
-it.
-> - */
-> -#define MEMCG_PATH_BUF_SIZE MAX_FILTER_STR_VAL
-> -
-> -#define TRACE_MMAP_LOCK_EVENT(type, mm, ...)                           \
-> -       do {                                                            \
-> -               if (trace_mmap_lock_##type##_enabled()) {               \
-> -                       char buf[MEMCG_PATH_BUF_SIZE];                  \
-> -                       get_mm_memcg_path(mm, buf, sizeof(buf));        \
-> -                       trace_mmap_lock_##type(mm, buf, ##__VA_ARGS__); \
-> -               }                                                       \
-> -       } while (0)
-> -
-> -#else /* !CONFIG_MEMCG */
-> -
-> -#define TRACE_MMAP_LOCK_EVENT(type, mm, ...)                            =
-       \
-> -       trace_mmap_lock_##type(mm, "", ##__VA_ARGS__)
-> -
-> -#endif /* CONFIG_MEMCG */
-> -
->  #ifdef CONFIG_TRACING
-> -#ifdef CONFIG_MEMCG
-> -/*
-> - * Write the given mm_struct's memcg path to a buffer. If the path canno=
-t be
-> - * determined, empty string is written.
-> - */
-> -static void get_mm_memcg_path(struct mm_struct *mm, char *buf, size_t bu=
-flen)
-> -{
-> -       struct mem_cgroup *memcg;
-> -
-> -       buf[0] =3D '\0';
-> -       memcg =3D get_mem_cgroup_from_mm(mm);
-> -       if (memcg =3D=3D NULL)
-> -               return;
-> -       if (memcg->css.cgroup)
-> -               cgroup_path(memcg->css.cgroup, buf, buflen);
-> -       css_put(&memcg->css);
-> -}
-> -
-> -#endif /* CONFIG_MEMCG */
-> -
->  /*
->   * Trace calls must be in a separate file, as otherwise there's a circul=
-ar
->   * dependency between linux/mmap_lock.h and trace/events/mmap_lock.h.
-> @@ -69,20 +25,20 @@ static void get_mm_memcg_path(struct mm_struct *mm, c=
-har *buf, size_t buflen)
->
->  void __mmap_lock_do_trace_start_locking(struct mm_struct *mm, bool write=
-)
->  {
-> -       TRACE_MMAP_LOCK_EVENT(start_locking, mm, write);
-> +       trace_mmap_lock_start_locking(mm, write);
->  }
->  EXPORT_SYMBOL(__mmap_lock_do_trace_start_locking);
->
->  void __mmap_lock_do_trace_acquire_returned(struct mm_struct *mm, bool wr=
-ite,
->                                            bool success)
->  {
-> -       TRACE_MMAP_LOCK_EVENT(acquire_returned, mm, write, success);
-> +       trace_mmap_lock_acquire_returned(mm, write, success);
->  }
->  EXPORT_SYMBOL(__mmap_lock_do_trace_acquire_returned);
->
->  void __mmap_lock_do_trace_released(struct mm_struct *mm, bool write)
->  {
-> -       TRACE_MMAP_LOCK_EVENT(released, mm, write);
-> +       trace_mmap_lock_released(mm, write);
->  }
->  EXPORT_SYMBOL(__mmap_lock_do_trace_released);
->  #endif /* CONFIG_TRACING */
-> --
-> 2.43.5
->
->
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
