@@ -1,174 +1,118 @@
-Return-Path: <linux-kernel+bounces-419298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CB2E9D6C02
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 00:01:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DCCD9D6BE5
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 23:59:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60381281175
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 23:00:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E0B2281646
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 22:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8CE1A3047;
-	Sat, 23 Nov 2024 23:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BozWns9o"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5382A1AB500;
+	Sat, 23 Nov 2024 22:59:21 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F064C1A4E9E;
-	Sat, 23 Nov 2024 23:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D987217BA6;
+	Sat, 23 Nov 2024 22:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732402820; cv=none; b=Kg+7gpnNXG7cASRUeNFKA50aLhMKvHGHEkMcuOqotuY9CeF9hY0RRZP3Ubk5YeUplqu8m/1aSq8NfeJlGIaNPQWmQ2uHFaiU0t7fp2vQkDbPDMUMIC7ADwei5EJPgskt82L4oykVkypzRhePmHM82PqEcigcXpqd+cQe01f7QNU=
+	t=1732402761; cv=none; b=iyq0rVJgEYCQs+8x0oj35Fe3ZOBweuczt1N3qtD0YpebJmg9ViTvtbEhzukJH3jxOcd6hS9WUoF42OnoL/QFxXo62DBIPkR2+dWAQVQondmV0CbLuPL22Wyap+qEvP3H2XFFUpXNdl7V6UUkyU389YjHDyKRV8ahawsaVWhfUzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732402820; c=relaxed/simple;
-	bh=uN74WQ2ZwE3oU4k1atJsAUJRMs5T5pzS3BqepRuHv4o=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V6c9CnNFsFypIT4skCJOjgMgf1zVtQvp8Qu4524eS+dq+dbMGwEc9JlT77UDlW4zQvlqmnqEbulZMYB/lsonhnGfL4SnFeW405Eq2QnbkHzyYrvRi8sv/Lgdv204GqpGqjqAGGrRwc4WBQFWGmTdqzHprPP1JB8jiJaRmCRVOu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BozWns9o; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ANMlUeN020736;
-	Sat, 23 Nov 2024 23:00:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=z1Th407nZNKUJgy0+yOGqGyJ
-	+2HnOT3I/5BrbLrTlfc=; b=BozWns9ohixfdCf/+oBB1JgFEV4/p+Xp3tL5mk0o
-	G0qoOVnYU+zXFlvZpFXFM+967ltCskaIY0adtU7eMt+4kmzJM9Ix1A9m6lVOY7Sh
-	CTNiZZorID+yINvafUZfL2YWSzI7e/WbTiPEeLv96Au2Us2crm5MfNamZ0M058f4
-	tpH3hXETpeY7YqmXijN9KlWnQJPLLHAJCgBJev0sJYm/aMDs9TKLxRs8N+/0bifD
-	ct9ACYBiI9T3e+zveC/6I4ou2YkW5q1NjqFOw+h6ufUHhWT00uqLBIknlBLddey8
-	FTAzhKGW902OJPtBi/z8ElBOS/foZjbtFX0sLMaZpQObfQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4336mx9dnh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 23 Nov 2024 23:00:06 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ANN05PF028434
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 23 Nov 2024 23:00:05 GMT
-Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Sat, 23 Nov 2024 14:59:58 -0800
-Date: Sun, 24 Nov 2024 04:29:54 +0530
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-CC: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Dmitry
- Baryshkov" <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Bjorn Andersson <andersson@kernel.org>, Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Connor Abbott <cwabbott0@gmail.com>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2 08/11] drm/msm: adreno: request for maximum bus
- bandwidth usage
-Message-ID: <20241123225954.lv3k2fxk7rxyh67z@hu-akhilpo-hyd.qualcomm.com>
-References: <20241119-topic-sm8x50-gpu-bw-vote-v2-0-4deb87be2498@linaro.org>
- <20241119-topic-sm8x50-gpu-bw-vote-v2-8-4deb87be2498@linaro.org>
+	s=arc-20240116; t=1732402761; c=relaxed/simple;
+	bh=O+BJBB8iRKrtZAFcE3KcXpmfjPRb97tBGjFFNPW4Pwg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=upBpkhMqdC+t36R4teqV5q1b91Och3/axUZ81v9X/HVxGnFvE3bFU+VXZdsq1+DcaESiZRel1qWgX3emdM+OPpwsEE3SkFjKI/FBlUUOxs5aV5rGS+hKqG77sg6/OjdDzaScCrVf/kfev2wJbIEsmOxoEAhwS42RdNmMeK8WGO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ED28C4CECD;
+	Sat, 23 Nov 2024 22:59:17 +0000 (UTC)
+Date: Sat, 23 Nov 2024 18:00:00 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ruan Bonan <bonan.ruan@u.nus.edu>, "mingo@redhat.com"
+ <mingo@redhat.com>, "will@kernel.org" <will@kernel.org>,
+ "longman@redhat.com" <longman@redhat.com>, "boqun.feng@gmail.com"
+ <boqun.feng@gmail.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "kpsingh@kernel.org" <kpsingh@kernel.org>,
+ "mattbobrowski@google.com" <mattbobrowski@google.com>, "ast@kernel.org"
+ <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>,
+ "andrii@kernel.org" <andrii@kernel.org>, "martin.lau@linux.dev"
+ <martin.lau@linux.dev>, "eddyz87@gmail.com" <eddyz87@gmail.com>,
+ "song@kernel.org" <song@kernel.org>, "yonghong.song@linux.dev"
+ <yonghong.song@linux.dev>, "john.fastabend@gmail.com"
+ <john.fastabend@gmail.com>, "sdf@fomichev.me" <sdf@fomichev.me>,
+ "haoluo@google.com" <haoluo@google.com>, "jolsa@kernel.org"
+ <jolsa@kernel.org>, "mhiramat@kernel.org" <mhiramat@kernel.org>,
+ "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+ "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Fu Yeqi
+ <e1374359@u.nus.edu>
+Subject: Re: [BUG] possible deadlock in __schedule (with reproducer
+ available)
+Message-ID: <20241123180000.5e219f2e@gandalf.local.home>
+In-Reply-To: <20241123202744.GB20633@noisy.programming.kicks-ass.net>
+References: <24481522-69BF-4CE7-A05D-1E7398400D80@u.nus.edu>
+	<20241123202744.GB20633@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241119-topic-sm8x50-gpu-bw-vote-v2-8-4deb87be2498@linaro.org>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: v9k5cxrwlBXoB2WC5EZWTBQoTzJsZLpU
-X-Proofpoint-GUID: v9k5cxrwlBXoB2WC5EZWTBQoTzJsZLpU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
- adultscore=0 impostorscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
- clxscore=1015 suspectscore=0 bulkscore=0 priorityscore=1501
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411230192
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 19, 2024 at 06:56:43PM +0100, Neil Armstrong wrote:
-> When requesting a DDR bandwidth level along a GPU frequency
-> level via the GMU, we can also specify the bus bandwidth usage in a 16bit
-> quantitized value.
-> 
-> For now simply request the maximum bus usage.
+On Sat, 23 Nov 2024 21:27:44 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Why? You don't care about power efficiency?
-Lets drop this patch. We don't care about AB vote yet.
+> On Sat, Nov 23, 2024 at 03:39:45AM +0000, Ruan Bonan wrote:
+> 
+> >  </TASK>
+> > FAULT_INJECTION: forcing a failure.
+> > name fail_usercopy, interval 1, probability 0, space 0, times 0
+> > ======================================================
+> > WARNING: possible circular locking dependency detected
+> > 6.12.0-rc7-00144-g66418447d27b #8 Not tainted
+> > ------------------------------------------------------
+> > syz-executor144/330 is trying to acquire lock:
+> > ffffffffbcd2da38 ((console_sem).lock){....}-{2:2}, at: down_trylock+0x20/0xa0 kernel/locking/semaphore.c:139
+> > 
+> > but task is already holding lock:
+> > ffff888065cbd718 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested kernel/sched/core.c:598 [inline]
+> > ffff888065cbd718 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock kernel/sched/sched.h:1506 [inline]
+> > ffff888065cbd718 (&rq->__lock){-.-.}-{2:2}, at: rq_lock kernel/sched/sched.h:1805 [inline]
+> > ffff888065cbd718 (&rq->__lock){-.-.}-{2:2}, at: __schedule+0x140/0x1e70 kernel/sched/core.c:6592
+> > 
+> > which lock already depends on the new lock.
+> > 
+> >        _printk+0x7a/0xa0 kernel/printk/printk.c:2432
+> >        fail_dump lib/fault-inject.c:46 [inline]
+> >        should_fail_ex+0x3be/0x570 lib/fault-inject.c:154
+> >        strncpy_from_user+0x36/0x230 lib/strncpy_from_user.c:118
+> >        strncpy_from_user_nofault+0x71/0x140 mm/maccess.c:186
+> >        bpf_probe_read_user_str_common kernel/trace/bpf_trace.c:215 [inline]
+> >        ____bpf_probe_read_user_str kernel/trace/bpf_trace.c:224 [inline]
+> >        bpf_probe_read_user_str+0x2a/0x70 kernel/trace/bpf_trace.c:221
+> >        bpf_prog_bc7c5c6b9645592f+0x3e/0x40
+> >        bpf_dispatcher_nop_func include/linux/bpf.h:1265 [inline]
+> >        __bpf_prog_run include/linux/filter.h:701 [inline]
+> >        bpf_prog_run include/linux/filter.h:708 [inline]
+> >        __bpf_trace_run kernel/trace/bpf_trace.c:2316 [inline]
+> >        bpf_trace_run4+0x30b/0x4d0 kernel/trace/bpf_trace.c:2359
+> >        __bpf_trace_sched_switch+0x1c6/0x2c0 include/trace/events/sched.h:222
+> >        trace_sched_switch+0x12a/0x190 include/trace/events/sched.h:222  
+> 
+> -EWONTFIX. Don't do stupid.
 
--Akhil
+Ack. BPF should not be causing deadlocks by doing code called from
+tracepoints. Tracepoints have a special context similar to NMIs. If you add
+a hook into an NMI handler that causes a deadlock, it's a bug in the hook,
+not the NMI code. If you add code that causes a deadlock when attaching to a
+tracepoint, it's a bug in the hook, not the tracepoint.
 
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 11 +++++++++++
->  drivers/gpu/drm/msm/adreno/a6xx_hfi.h |  5 +++++
->  2 files changed, 16 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> index dc2d0035544e7848e5c4ea27f1ea9a191f9c4991..36c0f67fd8e109aabf09a0804bacbed3593c39d7 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> @@ -134,6 +134,17 @@ void a6xx_gmu_set_freq(struct msm_gpu *gpu, struct dev_pm_opp *opp,
->  			if (bw == gmu->gpu_bw_table[bw_index])
->  				break;
->  		}
-> +
-> +		if (bw_index) {
-> +			/*
-> +			 * Append AB vote to the maximum bus usage.
-> +			 * AB represents a quantitized 16bit value of the
-> +			 * max ddr bandwidth we could use, let's simply
-> +			 * request the maximum for now.
-> +			 */
-> +			bw_index |= AB_VOTE(MAX_AB_VOTE);
-> +			bw_index |= AB_VOTE_ENABLE;
-> +		}
->  	}
->  
->  	gmu->current_perf_index = perf_index;
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.h b/drivers/gpu/drm/msm/adreno/a6xx_hfi.h
-> index 528110169398f69f16443a29a1594d19c36fb595..52ba4a07d7b9a709289acd244a751ace9bdaab5d 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.h
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.h
-> @@ -173,6 +173,11 @@ struct a6xx_hfi_gx_bw_perf_vote_cmd {
->  	u32 bw;
->  };
->  
-> +#define AB_VOTE_MASK		GENMASK(31, 16)
-> +#define MAX_AB_VOTE		(FIELD_MAX(AB_VOTE_MASK) - 1)
-> +#define AB_VOTE(vote)		FIELD_PREP(AB_VOTE_MASK, (vote))
-> +#define AB_VOTE_ENABLE		BIT(8)
-> +
->  #define HFI_H2F_MSG_PREPARE_SLUMBER 33
->  
->  struct a6xx_hfi_prep_slumber_cmd {
-> 
-> -- 
-> 2.34.1
-> 
+-- Steve
 
