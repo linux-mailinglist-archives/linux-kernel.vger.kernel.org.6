@@ -1,253 +1,210 @@
-Return-Path: <linux-kernel+bounces-419006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F3329D6853
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 10:34:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB24216115D
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 09:34:18 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047A017BB16;
-	Sat, 23 Nov 2024 09:34:17 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D442A9D687B
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 10:44:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCFC1514EE
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 09:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82B27281C75
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 09:44:32 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB45186E40;
+	Sat, 23 Nov 2024 09:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=illinois.edu header.i=@illinois.edu header.b="rC3I8S1o"
+Received: from mx0b-00007101.pphosted.com (mx0b-00007101.pphosted.com [148.163.139.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8DA1514EE;
+	Sat, 23 Nov 2024 09:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.139.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732354456; cv=none; b=YCWlVMiA869lbK3Tv3QEeU0kOqG3PFfEubtKRxXcZirOiWsmbN3UUPgaT46Y08tDsHkBBlPLxPn17b7xgr8SaXd2LaRd6UEgoh/NCXVx8R1c2Un1XvwENLm6zJwxzOyBWp9GgL/vnDwbBpq1+MhvsK7PQ1xHUDmmIOonrBqN7o8=
+	t=1732355063; cv=none; b=hsLE8qZyw4fQKz4pLM4a+oyemQ0nUO0F2k9N2SrhLNM3AL75VyDDOmQFdGsvqr0nEo/WjRhno1b/bGoFQEiYE/0lghG/oyaTk7CHS8NOcSGHwm2qGlvq5AmmfRJ/vvJ4vqEyYXSAVzqgTGFe4LH4WJR21RHk7aJ/HpKzxrGjpKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732354456; c=relaxed/simple;
-	bh=TPlg9dfSHvF8ZO1qaEu+Xj87qRDlJQQbr7UEDH8PFGA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=JRzNiqKGOK2dmy1ciGz5weh6heuncGzAVPVzGA+xPIdEMoSdDmt10wAo1B10Pvi9DDISsLKrBkr06x3lsWLgU0F5EEXNITUkdhXVwY1H1kqcJr5imnm9ki2jk2CRDBTc1s0lzISZ1sXqTC2n7rKNVwR8PhW11rtSUnfgJC1G9l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XwRb04NvjzRhqN;
-	Sat, 23 Nov 2024 17:32:44 +0800 (CST)
-Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2AC67140159;
-	Sat, 23 Nov 2024 17:34:10 +0800 (CST)
-Received: from [10.174.179.163] (10.174.179.163) by
- kwepemf100008.china.huawei.com (7.202.181.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 23 Nov 2024 17:34:09 +0800
-Message-ID: <c5c5de75-151b-e6bd-952e-606326b46e9a@huawei.com>
-Date: Sat, 23 Nov 2024 17:34:08 +0800
+	s=arc-20240116; t=1732355063; c=relaxed/simple;
+	bh=RB/wVdH0A5HO1rOsPwKJVyYz186feknowQ1S27C5oi0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E7DRBWiNmc0Iem4mnLsqFVpifYRcQjD1iDRI3ny0dmgMiP/l+8JGdTyfMG1AWXQOPN/o70FqVIQL85DrnhwvBQOk+ewAiK5MxChoGGwEyPh66N4CVLdxQPpept8qUtZKJatWURM3IuYOUPSKZTVy3liTbqutXdzBIKvzD4Krbro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=illinois.edu; spf=pass smtp.mailfrom=illinois.edu; dkim=pass (2048-bit key) header.d=illinois.edu header.i=@illinois.edu header.b=rC3I8S1o; arc=none smtp.client-ip=148.163.139.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=illinois.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=illinois.edu
+Received: from pps.filterd (m0272703.ppops.net [127.0.0.1])
+	by mx0b-00007101.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AN9aZG0017862;
+	Sat, 23 Nov 2024 09:43:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=illinois.edu; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=campusrelays; bh=oL+PRjo2JKV4WqCO3w0QPZTzXUUvuXwd
+	1UgHTC1NMcM=; b=rC3I8S1oAOG0DBzgHqkM3Y2xs4glRRFa9Gaw0FmUCRKHI2/p
+	JYdvL/nFfnB8MCBYxo3soem+4iRqrhRkWa47rd+9yYgq1ocPlR+iY83W/2DIS5IH
+	BXu0kgeSqP5UuByb1fbwX8peRoNPHuMbJwYc5yC6p3Gxg/3Xw50gkl4LJ3PxiGJJ
+	3xsvglsA02543ROhEMpyVVbxFQy3rV/9lQwUUsOCHOxxOxZGKwNKreQRIjKer5zs
+	23s76YC8zt5c5+mQGwt8fNVyJF1YkiwSZi3pXNmYrptYUwSI9f12m87tTZsQten9
+	n/+NgUe7ZJHRL//65iqS1HJE41OLB2weMBKEQg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0b-00007101.pphosted.com (PPS) with ESMTPS id 43382n0y4a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 23 Nov 2024 09:43:34 +0000 (GMT)
+Received: from m0272703.ppops.net (m0272703.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AN9hY2H031684;
+	Sat, 23 Nov 2024 09:43:34 GMT
+Received: from localhost.localdomain (oasis.cs.illinois.edu [130.126.137.13])
+	by mx0b-00007101.pphosted.com (PPS) with ESMTP id 43382n0y2x-1;
+	Sat, 23 Nov 2024 09:43:34 +0000 (GMT)
+From: Jinghao Jia <jinghao7@illinois.edu>
+To: Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>
+Cc: netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+        Jinghao Jia <jinghao7@illinois.edu>, kernel test robot <lkp@intel.com>,
+        Ruowen Qin <ruqin@redhat.com>
+Subject: [PATCH v3 net] ipvs: fix UB due to uninitialized stack access in ip_vs_protocol_init()
+Date: Sat, 23 Nov 2024 03:42:56 -0600
+Message-ID: <20241123094256.28887-1-jinghao7@illinois.edu>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-From: Zeng Heng <zengheng4@huawei.com>
-Subject: Re: [RFC PATCH mpam mpam/snapshot/v6.12-rc1 v2 0/6] arm_mpam:
- Introduce the Narrow-PARTID feature for MPAM driver
-To: Dave Martin <Dave.Martin@arm.com>
-CC: <james.morse@arm.com>, <linux-kernel@vger.kernel.org>,
-	<jonathan.cameron@huawei.com>, <xiexiuqi@huawei.com>,
-	<linux-arm-kernel@lists.infradead.org>, <bobo.shaobowang@huawei.com>
-References: <20241119135104.595630-1-zengheng4@huawei.com>
- <Zzyvbx9uubrLNv1C@e133380.arm.com>
-Content-Language: en-US
-In-Reply-To: <Zzyvbx9uubrLNv1C@e133380.arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemf100008.china.huawei.com (7.202.181.222)
+X-Proofpoint-GUID: asx8e01n9hRQlIb2y9Vm7UXV7wqwW2F7
+X-Proofpoint-ORIG-GUID: d_JrjJKs9g1oNL8oG2RL9eSfW7K1zTGo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
+X-Spam-Details: rule=cautious_plus_nq_notspam policy=cautious_plus_nq score=0 mlxscore=0
+ suspectscore=0 malwarescore=0 phishscore=0 adultscore=0 clxscore=1015
+ bulkscore=0 mlxlogscore=999 spamscore=0 impostorscore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411230081
+X-Spam-Score: 0
+X-Spam-OrigSender: jinghao7@illinois.edu
+X-Spam-Bar: 
 
-Hi,
+Under certain kernel configurations when building with Clang/LLVM, the
+compiler does not generate a return or jump as the terminator
+instruction for ip_vs_protocol_init(), triggering the following objtool
+warning during build time:
 
-   Thanks for comments!
+  vmlinux.o: warning: objtool: ip_vs_protocol_init() falls through to next function __initstub__kmod_ip_vs_rr__935_123_ip_vs_rr_init6()
 
-On 2024/11/19 23:31, Dave Martin wrote:
->
-> 1) There may be a mixture of MSCs in the system, some of which support
-> PARTID Narrowing and some of which do not.  Affected MSCs will not be
-> able to regulate resource consumption for a single resctrl control
-> group as a single unit, if multiple reqPARTIDs are used.
->
-> This matters when an MSC that does not support PARTID Narrowing also
-> has resource controls that are not of the "partition bitmap" type.
->
-> (Consider a resctrl control partition that throttles the partition to
-> 30% of memory bandwidth.  How can the same behaviour be achieved if the
-> partition is split arbitrarily across multiple reqPARTIDs?)
->
-> Because the MPAM driver needs to be as general as possible, it may be
-> hard to make the "right" decision about whether to group reqPARTIDs to
-> provide more monitoring groups.  because different use cases may have
-> different requirments (e.g., number of control groups versus number of
-> monitoring groups, and which types of control are useful).
+At runtime, this either causes an oops when trying to load the ipvs
+module or a boot-time panic if ipvs is built-in. This same issue has
+been reported by the Intel kernel test robot previously.
 
-1. The patch set solution is designed considering mixed MSC scenarios.
+Digging deeper into both LLVM and the kernel code reveals this to be a
+undefined behavior problem. ip_vs_protocol_init() uses a on-stack buffer
+of 64 chars to store the registered protocol names and leaves it
+uninitialized after definition. The function calls strnlen() when
+concatenating protocol names into the buffer. With CONFIG_FORTIFY_SOURCE
+strnlen() performs an extra step to check whether the last byte of the
+input char buffer is a null character (commit 3009f891bb9f ("fortify:
+Allow strlen() and strnlen() to pass compile-time known lengths")).
+This, together with possibly other configurations, cause the following
+IR to be generated:
 
-Regarding the definition of the quantity 'n', here is a detailed
+  define hidden i32 @ip_vs_protocol_init() local_unnamed_addr #5 section ".init.text" align 16 !kcfi_type !29 {
+    %1 = alloca [64 x i8], align 16
+    ...
 
-explanation:
+  14:                                               ; preds = %11
+    %15 = getelementptr inbounds i8, ptr %1, i64 63
+    %16 = load i8, ptr %15, align 1
+    %17 = tail call i1 @llvm.is.constant.i8(i8 %16)
+    %18 = icmp eq i8 %16, 0
+    %19 = select i1 %17, i1 %18, i1 false
+    br i1 %19, label %20, label %23
 
-n - Indicates the total number of intPARTIDs
+  20:                                               ; preds = %14
+    %21 = call i64 @strlen(ptr noundef nonnull dereferenceable(1) %1) #23
+    ...
 
-l - Represents the total number of reqPARTIDs
+  23:                                               ; preds = %14, %11, %20
+    %24 = call i64 @strnlen(ptr noundef nonnull dereferenceable(1) %1, i64 noundef 64) #24
+    ...
+  }
 
-m - Indicates the number of reqPARTIDs per intPARTID
+The above code calculates the address of the last char in the buffer
+(value %15) and then loads from it (value %16). Because the buffer is
+never initialized, the LLVM GVN pass marks value %16 as undefined:
 
-The values of n/l/m are derived from the following formula:
+  %13 = getelementptr inbounds i8, ptr %1, i64 63
+  br i1 undef, label %14, label %17
 
-n = min(intPARTID-np, PARTID-nnp)
+This gives later passes (SCCP, in particular) more DCE opportunities by
+propagating the undef value further, and eventually removes everything
+after the load on the uninitialized stack location:
 
-l = min(reqPARTID-np, PARTID-nnp)
+  define hidden i32 @ip_vs_protocol_init() local_unnamed_addr #0 section ".init.text" align 16 !kcfi_type !11 {
+    %1 = alloca [64 x i8], align 16
+    ...
 
-m = l // n
+  12:                                               ; preds = %11
+    %13 = getelementptr inbounds i8, ptr %1, i64 63
+    unreachable
+  }
 
-reqPARTID-np -- The number of reqPARTIDs supported by MSCs that support
-          narrow-partid.
+In this way, the generated native code will just fall through to the
+next function, as LLVM does not generate any code for the unreachable IR
+instruction and leaves the function without a terminator.
 
-intPARTID-np -- The number of intPARTIDs supported by MSCs that support
-          narrow partid.
-PARTID-nnp  -- The number of PARTIDs supported by MSCs that do not support
-          narrow partid.
+Zero the on-stack buffer to avoid this possible UB.
 
-The software needs to ensure that 'm' is an integer, meaning the number of
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202402100205.PWXIz1ZK-lkp@intel.com/
+Co-developed-by: Ruowen Qin <ruqin@redhat.com>
+Signed-off-by: Ruowen Qin <ruqin@redhat.com>
+Signed-off-by: Jinghao Jia <jinghao7@illinois.edu>
+---
+Changelog:
+v2 -> v3:
+v2: https://lore.kernel.org/lkml/20241122045257.27452-1-jinghao7@illinois.edu/
+* Fix changelog format based on Julian's feedback
 
-supported reqPARTIDs is an integer multiple of 'n'.
+v1 -> v2:
+v1: https://lore.kernel.org/lkml/20241111065105.82431-1-jinghao7@illinois.edu/
+* Fix small error in commit message
+* Address Julian's feedback:
+  * Make this patch target the net tree rather than net-next
+  * Add a "Fixes" tag for the initial git commit
 
-To illustrate how to determine n, l, and m through examples, we can assume
+ net/netfilter/ipvs/ip_vs_proto.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-a specific platform:
+diff --git a/net/netfilter/ipvs/ip_vs_proto.c b/net/netfilter/ipvs/ip_vs_proto.c
+index f100da4ba3bc..a9fd1d3fc2cb 100644
+--- a/net/netfilter/ipvs/ip_vs_proto.c
++++ b/net/netfilter/ipvs/ip_vs_proto.c
+@@ -340,7 +340,7 @@ void __net_exit ip_vs_protocol_net_cleanup(struct netns_ipvs *ipvs)
+ 
+ int __init ip_vs_protocol_init(void)
+ {
+-	char protocols[64];
++	char protocols[64] = { 0 };
+ #define REGISTER_PROTOCOL(p)			\
+ 	do {					\
+ 		register_ip_vs_protocol(p);	\
+@@ -348,8 +348,6 @@ int __init ip_vs_protocol_init(void)
+ 		strcat(protocols, (p)->name);	\
+ 	} while (0)
+ 
+-	protocols[0] = '\0';
+-	protocols[2] = '\0';
+ #ifdef CONFIG_IP_VS_PROTO_TCP
+ 	REGISTER_PROTOCOL(&ip_vs_protocol_tcp);
+ #endif
+-- 
+2.47.0
 
-L3  - Supports the narrow PARTID feature, supports 32 intPARTIDs, and
-
-     supports 256 reqPARTIDs.
-
-mata - Does not support the narrow PARTID feature, supports a range of
-
-     256 PARTIDs.
-
-Then，
-
-n = min(intPARTID-l3, PARTID-mata) = min(32, 256) = 32
-
-l = min(reqPARTID-l3, PARTID-mata) = min(256,256) = 256
-
-m = 256 / 32 = 8
-
-The mapping relationships between each group's closid and the respective
-
-MSCs' intPARTID/reqPartid/PARTID are illustrated:
-
-P - partition group
-
-M - monitoring group
-
-Group: Closid        MSCs with narrow-partid      MSCs without narrow-partid
-P1  : 0            intPARTID_1            PARTID_1
-M1_1 : 0              ├── reqPARTID_1_1       ├── PARTID_1_1
-M1_2 : 0+n             ├── reqPARTID_1_2       ├── PARTID_1_2
-...                ├── ...            ├── ...
-M1_m : 0+n*(m-1)          └── reqPARTID_1_m       └── PARTID_1_m
-
-P2  : 1          intPARTID_2            PARTID_2
-M2_1 : 1             ├── reqPARTID_2_1       ├── PARTID_2_1
-M2_2 : 1+n            ├── reqPARTID_2_2       ├── PARTID_2_2
-...                ├── ...            ├── ...
-M2_m : 1+n*(m-1)         └── reqPARTID_2_m       └── PARTID_2_m
-
-Pn  : (n-1)        intPARTID_n            PARTID_n
-Mn_1 : (n-1)           ├── reqPARTID_n_1       ├── PARTID_n_1
-Mn_2 : (n-1)+n          ├── reqPARTID_n_2       ├── PARTID_n_2
-...                ├── ...            ├── ...
-Mn_m : (n-1)+n*(m-1) = n*m-1   └── reqPARTID_n_m       └── PARTID_n_m
-
-The advantages of doing this are:
-
-   1. There is no need to modify or disrupt the existing resctrl layer
-
-    interface, ensuring that each control group has same resource
-
-    control functionality;
-
-   2. MSCs that support narrow-partid (including intPARTID and reqPARTID)
-
-    and MSCs that do not support (only including PARTID) can share the
-
-    same PARTID space;
-
-   3. On the premise of ensuring the (1) point, the number of control
-
-    groups can be maximized, because users can always choose to make a
-
-    control group act as a sub-monitoring group under another control
-
-    group;
-
-> 2) The resctrl core code uses CLOSIDs and RMIDs to identify control
-> groups and monitoring groups.  If a particular driver wants to
-> translate these into other values (reqPARTID, intPARTID, PMG) then it
-> can do so, but this mapping logic should be encapsulated in the driver.
-> This should be better for maintainability, since the details of the
-> remapping will be arch-specific -- and in general not all arches are
-> going to require it.  With this in mind, I think that changes in the
-> resctrl core code would be minimal (perhaps no changes at all).
-   Yes, maintaining the interface of the resctrl core code unchanged is,
-in essence, the (first) important constraint of the current MPAM code.
-We try the best to keep all resctrl interfaces and ensure the existing
-functionality of x86 RDT.
-
-   The only thing that falls short of being ideal (forgive me), is that
-it introduces the sole new function resctrl_arch_alloc_rmid() into the
-resctrl code (resctrl_arch_free_rmid() will be optimized away in the next
-version, and there are no other new functions any more).
-
-   The resctrl_arch_alloc_rmid() is the result of several restructuring
-iterations and it is one of the most critical points in the patch series.
-
-> 3) How should the amount of reqPARTID grouping (your "n" parameter) be
-> determined, in general?
->
-> As with (1), the right answer may depend on the use case as well as on
-> the hardware.
->
-> >From my investigations into this, I feel that some configuration
-> parameters will probably be needed, at least at boot time.
-   As mentioned earlier,
-Total number of intPARTIDs: n = min(intPARTID-np, PARTID-nnp)
-Total number of reqPARTIDs: l = min(reqPARTID-np, PARTID-nnp)
-
-   We maximize the number of control groups because users can always
-choose to make a control group act as a sub-monitoring group any time.
-
-> 4) If the mapping between reqPARTIDs and (CLOSID,RMID) pairs is static,
-> is it necessary to track which reqPARTIDs are in use?  Would it be
-> simpler to treat all n reqPARTIDs as permanently assigned to the
-> corresponding CLOSID?
->
-> If reqPARTID usage is not tracked, then every control change on MSCs
-> that do not support PARTID Narrowing would need to be replicated across
-> all reqPARTIDs corresponding to the affected resctrl control partition.
-> But control changes are a relatively rare event, so this approach feels
-> acceptable as a way of keeping the driver complexity down.  It partly
-> depends on how large the "n" parameter can become.
-   Yes, totally agree. I will try to remove the reqPARTID bitmap and
-the resctrl_arch_free_rmid(). As mentioned, this will simplify the code
-logic and reduce changes to the resctrl layer code.
-
-   Initially, to reduce the number of IPI interrupt, keep this resource
-tracking until now, and I will prioritize optimization for the next
-version.
-  (In fact, the initial version of the patch set was dynamically allocated,
-and during the code restructuring process, it was inevitable to retain
-some of the original ideas.)
-
-
-Best regards,
-Zeng Heng
 
