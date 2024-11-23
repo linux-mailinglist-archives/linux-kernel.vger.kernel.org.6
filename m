@@ -1,147 +1,125 @@
-Return-Path: <linux-kernel+bounces-419200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2F129D6AAC
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 19:07:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BC9F9D6AAD
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 19:09:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5633F281BB8
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 18:07:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E5C9281BD6
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 18:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6482614885E;
-	Sat, 23 Nov 2024 18:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CBC1422D4;
+	Sat, 23 Nov 2024 18:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eyVONdpW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OBxDMkfF"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D18195;
-	Sat, 23 Nov 2024 18:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553452AE90;
+	Sat, 23 Nov 2024 18:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732385220; cv=none; b=IZF9tWbzR7rZPBf9HiE7X5JGIbtqqKwYTBvkBWNLjZ/EOzOPjVu+Hw2/UtaW4EPfn8BviyVbxkmgF4XL6LhcHoKTji7ULL3KFI7pLLCaZ/u6MvJXDscIyLtT4yEJ41lKKDb3vTtH8nWmv+jMj/sEBf2F+HlZx3yXAbawSoImJc4=
+	t=1732385351; cv=none; b=YMiOSWCyvLqQHGdi8EKvlzI0oT6erRRZ9zGEZUpmMURUyFS6YjJW/IYbgf2gS07Iu1xznXpl/jbKy39ZdRgrqPDYc+NzULfOwWDwYLYNlcQ7AoisnYklWR6rLaMgMVwzOgvR+RA67X0EHgv50rAym/jzMFdzeSRpuBrxreFHtjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732385220; c=relaxed/simple;
-	bh=G8ni3nF+CHFJWJNVuFNWYcaPAgXx4khmiv9r6zEGe88=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bOqOAzXqsB/nkD/3cBZRr02/DjofvypeBnv5hfCZlfRqv4k9piDvm1BN3lUd0e2RBqoVvpV/iQKoKOFL3Iy4uIWcR4fIYqTLUkI7XV0mFCb9arRJo14HOv3nlSg7JXP6RbFHD1dWs6PIPagYLGqS9hofEc7tn0AHXQejcKTZtFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eyVONdpW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51828C4CECD;
-	Sat, 23 Nov 2024 18:06:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732385220;
-	bh=G8ni3nF+CHFJWJNVuFNWYcaPAgXx4khmiv9r6zEGe88=;
-	h=From:To:Cc:Subject:Date:From;
-	b=eyVONdpWkApbwCT24KyJkQLD6xlCFJNnSDY9nGrfXDz/mUANd4VyGAiaK172CKNno
-	 n/b/5rzAcy6QnWTPjjZaYEu/Pd9ORrXSIclv9ooJ8sPLDHUHlWLu1zNxpg0Ob1vbLZ
-	 0KrlDOgbmCihdE7PaP5wVf4i6XkVzF+ns9jPbV/dUr4/Xc3M/THyeDjUZSLq0JGJmq
-	 STHLerOMZVTve2SYu8WRRFg/LJ+i1CQLIeQGnXXc0RYB/pyE7t1WqgTI+c/5ryxjgI
-	 Mc5EG4zJ3s+6ZFlHunXK86M8ctSCVqC1Hh/HCI9K2u59R33NmkG2Ybto2yVwQ5euJ3
-	 em0LGNRjwfQHQ==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org,
+	s=arc-20240116; t=1732385351; c=relaxed/simple;
+	bh=6l9s3Ydvl+883iSfMEF6k5y+5gcrrJqW4lK9xyUxr34=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fCAOF1eZ1i4ZYtJcHJ9iJZ1hTZ/uPaJKI5k5W0z1wz1lMHgS4sx+c/m7Ms6tmd/x04gK6slxAFlygrOR7R8eo8sxmm4ylRfJbkfSqEFQUht9q92GVeo2DiVy1BWz581A1aqC5qYlafkuljWYGgvNkzHZ1YxVdH4PdSsQWoeNSCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OBxDMkfF; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-212776d6449so34878065ad.1;
+        Sat, 23 Nov 2024 10:09:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732385350; x=1732990150; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=70ukTFRg7n6M1zgWJ4AWCRSyP5CAlpK7ZnU0g82lpUE=;
+        b=OBxDMkfF7zB0budwXpXToDRKVeRxEzDLpCjLkQ/+9ykqfVYN8xeCp3bZ3OFSD2cl6M
+         r5ArWNUma88M9uc+mYVOIRIxLWe9ZK5cNVwJmH1TdBuZCCadxD7qDvRwH8v8/yYqJDpD
+         7ebWStGwuKc3seJieDCVfwfGK4Cr3c7HFxbyeXtwIzXgTIUzunFVWmTMI0xAOkk5IWq4
+         ozj3n3JNHbmSU1IKHQFC2n4ioaQrU5jOmjWMDrJ9twKJzTimHAQkUZZrb6VTUw+0UcnP
+         X/x4/R8+gFuUMRF4d/5ttn/5SHFkxTkgqAIWewMDssx5g69ov5B9bnzLVABCwNB8IMnP
+         VSqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732385350; x=1732990150;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=70ukTFRg7n6M1zgWJ4AWCRSyP5CAlpK7ZnU0g82lpUE=;
+        b=QL8DeKFKsrqUQFatvLYtWzBugvQYOivgvf/m17K55WaZkrxpkuw0qcEMtfVtFhl6ky
+         vlfpwu8ciF69+E8qBS21e2NRitvYRIJtYPZskAgW35h5Ng1bbsIlx9YlaDeKmLFEQVV9
+         ic8fh+4+zo1GOUTuh+X/kPo7Md6vmziAllSUXoBy90CIVsx/kGSWwei442SP/aIiGBS2
+         AwSH/Sw4kXElILapqzIjEo1ZHUcy+cCjYeKhBw7xpqpWTGqQYoUGB+0kdKjYAomKYAv+
+         PJDUUgoKLdJ3AB/zosVbO/YXzudENbBbu3dQIuHuGLLrxkbi4HIATtzFayGWRsRXHSO7
+         naug==
+X-Forwarded-Encrypted: i=1; AJvYcCUlAGNkVqUDo2+31Vp1kFCjU72mkteaivT/xGE4NPxqmJazsnvvybxt0lX3XIWOtXYRm6KP1B7GrJIJUWQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb7UELlvfbcPbY+aQTsln9IcA6pssoMmS9Oyp5K07judjGOm0W
+	spH7CpovgjYffhqDQEAnHEVctxXCDqegI/Y7MOWVXvbc7/daAJgB
+X-Gm-Gg: ASbGncukwrIKnBxfP/Qn21Mmt0oTp3ht9EmdQ6jm0+lX4v7RdtVGAL7aXOtN7tpqcFd
+	HnDFw65/aMFh6VmwEGTZmjvvxJ/Cq2Z+HTaEMPpiHpoPZOe8pfUxVHnG9E4eqz3wGsDZ+OezMU6
+	9EqugPMUGQmrYzjIRio3jC4N5tM1ks8ggYFLEN6r+3BSwRECnkfakzI/HfCTLB9AU/iz+iTjpub
+	Lb8dsHlKJkjHhYGVmcfe3TWne5wAhLTlKwSdwkdJCchjkS/9wEm42fUG2Q+EzxebQ==
+X-Google-Smtp-Source: AGHT+IE7+W1Fq7uSCQ8ZbRiJFN/jR8TqFwGezrB0SHydUC1bMvjCrf3pdWBBMMyJOJABN0Xxx8OaHg==
+X-Received: by 2002:a17:902:ec88:b0:212:530:a65d with SMTP id d9443c01a7336-2129f5e73bemr113795055ad.38.1732385349660;
+        Sat, 23 Nov 2024 10:09:09 -0800 (PST)
+Received: from localhost.localdomain ([119.28.17.178])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcc225e45sm3626491a12.42.2024.11.23.10.09.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Nov 2024 10:09:09 -0800 (PST)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	mcgrof@kernel.org,
+	kees@kernel.org,
+	joel.granados@kernel.org,
+	adobriyan@gmail.com
+Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH] rust: kbuild: run Clippy for `rusttest` code
-Date: Sat, 23 Nov 2024 19:06:38 +0100
-Message-ID: <20241123180639.260191-1-ojeda@kernel.org>
+	flyingpeng@tencent.com,
+	Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: [PATCH 0/6] Maintain the relative size of fs.file-max and fs.nr_open
+Date: Sun, 24 Nov 2024 02:08:55 +0800
+Message-ID: <20241123180901.181825-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.41.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Running Clippy for `rusttest` code is useful to catch issues there too,
-even if the code is not as critical. In the future, this code may also
-run in kernelspace and could be copy-pasted. Thus it is useful to keep
-it under the same standards. For instance, it will now make us add
-`// SAFETY` comments.
+According to Documentation/admin-guide/sysctl/fs.rst, fs.nr_open and
+fs.file-max represent the number of file-handles that can be opened
+by each process and the entire system, respectively.
 
-It also makes everything more consistent.
+Therefore, it's necessary to maintain a relative size between them,
+meaning we should ensure that files_stat.max_files is not less than
+sysctl_nr_open.
 
-Thus clean the few issues spotted by Clippy and start running it.
+However, this point is overlooked in the current kernel code, and
+this patchset aims to rectify this. Additionally, patch 0001 fixes
+the type issue with the sysctl_nr_open handler.
 
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
- rust/Makefile      | 8 ++++----
- rust/kernel/str.rs | 4 +++-
- 2 files changed, 7 insertions(+), 5 deletions(-)
+Jinliang Zheng (6):
+  fs: fix proc_handler for sysctl_nr_open
+  fs: make files_stat globally visible
+  sysctl: refactor __do_proc_doulongvec_minmax()
+  sysctl: ensure files_stat.max_files is not less than sysctl_nr_open
+  sysctl: ensure sysctl_nr_open is not greater than files_stat.max_files
+  fs: synchronize the access of fs.file-max and fs.nr_open
 
-diff --git a/rust/Makefile b/rust/Makefile
-index f349e7b067ea..5b257b814d38 100644
---- a/rust/Makefile
-+++ b/rust/Makefile
-@@ -114,10 +114,10 @@ rustdoc-kernel: $(src)/kernel/lib.rs rustdoc-core rustdoc-ffi rustdoc-macros \
-     $(obj)/bindings.o FORCE
- 	+$(call if_changed,rustdoc)
- 
--quiet_cmd_rustc_test_library = RUSTC TL $<
-+quiet_cmd_rustc_test_library = $(RUSTC_OR_CLIPPY_QUIET) TL $<
-       cmd_rustc_test_library = \
- 	OBJTREE=$(abspath $(objtree)) \
--	$(RUSTC) $(rust_common_flags) \
-+	$(RUSTC_OR_CLIPPY) $(rust_common_flags) \
- 		@$(objtree)/include/generated/rustc_cfg $(rustc_target_flags) \
- 		--crate-type $(if $(rustc_test_library_proc),proc-macro,rlib) \
- 		--out-dir $(objtree)/$(obj)/test --cfg testlib \
-@@ -185,10 +185,10 @@ quiet_cmd_rustdoc_test_kernel = RUSTDOC TK $<
- 
- # We cannot use `-Zpanic-abort-tests` because some tests are dynamic,
- # so for the moment we skip `-Cpanic=abort`.
--quiet_cmd_rustc_test = RUSTC T  $<
-+quiet_cmd_rustc_test = $(RUSTC_OR_CLIPPY_QUIET) T  $<
-       cmd_rustc_test = \
- 	OBJTREE=$(abspath $(objtree)) \
--	$(RUSTC) --test $(rust_common_flags) \
-+	$(RUSTC_OR_CLIPPY) --test $(rust_common_flags) \
- 		@$(objtree)/include/generated/rustc_cfg \
- 		$(rustc_target_flags) --out-dir $(objtree)/$(obj)/test \
- 		-L$(objtree)/$(obj)/test \
-diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
-index d04c12a1426d..f98966ba4991 100644
---- a/rust/kernel/str.rs
-+++ b/rust/kernel/str.rs
-@@ -522,6 +522,7 @@ macro_rules! c_str {
- }
- 
- #[cfg(test)]
-+#[expect(clippy::items_after_test_module)]
- mod tests {
-     use super::*;
- 
-@@ -547,7 +548,7 @@ macro_rules! format {
-         })
-     }
- 
--    const ALL_ASCII_CHARS: &'static str =
-+    const ALL_ASCII_CHARS: &str =
-         "\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\x09\\x0a\\x0b\\x0c\\x0d\\x0e\\x0f\
-         \\x10\\x11\\x12\\x13\\x14\\x15\\x16\\x17\\x18\\x19\\x1a\\x1b\\x1c\\x1d\\x1e\\x1f \
-         !\"#$%&'()*+,-./0123456789:;<=>?@\
-@@ -581,6 +582,7 @@ fn test_cstr_to_str_panic() {
-     fn test_cstr_as_str_unchecked() {
-         let good_bytes = b"\xf0\x9f\x90\xA7\0";
-         let checked_cstr = CStr::from_bytes_with_nul(good_bytes).unwrap();
-+        // SAFETY: The contents come from a string literal which contains valid UTF-8.
-         let unchecked_str = unsafe { checked_cstr.as_str_unchecked() };
-         assert_eq!(unchecked_str, "🐧");
-     }
+ fs/file_table.c        | 15 ++++++++---
+ include/linux/fs.h     |  2 ++
+ include/linux/sysctl.h |  4 +++
+ kernel/sysctl.c        | 59 ++++++++++++++++++++++++++++++++++++++----
+ 4 files changed, 71 insertions(+), 9 deletions(-)
 
-base-commit: b2603f8ac8217bc59f5c7f248ac248423b9b99cb
 -- 
-2.47.0
+2.41.1
 
 
