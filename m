@@ -1,243 +1,272 @@
-Return-Path: <linux-kernel+bounces-419102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA0CE9D6988
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:03:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D917161680
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 15:03:00 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2359282F1;
-	Sat, 23 Nov 2024 15:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a2i9jlGp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A3D9D698C
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:04:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75A929CEB;
-	Sat, 23 Nov 2024 15:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C8B3B20A67
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 15:04:34 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB492FE33;
+	Sat, 23 Nov 2024 15:04:24 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACE71BC49
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 15:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732374177; cv=none; b=QYQlNwyZ+l8wt2o66RXQJ0qRyhTFpuTQ8M50MXLiqU+o8+vFlAZc9/6f1iuZOY6GS8ePGOQDsdyx5F9DCDgBW1igbyRAGgVkHu4fkgpaaN8dMdKQO+vxl/uzpHrkT+d2q2nnYNIuQxjCmQAEux8MhWsqr0RIWRzGK/s7kfaPp8M=
+	t=1732374263; cv=none; b=D9x9o0uGTZYQHgj7d2bCx1Cl4+WRmfKmUeetcmIhvK2qRS7nXuG8MHmlj3j5/dhmLlWpQLwNwdB8mAiHmT8BqPtci9u4h0rT0bhl8L/iCLjNUyYqzD616vfFXonTZ6y6kBJlOZfU9TA6M5tpv37KY0Gl8gqzKWKMAhpjyCk+oGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732374177; c=relaxed/simple;
-	bh=P157WcS5ohYQAn6edzPl90GuO3alev9bLB/aKLVAonA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZkCz/K7/bSyF+I7I9pcdKoeW/VoCfJCb1DgX8ayEuM1WmEoD21U1uL1dRpttwsXMeykghmcSkhqV9DqahuoSvgsUN4wTlTgdlWTxnbI7q3hFHEWqg2gYO7E7xzjiIN3YrpUHQTENa63cqbucr7WfEKZDPF0ajSEjv94pMPnarro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a2i9jlGp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3D12C4CECD;
-	Sat, 23 Nov 2024 15:02:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732374176;
-	bh=P157WcS5ohYQAn6edzPl90GuO3alev9bLB/aKLVAonA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=a2i9jlGpP4BY6M3sO6UvZGtTn48iTlYRswftLo6T216t08sIJe8jGSigKCHnMe0LP
-	 /DCUGBZ4MPSDbU/CS9GdyV1H+/prcZ+6O/6jrvC1YGrL0bHHcSF/vONpdWnZPC4Z70
-	 lQItjByFZ+PXk96ckzl6Nd2+ghTQQFeCZHJOKM/l0JKqmvnbnS2AHAk5gtOw77FGOk
-	 qYGE+/yHOTQjHX523ydlcgUTBD3L2156BZP9Glret02gBGijXBajFBY9ms9c5YIQeE
-	 ZcFlgRH4L8968l7+vzPNW5vlWIgf426zAhTWzlV+hiimoLcMnmEcZFEA8JX9peP0Mk
-	 +hDck6GqSJF7Q==
-Date: Sat, 23 Nov 2024 15:02:47 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Cc: lars@metafoo.de, mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com, u.kleine-koenig@baylibre.com,
- tgamblin@baylibre.com, fabrice.gasnier@st.com,
- benjamin.gaignard@linaro.org, lee@kernel.org, linux-iio@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] iio: trigger: stm32-timer-trigger: Add check for
- clk_enable()
-Message-ID: <20241123150247.718ee116@jic23-huawei>
-In-Reply-To: <CANeGvZVxte61_FgrrYEt_oTRXXzCESrvq4q90xSWz4JqpMAtYg@mail.gmail.com>
-References: <20241108200900.44727-1-jiashengjiangcool@gmail.com>
-	<20241109133846.53d7ef06@jic23-huawei>
-	<CANeGvZVxte61_FgrrYEt_oTRXXzCESrvq4q90xSWz4JqpMAtYg@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732374263; c=relaxed/simple;
+	bh=07igk9HLAUcioR9FrXoWK+NULrK6z9HvKQZyKrsuQWc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=r7R+aowdpgTvbMdaPfQNaj6TCPJv0l5eASHAVhZI5Rt/Mz588aXAuCX27HQo1B2AwTN9I7UaSEJRKXdLOrk2rlTnM8rCiT+8hhlBgCZ4VVE1Z7dADBJmvQ/lnFM40B8+tkQGB/V3Yj/4cSOvJiuwjGpWUTlRGgZZE0KT8Qjpy/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a76690f813so34734105ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 07:04:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732374261; x=1732979061;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gTGiuF0orPc4cVkC95Pz41llff12Woo35NZTlolv2HI=;
+        b=ZEDhFc/n+ae/U9XUFxMbhROHV8LSGFglCLd3ZmZIr0jwxXqP31mJu+eH+v7psnt2Df
+         Qj2qa/2Qg6KyeklGlEV+PvHwaxlE4vI0nHBETivXGRk/LbuZBZj013SUKiskHhtz6FyB
+         VoRdrwKpwJplgmCFpjUX+ZMpTC7hwrEYZfvSH9/lKBdJH78xXDiDPvOU0MS93m3K1GDo
+         cp59lIaImhoXH1j6J4qfPPMFpQQtEi/ZHHhyEc6I1agQSs2RSNl1gn/rQoncRrrlGiFd
+         SvWES8sAunS2OtbeulTijE0HAeZEzdmqFClMBu9MMPkHMme3aaXEcYsCEo3qnF99opwT
+         reug==
+X-Forwarded-Encrypted: i=1; AJvYcCVkjUByIXcGwnu7mRrgAFnjpAeBxqRZbLraD34jO5kdAOXrKboGlzl4wrD+s5OuF3IEfvBCFpXPDRspDc8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyakGkPfli4aTZPjM/3jrPymVhhjZtTzb2FDsYCHdY6TpK/uWmH
+	jU0er/HhjpOcXkH2f2KrY/kxtsxrVcNQI1z6MasNFAb735RzUrCvhdO3IcIqETcJQi1gaR/agVJ
+	NDl6S+lpGZXyaUMNeM2/fXmHwSLxruEIx8sBBsfrb/aDWsb+giZQYLDY=
+X-Google-Smtp-Source: AGHT+IFb2hLTa1c0hJRM8Fm0jTHppZqJL4RCZecASYpGtoimOTIWNK1h/KGEJgaaxNl4NO3P3B4Y7rnpdSPd+xSgMk8SD5ad9xBp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:17c8:b0:3a7:5cda:2769 with SMTP id
+ e9e14a558f8ab-3a79aeaec6emr80833655ab.12.1732374260908; Sat, 23 Nov 2024
+ 07:04:20 -0800 (PST)
+Date: Sat, 23 Nov 2024 07:04:20 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6741eef4.050a0220.1cc393.0016.GAE@google.com>
+Subject: [syzbot] [xfs?] possible deadlock in xfs_qm_dqfree_one (3)
+From: syzbot <syzbot+aceb3ddca9f98c7c934f@syzkaller.appspotmail.com>
+To: cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 11 Nov 2024 14:15:43 -0500
-Jiasheng Jiang <jiashengjiangcool@gmail.com> wrote:
+Hello,
 
-> On Sat, Nov 9, 2024 at 8:38=E2=80=AFAM Jonathan Cameron <jic23@kernel.org=
-> wrote:
-> >
-> > On Fri,  8 Nov 2024 20:09:00 +0000
-> > Jiasheng Jiang <jiashengjiangcool@gmail.com> wrote:
-> > =20
-> > > Add check for the return value of clk_enable() in order to catch the
-> > > potential exception.
-> > >
-> > > Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com> =20
-> > Hi,
-> >
-> > In principle this is fine, but I'd rather we made use of guard()
-> > / scoped_guard() rather than adding the explicit unlocks.
-> >
-> > If you do that as a precursor patch in appropriate places
-> > in the driver then this will be a little cleaner.
-> >
-> > Note I'll not be taking this until next cycle now anyway.
-> >
-> > Jonathan
-> > =20
-> > > ---
-> > > Changelog:
-> > >
-> > > v1 -> v2:
-> > >
-> > > 1. Remove unsuitable dev_err_probe().
-> > > ---
-> > >  drivers/iio/trigger/stm32-timer-trigger.c | 32 ++++++++++++++++++---=
---
-> > >  1 file changed, 25 insertions(+), 7 deletions(-)
-> > >
-> > > diff --git a/drivers/iio/trigger/stm32-timer-trigger.c b/drivers/iio/=
-trigger/stm32-timer-trigger.c
-> > > index 0684329956d9..e1e077122f73 100644
-> > > --- a/drivers/iio/trigger/stm32-timer-trigger.c
-> > > +++ b/drivers/iio/trigger/stm32-timer-trigger.c
-> > > @@ -119,7 +119,7 @@ static int stm32_timer_start(struct stm32_timer_t=
-rigger *priv,
-> > >                            unsigned int frequency)
-> > >  {
-> > >       unsigned long long prd, div;
-> > > -     int prescaler =3D 0;
-> > > +     int prescaler =3D 0, ret;
-> > >       u32 ccer;
-> > >
-> > >       /* Period and prescaler values depends of clock rate */
-> > > @@ -153,7 +153,11 @@ static int stm32_timer_start(struct stm32_timer_=
-trigger *priv,
-> > >       mutex_lock(&priv->lock);
-> > >       if (!priv->enabled) {
-> > >               priv->enabled =3D true;
-> > > -             clk_enable(priv->clk);
-> > > +             ret =3D clk_enable(priv->clk);
-> > > +             if (ret) {
-> > > +                     mutex_unlock(&priv->lock); =20
-> >
-> > as below guard() for when the mutex is locked is cleaner.
-> > =20
-> > > +                     return ret;
-> > > +             }
-> > >       }
-> > >
-> > >       regmap_write(priv->regmap, TIM_PSC, prescaler);
-> > > @@ -307,7 +311,7 @@ static ssize_t stm32_tt_store_master_mode(struct =
-device *dev,
-> > >       struct stm32_timer_trigger *priv =3D dev_get_drvdata(dev);
-> > >       struct iio_trigger *trig =3D to_iio_trigger(dev);
-> > >       u32 mask, shift, master_mode_max;
-> > > -     int i;
-> > > +     int i, ret;
-> > >
-> > >       if (stm32_timer_is_trgo2_name(trig->name)) {
-> > >               mask =3D TIM_CR2_MMS2;
-> > > @@ -326,7 +330,11 @@ static ssize_t stm32_tt_store_master_mode(struct=
- device *dev,
-> > >                       if (!priv->enabled) {
-> > >                               /* Clock should be enabled first */
-> > >                               priv->enabled =3D true;
-> > > -                             clk_enable(priv->clk);
-> > > +                             ret =3D clk_enable(priv->clk);
-> > > +                             if (ret) {
-> > > +                                     mutex_unlock(&priv->lock); =20
-> > As below. Prefer use of guard() so we don't have to handle the unlock m=
-anually. =20
-> > > +                                     return ret;
-> > > +                             }
-> > >                       }
-> > >                       regmap_update_bits(priv->regmap, TIM_CR2, mask,
-> > >                                          i << shift);
-> > > @@ -482,6 +490,7 @@ static int stm32_counter_write_raw(struct iio_dev=
- *indio_dev,
-> > >                                  int val, int val2, long mask)
-> > >  {
-> > >       struct stm32_timer_trigger *priv =3D iio_priv(indio_dev);
-> > > +     int ret;
-> > >
-> > >       switch (mask) {
-> > >       case IIO_CHAN_INFO_RAW:
-> > > @@ -496,7 +505,11 @@ static int stm32_counter_write_raw(struct iio_de=
-v *indio_dev,
-> > >               if (val) {
-> > >                       if (!priv->enabled) {
-> > >                               priv->enabled =3D true;
-> > > -                             clk_enable(priv->clk);
-> > > +                             ret =3D clk_enable(priv->clk);
-> > > +                             if (ret) {
-> > > +                                     mutex_unlock(&priv->lock); =20
-> > Add include of cleanup.h and swithch the place where the mutex is locke=
-d to
-> > guard(mutex)(&priv->lock);
-> > then remember to drop the explicit unlocks. =20
->=20
-> I found that cleanup.h is already included.
->=20
-> Moreover, since labels cannot be followed by declarations,
-> I encountered a compilation error when using guard().
-> Therefore, I switched to using scoped_guard().
-Sometimes it is better to just add scope for blocks in switch statement
-with=20
-case XXX: {
-	guard()
-}
-because then we don't get the extra indent a scoped_guard() requires.
+syzbot found the following issue on:
 
-I'll take a look at the result in this case though!
+HEAD commit:    414c97c966b6 Add linux-next specific files for 20241119
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=167e5ac0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=45719eec4c74e6ba
+dashboard link: https://syzkaller.appspot.com/bug?extid=aceb3ddca9f98c7c934f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Jonathan
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> > =20
-> > > +                                     return ret;
-> > > +                             }
-> > >                       }
-> > >                       regmap_set_bits(priv->regmap, TIM_CR1, TIM_CR1_=
-CEN);
-> > >               } else {
-> > > @@ -601,7 +614,7 @@ static int stm32_set_enable_mode(struct iio_dev *=
-indio_dev,
-> > >                                unsigned int mode)
-> > >  {
-> > >       struct stm32_timer_trigger *priv =3D iio_priv(indio_dev);
-> > > -     int sms =3D stm32_enable_mode2sms(mode);
-> > > +     int sms =3D stm32_enable_mode2sms(mode), ret;
-> > >
-> > >       if (sms < 0)
-> > >               return sms;
-> > > @@ -611,7 +624,12 @@ static int stm32_set_enable_mode(struct iio_dev =
-*indio_dev,
-> > >        */
-> > >       mutex_lock(&priv->lock); =20
-> >
-> > Perhaps scoped_guard() is  appropriate here.
-> > =20
-> > >       if (sms =3D=3D 6 && !priv->enabled) {
-> > > -             clk_enable(priv->clk);
-> > > +             ret =3D clk_enable(priv->clk);
-> > > +             if (ret) {
-> > > +                     mutex_unlock(&priv->lock);
-> > > +                     return ret;
-> > > +             }
-> > > +
-> > >               priv->enabled =3D true;
-> > >       }
-> > >       mutex_unlock(&priv->lock); =20
-> > =20
->=20
-> Thanks, I will submit a v2 to simplify code with cleanup helpers.
->=20
-> -Jiasheng
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/394331d94392/disk-414c97c9.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ad0dc40a5d80/vmlinux-414c97c9.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fccab23947ef/bzImage-414c97c9.xz
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+aceb3ddca9f98c7c934f@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.12.0-next-20241119-syzkaller #0 Not tainted
+------------------------------------------------------
+kswapd0/88 is trying to acquire lock:
+ffff8881fb5e5958 (&qinf->qi_tree_lock){+.+.}-{4:4}, at: xfs_qm_dqfree_one+0x66/0x170 fs/xfs/xfs_qm.c:1874
+
+but task is already holding lock:
+ffffffff8ea35ae0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6864 [inline]
+ffffffff8ea35ae0 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x3700 mm/vmscan.c:7246
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (fs_reclaim){+.+.}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       __fs_reclaim_acquire mm/page_alloc.c:3887 [inline]
+       fs_reclaim_acquire+0x88/0x130 mm/page_alloc.c:3901
+       might_alloc include/linux/sched/mm.h:318 [inline]
+       slab_pre_alloc_hook mm/slub.c:4055 [inline]
+       slab_alloc_node mm/slub.c:4133 [inline]
+       __kmalloc_cache_noprof+0x41/0x390 mm/slub.c:4309
+       kmalloc_noprof include/linux/slab.h:901 [inline]
+       kzalloc_noprof include/linux/slab.h:1037 [inline]
+       kobject_uevent_env+0x28b/0x8e0 lib/kobject_uevent.c:540
+       loop_set_size drivers/block/loop.c:233 [inline]
+       loop_set_status+0x5f0/0x8f0 drivers/block/loop.c:1285
+       lo_ioctl+0xcbc/0x1f50
+       blkdev_ioctl+0x57d/0x6a0 block/ioctl.c:693
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:906 [inline]
+       __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (&q->q_usage_counter(io)#20){++++}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       bio_queue_enter block/blk.h:75 [inline]
+       blk_mq_submit_bio+0x1536/0x23a0 block/blk-mq.c:3092
+       __submit_bio+0x2c6/0x560 block/blk-core.c:629
+       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
+       submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
+       xlog_state_release_iclog+0x41d/0x7b0 fs/xfs/xfs_log.c:567
+       xlog_force_iclog fs/xfs/xfs_log.c:802 [inline]
+       xlog_force_and_check_iclog fs/xfs/xfs_log.c:2866 [inline]
+       xfs_log_force+0x616/0x960 fs/xfs/xfs_log.c:2943
+       xfs_qm_dqflush+0xd5e/0x15e0 fs/xfs/xfs_dquot.c:1333
+       xfs_qm_flush_one+0x129/0x430 fs/xfs/xfs_qm.c:1489
+       xfs_qm_dquot_walk+0x232/0x4a0 fs/xfs/xfs_qm.c:90
+       xfs_qm_quotacheck+0x3aa/0x6f0 fs/xfs/xfs_qm.c:1573
+       xfs_qm_mount_quotas+0x38f/0x680 fs/xfs/xfs_qm.c:1693
+       xfs_mountfs+0x1e60/0x2410 fs/xfs/xfs_mount.c:1030
+       xfs_fs_fill_super+0x12db/0x1590 fs/xfs/xfs_super.c:1791
+       get_tree_bdev_flags+0x48c/0x5c0 fs/super.c:1636
+       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+       do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+       do_mount fs/namespace.c:3847 [inline]
+       __do_sys_mount fs/namespace.c:4057 [inline]
+       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&xfs_dquot_group_class){+.+.}-{4:4}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
+       xfs_dqlock fs/xfs/xfs_dquot.h:131 [inline]
+       xfs_qm_dqget_cache_insert fs/xfs/xfs_dquot.c:843 [inline]
+       xfs_qm_dqget+0x370/0x6f0 fs/xfs/xfs_dquot.c:910
+       xfs_qm_quotacheck_dqadjust+0xea/0x5a0 fs/xfs/xfs_qm.c:1297
+       xfs_qm_dqusage_adjust+0x6a8/0x850 fs/xfs/xfs_qm.c:1426
+       xfs_iwalk_ag_recs+0x4e1/0x820 fs/xfs/xfs_iwalk.c:209
+       xfs_iwalk_run_callbacks+0x218/0x470 fs/xfs/xfs_iwalk.c:370
+       xfs_iwalk_ag+0xa9a/0xbb0 fs/xfs/xfs_iwalk.c:476
+       xfs_iwalk_ag_work+0xfb/0x1b0 fs/xfs/xfs_iwalk.c:625
+       xfs_pwork_work+0x7f/0x190 fs/xfs/xfs_pwork.c:47
+       process_one_work kernel/workqueue.c:3229 [inline]
+       process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #0 (&qinf->qi_tree_lock){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
+       xfs_qm_dqfree_one+0x66/0x170 fs/xfs/xfs_qm.c:1874
+       xfs_qm_shrink_scan+0x33f/0x400 fs/xfs/xfs_qm.c:558
+       do_shrink_slab+0x701/0x1160 mm/shrinker.c:437
+       shrink_slab+0x1093/0x14d0 mm/shrinker.c:664
+       shrink_one+0x43b/0x850 mm/vmscan.c:4836
+       shrink_many mm/vmscan.c:4897 [inline]
+       lru_gen_shrink_node mm/vmscan.c:4975 [inline]
+       shrink_node+0x37c5/0x3e50 mm/vmscan.c:5956
+       kswapd_shrink_node mm/vmscan.c:6785 [inline]
+       balance_pgdat mm/vmscan.c:6977 [inline]
+       kswapd+0x1ca9/0x3700 mm/vmscan.c:7246
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+other info that might help us debug this:
+
+Chain exists of:
+  &qinf->qi_tree_lock --> &q->q_usage_counter(io)#20 --> fs_reclaim
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(fs_reclaim);
+                               lock(&q->q_usage_counter(io)#20);
+                               lock(fs_reclaim);
+  lock(&qinf->qi_tree_lock);
+
+ *** DEADLOCK ***
+
+1 lock held by kswapd0/88:
+ #0: ffffffff8ea35ae0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6864 [inline]
+ #0: ffffffff8ea35ae0 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x3700 mm/vmscan.c:7246
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 88 Comm: kswapd0 Not tainted 6.12.0-next-20241119-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+ __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+ __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+ __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
+ xfs_qm_dqfree_one+0x66/0x170 fs/xfs/xfs_qm.c:1874
+ xfs_qm_shrink_scan+0x33f/0x400 fs/xfs/xfs_qm.c:558
+ do_shrink_slab+0x701/0x1160 mm/shrinker.c:437
+ shrink_slab+0x1093/0x14d0 mm/shrinker.c:664
+ shrink_one+0x43b/0x850 mm/vmscan.c:4836
+ shrink_many mm/vmscan.c:4897 [inline]
+ lru_gen_shrink_node mm/vmscan.c:4975 [inline]
+ shrink_node+0x37c5/0x3e50 mm/vmscan.c:5956
+ kswapd_shrink_node mm/vmscan.c:6785 [inline]
+ balance_pgdat mm/vmscan.c:6977 [inline]
+ kswapd+0x1ca9/0x3700 mm/vmscan.c:7246
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
