@@ -1,139 +1,262 @@
-Return-Path: <linux-kernel+bounces-418883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 380589D66AE
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 01:19:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 756179D66BF
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 01:19:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA6C5B21B4A
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:19:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E796161302
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC3479476;
-	Sat, 23 Nov 2024 00:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B259E208D0;
+	Sat, 23 Nov 2024 00:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Feo9+J+A"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PGoyDx/p"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5C61C32
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 00:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CF0D530
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 00:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732321143; cv=none; b=f9kC+yvd8d0Iw4Rjv7P5AlF6RA5amfJFyboCYJbypbBcqZUgiegCvT3GLlI15pS7z+/WxSTnKzUTgoMDBDcaUM5yHsuOxnzC63ej+L3z/CxM5ezQL/lFRiZ10rEFXZFCgA3kyk+YATnD2Wu7hnkOGgkH9f3qC68XAYzVt7AM3dA=
+	t=1732321164; cv=none; b=Io2I0oL4EbCdXOx/CBf1hx3rYbMPxO68/JlGi3BV/AAVBugOnSJ1Xycnvkf7UwMotgAd1TslSuPlYzOTwuvVjKH8BIslyAOQYvcsH8yp3IN3uTYykiuSbtH9iKJpBSjO3UcqGAr1QTzNSvm7uPe5waN4M9dqbf3akQiv2sO9jTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732321143; c=relaxed/simple;
-	bh=gp6cmepa61xAyiqmA0aFpcdQ8xEtl56sKeMzfRIXE1U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oDSs3e6KDMR2d0T0Lpzx/qk7E5646fIyTzzP4XbOwNwg7U+CP89zQSM4aHRgeY3MU99DSG64Tz/K1W9DdQBRpS8MkYc8Y/PxX/xeX3a+VM8aaTKNqGMu4ScA5sR5EybU6MP6/BiNW1zsAyDuH9EaVi3hQn+mTyHgsiBECphvAyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Feo9+J+A; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4315abed18aso23618815e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 16:19:01 -0800 (PST)
+	s=arc-20240116; t=1732321164; c=relaxed/simple;
+	bh=0yX0O56Cy9DjD1BN27Ou2NLL8xBazcNKqhkhwB+1Elo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=IG+PjGmQjLtb3ff9wBQOWEOPR8Tr0h7GNhPcyVAQ9r3cYb9YVtvP6D6BvA+FdZkjig4wm/AZ9elsFOCex47gLf1iutuBAX9BelZazEj5UFd/UrjMl4dakfaMsrxnXei9U8DNVgHnzIXmLJt9z7CW8IV0ZS+t/iA+TnOQWFdIEIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PGoyDx/p; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ea258fe4b6so64132677b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 16:19:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732321140; x=1732925940; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CBar/yUBJZ7evAtJzqvt9icFhcSkyuHEJP8iZfvqHus=;
-        b=Feo9+J+AR+AU+ahicpwF2PWcXN8I0qV2NdFn1o9kB4MN4DsZY1aPTb3TU6hhTJWUBZ
-         tIiioKDGA2up5wrH4dGGfBzaC3Mpi/pwx/OPeZDmfjnOm/Bz+6eIxnbXB4OtOEfpBwGN
-         WKqIejjb8qHFpdGcfO5KGg11Kdwag8d53soZNfbkNbbwHNlcXEKfcNT4E6YUEXz7lXrT
-         RPqrl3kfirqo8OUcIcx9NHXwJjAQ3Oyy/YIa+StCpxvUY+SNRMhhSGJmJamLoupidY0T
-         1RlzrH0Rx4hVoyH8B+lJjf+GP7gycsG4Y2c/zhAhLpWtCcR9MQdJAbyZGjD8vzdcRV2v
-         bK6A==
+        d=google.com; s=20230601; t=1732321161; x=1732925961; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lp/DQHT9ajDejoGv2qWHIWzSG+xRkTc6NeDxcpejopM=;
+        b=PGoyDx/prd8NN8YvB7C93jZI/uGmAr2uN7UYF4lyoAFGr0MrPDFqE0749j3H/jaybt
+         bitvIfEEO0DyEnIbldcYvn7xbXvMe4aaMyvfzWegiu4YKI8Se+HoZPku0Gg1Afx2x1KQ
+         +aVWBi5lteBRQbC72nOzxuIdnnNNRgByxUZwwE7EV+yLSQkk04oOPVAh4CqKBsJLsU9q
+         pqY34SbKJsgjlRWFCEF8yh0UP2csLpwuD20mx7vmQ3dUfYsGg5s4W5fSEnruCcYI330c
+         kV22JTj4571aj5+OgiQkS0Ex629DpHNclERthCsaZJxlc+ec7g6G3zAOl7CKMH4XYYey
+         HPlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732321140; x=1732925940;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CBar/yUBJZ7evAtJzqvt9icFhcSkyuHEJP8iZfvqHus=;
-        b=X7C7ubq31kSuhls1JnTbP/1kDa6gyVTkHDMBeex6T7HwTEoUctR1AmuLj434GNJrTV
-         5MCiAzOvqDOAJMt3PsUkp2WXh+bEJk9TSQrayYELGp1nyDAU6ZE7AhInhwf657w2CVkS
-         hXfBYIz2Vp0VC5ieNzzTqsv418SLnHeI+etQyz9g2ROHgkzuo2jdnGf33UetTyc4Ejr1
-         brv97zkIXu5U4n6tDxV4HH6EgFLs4KgVA6rQpAQk5cWelADfKBGS/HvHUbA73jR5h0Ay
-         SJobwg6w5QKN1yqWiGQ0KWTAMyJbcb/Q0QWx8zIcUm/YlvYAtxrdBP7H4ZV7qbfnCXNR
-         Beug==
-X-Forwarded-Encrypted: i=1; AJvYcCUy0z5BFT39qwx3a+dmsXDbT0d+c4YDCOlrYqLva3hFvdxX9uDmZB5/KOlSbFi0sNAM8RTAG8rg32y4T5o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyilM4U85mVqkNvs5vV/uA/qnFi3I+Kd3nnMrfPCUm9AHUk38JC
-	4FAqMiWVVamWqxZtGtDZs5pkoUBs7KNgmiQLw1sd4M9xkuh9w+bBzYgHiW9HqRw=
-X-Gm-Gg: ASbGncsM0N2ieq6/R6ueKrwvzsGEYIccgyXft4SuEi9XwMkadAONeFQ6rmAaB/DHOVo
-	XEK2Yg/sbpWvjC9m1Y6wiMpL8I9BE+Mpk8Dq8RjYgWpRKEb/hylzfJ0EyvZQ7qZ93S+pBfxlHkA
-	A9KHWldOXcRe7YbGA8gkFvcqUCxAHRomSQjPUiUcO/m+oZ7ZaQfQhM3HCd55Gx82koiIidl9gQf
-	bo7AjHbqihHStKzJO6aJpqBGVk0p/Ou7kdMMoD00RiJsBWJQnnuGT0TK7KCIyM=
-X-Google-Smtp-Source: AGHT+IHlRoz6uk5MGmn7iew4+RptSPaqyvO51B4OHl+zcs4aSMhp1CyvOMHb1GlQZ23DFr2P1b8X8g==
-X-Received: by 2002:a05:600c:3ac3:b0:431:6083:cd2a with SMTP id 5b1f17b1804b1-433ce42c78bmr45572455e9.15.1732321140029;
-        Fri, 22 Nov 2024 16:19:00 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433cde10eabsm43567815e9.13.2024.11.22.16.18.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Nov 2024 16:18:59 -0800 (PST)
-Message-ID: <f7c31279-8492-484c-94c4-893d98f53afb@linaro.org>
-Date: Sat, 23 Nov 2024 00:18:58 +0000
+        d=1e100.net; s=20230601; t=1732321161; x=1732925961;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lp/DQHT9ajDejoGv2qWHIWzSG+xRkTc6NeDxcpejopM=;
+        b=ssDG8EyL1RJiIMGeoofBPaIRnmJ2G7AOy7ZL/Pquw9sC07itzNubpkvgWgWsKT0O7I
+         Ta7C371Lsk5gAm7GTcyrrpzEXdDC6J3AnVcZNm6wZFOvSkbaelQhwAzlMbywpT3+JLIi
+         YI6sSs5sYJygzMEAc1Pl1CMakenWiLI+18lDMcmG3m4IwxzBfT3BHdWIP1q/aViJ0ydD
+         zPEdAJk9afiGSlhVhkw18BRtqaZ2zyQdaPT0YywlW3tgiqsUiLRWDrVjqd1/EET6hCku
+         1B/eX1xTwcVn96mfCnQK79ufVezp+/eSVbQVcmNzjK0I1tBEVt6aISPLMErrQVkgSF2H
+         Km1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWWob0Tt7TQQVFHc9ece3x5oOwbNre9bZWG+rQdqEbOQXKzlRjg0aXOdH6IVkqahMWBqFEw2bY4Vhckk+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxIrDBua4Z2bg7XQMre0IEzBF1DEXVTRjYBeVDbgsEg+hbr8B/
+	GjdcnEUq2WugRdjIxhrtNvYp+OMvW4ZSS09zE8UyCPvMTGM3i+QAdICADD+x6xUktg9aR0e2GXG
+	dswnebA==
+X-Google-Smtp-Source: AGHT+IFuSLZGc60ostLOU1k2OiwHArN8p4rGSAZKGq+sEAZLzYGueiQ4iVD6+faW9zxR2K/RMUCSN+U/O/4d
+X-Received: from anyblade.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:1791])
+ (user=mmaurer job=sendgmr) by 2002:a25:d651:0:b0:e2e:3328:7a00 with SMTP id
+ 3f1490d57ef6-e38fb5b40f4mr6735276.3.1732321161087; Fri, 22 Nov 2024 16:19:21
+ -0800 (PST)
+Date: Sat, 23 Nov 2024 00:18:59 +0000
+In-Reply-To: <20241123-extended-modversions-v9-0-bc0403f054bf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] Use APIs in gdsc genpd to switch gdsc mode for venus
- v4 core
-To: Renjiang Han <quic_renjiang@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- Taniya Das <quic_tdas@quicinc.com>
-References: <20241122-switch_gdsc_mode-v1-0-365f097ecbb0@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241122-switch_gdsc_mode-v1-0-365f097ecbb0@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20241123-extended-modversions-v9-0-bc0403f054bf@google.com>
+X-Mailer: b4 0.15-dev
+Message-ID: <20241123-extended-modversions-v9-2-bc0403f054bf@google.com>
+Subject: [PATCH v9 2/5] modpost: Produce extended MODVERSIONS information
+From: Matthew Maurer <mmaurer@google.com>
+To: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
+	Daniel Gomez <da.gomez@samsung.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Jonathan Corbet <corbet@lwn.net>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-doc@vger.kernel.org, 
+	Matthew Maurer <mmaurer@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On 22/11/2024 10:31, Renjiang Han wrote:
-> The Venus driver requires vcodec GDSC to be ON in SW mode for clock
-> operations and move it back to HW mode to gain power benefits. Earlier,
-> as there is no interface to switch the GDSC mode from GenPD framework,
-> the GDSC is moved to HW control mode as part of GDSC enable callback and
-> venus driver is writing to its POWER_CONTROL register to keep the GDSC ON
-> from SW whereever required. But the POWER_CONTROL register addresses are
-> not constant and can vary across the variants.
-> 
-> Also as per the HW recommendation, the GDSC mode switching needs to be
-> controlled from respective GDSC register and this is a uniform approach
-> across all the targets. Hence use dev_pm_genpd_set_hwmode() API which
-> controls GDSC mode switching using its respective GDSC register.
-> 
-> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
-> ---
-> Renjiang Han (1):
->        venus: pm_helpers: Use dev_pm_genpd_set_hwmode to switch GDSC mode on V4
-> 
-> Taniya Das (1):
->        clk: qcom: videocc: Use HW_CTRL_TRIGGER flag for video GDSC's
-> 
->   drivers/clk/qcom/videocc-sc7180.c              |  2 +-
->   drivers/clk/qcom/videocc-sdm845.c              |  4 ++--
->   drivers/media/platform/qcom/venus/pm_helpers.c | 10 +++++-----
->   3 files changed, 8 insertions(+), 8 deletions(-)
-> ---
-> base-commit: 63b3ff03d91ae8f875fe8747c781a521f78cde17
-> change-id: 20241122-switch_gdsc_mode-b658ea233c2a
-> 
-> Best regards,
+Generate both the existing modversions format and the new extended one
+when running modpost. Presence of this metadata in the final .ko is
+guarded by CONFIG_EXTENDED_MODVERSIONS.
 
-What's your test strategy here ? What platforms have you tested this on ?
+We no longer generate an error on long symbols in modpost if
+CONFIG_EXTENDED_MODVERSIONS is set, as they can now be appropriately
+encoded in the extended section. These symbols will be skipped in the
+previous encoding. An error will still be generated if
+CONFIG_EXTENDED_MODVERSIONS is not set.
 
-What help do you need ?
-
+Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
+Signed-off-by: Matthew Maurer <mmaurer@google.com>
 ---
-bod
+ kernel/module/Kconfig    | 10 ++++++++
+ scripts/Makefile.modpost |  1 +
+ scripts/mod/modpost.c    | 65 +++++++++++++++++++++++++++++++++++++++++++++---
+ 3 files changed, 72 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/module/Kconfig b/kernel/module/Kconfig
+index e6b2427e5c190aacf7b9c5c1bb57fca39d311564..a31c617cd67d3d66b24d2fba34cbd5cc9c53ab78 100644
+--- a/kernel/module/Kconfig
++++ b/kernel/module/Kconfig
+@@ -208,6 +208,16 @@ config ASM_MODVERSIONS
+ 	  assembly. This can be enabled only when the target architecture
+ 	  supports it.
+ 
++config EXTENDED_MODVERSIONS
++	bool "Extended Module Versioning Support"
++	depends on MODVERSIONS
++	help
++	  This enables extended MODVERSIONs support, allowing long symbol
++	  names to be versioned.
++
++	  The most likely reason you would enable this is to enable Rust
++	  support. If unsure, say N.
++
+ config MODULE_SRCVERSION_ALL
+ 	bool "Source checksum for all modules"
+ 	help
+diff --git a/scripts/Makefile.modpost b/scripts/Makefile.modpost
+index ab0e94ea62496e11dbaa3ffc289ce546862795ca..40426fc6350985780c0092beb49c6cc29b9eff62 100644
+--- a/scripts/Makefile.modpost
++++ b/scripts/Makefile.modpost
+@@ -43,6 +43,7 @@ MODPOST = $(objtree)/scripts/mod/modpost
+ modpost-args =										\
+ 	$(if $(CONFIG_MODULES),-M)							\
+ 	$(if $(CONFIG_MODVERSIONS),-m)							\
++	$(if $(CONFIG_EXTENDED_MODVERSIONS),-x)						\
+ 	$(if $(CONFIG_MODULE_SRCVERSION_ALL),-a)					\
+ 	$(if $(CONFIG_SECTION_MISMATCH_WARN_ONLY),,-E)					\
+ 	$(if $(KBUILD_MODPOST_WARN),-w)							\
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 107393a8c48a5993dbe456702fec0652a967ee86..bd38f33fd41fbd98bce34f8924b2fb0ac04297ee 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -32,6 +32,8 @@ static bool module_enabled;
+ static bool modversions;
+ /* Is CONFIG_MODULE_SRCVERSION_ALL set? */
+ static bool all_versions;
++/* Is CONFIG_EXTENDED_MODVERSIONS set? */
++static bool extended_modversions;
+ /* If we are modposting external module set to 1 */
+ static bool external_module;
+ /* Only warn about unresolved symbols */
+@@ -1817,6 +1819,52 @@ static void add_exported_symbols(struct buffer *buf, struct module *mod)
+ 	}
+ }
+ 
++/**
++ * Record CRCs for unresolved symbols, supporting long names
++ */
++static void add_extended_versions(struct buffer *b, struct module *mod)
++{
++	struct symbol *s;
++
++	if (!extended_modversions)
++		return;
++
++	buf_printf(b, "\n");
++	buf_printf(b, "static const s32 ____version_ext_crcs[]\n");
++	buf_printf(b, "__used __section(\"__version_ext_crcs\") = {\n");
++	list_for_each_entry(s, &mod->unresolved_symbols, list) {
++		if (!s->module)
++			continue;
++		if (!s->crc_valid) {
++			/*
++			 * We already warned on this when producing the legacy
++			 * modversions table.
++			 */
++			continue;
++		}
++		buf_printf(b, "\t%#8x,\n", s->crc);
++	}
++	buf_printf(b, "};\n");
++
++	buf_printf(b, "static const char ____version_ext_names[]\n");
++	buf_printf(b, "__used __section(\"__version_ext_names\") =\n");
++	list_for_each_entry(s, &mod->unresolved_symbols, list) {
++		if (!s->module)
++			continue;
++		if (!s->crc_valid) {
++			/*
++			 * We already warned on this when producing the legacy
++			 * modversions table.
++			 * We need to skip its name too, as the indexes in
++			 * both tables need to align.
++			 */
++			continue;
++		}
++		buf_printf(b, "\t\"%s\\0\"\n", s->name);
++	}
++	buf_printf(b, ";\n");
++}
++
+ /**
+  * Record CRCs for unresolved symbols
+  **/
+@@ -1840,9 +1888,14 @@ static void add_versions(struct buffer *b, struct module *mod)
+ 			continue;
+ 		}
+ 		if (strlen(s->name) >= MODULE_NAME_LEN) {
+-			error("too long symbol \"%s\" [%s.ko]\n",
+-			      s->name, mod->name);
+-			break;
++			if (extended_modversions)
++				/* this symbol will only be in the extended info */
++				continue;
++			else {
++				error("too long symbol \"%s\" [%s.ko]\n",
++				      s->name, mod->name);
++				break;
++			}
+ 		}
+ 		buf_printf(b, "\t{ %#8x, \"%s\" },\n",
+ 			   s->crc, s->name);
+@@ -1972,6 +2025,7 @@ static void write_mod_c_file(struct module *mod)
+ 	add_header(&buf, mod);
+ 	add_exported_symbols(&buf, mod);
+ 	add_versions(&buf, mod);
++	add_extended_versions(&buf, mod);
+ 	add_depends(&buf, mod);
+ 	add_moddevtable(&buf, mod);
+ 	add_srcversion(&buf, mod);
+@@ -2130,7 +2184,7 @@ int main(int argc, char **argv)
+ 	LIST_HEAD(dump_lists);
+ 	struct dump_list *dl, *dl2;
+ 
+-	while ((opt = getopt(argc, argv, "ei:MmnT:to:au:WwENd:")) != -1) {
++	while ((opt = getopt(argc, argv, "ei:MmnT:to:au:WwENd:x")) != -1) {
+ 		switch (opt) {
+ 		case 'e':
+ 			external_module = true;
+@@ -2179,6 +2233,9 @@ int main(int argc, char **argv)
+ 		case 'd':
+ 			missing_namespace_deps = optarg;
+ 			break;
++		case 'x':
++			extended_modversions = true;
++			break;
+ 		default:
+ 			exit(1);
+ 		}
+
+-- 
+2.47.0.371.ga323438b13-goog
+
 
