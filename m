@@ -1,136 +1,76 @@
-Return-Path: <linux-kernel+bounces-419244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F3849D6B46
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 20:50:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A4C9D6B49
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 20:55:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAEF6161CD8
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 19:55:52 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DDD178383;
+	Sat, 23 Nov 2024 19:55:51 +0000 (UTC)
+Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5066B221FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 19:50:11 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5152185935;
-	Sat, 23 Nov 2024 19:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QgBJq+9/"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61B134545;
-	Sat, 23 Nov 2024 19:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E6517C2
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 19:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732391404; cv=none; b=pFB1a9jy1hgz3a+Xk2MmQgfoBClLo8VSTNSSlqHPa8xCZZa97RRFM1QOUWZw6jIOO6tcF4TbBxHGVA3WgAvWGKOqxNBpQ/WD1kodKi31QxeX+Z3d/SMIis06LRiNsIYmaumS/AGAQ8Lxrcmt7oFJPeHajUgWkI8X2SNcTzPxhkw=
+	t=1732391751; cv=none; b=B86l+B0hR28W9aKxxLxuwdarvf5YQmYauMSZZyXdlTb0Wiw0QsOSDueQRY3lfslY+Yp0K/YXxvFQ9ECMS+bL4jaB/cbLbHry9vyfU4Hwnqq+RbPKQitzpl472td7ed4IWjDZd22ej+51VQijZ0HThFV2Mc78jc1Cfijh7mnwsHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732391404; c=relaxed/simple;
-	bh=0lJjK/Wj3Hu8vBZP4NKVokNyrxkIqZj5FLU4Os+ancI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xhf8GQxE4+OWJcunMnPJQiJprn9AiLFZtuayZElO8uUjUtqh+0sC53YbVTtoaXPlbeV4fTqF9Ddwhkl22uyi7QaARnMoE0WrFewW4R8KC4OwCw/LX2W7NQsxTOgFsD3IkKP2YV8Gun/fq+SENkUmEZE/0/KXsuhr33vRo9O3Jqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QgBJq+9/; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7246c8b89b4so3146851b3a.1;
-        Sat, 23 Nov 2024 11:50:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732391402; x=1732996202; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wtpJ5UMR5MaspyfBoKBZMhSAyxFrrP/3aDqY9HRg/tw=;
-        b=QgBJq+9/kIbGqrS9KV2K0UWpMvL1+qegKyVCgyS2ZEWUfzBP91yxsNNO0QfO+/h2zO
-         E2Zbuw4Ag+OTvfo0pAsOJ19ZPi8XThXlxN5kBubYq/kz158WWJcXYFx0ZKczK/h/1B+a
-         pKfTRLXBI+1B/Tk3AvRnupgxVbugrAuru+i2rqtipHfhO0zCN9ZCorKuhvvnQy0rZzPR
-         Bd1YJmOcg9ImZiVhdBrtI5GClFg6Cmza6rYw2aRVbWGoiUcnaO9DIGjhJOz7dh+2lRaY
-         K1O9k2FfA8w/epGM3pumRN4CI5ZhzxZ/w2oyklI7lLL3JNORCF8tMipwl6OgdK9/qsuL
-         XjPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732391402; x=1732996202;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wtpJ5UMR5MaspyfBoKBZMhSAyxFrrP/3aDqY9HRg/tw=;
-        b=WKZPm6G7+AJnWYBc6BrjshOqrf7C71hns+8/bBk8Fa5oDivXg8ZwypysaloRQA+F/B
-         X51GpVfhYJ3Zr2T3c1ef5nv5EoBmXGUqmZ9USsevbYjfc1jJxGw5qBgMrhns4RWObrTf
-         xMHbGr/XtdS298JSRrGXo1ze5GingNEgIRwMgiebeE4GkLOp+jIfvngsm4qIT1C3I3cc
-         I8vnyTS4GfDcNtn0dHvxwgk7KsnvNWSBtJ1fkZENKdBxZeccsuzcDHOxDYnciBd4DL1v
-         jFYND3ssmZ3rRlEv7wlL9Ipev0Nkfn0cKzNQi0N4qTftsF700EhEi01S1HVjpc7ODzD4
-         /O3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVfd33gn5O1691TF/PwW6nf+9/3KoNGWa0qYGMTLBNnA3oUxuixqueEMX7vl/i7gsxBs68stoifLwUDnEOn@vger.kernel.org, AJvYcCWAk5su8ZaWEccICHE7VfTpqxJKTlgMYsKkavCrCN5mR2FxhkMK0Nj1VRb4fbW3ug7rvatkd/6XwB6r7nuU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3fns4tyW60q2V9+DFmKShxS/tNK4PoP247tw0Rn6MkrOer9H8
-	Vey2NVEjYm6BIY62+nCpEaXsk3u8yXrBsvR1ah2hh4Fb6ijv5J60
-X-Gm-Gg: ASbGncvdGyEdmfJMnYhB+/hwt5QQJ2BVw8qBDAq/rki+SjMuf0ukQYgh6c4Xt9E/g1c
-	fa1HzG2I1KPCFpA+1VYwUKsApUktR+jptLYBVDZ2K7eygOOLZyqPi0Bgpc4+pvPFcd+q68DSbOP
-	iiBeNHKzcbFDXC0X1wXZiRAO5orrznSLvcOiGSCmf2/U+0BlZReRcT9UP4FDKjnGqWg/C7f3WFk
-	DtqPUWa5//kxH0Koy5QzSSIe8HHy1J7Yz2eITI05/RY1ljGCzNgsW8YSE4/Dqz+jg==
-X-Google-Smtp-Source: AGHT+IEonW02YsXMiQhDOe5tluD1XYyX9QKCECbVHY7UXTIZwuR2Rb7BIbNCftr/q27vK/JUE+i3IQ==
-X-Received: by 2002:a05:6a00:23cc:b0:71e:44f6:690f with SMTP id d2e1a72fcca58-724de95a306mr13402766b3a.8.1732391401983;
-        Sat, 23 Nov 2024 11:50:01 -0800 (PST)
-Received: from tc.hsd1.or.comcast.net ([2601:1c2:c104:170:86c6:5b62:b5b7:ec1a])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de48f108sm3627957b3a.87.2024.11.23.11.50.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Nov 2024 11:50:01 -0800 (PST)
-From: Leo Stone <leocstone@gmail.com>
-To: syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com,
-	brauner@kernel.org,
-	quic_jjohnson@quicinc.com,
-	jack@suse.cz,
-	viro@zeniv.linux.org.uk,
-	sandeen@redhat.com
-Cc: Leo Stone <leocstone@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	shuah@kernel.org,
-	anupnewsmail@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [PATCH] hfs: Sanity check the root record
-Date: Sat, 23 Nov 2024 11:49:47 -0800
-Message-ID: <20241123194949.9243-1-leocstone@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <67400d16.050a0220.363a1b.0132.GAE@google.com>
-References: <67400d16.050a0220.363a1b.0132.GAE@google.com>
+	s=arc-20240116; t=1732391751; c=relaxed/simple;
+	bh=JXfIhgh8HkAwewLXXElARlOCEMiN1yj3hdYbrmk1qsM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cln/vGeWOrsy0XpMkZGavxi3sezkjBeF9mJuK9FqDmQPHF0zJqTAPVEzAxgYT1VeyuMS5p4LUqA4sF8pEYvjizpWymsslLxalt5rpj4h3OrIbnHDdgpKDrJgK/6BKcU7d6jhgA8TFMKHGlCTS0kKqqMfqxYkGVyAJ5rw+U7SWN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-25-143.elisa-laajakaista.fi [88.113.25.143])
+	by fgw22.mail.saunalahti.fi (Halon) with ESMTP
+	id edf28269-a9d4-11ef-827a-005056bdf889;
+	Sat, 23 Nov 2024 21:55:46 +0200 (EET)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 23 Nov 2024 21:55:46 +0200
+To: Dipendra Khadka <kdipendra88@gmail.com>
+Cc: lee@kernel.org, pavel@ucw.cz, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] leds: bcm6328: Replace divide condition with
+ comparison for shift value
+Message-ID: <Z0IzQlsP6OMCcXRB@surfacebook.localdomain>
+References: <20241019073302.35499-1-kdipendra88@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241019073302.35499-1-kdipendra88@gmail.com>
 
-In the syzbot reproducer, the hfs_cat_rec for the root dir has type
-HFS_CDR_FIL after being read with hfs_bnode_read() in hfs_super_fill().
-This indicates it should be used as an hfs_cat_file, which is 102 bytes.
-Only the first 70 bytes of that struct are initialized, however,
-because the entrylength passed into hfs_bnode_read() is still the length of
-a directory record. This causes uninitialized values to be used later on,
-when the hfs_cat_rec union is treated as the larger hfs_cat_file struct.
+Sat, Oct 19, 2024 at 07:33:01AM +0000, Dipendra Khadka kirjoitti:
+> Fixes the following Smatch warnings:
+> drivers/leds/leds-bcm6328.c:116 bcm6328_led_mode() warn: replace divide condition 'shift / 16' with 'shift >= 16'
+> drivers/leds/leds-bcm6328.c:360 bcm6328_led() warn: replace divide condition 'shift / 16' with 'shift >= 16'
 
-Add a check to make sure the retrieved record has the correct type
-for the root directory (HFS_CDR_DIR).
+As discussed with Dan (author of smatch), these warnings make no much sense as
+"division" by power-of-two numbers in modern world (ISAs, compilers, etc) most
+unlikely become a real division instruction with all bad consequences. Even
+though, some ISAs can optimize cases where foo / 16; foo % 16 goes together and
+this change may break that.
 
-Reported-by: syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=2db3c7526ba68f4ea776
-Tested-by: syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com
-Signed-off-by: Leo Stone <leocstone@gmail.com>
----
- fs/hfs/super.c | 2 ++
- 1 file changed, 2 insertions(+)
+So, please, consider not to send such changes in the future because at least
+they are just noise, at most might add a (micro-)rgressions.
 
-diff --git a/fs/hfs/super.c b/fs/hfs/super.c
-index 3bee9b5dba5e..02d78992eefd 100644
---- a/fs/hfs/super.c
-+++ b/fs/hfs/super.c
-@@ -354,6 +354,8 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 			goto bail_hfs_find;
- 		}
- 		hfs_bnode_read(fd.bnode, &rec, fd.entryoffset, fd.entrylength);
-+		if (rec.type != HFS_CDR_DIR)
-+			res = -EIO;
- 	}
- 	if (res)
- 		goto bail_hfs_find;
+https://lore.kernel.org/linux-gpio/20241112201659.16785-1-surajsonawane0215@gmail.com/
+https://lore.kernel.org/all/20241121105838.4073659-4-andriy.shevchenko@linux.intel.com/
+
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
