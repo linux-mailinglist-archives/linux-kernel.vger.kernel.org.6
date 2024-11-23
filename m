@@ -1,65 +1,87 @@
-Return-Path: <linux-kernel+bounces-419046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A8559D68E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 12:37:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D2979D68E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 12:31:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4D25B21A07
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 11:37:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 021B9281D3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 11:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB5E19340F;
-	Sat, 23 Nov 2024 11:36:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 429FC18A93F;
+	Sat, 23 Nov 2024 11:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="htMqEKuo"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nu5aczPb"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1443F4A0A;
-	Sat, 23 Nov 2024 11:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DE04204B;
+	Sat, 23 Nov 2024 11:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732361814; cv=none; b=jubgPwxdk7R4n96WENKHCuZx7dV8HswpYZPvPv6RUN0ez/DkRvsJhZkxs6ZRM36pOC0fRwFLmOuVSQW9byB/3GdA6tNUbWjB2G4JGAS3JqnvGYzUypWtcPC+zOZV86OgP9k2XXp8uQw3crkVvVBnhqvS7EKAgT9G6Ah9tHuoJcM=
+	t=1732361509; cv=none; b=Xx3qrbfrxumE5/LyeMGMWxbJdbvCjzc0MZBahdOFiI9MMr0r9y2iB8NHfrfcgS4a+MzairsJuiuOwdr2V8XO21qzez18j218xza5HkOIb0mCbLw70iNpU0+JngTy9bV3kZfsb1PiomuGiVEzOdeFOEOk/d95WCHMkWqAEDmPiSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732361814; c=relaxed/simple;
-	bh=YkIphRuUwyG+kwmOIpvCmaA/uQWf8vLkyyyGb79ZLSI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OuIUv/dkcWmCCqBL+wkAr1T6VR+H4ynaw3/eI9QfiS+0A7vp+q56YOEooN0T1xo7sHegSHCjb41CB13Z3z+LghsgNXNEycbxYQ+m5FED6jQIw4v1m3epfLjV1XH82eL1GZLEwBo8S1qTNkAblqRpOC9cSwomY8MQ13a4Cosp0go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=htMqEKuo; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1732361802; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=UQVkuDSsfa6qhnqUzaRuxWOioIPLIGwd3nPZ/n+mi9s=;
-	b=htMqEKuoN4aBsB/wEddAsPd1FIlLbCgjRz2qYJRQtH+KjheFxUsCDIrRFvv8c0EN3T7kfUTJdq6jMKpHZAa+XL1j/9FtwHPznKb6U/EHL5rWwUO1ORjdEkrxZw3OTyT3AeOPXAxXeH39Sa98HtYZgVUH5/Jgl36uiPoHNHsY4bs=
-Received: from localhost.localdomain(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WK1Mj7a_1732361477 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sat, 23 Nov 2024 19:31:18 +0800
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-To: rostedt@goodmis.org,
-	lukas@wunner.de,
-	linux-pci@vger.kernel.org,
+	s=arc-20240116; t=1732361509; c=relaxed/simple;
+	bh=7l53ff7oBSbondRTNi7K/Blxj+8PK+VAW7cT64gbz7g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BL3HUXHwh5MwmRARMwAVmhfTIrEtjJ32wwXMeFnVAgqcVyVlkJVI1d0NHKBF5iCiFeDIqEWubHGMYeldZb9wKncw8vld3+7UIlRrqF6Jw4DYxLVfMOM5w3XfzmhgHhfH1BJtcG1ZNJYuTC0GWiYaqmCALEB2C55yBpee4hJ4aoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nu5aczPb; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2124ccf03edso29380135ad.2;
+        Sat, 23 Nov 2024 03:31:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732361508; x=1732966308; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U8nb5xhW2sO139VthmTPAswqENky3wnHBx6HMmEx694=;
+        b=Nu5aczPbkM7GY6OmEqle9LQmZgmAq6N7fTKa+7JqrYPjty0C5/V4ZbSg5Q+dXa3NzC
+         ivChGbr4onI7oMFsatzKx8ysnf/0+DPSoynDAWFfKd7Hx6nfHFXPfB5uimvW2Tq19+1a
+         xmFZJMpG6p9XXCk9cXIaWW8d2z+PESK8zz0eZ2q/81uzAcHVOG9pQ1MN4hTyVFzhFpX4
+         haSWOpGT0OsbXDfR5jJf8WXJHKWAYq01jaAtUUqMCeJVbdPAQYHZBSd801sZqyv9Jjm3
+         +3XAbilOmmL/HRV6H3yD+elPVPdA29nWB89NuadbnPCE3HbL0khHzGnVS2naWy5/g4/B
+         rRPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732361508; x=1732966308;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U8nb5xhW2sO139VthmTPAswqENky3wnHBx6HMmEx694=;
+        b=rpraVvY0OX8HfnpSouPXi2uGdiXvVE4DYc0YifPsv6bku9qDatSxYC3A+wIYkNbUDu
+         Hi4j2CRFkqSyJsa4oQYAimuyClZy5YqjL/b+0CyJOFLTSu1/i0YwQxXvA6RM/yiPeHMP
+         F/7V703mCXN5pXcoVvXWLNbLwCGs5Prl8ZhBDE9uRynf+363RkNaYe01CH0dHBaOPMWA
+         d0spp/Jd2oDpBGHkS3Cbeq+aeDSCA5as9a2/g4NJYUAWnRIrEtNtTGXNoDu/5SGKji19
+         feMPqUTS2v3SDPPAaF4Jxdb1sbO9MALmIEuzKTQhT5p1lGbo8Kh0Tm41UE0NWTHcU0wN
+         kLfA==
+X-Forwarded-Encrypted: i=1; AJvYcCVaGxIZWBjbNSoz99jjvVS2NL2ysu+S4mkk4yzk/bypj6DfLJb3h0zUnaUUEsIR5Uxg68YEM0mgvOssJq8=@vger.kernel.org, AJvYcCXTl7FlxcKtTs8hM+nENMo98RUY5uHILhI4HAePeVj30OwrPb5YW80wG18SJBoVYJTDiKn2e3zvjifLGA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQuwqRLDiCjcP6PbA/Y/t9FaBMUJtPJkgeHhe9gLcrHtfKXOpY
+	Smbv1LpPh+pfaUOXIGgHTa8h2FF59on5pHSaZEWc35qOBY42lDpE
+X-Gm-Gg: ASbGncvai36YrLcqk2NiAtoCFjVkbadlYptBiLX9/Vl+NZtsw23lmF9rCsY3uoMcxZl
+	SeSNZfKOmgl8rsdPc+MFOJHBIClTLso4O0PRtjOaQeTTPjkFR+nFqh+a5JWTPH9vXNnh5Z3YQA3
+	iz0vEtiZvqjUP79Uno5maJWe50c8LHXVmWwUfNpaaiQQj5OwbyzaB1GZOgpwvW4nTvIeb06Pozl
+	hmiZ/kiCK01zZM0QQRbNWaYQTh0Rsw3/0Kk5z8DdO7VuUyYJKcO7/RxF3xUM/oBwWmrv0prlo9v
+	M32Llr1OpXwp+kjSSj2ca6vKo/09pyn++w==
+X-Google-Smtp-Source: AGHT+IG3PzaM8Bw+R0W394CBKZEv9djrxBQmV3JOp7Wd20s/KiyA5JnyhBFunBImiThgsNSsPn2G/A==
+X-Received: by 2002:a17:902:e5c3:b0:20d:cb6:11e with SMTP id d9443c01a7336-2129f797c7amr70270315ad.26.1732361507576;
+        Sat, 23 Nov 2024 03:31:47 -0800 (PST)
+Received: from localhost.localdomain ([121.241.130.50])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcc218925sm3187487a12.43.2024.11.23.03.31.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Nov 2024 03:31:47 -0800 (PST)
+From: Ayush Satyam <ayushsatyam146@gmail.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev
+Cc: bpf@vger.kernel.org,
+	sparclinux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-edac@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: bhelgaas@google.com,
-	tony.luck@intel.com,
-	bp@alien8.de,
-	xueshuai@linux.alibaba.com,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	oleg@redhat.com,
-	naveen@kernel.org,
-	davem@davemloft.net,
-	anil.s.keshavamurthy@intel.com,
-	mark.rutland@arm.com,
-	peterz@infradead.org
-Subject: [PATCH v4] PCI: hotplug: Add a generic RAS tracepoint for hotplug event
-Date: Sat, 23 Nov 2024 19:31:08 +0800
-Message-ID: <20241123113108.29722-1-xueshuai@linux.alibaba.com>
-X-Mailer: git-send-email 2.44.0
+	Ayush Satyam <ayushsatyam146@gmail.com>
+Subject: [PATCH] bpf: sparc64: fix typo dont->don't
+Date: Sat, 23 Nov 2024 03:31:16 -0800
+Message-Id: <20241123113116.1983-1-ayushsatyam146@gmail.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,208 +90,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hotplug events are critical indicators for analyzing hardware health,
-particularly in AI supercomputers where surprise link downs can
-significantly impact system performance and reliability. The failure
-characterization analysis illustrates the significance of failures
-caused by the Infiniband link errors. Meta observes that 2% in a machine
-learning cluster and 6% in a vision application cluster of Infiniband
-failures co-occur with GPU failures, such as falling off the bus, which
-may indicate a correlation with PCIe.[1]
-
-To this end, define a new TRACING_SYSTEM named pci, add a generic RAS
-tracepoint for hotplug event to help healthy check, and generate
-tracepoints for pcie hotplug event. To monitor these tracepoints in
-userspace, e.g. with rasdaemon, put `enum pci_hotplug_event` in uapi
-header.
-
-The output like below:
-$ echo 1 > /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
-$ cat /sys/kernel/debug/tracing/trace_pipe
-           <...>-206     [001] .....    40.373870: pci_hp_event: 0000:00:02.0 slot:10, event:Link Down
-
-           <...>-206     [001] .....    40.374871: pci_hp_event: 0000:00:02.0 slot:10, event:Card not present
-
-[1]https://arxiv.org/abs/2410.21680
-
-Suggested-by: Lukas Wunner <lukas@wunner.de>
-Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
-Reviewed-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Ayush Satyam <ayushsatyam146@gmail.com>
 ---
-changes sincel v3:
-- rename TRACING_SYSTEM from pci_hotplug to pci
-- add Reviewed-by tag from Lukas
-- add Suggested-by tag from Lukas and Steven
----
- drivers/pci/hotplug/pciehp_ctrl.c | 33 ++++++++++++---
- drivers/pci/hotplug/trace.h       | 68 +++++++++++++++++++++++++++++++
- include/uapi/linux/pci.h          |  7 ++++
- 3 files changed, 102 insertions(+), 6 deletions(-)
- create mode 100644 drivers/pci/hotplug/trace.h
+ arch/sparc/net/bpf_jit_comp_64.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
-index dcdbfcf404dd..c836462ff067 100644
---- a/drivers/pci/hotplug/pciehp_ctrl.c
-+++ b/drivers/pci/hotplug/pciehp_ctrl.c
-@@ -21,6 +21,9 @@
- #include <linux/pci.h>
- #include "pciehp.h"
- 
-+#define CREATE_TRACE_POINTS
-+#include "trace.h"
-+
- /* The following routines constitute the bulk of the
-    hotplug controller logic
-  */
-@@ -239,12 +242,20 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
- 	case ON_STATE:
- 		ctrl->state = POWEROFF_STATE;
- 		mutex_unlock(&ctrl->state_lock);
--		if (events & PCI_EXP_SLTSTA_DLLSC)
-+		if (events & PCI_EXP_SLTSTA_DLLSC) {
- 			ctrl_info(ctrl, "Slot(%s): Link Down\n",
- 				  slot_name(ctrl));
--		if (events & PCI_EXP_SLTSTA_PDC)
-+			trace_pci_hp_event(pci_name(ctrl->pcie->port),
-+					   slot_name(ctrl),
-+					   PCI_HOTPLUG_LINK_DOWN);
-+		}
-+		if (events & PCI_EXP_SLTSTA_PDC) {
- 			ctrl_info(ctrl, "Slot(%s): Card not present\n",
- 				  slot_name(ctrl));
-+			trace_pci_hp_event(pci_name(ctrl->pcie->port),
-+					   slot_name(ctrl),
-+					   PCI_HOTPLUG_CARD_NOT_PRESENT);
-+		}
- 		pciehp_disable_slot(ctrl, SURPRISE_REMOVAL);
- 		break;
- 	default:
-@@ -264,6 +275,9 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
- 					      INDICATOR_NOOP);
- 			ctrl_info(ctrl, "Slot(%s): Card not present\n",
- 				  slot_name(ctrl));
-+			trace_pci_hp_event(pci_name(ctrl->pcie->port),
-+					   slot_name(ctrl),
-+					   PCI_HOTPLUG_CARD_NOT_PRESENT);
- 		}
- 		mutex_unlock(&ctrl->state_lock);
- 		return;
-@@ -276,12 +290,19 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
- 	case OFF_STATE:
- 		ctrl->state = POWERON_STATE;
- 		mutex_unlock(&ctrl->state_lock);
--		if (present)
-+		if (present) {
- 			ctrl_info(ctrl, "Slot(%s): Card present\n",
- 				  slot_name(ctrl));
--		if (link_active)
--			ctrl_info(ctrl, "Slot(%s): Link Up\n",
--				  slot_name(ctrl));
-+			trace_pci_hp_event(pci_name(ctrl->pcie->port),
-+					   slot_name(ctrl),
-+					   PCI_HOTPLUG_CARD_PRESENT);
-+		}
-+		if (link_active) {
-+			ctrl_info(ctrl, "Slot(%s): Link Up\n", slot_name(ctrl));
-+			trace_pci_hp_event(pci_name(ctrl->pcie->port),
-+					   slot_name(ctrl),
-+					   PCI_HOTPLUG_LINK_UP);
-+		}
- 		ctrl->request_result = pciehp_enable_slot(ctrl);
- 		break;
- 	default:
-diff --git a/drivers/pci/hotplug/trace.h b/drivers/pci/hotplug/trace.h
-new file mode 100644
-index 000000000000..5b60cd7bcffb
---- /dev/null
-+++ b/drivers/pci/hotplug/trace.h
-@@ -0,0 +1,68 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#if !defined(_TRACE_HW_EVENT_PCI_HP_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_HW_EVENT_PCI_HP_H
-+
-+#include <linux/tracepoint.h>
-+
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM pci
-+
-+#define PCI_HOTPLUG_EVENT					\
-+	EM(PCI_HOTPLUG_LINK_UP,			"Link Up")	\
-+	EM(PCI_HOTPLUG_LINK_DOWN,		"Link Down")	\
-+	EM(PCI_HOTPLUG_CARD_PRESENT,		"Card present")	\
-+	EMe(PCI_HOTPLUG_CARD_NOT_PRESENT,	"Card not present")
-+
-+/* Enums require being exported to userspace, for user tool parsing */
-+#undef EM
-+#undef EMe
-+#define EM(a, b)	TRACE_DEFINE_ENUM(a);
-+#define EMe(a, b)	TRACE_DEFINE_ENUM(a);
-+
-+PCI_HOTPLUG_EVENT
-+
-+/*
-+ * Now redefine the EM() and EMe() macros to map the enums to the strings
-+ * that will be printed in the output.
-+ */
-+#undef EM
-+#undef EMe
-+#define EM(a, b)	{a, b},
-+#define EMe(a, b)	{a, b}
-+
-+TRACE_EVENT(pci_hp_event,
-+
-+	TP_PROTO(const char *port_name,
-+		 const char *slot,
-+		 const int event),
-+
-+	TP_ARGS(port_name, slot, event),
-+
-+	TP_STRUCT__entry(
-+		__string(	port_name,	port_name	)
-+		__string(	slot,		slot		)
-+		__field(	int,		event	)
-+	),
-+
-+	TP_fast_assign(
-+		__assign_str(port_name);
-+		__assign_str(slot);
-+		__entry->event = event;
-+	),
-+
-+	TP_printk("%s slot:%s, event:%s\n",
-+		__get_str(port_name),
-+		__get_str(slot),
-+		__print_symbolic(__entry->event, PCI_HOTPLUG_EVENT)
-+	)
-+);
-+
-+#endif /* _TRACE_HW_EVENT_PCI_HP_H */
-+
-+#undef TRACE_INCLUDE_PATH
-+#define TRACE_INCLUDE_PATH  ../../drivers/pci/hotplug
-+#undef TRACE_INCLUDE_FILE
-+#define TRACE_INCLUDE_FILE trace
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
-diff --git a/include/uapi/linux/pci.h b/include/uapi/linux/pci.h
-index a769eefc5139..4f150028965d 100644
---- a/include/uapi/linux/pci.h
-+++ b/include/uapi/linux/pci.h
-@@ -39,4 +39,11 @@
- #define PCIIOC_MMAP_IS_MEM	(PCIIOC_BASE | 0x02)	/* Set mmap state to MEM space. */
- #define PCIIOC_WRITE_COMBINE	(PCIIOC_BASE | 0x03)	/* Enable/disable write-combining. */
- 
-+enum pci_hotplug_event {
-+	PCI_HOTPLUG_LINK_UP,
-+	PCI_HOTPLUG_LINK_DOWN,
-+	PCI_HOTPLUG_CARD_PRESENT,
-+	PCI_HOTPLUG_CARD_NOT_PRESENT,
-+};
-+
- #endif /* _UAPILINUX_PCI_H */
+diff --git a/arch/sparc/net/bpf_jit_comp_64.c b/arch/sparc/net/bpf_jit_comp_64.c
+index 73bf0aea8..0f850bbe7 100644
+--- a/arch/sparc/net/bpf_jit_comp_64.c
++++ b/arch/sparc/net/bpf_jit_comp_64.c
+@@ -732,7 +732,7 @@ static int emit_compare_and_branch(const u8 code, const u8 dst, u8 src,
+ 			br_opcode = BLE;
+ 			break;
+ 		default:
+-			/* Make sure we dont leak kernel information to the
++			/* Make sure we don't leak kernel information to the
+ 			 * user.
+ 			 */
+ 			return -EFAULT;
 -- 
-2.39.3
+2.20.1
 
 
