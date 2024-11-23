@@ -1,196 +1,192 @@
-Return-Path: <linux-kernel+bounces-418897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED40C9D66E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 01:58:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FB129D66EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 02:03:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62B1CB2273E
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:58:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D38B281460
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 01:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E938EBA42;
-	Sat, 23 Nov 2024 00:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE88D530;
+	Sat, 23 Nov 2024 01:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rg3DsXD7"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="tyIYsuMK"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C78F72905;
-	Sat, 23 Nov 2024 00:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A223A23BE;
+	Sat, 23 Nov 2024 01:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732323488; cv=none; b=clMYxdoWRRc/VDA0sfhJ+h3T9bh9IWP/2A3cXAw9XIPWKtRsfEZtkJHqH8M3CkyiH5QjQBqARc3g0cHmAYZErbzG9nRogKL9931SX5gmkYL89SQK35FPkB6dRdTVXQcCcJFnW6vQ8G2iBUKI9h2kunH2QrVYeyZExCGb6LenKjA=
+	t=1732323800; cv=none; b=W3tCM1tObxmWbiSf3hNpjs56l7xVGqIGzigDqOcY33SwA/tVwgzLC1RvCkYLKPZjVs3WokWkW0thzNEyzBVuRMSRAf/i4JiJLiRknkurYLdiLP4IL5aczpg/QWwc31msGlGEYocEC9iNRYcPlNVoPu2ac81krzIqCyC0hF/bjJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732323488; c=relaxed/simple;
-	bh=DwFjvp3LrpUpeBJB47qEo/UaYvoRqDdQOmRBSbyN+E0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O7SouCRPXLkzATTsB6DMvAZqd9adqed5WGBS1F6BgNePawKFTDF8KEr2c03QjsxjO93aF6R0tu1/qolmyjnOhAP1SChDOlY6QFVjfFgGCpBgVcAcwtbwKCbHR29yx4ht39RQswjJ4fRiVDtVUcWyB0mxMmq9RIt2Mj3VIHaHnDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rg3DsXD7; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e382661fb79so2310690276.0;
-        Fri, 22 Nov 2024 16:58:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732323485; x=1732928285; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gjPNDocQul8Z5NafjwYaP8O0UL5kL4VcdW/j1433320=;
-        b=Rg3DsXD7nWIhUdAdT7T3DWuAg74t9/c6RI7TBajvCepEDIaRgg9cNy/IG3p/Xjej9O
-         POmynC039GwMJd9tKTwRiRLYKckrZhb6WEJGlNINaAOOOJ0mY2abQK8JI9dw4M6/RAEr
-         rUP+mMLDjmwvbc3pK5cDvtO1V6i4eX49ANxbpEc5+ZirIeOEsLiMgwzrKzAGMeY1l3Jx
-         Azh8WZTylBinavH31uQuJN3OAS/DBs6M6abpWagxM/A66mfGPDptzm9ATmkjHmAgv3H1
-         qkiGJOEbGFNjhO9OqJECEVbOo53N+TTWM2SWqEbw5Kj2seODe/ZuGmQ7R31yJwnrVDcK
-         C3EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732323485; x=1732928285;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gjPNDocQul8Z5NafjwYaP8O0UL5kL4VcdW/j1433320=;
-        b=guJlKFZBNml7dOdjkt6f9L0qebuWbYJrgUa99VtSWpqKm/kCAgB0S4eh0PvaWxgwuy
-         Nk3KjZkmu0RX/jn5V1RjuXMWFDrc3lvwjLEYpBx/1XWRS9R/sw9WsBI5r1j4/9s9HNTF
-         Kzat1Wbf9bkfm2tjY15hfyuwdgVf1zLnpP3g/9LFPW0nTnHInWMj3PEF2Ko/1Abi4OFs
-         Xbulr5cjJcP6pkRoRWnv+CdTUQkXFTQpmZmvbih0qdbPnGrF3Rb3xcwEvSP4ZNBTesHV
-         74CjZ6Hi1IAnM/D6Glt8pdt3v3c3l59gHi9kWRJ9CNlXfFz9dalOk2Vbrd+oj1hTduE1
-         kHvA==
-X-Forwarded-Encrypted: i=1; AJvYcCVap+7mPWsknAcCV1MjjqxH+mhw5GRfY2xbJ+VNh/lpm7JCXrQfvyQPpmGxrj2fVKIuYkxMFUZX1RZyu/w=@vger.kernel.org, AJvYcCWkdf50q8+gNhULRYO8fCh1c8BOOEaJzrLGzfyZ/JIUmOQ+VwlvgmQcYfUWjNrGJUShUekDG7U3ltIn9n0yRPW5RA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW/dNI3+nxHn+cKW9P75/TAAvl/rURoPfIBAYFktDdpM7cX++c
-	DvwESVhxuhBdiQ0zGIrfCfh6pgn37QBVJc51ArsCU0ee4siYJQk9Xetd5Cfh6qT7J9iOVhvBueP
-	UFP0w54aOpcEuq//oh6l0zSxOMxU=
-X-Gm-Gg: ASbGncvMdhVyAHe69OxeeFAxtVnXi8RQYcNih5ner53UMD9GjiXDqGks8GVNfgWAR6T
-	28rZVgnj17/abeiL+8YC1d2vGCbtDrRl6
-X-Google-Smtp-Source: AGHT+IGw2h1Xh25R+Bb58ZbiscxcwNkZB/4AvE5Srlwo1QGbXnfMe/X+789oD7dAiAew+MMa1wRTr/wNEgWAGk1c/SQ=
-X-Received: by 2002:a05:6902:723:b0:e30:d516:e0ea with SMTP id
- 3f1490d57ef6-e38f8b343bcmr5232015276.21.1732323485468; Fri, 22 Nov 2024
- 16:58:05 -0800 (PST)
+	s=arc-20240116; t=1732323800; c=relaxed/simple;
+	bh=8Qd/2RIKKlsOCErrjdY4EU2AkhvuqRMK8OWdf1rWTX8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rhOiaKqw7seSd+TmhxdfBlRtP6oblZmxgOPVy+4rPczecjxW+bdnXXGor/YkbDVPZK+7uQ4lpqOGJL6y2RLqcp0n9MAh+3u/OG7iW6NxJuACTI9PHHeHgeaNGM/gh0pfk+UCfPtaPjBH6J0OU1wHwgQwkwXFAWUB91/K0yeeqyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=tyIYsuMK; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=DKWouLdo+R/jNUeXYvuMi6LNx1L+DRk29BvI3BCGaDk=; b=tyIYsuMKCR3VAtniecPkhu+/Ys
+	b5aRXe9RtiecBXCg20dyIvWSdOUD19oHv8auXBu/fSISxRu6Oo1R50WgUB1VuxLmCGmm1odVJ6HsE
+	TIZuGnQisXYIWBXV7cqK+SZt91FY86jizpUi6ESc19Uy6S9aoHgOvjssbU6BO3t5BPjA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tEeYG-00EBCF-JS; Sat, 23 Nov 2024 02:03:08 +0100
+Date: Sat, 23 Nov 2024 02:03:08 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Frank Sae <Frank.Sae@motor-comm.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, xiaogang.fan@motor-comm.com,
+	fei.zhang@motor-comm.com, hua.sun@motor-comm.com
+Subject: Re: [PATCH net-next v2 09/21] motorcomm:yt6801: Implement some
+ hw_ops function
+Message-ID: <46206a81-e230-411c-8a78-d461d238b171@lunn.ch>
+References: <20241120105625.22508-1-Frank.Sae@motor-comm.com>
+ <20241120105625.22508-10-Frank.Sae@motor-comm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241123005512.342079-1-howardchu95@gmail.com> <20241123005512.342079-2-howardchu95@gmail.com>
-In-Reply-To: <20241123005512.342079-2-howardchu95@gmail.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Fri, 22 Nov 2024 16:58:00 -0800
-Message-ID: <CAH0uvojmPp4-0xb6sObr8Tcw=ujysLMBeebpwON0Ygy=LH63Zg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] perf trace: Add tests for BTF general augmentation
-To: peterz@infradead.org
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, 
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
-	irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241120105625.22508-10-Frank.Sae@motor-comm.com>
 
-For the first patch, there is:
+It took a lot of effort to find your MDIO code. And MDIO bus driver
+makes a good patch on its own.
 
+> +static int mdio_loop_wait(struct fxgmac_pdata *pdata, u32 max_cnt)
+> +{
+> +	u32 val, i;
+> +
+> +	for (i = 0; i < max_cnt; i++) {
+> +		val = rd32_mac(pdata, MAC_MDIO_ADDRESS);
+> +		if ((val & MAC_MDIO_ADDR_BUSY) == 0)
+> +			break;
+> +
+> +		fsleep(10);
+> +	}
+> +
+> +	if (i >= max_cnt) {
+> +		WARN_ON(1);
+> +		yt_err(pdata, "%s timeout. used cnt:%d, reg_val=%x.\n",
+> +		       __func__, i + 1, val);
+> +
+> +		return -ETIMEDOUT;
+> +	}
 
-Suggested-by: Ian Rogers <irogers@google.com>
+Please replace this using one of the helpers in
+include/linux/iopoll.h.
 
-Thanks,
-Howard
-
-On Fri, Nov 22, 2024 at 4:55=E2=80=AFPM Howard Chu <howardchu95@gmail.com> =
-wrote:
->
-> Currently, we only have perf trace augmentation tests for enum
-> arguments. This patch adds tests for more general syscall arguments,
-> such as struct pointers, strings, and buffers.
->
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> ---
->  tools/perf/tests/shell/trace_btf_general.sh | 68 +++++++++++++++++++++
->  1 file changed, 68 insertions(+)
->  create mode 100755 tools/perf/tests/shell/trace_btf_general.sh
->
-> diff --git a/tools/perf/tests/shell/trace_btf_general.sh b/tools/perf/tes=
-ts/shell/trace_btf_general.sh
-> new file mode 100755
-> index 000000000000..7bcca81a40d8
-> --- /dev/null
-> +++ b/tools/perf/tests/shell/trace_btf_general.sh
-> @@ -0,0 +1,68 @@
-> +#!/bin/bash
-> +# perf trace BTF general tests
-> +# SPDX-License-Identifier: GPL-2.0
+> +#define PHY_WR_CONFIG(reg_offset)		(0x8000205 + ((reg_offset) * 0x10000))
+> +static int fxgmac_phy_write_reg(struct fxgmac_pdata *pdata, u32 reg_id, u32 data)
+> +{
+> +	int ret;
 > +
-> +err=3D0
-> +set -e
+> +	wr32_mac(pdata, data, MAC_MDIO_DATA);
+> +	wr32_mac(pdata, PHY_WR_CONFIG(reg_id), MAC_MDIO_ADDRESS);
+> +	ret = mdio_loop_wait(pdata, PHY_MDIO_MAX_TRY);
+> +	if (ret < 0)
+> +		return ret;
 > +
-> +. "$(dirname $0)"/lib/probe.sh
-> +skip_if_no_perf_trace || exit 2
+> +	yt_dbg(pdata, "%s, id:%x %s, ctrl:0x%08x, data:0x%08x\n", __func__,
+> +	       reg_id, (ret == 0) ? "ok" : "err", PHY_WR_CONFIG(reg_id), data);
 > +
-> +file1=3D$(mktemp /tmp/file1_XXXXX)
-> +file2=3D$(echo $file1 | sed 's/file1/file2/g')
-> +
-> +buffer=3D"the content of the buffer"
-> +
-> +trap cleanup EXIT TERM INT HUP
-> +
-> +trace_test_string() {
-> +  echo "Testing perf trace's string augmentation"
-> +  if ! perf trace -e renameat* --max-events=3D1 -- mv ${file1} ${file2} =
-2>&1 | grep -q -E " +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +mv\/[0-9]+ r=
-enameat(2)?\(olddfd: .*, oldname: \"${file1}\", newdfd: .*, newname: \"${fi=
-le2}\", flags: .*\) +=3D +[0-9]+$"
-> +  then
-> +    echo "String augmentation test failed"
-> +    err=3D1
-> +  fi
+> +	return ret;
 > +}
 > +
-> +trace_test_buffer() {
-> +  echo "Testing perf trace's buffer augmentation"
-> +  # echo will insert a newline (\10) at the end of the buffer
-> +  if ! perf trace -e write --max-events=3D1 -- echo "${buffer}" 2>&1 | g=
-rep -q -E " +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +echo\/[0-9]+ write\(=
-fd: [0-9]+, buf: ${buffer}.*, count: [0-9]+\) +=3D +[0-9]+$"
-> +  then
-> +    echo "Buffer augmentation test failed"
-> +    err=3D1
-> +  fi
+> +#define PHY_RD_CONFIG(reg_offset)		(0x800020d + ((reg_offset) * 0x10000))
+> +static int fxgmac_phy_read_reg(struct fxgmac_pdata *pdata, u32 reg_id)
+> +{
+> +	u32 val;
+> +	int ret;
+> +
+> +	wr32_mac(pdata, PHY_RD_CONFIG(reg_id), MAC_MDIO_ADDRESS);
+> +	ret =  mdio_loop_wait(pdata, PHY_MDIO_MAX_TRY);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	val = rd32_mac(pdata, MAC_MDIO_DATA);  /* Read data */
+> +	yt_dbg(pdata, "%s, id:%x ok, ctrl:0x%08x, val:0x%08x.\n", __func__,
+> +	       reg_id, PHY_RD_CONFIG(reg_id), val);
+> +
+> +	return val;
 > +}
+
+And where is the rest of the MDIO bus driver?
+
+> +static int fxgmac_config_flow_control(struct fxgmac_pdata *pdata)
+> +{
+> +	u32 val = 0;
+> +	int ret;
 > +
-> +trace_test_struct_btf() {
-> +  echo "Testing perf trace's struct augmentation"
-> +  if ! perf trace -e clock_nanosleep --force-btf --max-events=3D1 -- sle=
-ep 1 2>&1 | grep -q -E " +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +sleep\/=
-[0-9]+ clock_nanosleep\(rqtp: \(struct __kernel_timespec\)\{\.tv_sec =3D \(=
-__kernel_time64_t\)1,\}, rmtp: 0x[0-9a-f]+\) +=3D +[0-9]+$"
-> +  then
-> +    echo "BTF struct augmentation test failed"
-> +    err=3D1
-> +  fi
+> +	fxgmac_config_tx_flow_control(pdata);
+> +	fxgmac_config_rx_flow_control(pdata);
+> +
+> +	/* Set auto negotiation advertisement pause ability */
+> +	if (pdata->tx_pause || pdata->rx_pause)
+> +		val |= ADVERTISE_PAUSE_CAP | ADVERTISE_PAUSE_ASYM;
+> +
+> +	ret = phy_modify(pdata->phydev, MII_ADVERTISE,
+> +			 ADVERTISE_PAUSE_CAP | ADVERTISE_PAUSE_ASYM, val);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return phy_modify(pdata->phydev, MII_BMCR, BMCR_RESET, BMCR_RESET);
 > +}
+
+
+Yet more code messing with the PHY. This all needs to go.
+
+> +static int fxgmac_phy_clear_interrupt(struct fxgmac_pdata *pdata)
+> +{
+> +	u32 stats_pre, stats;
 > +
-> +cleanup() {
-> +       rm -rf ${file1} ${file2}
+> +	if (mutex_trylock(&pdata->phydev->mdio.bus->mdio_lock) == 0) {
+> +		yt_dbg(pdata, "lock not ready!\n");
+> +		return 0;
+> +	}
+> +
+> +	stats_pre = fxgmac_phy_read_reg(pdata, PHY_INT_STATUS);
+> +	if (stats_pre < 0)
+> +		goto unlock;
+> +
+> +	stats = fxgmac_phy_read_reg(pdata, PHY_INT_STATUS);
+> +	if (stats < 0)
+> +		goto unlock;
+> +
+> +	phy_unlock_mdio_bus(pdata->phydev);
+> +
+> +#define LINK_DOWN	0x800
+> +#define LINK_UP		0x400
+> +#define LINK_CHANGE	(LINK_DOWN | LINK_UP)
+> +	if ((stats_pre & LINK_CHANGE) != (stats & LINK_CHANGE)) {
+> +		yt_dbg(pdata, "phy link change\n");
+> +		return 1;
+> +	}
+> +
+> +	return 0;
+> +unlock:
+> +	phy_unlock_mdio_bus(pdata->phydev);
+> +	yt_err(pdata, "fxgmac_phy_read_reg err!\n");
+> +	return  -ETIMEDOUT;
 > +}
-> +
-> +trap_cleanup() {
-> +       echo "Unexpected signal in ${FUNCNAME[1]}"
-> +       cleanup
-> +       exit 1
-> +}
-> +
-> +trace_test_string
-> +
-> +if [ $err =3D 0 ]; then
-> +  trace_test_buffer
-> +fi
-> +
-> +if [ $err =3D 0 ]; then
-> +  trace_test_struct_btf
-> +fi
-> +
-> +cleanup
-> +
-> +exit $err
-> --
-> 2.43.0
->
+
+You need to rework your PHY interrupt handling. The PHY driver is
+responsible for handing the interrupt registers in the PHY. Ideally
+you just want to export an interrupt to phylib, so it can do all the
+work.
+
+	Andrew
 
