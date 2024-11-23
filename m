@@ -1,85 +1,84 @@
-Return-Path: <linux-kernel+bounces-419041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE1C49D68DC
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 12:29:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E59E9D68DE
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 12:30:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B704B2193C
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 11:29:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FBF216141C
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 11:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F53618A6B5;
-	Sat, 23 Nov 2024 11:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C4418A6BA;
+	Sat, 23 Nov 2024 11:30:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tquh4EFJ"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lw+czA8Y"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1522F4FA;
-	Sat, 23 Nov 2024 11:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC7B4204B;
+	Sat, 23 Nov 2024 11:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732361359; cv=none; b=qJ09po4XUQhYRC893XAOzOhZlxRpzTVXm+Ma0vyNBPWezMcbi/lj2JPNPUNYUgKhs2DkVtdih/0j+IKO8/aVI6jSFa06eP3MML13f+D2Npv+MmCqXU9wfSB2ADFqeXjA4jpQ4eEhIoB3Cpw+dEvakLzfN0fNVGT57LXxRSe2sP4=
+	t=1732361447; cv=none; b=Kr83YayPPVjMqsy7i3rKQScvjUZC7pumBHnzyUPlhsCFHir/Xb8v+pfHQecuGn7XeE6WvHVYNnh44PY/YFdinpG2d4hElBpbw2H7CrGwDqn8sb0XTHlOC2/4OOxC/vpNvq73AXiXsJAKJymnd+6n3YI+so0f4IB+DD93UZ5noT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732361359; c=relaxed/simple;
-	bh=Ki20cI8ZyBHp724TPkTVtVHSiOU63Gz+hpGQwyAufi0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h81hFcqTAPLlJCTb86zUgjlA8STJq0d3tR7dtSSMAAto5H9G0jGGFB0mtbQtP4C+yT4tfc8UD5ENXu3IsRuzrZRJDf8hsmHo54RVBYrK9be2PPuciiMvdN6ptvPgF/VTprJ7DdhuxO+tZgr7tdCFo6JnIfs2bOHuck7/DnrdKcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tquh4EFJ; arc=none smtp.client-ip=209.85.216.54
+	s=arc-20240116; t=1732361447; c=relaxed/simple;
+	bh=s1kW0GC7tVu/ry+dzlrfNXs6b4WecJETvWvBvwoP7UY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JI0L0u3Nwfq3X8bcD4zYzwGka2TeO1DksTvAAsSc6I5EIXaJWLzaNXthTetGDgfqRVgQJLItm+1+rkaXnGwwv+/YXvmHx4mnpndvDEbSWHMTd+sB6zKmeXGLbHbUB8v5DW43ydPE/3rVXs9Vl8E3O6MvwEFXNpbgL6sZuuFor+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lw+czA8Y; arc=none smtp.client-ip=209.85.216.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2ea68cd5780so2526728a91.3;
-        Sat, 23 Nov 2024 03:29:17 -0800 (PST)
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2ea8d322297so2367013a91.1;
+        Sat, 23 Nov 2024 03:30:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732361357; x=1732966157; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732361445; x=1732966245; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1ZEWgsPrytcrqYA4bO1VsXzllLQymLr9lNKwtdsQN+w=;
-        b=Tquh4EFJYq6A2gtA0ciw4UnQ0uVjz7rYGMvG1o/SSjZY43KjONjlH+/ogMGUAHI/5v
-         iCBatthC2JV4jWKEwYQCPOa0C+B3zP1Yc9DIuJdSWMm7dqalq+gQBJRlTgUkTtA+kg+H
-         nMJyLzM1XLHH8B4/CySqS8huJjbDZ0YrtjeBvXqF7U/IDqJtSu+aMIvAIO3kQrtxqpS3
-         SJP4asKaIignuNySu4I2fcfezfAPc03Luir89FSc6Pg5GpDEm5CAUl3YEgXJgTEOZYLB
-         4Lucm0klB8ZUz6eQWkZn1+bSvN9us5+F+F2IyDGF8sVTwi6yJbVbE+mrQki8vvFk68PH
-         kxlA==
+        bh=BoDEcCDWOg767qwXyvpXiCVeebqUSdME87+maYfZUUo=;
+        b=Lw+czA8Y4vmDaSyvhMoDjeLAlvgCBJpkIY/n5siDcKIkZ/EmYjrOOLSQNsWW0w88cP
+         IfaAF3/gE/XAwzKgipSzY7SmxVzzW9YlIv170PztAKv5aw4SRbCTQWG4kiXaB2fUyUAM
+         ekm9c9GrQ52P1OdMau3y4YRGF3t4ZifV9n4iJUOAkTGSn5FWcsWW1/ag+5ShU/r71Cju
+         bUXoE9w8DSb0XqnjmkErV56yqDrcMCZ75g1m/L4uN8aFfdDrRSzqqNYEarkqGMrV+4Ck
+         ZpH/jIlabOd3+ZKu40FtJsPnh5GRWCoBDJDSweekonDtGgA4QZKkopg1qqpjvfX9U/yq
+         bNyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732361357; x=1732966157;
+        d=1e100.net; s=20230601; t=1732361445; x=1732966245;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=1ZEWgsPrytcrqYA4bO1VsXzllLQymLr9lNKwtdsQN+w=;
-        b=oMiKdK7VHBlzFcIAblgic1wo5fM9dJr99DgqrEVz7kwzO0M8qrGh3WRb/CV76K2d14
-         My5zzAnNcI7dM2GddIe3BjUCLSSayjr/k7pUzxKS7OXFVa4Ex3Bd3196EUR1euPxb8Oo
-         BlnWKsgKBV/bfzQSQmbGIipQDLfW1ckNjo4/Rzb6WG78PO6mzjiu4FESh9fMO0meJ/XH
-         00E11Jxk2/nbJ/m4ARQrOk6TgXZFrwFUQDXPNlMfpjrvl5wj3+PgZJ/XKk3/8YB4Lb54
-         3zMm6WF8i+GotO/d3ljCRMmY6bNHQarOvkVcrWHSlasp4ytKe1sBFmkNcOjw//IQQY0g
-         gO+g==
-X-Forwarded-Encrypted: i=1; AJvYcCURk3aGv99PAvnJZnWEsRXup+h0CHuCskAYGniPWbE/54DFoCnruslKbeXhr5QvsOYpwfqprJRq8/Pdjls=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwfoqr77ODao1vPxVb1YYF1+c2h6aGpKHDRgxd0hVe+AL/hiKv
-	XyWJRDY47W0vMe+enQlgymtlVwU/kHerwkkNkzrRx8oM7mXOnq4f
-X-Gm-Gg: ASbGnctR/pKz9EgroZFdVwnnxRBc0ChtVR8o65t1VVGVhm1a14WM5Py9QjfAvrg+Rh9
-	AZcgmoisy0ROo/Jifmit0cDaR5VqUQyHFt39ouNNVGfRM1Ntjgk1/rIGqnn9sfSfVRx34T8dXLT
-	Lt7HoCwQRbcNedG6SZ90PraYmrQlzyIEMnKnQ58EeGkII/CjMHaEg7nxcSKak8T7leiSdh2iOar
-	RDa07lYwU2P/bDgLAgVNXgzrWGPHvx5nLGPTFdJ8tvuCAyIyyUwY8KBDWmOAmY1iV2aGhAC0qyB
-	yVuKQE7aI97mG4zm1t6N78yCIbNP3njk
-X-Google-Smtp-Source: AGHT+IFqtFUtjes0k5g0Gjl2qtEijRxNOC/R+dhCwlrAGMyYaof/fqlscmAxyLa4StFTs6HctzgZBA==
-X-Received: by 2002:a17:90b:17c9:b0:2ea:a9ac:eee1 with SMTP id 98e67ed59e1d1-2eb0e234c02mr7354722a91.10.1732361356956;
-        Sat, 23 Nov 2024 03:29:16 -0800 (PST)
+        bh=BoDEcCDWOg767qwXyvpXiCVeebqUSdME87+maYfZUUo=;
+        b=sCMR7UtNqrK9DCDgh7V0K8CdEyOLl1or3BP7bmdtWReaweXgX+znYaCiUbfG5VWGJw
+         sN/6VY8G2cH9U9xWZac5cOwEG6HzLZs03obBojLG0ICiR5IOrCjoBkxE7yA7mIW5tyWv
+         Lxa1w+UrxQIOoQ2YDRD+OgO4u5RQnRKLqnfdauN4xgU3DjXQLruPJsVBYRG0DSuxh1my
+         +SJ7nxQA8Fai9d+uGPhsErfRIl063BKJHa+PSv+ByIXKUsgrS3uEOWPGvTG2JQiqeXI2
+         nEPGd4fVU9DwPAz6ygpS22z1zgVN7dWAzAWiQZEHoPjV3UX97KFJY0tKnK+nvirk3txo
+         TVLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgXAlhbGTZL8Q8vryx2mD7lZ2o5IZls6fSfZE5TYJpStsgDI4H5eCtW4m9XLDM4KB/xl5TXQ/fx+P7TPU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2DREPa4DPRY+WsbT+XvO1+9FT0KUSMjHyLakkxzs6/4W7axBE
+	dsqW3Y+bHlyZ0JvHgtsOVYDab1wXntPXt2tkdleBzLR3D5BsKewi
+X-Gm-Gg: ASbGnctEdPOG0HWXJraLfAkjbHT28qGktSHKeIcoRcU807x5V/sSRFJR0/Np+VPF3ly
+	cYy2iqeKTD3xtaw2ejiIscmed/+4eO37tbJw6kDzBFoTeFwWGtXPDJOmkTnTDTZWM5I8hEuw+wI
+	uKPdYH4REkERsbNM1+ZaVm3CtgHUd8s7a/MnyVMEACsYCWgVjQI6HgRugpiiU9KpBPdPbqocCpC
+	I6WM4O1w78Xu39WM0ASMwdsUAhsICOiub+fiN1hK6n5CtTFC1g5jA57R/eJ3ApiuTbkzXg04oXN
+	NQxydNIv6cCC5eqOUsXAfTFxEnH5jX8a8TBMA+Vp9lg=
+X-Google-Smtp-Source: AGHT+IEU8x8SQh4r9HRbD5cHK1d/AtFbp85c1bmrSAfvLQQxFbmsHUcltnW+iiHVjVXUgxE48lZiow==
+X-Received: by 2002:a17:90b:17cd:b0:2ea:7368:3359 with SMTP id 98e67ed59e1d1-2eb0e126a6cmr6921008a91.5.1732361445487;
+        Sat, 23 Nov 2024 03:30:45 -0800 (PST)
 Received: from localhost.localdomain ([121.241.130.50])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de558bcbsm3102902b3a.152.2024.11.23.03.29.14
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de554fd6sm3072302b3a.139.2024.11.23.03.30.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Nov 2024 03:29:16 -0800 (PST)
-From: Nishit Rao <nishitrao1011@gmail.com>
-To: nishitrao1011@gmail.com,
-	lains@riseup.net,
-	jikos@kernel.org,
-	bentiss@kernel.org
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Fix typo in drivers/hid-logitech-dj.c
-Date: Sat, 23 Nov 2024 16:59:10 +0530
-Message-ID: <20241123112910.87829-1-nishitrao1011@gmail.com>
-X-Mailer: git-send-email 2.41.0
+        Sat, 23 Nov 2024 03:30:45 -0800 (PST)
+From: Prateek Singh Rathore <prateek.singh.rathore@gmail.com>
+To: James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prateek Singh Rathore <prateek.singh.rathore@gmail.com>
+Subject: [PATCH] [SCSI] csiostor: fix typo doesnt->doesn't
+Date: Sat, 23 Nov 2024 03:30:38 -0800
+Message-Id: <20241123113038.11188-1-prateek.singh.rathore@gmail.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,27 +87,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Change spelling of doesn't
-
-Signed-off-by: Nishit Rao <nishitrao1011@gmail.com>
+Signed-off-by: Prateek Singh Rathore <prateek.singh.rathore@gmail.com>
 ---
- drivers/hid/hid-logitech-dj.c | 2 +-
+ drivers/scsi/csiostor/csio_scsi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
-index 34fa71ceec2b..b7d15859b2ad 100644
---- a/drivers/hid/hid-logitech-dj.c
-+++ b/drivers/hid/hid-logitech-dj.c
-@@ -534,7 +534,7 @@ static const char hidpp_descriptor[] = {
-  *
-  * Right now, RF report types have the same report types (or report id's)
-  * than the hid report created from those RF reports. In the future
-- * this doesnt have to be true.
-+ * this doesn't have to be true.
-  *
-  * For instance, RF report type 0x01 which has a size of 8 bytes, corresponds
-  * to hid report id 0x01, this is standard keyboard. Same thing applies to mice
+diff --git a/drivers/scsi/csiostor/csio_scsi.c b/drivers/scsi/csiostor/csio_scsi.c
+index 8329f0cab..d9f0b6888 100644
+--- a/drivers/scsi/csiostor/csio_scsi.c
++++ b/drivers/scsi/csiostor/csio_scsi.c
+@@ -800,7 +800,7 @@ csio_scsis_io_active(struct csio_ioreq *req, enum csio_scsi_ev evt)
+ 			rn = req->rnode;
+ 			/*
+ 			 * FW says remote device is lost, but rnode
+-			 * doesnt reflect it.
++			 * doesn't reflect it.
+ 			 */
+ 			if (csio_scsi_itnexus_loss_error(req->wr_status) &&
+ 						csio_is_rnode_ready(rn)) {
 -- 
-2.41.0
+2.20.1
 
 
