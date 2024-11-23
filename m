@@ -1,179 +1,180 @@
-Return-Path: <linux-kernel+bounces-419299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1999D6C0D
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 00:04:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8B899D6C1B
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 00:14:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 437E0B209CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 23:04:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A96EA2817D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 23:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1DA1A7ADD;
-	Sat, 23 Nov 2024 23:04:23 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE20D1ADFEA;
+	Sat, 23 Nov 2024 23:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="cOKhxZfg"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E791915098F
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 23:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8541A157A48;
+	Sat, 23 Nov 2024 23:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732403062; cv=none; b=dqnmCG/3/eqUXlMwFmWPDUydbgRZ58wnAbCAHyGZDFjkAoNIyZgz91E/sVtNfhB/P6GiFfyKpb0YUUrwZL4khm7TCOxDoDQeYtF0EcRsdeWlIzYwVCJzuIV+8HMZTipOv8FjhWTp8c2WbH6BbNPmq3wedWIR8jFC/tHH27jF7iY=
+	t=1732403630; cv=none; b=flXl6jV4YYIroQUk0JV+4mYcIeYAAqu5CJuObcePILHMB1j50grfrmjDH2+94ONVuxzDSU69AXWpUFZFfYK2beiFYA7kZO7K39aKUP4BlxMFgRWuPKH+OyWdFcp8PjxFVyKjeAIWM4DxYGONNfIVGZyVQVdaTDEuJ8J1pLv7vlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732403062; c=relaxed/simple;
-	bh=OQKZmpprJjQHka1KGQ4qJxF4PFh5GjqDvlCcIhHf3vA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=iN+w+Nw722H6CqjJIV+yYEo/ab3Y6jcmx2vAWmFMq7Mjuhft945+oxmrHQ3krSp17ACX2RpAK8twdNJx/q75hCik8BOcIPrOZJstshs6BXuQVsMAx/aD7O4EfkWcHLNDMghledKvzVnCpP9IAQUFAlSx9GcfezABIbNiB97kPxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a76ba215b2so34721755ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 15:04:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732403060; x=1733007860;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2lIP8oYWN3Z6Cs7pp04JkPOHTRMRU6LhyBV5nJ0zgC0=;
-        b=mlPTlgfgVMvqltNDqh1tqw9A2BFD4WH1xeb78ZIk9P8cYHmQ716eEWkU8oiUSWnS2Z
-         gg/qcI+fGaOkCgxSpzfn7+jQFa+xXruujMNSdFCAbTFyefL7EWnF86LViaq9uxOYpJkr
-         E4aQLTlWMb9TuKxNmTHCfaBSg1KRzpUXqOLULkXKCrJjT9+foo32SA57vy0PXvHyvdD0
-         eN8ZaLOKtq8Krtdsqw0LgrFL1nmNlgmfgS7T/wfTgo1+6C2pmYtP1DRhLQTp2g19T8vI
-         JBr9YyFi6E1NQ81luRZ/pfLTrKeHqZx79WgNTDAx+z0qacsqRPRMaerzK3DthjGMZeRz
-         zqgA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlvV67jBvzSwWlCPFjASsuGTy8yCnk0YHz4xFYKKII0iJN4nmzAxBysrzJQYfMTQzZsyvlI4XVRj/4M+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKMxaNCxe1qFddzxywKYBzw5dIEwmGX+8cx5bmjr0UqczL/z8V
-	lc1D3p87KidfpefO81nXrMc9wIxy/+y4E4XKsJR2t5eH8rp0KZLx56vb1EyHyQyqQmc2MAs4oTy
-	4hOPPmH8OnqtN8UzNVNhLse24wBbWaiE07pY7MowLVIBOQ4vwukh//V4=
-X-Google-Smtp-Source: AGHT+IGxkh3DEa0BhCIDsDviPWHgC1r0aWEbqIrtW/I0wirAFEWL5dwOSKSvh5z4GPGBdb7dGC8pXBM8WXjlgMLRmW68xepJ6riq
+	s=arc-20240116; t=1732403630; c=relaxed/simple;
+	bh=hmKsj1Kmoig7skxnuCJnziJWFkrnNUegWisx4nPcWxw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TMds6sPXWLIsy7qtr3fvXbtAJlApG8kxBLAWCMnM+8SYMDq+LuqhhZLgzpgP1+exFRbhPHR7HDs1AlvYYFSk1pDgDXZOXZJERiheWi9jMOiVhAIqoXc6k9v1IKTDPPfPwMy0wDBYsp+gAGGJkB/pePXZ0XuEWiHYkz0cisfxUmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=cOKhxZfg; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from [192.168.149.162] (254C22A6.nat.pool.telekom.hu [37.76.34.166])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 5995AE47FC;
+	Sat, 23 Nov 2024 23:13:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1732403618;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=A1IjIuzmePlBChypxgkUHW8StKqlREwLvjwJVP3i4Ek=;
+	b=cOKhxZfgFJojLAMDVs/awBa7CV5zJr4zsoYskwrXwpPwfBOsdZT/2GSVQhTxVak9o4e90t
+	u6a8ICRiArSNd31wWh3ziYzP5iyT41jIMmtZCONuB3C+VgDGhaIwG5ToeafRrhttjr/VjW
+	XZEjcRyKKG3FU5iJ5LJ2qep1DCU3cUBYhJCJx09f7Pt5/FSe+EeI5FCn9usNapgQdPkbeB
+	eX/MELP1orenFn54unnOpu3JJRsJltsx9y9PSlodbMHBsiFsujaF7d5N+rNBDLBuaezHO8
+	MzWPJFSDSRurkPBwuk1UdZYKeN0RAb8hZM7iWgs/B2hakjFP+g34GPP3c8SeVA==
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Subject: [PATCH v7 0/8] Add MSM8917/PM8937/Redmi 5A
+Date: Sun, 24 Nov 2024 00:13:18 +0100
+Message-Id: <20241124-msm8917-v7-0-612729834656@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:4418:10b0:3a7:a553:72f with SMTP id
- e9e14a558f8ab-3a7a5530ef7mr33273105ab.18.1732403060102; Sat, 23 Nov 2024
- 15:04:20 -0800 (PST)
-Date: Sat, 23 Nov 2024 15:04:20 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67425f74.050a0220.1cc393.0020.GAE@google.com>
-Subject: [syzbot] [kernel?] general protection fault in bnep_session
-From: syzbot <syzbot+6df45dd3d03e1a9aca96@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, rafael@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAI9hQmcC/23Py27DIBAF0F+JWJeK4WGYrvofUReYh4NU2xVUV
+ qrI/16cDUjx8o44d5gHKSGnUMjH5UFy2FJJ61KDfrsQd7PLFGjyNRPOuAQGSOcyGwRNQTvhWYz
+ SKk7q658cYro/m65fNd9S+V3z37N4g2P62rEBZTRCFM6CNyaoz9mm5TstaZne1zyRo2jjHRbQM
+ K/YWKZVtNbgCKdYNAxMNywqHrx3yjqP2oynWPa4+7Y8No8BkUmN3J5j1WHgDauK68FCeiEA4Rw
+ PPRYNDxU7IU0cFWIM8QXv+/4PAKU0CtQBAAA=
+X-Change-ID: 20241019-msm8917-17c3d0ff4a52
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, Amit Kucheria <amitk@kernel.org>, 
+ Thara Gopinath <thara.gopinath@gmail.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>, 
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
+ Dang Huynh <danct12@riseup.net>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732403617; l=3512;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=hmKsj1Kmoig7skxnuCJnziJWFkrnNUegWisx4nPcWxw=;
+ b=vA+xSz4h4tyFicz58+tYzZHvNNNw0ti/c9/hgSTBLLzGxjWONwTmdsJA7ERGqgAyC+StMCrko
+ QcQHAYPLAESBQY0V7d8XAa0/XJ+F9Riq1E291IPlthiOxPZ+6nn85rd
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-Hello,
+This patch series add support for MSM8917 soc with PM8937 and
+Xiaomi Redmi 5A (riva).
 
-syzbot found the following issue on:
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+---
+Changes in v7:
+- msm8917-xiaomi-riva:
+  - Add pinctrls for used GPIO pins.
+  - Use interrupts-extend for charger.
+  - Order properies.
+- Link to v6: https://lore.kernel.org/r/20241113-msm8917-v6-0-c348fb599fef@mainlining.org
 
-HEAD commit:    fcc79e1714e8 Merge tag 'net-next-6.13' of git://git.kernel..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=135bbb78580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=275de99a754927af
-dashboard link: https://syzkaller.appspot.com/bug?extid=6df45dd3d03e1a9aca96
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Changes in v6:
+- msm8917:
+  - Consolidate SDC pins, remove sdc2-cd-on/off pins.
+  - Remove cluster-sleep-0 and cluster-sleep-1
+  and rename cluster-sleep-2 to cluster-sleep-0.
+  - Fix spi, i2c and related pinctrl namings.
+- msm8917-xiaomi-riva: follow i2c name changes.
+- Link to v5: https://lore.kernel.org/r/20241112-msm8917-v5-0-3ca34d33191b@mainlining.org
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Changes in v5:
+- msm8917:
+  - Remove aliases.
+  - Rename spi, i2c labels and pins.
+  - Remove clock-frequency from timers
+  - Remove unused mpss_mem region.
+  - Use mboxes where it can be used, only smd-edge uses qcom,ipc.
+- msm8917-xiaomi-riva: Follow i2c label changes.
+- Link to v4: https://lore.kernel.org/r/20241109-msm8917-v4-0-8be9904792ab@mainlining.org
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1539da626e54/disk-fcc79e17.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d44dbcc68df2/vmlinux-fcc79e17.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/76fdad1309ae/bzImage-fcc79e17.xz
+Changes in v4:
+- msm8917 pinctrl: Fix gpio regexp in the schema.
+- msm8937 tsens: Rename ops_msm8976 to ops_common and use it for msm8937.
+- msm8917: fix address padding, naming and ordering, remove polling-delays.
+- Remove applied patches from the series.
+- Link to v3: https://lore.kernel.org/r/20241107-msm8917-v3-0-6ddc5acd978b@mainlining.org
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6df45dd3d03e1a9aca96@syzkaller.appspotmail.com
+Changes in v3:
+- msm8917-xiaomi-riva: Fix issues addressed by Konrad.
+- msm8917: Fix node addresses, orders of some properties.
+- pm8937: simplify vadc channels.
+- msm8917 pinctrl: Fix schema issues addressed by Krzysztof. 
+- Remove applied tcsr patch from this series.
+- Reword some commit title.
+- Link to v2: https://lore.kernel.org/r/20241031-msm8917-v2-0-8a075faa89b1@mainlining.org
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc000000000b: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000058-0x000000000000005f]
-CPU: 0 UID: 0 PID: 8179 Comm: kbnepd bnep0 Not tainted 6.12.0-syzkaller-05480-gfcc79e1714e8 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:klist_put lib/klist.c:212 [inline]
-RIP: 0010:klist_del+0x49/0x110 lib/klist.c:230
-Code: f5 4d 89 f5 49 c1 ed 03 43 80 7c 25 00 00 74 08 4c 89 f7 e8 f9 77 3d f6 49 8b 1e 48 83 e3 fe 48 8d 7b 58 48 89 f8 48 c1 e8 03 <42> 80 3c 20 00 74 05 e8 db 77 3d f6 4c 8b 7b 58 48 89 df e8 2f 99
-RSP: 0000:ffffc9000b91f828 EFLAGS: 00010202
-RAX: 000000000000000b RBX: 0000000000000000 RCX: ffff88807e749e00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000058
-RBP: ffffc9000b91f950 R08: ffffffff823dd8ba R09: 1ffff11005dda786
-R10: dffffc0000000000 R11: ffffed1005dda787 R12: dffffc0000000000
-R13: 1ffff1100b406f8c R14: ffff88805a037c60 R15: ffff88805dc14b88
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f6e57cfc57c CR3: 000000005ded8000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- device_del+0x2c9/0x9b0 drivers/base/core.c:3838
- unregister_netdevice_many_notify+0x1859/0x1da0 net/core/dev.c:11556
- unregister_netdevice_many net/core/dev.c:11584 [inline]
- unregister_netdevice_queue+0x303/0x370 net/core/dev.c:11456
- unregister_netdevice include/linux/netdevice.h:3192 [inline]
- unregister_netdev+0x1c/0x30 net/core/dev.c:11602
- bnep_session+0x2e3c/0x3030 net/bluetooth/bnep/core.c:525
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:klist_put lib/klist.c:212 [inline]
-RIP: 0010:klist_del+0x49/0x110 lib/klist.c:230
-Code: f5 4d 89 f5 49 c1 ed 03 43 80 7c 25 00 00 74 08 4c 89 f7 e8 f9 77 3d f6 49 8b 1e 48 83 e3 fe 48 8d 7b 58 48 89 f8 48 c1 e8 03 <42> 80 3c 20 00 74 05 e8 db 77 3d f6 4c 8b 7b 58 48 89 df e8 2f 99
-RSP: 0000:ffffc9000b91f828 EFLAGS: 00010202
-RAX: 000000000000000b RBX: 0000000000000000 RCX: ffff88807e749e00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000058
-RBP: ffffc9000b91f950 R08: ffffffff823dd8ba R09: 1ffff11005dda786
-R10: dffffc0000000000 R11: ffffed1005dda787 R12: dffffc0000000000
-R13: 1ffff1100b406f8c R14: ffff88805a037c60 R15: ffff88805dc14b88
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f6e57cfc57c CR3: 0000000033700000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	f5                   	cmc
-   1:	4d 89 f5             	mov    %r14,%r13
-   4:	49 c1 ed 03          	shr    $0x3,%r13
-   8:	43 80 7c 25 00 00    	cmpb   $0x0,0x0(%r13,%r12,1)
-   e:	74 08                	je     0x18
-  10:	4c 89 f7             	mov    %r14,%rdi
-  13:	e8 f9 77 3d f6       	call   0xf63d7811
-  18:	49 8b 1e             	mov    (%r14),%rbx
-  1b:	48 83 e3 fe          	and    $0xfffffffffffffffe,%rbx
-  1f:	48 8d 7b 58          	lea    0x58(%rbx),%rdi
-  23:	48 89 f8             	mov    %rdi,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 20 00       	cmpb   $0x0,(%rax,%r12,1) <-- trapping instruction
-  2f:	74 05                	je     0x36
-  31:	e8 db 77 3d f6       	call   0xf63d7811
-  36:	4c 8b 7b 58          	mov    0x58(%rbx),%r15
-  3a:	48 89 df             	mov    %rbx,%rdi
-  3d:	e8                   	.byte 0xe8
-  3e:	2f                   	(bad)
-  3f:	99                   	cltd
-
+Changes in v2:
+- Add msm8937 tsens support.
+- Fix issues addressed by reviews.
+- Link to v1: https://lore.kernel.org/r/20241019-msm8917-v1-0-f1f3ca1d88e5@mainlining.org
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Barnabás Czémán (5):
+      dt-bindings: pinctrl: qcom: Add MSM8917 pinctrl
+      dt-bindings: iommu: qcom,iommu: Add MSM8917 IOMMU to SMMUv1 compatibles
+      dt-bindings: nvmem: Add compatible for MS8917
+      dt-bindings: arm: qcom: Add Xiaomi Redmi 5A
+      arm64: dts: qcom: Add Xiaomi Redmi 5A
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Dang Huynh (1):
+      arm64: dts: qcom: Add PM8937 PMIC
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Otto Pflüger (2):
+      pinctrl: qcom: Add MSM8917 tlmm pinctrl driver
+      arm64: dts: qcom: Add initial support for MSM8917
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    7 +
+ .../devicetree/bindings/iommu/qcom,iommu.yaml      |    1 +
+ .../devicetree/bindings/nvmem/qcom,qfprom.yaml     |    1 +
+ .../bindings/pinctrl/qcom,msm8917-pinctrl.yaml     |  160 ++
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts   |  335 ++++
+ arch/arm64/boot/dts/qcom/msm8917.dtsi              | 1946 ++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/pm8937.dtsi               |  152 ++
+ drivers/pinctrl/qcom/Kconfig.msm                   |    6 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-msm8917.c             | 1620 ++++++++++++++++
+ 11 files changed, 4230 insertions(+)
+---
+base-commit: cfba9f07a1d6aeca38f47f1f472cfb0ba133d341
+change-id: 20241019-msm8917-17c3d0ff4a52
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Best regards,
+-- 
+Barnabás Czémán <barnabas.czeman@mainlining.org>
 
-If you want to undo deduplication, reply with:
-#syz undup
 
