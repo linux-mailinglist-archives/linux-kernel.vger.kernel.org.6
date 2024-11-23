@@ -1,114 +1,120 @@
-Return-Path: <linux-kernel+bounces-419064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC4F9D6910
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 13:43:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53BCB161655
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 12:43:27 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5722219D088;
-	Sat, 23 Nov 2024 12:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="dROvrBaH"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CA039D6922
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 13:59:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528D3175D39;
-	Sat, 23 Nov 2024 12:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13179281D74
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 12:59:20 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2897D1A08CB;
+	Sat, 23 Nov 2024 12:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TqI4h5g7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BA21836D9;
+	Sat, 23 Nov 2024 12:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732365800; cv=none; b=bAlUr8Kknlpn2mf+VwMUjlPVnvI2kZPo4UPVcy6GS4XHJcMJF2lmTYdFYaPGcJ1xr/wesA8YjpFDScnwTCii6jhdxxGt8uzgHhOyt7GdPUntAgViykFmdsL2PCNarIaq1ZmSXJkJaPLveISXj7YM0TvMwX1jhwdTEGVBrQS7LDQ=
+	t=1732366739; cv=none; b=gr58F/FkS401PRBn8Uv5PnkR0+Ko577oBdw86DaHcqVP8pLK5ZZ7ziF9/xeodXmWvCwEzNwVZHhamjC9rjQ0tQS9nq1xM68al5vyMvXVgt2/b+Ho0GHtR8b7qNwX3KRZ0pTxs6V78SDD4jXb1/issDsD4OwiLEeFiS/8AT7YTBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732365800; c=relaxed/simple;
-	bh=o8uExKqB5qYo54a2nVBhqm5tJs6jO0jYNm2MbZM9eVQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tJySb+sF4RcJp1y+6UVAF+Kjjqkw5qst0+MGa6FboJj+8c1zuQIInD3ja/wJvXXTKT++pk+Cdb81ssjBZ1LdCUkZaUjxNAbQi5AOnGMFO0nsLIMid4vpWTxNJmEtxSEj6c3TUwCb2Wjz6yAOoNcRFgfTgTJg6d1BN3ohYVcraoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=dROvrBaH; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id AF4C7A0365;
-	Sat, 23 Nov 2024 13:43:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=ZZCQu8PNGzbUydOutitt
-	bytVy0ecwKj8suiZ8x5X5G4=; b=dROvrBaHTGGG4MgsvrJAMJu1R4x5bs43t4uK
-	JzMegSkUE8dpqLmVV6m4qFjRxBEOyU2qMdGA92gHytO0Ts/Pfq/el7jzTRXW3n8v
-	7E6S+XJ8In98RN4FW8mcA1nojHNZqeqh9BtqTvzWe0oONkNL/Aomtf8HUBiuLnrz
-	+9GVEodm/s3IKRsPPdvIq/tYPv8bH+FMQWhBizcligiBOEoHWYg2vHvz8/esxSkv
-	LK0MKNci95AZsg/s82hf9kVbFj1KYbMwy7Ded7RrOnC/BriUo+3M3RLEHXJNO5kq
-	lwS3y4lCPJ3R+2nN2C0qg45qMtyyPUD6X/NSX7Dxz5heIFa+cERtSWP4eCRPw1Xx
-	AecrxG/b6Hg3volmGKpWDQImKJ1szml3gdyttkjibf66nnDlVbhnYJ9C6YzRJjaj
-	rv0rG++imr1V3dHbEmm/w5lIkQXQ8PUFyR5fqmczhCHsM8XG7DySqHQ6zcfduOvB
-	j4I7V1v6rnftGQ/nukkkcLJkWAibEpAqX9ViNb5lvR7onceoskoEvRAIglQP7ziz
-	B1VooIFWE57OU1PFs93oHyRG5iEntuZPb1ZLTdk4EOm7KfH1JJ+JEFhHtR87/WVr
-	altyh++C3uL1Zi+EyaAEdejbqF2J6bZMdrZf0brfZBFjIeKWhcqhzIgUR1WsR2tZ
-	0xw8e0g=
-From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-CC: Mesih Kilinc <mesihkilinc@gmail.com>,
-	=?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
-	<jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v6 5/5] ARM: dts: suniv: f1c100s: Activate Audio Codec for Lichee Pi Nano
-Date: Sat, 23 Nov 2024 13:39:05 +0100
-Message-ID: <20241123123900.2656837-6-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241123123900.2656837-1-csokas.bence@prolan.hu>
-References: <20241123123900.2656837-1-csokas.bence@prolan.hu>
+	s=arc-20240116; t=1732366739; c=relaxed/simple;
+	bh=gRTpoiz71rEZ3HEhPa5QBWzaIeCM3QF+8GY8L2ThZMU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kUo265dDGY1NlxKMRHjMzOnMbxLReYWyExMKNH9pkF3huoSoGP9WTblxFUSAB+pa5lDqbZHbCdUXer1dd17frozd1t5EObMnbTYL87aZ9wB6pk0hE6wmxLIyFmeh5lKbCQfsiLMxUkPxQeavikWLX7vwcozXXOE5wvMh0rZu/oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TqI4h5g7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DB411C4CECD;
+	Sat, 23 Nov 2024 12:58:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732366739;
+	bh=gRTpoiz71rEZ3HEhPa5QBWzaIeCM3QF+8GY8L2ThZMU=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=TqI4h5g7r7iu7STjYURGiYnIM5o3GxJC5v7RDOM7KQbTZR9nD5gc+jVy4pBpsF2yp
+	 nuDvzFpMx5/vs2Rq345JTG43P93axb0Ewt7xtF5fRKaGDH6Bkgx8jWXj1VNioI2U98
+	 TMQWr1IKAycA4+z51Yd5rQ9XM8bU94WakvmsKVS5JpBn9YCrpgFHHz7PzRWKANziIr
+	 +NzxW2CZMQYxouZpA0Lc/qLkXAWPyj7dOvsVU/KE8KK6O7ZYfVzAfS9h0Byhyq/PAD
+	 2+Jpiuedo7q4fXrd1kLn8hNWsIHOU0fULxMxCTt0EzZKzXjygh0kpxDxXv/iagDHRX
+	 egW403TGFihVA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C44A8E6ADF9;
+	Sat, 23 Nov 2024 12:58:58 +0000 (UTC)
+From: Maud Spierings via B4 Relay <devnull+maud_spierings.hotmail.com@kernel.org>
+Subject: [PATCH v2 0/4] Asus vivobook s15 improvements
+Date: Sat, 23 Nov 2024 13:58:52 +0100
+Message-Id: <20241123-asus_qcom_display-v2-0-a0bff8576024@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1732365796;VERSION=7980;MC=2302033481;ID=80957;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A29ACD9485560726B
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIzRQWcC/22NwQ6CMBBEf4Xs2Zq2gIon/8MQsimt3QQodpFIC
+ P9uJR49vsnMmxXYRrIM12yFaGdiCkMCfcjAeBweVlCbGLTUhVLqJJBf3DxN6JuWeOxwEcaWzp1
+ 1leeFhLQbo3X03p33OrEnnkJc9otZfdOfTed/bLMSUlxKrJyrdCERbz5MPVJ3TC2ot237AB1Kf
+ q20AAAA
+X-Change-ID: 20241116-asus_qcom_display-ce5ff7293340
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Douglas Anderson <dianders@chromium.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Maud Spierings <maud_spierings@hotmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732366736; l=1132;
+ i=maud_spierings@hotmail.com; s=20241110; h=from:subject:message-id;
+ bh=gRTpoiz71rEZ3HEhPa5QBWzaIeCM3QF+8GY8L2ThZMU=;
+ b=MODatZrh/bk+k0WvKk5jsrWTZsQpXoa/lqa9kKOJxymK6Qyl0TGqe7vy0/wuKcbNZJs7+mAWj
+ LqMReLG/gtYBYkRFPII2dBPjLg6Se6DsoDUJ7gRNEix7oZGpSZmEqn/
+X-Developer-Key: i=maud_spierings@hotmail.com; a=ed25519;
+ pk=CeFKVnZvRfX2QjB1DpdiAe2N+MEjwLEB9Yhx/OAcxRc=
+X-Endpoint-Received: by B4 Relay for maud_spierings@hotmail.com/20241110
+ with auth_id=273
+X-Original-From: Maud Spierings <maud_spierings@hotmail.com>
+Reply-To: maud_spierings@hotmail.com
 
-From: Mesih Kilinc <mesihkilinc@gmail.com>
+Improves several parts of the devicetree:
+1. The eDP panel bindings
+2. Adds a lid switch
+3. Adds bluetooth (depends on [1])
 
-Allwinner suniv F1C100s now has basic audio codec support. Activate it
-for Lichee Pi Nano board.
+[1]: https://lore.kernel.org/all/20241007-x1e80100-pwrseq-qcp-v1-0-f7166510ab17@linaro.org/
 
-Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
-[ csokas.bence: Moved and fixed conflict ]
-Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
 ---
- .../boot/dts/allwinner/suniv-f1c100s-licheepi-nano.dts    | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Changes in v2:
+- Add missing gpiokeys include in the lid switch patch
+- Add depends on for the bluetooth patch
+- Link to v1: https://lore.kernel.org/r/20241123-asus_qcom_display-v1-0-85a9ff9240aa@hotmail.com
 
-diff --git a/arch/arm/boot/dts/allwinner/suniv-f1c100s-licheepi-nano.dts b/arch/arm/boot/dts/allwinner/suniv-f1c100s-licheepi-nano.dts
-index 43896723a994..472ded0aafcf 100644
---- a/arch/arm/boot/dts/allwinner/suniv-f1c100s-licheepi-nano.dts
-+++ b/arch/arm/boot/dts/allwinner/suniv-f1c100s-licheepi-nano.dts
-@@ -62,6 +62,14 @@ &uart0 {
- 	status = "okay";
- };
- 
-+&codec {
-+	allwinner,audio-routing =
-+		"Headphone", "HP",
-+		"Headphone", "HPCOM",
-+		"MIC", "Mic";
-+	status = "okay";
-+};
-+
- &usb_otg {
- 	dr_mode = "otg";
- 	status = "okay";
+---
+Maud Spierings (4):
+      dt-bindings: display: panel: samsung,atna56ac03: Document ATNA56AC03
+      arm64: dts: qcom: x1e80100-vivobook-s15: Use the samsung,atna33xc20 panel driver
+      arm64: dts: qcom: x1e80100-vivobook-s15: Add lid switch
+      arm64: dts: qcom: x1e80100-vivobook-s15: Add bluetooth
+
+ .../bindings/display/panel/samsung,atna33xc20.yaml |  2 +
+ .../boot/dts/qcom/x1e80100-asus-vivobook-s15.dts   | 61 +++++++++++++++++++++-
+ 2 files changed, 62 insertions(+), 1 deletion(-)
+---
+base-commit: 80e87ab38380e4ddf238ba3d8436357c3e0b52d1
+change-id: 20241116-asus_qcom_display-ce5ff7293340
+
+Best regards,
 -- 
-2.34.1
+Maud Spierings <maud_spierings@hotmail.com>
 
 
 
