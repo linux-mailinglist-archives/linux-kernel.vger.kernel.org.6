@@ -1,109 +1,122 @@
-Return-Path: <linux-kernel+bounces-418929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 901189D6758
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 04:01:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19A659D675D
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 04:09:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B04FEB21C06
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 03:01:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6A1C28234F
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 03:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540512AE90;
-	Sat, 23 Nov 2024 03:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D82C7E107;
+	Sat, 23 Nov 2024 03:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="CyDCe5Sk"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rb2mV5E+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44498800
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 03:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48AA7259C;
+	Sat, 23 Nov 2024 03:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732330889; cv=none; b=la5taIYUGJ7e5XEmFXdB1lc8a2KVYzI0S3oSG82Wu0JBFpqai5jmogBlMrwxZkrrg+zg66QyV2CZlYkGytkyczDfGqkXaX6FB6MjxNvPLSMRg8m0/m6A8AqyYKDwwtRHCe9HdsrqSDdjIZKw46A0jgvw+aLz9SX6oEtGOwSKOEg=
+	t=1732331361; cv=none; b=tfMtvLNGw4bpkxaM36Qkg5XAAYGm+ant6MU3+q5waKKWgDi5TngTKdLgZnJ0WJJtvZqev4+WG9+LjBAh+Y4nU2y9KFo0C7qhurTmop8jaeYiV1T95h4zk0YhvlAcPw124PjV8VQgkSEAec1X4fqD9rxO/JpmIqBOLWpofxQri6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732330889; c=relaxed/simple;
-	bh=xmf/pB8Fle7JNevkDE4mxBCzTeF7nVLdcwwlB25iz/4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YMIfmpS4AW3+o1zYfAE7R6OWQ2Odp3agGPUTsqm1h0qMGG+KKOc4T9PpG/rLu7VA8bsZiZS/UWkBuEsOOeNqUTaqK5HsvHjJ+8KvYMsjmxxV1nzVKrmpAq80oEKSoHsuyfoIB6tGllq2SMfgUIznWLE8msxhPKGAmaC97p+ycwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=CyDCe5Sk; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1732330876;
-	bh=xmf/pB8Fle7JNevkDE4mxBCzTeF7nVLdcwwlB25iz/4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=CyDCe5Skr1mmCIYEMYoLjSqCO2bD8/v+uEtWYHAFi2zk0D6BvxvGqTwSNGW6U9Hj2
-	 WeCm+pf/Fpx/zwvEMc3m5XZz/rDCBeUrwO6hWXJ0Ja2VISDrqjQTzw5Kz3dxiCmuK0
-	 i6DhPpf1Ns8/RqJKTfnN5bnYJuyNBRCSzWW+xAkOkiF526AzoeKV3HmTXPfOvBWrzO
-	 HhxWom2nNH+WqjLKDf45yUf1mpMfrsqvHLGx6wUwtoBzEkJ1DGILDsDurhSZVlGseS
-	 RZoSEsgq5O9FgDaXK7jFwhNvFJnTNAMuUQrlk+j4js66A9ADLjVCnQCmOi8HJwB6GG
-	 Ms70vkt2RIwcg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XwGvJ023xz4wcr;
-	Sat, 23 Nov 2024 14:01:15 +1100 (AEDT)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, Madhavan
- Srinivasan <maddy@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc: Transliterate author name and remove FIXME
-In-Reply-To: <55B1EE24-BEC9-4A8D-84B0-ED32FCC070A5@linux.dev>
-References: <20241110162139.5179-2-thorsten.blum@linux.dev>
- <87v7wuy3p5.fsf@mpe.ellerman.id.au>
- <55B1EE24-BEC9-4A8D-84B0-ED32FCC070A5@linux.dev>
-Date: Sat, 23 Nov 2024 14:01:04 +1100
-Message-ID: <87v7weodqn.fsf@mpe.ellerman.id.au>
+	s=arc-20240116; t=1732331361; c=relaxed/simple;
+	bh=xTIHzGabawTieoNHPmY6TAGibaQ4jK9SnDJEWSTFpxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YtXeqaPL5ksR0cvzTefz5eioXe6oGUCtT5qsaONkObdLyRO897CUChQijnmPfC/WpSEsMeeJApZ1d0MwtluSJbJX9ElZfr/UbzXjB8g7Ox5v16ppY9k2otDnfe0FguTr2UFmC7zy7yC7hpO33w8OwDUcfZUaJ5bg3TOU0+saq6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rb2mV5E+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28A6BC4CECE;
+	Sat, 23 Nov 2024 03:09:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732331359;
+	bh=xTIHzGabawTieoNHPmY6TAGibaQ4jK9SnDJEWSTFpxE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Rb2mV5E+AX3UHtwVJrGvMLxMzSAQmyj1gb9WqUzDmisEbMoiww63NDH3or1xk6CYs
+	 fbJi3gb+WJLWuYsSWxKalwT/Wiw91Hn6Q8cfHKNebAnw9llm9PKT7tAsrMzPu9Ibkd
+	 hJZOSmKoEoYS3P+aFcphSAjnEMqNI0h4kvT+2Yi73LNk509HDO0ozBlEUXk0woux73
+	 HCBRiJXcgt6w6zBWcHf9bxIMdCX/GP9cvSV0vO1N+JQghu6PCmmR7UJVk4Xv7PLbD0
+	 TyH9F+FH3fx6Q+bf0OJo5wXMB/Ld5Yme3wtp6hcTGyaXPgUqDKNtDlO8fANt2obQnD
+	 pL+/7UoZOQhrA==
+Date: Fri, 22 Nov 2024 20:09:15 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Wentao Zhang <wentaoz5@illinois.edu>, Matt.Kelly2@boeing.com,
+	akpm@linux-foundation.org, andrew.j.oppelt@boeing.com,
+	anton.ivanov@cambridgegreys.com, ardb@kernel.org, arnd@arndb.de,
+	bhelgaas@google.com, bp@alien8.de, chuck.wolber@boeing.com,
+	dave.hansen@linux.intel.com, dvyukov@google.com, hpa@zytor.com,
+	jinghao7@illinois.edu, johannes@sipsolutions.net,
+	jpoimboe@kernel.org, justinstitt@google.com, kees@kernel.org,
+	kent.overstreet@linux.dev, linux-arch@vger.kernel.org,
+	linux-efi@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-um@lists.infradead.org, llvm@lists.linux.dev, luto@kernel.org,
+	marinov@illinois.edu, masahiroy@kernel.org, maskray@google.com,
+	mathieu.desnoyers@efficios.com, matthew.l.weber3@boeing.com,
+	mhiramat@kernel.org, mingo@redhat.com, morbo@google.com,
+	ndesaulniers@google.com, oberpar@linux.ibm.com, paulmck@kernel.org,
+	richard@nod.at, rostedt@goodmis.org, samitolvanen@google.com,
+	samuel.sarkisian@boeing.com, steven.h.vanderleest@boeing.com,
+	tglx@linutronix.de, tingxur@illinois.edu, tyxu@illinois.edu,
+	x86@kernel.org
+Subject: Re: [PATCH v2 0/4] Enable measuring the kernel's Source-based Code
+ Coverage and MC/DC with Clang
+Message-ID: <20241123030915.GA1020125@thelio-3990X>
+References: <20241002045347.GE555609@thelio-3990X>
+ <20241002064252.41999-1-wentaoz5@illinois.edu>
+ <20241003232938.GA1663252@thelio-3990X>
+ <20241122122703.GW24774@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241122122703.GW24774@noisy.programming.kicks-ass.net>
 
-Thorsten Blum <thorsten.blum@linux.dev> writes:
-> On 11. Nov 2024, at 02:11, Michael Ellerman wrote:
->> Thorsten Blum <thorsten.blum@linux.dev> writes:
->>> The name is Mimi Phuong-Thao Vo.
->>=20
->> Is that the correct spelling?
->>=20
->> The github commit below suggests it's Mimi Ph=C3=BB=C3=B4ng-Th=C3=A5o V=
-=C3=B5.
->>=20
->> And presumably the author preferred that spelling, otherwise they would
->> have just written it in ASCII in the first place.
->>=20
->> https://github.com/bminor/binutils-gdb/commit/6603bf38d74409906b3814f6a2=
-6c0483a5d32e41
->
-> Hi Michael,
->
-> Are you suggesting to keep "Mimi Ph\373\364ng-Th\345o V\365" and a FIXME
-> instead of changing it to "Mimi Phuong-Thao Vo" which is how she spells
-> her name on her LinkedIn profile and other websites?
+On Fri, Nov 22, 2024 at 01:27:03PM +0100, Peter Zijlstra wrote:
+> On Thu, Oct 03, 2024 at 04:29:38PM -0700, Nathan Chancellor wrote:
+> 
+> > $ /usr/bin/time -v make -skj"$(nproc)" ARCH=x86_64 LLVM=1 mrproper {def,amd_mem_encrypt.,fortify_source.,llvm_cov.}config bzImage
+> > ...
+> > vmlinux.o: warning: objtool: __sev_es_nmi_complete+0x6e: call to kasan_check_write() leaves .noinstr.text section
+> > vmlinux.o: warning: objtool: do_syscall_64+0x141: call to lockdep_hardirqs_off() leaves .noinstr.text section
+> > vmlinux.o: warning: objtool: do_int80_emulation+0x138: call to lockdep_hardirqs_off() leaves .noinstr.text section
+> > vmlinux.o: warning: objtool: handle_bug+0x5: call to kmsan_unpoison_entry_regs() leaves .noinstr.text section
+> > vmlinux.o: warning: objtool: syscall_enter_from_user_mode_prepare+0x105: call to lockdep_hardirqs_off() leaves .noinstr.text section
+> > vmlinux.o: warning: objtool: syscall_exit_to_user_mode+0x73: call to user_enter_irqoff() leaves .noinstr.text section
+> > vmlinux.o: warning: objtool: irqentry_enter_from_user_mode+0x105: call to lockdep_hardirqs_off() leaves .noinstr.text section
+> > vmlinux.o: warning: objtool: irqentry_exit_to_user_mode+0x62: call to user_enter_irqoff() leaves .noinstr.text section
+> > vmlinux.o: warning: objtool: irqentry_enter+0x45: call to lockdep_hardirqs_off() leaves .noinstr.text section
+> > vmlinux.o: warning: objtool: irqentry_exit+0x4a: call to lockdep_hardirqs_on() leaves .noinstr.text section
+> > vmlinux.o: warning: objtool: irqentry_nmi_enter+0x4: call to lockdep_off() leaves .noinstr.text section
+> > vmlinux.o: warning: objtool: irqentry_nmi_exit+0x67: call to lockdep_on() leaves .noinstr.text section
+> > vmlinux.o: warning: objtool: enter_s2idle_proper+0xb5: call to lockdep_hardirqs_off() leaves .noinstr.text section
+> > vmlinux.o: warning: objtool: cpuidle_enter_state+0x113: call to lockdep_hardirqs_off() leaves .noinstr.text section
+> > vmlinux.o: warning: objtool: default_idle_call+0xad: call to lockdep_hardirqs_on() leaves .noinstr.text section
+> > vmlinux.o: warning: objtool: cpu_idle_poll+0x29: call to lockdep_hardirqs_on() leaves .noinstr.text section
+> > vmlinux.o: warning: objtool: acpi_idle_enter_bm+0x118: call to lockdep_hardirqs_on() leaves .noinstr.text section
+> > vmlinux.o: warning: objtool: acpi_idle_do_entry+0x4: call to perf_lopwr_cb() leaves .noinstr.text section
+> 
+> Just saw this fly by, that looks like something is buggered bad. Notably
+> lockdep_hardirqs_{on,off}() are noinstr.
+> 
+> Is this patch-set causing this, or what?
 
-No I'm not suggesting to leave it as-is.
+These warnings are not present without CONFIG_LLVM_COV_PROFILE_ALL, so
+it certainly seems related to this patchset. In this configuration,
+CONFIG_KASAN and CONFIG_LOCKDEP are disabled, so these functions are
+simple 'static inline' functions. An immediate theory is that because
+this instrumentation is applied by the frontend, these functions will
+not actually be empty or simple, which may affect the ability to inline
+them and eliminate the instrumentation by the __no_profile from noinstr?
+It definitely seems like this should probably be investigated...
 
-But I also suspect they spell it that way on LinkedIn etc. because it's
-the path of least resistance, not because it's the correct spelling.
-
-I was hoping someone who's more familiar with Vietnamese (I believe)
-spelling would chime in and tell us which is correct.
-
-> I doubt anyone prefers their name to be spelled with octal escape
-> characters.
-=20
-Sure, but it wouldn't have been octal escapes in the original character
-encoding, it would have appeared, I believe, as Mimi Ph=C3=BB=C3=B4ng-Th=C3=
-=A5o V=C3=B5.
-
-cheers
+Cheers,
+Nathan
 
