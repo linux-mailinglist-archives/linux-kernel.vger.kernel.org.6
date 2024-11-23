@@ -1,235 +1,225 @@
-Return-Path: <linux-kernel+bounces-418919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBBDA9D672B
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 03:14:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8AEC9D672F
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 03:36:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0F11B21AD0
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 02:14:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4799CB21B5B
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 02:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7357247A5C;
-	Sat, 23 Nov 2024 02:14:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059AC2D057;
+	Sat, 23 Nov 2024 02:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M2NrwM7e"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XIz4p1Pc"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18AD748A;
-	Sat, 23 Nov 2024 02:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873A4817;
+	Sat, 23 Nov 2024 02:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732328058; cv=none; b=tEEJwsNAmkN55TL0Sml1NQ0dIYo80wGnaWysgCuZlhPoTZ/KmRjR2ogGX8LgvAxhbInm9ODBNEUv29nAwYRSku+HgJI3RtXQFicoWorqmA45jib1ebrgaSTjMU2wBAeAO5NbsRFs8+UMI2OXZQ+Ck6G1MPOJg1ZQNpzeRCYfH1s=
+	t=1732329409; cv=none; b=NdyexMot8AhWF07xD4ju76fUVw/fbVM976hlvlwx17TfzT0488p/g/1Z3WSs7ZRj3lmP/RE9Ev0ixZLvLIOCyhvf8xe5Ttz+5hmWRm0zP74kKS5CpUv0NvfgJhhoVrkxdv0DV7w0W0N3Z1kvgM+Vm+PNhhkrH2t83amqhflgj/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732328058; c=relaxed/simple;
-	bh=EX4pMqx25HLXNXZjnFJMqrGwghQLt5+EG9kK/bHl8HY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YEJS4Xlb93bAVu74d0iSlxkq7MCW/b1mWZi9DkUiGTbblf23C18S9ejWiIaguYRflM5bMU7jSvPgKJUFtuxJVDv3ix2BmeyUHYOZKXdM6eOzZ6Ta+0imcl9qFt8fr3XN3S+DJMkNyefLVm/lOzkM62x6QXxljWp0cRQ4rZJysZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M2NrwM7e; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1732329409; c=relaxed/simple;
+	bh=7z2Q203ERLjoNfDcHGfqDcgsWzc//gbfXlLWU2WPLRY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rzNCavLeHHLCpvkYfnt9OQL1bKZTXs/dRTbML9TDjdHVSIrRzXQFJJVGPG3V2iSEl3KxelTV/eo7zGqPjMlhqq5gUDezBzUehDoageOvA642ZykLDShsyHZ2Cg+3Neyq+F+iCDrm0gEargpQ6QABKMWxMS9hq0JwQfjr/GYRa40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XIz4p1Pc; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-21263dbbbc4so29240675ad.1;
-        Fri, 22 Nov 2024 18:14:16 -0800 (PST)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cedf5fe237so3016046a12.3;
+        Fri, 22 Nov 2024 18:36:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732328056; x=1732932856; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=5tm0SQFRalTTa/1kWMTGU16lgeqQakuZDDSuhOCG4NU=;
-        b=M2NrwM7eQ18wtJ1sn5yiCsM9Xzq+l2vShH6xClQXmNmIahuvGAe/cDiWmITxuvTdPo
-         Sk4+Urx+hWm7AT7MQT1kUciqxUvtuylF1HdQcCpQUPr6rhnn3f58aSU15CoZL7svyYSO
-         KiC+LUN/Y/WmQHzJlFAS8bs1hXTzbHG7CxiNf69ZSk22AJ7t9PYuZQwHuMOKN0Pnaekg
-         rt+ttZW/UpJtLPD3IW8e1VLYhB+bSrrc+1DBmwesDjpQkAtGN2ICPZrhaowUqi839lyz
-         GUnvD0wBrnjBJZR6mhNP7xju8XMyxAws4gGf1wHTvCktrERH4nTzXrbG2LBD95ekJzw8
-         B1Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732328056; x=1732932856;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1732329406; x=1732934206; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5tm0SQFRalTTa/1kWMTGU16lgeqQakuZDDSuhOCG4NU=;
-        b=pS+VtUkcFVDa1c6Xu930BsLxpgnq7kDjF+btmkbKGFuKHL6mN8h8OHTspGM8SOloyx
-         kwzJJ7Or15rrCCw+mdPFZ/MnAQ+fbONVcX2+PbMSEKBgZfvm520b4fRv63PdarGYb34m
-         HVcqRQi3jvISJt1Qght6T/TGDiq4g9KMmCZKHMC6JrwjyCF3enFII1OMqo6GrWVvLEmt
-         5hqcOF23g1v+RPBfMy3r11WaOCvI6SfNrNemwVDnUlATWU4aDxbzdZvOteK6b646B6NK
-         X7VvmcIOdIojb+7bX3GnfJbBPYpi5H8lOSHj+d1eRupbhYsA01J2QNp2pRtw00smiAhz
-         VtbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCqvTbHeN+EwT90BdmO/yN24MRAPyITmzqCu1Esvumgd19M2vluqHNgT4/3UHRrp31mq0FR02NzV7BL/o=@vger.kernel.org, AJvYcCV86+D0M/NcdnZi1U+FR5exDPtbbo6lVQYl82MUFdLg30mx2ZGsu6n8VWN/8INgoZFh1zFYRhf+TrEWgO3J@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAp76Nfb/0AFpd7ETfa+UnspR6OLkgDTYzQsk1+F518MsrEwZV
-	AdxHYuP8xhDDNQz5mgdKKdlAjOVCONijF5YfYaW3G3iUmAlVjUxr
-X-Gm-Gg: ASbGncuowgEKmtxors+KKGE7w+OWe/dHcAM7ik0YPPWZEjNYAupJF7tJ4lXVGngt0Ii
-	lwB5j/PofmLfO4Ac4S0pue29QlSnNMMvYGOsbYDY0BrrFoXaaF64R9o48niIV+yvqpNCDEfeTx6
-	LhozQI8NPXIprYTNEqOykeZx4EEYYIonD5hVXyQzogc2rt13N0GHN6TohF+QJXrpA477qa+cRJc
-	QE/zhJ0B9TitXsHpSi2lxHgKXk9fzAxCq7XSs36QyUCELlWlafxrreviWspzlV8cO2BoMSyYZk8
-	vf2SR8FSSTDEn+H8iHkd6tA=
-X-Google-Smtp-Source: AGHT+IEEUTDG1x7QE08+4xA/5EJ+JQcxV8Bd3tAOVdlBof2etNmTJRl2cmvJk/PsOJU8wNtJel6acA==
-X-Received: by 2002:a17:903:230d:b0:20c:5cdd:a9e with SMTP id d9443c01a7336-2129fd21f41mr60315745ad.28.1732328056118;
-        Fri, 22 Nov 2024 18:14:16 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129db8c951sm23188185ad.32.2024.11.22.18.14.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Nov 2024 18:14:15 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <3d1e5e90-4675-4319-9f58-3c3d5b6f4b8a@roeck-us.net>
-Date: Fri, 22 Nov 2024 18:14:13 -0800
+        bh=gwAIYJiCi7vkj35O92N4pBX1EN9ewd8Gkt1H/zhirm8=;
+        b=XIz4p1PcvS7R5zQB/35Wr+K1BSbzPRbR31IObT2OMOssvB+v4nLOkkEdFGS1cnei5T
+         7Rf9sN0oArA98ezh//agvKQi0huBuUJ+EHu6Y2bNwoVbpL3LNbQBvCVv0SRvHi/kQtf7
+         uMJmerTn+XAwIzV0WwV2HXZKqG+7rW7betNET48xx7xLVfoOXD58Ae5xxHJPm2YuKg6A
+         hM59hFgq7MkwqWaWJn0vqk7WfBNLGY6+ClgKCI54XWCK/CJLbrqI8naIZL7Zy5qxlZ3q
+         0FJ54Air014YShlwOwQuLJ4KhhTdO469Soth0qtzMdumaBCEh2FlaLe6UDRUcRbaUGsN
+         l80w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732329406; x=1732934206;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gwAIYJiCi7vkj35O92N4pBX1EN9ewd8Gkt1H/zhirm8=;
+        b=OaimXI45xRV1vnZMgpb6PKNO0F60iKYdf8Pm0nz88Xg8St3IwkKzi+sxbGutdnzCot
+         WwYqhMKsFDqUGmsHyLB4A/vSRj2jvO3a8w5k/rQR8BlEtyW0IqRutJMixOTO7hFYsci2
+         Yg9xKC8E39pJKIYZRohUit8jgTLneRaFjtaPq6/O7JYilUsR1KnUmMAOULeOTO2Gc/ER
+         sqeI+ndP40lREQMhWJGJvw3NenGlLmoJ2g9VaBDOZyG6jO99QD5kUszj1tzrl3H25P3U
+         ybfJtSIukVaxSbAi6GtKthIArbEXF4DSs8ok7XjdjjTTlc5tOMXn+oZM1Naypc+wpfnd
+         Kx2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVhTk1PW8DwGiMYjogdMRbiwxp74LWRmP8XLnRY3KHPl3RiC2Eex1areeoG49IIuDcc/dMszwRFgCs=@vger.kernel.org, AJvYcCW0wkk3buqf+IZ8IsqQ63Lsb8DBshfzcpdAcG+C5DUI2JkOiArQmzmbYhZ19NOXaFOTMzsiOCC7hjHFjeiY@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUnSVVhbZzas4hbZsnKjk+lEpdRk/gxxIhXBr5U9gyvxzOk8eu
+	IJixmM4vM061yp1rYOeAjr8LQWESOkwPPaiMHPhbIJCTDFaIQGrQLWBZ4Ej5rY8JyUECgnaCq/X
+	7LCLHOC7YfiN9qGrSHroiQDX0XbQ=
+X-Gm-Gg: ASbGnctAK9Lym4mRzblXyJTYByA7GW58Bf1aSy1UAWMZBp3Nf0bmJWKr88xUhVNOawD
+	IkfEHYTqGFHN+H6YZg58qQWxaVlPXBYM=
+X-Google-Smtp-Source: AGHT+IGbwtMLT9zLGAmt+b/YRisjA1ks3t80ako207ZcbbrXuRR2QLaW8MTHtUvTwQkNtV8pOJqEdcuIc1XqbTKt+kc=
+X-Received: by 2002:a05:6402:270e:b0:5c2:6d16:ad5e with SMTP id
+ 4fb4d7f45d1cf-5d020629874mr3416136a12.19.1732329405487; Fri, 22 Nov 2024
+ 18:36:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
-To: Arnd Bergmann <arnd@kernel.org>, Niklas Schnelle <schnelle@linux.ibm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- linux-serial@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
- linux-kernel@vger.kernel.org,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-References: <20240405152924.252598-1-schnelle@linux.ibm.com>
- <20240405152924.252598-2-schnelle@linux.ibm.com>
- <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net>
- <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
- <472eb22a-dcb1-4fbb-bf2c-a4173706bc7a@app.fastmail.com>
- <27685942-fb62-44c5-86ed-98beb547ffed@roeck-us.net>
- <744920ba-551c-466b-ac5c-2607b81261a0@app.fastmail.com>
- <791f37f3-2b93-47f1-b0a3-46825c09f222@roeck-us.net>
- <eb1c5d4b-0662-41dd-826c-d3c3cf78de2b@app.fastmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <eb1c5d4b-0662-41dd-826c-d3c3cf78de2b@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241122161443.34667-1-haowenchao22@gmail.com>
+In-Reply-To: <20241122161443.34667-1-haowenchao22@gmail.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Sat, 23 Nov 2024 10:36:09 +0800
+Message-ID: <CAK1f24k6n1ngSicrSCv5jX+xa75t-7a3zZB4A95fUvDhteshEQ@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: add per-order mTHP swap-in fallback/fallback_charge
+ counters
+To: Wenchao Hao <haowenchao22@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Usama Arif <usamaarif642@gmail.com>, Matthew Wilcox <willy@infradead.org>, 
+	Peter Xu <peterx@redhat.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/22/24 14:51, Arnd Bergmann wrote:
-> On Fri, Nov 22, 2024, at 21:44, Guenter Roeck wrote:
->> On 11/22/24 11:24, Arnd Bergmann wrote:
->>>
->>> serial8250_setup_port() is where it ends up using the
->>> uninitialized serial8250_ports[index] contents. Since
->>> port->iotype is not set to anything here, it defaults to
->>> '0', which happens to be UPIO_PORT.
->>>
->>> The reason it doesn't immediately crash and burn is that
->>> this is still only setting up the structures for later
->>> use, but I assume that trying to use console=ttyS0, or
->>> opening /dev/ttyS0 on the uninitialized port would
->>> then cause an oops.
->>>
->>
->> All four affected platforms use ttyS0, only it is mmio based,
->> not io port based.
-> 
-> Right, so I think the problem is really the 8250_platform.c
-> file trying to handle all possible cases on x86 (acpi,
-> isapnp, legacy isa) that may define the same UARTs, but
-> also trying to handle non-legacy ports with their own
-> special cases on other architectures.
-> 
-> The patch below is a first idea of how we can skip the
-> legacy ISA case on architectures that don't define those.
-> If this works, we can try to come up with a better way of
-> doing that. Ideally all the pre-DT boardfile machines that
-> define their own "serial8250" platform_device (with platform_data)
-> should use a different identifier the x86-legacy case that
-> uses the platform_device (without platform_data). Similarly,
-> I think the riscv special ACPI port needs its own trivial
-> driver without all the ISA magic.
-> 
->        Arnd
-> 
-> diff --git a/drivers/tty/serial/8250/8250_platform.c b/drivers/tty/serial/8250/8250_platform.c
-> index 66fd6d5d4835..610b31517734 100644
-> --- a/drivers/tty/serial/8250/8250_platform.c
-> +++ b/drivers/tty/serial/8250/8250_platform.c
+Hi Wenchao,
 
-That didn't work.
+On Sat, Nov 23, 2024 at 12:14=E2=80=AFAM Wenchao Hao <haowenchao22@gmail.co=
+m> wrote:
+>
+> Currently, large folio swap-in is supported, but we lack a method to
+> analyze their success ratio. Similar to anon_fault_fallback, we introduce
+> per-order mTHP swpin_fallback and swpin_fallback_charge counters for
+> calculating their success ratio. The new counters are located at:
+>
+> /sys/kernel/mm/transparent_hugepage/hugepages-<size>/stats/
+>         swpin_fallback
+>         swpin_fallback_charge
+>
+> Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
+> ---
+> V2:
+>  Introduce swapin_fallback_charge, which increments if it fails to
+>  charge a huge page to memory despite successful allocation.
+>
+>  Documentation/admin-guide/mm/transhuge.rst | 10 ++++++++++
+>  include/linux/huge_mm.h                    |  2 ++
+>  mm/huge_memory.c                           |  6 ++++++
+>  mm/memory.c                                |  2 ++
+>  4 files changed, 20 insertions(+)
+>
+> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/a=
+dmin-guide/mm/transhuge.rst
+> index 5034915f4e8e..9c07612281b5 100644
+> --- a/Documentation/admin-guide/mm/transhuge.rst
+> +++ b/Documentation/admin-guide/mm/transhuge.rst
+> @@ -561,6 +561,16 @@ swpin
+>         is incremented every time a huge page is swapped in from a non-zs=
+wap
+>         swap device in one piece.
+>
 
+Would the following be better?
 
++swpin_fallback
++       is incremented if a huge page swapin fails to allocate or charge
++       it and instead falls back to using small pages.
 
-[    0.005735] Console: colour dummy device 80x25
-[    0.006393] BUG: spinlock bad magic on CPU#0, swapper/0
-[    0.006459]  lock: serial8250_ports+0x0/0x980, .magic: 00000000, .owner: <none>/-1, .owner_cpu: 0
-[    0.007102] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.12.0-07881-g6206e39999ae #1
-[    0.007359] Stack:
-[    0.007671] > 00000100 00000000 d09f9e10 d0951c2c
-[    0.007765]   d0951c2c 00000000 00000000 d0b06170
-[    0.007841]   9003f5ee d09f9e60 00000055 d0dd9900
-[    0.007884]   00000000 00000004 d09f9e40 00000000
-[    0.007925]   9003f681 d09f9e80 d0dd9900 d08f5924
-[    0.007976] > 00000000 d08f5890 ffffffff 00000000
-[    0.008019]   906f66b9 d09f9ea0 d0dd9900 00000000
-[    0.008059] > 00000000 00000480 00000000 d0a06d74
-[    0.008099]   904efe6a d09f9ec0 d0dd9900 00060300
-[    0.008139] > 00000000 00000000 00000001 00000000
-[    0.008180]   9004368d d09f9ef0 d0aa7238 d7ff70a4
-[    0.008220] > d04efe6a 00000000 00000001 00000000
-[    0.008260]   00000000 00000000 00000001 00000000
-[    0.008301]   90044a84 d09f9f10 d0aa7238 d04efe14
-[    0.008340] > d0dd9900 000000c4 d0a06d74 d0a00400
-[    0.008381]   90ae6710 d09f9f30 d0aa7238 d0cedea0
-[    0.008443] Call Trace:
-[    0.008502]  [<d06ed63d>] dump_stack+0x9/0xc
-[    0.008624]  [<d003f5ee>] spin_dump+0x4a/0x78
-[    0.008677]  [<d003f681>] do_raw_spin_lock+0x1d/0x68
-[    0.008727]  [<d06f66b9>] _raw_spin_lock_irqsave+0x41/0x54
-[    0.008780]  [<d04efe6a>] univ8250_console_setup+0x56/0x104
-[    0.008829]  [<d004368d>] try_enable_preferred_console+0x75/0xf4
-[    0.008877]  [<d0044a84>] register_console+0xf4/0x3e4
-[    0.008923]  [<d0ae6710>] univ8250_console_init+0x20/0x24
-[    0.008970]  [<d0ad44f0>] console_init+0x18/0x20
-[    0.009018]  [<d0acfdaf>] start_kernel+0x3db/0x4cc
-[    0.009063]  [<d06ee02b>] _startup+0x13b/0x13b
++swpin_fallback_charge
++       is incremented if a huge page swapin fails to charge it and instead
++       falls back to using small pages even though the allocation was
++       successful.
 
-That was xtensa. Others are just silent.
+Thanks,
+Lance
 
-Guenter
-
+> +swpin_fallback
+> +       is incremented if a huge page swapin fails to allocate or charge
+> +       a huge page and instead falls back to using huge pages with
+> +       lower orders or small pages.
+> +
+> +swpin_fallback_charge
+> +       is incremented if a page swapin fails to charge a huge page and
+> +       instead falls back to using huge pages with lower orders or
+> +       small pages even though the allocation was successful.
+> +
+>  swpout
+>         is incremented every time a huge page is swapped out to a non-zsw=
+ap
+>         swap device in one piece without splitting.
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index b94c2e8ee918..93e509b6c00e 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -121,6 +121,8 @@ enum mthp_stat_item {
+>         MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
+>         MTHP_STAT_ZSWPOUT,
+>         MTHP_STAT_SWPIN,
+> +       MTHP_STAT_SWPIN_FALLBACK,
+> +       MTHP_STAT_SWPIN_FALLBACK_CHARGE,
+>         MTHP_STAT_SWPOUT,
+>         MTHP_STAT_SWPOUT_FALLBACK,
+>         MTHP_STAT_SHMEM_ALLOC,
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index ee335d96fc39..46749dded1c9 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -617,6 +617,8 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_=
+ANON_FAULT_FALLBACK);
+>  DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_F=
+ALLBACK_CHARGE);
+>  DEFINE_MTHP_STAT_ATTR(zswpout, MTHP_STAT_ZSWPOUT);
+>  DEFINE_MTHP_STAT_ATTR(swpin, MTHP_STAT_SWPIN);
+> +DEFINE_MTHP_STAT_ATTR(swpin_fallback, MTHP_STAT_SWPIN_FALLBACK);
+> +DEFINE_MTHP_STAT_ATTR(swpin_fallback_charge, MTHP_STAT_SWPIN_FALLBACK_CH=
+ARGE);
+>  DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
+>  DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
+>  #ifdef CONFIG_SHMEM
+> @@ -637,6 +639,8 @@ static struct attribute *anon_stats_attrs[] =3D {
+>  #ifndef CONFIG_SHMEM
+>         &zswpout_attr.attr,
+>         &swpin_attr.attr,
+> +       &swpin_fallback_attr.attr,
+> +       &swpin_fallback_charge_attr.attr,
+>         &swpout_attr.attr,
+>         &swpout_fallback_attr.attr,
+>  #endif
+> @@ -669,6 +673,8 @@ static struct attribute *any_stats_attrs[] =3D {
+>  #ifdef CONFIG_SHMEM
+>         &zswpout_attr.attr,
+>         &swpin_attr.attr,
+> +       &swpin_fallback_attr.attr,
+> +       &swpin_fallback_charge_attr.attr,
+>         &swpout_attr.attr,
+>         &swpout_fallback_attr.attr,
+>  #endif
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 209885a4134f..774dfd309cfe 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -4189,8 +4189,10 @@ static struct folio *alloc_swap_folio(struct vm_fa=
+ult *vmf)
+>                         if (!mem_cgroup_swapin_charge_folio(folio, vma->v=
+m_mm,
+>                                                             gfp, entry))
+>                                 return folio;
+> +                       count_mthp_stat(order, MTHP_STAT_SWPIN_FALLBACK_C=
+HARGE);
+>                         folio_put(folio);
+>                 }
+> +               count_mthp_stat(order, MTHP_STAT_SWPIN_FALLBACK);
+>                 order =3D next_order(&orders, order);
+>         }
+>
+> --
+> 2.45.0
+>
 
