@@ -1,436 +1,206 @@
-Return-Path: <linux-kernel+bounces-418911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 516A89D671A
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 02:52:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A29D69D671D
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 02:54:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9293AB22757
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 01:52:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BEA4282327
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 01:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC97916C854;
-	Sat, 23 Nov 2024 01:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD96E4204B;
+	Sat, 23 Nov 2024 01:54:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZRXr4y/J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aRziH050"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E917E110
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 01:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19802A59;
+	Sat, 23 Nov 2024 01:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732326749; cv=none; b=uFeXWixrzJUEEgk6HvCqkmyFwJYVkpjf9Gh1GHZ9yBJt8g9UZh/oLs4bxjdagu1f7SkEpzodBce1OZC9R9ZwtYzmMIBMBh+3ludgfQmK2J8mQKad4yHv87NMQn0EtJ56/BnHAnrVDl003TWpqPquSDDbNDWwXhULn+PiGAWUcTg=
+	t=1732326856; cv=none; b=A6ZNZuaUTksfQtkpPEsKKmbzoiZPS5HQvpETm7/mtJv38QVggWb3e7x2yyFkOBhj4kGRqQS0MrWoSQ+oYtZ1rC8Qif/XOf8h/R0dbOZgOw/1pa97OCpF6fhEKbCJhD+z40/pxGKjcsiXTmrFYB6jooS1H3O3MZ08l8vT5U8lkBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732326749; c=relaxed/simple;
-	bh=kCKLCTtzvXMxGVC1AQNQNxZ1f5M/Pqa2iWzkX60XYMM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ivEtABT0WsCX50rRZAFc+FcOa/SHrTMiDyUWlEFgy0TiWnNAcAy/GT0M+kiaFoKDP6g7WeJjS2hZ93d2IIjceDMWC/MHYQ4Tk4t+us+Zh+qRrTFNHw4NzL1N8Kj4dgn+Gw+OEw/CjSjX5AzCjKF+kz6Koh++W3d/Bcyd60kVYVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZRXr4y/J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A8F9C4CED6;
-	Sat, 23 Nov 2024 01:52:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732326749;
-	bh=kCKLCTtzvXMxGVC1AQNQNxZ1f5M/Pqa2iWzkX60XYMM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZRXr4y/JlxoBAX7aX43D3fy0riPOxUVVabobn6w0PeGgjR07zj1hN21+oJ9jksa6d
-	 LvD96+D4638WYe8BlUgq+CvGTyZM7LOHNEeji89VBRZNDMN8JqvRrNZxEcrxiRaqNI
-	 M7ZCB2nGlLg05lkdDdsMGv+vZCrmytf91zqmfvDlAcSxoedg2vT6zxY4LPnSv/CZ+9
-	 geCvymrK6FT2eSYvuUenrOHKKwE1JkOuAbvVTlcVOe+Bw6vHIcNGqi0ktKoCRfdt0s
-	 nU+yPwQxNYuPHTHml6fuwxAoV+JRCv5mUNJO45+qN9pEqePPBuzsj6cEuIxCR1C5oD
-	 1F2Zl3+jS6lzw==
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 3/3] objtool: Add noinstr validation for static branches/calls
-Date: Fri, 22 Nov 2024 17:52:22 -0800
-Message-ID: <b5746646456eb030673cdb62c23d69ed83c2702a.1732326588.git.jpoimboe@kernel.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <cover.1732326588.git.jpoimboe@kernel.org>
-References: <cover.1732326588.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1732326856; c=relaxed/simple;
+	bh=o0rQsixvk+BoxGi8EPzy3Li3/gP0HzrlzPqJKe8VeSU=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=t8U4w2DxEwxsi682cadHCrXNbSsWIplsLFZg2rBdi+HAQiOj4b/gN8SILnNtXbJ7uKt4NbvcFjFl1fbcJy0cbavcUgfFGAn38PeZ/yOmoksBEa5lB52in5eNKOl+Y9zYvYlwHBhAQrqxcPS6Sn9FwFXjMaMapJhdk6pY728kSdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aRziH050; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5cfa9979cd1so4651949a12.1;
+        Fri, 22 Nov 2024 17:54:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732326852; x=1732931652; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ux7JpAah+n06vzV7mr3Rr/cfl5jMrQ1nyMBvYGDgus0=;
+        b=aRziH050knBlPLS0Fq3njgFx2LVHTYlyJL/VGnCI2CTymdMBNRLzB3v8gL/H8kR3HQ
+         lBeBRdJXCMOe0uY0E/z7KXArKu90kHiwsy7pc+CdAdcgDSe6v4jUapFx3MJWGD3PcVBI
+         K6DrwoVpQihRVDdQOdzwO8EB9R2lM9D7UrS4hP2cHzzXNt0qVw9Za96YrWA8t/TosSqM
+         kpFZg1D2yQrrLExcFkwdM7jJ+Yu/olq1Cvt3c5v2ROxseHPa7puIueVOpUmWaQDkUZ+d
+         5grCXR1OhhR3cY3n6Y8nfxIQ1uWT43y4SlqBBhs9a8PNdbL7O9q1JrktBiRvpOCWtZwN
+         bONA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732326852; x=1732931652;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ux7JpAah+n06vzV7mr3Rr/cfl5jMrQ1nyMBvYGDgus0=;
+        b=Y5JX+CUOHJyNCQHjlb6MQO3Zp8y+xaiokJobtYGuJ4QpAqejqmhIcvHmnexkh8Ns5c
+         QJqMTe7sNiUpB0jd6OF0HbjhlIBmG9uh6kqK/X06B7ESU8rKH0r3ywbYdfnygqCjMoij
+         Dkr1+HJISyeQ6gmlBfoRkkf3rwJRfdz4PO1Cxs8MGdE1i38zKggad7dxm+yXd3Qi4xnz
+         0AZLU5Cj+/oj6g7l/AobQ6bmmAuig/LZtBNjz6B3t3p5Nl3+8TMjX63GCyoOtXKA/O/M
+         l7QsmPIH0/y+DY05fgG2CgNWd/ke148uGeBb39UaY7626KlOtLR3o/a9/0YAjP45GPlZ
+         6aWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLkzpFDh38tJh4IFmbm9B22dh4vEtRLk+giljhapQh90JuFbCIewZAtWmpCPM04RFaNK95NPp+aU97B5c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvZRUcCBSc9/OrnIo3Md77s80HwO/9lweQT5NVxZ7haQyqqfsO
+	0nLYWU7uc+d4BiJX7FnUeKBrcjxonv7NC4O4eotBcARG7bPgj8+L
+X-Gm-Gg: ASbGnctm7ymLs2X6/WDx8DYaLxqkJo7ZrUpl1BGoHU3IO1gCuQez15vTgNs3WbFUsww
+	0NyfaJWxb9f2PCmtayT9ZUEmupw0GggdSA7oPr3ZI80VyRlsa7pde8mlFjMH9WO5rZllu8kEe5Y
+	/Ckp81Z5F6gdnk+XTLxUoVLvVBw2LBGT948OxOj17WNWmAmGJAYm59o9zQIFGQkf/JBuxiMg+0c
+	bZQKIDUvvthr5L3OoufU1niMKBu3Dgqk4P5ZC15QUQ6mOR3WrQrXg4jl1Jhn/zPjmjjxuMS6lp6
+	6+5g1A==
+X-Google-Smtp-Source: AGHT+IFT/oEOMf7UPbFLah1oMQMu9FZit10+Et2cbMJ7Aytiz0s9pRdjgBc/Y8x12qoxqHhuOOWzwQ==
+X-Received: by 2002:a05:6402:34d3:b0:5cf:beae:711 with SMTP id 4fb4d7f45d1cf-5d007c5a818mr10101553a12.10.1732326852085;
+        Fri, 22 Nov 2024 17:54:12 -0800 (PST)
+Received: from [192.168.178.20] (dh207-40-8.xnet.hr. [88.207.40.8])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d3fc93fsm1471827a12.67.2024.11.22.17.54.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Nov 2024 17:54:10 -0800 (PST)
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
+X-Google-Original-From: Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>
+Message-ID: <f50cd6ae-0d99-4836-b268-c9c86da448d8@alu.unizg.hr>
+Date: Sat, 23 Nov 2024 02:53:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PROBLEM] make bindeb-pkg: When just one source line in a single
+ driver is changed, all driver are rebuilt?
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
+ Mirsad Todorovac <mtodorovac69@gmail.com>
+Cc: Linux Kernel Build System <linux-kbuild@vger.kernel.org>,
+ Masahiro Yamada <masahiroy@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Bagas Sanjaya <bagasdotme@gmail.com>
+References: <f96d57c9-efda-4781-a395-a7c5fec7f2ad@gmail.com>
+ <9748bda4-0db8-4c70-a321-c7189d575cbc@t-8ch.de>
+Content-Language: en-US
+In-Reply-To: <9748bda4-0db8-4c70-a321-c7189d575cbc@t-8ch.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Warn about static branches/calls in noinstr regions, unless the
-corresponding key is RO-after-init or has been manually whitelisted with
-DEFINE_STATIC_KEY_*_NOINSTR(().
+Hi, Mr. Weißschuh,
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
----
- include/linux/jump_label.h              | 16 +++--
- include/linux/objtool.h                 |  6 ++
- include/linux/static_call.h             |  2 +
- tools/objtool/Documentation/objtool.txt | 34 +++++++++
- tools/objtool/check.c                   | 92 ++++++++++++++++++++++---
- tools/objtool/include/objtool/check.h   |  1 +
- tools/objtool/include/objtool/elf.h     |  1 +
- tools/objtool/include/objtool/special.h |  1 +
- tools/objtool/special.c                 | 20 +++++-
- 9 files changed, 155 insertions(+), 18 deletions(-)
+On 11/21/24 22:43, Thomas Weißschuh wrote:
 
-diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
-index 88bb6e32fdcb..eb3e118accc4 100644
---- a/include/linux/jump_label.h
-+++ b/include/linux/jump_label.h
-@@ -373,8 +373,9 @@ struct static_key_false {
- #define DEFINE_STATIC_KEY_TRUE(name)	\
- 	struct static_key_true name = STATIC_KEY_TRUE_INIT
- 
--#define DEFINE_STATIC_KEY_TRUE_RO(name)	\
--	struct static_key_true name __ro_after_init = STATIC_KEY_TRUE_INIT
-+#define DEFINE_STATIC_KEY_TRUE_RO(name)						\
-+	struct static_key_true name __ro_after_init = STATIC_KEY_TRUE_INIT;	\
-+	ANNOTATE_NOINSTR_ALLOWED(name)
- 
- #define DECLARE_STATIC_KEY_TRUE(name)	\
- 	extern struct static_key_true name
-@@ -382,8 +383,9 @@ struct static_key_false {
- #define DEFINE_STATIC_KEY_FALSE(name)	\
- 	struct static_key_false name = STATIC_KEY_FALSE_INIT
- 
--#define DEFINE_STATIC_KEY_FALSE_RO(name)	\
--	struct static_key_false name __ro_after_init = STATIC_KEY_FALSE_INIT
-+#define DEFINE_STATIC_KEY_FALSE_RO(name)					\
-+	struct static_key_false name __ro_after_init = STATIC_KEY_FALSE_INIT;	\
-+	ANNOTATE_NOINSTR_ALLOWED(name)
- 
- /*
-  * The _NOINSTR variants are used to tell objtool the static key is allowed to
-@@ -397,10 +399,12 @@ struct static_key_false {
-  * definition with the rationale.
-  */
- #define DEFINE_STATIC_KEY_TRUE_NOINSTR(name)					\
--	DEFINE_STATIC_KEY_TRUE(name)
-+	DEFINE_STATIC_KEY_TRUE(name);						\
-+	ANNOTATE_NOINSTR_ALLOWED(name)
- 
- #define DEFINE_STATIC_KEY_FALSE_NOINSTR(name)					\
--	DEFINE_STATIC_KEY_FALSE(name)
-+	DEFINE_STATIC_KEY_FALSE(name);						\
-+	ANNOTATE_NOINSTR_ALLOWED(name)
- 
- #define DECLARE_STATIC_KEY_FALSE(name)	\
- 	extern struct static_key_false name
-diff --git a/include/linux/objtool.h b/include/linux/objtool.h
-index b3b8d3dab52d..53de92666c48 100644
---- a/include/linux/objtool.h
-+++ b/include/linux/objtool.h
-@@ -34,6 +34,12 @@
- 	static void __used __section(".discard.func_stack_frame_non_standard") \
- 		*__func_stack_frame_non_standard_##func = func
- 
-+#define __ANNOTATE_NOINSTR_ALLOWED(key) \
-+	static void __used __section(".discard.noinstr_allowed") \
-+		*__annotate_noinstr_allowed_##key = &key
-+
-+#define ANNOTATE_NOINSTR_ALLOWED(key) __ANNOTATE_NOINSTR_ALLOWED(key)
-+
- /*
-  * STACK_FRAME_NON_STANDARD_FP() is a frame-pointer-specific function ignore
-  * for the case where a function is intentionally missing frame pointer setup,
-diff --git a/include/linux/static_call.h b/include/linux/static_call.h
-index 34970e178fdf..a82d0bd7860d 100644
---- a/include/linux/static_call.h
-+++ b/include/linux/static_call.h
-@@ -196,6 +196,7 @@ extern long __static_call_return0(void);
- 		.func = _func,						\
- 		.type = 1,						\
- 	};								\
-+	ANNOTATE_NOINSTR_ALLOWED(STATIC_CALL_TRAMP(name));		\
- 	ARCH_DEFINE_STATIC_CALL_TRAMP(name, _func)
- 
- #define DEFINE_STATIC_CALL_NULL(name, _func)				\
-@@ -212,6 +213,7 @@ extern long __static_call_return0(void);
- 		.func = NULL,						\
- 		.type = 1,						\
- 	};								\
-+	ANNOTATE_NOINSTR_ALLOWED(STATIC_CALL_TRAMP(name));		\
- 	ARCH_DEFINE_STATIC_CALL_NULL_TRAMP(name)
- 
- #define DEFINE_STATIC_CALL_RET0(name, _func)				\
-diff --git a/tools/objtool/Documentation/objtool.txt b/tools/objtool/Documentation/objtool.txt
-index 7c3ee959b63c..922d3b41541d 100644
---- a/tools/objtool/Documentation/objtool.txt
-+++ b/tools/objtool/Documentation/objtool.txt
-@@ -447,6 +447,40 @@ the objtool maintainers.
-    names and does not use module_init() / module_exit() macros to create
-    them.
- 
-+13. file.o: warning: func()+0x2a: key: non-RO static key usage in noinstr code
-+    file.o: warning: func()+0x2a: key: non-RO static call usage in noinstr code
-+
-+  This means that noinstr function func() uses a static key or
-+  static call named 'key' which can be modified at runtime.  This is
-+  discouraged because it prevents code patching IPIs from being
-+  deferred.
-+
-+  You have the following options:
-+
-+  1) Check whether the static key/call in question is only modified
-+     during init.  If so, define it as read-only-after-init with
-+     DEFINE_STATIC_KEY_*_RO() or DEFINE_STATIC_CALL_RO().
-+
-+  2) Avoid the runtime patching.  For static keys this can be done by
-+     using static_key_enabled() or by getting rid of the static key
-+     altogether if performance is not a concern.
-+
-+     For static calls, something like the following could be done:
-+
-+       target = static_call_query(foo);
-+       if (target == func1)
-+	       func1();
-+	else if (target == func2)
-+		func2();
-+	...
-+
-+  3) Silence the warning by defining the static key/call with
-+     DEFINE_STATIC_*_NOINSTR().  This decision should not
-+     be taken lightly as it may result in code patching IPIs getting
-+     sent to isolated NOHZ_FULL CPUs running in pure userspace.  A
-+     comment should be added above the definition explaining the
-+     rationale for the decision.
-+
- 
- If the error doesn't seem to make sense, it could be a bug in objtool.
- Feel free to ask the objtool maintainer for help.
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 7fc96c30b79c..225a075bc79e 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -1068,6 +1068,45 @@ static int create_direct_call_sections(struct objtool_file *file)
- 	return 0;
- }
- 
-+static int read_noinstr_allowed(struct objtool_file *file)
-+{
-+	struct section *rsec;
-+	struct symbol *sym;
-+	struct reloc *reloc;
-+
-+	rsec = find_section_by_name(file->elf, ".rela.discard.noinstr_allowed");
-+	if (!rsec)
-+		return 0;
-+
-+	for_each_reloc(rsec, reloc) {
-+		switch (reloc->sym->type) {
-+		case STT_OBJECT:
-+		case STT_FUNC:
-+			sym = reloc->sym;
-+			break;
-+
-+		case STT_SECTION:
-+			sym = find_symbol_by_offset(reloc->sym->sec,
-+						    reloc_addend(reloc));
-+			if (!sym) {
-+				WARN_FUNC("can't find static key/call symbol",
-+					  reloc->sym->sec, reloc_addend(reloc));
-+				return -1;
-+			}
-+			break;
-+
-+		default:
-+			WARN("unexpected relocation symbol type in %s: %d",
-+			     rsec->name, reloc->sym->type);
-+			return -1;
-+		}
-+
-+		sym->noinstr_allowed = 1;
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * Warnings shouldn't be reported for ignored functions.
-  */
-@@ -1955,6 +1994,8 @@ static int handle_jump_alt(struct objtool_file *file,
- 		return -1;
- 	}
- 
-+	orig_insn->key = special_alt->key;
-+
- 	if (opts.hack_jump_label && special_alt->key_addend & 2) {
- 		struct reloc *reloc = insn_reloc(file, orig_insn);
- 
-@@ -2731,6 +2772,10 @@ static int decode_sections(struct objtool_file *file)
- 	if (ret)
- 		return ret;
- 
-+	ret = read_noinstr_allowed(file);
-+	if (ret)
-+		return ret;
-+
- 	return 0;
- }
- 
-@@ -3494,9 +3539,9 @@ static bool pv_call_dest(struct objtool_file *file, struct instruction *insn)
- 	return file->pv_ops[idx].clean;
- }
- 
--static inline bool noinstr_call_dest(struct objtool_file *file,
--				     struct instruction *insn,
--				     struct symbol *func)
-+static inline bool noinstr_call_allowed(struct objtool_file *file,
-+					struct instruction *insn,
-+					struct symbol *func)
- {
- 	/*
- 	 * We can't deal with indirect function calls at present;
-@@ -3516,10 +3561,10 @@ static inline bool noinstr_call_dest(struct objtool_file *file,
- 		return true;
- 
- 	/*
--	 * If the symbol is a static_call trampoline, we can't tell.
-+	 * Only DEFINE_STATIC_CALL_*_RO allowed.
- 	 */
- 	if (func->static_call_tramp)
--		return true;
-+		return func->noinstr_allowed;
- 
- 	/*
- 	 * The __ubsan_handle_*() calls are like WARN(), they only happen when
-@@ -3532,14 +3577,29 @@ static inline bool noinstr_call_dest(struct objtool_file *file,
- 	return false;
- }
- 
-+static char *static_call_name(struct symbol *func)
-+{
-+	return func->name + strlen("__SCT__");
-+}
-+
- static int validate_call(struct objtool_file *file,
- 			 struct instruction *insn,
- 			 struct insn_state *state)
- {
--	if (state->noinstr && state->instr <= 0 &&
--	    !noinstr_call_dest(file, insn, insn_call_dest(insn))) {
--		WARN_INSN(insn, "call to %s() leaves .noinstr.text section", call_dest_name(insn));
--		return 1;
-+	if (state->noinstr && state->instr <= 0) {
-+		struct symbol *dest = insn_call_dest(insn);
-+
-+		if (dest->static_call_tramp) {
-+			if (!dest->noinstr_allowed) {
-+				WARN_INSN(insn, "non-RO static call usage for '%s' in noinstr",
-+					  static_call_name(dest));
-+			}
-+
-+		} else if (!noinstr_call_allowed(file, insn, dest)) {
-+			WARN_INSN(insn, "call to %s() leaves .noinstr.text section",
-+				  call_dest_name(insn));
-+			return 1;
-+		}
- 	}
- 
- 	if (state->uaccess && !func_uaccess_safe(insn_call_dest(insn))) {
-@@ -3602,6 +3662,17 @@ static int validate_return(struct symbol *func, struct instruction *insn, struct
- 	return 0;
- }
- 
-+static int validate_static_key(struct instruction *insn, struct insn_state *state)
-+{
-+	if (state->noinstr && state->instr <= 0 && !insn->key->noinstr_allowed) {
-+		WARN_INSN(insn, "non-RO static key usage for '%s' in noinstr",
-+			  insn->key->name);
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-+
- static struct instruction *next_insn_to_validate(struct objtool_file *file,
- 						 struct instruction *insn)
- {
-@@ -3763,6 +3834,9 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
- 		if (handle_insn_ops(insn, next_insn, &state))
- 			return 1;
- 
-+		if (insn->key)
-+			validate_static_key(insn, &state);
-+
- 		switch (insn->type) {
- 
- 		case INSN_RETURN:
-diff --git a/tools/objtool/include/objtool/check.h b/tools/objtool/include/objtool/check.h
-index daa46f1f0965..c0da7246eac7 100644
---- a/tools/objtool/include/objtool/check.h
-+++ b/tools/objtool/include/objtool/check.h
-@@ -77,6 +77,7 @@ struct instruction {
- 	struct symbol *sym;
- 	struct stack_op *stack_ops;
- 	struct cfi_state *cfi;
-+	struct symbol *key;
- };
- 
- static inline struct symbol *insn_func(struct instruction *insn)
-diff --git a/tools/objtool/include/objtool/elf.h b/tools/objtool/include/objtool/elf.h
-index d7e815c2fd15..0cb79931262b 100644
---- a/tools/objtool/include/objtool/elf.h
-+++ b/tools/objtool/include/objtool/elf.h
-@@ -69,6 +69,7 @@ struct symbol {
- 	u8 embedded_insn     : 1;
- 	u8 local_label       : 1;
- 	u8 frame_pointer     : 1;
-+	u8 noinstr_allowed   : 1;
- 	struct list_head pv_target;
- 	struct reloc *relocs;
- };
-diff --git a/tools/objtool/include/objtool/special.h b/tools/objtool/include/objtool/special.h
-index 86d4af9c5aa9..ce4759358ec4 100644
---- a/tools/objtool/include/objtool/special.h
-+++ b/tools/objtool/include/objtool/special.h
-@@ -20,6 +20,7 @@ struct special_alt {
- 	bool skip_alt;
- 	bool jump_or_nop;
- 	u8 key_addend;
-+	struct symbol *key;
- 
- 	struct section *orig_sec;
- 	unsigned long orig_off;
-diff --git a/tools/objtool/special.c b/tools/objtool/special.c
-index 097a69db82a0..d0a9cca27a9c 100644
---- a/tools/objtool/special.c
-+++ b/tools/objtool/special.c
-@@ -119,14 +119,28 @@ static int get_alt_entry(struct elf *elf, const struct special_entry *entry,
- 
- 	if (entry->key) {
- 		struct reloc *key_reloc;
-+		struct symbol *key;
-+		s64 key_addend;
- 
- 		key_reloc = find_reloc_by_dest(elf, sec, offset + entry->key);
- 		if (!key_reloc) {
--			WARN_FUNC("can't find key reloc",
--				  sec, offset + entry->key);
-+			WARN_FUNC("can't find key reloc", sec, offset + entry->key);
- 			return -1;
- 		}
--		alt->key_addend = reloc_addend(key_reloc);
-+
-+		key = key_reloc->sym;
-+		key_addend = reloc_addend(key_reloc);
-+
-+		if (key->type == STT_SECTION)
-+			key = find_symbol_by_offset(key->sec, key_addend & ~3);
-+
-+		if (!key) {
-+			WARN_FUNC("can't find key sym", sec, offset + entry->key);
-+			return -1;
-+		}
-+
-+		alt->key = key;
-+		alt->key_addend = key_addend;
- 	}
- 
- 	return 0;
+> Hi Mirsad,
+>
+> On 2024-11-21 22:18:58+0100, Mirsad Todorovac wrote:
+>> I am perplexed now at 6.12 stable vanilla tree, and I've noticed that after changing just one
+>> line in ./drivers/gpu/drm/xe/tests/xe_migrate.c:226:5-11, all unrelated drivers are being BTF'd, SIGNED,
+>> and INSTALL-ed:
+>>
+>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/aht10.ko
+>>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/coretemp.ko
+>>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/atxp1.ko
+>>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/corsair-cpro.ko
+>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/adt7475.ko
+>>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/axi-fan-control.ko
+>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/as370-hwmon.ko
+>>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/chipcap2.ko
+>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/aquacomputer_d5next.ko
+>>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/coretemp.ko
+>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/applesmc.ko
+>>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/corsair-psu.ko
+>>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/corsair-cpro.ko
+>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/asus_rog_ryujin.ko
+>>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/cros_ec_hwmon.ko
+>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/asc7621.ko
+>>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/da9052-hwmon.ko
+>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/atxp1.ko
+>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/axi-fan-control.ko
+>>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/corsair-psu.ko
+>>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/da9055-hwmon.ko
+>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/chipcap2.ko
+>>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/cros_ec_hwmon.ko
+>>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/da9052-hwmon.ko
+>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/coretemp.ko
+>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/corsair-cpro.ko
+>>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/dell-smm-hwmon.ko
+> This happens when the vermagic is changed. The vermagic is linked into
+> each module. And after relinking all the other steps also need to be
+> done.
+> Building the Debian package increases the build number which ends up in
+> the vermagic and therefore all modules.
+> Also there is CONFIG_LOCALVERSION_AUTO which may be involved.
+
+Yes, I use CONFIG_LOCALVERSION_AUTO because it saves a lot of trouble in bisecting.
+
+This vermagic manipulation is beyond my grasp. I understand that modules must match kernel version, for internal ABI often changes. But not between builds of the same source? Am I thinking right?
+
+>> Is there an option to rebuild just the necessary driver that was modified?
+> With the whole Debian packaging: No idea.
+> With plain kbuild: make $MAKEFLAGS $PATH_TO_MODULE.ko
+This could speed up some fixes, thanks :-)
+>> 2.
+>>
+>> >From the list of files that were compiled, it seems that drivers/gpu/drm/xe/tests/xe_migrate.c was
+>> not rebult:
+>>
+>> $ grep CC ../err-6.12.0-tiny-pt-02b.log
+>>   CC      init/version.o
+>>   CC      init/version-timestamp.o
+>>   CC      arch/x86/boot/version.o
+>>   CC      arch/x86/boot/compressed/kaslr.o
+>>   CC      arch/x86/boot/compressed/misc.o
+>>   HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/kallsyms
+>>   HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/sorttable
+>>   HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/asn1_compiler
+>>   HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/genksyms/genksyms.o
+>>   HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/selinux/genheaders/genheaders
+>>   HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/selinux/mdp/mdp
+>>   YACC    debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/genksyms/parse.tab.[ch]
+>>   HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/sign-file
+>>   HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/insert-sys-cert
+>>   HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/genksyms/parse.tab.o
+>>   HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/genksyms/lex.lex.o
+>>   HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/mod/modpost.o
+>>   HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/mod/file2alias.o
+>>   HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/mod/sumversion.o
+>>   HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/mod/symsearch.o
+>>   HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/basic/fixdep
+>>
+>> But they were only BTF + INSTALL + STRIP + SIGN'ed:
+>>
+>> $ grep drivers/gpu/drm/xe/ ../err-6.12.0-tiny-pt-02b.log
+>>   BTF [M] drivers/gpu/drm/xe/xe.ko
+>>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/gpu/drm/xe/xe.ko
+>>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/gpu/drm/xe/xe.ko
+>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/gpu/drm/xe/xe.ko
+>>
+>> Nothing suggests that "drivers/gpu/drm/xe/tests/xe_migrate.c" is being recompiled, though it was modified,
+>> or at least "touch"-ed.
+> Do you have CONFIG_DRM_XE_KUNIT_TEST enabled?
+> It probably does not make sense to use Debian packaging for a kunit
+> test. Just use kunit.py directly.
+Thanks.
+>
+>> Is this the expected behaviour?
+>>
+>> (I have deliberately skipped "make clean", to see if I can save some building time and grid power.)
+
+Best regards,
+Mirsad
+
 -- 
-2.47.0
+"Did I succeed in making a coherent view on the world?"
 
 
