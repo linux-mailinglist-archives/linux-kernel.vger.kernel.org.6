@@ -1,149 +1,113 @@
-Return-Path: <linux-kernel+bounces-419058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 089A99D6905
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 13:37:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDCD79D6906
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 13:42:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 846271614AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 12:37:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A74D281861
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 12:42:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA49A18B467;
-	Sat, 23 Nov 2024 12:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3276188583;
+	Sat, 23 Nov 2024 12:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KDnWeUWz"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="m7vYdD4C"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0208F62;
-	Sat, 23 Nov 2024 12:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4351F18EB0;
+	Sat, 23 Nov 2024 12:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732365428; cv=none; b=SjyicnSpgtk/iDnKpjwtdJDlyDtynjCeF6UBjXmz6zMCQcElRojdw7FdNo0zXssIsBPuX4Ee1ygR8iZDmZ+UbNSzW/PUn6CyesRWQgFdl8E/0s1wupUyiliBc0wCxYeucINK5X8JaqQ8WwPIi/Ruv2gPP6ThIj1/V+/dTaGTIjc=
+	t=1732365737; cv=none; b=hXCzzYzcE0+6bLEeBTHPU1X1CEFJQmPaU0an/o0sVCEASPnw9Vi1ZXV4U6SW8iK2CS0e2L3JfZGyTZ4ZtSGbc61D9RsiMjptC5MU0N5r1ndb6XU/VkqUv/rtmkOCPvyEmg4ypOO/EjBwDyruCKetGH0CbZ6VzAK2L0jT9g49cPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732365428; c=relaxed/simple;
-	bh=/KqLI+c6V+eHCk3PcyFlMtCqEsq2g5NGUwg4Z3SZNO4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kSxrEXz/PjbZ7KyHq9SDdpK5e6SAD5lqyBTxSj+/LEKapLj5ECWI08obbcnJr2mxtzFukilmrG26s2FgYIbL/ccDLPV0n+XUpGvRCMAXFTAtN62S63ZnrWLmNfm4kmpR2Gkk4I/QvCkAPYzo12qm8qK5eoFdMcNegpW0bnbDY1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KDnWeUWz; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-431616c23b5so16589915e9.0;
-        Sat, 23 Nov 2024 04:37:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732365424; x=1732970224; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=j+FIYWNxDRo9TU3lZYYljtUtoA1ai5ejfbOQhPyfFvI=;
-        b=KDnWeUWzG7cuHyquu8J075LbsAPTI8lJImB+IQ/n+8xJlUunWsDaRG7xEUA+g0MuUY
-         klolXIGrFuUAXajcRLvUfWPi4lyxh1KUD3Uw5fMqLBXrvV5Kz1FrEveVyHs/9pLIVBQj
-         4rlwtNoWjXK6SLQlG0+aet0GdiR/fy5MDEh1YizTw4BUBoFGNPYTz4Ad/dUbTbybUaTq
-         yi05xwsXbkXdf0B2Me8aKkdVOMH4yAmNk8jqo426nmGslHH+UYueTwG69DkTucVzkDFv
-         7FJSSwGXvGOIO8WvUBniWg8mK8GNYaWcy364ITnC5ZI7FLil9Bx3gqDxMEqyTvrvlqOu
-         j1Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732365424; x=1732970224;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j+FIYWNxDRo9TU3lZYYljtUtoA1ai5ejfbOQhPyfFvI=;
-        b=Dl4PfRqjud3HYnRqo+8lIiywsJvjcrUQapXWqV+ID8Wv3lCEfDaRb+LAKWCRU6fZgV
-         /9eb5CKBC8lwP7bXx+rTipFve28peKTAQe38g3ebk0nLyI93q4pW/8166AAx58UyDbN1
-         KkGnl4vT+ttyxip52lMp0BTe6MQ8O+I8VAGfG2selUTsdRP2znZoJ5EPY4kmuA/wMK6T
-         IHUEp4kxgqSn1jkBwHd5Vok7YfEFXRLwovXGi2yRdU70kpohRFBl3Upkg6loiiJNv01Y
-         1/KVI7lBJxQi75bBD18efB+jtnSSQgvo6eTePtFUvhh5+O9JuhiJOI5pJC0lBW+zq3TA
-         ytMg==
-X-Forwarded-Encrypted: i=1; AJvYcCWOH/0VzFe3auhXNqyPIHdNY5HkLZ+pv0lzHCe2pRtoDt3H/2dp6sHqE0aQYLxnzNP5TZF9EcLp9kjVZPLU@vger.kernel.org, AJvYcCX6lR4KNipb73OQ/yQT/ah6PAP7uDvEcDrEgtTTaEO2M7sZatjB8tmfn9yisHKdI2o1tZ2L@vger.kernel.org, AJvYcCXI8sN0DafD2sdmnAF35WATy0W9C/GBrnYJ/G/YaHS8AkmpgC3yLSrMMVCU6brJDsXCK+B5z3UQVQ==@vger.kernel.org, AJvYcCXiQOSZLg6Qut3EbvkRMqpNuH0MV9iPKnKMOy41ItDu8NTKZIoHTL8FLVK5KTf6Ypkch0WbaA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa265K8xLZfcqovMrgEMcA4tqRrJMv4tSO/dWIcJ/yuGoUF0Uf
-	e3izegQhrPpzePWfxxSYz1cGVNzZ+ZUPbHczt58kStHNldptlB9o
-X-Gm-Gg: ASbGncsjZmwhfG/GYFoo9tvTWKYdmnRsb5f395JSjnDSjGLOvVwAP4xX4r5mK/LzC6l
-	rthDn3dpvM1++W19s9g9zhWHsatrUKZzRP0DFAzFEiR0f/iGjL+rewiMIhzyvruPxFzVMpmn0gY
-	wJVgiK/iCw5D9u8Sbmj3QvByWd2WchCqquoSNg4QXOQQ/Cho6VgWPYBbEgptarZO/WGHtm/9vv6
-	TDzTW200egtMerJZHTJpulgF72QYODvRWahz/Yhcly6liXq1YFRjM1dpoiZ439dHkLHLj4=
-X-Google-Smtp-Source: AGHT+IGHNtE8JDX0+q6Lv6PMJPfhfsNRALK4ZhqFSQb8QeR03JV46vW7ocE89UcLvWXZNiEP33bteQ==
-X-Received: by 2002:a05:600c:1ca1:b0:431:559d:4103 with SMTP id 5b1f17b1804b1-433cdb0b2ffmr52512575e9.7.1732365424054;
-        Sat, 23 Nov 2024 04:37:04 -0800 (PST)
-Received: from krava (ip-94-113-247-30.net.vodafone.cz. [94.113.247.30])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43498a31432sm3012315e9.28.2024.11.23.04.37.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Nov 2024 04:37:03 -0800 (PST)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Sat, 23 Nov 2024 13:37:00 +0100
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: KP Singh <kpsingh@kernel.org>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Casey Schaufler <casey@schaufler-ca.com>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, audit@vger.kernel.org,
-	selinux@vger.kernel.org
-Subject: Re: [PATCH] bpf, lsm: Fix getlsmprop hooks BTF IDs
-Message-ID: <Z0HMbErrqgrklLSC@krava>
-References: <20241123-bpf_lsm_task_getsecid_obj-v1-1-0d0f94649e05@weissschuh.net>
+	s=arc-20240116; t=1732365737; c=relaxed/simple;
+	bh=XLt+eL6gvGf0WeHymcab1DvojRf4zp0Tlj9cL0/wZIo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y7UyYkajfYLa6SVEgfWI30rx+hgf8l0d3Iu+U3y+N7w+qp24rDgq8dh9Bk3sUKnL7NGHt4KQMyg0vZWj8FGwLcCkLzpQZhrzwrmShMWEzjyOs8X/5ZPsRAZ9HPp3YbuAivcTsb8kc+V035vskuYkihUAZNOU+qsWMS5xdK3bi8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=m7vYdD4C; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 33191A0302;
+	Sat, 23 Nov 2024 13:42:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=YbLZjplGEQIjdXszpZTw4vmkavVtRiLv7/HeUvS1y6Y=; b=
+	m7vYdD4CUbhmbR53UkvxOK/TK4UYu/0dzaiSpkTHsbSOn/w+C9+PB3bK+Rx4OugB
+	vzKmBP8GsuGe3a/fwmnPnqU5CDbEJwrLZiy4jGZKUgu3KRnJMZa8Uk5+m9j2rIMZ
+	CRHq4s20Sp2T/zJhH322B1h87P4DQDLPLea3beVq7nSmB8+sr0zQC7BuSIvh3GqQ
+	LKfwa+Wr1jCj27c8gXcIpf2n3BpgFpyDFEAMvsfwSXFm9VzJLSnXBTzQc1r3MNAo
+	YTIVenfri5KnvRymrIWYSqU9IdQrNnpRUt8frMbWl8UCFNhg9ef3lksrnNbWTYex
+	+yiQAj3gauhR4uwUjfjwqgh0jMDZttHf7FDs0AVqQVY5qv7G1LWfgw3Lb+I+UVIx
+	IVvXAtx2qJgJ5QXWmaC+1F4u/X4kudFQawlTXmalQLgAuPG/LONAQGX3N6Ef6J3V
+	A8vaUXfca5DngT07aNY1YA6vvY4WBdwek8oxfBinHpg3kueP0BOK+oOZDvRiz2Xu
+	AImB+RaN0GrDud+sM8S5RvAAGaZQZmRWcK8xrZ1FqCa/fZcH0cFrsZSvdjOe9Q+e
+	iEzTia0PF0KS1wcvTFQGESQuY1fuWT7n9QtHK8sqsFakSlH3MaD7kMY6VDm+phN6
+	F95SmWDXFSbc13pvAD89hQLqi3HBsU+csH+H2uNphcI=
+From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
+To: <linux-sound@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, "Mesih
+ Kilinc" <mesihkilinc@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, "Mark
+ Brown" <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+	<tiwai@suse.com>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+	<jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Maxime Ripard <mripard@kernel.org>
+Subject: [PATCH v6 0/3] Add support for codec of F1C100s
+Date: Sat, 23 Nov 2024 13:38:55 +0100
+Message-ID: <20241123123900.2656837-1-csokas.bence@prolan.hu>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241123-bpf_lsm_task_getsecid_obj-v1-1-0d0f94649e05@weissschuh.net>
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1732365724;VERSION=7980;MC=2816337656;ID=80950;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A29ACD9485560726B
 
-On Sat, Nov 23, 2024 at 11:19:01AM +0100, Thomas Weiﬂschuh wrote:
-> The hooks got renamed, adapt the BTF IDs.
-> Fixes the following build warning:
-> 
->   BTFIDS  vmlinux
-> WARN: resolve_btfids: unresolved symbol bpf_lsm_task_getsecid_obj
-> WARN: resolve_btfids: unresolved symbol bpf_lsm_current_getsecid_subj
-> 
-> Fixes: 37f670aacd48 ("lsm: use lsm_prop in security_current_getsecid")
-> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+Support for Allwinner F1C100s/200s series audio was
+submitted in 2018 as an RFC series, but was not merged,
+despite having only minor errors. However, this is
+essential for having audio on these SoCs.
+This series was forward-ported/rebased to the best of
+my abilities, on top of Linus' tree as of now:
+commit 28eb75e178d3 ("Merge tag 'drm-next-2024-11-21' of https://gitlab.freedesktop.org/drm/kernel")
 
-Acked-by: Jiri Olsa <olsajiri@gmail.com>
+Link: https://lore.kernel.org/all/cover.1543782328.git.mesihkilinc@gmail.com/
 
-thanks,
-jirka
+As requested by many, this series will now be split in 2, the DMA and the
+ALSA/ASoC codec driver. This is the codec part of the series.
+The first part (DMA) is at the link below. The first 3 patches of this
+series can be applied and built without the former series, but for working
+audio you need them both, plus the last 2 Device Tree patches in this series.
+Link: https://lore.kernel.org/linux-kernel/20241122161128.2619172-1-csokas.bence@prolan.hu/
 
-> ---
->  kernel/bpf/bpf_lsm.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-> index 3bc61628ab251e05d7837eb27dabc3b62bcc4783..5be76572ab2e8a0c6e18a81f9e4c14812a11aad2 100644
-> --- a/kernel/bpf/bpf_lsm.c
-> +++ b/kernel/bpf/bpf_lsm.c
-> @@ -375,8 +375,8 @@ BTF_ID(func, bpf_lsm_socket_socketpair)
->  
->  BTF_ID(func, bpf_lsm_syslog)
->  BTF_ID(func, bpf_lsm_task_alloc)
-> -BTF_ID(func, bpf_lsm_current_getsecid_subj)
-> -BTF_ID(func, bpf_lsm_task_getsecid_obj)
-> +BTF_ID(func, bpf_lsm_current_getlsmprop_subj)
-> +BTF_ID(func, bpf_lsm_task_getlsmprop_obj)
->  BTF_ID(func, bpf_lsm_task_prctl)
->  BTF_ID(func, bpf_lsm_task_setscheduler)
->  BTF_ID(func, bpf_lsm_task_to_inode)
-> 
-> ---
-> base-commit: 228a1157fb9fec47eb135b51c0202b574e079ebf
-> change-id: 20241123-bpf_lsm_task_getsecid_obj-afdd47f84c7f
-> 
-> Best regards,
-> -- 
-> Thomas Weiﬂschuh <linux@weissschuh.net>
-> 
+Cs√≥k√°s, Bence (1):
+  dt-bindings: sound: Add Allwinner suniv F1C100s Audio Codec
+
+Mesih Kilinc (4):
+  ASoC: sun4i-codec: Add DMA Max Burst field
+  ASoC: sun4i-codec: Add support for Allwinner suniv F1C100s
+  ARM: dts: suniv: f1c100s: Add support for Audio Codec
+  ARM: dts: suniv: f1c100s: Activate Audio Codec for Lichee Pi Nano
+
+ .../sound/allwinner,sun4i-a10-codec.yaml      |  31 ++
+ .../allwinner/suniv-f1c100s-licheepi-nano.dts |   8 +
+ .../arm/boot/dts/allwinner/suniv-f1c100s.dtsi |  14 +
+ sound/soc/sunxi/sun4i-codec.c                 | 367 +++++++++++++++++-
+ 4 files changed, 418 insertions(+), 2 deletions(-)
+
+-- 
+2.34.1
+
+
 
