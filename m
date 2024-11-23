@@ -1,131 +1,118 @@
-Return-Path: <linux-kernel+bounces-419219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B14229D6AFC
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 20:02:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98A059D6AFD
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 20:03:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A6C9161BAA
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 19:02:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AA24161BE1
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 19:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE3115B554;
-	Sat, 23 Nov 2024 19:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE7A1494CC;
+	Sat, 23 Nov 2024 19:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="kRjs/mEI"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VebvtSoz"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EBE3182C5;
-	Sat, 23 Nov 2024 19:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B4A182C5
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 19:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732388542; cv=none; b=AGsRIHrAvmNP3eEeXb5gV/FdzbI+ijjw9df0RbndMExL9Sux1Kn1v8xWti+OAy2LH94b2AqduFb1W17y7fH6KjYdfkZTbn8sPYdHaP+JSTMC3nPfPiJthvpP79fLRq48OBvBwPX8kgYB4HMHKJgsogif37Ea+bmLpx1zUBrNcoI=
+	t=1732388583; cv=none; b=Tq500Nb+hqglddZGf1alvG8z2cH0CVt3URWbexPJYJY2Nv8g3KK/6WMxRMviqEZn/ZoTjB/5GjVmWw0gOiYTBC/X5dIf2u2akWlTbTTGE/AWDEeKMreD7VCiJNKG4j8jyCBa8TGs8j/a4biRiQ7rhPFG9u3UXbrab2MH5PJOSfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732388542; c=relaxed/simple;
-	bh=+JDRYomU6ddZd09XJpOjydkJa21L4ORP64zWXQHJwFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PHwkU9YiJSMW4DQP/0ryUqDDaUEwzLPzZ1lxt4ooOJfGE7lujY4798RnO+5gla8grRbMk7aM3morpblklaGD4RHZyxy8dgWggMrWOib9nMgek5TufpUnxQCSG4CTCG8YrLM20yGNuYWbzeKMfdZm9RmZvV6AE5KIhe/KOIrQoBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=kRjs/mEI; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=3/idsCltb7XExEF3zfCfI1F96Qrzn3w6Pf9qRmMeZ88=; b=kRjs/mEI8quU8JR51yWzV6vCk9
-	mwjzJZfb+f7ARjptBHmf9PxbReYerWhmgwFWPdU0k8tK6HE5/mb4vT0bf5S5rwpu+YU6nqW2p2NXf
-	gMK3k5ioVQYiiDgR1c105K4r5p9p/pktb1R6a2yldjfchH9c2VIfoNexZmI3IVcFTo05BF5Li0wnd
-	ZDn2PlybuUhPq3Q/WeVuzMT88Y4TTyLq1YYhZaquhUDNbC/Ggh4RqoibbDst/VTZKRifeh/9tomvo
-	Yo+mwPdtUgSi7cQUtNc+CxrHUnEIG+tGfxataUsC0pQXiFcUQSMVoKszy4Xayh9xJ/04gnN64VNKz
-	LQMN9KwA==;
-Date: Sat, 23 Nov 2024 20:02:02 +0100
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Mithil Bavishi <bavishimithil@gmail.com>
-Cc: Laurent.pinchart@ideasonboard.com, aaro.koskinen@iki.fi,
- airlied@gmail.com, conor+dt@kernel.org, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, jernej.skrabec@gmail.com, jonas@kwiboo.se,
- khilman@baylibre.com, krzk+dt@kernel.org, linux-hardening@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- neil.armstrong@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
- quic_jesszhan@quicinc.com, rfoss@kernel.org, robh@kernel.org,
- rogerq@kernel.org, simona@ffwll.ch, thierry.reding@gmail.com,
- tony@atomide.com, tzimmermann@suse.de
-Subject: Re: [PATCH v3 10/10] ARM: dts: ti: omap: samsung-espresso10: Add
- initial support for Galaxy Tab 2 10.1
-Message-ID: <20241123200202.684d8bc5@akair>
-In-Reply-To: <20241123175259.775-1-bavishimithil@gmail.com>
-References: <20241112114818.1eb238e9@akair>
-	<20241123175259.775-1-bavishimithil@gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732388583; c=relaxed/simple;
+	bh=btkd7bcQxHTADngVj0AV9fsC2d2mq9nAj2gXnskQc1A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qrVzu0/mEtCmaq3j0O1mOb3QpU9fNE4qCeHUkkdi+sx2CS6kaEllqIZvs/9HcK9ZuOCZuDmXDwD40AtChGS92tbam+HdYAf6L17hIJm+QO00BKxmvPuw8/A6upYFSTqVyb6w9xOutRBukOXM9lROV6SQjjiHQ7IKCIfnaDTmAHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VebvtSoz; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5cf6f367f97so3820303a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 11:03:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1732388580; x=1732993380; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ufinr/VRsCnZl1jhLb5tWhQ+vGOvxxlOxwqyVUO4hhI=;
+        b=VebvtSozfk/XUSXfyzfSAr6cpivgPzbQvJ8rDF1e5h6GIe7TeiSzJqeodbYQ+23K/b
+         Gftp8TZGLvmt5+zfHceYPvpnzGUGv/ONARRrqPZ8xwQ9QjPtROy6BIbv6YccV3aIcgFD
+         IsDbg3wXzN66j1CswT7lSEEtvQMn4Ji2yknBE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732388580; x=1732993380;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ufinr/VRsCnZl1jhLb5tWhQ+vGOvxxlOxwqyVUO4hhI=;
+        b=Av8GNrc6lLLB3fBjLykef3ictpsnS19FPzE7j+iFu6EpdTx8oTimoALZzHohVLYIwJ
+         LDoA3sc1GB8mG8q+mYsnKARvqpzmHWgiIITVA7u6sJks1L5D7I4olpnTBO8/NuPhm7Dy
+         4FxExuqlfrYoXaMyBbBQs89tjJ/ONuv1SW4eGsR5nNpdjufSrI+c42HadzsSdsXwJ+1h
+         onfLVYvVD53usvYmd8XLFkURt1fBt7WNA8x74aH+KqA7/vN8SkOPZlr6hJz+O1xvjjIY
+         7+EY8mSxJr14kfg6ZLHo/Ftfp4TiyPczTZzy/5/W1pyPJW8SgsiMZo8bmCX1yXz9rcn9
+         8JmA==
+X-Forwarded-Encrypted: i=1; AJvYcCWoY7fnHUJ9/wtBEyCy8MitOpAkN2Ql+ArpfI+Ah5/RkgEVxRZrRFvnd4ctzDPq4C3iWUWe50Mi7yob3sc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXvED+6CK4u0F1kqMR67v5c12Z5wF9BZDxKeG7ySi/Qp4xXRDz
+	c0EtUdmbgFBJxzLDzhSItJWqxaIM6RKYoAWwPxUxWzoZwGpy5ODb0mg2q2PpA3vDqXvSR1m88iZ
+	+Euwl0g==
+X-Gm-Gg: ASbGncuPP5Her+8djQknLxAy9w+e7O9eB1yZVoRujLQHkZOh28MRtax+Iv8oeGhXk4Z
+	66tzzzasQvCV6n6usOWS3hdhM+U8zjQ9N09O9iaiJNVX+wIkCvf1RdVbL6rR3bvrazqmt2HRk/k
+	/0zbZFBCnewxkckqh1xBS6b2kEa+v67UsdO/O1R6aYXi/+TYOa/1WtR6G/MdbiK/zNCDDwxZ68m
+	K0izlAQZu1RQy1Iof1mLJYCFgEZ3cRIrWvV1iSz4Mgw6cLO7U6qhslaknRbmg6ROqJ78PUMiMN4
+	kctYHSt6fkLsgCnQ1tBsV/y/
+X-Google-Smtp-Source: AGHT+IFPL44fRnKvdkzbEg99H3wtx1tLB39yV6DcSowkzo2hPNVyzepPWPczBCpyeRx5yh9Bg7kSkg==
+X-Received: by 2002:a05:6402:3486:b0:5cf:ac34:380a with SMTP id 4fb4d7f45d1cf-5d0207b2755mr4536946a12.29.1732388579686;
+        Sat, 23 Nov 2024 11:02:59 -0800 (PST)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d3a2d15sm2410028a12.11.2024.11.23.11.02.57
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 23 Nov 2024 11:02:58 -0800 (PST)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aa545dc7105so4879966b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 11:02:57 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXp2bqKn4QFB0pbwT11PeqSHQniI7X4QadoKDS9Lcp7Qm5aoddvvrGanaB2MMfwP+u8Cl7uwx/e+TLN5Io=@vger.kernel.org
+X-Received: by 2002:a17:906:31d9:b0:aa4:a814:3f6c with SMTP id
+ a640c23a62f3a-aa50995de95mr534603566b.8.1732388577220; Sat, 23 Nov 2024
+ 11:02:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <680c14b5af9d43d6bc70d2c1e9321e01@AcuMS.aculab.com>
+In-Reply-To: <680c14b5af9d43d6bc70d2c1e9321e01@AcuMS.aculab.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 23 Nov 2024 11:02:41 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgT4E+6YO0-SvdD=Gh6wSuUB3Bq_qOiErfZkobQ9gn6=Q@mail.gmail.com>
+Message-ID: <CAHk-=wgT4E+6YO0-SvdD=Gh6wSuUB3Bq_qOiErfZkobQ9gn6=Q@mail.gmail.com>
+Subject: Re: [PATCH] x86: Allow user accesses to the base of the guard page
+To: David Laight <David.Laight@aculab.com>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>, "bp@alien8.de" <bp@alien8.de>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@kernel.org>, 
+	Mikel Rychliski <mikel@mikelr.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Am Sat, 23 Nov 2024 17:52:58 +0000
-schrieb Mithil Bavishi <bavishimithil@gmail.com>:
+On Sat, 23 Nov 2024 at 10:48, David Laight <David.Laight@aculab.com> wrote:
+>
+> In that case access_ok(ptr, size) will check that 'ptr + size'
+> is a valid user address -
 
-> > > +&i2c3 {
-> > > +	touchscreen: synaptics-rmi4-i2c@20 {  
-> >
-> > touchscreen@20  
-> Fixed, generic node names right!
-> 
-> > > +		avdd-supply = <&reg_touch_ldo_en>;  
-> > not known in schema  
-> I cannot seem to find the "vio-supply" shown in the bindings. There is
-> only mention of avdd-supply and vdd-supply. I am not sure if avdd and
-> vio are equivalent, hence the confusion.
-> What should be the solution here?
-> 
-well, look at the schematics and see how it is wired ;-) 
-Without schematic, it is a bit tricky. So you can look how it is used.
-vdd-supply sounds like something to make the chip fully functional.
-vio-supply seems to be for the io lines.  As the vendor kernel seem to
-set i2c to gpio mode, so probably because the vio-supply is powered
-down according to the board file you posted.
-So it might be vio-supply only or vio and vdd-supply combined.
-In any case document what you have seen in the vendor kernel.
+The point of USER_PTR_MAX is that the size never matters and we never
+check it. So the "-1" is basically just the minimal size.
 
-> > Documentation/devicetree/bindings/input/touchscreen/touchscreen.yaml:
-> > horizontal resolution of touchscreen (maximum x coordinate reported + 1)  
-> 
-> > So this touchscreen reports max 1278?  
-> 
-> Fixed it as well, 1280 and 800 respectively.
-> https://github.com/Unlegacy-Android/android_kernel_ti_omap4/blob/3.4/common/arch/arm/mach-omap2/board-espresso-input.c#L264
-> 
-> > And these things belong below rm4-f11 according to
-> > Documentation/devicetree/bindings/input/syna,rmi4.yaml  
-> 
-> I did not quite understand what you mean by this. I checked the bindings 
-> and a few examples, there is nothing "below" rmi4-f11.
-> 
-this part of the binding description
-patternProperties:
-  "^rmi4-f1[12]@1[12]$":
-    type: object
-    unevaluatedProperties: false
-    $ref: /schemas/input/touchscreen/touchscreen.yaml#
-    description:
+And the code does actually depend on the fact that the access has to
+start *before* the boundary to work.
 
-basically says that standard touchscreen properties are accepted below
-rmi4-f11. 
+Now, we do have that whole "at least PAGE_SIZE of guard page", and so
+the 1-byte minimal size doesn't actually matter, but I don't see the
+point of the change.
 
-In the example you have:
-           rmi4-f11@11 {
-                reg = <0x11>;
-                touchscreen-inverted-y;
-                syna,sensor-type = <2>;
-            };
+In particular, I don't see when it would matter to do access_ok(ptr,
+0) in the first place. Who does that, and why would it make any sense?
 
-Regards,
-Andreas
+               Linus
 
