@@ -1,150 +1,80 @@
-Return-Path: <linux-kernel+bounces-419065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB4D89D6921
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 13:59:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D0729D692F
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 14:09:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6423D281C87
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 12:59:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F465281D7C
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 13:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C6D1A0726;
-	Sat, 23 Nov 2024 12:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626C6189B80;
+	Sat, 23 Nov 2024 13:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LubYlHIM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GVMUCpWx"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ACC923098E;
-	Sat, 23 Nov 2024 12:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168031EEE6
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 13:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732366739; cv=none; b=Kq6QYCLqhtS2C2NBXEernAv5h28O+cghSGrOm7NMj1OeoRKs/am5azaEzVC1dvXb+l0MWG9AOduqfkbsc9yr4W7/e+ikEY188sAqV9cXAXDRlAEGt/YCBo6xjNrEv1o06V3RQKGPavjRkmXq4bCveYcO7P46youMevLbxelyVBY=
+	t=1732367369; cv=none; b=grYOwMRw7c+0jL2Nd32smmv6H2u0QqpITK7KmYntL9UGhn4LScQFsj2SXnVMQJHspmFTkPk72+vnXaBw3i/DnSmEWH/loXt+caMgMn9ekeR4xUoXel/huMktkaHCss0VgMkbk8TP5JjXqLF/zmYAVL+4OhLGVhn4SOr2ALcOVyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732366739; c=relaxed/simple;
-	bh=rJ3P/EwNpRpfkOloeZcwIZCsX0PzORmTXOM1R5SR4gU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=j6tE/Q/OeWeb/ZUDrs7eJu2MbUknTD5xxl1McjmuHAjioQ9YaO8MJSxdWRST8H7oaceB5td3vvnK2cGp897hD2D+33EAwNhdTY0XCDvQwWgxcXNUSEjPCdvy6ONSqpLyXOkDPk4p/vlU4dpHQoHDmY+bT3kjRaA/QF3uBhMjGWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LubYlHIM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2BA45C4CEDB;
-	Sat, 23 Nov 2024 12:58:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732366739;
-	bh=rJ3P/EwNpRpfkOloeZcwIZCsX0PzORmTXOM1R5SR4gU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=LubYlHIMr5OnyMfeNHXytxf+Hr0BMlp2/kvtWYg2mp5b/Gji9qDwA82Ku0QUm85Vq
-	 Wup9CUG2gc60FI+ZowAHyx5vA7m+Giiu5jkxNaNjVE8M1356NFHWTsZ9Z5lzh6GaRY
-	 oUBXMNENXQ8y9VXpLXtz53m4z8lTEUQ8YxqAJZAaJGK+mwpvgo8XF8227K0ssDI9H4
-	 yJh64C69ds+u5wFiJf1EdIxSn8UFxUCgGUIUtSXzkhzef10ZP3oCw5/Kxwb0D/ePR0
-	 yCrXMcGPKSvp4hXOXubDoGYLvfW9RTogreThW34h87s642UmbwMFKNBw1AkTnMsYN8
-	 Ghxm8A5JFWccA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A81E6ADFF;
-	Sat, 23 Nov 2024 12:58:59 +0000 (UTC)
-From: Maud Spierings via B4 Relay <devnull+maud_spierings.hotmail.com@kernel.org>
-Date: Sat, 23 Nov 2024 13:58:56 +0100
-Subject: [PATCH v2 4/4] arm64: dts: qcom: x1e80100-vivobook-s15: Add
- bluetooth
+	s=arc-20240116; t=1732367369; c=relaxed/simple;
+	bh=k++Wy0STB48MMdcQnykA8i43AMPrrqsa1PUnpy018ZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TaKMIL/EJ5neLQJ9wbDXGZSo4nTuZ5vwhh4FYOUmNqOmaZCmPgA+Xs+iJulQSAsacZ7Ly9tUMew2D3RRBZKtt/6PGD8RYJ0JJu79SPGoZwPiZklAaUZbNO9lFFJBGH5UbxTT+dCH8UH/O9+kmE2BQFp7cJcuOt3a1phI45OkXEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GVMUCpWx; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=2mLyvYcGoybty1wpHPq7oZtIQKwSDVu5sKSJhKOprtU=; b=GVMUCpWxFapOeY7+A9BXzs/OJ8
+	Ua8hNLfdYbV3EhI/p0txoLeQltejV0RFKdOtlzuVS78SwLgUlZT31+3XTZeKXSlGPxm+52K44lXSQ
+	hqsfo/Otl/WQwgXPzHmLmOgTvkLhHDrb6t1KdW3ZOZjtFnCNXboAJz3GWoacICYem7Llfk1D9/rc+
+	K8uTXpp89puD1LwFoY1heGVsv3rgUEC7TVKZWz8KKw0peXWjVcvYca0xoi8wVOm96B/dy2pK2D1bt
+	j0v5Uzy61KV2ZlcVFtXFCWlJ91AKgCyoM1uSBMVoGbCWkiRYwPpn/Xdk06Mdj7ONDStEOTTy/CY6e
+	dmAgvVVQ==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tEpsu-00000009Eqz-49uW;
+	Sat, 23 Nov 2024 13:09:14 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1B99130068B; Sat, 23 Nov 2024 14:09:13 +0100 (CET)
+Date: Sat, 23 Nov 2024 14:09:13 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 8/9] objtool: Collapse annotate sequences
+Message-ID: <20241123130913.GC24774@noisy.programming.kicks-ass.net>
+References: <20241122121016.372005127@infradead.org>
+ <20241122121556.447242540@infradead.org>
+ <20241122175713.zxtwuz77ppjcotg3@jpoimboe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241123-asus_qcom_display-v2-4-a0bff8576024@hotmail.com>
-References: <20241123-asus_qcom_display-v2-0-a0bff8576024@hotmail.com>
-In-Reply-To: <20241123-asus_qcom_display-v2-0-a0bff8576024@hotmail.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Douglas Anderson <dianders@chromium.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Maud Spierings <maud_spierings@hotmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732366736; l=1600;
- i=maud_spierings@hotmail.com; s=20241110; h=from:subject:message-id;
- bh=vMJXwGXqcYHA1iOq+F9o2RBWr2fMV7IxMGdC4E6B5Pk=;
- b=365x96YE6AP/LybGpULNt3Vr0JG9Hmfnj6O5ZshBhwY8zwRr+XMHMUjn9K5v/i9xyCtSGfNCA
- g3MHJQw82pbDiDQAjwkV5+BmmzWObPa1+W1LULiSmFWb4nvQy0K9mvZ
-X-Developer-Key: i=maud_spierings@hotmail.com; a=ed25519;
- pk=CeFKVnZvRfX2QjB1DpdiAe2N+MEjwLEB9Yhx/OAcxRc=
-X-Endpoint-Received: by B4 Relay for maud_spierings@hotmail.com/20241110
- with auth_id=273
-X-Original-From: Maud Spierings <maud_spierings@hotmail.com>
-Reply-To: maud_spierings@hotmail.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241122175713.zxtwuz77ppjcotg3@jpoimboe>
 
-From: Maud Spierings <maud_spierings@hotmail.com>
+On Fri, Nov 22, 2024 at 09:57:13AM -0800, Josh Poimboeuf wrote:
+> On Fri, Nov 22, 2024 at 01:10:24PM +0100, Peter Zijlstra wrote:
+> > Reduce read_annotate() runs by collapsing subsequent runs into a
+> > single call.
+> > 
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > Link: https://lkml.kernel.org/r/20241111125218.921110073@infradead.org
+> 
+> Stray link?
 
-Add bluetooth for the asus vivobook s15
-
-Signed-off-by: Maud Spierings <maud_spierings@hotmail.com>
----
- .../boot/dts/qcom/x1e80100-asus-vivobook-s15.dts   | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-index d0bee4b6fc0be6fe40d335f4d50dde495853b315..caf7509692db84c69ad375b5dd07054ac0adcb52 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-@@ -18,6 +18,11 @@ / {
- 	compatible = "asus,vivobook-s15", "qcom,x1e80100";
- 	chassis-type = "laptop";
- 
-+	aliases {
-+		serial0 = &uart21;
-+		serial1 = &uart14;
-+	};
-+
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 		pinctrl-0 = <&hall_int_n_default>;
-@@ -545,6 +550,14 @@ &tlmm {
- 			       <44 4>, /* SPI (TPM) */
- 			       <238 1>; /* UFS Reset */
- 
-+	bt_en_default: bt-en-sleep {
-+		pins = "gpio116";
-+		function = "gpio";
-+		output-low;
-+		bias-disable;
-+		qcom,drive-strength = <16>;
-+	};
-+
- 	edp_reg_en: edp-reg-en-state {
- 		pins = "gpio70";
- 		function = "gpio";
-@@ -624,6 +637,17 @@ tpad_default: tpad-default-state {
- 	};
- };
- 
-+&uart14 {
-+	status = "okay";
-+	bluetooth: bt_wcn7850 {
-+		compatible = "qcom,wcn7850-bt";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&bt_en_default>;
-+		enable-gpios = <&tlmm 116 GPIO_ACTIVE_HIGH>;
-+		max-speed = <3200000>;
-+	};
-+};
-+
- &usb_1_ss0_hsphy {
- 	vdd-supply = <&vreg_l3j_0p8>;
- 	vdda12-supply = <&vreg_l2j_1p2>;
-
--- 
-2.47.0
-
-
+Gah, yes, Was from the previous posting, I though I'd removed them all.
+Gone now.
 
