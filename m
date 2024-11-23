@@ -1,120 +1,140 @@
-Return-Path: <linux-kernel+bounces-419136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F939D69D5
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:01:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFD469D69DA
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:03:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5882281C8A
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:01:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B4F4B21A98
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CA15336E;
-	Sat, 23 Nov 2024 16:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13E354720;
+	Sat, 23 Nov 2024 16:02:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rY/hhEwK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KwjaODSX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2C31C695;
-	Sat, 23 Nov 2024 16:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38BA4A0A;
+	Sat, 23 Nov 2024 16:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732377656; cv=none; b=efxnng3F636nRrFlfGqgpXPZrj952xMHEes1cMj2Uk8ZLtP0RstLAQsXFc7a44W8FJwvIDhMntOe7kVS1zTVLbGAVyY9f1bMYMR8N2JSmRLyQCKnTtjwdHRKUG9PEs3adNH2Ba2GAiRxvrzL9uNR4lGFG8BxxlPVUPT9hW0Kkes=
+	t=1732377777; cv=none; b=ObtJQ8cGKmU/pjw1AyEXvVCOvIq+HeWHGSMR80IWLzyg9KhD1DtpXGt1SeqwnetD9oi1GCRN/19Pj6dmsbCAx5ADx9RYLKd9esEea84yULz0Cf6iMdi+UBLYirvzaHUNUCihNKo3ccuspyZxYRtPPZrroxGxfqAEcIN8MUcyBM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732377656; c=relaxed/simple;
-	bh=JNyDZtalF54Y5ZrHjZNjBgokrZyQ4W+6HBOQlcOGDlE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OkuZBWMrOC/iv6kxjAxg3cMPna/403S7gexxsY6hHikpwgCfYm7q4R+y464Cba+2nqGzSD90CHnY8pAF7lEPiRmL6dVWAWjN/uMCSn2vQJw1OlCS164QmGfMnR2DF3MPY+9FKf6d+cfqSrngUjxKm0nDGnAjDe0UYv8KDPt3n2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rY/hhEwK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B3F9C4CECD;
-	Sat, 23 Nov 2024 16:00:51 +0000 (UTC)
+	s=arc-20240116; t=1732377777; c=relaxed/simple;
+	bh=gknFFIhuKFYyMcx3T6Eo9QJPAfJs1EKLFbqVVENxTPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rw0mFirrPm9jtI35oWp4q0GyHyA5selaPYQu0UIE9CudIdI3b/Gaad07CMYhjsHslbCMhRMEjB/EQTr382dXiPvtNeIHs7+ml38brNjbFm2NTj2PKbSvtOqhE2xxkk6F1/8M+bCghJRgPgrjtqAv7zNS5vivWccGdp63c+Li0pM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KwjaODSX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 739D9C4CECD;
+	Sat, 23 Nov 2024 16:02:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732377655;
-	bh=JNyDZtalF54Y5ZrHjZNjBgokrZyQ4W+6HBOQlcOGDlE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rY/hhEwKiX9QS619xQENwikFKLz0Qk02jNdpOOnsvVz0eUtGdM1PmhDH4Soo41xkh
-	 +Z8I9f5kwkQ3+qVQJM0CqCHo3Vdtx96bwz/dwgtxJmvHSS5Zs4fYXuMrEVSTGqNgBO
-	 sdVetEQHEiB34O+iYoVz7cNhBDSOie0lzspiqtE5JuCSOn1/w2MCaHWR/JyxVRcq5V
-	 +kWd7vdZFCy/EsHInQsqZzirrJqSYynUuZy29X+WDLIrHMnV7R7IQcwzNQFtdblpZe
-	 fe72V3ww6mmizN3Ras3PQcAR733ZPry59UIzsDQKz2Tn0UJ+kFUk0hPoTQ4pPvuiep
-	 naRBttdDsIusg==
-Message-ID: <a664ae24-26a7-42bd-98e2-f46d7e475b9a@kernel.org>
-Date: Sat, 23 Nov 2024 17:00:49 +0100
+	s=k20201202; t=1732377776;
+	bh=gknFFIhuKFYyMcx3T6Eo9QJPAfJs1EKLFbqVVENxTPU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KwjaODSXSU/ZooDV/6sS8MdNwZwOndxsYulX6j5QPANGERlNozIlbyAhdoeYMG+D3
+	 uoXLnRa16y2RNPoWwlccQKd/xotndUgTv0S6PBaY5oz4K1VkI1ILZ4kwJyuwfkiBvO
+	 I4T05kIkj/csWJ1RG/xXc48d2JEXqSGJEAUJF8W0p8rrgpmAoQLQI+2Hlk9Y3SqA7E
+	 yTp/IcKllFeifYcbcLbHA6hb+KhWX44J902Omdx+rlgTr+kcoeGdKVtNyVK3Pgf7nK
+	 4Wj/roWV48I6/9aZTLID03VQFC+iyAqwOsEoZ0NTNhKp3XeSGVap4nRChnwjvqs4Yr
+	 KdWTe67EeBK0A==
+Date: Sat, 23 Nov 2024 16:02:49 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Antoniu Miclaus <antoniu.miclaus@analog.com>, robh@kernel.org,
+ conor+dt@kernel.org, dlechner@baylibre.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pwm@vger.kernel.org
+Subject: Re: [PATCH v6 3/8] iio: backend: add API for oversampling
+Message-ID: <20241123160249.219161d5@jic23-huawei>
+In-Reply-To: <e683ce92267ec4cafa825cdf1767939d922b04ea.camel@gmail.com>
+References: <20241111121203.3699-1-antoniu.miclaus@analog.com>
+	<20241111121203.3699-4-antoniu.miclaus@analog.com>
+	<e683ce92267ec4cafa825cdf1767939d922b04ea.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] media: camif-core: Add check for clk_enable()
-To: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Cc: sylvester.nawrocki@gmail.com, mchehab@kernel.org, dron0gus@gmail.com,
- tomasz.figa@gmail.com, alim.akhtar@samsung.com, kyungmin.park@samsung.com,
- laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241122221348.3998-1-jiashengjiangcool@gmail.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241122221348.3998-1-jiashengjiangcool@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 22/11/2024 23:13, Jiasheng Jiang wrote:
-> Add check for the return value of clk_enable() to gurantee the success.
-> 
-> Fixes: babde1c243b2 ("[media] V4L: Add driver for S3C24XX/S3C64XX SoC series camera interface")
-> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Please version your patches correctly, e.g. use b4 or git format-patch
--vX, and add changelog in cover letter or under '---' of individual
-patches describing changes from previous version.
+On Mon, 11 Nov 2024 16:41:02 +0100
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-Best regards,
-Krzysztof
+> On Mon, 2024-11-11 at 14:11 +0200, Antoniu Miclaus wrote:
+> > Add backend support for enabling/disabling oversampling.
+> >=20
+> > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> > ---
+> > changes in v6:
+> > =C2=A0- add iio backend commit for oversampling enable/disable
+> > =C2=A0drivers/iio/industrialio-backend.c | 14 ++++++++++++++
+> > =C2=A0include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0 3 +++
+> > =C2=A02 files changed, 17 insertions(+)
+> >=20
+> > diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industria=
+lio-
+> > backend.c
+> > index ea184fc2c838..6ba445ba3dd0 100644
+> > --- a/drivers/iio/industrialio-backend.c
+> > +++ b/drivers/iio/industrialio-backend.c
+> > @@ -681,6 +681,20 @@ int iio_backend_data_size_set(struct iio_backend *=
+back,
+> > unsigned int size)
+> > =C2=A0}
+> > =C2=A0EXPORT_SYMBOL_NS_GPL(iio_backend_data_size_set, IIO_BACKEND);
+> > =C2=A0
+> > +/**
+> > + * iio_backend_oversampling_en - set the data width/size in the data b=
+us. =20
+>=20
+> Seems unrelated?
+>=20
+> > + * @back: Backend device
+> > + * @en: oversampling enabled/disabled.
+> > + *
+> > + * Return:
+> > + * 0 on success, negative error number on failure.
+> > + */
+> > +int iio_backend_oversampling_en(struct iio_backend *back, bool en)
+Odd to just be on or off vs a count of how much to oversample by
+with 1 meaning don't oversample, 2,4,8 etc saying how much to oversample by.
+
+> > +{
+> > +	return iio_backend_op_call(back, oversampling_en, en);
+> > +}
+> > +EXPORT_SYMBOL_NS_GPL(iio_backend_oversampling_en, IIO_BACKEND);
+> > + =20
+>=20
+> There was some discussion around having APIs with a boolean parameter (ac=
+tually
+> even improving - in terms of callbacks - further with some generic
+> getter/setter's) or having two callbacks:
+>=20
+> iio_backend_oversampling_enable()
+> iio_backend_oversampling_disable()
+>=20
+> I'm guessing you don't really want to do any major conversion/refactoring=
+ at
+> this point in your series so I have a slight preference for just keeping =
+the
+> current style of dedicated enable and disable APIs (irrespective of being=
+ the
+> better approach or not). Please consider it, if you have to re-spin the s=
+eries.
+Agreed. Keep it consistent for now.  I don't mind a proposal to refactor
+the lot (though not yet convinced either way on it being a good idea)
+but I don't want to see it inconsistent.
+
+>=20
+> - Nuno S=C3=A1
+>=20
+>=20
+
 
