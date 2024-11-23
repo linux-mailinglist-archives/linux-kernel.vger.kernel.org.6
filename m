@@ -1,164 +1,193 @@
-Return-Path: <linux-kernel+bounces-419077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C0B09D6932
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 14:14:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E23F89D6934
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 14:17:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EDD9281DE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 13:14:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99781281EB7
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 13:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F68018A6AB;
-	Sat, 23 Nov 2024 13:14:25 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E641990C4;
+	Sat, 23 Nov 2024 13:17:22 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2818E1EEE6
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 13:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72064C62B
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 13:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732367664; cv=none; b=VxBhgXIsApQpF1pvTLia/bKyOjMwGaG6w6bGxiH5rElAukNn1OqkYN0WFXRyTH/fhs18LkT2zSM45e+3CZt4U9BMvtmn1VmUoN9NsX/Vo+gGwyHo+CW/1dd7LGs/etBKgRHOSEos9LgKbYNd22qGnNVS0S+IUPKXxiPErW6JRIM=
+	t=1732367842; cv=none; b=CuqCmmYoNtWnE1mSME0uvERbR8hLdV2YG6iPld9A9F702uaB9HbwM4nffQL5dJ2m1dR7KtKxKqZAWvXubmL3apEVgdPSvnlcH1jfyNp4BGXChyY+cm2mEpIfcqSQfXd8h3p3kCLvmDW49CWD8kDwlm8UsBLbysjK4vuSY6EZL9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732367664; c=relaxed/simple;
-	bh=W5VLZhCmHZLlr9K3vcCe2Q44BqQ4UeuOvfDDNyP5frk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=saKySDNI8efPpRNKRChqg2mj0RPrXQ1CGDww/dD/BVTEYQ+ydLC2cnekp8/UipjSchCGni/B6wNZJUam8q85GQQa+WmO4X8FIeiSeY1IXtR8a7m/CMAPEv/wRiJkziLO0/CTR+0Ftz6+U5SnaYW8bgL/VQ2Cy0t4lKSVUhdfre8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+	s=arc-20240116; t=1732367842; c=relaxed/simple;
+	bh=41DOHM4iPEklYF1VOcNv6jJ9XlYUlDwHGkNV4iLCm+k=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=EKWfsXvrdONhNVHtDm4MzSpuQOmCBGLzstM13KFjmcxyiBLhjS9+W5nYY82tHGT7nSe1zH8r+bUhg6cKmxBF8nvEEQbJpLwivKXgBhf+JgYMyiT3BowOrLyiRMpfFmPx2eMaMwNHipGM49RQ0RPbDcQ2wVqI2r0zubGL/DhG4zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a77d56e862so24676135ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 05:14:22 -0800 (PST)
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a78c40fa96so31524355ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 05:17:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732367662; x=1732972462;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HDZ99ejxD/GrhQAqRtjpC0KOChx8C2/P4scOf1Xv+qE=;
-        b=YiT8OAbkv3WqF0fpb31OU/7pP44OUcEjoJ5CRkrLr6i4WIP6BjSZd7jMw0637Y7fY+
-         BGeRPWENTO8//dK892mKJG/3pzcu1J71pL2AzJv0cFzfn1A1IcrG6eVCF/foi3YeHR0x
-         8+wFH7E4ULU/Gw6MKtyzfI0iORjF2FbNRNOevINM93TFIGxePZmx/gv6hEi76piXi74z
-         6nBUwjWLXBT8A600B0I+sEuruOw+jEPE0gKjF3dvVNgUDKu2om2mw1ii8xJq7Ni7f/B4
-         1npkPevfUPsPnA9+NdZqNbWy+Pce5MdrVGjFb5EDeKTa8upF6FrFDXNLGw1pvyzUdCHR
-         AN9g==
-X-Forwarded-Encrypted: i=1; AJvYcCV0RSdfbV9EN5zzr+TsX2UCpLzuWZCr2YXiyM9OdbmIV4q7aqZ6cXaocQEvh2XcbWpi/nv0gnbauqAHy1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/OISXNNcF6C4IIVpK/+7H9zgd8oc0SibtuTVLYIgAIvAmj/ya
-	jy3y3SeOc63CDTczoIzc77u8Q9vQnEJXC04tfQQ8dGVv9LHuC3Ah252CojC3HG8Mh9PkCfK8E//
-	G1vniN2m3gUkZKM7L/XgjemtE5qtfhyuHRPiv/XzjRh8vF3LgmT3xI6M=
-X-Google-Smtp-Source: AGHT+IGtIebMFpXYtE3/Wjyx/JZ6wmIoZw2ukrYTaEKklxbWbe6pqUNQ7MXIDTC2XLQhT9hmIn/wFJR1h2cYl9vvCdVXcmTmE7Ky
+        d=1e100.net; s=20230601; t=1732367840; x=1732972640;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EGS2Wf75yB6cGCwSVlaCEAqoIriUQfEOOBhDFTVpNeE=;
+        b=G71QURBlXq1oID0zvsU6q5m0qWDYRRWDer9K5yru8fzkvatQxfAjRb3UkpCvVWyk71
+         V+mFYE22P72/AvXPSmG3Pif+SLx40rqIWOmTcNLr7uJyOFRu7z7lSnOotmrFmr7fhg6F
+         AUiK86phiFHKkNHzeJG37jmihKasxfZ5TjnrokruemJrYcEGIovLkbubL9X1f013mkMf
+         xiItdNev9v5MF9L6Qq7csFLlKRm6P9wDFFZm78Qiu3usDsLpYeo2UL3yr9QHSOH1FNd3
+         DiC8ltU0DnUcLbdYK7It1+m4E2mWpsG6CFbjM5xf8/94VR5jse4+mDQleVU7ORJtFFsh
+         gxpA==
+X-Forwarded-Encrypted: i=1; AJvYcCXt7XJf/gswQ4UoodFngFq3ZEKWMqOBcTnujzQ1REvQKYcOi9UnBiu1x3daXxD/ZoVsZaleL5ES+NDYKFU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwLl82u9MlEnG4XXfr6Y4JLxiT7K0CyZviULQF3Ca3Pz7SHWOZ
+	RQoAhFgrbZiWKSptv9rpY33hqCCLTM9B6TM14cAfovd9FrsruIQPSM8XZwNddaxsL8g48Rrexst
+	HdTW+gxsWVPWb7MOcPvkZCZDilo5Sg3LYpxZ0yqD0H1dxvct/yKBaZv0=
+X-Google-Smtp-Source: AGHT+IHdAOKK39LzntP294O5KSdIOLNajuVRRe4hz9BfOGk9F61z8L8ng1ZBkF+gx35G6r2Cj8rOenb3SIe8qD7Ubeni3L7jua+l
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c269:0:b0:3a7:91a4:c752 with SMTP id
- e9e14a558f8ab-3a79afa90a6mr85761255ab.23.1732367662254; Sat, 23 Nov 2024
- 05:14:22 -0800 (PST)
-Date: Sat, 23 Nov 2024 05:14:22 -0800
+X-Received: by 2002:a05:6e02:1949:b0:3a7:98c4:86a9 with SMTP id
+ e9e14a558f8ab-3a79afcb712mr85669255ab.20.1732367839881; Sat, 23 Nov 2024
+ 05:17:19 -0800 (PST)
+Date: Sat, 23 Nov 2024 05:17:19 -0800
+In-Reply-To: <673f4bbc.050a0220.3c9d61.0174.GAE@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6741d52e.050a0220.1cc393.0010.GAE@google.com>
-Subject: [syzbot] [udf?] WARNING in __find_get_block (2)
-From: syzbot <syzbot+3c9f079f8fb1d7d331be@syzkaller.appspotmail.com>
-To: hirofumi@mail.parknet.co.jp, jack@suse.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <6741d5df.050a0220.1cc393.0011.GAE@google.com>
+Subject: Re: [syzbot] [kvm?] WARNING: locking bug in kvm_xen_set_evtchn_fast
+From: syzbot <syzbot+919877893c9d28162dc2@syzkaller.appspotmail.com>
+To: bp@alien8.de, dave.hansen@linux.intel.com, dwmw2@infradead.org, 
+	hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	mingo@redhat.com, paul@xen.org, pbonzini@redhat.com, seanjc@google.com, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+syzbot has found a reproducer for the following issue on:
 
-syzbot found the following issue on:
-
-HEAD commit:    cfba9f07a1d6 Add linux-next specific files for 20241122
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=178636e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=45719eec4c74e6ba
-dashboard link: https://syzkaller.appspot.com/bug?extid=3c9f079f8fb1d7d331be
+HEAD commit:    06afb0f36106 Merge tag 'trace-v6.13' of git://git.kernel.o..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=17ff7930580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=95b76860fd16c857
+dashboard link: https://syzkaller.appspot.com/bug?extid=919877893c9d28162dc2
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=142981c0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1371975f980000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/be35516c7ba5/disk-cfba9f07.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/70295210dc7d/vmlinux-cfba9f07.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8b5d044072ee/bzImage-cfba9f07.xz
+disk image: https://storage.googleapis.com/syzbot-assets/49111529582a/disk-06afb0f3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f04577ad9add/vmlinux-06afb0f3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b352b4fae995/bzImage-06afb0f3.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3c9f079f8fb1d7d331be@syzkaller.appspotmail.com
+Reported-by: syzbot+919877893c9d28162dc2@syzkaller.appspotmail.com
 
-------------[ cut here ]------------
-VFS: brelse: Trying to free free buffer
-WARNING: CPU: 0 PID: 12266 at fs/buffer.c:1229 __brelse fs/buffer.c:1229 [inline]
-WARNING: CPU: 0 PID: 12266 at fs/buffer.c:1229 brelse include/linux/buffer_head.h:324 [inline]
-WARNING: CPU: 0 PID: 12266 at fs/buffer.c:1229 bh_lru_install fs/buffer.c:1346 [inline]
-WARNING: CPU: 0 PID: 12266 at fs/buffer.c:1229 __find_get_block+0x109d/0x1150 fs/buffer.c:1400
-Modules linked in:
-CPU: 0 UID: 0 PID: 12266 Comm: syz.6.1269 Not tainted 6.12.0-next-20241122-syzkaller #0
+=============================
+[ BUG: Invalid wait context ]
+6.12.0-syzkaller-07834-g06afb0f36106 #0 Not tainted
+-----------------------------
+kworker/0:1/9 is trying to lock:
+ffffc90003bca460 (&gpc->lock){....}-{3:3}, at: kvm_xen_set_evtchn_fast+0x1ee/0xa00 arch/x86/kvm/xen.c:1755
+other info that might help us debug this:
+context-{2:2}
+6 locks held by kworker/0:1/9:
+ #0: ffff888144a92148 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ #0: ffff888144a92148 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+ #1: ffffc900000e7d00 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ #1: ffffc900000e7d00 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+ #2: ffff888145711190 (&dev->mutex){....}-{4:4}, at: device_lock include/linux/device.h:1014 [inline]
+ #2: ffff888145711190 (&dev->mutex){....}-{4:4}, at: hub_event+0x1fe/0x5150 drivers/usb/core/hub.c:5849
+ #3: ffffffff8e817de0 (console_lock){+.+.}-{0:0}, at: dev_vprintk_emit+0x2ae/0x330 drivers/base/core.c:4942
+ #4: ffffffff8e8179f0 (console_srcu){....}-{0:0}, at: rcu_try_lock_acquire include/linux/rcupdate.h:342 [inline]
+ #4: ffffffff8e8179f0 (console_srcu){....}-{0:0}, at: srcu_read_lock_nmisafe include/linux/srcu.h:297 [inline]
+ #4: ffffffff8e8179f0 (console_srcu){....}-{0:0}, at: console_srcu_read_lock kernel/printk/printk.c:288 [inline]
+ #4: ffffffff8e8179f0 (console_srcu){....}-{0:0}, at: console_flush_all+0x1a3/0xeb0 kernel/printk/printk.c:3187
+ #5: ffffc90003bca8c8 (&kvm->srcu){.?.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:158 [inline]
+ #5: ffffc90003bca8c8 (&kvm->srcu){.?.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:249 [inline]
+ #5: ffffc90003bca8c8 (&kvm->srcu){.?.+}-{0:0}, at: kvm_xen_set_evtchn_fast+0x1bb/0xa00 arch/x86/kvm/xen.c:1753
+stack backtrace:
+CPU: 0 UID: 0 PID: 9 Comm: kworker/0:1 Not tainted 6.12.0-syzkaller-07834-g06afb0f36106 #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:__brelse fs/buffer.c:1229 [inline]
-RIP: 0010:brelse include/linux/buffer_head.h:324 [inline]
-RIP: 0010:bh_lru_install fs/buffer.c:1346 [inline]
-RIP: 0010:__find_get_block+0x109d/0x1150 fs/buffer.c:1400
-Code: 67 3e 9a e8 05 20 db ff e9 1b f7 ff ff e8 4b 2f 70 ff e9 87 f7 ff ff e8 41 2f 70 ff 90 48 c7 c7 20 e1 18 8c e8 c4 cd 30 ff 90 <0f> 0b 90 90 e9 6b f7 ff ff e8 25 2f 70 ff 48 c7 c7 c0 cf a8 8e 4c
-RSP: 0018:ffffc90005d974a0 EFLAGS: 00010246
-RAX: 678501cd73c0d900 RBX: 0000000000000000 RCX: 0000000000080000
-RDX: ffffc9000fba1000 RSI: 0000000000011153 RDI: 0000000000011154
-RBP: ffffc90005d975d0 R08: ffffffff81601b32 R09: fffffbfff1cfa218
-R10: dffffc0000000000 R11: fffffbfff1cfa218 R12: ffff88807bcf69f8
-R13: ffff8880b86398b0 R14: ffff888034c6d828 R15: ffff88805ae4f6b8
-FS:  00007fbd27ae76c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b30210ff8 CR3: 0000000067510000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Workqueue: usb_hub_wq hub_event
 Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_lock_invalid_wait_context kernel/locking/lockdep.c:4826 [inline]
+ check_wait_context kernel/locking/lockdep.c:4898 [inline]
+ __lock_acquire+0x15a8/0x2100 kernel/locking/lockdep.c:5176
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+ __raw_read_lock_irqsave include/linux/rwlock_api_smp.h:160 [inline]
+ _raw_read_lock_irqsave+0xdd/0x130 kernel/locking/spinlock.c:236
+ kvm_xen_set_evtchn_fast+0x1ee/0xa00 arch/x86/kvm/xen.c:1755
+ xen_timer_callback+0x1a0/0x380 arch/x86/kvm/xen.c:140
+ __run_hrtimer kernel/time/hrtimer.c:1739 [inline]
+ __hrtimer_run_queues+0x551/0xd50 kernel/time/hrtimer.c:1803
+ hrtimer_interrupt+0x403/0xa40 kernel/time/hrtimer.c:1865
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1038 [inline]
+ __sysvec_apic_timer_interrupt+0x110/0x420 arch/x86/kernel/apic/apic.c:1055
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
+ sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1049
+ </IRQ>
  <TASK>
- bdev_getblk+0x33/0x550 fs/buffer.c:1425
- __bread_gfp+0x86/0x400 fs/buffer.c:1485
- sb_bread include/linux/buffer_head.h:346 [inline]
- fat__get_entry fs/fat/dir.c:100 [inline]
- fat_get_entry+0x78f/0xae0 fs/fat/dir.c:128
- fat_get_short_entry fs/fat/dir.c:885 [inline]
- fat_subdirs+0x227/0x3c0 fs/fat/dir.c:951
- fat_read_root+0x5e5/0x8b0 fs/fat/inode.c:1345
- fat_fill_super+0x205f/0x35a0 fs/fat/inode.c:1814
- get_tree_bdev_flags+0x48c/0x5c0 fs/super.c:1636
- vfs_get_tree+0x90/0x2b0 fs/super.c:1814
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fbd26d7ffba
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fbd27ae6e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007fbd27ae6ef0 RCX: 00007fbd26d7ffba
-RDX: 00000000200000c0 RSI: 0000000020000000 RDI: 00007fbd27ae6eb0
-RBP: 00000000200000c0 R08: 00007fbd27ae6ef0 R09: 0000000002010000
-R10: 0000000002010000 R11: 0000000000000246 R12: 0000000020000000
-R13: 00007fbd27ae6eb0 R14: 0000000000000336 R15: 0000000020000640
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:console_flush_all+0x996/0xeb0
+Code: 48 21 c3 0f 85 16 02 00 00 e8 66 aa 20 00 4c 8b 7c 24 10 4d 85 f6 75 07 e8 57 aa 20 00 eb 06 e8 50 aa 20 00 fb 48 8b 5c 24 18 <48> 8b 44 24 30 42 80 3c 28 00 74 08 48 89 df e8 76 61 8b 00 4c 8b
+RSP: 0018:ffffc900000e7000 EFLAGS: 00000293
+RAX: ffffffff8174a2e0 RBX: ffffffff8f17fa58 RCX: ffff88801bef8000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc900000e71b0 R08: ffffffff8174a2b7 R09: 1ffffffff285cb10
+R10: dffffc0000000000 R11: fffffbfff285cb11 R12: ffffffff8f17fa00
+R13: dffffc0000000000 R14: 0000000000000200 R15: ffffc900000e7200
+ __console_flush_and_unlock kernel/printk/printk.c:3269 [inline]
+ console_unlock+0x14f/0x3b0 kernel/printk/printk.c:3309
+ vprintk_emit+0x730/0xa10 kernel/printk/printk.c:2432
+ dev_vprintk_emit+0x2ae/0x330 drivers/base/core.c:4942
+ dev_printk_emit+0xdd/0x120 drivers/base/core.c:4953
+ _dev_info+0x122/0x170 drivers/base/core.c:5011
+ show_string drivers/usb/core/hub.c:2357 [inline]
+ announce_device drivers/usb/core/hub.c:2375 [inline]
+ usb_new_device+0xd02/0x19a0 drivers/usb/core/hub.c:2632
+ hub_port_connect drivers/usb/core/hub.c:5521 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x2d6d/0x5150 drivers/usb/core/hub.c:5903
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
  </TASK>
+----------------
+Code disassembly (best guess):
+   0:	48 21 c3             	and    %rax,%rbx
+   3:	0f 85 16 02 00 00    	jne    0x21f
+   9:	e8 66 aa 20 00       	call   0x20aa74
+   e:	4c 8b 7c 24 10       	mov    0x10(%rsp),%r15
+  13:	4d 85 f6             	test   %r14,%r14
+  16:	75 07                	jne    0x1f
+  18:	e8 57 aa 20 00       	call   0x20aa74
+  1d:	eb 06                	jmp    0x25
+  1f:	e8 50 aa 20 00       	call   0x20aa74
+  24:	fb                   	sti
+  25:	48 8b 5c 24 18       	mov    0x18(%rsp),%rbx
+* 2a:	48 8b 44 24 30       	mov    0x30(%rsp),%rax <-- trapping instruction
+  2f:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1)
+  34:	74 08                	je     0x3e
+  36:	48 89 df             	mov    %rbx,%rdi
+  39:	e8 76 61 8b 00       	call   0x8b61b4
+  3e:	4c                   	rex.WR
+  3f:	8b                   	.byte 0x8b
 
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
