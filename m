@@ -1,163 +1,153 @@
-Return-Path: <linux-kernel+bounces-419134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D26E79D69D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:56:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79BAC9D69D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:57:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98AE2281A87
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 15:56:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E73BF161853
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 15:57:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758233D0C5;
-	Sat, 23 Nov 2024 15:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34A94E1C4;
+	Sat, 23 Nov 2024 15:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="icXeyQxB"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W0JAxPc8"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4369E2943F;
-	Sat, 23 Nov 2024 15:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A3444384;
+	Sat, 23 Nov 2024 15:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732377406; cv=none; b=fLj06iglNjKIbV3SJsxPSGaQJnVIvCHFrev+cIFM+Ae8+wO00uE8Hwnwix9Q6lqJJxtIL2UA6QcvK0d1aIu9ZcTto+PYbg8Ms/rZyuBE1Qz0KkxrYYjNr17b+Gye03j4EW4Ego9FJ5HxlGqD0A6DO4YnRSJ1bRgZJOjxVyv4B68=
+	t=1732377460; cv=none; b=hglcRdaxlHXtYCzoZvZiaTSm4Zwhk0sT31WipvD7XtjKN8E6CDrfUxoczZplEpemtsoILRnQLmppFcbzJGKbwkoROvZNuX40TW1vnLXk7LZHwn5dWy47xGAYuLMYwKq6cQbsrBL1V6Dd5mQAuZPchTFtze4mOtsEEFUe7JkpdcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732377406; c=relaxed/simple;
-	bh=9YvKJJUYKOQQj/XXgK4v1/NRI7+lGgmBsUraJqPjh/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bC5w8YgDnrO27Q7b6jKt4htZRWN3vtyvnO/KrUuKJgifq1/m3Tc6Z8JeCP+OcRG1EMdZW7+EHq9mZRNkyMaMvrbiO/QWJvgGD5eOCLeRxBMQhzGmcD+pibtWUZCzjz9HHJMUG0TRLysvRwscspIlLMdXZDz4WFXIWgcmXZ9/wso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=icXeyQxB; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1732377460; c=relaxed/simple;
+	bh=hwWmkgrcAPGWl+ptMm1tghlsH4kqOvd4DTCxLptzDFk=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=jYtBgmoXUvrDLxfCw+O46F9CSZuoAt68jbX5JSV+Lb8batGgsIaLTkWiRuiimQoH4YVP3OcaZ3qxFMFhsXtdhW6yuRrcQG4fxe0C3B+LZhgkrvhXVFhkbz5tP8hYPezW2oM78DWZbPgA9tR3PmEWhXkscsM+FWSlLKFvxul+LwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W0JAxPc8; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21260cfc918so22693665ad.0;
-        Sat, 23 Nov 2024 07:56:44 -0800 (PST)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-724f41d520cso327734b3a.1;
+        Sat, 23 Nov 2024 07:57:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732377404; x=1732982204; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wdhhpCg+taJ4xsLRypTZUl8HmDm+NFsq0ODj29ISJ0M=;
-        b=icXeyQxBS22O961MBUERL4WjCaWQx/0h3RJutZie7zuLLFLKi12or/+t+cJxjcmIvB
-         GZ36/xtLwRPmOTRwsXTdeIphLLrd17owWzjhIbD9BYDBc4WjrXBIZ9T9hODl9Jw5gBDW
-         95W4G4ukFFMiCV82haMdxnRiM35tvUcVttIZAf8ctxSLIjDfjwoa87OlRg8ODreTaGbc
-         j+UIEse/O9O+rJKeITUxJpsb2t4fRMBfZ8k2WWFByf4u9Bnl/79uABdZGI2NXTqKPlum
-         9Fqf5+BmdIKsfn1FOQEb3FRnEeh1KdPJvnlFMqahgyXx0+39g1ZwlXEBKOqvCSF49Mro
-         A9cA==
+        d=gmail.com; s=20230601; t=1732377458; x=1732982258; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B7GR/93q8vbl1Y02szPjwXhKCJRJHqZnIo22AIrKeYk=;
+        b=W0JAxPc8jW4/y03ClGxaLgtyeymOx/qCFxQlV3LMRfgvF6oIZn0rfnoEvLLeG4znHz
+         p5XZt9OoBFDM7ktZFbecSkqZgrKvwSw6YrWXCtGEnaYpHjn0SgEJNu5OhMHxj2n9RV7N
+         gJbTgcU0OSbrRLdqaCpjWxWepBZWMkjzHjgRovN/1RzI8J0HBbHMZU6iQZC4ng1SCYhR
+         FWCKporArBWWsmoGwbQmKzjdBo268Oyg7V4oN1yeoKaHxVtfOVAi2ZdXcwokTmYbjj79
+         TDj9nkNV6xRtzgc97AX7g4Dd2fPIqAj7vOo1ZD8Ly1WKTsy1tknbI1Xr+hSe9ZGDaKHF
+         jyIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732377404; x=1732982204;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wdhhpCg+taJ4xsLRypTZUl8HmDm+NFsq0ODj29ISJ0M=;
-        b=niNPGLGG4zAmIU6LEsAs4Fk/gaETGnHm9I2Pj8CTLglOMzejqNh8e3fzrwbuNazpJj
-         4RlYN1MFtKGP++gg0P8vlBmR18P9KoSIWADliZGiMtYNArBBumb9DMZqVq/dOwW5SsmG
-         mUSM5XSOwGQL0zkBaWUxPcHH0Ce9PGZms0SzDlcGkfeKoYM6r7C/hCLQxnwMY0X3cM4H
-         f+fiR82/DBHMyCV5QQzOCk02cYj56UCWesJY+rNUNVJDijpbjREnN2KSykXYthtdgZF3
-         tR5YtV4wRk+Ze6hDe92Ae/UEtqRie9fBQF3hWh/YwjTnUDtISDQXWfTu8anCHKCZmM5y
-         YDpw==
-X-Forwarded-Encrypted: i=1; AJvYcCXavWEBsfHtjcddWyKw/N5NbviUHdIxeVP2GW1kGetFsCNAilbaT7hipEaTjvCgA+AQ0yUPTRUQARhU@vger.kernel.org, AJvYcCXqQxazFqH/oQZwYGQ8/oxocSdMsDHA+H4BxP+EKtl8aPPvxVHOwHCceC09tpGhIZ2ClKfXvnDnzP7BUd/7@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPuMmoJ1xVQ/tHSqI6/GbAIr/S5akqLMDPDIknrEWMiLLNvJvT
-	99K5EMwwtqTQn6wL6+tg70qO5AXGlDBunqOasgBqws4/r1qV7Rkp
-X-Gm-Gg: ASbGnctr2VxLXTWinWOqFIVffIMNx+z/8DOmm0DUTrucdA78hvnHD2RZiF5GH7jl1sT
-	Tq9WJg6pASuNP//s2SVfuYhRvhe02haKDnUGPE4mlYp0ijanCsCe24LVkinWwAKIk/3Ox/8S6Q3
-	5WS5bpCNI4fH1M1iuwBpegg/oHg86gsCbDaMdpTenJPrBaIcCs5g6tzfeetURXGGKFMcpWxnSFV
-	g3YglHf3DKiSSzSHdrVQRw9ewnPfsU99TwlBAG4Uu/2I8xfRjbu+lxhx+5soaU=
-X-Google-Smtp-Source: AGHT+IHB49Ds6XF42rhaBzmjNmAHIN7vXsDlDSoz7p5lUyfP90T9HB2pni6uH8yauXHUV/+wJVdjQw==
-X-Received: by 2002:a17:903:283:b0:20e:57c8:6ab3 with SMTP id d9443c01a7336-2129f7300c2mr99379585ad.4.1732377404385;
-        Sat, 23 Nov 2024 07:56:44 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc131d1sm34098095ad.187.2024.11.23.07.56.43
+        d=1e100.net; s=20230601; t=1732377458; x=1732982258;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=B7GR/93q8vbl1Y02szPjwXhKCJRJHqZnIo22AIrKeYk=;
+        b=tc2GUTjoej6uo+PQpsfdgBcHol+dLI2/P7xNMkxfJocxFglXGxjxmQBweaZ+/T7YrA
+         3yaWxSu6Rn/5fpL22KRIvPtObLTBGkWC/PX8QdWBbytIEcZHI4BrxXnnAU4IRKIXlKOl
+         X4N5Sp19dIQPlxqqLydcLClkRQnbfasJFJT3wOdRt9ADfQtGiqdLHz8NqWjikt/4Q1ZP
+         6+/hCD+JLW6iB81zwLib9NiEvRHq7WdhdpCdxOwmz6pL5/byNLcwGpK/APmOxMuQJ4vZ
+         ba3wvQ4TJHKsGtmiwDbxwB/28Fdojb0HWTuFLUJsN6eM0rOSuIE+0HMa8Up23B9w5SKP
+         Ugbg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8JeC8F0oqzI5o5XOPq5tDeaceXlMysF9i/BwQ6n9BD/SeW3QtVYZOzbkaho3HAjbRkhStKWzZFYdq53K8@vger.kernel.org, AJvYcCVzbxMmr95F35fsLC5JyODeYD52Q8JdUQKOn0+N0NHkYCtiOBKmZVyLN0kyQXlYCkm0aNo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm14QlX0Vv32RJOUtuaeq4LCScnKbLxne4sC9qyEgd4ysa7tVK
+	CI5nPH6+wY0izp9FTQZcj8gKTS8si55r6JrqxESdYi8b/Bi/7314WSje1g==
+X-Gm-Gg: ASbGncvwwh6g2DlyvNHM5WAUBu8Ur+zAZwBDxD+Nkh3ccHfbqYkE0eJZVLZG5re0QJQ
+	ErR3+XsNOeC4F3fFIZE+w7Tk4Pm8wJg6HRB4ox/tF6Pel1bZxv+QC3BExrj5YXIf4/4pVHJYKTw
+	54TLrH/YnAJSB2KbsWWgWz/lF+uCl+E7J+Fh3cW/WQVeq/lL1Eh5dFumZzEkERgX9+p4gcYzcEZ
+	S1vMw3YabL42M5Zi0lQ2Z5Ji/WD4iZeT+8LokHkjrSUFm+LKbE=
+X-Google-Smtp-Source: AGHT+IFMJCfOvYOEF4yxWvSC12dnHHtF5pdzV67OyIXKQZXcx/OHeGlHJ4q3kn0LfBDukmlj77ZR/Q==
+X-Received: by 2002:a05:6a00:10c8:b0:71e:47a2:676 with SMTP id d2e1a72fcca58-724df5d58ffmr9258267b3a.6.1732377456687;
+        Sat, 23 Nov 2024 07:57:36 -0800 (PST)
+Received: from localhost ([98.97.42.159])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de5762bfsm3505538b3a.184.2024.11.23.07.57.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Nov 2024 07:56:43 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sat, 23 Nov 2024 07:56:42 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Sandy Huang <hjc@rock-chips.com>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mark Yao <markyao0591@gmail.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Simona Vetter <simona@ffwll.ch>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-	kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>,
-	Luis de Arquer <ldearquer@gmail.com>,
-	Algea Cao <algea.cao@rock-chips.com>
-Subject: Re: [v10,3/3] drm/rockchip: Add basic RK3588 HDMI output support
-Message-ID: <790091a1-00af-43bb-8cdf-814f4cc38d83@roeck-us.net>
-References: <20241016-b4-rk3588-bridge-upstream-v10-3-87ef92a6d14e@collabora.com>
+        Sat, 23 Nov 2024 07:57:35 -0800 (PST)
+Date: Sat, 23 Nov 2024 07:57:32 -0800
+From: John Fastabend <john.fastabend@gmail.com>
+To: Tiezhu Yang <yangtiezhu@loongson.cn>, 
+ John Fastabend <john.fastabend@gmail.com>, 
+ Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev, 
+ bpf@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Message-ID: <6741fb6c516cc_c6be20839@john.notmuch>
+In-Reply-To: <4f6c74e0-dd22-8460-96fa-f408291a3ef8@loongson.cn>
+References: <20241119065230.19157-1-yangtiezhu@loongson.cn>
+ <673fd322ce3ac_1118208b3@john.notmuch>
+ <4f6c74e0-dd22-8460-96fa-f408291a3ef8@loongson.cn>
+Subject: Re: [PATCH] LoongArch: BPF: Sign-extend return values
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016-b4-rk3588-bridge-upstream-v10-3-87ef92a6d14e@collabora.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 16, 2024 at 11:06:53PM +0300, Cristian Ciocaltea wrote:
-> The RK3588 SoC family integrates the newer Synopsys DesignWare HDMI 2.1
-> Quad-Pixel (QP) TX controller IP and a HDMI/eDP TX Combo PHY based on a
-> Samsung IP block.
+Tiezhu Yang wrote:
+> On 11/22/2024 08:41 AM, John Fastabend wrote:
+> > Tiezhu Yang wrote:
+> >> (1) Description of Problem:
+> >>
+> >> When testing BPF JIT with the latest compiler toolchains on LoongArch,
+> >> there exist some strange failed test cases, dmesg shows something like
+> >> this:
+> >>
+> >>   # dmesg -t | grep FAIL | head -1
+> >>   ... ret -3 != -3 (0xfffffffd != 0xfffffffd)FAIL ...
 > 
-> Add just the basic support for now, i.e. RGB output up to 4K@60Hz,
-> without audio, CEC or any of the HDMI 2.1 specific features.
+> ...
 > 
-> Co-developed-by: Algea Cao <algea.cao@rock-chips.com>
-> Signed-off-by: Algea Cao <algea.cao@rock-chips.com>
-> Tested-by: Heiko Stuebner <heiko@sntech.de>
-> Reviewed-by: Maxime Ripard <mripard@kernel.org>
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
-[ ... ]
+> >>
+> >> (5) Final Solution:
+> >>
+> >> Keep a5 zero-extended, but explicitly sign-extend a0 (which is used
+> >> outside BPF land). Because libbpf currently defines the return value
+> >> of an ebpf program as a 32-bit unsigned integer, just use addi.w to
+> >> extend bit 31 into bits 63 through 32 of a5 to a0. This is similar
+> >> with commit 2f1b0d3d7331 ("riscv, bpf: Sign-extend return values").
+> >>
+> >> Fixes: 5dc615520c4d ("LoongArch: Add BPF JIT support")
+> >> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> >> ---
+> >>  arch/loongarch/net/bpf_jit.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
+> >> index 7dbefd4ba210..dd350cba1252 100644
+> >> --- a/arch/loongarch/net/bpf_jit.c
+> >> +++ b/arch/loongarch/net/bpf_jit.c
+> >> @@ -179,7 +179,7 @@ static void __build_epilogue(struct jit_ctx *ctx, bool is_tail_call)
+> >>
+> >>  	if (!is_tail_call) {
+> >>  		/* Set return value */
+> >> -		move_reg(ctx, LOONGARCH_GPR_A0, regmap[BPF_REG_0]);
+> >> +		emit_insn(ctx, addiw, LOONGARCH_GPR_A0, regmap[BPF_REG_0], 0);
+> >
+> > Not overly familiar with this JIT but just to check this wont be used
+> > for BPF 2 BPF calls correct?
+> 
+> I am not sure I understand your comment correctly, but with and without
+> this patch, the LoongArch JIT uses a5 as a dedicated register for BPF
+> return values, a5 is kept as zero-extended for bpf2bpf, just make a0
+> (which is used outside BPF land) as sign-extend, all of the test cases
+> in test_bpf.ko passed with "echo 1 > /proc/sys/net/core/bpf_jit_enable".
+> 
+> Thanks,
+> Tiezhu
+> 
 
-> +static void dw_hdmi_qp_rockchip_encoder_enable(struct drm_encoder *encoder)
-> +{
-> +	struct rockchip_hdmi_qp *hdmi = to_rockchip_hdmi_qp(encoder);
-> +	struct drm_crtc *crtc = encoder->crtc;
-> +	unsigned long long rate;
-> +
-> +	/* Unconditionally switch to TMDS as FRL is not yet supported */
-> +	gpiod_set_value(hdmi->enable_gpio, 1);
-> +
-> +	if (crtc && crtc->state) {
-> +		rate = drm_hdmi_compute_mode_clock(&crtc->state->adjusted_mode,
-> +						   8, HDMI_COLORSPACE_RGB);
-> +		clk_set_rate(hdmi->ref_clk, rate);
-> +		/*
-> +		 * FIXME: Temporary workaround to pass pixel clock rate
-> +		 * to the PHY driver until phy_configure_opts_hdmi
-> +		 * becomes available in the PHY API. See also the related
-> +		 * comment in rk_hdptx_phy_power_on() from
-> +		 * drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-> +		 */
-> +		phy_set_bus_width(hdmi->phy, rate / 100);
+Got it.
 
-On 32-bit systems:
-
-ERROR: modpost: "__udivdi3" [drivers/gpu/drm/rockchip/rockchipdrm.ko] undefined!
-
-in the mainline kernel.
-
-If the driver is not build tested (much less working) on 32-bit builds,
-please consider restricting it to 64 bit builds.
-
-Thanks,
-Guenter
+Acked-by: John Fastabend <john.fastabend@gmail.com>
 
