@@ -1,158 +1,242 @@
-Return-Path: <linux-kernel+bounces-418921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 104119D6735
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 03:42:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C609D673A
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 03:42:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9317B1616A0
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 02:41:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25804161673
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 02:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E6A4879B;
-	Sat, 23 Nov 2024 02:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 098367EEFD;
+	Sat, 23 Nov 2024 02:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TB57FEN6"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4CinfWNH"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A74817;
-	Sat, 23 Nov 2024 02:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A2C4879B
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 02:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732329713; cv=none; b=bphQZh+aN7FdSrQ24cR8wFGNCm/i/+PVD2EHobwLHN6jzy34kz5sAXJlceTi3r4s6wTo1eJ3FEOctYT7E7hQV55TiGrgz8suXtK81/uq3GEJ7eaSKutHDOrHD4r5DI6I/np/Cxt1y8IK28ZVVEuEdaAxUIWrFN9TGZDiP33wzoE=
+	t=1732329741; cv=none; b=Ln3wXOrmNk16GdeZ+nGeNOS+u0ItbfSB6mR+WnWaGuMUb+I2RA6MzJiqE0mx1gmqL0laRx2UZO7ZZysegDrruNEn8jiU1I0FhmvTKeu6qGLEKD/1dz8iXuIx9NTAeTOqxQJFo4LAXeothjHrcDWjCcUNmpVy20Ul2SLZijH8tR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732329713; c=relaxed/simple;
-	bh=LNavqxR7RibpcEYKL0qPKrLUMz33vsxDPgSWZhdxd0c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qti8aIv89MlQRY9Ew9pZrJOCFC1tWJ8TEorbcGpW8kMLYnSXzawptFuQ8ns4Q/nAe3/xDtfAy2G6nFEE/x+NlAdp3rrPpgwrnXne3G/3DVgPWSXE0eZlL3GKruVk7w7W6uu1fXpUTRs3SzHHrQ84cBYmuL30fDK4xYf8p6KlZ/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TB57FEN6; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-83e5dd0e5faso114790739f.1;
-        Fri, 22 Nov 2024 18:41:51 -0800 (PST)
+	s=arc-20240116; t=1732329741; c=relaxed/simple;
+	bh=tiuVMoJVl9iIcfkunBRqigJ/o5Br1JocmVkYy3ouOGU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ciseLz0529lNiIc3aRhzBHFbEB9s6NdyKMD+Ry+rvld3+dzkzTsluu+ReWAaSDxgGppqIWB0YKJIbdI6F0A2LL6OFtBLHAxwC6yAxAEAm9vjZU9AIGmC4XiiURKKmo6waaaEYhB7yUtA0xcP5X+WtBofz/y5AGKdK6xtxGcSKd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4CinfWNH; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ee86f21b2cso50126477b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 18:42:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732329711; x=1732934511; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=70gmuVqd5ZnoO1vvK5nWrsFGGQmS9boqrWJIu2Mw/JQ=;
-        b=TB57FEN6RGVpS08YfkrvVrovvoUvped3cvXF+p6BmoJ8dyGqaNaHxTZwJy94ROY6Nd
-         HolHkYFlhSJEVFuJoZOz7y56hftlimd8tDxoHoWvs71j56z9Owm4lrkz9wLKGhnDaGVS
-         2b9b68pYm+lGND6IA5Tr85vhIC5BwYoA6+JllLTGZZYI5Gslrl2CseQaI8Q7di0zp6sd
-         0QP+SIqYA7M3agACtLe9oVHtulGmbFOeLHa3JbtMZiW1phQYXXtYe1YfZ53tNZJKiP0w
-         LsEpzmLy4tZKlKDv6cC+YkWHVX+Ge0JhJ+mgaobxq+P9ppnMAbgR4qf2ibDEx/ZS5RfI
-         Dw4Q==
+        d=google.com; s=20230601; t=1732329738; x=1732934538; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=p7xX/47Vl0a27UdyPMbMgcO/jFPicE3KTPvW/80RrhM=;
+        b=4CinfWNHk6pCcLJq8zPesnHPQLwtSVk/NBXYp7XYu1jSWZsG15WRYLXRjdOv1peHnx
+         iQYiz3WSbLBQlNFn+9/KyfzdwoGwTx4Zeji4nrTRwhK4+oD4jigBUPq3ltrlMwFq+IbJ
+         Yk1sNXb8WvwlAzGJyDC0jRyKon6DOLI6nu/Dx5Gn0P3M5SpreIgs9tLgwL+t2siSgBHb
+         MNZPA9p4R92RB0aWOOq1BLR2v8ocjdx6lkgyCNF69I20Dok4WClR1TW9P8rFs5lj5kLS
+         mMIL/xfKdF8fXQmcNEcb2gfe0de17z8qY4qJ4OcSfV2dHxJgAiuF2f8pv8r0cMCfd0Y0
+         mw4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732329711; x=1732934511;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=70gmuVqd5ZnoO1vvK5nWrsFGGQmS9boqrWJIu2Mw/JQ=;
-        b=IEUwXKGQiHLAGOR9P0iY3GhD4YhkW/gL+nvJrUKxJEj7assZxbTMr9z2+ydOQcaLHb
-         lLqnxALbxw1DzVmHsRdta04meFFmG7LP6otCav+I1NY0JDep8ltXHDbGpzW2f7a3YUyB
-         h47nTR2f6jLwTZhJWTAo3bSuOK0NUNN/AwexfWbVVZaX96sXENtSV9CmCJBDALrW/RqF
-         nTcd7OhEBOVwODN1luVIzgXzk8lbo7pEBYRROLQ4ETGmIThx2Cjdy1a4ZrByJx+x3Sf7
-         kqVkjLB2t0sJRkI5ZnEo8XQ53Pfz9j8RqY2/noZFHfSQlCkVCiqaYog3KauFPh1TyYIW
-         9v8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVN5/Hhtfm6XV2oriFlcNoGodmx5IMHJvPx0SIhMixMHIFsyYqWCI7+BpLZeH4T9Lu96t6U72B5I8K2I310@vger.kernel.org, AJvYcCWxxHKjtNQ7McUZK65GTBdlr4+1hMbXDz58/3EKEArNWtW3foiJtUNesln2h7WSCb2hrZHJnDTU8XhmsaHq@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWQmyrEmhqb0LZpValUWQywLRTcPwrTx55KyviEIiGrz5uG+B1
-	b4yG9sYM4KQPikAX6JhjC7ccnITTfZNGvnj0I+Qh2YmkNxjPujCOBHzKmEVDYQ6H/GmgR+lltIV
-	4u7i28sFuDBoWjomhh2Xp2ODm68A=
-X-Gm-Gg: ASbGnctHH6NHSPFstc6Ag3h5S8F2oS30dwGeniCagUp2ZBFKVpaCwpe2R7gwxoY+Il6
-	BimJJrp8O7uHPyXK/j9VxW7Ywto/h5rU=
-X-Google-Smtp-Source: AGHT+IHCuNiL+FpVrEqzvuP5atIKEy/3nfa6jAXX2Bz235hjzWk72EjraJCcQQQADNxbedTXxFJysZnkRKitQUoDPeM=
-X-Received: by 2002:a05:6602:1491:b0:83a:a7ec:cc0e with SMTP id
- ca18e2360f4ac-83ecce46417mr403776539f.0.1732329710689; Fri, 22 Nov 2024
- 18:41:50 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732329738; x=1732934538;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=p7xX/47Vl0a27UdyPMbMgcO/jFPicE3KTPvW/80RrhM=;
+        b=SgCJ6XpXziNTtwM99GWQFJYE65fR6+BRc2YsEGnkwOTiQYjmrQre4otTHFTigXhMZh
+         5rb9CjEYqPFoZUW5LCPCGCdfCw2Ip3H1mUhI36WAuV8rMh9WD/HCVyjSjZTcUbLgFs3U
+         T+iVJCJFmLD+a8gl59HLuyhg+C317O4/fae/pRGF702W9XpEdgI8wKWa7eFvp+DsxNKt
+         aBKxg6DoYMO+sU9P4lo3SeasINM6eevutsz8snNGR3lvEKKkYKwr0wfL9WC7DqsWu8gs
+         qYtWjiLONCVnTn99v3fxjDNNqQfonwiii+wYm32sRTLlcf/+y6C+ZY4grC+ssUGFeV/8
+         S9Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2XPcnTToY6bTqRtikqhGJ7cwiV0XBb+o1ouWy2QfgdNpg3W9kYiL8E1GA8FUteBUt5ct+8aFtRiyuOuw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9W0MiezlnaCxeSKG0MsSUBPbnmNtn54bO/dMYou8Gy8QO86WJ
+	zn9LSdGqz1XLEPKFs83ZXdhVDG5LuhxwLDhEuxvz8k9GSiuevPCN+5tvd0BlniylcN8NBmomzMe
+	uiZFerg==
+X-Google-Smtp-Source: AGHT+IF1odZohGo0x5FmKnqA49SMz0WdtMATqtl5lIeEom9DctKrWPpJ8V6oI2GJwQjn5JiiVICykStr2Ivh
+X-Received: from anyblade.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:1791])
+ (user=mmaurer job=sendgmr) by 2002:a05:690c:7089:b0:6eb:ac7:b4bc with SMTP id
+ 00721157ae682-6eee08aa74fmr44677b3.2.1732329738069; Fri, 22 Nov 2024 18:42:18
+ -0800 (PST)
+Date: Sat, 23 Nov 2024 02:42:14 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241121164858.457921-1-robdclark@gmail.com> <54601d79-4156-41f4-b1b7-250c5c970641@oss.qualcomm.com>
- <CAF6AEGtafQM7-mYy163Krry3OHgPNH3e9A=9VEhBpiQTADtULQ@mail.gmail.com> <5ff5d720-ccf7-42ee-9a4b-90cc168a4b7b@oss.qualcomm.com>
-In-Reply-To: <5ff5d720-ccf7-42ee-9a4b-90cc168a4b7b@oss.qualcomm.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Fri, 22 Nov 2024 18:41:39 -0800
-Message-ID: <CAF6AEGuwjpizRy+S-xCmGdZV9MX+CDACwQp-NNKc2eBroCt1CQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/msm: UAPI error reporting
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, Rob Clark <robdclark@chromium.org>, 
-	Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAAZBQWcC/3XQ0U7EIBAF0F9peHY2MFBLG2P8D+MDbYcuyVIUu
+ s2azf67tDaxxvVxCBzu3CtLFB0l1hRXFml2yYUxD4I/FKw7mnEgcH0+YMhRCY4IdJlo7KkHH/q
+ Z4vIggalapXrbWmsFy0/fI1l3Wd3XtzzbGDxMx0hmh4kSpaixPEhdKpQcBHhvzpHiyxDCcKJDF
+ /ymRfo453DTN8k8pWTWbE3xtGoCBXKFyA8oKy20AOSQjHdTOM1mpHFnPi9oaxJBHvKNphjzVrA
+ 5yJbER5emED/XYuZq/XSrQN6vYK6Ag5R1pXMXUlZyv8Qiznqn5G3vKzortTRdT/YRO9J/lPpHE f9mqbPSdlxxaXmpWvtLud1uX7n+fg/4AQAA
+X-Change-Id: 20241022-extended-modversions-a7b44dfbfff1
+X-Mailer: b4 0.15-dev
+Message-ID: <20241123-extended-modversions-v10-0-0fa754ffdee3@google.com>
+Subject: [PATCH v10 0/5] Extended MODVERSIONS Support
+From: Matthew Maurer <mmaurer@google.com>
+To: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
+	Daniel Gomez <da.gomez@samsung.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Jonathan Corbet <corbet@lwn.net>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-doc@vger.kernel.org, 
+	Matthew Maurer <mmaurer@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, Nov 22, 2024 at 4:19=E2=80=AFPM Konrad Dybcio
-<konrad.dybcio@oss.qualcomm.com> wrote:
->
-> On 22.11.2024 4:51 PM, Rob Clark wrote:
-> > On Fri, Nov 22, 2024 at 4:21=E2=80=AFAM Konrad Dybcio
-> > <konrad.dybcio@oss.qualcomm.com> wrote:
-> >>
-> >> On 21.11.2024 5:48 PM, Rob Clark wrote:
-> >>> From: Rob Clark <robdclark@chromium.org>
-> >>>
-> >>> Debugging incorrect UAPI usage tends to be a bit painful, so add a
-> >>> helper macro to make it easier to add debug logging which can be enab=
-led
-> >>> at runtime via drm.debug.
-> >>>
-> >>> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> >>> ---
-> >>
-> >> [...]
-> >>
-> >>> +/* Helper for returning a UABI error with optional logging which can=
- make
-> >>> + * it easier for userspace to understand what it is doing wrong.
-> >>> + */
-> >>> +#define UERR(err, drm, fmt, ...) \
-> >>> +     ({ DRM_DEV_DEBUG_DRIVER((drm)->dev, fmt, ##__VA_ARGS__); -(err)=
-; })
-> >>> +
-> >>>  #define DBG(fmt, ...) DRM_DEBUG_DRIVER(fmt"\n", ##__VA_ARGS__)
-> >>>  #define VERB(fmt, ...) if (0) DRM_DEBUG_DRIVER(fmt"\n", ##__VA_ARGS_=
-_)
-> >>
-> >> I'm generally not a fan of adding driver-specific debug prints..
-> >>
-> >> Maybe that's something that could be pushed to the drm-common layer
-> >> or even deeper down the stack?
-> >
-> > Even if we had something like DRM_DBG_UABI_ERROR() I'd probably still
-> > just #define UERR() to be a wrapper for it, since line length/wrapping
-> > tends to be a bit of a challenge.  And I have a fairly substantial
-> > patch stack on top of this adding sparse/vm_bind support.  (Debugging
-> > that was actually the motivation for this patch.)
->
-> Alright, let's not get in the way then
->
-> > I noticed that xe has something similar, but slightly different shape,
-> > in the form of XE_IOCTL_DBG().. but that kinda just moves the line
-> > length problem into the if() conditional.  (And doesn't provide the
-> > benefit of being able to display the incorrect param.)
->
-> Maybe rust comes one day and the lines will start growing vertically ;)
+This patch series is intended for use alongside the Implement DWARF
+modversions series [1] to enable RUST and MODVERSIONS at the same
+time.
 
-Rust for the userspace facing rendernode side of the driver, in
-particular, would be interesting for me, tbh.  Especially if handle
-related rust<->c layers are designed properly.  I've lost track of how
-many handle lifetime race condition UAF's I've seen ;-)
+Elsewhere, we've seen a desire for long symbol name support for LTO
+symbol names [2], and the previous series came up [3] as a possible
+solution rather than hashing, which some have objected [4] to.
 
-Re-writing entire drivers is a big lift, especially when there is so
-much hw+features to enable.  KMS is limited to drm master (generally a
-somewhat privileged process), so less of a concern from a security
-standpoint.  Much of the GPU side of things is "boring" power related
-stuff (suspend/resume/devfreq).  But the rendernode ioctls are open to
-any process that can use the GPU in a typical setup.
+This series adds a MODVERSIONS format which uses a section per column.
+This avoids userspace tools breaking if we need to make a similar change
+to the format in the future - we would do so by adding a new section,
+rather than editing the struct definition. In the new format, the name
+section is formatted as a concatenated sequence of NUL-terminated
+strings, which allows for arbitrary length names.
 
-BR,
--R
+Emitting the extended format is guarded by CONFIG_EXTENDED_MODVERSIONS,
+but the kernel always knows how to validate both the original and
+extended formats.
+
+Emitting the existing format is now guarded by CONFIG_BASIC_MODVERSIONS,
+but it is enabled by default when MODVERSIONS is enabled and must be
+explicitly disabled by the user.
+
+Disabling CONFIG_BASIC_MODVERSIONS may cause some userspace tools to be
+unable to retrieve CRCs until they are patched to understand the new
+location. Even with CONFIG_BASIC_MODVERSIONS enabled, those tools will
+be unable to read the CRCs for long symbols until they are updated to
+read the new format. This is not expected to interfere with normal
+operation, as the primary use for CRCs embedded in the module is
+load-time verification by the kernel. Recording and monitoring of CRCs
+is typically done through Module.symvers.
+
+Selecting RUST and MODVERSIONS is now possible if GENDWARFKSYMS is
+selected, and will implicitly select EXTENDED_MODVERSIONS.
+
+This series depends upon the module verification refactor patches [5]
+that were split off of v5 (now in modules-next)
+and DWARF-based versions [1].
+
+[1] https://lore.kernel.org/all/20241121204220.2378181-20-samitolvanen@google.com/	
+[2] https://lore.kernel.org/lkml/20240605032120.3179157-1-song@kernel.org/
+[3] https://lore.kernel.org/lkml/ZoxbEEsK40ASi1cY@bombadil.infradead.org/
+[4] https://lore.kernel.org/lkml/0b2697fd-7ab4-469f-83a6-ec9ebc701ba0@suse.com/
+[5] https://lore.kernel.org/linux-modules/20241015231651.3851138-1-mmaurer@google.com/T/#t
+
+Changes in v10:
+- Fixed accidental selects / default confusion in previous patch
+- Re-ran tests (check for section presence in Y/Y, Y/N, N/Y, N/N, check
+  all module kinds load)
+
+v9: https://lore.kernel.org/r/20241123-extended-modversions-v9-0-bc0403f054bf@google.com
+- Rebased onto the latest version of Sami's series, on top of linux-next
+- Added BASIC_MODVERSIONS to allow using *only* EXTENDED_MODVERSIONS
+- Documented where symbol data is stored and format limitations
+
+v8: https://lore.kernel.org/r/20241030-extended-modversions-v8-0-93acdef62ce8@google.com
+- Rebased onto latest version of Sami's series, on top of v6.12-rc5
+- Pass --stable when KBUILD_GENDWARFKSYMS_STABLE is set.
+- Flipped MODVERSIONS/GENDWARFKSYMS order in deps for CONFIG_RUST
+- Picked up trailers
+
+v7: https://lore.kernel.org/r/20241023-extended-modversions-v7-0-339787b43373@google.com
+- Fix modpost to detect EXTENDED_MODVERSIONS based on a flag
+- Drop patches to fix export_report.pl
+- Switch from conditional compilation in .mod.c to conditional emission
+  in modpost
+- Factored extended modversion emission into its own function
+- Allow RUST + MODVERSIONS if GENDWARFKSYMS is enabled by selecting
+  EXTENDED_MODVERSIONS
+
+v6: https://lore.kernel.org/lkml/20241015231925.3854230-1-mmaurer@google.com/
+- Splits verification refactor Luis requested out to a separate change
+- Clarifies commits around export_report.pl repairs
+- Add CONFIG_EXTENDED_MODVERSIONS to control whether extended
+  information is included in the module, per Luis's request.
+
+v5: https://lore.kernel.org/all/20240925233854.90072-1-mmaurer@google.com/
+- Addresses Sami's comments from v3 that I missed in v4 (missing early
+  return, extra parens)
+
+v4: https://lore.kernel.org/asahi/20240924212024.540574-1-mmaurer@google.com/
+- Fix incorrect dot munging in PPC
+
+v3: https://lore.kernel.org/lkml/87le0w2hop.fsf@mail.lhotse/T/
+- Split up the module verification refactor into smaller patches, per
+  Greg K-H's suggestion.
+
+v2: https://lore.kernel.org/all/20231118025748.2778044-1-mmaurer@google.com/
+- Add loading/verification refactor before modifying, per Luis's request
+
+v1: https://lore.kernel.org/rust-for-linux/20231115185858.2110875-1-mmaurer@google.com/
+
+--
+2.47.0.rc1.288.g06298d1525-goog
+
+---
+Matthew Maurer (4):
+      modules: Support extended MODVERSIONS info
+      modpost: Produce extended MODVERSIONS information
+      modules: Allow extended modversions without basic MODVERSIONS
+      Documentation/kbuild: Document storage of symbol information
+
+Sami Tolvanen (1):
+      rust: Use gendwarfksyms + extended modversions for CONFIG_MODVERSIONS
+
+ Documentation/kbuild/modules.rst | 20 +++++++++
+ arch/powerpc/kernel/module_64.c  | 24 ++++++++++-
+ init/Kconfig                     |  3 +-
+ kernel/module/Kconfig            | 25 +++++++++++
+ kernel/module/internal.h         | 11 +++++
+ kernel/module/main.c             | 92 ++++++++++++++++++++++++++++++++++++----
+ kernel/module/version.c          | 45 ++++++++++++++++++++
+ rust/Makefile                    | 34 ++++++++++++++-
+ scripts/Makefile.modpost         |  2 +
+ scripts/mod/modpost.c            | 70 +++++++++++++++++++++++++++---
+ 10 files changed, 308 insertions(+), 18 deletions(-)
+---
+base-commit: 96ba0247d78ef4078e1de58b7e73715b93ee2c0b
+change-id: 20241022-extended-modversions-a7b44dfbfff1
+prerequisite-message-id: <20241121204220.2378181-20-samitolvanen@google.com>
+prerequisite-patch-id: 43f1286f3e4b991fda2aa093539631a01fadf5fb
+prerequisite-patch-id: 32a05b89083cfed15e5b877664b0c8138c40d09b
+prerequisite-patch-id: e192e2a692c40d96cba919e3baae68c441ab25e4
+prerequisite-patch-id: 50e884d28c720e90f201aae7801590d19736541b
+prerequisite-patch-id: 4d6a826429c519b581d01215e1d9c7373fdfd8c6
+prerequisite-patch-id: 0dcd84187b222adf52696dbcab303d683d087dd2
+prerequisite-patch-id: 0abe8634eb844a85e8dc51c1cd3970cf96cc494a
+prerequisite-patch-id: 5fabb630792f9304f200b5996314f3c2ae4c83ae
+prerequisite-patch-id: ff82b9794147dc28504e46a0170cd269623e73bf
+prerequisite-patch-id: a5cf20d27871bf63be64ac79cc81e5eb9d117b89
+prerequisite-patch-id: 2a317596a3288f9b8e06d73df53737bbfafb1d16
+prerequisite-patch-id: cac33b6e6672cf3f9f7f798a928ce7b147db271d
+prerequisite-patch-id: 62664c468be8afff72a3edaf2c1bcd2f4936a1b2
+prerequisite-patch-id: 5157d0421200858de3cc449bf39b3513efba3b24
+prerequisite-patch-id: 5a190c60e140cdf33caf4f4da03186a2bd75a531
+prerequisite-patch-id: 57d2fe708769154a6494fb1fece56911dea00687
+prerequisite-patch-id: 25255d6bc70d3ba38e45fb6a2c13038df293bd9e
+prerequisite-patch-id: 91c6131ab67a6f0fd8cf8bc95fa45144a868f095
+
+Best regards,
+-- 
+Matthew Maurer <mmaurer@google.com>
+
 
