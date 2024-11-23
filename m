@@ -1,101 +1,190 @@
-Return-Path: <linux-kernel+bounces-419011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5BC39D6887
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 11:02:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF62A9D688A
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 11:05:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 766D9B21851
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 10:02:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40468B213EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 10:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9ED183CA9;
-	Sat, 23 Nov 2024 10:02:26 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE4317F505;
+	Sat, 23 Nov 2024 10:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DVygJJJJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3894204B
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 10:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04454204B
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 10:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732356145; cv=none; b=bAFRBSEpsjupeWv+sRCtFQM8Jno85DTewtws5coDeuYFxfxMCaFlOkXvfgkRyOMHjNDll0vdL2Fbtvo8m+ysiYEmSDDvZzNMzl3XZSdljaB097sunZHGpK/0123125IlpMRBgtk6qXwvYQfbag40DnGPYUNcd9+2yoNtw1X1fKk=
+	t=1732356336; cv=none; b=qB201YLRkn+sQztS2yfnML5WAKqm9Q0YyLBGLaTrsNQbsE46cmGpE5BGC20W3+w4RSavxr/dO218RacIQrOk7X9l9hjmeUSnQp5gM3VU/V29w3tVwkV1fJhHYF/FnMoTdmxXJMfM6J+bAp7/hHO/rKFE7Qa6fQs2UO6TYLC+Ti0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732356145; c=relaxed/simple;
-	bh=eIKYcVCQQjJFBkH1lJcvxgr2iA+FCk76ApgQpF0yQlw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XGZzUHJsxYWJOCo03nr4Tv3J06JGXpz2gTOm6P4zsx6DAgkMiOeJy4zUgOxeQkd2VRo3nIlD9qv11kVCLlpBnIjx3pmA1YZ7z2VyWJi7s5Q5CjxDsIvdfaRGnDJKwE2JdfcE8ZcaTYyz8vEiFhS/gSWpqtUCl6F2hB2YlwQNWxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a76ba215b2so31124235ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 02:02:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732356143; x=1732960943;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=se6nHRVLma2x6ELMn9VIGQomPTv3OczUsSGNoxBdl3s=;
-        b=nah6RlZD7SnzJpY9tne+G8makuRNH0jc+jRf9XlrYYCjPCU6UD7c5Qc6amqIEGaoeD
-         Mw9rMUdzywtU+bfUmsNUwc+ML4D57EtJDscSXF0iKG0RNsCUaRxVNErcDa3kgC/2fLhR
-         pspdvP+ftYMBaNSHBpitMLqqkTBtWAqO+9KskWvFC2dKs3DvuG8a1BNPkiuqU4QjqIoC
-         D4m2qdRNo0MeKzm9qPAG9i3wAeiS/1qfx4RY502uPPqaXO6gdvu75IVJd5qjP3avyu9S
-         /vvtMtvTOvoboYhZdHhgJl6cbcmvNxRhRN8O5PcHGzNG//iv1OPq17lnWzMD5NRVoJC/
-         wjBA==
-X-Gm-Message-State: AOJu0YxulTJznnlUwccuv2beczDFUcOMpzjoYtVzlPjp2d5mASB/vgdI
-	xGtd4iagbltXVTvm3UjJWhbNgQ4MpyJDhZGVlyl7R13EYy80+LtBpNPyAnEeGBYrZd8jX1onkpw
-	ZhHjrA8uuhXwmZYvxTE2wP+tnwMgKqiLCBmfCEe7OhGjTwgz9oRZIhRk=
-X-Google-Smtp-Source: AGHT+IEFZw7X4VqDou46tA28UccIR9yRsRnvS4wmHsZzCcqCTVT2/cdmvQKE/N6OdTIpVcedJAC3mB3B3UpAXE1iPILHsb6Aa/Af
+	s=arc-20240116; t=1732356336; c=relaxed/simple;
+	bh=VfFjtMVJJGAyXRv2MDPvzehn2J0t4usVdu6w1H6HT4o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E07VT5IdatHxCKV9jpA80paZzEgDD6W95glrzSFT/6gtGc4mBFe0ixsg68/vZMmDro9lYc/oV+dCbth4GsJu2Y+Wt5u8p1CSAViwUTviyKLx2xIH6XiJYlY65fzsU6UcRfhkCskKdHaNppURkaWyfLFYH3JlIvmVVXkUpHoLuek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DVygJJJJ; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732356335; x=1763892335;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VfFjtMVJJGAyXRv2MDPvzehn2J0t4usVdu6w1H6HT4o=;
+  b=DVygJJJJQaBbMkZ72GkS6vDts++hwhXFLNLnJSu35JCFgcz8aiyWT/KR
+   J8/Hw1YMyB3z8jgkhKEffEepYS3NJRnXxgenDJqNEJ0cX+uGvmdCC/H+I
+   s0SBWSJT7U+BJc1X0mcowSwpMOGTADI5qbpE2I8GZk45oZ22CXNvi/Q1j
+   7uTFqYUcff/bfmNDOXIIi4F0Ljxkekfj81YHRX3jJ+jPeqRA2SFkkZCTX
+   Zu+o+V7Rdn3MhuUYsNQt/ntQiwsgyT+NZ1kXbylG7/GEEQ+U1y1a/+IFq
+   0RXLNxfOdyqJ/+suiQfBAoF3brlUZ0wJU62vY8sB5eJzhZXce6FAIjLcY
+   Q==;
+X-CSE-ConnectionGUID: LDBDvjAbRZ+el06I+worsQ==
+X-CSE-MsgGUID: FlnJ06nDRQKjGqmZrYx8OQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="55016038"
+X-IronPort-AV: E=Sophos;i="6.12,178,1728975600"; 
+   d="scan'208";a="55016038"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2024 02:05:34 -0800
+X-CSE-ConnectionGUID: hw0wb8yPRbu/4r9ZMEGp4w==
+X-CSE-MsgGUID: mDTNnOiESrmz+mqlvhquBw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,178,1728975600"; 
+   d="scan'208";a="114087048"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 23 Nov 2024 02:05:31 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tEn17-0004YV-05;
+	Sat, 23 Nov 2024 10:05:29 +0000
+Date: Sat, 23 Nov 2024 18:05:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mika Laitio <lamikr@gmail.com>, christian.koenig@amd.com,
+	Xinhui.Pan@amd.com, airlied@gmail.com, simona@ffwll.ch,
+	Hawking.Zhang@amd.com, sunil.khatri@amd.com, lijo.lazar@amd.com,
+	kevinyang.wang@amd.com, amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH] ammdgpu fix for gfx1103 queue evict/restore crash
+Message-ID: <202411231721.vBNjHNvr-lkp@intel.com>
+References: <20241121195233.10679-1-lamikr@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1885:b0:3a7:8720:9de5 with SMTP id
- e9e14a558f8ab-3a79acfb902mr90618525ab.1.1732356143548; Sat, 23 Nov 2024
- 02:02:23 -0800 (PST)
-Date: Sat, 23 Nov 2024 02:02:23 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6741a82f.050a0220.1cc393.0004.GAE@google.com>
-Subject: [syzbot] Monthly lsm report (Nov 2024)
-From: syzbot <syzbot+list403996b4777f311516dc@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241121195233.10679-1-lamikr@gmail.com>
 
-Hello lsm maintainers/developers,
+Hi Mika,
 
-This is a 31-day syzbot report for the lsm subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/lsm
+kernel test robot noticed the following build warnings:
 
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 8 issues are still open and 28 have already been fixed.
+[auto build test WARNING on drm-misc/drm-misc-next]
+[also build test WARNING on drm-tip/drm-tip v6.12 next-20241122]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Some of the still happening issues:
+url:    https://github.com/intel-lab-lkp/linux/commits/Mika-Laitio/ammdgpu-fix-for-gfx1103-queue-evict-restore-crash/20241122-035602
+base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+patch link:    https://lore.kernel.org/r/20241121195233.10679-1-lamikr%40gmail.com
+patch subject: [PATCH] ammdgpu fix for gfx1103 queue evict/restore crash
+config: powerpc-allmodconfig (https://download.01.org/0day-ci/archive/20241123/202411231721.vBNjHNvr-lkp@intel.com/config)
+compiler: powerpc64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241123/202411231721.vBNjHNvr-lkp@intel.com/reproduce)
 
-Ref Crashes Repro Title
-<1> 409     No    INFO: task hung in process_measurement (2)
-                  https://syzkaller.appspot.com/bug?extid=1de5a37cb85a2d536330
-<2> 56      Yes   WARNING in current_check_refer_path
-                  https://syzkaller.appspot.com/bug?extid=34b68f850391452207df
-<3> 29      Yes   KMSAN: uninit-value in ima_add_template_entry (2)
-                  https://syzkaller.appspot.com/bug?extid=91ae49e1c1a2634d20c0
-<4> 7       Yes   WARNING in get_mode_access
-                  https://syzkaller.appspot.com/bug?extid=360866a59e3c80510a62
-<5> 2       Yes   INFO: task hung in ima_file_free (4)
-                  https://syzkaller.appspot.com/bug?extid=8036326eebe7d0140944
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411231721.vBNjHNvr-lkp@intel.com/
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+All warnings (new ones prefixed by >>):
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+   drivers/gpu/drm/amd/amdgpu/../amdkfd/kfd_device_queue_manager.c: In function 'restore_process_queues_cpsch':
+>> drivers/gpu/drm/amd/amdgpu/../amdkfd/kfd_device_queue_manager.c:1354:1: warning: label 'out_unlock' defined but not used [-Wunused-label]
+    1354 | out_unlock:
+         | ^~~~~~~~~~
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
 
-You may send multiple commands in a single email message.
+vim +/out_unlock +1354 drivers/gpu/drm/amd/amdgpu/../amdkfd/kfd_device_queue_manager.c
+
+  1292	
+  1293	static int restore_process_queues_cpsch(struct device_queue_manager *dqm,
+  1294						struct qcm_process_device *qpd)
+  1295	{
+  1296		struct queue *q;
+  1297		struct device *dev = dqm->dev->adev->dev;
+  1298		struct kfd_process_device *pdd;
+  1299		uint64_t eviction_duration;
+  1300		int retval = 0;
+  1301	
+  1302		// gfx1103 APU fails to remove the queue usually after 10-50 attempts
+  1303		if (dqm->dev->adev->flags & AMD_IS_APU)
+  1304			goto out;
+  1305		pdd = qpd_to_pdd(qpd);
+  1306	
+  1307		dqm_lock(dqm);
+  1308		if (WARN_ON_ONCE(!qpd->evicted)) /* already restored, do nothing */
+  1309			goto out;
+  1310		if (qpd->evicted > 1) { /* ref count still > 0, decrement & quit */
+  1311			qpd->evicted--;
+  1312			goto out;
+  1313		}
+  1314	
+  1315		/* The debugger creates processes that temporarily have not acquired
+  1316		 * all VMs for all devices and has no VMs itself.
+  1317		 * Skip queue restore on process restore.
+  1318		 */
+  1319		if (!pdd->drm_priv)
+  1320			goto vm_not_acquired;
+  1321	
+  1322		pr_debug_ratelimited("Restoring PASID 0x%x queues\n",
+  1323				    pdd->process->pasid);
+  1324	
+  1325		/* Update PD Base in QPD */
+  1326		qpd->page_table_base = amdgpu_amdkfd_gpuvm_get_process_page_dir(pdd->drm_priv);
+  1327		pr_debug("Updated PD address to 0x%llx\n", qpd->page_table_base);
+  1328	
+  1329		/* activate all active queues on the qpd */
+  1330		list_for_each_entry(q, &qpd->queues_list, list) {
+  1331			q->properties.is_evicted = false;
+  1332			if (!QUEUE_IS_ACTIVE(q->properties))
+  1333				continue;
+  1334	
+  1335			q->properties.is_active = true;
+  1336			increment_queue_count(dqm, &pdd->qpd, q);
+  1337	
+  1338			if (dqm->dev->kfd->shared_resources.enable_mes) {
+  1339				retval = add_queue_mes(dqm, q, qpd);
+  1340				if (retval) {
+  1341					dev_err(dev, "Failed to restore queue %d\n",
+  1342						q->properties.queue_id);
+  1343					goto out;
+  1344				}
+  1345			}
+  1346		}
+  1347		if (!dqm->dev->kfd->shared_resources.enable_mes)
+  1348			retval = execute_queues_cpsch(dqm,
+  1349						      KFD_UNMAP_QUEUES_FILTER_DYNAMIC_QUEUES, 0, USE_DEFAULT_GRACE_PERIOD);
+  1350		eviction_duration = get_jiffies_64() - pdd->last_evict_timestamp;
+  1351		atomic64_add(eviction_duration, &pdd->evict_duration_counter);
+  1352	vm_not_acquired:
+  1353		qpd->evicted = 0;
+> 1354	out_unlock:
+  1355		dqm_unlock(dqm);
+  1356	out:
+  1357		return retval;
+  1358	}
+  1359	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
