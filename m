@@ -1,162 +1,184 @@
-Return-Path: <linux-kernel+bounces-418994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6B039D6827
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 09:15:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AB58161234
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 08:15:13 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82354188907;
-	Sat, 23 Nov 2024 08:14:57 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E71029D6821
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 09:07:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C49E16EB42;
-	Sat, 23 Nov 2024 08:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4969CB21FEB
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 08:07:35 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA79317557C;
+	Sat, 23 Nov 2024 08:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uTeOH3VC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2DC4A0A;
+	Sat, 23 Nov 2024 08:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732349697; cv=none; b=O/cpf4fjflVjOVD9VxJFUEZ+m8LrvkLtWtuzj6DxbbYma0Z0TeP7Z18nBgUoLXi1a5uaMsGSelwR5oKfwiMMDIFQ5P3xv+/zaRdC8/RpZyMmpP/s6lTG2BhLeaydBOXSWDpRKHjexO0iUmyv9qM48GMRPWnOj9VgdC1BfDPXYgs=
+	t=1732349249; cv=none; b=fiNeTmqKFlaQlGsZM9+q2IlSZPulmOK+S+V9XtMaXH8icptSmzULbswC+qYvE2rroPLKC2PxyZuqVmodK+4vtrziXcJTjfTQ7CDsNbjtR2ZW1CmfFM9swYCOcU7Fdmn+5lSpfe0YnaGM0qRftIJ1R30q59DdDPBndwkjSuvlXjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732349697; c=relaxed/simple;
-	bh=7tlLamZPrg2kK7rmzmbcfOuSyKFaE8jLagXf2MwKjPY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=g4GI7Vv2Xb4exLynb4hdjk+lbSDORqCSI1mmEedHN52pnobttP4MBv7bg2EYauvQ+hl7pdhAEPEK9PcXAyAooLPsh6hR4K5MsmJgc4gAg+Nvm7E3F6KY6lJMSlN6HscErhOeNSkNAC4xujFDEsPX8AWCGo+73UGG3OnbUMk7lWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XwPrk4kGCz4f3kK2;
-	Sat, 23 Nov 2024 16:14:30 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 3B1EB1A018C;
-	Sat, 23 Nov 2024 16:14:44 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP4 (Coremail) with SMTP id gCh0CgAH44bcjkFnuN1dCg--.14086S4;
-	Sat, 23 Nov 2024 16:14:44 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: steffen.klassert@secunet.com,
-	daniel.m.jordan@oracle.com,
-	herbert@gondor.apana.org.au
-Cc: linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chenridong@huawei.com,
-	wangweiyang2@huawei.com
-Subject: [PATCH 2/2] padata: fix UAF in padata_reorder
-Date: Sat, 23 Nov 2024 08:05:09 +0000
-Message-Id: <20241123080509.2573987-3-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241123080509.2573987-1-chenridong@huaweicloud.com>
-References: <20241123080509.2573987-1-chenridong@huaweicloud.com>
+	s=arc-20240116; t=1732349249; c=relaxed/simple;
+	bh=PIbwRTHdbqi5eTD61P0KDKt7aHhX7HKfT5+ET4l6qoc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m3Ek64ZAju2VSt0ir2SpIA8ld+25FgD0myoVmmYllZitxgzdGLahQTEGbqCzfYjQOziiCr3P+2WrmyMC+G0FIedR50B4ki1hAtEB4no7B+rqXDj7GoRY8FUb027C/JtpBaoljSf7BcfTKu4A6KFC53UixYDVKlW7Id46QKAayTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uTeOH3VC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58E2FC4CED2;
+	Sat, 23 Nov 2024 08:07:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732349248;
+	bh=PIbwRTHdbqi5eTD61P0KDKt7aHhX7HKfT5+ET4l6qoc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uTeOH3VChgkz5EnGR6oIbw4WHEudXDAQ30jO2IgjB+vRNVDtJ1zFPGxlxjv/2kDT/
+	 OXqrsNwpS+CRxO9ju4fZYoxfSgPZU9KzG21zEyJDo5cMtDViSkDSCTpz8Dp9ne8uJZ
+	 CW7Xk9vrLkTaS6pR9B4v6QumaJJ2Fm1AA6AowEMciXOY1vA9/ykgmVi3JVIKJMbkXR
+	 QiVtUFHP7S4bBeCnXP10O6BDiaGWfTQT/YxIW967CvVrP8npWI0VJt0RUygBc4o3mR
+	 fNqBB3lJ+Az9U3ABfWcxJu4+3QhUSW570mUOHeR1ZOepSRHQGbfVxvXQVT3dsTXjQe
+	 Z5a++kM5frBfQ==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb5111747cso34050081fa.2;
+        Sat, 23 Nov 2024 00:07:28 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWC+TN+/zFXr+w5b88/qVm3003dBdGLc+05z/4ekFlB5hON1TE8Wwe/8qPSLrGkXaUG8miU+4W3aM2twZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9XbWvB+3oYn8Ew6PJhp9PvzGHQNH3JydjWMkikyxbixX5C8cr
+	HB/uyo9K0l4DvyUer3f7qHijrMEj5+nPCiIn02waZWdCLBpId0FBqVdvGgmdo7arQIc+moJbrPr
+	bEDu3xfK5p/pRQVk2HZY3ZVovMMI=
+X-Google-Smtp-Source: AGHT+IGa7sb4RLdDJOo9iuRfeVpapV2AaJzdZkOATJJpVHFMWs49WfoKrdLRU9RgukSwVlC9apmJEKLJYJ1pY0DIimA=
+X-Received: by 2002:a2e:a90e:0:b0:2fb:6277:71d0 with SMTP id
+ 38308e7fff4ca-2ffa7133606mr35884541fa.22.1732349247035; Sat, 23 Nov 2024
+ 00:07:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAH44bcjkFnuN1dCg--.14086S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7CFWxXw48KFyfCFy7ur4DJwb_yoW5Jry5pF
-	W5CrW7JrW8Gr18Jw13ZFyxZryrWF1DuF13KFWrCFn3CrW3Jr18Arn7tw1FgryFgryvyw1D
-	Zayqqa4xtwsFqFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPab4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
-	A2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
-	Ij6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
-	Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr4
-	1l4c8EcI0Ec7CjxVAaw2AFwI0_JF0_Jw1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r
-	1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
-	WUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU
-	cBT5DUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+References: <20241122150037.1085800-1-linux@rasmusvillemoes.dk>
+In-Reply-To: <20241122150037.1085800-1-linux@rasmusvillemoes.dk>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sat, 23 Nov 2024 17:06:50 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS6aU4L+4JyDXzncMVsY+6XRYTD=RkhcXSUXTRh_WxWWw@mail.gmail.com>
+Message-ID: <CAK7LNAS6aU4L+4JyDXzncMVsY+6XRYTD=RkhcXSUXTRh_WxWWw@mail.gmail.com>
+Subject: Re: [PATCH v4] setlocalversion: work around "git describe" performance
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jeff King <peff@peff.net>, Sean Christopherson <seanjc@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Chen Ridong <chenridong@huawei.com>
+On Sat, Nov 23, 2024 at 12:01=E2=80=AFAM Rasmus Villemoes
+<linux@rasmusvillemoes.dk> wrote:
+>
+> Contrary to expectations, passing a single candidate tag to "git
+> describe" is slower than not passing any --match options.
+>
+>   $ time git describe --debug
+>   ...
+>   traversed 10619 commits
+>   ...
+>   v6.12-rc5-63-g0fc810ae3ae1
+>
+>   real    0m0.169s
+>
+>   $ time git describe --match=3Dv6.12-rc5 --debug
+>   ...
+>   traversed 1310024 commits
+>   v6.12-rc5-63-g0fc810ae3ae1
+>
+>   real    0m1.281s
+>
+> In fact, the --debug output shows that git traverses all or most of
+> history. For some repositories and/or git versions, those 1.3s are
+> actually 10-15 seconds.
+>
+> This has been acknowledged as a performance bug in git [1], and a fix
+> is on its way [2]. However, no solution is yet in git.git, and even
+> when one lands, it will take quite a while before it finds its way to
+> a release and for $random_kernel_developer to pick that up.
+>
+> So rewrite the logic to use plumbing commands. For each of the
+> candidate values of $tag, we ask: (1) is $tag even an annotated
+> tag? (2) Is it eligible to describe HEAD, i.e. an ancestor of
+> HEAD? (3) If so, how many commits are in $tag..HEAD?
+>
+> I have tested that this produces the same output as the current script
+> for ~700 random commits between v6.9..v6.10. For those 700 commits,
+> and in my git repo, the 'make -s kernelrelease' command is on average
+> ~4 times faster with this patch applied (geometric mean of ratios).
+>
+> For the commit mentioned in Josh's original report [3], the
+> time-consuming part of setlocalversion goes from
+>
+> $ time git describe --match=3Dv6.12-rc5 c1e939a21eb1
+> v6.12-rc5-44-gc1e939a21eb1
+>
+> real    0m1.210s
+>
+> to
+>
+> $ time git rev-list --count --left-right v6.12-rc5..c1e939a21eb1
+> 0       44
+>
+> real    0m0.037s
+>
+> [1] https://lore.kernel.org/git/20241101113910.GA2301440@coredump.intra.p=
+eff.net/
+> [2] https://lore.kernel.org/git/20241106192236.GC880133@coredump.intra.pe=
+ff.net/
+> [3] https://lore.kernel.org/lkml/309549cafdcfe50c4fceac3263220cc3d8b109b2=
+.1730337435.git.jpoimboe@kernel.org/
+>
+> Reported-by: Sean Christopherson <seanjc@google.com>
+> Closes: https://lore.kernel.org/lkml/ZPtlxmdIJXOe0sEy@google.com/
+> Reported-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> Closes: https://lore.kernel.org/lkml/309549cafdcfe50c4fceac3263220cc3d8b1=
+09b2.1730337435.git.jpoimboe@kernel.org/
+> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> ---
+> v4:
+>
+> - Switch the logic to make use of the return values from try_tag,
+>   instead of asking whether $count has been set.
 
-A bug was found when run ltp test:
 
-BUG: KASAN: slab-use-after-free in padata_find_next+0x29/0x1a0
-Read of size 4 at addr ffff88bbfe003524 by task kworker/u113:2/3039206
+No, please do not do this.
 
-CPU: 0 PID: 3039206 Comm: kworker/u113:2 Kdump: loaded Not tainted 6.6.0+
-Workqueue: pdecrypt_parallel padata_parallel_worker
-Call Trace:
-<TASK>
-dump_stack_lvl+0x32/0x50
-print_address_description.constprop.0+0x6b/0x3d0
-print_report+0xdd/0x2c0
-kasan_report+0xa5/0xd0
-padata_find_next+0x29/0x1a0
-padata_reorder+0x131/0x220
-padata_parallel_worker+0x3d/0xc0
-process_one_work+0x2ec/0x5a0
+As I replied in v3, my plan is to set -e, because otherwise
+the shell script is fragile.
 
-If 'mdelay(10)' is added before calling 'padata_find_next' in the
-'padata_reorder' function, this issue could be reproduced easily with
-ltp test (pcrypt_aead01).
+With this version, -e will not work in try_tag()
+because it is used in the if condition.
 
-This can be explained as bellow:
 
-pcrypt_aead_encrypt
-...
-padata_do_parallel
-refcount_inc(&pd->refcnt); // add refcnt
-...
-padata_do_serial
-padata_reorder // pd
-while (1) {
-padata_find_next(pd, true); // using pd
-queue_work_on
-...
-padata_serial_worker				crypto_del_alg
-padata_put_pd_cnt // sub refcnt
-						padata_free_shell
-						padata_put_pd(ps->pd);
-						// pd is freed
-// loop again, but pd is freed
-// call padata_find_next, UAF
-}
+> +try_tag() {
+> +       tag=3D"$1"
+> +
+> +       # Is $tag an annotated tag?
+> +       [ "$(git cat-file -t "$tag" 2> /dev/null)" =3D tag ] || return 1
+> +
+> +       # Is it an ancestor of HEAD, and if so, how many commits are in $=
+tag..HEAD?
+> +       # shellcheck disable=3DSC2046 # word splitting is the point here
+> +       set -- $(git rev-list --count --left-right "$tag"...HEAD 2> /dev/=
+null)
+> +
+> +       # $1 is 0 if and only if $tag is an ancestor of HEAD. Use
+> +       # string comparison, because $1 is empty if the 'git rev-list'
+> +       # command somehow failed.
+> +       [ "$1" =3D 0 ] || return 1
+> +
+> +       # $2 is the number of commits in the range $tag..HEAD, possibly 0=
+.
+> +       count=3D"$2"
 
-In the padata_reorder function, when it loops in 'while', if the alg is
-deleted, the refcnt may be decreased to 0 before entering
-'padata_find_next', which leads to UAF, To fix this issue, add refcnt in
-the padata_reorder to avoid UAF.
+Redundant double-quotes.
 
-Fixes: b128a3040935 ("padata: allocate workqueue internally")
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
-Signed-off-by: Qu Zicheng <quzicheng@huawei.com>
----
- kernel/padata.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/padata.c b/kernel/padata.c
-index 5d8e18cdcb25..627014825266 100644
---- a/kernel/padata.c
-+++ b/kernel/padata.c
-@@ -319,6 +319,7 @@ static void padata_reorder(struct parallel_data *pd)
- 	if (!spin_trylock_bh(&pd->lock))
- 		return;
- 
-+	padata_get_pd(pd);
- 	while (1) {
- 		padata = padata_find_next(pd, true);
- 
-@@ -355,6 +356,7 @@ static void padata_reorder(struct parallel_data *pd)
- 	reorder = per_cpu_ptr(pd->reorder_list, pd->cpu);
- 	if (!list_empty(&reorder->list) && padata_find_next(pd, false))
- 		queue_work(pinst->serial_wq, &pd->reorder_work);
-+	padata_put_pd(pd);
- }
- 
- static void invoke_padata_reorder(struct work_struct *work)
--- 
-2.34.1
 
+--
+Best Regards
+Masahiro Yamada
 
