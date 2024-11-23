@@ -1,111 +1,86 @@
-Return-Path: <linux-kernel+bounces-419054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B5FC9D68F6
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 13:06:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93C6A9D68F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 13:12:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0716B21A25
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 12:06:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D78D281CFF
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 12:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB23518A6B8;
-	Sat, 23 Nov 2024 12:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RE+xtvoZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 902D718873A;
+	Sat, 23 Nov 2024 12:12:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B05C14F9E9;
-	Sat, 23 Nov 2024 12:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C670E14F9E9
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 12:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732363579; cv=none; b=cd7mOFhaRWdJ7GVg5HsHgq1GBehmIh5VnvT9pt4wK0zdAwFvutpkaEatirNFiVEtv30/GmmDWQTvUKLBB9JJZWE+E8r/bVA3146z1nbMgYdt8JULs0ab3kLSukBd9pZtaIgyePBIn5ANpRxPThfCLMI1QfsWsTnwqIxpucCKK+g=
+	t=1732363926; cv=none; b=GRpk7O61qXceZkXzN04cgpDbSQgqJcN4nOf6d4gsSLDRKzke9OjNjuB+kmD7yn/bnnt2k0hZIjuG2wV8yIWlWIomEzC7dGOJ+4kVZfoYFcGc6Xbyys4CQKLkNsuP+nxmys72doTYZbhyJXfuGy5CmwiqD9ttHvqJ+f63DIX++B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732363579; c=relaxed/simple;
-	bh=tBMvMn07vHvdrtKWdPHOHNiRzfkJYZW/11LSRAHpRsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fppxT6HtAy8mbl6ZHodHBE3v703jbGPr3b9gAXVjPQ5xSzynYftkGj1R+R5HechOh1N+5yvFxelwesiV264fThvmqhbjIU53zy2IshrzHyIbKOTAfeomnxKZQIKRnU3jt7u9K/MT8ZQ6w3e6wjcs+8QjLxGDYkfFQLn6hTj0kc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RE+xtvoZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B846C4CECD;
-	Sat, 23 Nov 2024 12:06:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732363578;
-	bh=tBMvMn07vHvdrtKWdPHOHNiRzfkJYZW/11LSRAHpRsE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RE+xtvoZbNTUdhqSJExq/hRlUT2grJTTODqlC62AvsoUuzMZbPZ6mHQnouB3R6d4c
-	 HV6jmyNq9jgtsRMXgV3swxxDuwXvWjYnTLdYOG/IydAs2dp+OWOwEbRBV/p/WEEdTe
-	 Wi66dO9bwrzQjL7Xt6ZOdIhuWrGUwv2/QcCSNsSODUTr9X64tcI1jqzaQzfwLcxn7z
-	 h0uU99UGf01f6zO+PY22rlfMEf2SpGAejftGam0c7GW2Uqe3FvDn15wgkTc2YSa9Hn
-	 S+aCJdbuU4ke9MyOlNBta/sK0wHZW43AxVQPiJI1I8DooBYOc+6jibLtM+G5hDqOR5
-	 HWShpgq7yziUQ==
-Date: Sat, 23 Nov 2024 13:06:14 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org
-Subject: Re: [GIT PULL] overlayfs updates for 6.13
-Message-ID: <20241123-bauhof-tischbein-579ff1db831a@brauner>
-References: <20241122095746.198762-1-amir73il@gmail.com>
- <CAHk-=wg_Hbtk1oeghodpDMc5Pq24x=aaihBHedfubyCXbntEMw@mail.gmail.com>
+	s=arc-20240116; t=1732363926; c=relaxed/simple;
+	bh=TYyTZ2XNG/9L4jjo5iRo0rrA88GdXZarZrUK72B7FsA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=gyGmhy/kS54smg2CPXjapAAtFFsmn0YmXphbaz6BDeLyZYv5eFUtM6vIphiLe4rjdlWSel2RnxpsFkJZFQSYyjf86wKqsRyGTklHmaDaWi71zTTJOAOAW7eveMcY3jOJWkTzbsNuHpXt1xx73dMDyu0FIowl6pBXkZo+OUP33jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83abf9b6bfaso318167239f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 04:12:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732363924; x=1732968724;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cqxBek+GG5i+/WKQLp+6iOq60RM5a03OPRmp+n2mpQI=;
+        b=HFisrBmsQxahdS1lzCR4ZN4hvgbaQlZbnLGeheNtpSGUCRrd17nKfU5ib9tHAFvEDI
+         5reeu8z6THfy9o80x1t5SWCefb6XU09fDRKOFWnCC1xMmPcti3J+ib8LC0uQ54GV6Gja
+         kZzBsi7CJIFhoySsyU5ujT6OFwkZFqeW4lwbAR5IzQCWgESGmxfes+lptzCNBu9IJfuC
+         Cqd8Jm/L0rxLMHBX1tUX3GB1VnzfATGxkeDUwgDt8j6fgYuoiyd340rEdVOUPIiI+p7y
+         U1diti5qJo9DkKHgjsFtu8YimGCVWgiksXYA/kUSu0Q0XRLbvsuXALLIgcykFVyQs/+a
+         deFQ==
+X-Gm-Message-State: AOJu0YyJE1Rq9OzLvUxbenDrM04sBhUqayKLqvmnswmL3erhkZQeIYTj
+	KWNvil/Ih/1sWIlaUJRKSAk8i/Fom2hO8s0aqvW+yWY/fU4GZg/LEhZ++h+R/1XNSlujBCnTNG5
+	iCZwRpgX1OsdPZVWV8E9wFNcRdKYtTlhP0mizsC92jLcVkT/vVqQdUzw=
+X-Google-Smtp-Source: AGHT+IHwx+RNMPYg447vEukiWAi/v6iigwrQYwR7xJAfhhfOLKGRgc4fI/dFRgSSWHl5dZnRgtKRfzFptO7bxSfRQn7aCgjxjnwN
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wg_Hbtk1oeghodpDMc5Pq24x=aaihBHedfubyCXbntEMw@mail.gmail.com>
+X-Received: by 2002:a05:6e02:1a88:b0:3a7:6566:1e8f with SMTP id
+ e9e14a558f8ab-3a79aeade39mr53033695ab.16.1732363923874; Sat, 23 Nov 2024
+ 04:12:03 -0800 (PST)
+Date: Sat, 23 Nov 2024 04:12:03 -0800
+In-Reply-To: <f1601b51-4c9a-4a99-ac04-9403f2939b37@I-love.SAKURA.ne.jp>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6741c693.050a0220.1cc393.000a.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] VFS: Busy inodes after unmount (use-after-free)
+From: syzbot <syzbot+0af00f6a2cba2058b5db@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 22, 2024 at 09:21:58PM -0800, Linus Torvalds wrote:
-> On Fri, 22 Nov 2024 at 01:57, Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > - Introduction and use of revert/override_creds_light() helpers, that were
-> >   suggested by Christian as a mitigation to cache line bouncing and false
-> >   sharing of fields in overlayfs creator_cred long lived struct cred copy.
-> 
-> So I don't actively hate this, but I do wonder if this shouldn't have
-> been done differently.
-> 
-> In particular, I suspect *most* users of override_creds() actually
-> wants this "light" version, because they all already hold a ref to the
-> cred that they want to use as the override.
-> 
-> We did it that safe way with the extra refcount not because most
-> people would need it, but it was expected to not be a big deal.
-> 
-> Now you found that it *is* a big deal, and instead of just fixing the
-> old interface, you create a whole new interface and the mental burden
-> of having to know the difference between the two.
+Hello,
 
-> So may I ask that you look at perhaps just converting the (not very
-> many) users of the non-light cred override to the "light" version?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-I think that could be a good idea in general.
+Reported-by: syzbot+0af00f6a2cba2058b5db@syzkaller.appspotmail.com
+Tested-by: syzbot+0af00f6a2cba2058b5db@syzkaller.appspotmail.com
 
-But I have to say I'm feeling a bit defensive after having read your
-message even though I usually try not to. :) 
+Tested on:
 
-So just to clarify when that issue was brought up I realized that the
-cred bump was a big deal for overlayfs but from a quick grep I didn't
-think for any of the other cases it really mattered that much.
+commit:         adc21867 Linux 6.12
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git v6.12
+console output: https://syzkaller.appspot.com/x/log.txt?x=14bf36e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8dfe7071ced70e76
+dashboard link: https://syzkaller.appspot.com/bug?extid=0af00f6a2cba2058b5db
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12c281c0580000
 
-Realistically, overlayfs is the prime example where that override cred
-matters big time because it's called everywhere and in all core
-operations one can think of. But so far I at least haven't heard
-complaints outside of that and so the immediate focus was to bring about
-a solution for overlayfs.
-
-The reason the revert_creds_light() variant doesn't return the old creds
-is so that callers don't put_cred() them blindly.
-
-Because for overlayfs (and from a quick glance io_uring and nfs) the
-refcount for the temporary creds is kept completely independent of the
-callsites.
-
-The lifetime is bound to the superblock and so the final put on the
-temporary creds has nothing to do with the callers at all.
+Note: testing is done by a robot and is best-effort only.
 
