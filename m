@@ -1,114 +1,88 @@
-Return-Path: <linux-kernel+bounces-419043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D2979D68E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 12:31:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 160DD9D68E2
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 12:32:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 021B9281D3A
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 11:31:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D004A281DC7
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 11:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 429FC18A93F;
-	Sat, 23 Nov 2024 11:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nu5aczPb"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2CD18A93F;
+	Sat, 23 Nov 2024 11:32:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DE04204B;
-	Sat, 23 Nov 2024 11:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7790A18787C
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 11:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732361509; cv=none; b=Xx3qrbfrxumE5/LyeMGMWxbJdbvCjzc0MZBahdOFiI9MMr0r9y2iB8NHfrfcgS4a+MzairsJuiuOwdr2V8XO21qzez18j218xza5HkOIb0mCbLw70iNpU0+JngTy9bV3kZfsb1PiomuGiVEzOdeFOEOk/d95WCHMkWqAEDmPiSM=
+	t=1732361525; cv=none; b=VnS7XOM5MhlYtFYDM78P6Sgft5M/Ly3dbStgS6PM+xKR7/Wvt4dgBuQBWOhdIg6DAgnM5gfYpXQnzZ6KwF048GZ6UvBXjwIlPj5fJHYM8BltJm0KwqBdSQrg7X+J9ebPSS/hQKCl6mNkWLpdKzAOp0OA85Wi95+ZdiJ/kskqEkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732361509; c=relaxed/simple;
-	bh=7l53ff7oBSbondRTNi7K/Blxj+8PK+VAW7cT64gbz7g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BL3HUXHwh5MwmRARMwAVmhfTIrEtjJ32wwXMeFnVAgqcVyVlkJVI1d0NHKBF5iCiFeDIqEWubHGMYeldZb9wKncw8vld3+7UIlRrqF6Jw4DYxLVfMOM5w3XfzmhgHhfH1BJtcG1ZNJYuTC0GWiYaqmCALEB2C55yBpee4hJ4aoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nu5aczPb; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2124ccf03edso29380135ad.2;
-        Sat, 23 Nov 2024 03:31:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732361508; x=1732966308; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=U8nb5xhW2sO139VthmTPAswqENky3wnHBx6HMmEx694=;
-        b=Nu5aczPbkM7GY6OmEqle9LQmZgmAq6N7fTKa+7JqrYPjty0C5/V4ZbSg5Q+dXa3NzC
-         ivChGbr4onI7oMFsatzKx8ysnf/0+DPSoynDAWFfKd7Hx6nfHFXPfB5uimvW2Tq19+1a
-         xmFZJMpG6p9XXCk9cXIaWW8d2z+PESK8zz0eZ2q/81uzAcHVOG9pQ1MN4hTyVFzhFpX4
-         haSWOpGT0OsbXDfR5jJf8WXJHKWAYq01jaAtUUqMCeJVbdPAQYHZBSd801sZqyv9Jjm3
-         +3XAbilOmmL/HRV6H3yD+elPVPdA29nWB89NuadbnPCE3HbL0khHzGnVS2naWy5/g4/B
-         rRPw==
+	s=arc-20240116; t=1732361525; c=relaxed/simple;
+	bh=VR9S+T9x6z73xCX/A+Ll7XmOsXI4DQ+M1rnDvBMIyng=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=NaNeaLjYSiittY4jX8q7q6w/8Aa/LpjUGWagjKCaS6H/MN/bIrM5BlAuZTjEzjLJ0BCAIs8aGEXMONvJpi4s3OUkyVidSyEYJoqpla9awQ+vyF7bRU+ffm5rMVLJYTP33B05WZmI+sCd3FJGmGQw7m+CojRaxrKCmy3COW0qTGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a76690f813so33723335ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 03:32:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732361508; x=1732966308;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U8nb5xhW2sO139VthmTPAswqENky3wnHBx6HMmEx694=;
-        b=rpraVvY0OX8HfnpSouPXi2uGdiXvVE4DYc0YifPsv6bku9qDatSxYC3A+wIYkNbUDu
-         Hi4j2CRFkqSyJsa4oQYAimuyClZy5YqjL/b+0CyJOFLTSu1/i0YwQxXvA6RM/yiPeHMP
-         F/7V703mCXN5pXcoVvXWLNbLwCGs5Prl8ZhBDE9uRynf+363RkNaYe01CH0dHBaOPMWA
-         d0spp/Jd2oDpBGHkS3Cbeq+aeDSCA5as9a2/g4NJYUAWnRIrEtNtTGXNoDu/5SGKji19
-         feMPqUTS2v3SDPPAaF4Jxdb1sbO9MALmIEuzKTQhT5p1lGbo8Kh0Tm41UE0NWTHcU0wN
-         kLfA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaGxIZWBjbNSoz99jjvVS2NL2ysu+S4mkk4yzk/bypj6DfLJb3h0zUnaUUEsIR5Uxg68YEM0mgvOssJq8=@vger.kernel.org, AJvYcCXTl7FlxcKtTs8hM+nENMo98RUY5uHILhI4HAePeVj30OwrPb5YW80wG18SJBoVYJTDiKn2e3zvjifLGA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQuwqRLDiCjcP6PbA/Y/t9FaBMUJtPJkgeHhe9gLcrHtfKXOpY
-	Smbv1LpPh+pfaUOXIGgHTa8h2FF59on5pHSaZEWc35qOBY42lDpE
-X-Gm-Gg: ASbGncvai36YrLcqk2NiAtoCFjVkbadlYptBiLX9/Vl+NZtsw23lmF9rCsY3uoMcxZl
-	SeSNZfKOmgl8rsdPc+MFOJHBIClTLso4O0PRtjOaQeTTPjkFR+nFqh+a5JWTPH9vXNnh5Z3YQA3
-	iz0vEtiZvqjUP79Uno5maJWe50c8LHXVmWwUfNpaaiQQj5OwbyzaB1GZOgpwvW4nTvIeb06Pozl
-	hmiZ/kiCK01zZM0QQRbNWaYQTh0Rsw3/0Kk5z8DdO7VuUyYJKcO7/RxF3xUM/oBwWmrv0prlo9v
-	M32Llr1OpXwp+kjSSj2ca6vKo/09pyn++w==
-X-Google-Smtp-Source: AGHT+IG3PzaM8Bw+R0W394CBKZEv9djrxBQmV3JOp7Wd20s/KiyA5JnyhBFunBImiThgsNSsPn2G/A==
-X-Received: by 2002:a17:902:e5c3:b0:20d:cb6:11e with SMTP id d9443c01a7336-2129f797c7amr70270315ad.26.1732361507576;
-        Sat, 23 Nov 2024 03:31:47 -0800 (PST)
-Received: from localhost.localdomain ([121.241.130.50])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcc218925sm3187487a12.43.2024.11.23.03.31.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Nov 2024 03:31:47 -0800 (PST)
-From: Ayush Satyam <ayushsatyam146@gmail.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev
-Cc: bpf@vger.kernel.org,
-	sparclinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ayush Satyam <ayushsatyam146@gmail.com>
-Subject: [PATCH] bpf: sparc64: fix typo dont->don't
-Date: Sat, 23 Nov 2024 03:31:16 -0800
-Message-Id: <20241123113116.1983-1-ayushsatyam146@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        d=1e100.net; s=20230601; t=1732361523; x=1732966323;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rUSQB/mQEeRuUVXWDbOrYsEhon4hx55di7nuoYsi+oo=;
+        b=p6JWadFo7m4wl5J6dXkU05+awjcMBfEfOMFyqK7noLXKdt4N+lVTSnfgiEffbh9d7k
+         6QmtXtaIfhpJmGauBq12WBnQRPlWOOcm/70j6jZFulmGIDSOyajYKZ+OLpdrbO6n3ib+
+         81Wde00YB/4xfZBQPWYBnkJ3vz6FsLvVaM8Dlrm+RZmLtqVhfHrzEXlgixg3DrDHGsBP
+         awyA19FTR9jfapHpDZwmMWUH6W52Hqh3ied3wYihLXp1BMBf4GQ46aBOIgu2eGCGFnLC
+         kAhdb8QjxZobN3ai1Cffp/xX7Ta5EGTUYSqcCyn4AH/DJredPraQ9yuSN/oLrnlJZF6w
+         wApA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/weAtrsSTAV8NW43CfVs4vZEYBnqnvmFQa/tyS+50P+/iH2f0Q66fkKwzrPa2IjtyBJ7dYHYrtcH67is=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCed4TDVRazLhYhBsvDrxAxgz4BS+KEyyjj/QWtsMZMFKo6pRw
+	EWQhOeSmE10b9oFK2zneuMe3x9qqLlNRflg3D5ecC/FN8wCyMXi8+88tcLRyfY/ZOkvYT6PbNUR
+	gQKjQNXQ0Mk72CaixoPqSkdjDUfyUV9P6c8Q0KNRPHyuBtPg/PTqil1A=
+X-Google-Smtp-Source: AGHT+IG6z2DCg+rBpNnSGiWA28O5+iiELMj1GHBPUJFVhA9IbHCbJKfyUq05vY9BuhNx00BDZMDiO54vlZHDbogIk6ZwMMp9Jtzb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:144b:b0:3a7:44d9:c7dd with SMTP id
+ e9e14a558f8ab-3a79ad27697mr68006295ab.6.1732361523582; Sat, 23 Nov 2024
+ 03:32:03 -0800 (PST)
+Date: Sat, 23 Nov 2024 03:32:03 -0800
+In-Reply-To: <CAHiZj8gkf+W5dt7SeK3T9ZRe0-c72=TAciiCsho6+1vL2T2Upw@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6741bd33.050a0220.1cc393.0008.GAE@google.com>
+Subject: Re: [syzbot] [iommu?] WARNING in iommufd_device_unbind
+From: syzbot <syzbot+c92878e123785b1fa2db@syzkaller.appspotmail.com>
+To: iommu@lists.linux.dev, jgg@ziepe.ca, joro@8bytes.org, kevin.tian@intel.com, 
+	linux-kernel@vger.kernel.org, robin.murphy@arm.com, 
+	surajsonawane0215@gmail.com, syzkaller-bugs@googlegroups.com, will@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Signed-off-by: Ayush Satyam <ayushsatyam146@gmail.com>
----
- arch/sparc/net/bpf_jit_comp_64.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hello,
 
-diff --git a/arch/sparc/net/bpf_jit_comp_64.c b/arch/sparc/net/bpf_jit_comp_64.c
-index 73bf0aea8..0f850bbe7 100644
---- a/arch/sparc/net/bpf_jit_comp_64.c
-+++ b/arch/sparc/net/bpf_jit_comp_64.c
-@@ -732,7 +732,7 @@ static int emit_compare_and_branch(const u8 code, const u8 dst, u8 src,
- 			br_opcode = BLE;
- 			break;
- 		default:
--			/* Make sure we dont leak kernel information to the
-+			/* Make sure we don't leak kernel information to the
- 			 * user.
- 			 */
- 			return -EFAULT;
--- 
-2.20.1
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
+Reported-by: syzbot+c92878e123785b1fa2db@syzkaller.appspotmail.com
+Tested-by: syzbot+c92878e123785b1fa2db@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         228a1157 Merge tag '6.13-rc-part1-SMB3-client-fixes' o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=102a81c0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=402159daa216c89d
+dashboard link: https://syzkaller.appspot.com/bug?extid=c92878e123785b1fa2db
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1686975f980000
+
+Note: testing is done by a robot and is best-effort only.
 
