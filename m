@@ -1,186 +1,125 @@
-Return-Path: <linux-kernel+bounces-419281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76D4D9D6BB6
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 23:05:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10FA59D6BB8
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 23:09:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36B3D281DF8
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 22:05:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AF50B220D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 22:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E561A0715;
-	Sat, 23 Nov 2024 22:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983D51A38E3;
+	Sat, 23 Nov 2024 22:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aaCcLPWQ"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="mrheDw3f"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2932905;
-	Sat, 23 Nov 2024 22:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF1A2905;
+	Sat, 23 Nov 2024 22:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732399508; cv=none; b=RRfiw7/LeY52zDtETLgEpI7vGinpSzGym25XuEOkQZGAdwkCaPZrsTMTAm+CvSfQgMwsO/U8Mnc7JyeiR5IE2PWxuzGcWn18f/4Lnh6reMt3j3dv9MWaqR5M5aHioW57m8oMa8Qv1A7znHVsS8zR4XOUGtXoEMLo4M6e1RfAHE8=
+	t=1732399766; cv=none; b=qAm4Lhe3NT7GjADFAo06dTHX1s05zbfuvohL7DlSsybHDjS2mTA0jIDlNx+vweTH+DQ54YcSoHOIx1gPIp1CDYR0yFljdyP7xHVF+W6BDU0+kIhNaVIiblqzcU13QfTILZRdH8y4IizZwi9PU01i/7PtnDhtDpa4lcaREInJx6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732399508; c=relaxed/simple;
-	bh=J7CgrHpaT0nZsv9H0LNACO/CoZCUz8w11Hc1fC836IM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DnFDNWaDLTuS9d4MY9Xn66BCRBzw5by61rHOIqCtKIGvNEYgu7NdVsHHN3JtYBePboPTEX0gDn+oP86SDm56BfLCRX9lBKqvgrGvpn+oSQUm5owD9dJ1HOdz2TmAqIburpmO0cPfZ/9pFeT/uZUvMcyWHWAX/NmwyOOXUcma7G0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aaCcLPWQ; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-460ad98b031so23668911cf.0;
-        Sat, 23 Nov 2024 14:05:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732399505; x=1733004305; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EkSO0ae1qgqzPLe+fBXvhHl1eDnIeDZzwTeg6SCFQSc=;
-        b=aaCcLPWQkm3mngHDhwS0k67KQnMaqZh7qA6QgpAf7OyXpBdxsqB2zyyw76R4R5mRNK
-         wP/BCOTccaWInODga4/Q52T7CMvfqnPvAw5vx8s7MkWRx4URK5dGD0abEivlsZ3hu74x
-         eUjINVVyXKAqI7XGoEvxnM7AFXqUROCyYTtGO+B2TjGAQezlza8WM7vQPumEvgOwTDTq
-         pobHDJqajpJYnwHLyUXl46UiWhod0lWz9MUc2PctnQEEFVdHKPgfBUINrYE6GdI5mulc
-         TgYEZ6M86IllvKRGc6OBU2kyIXEJ13dkDDlgwlMorQlG71t0lXCHTb5ZM1pTlp7ZnbaJ
-         q03A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732399505; x=1733004305;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EkSO0ae1qgqzPLe+fBXvhHl1eDnIeDZzwTeg6SCFQSc=;
-        b=GJLb9TFufcD7T7xWfps2Lrz9aSxzI3QsmCzSarPJpZBYUskC0kQ2upA95Y3OPJRUB/
-         mM9/gOpwAeUaIJ2o38TU70kFQN6ZpPWjDaydBc/HMb3RGP2RvdTZI7FD9qZlMuYa11I4
-         tOzAPCV6B1X9aRZbCn0u0WcCRofnrsNGp/0PGFcdNVKDXYFiiuKM2lJ5grVoOpUCBZF+
-         Pdn8SqJlrD22l7bql2AQsoySv9DJaN3u7cxA9tKrKIz2YLBKkgsp7095xFbNXVIZv5o1
-         IfN+fibT4ULpkUefTRAjRW5mCkefx+YKlR43Bq+N/suS/geIrSbGLp9aYHl/IEW31lSk
-         lVxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3DYPdOH4lBOz4ax5cPdoeYyAKM8VFhw6HuetbNbLxN02C8l048JeCbSKg+q2qouXElySqGeYlYJQ=@vger.kernel.org, AJvYcCX8y3JbO1C7Xjp57m1Yl+ZIrT/9AA83vd0XpCIEjBsjPLzYqwL3Vh6E9i79mViqNB8dyDlpUzuRmKamub9c@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHv60+quoaB7tbocHD1Z+O6oOblJPBIT4Oj2ERGlMkIv4ciQnZ
-	PZa2BGtRSeHRXF+468vPf3p6wOqIfZsW3pzg0xGZMOjlpixEF4JbyP22tLVtlFQyzCUBrFJMtmh
-	mBSpXA02MzjQsOxeGY0RFNj7JFLuuQcEe
-X-Gm-Gg: ASbGncv4JqVL8S/9DGTyVcCdn/u8kFN65I1bQxP0aAn8GHC2WDi7XdrolyN1F9Z9pS0
-	QjEQslIbso6BaD2z/R1dXR0iHwNlppeuL
-X-Google-Smtp-Source: AGHT+IEDHw6BpJXxtWPVqade1NgtWHuCJEZszqIDMX8X2Z8ZsSkxcHVPRBOEeAJKY7783cobYOMI6sXBGxrZqXJvc10=
-X-Received: by 2002:a05:622a:1a1b:b0:461:1c54:5bd5 with SMTP id
- d75a77b69052e-4653d52276emr93948991cf.9.1732399505536; Sat, 23 Nov 2024
- 14:05:05 -0800 (PST)
+	s=arc-20240116; t=1732399766; c=relaxed/simple;
+	bh=ly8oeaIOAg6lQzNJz3++JQOR8O7rdaXLBJTqDo2MTiA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LOGJcsBn60lZHXDZ0TWaA7XgtZ0ISNQZxkb+TdEbhpzxHcuMswo13yW7DGjSlqKsi3P/kpy1tv+yRW2valpJmIirdOO3oNyih5ZS2ghjC31OaQuW7/T5TobA5xuODoBtYygnvK7KANKpTUhGQHY+G53CX/GgJKyJ0BTtbCZ0EfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=mrheDw3f; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 23AC3A037C;
+	Sat, 23 Nov 2024 23:09:20 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=ggcfDzy4T2wd6OE/Z3K6
+	o9nCDGY9SIX9C7Zth5qGkkw=; b=mrheDw3f9/c1M7uWYdSdjXZfspL54nuwPSA9
+	kwVUd78i8gy+792IM4dEZ/atzbyV3kg2iMPD5d00RenG5xkdYl8h6xGJq+Wo8m7O
+	tT4T34BCbLSC76luZhkGS6feezabh2pVoBdZawsTApjGI7FuWbf6ldS1garKQD7N
+	IDEfkrsDNg9UnaM/jjMOoc4Aph7eU93iBLB1nptj+oRrDTDAQZv/j3nGLFrt3zuB
+	74jY6EVfjBmm5NSUCgJbgxF9nGjjLKGRnhVlLVjNBOo5tYYz/3BVVkkDnnuo+fJK
+	3Cl6dXDOi+LOea+NXBaEBi4bx6pse5vDC1LUfjFvOuIFSn1xh07ul/hBvKmoeAmC
+	bfBjuQXB+OZYVT5RrCdIqrlGqC6hFo2IflskErKu2y8Cf/zSutPki9Cz5W84x8Yd
+	thpGg1uzT0Rwi+rLA0PyIcDNLOXXLljPowOxLa4ugzyfdgfmtgSKhEYlWRRJlH/J
+	8lra0RngSM8VIu1KwSs2U3tROUV+NzLiffS97CHf9k7NC5gQKgBsITbfrHU0NfnY
+	geAgpFHg67fBDpvHhOeN8AfCruIBapj8MJRrs5xtitJDYmDyv14QkG3J08YHgtwH
+	XHPkS3BYsUo1snyytbl3NHTpI1J04nZZIrJmdJVg2RiH84QU16rmZsqw2yeBAFnO
+	D4Sk4Vw=
+Message-ID: <f5f4be27-4d8c-4832-998f-8477030a21cb@prolan.hu>
+Date: Sat, 23 Nov 2024 23:09:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111222310.12339-1-jiashengjiangcool@gmail.com> <20241123150808.1426c6f8@jic23-huawei>
-In-Reply-To: <20241123150808.1426c6f8@jic23-huawei>
-From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Date: Sat, 23 Nov 2024 17:04:55 -0500
-Message-ID: <CANeGvZUZw3hxVGAUDhWjbWwVgfDnB33KfzitYwQ73YjLQYeqng@mail.gmail.com>
-Subject: Re: [PATCH v4] iio: trigger: stm32-timer-trigger: Add check for clk_enable()
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: dlechner@baylibre.com, lars@metafoo.de, mcoquelin.stm32@gmail.com, 
-	alexandre.torgue@foss.st.com, u.kleine-koenig@baylibre.com, 
-	tgamblin@baylibre.com, fabrice.gasnier@st.com, benjamin.gaignard@linaro.org, 
-	lee@kernel.org, linux-iio@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/5] dt-bindings: sound: Add Allwinner suniv F1C100s
+ Audio Codec
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <mripard@kernel.org>,
+	<linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, "Mark
+ Brown" <broonie@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>
+References: <20241123123900.2656837-1-csokas.bence@prolan.hu>
+ <20241123123900.2656837-3-csokas.bence@prolan.hu>
+ <juzxtwlr5ayvjrrqem2hr3nbyem6oajwrvveio5brlzazdafov@r2aehknf4shv>
+Content-Language: en-US
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <juzxtwlr5ayvjrrqem2hr3nbyem6oajwrvveio5brlzazdafov@r2aehknf4shv>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94855607D61
 
-Hi Jonathan,
+Hi,
 
-On Sat, Nov 23, 2024 at 10:08=E2=80=AFAM Jonathan Cameron <jic23@kernel.org=
-> wrote:
->
-> On Mon, 11 Nov 2024 22:23:10 +0000
-> Jiasheng Jiang <jiashengjiangcool@gmail.com> wrote:
->
-> > Add check for the return value of clk_enable() in order to catch the
-> > potential exception.
-> >
-> > Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-> Hi Jiasheng,
->
->
-> Should definitely mention the changes to use guard() to simplify
-> the resulting code.
+On 2024. 11. 23. 17:22, Krzysztof Kozlowski wrote:
+> On Sat, Nov 23, 2024 at 01:39:00PM +0100, Csókás, Bence wrote:
+>> Add compatible string for Allwinner suniv F1C100s audio codec.
+>>
+>> [ csokas.bence: Reimplement Mesih Kilinc's binding in YAML ]
+>> Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
+>> ---
+>>   .../sound/allwinner,sun4i-a10-codec.yaml      | 31 +++++++++++++++++++
+>>   1 file changed, 31 insertions(+)
+>>
+> 
+> Missing changelog - what happened here? If no changes, why ignoring
+> received tag?
 
-Thanks, I have revised the "v2 -> v3" in the Changelog to clarify the chang=
-es.
+Sorry, I just forgot to collect it, that's all.
 
-> One minor comment on the code inline. Otherwise looks good to me.
->
-> Thanks,
->
-> Jonathan
->
-> > ---
-> > Changelog:
-> >
-> > v3 -> v4:
-> >
-> > 1. Place braces around the case body.
-> >
-> > v2 -> v3:
-> >
-> > 1. Simplify code with cleanup helpers.
-> >
-> > v1 -> v2:
-> >
-> > 1. Remove unsuitable dev_err_probe().
->
-> > @@ -482,6 +484,7 @@ static int stm32_counter_write_raw(struct iio_dev *=
-indio_dev,
-> >                                  int val, int val2, long mask)
-> >  {
-> >       struct stm32_timer_trigger *priv =3D iio_priv(indio_dev);
-> > +     int ret;
-> >
-> >       switch (mask) {
-> >       case IIO_CHAN_INFO_RAW:
-> > @@ -491,12 +494,14 @@ static int stm32_counter_write_raw(struct iio_dev=
- *indio_dev,
-> >               /* fixed scale */
-> >               return -EINVAL;
-> >
-> > -     case IIO_CHAN_INFO_ENABLE:
-> > -             mutex_lock(&priv->lock);
-> > +     case IIO_CHAN_INFO_ENABLE: {
-> > +             guard(mutex)(&priv->lock);
-> >               if (val) {
-> >                       if (!priv->enabled) {
-> >                               priv->enabled =3D true;
-> > -                             clk_enable(priv->clk);
-> > +                             ret =3D clk_enable(priv->clk);
-> > +                             if (ret)
-> > +                                     return ret;
-> >                       }
-> >                       regmap_set_bits(priv->regmap, TIM_CR1, TIM_CR1_CE=
-N);
-> >               } else {
-> > @@ -506,9 +511,10 @@ static int stm32_counter_write_raw(struct iio_dev =
-*indio_dev,
-> >                               clk_disable(priv->clk);
-> >                       }
-> >               }
-> > -             mutex_unlock(&priv->lock);
-> > +
-> >               return 0;
-> >       }
-> Add a default for reasons David mentioned and it also makes it visually c=
-lear
-> that we expect to get in here for other cases but they are all errors.
->         default:
->                 return -EINVAL;
-> > +     }
-> >
-> And drop this return as unreachable.
->
-> >       return -EINVAL;
-> >  }
+> <form letter>
+> This is a friendly reminder during the review process.
+> 
+> It looks like you received a tag and forgot to add it.
+> 
+> If you do not know the process, here is a short explanation: Please add
+> Acked-by/Reviewed-by/Tested-by tags when posting new versions, under
+> or above your Signed-off-by tag. Tag is "received", when provided
+> in a message replied to you on the mailing list. Tools like b4 can help
+> here. However, there's no need to repost patches *only* to add the tags.
+> The upstream maintainer will do that for tags received on the version
+> they apply.
+> 
+> https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+> 
+> If a tag was not added on purpose, please state why and what changed.
+> </form letter>
+> 
+> Best regards,
+> Krzysztof
 
-Thanks, I have submitted v5 to include a default and remove the return.
+Bence
 
--Jiasheng
 
