@@ -1,82 +1,162 @@
-Return-Path: <linux-kernel+bounces-419148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75D619D69FF
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:17:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63E4A9D6A01
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:20:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BE4B281C0B
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:17:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E909B1617B7
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57D252F76;
-	Sat, 23 Nov 2024 16:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97BF52F76;
+	Sat, 23 Nov 2024 16:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cWRrf8Rz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QCzb5a8A"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E05E17C2;
-	Sat, 23 Nov 2024 16:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200C422331;
+	Sat, 23 Nov 2024 16:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732378671; cv=none; b=RxIIch/D7rlU3/g79gEtvGtLphexd6V2+M806Jik/b7jKDAK2X3dahJYcW1A6cl4KCLhjz+Kf0kJt13HcE2tZsjGn3oxPJm6C3ayceKXNX9BTxcy2W+8OOjpwXUNl4fJ2LFw1p1iBJJZnbVD7naiUFgx+ltvbgnjHOE3FFlB6qA=
+	t=1732378796; cv=none; b=lKkpdOp2xxcn4bKRmCIezjegJlzVXNnFUsQKh236qf7z5SAPI9RbFLRElgjKkFIpqAPOJm24jm9kd0zsWRDqt+xDdDSZ79dnVpg9NYEXJyRAmUKISTWVNYokUVRojJwyfmeSwQRxwxBQdbHsDVzchI8fQfBz7W/BkcNWuAQadcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732378671; c=relaxed/simple;
-	bh=r7VawsBWko4JGKpwGiwsn4hr5Gg4jKmMEXWLC4Zu6jo=;
+	s=arc-20240116; t=1732378796; c=relaxed/simple;
+	bh=UAz/5rueebgzUWvU1dKEBr8+mhyiLuppUlnKNTQYIFI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hSdLCGcREk16MbbVw8dnn7cEcdn4HtvsGeaSwfxODyDmaq6KYfVpjS8wbpNXIA9iCaWEZihRwXfVyxO3ICJJ3UyFxf1n30/94qwkkYMiyOFRihTaH0aFisTFlyD1lNk4dkLdR0SBhQRtjt+EqGt0nxdb5Mn6T6ut5OyNOw7+XuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cWRrf8Rz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA4BBC4CECD;
-	Sat, 23 Nov 2024 16:17:49 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=sNPAjFJpeGNwsgIrFu8qGcneR3XVz+aTzxFZLCpZ7CR18cNdMNPzmhlhiasDbWeFLvSQhojr3VKsKWw41xIZ0zo8HoAkuqj3SNuK7Pbi2FDdhgEczAQ4qem1Mr6HmeaaRimovcRFNo0CQYfgg0tzuuhbGsh8w6AvLpal/t5k1NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QCzb5a8A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB1DFC4CECD;
+	Sat, 23 Nov 2024 16:19:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732378670;
-	bh=r7VawsBWko4JGKpwGiwsn4hr5Gg4jKmMEXWLC4Zu6jo=;
+	s=k20201202; t=1732378795;
+	bh=UAz/5rueebgzUWvU1dKEBr8+mhyiLuppUlnKNTQYIFI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cWRrf8Rz9VUSKtqdMeH5xQslmt3yr8WCrh/jUNlPQdAbDvLReCrQihlUtfMaW5Q/j
-	 mTCfSAepcwct5RLq9f2JqO7rmLDxqHOOxV24Wl8/5e3lWaIxb4Itl63lrFzSQ/4Kyn
-	 TB3dY4Hi/daPK6kwmAKgljw+MnRTyl9Cl8gpGlpvpo/3Fxhl4r3dr1L/+zDher1IDV
-	 WHdRMQRWSGlubx0u4lvCJ/27a2bDDzb9jVYRMRxHdE7BMtAn4ZFQhQl3YTx8Ya88JZ
-	 cpIsfDXnoJ1Kt2W9c+eCVQKo2ifTj907w124rZVEa35Qkge5La5CFaRpYZXdyzOPQr
-	 X099PezSbMmww==
-Date: Sat, 23 Nov 2024 17:17:47 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Wojciech Macek <wmacek@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>, 
-	Rafal Milecki <rafal@milecki.pl>, Hsin-Yi Wang <hsinyi@chromium.org>, 
-	Sean Wang <sean.wang@mediatek.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v1 1/2] dt-bindings: arm: mediatek: Add MT8186 Starmie
- Chromebooks
-Message-ID: <cxuf6dwyp5cyzcq3h4bgydg5fffc24bwfz3umifqnxqyyvuhc5@pbe3v5andnrr>
-References: <20241122104938.1437925-1-wmacek@chromium.org>
- <20241122104938.1437925-2-wmacek@chromium.org>
+	b=QCzb5a8AwcfZgjSgKNQ9EzailygTLJLz7Tt4vJRh42qWopVD4jZyCGWUKHYgwYqq0
+	 Y7P7snVgNK/ZYbVk+sYiwAhuIq5tNZpvE/l58aW9NmVrCz9J2h3WopZjRbHtBolFbP
+	 W3pgtZCZ4ZL1rWEHVzJE4Gonzukx+x52DxIiV9rq/3XZWeNPgVWK9I4xWQcSJuLjyD
+	 oPIHiUIp6CwL++wAjqhhCWWCwLfztj57EwdGjXrNLtbHnunMSSnlpmqYYymTWGrVYS
+	 gm5rugLT/TdNEbvEh0+VSKopjFEZo/Nfjbh+vzTXS1IwWWfSZNan2mZSxVpJ1KIQGE
+	 xVBk07mdLsKfA==
+Date: Sat, 23 Nov 2024 08:19:55 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: dchinner@redhat.com, cem@kernel.org, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] xfs: use inode_set_cached_link()
+Message-ID: <20241123161955.GO1926309@frogsfrogsfrogs>
+References: <20241123075105.1082661-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241122104938.1437925-2-wmacek@chromium.org>
+In-Reply-To: <20241123075105.1082661-1-mjguzik@gmail.com>
 
-On Fri, Nov 22, 2024 at 10:49:37AM +0000, Wojciech Macek wrote:
-> Add an entry for the MT8186 based Starmie Chromebooks, also known as the
-> ASUS Chromebook Enterprise CM30 Detachable (CM3001). The device is
-> a tablet style chromebook.
+On Sat, Nov 23, 2024 at 08:51:05AM +0100, Mateusz Guzik wrote:
+> For cases where caching is applicable this dodges inode locking, memory
+> allocation and memcpy + strlen.
 > 
-> Signed-off-by: Wojciech Macek <wmacek@chromium.org>
+> Throughput of readlink on Saphire Rappids (ops/s):
+> before:	3641273
+> after:	4009524 (+10%)
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+> 
+> First a minor note that in the stock case strlen is called on the buffer
+> and I verified that i_disk_size is the value which is computed.
+> 
+> The important note is that I'm assuming the pointed to area is stable
+> for the duration of the inode's lifetime -- that is if the read off
+> symlink is fine *or* it was just created and is eligible caching, it
+> wont get invalidated as long as the inode is in memory. If this does not
+> hold then this submission is wrong and it would be nice(tm) to remedy
+> it.
 
-This was absolutely never tested. You obiovusly miss some items or enum,
-but main point is that it neither looks like existing code nor it was
-tested BY YOU prior to sending.
+It is not stable for the lifetime of the inode.  See commit
+7b7820b83f2300 ("xfs: don't expose internal symlink metadata buffers to
+the vfs").  With parent pointers' ability to expand the symlink xattr
+fork area sufficiently to bump the symlink target into a remote block
+and online repair's ability to mess with the inode, direct vfs access of
+if_data has only become more difficult.
 
-Best regards,
-Krzysztof
+--D
 
+> This depends on stuff which landed in vfs-6.14.misc, but is not in next
+> nor fs-next yet.
+> 
+> For benchmark code see bottom of https://lore.kernel.org/linux-fsdevel/20241120112037.822078-1-mjguzik@gmail.com/
+> 
+>  fs/xfs/xfs_iops.c    |  1 +
+>  fs/xfs/xfs_symlink.c | 24 ++++++++++++++++++++++++
+>  fs/xfs/xfs_symlink.h |  1 +
+>  3 files changed, 26 insertions(+)
+> 
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index 207e0dadffc3..1d0a3797f876 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -1394,6 +1394,7 @@ xfs_setup_iops(
+>  		break;
+>  	case S_IFLNK:
+>  		inode->i_op = &xfs_symlink_inode_operations;
+> +		xfs_setup_cached_symlink(ip);
+>  		break;
+>  	default:
+>  		inode->i_op = &xfs_inode_operations;
+> diff --git a/fs/xfs/xfs_symlink.c b/fs/xfs/xfs_symlink.c
+> index 4252b07cd251..59bf1b9ccb20 100644
+> --- a/fs/xfs/xfs_symlink.c
+> +++ b/fs/xfs/xfs_symlink.c
+> @@ -28,6 +28,30 @@
+>  #include "xfs_parent.h"
+>  #include "xfs_defer.h"
+>  
+> +void
+> +xfs_setup_cached_symlink(
+> +	struct xfs_inode	*ip)
+> +{
+> +	struct inode		*inode = &ip->i_vnode;
+> +	xfs_fsize_t		pathlen;
+> +
+> +	/*
+> +	 * If we have the symlink readily accessible let the VFS know where to
+> +	 * find it. This avoids calls to xfs_readlink().
+> +	 */
+> +	pathlen = ip->i_disk_size;
+> +	if (pathlen <= 0 || pathlen > XFS_SYMLINK_MAXLEN)
+> +		return;
+> +
+> +	if (ip->i_df.if_format != XFS_DINODE_FMT_LOCAL)
+> +		return;
+> +
+> +	if (XFS_IS_CORRUPT(ip->i_mount, !ip->i_df.if_data))
+> +		return;
+> +
+> +	inode_set_cached_link(inode, ip->i_df.if_data, pathlen);
+> +}
+> +
+>  int
+>  xfs_readlink(
+>  	struct xfs_inode	*ip,
+> diff --git a/fs/xfs/xfs_symlink.h b/fs/xfs/xfs_symlink.h
+> index 0d29a50e66fd..0e45a8a33829 100644
+> --- a/fs/xfs/xfs_symlink.h
+> +++ b/fs/xfs/xfs_symlink.h
+> @@ -12,5 +12,6 @@ int xfs_symlink(struct mnt_idmap *idmap, struct xfs_inode *dp,
+>  		umode_t mode, struct xfs_inode **ipp);
+>  int xfs_readlink(struct xfs_inode *ip, char *link);
+>  int xfs_inactive_symlink(struct xfs_inode *ip);
+> +void xfs_setup_cached_symlink(struct xfs_inode *ip);
+>  
+>  #endif /* __XFS_SYMLINK_H */
+> -- 
+> 2.43.0
+> 
 
