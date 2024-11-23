@@ -1,158 +1,197 @@
-Return-Path: <linux-kernel+bounces-419223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE1CA9D6B04
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 20:11:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3B49D6B0C
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 20:15:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 642CE161B76
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 19:11:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1F61161B1D
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 19:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BDF198A38;
-	Sat, 23 Nov 2024 19:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC7719B3E2;
+	Sat, 23 Nov 2024 19:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="L3AxKC6s"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fx75J/UL"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236C813D53E
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 19:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C318915666D
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 19:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732389100; cv=none; b=jaulbOpceXJmb0rhbrOHSn//NKo3IRNNV6SNSNWnmOD1ctY6SUoYQrWMXetZcnEbdoI/q/ZI5iN3dp9ECMSZ7J6/jJMe71YYi1XWfVCAN6M6z7XXj17ZX25Wv+i/FpETN/IVnHMKud9iVEoSmxo1KPJxItFfTnIoeHQnSkN+Gxc=
+	t=1732389319; cv=none; b=RLR7tyFxFPDNgnHNkEaDo5MkwUmgbNHgb0Dscs9zLnTwzx57UiZ/Efui/k9NNJd9v/wzTPf+VfvMGHW8PbAWwzaQY4gWX7K0a5u4PiR7/+M4tIFZv1stnbRUU6qsOIiX9bEL1TNQnS/551gvrD4oksq+i8jwPveyQoOm+ejKn4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732389100; c=relaxed/simple;
-	bh=Q3Bv+YAcYdx4Kbghoas2EOnIJDKc082hRcftApY277U=;
+	s=arc-20240116; t=1732389319; c=relaxed/simple;
+	bh=vIdT+2Ww75o64OjS4hA1/FUsDum2NjeJznqbZWB+dqM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ILopitc2KqnBnL44WVT/oDeDC+g6xPO3QR9pX2Cp8qyG6vi/dVemmLP51QJ141HrHAnsGP5oqMTU7G0iTfO4rcwVfwqkeG9Yar7TuUm0BzG3k5QW1EyomOCqxvq/dFVypnVxwG0qv5UhUEW8a0Sspi6b9exu8/rTE2HH7v3I290=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=L3AxKC6s; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6eeafd42dd8so33911847b3.0
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 11:11:38 -0800 (PST)
+	 To:Cc:Content-Type; b=qwCVulAKZrnQ3v4nLe1qzlbwjHGTTufpVNzq6u77WaaBOEGX9zYCo2s/IKtdtNAY/tTKHYsTakCkBtDtmGnMRWB+wx/s5+ZmjIxUDXKJHV8bOpvJg4pMC/dL4Z9WrmAO29pgXgdHuwMTmaMD4OyVMMnlmqn6cJgoHwKb4n1ptqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fx75J/UL; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5ceca0ec4e7so3773942a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 11:15:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1732389098; x=1732993898; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732389316; x=1732994116; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Qh9HuRP2TUeXMIAhRQU5UITcyp5cug1fkWSRB28P/dk=;
-        b=L3AxKC6szWtKL+zVW1sTZ5HaKDCFETPhuCaMiCV+Wvp2fllG/rcCUU/N1XTGXe53Mn
-         7mgW4tZMsL4FKauX5tLC80jXXGv/bTTHhJ/PqBZ01DvqmNyw8ns+fmu41CPNU60QCaQC
-         aZCLTNlK4AvYinhclachnr5lnTRjzOYbgmUAU52lV7CX23qsGENbD/BHQXYdTNEimESO
-         sY3XnyKxNmcWxJIyAbvWhm2roIC9oHxV2o8hqNaNAfxBN4SGHo4PsqdZv9EDI087ZVcP
-         JhanUxBlWsIY8UpcxNv/fuAVJUfMB2rqEdCFbCOT3mu8d8oewBycRqK3nkzcJDrFitVs
-         vL3w==
+        bh=d3siSsmJoeQyqChfSTAzBFj2JJGuY8dGGjMZNDcgh7g=;
+        b=fx75J/ULs1dGQmxMocjkIKz9Wh/ce4SEFsFP4ejOospwROhLdt0NeXX48x+poP+Fwg
+         aKgb5ddTR+qCIXIolM/2pBPfeRSb+EUhq/7KzOq66gzvFU3tSKEtDdt55K0V+bQjsqNO
+         Zpx7a9jwNgT9+suVwYmT+q3JoT3NWwGrtj6vAxqkHV7KWfy8L4MA1v1jd0IYkA4hl9tv
+         kHdng1YGOd2lejfM6CHeXmB4mhVHO61Regj+I8S7R4s4VH3G8HtJi4uRW9saZLSk97zt
+         sIz/KBluSfgcO3N6yCp11aeLanGzyLu3mUaNlw2ETBLc4rCNVfUWhD/xdMBL917jCSZP
+         agyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732389098; x=1732993898;
+        d=1e100.net; s=20230601; t=1732389316; x=1732994116;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Qh9HuRP2TUeXMIAhRQU5UITcyp5cug1fkWSRB28P/dk=;
-        b=r0IJ48QY+fK74TxCDufimjFmHDonVI4IxAGZ8WXjsvEK7ebJOFPb4MqOf9Ng93WcTi
-         i6AEUBe/w4omVAz+AU4vRICYDmIuNrjagrJc4wmjsdJqXtKSaT8G0vFARiBob1AUHvSr
-         tjiRZ2xvAan+T4pKcNezyHEywUVyYfvLJDTR1zfrgSZvJqpaVRocCg9Jc1aIe+Gu4JYZ
-         CmIbkVT3wgudXZuschPKAXFrFVFqeRyQbLiz11Afhw84lkyGsBpVURTaQtu3wfrQyqQx
-         V/d7gKpMPxLL/FxZGm/h1loG2PSJPXGzIWarxq4oJ5XuaxLP4eSRqxJfmHt+oJIVjv+o
-         ZH2w==
-X-Forwarded-Encrypted: i=1; AJvYcCV/RmTVHcj096o7lbM4oVb2Yrc+7oQLN6+0qAJ2sEK+140FKZyKTvKjhyLtWYN6co3r98sreOP7scnvHj0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdiBJU9I7JbCecIGLl66yepVD0GeORqW2utcc0pEA/cEuI/Fym
-	k8Cpo/1Dw5mN35av7+bTPPzyiTM+EUkFEAnS99D3tdaFh+qZJRoKNDvmpZ97P8RUVtl+ANJl9ls
-	RlQFq3vh+F7SjD1Vw9OrIUytm/UvcYYNHl5pR
-X-Gm-Gg: ASbGncuyn0J7lWWJGXllP8OFaPB2nXpn+sDkyWTZ7oYkkWm5Bog9LcuXg6XRh7Wg+8T
-	qvoYWUvMYAf4fxMsiLJXXv0UCvU47Nw==
-X-Google-Smtp-Source: AGHT+IFRQw2HWda+FH6Hq/asaKKE9KhYk6qQP2bkHz6lvGB9Yq/rCe0VCi2xcCZCO80m1bTU/ozhGnDwUyu/IGj9xE4=
-X-Received: by 2002:a05:690c:768f:b0:6ee:af06:fdf0 with SMTP id
- 00721157ae682-6eee09e82camr66104827b3.23.1732389098163; Sat, 23 Nov 2024
- 11:11:38 -0800 (PST)
+        bh=d3siSsmJoeQyqChfSTAzBFj2JJGuY8dGGjMZNDcgh7g=;
+        b=IYORvc0jpvSkn2XucJEJwqDyxyVpjPJs90zutjXOqnhivMWSAFlUFAn/xplPz0dLo0
+         +fyXD2T92KBpgEtXKjlC3Glrv4L1TBByhkvU0tuyOL+Xx6gw6TdZZt8cZ7AO5p+qS0wR
+         Qq4YJO42SxC/2v/DgPibMqQGXQC8ZWtfnk428g+HocPoardLGFTDx+ovku1GA6rPkhgY
+         mVcmsNzgx1cFu61lumqoAKaPCtbP8FQWHuKUYOUIB2lP90TUCa3MowuUgsWYTs8M+wzS
+         3A9613oxX9zzpLO1HT4fnhWDOWffPEhj7iPNTXHzU6mippC2KePQg7IQF7i38S8f9gyd
+         AHZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbcIJXwFdx6SMWBA241SKt2rYd5YEJRAmWiLMM1v2PjlMMw4bnwPNs7ECAQxKv/7+4k3X0lGLcsg2yKzE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yylqt3jqvPfMvfnYaM2xOw1vWFHaC2afCOIwLUFGLhDRpd1Zd+x
+	DSpQ3JElGnEulbb0RITLiqLU8IkFL/hKylJVVXF3ySWiGmNqn7tqWSnKGMzA0zq4364rVJvTVki
+	XYFs0d1N9OdUMwmBxX1+6i7QC5ywrvw==
+X-Gm-Gg: ASbGncvPH7mBEn1FJHX5sYIOahtN9wgXsuUbtPQebBzV9MLjNsvjDOEJMK/6ffZ/oya
+	jpBOM1S+8XXLw2EnOcbjC3Exd+tPIrXw=
+X-Google-Smtp-Source: AGHT+IF7XmFe/cS2IBmFMVvkPVeaoC51w7XyBYTAY4GzUrAsarRMIVXUHXTXeHTmp6s35cPwn+HVta8IqhQzHRvxU50=
+X-Received: by 2002:a05:6402:2713:b0:5cf:bcb4:7aff with SMTP id
+ 4fb4d7f45d1cf-5d02069448cmr6693472a12.22.1732389316015; Sat, 23 Nov 2024
+ 11:15:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112082600.298035-1-song@kernel.org> <d3e82f51-d381-4aaf-a6aa-917d5ec08150@schaufler-ca.com>
- <ACCC67D1-E206-4D9B-98F7-B24A2A44A532@fb.com> <d7d23675-88e6-4f63-b04d-c732165133ba@schaufler-ca.com>
- <332BDB30-BCDC-4F24-BB8C-DD29D5003426@fb.com> <8c86c2b4-cd23-42e0-9eb6-2c8f7a4cbcd4@schaufler-ca.com>
- <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com>
- <20241114163641.GA8697@wind.enjellic.com> <53a3601e-0999-4603-b69f-7bed39d4d89a@schaufler-ca.com>
- <4BF6D271-51D5-4768-A460-0853ABC5602D@fb.com> <b1e82da8daa1c372e4678b1984ac942c98db998d.camel@HansenPartnership.com>
-In-Reply-To: <b1e82da8daa1c372e4678b1984ac942c98db998d.camel@HansenPartnership.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Sat, 23 Nov 2024 14:11:27 -0500
-Message-ID: <CAHC9VhT4-aVbx_4EV3jAj27CUT=Lk0eb_fTRzFjHU8OO=ske8g@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
-To: James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Song Liu <songliubraving@meta.com>
-Cc: "Dr. Greg" <greg@enjellic.com>, Song Liu <song@kernel.org>, 
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>, 
-	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "brauner@kernel.org" <brauner@kernel.org>, 
-	"jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
-	"mattbobrowski@google.com" <mattbobrowski@google.com>, "amir73il@gmail.com" <amir73il@gmail.com>, 
-	"repnop@google.com" <repnop@google.com>, "jlayton@kernel.org" <jlayton@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>, "mic@digikod.net" <mic@digikod.net>, 
-	"gnoack@google.com" <gnoack@google.com>
+References: <20241123094729.1099378-1-mjguzik@gmail.com> <20241123094729.1099378-3-mjguzik@gmail.com>
+ <5f510b8238824aa6b3534e755f965d85@AcuMS.aculab.com> <20241123190922.GA3314432@thelio-3990X>
+In-Reply-To: <20241123190922.GA3314432@thelio-3990X>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Sat, 23 Nov 2024 20:15:03 +0100
+Message-ID: <CAGudoHGATcA06Q23mCWbz10SSkO8H72jWN2k8gZGgm+h_ogG4Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] string: retire bcmp()
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: David Laight <David.Laight@aculab.com>, "tglx@linutronix.de" <tglx@linutronix.de>, 
+	"bp@alien8.de" <bp@alien8.de>, "andy@kernel.org" <andy@kernel.org>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 14, 2024 at 4:49=E2=80=AFPM James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
+On Sat, Nov 23, 2024 at 8:09=E2=80=AFPM Nathan Chancellor <nathan@kernel.or=
+g> wrote:
 >
-> Got to say I'm with Casey here, this will generate horrible and failure
-> prone code.
+> Hi David,
 >
-> Since effectively you're making i_security always present anyway,
-> simply do that and also pull the allocation code out of security.c in a
-> way that it's always available?  That way you don't have to special
-> case the code depending on whether CONFIG_SECURITY is defined.
-> Effectively this would give everyone a generic way to attach some
-> memory area to an inode.  I know it's more complex than this because
-> there are LSM hooks that run from security_inode_alloc() but if you can
-> make it work generically, I'm sure everyone will benefit.
+> Thanks for the CC.
+>
+> On Sat, Nov 23, 2024 at 03:13:09PM +0000, David Laight wrote:
+> > From: Mateusz Guzik
+> > > Sent: 23 November 2024 09:47
+> > >
+> > > While architectures could override it thanks to __HAVE_ARCH_BCMP, non=
+e
+> > > of them did. Instead it was implemented as a call to memcmp().
+> > >
+> > > These routines differ in the API contract: memcmp()'s result indicate=
+s
+> > > which way the difference goes (making it usable for sorting), whereas
+> > > bcmp()'s result merely states whether the buffers differ in any way.
+> > >
+> > > This means that a dedicated optimized bcmp() is cheaper to execute th=
+an
+> > > memcmp() for differing buffers as there is no need to compute the ret=
+urn
+> > > value.
+> > >
+> > > However, per the above nobody bothered to write one and it is unclear=
+ if
+> > > it makes sense to do it.
+> > >
+> > > Users which really want to compare stuff may want to handle it
+> > > differently (like e.g., the path lookup).
+> > >
+> > > As there are no users and the code is merely a wrapper around memcmp(=
+),
+> > > just whack it.
+> > >
+> > ...
+> > >
+> > > -/*
+> > > - * Clang may lower `memcmp =3D=3D 0` to `bcmp =3D=3D 0`.
+> > > - */
+> > > -int bcmp(const void *s1, const void *s2, size_t len)
+> > > -{
+> > > -   return memcmp(s1, s2, len);
+> > > -}
+> > > -
+> >
+> > As per the comment I thought that clang would sometimes generate
+> > calls to bcmp().
+> >
+> > So while the two symbols could refer to the same code I don't
+> > think it can be removed.
+>
+> Right, commit 5f074f3e192f ("lib/string.c: implement a basic bcmp")
+> explicitly added bcmp() to lib/string.c because LLVM will emit calls to
+> bcmp instead of memcmp in certain circumstances [1], an optimization
+> that still exists, thus this patch would trigger new errors at link or
+> modpost time:
+>
+>   ERROR: modpost: "bcmp" [arch/x86/kvm/kvm.ko] undefined!
+>   ERROR: modpost: "bcmp" [arch/x86/kvm/kvm-intel.ko] undefined!
+>   ERROR: modpost: "bcmp" [fs/quota/quota_v2.ko] undefined!
+>   ERROR: modpost: "bcmp" [fs/dlm/dlm.ko] undefined!
+>   ERROR: modpost: "bcmp" [fs/netfs/netfs.ko] undefined!
+>   ERROR: modpost: "bcmp" [fs/ext4/ext4.ko] undefined!
+>   ERROR: modpost: "bcmp" [fs/minix/minix.ko] undefined!
+>   ERROR: modpost: "bcmp" [fs/fat/fat.ko] undefined!
+>   ERROR: modpost: "bcmp" [fs/isofs/isofs.ko] undefined!
+>   ERROR: modpost: "bcmp" [fs/nfs/nfs.ko] undefined!
+>   WARNING: modpost: suppressed 254 unresolved symbol warnings because the=
+re were too many)
+>
+>   ld.lld: error: undefined symbol: bcmp
+>   >>> referenced by fortify-string.h:715 (include/linux/fortify-string.h:=
+715)
+>   >>>               vmlinux.o:(load_pdptrs)
+>   >>> referenced by fortify-string.h:715 (include/linux/fortify-string.h:=
+715)
+>   >>>               vmlinux.o:(kvm_arch_irqfd_route_changed)
+>   >>> referenced by fortify-string.h:715 (include/linux/fortify-string.h:=
+715)
+>   >>>               vmlinux.o:(vmx_check_processor_compat)
+>   >>> referenced 438 more times
+>   >>> did you mean: bacmp
+>   >>> defined in: vmlinux.o
+>
+> Please do not apply this patch. If we need to shore up the comment to
+> make this explicit, I am happy to do so.
+>
+> [1]: https://github.com/llvm/llvm-project/commit/8e16d73346f8091461319a7d=
+fc4ddd18eedcff13
+>
 
-My apologies on such a delayed response to this thread, I've had very
-limited network access for a bit due to travel and the usual merge
-window related distractions (and some others that were completely
-unrelated) have left me with quite the mail backlog to sift through.
+Hi guys, I just tested and indeed clang will convert some of the
+memcmp uses into bcmp.
 
-Enough with the excuses ...
+However, given that this is counterproductive in the kernel (it merely
+adds a detour through another symbol), the thing to do here is to
+convince clang to *not* do it and then whack the symbol
 
-Quickly skimming this thread and the v3 patchset, I would advise you
-that there may be issues around using BPF LSMs and storing inode LSM
-state outside the LSM managed inode storage blob.  Beyond the
-conceptual objections that Casey has already mentioned, there have
-been issues relating to the disjoint inode and inode->i_security
-lifetimes.  While I believe we have an okay-ish solution in place now
-for LSMs, I can't promise everything will work fine for BPF LSMs that
-manage their inode LSM state outside of the LSM managed inode blob.
-I'm sure you've already looked at it, but if you haven't it might be
-worth looking at security_inode_free() to see some of the details.  In
-a perfect world inode->i_security would be better synchronized with
-the inode lifetime, but that would involve changes that the VFS folks
-dislike.
-
-However, while I will recommend against it, I'm not going to object to
-you storing BPF LSM inode state elsewhere, that is up to you and KP
-(he would need to ACK that as the BPF LSM maintainer).  I just want
-you to know that if things break, there isn't much we (the LSM folks)
-will be able to do to help other than suggest you go back to using the
-LSM managed inode storage.
-
-As far as some of the other ideas in this thread are concerned, at
-this point in time I don't think we want to do any massive rework or
-consolidation around i_security.  That's a critical field for the LSM
-framework and many individual LSMs and there is work underway which
-relies on this as a LSM specific inode storage blob; having to share
-i_security with non-LSM users or moving the management of i_security
-outside of the LSM is not something I'm overly excited about right
-now.
+I admit I did not bother checking how bcmp came to be because I assume
+it's a leftover -- it was the standard comparison routine back in the
+day in the BSD land for example.
 
 --=20
-paul-moore.com
+Mateusz Guzik <mjguzik gmail.com>
 
