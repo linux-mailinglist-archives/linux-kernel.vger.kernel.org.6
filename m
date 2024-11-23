@@ -1,112 +1,102 @@
-Return-Path: <linux-kernel+bounces-419144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AB409D69EE
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:14:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94F9D9D69F3
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:14:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09F5F1617C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:14:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA673161147
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11941386B4;
-	Sat, 23 Nov 2024 16:14:18 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00255137C37;
+	Sat, 23 Nov 2024 16:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fCgDdIaH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F171D545;
-	Sat, 23 Nov 2024 16:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DAE225D7;
+	Sat, 23 Nov 2024 16:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732378458; cv=none; b=RV6tL8XwWb56t41901dzMVdXsRoYIue3eY6OyAHNsBsbr6hhQ2M8w97fVa6Jqevaix3UwfuVzA5ciuYCVuP8pas/H8EXyHwXai1t49dE1swDtXGwV5jOVP/+sYDGMh4JMme+cyfI7XisAv/KXdUhJFMcuFEQ8ENAJHYepIzybaM=
+	t=1732378473; cv=none; b=ChyOhhxlDlzTO1q0YuD7cm20ldELPG2dM34VE7hsuzjtBPgT/H+CqyeGZKCQjlOxJWvDgjb2btPgdZhMHGnaBiu6S/9gyvLwDZm5WVtfLwA+FqJthcfe+5hBcY3pINrEgEBzLxUqmor3iAqbHfkPGjFpnIwIrC1/EKWLtn2E3uM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732378458; c=relaxed/simple;
-	bh=HRvM1IslAbrTkck5NoxkGSQcBIsd+bujipNjiBqdrcU=;
+	s=arc-20240116; t=1732378473; c=relaxed/simple;
+	bh=E02GaD6C2zW4KVX9ewnciYeUTWpwJEUwwnHlZ+OyWAA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MJWCe+Hcy2+mc53ITYell0leFmR7+d4ENF9iMt1TqqznQDQEV393x7Ak4D4UXCbt2Q4dE1eQWpgpfvQHV0l94VUt0clD+kFlHC2+lYb6rg9GzLBRbm05Tk2fxp0HlYlD5H0rtvnS3KpXHodrRi8VKzxK5/CLJ4dM5xaBlZBOBdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id A1EF330000950;
-	Sat, 23 Nov 2024 17:14:05 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 8B6903CEA09; Sat, 23 Nov 2024 17:14:05 +0100 (CET)
-Date: Sat, 23 Nov 2024 17:14:05 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Alistair Francis <alistair@alistair23.me>, Jonathan.Cameron@huawei.com,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	akpm@linux-foundation.org, bhelgaas@google.com,
-	linux-pci@vger.kernel.org, linux-cxl@vger.kernel.org,
-	bjorn3_gh@protonmail.com, ojeda@kernel.org, tmgross@umich.edu,
-	boqun.feng@gmail.com, benno.lossin@proton.me, a.hindborg@kernel.org,
-	wilfred.mallawa@wdc.com, alistair23@gmail.com,
-	alex.gaynor@gmail.com, gary@garyguo.net, aliceryhl@google.com
-Subject: Re: [RFC 3/6] lib: rspdm: Initial commit of Rust SPDM
-Message-ID: <Z0H_TYOPegVrkM9o@wunner.de>
-References: <20241115054616.1226735-4-alistair@alistair23.me>
- <20241122173104.GA2432309@bhelgaas>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yx7GLz9gJ0/m5CHMP2KlBfkvgd0rIhp3WtVUQ5O0V8Ojb2qx1Ow7L1YrJjTXUgzMq99uX33gnnKxTO5WXFMpbOrjtVZT5FdjRsVfv82qOyWn3vchukELjXQ6lPaecFyQ+w1+hTcPVhcn/EXJ5x7gRfs934KHqAr4ym3OufSeSrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fCgDdIaH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D9FDC4CECD;
+	Sat, 23 Nov 2024 16:14:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732378472;
+	bh=E02GaD6C2zW4KVX9ewnciYeUTWpwJEUwwnHlZ+OyWAA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fCgDdIaHZ/hdTwWsN6WgLvT5q0urJF4+Z5E/Sa8AebGnhIzjcjzdtMv6lQT0jgxWH
+	 9Q7kcXz2wXkEUfRPjU/pr/3HijAkVNFBs3IbCVREQlCA0kzZTm2OMGUqMa9nrIvTCG
+	 hI3w87j2uxmb/Ma4j2q79eV7AM1WYYzS09T+EEyci8RdtdOa9nExvQx4FwY5XA6eUw
+	 8uN9zRfIfcMu21Qbz5sBoLo0PgV+eFT0i4FhwAO1Pcyp/og3VKhJ2EegX/qVntPKbt
+	 yRoU4YqT7JkZL15r1sGVOapWJckzUEXe7c7UeTIlWOGJl3ol2qXdLF4+CY4EOYaRoM
+	 t31g5QM/vq8sA==
+Date: Sat, 23 Nov 2024 17:14:29 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Fange Zhang <quic_fangez@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Krishna Manikandan <quic_mkrishn@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Li Liu <quic_lliu6@quicinc.com>, 
+	Xiangxu Yin <quic_xiangxuy@quicinc.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 0/9] Add display support for QCS615 platform
+Message-ID: <2ihy463xjiguluacmd3qhlskjtrpotk4mmflqdtgm3qhjzcrif@x2ckw5h6xqyj>
+References: <20241122-add-display-support-for-qcs615-platform-v3-0-35252e3a51fe@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241122173104.GA2432309@bhelgaas>
+In-Reply-To: <20241122-add-display-support-for-qcs615-platform-v3-0-35252e3a51fe@quicinc.com>
 
-On Fri, Nov 22, 2024 at 11:31:04AM -0600, Bjorn Helgaas wrote:
-> On Fri, Nov 15, 2024 at 03:46:13PM +1000, Alistair Francis wrote:
-> > +++ b/lib/Kconfig
-> > @@ -754,6 +754,23 @@ config SPDM
-> >  	  in .config.  Drivers selecting SPDM therefore need to also select
-> >  	  any algorithms they deem mandatory.
-> >  
-> > +config RSPDM
-> > +	bool "Rust SPDM"
-> > +	select CRYPTO
-> > +	select KEYS
-> > +	select ASYMMETRIC_KEY_TYPE
-> > +	select ASYMMETRIC_PUBLIC_KEY_SUBTYPE
-> > +	select X509_CERTIFICATE_PARSER
-> > +	depends on SPDM = "n"
-> > +	help
-> > +	  The Rust implementation of the Security Protocol and Data Model (SPDM)
-> > +	  allows for device authentication, measurement, key exchange and
-> > +	  encrypted sessions.
-> > +
-> > +	  Crypto algorithms negotiated with SPDM are limited to those enabled
-> > +	  in .config.  Drivers selecting SPDM therefore need to also select
-> > +	  any algorithms they deem mandatory.
+On Fri, Nov 22, 2024 at 05:56:43PM +0800, Fange Zhang wrote:
+> This series aims to enable display on the QCS615 platform
 > 
-> Maybe this (and config SPDM) should be tweaked to mention drivers that
-> *depend* on SPDM or RSPDM, since they no longer use "select"?
+> 1.Add MDSS & DPU support for QCS615
+> 2.Add DSI support for QCS615     
 > 
-> PCI_CMA, which currently depends on SPDM, doesn't really look like a
-> "driver", so maybe it should say "users of SPDM" or "features
-> depending on SPDM" or something?
+> QCS615 platform supports DisplayPort, and this feature will be added in a future patch
+> 
+> This patch series depends on below patch series:
+> - rpmhcc
+> https://lore.kernel.org/all/20241022-qcs615-clock-driver-v4-2-3d716ad0d987@quicinc.com/
+> - gcc
+> https://lore.kernel.org/all/20241022-qcs615-clock-driver-v4-4-3d716ad0d987@quicinc.com/
+> - base
+> https://lore.kernel.org/all/20241104-add_initial_support_for_qcs615-v5-0-9dde8d7b80b0@quicinc.com/
+> - Apps SMMU
+> https://lore.kernel.org/all/20241105032107.9552-4-quic_qqzhou@quicinc.com/
+> - I2C
+> https://lore.kernel.org/all/20241111084331.2564643-1-quic_vdadhani@quicinc.com/
+> - dispcc
+> https://lore.kernel.org/all/20241108-qcs615-mm-clockcontroller-v3-0-7d3b2d235fdf@quicinc.com/
+> - dispcc dts
+> https://lore.kernel.org/lkml/20241108-qcs615-mm-dt-nodes-v1-0-b2669cac0624@quicinc.com/
 
-I anticipate that the SPDM library will eventually be used by at least
-two actual drivers:  NVMe and an x86 platform driver for Intel SDSi
-(Software Defined Silicon).  SCSI and ATA may follow suit.
+Which makes it unmergeable and untestable. I suggest decouple
+dependencies.
 
-Thus, although the PCI core may be the first user, the majority of
-users will likely be actual drivers, which is why I've used that
-term in the help text.
+Best regards,
+Krzysztof
 
-Referring to "users" instead of "drivers" may be misunderstood as
-users in the sense of people using the kernel.  In particular because
-the help text is seen by such users.  The terms "subsystems" or "features"
-don't seem to be as clear as "drivers" IMO.
-
-Thanks,
-
-Lukas
 
