@@ -1,234 +1,143 @@
-Return-Path: <linux-kernel+bounces-419289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 422DD9D6BCD
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 23:29:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC2A09D6BCE
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 23:32:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7649FB232F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 22:29:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A14ED281EBF
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 22:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64581AE005;
-	Sat, 23 Nov 2024 22:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16F119F110;
+	Sat, 23 Nov 2024 22:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tw5Zgmrl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BYC6/wFe"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DA21A76B5;
-	Sat, 23 Nov 2024 22:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60674137C37;
+	Sat, 23 Nov 2024 22:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732400948; cv=none; b=k3xWgYHZxIMwNP7kczrNg/FTpvNivLTKA5wgr2x1RbCZRalKMTxLhtDF/H/qM4y4FUQoWN4sxiwWWkDC0nS0zlMXnO/PK1zbmLiIyYql+Y+Iz+Rygs6jqyNGRYzAKv/198mbZrmKOMYUYUmOIJzTkJPuGxGN5V/aET+2878DABk=
+	t=1732401170; cv=none; b=ra+dNqughUUPRW+FH5+UHdbV99wSYrjZWqgIofoFc6Lw7TJZ2T55A77OYv84uq8RldNieHWoIQNdQxM7dgd+Sgz3iy5ZMm+hF2xUiqxzxAbG0iEPB3liT+lkueTTDw6rJskTbP9c/sJ0DHS3Pd7cHAIJMPP6X8OingTJtyG/tXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732400948; c=relaxed/simple;
-	bh=EfqQMqbewNi5Q0JETOl053CaTiHNe0XxlEiK6n0WTGk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VA3AeI8P8B8HMSL4EY8iH9joioJMawvuTunzAe0oDgxo7OtbS6Uyc/UjhYooSlcYhA5/xrTFdoRYFdaQU1iM0s6nE203Udm7aXD9tWeJs5lFBEcoCasbyJI/RLJ9IySXiLPKkAvbHXnANV3uRJviTnAzsrI2QppU7GHPe68gPwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tw5Zgmrl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01AC8C4CED0;
-	Sat, 23 Nov 2024 22:29:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732400947;
-	bh=EfqQMqbewNi5Q0JETOl053CaTiHNe0XxlEiK6n0WTGk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tw5ZgmrlXhLVac5/eeFisRRhfh29LiVwhkYm0odzharzUiqUcp8lThKgCZGNcU1HC
-	 do6GhTC6NcF3wEfAOCMFm0Z06ZvHvosAtUTiBWGiacoem9oSuNC1esAvkDHWYW1n7g
-	 HRXCP1gtiEOVO1xcIbDoCzHJx4pbFX+A25/94t+L8utZ8v82vzMrAlXom574nUwh7h
-	 T6AZdQRtJ0AZEOkzWTgvxPdvplSf43NNu9E8rzJbyGdfqEP0Bk0vSrMvXen7x48crW
-	 FeLOQM0eSmdixOkRfLCgJtHUTfEbOqaCaVFyCf6y1XFTnS4xjEja4DsjXicQY2RKl8
-	 3ptb0NN3oQhXg==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH 3/3] rust: add `build_error!` to the prelude
-Date: Sat, 23 Nov 2024 23:28:49 +0100
-Message-ID: <20241123222849.350287-3-ojeda@kernel.org>
-In-Reply-To: <20241123222849.350287-1-ojeda@kernel.org>
-References: <20241123222849.350287-1-ojeda@kernel.org>
+	s=arc-20240116; t=1732401170; c=relaxed/simple;
+	bh=Nk4VKU+4UkZZl7xiP/BV0EFMMFVeUg9V2zY8tgSiJcE=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=A6vJSahTeqFICYhz+DpGwQJ/eMWudNu5g7sKAoAkaq2lURWw1z3BO68VGV4Rde3Uk1VuOY8IzDHXOg0lK9O8YuSk86hGyR1n6cBtvkl5/KbVeUtUTs/xeUKkrk9OTMW1TudAN4mtulqVtGsGtubD76Wt/9SXNCTNMW4A2iDqEqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BYC6/wFe; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539ee1acb86so3744302e87.0;
+        Sat, 23 Nov 2024 14:32:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732401166; x=1733005966; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Nk4VKU+4UkZZl7xiP/BV0EFMMFVeUg9V2zY8tgSiJcE=;
+        b=BYC6/wFeTvHn2BVEfp96GlV68wHq47r2S5oLE4MZhLVRB/Y+dq8VFgYfavPBOT80UX
+         Exnn2ilcfDuykw57IFrN4A/EPoO2P2xhqtHN8DYczb5qyrYVBQQQ7Kazepb84LxmVfJE
+         xkM/TTGwWzsQx8zrnMAw0Gby0tLO3sTgUSi1HvpDQ+tjhlh8cg7fAGmnd/L2b5yiijDb
+         1d4+lmBm61DFq5lIZJESDVNNb6x35ruNS5PPw0N1KZaMj/PSFR3hsm9CNr8Kr6bagZIO
+         hPYzkf0Wrp4zBkoxT1LJkmNc1DjhMvvuPCUSKWfY3uspbNF8wP97aQ+FQd/3WffWB8eH
+         25fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732401166; x=1733005966;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Nk4VKU+4UkZZl7xiP/BV0EFMMFVeUg9V2zY8tgSiJcE=;
+        b=atY4nfUIWbTSWiH8/kZl1morHJdp0IAkspNWHibCSUc4bswyDqnrSwVNWT0ZZ1HEI6
+         32sLF/JPk8IdsvFuiBrnotTrbSeNTunjwSNHz4tzPUBrDyTh8v8MJTlHQBwi6TNl3gAs
+         y7+Hrge6FK3PyO8tvPkdyf1djpDtdRKLbpWDR6seyBbXaYLRJp63g3eL1TrElxXDjYZ2
+         bfRdZAv552s4EOB7i3Lcvss1TCFA+q3WZGoMJqzdtmyR3hC4JWKkkselEIz7GKaMwizN
+         jVwoCp9zUVKbhezPHWOSjgSPbhV0EfgjXvncYHc/a2bPVyq0ypraoI0ft4ezIuGDNKm5
+         7STw==
+X-Forwarded-Encrypted: i=1; AJvYcCVIac4pVN5mhgL9LlXU7mcQLMFZdnaMdb7FIbjYVmRCS1L0BPMkkkwfW199UQn0RPBZ5tIhW+8JVjqsiM1D@vger.kernel.org, AJvYcCWdez6fzXlYX23ueciuoRXPVDuWHijF45ohSjIk5bOmAiujqmHALwhCR7T2ib5lZps/y5dH0o6AlPaHt3cp@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJVAMejh7m+rPJHqxDcSEXXCJZ5mlF8hWBK2+8N4kHwXhcpQ58
+	xNyYC3Z8KxE/AqA+b55q94TVDTC4PDbZRpevfwSBkSHv93X5/mxY
+X-Gm-Gg: ASbGncuiD2LO4om0XdSgU5gkBUpDK6q/6YoVREVtztNV3jkCuBuK5zsa8m1UKVe/mza
+	iRedZXZ4U+Tfbwc5NPtJZYLpL5NxrVXoIbeppiToJRH/chsPSv6+0SWV7VeFWe+9GxGY4zhSTF/
+	vLr0NLlVPSgg5xsBf+sZ8SCV9BWarg8X7QCEcUg524XkBRikwf/CbwZ8/S1b1sZ/pAcatQzBT6L
+	yMDxEt4f5/8Xc7gk7mfWsJ4USf+Pj6BAN9+QvKBP/w91r3iFNxaFHG6OG09oE0YyPeFQmOLDL6t
+	BD7WoyXN5XMnpzaf7j0LFw==
+X-Google-Smtp-Source: AGHT+IGTZX1caXgox/FS6gjjWk+Y9HI77Uft+ZNVRiPY45h1eXn0pFbaPstf2x2zy2pf6Tod7cKVwQ==
+X-Received: by 2002:a05:6512:282b:b0:53d:c2f6:8399 with SMTP id 2adb3069b0e04-53dd39b5533mr3975249e87.53.1732401166140;
+        Sat, 23 Nov 2024 14:32:46 -0800 (PST)
+Received: from [192.168.68.111] (c83-253-44-175.bredband.tele2.se. [83.253.44.175])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd244571dsm1090310e87.46.2024.11.23.14.32.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 23 Nov 2024 14:32:45 -0800 (PST)
+Message-ID: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
+Date: Sat, 23 Nov 2024 23:32:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Jan Kara <jack@suse.cz>, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+From: Anders Blomdell <anders.blomdell@gmail.com>
+Subject: Regression in NFS probably due to very large amounts of readahead
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The sibling `build_assert!` is already in the prelude, it makes sense
-that a "core"/"language" facility like this is part of the prelude and
-users should not be defining their own one (thus there should be no risk
-of future name collisions and we would want to be aware of them anyway).
+When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
+we got terrible performance (lots of nfs: server x.x.x.x not responding).
+What triggered this problem was virtual machines with NFS-mounted qcow2 disks
+that often triggered large readaheads that generates long streaks of disk I/O
+of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache area of the
+machine.
 
-Thus add `build_error!` into the prelude.
+A git bisect gave the following suspect:
 
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
- rust/kernel/block/mq/operations.rs |  3 ++-
- rust/kernel/build_assert.rs        |  1 -
- rust/kernel/net/phy.rs             | 18 +++++++++---------
- rust/kernel/prelude.rs             |  2 +-
- rust/macros/lib.rs                 |  8 ++++----
- 5 files changed, 16 insertions(+), 16 deletions(-)
+git bisect start
+# status: waiting for both good and bad commits
+# bad: [8e24a758d14c0b1cd42ab0aea980a1030eea811f] Linux 6.11.3
+git bisect bad 8e24a758d14c0b1cd42ab0aea980a1030eea811f
+# status: waiting for good commit(s), bad commit known
+# good: [8a886bee7aa574611df83a028ab435aeee071e00] Linux 6.10.11
+git bisect good 8a886bee7aa574611df83a028ab435aeee071e00
+# good: [0c3836482481200ead7b416ca80c68a29cfdaabd] Linux 6.10
+git bisect good 0c3836482481200ead7b416ca80c68a29cfdaabd
+# good: [f669aac34c5f76b58e6cad1fef0643e5ae16d413] Merge tag 'trace-v6.11-2' of git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace
+git bisect good f669aac34c5f76b58e6cad1fef0643e5ae16d413
+# bad: [78eb4ea25cd5fdbdae7eb9fdf87b99195ff67508] sysctl: treewide: constify the ctl_table argument of proc_handlers
+git bisect bad 78eb4ea25cd5fdbdae7eb9fdf87b99195ff67508
+# good: [acc5965b9ff8a1889f5b51466562896d59c6e1b9] Merge tag 'char-misc-6.11-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc
+git bisect good acc5965b9ff8a1889f5b51466562896d59c6e1b9
+# good: [8e313211f7d46d42b6aa7601b972fe89dcc4a076] Merge tag 'pinctrl-v6.11-1' of git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl
+git bisect good 8e313211f7d46d42b6aa7601b972fe89dcc4a076
+# bad: [fbc90c042cd1dc7258ebfebe6d226017e5b5ac8c] Merge tag 'mm-stable-2024-07-21-14-50' of git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+git bisect bad fbc90c042cd1dc7258ebfebe6d226017e5b5ac8c
+# good: [f416817197e102b9bc6118101c3be652dac01a44] kmsan: support SLAB_POISON
+git bisect good f416817197e102b9bc6118101c3be652dac01a44
+# bad: [f6a6de245fdb1dfb4307b0a80ce7fa35ba2c35a6] Docs/mm/damon/index: add links to admin-guide doc
+git bisect bad f6a6de245fdb1dfb4307b0a80ce7fa35ba2c35a6
+# bad: [a0b856b617c585b86a077aae5176c946e1462b7d] mm/ksm: optimize the chain()/chain_prune() interfaces
+git bisect bad a0b856b617c585b86a077aae5176c946e1462b7d
+# good: [b1a80f4be7691a1ea007e24ebb3c8ca2e4a20f00] kmsan: do not pass NULL pointers as 0
+git bisect good b1a80f4be7691a1ea007e24ebb3c8ca2e4a20f00
+# bad: [58540f5cde404f512c80fb7b868b12005f0e2747] readahead: simplify gotos in page_cache_sync_ra()
+git bisect bad 58540f5cde404f512c80fb7b868b12005f0e2747
+# bad: [7c877586da3178974a8a94577b6045a48377ff25] readahead: properly shorten readahead when falling back to do_page_cache_ra()
+git bisect bad 7c877586da3178974a8a94577b6045a48377ff25
+# good: [ee86814b0562f18255b55c5e6a01a022895994cf] mm/migrate: move NUMA hinting fault folio isolation + checks under PTL
+git bisect good ee86814b0562f18255b55c5e6a01a022895994cf
+# good: [901a269ff3d59c9ee0e6be35c6044dc4bf2c0fdf] filemap: fix page_cache_next_miss() when no hole found
+git bisect good 901a269ff3d59c9ee0e6be35c6044dc4bf2c0fdf
+# first bad commit: [7c877586da3178974a8a94577b6045a48377ff25] readahead: properly shorten readahead when falling back to do_page_cache_ra()
 
-diff --git a/rust/kernel/block/mq/operations.rs b/rust/kernel/block/mq/operations.rs
-index 962f16a5a530..864ff379dc91 100644
---- a/rust/kernel/block/mq/operations.rs
-+++ b/rust/kernel/block/mq/operations.rs
-@@ -9,6 +9,7 @@
-     block::mq::request::RequestDataWrapper,
-     block::mq::Request,
-     error::{from_result, Result},
-+    prelude::*,
-     types::ARef,
- };
- use core::{marker::PhantomData, sync::atomic::AtomicU64, sync::atomic::Ordering};
-@@ -35,7 +36,7 @@ pub trait Operations: Sized {
-     /// Called by the kernel to poll the device for completed requests. Only
-     /// used for poll queues.
-     fn poll() -> bool {
--        crate::build_error!(crate::error::VTABLE_DEFAULT_ERROR)
-+        build_error!(crate::error::VTABLE_DEFAULT_ERROR)
-     }
- }
- 
-diff --git a/rust/kernel/build_assert.rs b/rust/kernel/build_assert.rs
-index 347ba5ce50f4..6331b15d7c4d 100644
---- a/rust/kernel/build_assert.rs
-+++ b/rust/kernel/build_assert.rs
-@@ -14,7 +14,6 @@
- /// # Examples
- ///
- /// ```
--/// # use kernel::build_error;
- /// #[inline]
- /// fn foo(a: usize) -> usize {
- ///     a.checked_add(1).unwrap_or_else(|| build_error!("overflow"))
-diff --git a/rust/kernel/net/phy.rs b/rust/kernel/net/phy.rs
-index f488f6c55e9a..654311a783e9 100644
---- a/rust/kernel/net/phy.rs
-+++ b/rust/kernel/net/phy.rs
-@@ -587,17 +587,17 @@ pub trait Driver {
- 
-     /// Issues a PHY software reset.
-     fn soft_reset(_dev: &mut Device) -> Result {
--        kernel::build_error!(VTABLE_DEFAULT_ERROR)
-+        build_error!(VTABLE_DEFAULT_ERROR)
-     }
- 
-     /// Sets up device-specific structures during discovery.
-     fn probe(_dev: &mut Device) -> Result {
--        kernel::build_error!(VTABLE_DEFAULT_ERROR)
-+        build_error!(VTABLE_DEFAULT_ERROR)
-     }
- 
-     /// Probes the hardware to determine what abilities it has.
-     fn get_features(_dev: &mut Device) -> Result {
--        kernel::build_error!(VTABLE_DEFAULT_ERROR)
-+        build_error!(VTABLE_DEFAULT_ERROR)
-     }
- 
-     /// Returns true if this is a suitable driver for the given phydev.
-@@ -609,32 +609,32 @@ fn match_phy_device(_dev: &Device) -> bool {
-     /// Configures the advertisement and resets auto-negotiation
-     /// if auto-negotiation is enabled.
-     fn config_aneg(_dev: &mut Device) -> Result {
--        kernel::build_error!(VTABLE_DEFAULT_ERROR)
-+        build_error!(VTABLE_DEFAULT_ERROR)
-     }
- 
-     /// Determines the negotiated speed and duplex.
-     fn read_status(_dev: &mut Device) -> Result<u16> {
--        kernel::build_error!(VTABLE_DEFAULT_ERROR)
-+        build_error!(VTABLE_DEFAULT_ERROR)
-     }
- 
-     /// Suspends the hardware, saving state if needed.
-     fn suspend(_dev: &mut Device) -> Result {
--        kernel::build_error!(VTABLE_DEFAULT_ERROR)
-+        build_error!(VTABLE_DEFAULT_ERROR)
-     }
- 
-     /// Resumes the hardware, restoring state if needed.
-     fn resume(_dev: &mut Device) -> Result {
--        kernel::build_error!(VTABLE_DEFAULT_ERROR)
-+        build_error!(VTABLE_DEFAULT_ERROR)
-     }
- 
-     /// Overrides the default MMD read function for reading a MMD register.
-     fn read_mmd(_dev: &mut Device, _devnum: u8, _regnum: u16) -> Result<u16> {
--        kernel::build_error!(VTABLE_DEFAULT_ERROR)
-+        build_error!(VTABLE_DEFAULT_ERROR)
-     }
- 
-     /// Overrides the default MMD write function for writing a MMD register.
-     fn write_mmd(_dev: &mut Device, _devnum: u8, _regnum: u16, _val: u16) -> Result {
--        kernel::build_error!(VTABLE_DEFAULT_ERROR)
-+        build_error!(VTABLE_DEFAULT_ERROR)
-     }
- 
-     /// Callback for notification of link change.
-diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
-index 8bdab9aa0d16..ed076b3062ae 100644
---- a/rust/kernel/prelude.rs
-+++ b/rust/kernel/prelude.rs
-@@ -19,7 +19,7 @@
- #[doc(no_inline)]
- pub use macros::{module, pin_data, pinned_drop, vtable, Zeroable};
- 
--pub use super::build_assert;
-+pub use super::{build_assert, build_error};
- 
- // `super::std_vendor` is hidden, which makes the macro inline for some reason.
- #[doc(no_inline)]
-diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
-index 1a30c8075ebd..d61bc6a56425 100644
---- a/rust/macros/lib.rs
-+++ b/rust/macros/lib.rs
-@@ -123,12 +123,12 @@ pub fn module(ts: TokenStream) -> TokenStream {
- /// used on the Rust side, it should not be possible to call the default
- /// implementation. This is done to ensure that we call the vtable methods
- /// through the C vtable, and not through the Rust vtable. Therefore, the
--/// default implementation should call `kernel::build_error!`, which prevents
-+/// default implementation should call `build_error!`, which prevents
- /// calls to this function at compile time:
- ///
- /// ```compile_fail
- /// # // Intentionally missing `use`s to simplify `rusttest`.
--/// kernel::build_error!(VTABLE_DEFAULT_ERROR)
-+/// build_error!(VTABLE_DEFAULT_ERROR)
- /// ```
- ///
- /// Note that you might need to import [`kernel::error::VTABLE_DEFAULT_ERROR`].
-@@ -145,11 +145,11 @@ pub fn module(ts: TokenStream) -> TokenStream {
- /// #[vtable]
- /// pub trait Operations: Send + Sync + Sized {
- ///     fn foo(&self) -> Result<()> {
--///         kernel::build_error!(VTABLE_DEFAULT_ERROR)
-+///         build_error!(VTABLE_DEFAULT_ERROR)
- ///     }
- ///
- ///     fn bar(&self) -> Result<()> {
--///         kernel::build_error!(VTABLE_DEFAULT_ERROR)
-+///         build_error!(VTABLE_DEFAULT_ERROR)
- ///     }
- /// }
- ///
--- 
-2.47.0
+I would much appreciate some guidance on how to proceed to track down what goes wrong.
+
+Best regards
+
+Anders Blomdell
 
 
