@@ -1,169 +1,112 @@
-Return-Path: <linux-kernel+bounces-419309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3682A9D6C3C
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 00:33:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 231ED9D6C40
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 00:45:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E2472817D7
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 23:33:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAE9C28174E
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 23:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B181C198E9B;
-	Sat, 23 Nov 2024 23:33:00 +0000 (UTC)
-Received: from mail115-171.sinamail.sina.com.cn (mail115-171.sinamail.sina.com.cn [218.30.115.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB4F19CC21;
+	Sat, 23 Nov 2024 23:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Fa0sCqVj"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3246EA59
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 23:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5433A59
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 23:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732404780; cv=none; b=KhzDTbsR788W4T4UNLaudpytE6ORJ4JalHhitdL+r4dpoSQzxv3akCw50IEHAK2bon78KuSVyzd4isCyNywJBZBHEVCKXZ1pPDFoZ5MFYxXAC/EbDFz1z7efUOBs4gsXqfL12rFr3e8IT79uDRudEH0xa42t6RAMzNJqRlM8e7s=
+	t=1732405496; cv=none; b=psjjUwcjIEBu7BE2SMeApFt8njP8Sfb5YKk7/trz9nSUbpcY0mMOHyUf+wfBLaeHYlMJGOuFa0WzU4zOeiLPKyPFm+YZZTkiCyhutplY0GFaAQR8rGepOABlKAoPqNr3H8iDRD9g57ZwCdXtGle76piT7Drb7VX/tDkWWIk05io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732404780; c=relaxed/simple;
-	bh=msBn8Fma/11yKn/GT2bR9nCdhGUiLq3CNcdDsndUZkU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pGxcJoP4DNMJWZ6t2IkzFcVhDvawhGvXvuchkqHJZF90gBcBtCs6Velq1QCSGrWqdyuugPLDx+lZidsDal7XvlbV6BQKDWFUWFJvbrnFWZYjfIQZsLC3xxYSUnEDWAbpK2aBImheXx/+u+/a/13kGDqNRD4pM0UOf/lIYwKi8oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.9.183])
-	by sina.com (10.185.250.24) with ESMTP
-	id 6742661900007C83; Sat, 24 Nov 2024 07:32:45 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 88043310748239
-X-SMAIL-UIID: CB53804FFDBC4BEEADD2E7583C19D992-20241124-073245-1
-From: Hillf Danton <hdanton@sina.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Boqun Feng <boqun.feng@gmail.com>
-Cc: syzbot <syzbot+919877893c9d28162dc2@syzkaller.appspotmail.com>,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	pbonzini@redhat.com,
-	seanjc@google.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [kvm?] WARNING: locking bug in kvm_xen_set_evtchn_fast
-Date: Sun, 24 Nov 2024 07:32:32 +0800
-Message-Id: <20241123233232.1437-1-hdanton@sina.com>
-In-Reply-To: <6741d5df.050a0220.1cc393.0011.GAE@google.com>
-References: 
+	s=arc-20240116; t=1732405496; c=relaxed/simple;
+	bh=g+Y4gOPLfF7M/YiCIO5Kef+8ZGTE+p61ejmOt/D4RFc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qkNAGrsVIoeloa97pfYFFMLXwFD2WUPWQLHgkJOLnWWcZxGLzvohAf4mdKIeB2tVRjFxF6h+LTd7I5aO+qAQqGwrlEDMSotcll9pxeVmoQOyXy2XkiXvSfjSe6wGgeNvjB5DQ7kZItPB7h/hHi2VsTQ+Xel2NJdZ7TM/wIUm8WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Fa0sCqVj; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-432d86a3085so30662355e9.2
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 15:44:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1732405493; x=1733010293; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=at8LIYYL1RmfVcLpy4XjCtr1orBJfgH86YuW+3k46Do=;
+        b=Fa0sCqVjazosBazQO/nRIe904Urgvnf/5coGB2ihvyA+v1oqjN2ncRk7HMZv0Kdita
+         obSrl9JpNjjXkdpE2MaRWb8CUqkJdCHbic+o0cAwXJbqlvOBru1OgYT4gry4bwkiQiCh
+         8+mJYX1zV4DTJoUkgf1Zo9SYUbE6h+Pvr8X0s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732405493; x=1733010293;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=at8LIYYL1RmfVcLpy4XjCtr1orBJfgH86YuW+3k46Do=;
+        b=TCQA4fDcpaI8p17VoJXLV43PeCxjTquhwLF0GKxY+8cBUqL+sByBI/Uc6Hf49qHB9L
+         ua0J8U4VT9FuNVGxjXLANzXWu62RQcEYc+URIiO9Uej9xUzSqPZSqZss1G2UCdOnCBk6
+         mc3Ugb9vSLMx+/7WC/pOcnioa7DbrgCnX3/4xpqr5m8d+SBY1+6mTy7r6Xq5z3SNEWhe
+         flF2in7JgJEi3ZeXXx3soDGgy9R71cZSF+Y/W7E/Cqp2L0h2vgewfcVsEG9IujLB9cDU
+         qWZ2cWRJxxo6yBRda1tCcmZ3HKlOMwWDZGBZ6E/Zt6ocu6mjcd5XELoDEazs6wgtizws
+         7iBA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfBnjZ66+F3DRTKQ+mem8ThJKKFJnhPuQhWfFoB/ayRCEQO0RhuAHj/VRo4TSoOUXXWktuMWjX7HT/hNo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa9bDAGBLfAjhAsA1squmFY6f5U85P06KKsQGlLP307tCjO+V2
+	W1Ndod3fS0Pda1ay3+IOlk0EpBbXJBe7fu9U4flj0neAGOMxS+B/COcayMg2E65oCKzQQmbAdfM
+	5fVY=
+X-Gm-Gg: ASbGncv2r8LwL8H4aHcF1//S1nDXOATYgXTNKKcvrhbTmtNZFNfvGi9IRC0pBAhdUF6
+	z/yILB6xfHNruo1BdyCVixcE2OakkBTfBPeUsIg4AamQqatjkgC6AJSnyuv/zzXJzWftfgeuW1U
+	29a8ufAmU3n/32UuCxAwuZ4RRIvPXnwdIW1jD3LE9qW9OuTHXgRxRNOasqX25okp6JCvMncBzwN
+	FfIiHKw3Xvzo0j4WhB3a31NS3HVXZ6wHr/uOZil4StZBRaWHpdWfELLazVYiB/PKfdGZZP5EJjl
+	KTTJrYkRcI+vo36Ess2jQ1C5
+X-Google-Smtp-Source: AGHT+IGACp7BhhnH6acb4+xIhe/ZW3D0P47U5ieDtTOJ1g3fAsSsB6Q3snduOJd1z6sh34wYkrYsDw==
+X-Received: by 2002:a05:6000:2807:b0:382:4b2e:d42d with SMTP id ffacd0b85a97d-38260b6bd61mr4261787f8f.30.1732405492762;
+        Sat, 23 Nov 2024 15:44:52 -0800 (PST)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d3a2d15sm2605950a12.11.2024.11.23.15.44.50
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 23 Nov 2024 15:44:51 -0800 (PST)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa520699becso245798166b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 15:44:50 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXupHxfCvO/oHz97ozT8peVKhxNuo+7DQnlWjTS5H6sJ8zG8STRGibzBvtYcrlfjQuzJzahiCFUu572ciw=@vger.kernel.org
+X-Received: by 2002:a17:906:23ea:b0:aa5:479b:3d25 with SMTP id
+ a640c23a62f3a-aa5479b3d7cmr24815866b.51.1732405490655; Sat, 23 Nov 2024
+ 15:44:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <680c14b5af9d43d6bc70d2c1e9321e01@AcuMS.aculab.com>
+ <CAHk-=wgT4E+6YO0-SvdD=Gh6wSuUB3Bq_qOiErfZkobQ9gn6=Q@mail.gmail.com> <e92823fee58d44b6a50a83fd27206857@AcuMS.aculab.com>
+In-Reply-To: <e92823fee58d44b6a50a83fd27206857@AcuMS.aculab.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 23 Nov 2024 15:44:34 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whsUQMM-FszR-D+myn9-B2pDidXG9DQWGKfAhU3azX==g@mail.gmail.com>
+Message-ID: <CAHk-=whsUQMM-FszR-D+myn9-B2pDidXG9DQWGKfAhU3azX==g@mail.gmail.com>
+Subject: Re: [PATCH] x86: Allow user accesses to the base of the guard page
+To: David Laight <David.Laight@aculab.com>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>, "bp@alien8.de" <bp@alien8.de>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@kernel.org>, 
+	Mikel Rychliski <mikel@mikelr.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Loop in lock people.
+On Sat, 23 Nov 2024 at 14:36, David Laight <David.Laight@aculab.com> wrote:
+>
+> The problem is that it is valid to pass a buffer that ends right
+> at the end of valid user memory.
 
-On Sat, 23 Nov 2024 05:17:19 -0800
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    06afb0f36106 Merge tag 'trace-v6.13' of git://git.kernel.o..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=17ff7930580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=95b76860fd16c857
-> dashboard link: https://syzkaller.appspot.com/bug?extid=919877893c9d28162dc2
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=142981c0580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1371975f980000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/49111529582a/disk-06afb0f3.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/f04577ad9add/vmlinux-06afb0f3.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/b352b4fae995/bzImage-06afb0f3.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+919877893c9d28162dc2@syzkaller.appspotmail.com
-> 
-> =============================
-> [ BUG: Invalid wait context ]
-> 6.12.0-syzkaller-07834-g06afb0f36106 #0 Not tainted
-> -----------------------------
-> kworker/0:1/9 is trying to lock:
-> ffffc90003bca460 (&gpc->lock){....}-{3:3}, at: kvm_xen_set_evtchn_fast+0x1ee/0xa00 arch/x86/kvm/xen.c:1755
-> other info that might help us debug this:
-> context-{2:2}
-> 6 locks held by kworker/0:1/9:
->  #0: ffff888144a92148 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
->  #0: ffff888144a92148 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
->  #1: ffffc900000e7d00 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
->  #1: ffffc900000e7d00 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
->  #2: ffff888145711190 (&dev->mutex){....}-{4:4}, at: device_lock include/linux/device.h:1014 [inline]
->  #2: ffff888145711190 (&dev->mutex){....}-{4:4}, at: hub_event+0x1fe/0x5150 drivers/usb/core/hub.c:5849
->  #3: ffffffff8e817de0 (console_lock){+.+.}-{0:0}, at: dev_vprintk_emit+0x2ae/0x330 drivers/base/core.c:4942
->  #4: ffffffff8e8179f0 (console_srcu){....}-{0:0}, at: rcu_try_lock_acquire include/linux/rcupdate.h:342 [inline]
->  #4: ffffffff8e8179f0 (console_srcu){....}-{0:0}, at: srcu_read_lock_nmisafe include/linux/srcu.h:297 [inline]
->  #4: ffffffff8e8179f0 (console_srcu){....}-{0:0}, at: console_srcu_read_lock kernel/printk/printk.c:288 [inline]
->  #4: ffffffff8e8179f0 (console_srcu){....}-{0:0}, at: console_flush_all+0x1a3/0xeb0 kernel/printk/printk.c:3187
->  #5: ffffc90003bca8c8 (&kvm->srcu){.?.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:158 [inline]
->  #5: ffffc90003bca8c8 (&kvm->srcu){.?.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:249 [inline]
->  #5: ffffc90003bca8c8 (&kvm->srcu){.?.+}-{0:0}, at: kvm_xen_set_evtchn_fast+0x1bb/0xa00 arch/x86/kvm/xen.c:1753
-> stack backtrace:
-> CPU: 0 UID: 0 PID: 9 Comm: kworker/0:1 Not tainted 6.12.0-syzkaller-07834-g06afb0f36106 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> Workqueue: usb_hub_wq hub_event
-> Call Trace:
->  <IRQ>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->  print_lock_invalid_wait_context kernel/locking/lockdep.c:4826 [inline]
->  check_wait_context kernel/locking/lockdep.c:4898 [inline]
->  __lock_acquire+0x15a8/0x2100 kernel/locking/lockdep.c:5176
->  lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
->  __raw_read_lock_irqsave include/linux/rwlock_api_smp.h:160 [inline]
->  _raw_read_lock_irqsave+0xdd/0x130 kernel/locking/spinlock.c:236
->  kvm_xen_set_evtchn_fast+0x1ee/0xa00 arch/x86/kvm/xen.c:1755
->  xen_timer_callback+0x1a0/0x380 arch/x86/kvm/xen.c:140
->  __run_hrtimer kernel/time/hrtimer.c:1739 [inline]
->  __hrtimer_run_queues+0x551/0xd50 kernel/time/hrtimer.c:1803
->  hrtimer_interrupt+0x403/0xa40 kernel/time/hrtimer.c:1865
->  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1038 [inline]
->  __sysvec_apic_timer_interrupt+0x110/0x420 arch/x86/kernel/apic/apic.c:1055
->  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
->  sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1049
->  </IRQ>
+There's a difference between "valid" and "we care".
 
-Another locking issue in irq context [1]
+This is way past that case. The only possible reason for that
+zero-byte thing at the end of the address space is somebody actively
+looking for some edge case, not a real use.
 
-[1] https://lore.kernel.org/lkml/20241116232957.1223-1-hdanton@sina.com/
-
->  <TASK>
->  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-> RIP: 0010:console_flush_all+0x996/0xeb0
-> Code: 48 21 c3 0f 85 16 02 00 00 e8 66 aa 20 00 4c 8b 7c 24 10 4d 85 f6 75 07 e8 57 aa 20 00 eb 06 e8 50 aa 20 00 fb 48 8b 5c 24 18 <48> 8b 44 24 30 42 80 3c 28 00 74 08 48 89 df e8 76 61 8b 00 4c 8b
-> RSP: 0018:ffffc900000e7000 EFLAGS: 00000293
-> RAX: ffffffff8174a2e0 RBX: ffffffff8f17fa58 RCX: ffff88801bef8000
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffffc900000e71b0 R08: ffffffff8174a2b7 R09: 1ffffffff285cb10
-> R10: dffffc0000000000 R11: fffffbfff285cb11 R12: ffffffff8f17fa00
-> R13: dffffc0000000000 R14: 0000000000000200 R15: ffffc900000e7200
->  __console_flush_and_unlock kernel/printk/printk.c:3269 [inline]
->  console_unlock+0x14f/0x3b0 kernel/printk/printk.c:3309
->  vprintk_emit+0x730/0xa10 kernel/printk/printk.c:2432
->  dev_vprintk_emit+0x2ae/0x330 drivers/base/core.c:4942
->  dev_printk_emit+0xdd/0x120 drivers/base/core.c:4953
->  _dev_info+0x122/0x170 drivers/base/core.c:5011
->  show_string drivers/usb/core/hub.c:2357 [inline]
->  announce_device drivers/usb/core/hub.c:2375 [inline]
->  usb_new_device+0xd02/0x19a0 drivers/usb/core/hub.c:2632
->  hub_port_connect drivers/usb/core/hub.c:5521 [inline]
->  hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
->  port_event drivers/usb/core/hub.c:5821 [inline]
->  hub_event+0x2d6d/0x5150 drivers/usb/core/hub.c:5903
->  process_one_work kernel/workqueue.c:3229 [inline]
->  process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
->  worker_thread+0x870/0xd30 kernel/workqueue.c:3391
->  kthread+0x2f0/0x390 kernel/kthread.c:389
->  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->  </TASK>
+               Linus
 
