@@ -1,144 +1,165 @@
-Return-Path: <linux-kernel+bounces-419198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C79B59D6AA9
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 18:53:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E91A9D6AAB
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 19:03:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 529F9161980
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:53:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09514281D04
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 18:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652B014B942;
-	Sat, 23 Nov 2024 17:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3792F146013;
+	Sat, 23 Nov 2024 18:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UPNvZ1i2"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HLIvSPui"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707B817C2;
-	Sat, 23 Nov 2024 17:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814A3195;
+	Sat, 23 Nov 2024 18:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732384392; cv=none; b=IaVYB2fs8yMKUQZTtso04Sl8NRySAPfmVt/SSuF3QaveZZfg5uVgJd+K1nuBcg2tP0k2r4VzJWHAfnhOSyYWh15945fHlIZlWfDjfYsjJqybHUmUa+i9ZRIoxhohNDcIVb2hEZ0tGDdE4tK4/710nLD7RFiR9vtpmYYQcPlvqMs=
+	t=1732385031; cv=none; b=TwffDSvCjW8lFt6T3y5BLHZGvwrVE7Ie0SPZO63qzhFzuMcYMBfpQI+0CAaOFPdMvWX+fdOi0FRNTRCUkBSd9xaYMJMrZ5DEQi74tkg69y0kKRCZdSyGyzDBvSu0sqD9CbdzI4NBTSLxjMfGlVKUahxCVu2o5FPS+HsNWaud1y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732384392; c=relaxed/simple;
-	bh=jCOcj1QFVge2e2sjAAUp5yF0+g+gTAyC86ZwLrjygZ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UQeRM0vsRpTLvEzlWyML8nIYHf9eJf06q89dI4cFwTn/ZTAeAj379gjZeUvGKFb4sy2ebskhqBfv6HmqWshg/IzD4MuRO4Mr7kf7UIjkfpUIvJxsUu5W/mxsjKRvnBKT2s2StkW+qF/OLQfV0fnrBfxDgoRMtbsnvP8HavpADxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UPNvZ1i2; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-724fee568aaso167208b3a.1;
-        Sat, 23 Nov 2024 09:53:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732384390; x=1732989190; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MChWc41P4OMqWVju6vAFErZ1LM1yUreLUBjhHItchBk=;
-        b=UPNvZ1i2H/deOdk465kyaZLwTI7pCJzfkZODrX2QSgEvacOFbsOLP/v9ezTZNTHOka
-         7EiWBmQhHzeshOITS3C8xCpGx85TGab5gXh1nCeOzMlYiT78dDps4tIyPFJrdY06VcaI
-         fZnWzahvfsX0B3BRS+LPvuOOShWqJCiEcfXct4LbVyjfpT19nJOZJWeFKaxyCZ6j9hWZ
-         JpPhXKEi89CgrZjyTQbzCYV5jHhglbZmN+8BhLrJ+R3F58tMV4vocwysQWtsgouiL/kd
-         bxqvMV8cvuQ8kWcSq3xuC1rEUWfYM43SEVy0TOD9xOcd5ZVQbtPwI/JEAcwYtDPHERIh
-         911A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732384390; x=1732989190;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MChWc41P4OMqWVju6vAFErZ1LM1yUreLUBjhHItchBk=;
-        b=cSzbo3TiogdDuY4eQqPV144NOkhR8pSiwTdWLi0OImWjXiZ40PsrWiDNEWZJhaMl8z
-         5V68xlgBtCL4ZCFXPStU3irPPxDKQBsQJ/E1hUSG+4O2vUgdpmBwBDX/dkFU10GM9ukn
-         xId7yVVtLmZKBvUvC3EfE8KW+2tH3XLxcsX6ea/BmIc5EXrSA2tDhHcPeGBNn97qA4Qw
-         V7BK6zb2vb7wbhDQ5MfjLFRVTG1OAI7GSCy7LP4pdP31y0vtOGpl2u6Q66OIKTnv3fVi
-         1SqUMb6q1QisTTI0lZi5D1iLyEa2doddR9+jtIptNNcMoZoB+CWyayOaPntx16yRiDjm
-         DbzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVb10tjwWgJnozLxk4jQvxpnlXNEuD5dQ3GVGvOZpDFQ7HCKPqWDZdJHt1gJ+S1WHaRTyXD11q8vVMl1g==@vger.kernel.org, AJvYcCWAN6V7YrguorfdIM9OqNMKgDQCXsmaLsqVdGvKnBPpumjzrSLmmyErlX2+cNjw4Ii0srIwcLmMTbEu@vger.kernel.org, AJvYcCWR2D1XhapMQPrgS29Rw+WSoUCbP8X4gPkXUBTTsQY5fuBvzuhFF7sL0X0z1H+VPVeEZjSlyGx71yCUqgLE1Gqt@vger.kernel.org, AJvYcCWjqJcX9ZbyK2bn69/V8iMFDc29PLmGfy9PQS6Wv30n0ARfcIj/iAq0l6pZ04YX4Y6Kj7T5f3zaEvtbR+sj@vger.kernel.org
-X-Gm-Message-State: AOJu0YyypCbEGfcrMa4E+CCaqMDPXWxz9p1J8gzFdmj6m0/I3wASVgD8
-	ydKKqnaqr9PnXvLQmJZCH6iKEoFLsAGk78VEW5QwaoiDpFoDiFN/
-X-Gm-Gg: ASbGncs0SzXNmqtGf+Dr2qgoMQMd4/TvtfSCtBx8ipK+1XX2ezZFAwmfA+DU7ZO+0XG
-	JLrcFchJTdGWWRjWhkbn3hfkG0EHpqTmGWwcK1F4EYRmtR6ue/pgvuZMhBWvyeGFWFEzcqYLyhm
-	cWP3pJ1OWolnluIVUPb8tEBPeqU3kjfliz3O4lKR0xZM9D7f9YeiOP1qbwJTwyhGQAgrJmIEXyK
-	4IgsVGh78tQg4SwTKg7zdcH/g1fsAJu0zYPaadvqjQQz5xkhbplX+Un6I0YWnZ5KlpxhrshAbg=
-X-Google-Smtp-Source: AGHT+IGDVRgdju70YKS9dKHuXvmqMGTwpB+LfLzrIv8QlUq+0rniiuKlMntRfxmT7VPHsEtMjf7NKw==
-X-Received: by 2002:a17:902:f68d:b0:20c:ce9c:bbd8 with SMTP id d9443c01a7336-2129f55d212mr79559515ad.25.1732384390542;
-        Sat, 23 Nov 2024 09:53:10 -0800 (PST)
-Received: from mighty.kangaroo-insen.ts.net ([45.64.12.174])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dba5920sm35420045ad.107.2024.11.23.09.53.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Nov 2024 09:53:09 -0800 (PST)
-From: Mithil Bavishi <bavishimithil@gmail.com>
-To: andreas@kemnade.info
-Cc: Laurent.pinchart@ideasonboard.com,
-	aaro.koskinen@iki.fi,
-	airlied@gmail.com,
-	bavishimithil@gmail.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	jernej.skrabec@gmail.com,
-	jonas@kwiboo.se,
-	khilman@baylibre.com,
-	krzk+dt@kernel.org,
-	linux-hardening@vger.kernel.org,
+	s=arc-20240116; t=1732385031; c=relaxed/simple;
+	bh=znf4LwmiKLLGvxbVhzTeQXiFCUGm6KOIppU0Ug6hGW0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZurrAxobwGZPPQqVUe3rzvjhLdH9DGibmOn/fRDPp4Ml3gle6my1c0R6uib3LyP23sCTekFTI6b2rOnTqeX/dw45ikseBq+Zeubu5Uz1QaUOMIzgYUJtbgJlNBqLWCx3zwY8LsMekMwVoT5tgO4cLWwX2daEmhuorJJvju6L05s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HLIvSPui; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6396C4CECD;
+	Sat, 23 Nov 2024 18:03:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732385031;
+	bh=znf4LwmiKLLGvxbVhzTeQXiFCUGm6KOIppU0Ug6hGW0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=HLIvSPuiEtZKJN/TrqpXEnUBvGttyzazq113hZ7QXPDTWeMCgA5rKp2awtk/7jRfq
+	 OZJjdVAw/ZhdR5IpCd5raLP5nvBPpYclin+qmbDL7/u5ynuUmOR0FN3PZ3wF3RrCBN
+	 wEGhP1KUyypzzYF11KPH/Sfshqbi68rpgjPXN/6p9BC2Z3XzWQQze0/Zs7bxz9xCwy
+	 oJ+9F/jq471bs8QxZ/k14XYsKRdOb/vuL3gsiUoOvh0Eu6NO2VJRlWCRtfeX75K25y
+	 dzHNLthROWjOb7HzBz8MP35MFq3c/GDCuIs089IyT7z8y5R224gFKHsYUDYOahjZJp
+	 rFoU39lLCdU+g==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	neil.armstrong@linaro.org,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	quic_jesszhan@quicinc.com,
-	rfoss@kernel.org,
-	robh@kernel.org,
-	rogerq@kernel.org,
-	simona@ffwll.ch,
-	thierry.reding@gmail.com,
-	tony@atomide.com,
-	tzimmermann@suse.de
-Subject: Re: [PATCH v3 10/10] ARM: dts: ti: omap: samsung-espresso10: Add initial support for Galaxy Tab 2 10.1
-Date: Sat, 23 Nov 2024 17:52:58 +0000
-Message-ID: <20241123175259.775-1-bavishimithil@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241112114818.1eb238e9@akair>
-References: <20241112114818.1eb238e9@akair>
+	patches@lists.linux.dev,
+	Christian Poveda <git@pvdrz.com>,
+	=?UTF-8?q?Emilio=20Cobos=20=C3=81lvarez?= <emilio@crisal.io>
+Subject: [PATCH] rust: kbuild: set `bindgen`'s Rust target version
+Date: Sat, 23 Nov 2024 19:03:23 +0100
+Message-ID: <20241123180323.255997-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-> > +&i2c3 {
-> > +	touchscreen: synaptics-rmi4-i2c@20 {
->
-> touchscreen@20
-Fixed, generic node names right!
+Each `bindgen` release may upgrade the list of Rust targets. For instance,
+currently, in their master branch [1], the latest ones are:
 
-> > +		avdd-supply = <&reg_touch_ldo_en>;
-> not known in schema
-I cannot seem to find the "vio-supply" shown in the bindings. There is
-only mention of avdd-supply and vdd-supply. I am not sure if avdd and
-vio are equivalent, hence the confusion.
-What should be the solution here?
+    Nightly => {
+        vectorcall_abi: #124485,
+        ptr_metadata: #81513,
+        layout_for_ptr: #69835,
+    },
+    Stable_1_77(77) => { offset_of: #106655 },
+    Stable_1_73(73) => { thiscall_abi: #42202 },
+    Stable_1_71(71) => { c_unwind_abi: #106075 },
+    Stable_1_68(68) => { abi_efiapi: #105795 },
 
-> Documentation/devicetree/bindings/input/touchscreen/touchscreen.yaml:
-> horizontal resolution of touchscreen (maximum x coordinate reported + 1)
+By default, the highest stable release in their list is used, and users
+are expected to set one if they need to support older Rust versions
+(e.g. see [2]).
 
-> So this touchscreen reports max 1278?
+Thus, over time, new Rust features are used by default, and at some
+point, it is likely that `bindgen` will emit Rust code that requires a
+Rust version higher than our minimum (or perhaps enabling an unstable
+feature). Currently, there is no problem because the maximum they have,
+as seen above, is Rust 1.77.0, and our current minimum is Rust 1.78.0.
 
-Fixed it as well, 1280 and 800 respectively.
-https://github.com/Unlegacy-Android/android_kernel_ti_omap4/blob/3.4/common/arch/arm/mach-omap2/board-espresso-input.c#L264
+Therefore, set a Rust target explicitly now to prevent going forward in
+time too much and thus getting potential build failures at some point.
 
-> And these things belong below rm4-f11 according to
-> Documentation/devicetree/bindings/input/syna,rmi4.yaml
+Since we also support a minimum `bindgen` version, and since `bindgen`
+does not support passing unknown Rust target versions, we need to use
+the list of our minimum `bindgen` version, rather than the latest. So,
+since `bindgen` 0.65.1 had this list [3], we need to use Rust 1.68.0:
 
-I did not quite understand what you mean by this. I checked the bindings 
-and a few examples, there is nothing "below" rmi4-f11.
+    /// Rust stable 1.64
+    ///  * `core_ffi_c` ([Tracking issue](https://github.com/rust-lang/rust/issues/94501))
+    => Stable_1_64 => 1.64;
+    /// Rust stable 1.68
+    ///  * `abi_efiapi` calling convention ([Tracking issue](https://github.com/rust-lang/rust/issues/65815))
+    => Stable_1_68 => 1.68;
+    /// Nightly rust
+    ///  * `thiscall` calling convention ([Tracking issue](https://github.com/rust-lang/rust/issues/42202))
+    ///  * `vectorcall` calling convention (no tracking issue)
+    ///  * `c_unwind` calling convention ([Tracking issue](https://github.com/rust-lang/rust/issues/74990))
+    => Nightly => nightly;
 
-Best Regards,
-Mithil
+    ...
+
+    /// Latest stable release of Rust
+    pub const LATEST_STABLE_RUST: RustTarget = RustTarget::Stable_1_68;
+
+Thus add the `--rust-target 1.68` parameter. Add a comment as well
+explaining this.
+
+An alternative would be to use the currently running (i.e. actual) `rustc`
+and `bindgen` versions to pick a "better" Rust target version. However,
+that would introduce more moving parts depending on the user setup and
+is also more complex to implement.
+
+Cc: Christian Poveda <git@pvdrz.com>
+Cc: Emilio Cobos Álvarez <emilio@crisal.io>
+Link: https://github.com/rust-lang/rust-bindgen/blob/21c60f473f4e824d4aa9b2b508056320d474b110/bindgen/features.rs#L97-L105 [1]
+Link: https://github.com/rust-lang/rust-bindgen/issues/2960 [2]
+Link: https://github.com/rust-lang/rust-bindgen/blob/7d243056d335fdc4537f7bca73c06d01aae24ddc/bindgen/features.rs#L131-L150 [3]
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+ rust/Makefile | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/rust/Makefile b/rust/Makefile
+index f349e7b067ea..1ca63ffee6cd 100644
+--- a/rust/Makefile
++++ b/rust/Makefile
+@@ -278,9 +278,19 @@ endif
+ # architecture instead of generating `usize`.
+ bindgen_c_flags_final = $(bindgen_c_flags_lto) -fno-builtin -D__BINDGEN__
+ 
++# Each `bindgen` release may upgrade the list of Rust target versions. By
++# default, the highest stable release in their list is used. Thus we need to set
++# a `--rust-target` to avoid future `bindgen` releases emitting code that
++# `rustc` may not understand. On top of that, `bindgen` does not support passing
++# an unknown Rust target version.
++#
++# Therefore, the Rust target for `bindgen` can be only as high as the minimum
++# Rust version the kernel supports and only as high as the greatest stable Rust
++# target supported by the minimum `bindgen` version the kernel supports (that
++# is, if we do not test the actual `rustc`/`bindgen` versions running).
+ quiet_cmd_bindgen = BINDGEN $@
+       cmd_bindgen = \
+-	$(BINDGEN) $< $(bindgen_target_flags) \
++	$(BINDGEN) $< $(bindgen_target_flags) --rust-target 1.68 \
+ 		--use-core --with-derive-default --ctypes-prefix ffi --no-layout-tests \
+ 		--no-debug '.*' --enable-function-attribute-detection \
+ 		-o $@ -- $(bindgen_c_flags_final) -DMODULE \
+
+base-commit: b2603f8ac8217bc59f5c7f248ac248423b9b99cb
+-- 
+2.47.0
+
 
