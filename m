@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-419125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5957A9D69BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:50:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 187509D69BC
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:50:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 511671617D8
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 15:50:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 868B1B21933
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 15:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6612E44384;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A005BAF0;
 	Sat, 23 Nov 2024 15:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XFn77zh3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bAq553/b"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C843E22EED
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 15:50:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006C12F509;
+	Sat, 23 Nov 2024 15:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732377028; cv=none; b=MqaFCQ57lY4yyIzAbsM9UXtJ9p7SjJO/UWWKznFxhZTMTvnLjTR1zTBH7CFkvEcTuVrzbewRFJKE22AcetXkJEQBHGSSCqoc0baVswYAp5Si6GlptcOarVfzt75EzHX2CIbyhv1rd+RJfdkQJE/mNrx4p4NqeDvP7cw/XEw+M/w=
+	t=1732377029; cv=none; b=UfB+UT13Wq9sAcft+y8ZPb63k6h+p2JDMsy5QhqOGw9Q74NY0OZ+h6toNifOzhRH9WbfimApbyUuU6CVQZxfqlyEsFlKg5mSNG7aE+3V06xVtlgb9XL1E4XL9Fw1M8z7BHJ1n6uJ+Ec9Arnkvz48G1tIGXwK2A9Q+DsdQWWi+Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732377028; c=relaxed/simple;
-	bh=dtotHtOLZEq4lFv92Zs9oG8yEKOiZLjVNbIt8QDq6S4=;
+	s=arc-20240116; t=1732377029; c=relaxed/simple;
+	bh=Kv86vApSh+6VFnQQ6AgK+uFE5X9tBqt+QALJDvB113o=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=RGNHuUkhm97N0t1kTjT3TK6WuAaPQDffX8I4LhIK/L5dCMctyeViXwsRiG2PtFboWXzh1LV5Ago7SM3kxSs6llitOg+DGV74r08LgObxvVrSGhnKxE6GsDrP3yJvfH+sCincy0v0P0+XDm4VxZISj0IFzFLnrT+7F183n/PuGaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XFn77zh3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 409A3C4CECF;
-	Sat, 23 Nov 2024 15:50:27 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=nAJW1tcjjoQB2T3fxmqVXBwQmVyZqxrACWbMSGq49ELHVWEu21fKTQ2ajd3zs7jY2+vW3/kpHsm/XJ9C8tWO9/Lr6Dw1xHdcN0N4/gfE5E+qiYR36noLhf+1vyBWz7dEpBMwSchZ1g4Qs4mYEfIYrcznPzh++2zwNGZbIQeJoCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bAq553/b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86518C4CED0;
+	Sat, 23 Nov 2024 15:50:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732377027;
-	bh=dtotHtOLZEq4lFv92Zs9oG8yEKOiZLjVNbIt8QDq6S4=;
+	s=k20201202; t=1732377028;
+	bh=Kv86vApSh+6VFnQQ6AgK+uFE5X9tBqt+QALJDvB113o=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=XFn77zh3+fKJRnqfBMpa8VOwmAIdyJTcc55zi6Ym8eVzq7ssSHin6oYHya/4+Vg38
-	 pv/YlZ4JcUDMAI2VWSX+hEyMSjw7s1NjEiCriTcuwmbS/SRw/VRJ+iXGQwFdcQQg/B
-	 OFSHikjPoNxGkIFNEBduB0AnnAXjJ08KF1isbncjYqtCCZV2sP3mvE9sxrG6Wc6PFe
-	 PHJncKY7URC0aZUv4RRch0OWnDa5/d5ZySz4Na1vsfIVzFbTkd8Fssp59P0PvGSQKV
-	 CkEQhzfiuK8boka32L2Gy9jC//o+HEPIuOvc9Ak5Uohp/RUWUBnzqqAE4N6EOlrHRn
-	 ePJBBe6/cXkYw==
+	b=bAq553/b7313j0r3Q7+1/MQugShfI+vjwcY7wP5mqr8rjeU1cMEFBoisr79zfw1jD
+	 Pv86bsFXfsOtU7/kOeOzAadEVKV1PocMPrYyw4/kQz3lY6pUTJM0y1hWQ6Ox0ecWq9
+	 FpHMofQVYu7pkctzGm5TMXImM7RzBiVDCFIx5VB+z5Tn6Qeocxq4gb66PAxNLRhMkX
+	 tJaW2M1qhJtdZ9mjxHAEceD6C6pquBuPNCTHcBwBJcmwyNKXxDYmutw/YcznJxe1lR
+	 VpkXur7nZJ44nLIee7fXCp5RL8ZCH8EyuIRyY7Eikyg0aD7ScpmOxXUIpKtU7o5ZD8
+	 nZ9TAiO37URpQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADBA13809A06;
-	Sat, 23 Nov 2024 15:50:40 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EBF933809A06;
+	Sat, 23 Nov 2024 15:50:41 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,40 +51,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH v2 1/2] f2fs: fix to shrink read extent node in
- batches
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to drop all discards after creating
+ snapshot on lvm device
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <173237703949.3018181.7264272337903464166.git-patchwork-notify@kernel.org>
-Date: Sat, 23 Nov 2024 15:50:39 +0000
-References: <20241122065005.3772987-1-chao@kernel.org>
-In-Reply-To: <20241122065005.3772987-1-chao@kernel.org>
+ <173237704074.3018181.13969811981387299887.git-patchwork-notify@kernel.org>
+Date: Sat, 23 Nov 2024 15:50:40 +0000
+References: <20241121141716.3018855-1-chao@kernel.org>
+In-Reply-To: <20241121141716.3018855-1-chao@kernel.org>
 To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, xiuhong.wang@unisoc.com, zhiguo.niu@unisoc.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: jaegeuk@kernel.org, piergiorgio.sartor@nexgo.de,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 
 Hello:
 
-This series was applied to jaegeuk/f2fs.git (dev)
+This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Fri, 22 Nov 2024 14:50:04 +0800 you wrote:
-> We use rwlock to protect core structure data of extent tree during
-> its shrink, however, if there is a huge number of extent nodes in
-> extent tree, during shrink of extent tree, it may hold rwlock for
-> a very long time, which may trigger kernel hang issue.
+On Thu, 21 Nov 2024 22:17:16 +0800 you wrote:
+> Piergiorgio reported a bug in bugzilla as below:
 > 
-> This patch fixes to shrink read extent node in batches, so that,
-> critical region of the rwlock can be shrunk to avoid its extreme
-> long time hold.
+> ------------[ cut here ]------------
+> WARNING: CPU: 2 PID: 969 at fs/f2fs/segment.c:1330
+> RIP: 0010:__submit_discard_cmd+0x27d/0x400 [f2fs]
+> Call Trace:
+>  __issue_discard_cmd+0x1ca/0x350 [f2fs]
+>  issue_discard_thread+0x191/0x480 [f2fs]
+>  kthread+0xcf/0x100
+>  ret_from_fork+0x31/0x50
+>  ret_from_fork_asm+0x1a/0x30
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,v2,1/2] f2fs: fix to shrink read extent node in batches
-    https://git.kernel.org/jaegeuk/f2fs/c/3fc5d5a182f6
-  - [f2fs-dev,v2,2/2] f2fs: add a sysfs node to limit max read extent count per-inode
-    https://git.kernel.org/jaegeuk/f2fs/c/009a8241a8e5
+  - [f2fs-dev] f2fs: fix to drop all discards after creating snapshot on lvm device
+    https://git.kernel.org/jaegeuk/f2fs/c/bc8aeb04fd80
 
 You are awesome, thank you!
 -- 
