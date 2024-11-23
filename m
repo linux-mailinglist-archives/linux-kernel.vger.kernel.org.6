@@ -1,155 +1,82 @@
-Return-Path: <linux-kernel+bounces-419239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A07B9D6B39
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 20:43:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 704E89D6B3D
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 20:46:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 203872822E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 19:43:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 332A92820FF
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 19:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2707719CCF4;
-	Sat, 23 Nov 2024 19:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EED1714A0;
+	Sat, 23 Nov 2024 19:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZfwFLNaZ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1j2Nycmr"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79FED225D7;
-	Sat, 23 Nov 2024 19:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691946F099;
+	Sat, 23 Nov 2024 19:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732391021; cv=none; b=Led9rabl7vWuCDAzEwcsOwJVX63FXLWv66ygPYAiitjbZCdHGmVdZ/R5b7+KRKaBhSsFJKa+ksgx3KYU7xyD/oXk1pI5A5UGLkogsxYAgLzUECA9haCVrl8ujqCuw777VWvD447E+ZNN7TN7wp1tcfFhPEYgS7SXiroMENdWq1c=
+	t=1732391158; cv=none; b=rfqkZJJ1sUGY5QSUg53fux1J4EAW4dKSwn/hUQIWDrtVLWVtYUBoJMEHqoIrDan59osFIAs10GhPAT+jSGh2F1ipl+UTjHt0kLkrvdzJSZXWsdlY2G5zmqJK/rhb7paaZ4JOq0RwFurujuYzgk5xbqtVEnQLN0cYCUVj0VHvdp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732391021; c=relaxed/simple;
-	bh=tGPOgclemoMu7/cMWJ8L6U5QW//GoJwlV7nmam601mM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b9kAAy//Qv7Cvm0M2a9OBw7ta5seLReNujvfUJdggNZYVkT42bmIQo9DR3X+qQppWPYzY/WcGJV8GrMhPr1UtGg6z0m5WBKwfu1ca00rMahh3RY+xks2dsETHRF6clfw6MKIENG0nwhzOOg8FAeIBaVQtHwfeiRkJ2zuzDU6Wm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZfwFLNaZ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ANJ2ZDL021590;
-	Sat, 23 Nov 2024 19:43:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=rTIOLT43gtxqh17Vq7x24Lsb
-	prvLiFCTG8dAMH1h/xg=; b=ZfwFLNaZIiMB+elaiYXtRH7SsQtiD3CJfEbv5/sq
-	ZLKJQufPK5OUYCPjcIdFxLfXOAC6ZTSgqRgQKwv09P1TIWZ2W6GGzQJtYPTYiLsN
-	C1xy6Jr9KV+zcMLuyzAQXZlLk3XgQv7r5jEobBalsSwigCjHWw9ghlXfouSRjWiN
-	BJ2/I0K/dU+SIGMT94AMMs+oXdKwWYpQbMyKknVv6Dk3pmh7ec8fQN/k5HtADLDf
-	t/aj/9ACnH+PQeRPgbLsOHpr/Q0gi7D5TVCT8Z9ekcQPTWr9zZuZj0xR+I4nSeA0
-	KGWggdO2zIZ0Z4pgnUadBhvT3/dVx87o9+PV4AyXBfZeFg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4338b894c6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 23 Nov 2024 19:43:27 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ANJhQJ0011605
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 23 Nov 2024 19:43:26 GMT
-Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Sat, 23 Nov 2024 11:43:19 -0800
-Date: Sun, 24 Nov 2024 01:13:16 +0530
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-CC: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Dmitry
- Baryshkov" <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Bjorn Andersson <andersson@kernel.org>, Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Connor Abbott <cwabbott0@gmail.com>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2 04/11] drm/msm: adreno: add GMU_BW_VOTE feature flag
-Message-ID: <20241123194316.yqvovktcptfep4dr@hu-akhilpo-hyd.qualcomm.com>
-References: <20241119-topic-sm8x50-gpu-bw-vote-v2-0-4deb87be2498@linaro.org>
- <20241119-topic-sm8x50-gpu-bw-vote-v2-4-4deb87be2498@linaro.org>
+	s=arc-20240116; t=1732391158; c=relaxed/simple;
+	bh=Il+2syc5dSmitzzBL/NDQCB7GsX20F7hSb/T8QYrcWg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aTW0m5kA+GCC2fAvlw2lkVo84U0KyoxCeCPr+K+8IDhzRqG3qM9FMof6yxHKNo7S+gNIySxKFC1ugr1gFhBtTbzOfrfgkyVJqtAZqxg7ooL7YxQDPqo+FujreHp4pLlyhrcoDcZ6MVLKDriyFxlSXkkBgLbvUDwdMtbUQXcay+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=1j2Nycmr; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=xUz8szYT2S3oxWL3VZFvQNTuoi+77WmzMXSa7g7vzl4=; b=1j2NycmroZtMJsGvd+zMNR/4uB
+	4JYk+EkqgQxEQAXUhoCWuukBZZ1TneCADwl1PoqKyz7XMZ96xaxzCWoS6X1hyYtUuaik8zxtm0uR/
+	qeSjUvkIQb+1xETSwCcKPX4ynTbIeED8fZWsba+p2nqH/fgwNmRNxL8HFFdXm2lNHg7k=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tEw4Z-00EEDe-M4; Sat, 23 Nov 2024 20:45:39 +0100
+Date: Sat, 23 Nov 2024 20:45:39 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: zhangheng <zhangheng@kylinos.cn>
+Cc: joyce.ooi@intel.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	chris.snook@gmail.com, f.fainelli@gmail.com, horms@kernel.org,
+	shannon.nelson@amd.com, jacob.e.keller@intel.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: ethernet: Use dma_set_mask_and_coherent to set DMA
+ mask
+Message-ID: <fb4a5fdd-9bd0-41fe-97ba-a3a64b846be5@lunn.ch>
+References: <20241123102713.1543832-1-zhangheng@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241119-topic-sm8x50-gpu-bw-vote-v2-4-4deb87be2498@linaro.org>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ryrIuRNVzSxZaJQeCU3vSDCY0aamOJEC
-X-Proofpoint-GUID: ryrIuRNVzSxZaJQeCU3vSDCY0aamOJEC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- adultscore=0 mlxscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0
- phishscore=0 malwarescore=0 suspectscore=0 mlxlogscore=999 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411230162
+In-Reply-To: <20241123102713.1543832-1-zhangheng@kylinos.cn>
 
-On Tue, Nov 19, 2024 at 06:56:39PM +0100, Neil Armstrong wrote:
-> The Adreno GMU Management Unit (GNU) can also scale the DDR Bandwidth
-> along the Frequency and Power Domain level, but by default we leave the
-> OPP core vote for the interconnect ddr path.
-> 
-> While scaling via the interconnect path was sufficient, newer GPUs
-> like the A750 requires specific vote paremeters and bandwidth to
-> achieve full functionality.
-> 
-> While the feature will require some data in a6xx_info, it's safer
-> to only enable tested platforms with this flag first.
-> 
-> Add a new feature enabling DDR Bandwidth vote via GMU.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  drivers/gpu/drm/msm/adreno/adreno_gpu.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> index 4702d4cfca3b58fb3cbb25cb6805f1c19be2ebcb..394b96eb6c83354ae008b15b562bedb96cd391dd 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> @@ -58,6 +58,7 @@ enum adreno_family {
->  #define ADRENO_FEAT_HAS_HW_APRIV		BIT(0)
->  #define ADRENO_FEAT_HAS_CACHED_COHERENT		BIT(1)
->  #define ADRENO_FEAT_PREEMPTION			BIT(2)
-> +#define ADRENO_FEAT_GMU_BW_VOTE			BIT(3)
+On Sat, Nov 23, 2024 at 06:27:13PM +0800, zhangheng wrote:
+> Replace the setting of the DMA masks with the dma_set_mask_and_coherent
+> function call.
 
-Do we really need a feature flag for this? We have to carry this for every
-GPU going forward. IB voting is supported on all GMUs from A6xx GEN2 and
-newer. So we can just check that along with whether the bw table is
-dynamically generated or not.
+I can read the patch and see what it is doing. The commit message
+should be about "Why?"
 
--Akhil
+netdev is closed at the moment because of the merge window.
 
->  
->  /* Helper for formating the chip_id in the way that userspace tools like
->   * crashdec expect.
-> 
-> -- 
-> 2.34.1
-> 
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+
+
+    Andrew
+
+---
+pw-bot: cr
 
