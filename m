@@ -1,149 +1,79 @@
-Return-Path: <linux-kernel+bounces-419167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7A69D6A38
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:37:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C8FD9D6A3C
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:37:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E032161877
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:37:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E739E281592
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11764139D1B;
-	Sat, 23 Nov 2024 16:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8FE13D53D;
+	Sat, 23 Nov 2024 16:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m9wRfaeE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fjgcnPik"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696DB17C2;
-	Sat, 23 Nov 2024 16:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEAD45948;
+	Sat, 23 Nov 2024 16:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732379842; cv=none; b=AzWPnlC/+Wv0DCX/pbDIg4hn5bzA8d+L6USLe145XgBw0l5v6MkG2CMrB/tqG9bT8q97sRk38yVAglikox5kg3kAnKTpywj95Umn36I+2C/EHy6ZCrevUVAU8xXIBR7YQ6enrf4EMlL34leASMi//6H3bwnEbw/dZGiFDUiNaBU=
+	t=1732379859; cv=none; b=sz0ayNMinUm4G4HkDPUYAxUY9bvE3VDLHJwpOB8Rl8MGBDTAkh7DQglufcnYuIWt94CLJ30iPN/sZ3yAS9VzNKuDRzKouHBWsikLXuwi9hcbraKxC6G/g0cllwu3maspJ3fE8lXU60xL2tFBI/YufTppgZxb1rVUzzODicfFZKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732379842; c=relaxed/simple;
-	bh=kqH1w9Z8UduwiuIpADpEHdaVEmAdD805XjHs5FU9NaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=civpOxEK4nDPUVTCenSkxlrckpzCdUnqmDYsxFm13qZOSsArnETfujBDhjL0baen7jLun87yBA0Wbo4t8BIYGjD0o6kNAh6ituteoiCLG5s6GeaEzxLKjdVWegzXZgpyKRoytkJwliWlmQE2bcKKwNBGyWID+5BIYDkBFMNjNX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m9wRfaeE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F215C4CECD;
-	Sat, 23 Nov 2024 16:37:17 +0000 (UTC)
+	s=arc-20240116; t=1732379859; c=relaxed/simple;
+	bh=YNEmZzVb/LFwKsxzeTicEJcsxyRI8JmhD/ZNgd+fPNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nSw1Ax4Q0zjhloTTW8oOLZsB0ThLHQRcBXPIRX0OipHXMmmBwgiNeVV407rB9cuG3RzxQ4USh656aprTdD3BUK4p6ZYtDrd4G+BP+1p7SO6fv8ITZ9owAeT6/xIkYmwoR9epDN6fq3KF88hgMimtjVizoERZzoqeFFwXiSkClHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fjgcnPik; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8B21C4CECD;
+	Sat, 23 Nov 2024 16:37:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732379841;
-	bh=kqH1w9Z8UduwiuIpADpEHdaVEmAdD805XjHs5FU9NaM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=m9wRfaeE70vgISBrAllJAY+9XEF/fzB+HC+QeB65cO9E+ZOxBE4mmvjG3IiiB4P1W
-	 zLkLqLajo5MwtEJMdeBLg6ISLO0832b14DkAFwH9VUneZVsdmgduN/yq/jIRfpcImN
-	 Gbqyrj7xtr9HNt1CwKDBRmV9WU8CNNpcyagjopDv0iBWMvRhgPckKrvv6XT4XPq+li
-	 G+Lb4hdMSm+ehvCCD+pCPKvBXg+yuUrXNfSlsWwCx3TYt0uVcJVZSnSwMhOWEIqf6e
-	 d4Qie96zoWn5pTcJUlBnWubVathEvsPWsuv2t9E+9xzX7lJb//1M+GT2E1imkguVGv
-	 bRKuMRVZkHlVA==
-Date: Sat, 23 Nov 2024 16:37:13 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/8] iio: gts: Simplify using __free
-Message-ID: <20241123163713.2ec03a37@jic23-huawei>
-In-Reply-To: <5efc30d832275778d1f48d7e2c75b1ecc63511d5.1732105157.git.mazziesaccount@gmail.com>
-References: <cover.1732105157.git.mazziesaccount@gmail.com>
-	<5efc30d832275778d1f48d7e2c75b1ecc63511d5.1732105157.git.mazziesaccount@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1732379858;
+	bh=YNEmZzVb/LFwKsxzeTicEJcsxyRI8JmhD/ZNgd+fPNo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fjgcnPikJ8c1rsa+pIzYERrbKDVXY8iQ8eapiuZcjDMi/I4UEeJ6GZtZc7w8j4l/7
+	 lc81dyOccpiG2uYBV+yNETFndMgpF6Ob1gNHriO7bwhrmEuT7v82fBhXni3GyhuVC4
+	 6TfGY6HXXKXElpNjTAmyMqjNeMucw0RGPh6HgwtlD1S04207Eg6iBfiwxIzGUYpQ/B
+	 21u11WcNRWFmApdT4tM105koUgieX7iRnzh9joUxoIY77J3hhBQkEalS9uCpvm05yj
+	 taGphfPWkxB8ZYM/NDb5E9LFs///1RzP38Cs4NtH8/P6tZWqSWhpIXJxOAEt5SXRE5
+	 zZ6aIHfZSlA0A==
+Date: Sat, 23 Nov 2024 17:37:35 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Qingqing Zhou <quic_qqzhou@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, robimarko@gmail.com, will@kernel.org, 
+	robin.murphy@arm.com, joro@8bytes.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+Subject: Re: [PATCH 1/2] dt-bindings: arm-smmu: document QCS615 GPU SMMU
+Message-ID: <bmkpwbqqymxu576ugys6ktno3zmrcudrsznqpknbvxnjbeldau@jcu3udl7cse5>
+References: <20241122074922.28153-1-quic_qqzhou@quicinc.com>
+ <20241122074922.28153-2-quic_qqzhou@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241122074922.28153-2-quic_qqzhou@quicinc.com>
 
-On Thu, 21 Nov 2024 10:20:07 +0200
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-
-> The error path in the gain_to_scaletables() uses goto for unwinding an
-> allocation on failure. This can be slightly simplified by using the
-> automated free when exiting the scope.
+On Fri, Nov 22, 2024 at 01:19:21PM +0530, Qingqing Zhou wrote:
+> Add the compatible for Qualcomm QCS615 GPU SMMU. Add the compatible
+> in the list of 3 clocks required by the GPU SMMU. Remove the compatible
+> from the "no clocks" list.
 > 
-> Use __free(kfree) and drop the goto based error handling.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> 
+> Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
 > ---
-> 
-> Revision history:
->   v1 => v2:
->   - patch number changed because a change was added to the series.
->   - rebased on iio/testing to avoid conflicts with queued fixes
-> ---
->  drivers/iio/industrialio-gts-helper.c | 19 ++++++++-----------
->  1 file changed, 8 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/iio/industrialio-gts-helper.c b/drivers/iio/industrialio-gts-helper.c
-> index 291c0fc332c9..602d3d338e66 100644
-> --- a/drivers/iio/industrialio-gts-helper.c
-> +++ b/drivers/iio/industrialio-gts-helper.c
-> @@ -4,6 +4,7 @@
->   * Copyright (c) 2023 Matti Vaittinen <mazziesaccount@gmail.com>
->   */
->  
-> +#include <linux/cleanup.h>
->  #include <linux/device.h>
->  #include <linux/errno.h>
->  #include <linux/export.h>
-> @@ -167,8 +168,8 @@ static int iio_gts_gain_cmp(const void *a, const void *b)
->  
->  static int gain_to_scaletables(struct iio_gts *gts, int **gains, int **scales)
->  {
-> -	int i, j, new_idx, time_idx, ret = 0;
-> -	int *all_gains;
-> +	int ret, i, j, new_idx, time_idx;
-> +	int *all_gains __free(kfree) = NULL;
-See the docs in cleanup.h (added recently).
+>  Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-Constructor and destructor should go together.   Dan wrote good docs on this
-(which are now in cleanup.h) so I'll not go into why!
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Upshot is this goes where you do the kcalloc, not up here.
-
->  	size_t gain_bytes;
->  
->  	for (i = 0; i < gts->num_itime; i++) {
-> @@ -232,10 +233,9 @@ static int gain_to_scaletables(struct iio_gts *gts, int **gains, int **scales)
->  
->  	gts->avail_all_scales_table = kcalloc(new_idx, 2 * sizeof(int),
->  					      GFP_KERNEL);
-> -	if (!gts->avail_all_scales_table) {
-> -		ret = -ENOMEM;
-> -		goto free_out;
-> -	}
-> +	if (!gts->avail_all_scales_table)
-> +		return -ENOMEM;
-> +
->  	gts->num_avail_all_scales = new_idx;
->  
->  	for (i = 0; i < gts->num_avail_all_scales; i++) {
-> @@ -246,14 +246,11 @@ static int gain_to_scaletables(struct iio_gts *gts, int **gains, int **scales)
->  		if (ret) {
->  			kfree(gts->avail_all_scales_table);
->  			gts->num_avail_all_scales = 0;
-> -			goto free_out;
-> +			return ret;
->  		}
->  	}
->  
-> -free_out:
-> -	kfree(all_gains);
-> -
-> -	return ret;
-> +	return 0;
->  }
->  
->  /**
+Best regards,
+Krzysztof
 
 
