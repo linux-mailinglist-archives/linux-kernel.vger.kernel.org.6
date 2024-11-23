@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-418936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2B3C9D6772
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 05:10:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 897709D6775
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 05:10:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6244F2816D8
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 04:10:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1917FB21FB8
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 04:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BEFC16FF44;
-	Sat, 23 Nov 2024 04:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD51517BB16;
+	Sat, 23 Nov 2024 04:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rAiavkj6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OsBfMaC0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715AF7E0E8;
-	Sat, 23 Nov 2024 04:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24254175D4F;
+	Sat, 23 Nov 2024 04:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732335029; cv=none; b=Sm6QU49NpS9R6dPyomGXvOoAaxOLw4/VhVgz8ovOOr6CPNBSyNsnUli/cVLYGnfVTKToFtnIESEbx1aT/t38D1pLar9sluK3IWiykUhZ7V+7h5MdJupMScDB6rJgyoK42/Me1vYYQrirOuM6OJnrZEzuJdwizEW7vZfRRkUy+Kw=
+	t=1732335032; cv=none; b=lX8K2amMXvD1Z/gGLUsZsH/rz92KQrJFH9PkuNWcdxcISqt02BhMWFMBYI2pquy8FhUuWNQCzpcK4nRpfCr/D57jl48CkgjiqJ8YnkaoExlaxI2lriYea5e9fzU4ictPXklTiSsMGWb3xuz1Q1RHOUUXIAL/pTWhaI9I1DF5Kpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732335029; c=relaxed/simple;
-	bh=LwVZIubD2F+DzYWVOJditvYk7swy3HhWDFT4INpEMu0=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=tWfFABJ+PUZGnQvmXS0gvhp18pj1fRKdylhiVR+8KBjep8dCho+CcZUdVzpW8FX7rn2lX1/3GWsvFMERDqGISk0rA/4uJw81iMKtmYKiTBdL+cmjHI8OBdfZ7Vi/qGp0Gwh/8WxxP0NGxBQvnPRcz0Bo0aiGz4lHuSeJdMqPPDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rAiavkj6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 540CFC4CECF;
-	Sat, 23 Nov 2024 04:10:29 +0000 (UTC)
+	s=arc-20240116; t=1732335032; c=relaxed/simple;
+	bh=J+qI8O4vMngVfSfA+n7ElaLg/q3yIfjNY151GO/kOCg=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=YdvUn4vF3N567v85Hjo34ORmW2q4BaEqjGsA3mGqtob5m/SmYIZ5BJlg7+Kn5kwY6eiesDzehbpoIdOSwNzDLTFMFpzKPDv5Hu7mQYXlN3rRuIs15VLQGfH7ZuxOUyzjXL2a3CxFLXR/NM1CXjmS1ZM2RtsIh/61RKW4ygUfv9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OsBfMaC0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 008C2C4CECD;
+	Sat, 23 Nov 2024 04:10:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732335029;
-	bh=LwVZIubD2F+DzYWVOJditvYk7swy3HhWDFT4INpEMu0=;
+	s=k20201202; t=1732335032;
+	bh=J+qI8O4vMngVfSfA+n7ElaLg/q3yIfjNY151GO/kOCg=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=rAiavkj6DlUTX9CTDknf9R1wJhCMAnTaGt3vKCii6njMqtfTSZ1v4hA1HjERivu0K
-	 3REyiIzBJCMRUN5osBC9BKTYwHSbRzgU9JCQlU9TwxcKqOSPYcy01oYdTxc+V7X0FX
-	 Ed2VTavIEC8JMkcEHFlNufUtssq4n6bIjM1gzmwozcPrfR1zh5zC/h1MsS3hx6cYX4
-	 R/BpnK7pA7xtEQjQPpWFfrUHqjbaFu/BxI8Q8315j72GyErqZH76V6Xc6Ac8O5INBK
-	 nwC6nffy4VbGFloKATUiFm6agCeOs8BxPE7kPCGMqm2SDYFPOL5okiXuLCKYCi7VnE
-	 IVyzVmh6H0LQw==
+	b=OsBfMaC0YSUGbLO/ywhExvii48WmVtRr1s037wnSbksHxQwEubw3wdOgAXjQ7frpx
+	 X2rd/MNk3TLFLUeiKenTjA1led4FdXJlmoVkCNsEDew/Z1lidei8mCw7mXtuLGMCab
+	 j1ts4Dq0OUZwjFFZ3KzAI/2Td0Altf3eqdNAIVMWiB8Gkv+QysoziW7Zt1mQShmNgF
+	 DoTt3vBu1PLMR9mK0nAlP76R6yNslt75Xn9FhwmWUZR/1HnCRI4q+zNGImrzqcoVxC
+	 OhF+lh3pSWERwPZPw0NDnAxzzWZc9wDCxpjEOw5bndSsw/reWCs3WDwsiD5/vx5ZLC
+	 u1Phb8anrHWDQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id CC2D83809A02;
-	Sat, 23 Nov 2024 04:10:42 +0000 (UTC)
-Subject: Re: [GIT PULL] Please pull RDMA subsystem changes
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 715943809A01;
+	Sat, 23 Nov 2024 04:10:45 +0000 (UTC)
+Subject: Re: [GIT PULL] More power management updates for v6.13-rc1
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20241122183628.GA1102912@nvidia.com>
-References: <20241122183628.GA1102912@nvidia.com>
+In-Reply-To: <CAJZ5v0hD-P3fK4qiZeu3xqnV120UtBiiH6UN4PE5xBqQfOZQmw@mail.gmail.com>
+References: <CAJZ5v0hD-P3fK4qiZeu3xqnV120UtBiiH6UN4PE5xBqQfOZQmw@mail.gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20241122183628.GA1102912@nvidia.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
-X-PR-Tracked-Commit-Id: 68b3bca2df00f0a63f0aa2db2b2adc795665229e
+X-PR-Tracked-Message-Id: <CAJZ5v0hD-P3fK4qiZeu3xqnV120UtBiiH6UN4PE5xBqQfOZQmw@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-6.13-rc1-2
+X-PR-Tracked-Commit-Id: f3e66e78f2ecb18a55374f7d58030556b751dd79
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2a163a4cea153348172e260a0c5b5569103a66a3
-Message-Id: <173233504162.2897203.15209598676665816169.pr-tracker-bot@kernel.org>
-Date: Sat, 23 Nov 2024 04:10:41 +0000
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, Leon Romanovsky <leonro@nvidia.com>
+X-PR-Merge-Commit-Id: 6f9baa9b92c2e4e28e385fa581f0511621db3f9a
+Message-Id: <173233504427.2897203.14549171937432815255.pr-tracker-bot@kernel.org>
+Date: Sat, 23 Nov 2024 04:10:44 +0000
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux PM <linux-pm@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Fri, 22 Nov 2024 14:36:28 -0400:
+The pull request you sent on Fri, 22 Nov 2024 21:26:40 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-6.13-rc1-2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2a163a4cea153348172e260a0c5b5569103a66a3
+https://git.kernel.org/torvalds/c/6f9baa9b92c2e4e28e385fa581f0511621db3f9a
 
 Thank you!
 
