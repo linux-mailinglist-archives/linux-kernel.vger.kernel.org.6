@@ -1,299 +1,80 @@
-Return-Path: <linux-kernel+bounces-418957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5948A9D67CB
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 07:10:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7DB59D67CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 07:14:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEF251612C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 06:10:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 324BA1612D2
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 06:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25BF6745F2;
-	Sat, 23 Nov 2024 06:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F086F16DEA9;
+	Sat, 23 Nov 2024 06:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rcr+bqvh"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="l26VeVAs"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B96DBA53
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 06:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F0F745F2;
+	Sat, 23 Nov 2024 06:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732342201; cv=none; b=YFChE4hRsbQqj4UmalYu0DrNoGoq/EHHlJ2UdmpQy4kCKVEJrFy28LP6EtmZnXyI2Tvg7bZe8FR2Y/1WT6vXO/NicXNpAhpMJrhBTTqNflnr2YKYBUO3k8zNL7RuqSG1gEDSQWboacFafMDHELVG5BhK210xh3nmBneJ7QQpFiM=
+	t=1732342453; cv=none; b=WT+c8QqyDw3qqq/vyOKGgUBXgltCCp1/DzDHcDb9dOwQyqcDExfmTPDzsLWUIlgRFLXoYD46dzPDyJEWskbOh/OiysF3tc3OCUTatXI2LAcZMDcNovtLNLs8hjQqib7A7yiC/RCJ2X4bDDg2ReFxTr9xf+HDjTn4B1FGbsqeONw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732342201; c=relaxed/simple;
-	bh=frRITaPzcBtAahtEMvvYVZTwXu3H/5fZcPsFOIOO5rE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L22S446Ykqu2+1KBxYiP/nhMu56yNGqzT7BKnp6kYQmKiv8sRVfgfzgzy++bmd45C8GmdBMtXBt5o9j3/+IJgqjfUrAza/vS8Bfh/YnXY39SeLzCYuWQ4IWLbJXGo8qxWz0gOZlVNH0GwEeBr6K5xt7kc6NodjwdZ9MyyEj054s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rcr+bqvh; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732342196;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Z/FHdAwT3UFixi6NAoa390cp3x+oKcU453tlU0Jllgg=;
-	b=rcr+bqvh97kJeYUmM+cl1xZN0Y+4OVRSTvX5uBGjp3Yt/50tnLN6/6frxztIRMjCzd9iF7
-	RgJ1Mwm+z8p9ega28RG5mV1SC8zfV++N/oJTIVMHELurBmacIifBdVqZ8G9usbW9VuhkxM
-	7x2++VYXzMHlDIJ8mzHDJt9F87+LkQI=
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	linux-mm@kvack.org,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>
-Subject: [PATCH] mm: mmap_lock: optimize mmap_lock tracepoints
-Date: Fri, 22 Nov 2024 22:09:39 -0800
-Message-ID: <20241123060939.169978-1-shakeel.butt@linux.dev>
+	s=arc-20240116; t=1732342453; c=relaxed/simple;
+	bh=cWZA13NEpGgUKcjTGGxnbtDxPl+U5UyU6KnlR/FVdII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qdej1Is1CyA76JQeEudP1hJckr8n8woI7OJ4GFwHEh1v6tcWLsd4wjApCixlZZtCdujtRMmysdjhWEqy1uFlkRlTv9OF3tYQF75dTvzqkD6o58y5cs8jAoHtpEsriU3j/hD/250CVwvWqiKcbpUCUCjQLacdA1q4tYLjVjb42Uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=l26VeVAs; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=EjvPV4IAoZwWE6d4dXszLiblhwQ+DDKq6CDDSeiu+tk=; b=l26VeVAsJoYSRJlNHvi9w/D/+C
+	UDJSXkgaXbCP5iQ6wZEI6XM/210kElFGymGHoMEadmsQ+SKwYJqpUnyPiEdNfWR0DUWRCq2qfnHH/
+	mP/P6tP8HCDbWI5rrACZ4phic2dkRtLb9D15aQplJmGVLOb7PFU6mV0AkVyvybpiqcoJemHqRAZf+
+	I0yTODtAGoOdyH3hl/gjUSzGN5GCUHteGkZiZ1/L1/fIPgjuveqYR2+Bg2yzmjsoxF9FbnQxktvWm
+	0tE0w6SqJWAD2+dRHJjTn9+ParTPtco1R4/x5DyEm4JT707P0BTBp3/xgazAPIKHl8GcPNyisSuJx
+	oNUTBhFw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tEjPD-00000000deu-33NN;
+	Sat, 23 Nov 2024 06:14:07 +0000
+Date: Sat, 23 Nov 2024 06:14:07 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org
+Subject: Re: [GIT PULL] overlayfs updates for 6.13
+Message-ID: <20241123061407.GR3387508@ZenIV>
+References: <20241122095746.198762-1-amir73il@gmail.com>
+ <CAHk-=wg_Hbtk1oeghodpDMc5Pq24x=aaihBHedfubyCXbntEMw@mail.gmail.com>
+ <CAHk-=wgLSHFvUhf7J5aJuuWpkW7vayoHjmtbnY1HZZvT361uxA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgLSHFvUhf7J5aJuuWpkW7vayoHjmtbnY1HZZvT361uxA@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-We are starting to deploy mmap_lock tracepoint monitoring across our
-fleet and the early results showed that these tracepoints are consuming
-significant amount of CPUs in kernfs_path_from_node when enabled.
+On Fri, Nov 22, 2024 at 10:09:04PM -0800, Linus Torvalds wrote:
 
-It seems like the kernel is trying to resolved the cgroup path in the
-fast path of the locking code path when the tracepoints are enabled. In
-addition for some application their metrics are regressing when
-monitoring is enabled.
+>  (a) add a new "dup_cred()" helper
+> 
+>     /* Get the cred without clearing the 'non_rcu' flag */
+>     const struct cred *dup_cred(const struct cred *cred)
+>     { get_new_cred((struct cred *)cred); return cred; }
 
-The cgroup path resolution can be slow and should not be done in the
-fast path. Most userspace tools, like bpftrace, provides functionality
-to get the cgroup path from cgroup id, so let's just trace the cgroup
-id and the users can use better tools to get the path in the slow path.
-
-Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
----
- include/linux/memcontrol.h       | 18 ++++++++++++
- include/trace/events/mmap_lock.h | 32 ++++++++++----------
- mm/mmap_lock.c                   | 50 ++------------------------------
- 3 files changed, 36 insertions(+), 64 deletions(-)
-
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 5502aa8e138e..d82f08cd70cd 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -1046,6 +1046,19 @@ static inline void memcg_memory_event_mm(struct mm_struct *mm,
- 
- void split_page_memcg(struct page *head, int old_order, int new_order);
- 
-+static inline u64 memcg_id_from_mm(struct mm_struct *mm)
-+{
-+	struct mem_cgroup *memcg;
-+	u64 id = 0;
-+
-+	rcu_read_lock();
-+	memcg = mem_cgroup_from_task(rcu_dereference(mm->owner));
-+	if (likely(memcg))
-+		id = cgroup_id(memcg->css.cgroup);
-+	rcu_read_unlock();
-+	return id;
-+}
-+
- #else /* CONFIG_MEMCG */
- 
- #define MEM_CGROUP_ID_SHIFT	0
-@@ -1466,6 +1479,11 @@ void count_memcg_event_mm(struct mm_struct *mm, enum vm_event_item idx)
- static inline void split_page_memcg(struct page *head, int old_order, int new_order)
- {
- }
-+
-+static inline u64 memcg_id_from_mm(struct mm_struct *mm)
-+{
-+	return 0;
-+}
- #endif /* CONFIG_MEMCG */
- 
- /*
-diff --git a/include/trace/events/mmap_lock.h b/include/trace/events/mmap_lock.h
-index bc2e3ad787b3..5529933d19c5 100644
---- a/include/trace/events/mmap_lock.h
-+++ b/include/trace/events/mmap_lock.h
-@@ -5,6 +5,7 @@
- #if !defined(_TRACE_MMAP_LOCK_H) || defined(TRACE_HEADER_MULTI_READ)
- #define _TRACE_MMAP_LOCK_H
- 
-+#include <linux/memcontrol.h>
- #include <linux/tracepoint.h>
- #include <linux/types.h>
- 
-@@ -12,64 +13,61 @@ struct mm_struct;
- 
- DECLARE_EVENT_CLASS(mmap_lock,
- 
--	TP_PROTO(struct mm_struct *mm, const char *memcg_path, bool write),
-+	TP_PROTO(struct mm_struct *mm, bool write),
- 
--	TP_ARGS(mm, memcg_path, write),
-+	TP_ARGS(mm, write),
- 
- 	TP_STRUCT__entry(
- 		__field(struct mm_struct *, mm)
--		__string(memcg_path, memcg_path)
-+		__field(u64, memcg_id)
- 		__field(bool, write)
- 	),
- 
- 	TP_fast_assign(
- 		__entry->mm = mm;
--		__assign_str(memcg_path);
-+		__entry->memcg_id = memcg_id_from_mm(mm);
- 		__entry->write = write;
- 	),
- 
- 	TP_printk(
--		"mm=%p memcg_path=%s write=%s",
--		__entry->mm,
--		__get_str(memcg_path),
-+		"mm=%p memcg_id=%llu write=%s",
-+		__entry->mm, __entry->memcg_id,
- 		__entry->write ? "true" : "false"
- 	)
- );
- 
- #define DEFINE_MMAP_LOCK_EVENT(name)                                    \
- 	DEFINE_EVENT(mmap_lock, name,                                   \
--		TP_PROTO(struct mm_struct *mm, const char *memcg_path,  \
--			bool write),                                    \
--		TP_ARGS(mm, memcg_path, write))
-+		TP_PROTO(struct mm_struct *mm, bool write),		\
-+		TP_ARGS(mm, write))
- 
- DEFINE_MMAP_LOCK_EVENT(mmap_lock_start_locking);
- DEFINE_MMAP_LOCK_EVENT(mmap_lock_released);
- 
- TRACE_EVENT(mmap_lock_acquire_returned,
- 
--	TP_PROTO(struct mm_struct *mm, const char *memcg_path, bool write,
--		bool success),
-+	TP_PROTO(struct mm_struct *mm, bool write, bool success),
- 
--	TP_ARGS(mm, memcg_path, write, success),
-+	TP_ARGS(mm, write, success),
- 
- 	TP_STRUCT__entry(
- 		__field(struct mm_struct *, mm)
--		__string(memcg_path, memcg_path)
-+		__field(u64, memcg_id)
- 		__field(bool, write)
- 		__field(bool, success)
- 	),
- 
- 	TP_fast_assign(
- 		__entry->mm = mm;
--		__assign_str(memcg_path);
-+		__entry->memcg_id = memcg_id_from_mm(mm);
- 		__entry->write = write;
- 		__entry->success = success;
- 	),
- 
- 	TP_printk(
--		"mm=%p memcg_path=%s write=%s success=%s",
-+		"mm=%p memcg_id=%llu write=%s success=%s",
- 		__entry->mm,
--		__get_str(memcg_path),
-+		__entry->memcg_id,
- 		__entry->write ? "true" : "false",
- 		__entry->success ? "true" : "false"
- 	)
-diff --git a/mm/mmap_lock.c b/mm/mmap_lock.c
-index f186d57df2c6..e7dbaf96aa17 100644
---- a/mm/mmap_lock.c
-+++ b/mm/mmap_lock.c
-@@ -17,51 +17,7 @@ EXPORT_TRACEPOINT_SYMBOL(mmap_lock_start_locking);
- EXPORT_TRACEPOINT_SYMBOL(mmap_lock_acquire_returned);
- EXPORT_TRACEPOINT_SYMBOL(mmap_lock_released);
- 
--#ifdef CONFIG_MEMCG
--
--/*
-- * Size of the buffer for memcg path names. Ignoring stack trace support,
-- * trace_events_hist.c uses MAX_FILTER_STR_VAL for this, so we also use it.
-- */
--#define MEMCG_PATH_BUF_SIZE MAX_FILTER_STR_VAL
--
--#define TRACE_MMAP_LOCK_EVENT(type, mm, ...)				\
--	do {								\
--		if (trace_mmap_lock_##type##_enabled()) {		\
--			char buf[MEMCG_PATH_BUF_SIZE];                  \
--			get_mm_memcg_path(mm, buf, sizeof(buf));        \
--			trace_mmap_lock_##type(mm, buf, ##__VA_ARGS__); \
--		}							\
--	} while (0)
--
--#else /* !CONFIG_MEMCG */
--
--#define TRACE_MMAP_LOCK_EVENT(type, mm, ...)                                   \
--	trace_mmap_lock_##type(mm, "", ##__VA_ARGS__)
--
--#endif /* CONFIG_MEMCG */
--
- #ifdef CONFIG_TRACING
--#ifdef CONFIG_MEMCG
--/*
-- * Write the given mm_struct's memcg path to a buffer. If the path cannot be
-- * determined, empty string is written.
-- */
--static void get_mm_memcg_path(struct mm_struct *mm, char *buf, size_t buflen)
--{
--	struct mem_cgroup *memcg;
--
--	buf[0] = '\0';
--	memcg = get_mem_cgroup_from_mm(mm);
--	if (memcg == NULL)
--		return;
--	if (memcg->css.cgroup)
--		cgroup_path(memcg->css.cgroup, buf, buflen);
--	css_put(&memcg->css);
--}
--
--#endif /* CONFIG_MEMCG */
--
- /*
-  * Trace calls must be in a separate file, as otherwise there's a circular
-  * dependency between linux/mmap_lock.h and trace/events/mmap_lock.h.
-@@ -69,20 +25,20 @@ static void get_mm_memcg_path(struct mm_struct *mm, char *buf, size_t buflen)
- 
- void __mmap_lock_do_trace_start_locking(struct mm_struct *mm, bool write)
- {
--	TRACE_MMAP_LOCK_EVENT(start_locking, mm, write);
-+	trace_mmap_lock_start_locking(mm, write);
- }
- EXPORT_SYMBOL(__mmap_lock_do_trace_start_locking);
- 
- void __mmap_lock_do_trace_acquire_returned(struct mm_struct *mm, bool write,
- 					   bool success)
- {
--	TRACE_MMAP_LOCK_EVENT(acquire_returned, mm, write, success);
-+	trace_mmap_lock_acquire_returned(mm, write, success);
- }
- EXPORT_SYMBOL(__mmap_lock_do_trace_acquire_returned);
- 
- void __mmap_lock_do_trace_released(struct mm_struct *mm, bool write)
- {
--	TRACE_MMAP_LOCK_EVENT(released, mm, write);
-+	trace_mmap_lock_released(mm, write);
- }
- EXPORT_SYMBOL(__mmap_lock_do_trace_released);
- #endif /* CONFIG_TRACING */
--- 
-2.43.5
-
+Umm...  Something like hold_cred() might be better - dup usually
+implies copying an object...  For grapping a reference we
+normally go for something like hold/get/grab/pin...
 
