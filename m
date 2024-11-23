@@ -1,141 +1,117 @@
-Return-Path: <linux-kernel+bounces-419192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04A479D6A9B
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 18:39:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD9819D6A9C
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 18:39:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A39A6B21244
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:39:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FD7E161944
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3DD146588;
-	Sat, 23 Nov 2024 17:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69CF713CFA8;
+	Sat, 23 Nov 2024 17:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UMDroGWF"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g8m5UZMT"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF50411CA9
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 17:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3373A2309A9;
+	Sat, 23 Nov 2024 17:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732383534; cv=none; b=Aq2kBLEs8XaYeMMEABdcs8iE6Nyd4uKQHIftNI92xTC4xguW7Bb8F6pgc3ifOoIhSxdtML7e6ceJ9ffXlrQzXrzi/CBW1Vl5Jyj8OBNWFFiaWjNGTvBkaguGonFKbCeNSlovywKPXWOvE1FM2KqGOsegwY1bVthR0cnYKPd8W+M=
+	t=1732383577; cv=none; b=epkUoLvtLOnRUO94j/1WaCWbU3Q5w3ceBTP5XIUU4kY/2OVdyRkwQN6kQoOMH9YzgDIEd5677pJbUuZDWQBoPuRhLwXK4m+NIdt2PPTH+1nYMInBWOmHC7FtX7ZyBaHVK+sfPaG6jMlev7BJCmhK8pUO8pWhhXWhPMn7txcePJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732383534; c=relaxed/simple;
-	bh=Z2N+kTJzZXoQJzfXPyysOgIn5Wbo9WbTTSH/hpfAXyE=;
+	s=arc-20240116; t=1732383577; c=relaxed/simple;
+	bh=10RxbR7ins5I/8Ouv+Ck9BsPNvjz92S1DpHBA2ih64k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fHGVl2zIq09AKxcRvmGyHPZyOLbbPIa/tAOGZfj1Y96kBJlGDIHVUSP/3ktYBHxP15G6UBgev1TGacZ03hG4X7JidIGrAKUzBZxYklE3nrRbJHY172QzluGLSbjL/8xO9wfx9bfv7ln0ThZnSqfYqxDxi0l1amhyQoR6TfGXUGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UMDroGWF; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa20944ce8cso758688766b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 09:38:52 -0800 (PST)
+	 To:Cc:Content-Type; b=aVh5EQlAh0ak/UyCDoVCur4wONz5x4tNek0C+j+2KIdh6MhxRXF0ZrofX6vW9pOIATstYUfO9Kuf5giDjQa0tnGXtQeKZK24AtlXG5NuoF9Ab0oJMMI7YkGfYpZ8ycpvh7NjhnPMo+Jo46GzkyTNEbJxvCMOC4cxmsvu4jUSIH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g8m5UZMT; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2121858db03so3488965ad.2;
+        Sat, 23 Nov 2024 09:39:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732383531; x=1732988331; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vpM1fsZfdZBok4MSDnesEhvbM53AiXvjDwKI+kJlxP0=;
-        b=UMDroGWF1+7vELjsmAXzd2LAZEjNp880pmEcFq6eKCbmgRJZNH2uzdXNlaj+5T90L9
-         iknr/bZ82UM8jLlcWT+7cMvoDniVtGVeP2YeewGqfmf5Q/ZYVaRiFcMvIt1o/Rwnt3+b
-         NiwXL7qcOgK8k6V8k+2YaJif9xh1S0p49PNQc=
+        d=gmail.com; s=20230601; t=1732383575; x=1732988375; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qe481K4vactw+UN4O2JIFyk3k/AejJVaIiJrhPoavoU=;
+        b=g8m5UZMTmw2RJQ+bEIUw5XL2wAVpIfA5cRn6cH+etq94J7wCMCe+Ls8WDQQagKjP8k
+         wOF4cfucgRh8kqEHkU6ISrLcNawfaLfaE2RJd8gV0H2HMACrM4p/pbE19tLUJrLh5ehB
+         fFvDKXTahMaiUBkibjToOEpPhXn3SKHjAQXUJ20wNq7vZEBIiX9UM59x/lVnSpLVWsS7
+         i0vYROx4IcHtXm+ozLVZ8EspiMxJpM2YQeT/YIR4IzXudY8coxaPjeGvmmwGypQ7ljW6
+         AaXOY6BmIuiEOH+srBsscgh5gfE5IOAH29VKc/vyjFy7zqLLe3kj2flq9BKoniUZdTz+
+         IKZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732383531; x=1732988331;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vpM1fsZfdZBok4MSDnesEhvbM53AiXvjDwKI+kJlxP0=;
-        b=WRez5DjXaMueFIufQrQbdfLXHqk899JtxsdKr51nnA9cA9RyWa663AhPBZX9qc92Wm
-         W1Fz8FO4Sr4EPTq/Nv7EqsHnzMyEygUUmGqEXTOXyJW26upVCjeL/CQwLF13C7ZvNdZI
-         QBdyBhuEYxzLuga/5cgbrYNCEv4Jk8N6pZ+ZpwwMTzs2Mq8iBIkvGUpFd4R9YQUQjk55
-         kQ6oLKzkJPH1Z8a9zlqiJu7Nvsm+4pdxLak81IU6JIVMD1i/MWgO6pdmjTwWx0hrmbM4
-         jzqA8Ijm6u9/OAgga46SxbbQZHX2XGNvr1OZ6y1VdWovg5R1hINO2rnlcTMZ8d+8XAL3
-         UYyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVVKao3A91uAzfdR4nKXFN1gR4RYjlcLDU3lyKVu6a+yEFkDLQo4HJcNVWOe0e2RlWBwsmP61UaVXyNDts=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaY3SvT9ldmbtLejwukNtOkuUU7rnMFBN/4jI+56H1QcT+VKKS
-	Lp0QSq+QsxqThVCNPNUXC4yif+LHVZKITlJhLCh/furqozrX6xiTqmDsqdJieGhN2ngbfUpJXXl
-	hT/fAqA==
-X-Gm-Gg: ASbGncsNsQCp7tm1jE1j4jcps8A15GzR4z32UNspLUvQ1QE2/Tp1s4FcqN9wwxX5J2w
-	CskvXqHw1LeeQJBwy4QvSSYqURTugGnsCc91gqcyJhHtOexWMH6xHOiBtLLyEGtlYWjXhtAPq2b
-	HL/U75XhwlXV8tFMbxXuQAJg93E7Jr/MEOEIZe1OTW0LEmr1hWk5JAEF8Lc/6iACUqsebUItWlX
-	i0+epjWttdprFrjpXIpJuYffd1DuGdxTGaBjE5qma5ex398REulIGpgvZtm9/HyyrFnQavlI+Mk
-	498wAjkDzLYyMKsMp3W/mXaY
-X-Google-Smtp-Source: AGHT+IH6S7My9w4RWoT/7DMQb9U+nsuPqGXL2AGSGOiBR30w3UKYBYwOTlIH7LR6EenhZlUu8HVm5Q==
-X-Received: by 2002:a17:906:32d4:b0:aa5:ac9:ce5f with SMTP id a640c23a62f3a-aa50ac9d235mr848686166b.0.1732383531209;
-        Sat, 23 Nov 2024 09:38:51 -0800 (PST)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b2a49aasm250493866b.1.2024.11.23.09.38.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 23 Nov 2024 09:38:50 -0800 (PST)
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cfcb7183deso7188015a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 09:38:50 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV5dsuvUq9dG5UhC85+8wv+ZddUg+tPTxHt1aU2sw2bnI1jJNz3lJpjUzHL0vUSoSLWgfdCKiYGS2ZGeI4=@vger.kernel.org
-X-Received: by 2002:a17:907:7853:b0:a9a:17be:fac7 with SMTP id
- a640c23a62f3a-aa509a07836mr857912866b.14.1732383529933; Sat, 23 Nov 2024
- 09:38:49 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732383575; x=1732988375;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qe481K4vactw+UN4O2JIFyk3k/AejJVaIiJrhPoavoU=;
+        b=GVTv4jlt6yT0uZnG07ICaIHhXy1y95npeMKxzr7tqA100+ggD0E/dJSNSqWAKdq2kS
+         PYHrxglKUdknGRIolyE4V15NAbPoA4j2oMb4n7EmL1R4YRK1t2IxbSfU9r83kg9/lrPU
+         eLclIiELaIU9mdG9iUP7fAAuwk1yQ3Y5af5XpwTXvDLzJCQ4tu2JKtQEjt0V8+NlqUUX
+         Zr4+MyStclU8fcakZ6MIGd0uSDe1Pt5/++3FIgDCmjNiwPEzwlGC+4KrgIQ8IAEM3kG/
+         ckf16nkDmY6T6dWtwLmUA5lYDglrLZJ5Vtnm60qtlel1k6InYsoDmR+66gRXXmljoaEV
+         IFjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVoPCEPDEBtPWS1hMexMVrSVpURxpZybm0B/Tdl7oISIPbd5um1wIsMox4CWY1XNbwQu6PTBUgvBMRPuw=@vger.kernel.org, AJvYcCW0TBfhsUF2t8iuOAMzH0Qs+M5owEka0kU9VLNBBZ38qkJZxMuTwkW5HLtx6fuXPlKGC79fan9EFzUSSpVr9r0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA1gWrC24VbK+wZLwa6yFK5VdmWuDYgX8vEIPv7OzxOCs7TAq0
+	tZKfPimnZTITJu/nuEmTsAPyr4s7WQAIlzSvQqv7pTiJN39ijraMT7xECl1jsEgbQtjcDPjzVwg
+	h7dFSm5vpWLuvt1PEafvibPpGJwM=
+X-Gm-Gg: ASbGncvqYWzix9fWDEku5Y6k5m2ia1QnWRayvafZt02j8JNsZ0ga7KRUHnJ5oGMRWnu
+	Qiz1fLzooegxL63yW9WoCzJOz8/V8mw==
+X-Google-Smtp-Source: AGHT+IE5Ll6Nx8YWkRinN7yzURC8SQfke0DCzcmaFl1uxQMnEdikIKbvGxBVUnu8385PM5/ScM+GAe7RjdY35sp0R8o=
+X-Received: by 2002:a17:90b:2250:b0:2ea:47f1:79d3 with SMTP id
+ 98e67ed59e1d1-2eb0e89c251mr3531306a91.6.1732383575479; Sat, 23 Nov 2024
+ 09:39:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241123153031.2884933-1-mathieu.desnoyers@efficios.com> <20241123153031.2884933-5-mathieu.desnoyers@efficios.com>
-In-Reply-To: <20241123153031.2884933-5-mathieu.desnoyers@efficios.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 23 Nov 2024 09:38:33 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whTjKsV5jYyq5yAxn7msQuyFdr9LB1vXcF6dOw2tubkWA@mail.gmail.com>
-Message-ID: <CAHk-=whTjKsV5jYyq5yAxn7msQuyFdr9LB1vXcF6dOw2tubkWA@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/5] tracing: Remove conditional locking from __DO_TRACE()
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Michael Jeanson <mjeanson@efficios.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, 
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org, 
-	Joel Fernandes <joel@joelfernandes.org>, Jordan Rife <jrife@google.com>, 
-	linux-trace-kernel@vger.kernel.org
+References: <20241123-rust-fix-arraylayout-v1-1-197e64c95bd4@asahilina.net>
+In-Reply-To: <20241123-rust-fix-arraylayout-v1-1-197e64c95bd4@asahilina.net>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 23 Nov 2024 18:39:23 +0100
+Message-ID: <CANiq72=axLe_WvPohRRpAnmmPOHtwSK1W3e86n7FMF2mao8HUg@mail.gmail.com>
+Subject: Re: [PATCH] rust: alloc: Fix `ArrayLayout` allocations
+To: Asahi Lina <lina@asahilina.net>
+Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Janne Grunau <j@jannau.net>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	asahi@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 23 Nov 2024 at 07:31, Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
+On Sat, Nov 23, 2024 at 11:30=E2=80=AFAM Asahi Lina <lina@asahilina.net> wr=
+ote:
 >
->  include/linux/tracepoint.h | 45 ++++++++++----------------------------
->  1 file changed, 12 insertions(+), 33 deletions(-)
+> We were accidentally allocating a layout for the *square* of the object
+> size due to a variable shadowing mishap.
 
-Thanks. This looks much more straightforward, and obviously is smaller too.
+Good catch, thanks! (Square?)
 
-Side note: I realize I was the one suggesting "scoped_guard()", but
-looking at the patch I do think that just unnecessarily added another
-level of indentation. Since you already wrote the
+`clippy::shadow_reuse` would catch this, but it does catch a lot more
+things, sadly.
 
-    if (cond) {
-        ..
-    }
+I sent:
 
-part as a block statement, there's no upside to the guard having its
-own scoped block, so instead of
+    https://github.com/rust-lang/rust-clippy/issues/3433#issuecomment-24955=
+47322
 
-    if (cond) { \
-        scoped_guard(preempt_notrace)           \
-            __DO_TRACE_CALL(name, TP_ARGS(args)); \
-    }
+and added it to the Clippy list. If one of the ideas in the issue are
+implemented, then I think we should easily enable it.
 
-this might be simpler as just a plain "guard()" and one less indentation:
+Similarly, we could do `shadow_unrelated` -- that one seems easier,
+and perhaps we should do it anyway, at least a couple cases I saw
+would make the code clearer.
 
-    if (cond) { \
-        guard(preempt_notrace);           \
-        __DO_TRACE_CALL(name, TP_ARGS(args)); \
-    }
-
-but by now this is just an unimportant detail.
-
-I think I suggested scoped_guard() mainly because that would then just
-make the "{ }" in the if-statement superfluous, but that's such a
-random reason that it *really* doesn't matter.
-
-             Linus
+Cheers,
+Miguel
 
