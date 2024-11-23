@@ -1,114 +1,113 @@
-Return-Path: <linux-kernel+bounces-419188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 307D49D6A82
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 18:19:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 750D79D6A91
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 18:25:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A36C281DE7
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:19:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14785B21B4C
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A881A381AA;
-	Sat, 23 Nov 2024 17:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="S104uy/M"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA44146013;
+	Sat, 23 Nov 2024 17:25:05 +0000 (UTC)
+Received: from air.basealt.ru (air.basealt.ru [193.43.8.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22035195
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 17:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB898195;
+	Sat, 23 Nov 2024 17:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.43.8.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732382355; cv=none; b=EDSNBtdE3j74mvtvK2EbIbv7+G1IK9EKr/XqCcF6WTRubKqxo+H76SHXG6+rhwiThoi/d64QaPeJPNJVmdJCQWA9xzX+S5SZw5lGV40hKe3qWpWi8jFPyWpXw4DTk6kZuBPnLdyD7MNwtLoyfiThfzlw1dtEijsAcZS/j/PCjVk=
+	t=1732382704; cv=none; b=uWW3B18NFbC0i4zbsW0R93L9xR1QUNZCID/zwWV3TUdsoQ6C3rqHsspXOxltSJ3avu49ypa9PKrkh0cimvSXYLU4jKWI9Tul6yK/firIydCKukaoXqbvZZ++i0wK3hyXyfmJaM1QdECL1dg+DbvBNpVq0Nb/b16KteLQY/iyolA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732382355; c=relaxed/simple;
-	bh=QNIZtU4UrRNcRlunJNgMSCglLrYx5rpbKWGGR17NwJI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rMaexwX/cJ7d9Ahd8Z80F7kMCR3YuOX+pQ+5zn4+ItiL2egPk3n7LXpReOOZrBSQ/9aixlNLzQHGTpe/EB2F5OG23QvrnuY2Hp7fOpWMHi3KjurHE5BfqQlT8vaFuM4cueT8Ih3q4/+TIxydok4U2cUyMU1MDYKSIrcyVHcWXJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=S104uy/M; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a850270e2so516708866b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 09:19:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732382351; x=1732987151; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=d5ChkXbScmteXOdHtNzIaXrYK9u5mdbWBULNnkBZeec=;
-        b=S104uy/Mmq8ePJYaZ/iehPGsIQiH7DO5g7nZXzIqaTLvWthUwAeeYjwBXxZrOLp8qN
-         PELXalv34hVIbzFhTiVuXHR++UdJcZalj2OGQuvlLHK+SJKCnC2uDHkIkp63bnAKayWl
-         N5qMPHa3gejLeODnNIJuurFLxIm+exhuroOfU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732382351; x=1732987151;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d5ChkXbScmteXOdHtNzIaXrYK9u5mdbWBULNnkBZeec=;
-        b=LHUyvzQVGLC7SVBkmFDaQZLg/h5Gfpg6zSaUpEojpzB6xoJeNp6zKUipgjniFdXEwu
-         jOJGHCneAZAF65UBjVFwJFyRglult30BFrxD0da6Q9QJwZgDn+8HJpwCjFN62IQGf4VL
-         e/KEiCe5ST1VoXTc28C0j6EyLcEumbEhs8rL6eIZd01gKYdyHABmnzgETFvWKo4PKB1Z
-         82IR5bxXuUqRJtXnzlRAND8+/6rRPBIdVLR+fzHudMgcodmfV9Q6ZLxpnXqw6SWuo4u0
-         HrEbmv0xpLstahHCFWifvf5sEth8gXYgluQwu7qimXPGgdd6sN5IcrDcJTk72DLtpPXa
-         mJ+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXV9PtEOlLDRxrqJaH/6Oo2D7BQ9KWp/jcYCJyrirAvRfmZKSyotkUr7eWvyVF9s2VVP5nRe05QXbzrTts=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+O58TmsMIY4ChxotLynF85TsdDU6wiOHkBkY7qY6CTJOpEFkL
-	GzAyqgSJ+NLAViUwGyFPmKU6u6LOtY/M6WwU16EgyX3KjscTTBipT8PN2ARjVbvkw9/D2x8jJE8
-	45MGcnA==
-X-Gm-Gg: ASbGncuNqnt8vgZ/qp++1QvKD3H4PU98ezLcJl0Nnrbon/dk8ES14HQSWtwBlITUCPb
-	wy0XsRYeJeL57KG+qLPd22tmWKoL9LoW600sgEfkqvGLThV85unL1T2JdV4bbaExnleWAZR4hrA
-	NC1AwKiQpt190LNy9VynW0XY31YqEdZ7GD2bxVTp60VEiPXHu/Qlkh+Pfzm/5a5TxPiG6aIEPXD
-	/qZxBPnc4HDZTl2UrzW+2o2ms1rKBuhFBxJ9jnifS7pjHdhw+u4aQ49xlhZnW5+8Uw4oQES+Tuo
-	SheCYTUYM9IIN/NBF2rAYcPR
-X-Google-Smtp-Source: AGHT+IHznlsEwdB7icssG716XtZk+NkWk+ePotkjcKywpiAXLiKlyYSFY6LyU3e+cxotEqB+rLhM5A==
-X-Received: by 2002:a17:906:cc9:b0:a9a:82e2:e8ce with SMTP id a640c23a62f3a-aa509b90dffmr612105466b.40.1732382351216;
-        Sat, 23 Nov 2024 09:19:11 -0800 (PST)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b52fa76sm249673166b.94.2024.11.23.09.19.10
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 23 Nov 2024 09:19:10 -0800 (PST)
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5cedf5fe237so3557344a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 09:19:10 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVDdcWFdY4US/llfO+Ijw63+F85RfrC4G5k9zG5zBxyrm5YS1SN4+nK6wAayuU5GwVRGvzI7FYl1JoTUrs=@vger.kernel.org
-X-Received: by 2002:a17:906:2191:b0:aa5:cad:eb08 with SMTP id
- a640c23a62f3a-aa50cadec25mr539778766b.39.1732382350257; Sat, 23 Nov 2024
- 09:19:10 -0800 (PST)
+	s=arc-20240116; t=1732382704; c=relaxed/simple;
+	bh=ge5FSu7/fAqLGmxFcR6uayT1c3YhSPc3WQsqzXSlKcc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Grhlbp1I4nB+6T+JqipT7wUAjBQGAw88QUw+v0XdtDafomAPadXYS5dbC+th8x50Bb8QqYL7ZR11QRg6YbHOu2wSryBbPXknAe0n+qCTTerAjQu8q539Ok4vSrLd24I3MhObT+koiKo/y2Qqpkbhv76BX0D/ro/vSHkhRx41tas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=193.43.8.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from altlinux.ipa.basealt.ru (unknown [178.76.204.78])
+	by air.basealt.ru (Postfix) with ESMTPSA id 9179223380;
+	Sat, 23 Nov 2024 20:24:56 +0300 (MSK)
+From: Vasiliy Kovalev <kovalev@altlinux.org>
+To: "Tigran A . Aivazian" <aivazian.tigran@gmail.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: kovalev@altlinux.org
+Subject: [PATCH] bfs: validate inode vtype and discard invalid entries
+Date: Sat, 23 Nov 2024 20:24:53 +0300
+Message-Id: <20241123172453.275255-1-kovalev@altlinux.org>
+X-Mailer: git-send-email 2.33.8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122095746.198762-1-amir73il@gmail.com> <CAHk-=wg_Hbtk1oeghodpDMc5Pq24x=aaihBHedfubyCXbntEMw@mail.gmail.com>
- <CAHk-=wgLSHFvUhf7J5aJuuWpkW7vayoHjmtbnY1HZZvT361uxA@mail.gmail.com> <20241123061407.GR3387508@ZenIV>
-In-Reply-To: <20241123061407.GR3387508@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 23 Nov 2024 09:18:52 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiWYnr+V1-RbgvxkuD6uSQUJWGuounVMXThyH8jJ49c2w@mail.gmail.com>
-Message-ID: <CAHk-=wiWYnr+V1-RbgvxkuD6uSQUJWGuounVMXThyH8jJ49c2w@mail.gmail.com>
-Subject: Re: [GIT PULL] overlayfs updates for 6.13
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 22 Nov 2024 at 22:14, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Fri, Nov 22, 2024 at 10:09:04PM -0800, Linus Torvalds wrote:
->
-> >  (a) add a new "dup_cred()" helper
-> >
-> >     /* Get the cred without clearing the 'non_rcu' flag */
-> >     const struct cred *dup_cred(const struct cred *cred)
-> >     { get_new_cred((struct cred *)cred); return cred; }
->
-> Umm...  Something like hold_cred() might be better - dup usually
-> implies copying an object...
+The inode's `i_mode` field previously included all 16 bits from the
+BFS on-disk mode, which combines permission bits (0-11) with file type
+bits (12-15).
+However, this approach allowed invalid type bits to propagate, leading
+to inodes with uninitialized or incorrect fields.
 
-Ack. "dup" is clearly a horrible name, and I'm ashamed and properly chastised.
+As Al Viro noted [1], file types are determined by bits 12-15, which
+correspond to:
+- `0x4000` for directories,
+- `0x8000` for regular files,
+- other values for different types like FIFOs or symlinks.
 
-               Linus
+If the `i_vtype` field does not match a valid file type (e.g., `BFS_VDIR`
+or `BFS_VREG`), it indicates corruption or an unsupported state in the
+filesystem.
+
+This patch restricts `i_mode` to the lower 12 bits and validates `i_vtype`:
+- Directories and regular files are handled as expected.
+- Inodes with invalid `i_vtype` values are discarded, and a warning is
+logged for debugging.
+
+[1] https://lore.kernel.org/linux-unionfs/20241123002157.GP3387508@ZenIV/
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: syzbot+a8c9d476508bd14a90e5@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=a8c9d476508bd14a90e5
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
+---
+ fs/bfs/inode.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/fs/bfs/inode.c b/fs/bfs/inode.c
+index db81570c96375..c02efc5724d26 100644
+--- a/fs/bfs/inode.c
++++ b/fs/bfs/inode.c
+@@ -60,7 +60,7 @@ struct inode *bfs_iget(struct super_block *sb, unsigned long ino)
+ 	off = (ino - BFS_ROOT_INO) % BFS_INODES_PER_BLOCK;
+ 	di = (struct bfs_inode *)bh->b_data + off;
+ 
+-	inode->i_mode = 0x0000FFFF & le32_to_cpu(di->i_mode);
++	inode->i_mode = 0x00000FFF & le32_to_cpu(di->i_mode);
+ 	if (le32_to_cpu(di->i_vtype) == BFS_VDIR) {
+ 		inode->i_mode |= S_IFDIR;
+ 		inode->i_op = &bfs_dir_inops;
+@@ -70,6 +70,11 @@ struct inode *bfs_iget(struct super_block *sb, unsigned long ino)
+ 		inode->i_op = &bfs_file_inops;
+ 		inode->i_fop = &bfs_file_operations;
+ 		inode->i_mapping->a_ops = &bfs_aops;
++	} else {
++		printf("Invalid vtype %u for inode %s:%08lx\n",
++			le32_to_cpu(di->i_vtype), inode->i_sb->s_id, ino);
++		brelse(bh);
++		goto error;
+ 	}
+ 
+ 	BFS_I(inode)->i_sblock =  le32_to_cpu(di->i_sblock);
+-- 
+2.33.8
+
 
