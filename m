@@ -1,144 +1,84 @@
-Return-Path: <linux-kernel+bounces-419278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 808D99D6BAF
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 22:55:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D9F59D6BB0
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 23:01:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0E9CB2227B
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 21:55:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAC43B22324
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 22:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534E31A01B9;
-	Sat, 23 Nov 2024 21:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05B419F42F;
+	Sat, 23 Nov 2024 22:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="wqNEyzw0";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RYdH079U"
-Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="miJvszto"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941BB433AB;
-	Sat, 23 Nov 2024 21:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41EE1862A;
+	Sat, 23 Nov 2024 22:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732398930; cv=none; b=gn1umexq+jS9xTa0O68vhz2ft0XRM4cSTt5VI5iUv+/94Y4+O508sbm1c22pB+7Y7XWZRMb4L1JEp7ek9G+r/ifs30yxTE58iKer5VHTOvjZvVGfp02q/rYZyey/LlgpcQVinMmMX+f3xGrxgAE3EUCSZlBVH4XcgkXY/7FUARE=
+	t=1732399297; cv=none; b=rsbCbUsJBlVg2cFzSapeEF2xaaCBjBCQ8J5C8kRIBSM6XnLy2t3uns0K1xoE8AbRaqotSfVa5KAi/32ai2UPp0wuQHmcH/QmFvWvDgLkgkcLF91T1DwlYp0CGc6iaektdPFeKvbC4UEk6mTi/w5iX6VtNK4RmpergijQoGGXtxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732398930; c=relaxed/simple;
-	bh=Zm0X8fq4YUcxLOenPGPNsE5Ecb98VxC895SXkjIgr44=;
+	s=arc-20240116; t=1732399297; c=relaxed/simple;
+	bh=R4TjGylb16jpWTG10E9GSwqmuPW5xKtP3F2bKF+4fZ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rhKmFE35fHEPOC17CB1a6fgsJUBWqXaJ0pWsQ4zeX4kjplG3Oot3yTBj7l2oX6QqlDZMuRxNS6DgCZjkxTSIpRSyI90eAeiWpsmBkFqYlbn4Sbn3eH2D/0+m+bkCbjOfFL7v9I3bnRzc3evUkvSYUrzMgmjxxJdPP0Yf3LaJABw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=wqNEyzw0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RYdH079U; arc=none smtp.client-ip=202.12.124.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 483202540133;
-	Sat, 23 Nov 2024 16:55:26 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-11.internal (MEProxy); Sat, 23 Nov 2024 16:55:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1732398926; x=1732485326; bh=E5wILRT4AS
-	8VZN9JFqdkKAhXm0BT9f0VwX4OKcgHv2Q=; b=wqNEyzw0IGshKMb3jr9mmAOa7y
-	ovdK3Wg7pmz0BVQUTSp4Y8M7ukRDgxBUHD8MS2ZvtEL3EluaXKC3nuQ7K958+KrO
-	0Z2mXXkO/hapDA9KP0rQ/miriax4iHUgzcYZzRfnh0f0new2wVirk27w4Y4Zm8bo
-	pXF/plgMjq3njCkDuiY1lJCl+qA5jwCulQFTN0cne+D5fbbgHWp90WOceGdSyQF3
-	7hW9YyATWamP3nQOCPyCeqJnAa3CIqjKIyHzuxIMgsw/C8gIkztf22N5EzLDG/Nv
-	xhacPAy/L7XeImCZX/EXCYZMd1MAhwrRBP0Cg5W8iYWjxtkz3ldhj45Ui3jg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1732398926; x=1732485326; bh=E5wILRT4AS8VZN9JFqdkKAhXm0BT9f0VwX4
-	OKcgHv2Q=; b=RYdH079Ux8/0wIiszDS0lHQY10umfcpdOudMPSnYO0Emd6ljim9
-	HC4Tbt7FZpQjawXpI7OFNkGREL0gtOnh8YaZ7hLXQwhNgA6hZzr3q1YH7AH3XTId
-	WEizw+ZYAjkMqFLlvQGSr08+jR/NwhGO6kln1kZRfSp08Nw8tTClaitl0nObSO7U
-	UMsb12q3fDPbBE3/eY/IL3EJIwURrF8aI6CD8QJ+L8ZDMt5Y7j8fh3e0W3J1aEVH
-	tQIhE/nllzeVOU2Jrvdr7A+yqs17zvaSYbSq04t8YowhjLUx63KSp/mPp3MViHmg
-	XHb50SAPWSh5xYQph7IigHdj+1xZnTKsoOQ==
-X-ME-Sender: <xms:TU9CZ6sS_h2A8V8NTFibpB4xxKQEiojrrXrWkwIxo67FNNmLr1lfxQ>
-    <xme:TU9CZ_ewjdFMUOyNma7pt-BF1kQj4Fky1Y_eJ9GY8Xs1AlPZ-TkG-r_mIl4Afoy9c
-    hhmQBGpYlqtUS8B7zA>
-X-ME-Received: <xmr:TU9CZ1ybZtPkd6Wx7GgvQ_mzWbEX9yjWiatUZA700QY1cbaVyXwKL-p0g7VbviagmWXVNs3533FGAVBG9pzZXsj5XSc8RLxAnp4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgedugdduheefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtjeen
-    ucfhrhhomheplfgrnhhnvgcuifhruhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenuc
-    ggtffrrghtthgvrhhnpefgvdffveelgedujeeffeehheekheelheefgfejffeftedugeet
-    hfeuudefheefteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpehjsehjrghnnhgruhdrnhgvthdpnhgspghrtghpthhtohepudegpdhmohguvgep
-    shhmthhpohhuthdprhgtphhtthhopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htoheplhhinhgrsegrshgrhhhilhhinhgrrdhnvghtpdhrtghpthhtohepohhjvggurges
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilh
-    drtghomhdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdrtghomhdprhgt
-    phhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfe
-    gpghhhsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhopegsvghnnhhordhlohhs
-    shhinhesphhrohhtohhnrdhmvgdprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrh
-    hnvghlrdhorhhg
-X-ME-Proxy: <xmx:TU9CZ1M6-Hcw9LD1QEA52hymW5RJm7jHaJaNuN9UyugI3MbWer3aGg>
-    <xmx:TU9CZ68r3xM-SWO0ElPHjIv2JXKztc90SwEjDk9iAXXEA5yDWmhnrA>
-    <xmx:TU9CZ9Vvf392EhsSHltcmUPwSR_864JBCcR8Rlo9kX89grIJGufhig>
-    <xmx:TU9CZzeNtQjT3nhfYTSbPxffLtDUHPediC5wqhdGmUEyPmg5H-Mk8A>
-    <xmx:Tk9CZ-VJgvmhx-rnAme-EEJ_ujk0coWlR-pwKamfAdEPQjMKHn9q2hL1>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 23 Nov 2024 16:55:24 -0500 (EST)
-Date: Sat, 23 Nov 2024 22:55:22 +0100
-From: Janne Grunau <j@jannau.net>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Asahi Lina <lina@asahilina.net>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	asahi@lists.linux.dev
-Subject: Re: [PATCH] rust: alloc: Fix `ArrayLayout` allocations
-Message-ID: <20241123215522.GB2171629@robin.jannau.net>
-References: <20241123-rust-fix-arraylayout-v1-1-197e64c95bd4@asahilina.net>
- <Z0I2Q_vGErIQ0xdn@pollux.localdomain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=st3sSor10AuwbWoob27s0JDDV/hTFsI9ZqLneWUO9SqKsN8M/Dagbvv+3SdIn/YJGgon9iuwi5yYAfZQXBRlhYlbNwe6JK6HY5moPEva7i4xScbkv172MHK5Z7fhwDJJuPsth4jrLnJof/WA/01i4hpRcRzFnOkGV2KESoV8RQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=miJvszto; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=VQAlmEJeN3UupymFJIVdz7z6mlrCIkMM22mcn6/6TAo=; b=miJvsztoQZsdcENufr3Tb8L/Ag
+	R9Vv8WYiqSaonaV/loGtNzqRkrzer8ucNVzz+E8Xd2+cLL3CIhfoRkjts4WayX3tbplkB4OnywcAi
+	4PuSchLjfusLFGPu+eJR40hZahvPx47eWDOqezcBUTbVcZ/Zofx+sIb3MNP+SqwA6iqd3jBtC8gSg
+	6/DNdXyBVbZAJ2lERRmI1p2ripKAOoqFRhfo2a/BehYySw0SRAl3HtOSah4D3s6gRJFK9I2SZsj+N
+	YFbQ1WHZXp0+l7BhNNGvnBdo86t9/2PW1TTntU5dewsjZUkH0vgfZw4gcE5Fz5hZyBIoYj5xXWUqB
+	yP8znscQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tEyC5-00000009gaW-0Dk9;
+	Sat, 23 Nov 2024 22:01:33 +0000
+Date: Sat, 23 Nov 2024 22:01:32 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+	mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] MM updates for 6.13-rc1
+Message-ID: <Z0JQvEK5jcOSaKsB@casper.infradead.org>
+References: <20241118193001.6aefcadd7426feafedf824e1@linux-foundation.org>
+ <ZzwVo0ZbuG37pHdR@casper.infradead.org>
+ <20241121214229.8fe091954f9bf0d26f54ed88@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z0I2Q_vGErIQ0xdn@pollux.localdomain>
+In-Reply-To: <20241121214229.8fe091954f9bf0d26f54ed88@linux-foundation.org>
 
-On Sat, Nov 23, 2024 at 09:08:35PM +0100, Danilo Krummrich wrote:
-> On Sat, Nov 23, 2024 at 07:29:38PM +0900, Asahi Lina wrote:
-> > We were accidentally allocating a layout for the *square* of the object
-> > size due to a variable shadowing mishap.
-> > 
-> > Fixes memory bloat and page allocation failures in drm/asahi.
-> > 
-> > Reported-by: Janne Grunau <j@jannau.net>
-> > Fixes: 9e7bbfa18276 ("rust: alloc: introduce `ArrayLayout`")
-> > Signed-off-by: Asahi Lina <lina@asahilina.net>
-> 
-> Good catch!
-> 
-> Acked-by: Danilo Krummrich <dakr@kernel.org>
-> 
-> (I'm just back from moving and just starting to catch up on what was going on
-> in the last few weeks.)
-> 
-> Is this related to the performance regression that has been observed by Andreas?
-> Or did it turn out to be a false positive?
+On Thu, Nov 21, 2024 at 09:42:29PM -0800, Andrew Morton wrote:
+> It isn't only Huawai people.  David acked Gaosheng's patch and it snuck
+> past me (again).  People keep on getting tricked by this idiom and I
+> think we'd be better off with some nicely named wrapper to help
+> readers understand what's going on.
 
-No idea. We noticed KVec allocation errors with page order 4 to 8 under
-memory pressure which weren't observed with the previous allocator (or at
-least not that easily).
+This whole discussion has got out of hand.  The solution is to divorce
+page and folio, and I think we can get there in 3-4 more merge windows,
+at least with a CONFIG option.
 
-I haven't noticed performance regressions with asahi's usage. glmark2
-score was roughly at the expected value.
+And this is where &folio->page is USEFUL because it clearly marks all
+the places that need to be fixed.  As I've been saying to people all
+along, while folio_page(folio, 0) and &folio->page are the same today,
+they have completely different semantics.  That hasn't stopped people
+from getting it wrong, but some people can't be helped.
 
-Janne
+Don't bother coming up with clever new ways for people to get this
+wrong.  Let's get this project over the finish line.
 
