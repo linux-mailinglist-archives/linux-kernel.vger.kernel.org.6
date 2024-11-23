@@ -1,127 +1,158 @@
-Return-Path: <linux-kernel+bounces-419225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 613709D6B0E
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 20:17:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE1CA9D6B04
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 20:11:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 155D9281EF1
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 19:17:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 642CE161B76
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 19:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739AC13D246;
-	Sat, 23 Nov 2024 19:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BDF198A38;
+	Sat, 23 Nov 2024 19:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="YBbwVYAO"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="L3AxKC6s"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5D827466
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 19:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236C813D53E
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 19:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732389454; cv=none; b=KQSa9aat2qPR0eghwyvgtzWIp2jBYhGZkLfTzrJf641qzuwL8E2hBPGYn93h107B1V+T7nmeuJ4wuUlBSJ5nOdu4yv6LmHMHRDLNaH72afk6I7r/elbHLutS69Ne6gZ4Fxk3vz4RkHXmC+2xG1bdn7Kjvck0XkyAGcqUvn5+Zhg=
+	t=1732389100; cv=none; b=jaulbOpceXJmb0rhbrOHSn//NKo3IRNNV6SNSNWnmOD1ctY6SUoYQrWMXetZcnEbdoI/q/ZI5iN3dp9ECMSZ7J6/jJMe71YYi1XWfVCAN6M6z7XXj17ZX25Wv+i/FpETN/IVnHMKud9iVEoSmxo1KPJxItFfTnIoeHQnSkN+Gxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732389454; c=relaxed/simple;
-	bh=rYmvIRPT0JSYYaJ9rRZO2FPG3lPc4CSjURyelhhlT4k=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=RkFM/0m0NfqUfvl8zTapxVy8cG0Ci7/1Y5fp2iakbUNudYoVV9mWHCgJ/UMKt6rQvgNJuQrRpspCn7TD2vFduRJfnGrk8wAQO0vz8vRmMTYPWkz/ym9u1tNj3HsBhBtiWEctfb2wqzjTELE3YSBjegKOdsGm/ddqCc7xIbkEhq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=YBbwVYAO; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1732389138; bh=eSGfu26T77d7IY4FTCS0fWJCHz54TUU/hG40FkEQcTI=;
-	h=From:To:Cc:Subject:Date;
-	b=YBbwVYAO7Wpgmpr779paxBHZVR/KU2TcpVq9oMOPTAqG3y1Qj3D6yUWT23TBcSDYD
-	 UlXxbgRX53HHhdqvNL43ltOQUxm09q8nUd8B3Nmmv7Keb0tukbohMJAJnlz9eZejJL
-	 wvickF3J0ec44YOUexlh2GEPmneEZ4jdBnyq5AGA=
-Received: from localhost.localdomain ([2409:875e:a030:1001:14::90f])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id 3111EC3E; Sun, 24 Nov 2024 03:12:17 +0800
-X-QQ-mid: xmsmtpt1732389137tysf0osr4
-Message-ID: <tencent_57D6CF437AF88E48DD5C5BD872753C43280A@qq.com>
-X-QQ-XMAILINFO: MRMtjO3A6C9XHNRjJZFzGWQcJ18ciuvW94XCr6GE9nuCwMrwVOPZSzpjPqyTNE
-	 L7rAUID/wf7ggTDTwz2qU2CgfKHNf/wF44HCybgtkAtw9QbZ6zGTLz8Rx/uYQ1u46Wt2RvCzBftX
-	 sYUE8BfutSqdklwL4lZZ9+6n/hQZHD6ZTM4KMwETYT2ivrP+v9SUAHCFYLluSAnSRT3Q+K8W7NS3
-	 k6jXFydwWFVST4obx13rEaADndBVTvAswqtdvYTbu7jLyuUFNl1FilVLmfJxEltaFuwW0mrh12fx
-	 d3CzJswRoK9zrBMemmfVWB/jTxDdHRw5q6wZwjUM8lVUaCMBiBwh6Yuz4haJfAYQ33c5hFmz4SSu
-	 f651gxIJsNUeF+x6yvpsVql5INxFsd9Z0HdpEEUDFCw2aNYPOvej5X+zjFpPfxkvgAdJMhgRU5WJ
-	 VUny4S97QdjLdRCVQp3OM+i4O3doVzIisZAfDRkhwZ1SyCInMnlWUqQMvtr2iYDNDzshkjkOBW2w
-	 f3Y5sNLrJNc+5G163fJE2urymQJg5Y71PcPBDUu0+y5TL2iwP9Osxh0tGlUZieqBeGICZX7soDj/
-	 cE7RMiyyIWaDevLRjk+yJfxp9ypFaz1VjzMWZrWqcEj3czXc8ZV6fY4YfR2z9fzmgPlizByINTPN
-	 HXw3TBIkjPa//LxGPsAa9oqfP1G8S4RBcx4z4GzBZ4Fwe7c/eTX2q3ROqBx88jisUGY0MQLdLmMq
-	 NOtvjc7/BYbS7MvlUSgqxMMznTe/h55oo65Gga7cLj/fkGDCqaYX1kCqCgU8sxQTHsPEgKZFP1uX
-	 AVnVpi/+H75Qg6zfelactAjfEbeAuCxTxsCuLIOQRvlyJLQ4/bgAd69S+Rn1oo1o/wxxaMJT0guW
-	 Hs/PxIlWauUhAj8014zKTdvnTdF1R1Uu674WjK8PXCnh9TTTMKIwbZGeCcdNyfzWr0bZtrR9AGGd
-	 Wk67TISSx6TYyi1VfLGdHMaKA5YQN9BauVCtCcfloS1diOpdQDktqm/mzs1oCz
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Junjie Fu <fujunjie1@qq.com>
-To: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: akpm@linux-foundation.org,
-	dave.hansen@intel.com,
-	mhocko@kernel.org,
-	fujunjie1@qq.com
-Subject: [PATCH] mm/mempolicy: Fix decision-making issues for memory migration during NUMA balancing
-Date: Sun, 24 Nov 2024 03:09:35 +0800
-X-OQ-MSGID: <20241123190935.2433794-1-fujunjie1@qq.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1732389100; c=relaxed/simple;
+	bh=Q3Bv+YAcYdx4Kbghoas2EOnIJDKc082hRcftApY277U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ILopitc2KqnBnL44WVT/oDeDC+g6xPO3QR9pX2Cp8qyG6vi/dVemmLP51QJ141HrHAnsGP5oqMTU7G0iTfO4rcwVfwqkeG9Yar7TuUm0BzG3k5QW1EyomOCqxvq/dFVypnVxwG0qv5UhUEW8a0Sspi6b9exu8/rTE2HH7v3I290=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=L3AxKC6s; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6eeafd42dd8so33911847b3.0
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 11:11:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1732389098; x=1732993898; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qh9HuRP2TUeXMIAhRQU5UITcyp5cug1fkWSRB28P/dk=;
+        b=L3AxKC6szWtKL+zVW1sTZ5HaKDCFETPhuCaMiCV+Wvp2fllG/rcCUU/N1XTGXe53Mn
+         7mgW4tZMsL4FKauX5tLC80jXXGv/bTTHhJ/PqBZ01DvqmNyw8ns+fmu41CPNU60QCaQC
+         aZCLTNlK4AvYinhclachnr5lnTRjzOYbgmUAU52lV7CX23qsGENbD/BHQXYdTNEimESO
+         sY3XnyKxNmcWxJIyAbvWhm2roIC9oHxV2o8hqNaNAfxBN4SGHo4PsqdZv9EDI087ZVcP
+         JhanUxBlWsIY8UpcxNv/fuAVJUfMB2rqEdCFbCOT3mu8d8oewBycRqK3nkzcJDrFitVs
+         vL3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732389098; x=1732993898;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qh9HuRP2TUeXMIAhRQU5UITcyp5cug1fkWSRB28P/dk=;
+        b=r0IJ48QY+fK74TxCDufimjFmHDonVI4IxAGZ8WXjsvEK7ebJOFPb4MqOf9Ng93WcTi
+         i6AEUBe/w4omVAz+AU4vRICYDmIuNrjagrJc4wmjsdJqXtKSaT8G0vFARiBob1AUHvSr
+         tjiRZ2xvAan+T4pKcNezyHEywUVyYfvLJDTR1zfrgSZvJqpaVRocCg9Jc1aIe+Gu4JYZ
+         CmIbkVT3wgudXZuschPKAXFrFVFqeRyQbLiz11Afhw84lkyGsBpVURTaQtu3wfrQyqQx
+         V/d7gKpMPxLL/FxZGm/h1loG2PSJPXGzIWarxq4oJ5XuaxLP4eSRqxJfmHt+oJIVjv+o
+         ZH2w==
+X-Forwarded-Encrypted: i=1; AJvYcCV/RmTVHcj096o7lbM4oVb2Yrc+7oQLN6+0qAJ2sEK+140FKZyKTvKjhyLtWYN6co3r98sreOP7scnvHj0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdiBJU9I7JbCecIGLl66yepVD0GeORqW2utcc0pEA/cEuI/Fym
+	k8Cpo/1Dw5mN35av7+bTPPzyiTM+EUkFEAnS99D3tdaFh+qZJRoKNDvmpZ97P8RUVtl+ANJl9ls
+	RlQFq3vh+F7SjD1Vw9OrIUytm/UvcYYNHl5pR
+X-Gm-Gg: ASbGncuyn0J7lWWJGXllP8OFaPB2nXpn+sDkyWTZ7oYkkWm5Bog9LcuXg6XRh7Wg+8T
+	qvoYWUvMYAf4fxMsiLJXXv0UCvU47Nw==
+X-Google-Smtp-Source: AGHT+IFRQw2HWda+FH6Hq/asaKKE9KhYk6qQP2bkHz6lvGB9Yq/rCe0VCi2xcCZCO80m1bTU/ozhGnDwUyu/IGj9xE4=
+X-Received: by 2002:a05:690c:768f:b0:6ee:af06:fdf0 with SMTP id
+ 00721157ae682-6eee09e82camr66104827b3.23.1732389098163; Sat, 23 Nov 2024
+ 11:11:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241112082600.298035-1-song@kernel.org> <d3e82f51-d381-4aaf-a6aa-917d5ec08150@schaufler-ca.com>
+ <ACCC67D1-E206-4D9B-98F7-B24A2A44A532@fb.com> <d7d23675-88e6-4f63-b04d-c732165133ba@schaufler-ca.com>
+ <332BDB30-BCDC-4F24-BB8C-DD29D5003426@fb.com> <8c86c2b4-cd23-42e0-9eb6-2c8f7a4cbcd4@schaufler-ca.com>
+ <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com>
+ <20241114163641.GA8697@wind.enjellic.com> <53a3601e-0999-4603-b69f-7bed39d4d89a@schaufler-ca.com>
+ <4BF6D271-51D5-4768-A460-0853ABC5602D@fb.com> <b1e82da8daa1c372e4678b1984ac942c98db998d.camel@HansenPartnership.com>
+In-Reply-To: <b1e82da8daa1c372e4678b1984ac942c98db998d.camel@HansenPartnership.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sat, 23 Nov 2024 14:11:27 -0500
+Message-ID: <CAHC9VhT4-aVbx_4EV3jAj27CUT=Lk0eb_fTRzFjHU8OO=ske8g@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
+To: James Bottomley <James.Bottomley@hansenpartnership.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Song Liu <songliubraving@meta.com>
+Cc: "Dr. Greg" <greg@enjellic.com>, Song Liu <song@kernel.org>, 
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>, 
+	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "brauner@kernel.org" <brauner@kernel.org>, 
+	"jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
+	"mattbobrowski@google.com" <mattbobrowski@google.com>, "amir73il@gmail.com" <amir73il@gmail.com>, 
+	"repnop@google.com" <repnop@google.com>, "jlayton@kernel.org" <jlayton@kernel.org>, 
+	Josef Bacik <josef@toxicpanda.com>, "mic@digikod.net" <mic@digikod.net>, 
+	"gnoack@google.com" <gnoack@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When handling a page fault caused by NUMA balancing (do_numa_page), it is
-necessary to decide whether to migrate the current page to another node or
-keep it on its current node. For pages with the MPOL_PREFERRED memory
-policy, it is sufficient to check whether the first node set in the
-nodemask is the same as the node where the page is currently located. If
-this is the case, the page should remain in its current state. Otherwise,
-migration to another node should be attempted.
+On Thu, Nov 14, 2024 at 4:49=E2=80=AFPM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+>
+> Got to say I'm with Casey here, this will generate horrible and failure
+> prone code.
+>
+> Since effectively you're making i_security always present anyway,
+> simply do that and also pull the allocation code out of security.c in a
+> way that it's always available?  That way you don't have to special
+> case the code depending on whether CONFIG_SECURITY is defined.
+> Effectively this would give everyone a generic way to attach some
+> memory area to an inode.  I know it's more complex than this because
+> there are LSM hooks that run from security_inode_alloc() but if you can
+> make it work generically, I'm sure everyone will benefit.
 
-Because the definition of MPOL_PREFERRED is as follows: "This mode sets the
-preferred node for allocation. The kernel will try to allocate pages from
-this node first and fall back to nearby nodes if the preferred node is low
-on free memory. If the nodemask specifies more than one node ID, the first
-node in the mask will be selected as the preferred node."
+My apologies on such a delayed response to this thread, I've had very
+limited network access for a bit due to travel and the usual merge
+window related distractions (and some others that were completely
+unrelated) have left me with quite the mail backlog to sift through.
 
-Thus, if the node where the current page resides is not the first node in
-the nodemask, it is not the PREFERRED node, and memory migration can be
-attempted.
+Enough with the excuses ...
 
-However, in the original code, the check only verifies whether the current
-node exists in the nodemask (which may or may not be the first node in the
-mask). This could lead to a scenario where, if the current node is not the
-first node in the nodemask, the code incorrectly decides not to attempt
-migration to other nodes.
+Quickly skimming this thread and the v3 patchset, I would advise you
+that there may be issues around using BPF LSMs and storing inode LSM
+state outside the LSM managed inode storage blob.  Beyond the
+conceptual objections that Casey has already mentioned, there have
+been issues relating to the disjoint inode and inode->i_security
+lifetimes.  While I believe we have an okay-ish solution in place now
+for LSMs, I can't promise everything will work fine for BPF LSMs that
+manage their inode LSM state outside of the LSM managed inode blob.
+I'm sure you've already looked at it, but if you haven't it might be
+worth looking at security_inode_free() to see some of the details.  In
+a perfect world inode->i_security would be better synchronized with
+the inode lifetime, but that would involve changes that the VFS folks
+dislike.
 
-This behavior is clearly incorrect. If the target node for migration and
-the page's current NUMA node are both within the nodemask but neither is
-the first node, they should be treated with the same priority, and
-migration attempts should proceed.
+However, while I will recommend against it, I'm not going to object to
+you storing BPF LSM inode state elsewhere, that is up to you and KP
+(he would need to ACK that as the BPF LSM maintainer).  I just want
+you to know that if things break, there isn't much we (the LSM folks)
+will be able to do to help other than suggest you go back to using the
+LSM managed inode storage.
 
-Signed-off-by: Junjie Fu <fujunjie1@qq.com>
----
- mm/mempolicy.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+As far as some of the other ideas in this thread are concerned, at
+this point in time I don't think we want to do any massive rework or
+consolidation around i_security.  That's a critical field for the LSM
+framework and many individual LSMs and there is work underway which
+relies on this as a LSM specific inode storage blob; having to share
+i_security with non-LSM users or moving the management of i_security
+outside of the LSM is not something I'm overly excited about right
+now.
 
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index bb37cd1a51d8..3454dfc7da8d 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -2769,7 +2769,7 @@ int mpol_misplaced(struct folio *folio, struct vm_fault *vmf,
- 		break;
- 
- 	case MPOL_PREFERRED:
--		if (node_isset(curnid, pol->nodes))
-+		if (curnid == first_node(pol->nodes))
- 			goto out;
- 		polnid = first_node(pol->nodes);
- 		break;
--- 
-2.34.1
-
+--=20
+paul-moore.com
 
