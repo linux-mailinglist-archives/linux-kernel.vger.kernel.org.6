@@ -1,109 +1,112 @@
-Return-Path: <linux-kernel+bounces-419143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 235949D69EC
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:13:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AB409D69EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:14:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83320B21933
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:13:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09F5F1617C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 232E9136658;
-	Sat, 23 Nov 2024 16:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nrlrFsPX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11941386B4;
+	Sat, 23 Nov 2024 16:14:18 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A304D8D0;
-	Sat, 23 Nov 2024 16:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F171D545;
+	Sat, 23 Nov 2024 16:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732378429; cv=none; b=XJsmj9/zvPY7hF1nvnfJK2g/ILnqQ4z0KeyIKnwTu98cI9FSVZ1UDigVcVAAoHwOiVwYqrzVvaPIIQwr5io3RQ5qddHAHs/BnIUTJNZmCQptcGXhupMzZ2kN4O6JRDQaKJQesvX7qFx6vT94d3N8zm/DdkfL/g8vuv68EyZdlxc=
+	t=1732378458; cv=none; b=RV6tL8XwWb56t41901dzMVdXsRoYIue3eY6OyAHNsBsbr6hhQ2M8w97fVa6Jqevaix3UwfuVzA5ciuYCVuP8pas/H8EXyHwXai1t49dE1swDtXGwV5jOVP/+sYDGMh4JMme+cyfI7XisAv/KXdUhJFMcuFEQ8ENAJHYepIzybaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732378429; c=relaxed/simple;
-	bh=QW1sglxsrkcGK+O4SS6T/kq6QuJj9k5GRbXNxF6HJKo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H9SofTLRB2AbGoeLoJmI/a+vHrd+B1c28TTChwhJLuRR/Q1WM4fv9AYEB08nNDPAPJN22Mwh6P4++w6mKJXQTkXuMJeEcvPNzvDwsTUlLwMf5zWj627zCB2wYeESsmhHaTWh20EOe2YXgt2M3PsCQkTyPtcyD5N72eu9eYOKzmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nrlrFsPX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7948CC4CECD;
-	Sat, 23 Nov 2024 16:13:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732378429;
-	bh=QW1sglxsrkcGK+O4SS6T/kq6QuJj9k5GRbXNxF6HJKo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nrlrFsPXCKoH5MgV7FKK9fSS6nqJzv78J2TlZ+v4T89MC9VTIMUlNUBJd61q0FirG
-	 K+iOq2au5SiS7reNDDNAchu6jIIYKzzpoGV92vSP8EO7BOoAropGL0l/P/a5PM9L6x
-	 E8B0mwVsHqE3x4JGczSGmqOMtj0BP4J0iyj4wEwFAPIBJ/IVML/PDJ8ntf54H2ztBh
-	 JNaDy/3wVJIeiwHub/RMbgX+Fn1utyZskgdSAM+aANrocgvyb7ygJ4Uvlrl1ZKxqTn
-	 OzaG1dHjahavzFLz6tGXr5PxnM+Q81vldlACl/AAjRDWSY1ZFkc0/dSpmJM3ozMMku
-	 +e1alM69Mk9OQ==
-Date: Sat, 23 Nov 2024 16:13:41 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: <robh@kernel.org>, <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: iio: adf4371: add rdiv2 and doubler
-Message-ID: <20241123161341.56d2e9bb@jic23-huawei>
-In-Reply-To: <20241122113226.49346-1-antoniu.miclaus@analog.com>
-References: <20241122113226.49346-1-antoniu.miclaus@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732378458; c=relaxed/simple;
+	bh=HRvM1IslAbrTkck5NoxkGSQcBIsd+bujipNjiBqdrcU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MJWCe+Hcy2+mc53ITYell0leFmR7+d4ENF9iMt1TqqznQDQEV393x7Ak4D4UXCbt2Q4dE1eQWpgpfvQHV0l94VUt0clD+kFlHC2+lYb6rg9GzLBRbm05Tk2fxp0HlYlD5H0rtvnS3KpXHodrRi8VKzxK5/CLJ4dM5xaBlZBOBdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id A1EF330000950;
+	Sat, 23 Nov 2024 17:14:05 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 8B6903CEA09; Sat, 23 Nov 2024 17:14:05 +0100 (CET)
+Date: Sat, 23 Nov 2024 17:14:05 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Alistair Francis <alistair@alistair23.me>, Jonathan.Cameron@huawei.com,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	akpm@linux-foundation.org, bhelgaas@google.com,
+	linux-pci@vger.kernel.org, linux-cxl@vger.kernel.org,
+	bjorn3_gh@protonmail.com, ojeda@kernel.org, tmgross@umich.edu,
+	boqun.feng@gmail.com, benno.lossin@proton.me, a.hindborg@kernel.org,
+	wilfred.mallawa@wdc.com, alistair23@gmail.com,
+	alex.gaynor@gmail.com, gary@garyguo.net, aliceryhl@google.com
+Subject: Re: [RFC 3/6] lib: rspdm: Initial commit of Rust SPDM
+Message-ID: <Z0H_TYOPegVrkM9o@wunner.de>
+References: <20241115054616.1226735-4-alistair@alistair23.me>
+ <20241122173104.GA2432309@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241122173104.GA2432309@bhelgaas>
 
-On Fri, 22 Nov 2024 13:32:13 +0200
-Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
-
-> Add support for reference doubler enable and reference divide by 2
-> clock.
+On Fri, Nov 22, 2024 at 11:31:04AM -0600, Bjorn Helgaas wrote:
+> On Fri, Nov 15, 2024 at 03:46:13PM +1000, Alistair Francis wrote:
+> > +++ b/lib/Kconfig
+> > @@ -754,6 +754,23 @@ config SPDM
+> >  	  in .config.  Drivers selecting SPDM therefore need to also select
+> >  	  any algorithms they deem mandatory.
+> >  
+> > +config RSPDM
+> > +	bool "Rust SPDM"
+> > +	select CRYPTO
+> > +	select KEYS
+> > +	select ASYMMETRIC_KEY_TYPE
+> > +	select ASYMMETRIC_PUBLIC_KEY_SUBTYPE
+> > +	select X509_CERTIFICATE_PARSER
+> > +	depends on SPDM = "n"
+> > +	help
+> > +	  The Rust implementation of the Security Protocol and Data Model (SPDM)
+> > +	  allows for device authentication, measurement, key exchange and
+> > +	  encrypted sessions.
+> > +
+> > +	  Crypto algorithms negotiated with SPDM are limited to those enabled
+> > +	  in .config.  Drivers selecting SPDM therefore need to also select
+> > +	  any algorithms they deem mandatory.
 > 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> Maybe this (and config SPDM) should be tweaked to mention drivers that
+> *depend* on SPDM or RSPDM, since they no longer use "select"?
+> 
+> PCI_CMA, which currently depends on SPDM, doesn't really look like a
+> "driver", so maybe it should say "users of SPDM" or "features
+> depending on SPDM" or something?
 
-why are these not things that are derivable from the required output
-frequency vs the clock frequency that comes in?
+I anticipate that the SPDM library will eventually be used by at least
+two actual drivers:  NVMe and an x86 platform driver for Intel SDSi
+(Software Defined Silicon).  SCSI and ATA may follow suit.
 
-Would have been good perhaps to have a cover letter with some description
-of how these features are used in practice.
+Thus, although the PCI core may be the first user, the majority of
+users will likely be actual drivers, which is why I've used that
+term in the help text.
+
+Referring to "users" instead of "drivers" may be misunderstood as
+users in the sense of people using the kernel.  In particular because
+the help text is seen by such users.  The terms "subsystems" or "features"
+don't seem to be as clear as "drivers" IMO.
 
 Thanks,
 
-Jonathan
-
-
-> ---
->  .../devicetree/bindings/iio/frequency/adf4371.yaml    | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
-> index 1cb2adaf66f9..ef241c38520c 100644
-> --- a/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
-> +++ b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
-> @@ -40,6 +40,17 @@ properties:
->        output stage will shut down until the ADF4371/ADF4372 achieves lock as
->        measured by the digital lock detect circuitry.
->  
-> +  adi,reference-doubler-enable:
-> +    type: boolean
-> +    description:
-> +      If this property is present, the reference doubler block is enabled.
-> +
-> +  adi,adi,reference-div2-enable:
-> +    type: boolean
-> +    description:
-> +      If this property is present, the reference divide by 2 clock is enabled.
-> +      This feature can be used to provide a 50% duty cycle signal to the PFD.
-> +
->  required:
->    - compatible
->    - reg
-
+Lukas
 
