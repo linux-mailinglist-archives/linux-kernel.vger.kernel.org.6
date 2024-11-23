@@ -1,81 +1,139 @@
-Return-Path: <linux-kernel+bounces-418892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39B5D9D66DB
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 01:45:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D10739D66E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 01:53:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAED3B225C2
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:45:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F2D3B2237B
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7667A954;
-	Sat, 23 Nov 2024 00:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B337BA42;
+	Sat, 23 Nov 2024 00:53:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="R3RpkYDn"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QU2tVmvz"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 465F2F9EC;
-	Sat, 23 Nov 2024 00:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81007257D;
+	Sat, 23 Nov 2024 00:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732322719; cv=none; b=oLxaUU50j18SxKA5+1LK+1IvZEmwK3HpXAJgTFC2Rc6C38AGvvznL26x9S3hLikxgf4BX0ROPN/KdI1uPRDyt/5H+icn0l+FVmYkUfaym1KV74ojXNxJVfMDt9UcGud9VKyM57U+E24VzyWxnRoj3DILwiVFcGeg3CRP0leinp4=
+	t=1732323220; cv=none; b=F38dRzGNUQvuB9YXZDkwMv8NXwXCanKsBLdTw17aoCcIS+M6P26MGqzbKQALnCW0Yx4wfJYjr7R+qWWErTe80V/AYRutrwMupbFg3bZDUjXgQDEPCBv3xT4BOHsgogHWhjlzaIajTxKe6V1CegtH9aPkpJvG3ZkTteixISBSw7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732322719; c=relaxed/simple;
-	bh=MUtFFihg5paON/LQGz8+V3IscqpvUiyOdci+P+6AY90=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J4fe5IA2rGbed+Jr4wAylKzcPvRKYbOhkBPnSHx3VVtsWzskJkkJgQwHOaxr+XOTjXuDNjNvyS+txpR/tMBT71ujdyGF34LLys99jySwHbBEeXVp91Ps/8/0To7CAapLpK+dPGTdQ9fWOla72Ca+mefTxIlIvK+TGtaIjWtGJj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=R3RpkYDn; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=wkAMD6+Xsoa00qoTvYqndK96Qtwb7/08ps3RP3TEKsA=; b=R3RpkYDnbEx98NFepoo6u+5aH5
-	8DzuYfYlA36Ky7VCp2zPlIpAMg4WN7+9tzr4gTH4F/z23kkEJqf+VLj+HNTHFf9FigwFmzBH8zM7r
-	G6vBPbdFTlUK80F9eecsH8OmBDCpJH7vgkbjLUtrGZKdUQ7B79Hu2RqX7uIfrynY9CK0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tEeGr-00EBAl-8T; Sat, 23 Nov 2024 01:45:09 +0100
-Date: Sat, 23 Nov 2024 01:45:09 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Frank Sae <Frank.Sae@motor-comm.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, xiaogang.fan@motor-comm.com,
-	fei.zhang@motor-comm.com, hua.sun@motor-comm.com
-Subject: Re: [PATCH net-next v2 00/21] net:yt6801: Add Motorcomm yt6801 PCIe
- driver
-Message-ID: <19de98cc-ad94-4f27-8c14-a9f3c427ffa7@lunn.ch>
-References: <20241120105625.22508-1-Frank.Sae@motor-comm.com>
+	s=arc-20240116; t=1732323220; c=relaxed/simple;
+	bh=ZOzgDCszNpXOPabHGe4wYbuuBiKrW5VJPNfRwhtW3h8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bivi2hIgcb4gsgaCJVeGQmHEXHiO7b0IjRwE2H9ipxTUpLsV8Ju/eHYUX0ojZ9hd5tp3V1jtYOVCwv2s+vlRkEe9u5xkWWjywLDuKi3i0YqcEdBrVyYltG5Kb+RJC1/OXkqhdKBcAdGvEpHjSZH00yYwGY5AAALXJ+4k1pySuHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QU2tVmvz; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=MySxW6Yvv72K+z2FlW9SiPYONLnpcffXjHrq0N51mFU=; b=QU2tVmvz9D0LyQZn/2E6OR0PhY
+	KqXPwT+XvUFmnjhx5IsgFic9byvXjamh8g3lJVkl/jKjHX/h8Ggf7+w5Ghw4Lsdg5GIoWmsnqZm8D
+	ePaR9EfPcQPX34JQkfJmVVzE5ZIupnCRIXKH0w9Cn54RS3pY8r0/hB+sE7/0f+3W1WYsM8fEo8AFg
+	BRh4wa4LCvl8zk7i8GQXoG0u7/6solDBLYQ181K8Kg8OIy4rr4QMBbrE2+f4NwBdqvFtp5bs0iRPO
+	1IIaqwvExMrR54msJqJW+LFghYYaBHjDtNT7UZSRQDrevYXT/7znfak++IuQLvgyD86oKT27WPwRa
+	HPwW7zZw==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tEeOj-00000008XJ3-3vvj;
+	Sat, 23 Nov 2024 00:53:19 +0000
+Message-ID: <eac20e8d-d08c-4be7-a34f-b511798f0a57@infradead.org>
+Date: Fri, 22 Nov 2024 16:53:07 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241120105625.22508-1-Frank.Sae@motor-comm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 3/5] modules: Allow extended modversions without basic
+ MODVERSIONS
+To: Matthew Maurer <mmaurer@google.com>, Michael Ellerman
+ <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Jonathan Corbet <corbet@lwn.net>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20241123-extended-modversions-v9-0-bc0403f054bf@google.com>
+ <20241123-extended-modversions-v9-3-bc0403f054bf@google.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20241123-extended-modversions-v9-3-bc0403f054bf@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 20, 2024 at 06:56:04PM +0800, Frank Sae wrote:
-> This series includes adding Motorcomm YT6801 Gigabit ethernet driver
-> and adding yt6801 ethernet driver entry in MAINTAINERS file.
+
+
+On 11/22/24 4:19 PM, Matthew Maurer wrote:
+> If you know that your kernel modules will only ever be loaded by a newer
+> kernel, you can disable BASIC_MODVERSIONS to save space. This also
+> allows easy creation of test modules to seee how tooling will respond to
+> modules that only have the new format.
 > 
-> YT6801 integrates a YT8531S phy.
+> Signed-off-by: Matthew Maurer <mmaurer@google.com>
+> ---
+>  kernel/module/Kconfig    | 15 +++++++++++++++
+>  scripts/Makefile.modpost |  1 +
+>  scripts/mod/modpost.c    | 19 +++++++++++--------
+>  3 files changed, 27 insertions(+), 8 deletions(-)
 > 
-> v1 -> v2:
-> - Split this driver into multiple patches.
-> - Reorganize this driver code and remove redundant code
+> diff --git a/kernel/module/Kconfig b/kernel/module/Kconfig
+> index a31c617cd67d3d66b24d2fba34cbd5cc9c53ab78..f28b361494c4b4cc2446d683589f9452a0043b2b 100644
+> --- a/kernel/module/Kconfig
+> +++ b/kernel/module/Kconfig
+> @@ -161,6 +161,7 @@ config MODULE_UNLOAD_TAINT_TRACKING
+>  config MODVERSIONS
+>  	bool "Module versioning support"
+>  	depends on !COMPILE_TEST
+> +	selects BASIC_MODVERSIONS
 
-I would say this is still too much code for one submission. You don't
-need every feature in the first patch series. Please post just post a
-basic driver without all the optional features. Keep to the 15 patch
-limit. You can the add more features in follow up patch sets.
+tested?  'selects' is not valid.
 
-	Andrew
+>  	help
+>  	  Usually, you have to use modules compiled with your kernel.
+>  	  Saying Y here makes it sometimes possible to use modules
+> @@ -218,6 +219,20 @@ config EXTENDED_MODVERSIONS
+>  	  The most likely reason you would enable this is to enable Rust
+>  	  support. If unsure, say N.
+>  
+> +config BASIC_MODVERSIONS
+> +	bool "Basic Module Versioning Support"
+> +	depends on MODVERSIONS
+> +	help
+> +	  This enables basic MODVERSIONS support, allowing older tools or
+> +	  kernels to potentially load modules.
+> +
+> +	  Disabling this may cause older `modprobe` or `kmod` to be unable
+> +	  to read MODVERSIONS information from built modules. With this
+> +	  disabled, older kernels may treat this module as unversioned.
+> +
+> +	  This is enabled by default when MODVERSIONS are enabled.
+> +	  If unsure, say Y.
+> +
+>  config MODULE_SRCVERSION_ALL
+>  	bool "Source checksum for all modules"
+>  	help
+
+
+-- 
+~Randy
+
 
