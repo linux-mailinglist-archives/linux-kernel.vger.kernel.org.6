@@ -1,199 +1,140 @@
-Return-Path: <linux-kernel+bounces-418876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F4429D6697
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 01:05:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74BF39D669D
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 01:09:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EBEFB220F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:05:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B18A0B21F96
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8423FC7;
-	Sat, 23 Nov 2024 00:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB3DA954;
+	Sat, 23 Nov 2024 00:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sdlcZs0x"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gEOSEUiB"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80934195
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 00:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F80A59;
+	Sat, 23 Nov 2024 00:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732320332; cv=none; b=Q4/BN/WCZMu/oA8e/DJ48yDTJ3ZsXZJStuuzLFpg9WGx0d0wNtwNxF6BIbxvvux2IoOwVbpMu/lcw4kchKl0raWx4cL0gQg+4GRi5bCD9OJdKfUx3Hq0PqgjRlQSDiRUFatxW9AjlQR1J98qK4IjcbWBH8jDnTxt0cb0AVIi+UA=
+	t=1732320518; cv=none; b=kEedu4AximaJzVqa6KtkEKrmHoPHR9iK7kkjeeY48PZQGH3fLLB4BMkmKJqkwqcqQu/2ng3uIFkBXFCVg9yPnhdmO1+JhinFLmML9QQ8nwEeGDypfyWzdVrj3MQUUYOd48j+AKmUHCjCX0kPLW84CVHWXJ9zHWo4ohZzqq1T57g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732320332; c=relaxed/simple;
-	bh=PNHSeXlforkDxsY2mNMKW2WVvL0U3nz3c06akHfRJr8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V3jKA1Nbgg9nRYVdbAXUNSQH1wPaqLK0uR1SDwCxCHh+vAYqhIQVqlLHpJb5ykNpyB8qt9sxxXyAUtnCqqpnXiF97M8uO5ms0eg97GJ08yP4+IJsEW40H191UUD2Ujxg6hnb3rB06EidZ8KluNk1rt0PoGb/0jrsozT4gHznQWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sdlcZs0x; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ffa974b2b0so12098411fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 16:05:29 -0800 (PST)
+	s=arc-20240116; t=1732320518; c=relaxed/simple;
+	bh=OivMuzy8RmEkygfwmOEeRITzjbJ3pOEAQUDbzLRND4A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gg+b5uZGBFiHBaTX+ccCFWZCrbYkhBs25oVL754xHG6/aHsXC0fO/j0hhVENPZxWqnD5m1m+2uDIsyPrgv92eCp4spRXg+iiZ0v6P9GvHAtneEpvPlXa1fNn1uySwPBf0UKZ3bFlej16clrko8ekVB8V9UI9DOqTBExthBkHo7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gEOSEUiB; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-382325b0508so1777602f8f.3;
+        Fri, 22 Nov 2024 16:08:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732320328; x=1732925128; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zL3UhjrThpsgNNxTDk0NoRagBCwD04e6B6PC0r7kPGQ=;
-        b=sdlcZs0x+r8RaFyLG5ryXmbdChdsP/szmSqWOHQNv7JVPXGWOzXNW3kjRm0h69YV1C
-         kP9ehz8NPuh5VQXa63fc8k4z/HmxCCstDuVLwtzeHatsqm8T0bV7SZz12c3IoCNwEb/X
-         8tHIJeFBOXcaVgX2yC0R2yNvCzbFOLnXyOBkoPfZFd+UHjCght3shvYkCjmbKFwuKuHi
-         E1q3dtozOp5chZMiIvPMueHgmr0FTUul62M0dIhWeA7kxTJBuRZABvYWF28szrWx5RcD
-         ZwsPkIna4KBNaf9DEfjRoxLj9yG6aWKCNYFUX5XAxg4w9XYOSUNVxpH2CdvoxLr2BB3H
-         2t5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732320328; x=1732925128;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1732320515; x=1732925315; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zL3UhjrThpsgNNxTDk0NoRagBCwD04e6B6PC0r7kPGQ=;
-        b=GuSe/1ygPTvmNI/inUG9oVBB9YNOeqG7stlPT7DyiBoVjgsvQ0YaqmkI6AeMZDi78S
-         5ToqYC+pkAX5nm3brO95mX534JmICorPz4uZGZenfq5kPPxK/dej/i51snZpWqgYoauT
-         Uwr6xtOqNaTQEcp6foO1lsNxyA+nKapZs6vehPMvMTXz8FdZfgyJQ6Wta+J3BPEknleN
-         m0BhI0vkbiDLZU3MFGt9yZTQsfFeKg4fkAUO8GVpa/Kr3MvMlTIouy+NVp1kdnr8y50Y
-         Vep9rNu7ThFqEHCW2XqkjQwUzmjMe5+60QO0ZGbv0mui1cnqKC6ZPDAjDq8MXTAsx/o3
-         Czbg==
-X-Forwarded-Encrypted: i=1; AJvYcCWkVSguO9b1zS+M+YsOMUUrHogB58sWh1IWFfagYCqgyh9pQrw+3T09B+ALxAT47bQacDZFqP8vuRV1haU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP9KKQAGsG5va9fCz5T79ZIhF13L7Xa8itKfRvZcgbj3MrmL8a
-	mvsu1fvO4HA0NBjJ3LRWJcGDUD6U+KZGh77mhb7uvGxbL5TBKlLFr6j0Vfqcmvg4JvxY8JHOLV+
-	4
-X-Gm-Gg: ASbGncvYUI4ml2Geo7PuPUzzwdm5ZzI23cxxePM7+azXWgTD0+jVwrKHNLxTzO5/GIK
-	lSFGxRsE6JU5+zDOk4RBZa+vM2HUMDMXhdtxsP84P+1GZNPxLTGIfXLC7oyEfYArxxyX2eLyhRG
-	dYlFQYBFb8BWNYXY9vfXbD/QNulnEk61Or3JJwPx40WWXx13oEf7OVsB2Dcpyr0M6vwGhlZpq7+
-	VPtfPwLXQxptibwdIRjmw1/SerGVJL6MKGS9seAaSDVKneLYK0fGG97rk2/RSQIL3ebRoODs4vX
-	NEUhrJtN1mijslXTHA0+1oEzbd8DKA==
-X-Google-Smtp-Source: AGHT+IFrIlWNZ12pXRHqhllPQ/j/19noAcfeFKC+8zRvZgcIAWZXtC8TQ29m5Ox+QNicJV5oRZkxoQ==
-X-Received: by 2002:a05:651c:8d:b0:2ff:a7c1:8c31 with SMTP id 38308e7fff4ca-2ffa7c18cbfmr25759941fa.26.1732320327533;
-        Fri, 22 Nov 2024 16:05:27 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffb0d0c4f9sm1170931fa.68.2024.11.22.16.05.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 16:05:27 -0800 (PST)
-Date: Sat, 23 Nov 2024 02:05:24 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Renjiang Han <quic_renjiang@quicinc.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
-	Vikash Garodia <quic_vgarodia@quicinc.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: qcom: videocc: Use HW_CTRL_TRIGGER flag for
- video GDSC's
-Message-ID: <23ho25gl3iwyi2jspb6a2x5bv76fco5pkg2x5ct4gu3c44dbiq@yec6evx5sihm>
-References: <20241122-switch_gdsc_mode-v1-0-365f097ecbb0@quicinc.com>
- <20241122-switch_gdsc_mode-v1-1-365f097ecbb0@quicinc.com>
- <zhco37pigrp4fh5alqx4xfxx3xhjitqlgw552vwiijka22bt4u@sl4ngzypwh4x>
- <1d9aa2e7-d402-42dc-baa6-155f01b132ca@quicinc.com>
+        bh=OivMuzy8RmEkygfwmOEeRITzjbJ3pOEAQUDbzLRND4A=;
+        b=gEOSEUiBXbvC61nCDiG8aSMD1cYuCzsisT3U7DznNg0yo9/pmbAGPPJ0Q6+Z4x83mG
+         fU0XAoM4f5hDl3PGNCwZ37W5Pr/XlDdopl8f2Mrhe4BU71sb/hEjjF54rfjZVr3OBiUG
+         lkZMom+lDFCIyft/0tcNRYLnBtykSszHNHTgJBuAi5ShQL1jjhky9jpybo9arjlRqNWy
+         r0pQZKce7mtNKbTlHGynFNKIf1IwHg7+cA7JiXSWLnyS9n0Sfe10w7Vf6vh/kn+S75fR
+         YeCu4HUbHtK9u86a9FwhN8ATcPlX2VatXQ2k7kbrhGvPc7wD5vXw4WcEKKJZ7xGCC4OU
+         tTXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732320515; x=1732925315;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OivMuzy8RmEkygfwmOEeRITzjbJ3pOEAQUDbzLRND4A=;
+        b=KpB6VLs0pOisjBKVwlrcCB2U7saEKbuV9XnJqTt/680SeJyTSMhP0uvvScI+Rbjriy
+         i7dS5K9nA2YokOjdBi2Rz8PdKPWqEdLsoLlCiG8P1zD3LQjgmoNEMKwRegl+21xWexwM
+         r9PcrXrZT+pRJPX7EGtkcf2Paq3eDE0iqyNAn/HFUBcNlSO3hI0K59pjZbCJ5dyq4bmP
+         GJQj0EtxbN33Xe/pehrZzsHbYD2frJ0OKtGOMN5vkirJYUOfjtmpbHAM5fV9obtENen4
+         coXUkUazFPzcrNgTgE7wuBX/pcJuHv12evvFivsMeMuCbgG911bPN15w+o3J76CipRxj
+         WtZA==
+X-Forwarded-Encrypted: i=1; AJvYcCU070cHVUKiy4BMfQKFGUGAf9B4ms1GhOJkXmmcOli301tqE2sl3F5KVcTlFe5ANElbm83XVljX5n7rE1S2xZjLrCw6lj8Q@vger.kernel.org, AJvYcCVDaA6b8+qcjuxvdRd9F81bzmDz4yclN0OL33NaEXObfoRBld5CN0p+32jKZYf5TgFMJ6+OX2PN70S+5UQ6@vger.kernel.org, AJvYcCVsQIWTsnDHHF2DyY6HAQ81uUe7g5yUKBbEVbgndaGl2e2KG5KQW7wLoAWZNw912hrpBsK3D+hQyUFAWTPB6Q==@vger.kernel.org, AJvYcCXupxYHc0cERQKjuhvR5p8KvZHn3gmfLbCFtuTXrb8LupwzmHkzPXeiAoBgiiTm9sh80sg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTSJJ/L5520IKwA23kBTNg5gXeZHxniRxdItAuLQWcO+pTKkuX
+	wfuCi816xrfUD4j0cMeRIPO6mr/BZDWAV2z7Za36aS/MBaT74DAD3xn56gz+cjuzOWFggYHLfMW
+	6kXFzprAbCYFadeOppGowMxO1bTo=
+X-Gm-Gg: ASbGnct8T2r+o16pulLi0Y897le/PzqLh461RYLb9FJjPe8VtHL3QSg9lUuOXhbDX0E
+	c4X4alpuy15ImOkbB8e3WSyZjpfT48g==
+X-Google-Smtp-Source: AGHT+IHZ4AAsVux9lUn0M+uDFGgBgO1vJ+SRqNv0DY5oxafFBj4LEno3SqwFlKuShIrT1Ho7aCIILMqtA6hgCcTt4iE=
+X-Received: by 2002:a5d:5889:0:b0:382:4e6a:bfd6 with SMTP id
+ ffacd0b85a97d-38260b46e71mr3947803f8f.10.1732320515104; Fri, 22 Nov 2024
+ 16:08:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1d9aa2e7-d402-42dc-baa6-155f01b132ca@quicinc.com>
+References: <20241112082600.298035-1-song@kernel.org> <20241112082600.298035-3-song@kernel.org>
+ <20241113-sensation-morgen-852f49484fd8@brauner> <86C65B85-8167-4D04-BFF5-40FD4F3407A4@fb.com>
+ <20241115111914.qhrwe4mek6quthko@quack3> <20241121-unfertig-hypothek-a665360efcf0@brauner>
+In-Reply-To: <20241121-unfertig-hypothek-a665360efcf0@brauner>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 22 Nov 2024 16:08:24 -0800
+Message-ID: <CAADnVQLvN7uF7NBapCWYtsfCHr3rDm-jRnN=9F=_xSjf4SAuLg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 2/4] bpf: Make bpf inode storage available to
+ tracing program
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Song Liu <songliubraving@meta.com>, Song Liu <song@kernel.org>, 
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>, 
+	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
+	"mattbobrowski@google.com" <mattbobrowski@google.com>, "amir73il@gmail.com" <amir73il@gmail.com>, 
+	"repnop@google.com" <repnop@google.com>, "jlayton@kernel.org" <jlayton@kernel.org>, 
+	Josef Bacik <josef@toxicpanda.com>, "mic@digikod.net" <mic@digikod.net>, 
+	"gnoack@google.com" <gnoack@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 22, 2024 at 10:25:44PM +0530, Taniya Das wrote:
-> 
-> 
-> On 11/22/2024 4:29 PM, Dmitry Baryshkov wrote:
-> > On Fri, Nov 22, 2024 at 04:01:45PM +0530, Renjiang Han wrote:
-> > > From: Taniya Das <quic_tdas@quicinc.com>
-> > > 
-> > > The video driver will be using the newly introduced
-> > 
-> > 'will be' or 'is using'? Or will be using it for these platforms? Is
-> > there any kind of dependency between two patches in the series?
-> > 
-> The video driver will not be able to work without the clock side changes.
+On Thu, Nov 21, 2024 at 1:15=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> > I'm personally not *so* hung up about a pointer in struct inode but I c=
+an
+> > see why Christian is and I agree adding a pointer there isn't a win for
+> > everybody.
+>
+> Maybe I'm annoying here but I feel that I have to be. Because it's
+> trivial to grow structs it's rather cumbersome work to get them to
+> shrink. I just looked at struct task_struct again and it has four bpf
+> related structures/pointers in there. Ok, struct task_struct is
+> everyone's favorite struct to bloat so whatever.
+>
+> For the VFS the structures we maintain longterm that need to be so
+> generic as to be usable by so many different filesystems have a tendency
+> to grow over time.
+>
+> With some we are very strict, i.e., nobody would dare to grow struct
+> dentry and that's mostly because we have people that really care about
+> this and have an eye on that and ofc also because it's costly.
+>
+> But for some structures we simply have no one caring about them that
+> much. So what happens is that with the ever growing list of features we
+> bloat them over time. There need to be some reasonable boundaries on
+> what we accept or not and the criteria I have been using is how
+> generically useful to filesystems or our infrastructre this is (roughly)
+> and this is rather very special-case so I'm weary of wasting 8 bytes in
+> struct inode that we fought rather hard to get back: Jeff's timespec
+> conversion and my i_state conversion.
+>
+> I'm not saying it's out of the question but I want to exhaust all other
+> options and I'm not yet sure we have.
 
-Will enabling this flag break the video driver until it is updated?
++1 to all of the above.
 
-> 
-> > > dev_pm_genpd_set_hwmode() API to switch the video GDSC to HW and SW
-> > > control modes at runtime.
-> > > Hence use HW_CTRL_TRIGGER flag instead of HW_CTRL for video GDSC's for
-> > > Qualcomm SoC SC7180 and SDM845.
-> > 
-> > Is it applicable to any other platforms? Why did you select just these
-> > two?
-> > 
-> 
-> The V6 version of Video driver is already using them, now the video driver
-> wants to migrate to v4 version of the HW to use the new flag.
+I hope we don't end up as strict as sk_buff though.
 
-I mean slightly different issue. We have following drivers:
-
-videocc-sa8775p.c - already uses HW_CTRL_TRIGGER
-videocc-sc7180.c - being converted now
-videocc-sc7280.c - already uses HW_CTRL_TRIGGER
-videocc-sdm845.c - being converted now
-videocc-sm7150.c
-videocc-sm8150.c
-videocc-sm8250.c - already uses HW_CTRL_TRIGGER
-videocc-sm8350.c - already uses HW_CTRL_TRIGGER
-videocc-sm8450.c
-videocc-sm8550.c - already uses HW_CTRL_TRIGGER
-
-This leaves sm7150, sm8150 and sm8450 untouched. Don't they also need to
-use HW_CTRL_TRIGGER?
-
-> 
-> > > 
-> > > Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> > > Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
-> > > ---
-> > >   drivers/clk/qcom/videocc-sc7180.c | 2 +-
-> > >   drivers/clk/qcom/videocc-sdm845.c | 4 ++--
-> > >   2 files changed, 3 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/clk/qcom/videocc-sc7180.c b/drivers/clk/qcom/videocc-sc7180.c
-> > > index d7f84548039699ce6fdd7c0f6675c168d5eaf4c1..dd2441d6aa83bd7cff17deeb42f5d011c1e9b134 100644
-> > > --- a/drivers/clk/qcom/videocc-sc7180.c
-> > > +++ b/drivers/clk/qcom/videocc-sc7180.c
-> > > @@ -166,7 +166,7 @@ static struct gdsc vcodec0_gdsc = {
-> > >   	.pd = {
-> > >   		.name = "vcodec0_gdsc",
-> > >   	},
-> > > -	.flags = HW_CTRL,
-> > > +	.flags = HW_CTRL_TRIGGER,
-> > >   	.pwrsts = PWRSTS_OFF_ON,
-> > >   };
-> > > diff --git a/drivers/clk/qcom/videocc-sdm845.c b/drivers/clk/qcom/videocc-sdm845.c
-> > > index f77a0777947773dc8902c92098acff71b9b8f10f..6dedc80a8b3e18eca82c08a5bcd7e1fdc374d4b5 100644
-> > > --- a/drivers/clk/qcom/videocc-sdm845.c
-> > > +++ b/drivers/clk/qcom/videocc-sdm845.c
-> > > @@ -260,7 +260,7 @@ static struct gdsc vcodec0_gdsc = {
-> > >   	},
-> > >   	.cxcs = (unsigned int []){ 0x890, 0x930 },
-> > >   	.cxc_count = 2,
-> > > -	.flags = HW_CTRL | POLL_CFG_GDSCR,
-> > > +	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
-> > >   	.pwrsts = PWRSTS_OFF_ON,
-> > >   };
-> > > @@ -271,7 +271,7 @@ static struct gdsc vcodec1_gdsc = {
-> > >   	},
-> > >   	.cxcs = (unsigned int []){ 0x8d0, 0x950 },
-> > >   	.cxc_count = 2,
-> > > -	.flags = HW_CTRL | POLL_CFG_GDSCR,
-> > > +	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
-> > >   	.pwrsts = PWRSTS_OFF_ON,
-> > >   };
-> > > 
-> > > -- 
-> > > 2.34.1
-> > > 
-> > 
-> 
-> -- 
-> Thanks & Regards,
-> Taniya Das.
-
--- 
-With best wishes
-Dmitry
+I think Song can proceed without this patch.
+Worst case bpf hash map with key=3D=3Dinode will do.
 
