@@ -1,113 +1,144 @@
-Return-Path: <linux-kernel+bounces-419080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04A629D6939
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 14:19:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04BBB9D693C
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 14:21:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC3B3281E87
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 13:19:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB3C4281F57
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 13:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B5B192D87;
-	Sat, 23 Nov 2024 13:19:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1360C19993E;
+	Sat, 23 Nov 2024 13:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OxWxbiDC"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ALLx14eK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7E523098E
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 13:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADBB23098E;
+	Sat, 23 Nov 2024 13:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732367988; cv=none; b=XXoWBV5VYLa2NrBXCGvn9cyUaZy+tav8aptnPayhafdnkGbP5mpbWuOfxI+tgCDNSbR6+TOI0QfxvBylGVI5TkRERYpcmtfllWbBoTGmoq/axYYm7bfpv9/gYeoE2dCAI86hrmI9bqW/tq9A/Wxh7QjB6I8f3VXzRZ07PaC4dz8=
+	t=1732368080; cv=none; b=kbJ/rQHufj82f4cbCsEVUHVh6oisLPdhPxha9hy5qdVywCQCd1EoXJDTha10CmvYL/zHFwGGbC4L4Urdq8vsDcgTMs5rWDsGFKchNJY77z/o4ir41Iwj460b6xjP7o3xHc/Ok7t8vw/M3p4c5zSHt6OnmpuqONmysRQrSX8K9JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732367988; c=relaxed/simple;
-	bh=NOpPhsvTPpJiyYwIvSbiGeu0Ok9leHgyJr4LdMTTwzk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AG8ncMPwrfOQrJOG9+HmG5t5fekieXCcIdSeIsG1Teh5JTdNmtidsPYM/Ehvuml441533w1k0QpMkfCJAjjl1ykN6iDYwF0BtvYkXLSKvHRrJZIivFJqT4EOR1UUPFfUV7vAaydoqInKG5kd4QMbCY+XHPdc6LGDHLJCAO2YaMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OxWxbiDC; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=8hSaDByv+7EJLIUIjLtEvKlB8zd6vWZZ/oxIztq/51k=; b=OxWxbiDC9hqWB7Ays54xyH++QE
-	UikzAIuL3aDmc1CDiP/9ZVs6n/mx1u2/ft1OTM17iaP0P9loyZ2KUUbw00mg33+S+C18KcRB/M59A
-	wYCt7T/A8FkIfTbBypvIlR/rnjQYa1ZK2woDvBNaDt6OIql0rugSkNea0Tk6jm3yzKNiMZEPSSYx0
-	z4I7v+uaYJ2RNXN9oKz07lncS4MNp32TYPU0zIJQjcJ6ltpm+aekeSzwkmsa/33n/DVUQGatTs74r
-	xKFz9SX3l1PWnPtan6AC8N/LQoOgCoKeCsnPW1BgEYC6WtdagwNOzbCPhKF29JEVKdXZcCiIImcPA
-	AxJGxNfg==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tEq35-00000009FL6-0KAS;
-	Sat, 23 Nov 2024 13:19:44 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id DE0BD30068B; Sat, 23 Nov 2024 14:19:43 +0100 (CET)
-Date: Sat, 23 Nov 2024 14:19:43 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 9/9] objtool: Collect all annotations in objtool.h
-Message-ID: <20241123131943.GD24774@noisy.programming.kicks-ass.net>
-References: <20241122121016.372005127@infradead.org>
- <20241122121556.560621502@infradead.org>
- <20241122175445.tx3edadmof76yegs@jpoimboe>
+	s=arc-20240116; t=1732368080; c=relaxed/simple;
+	bh=FAmEvsYjY2eUZI2qbLtFctsmsTQ9p22GNJnHD1cqov0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aW+sW2033HrRrw5D0sER/rVrfppL3xzR329sXlwwifGMYMjkBGcqOmwYcN/6k+SeEs2NTz2VgrSIoPN1uZlcX6alrXCSQBDIGXaCUeYUbzC+ZLnSiIHBYb/VPsLOEhzKoVeQ9u+fFNEb39ebyG1n7J8Gv0AtNUgeIQxmwOd9ts0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ALLx14eK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F13BC4CECD;
+	Sat, 23 Nov 2024 13:21:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732368079;
+	bh=FAmEvsYjY2eUZI2qbLtFctsmsTQ9p22GNJnHD1cqov0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ALLx14eKgm45LnSfqpDx44FXdbOm3W7BmgO8z2BZDaSUSFtk2yn1XDogDkh8NZKmB
+	 ZDrMhw0K9Hva32AsPJheAHyrlN5D4D+A9Lt24dn5hAR1jQS9HnJu9y7PpkN+LlWaeb
+	 fV2cUZ+cg9kktaXZjClG3VackhDLLVWbKMUvatrgPhd/+9GfKa8cFmdzxdy31ouAFa
+	 qDfAYSnYU4YWwETPM5vkpID5ui+WnjhBBmAQSpVTUstkfheQOFpGRRTYD90Ddh+K9h
+	 5KXioAMQH73hvwUbU2LBky9hOoEMo7yMibv+t+lGHsIp4w/zXcBksi0pWUdNbg2sYF
+	 tcKY4I65whMYA==
+Date: Sat, 23 Nov 2024 13:21:10 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Yasin Lee <yasin.lee.x@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, yasin.lee.x@outlook.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] dt-bindings: iio: tyhx,hx9023s: Add performance
+ tuning configuration
+Message-ID: <20241123132110.15570171@jic23-huawei>
+In-Reply-To: <b59f6933-e1f1-49e9-be61-3e3b4323da87@gmail.com>
+References: <20241017-add-performance-tuning-configuration-v3-0-e7289791f523@gmail.com>
+	<20241017-add-performance-tuning-configuration-v3-1-e7289791f523@gmail.com>
+	<20241020140638.127a9dbf@jic23-huawei>
+	<b59f6933-e1f1-49e9-be61-3e3b4323da87@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241122175445.tx3edadmof76yegs@jpoimboe>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 22, 2024 at 09:54:45AM -0800, Josh Poimboeuf wrote:
-> On Fri, Nov 22, 2024 at 01:10:25PM +0100, Peter Zijlstra wrote:
-> > +#ifndef __ASSEMBLY__
-> > +/*
-> > + * Annotate away the various 'relocation to !ENDBR` complaints; knowing that
-> > + * these relocations will never be used for indirect calls.
-> > + */
-> > +#define ANNOTATE_NOENDBR		ASM_ANNOTATE(ANNOTYPE_NOENDBR)
-> > +/*
-> > + * This should be used immediately before an indirect jump/call. It tells
-> > + * objtool the subsequent indirect jump/call is vouched safe for retpoline
-> > + * builds.
-> > + */
-> > +#define ANNOTATE_RETPOLINE_SAFE		ASM_ANNOTATE(ANNOTYPE_RETPOLINE_SAFE)
-> > +/*
-> > + * objtool annotation to ignore the alternatives and only consider the original
-> > + * instruction(s).
-> > + */
-> > +#define ANNOTATE_IGNORE_ALTERNATIVE	ASM_ANNOTATE(ANNOTYPE_IGNORE_ALTS)
+On Thu, 14 Nov 2024 23:16:51 +0800
+Yasin Lee <yasin.lee.x@gmail.com> wrote:
+
+> On 10/20/24 21:06, Jonathan Cameron wrote:
+> > On Thu, 17 Oct 2024 18:36:44 +0800
+> > Yasin Lee <yasin.lee.x@gmail.com> wrote:
+> >  
+> >> When hardware design introduces significant sensor data noise,
+> >> performance can be improved by adjusting register settings.  
+> > Questions inline. Mostly around why these controls belong in DT.
+> > What do they have to do with hardware / wiring etc rather than being
+> > appropriate for userspace controls.
+> >
+> > So almost all are definite no to being suitable for device tree bindings.
+> >
+> > Jonathan
+> >  
+> Hi Jonathan,
 > 
-> This is a good start, though it would be really nice to have them *all*
-> together:
+> Thank you for the suggestions in your recent email. Following your 
+> advice, I discussed these configurations in detail with engineers from 
+> the HX9023S supplier. Based on their feedback, these settings are not 
+> intended to be exposed to end-users. Typically, these configurations are 
+> adjusted during the DVT phase of the end product by the supplier to 
+> optimize performance, after which they are finalized and not meant to be 
+> modified dynamically at the user level.
 > 
->   - move ANNOTATE_INTRA_FUNCTION_CALL down next to those ^
+> Given this approach, it seems more appropriate to provide these settings 
+> as part of a firmware file, allowing the configuration to be kept 
+> internal and managed without user-level access. If this approach aligns 
+> with your thoughts, I can prepare and submit a new patch focused on 
+> firmware parsing and handling for these configurations.
+
+Whilst I agree that a typical user may well not modify these settings
+that doesn't necessarily make them suitable for control from the
+Device Tree. Some may be but settings like ODR are about use case
+not physical hardware. Average and OSR are normally a question of
+trading off noise against data rate - that's policy not a fundamental
+characteristic of the hardware. Filter controls are similar.
+
+For other such as Dither, there may hardware configurations where it
+doesn't need to be turned, only but does it do any harm? I'd be
+somewhat surprised if the right thing to do there isn't to just hard
+code it to turned on.
+
+The enabling of dataready interrupt is entirely down to how the
+device is being used, not the platform.
+
+If these devices are being used in embedded platforms for a specific
+purpose, then a simple udev rule or similar can configure the
+defaults whilst still allowing them to be easily tweaked.
+If you are dealing with standardized software it will already understand
+many of the userspace ABI calls and have appropriate configuration files.
+
+That is the appropriate level for such control, not device
+tree.
+
+If you have a strong case why a setting is never a policy decision
+but rather a hard characteristic of the system, then that one may
+be appropriate for DT.  Examples of this in the past have been things
+like output voltage ranges for DACs because the hardware beyond
+this device may only cope with some settings.
+
+Jonathan
+
+
+
 > 
->   - similarly, create ANNOTATE_UNRET_BEGIN and just do
+> Thank you again for your valuable guidance, and I look forward to your 
+> feedback.
 > 
->       #define VALIDATE_UNRET_BEGIN ANNOTATE_UNRET_BEGIN
->     
->     since the VALIDATE_* syntax is more descriptive.
-
-Done these two.
-
->   - create ANNOTATE_INSTR_BEGIN and ANNOTATE_INSTR_END, and then do
->     
->       #define instrumentation_begin() ANNOTATE_INSTR_BEGIN
+> Best regards,
+> Yasin Lee
 > 
->     to keep the existing syntax.  Then instrumentation.h is no longer
->     needed.  The nice comment there can go above ANNOTATE_INSTR_BEGIN.
+> 
 
-Let me noodle a bit with this one, its a bit different from the rest.
-
-> BTW, is there a reason .discard.[un]reachable weren't converted over?
-
-Completely forgot/missed them. Let me add a patch.
 
