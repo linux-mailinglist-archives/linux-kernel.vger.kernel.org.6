@@ -1,52 +1,64 @@
-Return-Path: <linux-kernel+bounces-418928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54BB09D6754
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 03:47:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 901189D6758
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 04:01:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF3E82828B0
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 02:47:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B04FEB21C06
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 03:01:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F77945008;
-	Sat, 23 Nov 2024 02:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540512AE90;
+	Sat, 23 Nov 2024 03:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d0Xqljy/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="CyDCe5Sk"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0696646BF
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 02:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44498800
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 03:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732330040; cv=none; b=KL0/G1kJfgpOT+r6YTFNRko8N3M8dD426jGwn6cAuHi5A/KdgMzPi7CViJ4Z7xDq+b0DbZxCCe6DXC4Hkigurr3QVvvjtPeC1wX3gR7ZEEAs4bblGdF0GhVVN2OcFVBSqT3FUgo/AgeD5+bT8MSdmIqER5vi2CDxU96rIBJe8mY=
+	t=1732330889; cv=none; b=la5taIYUGJ7e5XEmFXdB1lc8a2KVYzI0S3oSG82Wu0JBFpqai5jmogBlMrwxZkrrg+zg66QyV2CZlYkGytkyczDfGqkXaX6FB6MjxNvPLSMRg8m0/m6A8AqyYKDwwtRHCe9HdsrqSDdjIZKw46A0jgvw+aLz9SX6oEtGOwSKOEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732330040; c=relaxed/simple;
-	bh=/GuUBZbqHJgIKkuPyY3DKplJMCtcun5TDXxh9fwwt1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i3BBD5ZLnLyPZJmMLwjPNL3ugam2GtEwFzkHL/cV5BpqRkX+yt4LfmEcvlACZFEuYb9KTdM7yNYoMJV42lLA00hBc4JBPgtA0ey4IbaSd91aUNkHRi7kPBEsjJmt5qOGzit1qSCZKIxj8mO5PJcOnOYbVbzAbt0SpwnqMVrCrX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d0Xqljy/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69E99C4CECE;
-	Sat, 23 Nov 2024 02:47:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732330039;
-	bh=/GuUBZbqHJgIKkuPyY3DKplJMCtcun5TDXxh9fwwt1I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d0Xqljy/XU5vwQ/SYXcqD5Zz1TiXDqGEJeZlzEZb5ViyPI9VdoNsRbDoO+NVKKDpL
-	 qvb6/RoNGwnNbb/CrZ0onttcginuh4sCplBrjKkTbZopY3YSo4l4Pnw3u8KOF2cR5n
-	 G8t0Mol5PyL5b3G57kvtuPYi/Q+9Q4PVpQNNuleuxOaokLKbeL+2LDgMkMU7AgWdjC
-	 QOIleY/F2/ZAOrn5zGKoDsmOCzC5GeK+20n1teB8EJRcCfad1vR1tkVd00x34zsZIo
-	 g4vAzDiUOsXzimi3sfwJN61KPqkxJI+pZCgX5sqXH1VsBLH5zIUIm5PrTAx6bufp50
-	 EBNAh1fbH76LA==
-Date: Fri, 22 Nov 2024 18:47:17 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, x86@kernel.org
-Subject: Re: [PATCH] futex: improve user space accesses
-Message-ID: <20241123024717.rvwcpfwh5frrw6nz@jpoimboe>
-References: <20241122193305.7316-1-torvalds@linux-foundation.org>
+	s=arc-20240116; t=1732330889; c=relaxed/simple;
+	bh=xmf/pB8Fle7JNevkDE4mxBCzTeF7nVLdcwwlB25iz/4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YMIfmpS4AW3+o1zYfAE7R6OWQ2Odp3agGPUTsqm1h0qMGG+KKOc4T9PpG/rLu7VA8bsZiZS/UWkBuEsOOeNqUTaqK5HsvHjJ+8KvYMsjmxxV1nzVKrmpAq80oEKSoHsuyfoIB6tGllq2SMfgUIznWLE8msxhPKGAmaC97p+ycwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=CyDCe5Sk; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1732330876;
+	bh=xmf/pB8Fle7JNevkDE4mxBCzTeF7nVLdcwwlB25iz/4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=CyDCe5Skr1mmCIYEMYoLjSqCO2bD8/v+uEtWYHAFi2zk0D6BvxvGqTwSNGW6U9Hj2
+	 WeCm+pf/Fpx/zwvEMc3m5XZz/rDCBeUrwO6hWXJ0Ja2VISDrqjQTzw5Kz3dxiCmuK0
+	 i6DhPpf1Ns8/RqJKTfnN5bnYJuyNBRCSzWW+xAkOkiF526AzoeKV3HmTXPfOvBWrzO
+	 HhxWom2nNH+WqjLKDf45yUf1mpMfrsqvHLGx6wUwtoBzEkJ1DGILDsDurhSZVlGseS
+	 RZoSEsgq5O9FgDaXK7jFwhNvFJnTNAMuUQrlk+j4js66A9ADLjVCnQCmOi8HJwB6GG
+	 Ms70vkt2RIwcg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XwGvJ023xz4wcr;
+	Sat, 23 Nov 2024 14:01:15 +1100 (AEDT)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, Madhavan
+ Srinivasan <maddy@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc: Transliterate author name and remove FIXME
+In-Reply-To: <55B1EE24-BEC9-4A8D-84B0-ED32FCC070A5@linux.dev>
+References: <20241110162139.5179-2-thorsten.blum@linux.dev>
+ <87v7wuy3p5.fsf@mpe.ellerman.id.au>
+ <55B1EE24-BEC9-4A8D-84B0-ED32FCC070A5@linux.dev>
+Date: Sat, 23 Nov 2024 14:01:04 +1100
+Message-ID: <87v7weodqn.fsf@mpe.ellerman.id.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,35 +66,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241122193305.7316-1-torvalds@linux-foundation.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 22, 2024 at 11:33:05AM -0800, Linus Torvalds wrote:
-> Josh Poimboeuf reports that he got a "will-it-scale.per_process_ops 1.9%
-> improvement" report for his patch that changed __get_user() to use
-> pointer masking instead of the explicit speculation barrier.  However,
-> that patch doesn't actually work in the general case, because some (very
-> bad) architecture-specific code actually depends on __get_user() also
-> working on kernel addresses.
-> 
-> A profile showed that the offending __get_user() was the futex code,
-> which really should be fixed up to not use that horrid legacy case.
-> Rewrite futex_get_value_locked() to use the modern user acccess helpers,
-> and inline it so that the compiler not only avoids the function call for
-> a few instructions, but can do CSE on the address masking.
-> 
-> It also turns out the x86 futex functions have unnecessary barriers in
-> other places, so let's fix those up too.
-> 
-> Link: https://lore.kernel.org/all/20241115230653.hfvzyf3aqqntgp63@jpoimboe/
-> Reported-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Thorsten Blum <thorsten.blum@linux.dev> writes:
+> On 11. Nov 2024, at 02:11, Michael Ellerman wrote:
+>> Thorsten Blum <thorsten.blum@linux.dev> writes:
+>>> The name is Mimi Phuong-Thao Vo.
+>>=20
+>> Is that the correct spelling?
+>>=20
+>> The github commit below suggests it's Mimi Ph=C3=BB=C3=B4ng-Th=C3=A5o V=
+=C3=B5.
+>>=20
+>> And presumably the author preferred that spelling, otherwise they would
+>> have just written it in ASCII in the first place.
+>>=20
+>> https://github.com/bminor/binutils-gdb/commit/6603bf38d74409906b3814f6a2=
+6c0483a5d32e41
+>
+> Hi Michael,
+>
+> Are you suggesting to keep "Mimi Ph\373\364ng-Th\345o V\365" and a FIXME
+> instead of changing it to "Mimi Phuong-Thao Vo" which is how she spells
+> her name on her LinkedIn profile and other websites?
 
-I didn't get a chance to try to recreate the original benchmark, but
-this looks obviously correct.
+No I'm not suggesting to leave it as-is.
 
-Reviewed-by: Josh Poimboeuf <jpoimboe@kernel.org>
+But I also suspect they spell it that way on LinkedIn etc. because it's
+the path of least resistance, not because it's the correct spelling.
 
--- 
-Josh
+I was hoping someone who's more familiar with Vietnamese (I believe)
+spelling would chime in and tell us which is correct.
+
+> I doubt anyone prefers their name to be spelled with octal escape
+> characters.
+=20
+Sure, but it wouldn't have been octal escapes in the original character
+encoding, it would have appeared, I believe, as Mimi Ph=C3=BB=C3=B4ng-Th=C3=
+=A5o V=C3=B5.
+
+cheers
 
