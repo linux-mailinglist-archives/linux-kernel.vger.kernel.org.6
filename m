@@ -1,193 +1,275 @@
-Return-Path: <linux-kernel+bounces-419078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E23F89D6934
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 14:17:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 749959D6937
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 14:17:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99781281EB7
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 13:17:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC54216159F
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 13:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E641990C4;
-	Sat, 23 Nov 2024 13:17:22 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D3B197549;
+	Sat, 23 Nov 2024 13:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e3+PxoNg"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72064C62B
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 13:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF13A14F9E9;
+	Sat, 23 Nov 2024 13:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732367842; cv=none; b=CuqCmmYoNtWnE1mSME0uvERbR8hLdV2YG6iPld9A9F702uaB9HbwM4nffQL5dJ2m1dR7KtKxKqZAWvXubmL3apEVgdPSvnlcH1jfyNp4BGXChyY+cm2mEpIfcqSQfXd8h3p3kCLvmDW49CWD8kDwlm8UsBLbysjK4vuSY6EZL9g=
+	t=1732367867; cv=none; b=Jis8E6biJvjdm6CyTLfEiI5kLDnWHD84zkfw0swXoOPUi/4vFIPjF+iMXsOY6U+Olex9JqlbqZ/uv/Vz3tzZWlhuhAUsy6hn0MuAawpPKKDJusP1Tyb2iHN3e236jxZcJjiz83f45cdAq6IzZpVamrI9CD9G4RHE/fzWkNDcDPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732367842; c=relaxed/simple;
-	bh=41DOHM4iPEklYF1VOcNv6jJ9XlYUlDwHGkNV4iLCm+k=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=EKWfsXvrdONhNVHtDm4MzSpuQOmCBGLzstM13KFjmcxyiBLhjS9+W5nYY82tHGT7nSe1zH8r+bUhg6cKmxBF8nvEEQbJpLwivKXgBhf+JgYMyiT3BowOrLyiRMpfFmPx2eMaMwNHipGM49RQ0RPbDcQ2wVqI2r0zubGL/DhG4zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a78c40fa96so31524355ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 05:17:20 -0800 (PST)
+	s=arc-20240116; t=1732367867; c=relaxed/simple;
+	bh=wRvYZvYSnnJIoD1Ty07qk2G1peUCzMwq6fr5D36Itt8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RJaZx8glGwiufKKzKSmg20b5Rj+li0asgfLvOnKQBn1VNZbRvlCk90Skm5k+faTum5+31mc37RiQPCGyd3d9FqfA3eOhtcUDPqISbTEBiYL3TQTN2f7D4woeCFhERj9PpBttMC1SjAQIRmZvbP6b6+EBLt4crGT2uuhbL9PQsJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e3+PxoNg; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ea568d8216so2574807a91.1;
+        Sat, 23 Nov 2024 05:17:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732367865; x=1732972665; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BM4r1HEBrTnTWqy/E6iTOqwcoKUdMj3yu2jdBDSd560=;
+        b=e3+PxoNgaWf0xmGsQKbnleq1YBd6PSRSd3lV7FxAZwaozxbIoE9H04bkQofpEV6o8U
+         XWXTmWs/YxMuXU+Qv0PKC1PaaC0EeoOVGd6SZW6AY7f3ZRWUBXQPQiXYLTroLHZG1Z17
+         OHB45JpW54uxN9BbuldxEXfsPjpGVsdEBbh09uWdBRXB7s5n7YFSWrMx8ovoFMMNq3xK
+         ed9cDhIYlS//aG58y6bOe679bCtqfavZAA4Re90KYRwz5h9IXybYLgFUWE+IuLyXo5CR
+         Xk4nRllB+34lnL6GZOXx1yBgqzsxjBPyo6fY5Cnrx45t9wR/HtxHgQMFD1ZcM6ggBj+v
+         qoLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732367840; x=1732972640;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1732367865; x=1732972665;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EGS2Wf75yB6cGCwSVlaCEAqoIriUQfEOOBhDFTVpNeE=;
-        b=G71QURBlXq1oID0zvsU6q5m0qWDYRRWDer9K5yru8fzkvatQxfAjRb3UkpCvVWyk71
-         V+mFYE22P72/AvXPSmG3Pif+SLx40rqIWOmTcNLr7uJyOFRu7z7lSnOotmrFmr7fhg6F
-         AUiK86phiFHKkNHzeJG37jmihKasxfZ5TjnrokruemJrYcEGIovLkbubL9X1f013mkMf
-         xiItdNev9v5MF9L6Qq7csFLlKRm6P9wDFFZm78Qiu3usDsLpYeo2UL3yr9QHSOH1FNd3
-         DiC8ltU0DnUcLbdYK7It1+m4E2mWpsG6CFbjM5xf8/94VR5jse4+mDQleVU7ORJtFFsh
-         gxpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXt7XJf/gswQ4UoodFngFq3ZEKWMqOBcTnujzQ1REvQKYcOi9UnBiu1x3daXxD/ZoVsZaleL5ES+NDYKFU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwLl82u9MlEnG4XXfr6Y4JLxiT7K0CyZviULQF3Ca3Pz7SHWOZ
-	RQoAhFgrbZiWKSptv9rpY33hqCCLTM9B6TM14cAfovd9FrsruIQPSM8XZwNddaxsL8g48Rrexst
-	HdTW+gxsWVPWb7MOcPvkZCZDilo5Sg3LYpxZ0yqD0H1dxvct/yKBaZv0=
-X-Google-Smtp-Source: AGHT+IHdAOKK39LzntP294O5KSdIOLNajuVRRe4hz9BfOGk9F61z8L8ng1ZBkF+gx35G6r2Cj8rOenb3SIe8qD7Ubeni3L7jua+l
+        bh=BM4r1HEBrTnTWqy/E6iTOqwcoKUdMj3yu2jdBDSd560=;
+        b=PbAXl5vfDrILOQgIHHyOjnYBriTGOvNwLOIvz5CzkwrwW0onolPm9EuazjbDiaxL/w
+         xAfljXdccfj/tXTT9UxOQbHHQVyfqkIkV6t1Op8/ZC9Nc+hFW67HeLhVFzKcf+Nm/bEC
+         ezezRVD0F32V5M9hk4jPwZSJ0uwaYHqaZuzXL5uqQJJ0ZPMUscfBdZO+gRCmWYGVEgjl
+         MN3YU2vaQrim5fuj4zRjzSk/y9ML5zz1dDJEpN/ZnBKrHXVNBg035InY51KGCK9gZ1F3
+         d268x8RRnf4AgPgUIFPaxapPaccVXqdIGnI/7nPLStSYm+oRTsU/hlTAbS+zGpdHc5aX
+         0F+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUGkrfSB4poh+/bN6ltDoroq5+HH0O6pOByblvfBRsfVhoA09QYQpExQw8gOVUa15SRK2PbGPiFvOI=@vger.kernel.org, AJvYcCWwvggmCwDt6d9FNF+/ulkUbCboB3Zzk1wx6UDLXDbmeB/0hgqHiQAXu+ueYrhJuN16xLKvfsiW0iYAjg9s@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy/Lg2zY+o1F3nfvBz3JtffvSFgztr55uiD5Yls26l7Itk0w/A
+	vJV/wrcdqHWQ8PHkg/z/62z4NsbgPTogbfLcA7WO/lrIYRWIqtJt
+X-Gm-Gg: ASbGnctxAUwkqYUGXo/EMg/EqCHaLovoCdrqGm9czY7Ujpels5XpipPs6owEjO7OmKu
+	0GpefS1zpmPOfcF9lYqDWEwqYe8+oNzOfCbJccB11HoXydeUySt0T9jmbeUy0VJB6U/efPVtRBg
+	wb37xX18YVmlzMMi65Syl+16RZZ/gad5Q/Lbnrx6XrW+HHNfk1IJacWWhSOs4t87Eo4R7LB2xLN
+	POv1RtQ/X/S1ArABRxDO4nm+Cv2WYJE9q/BuOvMeZt/HV8UN7Varyfyadqft7TwLpnHbEsmOwed
+	+ueyucI2kezWHxY4G61WC5FMVfzBDBESb9TbTxJZ0XKS
+X-Google-Smtp-Source: AGHT+IFquSV2OHVBBP4S/5O/ly8yiowqeOIk+QFZcCeDyWYWH1WyuRZ2Dca8iG3StAYanBwj/x92ag==
+X-Received: by 2002:a17:90a:d40b:b0:2ea:5dcf:6f5d with SMTP id 98e67ed59e1d1-2eb0e528054mr8675157a91.16.1732367864945;
+        Sat, 23 Nov 2024 05:17:44 -0800 (PST)
+Received: from ?IPV6:2408:843e:480:254b:48e9:fef4:2ffc:1729? ([2408:843e:480:254b:48e9:fef4:2ffc:1729])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2eb0d048c41sm3654599a91.41.2024.11.23.05.17.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 23 Nov 2024 05:17:44 -0800 (PST)
+Message-ID: <24ea047a-7294-4e7a-bf51-66b7f79f5085@gmail.com>
+Date: Sat, 23 Nov 2024 21:17:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1949:b0:3a7:98c4:86a9 with SMTP id
- e9e14a558f8ab-3a79afcb712mr85669255ab.20.1732367839881; Sat, 23 Nov 2024
- 05:17:19 -0800 (PST)
-Date: Sat, 23 Nov 2024 05:17:19 -0800
-In-Reply-To: <673f4bbc.050a0220.3c9d61.0174.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6741d5df.050a0220.1cc393.0011.GAE@google.com>
-Subject: Re: [syzbot] [kvm?] WARNING: locking bug in kvm_xen_set_evtchn_fast
-From: syzbot <syzbot+919877893c9d28162dc2@syzkaller.appspotmail.com>
-To: bp@alien8.de, dave.hansen@linux.intel.com, dwmw2@infradead.org, 
-	hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mingo@redhat.com, paul@xen.org, pbonzini@redhat.com, seanjc@google.com, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: add per-order mTHP swap-in
+ fallback/fallback_charge counters
+To: Lance Yang <ioworker0@gmail.com>, Barry Song <21cnbao@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Usama Arif <usamaarif642@gmail.com>, Matthew Wilcox <willy@infradead.org>,
+ Peter Xu <peterx@redhat.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20241122161443.34667-1-haowenchao22@gmail.com>
+ <CAK1f24k6n1ngSicrSCv5jX+xa75t-7a3zZB4A95fUvDhteshEQ@mail.gmail.com>
+ <CAGsJ_4w-u703LbrmnsgkNVzpFwFwY7tO9mFoo1RXGk3rb_r3mw@mail.gmail.com>
+ <CAK1f24meJBDA1wzX56=2y2NQm7BVP6OudFXJuGnZuUFnZKUh+A@mail.gmail.com>
+Content-Language: en-US
+From: Wenchao Hao <haowenchao22@gmail.com>
+In-Reply-To: <CAK1f24meJBDA1wzX56=2y2NQm7BVP6OudFXJuGnZuUFnZKUh+A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-syzbot has found a reproducer for the following issue on:
+On 2024/11/23 19:52, Lance Yang wrote:
+> On Sat, Nov 23, 2024 at 6:27 PM Barry Song <21cnbao@gmail.com> wrote:
+>>
+>> On Sat, Nov 23, 2024 at 10:36 AM Lance Yang <ioworker0@gmail.com> wrote:
+>>>
+>>> Hi Wenchao,
+>>>
+>>> On Sat, Nov 23, 2024 at 12:14 AM Wenchao Hao <haowenchao22@gmail.com> wrote:
+>>>>
+>>>> Currently, large folio swap-in is supported, but we lack a method to
+>>>> analyze their success ratio. Similar to anon_fault_fallback, we introduce
+>>>> per-order mTHP swpin_fallback and swpin_fallback_charge counters for
+>>>> calculating their success ratio. The new counters are located at:
+>>>>
+>>>> /sys/kernel/mm/transparent_hugepage/hugepages-<size>/stats/
+>>>>         swpin_fallback
+>>>>         swpin_fallback_charge
+>>>>
+>>>> Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
+>>>> ---
+>>>> V2:
+>>>>  Introduce swapin_fallback_charge, which increments if it fails to
+>>>>  charge a huge page to memory despite successful allocation.
+>>>>
+>>>>  Documentation/admin-guide/mm/transhuge.rst | 10 ++++++++++
+>>>>  include/linux/huge_mm.h                    |  2 ++
+>>>>  mm/huge_memory.c                           |  6 ++++++
+>>>>  mm/memory.c                                |  2 ++
+>>>>  4 files changed, 20 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+>>>> index 5034915f4e8e..9c07612281b5 100644
+>>>> --- a/Documentation/admin-guide/mm/transhuge.rst
+>>>> +++ b/Documentation/admin-guide/mm/transhuge.rst
+>>>> @@ -561,6 +561,16 @@ swpin
+>>>>         is incremented every time a huge page is swapped in from a non-zswap
+>>>>         swap device in one piece.
+>>>>
+>>>
+>>> Would the following be better?
+>>>
+>>> +swpin_fallback
+>>> +       is incremented if a huge page swapin fails to allocate or charge
+>>> +       it and instead falls back to using small pages.
+>>>
+>>> +swpin_fallback_charge
+>>> +       is incremented if a huge page swapin fails to charge it and instead
+>>> +       falls back to using small pages even though the allocation was
+>>> +       successful.
+>>
+>> much better, but it is better to align with "huge pages with
+>> lower orders or small pages", not necessarily small pages:
+>>
+>> anon_fault_fallback
+>> is incremented if a page fault fails to allocate or charge
+>> a huge page and instead falls back to using huge pages with
+>> lower orders or small pages.
+>>
+>> anon_fault_fallback_charge
+>> is incremented if a page fault fails to charge a huge page and
+>> instead falls back to using huge pages with lower orders or
+>> small pages even though the allocation was successful.
+> 
+> Right, I clearly overlooked that ;)
+> 
 
-HEAD commit:    06afb0f36106 Merge tag 'trace-v6.13' of git://git.kernel.o..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=17ff7930580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=95b76860fd16c857
-dashboard link: https://syzkaller.appspot.com/bug?extid=919877893c9d28162dc2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=142981c0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1371975f980000
+Hi Lance and Barry,
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/49111529582a/disk-06afb0f3.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f04577ad9add/vmlinux-06afb0f3.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b352b4fae995/bzImage-06afb0f3.xz
+Do you think the following expression is clear? Compared to my original
+version, I’ve removed the word “huge” from the first line, and it now
+looks almost identical to anon_fault_fallback/anon_fault_fallback_charge.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+919877893c9d28162dc2@syzkaller.appspotmail.com
+swpin_fallback
+       is incremented if a page swapin fails to allocate or charge
+       a huge page and instead falls back to using huge pages with
+       lower orders or small pages.
 
-=============================
-[ BUG: Invalid wait context ]
-6.12.0-syzkaller-07834-g06afb0f36106 #0 Not tainted
------------------------------
-kworker/0:1/9 is trying to lock:
-ffffc90003bca460 (&gpc->lock){....}-{3:3}, at: kvm_xen_set_evtchn_fast+0x1ee/0xa00 arch/x86/kvm/xen.c:1755
-other info that might help us debug this:
-context-{2:2}
-6 locks held by kworker/0:1/9:
- #0: ffff888144a92148 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff888144a92148 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc900000e7d00 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc900000e7d00 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffff888145711190 (&dev->mutex){....}-{4:4}, at: device_lock include/linux/device.h:1014 [inline]
- #2: ffff888145711190 (&dev->mutex){....}-{4:4}, at: hub_event+0x1fe/0x5150 drivers/usb/core/hub.c:5849
- #3: ffffffff8e817de0 (console_lock){+.+.}-{0:0}, at: dev_vprintk_emit+0x2ae/0x330 drivers/base/core.c:4942
- #4: ffffffff8e8179f0 (console_srcu){....}-{0:0}, at: rcu_try_lock_acquire include/linux/rcupdate.h:342 [inline]
- #4: ffffffff8e8179f0 (console_srcu){....}-{0:0}, at: srcu_read_lock_nmisafe include/linux/srcu.h:297 [inline]
- #4: ffffffff8e8179f0 (console_srcu){....}-{0:0}, at: console_srcu_read_lock kernel/printk/printk.c:288 [inline]
- #4: ffffffff8e8179f0 (console_srcu){....}-{0:0}, at: console_flush_all+0x1a3/0xeb0 kernel/printk/printk.c:3187
- #5: ffffc90003bca8c8 (&kvm->srcu){.?.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:158 [inline]
- #5: ffffc90003bca8c8 (&kvm->srcu){.?.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:249 [inline]
- #5: ffffc90003bca8c8 (&kvm->srcu){.?.+}-{0:0}, at: kvm_xen_set_evtchn_fast+0x1bb/0xa00 arch/x86/kvm/xen.c:1753
-stack backtrace:
-CPU: 0 UID: 0 PID: 9 Comm: kworker/0:1 Not tainted 6.12.0-syzkaller-07834-g06afb0f36106 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_lock_invalid_wait_context kernel/locking/lockdep.c:4826 [inline]
- check_wait_context kernel/locking/lockdep.c:4898 [inline]
- __lock_acquire+0x15a8/0x2100 kernel/locking/lockdep.c:5176
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- __raw_read_lock_irqsave include/linux/rwlock_api_smp.h:160 [inline]
- _raw_read_lock_irqsave+0xdd/0x130 kernel/locking/spinlock.c:236
- kvm_xen_set_evtchn_fast+0x1ee/0xa00 arch/x86/kvm/xen.c:1755
- xen_timer_callback+0x1a0/0x380 arch/x86/kvm/xen.c:140
- __run_hrtimer kernel/time/hrtimer.c:1739 [inline]
- __hrtimer_run_queues+0x551/0xd50 kernel/time/hrtimer.c:1803
- hrtimer_interrupt+0x403/0xa40 kernel/time/hrtimer.c:1865
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1038 [inline]
- __sysvec_apic_timer_interrupt+0x110/0x420 arch/x86/kernel/apic/apic.c:1055
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
- sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1049
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:console_flush_all+0x996/0xeb0
-Code: 48 21 c3 0f 85 16 02 00 00 e8 66 aa 20 00 4c 8b 7c 24 10 4d 85 f6 75 07 e8 57 aa 20 00 eb 06 e8 50 aa 20 00 fb 48 8b 5c 24 18 <48> 8b 44 24 30 42 80 3c 28 00 74 08 48 89 df e8 76 61 8b 00 4c 8b
-RSP: 0018:ffffc900000e7000 EFLAGS: 00000293
-RAX: ffffffff8174a2e0 RBX: ffffffff8f17fa58 RCX: ffff88801bef8000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc900000e71b0 R08: ffffffff8174a2b7 R09: 1ffffffff285cb10
-R10: dffffc0000000000 R11: fffffbfff285cb11 R12: ffffffff8f17fa00
-R13: dffffc0000000000 R14: 0000000000000200 R15: ffffc900000e7200
- __console_flush_and_unlock kernel/printk/printk.c:3269 [inline]
- console_unlock+0x14f/0x3b0 kernel/printk/printk.c:3309
- vprintk_emit+0x730/0xa10 kernel/printk/printk.c:2432
- dev_vprintk_emit+0x2ae/0x330 drivers/base/core.c:4942
- dev_printk_emit+0xdd/0x120 drivers/base/core.c:4953
- _dev_info+0x122/0x170 drivers/base/core.c:5011
- show_string drivers/usb/core/hub.c:2357 [inline]
- announce_device drivers/usb/core/hub.c:2375 [inline]
- usb_new_device+0xd02/0x19a0 drivers/usb/core/hub.c:2632
- hub_port_connect drivers/usb/core/hub.c:5521 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x2d6d/0x5150 drivers/usb/core/hub.c:5903
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	48 21 c3             	and    %rax,%rbx
-   3:	0f 85 16 02 00 00    	jne    0x21f
-   9:	e8 66 aa 20 00       	call   0x20aa74
-   e:	4c 8b 7c 24 10       	mov    0x10(%rsp),%r15
-  13:	4d 85 f6             	test   %r14,%r14
-  16:	75 07                	jne    0x1f
-  18:	e8 57 aa 20 00       	call   0x20aa74
-  1d:	eb 06                	jmp    0x25
-  1f:	e8 50 aa 20 00       	call   0x20aa74
-  24:	fb                   	sti
-  25:	48 8b 5c 24 18       	mov    0x18(%rsp),%rbx
-* 2a:	48 8b 44 24 30       	mov    0x30(%rsp),%rax <-- trapping instruction
-  2f:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1)
-  34:	74 08                	je     0x3e
-  36:	48 89 df             	mov    %rbx,%rdi
-  39:	e8 76 61 8b 00       	call   0x8b61b4
-  3e:	4c                   	rex.WR
-  3f:	8b                   	.byte 0x8b
+swpin_fallback_charge
+       is incremented if a page swapin fails to charge a huge page and
+       instead falls back to using huge pages with lower orders or
+       small pages even though the allocation was successful.
 
+Thanks,
+Wencaho
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> Thanks,
+> Lance
+> 
+>>
+>>>
+>>> Thanks,
+>>> Lance
+>>>
+>>>> +swpin_fallback
+>>>> +       is incremented if a huge page swapin fails to allocate or charge
+>>>> +       a huge page and instead falls back to using huge pages with
+>>>> +       lower orders or small pages.
+>>>> +
+>>>> +swpin_fallback_charge
+>>>> +       is incremented if a page swapin fails to charge a huge page and
+>>>> +       instead falls back to using huge pages with lower orders or
+>>>> +       small pages even though the allocation was successful.
+>>>> +
+>>>>  swpout
+>>>>         is incremented every time a huge page is swapped out to a non-zswap
+>>>>         swap device in one piece without splitting.
+>>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>>>> index b94c2e8ee918..93e509b6c00e 100644
+>>>> --- a/include/linux/huge_mm.h
+>>>> +++ b/include/linux/huge_mm.h
+>>>> @@ -121,6 +121,8 @@ enum mthp_stat_item {
+>>>>         MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
+>>>>         MTHP_STAT_ZSWPOUT,
+>>>>         MTHP_STAT_SWPIN,
+>>>> +       MTHP_STAT_SWPIN_FALLBACK,
+>>>> +       MTHP_STAT_SWPIN_FALLBACK_CHARGE,
+>>>>         MTHP_STAT_SWPOUT,
+>>>>         MTHP_STAT_SWPOUT_FALLBACK,
+>>>>         MTHP_STAT_SHMEM_ALLOC,
+>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>>> index ee335d96fc39..46749dded1c9 100644
+>>>> --- a/mm/huge_memory.c
+>>>> +++ b/mm/huge_memory.c
+>>>> @@ -617,6 +617,8 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
+>>>>  DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
+>>>>  DEFINE_MTHP_STAT_ATTR(zswpout, MTHP_STAT_ZSWPOUT);
+>>>>  DEFINE_MTHP_STAT_ATTR(swpin, MTHP_STAT_SWPIN);
+>>>> +DEFINE_MTHP_STAT_ATTR(swpin_fallback, MTHP_STAT_SWPIN_FALLBACK);
+>>>> +DEFINE_MTHP_STAT_ATTR(swpin_fallback_charge, MTHP_STAT_SWPIN_FALLBACK_CHARGE);
+>>>>  DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
+>>>>  DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
+>>>>  #ifdef CONFIG_SHMEM
+>>>> @@ -637,6 +639,8 @@ static struct attribute *anon_stats_attrs[] = {
+>>>>  #ifndef CONFIG_SHMEM
+>>>>         &zswpout_attr.attr,
+>>>>         &swpin_attr.attr,
+>>>> +       &swpin_fallback_attr.attr,
+>>>> +       &swpin_fallback_charge_attr.attr,
+>>>>         &swpout_attr.attr,
+>>>>         &swpout_fallback_attr.attr,
+>>>>  #endif
+>>>> @@ -669,6 +673,8 @@ static struct attribute *any_stats_attrs[] = {
+>>>>  #ifdef CONFIG_SHMEM
+>>>>         &zswpout_attr.attr,
+>>>>         &swpin_attr.attr,
+>>>> +       &swpin_fallback_attr.attr,
+>>>> +       &swpin_fallback_charge_attr.attr,
+>>>>         &swpout_attr.attr,
+>>>>         &swpout_fallback_attr.attr,
+>>>>  #endif
+>>>> diff --git a/mm/memory.c b/mm/memory.c
+>>>> index 209885a4134f..774dfd309cfe 100644
+>>>> --- a/mm/memory.c
+>>>> +++ b/mm/memory.c
+>>>> @@ -4189,8 +4189,10 @@ static struct folio *alloc_swap_folio(struct vm_fault *vmf)
+>>>>                         if (!mem_cgroup_swapin_charge_folio(folio, vma->vm_mm,
+>>>>                                                             gfp, entry))
+>>>>                                 return folio;
+>>>> +                       count_mthp_stat(order, MTHP_STAT_SWPIN_FALLBACK_CHARGE);
+>>>>                         folio_put(folio);
+>>>>                 }
+>>>> +               count_mthp_stat(order, MTHP_STAT_SWPIN_FALLBACK);
+>>>>                 order = next_order(&orders, order);
+>>>>         }
+>>>>
+>>>> --
+>>>> 2.45.0
+>>>>
+>>
+>> Thanks
+>> Barry
+
 
