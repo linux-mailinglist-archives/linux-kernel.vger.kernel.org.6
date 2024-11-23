@@ -1,86 +1,148 @@
-Return-Path: <linux-kernel+bounces-419055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C6A9D68F7
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 13:12:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C79309D68F9
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 13:13:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D78D281CFF
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 12:12:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D3DD281D0B
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 12:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 902D718873A;
-	Sat, 23 Nov 2024 12:12:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D0618C002;
+	Sat, 23 Nov 2024 12:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Vlsq0FoQ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C670E14F9E9
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 12:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD3B14F9E9;
+	Sat, 23 Nov 2024 12:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732363926; cv=none; b=GRpk7O61qXceZkXzN04cgpDbSQgqJcN4nOf6d4gsSLDRKzke9OjNjuB+kmD7yn/bnnt2k0hZIjuG2wV8yIWlWIomEzC7dGOJ+4kVZfoYFcGc6Xbyys4CQKLkNsuP+nxmys72doTYZbhyJXfuGy5CmwiqD9ttHvqJ+f63DIX++B8=
+	t=1732364002; cv=none; b=IpbPzi7Swp1ejsVjg6706QXLl7PEYwLlHwq/NNiqwvZZdIS0Cu9utFH7ZhHRhupcHsMnwH2+0wH/JWsH1y3B+a6Jx5EQq+ESjc1CNJMD7OMwipXJZqB5ev6/hxxskux03RVkQS1yXgosh2X+8EVw3fXSpsY3FaUJEo5B2h2G8k0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732363926; c=relaxed/simple;
-	bh=TYyTZ2XNG/9L4jjo5iRo0rrA88GdXZarZrUK72B7FsA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=gyGmhy/kS54smg2CPXjapAAtFFsmn0YmXphbaz6BDeLyZYv5eFUtM6vIphiLe4rjdlWSel2RnxpsFkJZFQSYyjf86wKqsRyGTklHmaDaWi71zTTJOAOAW7eveMcY3jOJWkTzbsNuHpXt1xx73dMDyu0FIowl6pBXkZo+OUP33jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83abf9b6bfaso318167239f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 04:12:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732363924; x=1732968724;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cqxBek+GG5i+/WKQLp+6iOq60RM5a03OPRmp+n2mpQI=;
-        b=HFisrBmsQxahdS1lzCR4ZN4hvgbaQlZbnLGeheNtpSGUCRrd17nKfU5ib9tHAFvEDI
-         5reeu8z6THfy9o80x1t5SWCefb6XU09fDRKOFWnCC1xMmPcti3J+ib8LC0uQ54GV6Gja
-         kZzBsi7CJIFhoySsyU5ujT6OFwkZFqeW4lwbAR5IzQCWgESGmxfes+lptzCNBu9IJfuC
-         Cqd8Jm/L0rxLMHBX1tUX3GB1VnzfATGxkeDUwgDt8j6fgYuoiyd340rEdVOUPIiI+p7y
-         U1diti5qJo9DkKHgjsFtu8YimGCVWgiksXYA/kUSu0Q0XRLbvsuXALLIgcykFVyQs/+a
-         deFQ==
-X-Gm-Message-State: AOJu0YyJE1Rq9OzLvUxbenDrM04sBhUqayKLqvmnswmL3erhkZQeIYTj
-	KWNvil/Ih/1sWIlaUJRKSAk8i/Fom2hO8s0aqvW+yWY/fU4GZg/LEhZ++h+R/1XNSlujBCnTNG5
-	iCZwRpgX1OsdPZVWV8E9wFNcRdKYtTlhP0mizsC92jLcVkT/vVqQdUzw=
-X-Google-Smtp-Source: AGHT+IHwx+RNMPYg447vEukiWAi/v6iigwrQYwR7xJAfhhfOLKGRgc4fI/dFRgSSWHl5dZnRgtKRfzFptO7bxSfRQn7aCgjxjnwN
+	s=arc-20240116; t=1732364002; c=relaxed/simple;
+	bh=1dM5uHcLVJ4kOXWd0J8Gu9w8OhsgSUXOM8wfFq038M0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ttAlfaD/m7T+5oC3l2JN+1AFFahUSqFJ5ydwMq4r9wEEIl0H7c3kIzrg8j8VeAzFSVRywkVA+6enbyk4f9Cf+zXWMcFpbZg2yOTGPkUjjRD9EYCZ10M4XT7QDYkB0B3bPk+HPCdZJEJ4g3txBWYP/wSMmZa1ASi8590oH/6nyFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Vlsq0FoQ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AN9X4nM021444;
+	Sat, 23 Nov 2024 12:13:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	l5alXzzFD3JlV4R06VDMhg9cSTZcm4OkikXmaWosx7E=; b=Vlsq0FoQMDhgx3bn
+	EBo/tbTrznsQAgv0Hfn4yNa47egmItRmfpzcP9/N+GleCDL6mPknliGs8FHstv+d
+	rPDNk7FaTMhicJ1Rb1qwC69GVdn8M5RzNzQnVtjWYsK7mwWGNjz9v+eLmQ/wDC2n
+	sfk1Y3bCvCLUYuX1scotowT1/PW/f2smC6ZVya/c63O/MQ4FMTF0XW5jX1yBSNmS
+	Z8Ffoi5PNoP8b7siJk1Pz8pxGRQeheHmUgexcp+SzxDq4oxBqA58LdRu1T2aTZxU
+	AjdJLrK3ajszDAJw9qLKDeODaYZ29xVtbifjqdoYWn9wf6lexGx4hATA2X+/TVgH
+	CXx84A==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4337e6rps7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 23 Nov 2024 12:13:16 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ANCDFoE024074
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 23 Nov 2024 12:13:15 GMT
+Received: from [10.216.31.245] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 23 Nov
+ 2024 04:13:12 -0800
+Message-ID: <f96fbfc5-ed5a-4def-a7e0-df4098dea4b3@quicinc.com>
+Date: Sat, 23 Nov 2024 17:43:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a88:b0:3a7:6566:1e8f with SMTP id
- e9e14a558f8ab-3a79aeade39mr53033695ab.16.1732363923874; Sat, 23 Nov 2024
- 04:12:03 -0800 (PST)
-Date: Sat, 23 Nov 2024 04:12:03 -0800
-In-Reply-To: <f1601b51-4c9a-4a99-ac04-9403f2939b37@I-love.SAKURA.ne.jp>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6741c693.050a0220.1cc393.000a.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] VFS: Busy inodes after unmount (use-after-free)
-From: syzbot <syzbot+0af00f6a2cba2058b5db@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] i2c: i2c-qcom-geni: Serve transfer during early resume
+ stage
+To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+CC: <andi.shyti@kernel.org>, <quic_bjorande@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <konrad.dybcio@linaro.org>,
+        <quic_vdadhani@quicinc.com>, <vkoul@kernel.org>
+References: <20241011121757.2267336-1-quic_msavaliy@quicinc.com>
+ <ZwlnWIWkS1pwQ/xK@hu-bjorande-lv.qualcomm.com>
+ <3797c11f-b263-4f5d-9307-963fd6662b26@quicinc.com>
+ <CADLxj5RD5syLXdVnfsMpEso9VOhWiwdP8_iV12R=mvhKwUY_bA@mail.gmail.com>
+Content-Language: en-US
+From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+In-Reply-To: <CADLxj5RD5syLXdVnfsMpEso9VOhWiwdP8_iV12R=mvhKwUY_bA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: cabVDFBPFFZzUr2N_0-bjYKUK5IR4W66
+X-Proofpoint-ORIG-GUID: cabVDFBPFFZzUr2N_0-bjYKUK5IR4W66
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 impostorscore=0 malwarescore=0 clxscore=1015
+ lowpriorityscore=0 spamscore=0 mlxscore=0 mlxlogscore=999 adultscore=0
+ suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2411230104
 
-Hello,
+Thanks Bjorn.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On 11/19/2024 8:29 PM, Bjorn Andersson wrote:
+> On Tue, Nov 19, 2024 at 8:29 AM Mukesh Kumar Savaliya
+> <quic_msavaliy@quicinc.com> wrote:
+>> On 10/11/2024 11:28 PM, Bjorn Andersson wrote:
+>>> On Fri, Oct 11, 2024 at 05:47:57PM +0530, Mukesh Kumar Savaliya wrote:
+> [..]
+>>>> pm_runtime_get_sync() function fails during PM early resume and returning
+>>>> -EACCES because runtime PM for the device is disabled at the early stage
+>>>> causing i2c transfer to fail. Make changes to serve transfer with forced
+>>>> resume.
+>>>>
+>>>> Few i2c clients like PCI OR touch may request i2c transfers during early
+>>>> resume stage. In order to serve transfer request do :
+>>>>
+>>>
+>>> This problem description is too generic. I am not aware of any use case
+>>> upstream where PCI or touch might need to perform i2c transfers during
+>>> early resume; your commit message should educate me.
+>>>
+>> yes, it's generic as of now since we have an internal usecase with PCI
+>> is yet to be enabled in upstream. Not tied up with any usecase in
+>> upstream, i just heard recently.
+>>
+>> Provided the scenario is generic and possible by any client, can this
+>> code change be reviewed or shall be kept on halt till PCI usecase gets
+>> enabled ?
+>>
+> 
+> If this is a valid scenario in the upstream kernel, yes. If it solves
+> a problem only manifesting itself based on a downstream design then
+> you need to exactly describe that scenario so that reviewers can
+> decide if this is a problem with the upstream kernel or your
+> downstream design.
+> 
+The exact scenario from PCIe switch is as below.  Hope it describes the 
+usecase at high level to understand PCIe client -> PCIe Driver -> I2C 
+driver.
 
-Reported-by: syzbot+0af00f6a2cba2058b5db@syzkaller.appspotmail.com
-Tested-by: syzbot+0af00f6a2cba2058b5db@syzkaller.appspotmail.com
+PCIe switch needs certain configurations through i2c after powering on 
+the switch, as part of suspend we are using suspend_noirq() to turn off 
+the switch because some PCIe clients do some transfers till 
+suspend_noirq() phase. And as part of resume_noirq(), we will enable the 
+power to the switch and configures the switch again through i2c.
 
-Tested on:
 
-commit:         adc21867 Linux 6.12
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git v6.12
-console output: https://syzkaller.appspot.com/x/log.txt?x=14bf36e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8dfe7071ced70e76
-dashboard link: https://syzkaller.appspot.com/bug?extid=0af00f6a2cba2058b5db
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12c281c0580000
-
-Note: testing is done by a robot and is best-effort only.
+> Regards,
+> Bjonr
+> 
 
