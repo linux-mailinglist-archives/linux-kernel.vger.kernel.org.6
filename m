@@ -1,83 +1,115 @@
-Return-Path: <linux-kernel+bounces-419027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 684369D68AD
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 12:04:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB8F9D68B3
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 12:04:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65125281D71
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 11:03:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2F02281D0C
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 11:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ADB317C7CE;
-	Sat, 23 Nov 2024 11:03:45 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2F437171
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 11:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B38B193408;
+	Sat, 23 Nov 2024 11:04:49 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803DC37171;
+	Sat, 23 Nov 2024 11:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732359824; cv=none; b=sTQSKCpdnQw/xZI1zjGAeO8KEieKgdRSYo3X2yW/eMibMxAlKm4UQfv8xO0DU+LtCu3q2Y0FzeNQd5TeyqGt4Qvqm3tMe+ut9//qak9Damdl2xkfyJ5ER+FP/NO04RXe2DEMZ0Bx0SyWA9cu/LwScaXeM5j33vmRWdUGqIjbh9Y=
+	t=1732359888; cv=none; b=REsVd0tN8ipnSgdr4G/SxsMtbPQFyPYI2wsthZaSWzDVahrMdEDA8ZPeI7ephRjwCOnLSlRfinMA9p1QjzjGH72TD6uQz5UtAy69FuJbhQ31qf+Ptewe5m0AqmvaMwFtsMZApZGvrBlbxN0l/2Od1wV49tDO5BzsH6QA7TdA76g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732359824; c=relaxed/simple;
-	bh=AcW1pzHRwc++yy4kwyJcko3+44BjcCB5q/uENXMqVls=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=WIUl+wx8Eyh4YZsozJyjIdeDtb6Fk+5SdtjpSWNxO6OzdER/JkFiTOWPfF0wOSeLD98Ifus6DU1e0G5zMSeAW154lKa1VcLizcKvk8l0AKn0jUTug569l87YYUmIREEqi+68NrysS4zcYxH08aWp3j77Urm289y85MsZG+YnKew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 4ANB3Sp4023236;
-	Sat, 23 Nov 2024 20:03:28 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 4ANB3SoZ023233
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 23 Nov 2024 20:03:28 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <f1601b51-4c9a-4a99-ac04-9403f2939b37@I-love.SAKURA.ne.jp>
-Date: Sat, 23 Nov 2024 20:03:29 +0900
+	s=arc-20240116; t=1732359888; c=relaxed/simple;
+	bh=6g2lUM70jNivzuxuoC2WEihURosHXc9laXkjI5Lfb1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dcQ6FPwGlxNlVKU12qWTP6eibwt/dWfesQhznOGC30Kxq3SAYzdwm8X4Vl4PcbaHNGkhx82DI+MX4wB/yNKNqutUVFfX4exPdEUOjiZWc+dJRWY/u5FwrMJyNPoh0ol8+bGbWPZthI2yflW/LEWnkAvR+hBaAE7xFuOqr/Ji4DA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1tEnw5-0005uq-00; Sat, 23 Nov 2024 12:04:21 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 98377C014F; Sat, 23 Nov 2024 12:03:49 +0100 (CET)
+Date: Sat, 23 Nov 2024 12:03:49 +0100
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, markus.stockhausen@gmx.de,
+	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
+Subject: Re: [PATCH v5 2/3] mips: dts: realtek: Add SPI NAND controller
+Message-ID: <Z0G2lYGXHKwXpuWB@alpha.franken.de>
+References: <20241015225434.3970360-1-chris.packham@alliedtelesis.co.nz>
+ <20241015225434.3970360-3-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: syzbot+0af00f6a2cba2058b5db@syzkaller.appspotmail.com,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: Re: VFS: Busy inodes after unmount (use-after-free)
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav203.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241015225434.3970360-3-chris.packham@alliedtelesis.co.nz>
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git v6.12
+On Wed, Oct 16, 2024 at 11:54:33AM +1300, Chris Packham wrote:
+> Add the SPI-NAND controller on the RTL9300 family of devices. This
+> supports serial/dual/quad data width and DMA for read/program
+> operations.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+> 
+> Notes:
+>     Changes in v4 & v5:
+>     - none
+>     Changes in v3:
+>     - drop wildcard rtl9300-snand compatible
+>     - drop clock-names
+>     Changes in v2:
+>     - Add clocks
+> 
+>  arch/mips/boot/dts/realtek/rtl930x.dtsi | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/arch/mips/boot/dts/realtek/rtl930x.dtsi b/arch/mips/boot/dts/realtek/rtl930x.dtsi
+> index f271940f82be..b01a40ec3064 100644
+> --- a/arch/mips/boot/dts/realtek/rtl930x.dtsi
+> +++ b/arch/mips/boot/dts/realtek/rtl930x.dtsi
+> @@ -32,6 +32,8 @@ lx_clk: clock-175mhz {
+>  };
+>  
+>  &soc {
+> +	ranges = <0x0 0x18000000 0x20000>;
+> +
+>  	intc: interrupt-controller@3000 {
+>  		compatible = "realtek,rtl9300-intc", "realtek,rtl-intc";
+>  		reg = <0x3000 0x18>, <0x3018 0x18>;
+> @@ -59,6 +61,17 @@ timer0: timer@3200 {
+>  		interrupts = <7>, <8>, <9>, <10>, <11>;
+>  		clocks = <&lx_clk>;
+>  	};
+> +
+> +	snand: spi@1a400 {
+> +		compatible = "realtek,rtl9301-snand";
+> +		reg = <0x1a400 0x44>;
+> +		interrupt-parent = <&intc>;
+> +		interrupts = <19>;
+> +		clocks = <&lx_clk>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		status = "disabled";
+> +	};
+>  };
+>  
+>  &uart0 {
+> -- 
+> 2.47.0
 
- fs/ocfs2/namei.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+applied to mips-next.
 
-diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
-index 59c92353151a..5550f8afa438 100644
---- a/fs/ocfs2/namei.c
-+++ b/fs/ocfs2/namei.c
-@@ -200,8 +200,10 @@ static struct inode *ocfs2_get_init_inode(struct inode *dir, umode_t mode)
- 	mode = mode_strip_sgid(&nop_mnt_idmap, dir, mode);
- 	inode_init_owner(&nop_mnt_idmap, inode, dir, mode);
- 	status = dquot_initialize(inode);
--	if (status)
-+	if (status) {
-+		iput(inode);
- 		return ERR_PTR(status);
-+	}
- 
- 	return inode;
- }
+Thomas.
+
 -- 
-2.47.0
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
