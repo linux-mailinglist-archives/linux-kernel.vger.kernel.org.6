@@ -1,114 +1,116 @@
-Return-Path: <linux-kernel+bounces-419250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9456D9D6B57
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 21:03:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 586059D6B5F
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 21:06:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47F34282000
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 20:03:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E405282103
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 20:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8001C14EC47;
-	Sat, 23 Nov 2024 20:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5F31A724C;
+	Sat, 23 Nov 2024 20:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ISVv6ieq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NhoOLutI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE99EADC;
-	Sat, 23 Nov 2024 20:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EE319CC02;
+	Sat, 23 Nov 2024 20:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732392220; cv=none; b=Xg6xJeJ9DRkywwoYqiRJMzMwMA6LfCMpjcXXNoMkFSorRgaKFAKuLtLH5awbPnW7IGTtJdNL3GtjGdZ1mVNULznQTRcAfA0zjuK1wgJID/RWkwXJGUR6+tEiKCYaBLmgfVGomSUW7nbz/LSLNhebDyJ62Dj6hQyCEwzYf3f0jpA=
+	t=1732392370; cv=none; b=mk8iTx0qgm7sjIH5a4vVaJ+PIcpdlreS2jIxKkwF3wqR4bnal2V0JSjUlEoJJ01qKw4BbLlUMsO/OTZsGlpV9f8mgwMryEdm2n2UQ5b14KksmAyCtWofDIPnV8beZ0E8R15f1g/z9LYz+1PYcQ3+7/AEfTwj0DBXWVHZ+zCQrDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732392220; c=relaxed/simple;
-	bh=awX1OHgdqsxsHC3kU5IcFhrvdjajWLHd4mnWWIWjVM4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Fd8CSBRJzfgRabin++uxNwP514ALpoL14VCkt3ugDkQE/vsgzmkxP5gJbCj8QRn+RSZBXmlTlnjLD+c3QpXlUN8VN4MFwNy/hOBWVfKjNLc4M9zAT+IkgwkDL8CsDDuSS+OAaEPNF2Sf1/U/pRq7vnlnLq+U3f2biJ8Y6oAiAiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ISVv6ieq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 111E0C4CECD;
-	Sat, 23 Nov 2024 20:03:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732392219;
-	bh=awX1OHgdqsxsHC3kU5IcFhrvdjajWLHd4mnWWIWjVM4=;
-	h=From:Date:Subject:To:Cc:From;
-	b=ISVv6ieqm/cuXatmH24O4oeGMpbRkgIXj/sg9WC+froq7CMPaE6Jzc0s+O9ZgXWtj
-	 qKLF0UUNR6NYTevejyQJ57ZoN6JnhlWwioZcIi0ppftJ76EptHxfzBTcMzsc5IRaYw
-	 HNvCc9/jXHVaJNEkKZ4E/kfd8RR/luHTRy061VuzI8flPDK2soZ8cQRA2WG/v+1us8
-	 l0siS5VUAap6D9fGc/oMuLWSglcHcmQJPfc4TbHRFW0PTIU4LpInHpRdi70/IVXbDq
-	 8gzisVMmGBhz7SUC8trpVauh/Lhy4a1wvv+1bqMT2aOxTq+rnePczy9gL1Dfa4XQno
-	 BOPdnIf6gsjhg==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Sat, 23 Nov 2024 13:03:25 -0700
-Subject: [PATCH] staging: gpib: Make GPIB_NI_PCI_ISA depend on HAS_IOPORT
+	s=arc-20240116; t=1732392370; c=relaxed/simple;
+	bh=SDRSLzgqxuDd1Y5jRSnSWyP7peIE45CnOm8Zg3wyB6o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=InvXXXueeh5MEgl++7sKPEzbwDEI3+85o8A4jg4VlkHtLm0Q2UrglsFpcA/b3tK42Jci4FbaHKq+QmFcLrMPHr51bcc7E4K1ehdxW0Uq/GuQvYi1/o7kZrIGX5LDwV0Qc0lPniCB+iuUAc6gEcF3YJnitNid5LURkJXeN0S6N4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=none smtp.mailfrom=ecsmtp.iind.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NhoOLutI; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ecsmtp.iind.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732392370; x=1763928370;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=SDRSLzgqxuDd1Y5jRSnSWyP7peIE45CnOm8Zg3wyB6o=;
+  b=NhoOLutIkx45Cd6b5EVmfZtOrM52TSLJPIN3MWSSuEQUqCEu2DmdWMtY
+   2/lpHBbztUWCJMFn8RA7Y8KGpg6VOb2/PIFK+2KVVyVYjZ6tTsG4UZXj4
+   vYkEHi6uKd3zZZLgx6cqU0WGeG07PpDFyXFXmwVn3cPeC9iFdqadI1hBC
+   VV7AEQ9bfQisUDMaMTQLojRrQ6fXNMwIlUhks9UJ6A/vVpyMSllOOq+jl
+   iBKkGK8yVTEpRZ4AHuvQvFIpTWu8nW2/0exe7l5Jqm831VnuGhSPa394H
+   +rEYQeti2nDsLygGy/RqsmKGVtLQo/zriDS3y2oiYTyn2nUOT+g6f2wMY
+   A==;
+X-CSE-ConnectionGUID: zmEQidfuS32fayeWoHixYA==
+X-CSE-MsgGUID: An6ca+UvRjaPZA0i8SvtCw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11265"; a="32678542"
+X-IronPort-AV: E=Sophos;i="6.12,179,1728975600"; 
+   d="scan'208";a="32678542"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2024 12:06:07 -0800
+X-CSE-ConnectionGUID: /fJGvNgxRFaOKdjcF20isA==
+X-CSE-MsgGUID: PxgMXxkkQzOtnpw8vphbag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,179,1728975600"; 
+   d="scan'208";a="121737992"
+Received: from inesxmail01.iind.intel.com ([10.223.57.40])
+  by orviesa002.jf.intel.com with ESMTP; 23 Nov 2024 12:06:04 -0800
+Received: from inlubt0316.iind.intel.com (inlubt0316.iind.intel.com [10.191.20.213])
+	by inesxmail01.iind.intel.com (Postfix) with ESMTP id 006121CACF;
+	Sun, 24 Nov 2024 01:36:03 +0530 (IST)
+Received: by inlubt0316.iind.intel.com (Postfix, from userid 12101951)
+	id EF9AD160010D; Sun, 24 Nov 2024 01:36:02 +0530 (IST)
+From: Raag Jadav <raag.jadav@intel.com>
+To: gregkh@linuxfoundation.org,
+	linus.walleij@linaro.org,
+	mika.westerberg@linux.intel.com,
+	andriy.shevchenko@linux.intel.com,
+	dmitry.torokhov@gmail.com,
+	broonie@kernel.org,
+	pierre-louis.bossart@linux.dev
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	Raag Jadav <raag.jadav@intel.com>
+Subject: [PATCH v1 0/5] Introduce devm_kmemdup_array() helper
+Date: Sun, 24 Nov 2024 01:35:22 +0530
+Message-Id: <20241123200527.7830-1-raag.jadav@intel.com>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241123-gpib-tnt4882-depends-on-has_ioport-v1-1-033c58b64751@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAAw1QmcC/x3NwQrCMAyA4VcZORuwsZPhq4hIt2RbLmlpighj7
- 27x+F3+/wCXquLwGA6o8lHXbB3hMsCyJ9sElbuBrhRDoBtuRWds1uI0EbIUMXbMhnvyt+aSa8O
- ZmSLfZUyyQA+VKqt+/5Pn6zx/W8aW5XQAAAA=
-X-Change-ID: 20241123-gpib-tnt4882-depends-on-has_ioport-bdd24d6e5aec
-To: Dave Penkler <dpenkler@gmail.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Arnd Bergmann <arnd@arndb.de>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1735; i=nathan@kernel.org;
- h=from:subject:message-id; bh=awX1OHgdqsxsHC3kU5IcFhrvdjajWLHd4mnWWIWjVM4=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDOlOplKzz33ilJr9wNL9XMLJebJ2M7IvduaEGGqWWn1M+
- 5F1XM6so5SFQYyLQVZMkaX6sepxQ8M5ZxlvnJoEM4eVCWQIAxenAEyk8hMjw+VDB4OqAtll/S4x
- KrAfCY7frbWz63Cup8+M85cFEr5N/cnI0H3OdGOItyYnT+qxye/bLHdP/PXT+d+3Lxdvhv046iT
- WyAgA
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
+Content-Transfer-Encoding: 8bit
 
-After commit 78ecb0375685 ("staging: gpib: make port I/O code
-conditional"), building tnt4882.ko on platforms without HAS_IOPORT (such
-as hexagon and s390) fails with:
+This series introduces devm_kmemdup_array() helper with multiplication
+overflow check and uses it across drivers.
 
-  ERROR: modpost: "inb_wrapper" [drivers/staging/gpib/tnt4882/tnt4882.ko] undefined!
-  ERROR: modpost: "inw_wrapper" [drivers/staging/gpib/tnt4882/tnt4882.ko] undefined!
-  ERROR: modpost: "nec7210_locking_ioport_write_byte" [drivers/staging/gpib/tnt4882/tnt4882.ko] undefined!
-  ERROR: modpost: "nec7210_locking_ioport_read_byte" [drivers/staging/gpib/tnt4882/tnt4882.ko] undefined!
-  ERROR: modpost: "outb_wrapper" [drivers/staging/gpib/tnt4882/tnt4882.ko] undefined!
-  ERROR: modpost: "outw_wrapper" [drivers/staging/gpib/tnt4882/tnt4882.ko] undefined!
+Raag Jadav (5):
+  devres: Introduce devm_kmemdup_array()
+  pinctrl: intel: copy communities using devm_kmemdup_array()
+  pinctrl: pxa2xx: use devm_kmemdup_array()
+  input: sparse-keymap: use devm_kmemdup_array()
+  ASoC: Intel: avs: use devm_kmemdup_array()
 
-Only allow tnt4882.ko to be built when CONFIG_HAS_IOPORT is set to avoid
-this build failure, as this driver unconditionally needs it.
+ drivers/input/sparse-keymap.c         |  3 +--
+ drivers/pinctrl/intel/pinctrl-intel.c |  6 ++----
+ drivers/pinctrl/pxa/pinctrl-pxa2xx.c  |  8 ++++----
+ include/linux/device.h                | 10 ++++++++++
+ sound/soc/intel/avs/boards/da7219.c   |  3 ++-
+ sound/soc/intel/avs/boards/es8336.c   |  3 ++-
+ sound/soc/intel/avs/boards/nau8825.c  |  3 ++-
+ sound/soc/intel/avs/boards/rt274.c    |  3 ++-
+ sound/soc/intel/avs/boards/rt286.c    |  3 ++-
+ sound/soc/intel/avs/boards/rt298.c    |  3 ++-
+ sound/soc/intel/avs/boards/rt5663.c   |  3 ++-
+ sound/soc/intel/avs/boards/rt5682.c   |  2 +-
+ 12 files changed, 32 insertions(+), 18 deletions(-)
 
-Fixes: 78ecb0375685 ("staging: gpib: make port I/O code conditional")
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
- drivers/staging/gpib/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/staging/gpib/Kconfig b/drivers/staging/gpib/Kconfig
-index 95308d15a55516de9118e7ae90a6103ee8c6c003..9ee4323164654916e7ed49190eaf5bb02ce7f045 100644
---- a/drivers/staging/gpib/Kconfig
-+++ b/drivers/staging/gpib/Kconfig
-@@ -62,6 +62,7 @@ config GPIB_CEC_PCI
- config GPIB_NI_PCI_ISA
- 	tristate "NI PCI/ISA compatible boards"
- 	depends on ISA_BUS || PCI || PCMCIA
-+	depends on HAS_IOPORT
- 	select GPIB_COMMON
- 	select GPIB_NEC7210
- 	help
-
----
-base-commit: 114eae3c9fde35220cca623840817a740a2eb7b3
-change-id: 20241123-gpib-tnt4882-depends-on-has_ioport-bdd24d6e5aec
-
-Best regards,
 -- 
-Nathan Chancellor <nathan@kernel.org>
+2.35.3
 
 
