@@ -1,187 +1,167 @@
-Return-Path: <linux-kernel+bounces-418944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BA8C9D679B
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 06:08:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 666119D67A3
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 06:22:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D14EEB22095
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 05:08:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D219416133F
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 05:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60E01662E7;
-	Sat, 23 Nov 2024 05:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1424515CD78;
+	Sat, 23 Nov 2024 05:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H+i9TyOe"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Ns4roqSj"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5BF44C76;
-	Sat, 23 Nov 2024 05:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FFAC23BE
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 05:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732338478; cv=none; b=LzAuE52Be0oz2dUwuoirF3wK+aRKIKz3rogj/fBjaa7U6tyGd3YZe0G7bfDOtTCa0R84D9z+Qm5E+WxuzxDTsFwVDmyzw9vnxtMQMt+zfoSpqOREpIm1Qhshz031nxgEP+650S9iP5jc0sgVOemSRTrjauYgmgOTJ34BrmvUkqg=
+	t=1732339340; cv=none; b=pIkTbaE0QBZr5J5+nizY+rTU/DrSjVs//LHTaxP5GdbuEOD0tNCmsOJQPu2FKBKQ4GB1cEUKMhizoNzb03EsiVlnE1+U1jW/cbHTITojrCqrxJNMhyeDSz1zovhbU0qOAZLn1Ib6yyHAPLwXFn6LETayBrrbEgbkszzSTCnweRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732338478; c=relaxed/simple;
-	bh=08t2tZbZiEut8e8jcyLwzjZSqMzV1M3wCk4G+S74gUM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=haLsp39nuuOkRDcV6NcbaX01k+TFF9V1FvML/5oDHBFEbt/5h1iNEmWAzWNbIPMmEghPjczJDEiv1SDthnHSBYj4v2DfcBY9S2fNqtyUxhHngvPFl0I/kDQALHO5zZG5vrFSOBUjERChAD9CIfGLUg7GQ+52SNyDzjkAOsSDJYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H+i9TyOe; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AN4epau026083;
-	Sat, 23 Nov 2024 05:07:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	iHPi2UueuCGaZwoFZeuex97y1jXPUPoI3V5NZS7xEm4=; b=H+i9TyOe9PMZqaUF
-	o9Pm6De8nkv0etlK3xwzCELp9ZbuF3Mp3+6nBMScGwkjojlPRHnYERb+KBPCwEIV
-	fGF+XDE2Ef8+2Tu5jItAz3gRyCk44SpnHF+6UqzzS4WEO4V1KEBhSYfRAFzpC1R6
-	C7rELBDITc+N+OJGKO/0KEeT2eaKiEeQIrTU2Stqp52XbfJAgDAh6t/A33dwfPiG
-	MOj77jnpN4Sy97XzWdDluun/m6IBZ9XP6aztxrTA/2NcCltsGwpzcBgapp+vDp7M
-	gxZKdjYJKMcvFNz6RusISlzxoAO3oTcx/YOgAFj7eK21quoWwQmzPkmSUmnzKagV
-	H9Mnpg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43387j812y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 23 Nov 2024 05:07:15 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AN57EwZ027870
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 23 Nov 2024 05:07:14 GMT
-Received: from [10.253.78.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 22 Nov
- 2024 21:07:08 -0800
-Message-ID: <b8cd1434-8096-4d52-8499-9d25cf3805b8@quicinc.com>
-Date: Sat, 23 Nov 2024 13:07:06 +0800
+	s=arc-20240116; t=1732339340; c=relaxed/simple;
+	bh=7tU5ALD6dT/GscddLn0cfJ213h8MSmkYT/S9vdeLi4o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o+5CrzIG5pJcbEKubr1qY9nLrIueADKG+Lf5nd1Fv5wqvH9orp+uK7iSJC0QgwGM/QNIQ1QGaWB6Z5YklRIazyEh8NEdmTEJ1opHUE413SUsPV4azgvggx8sBy5wdP7xsamoYpAsbIUyYU1CImjMCbLMn/STX27QjZnNxGjmQ9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Ns4roqSj; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5d036963a6eso419931a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 21:22:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1732339336; x=1732944136; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bz/Cem8L1Zly4fm6PMZZr9K2nmFFTd5Yiu7PpEQWHQQ=;
+        b=Ns4roqSj/PgcITPoBIrA7VyIQQAr4f6ACmYvOe3AubSlqNhrXIVkl2YXWFhd5fzanw
+         znu1r8R47HU8DR5q1/6xmNu3k2uQLRa9NqeSrok7ni5gJpRc2GE1gdzjwcJooy0adm3O
+         ULhyiicjGO/eoHK4zx6NvFYZw2y5r2692PyhE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732339336; x=1732944136;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Bz/Cem8L1Zly4fm6PMZZr9K2nmFFTd5Yiu7PpEQWHQQ=;
+        b=EtDsX4j5i5BzW56q10rpBG3usNLExP2VM2lKpKLME+P7pO+hc1UbbzCTa2VHWxGMyn
+         vRnXtN+aminu7JHXMRiBUNEZzSviwHHKIWHP35p/ntTSbrs4pkr6daqxbqfZBu2wccvK
+         byEGa0zOPtzoe1AFeSjf/l/8dYvOPoj08kcHpiaE46ikEGGjD1wt9kka5utYAl/KiNJ9
+         zcDnV0FQrYWFJJ5ObbG4JJqyCX5QM8g6NWEBShAtzXSfuS5FYvQ9ivQcccmqw8j4Hsc9
+         S6Cc9QJQ2TXZ1AdLgxGgNUfpUWj/+/FQA8dwcqy2iLDyvzVNYXv+jgyWuV+MRfoBeYMg
+         v+Hw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6mBME3dKt5TZeEgkdPAc31vaHu6w8UwC4KXFTroy+wSdz2gSdmGXVrWKS/sBYZl7XczgESwFnDaNfg6c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/DOyfMZxyWOxycBuIZgs6l4sbVf1jYfxT+WIzFBMdH8oYaWyl
+	+eQzwm7gQqKJz/+DuzZgDW4AGg7QQmAlz6J7Ld15s0aj6qHl1sQqylzxldpbRDEfr4DBWompBLf
+	202V9YQ==
+X-Gm-Gg: ASbGncsoC3okfAXi3ZgNTkw2p/QOEgK3Wwt7a9SHbONFB2sXt1tkt69SpfrSGXYrqSo
+	9dOuzzLV6PlXC7tpL//PwBGgXOwOUx+QlHvzMIQ7PMV1wlSvAnFIJhZQWZIkpJXzQ1S72B3rtCp
+	LwL4HfeuLxKYzF0RpMZEWNI/kGk9HOMCi2/qwuDBjv2ptXiJ9+DS273YIqPUeFF741Rrp9Ti6Be
+	BAJb+CGAsXWO+uoNfvbBd5yduwxx4qQJ3kEmBrCODkTmFiriPuxitm+HZ3oEJFsUyWHifl1Qnk0
+	uKofBYEq/pfRAaTX8Rzkfhch
+X-Google-Smtp-Source: AGHT+IFft2FHAW23iWf0EWdskjCLxEavkJHXngCyJ8KA3GV2BE+FgdlEfN4+l9tZPj7dqlrLOvhbIg==
+X-Received: by 2002:aa7:dcc4:0:b0:5d0:225b:f4fd with SMTP id 4fb4d7f45d1cf-5d0225bf514mr3503541a12.30.1732339336253;
+        Fri, 22 Nov 2024 21:22:16 -0800 (PST)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa539214685sm3923366b.199.2024.11.22.21.22.14
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Nov 2024 21:22:14 -0800 (PST)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa520699becso158887066b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 21:22:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXY/G5GAB2ca1LkKg/7arR25mm3fuZroHxzg2X50zdr8cqgJf8lgroCI7vbmfOuFaPRoxCKZ9CTTVVIp/E=@vger.kernel.org
+X-Received: by 2002:a17:906:18b2:b0:aa5:14a8:f6d9 with SMTP id
+ a640c23a62f3a-aa514a8fdacmr332444066b.14.1732339334425; Fri, 22 Nov 2024
+ 21:22:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] phy: qcom-qusb2: Add regulator_set_load to Qualcomm
- usb phy
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        Vivek Gautam
-	<vivek.gautam@codeaurora.org>, <kernel@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241121-add_set_load_to_qusb_phy-v2-1-1c5da1befec0@quicinc.com>
- <7qj4szkw365ve45hm5w475xs2vlfsfg5pcpc44bo3s5vhrcmuu@bh5swbug4ywi>
-Content-Language: en-US
-From: Song Xue <quic_songxue@quicinc.com>
-In-Reply-To: <7qj4szkw365ve45hm5w475xs2vlfsfg5pcpc44bo3s5vhrcmuu@bh5swbug4ywi>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: IaaVYCvSpmgEqtHfHqQFO8o_pzagdxtR
-X-Proofpoint-GUID: IaaVYCvSpmgEqtHfHqQFO8o_pzagdxtR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 clxscore=1015 phishscore=0 malwarescore=0
- suspectscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0
- impostorscore=0 mlxscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411230038
+References: <20241122095746.198762-1-amir73il@gmail.com>
+In-Reply-To: <20241122095746.198762-1-amir73il@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 22 Nov 2024 21:21:58 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wg_Hbtk1oeghodpDMc5Pq24x=aaihBHedfubyCXbntEMw@mail.gmail.com>
+Message-ID: <CAHk-=wg_Hbtk1oeghodpDMc5Pq24x=aaihBHedfubyCXbntEMw@mail.gmail.com>
+Subject: Re: [GIT PULL] overlayfs updates for 6.13
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Fri, 22 Nov 2024 at 01:57, Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> - Introduction and use of revert/override_creds_light() helpers, that were
+>   suggested by Christian as a mitigation to cache line bouncing and false
+>   sharing of fields in overlayfs creator_cred long lived struct cred copy.
 
+So I don't actively hate this, but I do wonder if this shouldn't have
+been done differently.
 
-On 11/22/2024 6:24 AM, Dmitry Baryshkov wrote:
-> On Thu, Nov 21, 2024 at 04:09:27PM +0800, Song Xue wrote:
->> Set the current load before enable regulator supplies at QUSB phy.
->>
->> Encountered one issue where the board powered down instantly once the UVC
->> camera was attached to USB port while adding host mode on usb port and
->> testing a UVC camera with the driver on QCS615 platform. The extensible
->> boot loader mentioned that OCP(Over Current Protection) occurred at LDO12
->> from regulators-0 upon powered on board again. That indicates that the
->> current load set for QUSB phy, which use the regulator supply, is lower
->> than expected.
->>
->> As per QUSB spec, set the maximum current load at 30mA to avoid overcurrent
->> load when attach a device to the USB port.
->>
->> Fixes: 937e17f36a32 ("phy: qcom-qusb2: Power-on PHY before initialization")
->> Signed-off-by: Song Xue <quic_songxue@quicinc.com>
->> ---
->> Changes in v2:
->> - Removed "---" above the Fixes.
->> - Link to v1: https://lore.kernel.org/r/20241121-add_set_load_to_qusb_phy-v1-1-0f44f3a3290e@quicinc.com
->> ---
->>   drivers/phy/qualcomm/phy-qcom-qusb2.c | 13 ++++++++++++-
->>   1 file changed, 12 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c b/drivers/phy/qualcomm/phy-qcom-qusb2.c
->> index c52655a383cef008552ed4533b9f31d1cbf34a13..80f0d17c42717e843937255a9a780bbae5998535 100644
->> --- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
->> +++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
->> @@ -722,16 +722,27 @@ static int __maybe_unused qusb2_phy_runtime_resume(struct device *dev)
->>   	return ret;
->>   }
->>   
->> +#define QUSB2PHY_HPM_LOAD 30000 /*uA*/
->> +
->>   static int qusb2_phy_init(struct phy *phy)
->>   {
->>   	struct qusb2_phy *qphy = phy_get_drvdata(phy);
->>   	const struct qusb2_phy_cfg *cfg = qphy->cfg;
->>   	unsigned int val = 0;
->>   	unsigned int clk_scheme;
->> -	int ret;
->> +	int ret, i;
->>   
->>   	dev_vdbg(&phy->dev, "%s(): Initializing QUSB2 phy\n", __func__);
->>   
->> +	/* set the current load */
->> +	for (i = 0; i < ARRAY_SIZE(qphy->vregs); i++) {
->> +		ret = regulator_set_load(qphy->vregs[i].consumer, QUSB2PHY_HPM_LOAD);
-> 
-> Please use regulator_set_mode() instead. Or just fix the mode in the
-> device tree, if the device can not operate if the regulator is in
-> non-HPM mode.
-> 
-Thanks for comment.
+In particular, I suspect *most* users of override_creds() actually
+wants this "light" version, because they all already hold a ref to the
+cred that they want to use as the override.
 
- From my point, regulator_set_mode() will change the regulator's 
-operating mode including current and voltage, which will also influence 
-the other shared consumers. Meanwhile it is unacceptable to fix mode in 
-the device tree because it is determined by regulator's device tree.
+We did it that safe way with the extra refcount not because most
+people would need it, but it was expected to not be a big deal.
 
-According to the required fix, regulator_set_load() simply aggregates 
-the current load for the regulator and does not affect other shared 
-consumers. Setting the current load is relevant to the issue.
+Now you found that it *is* a big deal, and instead of just fixing the
+old interface, you create a whole new interface and the mental burden
+of having to know the difference between the two.
 
-Regards,
-Song
->> +		if (ret) {
->> +			dev_err(&phy->dev, "failed to set load at %s\n", qphy->vregs[i].supply);
->> +			return ret;
->> +		}
->> +	}
->> +
->>   	/* turn on regulator supplies */
->>   	ret = regulator_bulk_enable(ARRAY_SIZE(qphy->vregs), qphy->vregs);
->>   	if (ret)
->>
->> ---
->> base-commit: decc701f41d07481893fdea942c0ac6b226e84cd
->> change-id: 20241121-add_set_load_to_qusb_phy-d1327c797ffe
->>
->> Best regards,
->> -- 
->> Song Xue <quic_songxue@quicinc.com>
->>
-> 
+So may I ask that you look at perhaps just converting the (not very
+many) users of the non-light cred override to the "light" version?
 
+Because I suspect you will find that they basically *all* convert. I
+wouldn't be surprised if some of them could convert automatically with
+a coccinelle script.
+
+Because we actually have several users that have a pattern line
+
+        old_cred = override_creds(override_cred);
+
+        /* override_cred() gets its own ref */
+        put_cred(override_cred);
+
+because it *didn't* want the new cred, because it's literally a
+temporary cred that already had the single ref it needed, and the code
+actually it wants it to go away when it does
+
+        revert_creds(old_cred);
+
+End result: I suspect what it *really* would have wanted is basically
+to have 'override_creds()' not do the refcount at all, and at revert
+time, it would want "revert_creds()" to return the creds that got
+reverted, and then it would just do
+
+        old_cred = override_creds(override_cred);
+        ...
+        put_cred(revert_creds(old_cred));
+
+instead - which would not change the refcount on 'old_cred' at all at
+any time (and does it for the override case only at the end when it
+actually wants it free'd).
+
+And the above is very annoyingly *almost* exactly what your "light"
+interface does, except your interface is bad too: it doesn't return
+the reverted creds.
+
+So then users have to remember the override_creds *and* the old creds,
+just to do their own cred refcounting outside of this all.
+
+In other words, what I really dislike about this all is that
+
+ (a) we had a flawed interface
+
+ (b) you added *another* flawed interface for one special case you cared about
+
+ (c) now we have *two* flawed interfaces instead of one better one
+
+Hmm?
+
+                  Linus
 
