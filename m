@@ -1,104 +1,114 @@
-Return-Path: <linux-kernel+bounces-419038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17C7F9D68D7
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 12:23:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDF259D68D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 12:28:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8ABD2B21A68
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 11:23:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CF9FB21967
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 11:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A74218D634;
-	Sat, 23 Nov 2024 11:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D239218A6B5;
+	Sat, 23 Nov 2024 11:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QX7zEFi1"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a0T0sXwV"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1910154BFB;
-	Sat, 23 Nov 2024 11:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D131FF4FA;
+	Sat, 23 Nov 2024 11:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732360995; cv=none; b=PHhDeKw1xgRYDkyGTHJ7zPRzNXq1u+Tjmjkjgtdnoy81Si4u5AXkGVkRGP7vdIBxItMiOGuGLqXpmrGsURKufFTbl17s0S3vsP0M5b57WbTdN0ZCoxgPPGBOstOkW/XgfFMnKG0FONGqHylGEYXv7iirROTYKnCOcW1h8O92ru4=
+	t=1732361295; cv=none; b=R3oUQGLu5gBaqNI4gnSnt/JrTyyflFy0CXo+8DomcjXwoUtIKLnBMu8upJzfWM2f286174HX8GC0lRLBDbdiKHh6viSsw/T8T8PKEtD2v83+ICAs8dRzfxktx3dHHAB5qvb4FXnpq8Hdclxko+LYIF331rvnF7W90BEKnyefCjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732360995; c=relaxed/simple;
-	bh=u/EP1S+viKGpmTrQ8yI3KxsDbuyUkdLIpl2IkM7RyRs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kBpa7UWWk8zDD03ZP4s+yrxXkgjstWBwECKQNSwwCtYNqGyRbp5H9sKFYScuDKPLio6QLM5uvAYWqAl1cfL+K/86XTt2Q1BHBqDaIYRRLlCO2Bp2WXatcTGdorzV7Xa9929zizSl2UC5ph3hnHJWpUv2g/e+L9qlQAbyyw1mfa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QX7zEFi1; arc=none smtp.client-ip=209.85.167.42
+	s=arc-20240116; t=1732361295; c=relaxed/simple;
+	bh=6/Ld9f8L7VslcnYOHVLi3dRtQSGDgjrivfqEn/LytIM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LweSuZWmVX7/thI4SqnyExB+hDKxLp6btD+jMutB3KIXIXAJbhITD/7qLKHXGD0Mj7aiyjmDUFiX33EgL4Jc1F9LJ7K1NVwW9CrdEyCUz+L+p9YIGt2OHXCuq/qnCyAFr/GbOCHUgd3e1BZglfWuG0H7pl9U+/NzDXNc/QTXTF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a0T0sXwV; arc=none smtp.client-ip=209.85.219.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53dd59a2bc1so1783540e87.2;
-        Sat, 23 Nov 2024 03:23:13 -0800 (PST)
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6d43134d574so18293886d6.0;
+        Sat, 23 Nov 2024 03:28:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732360992; x=1732965792; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:reply-to:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=u/EP1S+viKGpmTrQ8yI3KxsDbuyUkdLIpl2IkM7RyRs=;
-        b=QX7zEFi1wFY/uD3jkok8lfHTByJ2aNleRCbOXvNUXvJHNNNRYsDSMeXIdtuXwJAl5H
-         nClVUwKKIYQKFNoCJIpu3wCP0AXoxObBLiaQaIJcISuGAZF2E7Msmfu00u/kkAdGZEOP
-         Kek8z4DaMshzkmnfzMw8zfvT5/YvJzp1iDp62P3h8tSJzIGEwsTW9H8ne+6dv5h4YkdN
-         PSE+vgkjr7EbMNka536HxpVfB/WPVb1zJKmjg3JpZvtZBR2M8aHKkOa1iLW+txiUyvOn
-         YcRXU+vP/ieIovXgVbWIki1lEajZNH3icl72OKCEEu6KDxgYODb2GDf7GogsL+ucGZBd
-         aSSg==
+        d=gmail.com; s=20230601; t=1732361292; x=1732966092; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nW41neqocy6fXKAssHg8G0smE9BKy2Vr7PCjJvIyTyA=;
+        b=a0T0sXwVXM9oSwAhuRLdSoz3gi1MI3hm221Y8n1jmVoYrSXljrGJPD8VFNW14hg+R+
+         xx8clfJ5VtKUBeDXVlkkNkPMFPzhj7iItnp89j1Pa8XHDX//04yrk0WX4DUa/9zZtSqO
+         c3ShvVPEYiGb/p6ZfJc4cwjdo3LWMwJ7RFBH+Kuz11qFmfde3lJwStY0u9tAq0d9UM32
+         CQLQkIv8MORKqFhsEjUZXQ5oLy7ElhKuAygbHw9XEGPrQ0mkm586LChc9JzT5pecpPIM
+         nnXjI3P6jKJ686hs2B36Re4Y6O+gzhbiP/YWeOAXCJecca91Z0+CauFPgfH7huhPtpel
+         Wfuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732360992; x=1732965792;
-        h=cc:to:subject:message-id:date:from:reply-to:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1732361292; x=1732966092;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=u/EP1S+viKGpmTrQ8yI3KxsDbuyUkdLIpl2IkM7RyRs=;
-        b=VnWZW6pZuZWQNJJR/66h/ZzuHFg9ecMJyX4ZQivpDkbRzbvZusWFiGEDuyPx0EuMzL
-         7oq+nS9tyUbhyd1L6SZiqR6lQjpafXx071+y+WlBnBu2/iNVAvUFMYJel5VrHtqbIgaT
-         RC+vEjrP/iijpYVIGhVNX93MCQHssE5+XjSVC24IvNhiqj1DIL6QDHr7KtV6anJgz5Lo
-         XW3Nsy4VgPq6tW1no9e7Cft1o3mW/lm0RDp4rxp3mCZ0CU7Qt33s1zMYZcw3a6brH6tP
-         2j4Zs3w9Ok7J6PGc6BXfgOeC6w9H9EfZuUBK8pwlVn1YzaUjZ/zjz2bKCafuyfxs+yuy
-         yfRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6QY6fpqRdXGGTKuOqIh2PtKWu1xxzrEaXqIalaaoXE3zWA/29ZRiU+4FE1PhIorYEX63sgz/CUwGQtDzm@vger.kernel.org, AJvYcCVtZKJZGHM5uSNFm8WeKH0MEREdvBj2zoncN/H3V6y8CXf9e/opkLvJhrk5Pl/FIEQ6/4ZmRSBdPgTPgSV1l0o=@vger.kernel.org, AJvYcCWbb6oXiqwXOl2f2nQdb6dzC8OBqaJMBe1eFoI2nhItdbCfQiz5WoWc1SCUWRrvqXQrFiF3qqlUhyv1fn1fYQ==@vger.kernel.org, AJvYcCX+ZpqOv+UcEnplXjzvJasIE+6Am8yEc1CJAc79vtEwDXmTN0n+I9UkWgdduR3n4dA1omPjCug3QjBq6gU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP0v6rC+5+Sk+Mlu8v8I4wiiTMYdP8Docgsk1WhCN0vl2BlQbQ
-	mVMA1L/WPUNsK9/snrgMm/XFj8Cs4z/yGCqEwyHhvKLLUEC6VNKJvATziz2Dy9HIVLrx8ftRXVI
-	+5SoyeuBdB6DT3coQKJU1Lo6lEts=
-X-Gm-Gg: ASbGncsGFGgpLICVdo4Eo6EmRAO7tv/8jjdPNXtOwuk/NYIaCuTafdKBxwMEw8Q3cf2
-	q3iRPZtue1ary66qu08+sP3Y6xphpDTm4EX+ej7FDgOsqzCgFFbXZvaBq2NNJvg==
-X-Google-Smtp-Source: AGHT+IF0iUq4b7Ych9A6xW9HMPkRzg3eqN5Ybs8vt/ejefOR7PyZW6CtBCOharUBfJO5wJ8zXGhjtReeIFOtxTdYdEU=
-X-Received: by 2002:a05:6512:2391:b0:53d:d5be:4bd9 with SMTP id
- 2adb3069b0e04-53dd5be4bebmr3155701e87.22.1732360991729; Sat, 23 Nov 2024
- 03:23:11 -0800 (PST)
+        bh=nW41neqocy6fXKAssHg8G0smE9BKy2Vr7PCjJvIyTyA=;
+        b=eVzSVeoYv5snaeg1GixOJd2lLCPEN3vhkceCvfqvifHG/dBqZ/UEai1Oe3Tb7gXr8c
+         xdkvaRhixEux9WLKnC8OwPf1mDFGmU0/OVLU+5eGk4hyfWY/VsasILSOv/J3KrLjFRyQ
+         Vllpn/EL1ibZz2+ndLERndXmp3T7E18vjkaDsmUiUkVKTdsodErzx4BlnvUroVc0eaZv
+         CV6c9xe6bCFLtzAgHEdnUA6gM4kZXqO53QLmB/L8pJjiZknBHdnsN28FQLL3l3TBtgyq
+         ubZEAwPmCACcOsCuOMTNBsYB1qFYok7mURL3fMg95kRp9iHZWlvQn2Tg8bWd0xp5Fede
+         lg2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUkqAvWvp5OBILfmzLYPm1+PSak2jkLPpL0InBoSi4WrtLNXEuNSCYXoPLjlHgI6izVAqPJfGympAMAU9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6QDqjDLiUSI9jw55/tU8S7tke4gZmZddRdjeMPwsQjKBqVwxs
+	YQLZcnPi1Nq57BubMuvmn6D0EdCVCWhPQ/p8EJyzT8zG/KICGgct
+X-Gm-Gg: ASbGncvfi+e9IrF+dCeYFPU2lK1IyM8Q06ktAH3rPEo/VqAOZ7OvJ7NUJYWjf2H7dKJ
+	gklv0pu0QRxFUo8BxUnEWwO2Y/18HLMq/leiCSUGLbMYnj5ARhLUdSuNbQDI2wQHZbUKt39looJ
+	rJLlRtEkFLTBzYZxG2WpEpQg3bIc9qtL2/UL47eQVbRmcyANdBL9bFuXP6kma2lHgkmjv6zqDxa
+	lNSfMElzNUhUBP8wPWTnmZHAzLPTplERowQ0O5l4d7Za/f7JaYXfoXVtvZXb4gJ0Go7Gaq9hhxf
+	Uplc/H3TyLHdtNuzHyTdLG3q2A1AEP91
+X-Google-Smtp-Source: AGHT+IHQ7+9Q9GPOTQdK4h5WW33bBxMaJz+2EEngjB4L+PBJlHnrNDRPK7UyEprkUM1jTdhIud7XyQ==
+X-Received: by 2002:ad4:5aa5:0:b0:6d4:10b0:c249 with SMTP id 6a1803df08f44-6d450e87220mr106668566d6.22.1732361292535;
+        Sat, 23 Nov 2024 03:28:12 -0800 (PST)
+Received: from ip-172-31-17-125.ec2.internal (ec2-3-80-66-87.compute-1.amazonaws.com. [3.80.66.87])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d451a99714sm20696336d6.35.2024.11.23.03.28.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Nov 2024 03:28:12 -0800 (PST)
+From: Kuldeep Pisda <pisdak79@gmail.com>
+To: jic23@kernel.org,
+	lars@metafoo.de
+Cc: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kuldeep Pisda <pisdak79@gmail.com>
+Subject: [PATCH] iio: adc: palmas: Fix typo in threshold calculation comment
+Date: Sat, 23 Nov 2024 11:27:57 +0000
+Message-ID: <20241123112757.63928-1-pisdak79@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121204220.2378181-20-samitolvanen@google.com> <CA+icZUX-gf8624z8u+h-W8KeddCruYDng-4vTggNGwC61NzfNA@mail.gmail.com>
-In-Reply-To: <CA+icZUX-gf8624z8u+h-W8KeddCruYDng-4vTggNGwC61NzfNA@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Sat, 23 Nov 2024 12:22:35 +0100
-Message-ID: <CA+icZUWSKygQJNiODzdauNiHz2Di-2eSGGmd-fgBrFpdyh_HgA@mail.gmail.com>
-Subject: Re: [PATCH v6 00/18] Implement DWARF modversions
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
-	Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-> BTW, I am testing with the latest kmod-git and pahole-git.
->
-> I will give this a try when Linux v6.12.1 is released.
->
+Fix a typo in the GPADC threshold calculation documentation where
+"paramenters" was incorrectly written instead of "parameters".
 
-I have a prolonged build-time of +22,75 per cent.
-Compared gendwarfksyms-v5 + Linux-v6.12.0 VS. gendwarfksyms-v6 + Linux-v6.12.1
+Signed-off-by: Kuldeep Pisda <pisdak79@gmail.com>
+---
+ drivers/iio/adc/palmas_gpadc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Is this a known issue?
+diff --git a/drivers/iio/adc/palmas_gpadc.c b/drivers/iio/adc/palmas_gpadc.c
+index 203cbbc70719..67d567ee21b4 100644
+--- a/drivers/iio/adc/palmas_gpadc.c
++++ b/drivers/iio/adc/palmas_gpadc.c
+@@ -456,7 +456,7 @@ static int palmas_gpadc_get_calibrated_code(struct palmas_gpadc *adc,
+  *   raw high threshold = (ideal threshold + INL) * gain error + offset error
+  *
+  * The gain error include both gain error, as specified in the datasheet, and
+- * the gain error drift. These paramenters vary depending on device and whether
++ * the gain error drift. These parameters vary depending on device and whether
+  * the channel is calibrated (trimmed) or not.
+  */
+ static int palmas_gpadc_threshold_with_tolerance(int val, const int INL,
+-- 
+2.43.0
 
-Best regards,
--Sedat-
 
