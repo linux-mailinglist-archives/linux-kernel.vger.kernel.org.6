@@ -1,81 +1,111 @@
-Return-Path: <linux-kernel+bounces-419284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 931B09D6BBB
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 23:16:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41AC19D6BC0
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 23:24:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29766161A1E
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 22:16:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD05F161AAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 22:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B52319CC02;
-	Sat, 23 Nov 2024 22:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A811A0AF0;
+	Sat, 23 Nov 2024 22:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aOZPOlZt"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gGn6Y5S7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F30C433AB
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 22:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171AA139D1B;
+	Sat, 23 Nov 2024 22:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732400166; cv=none; b=SgDl2NXfN1JlxtWX6Rjm4+U7K4ejlvD5Ov1dTCnZtLKbsPRRVtFFUOdfavRJ2pBUZ9WJwueD9J7/E93QqAYjII7eJY0S+7INLBoOlI74mFpH8P8lLhIv4Pw2hB/TYzmi2Me+mTFKhU0nhUzEO3xCmRllb+TzQSCq898Ht7/JBnM=
+	t=1732400650; cv=none; b=tdxkT8q0DrDDBdKlPvaXhnK/t5joYRgLF/dPpJuUcH6TYWKDBGhm20sQ9+XoBO/7o/s8PBdgHvWKgBGyc7lOhslTl/61eBvcdRaJB2oRoTeTWe892LIA4CtzIPHBef6lt/1RxjpskcLpx+fxHWZS9cSj6OfL0T6wgor2U1IKFo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732400166; c=relaxed/simple;
-	bh=I+mHaJgefbkzwUl+01PtiitXGIMXujzs5bRyr/xe+Dg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JlpENKMZcyGcZ8vpp7fex7RUv+Tv0jsjLRBTooU7+CnThzUrMUq19szvvynlmQBZMK0lsBWJO02vfUeoeeRYS2JS3uUqeH/jPeX/e1Pp61ECwiG8V4Lq8YNgdKOaa4LamNfR+/SbXfOXkPt1+IzazePf8rC2G0q1HRw0UECqvqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aOZPOlZt; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=JYR0lfiZ1TWLALwPOMCeGprcH2BZa7iQPqABEcTjuZQ=; b=aOZPOlZtqy6H42q8zLm4DaFwNf
-	gSvRpOoyp2ZAk/7hTHPLv3cEjVjJQfcAXWS7/BDQxwEypfLUFOoq+Qbt/21/VcyxjMGHSBtfggyRN
-	ldtucx8OHB60gx6HtylhwrH5E4r6T48P4i2xdPU6b4EbZr5nu2oRoxUWFfHvdSpjSZkOizEypoM+Y
-	66d8B4X+NLm6TzEiKVS9KZuXJZleAynXaBf4NKWE9CzgcG46SgPytEQmFKn5lHiqPLkN1SevqsQ07
-	g6N/M3YplKRHCydPPgXztLyjkaAyZ0Dvh5dxAKpHHodMsR1VKuYKDA9NzsadgkX2K76bPIKf5XYpZ
-	MzAqFLYg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tEyQ0-00000009hNs-1VyV;
-	Sat, 23 Nov 2024 22:15:56 +0000
-Date: Sat, 23 Nov 2024 22:15:56 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Junjie Fu <fujunjie1@qq.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org, dave.hansen@intel.com, mhocko@kernel.org
-Subject: Re: [PATCH] mm/mempolicy: Fix decision-making issues for memory
- migration during NUMA balancing
-Message-ID: <Z0JUHBJ5MOKF1n-k@casper.infradead.org>
-References: <tencent_57D6CF437AF88E48DD5C5BD872753C43280A@qq.com>
+	s=arc-20240116; t=1732400650; c=relaxed/simple;
+	bh=0cceid9Jq8v7gT0R89WcHt7ECqajY1qVimASQaSFABY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r4KSpd5zp/4toIcxFJuilyDFj6Tkn07l8Z5DfkuaMpmKH6g26mCJOiwT2+z0acInjJV8FJbxzOAunBzivnp8tEVqyMFZLj/Ns+XsY8B4zK77++eS2kue8zIP7qXJYcF1l2Z/jasLhErW7TGYxNmaJ3TieSwQqAIL96k8FtoQzBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gGn6Y5S7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD253C4CECD;
+	Sat, 23 Nov 2024 22:24:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732400649;
+	bh=0cceid9Jq8v7gT0R89WcHt7ECqajY1qVimASQaSFABY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=gGn6Y5S7FkIrpS+YMFGWtLN5XCUfK6ahd24hW52dLwi9psh856GI7gUuFRBvuHI60
+	 BPHrQhJVrmKsbi1+1ZHvuTJI221AbJIDr8GEWiYJLvOV9ZAukHWH2mQRUC2pe2zfC7
+	 i5FjJqbKUscomDl3oiTU1dCXWVfgo/ka9rgeQth1IhHeuUHZrx/EYjg3YHWRfATjU7
+	 j+hXJWszVmajxEcs7g9Sy1v3ZJT2UKcfXPNxhFGHnNBATxPb3z8M/h71mZ3tFXVfwD
+	 B5OYCjU+QkmqDbQOiSbZw4X3qASd+7mpv9fNzJPkojYA/q7y6W9LnS2ExzbDNhmSBp
+	 HPwJLgqgLkE0Q==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [RFC PATCH] rust: give Clippy the minimum supported Rust version
+Date: Sat, 23 Nov 2024 23:23:45 +0100
+Message-ID: <20241123222345.346976-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_57D6CF437AF88E48DD5C5BD872753C43280A@qq.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 24, 2024 at 03:09:35AM +0800, Junjie Fu wrote:
-> Because the definition of MPOL_PREFERRED is as follows: "This mode sets the
-> preferred node for allocation. The kernel will try to allocate pages from
-> this node first and fall back to nearby nodes if the preferred node is low
-> on free memory. If the nodemask specifies more than one node ID, the first
-> node in the mask will be selected as the preferred node."
-> 
-> Thus, if the node where the current page resides is not the first node in
-> the nodemask, it is not the PREFERRED node, and memory migration can be
-> attempted.
+Clippy's lints may avoid emitting a suggestion to use a language or
+library feature that is not supported by the minimum supported version,
+if given by the `msrv` field in the configuration file.
 
-I think you've found poor documentation, not a kernel bug.  If multiple
-nodes are set in PREFERRED, then _new_ allocations should come from the
-first node, but _existing_ allocations do not need to be moved to the
-new node.  At least IMO that was the original intent of allowing
-multiple nodes to be set.  Otherwise, what is the point?
+For instance, Clippy should not suggest using `let ... else` in a lint
+if the MSRV did not implement that syntax.
+
+If the MSRV is not provided, Clippy will assume all features are available.
+
+Thus enable it with the minimum Rust version the kernel supports.
+
+Note that there is currently a small disadvantage in doing so: since
+we still use unstable features that nevertheless work in the range
+of versions we support (e.g. `#[expect(...)]`), we lose suggestions
+for those. However, over time we will stop using unstable features
+(especially language and library ones) as it is our goal, thus, in the
+end, we will want to have the `msrv` set.
+
+Rust is also considering adding a similar feature in `rustc` too, which
+we should probably enable if it becomes available [2].
+
+Link: https://github.com/rust-lang/rust-clippy/blob/8298da72e7b81fa30c515631b40fc4c0845948cb/clippy_utils/src/msrvs.rs#L20 [1]
+Link: https://github.com/rust-lang/compiler-team/issues/772 [2]
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+ .clippy.toml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/.clippy.toml b/.clippy.toml
+index e4c4eef10b28..815c94732ed7 100644
+--- a/.clippy.toml
++++ b/.clippy.toml
+@@ -1,5 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
++msrv = "1.78.0"
++
+ check-private-items = true
+ 
+ disallowed-macros = [
+
+base-commit: b2603f8ac8217bc59f5c7f248ac248423b9b99cb
+-- 
+2.47.0
+
 
