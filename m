@@ -1,73 +1,84 @@
-Return-Path: <linux-kernel+bounces-418987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0118A9D6814
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 08:38:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E78F99D6817
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 08:51:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ABC3B21FB6
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 07:38:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F00A281EE8
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 07:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAAEC17332C;
-	Sat, 23 Nov 2024 07:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE431662E7;
+	Sat, 23 Nov 2024 07:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RZ8SwcD6"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EEH3EUFl"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF77F29405;
-	Sat, 23 Nov 2024 07:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3202F17C2;
+	Sat, 23 Nov 2024 07:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732347514; cv=none; b=FGIT9LEvIKDN99NNBV+MizfQeOWts6XeyK6+AEI7KPqzv77kaPxxaSKGAbIR0aFgBvePuhhzgQj1EwE0GoNAHgyDnwwcHG4FbVIhvNjhyjZlKhZQaenhsFojelwZqqY/JpDVENFfbFCs5ZJGELOveHwJK2rSxCnazw0JyUN2Puo=
+	t=1732348274; cv=none; b=LSvBrvGrtXjCGX+6Bs2utYpQVWhzG4V9ChPDDMqdMuWXCgZ9ewQg/GAjioBdTttg5fCW9s819QoH3xn5+iJLQATgS9v8bgOQQWOjbYDdtF4Pr07brd0kmgfcgpHOeVd/LapKR3j9tA8CvUaIFOFYhU5wwSUdznihxD9398y63Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732347514; c=relaxed/simple;
-	bh=aGIaoO1YHf+R5SjDlxBE/RRUG/lcdg/lXx00sQOE9+w=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=D05IROtlnuMsYWpoCE/7A5kJ3PhmC1SadZI7AbIad5lcJQgHwLnNqYBF9osvD6cPH/EWvvh5j0PAkszQj7nxuCzf30tAl2kBGDzA2L/WvMjc6FYGyJt5FmNM5PFGfM2DXlQEBMg+Zuh9Wn5gL/Z5YbEPM6VvqEEQBiC6GZoQqgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RZ8SwcD6; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4AN7bo4i354991
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 23 Nov 2024 01:37:50 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1732347470;
-	bh=znV0hiy+79kCqa4DdCKl2VJO7n87Un/tZ7WR9hZxI/8=;
-	h=From:To:CC:Subject:Date;
-	b=RZ8SwcD6pHAfabnZ37gPI8cTWNe1r8Z4BOgdONzPKKH5D/vD7UsmW7UO+AhW5kt2l
-	 znLVcrEChfhDmwD9n30HKDknE1G1KTCqp3Zz3XF6ZWGZVymE+XECsZuF3cLZSo1LwK
-	 7NprqokYXBr87gCzg2oA7CpkxY1jofBJSQoSyoS8=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4AN7bost063777
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 23 Nov 2024 01:37:50 -0600
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 23
- Nov 2024 01:37:50 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 23 Nov 2024 01:37:50 -0600
-Received: from lelvsmtp5.itg.ti.com ([10.250.165.138])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AN7bgsN061765;
-	Sat, 23 Nov 2024 01:37:43 -0600
-From: Baojun Xu <baojun.xu@ti.com>
-To: <tiwai@suse.de>
-CC: <robh+dt@kernel.org>, <andriy.shevchenko@linux.intel.com>,
-        <lgirdwood@gmail.com>, <perex@perex.cz>, <shenghao-ding@ti.com>,
-        <navada@ti.com>, <13916275206@139.com>, <v-hampiholi@ti.com>,
-        <v-po@ti.com>, <linux-sound@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <liam.r.girdwood@intel.com>,
-        <yung-chuan.liao@linux.intel.com>, <baojun.xu@ti.com>,
-        <broonie@kernel.org>, <antheas.dk@gmail.com>, <philm@manjaro.org>
-Subject: [PATCH v6] ALSA: hda/tas2781: Add speaker id check for ASUS projects
-Date: Sat, 23 Nov 2024 15:37:18 +0800
-Message-ID: <20241123073718.475-1-baojun.xu@ti.com>
-X-Mailer: git-send-email 2.43.0.windows.1
+	s=arc-20240116; t=1732348274; c=relaxed/simple;
+	bh=8aChVbkK0EVXAN7NoXRGD/tIqKzSh29p3UYm7S7ulYs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MaNktEKDWnFom1kvFQWfV2PZjpGEoKyBhwAFWRcXa9N/pL8XLXHSr72UNas3r+Dim4UuC3RCIEKmuUbbFUZ5ZJMA6pg++f2RqfbFWqqPMurc4/SxV5pV5fEViBxuwo8qCvk3MoiunlQCP/XvNoPWxeIRUEsvr5iDqkkJO3B+hPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EEH3EUFl; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aa503cced42so228592266b.3;
+        Fri, 22 Nov 2024 23:51:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732348271; x=1732953071; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JjqODffSLarE4IkaHSg6ABv//2c3FMpHj9F25S+cusA=;
+        b=EEH3EUFlDC1eDDcBXV5CP81mHoSNSMcjezX1Ay8juQAQvtN1PisHj7wJbB66tl4GcO
+         bKOvpePBz7GZtSv+WAHBttduBlU5ZNHcyKWJ93eW6v7qtr6G424/MbdxSLfCtYQ6Onph
+         qFfy7+tWg+xivnjlPm4flUU3/9R0p+UPAK2IkSKjOj9cJYVWfu3uGpbJMsDQgLl+sceI
+         r1fENCbAwWlfOSAGwkmMMvTMBZpSKFkLNFLwBCqHOGgL0cVqsB7ujw2T92DuYBTGhE5v
+         bjsYyd89OpxKx6RLNEAPGXJsq8ChN1VCKNS8GOAFNpHFSW0yxIyZcO8K3//2EukQxTNG
+         zAlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732348271; x=1732953071;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JjqODffSLarE4IkaHSg6ABv//2c3FMpHj9F25S+cusA=;
+        b=fVzJk+eChE7+U2+/oiYzjLFKpYNkUZKHoDkoNTVO2VrE81AbuOqKZ/rKAmo4gYbZpV
+         nGvzErI++XOa5u7TMEQOmqCTF4upVYCediI98rtWQqxtV2Xi+wgNkX+t2P/xMFzsnn34
+         FFxhiR7I5q4T9pwyUhLqI/5B7Y6xVP5gtm+qaGGGWjf5Ya1qCqb3bMPG44D7n/ddqZa+
+         GOhJ0zeiJjOY4LIPvnz8As98UHfd7eA45who+Lt0VfdKoydbqyJAw78FYYfdPn02EBKN
+         CqlsPMcslqvH5r3MHhIIPbxy2LG0sIUbdCIiN238wIAOmYlsyf8XGJWUlmVctCy6B/xr
+         /adw==
+X-Forwarded-Encrypted: i=1; AJvYcCUS63s6rWd+o+9bhF6d1dQmO5Spa9YtkWC1FIg99xhuvB6NnVo9/pEoLEksQ2MyZnmS/BYR3yTrhXf5Q+A=@vger.kernel.org, AJvYcCVGbdlJIwgfRKCE0oimRkphIY9UQxyUDpxi/riAIAVo44uCqN2pz2o29SAkttrWbVt83BbOKwyvUcHM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxy39YaQ+acC/eldz0l1kEao7AUo4A3VKojG5FyQ0XcGiESD08V
+	3DqjUDHliJGwciFFFqwiciirJdq8kNcUadeIHDtWJgmkUmmNiFHM
+X-Gm-Gg: ASbGncuKOQu9HsCTK9j+k2wmsW6cZLZnX4uET8M+9SnBqnFVd/ZC+SVyBgEGhh7faOb
+	dKhGJz+eCWWTwOzCgVM35HcOgtohbuOewmp8gRmk7p/k65jmzO4cSmgTO75a/iC9N/eFX27kuGP
+	5HT0b23w3bH8Yb/6o9hzf84mlTQ7CAL8TkB7pdpZVp/rvoFcHJiMUkHuQl1HNstdmF9C42/JTo8
+	6P4H5AqEGTsnrZv4JHxE2onwZ9f7DCutnvzPm9uUzkDITHA54psf9V4Aeaynqmxog==
+X-Google-Smtp-Source: AGHT+IErZcIlg5kLu3d34Vm8i/ExFg/oGLWvlYWlzHxp2Oc+UxIkYf8KBPYGqAuIWUP4YNL7LhvD9g==
+X-Received: by 2002:a17:907:7844:b0:aa5:2bfb:dd4d with SMTP id a640c23a62f3a-aa52bfbdffcmr198373566b.0.1732348271299;
+        Fri, 22 Nov 2024 23:51:11 -0800 (PST)
+Received: from f.. (cst-prg-93-87.cust.vodafone.cz. [46.135.93.87])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b57c19esm191456666b.154.2024.11.22.23.51.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 23:51:10 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: dchinner@redhat.com
+Cc: cem@kernel.org,
+	djwong@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] xfs: use inode_set_cached_link()
+Date: Sat, 23 Nov 2024 08:51:05 +0100
+Message-ID: <20241123075105.1082661-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,187 +86,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Add speaker id check by gpio in ACPI for ASUS projects.
-In other vendors, speaker id was checked by BIOS, and was applied in
-last bit of subsys id, so we can load corresponding firmware binary file
-for its speaker by subsys id.
-But in ASUS project, the firmware binary name will be appended an extra
-number to tell the speakers from different vendors. And this single digit
-come from gpio level of speaker id in BIOS.
+For cases where caching is applicable this dodges inode locking, memory
+allocation and memcpy + strlen.
 
-Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+Throughput of readlink on Saphire Rappids (ops/s):
+before:	3641273
+after:	4009524 (+10%)
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
-v6:
- - Remove define for AUSU in tas2781.h.
- - Add include linux/pci_ids.h for use public ASUS id define.
- - Add subid for ASUS id save and check.
- - Change comments to /* */ from //.
- - Change next line indented to (.
- - Change ASUS check from string compare to u16 compare.
-v5:
- - Change length in strncmp(), use strlen().
-v4:
- - Change strncasecmp() to strncmp().
- - Add error debug message print for "add driver gpio".
- - Put error information (PTR_ERR) to ret for get gpio.
- - Change %01d to %d in snprintf().
-v3:
- - Change strstr() to strncasecmp() for compare subsystem id.
- - Remove result check after devm_acpi_dev_add_driver_gpios().
- - Remove spk_id > 1 check, as result of gpiod_get_value(),
-   must be 0 or 1, or negative if error happend.
- - Change scnprintf() to snprintf(), as didn't care the length.
- - Remove changes which not relative current patch.
-v2:
- - Change ASUS id from 0x10430000 to "1043".
- - Move gpio setting to tas2781_read_acpi() from probe.
- - Remove interrupt gpio in acpi_gpio_mapping.
- - Add sub and physdev in tas2781_read_acpi() for subsys id read.
- - Add debug log for get acpi resource failed.
- - Return error if get resource or subsys id failed.
- - Return error if get gpio fail for speaker id with ASUS projects.
- - Change fixed buffer lengh to sizeof().
- - Change bits calculator to lower_16_bits().
- - Remove unnecessary empty line in tas2781_hda_i2c_probe().
----
- include/sound/tas2781.h         |  1 +
- sound/pci/hda/tas2781_hda_i2c.c | 67 ++++++++++++++++++++++++++++++---
- 2 files changed, 62 insertions(+), 6 deletions(-)
 
-diff --git a/include/sound/tas2781.h b/include/sound/tas2781.h
-index 8cd6da0480b7..72d2060904f6 100644
---- a/include/sound/tas2781.h
-+++ b/include/sound/tas2781.h
-@@ -156,6 +156,7 @@ struct tasdevice_priv {
- 	struct tasdevice_rca rcabin;
- 	struct calidata cali_data;
- 	struct tasdevice_fw *fmw;
-+	struct gpio_desc *speaker_id;
- 	struct gpio_desc *reset;
- 	struct mutex codec_lock;
- 	struct regmap *regmap;
-diff --git a/sound/pci/hda/tas2781_hda_i2c.c b/sound/pci/hda/tas2781_hda_i2c.c
-index 370d847517f9..e6293c554a23 100644
---- a/sound/pci/hda/tas2781_hda_i2c.c
-+++ b/sound/pci/hda/tas2781_hda_i2c.c
-@@ -16,6 +16,7 @@
- #include <linux/i2c.h>
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
-+#include <linux/pci_ids.h>
- #include <linux/pm_runtime.h>
- #include <linux/regmap.h>
- #include <sound/hda_codec.h>
-@@ -110,10 +111,20 @@ static int tas2781_get_i2c_res(struct acpi_resource *ares, void *data)
- 	return 1;
- }
+First a minor note that in the stock case strlen is called on the buffer
+and I verified that i_disk_size is the value which is computed.
+
+The important note is that I'm assuming the pointed to area is stable
+for the duration of the inode's lifetime -- that is if the read off
+symlink is fine *or* it was just created and is eligible caching, it
+wont get invalidated as long as the inode is in memory. If this does not
+hold then this submission is wrong and it would be nice(tm) to remedy
+it.
+
+This depends on stuff which landed in vfs-6.14.misc, but is not in next
+nor fs-next yet.
+
+For benchmark code see bottom of https://lore.kernel.org/linux-fsdevel/20241120112037.822078-1-mjguzik@gmail.com/
+
+ fs/xfs/xfs_iops.c    |  1 +
+ fs/xfs/xfs_symlink.c | 24 ++++++++++++++++++++++++
+ fs/xfs/xfs_symlink.h |  1 +
+ 3 files changed, 26 insertions(+)
+
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 207e0dadffc3..1d0a3797f876 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -1394,6 +1394,7 @@ xfs_setup_iops(
+ 		break;
+ 	case S_IFLNK:
+ 		inode->i_op = &xfs_symlink_inode_operations;
++		xfs_setup_cached_symlink(ip);
+ 		break;
+ 	default:
+ 		inode->i_op = &xfs_inode_operations;
+diff --git a/fs/xfs/xfs_symlink.c b/fs/xfs/xfs_symlink.c
+index 4252b07cd251..59bf1b9ccb20 100644
+--- a/fs/xfs/xfs_symlink.c
++++ b/fs/xfs/xfs_symlink.c
+@@ -28,6 +28,30 @@
+ #include "xfs_parent.h"
+ #include "xfs_defer.h"
  
-+static const struct acpi_gpio_params speakerid_gpios = { 0, 0, false };
++void
++xfs_setup_cached_symlink(
++	struct xfs_inode	*ip)
++{
++	struct inode		*inode = &ip->i_vnode;
++	xfs_fsize_t		pathlen;
 +
-+static const struct acpi_gpio_mapping tas2781_speaker_id_gpios[] = {
-+	{ "speakerid-gpios", &speakerid_gpios, 1 },
-+	{ }
-+};
++	/*
++	 * If we have the symlink readily accessible let the VFS know where to
++	 * find it. This avoids calls to xfs_readlink().
++	 */
++	pathlen = ip->i_disk_size;
++	if (pathlen <= 0 || pathlen > XFS_SYMLINK_MAXLEN)
++		return;
 +
- static int tas2781_read_acpi(struct tasdevice_priv *p, const char *hid)
- {
- 	struct acpi_device *adev;
-+	struct device *physdev;
- 	LIST_HEAD(resources);
-+	const char *sub;
-+	uint32_t subid;
- 	int ret;
++	if (ip->i_df.if_format != XFS_DINODE_FMT_LOCAL)
++		return;
++
++	if (XFS_IS_CORRUPT(ip->i_mount, !ip->i_df.if_data))
++		return;
++
++	inode_set_cached_link(inode, ip->i_df.if_data, pathlen);
++}
++
+ int
+ xfs_readlink(
+ 	struct xfs_inode	*ip,
+diff --git a/fs/xfs/xfs_symlink.h b/fs/xfs/xfs_symlink.h
+index 0d29a50e66fd..0e45a8a33829 100644
+--- a/fs/xfs/xfs_symlink.h
++++ b/fs/xfs/xfs_symlink.h
+@@ -12,5 +12,6 @@ int xfs_symlink(struct mnt_idmap *idmap, struct xfs_inode *dp,
+ 		umode_t mode, struct xfs_inode **ipp);
+ int xfs_readlink(struct xfs_inode *ip, char *link);
+ int xfs_inactive_symlink(struct xfs_inode *ip);
++void xfs_setup_cached_symlink(struct xfs_inode *ip);
  
- 	adev = acpi_dev_get_first_match_dev(hid, NULL, -1);
-@@ -123,18 +134,45 @@ static int tas2781_read_acpi(struct tasdevice_priv *p, const char *hid)
- 		return -ENODEV;
- 	}
- 
--	ret = acpi_dev_get_resources(adev, &resources, tas2781_get_i2c_res, p);
--	if (ret < 0)
--		goto err;
-+	physdev = get_device(acpi_get_first_physical_node(adev));
-+	ret = acpi_dev_get_resources(adev, &resources, tas2781_get_i2c_res, p);
-+	if (ret < 0) {
-+		dev_err(p->dev, "Failed to get ACPI resource.\n");
-+		goto err;
-+	}
-+	sub = acpi_get_subsystem_id(ACPI_HANDLE(physdev));
-+	if (IS_ERR(sub)) {
-+		dev_err(p->dev, "Failed to get SUBSYS ID.\n");
-+		goto err;
-+	}
-+	/* Speaker id was needed for ASUS projects. */
-+	ret = kstrtou32(sub, 16, &subid);
-+	if (!ret && upper_16_bits(subid) == PCI_VENDOR_ID_ASUSTEK) {
-+		ret = devm_acpi_dev_add_driver_gpios(p->dev,
-+			tas2781_speaker_id_gpios);
-+		if (ret < 0)
-+			dev_err(p->dev, "Failed to add driver gpio %d.\n",
-+				ret);
-+		p->speaker_id = devm_gpiod_get(p->dev, "speakerid", GPIOD_IN);
-+		if (IS_ERR(p->speaker_id)) {
-+			dev_err(p->dev, "Failed to get Speaker id.\n");
-+			ret = PTR_ERR(p->speaker_id);
-+			goto err;
-+		}
-+	} else {
-+		p->speaker_id = NULL;
-+	}
- 
- 	acpi_dev_free_resource_list(&resources);
- 	strscpy(p->dev_name, hid, sizeof(p->dev_name));
-+	put_device(physdev);
- 	acpi_dev_put(adev);
- 
- 	return 0;
- 
- err:
- 	dev_err(p->dev, "read acpi error, ret: %d\n", ret);
-+	put_device(physdev);
- 	acpi_dev_put(adev);
- 
- 	return ret;
-@@ -615,7 +653,7 @@ static void tasdev_fw_ready(const struct firmware *fmw, void *context)
- 	struct tasdevice_priv *tas_priv = context;
- 	struct tas2781_hda *tas_hda = dev_get_drvdata(tas_priv->dev);
- 	struct hda_codec *codec = tas_priv->codec;
--	int i, ret;
-+	int i, ret, spk_id;
- 
- 	pm_runtime_get_sync(tas_priv->dev);
- 	mutex_lock(&tas_priv->codec_lock);
-@@ -648,8 +686,25 @@ static void tasdev_fw_ready(const struct firmware *fmw, void *context)
- 	tasdevice_dsp_remove(tas_priv);
- 
- 	tas_priv->fw_state = TASDEVICE_DSP_FW_PENDING;
--	scnprintf(tas_priv->coef_binaryname, 64, "TAS2XXX%04X.bin",
--		codec->core.subsystem_id & 0xffff);
-+	if (tas_priv->speaker_id != NULL) {
-+		// Speaker id need to be checked for ASUS only.
-+		spk_id = gpiod_get_value(tas_priv->speaker_id);
-+		if (spk_id < 0) {
-+			// Speaker id is not valid, use default.
-+			dev_dbg(tas_priv->dev, "Wrong spk_id = %d\n", spk_id);
-+			spk_id = 0;
-+		}
-+		snprintf(tas_priv->coef_binaryname,
-+			  sizeof(tas_priv->coef_binaryname),
-+			  "TAS2XXX%04X%d.bin",
-+			  lower_16_bits(codec->core.subsystem_id),
-+			  spk_id);
-+	} else {
-+		snprintf(tas_priv->coef_binaryname,
-+			  sizeof(tas_priv->coef_binaryname),
-+			  "TAS2XXX%04X.bin",
-+			  lower_16_bits(codec->core.subsystem_id));
-+	}
- 	ret = tasdevice_dsp_parser(tas_priv);
- 	if (ret) {
- 		dev_err(tas_priv->dev, "dspfw load %s error\n",
+ #endif /* __XFS_SYMLINK_H */
 -- 
 2.43.0
 
