@@ -1,160 +1,114 @@
-Return-Path: <linux-kernel+bounces-419187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81BBE9D6A80
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 18:18:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 307D49D6A82
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 18:19:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D406B16197E
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:17:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A36C281DE7
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E8E7CF16;
-	Sat, 23 Nov 2024 17:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A881A381AA;
+	Sat, 23 Nov 2024 17:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PK06vol8"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="S104uy/M"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D1717578
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 17:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22035195
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 17:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732382277; cv=none; b=rGjRmOn3egDZN0UEMLz0frN1JVrMtEbHmcthlW2kIN1kJpHOR0HphO6afs6tNHPVDI/bsTe416QGNRveawtm06ah8kqfdOG2/lKiqZkSFzIy5ajmrad4W+AXTGQYOeaZIaaLxZZsE2lHHWUXoaO3a9Ho1JEPw55ehuXUW/HnPWw=
+	t=1732382355; cv=none; b=EDSNBtdE3j74mvtvK2EbIbv7+G1IK9EKr/XqCcF6WTRubKqxo+H76SHXG6+rhwiThoi/d64QaPeJPNJVmdJCQWA9xzX+S5SZw5lGV40hKe3qWpWi8jFPyWpXw4DTk6kZuBPnLdyD7MNwtLoyfiThfzlw1dtEijsAcZS/j/PCjVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732382277; c=relaxed/simple;
-	bh=N/c2G4T+3luo3gfO0/Cnn5uaOPk6LCqz/xHBnqKCtRw=;
+	s=arc-20240116; t=1732382355; c=relaxed/simple;
+	bh=QNIZtU4UrRNcRlunJNgMSCglLrYx5rpbKWGGR17NwJI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rSihsc+jM7YqyG0WA2MiO+LBhYVGeYh2LWOjD1QtshsEaerx1SrTHW75jklHnm3RTVCrmp2RAXDmbf1PGl9TYz/AOdqU3TvXkQybH1zb16177Mp7OtM9/oOQhflJqJV/NcEb1qDz/ZTOaM1NJ42WaNuHmBZZL1Vm+mRCGR3M6Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=PK06vol8; arc=none smtp.client-ip=209.85.218.44
+	 To:Cc:Content-Type; b=rMaexwX/cJ7d9Ahd8Z80F7kMCR3YuOX+pQ+5zn4+ItiL2egPk3n7LXpReOOZrBSQ/9aixlNLzQHGTpe/EB2F5OG23QvrnuY2Hp7fOpWMHi3KjurHE5BfqQlT8vaFuM4cueT8Ih3q4/+TIxydok4U2cUyMU1MDYKSIrcyVHcWXJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=S104uy/M; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9a68480164so440944466b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 09:17:54 -0800 (PST)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a850270e2so516708866b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 09:19:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732382273; x=1732987073; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1732382351; x=1732987151; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YsYYdoht4nVDWT1U34pWzA3/O43nanfgBhW3M7KZMvQ=;
-        b=PK06vol82KSVf8mW7WwXmdt+HFqrPWbJhS45GVZZbLOc1lCoD0fSMldtjdlHJDGhUR
-         wXYQ/IzCGU4qsSAr0oO2JOzneHA2NJSDMcWltHWnbn6PWUQZZfPKdqnqo8PtwY9bflHJ
-         ZyS5uhufmUq9N0FqtU9l21MT5EF3dVn+I1cbI=
+        bh=d5ChkXbScmteXOdHtNzIaXrYK9u5mdbWBULNnkBZeec=;
+        b=S104uy/Mmq8ePJYaZ/iehPGsIQiH7DO5g7nZXzIqaTLvWthUwAeeYjwBXxZrOLp8qN
+         PELXalv34hVIbzFhTiVuXHR++UdJcZalj2OGQuvlLHK+SJKCnC2uDHkIkp63bnAKayWl
+         N5qMPHa3gejLeODnNIJuurFLxIm+exhuroOfU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732382273; x=1732987073;
+        d=1e100.net; s=20230601; t=1732382351; x=1732987151;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YsYYdoht4nVDWT1U34pWzA3/O43nanfgBhW3M7KZMvQ=;
-        b=Yvna4YTWBCHXU3Y6aTP6qE/16GNa01DyYhe23Edu+BCIw/cUq30tYf3jEA7f2BJGt9
-         +1SPJAVhXJc2JgfeJaGtho8TzWAwK4itWDgEN8O7ZacjTnVdMaetHqCzEvqiOgELokaJ
-         LMioeASJGiVU3ExwpbfFjzE0HW8mM4x5IVVZaar3idQu4q6rBwA6iW4fjtVgv9X9W2Cc
-         avjXgnXJl7/a21KdcqVj6hUK92twf7IO/3YsBfSI6cS6jZYneSpQU+ucOY6KdrQMMiMq
-         a5ydVAFh1EQ85J8fKlyvW/aPgcOAiEnpvSBSO6P1qAF/PMyn0wfCGLONFbQiTZaJh3GY
-         MqGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbnqQCppeECYelZQiuU5iyn09ZTHorQnbqtdNp3DV/9Dg0zZ9cbFpDGxU5JVabgRgVbvY8aQnKVFWBSSM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7Wx78tYpsNYCz/QcfvE9rDHNDMcStEMfZTrHIu4wzaqrSz8jK
-	W+bgaPPinGiGheJdHfIzth7LAgH+jByNRm8aav23SAZqHqcYDSR9/pzjnPpbM/Yr8PW3IyPVG7R
-	X+pS+Rw==
-X-Gm-Gg: ASbGncuu0kFzsCjH+HyC8GmBfZr2/gc7PbDu3IyFQ7dZPFhtVAxkxjzp5+j71bVCLCV
-	+A/w55C1uSTtnbBVf5pGyFEn2hWX1VeguvINKO2v8PAyob/XEKMrqc/akSY9rRFaQbEvi7yHX22
-	sMiJE+lTsGDR3IbNmiGkDg7SFjbehrYFyU5TwHqLY5Z80zBPptOqEqKqh3G63TnyCHlycP3MAE4
-	n64TVYv16R4SVlT8fJV4NcHRnBJKZ9hwWka0ktLVbQvjNLA5BEANo7bfGjlKaVIqNxPZY/hZ6rQ
-	H62cRnJYSqLg/Y4x4DDmFS1q
-X-Google-Smtp-Source: AGHT+IEMk2TS8PWIkfG1pM4Hcw1TfkxTKN7q/O9ojvsev8HFH4bVo+mexGGZRRwa6YQZbprHAyeErQ==
-X-Received: by 2002:a17:906:1baa:b0:aa5:308c:3489 with SMTP id a640c23a62f3a-aa5308c351cmr277386366b.58.1732382273079;
-        Sat, 23 Nov 2024 09:17:53 -0800 (PST)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa53afa8eb8sm63328066b.197.2024.11.23.09.17.51
+        bh=d5ChkXbScmteXOdHtNzIaXrYK9u5mdbWBULNnkBZeec=;
+        b=LHUyvzQVGLC7SVBkmFDaQZLg/h5Gfpg6zSaUpEojpzB6xoJeNp6zKUipgjniFdXEwu
+         jOJGHCneAZAF65UBjVFwJFyRglult30BFrxD0da6Q9QJwZgDn+8HJpwCjFN62IQGf4VL
+         e/KEiCe5ST1VoXTc28C0j6EyLcEumbEhs8rL6eIZd01gKYdyHABmnzgETFvWKo4PKB1Z
+         82IR5bxXuUqRJtXnzlRAND8+/6rRPBIdVLR+fzHudMgcodmfV9Q6ZLxpnXqw6SWuo4u0
+         HrEbmv0xpLstahHCFWifvf5sEth8gXYgluQwu7qimXPGgdd6sN5IcrDcJTk72DLtpPXa
+         mJ+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXV9PtEOlLDRxrqJaH/6Oo2D7BQ9KWp/jcYCJyrirAvRfmZKSyotkUr7eWvyVF9s2VVP5nRe05QXbzrTts=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+O58TmsMIY4ChxotLynF85TsdDU6wiOHkBkY7qY6CTJOpEFkL
+	GzAyqgSJ+NLAViUwGyFPmKU6u6LOtY/M6WwU16EgyX3KjscTTBipT8PN2ARjVbvkw9/D2x8jJE8
+	45MGcnA==
+X-Gm-Gg: ASbGncuNqnt8vgZ/qp++1QvKD3H4PU98ezLcJl0Nnrbon/dk8ES14HQSWtwBlITUCPb
+	wy0XsRYeJeL57KG+qLPd22tmWKoL9LoW600sgEfkqvGLThV85unL1T2JdV4bbaExnleWAZR4hrA
+	NC1AwKiQpt190LNy9VynW0XY31YqEdZ7GD2bxVTp60VEiPXHu/Qlkh+Pfzm/5a5TxPiG6aIEPXD
+	/qZxBPnc4HDZTl2UrzW+2o2ms1rKBuhFBxJ9jnifS7pjHdhw+u4aQ49xlhZnW5+8Uw4oQES+Tuo
+	SheCYTUYM9IIN/NBF2rAYcPR
+X-Google-Smtp-Source: AGHT+IHznlsEwdB7icssG716XtZk+NkWk+ePotkjcKywpiAXLiKlyYSFY6LyU3e+cxotEqB+rLhM5A==
+X-Received: by 2002:a17:906:cc9:b0:a9a:82e2:e8ce with SMTP id a640c23a62f3a-aa509b90dffmr612105466b.40.1732382351216;
+        Sat, 23 Nov 2024 09:19:11 -0800 (PST)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b52fa76sm249673166b.94.2024.11.23.09.19.10
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 23 Nov 2024 09:17:52 -0800 (PST)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa4833e9c44so360344766b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 09:17:51 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWz3WpPs8nkXcDPf79+a995AiV945R5zLEgohYNEqlocuERd0jaTpMKKZWmLIpYVTYlrTSZ7PjCZTiF9H4=@vger.kernel.org
-X-Received: by 2002:a17:906:9ca:b0:aa5:35cc:f838 with SMTP id
- a640c23a62f3a-aa535ccfb35mr206712766b.36.1732382271382; Sat, 23 Nov 2024
- 09:17:51 -0800 (PST)
+        Sat, 23 Nov 2024 09:19:10 -0800 (PST)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5cedf5fe237so3557344a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 09:19:10 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVDdcWFdY4US/llfO+Ijw63+F85RfrC4G5k9zG5zBxyrm5YS1SN4+nK6wAayuU5GwVRGvzI7FYl1JoTUrs=@vger.kernel.org
+X-Received: by 2002:a17:906:2191:b0:aa5:cad:eb08 with SMTP id
+ a640c23a62f3a-aa50cadec25mr539778766b.39.1732382350257; Sat, 23 Nov 2024
+ 09:19:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <nycvar.YFH.7.76.2411182207390.20286@cbobk.fhfr.pm>
- <CAHk-=wiUkQM3uheit2cNM0Y0OOY5qqspJgC8LkmOkJ2p2LDxcw@mail.gmail.com> <ziofbee4q5cvxvovpzb2rfjw2cduefpm4umwtfyyx5kfwajjp4@nrjwkqryz2j5>
-In-Reply-To: <ziofbee4q5cvxvovpzb2rfjw2cduefpm4umwtfyyx5kfwajjp4@nrjwkqryz2j5>
+References: <20241122095746.198762-1-amir73il@gmail.com> <CAHk-=wg_Hbtk1oeghodpDMc5Pq24x=aaihBHedfubyCXbntEMw@mail.gmail.com>
+ <CAHk-=wgLSHFvUhf7J5aJuuWpkW7vayoHjmtbnY1HZZvT361uxA@mail.gmail.com> <20241123061407.GR3387508@ZenIV>
+In-Reply-To: <20241123061407.GR3387508@ZenIV>
 From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 23 Nov 2024 09:17:33 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wj2XYoq5Rp-An0SMRiA0x7mzGWgt1RyqQYpm1DtX0XwJQ@mail.gmail.com>
-Message-ID: <CAHk-=wj2XYoq5Rp-An0SMRiA0x7mzGWgt1RyqQYpm1DtX0XwJQ@mail.gmail.com>
-Subject: Re: [GIT PULL] HID for 6.13
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: Jiri Kosina <jikos@kernel.org>, linux-kernel@vger.kernel.org
+Date: Sat, 23 Nov 2024 09:18:52 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiWYnr+V1-RbgvxkuD6uSQUJWGuounVMXThyH8jJ49c2w@mail.gmail.com>
+Message-ID: <CAHk-=wiWYnr+V1-RbgvxkuD6uSQUJWGuounVMXThyH8jJ49c2w@mail.gmail.com>
+Subject: Re: [GIT PULL] overlayfs updates for 6.13
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 23 Nov 2024 at 08:42, Benjamin Tissoires <bentiss@kernel.org> wrote:
+On Fri, 22 Nov 2024 at 22:14, Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
-> IMO the suspect might be 526748b925185e95f1415900ee13c2469d4b64cc.
+> On Fri, Nov 22, 2024 at 10:09:04PM -0800, Linus Torvalds wrote:
+>
+> >  (a) add a new "dup_cred()" helper
+> >
+> >     /* Get the cred without clearing the 'non_rcu' flag */
+> >     const struct cred *dup_cred(const struct cred *cred)
+> >     { get_new_cred((struct cred *)cred); return cred; }
+>
+> Umm...  Something like hold_cred() might be better - dup usually
+> implies copying an object...
 
-I'll try reverting it when I have more time (which is probably end of
-next week.. merge window).
+Ack. "dup" is clearly a horrible name, and I'm ashamed and properly chastised.
 
-> In addition to Jiri's requests, could you also post the dmesg after the
-> fresh (and broken) reboot, and after unplug/replug the dongle? We would
-> get more information on to which kernel modules are involved this way.
-
-All I get for a unplug/replug is
-
-  usb 5-4.2.2: USB disconnect, device number 10
-  usb 5-4.2.2: new full-speed USB device number 11 using xhci_hcd
-  usb 5-4.2.2: New USB device found, idVendor=046d, idProduct=c52b,
-bcdDevice=24.11
-  usb 5-4.2.2: New USB device strings: Mfr=1, Product=2, SerialNumber=0
-  usb 5-4.2.2: Product: USB Receiver
-  usb 5-4.2.2: Manufacturer: Logitech
-
-and then
-
-  logitech-djreceiver 0003:046D:C52B.0019: hiddev100,hidraw9: USB HID
-v1.11 Device [Logitech USB Receiver] on usb-0000:46:00.1-4.2.2/input2
-  input: Logitech MX Anywhere 3 as
-/devices/pci0000:40/0000:40:01.1/0000:41:00.0/0000:42:08.0/0000:46:00.1/usb5/5-4/5-4.2/5-4.2.2/5-4.2.2:1.2/0003:046D:C52B.0019/0003:046D:4090.001A/input/input36
-  logitech-hidpp-device 0003:046D:4090.001A: input,hidraw10: USB HID
-v1.11 Mouse [Logitech MX Anywhere 3] on
-usb-0000:46:00.1-4.2.2/input2:1
-  logitech-hidpp-device 0003:046D:4090.001A: HID++ 4.5 device connected.
-
-but doing some grepping, at bootup time I also see a line line
-
-  hid-generic 0003:046D:4090.000E: input,hidraw10: USB HID v1.11 Mouse
-[Logitech Wireless Device PID:4090] on usb-0000:46:00.1-4.2.2/input2:1
-
-which does not happen at replug. There's a few other boot-time
-messages that seem to be about module init stuff too, ie
-
-  input: Logitech USB Receiver as /devices/...
-  input: Logitech USB Receiver Mouse as /devices/...
-  input: Logitech USB Receiver Consumer Control as /devices/...
-  input: Logitech USB Receiver System Control as /devices/...
-  input: Logitech Wireless Device PID:4090 Mouse as /devices/...
-
-and that only happens once and then never again. Some module loading
-thing? I have
-
-  CONFIG_HID=y
-  CONFIG_HID_BATTERY_STRENGTH=y
-  CONFIG_HIDRAW=y
-  CONFIG_HID_GENERIC=y
-
-but then the Logitech part is modules:
-
-  CONFIG_HID_LOGITECH=m
-  CONFIG_HID_LOGITECH_DJ=m
-  CONFIG_HID_LOGITECH_HIDPP=m
-
-which I think is all normal (ie I have my own local config, but that
-part matches the default distro kernel config)
-
-             Linus
+               Linus
 
