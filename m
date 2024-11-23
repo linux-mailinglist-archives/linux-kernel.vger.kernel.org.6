@@ -1,88 +1,306 @@
-Return-Path: <linux-kernel+bounces-419139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4B839D69DF
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:06:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCEB99D69E6
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:11:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A4A7281C43
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:06:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F1E6281BC2
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7BD41C92;
-	Sat, 23 Nov 2024 16:06:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE3C6F06D;
+	Sat, 23 Nov 2024 16:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CcovsgUL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012F32EB1F
-	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 16:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D978F376E0;
+	Sat, 23 Nov 2024 16:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732377965; cv=none; b=B1/nilVTuW/DbhVEAUNa17rcUNC9xS5onwbyUXvUBgIVanYoianCO3JJsfUpJVmJGAW3ImA7HAHMfOXWkChKVYx5e0jW8pAn6BlgsKyXgw4V7WDA4zz29Sy8gdh5I1PAQUVSxOFDLIssBkcTAe0TVJT11Wlc/3rwodgA51PtwdI=
+	t=1732378304; cv=none; b=L5cnusfM710XRSmQmcS1cecLO6LeCZTtv143SDmgeXxxbuKLLl9sxytPu3Pj1mv5OLiJ5Tf2d5U+OZ23Fab+GaZigljOl+GMIbIwdeNQexRPKg7B/TdreVRWV673V2olPjd2t88D/4eaJnLE0mYdlH/Dxdmftd71it/3SpT1D/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732377965; c=relaxed/simple;
-	bh=/Oe7C8tWFR+WpQtX4zy0qvLDM/utxO6jL0VZWbq3xac=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=r62JtzgBLJ9g7DEZkToy6h2Djif/hOxKzB4rqMEGutlHPhKaDCexKnbLYHZj/YSYZfznUII2q2iepl8Uo97e4quSk328diNhBkFUYjlwjQEdm+lvWCITHwzmauudv4cOMqWphuvjGNk8zy9vVpTbGRPCdDZKvmXTd9K1fPlLGPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83abb901672so361313739f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 08:06:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732377963; x=1732982763;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9LX7/6JCZjAchMCgt4YjUfhqTQQacnrhf6k9MzJL65s=;
-        b=k9lKEG5Kra0UREXmVMgCb2HtA1MMuuuf7WZoJLJd8SozzWLYXkmMu0kjiNIkhFTxmS
-         asddH2OpvhZlEhRUtGmsXQJda+djs/i/94YMAv1T4CQerYGHjzisH5K+CKCuKwGBjHXi
-         AOIDK44Xhp35G4Lz8F/MSB5HmxgSRp3dUrHuu4YuSH9YNEx+Q3thchet75Ooya/UomzI
-         dxFPIRxGQllT2wfU3MGvTC3i/JiyHLzeUFLhSZYAt8xXeP6Dgly4WNFcsHgCsyevcc4w
-         Pdw5PT2fdPXsvPrLa3vhbnFWpyozozV9EG50r+PoNDhwKSDXm4hlgadoc00R7bseL5oP
-         FttA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSiK7nk38vT8xq4RYoJ2kM4HKTGuz2H52OAoIr+znIDwrfwKMf8/aVfqIblo2kQX7T8ZHFtE8j9KR78Zw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLIK/j+2qTfzflrOPZYRW8fpf7jNqmKU2BZHsmM1F8JKuMEQpp
-	0am79J7I5CHlKq7e2JdDNDpIK+XKhGDQ+6rE2BH1AtqwRtloI+3XrZwvi2JnFDG4MIhBvJWDU7/
-	vmixGoMBAmDgN95E5KL/R7z4UM/EjD0kZfUHbYwIHJVfqxGfO0QWeEKE=
-X-Google-Smtp-Source: AGHT+IHid+DYZc0rutOVjJkXhhK/zT4IGdk50i6NK0wDiOleYfjLPSpHE43QmXfMhzjwKaijD9FmOdOtiyzjhAeftaObjZP0fY7h
+	s=arc-20240116; t=1732378304; c=relaxed/simple;
+	bh=g18tIdDWIrEz/MlWEIRwjzIdSb4DyithcPpWM1gVK2c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aGdyq4YKMIC2vB/Cuz8HKoaPtbWIHorj/iy4Exp9J8WkYpsu/v0A5Eydb4uQo7j3ysilTQzqKtnZxV6PAFBrMpgFEtqQbOYzJVV8e/PyJFgJzZcqW0b+YQqfgvbNXVtYLg2xgWCNYb4m2VE6JYTvqr+xcdqaOPJPJLZMh6haP8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CcovsgUL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 643FAC4CECD;
+	Sat, 23 Nov 2024 16:11:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732378303;
+	bh=g18tIdDWIrEz/MlWEIRwjzIdSb4DyithcPpWM1gVK2c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CcovsgULrYrYuDeXclH0/UykDUBz5A1nT3jz2ljUOglzJcKv0KII02nUPvubzaSWK
+	 Tlrw1x9F1CtgR3KMC5DmTYCwXGhS9nsFG7r6vjD67pUcKH4uoqgSQcCTVk/wk2WxkH
+	 i4jofVOdPwsv2gigF7nco7a+X8jzNrOlAqsS82IyyxkSzymC2of9tSllskTgfzLxwr
+	 iBw6gqH5mEjcCeukH6ZbUUieQXDOT13lVXFqoE8QzAvINU7/0JlAcCeLTRtM3y2IYi
+	 G+cTHaq5TgL48ojypt1KbolgjM99SNiIiU6D7e5dZbPyw+tnPcaO12qGRWJeDGc4UT
+	 q3rMQXqmjywDg==
+Message-ID: <7a512b1a-1b04-4fee-93e9-ddffc38233fc@kernel.org>
+Date: Sat, 23 Nov 2024 17:11:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c41:b0:3a7:6e34:9219 with SMTP id
- e9e14a558f8ab-3a79af336a4mr52136325ab.14.1732377963227; Sat, 23 Nov 2024
- 08:06:03 -0800 (PST)
-Date: Sat, 23 Nov 2024 08:06:03 -0800
-In-Reply-To: <CAHiZj8hNe6jgUgZ=FViJV33wd89cpeHeEX-Ak02nn97t2yGiHQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6741fd6b.050a0220.1cc393.0018.GAE@google.com>
-Subject: Re: [syzbot] [iommu?] WARNING in iommufd_device_unbind
-From: syzbot <syzbot+c92878e123785b1fa2db@syzkaller.appspotmail.com>
-To: iommu@lists.linux.dev, jgg@ziepe.ca, joro@8bytes.org, kevin.tian@intel.com, 
-	linux-kernel@vger.kernel.org, robin.murphy@arm.com, 
-	surajsonawane0215@gmail.com, syzkaller-bugs@googlegroups.com, will@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] dt-bindings: iio: adc: adi,ad4000: Add PulSAR
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
+ Michael.Hennerich@analog.com, jic23@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1732020224.git.marcelo.schmitt@analog.com>
+ <dd7fd54585e1230d2da86b5e3d4ed770256b0af2.1732020224.git.marcelo.schmitt@analog.com>
+ <5kz6ghe56yiprlvhyduv7olcrajvejyvulcpjav6doiyvr6dcl@6qlt4nebp4gb>
+ <Z0CkOTGhGhfV18OG@debian-BULLSEYE-live-builder-AMD64>
+ <a311de1b-cd59-4f67-9bd1-61596a54c8cd@kernel.org>
+ <Z0D0e6mNKlVAXp0z@debian-BULLSEYE-live-builder-AMD64>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <Z0D0e6mNKlVAXp0z@debian-BULLSEYE-live-builder-AMD64>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 22/11/2024 22:15, Marcelo Schmitt wrote:
+> On 11/22, Krzysztof Kozlowski wrote:
+>> On 22/11/2024 16:33, Marcelo Schmitt wrote:
+>>>>
+>>>>> +      - items:
+>>>>> +          - enum:
+>>>>> +              - adi,ad7942
+>>>>> +          - const: adi,ad7946
+>>>>> +
+>>>>> +      - const: adi,ad7983
+>>>>> +      - items:
+>>>>> +          - enum:
+>>>>> +              - adi,ad7980
+>>>>> +              - adi,ad7988-5
+>>>>> +              - adi,ad7686
+>>>>> +              - adi,ad7685
+>>>>
+>>>> Keep alphabetical order.
+>>>
+>>> Do the fallbacks declared here have any impact on the match try order or on how
+>>> the compatible list should be ordered?
+>>
+>> I don't understand, we do not talk about fallbacks. I also do not
+>> understand at all how this relates to my comment.
+> 
+> I was wondering if the arrangement in which compatible strings appear in dt doc
+> could be used to suggest the sequence to add them to the compatible property of a
+> device node in a dts. Apparently, the arrangement of compatible strings in dt doc
+> has nothing to do with how they can appear in a dts file. Will sort them in
+> alphabetical order.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+We talk here about enum. Enum enumerates, so obviously they cannot
+appear one after another.
 
-Reported-by: syzbot+c92878e123785b1fa2db@syzkaller.appspotmail.com
-Tested-by: syzbot+c92878e123785b1fa2db@syzkaller.appspotmail.com
+> 
+>>
+>>> The only significant difference between each group of devices is the sample rate.
+>>> A faster device can read at slower sample rates so if somebody knows to have
+>>> a 16-bit pseudo-differential PulSAR but doesn't know about the exact model they
+>>> could have a compatible like
+>>>       compatible = "adi,ad7980", "adi,ad7988-5", "adi,ad7686", "adi,ad7685",
+>>>                    "adi,ad7988-1", "adi,ad7983";
+>>
+>> Can't you autodetect this?
+> 
+> There is no way of detecting the maximum sample rate other than the compatible
+> string or, maybe, running a data capture.
 
-Tested on:
 
-commit:         228a1157 Merge tag '6.13-rc-part1-SMB3-client-fixes' o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17ab7b78580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=402159daa216c89d
-dashboard link: https://syzkaller.appspot.com/bug?extid=c92878e123785b1fa2db
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=121981c0580000
+Devices do not have version/revision/model register?
 
-Note: testing is done by a robot and is best-effort only.
+> 
+>>
+>>>
+>>> to try from fastest to slowest device.
+>>> The dt doc would indicate that order in the fallback list?
+>>>       - items:
+>>>           - enum:
+>>>               - adi,ad7980    # Fastest 16-bit pseudo-differential ADC
+>>>               - adi,ad7988-5  # 2nd fastest 16-bit pseudo-differential ADC
+>>>               - adi,ad7686    # 3rd fastest 16-bit pseudo-differential ADC
+>>>               - adi,ad7685    # 4th fastest 16-bit pseudo-differential ADC
+>>>               - adi,ad7988-1  # 5th fastest 16-bit pseudo-differential ADC
+>>>           - const: adi,ad7983 # Slowest 16-bit pseudo-differential ADC
+>>
+> [...]
+>>>
+>>> writing-bindings.rst says "DO use fallback compatibles when devices are the same
+>>> as or a subset of prior implementations."
+>>> But, how can we use fallbacks properly?
+>>
+>> How DT spec and tutorials like elinux ask... What is exactly the problem
+>> or question?
+> 
+> Never mind. Do the bellow follow the preferred syntax?
+> 
+>       - items:
+>           - enum:
+>               - adi,ad7980
+>               - adi,ad7685
+>               - adi,ad7686
+>               - adi,ad7988-1
+>               - adi,ad7988-5
+>           - const: adi,ad7983
+> 
+>       - items:
+>           - enum:
+>               - adi,ad7688
+>               - adi,ad7693
+>           - const: adi,ad7687
+> 
+>       - items:
+>           - enum:
+>               - adi,ad7982
+>               - adi,ad7984
+>               - adi,ad7690
+>           - const: adi,ad7691
+> 
+>       - enum:
+>           - adi,ad7942
+>           - adi,ad7946
+>           - adi,ad7984
+
+Yes
+
+> 
+>>
+>>> From Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml I'm
+>>
+>> How LVDS bridge is related to this one here?
+> 
+> Aside from having compatible fallbacks, not related.
+> 
+>>
+>>> inferring only one fallback should be provided per group of devices.
+>>>
+>>>>
+>>>>> +              - adi,ad7988-1
+>>>>> +          - const: adi,ad7983
+>>>>> +
+>>>>> +      - const: adi,ad7688
+>>>>> +      - items:
+>>>>> +          - enum:
+>>>>> +              - adi,ad7693
+>>>>> +              - adi,ad7687
+>>>>> +          - const: adi,ad7688
+>>>>> +
+>>>>> +      - const: adi,ad7984
+>>>>> +      - items:
+>>>>> +          - enum:
+>>>>> +              - adi,ad7982
+>>>>> +              - adi,ad7690
+>>>>> +              - adi,ad7691
+>>>>> +          - const: adi,ad7984
+>>>>> +
+>>>>>    reg:
+>>>>>      maxItems: 1
+>>>>>  
+>>>>> @@ -133,6 +178,32 @@ required:
+>>>>>    - ref-supply
+>>>>>  
+>>>>>  allOf:
+>>>>> +  # Single-channel PulSAR devices have SDI either tied to VIO, GND, or host CS.
+>>>>> +  - if:
+>>>>> +      properties:
+>>>>> +        compatible:
+>>>>> +          contains:
+>>>>> +            enum:
+>>>>> +              - adi,ad7685
+>>>>
+>>>> Why do you need this? It's fallback is already here.
+>>>
+>>> So dtbs_check can provide an error message if for example compatible = "adi,ad7687";
+>>> and adi,sdi-pin = "sdi";
+>>
+>>
+>> I mean this compatible, not if clause.
+> 
+> dtbs_check don't show an error message if the allOf list only has the fallback
+> compatible for adi,ad7685 and a device node has both 
+> compatible = "adi,ad7685" and adi,sdi-pin = "sdi".
+
+It must and your compatibles should not affect it. I don't know which
+code you are testing, but I even tested the correct approach and it
+correctly shows error.
+
+
+> 
+> The new set of devices that will be supported by this binding don't have a
+> configuration register like the previous ones did. Because the PulSAR devices
+> don't have a config reg, they don't support all features of AD4000-like devices
+> and thus fewer IIO ABI interfaces are provided to user space. Though, AD4000
+> devices also can be wired in a way that no reg access is possible, in which
+> case they provide the same IIO interfaces that PulSAR devices do. The difference
+> is on what is connected to the peripheral SDI pin. When AD4000 SDI is connected
+> to SPI controller MOSI line, more interfaces are provided because the config
+> reg can be accessed to set additional features. But that is not an option for
+> PulSAR devices. Even if controller MOSI is connected to a PulSAR device, we
+> cannot provide the additional interfaces because every attempt to use them would
+> fail (the device has no register to configure). No datasheets mentions
+> connecting a PulSAR device SDI pin to a SPI MOSI line. All datasheets show
+> PulSAR SDI pin connected either to VIO (high), GND (low), or controller CS.
+> 
+> IMHO, it would be nice to have dtbs_check warn about invalid SDI pin
+> configuration otherwise it may only be noticed on driver probe.
+> Anyway, I'm also fine keeping only the fallback compatibles in the allOf list
+> if that makes dt maintainers happy.
+
+Only fallbacks go there,
+
+
+Best regards,
+Krzysztof
 
