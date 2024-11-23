@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-418900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC9A09D6704
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 02:30:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26B8A9D6707
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 02:30:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F933B223C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 01:30:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CAE8283191
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 01:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A1B15FA7B;
-	Sat, 23 Nov 2024 01:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B832F16B3B7;
+	Sat, 23 Nov 2024 01:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZ9Ua32F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WdRjpY8o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0AB1770FE;
-	Sat, 23 Nov 2024 01:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E22D1632FA;
+	Sat, 23 Nov 2024 01:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732325396; cv=none; b=VsigaTTM7RBGASIcSFcj1Y2jpTPsDG6SSolrPS4+ASUcnRXUcXvd/a6Zg/bi1BdCR/SC3l4tzLJ6D78NV4g8o8lSneMBCLjbZNIeZUKeeNQJLMdLrzsBUJ1Ylb41Svf18l7JyGmJ0a9F4T6IQK+rWkezaKycaYAuZHdo6KGNex4=
+	t=1732325399; cv=none; b=POYDP53FVbzsgreMLwBNF4sgL5CD+g91iF0Vcid5qvb0grSXw3d/EMtSkcEqUfWzNxRxdOP3ZesydGn1rz9bWMcolrsAEmfNE6sM//HLH6MA1v3GoE5aj5PaWXUtcS55OsbGRl8IwD5HkL2+KjM0bhVj0p8sNiHE6L2xy9HlMbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732325396; c=relaxed/simple;
-	bh=Qauzjxox3kAHfnfmajW0ehQqp1C3uPDzLuTFySHrwbc=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=J2CyINt3XjSXEzwfZs7H7pDEh+II+ZWKykiJONssxqNCIbswsahqeYlF+4CCXCIeaGSVOucYd83AiLUHANkhrM+dPZb8RJfTfRZDqyATvky1nnYZR7Zhe0MkWfuVPcO3aj187ws460izEWc1h3VtsC9PHL7902Y9WZDBRttXHds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bZ9Ua32F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 450DCC4CECE;
-	Sat, 23 Nov 2024 01:29:56 +0000 (UTC)
+	s=arc-20240116; t=1732325399; c=relaxed/simple;
+	bh=60amuwJeWKMn2wu118Hx7N21nxzN3QbMwtbd5rrSn18=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=fkloFNGgAWj2j2BTqxSl7mDvvjDTriIK2Kf/O4jHkieFeZ59fGI8M0n2x+u5LeTRa449qJCfnYTBDkwfppnKJLejqCXi4vctmtcX0rE3vHrHV0g8KZ1F78Q0tP4KeVD3ba2GqzwVNolyXbv1qONoB3kCFiasiTIiA6lzy3Lw/9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WdRjpY8o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03608C4CED0;
+	Sat, 23 Nov 2024 01:29:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732325396;
-	bh=Qauzjxox3kAHfnfmajW0ehQqp1C3uPDzLuTFySHrwbc=;
+	s=k20201202; t=1732325399;
+	bh=60amuwJeWKMn2wu118Hx7N21nxzN3QbMwtbd5rrSn18=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=bZ9Ua32F81GNpB0pruGu3eqD6/T+tTM2C9R4kJ5P3mMudX+04g8kxhFSgA+nul39k
-	 2hdf2GS5JHFJ2u+UKSpBchc20p9XlJ4pjqYtWZ1phUJFdYfqeMJjB0WhRFbxaCYYXm
-	 VMGgdHsDEMXX3fmzoj3czRd0K51M0yfaIWyK4QY56ULAx0lg1327ZMeMHJI9JUT68D
-	 Nb4/FfSv0ShlcqOFN8tOhUIcntEfvR6cZsbQeEqs3OHQT03ACeX2pmaXXNCmk73YBj
-	 EoOFfWDWh5jHLND8MH1Waom8RS2Oa7n2kSjZH6VmKB2nd/dXzuALHZMqldSy0RRaib
-	 hKjm7rkRnLEKw==
+	b=WdRjpY8oAJyQmIls8PeK8x7Efgxb1PY7YD8VUpEUsuFvgNPQV8HJ6bIqDJrO1s/7o
+	 lAluO7go3D2AiG+3SDZjP9TwOLVqOfp66Sh+2lfVyvjnE8cCxWYUb9+8kCp2z+15JB
+	 yqidY2k7R0koS9RQXgBfELQI9wRfuuL5maygUdw4ce/YqkT/iiYrSsm98FBi9il+QA
+	 sLMw3o2nFbLAMPVIS+A15TyM+N9jFVMtDt/WAd8KVZFFI0Huaq5dPWGuEng7JkhE8Q
+	 LxaxwuQGLtNwRcS7Jx+rrhsHTDERE5Vr6ql8q8xHRS+QRm1SCOhtE37PDTljSxKVv9
+	 kmM9AN0vpLESw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AEEBC3809A00;
-	Sat, 23 Nov 2024 01:30:09 +0000 (UTC)
-Subject: Re: [GIT PULL] KUnit update for Linux 6.13-rc1-fixed
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 713E13809A00;
+	Sat, 23 Nov 2024 01:30:12 +0000 (UTC)
+Subject: Re: [GIT PULL] TPM DEVICE DRIVER: linux-next-6.13-rc1
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <9ac83205-add4-4971-8cf3-70be10282e1c@linuxfoundation.org>
-References: <9ac83205-add4-4971-8cf3-70be10282e1c@linuxfoundation.org>
-X-PR-Tracked-List-Id: <linux-kselftest.vger.kernel.org>
-X-PR-Tracked-Message-Id: <9ac83205-add4-4971-8cf3-70be10282e1c@linuxfoundation.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-kunit-6.13-rc1-fixed
-X-PR-Tracked-Commit-Id: 62adcae479fe5bc04fa3b6c3f93bd340441f8b25
+In-Reply-To: <D5S95V90MFOZ.4LGI0I0F9QP8@kernel.org>
+References: <D5S95V90MFOZ.4LGI0I0F9QP8@kernel.org>
+X-PR-Tracked-List-Id: <keyrings.vger.kernel.org>
+X-PR-Tracked-Message-Id: <D5S95V90MFOZ.4LGI0I0F9QP8@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-6.13-rc1
+X-PR-Tracked-Commit-Id: 5578b4347bb5d5dfc8eeb8ee2eb8248658707d9b
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e288c352a4a5716babf2edad4cba10ec6002a20a
-Message-Id: <173232540839.2863978.3117516865769299457.pr-tracker-bot@kernel.org>
-Date: Sat, 23 Nov 2024 01:30:08 +0000
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Shuah Khan <skhan@linuxfoundation.org>, shuah <shuah@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+X-PR-Merge-Commit-Id: 619d996c86421da1057d589123a28e2da0bf0785
+Message-Id: <173232541130.2863978.6328455370106125781.pr-tracker-bot@kernel.org>
+Date: Sat, 23 Nov 2024 01:30:11 +0000
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Thu, 21 Nov 2024 17:54:55 -0700:
+The pull request you sent on Fri, 22 Nov 2024 01:41:10 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-kunit-6.13-rc1-fixed
+> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-6.13-rc1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e288c352a4a5716babf2edad4cba10ec6002a20a
+https://git.kernel.org/torvalds/c/619d996c86421da1057d589123a28e2da0bf0785
 
 Thank you!
 
