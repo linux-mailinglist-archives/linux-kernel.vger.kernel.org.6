@@ -1,46 +1,85 @@
-Return-Path: <linux-kernel+bounces-419189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 750D79D6A91
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 18:25:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1FAC9D6A93
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 18:25:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14785B21B4C
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:25:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6032BB21451
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA44146013;
-	Sat, 23 Nov 2024 17:25:05 +0000 (UTC)
-Received: from air.basealt.ru (air.basealt.ru [193.43.8.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76B916088F;
+	Sat, 23 Nov 2024 17:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ko/bhx+0"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB898195;
-	Sat, 23 Nov 2024 17:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.43.8.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5766195;
+	Sat, 23 Nov 2024 17:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732382704; cv=none; b=uWW3B18NFbC0i4zbsW0R93L9xR1QUNZCID/zwWV3TUdsoQ6C3rqHsspXOxltSJ3avu49ypa9PKrkh0cimvSXYLU4jKWI9Tul6yK/firIydCKukaoXqbvZZ++i0wK3hyXyfmJaM1QdECL1dg+DbvBNpVq0Nb/b16KteLQY/iyolA=
+	t=1732382711; cv=none; b=KaS2amBSz+SkkKXxXcLzLCTi1shxhShlO0qRg17H72uU+5rzDtxK1iM33dgrX1KkMklbRvsR6XkV9/+oJEgJfHJFfeAOM2urJhXvMiQ2T+YQcTtknko2IRpA4HjbJuE4JT1VYASha1yhATqGa4vfDGGs7hBuZOaL109M8a/O9xA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732382704; c=relaxed/simple;
-	bh=ge5FSu7/fAqLGmxFcR6uayT1c3YhSPc3WQsqzXSlKcc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Grhlbp1I4nB+6T+JqipT7wUAjBQGAw88QUw+v0XdtDafomAPadXYS5dbC+th8x50Bb8QqYL7ZR11QRg6YbHOu2wSryBbPXknAe0n+qCTTerAjQu8q539Ok4vSrLd24I3MhObT+koiKo/y2Qqpkbhv76BX0D/ro/vSHkhRx41tas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=193.43.8.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from altlinux.ipa.basealt.ru (unknown [178.76.204.78])
-	by air.basealt.ru (Postfix) with ESMTPSA id 9179223380;
-	Sat, 23 Nov 2024 20:24:56 +0300 (MSK)
-From: Vasiliy Kovalev <kovalev@altlinux.org>
-To: "Tigran A . Aivazian" <aivazian.tigran@gmail.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org,
-	linux-unionfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: kovalev@altlinux.org
-Subject: [PATCH] bfs: validate inode vtype and discard invalid entries
-Date: Sat, 23 Nov 2024 20:24:53 +0300
-Message-Id: <20241123172453.275255-1-kovalev@altlinux.org>
-X-Mailer: git-send-email 2.33.8
+	s=arc-20240116; t=1732382711; c=relaxed/simple;
+	bh=do5FpcXe+YPGqzUKIa7gtHLJOU1MBH7h7I39m14jIuQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L5nl4sgl97MqTCbzJai1JTv9VsbPRPz7bSV7/l167/HyJVQDbvr/nJ3jfTRHJBaipUWlFoq968KPHIvKUtO4AYO82qg5UhGbHylvxGrMyG1cgkJWXGqmKcwU3YWd6bbK1a58l7xNj+pKH65DBTIeNF601FEklphRlwGX6ypJw4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ko/bhx+0; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7f8cc29aaf2so2431687a12.3;
+        Sat, 23 Nov 2024 09:25:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732382709; x=1732987509; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DW0N1eG0yxuVH6pEtyWsL2STLDTPWc/PAMyAqXq+1as=;
+        b=ko/bhx+0vIJRizMX3MkgYLR8YqFre5YVOEqzwiBlWI+cGQlxBXzgzSZ6l37LZgIdkZ
+         /lOOJBuXhcfWOzt4Cve3C8wNIJSWp6mjlDY8CvwV/TauviqEoL19crBMrA03FXSsPk1k
+         3HE+4NJ5GZG0ADqFJJsiv7TWmD5eS9yPNw5gvJnHa3h/tkmNciSLOeQ8yCietVd7Rzos
+         e+V/SdO5uOqFSpwIcwYMdMXa+xoeyhfQFlWP54pP0x2tkRoNx53kjzUFw2qxxv1DuCGO
+         sSeXVVTSACKv7q4lVzoZdTVrc4YoQtGmmGbe0HN4gkPz6f4mr9WdO+Crvp0hsgaOIJQK
+         wfgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732382709; x=1732987509;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DW0N1eG0yxuVH6pEtyWsL2STLDTPWc/PAMyAqXq+1as=;
+        b=nxLfofs2kicB3Ep74e2EsWstrXdTD+RVjoIRLG2jAZFhcU5NpvlvWBSG3evDItQtlR
+         NLY+Xh9WGoc6yG/pRzNDffoe2Sh55pv8lbYBKvLmRjbmcfPIGmnHQ9eRrDVEjsoqDtuu
+         cpjMgU4hfSwxePsKZC0rYAS3CRsPkrtPU7/JmGP3WfAdW4Xy6TlvfPb3dxiGuNMYV9Fz
+         K96Pme913VDTPcmBKo5yApcOuk45YKE4VERshHdFL0y8Hy2OOznIMXZ0KBChTlN1t4gW
+         QzQYGJRV5GkHN1vLttII1So4OWExlWFyUBpN8T+hZ/Fq8dXaCrtOjdfmtf+SHIXkpHnG
+         QI4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUGHxFkJdSCKr5nL4ofgDxwnsU9iBLEsXVeG+YRrSalgAkfkJquE/zEoFFaSbKkrcbvoWRK3FeE6gHCKkR0@vger.kernel.org, AJvYcCWEBvLK5GV3MPfRwGAtLL/zK57+Hwfx4y4nlfKO/m7B5/qX0fRfuV4vczokzOTDEBmKOVrJsiRdW4qEPxrjv20=@vger.kernel.org, AJvYcCXvPCNPYU8YZ8Ic1lkOlxAF/+YA1mSapZLnbBVIJvkFv4yeCWdjPw4/D2RnokbkIYclXfHY5ruBuz61HsDWhCI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfZS6f9VtdZA05XtjemfSUMyBLU2XqI3O8p0OpyhE1j+6uxvmr
+	6Gbr45yB8dcQRM70ZPIM4xeGHHUx7xawChmEl5wqCNaxiQ51FGgoriYivHcVxpBTvK7/
+X-Gm-Gg: ASbGncvC7wChNB79cL81LcQNxTsId8Uu0cYodm/AfQFiQR1cCzRrswBAdQAT56el5+A
+	1SBpvNaVlCSJKGHJBdUc5w6IffmaI6CcpDWOK+4QXJ/V1ZIe670/KFM+k7tF1VDrCi4iwadVXab
+	dCufeantepq1z9DUI8ZaQvDoF5xZ2eIERMOO73TyW8zKDT+/oPrPzqoPpuPD+5dRqifcfMhZ/Z0
+	4dGdnrhn8ehkbY8N67Xupkp7cSny+6xhUZi3bU0JgKexdiNu2+s7Q==
+X-Google-Smtp-Source: AGHT+IG1PhaCoRwezIi0opqFOZ1+jE+e8RYz3APjscqDtcqIIdEaXJeTQaDRBchS0Yw2waNsl3Ro2A==
+X-Received: by 2002:a05:6a21:114f:b0:1e0:bf98:42dc with SMTP id adf61e73a8af0-1e0bf98435amr1574448637.28.1732382708694;
+        Sat, 23 Nov 2024 09:25:08 -0800 (PST)
+Received: from ubuntuxuelab.. ([58.246.183.50])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de47955asm3621038b3a.65.2024.11.23.09.25.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Nov 2024 09:25:08 -0800 (PST)
+From: Haoyu Li <lihaoyu499@gmail.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Kees Cook <kees@kernel.org>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	Haoyu Li <lihaoyu499@gmail.com>
+Subject: [PATCH] net: mac80211: cfg: Initialize cnt before accessing elem in ieee80211_copy_mbssid_beacon
+Date: Sun, 24 Nov 2024 01:25:00 +0800
+Message-Id: <20241123172500.311853-1-lihaoyu499@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,65 +88,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The inode's `i_mode` field previously included all 16 bits from the
-BFS on-disk mode, which combines permission bits (0-11) with file type
-bits (12-15).
-However, this approach allowed invalid type bits to propagate, leading
-to inodes with uninitialized or incorrect fields.
+With the new __counted_by annocation in cfg80211_mbssid_elems,
+the "cnt" struct member must be set before accessing the "elem"
+array. Failing to do so will trigger a runtime warning when enabling
+CONFIG_UBSAN_BOUNDS and CONFIG_FORTIFY_SOURCE.
 
-As Al Viro noted [1], file types are determined by bits 12-15, which
-correspond to:
-- `0x4000` for directories,
-- `0x8000` for regular files,
-- other values for different types like FIFOs or symlinks.
-
-If the `i_vtype` field does not match a valid file type (e.g., `BFS_VDIR`
-or `BFS_VREG`), it indicates corruption or an unsupported state in the
-filesystem.
-
-This patch restricts `i_mode` to the lower 12 bits and validates `i_vtype`:
-- Directories and regular files are handled as expected.
-- Inodes with invalid `i_vtype` values are discarded, and a warning is
-logged for debugging.
-
-[1] https://lore.kernel.org/linux-unionfs/20241123002157.GP3387508@ZenIV/
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: syzbot+a8c9d476508bd14a90e5@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=a8c9d476508bd14a90e5
-Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
+Fixes: c14679d7005a ("wifi: cfg80211: Annotate struct cfg80211_mbssid_elems with __counted_by")
+Signed-off-by: Haoyu Li <lihaoyu499@gmail.com>
 ---
- fs/bfs/inode.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ net/mac80211/cfg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/bfs/inode.c b/fs/bfs/inode.c
-index db81570c96375..c02efc5724d26 100644
---- a/fs/bfs/inode.c
-+++ b/fs/bfs/inode.c
-@@ -60,7 +60,7 @@ struct inode *bfs_iget(struct super_block *sb, unsigned long ino)
- 	off = (ino - BFS_ROOT_INO) % BFS_INODES_PER_BLOCK;
- 	di = (struct bfs_inode *)bh->b_data + off;
+diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
+index 61a824ec33da..1dd61c9bb8f1 100644
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@ -1088,13 +1088,13 @@ ieee80211_copy_mbssid_beacon(u8 *pos, struct cfg80211_mbssid_elems *dst,
+ {
+ 	int i, offset = 0;
  
--	inode->i_mode = 0x0000FFFF & le32_to_cpu(di->i_mode);
-+	inode->i_mode = 0x00000FFF & le32_to_cpu(di->i_mode);
- 	if (le32_to_cpu(di->i_vtype) == BFS_VDIR) {
- 		inode->i_mode |= S_IFDIR;
- 		inode->i_op = &bfs_dir_inops;
-@@ -70,6 +70,11 @@ struct inode *bfs_iget(struct super_block *sb, unsigned long ino)
- 		inode->i_op = &bfs_file_inops;
- 		inode->i_fop = &bfs_file_operations;
- 		inode->i_mapping->a_ops = &bfs_aops;
-+	} else {
-+		printf("Invalid vtype %u for inode %s:%08lx\n",
-+			le32_to_cpu(di->i_vtype), inode->i_sb->s_id, ino);
-+		brelse(bh);
-+		goto error;
++	dst->cnt = src->cnt;
+ 	for (i = 0; i < src->cnt; i++) {
+ 		memcpy(pos + offset, src->elem[i].data, src->elem[i].len);
+ 		dst->elem[i].len = src->elem[i].len;
+ 		dst->elem[i].data = pos + offset;
+ 		offset += dst->elem[i].len;
  	}
+-	dst->cnt = src->cnt;
  
- 	BFS_I(inode)->i_sblock =  le32_to_cpu(di->i_sblock);
+ 	return offset;
+ }
 -- 
-2.33.8
+2.34.1
 
 
