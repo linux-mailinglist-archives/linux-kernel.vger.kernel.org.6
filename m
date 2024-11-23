@@ -1,140 +1,180 @@
-Return-Path: <linux-kernel+bounces-418878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74BF39D669D
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 01:09:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 190D59D6698
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 01:08:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B18A0B21F96
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:08:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9036281948
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB3DA954;
-	Sat, 23 Nov 2024 00:08:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954D72F41;
+	Sat, 23 Nov 2024 00:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gEOSEUiB"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YdBLM1ey"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F80A59;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5240E817;
 	Sat, 23 Nov 2024 00:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732320518; cv=none; b=kEedu4AximaJzVqa6KtkEKrmHoPHR9iK7kkjeeY48PZQGH3fLLB4BMkmKJqkwqcqQu/2ng3uIFkBXFCVg9yPnhdmO1+JhinFLmML9QQ8nwEeGDypfyWzdVrj3MQUUYOd48j+AKmUHCjCX0kPLW84CVHWXJ9zHWo4ohZzqq1T57g=
+	t=1732320517; cv=none; b=Ux8H5X0s9/yUCt1tL7JI/zWk9GvfH7uitzq/jbOVkxqGffvEOLCECi+HydUoAqFe6y3lXV46ByVix5M7DH1isDi9pH+OG7oSODH6efGeKN8CmKixtOJpJXGzDYjec9YrdusnkGBoqVoiJ2AXY4oYReAjNIug23e7Sx6mhQ/rAkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732320518; c=relaxed/simple;
-	bh=OivMuzy8RmEkygfwmOEeRITzjbJ3pOEAQUDbzLRND4A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gg+b5uZGBFiHBaTX+ccCFWZCrbYkhBs25oVL754xHG6/aHsXC0fO/j0hhVENPZxWqnD5m1m+2uDIsyPrgv92eCp4spRXg+iiZ0v6P9GvHAtneEpvPlXa1fNn1uySwPBf0UKZ3bFlej16clrko8ekVB8V9UI9DOqTBExthBkHo7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gEOSEUiB; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-382325b0508so1777602f8f.3;
-        Fri, 22 Nov 2024 16:08:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732320515; x=1732925315; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OivMuzy8RmEkygfwmOEeRITzjbJ3pOEAQUDbzLRND4A=;
-        b=gEOSEUiBXbvC61nCDiG8aSMD1cYuCzsisT3U7DznNg0yo9/pmbAGPPJ0Q6+Z4x83mG
-         fU0XAoM4f5hDl3PGNCwZ37W5Pr/XlDdopl8f2Mrhe4BU71sb/hEjjF54rfjZVr3OBiUG
-         lkZMom+lDFCIyft/0tcNRYLnBtykSszHNHTgJBuAi5ShQL1jjhky9jpybo9arjlRqNWy
-         r0pQZKce7mtNKbTlHGynFNKIf1IwHg7+cA7JiXSWLnyS9n0Sfe10w7Vf6vh/kn+S75fR
-         YeCu4HUbHtK9u86a9FwhN8ATcPlX2VatXQ2k7kbrhGvPc7wD5vXw4WcEKKJZ7xGCC4OU
-         tTXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732320515; x=1732925315;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OivMuzy8RmEkygfwmOEeRITzjbJ3pOEAQUDbzLRND4A=;
-        b=KpB6VLs0pOisjBKVwlrcCB2U7saEKbuV9XnJqTt/680SeJyTSMhP0uvvScI+Rbjriy
-         i7dS5K9nA2YokOjdBi2Rz8PdKPWqEdLsoLlCiG8P1zD3LQjgmoNEMKwRegl+21xWexwM
-         r9PcrXrZT+pRJPX7EGtkcf2Paq3eDE0iqyNAn/HFUBcNlSO3hI0K59pjZbCJ5dyq4bmP
-         GJQj0EtxbN33Xe/pehrZzsHbYD2frJ0OKtGOMN5vkirJYUOfjtmpbHAM5fV9obtENen4
-         coXUkUazFPzcrNgTgE7wuBX/pcJuHv12evvFivsMeMuCbgG911bPN15w+o3J76CipRxj
-         WtZA==
-X-Forwarded-Encrypted: i=1; AJvYcCU070cHVUKiy4BMfQKFGUGAf9B4ms1GhOJkXmmcOli301tqE2sl3F5KVcTlFe5ANElbm83XVljX5n7rE1S2xZjLrCw6lj8Q@vger.kernel.org, AJvYcCVDaA6b8+qcjuxvdRd9F81bzmDz4yclN0OL33NaEXObfoRBld5CN0p+32jKZYf5TgFMJ6+OX2PN70S+5UQ6@vger.kernel.org, AJvYcCVsQIWTsnDHHF2DyY6HAQ81uUe7g5yUKBbEVbgndaGl2e2KG5KQW7wLoAWZNw912hrpBsK3D+hQyUFAWTPB6Q==@vger.kernel.org, AJvYcCXupxYHc0cERQKjuhvR5p8KvZHn3gmfLbCFtuTXrb8LupwzmHkzPXeiAoBgiiTm9sh80sg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTSJJ/L5520IKwA23kBTNg5gXeZHxniRxdItAuLQWcO+pTKkuX
-	wfuCi816xrfUD4j0cMeRIPO6mr/BZDWAV2z7Za36aS/MBaT74DAD3xn56gz+cjuzOWFggYHLfMW
-	6kXFzprAbCYFadeOppGowMxO1bTo=
-X-Gm-Gg: ASbGnct8T2r+o16pulLi0Y897le/PzqLh461RYLb9FJjPe8VtHL3QSg9lUuOXhbDX0E
-	c4X4alpuy15ImOkbB8e3WSyZjpfT48g==
-X-Google-Smtp-Source: AGHT+IHZ4AAsVux9lUn0M+uDFGgBgO1vJ+SRqNv0DY5oxafFBj4LEno3SqwFlKuShIrT1Ho7aCIILMqtA6hgCcTt4iE=
-X-Received: by 2002:a5d:5889:0:b0:382:4e6a:bfd6 with SMTP id
- ffacd0b85a97d-38260b46e71mr3947803f8f.10.1732320515104; Fri, 22 Nov 2024
- 16:08:35 -0800 (PST)
+	s=arc-20240116; t=1732320517; c=relaxed/simple;
+	bh=APVj4q25ZayGfJKZ9Lm/pwT5JHS27FOdlBrt2jGCVQM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J1uz+mLtggKQFUTBEeASO+ExMHyhy/q2WMkU06I78+p/e27Twrj4UkNguV3QhuVtLSnVeHXVTo1Rm9xMCfUozW8MswETFbMCoDMvuhdM9fk9c7pfbjjw1zuvtoFy8DoxuMjFoIIlUuXd/mr1bpUsqz3xdcXOcaX3SilAmZs6Kfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YdBLM1ey; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732320516; x=1763856516;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=APVj4q25ZayGfJKZ9Lm/pwT5JHS27FOdlBrt2jGCVQM=;
+  b=YdBLM1ey76FZuW1ymThGLhsTQAy2NgkNS75n/pXdr1uHlCB5IwKgJ1Qn
+   7FkGselpdw8la7wBTzJEcUoMyrfe+VN7k7SkA1lrjaplFsHEx3gyikQ6V
+   fIPrDuuGKnhNyKF2sWNteN1Jn8128q1sBAiFhPFvTCVzRw13FS8mLzuJU
+   5JOYEcIIhsyr7VrwvWqpbfRiTwczJFPP1ZqiLuX5CowS5b/QSU/irWDa0
+   gRl9f+DZR7+vm2LH/NyJb5W8A9eQubnluGJIBIPUktA+XK9iswyWpY1tN
+   B8O+f7Ur6Iu+75zPxagG6M+nyFqXez3rdP6JOVduN6R9P1rP2rw7+2Zzu
+   g==;
+X-CSE-ConnectionGUID: BLcnPmM+TVmFq7SfrDbfwA==
+X-CSE-MsgGUID: hGQdiSC2R8afukgOFNL5dQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="20078715"
+X-IronPort-AV: E=Sophos;i="6.12,177,1728975600"; 
+   d="scan'208";a="20078715"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 16:08:36 -0800
+X-CSE-ConnectionGUID: PJ0fQCx4S72wuaV7268a7Q==
+X-CSE-MsgGUID: p1nuRMkJRauskh1buPU2KA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,177,1728975600"; 
+   d="scan'208";a="95794788"
+Received: from bjrankin-mobl3.amr.corp.intel.com (HELO [10.124.220.110]) ([10.124.220.110])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 16:08:35 -0800
+Message-ID: <6903d890-c591-4986-8c88-a4b069309033@intel.com>
+Date: Fri, 22 Nov 2024 16:08:34 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112082600.298035-1-song@kernel.org> <20241112082600.298035-3-song@kernel.org>
- <20241113-sensation-morgen-852f49484fd8@brauner> <86C65B85-8167-4D04-BFF5-40FD4F3407A4@fb.com>
- <20241115111914.qhrwe4mek6quthko@quack3> <20241121-unfertig-hypothek-a665360efcf0@brauner>
-In-Reply-To: <20241121-unfertig-hypothek-a665360efcf0@brauner>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 22 Nov 2024 16:08:24 -0800
-Message-ID: <CAADnVQLvN7uF7NBapCWYtsfCHr3rDm-jRnN=9F=_xSjf4SAuLg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 2/4] bpf: Make bpf inode storage available to
- tracing program
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Song Liu <songliubraving@meta.com>, Song Liu <song@kernel.org>, 
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>, 
-	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
-	"mattbobrowski@google.com" <mattbobrowski@google.com>, "amir73il@gmail.com" <amir73il@gmail.com>, 
-	"repnop@google.com" <repnop@google.com>, "jlayton@kernel.org" <jlayton@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>, "mic@digikod.net" <mic@digikod.net>, 
-	"gnoack@google.com" <gnoack@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/6] x86/virt/tdx: Add SEAMCALL wrappers for TDX KeyID
+ management
+To: Sean Christopherson <seanjc@google.com>
+Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, kvm@vger.kernel.org,
+ pbonzini@redhat.com, isaku.yamahata@gmail.com, kai.huang@intel.com,
+ linux-kernel@vger.kernel.org, tony.lindgren@linux.intel.com,
+ xiaoyao.li@intel.com, yan.y.zhao@intel.com, x86@kernel.org,
+ adrian.hunter@intel.com, Isaku Yamahata <isaku.yamahata@intel.com>,
+ Binbin Wu <binbin.wu@linux.intel.com>, Yuan Yao <yuan.yao@intel.com>
+References: <20241115202028.1585487-1-rick.p.edgecombe@intel.com>
+ <20241115202028.1585487-2-rick.p.edgecombe@intel.com>
+ <30d0cef5-82d5-4325-b149-0e99833b8785@intel.com>
+ <Z0EZ4gt2J8hVJz4x@google.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <Z0EZ4gt2J8hVJz4x@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 21, 2024 at 1:15=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> > I'm personally not *so* hung up about a pointer in struct inode but I c=
-an
-> > see why Christian is and I agree adding a pointer there isn't a win for
-> > everybody.
->
-> Maybe I'm annoying here but I feel that I have to be. Because it's
-> trivial to grow structs it's rather cumbersome work to get them to
-> shrink. I just looked at struct task_struct again and it has four bpf
-> related structures/pointers in there. Ok, struct task_struct is
-> everyone's favorite struct to bloat so whatever.
->
-> For the VFS the structures we maintain longterm that need to be so
-> generic as to be usable by so many different filesystems have a tendency
-> to grow over time.
->
-> With some we are very strict, i.e., nobody would dare to grow struct
-> dentry and that's mostly because we have people that really care about
-> this and have an eye on that and ofc also because it's costly.
->
-> But for some structures we simply have no one caring about them that
-> much. So what happens is that with the ever growing list of features we
-> bloat them over time. There need to be some reasonable boundaries on
-> what we accept or not and the criteria I have been using is how
-> generically useful to filesystems or our infrastructre this is (roughly)
-> and this is rather very special-case so I'm weary of wasting 8 bytes in
-> struct inode that we fought rather hard to get back: Jeff's timespec
-> conversion and my i_state conversion.
->
-> I'm not saying it's out of the question but I want to exhaust all other
-> options and I'm not yet sure we have.
+On 11/22/24 15:55, Sean Christopherson wrote:
+> On Fri, Nov 22, 2024, Dave Hansen wrote:
+> I don't know the full context, but working with "struct page" is a pain when every
+> user just wants the physical address.  KVM SVM had a few cases where pointers were
+> tracked as "struct page", and it was generally unpleasant to read and work with.
 
-+1 to all of the above.
+I'm not super convinced. page_to_phys(foo) is all it takes
 
-I hope we don't end up as strict as sk_buff though.
+> I also don't like conflating the kernel's "struct page" with the architecture's
+> definition of a 4KiB page.
 
-I think Song can proceed without this patch.
-Worst case bpf hash map with key=3D=3Dinode will do.
+That's fair, although it's pervasively conflated across our entire
+codebase. But 'struct page' is substantially better than a hpa_t,
+phys_addr_t or u64 that can store a full 64-bits of address. Those
+conflate a physical address with a physical page, which is *FAR* worse.
+
+>> You know that 'tdr' is not just some random physical address.  It's a
+>> whole physical page.  It's page-aligned.  It was allocated, from the
+>> allocator.  It doesn't point to special memory.
+> 
+> Oh, but it does point to special memory.  If it *didn't* point at special memory
+> that is completely opaque and untouchable, then KVM could use a struct overlay,
+> which would give contextual information and some amount of type safety.  E.g.
+> an equivalent without TDX is "struct vmcs *".
+> 
+> Rather than "struct page", what if we add an address_space (in the Sparse sense),
+> and a typedef for a TDX pages?  Maybe __firmware?  E.g.
+> 
+>   # define __firmware	__attribute__((noderef, address_space(__firmware)))
+> 
+>   typedef u64 __firmware *tdx_page_t;
+> 
+> That doesn't give as much compile-time safety, but in some ways it provides more
+> type safety since KVM (or whatever else cares) would need to make an explicit and
+> ugly cast to misuse the pointer.
+
+It's better than nothing. But I still vastly prefer to have a type that
+tells you that something is physically-allocated out of the buddy, RAM,
+and page-aligned.
+
+I'd be better to have:
+
+struct tdx_page {
+	u64 page_phys_addr;
+};
+
+than depend on sparse, IMNHO.
+
+Do you run sparse every time you compile the kernel, btw? ;)
 
