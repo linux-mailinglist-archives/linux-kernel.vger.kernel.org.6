@@ -1,225 +1,365 @@
-Return-Path: <linux-kernel+bounces-418962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49CF29D67DB
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 07:43:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D389D67DD
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 07:47:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE42B161226
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 06:42:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B691D1613FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 06:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3702165F1A;
-	Sat, 23 Nov 2024 06:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9E916B3B7;
+	Sat, 23 Nov 2024 06:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pk3AhrIp"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2085.outbound.protection.outlook.com [40.107.96.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CP58vpLh"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4D22AD04;
-	Sat, 23 Nov 2024 06:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732344177; cv=fail; b=jgkemwUCJqOdlu60aQEFpmtYal/2ALyw7QNH8HZtfMSnm4fiujOvRfNoepe7++RI1ns7M+ByGnHTJncIzBjq/76OEQpUb/Ujh3kGJBBaCJWU1EmTzaX4p4OU1JEIcm7GYAAwcipbBf5D2Nby/lxD/QgAu1ZaLzEHtrW3MKejW54=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732344177; c=relaxed/simple;
-	bh=t5tVVdGCLP4qPaewpNyuz9b5hw/ZEQREb6Iz7YOlIJw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=IAbrNyrmtATMAqfCuWUJKM1rdzBb7IymqeJD2r3P+XWkkR9boFCL4snT1MfPkfvIgVMWT8FE77fmywEzZJaXrqfDI1ojrqfQu1FCgXfteS6GsEwfULFAezfTZvlUWKRbGUDBl1qXlF1keG6hUF+Oul0wmV9d+IqcWACxx5pkMtc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pk3AhrIp; arc=fail smtp.client-ip=40.107.96.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NOzW5Q/eiyjMbGMjLzSSN6jVA+PDyiyVKynUYyZ2IGyfMjtvb+7Qr3yeoASS7wyd16rgrzVTSqbkM5vWW42AEez4+ER5guAKvcNe7sbv7sWuka0O49pYUxLqC4qKEB5schzrb545bQM5Zs+6k7hK3iffLSX/zXCQRMa1+m5IiMdYITLvnr8CPkxsMBTfcco/r4+/+ztSEHBxQechOEmy6/RSQwytNqOO7te2a+q+vPJg64BE3O+9qIyUx3oo6suGyXh+TQDGwnSf03dRkUUasTm6jcWQrx6xOHzNOJJYwpP01INJBfKrsr7Qohhoych058/1z7MHFQWg4P42xFrQvA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1PUXYGeAM+mWtDo7yziN1mX1Bx1OuV9UjluQPkUltHw=;
- b=uZNl06is6pM7z+BvH7rUxZcifW4tpwq7MHwJc+WyeFE+0EW1haFYSXUhfsIHuzT4IoG7reihGEWhemtTL01skuqDNfCZjKD9vXc+5auhzHDbQul3QHrJRXEkAarLFoWh1667E0qEENlCVnIKRMgo/975PH9/EogMkbiRtVwaX1siO1KoCHPjRmqoq4Wj+pMDTxOC59F9PtC1wq8K+KvkomXpQCGm2T9gPvWdl7XFK4vHq7nusXEIIlEqk1ownOk4TR4FodK+yf4t60YHNAjME1TVSpTCvE32Il1jq76ecliJctd0o0CYwoIcQtK4XHFQAFNaa2aS2mRdIMKVM1G+GA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1PUXYGeAM+mWtDo7yziN1mX1Bx1OuV9UjluQPkUltHw=;
- b=pk3AhrIpYUo2M6jRYdGpBEMPK+GVTgi8YO5EW2Z0SAPLlDgri1gErWNMt+NN4L/DuknVgbSyChQ3l9valRgzbQZfNuoPbHquu24LTN0EuLHvgELv5Y2NF/p8HvbE1ovwp5nVqjWqh7WO22bVXkClJG0ZIFrGwU5GtgyW1W4Z+mfHsIGo3V4Ox8K4Gtowoffc1MkPX8O7TGjVHAxaAnScoegnokhCN/bHR+Bn9VT7G7Pu0uEEIM9ffs2D8gikerWUJ81pcBef3/JPO17mSZxzuu3wLhxH5YKym4kYnU1Pne7uuBjtvzSRg4zXkGN4kFVEi4fXqFSRxKXmdlxhN3gB4Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ0PR12MB5469.namprd12.prod.outlook.com (2603:10b6:a03:37f::16)
- by SA1PR12MB7149.namprd12.prod.outlook.com (2603:10b6:806:29c::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Sat, 23 Nov
- 2024 06:42:51 +0000
-Received: from SJ0PR12MB5469.namprd12.prod.outlook.com
- ([fe80::ff21:d180:55f2:d0c0]) by SJ0PR12MB5469.namprd12.prod.outlook.com
- ([fe80::ff21:d180:55f2:d0c0%4]) with mapi id 15.20.8182.018; Sat, 23 Nov 2024
- 06:42:51 +0000
-Message-ID: <54aacb25-d7c8-40b7-a926-03716c0010c8@nvidia.com>
-Date: Fri, 22 Nov 2024 22:42:50 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-next v3] selftests/mm: Add a few missing gitignore
- files
-To: Li Zhijian <lizhijian@fujitsu.com>, linux-kselftest@vger.kernel.org
-Cc: shuah@kernel.org, linux-kernel@vger.kernel.org,
- Donet Tom <donettom@linux.ibm.com>, Andrew Morton
- <akpm@linux-foundation.org>, linux-mm@kvack.org
-References: <20241122074612.1582161-1-lizhijian@fujitsu.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <20241122074612.1582161-1-lizhijian@fujitsu.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR05CA0045.namprd05.prod.outlook.com
- (2603:10b6:a03:33f::20) To SJ0PR12MB5469.namprd12.prod.outlook.com
- (2603:10b6:a03:37f::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8050629405
+	for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 06:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732344453; cv=none; b=hcllgbd/xXY9/Ua7X+BlumHTkQ7X+UCjSW5CwMrno26ZwOFLGM+lBzLFoQgpp/9MC3ylKJ8X0FZW8BNo1tDo9U1JyU3nV2acGIOePdssCcWq9L+0jvyP1eMXYktWd/SrCSWdvOpVeys04b1cSB367tCTnyHheg/iFJ/V9zAaUgQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732344453; c=relaxed/simple;
+	bh=YVACDs1RtLKGWVhnz3UkHS1/ASXsfVYyPBlgFQOfk1Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AEpmQ0FczUfYHLLnYuv2Tf9c63MFhaYvx6iOj5gaZIBOMQW3BlkxUET6g70El7rse4UgAhyOXFpN2dK8AUzlobNOKB69iDGTV1kTKVNO5bPcQJBcjOrazml/uZU6CwB6Tk+xOUzAvQFP0af9rPDyx6F2po62xPwr3cVEt61WpSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CP58vpLh; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6d400ffb227so18914986d6.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 22:47:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732344450; x=1732949250; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ymgflkDUVyug1wPOQFiRQ2YqU/Q7TymF7PGNQguc3+A=;
+        b=CP58vpLhPzKcFU9UN4M+xmmxcxlg8aGEHXYHZbBmmHD0sPUbI6+lgfXgj29g2x0CFP
+         nAsff5HdIytDSZE9j3lLaH3r1rW18VbhR0cL6Az4hM/AvQ5pwf8Ify/9aOcpZiPEUHr9
+         TZNx3wHXk0aoKF9vV2VaczCpoubFS2jyC/mIXbKXATb1zpHcwurrAABvzCd7RTDwiPzD
+         ekjtlxCIzVkLtWuOVm8vDl5zKUn89WfF2gGUxo4D4Z4iT8avFelQJPN/wM5SD4I0TsAs
+         0t/SU8BHnUF70c3AfifbDTgdhYq1rcr8pNVsJKisHrQwFWHzb4Ro/lXsdfRn6a059Acd
+         os/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732344450; x=1732949250;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ymgflkDUVyug1wPOQFiRQ2YqU/Q7TymF7PGNQguc3+A=;
+        b=J6YK8zvP0sYrG7qy0teIVMJ62HxKsuQQ2wiZWJiA8bst+Tc9t1tvaWgtyIpKw1VyBV
+         l/YDuqutOvX8w9L8tBkCC0kHMARp8oLBDOnFWJY5zWqKLXBfd8nSphZx8VzB6RXRXHLm
+         Rl//2SVI9iR+O6Ftd5UIilXqJDFyWHbNtFEfKueCOzElpBSlw69Aa556fNAd+C6GG/qS
+         8tcdIHpvzk1AF8ft0650TRCfEsm1cZsGZ+vXaNyiPG9X/ozijhvjgkhYpehKjPxjSpwI
+         aRLQ+f+eKU1I8i3ZEbxJpKQYK4Wp3jjS/Y364mE1Gy5OVhtm9KmyMj45FeqO8SMYlmH2
+         I9zA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOzyxKua9s8IlcKmvImljLn+/pqTw3KrxyZHXtlFQZ5X1kBaloPrxnqxkxF/RJHqYMv7MAQZ2euHhcKh4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI9aZN8MZasTkFIq8Z2FBA9XBiZMnUn2S087GrBNEEySze60i5
+	5orcFIfpq7zmVrZpmru1QjZejhzJuFDGT0y2kGJBHc+/t914vX3QJmWqD58EgSi+QUc46g6naML
+	l98gooWIRFmGQ8B1osIsQcH0ubQcB4cYMJ4zSWUOfjeF3fLby+wI0
+X-Gm-Gg: ASbGncvMPqcpcBFZODcew9oqIFCHrpSjHLtBvFp9wwPFVxTUshrOLuw3FQakFpVLgja
+	Omi6d9L27XAeDW9MPN41jfqsOBb0D
+X-Google-Smtp-Source: AGHT+IEkDB9TYGxxMJwZU3/JVtCFBD87cfOIXWCVX3m/odh7EtLSO0xYG3/4XTBX7kGJq+bQhEf7xk72q9otkdJWVxs=
+X-Received: by 2002:a05:6214:410:b0:6d4:1bad:7405 with SMTP id
+ 6a1803df08f44-6d450e6a990mr87224516d6.3.1732344450249; Fri, 22 Nov 2024
+ 22:47:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR12MB5469:EE_|SA1PR12MB7149:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3380399f-d559-4325-87cb-08dd0b8a0d39
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|10070799003|376014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WEk3YXVGMG5GK2dtLzYzNW9LMy90YmpZNGFhZitwTE04M2dkeDE3aHh2TE1E?=
- =?utf-8?B?blAyK1ZmSkdhVXdIMVRNdGdTSFpLOXduOFdZVXhRMHVHRWkyZTVzTXFROVhi?=
- =?utf-8?B?ZXM4eWExRE4rRXhGMlRBdU9KWmJyRGw1NU8yRFpGUmN1ZWhqcGFuZnVZeGUr?=
- =?utf-8?B?U0J2akRqeVNzOER5NUVDK2UxVk9VS0o3ektkZGZsVG5JcDZSc3FVS0QwZWxW?=
- =?utf-8?B?QUJSV2pUd3NmaXJjeVNpUUdMZVh1R3YyL0pwZUcvYW81ODBHNTFhUVRTL29J?=
- =?utf-8?B?b245ZFBSblQzYjIwZERaVUo2TStkMmI5ZTJSSmZ5RWdta0o1Ry9iVS9WZE5G?=
- =?utf-8?B?NG5IeW4vRzhHR1FFSWJ2cGV2WjJsTW5ibk1TSmNkcDg0L3M5MzVYS1JpclVo?=
- =?utf-8?B?TTlUWG1uUi94ZjBhMm9XLzNvSGEyRkk1akY1eG5MTEpyRlVCdWxMdnpVSkwz?=
- =?utf-8?B?UEs2dTQ1dGRQclc4a2QyTTNtMi8xeHQzTm9RZVh6WDBIYjdXaGFhY01Hekx6?=
- =?utf-8?B?d09NU2QyL0VQRXEyUmgxYWJqajdINnhjVlZKVmZncWtnZEtOcE45aUFncmJJ?=
- =?utf-8?B?YVVQSk4vaDdRUDY4M2dDTiszY2hVaDBrNWJlVENFbC9GSFZKbFUyNTEvTCtC?=
- =?utf-8?B?cEtyTzcrbGJHa1JQc2wwMFpEY05hTUc4Q1I5QWFqV0JYOUorTjdKSVNqZkJi?=
- =?utf-8?B?VzBHNnBFc1ROU2lBNXplTEk1OEo0Z3hId3ZkUEtkOVYvRDEwUUw4MDdWUENF?=
- =?utf-8?B?SUsvOVlEM0EvNitHRUJGamVPY2JWa08yeTJKNFRVRWZVS0VQVWhSV09MQlpN?=
- =?utf-8?B?YXI2WENoMXMrV1RSTXhBSzJGWVJla09wbERwcVRwa0labXF4Y3B2MTliTURj?=
- =?utf-8?B?VUZEbENtV01RVmRtOGFtdXk0R1NWRWZONUdKNVQvV2U5OTQxaHVIVTY3VTlU?=
- =?utf-8?B?QWZyRklRNDdFZjFEdW56cXJUaEpDbDZvVmpab083N0U1dHdxSUV3ZVFrYlZW?=
- =?utf-8?B?Q1l4VnVMenBjV1czZjBGc3JjOEJ1M21BRzlrZEo4U1kwTXN2L3FaanMwZHBj?=
- =?utf-8?B?ZlE5eXV0NXNQZVZHaXQ4ZkJyUWJGNzNBUnlHWENZWEJZQ0x0Z2k1TWxROVZR?=
- =?utf-8?B?aDZVa3Z1RUV1aTlMUWVGck9mMHJzRFJGdk43OVkxbTF4eEl6cDZuR2E3V01V?=
- =?utf-8?B?WXpSWHZITHgzbUZkT1B4SVRPOEhGR2RPSkRVL05iRHhJT2pvU2UxdDg1cWVC?=
- =?utf-8?B?bDNCTE4rcjkzRmtiK3B0K0tFWEVWTGt5V2wrbWUvdDJ2aTBJd0pzNFNTWkl4?=
- =?utf-8?B?ZXRtTitLSGYrM0hUcFlnUGdpcm1QSXNOekZqYXJnTG5EdFg3bGhUOXlJd2Zx?=
- =?utf-8?B?Snd2bGZQbVZJdC9wUFl0Q2w5ZUIwS2xJTTducEt5OG1TaUNtdGRKdUs3QTdq?=
- =?utf-8?B?QXBqTTlMaTNsR01sTkZUU1Q1UmIrSDF1cDYwY05YbndYQ3N2R3JLUm9vcWZG?=
- =?utf-8?B?TTJ3Z1ZUekhhSG82MjE5Q2huTVBEZWI1K3VZa3lqVE9UR3JuNExXL1JWU2h1?=
- =?utf-8?B?MXdueXZTeEFVcUt4NHU3WEhmTHR0ZFFzdjhhZnRKNnk2Qmd3MTBzSGswd2pX?=
- =?utf-8?B?MUJlTDU1R2k1d0crUGRTdW03S1pUa1ZGVE8zU3lvWldjRUNXQ2t0V0hqTElQ?=
- =?utf-8?B?TmxEKy9pZ3FmaVQ5bjVEMCtwa2Z1RlJNRnBjNWI2Zmh2S0tCQkMrZ2RQTmpz?=
- =?utf-8?B?ZVJlY1hKbTlsZFAwSDVqTVdrYVhBVlFVbHJ3QVNvQlpRanNGcXBEVmNjVFhO?=
- =?utf-8?Q?Zy36KYkieo59iaQUPM4gM1pZaAWqY4PeVtJ/k=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR12MB5469.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RHJCTE52cWR6NUU5U0tzMEdxcGk5bURiYnI5eXVzalVVempqejRJNHR0cUhl?=
- =?utf-8?B?YWVoSXJWNGw1Q2J3UVdHWmo0SWZMU0xOUFpJODV4bG5VMmtKUG45MnBjdHZU?=
- =?utf-8?B?YVc0NE5lMEhPb3I4bnNCajlZc1U5c1Vnb3NFLzZSQWZHU1BaUW9tcU9ReTFK?=
- =?utf-8?B?Q01IVDcyWmtiZkFFdnh4ZWtGYUxTMS9PS1drNDJ1dXRnSUNRejJyeFRtSjYy?=
- =?utf-8?B?bHdkOTdHQmlzZnlMOUdldEp3QitrdzBzc3E3eEtSUERsTHd5cTluQkRBaWZ3?=
- =?utf-8?B?ZTQ2QlJ1aUdqdzhNZGVOZGgrUGVKbDNuY3lRbzZoV05mUjFPTllkOXRhdXMx?=
- =?utf-8?B?YU44R29NeUdSbE9RcFYyd1pKZ0g3N1RQMThqeS85aDNuMklLbVRIaitWQy9Q?=
- =?utf-8?B?eXdOOERqQ2JVTC9xQnhYZ1V6cjFCU2ZGVldwQTI0eHpERTh6NXRRZ0lscE5v?=
- =?utf-8?B?dU40OHUzckwwV0VTaUFGblhBRTl4L3ZqNC9GUTdablF5eXlSOUM3U0JEbG5P?=
- =?utf-8?B?ZWxQS1VvWlBuV1dsNjFJc2tTWlRFNCtDNm5mamtXVGZXMzhzb1UxVWN6bFNr?=
- =?utf-8?B?K2FLZUUxWGcrUFAxQVkxZEtMYUU1bjZvVVhRckxxN0xTbzk1WGx6MnhsbDdp?=
- =?utf-8?B?Qi9saGc0eWtQVWZwNGZGcG9sOFFUNmZBanc1M21oMURuRURKa3F5eWFlb2lB?=
- =?utf-8?B?d1UxR3gyZSt4Z0FJRGwyNktFVGN0TnFHaU1SWlVPSzF4bUVuK3BFY1c3anpz?=
- =?utf-8?B?YXJrb3pDdmZLTTgyb2pqWkJNOEtoZGsxRXZETTE0bmwrNnc1ak93ZlAxWXFS?=
- =?utf-8?B?UDJlRW1HRGludlI3MjYwU1JqZDdmcHFMZjZVdUhDcllpSVEramx3d01xMW8r?=
- =?utf-8?B?NThDMWJSdnhudmozRjlIOUNwUnFhcW9hMVJHbGdUOEt2aWx3amV1dUxkUnpJ?=
- =?utf-8?B?ekl4M2d3M2cxMTBKdnQrak5XUHZNaDhHczNoMGlUVzNJM283dE8zUXV5T3Jp?=
- =?utf-8?B?VFYxb3A4Sm5HeVpBMFdhTGxXUHo2N1VGZUVxbXExTGJNK01sMlRWZ1RGYlJ5?=
- =?utf-8?B?SFg1N1loenlWT21jWlhKc1ZCdHc5aW5PMk9rNFV0TkxINU1jLzkxUis2aVBV?=
- =?utf-8?B?SVhJaFZ4SnVZcjRLQmxVWjh6SjlHdm1ZQTBQUjM4Yi9kdDFyVUV1c0p6bFRh?=
- =?utf-8?B?bVZTYUE3cFM4eGs1RU1vSnp4YWtJUmN3SjlIcFJCVmRKMWx5cXQ1T3FFY2dr?=
- =?utf-8?B?VlRZcVp1b0J1NTVybk43bUlmQ1RvTmJ3NHB2MmRwRHg2NjJxYzJYK0dZeE9j?=
- =?utf-8?B?S0dWcTRZTUd3aTZOSzhUNXg3NWVvZ2JNeFJYdk9KWlRrQ3o1YVp0b2UyODcx?=
- =?utf-8?B?NWVkMW5yQnJLclpUVUJDdzlkRGhuTnVCZ3M2SjFEQUgxVk40TkdxcyswUHp6?=
- =?utf-8?B?MEQ1SXpjNU5naHhLK1VMd3A1bGREcGt1dTRQVzVadm1ORW1pMXhheTVUTGVL?=
- =?utf-8?B?b3VBT2plTmUxdndHMzdteTRTeEFmb3ZUTU9qU1lWYllmTmtZV2JrZFFtZC8w?=
- =?utf-8?B?R2xWT3ZSTWRxN0pQSUNnbFlYU2NNSG5nbUswNXF0UDBVdzNkSHdFYjhkMXZh?=
- =?utf-8?B?SzhMVHpZMmxzemE3aDZ0Zm5lS1RYWlUzdTlyUDNrZ3NRMkk2U1gzNUNKQ25k?=
- =?utf-8?B?TmRBb2ZoNFRyMWJwOFk4VWJiUFQzc0RZVVMzVHhlQmgxMVVlR3hRR3FkWlA0?=
- =?utf-8?B?bzY2Q28wWERrZFhZZ0dLb2hCL2tqM2kwTFJleXhSOEZJRFZHbngwTUQvbEZF?=
- =?utf-8?B?MHFFSE1wVGR3YURJMWZyb2pPRENNMDZlZkdadzdaVFk0L3pEQmk1RmZQMy9Z?=
- =?utf-8?B?OUZiQ2RUNk5aK2JKSXMrbGY4eWI1dU52TG1hWEZTQ1ZiK2tyendlOU9iYWsv?=
- =?utf-8?B?S2JkVEFRSDZ3bXROQWEzWkdMUUVlOFlML2E1WWNXaE5UOXpUN0FnU0E0cm9q?=
- =?utf-8?B?WjRIMCt5SEdlK2dBSVljU09pRHA0QmxFb1VkcnA0SFdtRjJYRDRVT3FaR2t5?=
- =?utf-8?B?Y2c2TTUrT2NiY05Bcm5ZQkw1T04zV0tyc2syU09UQitRa0t3WEhqVnZJQU93?=
- =?utf-8?B?WWVRdUNtNUhDS3pJd1FPZ29LRkJ4VDlxQUNyNlQyMW5Ga2FMbkVkUU9EcEg2?=
- =?utf-8?Q?uIJAnebHZZZtL3LFyNZup8o=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3380399f-d559-4325-87cb-08dd0b8a0d39
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR12MB5469.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Nov 2024 06:42:51.3142
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 54ze8P4HJXu2QJV+rRft+6d7dXjGzV9zUmLzeSuakSt0wZGaO+D0CwhVupCS3EN0KkJs/NqTYSdO7b4yykgoWg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7149
+References: <20241123060939.169978-1-shakeel.butt@linux.dev>
+In-Reply-To: <20241123060939.169978-1-shakeel.butt@linux.dev>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Fri, 22 Nov 2024 22:46:53 -0800
+Message-ID: <CAJD7tkYAch4TpO0JSpjmg6k3VVw-0x_acf2P2JBveaD3mXPxgA@mail.gmail.com>
+Subject: Re: [PATCH] mm: mmap_lock: optimize mmap_lock tracepoints
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Vlastimil Babka <vbabka@suse.cz>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/21/24 11:46 PM, Li Zhijian wrote:
-> Compiled binary files should be added to .gitignore
-> 'git status' complains:
->     Untracked files:
->     (use "git add <file>..." to include in what will be committed)
->           mm/hugetlb_dio
->           mm/pkey_sighandler_tests_32
->           mm/pkey_sighandler_tests_64
-> 
-> Cc: Donet Tom <donettom@linux.ibm.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Shuah Khan <shuah@kernel.org>
-> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+On Fri, Nov 22, 2024 at 10:10=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.d=
+ev> wrote:
+>
+> We are starting to deploy mmap_lock tracepoint monitoring across our
+> fleet and the early results showed that these tracepoints are consuming
+> significant amount of CPUs in kernfs_path_from_node when enabled.
+>
+> It seems like the kernel is trying to resolved the cgroup path in the
+
+s/resolved/resolve
+
+> fast path of the locking code path when the tracepoints are enabled. In
+> addition for some application their metrics are regressing when
+> monitoring is enabled.
+>
+> The cgroup path resolution can be slow and should not be done in the
+> fast path. Most userspace tools, like bpftrace, provides functionality
+> to get the cgroup path from cgroup id, so let's just trace the cgroup
+> id and the users can use better tools to get the path in the slow path.
+>
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 > ---
-> Cc: linux-mm@kvack.org
-> ---
-> Hello,
-> Cover letter is here.
-> 
-> This patch set aims to make 'git status' clear after 'make' and 'make
-> run_tests' for kselftests.
-> ---
-> V3:
->     nothing change, just resend it
->     (This .gitignore have not sorted, so I appended new files to the end)
-> V2:
->    split as seperate patch from a small one [0]
->    [0] https://lore.kernel.org/linux-kselftest/20241015010817.453539-1-lizhijian@fujitsu.com/
-> ---
->   tools/testing/selftests/mm/.gitignore | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/mm/.gitignore b/tools/testing/selftests/mm/.gitignore
-> index da030b43e43b..2ac11b7fcb26 100644
-> --- a/tools/testing/selftests/mm/.gitignore
-> +++ b/tools/testing/selftests/mm/.gitignore
-> @@ -51,3 +51,5 @@ hugetlb_madv_vs_map
->   mseal_test
->   seal_elf
->   droppable
-> +hugetlb_dio
-> +pkey_sighandler_tests*
+>  include/linux/memcontrol.h       | 18 ++++++++++++
+>  include/trace/events/mmap_lock.h | 32 ++++++++++----------
+>  mm/mmap_lock.c                   | 50 ++------------------------------
+>  3 files changed, 36 insertions(+), 64 deletions(-)
+>
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 5502aa8e138e..d82f08cd70cd 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -1046,6 +1046,19 @@ static inline void memcg_memory_event_mm(struct mm=
+_struct *mm,
+>
+>  void split_page_memcg(struct page *head, int old_order, int new_order);
+>
+> +static inline u64 memcg_id_from_mm(struct mm_struct *mm)
 
+The usage of memcg_id here and throughout the patch is a bit confusing
+because we have a member called 'id' in struct mem_cgroup, but this
+isn't it. This is the cgroup_id of the memcg. I admit it's hard to
+distinguish them during naming, but when I first saw the function I
+thought it was returning memcg->id.
 
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+Maybe just cgroup_id_from_mm()? In cgroup v2, the cgroup id is the
+same regardless of the controller anyway, in cgroup v1, it's kinda
+natural that we return the cgroup id of the memcg.
 
-thanks,
--- 
-John Hubbard
+I don't feel strongly, but I prefer that we use clearer naming, and
+either way a comment may help clarify things.
 
+> +{
+> +       struct mem_cgroup *memcg;
+> +       u64 id =3D 0;
+> +
+> +       rcu_read_lock();
+> +       memcg =3D mem_cgroup_from_task(rcu_dereference(mm->owner));
+> +       if (likely(memcg))
+> +               id =3D cgroup_id(memcg->css.cgroup);
+
+We return 0 if the memcg is NULL here, shouldn't we return the cgroup
+id of the root memcg instead? This is more consistent with
+get_mem_cgroup_from_mm(), and makes sure we always return the id of a
+valid cgroup.
+
+> +       rcu_read_unlock();
+> +       return id;
+> +}
+> +
+>  #else /* CONFIG_MEMCG */
+>
+>  #define MEM_CGROUP_ID_SHIFT    0
+> @@ -1466,6 +1479,11 @@ void count_memcg_event_mm(struct mm_struct *mm, en=
+um vm_event_item idx)
+>  static inline void split_page_memcg(struct page *head, int old_order, in=
+t new_order)
+>  {
+>  }
+> +
+> +static inline u64 memcg_id_from_mm(struct mm_struct *mm)
+> +{
+> +       return 0;
+> +}
+>  #endif /* CONFIG_MEMCG */
+>
+>  /*
+> diff --git a/include/trace/events/mmap_lock.h b/include/trace/events/mmap=
+_lock.h
+> index bc2e3ad787b3..5529933d19c5 100644
+> --- a/include/trace/events/mmap_lock.h
+> +++ b/include/trace/events/mmap_lock.h
+> @@ -5,6 +5,7 @@
+>  #if !defined(_TRACE_MMAP_LOCK_H) || defined(TRACE_HEADER_MULTI_READ)
+>  #define _TRACE_MMAP_LOCK_H
+>
+> +#include <linux/memcontrol.h>
+>  #include <linux/tracepoint.h>
+>  #include <linux/types.h>
+>
+> @@ -12,64 +13,61 @@ struct mm_struct;
+>
+>  DECLARE_EVENT_CLASS(mmap_lock,
+>
+> -       TP_PROTO(struct mm_struct *mm, const char *memcg_path, bool write=
+),
+> +       TP_PROTO(struct mm_struct *mm, bool write),
+>
+> -       TP_ARGS(mm, memcg_path, write),
+> +       TP_ARGS(mm, write),
+>
+>         TP_STRUCT__entry(
+>                 __field(struct mm_struct *, mm)
+> -               __string(memcg_path, memcg_path)
+> +               __field(u64, memcg_id)
+>                 __field(bool, write)
+>         ),
+>
+>         TP_fast_assign(
+>                 __entry->mm =3D mm;
+> -               __assign_str(memcg_path);
+> +               __entry->memcg_id =3D memcg_id_from_mm(mm);
+>                 __entry->write =3D write;
+>         ),
+>
+>         TP_printk(
+> -               "mm=3D%p memcg_path=3D%s write=3D%s",
+> -               __entry->mm,
+> -               __get_str(memcg_path),
+> +               "mm=3D%p memcg_id=3D%llu write=3D%s",
+> +               __entry->mm, __entry->memcg_id,
+>                 __entry->write ? "true" : "false"
+>         )
+>  );
+>
+>  #define DEFINE_MMAP_LOCK_EVENT(name)                                    =
+\
+>         DEFINE_EVENT(mmap_lock, name,                                   \
+> -               TP_PROTO(struct mm_struct *mm, const char *memcg_path,  \
+> -                       bool write),                                    \
+> -               TP_ARGS(mm, memcg_path, write))
+> +               TP_PROTO(struct mm_struct *mm, bool write),             \
+> +               TP_ARGS(mm, write))
+>
+>  DEFINE_MMAP_LOCK_EVENT(mmap_lock_start_locking);
+>  DEFINE_MMAP_LOCK_EVENT(mmap_lock_released);
+>
+>  TRACE_EVENT(mmap_lock_acquire_returned,
+>
+> -       TP_PROTO(struct mm_struct *mm, const char *memcg_path, bool write=
+,
+> -               bool success),
+> +       TP_PROTO(struct mm_struct *mm, bool write, bool success),
+>
+> -       TP_ARGS(mm, memcg_path, write, success),
+> +       TP_ARGS(mm, write, success),
+>
+>         TP_STRUCT__entry(
+>                 __field(struct mm_struct *, mm)
+> -               __string(memcg_path, memcg_path)
+> +               __field(u64, memcg_id)
+>                 __field(bool, write)
+>                 __field(bool, success)
+>         ),
+>
+>         TP_fast_assign(
+>                 __entry->mm =3D mm;
+> -               __assign_str(memcg_path);
+> +               __entry->memcg_id =3D memcg_id_from_mm(mm);
+>                 __entry->write =3D write;
+>                 __entry->success =3D success;
+>         ),
+>
+>         TP_printk(
+> -               "mm=3D%p memcg_path=3D%s write=3D%s success=3D%s",
+> +               "mm=3D%p memcg_id=3D%llu write=3D%s success=3D%s",
+>                 __entry->mm,
+> -               __get_str(memcg_path),
+> +               __entry->memcg_id,
+>                 __entry->write ? "true" : "false",
+>                 __entry->success ? "true" : "false"
+>         )
+> diff --git a/mm/mmap_lock.c b/mm/mmap_lock.c
+> index f186d57df2c6..e7dbaf96aa17 100644
+> --- a/mm/mmap_lock.c
+> +++ b/mm/mmap_lock.c
+> @@ -17,51 +17,7 @@ EXPORT_TRACEPOINT_SYMBOL(mmap_lock_start_locking);
+>  EXPORT_TRACEPOINT_SYMBOL(mmap_lock_acquire_returned);
+>  EXPORT_TRACEPOINT_SYMBOL(mmap_lock_released);
+>
+> -#ifdef CONFIG_MEMCG
+> -
+> -/*
+> - * Size of the buffer for memcg path names. Ignoring stack trace support=
+,
+> - * trace_events_hist.c uses MAX_FILTER_STR_VAL for this, so we also use =
+it.
+> - */
+> -#define MEMCG_PATH_BUF_SIZE MAX_FILTER_STR_VAL
+> -
+> -#define TRACE_MMAP_LOCK_EVENT(type, mm, ...)                           \
+> -       do {                                                            \
+> -               if (trace_mmap_lock_##type##_enabled()) {               \
+> -                       char buf[MEMCG_PATH_BUF_SIZE];                  \
+> -                       get_mm_memcg_path(mm, buf, sizeof(buf));        \
+> -                       trace_mmap_lock_##type(mm, buf, ##__VA_ARGS__); \
+> -               }                                                       \
+> -       } while (0)
+> -
+> -#else /* !CONFIG_MEMCG */
+> -
+> -#define TRACE_MMAP_LOCK_EVENT(type, mm, ...)                            =
+       \
+> -       trace_mmap_lock_##type(mm, "", ##__VA_ARGS__)
+> -
+> -#endif /* CONFIG_MEMCG */
+> -
+>  #ifdef CONFIG_TRACING
+> -#ifdef CONFIG_MEMCG
+> -/*
+> - * Write the given mm_struct's memcg path to a buffer. If the path canno=
+t be
+> - * determined, empty string is written.
+> - */
+> -static void get_mm_memcg_path(struct mm_struct *mm, char *buf, size_t bu=
+flen)
+> -{
+> -       struct mem_cgroup *memcg;
+> -
+> -       buf[0] =3D '\0';
+> -       memcg =3D get_mem_cgroup_from_mm(mm);
+> -       if (memcg =3D=3D NULL)
+> -               return;
+> -       if (memcg->css.cgroup)
+> -               cgroup_path(memcg->css.cgroup, buf, buflen);
+> -       css_put(&memcg->css);
+> -}
+> -
+> -#endif /* CONFIG_MEMCG */
+> -
+>  /*
+>   * Trace calls must be in a separate file, as otherwise there's a circul=
+ar
+>   * dependency between linux/mmap_lock.h and trace/events/mmap_lock.h.
+> @@ -69,20 +25,20 @@ static void get_mm_memcg_path(struct mm_struct *mm, c=
+har *buf, size_t buflen)
+>
+>  void __mmap_lock_do_trace_start_locking(struct mm_struct *mm, bool write=
+)
+>  {
+> -       TRACE_MMAP_LOCK_EVENT(start_locking, mm, write);
+> +       trace_mmap_lock_start_locking(mm, write);
+>  }
+>  EXPORT_SYMBOL(__mmap_lock_do_trace_start_locking);
+>
+>  void __mmap_lock_do_trace_acquire_returned(struct mm_struct *mm, bool wr=
+ite,
+>                                            bool success)
+>  {
+> -       TRACE_MMAP_LOCK_EVENT(acquire_returned, mm, write, success);
+> +       trace_mmap_lock_acquire_returned(mm, write, success);
+>  }
+>  EXPORT_SYMBOL(__mmap_lock_do_trace_acquire_returned);
+>
+>  void __mmap_lock_do_trace_released(struct mm_struct *mm, bool write)
+>  {
+> -       TRACE_MMAP_LOCK_EVENT(released, mm, write);
+> +       trace_mmap_lock_released(mm, write);
+>  }
+>  EXPORT_SYMBOL(__mmap_lock_do_trace_released);
+>  #endif /* CONFIG_TRACING */
+> --
+> 2.43.5
+>
+>
 
