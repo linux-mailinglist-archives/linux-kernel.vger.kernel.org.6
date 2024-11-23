@@ -1,170 +1,82 @@
-Return-Path: <linux-kernel+bounces-419147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69D369D69FD
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:17:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75D619D69FF
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 17:17:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD77916178C
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:16:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BE4B281C0B
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 16:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57927E591;
-	Sat, 23 Nov 2024 16:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57D252F76;
+	Sat, 23 Nov 2024 16:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cAmOy4k+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cWRrf8Rz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3EF617C2;
-	Sat, 23 Nov 2024 16:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E05E17C2;
+	Sat, 23 Nov 2024 16:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732378616; cv=none; b=i3j9FpFlpv/DR7frxMtp92TASbsCmN0EfPSKg0Wp2eosK+xPVJ5KyhwBKZLcGagaiFU+zsUQ1PsuuZ3Yooea2fPvbu2DCEZr7LALCM2SPBMmeLOeu3uDqAmK2Ojz6HSlwqfHwRquTbodLSkinht9x0/P/vJoR1sa78tpMC8NOm0=
+	t=1732378671; cv=none; b=RxIIch/D7rlU3/g79gEtvGtLphexd6V2+M806Jik/b7jKDAK2X3dahJYcW1A6cl4KCLhjz+Kf0kJt13HcE2tZsjGn3oxPJm6C3ayceKXNX9BTxcy2W+8OOjpwXUNl4fJ2LFw1p1iBJJZnbVD7naiUFgx+ltvbgnjHOE3FFlB6qA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732378616; c=relaxed/simple;
-	bh=QrYGQca99pNSS32QFKzb/qidE/jOxXtlsHmhzCc+pDA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LpLCHjqoZqsd21WdBkW4SVe7H9ZhQXYR3ja70b4MM3rlpWBlP6E/AJhtYlbYQabBEcXMDeRBFD9ncl6xZ6mKkZnLnL4IFJV0Ki32aE15SUCAYTCT/DPAgFuHmU6ZQZ33Y7xrIxjGjxiw6Ostiu8eTTMXUIkOi/SyWrXt/yOieOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cAmOy4k+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E38C5C4CECD;
-	Sat, 23 Nov 2024 16:16:52 +0000 (UTC)
+	s=arc-20240116; t=1732378671; c=relaxed/simple;
+	bh=r7VawsBWko4JGKpwGiwsn4hr5Gg4jKmMEXWLC4Zu6jo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hSdLCGcREk16MbbVw8dnn7cEcdn4HtvsGeaSwfxODyDmaq6KYfVpjS8wbpNXIA9iCaWEZihRwXfVyxO3ICJJ3UyFxf1n30/94qwkkYMiyOFRihTaH0aFisTFlyD1lNk4dkLdR0SBhQRtjt+EqGt0nxdb5Mn6T6ut5OyNOw7+XuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cWRrf8Rz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA4BBC4CECD;
+	Sat, 23 Nov 2024 16:17:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732378615;
-	bh=QrYGQca99pNSS32QFKzb/qidE/jOxXtlsHmhzCc+pDA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cAmOy4k++gzo23aVP32SGFjjbFY8qxcghka4n+UKd01apBrfSpYYWrlGV2qOPopI5
-	 a2uQVLHwaNZ1NwozQEmpT/JdRTf2MWoWuhoKdf10TiuV1tNohyAB8MdpjWvcgWE2hv
-	 13jH+4IrWmK1QsMQFpqe5214U3aQ+lVJ8lPofcn3h93G+iDzAh5mlZ8mTQJuO50Xe4
-	 EIaFDfqAYylepf3YRIfF7C93/gnIuTvc18C1CmGmLz18OeMfSH5/NIBVjN1YXqCZi/
-	 5hQtwQaIRW1feMUrAL36dm0yQUMEZ+2ii2Ppk9kaUk9tVXIqo2EXIf/bQvoWUmwWW8
-	 piFgO9B90vv+A==
-Date: Sat, 23 Nov 2024 16:16:50 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: <robh@kernel.org>, <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>
-Subject: Re: [PATCH 2/2] iio: frequency: adf4371: add ref doubler and div2
-Message-ID: <20241123161650.3487d386@jic23-huawei>
-In-Reply-To: <20241122113226.49346-2-antoniu.miclaus@analog.com>
-References: <20241122113226.49346-1-antoniu.miclaus@analog.com>
-	<20241122113226.49346-2-antoniu.miclaus@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1732378670;
+	bh=r7VawsBWko4JGKpwGiwsn4hr5Gg4jKmMEXWLC4Zu6jo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cWRrf8Rz9VUSKtqdMeH5xQslmt3yr8WCrh/jUNlPQdAbDvLReCrQihlUtfMaW5Q/j
+	 mTCfSAepcwct5RLq9f2JqO7rmLDxqHOOxV24Wl8/5e3lWaIxb4Itl63lrFzSQ/4Kyn
+	 TB3dY4Hi/daPK6kwmAKgljw+MnRTyl9Cl8gpGlpvpo/3Fxhl4r3dr1L/+zDher1IDV
+	 WHdRMQRWSGlubx0u4lvCJ/27a2bDDzb9jVYRMRxHdE7BMtAn4ZFQhQl3YTx8Ya88JZ
+	 cpIsfDXnoJ1Kt2W9c+eCVQKo2ifTj907w124rZVEa35Qkge5La5CFaRpYZXdyzOPQr
+	 X099PezSbMmww==
+Date: Sat, 23 Nov 2024 17:17:47 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Wojciech Macek <wmacek@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>, 
+	Rafal Milecki <rafal@milecki.pl>, Hsin-Yi Wang <hsinyi@chromium.org>, 
+	Sean Wang <sean.wang@mediatek.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: arm: mediatek: Add MT8186 Starmie
+ Chromebooks
+Message-ID: <cxuf6dwyp5cyzcq3h4bgydg5fffc24bwfz3umifqnxqyyvuhc5@pbe3v5andnrr>
+References: <20241122104938.1437925-1-wmacek@chromium.org>
+ <20241122104938.1437925-2-wmacek@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241122104938.1437925-2-wmacek@chromium.org>
 
-On Fri, 22 Nov 2024 13:32:14 +0200
-Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
+On Fri, Nov 22, 2024 at 10:49:37AM +0000, Wojciech Macek wrote:
+> Add an entry for the MT8186 based Starmie Chromebooks, also known as the
+> ASUS Chromebook Enterprise CM30 Detachable (CM3001). The device is
+> a tablet style chromebook.
+> 
+> Signed-off-by: Wojciech Macek <wmacek@chromium.org>
 
-> Add support for the reference doubler and the reference divide by 2
-> clock.
-The question of 'why' these would be set in firmware remains, but
-a few trivial comments inline on the implementation.
+This was absolutely never tested. You obiovusly miss some items or enum,
+but main point is that it neither looks like existing code nor it was
+tested BY YOU prior to sending.
 
-
->=20
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
->  drivers/iio/frequency/adf4371.c | 37 +++++++++++++++++++++++++++++++--
->  1 file changed, 35 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/iio/frequency/adf4371.c b/drivers/iio/frequency/adf4=
-371.c
-> index b27088464826..02d42652dfdd 100644
-> --- a/drivers/iio/frequency/adf4371.c
-> +++ b/drivers/iio/frequency/adf4371.c
-> @@ -41,6 +41,12 @@
->  #define ADF4371_MOD2WORD_MSK		GENMASK(5, 0)
->  #define ADF4371_MOD2WORD(x)		FIELD_PREP(ADF4371_MOD2WORD_MSK, x)
-> =20
-> +/* ADF4371_REG22 */
-> +#define ADF4371_REF_DOUB_MASK		BIT(5)
-> +#define ADF4371_REF_DOUB(x)		FIELD_PREP(ADF4371_REF_DOUB_MASK, x)
-> +#define ADF4371_RDIV2_MASK		BIT(4)
-> +#define ADF4371_RDIV2(x)		FIELD_PREP(ADF4371_RDIV2_MASK, x)
-> +
->  /* ADF4371_REG24 */
->  #define ADF4371_RF_DIV_SEL_MSK		GENMASK(6, 4)
->  #define ADF4371_RF_DIV_SEL(x)		FIELD_PREP(ADF4371_RF_DIV_SEL_MSK, x)
-> @@ -70,6 +76,9 @@
->  #define ADF4371_MAX_FREQ_PFD		250000000UL /* Hz */
->  #define ADF4371_MAX_FREQ_REFIN		600000000UL /* Hz */
-> =20
-> +#define ADF4371_MIN_CLKIN_DOUB_FREQ	10000000ULL /* Hz */
-> +#define ADF4371_MAX_CLKIN_DOUB_FREQ	125000000ULL /* Hz */
-> +
->  /* MOD1 is a 24-bit primary modulus with fixed value of 2^25 */
->  #define ADF4371_MODULUS1		33554432ULL
->  /* MOD2 is the programmable, 14-bit auxiliary fractional modulus */
-> @@ -175,6 +184,8 @@ struct adf4371_state {
->  	unsigned int mod2;
->  	unsigned int rf_div_sel;
->  	unsigned int ref_div_factor;
-> +	bool ref_doubler_en;
-> +	bool ref_div2_en;
->  	u8 buf[10] __aligned(IIO_DMA_MINALIGN);
->  };
-> =20
-> @@ -497,22 +508,44 @@ static int adf4371_setup(struct adf4371_state *st)
->  			return ret;
->  	}
-> =20
-> +	if (device_property_read_bool(&st->spi->dev,
-> +				      "adi,reference-doubler-enable"))
-> +		st->ref_doubler_en =3D true;
-> +
-> +	if (device_property_read_bool(&st->spi->dev,
-> +				      "adi,reference-div2-enable"))
-> +		st->ref_div2_en =3D true;
-	st->ref_div2_en =3D device_property_read_bool(dev, "adi,reference-div2-ena=
-ble");
-Line is a bit long but more readable.
-struct device *dev =3D &st->spi->dev; needed at top of function.
-+ do the same for ref_doubler_en..
-
-> +
->  	/* Set address in ascending order, so the bulk_write() will work */
->  	ret =3D regmap_update_bits(st->regmap, ADF4371_REG(0x0),
->  				 ADF4371_ADDR_ASC_MSK | ADF4371_ADDR_ASC_R_MSK,
->  				 ADF4371_ADDR_ASC(1) | ADF4371_ADDR_ASC_R(1));
->  	if (ret < 0)
->  		return ret;
-> +
-> +	if (st->ref_doubler_en &&
-> +	    (st->clkin_freq > ADF4371_MAX_CLKIN_DOUB_FREQ ||
-> +	     st->clkin_freq < ADF4371_MIN_CLKIN_DOUB_FREQ))
-> +		st->ref_doubler_en =3D false;
-> +
-> +	ret =3D regmap_update_bits(st->regmap,  ADF4371_REG(0x22),
-> +				 ADF4371_REF_DOUB_MASK |
-> +				 ADF4371_RDIV2_MASK,
-> +				 ADF4371_REF_DOUB(st->ref_doubler_en) |
-> +				 ADF4371_RDIV2(st->ref_div2_en));
-> +	if (ret < 0)
-> +		return ret;
-> +
->  	/*
->  	 * Calculate and maximize PFD frequency
->  	 * fPFD =3D REFIN =C3=97 ((1 + D)/(R =C3=97 (1 + T)))
->  	 * Where D is the REFIN doubler bit, T is the reference divide by 2,
->  	 * R is the reference division factor
-> -	 * TODO: it is assumed D and T equal 0.
->  	 */
->  	do {
->  		st->ref_div_factor++;
-> -		st->fpfd =3D st->clkin_freq / st->ref_div_factor;
-> +		st->fpfd =3D (st->clkin_freq * (st->ref_doubler_en ? 2 : 1)) /
-> +			   (st->ref_div_factor * (st->ref_div2_en ? 2 : 1));
->  	} while (st->fpfd > ADF4371_MAX_FREQ_PFD);
-> =20
->  	/* Calculate Timeouts */
+Best regards,
+Krzysztof
 
 
