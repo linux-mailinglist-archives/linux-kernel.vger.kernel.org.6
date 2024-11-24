@@ -1,351 +1,290 @@
-Return-Path: <linux-kernel+bounces-420114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 912D99D753B
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:31:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2CF99D753E
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:32:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EFC42836CE
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:31:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82F67287CAB
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDD119005F;
-	Sun, 24 Nov 2024 14:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF86C1917ED;
+	Sun, 24 Nov 2024 14:37:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cn1PtsvZ"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rCGTn4Ig"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E135A18CC1D
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 14:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BB8BE4E
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 14:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732458818; cv=none; b=F1hA1LqSrS3T2+LgXZNS0ZUeqViRp+Xan1/KK/BZgkuYm0vTD1jGPHQN7GTj7Y+Ye/h7koC6x30Qv98Ospcp77hFLOnhtWKoYRyhFCCXP4o1SqTW2RqRa5KP9DF35NsSpakOxw+X/mAjCtWmemoRWwAnowZv8nEqJ2LG6wJvYb4=
+	t=1732459028; cv=none; b=bkooXbd+UPHoukDV9Mb2h6KrpgqvHwLMg3CsKj9O5gSyhUxUFbsYS1F5rWxoLfLeRn1g0gTUSwR/TZI5gq/sCTdyCYtg8jYA7P7WLfignT6GwolNRs+2R7G7reJDxnpItTB5rCjhYzFrdR74JUQJvvAmkX8wbazycakm0DHYqSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732458818; c=relaxed/simple;
-	bh=u9yilslDcMuJJJ+0HtllR45tBWp0Y8R7N5Mva6i0fqk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L9Ar6gjsXstn6EV+IwHpKnHiUHq11hxfWQIPY8BvFHbnVF6WA1f2WQtdtosL+S+gQBpaTI+fWWfrhom9sKxWUtDe+MUmeI7ChJ9HSggwT1OVakYHNwoTeRnAjmyWt6WViNJj+VnnU/mGmayhQrxubHDZWZm9joukfWOZs32AHfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cn1PtsvZ; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-724e1b08fc7so1914961b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 06:33:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732458815; x=1733063615; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qQsDVb7F2iz9b9KgCIAt+p1CapfKtmuyCi0nc0rEfIc=;
-        b=cn1PtsvZ3SBhXixGJmqOX3rBqaPRDx7tTWRip5G5F44/U957DuWPQs+pdBDlqepP7V
-         4uGjCFAh/K1FkSehYmRu5TTqHdgpiRUyo8L0w09EjF6ZrS7Kr+HB8ADmJeOHnGkUx1bt
-         SJFucBFWR0Jkbca/jp9YHxdBpTow3jPQ9LIr1CT4AA+8N+8ckNrc3fOuhBtWy4LEVtIK
-         JRdLBYuHisHa9gmd95461kHR6Ru8rSCXuCcINOgUzSAscDI0bqmFF47nDw7GecbsSH/c
-         LDrTwgIQP1ADUSphr908jmTf6uBhz//cceHophL4seeAhP2g967cG05oOcpHSeVQ7kOg
-         KxrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732458815; x=1733063615;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qQsDVb7F2iz9b9KgCIAt+p1CapfKtmuyCi0nc0rEfIc=;
-        b=V0DwoNg9ru56x5//fmxM8rBrcUQwYjs8kW8zQBUAaN4cvrw9hW2X9hfUmw2OAb+rtP
-         d7kdxfx+jDOnFcweUcB1rImun6Cb7mBi9gCC2iznZ4c61+wvls933zGRq9h6L9VuIu5o
-         QOiW7qfIus5yVtBEkNUwM+avCaHAeO5JKgXJYovoVRmL8/oMx84pp0lF0uVIVqDstOWe
-         ivP1H1lvzv1gksIgek4GgMsDDKzyzb81Fc+F4Q52qNaJM/dNBWW36aqoGWGl+c9IyOGd
-         VhqDALdZLP4GjluUc189dwceEg5kTUZWsvQ7xwUl/i5Lu1P1OSleek3pspSyoIijdhXj
-         NF8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUA5Vv2+QaAsCJTcoqAOTHo1a8cq/9oU1AdNfEEBwAqqo5AhRC+uL4J5U7cbTjvzl+qvMdaQ4I5RauVH8E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLu8k6yZdoMLfg+7/UfYTkdhtIMy4lkUyhomI1ed+UiNiK1jJh
-	FdceaO7Zzl4G1J0CPyEkzl/C4+INn3bn4A/gvLTAj1ZYbly+m+p7bOp2oXmF5Q==
-X-Gm-Gg: ASbGncuX084dOn+HdVMXEksDVv8V3qSGtwW43jx1qbYRONNfCsxwofaT17tSAh6APFh
-	pZAAlX6S3TJrpHOzLFTfpTZefk/JsyHh2bSS4osPEL1HZGtcZOS+/9dWB7nFbm/EobrqHSodWiy
-	dD3xdFJYM+TD+UvFvTT+bIvH7OPSad42mEAhQtbXDLvyOxgilN5vTDfgokj9HVzze//GGQ/3Nra
-	6azdnTa4EX10s0qSw5A/p/TVjhi1hupB1DsOu05x+5ckf0Dmln+WdjESuu/
-X-Google-Smtp-Source: AGHT+IEXdIY8HdO7q0GsWQpaA8gaDP2oPUf00iydOaa8Lv2vpwZRDX+byC5eu+a3QGb7Pw0MmbQxmg==
-X-Received: by 2002:a17:903:2cd:b0:20c:a387:7dc9 with SMTP id d9443c01a7336-2129f7b4e55mr144454115ad.29.1732458815130;
-        Sun, 24 Nov 2024 06:33:35 -0800 (PST)
-Received: from thinkpad ([36.255.17.192])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129db87dafsm47492325ad.43.2024.11.24.06.33.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Nov 2024 06:33:34 -0800 (PST)
-Date: Sun, 24 Nov 2024 20:03:27 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev
-Subject: Re: [PATCH v8 2/7] PCI: dwc: Use devicetree 'ranges' property to get
- rid of cpu_addr_fixup() callback
-Message-ID: <20241124143327.6cuxrw76pr6olfor@thinkpad>
-References: <20241119-pci_fixup_addr-v8-0-c4bfa5193288@nxp.com>
- <20241119-pci_fixup_addr-v8-2-c4bfa5193288@nxp.com>
+	s=arc-20240116; t=1732459028; c=relaxed/simple;
+	bh=KLPdmkQ1xezsdB8ipXFKie47JPaMlfuKDLWgjUT4NYg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aINym/bG1dkWM/cyfKDuLWkPveC7yrD3m96qVfaUobQDqQMdhCH1aX1563lhoUMueG2nTNX/JfZQt1hYXV9lROPNkx9USVHhF/a4I7LDnFdpi4Z2OHTSHz5w+6xfoMZpYA5p5BTN2gPIiM5A6QD9TR4QQh63OvD96Sbi9mezzj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rCGTn4Ig; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732459022;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=e1JexP5qKES3KsZCQk3q40DAGc5t+R8erZaju+hJwK0=;
+	b=rCGTn4Ig3tjMhUyq8TefREa8ZDiEWEQHE/omA9ex0aHs+C2W95Ke4yA6qITcREbVdh4C1k
+	uTLVNUaZ+VF1Q/klxgmBiiFoJyGY1KYGVLC5nfEcEdu8n+iRdZ6oPFqnOpkgVvkTZAI4W/
+	CUZO/W52iJjWcUYhLibBmXleMlpsW6Q=
+From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Maxime Ripard <mripard@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Devarsh Thakkar <devarsht@ti.com>,
+	Praneeth Bajjuri <praneeth@ti.com>,
+	Udit Kumar <u-kumar1@ti.com>,
+	Jayesh Choudhary <j-choudhary@ti.com>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Max Krummenacher <max.oss.09@gmail.com>,
+	DRI Development List <dri-devel@lists.freedesktop.org>,
+	Devicetree List <devicetree@vger.kernel.org>,
+	Linux Kernel List <linux-kernel@vger.kernel.org>,
+	Aradhya Bhatia <aradhya.bhatia@linux.dev>
+Subject: [PATCH v4 0/3] drm/tidss: Add OLDI bridge support
+Date: Sun, 24 Nov 2024 20:06:46 +0530
+Message-Id: <20241124143649.686995-1-aradhya.bhatia@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241119-pci_fixup_addr-v8-2-c4bfa5193288@nxp.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Nov 19, 2024 at 02:44:20PM -0500, Frank Li wrote:
-> parent_bus_addr in struct of_range can indicate address information just
-> ahead of PCIe controller. Most system's bus fabric use 1:1 map between
-> input and output address. but some hardware like i.MX8QXP doesn't use 1:1
-> map. See below diagram:
-> 
->             ┌─────────┐                    ┌────────────┐
->  ┌─────┐    │         │ IA: 0x8ff8_0000    │            │
->  │ CPU ├───►│   ┌────►├─────────────────┐  │ PCI        │
->  └─────┘    │   │     │ IA: 0x8ff0_0000 │  │            │
->   CPU Addr  │   │  ┌─►├─────────────┐   │  │ Controller │
-> 0x7ff8_0000─┼───┘  │  │             │   │  │            │
->             │      │  │             │   │  │            │   PCI Addr
-> 0x7ff0_0000─┼──────┘  │             │   └──► IOSpace   ─┼────────────►
->             │         │             │      │            │    0
-> 0x7000_0000─┼────────►├─────────┐   │      │            │
->             └─────────┘         │   └──────► CfgSpace  ─┼────────────►
->              BUS Fabric         │          │            │    0
->                                 │          │            │
->                                 └──────────► MemSpace  ─┼────────────►
->                         IA: 0x8000_0000    │            │  0x8000_0000
->                                            └────────────┘
-> 
-> bus@5f000000 {
-> 	compatible = "simple-bus";
-> 	#address-cells = <1>;
-> 	#size-cells = <1>;
-> 	ranges = <0x80000000 0x0 0x70000000 0x10000000>;
-> 
-> 	pcie@5f010000 {
-> 		compatible = "fsl,imx8q-pcie";
-> 		reg = <0x5f010000 0x10000>, <0x8ff00000 0x80000>;
-> 		reg-names = "dbi", "config";
-> 		#address-cells = <3>;
-> 		#size-cells = <2>;
-> 		device_type = "pci";
-> 		bus-range = <0x00 0xff>;
-> 		ranges = <0x81000000 0 0x00000000 0x8ff80000 0 0x00010000>,
-> 			 <0x82000000 0 0x80000000 0x80000000 0 0x0ff00000>;
-> 	...
-> 	};
-> };
-> 
-> Term internal address (IA) here means the address just before PCIe
-> controller. After ATU use this IA instead CPU address, cpu_addr_fixup() can
-> be removed.
-> 
+Hello all,
 
-The newly added warning should be mentioned in the commit message. But no need
-to respin just for this. I hope Krzysztof can add it while applying.
+This patch series add support for the dual OLDI TXes supported in Texas
+Instruments' AM62x and AM62Px family of SoCs. The OLDI TXes support single-lvds
+lvds-clone, and dual-lvds modes. These have now been represented through DRM
+bridges within TI-DSS.
 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+ - Some history and hardware description for this patch series.
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+This patch series is a complete re-vamp from the previously posted series[1] and
+hence, the version index has been reset to v1. The OLDI support from that series
+was dropped and only the base support for AM62x DSS was kept (and eventually
+merged)[2].
 
-- Mani
+The OLDI display that the tidss driver today supports, could not be extended for
+the newer SoCs. The OLDI display in tidss is modelled after the DSS and OLDI
+hardware in the AM65x SoC. The DSS in AM65x SoC, has two video-ports. Both these
+video-ports (VP) output DPI video signals. One of the DPI output (from VP1) from
+the DSS connects to a singular OLDI TX present inside the SoC. There is no other
+way for the DPI from VP1 to be taken out of the SoC. The other DPI output
+however - the one from VP2 - is taken out of the SoC as is. Hence we have an
+OLDI bus output and a DPI bus output from the SoC. Since the VP1 and OLDI are
+tightly coupled, the tidss driver considers them as a single entity. That is
+why, any OLDI sink connects directly to the DSS ports in the OF graphs.
 
-> ---
-> Change from v7 to v8
-> - Add dev_warning_once at dw_pcie_iatu_detect() to reminder
-> cpu_addr_fixup() user to correct their code
-> - use 'use_parent_dt_ranges' control enable use dt parent bus node ranges.
-> - rename dw_pcie_get_untranslate_addr to dw_pcie_get_parent_addr().
-> - of_property_read_reg() already have comments, so needn't add more.
-> - return actual err code from function
-> 
-> Change from v6 to v7
-> Add a resource_size_t parent_bus_addr local varible to fix 32bit build
-> error.
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202410291546.kvgEWJv7-lkp@intel.com/
-> 
-> Chagne from v5 to v6
-> -add comments for of_property_read_reg().
-> 
-> Change from v4 to v5
-> - remove confused 0x5f00_0000 range in sample dts.
-> - reorder address at above diagram.
-> 
-> Change from v3 to v4
-> - none
-> 
-> Change from v2 to v3
-> - %s/cpu_untranslate_addr/parent_bus_addr/g
-> - update diagram.
-> - improve commit message.
-> 
-> Change from v1 to v2
-> - update because patch1 change get untranslate address method.
-> - add using_dtbus_info in case break back compatibility for exited platform.
-> ---
->  drivers/pci/controller/dwc/pcie-designware-host.c | 57 ++++++++++++++++++++++-
->  drivers/pci/controller/dwc/pcie-designware.c      |  9 ++++
->  drivers/pci/controller/dwc/pcie-designware.h      |  7 +++
->  3 files changed, 72 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 3e41865c72904..f882b11fd7b94 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -418,6 +418,34 @@ static void dw_pcie_host_request_msg_tlp_res(struct dw_pcie_rp *pp)
->  	}
->  }
->  
-> +static int dw_pcie_get_parent_addr(struct dw_pcie *pci, resource_size_t pci_addr,
-> +				   resource_size_t *i_addr)
-> +{
-> +	struct device *dev = pci->dev;
-> +	struct device_node *np = dev->of_node;
-> +	struct of_range_parser parser;
-> +	struct of_range range;
-> +	int ret;
-> +
-> +	if (!pci->use_parent_dt_ranges) {
-> +		*i_addr = pci_addr;
-> +		return 0;
-> +	}
-> +
-> +	ret = of_range_parser_init(&parser, np);
-> +	if (ret)
-> +		return ret;
-> +
-> +	for_each_of_pci_range(&parser, &range) {
-> +		if (pci_addr == range.bus_addr) {
-> +			*i_addr = range.parent_bus_addr;
-> +			break;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  int dw_pcie_host_init(struct dw_pcie_rp *pp)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> @@ -427,6 +455,7 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
->  	struct resource_entry *win;
->  	struct pci_host_bridge *bridge;
->  	struct resource *res;
-> +	int index;
->  	int ret;
->  
->  	raw_spin_lock_init(&pp->lock);
-> @@ -440,6 +469,20 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
->  		pp->cfg0_size = resource_size(res);
->  		pp->cfg0_base = res->start;
->  
-> +		if (pci->use_parent_dt_ranges) {
-> +			index = of_property_match_string(np, "reg-names", "config");
-> +			if (index < 0)
-> +				return -EINVAL;
-> +			/*
-> +			 * Retrieve the parent bus address of PCI config space.
-> +			 * If the parent bus ranges in the device tree provide
-> +			 * the correct address conversion information, set
-> +			 * 'use_parent_dt_ranges' to true, The
-> +			 * 'cpu_addr_fixup()' can be eliminated.
-> +			 */
-> +			of_property_read_reg(np, index, &pp->cfg0_base, NULL);
-> +		}
-> +
->  		pp->va_cfg0_base = devm_pci_remap_cfg_resource(dev, res);
->  		if (IS_ERR(pp->va_cfg0_base))
->  			return PTR_ERR(pp->va_cfg0_base);
-> @@ -462,6 +505,10 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
->  		pp->io_base = pci_pio_to_address(win->res->start);
->  	}
->  
-> +	ret = dw_pcie_get_parent_addr(pci, pp->io_bus_addr, &pp->io_base);
-> +	if (ret)
-> +		return ret;
-> +
->  	/* Set default bus ops */
->  	bridge->ops = &dw_pcie_ops;
->  	bridge->child_ops = &dw_child_pcie_ops;
-> @@ -722,6 +769,8 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
->  
->  	i = 0;
->  	resource_list_for_each_entry(entry, &pp->bridge->windows) {
-> +		resource_size_t parent_bus_addr;
-> +
->  		if (resource_type(entry->res) != IORESOURCE_MEM)
->  			continue;
->  
-> @@ -730,9 +779,15 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
->  
->  		atu.index = i;
->  		atu.type = PCIE_ATU_TYPE_MEM;
-> -		atu.cpu_addr = entry->res->start;
-> +		parent_bus_addr = entry->res->start;
->  		atu.pci_addr = entry->res->start - entry->offset;
->  
-> +		ret = dw_pcie_get_parent_addr(pci, entry->res->start, &parent_bus_addr);
-> +		if (ret)
-> +			return ret;
-> +
-> +		atu.cpu_addr = parent_bus_addr;
-> +
->  		/* Adjust iATU size if MSG TLP region was allocated before */
->  		if (pp->msg_res && pp->msg_res->parent == entry->res)
->  			atu.size = resource_size(entry->res) -
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> index 6d6cbc8b5b2c6..e1ac9c81ad531 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> @@ -840,6 +840,15 @@ void dw_pcie_iatu_detect(struct dw_pcie *pci)
->  	pci->region_align = 1 << fls(min);
->  	pci->region_limit = (max << 32) | (SZ_4G - 1);
->  
-> +	if (pci->ops && pci->ops->cpu_addr_fixup) {
-> +		/*
-> +		 * If the parent 'ranges' property in DT correctly describes
-> +		 * the address translation, cpu_addr_fixup() callback is not
-> +		 * needed.
-> +		 */
-> +		dev_warn_once(pci->dev, "cpu_addr_fixup() usage detected. Please fix DT!\n");
-> +	}
-> +
->  	dev_info(pci->dev, "iATU: unroll %s, %u ob, %u ib, align %uK, limit %lluG\n",
->  		 dw_pcie_cap_is(pci, IATU_UNROLL) ? "T" : "F",
->  		 pci->num_ob_windows, pci->num_ib_windows,
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index 347ab74ac35aa..4f31d4259a0de 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -463,6 +463,13 @@ struct dw_pcie {
->  	struct reset_control_bulk_data	core_rsts[DW_PCIE_NUM_CORE_RSTS];
->  	struct gpio_desc		*pe_rst;
->  	bool			suspended;
-> +	/*
-> +	 * This flag indicates that the vendor driver uses devicetree 'ranges'
-> +	 * property to allow iATU to use the Intermediate Address (IA) for
-> +	 * outbound mapping. Using this flag also avoids the usage of
-> +	 * 'cpu_addr_fixup' callback implementation in the driver.
-> +	 */
-> +	bool			use_parent_dt_ranges;
->  };
->  
->  #define to_dw_pcie_from_pp(port) container_of((port), struct dw_pcie, pp)
-> 
-> -- 
-> 2.34.1
-> 
+The newer SoCs have varying DSS and OLDI integrations.
 
+The AM62x DSS also has 2 VPs. The 2nd VP, VP2, outputs DPI signals which are
+taken out of the SoC - similar to the AM65x above. For the VP1, there are 2 OLDI
+TXes. These OLDI TXes can only receive DPI signals from VP1, and don't connect
+to VP2 at all.
+
+The AM62Px SoC has 2 OLDI TXes like AM62x SoC. However, the AM62Px SoC also has
+2 separate DSSes. The 2 OLDI TXes can now be shared between the 2 VPs of the 2
+DSSes.
+
+The addition of the 2nd OLDI TX (and a 2nd DSS in AM62Px) creates a need for
+some major changes for a full feature experience.
+
+1. The OF graph needs to be updated to accurately show the data flow.
+2. The tidss and OLDI drivers now need to support the dual-link and the cloned
+   single-link OLDI video signals.
+3. The drivers also need to support the case where 2 OLDI TXes are connected to
+   2 different VPs - thereby creating 2 independent streams of single-link OLDI
+   outputs.
+
+Note that the OLDI does not have registers of its own. It is still dependent on
+the parent VP. The VP that provides the DPI video signals to the OLDI TXes, also
+gives the OLDI TXes all the config data. That is to say, the hardware doesn't
+sit on the bus directly - but does so through the DSS.
+
+In light of all of these hardware variations, it was decided to have a separate
+OLDI driver (unlike AM65x) but not entirely separate so as to be a platform
+device. The OLDI TXes are now being represented as DRM bridges under the tidss.
+
+Also, since the DRM framework only really supports a linear encoder-bridge
+chain, the OLDI driver creates a DRM bridge ONLY for the primary OLDI TX in
+cases of dual-link or cloned single-link OLDI modes. That bridge then attaches
+to the tidss's display core - which consists of a CRTC, an Encoder (dummy) and a
+bridge (dummy). On the other end, it attaches to OLDI sinks (panels or other
+bridges).
+
+Since the OLDI TX have a hardware dependency with the VP, the OLDI configuration
+needs to happen before that VP is enabled for streaming. VP stream enable takes
+place in tidss_crtc_atomic_enable hook. I have posted a patch allowing DRM
+bridges to get pre-enabled before the CRTC of that bridge is enabled[0]. Without
+that patch, some warnings or glitches can be seen.
+
+These patches have been tested on AM625 based Beagleplay[3] platform with a
+Lincolntech LCD185 dual-lvds panel. The patches with complete support including
+the expected devicetree configuration of the OLDI TXes can be found in the
+"next_oldi_v4_tests" branch of my github fork[4]. This branch also has support
+for Microtips dual-lvds panel (SK-LCD1) which is compatible with the SK-AM625
+EVM platform.
+
+Due to lack of hardware, I haven't been able to test single-link / cloned
+single-link OLDI modes. I have only used a sample cloned single-link DTBO and
+booted the board with it. I didn't see any probe_deferred errors (as seen
+previously), and the `kmsprint` utility enumerated the display details fine.
+
+Regardless, I'd appreciate it if somebody can test it, and report back if they
+observe any issues.
+
+Thanks,
+Aradhya
+
+
+Additional Notes:
+
+* Important note about a false positive in dtbs_check *
+Both the ports, port0 and port1, are required for the OLDI functionality to
+work. The schema suggests this condition too. Additionally, the OLDI devicetree
+node is expected to be defined in the soc.dtsi file, and kept as disabled.
+Over the current platforms (Beagleplay and SK-AM625 EVM), the OLDI panel is not
+always attached, and hence we use a DT overlay to add panel details - which is
+where we enable the OLDI nodes. The structure of files is like this -
+
+- soc.dtsi                  (OLDI disabled)
+- soc-baseboard.dts         (OLDI disabled)
+- soc-baseboard-panel.dtso  (OLDI enabled)
+
+During dtbs_check runs, it was observed that the check was not able to rule out
+OLDI issues even when its DT was disabled in the soc-baseboard.dts. It is
+impractical and impossible to add OLDI ports prior to the panel overlay file.
+While the dtbs_check usually ignores checking disabled devicetree nodes, it was
+unable to do so in the OLDI's case.
+
+
+* Important note about the authorship of patches *
+All the patches in the of this series were authored when I owned a "ti.com"
+based email id, i.e. <a-bhatia1@ti.com>. This email id is not in use anymore,
+and all the work done later has been part of my personal work. Since the
+original patches were authored using TI's email id, I have maintained the
+original authorships as they are, as well as their sign offs.
+
+I have further added another sign off that uses my current (and personal) email
+id, the one that is being used to send this revision, i.e.
+<aradhya.bhatia@linux.dev>.
+
+---
+
+Change Log:
+V4:
+  - Implement fixes suggested by Krzysztof Kozlowski:
+    - Squash patches v3:2/4 and v3:3/4 to v4:2/3, and add more hardware details
+      in commit description.
+    - Change the serial clock name for OLDI, from "s_clk" to "serial".
+    - Fix the required condition in the OLDI schema.
+    - Other minor fixes.
+  - Change "oldi-txes" OLDI DT node name to "oldi-transmitters".
+  - Update secondary-OLDI property requirements to be more relaxing for AM62P
+    DSS configuration.
+
+V3:
+  - Fix the dt_binding_check warning in patch 3/4[5] by adding
+    "additionalProperties" constraint.
+
+V2:
+  - Add all the R-b and A-b tags from Laurent Pinchart, Rob Herring, and
+    Tomi Valkeinen.
+  - Reword the subject for patch 1/4.
+  - Reword the commit descriptions to add proper hardware detail.
+  - Drop the change in schema reference for port@0 in patch 3/4.
+  - Lots of improvements for patch 4/4.
+    * Refactor OLDI selection logic in tidss_oldi_tx_power().
+    * Add "companion_instance" support to identify the OLDI index in
+      dual-link or cloned sinle-link modes.
+    * De-initialize tidss_oldi during tidss removal.
+    * Use dev_err_probe() instead of dev_err().
+    * Drop OLDI(n) macro.
+    * Move OLDI Config register bits to tidss_dispc_regs.h.
+    * Drop oldi bridge atomic_check().
+    * s/%d/%u for all print instances of "oldi_instance".
+    * Move OLDI init after DISPC init in tidss_probe.
+    * Use devm_drm_of_get_bridge() instead of
+      drm_of_find_panel_or_bridge() to find the next bridge and drop all
+      the drm_panel support from tidss_oldi.
+
+Previous revisions:
+V3: https://lore.kernel.org/all/20240716084248.1393666-1-a-bhatia1@ti.com/
+V2: https://lore.kernel.org/all/20240715200953.1213284-1-a-bhatia1@ti.com/
+V1: https://lore.kernel.org/all/20240511193055.1686149-1-a-bhatia1@ti.com/
+
+
+[0]: Dependency Patch: 
+("drm/atomic-helper: Re-order bridge chain pre-enable and post-disable")
+https://lore.kernel.org/all/20240622110929.3115714-11-a-bhatia1@ti.com/
+
+[1]: AM62 OLDI Series - v7
+https://lore.kernel.org/all/20230125113529.13952-1-a-bhatia1@ti.com/
+
+[2]: AM62 DSS Series - v9
+https://lore.kernel.org/all/20230616150900.6617-1-a-bhatia1@ti.com/
+
+[3]: TI AM625 SoC based Beagleplay platform
+https://www.beagleboard.org/boards/beagleplay
+
+[4]: GitHub Fork for OLDI tests
+https://github.com/aradhya07/linux-ab/tree/next_oldi_v4_tests
+
+[5]: ("ti,am65x-dss.yaml: oldi-txes: Missing additionalProperties/
+      unevaluatedProperties constraint")
+https://lore.kernel.org/all/172107979988.1595945.9666141982402158422.robh@kernel.org/
+
+Aradhya Bhatia (3):
+  dt-bindings: display: ti,am65x-dss: Re-indent the example
+  dt-bindings: display: ti: Add schema for AM625 OLDI Transmitter
+  drm/tidss: Add OLDI bridge support
+
+ .../bindings/display/ti/ti,am625-oldi.yaml    | 119 ++++
+ .../bindings/display/ti/ti,am65x-dss.yaml     | 195 ++++++-
+ MAINTAINERS                                   |   1 +
+ drivers/gpu/drm/tidss/Makefile                |   3 +-
+ drivers/gpu/drm/tidss/tidss_dispc.c           |  20 +-
+ drivers/gpu/drm/tidss/tidss_dispc.h           |   4 +
+ drivers/gpu/drm/tidss/tidss_dispc_regs.h      |  14 +
+ drivers/gpu/drm/tidss/tidss_drv.c             |   9 +
+ drivers/gpu/drm/tidss/tidss_drv.h             |   5 +
+ drivers/gpu/drm/tidss/tidss_oldi.c            | 537 ++++++++++++++++++
+ drivers/gpu/drm/tidss/tidss_oldi.h            |  51 ++
+ 11 files changed, 935 insertions(+), 23 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
+ create mode 100644 drivers/gpu/drm/tidss/tidss_oldi.c
+ create mode 100644 drivers/gpu/drm/tidss/tidss_oldi.h
+
+
+base-commit: cfba9f07a1d6aeca38f47f1f472cfb0ba133d341
 -- 
-மணிவண்ணன் சதாசிவம்
+2.34.1
+
 
