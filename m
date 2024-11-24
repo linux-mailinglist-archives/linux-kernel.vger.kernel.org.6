@@ -1,98 +1,92 @@
-Return-Path: <linux-kernel+bounces-420197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 842EF9D778C
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 19:58:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B76B89D76CD
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:40:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB101B2B18E
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:38:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C80A283817
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D4B139D0A;
-	Sun, 24 Nov 2024 17:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8A07DA6F;
+	Sun, 24 Nov 2024 17:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iuLcgPE6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uucXZ6qV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13471311AC;
-	Sun, 24 Nov 2024 17:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241CE1E531;
+	Sun, 24 Nov 2024 17:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732469911; cv=none; b=GrjyiULl88x1JUbddh619HFVJW6QK6yxA6AYwliduXt5rzotbbfCGIhyFJFSCz7kAoIpu7vnpR49YwdE0VvbIYX8oL8bc+XAe7aHJ0X/p65HTI5r4+9zH0B6fYE4R/yJiYE++TvBxs6Hq6IqpwOKOeSUXSO0RFhAcpOBoVO8cy4=
+	t=1732469996; cv=none; b=rcyZSr9ovSMznEkhQCjnaHlPkE5rqHHvnefC9o14MEy2vWZZ2WvkrBkWXAnl0kvyA836qlZ3QE7OWdx/gns2WfMZMa93lBe4nYdLKBqXivAla5G3dJeHUltGYWEs+PBt0mDmAYKPdh92oeiepgFMKpq3frgqkH56SHZPPNlnb1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732469911; c=relaxed/simple;
-	bh=HxTYlh3ZiQ6RZupeK62kAyRgWiWDGmzBXEGGc5CWI4k=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=owl71o7vfIy4Gno4BN4byHRTe01P1ed9PGYAmGMtqubhTJ39ZsGwAzjGSdQX7XsWay0oLebLUY2zOEhYrnpf3ZXSLZ9FKy2wDnwKwAM6c9eNmYLjPvD8G+rOulxsNB8chmAtBhqVyZ6LZqjtiYQ/M+Cb4e8hGU7qU38b3RLlh0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iuLcgPE6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D09E2C4CED8;
-	Sun, 24 Nov 2024 17:38:29 +0000 (UTC)
+	s=arc-20240116; t=1732469996; c=relaxed/simple;
+	bh=m5EaufxYOCgvQD7PLW/UK4+ViW/a9/04yeGqV2OVmug=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZmvF0poJj12oRJFRYxffaFGpjbxY+7tG5fHs4cLJEmt16zOrlRPO/uUIIC/t1ZnNM5TjmniXgG/IJ4ja8ZiqCO+PD2JTPCCHGWsxu7sOXvVtH6g87GWHa1pbXDxIzbzWfPgOtOHJbvI0ZI4jAxTXdGRWs/OBKkynWA4+/uAQmKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uucXZ6qV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCEACC4CECC;
+	Sun, 24 Nov 2024 17:39:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732469911;
-	bh=HxTYlh3ZiQ6RZupeK62kAyRgWiWDGmzBXEGGc5CWI4k=;
-	h=Date:From:To:Subject:From;
-	b=iuLcgPE6ckXSU0xRVeNsTB6l2H0Gv2iF1wq7juLYDbQEW3sy7bx5LG+izQkra0srH
-	 CI7K9HNj6TiRYUY7h+y7V3nBEZAMdroJhR8oqEzE+fpTI8QdTsvN43Wc9Z8L+JJUfm
-	 sR5HtDb0a5Mlh/QUww5BwAs4dXY4ZMVI10tXMa45lEoisHrOa+pWhyxDcsIQ6CNmpx
-	 cqUrMKeeQvDWUp8TFoVLZd+Cxkc9DsQhgMH5U/qrsDIlObFkpwFU417I3Wrn7Sc4VH
-	 UMqFTtZoSDnjah7E4bwMRs4dX1qqA5a1PRCbklbKDcnQp45wykrBi+ilTGMnLytiEv
-	 qceZq+Qcg4F4w==
-Date: Sun, 24 Nov 2024 18:38:26 +0100
-From: Helge Deller <deller@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: [GIT PULL] fbdev fixes and cleanups for v6.13-rc1
-Message-ID: <Z0NkkihDqEwi3k9Y@carbonx1>
+	s=k20201202; t=1732469995;
+	bh=m5EaufxYOCgvQD7PLW/UK4+ViW/a9/04yeGqV2OVmug=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uucXZ6qVhFutxrUv/uZVWQ13Gm38x9uqlRICcYRtaA4S2fK17kDymZE014ABKR1F3
+	 b9I1AVW1m3Jq56Bam7wqugvrftVHqrqu6dWsNFHrxey3Nn3bcQ/v1knDf1ZGg62VDi
+	 xy+FbG30DFJgFPpyHRbTsbKy0zRsQ0pMR1pVOgAAAA+80nSQbj5TQRhC7s+L6uYUmX
+	 BbVkZaTcHwwbY/hh/OQ2CZEWvrOaSalL1fq/reP1ycwkN3oeLOjhCCslf+2R8bF+/p
+	 bs/5zaxg/mRy3xmRj/6rUHdfFr69N1NSfTVvEuOrSlTJXwdKRPfVVCvBcxxDsTDBgI
+	 8xYAmVY0qfAHg==
+Date: Sun, 24 Nov 2024 17:39:49 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: ad_sigma_delta: add tab to align irq_line
+Message-ID: <20241124173949.0d093579@jic23-huawei>
+In-Reply-To: <20241122-iio-adc-ad_signal_delta-fix-align-v1-1-d0a071d2dc83@baylibre.com>
+References: <20241122-iio-adc-ad_signal_delta-fix-align-v1-1-d0a071d2dc83@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On Fri, 22 Nov 2024 11:42:48 -0600
+David Lechner <dlechner@baylibre.com> wrote:
 
-please pull two patches for fbdev for this merge window:
-One removes a memory leak in an error path, the other drops unused code.
+> Align the irq_line field in struct ad_sigma_delta with the other fields.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+Applied.
+> ---
+>  include/linux/iio/adc/ad_sigma_delta.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/iio/adc/ad_sigma_delta.h b/include/linux/iio/adc/ad_sigma_delta.h
+> index f8c1d2505940..1851f8fed3a4 100644
+> --- a/include/linux/iio/adc/ad_sigma_delta.h
+> +++ b/include/linux/iio/adc/ad_sigma_delta.h
+> @@ -96,7 +96,7 @@ struct ad_sigma_delta {
+>  	unsigned int		active_slots;
+>  	unsigned int		current_slot;
+>  	unsigned int		num_slots;
+> -	int		irq_line;
+> +	int			irq_line;
+>  	bool			status_appended;
+>  	/* map slots to channels in order to know what to expect from devices */
+>  	unsigned int		*slots;
+> 
+> ---
+> base-commit: 9dd2270ca0b38ee16094817f4a53e7ba78e31567
+> change-id: 20241122-iio-adc-ad_signal_delta-fix-align-2e229d6c03db
+> 
+> Best regards,
 
-Thanks,
-Helge
-
-----------------------------------------------------------------
-The following changes since commit 2d5404caa8c7bb5c4e0435f94b28834ae5456623:
-
-  Linux 6.12-rc7 (2024-11-10 14:19:35 -0800)
-
-are available in the Git repository at:
-
-  http://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev.git tags/fbdev-for-6.13-rc1
-
-for you to fetch changes up to 8d7493133bfd89322349be3daaf39a256e4354ac:
-
-  fbdev: omapfb: Remove some deadcode (2024-11-14 15:30:36 +0100)
-
-----------------------------------------------------------------
-fbdev fixes and updates for 6.13-rc1:
-
-- omapfb: Remove unused code (Dr. David Alan Gilbert)
-- sh7760fb: Fix memory leak in error path of sh7760fb_alloc_mem()
-  (Zhen Lei)
-
-----------------------------------------------------------------
-Dr. David Alan Gilbert (1):
-      fbdev: omapfb: Remove some deadcode
-
-Zhen Lei (1):
-      fbdev: sh7760fb: Fix a possible memory leak in sh7760fb_alloc_mem()
-
- drivers/video/fbdev/omap2/omapfb/dss/dispc.c | 27 ---------------------------
- drivers/video/fbdev/omap2/omapfb/dss/dss.h   |  3 ---
- drivers/video/fbdev/sh7760fb.c               |  3 +--
- 3 files changed, 1 insertion(+), 32 deletions(-)
 
