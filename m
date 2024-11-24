@@ -1,178 +1,104 @@
-Return-Path: <linux-kernel+bounces-420232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E779D7735
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 19:16:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F8E9D773A
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 19:19:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0B8E282E27
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:16:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7C4228310E
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:19:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4FC13A86C;
-	Sun, 24 Nov 2024 18:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12E113A271;
+	Sun, 24 Nov 2024 18:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MTDk3Zvj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="LFt4gkS4"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF9A224FA;
-	Sun, 24 Nov 2024 18:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2308472;
+	Sun, 24 Nov 2024 18:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732472189; cv=none; b=g6oFbySKHztvKvSasE71UuKQz9gHB11luBT7ij+w7y0VHzMBeKg+TcxYDPDipAvsV9kb2/57FSyiQPqgz6CnOjRqe89fUi68Ni+b5hJ7dBthfQfOXpUpACa1xaoEXNmHBmhGCmcKDV7rTaF7iuFyyodiuCA5NBbW35y3yTOa1XI=
+	t=1732472355; cv=none; b=UaRUpWipUnxZUS8y/VUFHi9Jge3Zt+fiddNCvAO7psHlPKSHfXzulWccoaco1u5cLeMSbaJL4dHWIt0u0kM6doSHb20AXKMXfLttUdIaDzjmOLi5Lg9EoYUep48N8uSVTIKe0aUdsE8UL/dAQSBab7ED5oTTOtikbBzbLQ0nPpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732472189; c=relaxed/simple;
-	bh=FXsuG6lDU1uWF4iyfoWnk1dMCf5iIc4lUECmwOYM7NI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Njvj9+YjxlD+36/v/tHdZwUi0+SsN/7XRGvi1yJ2YWb0NFa5raswckYPtQ8hX5Mfzaim40MGH8mpVN+Xxc9g7CCtuPPqsm6ckbG00KzF2DL16JtA5X4yh9cS5QYgZr7n4dkKwUKZGjRL//oTYHlP7Krbv+0lXK8CMafQTEK80VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MTDk3Zvj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34B58C4CECC;
-	Sun, 24 Nov 2024 18:16:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732472189;
-	bh=FXsuG6lDU1uWF4iyfoWnk1dMCf5iIc4lUECmwOYM7NI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MTDk3Zvj5ymz6fVnlE+/RNU3sFjfxXMQD3YKBM9SWCCGQBH1axe6GglrIBT4Xl4La
-	 jVhLsjbCZNDOX5ratGwNf+hOzHc6BdmWj9ezDWuC8gVPicoU+XjYblGvmoNDrg63H+
-	 IbQ2578o8YNjhiU7xqcxqHejin/I2000YsZD+EjduSvqw7Rx7uOrnw3dDsL48X/nML
-	 bt6u4fIOcztBeSFZpB+nzzX5m0IQiTGx8br3W12eduMOm5ONdDkpUt9RDgW3xjBVoU
-	 bOpFaevOAe85TvRCYCW0DcSfyhgWgBICxavtJ00k3feA+WEm8EHUHu9Tu0NXISlWuG
-	 W+CMYU9Jh1KLg==
-Date: Sun, 24 Nov 2024 18:16:22 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v2 08/22] iio: accel: adxl345: initialize FIFO delay
- value for SPI
-Message-ID: <20241124181622.6df37d30@jic23-huawei>
-In-Reply-To: <20241117182651.115056-9-l.rubusch@gmail.com>
-References: <20241117182651.115056-1-l.rubusch@gmail.com>
-	<20241117182651.115056-9-l.rubusch@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732472355; c=relaxed/simple;
+	bh=NrWBE+eVf6/bQnfDOwbINHP5NuRpko5suWSXSRKyxCo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fEQbYLMuFC76cD47dxLho6b+LSP+EACPcfTVdDfh9c2HYpAPwu+4wl0zZq4brLEXCKaeirVGQKpDhsG2l7ai6rdFMddORNTsQpa9kXyrC2HnyexUEv7Oq/rWsdpwsl48T5oWQS+zGeMlS2+EbWccbWCNdNtqIkT+aU+7PNceElY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=LFt4gkS4; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=IvgTirpIcd/X+b0JRn0paS0cOSU5p0DJfQ0sxfqmEKU=; b=LFt4gkS4h0Gq2Eh3XpPrFiU279
+	MWwgzIJIbodTf3CsbMNQ4SxkdExvQAXkV2xMP/XsqtmdPXxZuRaKCJiz9kksAx2IXsaSJWo4y3wgw
+	dl/+JzXh+oH8j18vL+udYm7G0hpI/hd10VlOrbMkUeAqlKco7sciKqkEMjm2MVt1263TVXc0iemg1
+	f5ow3WG6piB2SN+PGKYIEAKuesB9aSndf51A15Ls9hCSM8dUnT0fcHXAFcZRtmLsWIvAutG8o6gQe
+	jXxNiRfczq9eMt18ofr+LVtNXv63qHFWelWlXAWK1K9gWcqKqDyFXslQxNQYvWlvrEiy8L3p5fWGR
+	Fhmcmb1Q==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tFHCO-00000001HYh-44eI;
+	Sun, 24 Nov 2024 18:19:09 +0000
+Date: Sun, 24 Nov 2024 18:19:08 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 08/26] sev-dev: avoid pointless cred reference count bump
+Message-ID: <20241124181908.GV3387508@ZenIV>
+References: <20241124-work-cred-v1-0-f352241c3970@kernel.org>
+ <20241124-work-cred-v1-8-f352241c3970@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241124-work-cred-v1-8-f352241c3970@kernel.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sun, 17 Nov 2024 18:26:37 +0000
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
+On Sun, Nov 24, 2024 at 02:43:54PM +0100, Christian Brauner wrote:
 
-> Add the possibility to delay FIFO access when SPI is used. According to
-> the datasheet this is needed for the adxl345. When initialization
-> happens over SPI the need for delay is to be signalized, and the delay
-> will be used.
-A specific reference to a section of the specification might be useful
-here.
-
-One trivial comment inline, but otherwise looks fine to me.
-
+>  drivers/crypto/ccp/sev-dev.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-> ---
->  drivers/iio/accel/adxl345.h      | 2 +-
->  drivers/iio/accel/adxl345_core.c | 6 +++++-
->  drivers/iio/accel/adxl345_i2c.c  | 2 +-
->  drivers/iio/accel/adxl345_spi.c  | 3 +++
->  4 files changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/iio/accel/adxl345.h b/drivers/iio/accel/adxl345.h
-> index cf4132715c..4ba493f636 100644
-> --- a/drivers/iio/accel/adxl345.h
-> +++ b/drivers/iio/accel/adxl345.h
-> @@ -62,7 +62,7 @@ struct adxl345_chip_info {
->  };
+> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
+> index 187c34b02442dd50640f88713bc5f6f88a1990f4..2e87ca0e292a1c1706a8e878285159b481b68a6f 100644
+> --- a/drivers/crypto/ccp/sev-dev.c
+> +++ b/drivers/crypto/ccp/sev-dev.c
+> @@ -244,7 +244,7 @@ static struct file *open_file_as_root(const char *filename, int flags, umode_t m
+>  	if (!cred)
+>  		return ERR_PTR(-ENOMEM);
+>  	cred->fsuid = GLOBAL_ROOT_UID;
+> -	old_cred = override_creds(get_new_cred(cred));
+> +	old_cred = override_creds(cred);
 >  
->  int adxl345_core_probe(struct device *dev, struct regmap *regmap,
-> -		       int irq,
-> +		       int irq, bool fifo_delay_default,
->  		       int (*setup)(struct device*, struct regmap*));
->  
->  #endif /* _ADXL345_H_ */
-> diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl345_core.c
-> index 902bd3568b..51b229cc44 100644
-> --- a/drivers/iio/accel/adxl345_core.c
-> +++ b/drivers/iio/accel/adxl345_core.c
-> @@ -22,6 +22,7 @@ struct adxl34x_state {
->  	int irq;
->  	const struct adxl345_chip_info *info;
->  	struct regmap *regmap;
-> +	bool fifo_delay; /* delay: delay is needed for SPI */
->  };
->  
->  #define ADXL345_CHANNEL(index, axis) {					\
-> @@ -199,13 +200,14 @@ static const struct iio_info adxl345_info = {
->   * @dev:	Driver model representation of the device
->   * @regmap:	Regmap instance for the device
->   * @irq:	Interrupt handling for async usage
-> + * @fifo_delay_default: Using FIFO with SPI needs delay
->   * @setup:	Setup routine to be executed right before the standard device
->   *		setup
->   *
->   * Return: 0 on success, negative errno on error
->   */
->  int adxl345_core_probe(struct device *dev, struct regmap *regmap,
-> -		       int irq,
-> +		       int irq, bool fifo_delay_default,
->  		       int (*setup)(struct device*, struct regmap*))
->  {
->  	struct adxl34x_state *st;
-> @@ -234,6 +236,8 @@ int adxl345_core_probe(struct device *dev, struct regmap *regmap,
->  	if (!st->info)
->  		return -ENODEV;
->  
-> +	st->fifo_delay = fifo_delay_default;
-> +
->  	indio_dev->name = st->info->name;
->  	indio_dev->info = &adxl345_info;
->  	indio_dev->modes = INDIO_DIRECT_MODE;
-> diff --git a/drivers/iio/accel/adxl345_i2c.c b/drivers/iio/accel/adxl345_i2c.c
-> index 604b706c29..fa1b7e7026 100644
-> --- a/drivers/iio/accel/adxl345_i2c.c
-> +++ b/drivers/iio/accel/adxl345_i2c.c
-> @@ -27,7 +27,7 @@ static int adxl345_i2c_probe(struct i2c_client *client)
->  	if (IS_ERR(regmap))
->  		return dev_err_probe(&client->dev, PTR_ERR(regmap), "Error initializing regmap\n");
->  
-> -	return adxl345_core_probe(&client->dev, regmap, client->irq, NULL);
-> +	return adxl345_core_probe(&client->dev, regmap, client->irq, false, NULL);
->  }
->  
->  static const struct adxl345_chip_info adxl345_i2c_info = {
-> diff --git a/drivers/iio/accel/adxl345_spi.c b/drivers/iio/accel/adxl345_spi.c
-> index 39e7d71e1d..75940d9c1c 100644
-> --- a/drivers/iio/accel/adxl345_spi.c
-> +++ b/drivers/iio/accel/adxl345_spi.c
-> @@ -12,6 +12,7 @@
->  #include "adxl345.h"
->  
->  #define ADXL345_MAX_SPI_FREQ_HZ		5000000
-> +#define ADXL345_MAX_FREQ_NO_FIFO_DELAY	1500000
->  
->  static const struct regmap_config adxl345_spi_regmap_config = {
->  	.reg_bits = 8,
-> @@ -41,10 +42,12 @@ static int adxl345_spi_probe(struct spi_device *spi)
->  	if (spi->mode & SPI_3WIRE)
->  		return adxl345_core_probe(&spi->dev, regmap,
->  					  spi->irq,
-> +					  spi->max_speed_hz > ADXL345_MAX_FREQ_NO_FIFO_DELAY,
->  					  adxl345_spi_setup);
->  	else
->  		return adxl345_core_probe(&spi->dev, regmap,
->  					  spi->irq,
-> +					  spi->max_speed_hz > ADXL345_MAX_FREQ_NO_FIFO_DELAY,
+>  	fp = file_open_root(&root, filename, flags, mode);
+>  	path_put(&root);
 
-use a local variable to establish this without the very long line.
+Looks sane, but the use of file reads/writes in there does not.
 
->  					  NULL);
->  }
->  
+At the very least, this
+        nwrite = kernel_write(fp, sev_init_ex_buffer, NV_LENGTH, &offset);
+        vfs_fsync(fp, 0);
+        filp_close(fp, NULL);
 
+        if (nwrite != NV_LENGTH) {
+                dev_err(sev->dev,
+                        "SEV: failed to write %u bytes to non volatile memory area, ret %ld\n",
+                        NV_LENGTH, nwrite);
+                return -EIO;
+        }
+is either too much or too little - if it's serious about reporting errors,
+it would better check what fsync and close return...
+
+Oh, well - unrelated to your patchset, obviously
 
