@@ -1,223 +1,132 @@
-Return-Path: <linux-kernel+bounces-419360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A9A79D6CEF
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 08:32:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B5BB9D6CF3
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 08:33:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90C8DB21325
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 07:32:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 042B6161977
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 07:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10CFD3FBB3;
-	Sun, 24 Nov 2024 07:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BDD188591;
+	Sun, 24 Nov 2024 07:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LJqG9dYu"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WbXnN2kZ"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D883F8F7
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 07:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6C33FBB3;
+	Sun, 24 Nov 2024 07:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732433569; cv=none; b=TTbSru8YzWKJhl9kU6lUaC4T5QTgb2reQilA+5anFi9zM/aTkR/tRjnnmVIKTZGBQZcTomt4gKDqwYFQipVyyii/G1mlW9nF7fj3jMbIOwmzcVSrTGdDu7q/wFDzG8e6s7OwnHE8oCb592t0aRRYxEGrsxgYeujNCRT54XYCjTA=
+	t=1732433581; cv=none; b=MFZR4EMzKuihtw7WABxr+tUY+JHAStlS+xkotjQ30YHXzwJa/rcYr4RZtSJ+TAbRbV9+HfzkUYJUhWXEN6Vnq+FKGrQOJwLySg/RYzqUOktQLXlbmA4Ga7FdIViWCV2tCZmTnQCaU0xRLJhUZHr8/xT1bJznIUyDjHr3IhAeUng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732433569; c=relaxed/simple;
-	bh=jg1trj8SIK0uw3/nGerieNHfGI/GQeoYk99nBhnMeCU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DbENzVVkTMdoQCbGF1FwBIpqf3wsu5WuY41Mwk8T9aFGJF3R31fQmaaatX1PWQpX/V9ax2saNlBzwT7mmcNdeLP7gYjtXuFyG/gaNG5R6Cso0x36D+nUi33rDDCpZhtFCrlkJjx17/6HVw9toB21nqZCW2YIg9IvqsvDm2CRRGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LJqG9dYu; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-724f81cc659so535494b3a.2
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 23:32:47 -0800 (PST)
+	s=arc-20240116; t=1732433581; c=relaxed/simple;
+	bh=U3pW/br4mPdRA9g2qa3TF6acrn0LRv7kMOPVDiNBhIA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q7d66sbkJRUmIN4yPXvcrVgPtHzMA/wkuXY7oE1pKV4RqiamrMOTOA8rUg/obACIzfzQxTUhHDAOBP5+hYoF1q869Yw/YsQ3EqWLqlV3BvM5zzBbMww+YuRcjic+YTuz+QobtnnohjXoer8OBM3Ci+HufqqNByEXGMR5NwkdtwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WbXnN2kZ; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-212776d6449so37714585ad.1;
+        Sat, 23 Nov 2024 23:33:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732433567; x=1733038367; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HyV5xr4Ha7tQT940pOqmrtctl45RuXMP89TFFW03cOU=;
-        b=LJqG9dYu0PU2DMKl0bZUKx5rAdymJguFuxSYM1lObK362atg+ubMtMkfgWs4FwUa2G
-         AGuyJPqIAthEji2vtwjVdaw4E4SK/X+CLJIfrEEOP/PQFKVEkI1BfXMcZ+gBgxGAsrIE
-         CUPq40GY0Y4FxvDLNJiD/69Ug4974MAtgJq2kgWxnODQtozLw8IpNjseKTe8ZfFI3Hyt
-         q1rker+jvkuuHLBV9TRMuEeYUmX9An+n+fSgspRLTt7WMCwobckuDHd+hv3cX+24iiQy
-         uWwfuiTYVVAyEHyzauw732hFN9lOLCTyXXkYdgPQyTxciDrXK+lvWimO8cPT0PST7i5d
-         4mMA==
+        d=gmail.com; s=20230601; t=1732433579; x=1733038379; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/QrxvnHLhHHbClsG+fnoj3DaRzMXyXEa249hcftSwf0=;
+        b=WbXnN2kZHQgohVZjHoBhpf/ai18NKYHovDgExac4Ec2nObUJipJMaX1tPF2u2ZjqnS
+         +9llTuYn4JQYp68EjftXFtpjeTDJPCd+Et+ybJ2Mggz+I08n6LHz9A8HxbDXKG79HoTP
+         tUi81bKz+LHmP5qyR0xySthjKF3JSOfDlys++roC6IDIQQHkUs6z+RHbheNZ9n2LsXsR
+         iifvuS3d46zvpy6FdFE9dB1Kwg31QQApD4HVTJ3JKK+luyvqQhncausjd00vXwhAeZTJ
+         CF1xL49te1kwS++kDLAMsG3SpubB0mDX198y50e/Tx2yS/GmAj9B0SIb59PudZ2rn+38
+         +CHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732433567; x=1733038367;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HyV5xr4Ha7tQT940pOqmrtctl45RuXMP89TFFW03cOU=;
-        b=VI949109iOIidmFJzNlQNPbYzguYZSIcrdat1tNO4LTHX9d+CIZhk4QbuuFHSIevIY
-         Zof5LISMrIfCEYtXfDL3le/HKyujuMNkqCD1wyDejGMzeNGw+pPCml12JZOAh41ZQ96u
-         5SZjyzL0wmzFWzmqjkus2vyqzYToNG37YpEDUKvZUZPlmcpE9+X2L7c2FNx9T+N8D8pY
-         kpiCviS6QdnDn5mDv3ECTWiq29xo25j61ezi+lOe8miVKNrYuL3z8IE8XuH4C98cpw1v
-         gdnSmA8ctGPsMJijo0urqieifoAVywj/JFmAmc3QVErrUvAaFpt6Gd1SGZsa1emGrM+x
-         93Ng==
-X-Forwarded-Encrypted: i=1; AJvYcCU/uYT01KrJ5tLNOPD1+9Clp3mii/KXCVhWC9nMbbsIzPjKLCSB5KjCXImm5QtAcmbCACv9TCAokDSn4OE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9glvnjEVuaDK8v3Hm3g8G1vEWm/HA9FYThRdwSNMW/YegC5XC
-	6rCesKHT6dyaN7la7UvBx0qje1R4rugJgpU70kd4VWSuLdCeq22JhklwjX9HkA==
-X-Gm-Gg: ASbGncvNvPsesFeFDs5pOM83mpEbT2C25eq4HpPrDXKWpPLMnzvNuMvGcxZUxGTLlqA
-	uL9RGkBpOxeIeuS9uYrZr4U583rjppzp1KFoW0P4z+cl9eHdbwU5ghaMtyyoU30JQ1q9+2yJQV2
-	MdRh/rv3RGbdo1pZGn1ClvGrp8ALd1Bg5rT9aFdTxwQl/PaVJu3K5ynhue5U7wG8sdpvqoA7q9p
-	4vo7FRr99ogrKPHZlzpVKVKoOnBPgtAP3XSYPNDLrvqEdyPj0T6VFI8dTmhQoQPQg==
-X-Google-Smtp-Source: AGHT+IH+PlSwlQjrB2gCDs+rD3Rjc8himwsAaIYeIcQh678cCt/hQCj5LyFfCLjmOQxDfzpEEgnsnw==
-X-Received: by 2002:a05:6a00:21c9:b0:71e:14c:8d31 with SMTP id d2e1a72fcca58-724df6677a1mr11545467b3a.16.1732433567075;
-        Sat, 23 Nov 2024 23:32:47 -0800 (PST)
-Received: from thinkpad ([2409:40f2:100d:708e:8ced:6048:5b4d:7203])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de55862esm4235213b3a.155.2024.11.23.23.32.42
+        d=1e100.net; s=20230601; t=1732433579; x=1733038379;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/QrxvnHLhHHbClsG+fnoj3DaRzMXyXEa249hcftSwf0=;
+        b=BQfV+wL/BalN/YPBll5TXlk7N4nJmfHNsBKqRvjDCNAk9Reiw6jXmDq/RbiTh1Vhhf
+         z8B78F9ja3PBDP38lXylcuE0fAtm63vosfXjuw6BNyJ+tX2CfKS2vl2S5LjskYc4qpSH
+         cHOfHEjNL4j5jfi9oYDKpNRlRxj48DFZbqTOvyc8k+F6OMWjXo2+2QicndTzr4hyYdNV
+         xln4xzgnVPf/8YP0zuWWgL9q5XWT0KTajBzqSuK79xvAH8ocJOptWzCSHcDGuaUOg9/w
+         obvwFofzs3XMgpEEGZ65T6LWxF3com7DISdNSyXOa+Y95NeHDSsGeBERR8CpX66QIyvH
+         OJgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW4MdLZ9fV7un8C3gWyATQuK6Om5eUwRzZLsBTrShYz67GlhyTXR5zNYMsiQPsUXL0oesLeIuqHMhFjkak=@vger.kernel.org, AJvYcCXEHgBH3DrMBlfwZxflGwiK1wx+ddMapv77BpPDgaG7ZAPvhyWbSTuxEc6Wkur8lrx2Ok0D58zvfxM7Rm7XT8eH@vger.kernel.org, AJvYcCXf0NWgK22BEN6LDzs/FocQGreSuEjs5GeUOqO/2rNGdBPmMlCqu4qgilyLYMAAKT8BChv0NR9x74lG3Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YynRnPwoLzRsesCip2p0Cv0hZWK252GQx5H3jFHm/q4zPyRccXV
+	G/TYABz7ppooc2rmSas3mpOzERX/+vT4nene+j2e95g4ch1koHidZ0d57n+Ldp0=
+X-Gm-Gg: ASbGncvxwHl2MT53+2l3rC0uVGV3LECo30W7ep2qeA6LrOzo5nZwFJIO+tiPzhpz51c
+	wXv0PL+JolNnWqgPhjK8C2QxlDecLYU3+JnGOTpSyEBXFkqPbpbi1PifbvxKJtO9tYdyr2IBdYG
+	Q43oWJydY7056wTvpet1DTzFwE8EPj2ZIcwDFBSErIHQ3FVdVoaQ88N99Wr8w7tvt96tcOqEQZU
+	241DgVy+rl0aS+iKyy5V3brP2dx9i7KrEcCfKfulvkPw4+DD4f87YrJbD81IBvnNcI51Q==
+X-Google-Smtp-Source: AGHT+IH5VX8VLwH3q/3mONS3hSvP67LvADoIcPzqcrl1vByLw96QkSk+U2+gV5pEhf13xbrM09Cb+g==
+X-Received: by 2002:a17:902:e80a:b0:20b:bd8d:427c with SMTP id d9443c01a7336-2129f55a11emr108317305ad.23.1732433579276;
+        Sat, 23 Nov 2024 23:32:59 -0800 (PST)
+Received: from fedora.dns.podman ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129db8c881sm42838605ad.13.2024.11.23.23.32.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Nov 2024 23:32:46 -0800 (PST)
-Date: Sun, 24 Nov 2024 13:02:39 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	imx@lists.linux.dev, Niklas Cassel <cassel@kernel.org>,
-	dlemoal@kernel.org, maz@kernel.org, tglx@linutronix.de,
-	jdmason@kudzu.us
-Subject: Re: [PATCH v8 3/6] PCI: endpoint: Add pci_epf_align_addr() helper
- for address alignment
-Message-ID: <20241124073239.5yl5zsmrrcrhmibh@thinkpad>
-References: <20241116-ep-msi-v8-0-6f1f68ffd1bb@nxp.com>
- <20241116-ep-msi-v8-3-6f1f68ffd1bb@nxp.com>
+        Sat, 23 Nov 2024 23:32:58 -0800 (PST)
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Allison Henderson <allison.henderson@oracle.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	linux-rdma@vger.kernel.org,
+	rds-devel@oss.oracle.com,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hangbin Liu <liuhangbin@gmail.com>,
+	Maximilian Heyne <mheyne@amazon.de>
+Subject: [PATCH net] selftests: rds: move test.py to TEST_FILES
+Date: Sun, 24 Nov 2024 07:32:43 +0000
+Message-ID: <20241124073243.847932-1-liuhangbin@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241116-ep-msi-v8-3-6f1f68ffd1bb@nxp.com>
 
-On Sat, Nov 16, 2024 at 09:40:43AM -0500, Frank Li wrote:
-> Introduce the helper function pci_epf_align_addr() to adjust addresses
+The test.py should not be run separately. It should be run via run.sh,
+which will do some sanity checks first. Move the test.py from TEST_PROGS
+to TEST_FILES.
 
-pci_epf_align_inbound_addr()?
+Reported-by: Maximilian Heyne <mheyne@amazon.de>
+Closes: https://lore.kernel.org/netdev/20241122150129.GB18887@dev-dsk-mheyne-1b-55676e6a.eu-west-1.amazon.com
+Fixes: 3ade6ce1255e ("selftests: rds: add testing infrastructure")
+Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+---
+ tools/testing/selftests/net/rds/Makefile | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-> according to PCI BAR alignment requirements, converting addresses into base
-> and offset values.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> change from v7 to v8
-> - change name to pci_epf_align_inbound_addr()
-> - update comment said only need for memory, which not allocated by
-> pci_epf_alloc_space().
-> 
-> change from v6 to v7
-> - new patch
-> ---
->  drivers/pci/endpoint/pci-epf-core.c | 45 +++++++++++++++++++++++++++++++++++++
->  include/linux/pci-epf.h             | 14 ++++++++++++
->  2 files changed, 59 insertions(+)
-> 
-> diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
-> index 8fa2797d4169a..4dfc218ebe20b 100644
-> --- a/drivers/pci/endpoint/pci-epf-core.c
-> +++ b/drivers/pci/endpoint/pci-epf-core.c
-> @@ -464,6 +464,51 @@ struct pci_epf *pci_epf_create(const char *name)
->  }
->  EXPORT_SYMBOL_GPL(pci_epf_create);
->  
-> +/**
-> + * pci_epf_align_inbound_addr() - Get base address and offset that match bar's
-
-BAR's
-
-> + *			  alignment requirement
-> + * @epf: the EPF device
-> + * @addr: the address of the memory
-> + * @bar: the BAR number corresponding to map addr
-> + * @base: return base address, which match BAR's alignment requirement, nothing
-> + *	  return if NULL
-
-Below, you are updating 'base' only if it is not NULL. Why would anyone call
-this API with 'base' and 'offset' set to NULL?
-
-> + * @off: return offset, nothing return if NULL
-> + *
-> + * Helper function to convert input 'addr' to base and offset, which match
-> + * BAR's alignment requirement.
-> + *
-> + * The pci_epf_alloc_space() function already accounts for alignment. This is
-> + * primarily intended for use with other memory regions not allocated by
-> + * pci_epf_alloc_space(), such as peripheral register spaces or the trigger
-> + * address for a platform MSI controller.
-> + */
-> +int pci_epf_align_inbound_addr(struct pci_epf *epf, enum pci_barno bar,
-> +			       u64 addr, u64 *base, size_t *off)
-> +{
-> +	const struct pci_epc_features *epc_features;
-> +	u64 align;
-> +
-> +	epc_features = pci_epc_get_features(epf->epc, epf->func_no, epf->vfunc_no);
-> +	if (!epc_features) {
-> +		dev_err(&epf->dev, "epc_features not implemented\n");
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	align = epc_features->align;
-> +	align = align ? align : 128;
-> +	if (epc_features->bar[bar].type == BAR_FIXED)
-> +		align = max(epc_features->bar[bar].fixed_size, align);
-> +
-> +	if (base)
-> +		*base = round_down(addr, align);
-> +
-> +	if (off)
-> +		*off = addr & (align - 1);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(pci_epf_align_inbound_addr);
-> +
->  static void pci_epf_dev_release(struct device *dev)
->  {
->  	struct pci_epf *epf = to_pci_epf(dev);
-> diff --git a/include/linux/pci-epf.h b/include/linux/pci-epf.h
-> index 5374e6515ffa0..eff73ccb5e702 100644
-> --- a/include/linux/pci-epf.h
-> +++ b/include/linux/pci-epf.h
-> @@ -238,6 +238,20 @@ void *pci_epf_alloc_space(struct pci_epf *epf, size_t size, enum pci_barno bar,
->  			  enum pci_epc_interface_type type);
->  void pci_epf_free_space(struct pci_epf *epf, void *addr, enum pci_barno bar,
->  			enum pci_epc_interface_type type);
-> +
-> +int pci_epf_align_inbound_addr(struct pci_epf *epf, enum pci_barno bar,
-> +			       u64 addr, u64 *base, size_t *off);
-> +static inline int pci_epf_align_inbound_addr_lo_hi(struct pci_epf *epf, enum pci_barno bar,
-> +						   u32 low, u32 high, u64 *base, size_t *off)
-
-Why can't you just use pci_epf_align_inbound_addr() directly? Or the caller
-could pass u64 address directly.
-
-- Mani
-
-> +{
-> +	u64 addr = high;
-> +
-> +	addr <<= 32;
-> +	addr |= low;
-> +
-> +	return pci_epf_align_inbound_addr(epf, bar, addr, base, off);
-> +}
-> +
->  int pci_epf_bind(struct pci_epf *epf);
->  void pci_epf_unbind(struct pci_epf *epf);
->  int pci_epf_add_vepf(struct pci_epf *epf_pf, struct pci_epf *epf_vf);
-> 
-> -- 
-> 2.34.1
-> 
-
+diff --git a/tools/testing/selftests/net/rds/Makefile b/tools/testing/selftests/net/rds/Makefile
+index 1803c39dbacb..612a7219990e 100644
+--- a/tools/testing/selftests/net/rds/Makefile
++++ b/tools/testing/selftests/net/rds/Makefile
+@@ -3,10 +3,9 @@
+ all:
+ 	@echo mk_build_dir="$(shell pwd)" > include.sh
+ 
+-TEST_PROGS := run.sh \
+-	test.py
++TEST_PROGS := run.sh
+ 
+-TEST_FILES := include.sh
++TEST_FILES := include.sh test.py
+ 
+ EXTRA_CLEAN := /tmp/rds_logs include.sh
+ 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.46.0
+
 
