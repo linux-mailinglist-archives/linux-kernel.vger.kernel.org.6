@@ -1,143 +1,93 @@
-Return-Path: <linux-kernel+bounces-419344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0264A9D6CC2
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 07:12:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8134316184C
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 06:12:18 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40024186616;
-	Sun, 24 Nov 2024 06:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Gwez3x7C"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13ACE9D6CC4
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 07:15:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F228C8828;
-	Sun, 24 Nov 2024 06:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE812281623
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 06:15:11 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A74188714;
+	Sun, 24 Nov 2024 06:15:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A672F44
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 06:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732428733; cv=none; b=Lza4tFauPTGBx+hY4DW9AsuJI6MUL5vJYqtKum7pWGX1BLu0WBBj9h0bHQMCDGNWEO/t5STZf8PiirUvPriOi8NiD3ZxLqmxSjI+ZFkiUgJkNIS3flPjMkTyAZENV0XUGAyp92qhbeCk6uShZv9jUC0HGR5wxFi7vGiESMJUWP8=
+	t=1732428905; cv=none; b=oXMDsGPN2MG5o1zMvwTG35zPJs+nDEhz640D3+H5Zmux+KdGqJLkWHKoZPUZS7XOYHVgFPEo8VMjYngqJ+ZuyNbBSoU2zbLWFJHmmVNV8o7NyZ/tHBFCqxqI9YFJzwCKfcrLq+ce2HmJ2/X+rOXdSNT8Yu12GV6tbKGQxpZ9BAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732428733; c=relaxed/simple;
-	bh=B83l0SEiWv+6jdMr62dgC5qObjxKWmfUpCeu4JzKH+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CY4mJkoipPuLcHHXKLsYegVj3jetMQ0AZFhfry3InPw4L/jmhG3cPNXGHiXQBy2IspMOgTcPMftZ3mVbqwsVIbYhnVWlBY6oG8OEXakQoeHnzSgIJCTEa+Hzv5NJbPG2pAOsor3U/94y+lBvu8XqKsgl1NoE165y29SFOddHIcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Gwez3x7C; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BC9C4581;
-	Sun, 24 Nov 2024 07:11:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732428708;
-	bh=B83l0SEiWv+6jdMr62dgC5qObjxKWmfUpCeu4JzKH+w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gwez3x7Ci7s62mg6glT8BrBJ1hX/Y5lCRXf18R2xDvm5CkQdb1tu8cqfEDKbBIgpH
-	 +CILQu6nfdTyaA27+ATbrbnTdbXNe413uopKH5zPORpWipJjq2iNm2xZtaaLD2LAQ0
-	 L24/BAvt91/tJyu7kTYaODTaA0Zuv1jv5BMDrj9o=
-Date: Sun, 24 Nov 2024 08:11:59 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: CK Hu =?utf-8?B?KOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
-Cc: Julien Stephan <jstephan@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"paul.elder@ideasonboard.com" <paul.elder@ideasonboard.com>,
-	"mchehab@kernel.org" <mchehab@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	Andy Hsieh =?utf-8?B?KOisneaZuueakyk=?= <Andy.Hsieh@mediatek.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"fsylvestre@baylibre.com" <fsylvestre@baylibre.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	"pnguyen@baylibre.com" <pnguyen@baylibre.com>
-Subject: Re: [PATCH v7 4/5] media: platform: mediatek: isp: add mediatek
- ISP3.0 camsv
-Message-ID: <20241124061159.GD19381@pendragon.ideasonboard.com>
-References: <20241121-add-mtk-isp-3-0-support-v7-0-b04dc9610619@baylibre.com>
- <20241121-add-mtk-isp-3-0-support-v7-4-b04dc9610619@baylibre.com>
- <85ab1984c04b1eddbea71006ab5d95cb4333d838.camel@mediatek.com>
- <CAEHHSvaEzCGZt3GpKBNDGUphetR7JWfJ7SZfvAU=O-3M4WZY7w@mail.gmail.com>
- <1136391c4cf4067a4cac77da8490e1e009808b8d.camel@mediatek.com>
+	s=arc-20240116; t=1732428905; c=relaxed/simple;
+	bh=yeNCFnf7JLEG+Txx7kfYTh9rCxVCgbbE10o8+WBLx8w=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=WmbjUCfX0ViURDg74FG937eJ4YsI3xoqG6p8aLylrjvw8cwBNh+OplufAgVv35a4oTNlla2ytCKcVZYvhlRrTxkDkvm2tJ6WhdwCpZMppLjD+iDweKIEB08ks2EhKZeOwUX46q+Y7T9gxFXObMkijvgzCyC2GnBVQnOctv1f/nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83abf9b6bfaso361160239f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 22:15:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732428902; x=1733033702;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=37DcHQSnQqigjF3B9FsTGkJi7xMOT+nc2TbxsA+afeU=;
+        b=h5cSDUS2FfciNHKtl77K6l+egbDPw6hwaSoeyDt1mEcuZLRZdsPBhbo9TsHn1Q1r1H
+         +kTh616Qq+8WN5QvvgxX/oTffYEt/uuBkOQvDSX9ikoKEmoEuslAhYhgo7S0TWZv3LIL
+         +2akbS1+u+6Qwh/NsSmGxd4g6U6ao+0z8Sz/hCBkv/fNTE0lp2qVZjw5yxps5OpgbaIl
+         H7hIfJRW8yggX16fMZ/4MAs8saxxFX6YL4JVIu+XEyq1sigxe5x1XDGtFJhF35e1Ockj
+         dJkDmYYYrj2MUxOGmrb6lMrMLYarPhHvywiYYxPMWFN8iQrYlt05r9BEk7wL8zz6QWjW
+         Zk6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUd9LqcfbScwKrLJhyk8/t5G1tRavQ1/TlJ5s+rDVVsk0PpE/Ttiymgs5wGBPZCaZIMgjKm62CGO6QSh+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw22dIGh3GSq+2MojErBjGDIJlt0Hrn2bEing4yYhFDpHl8BVZv
+	RgJdNWaxmtj8og4NyECU2iLbIbaAIqmPN8Pi8H2BRYb1A/7xbxfoVgzTFvLLS2TmCDe+WiB0svN
+	k752bFAhTMDGxap286nB1YraZchX6eIQyOENCfVA0hng9UZNOpRX2fP4=
+X-Google-Smtp-Source: AGHT+IHDP9UJh3rqI8nZi1MSqLFUDpvVT0wVt5S1MLnMyJKsK9GRuY2H5qd8nRzXlcfdutVRyKeYTPxJifHIQ5RI3PvhoWGNt+4g
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1136391c4cf4067a4cac77da8490e1e009808b8d.camel@mediatek.com>
+X-Received: by 2002:a05:6e02:12cc:b0:3a7:7f30:18e1 with SMTP id
+ e9e14a558f8ab-3a79aeacd61mr71302945ab.17.1732428902704; Sat, 23 Nov 2024
+ 22:15:02 -0800 (PST)
+Date: Sat, 23 Nov 2024 22:15:02 -0800
+In-Reply-To: <66f5cc9a.050a0220.46d20.0004.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6742c466.050a0220.1cc393.0035.GAE@google.com>
+Subject: Re: [syzbot] [media?] WARNING in iguanair_probe/usb_submit_urb (2)
+From: syzbot <syzbot+ffba8e636870dac0e0c0@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-usb@vger.kernel.org, mchehab@kernel.org, 
+	oneukum@suse.com, sean@mess.org, stern@rowland.harvard.edu, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 22, 2024 at 09:28:53AM +0000, CK Hu (胡俊光) wrote:
-> On Fri, 2024-11-22 at 10:16 +0100, Julien Stephan wrote:
-> > Le ven. 22 nov. 2024 à 08:54, CK Hu (胡俊光) a écrit :
-> > > On Thu, 2024-11-21 at 09:53 +0100, Julien Stephan wrote:
-> > > > External email : Please do not click links or open attachments until you have verified the sender or the content.
-> > > >
-> > > >
-> > > > From: Phi-bang Nguyen <pnguyen@baylibre.com>
-> > > >
-> > > > This driver provides a path to bypass the SoC ISP so that image data
-> > > > coming from the SENINF can go directly into memory without any image
-> > > > processing. This allows the use of an external ISP.
-> > > >
-> > > > Signed-off-by: Phi-bang Nguyen <pnguyen@baylibre.com>
-> > > > Signed-off-by: Florian Sylvestre <fsylvestre@baylibre.com>
-> > > > [Paul Elder fix irq locking]
-> > > > Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
-> > > > Co-developed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > > Co-developed-by: Julien Stephan <jstephan@baylibre.com>
-> > > > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> > > > ---
-> > >
-> > > [snip]
-> > >
-> > > > +static void mtk_cam_cmos_vf_enable(struct mtk_cam_dev *cam_dev,
-> > > > +                                  bool enable, bool pak_en)
-> > > > +{
-> > > > +       if (enable)
-> > > > +               cam_dev->hw_functions->mtk_cam_cmos_vf_hw_enable(cam_dev);
-> > >
-> > > Directly call mtk_camsv30_cmos_vf_hw_enable().
-> > > This has discussed in previous version [1].
-> > >
-> > > [1] https://patchwork.kernel.org/project/linux-mediatek/patch/20240729-add-mtk-isp-3-0-support-v6-4-c374c9e0c672@baylibre.com/
-> >
-> > Hi CK,
-> >
-> > I forgot about that discussion sorry :/
-> > I guess you want me to completely remove the  mtk_cam_hw_functions struct?
-> > In that case, what do you prefer:
-> > - keep mtk_camsv30_hw.c and put signatures in mtkcamsv30_hw.h and
-> > include mtk_camsv30_hw.h in mtk_camsv_video.c
-> > - rename mtk_camsv30_hw.c to mtk_camsv_hw.c (and all functions) and
-> > put signatures in mtk_camsv_hw.h
-> 
-> I prefer the second one.
+syzbot has bisected this issue to:
 
-If we drop the indirection (which I think is a good idea until we get a
-second hardware generation supported by the same driver) I would also go
-for the latter.
+commit b3e40fc85735b787ce65909619fcd173107113c2
+Author: Oliver Neukum <oneukum@suse.com>
+Date:   Thu May 2 11:51:40 2024 +0000
 
-> > > > +       else
-> > > > +               cam_dev->hw_functions->mtk_cam_cmos_vf_hw_disable(cam_dev);
-> > > > +}
-> > > > +
-> > > >
+    USB: usb_parse_endpoint: ignore reserved bits
 
--- 
-Regards,
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=135d0530580000
+start commit:   43fb83c17ba2 Merge tag 'soc-arm-6.13' of git://git.kernel...
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10dd0530580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=175d0530580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=58b000b917043826
+dashboard link: https://syzkaller.appspot.com/bug?extid=ffba8e636870dac0e0c0
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12515930580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11ca8ec0580000
 
-Laurent Pinchart
+Reported-by: syzbot+ffba8e636870dac0e0c0@syzkaller.appspotmail.com
+Fixes: b3e40fc85735 ("USB: usb_parse_endpoint: ignore reserved bits")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
