@@ -1,140 +1,146 @@
-Return-Path: <linux-kernel+bounces-420241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8341C9D7762
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 19:34:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C87369D77D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:20:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAF4E282891
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:34:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FBA3B2B051
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34994139D0A;
-	Sun, 24 Nov 2024 18:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC3213B5A0;
+	Sun, 24 Nov 2024 18:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kslEHoLP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YTao2hPQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933BB2500AF;
-	Sun, 24 Nov 2024 18:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A388376E0;
+	Sun, 24 Nov 2024 18:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732473253; cv=none; b=guOZHphW1GdCnuW9SV8lu3VLaM7d1TnDySgDbZdYaTzVOIwQxmAggCpv+TanX3pfkbKhTiNv8rNoRi+EbH4WwferpX7Z2qn2gMymMggr5Nr68AYe7r5xnioQRUf4Uw0OPgx+By9YBUjkaPvdLrE8IxcO2sX1VhFhnh9KHGFUioc=
+	t=1732473288; cv=none; b=k6YwHK6qFEKhDlXzyPDiUIfEKDclQxbSSLktHwsUcBTYljMZtPXjrn28ScwmkRJAFRlCRJkLIztZTWF/EkVp6dHrgj9ZddgiG0dAPmQJLrnwEVywqESyMJC+xRApNWqtgINnWFYnaOcwPW04LOyBepk29Qo6PkWFIdKZBPnE2ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732473253; c=relaxed/simple;
-	bh=fvPo6IPSTku4fpZN+SQNNK5hr8bBPTZJf14FIHbm1Jk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tfoF7VcY3dlPMXDQ8McJGHxStAB8qjYiOC28PWDSVr6J1hxqEASbdDWYgwCcxNZrcBBLstd9nn+8iKSdclVadENc8BcP85jw6BreQEHgRVOY55l+yC8BpDNQMApBbat7XAj3Xh+ZzFxOjZtagFf7MsRryCxBid1Ccv1baRS1SrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kslEHoLP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 740B0C4CECC;
-	Sun, 24 Nov 2024 18:34:10 +0000 (UTC)
+	s=arc-20240116; t=1732473288; c=relaxed/simple;
+	bh=cl1Zu0xcmXtHBm1fsA0sKafkjie9H43MlBq8H5G4JDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kgxsch87ILNe4hR29n/eetbgLRjPZCzgvERR94pM68Ir9MaApnGVwjiB40GI0Gq4gI8Xi4RT9pi3AUvl25GFegTK9x4x70lHvtlU163HpDtUSjaDufKpJbv55DzXXrSe01P9pt4NcDI0wTHYLQZPAcrVF/hO4FZhI8tHoYMwyo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YTao2hPQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0513FC4CECC;
+	Sun, 24 Nov 2024 18:34:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732473253;
-	bh=fvPo6IPSTku4fpZN+SQNNK5hr8bBPTZJf14FIHbm1Jk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kslEHoLPjA0b1qXeBx6/VPMorep/DurS2ECjIinQeInqzZr0LbDMcaKxNaej7bC45
-	 jOqy9rF5PV+qZGGgaWj/TP3QVpN8A6fpY5FXzgX+yegUGWjSvXQPFxyHsPx0fJ2RtP
-	 n4Oegzzp0CPMaiRbs/v32WWSkecJ8twne9M3dIIKKoE97wRPvuvKhPtS5HGCS9f8AS
-	 FUiMVvyMoXpleV/SoRTA5YDu7njH3hp1TMlgIprSt0QwtJMyMjJZeVT5oIl2pUPgvR
-	 LcCjXI9Deiq2XIvBVL/+myYpAAuR2z57pka6rSMlQBLvqTmm1P7Y/cLpUc3tQzehhI
-	 zuKb91Pg1OaRg==
-Date: Sun, 24 Nov 2024 18:34:06 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v2 12/22] iio: accel: adxl345: elaborate iio channel
- definition
-Message-ID: <20241124183406.74861fef@jic23-huawei>
-In-Reply-To: <20241117182651.115056-13-l.rubusch@gmail.com>
-References: <20241117182651.115056-1-l.rubusch@gmail.com>
-	<20241117182651.115056-13-l.rubusch@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1732473288;
+	bh=cl1Zu0xcmXtHBm1fsA0sKafkjie9H43MlBq8H5G4JDY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YTao2hPQG5JL2+MpViH9pcDzQ9eFgXvAgJnKhxe0er4A0yb4s3GdlixJofg1c5D2k
+	 lw4v+QoXZJdZtQYmIwME4l3TnDG+i9CsqLISxC9yRR+P6TWqRKP4FLKWyX+RQCYz2x
+	 9+qmFLQeAVMMGyXbIL01hw3s4uKJqR9ILjkWQPl0Bifh46KMekMbr+kBsTaHBJc/2A
+	 prGJ+yRT0eY7x3ULbsWO/2oN3OnzZFynZoQMkSsinPpGXjYcVum0UVMyD5cWS381NE
+	 g0XH5/TgcMESL2txoYE2YlI0iwMicgFJtt9OB1hFTVh4pDO620Rxltsbj6q7a1PDV1
+	 Pebt/ECmXoMWQ==
+Date: Sun, 24 Nov 2024 10:34:47 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, baijiaju1990@gmail.com,
+	21371365@buaa.edu.cn
+Subject: Re: [PATCH v4] fs: Fix data race in inode_set_ctime_to_ts
+Message-ID: <20241124183447.GP1926309@frogsfrogsfrogs>
+References: <61292055a11a3f80e3afd2ef6871416e3963b977.camel@kernel.org>
+ <20241124094253.565643-1-zhenghaoran@buaa.edu.cn>
+ <20241124174435.GB620578@frogsfrogsfrogs>
+ <wxwj3mxb7xromjvy3vreqbme7tugvi7gfriyhtcznukiladeoj@o7drq3kvflfa>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <wxwj3mxb7xromjvy3vreqbme7tugvi7gfriyhtcznukiladeoj@o7drq3kvflfa>
 
-On Sun, 17 Nov 2024 18:26:41 +0000
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
-
-> Make the channel definition ready to allow for feature implementation
-> for this accelerometer sensor.
-
-Add what you need for each patch that makes use of the new data.
-A separate change like this is not easy to review without seeing those
-usecases and a reviewer should not need to go look for them in other
-patches.
-
+On Sun, Nov 24, 2024 at 06:56:57PM +0100, Mateusz Guzik wrote:
+> On Sun, Nov 24, 2024 at 09:44:35AM -0800, Darrick J. Wong wrote:
+> > On Sun, Nov 24, 2024 at 05:42:53PM +0800, Hao-ran Zheng wrote:
+> > > A data race may occur when the function `inode_set_ctime_to_ts()` and
+> > > the function `inode_get_ctime_sec()` are executed concurrently. When
+> > > two threads call `aio_read` and `aio_write` respectively, they will
+> > > be distributed to the read and write functions of the corresponding
+> > > file system respectively. Taking the btrfs file system as an example,
+> > > the `btrfs_file_read_iter` and `btrfs_file_write_iter` functions are
+> > > finally called. These two functions created a data race when they
+> > > finally called `inode_get_ctime_sec()` and `inode_set_ctime_to_ns()`.
+> > > The specific call stack that appears during testing is as follows:
+> > > 
+> > > ============DATA_RACE============
+> > > btrfs_delayed_update_inode+0x1f61/0x7ce0 [btrfs]
+> > > btrfs_update_inode+0x45e/0xbb0 [btrfs]
+> > > btrfs_dirty_inode+0x2b8/0x530 [btrfs]
+> > > btrfs_update_time+0x1ad/0x230 [btrfs]
+> > > touch_atime+0x211/0x440
+> > > filemap_read+0x90f/0xa20
+> > > btrfs_file_read_iter+0xeb/0x580 [btrfs]
+> > > aio_read+0x275/0x3a0
+> > > io_submit_one+0xd22/0x1ce0
+> > > __se_sys_io_submit+0xb3/0x250
+> > > do_syscall_64+0xc1/0x190
+> > > entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > > ============OTHER_INFO============
+> > > btrfs_write_check+0xa15/0x1390 [btrfs]
+> > > btrfs_buffered_write+0x52f/0x29d0 [btrfs]
+> > > btrfs_do_write_iter+0x53d/0x1590 [btrfs]
+> > > btrfs_file_write_iter+0x41/0x60 [btrfs]
+> > > aio_write+0x41e/0x5f0
+> > > io_submit_one+0xd42/0x1ce0
+> > > __se_sys_io_submit+0xb3/0x250
+> > > do_syscall_64+0xc1/0x190
+> > > entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > > 
+> > > To address this issue, it is recommended to add WRITE_ONCE
+> > > and READ_ONCE when reading or writing the `inode->i_ctime_sec`
+> > > and `inode->i_ctime_nsec` variable.
+> > 
+> > Excuse my ignorance, but how exactly does this annotation fix the race?
+> > Does it prevent reordering of the memory accesses or something?  "it is
+> > recommended" is not enough for dunces such as myself to figure out why
+> > this fixes the problem. :(
+> > 
 > 
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-> ---
->  drivers/iio/accel/adxl345_core.c | 36 +++++++++++++++++++++-----------
->  1 file changed, 24 insertions(+), 12 deletions(-)
+> It prevents the compiler from getting ideas. One hypothetical is
+> splitting the load from one asm op to several, possibly resulting a
+> corrupted value when racing against an update
 > 
-> diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl345_core.c
-> index b16887ec1c..f98ddef4c5 100644
-> --- a/drivers/iio/accel/adxl345_core.c
-> +++ b/drivers/iio/accel/adxl345_core.c
-> @@ -141,21 +141,33 @@ struct adxl34x_state {
->  	u8 intio;
->  };
->  
-> -#define ADXL345_CHANNEL(index, axis) {					\
-> -	.type = IIO_ACCEL,						\
-> -	.modified = 1,							\
-> -	.channel2 = IIO_MOD_##axis,					\
-> -	.address = index,						\
-> -	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |			\
-> -		BIT(IIO_CHAN_INFO_CALIBBIAS),				\
-> -	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |		\
-> -		BIT(IIO_CHAN_INFO_SAMP_FREQ),				\
-> +#define ADXL34x_CHANNEL(index, reg, axis) {				\
-> +		.type = IIO_ACCEL,					\
+> A not hypothethical concerns some like this:
+> 	time64_t sec = inode_get_ctime_sec(inode);
+> 	/* do stuff with sec */
+> 	/* do other stuff */
+> 	/* do more stuff sec */
+> 
+> The compiler might have decided to throw away the read sec value and do
+> the load again later. Thus if an update happened in the meantime then
+> the code ends up operating on 2 different values, even though the
+> programmer clearly intended it to be stable.
 
-No reason to change the indentation.
-That just makes this patch hard to read as I can't immeidately see what changed.
+<nod> I figured as much, but I wanted the commit message to spell that
+out for everybody, e.g. "Use READ_ONCE to force compilers to sample the
+ctime values one time only, and WRITE_ONCE to prevent the compiler from
+turning one line of code into multiple stores to the same address."
 
-> +			.address = (reg),				\
-> +			.modified = 1,					\
-> +			.channel2 = IIO_MOD_##axis,			\
-> +			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |	\
-> +			BIT(IIO_CHAN_INFO_CALIBBIAS),			\
-> +			.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) | \
-> +			BIT(IIO_CHAN_INFO_SAMP_FREQ),			\
-> +			.scan_index = (index),				\
-> +			.scan_type = {					\
-Bring the scan stuff in as part of a patch that makes use of it. Not
-beofre that.
+> However, since both sec and nsec are updated separately and there is no
+> synchro, reading *both* can still result in values from 2 different
+> updates which is a bug not addressed by any of the above. To my
+> underestanding of the vfs folk take on it this is considered tolerable.
 
-> +				.sign = 's',				\
-> +				.realbits = 13,				\
-> +				.storagebits = 16,			\
-> +				.shift = 0,				\
-> +				.endianness = IIO_LE,			\
-> +			},						\
->  }
->  
-> +enum adxl34x_chans {
-> +	chan_x, chan_y, chan_z,
-> +};
-> +
->  static const struct iio_chan_spec adxl34x_channels[] = {
-> -	ADXL345_CHANNEL(0, X),
-> -	ADXL345_CHANNEL(1, Y),
-> -	ADXL345_CHANNEL(2, Z),
-> +	ADXL34x_CHANNEL(0, chan_x, X),
-> +	ADXL34x_CHANNEL(1, chan_y, Y),
-> +	ADXL34x_CHANNEL(2, chan_z, Z),
->  };
->  
->  static int adxl345_read_raw(struct iio_dev *indio_dev,
+<nod> This is the other thing -- the commit message refers to preventing
+a data race, but there is indeed nothing about access ordering that
+prevents /that/ race.  Someone not an fs developer could interpret that
+as "the patch does not fully fix all possible problems" whereas the
+community has decided there's an acceptable tradeoff with not taking
+i_rwsem.
 
+--D
 
