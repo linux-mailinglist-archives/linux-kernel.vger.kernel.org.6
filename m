@@ -1,123 +1,126 @@
-Return-Path: <linux-kernel+bounces-420294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C36A9D7872
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 23:01:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3469D7873
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 23:03:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43CEF282AD2
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 22:01:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F43A1631FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 22:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D305103F;
-	Sun, 24 Nov 2024 22:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9809F1632FA;
+	Sun, 24 Nov 2024 22:03:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="hX5bDHYg"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Hr+2msdC"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21092500D3
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 22:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053672500A7
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 22:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732485677; cv=none; b=M+yla9atwlzxLp6U464DIgoMvw63W0pZU/q3OO6fqL219xYo8yegWH8Pr7opCBZy4Yy/DOyFdgtovyfJebmkx0SEex2LCQ+/kxcjXbScsymrGY61AIli1GnKdsgTF2YJgEyB0hk5NeuM8bZAfUdkeYLDvkpEUtBbuYiLo2q3848=
+	t=1732485818; cv=none; b=iHstA/2OGVY57lY+eSJ1lB6QDE2PN14z6CRv/LIgAccpf/jHx7lLiabdaZ3D4TLNH2GhaHnvV6fLjEkapVdjzv5v62LLWJ0/pE+Qy+kwkSHIG9NIzWIY2z0H3dJIFeTdU3ZKJiKWNkR0+JqqEDJBlXVilpp20KK0OWasNAn/vjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732485677; c=relaxed/simple;
-	bh=B6ZExtlrWDpdVkh4NrErlj5TWXl10njXAk3D3IVXvjY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=msOE72/nK/5eMHfgQ1sNuMQqRtVqGCbRZgpTSBQQmTNvsk18wTCn01Lf5XEglWbbqJwKBtzmFPVqGKWBoK5MiRZ0/T9FKIug+XO6tgaGO6aBHICu+govJ41RbntpkwQBWF/P+yWRDr1hpcRzSf5kl9W1wV0oFfCH2pS4rwyfZIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=hX5bDHYg; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4315f24a6bbso32333945e9.1
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 14:01:14 -0800 (PST)
+	s=arc-20240116; t=1732485818; c=relaxed/simple;
+	bh=iX94XKfZ7f0NO+joOYX0MDrnEIpOJQpUrddQEZ6qTtk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WfVwg6K5J3l0YAbRTlmVa9pxRJHCk/KjPzx8YQZQlkDoslwpVbNz19mDLbao2ooak91eIF+rY+f6NSt1+BNd8htdLJR6xzv1dnhKJsY6wYIoWz/mcx0wi7or51USun1BBQy0G9p0A82W06Hwn0PB6R58aYhISqZqRsoNP2s/Tnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Hr+2msdC; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5cfabc686c8so4590874a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 14:03:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1732485673; x=1733090473; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WO0cvhOCCYEcMHo4t/kUcC7+MddOiWfvg8yPqnsazn4=;
-        b=hX5bDHYg6+UsRUluRjpXQcWAhAehhv496WFfAjp3OK+Sl9S/xEdfrXuusNwYYzKx/O
-         Aks3lm+k7/hd4suDwLvlTot5iiw0eoFVBdc1CGVwx8K1k//INL2ELAXfFcr9gwtzuJi1
-         vrxR4pBcp8CbRsJGTN4HS3m9nrmuX6JFUKIjRTLz9ocViQdFeIUZgD7J+kgZ5lMoLAg6
-         qM7O3UfmwgN+aJfb5xvZX48o+Lqz2mnWbiVk0SJd8HSMDm3qamafOkgmk9lUsZOHNxu6
-         jC3kcLmwL0qK1JfpYlFws5y58VZ5AgsjjJ+aT/lkpiWUE/JX5SiFFiyXDkVlNBMGB9yH
-         4DmQ==
+        d=linux-foundation.org; s=google; t=1732485815; x=1733090615; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ERBLAMwfDvyFZlAfhe6oQ+WFB88uOyEhfAk9kyMRbGg=;
+        b=Hr+2msdC3637mFCUt5Jk+FL3CbAyJEZ67IvFVfWdMxs1RV/XhesvZ8DQ7osM/KHF9j
+         tv8kv09eO30Y6EeINO+TQrd7sK8BJLdnPj9rK6YKrLfzS/1EOUnhUhlA7yLFvYhMM0QV
+         cySOP5tBcm51pqWsGJqb9f+q+1AHIgRPVO5UQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732485673; x=1733090473;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WO0cvhOCCYEcMHo4t/kUcC7+MddOiWfvg8yPqnsazn4=;
-        b=u6vBZOYacPeHuwvueJnfs3p7+H8f9bL+uQ2zXu1DQJ64h/EKvZM6nM0vjnAEkuY7mt
-         3KkdCJsgG0Xw+JI3k/mTAK5uYl8kXq3WDwvBm9C356QVffUdTmaOA8BJVrAeQkkM5Y2A
-         bqjoqsnaPePnEN1sULj0ABuJKoAx5RfUDB/DMTh62cdrB2LIYV1Bd2ubuv65fdagVe9L
-         o7KtzdLZTca7FlNuOar7YB2Sf+cYsu3Xu9A2j/lym04lK5E3ot3Fm3yvYqdlwgMilee1
-         VwhKHPJnrbcbQwIzzL/AxZwEv0KepSj1nZ5U6OC0oPNNqLqTOsfbyAbLLVLQgsRiFvyF
-         mimA==
-X-Forwarded-Encrypted: i=1; AJvYcCV969axmh6Lj1RpY+TsAXCxRcgHidREcFy1XtAtGE7JUmU98y4jY/CmF6soouK2Mh3zVWy1OL4O6q1ZQbk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxy/vbHoUt/X1Ezk0/Ei2r+jzFHlus5D6PYm3sM1Ch5pdwYXLW6
-	BaxdlYEeNXQk/RrrIM/nVqbS0Cvq7r/hgbLK5MksIEFbJH6LYzkypGGaRYd0f2o=
-X-Gm-Gg: ASbGnctknTwpTVN9Pcyns4Lov/iOy96e44ma86koy8LR1aSrxHIqPFd3r6UFy4cD8x0
-	li+hUAcl1MtxrSQycEk4Z7oWcIvmv+5kRnVu6FTArh2F7vJ1KpekM/AKeOyVvvW9sbA7vrlSWLT
-	MfNsArEgdli7BJOjSD8lsBcjY8icxq9NSWI6scwn7nj+srdFZE/m2qD64dDpy8aDxThWxwgfnko
-	vxUHaSROpFPsMWXFdHQa1U4Z08yHuN+yKfU6T+D3mYJNb+JzpLV
-X-Google-Smtp-Source: AGHT+IEUmJWNVT/yCHIU4DpWfoBtu4D/gDbWjN7B8ekkI1xXmQ3BxXPpdtKlYrC7+KrVS7KrV9+AEw==
-X-Received: by 2002:a5d:64a1:0:b0:382:5aae:87c7 with SMTP id ffacd0b85a97d-38260b89369mr8791101f8f.31.1732485673204;
-        Sun, 24 Nov 2024 14:01:13 -0800 (PST)
-Received: from [192.168.0.245] ([62.73.69.208])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433cde0db3csm105665385e9.10.2024.11.24.14.01.12
+        d=1e100.net; s=20230601; t=1732485815; x=1733090615;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ERBLAMwfDvyFZlAfhe6oQ+WFB88uOyEhfAk9kyMRbGg=;
+        b=QbiOFWJlP9b3WnBu+n7ke8vzGB4ayJ+cb89TLftDsVgoV03TCLkAbvL3xRl+oy604S
+         yqa4eeZlKGpUmE9os4XuOcT/4jC1FtNhQXUE3JevRtb5Ga94QbPkddwz7nTukmH39OvI
+         U5omS5/WPTqhOPi1yhlDdKzo5ZM0D+z6XGbeRXckb7dJSO8J540qO30XKzzqCoAEMipV
+         ZCcZL4KMfIXmjBqRLIxJNmQLaHFWnlOsGveq/q+Hwi32jkkPTqqiFQarfS0l3Y4gYI4y
+         McDX+IkPAb6yT1nNISm3gep7LxARO0XRjLprqtwKA/JxUDxS1sXK31lNJI97WEcV1pq9
+         cPYg==
+X-Forwarded-Encrypted: i=1; AJvYcCXIw4w2g8UvfTy8SUmJ6kArmj+MbQ6NibMFd0vzjaDBRWAWPCg5XV+aU1jGGpJjTVrMTN79ieSff+mIK3k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLsBlVS+yXwZaNatyxstNpbKSPNBubpsWKmuBJn/tfQ6SB2qKP
+	YK8iMpsCCEzoEYUb5BpChsTxqRvfDigebuAKcOJ71M6/EbxOsLVIwJcu7uuesxGqJ60CqY+JwWR
+	XJksowg==
+X-Gm-Gg: ASbGncv7GIrM/hxoS3R0+StqDkddds3lRKB49beEPqMoiBpe4c5AxPeaKlRFukwFxQi
+	Z6pT6EWmjuMunqTbzef5OdacUVdE3uMIMhFvZgnArNJIq73tjZpXUNciWlZFc6bxXG8nVfpw9wc
+	/7Xj/0GJ4THmFGdOI1i7D5rb4ZStSLcnkWhw6X7hIqOaGydk4KLZ2pG5fIHaQ+W70bEfs2Kx9ki
+	7kkS5twNbJ4lVG9cSfpZK3XTNBY7gMN7BrLSshu6n4myjgciDeOpMxeFJvZ4q9enAxRH0yBePyI
+	FtzJdN0mCEg3VtYi9qKV2rmc
+X-Google-Smtp-Source: AGHT+IELbxoP9VoPDgSNr0GyKUzHu1aQaLbjhrJpQmUgF+MNV3q+0xsgKSV/wjFPt42RWvNnYm2YAg==
+X-Received: by 2002:a05:6402:2551:b0:5cf:f453:4bac with SMTP id 4fb4d7f45d1cf-5d02060d32bmr9136400a12.19.1732485815079;
+        Sun, 24 Nov 2024 14:03:35 -0800 (PST)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d3fc6besm3414937a12.55.2024.11.24.14.03.33
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Nov 2024 14:01:12 -0800 (PST)
-Message-ID: <87d8a49c-41e3-4b18-9ada-cb64fa66fe9b@blackwall.org>
-Date: Mon, 25 Nov 2024 00:01:11 +0200
+        Sun, 24 Nov 2024 14:03:34 -0800 (PST)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa51d32fa69so325498966b.2
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 14:03:33 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVJLp59W3Bsh+Gt0fS9EUAS1DiA68foZUJGGaueSr9prZ9VpZ0MJlHi8sUwIv85Ex4vzTdtNfq2+brGy+U=@vger.kernel.org
+X-Received: by 2002:a17:906:1daa:b0:aa5:3853:5531 with SMTP id
+ a640c23a62f3a-aa53853579amr485003366b.33.1732485812755; Sun, 24 Nov 2024
+ 14:03:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC net-next (resend) 1/4] net: bridge: respect sticky flag on
- external learn
-To: Elliot Ayrey <Elliot.Ayrey@alliedtelesis.co.nz>,
- "andrew@lunn.ch" <andrew@lunn.ch>, "olteanv@gmail.com" <olteanv@gmail.com>,
- "davem@davemloft.net" <davem@davemloft.net>,
- "pabeni@redhat.com" <pabeni@redhat.com>, "roopa@nvidia.com"
- <roopa@nvidia.com>, "edumazet@google.com" <edumazet@google.com>,
- "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
- "horms@kernel.org" <horms@kernel.org>, "kuba@kernel.org" <kuba@kernel.org>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "bridge@lists.linux.dev" <bridge@lists.linux.dev>
-References: <20241108035546.2055996-1-elliot.ayrey@alliedtelesis.co.nz>
- <20241108035546.2055996-2-elliot.ayrey@alliedtelesis.co.nz>
- <f2ac33e7b8ec0fefa48fe7cd3b1004abab67dcb1.camel@alliedtelesis.co.nz>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <f2ac33e7b8ec0fefa48fe7cd3b1004abab67dcb1.camel@alliedtelesis.co.nz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <0edca3e5d2194cdf9812a8ccb42216e9@AcuMS.aculab.com>
+ <CAHk-=wik4GHHXNXgzK-4S=yK=7BsNnrvEnSX3Funu6BFr=Pryw@mail.gmail.com> <b90410d3f213496ebfdd2f561281791b@AcuMS.aculab.com>
+In-Reply-To: <b90410d3f213496ebfdd2f561281791b@AcuMS.aculab.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 24 Nov 2024 14:03:16 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgq1eEoUFK5mSUM6d53USDRaWY4G+ctTNEw9w_PsUqf1w@mail.gmail.com>
+Message-ID: <CAHk-=wgq1eEoUFK5mSUM6d53USDRaWY4G+ctTNEw9w_PsUqf1w@mail.gmail.com>
+Subject: Re: [PATCH v2] x86: Allow user accesses to the base of the guard page
+To: David Laight <David.Laight@aculab.com>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>, "bp@alien8.de" <bp@alien8.de>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@kernel.org>, 
+	Mikel Rychliski <mikel@mikelr.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 24/11/2024 23:01, Elliot Ayrey wrote:
-> On Sat, 2024-11-09 at 15:32 +0200, Nikolay Aleksandrov wrote:
->> So you have a sticky fdb entry added, but it is still allowed to roam
->> in HW?
-> 
-> No the hardware has informed us a host has _tried_ to roam.
-> 
-> As I think about this more, using the sticky bit alone probably isn't
-> the best idea and it might be better if this mechanism were related to
-> a port being locked? After all the port being locked in hardware is
-> what generates this event.
+On Sun, 24 Nov 2024 at 12:49, David Laight <David.Laight@aculab.com> wrote:
+>
+> Doesn't that just need a <= changed to < ?
+> (And possibly of name)
 
-That does sound better, but we should have the same functionality
-in software as well. Perhaps optional to avoid potential flood of
-current users with unexpected notifications, see my response to
-the other mail for more info.
+Well, more importantly, it means that we can't use the same helper
+function at all.
 
-Cheers,
- Nik
+> > but I suspect that I'm too chicken to actually do that.
+> >
+> > Please somebody convince me.
+>
+> I didn't know you really had a 'chicken streak' :-)
 
+Actually, looking at some of the users of access_ok(), my chicken
+streak just got wider.
+
+Most of them are trivial, but when masking out the pure 'sizeof(x)'
+things (that the "statically smaller than one page" case will filter
+out anyway), there's a few scary ones in the vhost code and the drm
+code that makes me go "those are checking ring buffer sizes and may
+not access the end result in any order".
+
+So trying to optimize access_ok() is probably not worth the heartburn.  Oh well.
+
+               Linus
 
