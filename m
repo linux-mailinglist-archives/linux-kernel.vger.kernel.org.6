@@ -1,243 +1,111 @@
-Return-Path: <linux-kernel+bounces-420165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FB4A9D77BC
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:10:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F4569D772B
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 19:13:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12227B264AC
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:50:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17915B26373
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02B318BBAC;
-	Sun, 24 Nov 2024 16:50:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53AD18B475;
+	Sun, 24 Nov 2024 16:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OBxC9suO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uoZNqMVt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DC03A268;
-	Sun, 24 Nov 2024 16:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5135C189F45;
+	Sun, 24 Nov 2024 16:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732467050; cv=none; b=QCGyG6Wp2p9M5vZiEwGwliprnoXJp3AFxB4pGX1TCRrGHZp8sf/vIb+cL+KemZSRUEcQhXYe12CAD7k4Bgy5aQHPqPjUdxyKgkBCCfrRnvNMia/R4sSJbdbeCOYd6QlXQs1nBB3V6sWPVvb6uYWJXlnEl/EyqcqqrPgKO4c4vNQ=
+	t=1732467300; cv=none; b=HOWKw81wJUcTrJONcmrdpY10JApkSb3VUSEKgzZ8U6RD5E+9YqZNRdzlXhUQt25rdPiyEG7MxWE0jQCNsOLqSxiMAvntyqGifc8rkovn8CQ6fBfqsTQtyEkg+3jAoiUfG7jBW7T346XCoUyc/cele5m5mJMrB7Mh4KBuCMJnW70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732467050; c=relaxed/simple;
-	bh=p+7fvZaMBVAV7TlCOhok6MWd10/1G8Mu+ZfdfRXfnYA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C4B94EOrAzaley0dYJIZ1g0L7RE+ivI+EUABjy1TvXyzFwR+raabd8mMRr6uOPsrSGBJUNPYguotmLFx633H99J0sJVAjta+CkelxjVlNEpqpjeO8g5FYChXmvsvwI21CmHofdZw0xK9gS13knYn+OQsn3utZzfVsawQzshgn8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OBxC9suO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F054EC4CECC;
-	Sun, 24 Nov 2024 16:50:43 +0000 (UTC)
+	s=arc-20240116; t=1732467300; c=relaxed/simple;
+	bh=xjHzIgrs0evP7qQh1vDP8iL2YuIbWNeUnTID39DnOfQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k1P+mCL121f4j9MhvDoT94T+Hyt2EgSr9YmF9+Yh6YcKhYnD5uKr/il8GrGr2pqyc/qDwFE2VpTD5Ng2lHMmU3bkDdD1rIIRJ2VvYtJm4GYuuKvMHsNJoYuQZq5ANLReQsGzezC/zv6l5CXkCkBRdoyRKZ74pPVocHLcF6P7hQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uoZNqMVt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FFCBC4CECC;
+	Sun, 24 Nov 2024 16:54:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732467049;
-	bh=p+7fvZaMBVAV7TlCOhok6MWd10/1G8Mu+ZfdfRXfnYA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OBxC9suOAZzl7df9dBD333MPlskw5F+/wLwbgyieBhrqKcGvdoZwizxSuDoRsLVNH
-	 Ob/xTEMx473CcHFVgHC9OiqzHtmPk/iPK2gvCpF2ctWzTaUk94efcSQvquqwx+QX1k
-	 Yytcodwod2KKxG20QxSASOmiGChl7A80WEGqIFbiA3NysXP4+6lMAZUtJcwRC6+klA
-	 lC1cTam7sRkaXWMlO70Kx96Kn8K30ruHXeR5/jszM66srUKuFcu62F3jgHbddXiKhr
-	 WK+YWm3McZ2bGA+rgcvrfybaUQgaoerbG1HnFz2y06+b7vudQub2GLYIQec2Bi0zyt
-	 68DyQuTiIf4EA==
-Date: Sun, 24 Nov 2024 16:50:39 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, David
- Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>,
- linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v5 06/16] spi: add offload TX/RX streaming APIs
-Message-ID: <20241124165039.206dc994@jic23-huawei>
-In-Reply-To: <20241115-dlech-mainline-spi-engine-offload-2-v5-6-bea815bd5ea5@baylibre.com>
-References: <20241115-dlech-mainline-spi-engine-offload-2-v5-0-bea815bd5ea5@baylibre.com>
-	<20241115-dlech-mainline-spi-engine-offload-2-v5-6-bea815bd5ea5@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1732467299;
+	bh=xjHzIgrs0evP7qQh1vDP8iL2YuIbWNeUnTID39DnOfQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uoZNqMVtF8aUG2rkbpgEkw4uObOeEM5TcWw+QgZ/wekchZlpLwoWzHBF1olPVSqnz
+	 SM2KcYljWokCjLyaIuHaNF8peWIG/NET1R6TKxYBq7K9pgP+Vu3v0g1nF9p/T4mEjS
+	 Mh/ijXQoBQrd9+xZQ+MuWt+2AGhmjr6/+f8t/2ljHz4EAUh15LkObVHBXZa3KHIONX
+	 V4fO5oeY2c8aGxzl0AwIt1Gt8UAVHfsZ5t4jOPxtf6Hqht2AIT8dvT3ZPC6a+4Gkfk
+	 6nrKCkP2PuclaQP/iiAponvcrF5NxtzZqJmoaSBANtBtJoViFQsLz6BM6HXGzk1jfo
+	 e+pomu2pAHf1w==
+Date: Sun, 24 Nov 2024 11:54:58 -0500
+From: Sasha Levin <sashal@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] pin control changes for v6.13
+Message-ID: <Z0NaYhtZy89ObgmR@sashalap>
+References: <CACRpkdZWqTOTzYYgD-wAps2Ygsh-D+nxaW76hrWSdTDZZKBA_w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZWqTOTzYYgD-wAps2Ygsh-D+nxaW76hrWSdTDZZKBA_w@mail.gmail.com>
 
-On Fri, 15 Nov 2024 14:18:45 -0600
-David Lechner <dlechner@baylibre.com> wrote:
+Hi Linus,
 
-> Most configuration of SPI offloads is handled opaquely using the offload
-> pointer that is passed to the various offload functions. However, there
-> are some offload features that need to be controlled on a per transfer
-> basis.
-> 
-> This patch adds a flag field to struct spi_transfer to allow specifying
-> such features. The first feature to be added is the ability to stream
-> data to/from a hardware sink/source rather than using a tx or rx buffer.
-> Additional flags can be added in the future as needed.
-> 
-> A flags field is also added to the offload struct for providers to
-> indicate which flags are supported. This allows for generic checking of
-> offload capabilities during __spi_validate() so that each offload
-> provider doesn't have to implement their own validation.
-> 
-> As a first users of this streaming capability, getter functions are
-> added to get a DMA channel that is directly connected to the offload.
-> Peripheral drivers will use this to get a DMA channel and configure it
-> to suit their needs.
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-Some docs that need updating.  Otherwise I wonder if we should delay
-the _tx variants until there is a driver using them.
+I've just hit the issue you've described in this PR:
 
-I'm sure you have one on the way and there is an argument that it makes
-sense to review rx and tx together, but still good to only add code
-when it's used.
+On Sat, Nov 23, 2024 at 05:23:26PM +0100, Linus Walleij wrote:
+>- The second issue is more sneaky: a recent fixup patch to one
+>   of the rc:s (I think -rc4) fixed some error path bugs in
+>   the AW9523 driver, then a patch to the regular devel is
+>   improving the use of devres so the fixed errorpath fixes
+>   things broken.
+>
+>I have been applying the following fixup patch for -next to work:
 
-Jonathan
+And realized that that proposed fixup:
 
-> ---
-> 
-> v5 change:
-> * Remove incorrect comment about caller needing to release DMA channels.
-> 
-> v4 changes:
-> * DMA API's now automatically release DMA channels instead of leaving
->   it up to the caller.
-> 
-> v3 changes:
-> * Added spi_offload_{tx,rx}_stream_get_dma_chan() functions.
-> 
-> v2 changes:
-> * This is also split out from "spi: add core support for controllers with
->   offload capabilities".
-> * In the previous version, we were using (void *)-1 as a sentinel value
->   that could be assigned, e.g. to rx_buf. But this was naive since there
->   is core code that would try to dereference this pointer. So instead,
->   we've added a new flags field to the spi_transfer structure for this
->   sort of thing. This also has the advantage of being able to be used in
->   the future for other arbitrary features.
-> ---
->  drivers/spi/spi-offload.c       | 70 +++++++++++++++++++++++++++++++++++++++++
->  drivers/spi/spi.c               | 10 ++++++
->  include/linux/spi/spi-offload.h | 24 ++++++++++++++
->  include/linux/spi/spi.h         |  3 ++
->  4 files changed, 107 insertions(+)
-> 
-> diff --git a/drivers/spi/spi-offload.c b/drivers/spi/spi-offload.c
-> index 01d7b632d109..7b3e20ad9e4f 100644
-> --- a/drivers/spi/spi-offload.c
-> +++ b/drivers/spi/spi-offload.c
-> @@ -8,6 +8,7 @@
->  
->  #include <linux/cleanup.h>
->  #include <linux/device.h>
-> +#include <linux/dmaengine.h>
->  #include <linux/export.h>
->  #include <linux/kref.h>
->  #include <linux/list.h>
-> @@ -319,6 +320,75 @@ void spi_offload_trigger_disable(struct spi_offload *offload,
->  }
->  EXPORT_SYMBOL_GPL(spi_offload_trigger_disable);
->  
-> +static void spi_offload_release_dma_chan(void *chan)
-> +{
-> +	dma_release_channel(chan);
-> +}
-> +
-> +/**
-> + * spi_offload_tx_stream_request_dma_chan_info - Get the DMA channel info for the TX stream
-> + * @spi: SPI device
-> + * @id: Function ID if SPI device uses more than one offload or NULL.
-As below.  Code is ahead of the docs.
-> + *
-> + * This is the DMA channel that will provide data to transfers that use the
-> + * %SPI_OFFLOAD_XFER_TX_STREAM offload flag.
-> + *
-> + * Return: Pointer to DMA channel info, or negative error code
-> + */
-> +struct dma_chan
-> +*devm_spi_offload_tx_stream_request_dma_chan(struct device *dev,
-> +					     struct spi_offload *offload)
-> +{
-> +	struct dma_chan *chan;
-> +	int ret;
-> +
-> +	if (!offload->ops || !offload->ops->tx_stream_request_dma_chan)
-> +		return ERR_PTR(-EOPNOTSUPP);
-> +
-> +	chan = offload->ops->tx_stream_request_dma_chan(offload);
-> +	if (IS_ERR(chan))
-> +		return chan;
-> +
-> +	ret = devm_add_action_or_reset(dev, spi_offload_release_dma_chan, chan);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	return chan;
-> +}
-> +EXPORT_SYMBOL_GPL(devm_spi_offload_tx_stream_request_dma_chan);
-> +
-> +/**
-> + * spi_offload_rx_stream_request_dma_chan_info - Get the DMA channel info for the RX stream
-> + * @spi: SPI device
+>diff --git a/drivers/pinctrl/pinctrl-aw9523.c b/drivers/pinctrl/pinctrl-aw9523.c
+>index ebd590a3cec6..90059b0d20e5 100644
+>--- a/drivers/pinctrl/pinctrl-aw9523.c
+>+++ b/drivers/pinctrl/pinctrl-aw9523.c
+>@@ -983,11 +983,8 @@ static int aw9523_probe(struct i2c_client *client)
+>        lockdep_set_subclass(&awi->i2c_lock,
+>i2c_adapter_depth(client->adapter));
+>
+>        pdesc = devm_kzalloc(dev, sizeof(*pdesc), GFP_KERNEL);
+>-       if (!pdesc) {
+>-               ret = -ENOMEM;
+>-               goto err_disable_vregs;
+>-       }
+>-
+>+       if (!pdesc)
+>+               return -ENOMEM;
+>        ret = aw9523_hw_init(awi);
+>        if (ret)
+>                return ret;
+>
+>This can be folded in as an "evil merge" or applied separately on
+>top, your pick.
 
-Run kernel-doc over these. There is no spi here.
+Is effectively a revert of one of the commits that are part of this PR:
 
+>      pinctrl: aw9523: add missing mutex_destroy
 
-> + * @id: Function ID if SPI device uses more than one offload or NULL.
-or indeed ID...
-> + *
-> + * This is the DMA channel that will receive data from transfers that use the
-> + * %SPI_OFFLOAD_XFER_RX_STREAM offload flag.
-> + *
-> + * Return: Pointer to DMA channel info, or negative error code
-> + */
-> +struct dma_chan
-> +*devm_spi_offload_rx_stream_request_dma_chan(struct device *dev,
-> +					     struct spi_offload *offload)
-> +{
-> +	struct dma_chan *chan;
-> +	int ret;
-> +
-> +	if (!offload->ops || !offload->ops->rx_stream_request_dma_chan)
-> +		return ERR_PTR(-EOPNOTSUPP);
-> +
-> +	chan = offload->ops->rx_stream_request_dma_chan(offload);
-> +	if (IS_ERR(chan))
-> +		return chan;
-> +
-> +	ret = devm_add_action_or_reset(dev, spi_offload_release_dma_chan, chan);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	return chan;
-> +}
-> +EXPORT_SYMBOL_GPL(devm_spi_offload_rx_stream_request_dma_chan);
-> +
->  /* Triggers providers */
->  
->  static void spi_offload_trigger_unregister(void *data)
+Would it make more sense to just re-do this PR without the offending
+commit? I understand that this is a fairly small fixup, but I'm
+concerned that this will just create confusion later on...
 
->  
->  struct spi_offload *devm_spi_offload_alloc(struct device *dev, size_t priv_size);
-> @@ -107,6 +126,11 @@ int spi_offload_trigger_enable(struct spi_offload *offload,
->  void spi_offload_trigger_disable(struct spi_offload *offload,
->  				 struct spi_offload_trigger *trigger);
->  
-> +struct dma_chan *devm_spi_offload_tx_stream_request_dma_chan(struct device *dev,
-> +							     struct spi_offload *offload);
-Would be better supported by actual driver code using it.  Maybe it is better to bring
-in TX only with the first user?
-
-
-> +struct dma_chan *devm_spi_offload_rx_stream_request_dma_chan(struct device *dev,
-> +							     struct spi_offload *offload);
-> +
->  /* Trigger providers */
-
+-- 
+Thanks,
+Sasha
 
