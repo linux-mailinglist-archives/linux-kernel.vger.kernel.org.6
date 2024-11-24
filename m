@@ -1,100 +1,351 @@
-Return-Path: <linux-kernel+bounces-420121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9897D9D7547
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:33:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 912D99D753B
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:31:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EFC7287556
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:33:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EFC42836CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97BA418FC70;
-	Sun, 24 Nov 2024 14:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDD119005F;
+	Sun, 24 Nov 2024 14:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="jqQiHN9B"
-Received: from out162-62-57-87.mail.qq.com (out162-62-57-87.mail.qq.com [162.62.57.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cn1PtsvZ"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5341E178378
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 14:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E135A18CC1D
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 14:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732459330; cv=none; b=hyOksBKT+HoJme5+TGBpQkf1iwBBz9XelJJzSPBQ1eYcH1Y4YijCuVnzVOcMdcqwaWeFpUXjBsfhNQKiNVORe5EJUFXxFc95LOPsVQxjXmvWvjh9uFhyxM5iJeMQVWFfqRiqSQ3LwimvYV27CFF9f/rR3QC+45RCZYRN6OdWhQ4=
+	t=1732458818; cv=none; b=F1hA1LqSrS3T2+LgXZNS0ZUeqViRp+Xan1/KK/BZgkuYm0vTD1jGPHQN7GTj7Y+Ye/h7koC6x30Qv98Ospcp77hFLOnhtWKoYRyhFCCXP4o1SqTW2RqRa5KP9DF35NsSpakOxw+X/mAjCtWmemoRWwAnowZv8nEqJ2LG6wJvYb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732459330; c=relaxed/simple;
-	bh=JJcJfVETs9OtVreOkeCNeX8E38D/+W63WufqrSiavyA=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=gV6ucTyfWX7QnpHce/yKGtipeAIHlQGsKsdRVm/hYgeGysxp522i8aF9SVlqfABnfo2l8MEGWeqPlUfndBp9Nd99tnUvJo/weFEPb1h0E5LT3+AlXqZIJkkIKacepf5zcrcvpEmBh0r5FUcSb+lFzKyJzQsMR3MYQt+XjhLN55U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=jqQiHN9B; arc=none smtp.client-ip=162.62.57.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1732459019; bh=zQC6NaOKMV7ZIDxq/pvImsHvIGeLGjRZKnaH2HH60ig=;
-	h=From:To:Cc:Subject:Date;
-	b=jqQiHN9BW2y/z6ufCR5TBGFPXeMYmP+c2xDFol2IPZvXgT7WZfnLHjy1WmGnTAsdI
-	 A5L72CMwPuSm2YJ2qnR3Qo9aCLLuLvuPVd7ZsHutsq5XJs6XjEkbCSHraioV+qltqG
-	 7GnE2ls8EGQZ7Kl9aLqrqk3JXqPfXUXaK1GEyYn4=
-Received: from archlinux-sandisk.localdomain ([220.176.232.51])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id 7B02E2C9; Sun, 24 Nov 2024 22:30:48 +0800
-X-QQ-mid: xmsmtpt1732458648ta73d9xvs
-Message-ID: <tencent_B68357134C27627076BD7E44834D9E2C6D09@qq.com>
-X-QQ-XMAILINFO: MwqrwaLzgdebDvba6S6v4Yq9FHRCZSb0C8uoR9YkM3Wa07av6DQc46J76mZ+X0
-	 6qY+c//GQ5BtAib0Z8G3iK5yQ5gvxyvZr33nHTXCj25klNSXiKO1ytOWE3CuSMphK7ZU0/dViA5t
-	 6jgZNtEYtuclnfZKX3VFO2p+80jK0Z641sYAhqILPNqC7rzRJvFU3W5nhqhWtAEdlBlZyXgJzlDT
-	 kzZfu+K4toPezFWLf24E6e80V2ulDipIYF3vJ/zaMUFvH2zgka4f+rYfnMw43FQuAIKNIRzikLu4
-	 IAn05NC5aADUuavg1Cz7Ewanm+1pXZiQ3KGLNDNZbyA21Lmuj1pQz9jf8M82rdsOAi+nehSF3wkJ
-	 fyIWOQv0MA7KBWXKjNl2EA3UYWmgbWLZ73fl9XDeokS+A5GGq9lZ6f963HON+9L5Zl7EAJqbJvTq
-	 ARnKbRpvZmLopljku62TpUPc22iATJq5fcuZpwmcWcPEpgHbqK551VidkEZ8wDl3J+LJn49oN2y7
-	 SekVELq5mPMJUXYWSzJ4BCYhzfuk/RGQarkAYnQ1qyBvX4/vy5mtG2FbWTrdjM2L11Q3PyReWJ8t
-	 S5GBAmP0JRzpaDzFz8I4VUSWOO7I79KIG1+P6/bYLMz50vpkdfRj/AQo/51DOToKMbs4wjJTLrRO
-	 gxM78dQ28OTfrgZwUD82+ScAvJPBx538rn6T+XvlM9OezzMhNgYmyiu9SM1E81wb1tvazSmYV+q6
-	 JmmPmSmQ84MXNdJi62Kbg61LuQpIXhIccknP/z0Ko/3QwYBGlVXlg4J50JeDFiQMqCeNCiPksIFK
-	 jXg3tLA6cEDx7mamFVAX7dO7s01abkvh85x1KBTdowBgVR9vbIwsQkM7p6fF09LTdTjbo4PE3FJf
-	 BeI5Sdy7OesIgpWmaIh57bby3TcN7So3QtTNcsUXD3MtGM8n5eEOc=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Jiale Yang <295107659@qq.com>
-To: akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Jiale Yang <295107659@qq.com>
-Subject: [PATCH] mm: Remove braces for single statement block
-Date: Sun, 24 Nov 2024 22:30:36 +0800
-X-OQ-MSGID: <20241124143036.1572-1-295107659@qq.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1732458818; c=relaxed/simple;
+	bh=u9yilslDcMuJJJ+0HtllR45tBWp0Y8R7N5Mva6i0fqk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L9Ar6gjsXstn6EV+IwHpKnHiUHq11hxfWQIPY8BvFHbnVF6WA1f2WQtdtosL+S+gQBpaTI+fWWfrhom9sKxWUtDe+MUmeI7ChJ9HSggwT1OVakYHNwoTeRnAjmyWt6WViNJj+VnnU/mGmayhQrxubHDZWZm9joukfWOZs32AHfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cn1PtsvZ; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-724e1b08fc7so1914961b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 06:33:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732458815; x=1733063615; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qQsDVb7F2iz9b9KgCIAt+p1CapfKtmuyCi0nc0rEfIc=;
+        b=cn1PtsvZ3SBhXixGJmqOX3rBqaPRDx7tTWRip5G5F44/U957DuWPQs+pdBDlqepP7V
+         4uGjCFAh/K1FkSehYmRu5TTqHdgpiRUyo8L0w09EjF6ZrS7Kr+HB8ADmJeOHnGkUx1bt
+         SJFucBFWR0Jkbca/jp9YHxdBpTow3jPQ9LIr1CT4AA+8N+8ckNrc3fOuhBtWy4LEVtIK
+         JRdLBYuHisHa9gmd95461kHR6Ru8rSCXuCcINOgUzSAscDI0bqmFF47nDw7GecbsSH/c
+         LDrTwgIQP1ADUSphr908jmTf6uBhz//cceHophL4seeAhP2g967cG05oOcpHSeVQ7kOg
+         KxrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732458815; x=1733063615;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qQsDVb7F2iz9b9KgCIAt+p1CapfKtmuyCi0nc0rEfIc=;
+        b=V0DwoNg9ru56x5//fmxM8rBrcUQwYjs8kW8zQBUAaN4cvrw9hW2X9hfUmw2OAb+rtP
+         d7kdxfx+jDOnFcweUcB1rImun6Cb7mBi9gCC2iznZ4c61+wvls933zGRq9h6L9VuIu5o
+         QOiW7qfIus5yVtBEkNUwM+avCaHAeO5JKgXJYovoVRmL8/oMx84pp0lF0uVIVqDstOWe
+         ivP1H1lvzv1gksIgek4GgMsDDKzyzb81Fc+F4Q52qNaJM/dNBWW36aqoGWGl+c9IyOGd
+         VhqDALdZLP4GjluUc189dwceEg5kTUZWsvQ7xwUl/i5Lu1P1OSleek3pspSyoIijdhXj
+         NF8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUA5Vv2+QaAsCJTcoqAOTHo1a8cq/9oU1AdNfEEBwAqqo5AhRC+uL4J5U7cbTjvzl+qvMdaQ4I5RauVH8E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLu8k6yZdoMLfg+7/UfYTkdhtIMy4lkUyhomI1ed+UiNiK1jJh
+	FdceaO7Zzl4G1J0CPyEkzl/C4+INn3bn4A/gvLTAj1ZYbly+m+p7bOp2oXmF5Q==
+X-Gm-Gg: ASbGncuX084dOn+HdVMXEksDVv8V3qSGtwW43jx1qbYRONNfCsxwofaT17tSAh6APFh
+	pZAAlX6S3TJrpHOzLFTfpTZefk/JsyHh2bSS4osPEL1HZGtcZOS+/9dWB7nFbm/EobrqHSodWiy
+	dD3xdFJYM+TD+UvFvTT+bIvH7OPSad42mEAhQtbXDLvyOxgilN5vTDfgokj9HVzze//GGQ/3Nra
+	6azdnTa4EX10s0qSw5A/p/TVjhi1hupB1DsOu05x+5ckf0Dmln+WdjESuu/
+X-Google-Smtp-Source: AGHT+IEXdIY8HdO7q0GsWQpaA8gaDP2oPUf00iydOaa8Lv2vpwZRDX+byC5eu+a3QGb7Pw0MmbQxmg==
+X-Received: by 2002:a17:903:2cd:b0:20c:a387:7dc9 with SMTP id d9443c01a7336-2129f7b4e55mr144454115ad.29.1732458815130;
+        Sun, 24 Nov 2024 06:33:35 -0800 (PST)
+Received: from thinkpad ([36.255.17.192])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129db87dafsm47492325ad.43.2024.11.24.06.33.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Nov 2024 06:33:34 -0800 (PST)
+Date: Sun, 24 Nov 2024 20:03:27 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev
+Subject: Re: [PATCH v8 2/7] PCI: dwc: Use devicetree 'ranges' property to get
+ rid of cpu_addr_fixup() callback
+Message-ID: <20241124143327.6cuxrw76pr6olfor@thinkpad>
+References: <20241119-pci_fixup_addr-v8-0-c4bfa5193288@nxp.com>
+ <20241119-pci_fixup_addr-v8-2-c4bfa5193288@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241119-pci_fixup_addr-v8-2-c4bfa5193288@nxp.com>
 
-Linux kernel coding style say braces are not necessary if a block has
-only one statement. So remove it.
+On Tue, Nov 19, 2024 at 02:44:20PM -0500, Frank Li wrote:
+> parent_bus_addr in struct of_range can indicate address information just
+> ahead of PCIe controller. Most system's bus fabric use 1:1 map between
+> input and output address. but some hardware like i.MX8QXP doesn't use 1:1
+> map. See below diagram:
+> 
+>             ┌─────────┐                    ┌────────────┐
+>  ┌─────┐    │         │ IA: 0x8ff8_0000    │            │
+>  │ CPU ├───►│   ┌────►├─────────────────┐  │ PCI        │
+>  └─────┘    │   │     │ IA: 0x8ff0_0000 │  │            │
+>   CPU Addr  │   │  ┌─►├─────────────┐   │  │ Controller │
+> 0x7ff8_0000─┼───┘  │  │             │   │  │            │
+>             │      │  │             │   │  │            │   PCI Addr
+> 0x7ff0_0000─┼──────┘  │             │   └──► IOSpace   ─┼────────────►
+>             │         │             │      │            │    0
+> 0x7000_0000─┼────────►├─────────┐   │      │            │
+>             └─────────┘         │   └──────► CfgSpace  ─┼────────────►
+>              BUS Fabric         │          │            │    0
+>                                 │          │            │
+>                                 └──────────► MemSpace  ─┼────────────►
+>                         IA: 0x8000_0000    │            │  0x8000_0000
+>                                            └────────────┘
+> 
+> bus@5f000000 {
+> 	compatible = "simple-bus";
+> 	#address-cells = <1>;
+> 	#size-cells = <1>;
+> 	ranges = <0x80000000 0x0 0x70000000 0x10000000>;
+> 
+> 	pcie@5f010000 {
+> 		compatible = "fsl,imx8q-pcie";
+> 		reg = <0x5f010000 0x10000>, <0x8ff00000 0x80000>;
+> 		reg-names = "dbi", "config";
+> 		#address-cells = <3>;
+> 		#size-cells = <2>;
+> 		device_type = "pci";
+> 		bus-range = <0x00 0xff>;
+> 		ranges = <0x81000000 0 0x00000000 0x8ff80000 0 0x00010000>,
+> 			 <0x82000000 0 0x80000000 0x80000000 0 0x0ff00000>;
+> 	...
+> 	};
+> };
+> 
+> Term internal address (IA) here means the address just before PCIe
+> controller. After ATU use this IA instead CPU address, cpu_addr_fixup() can
+> be removed.
+> 
 
-Signed-off-by: Jiale Yang <295107659@qq.com>
----
- mm/page_alloc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+The newly added warning should be mentioned in the commit message. But no need
+to respin just for this. I hope Krzysztof can add it while applying.
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index a8cd54c02..4915b5d31 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6877,9 +6877,8 @@ bool put_page_back_buddy(struct page *page)
- 
- 		ClearPageHWPoisonTakenOff(page);
- 		__free_one_page(page, pfn, zone, 0, migratetype, FPI_NONE);
--		if (TestClearPageHWPoison(page)) {
-+		if (TestClearPageHWPoison(page))
- 			ret = true;
--		}
- 	}
- 	spin_unlock_irqrestore(&zone->lock, flags);
- 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
+> ---
+> Change from v7 to v8
+> - Add dev_warning_once at dw_pcie_iatu_detect() to reminder
+> cpu_addr_fixup() user to correct their code
+> - use 'use_parent_dt_ranges' control enable use dt parent bus node ranges.
+> - rename dw_pcie_get_untranslate_addr to dw_pcie_get_parent_addr().
+> - of_property_read_reg() already have comments, so needn't add more.
+> - return actual err code from function
+> 
+> Change from v6 to v7
+> Add a resource_size_t parent_bus_addr local varible to fix 32bit build
+> error.
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202410291546.kvgEWJv7-lkp@intel.com/
+> 
+> Chagne from v5 to v6
+> -add comments for of_property_read_reg().
+> 
+> Change from v4 to v5
+> - remove confused 0x5f00_0000 range in sample dts.
+> - reorder address at above diagram.
+> 
+> Change from v3 to v4
+> - none
+> 
+> Change from v2 to v3
+> - %s/cpu_untranslate_addr/parent_bus_addr/g
+> - update diagram.
+> - improve commit message.
+> 
+> Change from v1 to v2
+> - update because patch1 change get untranslate address method.
+> - add using_dtbus_info in case break back compatibility for exited platform.
+> ---
+>  drivers/pci/controller/dwc/pcie-designware-host.c | 57 ++++++++++++++++++++++-
+>  drivers/pci/controller/dwc/pcie-designware.c      |  9 ++++
+>  drivers/pci/controller/dwc/pcie-designware.h      |  7 +++
+>  3 files changed, 72 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 3e41865c72904..f882b11fd7b94 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -418,6 +418,34 @@ static void dw_pcie_host_request_msg_tlp_res(struct dw_pcie_rp *pp)
+>  	}
+>  }
+>  
+> +static int dw_pcie_get_parent_addr(struct dw_pcie *pci, resource_size_t pci_addr,
+> +				   resource_size_t *i_addr)
+> +{
+> +	struct device *dev = pci->dev;
+> +	struct device_node *np = dev->of_node;
+> +	struct of_range_parser parser;
+> +	struct of_range range;
+> +	int ret;
+> +
+> +	if (!pci->use_parent_dt_ranges) {
+> +		*i_addr = pci_addr;
+> +		return 0;
+> +	}
+> +
+> +	ret = of_range_parser_init(&parser, np);
+> +	if (ret)
+> +		return ret;
+> +
+> +	for_each_of_pci_range(&parser, &range) {
+> +		if (pci_addr == range.bus_addr) {
+> +			*i_addr = range.parent_bus_addr;
+> +			break;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  int dw_pcie_host_init(struct dw_pcie_rp *pp)
+>  {
+>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> @@ -427,6 +455,7 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
+>  	struct resource_entry *win;
+>  	struct pci_host_bridge *bridge;
+>  	struct resource *res;
+> +	int index;
+>  	int ret;
+>  
+>  	raw_spin_lock_init(&pp->lock);
+> @@ -440,6 +469,20 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
+>  		pp->cfg0_size = resource_size(res);
+>  		pp->cfg0_base = res->start;
+>  
+> +		if (pci->use_parent_dt_ranges) {
+> +			index = of_property_match_string(np, "reg-names", "config");
+> +			if (index < 0)
+> +				return -EINVAL;
+> +			/*
+> +			 * Retrieve the parent bus address of PCI config space.
+> +			 * If the parent bus ranges in the device tree provide
+> +			 * the correct address conversion information, set
+> +			 * 'use_parent_dt_ranges' to true, The
+> +			 * 'cpu_addr_fixup()' can be eliminated.
+> +			 */
+> +			of_property_read_reg(np, index, &pp->cfg0_base, NULL);
+> +		}
+> +
+>  		pp->va_cfg0_base = devm_pci_remap_cfg_resource(dev, res);
+>  		if (IS_ERR(pp->va_cfg0_base))
+>  			return PTR_ERR(pp->va_cfg0_base);
+> @@ -462,6 +505,10 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
+>  		pp->io_base = pci_pio_to_address(win->res->start);
+>  	}
+>  
+> +	ret = dw_pcie_get_parent_addr(pci, pp->io_bus_addr, &pp->io_base);
+> +	if (ret)
+> +		return ret;
+> +
+>  	/* Set default bus ops */
+>  	bridge->ops = &dw_pcie_ops;
+>  	bridge->child_ops = &dw_child_pcie_ops;
+> @@ -722,6 +769,8 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
+>  
+>  	i = 0;
+>  	resource_list_for_each_entry(entry, &pp->bridge->windows) {
+> +		resource_size_t parent_bus_addr;
+> +
+>  		if (resource_type(entry->res) != IORESOURCE_MEM)
+>  			continue;
+>  
+> @@ -730,9 +779,15 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
+>  
+>  		atu.index = i;
+>  		atu.type = PCIE_ATU_TYPE_MEM;
+> -		atu.cpu_addr = entry->res->start;
+> +		parent_bus_addr = entry->res->start;
+>  		atu.pci_addr = entry->res->start - entry->offset;
+>  
+> +		ret = dw_pcie_get_parent_addr(pci, entry->res->start, &parent_bus_addr);
+> +		if (ret)
+> +			return ret;
+> +
+> +		atu.cpu_addr = parent_bus_addr;
+> +
+>  		/* Adjust iATU size if MSG TLP region was allocated before */
+>  		if (pp->msg_res && pp->msg_res->parent == entry->res)
+>  			atu.size = resource_size(entry->res) -
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+> index 6d6cbc8b5b2c6..e1ac9c81ad531 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> @@ -840,6 +840,15 @@ void dw_pcie_iatu_detect(struct dw_pcie *pci)
+>  	pci->region_align = 1 << fls(min);
+>  	pci->region_limit = (max << 32) | (SZ_4G - 1);
+>  
+> +	if (pci->ops && pci->ops->cpu_addr_fixup) {
+> +		/*
+> +		 * If the parent 'ranges' property in DT correctly describes
+> +		 * the address translation, cpu_addr_fixup() callback is not
+> +		 * needed.
+> +		 */
+> +		dev_warn_once(pci->dev, "cpu_addr_fixup() usage detected. Please fix DT!\n");
+> +	}
+> +
+>  	dev_info(pci->dev, "iATU: unroll %s, %u ob, %u ib, align %uK, limit %lluG\n",
+>  		 dw_pcie_cap_is(pci, IATU_UNROLL) ? "T" : "F",
+>  		 pci->num_ob_windows, pci->num_ib_windows,
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 347ab74ac35aa..4f31d4259a0de 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -463,6 +463,13 @@ struct dw_pcie {
+>  	struct reset_control_bulk_data	core_rsts[DW_PCIE_NUM_CORE_RSTS];
+>  	struct gpio_desc		*pe_rst;
+>  	bool			suspended;
+> +	/*
+> +	 * This flag indicates that the vendor driver uses devicetree 'ranges'
+> +	 * property to allow iATU to use the Intermediate Address (IA) for
+> +	 * outbound mapping. Using this flag also avoids the usage of
+> +	 * 'cpu_addr_fixup' callback implementation in the driver.
+> +	 */
+> +	bool			use_parent_dt_ranges;
+>  };
+>  
+>  #define to_dw_pcie_from_pp(port) container_of((port), struct dw_pcie, pp)
+> 
+> -- 
+> 2.34.1
+> 
+
 -- 
-2.47.0
-
+மணிவண்ணன் சதாசிவம்
 
