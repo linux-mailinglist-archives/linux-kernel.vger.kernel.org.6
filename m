@@ -1,82 +1,87 @@
-Return-Path: <linux-kernel+bounces-419382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2291D9D6D26
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 09:59:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E11419D6D27
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 09:59:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 747F8B21187
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 08:59:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5CFB2813E4
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 08:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FFE186E26;
-	Sun, 24 Nov 2024 08:59:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC3D188596;
+	Sun, 24 Nov 2024 08:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O2BTaB8K"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KvlG8RPH"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF36C14287
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 08:59:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC1915C14B
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 08:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732438762; cv=none; b=KkVixydoqaLV194zBN/MRHjG5ZZRMiPIEYW2txyZIJqWO6tyD1fdIS9gO/D+JePeT1n2h413XjGyuVeK0659TVj7B4orYQskuxXiMWN41FAunXkdKQTJHbIxOxsTAeQdZWSEl0KIBbvRpeLqVfigkOCuX2nAS44bJpSaaoVxSbY=
+	t=1732438763; cv=none; b=rCm1dsJBo0xR4b2fZxeGoesRgNf5RANz3u3iHnGGq3uQD41Le2SHxb1UzWZWZWoNWHRY1MIkMR0B8Z7HkXkq8izywXG6czILXOyjak+hTmwvTaUJIhaZJjYFPG+yj83k95D+6Rk6cVlfg825Ke7gA5TjC5+9aPXnHYCTwBW8wbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732438762; c=relaxed/simple;
-	bh=YLV9lN4WZZU4RfbhuYed4kCtgqOCfoY6/K0MGXxuvgE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uQsi0okgHfoLSo/t6/G/5e1HeIdwpdCLGwybLHUUpy4PsI2isNliXBKpoo7erxDEA9F4oeLmGn/AK8l9JdVw5R+2v0RIKT5fgY/98NO3ZuL3xXsyEdBUSYC4fSUQTvd5lJBWouDtgWxHlN8TrchPoY+aAqcSjfCD1HFSvF3qzag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=O2BTaB8K; arc=none smtp.client-ip=209.85.215.175
+	s=arc-20240116; t=1732438763; c=relaxed/simple;
+	bh=sCFf8fnkrq9R7Lkd1c3bEfaiB1jb8kVcwtp3GOGOp0E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qVqcWdOrFt4MecFR58D27Lkh43BJ9lQruItKvINNebgtwpLgJQyOoLP9q71gDkrsZsgH33czoviV7GJoKpfyLRY4Vw6bCJ0qFDTYeU8mq7G/xhCHCDMfU04yAN1W+SQ3YivjjHc8mF7YwY1PKGckaKfadCa9b+zY1HXOKHKurf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KvlG8RPH; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7f46d5d1ad5so2976265a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 00:59:18 -0800 (PST)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-724f1ce1732so748179b3a.1
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 00:59:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732438758; x=1733043558; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EF6KAe0aJXErRNe2gIgSW1j08V4k2/044lY06SL09oI=;
-        b=O2BTaB8KfSVvS6G0CE0CzrTt4jhYJibvmWork81xuHaA7z3nCqDFcjNGKu+Sr6IJ2W
-         7f37Kmgm5XtPVIPC1e8hc/weWPef7lfjEKm8mvxwtC2xWqt7MdMDtFW2ul5D7K3cF2ic
-         Tihi0OS7FWW3hLRhNtjZpS1H+o19/Nup4wGa8=
+        d=chromium.org; s=google; t=1732438760; x=1733043560; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I/IvUBcoipMDIe3/pYAHB/bcuEx/FUoQvLyB3GzlNVU=;
+        b=KvlG8RPHN52xSXzJsiGpx9zW0hp+vqwzv5F9gojh8aNSHaeD3o8kmpukhAcW+37ovC
+         W0RPEYAHvuFR6sKeJwUEL9tFYjfqwAu1yWTHppR12MefFzaQNvE+Igm/5relp38Kd1yV
+         HkpxPL72DE7TMgXjBCYK/duN1r0OoH/RN3Ngs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732438758; x=1733043558;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EF6KAe0aJXErRNe2gIgSW1j08V4k2/044lY06SL09oI=;
-        b=BnXeqmebufMwA6qg0mpMkX0ysd3QkW+aMBhEBut9b2qKcwFyIXxYfkr1mmlAVXuK0t
-         8sTo5sqHWmY0HMqkFQVxKjYhjjozPtmlJt+B2zAR5Oug52ALRS6Ynn7cCNV5hkXKCyDg
-         3UTowfr00wPBTXfXUwEallAkFbX9Xq7W+i5mlvk9NJWa+/2fizZGMDNfgxN92DTO8Nb8
-         QWSSW4nD6EcBBcMzVpsZw8w0MHBhHp1xNWFPzH8X2uuZR5SSgwtUUvho+u05tXP6MdXO
-         ImvvrrQCwHR7cLRfSFitVA1OK4/mrlPqII6m+4lWWr1ObaUTUCiHRo1DrLIrwpXLmzoE
-         ecBg==
-X-Forwarded-Encrypted: i=1; AJvYcCWG+5Igc8u7uKn963A/CLmxCnugmAtGWNsRktj/RdmW6YJKK1QanKj9Hsc0EGECMBpBn2fGWwjJrpvazmw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0V4ghMCzJ8OwUzLhHytUqgCXIximrWG7i2Y3xKiEejIUz+0pq
-	l5SFEK7cA/kTy44OmSiR8dpDErlBAL5SzGsxwVVH2C6gqmFF/ncF8upzPh3ICQ==
-X-Gm-Gg: ASbGncsgFgM/fadjKUTafSrqOKhaAXhVVCJ7n3mb3A7tGgfWuSmTpqW+cikFxXLXCkC
-	hf/njDY8gxfPKoKKa0z/Bh/Tgy350twsSQHhuKOn5kEDqE82F6b9IxAlNdkg9HYxhNWjO9CtK4D
-	XFm2HkBUvp6HW3tRTVXtBc/8Inlt9/7Jx0QXv6Frez3Wg0Lhljatbsc76tHneaJOg7gcw9t8AaY
-	AQYNyW5OL/xM/ry7lmxJw3ND7f4EFqPA5j6jIxYjcjUARpCd44j3XvF6SONEpt6lZzNCg==
-X-Google-Smtp-Source: AGHT+IFXc7VvlP/3gYWKOjTV8+v6xQUtU+qQkhGAveyBwDGTGonrlWWpAiyBkTbiDpTB33S9/XAxUg==
-X-Received: by 2002:a05:6a21:778f:b0:1e0:b51b:ac22 with SMTP id adf61e73a8af0-1e0b51bad66mr4211481637.30.1732438758063;
-        Sun, 24 Nov 2024 00:59:18 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732438760; x=1733043560;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I/IvUBcoipMDIe3/pYAHB/bcuEx/FUoQvLyB3GzlNVU=;
+        b=VgBjmmr9LG4L8oKyabASIxeNuQJP9LYZtyQGN2nq50wBDsbgjr48M2MlBj/fKn6J2S
+         FQo49iCjjhzgNorJZQJ444FcA/E9iGwhAwbL/Y9pvRKdFNMe+aiyR8lbqf+aFWYd1rec
+         S+jYuSjlb3zvaqSOjKejlXpfFWfrUyhxxY9Ox+IEfeTDOeiyG9s2kLqQdmCAUEsNIenR
+         9a84Bavmx6EJZ11cHQlPzVYW5hIw6vZqxyFJZpspQUtzPgVJ+m5STyc2NZUuXf5no0n4
+         3O8EkLNTgh9ij6gq5E25I4coZV+/8CYkEi+U0W3qy70bQoWoPpjccL49vzPSf/k4CAm3
+         qPdA==
+X-Forwarded-Encrypted: i=1; AJvYcCUExXFRREbZHANCEm9KXPIwkWa7cZf17sid/4dGmAcUe3a0MjF14jm9wyD4580zviL4jBgeyuw8883nHB8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgoKVfD2jMBgaZQFsLbZw2MyvY7bHrqbh38Wl717VS5yPNPIZ3
+	I48CjJ7g+zaCir1MrXEehV1q+x/QKvJNPd+MKBcGphpZakha+zt3uN7eO2CcuQ==
+X-Gm-Gg: ASbGncvWkEcYm6odbD8L4WTE1lDOWnsJgxtFcb3Xd8QDEd/feXtwcFoRyA7g68wNhlK
+	0pXuDemqRUOtUP3lJyAnuDuBh7obe8+rOvIVSeF1d8ESIHmCBKi8mM9IQpl7INBtGqV3jOs6LPC
+	IvmirLRWG3ylG/xLbNfg8E2sIyCoNGzgnMUmnL2UyDrv6m/9oq2eesESji1UPQZyZz2PGYXh+j7
+	GyAMPlp65T8E1vvC/Q7XBuGlxJnZMlQL89PbKheDO3GvSvJua0Z49MSh+L7Ma9GG0TEJA==
+X-Google-Smtp-Source: AGHT+IHfzR8ObvybrfM7pUctOZmJy+v/RQYyVAaGYmK6XbUOyVSBD4McBx6obvZbzN9dxMWFrAHZVg==
+X-Received: by 2002:a05:6a20:9155:b0:1db:d932:ddcc with SMTP id adf61e73a8af0-1e09e452055mr9437889637.19.1732438760553;
+        Sun, 24 Nov 2024 00:59:20 -0800 (PST)
 Received: from fshao-p620.tpe.corp.google.com ([2401:fa00:1:10:f699:9cb9:f928:9a14])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcbfc4c28sm4465890a12.3.2024.11.24.00.59.16
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcbfc4c28sm4465890a12.3.2024.11.24.00.59.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Nov 2024 00:59:17 -0800 (PST)
+        Sun, 24 Nov 2024 00:59:20 -0800 (PST)
 From: Fei Shao <fshao@chromium.org>
 To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
 	Matthias Brugger <matthias.bgg@gmail.com>
 Cc: Fei Shao <fshao@chromium.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 0/2] Add device tree for MT8188-based Chromebook "Ciri"
-Date: Sun, 24 Nov 2024 16:52:36 +0800
-Message-ID: <20241124085739.290556-1-fshao@chromium.org>
+Subject: [PATCH v3 1/2] dt-bindings: arm: mediatek: Add MT8188 Lenovo Chromebook Duet (11", 9)
+Date: Sun, 24 Nov 2024 16:52:37 +0800
+Message-ID: <20241124085739.290556-2-fshao@chromium.org>
 X-Mailer: git-send-email 2.47.0.371.ga323438b13-goog
+In-Reply-To: <20241124085739.290556-1-fshao@chromium.org>
+References: <20241124085739.290556-1-fshao@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,91 +90,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+Add entries for the MT8188-based Chromebook "Ciri", also known as
+Lenovo Chromebook Duet (11", 9).
 
-This is the v3 series to introduce the device trees for Ciri. Please
-refer to [v1] and [v2] cover letter for the detail introduction of Ciri
-if needed.
+This device features a detachable design with touchscreen, detachable
+keyboard and USI 2.0 Stylus support, and has 8 SKUs to accommodate the
+combinations of second-source components.
 
-Note that there are patches for some known dtbs_check warnings:
-- sound: Unevaluated 'mediatek,adsp' property
-  https://lore.kernel.org/all/20241105091246.3944946-1-fshao@chromium.org/
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Signed-off-by: Fei Shao <fshao@chromium.org>
+---
 
-- amplifier: '#sound-dai-cells' does not match any of the regexes
-  https://lore.kernel.org/all/20241105091513.3963102-1-fshao@chromium.org/
+(no changes since v1)
 
-- dp-tx: '#sound-dai-cells' does not match any of the regexes
-  https://lore.kernel.org/all/20241105090207.3892242-1-fshao@chromium.org/
+ Documentation/devicetree/bindings/arm/mediatek.yaml | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-- audio-codec: 'interrupts-extended' does not match any of the regexes
-  https://lore.kernel.org/all/20241105091910.3984381-1-fshao@chromium.org/
-
-- pmic: 'compatible' is a required property; 'adc', 'mt6359codec',
-  'mt6359rtc' do not match any of the regexes
-  https://lore.kernel.org/all/20241004030148.13366-2-macpaul.lin@mediatek.com/
-
-- power-controller: Unevaluated properties are not allowed
-  ('power-domain@31', 'power-domain@32' were unexpected)
-  https://lore.kernel.org/all/20241001113052.3124869-2-fshao@chromium.org/
-
-- mailbox: 'clock-names' is a required property
-  https://lore.kernel.org/all/20240911104327.123602-1-angelogioacchino.delregno@collabora.com/
-
-- jpeg-decoder: iommus: [[141, 685], [141, 686], [141, 690], [141, 691],
-  [141, 692], [141, 693]] is too long
-  https://lore.kernel.org/all/20241001113052.3124869-4-fshao@chromium.org/
-
-- amplifier@4f: reg:0:0: 79 is greater than the maximum of 63
-    >> ti,tas2781 binding specifies that ti,tas2563 register range is
-       0x4c-0x4f. The DT follows what the binding literally suggests.
-       I tried changing the binding locally but didn't help.
-
-[v1]:
-https://lore.kernel.org/all/20241025110111.1321704-1-fshao@chromium.org/
-[v2]:
-https://lore.kernel.org/all/20241105093222.4055774-1-fshao@chromium.org/
-
-Regards,
-Fei
-
-Changes in v3:
-- Multiple DT changes, refer to Patch 2/2 for all details
-
-Changes in v2:
-- remove invalid or undocumented properties
-    e.g. mediatek,dai-link, maxim,dsm_param_name etc.
-- remove touchscreen as the driver is not yet accepted in upstream
-- update sound DAI link node name to match the binding
-- add missing pinctrls in audio codec nodes
-
-Fei Shao (2):
-  dt-bindings: arm: mediatek: Add MT8188 Lenovo Chromebook Duet (11", 9)
-  arm64: dts: mediatek: Introduce MT8188 Geralt platform based Ciri
-
- .../devicetree/bindings/arm/mediatek.yaml     |   13 +
- arch/arm64/boot/dts/mediatek/Makefile         |    8 +
- .../dts/mediatek/mt8188-geralt-ciri-sku0.dts  |   32 +
- .../dts/mediatek/mt8188-geralt-ciri-sku1.dts  |   59 +
- .../dts/mediatek/mt8188-geralt-ciri-sku2.dts  |   59 +
- .../dts/mediatek/mt8188-geralt-ciri-sku3.dts  |   32 +
- .../dts/mediatek/mt8188-geralt-ciri-sku4.dts  |   48 +
- .../dts/mediatek/mt8188-geralt-ciri-sku5.dts  |   72 +
- .../dts/mediatek/mt8188-geralt-ciri-sku6.dts  |   72 +
- .../dts/mediatek/mt8188-geralt-ciri-sku7.dts  |   48 +
- .../boot/dts/mediatek/mt8188-geralt-ciri.dtsi |  316 +++++
- .../boot/dts/mediatek/mt8188-geralt.dtsi      | 1156 +++++++++++++++++
- 12 files changed, 1915 insertions(+)
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku0.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku1.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku2.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku3.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku4.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku5.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku6.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku7.dts
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri.dtsi
- create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt.dtsi
-
+diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
+index 1d4bb50fcd8d..4b68f0baf010 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek.yaml
++++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
+@@ -307,6 +307,19 @@ properties:
+           - enum:
+               - mediatek,mt8186-evb
+           - const: mediatek,mt8186
++      - description: Google Ciri (Lenovo Chromebook Duet (11", 9))
++        items:
++          - enum:
++              - google,ciri-sku0
++              - google,ciri-sku1
++              - google,ciri-sku2
++              - google,ciri-sku3
++              - google,ciri-sku4
++              - google,ciri-sku5
++              - google,ciri-sku6
++              - google,ciri-sku7
++          - const: google,ciri
++          - const: mediatek,mt8188
+       - items:
+           - enum:
+               - mediatek,mt8188-evb
 -- 
 2.47.0.371.ga323438b13-goog
 
