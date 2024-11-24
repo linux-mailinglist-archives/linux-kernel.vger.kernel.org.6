@@ -1,239 +1,175 @@
-Return-Path: <linux-kernel+bounces-419926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B959D762F
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:55:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 313D89D731E
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:29:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC80FBE835F
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 14:42:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E19F41633E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 14:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C278D22C117;
-	Sun, 24 Nov 2024 13:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PvI3l8LQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C999C215F75;
+	Sun, 24 Nov 2024 13:45:21 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0151422C0FF;
-	Sun, 24 Nov 2024 13:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D582144C9
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 13:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732456104; cv=none; b=DJGzD0ujBZJZCMHMN03lIQLrLunwrJEurruwPvVE7Chku24UgHiGbxzPhtc09p9wKZ0fpmkArQVUUCe2HO4BThoL533ggc0kd5AomJOtZdy4+JgKZo2OZqE1YVp0YSDt0iKFBjt1ebH+1uK10dmsRInEK7xMLCa7LZyPujVazaw=
+	t=1732455921; cv=none; b=la+OAaDi8zHhv+tMqAMLRKBsFHu6Slfk9+dX7D1+YniFnEfgWBbcxQSBtskFtCcZ688YnpLY6XZ8ve+KNWsi724LLopOo6PLh+UDapR1blN21PykjlqKeKMNJ5c58XWG/ocGB0d0pONmfe/je2E82xO3dIaWb43a2J0r9otpKJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732456104; c=relaxed/simple;
-	bh=etKWQqRir1fnlJZqbLpLotJgPM+t6WIibgr+QZvh6WY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WV27WePSULpjtq6YNmDwfqa7k/jvt4gdNueZs+7wacIbNQ3pZRxazvqSD2rZd1to/Dey+3fL7+uTIGEXbTWHFYzipiS8/f7B+cBiOf4Ym2sjR41xTIjmKZy9g4GA34H50NXwg9PEwmA2d1Tv5L0HTGsEJCMpj+WO6aWQX6vgo5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PvI3l8LQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58D4FC4CECC;
-	Sun, 24 Nov 2024 13:48:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732456103;
-	bh=etKWQqRir1fnlJZqbLpLotJgPM+t6WIibgr+QZvh6WY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PvI3l8LQH1r5NhtqdDaRJENqmnUoNrPjZEBxeqzcxNtK2punvP++BqWB3Sjpkvl0p
-	 zb+TvAcvudhNrFC5fsRDSkDyi+BLQASBEuzGn8viBKudJKl/eLeiDOhi3woWHmoCNW
-	 4skGtFk/1OBN4wSOT3rL2uuNuf5KsoJBt8FMpDFD1ko0cZfItdwh1JB+Yl9hq0QIdz
-	 CKx6MBaq2ARGXgkdF465uy9MIp3Fjq2AJoJC3VKAWoNSMAjat4QuCIVKHX33EA5gz0
-	 DJskpKzENoJsFdutsFGFRtmhBACcq05uYgKrJzXmvi+BHnL7oVG9MVw16PNZot9gQs
-	 iyjh3IWvqHrUg==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Wei Fang <wei.fang@nxp.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Sasha Levin <sashal@kernel.org>,
-	claudiu.manoil@nxp.com,
-	xiaoning.wang@nxp.com,
-	andrew+netdev@lunn.ch,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	imx@lists.linux.dev,
-	netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 43/61] net: enetc: remove ERR050089 workaround for i.MX95
-Date: Sun, 24 Nov 2024 08:45:18 -0500
-Message-ID: <20241124134637.3346391-43-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241124134637.3346391-1-sashal@kernel.org>
-References: <20241124134637.3346391-1-sashal@kernel.org>
+	s=arc-20240116; t=1732455921; c=relaxed/simple;
+	bh=gBCA6PvhsD68CM59+LDlo4RQBIZiH2mLYih1G5oOcD4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AHtWBwAF1Wa8KCMSs4nAl/dJYwLt/i+cNEmUGtAa5vlUp9sI2sdwxBnwIVT87psDwmUcFajpt8rsWhv4sDm3GhUHMigZ6BuAVxyup0OMOn+S3nABg651b+0eRFFtFi0CmSuGd9vTrEplyFm82k9hiXy8Dbn7AJs3Bb8oZac9xr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a763f42b35so27154815ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 05:45:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732455918; x=1733060718;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=a81M4efnjatMHVgJX7A227EncQOmk61XuBnuORvoZ3Y=;
+        b=OvOXjeMgqhfkBrS3uN5wcgbsfOEn/UsIp3usVVzkjy28O28h9VQsSxBhDCKOGYVRI5
+         fM0HmZoHR4QPpSIwPapwrGA/TAsbiJrYWl27Kg+PmU7LCgBhR3kqxyPdVeHFDpYo6Ldm
+         5OmfB2EkTOYPQ987mhy3lR93i0bCSGy8GcMXK7vFnpZwr4k4Z3dqtFW+6FJ2rTYSp2Ku
+         QxrtzEFJvRuunnv+zVh/L+DMLnMNoA0FwyI/yJQ7FltJ743yJRZTF1lnuGLYmhFLAYvX
+         PcS/P38VWmuxtqu2Y73qh30nRZdaNn1ZXQbpA/wdrhs7oTXPaourGRV54PBt7rvD4PPP
+         TPvg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmyuTE6W2BVgaBpRyYMhakuGSN4ZBKADl/jVU3ikv9OBm2PXkG2SHH1CgTmJzWc+qztqkd0XdCb4AuvZ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLo6CR2j2whpHL1oWolPgXD9ElEqWKMh8/f8s5aX/sdclzQX7m
+	YyMrIjMzAnj0j8Wqq+DVIpBRjZAfmviVyDuVapleuYSjRPFk9UUmGhBgGitHX8VAsY6mCfoz1Bz
+	EpeP2wRCPyqu9zs8ANkT8USIxEKT2BoJdpT7uYK/13bNqe9i2uXuLWdk=
+X-Google-Smtp-Source: AGHT+IFpf92NeJYFxU9gLOtHQWOMGi4CPunFrp6hEzgy12y0qdbEpdXOPeIXOk5eDbM6qrzAD0q4COZzziVxCCKzXfh50C0PeRrs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.63
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:164c:b0:3a7:15aa:3fcc with SMTP id
+ e9e14a558f8ab-3a79acea4e0mr111445195ab.1.1732455918361; Sun, 24 Nov 2024
+ 05:45:18 -0800 (PST)
+Date: Sun, 24 Nov 2024 05:45:18 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67432dee.050a0220.1cc393.0041.GAE@google.com>
+Subject: [syzbot] [btrfs?] kernel BUG in __folio_start_writeback
+From: syzbot <syzbot+aac7bff85be224de5156@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, clm@fb.com, dsterba@suse.com, 
+	josef@toxicpanda.com, linux-btrfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
+Hello,
 
-[ Upstream commit 86831a3f4cd4c924dd78cf0d6e4d73acacfe1b11 ]
+syzbot found the following issue on:
 
-The ERR050089 workaround causes performance degradation and potential
-functional issues (e.g., RCU stalls) under certain workloads. Since
-new SoCs like i.MX95 do not require this workaround, use a static key
-to compile out enetc_lock_mdio() and enetc_unlock_mdio() at runtime,
-improving performance and avoiding unnecessary logic.
+HEAD commit:    228a1157fb9f Merge tag '6.13-rc-part1-SMB3-client-fixes' o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13820530580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=402159daa216c89d
+dashboard link: https://syzkaller.appspot.com/bug?extid=aac7bff85be224de5156
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13840778580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17840778580000
 
-Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-Signed-off-by: Wei Fang <wei.fang@nxp.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d32a8e8c5aae/disk-228a1157.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/28d5c070092e/vmlinux-228a1157.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/45af4bfd9e8e/bzImage-228a1157.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/69603aa12e8f/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+aac7bff85be224de5156@syzkaller.appspotmail.com
+
+ __fput+0x5ba/0xa50 fs/file_table.c:458
+ task_work_run+0x24f/0x310 kernel/task_work.c:239
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x13f/0x340 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+------------[ cut here ]------------
+kernel BUG at mm/page-writeback.c:3119!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 0 UID: 0 PID: 12 Comm: kworker/u8:1 Not tainted 6.12.0-syzkaller-08446-g228a1157fb9f #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: btrfs-delalloc btrfs_work_helper
+RIP: 0010:__folio_start_writeback+0xc06/0x1050 mm/page-writeback.c:3119
+Code: 25 ff 0f 00 00 0f 84 d3 00 00 00 e8 14 ae c3 ff e9 ba f5 ff ff e8 0a ae c3 ff 4c 89 f7 48 c7 c6 00 2e 14 8c e8 8b 4f 0d 00 90 <0f> 0b e8 f3 ad c3 ff 4c 89 f7 48 c7 c6 60 34 14 8c e8 74 4f 0d 00
+RSP: 0018:ffffc90000117500 EFLAGS: 00010246
+RAX: ed413247a2060f00 RBX: 0000000000000002 RCX: 0000000000000001
+RDX: dffffc0000000000 RSI: ffffffff8c0ad620 RDI: 0000000000000001
+RBP: ffffc90000117670 R08: ffffffff942b2967 R09: 1ffffffff285652c
+R10: dffffc0000000000 R11: fffffbfff285652d R12: 0000000000000000
+R13: 1ffff92000022eac R14: ffffea0001cab940 R15: ffff888077139710
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f6661870000 CR3: 00000000792b2000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ process_one_folio fs/btrfs/extent_io.c:187 [inline]
+ __process_folios_contig+0x31c/0x540 fs/btrfs/extent_io.c:216
+ submit_one_async_extent fs/btrfs/inode.c:1229 [inline]
+ submit_compressed_extents+0xdb3/0x16e0 fs/btrfs/inode.c:1632
+ run_ordered_work fs/btrfs/async-thread.c:245 [inline]
+ btrfs_work_helper+0x56b/0xc50 fs/btrfs/async-thread.c:324
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__folio_start_writeback+0xc06/0x1050 mm/page-writeback.c:3119
+Code: 25 ff 0f 00 00 0f 84 d3 00 00 00 e8 14 ae c3 ff e9 ba f5 ff ff e8 0a ae c3 ff 4c 89 f7 48 c7 c6 00 2e 14 8c e8 8b 4f 0d 00 90 <0f> 0b e8 f3 ad c3 ff 4c 89 f7 48 c7 c6 60 34 14 8c e8 74 4f 0d 00
+RSP: 0018:ffffc90000117500 EFLAGS: 00010246
+RAX: ed413247a2060f00 RBX: 0000000000000002 RCX: 0000000000000001
+RDX: dffffc0000000000 RSI: ffffffff8c0ad620 RDI: 0000000000000001
+RBP: ffffc90000117670 R08: ffffffff942b2967 R09: 1ffffffff285652c
+R10: dffffc0000000000 R11: fffffbfff285652d R12: 0000000000000000
+R13: 1ffff92000022eac R14: ffffea0001cab940 R15: ffff888077139710
+FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055ec8463e668 CR3: 000000007ed5e000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
- .../net/ethernet/freescale/enetc/enetc_hw.h   | 34 +++++++++++++------
- .../ethernet/freescale/enetc/enetc_pci_mdio.c | 28 +++++++++++++++
- 2 files changed, 52 insertions(+), 10 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_hw.h b/drivers/net/ethernet/freescale/enetc/enetc_hw.h
-index 1619943fb2637..6a7b9b75d660d 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc_hw.h
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_hw.h
-@@ -396,18 +396,22 @@ struct enetc_hw {
-  */
- extern rwlock_t enetc_mdio_lock;
- 
-+DECLARE_STATIC_KEY_FALSE(enetc_has_err050089);
-+
- /* use this locking primitive only on the fast datapath to
-  * group together multiple non-MDIO register accesses to
-  * minimize the overhead of the lock
-  */
- static inline void enetc_lock_mdio(void)
- {
--	read_lock(&enetc_mdio_lock);
-+	if (static_branch_unlikely(&enetc_has_err050089))
-+		read_lock(&enetc_mdio_lock);
- }
- 
- static inline void enetc_unlock_mdio(void)
- {
--	read_unlock(&enetc_mdio_lock);
-+	if (static_branch_unlikely(&enetc_has_err050089))
-+		read_unlock(&enetc_mdio_lock);
- }
- 
- /* use these accessors only on the fast datapath under
-@@ -416,14 +420,16 @@ static inline void enetc_unlock_mdio(void)
-  */
- static inline u32 enetc_rd_reg_hot(void __iomem *reg)
- {
--	lockdep_assert_held(&enetc_mdio_lock);
-+	if (static_branch_unlikely(&enetc_has_err050089))
-+		lockdep_assert_held(&enetc_mdio_lock);
- 
- 	return ioread32(reg);
- }
- 
- static inline void enetc_wr_reg_hot(void __iomem *reg, u32 val)
- {
--	lockdep_assert_held(&enetc_mdio_lock);
-+	if (static_branch_unlikely(&enetc_has_err050089))
-+		lockdep_assert_held(&enetc_mdio_lock);
- 
- 	iowrite32(val, reg);
- }
-@@ -452,9 +458,13 @@ static inline u32 _enetc_rd_mdio_reg_wa(void __iomem *reg)
- 	unsigned long flags;
- 	u32 val;
- 
--	write_lock_irqsave(&enetc_mdio_lock, flags);
--	val = ioread32(reg);
--	write_unlock_irqrestore(&enetc_mdio_lock, flags);
-+	if (static_branch_unlikely(&enetc_has_err050089)) {
-+		write_lock_irqsave(&enetc_mdio_lock, flags);
-+		val = ioread32(reg);
-+		write_unlock_irqrestore(&enetc_mdio_lock, flags);
-+	} else {
-+		val = ioread32(reg);
-+	}
- 
- 	return val;
- }
-@@ -463,9 +473,13 @@ static inline void _enetc_wr_mdio_reg_wa(void __iomem *reg, u32 val)
- {
- 	unsigned long flags;
- 
--	write_lock_irqsave(&enetc_mdio_lock, flags);
--	iowrite32(val, reg);
--	write_unlock_irqrestore(&enetc_mdio_lock, flags);
-+	if (static_branch_unlikely(&enetc_has_err050089)) {
-+		write_lock_irqsave(&enetc_mdio_lock, flags);
-+		iowrite32(val, reg);
-+		write_unlock_irqrestore(&enetc_mdio_lock, flags);
-+	} else {
-+		iowrite32(val, reg);
-+	}
- }
- 
- #ifdef ioread64
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_pci_mdio.c b/drivers/net/ethernet/freescale/enetc/enetc_pci_mdio.c
-index a1b595bd79935..e178cd9375a13 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc_pci_mdio.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_pci_mdio.c
-@@ -9,6 +9,28 @@
- #define ENETC_MDIO_BUS_NAME	ENETC_MDIO_DEV_NAME " Bus"
- #define ENETC_MDIO_DRV_NAME	ENETC_MDIO_DEV_NAME " driver"
- 
-+DEFINE_STATIC_KEY_FALSE(enetc_has_err050089);
-+EXPORT_SYMBOL_GPL(enetc_has_err050089);
-+
-+static void enetc_emdio_enable_err050089(struct pci_dev *pdev)
-+{
-+	if (pdev->vendor == PCI_VENDOR_ID_FREESCALE &&
-+	    pdev->device == ENETC_MDIO_DEV_ID) {
-+		static_branch_inc(&enetc_has_err050089);
-+		dev_info(&pdev->dev, "Enabled ERR050089 workaround\n");
-+	}
-+}
-+
-+static void enetc_emdio_disable_err050089(struct pci_dev *pdev)
-+{
-+	if (pdev->vendor == PCI_VENDOR_ID_FREESCALE &&
-+	    pdev->device == ENETC_MDIO_DEV_ID) {
-+		static_branch_dec(&enetc_has_err050089);
-+		if (!static_key_enabled(&enetc_has_err050089.key))
-+			dev_info(&pdev->dev, "Disabled ERR050089 workaround\n");
-+	}
-+}
-+
- static int enetc_pci_mdio_probe(struct pci_dev *pdev,
- 				const struct pci_device_id *ent)
- {
-@@ -62,6 +84,8 @@ static int enetc_pci_mdio_probe(struct pci_dev *pdev,
- 		goto err_pci_mem_reg;
- 	}
- 
-+	enetc_emdio_enable_err050089(pdev);
-+
- 	err = of_mdiobus_register(bus, dev->of_node);
- 	if (err)
- 		goto err_mdiobus_reg;
-@@ -71,6 +95,7 @@ static int enetc_pci_mdio_probe(struct pci_dev *pdev,
- 	return 0;
- 
- err_mdiobus_reg:
-+	enetc_emdio_disable_err050089(pdev);
- 	pci_release_region(pdev, 0);
- err_pci_mem_reg:
- 	pci_disable_device(pdev);
-@@ -88,6 +113,9 @@ static void enetc_pci_mdio_remove(struct pci_dev *pdev)
- 	struct enetc_mdio_priv *mdio_priv;
- 
- 	mdiobus_unregister(bus);
-+
-+	enetc_emdio_disable_err050089(pdev);
-+
- 	mdio_priv = bus->priv;
- 	iounmap(mdio_priv->hw->port);
- 	pci_release_region(pdev, 0);
--- 
-2.43.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
