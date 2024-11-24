@@ -1,359 +1,185 @@
-Return-Path: <linux-kernel+bounces-419407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DA029D6D85
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 11:08:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4CAD9D6D89
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 11:22:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AF7328147E
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 10:08:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2B3DB2121B
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 10:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6A518859F;
-	Sun, 24 Nov 2024 10:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34CDA186E27;
+	Sun, 24 Nov 2024 10:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ggEhGLJf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WPOeQKcV"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F75C14287;
-	Sun, 24 Nov 2024 10:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11413FC7;
+	Sun, 24 Nov 2024 10:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732442931; cv=none; b=noZjVIDNiKaJ1Wezovuf8R7xv2/odg70RWNR77TZchncsPI0Wb70YgDavahGQRCFALhrgyMRUZtHug5dVHMp7uqm0fDB0s5pIbfDE8Xi9gPnupqcplMtEMdwIQfXfXlH19kCWAJOiE3R05oeY9t7SSbg9uaBZZpeA3GFBg57pBU=
+	t=1732443725; cv=none; b=XcwAeo/Sn2tpFv+NpBfUXW+ojuhIT5iW3ivmTsmy78CoAvtf8XRyrs+t2sxSdxL5JN5FQbiNki2QU1mrtADzyO12mRV6Px15qZzJWabSr2XrgaKFBvyOoCSbSIcueHDg8faNntwdpUtT4wBy5e98cMYJwtCX6a3RZYww0KwQyOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732442931; c=relaxed/simple;
-	bh=JOaEzMsrupHbOYkmeB77Gn8/lgjUaj9fxhGXkH5xHaA=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=PIVm8XZXt7AkUmthZvQ6B4GVX5rTnw8j8IQbBpGvA1Kts9pPaWDqDzP6/3kfZFXZL4S5EX7qMnpDPOnty0nyC8ibHVdDyQv8Uk9DFHA1m75XPboydmlZOPzptTSqFQJLNsOdHVj/PpcIipYqYSwz6f7pEKuJDjequ7G7UxLua5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ggEhGLJf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5D91C4CECC;
-	Sun, 24 Nov 2024 10:08:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1732442931;
-	bh=JOaEzMsrupHbOYkmeB77Gn8/lgjUaj9fxhGXkH5xHaA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ggEhGLJfZesK8O9RXX3jmh5lwx+M+JvYmFPMrKrgjPnI7oDCK+kkfvdPhAKVhAUmH
-	 K7OlZ0URs5QE8GWmgg7DKQSZRoIDNVp2VsyxGOn7AWzdM5vbjGixZEzkZWH+tmDCLm
-	 FXljQod357ta7wwtzqx/LP8wlmf7c8q1OAzCdCiQ=
-Date: Sun, 24 Nov 2024 02:08:41 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: [GIT PULL] non-MM updates for 6.13-rc1
-Message-Id: <20241124020841.3a96d9e26be9ce4d5810d0b5@linux-foundation.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732443725; c=relaxed/simple;
+	bh=9oCTn0OuRR2ZYCAbf59HtSXH94Vj+xyQ4b0OVmshtos=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lYvHjf4r8lpfITcfjhWfBvD+3KcnFBovlD9ZsVkMYnlEM0iTmEb7CxG6fe5K3/VltustqO/Hi6bqf7cDj2z/qVCMKmktKvD5D9O1XeQCt9OcZPirhfg2BYmQXS+Fhhkape7T+k2smnhljlnOh1jySomafuuaCOIBFO3fUjFvmXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WPOeQKcV; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4315baa51d8so31649915e9.0;
+        Sun, 24 Nov 2024 02:22:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732443722; x=1733048522; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EARY631trTP8bPGVF4+FUq8WRYwqoko+NV4e4AJDVS4=;
+        b=WPOeQKcVMVs9ZJNj58IfPhbI1qO42/tVKegUoSOZ2LcQcxZB/cros5LxCchboD9jZp
+         Wj7LV8uRjOLon5WLtKZijkaT4W9pkufJ0H6iaPVO7l9ZrgBr1uJ4QSHT7P/dbvwz4wCe
+         2NbhK1v6YAMvmoZdP9TKJZ0zB16fIlymzFRUGO7QDvzIr0EZCssV3ZUjZLNPqjSbkZAx
+         C/etrZUSz2yL/s6W8BBUfnP2meZEMWe4JrNzhIbCh6cfDesTNwT/MdqwozQGYYKoGMLx
+         lgs2U+bycDshaGv3QmsM/jY2YRmmvk0opOWdHioIGzX++ch1V0vcqLsLJ67C9d/A0Tk3
+         cSlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732443722; x=1733048522;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EARY631trTP8bPGVF4+FUq8WRYwqoko+NV4e4AJDVS4=;
+        b=BjbNgxnvUdcyBxz7nFiRygNo2y6Xa7VD53+5POUcbO1WxJnbzHwqzAMGdaP4m3nd1J
+         bYJDR909GlMR/GvG2awVLpm4cRR+eHpmo6ulC3PWBo1S6KMU6ItsbEOAjf8R0D7G80Uc
+         v+dkqqEjuqg/AwLruoEfqqb3HwnyiCbq0NlMvaEXjp7li0cP13YFn/r7xmubSYK2aKgK
+         1JuodCJIzhtJlrfv4yNLhm83gkK9ayFkixm5tAfQ817mjBcNJyPidtZJoWkdMyPxDNSl
+         gayO46QuHcmHQihhWR3vJlAqHwdM6ErrzTkNPzpRAXHL64PwBcr8zYdZlaHIsbXtFxWW
+         5ueQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVw9kCnKimMF1PgoR6BaNxj22XAk1kqVvkroB443AIpOKrbEbgPdQR/gt4lpd+QUF7coJNIdm2wk/sc@vger.kernel.org, AJvYcCW+3A86580nhUl0OxY7S/J3CplxdtzpOm41HcjTyfKDaZhi7b7t3w6DOBKKoSAC1ibqF+7N6YBOuqIH4URu@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwdL0yB97St0HqYXKcWrJz39KnKwsHkNk/9a893qQOwjzSxIT1
+	j4xFAGEmO3uwd1huevbxDDKk6GgV+Sfdd5v1bytzCtWG3QORFOZI
+X-Gm-Gg: ASbGncv7FjYAEdp7DguflGN/tDenGSwnLRmNZS0nom/qK7TSajtNxomC9zK3087LwUs
+	jFd8XyR6Zz0tAF5ypMivoE3W6wgr8HYaIt6L0utSUwjWbVLSBk9/U9hG0w5f1PphgorfHxH1lGL
+	QYBvQ/EuVhINQvKQXU5fLiK9I016gPFnlLghaKo1LsiwLFYZKs5UiDmQmo+N6AgzwW9dQ+4gWhP
+	XCVHbjff6iuRmWeEYaKKyZRYGGoEqj5CIS9IuFgmau17hKSCY1jZmZ+p3GC9CKiCrNsLo5CO8k7
+	REA1aUqxvDnk8FFEZVJ6kIdWVlyK1Q==
+X-Google-Smtp-Source: AGHT+IF90ZCmjQclncaeSHdtxHJLKaUTR0zA5IJT87d4aV/v6gyuaYoZ5id52sQMUI8wUQFT+DWspA==
+X-Received: by 2002:a05:600c:4712:b0:432:7c08:d0ff with SMTP id 5b1f17b1804b1-433ce48ee2amr67395605e9.23.1732443721726;
+        Sun, 24 Nov 2024 02:22:01 -0800 (PST)
+Received: from [192.168.2.120] (cst-prg-110-166.cust.vodafone.cz. [46.135.110.166])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4349f2e1b3bsm1036125e9.25.2024.11.24.02.22.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 24 Nov 2024 02:22:00 -0800 (PST)
+Message-ID: <c8f40177-1d81-4c8e-8319-e78623cded42@gmail.com>
+Date: Sun, 24 Nov 2024 11:22:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] w1: ds2482: Add regulator support
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Stefan Wahren <stefan.wahren@chargebyte.com>,
+ Ben Gardner <bgardner@wabtec.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20241122-ds2482-add-reg-v2-0-a5a03ee74da7@gmail.com>
+ <20241122-ds2482-add-reg-v2-1-a5a03ee74da7@gmail.com>
+ <2ff7omfp752zdtzozcle5jn7nsyonsbqgjefrx5t4lncoer5bw@wb76uxg26ugg>
+Content-Language: cs, en-US
+From: =?UTF-8?B?S3J5xaF0b2YgxIxlcm7DvQ==?= <cleverline1mc@gmail.com>
+In-Reply-To: <2ff7omfp752zdtzozcle5jn7nsyonsbqgjefrx5t4lncoer5bw@wb76uxg26ugg>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+> On Fri, Nov 22, 2024 at 09:53:57AM +0100, Kryštof Černý wrote:
+>> Adds a support for attaching a supply regulator.
+>>
+>> Signed-off-by: Kryštof Černý <cleverline1mc@gmail.com>
+>> ---
+>>   drivers/w1/masters/ds2482.c | 21 +++++++++++++++++++++
+>>   1 file changed, 21 insertions(+)
+>>
+>> diff --git a/drivers/w1/masters/ds2482.c b/drivers/w1/masters/ds2482.c
+>> index a2ecbb863c57f38bffc8e3cd463db1940e603179..3fb35e92fc1587dc4e609c0061fa5057e0027a80 100644
+>> --- a/drivers/w1/masters/ds2482.c
+>> +++ b/drivers/w1/masters/ds2482.c
+>> @@ -15,6 +15,7 @@
+>>   #include <linux/slab.h>
+>>   #include <linux/i2c.h>
+>>   #include <linux/delay.h>
+>> +#include <linux/regulator/consumer.h>
+>>   
+>>   #include <linux/w1.h>
+>>   
+>> @@ -117,6 +118,9 @@ struct ds2482_data {
+>>   	u8			channel;
+>>   	u8			read_prt;	/* see DS2482_PTR_CODE_xxx */
+>>   	u8			reg_config;
+>> +
+>> +	/* reference to the optional regulator */
+> 
+> Drop comment, obvious.
+
+I will drop all the other comments, as they seem to have the same level
+of "obviousness" as this one to me.
 
 
-Linus, please merge this cycle's non-MM updates, thanks.
+> 
+>> +	struct regulator *vcc_reg;
+> 
+> Missing indentation after type - see earlier lines.
 
-Merge issues along with their linux-next resolutions are as follows:
+struct will be removed with switching to devm_regulator_get_enable().
 
-kernel/auditsc.c, vs security tree:
-https://lkml.kernel.org/r/20241014144648.1923104a@canb.auug.org.au
+> 
+>>   };
+>>   
+>>   
+>> @@ -445,6 +449,7 @@ static int ds2482_probe(struct i2c_client *client)
+>>   	int err = -ENODEV;
+>>   	int temp1;
+>>   	int idx;
+>> +	int ret;
+>>   
+>>   	if (!i2c_check_functionality(client->adapter,
+>>   				     I2C_FUNC_SMBUS_WRITE_BYTE_DATA |
+>> @@ -457,6 +462,18 @@ static int ds2482_probe(struct i2c_client *client)
+>>   		goto exit;
+>>   	}
+>>   
+>> +	/* Get the vcc regulator */
+>> +	data->vcc_reg = devm_regulator_get(&client->dev, "vcc");
+>> +	if (IS_ERR(data->vcc_reg))
+>> +		return PTR_ERR(data->vcc_reg);
+>> +
+>> +	/* Enable the vcc regulator */
+>> +	ret = regulator_enable(data->vcc_reg);
+> 
+> You wanted devm_regulator_get_enable().
+> 
+> ... but your comment also suggests devm_regulator_get_enable_optional().
+> 
 
-lib/Makefile, vs asm-generic tree:
-https://lkml.kernel.org/r/20241029095525.0fba9d23@canb.auug.org.au
+This is a good point, my implementation is based on observation of a few 
+other drivers and it's not needed in this case. This will reduce the 
+amount of changes.
 
+I think my wording was not correct. By optionally I meant that most 
+hardware designs do not use a separate power supply regulator, so they 
+do not need to specify one, but the device needs power to function.
+My current view is that it should not be optional after all, so I would 
+go with devm_regulator_get_enable(). Could you please tell me your view 
+on this?
 
-The following changes since commit 59b723cd2adbac2a34fc8e12c74ae26ae45bf230:
+> 
+> Best regards,
+> Krzysztof
+> 
 
-  Linux 6.12-rc6 (2024-11-03 14:05:52 -1000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-nonmm-stabl=
-e-2024-11-24-02-05
-
-for you to fetch changes up to 2c259a91d8d23a8266092b0dd51b8092877717a4:
-
-  gdb: lx-symbols: do not error out on monolithic build (2024-11-14 22:51:1=
-4 -0800)
-
-----------------------------------------------------------------
-- The series "resource: A couple of cleanups" from Andy Shevchenko
-  performs some cleanups in the resource management code.
-
-- The series "Improve the copy of task comm" from Yafang Shao addresses
-  possible race-induced overflows in the management of task_struct.comm[].
-
-- The series "Remove unnecessary header includes from
-  {tools/}lib/list_sort.c" from Kuan-Wei Chiu adds some cleanups and a
-  small fix to the list_sort library code and to its selftest.
-
-- The series "Enhance min heap API with non-inline functions and
-  optimizations" also from Kuan-Wei Chiu optimizes and cleans up the
-  min_heap library code.
-
-- The series "nilfs2: Finish folio conversion" from Ryusuke Konishi
-  finishes off nilfs2's folioification.
-
-- The series "add detect count for hung tasks" from Lance Yang adds more
-  userspace visibility into the hung-task detector's activity.
-
-- Apart from that, singelton patches in many places - please see the
-  individual changelogs for details.
-
-----------------------------------------------------------------
-Alexandru Ardelean (2):
-      util_macros.h: fix/rework find_closest() macros
-      lib: util_macros_kunit: add kunit test for util_macros.h
-
-Andrew Kreimer (1):
-      ocfs2: cluster: fix a typo
-
-Andy Shevchenko (2):
-      resource: replace open coded resource_intersection()
-      resource: introduce is_type_match() helper and use it
-
-Breno Leitao (1):
-      scripts/decode_stacktrace.sh: remove trailing space
-
-Dmitry Antipov (1):
-      ocfs2: fix uninitialized value in ocfs2_file_read_iter()
-
-Dr. David Alan Gilbert (1):
-      ocfs2: remove unused errmsg function and table
-
-Etienne Buira (1):
-      gdb: lx-symbols: do not error out on monolithic build
-
-Huang Ying (1):
-      resource: avoid unnecessary resource tree walking in __region_interse=
-cts()
-
-I Hsin Cheng (1):
-      list: test: check the size of every lists for list_cut_position*()
-
-Ilpo J=E4rvinen (1):
-      resource: correct reallocate_resource() documentation
-
-Kuan-Wei Chiu (16):
-      lib/Kconfig.debug: move int_pow test option to runtime testing section
-      lib/Makefile: make union-find compilation conditional on CONFIG_CPUSE=
-TS
-      lib/list_sort: remove unnecessary header includes
-      tools/lib/list_sort: remove unnecessary header includes
-      perf tools: update expected diff for lib/list_sort.c
-      lib/min_heap: introduce non-inline versions of min heap API functions
-      lib min_heap: optimize min heap by prescaling counters for better per=
-formance
-      lib min_heap: avoid indirect function call by providing default swap
-      lib/test_min_heap: update min_heap_callbacks to use default builtin s=
-wap
-      perf/core: update min_heap_callbacks to use default builtin swap
-      dm vdo: update min_heap_callbacks to use default builtin swap
-      bcache: update min_heap_callbacks to use default builtin swap
-      bcachefs: clean up duplicate min_heap_callbacks declarations
-      bcachefs: update min_heap_callbacks to use default builtin swap
-      Documentation/core-api: add min heap API introduction
-      MAINTAINERS: add entry for min heap library code
-
-Lance Yang (2):
-      hung_task: add detect count for hung tasks
-      hung_task: add docs for hung_task_detect_count
-
-Ma Wupeng (1):
-      ipc: fix memleak if msg_init_ns failed in create_ipc_ns
-
-Matthew Wilcox (Oracle) (4):
-      nilfs2: remove nilfs_writepage
-      nilfs2: convert nilfs_page_count_clean_buffers() to take a folio
-      nilfs2: convert nilfs_recovery_copy_block() to take a folio
-      nilfs2: convert metadata aops from writepage to writepages
-
-Mirsad Todorovac (1):
-      fs/proc/kcore.c: fix coccinelle reported ERROR instances
-
-Mohammed Anees (1):
-      ocfs2: fix typo in comment
-
-Nataniel Farzan (1):
-      Improve consistency of '#error' directive messages
-
-Ryusuke Konishi (8):
-      nilfs2: convert segment buffer to be folio-based
-      nilfs2: convert common metadata file code to be folio-based
-      nilfs2: convert segment usage file to be folio-based
-      nilfs2: convert persistent object allocator to be folio-based
-      nilfs2: convert inode file to be folio-based
-      nilfs2: convert DAT file to be folio-based
-      nilfs2: remove nilfs_palloc_block_get_entry()
-      nilfs2: convert checkpoint file to be folio-based
-
-Shuah Khan (1):
-      tools: fix -Wunused-result in linux.c
-
-Sourabh Jain (1):
-      kexec/crash: no crash update when kexec in progress
-
-Sui Jingfeng (2):
-      scatterlist: fix a typo
-      lib/scatterlist: use sg_phys() helper
-
-Tamir Duberstein (1):
-      checkpatch: always parse orig_commit in fixes tag
-
-Thomas Wei=DFschuh (1):
-      reboot: move reboot_notifier_list to kernel/reboot.c
-
-Thorsten Blum (1):
-      ipc/msg: replace one-element array with flexible array member
-
-Tio Zhang (1):
-      kernel/watchdog: always restore watchdog_softlockup(,hardlockup)_user=
-_enabled after proc show
-
-Uros Bizjak (5):
-      perf/hw_breakpoint: use ERR_PTR_PCPU(), IS_ERR_PCPU() and PTR_ERR_PCP=
-U() macros
-      percpu: merge VERIFY_PERCPU_PTR() into its only user
-      percpu: introduce PERCPU_PTR() macro
-      percpu: cast percpu pointer in PERCPU_PTR() via unsigned long
-      dma-buf: use atomic64_inc_return() in dma_buf_getfile()
-
-Vinicius Peixoto (1):
-      lib/crc16_kunit.c: add KUnit tests for crc16
-
-WangYuli (1):
-      scripts/spelling.txt: add typo "exprienced" and "rewritting"
-
-Yafang Shao (7):
-      get rid of __get_task_comm()
-      auditsc: replace memcpy() with strscpy()
-      security: replace memcpy() with get_task_comm()
-      bpftool: ensure task comm is always NUL-terminated
-      mm/util: fix possible race condition in kstrdup()
-      mm/util: deduplicate code in {kstrdup,kstrndup,kmemdup_nul}
-      drm: replace strcpy() with strscpy()
-
-Yu Jiaoliang (1):
-      scripts/spelling.txt: add more spellings corrections
-
-Zhang Zekun (1):
-      ocfs2: remove unused declaration in header file
-
-zhangguopeng (1):
-      kernel/reboot: replace sprintf() with sysfs_emit()
-
- Documentation/admin-guide/sysctl/kernel.rst        |   9 +
- Documentation/core-api/index.rst                   |   1 +
- Documentation/core-api/min_heap.rst                | 300 ++++++++++++++++
- MAINTAINERS                                        |   9 +
- arch/alpha/include/asm/spinlock_types.h            |   2 +-
- arch/arm/include/asm/spinlock_types.h              |   2 +-
- arch/arm64/include/asm/spinlock_types.h            |   2 +-
- arch/hexagon/include/asm/spinlock_types.h          |   2 +-
- arch/powerpc/include/asm/simple_spinlock_types.h   |   2 +-
- arch/powerpc/include/asm/spinlock_types.h          |   2 +-
- arch/s390/include/asm/spinlock_types.h             |   2 +-
- arch/sh/include/asm/spinlock_types.h               |   2 +-
- arch/xtensa/include/asm/spinlock_types.h           |   2 +-
- drivers/dma-buf/dma-buf.c                          |   2 +-
- drivers/gpu/drm/drm_framebuffer.c                  |   2 +-
- drivers/gpu/drm/i915/i915_gpu_error.c              |   6 +-
- drivers/md/bcache/Kconfig                          |   1 +
- drivers/md/bcache/alloc.c                          |  11 +-
- drivers/md/bcache/bset.c                           |  14 +-
- drivers/md/bcache/extents.c                        |  10 +-
- drivers/md/bcache/movinggc.c                       |  10 +-
- drivers/md/dm-vdo/Kconfig                          |   1 +
- drivers/md/dm-vdo/repair.c                         |   2 +-
- drivers/md/dm-vdo/slab-depot.c                     |  10 +-
- fs/bcachefs/Kconfig                                |   1 +
- fs/bcachefs/clock.c                                |  25 +-
- fs/bcachefs/ec.c                                   |  19 +-
- fs/exec.c                                          |  10 -
- fs/nilfs2/alloc.c                                  | 148 ++++----
- fs/nilfs2/alloc.h                                  |   4 +-
- fs/nilfs2/cpfile.c                                 | 383 +++++++++++------=
-----
- fs/nilfs2/dat.c                                    |  98 +++---
- fs/nilfs2/dir.c                                    |   2 +-
- fs/nilfs2/ifile.c                                  |  10 +-
- fs/nilfs2/ifile.h                                  |   4 +-
- fs/nilfs2/inode.c                                  |  35 +-
- fs/nilfs2/mdt.c                                    |  40 ++-
- fs/nilfs2/page.c                                   |   4 +-
- fs/nilfs2/page.h                                   |   4 +-
- fs/nilfs2/recovery.c                               |  17 +-
- fs/nilfs2/segbuf.c                                 |  17 +-
- fs/nilfs2/sufile.c                                 | 160 ++++-----
- fs/ocfs2/alloc.c                                   |   2 +-
- fs/ocfs2/aops.h                                    |   2 +
- fs/ocfs2/cluster/quorum.c                          |   2 +-
- fs/ocfs2/dlm/dlmapi.h                              |   2 -
- fs/ocfs2/dlm/dlmdebug.c                            |  53 ---
- fs/ocfs2/file.c                                    |   4 +
- fs/ocfs2/quota.h                                   |   1 -
- fs/proc/array.c                                    |   2 +-
- fs/proc/kcore.c                                    |  10 +-
- include/acpi/platform/aclinux.h                    |   2 +-
- include/linux/compiler-clang.h                     |   2 +-
- include/linux/compiler-gcc.h                       |   2 +-
- include/linux/min_heap.h                           | 357 +++++++++++++++--=
---
- include/linux/notifier.h                           |   2 -
- include/linux/percpu-defs.h                        |  21 +-
- include/linux/pm_wakeup.h                          |   2 +-
- include/linux/rwlock.h                             |   2 +-
- include/linux/rwlock_api_smp.h                     |   2 +-
- include/linux/scatterlist.h                        |   2 +-
- include/linux/sched.h                              |  28 +-
- include/linux/spinlock_api_smp.h                   |   2 +-
- include/linux/spinlock_types_up.h                  |   2 +-
- include/linux/spinlock_up.h                        |   2 +-
- include/linux/util_macros.h                        |  56 ++-
- init/Kconfig                                       |   1 +
- ipc/msg.c                                          |   2 +-
- ipc/namespace.c                                    |   4 +-
- kernel/auditsc.c                                   |   6 +-
- kernel/crash_core.c                                |   6 +-
- kernel/events/core.c                               |  15 +-
- kernel/events/hw_breakpoint.c                      |   4 +-
- kernel/hung_task.c                                 |  18 +
- kernel/kthread.c                                   |   2 +-
- kernel/notifier.c                                  |   8 -
- kernel/reboot.c                                    |  15 +-
- kernel/resource.c                                  |  66 ++--
- kernel/watchdog.c                                  |   3 +-
- lib/Kconfig                                        |   6 +
- lib/Kconfig.debug                                  |  59 +++-
- lib/Makefile                                       |   6 +-
- lib/crc16_kunit.c                                  | 155 +++++++++
- lib/list-test.c                                    |   4 +
- lib/list_sort.c                                    |   3 -
- lib/min_heap.c                                     |  70 ++++
- lib/scatterlist.c                                  |   4 +-
- lib/test_min_heap.c                                |  16 +-
- lib/util_macros_kunit.c                            | 240 +++++++++++++
- mm/util.c                                          |  62 ++--
- samples/hw_breakpoint/data_breakpoint.c            |   4 +-
- scripts/checkpatch.pl                              |  37 +-
- scripts/decode_stacktrace.sh                       |   7 +-
- scripts/gdb/linux/modules.py                       |   3 +
- scripts/gdb/linux/symbols.py                       |   3 +
- scripts/spelling.txt                               |  33 ++
- security/lsm_audit.c                               |   4 +-
- security/selinux/selinuxfs.c                       |   2 +-
- tools/bpf/bpftool/pids.c                           |   2 +
- tools/include/linux/compiler-gcc.h                 |   2 +-
- tools/lib/list_sort.c                              |   2 -
- .../perf/check-header_ignore_hunks/lib/list_sort.c |  11 +-
- tools/testing/shared/linux.c                       |  14 +-
- 103 files changed, 1952 insertions(+), 896 deletions(-)
- create mode 100644 Documentation/core-api/min_heap.rst
- create mode 100644 lib/crc16_kunit.c
- create mode 100644 lib/min_heap.c
- create mode 100644 lib/util_macros_kunit.c
-
+Thank you very much for the review,
+Kryštof Černý
 
