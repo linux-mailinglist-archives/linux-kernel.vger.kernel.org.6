@@ -1,103 +1,146 @@
-Return-Path: <linux-kernel+bounces-420171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2D4A9D7650
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:04:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F1FA9D7653
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:04:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 888EF28473F
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:04:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE21C164A50
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0941C42AA0;
-	Sun, 24 Nov 2024 17:04:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43444594C;
+	Sun, 24 Nov 2024 17:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ZLwfTd3k"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.209])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I63cvkl/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016DA2500D9;
-	Sun, 24 Nov 2024 17:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05652AF0E;
+	Sun, 24 Nov 2024 17:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732467846; cv=none; b=BKc7L7JiyhJOP9tL+pJI8RnqczjyKvXUYKniYTx5xJSdDfR/6sYek9rfR4rCFkOORzSz1Nm063xh3FT1hX99V603ij0vvM+EXwhdbFGnWqkWLmg6CFfYqEe7VaPE89F8wKnKd++NiMoga3BFYkxSfnL4g2cjx6B6EDwwWzeBtyA=
+	t=1732467854; cv=none; b=jQ3KOBuFVWrjl5duEWnoHe/SPd9dmrlLbaZMsBQVFNTwFWmTtJuwWcMfXr9ERk9Blj8KQGbYxBy2ySvO+O+FlS+Rb+MaprzJdWMxwK5zpZuT4ivm4DOWOKJoNujbrTpV4Hokx4yHI7HsqFh3D+J2WG8i3Kk8kegRJ4K1Nwgb2as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732467846; c=relaxed/simple;
-	bh=0nUyTFgN93JxdXis2A1wjb0ApbtOrSZY//1Dp6Ir21Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NoNWR5JP+4+8GJ9Apw+l/RNTO9w/g8+yu2Nj5drZ0aGTuc5dGAxe1FSZ24zvvfQ5yzre/yw/Cjf137Y2pjV5x1YVJvXh73iKOGzLSCjXH7Lrall/09fYzkD5htWcj6VYBCSSVSrnS8Ayg4FhWNZs9szYRwXd/cjpW7Y1gZHFKeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ZLwfTd3k; arc=none smtp.client-ip=192.19.144.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 50157C0005D4;
-	Sun, 24 Nov 2024 09:03:58 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 50157C0005D4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1732467838;
-	bh=0nUyTFgN93JxdXis2A1wjb0ApbtOrSZY//1Dp6Ir21Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZLwfTd3k1VZLYnirJBPxFlwYvo4yvosVee3xExCJ75wy5e8Xqkk/KWSaSC23RdlgK
-	 zVjxm/q/fXcmBO7C2sbvxPxjKZ/8i+vyURWadI+I3h/3ZqcVOcAV0NCA5yI8oe8kqa
-	 YabO1eWeQSjeRAFU8e1gkvvJnWHpdDgLLxBtVlnM=
-Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id BFF0418041CAC6;
-	Sun, 24 Nov 2024 09:03:57 -0800 (PST)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: bcm-kernel-feedback-list@broadcom.com,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	=?iso-8859-1?b?TWHtcmE=?= Canal <mcanal@igalia.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 34/36] arm64: dts: broadcom: Add firmware clocks and power nodes to Pi5 DT
-Date: Sun, 24 Nov 2024 09:03:57 -0800
-Message-ID: <20241124170357.710628-1-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241025-drm-vc4-2712-support-v2-34-35efa83c8fc0@raspberrypi.com>
-References: <20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com> <20241025-drm-vc4-2712-support-v2-34-35efa83c8fc0@raspberrypi.com>
+	s=arc-20240116; t=1732467854; c=relaxed/simple;
+	bh=ebK/u7XSkMKmYHFOHv85R8sBCHIqb3iUA0ffhU4di2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FuMFL2KHSctEOsKu8wDlj6a5tnw7hxnPF22Vt8W51gZmxZ02yeADJQOvzxxJV3XCyrPhV1C+EuW5E/YsP5NQyJmKfVO5Z+v6DltUxdGfaOzM/IQKmEo5LOohK1BeWrOrxgcv7Dr1xuZRVhohm0RwyXnvlw6inhPs8p6RWgQhCic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I63cvkl/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BB8EC4CED6;
+	Sun, 24 Nov 2024 17:04:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732467853;
+	bh=ebK/u7XSkMKmYHFOHv85R8sBCHIqb3iUA0ffhU4di2k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=I63cvkl/tzeqeDdSLx6idOBGw+J2ueXcQSm6LkgNECIMQaIrrSTfkQgs5esReQk0g
+	 4q8u1bBzxKyqw4VaYv7agh6hv/3Zk4dPK00XTI0TTy1BhCGiPFk8F6mW16ayQNWDzQ
+	 BOFM9VD2Q06wOvL2pIB6Lrj6CPZUtueSClScMlNk988otUsinrUgoVhhIj4nOLjGRo
+	 4BW3NyJY2cgbPFR63MYHZBiKQhY19bPnZIokSzvUpof+RTaFn4HSsEIdvGf4r7+w42
+	 qoDnAdtH4sirioyUGRzR5AMzlUiq6iqHtarfwvEJHRNEmOXea6CTmKCHB4oiju8vbG
+	 eYvAcFu46jPoA==
+Date: Sun, 24 Nov 2024 17:04:03 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, David
+ Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>,
+ linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-pwm@vger.kernel.org
+Subject: Re: [PATCH v5 09/16] iio: buffer-dmaengine: document
+ iio_dmaengine_buffer_setup_ext
+Message-ID: <20241124170403.2dba7a42@jic23-huawei>
+In-Reply-To: <20241115-dlech-mainline-spi-engine-offload-2-v5-9-bea815bd5ea5@baylibre.com>
+References: <20241115-dlech-mainline-spi-engine-offload-2-v5-0-bea815bd5ea5@baylibre.com>
+	<20241115-dlech-mainline-spi-engine-offload-2-v5-9-bea815bd5ea5@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+On Fri, 15 Nov 2024 14:18:48 -0600
+David Lechner <dlechner@baylibre.com> wrote:
 
-On Fri, 25 Oct 2024 18:16:05 +0100, Dave Stevenson <dave.stevenson@raspberrypi.com> wrote:
-> BCM2712 still uses the firmware clocks and power drivers, so add
-> them to the base device tree.
+> The iio_dmaengine_buffer_setup_ext() function is public and should be
+> documented. Also, while touching this, fix the description of @dev in
+> related functions. @dev does not strictly have to be the parent of the
+> IIO device. It is only passed to dma_request_chan() so strictly
+> speaking, it can be any device that is a valid DMA channel consumer.
 > 
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
 > ---
+> 
+> v5 changes: none
+> 
+> v4 changes:
+> * This patch is new in v4.
+> 
+> Jonathan, I think this patch stands on its own if you want to take it
+> earlier than the rest of this series.
+Fair enough. Patch looks good to me.
 
-Applied to https://github.com/Broadcom/stblinux/commits/devicetree-arm64/next, thanks!
---
-Florian
+Applied.
+
+
+
+> ---
+>  drivers/iio/buffer/industrialio-buffer-dmaengine.c | 19 +++++++++++++++++--
+>  1 file changed, 17 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/buffer/industrialio-buffer-dmaengine.c b/drivers/iio/buffer/industrialio-buffer-dmaengine.c
+> index 19af1caf14cd..054af21dfa65 100644
+> --- a/drivers/iio/buffer/industrialio-buffer-dmaengine.c
+> +++ b/drivers/iio/buffer/industrialio-buffer-dmaengine.c
+> @@ -206,7 +206,7 @@ static const struct iio_dev_attr *iio_dmaengine_buffer_attrs[] = {
+>  
+>  /**
+>   * iio_dmaengine_buffer_alloc() - Allocate new buffer which uses DMAengine
+> - * @dev: Parent device for the buffer
+> + * @dev: DMA channel consumer device
+>   * @channel: DMA channel name, typically "rx".
+>   *
+>   * This allocates a new IIO buffer which internally uses the DMAengine framework
+> @@ -288,6 +288,21 @@ void iio_dmaengine_buffer_free(struct iio_buffer *buffer)
+>  }
+>  EXPORT_SYMBOL_NS_GPL(iio_dmaengine_buffer_free, IIO_DMAENGINE_BUFFER);
+>  
+> +/**
+> + * iio_dmaengine_buffer_setup_ext() - Setup a DMA buffer for an IIO device
+> + * @dev: DMA channel consumer device
+> + * @indio_dev: IIO device to which to attach this buffer.
+> + * @channel: DMA channel name, typically "rx".
+> + * @dir: Direction of buffer (in or out)
+> + *
+> + * This allocates a new IIO buffer with devm_iio_dmaengine_buffer_alloc()
+> + * and attaches it to an IIO device with iio_device_attach_buffer().
+> + * It also appends the INDIO_BUFFER_HARDWARE mode to the supported modes of the
+> + * IIO device.
+> + *
+> + * Once done using the buffer iio_dmaengine_buffer_free() should be used to
+> + * release it.
+> + */
+>  struct iio_buffer *iio_dmaengine_buffer_setup_ext(struct device *dev,
+>  						  struct iio_dev *indio_dev,
+>  						  const char *channel,
+> @@ -321,7 +336,7 @@ static void __devm_iio_dmaengine_buffer_free(void *buffer)
+>  
+>  /**
+>   * devm_iio_dmaengine_buffer_setup_ext() - Setup a DMA buffer for an IIO device
+> - * @dev: Parent device for the buffer
+> + * @dev: Device for devm ownership and DMA channel consumer device
+>   * @indio_dev: IIO device to which to attach this buffer.
+>   * @channel: DMA channel name, typically "rx".
+>   * @dir: Direction of buffer (in or out)
+> 
+
 
