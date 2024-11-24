@@ -1,87 +1,157 @@
-Return-Path: <linux-kernel+bounces-419651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22BE79D7044
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 14:32:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 014D59D704E
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 14:32:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC05A28199E
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 13:32:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB2B2281A99
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 13:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127BE1CF2B7;
-	Sun, 24 Nov 2024 13:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A60F1D433C;
+	Sun, 24 Nov 2024 13:20:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/+hFmjU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="paVKX0kq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62AF119DF66;
-	Sun, 24 Nov 2024 13:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475C31AD3E4;
+	Sun, 24 Nov 2024 13:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732454360; cv=none; b=E/rfKqtrsCJj1cvQvqWvTJkXsmvlIWBucYEGZ7r2ZI40PAwAlskkA4+j11TqvW/S62VmbjQSHcmfAYc1N0GsQmDmgN8X3FzNR8CYFFuiaBFZu45MS6BC5/guANbbCZ4gHennSjvcayuvbnYJm8rDmhXMCm4Zb763R/TraobxOhE=
+	t=1732454420; cv=none; b=Uv0Njj5z42LMlOb5WVZFV8WQumNMWTCK9CycAKOQ/dUBY+N+fVvx7sLjCYl5jrEt782rPsI0nC9P+aezuBJsPXpjA3RPZWpBOUYFpeb0XfNZmI5p8a6aHebixWE/kngyuPE7gqub6LllS7dVCku6JeBhdYrmgtiJ2lgwtfCtD/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732454360; c=relaxed/simple;
-	bh=sxKZYASatDASe1lHjm2Qs/c1u8f+S06Fq0ta2VmTAho=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YuRXZqnbXRGcMfS1kj8kuzfBnnKHaysVoiTjX79vGBWy6pf+TywL3VOf/507LlXIP3h61i7P25xs1Z4651YOni7pVrXrGx/yWqE1JznQiuo9moAca6S3dK0oEVJux6p8bRrmab81sibovI4ZCqAA8Ukm0kpZH8/ityhhqjbPWq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/+hFmjU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D798EC4CECC;
-	Sun, 24 Nov 2024 13:19:15 +0000 (UTC)
+	s=arc-20240116; t=1732454420; c=relaxed/simple;
+	bh=o3qDnzRB7JA/YNfKWgznRZdQVguoCPuO7AEYr5dX23k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kFCSrYJzAoSZzq+unQApJd6vKQLVNdF4Ut0g0rbFuH2owePS97l3KC03hyawvL3StP/5WKiZpqwhCLwjiYhj9zCZif4rSyvK/qAtaCUnB/gYM8yoNb+YA991GSb89tpl7VMEM5RABiqlSk7iAgTTxIAxIuUsZeM4/5uCVrQ/P4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=paVKX0kq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C9B0CC4CECC;
+	Sun, 24 Nov 2024 13:20:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732454359;
-	bh=sxKZYASatDASe1lHjm2Qs/c1u8f+S06Fq0ta2VmTAho=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=l/+hFmjUzwg7qwsqmjXQmcRoyfDwGCabJlp4IAK+xur7gOb2XiTo9u7Hj/WCCFdQZ
-	 Y22CHBfcnDiAiLpPWNNJqlBmJE7JvIVAjvvGeIZRi5UXoaxi562yD6gXSQj9WKKvBx
-	 eLBTAuAKLCgoBdrk8xFreHVBGd7xQX/tnOvAOR5bNJ2vtx9LUFaxK7xEnchu1h4EMZ
-	 2ISUOEjEGtGkqotTXGv8uNdB5Eg4F1GuekohXb+4rxmdiG0ybbay4PNt1pCWAUHBHS
-	 x2JmFtur6/RXdntCgX+pGBSO81uBqUxVMaVcFvEyRBvqfGvHo3MPurhGJWrhz3ATDS
-	 jeiGTom6udaJw==
-Date: Sun, 24 Nov 2024 13:19:10 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: <lars@metafoo.de>, <Michael.Hennerich@analog.com>, <robh@kernel.org>,
- <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <marcelo.schmitt1@gmail.com>,
- <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, David Lechner <dlechner@baylibre.com>
-Subject: Re: [PATCH v3 4/4] iio: adc: ad4000: Add support for PulSAR devices
-Message-ID: <20241124131910.0b2a2d8d@jic23-huawei>
-In-Reply-To: <d5f127acef28e02f1bd4af0d68bd06e75a98dfca.1732020224.git.marcelo.schmitt@analog.com>
-References: <cover.1732020224.git.marcelo.schmitt@analog.com>
-	<d5f127acef28e02f1bd4af0d68bd06e75a98dfca.1732020224.git.marcelo.schmitt@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1732454419;
+	bh=o3qDnzRB7JA/YNfKWgznRZdQVguoCPuO7AEYr5dX23k=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=paVKX0kqYT2nvdoHufguy5HfyyG9XXp0+VAkZMVGWHodWNczuWccwMIqFtmozVGbF
+	 uXx9kB1mZxBH++OlQbCJiGejLAA0VwLhEZqe4RxFsPphFCOp3dX5vi2wTwesX5VSok
+	 nfozbmiugYPXqlsss/bbXa113/42znbQhnvvMl2gCZW3r74ilE1s0yvKPsbhWjEp1K
+	 mxawjgP7rFj7IGuwF+lYVhDXoDpb9Ow9pBHEOQeJQiLn6ntpBP5YbzF0BxxJUPLKCl
+	 cZR8S0bktX+1/Paq+G21XEKgQB6eKsHUTlBW9E945t0DUgDjbEyaSy6UOQE6rmZIBd
+	 ibq43Ea5z4GHA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4EE6E66887;
+	Sun, 24 Nov 2024 13:20:19 +0000 (UTC)
+From: Jens Glathe via B4 Relay <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org>
+Subject: [PATCH 0/4] arm64: dts: qcom: x1e80100-hp-x14: dt for HP Omnibook
+ X Laptop 14
+Date: Sun, 24 Nov 2024 14:20:14 +0100
+Message-Id: <20241124-hp-omnibook-x14-v1-0-e4262f0254fa@oldschoolsolutions.biz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAA4oQ2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQ0Mz3YwC3fzcvMyk/Pxs3QpDE11LA1Njy7TEZHND0xQloK6CotS0zAq
+ widGxtbUAwF/s9WEAAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Douglas Anderson <dianders@chromium.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Kalle Valo <kvalo@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732454418; l=2781;
+ i=jens.glathe@oldschoolsolutions.biz; s=20240919;
+ h=from:subject:message-id;
+ bh=o3qDnzRB7JA/YNfKWgznRZdQVguoCPuO7AEYr5dX23k=;
+ b=xaxMZTW7q82I7KgHQhtF4RH7TZalgHO5X4PZkOpcLhkzbDQJYpj3ZgrgQXc1h31/KM1wPgSat
+ IXibu276GryBpYmi/fV6BchNUun2XnxEqk/QkA79MBIZx2z03Tce85A
+X-Developer-Key: i=jens.glathe@oldschoolsolutions.biz; a=ed25519;
+ pk=JcRJqJc/y8LsxOlPakALD3juGfOKmFBWtO+GfELMJVg=
+X-Endpoint-Received: by B4 Relay for
+ jens.glathe@oldschoolsolutions.biz/20240919 with auth_id=216
+X-Original-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Reply-To: jens.glathe@oldschoolsolutions.biz
 
-On Tue, 19 Nov 2024 09:54:39 -0300
-Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
+Introduce device tree for the HP Omnibook X Laptop 14-fe0750ng
+(hp-omnibook-x14). It is a Laptop based on the Qualcomm Snapdragon
+X Elite SoC. There seem to be other SKUs, some with Wifi-7 (WCN7850)
+instead of Wifi-6E (WCN6855). This dt explicitly supports WCN6855,
+I haven't found a good way yet to describe both.
+    
+PDF link: https://www8.hp.com/h20195/V2/GetPDF.aspx/c08989140
 
-> The ADI PulSAR series of single-channel devices comprises differential and
-> pseudo-differential ADCs that don't require any input data from the host
-> controller. By not requiring a data input line, PulSAR devices can operate
-> with a 3-wire only data bus in some setups.
-> 
-> The AD4000 series and the single-channel PulSAR series of devices have
-> similar SPI transfer specifications and wiring configurations.
-> Single-channel PulSAR devices are slower than AD4000 and don't have a
-> configuration register. That taken into account, single-channel PulSARs can
-> be supported by the ad4000 driver without any increase in code complexity.
-> 
-> Extend the AD4000 driver to also support single-channel PulSAR devices.
-> 
-> Reviewed-by: David Lechner <dlechner@baylibre.com>
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-The series looks fine to be other than the remaining DT discussion.
-Fingers crossed for v4 :)
+Supported features:
+    
+- Keyboard (no function keys though)
+- Display (IPS 2240x1400, 300nits)
+- PWM brightness control (works via brightnessctl)
+- Touchpad
+- Touchscreen
+- PCIe ports (pcie4, pcie6a)
+- USB type-c, type-a
+- WCN6855 Wifi-6E
+- WCN6855 Bluetooth
+- ADSP and CDSP
+- X1 GPU
+- GPIO Keys (Lid switch)
+- Audio definition (works via USB)
+- prepared for DP Altmode
 
-Jonathan
+Bringup work has started with the Asus Vivobook S15 as initial template,
+worked from there by comparing and copying from the CRD, QCP, 
+Yoga Slim 7, Thinkpad T14s. Special thanks to all the people that helped
+on #aarch64-laptops [1] with comments and suggestions.
+I tested on my laptop, mostly. Since the dt is also in Ubuntu-Concept X1E
+[2] there is also test exposure there, with some feedback.
+
+For WiFi to work you need a board file matching the board string [3]. By 
+experiment and pure guess I found the already existing calibration for
+HP_G8_LANCIA_14 to be quite nice, it gives 866MB/s link speed here. A 
+patch proposal is on its way.
+
+For this patchset to work you also need patch [4] in the tree,
+otherwise uart14 for BT will be mising.
+
+[1] https://oftc.irclog.whitequark.org/aarch64-laptops
+[2] https://discourse.ubuntu.com/t/ubuntu-24-10-concept-snapdragon-x-elite/48800
+[3] "bus=pci,vendor=17cb,device=1103,subsystem-vendor=105b,subsystem-device=e108,qmi-chip-id=2,qmi-board-id=255"
+[4] https://lore.kernel.org/all/20241007-x1e80100-pwrseq-qcp-v1-0-f7166510ab17@linaro.org/
+
+Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+---
+Jens Glathe (4):
+      dt-bindings: arm: qcom: Add HP Omnibook X 14
+      firmware: qcom: scm: Allow QSEECOM for HP Omnibook X14
+      drm/panel-edp: Add unknown BOE panel for HP Omnibook X14
+      arm64: dts: qcom: x1e80100-hp-x14: dt for HP Omnibook X Laptop 14
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    1 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ .../boot/dts/qcom/x1e80100-hp-omnibook-x14.dts     | 1693 ++++++++++++++++++++
+ drivers/firmware/qcom/qcom_scm.c                   |    1 +
+ drivers/gpu/drm/panel/panel-edp.c                  |    1 +
+ 5 files changed, 1697 insertions(+)
+---
+base-commit: b59c450dec42537800be384db7e552042b72f93c
+change-id: 20241116-hp-omnibook-x14-90539fac715d
+
+Best regards,
+-- 
+Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+
+
 
