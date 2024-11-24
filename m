@@ -1,405 +1,230 @@
-Return-Path: <linux-kernel+bounces-419356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16FF39D6CE5
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 08:11:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F7BA9D6CE7
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 08:11:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0E622814BC
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 07:11:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCD4F161820
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 07:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9CD18C322;
-	Sun, 24 Nov 2024 07:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B94188CCA;
+	Sun, 24 Nov 2024 07:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="h4COrv5D"
-Received: from esa6.hgst.iphmx.com (esa6.hgst.iphmx.com [216.71.154.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OZKuuCYs"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1309118BC19;
-	Sun, 24 Nov 2024 07:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.154.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6749188A0E
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 07:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732432240; cv=none; b=csQcVvTuZ53NsuSXb7amQ/N8c8AfW7qH4raJRsnLrW03VDRL4pPuoWW+3brI5P0NCpz6eHqhiNSPABhmP8o5IQqKf95VU54LXZ/CK4uL1MY2cn55RH0XdHGc2HhdeW1UFxqTnHUHZsAHCInzXgQweF78uu92amLHsZFFqM0GOjw=
+	t=1732432270; cv=none; b=P11ZabBcYJDY0NZgTGCSO7Shk7Pwu8waK2WfScK3tUMg0giHaU/ezy69jhTGX2JTUHyDOwH4Cs4pjGPd+FpvXeuOHkDVTgI3QZoxun/RFDYBams8UdPuxAdBu6zvdPcH/6V2YWnstRgjGEYGMkJCfr2ymWGvnRtFtKUqvNR0THo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732432240; c=relaxed/simple;
-	bh=htKjiie+6Z4Imx7ZVdZmIvCu3LJnp/lNWxgACaPczZ8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XDaBAPPBh3sceVy+mhXqwvrsiNKVQVv0dVMv1OcHWhlK8iUUt4imVpi4HVhA+2ksDh3Sb4SC65lrF5mjf25STt9JHpwLnHkWsKSlddYKM4ikzCs1z2a5c2Ho8piRTH3Prz425jg8gYr4A6gjpJwmhD8tFSA6hAMm/TdWlm2/QaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=h4COrv5D; arc=none smtp.client-ip=216.71.154.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1732432237; x=1763968237;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=htKjiie+6Z4Imx7ZVdZmIvCu3LJnp/lNWxgACaPczZ8=;
-  b=h4COrv5DtHHNe97WC7PmrTCfQcX8SJ5EptRkXiJ5eO0+D3/pC+fjkWp1
-   TaAe/VHR2gpyUBzNqNYbZXRgsYDjI1wWfYzZJXvYghENncUJL7jbQ9vS0
-   der1eA30Ts3nEZiN3ZxmI6rdXbAxNVtyTbj9KhdWjQbFGQWihHvSB6z/D
-   KTkJQlAwHXwOx+KdNEcFL4dwDCHdqfcTidzHETDkuqwr+Wm0R+h2IjKu5
-   cF0e67207B+YRnr5u21MP6Yp8uKSEu4h3mxILf5hed2R4KOc0jmNUQo/y
-   gkGg9yeRqABvwueulry22YiPZWWhIf2FLzJj39FY4q8oJzVDiP1oX5chA
-   w==;
-X-CSE-ConnectionGUID: DguoewshQAW/hOHHPzM29Q==
-X-CSE-MsgGUID: bn9HOHgtQ/arPDC/Go/kxg==
-X-IronPort-AV: E=Sophos;i="6.12,180,1728921600"; 
-   d="scan'208";a="32127835"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 24 Nov 2024 15:10:37 +0800
-IronPort-SDR: 6742c420_MqbalEIdz5jVR6DSBZmbwFKEqgkKDnRBpZFw0gnosJRCG0L
- YcYikt8Ue5z7hMn5NMvorDW6uR++aaucR4pMxoQ==
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 Nov 2024 22:13:53 -0800
-WDCIronportException: Internal
-Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
-  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 Nov 2024 23:10:36 -0800
-From: Avri Altman <avri.altman@wdc.com>
-To: "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bart Van Assche <bvanassche@acm.org>,
-	Bean Huo <beanhuo@micron.com>,
-	Avri Altman <avri.altman@wdc.com>
-Subject: [PATCH v5 4/4] scsi: ufs: core: Introduce a new clock_scaling lock
-Date: Sun, 24 Nov 2024 09:08:08 +0200
-Message-Id: <20241124070808.194860-5-avri.altman@wdc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241124070808.194860-1-avri.altman@wdc.com>
-References: <20241124070808.194860-1-avri.altman@wdc.com>
+	s=arc-20240116; t=1732432270; c=relaxed/simple;
+	bh=Jh4TFRyB38GkH9XMLtaVrr4by8pRBeNdveW6o8CV8Tg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ac9dygm3wefIyEeujO4lngZDPQoRjCAmGqFAAJ6tXEkFvzmqVAYLXjgCFGnvgTlzW2gZQO1/j7qWQH4mbVZVZ0jWCJwyOYHuSoQGPDsFYveRnm1cUv1SXc240MYj1Oj4vrLJ8CyrkgT9POPe0mfNlzO6h89GSKczM+2IvXubfCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OZKuuCYs; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2128383b86eso32714095ad.2
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 23:11:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732432267; x=1733037067; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=CUBwayFAarPrS1JTjl9O+JdTBdqlG59MDYk/Wk5mK5c=;
+        b=OZKuuCYs5y+72T3NX0AE0lniUeJNg6nDxvtTAPHq3t/4DMyOSQWgJma1kP0hN9yf0j
+         TEbuW4aKrgK12GCKJPvn1GSuAYFN7Tw+vJWFg8zfcf8CgH2Edoc/2esD0vMT8BZzhEy7
+         ItSVUG8uqYIC/VoTSV/zWuDFOrOYlzYyP6uGeKu8ce5hEeuu8GlmV3AFlCz8LqVjG9Cz
+         8sVbNBYte5ZhmdbO8keylSlVx2U/hxrkoPfHmgOB7AHL79Pz8EprNsGw15XBjAsxmEKT
+         +M9kTYGewfpZqLpuiM4guDUARSi9TZh4icTL8nA4yIM1GlxTdd/5fjdus0qhg7V6NKya
+         2fLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732432267; x=1733037067;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CUBwayFAarPrS1JTjl9O+JdTBdqlG59MDYk/Wk5mK5c=;
+        b=r+NW4DW4eShqMHWvv/qGnZ2Y5A1hmrfy1xSkj+/ve8GhsX0vavy0Zq9giiRaVI4i5O
+         3ySzPZhissfdUCh9uOJKvId6y1WlyyawMK8N1lHAiFTGKdqKUaViVVEpOiPTltk+SQcb
+         yeReRTZdBbtQHtipSHTKZypfC4WJD6vwD6wPYKgInsRYltPGoS+LKv1GkL/bTZh3lfTa
+         QjCqdvnYDxl0Q6D1dpZAbNkE7CuolpQGgukIw/aK2MJ60u+BLfyW0qaETybhVZhRunY/
+         scXepDEgr+1bZ/xj9rFDgN95TawpIzK2rOWRnOL45hI1wzltuinPzKFUL5aTaB5J24Rx
+         NBeg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3tu+DQnS69Cx/MTR1MijpMXb/tki09zZy1HQQkyqoDU5fJ9MOf3eU3s6+nth683uzym0yTBvvLtGbdRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyID07dDfl9Qn5xilKsMuI0oUcWbZ8A1aTn9uM5F4yu9eIhuCAZ
+	B7BZ8V0R/jJmWFHdUEkBJ7G42XnLeFXgolm3yi0aqjoEZfIFehmDVCDrNBBQIQ==
+X-Gm-Gg: ASbGncvk/AKvGLlgwZhWQBm2SXKA7sifzaAe8+uIFfPxjeGALyUx4FcOysYbS0jsrYa
+	MLfCoCyYeVzZHCOpBhzCAjGQ4bm/xhX6WAgu+Chp4rtMeZQBmD+WDXhWa5eSE2KKk/CAuq7AFQW
+	6yVuqv561jhljIp6VNNuaokHGpOE89vT/1JD9i/roXz5nNysVfG+K8esLwW69/SqOKwawaM0G6g
+	H2tbpM+rQy1HfpuDzfiq94Kvy8RM8DOlAqr+QuGhwg3w1o+G2xjqkPFoCdalmpCDw==
+X-Google-Smtp-Source: AGHT+IFW+BG/x2A1btDFw10GDtMqQ0QNCfceMONDlBPPdj77feBstXz+Gq9nYXGSQ4wCKhzZmImimw==
+X-Received: by 2002:a17:903:230e:b0:212:3f13:d4d5 with SMTP id d9443c01a7336-2129fd22060mr116470595ad.27.1732432267264;
+        Sat, 23 Nov 2024 23:11:07 -0800 (PST)
+Received: from thinkpad ([2409:40f2:100d:708e:8ced:6048:5b4d:7203])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dba3044sm42219745ad.91.2024.11.23.23.11.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Nov 2024 23:11:06 -0800 (PST)
+Date: Sun, 24 Nov 2024 12:41:00 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, Niklas Cassel <cassel@kernel.org>,
+	dlemoal@kernel.org, maz@kernel.org, tglx@linutronix.de,
+	jdmason@kudzu.us
+Subject: Re: [PATCH v8 2/6] PCI: endpoint: Add RC-to-EP doorbell support
+ using platform MSI controller
+Message-ID: <20241124071100.ts34jbnosiipnx2x@thinkpad>
+References: <20241116-ep-msi-v8-0-6f1f68ffd1bb@nxp.com>
+ <20241116-ep-msi-v8-2-6f1f68ffd1bb@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241116-ep-msi-v8-2-6f1f68ffd1bb@nxp.com>
 
-Introduce a new clock scaling lock to serialize access to some of the
-clock scaling members instead of the host_lock. here also, simplify the
-code with the guard() macro and co.
+On Sat, Nov 16, 2024 at 09:40:42AM -0500, Frank Li wrote:
+> Doorbell feature is implemented by mapping the EP's MSI interrupt
+> controller message address to a dedicated BAR in the EPC core. It is the
+> responsibility of the EPF driver to pass the actual message data to be
+> written by the host to the doorbell BAR region through its own logic.
+> 
+> Tested-by: Niklas Cassel <cassel@kernel.org>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> change from v5 to v8
+> -none
+> 
+> Change from v4 to v5
+> - Remove request_irq() in pci_epc_alloc_doorbell() and leave to EP function
+> driver, so ep function driver can register differece call back function for
+> difference doorbell events and set irq affinity to differece CPU core.
+> - Improve error message when MSI allocate failure.
+> 
+> Change from v3 to v4
+> - msi change to use msi_get_virq() avoid use msi_for_each_desc().
+> - add new struct for pci_epf_doorbell_msg to msi msg,virq and irq name.
+> - move mutex lock to epc function
+> - initialize variable at declear place.
+> - passdown epf to epc*() function to simplify code.
+> ---
+>  drivers/pci/endpoint/Makefile     |  2 +-
+>  drivers/pci/endpoint/pci-ep-msi.c | 99 +++++++++++++++++++++++++++++++++++++++
+>  include/linux/pci-ep-msi.h        | 15 ++++++
+>  include/linux/pci-epf.h           | 16 +++++++
+>  4 files changed, 131 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/endpoint/Makefile b/drivers/pci/endpoint/Makefile
+> index 95b2fe47e3b06..a1ccce440c2c5 100644
+> --- a/drivers/pci/endpoint/Makefile
+> +++ b/drivers/pci/endpoint/Makefile
+> @@ -5,4 +5,4 @@
+>  
+>  obj-$(CONFIG_PCI_ENDPOINT_CONFIGFS)	+= pci-ep-cfs.o
+>  obj-$(CONFIG_PCI_ENDPOINT)		+= pci-epc-core.o pci-epf-core.o\
+> -					   pci-epc-mem.o functions/
+> +					   pci-epc-mem.o pci-ep-msi.o functions/
+> diff --git a/drivers/pci/endpoint/pci-ep-msi.c b/drivers/pci/endpoint/pci-ep-msi.c
+> new file mode 100644
+> index 0000000000000..7868a529dce37
+> --- /dev/null
+> +++ b/drivers/pci/endpoint/pci-ep-msi.c
+> @@ -0,0 +1,99 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * PCI Endpoint *Controller* (EPC) MSI library
+> + *
+> + * Copyright (C) 2024 NXP
+> + * Author: Frank Li <Frank.Li@nxp.com>
+> + */
+> +
+> +#include <linux/cleanup.h>
+> +#include <linux/device.h>
+> +#include <linux/slab.h>
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Avri Altman <avri.altman@wdc.com>
----
- drivers/ufs/core/ufshcd.c | 132 ++++++++++++++++++--------------------
- include/ufs/ufshcd.h      |  16 +++--
- 2 files changed, 71 insertions(+), 77 deletions(-)
+Please sort alphabetically.
 
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index b4c8f528c18f..42ce4dff8dd2 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -1452,16 +1452,16 @@ static void ufshcd_clk_scaling_suspend_work(struct work_struct *work)
- {
- 	struct ufs_hba *hba = container_of(work, struct ufs_hba,
- 					   clk_scaling.suspend_work);
--	unsigned long irq_flags;
- 
--	spin_lock_irqsave(hba->host->host_lock, irq_flags);
--	if (hba->clk_scaling.active_reqs || hba->clk_scaling.is_suspended) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
--		return;
-+	scoped_guard(spinlock_irqsave, &hba->clk_scaling.lock)
-+	{
-+		if (hba->clk_scaling.active_reqs ||
-+		    hba->clk_scaling.is_suspended)
-+			return;
-+
-+		hba->clk_scaling.is_suspended = true;
-+		hba->clk_scaling.window_start_t = 0;
- 	}
--	hba->clk_scaling.is_suspended = true;
--	hba->clk_scaling.window_start_t = 0;
--	spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
- 
- 	devfreq_suspend_device(hba->devfreq);
- }
-@@ -1470,15 +1470,13 @@ static void ufshcd_clk_scaling_resume_work(struct work_struct *work)
- {
- 	struct ufs_hba *hba = container_of(work, struct ufs_hba,
- 					   clk_scaling.resume_work);
--	unsigned long irq_flags;
- 
--	spin_lock_irqsave(hba->host->host_lock, irq_flags);
--	if (!hba->clk_scaling.is_suspended) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
--		return;
-+	scoped_guard(spinlock_irqsave, &hba->clk_scaling.lock)
-+	{
-+		if (!hba->clk_scaling.is_suspended)
-+			return;
-+		hba->clk_scaling.is_suspended = false;
- 	}
--	hba->clk_scaling.is_suspended = false;
--	spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
- 
- 	devfreq_resume_device(hba->devfreq);
- }
-@@ -1492,7 +1490,6 @@ static int ufshcd_devfreq_target(struct device *dev,
- 	bool scale_up = false, sched_clk_scaling_suspend_work = false;
- 	struct list_head *clk_list = &hba->clk_list_head;
- 	struct ufs_clk_info *clki;
--	unsigned long irq_flags;
- 
- 	if (!ufshcd_is_clkscaling_supported(hba))
- 		return -EINVAL;
-@@ -1513,43 +1510,38 @@ static int ufshcd_devfreq_target(struct device *dev,
- 		*freq =	(unsigned long) clk_round_rate(clki->clk, *freq);
- 	}
- 
--	spin_lock_irqsave(hba->host->host_lock, irq_flags);
--	if (ufshcd_eh_in_progress(hba)) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
--		return 0;
--	}
-+	scoped_guard(spinlock_irqsave, &hba->clk_scaling.lock)
-+	{
-+		if (ufshcd_eh_in_progress(hba))
-+			return 0;
- 
--	/* Skip scaling clock when clock scaling is suspended */
--	if (hba->clk_scaling.is_suspended) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
--		dev_warn(hba->dev, "clock scaling is suspended, skip");
--		return 0;
--	}
-+		/* Skip scaling clock when clock scaling is suspended */
-+		if (hba->clk_scaling.is_suspended) {
-+			dev_warn(hba->dev, "clock scaling is suspended, skip");
-+			return 0;
-+		}
- 
--	if (!hba->clk_scaling.active_reqs)
--		sched_clk_scaling_suspend_work = true;
-+		if (!hba->clk_scaling.active_reqs)
-+			sched_clk_scaling_suspend_work = true;
- 
--	if (list_empty(clk_list)) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
--		goto out;
--	}
-+		if (list_empty(clk_list))
-+			goto out;
- 
--	/* Decide based on the target or rounded-off frequency and update */
--	if (hba->use_pm_opp)
--		scale_up = *freq > hba->clk_scaling.target_freq;
--	else
--		scale_up = *freq == clki->max_freq;
-+		/* Decide based on the target or rounded-off frequency and update */
-+		if (hba->use_pm_opp)
-+			scale_up = *freq > hba->clk_scaling.target_freq;
-+		else
-+			scale_up = *freq == clki->max_freq;
- 
--	if (!hba->use_pm_opp && !scale_up)
--		*freq = clki->min_freq;
-+		if (!hba->use_pm_opp && !scale_up)
-+			*freq = clki->min_freq;
- 
--	/* Update the frequency */
--	if (!ufshcd_is_devfreq_scaling_required(hba, *freq, scale_up)) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
--		ret = 0;
--		goto out; /* no state change required */
-+		/* Update the frequency */
-+		if (!ufshcd_is_devfreq_scaling_required(hba, *freq, scale_up)) {
-+			ret = 0;
-+			goto out; /* no state change required */
-+		}
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
- 
- 	start = ktime_get();
- 	ret = ufshcd_devfreq_scale(hba, *freq, scale_up);
-@@ -1574,7 +1566,6 @@ static int ufshcd_devfreq_get_dev_status(struct device *dev,
- {
- 	struct ufs_hba *hba = dev_get_drvdata(dev);
- 	struct ufs_clk_scaling *scaling = &hba->clk_scaling;
--	unsigned long flags;
- 	ktime_t curr_t;
- 
- 	if (!ufshcd_is_clkscaling_supported(hba))
-@@ -1582,7 +1573,8 @@ static int ufshcd_devfreq_get_dev_status(struct device *dev,
- 
- 	memset(stat, 0, sizeof(*stat));
- 
--	spin_lock_irqsave(hba->host->host_lock, flags);
-+	guard(spinlock_irqsave)(&hba->clk_scaling.lock);
-+
- 	curr_t = ktime_get();
- 	if (!scaling->window_start_t)
- 		goto start_window;
-@@ -1618,7 +1610,7 @@ static int ufshcd_devfreq_get_dev_status(struct device *dev,
- 		scaling->busy_start_t = 0;
- 		scaling->is_busy_started = false;
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
-+
- 	return 0;
- }
- 
-@@ -1682,19 +1674,19 @@ static void ufshcd_devfreq_remove(struct ufs_hba *hba)
- 
- static void ufshcd_suspend_clkscaling(struct ufs_hba *hba)
- {
--	unsigned long flags;
- 	bool suspend = false;
- 
- 	cancel_work_sync(&hba->clk_scaling.suspend_work);
- 	cancel_work_sync(&hba->clk_scaling.resume_work);
- 
--	spin_lock_irqsave(hba->host->host_lock, flags);
--	if (!hba->clk_scaling.is_suspended) {
--		suspend = true;
--		hba->clk_scaling.is_suspended = true;
--		hba->clk_scaling.window_start_t = 0;
-+	scoped_guard(spinlock_irqsave, &hba->clk_scaling.lock)
-+	{
-+		if (!hba->clk_scaling.is_suspended) {
-+			suspend = true;
-+			hba->clk_scaling.is_suspended = true;
-+			hba->clk_scaling.window_start_t = 0;
-+		}
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
- 
- 	if (suspend)
- 		devfreq_suspend_device(hba->devfreq);
-@@ -1702,15 +1694,15 @@ static void ufshcd_suspend_clkscaling(struct ufs_hba *hba)
- 
- static void ufshcd_resume_clkscaling(struct ufs_hba *hba)
- {
--	unsigned long flags;
- 	bool resume = false;
- 
--	spin_lock_irqsave(hba->host->host_lock, flags);
--	if (hba->clk_scaling.is_suspended) {
--		resume = true;
--		hba->clk_scaling.is_suspended = false;
-+	scoped_guard(spinlock_irqsave, &hba->clk_scaling.lock)
-+	{
-+		if (hba->clk_scaling.is_suspended) {
-+			resume = true;
-+			hba->clk_scaling.is_suspended = false;
-+		}
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
- 
- 	if (resume)
- 		devfreq_resume_device(hba->devfreq);
-@@ -1796,6 +1788,8 @@ static void ufshcd_init_clk_scaling(struct ufs_hba *hba)
- 	INIT_WORK(&hba->clk_scaling.resume_work,
- 		  ufshcd_clk_scaling_resume_work);
- 
-+	spin_lock_init(&hba->clk_scaling.lock);
-+
- 	hba->clk_scaling.workq = alloc_ordered_workqueue(
- 		"ufs_clkscaling_%d", WQ_MEM_RECLAIM, hba->host->host_no);
- 
-@@ -2157,19 +2151,17 @@ static void ufshcd_clk_scaling_start_busy(struct ufs_hba *hba)
- {
- 	bool queue_resume_work = false;
- 	ktime_t curr_t = ktime_get();
--	unsigned long flags;
- 
- 	if (!ufshcd_is_clkscaling_supported(hba))
- 		return;
- 
--	spin_lock_irqsave(hba->host->host_lock, flags);
-+	guard(spinlock_irqsave)(&hba->clk_scaling.lock);
-+
- 	if (!hba->clk_scaling.active_reqs++)
- 		queue_resume_work = true;
- 
--	if (!hba->clk_scaling.is_enabled || hba->pm_op_in_progress) {
--		spin_unlock_irqrestore(hba->host->host_lock, flags);
-+	if (!hba->clk_scaling.is_enabled || hba->pm_op_in_progress)
- 		return;
--	}
- 
- 	if (queue_resume_work)
- 		queue_work(hba->clk_scaling.workq,
-@@ -2185,18 +2177,17 @@ static void ufshcd_clk_scaling_start_busy(struct ufs_hba *hba)
- 		hba->clk_scaling.busy_start_t = curr_t;
- 		hba->clk_scaling.is_busy_started = true;
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
- }
- 
- static void ufshcd_clk_scaling_update_busy(struct ufs_hba *hba)
- {
- 	struct ufs_clk_scaling *scaling = &hba->clk_scaling;
--	unsigned long flags;
- 
- 	if (!ufshcd_is_clkscaling_supported(hba))
- 		return;
- 
--	spin_lock_irqsave(hba->host->host_lock, flags);
-+	guard(spinlock_irqsave)(&hba->clk_scaling.lock);
-+
- 	hba->clk_scaling.active_reqs--;
- 	if (!scaling->active_reqs && scaling->is_busy_started) {
- 		scaling->tot_busy_t += ktime_to_us(ktime_sub(ktime_get(),
-@@ -2204,7 +2195,6 @@ static void ufshcd_clk_scaling_update_busy(struct ufs_hba *hba)
- 		scaling->busy_start_t = 0;
- 		scaling->is_busy_started = false;
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
- }
- 
- static inline int ufshcd_monitor_opcode2dir(u8 opcode)
-diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index b6311069d901..ce7667b020e2 100644
---- a/include/ufs/ufshcd.h
-+++ b/include/ufs/ufshcd.h
-@@ -436,6 +436,10 @@ struct ufs_clk_gating {
- 
- /**
-  * struct ufs_clk_scaling - UFS clock scaling related data
-+ * @workq: workqueue to schedule devfreq suspend/resume work
-+ * @suspend_work: worker to suspend devfreq
-+ * @resume_work: worker to resume devfreq
-+ * @lock: serialize access to some struct ufs_clk_scaling members
-  * @active_reqs: number of requests that are pending. If this is zero when
-  * devfreq ->target() function is called then schedule "suspend_work" to
-  * suspend devfreq.
-@@ -445,9 +449,6 @@ struct ufs_clk_gating {
-  * @enable_attr: sysfs attribute to enable/disable clock scaling
-  * @saved_pwr_info: UFS power mode may also be changed during scaling and this
-  * one keeps track of previous power mode.
-- * @workq: workqueue to schedule devfreq suspend/resume work
-- * @suspend_work: worker to suspend devfreq
-- * @resume_work: worker to resume devfreq
-  * @target_freq: frequency requested by devfreq framework
-  * @min_gear: lowest HS gear to scale down to
-  * @is_enabled: tracks if scaling is currently enabled or not, controlled by
-@@ -459,15 +460,18 @@ struct ufs_clk_gating {
-  * @is_suspended: tracks if devfreq is suspended or not
-  */
- struct ufs_clk_scaling {
-+	struct workqueue_struct *workq;
-+	struct work_struct suspend_work;
-+	struct work_struct resume_work;
-+
-+	spinlock_t lock;
-+
- 	int active_reqs;
- 	unsigned long tot_busy_t;
- 	ktime_t window_start_t;
- 	ktime_t busy_start_t;
- 	struct device_attribute enable_attr;
- 	struct ufs_pa_layer_attr saved_pwr_info;
--	struct workqueue_struct *workq;
--	struct work_struct suspend_work;
--	struct work_struct resume_work;
- 	unsigned long target_freq;
- 	u32 min_gear;
- 	bool is_enabled;
+> +#include <linux/module.h>
+> +#include <linux/msi.h>
+> +#include <linux/pci-epc.h>
+> +#include <linux/pci-epf.h>
+> +#include <linux/pci-ep-cfs.h>
+> +#include <linux/pci-ep-msi.h>
+> +
+> +static bool pci_epc_match_parent(struct device *dev, void *param)
+> +{
+> +	return dev->parent == param;
+> +}
+> +
+> +static void pci_epc_write_msi_msg(struct msi_desc *desc, struct msi_msg *msg)
+> +{
+> +	struct pci_epc *epc __free(pci_epc_put) = NULL;
+> +	struct pci_epf *epf;
+> +
+> +	epc = pci_epc_get_fn(pci_epc_match_parent, desc->dev);
+
+You were passing 'epc->dev.parent' to platform_device_msi_init_and_alloc_irqs().
+So 'desc->dev' should be the EPC parent, right? If so, you can do:
+
+	epc = pci_epc_get(dev_name(msi_desc_to_dev(desc)));
+
+since we are reusing the parent dev name for EPC.
+
+> +	if (!epc)
+> +		return;
+> +
+> +	/* Only support one EPF for doorbell */
+> +	epf = list_first_entry_or_null(&epc->pci_epf, struct pci_epf, list);
+
+Why don't you impose this restriction in pci_epf_alloc_doorbell() itself?
+
+> +
+> +	if (epf && epf->db_msg && desc->msi_index < epf->num_db)
+> +		memcpy(&epf->db_msg[desc->msi_index].msg, msg, sizeof(*msg));
+> +}
+> +
+> +static void pci_epc_free_doorbell(struct pci_epc *epc, struct pci_epf *epf)
+> +{
+> +	guard(mutex)(&epc->lock);
+> +
+> +	platform_device_msi_free_irqs_all(epc->dev.parent);
+> +}
+> +
+> +static int pci_epc_alloc_doorbell(struct pci_epc *epc, struct pci_epf *epf)
+> +{
+> +	struct device *dev = epc->dev.parent;
+> +	u16 num_db = epf->num_db;
+> +	int i = 0;
+> +	int ret;
+> +
+> +	guard(mutex)(&epc->lock);
+> +
+> +	ret = platform_device_msi_init_and_alloc_irqs(dev, num_db, pci_epc_write_msi_msg);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to allocate MSI, may miss 'msi-parent' at your DTS\n");
+
+No need to mention 'msi-parent'. Just 'Failed to allocate MSI' is enough.
+
+> +		return -ENOMEM;
+
+-ENODEV?
+
+- Mani
+
 -- 
-2.25.1
-
+மணிவண்ணன் சதாசிவம்
 
