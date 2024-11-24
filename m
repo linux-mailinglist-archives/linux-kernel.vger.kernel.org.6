@@ -1,91 +1,89 @@
-Return-Path: <linux-kernel+bounces-419325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DEBE9D6C7F
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 03:32:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A61E79D6C81
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 03:34:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEEF3B2124F
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 02:32:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED535B21435
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 02:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FAF26AFB;
-	Sun, 24 Nov 2024 02:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05ECA20B20;
+	Sun, 24 Nov 2024 02:33:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="JdQxkdGv"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NZf8ax+y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A3F1CFA9
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 02:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F05F1FC8;
+	Sun, 24 Nov 2024 02:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732415518; cv=none; b=QogxO+wHeOOQE20PfucKr8hEO5ht43RR+PDiuXE7cXVOrpCY0RGXXlrABrke+dIFQAR+YrZoyZRZpErQSeKB+CmTFCrBGcQPzPaq2CUpoQGQDq/idPG/RUh+JxaZCXnqlu9Z/tV0Vy9biEok4WAOmLamftSLM5lf1f/mi074MbA=
+	t=1732415633; cv=none; b=TpaWIk05CqfCI9dVA2bx6zpnk4uc44syVURarMOAXHStSnnCnmVQ05izNXvg7kZkoHbctUj7If7tJxgxiCw9tWKwTUvZrDCyxSpVBpaFDXzGFwi/cvRr1YAaWdPI3hMAcc6VbNH3QtDNKhwt+Da3B/wu+8KoLoM68i9NkCi0ZxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732415518; c=relaxed/simple;
-	bh=JVPNQKi05pxv8edbI23zQiTDhszhaVeb5AStLzYC6VE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z12BBMhF4WnEDfVLpEd+H4I4owDOC28ZaksSkYS/mXPWWw3gtXNLQqiHF0abw+EdgFsC2p7HR3JzG5WJGe8OoQuE8ZhcdkYituairmCWYVuFCDgVlA4UxK9+Vus6My5e0FlOzBUywileXlfJ3+nDEq7Rik6zViprGM2yuD8m8zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=JdQxkdGv; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from macsyma.thunk.org (syn-098-147-040-133.biz.spectrum.com [98.147.40.133])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4AO2UPXs009591
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 23 Nov 2024 21:30:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1732415429; bh=tMYA3FuEfBdwg4uY/IL9dl9TyQ4GzJOPWzyUfUCOSHA=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=JdQxkdGvV2bFkTsn7WTIo6NEBtphYwCkSJ6xu+YMGMQ0uBY+Uozz2K7D3i2KdFEom
-	 pzzViQesUzyVmQn9UCBQzytLm2nClYskc9bgiTHJl0ioCVtoGXMjWtZSMeLp07Ik0i
-	 pjedn6lKdiZFbEJGjjHyEJH+t4nNXjl2txuLwBF4gmqNIztqUwyAOeowEVy48OkVyz
-	 jSE3u5TNS8P/MskfjAjhacYpyl07VaCEkZ3pN9w5XsxO2a3h32yrSQfpMudJwrSObJ
-	 JZlkcN/7lStPMw/G3srGEuOjrMa5xI1vpprVldBTcFV5KDCh1gN4S4/dzbej7fX0iQ
-	 vzXBFmfESkWVg==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id EA59E34125E; Sat, 23 Nov 2024 21:30:24 -0500 (EST)
-Date: Sat, 23 Nov 2024 16:30:24 -1000
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jinliang Zheng <alexjlzheng@gmail.com>, brauner@kernel.org, jack@suse.cz,
-        mcgrof@kernel.org, kees@kernel.org, joel.granados@kernel.org,
-        adobriyan@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, flyingpeng@tencent.com,
-        Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: Re: [PATCH 0/6] Maintain the relative size of fs.file-max and
- fs.nr_open
-Message-ID: <20241124023024.GB3874922@mit.edu>
-References: <20241123180901.181825-1-alexjlzheng@tencent.com>
- <20241123182730.GS3387508@ZenIV>
- <20241123193227.GT3387508@ZenIV>
+	s=arc-20240116; t=1732415633; c=relaxed/simple;
+	bh=MHgkf4950Dv/pXJOwCEapYXWpGGemZnM6ozWk9gJHL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CFLu2s7tJvpGtyKLr3Y55BNpOs7kLK9sVIUTQSjD5ZHo0dITyrJoRnP8t+nyXo1TCCRdknxjkpRwKFZDJm4Zuu0mYxnejFZKhOKSydwWyfMxyZHpQnoNFhuj8VUpNIkZ7JVIvUthxC+6uV1/IkBY+Lg/2esREmlUu1oKvvdPHZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NZf8ax+y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E48C4CECD;
+	Sun, 24 Nov 2024 02:33:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732415633;
+	bh=MHgkf4950Dv/pXJOwCEapYXWpGGemZnM6ozWk9gJHL8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NZf8ax+yKFnT5V6LPnNTtCVX5TJTuDlsIM52OkE2T5C/OFcyA1dR20z41kREc+n0p
+	 Q8XRZjyuEazlHNiVleRDwbfhiMBULQ3b3rRqbQAF36u0tc/NLapyOqteUjWXmuFGMk
+	 wyJQ/eQC7L2UYMZePrfu5lJyPSNr0CrYB098+TQmDfUciV02Wo2momHpn9OSDeD+vb
+	 JSTWH7RzyawDkT6ZUtyK/+XvzHy6wNvHpWE3PquzAQubI+kUlsEFVtEoLkJ82E3280
+	 TmmfZLj6ltV6dYaGpqnQdLZ6+1bmQNmkCBgn0OgfC3a+GT2q+TL50vVOvVRPu0Djdn
+	 XnIx5Vokkf8WQ==
+Date: Sat, 23 Nov 2024 18:33:51 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Samiullah Khawaja <skhawaja@google.com>, Mina Almasry
+ <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, Pavel Begunkov <asml.silence@gmail.com>, Willem
+ de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>,
+ linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, Ilias
+ Apalodimas <ilias.apalodimas@linaro.org>
+Subject: Re: [PATCH net-next v2 4/5] page_pool: disable sync for cpu for
+ dmabuf memory provider
+Message-ID: <20241123183351.582aa8ac@kernel.org>
+In-Reply-To: <CAAywjhRb0Lb9fJocWBU1r01521sy71hLOaH=92gqceXqUOGHJg@mail.gmail.com>
+References: <20241107212309.3097362-1-almasrymina@google.com>
+	<20241107212309.3097362-5-almasrymina@google.com>
+	<20241108141812.GL35848@ziepe.ca>
+	<CAHS8izOVs+Tz2nFHMfiQ7=+hk6jKg46epO2f6Whfn07fNFOSRw@mail.gmail.com>
+	<20241115015912.GA559636@ziepe.ca>
+	<CAAywjhRb0Lb9fJocWBU1r01521sy71hLOaH=92gqceXqUOGHJg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241123193227.GT3387508@ZenIV>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Nov 23, 2024 at 07:32:27PM +0000, Al Viro wrote:
+On Fri, 22 Nov 2024 14:10:28 -0800 Samiullah Khawaja wrote:
+> > > > If you do this you may want to block accepting dmabufs that have CPU
+> > > > pages inside them.  
 > 
-> 	You won't find the words 'IO channel' in POSIX, but I refuse
-> to use the term they have chosen instead - 'file description'.	Yes,
-> alongside with 'file descriptor', in the contexts where the distinction
-> between these notions is quite important.
+> I believe we should be following the dmabuf API for this purpose, if
+> we really want to sync for CPU in. page_pool, and should not assume
+> the behaviour of the backing memory.
+> 
+> The dmabuf exporters are supposed to implement the begin_cpu_access
+> (optional) and the sync for cpu is done based on the exporter
+> implementation.
 
-What I tend to do is use the term "struct file" instead.  The "file
-descriptor" literally is an integer index into an array of "struct
-file" pointers.
+DMABUF is a bit of a distraction here.
 
-"struct file" is how things are actually implemented in Linux and most
-Unix systems.  And while it's admittedly ugly to use an implementation
-detail as an abstract term, it's infinitely less ugly than Posix's
-"file description".  :-)
-
-						- Ted
+What's key is that we need to fill in the gap in the driver facing
+page_pool API, because DMABUF will not be the only provider we can
+plug in.
 
