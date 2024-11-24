@@ -1,220 +1,88 @@
-Return-Path: <linux-kernel+bounces-419321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E4B09D6C74
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 02:44:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49E799D6C75
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 03:03:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F4076B21406
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 01:44:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86489B21498
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 02:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34D924B26;
-	Sun, 24 Nov 2024 01:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="phwr6oYV"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FB7FC1D;
+	Sun, 24 Nov 2024 02:03:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBE82F26;
-	Sun, 24 Nov 2024 01:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198171370
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 02:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732412673; cv=none; b=nDkRcDyX5s/Y45f9FkxJ9vrR3LP/ghJqlwyG+tZNjGc6u86q7L3La9kZk1BrzX8xTyMexFIGpTcaeNLfNYdPQ0pC7WLXpix0eEX/JpH9yLP1Eky94HJQLmZbKOdKaF1J+gJIcPwYn5IuppYQcMuRolFjHLTx+LSzOPBXNsuizJc=
+	t=1732413785; cv=none; b=RgzAxBzD5eWRmW/Jked7uy44sssW7GCQ9jDiY52+snQsaufZ+mm8AB2+FQXrtc+TLHFs2db4dyskXwyeozkLyd9v3kkavAEBSiMTABQM1rBN6r2U5V9D21r+fZaFRBdTQLFw/zbAPReHr/Vu0XF5H7CRdPoCT2oEfCMJDC5ZM/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732412673; c=relaxed/simple;
-	bh=HfTua57kegNRfT6STmuD15q6lJAvFdxokP/cBoAzAfs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=B5YzV8VrUETHnTCW6PWWBKV9FV0RVOriLJSCkDxLUH3XWvGLPBjV5APrjYzY7TJ3rtvNL1BUKJ46dIpKc1shu5x8xr8f+GhNYiG2hQveqwL6F1s2NlX+Gs7/ePFOrHhoYDPExgW9hOXDKFuoskpkEX8cfJ+CkrRdgu+SvAL5Atk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=phwr6oYV; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AO0F12h006558;
-	Sun, 24 Nov 2024 01:44:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+e7MoueAaCrUQ0s0RkvzIxfJfB32OKnEoD9FCsA0ZUk=; b=phwr6oYVBy3vxCJ+
-	JroeWYG3mqGivh7vVKkPcxuRXn1oQFpOp6j8dAwzgWLDF1SmiK75g4FeQna6NIpm
-	Ab8TwkqtJBdyz7wqwfBoxV35HgNYQNbXS0j3PvKTh/LXMgJv1QpI4KtXh1qwKk45
-	2rErlgmk4+nlCVdahKP9gKpEtMAY0AJf/Nd7gLHDkghD7gx2nOZyQGVl/pSq5Pl6
-	W2q8wThDTMpKUuy0YMRE3FjnNsoMVtHHZEvg29eTGSTNHGyCZbx/bNiKdClPDjYj
-	Yp3iYBjAyp22IthBJObFSKrNyeI0M2Ggalsau8nL7Ttw8SpmVRqZA0jXhWAnxI0S
-	1Q/v9w==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4334rd1qkv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 24 Nov 2024 01:44:23 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AO1iNpC012418
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 24 Nov 2024 01:44:23 GMT
-Received: from [10.216.29.212] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 23 Nov
- 2024 17:44:17 -0800
-Message-ID: <e0ed1805-a5ba-4bed-d0df-d5f8f09a1b5f@quicinc.com>
-Date: Sun, 24 Nov 2024 07:14:14 +0530
+	s=arc-20240116; t=1732413785; c=relaxed/simple;
+	bh=wKOS6kuMRiKv0djqKJKO0SWL+0ljDjxFOJojfR//bXI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=dCkOB7k+yMQOVRPD1FZ3UEyOtRbIl6k40utGrDec7VK9AaQ5E8JkGLMfKAobEq+BZ4cQ7A6us6AV2yt1ns+DQ4Ekchq3nOa2t3AZ5Z8ZcpRq6kN2mLZvfclvYLt8omX8nbAbFxBIqKwarzss9b6yl5q26RQo1mYv2m1e+zWlNCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83e07db6451so374886739f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 18:03:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732413783; x=1733018583;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dsK2DDxX8/5s/4MDUlb+3ESwSOg8HpdPkz0O5YxTNSg=;
+        b=JxSJPqGhNUlZ4js2Oaa33NeOQVPj0lLmZC5r1n2PIU6slgJjRIp/PicVynXiymkhAf
+         jU/W268+c5MKB2u7uCg05LN1b4nG0c0sntqPHDA/gMO0n0wKIiPNIIzD61P67aO/fZeP
+         4+U0rrlc9UI3Sz8oDpCtkKr4bnVbD2pweb111EBafmgRm+RIo9juBzLnGaylkHix4o13
+         sznSxw61tIuSMFj+QwPHpfZyBV3gHpiBq9HMuD9mhe3f8fBa10FFTWlM8lKLl9HIvnRs
+         ULbBqzqODdHyQwTkgnemOLpNpA0itG71A15z3ExQm6xOyADuCTvv3yf9nt3WFukwrBjL
+         oolg==
+X-Forwarded-Encrypted: i=1; AJvYcCX8JGg1yH5olMr1cjklEcbgb0Bx1bmnL3RdZzWOz41ukwYZpJXOezGkFldCisgyf5v8EX6s1PBRfezMmNI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYYUsoaRUdTbEPluSKV6rPE+JDJVhDh4RNtyehL0vEeJBQSBSC
+	egRZjiAPYjPfoR+JgEk6d+3DLXh1iOFN0CgEsHy2fqJaw/Xv8EsdiBCkV+W2397Wbr331tOuKi2
+	kEHQOoXbYKdGEqfL0vLCDOooOrr9WVekNWxbyHCV6z1nfkcHRyWYWdJc=
+X-Google-Smtp-Source: AGHT+IF+DNWP+x0fg8StCR3ZpWzoweheSRJSQEQojHyIe5CRY+iwCnlT4H3kTAxC8fZXBBPQg5IYNddMZhSDp3EoHRKb6TYgmtki
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 5/6] PCI: qcom: Add support for host_stop_link() &
- host_start_link()
-Content-Language: en-US
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC: <andersson@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        "Lorenzo
- Pieralisi" <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
-	<kw@linux.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        <cros-qcom-dts-watchers@chromium.org>,
-        Jingoo Han
-	<jingoohan1@gmail.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>, <quic_vbadigan@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241112-qps615_pwr-v3-0-29a1e98aa2b0@quicinc.com>
- <20241112-qps615_pwr-v3-5-29a1e98aa2b0@quicinc.com>
- <20241115115729.wmcohbbc6sl4il3e@thinkpad>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <20241115115729.wmcohbbc6sl4il3e@thinkpad>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: eyKfJMKNIinCvmMyIerXsX3MPT6VLrYk
-X-Proofpoint-GUID: eyKfJMKNIinCvmMyIerXsX3MPT6VLrYk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- bulkscore=0 clxscore=1015 suspectscore=0 priorityscore=1501 malwarescore=0
- spamscore=0 adultscore=0 impostorscore=0 phishscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411240013
+X-Received: by 2002:a05:6e02:3890:b0:3a7:a29b:bf2f with SMTP id
+ e9e14a558f8ab-3a7a29bc3d4mr69787105ab.9.1732413783359; Sat, 23 Nov 2024
+ 18:03:03 -0800 (PST)
+Date: Sat, 23 Nov 2024 18:03:03 -0800
+In-Reply-To: <20241124013441.23975-1-leocstone@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67428957.050a0220.1cc393.002b.GAE@google.com>
+Subject: Re: [syzbot] [f2fs?] WARNING in f2fs_delete_entry
+From: syzbot <syzbot+35a21b6aade7af3c7b3a@syzkaller.appspotmail.com>
+To: leocstone@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On 11/15/2024 5:27 PM, Manivannan Sadhasivam wrote:
-> On Tue, Nov 12, 2024 at 08:31:37PM +0530, Krishna chaitanya chundru wrote:
->> For the switches like QPS615 which needs to configure it before
->> the PCIe link is established.
->>
->> If the link is up, the boatloader might powered and configured the
->> endpoint/switch already. In that case don't touch PCIe link else
->> assert the PERST# and disable LTSSM bit so that PCIe controller
->> will not participate in the link training as part of host_stop_link().
->>
->> De-assert the PERST# and enable LTSSM bit back in host_start_link().
->>
->> Introduce ltssm_disable function op to stop the link training.
->>
->> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
->> ---
->>   drivers/pci/controller/dwc/pcie-qcom.c | 39 ++++++++++++++++++++++++++++++++++
->>   1 file changed, 39 insertions(+)
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
->> index ef44a82be058..048aea94e319 100644
->> --- a/drivers/pci/controller/dwc/pcie-qcom.c
->> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
->> @@ -246,6 +246,7 @@ struct qcom_pcie_ops {
->>   	void (*host_post_init)(struct qcom_pcie *pcie);
->>   	void (*deinit)(struct qcom_pcie *pcie);
->>   	void (*ltssm_enable)(struct qcom_pcie *pcie);
->> +	void (*ltssm_disable)(struct qcom_pcie *pcie);
->>   	int (*config_sid)(struct qcom_pcie *pcie);
->>   };
->>   
->> @@ -617,6 +618,41 @@ static int qcom_pcie_post_init_1_0_0(struct qcom_pcie *pcie)
->>   	return 0;
->>   }
->>   
->> +static int qcom_pcie_host_start_link(struct dw_pcie *pci)
->> +{
->> +	struct qcom_pcie *pcie = to_qcom_pcie(pci);
->> +
->> +	if (!dw_pcie_link_up(pcie->pci))  {
-> 
-> I don't think the controller driver should worry about the bootloader
-> initialization. You should export dw_pcie_link_up() as a callback and call
-> start/stop link if only required (link not up) from the pwrctl driver.
->
-Instead of exporting this API, I will try to read config space and see 
-if the link is up or not. if it is not up then will call these.
+Reported-by: syzbot+35a21b6aade7af3c7b3a@syzkaller.appspotmail.com
+Tested-by: syzbot+35a21b6aade7af3c7b3a@syzkaller.appspotmail.com
 
-- Krishna Chaitanya.
+Tested on:
 
-> - Mani
-> 
->> +		qcom_ep_reset_deassert(pcie);
->> +
->> +		if (pcie->cfg->ops->ltssm_enable)
->> +			pcie->cfg->ops->ltssm_enable(pcie);
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static void qcom_pcie_host_stop_link(struct dw_pcie *pci)
->> +{
->> +	struct qcom_pcie *pcie = to_qcom_pcie(pci);
->> +
->> +	if (!dw_pcie_link_up(pcie->pci))  {
->> +		qcom_ep_reset_assert(pcie);
->> +
->> +		if (pcie->cfg->ops->ltssm_disable)
->> +			pcie->cfg->ops->ltssm_disable(pcie);
->> +	}
->> +}
->> +
->> +static void qcom_pcie_2_3_2_ltssm_disable(struct qcom_pcie *pcie)
->> +{
->> +	u32 val;
->> +
->> +	val = readl(pcie->parf + PARF_LTSSM);
->> +	val &= ~LTSSM_EN;
->> +	writel(val, pcie->parf + PARF_LTSSM);
->> +}
->> +
->>   static void qcom_pcie_2_3_2_ltssm_enable(struct qcom_pcie *pcie)
->>   {
->>   	u32 val;
->> @@ -1361,6 +1397,7 @@ static const struct qcom_pcie_ops ops_1_9_0 = {
->>   	.host_post_init = qcom_pcie_host_post_init_2_7_0,
->>   	.deinit = qcom_pcie_deinit_2_7_0,
->>   	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
->> +	.ltssm_disable = qcom_pcie_2_3_2_ltssm_disable,
->>   	.config_sid = qcom_pcie_config_sid_1_9_0,
->>   };
->>   
->> @@ -1418,6 +1455,8 @@ static const struct qcom_pcie_cfg cfg_sc8280xp = {
->>   static const struct dw_pcie_ops dw_pcie_ops = {
->>   	.link_up = qcom_pcie_link_up,
->>   	.start_link = qcom_pcie_start_link,
->> +	.host_start_link = qcom_pcie_host_start_link,
->> +	.host_stop_link = qcom_pcie_host_stop_link,
->>   };
->>   
->>   static int qcom_pcie_icc_init(struct qcom_pcie *pcie)
->>
->> -- 
->> 2.34.1
->>
-> 
+commit:         7b1d1d4c Merge remote-tracking branch 'iommu/arm/smmu'..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=1213575f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dfe1e340fbee3d16
+dashboard link: https://syzkaller.appspot.com/bug?extid=35a21b6aade7af3c7b3a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10e476e8580000
+
+Note: testing is done by a robot and is best-effort only.
 
