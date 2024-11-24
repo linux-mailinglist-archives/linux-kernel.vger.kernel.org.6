@@ -1,111 +1,93 @@
-Return-Path: <linux-kernel+bounces-420142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AED09D7596
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:59:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4905166D2D
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:59:17 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B9A18871E;
-	Sun, 24 Nov 2024 15:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="PjwAJVAH"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4EFC9D768F
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:20:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E44B186E27;
-	Sun, 24 Nov 2024 15:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD3B3B2E37F
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:01:17 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE1A1891AA;
+	Sun, 24 Nov 2024 16:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Uv+Nhptk"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB48186E59
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 16:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732463955; cv=none; b=otn5QugSQAmhrCD4v7/UjmUyWrej6AG2aCY8YVk5jAwnvjmITiJJLv+T3Bj8W8UCKjk4zqQz6K0Bk1R1UQkzmbFAo6IAAlxmhDBK1u2/LRgUPub+7AO5fm67iLtcyo97BnhtcScYQ5a5hH2cSq+hV0uEEN+Y+xFMmZgQrhAfOmI=
+	t=1732464072; cv=none; b=U3zYZj9kK5wt2+DH1DLQBXzsl8NOtFiqud1gzGoWsgOREX1q+5tJ+UX+nutefaClWae0jIYCcC0BepU3A4HoC8o8kGQ9Q5nLtr7YbnbI2LgdpavIPHBTlMGCjhVVtNhVd9KpNmil7TrkMvIQGsjj/S0vLT4ae+K7OklLjJsOkbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732463955; c=relaxed/simple;
-	bh=4w8HlmIoy2WtB+YbTtKCdX2a1oD12zK0Q2sU2umMiew=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dV6tES5Kzva1QpgZZz1akHSTYh/lN9YrDydqxNc6dWRk53TRhBlmLCt/pR+MK1itz6u8bS3e+H9m6p7vXcB94R0wGZRBzfbhsOnuvsP5jOJEDEhk9BaN/5Z7m/XpV/V/WxB5MmKkPc8qjDGE8DaZU/E70AfYC0Fw266Hec1xp2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=PjwAJVAH; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1732463941;
-	bh=4w8HlmIoy2WtB+YbTtKCdX2a1oD12zK0Q2sU2umMiew=;
-	h=From:Date:Subject:To:Cc:From;
-	b=PjwAJVAHf7BNBZlXvihySaYikMHa5t1dvWJ3X4Nhx7s8te+e0vwWOQiFhqV9FLSAR
-	 XY8cIi3RhTfw49fl9qFBp5fyAjCYOph+A5mB7c+pwEP9nW/PvRiIucC+fgkEKcIZh9
-	 LTIDNTbMO/YVE7FhzK+NaDcTDz5bpA6Jqkuqe2Z8=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sun, 24 Nov 2024 16:58:04 +0100
-Subject: [PATCH] kconfig: prefer toolchain default for debug information
- choice
+	s=arc-20240116; t=1732464072; c=relaxed/simple;
+	bh=Sf2MTihRGbCzA9KzLK1IO48wXW7JUnu8n4umANxIRQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oz2eG3UBf4dshMzvGnda4n3AnOAdrOItSfhkHTit6BalFXSBhuTGVR8CVmHbyWjvxUlGOG1lkXBuJcCHTfbRW+IJp/BCOtiY7g+bvKeVFUIPAA487W1v4SNKKGLAZVc1gT7CU+165mKrEs87RL0cDl2ExVu8yvdIAATUgEWnHu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=Uv+Nhptk; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from macsyma.thunk.org (syn-098-147-040-133.biz.spectrum.com [98.147.40.133])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4AOFxtZw003163
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 24 Nov 2024 10:59:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1732464000; bh=2w6rzDBqZDK836MybJ78ZxuL/o1JL2jaY8GwyU8vRy8=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=Uv+NhptkVd6SGZkhvfe2HViuBEf9uF44mw8F0pi4PmRyL/Pg0jVzXrdEoDha2NpNi
+	 csQYj2RWZJ2ZHgPDYWagfRuls1GA770238Pk4PInSwyEboeYs2Ww39D6egVkXxM/e4
+	 bvZW02uoU9v9MCMijuxLM7FJQSNXGcK2ubAKe2uEsKgmQQBLHDHLTINBAtZACYvMAp
+	 cw2B4ajAbiQP0XWP9MP9VMqmpdN4Usod06wQam5G7oJIifzcqgysjEdBOBNu1UXxPU
+	 Zd602lTPvWDmQyq2Z7J7jmXaAE7ts8r+6KG9dNrT7Ko+XoKMkrnhX/jE8NVN8QMywL
+	 awoa1+QKJuHvg==
+Received: by macsyma.thunk.org (Postfix, from userid 15806)
+	id 2CD6C341253; Sun, 24 Nov 2024 10:59:55 -0500 (EST)
+Date: Sun, 24 Nov 2024 05:59:55 -1000
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Jinliang Zheng <alexjlzheng@gmail.com>
+Cc: viro@zeniv.linux.org.uk, adobriyan@gmail.com, alexjlzheng@tencent.com,
+        brauner@kernel.org, flyingpeng@tencent.com, jack@suse.cz,
+        joel.granados@kernel.org, kees@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mcgrof@kernel.org
+Subject: Re: [PATCH 0/6] Maintain the relative size of fs.file-max and
+ fs.nr_open
+Message-ID: <20241124155955.GD3874922@mit.edu>
+References: <20241123193227.GT3387508@ZenIV>
+ <20241124094813.1021293-1-alexjlzheng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241124-kbuild-allconfig_debug_info-v1-1-07a7ac8d9a73@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAAtNQ2cC/x3MQQqAIBAAwK/EnhNSrKivRITmakuioRRB9Pek4
- 1zmgYyJMMNYPZDwokwxFPC6gnVTwSEjUwyiEZJzIdmuT/KGKe/XGCy5xaA+3ULBRmZ7KQeteKu
- xgzIcCS3d/z7N7/sBfIeB8W0AAAA=
-X-Change-ID: 20241124-kbuild-allconfig_debug_info-f7449ba15be6
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>, 
- Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732463940; l=1374;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=4w8HlmIoy2WtB+YbTtKCdX2a1oD12zK0Q2sU2umMiew=;
- b=j2KA7ysOF3fTSzZ0FC2ksKF8XUeletFAme4jxEagaMOl8mkyU43106vnUeneExDRcgI4GmYhv
- ozhWQc81ClRCcpDDrAJtl2dRWeIS37ZonTluMIwtiVdleFOKyumRRzq
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241124094813.1021293-1-alexjlzheng@tencent.com>
 
-Kconfig by default chooses the first entry of a choice setting.
-For the "debug information" choice this is DEBUG_INFO_NONE which
-disables debug information completely.
+On Sun, Nov 24, 2024 at 05:48:13PM +0800, Jinliang Zheng wrote:
+> > 
+> > Short version: there are 3 different notions -
+> > 	1) file as a collection of data kept by filesystem. Such things as
+> > contents, ownership, permissions, timestamps belong there.
+> > 	2) IO channel used to access one of (1).  open(2) creates such;
+> > things like current position in file, whether it's read-only or read-write
+> > open, etc. belong there.  It does not belong to a process - after fork(),
+> > ...
+>
+> I'm sorry that I don't know much about the implementation of UNIX, but
+> specific to the implementation of Linux, struct file is more like a
+> combination of what you said 1) and 2).
 
-The kconfig choice itself recommends to use "Toolchain default":
+This is incorrect.  In Linux (and historical implementations of Unix)
+struct file is precisely (2).  The struct file has a pointer to a
+struct dentry, which in turn has a pointer to a struct inode.  So a
+struct file *refers* to (1), but it is *not* (1).
 
-	Choose which version of DWARF debug info to emit. If unsure,
-	select "Toolchain default".
-
-Align the actual configuration with the recommendation by providing an
-explicit default.
-
-This also enables more codepaths from allmodconfig/allyesconfig which
-depend on debug information being available.
-
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- lib/Kconfig.debug | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 5d9eca035d470f7ba0c5ff932c37fd5869174269..0aefcd103d9012cd8067e5594404358b0e977644 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -240,6 +240,7 @@ config AS_HAS_NON_CONST_ULEB128
- choice
- 	prompt "Debug information"
- 	depends on DEBUG_KERNEL
-+	default DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
- 	help
- 	  Selecting something other than "None" results in a kernel image
- 	  that will include debugging info resulting in a larger kernel image.
-
----
-base-commit: 9f16d5e6f220661f73b36a4be1b21575651d8833
-change-id: 20241124-kbuild-allconfig_debug_info-f7449ba15be6
-
-Best regards,
--- 
-Thomas Weißschuh <linux@weissschuh.net>
-
+       	    	     	     	       	     - Ted
 
