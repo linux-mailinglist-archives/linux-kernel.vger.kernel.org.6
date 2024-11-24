@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-420146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE50A9D75A7
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:02:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5E509D75AA
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:02:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 742D5285262
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:02:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C2AA163FC4
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F854188938;
-	Sun, 24 Nov 2024 16:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1F4188A18;
+	Sun, 24 Nov 2024 16:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dDWOK3C0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JvuNli2J"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EAC2500C6;
-	Sun, 24 Nov 2024 16:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236772500BE;
+	Sun, 24 Nov 2024 16:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732464127; cv=none; b=JDQnGn79HxdxA2hz6jkgOAkDvdN4M1NTydlj7jTwCUAnTqUvT5mBH6rGCHolzm9hFZXJpCmBLqh2MiL/IMvBFROaLdhr4jOXbxi+Ff5gHbPDRFFoqPUc8iCG9VR1BcGo3AyX8tX4l56UpYfc1qOOFCChbjMMv8F+qAcHfKiPps0=
+	t=1732464163; cv=none; b=OlRYZ9FIXQ1FUb1Za7DQwHP1KBIm/JBldwuZ+ZsP12jtE9MJryJrFyPaPQwWOXIpJld9LugoVBmfUHmOoOQdExS705gRj2QUAkjq91H5KttnVxZtYrO7dZMJQn9tc1iV/14DY4aiw6cQE1nhKA4s5yT9GefVpGctzbymZeQdKho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732464127; c=relaxed/simple;
-	bh=0grkUlSSt+CBbPaRjx1R/V5AdzNtLdNvHIfPzoapiAE=;
+	s=arc-20240116; t=1732464163; c=relaxed/simple;
+	bh=7w31rdrSeRnm8mgigFlAucf/F6Tja4o0wA220lp7GLY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wf+gzQsEatQYNBrHozRA1y+Ufp9cxkTDkmziUiyfzuiYd8/aAuuzgazQ1beSUS5+/PXTouciYpgds44FtrrftQ0UH86K4oRdPKARVH8oiua//9lHn6RhK42c4bagK+YMEg62KvTyoVtY/UaKTitTrNC3R3AOWRT2Ji5gIaiI7Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dDWOK3C0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE9B1C4CECC;
-	Sun, 24 Nov 2024 16:02:01 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=pEXD455CV9KDbJ1wkKXKN69x/3JWSWiVz46+7z18kOjZEPcR5ykm3QwilhfzqlUCtFSHx2ixTeJxAutXAgbCCsPBqWn3ZitFBq2rbLVwhPNArHYBQPc1in+0t2xWO48f/HVyhOIthCWXSMJKd6cAoB+3dEB+lDrJviJbZ1Esm0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JvuNli2J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02356C4CECC;
+	Sun, 24 Nov 2024 16:02:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732464125;
-	bh=0grkUlSSt+CBbPaRjx1R/V5AdzNtLdNvHIfPzoapiAE=;
+	s=k20201202; t=1732464162;
+	bh=7w31rdrSeRnm8mgigFlAucf/F6Tja4o0wA220lp7GLY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dDWOK3C0T3eSiiggspDBe5yCGnmmeN9olqtnxw1FaSdkbowkYcnS+NIyX6wapuft0
-	 kWpYdq4WHV6L/urN2ZhpLVE/7se5RjrhvSvsuUL8p3XilNGbMGioEqQ2vmpyzZ0blt
-	 cQ4gj+rcuQZCFYrnY/yyF8lIdQ3IB5Kt7eqjq+f3dor2/1bq54ofiqDVrB5Wm6kw3b
-	 bDsdiI2wn66BkZ2t2jAlaTT3wjlg4G3v1t1x/HY1RKJA5vhm5lB4QPX57qf0eZjRu+
-	 HX7BmkZ/ZsApAtWLTfUzVKYUBfUbvWtCAtor5osdJomhdV4emaoDYE1KQeCQ+CNQ9n
-	 TRuGGEQX+mAbQ==
-Message-ID: <f0d983f7-5f60-4cb7-9522-ef4429359c52@kernel.org>
-Date: Sun, 24 Nov 2024 17:01:59 +0100
+	b=JvuNli2J0oaLRj8lWIr8qQiMlIIu40dlmGzU15kemdnu13dp22qoluLQS+cs0jvzz
+	 As7vL31vlR9OP+foMdsNY3Ny9o4RF8to76aAErN5EgcpEpRC8erbDaQ+Sg/4I7r4lr
+	 8fQhyRGs6EZgx/1qVEFcvJrd11f4I06FQaLdzROWheKIoBbrdoBCd4WdNyilVEhsPT
+	 VJbCoQ11d/pP8sGziDBaoo+v3V9ip9ujdX1DG5HJrUHa7hw+tWb1hNiksThP2mKE9O
+	 K7YsabecEHOg4pl5xAjkTRFHbLzv/eSKYUZKHCI77KlroN5qONRQM5DXacGFQVPr1C
+	 dEupxwGeY7Hfw==
+Message-ID: <bcee5dfe-2889-45d3-a859-f2cf981712b2@kernel.org>
+Date: Sun, 24 Nov 2024 17:02:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] dt-bindings: display: panel: Add another panel for
- RG35XX Plus (Rev6)
+Subject: Re: [PATCH 3/6] dt-bindings: display: panel: Add a panel for RG40XX
+ series
 To: Hironori KIKUCHI <kikuchan98@gmail.com>, linux-kernel@vger.kernel.org
 Cc: Neil Armstrong <neil.armstrong@linaro.org>,
  Jessica Zhang <quic_jesszhan@quicinc.com>,
@@ -63,7 +63,7 @@ Cc: Neil Armstrong <neil.armstrong@linaro.org>,
  Ryan Walklin <ryan@testtoast.com>, dri-devel@lists.freedesktop.org,
  devicetree@vger.kernel.org
 References: <20241124080220.1657238-1-kikuchan98@gmail.com>
- <20241124080220.1657238-2-kikuchan98@gmail.com>
+ <20241124080220.1657238-4-kikuchan98@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,20 +109,34 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241124080220.1657238-2-kikuchan98@gmail.com>
+In-Reply-To: <20241124080220.1657238-4-kikuchan98@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 24/11/2024 09:02, Hironori KIKUCHI wrote:
-> +++ b/Documentation/devicetree/bindings/display/panel/anbernic,rg35xx-plus-rev6-panel.yaml
+> This is a display panel used in the Anbernic RG40XX series (H and V),
+> a handheld gaming device from Anbernic. It is 4.00 inches in size
+> (diagonally) with a resolution of 640x480.
+> 
+> Signed-off-by: Hironori KIKUCHI <kikuchan98@gmail.com>
+> ---
+>  .../display/panel/anbernic,rg40xx-panel.yaml  | 60 +++++++++++++++++++
+>  1 file changed, 60 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/anbernic,rg40xx-panel.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/display/panel/anbernic,rg40xx-panel.yaml b/Documentation/devicetree/bindings/display/panel/anbernic,rg40xx-panel.yaml
+> new file mode 100644
+> index 00000000000..bec5363e1d5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/panel/anbernic,rg40xx-panel.yaml
 > @@ -0,0 +1,60 @@
 > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/display/panel/anbernic,rg35xx-plus-rev6-panel.yaml#
+> +$id: http://devicetree.org/schemas/display/panel/anbernic,rg40xx-panel.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Anbernic RG35XX series (YLM-LBV0345001H-V2) 3.45" 640x480 24-bit IPS LCD panel
+> +title: Anbernic RG40XX series (YLM-LBV0400001X-V1) 4.00" 640x480 24-bit IPS LCD panel
 > +
 > +maintainers:
 > +  - Hironori KIKUCHI <kikuchan98@gmail.com>
@@ -133,10 +147,10 @@ On 24/11/2024 09:02, Hironori KIKUCHI wrote:
 > +
 > +properties:
 > +  compatible:
-> +    const: anbernic,rg35xx-plus-rev6-panel
+> +    const: anbernic,rg40xx-panel
 
-Everything is the same here. Add new compatible to existing schema
-respecting compatibility (fallback) or not (no fallback).
+Nope, same comments. Also for both patches, wildcards are not allowed.
+Use specific number.
 
 
 Best regards,
