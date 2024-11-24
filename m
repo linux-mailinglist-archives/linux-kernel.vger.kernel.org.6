@@ -1,155 +1,131 @@
-Return-Path: <linux-kernel+bounces-420275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A7DA9D780F
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 21:12:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C3989D780A
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 21:10:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E83CB22CA9
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:12:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A71CB21C9D
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6305615C15E;
-	Sun, 24 Nov 2024 20:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC4114B06C;
+	Sun, 24 Nov 2024 20:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="oq3J4W5D"
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hUCfXwG8"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B96036C;
-	Sun, 24 Nov 2024 20:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B59291E
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 20:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732479151; cv=none; b=dHT1IAw2X+uKUG9hHIy3cZHKHkH1pjuXAT5GTxO5rlv67bZFKPIMaXt1BUjhPmBuQ8Yq2b9+FqD/u5CEe4aI7QVJsK1jkkHeZU6QIS0f10uQyUOIUGVVzlqeiwpAxIyPoFyurBWw/zoTWidc9/6+O5O2vmrdPgRWsanI3Xr/zPE=
+	t=1732478996; cv=none; b=rBiubXAPKjX8X5n3xbyYlMERjb/9MIuFrm8+QcAkQKOH7v+GFGHAfKj+tGJnF+lCv+I7H+sRzCYrGwhlvRyrIGHUfWGJdmHgRXDo/MmY41BY1EgXffUjS+i4cckxVDA9mrv6tgCn/MNSQGqE+Bmv6gJjvE/sMivzyy4NS3UU6tY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732479151; c=relaxed/simple;
-	bh=ynqyixvm2rjUp9IOH82m4L0Ic1fb+euGKq6l6ona/zY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CyEMUYv6SYP+H4hUb5cp+TY9WDiA9BILFfUJtFuyT6rwLSFV04IrmExIynd9/PeVfK4LgevJfyilWvpVWExrNAr6ct0twL1eHiOoPfxHrjDIX7C5XvXOG06/q64b3YQV2WBkA8qjH9jbGjlyg2DxcjzCGdo8gcmDwY/Bgp35g5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=oq3J4W5D; arc=none smtp.client-ip=217.72.192.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
+	s=arc-20240116; t=1732478996; c=relaxed/simple;
+	bh=hlqPQuS8ofAYpPfraJUnreUPZH3D1P/2FWLM9df7BTU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ewlLzUsmx9yRiV1syulH92wAKvl6u3++GBLyovCW6jhDLhhYogK54EppqQaKMZKsaCgWIEqnXaQvVoLIY5Dcbfq2bDsv4kahCHwUpG57fjsYYWRqbSmKLABmY38zIpvtNgkkEaClz4yFRFR6W5Lr0foNvObWzw5xqvdSWahxVBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hUCfXwG8; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7fc340eb006so94222a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 12:09:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=oldschoolsolutions.biz; s=s1-ionos; t=1732479139; x=1733083939;
-	i=jens.glathe@oldschoolsolutions.biz;
-	bh=ynqyixvm2rjUp9IOH82m4L0Ic1fb+euGKq6l6ona/zY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=oq3J4W5D1gmqjCBarmwEU9Rk9o3lSke6G6Fe1i40xbdKxRDLS8PsZCMX3woyV+hC
-	 An9vk9uUbJ7GPbvarGczRh4uJq0eZFc1emsvI00LAsy9tvecQrjYZMI5wpPcgPxsT
-	 BAh2V1gORj29+vJYJCtMzE9yuttwAZWLe4fKIMe5+vaUg3aDYItNaO2VlSWz4LhOF
-	 SgttJA661Mj+WvGnQV3R10RaIYCTzIOVvLBugjoxrhMDS68LunW9Nl96qJ2GaQuw9
-	 VAKsOMsm8A3L82w89AyMxjZbjGJZr1up4dHyuCtJnagMTqvCTggiw738m1XaeHvv1
-	 4zDn2wgGB4s/wDQHZg==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from [192.168.0.174] ([91.64.229.215]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MXYAj-1tDVBQ0uJ5-00OiAI; Sun, 24 Nov 2024 20:58:15 +0100
-Message-ID: <0455ab38-fd58-4b93-9656-5745c2f62f89@oldschoolsolutions.biz>
-Date: Sun, 24 Nov 2024 20:58:09 +0100
+        d=gmail.com; s=20230601; t=1732478995; x=1733083795; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Garqcydm6d6hOSEnkqfwcQpL+EyitpGGI+ocpotqa4c=;
+        b=hUCfXwG8Y3DE7j5IVpc52p7C/9T2+BPiVPnFBb1ITQUjssi7wTRmDBORfH66hfFS30
+         OwX+EiIbPoYe0N36pTKaJtsgSXa1O7XzRVrN4lgIrQei9cCVbXY7hXoahLaJOe2mcQYe
+         VMiLkX+17LXHlPlut42bwFDFsYpU6CdYRuTVgeATmU0kaAuFeEuE/P7TLPmC4nRO5Yda
+         x22cvle9r7hS3zxAU/BUQJDivQeaOKQg8AnEnB9B9Ra50kk6pAtxdvkOvhsoCHm8lqRp
+         VeBlp8GneMlNTISyMZM69GbZ5vTWknPmXEfluH02zR/UlB4PEuuu1AzOIda4XwpcTyyH
+         9qcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732478995; x=1733083795;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Garqcydm6d6hOSEnkqfwcQpL+EyitpGGI+ocpotqa4c=;
+        b=TXklE/50FIEpJP9WwL7JviTgcFzDd3XP/Tq9VSEYnqhygxpBmx9znACZe+A5XpqUwT
+         AoUJAORAkkcL6ZpG/vfiyrWqiDY6fUd+gnv3ayvNwLmX4TrIQENakV6jfxp4OC5U/Ukq
+         P2BtsbcOISGrrkNE3R+kWiCwP2atOHKT5rAyAlh8WS52kO2dQ78fCN54XOxl5t8mFqWv
+         IcZsnt1ZUfFyjRtoV0jyKRw8a2u89RM7tVsoUjvPGdv3dKeaMqACSGCZdyObqlMiP2gA
+         Xs89vkj82cIoBQgrNwbWI7wrThrzNjUY8zI089ctWYBva9T32l57Tx/pEiWBxqDUX5p9
+         4/Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCWAKSUm+96C85oMVm1KNHDLZta3DzwfXdnSD0NiW3QZe0b3iO100D8yeAl0QDbGbdZHStKee1rehB9xeg8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4PyoFxZfQ3LP2eyrsbV0vo2ywICKIvzC/iTt5TNrxR1IWzzye
+	S8N4/qZzWbnj/IpKVbqGtuYaKU3R5Pd5LZ6R7xUKzsPcWnpO8Wpy
+X-Gm-Gg: ASbGncsXIEY8pas8TslLCL3k6TScm3HiF7vrPHUTAa31a023A0d26yDG3hnSBppGWS1
+	1CwKRmJ1YqyB4QS3OioKanR7b2fGUqEqop0xPTmv1JSWb2cEIf574Tqk6aWOYcbkMcoOW5Xj7z7
+	FtLItjYXxAA0DqBoapIDPkD6M6HLJocoSbl9Us1DCbbybB6ITloYPQ2MzX6n24kz6eCYn+lIysw
+	5mZUJ3BfwWro/844s3324abBfYHDUUuPhVCvLjR3yCHfworSw3wWDOm9gESke0XmJgTPW1FiA==
+X-Google-Smtp-Source: AGHT+IESq8ReY8EvXIJVDV9iY0yFrIx8i65dKaW8cXabuqo6IeLRwhk4vuvzztkiAP89nQfKLe74FQ==
+X-Received: by 2002:a17:902:d4c4:b0:212:f64:8d9f with SMTP id d9443c01a7336-2129f7c1228mr157928095ad.32.1732478994603;
+        Sun, 24 Nov 2024 12:09:54 -0800 (PST)
+Received: from localhost.localdomain ([2804:14d:4c64:81ec:7409:107a:a63b:a3da])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dba22afsm50280195ad.73.2024.11.24.12.09.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Nov 2024 12:09:53 -0800 (PST)
+From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+To: gregkh@linuxfoundation.org,
+	philipp.g.hortmann@gmail.com
+Cc: ~lkcamp/patches@lists.sr.ht,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl8723bs: fix broken code when cflag is used
+Date: Sun, 24 Nov 2024 17:08:22 -0300
+Message-ID: <20241124200934.156252-1-rodrigo.gobbi.7@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] arm64: dts: qcom: x1e80100-hp-x14: dt for HP Omnibook
- X Laptop 14
-To: Krishna Kurapati <quic_kriskura@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Douglas Anderson <dianders@chromium.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Kalle Valo <kvalo@kernel.org>, David Airlie <airlied@gmail.com>,
- Conor Dooley <conor+dt@kernel.org>, Simona Vetter <simona@ffwll.ch>,
- Thomas Zimmermann <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>
-References: <20241124-hp-omnibook-x14-v1-0-e4262f0254fa@oldschoolsolutions.biz>
- <20241124-hp-omnibook-x14-v1-4-e4262f0254fa@oldschoolsolutions.biz>
- <0b4db909-6029-40e6-8e1d-a7ecdc731b25@quicinc.com>
-Content-Language: en-US
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-In-Reply-To: <0b4db909-6029-40e6-8e1d-a7ecdc731b25@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:LaIDgpAhSCbFpwAaThtHz90n64aey9SlwaHk0+mqX/KFMT6ppV5
- FqkGHIcjwYtnASxdeuABOrVF6ZeyCdU9BDIlGhnv83yiZeNluPeWv0KRyM0Ncdf5L9/64JE
- tdhOtJmComQGYwL38Lm0SuxkTxHmNga2gT7dsgjVNk+jrA/IOdapLnOEO+sn5oJ9vxxWsVn
- UUwLDExljqSQotxMEYRHA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:mkB2p6G99c0=;wxgmyBo2+zCMAptP7a+gEhTrgnt
- zcbz/mLa/k0sRzL4qWqqh7xl3xcBO6sDStN2mHEUNgQ46+L8QwrrDCc+okdMyEz+vwR43rzie
- /9XNRQuWdj3z2rbUL4PaZpHyQU88mJ+cEhzdh0SVBj9oCTzF6O4Yj7phd4CErOk3Um9KO+Gyb
- UajfoJ4twLU+UJdis9/bpABf6dTm4HCn2qmTQralMTwh2NQ4XIACCnvnNE7GtWDPYIJ3BfB1n
- 0cvbDgsz8kS7kPDaDgaXATJfz2yijgYCd7xCCNy9XoPa2ufoz3ZEYnfoPJiVS1g3CVzwtx1jy
- kBQeqVLfUcoU6B3kXo22GXBctp72o2T3h0U8sdf0zTF4P9dTUarBEjSK4ziaqlYdYPwPrf301
- jineSDoMsg8lgrR0n2aOXA2k7FvkechHLP5iu2qkPheXJcfoKVnxYtBlab6ps0WkAue0yB0Bh
- 0vaYJxMS/W5waMWZR3oEkqomcoFKdniYvSS0y/zNzdpdmsq9pwnvVtQ1LS3nV6CW3x5M8XukQ
- 4po/kQhQO1KY0s36VIly2VM1nfao9DszJJ6ANWYId84CIQ5U3a5jbgNV5gcE+unaia9QQDKFM
- 5srdX9S/OOT19Is1Y1/pWoO07Lzyw5EulhwK93bwGrQGv3Vn6ciUDUvZcaFhwkBSyPUDyplNa
- LaOeG3ZbeFFqykynDUeBsrHyxc3ThOiH7H7GnAcKUeVTkyxNhL67vLOF+kk3v6MyaQirFQ2bs
- /lGhYarfrw1JeSRXxku84Otij32VsHd/gtwkT3Dn8YNG43Jl8IXrT95Nj9JzA1tTTVFgfA+u+
- VSen8/KOkFiXxeNTa12DyBM+ocuHO2YuAk6/1zgCEH/dRH8VKL2bObD0sxx8MV9ZsD
+Content-Transfer-Encoding: 8bit
 
+Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+---
+As noticed at [1], hal_com.c is not compiling with -DDBG_RX_SIGNAL_DISPLAY_RAW_DATA due
+the changes at [2] (a few statements were not replaced with the new struct).
+A little discussion was made at [1] too about how useful this cflag was or if the
+code under the cflag should be deleted. I think there is no harm to keep those things
+as is since we can easily fix the error.
+Tks and regards.
 
-On 24.11.24 16:54, Krishna Kurapati wrote:
->
->
-> On 11/24/2024 6:50 PM, Jens Glathe via B4 Relay wrote:
->> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
->>
-> [...]
->
->> +
->> +&usb_mp {
->> +=C2=A0=C2=A0=C2=A0 status =3D "okay";
->> +};
->> +
->> +&usb_mp_dwc3 {
->> +=C2=A0=C2=A0=C2=A0 phys =3D <&usb_mp_hsphy0>;
->> +=C2=A0=C2=A0=C2=A0 phy-names =3D "usb2-0";
->> +};
->> +
->> +&usb_mp_hsphy0 {
->> +=C2=A0=C2=A0=C2=A0 vdd-supply =3D <&vreg_l2e_0p8>;
->> +=C2=A0=C2=A0=C2=A0 vdda12-supply =3D <&vreg_l3e_1p2>;
->> +
->> +=C2=A0=C2=A0=C2=A0 phys =3D <&eusb3_repeater>;
->> +
->> +=C2=A0=C2=A0=C2=A0 status =3D "okay";
->> +};
->> +
->> +&usb_mp_qmpphy0 {
->> +=C2=A0=C2=A0=C2=A0 vdda-phy-supply =3D <&vreg_l3e_1p2>;
->> +=C2=A0=C2=A0=C2=A0 vdda-pll-supply =3D <&vreg_l3c_0p8>;
->> +
->> +=C2=A0=C2=A0=C2=A0 status =3D "okay";
->> +};
->>
->
-> The above QMP MP PHy is unused in the above DWC3 node. If the port is
-> only HS capable, please don't enable the QMP node.
->
-Oh its the other way round I guess. Thank you for the hint. It should be:
+[1] https://lore.kernel.org/linux-staging/f61d8272-4af3-40d6-a333-e7731c3fc5ae@stanley.mountain/T/#mffa281a89e67c609db9b125878d5b8d090776812
+[2] "staging: rtl8723bs: Rework 'struct _ODM_Phy_Status_Info_' coding style.", commit ec57f8641fbca07bbb61a75bd4760fd7aef86860
+---
+ drivers/staging/rtl8723bs/hal/hal_com.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-+&usb_mp_dwc3 {
-+=C2=A0=C2=A0=C2=A0 phys =3D <&usb_mp_hsphy0>, <&usb_mp_qmpphy0>;
-+=C2=A0=C2=A0=C2=A0 phy-names =3D "usb2-0", "usb3-0";
-+};
-
-The port is USB2 and USB3 capable, and this was the intent. Noted for v2.
-
-with best regards
-
-Jens Glathe
+diff --git a/drivers/staging/rtl8723bs/hal/hal_com.c b/drivers/staging/rtl8723bs/hal/hal_com.c
+index 95fb38283c58..63bf6f034f61 100644
+--- a/drivers/staging/rtl8723bs/hal/hal_com.c
++++ b/drivers/staging/rtl8723bs/hal/hal_com.c
+@@ -906,7 +906,7 @@ void rtw_store_phy_info(struct adapter *padapter, union recv_frame *prframe)
+ 	struct hal_com_data *pHalData =  GET_HAL_DATA(padapter);
+ 	struct rx_pkt_attrib *pattrib = &prframe->u.hdr.attrib;
+ 
+-	struct odm_phy_info *pPhyInfo  = (PODM_PHY_INFO_T)(&pattrib->phy_info);
++	struct odm_phy_info *pPhyInfo  = (struct odm_phy_info *)(&pattrib->phy_info);
+ 	struct rx_raw_rssi *psample_pkt_rssi = &padapter->recvpriv.raw_rssi_info;
+ 
+ 	psample_pkt_rssi->data_rate = pattrib->data_rate;
+@@ -919,8 +919,8 @@ void rtw_store_phy_info(struct adapter *padapter, union recv_frame *prframe)
+ 		psample_pkt_rssi->mimo_signal_strength[rf_path] = pPhyInfo->rx_mimo_signal_strength[rf_path];
+ 		psample_pkt_rssi->mimo_signal_quality[rf_path] = pPhyInfo->rx_mimo_signal_quality[rf_path];
+ 		if (!isCCKrate) {
+-			psample_pkt_rssi->ofdm_pwr[rf_path] = pPhyInfo->RxPwr[rf_path];
+-			psample_pkt_rssi->ofdm_snr[rf_path] = pPhyInfo->RxSNR[rf_path];
++			psample_pkt_rssi->ofdm_pwr[rf_path] = pPhyInfo->rx_pwr[rf_path];
++			psample_pkt_rssi->ofdm_snr[rf_path] = pPhyInfo->rx_snr[rf_path];
+ 		}
+ 	}
+ }
+-- 
+2.47.0
 
 
