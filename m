@@ -1,74 +1,125 @@
-Return-Path: <linux-kernel+bounces-419328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 838F09D6C89
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 04:10:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA249D6C8B
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 04:16:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A30F2816B9
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 03:10:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F4B5B2133E
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 03:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB31824B26;
-	Sun, 24 Nov 2024 03:10:05 +0000 (UTC)
-Received: from yyz.mikelr.com (yyz.mikelr.com [170.75.163.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F113C2AF05;
+	Sun, 24 Nov 2024 03:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="THCLBAS4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA05A25745
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 03:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.75.163.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E801E53A;
+	Sun, 24 Nov 2024 03:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732417805; cv=none; b=elDIP9BlIp+xJPIu2mhqe9s6Gs4JxD+VAvdjiWDnvbvBi5CpEV20HsNcNV0Wa6Esf1Se/ISWpz3t21XFE7728KJsyBMsXsMjtzXlk0SvhgSSzicHPr4ChMCuTbEEIpTxQn/GvZjT1YoFdzOL30/EQXKqkgGFTQ/iCgUiuu8DNHI=
+	t=1732418203; cv=none; b=QuGWqLLJbtXRCPnad97mCQFiQaaUGywsEjatfT65Ofktgl4i2fzo1w1U6hsE74vDFcHhfsEbVJXjUio8Fh2wm2YyaanVLMh9p2qrqM7cMqM8NN9tsTtfPA0ZR5eb3rveQPD7X1/0E6wyq3E6/oejqhuV3/+Q9uhnLCqNNUoSXH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732417805; c=relaxed/simple;
-	bh=TRDCz7rZW73cyfup64t6Wb+A0Uz7Wwtxn/v5XnEXp4Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VGsEOX5jlSPb41Nr5AeB5YneLxDCnb6SE1iyLozXzsL/A+sd5kpOi8/vKuT53XP2IVTssKmvABsPx9TLPDa8mMC1Vkn6J+azUtx23ZKK2OZdiPGYc/PLWcK7TKZKmIYcbylX0vf6NAM+Xc0TOYgtjkRKcSO9esGKw0I4fReeRcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mikelr.com; spf=pass smtp.mailfrom=mikelr.com; arc=none smtp.client-ip=170.75.163.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mikelr.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mikelr.com
-Received: from basin.localnet (unknown [IPv6:2607:f2c0:e554:1200:4b8f:795f:f483:85bf])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by yyz.mikelr.com (Postfix) with ESMTPSA id 0B70373006;
-	Sat, 23 Nov 2024 22:10:02 -0500 (EST)
-From: Mikel Rychliski <mikel@mikelr.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Laight <David.Laight@aculab.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>, "bp@alien8.de" <bp@alien8.de>,
- Josh Poimboeuf <jpoimboe@kernel.org>, "x86@kernel.org" <x86@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Arnd Bergmann <arnd@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] x86: Allow user accesses to the base of the guard page
-Date: Sat, 23 Nov 2024 22:10:01 -0500
-Message-ID: <2331683.YKUYFuaPT4@basin>
-In-Reply-To:
- <CAHk-=whkMC3afZJBamTuppf4BTJEuHNVpqK7qMKsg5VgX8q2HQ@mail.gmail.com>
-References:
- <680c14b5af9d43d6bc70d2c1e9321e01@AcuMS.aculab.com>
- <2195976.7Z3S40VBb9@basin>
- <CAHk-=whkMC3afZJBamTuppf4BTJEuHNVpqK7qMKsg5VgX8q2HQ@mail.gmail.com>
+	s=arc-20240116; t=1732418203; c=relaxed/simple;
+	bh=NURJk+W/Vb8yZSaVKlSCaDW7s1l1rsRSALqij7rYauE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pMxcrZWkNHnGFPqHxcV/8iQ5WHvKYlIwZLSCvqWdYQOAZ2a8kSgAQY3pljUiLlrBvFQyCA20MRKAl1k+O/yZNkJ/yS19StXcjk5Z6sVb86uLwIaNsDE5kcPzHtYSGA3ys3dWJtM8MmPoU0hnd+YbkoAgF/L82kH///ZzTCD0d98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=THCLBAS4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77DCDC4CED0;
+	Sun, 24 Nov 2024 03:16:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732418202;
+	bh=NURJk+W/Vb8yZSaVKlSCaDW7s1l1rsRSALqij7rYauE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=THCLBAS4hOwP4PwbzEUCziIjzMT3fUCVwjnvXkitTWb83M3RfKLBv3qQDaScXEt1M
+	 xAcFLZAD78ozXRmiyOIJ31ZTFSZUwECNz/xqjYkdTjLzh5gFfkc7pTa3WQOpxPQLPt
+	 xOkqGYCXMFBv9lRaWTf9Q+rQAmWF+Tho0tmQHelquXiExZzl83DgtibvXRS2FSQQa7
+	 Y7GsNvGYcx2CCej/PEGMciUdcJM7kkt2dVUMzn6ngnM5o/zSm5T8KLlrA131FgE9Cm
+	 ARHmave33nZwRW8Ztd6KmxHWr4b0txZaWPgeVzfQGMW8QGSf6uScxx1lVvo3GNeUc9
+	 Qdk4bu5OzJ2HQ==
+Date: Sat, 23 Nov 2024 20:16:40 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: jpoimboe@redhat.com, linux-kernel@vger.kernel.org,
+	Fangrui Song <i@maskray.me>, llvm@lists.linux.dev
+Subject: Re: [PATCH 1/9] objtool: Generic annotation infrastructure
+Message-ID: <20241124031640.GA3646332@thelio-3990X>
+References: <20241122121016.372005127@infradead.org>
+ <20241122121555.621070802@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241122121555.621070802@infradead.org>
 
-On Saturday, November 23, 2024 7:30:06=E2=80=AFP.M. EST Linus Torvalds wrot=
-e:
-> So if David's patch fixes your use case, I'm happy to apply it with a
-> fixed commit message.
+On Fri, Nov 22, 2024 at 01:10:17PM +0100, Peter Zijlstra wrote:
+> Avoid endless .discard.foo sections for each annotation, create a
+> single .discard.annotate section that takes an annotation type along
+> with the instruction.
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+...
+> --- a/tools/objtool/check.c
+> +++ b/tools/objtool/check.c
+> @@ -2373,6 +2373,49 @@ static int read_unwind_hints(struct objt
+>  	return 0;
+>  }
+>  
+> +static int read_annotate(struct objtool_file *file, void (*func)(int type, struct instruction *insn))
+> +{
+> +	struct section *sec;
+> +	struct instruction *insn;
+> +	struct reloc *reloc;
+> +	int type;
+> +
+> +	sec = find_section_by_name(file->elf, ".discard.annotate");
+> +	if (!sec)
+> +		return 0;
+> +
+> +	if (!sec->rsec)
+> +		return 0;
+> +
+> +	if (sec->sh.sh_entsize != 8) {
+> +		static bool warned = false;
+> +		if (!warned) {
+> +			WARN("%s: dodgy linker, sh_entsize != 8", sec->name);
 
-Thanks, confirmed this case is fixed with David's patch:
+Thanks to Fangrui, this has been resolved in LLVM main:
 
-Tested-by: Mikel Rychliski <mikel@mikelr.com>
+https://github.com/llvm/llvm-project/commit/d4bed617f4378873d7ddf4b53c041e7b39d1a9ca
+https://github.com/ClangBuiltLinux/linux/issues/2057#issuecomment-2495675374
 
+I have built a version of LLVM from main and verified that this warning
+does not trigger with that version, while it does with LLVM 19.1.4.
 
+> +			warned = true;
+> +		}
+> +		sec->sh.sh_entsize = 8;
+> +	}
+> +
+> +	for_each_reloc(sec->rsec, reloc) {
+> +		type = *(u32 *)(sec->data->d_buf + (reloc_idx(reloc) * sec->sh.sh_entsize) + 4);
+> +
+> +		insn = find_insn(file, reloc->sym->sec,
+> +				 reloc->sym->offset + reloc_addend(reloc));
+> +		if (!insn) {
+> +			WARN("bad .discard.annotate entry: %d of type %d", reloc_idx(reloc), type);
+> +			return -1;
+> +		}
+> +
+> +		func(type, insn);
+> +	}
+> +
+> +	return 0;
+> +}
+
+Cheers,
+Nathan
 
