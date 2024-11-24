@@ -1,121 +1,146 @@
-Return-Path: <linux-kernel+bounces-420255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 587BA9D77AB
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:07:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 592009D77B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:08:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF674162029
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 19:07:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8B27161FF8
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 19:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB5814A4FF;
-	Sun, 24 Nov 2024 19:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05A2517BA6;
+	Sun, 24 Nov 2024 19:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HJEKVx+0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IsKkIAGR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B1F17BA6;
-	Sun, 24 Nov 2024 19:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBA92500D8;
+	Sun, 24 Nov 2024 19:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732475254; cv=none; b=l3aKzJFWo92EZcTgvoFIjMREQGjkzHP87TNOMRQPtYSLBJcsuaKEPGoQsOn4UnRCAyYxUQquSj42hCHAX5rRT62x31iEdY3hBJSyGQS5bCO9r0lqpBbC+bL4FOMk+Ztz/Q5e254zsjZKafG5o2vIKSvKz5+D2OwosAwj3wui724=
+	t=1732475319; cv=none; b=MN1qFfnseY21JYEVCyp2Gkdn0wBA9CDEU9HSRhT6OWNvyNcbjZCpqRhooSVjF8+3eoHzaWahVXsWX5iq/+PXYo1RNCYbHzcIzJfi5mRtdDTju3eQUUKUWDhOe2WvYf3jzgxFVasFNIAWCbtabb0YP2157XPsAkrzc6uZyto6VxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732475254; c=relaxed/simple;
-	bh=esIeKPZ5uMUcixde5dcDskkQnFhBhetH5uV6GOY/E54=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=li1sPRgMEY25i3Up+v8GaAC7LtKJTyaKnYX2v8F6V13Kb/+81tdhTStZJQRkoFEElr7QAMy2BdUnzEIO1m4MxLdQhE3n6v542NhWNp6oPOzXNPN0n30Bd3SuxpVSVMKFvrvp7ocoWgfA2YiwGH9U+mH3RyYWjGCpijjpPr1zOGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HJEKVx+0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AO9Q1TI013221;
-	Sun, 24 Nov 2024 19:07:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Bkre2WeoGiPhovYus2RkV3ZM5DAJZ4Ku2XTeN1DLg+M=; b=HJEKVx+0D67xsjSp
-	9RpCLAS+OHmQ6u5PiLD+Q+wdS2ppmbMTCT/EuX40FlM1mHRrdiu58m0yhZ5xDiLV
-	xetOZXBFDeEOmyio4hb58W7215cxWBqlzdLQYTBa/Dn/XEvMT3lpx9HU85NFswyj
-	KT33I+wvYXNmVp8VTiXfUJGX9eNhUEmAv9pCJJ2mE86YFqWG7e6xqB6eKVaNKDv2
-	tMYQuTf6c4Yq1dhZOChU/595R5JHejU/MnaNcUvmPoltuqzw7lRwIU8YC4etA5ju
-	iRSigIucMWQrcwGZI/Ea8B2t1yUfRFbCCIQpbQS7bg4Id82ieHJNMP4pBkJ8v4Fn
-	3OJuRw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4337e6tmvw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 24 Nov 2024 19:07:23 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AOJ7MKS000470
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 24 Nov 2024 19:07:22 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 24 Nov
- 2024 11:07:21 -0800
-Message-ID: <51afee37-2c90-d31a-978c-5681dccd5ccb@quicinc.com>
-Date: Sun, 24 Nov 2024 12:07:20 -0700
+	s=arc-20240116; t=1732475319; c=relaxed/simple;
+	bh=IpqIC9BrjS82qzwS8IJ+zOoNIOZYoa+HlKmZTsqXfUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IH+VWeIsw9ajKNBDWbXBQh+xbg8wHuohHkh21sEHJGXX9QTmQdMN79jjWFxFsYyPW44HeS0l66/U843Cm8z+Owbv8i5kZHTj9+vENWrNUe5vvjjU44ms1e8r0R8KRvaiWp0MWJ4uqE/nU4tzVAtpvxFnqC1QFinvSx5ES5zdc+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IsKkIAGR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33361C4CECC;
+	Sun, 24 Nov 2024 19:08:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732475318;
+	bh=IpqIC9BrjS82qzwS8IJ+zOoNIOZYoa+HlKmZTsqXfUs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IsKkIAGRJoIJx0qAdPJR3fQlDDf+FlyeWyT99NC62qnLsuPDExAfBUVNsA4EVA+fW
+	 EScaxMJTQLlOdkF7WaPUEinf8ZWt6KXferQEzZ4o6ATSs9hFQENQAjdh5QYKGkFt+n
+	 MPRgRGbNr4azqW38G41Sy6qw5EMOnCgMXTXLmb4IYLC3bFZbBW7/cmkOqKHttVn9Fg
+	 XlKXK9Rmc4u3WjvsLaeq7M2QPGg7vsJ78U971r/lPIh874YgFg1mq0Flsa0myZnoV4
+	 0+RzRTSFMN0TMAXz9L0Vs80Ts3ANsTp3E/vc/uCJjSHJDcX83X4IXNwO9vbo/qd79c
+	 19L8pWZS4fm6A==
+Date: Sun, 24 Nov 2024 19:08:30 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ eraretuya@gmail.com
+Subject: Re: [PATCH v2 20/22] iio: accel: adxl345: use FIFO with watermark
+ IRQ
+Message-ID: <20241124190830.1766bb71@jic23-huawei>
+In-Reply-To: <20241117182651.115056-21-l.rubusch@gmail.com>
+References: <20241117182651.115056-1-l.rubusch@gmail.com>
+	<20241117182651.115056-21-l.rubusch@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH AUTOSEL 6.12 033/107] accel/qaic: Add AIC080 support
-Content-Language: en-US
-To: Sasha Levin <sashal@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-CC: Troy Hanson <quic_thanson@quicinc.com>,
-        Jacek Lawrynowicz
-	<jacek.lawrynowicz@linux.intel.com>,
-        <ogabbay@kernel.org>, <corbet@lwn.net>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-doc@vger.kernel.org>
-References: <20241124133301.3341829-1-sashal@kernel.org>
- <20241124133301.3341829-33-sashal@kernel.org>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20241124133301.3341829-33-sashal@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: P6p515Ej5zV_wAaxb-O7SdWDXz9JZpjc
-X-Proofpoint-ORIG-GUID: P6p515Ej5zV_wAaxb-O7SdWDXz9JZpjc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 impostorscore=0 malwarescore=0 clxscore=1031
- lowpriorityscore=0 spamscore=0 mlxscore=0 mlxlogscore=999 adultscore=0
- suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411240168
 
-On 11/24/2024 6:28 AM, Sasha Levin wrote:
-> From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+On Sun, 17 Nov 2024 18:26:49 +0000
+Lothar Rubusch <l.rubusch@gmail.com> wrote:
+
+> Enable the watermark feature of the adxl345 sensor. The feature uses a
+> FIFO to be configured by the IIO fifo sysfs handles. The sensor
+> configures the FIFO to streaming mode for measurements, or bypass for
+> configuration. The sensor issues an interrupt on the configured line to
+> signal several signals (data available, overrun or watermark reached).
+> The setup allows for extension of further features based on the
+> interrupt handler and the FIFO setup.
 > 
-> [ Upstream commit b8128f7815ff135f0333c1b46dcdf1543c41b860 ]
+> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> ---
+>  drivers/iio/accel/adxl345_core.c | 39 ++++++++++++++++++++++++++++++++
+>  1 file changed, 39 insertions(+)
 > 
-> Add basic support for the new AIC080 product. The PCIe Device ID is
-> 0xa080. AIC080 is a lower cost, lower performance SKU variant of AIC100.
->  From the qaic perspective, it is the same as AIC100.
-> 
-> Reviewed-by: Troy Hanson <quic_thanson@quicinc.com>
-> Signed-off-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
-> Reviewed-by: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
-> Link: https://patchwork.freedesktop.org/patch/msgid/20241004195209.3910996-1-quic_jhugo@quicinc.com
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl345_core.c
+> index f7b937fb16..07c336211f 100644
+> --- a/drivers/iio/accel/adxl345_core.c
+> +++ b/drivers/iio/accel/adxl345_core.c
+> @@ -870,6 +870,45 @@ int adxl345_core_probe(struct device *dev, struct regmap *regmap,
+>  		if (ret)
+>  			return dev_err_probe(dev, ret, "Failed to setup triggered buffer\n");
+>  
+> +		dev_dbg(dev, "IRQ: allocating data ready trigger\n");
+> +		st->trig_dready = devm_iio_trigger_alloc(dev,
+> +							 "%s-dev%d-dready",
+> +							 indio_dev->name,
+> +							 iio_device_id(indio_dev));
+> +		if (!st->trig_dready)
+> +			return dev_err_probe(dev, -ENOMEM,
+> +					     "Failed to setup triggered buffer\n");
+> +		dev_dbg(dev, "IRQ: allocating data ready trigger ok\n");
+Drop these debug prints from code you want to go upstream. Mostly it is easy
+to find out what they provide via other means and they hurt code redability.
+> +
+> +		st->trig_dready->ops = &adxl34x_trig_dready_ops;
+> +		dev_dbg(dev, "IRQ: Setting data ready trigger ops ok\n");
+> +
+> +		iio_trigger_set_drvdata(st->trig_dready, indio_dev);
+> +		dev_dbg(dev, "IRQ: Setting up data ready trigger as driver data ok\n");
+> +
+> +		ret = devm_iio_trigger_register(dev, st->trig_dready);
+> +		if (ret < 0)
+> +			return dev_err_probe(dev, ret,
+> +					     "Failed to register dready trigger\n");
+> +		dev_dbg(dev, "Registering data ready trigger ok\n");
+> +
+> +		indio_dev->trig = iio_trigger_get(st->trig_dready);
+you want to set it as immutable as this code doesn't currently work with other
+triggers or with this removed.  This is subject to just getting rid of the trigger
+in general a suggested earlier.
+> +
+> +		dev_dbg(dev, "Requesting threaded IRQ, indio_dev->name '%s'\n",
+> +			indio_dev->name);
+> +
+> +		ret = devm_request_threaded_irq(dev, st->irq,
+> +						iio_trigger_generic_data_rdy_poll,
+It's not. It's on a watermark interrupt. That's what strongly implies treating this
+as a trigger is a bad idea.
+> +						NULL,
+> +						IRQF_TRIGGER_RISING | IRQF_ONESHOT,
 
-Sasha, it feels like autosel was a bit aggressive here.  This is an 
-enablement patch for new hardware, and not a bug fix.  Therefore, it 
-does not appear to be stable material to me.
+Direction should be coming from firmware so not set here.
 
-Am I missing something?
+Note there are some older drivers where we do set it in the driver, and we can't
+'fix' those because there may be hardware with broken firmware relying on that.
+However no new cases of this.
 
--Jeff
+> +						indio_dev->name, st->trig_dready);
+> +		if (ret < 0)
+> +			return dev_err_probe(dev, ret, "Failed to request IRQ handler\n");
+> +		dev_dbg(dev, "Requesting threaded IRQ handler ok\n");
+> +
+> +		/* Cleanup */
+> +		adxl345_empty_fifo(st);
+> +
+>  	} else { /* Initialization to prepare for FIFO_BYPASS mode (fallback) */
+>  
+>  		/* The following defaults to 0x00, anyway */
+
 
