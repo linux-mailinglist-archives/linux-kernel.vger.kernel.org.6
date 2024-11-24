@@ -1,115 +1,143 @@
-Return-Path: <linux-kernel+bounces-420285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AFFD9D784D
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 22:23:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 004029D7868
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 22:48:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF6E1B22292
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 21:23:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5878116240A
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 21:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AD91632F1;
-	Sun, 24 Nov 2024 21:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C475175D5D;
+	Sun, 24 Nov 2024 21:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="0sreF3vB"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tm7XtDTo"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19452500AA
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 21:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386A22500BA;
+	Sun, 24 Nov 2024 21:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732483402; cv=none; b=hT+IgfO5YUjEFfMnXx9qsm587LGazYw0bRofJr6Qe+eUf7W9XxMeviSbx2s0Scl7uUofPWOuaeOjpJC3RIk5tAKf3sUKO9XgyHK8RSL7DGM9e2C28zwTj/hf87qVd3zgtxWcIMpGTB+RrqzL9u4OqIOpSeAo17RKAtYuhf2FrzA=
+	t=1732484901; cv=none; b=Yx7YtVoJSp0zAnb90jQBCYyS/aBXa6XF0pFn9FZ5hGKB1J2sBYioP0coNj5yNtnimZhF+W+6alTP8VvGqgjxTMKN98sDc7E7FOGpC4L/iReBYQTesColRvtDnOUU9pXppCC8vcgKQKoWl8N3IHrC4yV0B40Ho8NPtcOEpzjSYXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732483402; c=relaxed/simple;
-	bh=4e6MPzgtJsRDKZgBnv8M2opvpBvfQiqs64JOtuAYc9A=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZdOSu9LGdMT9M3PMjso9wc0jMzgO8BgrXp1rlRrb1imFN/TF5mW0Dyrcuw7OxiRcbTz5afWsUqu69hII4oyi165tgkKS95QeWmWKquTRFrfRjObv+nF7rNJgKUYqbZzKB/wb0zEmgcJbIFR2kEMC61j5v/9W15UzCEQt1mFQRuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=0sreF3vB; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 7DA192C045C;
-	Mon, 25 Nov 2024 10:23:17 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1732483397;
-	bh=4e6MPzgtJsRDKZgBnv8M2opvpBvfQiqs64JOtuAYc9A=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=0sreF3vBwJrCqwjfhnioLObdzsHzcuBAqdrlYs0SlJE8rDGt/EvNJbsm7LJsBnYxL
-	 j3ga2Zk2YfNqzlAYbdonzunFONQNAe48rWVpRhHWC9y1f41sh4/pv55MOm7bHmoFDW
-	 4EoiGJJ91oVlTmSsXeFdl2dthrgy/leTE8OUVs5kRlyzEFI43p09PVZBBpZ6HaQPn1
-	 4XDAnSmyE0ZGGQ8c8bVomBTZkbFWyuh9AckKKdAlfqaxuDgYSoqgUIxOuTM/7oYxKu
-	 bpuKEhxYZ/QZIj2UawcsMG+leJGx8+qCA3IgIIW2+bqdGqJacRXyWiK92uKkXk9ahN
-	 RS7ChqtLrWY0w==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B674399450001>; Mon, 25 Nov 2024 10:23:17 +1300
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 25 Nov 2024 10:23:17 +1300
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Mon, 25 Nov 2024 10:23:17 +1300
-From: Elliot Ayrey <Elliot.Ayrey@alliedtelesis.co.nz>
-To: "andrew@lunn.ch" <andrew@lunn.ch>, "olteanv@gmail.com"
-	<olteanv@gmail.com>, "davem@davemloft.net" <davem@davemloft.net>,
-	"razor@blackwall.org" <razor@blackwall.org>, "pabeni@redhat.com"
-	<pabeni@redhat.com>, "roopa@nvidia.com" <roopa@nvidia.com>,
-	"edumazet@google.com" <edumazet@google.com>, "f.fainelli@gmail.com"
-	<f.fainelli@gmail.com>, "horms@kernel.org" <horms@kernel.org>,
-	"kuba@kernel.org" <kuba@kernel.org>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"bridge@lists.linux.dev" <bridge@lists.linux.dev>
-Subject: Re: [RFC net-next (resend) 2/4] net: bridge: send notification for
- roaming hosts
-Thread-Topic: [RFC net-next (resend) 2/4] net: bridge: send notification for
- roaming hosts
-Thread-Index: AQHbMZIZlVCrlxg6kUq3+Q+3FOi2grLGMRQA
-Date: Sun, 24 Nov 2024 21:23:17 +0000
-Message-ID: <e562704277f5d64a37ea67789b8e7d13d2cb12a4.camel@alliedtelesis.co.nz>
-References: <20241108035546.2055996-1-elliot.ayrey@alliedtelesis.co.nz>
-	 <20241108035546.2055996-3-elliot.ayrey@alliedtelesis.co.nz>
-In-Reply-To: <20241108035546.2055996-3-elliot.ayrey@alliedtelesis.co.nz>
-Accept-Language: en-US, en-NZ
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A5B4FE4F8FF2354DB977C4CC45D591B8@atlnz.lc>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1732484901; c=relaxed/simple;
+	bh=jNTAPP/MfNPEwet+Ok+/W1RZ2VIy1+gzv/XDoCfYEdc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X3N74drCANtgfUT66zxD1wXyNDnRQ8rvLvspU/PN03Vx1DadcwRghlnbgKVOSU7951oMPnGYzrnGhYB4b/V636hHiLBtqkOXS+2Oc1IWiCQtFuxAWaW3wlfoSO9Qme3hqLhrllJxc/aqFynwLWfeFtfGi1yQHzGNiIQiH93ex+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tm7XtDTo; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=FUIkB0nu6kVu8Kh8kg7nHVT5DQReYZ3ZBRdCsxIWzDQ=; b=tm7XtDTooTSDxUSCSm73zsVteU
+	xNt1bxswAxTe1kUbhDqRSsyw4BqsSMOgY6R/MoZBbnu4Gk0Nw6Dx2v15m13pfQF6suCXsjqGZj2+n
+	pOL4RQ0ohNtn7o/Te8+EjTMA/LFadHLAmmmHy6efDsu/5I2Aj4vNsqF1bi7B8SIwEbtX8Mn5mrYaq
+	n/CHXbj9vStw0VwSLOziTJoqYZZ3k9+/fIP8pFE2pMhl1MH6OIZ3lUEXU96VjJVs8qvQqRHYuYOEj
+	wlfhwGgt3OQJUb37navH3TrkKkKRiN3B4yvYpkO2SGRIhTutILInHoOrRo5MaTno6/1JU/9mvAPdV
+	vQYqwPaw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tFK85-0000000Awx1-2C4n;
+	Sun, 24 Nov 2024 21:26:53 +0000
+Date: Sun, 24 Nov 2024 21:26:53 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: syzbot <syzbot+aac7bff85be224de5156@syzkaller.appspotmail.com>
+Cc: akpm@linux-foundation.org, clm@fb.com, dsterba@suse.com,
+	josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [btrfs?] kernel BUG in __folio_start_writeback
+Message-ID: <Z0OaHcMWcRtohZfz@casper.infradead.org>
+References: <67432dee.050a0220.1cc393.0041.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=Gam0nhXL c=1 sm=1 tr=0 ts=67439945 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=nyesw9g_oEEA:10 a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=czF_dnlavrRpCoVLzgYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67432dee.050a0220.1cc393.0041.GAE@google.com>
 
-T24gU2F0LCAyMDI0LTExLTA5IGF0IDE1OjQwICswMjAwLCBOaWtvbGF5IEFsZWtzYW5kcm92IHdy
-b3RlOg0KPiBObyB3YXksIHRoaXMgaXMgcmlkaWN1bG91cy4gQ2hhbmdpbmcgdGhlIHBvcnQgbGlr
-ZSB0aGF0IGZvciBhIG5vdGlmaWNhdGlvbiBpcyBub3QNCj4gb2sgYXQgYWxsLiBJdCBpcyBhbHNv
-IG5vdCB0aGUgYnJpZGdlJ3Mgam9iIHRvIG5vdGlmeSB1c2VyLXNwYWNlIGZvciBzdGlja3kgZmRi
-cw0KPiB0aGF0IGFyZSB0cnlpbmcgdG8gcm9hbSwgeW91IGFscmVhZHkgaGF2ZSBzb21lIHVzZXIt
-c3BhY2UgYXBwIGFuZCB5b3UgY2FuIGNhdGNoDQo+IHN1Y2ggZmRicyBieSBvdGhlciBtZWFucyAo
-c25pZmZpbmcsIGVicGYgaG9va3MsIG5ldGZpbHRlciBtYXRjaGluZyBldGMpLiBTdWNoDQo+IGNo
-YW5nZSBjYW4gYWxzbyBsZWFkIHRvIEREb1MgYXR0YWNrcyB3aXRoIG1hbnkgbm90aWZpY2F0aW9u
-cy4NCg0KVW5mb3J0dW5hdGVseSBpbiB0aGlzIGNhc2UgdGhlIG9ubHkgaW5kaWNhdGlvbiB3ZSBn
-ZXQgZnJvbSB0aGUgaGFyZHdhcmUgb2YgdGhpcw0KZXZlbnQgaGFwcGVuaW5nIGlzIGEgc3dpdGNo
-ZGV2IG5vdGlmaWNhdGlvbiB0byB0aGUgYnJpZGdlLiBBbGwgdHJhZmZpYyBpcyBkcm9wcGVkDQpp
-biBoYXJkd2FyZSB3aGVuIHRoZSBwb3J0IGlzIGluIHRoaXMgbW9kZSBzbyB0aGUgbWV0aG9kcyB5
-b3Ugc3VnZ2VzdCB3aWxsIG5vdCB3b3JrLg0KDQpJIGhhdmUgY2hhbmdlZCBteSBpbXBsZW1lbnRh
-dGlvbiB0byB1c2UgQW5kcmV3J3Mgc3VnZ2VzdGlvbiBvZiB1c2luZyBhIG5ldyBhdHRyaWJ1dGUN
-CnJhdGhlciB0aGFuIG1lc3Npbmcgd2l0aCB0aGUgcG9ydC4gQnV0IHdvdWxkIHRoaXMgYWxzbyBi
-ZSBtb3JlIGFwcHJvcHJpYXRlIGlmIHRoZQ0Kbm90aWZpY2F0aW9uIHdhcyBvbmx5IHRyaWdnZXJl
-ZCB3aGVuIHJlY2VpdmluZyB0aGUgZXZlbnQgZnJvbSBoYXJkd2FyZT8gSWYgbm90DQp0aGVuIGRv
-IHlvdSBoYXZlIGFueSBzdWdnZXN0aW9ucyBmb3IgZ2V0dGluZyB0aGVzZSBraW5kcyBvZiBldmVu
-dHMgZnJvbSBoYXJkd2FyZQ0KdG8gdXNlcnNwYWNlIHdpdGhvdXQgZ29pbmcgdGhyb3VnaCB0aGUg
-YnJpZGdlPw0KDQoNCg==
+On Sun, Nov 24, 2024 at 05:45:18AM -0800, syzbot wrote:
+> 
+>  __fput+0x5ba/0xa50 fs/file_table.c:458
+>  task_work_run+0x24f/0x310 kernel/task_work.c:239
+>  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+>  exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+>  exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+>  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+>  syscall_exit_to_user_mode+0x13f/0x340 kernel/entry/common.c:218
+>  do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+This is:
+
+        VM_BUG_ON_FOLIO(folio_test_writeback(folio), folio);
+
+ie we've called __folio_start_writeback() on a folio which is already
+under writeback.
+
+Higher up in the trace, we have the useful information:
+
+ page: refcount:6 mapcount:0 mapping:ffff888077139710 index:0x3 pfn:0x72ae5
+ memcg:ffff888140adc000
+ aops:btrfs_aops ino:105 dentry name(?):"file2"
+ flags: 0xfff000000040ab(locked|waiters|uptodate|lru|private|writeback|node=0|zone=1|lastcpupid=0x7ff)
+ raw: 00fff000000040ab ffffea0001c8f408 ffffea0000939708 ffff888077139710
+ raw: 0000000000000003 0000000000000001 00000006ffffffff ffff888140adc000
+ page dumped because: VM_BUG_ON_FOLIO(folio_test_writeback(folio))
+ page_owner tracks the page as allocated
+
+The interesting part of the page_owner stacktrace is:
+
+  filemap_alloc_folio_noprof+0xdf/0x500
+  __filemap_get_folio+0x446/0xbd0
+  prepare_one_folio+0xb6/0xa20
+  btrfs_buffered_write+0x6bd/0x1150
+  btrfs_direct_write+0x52d/0xa30
+  btrfs_do_write_iter+0x2a0/0x760
+  do_iter_readv_writev+0x600/0x880
+  vfs_writev+0x376/0xba0
+
+(ie not very interesting)
+
+> Workqueue: btrfs-delalloc btrfs_work_helper
+> RIP: 0010:__folio_start_writeback+0xc06/0x1050 mm/page-writeback.c:3119
+> Call Trace:
+>  <TASK>
+>  process_one_folio fs/btrfs/extent_io.c:187 [inline]
+>  __process_folios_contig+0x31c/0x540 fs/btrfs/extent_io.c:216
+>  submit_one_async_extent fs/btrfs/inode.c:1229 [inline]
+>  submit_compressed_extents+0xdb3/0x16e0 fs/btrfs/inode.c:1632
+>  run_ordered_work fs/btrfs/async-thread.c:245 [inline]
+>  btrfs_work_helper+0x56b/0xc50 fs/btrfs/async-thread.c:324
+>  process_one_work kernel/workqueue.c:3229 [inline]
+
+This looks like a race?
+
+process_one_folio() calls
+btrfs_folio_clamp_set_writeback calls
+btrfs_subpage_set_writeback:
+
+        spin_lock_irqsave(&subpage->lock, flags);
+        bitmap_set(subpage->bitmaps, start_bit, len >> fs_info->sectorsize_bits)
+;
+        if (!folio_test_writeback(folio))
+                folio_start_writeback(folio);
+        spin_unlock_irqrestore(&subpage->lock, flags);
+
+so somebody else set writeback after we tested for writeback here.
+
+One thing that comes to mind is that _usually_ we take folio_lock()
+first, then start writeback, then call folio_unlock() and btrfs isn't
+doing that here (afaict).  Maybe that's not the source of the bug?
+
+If it is, should we have a VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio)
+in __folio_start_writeback()?  Or is there somewhere that can't lock the
+folio before starting writeback?
 
