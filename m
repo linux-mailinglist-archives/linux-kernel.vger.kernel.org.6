@@ -1,195 +1,120 @@
-Return-Path: <linux-kernel+bounces-419351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BEFF9D6CDB
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 08:04:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93CD99D6CDD
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 08:10:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68745B21391
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 07:04:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59CA32814FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 07:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2FB418732E;
-	Sun, 24 Nov 2024 07:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0084B18732E;
+	Sun, 24 Nov 2024 07:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="uCdWJKtd"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="HrJ9BGOP"
+Received: from esa6.hgst.iphmx.com (esa6.hgst.iphmx.com [216.71.154.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88015847C;
-	Sun, 24 Nov 2024 07:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A773A847C;
+	Sun, 24 Nov 2024 07:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.154.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732431881; cv=none; b=a8tITNQI9UJlmG5uyF0B5aR3cXJejle+9p9yGGcfkO3j5U9gd9YyxtMJayVWWIvSmWqHusALqTSZCujxjAK8naGs99nqoy6/MlwPEnhbgtx3hWLp9kSbN2+tY0JKTYM3QaG0qM5o+DiCd626x+RAHQz/6gx5Gvc5hnfGgaHOCqg=
+	t=1732432230; cv=none; b=YP0ImvqsRjHG6L4DTUsThy9Qh/OAZ2dPFTi6wL9KUVXu8OCG2Ms300lG1gR6n4uJsPmSwdBkt2YfRWQLWqH7chh5qMq6voNCo92F7csiKEknLtJhVutzACMqz/ALzl3eFd6hstCF161OtGfmnhxJOcDXPK/kZ35sM++8DfP6uCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732431881; c=relaxed/simple;
-	bh=T3fbZXJ36wbjYidh3cGTZ7WKl7BVEtZ7NeY3axJeDu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sKnCpIzFfQUetqh6V0DXSVZflrMSrh89tSvoM277LBgnGRQiZdKUiHtUwjYeylaKi3J0aYJFRmmTdKOg79WBy8dCA9f5Bvo2+qZlx3IvS9W8xDxoE3oY5QrnFmXqNeP2vn1xdhb4bi9HyL8LspD0osB19AhKX8MnZiwrmo8V8B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=uCdWJKtd; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 979F9129;
-	Sun, 24 Nov 2024 08:04:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732431856;
-	bh=T3fbZXJ36wbjYidh3cGTZ7WKl7BVEtZ7NeY3axJeDu8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uCdWJKtd1y4P9sPbYAorA0HwhSFO6Af3ZmH5tCzziotGhkJKZGyVCjOA6p9NaPYjL
-	 6N4r4rdjiLEcTNUDUAHWD1h/FwXI9cGTf9xpcVEyGoqFQfc28NvSNlrWJUWFe+oprU
-	 Yubp6kF4e74V1+fhJunY218gwazbwDlsKOiw4gPg=
-Date: Sun, 24 Nov 2024 09:04:28 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Naushir Patuck <naush@raspberrypi.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	linux-media@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH v1 5/5] drivers: media: bcm2835-unicam: Correctly handle
- FS + FE ISR condition
-Message-ID: <20241124070428.GG19573@pendragon.ideasonboard.com>
-References: <20241122084152.1841419-1-naush@raspberrypi.com>
- <20241122084152.1841419-6-naush@raspberrypi.com>
- <xy44zndazbw7ehpzbc6hexgptjymevvupjhuy2x6zxp54qtepm@vlbb6js62cq4>
- <CAEmqJPrrAhhukn2H4nUhe1njVi-dyW9q=u1h8YgafvJGbYRG6Q@mail.gmail.com>
- <xadxi6rjcnmgjiqhinqnawj3mgps4b3xp6ftozap4ps6q5xaz7@bsdwrrkyniwt>
- <deremuh7mawzt6ke3c67fvzfyuksmuwon3dhorxbm5mr5rllmf@fbj2f5qvfpjd>
+	s=arc-20240116; t=1732432230; c=relaxed/simple;
+	bh=8/v+dbQ2EPfQZqv+s72OvFy8zQgKe/TlqGjhzbVcaVs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hS+3YXe0Z++g5FveUEDMlm2YDIiquXSRHFtOGp0iummXY/LMhdchrreCoN+RTxRH799X+79UNQa0Fuw+qTkCjUuZJ9M9g7i1nocb8iboDOTQsh0W7FK5XveVzP7641oGSLdFqCIgKuDzI4bbdt5QHlxYcy2iHbJ6zNfpKM/TqVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=HrJ9BGOP; arc=none smtp.client-ip=216.71.154.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1732432228; x=1763968228;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=8/v+dbQ2EPfQZqv+s72OvFy8zQgKe/TlqGjhzbVcaVs=;
+  b=HrJ9BGOPCux7nlT23OSwS3wIsMCJN/5WApLNtASdfamYdOdyCFvqXBVI
+   jt/WSbjtK1vtq2NiLGUQPqqLLnQ4l2AT8G/f72IChaD8HfQhw/SySgph6
+   lNq6eCPjbMPkP36JN924qeNcL3fHnLIy50xmte2WKQDTqEbNQodBLDkau
+   F32YqcNG1q6OCrzQzKlrbGtqIZz8rhlJz5ZG87F1JsaXVAzXMZZdaVLjO
+   hwtU26uq9QuXmVPx8mYNsXgP6o43L3MJhnZzwJ1ZAlG14r2+okqtRI2a1
+   5iqViWiRy08ZjqhKBIWJp9wxiyrFS0IBqGbuJdDd59Ene2IjaqF6+niPL
+   w==;
+X-CSE-ConnectionGUID: koQibHCSTbW0q8rRukNpYQ==
+X-CSE-MsgGUID: 93OWvHuoT0O8sPzABw2T0g==
+X-IronPort-AV: E=Sophos;i="6.12,180,1728921600"; 
+   d="scan'208";a="32127820"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 24 Nov 2024 15:10:21 +0800
+IronPort-SDR: 6742c410_L3hOgITQWY/yy+L4tyw/l5y6IhacwlPDdhn46r32GKa/FPk
+ oAEvAd242bwmkETVTTmPFm63gAXT/X+0vB9u1Tg==
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 Nov 2024 22:13:37 -0800
+WDCIronportException: Internal
+Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
+  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 Nov 2024 23:10:20 -0800
+From: Avri Altman <avri.altman@wdc.com>
+To: "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bart Van Assche <bvanassche@acm.org>,
+	Bean Huo <beanhuo@micron.com>,
+	Avri Altman <avri.altman@wdc.com>
+Subject: [PATCH v5 0/4] Untie the host lock entanglement - part 2
+Date: Sun, 24 Nov 2024 09:08:04 +0200
+Message-Id: <20241124070808.194860-1-avri.altman@wdc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <deremuh7mawzt6ke3c67fvzfyuksmuwon3dhorxbm5mr5rllmf@fbj2f5qvfpjd>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 22, 2024 at 03:48:11PM +0100, Jacopo Mondi wrote:
-> 
-> With Hans Sakari and Laurent in cc for real now
-> 
-> On Fri, Nov 22, 2024 at 03:41:31PM +0100, Jacopo Mondi wrote:
-> > On Fri, Nov 22, 2024 at 11:40:26AM +0000, Naushir Patuck wrote:
-> > > On Fri, 22 Nov 2024 at 11:16, Jacopo Mondi wrote:
-> > > > On Fri, Nov 22, 2024 at 08:41:52AM +0000, Naushir Patuck wrote:
-> > > > > This change aligns the FS/FE interrupt handling with the Raspberry Pi
-> > > > > kernel downstream Unicam driver.
-> > > > >
-> > > > > If we get a simultaneous FS + FE interrupt for the same frame, it cannot
-> > > > > be marked as completed and returned to userland as the framebuffer will
-> > > > > be refilled by Unicam on the next sensor frame. Additionally, the
-> > > > > timestamp will be set to 0 as the FS interrupt handling code will not
-> > > > > have run yet.
-> > > > >
-> > > > > To avoid these problems, the frame is considered dropped in the FE
-> > > > > handler, and will be returned to userland on the subsequent sensor frame.
-> > > > >
-> > > > > Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
-> > > > > ---
-> > > > >  .../media/platform/broadcom/bcm2835-unicam.c  | 39 +++++++++++++++++--
-> > > > >  1 file changed, 35 insertions(+), 4 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/media/platform/broadcom/bcm2835-unicam.c b/drivers/media/platform/broadcom/bcm2835-unicam.c
-> > > > > index f10064107d54..0d2aa25d483f 100644
-> > > > > --- a/drivers/media/platform/broadcom/bcm2835-unicam.c
-> > > > > +++ b/drivers/media/platform/broadcom/bcm2835-unicam.c
-> > > > > @@ -773,10 +773,26 @@ static irqreturn_t unicam_isr(int irq, void *dev)
-> > > > >                        * as complete, as the HW will reuse that buffer.
-> > > > >                        */
-> > > > >                       if (node->cur_frm && node->cur_frm != node->next_frm) {
-> > > > > +                             /*
-> > > > > +                              * This condition checks if FE + FS for the same
-> > > > > +                              * frame has occurred. In such cases, we cannot
-> > > > > +                              * return out the frame, as no buffer handling
-> > > > > +                              * or timestamping has yet been done as part of
-> > > > > +                              * the FS handler.
-> > > > > +                              */
-> > > > > +                             if (!node->cur_frm->vb.vb2_buf.timestamp) {
-> > > > > +                                     dev_dbg(unicam->v4l2_dev.dev,
-> > > > > +                                             "ISR: FE without FS, dropping frame\n");
-> > > > > +                                     continue;
-> > > > > +                             }
-> > > > > +
-> > > > >                               unicam_process_buffer_complete(node, sequence);
-> > > > > +                             node->cur_frm = node->next_frm;
-> > > > > +                             node->next_frm = NULL;
-> > > > >                               inc_seq = true;
-> > > > > +                     } else {
-> > > > > +                             node->cur_frm = node->next_frm;
-> > > > >                       }
-> > > > > -                     node->cur_frm = node->next_frm;
-> > > > >               }
-> > > > >
-> > > > >               /*
-> > > > > @@ -812,10 +828,25 @@ static irqreturn_t unicam_isr(int irq, void *dev)
-> > > > >                                       i);
-> > > > >                       /*
-> > > > >                        * Set the next frame output to go to a dummy frame
-> > > > > -                      * if we have not managed to obtain another frame
-> > > > > -                      * from the queue.
-> > > > > +                      * if no buffer currently queued.
-> > > > >                        */
-> > > > > -                     unicam_schedule_dummy_buffer(node);
-> > > > > +                     if (!node->next_frm ||
-> > > > > +                         node->next_frm == node->cur_frm) {
-> > > > > +                             unicam_schedule_dummy_buffer(node);
-> > > > > +                     } else if (unicam->node[i].cur_frm) {
-> > > > > +                             /*
-> > > > > +                              * Repeated FS without FE. Hardware will have
-> > > > > +                              * swapped buffers, but the cur_frm doesn't
-> > > > > +                              * contain valid data. Return cur_frm to the
-> > > > > +                              * queue.
-> > > >
-> > > > So the buffer gets silently recycled ? Or should it be returned with
-> > > > errors to userspace ?
-> > >
-> > > The buffer silently gets recycled and we dequeue when we are sure it
-> > > is valid and will not get overwritten.  If we were to return to
-> >
-> > I haven't find in the v4l2 specs any reference to what the behaviour
-> > should be.
-> >
-> > If I can summarize it: When a frame capture is aborted after the DMA
-> > transfer has already started, should the corresponding capture buffer
-> > be returned to the user in error state or the frame drop can go
-> > silently ignored ?
+Here is the 2nd part in the sequel, watering down the scsi host lock
+usage in the ufs driver. This work is motivated by a comment made by
+Bart [1], of the abuse of the scsi host lock in the ufs driver.  Its
+Precursor [2] removed the host lock around some of the host register
+accesses.
 
-If the DMA tranfer is aborted, I would return the buffer to userspace.
-This will indicate a frame loss better than deducing it from a gap in
-the sequence numbers.
+This part replaces the scsi host lock by dedicated locks serializing
+access to the clock gating and clock scaling members.
 
-Is the DMA really aborted here though ?
+Changes compared to v4:
+ - split patch 1 into 2 parts (Bart)
+ - use scoped_guard() for the host_lock as well (Bart)
+ - remove irrelevant comment and use lockdep_assert_held instead (Bart)
+ - improve @lock documentation (Bart)
 
-> > Cc-ing Hans Sakari and Laurent for opinions.
-> >
-> > > userspace with an error, there is still a race condition on the name
-> > > frame/buffer which will also have to return as error.
-> >
-> > I'm sorry I didn't get this part :)
-> >
-> > > > > +                              */
-> > > > > +                             spin_lock(&node->dma_queue_lock);
-> > > > > +                             list_add_tail(&node->cur_frm->list,
-> > > > > +                                           &node->dma_queue);
-> > > > > +                             spin_unlock(&node->dma_queue_lock);
-> > > > > +                             node->cur_frm = node->next_frm;
-> > > > > +                             node->next_frm = NULL;
-> > > > > +                     }
-> > > > >               }
-> > > > >
-> > > > >               unicam_queue_event_sof(unicam);
+Changes compared to v3:
+ - Keep the host lock when checking ufshcd_state (Bean)
+
+Changes compared to v2:
+ - Use clang-format to fix formating (Bart)
+ - Use guard() in ufshcd_clkgate_enable_store (Bart)
+ - Elaborate commit log (Bart)
+
+Changes compared to v1:
+ - use the guard() & scoped_guard() macros (Bart)
+ - re-order struct ufs_clk_scaling and struct ufs_clk_gating (Bart)
+
+[1] https://lore.kernel.org/linux-scsi/0b031b8f-c07c-42ef-af93-7336439d3c37@acm.org/
+[2] https://lore.kernel.org/linux-scsi/20241024075033.562562-1-avri.altman@wdc.com/
+
+Avri Altman (4):
+  scsi: ufs: core: Introduce ufshcd_has_pending_tasks
+  scsi: ufs: core: Prepare to introduce a new clock_gating lock
+  scsi: ufs: core: Introduce a new clock_gating lock
+  scsi: ufs: core: Introduce a new clock_scaling lock
+
+ drivers/ufs/core/ufshcd.c | 253 ++++++++++++++++++--------------------
+ include/ufs/ufshcd.h      |  25 ++--
+ 2 files changed, 140 insertions(+), 138 deletions(-)
 
 -- 
-Regards,
+2.25.1
 
-Laurent Pinchart
 
