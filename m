@@ -1,143 +1,112 @@
-Return-Path: <linux-kernel+bounces-419338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C43E79D6CB4
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 06:33:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10FC69D6CB5
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 06:34:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEC541617EE
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 05:33:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB8BE281622
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 05:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D75315B12F;
-	Sun, 24 Nov 2024 05:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B93154444;
+	Sun, 24 Nov 2024 05:33:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="noqp2u9i"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9nSNQQ4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B153AEAD0;
-	Sun, 24 Nov 2024 05:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1FE13CA99
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 05:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732426408; cv=none; b=H7VvU0OTzbHu5Fco865WtaKhmA6sBO/UKyFBJXO8QoLf6/jWU/u0B7lrN3C1znzXwTbpezZK8a5jShoYr4t5fwwbZHMSBadwLGCa5q1Ali3NCHvq+uWSENLOwjGlZjH3FhLDscJGoFdLC5NZMqyWrRmGgEuwfL+L1KImo7lBrjM=
+	t=1732426437; cv=none; b=C7xbtt7s2HqeN541FtQhtT5zjqhP+zmiRQb9aiE/P+wjQyl/h+vozvA/QAp0VT3NoJJDvinzDG00xZB3BiIG3S7HWuoqm9YXdq8wDy6A497WEuT/wFxpOt/KhcwqXbkPfEemvN7uv//v4r7aJelf8UJrRQvHJzoUVJs+VHiOHnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732426408; c=relaxed/simple;
-	bh=SnJLsAztLM66kXlbc2WRGislA8b9y3o3WrkLh68XyPg=;
+	s=arc-20240116; t=1732426437; c=relaxed/simple;
+	bh=lsWJ7hIwmqH4zKPKpDuOvRzAf9o0FX5oZjN1MtXjKEU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RsFzKAErgw3vsUdlZp8Dz3P5HtzBXDu8Pq6up6p2sCGmX6iqMkV5dZP1BOihyWQjNk4mA+cnFmGsICblvcnUr4T1sIUW0UFwJY/2KvplJTPec3YD5kcsZ0AspxsULpnoeWoZ/AzpxoryehR4i1nEB8d5ZLbos3GW+hRHPO3+X0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=noqp2u9i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DA4DC4CED6;
-	Sun, 24 Nov 2024 05:33:28 +0000 (UTC)
+	 To:Cc:Content-Type; b=mPvrQCPYKtIpVsz3sHntVdTHDJKrVNjNoFrIfH4iLfNzl1KbORtfDX/af4XLkUPSH1PgvyK40gikzNudhBMxEr9PAwmQjzy0beakLHYwjXWD3OYFPQcgseTHEnKpNcKDyol1WZ2o1wBzNxfHm0xiByxjhBph1Y3OIN37sTNZW6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9nSNQQ4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86A1DC4AF0C
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 05:33:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732426408;
-	bh=SnJLsAztLM66kXlbc2WRGislA8b9y3o3WrkLh68XyPg=;
+	s=k20201202; t=1732426437;
+	bh=lsWJ7hIwmqH4zKPKpDuOvRzAf9o0FX5oZjN1MtXjKEU=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=noqp2u9iz0h5w1MH4ahHr4Y//93aDWCLGzUr5w7zRKiwlLRlDCk1+kiYUa1+fP3oP
-	 5+0o2XqflFpIFum/WS1gBMdm4e+mPWRxgHk6ivOsA/Hv9XGSNu/h8pq8rnYDV14DTH
-	 nv6wHbkqbj1b0sl7JZPB/cT0pfQhm9M9BupN6eYVma6xz0/5ELZMhXn7dOzuvzq9rW
-	 5jxQlwm2Aanyp5dt4aruriCevfYZMS3KqRLxkkJsropchTxQAiVV0SMryExfkt+W39
-	 itH3Ip37HFe0g2PO3xaYtlZZgKFVhte1/T7XWFD8Q92M3S085F7Tai8Ets2s2ACCoW
-	 TfbKVBGYyuJjA==
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5cfd3a7e377so4520863a12.2;
-        Sat, 23 Nov 2024 21:33:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV7XzJWuRy7bFqNSuIKME3UO4Fu50G8q4gmJHdcYpYyBzrvW9GDcrPkz6Mgw7XQv+IN8TKMO8IxU0eueh6+@vger.kernel.org, AJvYcCX9JNp8hE+qK1nCjj5Gesl53jntzrLR5VX34SMXEa9za9CrygFuFHe5DpEDVoUXESOnPWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2w41xtPp3mb5xZZ58+FAZzG7XhQwlQqrYWwf0g6NMsCNqGEcI
-	lFUAb8Jw6CdJl8IIqcoo5aQHtMqQ6FIfHFrzUIfoAhkJxa+6Bu90dxKlntcJeBtryVIJ8OMj94i
-	gSoZuv/R+bcwjNUu8MgSoeyP0kmg=
-X-Google-Smtp-Source: AGHT+IGFsDXhUvcgiamPXOXgC2+BiHJ3X4VHU0HBkvo39oIJvZZcacknU/rYHXzL0iJ53xOKrp1PMQ3ABpXAa3O+nAo=
-X-Received: by 2002:a17:906:cc11:b0:a9a:a5c:e23b with SMTP id
- a640c23a62f3a-aa509e7bb6amr761146866b.58.1732426406981; Sat, 23 Nov 2024
- 21:33:26 -0800 (PST)
+	b=b9nSNQQ4S8NcJIiKfjZMlu9xF9hplwLePIGaig64fOdsgPBAsCFj0vbS1V6Mdj2jy
+	 t9bwHXpG/5rLJtutoNYmxx3txI9Rgkm9ZJ08fW6LWgXInGV7j+XZ+CHrtX3M4XVGjh
+	 C+h/gRC5c5SZxXKES/Z1iYfVOWKb6voiozQhX8Wtd7ocSTSzlS/W1owfFdhdEvDtTS
+	 5qjDc8ND/rD6hXb+dAHj/AIvQ4LAH4i9FkPxfzNhgzHkadI991XQqHYIRHcERyvbl4
+	 G6a4SeGg1UpAChyilGceLMowUQl9IFUYj/uyO7rB/iW2AAdxgURgsrDzL4HUR5oxU7
+	 zG8JsPKvN6pvg==
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa549f2f9d2so19833666b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 21:33:57 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXUk43f4YvFmQQ5Z8a1IiGUfC0KYFWqM9mcEmGgkefzJmMgQ18OjZygeGzfS4RvNGq43+z2Re7UOcL6f+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBB/lp4ZoV88RMwpZ7YYEhCg+QJU9ZGT45wwbepv1ejJKWdBuk
+	iOm2//5ectedJSkm7Q+C0lF2WWdXZymVfS578L3XUOf9s/qEpwwtPJR455QVN8mC3ZHvy7OeOpb
+	WZEkQ8DeHJ7W4qAto0hATiRiXubw=
+X-Google-Smtp-Source: AGHT+IGsd4ISMnlPFdcMA2Mp+XlnM4DjrW4plopNbAX2q9mbjRW+4QSuPktNZdN+jLDwMejRrbo10At4krSM/0/2gyo=
+X-Received: by 2002:a17:906:cc9:b0:aa5:459e:2db with SMTP id
+ a640c23a62f3a-aa5459e03bcmr94401466b.53.1732426436178; Sat, 23 Nov 2024
+ 21:33:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241119065230.19157-1-yangtiezhu@loongson.cn>
- <673fd322ce3ac_1118208b3@john.notmuch> <4f6c74e0-dd22-8460-96fa-f408291a3ef8@loongson.cn>
- <6741fb6c516cc_c6be20839@john.notmuch>
-In-Reply-To: <6741fb6c516cc_c6be20839@john.notmuch>
+References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
+In-Reply-To: <20241122045005.14617-1-yangtiezhu@loongson.cn>
 From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sun, 24 Nov 2024 13:33:14 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7rBeS1n8vR7nyzU7_buf+3JQNNWxiTw5Grx5Rh-eUzXA@mail.gmail.com>
-Message-ID: <CAAhV-H7rBeS1n8vR7nyzU7_buf+3JQNNWxiTw5Grx5Rh-eUzXA@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: BPF: Sign-extend return values
-To: John Fastabend <john.fastabend@gmail.com>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, loongarch@lists.linux.dev, bpf@vger.kernel.org, 
+Date: Sun, 24 Nov 2024 13:33:43 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H6B_-y6ebR=GJmazzukW8Ad-=VRJPvT=ZF+41+rTX7D1w@mail.gmail.com>
+Message-ID: <CAAhV-H6B_-y6ebR=GJmazzukW8Ad-=VRJPvT=ZF+41+rTX7D1w@mail.gmail.com>
+Subject: Re: [PATCH v4 00/10] Add jump table support for objtool on LoongArch
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks.
+Series applied, thanks.
 
 Huacai
 
-On Sat, Nov 23, 2024 at 11:57=E2=80=AFPM John Fastabend
-<john.fastabend@gmail.com> wrote:
+On Fri, Nov 22, 2024 at 12:50=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.c=
+n> wrote:
 >
-> Tiezhu Yang wrote:
-> > On 11/22/2024 08:41 AM, John Fastabend wrote:
-> > > Tiezhu Yang wrote:
-> > >> (1) Description of Problem:
-> > >>
-> > >> When testing BPF JIT with the latest compiler toolchains on LoongArc=
-h,
-> > >> there exist some strange failed test cases, dmesg shows something li=
-ke
-> > >> this:
-> > >>
-> > >>   # dmesg -t | grep FAIL | head -1
-> > >>   ... ret -3 !=3D -3 (0xfffffffd !=3D 0xfffffffd)FAIL ...
-> >
-> > ...
-> >
-> > >>
-> > >> (5) Final Solution:
-> > >>
-> > >> Keep a5 zero-extended, but explicitly sign-extend a0 (which is used
-> > >> outside BPF land). Because libbpf currently defines the return value
-> > >> of an ebpf program as a 32-bit unsigned integer, just use addi.w to
-> > >> extend bit 31 into bits 63 through 32 of a5 to a0. This is similar
-> > >> with commit 2f1b0d3d7331 ("riscv, bpf: Sign-extend return values").
-> > >>
-> > >> Fixes: 5dc615520c4d ("LoongArch: Add BPF JIT support")
-> > >> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> > >> ---
-> > >>  arch/loongarch/net/bpf_jit.c | 2 +-
-> > >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >>
-> > >> diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_j=
-it.c
-> > >> index 7dbefd4ba210..dd350cba1252 100644
-> > >> --- a/arch/loongarch/net/bpf_jit.c
-> > >> +++ b/arch/loongarch/net/bpf_jit.c
-> > >> @@ -179,7 +179,7 @@ static void __build_epilogue(struct jit_ctx *ctx=
-, bool is_tail_call)
-> > >>
-> > >>    if (!is_tail_call) {
-> > >>            /* Set return value */
-> > >> -          move_reg(ctx, LOONGARCH_GPR_A0, regmap[BPF_REG_0]);
-> > >> +          emit_insn(ctx, addiw, LOONGARCH_GPR_A0, regmap[BPF_REG_0]=
-, 0);
-> > >
-> > > Not overly familiar with this JIT but just to check this wont be used
-> > > for BPF 2 BPF calls correct?
-> >
-> > I am not sure I understand your comment correctly, but with and without
-> > this patch, the LoongArch JIT uses a5 as a dedicated register for BPF
-> > return values, a5 is kept as zero-extended for bpf2bpf, just make a0
-> > (which is used outside BPF land) as sign-extend, all of the test cases
-> > in test_bpf.ko passed with "echo 1 > /proc/sys/net/core/bpf_jit_enable"=
-.
-> >
-> > Thanks,
-> > Tiezhu
-> >
+> This series is based on 6.12-rc7, tested with the latest upstream
+> mainline Binutils, GCC and Clang, most of the patches are aim to
+> handle the special cases compiled with Clang on LoongArch.
 >
-> Got it.
+> v4:
+>   -- Avoid EM_LOONGARCH and R_LARCH_32_PCREL undeclared error
+>      for various compiling environments.
 >
-> Acked-by: John Fastabend <john.fastabend@gmail.com>
+>   -- Remove the check condition "dest_insn->type =3D=3D INSN_NOP"
+>      for unreachable entry of rodata.
+>
+> Tiezhu Yang (10):
+>   objtool: Handle various symbol types of rodata
+>   objtool: Handle special cases of dead end insn
+>   objtool: Handle different entry size of rodata
+>   objtool: Handle PC relative relocation type
+>   objtool: Handle unreachable entry of rodata
+>   objtool: Handle unsorted table offset of rodata
+>   objtool/LoongArch: Get each table size of rodata
+>   objtool/LoongArch: Add support for switch table
+>   objtool/LoongArch: Add support for goto table
+>   LoongArch: Enable jump table for objtool
+>
+>  arch/loongarch/Kconfig                 |   3 +
+>  arch/loongarch/Makefile                |   4 +
+>  tools/objtool/arch/loongarch/special.c | 156 ++++++++++++++++++++++++-
+>  tools/objtool/check.c                  |  75 +++++++++++-
+>  tools/objtool/include/objtool/check.h  |   1 +
+>  5 files changed, 233 insertions(+), 6 deletions(-)
+>
+> --
+> 2.42.0
+>
 
