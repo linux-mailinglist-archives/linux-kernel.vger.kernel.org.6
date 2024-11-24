@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-420181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B8659D767C
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:15:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCCDC9D767E
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:15:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB056165519
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:15:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 578D31655C2
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5E91442F4;
-	Sun, 24 Nov 2024 17:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3157346D;
+	Sun, 24 Nov 2024 17:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="SQLwZXDW"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="HgEWe/9W"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B94313C67C;
-	Sun, 24 Nov 2024 17:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E7F148300;
+	Sun, 24 Nov 2024 17:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732468493; cv=none; b=dFjaH3kX8NqS44nyOwqaQRQV89o3L/52WMNGL2I/se5DktxaBh+ELUj68uyYHYjT5bqAq5W6BPVSkFrQ0KIoVf9FkMhMPxioxSy3NBwM7hVXK0ffh4sygyXJ51DDwNObuEzV0mUrF3f2zDll7QR1N4DR/e6jXXwgi84JTqi7xQc=
+	t=1732468496; cv=none; b=JvmBA/mtYyZ70cnu3WAEjpowPLLTlVAGo4o5lSKAycY3GiniH/9SjtLVbtKP2TE5omYHhx5I4wjxu1pU8rKVWVMV7DJdo2LqVXGl4MppQxLUXKU7X/+1P1+pqmpAHGbrvWvk3IsdNZZipDW+d8aI+K2CFhdmrbF72IpCykNOFlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732468493; c=relaxed/simple;
-	bh=jeJr9pNckNqyUtItMreZp/xbZoNuzRhND+ij3pWjuOM=;
+	s=arc-20240116; t=1732468496; c=relaxed/simple;
+	bh=mzzZCDT4apevZdSoi/1I/xkCLKfdfaKYP2QGEvMmaLY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uJHn7ZevJiwdvLa6T7DdtaI0ANhGqk/P61DXcAzGzwOR++mGWl3Xf4sYbN020N08+aidr0gMIsKG7yd+0DUJPfBZg+jKwedWHg9QxuquDDjpQMN4jEWOOdrRCHkqW2lc+YzaONJiBFNfgjW+QOk27InhbZKU5QavhbFIsosnJo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=SQLwZXDW; arc=none smtp.client-ip=212.227.15.15
+	 MIME-Version; b=oFdk8P7vIdTBIfxpoCSzvTBglSTFRGCxNuNc/b03vhFm2dmzxy9dMaxl/u3fU4wpt4rSm49EYjsQR6v8jFlkFdZnzICkdGcoPapf9BeQiPkHVtJfn9b7VJMzk8I59IqbfC0RAT6zi8WvckVrzY0+T4sZFuXUoL9pKdHhFu8P7dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=HgEWe/9W; arc=none smtp.client-ip=212.227.15.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1732468484; x=1733073284; i=w_armin@gmx.de;
-	bh=5csBIJ5NYZF2Vp9CmRhZS/Mn3fYDpyfQnXs60XIx8Pg=;
+	s=s31663417; t=1732468486; x=1733073286; i=w_armin@gmx.de;
+	bh=SvrPVsAm5TseWOQrJsUD7l2NbvUMXNQH8wvoQdhPT6Y=;
 	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
 	 References:MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=SQLwZXDWbTF8IvY2tBCLl0FHl2MjME7GiYMKQ9o+ZFHUu+9K3SdaG7RYRm5CyM/D
-	 inJ1S7kD3/fVFl1Kn/EuvM5Yzrfo23sKHNp6Ckuw164DjTFl+vOSGHAURSLsxosET
-	 VLcvznSFudLI4BcKg08HbqJ3PVAyvwg3Xy9bt1ocu2M0W5vIdTffKDfA7Dgw9KU/z
-	 CE/xLsUCF6HaKU1rg1TApPzdFIq+H3teMRyPkVrnmQAt6eYIHRBpksAkYDaZ0Z6KF
-	 8C4XMvqXefGW/Iqu4Ad6eFuYtVTbA++LiGdepJvy6SAXhvg8UZWobk+sWMveAf8Op
-	 qUJAfFXdfin8Kby7eQ==
+	b=HgEWe/9WivVQmYmVn/VBOi83f5rBR96BSF8h40gt8gnZrYTImsxxdF1pEMgxAH5S
+	 JzdkxeQwAWChm9CkL7agZ1Hdb4ZEdcQHRdu2Yko54vEp0R7/rRIv1bzHlfFuTTJbx
+	 6MOYjP9anpolVB+FSVsYIJrBeko/BayROBNcPStdMs7Gd9PQjp+upR8Bf7ysdk29u
+	 sS/2sOVCdh4rl6IkbIa+NVqYVOR+YlhscEcoa/n179PH1GFGIn9H1GFnq0Bz6oYrw
+	 HBALN1TUto9wd2QGZL3SrFOYKzejlMdYRXdAHinyIxvNr0pEgQUPaJ8PC5j6wpLmy
+	 bX9sPY0NGTmfDhrSfg==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from mx-inspiron.fritz.box ([141.30.226.119]) by mail.gmx.net
- (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1MJmKh-1szVYw3IL3-00U36N; Sun, 24 Nov 2024 18:14:43 +0100
+ (mrgmx005 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 1N2E1M-1tiUtn3w4c-00ybzh; Sun, 24 Nov 2024 18:14:46 +0100
 From: Armin Wolf <W_Armin@gmx.de>
 To: jlee@suse.com,
 	farhan.anwar8@gmail.com,
@@ -55,9 +55,9 @@ Cc: hdegoede@redhat.com,
 	ilpo.jarvinen@linux.intel.com,
 	platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 4/5] platform/x86: acer-wmi: Improve error handling when reading AC status
-Date: Sun, 24 Nov 2024 18:14:25 +0100
-Message-Id: <20241124171426.29203-5-W_Armin@gmx.de>
+Subject: [RFC PATCH 5/5] platform/x86: acer-wmi: Ignore AC events
+Date: Sun, 24 Nov 2024 18:14:26 +0100
+Message-Id: <20241124171426.29203-6-W_Armin@gmx.de>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241124171426.29203-1-W_Armin@gmx.de>
 References: <20241124171426.29203-1-W_Armin@gmx.de>
@@ -68,57 +68,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:KTC22Ub/XvgdO7f+LCMCexLP8K3fbNSob6bqwD7Gd9k0/u10VwA
- xnURzPzjH8Feyds3Tg1jEBunojOsuDmpyiyX3CQhGyaKS//9+muBf8lxjNGRbSKTVlzZKd4
- 6d1uMTazSwSdd4SdV3ARWTjVELvsJQIps/kH0PPKq+Yem4kzGLwEPOhrNwPnutA96+iESBT
- 7jMGmHAmQ5oBVw9xyuMZg==
+X-Provags-ID: V03:K1:k0On+4OSPz+hHluHv8K09QPFIQKbZuvsX1umrwKCxWipua9RFm+
+ viQqRvndXfgtw/jN5TXlT5q5RCllaYsdD+5j1P/VoKZEByESoO4ieyW7OOMWjIa7pBAr/P6
+ 1KoyzzZI1PTWT65UylRYYm4WL6pif8+cCuo2bk7VVkI1J99YEfbqDOtHBdTXN+HRPAJQHpi
+ mApn0sZ/esb8pM6KMyXSw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Dv3MOpZJ4fo=;zNSBzA0V4DBUC/bdoLdrUmGJbkH
- Fd2Ngc29Wwo7q4hYu3cAGSBMG0b+24arxGdPLmnFlsqTqdfOH5hBRI3XNzfXT7s1weEIoPhhm
- 2XRJx/rxj7gUzBsQNmZP3PZn++6aKGZyRxThwlHcGxtQnEtm5Z7RawoqhAltnrw/B64R+YKSh
- 5cEYuomHe3VrBz9K2zV/HMXk/6ah6avtZ210XXXqvZRsV0U3y2XHAZKmZLKHPGSuPpysORbpF
- CUh7672wVGiwao4lNdl4WzpVJrDfL9YIWemYk4njfBPHHO+swHnsJPOkchrxG15Gr9YWS5Ta0
- IcyQ3OfnsUWo7aOgfSf5siWztC+5uiRczMaaSxRCR4t3L7/JrjtVcV8Sp0sdjRdOMYSal3ZMC
- mg/HTPyjjbGdoekHWruD80YX7AucOnsFUPstluNfVmm4lCRaQswqF+2rHVbtN1CQQAJ2AwcvG
- mNu3qlYCGKy6btWB5YVeOvIuZN09Rxwi3ni9vmgOf7R3P625AyEHINijLbiDNN1fCaS2wP5dq
- p5r6LA+uoQQsfYmpc+xsoScqd/QS5xsLgz6OCf+ZwhU41mDdygGbG7e48fFLqghbRpK0cWRQ7
- rCIvQarDkTAtE8Et947EGfB1yw29MsiL5joAv9IwIeAcle89VpuBDM+/c+bH1geV9DqM3736g
- QSbYndnavsD1WTHz1R06vov8xDjcQoepjE1lthiAzKAQMnOkmpAJIWF63DHNYwd6ocuBZci2E
- 1gnOjiMoZH5f5ZScDvnN2rtMIPCHwXhmEwX9FQCHjejPc2ujMD5muhhpomwpL4sColE1PhJaA
- 5jhwTUegkW+m4j5bT0zt9GOCx9P6OENJntG4+nCBal4C95Kepo0eA/4H72j355cwqKE7Ld7Pm
- zxt2b85vESr34+ZAl5ki5FNeLmZXCLP9WP8akUmvEMT3ghtWVHiU5wwf4
+UI-OutboundReport: notjunk:1;M01:P0:YXj3lUSOm9Q=;FBolMd4+D2pSAiBl3kVkMw7QMUC
+ aTfcedW8Z4fV84CmfWmLu8n8iM664Z2oMsKVWhtD0gPt57rcdj0yeRvZuBUEF6VeCzFciLyuS
+ sj27rI8UkCG+NvCMzUibUVRH1vszfwrqP7XqGUBMmLUB8+75G6ilroFS6bwSvRKStafa+2tHt
+ G7FrJREF/A+5ZZcZvoemNOhkYLP8k37RcTdS1tA7LuHUxBhBQWiBOv4lU3xSUCrCahHuGphYn
+ 7mH+wscxNA77NkRfXZgHULf852eXpx7q2aQ5SQ8+jvnhn3fDucoBOO1NHPjJ1lYrLiu/MGyWh
+ F+fv+lJFcPGcpyKLohUZSndNqJiQ3rAGn/UevZaPqFyVnXexArM+W2Lv1/0CceF7rJipOaf2K
+ dE10HDafh7lWHrG3I/bQjHb3xZctRlKL8DN+CqyEvJYlcjdbYVJndyv5J/Z7aUR5FseoH7D52
+ 6iTn8Mi74sa9EGDFkbwFkUhn30l348rBrFfr62zqjh9PBx9U3yni3UAYgwD6t3PlrWbeupc8c
+ sZGUydmG4QP45ct+SJHGyYrPdprLo+LDQjsvIKM6FN9umAIJXrlfj2tv7S0Xx9jdRy11alxlw
+ VSPX4iHygGW3VyM3ctEr5iesmKvwGLpX9+nFHsSs8XzHRh9yT68uHWgDtjNcXbpWKw2lq3ICq
+ UWPwYITnGRne12hVEdI9HswJlRDOwIA1hYJppkxUMrvAzzim0vIOdnFbVlwRhMu0eYItwyVRZ
+ 0QCgcWg9MpGVwmOKVRo6Ax8nu08FVasoLxXd5Tg+1gaKo/IgdBix0s5Elqnqc97JxnTvICcLq
+ aQLQdUxCOfGktK+kyTtCc6SeyF5sJSEg1DAbi1P7NvjTEXgPkj7Lzy6IV2nIYbJoIPW+ExQEv
+ 5PXwM+yH/w9e+HUyqBCqBnLT4Jg4T8m5q8s5IR9MD2ifFcctLXrRF1cBohvmARUrbU1CkoEG7
+ Y8JJh9wvTn0OadTizeDA94agtfozapzC4yf85LDqqWTzU3VfZk3ErVqwsDp1IAjHuacBG6jx1
+ Sd+Otu0VuH3RUkZxMK+psTVYXUq5lBSpyb0QgGqvpapySXk6PWQcLIof6Hk+svYS02zJ8Jwzt
+ WpIpHUv5d4PsreCHB9N/aZr/gh1RDJ
 
-If a call to ACER_WMID_GET_GAMING_SYS_INFO_METHODID fails, the lower
-8 bits will be non-zero. Use WMID_gaming_get_sys_info() to check for
-this when reading the AC status.
+On the Acer Swift SFG14-41, the events 8 - 1 and 8 - 0 are printed on
+AC connect/disconnect. Ignore those events to avoid spamming the
+kernel log with error messages.
 
+Reported-by: Farhan Anwar <farhan.anwar8@gmail.com>
+Closes: https://lore.kernel.org/platform-driver-x86/2ffb529d-e7c8-4026-a3b=
+8-120c8e7afec8@gmail.com
 Signed-off-by: Armin Wolf <W_Armin@gmx.de>
 =2D--
- drivers/platform/x86/acer-wmi.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/platform/x86/acer-wmi.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-w=
 mi.c
-index 7b549920eba7..6964fea84fa1 100644
+index 6964fea84fa1..73243090242d 100644
 =2D-- a/drivers/platform/x86/acer-wmi.c
 +++ b/drivers/platform/x86/acer-wmi.c
-@@ -1951,12 +1951,9 @@ static int acer_thermal_profile_change(void)
- 			return err;
+@@ -97,6 +97,7 @@ enum acer_wmi_event_ids {
+ 	WMID_HOTKEY_EVENT =3D 0x1,
+ 	WMID_ACCEL_OR_KBD_DOCK_EVENT =3D 0x5,
+ 	WMID_GAMING_TURBO_KEY_EVENT =3D 0x7,
++	WMID_AC_EVENT =3D 0x8,
+ };
 
- 		/* Check power source */
--		status =3D WMI_gaming_execute_u64(
--			ACER_WMID_GET_GAMING_SYS_INFO_METHODID,
--			ACER_WMID_CMD_GET_PREDATOR_V4_BAT_STATUS, &on_AC);
--
--		if (ACPI_FAILURE(status))
--			return -EIO;
-+		err =3D WMID_gaming_get_sys_info(ACER_WMID_CMD_GET_PREDATOR_V4_BAT_STAT=
-US, &on_AC);
-+		if (err < 0)
-+			return err;
-
- 		switch (current_tp) {
- 		case ACER_PREDATOR_V4_THERMAL_PROFILE_TURBO:
+ enum acer_wmi_predator_v4_sys_info_command {
+@@ -2302,6 +2303,9 @@ static void acer_wmi_notify(union acpi_object *obj, =
+void *context)
+ 		if (return_value.key_num =3D=3D 0x5 && has_cap(ACER_CAP_PLATFORM_PROFIL=
+E))
+ 			acer_thermal_profile_change();
+ 		break;
++	case WMID_AC_EVENT:
++		/* We ignore AC events here */
++		break;
+ 	default:
+ 		pr_warn("Unknown function number - %d - %d\n",
+ 			return_value.function, return_value.key_num);
 =2D-
 2.39.5
 
