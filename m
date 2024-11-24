@@ -1,146 +1,120 @@
-Return-Path: <linux-kernel+bounces-420162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE7529D760A
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:41:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98BD89D7614
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:44:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 929822834EB
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:41:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31D7C164246
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1BD18A6D4;
-	Sun, 24 Nov 2024 16:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A1C2AE77;
+	Sun, 24 Nov 2024 16:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jc9AB0Vb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qw38TOIO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A7A188591
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 16:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FC918A6C5;
+	Sun, 24 Nov 2024 16:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732466501; cv=none; b=WgP05FeThCPWQDHsUbk9zDvk/dWWhF59mML4iQ8aJL7dnPYfZigvLlGREze1wGCKegISqH/2bbPkegBC1rib+RbwgJN3xSn1QrhtR4URAN4QsGb8r9o3i2sGvlyfRyUI2n5ulcWn7bB+JZEVAG6nJDdRHN+0O3FEqjRXYMkZBJg=
+	t=1732466677; cv=none; b=avEUV99iYpksR0YM0dakTeNzoeRe0oPvrVBUDwRzFmsh4msJUBm6pteYFR4rKk6ib6R0pZwuAFLd4AWWtnxJCi3wJvaH8UVxGfJTy5nd0c6w/hqXgt3+uW3gkZW+190iNqrPSvzaRGlTufo/jy3J2IMiUhHzrbXR1iQXqkx375Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732466501; c=relaxed/simple;
-	bh=kD8V7wEaAgQ1Y78HhvcyEpwD0B7CEafpldX0hsH9Nz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jY/HYYs+Wn1D5IEyYwEzTAfoYfcj78iwlo84rFjpqZlbjzNW+kSIyuzu6zkZEcajgdZPt4CRsDJ+YLxvc40rZ4VhwIMv/f0XrnMAc3PAPo2EIGBeK3f9LiKWsoZxYTr73pCZ8DrkkTFigThMZORRxc7FfD7KH5vav6cJDl7bCdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jc9AB0Vb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88473C4CECC;
-	Sun, 24 Nov 2024 16:41:40 +0000 (UTC)
+	s=arc-20240116; t=1732466677; c=relaxed/simple;
+	bh=xVMYbpcLjtnlstFSdSWP+o+OFpVkdd5lSpsHXHUP5qU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eAcnZ/oufmGfK+nA+/4feOYz46ooW/U8NFtkcCbc8woEzTKlg5x6mCO0Ue56PwDhBL/F7mxd0zA5L42NGae4IxjoljrwZ/3nhB/nqiHXQAY4Ra3YYb6UzrfmgcHSEvsRSPemLb0VJvJIFA56zb2Pw8z6sUsw6bvHHz0Ry5FZhdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qw38TOIO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22E9FC4CECC;
+	Sun, 24 Nov 2024 16:44:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732466500;
-	bh=kD8V7wEaAgQ1Y78HhvcyEpwD0B7CEafpldX0hsH9Nz8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jc9AB0VbNP+6nHDswQYSJI/u8u3R7P18gKj+ETQiRNrwkutvJqZ9Li6TQotV0ldbY
-	 caoLGDaqMkrDz7/WkXKF07TV8xSkPu52YhuTyYsPQTDR2/VvnXkCDbgSe7gS83aKSj
-	 sndrHoVsqKQDwwDUeinAdb5hFoy53MYatDkF0826AZLoQdbfat9aCnMpe0lBnryVV8
-	 V+BFmN6DTWO5r/HWAnkWMwi0Geb1s1lHCcnZ7voO+2Ve8X4CNmTQiTKCoMn7LDH9VQ
-	 7o2yWRgjhUCccRgY4zZDI5xDebAtsHXY3gUAQHqbQPmrAct0QiQ2IiFYudfAM0BmFc
-	 Ol80zV2wZt/tg==
-Date: Sun, 24 Nov 2024 11:41:39 -0500
-From: Sasha Levin <sashal@kernel.org>
-To: Dave Airlie <airlied@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Sima Vetter <sima@ffwll.ch>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [git pull] drm for 6.13-rc1
-Message-ID: <Z0NXQ6iRK43x6WbG@sashalap>
-References: <CAPM=9txbfH8vf-YjwTXEYL729a6r2eeLBxCJc3MSD-t5jXVA-w@mail.gmail.com>
+	s=k20201202; t=1732466677;
+	bh=xVMYbpcLjtnlstFSdSWP+o+OFpVkdd5lSpsHXHUP5qU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qw38TOIOYPRWPkIDLjnGuUAMSdDQUv/n7j8fE08CGQQmxUUBgjsC/b7x2Lg3FTUJZ
+	 JsG0nchgFDc1joPIOJ+j3VkiCcQi3HC1fc4i+7m4qbv9b5VhIMkRdOQPnvGXkg6m34
+	 6qABwt9sW8B7saqP5iAYmsSG8P6hM9BnS6R/ejJ3uu2KLE6AGLyEkCTdvdXmGHDVju
+	 8or4g/BazkesFBfylfH9CU1VA5JI4NoVJnybCrvCSEvcY7KZSKP8xwY7wOAj5XO+/W
+	 JawoSxAhk0TDX9lwuuWTyYwIlI96KP1DIFt4Swef2awAhCJsBtZKoDcVgwjdtdfQKk
+	 wcvs35nu7cV6g==
+Date: Sun, 24 Nov 2024 16:44:27 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, David
+ Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>,
+ linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-pwm@vger.kernel.org
+Subject: Re: [PATCH v5 05/16] spi: offload-trigger: add PWM trigger driver
+Message-ID: <20241124164427.6e787b2b@jic23-huawei>
+In-Reply-To: <20241115-dlech-mainline-spi-engine-offload-2-v5-5-bea815bd5ea5@baylibre.com>
+References: <20241115-dlech-mainline-spi-engine-offload-2-v5-0-bea815bd5ea5@baylibre.com>
+	<20241115-dlech-mainline-spi-engine-offload-2-v5-5-bea815bd5ea5@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAPM=9txbfH8vf-YjwTXEYL729a6r2eeLBxCJc3MSD-t5jXVA-w@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 21, 2024 at 10:25:45AM +1000, Dave Airlie wrote:
->Hi Linus,
->
->This is the main drm pull request for 6.13.
->
->I've done a test merge into your tree, there were two conflicts both
->of which seem easy enough to resolve for you.
->
->There's a lot of rework, the panic helper support is being added to
->more drivers, v3d gets support for HW superpages, scheduler
->documentation, drm client and video aperture reworks, some new
->MAINTAINERS added, amdgpu has the usual lots of IP refactors, Intel
->has some Pantherlake enablement and xe is getting some SRIOV bits, but
->just lots of stuff everywhere.
->
->Let me know if there are any issues,
+On Fri, 15 Nov 2024 14:18:44 -0600
+David Lechner <dlechner@baylibre.com> wrote:
 
-Hey Dave,
+> Add a new driver for a generic PWM trigger for SPI offloads.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+Trivial thing to tidy up mentioned below.
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-After the PR was merged, I've started seeing boot failures reported by
-KernelCI:
 
-[    4.395400] mediatek-drm mediatek-drm.5.auto: bound 1c014000.merge (ops 0xffffd35fd12975f8)
-[    4.396155] mediatek-drm mediatek-drm.5.auto: bound 1c000000.ovl (ops 0xffffd35fd12977b8)
-[    4.411951] mediatek-drm mediatek-drm.5.auto: bound 1c002000.rdma (ops 0xffffd35fd12989c0)
-[    4.536837] mediatek-drm mediatek-drm.5.auto: bound 1c004000.ccorr (ops 0xffffd35fd1296cf0)
-[    4.545181] mediatek-drm mediatek-drm.5.auto: bound 1c005000.aal (ops 0xffffd35fd1296a80)
-[    4.553344] mediatek-drm mediatek-drm.5.auto: bound 1c006000.gamma (ops 0xffffd35fd12972b0)
-[    4.561680] mediatek-drm mediatek-drm.5.auto: bound 1c014000.merge (ops 0xffffd35fd12975f8)
-[    4.570025] ------------[ cut here ]------------
-[    4.574630] refcount_t: underflow; use-after-free.
-[    4.579416] WARNING: CPU: 6 PID: 81 at lib/refcount.c:28 refcount_warn_saturate+0xf4/0x148
-[    4.587670] Modules linked in:
-[    4.590714] CPU: 6 UID: 0 PID: 81 Comm: kworker/u32:3 Tainted: G        W          6.12.0 #1 cab58e2e59020ebd4be8ada89a65f465a316c742
-[    4.602695] Tainted: [W]=WARN
-[    4.605649] Hardware name: Acer Tomato (rev2) board (DT)
-[    4.610947] Workqueue: events_unbound deferred_probe_work_func
-[    4.616768] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    4.623715] pc : refcount_warn_saturate+0xf4/0x148
-[    4.628493] lr : refcount_warn_saturate+0xf4/0x148
-[    4.633270] sp : ffff8000807639c0
-[    4.636571] x29: ffff8000807639c0 x28: ffff34ff4116c640 x27: ffff34ff4368e080
-[    4.643693] x26: ffffd35fd1299ac8 x25: ffff34ff46c8c410 x24: 0000000000000000
-[    4.650814] x23: ffff34ff4368e080 x22: 00000000fffffdfb x21: 0000000000000002
-[    4.657934] x20: ffff34ff470c6000 x19: ffff34ff410c7c10 x18: 0000000000000006
-[    4.665055] x17: 666678302073706f x16: 2820656772656d2e x15: ffff800080763440
-[    4.672176] x14: 0000000000000000 x13: 2e656572662d7265 x12: ffffd35fd2ed14f0
-[    4.679297] x11: 0000000000000001 x10: 0000000000000001 x9 : ffffd35fd0342150
-[    4.686418] x8 : c0000000ffffdfff x7 : ffffd35fd2e21450 x6 : 00000000000affa8
-[    4.693539] x5 : ffffd35fd2ed1498 x4 : 0000000000000000 x3 : 0000000000000000
-[    4.700660] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff34ff40932580
-[    4.707781] Call trace:
-[    4.710216]  refcount_warn_saturate+0xf4/0x148 (P)
-[    4.714993]  refcount_warn_saturate+0xf4/0x148 (L)
-[    4.719772]  kobject_put+0x110/0x118
-[    4.723335]  put_device+0x1c/0x38
-[    4.726638]  mtk_drm_bind+0x294/0x5c0
-[    4.730289]  try_to_bring_up_aggregate_device+0x16c/0x1e0
-[    4.735673]  __component_add+0xbc/0x1c0
-[    4.739495]  component_add+0x1c/0x30
-[    4.743058]  mtk_disp_rdma_probe+0x140/0x210
-[    4.747314]  platform_probe+0x70/0xd0
-[    4.750964]  really_probe+0xc4/0x2a8
-[    4.754527]  __driver_probe_device+0x80/0x140
-[    4.758870]  driver_probe_device+0x44/0x120
-[    4.763040]  __device_attach_driver+0xc0/0x108
-[    4.767470]  bus_for_each_drv+0x8c/0xf0
-[    4.771294]  __device_attach+0xa4/0x198
-[    4.775117]  device_initial_probe+0x1c/0x30
-[    4.779286]  bus_probe_device+0xb4/0xc0
-[    4.783109]  deferred_probe_work_func+0xb0/0x100
-[    4.787714]  process_one_work+0x18c/0x420
-[    4.791712]  worker_thread+0x30c/0x418
-[    4.795449]  kthread+0x128/0x138
-[    4.798665]  ret_from_fork+0x10/0x20
-[    4.802229] ---[ end trace 0000000000000000 ]---
+> +static int spi_offload_trigger_pwm_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct spi_offload_trigger_info info = {
+> +		.fwnode = dev_fwnode(dev),
+> +		.ops = &spi_offload_trigger_pwm_ops,
+> +	};
+> +	struct spi_offload_trigger_pwm_state *st;
+> +	struct pwm_state state;
+> +	int ret;
+> +
+> +	st = devm_kzalloc(&pdev->dev, sizeof(*st), GFP_KERNEL);
+use dev.
 
-I don't think that I'll be able to bisect further as I don't have the
-relevant hardware available.
+> +	if (!st)
+> +		return -ENOMEM;
+> +
+> +	info.priv = st;
+> +	st->dev = dev;
+> +
+> +	st->pwm = devm_pwm_get(&pdev->dev, NULL);
+use dev.
 
--- 
-Thanks,
-Sasha
+> +	if (IS_ERR(st->pwm))
+> +		return dev_err_probe(dev, PTR_ERR(st->pwm), "failed to get PWM\n");
+> +
+> +	/* init with duty_cycle = 0, output enabled to ensure trigger off */
+> +	pwm_init_state(st->pwm, &state);
+> +	state.enabled = true;
+> +
+> +	ret = pwm_apply_might_sleep(st->pwm, &state);
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret, "failed to apply PWM state\n");
+> +
+> +	ret = devm_add_action_or_reset(dev, spi_offload_trigger_pwm_release, st->pwm);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return devm_spi_offload_trigger_register(dev, &info);
+> +}
 
