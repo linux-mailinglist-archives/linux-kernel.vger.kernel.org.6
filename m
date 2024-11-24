@@ -1,329 +1,147 @@
-Return-Path: <linux-kernel+bounces-419340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 246EE9D6CB8
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 06:34:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 353A89D6CBC
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 06:37:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EDC41618C6
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 05:34:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FBC6B2140A
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 05:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA80218786A;
-	Sun, 24 Nov 2024 05:34:24 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E65187561;
+	Sun, 24 Nov 2024 05:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="QI5lVmwD"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108DA13CA99
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 05:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854911E4B0;
+	Sun, 24 Nov 2024 05:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732426464; cv=none; b=bfKTyBWOWx211lf9Uwq50AI7d0cNhSU+JOAkCf7jj6je8ema/0XSs32mfprYjovzaabE7PinKIYPqmXeUT0dgtNBH0gExAAXPWxeQqWoJFBL7d0SfmqOmyRbrfZu5qbObaISKeIolQjJRcPN9uYyL/Z7cvqha/sEZ5nq9zK1T5Y=
+	t=1732426645; cv=none; b=UajtY0onbYHNys8F3zmjeBPFEh8PqE6s8gIoDLZ5c6GSvBoV5WjgdYzKYcnfi1u6jZZO/+Mfu8UY3Nlvj/rVzE0/RzDAu7UfqwsQuDH1w3ZPnmoqMjZ0yPAeIpevPpCwbt/siKbNMOWBeT2Ip22crKR+jDnXgiGz/FzzYxSeFbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732426464; c=relaxed/simple;
-	bh=mXh7kAqdmuCvYP6oafLjX5fe/yQ1e2QvANH1qF81Ek8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ul7hkh4LEv7+lK3pJldA0BolN3yd1RAsdo9U3WJg8ShADvLqkiacIMxFU0TejjqhR0uOzbGhZxIQy4fBwnFHZQ53Vhrzsn84UFCTTy/Rm0Is2MeOLgqTIvw/GrgY4eUG3rz7DgnEPmRrgwMy0AQ11kBEjlxxJp16efHo3i5bnXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a77a808c27so36332575ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 21:34:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732426461; x=1733031261;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xuQiBCpsKoL+MejE3uyezV1hXADQ2FKc/9M0c14aSVo=;
-        b=GD8LBwc3TzZGkjEEGg3lLqKunvjdNuHeENcOq88+zKLaDDhJdKKDboAFfMnvMCe0K3
-         LXTp5PqTTotX9A3WZy0bqw1J6xDVJcUPFMgtoLq2SBL05BHzzrpbsooWyD7BpSDtly9P
-         a9KDFmbM7LfHN6wIQjlWf6ZymddfsSSc/vshlnuHY8PpbTowg5iSJnQqOMoAReqZ+iAU
-         HEBnYGpUKCYFVe9Ij6trG8AZhTM/SEkTultbyc460VSPCaYCWF4Ey1J93yq8hG7h5FQJ
-         9NRYJnPAo4U1fMC38BtyjVYNN4T57X3bJcxXxUBA/iQC9zuraS9F3s+LBN6LIUFnz6Zw
-         h21A==
-X-Forwarded-Encrypted: i=1; AJvYcCXNo305ypqImbT/p289GPqXjqAuLlnXmKxvqQrJZdAoIjkiRpE4zRofx4PWW6RMjHjbKpv4L3FrTTq+i+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7l+oNrQAvI0ybyTq+bTBG5AgGYeW9iveFmVSO8KGqBGggGeA/
-	EwM0eBFK1qo1pIX0dRWtyL7hGi4ViiyebukXJTwuxgQJsa7mjCiP9bFPoWL1/z0SGXBQAu2VLMY
-	0zOBgTSGjHJZ8VKm8oppdxgwnQaPqucRZSzELzM2b6VH4e3bRl18DLpw=
-X-Google-Smtp-Source: AGHT+IE9IKWzkzxT0uC1bKBtFxdblhGrd/Q57xk578ufi8VW31t7PLHSyWrnLjn+B8KJLwe10gXX+X1QghSwewvPO7ZSwTf9h+RI
+	s=arc-20240116; t=1732426645; c=relaxed/simple;
+	bh=1YKomkwpiGBc6nPaALBtYBaLKIfZ16oaAsPuwY4HVj8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VHQsw32BXUvWdZVe3Gh5lLTKb4GgyXloQGdRSs7u1qowRQWDHKY7KBjvag9e/0cZ4vX0+YyY64WkVTROwJQ/h0fuLR/P70Zx7s822MqdU8MKJBE5BrUqyqjfQNhLyT+0M+t+VBt5tILK+Ch/nXvf/u6TQ3aQG92/0bhHRFOUOf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=QI5lVmwD; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AO1HfBk010650;
+	Sun, 24 Nov 2024 00:37:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=vd5pBbWV0IlQckYFHPr/nEm+WGg
+	2x3xfrkbt5dOGoX4=; b=QI5lVmwD4zhCy0wkD23NKxmU6uyPnoMr2xBa5nsro5s
+	sdngwReMgV4bZTdX2gBgrQpskAwWWipme/ZWTuttc6qFYIL2dv+Gh0BhxwjhhmxX
+	GBkoo1TRztgnQh3h0CHqUQImeJwges6ZL6KRS+6ITwXlHC0Ya+wfk8RgcjUPdLpC
+	mBd/QD9VohgjvtB66wkcBsoNhua64wfFfUCtYn/iXmAn7rkw5eu1yD2Kn+vSW38F
+	UzMHkW/7N4uJk3C3S2J4EBfBLep4rMiOpwZkTmyHu1RuEqcEV2xmEDMXmVZhEVWN
+	9GN0GBV4dn2Z/04vC1IPsJvnr16Hubpr3853MGSpftA==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 4339s73k0r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 24 Nov 2024 00:37:04 -0500 (EST)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 4AO5b37c034174
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sun, 24 Nov 2024 00:37:03 -0500
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Sun, 24 Nov 2024 00:37:03 -0500
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Sun, 24 Nov 2024 00:37:02 -0500
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Sun, 24 Nov 2024 00:37:02 -0500
+Received: from kim-VirtualBox.ad.analog.com (KPALLER2-L03.ad.analog.com [10.116.18.26])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4AO5aocn007246;
+	Sun, 24 Nov 2024 00:36:53 -0500
+From: Kim Seer Paller <kimseer.paller@analog.com>
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Mike Looijmans <mike.looijmans@topic.nl>
+CC: <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Kim Seer Paller <kimseer.paller@analog.com>
+Subject: [PATCH v4 1/2] dt-bindings: power/supply: Add ltc4162-f/s and ltc4015
+Date: Sun, 24 Nov 2024 13:36:42 +0800
+Message-ID: <20241124053643.6602-1-kimseer.paller@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18ce:b0:3a7:86ab:be6c with SMTP id
- e9e14a558f8ab-3a79af54861mr95373415ab.15.1732426461207; Sat, 23 Nov 2024
- 21:34:21 -0800 (PST)
-Date: Sat, 23 Nov 2024 21:34:21 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6742badd.050a0220.1cc393.0034.GAE@google.com>
-Subject: [syzbot] [netfilter?] INFO: task hung in htable_put (2)
-From: syzbot <syzbot+013daa7966d4340a8b8f@syzkaller.appspotmail.com>
-To: coreteam@netfilter.org, davem@davemloft.net, edumazet@google.com, 
-	horms@kernel.org, kadlec@netfilter.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, pabeni@redhat.com, pablo@netfilter.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: tCCuzsA38qw8QWaeNypptHAmNgofiKhf
+X-Proofpoint-GUID: tCCuzsA38qw8QWaeNypptHAmNgofiKhf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
+ impostorscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
+ mlxscore=0 bulkscore=0 adultscore=0 priorityscore=1501 suspectscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411240045
 
-Hello,
+Add LTC4162-F/S and LTC4015 to the supported devices of LTC4162-L.
+They share a common set of registers. The only differences lie in the
+resolution value of the scaling factor for battery voltage and battery
+current measurement, input voltage, and input current for different
+battery chemistries. The differences also include the calculation of
+setting and getting the actual voltage applied to the charge voltage,
+as well as getting the die temperature.
 
-syzbot found the following issue on:
+This add compatible entries for ltc4162-f/s and ltc4015 and include
+datasheets for new devices.
 
-HEAD commit:    cfaaa7d010d1 Merge tag 'net-6.12-rc8' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13fd6b5f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d2aeec8c0b2e420c
-dashboard link: https://syzkaller.appspot.com/bug?extid=013daa7966d4340a8b8f
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5ab991f9cba7/disk-cfaaa7d0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b840e35f87ab/vmlinux-cfaaa7d0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0b16dd5db314/bzImage-cfaaa7d0.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+013daa7966d4340a8b8f@syzkaller.appspotmail.com
-
-INFO: task syz.2.6523:19093 blocked for more than 143 seconds.
-      Not tainted 6.12.0-rc7-syzkaller-00125-gcfaaa7d010d1 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.2.6523      state:D stack:25776 pid:19093 tgid:19091 ppid:18127  flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0x184f/0x4c30 kernel/sched/core.c:6693
- __schedule_loop kernel/sched/core.c:6770 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6785
- schedule_timeout+0xb0/0x310 kernel/time/timer.c:2591
- do_wait_for_common kernel/sched/completion.c:95 [inline]
- __wait_for_common kernel/sched/completion.c:116 [inline]
- wait_for_common kernel/sched/completion.c:127 [inline]
- wait_for_completion+0x355/0x620 kernel/sched/completion.c:148
- __flush_work+0xa37/0xc50 kernel/workqueue.c:4217
- __cancel_work_sync+0xbc/0x110 kernel/workqueue.c:4337
- htable_put+0x1e4/0x250 net/netfilter/xt_hashlimit.c:429
- cleanup_match net/ipv6/netfilter/ip6_tables.c:477 [inline]
- cleanup_entry+0x20f/0x4c0 net/ipv6/netfilter/ip6_tables.c:661
- translate_table+0x213c/0x2330 net/ipv6/netfilter/ip6_tables.c:744
- do_replace net/ipv6/netfilter/ip6_tables.c:1154 [inline]
- do_ip6t_set_ctl+0xe4c/0x1270 net/ipv6/netfilter/ip6_tables.c:1644
- nf_setsockopt+0x295/0x2c0 net/netfilter/nf_sockopt.c:101
- rawv6_setsockopt+0x327/0x740 net/ipv6/raw.c:1054
- do_sock_setsockopt+0x3af/0x720 net/socket.c:2334
- __sys_setsockopt+0x1a2/0x250 net/socket.c:2357
- __do_sys_setsockopt net/socket.c:2366 [inline]
- __se_sys_setsockopt net/socket.c:2363 [inline]
- __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2363
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f090e97e719
-RSP: 002b:00007f090f6ed038 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00007f090eb35f80 RCX: 00007f090e97e719
-RDX: 0000000000000040 RSI: 0000000000000029 RDI: 0000000000000004
-RBP: 00007f090e9f175e R08: 0000000000000488 R09: 0000000000000000
-R10: 0000000020000b00 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f090eb35f80 R15: 00007f090ec5fa28
- </TASK>
-
-Showing all locks held in the system:
-4 locks held by kworker/u8:1/12:
- #0: ffff88801baed948 ((wq_completion)netns){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801baed948 ((wq_completion)netns){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc90000117d00 (net_cleanup_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc90000117d00 (net_cleanup_work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffffffff8fcc70d0 (pernet_ops_rwsem){++++}-{3:3}, at: cleanup_net+0x16a/0xcc0 net/core/net_namespace.c:580
- #3: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: wg_destruct+0x25/0x2e0 drivers/net/wireguard/device.c:246
-1 lock held by khungtaskd/30:
- #0: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6720
-2 locks held by kworker/1:2/2146:
-2 locks held by dhcpcd/5507:
- #0: ffffffff8fcb86c8 (vlan_ioctl_mutex){+.+.}-{3:3}, at: sock_ioctl+0x661/0x8e0 net/socket.c:1308
- #1: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: vlan_ioctl_handler+0x112/0x9d0 net/8021q/vlan.c:553
-2 locks held by getty/5592:
- #0: ffff8880306270a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002f062f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
-2 locks held by kworker/1:3/5890:
-3 locks held by kworker/0:8/5947:
- #0: ffff88801ac80948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801ac80948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc90004367d00 (deferred_process_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc90004367d00 (deferred_process_work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: switchdev_deferred_process_work+0xe/0x20 net/switchdev/switchdev.c:104
-3 locks held by kworker/u8:13/7287:
- #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc9000319fd00 ((linkwatch_work).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc9000319fd00 ((linkwatch_work).work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: linkwatch_event+0xe/0x60 net/core/link_watch.c:276
-5 locks held by kworker/1:8/9368:
-6 locks held by kworker/1:10/29362:
-2 locks held by kworker/1:4/8744:
-6 locks held by kworker/1:6/12106:
-3 locks held by kworker/u8:23/14349:
- #0: ffff88802feef948 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88802feef948 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc900015f7d00 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc900015f7d00 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: addrconf_dad_work+0xd0/0x16f0 net/ipv6/addrconf.c:4196
-2 locks held by syz-executor/15375:
- #0: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: tun_detach drivers/net/tun.c:698 [inline]
- #0: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: tun_chr_close+0x3b/0x1b0 drivers/net/tun.c:3517
- #1: ffffffff8e7d1d90 (cpu_hotplug_lock){++++}-{0:0}, at: flush_all_backlogs net/core/dev.c:6029 [inline]
- #1: ffffffff8e7d1d90 (cpu_hotplug_lock){++++}-{0:0}, at: unregister_netdevice_many_notify+0x5ea/0x1da0 net/core/dev.c:11388
-1 lock held by syz-executor/18786:
- #0: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: tun_detach drivers/net/tun.c:698 [inline]
- #0: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: tun_chr_close+0x3b/0x1b0 drivers/net/tun.c:3517
-1 lock held by syz-executor/19172:
- #0: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: tun_detach drivers/net/tun.c:698 [inline]
- #0: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: tun_chr_close+0x3b/0x1b0 drivers/net/tun.c:3517
-7 locks held by syz-executor/19380:
- #0: ffff8880353fe420 (sb_writers#8){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2931 [inline]
- #0: ffff8880353fe420 (sb_writers#8){.+.+}-{0:0}, at: vfs_write+0x225/0xd30 fs/read_write.c:679
- #1: ffff88806b265c88 (&of->mutex){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x1ea/0x500 fs/kernfs/file.c:325
- #2: ffff88802720b968 (kn->active#49){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x20e/0x500 fs/kernfs/file.c:326
- #3: ffffffff8f571a48 (nsim_bus_dev_list_lock){+.+.}-{3:3}, at: del_device_store+0xfc/0x480 drivers/net/netdevsim/bus.c:216
- #4: ffff8880436fe0e8 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #4: ffff8880436fe0e8 (&dev->mutex){....}-{3:3}, at: __device_driver_lock drivers/base/dd.c:1095 [inline]
- #4: ffff8880436fe0e8 (&dev->mutex){....}-{3:3}, at: device_release_driver_internal+0xce/0x7c0 drivers/base/dd.c:1293
- #5: ffff8880436fa250 (&devlink->lock_key#86){+.+.}-{3:3}, at: nsim_drv_remove+0x50/0x160 drivers/net/netdevsim/dev.c:1675
- #6: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: nsim_destroy+0x71/0x5c0 drivers/net/netdevsim/netdev.c:773
-3 locks held by syz.0.6579/19489:
- #0: ffff8880467d8d80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_dev_do_close net/bluetooth/hci_core.c:481 [inline]
- #0: ffff8880467d8d80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_unregister_dev+0x203/0x510 net/bluetooth/hci_core.c:2698
- #1: ffff8880467d8078 (&hdev->lock){+.+.}-{3:3}, at: hci_dev_close_sync+0x5c8/0x11c0 net/bluetooth/hci_sync.c:5193
- #2: ffffffff90039128 (uevent_sock_mutex){+.+.}-{3:3}, at: uevent_net_broadcast_untagged lib/kobject_uevent.c:317 [inline]
- #2: ffffffff90039128 (uevent_sock_mutex){+.+.}-{3:3}, at: kobject_uevent_net_broadcast+0x280/0x580 lib/kobject_uevent.c:410
-2 locks held by syz-executor/19502:
- #0: ffffffff8fcc70d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/19504:
- #0: ffffffff8fcc70d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/19505:
- #0: ffffffff8fcc70d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/19507:
- #0: ffffffff8fcc70d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/19512:
- #0: ffffffff8fcc70d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/19517:
- #0: ffffffff8fcc70d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/19523:
- #0: ffffffff8fcc70d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/19526:
- #0: ffffffff8fcc70d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/19528:
- #0: ffffffff8fcc70d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/19532:
- #0: ffffffff8fcc70d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd3c08 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.12.0-rc7-syzkaller-00125-gcfaaa7d010d1 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xff4/0x1040 kernel/hung_task.c:379
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 9368 Comm: kworker/1:8 Not tainted 6.12.0-rc7-syzkaller-00125-gcfaaa7d010d1 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Workqueue: events_power_efficient htable_gc
-RIP: 0010:get_reg arch/x86/kernel/unwind_orc.c:452 [inline]
-RIP: 0010:unwind_next_frame+0x1634/0x22d0 arch/x86/kernel/unwind_orc.c:643
-Code: 24 28 0f b7 30 c1 ee 04 83 e6 0f 83 fe 04 0f 84 d0 00 00 00 83 fe 01 0f 84 28 01 00 00 85 f6 0f 85 cb 02 00 00 48 8b 44 24 38 <80> 3c 28 00 74 08 4c 89 ff e8 fe 49 bd 00 49 8b 1f 48 85 db 0f 84
-RSP: 0018:ffffc90000a18610 EFLAGS: 00000246
-RAX: 1ffff920001430e6 RBX: 1ffffffff215f1b6 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffc90000a18740
-RBP: dffffc0000000000 R08: ffffc90000a1873f R09: 0000000000000000
-R10: ffffc90000a18730 R11: fffff520001430e8 R12: ffffc90000a19000
-R13: ffffc90000a186e0 R14: ffffffff81fe9019 R15: ffffc90000a18730
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000002030c030 CR3: 000000000e734000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
- </NMI>
- <IRQ>
- arch_stack_walk+0x11c/0x150 arch/x86/kernel/stacktrace.c:25
- stack_trace_save+0x118/0x1d0 kernel/stacktrace.c:122
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:230 [inline]
- slab_free_hook mm/slub.c:2342 [inline]
- slab_free mm/slub.c:4579 [inline]
- kfree+0x1a0/0x440 mm/slub.c:4727
- ref_tracker_free+0x4ef/0x7e0 lib/ref_tracker.c:272
- netdev_tracker_free include/linux/netdevice.h:4082 [inline]
- netdev_put include/linux/netdevice.h:4099 [inline]
- dst_destroy+0x105/0x360 net/core/dst.c:114
- rcu_do_batch kernel/rcu/tree.c:2567 [inline]
- rcu_core+0xaaa/0x17a0 kernel/rcu/tree.c:2823
- handle_softirqs+0x2c5/0x980 kernel/softirq.c:554
- do_softirq+0x11b/0x1e0 kernel/softirq.c:455
- </IRQ>
- <TASK>
- __local_bh_enable_ip+0x1bb/0x200 kernel/softirq.c:382
- spin_unlock_bh include/linux/spinlock.h:396 [inline]
- htable_selective_cleanup+0x25f/0x310 net/netfilter/xt_hashlimit.c:374
- htable_gc+0x1f/0xa0 net/netfilter/xt_hashlimit.c:385
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
+Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+V3 -> V4: Arranged the compatible entries in alphabetical order.
+V2 -> V3: Described differences in the programming model between variants/devices.
+V1 -> V2: Modified commit message describing differences between
+          variants/devices.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ .../devicetree/bindings/power/supply/ltc4162-l.yaml         | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+diff --git a/Documentation/devicetree/bindings/power/supply/ltc4162-l.yaml b/Documentation/devicetree/bindings/power/supply/ltc4162-l.yaml
+index 29d536541..06595a953 100644
+--- a/Documentation/devicetree/bindings/power/supply/ltc4162-l.yaml
++++ b/Documentation/devicetree/bindings/power/supply/ltc4162-l.yaml
+@@ -17,12 +17,18 @@ description: |
+   panels, etc., and a rechargeable Lithium-Ion/Polymer battery.
+ 
+   Specifications about the charger can be found at:
++    https://www.analog.com/en/products/ltc4162-l.html
++    https://www.analog.com/en/products/ltc4162-f.html
+     https://www.analog.com/en/products/ltc4162-s.html
++    https://www.analog.com/en/products/ltc4015.html
+ 
+ properties:
+   compatible:
+     enum:
++      - lltc,ltc4015
++      - lltc,ltc4162-f
+       - lltc,ltc4162-l
++      - lltc,ltc4162-s
+ 
+   reg:
+     maxItems: 1
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+base-commit: 05d9044177c3e910921522e0209640d3b825a6ae
+-- 
+2.34.1
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
