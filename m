@@ -1,254 +1,196 @@
-Return-Path: <linux-kernel+bounces-419323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A4909D6C78
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 03:11:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 183C49D6C7D
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 03:30:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A04B02816F7
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 02:11:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B65B12816AA
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 02:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5802115E8B;
-	Sun, 24 Nov 2024 02:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E2D225A8;
+	Sun, 24 Nov 2024 02:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nlwBTwah"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EDjhHWpz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0D41370;
-	Sun, 24 Nov 2024 02:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2A31FC8;
+	Sun, 24 Nov 2024 02:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732414284; cv=none; b=YIkh76c8DZJBNGzzNL3ytD0+pWmTVkGGPOf4B63SM/fNYqamAiiDVu36y8Aq1retKoNnyIL8rf5cEfARHXZjOfoNCb5m0gY2PIxG1s3nqLzYYl1GnCTq5wUT1b2CfPN4AYEEd7E7ZpXa4CiPJuKICiHV5gi6TsfcLwok4OH9ziQ=
+	t=1732415450; cv=none; b=u3radabQKy0m8KLsGSWOnarioOvxy8YLb5TreQFARKhmZKawIqJ9aFmDGaP6aEN0c6RICcKALH/QB/yhSqdd7ZricMr9Ys4JoPUzTiglV0APoE4u+UW6zIosXOv7JBTLUIO2FtVn7gWoBL3yrxM8key9PcyTS90itlTddA5YKMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732414284; c=relaxed/simple;
-	bh=S+emmCzwyCoks7S9zsw5tQlX8wEFWEQd/iSHmrWwfvA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ayZxCwC8QFJ2H4KILSLuXPaS0WUSKK8nBb1iVaQuoN1uIrm/6hDAHYaqlN0JoOGQO14H6Rle5RM567Ze8rF2GI5XacFM16l/+rZv41GDpIL8nBaowdsFgJyiIBhG6ewxeqYqZKeybwaUe/Fgw9fzF+dB5kNcd+/grLbMb928O0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nlwBTwah; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63447C4CED2;
-	Sun, 24 Nov 2024 02:11:24 +0000 (UTC)
+	s=arc-20240116; t=1732415450; c=relaxed/simple;
+	bh=MNKk7Ci3f1opxvYb+4djlIYsEba/X8+/Xe7iEjP1cAg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hnXMYiNA7R4aS+s53qnmUcGEuv0rsW/TE2YbmkqLu6M+b4rrQ3xcRTCgfLrNpL3hF1SfYrvXoT/DHpp8wxZ9j1TTcPqAMRQK2uWbsNyUuNBQLOAH1iKL7dETJZyPvlK8m43bMFta708vPxHbGy12siMwEazcPhCaGkylj+/CzS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EDjhHWpz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F23AC4CECD;
+	Sun, 24 Nov 2024 02:30:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732414284;
-	bh=S+emmCzwyCoks7S9zsw5tQlX8wEFWEQd/iSHmrWwfvA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=nlwBTwahIpQQLyszSpsEnTZOL8bEiQSSRDH9o7+pZzZicoW6wAjA7fbyhGJxTlbq+
-	 07Me+FM1wod59M2dBRFoToDSu3v8K2C+eyvvRbJw/CLew/Ko2+SK4D58Xiw8DbMS23
-	 tm76Vqiw6T8kBoUePQTJW+qPNTgkT5V0R2lCrOuRioY8rBIu2qOmzhi7JugAdXD8CE
-	 9yNoe4uZm0Cxr8b3sTzpegMbIrcZZfQUWkdG87fK6MU7h6VxRdT2fkKWYwil5FWm7X
-	 tANN0xyDOyJfzcZxqOwp3QmtgQcdW0NKfzVLkArfSw9MA78CpNMcK1Fyx4qo4zh+2C
-	 8Osy/UwiRbKBQ==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53d9ff8f1e4so3654487e87.2;
-        Sat, 23 Nov 2024 18:11:24 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXKK4Ccdbr3c7gi/XH+XnViggAoU7Gl0acPMpbWU0mkQ96ygfOLUFbSct0WpEVVJO4AcNCSZxO47BwOXFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPGLfBO+VqrrwQGVZNBdxy0ngYwZUIvx3cU7FjqpA1KVrkWvbz
-	jvZnDbiSCOse5sU4D6wGTW91u9u3iObGtB5HaDe42X1ehfXN5xS1KczghMn5vjHFuUE7o1jXh5L
-	4aVMcZErs6z5eiOr6eBfnIFysAf4=
-X-Google-Smtp-Source: AGHT+IEeqMMFx6TRXmt8noXgqSRRHXqPMMV4q92iZCiAxBk8TrNBnD9s6tUDwR+dc3Lkvcf1aESFbGsFe2ZnzFyWpsw=
-X-Received: by 2002:ac2:4a64:0:b0:53d:d951:bbfc with SMTP id
- 2adb3069b0e04-53dd951be49mr2730077e87.55.1732414282943; Sat, 23 Nov 2024
- 18:11:22 -0800 (PST)
+	s=k20201202; t=1732415450;
+	bh=MNKk7Ci3f1opxvYb+4djlIYsEba/X8+/Xe7iEjP1cAg=;
+	h=From:Date:Subject:To:Cc:From;
+	b=EDjhHWpzXUPThA+88eNXqzoljLQGxpY8UvsfEg6HlThHCxtLqEe2ks/tLT7k1HzMc
+	 KtsSbhW6QnNblk2SEQ/2tdR8ZBcCf4peTTnFmU342/drv6Z5EwQ8aaOUw2UVns3tc2
+	 7mGfPUv0FYxVDkAyjgXNoO8CoWcZ4FIIQKrQ9j+dKCd6PbFouZkwNBJwNwykn7KCFn
+	 8tFxU8RFbkzG9ErZw9nU7LHvi/rjuUzfPu+isYvjrEjoCaTTZPpVc/+Rh9WrjiND3V
+	 ZpEQcnoS7PkDFFWq0jbcIGNrfaWKDuXKETD5Wz/XHFiC5vCHn78GhalyO0UiiFJlgw
+	 nxQEScL3WO5qA==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Sat, 23 Nov 2024 19:30:19 -0700
+Subject: [PATCH] riscv: Always inline bitops
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122150037.1085800-1-linux@rasmusvillemoes.dk>
- <CAK7LNAS6aU4L+4JyDXzncMVsY+6XRYTD=RkhcXSUXTRh_WxWWw@mail.gmail.com> <87iksdk3ag.fsf@prevas.dk>
-In-Reply-To: <87iksdk3ag.fsf@prevas.dk>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 24 Nov 2024 11:10:46 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASq+iTgjhCYdwkmgDmyPTbtORgU6UWrs889S4x1xkCHxg@mail.gmail.com>
-Message-ID: <CAK7LNASq+iTgjhCYdwkmgDmyPTbtORgU6UWrs889S4x1xkCHxg@mail.gmail.com>
-Subject: Re: [PATCH v4] setlocalversion: work around "git describe" performance
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jeff King <peff@peff.net>, Sean Christopherson <seanjc@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241123-riscv-always-inline-bitops-v1-1-00e8262ab1cf@kernel.org>
+X-B4-Tracking: v=1; b=H4sIALqPQmcC/x3MSQqEMBAF0KtIrS3IIL3wKuIixtL+IFFS4oB49
+ w69fJv3kEqGKLXVQ1kOKNZUYOuK4jekWRhjMTnjGmud5wyNB4flDLcy0oIkPGBfN2VjnI3NGMR
+ /BirBlmXC9c+7/n1/ZVks2mwAAAA=
+X-Change-ID: 20241123-riscv-always-inline-bitops-0021c4dae36b
+To: Palmer Dabbelt <palmer@dabbelt.com>, Yury Norov <yury.norov@gmail.com>, 
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: Conor Dooley <conor@kernel.org>, linux-riscv@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+ Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5392; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=MNKk7Ci3f1opxvYb+4djlIYsEba/X8+/Xe7iEjP1cAg=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDOlO/TdvLT0Wxn97c4y8gpCEiliyyC8fnc+Vrn2nuQ1KY
+ /1MAhd3lLIwiHExyIopslQ/Vj1uaDjnLOONU5Ng5rAygQxh4OIUgIm8WsrwT8/G7kv+fgXxi5W8
+ C/sEpRcestoyYXur+7ec+HlJ/0STTjD8lZt4uvSmpXBVltslFvcZ/YfWzWta7HAv0H9d5napdrv
+ jDAA=
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-On Sun, Nov 24, 2024 at 7:12=E2=80=AFAM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
->
-> On Sat, Nov 23 2024, Masahiro Yamada <masahiroy@kernel.org> wrote:
->
-> > On Sat, Nov 23, 2024 at 12:01=E2=80=AFAM Rasmus Villemoes
-> > <linux@rasmusvillemoes.dk> wrote:
->
-> >> v4:
-> >>
-> >> - Switch the logic to make use of the return values from try_tag,
-> >>   instead of asking whether $count has been set.
-> >
-> >
-> > No, please do not do this.
-> >
-> > As I replied in v3, my plan is to set -e, because otherwise
-> > the shell script is fragile.
-> >
-> > With this version, -e will not work in try_tag()
-> > because it is used in the if condition.
->
-> I'm confused. Previously you said that "either style is fine with
-> me".
+When building allmodconfig + ThinLTO with certain versions of clang,
+arch_set_bit() may not be inlined, resulting in a modpost warning:
 
-That was my comment in v2.
+  WARNING: modpost: vmlinux: section mismatch in reference: arch_set_bit+0x58 (section: .text.arch_set_bit) -> numa_nodes_parsed (section: .init.data)
 
-At that time, I was not aware that the -e option was missing
-in this script.
+acpi_numa_rintc_affinity_init() calls arch_set_bit() via __node_set()
+with numa_nodes_parsed, which is marked as __initdata. If arch_set_bit()
+is not inlined, modpost will flag that it is being called with data that
+will be freed after init.
 
-Sorry, I changed my mind.
+As acpi_numa_rintc_affinity_init() is marked as __init, there is not
+actually a functional issue here. However, the bitop functions should be
+marked as __always_inline, so that they work consistently for init and
+non-init code, which the comment in include/linux/nodemask.h alludes to.
+This matches s390 and x86's implementations.
 
-In v3, I commented what I like this script to look like
-when turning on the -e option.
-Then, you came back with a different approach.
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+ arch/riscv/include/asm/bitops.h | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
+diff --git a/arch/riscv/include/asm/bitops.h b/arch/riscv/include/asm/bitops.h
+index fae152ea0508d2e1ea490fffd645eab99cf387bf..c6bd3d8354a96b4e7bbef0e98a201da412301b57 100644
+--- a/arch/riscv/include/asm/bitops.h
++++ b/arch/riscv/include/asm/bitops.h
+@@ -228,7 +228,7 @@ static __always_inline int variable_fls(unsigned int x)
+  *
+  * This operation may be reordered on other architectures than x86.
+  */
+-static inline int arch_test_and_set_bit(int nr, volatile unsigned long *addr)
++static __always_inline int arch_test_and_set_bit(int nr, volatile unsigned long *addr)
+ {
+ 	return __test_and_op_bit(or, __NOP, nr, addr);
+ }
+@@ -240,7 +240,7 @@ static inline int arch_test_and_set_bit(int nr, volatile unsigned long *addr)
+  *
+  * This operation can be reordered on other architectures other than x86.
+  */
+-static inline int arch_test_and_clear_bit(int nr, volatile unsigned long *addr)
++static __always_inline int arch_test_and_clear_bit(int nr, volatile unsigned long *addr)
+ {
+ 	return __test_and_op_bit(and, __NOT, nr, addr);
+ }
+@@ -253,7 +253,7 @@ static inline int arch_test_and_clear_bit(int nr, volatile unsigned long *addr)
+  * This operation is atomic and cannot be reordered.
+  * It also implies a memory barrier.
+  */
+-static inline int arch_test_and_change_bit(int nr, volatile unsigned long *addr)
++static __always_inline int arch_test_and_change_bit(int nr, volatile unsigned long *addr)
+ {
+ 	return __test_and_op_bit(xor, __NOP, nr, addr);
+ }
+@@ -270,7 +270,7 @@ static inline int arch_test_and_change_bit(int nr, volatile unsigned long *addr)
+  * Note that @nr may be almost arbitrarily large; this function is not
+  * restricted to acting on a single-word quantity.
+  */
+-static inline void arch_set_bit(int nr, volatile unsigned long *addr)
++static __always_inline void arch_set_bit(int nr, volatile unsigned long *addr)
+ {
+ 	__op_bit(or, __NOP, nr, addr);
+ }
+@@ -284,7 +284,7 @@ static inline void arch_set_bit(int nr, volatile unsigned long *addr)
+  * on non x86 architectures, so if you are writing portable code,
+  * make sure not to rely on its reordering guarantees.
+  */
+-static inline void arch_clear_bit(int nr, volatile unsigned long *addr)
++static __always_inline void arch_clear_bit(int nr, volatile unsigned long *addr)
+ {
+ 	__op_bit(and, __NOT, nr, addr);
+ }
+@@ -298,7 +298,7 @@ static inline void arch_clear_bit(int nr, volatile unsigned long *addr)
+  * Note that @nr may be almost arbitrarily large; this function is not
+  * restricted to acting on a single-word quantity.
+  */
+-static inline void arch_change_bit(int nr, volatile unsigned long *addr)
++static __always_inline void arch_change_bit(int nr, volatile unsigned long *addr)
+ {
+ 	__op_bit(xor, __NOP, nr, addr);
+ }
+@@ -311,7 +311,7 @@ static inline void arch_change_bit(int nr, volatile unsigned long *addr)
+  * This operation is atomic and provides acquire barrier semantics.
+  * It can be used to implement bit locks.
+  */
+-static inline int arch_test_and_set_bit_lock(
++static __always_inline int arch_test_and_set_bit_lock(
+ 	unsigned long nr, volatile unsigned long *addr)
+ {
+ 	return __test_and_op_bit_ord(or, __NOP, nr, addr, .aq);
+@@ -324,7 +324,7 @@ static inline int arch_test_and_set_bit_lock(
+  *
+  * This operation is atomic and provides release barrier semantics.
+  */
+-static inline void arch_clear_bit_unlock(
++static __always_inline void arch_clear_bit_unlock(
+ 	unsigned long nr, volatile unsigned long *addr)
+ {
+ 	__op_bit_ord(and, __NOT, nr, addr, .rl);
+@@ -345,13 +345,13 @@ static inline void arch_clear_bit_unlock(
+  * non-atomic property here: it's a lot more instructions and we still have to
+  * provide release semantics anyway.
+  */
+-static inline void arch___clear_bit_unlock(
++static __always_inline void arch___clear_bit_unlock(
+ 	unsigned long nr, volatile unsigned long *addr)
+ {
+ 	arch_clear_bit_unlock(nr, addr);
+ }
+ 
+-static inline bool arch_xor_unlock_is_negative_byte(unsigned long mask,
++static __always_inline bool arch_xor_unlock_is_negative_byte(unsigned long mask,
+ 		volatile unsigned long *addr)
+ {
+ 	unsigned long res;
 
-> Now you've invented some necessity to add "set -e", which of course
-> yes, is then suppressed inside try_tag. But there is not a single
-> statement within that that would cause "set -e" to exit anyway: The only
-> one that is not a simple assignment or is itself a test is the "set --
-> $()", and git rev-list failing there does not cause set -e to trigger.
+---
+base-commit: 0eb512779d642b21ced83778287a0f7a3ca8f2a1
+change-id: 20241123-riscv-always-inline-bitops-0021c4dae36b
 
-This is correct, but think about the resiliency when someone
-adds more code to try_tag() in the future.
+Best regards,
+-- 
+Nathan Chancellor <nathan@kernel.org>
 
-
-> Aside from that, I'm skeptical to introducing set -e anyway, it's simply
-> too hard to reason about what it will actually
-> do. http://mywiki.wooledge.org/BashFAQ/105 . But you're the maintainer.
-
-
-
-First, set -e is almost always useful because it is not realistic
-to add '|| exit 1' for every command.
-
-For example, see commit bc53d3d777f81385c1bb08b07bd1c06450ecc2c1
-how the -e catches an error.
-
-Second, the link you reference is exaggerating.
-
-For example, the article mentioned the quirks in the Bash mode.
-This argument is not applicable in our case because
-Bash runs in the POSIX mode when it is invoked as 'sh'.
-Since this script is invoked by #!/bin/sh,
-'set -e' follows the POSIX behavior whether /bin/sh is a
-symlink to bash or dash.
-The -e option is propagated to subshell executions.
-(It would not if the shebang had been #!/bin/bash,
-but Bash still provides "set -o posix" to cater to this case).
-
-In the referred link, I do not find a good reason to
-avoid using the -e option.
-
-When a function returns a value (yes/no question just like
-try_tag()), you need to be careful about the possible
-third case.
-
-1) yes
-2) no
-3) error
-
-
-I hope the following provides even more clarification.
-
-Let's say, is_ancestor_tag() checks if the given tag is
-an ancestor or not.
-
-
-
-[Bad Code]
-
-set -e
-
-if is_ancestor_tag "${tag}"; then
-        # Any error in is_ancestor_tag() is ignored.
-        # "Yes, ... " may be printed even if  an error occurs.
-        echo "Yes, ${tag} is an ancestor"
-else
-        echo "No, ${tag} is not an ancestor"
-fi
-
-
-[Good Code 1]
-
-set -e
-
-ret=3D$(is_ancestor_tag "${tag}")
-# If any error occurs in is_ancestor_tag()
-# the script is terminated here.
-
-if [ "${ret}" =3D yes ]; then
-        echo "Yes, ${tag} is an ancestor"
-else
-        echo "No, ${tag} is not an ancestor"
-fi
-
-
-[Good Code 2]
-
-set -e
-
-# is_ancestor_tag() sets 'ret' in the function body
-is_ancestor_tag "${tag}"
-if [ "${ret}" =3D yes ]; then
-        echo "Yes, ${tag} is an ancestor"
-else
-        echo "No, ${tag} is not an ancestor"
-fi
-
-
-V3 is [Good Code 2], as the return value, 'count' is assigned
-within the try_tag() function, and the caller checks it.
-
-
-
-
-
-
-
-
-> >> +try_tag() {
-> >> +       tag=3D"$1"
-> >> +
-> >> +       # Is $tag an annotated tag?
-> >> +       [ "$(git cat-file -t "$tag" 2> /dev/null)" =3D tag ] || return=
- 1
-> >> +
-> >> +       # Is it an ancestor of HEAD, and if so, how many commits are i=
-n $tag..HEAD?
-> >> +       # shellcheck disable=3DSC2046 # word splitting is the point he=
-re
-> >> +       set -- $(git rev-list --count --left-right "$tag"...HEAD 2> /d=
-ev/null)
-> >> +
-> >> +       # $1 is 0 if and only if $tag is an ancestor of HEAD. Use
-> >> +       # string comparison, because $1 is empty if the 'git rev-list'
-> >> +       # command somehow failed.
-> >> +       [ "$1" =3D 0 ] || return 1
-> >> +
-> >> +       # $2 is the number of commits in the range $tag..HEAD, possibl=
-y 0.
-> >> +       count=3D"$2"
-> >
-> > Redundant double-quotes.
->
-> Perhaps, but sorry, I'm not code-golfing, and trying to remember when
-> quotes can be elided when variables are referenced is simply not
-> something I spend my very limited brain capacity on.
->
-> Feel free to make any adjustments you want and commit that, or drop
-> this, I'm not sending a v5 as that seems to be a waste of everybody's
-> time.
->
-> Rasmus
-
-
-
---
-Best Regards
-Masahiro Yamada
 
