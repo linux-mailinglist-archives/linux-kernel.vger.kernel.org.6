@@ -1,268 +1,278 @@
-Return-Path: <linux-kernel+bounces-419590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 224E29D7079
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 14:34:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BFF19D726A
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:08:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAD9EB32D27
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 13:16:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33BA4B2EAC0
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 13:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226651F76B4;
-	Sun, 24 Nov 2024 12:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6521F6693;
+	Sun, 24 Nov 2024 12:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HlSyy5Up"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pa688dDh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1851F76A4;
-	Sun, 24 Nov 2024 12:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BDF1F667F;
+	Sun, 24 Nov 2024 12:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732452754; cv=none; b=mQPKsyZZbhra2LEZ/UUdcuOCccWPljt0S2qQSzW7gvdmZzpOR+ZJu2jZoWxJaHPsCXfD/Upd8Z1nUQZ3nuaT34p1adpc76oaKnvmVBsqpNWQ6SEeEBFvzWvNPXjLwD5402UbJvaj8IRMBXsS1Vd18gqWzVhRYtHXK8OXd1cmIts=
+	t=1732452734; cv=none; b=PqfVo9ypGxbWicwb/e+pQWH3NtY9/mRA9UCRGgWIsTH0HJpGxrgeNHFFXi/q07r9GobWGiJ5QKaT3a3aVH9jX2iz61EE4kGs2e08Ndwd5+f/VPk9vgm7zfOzsY22n25LE0B7eHM2ndIpMYEYuekZVME10Rvu7Nsm3GenJcelIxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732452754; c=relaxed/simple;
-	bh=JnPf8NKw029622pt0I22TvxjOvk0OM+x+LzF25eW7Xw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TKTeP3ysBiy0My32V1aP5gwB4t10JK1sJrO4+p4tMCz051AS9IkHACIuMNFiiHkDN8qCeF1nMV8QdtBW+SmymFYubW7ly16mIppoeJzkZ0PXqKV09mFCaq694ORatIFSupyztcmsaFirYrLP+hz6SsDV0LWABnKZL3Gi5Wtv1lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HlSyy5Up; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A1B6C4CECC;
-	Sun, 24 Nov 2024 12:52:33 +0000 (UTC)
+	s=arc-20240116; t=1732452734; c=relaxed/simple;
+	bh=ZLItKeFVpAfe6+B3dnl0rc2rin68FgFRSXSioc5OKj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aZAdSz+h6jZ2EX9JvQV65TvvKdI5mLq0D71wkrHL9NKL1s/bxsOkhDCvT4clmGVlX1mGSqfIhUUlwtvlWHUhwIuEINkYzL7wg/ktXhnFlvAsFGANfQfa+Phm+qFNauGuNDKAvBzrh6eN1Vd8Mjf9LeFzPjnN7XPCWS17kcw/wn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pa688dDh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47F54C4CED6;
+	Sun, 24 Nov 2024 12:52:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732452754;
-	bh=JnPf8NKw029622pt0I22TvxjOvk0OM+x+LzF25eW7Xw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HlSyy5UpzYMRupm1tLOT4JUDrW60yeTWzxW52U6K7de/eE7CFI4dCbX/T26BqCYTi
-	 VVWSqVAGbMgvx7hm1BfAdNzDA/yXq13dHSrBOY4VOOeJ+ZWT5mxOD4cUoXMXM+N2KJ
-	 huzJ6oFaMnTdOsgxHw1bQ1QL3zQ5ncd6rqbDASGJQKY2I/xii29sK5y2teR17RT1FR
-	 IYQsOrCDvJjHfMt4ZcrjylkmKCiDYiTccwR6xD9VwjKIccSQfpGl6pmgHZb5yTEY2r
-	 Ii+OHoyjNMgTyuWMfudfbwlVfkhpQI81ae2AmJZ8zOyWAEDsmWqclELOmNoX6Zz4h9
-	 TuJMD0jdvyM5Q==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Callahan Kovacs <callahankovacs@gmail.com>,
-	Jiri Kosina <jkosina@suse.com>,
-	Sasha Levin <sashal@kernel.org>,
-	jikos@kernel.org,
-	bentiss@kernel.org,
-	linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.11 20/20] HID: magicmouse: Apple Magic Trackpad 2 USB-C driver support
-Date: Sun, 24 Nov 2024 07:50:50 -0500
-Message-ID: <20241124125124.3339648-20-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241124125124.3339648-1-sashal@kernel.org>
-References: <20241124125124.3339648-1-sashal@kernel.org>
+	s=k20201202; t=1732452734;
+	bh=ZLItKeFVpAfe6+B3dnl0rc2rin68FgFRSXSioc5OKj8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=pa688dDhzOGrLy4O5R+AippHWZK711zs+jdJlYfzDhJ1rACyvE6BUZSAUES6xUoFK
+	 0pRkTR91nPRjDAShcmXKYbYDS4xtRqp8zL0roTT41W7jE7TydhXAel0IAkVg8XqBoS
+	 6xBPlA3lh8DAp/gAqI+uIJiXEls5WAxIsmtUxPI4BJT56qubLuQa93CzExXoCFfFME
+	 TUSA1DxXX4CpdSIcs8NmYyehWvLeLq249HaxoaFftCFc/Jy1pN5eTRMk5oxQ8VMg2q
+	 uwval16uzXOD8VXOhR5iyyN8bOb7ZbFUY2khc1OpPPJr/ADc0qghVGkkJzvXPU2eBG
+	 BoVL2J1Vy4QXA==
+Date: Sun, 24 Nov 2024 12:52:06 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Trevor Gamblin <tgamblin@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ David Lechner <dlechner@baylibre.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] iio: adc: ad4695: fix buffered read, single
+ sample timings
+Message-ID: <20241124125206.1ffd6e6c@jic23-huawei>
+In-Reply-To: <20241113-tgamblin-ad4695_improvements-v2-1-b6bb7c758fc4@baylibre.com>
+References: <20241113-tgamblin-ad4695_improvements-v2-0-b6bb7c758fc4@baylibre.com>
+	<20241113-tgamblin-ad4695_improvements-v2-1-b6bb7c758fc4@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.11.10
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Callahan Kovacs <callahankovacs@gmail.com>
+On Wed, 13 Nov 2024 15:52:58 -0500
+Trevor Gamblin <tgamblin@baylibre.com> wrote:
 
-[ Upstream commit 87a2f10395c82c2b4687bb8611a6c5663a12f9e7 ]
+> Modify ad4695_buffer_preenable() by adding an extra SPI transfer after
+> each data read to help ensure that the timing requirement between the
+> last SCLK rising edge and the next CNV rising edge is met. This requires
+> a restructure of the buf_read_xfer array in ad4695_state. Also define
+> AD4695_T_SCK_CNV_DELAY_NS to use for each added transfer. Without this
+> change it is possible for the data to become corrupted on sequential
+> buffered reads due to the device not properly exiting conversion mode.
+> 
+> Similarly, make adjustments to ad4695_read_one_sample() so that timings
+> are respected, and clean up the function slightly in the process.
+> 
+> Fixes: 6cc7e4bf2e08 ("iio: adc: ad4695: implement triggered buffer")
+> Co-developed-by: David Lechner <dlechner@baylibre.com>
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+> ---
+Applied to the fixes-togreg branch of iio.git. I'll rebase that
+and send out a pull shortly after rc1.
 
-Adds driver support for the USB-C model of Apple's Magic Trackpad 2.
+The other two will have to wait for that to cycle around to be
+in the upstream for my togreg branch later in the cycle.
 
-The 2024 USB-C model is compatible with the existing Magic Trackpad 2
-driver but has a different hardware ID.
+Thanks,
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=219470
-Signed-off-by: Callahan Kovacs <callahankovacs@gmail.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/hid/hid-ids.h        |  1 +
- drivers/hid/hid-magicmouse.c | 56 ++++++++++++++++++++++++++----------
- 2 files changed, 42 insertions(+), 15 deletions(-)
+Jonathan
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 92cff3f2658cf..0f23be98c56e2 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -94,6 +94,7 @@
- #define USB_DEVICE_ID_APPLE_MAGICMOUSE2	0x0269
- #define USB_DEVICE_ID_APPLE_MAGICTRACKPAD	0x030e
- #define USB_DEVICE_ID_APPLE_MAGICTRACKPAD2	0x0265
-+#define USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC	0x0324
- #define USB_DEVICE_ID_APPLE_FOUNTAIN_ANSI	0x020e
- #define USB_DEVICE_ID_APPLE_FOUNTAIN_ISO	0x020f
- #define USB_DEVICE_ID_APPLE_GEYSER_ANSI	0x0214
-diff --git a/drivers/hid/hid-magicmouse.c b/drivers/hid/hid-magicmouse.c
-index 2eb285b97fc01..4ba30f497448a 100644
---- a/drivers/hid/hid-magicmouse.c
-+++ b/drivers/hid/hid-magicmouse.c
-@@ -227,7 +227,9 @@ static void magicmouse_emit_touch(struct magicmouse_sc *msc, int raw_id, u8 *tda
- 		touch_minor = tdata[4];
- 		state = tdata[7] & TOUCH_STATE_MASK;
- 		down = state != TOUCH_STATE_NONE;
--	} else if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
-+	} else if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
-+		   input->id.product ==
-+			   USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) {
- 		id = tdata[8] & 0xf;
- 		x = (tdata[1] << 27 | tdata[0] << 19) >> 19;
- 		y = -((tdata[3] << 30 | tdata[2] << 22 | tdata[1] << 14) >> 19);
-@@ -259,8 +261,9 @@ static void magicmouse_emit_touch(struct magicmouse_sc *msc, int raw_id, u8 *tda
- 	/* If requested, emulate a scroll wheel by detecting small
- 	 * vertical touch motions.
- 	 */
--	if (emulate_scroll_wheel && (input->id.product !=
--			USB_DEVICE_ID_APPLE_MAGICTRACKPAD2)) {
-+	if (emulate_scroll_wheel &&
-+	    input->id.product != USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 &&
-+	    input->id.product != USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) {
- 		unsigned long now = jiffies;
- 		int step_x = msc->touches[id].scroll_x - x;
- 		int step_y = msc->touches[id].scroll_y - y;
-@@ -359,7 +362,9 @@ static void magicmouse_emit_touch(struct magicmouse_sc *msc, int raw_id, u8 *tda
- 		input_report_abs(input, ABS_MT_POSITION_X, x);
- 		input_report_abs(input, ABS_MT_POSITION_Y, y);
- 
--		if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2)
-+		if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
-+		    input->id.product ==
-+			    USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC)
- 			input_report_abs(input, ABS_MT_PRESSURE, pressure);
- 
- 		if (report_undeciphered) {
-@@ -367,7 +372,9 @@ static void magicmouse_emit_touch(struct magicmouse_sc *msc, int raw_id, u8 *tda
- 			    input->id.product == USB_DEVICE_ID_APPLE_MAGICMOUSE2)
- 				input_event(input, EV_MSC, MSC_RAW, tdata[7]);
- 			else if (input->id.product !=
--					USB_DEVICE_ID_APPLE_MAGICTRACKPAD2)
-+					 USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 &&
-+				 input->id.product !=
-+					 USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC)
- 				input_event(input, EV_MSC, MSC_RAW, tdata[8]);
- 		}
- 	}
-@@ -493,7 +500,9 @@ static int magicmouse_raw_event(struct hid_device *hdev,
- 		magicmouse_emit_buttons(msc, clicks & 3);
- 		input_report_rel(input, REL_X, x);
- 		input_report_rel(input, REL_Y, y);
--	} else if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
-+	} else if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
-+		   input->id.product ==
-+			   USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) {
- 		input_mt_sync_frame(input);
- 		input_report_key(input, BTN_MOUSE, clicks & 1);
- 	} else { /* USB_DEVICE_ID_APPLE_MAGICTRACKPAD */
-@@ -545,7 +554,9 @@ static int magicmouse_setup_input(struct input_dev *input, struct hid_device *hd
- 			__set_bit(REL_WHEEL_HI_RES, input->relbit);
- 			__set_bit(REL_HWHEEL_HI_RES, input->relbit);
- 		}
--	} else if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
-+	} else if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
-+		   input->id.product ==
-+			   USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) {
- 		/* If the trackpad has been connected to a Mac, the name is
- 		 * automatically personalized, e.g., "José Expósito's Trackpad".
- 		 * When connected through Bluetooth, the personalized name is
-@@ -621,7 +632,9 @@ static int magicmouse_setup_input(struct input_dev *input, struct hid_device *hd
- 				  MOUSE_RES_X);
- 		input_abs_set_res(input, ABS_MT_POSITION_Y,
- 				  MOUSE_RES_Y);
--	} else if (input->id.product ==  USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
-+	} else if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
-+		   input->id.product ==
-+			   USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) {
- 		input_set_abs_params(input, ABS_MT_PRESSURE, 0, 253, 0, 0);
- 		input_set_abs_params(input, ABS_PRESSURE, 0, 253, 0, 0);
- 		input_set_abs_params(input, ABS_MT_ORIENTATION, -3, 4, 0, 0);
-@@ -660,7 +673,8 @@ static int magicmouse_setup_input(struct input_dev *input, struct hid_device *hd
- 	input_set_events_per_packet(input, 60);
- 
- 	if (report_undeciphered &&
--	    input->id.product != USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
-+	    input->id.product != USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 &&
-+	    input->id.product != USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) {
- 		__set_bit(EV_MSC, input->evbit);
- 		__set_bit(MSC_RAW, input->mscbit);
- 	}
-@@ -685,7 +699,9 @@ static int magicmouse_input_mapping(struct hid_device *hdev,
- 
- 	/* Magic Trackpad does not give relative data after switching to MT */
- 	if ((hi->input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD ||
--	     hi->input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) &&
-+	     hi->input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
-+	     hi->input->id.product ==
-+		     USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) &&
- 	    field->flags & HID_MAIN_ITEM_RELATIVE)
- 		return -1;
- 
-@@ -721,7 +737,8 @@ static int magicmouse_enable_multitouch(struct hid_device *hdev)
- 	int ret;
- 	int feature_size;
- 
--	if (hdev->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
-+	if (hdev->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
-+	    hdev->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) {
- 		if (hdev->vendor == BT_VENDOR_ID_APPLE) {
- 			feature_size = sizeof(feature_mt_trackpad2_bt);
- 			feature = feature_mt_trackpad2_bt;
-@@ -766,7 +783,8 @@ static int magicmouse_fetch_battery(struct hid_device *hdev)
- 
- 	if (!hdev->battery || hdev->vendor != USB_VENDOR_ID_APPLE ||
- 	    (hdev->product != USB_DEVICE_ID_APPLE_MAGICMOUSE2 &&
--	     hdev->product != USB_DEVICE_ID_APPLE_MAGICTRACKPAD2))
-+	     hdev->product != USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 &&
-+	     hdev->product != USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC))
- 		return -1;
- 
- 	report_enum = &hdev->report_enum[hdev->battery_report_type];
-@@ -835,7 +853,9 @@ static int magicmouse_probe(struct hid_device *hdev,
- 
- 	if (id->vendor == USB_VENDOR_ID_APPLE &&
- 	    (id->product == USB_DEVICE_ID_APPLE_MAGICMOUSE2 ||
--	     (id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 && hdev->type != HID_TYPE_USBMOUSE)))
-+	     ((id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
-+	       id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) &&
-+	      hdev->type != HID_TYPE_USBMOUSE)))
- 		return 0;
- 
- 	if (!msc->input) {
-@@ -850,7 +870,8 @@ static int magicmouse_probe(struct hid_device *hdev,
- 	else if (id->product == USB_DEVICE_ID_APPLE_MAGICMOUSE2)
- 		report = hid_register_report(hdev, HID_INPUT_REPORT,
- 			MOUSE2_REPORT_ID, 0);
--	else if (id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
-+	else if (id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
-+		 id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) {
- 		if (id->vendor == BT_VENDOR_ID_APPLE)
- 			report = hid_register_report(hdev, HID_INPUT_REPORT,
- 				TRACKPAD2_BT_REPORT_ID, 0);
-@@ -920,7 +941,8 @@ static __u8 *magicmouse_report_fixup(struct hid_device *hdev, __u8 *rdesc,
- 	 */
- 	if (hdev->vendor == USB_VENDOR_ID_APPLE &&
- 	    (hdev->product == USB_DEVICE_ID_APPLE_MAGICMOUSE2 ||
--	     hdev->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) &&
-+	     hdev->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
-+	     hdev->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) &&
- 	    *rsize == 83 && rdesc[46] == 0x84 && rdesc[58] == 0x85) {
- 		hid_info(hdev,
- 			 "fixing up magicmouse battery report descriptor\n");
-@@ -951,6 +973,10 @@ static const struct hid_device_id magic_mice[] = {
- 		USB_DEVICE_ID_APPLE_MAGICTRACKPAD2), .driver_data = 0 },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE,
- 		USB_DEVICE_ID_APPLE_MAGICTRACKPAD2), .driver_data = 0 },
-+	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE,
-+		USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC), .driver_data = 0 },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE,
-+		USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC), .driver_data = 0 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(hid, magic_mice);
--- 
-2.43.0
+>  drivers/iio/adc/ad4695.c | 100 ++++++++++++++++++++++++++++++++---------------
+>  1 file changed, 69 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad4695.c b/drivers/iio/adc/ad4695.c
+> index 595ec4158e73..0146aed9069f 100644
+> --- a/drivers/iio/adc/ad4695.c
+> +++ b/drivers/iio/adc/ad4695.c
+> @@ -91,6 +91,7 @@
+>  #define AD4695_T_WAKEUP_SW_MS		3
+>  #define AD4695_T_REFBUF_MS		100
+>  #define AD4695_T_REGCONFIG_NS		20
+> +#define AD4695_T_SCK_CNV_DELAY_NS	80
+>  #define AD4695_REG_ACCESS_SCLK_HZ	(10 * MEGA)
+>  
+>  /* Max number of voltage input channels. */
+> @@ -132,8 +133,13 @@ struct ad4695_state {
+>  	unsigned int vref_mv;
+>  	/* Common mode input pin voltage. */
+>  	unsigned int com_mv;
+> -	/* 1 per voltage and temperature chan plus 1 xfer to trigger 1st CNV */
+> -	struct spi_transfer buf_read_xfer[AD4695_MAX_CHANNELS + 2];
+> +	/*
+> +	 * 2 per voltage and temperature chan plus 1 xfer to trigger 1st
+> +	 * CNV. Excluding the trigger xfer, every 2nd xfer only serves
+> +	 * to control CS and add a delay between the last SCLK and next
+> +	 * CNV rising edges.
+> +	 */
+> +	struct spi_transfer buf_read_xfer[AD4695_MAX_CHANNELS * 2 + 3];
+>  	struct spi_message buf_read_msg;
+>  	/* Raw conversion data received. */
+>  	u8 buf[ALIGN((AD4695_MAX_CHANNELS + 2) * AD4695_MAX_CHANNEL_SIZE,
+> @@ -423,7 +429,7 @@ static int ad4695_buffer_preenable(struct iio_dev *indio_dev)
+>  	u8 temp_chan_bit = st->chip_info->num_voltage_inputs;
+>  	u32 bit, num_xfer, num_slots;
+>  	u32 temp_en = 0;
+> -	int ret;
+> +	int ret, rx_buf_offset = 0;
+>  
+>  	/*
+>  	 * We are using the advanced sequencer since it is the only way to read
+> @@ -449,11 +455,9 @@ static int ad4695_buffer_preenable(struct iio_dev *indio_dev)
+>  	iio_for_each_active_channel(indio_dev, bit) {
+>  		xfer = &st->buf_read_xfer[num_xfer];
+>  		xfer->bits_per_word = 16;
+> -		xfer->rx_buf = &st->buf[(num_xfer - 1) * 2];
+> +		xfer->rx_buf = &st->buf[rx_buf_offset];
+>  		xfer->len = 2;
+> -		xfer->cs_change = 1;
+> -		xfer->cs_change_delay.value = AD4695_T_CONVERT_NS;
+> -		xfer->cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
+> +		rx_buf_offset += xfer->len;
+>  
+>  		if (bit == temp_chan_bit) {
+>  			temp_en = 1;
+> @@ -468,21 +472,44 @@ static int ad4695_buffer_preenable(struct iio_dev *indio_dev)
+>  		}
+>  
+>  		num_xfer++;
+> +
+> +		/*
+> +		 * We need to add a blank xfer in data reads, to meet the timing
+> +		 * requirement of a minimum delay between the last SCLK rising
+> +		 * edge and the CS deassert.
+> +		 */
+> +		xfer = &st->buf_read_xfer[num_xfer];
+> +		xfer->delay.value = AD4695_T_SCK_CNV_DELAY_NS;
+> +		xfer->delay.unit = SPI_DELAY_UNIT_NSECS;
+> +		xfer->cs_change = 1;
+> +		xfer->cs_change_delay.value = AD4695_T_CONVERT_NS;
+> +		xfer->cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
+> +
+> +		num_xfer++;
+>  	}
+>  
+>  	/*
+>  	 * The advanced sequencer requires that at least 2 slots are enabled.
+>  	 * Since slot 0 is always used for other purposes, we need only 1
+> -	 * enabled voltage channel to meet this requirement. If the temperature
+> -	 * channel is the only enabled channel, we need to add one more slot
+> -	 * in the sequence but not read from it.
+> +	 * enabled voltage channel to meet this requirement.  If the temperature
+> +	 * channel is the only enabled channel, we need to add one more slot in
+> +	 * the sequence but not read from it. This is because the temperature
+> +	 * sensor is sampled at the end of the channel sequence in advanced
+> +	 * sequencer mode (see datasheet page 38).
+> +	 *
+> +	 * From the iio_for_each_active_channel() block above, we now have an
+> +	 * xfer with data followed by a blank xfer to allow us to meet the
+> +	 * timing spec, so move both of those up before adding an extra to
+> +	 * handle the temperature-only case.
+>  	 */
+>  	if (num_slots < 2) {
+> -		/* move last xfer so we can insert one more xfer before it */
+> -		st->buf_read_xfer[num_xfer] = *xfer;
+> +		/* Move last two xfers */
+> +		st->buf_read_xfer[num_xfer] = st->buf_read_xfer[num_xfer - 1];
+> +		st->buf_read_xfer[num_xfer - 1] = st->buf_read_xfer[num_xfer - 2];
+>  		num_xfer++;
+>  
+> -		/* modify 2nd to last xfer for extra slot */
+> +		/* Modify inserted xfer for extra slot. */
+> +		xfer = &st->buf_read_xfer[num_xfer - 3];
+>  		memset(xfer, 0, sizeof(*xfer));
+>  		xfer->cs_change = 1;
+>  		xfer->delay.value = st->chip_info->t_acq_ns;
+> @@ -499,6 +526,12 @@ static int ad4695_buffer_preenable(struct iio_dev *indio_dev)
+>  			return ret;
+>  
+>  		num_slots++;
+> +
+> +		/*
+> +		 * We still want to point at the last xfer when finished, so
+> +		 * update the pointer.
+> +		 */
+> +		xfer = &st->buf_read_xfer[num_xfer - 1];
+>  	}
+>  
+>  	/*
+> @@ -583,8 +616,20 @@ static irqreturn_t ad4695_trigger_handler(int irq, void *p)
+>   */
+>  static int ad4695_read_one_sample(struct ad4695_state *st, unsigned int address)
+>  {
+> -	struct spi_transfer xfer[2] = { };
+> -	int ret, i = 0;
+> +	struct spi_transfer xfers[2] = {
+> +		{
+> +			.speed_hz = AD4695_REG_ACCESS_SCLK_HZ,
+> +			.bits_per_word = 16,
+> +			.tx_buf = &st->cnv_cmd,
+> +			.len = 2,
+> +		},
+> +		{
+> +			/* Required delay between last SCLK and CNV/CS */
+> +			.delay.value = AD4695_T_SCK_CNV_DELAY_NS,
+> +			.delay.unit = SPI_DELAY_UNIT_NSECS,
+> +		}
+> +	};
+> +	int ret;
+>  
+>  	ret = ad4695_set_single_cycle_mode(st, address);
+>  	if (ret)
+> @@ -592,29 +637,22 @@ static int ad4695_read_one_sample(struct ad4695_state *st, unsigned int address)
+>  
+>  	/*
+>  	 * Setting the first channel to the temperature channel isn't supported
+> -	 * in single-cycle mode, so we have to do an extra xfer to read the
+> -	 * temperature.
+> +	 * in single-cycle mode, so we have to do an extra conversion to read
+> +	 * the temperature.
+>  	 */
+>  	if (address == AD4695_CMD_TEMP_CHAN) {
+> -		/* We aren't reading, so we can make this a short xfer. */
+> -		st->cnv_cmd2 = AD4695_CMD_TEMP_CHAN << 3;
+> -		xfer[0].tx_buf = &st->cnv_cmd2;
+> -		xfer[0].len = 1;
+> -		xfer[0].cs_change = 1;
+> -		xfer[0].cs_change_delay.value = AD4695_T_CONVERT_NS;
+> -		xfer[0].cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
+> -
+> -		i = 1;
+> +		st->cnv_cmd = AD4695_CMD_TEMP_CHAN << 11;
+> +
+> +		ret = spi_sync_transfer(st->spi, xfers, ARRAY_SIZE(xfers));
+> +		if (ret)
+> +			return ret;
+>  	}
+>  
+>  	/* Then read the result and exit conversion mode. */
+>  	st->cnv_cmd = AD4695_CMD_EXIT_CNV_MODE << 11;
+> -	xfer[i].bits_per_word = 16;
+> -	xfer[i].tx_buf = &st->cnv_cmd;
+> -	xfer[i].rx_buf = &st->raw_data;
+> -	xfer[i].len = 2;
+> +	xfers[0].rx_buf = &st->raw_data;
+>  
+> -	return spi_sync_transfer(st->spi, xfer, i + 1);
+> +	return spi_sync_transfer(st->spi, xfers, ARRAY_SIZE(xfers));
+>  }
+>  
+>  static int ad4695_read_raw(struct iio_dev *indio_dev,
+> 
 
 
