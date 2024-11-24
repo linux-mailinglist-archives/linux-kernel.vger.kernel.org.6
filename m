@@ -1,120 +1,121 @@
-Return-Path: <linux-kernel+bounces-420254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8DC49D77A3
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:05:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 587BA9D77AB
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:07:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E10A281FD6
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 19:05:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF674162029
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 19:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BDC145A0B;
-	Sun, 24 Nov 2024 19:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB5814A4FF;
+	Sun, 24 Nov 2024 19:07:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MUZUY+FI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HJEKVx+0"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD84F74BE1;
-	Sun, 24 Nov 2024 19:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B1F17BA6;
+	Sun, 24 Nov 2024 19:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732475133; cv=none; b=V9sf0HxhoXtvwZ6jZVEkl0cdy3m5TRKIUUXJPK4Myh2F9/akvp09Nj9inMFUNOdDGyLjoFnSwSrmRy0Dc2/+R+q+EMYTvKzfYe+DCK5kEwGbfoAeZhdmBDbpqK5iqwoPI1O63YdyZftdG6/frqKdA2i4npfiL3qHccN7FZfWNSE=
+	t=1732475254; cv=none; b=l3aKzJFWo92EZcTgvoFIjMREQGjkzHP87TNOMRQPtYSLBJcsuaKEPGoQsOn4UnRCAyYxUQquSj42hCHAX5rRT62x31iEdY3hBJSyGQS5bCO9r0lqpBbC+bL4FOMk+Ztz/Q5e254zsjZKafG5o2vIKSvKz5+D2OwosAwj3wui724=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732475133; c=relaxed/simple;
-	bh=gJ39YNdqVALmmIgom11PXBFoRDla3/H13dkv33g2bcs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aVv0JASSuFEw8sE6M46SQmzZxDsmfc4y22buCdYkpkE8I7mgX1GiO9Gk8mJzAS6uXUVol8/nqN6M5VsU1kxu+uEAO9WZYM8P4sh6lzICRVkjzg362yppArLzFnhMgrR7hl+f4tuawpbXGwSDEVGEX9++NutiPIHqxOoK+1ZmhP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MUZUY+FI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E934C4CECC;
-	Sun, 24 Nov 2024 19:05:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732475132;
-	bh=gJ39YNdqVALmmIgom11PXBFoRDla3/H13dkv33g2bcs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MUZUY+FIbVToph6L03X8tD6uz2HAFzgq5skkYV2gzRKhAfUzJDRJrJ2rLSUIZPooW
-	 MVBVaKM9l+CSk43AqS6Nw1j1M1ZiF861ka+VpWXNqjt1NlAnEs50YuK677xsKdoLWM
-	 O4rc+JE/O66gaEIO7h9axA+seiAj8rDsLqRHGo13yXJn3l84MrU8zpqr0s1xl/gwvO
-	 2N0dvm2PA9IWq5u7ho4/lTe/OKQjUw3fw9Ch2BZLl+9s+DRtWx9r8+U/Q7qxvYEfL8
-	 O0YkT6Kup2AHXMkdhS7pYo/JEBOsE1T9yIpAHha8w/4ZNmCFOGqVm4827GoQPFzSM4
-	 BA6KgjjMeq4gQ==
-Date: Sun, 24 Nov 2024 19:05:25 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v2 19/22] iio: accel: adxl345: prepare FIFO watermark
- handling
-Message-ID: <20241124190525.51cc08ff@jic23-huawei>
-In-Reply-To: <20241117182651.115056-20-l.rubusch@gmail.com>
-References: <20241117182651.115056-1-l.rubusch@gmail.com>
-	<20241117182651.115056-20-l.rubusch@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732475254; c=relaxed/simple;
+	bh=esIeKPZ5uMUcixde5dcDskkQnFhBhetH5uV6GOY/E54=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=li1sPRgMEY25i3Up+v8GaAC7LtKJTyaKnYX2v8F6V13Kb/+81tdhTStZJQRkoFEElr7QAMy2BdUnzEIO1m4MxLdQhE3n6v542NhWNp6oPOzXNPN0n30Bd3SuxpVSVMKFvrvp7ocoWgfA2YiwGH9U+mH3RyYWjGCpijjpPr1zOGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HJEKVx+0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AO9Q1TI013221;
+	Sun, 24 Nov 2024 19:07:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Bkre2WeoGiPhovYus2RkV3ZM5DAJZ4Ku2XTeN1DLg+M=; b=HJEKVx+0D67xsjSp
+	9RpCLAS+OHmQ6u5PiLD+Q+wdS2ppmbMTCT/EuX40FlM1mHRrdiu58m0yhZ5xDiLV
+	xetOZXBFDeEOmyio4hb58W7215cxWBqlzdLQYTBa/Dn/XEvMT3lpx9HU85NFswyj
+	KT33I+wvYXNmVp8VTiXfUJGX9eNhUEmAv9pCJJ2mE86YFqWG7e6xqB6eKVaNKDv2
+	tMYQuTf6c4Yq1dhZOChU/595R5JHejU/MnaNcUvmPoltuqzw7lRwIU8YC4etA5ju
+	iRSigIucMWQrcwGZI/Ea8B2t1yUfRFbCCIQpbQS7bg4Id82ieHJNMP4pBkJ8v4Fn
+	3OJuRw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4337e6tmvw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 24 Nov 2024 19:07:23 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AOJ7MKS000470
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 24 Nov 2024 19:07:22 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 24 Nov
+ 2024 11:07:21 -0800
+Message-ID: <51afee37-2c90-d31a-978c-5681dccd5ccb@quicinc.com>
+Date: Sun, 24 Nov 2024 12:07:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH AUTOSEL 6.12 033/107] accel/qaic: Add AIC080 support
+Content-Language: en-US
+To: Sasha Levin <sashal@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>
+CC: Troy Hanson <quic_thanson@quicinc.com>,
+        Jacek Lawrynowicz
+	<jacek.lawrynowicz@linux.intel.com>,
+        <ogabbay@kernel.org>, <corbet@lwn.net>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-doc@vger.kernel.org>
+References: <20241124133301.3341829-1-sashal@kernel.org>
+ <20241124133301.3341829-33-sashal@kernel.org>
+From: Jeffrey Hugo <quic_jhugo@quicinc.com>
+In-Reply-To: <20241124133301.3341829-33-sashal@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: P6p515Ej5zV_wAaxb-O7SdWDXz9JZpjc
+X-Proofpoint-ORIG-GUID: P6p515Ej5zV_wAaxb-O7SdWDXz9JZpjc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 impostorscore=0 malwarescore=0 clxscore=1031
+ lowpriorityscore=0 spamscore=0 mlxscore=0 mlxlogscore=999 adultscore=0
+ suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2411240168
 
-On Sun, 17 Nov 2024 18:26:48 +0000
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
-
-> Add the feature of the adxl345 and related sensors to manage a FIFO in
-> stream mode by a watermark level. Provide means to set the watermark
-> through the IIO api and sysfs interface.
+On 11/24/2024 6:28 AM, Sasha Levin wrote:
+> From: Jeffrey Hugo <quic_jhugo@quicinc.com>
 > 
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> [ Upstream commit b8128f7815ff135f0333c1b46dcdf1543c41b860 ]
+> 
+> Add basic support for the new AIC080 product. The PCIe Device ID is
+> 0xa080. AIC080 is a lower cost, lower performance SKU variant of AIC100.
+>  From the qaic perspective, it is the same as AIC100.
+> 
+> Reviewed-by: Troy Hanson <quic_thanson@quicinc.com>
+> Signed-off-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+> Reviewed-by: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
+> Link: https://patchwork.freedesktop.org/patch/msgid/20241004195209.3910996-1-quic_jhugo@quicinc.com
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-> +/*
-> + * NB: The buffer/hwfifo_watermark is a read-only entry to display the
-> + * currently set hardware FIFO watermark. First set a value to buffer0/length.
-> + * This allows to configure buffer0/watermark. After enabling buffer0/enable
-> + * the hwfifo_watermark shall show the configured FIFO watermark value.
-> + *
-> + * ref: Documentation/ABI/testing/sysfs-bus-iio
-> + */
-> +IIO_STATIC_CONST_DEVICE_ATTR(hwfifo_watermark_min, "1");
-> +IIO_STATIC_CONST_DEVICE_ATTR(hwfifo_watermark_max,
-> +			     __stringify(ADXL34x_FIFO_SIZE));
-> +static IIO_DEVICE_ATTR(hwfifo_watermark, 0444,
-> +		       adxl345_get_fifo_watermark, NULL, 0);
-> +static IIO_DEVICE_ATTR(hwfifo_enabled, 0444,
-> +		       adxl345_get_fifo_enabled, NULL, 0);
-> +
-> +static IIO_DEVICE_ATTR_RW(watermark_en, 0);
-> +
->  static const struct iio_dev_attr *adxl345_fifo_attributes[] = {
-> +	&iio_dev_attr_hwfifo_watermark_min,
-> +	&iio_dev_attr_hwfifo_watermark_max,
-> +	&iio_dev_attr_hwfifo_watermark,
-> +	&iio_dev_attr_hwfifo_enabled,
->  	NULL,
-Introduce the whole array only when you bring in the entries (so here).
->  };
->  
-> @@ -345,6 +434,7 @@ static IIO_CONST_ATTR_SAMP_FREQ_AVAIL(
->  
->  static struct attribute *adxl345_attrs[] = {
->  	&iio_const_attr_sampling_frequency_available.dev_attr.attr,
-> +	&iio_dev_attr_watermark_en.dev_attr.attr,
+Sasha, it feels like autosel was a bit aggressive here.  This is an 
+enablement patch for new hardware, and not a bug fix.  Therefore, it 
+does not appear to be stable material to me.
 
-Non standard ABI.  This should be indirectly controlled by the
-watermark on the software buffer IIRC. (it's been a while
-since I last looked at that). 
+Am I missing something?
 
-If the watermark passed to hwfifo_set_watermark is 0 then turn it off.
-Otherwise turn it on.
-
-
-Jonathan
-
->  	NULL
->  };
-
+-Jeff
 
