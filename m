@@ -1,67 +1,68 @@
-Return-Path: <linux-kernel+bounces-420190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D64D9D77C1
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:12:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9ACE9D76AF
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:28:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F537B28F35
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:26:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64EEE164570
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F95C53804;
-	Sun, 24 Nov 2024 17:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5775E558BC;
+	Sun, 24 Nov 2024 17:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="c1NDafdB"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="phE1bnRu"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EE629A9
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 17:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C78C72F26
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 17:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732469186; cv=none; b=d05ygpm7j8kExdIMw5msvjae0qhgEJOW5f90JwmJcudptK4M1Lc9psMnRwuJvG+2JmsU5K4NMx1dAlHfvUG5rveKp7lu7Ofni9SX/U5ijKq8DlA4dsNjyL3/Ccad0+2NL5zi/SnZmTDacSx5q5RTWk4CB86JxeIFCmupK1vhTZM=
+	t=1732469321; cv=none; b=hA7o2XvGpF1X6n4TrvxljOX7hPoMpwiY2+dT3DCyT9r3isP5/5KnfyYkwj1l6yqBe+z+dunUqxAz4Sj64glLZUAphd/7O8j3XfNSYc4K3MnDkYbofxq2Q6aR/EyXYikmw1l05xKHVFg8Ry1zzv5bNVQ1ZtHd/sX+Zt6KiI2A8jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732469186; c=relaxed/simple;
-	bh=m19Kp7mMI8MYbohPzKg1/Hq4+gxTJM6g/ldFdn6kUXg=;
+	s=arc-20240116; t=1732469321; c=relaxed/simple;
+	bh=Lrh/VMhFsmPsXghhCugJTmIbIcEhYH7n6mKX8kHDUsw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ej6lrRk+96wQjnLcjN2NZHeG/ghjL4PopnIiTP9oO8sXOPrF3OZiXKnOTbczwvSFI8K4VoMCseIBsss4sfdrRFe8S8uQxjDdH2T1ribYABwlt8K8Gt3Vv/F3KUS3t7hIXrjoco5Ya7Uc6Xtro0tUewReCO6jn4P0mLWpZOLoYlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=c1NDafdB; arc=none smtp.client-ip=95.215.58.186
+	 In-Reply-To:Content-Type; b=fKYUMH/DPnn43/lohdRm3fhID3qkbCkh/X6wMFrUqTZbWKsMpNVdA/pWfJ0PKhjzvsB6cxoeMYDMnQ1cUWqHEOtUSY0y24Y0rDotevqagO6MISh/2S2J72o3yIERcSt6ZT59u4rgMT8aii5sdt+c8P5o+QHGZsmdmgn1Ppru0Tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=phE1bnRu; arc=none smtp.client-ip=91.218.175.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c4273ac2-4ce5-4fa9-affc-db5081eefd36@linux.dev>
+Message-ID: <91dcbf49-fcef-44e9-aa78-415fd70cba9d@linux.dev>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732469180;
+	t=1732469317;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Bhx9GWrlh15tI8+NICW2csUyfRfC9547Fo3fTXaA0fc=;
-	b=c1NDafdBxg0t3m+Ux0StZjGw1GnBATsMTOxH9Zec0zbHL5rfmcmBQ25WFppQFV6WpcLNxp
-	e4fAgz0ubhjej+w7ClgTcl+okBKfVfo/Tfu+iwdIcv4w8ra7VkwuVfEz0T+kiiyuPXf4QY
-	vVy49Djfe4eQqlFkUlkYsproyDZpmwg=
-Date: Sun, 24 Nov 2024 22:56:09 +0530
+	bh=QMREzF/1nhtk4WfzOZ1mGniS/0dmFZlSzW3aXWHoBpI=;
+	b=phE1bnRulaAKiria+VyImMr1gIR7wOSPIJlNXqT2zOSwZojGAOhTdXZZM5jFgPpE++Dwwl
+	S6ESS442uh9mlyppRXM0AjhI/YkwhyAibW4HY4Pcvot5Pvt/QiUZ135jDNwB1YsBAVgM1N
+	9aEUmRndK19xV562KCHKql0ik9vsYws=
+Date: Sun, 24 Nov 2024 22:58:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 4/7] drm/tidss: Add printing of underflows
+Subject: Re: [PATCH 5/7] drm/tidss: Clear the interrupt status for interrupts
+ being disabled
 To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
  Devarsh Thakkar <devarsht@ti.com>, Jyri Sarha <jyri.sarha@iki.fi>
 Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
  David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
  dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Jonathan Cormier <jcormier@criticallink.com>
+ Jonathan Cormier <jcormier@criticallink.com>, stable@vger.kernel.org
 References: <20241021-tidss-irq-fix-v1-0-82ddaec94e4a@ideasonboard.com>
- <20241021-tidss-irq-fix-v1-4-82ddaec94e4a@ideasonboard.com>
+ <20241021-tidss-irq-fix-v1-5-82ddaec94e4a@ideasonboard.com>
 Content-Language: en-US
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
-In-Reply-To: <20241021-tidss-irq-fix-v1-4-82ddaec94e4a@ideasonboard.com>
+In-Reply-To: <20241021-tidss-irq-fix-v1-5-82ddaec94e4a@ideasonboard.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Migadu-Flow: FLOW_OUT
@@ -69,10 +70,23 @@ X-Migadu-Flow: FLOW_OUT
 
 
 On 10/21/24 19:37, Tomi Valkeinen wrote:
-> Add printing of underflows the same way as we handle sync losts.
+> From: Devarsh Thakkar <devarsht@ti.com>
 > 
+> The driver does not touch the irqstatus register when it is disabling
+> interrupts.  This might cause an interrupt to trigger for an interrupt
+> that was just disabled.
+> 
+> To fix the issue, clear the irqstatus registers right after disabling
+> the interrupts.
+> 
+> Fixes: 32a1795f57ee ("drm/tidss: New driver for TI Keystone platform Display SubSystem")
+> Cc: stable@vger.kernel.org
+> Reported-by: Jonathan Cormier <jcormier@criticallink.com>
+> Closes: https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1394222/am625-issue-about-tidss-rcu_preempt-self-detected-stall-on-cpu/5424479#5424479
+> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+> [Tomi: mostly rewrote the patch]
 > Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-
+> ---
 
 Reviewed-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
 
