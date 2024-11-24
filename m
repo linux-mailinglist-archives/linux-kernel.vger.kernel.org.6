@@ -1,109 +1,195 @@
-Return-Path: <linux-kernel+bounces-419501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 506439D6EF0
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 13:57:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EC109D6EDF
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 13:55:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C00EAB27329
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 12:54:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89CE81621BB
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 12:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74521E0B7D;
-	Sun, 24 Nov 2024 12:42:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8BB3190057;
+	Sun, 24 Nov 2024 12:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bX1LEq27"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhCWp8+Y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CA41E0B6E;
-	Sun, 24 Nov 2024 12:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C9B18C92F;
+	Sun, 24 Nov 2024 12:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732452156; cv=none; b=eoBcSc0DMdfbX2tF6xqkYK84ERqSL21rJb9TTbc5Il+lOwLRiHKbYgL1TZiJfboJXiZcWeAKw1uvSKalylwIKFgGfWv2FPsgG1aQUdcykjNVIr7HyRRQwKpPxJQ33Ed9GMbYpnCqouVStKgASOzsQJEt6MNdmEpICpZ9cHR3RIE=
+	t=1732452207; cv=none; b=WA/aMa+XY+2mDC/IOrQsxwttiAns4y8JRRehasADFHghLw0UQ4oKzS/pHscFoiuht6Pthg0m20Wdaf1jxtqs8MJhutNbKpDfmxZX7zveYKa31be7p3LAvUxaxe/O1tfXC7IHXPMOZhB1N+DjJKRcKEW04jWacXsj4BLfGsD3Ha4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732452156; c=relaxed/simple;
-	bh=U5cJMnmzukYGPKOjl6IplW7PNAjyX2EZNYMB/z1fB5U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bClRrman0THI0lxuSKhWIzoWf0kmrY5gIOL7GIS19ZzFKK3GZV8B2xdnUoek+4e+v1SaY1zFpW6J2bHA+mQdvTyqXN9+QmYrUZ8RSqiONFqVuRZzlJuvWU/thL0R6qmESe6bUHUbaTYc5Ab3E94pViQ1PTb3Y+iroiHzPuUYFZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bX1LEq27; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89E46C4CECC;
-	Sun, 24 Nov 2024 12:42:34 +0000 (UTC)
+	s=arc-20240116; t=1732452207; c=relaxed/simple;
+	bh=/Q111bk9ppM7RAlVGQNEPtozwwO/NImA489FG/ufEWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=az1UKvto4NP71UV5zgHtvOQR07cWd5P022oFaZ5swqNAg+fWMQhWzm9566cPez0EtsfsEK4EA6SNPHZ6SZG7AEQS89MHyrHGrSoUiayMjioJO+LmHIp09J9EyXUvV2HYi6hho0SlIIHYB2UMVSzwg1T3hfjbcmi9RN7n7R8OXJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bhCWp8+Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36628C4CECC;
+	Sun, 24 Nov 2024 12:43:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732452155;
-	bh=U5cJMnmzukYGPKOjl6IplW7PNAjyX2EZNYMB/z1fB5U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bX1LEq27R68zGVd39ywGNFfFQGQO7GJRanaCtuyB7xke2jzrEHBp7V5s1pIAjWMWb
-	 c8h/EogpRgPZO3lMTAjflOqrHbtlkHhskgOjjpG3bLq2fgl8DzdBIFtcV1Z494Dicq
-	 XdVFw2ktDhWm+yQNws8/qW6dqMKNrJCwW21GkBvEqtKpnJos6D1L9Tj/cbZapAOtzI
-	 D+iIGuHwS2Tgbs7AEHDF758f9vfZ0P/hAtzxImbF57MTLR+LIodaHBxdbEhTsyCO3a
-	 A2IgRyNm/4fSe4QKGnypfoFfQGgv6VMq8KQUen4NFs9Qrv/hEWAiZmRYhRYQFryzZI
-	 N6JPYTR/AQzxg==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Filipe Manana <fdmanana@suse.com>,
-	Qu Wenruo <wqu@suse.com>,
-	David Sterba <dsterba@suse.com>,
-	Sasha Levin <sashal@kernel.org>,
-	clm@fb.com,
-	josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 2/2] btrfs: fix warning on PTR_ERR() against NULL device at btrfs_control_ioctl()
-Date: Sun, 24 Nov 2024 07:42:28 -0500
-Message-ID: <20241124124231.3337202-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241124124231.3337202-1-sashal@kernel.org>
-References: <20241124124231.3337202-1-sashal@kernel.org>
+	s=k20201202; t=1732452207;
+	bh=/Q111bk9ppM7RAlVGQNEPtozwwO/NImA489FG/ufEWE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bhCWp8+YLKtwoDZkzIoFCPk08DgXl16+QzWcAb/eM2vwBdvW5qqVFA9TcpFxgaIqp
+	 bpxuJuewT851JU4AUA7kKfeWdzpTM6ZQyBnwYC6pUzTNsKXEgqVvgML/bg7i1cAsMM
+	 PQFZBBHSgL4maMbQ/h6txERjVKwdBWYwUXbb/fajWCOI31iOYoPq/tRXCUPwVKgJlE
+	 LFv6lJMeMTIPSg08jiybBKARY6EKssf0u+9OKRh+7MxIugU7gg3PaebIbanpoa6cWd
+	 z2McDjaTGcyoE5YDgtJ/YKOvoZ80W2xT5Um4RcMEivQR85tIRJNm50eJVdgTGDXz6M
+	 FshTsbKBKWRtw==
+Date: Sun, 24 Nov 2024 12:43:20 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: light: veml6030: add support for triggered
+ buffer
+Message-ID: <20241124124320.4237c67e@jic23-huawei>
+In-Reply-To: <1f5d62d0-42af-4eda-846d-cd0d57b5c6d5@gmail.com>
+References: <20241110-veml6030_triggered_buffer-v2-1-ecda3b6ed77f@gmail.com>
+	<20241123151634.303aa860@jic23-huawei>
+	<1f5d62d0-42af-4eda-846d-cd0d57b5c6d5@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.19.324
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Filipe Manana <fdmanana@suse.com>
+On Sat, 23 Nov 2024 22:15:11 +0100
+Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
 
-[ Upstream commit 2342d6595b608eec94187a17dc112dd4c2a812fa ]
+> On 23/11/2024 16:16, Jonathan Cameron wrote:
+> > On Sun, 10 Nov 2024 18:49:05 +0100
+> > Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+> >   
+> >> All devices supported by this driver (currently veml6030, veml6035
+> >> and veml7700) have two 16-bit channels, and can profit for the same
+> >> configuration to support data access via triggered buffers.
+> >>
+> >> The measurements are stored in two 16-bit consecutive registers
+> >> (addresses 0x04 and 0x05) as little endian, unsigned data.
+> >>
+> >> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>  
+> > Hi Javier,
+> > 
+> > We have to be a little careful with pushing data from the stack.
+> > Need to makes sure holes are zero filled.
+> > 
+> > Jonathan
+> >   
+> >> diff --git a/drivers/iio/light/veml6030.c b/drivers/iio/light/veml6030.c
+> >> index ccb43dfd5cf7..ce9af9a0e933 100644
+> >> --- a/drivers/iio/light/veml6030.c
+> >> +++ b/drivers/iio/light/veml6030.c  
+> >   
+> >>  
+> >>  static const struct regmap_config veml6030_regmap_config = {
+> >> @@ -889,6 +928,35 @@ static irqreturn_t veml6030_event_handler(int irq, void *private)
+> >>  	return IRQ_HANDLED;
+> >>  }
+> >>  
+> >> +static irqreturn_t veml6030_trigger_handler(int irq, void *p)
+> >> +{
+> >> +	struct iio_poll_func *pf = p;
+> >> +	struct iio_dev *iio = pf->indio_dev;
+> >> +	struct veml6030_data *data = iio_priv(iio);
+> >> +	unsigned int reg;
+> >> +	int ch, ret, i = 0;
+> >> +	struct {
+> >> +		u16 chans[2];  
+> > There is a hole here...   
+> >> +		aligned_s64 timestamp;
+> >> +	} scan;
+> >> +
+> >> +	iio_for_each_active_channel(iio, ch) {
+> >> +		ret = regmap_read(data->regmap, VEML6030_REG_DATA(ch),
+> >> +				  &reg);
+> >> +		if (ret)
+> >> +			goto done;
+> >> +
+> >> +		scan.chans[i++] = reg;  
+> > This fills in at least 1 channel, but maybe not the second.  
+> >> +	}
+> >> +  
+> > So this leaks random stack data I think.
+> > 
+> > Upshot, when holes are involved or not all the channels are set, need
+> > memset(&scan, 0, sizeof(scan));
+> > for the structure on the stack which will zero the holes as well as
+> > both channels.
+> > 
+> > Ancient article on this: https://lwn.net/Articles/417989/
+> > 
+> > We get away with it when they are in the iio_priv space because they are
+> > kzalloc + if we do leak data due to changes in configured channels it's
+> > just old sensor data which is (I think) never a security problem!
+> >   
+> >> +	iio_push_to_buffers_with_timestamp(iio, &scan, pf->timestamp);
+> >> +
+> >> +done:
+> >> +	iio_trigger_notify_done(iio->trig);
+> >> +
+> >> +	return IRQ_HANDLED;
+> >> +}
+> >> +
+> >>  static int veml6030_set_info(struct iio_dev *indio_dev)
+> >>  {
+> >>  	struct veml6030_data *data = iio_priv(indio_dev);
+> >> @@ -1077,6 +1145,12 @@ static int veml6030_probe(struct i2c_client *client)
+> >>  	if (ret < 0)
+> >>  		return ret;
+> >>  
+> >> +	ret = devm_iio_triggered_buffer_setup(&client->dev, indio_dev, NULL,
+> >> +					      veml6030_trigger_handler, NULL);
+> >> +	if (ret)
+> >> +		return dev_err_probe(&client->dev, ret,
+> >> +				     "Failed to register triggered buffer");
+> >> +
+> >>  	return devm_iio_device_register(&client->dev, indio_dev);
+> >>  }
+> >>  
+> >>
+> >> ---
+> >> base-commit: 9dd2270ca0b38ee16094817f4a53e7ba78e31567
+> >> change-id: 20241106-veml6030_triggered_buffer-a38886ca4cce
+> >>
+> >> Best regards,  
+> >   
+> 
+> 
+> Hi Jonathan,
+> 
+> thanks a lot for your explanation and the link, it makes perfect sense.
+> By the way, when I moved this struct from the iio_priv to the function,
+> I took a look at some existing code, and a couple of them might have the
+> same issue:
+> 
+> - temperature/tmp006.c: it also has a hole between the two 16-bit
+> channels and the timestamp (aligned(8)), but it is not set to zero.
+> 
+> - adc/ti-ads1119.c: the scan consists of an unsigned int and the
+> timestamp (aligned(8)). I believe there is a hole there as well.
+> 
+> I did not go over all drivers (most of them store the scan struct in the
+> iio_priv space anyway), but at least those two look suspicious.
+> 
+> Should I fix (e.g. memset) those two I mentioned?
 
-Smatch complains about calling PTR_ERR() against a NULL pointer:
+Please do.  Thanks!
 
-  fs/btrfs/super.c:2272 btrfs_control_ioctl() warn: passing zero to 'PTR_ERR'
+Jonathan
 
-Fix this by calling PTR_ERR() against the device pointer only if it
-contains an error.
 
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/btrfs/super.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index a595439518519..086d6d397f0be 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -2283,7 +2283,10 @@ static long btrfs_control_ioctl(struct file *file, unsigned int cmd,
- 					       &btrfs_root_fs_type);
- 		if (IS_ERR(device)) {
- 			mutex_unlock(&uuid_mutex);
--			ret = PTR_ERR(device);
-+			if (IS_ERR(device))
-+				ret = PTR_ERR(device);
-+			else
-+				ret = 0;
- 			break;
- 		}
- 		ret = !(device->fs_devices->num_devices ==
--- 
-2.43.0
+> 
+> Best regards,
+> Javier Carrasco
+> 
 
 
