@@ -1,113 +1,104 @@
-Return-Path: <linux-kernel+bounces-419916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 384CE9D7741
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 19:23:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60DBD9D75AE
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:05:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C45FB62555
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 14:39:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3666B27961
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 14:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404CB22A596;
-	Sun, 24 Nov 2024 13:47:57 +0000 (UTC)
-Received: from mx9.didiglobal.com (mx9.didiglobal.com [111.202.70.124])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 556AA229C7B;
-	Sun, 24 Nov 2024 13:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.202.70.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542AE1DF267;
+	Sun, 24 Nov 2024 13:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDKav+nM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1B9219485;
+	Sun, 24 Nov 2024 13:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732456076; cv=none; b=jl4RTeIRuGEzWNMonGWOBiIKVWtEKejDSdzSxGpAnhdPMw49v+t9NVal9dUAF8svHRf+Jxre61IqWtUsnIfkvy2MI2IcYE0MRxSJ6qGXiuU2WJEeAWYYIHaX+buRhwCbg81sxNIJHwe3W8cWDAIy/R0TSVcoeuGrTRVqdTxDN4k=
+	t=1732456010; cv=none; b=HIUSFPR3a+xevPFezmC6OATOgVbTxhiEFaBzNtiUEZeDgCL9/o2fI2po2K5m5qXlxcjBpzQ6GIm0+Uqf9mvD1f5zI3TEdfA+D5M3z5BtbkD4Uf/AFmho4Fi7nl/31L39ytZ3KQkh8bvVumw3kVJvA/q+SEn5OzhHisCdn329pE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732456076; c=relaxed/simple;
-	bh=pEalVqfZuwgm9F9FEnY4rS5iSP3CG4m6oKqxI94kKxQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
-	 MIME-Version; b=KV+AXpXGgbR42fUWxSb51I9Zd3Nj5iK0b1ChCO3oEUScGYsyBSkaXbP91eqZtnKAxHwZNLsGBEO4ziFu9KofrD62YCoLuRSmZMDnh4k0aMtvRmuMid2jUiteakjivoZ2A5zdxC8RNdBJkB+1E8CrTww75jkIGk4N/QsPibkg1OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com; spf=pass smtp.mailfrom=didiglobal.com; arc=none smtp.client-ip=111.202.70.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=didiglobal.com
-Received: from mail.didiglobal.com (unknown [10.79.65.20])
-	by mx9.didiglobal.com (MailData Gateway V2.8.8) with ESMTPS id 79B3E18746009B;
-	Sun, 24 Nov 2024 21:44:22 +0800 (CST)
-Received: from BJ03-ACTMBX-03.didichuxing.com (10.79.71.12) by
- BJ02-ACTMBX-02.didichuxing.com (10.79.65.20) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sun, 24 Nov 2024 21:44:42 +0800
-Received: from BJ02-ACTMBX-03.didichuxing.com (10.79.65.11) by
- BJ03-ACTMBX-03.didichuxing.com (10.79.71.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sun, 24 Nov 2024 21:44:41 +0800
-Received: from BJ02-ACTMBX-03.didichuxing.com ([fe80::9c02:2754:e1db:e82e]) by
- BJ02-ACTMBX-03.didichuxing.com ([fe80::9c02:2754:e1db:e82e%5]) with mapi id
- 15.02.1544.011; Sun, 24 Nov 2024 21:44:41 +0800
-X-MD-Sfrom: daikunhai@didiglobal.com
-X-MD-SrcIP: 10.79.65.20
-From: =?utf-8?B?5oi05Z2k5rW3IFRvbnkgRGFp?= <daikunhai@didiglobal.com>
-To: Yu Kuai <yukuai1@huaweicloud.com>, "tj@kernel.org" <tj@kernel.org>,
-	"josef@toxicpanda.com" <josef@toxicpanda.com>, "axboe@kernel.dk"
-	<axboe@kernel.dk>
-CC: "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "yukuai (C)"
-	<yukuai3@huawei.com>
-Subject: Re: [PATCH] block: iocost: ensure hweight_inuse is at least 1
-Thread-Topic: [PATCH] block: iocost: ensure hweight_inuse is at least 1
-Thread-Index: AQHbPK/ZVOMoLGOycU+ydueJcsx/wrLCbhOAgAQGk4A=
-Date: Sun, 24 Nov 2024 13:44:41 +0000
-Message-ID: <3B8BC663-3B34-454D-AE79-4FCE50001D6E@didiglobal.com>
-In-Reply-To: <29ebfb70-87de-dd75-5ff2-0ca49ec35cf1@huaweicloud.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <79D0517768A12840B638C9639307A8D3@didichuxing.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1732456010; c=relaxed/simple;
+	bh=amtzTJK3tFhkO9J6qjF77+DPWpImNhAeciDK4XQqCXw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ub8L9m3vt4ixOcfxFq6U8E+z3ghkAMXEF0eqYezNkgRMycBxUCUtipN7HuhK/2OQpSkyg5Jolupv5MiYzcMzWuhIIV3jtnAcyw7CscRjUWr0IqNu4k2ZoCBBhGWY7y8xN9hNjtHVdcSkARdaN7WUkc5J5eUefMRgPVphVKfDiPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YDKav+nM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50C93C4CED3;
+	Sun, 24 Nov 2024 13:46:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732456010;
+	bh=amtzTJK3tFhkO9J6qjF77+DPWpImNhAeciDK4XQqCXw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=YDKav+nM1cnPJ3XstarVsnSnIkZkROvSu3NhP8HzvrJk0JEGUTuWnfF1s/Ps2HKoB
+	 9iJa3gWw2jjEKKZv+JKBqiVbMrrU0czOACDQv+pgLLPvbjWbW+em1b+r6wV9OTNC9L
+	 134KOdlWjaOmqVcTFovxDSAjXhf4h/DzE0rtPuLQx+yCl9Fnp/TWboRqIHU5KQeQWp
+	 uwsGZ4ele2YAVFkrOukQ3axPH8xWUbwyz4TPkN82Ure/nZIBxiccl52gPFYZnBkg+t
+	 t9C+vY6EXpZMjzvewNb+bIVqsduQhIRbjIjQ7Zkz0flMa3dzZrls4G/gVjGWg972Ry
+	 vq8yr3a3aWEpw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Liao Chen <liaochen4@huawei.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Sasha Levin <sashal@kernel.org>,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 6.6 07/61] drm/mcde: Enable module autoloading
+Date: Sun, 24 Nov 2024 08:44:42 -0500
+Message-ID: <20241124134637.3346391-7-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241124134637.3346391-1-sashal@kernel.org>
+References: <20241124134637.3346391-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.6.63
+Content-Transfer-Encoding: 8bit
 
-SW4gZmFjdCwgd2UgZGlkIGVuY291bnRlciBzdWNoIGEgc3BlY2lhbCBzaXR1YXRpb24gd2hlcmUg
-dGhlIGtlcm5lbCBwcmludGVkIG91dCBgaW9jZzogaW52YWxpZCBkb25hdGlvbiB3ZWlnaHRzIGlu
-IC9hL2IvYzogYWN0aXZlPTEgZG9uYXRpbmc9MSBhZnRlcj0wYCwgYW5kIHRoZW4gaXQgaW1tZWRp
-YXRlbHkgcGFuaWMuIEkgYW5hbHl6ZWQgdGhlIGNvZGUgYnV0IGNvdWxkIG5vdCBmaWd1cmUgb3V0
-IGhvdyB0aGlzIGhhcHBlbmVkOyBpdCBtaWdodCBiZSBhIGNvbmN1cnJlbmN5IGlzc3VlIG9yIHNv
-bWUgb3RoZXIgaGlkZGVuIGJ1Zy4NCg0KT3VyIGtlcm5lbCBpcyBub3QgdGhlIGxhdGVzdCwgYnV0
-IGl0IGluY2x1ZGVzIHRoZSBwYXRjaCBlZGFhMjYzMzRjMTE3YTU4NGFkZDYwNTNmNDhkNjNhOTg4
-ZDI1YTZlIChpb2Nvc3Q6IEZpeCBkaXZpZGUtYnktemVybyBvbiBkb25hdGlvbiBmcm9tIGxvdyBo
-d2VpZ2h0IGNncm91cCkuDQoNCu+7v+WcqCAyMDI0LzExLzIyIDE2OjE277yM4oCcWXUgS3VhaeKA
-nTx5dWt1YWkxQGh1YXdlaWNsb3VkLmNvbSA8bWFpbHRvOnl1a3VhaTFAaHVhd2VpY2xvdWQuY29t
-Pj4g5YaZ5YWlOg0KDQoNCkhpLA0KDQoNCuWcqCAyMDI0LzExLzIyIDE1OjI2LCBLdW5oYWkgRGFp
-IOWGmemBkzoNCj4gVGhlIGh3ZWlnaHRfaW51c2UgY2FsY3VsYXRpb24gaW4gdHJhbnNmZXJfc3Vy
-cGx1c2VzKCkgY291bGQgcG90ZW50aWFsbHkNCj4gcmVzdWx0IGluIGEgdmFsdWUgb2YgMCwgd2hp
-Y2ggd291bGQgbGVhZCB0byBkaXZpc2lvbiBieSB6ZXJvIGVycm9ycyBpbg0KPiBzdWJzZXF1ZW50
-IGNhbGN1bGF0aW9ucyB0aGF0IHVzZSB0aGlzIHZhbHVlIGFzIGEgZGl2aXNvci4NCj4gDQo+IFNp
-Z25lZC1vZmYtYnk6IEt1bmhhaSBEYWkgPGRhaWt1bmhhaUBkaWRpZ2xvYmFsLmNvbSA8bWFpbHRv
-OmRhaWt1bmhhaUBkaWRpZ2xvYmFsLmNvbT4+DQo+IC0tLQ0KPiBibG9jay9ibGstaW9jb3N0LmMg
-fCA3ICsrKystLS0NCj4gMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlv
-bnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9ibG9jay9ibGstaW9jb3N0LmMgYi9ibG9jay9ibGst
-aW9jb3N0LmMNCj4gaW5kZXggMzg0YWExNWU4MjYwLi42NWNkYjU1ZDMwY2MgMTAwNjQ0DQo+IC0t
-LSBhL2Jsb2NrL2Jsay1pb2Nvc3QuYw0KPiArKysgYi9ibG9jay9ibGstaW9jb3N0LmMNCj4gQEAg
-LTE5OTksOSArMTk5OSwxMCBAQCBzdGF0aWMgdm9pZCB0cmFuc2Zlcl9zdXJwbHVzZXMoc3RydWN0
-IGxpc3RfaGVhZCAqc3VycGx1c2VzLCBzdHJ1Y3QgaW9jX25vdyAqbm93KQ0KPiBwYXJlbnQgPSBp
-b2NnLT5hbmNlc3RvcnNbaW9jZy0+bGV2ZWwgLSAxXTsNCj4gDQo+IC8qIGInID0gZ2FtbWEgKiBi
-X2YgKyBiX3QnICovDQo+IC0gaW9jZy0+aHdlaWdodF9pbnVzZSA9IERJVjY0X1U2NF9ST1VORF9V
-UCgNCj4gLSAodTY0KWdhbW1hICogKGlvY2ctPmh3ZWlnaHRfYWN0aXZlIC0gaW9jZy0+aHdlaWdo
-dF9kb25hdGluZyksDQo+IC0gV0VJR0hUX09ORSkgKyBpb2NnLT5od2VpZ2h0X2FmdGVyX2RvbmF0
-aW9uOw0KPiArIGlvY2ctPmh3ZWlnaHRfaW51c2UgPSBtYXhfdCh1NjQsIDEsDQo+ICsgRElWNjRf
-VTY0X1JPVU5EX1VQKA0KPiArICh1NjQpZ2FtbWEgKiAoaW9jZy0+aHdlaWdodF9hY3RpdmUgLSBp
-b2NnLT5od2VpZ2h0X2RvbmF0aW5nKSwNCj4gKyBXRUlHSFRfT05FKSArIGlvY2ctPmh3ZWlnaHRf
-YWZ0ZXJfZG9uYXRpb24pOw0KDQoNCkknbSBjb25mdXNlZCwgaG93IGNvdWxkIERJVjY0X1U2NF9S
-b3VuZF9VUCgpIGVuZCB1cCBsZXNzIHRoYW4gMT8NCg0KDQojZGVmaW5lIERJVjY0X1U2NF9ST1VO
-RF9VUChsbCwgZCkgXA0KKHsgdTY0IF90bXAgPSAoZCk7IGRpdjY0X3U2NCgobGwpICsgX3RtcCAt
-IDEsIF90bXApOyB9KQ0KDQoNCkFGQUlLLCB0aGUgb25seSBjYXNlIHRoYXQgY291bGQgaGFwcGVu
-IGlzIHRoYXQNCmlvY2ctPmh3ZWlnaHRfYWN0aXZlIC0gaW9jZy0+aHdlaWdodF9kb25hdGluZyBp
-cyAwLCB0aGVuIEkgZG9uJ3QNCmdldCBpdCBub3cgaG93IGNvdW5kIGFjdGl2ZSBpb2NnIGRvbmF0
-ZSBhbGwgdGhlIGh3ZWlnaHQsIGlmIHRoaXMNCnJlYWxseSBoYXBwZW5kIHBlcmhhcHMgdGhlIGJl
-dHRlciBzb2x1dGlvbiBpcyB0byBhdm9pZCBzdWNoIGNhc2UuDQoNCg0KVGhhbmtzLA0KS3VhaQ0K
-DQoNCj4gDQo+IC8qIHcnID0gcycgKiBiJyAvIGInX3AgKi8NCj4gaW51c2UgPSBESVY2NF9VNjRf
-Uk9VTkRfVVAoDQo+IA0KDQoNCg0KDQoNCg==
+From: Liao Chen <liaochen4@huawei.com>
+
+[ Upstream commit 8a16b5cdae26207ff4c22834559384ad3d7bc970 ]
+
+Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded based
+on the alias from of_device_id table.
+
+Signed-off-by: Liao Chen <liaochen4@huawei.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20240902113320.903147-4-liaochen4@huawei.com
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/mcde/mcde_drv.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/mcde/mcde_drv.c b/drivers/gpu/drm/mcde/mcde_drv.c
+index a2572fb311f08..753f261dad678 100644
+--- a/drivers/gpu/drm/mcde/mcde_drv.c
++++ b/drivers/gpu/drm/mcde/mcde_drv.c
+@@ -465,6 +465,7 @@ static const struct of_device_id mcde_of_match[] = {
+ 	},
+ 	{},
+ };
++MODULE_DEVICE_TABLE(of, mcde_of_match);
+ 
+ static struct platform_driver mcde_driver = {
+ 	.driver = {
+-- 
+2.43.0
+
 
