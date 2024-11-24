@@ -1,157 +1,162 @@
-Return-Path: <linux-kernel+bounces-420174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09E8B9D7705
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:59:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1827F9D76A7
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:27:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C652DB28C85
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:10:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40DD8B2E0E6
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0C94D9FB;
-	Sun, 24 Nov 2024 17:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED715103F;
+	Sun, 24 Nov 2024 17:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="szS1/3qb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EUFfFS7s"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D8429A9;
-	Sun, 24 Nov 2024 17:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BC629A9;
+	Sun, 24 Nov 2024 17:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732468251; cv=none; b=Oxa5JiF5T11/xlSoXWvu0GEfvDCJroIsPxH9aOQ2+YfXGmMVwbNrT+BgwiFy6fMfljafGInzLAG/oeyIUBewd7nXZR42DcsRdabffv1F/uQ3UgL23IyCsQdPCGUsWgEw4+tv39CuXuBP52jZZDWmyCZrVkXV0prawQH4nkkuYJk=
+	t=1732468419; cv=none; b=nbrBFNC50RWMXNmQD1ZOR/mhLZbsZDonSKHMMWSyeUPttLNTF2c7OsuQtQvNzmQdoRiYHdbxZA7qX8rDhYDqmAtAtN8nK+VUuvJbidz+Y59wL0X+vc0lGr3oDlTOPrz8bGvAU9X5pWHnMpcsWV//oQ2V3pH52f0gPUrnKB/RTto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732468251; c=relaxed/simple;
-	bh=JMpphRHrvrNUXU/Bv0iBkopHsT7/Fgvhl4pq7h+uxww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ubKfYz3q0MMbmasyCdKuPZDhwraGNB1xeH/9bVSLEQgcCkEA9F+S/nW6FofjN1nbfQcpmQVZp0THJa8ZDDreZkYAUMUVAPFBx9ypWSxJbOnFMj3ebWnMgk5gVYDPeYjzJjVQeDghWOnSXR4tGQBwR0cXh/BbknX2QZ52yHIJRUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=szS1/3qb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFED3C4CECC;
-	Sun, 24 Nov 2024 17:10:49 +0000 (UTC)
+	s=arc-20240116; t=1732468419; c=relaxed/simple;
+	bh=VgLddvcIzz9+UK7Lv/jyucFoeBwfZMeb43hwR1RLZaY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pmi6vkVT+201GGHynWFhAfupKZucp+ut+7wGOfpYU9+TzVnVKgLN0Un6JCEZDixmIybiyFUIohdbKWSJPvi+XXspKGXPUfUp137s+rLdvT3kGrZ966CtpsIyIIPh//ixqXiiXHHDw87DMq3BG7E+X4o66sNLsE3OUV2bfHpRa/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EUFfFS7s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34A84C4CED6;
+	Sun, 24 Nov 2024 17:13:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732468251;
-	bh=JMpphRHrvrNUXU/Bv0iBkopHsT7/Fgvhl4pq7h+uxww=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=szS1/3qb+Y0gog7DD75HUEd2xUMGhz/hY/qeFxEWnybO/InkTgMsJke+2ZoHYkua0
-	 5HDRxhLIYyEB4heDGpz04A/QMTCbbxjrwDy8O/ir0YOa+CC0vCGSkl2ERAATKqwONP
-	 akA2I6afWSUIYEOZ3kYQiR//TPfq6gQH+/vIU8zqpkbQ0vL88J8eNBXXerdkJPrNI4
-	 S2zvC85FGSvUdyGUBYssVjhWMsHlcOkdFc9V2qcvDOXYO0qyVpiAg58c125gYSKv72
-	 iI3N8Z8hfyj4c0IGwkZ3MHMMMHl41FOjAou+kuMZ4sgVtmcyLlFmZFaQOCk/wqiaUl
-	 drT1xp0V2x95g==
-Date: Sun, 24 Nov 2024 12:10:48 -0500
-From: Sasha Levin <sashal@kernel.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Linux PM <linux-pm@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [GIT PULL] Thermal control updates for v6.13-rc1
-Message-ID: <Z0NeGF4ryCe_b5rr@sashalap>
-References: <CAJZ5v0imu3DZbUb6P=UGP5G9ffxS6MbnRb-2zx7pXNTrxS1Z1A@mail.gmail.com>
+	s=k20201202; t=1732468419;
+	bh=VgLddvcIzz9+UK7Lv/jyucFoeBwfZMeb43hwR1RLZaY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EUFfFS7sVLUJ9Fg6T2pG975BnYsLEKXW9mSOgNaBnKvpYpQo0oUd1U52ALHZN4oY4
+	 kB2xVPOZk9YYFq3xxuxSGfHxnlV07NR/NuPzAujvYQ4IqdB3G/h6I0RRMxRZWo68IR
+	 hGBGfvsoq/zXt6LfHx5donsXlKzdTiw7IDNFfDsvV4JG7MhfTVwyrjH7W6RV1xuw98
+	 CbloiF87k4GMLib+jKC3VttPezl7dOEZhjLZfqqmPKkUtV+L284NnmS3SQwMQJIrpR
+	 yA5+GHD+gLpD7k50HO7RQVTy0N9WlQF/0qhSRjJNjIrcPOyohTUM+Rvh0BYR/exZtk
+	 bK0Ho8XkNY2ZQ==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53de27f1478so475539e87.2;
+        Sun, 24 Nov 2024 09:13:39 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUZbE06AtPpCDwOAu22P5b7BjYQrIbV7P1YRTwFmdCzwftd5vZtWdSxVeHC5MzOeYbWbAi/aokJu9VJNGI=@vger.kernel.org, AJvYcCWQK+oq6VOqazByBygkFoWhLpCnv+rNor9O242u3qXZmklsBToapLgru01i2Mmv/3zb+FBq9ZxSz9na5ZwI@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyJ63ZVq0sLrtmdrc6bzWhPE0IEravCJJDDWUc7G0nYRwFCLbi
+	MOggRjR22+ZXfRilDDVfk+QNTV5A3TtI88Xd6Tm08E/OVdjCy/A6EZnMFr4NRi1elGVbAUl8EOw
+	pdak+pemuG2GSd8zz59M6kdkqik4=
+X-Google-Smtp-Source: AGHT+IGvr5lmwfakmqlIkJcu6XwxF2gNioqukRxVSZG7xd4plRNby6TC62vi+qXjmI0oWhBEiwO+HWPIenKZ0FJ8oBE=
+X-Received: by 2002:a05:6512:158f:b0:53d:e50a:7046 with SMTP id
+ 2adb3069b0e04-53de50a7236mr32923e87.9.1732468417494; Sun, 24 Nov 2024
+ 09:13:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0imu3DZbUb6P=UGP5G9ffxS6MbnRb-2zx7pXNTrxS1Z1A@mail.gmail.com>
+References: <90667b2b7f773308318261f96ebefd1a67133c4c.1732464395.git.lukas@wunner.de>
+ <CAMj1kXFvJGHr_iv6bFQfb89XqPFrNWH7-rV7SFy4QBSWXYC4RA@mail.gmail.com>
+In-Reply-To: <CAMj1kXFvJGHr_iv6bFQfb89XqPFrNWH7-rV7SFy4QBSWXYC4RA@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Sun, 24 Nov 2024 18:13:26 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXER7AbNyUDjtij6Ni0jVRMg11xvyhkCMKAxaKbx=dsgcQ@mail.gmail.com>
+Message-ID: <CAMj1kXER7AbNyUDjtij6Ni0jVRMg11xvyhkCMKAxaKbx=dsgcQ@mail.gmail.com>
+Subject: Re: [PATCH for-next/fixes] arm64/mm: Fix false-positive
+ !virt_addr_valid() for kernel image
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Zorro Lang <zlang@redhat.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, Joey Gouly <joey.gouly@arm.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Nov 18, 2024 at 11:23:46AM +0100, Rafael J. Wysocki wrote:
->Hi Linus,
+On Sun, 24 Nov 2024 at 17:38, Ard Biesheuvel <ardb@kernel.org> wrote:
 >
->Please pull from the tag
+> On Sun, 24 Nov 2024 at 17:16, Lukas Wunner <lukas@wunner.de> wrote:
+> >
+> > Zorro reports a false-positive BUG_ON() when running crypto selftests on
+> > boot:  Since commit 1e562deacecc ("crypto: rsassa-pkcs1 - Migrate to
+> > sig_alg backend"), test_sig_one() invokes an RSA verify operation with a
+> > test vector in the kernel's .rodata section.  The test vector is passed
+> > to sg_set_buf(), which performs a virt_addr_valid() check.
+> >
+> > On arm64, virt_addr_valid() returns false for kernel image addresses
+> > such as this one, even though they're valid virtual addresses.
+> > x86 returns true for kernel image addresses, so the BUG_ON() does not
+> > occur there.  In fact, x86 has been doing so for 16 years, i.e. since
+> > commit af5c2bd16ac2 ("x86: fix virt_addr_valid() with
+> > CONFIG_DEBUG_VIRTUAL=y, v2").
+> >
+> > Do the same on arm64 to avoid the false-positive BUG_ON() and to achieve
+> > consistent virt_addr_valid() behavior across arches.
+> >
+> > Silence a WARN splat in __virt_to_phys() which occurs once the BUG_ON()
+> > is avoided.
+> >
+> > The is_kernel_address() helper introduced herein cannot be put directly
+> > in the virt_addr_valid() macro:  It has to be part of the kernel proper
+> > so that it has visibility of the _text and _end symbols (referenced
+> > through KERNEL_START and KERNEL_END).  These symbols are not exported,
+> > so modules expanding the virt_addr_valid() macro could not access them.
+> > For almost all invocations of virt_addr_valid(), __is_lm_address()
+> > returns true, so jumping to the is_kernel_address() helper hardly ever
+> > occurs and its performance impact is thus negligible.
+> >
+> > Likewise, calling is_kernel_address() from the functions in physaddr.c
+> > ought to be fine as they depend on CONFIG_DEBUG_VIRTUAL=y, which is
+> > explicitly described as "costly" in the Kconfig help text.  (And this
+> > doesn't add much cost really.)
+> >
+> > Abridged stack trace:
+> >
+> >   kernel BUG at include/linux/scatterlist.h:187!
+> >   sg_init_one()
+> >   rsassa_pkcs1_verify()
+> >   test_sig_one()
+> >   alg_test_sig()
+> >   alg_test()
+> >   cryptomgr_test()
+> >
+> > Fixes: 1e562deacecc ("crypto: rsassa-pkcs1 - Migrate to sig_alg backend")
+> > Reported-by: Zorro Lang <zlang@redhat.com>
+> > Closes: https://lore.kernel.org/r/20241122045106.tzhvm2wrqvttub6k@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com/
+> > Signed-off-by: Lukas Wunner <lukas@wunner.de>
+> > ---
+> > Just from looking at the code it seems arm's virt_addr_valid() returns
+> > true for kernel image addresses, so apparently arm64 is the odd man out.
+> >
 >
-> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
-> thermal-6.13-rc1
+> That is because ARM maps the kernel in the linear map, whereas arm64
+> maps the kernel in the vmalloc space.
+>
+> vmalloc addresses cannot be used for DMA, which is why
+> virt_addr_valid() rejects them. On arm64, the same applies to the
+> kernel image, as well as the vmap'ed stack.
+>
+> > Note that this fix would have obviated the need for commit c02e7c5c6da8
+> > ("arm64/mm: use lm_alias() with addresses passed to memblock_free()").
+> >
+>
+> Your 'fix' will break other stuff: it is used, e.g., to decide whether
+> __pa() may be used on the input VA, which applies a fixed translation
+> on the input, rather than walk the page tables to obtain the physical
+> address.
+>
 
-Hi Rafael,
+Apologies, I replied a little too quickly.
 
-After merging this PR into linus-next, KernelCI started reporting boot
-failures on a few platforms:
+__pa() on arm64 permits linear addresses and kernel image addresses,
+and so the kernel image is treated differently from the vmap'ed stack
+and other vmalloc addresses.
 
-[    6.921489] [00000000000000d0] user address but active_mm is swapper
-[    6.927831] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-[    6.934086] Modules linked in:
-[    6.937131] CPU: 7 UID: 0 PID: 12 Comm: kworker/u32:1 Tainted: G        W          6.12.0 #1 cab58e2e59020ebd4be8ada89a65f465a316c742
-[    6.949114] Tainted: [W]=WARN
-[    6.952070] Hardware name: Google Spherion (rev0 - 3) (DT)
-[    6.957543] Workqueue: async async_run_entry_fn
-[    6.962066] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    6.969013] pc : power_allocator_bind+0xd4/0x2e8
-[    6.973622] lr : power_allocator_bind+0x38/0x2e8
-[    6.978226] sp : ffff8000800e3010 
-[    6.981528] x29: ffff8000800e3010 x28: ffff71f205b31800 x27: ffff71f205b31c08
-[    6.988650] x26: ffffd833bdc11a78 x25: 0000000000000000 x24: ffff71f205b31da8
-[    6.995773] x23: 0000000000000000 x22: ffff71f205b31800 x21: ffffd833bcd5f438
-[    7.002896] x20: ffff71f200af61c0 x19: 0000000000000000 x18: ffffffffffffffff
-[    7.010018] x17: 000000040044ffff x16: 0000000000000100 x15: ffff8000800e2e30
-[    7.017141] x14: ffff71f205b40a1c x13: ffff71f205b4026f x12: 0101010101010101
-[    7.024264] x11: 7f7f7f7f7f7f7f7f x10: 0000000000000000 x9 : ffffd833baefbd2c
-[    7.031387] x8 : ffff71f200af6200 x7 : 0000000000000000 x6 : 0000000000000000
-[    7.038509] x5 : 0000000000000000 x4 : 0000000000000040 x3 : 0000000000000000
-[    7.045632] x2 : ffffffffffffffc0 x1 : 0000000000000000 x0 : ffff71f205b31da8
-[    7.052755] Call trace:
-[    7.055190]  power_allocator_bind+0xd4/0x2e8 (P)
-[    7.059795]  power_allocator_bind+0x38/0x2e8 (L)
-[    7.064399]  thermal_set_governor+0x4c/0xc8
-[    7.068571]  thermal_zone_device_register_with_trips+0x480/0x630
-[    7.074566]  thermal_tripless_zone_device_register+0x34/0x48
-[    7.080214]  __power_supply_register.part.0+0x364/0x4b8
-[    7.085428]  __power_supply_register+0x64/0xc0
-[    7.089860]  devm_power_supply_register+0x64/0xb8
-[    7.094552]  sbs_probe+0x290/0x3a0 
-[    7.097941]  i2c_device_probe+0x150/0x2a0
-[    7.101941]  really_probe+0xc4/0x2a8
-[    7.105506]  __driver_probe_device+0x80/0x140
-[    7.109850]  driver_probe_device+0x44/0x120
-[    7.114021]  __device_attach_driver+0xc0/0x108
-[    7.118451]  bus_for_each_drv+0x8c/0xf0
-[    7.122276]  __device_attach+0xa4/0x198 
-[    7.126099]  device_initial_probe+0x1c/0x30
-[    7.130269]  bus_probe_device+0xb4/0xc0
-[    7.134093]  device_add+0x570/0x740
-[    7.137570]  device_register+0x28/0x40 
-[    7.141307]  i2c_new_client_device+0x19c/0x380
-[    7.145740]  of_i2c_register_devices+0x120/0x1a0
-[    7.150345]  i2c_register_adapter+0x204/0x670
-[    7.154690]  i2c_add_adapter+0x80/0xe0 
-[    7.158428]  ec_i2c_probe+0xe0/0x160
-[    7.161991]  platform_probe+0x70/0xd0
-[    7.165642]  really_probe+0xc4/0x2a8 
-[    7.169207]  __driver_probe_device+0x80/0x140
-[    7.173550]  driver_probe_device+0x44/0x120
-[    7.177720]  __device_attach_driver+0xc0/0x108
-[    7.182151]  bus_for_each_drv+0x8c/0xf0
-[    7.185976]  __device_attach+0xa4/0x198
-[    7.189799]  device_initial_probe+0x1c/0x30
-[    7.193970]  bus_probe_device+0xb4/0xc0
-[    7.197794]  device_add+0x570/0x740
-[    7.201271]  of_device_add+0x5c/0x78
-[    7.204836]  of_platform_device_create_pdata+0x98/0x138
-[    7.210050]  of_platform_bus_create+0x15c/0x398
-[    7.214569]  of_platform_populate+0x58/0x110
-[    7.218827]  devm_of_platform_populate+0x60/0xd0
-[    7.223432]  cros_ec_register+0x18c/0x370
-[    7.227430]  cros_ec_spi_probe+0x17c/0x250
-[    7.231514]  spi_probe+0x88/0xf8
-[    7.234732]  really_probe+0xc4/0x2a8
-[    7.238297]  __driver_probe_device+0x80/0x140
-[    7.242641]  driver_probe_device+0x44/0x120
-[    7.246812]  __driver_attach_async_helper+0x54/0xc8
-[    7.251678]  async_run_entry_fn+0x40/0x160
-[    7.255762]  process_one_work+0x18c/0x420
-[    7.259762]  worker_thread+0x30c/0x418
-[    7.263500]  kthread+0x128/0x138
-[    7.266716]  ret_from_fork+0x10/0x20
-[    7.270282] Code: b4000b47 aa0703e5 a9019e86 52800013 (f84d0ca0)
-[    7.276362] ---[ end trace 0000000000000000 ]---
-[    7.282971] Kernel panic - not syncing: Oops: Fatal exception
-
--- 
-Thanks,
-Sasha
+However, that doesn't mean doing DMA from the kernel image is a great
+idea. Allocations in the linear map are rounded up to cacheline size
+to ensure that they are safe for non-coherent DMA, but this does not
+apply to the kernel image. .rodata should still be safe in this
+regard, but the general idea of allowing kernel image addresses in
+places where DMA'able virtual addresses are expected is something we
+should consider with care.
 
