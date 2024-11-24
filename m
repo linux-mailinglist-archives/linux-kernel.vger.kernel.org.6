@@ -1,79 +1,83 @@
-Return-Path: <linux-kernel+bounces-420189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5781C9D76A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:25:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAD1516507A
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:25:40 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4F56EB7D;
-	Sun, 24 Nov 2024 17:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JbUHdLe2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D64D9D77C1
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:12:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD42B2500C9;
-	Sun, 24 Nov 2024 17:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F537B28F35
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:26:31 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F95C53804;
+	Sun, 24 Nov 2024 17:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="c1NDafdB"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EE629A9
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 17:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732469136; cv=none; b=Jd0qc/60ICC4xzxhj2nVeGLTtTLAqSw4zqEjUzdgPv6O2Khjzg6GuVrNv9VaDdsk/WXDcf4zIi56SHsK+PTGsw5KZpUD+TudAlxLTbxtplv95reQAXe9W/momVox43Wf22LasmqVJSclRFV6GQt6rZnnhTHUmur8iLkJXYE/vAU=
+	t=1732469186; cv=none; b=d05ygpm7j8kExdIMw5msvjae0qhgEJOW5f90JwmJcudptK4M1Lc9psMnRwuJvG+2JmsU5K4NMx1dAlHfvUG5rveKp7lu7Ofni9SX/U5ijKq8DlA4dsNjyL3/Ccad0+2NL5zi/SnZmTDacSx5q5RTWk4CB86JxeIFCmupK1vhTZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732469136; c=relaxed/simple;
-	bh=xkei7SKy+BXPhBFtJI/2hNIGqfprq9wKmCc3yQUOQVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d0gPGiBHHDJIThQlSBa2zgmUVbey/OefXoI1iSGAQO4y9eD7zcLofmYujE3YwBtZLSjsEFEXw09F4Je75O3LPczDv7ClaR+XSgk1xOV8M6pTUV+IljKJwktCIk8eB7PuJqkJNzdyBqWwthGmQgzQUz4hg0NZloxvz65xLRiqtF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JbUHdLe2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A4D8C4CECC;
-	Sun, 24 Nov 2024 17:25:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732469136;
-	bh=xkei7SKy+BXPhBFtJI/2hNIGqfprq9wKmCc3yQUOQVo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JbUHdLe2t/Qdkla74X0llcVD8LwO8+tFERZupxVexjETVdBFpKpFmmwPyNFpeacci
-	 Agj7tfYyVmjLrREeJVT5us0S7tvy34fY05St/uuJU56hgcc/ACB8LFUE4NpBuPnlan
-	 +zWw5/oMMdlGT2wFoV0DS34EhSqJo8cYROo+vi/IKltxwqDzFAujH+dhN06yttXn8d
-	 /1zsVo9icsVkhKp06s6xYByZH8FKi2vxd48/Ikt+rTxEVkIfmMemjj8/o5hiYYGhBP
-	 O+yUDkOEg/Zx5Zz3xJVmiAyrKJl0BmCri2IgJPmUzn+/7UM6Mzuz/iRgftk6Bq6Iqg
-	 8ADu15L3rtiPw==
-Date: Sun, 24 Nov 2024 17:25:27 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, David
- Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>,
- linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v5 13/16] doc: iio: ad7944: describe offload support
-Message-ID: <20241124172527.08ef8705@jic23-huawei>
-In-Reply-To: <20241115-dlech-mainline-spi-engine-offload-2-v5-13-bea815bd5ea5@baylibre.com>
-References: <20241115-dlech-mainline-spi-engine-offload-2-v5-0-bea815bd5ea5@baylibre.com>
-	<20241115-dlech-mainline-spi-engine-offload-2-v5-13-bea815bd5ea5@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732469186; c=relaxed/simple;
+	bh=m19Kp7mMI8MYbohPzKg1/Hq4+gxTJM6g/ldFdn6kUXg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ej6lrRk+96wQjnLcjN2NZHeG/ghjL4PopnIiTP9oO8sXOPrF3OZiXKnOTbczwvSFI8K4VoMCseIBsss4sfdrRFe8S8uQxjDdH2T1ribYABwlt8K8Gt3Vv/F3KUS3t7hIXrjoco5Ya7Uc6Xtro0tUewReCO6jn4P0mLWpZOLoYlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=c1NDafdB; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c4273ac2-4ce5-4fa9-affc-db5081eefd36@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732469180;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Bhx9GWrlh15tI8+NICW2csUyfRfC9547Fo3fTXaA0fc=;
+	b=c1NDafdBxg0t3m+Ux0StZjGw1GnBATsMTOxH9Zec0zbHL5rfmcmBQ25WFppQFV6WpcLNxp
+	e4fAgz0ubhjej+w7ClgTcl+okBKfVfo/Tfu+iwdIcv4w8ra7VkwuVfEz0T+kiiyuPXf4QY
+	vVy49Djfe4eQqlFkUlkYsproyDZpmwg=
+Date: Sun, 24 Nov 2024 22:56:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Subject: Re: [PATCH 4/7] drm/tidss: Add printing of underflows
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Devarsh Thakkar <devarsht@ti.com>, Jyri Sarha <jyri.sarha@iki.fi>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Jonathan Cormier <jcormier@criticallink.com>
+References: <20241021-tidss-irq-fix-v1-0-82ddaec94e4a@ideasonboard.com>
+ <20241021-tidss-irq-fix-v1-4-82ddaec94e4a@ideasonboard.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+In-Reply-To: <20241021-tidss-irq-fix-v1-4-82ddaec94e4a@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 15 Nov 2024 14:18:52 -0600
-David Lechner <dlechner@baylibre.com> wrote:
 
-> Add a section to the ad7944 documentation describing how to use the
-> driver with SPI offloading.
+
+On 10/21/24 19:37, Tomi Valkeinen wrote:
+> Add printing of underflows the same way as we handle sync losts.
 > 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-LGTM
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+
+
+Reviewed-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+
+Regards
+Aradhya
+
+[...]
 
