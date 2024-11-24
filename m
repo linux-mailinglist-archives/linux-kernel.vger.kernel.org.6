@@ -1,129 +1,110 @@
-Return-Path: <linux-kernel+bounces-420129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 697349D76BA
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:31:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6379D9D75BE
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:15:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A21CFC44555
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:35:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27CDAC4482C
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F021B87D2;
-	Sun, 24 Nov 2024 15:04:33 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0FF1BA86C;
+	Sun, 24 Nov 2024 15:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gNTG+nBf"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989261B3923;
-	Sun, 24 Nov 2024 15:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517FC166F29;
+	Sun, 24 Nov 2024 15:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732460672; cv=none; b=Xn8Ua7mYejtnj8fRTKha0XWAt8HOOdWrVS0LKUANei05B1wQwX2dk7DrsjS8dHgD7x/QJlkSxwFkHyXN9hoJBiqcJg7pMHZfcL2otYyIpLC8/k2//plB2+ctoqh553IaJkUB5jORf4nTLxR3VR4fdDT4DVhPs687WceQONNhYNc=
+	t=1732460842; cv=none; b=iaEJSqqgWyayFJxCO3PxEKkRYkka2p6QkL4YI092jK9oAVzOQd04DTCwASMCG/sUcXVvAH0G0tt/BMJnB8sz+aP7Aiuy+4F8MF+orQUdwqdu+mYtD+127qFjwQexRkut1ljGZldHxJX+QWZKsqsiD+82gwP7dfQ1E/R25naJ5E0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732460672; c=relaxed/simple;
-	bh=NzAhNdIviC4mcJCGvuq35Fppehjrbw/+lTWbWZ/mAFQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hp7LtcLjf+xReX5WeC31r11hR+DkRcOR5mw+Uuw88XirkAnO0J8IMmZKTxRZAyF00kdJq8lo+N/lC+bG767WvvJD9X4y1i6mooPwPx9yxzEncUjC8/4LKXxrBqX5sthmn2i9wdjI+IvY5BlG599XsTDDsnJsOxBFiI4FOAiuk5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20911C4CECC;
-	Sun, 24 Nov 2024 15:04:27 +0000 (UTC)
-Date: Sun, 24 Nov 2024 20:34:22 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Chris Lew <quic_clew@quicinc.com>
-Cc: Johan Hovold <johan@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Hemant Kumar <quic_hemantk@quicinc.com>,
-	Loic Poulain <loic.poulain@linaro.org>,
-	Maxim Kochetkov <fido_max@inbox.ru>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Bhaumik Bhatt <bbhatt@codeaurora.org>
-Subject: Re: [PATCH] net: qrtr: mhi: synchronize qrtr and mhi preparation
-Message-ID: <20241124150422.nt67aonfknfhz3sc@thinkpad>
-References: <20241104-qrtr_mhi-v1-1-79adf7e3bba5@quicinc.com>
- <Zy3oyGLdsnDY9C0p@hovoldconsulting.com>
- <b1e22673-2768-445c-8c67-eae93206cca5@quicinc.com>
+	s=arc-20240116; t=1732460842; c=relaxed/simple;
+	bh=29MJ8sYwFKcFWGk8rIN1r6kbK05u7kw1662rEDQQqNU=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=eLDf7Jeu1FlxppStkNshT9ZS6oZ06T0DeP94+950xGm5bH8jA/A2ogQS681VNopmRjEMDrEb1S8v2yaHCkeAnzC/+AjNaqUHZ/cL1cWYgF6J+nkKSEPT3Wx9b2bXRkuhzLj4Xa3JEB0BFgFtN2SZSt66WJDdor2C+9292OWhlCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gNTG+nBf; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e382e549918so3034694276.2;
+        Sun, 24 Nov 2024 07:07:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732460840; x=1733065640; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7vDoUwVk54/2HDm8WhQ/hokgEo26iQk0+d75grJPQqM=;
+        b=gNTG+nBf/7mWSlIoeZhuZjoIJm1h4JnUOBXw2K/D177zJGKjeUuWJ+WMNnjKIT72/L
+         66ML+2oubaqPRo8nFLHBeIAYJPUMR8Nful0AZOj0E5ShSeMqkRPtrwvX9bHWcNC0O/WG
+         wSSnHakEvkOxQY3Iu+ktbLLHQCmY1IhMlJo8wf5pKDv062C/yYlz6H7pxulYe6GlW7wt
+         VA44kdICyzkFrhz4WXHWXHYU1TIBcsugIAZBI7fhzbfPkPVk/+lApYHvyqdnPKRjcMis
+         DeA3SKS69YFYdYOuG12bC82fMDU00VOlub3j1RvOcDbp+7YggsxMb/N8lDdJ9on2b39z
+         0z1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732460840; x=1733065640;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7vDoUwVk54/2HDm8WhQ/hokgEo26iQk0+d75grJPQqM=;
+        b=t4WPyD/W6QvsU/P+9apKvScIfpTExPuouyuC71ofxrBf7+Y5RvTo6Gq4d/iRl+ECO8
+         d+PPbLOpCyYsr9Xx0d/N4HOyIHO7H7/OTPnOFyj543614EdLaYkekEikjHHC2rPullJX
+         NjypnSu6Hray7kJH2y1irvILrJDQ96fHG+k6AovRQLN4oA/mAS45JlD76pFjQVHmZf3u
+         AU0fh6oiR0q9zhsY42uO5RJUPO5kKdZsuTZXi8xIG3s1y6WZ5j1Rq8IfElIkMDnIaap+
+         QoS1GVAxM3LViOJyGDoooLYwan5DtAGUJ5ykWTVUd4mhRj5v5jWlWCnyk9MXuR8kA4vT
+         ZzMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVR5TdwtPq5cHo6NuvNskMPczyeU8fBqccJgDNZKjnScliEHGDsUqNQSVWSJs+G3ivW1kQ5ZSA7z3NQ@vger.kernel.org, AJvYcCVWwc/hRhCjE1hrKTBER/D3KoQzu69ZIXykfoVavc1wQtDFmXBTA9pBz+M+Dg4hl9J4O6SuBppeQEOs@vger.kernel.org, AJvYcCXYCspAFGosILqMpfcwhgn3xTqdKsz37TqVh+KJ8+2KiDB5g0f/qZMtrHiA6zET2M85DquEVMUe4qhr/Lvx@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTzp7qhMERmp3k0PbfoY74yggt9yprwD3UBwgreiJKmMFwYKWt
+	UwO581FJJPUI89myMARENRCLCavmV1MvIs8UzObdMZ7wL9rswQbzulO1WciVhViSwaSnHrsiMTM
+	ifYjyv+Tm4ggEIcmpNa/8S2P6G2E=
+X-Gm-Gg: ASbGncs7CtnowAKs/kNesSbyb3+e50th9gfgNF8PU6G35AQ3CPLsYiEsR09uORUJueI
+	v0WtxYzrnihqSExsXgFM27kHFSS0DdH1E
+X-Google-Smtp-Source: AGHT+IG9ahPQQV57NbUiEfytAhXwmIMWj+E8j9L72G0f1AQV4HUtOjvOrCGoOaHQeT99p4rPqWI5dxAo1AKm9fZH/sA=
+X-Received: by 2002:a05:6902:1b06:b0:e38:c692:14a8 with SMTP id
+ 3f1490d57ef6-e38f8bf0a9amr8723492276.44.1732460840164; Sun, 24 Nov 2024
+ 07:07:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b1e22673-2768-445c-8c67-eae93206cca5@quicinc.com>
+From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Date: Sun, 24 Nov 2024 16:07:09 +0100
+Message-ID: <CAMT+MTTiimUvH7=T-zHsGAU0cDSYcyJL9p_jWNE3K+JKaxQ-Aw@mail.gmail.com>
+Subject: Re: [PATCH v3 05/16] rust: implement `IdArray`, `IdTable` and `RawDeviceId`
+To: Danilo Krummrich <dakr@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org, 
+	bhelgaas@google.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, tmgross@umich.edu, a.hindborg@samsung.com, 
+	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com, 
+	lina@asahilina.net, pstanner@redhat.com, ajanulgu@redhat.com, 
+	lyude@redhat.com, Rob Herring <robh@kernel.org>, daniel.almeida@collabora.com, 
+	saravanak@google.com
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Fabien Parent <fabien.parent@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 21, 2024 at 04:28:41PM -0800, Chris Lew wrote:
-> 
-> 
-> On 11/8/2024 2:32 AM, Johan Hovold wrote:
-> > On Mon, Nov 04, 2024 at 05:29:37PM -0800, Chris Lew wrote:
-> > > From: Bhaumik Bhatt <bbhatt@codeaurora.org>
-> > > 
-> > > The call to qrtr_endpoint_register() was moved before
-> > > mhi_prepare_for_transfer_autoqueue() to prevent a case where a dl
-> > > callback can occur before the qrtr endpoint is registered.
-> > > 
-> > > Now the reverse can happen where qrtr will try to send a packet
-> > > before the channels are prepared. Add a wait in the sending path to
-> > > ensure the channels are prepared before trying to do a ul transfer.
-> > > 
-> > > Fixes: 68a838b84eff ("net: qrtr: start MHI channel after endpoit creation")
-> > > Reported-by: Johan Hovold <johan@kernel.org>
-> > > Closes: https://lore.kernel.org/linux-arm-msm/ZyTtVdkCCES0lkl4@hovoldconsulting.com/
-> > > Signed-off-by: Bhaumik Bhatt <bbhatt@codeaurora.org>
-> > > Signed-off-by: Chris Lew <quic_clew@quicinc.com>
-> > 
-> > > @@ -53,6 +54,10 @@ static int qcom_mhi_qrtr_send(struct qrtr_endpoint *ep, struct sk_buff *skb)
-> > >   	if (skb->sk)
-> > >   		sock_hold(skb->sk);
-> > > +	rc = wait_for_completion_interruptible(&qdev->prepared);
-> > > +	if (rc)
-> > > +		goto free_skb;
-> > > +
-> > >   	rc = skb_linearize(skb);
-> > >   	if (rc)
-> > >   		goto free_skb;
-> > > @@ -85,6 +90,7 @@ static int qcom_mhi_qrtr_probe(struct mhi_device *mhi_dev,
-> > >   	qdev->mhi_dev = mhi_dev;
-> > >   	qdev->dev = &mhi_dev->dev;
-> > >   	qdev->ep.xmit = qcom_mhi_qrtr_send;
-> > > +	init_completion(&qdev->prepared);
-> > >   	dev_set_drvdata(&mhi_dev->dev, qdev);
-> > >   	rc = qrtr_endpoint_register(&qdev->ep, QRTR_EP_NID_AUTO);
-> > > @@ -97,6 +103,7 @@ static int qcom_mhi_qrtr_probe(struct mhi_device *mhi_dev,
-> > >   		qrtr_endpoint_unregister(&qdev->ep);
-> > >   		return rc;
-> > >   	}
-> > > +	complete_all(&qdev->prepared);
-> > >   	dev_dbg(qdev->dev, "Qualcomm MHI QRTR driver probed\n");
-> > 
-> > While this probably works, it still looks like a bit of a hack.
-> > 
-> > Why can't you restructure the code so that the channels are fully
-> > initialised before you register or enable them instead?
-> > 
-> 
-> Ok, I think we will have to stop using the autoqueue feature of MHI and
-> change the flow to be mhi_prepare_for_transfer() -->
-> qrtr_endpoint_register() --> mhi_queue_buf(DMA_FROM_DEVICE). This would make
-> it so ul_transfers only happen after mhi_prepare_for_transfer() and
-> dl_transfers happen after qrtr_endpoint_register().
-> 
-> I'll take a stab at implementing this.
-> 
+On 10/22/24 23:31, Danilo Krummrich wrote:
++
++/// Create device table alias for modpost.
++#[macro_export]
++macro_rules! module_device_table {
++    ($table_type: literal, $module_table_name:ident, $table_name:ident) => {
++        #[rustfmt::skip]
++        #[export_name =
++            concat!("__mod_", $table_type, "__",
+stringify!($table_name), "_device_table")
++        ]
++        static $module_table_name: [core::mem::MaybeUninit<u8>;
+$table_name.raw_ids().size()] =
++            unsafe { core::mem::transmute_copy($table_name.raw_ids()) };
++    };
++}
 
-Hmm, I thought 'autoqueue' was used for a specific reason. So it is not valid
-now?
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+This needs a cfg(MODULE) or similar, otherwise it is impossible to
+build multiple modules
+into the kernel. (See
+https://github.com/AsahiLinux/linux/commit/b63a09090638ff92993c450132387a77e1e68c9a)
 
