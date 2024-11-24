@@ -1,345 +1,183 @@
-Return-Path: <linux-kernel+bounces-419334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BC129D6C98
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 05:05:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 316C89D6C9E
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 05:43:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A67B6161776
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 04:43:54 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88B12AF0E;
+	Sun, 24 Nov 2024 04:43:49 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44675B212AC
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 04:05:31 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7542AD02;
-	Sun, 24 Nov 2024 04:05:24 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81501B660
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 04:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34DE817;
+	Sun, 24 Nov 2024 04:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732421123; cv=none; b=ctk73NmDbnfg9yLb0Gl3wI2Ufg2dBAs7cIlqwHhV94rV184tWHA8/O1DVV0oDkpX0/lcJ07pedZ++gN0G6XILzSm+7Q9fQpzh6cJ6LIKcH2oYqNV7k05AlyUH+SD8Cs9+Q5KJ91Yh+VuqG0janCGs9dGV5NH1W8pWAvKIExKTTo=
+	t=1732423429; cv=none; b=eOEYKkxLYphoKHeACLrjw9MF3mPR8uRuGaR5vbEUw8gi8vmXxsnw+tIKi4yDNpHgUlre91NMWcvp0kz3Ou44dmm6jW3hMWMrHkb/jTuJPCpjiA+NLmzdmD1OMCZ5Hcfi0fTEiOPCyR06Zl5rFWlYvaMZP7Lz7Qe3XeRIMfeIRug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732421123; c=relaxed/simple;
-	bh=YCOj/JeoCAycr9jdz8D3EMwTzuQel8zf+TdD3SAjhkc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XpIkK9fmr+COk/eDhmtUKv8FJbClgTqHiu40vwe+oCto+suOue3AKBOVzbN/NR8OOlLQev3o2E4ItjXlrj0eCreunP83CQFxoczCyh2bsAATLbXPmkAgpEJGRnZIuSEKq+2wkibPps4rzFFaIWzBTJvFWZqdTDPNiT/LmYW3UBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a77a2d9601so39631825ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 20:05:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732421120; x=1733025920;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kvyA8Fcq7n5MWGe6tHs8ESU/jP713NuJTLsOZQbo+Qo=;
-        b=aSdXnNpaOdoI+K3qDmkV6YHimyf8lDUZJko5MrZ+AS63XGNIXhmY4D+CkeReUx8lZb
-         Hk8ErytSMYRIqJAzchwGConaVCXoy5qps0W7N87RGjP14CtdBvFP4HYpJ4wjoTfPY7Fe
-         R2WgM+wMcIOvkG796MGjLHQf9pwbVHn47ORxdWaFQFdCxPT71ru0Tmp4E32urU1U77l8
-         PomMvqS2dlvFll6cu5ywO1yBTk+TiEOAKCvV+crwh3tHN2CnKc8qTnaA4E5C04eGwkaf
-         a2+ipkezHwoG0f+nGV8TIL8dyejCL/9MB8FGp3pIxoH9C3lK00wV4D2ZpNgFWFOZB9me
-         7+yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWB4lI+kLGzDtIInww5iDIrNcZMHlL5+xekRGb/mmNFnnXjZ3j4V+c5WKaNIkX2JA9qbtnC7SoKHeGtiTU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+6LBtQaWcCc4huw2RFY3z9IVxEKmUDCkloF1w5oLGNcJTi1Px
-	uXFRYU1y/ekeIHAYyZ/xfAsHLPcP1AbOvkgCkh2W7WpNMmwLN07d4PHL4M1N+43un6xkCQPdd99
-	zdJBiGnvp631Xjl18lL2C0huaACFqiMneIhAUBmjKXJZHy2+xo3QNPDI=
-X-Google-Smtp-Source: AGHT+IHXe1GncEpdNQK6Xcq/GFmvnHXvAYt5XA9+hJwRhV5R4PzVEYdGZ5oiz8SF9aoyMksdyZrO6JFUWOzDes7I7s8OuHcWb2vx
+	s=arc-20240116; t=1732423429; c=relaxed/simple;
+	bh=0118LA88yubD1HbW8rhHx8ypMvILVmBnQzFIaafSCsU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f4Ai3Vk++kRc0qJ+H3A9QdyUWOpemzkEEwB9HAVLrbQTO+HcaEGNg25Md61/YSppOADBdUREcdCCFbw+qBJaBZxvc9mtbTtLKkyUsNPlVLxFls8odi+Zilk7upQRJ6bvr2TqJUc5PoCl81wQJQNMP2JYQbF9hxTQcoyTPIuEcXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AO4h7bE002856;
+	Sun, 24 Nov 2024 04:43:07 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 4336188tja-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Sun, 24 Nov 2024 04:43:06 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Sat, 23 Nov 2024 20:43:05 -0800
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Sat, 23 Nov 2024 20:43:03 -0800
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <viro@zeniv.linux.org.uk>
+CC: <almaz.alexandrovich@paragon-software.com>, <brauner@kernel.org>,
+        <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <ntfs3@lists.linux.dev>,
+        <syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: [PATCH V6] fs/ntfs3: check if the inode is bad before instantiating dentry
+Date: Sun, 24 Nov 2024 12:43:02 +0800
+Message-ID: <20241124044302.3728104-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241123013252.GQ3387508@ZenIV>
+References: <20241123013252.GQ3387508@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aa8:b0:3a7:96cc:8cc1 with SMTP id
- e9e14a558f8ab-3a79acfb369mr84305585ab.5.1732421120694; Sat, 23 Nov 2024
- 20:05:20 -0800 (PST)
-Date: Sat, 23 Nov 2024 20:05:20 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6742a600.050a0220.1cc393.002e.GAE@google.com>
-Subject: [syzbot] [nbd?] possible deadlock in nbd_set_size
-From: syzbot <syzbot+966c3b607cb094ce7299@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, josef@toxicpanda.com, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nbd@other.debian.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: oJ2W6tyR1st-h82seTu-bS8JrptP_YYF
+X-Proofpoint-GUID: oJ2W6tyR1st-h82seTu-bS8JrptP_YYF
+X-Authority-Analysis: v=2.4 cv=O65rvw9W c=1 sm=1 tr=0 ts=6742aeda cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=VlfZXiiP6vEA:10 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8 a=m1U9UHP-Xm7QjdHxdRgA:9 a=DcSpbTIhAlouE1Uv7lRv:22
+ a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-24_03,2024-11-21_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ clxscore=1015 mlxscore=0 bulkscore=0 mlxlogscore=773 spamscore=0
+ priorityscore=1501 lowpriorityscore=0 adultscore=0 malwarescore=0
+ impostorscore=0 classifier=spam authscore=0 adjust=0 reason=mlx
+ scancount=1 engine=8.21.0-2409260000 definitions=main-2411240037
 
-Hello,
+syzbot reported a null-ptr-deref in pick_link. [1]
 
-syzbot found the following issue on:
+First, i_link and i_dir_seq are in the same union, they share the same memory
+address, and i_dir_seq will be updated during the execution of walk_component,
+which makes the value of i_link equal to i_dir_seq.
 
-HEAD commit:    a5c93bfec0be Merge tag 'x86-mm-2024-11-18' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14a9875f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fc0e771bc3a6cf07
-dashboard link: https://syzkaller.appspot.com/bug?extid=966c3b607cb094ce7299
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Secondly, the chmod execution failed, which resulted in setting the mode value
+of file0's inode to REG when executing ntfs_bad_inode.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Third, during the execution of the link syscall, two things are done in
+d_instantiate. One is to set the bad inode to the dentry of the bus. More
+importantly, the symlink flag obtained in d_flags_for_inode(bad inode) is used
+to update the d_flags of the dentry of the bus through __d_set_inode_and_type,
+which will cause the dentry flag of the created bus to have symlink. The bus
+should have been a hardlink, but it eventually became a symlink.
+These two points constitute the root cause.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/bd46e8a61d2c/disk-a5c93bfe.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/bec1baa1daec/vmlinux-a5c93bfe.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/bace1a48b99a/bzImage-a5c93bfe.xz
+When executing the mount syscall, in walk_component(), when executing to
+step_into() and using d_is_symlink() to judge, because the flag of the dentry
+of the bus is symlink, it leads to the wrong process, and trigger null-ptr-deref
+in pick_link(). 
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+966c3b607cb094ce7299@syzkaller.appspotmail.com
+Note: ("file0, bus" are defined in reproducer [2])
 
-netlink: 4 bytes leftover after parsing attributes in process `syz.0.832'.
-netlink: 36 bytes leftover after parsing attributes in process `syz.0.832'.
-======================================================
-WARNING: possible circular locking dependency detected
-6.12.0-syzkaller-01518-ga5c93bfec0be #0 Not tainted
-------------------------------------------------------
-syz.0.832/9739 is trying to acquire lock:
-ffff8881423af290 (&q->limits_lock){+.+.}-{4:4}, at: queue_limits_start_update include/linux/blkdev.h:945 [inline]
-ffff8881423af290 (&q->limits_lock){+.+.}-{4:4}, at: __nbd_set_size drivers/block/nbd.c:351 [inline]
-ffff8881423af290 (&q->limits_lock){+.+.}-{4:4}, at: nbd_set_size+0x2e0/0x8f0 drivers/block/nbd.c:388
+To avoid null-ptr-deref in pick_link, when creating a hardlink, first check
+whether the inode of file is already bad.
 
-but task is already holding lock:
-ffff8881423aec40 (&q->q_usage_counter(io)#49){++++}-{0:0}, at: nbd_set_size+0xe0/0x8f0 drivers/block/nbd.c:387
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #5 (&q->q_usage_counter(io)#49){++++}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       bio_queue_enter block/blk.h:75 [inline]
-       blk_mq_submit_bio+0x1536/0x23a0 block/blk-mq.c:3092
-       __submit_bio+0x2c6/0x560 block/blk-core.c:629
-       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
-       submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
-       mpage_bio_submit_read fs/mpage.c:75 [inline]
-       mpage_readahead+0x7da/0x930 fs/mpage.c:377
-       read_pages+0x176/0x830 mm/readahead.c:160
-       page_cache_ra_unbounded+0x774/0x8a0 mm/readahead.c:290
-       do_page_cache_ra mm/readahead.c:320 [inline]
-       force_page_cache_ra mm/readahead.c:349 [inline]
-       page_cache_sync_ra+0x3c5/0xad0 mm/readahead.c:562
-       page_cache_sync_readahead include/linux/pagemap.h:1394 [inline]
-       filemap_get_pages+0x621/0x2540 mm/filemap.c:2547
-       filemap_read+0x45c/0xf50 mm/filemap.c:2647
-       blkdev_read_iter+0x2d8/0x430 block/fops.c:767
-       new_sync_read fs/read_write.c:484 [inline]
-       vfs_read+0x991/0xb70 fs/read_write.c:565
-       ksys_read+0x18f/0x2b0 fs/read_write.c:708
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #4 (mapping.invalidate_lock#2){.+.+}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1524
-       filemap_invalidate_lock_shared include/linux/fs.h:873 [inline]
-       filemap_fault+0xd54/0x1950 mm/filemap.c:3352
-       __do_fault+0x135/0x460 mm/memory.c:4882
-       do_shared_fault mm/memory.c:5361 [inline]
-       do_fault mm/memory.c:5435 [inline]
-       do_pte_missing mm/memory.c:3965 [inline]
-       handle_pte_fault+0x1105/0x6820 mm/memory.c:5766
-       __handle_mm_fault mm/memory.c:5909 [inline]
-       handle_mm_fault+0x1053/0x1ad0 mm/memory.c:6077
-       do_user_addr_fault arch/x86/mm/fault.c:1389 [inline]
-       handle_page_fault arch/x86/mm/fault.c:1481 [inline]
-       exc_page_fault+0x2b9/0x8c0 arch/x86/mm/fault.c:1539
-       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-       rep_movs_alternative+0x33/0x70 arch/x86/lib/copy_user_64.S:57
-       copy_user_generic arch/x86/include/asm/uaccess_64.h:126 [inline]
-       raw_copy_to_user arch/x86/include/asm/uaccess_64.h:147 [inline]
-       _inline_copy_to_user include/linux/uaccess.h:197 [inline]
-       _copy_to_user+0x8b/0xb0 lib/usercopy.c:26
-       copy_to_user include/linux/uaccess.h:225 [inline]
-       msr_read+0x184/0x260 arch/x86/kernel/msr.c:69
-       vfs_read+0x1fc/0xb70 fs/read_write.c:563
-       ksys_read+0x18f/0x2b0 fs/read_write.c:708
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #3 (&mm->mmap_lock){++++}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __might_fault+0xc6/0x120 mm/memory.c:6716
-       _inline_copy_from_user include/linux/uaccess.h:162 [inline]
-       _copy_from_user+0x2a/0xc0 lib/usercopy.c:18
-       copy_from_user include/linux/uaccess.h:212 [inline]
-       __blk_trace_setup kernel/trace/blktrace.c:626 [inline]
-       blk_trace_ioctl+0x1ad/0x9a0 kernel/trace/blktrace.c:740
-       blkdev_ioctl+0x40c/0x6a0 block/ioctl.c:682
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #2 (&q->debugfs_mutex){+.+.}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
-       blk_mq_init_sched+0x3fa/0x830 block/blk-mq-sched.c:473
-       elevator_init_mq+0x20e/0x320 block/elevator.c:610
-       add_disk_fwnode+0x10d/0xf80 block/genhd.c:413
-       sd_probe+0xba6/0x1100 drivers/scsi/sd.c:4024
-       really_probe+0x2b8/0xad0 drivers/base/dd.c:658
-       __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
-       driver_probe_device+0x50/0x430 drivers/base/dd.c:830
-       __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
-       bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:459
-       __device_attach_async_helper+0x22d/0x300 drivers/base/dd.c:987
-       async_run_entry_fn+0xa8/0x420 kernel/async.c:129
-       process_one_work kernel/workqueue.c:3229 [inline]
-       process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
-       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
-       kthread+0x2f0/0x390 kernel/kthread.c:389
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #1 (&q->q_usage_counter(queue)#50){++++}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       blk_queue_enter+0xe1/0x600 block/blk-core.c:328
-       blk_mq_alloc_request+0x4fa/0xaa0 block/blk-mq.c:652
-       scsi_alloc_request drivers/scsi/scsi_lib.c:1222 [inline]
-       scsi_execute_cmd+0x177/0x1090 drivers/scsi/scsi_lib.c:304
-       read_capacity_16+0x2b4/0x1450 drivers/scsi/sd.c:2655
-       sd_read_capacity drivers/scsi/sd.c:2824 [inline]
-       sd_revalidate_disk+0x1013/0xbce0 drivers/scsi/sd.c:3734
-       sd_probe+0x9fa/0x1100 drivers/scsi/sd.c:4010
-       really_probe+0x2b8/0xad0 drivers/base/dd.c:658
-       __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
-       driver_probe_device+0x50/0x430 drivers/base/dd.c:830
-       __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
-       bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:459
-       __device_attach_async_helper+0x22d/0x300 drivers/base/dd.c:987
-       async_run_entry_fn+0xa8/0x420 kernel/async.c:129
-       process_one_work kernel/workqueue.c:3229 [inline]
-       process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
-       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
-       kthread+0x2f0/0x390 kernel/kthread.c:389
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #0 (&q->limits_lock){+.+.}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
-       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
-       queue_limits_start_update include/linux/blkdev.h:945 [inline]
-       __nbd_set_size drivers/block/nbd.c:351 [inline]
-       nbd_set_size+0x2e0/0x8f0 drivers/block/nbd.c:388
-       nbd_genl_connect+0x157c/0x1c80 drivers/block/nbd.c:2139
-       genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
-       genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
-       genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
-       netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2541
-       genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
-       netlink_unicast_kernel net/netlink/af_netlink.c:1321 [inline]
-       netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1347
-       netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1891
-       sock_sendmsg_nosec net/socket.c:711 [inline]
-       __sock_sendmsg+0x221/0x270 net/socket.c:726
-       ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2581
-       ___sys_sendmsg net/socket.c:2635 [inline]
-       __sys_sendmsg+0x269/0x350 net/socket.c:2667
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  &q->limits_lock --> mapping.invalidate_lock#2 --> &q->q_usage_counter(io)#49
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&q->q_usage_counter(io)#49);
-                               lock(mapping.invalidate_lock#2);
-                               lock(&q->q_usage_counter(io)#49);
-  lock(&q->limits_lock);
-
- *** DEADLOCK ***
-
-5 locks held by syz.0.832/9739:
- #0: ffffffff8fd2f490 (cb_lock){++++}-{4:4}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
- #1: ffffffff8fd2f348 (genl_mutex){+.+.}-{4:4}, at: genl_lock net/netlink/genetlink.c:35 [inline]
- #1: ffffffff8fd2f348 (genl_mutex){+.+.}-{4:4}, at: genl_op_lock net/netlink/genetlink.c:60 [inline]
- #1: ffffffff8fd2f348 (genl_mutex){+.+.}-{4:4}, at: genl_rcv_msg+0x121/0xec0 net/netlink/genetlink.c:1209
- #2: ffff8880256a9998 (&nbd->config_lock){+.+.}-{4:4}, at: nbd_genl_connect+0xc26/0x1c80 drivers/block/nbd.c:2049
- #3: ffff8881423aec40 (&q->q_usage_counter(io)#49){++++}-{0:0}, at: nbd_set_size+0xe0/0x8f0 drivers/block/nbd.c:387
- #4: ffff8881423aec78 (&q->q_usage_counter(queue)#33){+.+.}-{0:0}, at: nbd_set_size+0xe0/0x8f0 drivers/block/nbd.c:387
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 9739 Comm: syz.0.832 Not tainted 6.12.0-syzkaller-01518-ga5c93bfec0be #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+[1]
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 0 UID: 0 PID: 5310 Comm: syz-executor255 Not tainted 6.12.0-rc6-syzkaller-00318-ga9cda7c0ffed #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:pick_link+0x51c/0xd50 fs/namei.c:1864
+Code: c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 fc 00 e9 ff 48 8b 2b 48 85 ed 0f 84 92 00 00 00 e8 7b 36 7f ff 48 89 e8 48 c1 e8 03 <42> 0f b6 04 38 84 c0 0f 85 a2 05 00 00 0f b6 5d 00 bf 2f 00 00 00
+RSP: 0018:ffffc9000d147998 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff88804558dec8 RCX: ffff88801ec7a440
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000002 R08: ffffffff8215a35f R09: 1ffffffff203a13d
+R10: dffffc0000000000 R11: fffffbfff203a13e R12: 1ffff92001a28f93
+R13: ffffc9000d147af8 R14: 1ffff92001a28f5f R15: dffffc0000000000
+FS:  0000555577611380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fcc0a595ed8 CR3: 0000000035760000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
  <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
- __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- __mutex_lock_common kernel/locking/mutex.c:585 [inline]
- __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
- queue_limits_start_update include/linux/blkdev.h:945 [inline]
- __nbd_set_size drivers/block/nbd.c:351 [inline]
- nbd_set_size+0x2e0/0x8f0 drivers/block/nbd.c:388
- nbd_genl_connect+0x157c/0x1c80 drivers/block/nbd.c:2139
- genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2541
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1321 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1347
- netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1891
- sock_sendmsg_nosec net/socket.c:711 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:726
- ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2581
- ___sys_sendmsg net/socket.c:2635 [inline]
- __sys_sendmsg+0x269/0x350 net/socket.c:2667
+ step_into+0xca9/0x1080 fs/namei.c:1923
+ lookup_last fs/namei.c:2556 [inline]
+ path_lookupat+0x16f/0x450 fs/namei.c:2580
+ filename_lookup+0x256/0x610 fs/namei.c:2609
+ user_path_at+0x3a/0x60 fs/namei.c:3016
+ do_mount fs/namespace.c:3844 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x297/0x3c0 fs/namespace.c:4034
  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7efd8f57e759
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007efd90381038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007efd8f735f80 RCX: 00007efd8f57e759
-RDX: 0000000000000000 RSI: 00000000200002c0 RDI: 0000000000000008
-RBP: 00007efd8f5f175e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007efd8f735f80 R15: 00007ffd8969a0a8
+RIP: 0033:0x7f4b18ad5b19
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc2e486c48 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 00007f4b18ad5b19
+RDX: 0000000000000000 RSI: 00000000200000c0 RDI: 0000000000000000
+RBP: 00007f4b18b685f0 R08: 0000000000000000 R09: 00005555776124c0
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc2e486c70
+R13: 00007ffc2e486e98 R14: 431bde82d7b634db R15: 00007f4b18b1e03b
  </TASK>
 
+[2]
+move_mount(0xffffffffffffff9c, &(0x7f00000003c0)='./file0\x00', 0xffffffffffffff9c, &(0x7f0000000400)='./file0/file0\x00', 0x140)
+chmod(&(0x7f0000000080)='./file0\x00', 0x0)
+link(&(0x7f0000000200)='./file0\x00', &(0x7f0000000240)='./bus\x00')
+mount$overlay(0x0, &(0x7f00000000c0)='./bus\x00', 0x0, 0x0, 0x0)
 
+Reported-by: syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=73d8fc29ec7cba8286fa
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+V1 --> V2: add the root cause of the i_link not set issue and imporve the check
+V2 --> V3: when creating a symbolic link, first check whether the inode of file is bad.
+V3 --> V4: add comments for symlink use bad inode, it is the root cause
+V4 --> V5: update comments for link command, it is creating hardlink
+V5 --> V6: add comments for link syscall return a symlink and update subject
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ fs/ntfs3/inode.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index be04d2845bb7..fefbdcf75016 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -1719,6 +1719,9 @@ int ntfs_link_inode(struct inode *inode, struct dentry *dentry)
+ 	struct ntfs_sb_info *sbi = inode->i_sb->s_fs_info;
+ 	struct NTFS_DE *de;
+ 
++	if (is_bad_inode(inode))
++		return -EIO;
++
+ 	/* Allocate PATH_MAX bytes. */
+ 	de = __getname();
+ 	if (!de)
+-- 
+2.43.0
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
