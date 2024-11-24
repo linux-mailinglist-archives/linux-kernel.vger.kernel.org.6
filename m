@@ -1,138 +1,157 @@
-Return-Path: <linux-kernel+bounces-420337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 412FA9D791C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 00:20:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF8D9D7921
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 00:34:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F6212821DF
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 23:20:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9789281C63
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 23:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE2C187325;
-	Sun, 24 Nov 2024 23:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E21291714B3;
+	Sun, 24 Nov 2024 23:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GIlOjVH3"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Y2ZGqkIJ"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE951632F1;
-	Sun, 24 Nov 2024 23:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995E3163;
+	Sun, 24 Nov 2024 23:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732490399; cv=none; b=ddwC8No+9TQtQ/k/EIx/Hxvgiiq0rEV1hlxifIkRe0moAvKJT36/p9vbD00m5Z3bRDfxca1yw7kGB+0vJvwmGw2LbCMN/fuh75M/OtfE75cbA7DrHQ9bT0lmdOa1eLl4mzC+jNi6trrim0FfD7Ko0JK2C9CKs6LMMJ8+ZL893V4=
+	t=1732491250; cv=none; b=spgY0BxDdvZWl4NoZlawqCsiV+PRT1Hb0DWZg8sFYLqZl4vmYQLTcVZBgYYTrYsbR60bKkAt+QEx+sNXBdK31Jezhgd5Fh7cLDcb1K+D3JDuWf7UidvSnFwVLGJwAUuDEsUxejQZRWNyd2ZrrnDpfzrthlD5HxwjI0IA1lagdpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732490399; c=relaxed/simple;
-	bh=FDgkr+nVJEe9nFNlOFSS2v5pgxqgjhmXjfSkEDzaPw4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W1B+qJflLhKWNIjq3xBP8//Yh4kqZ9lyN66zLyV5f9Z3wMz+Fu8treHIBqe5MRjnYByU7rE0zL3vKa4N0Es2M9cJx0+t7Aj64ywpA2Opwk6IjwZl/ATNtNVZK7IASuD7vdQaJ8VKe/SwtIZt4N0pyj+ZkUCvbX9W/0nUst92ugQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GIlOjVH3; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5cece886771so5892837a12.0;
-        Sun, 24 Nov 2024 15:19:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732490396; x=1733095196; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MZSeyrsrMwj7Vz8/1lrt+/EiUgYqd95oAQ+Ko/mi8sY=;
-        b=GIlOjVH3ddeLL/C61943thsz/E9zo6e4r8gCvKbys9oBVakrfzUd+IPCsKYoLFe/4t
-         mvyuruQ/FzATPgj2wq4yHeyMTJtTR3UlYhr31KdCosK+TS69Nf5Y/X193jnezFH8+hxE
-         8TJi5kvhDpyzIVnc1Tc7Sfa8dje52boJsI9pomCS07uO5PcWMtFSibLtBgVNc6NMNLBx
-         KRQZbqkg+3LtaTMsasH1GtcXzIkzN9dUvkE5TdlYH5v6Hi6a9bEVdiNFtsL61OGRVxp5
-         7dgVWg1voD8UobO20QfbNuMoXoE5GD9f7tk9XhdLvlYKOTispoQD5Z2z3O2O+QwKvDQe
-         OoWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732490396; x=1733095196;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MZSeyrsrMwj7Vz8/1lrt+/EiUgYqd95oAQ+Ko/mi8sY=;
-        b=eriC+6Tul4B4Ut8DHy72pSIyI34DgBic9Og2zSV6n75DH8TXoc20L2qrcBeHnt7T6m
-         L/2OeUKcQubS8qJhwr3Cb0kZmpgF5rWdDrRXxDTs9DNRWkeLnEI8VkDx1MlWDEhQI72q
-         1gB01/ofjuDa+it5td0OWgYGNi/LFZbClXjx5m5RbMPHJGsnkWuP97m7zf6cqyE9Vyzr
-         awoRjI9JY21cusrRxI3jG17TcMSyh7cHiN4u5fETKvsWvD9RRzr6aWD5BgEzIXdhi3cn
-         2RAOYoK0rrPPmg0Obgpylcuy1IsKhJN8NU05eal1SB4TjByuSRwE/obIAe/belJlImE+
-         wnvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXqbQJN79inXxtCoPIwa/QGf8My5QcyF0U/cfmgUJx5/VldzHDn0V7lKaWVV0WejlqX5rDDeNzsKrnm2hnY@vger.kernel.org, AJvYcCXtM+hAbXrqhCPai+GxhHLgujpsMCrQtV7n6e3dKAymujMRlnSYA6dy/U4ESDsUuuzQ3EEoRyw9cEA1RMqB@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGQjoCupt74yDcOytOiPauniRAAo9tVEOXGAy+56nk7CYhTs/J
-	9dTVPHnV9WqerQt10aSiBIiHrdrt95XOyRUQ5/kWQWsTMEFXlqSBapAZiWHkoE+zA/S/WYkm+vf
-	YQJER6r/6yjgiwyCejUINAL3s+kQ=
-X-Gm-Gg: ASbGncuU7alDf/HwCHXSKssnY0fMxt3Oi4ezz0/O+mmxgziLlBDXzX3y00ZuIVLDDYI
-	wtUyYo6dNQoRJPAwYLiRBZzv7JMV5bBA=
-X-Google-Smtp-Source: AGHT+IHhb8E2WJzS+2twhTTngIH12k08ICL23i+O8L3vzpj6+6Ge5pecHFKe+tpVFMXLsJC0qc1HMdxwCpVgWHvHmjE=
-X-Received: by 2002:a05:6402:1ec9:b0:5cf:d2ab:6bf3 with SMTP id
- 4fb4d7f45d1cf-5d01d367034mr10756871a12.0.1732490396232; Sun, 24 Nov 2024
- 15:19:56 -0800 (PST)
+	s=arc-20240116; t=1732491250; c=relaxed/simple;
+	bh=CT9D6mdOROTux249B+29mlTSpXVs5OamgWdIgzsLPTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OPNWMQrqKrX2dA26yq1M98losqLPdMASZoALvethTeA4kdKu185NVsNEFvJYdu70QGhBzaa/q+FtNKOUSj0PS+3MsHjsWBMId3nDLUpIxB9oed7oE8ZG9M3pJ+/mHOXvx03L4tn5gMY6b+VnQMqrr3aTxLGaXsuKmCh2U0mM/Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Y2ZGqkIJ; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1732491238;
+	bh=3HZgDipoBDYjlrimLFeAzGIB/HpXZYSyIrDnhPg+UVQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Y2ZGqkIJPobGRlc/ltIq3UFrdZNbJNUQ1D32IYYc+2P5f66hP/QPs6kSWZmdRZnAj
+	 l7iJA0prBuFnXLEHQ105uzhw3SC1s9QZ+NstXkKtjIcBiLk17LvBD1lytYAhw026Hv
+	 r6pR/CQHrTJew4MQQPMsrPTozkl8WXf9tA9qFzWMZuDjZl0g3W1y3jpcrhajp3pR+q
+	 G5qbBJ8NjOTfekwjZv1cnYUZ0NW6fDd1uItzJhJgq3/SwXo6k+DVqhI5gCJjNit6b0
+	 i6rRmNJQOSWEbyN15CjwNgktroiSr0xT3hNqmDAymTYaDWEzXBqPp5+c7MAuDWZfNo
+	 03C9z0xRAghcw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XxQCB10mLz4xdH;
+	Mon, 25 Nov 2024 10:33:58 +1100 (AEDT)
+Date: Mon, 25 Nov 2024 10:32:17 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, PowerPC
+ <linuxppc-dev@lists.ozlabs.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Nathan Chancellor <nathan@kernel.org>
+Subject: Re: linux-next: manual merge of the powerpc tree with the kbuild
+ tree
+Message-ID: <20241125103217.56a6eb0e@canb.auug.org.au>
+In-Reply-To: <20241113095228.4ac96776@canb.auug.org.au>
+References: <20241113095228.4ac96776@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <61292055a11a3f80e3afd2ef6871416e3963b977.camel@kernel.org>
- <20241124094253.565643-1-zhenghaoran@buaa.edu.cn> <20241124174435.GB620578@frogsfrogsfrogs>
- <wxwj3mxb7xromjvy3vreqbme7tugvi7gfriyhtcznukiladeoj@o7drq3kvflfa>
- <20241124215014.GA3387508@ZenIV> <CAHk-=whYakCL3tws54vLjejwU3WvYVKVSpO1waXxA-vt72Kt5Q@mail.gmail.com>
- <CAGudoHEqDaY3=KuV9CuPja8UgVBhiZVZ7ej5r1yoSxRZaMnknA@mail.gmail.com>
-In-Reply-To: <CAGudoHEqDaY3=KuV9CuPja8UgVBhiZVZ7ej5r1yoSxRZaMnknA@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 25 Nov 2024 00:19:44 +0100
-Message-ID: <CAGudoHGyBQMtfgpq3EzaZi+zWBOoTADVro+Gb27DRHFF1iijVA@mail.gmail.com>
-Subject: Re: [RFC] metadata updates vs. fetches (was Re: [PATCH v4] fs: Fix
- data race in inode_set_ctime_to_ts)
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, "Darrick J. Wong" <djwong@kernel.org>, 
-	Hao-ran Zheng <zhenghaoran@buaa.edu.cn>, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	baijiaju1990@gmail.com, 21371365@buaa.edu.cn
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/dY9MbLJdb98co5AuDAiy8S5";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/dY9MbLJdb98co5AuDAiy8S5
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 25, 2024 at 12:05=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com> =
+Hi all,
+
+On Wed, 13 Nov 2024 09:52:28 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
 wrote:
-> Looks like this is a recurring topic?
 >
-> Until the day comes when someone has way too much time on their hands
-> and patches it up (even that may encounter resistance though), I do
-> think it would make sense to nicely write it down somewhere so for
-> easy reference -- maybe as a comment above getattr and note around
-> other places like the timespec helpers to read that.
->
+> Today's linux-next merge of the powerpc tree got a conflict in:
+>=20
+>   arch/powerpc/Makefile
+>=20
+> between commit:
+>=20
+>   de51342c5157 ("kbuild: add $(objtree)/ prefix to some in-kernel build a=
+rtifacts")
+>=20
+> from the kbuild tree and commit:
+>=20
+>   bee08a9e6ab0 ("powerpc: Adjust adding stack protector flags to KBUILD_C=
+LAGS for clang")
+>=20
+> from the powerpc tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+>=20
+> diff --cc arch/powerpc/Makefile
+> index 321b596d2550,99af7953e844..000000000000
+> --- a/arch/powerpc/Makefile
+> +++ b/arch/powerpc/Makefile
+> @@@ -402,9 -403,11 +403,11 @@@ prepare: stack_protector_prepar
+>   PHONY +=3D stack_protector_prepare
+>   stack_protector_prepare: prepare0
+>   ifdef CONFIG_PPC64
+> - 	$(eval KBUILD_CFLAGS +=3D -mstack-protector-guard-offset=3D$(shell awk=
+ '{if ($$2 =3D=3D "PACA_CANARY") print $$3;}' $(objtree)/include/generated/=
+asm-offsets.h))
+> + 	$(eval KBUILD_CFLAGS +=3D -mstack-protector-guard=3Dtls -mstack-protec=
+tor-guard-reg=3Dr13 \
+>  -				-mstack-protector-guard-offset=3D$(shell awk '{if ($$2 =3D=3D "PACA=
+_CANARY") print $$3;}' include/generated/asm-offsets.h))
+> ++				-mstack-protector-guard-offset=3D$(shell awk '{if ($$2 =3D=3D "PACA=
+_CANARY") print $$3;}' $(objtree)/include/generated/asm-offsets.h))
+>   else
+> - 	$(eval KBUILD_CFLAGS +=3D -mstack-protector-guard-offset=3D$(shell awk=
+ '{if ($$2 =3D=3D "TASK_CANARY") print $$3;}' $(objtree)/include/generated/=
+asm-offsets.h))
+> + 	$(eval KBUILD_CFLAGS +=3D -mstack-protector-guard=3Dtls -mstack-protec=
+tor-guard-reg=3Dr2 \
+>  -				-mstack-protector-guard-offset=3D$(shell awk '{if ($$2 =3D=3D "TASK=
+_CANARY") print $$3;}' include/generated/asm-offsets.h))
+> ++				-mstack-protector-guard-offset=3D$(shell awk '{if ($$2 =3D=3D "TASK=
+_CANARY") print $$3;}' $(objtree)/include/generated/asm-offsets.h))
+>   endif
+>   endif
+>  =20
 
-I'll add personally I was concerned with uid:gid pairs vs chown --
-after all you can read an incorrect pair after getting unlucky enough.
-Again one has to really try to run into it though.
-
-So how about something like this:
-diff --git a/fs/stat.c b/fs/stat.c
-index 0870e969a8a0..302586d6afae 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -78,6 +78,11 @@ EXPORT_SYMBOL(fill_mg_cmtime);
-  * take care to map the inode according to @idmap before filling in the
-  * uid and gid filds. On non-idmapped mounts or if permission checking is =
-to be
-  * performed on the raw inode simply pass @nop_mnt_idmap.
-+ *
-+ * DONTFIXME: no effort is put into ensuring a consistent snapshot of the
-+ * metadata read below. For example a call racing against parallel setattr=
-()
-+ * can end up with a mixture of old and new attributes. This is not consid=
-ered
-+ * enough to warrant fixing.
-  */
- void generic_fillattr(struct mnt_idmap *idmap, u32 request_mask,
-                      struct inode *inode, struct kstat *stat)
-
-not an actual patch submission, any party is free to take the comment
-and tweak in whatever capacity without credit.
-
-What I am after here is preventing more people from spotting the
-problem and thinking it is new.
+This is now a conflict between the kbuild tree and Linus' tree.
 
 --=20
-Mateusz Guzik <mjguzik gmail.com>
+Cheers,
+Stephen Rothwell
+
+--Sig_/dY9MbLJdb98co5AuDAiy8S5
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdDt4EACgkQAVBC80lX
+0GxIRgf/ZYcl6Eoilt3oUwtsfmVx4S5ZuRc/BGXxz+C7amLovrnnvKd2soqIYk8d
++iluP6iZPEAxqkoYSWwMoCqBrO+OLlQi/TY2S0f9Ig7M7TqcZG0qR+43FohW62hN
+usbJEFKHp1T+Oc3LCdxQArk9aAZJ0BI/vdypwRvZ+d+fQ+u2OLMNFmKJ6HOlNfL5
+bLdD2kMhRR85pIGcHMqfuDvb2aiePB0IKmilp4iRZkj3AEddl3+ArIoyCiKjqt3/
+XKSmoCBIXejzOq573z2PiKoJBEtRsSTJK2Nf1Vo9tffmzYcNaQfUbmdDj2nG1B8H
+nvRg6C76jMaRfB/NHco2+2++nLjncg==
+=Bz4k
+-----END PGP SIGNATURE-----
+
+--Sig_/dY9MbLJdb98co5AuDAiy8S5--
 
