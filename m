@@ -1,175 +1,113 @@
-Return-Path: <linux-kernel+bounces-420152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E59A9D76BD
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:34:11 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 536549D75CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:21:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7D87B24A16
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:16:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02B6D16625D
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E8F1891AA;
-	Sun, 24 Nov 2024 16:16:23 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94EE418B483;
+	Sun, 24 Nov 2024 16:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TWTnO1ib"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731552500CE;
-	Sun, 24 Nov 2024 16:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB251531E9;
+	Sun, 24 Nov 2024 16:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732464983; cv=none; b=d0Lhhh7DswHxjneOl4LxEjwu3/lcX58Yr3WrHYd8sKO2K6CWU6Pyrb8MKLVuUprnxFTyoAv7viBfexhE0QXunEg8viYLCLeKSIbzWJCNeT92vVBZQqwokSvTCXGjKeHZEjAPR7S5mJkslQF0KAT/+y8Qhuwd2xv4wnGVlC4NwMM=
+	t=1732465299; cv=none; b=cVxdMQBDmm2RbFBiLduSrs/W0HM860dzgj/gWgxoF6/Syq0g6+vMeTpWKxSWutaE9YApXbszsZM+yIcgW7NUVHiQmGAU5+MgsuWRSfVmq/ZoqdAzeEaaq+r+q93EtfuavhznJYsjQ3TIeiIoIONyAS5Bs8dWhk/j1J01hzwHtIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732464983; c=relaxed/simple;
-	bh=04RyrCigpAh94frnQiTaXhrwqzPX445WtuMSL5hVZw4=;
-	h=Message-Id:From:Date:Subject:To:Cc; b=ULx/1BNY/xIybfc/dWGvCFwhvQslkYK5VJXX80rTlytPHjV/ZZDDG4FLy4kZfRxZvQ7PgMjGZ++0EP6SVJ4omyj9d5WLnccjvI4Q6Rtuc7I9LZQZrg4MfwQDyzu/1IUJEt78x+xDsGJgaBI58f3BTROTLqAR1+hD9ai8DPT8jkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=pass smtp.mailfrom=wunner.de; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wunner.de
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id E9A32100E2027;
-	Sun, 24 Nov 2024 17:16:09 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id A91511DB74D; Sun, 24 Nov 2024 17:16:09 +0100 (CET)
-Message-Id: <90667b2b7f773308318261f96ebefd1a67133c4c.1732464395.git.lukas@wunner.de>
-From: Lukas Wunner <lukas@wunner.de>
-Date: Sun, 24 Nov 2024 17:15:27 +0100
-Subject: [PATCH for-next/fixes] arm64/mm: Fix false-positive
- !virt_addr_valid() for kernel image
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, Zorro Lang <zlang@redhat.com>, Ard Biesheuvel <ardb@kernel.org>, Vegard Nossum <vegard.nossum@oracle.com>, Joey Gouly <joey.gouly@arm.com>, linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1732465299; c=relaxed/simple;
+	bh=/9ijyl8GH0XD0x3k3EDuqb7k1ihuj0joBaoT2aUOF4w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mlfAuSBrqACDPOp1KiUn9xPeB0dt3XWMZv7pqfYPLqeTT9+5fzCBVy7RPSyuutsaLPW+RxcgD0pgo6g8oBJSc1NhUXehWE39v4TebDiKu37F5gAz8sCFAXNFcl+o6SrQmwhlIdtSmWcW0pp2uqBulgFQI1eY+8Jrt6hbn3f21pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TWTnO1ib; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 659C0C4CECC;
+	Sun, 24 Nov 2024 16:21:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732465298;
+	bh=/9ijyl8GH0XD0x3k3EDuqb7k1ihuj0joBaoT2aUOF4w=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=TWTnO1ibZO6ZbBR7RWtZ9ldmuQ4TQuBfU9gEyF4WdCDbcTj1k9+fXDWL8J1d7YRCB
+	 n0lOQ6c/yN0fflaRC7Xt8MJxedqBRlyjHoT5FV2a0SqNj8hzt+SUsCfmS/EY5J7cb+
+	 ROBJlf6j6DYvCuwdHYGsn+jeKUvbLXiBt9WPgJhN2x93pRSy733wgC2jZ1N/KYx6g4
+	 nKMjsVF2IlRLC0UEb/Z/KiHW8MqdeXD7Exm22X0b0HWsjMDOFAlglJPPm2Bs9catom
+	 r8QM7KAet4IKchicVVByqXwHDCzJl6vYCRknJ/QwtajFbIXFGraH29jtfL5uUXp7CS
+	 fI0nKMl51jzSA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C0B8E668B8;
+	Sun, 24 Nov 2024 16:21:38 +0000 (UTC)
+From: =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD_via_B4_Relay?= <devnull+cleverline1mc.gmail.com@kernel.org>
+Subject: [PATCH v3 0/3] Add support for attaching a regulator to w1: ds2482
+Date: Sun, 24 Nov 2024 17:21:34 +0100
+Message-Id: <20241124-ds2482-add-reg-v3-0-806df39c9454@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAI5SQ2cC/2WMywrCMBBFf6Vk7UgyTR+68j/ExTSZtgHbSiJBK
+ f1304JQ9O7OhXNmEdg7DuKczcJzdMFNY4L8kAnT09gxOJtYoESt0sAG1DUCWQueO2hZ5Sgl2cq
+ WIkkPz617bcHrLXHvwnPy760f1fp+U8VvKiqQYEytmxM1pLC8dAO5+9FMg1hTEXc64p+OSaeCZ
+ M5caUvVXl+W5QOztA/L6wAAAA==
+X-Change-ID: 20241111-ds2482-add-reg-fe13200ad7d6
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Stefan Wahren <stefan.wahren@chargebyte.com>
+Cc: Ben Gardner <bgardner@wabtec.com>, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732465298; l=1048;
+ i=cleverline1mc@gmail.com; s=20241112; h=from:subject:message-id;
+ bh=/9ijyl8GH0XD0x3k3EDuqb7k1ihuj0joBaoT2aUOF4w=;
+ b=T8bKNb/jV0tPhdz3tKUndiEJsHAJ0g2LD8k+h1QGp8n+8cWVyrVgo705iH02D8LTng8BzZN9N
+ qivFJymlTwfDjymO/kzxYEDAnB03gHnpYQyoyApCGgSNm40cUn+zsCK
+X-Developer-Key: i=cleverline1mc@gmail.com; a=ed25519;
+ pk=EJoEbw03UiRORQuCiEyNA8gH1Q6fIpEWnn/MyaWOWX0=
+X-Endpoint-Received: by B4 Relay for cleverline1mc@gmail.com/20241112 with
+ auth_id=275
+X-Original-From: =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
+Reply-To: cleverline1mc@gmail.com
 
-Zorro reports a false-positive BUG_ON() when running crypto selftests on
-boot:  Since commit 1e562deacecc ("crypto: rsassa-pkcs1 - Migrate to
-sig_alg backend"), test_sig_one() invokes an RSA verify operation with a
-test vector in the kernel's .rodata section.  The test vector is passed
-to sg_set_buf(), which performs a virt_addr_valid() check.
+Implemented changes requested in review and retested them.
 
-On arm64, virt_addr_valid() returns false for kernel image addresses
-such as this one, even though they're valid virtual addresses.
-x86 returns true for kernel image addresses, so the BUG_ON() does not
-occur there.  In fact, x86 has been doing so for 16 years, i.e. since
-commit af5c2bd16ac2 ("x86: fix virt_addr_valid() with
-CONFIG_DEBUG_VIRTUAL=y, v2").
-
-Do the same on arm64 to avoid the false-positive BUG_ON() and to achieve
-consistent virt_addr_valid() behavior across arches.
-
-Silence a WARN splat in __virt_to_phys() which occurs once the BUG_ON()
-is avoided.
-
-The is_kernel_address() helper introduced herein cannot be put directly
-in the virt_addr_valid() macro:  It has to be part of the kernel proper
-so that it has visibility of the _text and _end symbols (referenced
-through KERNEL_START and KERNEL_END).  These symbols are not exported,
-so modules expanding the virt_addr_valid() macro could not access them.
-For almost all invocations of virt_addr_valid(), __is_lm_address()
-returns true, so jumping to the is_kernel_address() helper hardly ever
-occurs and its performance impact is thus negligible.
-
-Likewise, calling is_kernel_address() from the functions in physaddr.c
-ought to be fine as they depend on CONFIG_DEBUG_VIRTUAL=y, which is
-explicitly described as "costly" in the Kconfig help text.  (And this
-doesn't add much cost really.)
-
-Abridged stack trace:
-
-  kernel BUG at include/linux/scatterlist.h:187!
-  sg_init_one()
-  rsassa_pkcs1_verify()
-  test_sig_one()
-  alg_test_sig()
-  alg_test()
-  cryptomgr_test()
-
-Fixes: 1e562deacecc ("crypto: rsassa-pkcs1 - Migrate to sig_alg backend")
-Reported-by: Zorro Lang <zlang@redhat.com>
-Closes: https://lore.kernel.org/r/20241122045106.tzhvm2wrqvttub6k@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com/
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Kryštof Černý <cleverline1mc@gmail.com>
 ---
-Just from looking at the code it seems arm's virt_addr_valid() returns
-true for kernel image addresses, so apparently arm64 is the odd man out.
+Changes in v3:
+- Switched from regulator_enable() to devm_regulator_get_enable()
+- Removed obvious comments.
+- Link to v2: https://lore.kernel.org/r/20241122-ds2482-add-reg-v2-0-a5a03ee74da7@gmail.com
 
-Note that this fix would have obviated the need for commit c02e7c5c6da8
-("arm64/mm: use lm_alias() with addresses passed to memblock_free()").
+Changes in v2:
+- Removed property description
+- Changed commit message of binding commit
+- Link to v1: https://lore.kernel.org/r/20241115-ds2482-add-reg-v1-0-cc84b9aba126@gmail.com
 
- arch/arm64/include/asm/memory.h | 6 +++++-
- arch/arm64/mm/init.c            | 7 +++++++
- arch/arm64/mm/physaddr.c        | 6 +++---
- 3 files changed, 15 insertions(+), 4 deletions(-)
+---
+Kryštof Černý (3):
+      w1: ds2482: Add regulator support
+      w1: ds2482: Fix datasheet URL
+      dt-bindings: w1: ds2482: Add vcc-supply property
 
-diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-index b9b9929..bb83315 100644
---- a/arch/arm64/include/asm/memory.h
-+++ b/arch/arm64/include/asm/memory.h
-@@ -416,9 +416,13 @@ static inline unsigned long virt_to_pfn(const void *kaddr)
- })
- #endif /* CONFIG_DEBUG_VIRTUAL */
- 
-+bool is_kernel_address(unsigned long x);
-+
- #define virt_addr_valid(addr)	({					\
- 	__typeof__(addr) __addr = __tag_reset(addr);			\
--	__is_lm_address(__addr) && pfn_is_map_memory(virt_to_pfn(__addr));	\
-+	(__is_lm_address(__addr) ||					\
-+	 is_kernel_address((unsigned long)__addr)) &&			\
-+	pfn_is_map_memory(virt_to_pfn(__addr));				\
- })
- 
- void dump_mem_limit(void);
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index d21f67d..2e8a00f 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -156,6 +156,13 @@ static void __init zone_sizes_init(void)
- 	free_area_init(max_zone_pfns);
- }
- 
-+bool is_kernel_address(unsigned long x)
-+{
-+	return x >= (unsigned long) KERNEL_START &&
-+	       x <= (unsigned long) KERNEL_END;
-+}
-+EXPORT_SYMBOL(is_kernel_address);
-+
- int pfn_is_map_memory(unsigned long pfn)
- {
- 	phys_addr_t addr = PFN_PHYS(pfn);
-diff --git a/arch/arm64/mm/physaddr.c b/arch/arm64/mm/physaddr.c
-index cde44c1..2d6755b 100644
---- a/arch/arm64/mm/physaddr.c
-+++ b/arch/arm64/mm/physaddr.c
-@@ -9,7 +9,8 @@
- 
- phys_addr_t __virt_to_phys(unsigned long x)
- {
--	WARN(!__is_lm_address(__tag_reset(x)),
-+	WARN(!__is_lm_address(__tag_reset(x)) &&
-+	     !is_kernel_address(__tag_reset(x)),
- 	     "virt_to_phys used for non-linear address: %pK (%pS)\n",
- 	      (void *)x,
- 	      (void *)x);
-@@ -24,8 +25,7 @@ phys_addr_t __phys_addr_symbol(unsigned long x)
- 	 * This is bounds checking against the kernel image only.
- 	 * __pa_symbol should only be used on kernel symbol addresses.
- 	 */
--	VIRTUAL_BUG_ON(x < (unsigned long) KERNEL_START ||
--		       x > (unsigned long) KERNEL_END);
-+	VIRTUAL_BUG_ON(!is_kernel_address(x));
- 	return __pa_symbol_nodebug(x);
- }
- EXPORT_SYMBOL(__phys_addr_symbol);
+ Documentation/devicetree/bindings/w1/maxim,ds2482.yaml |  2 ++
+ drivers/w1/masters/ds2482.c                            | 10 +++++++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+---
+base-commit: 6d59cab07b8d74d0f0422b750038123334f6ecc2
+change-id: 20241111-ds2482-add-reg-fe13200ad7d6
+
+Best regards,
 -- 
-2.43.0
+Kryštof Černý <cleverline1mc@gmail.com>
+
 
 
