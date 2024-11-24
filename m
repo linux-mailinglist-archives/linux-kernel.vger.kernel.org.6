@@ -1,54 +1,61 @@
-Return-Path: <linux-kernel+bounces-420166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F4569D772B
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 19:13:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97B149D763E
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:59:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17915B26373
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:55:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29FC016520B
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53AD18B475;
-	Sun, 24 Nov 2024 16:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91CE18B494;
+	Sun, 24 Nov 2024 16:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uoZNqMVt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L7C5X32D"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5135C189F45;
-	Sun, 24 Nov 2024 16:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D432500A6;
+	Sun, 24 Nov 2024 16:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732467300; cv=none; b=HOWKw81wJUcTrJONcmrdpY10JApkSb3VUSEKgzZ8U6RD5E+9YqZNRdzlXhUQt25rdPiyEG7MxWE0jQCNsOLqSxiMAvntyqGifc8rkovn8CQ6fBfqsTQtyEkg+3jAoiUfG7jBW7T346XCoUyc/cele5m5mJMrB7Mh4KBuCMJnW70=
+	t=1732467581; cv=none; b=H/2Enb3JOWVIqb0oFZwIu0M8LC1T3juyEqSUQza2wfu/uCfmUS7Tnk4beasRX33LzZfVMczw8HQ3ARj0vyWDwXCf9VI/U32uJf+/OupMUE/BZpwQ/kaz6OeXx7uW2hwa5mCFiOblVVwQhRbtypcvScDz0oVfQek7fblBPT0dMVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732467300; c=relaxed/simple;
-	bh=xjHzIgrs0evP7qQh1vDP8iL2YuIbWNeUnTID39DnOfQ=;
+	s=arc-20240116; t=1732467581; c=relaxed/simple;
+	bh=62lzdX1je+3iYYAmaaDAMkNrEtuWCkBzEZG2dnkQSzI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k1P+mCL121f4j9MhvDoT94T+Hyt2EgSr9YmF9+Yh6YcKhYnD5uKr/il8GrGr2pqyc/qDwFE2VpTD5Ng2lHMmU3bkDdD1rIIRJ2VvYtJm4GYuuKvMHsNJoYuQZq5ANLReQsGzezC/zv6l5CXkCkBRdoyRKZ74pPVocHLcF6P7hQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uoZNqMVt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FFCBC4CECC;
-	Sun, 24 Nov 2024 16:54:59 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=WX3htXApFA3dTYAzKIXoK0l0vf0aFGnVOrUL2UiQ6dyywDITXzMi4BK7sP7P0hSz/tYak9G1qzR4noyztQrS/rscJs5Xw2J2hiexiYISc5CFsE0h5IA49uIfC40ZSFLu76ypxLkODt4CxuIBWDZF++JgHkRxCuv+Tw1op5gW510=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L7C5X32D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8406FC4CECC;
+	Sun, 24 Nov 2024 16:59:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732467299;
-	bh=xjHzIgrs0evP7qQh1vDP8iL2YuIbWNeUnTID39DnOfQ=;
+	s=k20201202; t=1732467580;
+	bh=62lzdX1je+3iYYAmaaDAMkNrEtuWCkBzEZG2dnkQSzI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uoZNqMVtF8aUG2rkbpgEkw4uObOeEM5TcWw+QgZ/wekchZlpLwoWzHBF1olPVSqnz
-	 SM2KcYljWokCjLyaIuHaNF8peWIG/NET1R6TKxYBq7K9pgP+Vu3v0g1nF9p/T4mEjS
-	 Mh/ijXQoBQrd9+xZQ+MuWt+2AGhmjr6/+f8t/2ljHz4EAUh15LkObVHBXZa3KHIONX
-	 V4fO5oeY2c8aGxzl0AwIt1Gt8UAVHfsZ5t4jOPxtf6Hqht2AIT8dvT3ZPC6a+4Gkfk
-	 6nrKCkP2PuclaQP/iiAponvcrF5NxtzZqJmoaSBANtBtJoViFQsLz6BM6HXGzk1jfo
-	 e+pomu2pAHf1w==
-Date: Sun, 24 Nov 2024 11:54:58 -0500
+	b=L7C5X32DvxvZiyA1kpANkYZKm4v7AF0QVAw92/bwWdOwtIrUu/mh8jWAysmfVGaUC
+	 q2uhS+LT/5GtHVLe28GQSHH/AnOAFjrP7WejjA6ymV7jk7/c11O6fPzxdHFBThTZP9
+	 Ruk+M6QTp/AmYKdg4jio1i3vj6mVOOOjt/8Ewa+vJflhnghgSglaRUL1oN2LagAhio
+	 gsB4XA1dwqpThSKC7rffCQzA30Csh0YZjoS5g2OWsWC3YY7VUD18ePW+I4DBP79yNt
+	 xVh0wOh/FpCF7nF8L/qAoEO5FJyC+AmftpDw4wvEP3R1pLBxg1ap1Z1tKu2IznH88p
+	 HdRUxhkzmCWMA==
+Date: Sun, 24 Nov 2024 11:59:39 -0500
 From: Sasha Levin <sashal@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] pin control changes for v6.13
-Message-ID: <Z0NaYhtZy89ObgmR@sashalap>
-References: <CACRpkdZWqTOTzYYgD-wAps2Ygsh-D+nxaW76hrWSdTDZZKBA_w@mail.gmail.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [GIT PULL] Devicetree updates for v6.13
+Message-ID: <Z0NbeyTwxo-M4Lgi@sashalap>
+References: <20241118210730.GA3331421-robh@kernel.org>
+ <Z0NUdoG17EwuCigT@sashalap>
+ <c25e6a80-f6dc-4ef9-a90d-0fa09cbbc217@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,53 +64,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <CACRpkdZWqTOTzYYgD-wAps2Ygsh-D+nxaW76hrWSdTDZZKBA_w@mail.gmail.com>
+In-Reply-To: <c25e6a80-f6dc-4ef9-a90d-0fa09cbbc217@linaro.org>
 
-Hi Linus,
-
-I've just hit the issue you've described in this PR:
-
-On Sat, Nov 23, 2024 at 05:23:26PM +0100, Linus Walleij wrote:
->- The second issue is more sneaky: a recent fixup patch to one
->   of the rc:s (I think -rc4) fixed some error path bugs in
->   the AW9523 driver, then a patch to the regular devel is
->   improving the use of devres so the fixed errorpath fixes
->   things broken.
+On Sun, Nov 24, 2024 at 05:47:33PM +0100, Krzysztof Kozlowski wrote:
+>On 24/11/2024 17:29, Sasha Levin wrote:
+>> Hi Rob,
+>>
+>> On Mon, Nov 18, 2024 at 03:07:30PM -0600, Rob Herring wrote:
+>>>      of: WARN on deprecated #address-cells/#size-cells handling
+>>
+>> With the commit above, I've started seeing boot warnings on a few
 >
->I have been applying the following fixup patch for -next to work:
+>And same boards do not report problems on the next?
 
-And realized that that proposed fixup:
-
->diff --git a/drivers/pinctrl/pinctrl-aw9523.c b/drivers/pinctrl/pinctrl-aw9523.c
->index ebd590a3cec6..90059b0d20e5 100644
->--- a/drivers/pinctrl/pinctrl-aw9523.c
->+++ b/drivers/pinctrl/pinctrl-aw9523.c
->@@ -983,11 +983,8 @@ static int aw9523_probe(struct i2c_client *client)
->        lockdep_set_subclass(&awi->i2c_lock,
->i2c_adapter_depth(client->adapter));
->
->        pdesc = devm_kzalloc(dev, sizeof(*pdesc), GFP_KERNEL);
->-       if (!pdesc) {
->-               ret = -ENOMEM;
->-               goto err_disable_vregs;
->-       }
->-
->+       if (!pdesc)
->+               return -ENOMEM;
->        ret = aw9523_hw_init(awi);
->        if (ret)
->                return ret;
->
->This can be folded in as an "evil merge" or applied separately on
->top, your pick.
-
-Is effectively a revert of one of the commits that are part of this PR:
-
->      pinctrl: aw9523: add missing mutex_destroy
-
-Would it make more sense to just re-do this PR without the offending
-commit? I understand that this is a fairly small fixup, but I'm
-concerned that this will just create confusion later on...
+Looks like they do. I haven't checked it previously, but I see that we
+have similar warnings on a few boards that KernelCI is testing -next on.
 
 -- 
 Thanks,
