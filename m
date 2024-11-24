@@ -1,98 +1,88 @@
-Return-Path: <linux-kernel+bounces-419362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF4C59D6CF4
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 08:35:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ECAF9D6CF7
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 08:44:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD026281562
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 07:35:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5E7A2815CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 07:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B00186616;
-	Sun, 24 Nov 2024 07:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F376433C4;
+	Sun, 24 Nov 2024 07:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="o4f2SSI2"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928132C80;
-	Sun, 24 Nov 2024 07:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="NCNE1bfe"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57452C80
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 07:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732433724; cv=none; b=sa6dlq3KNx7KRKcR2ttaUko/hepUnPYwcmAelSsNrCWuBF2vZrydHUtWH2k+L92zVsBHjqboB0FZHRKZeNlVgfp80oNrqsg+0oXQcCUCVfZR63yGa/YKh6CF1voQLNUxpJcjchsB7NMatT51LK5LIFEr8eqqinaquQTduf0+150=
+	t=1732434246; cv=none; b=Vr3wIrNgj2HD9eZDJclKMXl865r8QDBJwcd6Mytfq5kkBLhmIlVBY9peHrIpRCcRr9jJ/hlU7YOe0zmBwTZCHOaKrxnKwBtjL94gULIB3AWtEPeg39oZH/+Ah+OIyU0nJI2cH2nBRnPLlXXWWJSKfG4vFuNwbB1Q20aJipWzQQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732433724; c=relaxed/simple;
-	bh=xD0OTv8NYqXJUcI0861MpKG3gedbbh4T5TGm05+Z46s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=QTB5QOYZWZJLOHwq5ibP+NmVsKmPQclclRKjyxvvyNrBuqr8UAfZ8PsRELRAsi08sefTn+Vr6vaFWvSlo5CKpA3ZQd/RpY6FN/YLsxjAVPQ4PMLosFR7HvJS3B9cQurixoY+na/4s1o8dx68QrK/ZgHvjbHbZ9KqA/q5BDdXcek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=o4f2SSI2; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1732433706;
-	bh=ISNUCydJFPrrwpu/ZQRl1WMIOCTUMaovewwJ98YskrM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=o4f2SSI2WsD4MsmFe+i5jSx3oRxyB7SnoK5XfQcVwNp2w19vAzp2EYpciiD3iVRO1
-	 00jNLcOvyWgqP9hdFe5AJjNI7bFvmp0QwvPuC5DnDC9mmkznyIX7lhaJSwQUzNxwxX
-	 aXSMznstdr+JednLMvcws1x3MLluEjRBAYXELjHuIjYcVpRkNDy7U/QquYwvDFUIia
-	 NLSzvmA8pXWKva9ox2IjAGkgTZ0dCWsWAWYQRv25hjtQqzYLOFi/M+biwERcZLe3nT
-	 meX5HcQnG6hNsnbguhbwsm68li+FJVt7pczfR0NixLC8P6Oqwt9YLIzUynfHmxqZgM
-	 NXtwV3nMijg8Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xx0wp17pxz4x6P;
-	Sun, 24 Nov 2024 18:35:05 +1100 (AEDT)
-Date: Sun, 24 Nov 2024 18:35:07 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Piotr Zalewski <pZ010001011111@proton.me>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the bcachefs tree
-Message-ID: <20241124183507.5241d705@canb.auug.org.au>
+	s=arc-20240116; t=1732434246; c=relaxed/simple;
+	bh=i9UtdqXtVjG4OxCdBgR3ofGqYJaU4aMbCNFixJDYH2c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dfa0LFnBio04oNBP5NfC8FBHKWpsaNfsCF2AQW/Mb4W/Oh6Gjw5p+L5efspC+TM/pwH/JVW/TU+3dT1JjLTpgxSG4e5HLYBW4DrYXac+YePp9Hxlxk2xPQI9VRcbDFFLPBlTXWwzq5wDBiccvXR0rdCRyCbuICY5aMvlFn1vuuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=NCNE1bfe; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=pB/P2
+	KM2O7XmmfZ64PdjOHBu5Bm2PcLL67BQ7nehanY=; b=NCNE1bfekUMRVsonZSwbC
+	qYOhLhXdrgoFBsYqX/dGDfALriboZRcC9jQ3QyG36UWh4O+b4kkASOeezLTrCZR7
+	813GzhUX6fAddG6m3NEtpcFo5nf9HT3ZR6q0XZE6e47hxggDDDAxNmyEYpsbB+Df
+	9fMjZTN61ML91IeoaC0DM4=
+Received: from localhost.localdomain (unknown [111.35.191.191])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDn73UX2UJnWv1eCA--.358S4;
+	Sun, 24 Nov 2024 15:43:40 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: surenb@google.com,
+	kent.overstreet@linux.dev
+Cc: linux-kernel@vger.kernel.org
+Subject: Abnormal values show up in /proc/allocinfo
+Date: Sun, 24 Nov 2024 15:43:18 +0800
+Message-Id: <20241124074318.399027-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/s0htmlwwT+yDhu/dNb/xjrE";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDn73UX2UJnWv1eCA--.358S4
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtryxJF47KrWxJr45Zr4rGrg_yoWkXrb_Wa
+	1rtr4Sq345J348WasrWr4qv3y0qay7Kr1Sgasxtr1ayF95tan3G3WqvwnIqFyfJr42yF45
+	uwnIqr4Ska1a9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbjQ6tUUUUU==
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMwqhqmdCzvKzgQAAsZ
 
---Sig_/s0htmlwwT+yDhu/dNb/xjrE
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi all,
+I am running 6.12.0 for a week, and today I notice several strange
+items in /proc/allocinfo:
 
-Commit
+       -4096 18446744073709551615 mm/filemap.c:3787 func:do_read_cache_folio
+ -1946730496 18446744073709076340 mm/filemap.c:1952 func:__filemap_get_folio
+  -903294976 18446744073709331085 mm/readahead.c:263 func:page_cache_ra_unbounded
+  -353054720 18446744073709465421 mm/shmem.c:1769 func:shmem_alloc_folio
+ 10547565210        0 mm/compaction.c:1880 func:compaction_alloc
+  -156487680 18446744073709513411 mm/memory.c:1064 func:folio_prealloc
+ -2422685696 18446744073708960140 mm/memory.c:1062 func:folio_prealloc
+ -2332479488 18446744073708982163 fs/btrfs/extent_io.c:635 [btrfs] func:btrfs_alloc_page_array
 
-  a4f3d037408e ("bcachefs: Fix evacuate_bucket tracepoint")
+some values are way too large, seems like corrupted/uninitialized, and values for compaction_alloc 
+are inconsistent: non-zero size with zero count.
 
-is missing a Signed-off-by from its author.
+I do not know when those data became this strange, and I have not reboot my system yet.
+Do you guys need extra information before I reboot my system and started to try reproducing?
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/s0htmlwwT+yDhu/dNb/xjrE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Thanks
+David
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdC1ysACgkQAVBC80lX
-0Gx4YAf6A8bqdcC6sthwP54prMgE/HK9rLuSbF1Fr5GoNSkP0ajxafjbZVOftmkD
-UWtg5jOUm7yST61ELoWEarrCMGIjN7oEQuY8yCKfhqtGogsfa3+V7HxEnGdZ6ooN
-NZBzQuETYxv+GgWM7ZSCOcTu8+ShqjW3pt3d9D0WAdb4AYegAdspspF3viXDMArc
-pqi1/0mOpx1YE5LK/kzsBbSkkfE9BdEzdigRVmrTsGpig1awio0MvdRTVxG3efHW
-lII3RFpYGlOwhBhff4UBh5a6x6z7+7csLiUSPew2cSXl20L/e+H6KSpy/LA9f2DG
-qhwPC6m9wJxjdIYsS0jrNvEpTBUZqg==
-=+B4i
------END PGP SIGNATURE-----
 
---Sig_/s0htmlwwT+yDhu/dNb/xjrE--
+
 
