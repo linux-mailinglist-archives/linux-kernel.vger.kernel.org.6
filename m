@@ -1,88 +1,254 @@
-Return-Path: <linux-kernel+bounces-419322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49E799D6C75
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 03:03:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A4909D6C78
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 03:11:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86489B21498
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 02:03:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A04B02816F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 02:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FB7FC1D;
-	Sun, 24 Nov 2024 02:03:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5802115E8B;
+	Sun, 24 Nov 2024 02:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nlwBTwah"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198171370
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 02:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0D41370;
+	Sun, 24 Nov 2024 02:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732413785; cv=none; b=RgzAxBzD5eWRmW/Jked7uy44sssW7GCQ9jDiY52+snQsaufZ+mm8AB2+FQXrtc+TLHFs2db4dyskXwyeozkLyd9v3kkavAEBSiMTABQM1rBN6r2U5V9D21r+fZaFRBdTQLFw/zbAPReHr/Vu0XF5H7CRdPoCT2oEfCMJDC5ZM/E=
+	t=1732414284; cv=none; b=YIkh76c8DZJBNGzzNL3ytD0+pWmTVkGGPOf4B63SM/fNYqamAiiDVu36y8Aq1retKoNnyIL8rf5cEfARHXZjOfoNCb5m0gY2PIxG1s3nqLzYYl1GnCTq5wUT1b2CfPN4AYEEd7E7ZpXa4CiPJuKICiHV5gi6TsfcLwok4OH9ziQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732413785; c=relaxed/simple;
-	bh=wKOS6kuMRiKv0djqKJKO0SWL+0ljDjxFOJojfR//bXI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=dCkOB7k+yMQOVRPD1FZ3UEyOtRbIl6k40utGrDec7VK9AaQ5E8JkGLMfKAobEq+BZ4cQ7A6us6AV2yt1ns+DQ4Ekchq3nOa2t3AZ5Z8ZcpRq6kN2mLZvfclvYLt8omX8nbAbFxBIqKwarzss9b6yl5q26RQo1mYv2m1e+zWlNCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83e07db6451so374886739f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 18:03:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732413783; x=1733018583;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dsK2DDxX8/5s/4MDUlb+3ESwSOg8HpdPkz0O5YxTNSg=;
-        b=JxSJPqGhNUlZ4js2Oaa33NeOQVPj0lLmZC5r1n2PIU6slgJjRIp/PicVynXiymkhAf
-         jU/W268+c5MKB2u7uCg05LN1b4nG0c0sntqPHDA/gMO0n0wKIiPNIIzD61P67aO/fZeP
-         4+U0rrlc9UI3Sz8oDpCtkKr4bnVbD2pweb111EBafmgRm+RIo9juBzLnGaylkHix4o13
-         sznSxw61tIuSMFj+QwPHpfZyBV3gHpiBq9HMuD9mhe3f8fBa10FFTWlM8lKLl9HIvnRs
-         ULbBqzqODdHyQwTkgnemOLpNpA0itG71A15z3ExQm6xOyADuCTvv3yf9nt3WFukwrBjL
-         oolg==
-X-Forwarded-Encrypted: i=1; AJvYcCX8JGg1yH5olMr1cjklEcbgb0Bx1bmnL3RdZzWOz41ukwYZpJXOezGkFldCisgyf5v8EX6s1PBRfezMmNI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYYUsoaRUdTbEPluSKV6rPE+JDJVhDh4RNtyehL0vEeJBQSBSC
-	egRZjiAPYjPfoR+JgEk6d+3DLXh1iOFN0CgEsHy2fqJaw/Xv8EsdiBCkV+W2397Wbr331tOuKi2
-	kEHQOoXbYKdGEqfL0vLCDOooOrr9WVekNWxbyHCV6z1nfkcHRyWYWdJc=
-X-Google-Smtp-Source: AGHT+IF+DNWP+x0fg8StCR3ZpWzoweheSRJSQEQojHyIe5CRY+iwCnlT4H3kTAxC8fZXBBPQg5IYNddMZhSDp3EoHRKb6TYgmtki
+	s=arc-20240116; t=1732414284; c=relaxed/simple;
+	bh=S+emmCzwyCoks7S9zsw5tQlX8wEFWEQd/iSHmrWwfvA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ayZxCwC8QFJ2H4KILSLuXPaS0WUSKK8nBb1iVaQuoN1uIrm/6hDAHYaqlN0JoOGQO14H6Rle5RM567Ze8rF2GI5XacFM16l/+rZv41GDpIL8nBaowdsFgJyiIBhG6ewxeqYqZKeybwaUe/Fgw9fzF+dB5kNcd+/grLbMb928O0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nlwBTwah; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63447C4CED2;
+	Sun, 24 Nov 2024 02:11:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732414284;
+	bh=S+emmCzwyCoks7S9zsw5tQlX8wEFWEQd/iSHmrWwfvA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nlwBTwahIpQQLyszSpsEnTZOL8bEiQSSRDH9o7+pZzZicoW6wAjA7fbyhGJxTlbq+
+	 07Me+FM1wod59M2dBRFoToDSu3v8K2C+eyvvRbJw/CLew/Ko2+SK4D58Xiw8DbMS23
+	 tm76Vqiw6T8kBoUePQTJW+qPNTgkT5V0R2lCrOuRioY8rBIu2qOmzhi7JugAdXD8CE
+	 9yNoe4uZm0Cxr8b3sTzpegMbIrcZZfQUWkdG87fK6MU7h6VxRdT2fkKWYwil5FWm7X
+	 tANN0xyDOyJfzcZxqOwp3QmtgQcdW0NKfzVLkArfSw9MA78CpNMcK1Fyx4qo4zh+2C
+	 8Osy/UwiRbKBQ==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53d9ff8f1e4so3654487e87.2;
+        Sat, 23 Nov 2024 18:11:24 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXKK4Ccdbr3c7gi/XH+XnViggAoU7Gl0acPMpbWU0mkQ96ygfOLUFbSct0WpEVVJO4AcNCSZxO47BwOXFs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPGLfBO+VqrrwQGVZNBdxy0ngYwZUIvx3cU7FjqpA1KVrkWvbz
+	jvZnDbiSCOse5sU4D6wGTW91u9u3iObGtB5HaDe42X1ehfXN5xS1KczghMn5vjHFuUE7o1jXh5L
+	4aVMcZErs6z5eiOr6eBfnIFysAf4=
+X-Google-Smtp-Source: AGHT+IEeqMMFx6TRXmt8noXgqSRRHXqPMMV4q92iZCiAxBk8TrNBnD9s6tUDwR+dc3Lkvcf1aESFbGsFe2ZnzFyWpsw=
+X-Received: by 2002:ac2:4a64:0:b0:53d:d951:bbfc with SMTP id
+ 2adb3069b0e04-53dd951be49mr2730077e87.55.1732414282943; Sat, 23 Nov 2024
+ 18:11:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3890:b0:3a7:a29b:bf2f with SMTP id
- e9e14a558f8ab-3a7a29bc3d4mr69787105ab.9.1732413783359; Sat, 23 Nov 2024
- 18:03:03 -0800 (PST)
-Date: Sat, 23 Nov 2024 18:03:03 -0800
-In-Reply-To: <20241124013441.23975-1-leocstone@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67428957.050a0220.1cc393.002b.GAE@google.com>
-Subject: Re: [syzbot] [f2fs?] WARNING in f2fs_delete_entry
-From: syzbot <syzbot+35a21b6aade7af3c7b3a@syzkaller.appspotmail.com>
-To: leocstone@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20241122150037.1085800-1-linux@rasmusvillemoes.dk>
+ <CAK7LNAS6aU4L+4JyDXzncMVsY+6XRYTD=RkhcXSUXTRh_WxWWw@mail.gmail.com> <87iksdk3ag.fsf@prevas.dk>
+In-Reply-To: <87iksdk3ag.fsf@prevas.dk>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 24 Nov 2024 11:10:46 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASq+iTgjhCYdwkmgDmyPTbtORgU6UWrs889S4x1xkCHxg@mail.gmail.com>
+Message-ID: <CAK7LNASq+iTgjhCYdwkmgDmyPTbtORgU6UWrs889S4x1xkCHxg@mail.gmail.com>
+Subject: Re: [PATCH v4] setlocalversion: work around "git describe" performance
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jeff King <peff@peff.net>, Sean Christopherson <seanjc@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Sun, Nov 24, 2024 at 7:12=E2=80=AFAM Rasmus Villemoes
+<linux@rasmusvillemoes.dk> wrote:
+>
+> On Sat, Nov 23 2024, Masahiro Yamada <masahiroy@kernel.org> wrote:
+>
+> > On Sat, Nov 23, 2024 at 12:01=E2=80=AFAM Rasmus Villemoes
+> > <linux@rasmusvillemoes.dk> wrote:
+>
+> >> v4:
+> >>
+> >> - Switch the logic to make use of the return values from try_tag,
+> >>   instead of asking whether $count has been set.
+> >
+> >
+> > No, please do not do this.
+> >
+> > As I replied in v3, my plan is to set -e, because otherwise
+> > the shell script is fragile.
+> >
+> > With this version, -e will not work in try_tag()
+> > because it is used in the if condition.
+>
+> I'm confused. Previously you said that "either style is fine with
+> me".
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+That was my comment in v2.
 
-Reported-by: syzbot+35a21b6aade7af3c7b3a@syzkaller.appspotmail.com
-Tested-by: syzbot+35a21b6aade7af3c7b3a@syzkaller.appspotmail.com
+At that time, I was not aware that the -e option was missing
+in this script.
 
-Tested on:
+Sorry, I changed my mind.
 
-commit:         7b1d1d4c Merge remote-tracking branch 'iommu/arm/smmu'..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=1213575f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dfe1e340fbee3d16
-dashboard link: https://syzkaller.appspot.com/bug?extid=35a21b6aade7af3c7b3a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10e476e8580000
+In v3, I commented what I like this script to look like
+when turning on the -e option.
+Then, you came back with a different approach.
 
-Note: testing is done by a robot and is best-effort only.
+
+> Now you've invented some necessity to add "set -e", which of course
+> yes, is then suppressed inside try_tag. But there is not a single
+> statement within that that would cause "set -e" to exit anyway: The only
+> one that is not a simple assignment or is itself a test is the "set --
+> $()", and git rev-list failing there does not cause set -e to trigger.
+
+This is correct, but think about the resiliency when someone
+adds more code to try_tag() in the future.
+
+
+> Aside from that, I'm skeptical to introducing set -e anyway, it's simply
+> too hard to reason about what it will actually
+> do. http://mywiki.wooledge.org/BashFAQ/105 . But you're the maintainer.
+
+
+
+First, set -e is almost always useful because it is not realistic
+to add '|| exit 1' for every command.
+
+For example, see commit bc53d3d777f81385c1bb08b07bd1c06450ecc2c1
+how the -e catches an error.
+
+Second, the link you reference is exaggerating.
+
+For example, the article mentioned the quirks in the Bash mode.
+This argument is not applicable in our case because
+Bash runs in the POSIX mode when it is invoked as 'sh'.
+Since this script is invoked by #!/bin/sh,
+'set -e' follows the POSIX behavior whether /bin/sh is a
+symlink to bash or dash.
+The -e option is propagated to subshell executions.
+(It would not if the shebang had been #!/bin/bash,
+but Bash still provides "set -o posix" to cater to this case).
+
+In the referred link, I do not find a good reason to
+avoid using the -e option.
+
+When a function returns a value (yes/no question just like
+try_tag()), you need to be careful about the possible
+third case.
+
+1) yes
+2) no
+3) error
+
+
+I hope the following provides even more clarification.
+
+Let's say, is_ancestor_tag() checks if the given tag is
+an ancestor or not.
+
+
+
+[Bad Code]
+
+set -e
+
+if is_ancestor_tag "${tag}"; then
+        # Any error in is_ancestor_tag() is ignored.
+        # "Yes, ... " may be printed even if  an error occurs.
+        echo "Yes, ${tag} is an ancestor"
+else
+        echo "No, ${tag} is not an ancestor"
+fi
+
+
+[Good Code 1]
+
+set -e
+
+ret=3D$(is_ancestor_tag "${tag}")
+# If any error occurs in is_ancestor_tag()
+# the script is terminated here.
+
+if [ "${ret}" =3D yes ]; then
+        echo "Yes, ${tag} is an ancestor"
+else
+        echo "No, ${tag} is not an ancestor"
+fi
+
+
+[Good Code 2]
+
+set -e
+
+# is_ancestor_tag() sets 'ret' in the function body
+is_ancestor_tag "${tag}"
+if [ "${ret}" =3D yes ]; then
+        echo "Yes, ${tag} is an ancestor"
+else
+        echo "No, ${tag} is not an ancestor"
+fi
+
+
+V3 is [Good Code 2], as the return value, 'count' is assigned
+within the try_tag() function, and the caller checks it.
+
+
+
+
+
+
+
+
+> >> +try_tag() {
+> >> +       tag=3D"$1"
+> >> +
+> >> +       # Is $tag an annotated tag?
+> >> +       [ "$(git cat-file -t "$tag" 2> /dev/null)" =3D tag ] || return=
+ 1
+> >> +
+> >> +       # Is it an ancestor of HEAD, and if so, how many commits are i=
+n $tag..HEAD?
+> >> +       # shellcheck disable=3DSC2046 # word splitting is the point he=
+re
+> >> +       set -- $(git rev-list --count --left-right "$tag"...HEAD 2> /d=
+ev/null)
+> >> +
+> >> +       # $1 is 0 if and only if $tag is an ancestor of HEAD. Use
+> >> +       # string comparison, because $1 is empty if the 'git rev-list'
+> >> +       # command somehow failed.
+> >> +       [ "$1" =3D 0 ] || return 1
+> >> +
+> >> +       # $2 is the number of commits in the range $tag..HEAD, possibl=
+y 0.
+> >> +       count=3D"$2"
+> >
+> > Redundant double-quotes.
+>
+> Perhaps, but sorry, I'm not code-golfing, and trying to remember when
+> quotes can be elided when variables are referenced is simply not
+> something I spend my very limited brain capacity on.
+>
+> Feel free to make any adjustments you want and commit that, or drop
+> this, I'm not sending a v5 as that seems to be a waste of everybody's
+> time.
+>
+> Rasmus
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
