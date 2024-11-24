@@ -1,138 +1,214 @@
-Return-Path: <linux-kernel+bounces-419391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FA1F9D6D48
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 10:42:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54B889D6D49
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 10:43:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 367941618F9
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 09:42:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E9B82813FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 09:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78427185923;
-	Sun, 24 Nov 2024 09:42:45 +0000 (UTC)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7715B8837;
-	Sun, 24 Nov 2024 09:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457BF1865FA;
+	Sun, 24 Nov 2024 09:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b="Nvj/U7da"
+Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825E48837;
+	Sun, 24 Nov 2024 09:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732441365; cv=none; b=pKrbMxDKHu2Yp2zTFRInPKr7dxNn1RXxYvWcDkS7JASdgJgFsiom7/oGz+uvBcLwaOwAF5TKNSAkn+lf7/Fe9A4onatkbG618syEA5P40yfMGe0kGcXdVB6Ibx4ZCcjUJKvn+8GXbWHJQmuENGdK3mmTAIDRvak59yaDXROMSIA=
+	t=1732441392; cv=none; b=GA4wJwY9yLPpyUhnPbX8gML5RqjzlLI/OFMadAF3EMCLoL30g+AEiD+7vYfyiLwCOmok88EfYp0YgPAnBrlPhQH+3/XYbjoeWPWojWhYqucVzaitPaMKtmvrl0nbQfyj/ymP53NN29wN9hlragnf3MLeq/rnVqDGukPKaBE28Hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732441365; c=relaxed/simple;
-	bh=czEKvwebo6N0ybZpopI8XXJ6AJO1Z1m1j7/C9FhcEzE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jTmvUplcBlwR2rM5m2Kt2mpftah5Mi1YDfpHMD3xdzRHNi89JAZmCLz6URVYAPV8X/+9id0jfRvzoB6lncUYY4X3C0Tn6E9jZFPFRgzcnuF78NYGL+Y6apw39XHhFU48WqwblnCLPmyitVqWRHQfOJ5YX9CJ11OEhGW77FRhVT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e3839177651so2842809276.3;
-        Sun, 24 Nov 2024 01:42:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732441361; x=1733046161;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Aw291P4QQp2xc52w4erCu+NMtXgYhXO+meOEucMjW4Q=;
-        b=AsD+kyvsKX/uoTX1RIMbBi5x+32o4E9IEKYY+NFp0AZ3epBckdwhV9O7tvGtk4lyjs
-         GxXi81KazRbZYq1K9KoKXdvXJeTuPPOB4lMVD4U3vJOpj74CNyrk50zloyC32YTbmtal
-         iPtkzbKZSmunj6VXyOFjt99A4Ov3P4dFH4l+0Mryot8C7iGMP/18iOjEeHUNi44PZdZr
-         yo5w65V6Jf69uklrBVxAVFaYqhDg7vwW4kGNbz+27Vtt1r3YSf7G48HfRFiPGDcafj/Q
-         JvaWCAumaz8wUn+L/L8VT0p9W9yxIVQduZA/t61upws4SMNsfDxAN+H84GYEKeT3D5mI
-         5Rqg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzDcz97ZXg1ceg5sy0mb4KVQs8qPU88K6fhCJurO/PipFfCZYt+AM9LCFfWf8rCdRx/hwnBa4ywTTS@vger.kernel.org, AJvYcCXqA3IIdIWfHRjEBBR9BwYEPk9WzIy/myHu51HpZwC+96ny6hdg6IXil2Hd/uudpKTTy6BPOc3N+v46w9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLmAFqmzF7XSmg1fwj452ChlV0AUbRlZn4CkEJgeKkQymBiNRw
-	rzxvIVAkaksciW+vPzw0El1S1iAy0MW93pQKaeimocd3AdZuHUXps0+PvUzH
-X-Gm-Gg: ASbGncvMLyqjELJkI7qsmiLiIY9b1rKZll9HFhFgK7IeGQJGY3K21vO0I0f41RfO7S9
-	tAgaP4KBRW4oNJGcOlylsGaOqsGnj9VvP27vMMM0D2rMQQEAjm/7oZ0uyi/ftQBQeme99fAhMut
-	bIjTSidjO6mTsVCYp9XMQwOheufodOq/sU8szNdx+tNsEBGLjkAFj1G+F+RVLcO2vYbp+7z+1Mq
-	Ron/pUL9yDJbl3Wxm4I5AUs4WK9/xiqMGw48qdfWjIV64H6hCMLR48NWd4V1eaLIh+6ABePgGXr
-	3helYQD6UnOgXPXG
-X-Google-Smtp-Source: AGHT+IFRMucaFN1U8eS45w73KSswxy1I117v3MGPbfdKq/FJMv1fTcUhdsIA7vUTK6rsW6RfPoJMQQ==
-X-Received: by 2002:a05:6902:1028:b0:e38:f30e:9b52 with SMTP id 3f1490d57ef6-e38f8b0aaf9mr5469356276.4.1732441361065;
-        Sun, 24 Nov 2024 01:42:41 -0800 (PST)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e38f60897d0sm1675544276.33.2024.11.24.01.42.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Nov 2024 01:42:40 -0800 (PST)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6ea339a41f1so30758077b3.2;
-        Sun, 24 Nov 2024 01:42:40 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXG3hcUkyzSgSv6AXqUJk63DawA7wPmYvmWIySNwdYl0hNFnJZU7JCQX5bg2/8nPE97wGz0WCJRkMH0isA=@vger.kernel.org, AJvYcCXoXJOqqcep27j7/9Q+N23VYpcncY1A2zc3xtTErGEWdAG/Vr1L4/fONF3CpCHecm8ggIUzpRuz3P9I@vger.kernel.org
-X-Received: by 2002:a05:690c:881:b0:6ee:b38c:b6e1 with SMTP id
- 00721157ae682-6eee089e833mr98777127b3.14.1732441359840; Sun, 24 Nov 2024
- 01:42:39 -0800 (PST)
+	s=arc-20240116; t=1732441392; c=relaxed/simple;
+	bh=7TXrT/YIvGFUas+Vhdc4qxiauuoJFaZK/vtGnuidlNo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=gSk8CQsg6aCiohuC44wiS46lnK3typrxlqPpyt7ENrt23EJww7LvFn5BT9hDHqyuZyYtBZ7o8/fWIe4eO1t6kEqDAIyWgLEj83hIOlF1weQSk5QYsY0tbFcEMqZRvCi7CHYFWoaGvzfoRGqONhQasG1N9WPuk6LqesOrTeEsCYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn; spf=pass smtp.mailfrom=buaa.edu.cn; dkim=fail (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b=Nvj/U7da reason="key not found in DNS"; arc=none smtp.client-ip=162.243.161.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buaa.edu.cn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=buaa.edu.cn; s=buaa; h=Received:From:To:Cc:Subject:Date:
+	Message-Id:In-Reply-To:References:MIME-Version:
+	Content-Transfer-Encoding; bh=JbV+Q8dcL9PtWIxVmtXG/VoDrDCWDm5rp7
+	REW9NDn34=; b=Nvj/U7damqFOPs8pv1tGqzPSRNuefFT9oLC/Ih7dhPVsNILU9t
+	hGm9VjuaF4oD39tSW7woplndqAJG7VxvrY+JQnKwv/UWmoPFTp1Nh3sf0+b9wuBC
+	eV3Ox1L1vUfZjWzPP1bldcfBh9wbo3siBLVW6Yfd1QVpSihSDXrtE/cuk=
+Received: from s1eepy-QiTianM540-A739.. (unknown [10.130.145.81])
+	by coremail-app1 (Coremail) with SMTP id OCz+CgBnlQ8g9UJnlgxNAQ--.24070S2;
+	Sun, 24 Nov 2024 17:43:00 +0800 (CST)
+From: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: baijiaju1990@gmail.com,
+	zhenghaoran@buaa.edu.cn,
+	21371365@buaa.edu.cn
+Subject: [PATCH v4] fs: Fix data race in inode_set_ctime_to_ts
+Date: Sun, 24 Nov 2024 17:42:53 +0800
+Message-Id: <20241124094253.565643-1-zhenghaoran@buaa.edu.cn>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <61292055a11a3f80e3afd2ef6871416e3963b977.camel@kernel.org>
+References: <61292055a11a3f80e3afd2ef6871416e3963b977.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1731450735.git.fthain@linux-m68k.org> <19a16bcc94c42ea9c5397b37b1918c2937e3faab.1731450735.git.fthain@linux-m68k.org>
- <CAMuHMdVuv7wRud4jNt=t4Ac_s4ze6YYguUKLRt0hQ4gTqEWpEg@mail.gmail.com> <20241122230329128df024@mail.local>
-In-Reply-To: <20241122230329128df024@mail.local>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sun, 24 Nov 2024 10:42:28 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVjTgssYR0RAsxpejRcUnPb7biT0kuq+Xc5T2TcPsahiw@mail.gmail.com>
-Message-ID: <CAMuHMdVjTgssYR0RAsxpejRcUnPb7biT0kuq+Xc5T2TcPsahiw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] m68k: mvme147, mvme16x: Adopt rtc-m48t59 platform driver
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Finn Thain <fthain@linux-m68k.org>, Daniel Palmer <daniel@0x0f.com>, 
-	Michael Pavone <pavone@retrodev.com>, linux-m68k@lists.linux-m68k.org, 
-	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:OCz+CgBnlQ8g9UJnlgxNAQ--.24070S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3XF17uFy8XF18Jr1xJryUGFg_yoW7Aw45pF
+	ZrKa4fX3y5JFZ7Crs7tw4DWrnYganYqa1UJrZ7Wr4F9rn3tw18Kr1jy3yayF4UCrWkAryF
+	qay8Kr15XrnIkr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUgE1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kE
+	wVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x02
+	67AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I
+	80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCj
+	c4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4
+	vE-syl42xK82IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VW7tr1UJr1l4I8I3I0E4IkC
+	6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWw
+	C2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_
+	JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJV
+	WUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIY
+	CTnIWIevJa73UjIFyTuYvjfUoOJ5UUUUU
+X-CM-SenderInfo: 1v1sjjazstiqpexdthxhgxhubq/
 
-Hi Alexandre,
+A data race may occur when the function `inode_set_ctime_to_ts()` and
+the function `inode_get_ctime_sec()` are executed concurrently. When
+two threads call `aio_read` and `aio_write` respectively, they will
+be distributed to the read and write functions of the corresponding
+file system respectively. Taking the btrfs file system as an example,
+the `btrfs_file_read_iter` and `btrfs_file_write_iter` functions are
+finally called. These two functions created a data race when they
+finally called `inode_get_ctime_sec()` and `inode_set_ctime_to_ns()`.
+The specific call stack that appears during testing is as follows:
 
-On Sat, Nov 23, 2024 at 12:03=E2=80=AFAM Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
-> On 22/11/2024 15:44:33+0100, Geert Uytterhoeven wrote:
-> > On Tue, Nov 12, 2024 at 11:51=E2=80=AFPM Finn Thain <fthain@linux-m68k.=
-org> wrote:
-> > > Both mvme147 and mvme16x platforms have their own RTC driver
-> > > implementations that duplicate functionality provided by the rtc-m48t=
-59
-> > > driver. Adopt the rtc-m48t59 driver and remove the other ones.
-> > >
-> > > Tested-by: Daniel Palmer <daniel@0x0f.com>
-> > > Signed-off-by: Finn Thain <fthain@linux-m68k.org>
-> > > Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > > ---
-> > > This patch depends upon the m48t59 driver changes in the preceding pa=
-tch.
-> > >
-> > > Changed since v1:
-> > >  - Initialize yy_offset in struct m48t59_plat_data.
-> > >
-> > > Changed Since v3:
-> > >  - Re-ordered defconfig symbols.
-> > >  - Added reviewed-by tag from arch maintainer.
-> >
-> > Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > so it still can make it into v6.13-rc1 via RTC?
->
-> It is now applied, it is going to conflict with your tree as it didn't
-> cleanly apply. I don't think this is going to cause issues but I'll let
-> it sit in linux-next for a few days before sending to Linus.
+============DATA_RACE============
+btrfs_delayed_update_inode+0x1f61/0x7ce0 [btrfs]
+btrfs_update_inode+0x45e/0xbb0 [btrfs]
+btrfs_dirty_inode+0x2b8/0x530 [btrfs]
+btrfs_update_time+0x1ad/0x230 [btrfs]
+touch_atime+0x211/0x440
+filemap_read+0x90f/0xa20
+btrfs_file_read_iter+0xeb/0x580 [btrfs]
+aio_read+0x275/0x3a0
+io_submit_one+0xd22/0x1ce0
+__se_sys_io_submit+0xb3/0x250
+do_syscall_64+0xc1/0x190
+entry_SYSCALL_64_after_hwframe+0x77/0x7f
+============OTHER_INFO============
+btrfs_write_check+0xa15/0x1390 [btrfs]
+btrfs_buffered_write+0x52f/0x29d0 [btrfs]
+btrfs_do_write_iter+0x53d/0x1590 [btrfs]
+btrfs_file_write_iter+0x41/0x60 [btrfs]
+aio_write+0x41e/0x5f0
+io_submit_one+0xd42/0x1ce0
+__se_sys_io_submit+0xb3/0x250
+do_syscall_64+0xc1/0x190
+entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Thanks! It indeed conflicts with what I sent to Linus, and thus with
-Linus' current tree, due to nearby changes. If you think the conflict
-is too serious, feel free to drop the commit, and I'll pick it up
-for v6.14-rc1.
+To address this issue, it is recommended to add WRITE_ONCE
+and READ_ONCE when reading or writing the `inode->i_ctime_sec`
+and `inode->i_ctime_nsec` variable.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
+---
+V3 -> V4: Fixed patch for latest code
+V2 -> V3: Added READ_ONCE in inode_get_ctime_nsec() and addressed review comments
+V1 -> V2: Added READ_ONCE in inode_get_ctime_sec()
+---
+ fs/inode.c | 16 ++++++++--------
+ fs/stat.c  |  2 +-
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-                        Geert
+diff --git a/fs/inode.c b/fs/inode.c
+index b13b778257ae..bfab370c8622 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2713,8 +2713,8 @@ struct timespec64 inode_set_ctime_to_ts(struct inode *inode, struct timespec64 t
+ {
+ 	trace_inode_set_ctime_to_ts(inode, &ts);
+ 	set_normalized_timespec64(&ts, ts.tv_sec, ts.tv_nsec);
+-	inode->i_ctime_sec = ts.tv_sec;
+-	inode->i_ctime_nsec = ts.tv_nsec;
++	WRITE_ONCE(inode->i_ctime_sec, ts.tv_sec);
++	WRITE_ONCE(inode->i_ctime_nsec, ts.tv_nsec);
+ 	return ts;
+ }
+ EXPORT_SYMBOL(inode_set_ctime_to_ts);
+@@ -2788,7 +2788,7 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
+ 	 */
+ 	cns = smp_load_acquire(&inode->i_ctime_nsec);
+ 	if (cns & I_CTIME_QUERIED) {
+-		struct timespec64 ctime = { .tv_sec = inode->i_ctime_sec,
++		struct timespec64 ctime = { .tv_sec = READ_ONCE(inode->i_ctime_sec),
+ 					    .tv_nsec = cns & ~I_CTIME_QUERIED };
+ 
+ 		if (timespec64_compare(&now, &ctime) <= 0) {
+@@ -2809,7 +2809,7 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
+ 	/* Try to swap the nsec value into place. */
+ 	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, now.tv_nsec)) {
+ 		/* If swap occurred, then we're (mostly) done */
+-		inode->i_ctime_sec = now.tv_sec;
++		WRITE_ONCE(inode->i_ctime_sec, now.tv_sec);
+ 		trace_ctime_ns_xchg(inode, cns, now.tv_nsec, cur);
+ 		mgtime_counter_inc(mg_ctime_swaps);
+ 	} else {
+@@ -2824,7 +2824,7 @@ struct timespec64 inode_set_ctime_current(struct inode *inode)
+ 			goto retry;
+ 		}
+ 		/* Otherwise, keep the existing ctime */
+-		now.tv_sec = inode->i_ctime_sec;
++		now.tv_sec = READ_ONCE(inode->i_ctime_sec);
+ 		now.tv_nsec = cur & ~I_CTIME_QUERIED;
+ 	}
+ out:
+@@ -2857,7 +2857,7 @@ struct timespec64 inode_set_ctime_deleg(struct inode *inode, struct timespec64 u
+ 	/* pairs with try_cmpxchg below */
+ 	cur = smp_load_acquire(&inode->i_ctime_nsec);
+ 	cur_ts.tv_nsec = cur & ~I_CTIME_QUERIED;
+-	cur_ts.tv_sec = inode->i_ctime_sec;
++	cur_ts.tv_sec = READ_ONCE(inode->i_ctime_sec);
+ 
+ 	/* If the update is older than the existing value, skip it. */
+ 	if (timespec64_compare(&update, &cur_ts) <= 0)
+@@ -2883,7 +2883,7 @@ struct timespec64 inode_set_ctime_deleg(struct inode *inode, struct timespec64 u
+ retry:
+ 	old = cur;
+ 	if (try_cmpxchg(&inode->i_ctime_nsec, &cur, update.tv_nsec)) {
+-		inode->i_ctime_sec = update.tv_sec;
++		WRITE_ONCE(inode->i_ctime_sec, update.tv_sec);
+ 		mgtime_counter_inc(mg_ctime_swaps);
+ 		return update;
+ 	}
+@@ -2899,7 +2899,7 @@ struct timespec64 inode_set_ctime_deleg(struct inode *inode, struct timespec64 u
+ 		goto retry;
+ 
+ 	/* Otherwise, it was a new timestamp. */
+-	cur_ts.tv_sec = inode->i_ctime_sec;
++	cur_ts.tv_sec = READ_ONCE(inode->i_ctime_sec);
+ 	cur_ts.tv_nsec = cur & ~I_CTIME_QUERIED;
+ 	return cur_ts;
+ }
+diff --git a/fs/stat.c b/fs/stat.c
+index 0870e969a8a0..e39c78cd62f3 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -53,7 +53,7 @@ void fill_mg_cmtime(struct kstat *stat, u32 request_mask, struct inode *inode)
+ 	}
+ 
+ 	stat->mtime = inode_get_mtime(inode);
+-	stat->ctime.tv_sec = inode->i_ctime_sec;
++	stat->ctime.tv_sec = READ_ONCE(inode->i_ctime_sec);
+ 	stat->ctime.tv_nsec = (u32)atomic_read(pcn);
+ 	if (!(stat->ctime.tv_nsec & I_CTIME_QUERIED))
+ 		stat->ctime.tv_nsec = ((u32)atomic_fetch_or(I_CTIME_QUERIED, pcn));
+-- 
+2.34.1
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
