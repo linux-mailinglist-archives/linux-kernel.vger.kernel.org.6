@@ -1,218 +1,136 @@
-Return-Path: <linux-kernel+bounces-420278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4FB59D781D
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 21:40:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3670B162549
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:39:53 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCA31514CC;
-	Sun, 24 Nov 2024 20:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=zillerbaer@gmx.de header.b="UA139x6L"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D44A39D7820
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 21:40:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE042500B5
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 20:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E0ADB22570
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:40:27 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06852157A5C;
+	Sun, 24 Nov 2024 20:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="dD2S3Zmr"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C177BAEC
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 20:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732480791; cv=none; b=kYsfU2G+1luK9LxFzQwzw6G94C6QuyeOHgPZG9sMeuzfzfXeySWLCouwR/q9PkwlPtww7vqNyVT5adSjJEfNH0FYVMm3JwUABLXGL+Ni4/T298wu2K1ubUb44Nf60eoPu/KYfRnMeGvcNj1eDHFrwYy2Cnd1goOOBf5RK1G6ecU=
+	t=1732480822; cv=none; b=NA06w6vry+IvTUwwCVzNhshuyGfupji46wYFlFEb2NpbJZCwfmHGRMt+HhpP8pR3rbEsDfbvCEer3iutBg4k71I5FW40RAGU7NR8hIIe/nYYg6aEbToPLKX+Xr6t/0aVsKyhnw3diTQI9YePxVoFfL2i3h4xmpVHmHVgOB8fGD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732480791; c=relaxed/simple;
-	bh=/OVU9VRB98T2PdYVfvFRKkhxIsALtPdl2fq5SLEW8PU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c5pqskoh9PdSAdzfFTFpEDMymC2Ig5mSz8oTmriwoBwDDmQWjeSzLQceVkeP8QqPu2v/oI91MG5c8xAesDJD3iLaNUOdh+MuEwbzw4+Ub9FInCU8TTxf50wI0MnzMSe8OxNmBdaS8poCTqFc3TIRtgKewxXwPimwOMCztMNMb84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=zillerbaer@gmx.de header.b=UA139x6L; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1732480764; x=1733085564; i=zillerbaer@gmx.de;
-	bh=ywMSe1q/965v+eVkcNyBvT1Ac5yKe2OMwFLssD4KmtM=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=UA139x6LtD0mAH7hsre7jh4hbLsV6B8Znrsa401xiAzPdGkO0Mi9rvVfSGsBvc6Z
-	 AgoSpIdHp7hKKrz4cVPfOJfTZ8H5SEipWIsyxBKLIUG5onbQvVJ9hlTECvWjhI6wH
-	 IIGGXT6k+hRK9OrXbgQTalCNJFKyrPYz+FMak1P5fKDPqHwmJFytO9zWg93CHhWNA
-	 +nKgYEnEurQjukAudlWBR4U+EoTFg1GEFWYwMNJNs16V4kSamp5GvZVROjl83BnTQ
-	 I36oucGiZ54Eain4YJlr6il9akOY4/jxH90Pdl+ZwFoiPOJeXgUEzUzDy1HXKC45y
-	 PoIchL3VQWNcQyIKcg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from book ([91.14.228.167]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MqaxU-1u1cce0YwS-00hooB; Sun, 24
- Nov 2024 21:39:24 +0100
-Date: Sun, 24 Nov 2024 21:38:53 +0100
-From: Jens Ziller <zillerbaer@gmx.de>
-To: "CK Hu (=?UTF-8?B?6IOh5L+K5YWJ?=)" <ck.hu@mediatek.com>
-Cc: "Shuijing Li (=?UTF-8?B?5p2O5rC06Z2Z?=)" <Shuijing.Li@mediatek.com>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>, "Jitao Shi (
- =?UTF-8?B?55+z6K6w5rab?=)" <jitao.shi@mediatek.com>, "daniel@ffwll.ch"
- <daniel@ffwll.ch>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>, "airlied@gmail.com"
- <airlied@gmail.com>, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "matthias.bgg@gmail.com"
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v2] mediatek: dsi: Correct calculation formula of PHY
- Timing
-Message-ID: <20241124213853.06c1bd33@book>
-In-Reply-To: <4b9e27b50417d60eb32cd0ec782778f652656909.camel@mediatek.com>
-References: <20240412031208.30688-1-shuijing.li@mediatek.com>
-	<20241027143219.56e7b4d0@schleppi.lan>
-	<4b9e27b50417d60eb32cd0ec782778f652656909.camel@mediatek.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.41; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1732480822; c=relaxed/simple;
+	bh=KUGC2HRqQUXTP5RgtQMi8H27nk8lrRe7gjUAR5lyybs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=f5zHEtcnD8D4hX1RRFc+/KO3DJKMyJl/LSOGgo+MI1nk1oQKj0PDD2xvs0ec4rt0R4NHtnjzkL2/trFJdYaDdC6TMJTLUe1quzf5JvTvNlBcRrsX6/30mSBhti1hxwLKfqRUUH6Y1QlDxSuUg+2Ad32D/hRkL5rQxUZVySclbp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=dD2S3Zmr; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 5E3F42C045C;
+	Mon, 25 Nov 2024 09:40:10 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1732480810;
+	bh=KUGC2HRqQUXTP5RgtQMi8H27nk8lrRe7gjUAR5lyybs=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=dD2S3ZmroxJhECEGq8jBDzqldrMW+n1amKf98DT5XaAH/odenZTyIMzcu9xTZBuTc
+	 E18VSIza8LEQUwcwR0YTxwWc9ttlcnqWW0eLYlXC5fZbPxvDAQ/WFdpc4jEYYp68gT
+	 cynncBRvPDOcayJOTqO8af7OBPY5lmW8Dwqdl8WBBuft+LES8MTdJdD9/gY+U5goeB
+	 GIvCoeHcclfmrV5aKRuDlVALc+WbOOrFBez1G6k+dNqbcVs71N0Qibam3vUaj9YHwM
+	 JG57NgsQc+9KIm5GLqJJaaq8sUfgJODMYpWWA+I5wllNNKy+p8e85NYlmbkEB2yry3
+	 Vf0sql9jCWANQ==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B67438f2a0001>; Mon, 25 Nov 2024 09:40:10 +1300
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 25 Nov 2024 09:40:10 +1300
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1544.011; Mon, 25 Nov 2024 09:40:10 +1300
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: Rong Xu <xur@google.com>
+CC: "Han Yao Yeo (atg)" <hanyao.yeo@alliedtelesis.com.sg>, Thomas Bogendoerfer
+	<tsbogend@alpha.franken.de>, Masahiro Gotoh <gotoh@allied-telesis.co.jp>,
+	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: RTL9300 (mips) fails to boot with commit d4a7f2510ff4
+ ("vmlinux.lds.h: Adjust symbol ordering in text output section")
+Thread-Topic: RTL9300 (mips) fails to boot with commit d4a7f2510ff4
+ ("vmlinux.lds.h: Adjust symbol ordering in text output section")
+Thread-Index: AQHbPIH7i71pZM/vO0CstDPfvIZ7vrLBuayAgAAqwQCABCq7gA==
+Date: Sun, 24 Nov 2024 20:40:09 +0000
+Message-ID: <c6719149-8531-4174-824e-a3caf4bc6d0e@alliedtelesis.co.nz>
+References: <cd252b78-077b-441e-8371-106d71258ff3@alliedtelesis.co.nz>
+ <84d9200e-25b4-4bd8-8eb5-c954ff92ac08@alliedtelesis.co.nz>
+ <CAF1bQ=RU2dZU3ENy3MLM4FvrZNaZprgPAM5vbRtUVDixJNQ_zg@mail.gmail.com>
+In-Reply-To: <CAF1bQ=RU2dZU3ENy3MLM4FvrZNaZprgPAM5vbRtUVDixJNQ_zg@mail.gmail.com>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2CABEC1A36C4794BAF26996E0931456E@atlnz.lc>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:HkxXrXpOsattdDkhnrvYIdDinULQaFyrzUNAc2LDZpldEAhh+QJ
- bcuyHSa9BctP5nW+CrrhqtpstoObhJC2BKZlM99618KZgz0Pdu4YB9h38uM12SDex9IanhP
- nmRL2B8Y4XX8HXWrotB3/24rdxEqY2vlNASTAY82INLUWEUEVj6zTC2JrsvAWYOlc0dkVvr
- m2PdAfPWnwsjvyhtmONHw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:n9Y+PD3R9fI=;eQeqCGU5HdIPEZHFNsrJg8AN+ZU
- e2coRFOYFkdl+aawOf/hSbyCuA2KiPAWJLnMTbusXyJhbgN633JGIoxbRqlpM7SppyioJzrOc
- zRPglEpPwedoY2jQ/fMGHQqhKOwFb9cBm0YEGhPEMmfpGis2hlBL8daveaZg2mwQpdBmbwBbG
- OrE3pnb4gtnkFIuJ0eljVzijD76tkQhSL7S67AID1twSAIuUYnaiUtFimXXn1iyi9AITIeODq
- Hep9f0xvQKAZb2zXgG2FJgeYDospSq/ul4GewqRbVQV68xSVigu2ftxEVRPBfHBlGodwMcskB
- JVLDwPekaSR6q6O6EQ3luqzOna8OX4XbqxFS5iNe+4vypv+CQxvz90iRIxuTkfpcIk9EMyalz
- yc+d9di7GZrBrgrDS/Fb2cscN0au0bqeFIlhaEGLO2Y2pYBOsi05y7oWNd6slMFdBGaiUYp+I
- gw5tydx08xnlysd5Iv6DuPXpjzk9PmSdFTFqz5OTPDuKqXmfkQY4oFf1epDEZWf9rKP2lnjXo
- 7PG0knnQiU96VtmVSqt3IZ6BOe3VmQMA7fCSC/cxMgOlV8DZ5yQR27wYO/ir50xrQckV05jax
- Rq+IQtsvGpMEJ+LyXt8wf8naPkMP//RVJtehxHIoi4vqssF/ytm20MzYjPuAUfcmsOCdi+4AQ
- Kg897K0eHX9TovfyE2fJgNZNAkdHkiXNAbCRmq8wE32TTV4w0LZBRqT0cyiN2VCq2k5+L+I8g
- Mq1dJyKkR+rfBby42dzog0rdfuSSABqag1MwpJKvovzUPwMyw0SGM+Y1SWRuWSZihGDCPSnSd
- GSGarkalNWIrYA0tw58WCXGcXfwla2wn2gnyNJCZFYT8wXy1x1fvF9FySCJjpXo4nUM2DvoN0
- pJdvGhoCa1PyJymk2nJVomhgQuMxWyOxe36bPZ4I1D//BIUv0XgpeQ3sT
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=Gam0nhXL c=1 sm=1 tr=0 ts=67438f2a a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=PIBCEmLLjRJRdw3PA-0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
 
-Am Thu, 21 Nov 2024 03:50:02 +0000
-schrieb CK Hu (=E8=83=A1=E4=BF=8A=E5=85=89) <ck.hu@mediatek.com>:
-
-> Hi, Shuijing:
->=20
-> On Sun, 2024-10-27 at 14:32 +0100, Jens Ziller wrote:
-> > External email : Please do not click links or open attachments
-> > until you have verified the sender or the content.
-> >=20
-> >=20
-> > Am Fri, 12 Apr 2024 11:11:39 +0800
-> > schrieb Shuijing Li <shuijing.li@mediatek.com>:
-> >=20
-> > > This patch correct calculation formula of PHY timing.
-> > > The spec define HS-PREPARE should be from 40ns+4*UI(44ns) to
-> > > 85ns+6*UI(91ns). But current duration is 88ns and is near the
-> > > boundary. So this patch make the duration to 64ns so it is near
-> > > the safe range.
-> >=20
-> > Hi Shuijing,
-> >=20
-> > with this patch the panel in the Tentacruel ASUS Chromebook CM14
-> > (CM1402F) flickers. There are 1 or 2 times per second a black panel.
-> > Stable Kernel 6.11.5 and mainline 6.12-rc4 works only when I reverse
-> > this patch. There's a bug inside. Can you please check that?
->=20
-> Please help Jens to fix this bug.
-> Otherwise, I've to revert this patch.
->
-> Regards,
-> CK
-
-I'am not be able to fix that. This patch must be reverted that the
-actual kernel runs on my Chromebook. Please revert this patch.
-
-Regards
-Jens
-
->=20
-> >=20
-> > Best regards
-> > Jens
-> >=20
-> > >=20
-> > > Signed-off-by: Shuijing Li <shuijing.li@mediatek.com>
-> > > ---
-> > > Changes in v2:
-> > > Add a commit to describe the improvements to this patch in detail,
-> > > per suggestion frome previous thread:
-> > > https://urldefense.com/v3/__https://patchwork.kernel.org/project/linu=
-x-mediatek/patch/20240315072945.19502-1-shuijing.li@mediatek.com/__;!!CTRNK=
-A9wMg0ARbw!nA3Auuq2W3qyf3a8OtzDvLICN_xfq5zUozp_-Wo7Q4jR9l6qKlxiWNC4TZPXQa8W=
-08veWhokHyRrvCodcpg$
-> > > ---
-> > >  drivers/gpu/drm/mediatek/mtk_dsi.c | 33
-> > > +++++++++++++++--------------- 1 file changed, 17 insertions(+),
-> > > 16 deletions(-)
-> > >=20
-> > > diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c
-> > > b/drivers/gpu/drm/mediatek/mtk_dsi.c index
-> > > a2fdfc8ddb15..d1bd7d671880 100644 ---
-> > > a/drivers/gpu/drm/mediatek/mtk_dsi.c +++
-> > > b/drivers/gpu/drm/mediatek/mtk_dsi.c @@ -235,22 +235,23 @@ static
-> > > void mtk_dsi_phy_timconfig(struct mtk_dsi *dsi) u32 data_rate_mhz
-> > > =3D DIV_ROUND_UP(dsi->data_rate, 1000000); struct mtk_phy_timing
-> > > *timing =3D &dsi->phy_timing;
-> > >=20
-> > > -     timing->lpx =3D (60 * data_rate_mhz / (8 * 1000)) + 1;
-> > > -     timing->da_hs_prepare =3D (80 * data_rate_mhz + 4 * 1000) /
-> > > 8000;
-> > > -     timing->da_hs_zero =3D (170 * data_rate_mhz + 10 * 1000) /
-> > > 8000 + 1 -
-> > > -                          timing->da_hs_prepare;
-> > > -     timing->da_hs_trail =3D timing->da_hs_prepare + 1;
-> > > -
-> > > -     timing->ta_go =3D 4 * timing->lpx - 2;
-> > > -     timing->ta_sure =3D timing->lpx + 2;
-> > > -     timing->ta_get =3D 4 * timing->lpx;
-> > > -     timing->da_hs_exit =3D 2 * timing->lpx + 1;
-> > > -
-> > > -     timing->clk_hs_prepare =3D 70 * data_rate_mhz / (8 * 1000);
-> > > -     timing->clk_hs_post =3D timing->clk_hs_prepare + 8;
-> > > -     timing->clk_hs_trail =3D timing->clk_hs_prepare;
-> > > -     timing->clk_hs_zero =3D timing->clk_hs_trail * 4;
-> > > -     timing->clk_hs_exit =3D 2 * timing->clk_hs_trail;
-> > > +     timing->lpx =3D (80 * data_rate_mhz / (8 * 1000)) + 1;
-> > > +     timing->da_hs_prepare =3D (59 * data_rate_mhz + 4 * 1000) /
-> > > 8000 + 1;
-> > > +     timing->da_hs_zero =3D (163 * data_rate_mhz + 11 * 1000) /
-> > > 8000 + 1 -
-> > > +             timing->da_hs_prepare;
-> > > +     timing->da_hs_trail =3D (78 * data_rate_mhz + 7 * 1000) / 8000
-> > > + 1; +
-> > > +     timing->ta_go =3D 4 * timing->lpx;
-> > > +     timing->ta_sure =3D 3 * timing->lpx / 2;
-> > > +     timing->ta_get =3D 5 * timing->lpx;
-> > > +     timing->da_hs_exit =3D (118 * data_rate_mhz / (8 * 1000)) + 1;
-> > > +
-> > > +     timing->clk_hs_prepare =3D (57 * data_rate_mhz / (8 * 1000)) +
-> > > 1;
-> > > +     timing->clk_hs_post =3D (65 * data_rate_mhz + 53 * 1000) /
-> > > 8000 + 1;
-> > > +     timing->clk_hs_trail =3D (78 * data_rate_mhz + 7 * 1000) /
-> > > 8000 + 1;
-> > > +     timing->clk_hs_zero =3D (330 * data_rate_mhz / (8 * 1000)) + 1
-> > > -
-> > > +             timing->clk_hs_prepare;
-> > > +     timing->clk_hs_exit =3D (118 * data_rate_mhz / (8 * 1000)) +
-> > > 1;
-> > >=20
-> > >       timcon0 =3D timing->lpx | timing->da_hs_prepare << 8 |
-> > >                 timing->da_hs_zero << 16 | timing->da_hs_trail <<
-> > > 24;
-> >=20
-> >=20
-
+SGkgUm9uZywNCg0KT24gMjIvMTEvMjQgMTg6MDIsIFJvbmcgWHUgd3JvdGU6DQo+IERvZXMgdGhl
+IGZvbGxvd2luZyBwYXRjaCBmaXggeW91ciBpc3N1ZT8NCj4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5v
+cmcvbGttbC9DQUs3TE5BUVNwTTJoaDI9V2dyaWJiOTJuSEY1X3BlUmIrZ3hkTzFCdDFNa2VMOE4r
+aHdAbWFpbC5nbWFpbC5jb20vdC8NCj4NCj4gTWFzYWhpcm8gWWFtYWRhIGFscmVhZHkgYXBwbGll
+ZCB0aGUgcGF0Y2ggdG8ga2J1aWxkLXRyZWUuDQo+DQo+IEkgYWxzbyBwcm9wb3NlZCBhIHNpbWls
+YXIgZml4IGFzIHlvdXJzLiBCdXQgd2UgYmVsaWV2ZSB0aGUgYWJvdmUgcGF0Y2gNCj4gc2hvdWxk
+IGFsc28gd29yayAoYW5kIHByb2JhYmx5IGlzIGJldHRlcikuDQo+DQo+IFBsZWFzZSB0cnkgYW5k
+IGxldCB1cyBrbm93Lg0KDQpMb29rcyBsaWtlIGxpbnV4LW5leHQgYWxyZWFkeSBoYXMgdGhhdCBw
+YXRjaCBhbmQgbm8gaXQgZG9lc24ndCBmaXggbXkgDQppc3N1ZS4gRm9yIHRoZSByZWNvcmQgaGVy
+ZSdzIHRoZSBzdGFydCBvZiBteSBTeXN0ZW0ubWFwDQoNCiQgaGVhZCBTeXN0ZW0ubWFwDQpmZmZm
+ZmZmZjgwMTAwMDAwIFQgX19zcGxpdF90ZXh0X2VuZA0KZmZmZmZmZmY4MDEwMDAwMCBUIF9fc3Bs
+aXRfdGV4dF9zdGFydA0KZmZmZmZmZmY4MDEwMDAwMCBUIF9fdW5saWtlbHlfdGV4dF9zdGFydA0K
+ZmZmZmZmZmY4MDEwMDAwMCBUIF9zdGV4dA0KZmZmZmZmZmY4MDEwMDAwMCBUIF90ZXh0DQpmZmZm
+ZmZmZjgwMTAwMDAwIHQgcnVuX2luaXRfcHJvY2Vzcw0KZmZmZmZmZmY4MDEwMDEzOCB0IHRyeV90
+b19ydW5faW5pdF9wcm9jZXNzDQpmZmZmZmZmZjgwMTAwMThjIHQgcHV0X3BhZ2UNCmZmZmZmZmZm
+ODAxMDAxZDAgdCBucl9ibG9ja3MuaXNyYS4wDQpmZmZmZmZmZjgwMTAwMjA4IFQgYWNrX2JhZF9p
+cnENCg0KSXQgZG9lcyBsb29rIGxpa2Ugd2hhdGV2ZXIgaXMgc3VwcG9zZWQgdG8gcHV0IGhlYWQu
+byBmaXJzdCBpc24ndCBraWNraW5nIA0KaW4gZm9yIG1lLg0KDQo+DQo+IFRoYW5rcyENCj4NCj4g
+LVJvbmcNCj4NCj4gT24gVGh1LCBOb3YgMjEsIDIwMjQgYXQgNjoyOeKAr1BNIENocmlzIFBhY2to
+YW0NCj4gPGNocmlzLnBhY2toYW1AYWxsaWVkdGVsZXNpcy5jby5uej4gd3JvdGU6DQo+Pg0KPj4g
+T24gMjIvMTEvMjQgMTQ6NTgsIENocmlzIFBhY2toYW0gd3JvdGU6DQo+Pj4gSGkgUm9uZywNCj4+
+Pg0KPj4+IEkgd2FzIGp1c3QgdHJ5aW5nIHNvbWUgb2YgbXkgaW4tZmxpZ2h0IGNoYW5nZXMgYWdh
+aW5zdCBsaW51eC1uZXh0IGFuZA0KPj4+IGZvdW5kIHRoYXQgbXkgUlRMOTMwMCogYmFzZWQgYm9h
+cmQgbm8gbG9uZ2VyIGJvb3RzIChub3RoaW5nIG9uIHRoZQ0KPj4+IHNlcmlhbCBjb25zb2xlIGFm
+dGVyIFUtQm9vdCBoYW5kcyBvZmYgdG8gdGhlIGtlcm5lbCkuDQo+Pj4NCj4+PiBBIGJpc2VjdCBi
+ZXR3ZWVuIExpbnVzJ3MgdHJlZSBhbmQgbGludXgtbmV4dC9tYXN0ZXIgcG9pbnRzIHRvIGNvbW1p
+dA0KPj4+IGQ0YTdmMjUxMGZmNCAoInZtbGludXgubGRzLmg6IEFkanVzdCBzeW1ib2wgb3JkZXJp
+bmcgaW4gdGV4dCBvdXRwdXQNCj4+PiBzZWN0aW9uIikuIEEgYnVpbGQgb24gZDRhN2YyNTEwZmY0
+XiBib290cyBzdWNjZXNzZnVsbHkuIFRoYXQgc2VyaWVzIGlzDQo+Pj4gd2VsbCBiZXlvbmQgbXkg
+YXJlYSBvZiBrbm93bGVkZ2UsIHRoZXJlIG1heSBiZSBzb21ldGhpbmcgdGhhdCB0aGUgTUlQUw0K
+Pj4+IFNvQ3MgYXJlIGRvaW5nIChvciBub3QgZG9pbmcpIHRoYXQgaXMgYmVpbmcgYWZmZWN0ZWQg
+YnkgdGhlIHNlY3Rpb25zDQo+Pj4gbW92aW5nLg0KPj4gQmFzZWQgb24gdGhlIHNwYXJjIGNoYW5n
+ZSB0aGF0IGFjY29tcGFuaWVkIHRoaXMgY29tbWl0IHRoZSBmb2xsb3dpbmcNCj4+IGRvZXMgc2Vl
+bSB0byByZXN0b3JlIHdvcmtpbmcgb3JkZXIgZm9yIG1lOg0KPj4NCj4+IGRpZmYgLS1naXQgYS9h
+cmNoL21pcHMva2VybmVsL3ZtbGludXgubGRzLlMgYi9hcmNoL21pcHMva2VybmVsL3ZtbGludXgu
+bGRzLlMNCj4+IGluZGV4IGQ1NzVmOTQ1ZDQyMi4uZTkwYjBmNjgyOTBjIDEwMDY0NA0KPj4gLS0t
+IGEvYXJjaC9taXBzL2tlcm5lbC92bWxpbnV4Lmxkcy5TDQo+PiArKysgYi9hcmNoL21pcHMva2Vy
+bmVsL3ZtbGludXgubGRzLlMNCj4+IEBAIC02Miw2ICs2Miw4IEBAIFNFQ1RJT05TDQo+PiAgICAg
+ICAgICAgX3RleHQgPSAuOyAgICAgIC8qIFRleHQgYW5kIHJlYWQtb25seSBkYXRhICovDQo+PiAg
+ICAgICAgICAgX3N0ZXh0ID0gLjsNCj4+ICAgICAgICAgICAudGV4dCA6IHsNCj4+ICsgICAgICAg
+ICAgICAgICAvKiBNYXRjaCB0ZXh0IHNlY3Rpb24gc3ltYm9scyBpbiBoZWFkLlMgZmlyc3QgKi8N
+Cj4+ICsgICAgICAgICAgICAgICAqaGVhZC5vKC50ZXh0KQ0KPj4gICAgICAgICAgICAgICAgICAg
+VEVYVF9URVhUDQo+PiAgICAgICAgICAgICAgICAgICBTQ0hFRF9URVhUDQo+PiAgICAgICAgICAg
+ICAgICAgICBMT0NLX1RFWFQNCj4+DQo+PiBObyBpZGVhIGlmIHRoYXQncyBhcHByb3ByaWF0ZQ0K
+Pj4=
 
