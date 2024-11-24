@@ -1,61 +1,56 @@
-Return-Path: <linux-kernel+bounces-419426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE7E9D6DFF
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 12:00:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E37D79D6E02
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 12:03:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 333F5281438
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 11:00:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BEBCB20DCD
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 11:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2006189B8D;
-	Sun, 24 Nov 2024 11:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60DE18801A;
+	Sun, 24 Nov 2024 11:03:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N9F+V2L1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pLZSJ31s"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5191A1891AB;
-	Sun, 24 Nov 2024 11:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49206F9F8;
+	Sun, 24 Nov 2024 11:03:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732446005; cv=none; b=QPw0lTTsjN/c0xtF6AEerYS8/+f6uOKMqB/fue1G4cD1kRbV0BEhdq9agrRwmLZ+K/36HNSOtEC4KNmKKLnlrRvXlY5geMR+QIPovDx7XbM0qDCkfTzg2eQAjIWMwCpDWWrrv8DI2E6FPg/2ZbVs0CRbGMupJY1WGeHDACk+ZoY=
+	t=1732446198; cv=none; b=ewvmPHscCmliiTwOpzagOOnl5pmxngvUryniFRGRqfmXSxaOFA5jW4QSS+buLyLaeLY5DjyOwP4sCcT0a77bVGNVPIoUTsKq8pTVFK9deLp+5c/q9VcvMWZlkFwEJl0FOTWvyKQRoK374n/8UEg5rdMR07vEtNKLS/dcyiolDeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732446005; c=relaxed/simple;
-	bh=95UQNooQ1/xtDHil/lFmvjulG65W+cWONuW8GgkYtUE=;
+	s=arc-20240116; t=1732446198; c=relaxed/simple;
+	bh=EfW2avhhyK3SyPtpaAqnOLD1oU9lkffmDg7NK1/wkew=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DN2EUPf8aIaHgD5F7ldS+PfgF9lPqT5QvupgIjQknVdcmSP3PIJ5aGlc1TuspQxpn4Ui4H4VFU7utovBp13j9cpwd+Gg6eBcwjlBH/eqkYeSJDQpp+xFuGmTxk3UF1z7c4glKYuT/n1M1bAQxSDXmB/8M2+RW8OJ4tCoVOQAyD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N9F+V2L1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13041C4CED1;
-	Sun, 24 Nov 2024 11:00:03 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HWuzd9b1Slu2zyfOTPTOMvp2/xqgFd7jBJNj5WxnHYn8c3bxhR4f1TcpsVEDtOWDqFzCHEQDwiS33iz8RZmGm82zLe2mZCif9ecrS0OFmFvYhbzeNP94KjiRTnxQsP5fpG5Y2cT/563U1/odLoEiJFtqsA6qds8ZlFZAizQ3o5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pLZSJ31s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 371F5C4CECC;
+	Sun, 24 Nov 2024 11:03:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732446004;
-	bh=95UQNooQ1/xtDHil/lFmvjulG65W+cWONuW8GgkYtUE=;
+	s=k20201202; t=1732446197;
+	bh=EfW2avhhyK3SyPtpaAqnOLD1oU9lkffmDg7NK1/wkew=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N9F+V2L16moEeax2rywUzrYkZcOBcCczdpsyl2aNWCKDFLnkFtWjbYI1jEqGibZwy
-	 eSiDOI+uECaEWMJXIs3DQtEvcBZeNcSSoaizkgvW/Zw+RsKNeiqfDtYc2wvC9S3q2G
-	 BiXpRNBHdXZoJtp/a9wmQtp9xnWbxodmhYFE/6qErL6TeZWVS/YstTvlkmFRnz8dWZ
-	 XCNYo88PpDbFDFYcR+INGk1yGrdVXyJTWxXNmrSCEnDpEYbS7aMo1rF8SYaA1MOTww
-	 8st5Wasj+cYcm8Oe5BDzXjeUBa4hFwczQXmFaiv5qN433pD0SKRyIzCH1ktlMSh/NS
-	 fuAst+iZb4YVQ==
-Date: Sun, 24 Nov 2024 12:00:01 +0100
+	b=pLZSJ31sxLHPX52vcluqFRHNKkJJAlRfqWlGEmoLMJ1+j/cuVlhPgaxXoJ6qLP5wh
+	 Iy/YUKzz5O7sKsMSTJKfoJ/2w7YOnZoDV5UP7sf9w6zWHyRQCl2SB8fWlgnX1eBlsd
+	 456LbUFs4zhVaB4RL50pABi05FedCNEbeIe/VG9P9i4CbUfw5qOLM7L3FJ4YxPk3cg
+	 L4wi2q1lhWrx3PpNh5AEKw34P/N/FgWNg2ViWhG8W3BS/STVBU3HPEpagfonPP4XZm
+	 XOEgXROvuQBc0Eww2FRbgGkT367bzq+FqclL+jIkJmsyk66MASEVpIeZUMWRk7RcVL
+	 bq4IQYm3vm0ug==
+Date: Sun, 24 Nov 2024 12:03:14 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Maud Spierings <maud_spierings@hotmail.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+To: Kim Seer Paller <kimseer.paller@analog.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Douglas Anderson <dianders@chromium.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] dt-bindings: display: panel: samsung,atna56ac03:
- Document ATNA56AC03
-Message-ID: <k27rqbfvuon3uppgyhcfhcmlqv7ritbn35fmhuljnw2ievqnia@rey3cljv2p2n>
-References: <20241124-asus_qcom_display-v3-0-002b723b1920@hotmail.com>
- <20241124-asus_qcom_display-v3-1-002b723b1920@hotmail.com>
+	Mike Looijmans <mike.looijmans@topic.nl>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: power/supply: Add ltc4162-f/s and
+ ltc4015
+Message-ID: <ax7fbdlm6a2ysqkiwi54bf5jr67ynavphu2cw6o37x6co43xz6@3znvedsd6vrq>
+References: <20241124053643.6602-1-kimseer.paller@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,33 +59,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241124-asus_qcom_display-v3-1-002b723b1920@hotmail.com>
+In-Reply-To: <20241124053643.6602-1-kimseer.paller@analog.com>
 
-On Sun, Nov 24, 2024 at 11:00:57AM +0100, Maud Spierings wrote:
-> The Samsung ATNA56AC03 panel is an AMOLED eDP panel.
-> It is similar to the ATNA33xc20 except it is larger and has a different
-> resolution.
+On Sun, Nov 24, 2024 at 01:36:42PM +0800, Kim Seer Paller wrote:
+> Add LTC4162-F/S and LTC4015 to the supported devices of LTC4162-L.
+> They share a common set of registers. The only differences lie in the
+> resolution value of the scaling factor for battery voltage and battery
+> current measurement, input voltage, and input current for different
+> battery chemistries. The differences also include the calculation of
+> setting and getting the actual voltage applied to the charge voltage,
+> as well as getting the die temperature.
 > 
-> Signed-off-by: Maud Spierings <maud_spierings@hotmail.com>
-> ---
+> This add compatible entries for ltc4162-f/s and ltc4015 and include
+> datasheets for new devices.
+> 
+> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
 
-<form letter>
-This is a friendly reminder during the review process.
-
-It looks like you received a tag and forgot to add it.
-
-If you do not know the process, here is a short explanation: Please add
-Acked-by/Reviewed-by/Tested-by tags when posting new versions, under
-or above your Signed-off-by tag. Tag is "received", when provided
-in a message replied to you on the mailing list. Tools like b4 can help
-here. However, there's no need to repost patches *only* to add the tags.
-The upstream maintainer will do that for tags received on the version
-they apply.
-
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
