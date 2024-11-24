@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-419411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F1D99D6DBB
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 11:50:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE9939D6DBF
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 11:50:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50389161850
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 10:50:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6199BB21207
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 10:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30BF187561;
-	Sun, 24 Nov 2024 10:50:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93768188907;
+	Sun, 24 Nov 2024 10:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2AP3zQx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SPmlUIGn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14ACC2AF16;
-	Sun, 24 Nov 2024 10:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F9A185B48;
+	Sun, 24 Nov 2024 10:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732445423; cv=none; b=aXHyrUjYutKBqtQU4nQ/DRDmr5z10bzTr/7MXO1ylILr615e5/A8nGXElz4ADGckuxFEfaOuTNNuAlf4hwkJdjdGhvV+Di1H/6chHgVh8BcRWbWbhh8ne6z2eUOCgbk/ZWnTeNOgBMVyiIJH5N+HjvpX9cHaI3MqVjn7HyUR9eY=
+	t=1732445447; cv=none; b=iYH4Q+pLCOpUPsdyyBD7OAYh40oZ0R2wi7/4MCYUaQe7d7+4+Mxm7sF3pQ10earrKC7fM2CxupMF5kj1za6uUq0HlK+P/L/b5I/1yMEYUn6F5fzmw6k8x8AwrLm9Cw1iWoIANkl49DHLp3iWnvy4yWzfB8tLsdkVENqgUtoy5yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732445423; c=relaxed/simple;
-	bh=ZrnJ+jDwRbENGrk48WfqaEHSTZRZdNi7M8l9PrYAq44=;
+	s=arc-20240116; t=1732445447; c=relaxed/simple;
+	bh=6M33QFnXiDvcqYWVlL5d5egiOOXz+1qn3LDvb3r95ng=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I8hZgbLCmfBEEkQFpKpAMw1SDLAi3l58h4xVY4azLh/DulQBvr9qA1uPkr72RPi/8g2oAbhWL8I2WV6eehf+CQ1qdtAuP3bkeTJDeoR8mxyG/W34M93Mm/wytwuiNYuooyRfnepD3E1qiqFTUCBI2Tv3ptcLc7y16lp0XcdBCS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m2AP3zQx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AA64C4CECC;
-	Sun, 24 Nov 2024 10:50:20 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=TjBeN+IE6rn8QRb4RlHSZbZ/RGgp2/nVVkcWQRizhPRbChRGVRCIFXQi04du/GNGR/MR+BFThfI2YbSW29ZlXG6DI4e0Ny1FnRp3U+rEFdIKTuM53nQXUfW6/46ZMlxycykZkOtcXvINAIvsOnUfPCApLokX72w0VPhiUk80p1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SPmlUIGn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 746EEC4CECC;
+	Sun, 24 Nov 2024 10:50:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732445422;
-	bh=ZrnJ+jDwRbENGrk48WfqaEHSTZRZdNi7M8l9PrYAq44=;
+	s=k20201202; t=1732445446;
+	bh=6M33QFnXiDvcqYWVlL5d5egiOOXz+1qn3LDvb3r95ng=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=m2AP3zQx1r6eEEfueXPoI/sbM8g5SC5EEbComdOwH6Fx3gJKS/m8Dl/LV/Y3YXbWt
-	 eNOZqp2cFZ/xNJAtsalHiaSlVlATR876fdatc4MT2R/zxMLxsvCy1qqUIyqpLlWWUX
-	 oodAvbHcuRrOeY0L4CiYQLyEyVcEA7pscRBhytLLaYOb6ykj3pSmPuD05aATA8atEg
-	 X2v9eYK7EqVjCbiysMCnjxZ8SNzTFz1DKMYt9o8MPd99aq5HbZ1ZijigexN0VWaoP/
-	 dvFKH7gEgCtQmZGdgjS0S/zu2PiAHYS/nqXEIneKwtBVlF6VtuAxC0AzkSomt503B2
-	 LVo7wAYaWTnZw==
-Message-ID: <40684c50-6f6d-493c-97db-ff3bd8883259@kernel.org>
-Date: Sun, 24 Nov 2024 11:50:17 +0100
+	b=SPmlUIGnrEjzqZ/gkQ6bFtPKH+VKgmP3fk1QT9+jiwKs65G3FpOIXwnEnHn+LrI1K
+	 2AMmZ4ms4z2cPeT7XjqHhTvqzDsHeQUr/LFI8qqZgQ34o+uGoVcSsDuwp7pshcppiB
+	 ZlFWApb3ZPTgtbEMwNzLkAUYpQL8EXpMeWEHirWcDFG4oCtdbM5GA61ppSXHBxlwXn
+	 1oBepD+l/kQhNDHSgLXiE712jbs/Obk2kP65cd0ojrzv9GTm+D+fSdndrqwizwV9En
+	 7nTDlCsVKk9NVPjBwIDcUMywJ5J0yjgwJQqiz+1ZI6XTgg2BsZBI/sT/qjm7IvMX4c
+	 pJ0JHARAe3k2Q==
+Message-ID: <b3e2ed68-092f-4ccb-a945-19e19d5c8071@kernel.org>
+Date: Sun, 24 Nov 2024 11:50:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] w1: ds2482: Add regulator support
-To: =?UTF-8?B?S3J5xaF0b2YgxIxlcm7DvQ==?= <cleverline1mc@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Stefan Wahren <stefan.wahren@chargebyte.com>,
- Ben Gardner <bgardner@wabtec.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20241122-ds2482-add-reg-v2-0-a5a03ee74da7@gmail.com>
- <20241122-ds2482-add-reg-v2-1-a5a03ee74da7@gmail.com>
- <2ff7omfp752zdtzozcle5jn7nsyonsbqgjefrx5t4lncoer5bw@wb76uxg26ugg>
- <c8f40177-1d81-4c8e-8319-e78623cded42@gmail.com>
+Subject: Re: [PATCH 2/2] media: camif-core: Add check for clk_enable()
+To: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Cc: sylvester.nawrocki@gmail.com, mchehab@kernel.org, dron0gus@gmail.com,
+ tomasz.figa@gmail.com, alim.akhtar@samsung.com, kyungmin.park@samsung.com,
+ laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241123212624.6237-1-jiashengjiangcool@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,38 +102,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <c8f40177-1d81-4c8e-8319-e78623cded42@gmail.com>
+In-Reply-To: <20241123212624.6237-1-jiashengjiangcool@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 24/11/2024 11:22, Kryštof Černý wrote:
->>> +	/* Get the vcc regulator */
->>> +	data->vcc_reg = devm_regulator_get(&client->dev, "vcc");
->>> +	if (IS_ERR(data->vcc_reg))
->>> +		return PTR_ERR(data->vcc_reg);
->>> +
->>> +	/* Enable the vcc regulator */
->>> +	ret = regulator_enable(data->vcc_reg);
->>
->> You wanted devm_regulator_get_enable().
->>
->> ... but your comment also suggests devm_regulator_get_enable_optional().
->>
+On 23/11/2024 22:26, Jiasheng Jiang wrote:
+> Add check for the return value of clk_enable() to gurantee the success.
 > 
-> This is a good point, my implementation is based on observation of a few 
-> other drivers and it's not needed in this case. This will reduce the 
-> amount of changes.
-> 
-> I think my wording was not correct. By optionally I meant that most 
-> hardware designs do not use a separate power supply regulator, so they 
-> do not need to specify one, but the device needs power to function.
-> My current view is that it should not be optional after all, so I would 
-> go with devm_regulator_get_enable(). Could you please tell me your view 
-> on this?
-> 
+> Fixes: babde1c243b2 ("[media] V4L: Add driver for S3C24XX/S3C64XX SoC series camera interface")
+> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+> ---
+>  .../media/platform/samsung/s3c-camif/camif-core.c   | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
 
-
-Sure, fine.
+Nothing improved...
 
 Best regards,
 Krzysztof
