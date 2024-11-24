@@ -1,136 +1,343 @@
-Return-Path: <linux-kernel+bounces-419364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C20F59D6CFB
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 08:44:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E0E19D6CFD
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 08:53:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87B3A2813EB
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 07:44:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B50E0161688
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 07:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950D918756D;
-	Sun, 24 Nov 2024 07:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nANAZmy7"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C3815EFA1;
+	Sun, 24 Nov 2024 07:53:24 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09072C80;
-	Sun, 24 Nov 2024 07:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A713847C
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 07:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732434289; cv=none; b=My2yvTp4sIsQxuB0DHzftdVgGD8P1F+yetlrZrXKTPoPJ3yQD78UlqVyPbFzo00OUySh0if6dCHOVKhLhJnp+vwF/+1k7cMWdKy9VBqKq1n6SYZwABtVZtbg/i2uxxSA2ALUbOQ4MaE+jkT9FrSjp3G+WJMFkH/rVWAroXfCUsI=
+	t=1732434803; cv=none; b=PAAD85eyQNe9TAx4r7TFxVKUth9G7dU4Ub8ehXGE+Au9yItzO0O2IKC4J8Q4wZY605a/YJuPb/YicsWmMJlMu8M7TKbskQEZ/7Roj9hNh7+CSFSjwEAvFbO4LBFu2USJpwLvgVOXCA+xTF5viygOmcDXQoUvHzRGtqIOQwc65rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732434289; c=relaxed/simple;
-	bh=Aq2f37XpxmkvDg9k6RPxNwitNinOPVD09l4HgvPD3Nw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MwQ1mTyRV7MFbzmxve0S53XRDhdb1qLVSD1yBn1Wog/WXZARX9lCv7qj7CJbwvTCow0Ier9lx4XIthVy26uFJ7byOaavpWIvviKdcko4HcMOrl853gMe9NMT0AcRnIPkVQ1mYxxhdKgLTwLEKRAasD5AHSVKxLBsh3l114PKKLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nANAZmy7; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2ea2bf25dc8so2932918a91.0;
-        Sat, 23 Nov 2024 23:44:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732434287; x=1733039087; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Aq2f37XpxmkvDg9k6RPxNwitNinOPVD09l4HgvPD3Nw=;
-        b=nANAZmy7IWQuXYfzxmtXOUE933+Y0uIpL8wISUjA0d6kNxuGol5cDlVhp2uvL1+2Jo
-         vk+onx3eSEtdMPJYmflt6uwP3UGeocSDATn/0ZFsHb/qLylsrkZ9wtGDZhZL3IUERWHr
-         KO3bY00yz+u4VmMs1WFNEB52GLgL7l1nh4Vr8LWbq2OOw9kgOs7ykLCx0YjP25bMx3Vx
-         rcWnMMi0FHVXE4trJrDzYp2fDO8IDVZwURbcczUDEUNPjFL4j1Si5JWTK+0LHzpTHEw0
-         YVJOhN5iAd9T40Ny23BHlpe4TuxVsXMSh+HlUhjld9TR7dlHhwN3XbqQ8zoUENS/ndMh
-         dFJg==
+	s=arc-20240116; t=1732434803; c=relaxed/simple;
+	bh=jwJtOUIfQenAVBHdp0JtAt0VzK+ZSKR1DfsHATTSRV0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HAH2yt22VURO1xtr1M1CvUWFH4yR4UGIF4blEY0mvcqeeTU4uRZ6Jp8JxkQyaPPGasowbb8xW40ut69lFHXbn7XpnDbQrWLJOll6h08v+osJwdnHEc3l3qPwiM6Ab9I27K6n+Uj4B1cKprKiQ2tCeCG0COJshI4I8yFbZs7jDuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a79afe7a0bso29717645ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 23 Nov 2024 23:53:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732434287; x=1733039087;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Aq2f37XpxmkvDg9k6RPxNwitNinOPVD09l4HgvPD3Nw=;
-        b=sueBMLmmSEg5z0mhuaMIykaM1f+W2zXUd7duWTTA4sPU4TCv/TrxgT7VKuLxvtfIKt
-         47ciAEXII4/Ubz0zrKtEmoI+h08HAdExcExCA4uInPDohBrSDYXFb3yS2MqY0W0BEL/2
-         U4MfRTS+hLboL3nl7afWwJ+RcQl9OB8oeXNkCuPrY/NFN+B+fPyDoXK7i5JkN97ur379
-         SAOBTViFaGXrZpKnspPVAH14SNtk1I3pFSjB8Ks/axklcO42cU/mfIlSo1uKH0z4t5ih
-         RPBzhfmy+T/gTSFIzxXnjLdOBVHayIVCl+iOLoKIyGgK/OS9Cq3J/jkhhL2qqZNBU/4t
-         4K/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVD1MC6JhB/+wxMFliW4mujGX0tvilbLk6jTf/C5gPhcx7NPirsrdat7+/WQqNOPjTNshDiYjeelO+HQZeH@vger.kernel.org, AJvYcCVUcGf3Zf4u9uqNYowmpb2ogwOeyYRJszP/crrLy8NkrCbqXM/3Ziy1h2x97E26wsZ0PAaO3lNqQMcLTQ==@vger.kernel.org, AJvYcCVyLcZ9hMc1snFMoCk7V1L5nt4rFJD31DXIvFGB4CIX8CYD7Trkyz1Z7UYTWslyiMOZIOdQlgMdEkqZ@vger.kernel.org, AJvYcCXFfqFTJSc65fbOTRyMeShLVkgT9uZDTqd2spynXQ0IoCou+swv2fb1xiJ+Gz6oeDvBTOD3Vt71eDFcuF2XXIgW@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkPrdLSnPrQeoixd1UfgmuBVxcg57jeHK+/Y/bSFzmMdRFdnf4
-	8/RqzLVU4OXlZSoARx+0FSinV49np7NcGq9LyLILhuhCq78cTPmW
-X-Gm-Gg: ASbGnctfdn3khWomDx30fKk3CC3Jo4B26tTJc0jNNftUdEY/0dXkFcAICpqIYZeDaDQ
-	YRTtl6Cl4yW8Li3Nehj/JD42oKuFd6aePgVSAgeBustc17sd4ckNr9vtmFxN1OKo51wmmnImezk
-	9RqecgyVLCYI3BQ116wrxtlpAP09Gnys4DWKRf32QKMK9sOLtriUxuTLBEcFt/2mrDE4MtBYfcl
-	MDlJz5yiVw7V/a1PdPOBSJ6S5T19FizPoMgaJS3ZMDn7xfgpqJWyXN3HphlahRckqKR+fVkQH4=
-X-Google-Smtp-Source: AGHT+IGmkHiMH8U4JrZGmeZGNyxfAdia1O9NuHDN7UBXQpwBwxx7QaDqfGke2FmpU6dpMC+J18Wgmw==
-X-Received: by 2002:a17:90b:4e8c:b0:2ea:525e:14a7 with SMTP id 98e67ed59e1d1-2eb0e866014mr11327597a91.29.1732434286850;
-        Sat, 23 Nov 2024 23:44:46 -0800 (PST)
-Received: from mighty.kangaroo-insen.ts.net ([45.64.12.219])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ead02eca46sm7870925a91.7.2024.11.23.23.44.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Nov 2024 23:44:46 -0800 (PST)
-From: Mithil Bavishi <bavishimithil@gmail.com>
-To: andreas@kemnade.info
-Cc: Laurent.pinchart@ideasonboard.com,
-	aaro.koskinen@iki.fi,
-	airlied@gmail.com,
-	bavishimithil@gmail.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	jernej.skrabec@gmail.com,
-	jonas@kwiboo.se,
-	khilman@baylibre.com,
-	krzk+dt@kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	neil.armstrong@linaro.org,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	quic_jesszhan@quicinc.com,
-	rfoss@kernel.org,
-	robh@kernel.org,
-	rogerq@kernel.org,
-	simona@ffwll.ch,
-	thierry.reding@gmail.com,
-	tony@atomide.com,
-	tzimmermann@suse.de
-Subject: Re: [PATCH v3 10/10] ARM: dts: ti: omap: samsung-espresso10: Add initial support for Galaxy Tab 2 10.1
-Date: Sun, 24 Nov 2024 07:44:34 +0000
-Message-ID: <20241124074434.534-1-bavishimithil@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241123223150.28d4002b@akair>
-References: <20241123223150.28d4002b@akair>
+        d=1e100.net; s=20230601; t=1732434801; x=1733039601;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BVxZfcFVquyGFJdiqGNgz+utdBg0BNv/kkHjTopv2NI=;
+        b=KU9iqT5+Jz/7xM6RfaMPuHMYTzVo7bik612dhGE87uGT3YEQJXBMVyG6X/uXpPLBar
+         d0/p01jVIjfxm5qCqEfPoNIGDR3RtiK6xshM6G1NZa1fpM+p2gT4TnEm7C9p+yu/tK83
+         /npJsBNL7rhVzhltRSeVYIhZNexoZdFn1RCEaq626b+OED+tL7HBnzrLsO7VxSMefdF/
+         KSeZHaHrshwpeUIn1YSMj6TAHzPwKP9r7hXwyaoLRhP0rOttoiGOzWhxxyAKZJAF7u3g
+         tCwacyeRysAf9y5Z0uYuiZLISS9Y7yk4h7JPnMzxwvrK0WsI/S3lC4KMKdSWaxKlPXrv
+         0eGw==
+X-Forwarded-Encrypted: i=1; AJvYcCXwJxXSrtO+r0JX18EuQZbQJj9oZKdFjPWdE7am8jxUiBMvV5Lw7NnwEggdHdyAG9aJTx83hS0EqlwxLmI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvjRaU4uMYftFyYDhFi+btYKUbuo4EihF8wZOJHaJbIO5vzPmc
+	J7x4AuKkGtSO9L979W3TVpP9vpPUgTPm3Rnq9o4jCmFaSr4pTjUC59q57lwglWzrxm5+jZDI/ga
+	Re2bHlTCO3anl+3YNLf5V299MoMGDyl+00DUWSoa1t62mYicVsdBnFNo=
+X-Google-Smtp-Source: AGHT+IFKTFx5nGWNKegye2fnLSkUqQiNnEtsHiCCb7sB+vVqYEQb0CghF3QOPEVnUxz3v8uytRnlXIYsPYHH0TjAO2+M3WQcTVQ0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1fed:b0:3a7:955e:1cc5 with SMTP id
+ e9e14a558f8ab-3a79acf1b29mr100692255ab.1.1732434801229; Sat, 23 Nov 2024
+ 23:53:21 -0800 (PST)
+Date: Sat, 23 Nov 2024 23:53:21 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6742db71.050a0220.1cc393.0036.GAE@google.com>
+Subject: [syzbot] [xfs?] possible deadlock in xfs_dquot_disk_alloc
+From: syzbot <syzbot+0f440b139d96ada5b0fd@syzkaller.appspotmail.com>
+To: cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-> well, I think I2C bus runs at 1.8V, and there is IO_1.8V in the name,
-> so vio-supply should be something at 1.8V, so probably ldo6 is
-> vio-supply. Maybe add a remark in the comments. But then it might be
-> not a good idea to turn that off in suspend. if the other regulator is
-> kept on.
+Hello,
 
-But we are not sure if it is the same, also I personally cannot test it
-since I own the 7 inch version. Let's remove avdd supply for now and see
-if someone with 10 inch version can test it again later. This is better
-than putting potentially incorrect information.
+syzbot found the following issue on:
 
-> We have also the warning from dtbs_check:
-> arch/arm/boot/dts/ti/omap/omap4-samsung-espresso10.dtb:
-> synaptics-rmi4-i2c@20: Unevaluated properties are not allowed
-> ('avdd-supply', 'touchscreen-size-x', 'touchscreen-size-y' were
-> unexpected)
+HEAD commit:    28eb75e178d3 Merge tag 'drm-next-2024-11-21' of https://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16983930580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=95b76860fd16c857
+dashboard link: https://syzkaller.appspot.com/bug?extid=0f440b139d96ada5b0fd
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Ah, indeed. I missed it, will fix it as you've mentioned.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Best Regards,
-Mithil
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1bc8b96259b1/disk-28eb75e1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3d3a17b8d4e1/vmlinux-28eb75e1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b86ac344a770/bzImage-28eb75e1.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0f440b139d96ada5b0fd@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.12.0-syzkaller-07749-g28eb75e178d3 #0 Not tainted
+------------------------------------------------------
+kworker/u8:4/62 is trying to acquire lock:
+ffff88807b723758 (&xfs_nondir_ilock_class){++++}-{4:4}, at: xfs_dquot_disk_alloc+0x399/0xe20 fs/xfs/xfs_dquot.c:337
+
+but task is already holding lock:
+ffff8880794ac610 (sb_internal#2){.+.+}-{0:0}, at: xfs_dquot_disk_alloc+0x36f/0xe20 fs/xfs/xfs_dquot.c:332
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #6 (sb_internal#2){.+.+}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1725 [inline]
+       sb_start_intwrite include/linux/fs.h:1908 [inline]
+       xfs_trans_alloc+0xe5/0x830 fs/xfs/xfs_trans.c:266
+       xfs_vn_update_time+0x203/0x600 fs/xfs/xfs_iops.c:1103
+       inode_update_time fs/inode.c:2125 [inline]
+       touch_atime+0x27f/0x690 fs/inode.c:2198
+       file_accessed include/linux/fs.h:2539 [inline]
+       xfs_file_mmap+0x1ab/0x530 fs/xfs/xfs_file.c:1581
+       call_mmap include/linux/fs.h:2183 [inline]
+       mmap_file mm/internal.h:123 [inline]
+       __mmap_region mm/mmap.c:1453 [inline]
+       mmap_region+0x1a2c/0x23f0 mm/mmap.c:1603
+       do_mmap+0x8f0/0x1000 mm/mmap.c:496
+       vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:588
+       ksys_mmap_pgoff+0x4eb/0x720 mm/mmap.c:542
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #5 (&mm->mmap_lock){++++}-{4:4}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       __might_fault+0xc6/0x120 mm/memory.c:6716
+       _inline_copy_from_user include/linux/uaccess.h:162 [inline]
+       _copy_from_user+0x2a/0xc0 lib/usercopy.c:18
+       copy_from_user include/linux/uaccess.h:212 [inline]
+       __blk_trace_setup kernel/trace/blktrace.c:626 [inline]
+       blk_trace_setup+0xd2/0x1e0 kernel/trace/blktrace.c:648
+       sg_ioctl_common drivers/scsi/sg.c:1121 [inline]
+       sg_ioctl+0xa46/0x2e80 drivers/scsi/sg.c:1163
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:906 [inline]
+       __se_sys_ioctl+0xf7/0x170 fs/ioctl.c:892
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #4 (&q->debugfs_mutex){+.+.}-{4:4}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
+       blk_mq_init_sched+0x3fa/0x830 block/blk-mq-sched.c:473
+       elevator_init_mq+0x20e/0x320 block/elevator.c:610
+       add_disk_fwnode+0x10d/0xf80 block/genhd.c:413
+       sd_probe+0xba6/0x1100 drivers/scsi/sd.c:4024
+       really_probe+0x2ba/0xad0 drivers/base/dd.c:658
+       __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
+       driver_probe_device+0x50/0x430 drivers/base/dd.c:830
+       __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
+       bus_for_each_drv+0x250/0x2e0 drivers/base/bus.c:459
+       __device_attach_async_helper+0x22d/0x300 drivers/base/dd.c:987
+       async_run_entry_fn+0xaa/0x420 kernel/async.c:129
+       process_one_work kernel/workqueue.c:3229 [inline]
+       process_scheduled_works+0xa65/0x1850 kernel/workqueue.c:3310
+       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+       kthread+0x2f2/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #3 (&q->q_usage_counter(queue)#50){++++}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       blk_queue_enter+0xe1/0x600 block/blk-core.c:328
+       blk_mq_alloc_request+0x4fa/0xaa0 block/blk-mq.c:652
+       scsi_alloc_request drivers/scsi/scsi_lib.c:1222 [inline]
+       scsi_execute_cmd+0x177/0x1090 drivers/scsi/scsi_lib.c:304
+       read_capacity_16+0x2b4/0x1450 drivers/scsi/sd.c:2655
+       sd_read_capacity drivers/scsi/sd.c:2824 [inline]
+       sd_revalidate_disk+0x1013/0xbce0 drivers/scsi/sd.c:3734
+       sd_probe+0x9fa/0x1100 drivers/scsi/sd.c:4010
+       really_probe+0x2ba/0xad0 drivers/base/dd.c:658
+       __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
+       driver_probe_device+0x50/0x430 drivers/base/dd.c:830
+       __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
+       bus_for_each_drv+0x250/0x2e0 drivers/base/bus.c:459
+       __device_attach_async_helper+0x22d/0x300 drivers/base/dd.c:987
+       async_run_entry_fn+0xaa/0x420 kernel/async.c:129
+       process_one_work kernel/workqueue.c:3229 [inline]
+       process_scheduled_works+0xa65/0x1850 kernel/workqueue.c:3310
+       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+       kthread+0x2f2/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #2 (&q->limits_lock){+.+.}-{4:4}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
+       queue_limits_start_update include/linux/blkdev.h:945 [inline]
+       loop_reconfigure_limits+0x283/0x9e0 drivers/block/loop.c:1003
+       loop_set_block_size drivers/block/loop.c:1473 [inline]
+       lo_simple_ioctl drivers/block/loop.c:1496 [inline]
+       lo_ioctl+0x1351/0x1f50 drivers/block/loop.c:1559
+       blkdev_ioctl+0x57f/0x6a0 block/ioctl.c:693
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:906 [inline]
+       __se_sys_ioctl+0xf7/0x170 fs/ioctl.c:892
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&q->q_usage_counter(io)#21){++++}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       bio_queue_enter block/blk.h:75 [inline]
+       blk_mq_submit_bio+0x1536/0x23a0 block/blk-mq.c:3092
+       __submit_bio+0x2c6/0x560 block/blk-core.c:629
+       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
+       submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
+       xfs_buf_ioapply_map+0x461/0x5d0 fs/xfs/xfs_buf.c:1586
+       _xfs_buf_ioapply+0x307/0x660 fs/xfs/xfs_buf.c:1674
+       __xfs_buf_submit+0x34f/0x7f0 fs/xfs/xfs_buf.c:1758
+       xfs_buf_submit fs/xfs/xfs_buf.c:61 [inline]
+       _xfs_buf_read fs/xfs/xfs_buf.c:809 [inline]
+       xfs_buf_read_map+0x431/0xa60 fs/xfs/xfs_buf.c:873
+       xfs_trans_read_buf_map+0x260/0xad0 fs/xfs/xfs_trans_buf.c:304
+       xfs_trans_read_buf fs/xfs/xfs_trans.h:213 [inline]
+       xfs_imap_to_bp+0x18d/0x380 fs/xfs/libxfs/xfs_inode_buf.c:139
+       xfs_inode_item_precommit+0x566/0x920 fs/xfs/xfs_inode_item.c:174
+       xfs_trans_run_precommits fs/xfs/xfs_trans.c:828 [inline]
+       __xfs_trans_commit+0x35a/0x1290 fs/xfs/xfs_trans.c:863
+       xfs_qm_qino_alloc+0x5cc/0x770 fs/xfs/xfs_qm.c:1035
+       xfs_qm_init_quotainos+0x60b/0x8a0 fs/xfs/xfs_qm.c:1831
+       xfs_qm_init_quotainfo+0x182/0x1270 fs/xfs/xfs_qm.c:826
+       xfs_qm_mount_quotas+0xe9/0x680 fs/xfs/xfs_qm.c:1682
+       xfs_mountfs+0x1e60/0x2410 fs/xfs/xfs_mount.c:1030
+       xfs_fs_fill_super+0x12db/0x1590 fs/xfs/xfs_super.c:1791
+       get_tree_bdev_flags+0x48e/0x5c0 fs/super.c:1636
+       vfs_get_tree+0x92/0x2b0 fs/super.c:1814
+       do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+       do_mount fs/namespace.c:3847 [inline]
+       __do_sys_mount fs/namespace.c:4057 [inline]
+       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&xfs_nondir_ilock_class){++++}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+       down_write_nested+0xa2/0x220 kernel/locking/rwsem.c:1693
+       xfs_dquot_disk_alloc+0x399/0xe20 fs/xfs/xfs_dquot.c:337
+       xfs_qm_dqread+0x1a3/0x650 fs/xfs/xfs_dquot.c:694
+       xfs_qm_dqget+0x2bb/0x6f0 fs/xfs/xfs_dquot.c:906
+       xfs_qm_quotacheck_dqadjust+0xea/0x5a0 fs/xfs/xfs_qm.c:1299
+       xfs_qm_dqusage_adjust+0x5e1/0x850 fs/xfs/xfs_qm.c:1421
+       xfs_iwalk_ag_recs+0x4e3/0x820 fs/xfs/xfs_iwalk.c:209
+       xfs_iwalk_run_callbacks+0x218/0x470 fs/xfs/xfs_iwalk.c:370
+       xfs_iwalk_ag+0xa9a/0xbb0 fs/xfs/xfs_iwalk.c:476
+       xfs_iwalk_ag_work+0xfb/0x1b0 fs/xfs/xfs_iwalk.c:625
+       xfs_pwork_work+0x81/0x190 fs/xfs/xfs_pwork.c:47
+       process_one_work kernel/workqueue.c:3229 [inline]
+       process_scheduled_works+0xa65/0x1850 kernel/workqueue.c:3310
+       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+       kthread+0x2f2/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+other info that might help us debug this:
+
+Chain exists of:
+  &xfs_nondir_ilock_class --> &mm->mmap_lock --> sb_internal#2
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  rlock(sb_internal#2);
+                               lock(&mm->mmap_lock);
+                               lock(sb_internal#2);
+  lock(&xfs_nondir_ilock_class);
+
+ *** DEADLOCK ***
+
+3 locks held by kworker/u8:4/62:
+ #0: ffff888025056948 ((wq_completion)xfs_iwalk-14699){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ #0: ffff888025056948 ((wq_completion)xfs_iwalk-14699){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+ #1: ffffc9000213fd00 ((work_completion)(&pwork->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ #1: ffffc9000213fd00 ((work_completion)(&pwork->work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+ #2: ffff8880794ac610 (sb_internal#2){.+.+}-{0:0}, at: xfs_dquot_disk_alloc+0x36f/0xe20 fs/xfs/xfs_dquot.c:332
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 62 Comm: kworker/u8:4 Not tainted 6.12.0-syzkaller-07749-g28eb75e178d3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: xfs_iwalk-14699 xfs_pwork_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+ __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+ down_write_nested+0xa2/0x220 kernel/locking/rwsem.c:1693
+ xfs_dquot_disk_alloc+0x399/0xe20 fs/xfs/xfs_dquot.c:337
+ xfs_qm_dqread+0x1a3/0x650 fs/xfs/xfs_dquot.c:694
+ xfs_qm_dqget+0x2bb/0x6f0 fs/xfs/xfs_dquot.c:906
+ xfs_qm_quotacheck_dqadjust+0xea/0x5a0 fs/xfs/xfs_qm.c:1299
+ xfs_qm_dqusage_adjust+0x5e1/0x850 fs/xfs/xfs_qm.c:1421
+ xfs_iwalk_ag_recs+0x4e3/0x820 fs/xfs/xfs_iwalk.c:209
+ xfs_iwalk_run_callbacks+0x218/0x470 fs/xfs/xfs_iwalk.c:370
+ xfs_iwalk_ag+0xa9a/0xbb0 fs/xfs/xfs_iwalk.c:476
+ xfs_iwalk_ag_work+0xfb/0x1b0 fs/xfs/xfs_iwalk.c:625
+ xfs_pwork_work+0x81/0x190 fs/xfs/xfs_pwork.c:47
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa65/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
