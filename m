@@ -1,185 +1,138 @@
-Return-Path: <linux-kernel+bounces-419390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB9CB9D6D44
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 10:39:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FA1F9D6D48
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 10:42:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 270DC161909
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 09:39:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 367941618F9
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 09:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA99B185923;
-	Sun, 24 Nov 2024 09:39:37 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78427185923;
+	Sun, 24 Nov 2024 09:42:45 +0000 (UTC)
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C524F1F95A
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 09:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7715B8837;
+	Sun, 24 Nov 2024 09:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732441177; cv=none; b=SKrDwMAxEI2pa0C/ng4uEfJxZGqfb4R0RHcITtQOJzv2X7+bRNE9j2EJD7TOIxQyJwE58cVKujzzza7oVmVr4tnE7jBR1s8ABsNKg4/2OegmsiZxVM0DolvcU7ayTiONh/8RMaS+2fYAps3CImdLLHJEX6wA6BSdorgxG2xMElA=
+	t=1732441365; cv=none; b=pKrbMxDKHu2Yp2zTFRInPKr7dxNn1RXxYvWcDkS7JASdgJgFsiom7/oGz+uvBcLwaOwAF5TKNSAkn+lf7/Fe9A4onatkbG618syEA5P40yfMGe0kGcXdVB6Ibx4ZCcjUJKvn+8GXbWHJQmuENGdK3mmTAIDRvak59yaDXROMSIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732441177; c=relaxed/simple;
-	bh=8kxRd7XhCltL01GOni+S70qJmZTEC+JyuGErQY6dkYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mvNX0I/CtIS1IhlA0XeIgRp5IiCusxKNr5HXRCX/kL6MNPCgKBhQZaL0leMyA/0UmYVkQ2vrOgwJyyVZMCbicA2oD3imwwLJ80e7Zrs6FWI9OzMLdyQSbpGxC2DW70NPUvmUnROrvcV7SU9kFpCTNeKVWxphCD3QmCQ8wSugKyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tF95P-0005dS-Jh; Sun, 24 Nov 2024 10:39:23 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tF95O-002NBz-2H;
-	Sun, 24 Nov 2024 10:39:22 +0100
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tF95O-00CgPK-1q;
-	Sun, 24 Nov 2024 10:39:22 +0100
-Date: Sun, 24 Nov 2024 10:39:22 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
-	Dent Project <dentproject@linuxfoundation.org>,
-	kernel@pengutronix.de,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH RFC net-next v3 15/27] regulator: core: Resolve supply
- using of_node from regulator_config
-Message-ID: <Z0L0SuaRysRxbtNM@pengutronix.de>
-References: <20241121-feature_poe_port_prio-v3-0-83299fa6967c@bootlin.com>
- <20241121-feature_poe_port_prio-v3-15-83299fa6967c@bootlin.com>
+	s=arc-20240116; t=1732441365; c=relaxed/simple;
+	bh=czEKvwebo6N0ybZpopI8XXJ6AJO1Z1m1j7/C9FhcEzE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jTmvUplcBlwR2rM5m2Kt2mpftah5Mi1YDfpHMD3xdzRHNi89JAZmCLz6URVYAPV8X/+9id0jfRvzoB6lncUYY4X3C0Tn6E9jZFPFRgzcnuF78NYGL+Y6apw39XHhFU48WqwblnCLPmyitVqWRHQfOJ5YX9CJ11OEhGW77FRhVT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e3839177651so2842809276.3;
+        Sun, 24 Nov 2024 01:42:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732441361; x=1733046161;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Aw291P4QQp2xc52w4erCu+NMtXgYhXO+meOEucMjW4Q=;
+        b=AsD+kyvsKX/uoTX1RIMbBi5x+32o4E9IEKYY+NFp0AZ3epBckdwhV9O7tvGtk4lyjs
+         GxXi81KazRbZYq1K9KoKXdvXJeTuPPOB4lMVD4U3vJOpj74CNyrk50zloyC32YTbmtal
+         iPtkzbKZSmunj6VXyOFjt99A4Ov3P4dFH4l+0Mryot8C7iGMP/18iOjEeHUNi44PZdZr
+         yo5w65V6Jf69uklrBVxAVFaYqhDg7vwW4kGNbz+27Vtt1r3YSf7G48HfRFiPGDcafj/Q
+         JvaWCAumaz8wUn+L/L8VT0p9W9yxIVQduZA/t61upws4SMNsfDxAN+H84GYEKeT3D5mI
+         5Rqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzDcz97ZXg1ceg5sy0mb4KVQs8qPU88K6fhCJurO/PipFfCZYt+AM9LCFfWf8rCdRx/hwnBa4ywTTS@vger.kernel.org, AJvYcCXqA3IIdIWfHRjEBBR9BwYEPk9WzIy/myHu51HpZwC+96ny6hdg6IXil2Hd/uudpKTTy6BPOc3N+v46w9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLmAFqmzF7XSmg1fwj452ChlV0AUbRlZn4CkEJgeKkQymBiNRw
+	rzxvIVAkaksciW+vPzw0El1S1iAy0MW93pQKaeimocd3AdZuHUXps0+PvUzH
+X-Gm-Gg: ASbGncvMLyqjELJkI7qsmiLiIY9b1rKZll9HFhFgK7IeGQJGY3K21vO0I0f41RfO7S9
+	tAgaP4KBRW4oNJGcOlylsGaOqsGnj9VvP27vMMM0D2rMQQEAjm/7oZ0uyi/ftQBQeme99fAhMut
+	bIjTSidjO6mTsVCYp9XMQwOheufodOq/sU8szNdx+tNsEBGLjkAFj1G+F+RVLcO2vYbp+7z+1Mq
+	Ron/pUL9yDJbl3Wxm4I5AUs4WK9/xiqMGw48qdfWjIV64H6hCMLR48NWd4V1eaLIh+6ABePgGXr
+	3helYQD6UnOgXPXG
+X-Google-Smtp-Source: AGHT+IFRMucaFN1U8eS45w73KSswxy1I117v3MGPbfdKq/FJMv1fTcUhdsIA7vUTK6rsW6RfPoJMQQ==
+X-Received: by 2002:a05:6902:1028:b0:e38:f30e:9b52 with SMTP id 3f1490d57ef6-e38f8b0aaf9mr5469356276.4.1732441361065;
+        Sun, 24 Nov 2024 01:42:41 -0800 (PST)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e38f60897d0sm1675544276.33.2024.11.24.01.42.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 24 Nov 2024 01:42:40 -0800 (PST)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6ea339a41f1so30758077b3.2;
+        Sun, 24 Nov 2024 01:42:40 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXG3hcUkyzSgSv6AXqUJk63DawA7wPmYvmWIySNwdYl0hNFnJZU7JCQX5bg2/8nPE97wGz0WCJRkMH0isA=@vger.kernel.org, AJvYcCXoXJOqqcep27j7/9Q+N23VYpcncY1A2zc3xtTErGEWdAG/Vr1L4/fONF3CpCHecm8ggIUzpRuz3P9I@vger.kernel.org
+X-Received: by 2002:a05:690c:881:b0:6ee:b38c:b6e1 with SMTP id
+ 00721157ae682-6eee089e833mr98777127b3.14.1732441359840; Sun, 24 Nov 2024
+ 01:42:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241121-feature_poe_port_prio-v3-15-83299fa6967c@bootlin.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <cover.1731450735.git.fthain@linux-m68k.org> <19a16bcc94c42ea9c5397b37b1918c2937e3faab.1731450735.git.fthain@linux-m68k.org>
+ <CAMuHMdVuv7wRud4jNt=t4Ac_s4ze6YYguUKLRt0hQ4gTqEWpEg@mail.gmail.com> <20241122230329128df024@mail.local>
+In-Reply-To: <20241122230329128df024@mail.local>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Sun, 24 Nov 2024 10:42:28 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVjTgssYR0RAsxpejRcUnPb7biT0kuq+Xc5T2TcPsahiw@mail.gmail.com>
+Message-ID: <CAMuHMdVjTgssYR0RAsxpejRcUnPb7biT0kuq+Xc5T2TcPsahiw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] m68k: mvme147, mvme16x: Adopt rtc-m48t59 platform driver
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Finn Thain <fthain@linux-m68k.org>, Daniel Palmer <daniel@0x0f.com>, 
+	Michael Pavone <pavone@retrodev.com>, linux-m68k@lists.linux-m68k.org, 
+	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 21, 2024 at 03:42:41PM +0100, Kory Maincent wrote:
-> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
-> 
-> Previously, the regulator core resolved its supply only from the parent
-> device or its children, ignoring the of_node specified in the
-> regulator_config structure.
-> This behavior causes issues in scenarios where multiple regulator devices
-> are registered for components described as children of a controller, each
-> with their own specific regulator supply.
-> 
-> For instance, in a PSE controller with multiple PIs (Power Interfaces),
-> each PI may have a distinct regulator supply. However, the regulator core
-> would incorrectly use the PSE controller node or its first child to look up
-> the regulator supply, rather than the node specified by the
-> regulator_config->of_node for the PI.
-> 
-> This update modifies the behavior to prioritize the of_node in
-> regulator_config for resolving the supply. This ensures correct resolution
-> of the power supply for each device. If no supply is found in the provided
-> of_node, the core falls back to searching within the parent device as
-> before.
-> 
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
-> ---
-> It is weird that it wasn't seen before, maybe there was not any case
-> were it can't find the supply_name from the parent device.
-> 
-> Changes in v3:
-> - New patch
-> ---
->  drivers/regulator/core.c | 42 ++++++++++++++++++++++++++++++------------
->  1 file changed, 30 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-> index 2948a7eca734..b49f751893b9 100644
-> --- a/drivers/regulator/core.c
-> +++ b/drivers/regulator/core.c
-> @@ -1936,6 +1936,20 @@ static struct regulator_dev *regulator_lookup_by_name(const char *name)
->  	return dev ? dev_to_rdev(dev) : NULL;
->  }
->  
-> +static struct regulator_dev *regulator_dt_lookup(struct device *dev,
-> +						 const char *supply)
-> +{
-> +	struct regulator_dev *r = NULL;
-> +
-> +	if (dev && dev->of_node) {
-> +		r = of_regulator_dev_lookup(dev, supply);
-> +		if (PTR_ERR(r) == -ENODEV)
-> +			r = NULL;
-> +	}
-> +
-> +	return r;
-> +}
-...
->  static int regulator_resolve_supply(struct regulator_dev *rdev)
->  {
-> -	struct regulator_dev *r;
->  	struct device *dev = rdev->dev.parent;
-> +	struct regulator_dev *r = NULL;
->  	struct ww_acquire_ctx ww_ctx;
->  	int ret = 0;
->  
-> @@ -2015,7 +2022,18 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
->  	if (rdev->supply)
->  		return 0;
->  
-> -	r = regulator_dev_lookup(dev, rdev->supply_name);
-> +	/* first do a dt based lookup on the node described in the virtual
-> +	 * device.
-> +	 */
-> +	if (rdev->dev.of_node)
+Hi Alexandre,
 
-regulator_dt_lookup() is already doing dev.of_node check, this one can
-be removed.
+On Sat, Nov 23, 2024 at 12:03=E2=80=AFAM Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
+> On 22/11/2024 15:44:33+0100, Geert Uytterhoeven wrote:
+> > On Tue, Nov 12, 2024 at 11:51=E2=80=AFPM Finn Thain <fthain@linux-m68k.=
+org> wrote:
+> > > Both mvme147 and mvme16x platforms have their own RTC driver
+> > > implementations that duplicate functionality provided by the rtc-m48t=
+59
+> > > driver. Adopt the rtc-m48t59 driver and remove the other ones.
+> > >
+> > > Tested-by: Daniel Palmer <daniel@0x0f.com>
+> > > Signed-off-by: Finn Thain <fthain@linux-m68k.org>
+> > > Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > > ---
+> > > This patch depends upon the m48t59 driver changes in the preceding pa=
+tch.
+> > >
+> > > Changed since v1:
+> > >  - Initialize yy_offset in struct m48t59_plat_data.
+> > >
+> > > Changed Since v3:
+> > >  - Re-ordered defconfig symbols.
+> > >  - Added reviewed-by tag from arch maintainer.
+> >
+> > Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > so it still can make it into v6.13-rc1 via RTC?
+>
+> It is now applied, it is going to conflict with your tree as it didn't
+> cleanly apply. I don't think this is going to cause issues but I'll let
+> it sit in linux-next for a few days before sending to Linus.
 
-> +		r = regulator_dt_lookup(&rdev->dev, rdev->supply_name);
-> +
-> +	/* If regulator not found use usual search path in the parent
-> +	 * device.
-> +	 */
-> +	if (!r)
-> +		r = regulator_dev_lookup(dev, rdev->supply_name);
-> +
->  	if (IS_ERR(r)) {
->  		ret = PTR_ERR(r);
->  
+Thanks! It indeed conflicts with what I sent to Linus, and thus with
+Linus' current tree, due to nearby changes. If you think the conflict
+is too serious, feel free to drop the commit, and I'll pick it up
+for v6.14-rc1.
 
-With remove dev.of_node check:
-Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Gr{oetje,eeting}s,
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
