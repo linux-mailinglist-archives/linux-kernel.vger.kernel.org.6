@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-420148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5393B9D75AD
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:03:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11F439D75B0
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:06:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D42C0163359
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:03:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F40C1639C4
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1776F188CCA;
-	Sun, 24 Nov 2024 16:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4816189520;
+	Sun, 24 Nov 2024 16:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UBoSk+ew"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t1rkeLLv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63835186294;
-	Sun, 24 Nov 2024 16:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2236B2905;
+	Sun, 24 Nov 2024 16:05:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732464191; cv=none; b=QUJUioXQiZyxywLGxL+fzAHrRH+dZq+Z0ngjmzAQ0jXO0hxPTf51oFE0UwFvRxZS5dtMHNqXK4z3U3XmXNhqarl8QtAMiCcqAwODcjvpVLZiduC+5keQ+YGebfm2p3sRI7X01eFeJn6z07L2MGx12CTlVPqR0mKH8o40jsLR5lc=
+	t=1732464353; cv=none; b=PlrmnhddewhtedRsv0yjouB5N11iIGRLXxelFJhYcKMwkk17ps3y5115ASypc3Ocn75gYzZJ6FMBaXIyl6rotsnD6+uf8QYS6nl9moyLzTXD8nfPMXARk6kqn1y182mOxfVDhfiKZSs1yVwKvbuCXwvLOwQALh4tvPyoiHT/y6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732464191; c=relaxed/simple;
-	bh=TiuuV2/gWj9AkWTL9A2jFvW5nIEX/9hAfvZkZWZO6Ks=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lzn+pCTu4bfO0e9do1mipA7TZcWqKZBpmEqEezdhxTT6pv58qYrNhyCuWbQo8dfbgKLJIxpTZW/VSL8SPb2BEpAkTn4ECUWlXqBj77IQGgCUG/BX35Jyz5PuBzG60NX+eRru4AGGbyP+cgxU9i6jGQABiAZJYo26tdBZkUNhb88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UBoSk+ew; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CE6FC4CECC;
-	Sun, 24 Nov 2024 16:03:05 +0000 (UTC)
+	s=arc-20240116; t=1732464353; c=relaxed/simple;
+	bh=zzNQ/g5KRecVcFHwFPRkAiGht0QlqJPq6nHE9qpl6pI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Swp3WkjW2u5i4afp9sikJiw08ItGe/IpBMRvzwEvjC367I6ninF9PnT4Jei7ZmF24KFQ101/ySnxv4pGJJxjO37jtwQzNieP2wsMM2NqkzvL/y/2VX2uJI8okZmvU6tI7smOQM2OOzjLQaUsnE3mxUA4QVk9PiRtIFpXqBTlQcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t1rkeLLv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7503CC4CECC;
+	Sun, 24 Nov 2024 16:05:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732464190;
-	bh=TiuuV2/gWj9AkWTL9A2jFvW5nIEX/9hAfvZkZWZO6Ks=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UBoSk+ewNWeZddO+XJ1We2sTDo6MWe0FPt/6mVEcjx89+ct2zEUq1BsYtyF9zg9gE
-	 Fr3Oz8auVVhjqR80gyBYXPmArMVm1fIn5PQbtEC13VSuzD2kAmLnL58ie6f/59eNtd
-	 2JTJwUxVqtTxlRwb7dHsvKqMxvNx/716n+jrU7yx7nMU7NWPItoRA0O22erdrKH+UU
-	 6DaEen1smqwJaMsOLgg9ytnDLyp6qkhG3PaOmCApPU7yjDTx6ZSFWYeKwIENMZfcnY
-	 iO9AKPap+FyIyapfisbC0PlhFwmGL0W0rrsdIQFCDPhGNkGWiMuSILAbrdl8pBWCxB
-	 78gXuQs2VukQw==
-Message-ID: <c8620f8d-6a09-4855-b8f5-436a498157a2@kernel.org>
-Date: Sun, 24 Nov 2024 17:03:03 +0100
+	s=k20201202; t=1732464352;
+	bh=zzNQ/g5KRecVcFHwFPRkAiGht0QlqJPq6nHE9qpl6pI=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=t1rkeLLvwc6doDJxln7h2v6aBbWZvkAfL8viuSYDDMBLz1JwUHihu9GlEo9z7SZ9f
+	 20ljfovmDT0cNEqFKkCcHo9T7J30GBvbyNLj6cqolSgUjM2ovau8YLPMvQGEHOtLyf
+	 apBnh4UOUDuwP55VUZkq+ua3WCOef6/qNwT+rmlUrWlmACA/Gpf5gv8l7OkZzGqx4s
+	 ZqDZlqsrUD84gPxmAnQ3B+0iG0tTJK0T/X9YdkSZDX4FNp5CM8AMeKG4F+FXo5E1Bf
+	 YPDEt+X3N49bLlaY7RV6ICqlgGYnlDPzgv1QmLmqhLSZcdmbI/0O9EW5ZsYh3oCJyr
+	 IuY4pqAwzHVBA==
+Message-ID: <945786cc-1d6d-4a45-b9df-26d9335fd271@kernel.org>
+Date: Sun, 24 Nov 2024 17:05:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,9 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] dt-bindings: display: panel: Add a panel for RG
- CubeXX
+Subject: Re: [PATCH 1/6] dt-bindings: display: panel: Add another panel for
+ RG35XX Plus (Rev6)
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Hironori KIKUCHI <kikuchan98@gmail.com>, linux-kernel@vger.kernel.org
 Cc: Neil Armstrong <neil.armstrong@linaro.org>,
  Jessica Zhang <quic_jesszhan@quicinc.com>,
@@ -63,8 +64,8 @@ Cc: Neil Armstrong <neil.armstrong@linaro.org>,
  Ryan Walklin <ryan@testtoast.com>, dri-devel@lists.freedesktop.org,
  devicetree@vger.kernel.org
 References: <20241124080220.1657238-1-kikuchan98@gmail.com>
- <20241124080220.1657238-6-kikuchan98@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <20241124080220.1657238-2-kikuchan98@gmail.com>
+ <f0d983f7-5f60-4cb7-9522-ef4429359c52@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -109,48 +110,43 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241124080220.1657238-6-kikuchan98@gmail.com>
+In-Reply-To: <f0d983f7-5f60-4cb7-9522-ef4429359c52@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/11/2024 09:02, Hironori KIKUCHI wrote:
-> This is a display panel used in the Anbernic RG CubeXX, a handheld
-> gaming device from Anbernic. It is 3.95 inches in size (diagonally)
-> with a resolution of 720x720.
+On 24/11/2024 17:01, Krzysztof Kozlowski wrote:
+> On 24/11/2024 09:02, Hironori KIKUCHI wrote:
+>> +++ b/Documentation/devicetree/bindings/display/panel/anbernic,rg35xx-plus-rev6-panel.yaml
+>> @@ -0,0 +1,60 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/display/panel/anbernic,rg35xx-plus-rev6-panel.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Anbernic RG35XX series (YLM-LBV0345001H-V2) 3.45" 640x480 24-bit IPS LCD panel
+>> +
+>> +maintainers:
+>> +  - Hironori KIKUCHI <kikuchan98@gmail.com>
+>> +
+>> +allOf:
+>> +  - $ref: panel-common.yaml#
+>> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: anbernic,rg35xx-plus-rev6-panel
 > 
-> Signed-off-by: Hironori KIKUCHI <kikuchan98@gmail.com>
-> ---
->  .../panel/anbernic,rgcubexx-panel.yaml        | 60 +++++++++++++++++++
->  1 file changed, 60 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/anbernic,rgcubexx-panel.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/display/panel/anbernic,rgcubexx-panel.yaml b/Documentation/devicetree/bindings/display/panel/anbernic,rgcubexx-panel.yaml
-> new file mode 100644
-> index 00000000000..47c5174fad2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/panel/anbernic,rgcubexx-panel.yaml
-> @@ -0,0 +1,60 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/panel/anbernic,rgcubexx-panel.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Anbernic RG CubeXX (YLM-LBN0395004H-V1) 3.95" 720x720 24-bit IPS LCD panel
-> +
-> +maintainers:
-> +  - Hironori KIKUCHI <kikuchan98@gmail.com>
-> +
-> +allOf:
-> +  - $ref: panel-common.yaml#
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: anbernic,rgcubexx-panel
+> Everything is the same here. Add new compatible to existing schema
+> respecting compatibility (fallback) or not (no fallback).
 
-Same comments, no wildcards, don't duplicate schemas. See how other
-files are doing it.
+BTW, isn't this v2? Where is the changelog and proper versioning of
+patches? The changes against previous version are quite unexpected. You
+removed specific compatibles and went with wildcard, so this needs
+thorough explanation (why standard bindings rules do not apply here).
+
+Anyway next version *will be v3*. Please start using b4 tool.
+
 
 Best regards,
 Krzysztof
