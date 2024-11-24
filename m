@@ -1,126 +1,147 @@
-Return-Path: <linux-kernel+bounces-420276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B25309D7815
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 21:30:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1ADA9D7819
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 21:33:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 782E62821D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:30:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45B6E16247F
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C06B16EB54;
-	Sun, 24 Nov 2024 20:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA326157A5C;
+	Sun, 24 Nov 2024 20:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D8Z2M9KY"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ki85Mn4d"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53901514CC;
-	Sun, 24 Nov 2024 20:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7D92500A7;
+	Sun, 24 Nov 2024 20:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732480210; cv=none; b=DlAcjKaKetmv69KXbX34F7gXt6QW/zmDrRoFSM6Z3nxNv9y6YJB/MbHt9NzQRVH5N5rbsNDjl5kUO8MOvj1cUzjHJ7Y7rWIti5hqJhKMIpey9AvRTEZ7AIfv9pDULpo5H40qz9iCIlqmp3//tly0CKoOf7GI7+HFsL6/pyk0Swo=
+	t=1732480421; cv=none; b=KMTJ2qBjjeEClkSnMLs8LvHCtvB65vcOVBde808o4Ezd+O0SuNOAZMpSLRrhA5GyIvpsqyPDQWxbUMZR/4xp4mLWhFPUV7/qq2GqO+qFiJjDlSGpVWsfQLPknY6TAv3yiPBoEn20Viq/ekNHEJ68r6bX5LSUYsqwi8UA3pLnW24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732480210; c=relaxed/simple;
-	bh=b0zJ+1w0rSXrcUfJFVsZHYWclzP9koqNBleKNvcaNI4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=goMNV+/bdth+yhr7ZPNRNB7JZvIPdzQnDmUQYD6KTHlN1Q+ZkgMCyZuPrFRqIa3wTVunzhIQM/at5BhFqEW8MkHfapCWfiFsn+KdnHp1OHUyw2w+65H3Z/Ghd5aIUAEpSJ5nFzmj/8sOTW2Qwrxu2n5piKTvL8fR0xknRCs6ThU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D8Z2M9KY; arc=none smtp.client-ip=209.85.221.49
+	s=arc-20240116; t=1732480421; c=relaxed/simple;
+	bh=orb+6Lh+Mvw+UsIrrtvkhg2HB2Y2dNPiP69h9SJhSV8=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p+kFoI3TPRhRYTUr7kyL3dKbOSA9WIFVbN3LeL1AZ36MbTxp6v2j9DVkbfRzY5oVhjQ91K6KrOfqIfc/38J1Dvxl+bvF6bxUZXRz87Xj82OMvQR51YVI3Rv/1LgAI7Gn0719OrQOy+BiGOrne7NMtc17F5mUP9IJp2874YhZutg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ki85Mn4d; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-38242abf421so2626943f8f.2;
-        Sun, 24 Nov 2024 12:30:08 -0800 (PST)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5cf7aa91733so2177229a12.2;
+        Sun, 24 Nov 2024 12:33:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732480207; x=1733085007; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uEHD4xg3fpEqhVxo7h0zl2GuAd3y3pi4wZYTTu+6Nqg=;
-        b=D8Z2M9KYB+eo8IapsoInTPJU8zABc8UO0S4MWcvrY69uIQcW2hbia3zlNuibCGgEXh
-         OBS4RM1em4KQsZcKd4/hs/yFEG1Ewz8W6Q9we6VfwiBnGg3M5SNZCg94pcd5iZ5ffqem
-         +8mvN1HYtqQ3e2AbGky1tCyEK6o4NJCZwPpHTCETyKuL2FNrHM4fsXpe+S39gU+WbLoh
-         yy9qG1O9NOagEh6hXideR/0nDSVJW8ls775Ak+nrTeSWu7XKOA8XbkaiCijhwErrFapM
-         ifHqIWoNYQItEo1zCL1dTicg/5UME6gzRhC4yd1DGIzLI/51xxkLL1PDTElfZa99ggtq
-         sIcA==
+        d=gmail.com; s=20230601; t=1732480418; x=1733085218; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qQ2bcCYDEj5ivdxpDRH7IqA9H1fx7+TQGm6qz9vLT0s=;
+        b=ki85Mn4dAiMrrEYihePN7UhIfyBIwMDoTdXxeuIEsr388lkjBh/wEM1z5HFfsV5mdt
+         zquLi7Ut8KziX33ckutdFpcygerm8G8QQdjllWVqxBaIrmVUquWRv+bBEVvD9Oj3WwMy
+         iXTnexJDpSa6GNvIjJlzetqsUpyh2uck42O7DEUoUEURGpou6LpHjNC0zGozbMJlB7Uo
+         CNd0DjY+L3c5g4l1JzH3628yHRvsODjeIUiQDv4vA7WdyBoCvoIPD16yhGTkXeqRtCI7
+         YVa6pkdFCxYCQbroUC5Z+lmfzPBDwgU4M/9ca5yt1OXskCeo05ACrtYMtkbE5ZO57tLu
+         Y1yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732480207; x=1733085007;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uEHD4xg3fpEqhVxo7h0zl2GuAd3y3pi4wZYTTu+6Nqg=;
-        b=eL803ZhMk3ptQDAFh4GCQZJNDK954RTDyABWACd2WlCKz7Sh0kVQeTR7bBjSHND88Z
-         o/Zc+ZJCuoIIHcG+BE7G2dlmshDtfUUjVmd8Z//N6ULPkh/FDp2Sq6JBtYxOMpWy8TSy
-         qp87A4U6RDJl4/r6KeX5RX3kweNFy30HqtJZDSrC/udY+Jlu60eW3Dv5V/7QSsNcAbOH
-         tznSbFwZRzF6vA8R+sAJTrtTw0ivo3KloV3Gv4RI9CSO9AbcNT0jzsVZ55JqXmTleYE7
-         jDUcgjd4CvehIjQrH/zBJOIbDdLGuHZduhl7SW3ICVgPM/6LMQteaanUXzz2A+Ti/Q1E
-         8LyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBsMCq1W1vrzE4VHoqoOleEyQGw0hWfoxMuc+aDCeS5Wh6+vmnbKpcbXu5DAU7PfJK3/vxsukcKBFR@vger.kernel.org, AJvYcCWqeC83Et1Z1Bjta934G2U7RrJiY6Na+DgDfcoC4TDcIwwwaqqQEYftsXpy6qA8ZukI8PhnakVc2wKcrNk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6+xjhWikSAoIjo5cRCsxaS8O79rTD1LhnYnC2cya+fIi6s3ho
-	nSlL/1bkE8cXmNGjy0YVxuydDlP4t1P1J4SSVkTUOykfBXQp+JT7ijkQsEsCXRcEuwCa8NcmK9a
-	csm0fq/74azpvBAqLLuGzARNBFVo=
-X-Gm-Gg: ASbGncvWWVqUHIx5d7AiEos/IOrBY5Mgi26AFbY0oxDBjS31m6Fg3hIPPcymYNdw55/
-	mlgAXeEmwrZzHEuUYDZlO6I2+1Rcb0u/dQA==
-X-Google-Smtp-Source: AGHT+IHxY9xhVK60hNmUjHbJsFLHkW8fRnXfpPQFrMPAKXdy6tzBwn69pHtqDTq0suqecrS+4hFqSAciP+G2GL2/kis=
-X-Received: by 2002:a05:6000:1866:b0:382:4a3b:5139 with SMTP id
- ffacd0b85a97d-38260bed0dcmr8542633f8f.59.1732480207065; Sun, 24 Nov 2024
- 12:30:07 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732480418; x=1733085218;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qQ2bcCYDEj5ivdxpDRH7IqA9H1fx7+TQGm6qz9vLT0s=;
+        b=repLq5Tg7poE3sCfgTnWIujWNbwAAMVjV7z3iAa1n6Q8ufOdyl5pnsjLFnPYNu/fQ3
+         3G4pO7kLl1ugN2VnVH+UAyMXJSx0OqkMY9BtnciD730wohmHuK1/z/QCNMSZHnmTKG0K
+         5Rtp3hhfjJkUa8HiYn5cLOBL0QqRHF4mws3FW7pan2zGoXkTMAfkav5lHEU+nnzUvzjF
+         0TAKN7/jh6iwOA3WRIiVofGxOd5/F64g68ZQ0//ychRSymriWFjUdn9iDQuVLTLiIDt0
+         Kg27nv5SgCj9denf/pPMogq4Su8Z/ebobVXROl8hPVnbiOvYPOkMnecFuVjtryM30wK4
+         xo/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ9NzuxX3KfLNPna3fe3T8D3gSWoAVT6tU5D51S+VlOmrAbwIZtBFehdhHC5pXfkR3jjI+6/SAq2Rsm9XJ@vger.kernel.org, AJvYcCVB+0d2gFdvgp8EJsf9erqoB8XSpaapW8XZbZsN4WcWZAqt/T21JCQ0OFOavKFjeplEiy0=@vger.kernel.org, AJvYcCWxyzaGGrqO3DE46Q92vGyw/55DmO9k8o5FIbGXBIwItWQJjxJHXXjFuQPj2MF7pDDXkYV3eFgDVjcm0JS4@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywvwb+/wpd5bqWe2GNgeM9siv7IyeVrPpLa1eYepNpr8yCKl96g
+	1GzKEEeVK23GZCjifgqmDUoZcQVVjXpb7FSduMn7NDkkHqwNmT/k
+X-Gm-Gg: ASbGnctHWb6CtH6K7HnetxpAubSVpXZmx2+aL7rRDDEmcRX/4PqvMmlRm11S4gVQYf9
+	EULc52nHSzkXSPzKLREjSlifFTsXQ8qyeove9zkbzJcmNNw8YlI0itNZj9yoIIgrYP3wTlqcSMl
+	dY4mUxbzZOL2uvTQ2QVtbn0ibfxwqz5N6cmDlUdq0LEVDSird9FllFbVnIl+a4Z+VrqRoLieX3T
+	WqaoPj/jnjb4O/dIRTY8rYLk17JA/T+Ipw9oVDSaRbDtuofDo5CCYDdHLA=
+X-Google-Smtp-Source: AGHT+IHjewQjkc1UmSFP7iWn3VpVAMGTmORHfXR5vI5QPYGQYQ94OoNTl37w+i596f67zZ3cMrSXvQ==
+X-Received: by 2002:a05:6402:348e:b0:5d0:35ba:f12f with SMTP id 4fb4d7f45d1cf-5d035baf230mr8061427a12.14.1732480417629;
+        Sun, 24 Nov 2024 12:33:37 -0800 (PST)
+Received: from krava (85-193-35-130.rib.o2.cz. [85.193.35.130])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d401f64sm3346378a12.70.2024.11.24.12.33.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Nov 2024 12:33:37 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Sun, 24 Nov 2024 21:33:34 +0100
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH 1/3] kbuild: add dependency from vmlinux to resolve_btfids
+Message-ID: <Z0ONnhIVK1Sj9J09@krava>
+References: <20241123-resolve_btfids-v1-0-927700b641d1@weissschuh.net>
+ <20241123-resolve_btfids-v1-1-927700b641d1@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0000000000003c68f3061fd2c285@google.com> <000000000000e82e420622326e3f@google.com>
- <CA+fCnZd2b70N6nXTyWO2UYivh_U7Wey==XWURpFy7B_x8xEFHQ@mail.gmail.com> <ZyVn1tNVntbykOuG@gmail.com>
-In-Reply-To: <ZyVn1tNVntbykOuG@gmail.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Sun, 24 Nov 2024 21:29:56 +0100
-Message-ID: <CA+fCnZcA4hEujDLUtzN=3q7akeG8qMMbYrL1Jyj=JKN0C1D12g@mail.gmail.com>
-Subject: Re: [syzbot] [usb?] KASAN: invalid-free in dev_free
-To: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Chang Yu <marcus.yu.56@gmail.com>, gregkh@linuxfoundation.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, 
-	syzbot <syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241123-resolve_btfids-v1-1-927700b641d1@weissschuh.net>
 
-On Sat, Nov 2, 2024 at 12:44=E2=80=AFAM Chang Yu <marcus.yu.56@gmail.com> w=
-rote:
->
-> On Sat, Nov 02, 2024 at 12:26:30AM +0100, Andrey Konovalov wrote:
-> > On Mon, Sep 16, 2024 at 3:24=E2=80=AFAM syzbot
-> > <syzbot+3e563d99e70973c0755c@syzkaller.appspotmail.com> wrote:
-> > >
-> > > syzbot has found a reproducer for the following issue on:
-> > >
-> > > HEAD commit:    68d4209158f4 sub: cdns3: Use predefined PCI vendor ID=
- cons..
-> > > git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregk=
-h/usb.git usb-testing
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D10a962005=
-80000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dcb61872d4=
-d8c5df9
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=3D3e563d99e70=
-973c0755c
-> > > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils f=
-or Debian) 2.40
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1297cc0=
-7980000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1217c8a99=
-80000
-> >
-> > I'm not sure what the correct patch would be though, as I don't
-> > understand what the issue is. It seems that dev_free() indeed gets
-> > called twice, but since it's guarded by kref_put(), this shouldn't
-> > happen AFAIU. Or at least we should get a bad refcount report.
+On Sat, Nov 23, 2024 at 02:33:37PM +0100, Thomas Weiﬂschuh wrote:
+> resolve_btfids is used by link-vmlinux.sh.
+> In contrast to other configuration options and targets no transitive
+> dependency between resolve_btfids and vmlinux.
+> Add an explicit one.
 
-Interestingly, crashes stopped happening 20 days ago. It could be that
-there was some kind of bug in the refcount or the generic USB code,
-and that got fixed (at least I don't see a problem in the Raw Gadget
-code). Let's keep this bug open for now and monitor, and late I'll
-close it if there are no more crashes.
+hi,
+there's prepare dependency in root Makefile, isn't it enough?
+
+ifdef CONFIG_BPF
+ifdef CONFIG_DEBUG_INFO_BTF
+prepare: tools/bpf/resolve_btfids
+endif
+endif
+
+thanks,
+jirka
+
+> 
+> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+> ---
+>  scripts/Makefile.vmlinux | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
+> index 1284f05555b97f726c6d167a09f6b92f20e120a2..599b486adb31cfb653e54707b7d77052d372b7c1 100644
+> --- a/scripts/Makefile.vmlinux
+> +++ b/scripts/Makefile.vmlinux
+> @@ -32,6 +32,9 @@ cmd_link_vmlinux =							\
+>  targets += vmlinux
+>  vmlinux: scripts/link-vmlinux.sh vmlinux.o $(KBUILD_LDS) FORCE
+>  	+$(call if_changed_dep,link_vmlinux)
+> +ifdef CONFIG_DEBUG_INFO_BTF
+> +vmlinux: $(RESOLVE_BTFIDS)
+> +endif
+>  
+>  # module.builtin.ranges
+>  # ---------------------------------------------------------------------------
+> 
+> -- 
+> 2.47.0
+> 
 
