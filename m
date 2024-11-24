@@ -1,125 +1,110 @@
-Return-Path: <linux-kernel+bounces-419893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E1329D7346
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:33:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C43FA9D7566
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:38:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69AD4165E4C
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 14:33:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9ED07B22474
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 14:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BFA19D8AD;
-	Sun, 24 Nov 2024 13:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97BB230F57;
+	Sun, 24 Nov 2024 13:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gtx3U4h8"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LG1YHT1v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBC1227BAA;
-	Sun, 24 Nov 2024 13:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231CC230F4C;
+	Sun, 24 Nov 2024 13:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732456020; cv=none; b=Xu2y+OJl/z7nJ8HfW7p6/lfJwj/jiUZdQJ5eGu0wDEGe4XF6whewf3tFEutSvY0pu0KINaKp1tplZHkaAtnHHVFFZzRU98YHGvIv/pj3DhvUSnWfmS7ynC1ABMWi40jMjm5Zh2F2HWVMNETxF+VpjTE8pqBgqyQj5whzk3njJXA=
+	t=1732456193; cv=none; b=e2SWQOjjfM95pZ64dta8NG7xdK1/K/v4ahnnSNEhmwtVsXymGDNZdcW+fBzouCvaQRkzF+lmzj1fCcoEfEc3suiDy7+wPMHSvhz4lCFX9ei1WVFaHDMTbpyhEFeDU2rOHws7pv51YLry79JpazvcFEs0z1LeDVdywTYwxbE6tHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732456020; c=relaxed/simple;
-	bh=UQhQa+Yg/KYAh3eKhISv+/YlBTMTOqZ6aaA1ihQ7TcM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nBshi7NKlXi2grJ+XNfA3Cl1CrCMHJhkVCL3WdnrWXup8u8RiqBBz7PAo9G1Ij9Nh2b/OlMIXwztqiQO+qYD86dHwHzQnm7BqO5DEaHxwLD8UMToCkXi5fTWxLr2MA4vliGIBvriUbIkD9CW7400+UoMeen+8AlH9IHjMhj/p8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gtx3U4h8; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21145812538so28573805ad.0;
-        Sun, 24 Nov 2024 05:46:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732456018; x=1733060818; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZmISgBoq2URn/hDyR4q7MEAA7ngEur9IZlkoC4zkGCQ=;
-        b=gtx3U4h8AEP7BKrJW1wfnCow+pM+kUp3kwkUKndsXgL3uRsQ+ubQFGfDkSSRS0SH18
-         SzXLrESBp/LynHc9vLC+ZaL+CgQ+2VjoShWpQzyfEK9YMvqeoI5ZfYtv0MiwEq+WUsWV
-         Xritu0IafGQqFNhuzJpCIcdVgubGrKzew9e/76cs0gEK2CZ/DOLaB+nNLXjeyrlkJ0x1
-         V215fE+wZisQoaFITIZ/gHb3CFMu1il8DQ2jOqmr2k2sNMKTQ862nMtNwyZVlRrZ06cn
-         cpZRRK5J61vAkn3z+MVRSZQZTJEwZi1OT1rSrfsEZeFG2cq1TggN4BRLnMyvbV7Id9CZ
-         eeGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732456018; x=1733060818;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZmISgBoq2URn/hDyR4q7MEAA7ngEur9IZlkoC4zkGCQ=;
-        b=aBMdhBwv8psc+K7qFJ8GiiX94UX5kTv7qQicHjwe9WKkCLRQxDXiTSIa4+/gZT3JE6
-         c4+LCxluX9S4O0Q7a95/nilPMuB64JDMtv7m2XD8bpoWek0Cr6UaD02mfRy/cYd7aPLt
-         mgD893+4UnKDAnpwX07koYmw0FKtHj+k4aqdqrss6BntNTTW5zdfUOIh3CaGrmzv/BWw
-         6Cimq9Dd/+bYUOyTCQJlAIxxWdE6EYiN6DMpf4Syfh6MCa3PsvebZQ7mzZ+xfUZe/Pte
-         GjkVQPC0KmTPVLFnpL8dqka/uuY3bQIFEhZpzFAc3RgBM8+y5C41xZR5iM9GEhrNMWhF
-         3FwA==
-X-Forwarded-Encrypted: i=1; AJvYcCWPaGBvxs17sHy3zfco/3YG1B04QjDKgBH0y6pG5Y1w28bjr5rxJWjFqvLi8trcS+xXQIrwpODgET7Pkf7X@vger.kernel.org, AJvYcCXLeG3auBRZWigk+OMRqVL+5xHQ9IcEGDv+P5XGv6xEyF8aM7fGVJlKwlBR2pamlbMGjCkqPdEZF98=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyznJALfz24lfEDQDht6rKIXF3O36+LHUlhixKHXtNc4HqYCuMs
-	m3dC+0bN6kKyLnfr2L3IcQyDIOOeeesd8CgGfmDZG9GfpVXIDBQ5
-X-Gm-Gg: ASbGnctYJhfmiOagHiKZcfkZGrUefzJjVagi4oNcyLBVsxQAlsdr0gOXuZeJY0qRLad
-	RbW3Jacu+xYMNxLmrHU7z2c80O714+h9WzErBalDS8I0+sLCWQCk06tYil5VFKTj4pEj/EHxd/f
-	RtDraUG5DOXQYPw9KZoFcDUjDZYzB0rGYEdcPdhGTZBU8ojUb/xTY0ohh+oMZhvOvqpwzbtxX/K
-	ZQCxxhqEMiJbw+/7QaT0MlJbtSiM/dn3AgWySsBIfPrEaWVKeNtaAeU9HGNbRovtw==
-X-Google-Smtp-Source: AGHT+IEeTHJwNLsbC33Xz4h5tJ2xj1ax/aWAICGlsuNXeujZin4eKHBeBYybX8UBaIWL39fJsXyxvA==
-X-Received: by 2002:a17:902:ccc8:b0:212:5d53:d02c with SMTP id d9443c01a7336-2129fd74093mr130141755ad.50.1732456018455;
-        Sun, 24 Nov 2024 05:46:58 -0800 (PST)
-Received: from localhost.localdomain ([49.206.113.92])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129db8c864sm46937225ad.37.2024.11.24.05.46.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Nov 2024 05:46:57 -0800 (PST)
-From: Saru2003 <sarvesh20123@gmail.com>
-To: minchan@kernel.org,
-	senozhatsky@chromium.org
-Cc: philipp.reisner@linbit.com,
-	lars.ellenberg@linbit.com,
-	christoph.boehmwalder@linbit.com,
-	corbet@lwn.net,
-	terrelln@fb.com,
-	linux-kernel@vger.kernel.org,
-	drbd-dev@lists.linbit.com,
-	linux-doc@vger.kernel.org,
-	Saru2003 <sarvesh20123@gmail.com>
-Subject: [PATCH] Corrected the spelling of dictionary in the example usage of 'algorithm_params' in the ZRAM documentation.
-Date: Sun, 24 Nov 2024 19:15:50 +0530
-Message-Id: <20241124134550.69112-1-sarvesh20123@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1732456193; c=relaxed/simple;
+	bh=6YhAJVbTfvrNGGBHSBgjgxW8/vqPCFlO/eFJJowc6uc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=imuF1ma/NckpAONkdR/VI0MMQdDNN4XxkMJulGP/5QL225yKDYIVA72Tud2XHoqVdESrFj97u1nPO5BJWPL5i6Kt17PM4usnRekw961ouKKoOBAnUO1DeABZLmFLvgx8HAT3GyNP56pMzSDSiaeU+KOxFv0bUHwvR+9+lCsPUfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LG1YHT1v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA152C4CECC;
+	Sun, 24 Nov 2024 13:49:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732456193;
+	bh=6YhAJVbTfvrNGGBHSBgjgxW8/vqPCFlO/eFJJowc6uc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LG1YHT1v8gUVVE4l2QuzfWdlClzXY8pYfnFutKabCiIdlOS7bIy1vpoDbTqiqAAc+
+	 pJqacWipHRDY4TLqT0R5vNINciulKYuBZ+J3hFnOFZvG+zLO3MbCIlany9gHGjBGZm
+	 hx7U+ddA/VlzzfGitTGw3UN5HAmHjglNm0Np/+jgBYmcFYd2OiXBIB7obUxrGyndJJ
+	 tpOqogOfS6sl7esMPkNyanS+Zms1zTHqIRqngVYQFsY4C74ScsBKQBZUijJ1WvER6N
+	 mDGRZadMMrghFJLhx0jeRIUd3gZEYZzqNWZYlSfKn02VsUQ80s7dIT7fpXwiiTImR3
+	 nZMq8tT07ji/Q==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Dom Cobley <popcornmix@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Sasha Levin <sashal@kernel.org>,
+	maarten.lankhorst@linux.intel.com,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 6.1 01/48] drm/vc4: hdmi: Avoid log spam for audio start failure
+Date: Sun, 24 Nov 2024 08:48:24 -0500
+Message-ID: <20241124134950.3348099-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.1.119
 Content-Transfer-Encoding: 8bit
 
-Signed-off-by: Saru2003 <sarvesh20123@gmail.com>
----
- Documentation/admin-guide/blockdev/zram.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+From: Dom Cobley <popcornmix@gmail.com>
 
-diff --git a/Documentation/admin-guide/blockdev/zram.rst b/Documentation/admin-guide/blockdev/zram.rst
-index 678d70d6e1c3..dbf2b4f47ec3 100644
---- a/Documentation/admin-guide/blockdev/zram.rst
-+++ b/Documentation/admin-guide/blockdev/zram.rst
-@@ -119,14 +119,14 @@ compression algorithm to use external pre-trained dictionary, pass full
- path to the `dict` along with other parameters::
+[ Upstream commit b4e5646178e86665f5caef2894578600f597098a ]
+
+We regularly get dmesg error reports of:
+[   18.184066] hdmi-audio-codec hdmi-audio-codec.3.auto: ASoC: error at snd_soc_dai_startup on i2s-hifi: -19
+[   18.184098]  MAI: soc_pcm_open() failed (-19)
+
+These are generated for any disconnected hdmi interface when pulseaudio
+attempts to open the associated ALSA device (numerous times). Each open
+generates a kernel error message, generating general log spam.
+
+The error messages all come from _soc_pcm_ret in sound/soc/soc-pcm.c#L39
+which suggests returning ENOTSUPP, rather that ENODEV will be quiet.
+And indeed it is.
+
+Signed-off-by: Dom Cobley <popcornmix@gmail.com>
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20240621152055.4180873-5-dave.stevenson@raspberrypi.com
+Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/vc4/vc4_hdmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
+index 971801acbde60..51971035d8cbb 100644
+--- a/drivers/gpu/drm/vc4/vc4_hdmi.c
++++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+@@ -2156,7 +2156,7 @@ static int vc4_hdmi_audio_startup(struct device *dev, void *data)
+ 	}
  
- 	#pass path to pre-trained zstd dictionary
--	echo "algo=zstd dict=/etc/dictioary" > /sys/block/zram0/algorithm_params
-+	echo "algo=zstd dict=/etc/dictionary" > /sys/block/zram0/algorithm_params
+ 	if (!vc4_hdmi_audio_can_stream(vc4_hdmi)) {
+-		ret = -ENODEV;
++		ret = -ENOTSUPP;
+ 		goto out_dev_exit;
+ 	}
  
- 	#same, but using algorithm priority
--	echo "priority=1 dict=/etc/dictioary" > \
-+	echo "priority=1 dict=/etc/dictionary" > \
- 		/sys/block/zram0/algorithm_params
- 
- 	#pass path to pre-trained zstd dictionary and compression level
--	echo "algo=zstd level=8 dict=/etc/dictioary" > \
-+	echo "algo=zstd level=8 dict=/etc/dictionary" > \
- 		/sys/block/zram0/algorithm_params
- 
- Parameters are algorithm specific: not all algorithms support pre-trained
 -- 
-2.34.1
+2.43.0
 
 
