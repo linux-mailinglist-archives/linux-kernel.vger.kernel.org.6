@@ -1,179 +1,159 @@
-Return-Path: <linux-kernel+bounces-420206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F2029D76E4
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:50:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E085A16311F
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:50:26 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC32664C6;
-	Sun, 24 Nov 2024 17:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F91amEzn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7903B9D77A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:04:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3041641746;
-	Sun, 24 Nov 2024 17:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26704B28130
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:52:03 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A89126BEE;
+	Sun, 24 Nov 2024 17:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="bL0HEzWW"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49CE41746;
+	Sun, 24 Nov 2024 17:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732470624; cv=none; b=ZykKgAgDRdpY8XQTlBC0cXQxhUn1z13cUStS9L3oPQoc3qtXQVIGnwqX7SORMhNE3++zNahToX1j37ZCIZuXdj8ZH8YPwqh5wH+5hfLWhsLEG1MuV7mSaBzRbbDOm++9hECeYoiY1byetQykC3WOeSgRqxnykK/294DLkeHqTtc=
+	t=1732470716; cv=none; b=N32qqQRkILsfbWSSvnjMaMpjMpnbF0GU+urUhBix6BET5d/iTlvoqvJ8KllHO9Ar8itZvfATflUrvn5etiSiuS9lMNdP+r83ZBTvQ4jS7TxG+XOrpAQJUj0k+EPWetOt0u0bIsYie1lIphz5ZjfV3YE8IwAAseg0/DvoPGxxiI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732470624; c=relaxed/simple;
-	bh=6vOrt32oKvYs9GLXgwzgX+yjwI0Xilni1o2lV9+Q/70=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jGkGJlKo+1Pm9+RVL12at5rnAEFtW5uTu5syIV7GYIvIz22tg1CZGAuClEzMI+sNAHApQ94kIG+C0SCuJrAVjARELR8yrMWVBzDZinKM5QB+QlwV++4IvZDtzSDWmIRaCIqQVmL1JGw6vKt/3P5Yd9XEDrzOrPJ/YdpP07Cz0e4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F91amEzn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48A15C4CECC;
-	Sun, 24 Nov 2024 17:50:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732470623;
-	bh=6vOrt32oKvYs9GLXgwzgX+yjwI0Xilni1o2lV9+Q/70=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=F91amEznREet/hyOSgn7E4yHyCS2xDp8sn/F5N6Cm/ptbGRd+t0hj2xExgXk64lvC
-	 9g4HVQIfEceQKL1WZAyYPrFNSAA3XHfnbiSKckLFzfujxeGONz6Q0kVgU5LlOh9y92
-	 r9L1+8M9OLWD8ABwxcHWueZkIH1S9aytu62SwO1+EADPylI9YJi887l3NsaRhVH6fr
-	 KH7HUGTnVyel1Vr0AC4aG1G/elVw49F59OGRPjJuQqzbfVFhga/7i7bQhuVl7xBkbz
-	 vW7qDjE25XelySdAj6s6DAeEXUQcSk/z7oRWkpwOCbBzxkkBH5T52ADnVSlw6nv8pk
-	 ozjD0cTHcM4UA==
-Date: Sun, 24 Nov 2024 17:50:18 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] iio: light: veml6030: add support for triggered
- buffer
-Message-ID: <20241124175018.101452fb@jic23-huawei>
-In-Reply-To: <101820df-d6c6-4032-8e1e-d3d8b85720c4@gmail.com>
-References: <20241110-veml6030_triggered_buffer-v2-1-ecda3b6ed77f@gmail.com>
-	<20241123151634.303aa860@jic23-huawei>
-	<1f5d62d0-42af-4eda-846d-cd0d57b5c6d5@gmail.com>
-	<20241124124320.4237c67e@jic23-huawei>
-	<101820df-d6c6-4032-8e1e-d3d8b85720c4@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732470716; c=relaxed/simple;
+	bh=aFiMuy9mcRHMPQ053hGyjtKqIn+7hqWhqOvEFy3aZJ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t/mNMDEegcasQEQWKQoJ9sPOyTbV6rSgg1LfFvzcTcLe54Tx62SrPX16Cx+Xm22WewuUOPcGT6Oc4jnPSdS4tMv+APyCjET3Zym20VMBmWHjvXFxOirgohQMIatJFd+2b8psWl7qJ24mjJEtq5fuOMSirojYM2qk76hyHjjReJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=bL0HEzWW; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1732470703; x=1733075503; i=w_armin@gmx.de;
+	bh=fwL0qNtLB7MUk+18v3c9cA+7lZR+Usz2hqAs8ycRtzQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=bL0HEzWWPBbU3JKDpMGcidAV/EQ71pLzWlsg3l9DMzO5qFX4W/VNZfFWTGOQEpIu
+	 RzKby6BlRNTVrCAzTxUeUXiNo9zvqJBTc3kOnS59V94i2ekhN7oYd3AiGxy2Jgz4E
+	 ExOCDfeGJE/r5O+1pe8S+2wy/pLuQwAZbTSnM1RVcshPLJXo4+QgC5pzGqOs0wIUI
+	 gpWmfdr8WjIGlNsC81U+KLk6urvajlc9GcRsrps3/W9GvP6wruaifiVu3JHnyuMA/
+	 koLy/cCGCL+k8R/LzMugkCcrGGmxtMyyMeSxVrT20cFQPaiXy+xfNfTbQAjP7MLPo
+	 z6Bf9UhW9g+H5NvIYw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.14] ([141.30.226.119]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MAONX-1tPPlt2b2h-001JRA; Sun, 24
+ Nov 2024 18:51:42 +0100
+Message-ID: <0d56a09d-59a4-4574-9fb7-635f627f5657@gmx.de>
+Date: Sun, 24 Nov 2024 18:51:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/9] power: supply: core: introduce
+ power_supply_has_property()
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Sebastian Reichel <sre@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>,
+ Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ chrome-platform@lists.linux.dev,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+References: <20241111-power-supply-extensions-v4-0-7240144daa8e@weissschuh.net>
+ <20241111-power-supply-extensions-v4-3-7240144daa8e@weissschuh.net>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20241111-power-supply-extensions-v4-3-7240144daa8e@weissschuh.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:zfgWTVipdSrxgoPcOqE5dYf7tRVuHMhf22WtP4IDbcisbRsAJ6B
+ TgCr8MwwkRbPIp4OJQVXGQ/NEzIK3RyNJLwk4x4nlSTb1Cntu+x+okhFYeS8yKW0LpZxM4r
+ E/U6rvrZgaxd/MivMUAVvpMZfnYLTDDgtMAa1VAigNd/m/z52NAG6H/QnBatrA2TSTOysSy
+ vLq4Xl9oQawc2Js43haaA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:rGzjzrvNnx0=;fAsho1mxkfy4ParjdwNU4aL/kS2
+ PB/oHWUwTQaamNJUiNint8qlcOMC0WHzVn6/6AroFGUZWdhtgNHQ5DRftiPQP8NDAB9FHOsbQ
+ or5Wedy3FnCz8QUE/fcQFi/4tcna+VDQjQooM075yI/fXUsMKizI42oBHDKYBHhNWjiunPuVe
+ BlCvmtkbrTCvyP9Zh8KU5o1zl2L8DNbt6MBJ3s7CBpqn1sDpqQ9k7xBX8ScmguJX1y3ETAGNO
+ FUKfhdNmPDxAa1Hl9fxMN0LylIhtoc9/T5E5S9OzKF8aTr0YLYY023w9mCuA/Uy9jCKN+bWas
+ EihFlXeJvOGvt9d+QcbjdMvNuBXsllbhYq5k0k5KNK04lo9BeqqXUvKjqx1IgW+CiUxztA1ND
+ JUHlMPc2PD6vxMsAplJBAyqanr5FQmcuQyIpLWIYNMfrmhV0d6/iyndq1v9NiADU6LtHeoTo1
+ 9cXmyy7LNEtjck77h3ksbiJRdiGWGuhKlUetXDJD2UZ6kNDdg7gjH0jECvlSQp6IK6m2FfKQx
+ rwg/NpPBdyc3ZDF8RiMphlzigWAOoTDL0odY21CXjITb7SAlVS1kn5VhDho3BYSgaB5dR400D
+ /fr7DvWkITXVYvaFYg2kQF3KIUjvSBvyJfM3jFFDPU+XjY2CY+hQGKsYCo/pzSKo0pYPglVjp
+ /vRqJVdgvbMosdoDu1Xhl1WOHMiHfiVegjiMQ7TrLQYVhMZ1gwcRVA8/Ysffsg/KqOyXo9Tr8
+ 1Tar6Osyb/KgMMJLGH4YXe1HNKEwX/tk8u4OwqVnExUmplbNG7CNaLz6XfV/4xJoL5axwJV5u
+ uER/vag8gVJNg2AcIwu1LFbxch8fqncPooHT2RyvlqTNauD1DEar+fSnaPCIqyLgIJAUF4OoM
+ 7wxZB1VDO7AlSNCJPReOpLaOy9GDBOIuMc44MKmQy1j0JWWimEaasH1GX6PJyn9rLMueovPj4
+ 7zYTBwklvAkpCSvUDI/zRGcR1x1RT76CC5X+VExs+EEgSn0wxtgvHYZE1NgqIYXgyY0CG6JxY
+ Pvx1JQfrIsSkQH1xD8iRNRRy+EBlSFE5xnw3I31GwyV4Wpex14QMlkHmfZb2TBsGECZ4X+fgm
+ z/555pnX4k6Fp6KOpK58jCPsptN0um
 
-On Sun, 24 Nov 2024 15:47:23 +0100
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+Am 11.11.24 um 22:40 schrieb Thomas Wei=C3=9Fschuh:
 
-> On 24/11/2024 13:43, Jonathan Cameron wrote:
-> >>>> +static irqreturn_t veml6030_trigger_handler(int irq, void *p)
-> >>>> +{
-> >>>> +	struct iio_poll_func *pf = p;
-> >>>> +	struct iio_dev *iio = pf->indio_dev;
-> >>>> +	struct veml6030_data *data = iio_priv(iio);
-> >>>> +	unsigned int reg;
-> >>>> +	int ch, ret, i = 0;
-> >>>> +	struct {
-> >>>> +		u16 chans[2];    
-> >>> There is a hole here...     
-> >>>> +		aligned_s64 timestamp;
-> >>>> +	} scan;
-> >>>> +
-> >>>> +	iio_for_each_active_channel(iio, ch) {
-> >>>> +		ret = regmap_read(data->regmap, VEML6030_REG_DATA(ch),
-> >>>> +				  &reg);
-> >>>> +		if (ret)
-> >>>> +			goto done;
-> >>>> +
-> >>>> +		scan.chans[i++] = reg;    
-> >>> This fills in at least 1 channel, but maybe not the second.    
-> >>>> +	}
-> >>>> +    
-> >>> So this leaks random stack data I think.
-> >>>
-> >>> Upshot, when holes are involved or not all the channels are set, need
-> >>> memset(&scan, 0, sizeof(scan));
-> >>> for the structure on the stack which will zero the holes as well as
-> >>> both channels.
-> >>>
-> >>> Ancient article on this: https://lwn.net/Articles/417989/
-> >>>
-> >>> We get away with it when they are in the iio_priv space because they are
-> >>> kzalloc + if we do leak data due to changes in configured channels it's
-> >>> just old sensor data which is (I think) never a security problem!
-> >>>     
-> >>>> +	iio_push_to_buffers_with_timestamp(iio, &scan, pf->timestamp);
-> >>>> +
-> >>>> +done:
-> >>>> +	iio_trigger_notify_done(iio->trig);
-> >>>> +
-> >>>> +	return IRQ_HANDLED;
-> >>>> +}
-> >>>> +
-> >>>>  static int veml6030_set_info(struct iio_dev *indio_dev)
-> >>>>  {
-> >>>>  	struct veml6030_data *data = iio_priv(indio_dev);
-> >>>> @@ -1077,6 +1145,12 @@ static int veml6030_probe(struct i2c_client *client)
-> >>>>  	if (ret < 0)
-> >>>>  		return ret;
-> >>>>  
-> >>>> +	ret = devm_iio_triggered_buffer_setup(&client->dev, indio_dev, NULL,
-> >>>> +					      veml6030_trigger_handler, NULL);
-> >>>> +	if (ret)
-> >>>> +		return dev_err_probe(&client->dev, ret,
-> >>>> +				     "Failed to register triggered buffer");
-> >>>> +
-> >>>>  	return devm_iio_device_register(&client->dev, indio_dev);
-> >>>>  }
-> >>>>  
-> >>>>
-> >>>> ---
-> >>>> base-commit: 9dd2270ca0b38ee16094817f4a53e7ba78e31567
-> >>>> change-id: 20241106-veml6030_triggered_buffer-a38886ca4cce
-> >>>>
-> >>>> Best regards,    
-> >>>     
-> >>
-> >>
-> >> Hi Jonathan,
-> >>
-> >> thanks a lot for your explanation and the link, it makes perfect sense.
-> >> By the way, when I moved this struct from the iio_priv to the function,
-> >> I took a look at some existing code, and a couple of them might have the
-> >> same issue:
-> >>
-> >> - temperature/tmp006.c: it also has a hole between the two 16-bit
-> >> channels and the timestamp (aligned(8)), but it is not set to zero.
-> >>
-> >> - adc/ti-ads1119.c: the scan consists of an unsigned int and the
-> >> timestamp (aligned(8)). I believe there is a hole there as well.
-> >>
-> >> I did not go over all drivers (most of them store the scan struct in the
-> >> iio_priv space anyway), but at least those two look suspicious.
-> >>
-> >> Should I fix (e.g. memset) those two I mentioned?  
-> > 
-> > Please do.  Thanks!
-> > 
-> > Jonathan
-> >   
-> 
-> Ok, I will take a closer look to check if there are more drivers leaking
-> uninitialized data. By the way, would you tag the fixes for stable? This
-> becoming an attack vector might be a bit theoretical, and I don't know
-> the consensus about the danger of passing uninitialized data to userspace.
+> Introduce a helper to check if a power supply implements a certain
+> property. It will be used by the sysfs and hwmon code to remove similar
+> open-coded checks.
+> It also paves the way for the extension API to hook into.
 
-Yes. Stable would be appropriate for these. Thanks for looking into it.
-Your patch had me adding checking this to my todo list but I'm very
-happy to have you do it instead! :)
+Reviewed-by: Armin Wolf <W_Armin@gmx.de>
 
-
-Jonathan
-
-> 
-> Thanks again,
-> Javier Carrasco
-
+> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
+>   drivers/power/supply/power_supply.h      |  2 ++
+>   drivers/power/supply/power_supply_core.c | 12 ++++++++++++
+>   2 files changed, 14 insertions(+)
+>
+> diff --git a/drivers/power/supply/power_supply.h b/drivers/power/supply/=
+power_supply.h
+> index 7434a6f2477504ee6c0a3c7420e1444387b41180..5dabbd895538003096b62d03=
+fdd0201b82b090e6 100644
+> --- a/drivers/power/supply/power_supply.h
+> +++ b/drivers/power/supply/power_supply.h
+> @@ -15,6 +15,8 @@ struct power_supply;
+>
+>   extern int power_supply_property_is_writeable(struct power_supply *psy=
+,
+>   					      enum power_supply_property psp);
+> +extern bool power_supply_has_property(struct power_supply *psy,
+> +				      enum power_supply_property psp);
+>
+>   #ifdef CONFIG_SYSFS
+>
+> diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/su=
+pply/power_supply_core.c
+> index 2f61f6b90b99f40ee04a6d63ebc20036f0447102..502b07468b93dfb7f5a6c209=
+2588d931a7d015f2 100644
+> --- a/drivers/power/supply/power_supply_core.c
+> +++ b/drivers/power/supply/power_supply_core.c
+> @@ -1196,6 +1196,18 @@ static bool psy_desc_has_property(const struct po=
+wer_supply_desc *psy_desc,
+>   	return found;
+>   }
+>
+> +bool power_supply_has_property(struct power_supply *psy,
+> +			       enum power_supply_property psp)
+> +{
+> +	if (psy_desc_has_property(psy->desc, psp))
+> +		return true;
+> +
+> +	if (power_supply_battery_info_has_prop(psy->battery_info, psp))
+> +		return true;
+> +
+> +	return false;
+> +}
+> +
+>   int power_supply_get_property(struct power_supply *psy,
+>   			    enum power_supply_property psp,
+>   			    union power_supply_propval *val)
+>
 
