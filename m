@@ -1,120 +1,230 @@
-Return-Path: <linux-kernel+bounces-420299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D33FF9D787C
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 23:14:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B2189D7882
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 23:19:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B4ED282AE4
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 22:14:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6E80162D86
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 22:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DB1175D39;
-	Sun, 24 Nov 2024 22:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="S/dhdC82"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC88D17BED0;
+	Sun, 24 Nov 2024 22:18:51 +0000 (UTC)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5885213A244
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 22:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9243B15FD13;
+	Sun, 24 Nov 2024 22:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732486491; cv=none; b=FgvToaoEU/N+zsNl/5X4UnGaS344oqhouGv0Ivs784dxxy+th8NerkJv4aArDlrtV4ykuV4TbhVnMXWQQ7ofkCIttHE7KYOJRNDSeWtuFehzczsCRHP814Na78YSYshakUneMp20+x4PuC8OIHgHwgDKLxeEq9nv2ijNRzQDy2I=
+	t=1732486731; cv=none; b=E7GQaHQ8MIoxokHf+SsbTW7RyOApNSXFy4zFuqlLPqGztx+2QoflCZETXg8HCwqGzfluX/f+oJFsywMgD7n+Pk/MzkZskO0V6dgcEsyGRcUjpXD3tf9ZXQaW6yzHnZyF2BToHX6YBfsXN0wJzWYOjE7LyPRx2MdVimxq8JDtWTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732486491; c=relaxed/simple;
-	bh=5LCkleFSbaQtCG4x5qMTLCfSc8sP2dhui/dkVkiMwDE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U9htDjhogbgGaahhir2B3vlfJ97lb+9oX8GIDv87Y/25NhKLdKbp8HTT0oR0TngB95qyFDe37tgpv4Bh0clD3sC8vgPx9WZSGu89Pro50Ta17yxi9et+9wh3lf0oCnDCbPjENug2896l9GApN+kj3BpY75ti7pFoXgd1GQsbIwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=S/dhdC82; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id E31732C057D;
-	Mon, 25 Nov 2024 11:14:44 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1732486484;
-	bh=O92f3zpvDXMuVRxHboYfiuDPDnXc3HizrQNIyXRegKc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=S/dhdC82RKL8iLHFbf11HkRVSyYLF029dKO0Wr3EqDBstSXR/RtetQnHYnls/aSrh
-	 L5LOeh/eM8RFzkbb+fT7zMXZf8j9C4j7hiuhqlmQfQLGopYozj8EEHuWst+jlIr6Hv
-	 qvISQp3LbjxPI69eDGe1BWJ9jQSefynyVrMi2+zylelaspj/7QI0cYeMRv8ibVOR85
-	 XqR0tStSwboM3+M99N6R9gpwsnO69FsLrFD4NkCetzUU5ro2haT8LemZZzApU9LLPY
-	 BDLeTrcAnFiYwYSxqcTjXY26XP+S5sccCkehgkyA1AN4UH05O+H16yGa8XcnwFmcOo
-	 BVZdWeEwyqWgg==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B6743a5540000>; Mon, 25 Nov 2024 11:14:44 +1300
-Received: from markto-dl.ws.atlnz.lc (markto-dl.ws.atlnz.lc [10.33.23.16])
-	by pat.atlnz.lc (Postfix) with ESMTP id BEAE713ED95;
-	Mon, 25 Nov 2024 11:14:44 +1300 (NZDT)
-Received: by markto-dl.ws.atlnz.lc (Postfix, from userid 1155)
-	id B2DED40678; Mon, 25 Nov 2024 11:14:44 +1300 (NZDT)
-From: Mark Tomlinson <mark.tomlinson@alliedtelesis.co.nz>
-To: gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mark Tomlinson <mark.tomlinson@alliedtelesis.co.nz>
-Subject: [PATCH] usb: host: max3421-hcd: Correctly abort a USB request.
-Date: Mon, 25 Nov 2024 11:14:30 +1300
-Message-ID: <20241124221430.1106080-1-mark.tomlinson@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1732486731; c=relaxed/simple;
+	bh=u7kQYVP2q/NUDySFecDk5xUiUxBqNf/gjfU1dgYlhRg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pZ9L3Aweve03gcBS76NI0z5At+kcKeAS56v29pnvIQ/7ib/Z1fvIo5aCx5rtqxrxhZMhP2+dkJeLhDXlNYLsJecNTFcSgMwO0I/ei78Kr9Y6yzyheAaaMLTssCJzmnZSgQjj1AGurMxmjkn2JJZVBuj/zmZBnjfCnYRGdvTeXXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; arc=none smtp.client-ip=92.121.34.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D40F01A07D4;
+	Sun, 24 Nov 2024 23:18:40 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C192A1A07F5;
+	Sun, 24 Nov 2024 23:18:40 +0100 (CET)
+Received: from lsv051416.swis.nl-cdc01.nxp.com (lsv051416.swis.nl-cdc01.nxp.com [10.168.48.122])
+	by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 722BA203B1;
+	Sun, 24 Nov 2024 23:18:39 +0100 (CET)
+Date: Sun, 24 Nov 2024 23:18:40 +0100
+From: Jan Petrous <jan.petrous@oss.nxp.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Minda Chen <minda.chen@starfivetech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
+	Keyur Chudgar <keyur@os.amperecomputing.com>,
+	Quan Nguyen <quan@os.amperecomputing.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	NXP S32 Linux Team <s32@nxp.com>
+Subject: Re: [PATCH v5 14/16] net: stmmac: dwmac-s32: add basic NXP S32G/S32R
+ glue driver
+Message-ID: <Z0OmQI+4sEbA0lFs@lsv051416.swis.nl-cdc01.nxp.com>
+References: <20241119-upstream_s32cc_gmac-v5-0-7dcc90fcffef@oss.nxp.com>
+ <20241119-upstream_s32cc_gmac-v5-14-7dcc90fcffef@oss.nxp.com>
+ <ZzzDu0tcyixAZ8l1@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=Gam0nhXL c=1 sm=1 tr=0 ts=6743a554 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=VlfZXiiP6vEA:10 a=9JeQPKVsZYsqtNgjPSQA:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZzzDu0tcyixAZ8l1@shell.armlinux.org.uk>
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-If the current USB request was aborted, the spi thread would not respond
-to any further requests. This is because the "curr_urb" pointer would
-not become NULL, so no further requests would be taken off the queue.
-The solution here is to set the "urb_done" flag, as this will cause the
-correct handling of the URB. Also clear interrupts that should only be
-expected if an URB is in progress.
+On Tue, Nov 19, 2024 at 04:58:35PM +0000, Russell King (Oracle) wrote:
+> On Tue, Nov 19, 2024 at 04:00:20PM +0100, Jan Petrous via B4 Relay wrote:
+> > From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
+> > 
+> > NXP S32G2xx/S32G3xx and S32R45 are automotive grade SoCs
+> > that integrate one or two Synopsys DWMAC 5.10/5.20 IPs.
+> > 
+> > The basic driver supports only RGMII interface.
+> > 
+> > Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+> 
+> One thing that stands out to me in this is the duplication of the PHY
+> interface mode. I would much prefer if we didn't end up with multiple
+> copies, but instead made use of the one already in plat_stmmacenet_data
+> maybe by storing a its pointer in struct s32_priv_data?
 
-Fixes: 2d53139f3162 ("Add support for using a MAX3421E chip as a host dri=
-ver.")
-Signed-off-by: Mark Tomlinson <mark.tomlinson@alliedtelesis.co.nz>
----
- drivers/usb/host/max3421-hcd.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+I missed the struct plat_stmmacenet_data's phy_interface member. I
+switch the duplicate member intf_mode in struct s32_priv_data to
+pointer.
 
-diff --git a/drivers/usb/host/max3421-hcd.c b/drivers/usb/host/max3421-hc=
-d.c
-index 9fe4f48b1898..0881fdd1823e 100644
---- a/drivers/usb/host/max3421-hcd.c
-+++ b/drivers/usb/host/max3421-hcd.c
-@@ -779,11 +779,17 @@ max3421_check_unlink(struct usb_hcd *hcd)
- 				retval =3D 1;
- 				dev_dbg(&spi->dev, "%s: URB %p unlinked=3D%d",
- 					__func__, urb, urb->unlinked);
--				usb_hcd_unlink_urb_from_ep(hcd, urb);
--				spin_unlock_irqrestore(&max3421_hcd->lock,
--						       flags);
--				usb_hcd_giveback_urb(hcd, urb, 0);
--				spin_lock_irqsave(&max3421_hcd->lock, flags);
-+				if (urb =3D=3D max3421_hcd->curr_urb) {
-+					max3421_hcd->urb_done =3D 1;
-+					max3421_hcd->hien &=3D ~(BIT(MAX3421_HI_HXFRDN_BIT) |
-+							       BIT(MAX3421_HI_RCVDAV_BIT));
-+				} else {
-+					usb_hcd_unlink_urb_from_ep(hcd, urb);
-+					spin_unlock_irqrestore(&max3421_hcd->lock,
-+							       flags);
-+					usb_hcd_giveback_urb(hcd, urb, 0);
-+					spin_lock_irqsave(&max3421_hcd->lock, flags);
-+				}
- 			}
- 		}
- 	}
---=20
-2.47.0
+> 
+> > ---
+> >  drivers/net/ethernet/stmicro/stmmac/Kconfig     |  12 ++
+> >  drivers/net/ethernet/stmicro/stmmac/Makefile    |   1 +
+> >  drivers/net/ethernet/stmicro/stmmac/dwmac-s32.c | 204 ++++++++++++++++++++++++
+> >  3 files changed, 217 insertions(+)
+> > 
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> > index 05cc07b8f48c..a6579377bedb 100644
+> > --- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> > @@ -154,6 +154,18 @@ config DWMAC_RZN1
+> >  	  the stmmac device driver. This support can make use of a custom MII
+> >  	  converter PCS device.
+> >  
+> > +config DWMAC_S32
+> > +	tristate "NXP S32G/S32R GMAC support"
+> > +	default ARCH_S32
+> > +	depends on OF && (ARCH_S32 || COMPILE_TEST)
+> > +	help
+> > +	  Support for ethernet controller on NXP S32CC SOCs.
+> > +
+> > +	  This selects NXP SoC glue layer support for the stmmac
+> > +	  device driver. This driver is used for the S32CC series
+> > +	  SOCs GMAC ethernet controller, ie. S32G2xx, S32G3xx and
+> > +	  S32R45.
+> > +
+> >  config DWMAC_SOCFPGA
+> >  	tristate "SOCFPGA dwmac support"
+> >  	default ARCH_INTEL_SOCFPGA
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/Makefile b/drivers/net/ethernet/stmicro/stmmac/Makefile
+> > index c2f0e91f6bf8..1e87e2652c82 100644
+> > --- a/drivers/net/ethernet/stmicro/stmmac/Makefile
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/Makefile
+> > @@ -22,6 +22,7 @@ obj-$(CONFIG_DWMAC_MESON)	+= dwmac-meson.o dwmac-meson8b.o
+> >  obj-$(CONFIG_DWMAC_QCOM_ETHQOS)	+= dwmac-qcom-ethqos.o
+> >  obj-$(CONFIG_DWMAC_ROCKCHIP)	+= dwmac-rk.o
+> >  obj-$(CONFIG_DWMAC_RZN1)	+= dwmac-rzn1.o
+> > +obj-$(CONFIG_DWMAC_S32)		+= dwmac-s32.o
+> >  obj-$(CONFIG_DWMAC_SOCFPGA)	+= dwmac-altr-socfpga.o
+> >  obj-$(CONFIG_DWMAC_STARFIVE)	+= dwmac-starfive.o
+> >  obj-$(CONFIG_DWMAC_STI)		+= dwmac-sti.o
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-s32.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-s32.c
+> > new file mode 100644
+> > index 000000000000..9af7cd093100
+> > --- /dev/null
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-s32.c
+> > @@ -0,0 +1,204 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * NXP S32G/R GMAC glue layer
+> > + *
+> > + * Copyright 2019-2024 NXP
+> > + *
+> > + */
+> > +
+> > +#include <linux/clk.h>
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/device.h>
+> > +#include <linux/ethtool.h>
+> > +#include <linux/io.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of_mdio.h>
+> > +#include <linux/of_address.h>
+> > +#include <linux/phy.h>
+> > +#include <linux/phylink.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/stmmac.h>
+> > +
+> > +#include "stmmac_platform.h"
+> > +
+> > +#define GMAC_TX_RATE_125M	125000000	/* 125MHz */
+> > +
+> > +/* SoC PHY interface control register */
+> > +#define PHY_INTF_SEL_MII	0x00
+> > +#define PHY_INTF_SEL_SGMII	0x01
+> > +#define PHY_INTF_SEL_RGMII	0x02
+> > +#define PHY_INTF_SEL_RMII	0x08
+> > +
+> > +struct s32_priv_data {
+> > +	void __iomem *ioaddr;
+> > +	void __iomem *ctrl_sts;
+> > +	struct device *dev;
+> > +	phy_interface_t intf_mode;
+> > +	struct clk *tx_clk;
+> > +	struct clk *rx_clk;
+> > +};
+> > +
+> > +static int s32_gmac_write_phy_intf_select(struct s32_priv_data *gmac)
+> > +{
+> > +	u32 intf_sel;
+> > +
+> > +	switch (gmac->intf_mode) {
+> > +	case PHY_INTERFACE_MODE_RGMII:
+> > +	case PHY_INTERFACE_MODE_RGMII_ID:
+> > +	case PHY_INTERFACE_MODE_RGMII_TXID:
+> > +	case PHY_INTERFACE_MODE_RGMII_RXID:
+> > +		intf_sel = PHY_INTF_SEL_RGMII;
+> > +		break;
+> > +	default:
+> > +		dev_err(gmac->dev, "Unsupported PHY interface: %s\n",
+> > +			phy_modes(gmac->intf_mode));
+> > +		return -EINVAL;
+> > +	}
+> 
+> This can be simplfied to:
+> 
+> 	if (!phy_interface_mode_is_rgmii(...)) {
+> 		dev_err(gmac->dev, "Unsupported PHY interface: %s\n",
+> 			phy_modes(...));
+> 		return -EINVAL;
+> 	}
+> 
+> Also, would it not be better to validate this in s32_dwmac_probe()?
+> 
 
+Thanks, I move the interface mode to s32_dwmac_probe() in v6.
+
+BR.
+/Jan
 
