@@ -1,132 +1,98 @@
-Return-Path: <linux-kernel+bounces-419361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B5BB9D6CF3
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 08:33:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF4C59D6CF4
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 08:35:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 042B6161977
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 07:33:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD026281562
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 07:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BDD188591;
-	Sun, 24 Nov 2024 07:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B00186616;
+	Sun, 24 Nov 2024 07:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WbXnN2kZ"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="o4f2SSI2"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6C33FBB3;
-	Sun, 24 Nov 2024 07:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928132C80;
+	Sun, 24 Nov 2024 07:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732433581; cv=none; b=MFZR4EMzKuihtw7WABxr+tUY+JHAStlS+xkotjQ30YHXzwJa/rcYr4RZtSJ+TAbRbV9+HfzkUYJUhWXEN6Vnq+FKGrQOJwLySg/RYzqUOktQLXlbmA4Ga7FdIViWCV2tCZmTnQCaU0xRLJhUZHr8/xT1bJznIUyDjHr3IhAeUng=
+	t=1732433724; cv=none; b=sa6dlq3KNx7KRKcR2ttaUko/hepUnPYwcmAelSsNrCWuBF2vZrydHUtWH2k+L92zVsBHjqboB0FZHRKZeNlVgfp80oNrqsg+0oXQcCUCVfZR63yGa/YKh6CF1voQLNUxpJcjchsB7NMatT51LK5LIFEr8eqqinaquQTduf0+150=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732433581; c=relaxed/simple;
-	bh=U3pW/br4mPdRA9g2qa3TF6acrn0LRv7kMOPVDiNBhIA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q7d66sbkJRUmIN4yPXvcrVgPtHzMA/wkuXY7oE1pKV4RqiamrMOTOA8rUg/obACIzfzQxTUhHDAOBP5+hYoF1q869Yw/YsQ3EqWLqlV3BvM5zzBbMww+YuRcjic+YTuz+QobtnnohjXoer8OBM3Ci+HufqqNByEXGMR5NwkdtwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WbXnN2kZ; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-212776d6449so37714585ad.1;
-        Sat, 23 Nov 2024 23:33:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732433579; x=1733038379; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/QrxvnHLhHHbClsG+fnoj3DaRzMXyXEa249hcftSwf0=;
-        b=WbXnN2kZHQgohVZjHoBhpf/ai18NKYHovDgExac4Ec2nObUJipJMaX1tPF2u2ZjqnS
-         +9llTuYn4JQYp68EjftXFtpjeTDJPCd+Et+ybJ2Mggz+I08n6LHz9A8HxbDXKG79HoTP
-         tUi81bKz+LHmP5qyR0xySthjKF3JSOfDlys++roC6IDIQQHkUs6z+RHbheNZ9n2LsXsR
-         iifvuS3d46zvpy6FdFE9dB1Kwg31QQApD4HVTJ3JKK+luyvqQhncausjd00vXwhAeZTJ
-         CF1xL49te1kwS++kDLAMsG3SpubB0mDX198y50e/Tx2yS/GmAj9B0SIb59PudZ2rn+38
-         +CHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732433579; x=1733038379;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/QrxvnHLhHHbClsG+fnoj3DaRzMXyXEa249hcftSwf0=;
-        b=BQfV+wL/BalN/YPBll5TXlk7N4nJmfHNsBKqRvjDCNAk9Reiw6jXmDq/RbiTh1Vhhf
-         z8B78F9ja3PBDP38lXylcuE0fAtm63vosfXjuw6BNyJ+tX2CfKS2vl2S5LjskYc4qpSH
-         cHOfHEjNL4j5jfi9oYDKpNRlRxj48DFZbqTOvyc8k+F6OMWjXo2+2QicndTzr4hyYdNV
-         xln4xzgnVPf/8YP0zuWWgL9q5XWT0KTajBzqSuK79xvAH8ocJOptWzCSHcDGuaUOg9/w
-         obvwFofzs3XMgpEEGZ65T6LWxF3com7DISdNSyXOa+Y95NeHDSsGeBERR8CpX66QIyvH
-         OJgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW4MdLZ9fV7un8C3gWyATQuK6Om5eUwRzZLsBTrShYz67GlhyTXR5zNYMsiQPsUXL0oesLeIuqHMhFjkak=@vger.kernel.org, AJvYcCXEHgBH3DrMBlfwZxflGwiK1wx+ddMapv77BpPDgaG7ZAPvhyWbSTuxEc6Wkur8lrx2Ok0D58zvfxM7Rm7XT8eH@vger.kernel.org, AJvYcCXf0NWgK22BEN6LDzs/FocQGreSuEjs5GeUOqO/2rNGdBPmMlCqu4qgilyLYMAAKT8BChv0NR9x74lG3Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YynRnPwoLzRsesCip2p0Cv0hZWK252GQx5H3jFHm/q4zPyRccXV
-	G/TYABz7ppooc2rmSas3mpOzERX/+vT4nene+j2e95g4ch1koHidZ0d57n+Ldp0=
-X-Gm-Gg: ASbGncvxwHl2MT53+2l3rC0uVGV3LECo30W7ep2qeA6LrOzo5nZwFJIO+tiPzhpz51c
-	wXv0PL+JolNnWqgPhjK8C2QxlDecLYU3+JnGOTpSyEBXFkqPbpbi1PifbvxKJtO9tYdyr2IBdYG
-	Q43oWJydY7056wTvpet1DTzFwE8EPj2ZIcwDFBSErIHQ3FVdVoaQ88N99Wr8w7tvt96tcOqEQZU
-	241DgVy+rl0aS+iKyy5V3brP2dx9i7KrEcCfKfulvkPw4+DD4f87YrJbD81IBvnNcI51Q==
-X-Google-Smtp-Source: AGHT+IH5VX8VLwH3q/3mONS3hSvP67LvADoIcPzqcrl1vByLw96QkSk+U2+gV5pEhf13xbrM09Cb+g==
-X-Received: by 2002:a17:902:e80a:b0:20b:bd8d:427c with SMTP id d9443c01a7336-2129f55a11emr108317305ad.23.1732433579276;
-        Sat, 23 Nov 2024 23:32:59 -0800 (PST)
-Received: from fedora.dns.podman ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129db8c881sm42838605ad.13.2024.11.23.23.32.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Nov 2024 23:32:58 -0800 (PST)
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Allison Henderson <allison.henderson@oracle.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	linux-rdma@vger.kernel.org,
-	rds-devel@oss.oracle.com,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hangbin Liu <liuhangbin@gmail.com>,
-	Maximilian Heyne <mheyne@amazon.de>
-Subject: [PATCH net] selftests: rds: move test.py to TEST_FILES
-Date: Sun, 24 Nov 2024 07:32:43 +0000
-Message-ID: <20241124073243.847932-1-liuhangbin@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1732433724; c=relaxed/simple;
+	bh=xD0OTv8NYqXJUcI0861MpKG3gedbbh4T5TGm05+Z46s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=QTB5QOYZWZJLOHwq5ibP+NmVsKmPQclclRKjyxvvyNrBuqr8UAfZ8PsRELRAsi08sefTn+Vr6vaFWvSlo5CKpA3ZQd/RpY6FN/YLsxjAVPQ4PMLosFR7HvJS3B9cQurixoY+na/4s1o8dx68QrK/ZgHvjbHbZ9KqA/q5BDdXcek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=o4f2SSI2; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1732433706;
+	bh=ISNUCydJFPrrwpu/ZQRl1WMIOCTUMaovewwJ98YskrM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=o4f2SSI2WsD4MsmFe+i5jSx3oRxyB7SnoK5XfQcVwNp2w19vAzp2EYpciiD3iVRO1
+	 00jNLcOvyWgqP9hdFe5AJjNI7bFvmp0QwvPuC5DnDC9mmkznyIX7lhaJSwQUzNxwxX
+	 aXSMznstdr+JednLMvcws1x3MLluEjRBAYXELjHuIjYcVpRkNDy7U/QquYwvDFUIia
+	 NLSzvmA8pXWKva9ox2IjAGkgTZ0dCWsWAWYQRv25hjtQqzYLOFi/M+biwERcZLe3nT
+	 meX5HcQnG6hNsnbguhbwsm68li+FJVt7pczfR0NixLC8P6Oqwt9YLIzUynfHmxqZgM
+	 NXtwV3nMijg8Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xx0wp17pxz4x6P;
+	Sun, 24 Nov 2024 18:35:05 +1100 (AEDT)
+Date: Sun, 24 Nov 2024 18:35:07 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Piotr Zalewski <pZ010001011111@proton.me>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the bcachefs tree
+Message-ID: <20241124183507.5241d705@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/s0htmlwwT+yDhu/dNb/xjrE";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-The test.py should not be run separately. It should be run via run.sh,
-which will do some sanity checks first. Move the test.py from TEST_PROGS
-to TEST_FILES.
+--Sig_/s0htmlwwT+yDhu/dNb/xjrE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reported-by: Maximilian Heyne <mheyne@amazon.de>
-Closes: https://lore.kernel.org/netdev/20241122150129.GB18887@dev-dsk-mheyne-1b-55676e6a.eu-west-1.amazon.com
-Fixes: 3ade6ce1255e ("selftests: rds: add testing infrastructure")
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
----
- tools/testing/selftests/net/rds/Makefile | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Hi all,
 
-diff --git a/tools/testing/selftests/net/rds/Makefile b/tools/testing/selftests/net/rds/Makefile
-index 1803c39dbacb..612a7219990e 100644
---- a/tools/testing/selftests/net/rds/Makefile
-+++ b/tools/testing/selftests/net/rds/Makefile
-@@ -3,10 +3,9 @@
- all:
- 	@echo mk_build_dir="$(shell pwd)" > include.sh
- 
--TEST_PROGS := run.sh \
--	test.py
-+TEST_PROGS := run.sh
- 
--TEST_FILES := include.sh
-+TEST_FILES := include.sh test.py
- 
- EXTRA_CLEAN := /tmp/rds_logs include.sh
- 
--- 
-2.46.0
+Commit
 
+  a4f3d037408e ("bcachefs: Fix evacuate_bucket tracepoint")
+
+is missing a Signed-off-by from its author.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/s0htmlwwT+yDhu/dNb/xjrE
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdC1ysACgkQAVBC80lX
+0Gx4YAf6A8bqdcC6sthwP54prMgE/HK9rLuSbF1Fr5GoNSkP0ajxafjbZVOftmkD
+UWtg5jOUm7yST61ELoWEarrCMGIjN7oEQuY8yCKfhqtGogsfa3+V7HxEnGdZ6ooN
+NZBzQuETYxv+GgWM7ZSCOcTu8+ShqjW3pt3d9D0WAdb4AYegAdspspF3viXDMArc
+pqi1/0mOpx1YE5LK/kzsBbSkkfE9BdEzdigRVmrTsGpig1awio0MvdRTVxG3efHW
+lII3RFpYGlOwhBhff4UBh5a6x6z7+7csLiUSPew2cSXl20L/e+H6KSpy/LA9f2DG
+qhwPC6m9wJxjdIYsS0jrNvEpTBUZqg==
+=+B4i
+-----END PGP SIGNATURE-----
+
+--Sig_/s0htmlwwT+yDhu/dNb/xjrE--
 
