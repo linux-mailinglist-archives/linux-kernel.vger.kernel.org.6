@@ -1,85 +1,131 @@
-Return-Path: <linux-kernel+bounces-420194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D519D76B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:30:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82EE4164A67
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:30:22 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186157BAEC;
-	Sun, 24 Nov 2024 17:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nSqf4itm"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563849D7799
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:01:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A31E664C6
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 17:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF458B24B57
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:35:41 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDDE1E531;
+	Sun, 24 Nov 2024 17:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FUrQwHEW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9BB5336E;
+	Sun, 24 Nov 2024 17:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732469420; cv=none; b=Q9uSpZmaownLhyCWxouxVCJaBczhO2uYQCDDwRHgbsaIAEghNm6Tova+JPW6XXffxhur1qfOSrx+BVUKYfYfbYOP7aJI8Vru3z1K0fgpMNIYMrS+Xe4Q0J7aZc5X5qD7OS7e1hlA58ydIdWqfOAa/ibfsvzFawrN0i+AAFAUDLE=
+	t=1732469734; cv=none; b=eNXob5Dx7bYywOjYiDtnQchxDSC3UTi17GjeoACdOfFTVa2I8ybK3/PcvvXbZ5WGDatkvbjXIuqnn2Z/bNxgE0P/NN4J+/Zy1sV8wMNmgx3jvg2Esh/0ZRtWCTdioUTtajV8lGSUg1+bHMwZo3hXHdjQU6tQwid8iNwr6aj9P0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732469420; c=relaxed/simple;
-	bh=EJ3K/diBSYpKOFSN2kAXlHy07iUDkk3cbKEZu/TU5bQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U4BEoaEtjy2RDbY0zJQoVcoWZKzeIE8/L9FcLLO1N9vW7QeNbLB0t8a83NSW3CEmbJ+zrV9u0UXf7xH8w2JEi9YyB+PhqckSMxIV9WAs0bdXLmB/NjTdflkE+bYf9NWrMSrGRRAEEnTI6khubxDZ2eX6f8PdRywJoHO15I8rEXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nSqf4itm; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <561af7e3-dd81-4b56-abf5-46dbc29e722d@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732469416;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rK1mzmJ7vpkr+04+AqkMIb5woGMrT4y42UHtCqLFTmo=;
-	b=nSqf4itmaNqH9PVzApKVjjqJlI8hDj18w/GAfwGpTjMBDORyMJI65keO8zwBWzyi2vSXI1
-	wQm6mYniY5rEzTwWwYxWhg7Yz49e6duo9dl3Z0HA6bQ5u1xqU6QpdyFVPOPUe5/vLDYvLZ
-	ysHRTLdrmrrdXuiXdbmlzF/B64lK5mQ=
-Date: Sun, 24 Nov 2024 23:00:03 +0530
+	s=arc-20240116; t=1732469734; c=relaxed/simple;
+	bh=NNO1v8uI0g1RI6kvrfdYdEVsM8AQmZbR6prCbj8eSic=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L+pnR9Ct5DK79kRGr8uQfqgFH5XfysVFTgU1AQNhqSeL2d0Ywulrnj+WigldNSnYDoWLQZygQxTa74AQSncis0p/Uh/WORDIbIxvqN8zCd6VBB5qPITNsTKll5K2Xp4MCVG4HAP/O2/z22Vv2BfM4M9kRVlPRXEnu/m6P3NE5Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FUrQwHEW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5DB0C4CECC;
+	Sun, 24 Nov 2024 17:35:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732469733;
+	bh=NNO1v8uI0g1RI6kvrfdYdEVsM8AQmZbR6prCbj8eSic=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FUrQwHEWxb97oW0wQYfVAvlCjJ+KEXeX6AkB6U128P8jhmlmjjEsERWpFdp84rxh0
+	 SA/SrhxhIkR2Dc9xzZVGeK5Uzbe8Prv7PFBaYonboBS8GlAjxASMbl08vY53TWqHoL
+	 YPDWGcXNttkB3A8u0DYrLV6DfvCKRAwIYJsrHaABncrlt5FnjjEcCeQLn1nIXlUKW+
+	 KqHOinu7xTckExo1SJ8wq2ttW2rWfidAUERM12p0hy+Y6NVzBdJ/WBzZ2KgnXVlbck
+	 kH8thAxTi7mCZ7Urz1ic6fZZoo9LdX2+ePnoxqS0m1jaXg4oD7VRiKAscoaMfojaZR
+	 hbIw/07+5t73w==
+Date: Sun, 24 Nov 2024 17:35:23 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, David
+ Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>,
+ linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-pwm@vger.kernel.org
+Subject: Re: [PATCH v5 15/16] iio: adc: ad4695: Add support for SPI offload
+Message-ID: <20241124173523.1fc48f25@jic23-huawei>
+In-Reply-To: <20241115-dlech-mainline-spi-engine-offload-2-v5-15-bea815bd5ea5@baylibre.com>
+References: <20241115-dlech-mainline-spi-engine-offload-2-v5-0-bea815bd5ea5@baylibre.com>
+	<20241115-dlech-mainline-spi-engine-offload-2-v5-15-bea815bd5ea5@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 7/7] drm/tidss: Rename 'wait_lock' to 'irq_lock'
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Devarsh Thakkar <devarsht@ti.com>, Jyri Sarha <jyri.sarha@iki.fi>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Jonathan Cormier <jcormier@criticallink.com>
-References: <20241021-tidss-irq-fix-v1-0-82ddaec94e4a@ideasonboard.com>
- <20241021-tidss-irq-fix-v1-7-82ddaec94e4a@ideasonboard.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
-In-Reply-To: <20241021-tidss-irq-fix-v1-7-82ddaec94e4a@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
+On Fri, 15 Nov 2024 14:18:54 -0600
+David Lechner <dlechner@baylibre.com> wrote:
 
-
-On 10/21/24 19:37, Tomi Valkeinen wrote:
-> The 'wait_lock' name seems to be a copy-paste from omapdrm, and makes no
-> sense here. Rename it to 'irq_lock'. Also clarify the related comment to
-> make it clear what it protects, and drop any comments related to
-> 'wait_list' which doesn't exist in tidss.
+> Add support for SPI offload to the ad4695 driver. SPI offload allows
+> sampling data at the max sample rate (500kSPS or 1MSPS).
 > 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> This is developed and tested against the ADI example FPGA design for
+> this family of ADCs [1].
+> 
+> [1]: http://analogdevicesinc.github.io/hdl/projects/ad469x_fmc/index.html
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
 
-Reviewed-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+A few minor formatting type comments inline.
 
-Regards
-Aradhya
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-[...]
+
+
+> +static bool ad4695_offload_trigger_match(struct spi_offload_trigger *trigger,
+> +					 enum spi_offload_trigger_type type,
+> +					 u64 *args, u32 nargs)
+> +{
+> +	if (type != SPI_OFFLOAD_TRIGGER_DATA_READY)
+> +		return false;
+> +
+> +	// args[0] is the trigger event.
+> +	// args[1] is the GPIO pin number.
+/*
+ * args[0] etc
+
+> +	if (nargs != 2 || args[0] != AD4695_TRIGGER_EVENT_BUSY)
+> +		return false;
+> +
+> +	return true;
+> +}
+
+
+
+> @@ -1260,12 +1639,36 @@ static int ad4695_probe(struct spi_device *spi)
+>  	indio_dev->modes = INDIO_DIRECT_MODE;
+>  	indio_dev->channels = st->iio_chan;
+>  
+> -	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
+> -					      iio_pollfunc_store_time,
+> -					      ad4695_trigger_handler,
+> -					      &ad4695_buffer_setup_ops);
+> -	if (ret)
+> -		return ret;
+> +	static const struct spi_offload_config ad4695_offload_config = {
+
+Whilst we do allow declarations other than at the top for use with things
+like __free() there is no strong reason for this one. So move it up to the
+top of the function.
+
+> +		.capability_flags = SPI_OFFLOAD_CAP_TRIGGER
+> +				  | SPI_OFFLOAD_CAP_RX_STREAM_DMA,
+> +	};
+> +
+> +	st->offload = devm_spi_offload_get(dev, spi, &ad4695_offload_config);
+>
 
