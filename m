@@ -1,177 +1,179 @@
-Return-Path: <linux-kernel+bounces-420332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2E309D78F7
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 23:58:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 430CE9D7911
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 00:00:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9187281B57
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 22:58:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE2372820E0
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 23:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C0B15F3FF;
-	Sun, 24 Nov 2024 22:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B66187858;
+	Sun, 24 Nov 2024 23:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OD9IRBdA"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U3rgm/nG"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C09A2500BD
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 22:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F359183CD6;
+	Sun, 24 Nov 2024 23:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732489120; cv=none; b=CQNeUr0mZMQCy52MLP+7FJVHGQVO87MnfYdFcIewVrwvfHvXFkuqb8xXFeP5Bs9czSkA/eqRAYULvds99fVQrRGsWu9Bl8FoV0ymi02+ulHunrXcZwxmMZZeC6sCWINKau7ZOTM6YrepsezV7Ma8XUPYi7tl9d8lkMZmg9yZnf8=
+	t=1732489214; cv=none; b=Xl+D73FJsDtCV+JZ6VUrGfC3bMNx1p4rM1xpVytvfpeHA5R4P+JRKIUPi2qLjyN8bCBiWswqd1yb5oeKkI0DZF74lSjn/a3Yazm+H3TrfvUWDn4EmY4vh6pHyN1/QF8C/OT8wgjE0T7C2idnS+udNBUQspuDFs+FlB3nTSSDWDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732489120; c=relaxed/simple;
-	bh=ZjuAMRHwncamsNIrC2i1xY9kC1cOxqLCQI7RzXBW4ws=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FJ0DRWU/OHARusWu6hW/ki1eAJ9xHf8MpliPVEBOdBe8af8Wy4Ncfd3mMbKlemXLzghLxJN6tf+pePFd1ThtfPNe+ppG59NaJlpCs2sK5gJ/2i+EZpeP+1TDESXlEdegm3ESzQEoqx6kaJsR0e3xcwf6wn/k12HpPHaVVdEhr48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OD9IRBdA; arc=none smtp.client-ip=209.85.218.41
+	s=arc-20240116; t=1732489214; c=relaxed/simple;
+	bh=+Xu7LpvkWORKcGzWxzrP1e3ZbJIL5wrdHr0BLgTc1xU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Xt5jKumNn9iQfNoZqeL5z8DtnP4xkBI2UgZaHupWAyxYi8eavd+XLe+Rcc9eGfZlz7ZHjWeUb20bVzFrzjTIihFkfvUisZmrDhNKm2yu2Rz6jpTiXAMQWM5VTJXK4NBsf6+SwrOlv0lbISPGiKAauQ8+baLzQKJWFNnYYSVEmaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U3rgm/nG; arc=none smtp.client-ip=209.85.210.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9ed49edd41so636508566b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 14:58:38 -0800 (PST)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-724e7d5d5b2so2017252b3a.2;
+        Sun, 24 Nov 2024 15:00:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732489117; x=1733093917; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pJZn4r1Q1mVyx8xe9OjWZIQdyqdlmM4KAqXOvCd7B8A=;
-        b=OD9IRBdA8we4BX6JnH12xhIZOt1R5ZGazfOjcXp97JDviG5Hm4RQ4HShustqG+8GfL
-         oYaHeufh+q2O90iEL3l8JGqI3zIIT81RkJ37qAcSuVEjweQV4jb9BBucgKjD+LT1il4E
-         OmU+lyy4BOeyVfgpi0hhVBqgVADgrFR8QIBYnibtIQm/s/WFmsyt0gyxqpc0r57110Gn
-         Y+5PCGVT2MUw9J4Ipu2t4EN/ZjNO6RfD5XezvaJNqX8bAkmxN6iZDWH0rQYBxe1PPDOl
-         LtChqLtoixKbLgyPnkjwBBfqE0CP+60U8kUcPjX68gmX86zOsGRJmyVTpdA0qT00QP3B
-         qzsQ==
+        d=gmail.com; s=20230601; t=1732489212; x=1733094012; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mpwQAY/y3s/YiKLLW+31fL0gZz6Q1yNva27VtG1Cnnw=;
+        b=U3rgm/nGKNTqtMhU08iU7CtRvfhk+qOpPgqwPXWdvzxTtrHKW7bLorylFWdHjTvRS8
+         vaIbTqHQooX8j18h6HW1ieDbJUIgiYRytoeEJnHgjA+Hht0rQVejl5JRrxw8vKQFZ63o
+         F6mVHsP1NcfdhZ4KebMArddeUTRudj0a/OybmIQbc3FWqEjkYC5wwRItY65TdzFGWuKS
+         0K/bOCy/NBXj8o/W1SlhHUSM/PAPeil2KWU0e2nXkmIMcB5vFE1vODKdNVLQgJEZCnm/
+         corv4YvDTNQRUaOGWqzoruPH7mOGU5iQcJpLcrvs5fxSb8UX5PY1x+oOmUTmDCS9G3jA
+         YLCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732489117; x=1733093917;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1732489212; x=1733094012;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=pJZn4r1Q1mVyx8xe9OjWZIQdyqdlmM4KAqXOvCd7B8A=;
-        b=VrFWhx92aNiS1c0V/ZailEwq4DW96OTvaOpnRtJRS/NJ97SXbVMtCmz1kfPK/AXNGd
-         +awf2KIRlq/X0V18+zVNYVwgx6QYjC6CrTom80yMb3ROE2UPc4Cgj3B9rzcawY7RDtF+
-         wqHFoP9W1WUi6balK7lcwyYs0Zd8fTZkfRPsHmyT+4UdXLAHJIzxGZYw7p4ekP8LnJ3e
-         3NSjTlYRHesB3K5LWjYI7mdLNkj26pUdG/StNCdmeQi1/6kprapy08TkXVnCobW0z/pA
-         oYwLnxyvH7pl5Y5Zxj2cIFlDzh809Pv3RIHX5xo5nzLgXhkgb+brW4YIo7SC+a4GrYRA
-         EsWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXjyFH7dAWc3KGGJkrNXuJbWekX2rNW86kZsvkajqk7B/j/t7+ovlYMjEhnRaWCN+GwJE1VGJZuiZRWN54=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQGs03oG+26nzMRj2RWyUsP0moqCw1d6S9JyYBY5g71rf6Y/nF
-	/zlnwzJ39kokWvP2xKlMqNXgikbTwXrfugS3rTRvQaOdlf38e154T3iAt6V6fQp4DYJI+oVLgW+
-	9sssSy6kNlZLaKKGVPl72gMA0KVk=
-X-Gm-Gg: ASbGncuhPSxTk2346UR5YbwfCmLxO9ZnvUzfIbmbczRv1ChcCMg3qi7i4rritMBm7FS
-	2e0SZkMrQYYXIawJt3bjFhZGGCNr8NA==
-X-Google-Smtp-Source: AGHT+IEaat5Lo3zoMYsazU224LzNHL+gn1VeSlwrawrhbYhupgnxEoxvfhiEmoJgbcjr0GtT2Xt1R2cw4sPlnm4+GLM=
-X-Received: by 2002:a17:906:2189:b0:aa5:2f8a:b958 with SMTP id
- a640c23a62f3a-aa52f8aca44mr565291566b.52.1732489116886; Sun, 24 Nov 2024
- 14:58:36 -0800 (PST)
+        bh=mpwQAY/y3s/YiKLLW+31fL0gZz6Q1yNva27VtG1Cnnw=;
+        b=u3F/kADMJ2xzV9BZqlz1+45eQkA/5RMbpzFhj6zV9gamOlOdlbywJNca4/hbloUf7S
+         Yv/2ISrtfpx1Jxz41QiYmAlE197eJnVCPXVNYrl9yjBD2qzj21SfoO3fdXhhSWPBHWrh
+         l1U4RRChH7HdXN9GcV9S5iaTeL7PR4GItqBWWKMW4xwiW02eZLNhIEuKUX0n23J1Pzjb
+         M8EVwzrY3XsRU2dGALvUIVhuWV8xGPrya7CeIBRXiw8UtoWwyWZorlsD+Bq7n/yXVIHF
+         ZzPjoeC17NuT128Unj5zge6KRy4HFj8qP450eW141nl6xeBZmW/CCOhGpv6d0/dI4rEd
+         8Lxg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5UHzcW2MjiYZmFADJoB3w3oXNlcmipqKKrhsgoJ4aME3+fUheB1u9lK4BwBuZOycEhglz11VN9zP8BCWe@vger.kernel.org, AJvYcCW/M1TaKwgtSWuiC6sivOIV5W7j5WVkObo3W0HJjQkFm5lo0g0fcUOqJio3u2SvVgAJIkBaSEIX@vger.kernel.org, AJvYcCXimMeE5q/h1f3RM76emdJ9YdzXPGdKGi0lKiQ9uZP1o++hLAG2kbhXmE9BTqmD3HN6IBWSj7cj6qA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTkCaYGC2zQQkW2PJbE4Qw3jy8+DF4GcCpWB+2nFhSuI0o35e/
+	67Uf/fUNkiBk9TUcMN0mRXV/EQI+0h+G9OflrMM8DUQ5zXqdhKdz
+X-Gm-Gg: ASbGncsWERYHnyvAHd1glnlyW4U59XZYKRP3gZpY7F4wHnNqbAFL91v2qA1h+NM7ZFT
+	2r8w/+HzG24jHwYU9ZH5kXl1O1CDtMHlz6dcajpeDG0VqsBoKiUe/bhXAVrWDRGWvSNOch5krj+
+	NExTmHAnDti0zl8ar/468w5ijzffob8v2r66ZJub4ks7PF/EVsmofMY1BON8vfbvdicoQTsP2AS
+	ng1I2uiijBeVTS1bSMip0ZIYebc4o69O1khfPfgnwSx/6r3RPgjfxrnTbeKzPmIuw==
+X-Google-Smtp-Source: AGHT+IGUnZQWDsFadewkQbsu/0WUOmWeV3zVIZ5pQhuvrj989/R9KFsT+pSTCdbaQi5sq43QHljjEg==
+X-Received: by 2002:a05:6a00:2313:b0:71e:db72:3c87 with SMTP id d2e1a72fcca58-724df660821mr18578671b3a.20.1732489212456;
+        Sun, 24 Nov 2024 15:00:12 -0800 (PST)
+Received: from tp.hsd1.or.comcast.net ([2601:1c2:c104:170:9817:7858:9b63:8745])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de57a53asm5090028b3a.198.2024.11.24.15.00.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Nov 2024 15:00:12 -0800 (PST)
+From: Leo Stone <leocstone@gmail.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	corbet@lwn.net
+Cc: Leo Stone <leocstone@gmail.com>,
+	netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net] Documentation: tls_offload: fix typos and grammar
+Date: Sun, 24 Nov 2024 15:00:02 -0800
+Message-Id: <20241124230002.56058-1-leocstone@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPM=9txbfH8vf-YjwTXEYL729a6r2eeLBxCJc3MSD-t5jXVA-w@mail.gmail.com>
- <Z0NXQ6iRK43x6WbG@sashalap>
-In-Reply-To: <Z0NXQ6iRK43x6WbG@sashalap>
-From: Dave Airlie <airlied@gmail.com>
-Date: Mon, 25 Nov 2024 08:58:25 +1000
-Message-ID: <CAPM=9tw5eTBCDn93GyrMjF3r_kDbr2-v1GgKdZECFNupqakDFw@mail.gmail.com>
-Subject: Re: [git pull] drm for 6.13-rc1
-To: Sasha Levin <sashal@kernel.org>, javier.carrasco.cruz@gmail.com, 
-	CK Hu <ck.hu@mediatek.com>, wenst@chromium.org, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Sima Vetter <sima@ffwll.ch>, 
-	dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 25 Nov 2024 at 02:41, Sasha Levin <sashal@kernel.org> wrote:
->
-> On Thu, Nov 21, 2024 at 10:25:45AM +1000, Dave Airlie wrote:
-> >Hi Linus,
-> >
-> >This is the main drm pull request for 6.13.
-> >
-> >I've done a test merge into your tree, there were two conflicts both
-> >of which seem easy enough to resolve for you.
-> >
-> >There's a lot of rework, the panic helper support is being added to
-> >more drivers, v3d gets support for HW superpages, scheduler
-> >documentation, drm client and video aperture reworks, some new
-> >MAINTAINERS added, amdgpu has the usual lots of IP refactors, Intel
-> >has some Pantherlake enablement and xe is getting some SRIOV bits, but
-> >just lots of stuff everywhere.
-> >
-> >Let me know if there are any issues,
->
-> Hey Dave,
->
-> After the PR was merged, I've started seeing boot failures reported by
-> KernelCI:
+Fix typos and grammar where it improves readability. 
 
-I'll add the mediatek names I see who touched anything in the area recently.
+Signed-off-by: Leo Stone <leocstone@gmail.com>
+---
+ Documentation/networking/tls-offload.rst | 29 ++++++++++++------------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
 
-Dave.
->
-> [    4.395400] mediatek-drm mediatek-drm.5.auto: bound 1c014000.merge (ops 0xffffd35fd12975f8)
-> [    4.396155] mediatek-drm mediatek-drm.5.auto: bound 1c000000.ovl (ops 0xffffd35fd12977b8)
-> [    4.411951] mediatek-drm mediatek-drm.5.auto: bound 1c002000.rdma (ops 0xffffd35fd12989c0)
-> [    4.536837] mediatek-drm mediatek-drm.5.auto: bound 1c004000.ccorr (ops 0xffffd35fd1296cf0)
-> [    4.545181] mediatek-drm mediatek-drm.5.auto: bound 1c005000.aal (ops 0xffffd35fd1296a80)
-> [    4.553344] mediatek-drm mediatek-drm.5.auto: bound 1c006000.gamma (ops 0xffffd35fd12972b0)
-> [    4.561680] mediatek-drm mediatek-drm.5.auto: bound 1c014000.merge (ops 0xffffd35fd12975f8)
-> [    4.570025] ------------[ cut here ]------------
-> [    4.574630] refcount_t: underflow; use-after-free.
-> [    4.579416] WARNING: CPU: 6 PID: 81 at lib/refcount.c:28 refcount_warn_saturate+0xf4/0x148
-> [    4.587670] Modules linked in:
-> [    4.590714] CPU: 6 UID: 0 PID: 81 Comm: kworker/u32:3 Tainted: G        W          6.12.0 #1 cab58e2e59020ebd4be8ada89a65f465a316c742
-> [    4.602695] Tainted: [W]=WARN
-> [    4.605649] Hardware name: Acer Tomato (rev2) board (DT)
-> [    4.610947] Workqueue: events_unbound deferred_probe_work_func
-> [    4.616768] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [    4.623715] pc : refcount_warn_saturate+0xf4/0x148
-> [    4.628493] lr : refcount_warn_saturate+0xf4/0x148
-> [    4.633270] sp : ffff8000807639c0
-> [    4.636571] x29: ffff8000807639c0 x28: ffff34ff4116c640 x27: ffff34ff4368e080
-> [    4.643693] x26: ffffd35fd1299ac8 x25: ffff34ff46c8c410 x24: 0000000000000000
-> [    4.650814] x23: ffff34ff4368e080 x22: 00000000fffffdfb x21: 0000000000000002
-> [    4.657934] x20: ffff34ff470c6000 x19: ffff34ff410c7c10 x18: 0000000000000006
-> [    4.665055] x17: 666678302073706f x16: 2820656772656d2e x15: ffff800080763440
-> [    4.672176] x14: 0000000000000000 x13: 2e656572662d7265 x12: ffffd35fd2ed14f0
-> [    4.679297] x11: 0000000000000001 x10: 0000000000000001 x9 : ffffd35fd0342150
-> [    4.686418] x8 : c0000000ffffdfff x7 : ffffd35fd2e21450 x6 : 00000000000affa8
-> [    4.693539] x5 : ffffd35fd2ed1498 x4 : 0000000000000000 x3 : 0000000000000000
-> [    4.700660] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff34ff40932580
-> [    4.707781] Call trace:
-> [    4.710216]  refcount_warn_saturate+0xf4/0x148 (P)
-> [    4.714993]  refcount_warn_saturate+0xf4/0x148 (L)
-> [    4.719772]  kobject_put+0x110/0x118
-> [    4.723335]  put_device+0x1c/0x38
-> [    4.726638]  mtk_drm_bind+0x294/0x5c0
-> [    4.730289]  try_to_bring_up_aggregate_device+0x16c/0x1e0
-> [    4.735673]  __component_add+0xbc/0x1c0
-> [    4.739495]  component_add+0x1c/0x30
-> [    4.743058]  mtk_disp_rdma_probe+0x140/0x210
-> [    4.747314]  platform_probe+0x70/0xd0
-> [    4.750964]  really_probe+0xc4/0x2a8
-> [    4.754527]  __driver_probe_device+0x80/0x140
-> [    4.758870]  driver_probe_device+0x44/0x120
-> [    4.763040]  __device_attach_driver+0xc0/0x108
-> [    4.767470]  bus_for_each_drv+0x8c/0xf0
-> [    4.771294]  __device_attach+0xa4/0x198
-> [    4.775117]  device_initial_probe+0x1c/0x30
-> [    4.779286]  bus_probe_device+0xb4/0xc0
-> [    4.783109]  deferred_probe_work_func+0xb0/0x100
-> [    4.787714]  process_one_work+0x18c/0x420
-> [    4.791712]  worker_thread+0x30c/0x418
-> [    4.795449]  kthread+0x128/0x138
-> [    4.798665]  ret_from_fork+0x10/0x20
-> [    4.802229] ---[ end trace 0000000000000000 ]---
->
-> I don't think that I'll be able to bisect further as I don't have the
-> relevant hardware available.
->
-> --
-> Thanks,
-> Sasha
+diff --git a/Documentation/networking/tls-offload.rst b/Documentation/networking/tls-offload.rst
+index 5f0dea3d571e..7354d48cdf92 100644
+--- a/Documentation/networking/tls-offload.rst
++++ b/Documentation/networking/tls-offload.rst
+@@ -51,7 +51,7 @@ and send them to the device for encryption and transmission.
+ RX
+ --
+ 
+-On the receive side if the device handled decryption and authentication
++On the receive side, if the device handled decryption and authentication
+ successfully, the driver will set the decrypted bit in the associated
+ :c:type:`struct sk_buff <sk_buff>`. The packets reach the TCP stack and
+ are handled normally. ``ktls`` is informed when data is queued to the socket
+@@ -120,8 +120,9 @@ before installing the connection state in the kernel.
+ RX
+ --
+ 
+-In RX direction local networking stack has little control over the segmentation,
+-so the initial records' TCP sequence number may be anywhere inside the segment.
++In the RX direction, the local networking stack has little control over
++segmentation, so the initial records' TCP sequence number may be anywhere
++inside the segment.
+ 
+ Normal operation
+ ================
+@@ -138,8 +139,8 @@ There are no guarantees on record length or record segmentation. In particular
+ segments may start at any point of a record and contain any number of records.
+ Assuming segments are received in order, the device should be able to perform
+ crypto operations and authentication regardless of segmentation. For this
+-to be possible device has to keep small amount of segment-to-segment state.
+-This includes at least:
++to be possible, the device has to keep a small amount of segment-to-segment
++state. This includes at least:
+ 
+  * partial headers (if a segment carried only a part of the TLS header)
+  * partial data block
+@@ -175,12 +176,12 @@ and packet transformation functions) the device validates the Layer 4
+ checksum and performs a 5-tuple lookup to find any TLS connection the packet
+ may belong to (technically a 4-tuple
+ lookup is sufficient - IP addresses and TCP port numbers, as the protocol
+-is always TCP). If connection is matched device confirms if the TCP sequence
+-number is the expected one and proceeds to TLS handling (record delineation,
+-decryption, authentication for each record in the packet). The device leaves
+-the record framing unmodified, the stack takes care of record decapsulation.
+-Device indicates successful handling of TLS offload in the per-packet context
+-(descriptor) passed to the host.
++is always TCP). If the packet is matched to a connection, the device confirms
++if the TCP sequence number is the expected one and proceeds to TLS handling
++(record delineation, decryption, authentication for each record in the packet).
++The device leaves the record framing unmodified, the stack takes care of record
++decapsulation. Device indicates successful handling of TLS offload in the
++per-packet context (descriptor) passed to the host.
+ 
+ Upon reception of a TLS offloaded packet, the driver sets
+ the :c:member:`decrypted` mark in :c:type:`struct sk_buff <sk_buff>`
+@@ -439,7 +440,7 @@ by the driver:
+  * ``rx_tls_resync_req_end`` - number of times the TLS async resync request
+     properly ended with providing the HW tracked tcp-seq.
+  * ``rx_tls_resync_req_skip`` - number of times the TLS async resync request
+-    procedure was started by not properly ended.
++    procedure was started but not properly ended.
+  * ``rx_tls_resync_res_ok`` - number of times the TLS resync response call to
+     the driver was successfully handled.
+  * ``rx_tls_resync_res_skip`` - number of times the TLS resync response call to
+@@ -507,8 +508,8 @@ in packets as seen on the wire.
+ Transport layer transparency
+ ----------------------------
+ 
+-The device should not modify any packet headers for the purpose
+-of the simplifying TLS offload.
++For the purpose of simplifying TLS offload, the device should not modify any
++packet headers.
+ 
+ The device should not depend on any packet headers beyond what is strictly
+ necessary for TLS offload.
+-- 
+2.39.5
+
 
