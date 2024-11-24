@@ -1,95 +1,110 @@
-Return-Path: <linux-kernel+bounces-419866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3E7A9D7309
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:26:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 068109D7331
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:31:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 895672850C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 14:26:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDBF62849FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 14:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8AEA1D8DF9;
-	Sun, 24 Nov 2024 13:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CD819F410;
+	Sun, 24 Nov 2024 13:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iKIJhUru"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bu3GSnAK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C29A2101A4;
-	Sun, 24 Nov 2024 13:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9C41974EA;
+	Sun, 24 Nov 2024 13:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732455910; cv=none; b=CTPeVtez4iK7nJ3Aiu5bHn1YvvHGXcOROn42J7XH+YW+b+kcDp0PPtufeu80+3Iaz19O6PsBULwG1KEHkixS+YqwILC5MwPYH7rqOsdSQ7N6WqjLf8uiI4f1jBAMZsQfp2PvlshUCQruRgeR2RAcpFR5FFi9kwxjY4xQ+PtCpV4=
+	t=1732456000; cv=none; b=MsZ38whxCyDlhBf8NrvtlupfLQKIsGcuJNsMzMgP5mjTQybzJGZ6i+15S/+b/ZC3D1dc+G7cl7yCn1igy3yusU6tVSn76yUE+sLYc71tFSb9iusBaM4xwF0OMhRcPtZ8Y09kWUH7Cw6Ax6QZo/i0dY9kNh9RuV27nZGyczz6ZkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732455910; c=relaxed/simple;
-	bh=Cxwbe8QlWEJJCmaXE8xmYnN+TJILRMFJ54WvDGDeDgs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h60lLVF5dW3VUU1chpeVNfKBugPosygoPTn5jVRLAHx98aH0SKYReov/1xfoQ8Q2KCrtiT/dbgRcG6KxXP0C+M+HPXAnnSeWf1F/ux8rIDsQxMcj4oU3iO6v5qPePl2E3e9GI7mkDttMhgLGbzjmWXS5wkYK55aY1tJlGWOpR6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iKIJhUru; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D452C4CECC;
-	Sun, 24 Nov 2024 13:45:08 +0000 (UTC)
+	s=arc-20240116; t=1732456000; c=relaxed/simple;
+	bh=qdiB0thozglpFuFyTlIZMBwLPGTZmLhXJH68DX3ouZU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TLAQivow/lMYVl5t/E4MBiqBXou7f2W/UDq5RCw6yTnWSFfNcuGJGqjOKKcN1JOLTs6nUCZixSHsGaUKw6p9zKuBNu5N9YTJqVxDkQiTilxChHZPV9TZu2PobU0+jO5YiI7nXgaJAcG5kWhbhcmXnO9u75pEJnMPAWxmlwZeDjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bu3GSnAK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB178C4CED1;
+	Sun, 24 Nov 2024 13:46:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732455909;
-	bh=Cxwbe8QlWEJJCmaXE8xmYnN+TJILRMFJ54WvDGDeDgs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iKIJhUruV9FeRFuGmVYkwumvyPUoLtWv3jgJYbB3e+J11oJiJU/NH3j6HndXFyElN
-	 gggNjGqrODywtdKxENqvzPTK5SYCKjggqaxDVVLtAK9nn0wcEZc7Lc/87TQt08IZBB
-	 SXhSYB9ZSH0WG0HddoUWcSRIqg02DVuVGq/av1EcGCD07GYw7EuGzZJ0XU/JQWIkFA
-	 thOBUYbLTACjB4qsh3IrvZmTHJT2rMiMulA9BTSykNKuYZuhfsKYsKgz/AaQFsIITK
-	 eFC500+kLaUDZjJzJLmPaczZwnBJLGNnw/h2ArEz6oGtO+65QNgD0GkldqzDwsnoI5
-	 B3BUaYR8qtlOQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 26/26] dns_resolver: avoid pointless cred reference count bump
-Date: Sun, 24 Nov 2024 14:44:12 +0100
-Message-ID: <20241124-work-cred-v1-26-f352241c3970@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241124-work-cred-v1-0-f352241c3970@kernel.org>
-References: <20241124-work-cred-v1-0-f352241c3970@kernel.org>
+	s=k20201202; t=1732455999;
+	bh=qdiB0thozglpFuFyTlIZMBwLPGTZmLhXJH68DX3ouZU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bu3GSnAKhYTk1rnzyvSx1LlcXKhcSht4Vnk0JWVS4hT2f0PsXqNcdRXDU21QESWop
+	 Miq4DtlBIr5WK6wGUlMLqfH6QmAUhJU4tjQMAWaNrJw2obaMpU+WepO4sQYQwdmU+D
+	 mQuZtN6ut3qkEr40lGkK7ie20TBjoVaQbj1sJy3I2Lm8OrqOBGEgPQyPi31+AARzyq
+	 Hh3CO75/PfbhLKc7OBO52JXbF0qvorXmAgn8u465kqmGlMuCsRF5ep1XfcLHx+8pij
+	 M78dPiiZrU4PiK5BE+ZDMppmNXqFWA/LVSICNbRzsCKue3FmVbMAz9RjlQ0POg4jPA
+	 3TuxvJgz2FBrw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Dom Cobley <popcornmix@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Sasha Levin <sashal@kernel.org>,
+	maarten.lankhorst@linux.intel.com,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 6.6 01/61] drm/vc4: hdmi: Avoid log spam for audio start failure
+Date: Sun, 24 Nov 2024 08:44:36 -0500
+Message-ID: <20241124134637.3346391-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.15-dev-355e8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=961; i=brauner@kernel.org; h=from:subject:message-id; bh=Cxwbe8QlWEJJCmaXE8xmYnN+TJILRMFJ54WvDGDeDgs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ76y6uD0w3PaB1pfvlnc1fYutrr73SVQszd1pi4PT09 OEvRyYt7ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjI6iiGP5xdam/3P0x4yZ3u kuNRXKslsrFcQnvazZPnuSwFRX4GmzH8zzmhtUhI5f5rtWLb96FdexnO/Dotl5nDkmky8ciyyTy cnAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.6.63
 Content-Transfer-Encoding: 8bit
 
-No need for the extra reference count bump.
+From: Dom Cobley <popcornmix@gmail.com>
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
+[ Upstream commit b4e5646178e86665f5caef2894578600f597098a ]
+
+We regularly get dmesg error reports of:
+[   18.184066] hdmi-audio-codec hdmi-audio-codec.3.auto: ASoC: error at snd_soc_dai_startup on i2s-hifi: -19
+[   18.184098]  MAI: soc_pcm_open() failed (-19)
+
+These are generated for any disconnected hdmi interface when pulseaudio
+attempts to open the associated ALSA device (numerous times). Each open
+generates a kernel error message, generating general log spam.
+
+The error messages all come from _soc_pcm_ret in sound/soc/soc-pcm.c#L39
+which suggests returning ENOTSUPP, rather that ENODEV will be quiet.
+And indeed it is.
+
+Signed-off-by: Dom Cobley <popcornmix@gmail.com>
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20240621152055.4180873-5-dave.stevenson@raspberrypi.com
+Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/dns_resolver/dns_query.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/vc4/vc4_hdmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/dns_resolver/dns_query.c b/net/dns_resolver/dns_query.c
-index 0b0789fe2194151102d5234aca3fc2dae9a1ed69..82b084cc1cc6349bb532d5ada555b0bcbb1cdbea 100644
---- a/net/dns_resolver/dns_query.c
-+++ b/net/dns_resolver/dns_query.c
-@@ -124,9 +124,9 @@ int dns_query(struct net *net,
- 	/* make the upcall, using special credentials to prevent the use of
- 	 * add_key() to preinstall malicious redirections
- 	 */
--	saved_cred = override_creds(get_new_cred(dns_resolver_cache));
-+	saved_cred = override_creds(dns_resolver_cache);
- 	rkey = request_key_net(&key_type_dns_resolver, desc, net, options);
--	put_cred(revert_creds(saved_cred));
-+	revert_creds(saved_cred);
- 	kfree(desc);
- 	if (IS_ERR(rkey)) {
- 		ret = PTR_ERR(rkey);
-
+diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
+index c6e986f71a26f..7cabfa1b883d2 100644
+--- a/drivers/gpu/drm/vc4/vc4_hdmi.c
++++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+@@ -2392,7 +2392,7 @@ static int vc4_hdmi_audio_startup(struct device *dev, void *data)
+ 	}
+ 
+ 	if (!vc4_hdmi_audio_can_stream(vc4_hdmi)) {
+-		ret = -ENODEV;
++		ret = -ENOTSUPP;
+ 		goto out_dev_exit;
+ 	}
+ 
 -- 
-2.45.2
+2.43.0
 
 
