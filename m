@@ -1,161 +1,98 @@
-Return-Path: <linux-kernel+bounces-419425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 411839D6DF9
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 11:54:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DE7E9D6DFF
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 12:00:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0138E281342
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 10:54:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 333F5281438
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 11:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71D118BB9C;
-	Sun, 24 Nov 2024 10:53:26 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2006189B8D;
+	Sun, 24 Nov 2024 11:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N9F+V2L1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F0E154C05
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 10:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5191A1891AB;
+	Sun, 24 Nov 2024 11:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732445606; cv=none; b=qVCoBmpgoLwCfrGDYswQqeQGS3mGut3JVIm1IJIwVT+rEuXjTikQJQ+4VXU1sUEuffnGLhZsebg1JWhmEDKFrUITrPP60SriXRKASXyZkT+WesI/jHbSkiPD3OMOaCgRSww4mlJDXZjikrMszgjMKH47KiL5deccn34C8Q88km4=
+	t=1732446005; cv=none; b=QPw0lTTsjN/c0xtF6AEerYS8/+f6uOKMqB/fue1G4cD1kRbV0BEhdq9agrRwmLZ+K/36HNSOtEC4KNmKKLnlrRvXlY5geMR+QIPovDx7XbM0qDCkfTzg2eQAjIWMwCpDWWrrv8DI2E6FPg/2ZbVs0CRbGMupJY1WGeHDACk+ZoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732445606; c=relaxed/simple;
-	bh=u4odtu8AJ6ObfYgY9usEUiG3XIEHqAcJENXaji4aCgI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=sKTj/1E/QH97YgEjsVFCnD7heUEWv9sxtn1z5TC3k1cN1mgjHhMbphrUc/3tK6p8eszr3tb4P5pa0FOs/6GUKoJAJGoSvrzW6oRvOCFBhxiyF9O4j/dTYIa8e4elHMNQhdo8uHic+U21XLycyQTV1zd1pCvclMBVxmEc9lpN6hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a7776959fdso39487385ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 02:53:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732445604; x=1733050404;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r7fFg/Ni0KiZfql037jokePcuiaJAU45KqdnhH3FOPQ=;
-        b=g6/Zx4oexxp6WfuP5M9+rN7b++Ajjzvsx1PWWrrt1VX0Yx0aJYFt6KErEAuG5iOs+N
-         /buUzHokIAK2khrTD+xcrFsZL/yA0BLlSIPk1uawr45G1ximt4NCWsdSY/y8CRuUq0oT
-         GJ4/Fnx2e27wZzebFUce5uu/H3He0zP8SePYvesi7n+PAUQVjcxZ1t1uehni9zjHa2Vm
-         5QatiCGAjuobYtjKet5OtBJDJEmhJW+VwN/PL6+aHXdLh2YMX/uVkY41E4RXBh7tl4s2
-         tIeZ0fKfpnwWql/0f2W4xWTMz11+BVI6v7LJQ7J+LQPSLCsswB2DDsycTkM64caC8j3v
-         3NQA==
-X-Forwarded-Encrypted: i=1; AJvYcCXX38LNoZ95yUEualJAR8tv7GSu/v4MOSX8P9sl4FzgmZfIIRgsmteotzHwNbccbbko8orD/XNSHGPAADA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbJrfQ9ruBEoEipV5q1j/Fxbgofjiq3UWGa8pxSqhuCe9O1/fp
-	Ys7NryQ9DFVznxAh2/gozBh0SAb7LtOQl39jnOn6SjXydcTdDNckesGzxjf2SR2u3pxcMAwz9mz
-	ODOKDzv7BnZXKUPT1k00ARUs+hPZhbXJRD0BHo4mp9PUdPQaIzl55NrU=
-X-Google-Smtp-Source: AGHT+IEG+JaCd1m/gkFOoY1onehyxqlbZAkUc81MpdNrM83WGg4z6bGiH7yCl/yVE2P57vMWAVDE/Jer+NAhxTmvqsLkLsfTO5Cq
+	s=arc-20240116; t=1732446005; c=relaxed/simple;
+	bh=95UQNooQ1/xtDHil/lFmvjulG65W+cWONuW8GgkYtUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DN2EUPf8aIaHgD5F7ldS+PfgF9lPqT5QvupgIjQknVdcmSP3PIJ5aGlc1TuspQxpn4Ui4H4VFU7utovBp13j9cpwd+Gg6eBcwjlBH/eqkYeSJDQpp+xFuGmTxk3UF1z7c4glKYuT/n1M1bAQxSDXmB/8M2+RW8OJ4tCoVOQAyD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N9F+V2L1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13041C4CED1;
+	Sun, 24 Nov 2024 11:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732446004;
+	bh=95UQNooQ1/xtDHil/lFmvjulG65W+cWONuW8GgkYtUE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N9F+V2L16moEeax2rywUzrYkZcOBcCczdpsyl2aNWCKDFLnkFtWjbYI1jEqGibZwy
+	 eSiDOI+uECaEWMJXIs3DQtEvcBZeNcSSoaizkgvW/Zw+RsKNeiqfDtYc2wvC9S3q2G
+	 BiXpRNBHdXZoJtp/a9wmQtp9xnWbxodmhYFE/6qErL6TeZWVS/YstTvlkmFRnz8dWZ
+	 XCNYo88PpDbFDFYcR+INGk1yGrdVXyJTWxXNmrSCEnDpEYbS7aMo1rF8SYaA1MOTww
+	 8st5Wasj+cYcm8Oe5BDzXjeUBa4hFwczQXmFaiv5qN433pD0SKRyIzCH1ktlMSh/NS
+	 fuAst+iZb4YVQ==
+Date: Sun, 24 Nov 2024 12:00:01 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Maud Spierings <maud_spierings@hotmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Douglas Anderson <dianders@chromium.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: display: panel: samsung,atna56ac03:
+ Document ATNA56AC03
+Message-ID: <k27rqbfvuon3uppgyhcfhcmlqv7ritbn35fmhuljnw2ievqnia@rey3cljv2p2n>
+References: <20241124-asus_qcom_display-v3-0-002b723b1920@hotmail.com>
+ <20241124-asus_qcom_display-v3-1-002b723b1920@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c54c:0:b0:3a7:7ee3:108d with SMTP id
- e9e14a558f8ab-3a79afd5844mr108647175ab.23.1732445603988; Sun, 24 Nov 2024
- 02:53:23 -0800 (PST)
-Date: Sun, 24 Nov 2024 02:53:23 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674305a3.050a0220.1cc393.003b.GAE@google.com>
-Subject: [syzbot] [hfs?] WARNING in hfsplus_unlink
-From: syzbot <syzbot+028180f480a74961919c@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241124-asus_qcom_display-v3-1-002b723b1920@hotmail.com>
 
-Hello,
+On Sun, Nov 24, 2024 at 11:00:57AM +0100, Maud Spierings wrote:
+> The Samsung ATNA56AC03 panel is an AMOLED eDP panel.
+> It is similar to the ATNA33xc20 except it is larger and has a different
+> resolution.
+> 
+> Signed-off-by: Maud Spierings <maud_spierings@hotmail.com>
+> ---
 
-syzbot found the following issue on:
+<form letter>
+This is a friendly reminder during the review process.
 
-HEAD commit:    bf9aa14fc523 Merge tag 'timers-core-2024-11-18' of git://g..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=154e4b78580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ccd6152c3e2378ce
-dashboard link: https://syzkaller.appspot.com/bug?extid=028180f480a74961919c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1676475f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16ff46c0580000
+It looks like you received a tag and forgot to add it.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f7f38a2c24fc/disk-bf9aa14f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9fe13f1c9a0f/vmlinux-bf9aa14f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/04d354ff9f6b/bzImage-bf9aa14f.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/64b16595572b/mount_0.gz
+If you do not know the process, here is a short explanation: Please add
+Acked-by/Reviewed-by/Tested-by tags when posting new versions, under
+or above your Signed-off-by tag. Tag is "received", when provided
+in a message replied to you on the mailing list. Tools like b4 can help
+here. However, there's no need to repost patches *only* to add the tags.
+The upstream maintainer will do that for tags received on the version
+they apply.
 
-Bisection is inconclusive: the issue happens on the oldest tested release.
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=148be930580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=168be930580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=128be930580000
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+028180f480a74961919c@syzkaller.appspotmail.com
+Best regards,
+Krzysztof
 
-loop0: detected capacity change from 0 to 1024
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 5831 at fs/inode.c:407 drop_nlink+0xc4/0x110 fs/inode.c:407
-Modules linked in:
-CPU: 1 UID: 0 PID: 5831 Comm: syz-executor234 Not tainted 6.12.0-syzkaller-01782-gbf9aa14fc523 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-RIP: 0010:drop_nlink+0xc4/0x110 fs/inode.c:407
-Code: bb 70 07 00 00 be 08 00 00 00 e8 07 df e5 ff f0 48 ff 83 70 07 00 00 5b 41 5c 41 5e 41 5f 5d c3 cc cc cc cc e8 6d f4 7e ff 90 <0f> 0b 90 eb 83 44 89 e1 80 e1 07 80 c1 03 38 c1 0f 8c 5c ff ff ff
-RSP: 0018:ffffc9000369fbb0 EFLAGS: 00010293
-RAX: ffffffff8215f523 RBX: 1ffff11004ad054f RCX: ffff88802a931e00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff8215f4a3 R09: 1ffff920006d3ed8
-R10: dffffc0000000000 R11: fffff520006d3ed9 R12: ffff888025682a78
-R13: ffff888079eef370 R14: ffff888025682a30 R15: dffffc0000000000
-FS:  0000555588597380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000066c7e0 CR3: 0000000078e92000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- hfsplus_unlink+0x3fe/0x790 fs/hfsplus/dir.c:381
- vfs_unlink+0x365/0x650 fs/namei.c:4523
- do_unlinkat+0x4ae/0x830 fs/namei.c:4587
- __do_sys_unlink fs/namei.c:4635 [inline]
- __se_sys_unlink fs/namei.c:4633 [inline]
- __x64_sys_unlink+0x47/0x50 fs/namei.c:4633
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f81f72e79b9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fffbff4f578 EFLAGS: 00000246 ORIG_RAX: 0000000000000057
-RAX: ffffffffffffffda RBX: 0031656c69662f2e RCX: 00007f81f72e79b9
-RDX: ffffffffffffffb8 RSI: 00007f81f72e79b9 RDI: 00000000200000c0
-RBP: 00007f81f735b610 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007fffbff4f748 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
