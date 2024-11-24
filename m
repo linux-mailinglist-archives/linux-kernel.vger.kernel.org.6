@@ -1,101 +1,196 @@
-Return-Path: <linux-kernel+bounces-419347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 601D39D6CCE
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 07:26:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93D709D6CCF
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 07:49:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4909B21201
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 06:26:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 026BD2815B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 06:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215EC186E40;
-	Sun, 24 Nov 2024 06:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB0B1632E7;
+	Sun, 24 Nov 2024 06:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Uwf+WcUE"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="KflbeIQW"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5527282FA
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 06:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325D61FDA;
+	Sun, 24 Nov 2024 06:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732429603; cv=none; b=gyyNnWg4iAXIInNL4mYl8eyIx0TNsluUh+Kublzq0YOb20H4jDqOAhXpE8HJXdXiz9RHcTpo3r+4QibKWpcf9967sCHowHiXdpo6oyVS4kBtfXeTSkapGYwYYi2KaVKg8ZE5okR0RxX6jh3Tx/zXOmvZietMZKnfnhIdKmG17ps=
+	t=1732430983; cv=none; b=kXB4bgBaX2mz0owGbOYdCk4Sj8gYEp1TN2JnTOIOqPP/IagUszHy0H/d1uZy/BgplOuRA7Dga+KYEyBf6ICsZMXhPF+LRLQ4cLV+FOUXpSK0/9G1ffcTyMAHTGb+PTh86SB6/04g967pC9MIA33P82uFdot2kwnA9tvERAHHsKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732429603; c=relaxed/simple;
-	bh=+y0CsPw7LLVNrgEeNos7kqugUqrqWjatS9edAZZf+ac=;
+	s=arc-20240116; t=1732430983; c=relaxed/simple;
+	bh=56NZeVgEqDseacOk/VSKGfdQ+vXX19KpODinrcPF32w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CWc7JB3+9PolB9Ni7zofsBG4pFAAqkGPOb1dD5pDaomg9ql77CAzD3mqcJ7g1jwm6fjLeKUSS64ld0FhmIK9puV2FkFnFGEj2GgarjqctGxZmDWRvCfZt9gpdSrd9ciyMc/IPpG/VFRB9v5BAKUdzH2t2VgDSNCNcGdF99tYk9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Uwf+WcUE; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 23 Nov 2024 22:26:30 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732429598;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Tqwfti3Gig5keHs1oaBRmyx5dx91X6ka+Wihml4zKdY=;
-	b=Uwf+WcUEC2Er69hyT7eqwu8RzNxIx8K8eAEdy3iLxohfghYpOY30mTJie8fxdGFf5G2Y/r
-	K3LpmFbr/Sft5PI0C+yEPsgr0ADB8LAX2aGHiAIyRpQo61er1jP46EkAX8zKtuuPmSLgQp
-	K4RTPYDNU9y4PSkF2PWSTqilYRKAb8c=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Matthew Wilcox <willy@infradead.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Axel Rasmussen <axelrasmussen@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH] mm: mmap_lock: optimize mmap_lock tracepoints
-Message-ID: <h7qapwdyg452s7k6qyhea42gp2dkqsvymm5iwe6wrjaltcq6z6@weqt46qywfbn>
-References: <20241123060939.169978-1-shakeel.butt@linux.dev>
- <Z0IKhWfOr4ppnQem@casper.infradead.org>
- <i3joc4vme76imq2etk7gjfntsy2z5l5niyqobeun5e7m6jh4yi@adwzrxbvuc6l>
- <c3eb6f05-f857-4c3d-9ef8-2488baecb00c@suse.cz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cp96gJIbSvN0Qd+lwVkCnxHA3MpIcwKoBCIUemFCDiwFUW9FT28X8R4ZsVOlb4KdKgtB6Ndl1TleT77lORHTGUnzjxdxw5qwio08IDrTqDOltmWaopgiwcjkyK8bnVqGrE5lZKGcDnOl53bdDyAynvTKQejGfFfBjymB04fwdU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=KflbeIQW; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5BC1F581;
+	Sun, 24 Nov 2024 07:49:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732430957;
+	bh=56NZeVgEqDseacOk/VSKGfdQ+vXX19KpODinrcPF32w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KflbeIQWWfuSVB4h0O4KZN4Ht0JpVTFtxLp12AGApMXxXJwNTtWIVqAonbLqnvG8u
+	 wnKqn1kJr26fhCu/ISid9CnFGtUpGuIMLiO17BpzRcxyPKOz2vBF35ECYmNdGL+Zac
+	 3jzYaMMJly3AUSuVWfrIgRdVTpt9kbuQJKkYGQdw=
+Date: Sun, 24 Nov 2024 08:49:29 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Cosmin Tanislav <demonsingur@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	=?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: v4l: subdev: Prevent NULL routes access
+Message-ID: <20241124064929.GE19381@pendragon.ideasonboard.com>
+References: <20241122143717.173344-1-demonsingur@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c3eb6f05-f857-4c3d-9ef8-2488baecb00c@suse.cz>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20241122143717.173344-1-demonsingur@gmail.com>
 
-On Sat, Nov 23, 2024 at 10:38:59PM +0100, Vlastimil Babka wrote:
-> On 11/23/24 22:35, Shakeel Butt wrote:
-> > On Sat, Nov 23, 2024 at 05:01:57PM +0000, Matthew Wilcox wrote:
-> >> On Fri, Nov 22, 2024 at 10:09:39PM -0800, Shakeel Butt wrote:
-> >> >  	TP_printk(
-> >> > -		"mm=%p memcg_path=%s write=%s",
-> >> > -		__entry->mm,
-> >> > -		__get_str(memcg_path),
-> >> > +		"mm=%p memcg_id=%llu write=%s",
-> >> > +		__entry->mm, __entry->memcg_id,
-> >> >  		__entry->write ? "true" : "false"
-> >> 
-> >> Is it actually useful to print out the (hashed) pointer of the mm?
-> >> Wouldn't the PID be more useful so you could actually associate it with
-> >> a task?
-> >> 
-> > 
-> > For our usecase i.e. bpftrace, we don't really care about these prints
-> > as we can directly access the arguments like mm in bpftrace. I wonder if
-> > others are using this hased pointer in some other way. I don't mind
-> > chaning it but I think that would be a separate patch.
+On Fri, Nov 22, 2024 at 04:37:12PM +0200, Cosmin Tanislav wrote:
+> When using v4l2_subdev_set_routing to set a subdev's routing, and the
+> passed routing.num_routes is 0, kmemdup is not called to populate the
+> routes of the new routing (which is fine, since we wouldn't want to pass
+> a possible NULL value to kmemdup).
 > 
-> I wonder if it's actually hashed when trace events are obtained in binary
-> form, i.e. via trace-cmd. Might be hashed only when doing e.g. cat
-> trace_pipe as that's when the kernel's printk with its hashing is used?
+> This results in subdev's routing.routes to be NULL.
 > 
-> I guess that would be another argument for not using it in the tracepoint,
-> as it would be a sidechannel...
+> routing.routes is further used in some places without being guarded by
+> the same num_routes non-zero condition.
 
-Yup trace-cmd is showing the unhashed raw pointers for mm. If there is
-agreement, I can remove the printk of mm pointer in next version.
+What other places is that ? Have you experienced a crash anywhere ?
+
+> 
+> Fix it.
+> 
+
+A Fixes: tag would be good to help backporting.
+
+> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+> ---
+>  drivers/media/v4l2-core/v4l2-subdev.c | 46 +++++++++++++--------------
+>  1 file changed, 23 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
+> index cde1774c9098d..4f0eecd7fd66f 100644
+> --- a/drivers/media/v4l2-core/v4l2-subdev.c
+> +++ b/drivers/media/v4l2-core/v4l2-subdev.c
+> @@ -605,6 +605,23 @@ subdev_ioctl_get_state(struct v4l2_subdev *sd, struct v4l2_subdev_fh *subdev_fh,
+>  			     v4l2_subdev_get_unlocked_active_state(sd);
+>  }
+>  
+> +static void subdev_copy_krouting(struct v4l2_subdev_routing *routing,
+> +				 struct v4l2_subdev_krouting *krouting)
+
+The second argument should be const.
+
+> +{
+> +	memset(routing->reserved, 0, sizeof(routing->reserved));
+> +
+> +	if (!krouting->routes) {
+> +		routing->num_routes = 0;
+> +		return;
+> +	}
+> +
+> +	memcpy((struct v4l2_subdev_route *)(uintptr_t)routing->routes,
+> +	       krouting->routes,
+> +	       min(krouting->num_routes, routing->len_routes) *
+> +	       sizeof(*krouting->routes));
+> +	routing->num_routes = krouting->num_routes;
+> +}
+> +
+>  static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+>  			    struct v4l2_subdev_state *state)
+>  {
+> @@ -976,7 +993,6 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+>  
+>  	case VIDIOC_SUBDEV_G_ROUTING: {
+>  		struct v4l2_subdev_routing *routing = arg;
+> -		struct v4l2_subdev_krouting *krouting;
+>  
+>  		if (!v4l2_subdev_enable_streams_api)
+>  			return -ENOIOCTLCMD;
+> @@ -984,15 +1000,7 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+>  		if (!(sd->flags & V4L2_SUBDEV_FL_STREAMS))
+>  			return -ENOIOCTLCMD;
+>  
+> -		memset(routing->reserved, 0, sizeof(routing->reserved));
+> -
+> -		krouting = &state->routing;
+> -
+> -		memcpy((struct v4l2_subdev_route *)(uintptr_t)routing->routes,
+> -		       krouting->routes,
+> -		       min(krouting->num_routes, routing->len_routes) *
+> -		       sizeof(*krouting->routes));
+> -		routing->num_routes = krouting->num_routes;
+> +		subdev_copy_krouting(routing, &state->routing);
+>  
+>  		return 0;
+>  	}
+> @@ -1016,8 +1024,6 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+>  		if (routing->num_routes > routing->len_routes)
+>  			return -EINVAL;
+>  
+> -		memset(routing->reserved, 0, sizeof(routing->reserved));
+> -
+>  		for (i = 0; i < routing->num_routes; ++i) {
+>  			const struct v4l2_subdev_route *route = &routes[i];
+>  			const struct media_pad *pads = sd->entity.pads;
+> @@ -1046,12 +1052,7 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+>  		 * the routing table.
+>  		 */
+>  		if (!v4l2_subdev_has_op(sd, pad, set_routing)) {
+> -			memcpy((struct v4l2_subdev_route *)(uintptr_t)routing->routes,
+> -			       state->routing.routes,
+> -			       min(state->routing.num_routes, routing->len_routes) *
+> -			       sizeof(*state->routing.routes));
+> -			routing->num_routes = state->routing.num_routes;
+> -
+> +			subdev_copy_krouting(routing, &state->routing);
+>  			return 0;
+>  		}
+>  
+> @@ -1064,11 +1065,7 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+>  		if (rval < 0)
+>  			return rval;
+>  
+> -		memcpy((struct v4l2_subdev_route *)(uintptr_t)routing->routes,
+> -		       state->routing.routes,
+> -		       min(state->routing.num_routes, routing->len_routes) *
+> -		       sizeof(*state->routing.routes));
+> -		routing->num_routes = state->routing.num_routes;
+> +		subdev_copy_krouting(routing, &state->routing);
+>  
+>  		return 0;
+>  	}
+> @@ -1956,6 +1953,9 @@ struct v4l2_subdev_route *
+>  __v4l2_subdev_next_active_route(const struct v4l2_subdev_krouting *routing,
+>  				struct v4l2_subdev_route *route)
+>  {
+> +	if (!routing->routes)
+> +		return NULL;
+> +
+>  	if (route)
+>  		++route;
+>  	else
+
+-- 
+Regards,
+
+Laurent Pinchart
 
