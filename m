@@ -1,178 +1,166 @@
-Return-Path: <linux-kernel+bounces-419379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 964A59D6D1F
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 09:45:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42FCD9D6D21
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 09:47:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D213FB2111A
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 08:45:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D94FFB2135F
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 08:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80707187555;
-	Sun, 24 Nov 2024 08:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362D315C14B;
+	Sun, 24 Nov 2024 08:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JzeLvblt"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5438A154430;
-	Sun, 24 Nov 2024 08:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b="x8PZ9rMA"
+Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810DC3C12;
+	Sun, 24 Nov 2024 08:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732437920; cv=none; b=QhoiMW02L4NWJ81+sVOUoeVs4okVGisB1D4lI5OTsNrHJy+KaqoladLz0TfRKxi9wsXs4d1Atp/RYzBhT+WSOuzdRCegA4oQFadTk1D3GP/4ol/ZTFL/LWpRRoQ1hE+bs13xwl9fAu9I6LYJ0GAnGcKZE0AO8IttTMhOOqSvpOY=
+	t=1732438038; cv=none; b=OCwtMlhMyHeHmTQRQJDtA8EvAFPhNt/y3/tbCmbgS+L1gvDb9xF5rfPYE7ls0+B516uLo3Bcr4vgSgOoaoXVTbP4Tq2lmnS6nAKwZwZMqhzB1NF+BAGYp/2C/0fhVxex5b1dNB+r2MeSEGknguLVylts1c6bjmpVmLtvd/DpKxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732437920; c=relaxed/simple;
-	bh=L/B960ZUK6oFm9KX0F36Ar23lhXDaLZlEJftm6qhPso=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G67IuukITvdESw6PPcI5a1XpBiF6vtni4tJaz3SV+auosBgG1JsOu4QR6gvToCcVxgp+07VVUsIqUvZTvlxA5Uo2JvSpOVzO32sGh6w0PStk4Y7MAPYB+fhR0gUnDYqzpKX7I+zOeMeYFbmb8qRDyl8NUBf2hI3q3x2zHDqKVEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JzeLvblt; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ed91d2a245so1196015a91.3;
-        Sun, 24 Nov 2024 00:45:19 -0800 (PST)
+	s=arc-20240116; t=1732438038; c=relaxed/simple;
+	bh=SmkG5pppsWnJiVYBd3F6Y3NOapASpge3WWBuMaCBc4U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=axukK2XHtNF4LN5Ooo/zHwEfBSolly82/AEIR9ns1ii6P2YQMElX+S2oLFT9Bl38bx0Ec6eSFwhxfmAO+faZaDUq06h/z4AWnBfYAZnqY0jKMyhGl7RNDhx+n7vrF2l41AuezXO+XXVH5YsOLbdETK09OSR8pASSdSseSnC658Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn; spf=pass smtp.mailfrom=buaa.edu.cn; dkim=fail (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b=x8PZ9rMA reason="key not found in DNS"; arc=none smtp.client-ip=162.243.161.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buaa.edu.cn
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732437918; x=1733042718; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3R9OsxCdswWtlB5Por3GdbqaxblTmykUB0v1B3P99UI=;
-        b=JzeLvblt7bxF7t9Y5oRDwyv/Qp5BvoUMfouKvp+6Ly5wkzjBqVx263EdCxP9Jm1hiG
-         XyAWE8lOv3yj0PSsq1EQ1bMfiaOrrWzKYIa7BKmqIZPeBUzu0/IWVQq2ywQwd4PMIQh7
-         slQ5v8wUBgBtCiv2ML/iZwIm+ZjjSJ+LsXcjE6IB3+OFebDv17AxvealibRDtYElMgzN
-         /6fkf/SXYIrf3XJ3Al1M0Msk6/eG1YevR0N0qcjWL3+KfgXcj9e2V79jLUzpEFzCe+99
-         /OreQhxsfLM3NtIOFfMVJxB9YFmeh4HkJzoqoyyneDsmhBCWqwror1SwRe36q+yL74fi
-         V9Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732437918; x=1733042718;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3R9OsxCdswWtlB5Por3GdbqaxblTmykUB0v1B3P99UI=;
-        b=qWKk/m5wkMlZQCPKL39Y4+0O/OESpV0Miz3aOCQBJD5f39T6zpT2a/2uzw9Y69sSrm
-         62LX7jsVHbM2W8xGBjEWtstQ0NQbOXWWQtv6PFVZazI5as5vUrsNaLJdTCjrgJVGHj9U
-         RB119NbEn7yLCqBK9ywWNShXX6hsuN46le9vbvmEBbZuPZTUWJ4UpZ93gcghXWsZAtAE
-         Cn7hqJSuoG4Zs13pdQ5M5f6aexI4iJjAEOWOr4167pXmaoSa7pqVcvsSQnTxVeI98oAf
-         PHNE1aFl5psm79oC0clEuj8WXs+gYn68mG6tanLD/tgbxdR0ZXjthixnEcTXVeM5ABaL
-         do7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWGtUgv6xu8u3o7nxydvtnWg0BEwiWIrZzCF1Dd8f1Ydf2pq9u6O0ouZL5nAtXs3bygvRvvHzpKDZa6@vger.kernel.org, AJvYcCXj8HAM8czaL4+rgJbpcJ85/5bdQcmAhO0KIhxhTbiqeR/+WhY4q0G12cXNYlMBJ2rax4W2J6JP50SmRBs0@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBnjsuwvGHO10nOfREdEZxRN8Do4Mx9pQVZp5opgKgFWnIvfWi
-	CqoEsZ5pWJNNHAAvdV136mYoPD8wgPlvcb6rFnJL36NrGA8zifMHYrL+VjchNEI=
-X-Gm-Gg: ASbGncukXVRdOm07q8EzLYZ60tufM+3H7yp3OWq9Rx4Onz3Zi50PpvW/yW0N9W9RoFP
-	/Vn/TQas5d1nFkxVYA9Ep3yhQFm8caFnym+gUyqF5dOj5sGyqhVDmnVwjgPn0Je/nGzk5XqeKAb
-	jDPDtV4yaNuqg0hBuPZIKeQzgdv8yWWdAC96ZVrUqOI25NMm9Kf5IsKUWm4QEdNSFilyq4jUXvx
-	aSVr/mT3AR/qASjZuRgyIi5/ga+L129XCkK72cRuVLpIScV
-X-Google-Smtp-Source: AGHT+IF08mzNjuHFHUY0zKduhPc0J8Ocms15OD2nzc8IrMpNhK8aCJJY8eODgIBd6HYn+E3GsMpQ5g==
-X-Received: by 2002:a17:90b:3bc5:b0:2ea:98f1:c17b with SMTP id 98e67ed59e1d1-2eb0e024bf6mr10340580a91.5.1732437918387;
-        Sun, 24 Nov 2024 00:45:18 -0800 (PST)
-Received: from Emma ([2401:4900:1c21:cadf:5054:ff:fe53:2787])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2eb0d0600b2sm4454626a91.44.2024.11.24.00.45.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Nov 2024 00:45:17 -0800 (PST)
-Date: Sun, 24 Nov 2024 08:45:12 +0000
-From: Karan Sanghavi <karansanghvi98@gmail.com>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>, 
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH v2] RAS/AMD/ATL: Fix unintended sign extension issue from
- coverity
-Message-ID: <4shdmryv5gq7lwc6zp5riiiaoatgfv7fji4isuhnbwvkoliiqb@uwwlt5n2juuq>
-References: <20241108-coverity1593397signextension-v2-1-4acdf3968d2d@gmail.com>
- <20241112150419.GA3017802@yaz-khff2.amd.com>
+	d=buaa.edu.cn; s=buaa; h=Received:Date:From:To:Cc:Subject:
+	In-Reply-To:References:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Message-ID; bh=OI38ZUo+qIWhmN4Jrh9l/MMiqa1OcMJ6ZroG
+	WNzkrWM=; b=x8PZ9rMApbH+hMAd5L27L8aeFAg6QEZznivDxJ+mbsqXbI766Gee
+	u30452eiR+6amK5fcPnfMcSFrCnckJlokVLgiT2JD+7UP9PoWN07QrNZu1KaADSw
+	BzoGCLG+aAXNF6JbCpFHG+tmWtq5/+h/dgHbVWrpSKYBXi1PC7EsxiQ=
+Received: from zhenghaoran$buaa.edu.cn ( [115.60.191.15] ) by
+ ajax-webmail-coremail-app1 (Coremail) ; Sun, 24 Nov 2024 16:46:42 +0800
+ (GMT+08:00)
+Date: Sun, 24 Nov 2024 16:46:42 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: =?UTF-8?B?6YOR5rWp54S2?= <zhenghaoran@buaa.edu.cn>
+To: "Jeff Layton" <jlayton@kernel.org>, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: baijiaju1990@gmail.com, 21371365@buaa.edu.cn, zhenghaoran@buaa.edu.cn
+Subject: Re: Re: [PATCH v3] fs: Fix data race in inode_set_ctime_to_ts
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT5 build
+ 20240305(0ac2fdd1) Copyright (c) 2002-2024 www.mailtech.cn
+ mispb-63b7ebb9-fa87-40c1-9aec-818ec5a006d9-buaa.edu.cn
+In-Reply-To: <61292055a11a3f80e3afd2ef6871416e3963b977.camel@kernel.org>
+References: <20241122112228.6him45jdtibue26s@quack3>
+ <20241122130642.460929-1-zhenghaoran@buaa.edu.cn>
+ <61292055a11a3f80e3afd2ef6871416e3963b977.camel@kernel.org>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112150419.GA3017802@yaz-khff2.amd.com>
+Message-ID: <26bf3b09.18da5.1935d5a0c1d.Coremail.zhenghaoran@buaa.edu.cn>
+X-Coremail-Locale: zh_TW
+X-CM-TRANSID:OCz+CgDXBxLy50Jnu9JMAQ--.39035W
+X-CM-SenderInfo: 1v1sjjazstiqpexdthxhgxhubq/1tbiAgMLA2dCDMIc1AAAsq
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-On Tue, Nov 12, 2024 at 10:04:19AM -0500, Yazen Ghannam wrote:
-> On Fri, Nov 08, 2024 at 04:40:41PM +0000, Karan Sanghavi wrote:
-> > This error is reported by coverity scan stating as
-> > 
-> > CID 1593397: (#1 of 1): Unintended sign extension (SIGN_EXTENSION)
-> > sign_extension: Suspicious implicit sign extension: pc
-> > with type u16 (16 bits, unsigned) is promoted in
-> > pc << bit_shifts.pc to type int (32 bits, signed),
-> > then sign-extended to type unsigned long (64 bits, unsigned).
-> > If pc << bit_shifts.pc is greater than 0x7FFFFFFF,
-> > the upper bits of the result will all be 1.
-> > 
-> > Following the code styleof the file, assigning the u16
-> 
-> styleof -> style of
-> 
-> > value to u32 variable and using it for the bit wise
-> > operation, thus ensuring no unintentional sign
-> > extension occurs.
-> >
-> 
-> Please make sure you use an imperative voice here. For example, "assign
-> the value...and use it...". This should read like you are giving
-> commands.
-> 
-> > Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
-> 
-> Overall, looks good to me.
-> 
-> Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> 
-> Thanks,
-> Yazen
-> 
-> > ---
-> > Coverity  Link: 
-> > https://scan7.scan.coverity.com/#/project-view/51975/11354?selectedIssue=1593397
-> > ---
-> > Changes in v2:
-> > - Assigning pc value to temp variable before left shifting as mentioned
-> >   in feedback rather then typecasting pc to u32. 
-> > - Link to v1: https://lore.kernel.org/r/20241104-coverity1593397signextension-v1-1-4cfae6532140@gmail.com
-> > ---
-> >  drivers/ras/amd/atl/umc.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/ras/amd/atl/umc.c b/drivers/ras/amd/atl/umc.c
-> > index dc8aa12f63c8..3f4b1f31e14f 100644
-> > --- a/drivers/ras/amd/atl/umc.c
-> > +++ b/drivers/ras/amd/atl/umc.c
-> > @@ -293,7 +293,8 @@ static unsigned long convert_dram_to_norm_addr_mi300(unsigned long addr)
-> >  	}
-> >  
-> >  	/* PC bit */
-> > -	addr |= pc << bit_shifts.pc;
-> > +	temp = pc;
-> > +	addr |= temp << bit_shifts.pc;
-> >  
-> >  	/* SID bits */
-> >  	for (i = 0; i < NUM_SID_BITS; i++) {
-> > 
-> > ---
-> > base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
-> > change-id: 20241104-coverity1593397signextension-78c9b2c21d51
-> > 
-> > Best regards,
-> > -- 
-> > Karan Sanghavi <karansanghvi98@gmail.com>
-> >
-
-Dear Yazen,
-
-I hope this email finds you well. 
-I'm following up on the patch I recently submitted linked below.
-https://lore.kernel.org/all/20241108-coverity1593397signextension-v2-1-4acdf3968d2d@gmail.com/
-
-I noticed it hasn't been applied yet, and I wanted to see if there was 
-anything else needed from my end. 
-Please let me know if any further information or modifications are required.
-I appreciate your time and feedback.  
-
-Thank you! 
-
-Sincerely,
-Karan.
+VGhhbmtzIHRvIENocmlzdGlhbiBCcmF1bmVyIGZvciB0aGUgcmVtaW5kZXIgYW5kIEplZmYgTGF5
+dG9uIGZvciB0aGUgZml4IHN1Z2dlc3Rpb24uIEkgd2lsbCBiYXNlIG15IHBhdGNoIG9uIHZmcy5m
+aXhlcyBhbmQgcmVzZW5kIHRoZSBwYXRjaCB2NCBhZnRlciBmaXhpbmcgaXQuCgoKPiAtLS0tLeWO
+n+Wni+mDteS7ti0tLS0tCj4g55m85Lu25Lq6OiAiSmVmZiBMYXl0b24iIDxqbGF5dG9uQGtlcm5l
+bC5vcmc+Cj4g55m86YCB5pmC6ZaTOjIwMjQtMTEtMjMgMjI6MDE6MDggKOaYn+acn+WFrSkKPiDm
+lLbku7bkuro6ICJIYW8tcmFuIFpoZW5nIiA8emhlbmdoYW9yYW5AYnVhYS5lZHUuY24+LCB2aXJv
+QHplbml2LmxpbnV4Lm9yZy51aywgYnJhdW5lckBrZXJuZWwub3JnLCBqYWNrQHN1c2UuY3osIGxp
+bnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnLCBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3Jn
+Cj4g5oqE6YCBOiBiYWlqaWFqdTE5OTBAZ21haWwuY29tLCAyMTM3MTM2NUBidWFhLmVkdS5jbgo+
+IOS4u+mhjDogUmU6IFtQQVRDSCB2M10gZnM6IEZpeCBkYXRhIHJhY2UgaW4gaW5vZGVfc2V0X2N0
+aW1lX3RvX3RzCj4gCj4gT24gRnJpLCAyMDI0LTExLTIyIGF0IDIxOjA2ICswODAwLCBIYW8tcmFu
+IFpoZW5nIHdyb3RlOgo+ID4gQSBkYXRhIHJhY2UgbWF5IG9jY3VyIHdoZW4gdGhlIGZ1bmN0aW9u
+IGBpbm9kZV9zZXRfY3RpbWVfdG9fdHMoKWAgYW5kCj4gPiB0aGUgZnVuY3Rpb24gYGlub2RlX2dl
+dF9jdGltZV9zZWMoKWAgYXJlIGV4ZWN1dGVkIGNvbmN1cnJlbnRseS4gV2hlbgo+ID4gdHdvIHRo
+cmVhZHMgY2FsbCBgYWlvX3JlYWRgIGFuZCBgYWlvX3dyaXRlYCByZXNwZWN0aXZlbHksIHRoZXkg
+d2lsbAo+ID4gYmUgZGlzdHJpYnV0ZWQgdG8gdGhlIHJlYWQgYW5kIHdyaXRlIGZ1bmN0aW9ucyBv
+ZiB0aGUgY29ycmVzcG9uZGluZwo+ID4gZmlsZSBzeXN0ZW0gcmVzcGVjdGl2ZWx5LiBUYWtpbmcg
+dGhlIGJ0cmZzIGZpbGUgc3lzdGVtIGFzIGFuIGV4YW1wbGUsCj4gPiB0aGUgYGJ0cmZzX2ZpbGVf
+cmVhZF9pdGVyYCBhbmQgYGJ0cmZzX2ZpbGVfd3JpdGVfaXRlcmAgZnVuY3Rpb25zIGFyZQo+ID4g
+ZmluYWxseSBjYWxsZWQuIFRoZXNlIHR3byBmdW5jdGlvbnMgY3JlYXRlZCBhIGRhdGEgcmFjZSB3
+aGVuIHRoZXkKPiA+IGZpbmFsbHkgY2FsbGVkIGBpbm9kZV9nZXRfY3RpbWVfc2VjKClgIGFuZCBg
+aW5vZGVfc2V0X2N0aW1lX3RvX25zKClgLgo+ID4gVGhlIHNwZWNpZmljIGNhbGwgc3RhY2sgdGhh
+dCBhcHBlYXJzIGR1cmluZyB0ZXN0aW5nIGlzIGFzIGZvbGxvd3M6Cj4gPiAKPiA+ID09PT09PT09
+PT09PURBVEFfUkFDRT09PT09PT09PT09PQo+ID4gYnRyZnNfZGVsYXllZF91cGRhdGVfaW5vZGUr
+MHgxZjYxLzB4N2NlMCBbYnRyZnNdCj4gPiBidHJmc191cGRhdGVfaW5vZGUrMHg0NWUvMHhiYjAg
+W2J0cmZzXQo+ID4gYnRyZnNfZGlydHlfaW5vZGUrMHgyYjgvMHg1MzAgW2J0cmZzXQo+ID4gYnRy
+ZnNfdXBkYXRlX3RpbWUrMHgxYWQvMHgyMzAgW2J0cmZzXQo+ID4gdG91Y2hfYXRpbWUrMHgyMTEv
+MHg0NDAKPiA+IGZpbGVtYXBfcmVhZCsweDkwZi8weGEyMAo+ID4gYnRyZnNfZmlsZV9yZWFkX2l0
+ZXIrMHhlYi8weDU4MCBbYnRyZnNdCj4gPiBhaW9fcmVhZCsweDI3NS8weDNhMAo+ID4gaW9fc3Vi
+bWl0X29uZSsweGQyMi8weDFjZTAKPiA+IF9fc2Vfc3lzX2lvX3N1Ym1pdCsweGIzLzB4MjUwCj4g
+PiBkb19zeXNjYWxsXzY0KzB4YzEvMHgxOTAKPiA+IGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdm
+cmFtZSsweDc3LzB4N2YKPiA+ID09PT09PT09PT09PU9USEVSX0lORk89PT09PT09PT09PT0KPiA+
+IGJ0cmZzX3dyaXRlX2NoZWNrKzB4YTE1LzB4MTM5MCBbYnRyZnNdCj4gPiBidHJmc19idWZmZXJl
+ZF93cml0ZSsweDUyZi8weDI5ZDAgW2J0cmZzXQo+ID4gYnRyZnNfZG9fd3JpdGVfaXRlcisweDUz
+ZC8weDE1OTAgW2J0cmZzXQo+ID4gYnRyZnNfZmlsZV93cml0ZV9pdGVyKzB4NDEvMHg2MCBbYnRy
+ZnNdCj4gPiBhaW9fd3JpdGUrMHg0MWUvMHg1ZjAKPiA+IGlvX3N1Ym1pdF9vbmUrMHhkNDIvMHgx
+Y2UwCj4gPiBfX3NlX3N5c19pb19zdWJtaXQrMHhiMy8weDI1MAo+ID4gZG9fc3lzY2FsbF82NCsw
+eGMxLzB4MTkwCj4gPiBlbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUrMHg3Ny8weDdmCj4g
+PiAKPiA+IFRvIGFkZHJlc3MgdGhpcyBpc3N1ZSwgaXQgaXMgcmVjb21tZW5kZWQgdG8gYWRkIFdS
+SVRFX09OQ0UKPiA+IHdoZW4gd3JpdGluZyB0aGUgYGlub2RlLT5pX2N0aW1lX3NlY2AgdmFyaWFi
+bGUuYW5kIGFkZAo+ID4gUkVBRF9PTkNFIHdoZW4gcmVhZGluZyBpbiBmdW5jdGlvbiBgaW5vZGVf
+Z2V0X2N0aW1lX3NlYygpYAo+ID4gYW5kIGBpbm9kZV9nZXRfY3RpbWVfbnNlYygpYC4KPiA+IAo+
+ID4gU2lnbmVkLW9mZi1ieTogSGFvLXJhbiBaaGVuZyA8emhlbmdoYW9yYW5AYnVhYS5lZHUuY24+
+Cj4gPiAtLS0KPiA+IFYyIC0+IFYzOiBBZGRlZCBSRUFEX09OQ0UgaW4gaW5vZGVfZ2V0X2N0aW1l
+X25zZWMoKSBhbmQgYWRkcmVzc2VkIHJldmlldyBjb21tZW50cwo+ID4gVjEgLT4gVjI6IEFkZGVk
+IFJFQURfT05DRSBpbiBpbm9kZV9nZXRfY3RpbWVfc2VjKCkKPiA+IC0tLQo+ID4gIGluY2x1ZGUv
+bGludXgvZnMuaCB8IDggKysrKy0tLS0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25z
+KCspLCA0IGRlbGV0aW9ucygtKQo+ID4gCj4gPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9m
+cy5oIGIvaW5jbHVkZS9saW51eC9mcy5oCj4gPiBpbmRleCAzNTU5NDQ2Mjc5YzEuLmMxOGY5YTll
+ZTVlNyAxMDA2NDQKPiA+IC0tLSBhL2luY2x1ZGUvbGludXgvZnMuaAo+ID4gKysrIGIvaW5jbHVk
+ZS9saW51eC9mcy5oCj4gPiBAQCAtMTY1NSwxMiArMTY1NSwxMiBAQCBzdGF0aWMgaW5saW5lIHN0
+cnVjdCB0aW1lc3BlYzY0IGlub2RlX3NldF9tdGltZShzdHJ1Y3QgaW5vZGUgKmlub2RlLAo+ID4g
+IAo+ID4gIHN0YXRpYyBpbmxpbmUgdGltZTY0X3QgaW5vZGVfZ2V0X2N0aW1lX3NlYyhjb25zdCBz
+dHJ1Y3QgaW5vZGUgKmlub2RlKQo+ID4gIHsKPiA+IC0JcmV0dXJuIGlub2RlLT5pX2N0aW1lX3Nl
+YzsKPiA+ICsJcmV0dXJuIFJFQURfT05DRShpbm9kZS0+aV9jdGltZV9zZWMpOwo+ID4gIH0KPiA+
+ICAKPiA+ICBzdGF0aWMgaW5saW5lIGxvbmcgaW5vZGVfZ2V0X2N0aW1lX25zZWMoY29uc3Qgc3Ry
+dWN0IGlub2RlICppbm9kZSkKPiA+ICB7Cj4gPiAtCXJldHVybiBpbm9kZS0+aV9jdGltZV9uc2Vj
+Owo+ID4gKwlyZXR1cm4gUkVBRF9PTkNFKGlub2RlLT5pX2N0aW1lX25zZWMpOwo+ID4gIH0KPiA+
+ICAKPiA+ICBzdGF0aWMgaW5saW5lIHN0cnVjdCB0aW1lc3BlYzY0IGlub2RlX2dldF9jdGltZShj
+b25zdCBzdHJ1Y3QgaW5vZGUgKmlub2RlKQo+ID4gQEAgLTE2NzQsOCArMTY3NCw4IEBAIHN0YXRp
+YyBpbmxpbmUgc3RydWN0IHRpbWVzcGVjNjQgaW5vZGVfZ2V0X2N0aW1lKGNvbnN0IHN0cnVjdCBp
+bm9kZSAqaW5vZGUpCj4gPiAgc3RhdGljIGlubGluZSBzdHJ1Y3QgdGltZXNwZWM2NCBpbm9kZV9z
+ZXRfY3RpbWVfdG9fdHMoc3RydWN0IGlub2RlICppbm9kZSwKPiA+ICAJCQkJCQkgICAgICBzdHJ1
+Y3QgdGltZXNwZWM2NCB0cykKPiA+ICB7Cj4gPiAtCWlub2RlLT5pX2N0aW1lX3NlYyA9IHRzLnR2
+X3NlYzsKPiA+IC0JaW5vZGUtPmlfY3RpbWVfbnNlYyA9IHRzLnR2X25zZWM7Cj4gPiArCVdSSVRF
+X09OQ0UoaW5vZGUtPmlfY3RpbWVfc2VjLCB0cy50dl9zZWMpOwo+ID4gKwlXUklURV9PTkNFKGlu
+b2RlLT5pX2N0aW1lX25zZWMsIHRzLnR2X25zZWMpOwo+ID4gIAlyZXR1cm4gdHM7Cj4gPiAgfQo+
+ID4gIAo+IAo+IExvb2tzIHJlYXNvbmFibGUuIFRoZXJlIGFyZSBhbHNvIGJhcmUgZmV0Y2hlcyBh
+bmQgc3RvcmVzIG9mIHRoZQo+IGlfY3RpbWVfc2VjIGZpZWxkIGluIGlub2RlX3NldF9jdGltZV9j
+dXJyZW50KCkuIERvIHdlIG5lZWQgc29tZXRoaW5nCj4gbGlrZSB0aGlzIGluIGFkZGl0aW9uIHRv
+IHRoZSBhYm92ZT8KPiAKPiAKPiBkaWZmIC0tZ2l0IGEvZnMvaW5vZGUuYyBiL2ZzL2lub2RlLmMK
+PiBpbmRleCBiMTNiNzc4MjU3YWUuLmQ4NjllZTZmMWM2YiAxMDA2NDQKPiAtLS0gYS9mcy9pbm9k
+ZS5jCj4gKysrIGIvZnMvaW5vZGUuYwo+IEBAIC0yNzg4LDcgKzI3ODgsNyBAQCBzdHJ1Y3QgdGlt
+ZXNwZWM2NCBpbm9kZV9zZXRfY3RpbWVfY3VycmVudChzdHJ1Y3QgaW5vZGUgKmlub2RlKQo+ICAJ
+ICovCj4gIAljbnMgPSBzbXBfbG9hZF9hY3F1aXJlKCZpbm9kZS0+aV9jdGltZV9uc2VjKTsKPiAg
+CWlmIChjbnMgJiBJX0NUSU1FX1FVRVJJRUQpIHsKPiAtCQlzdHJ1Y3QgdGltZXNwZWM2NCBjdGlt
+ZSA9IHsgLnR2X3NlYyA9IGlub2RlLT5pX2N0aW1lX3NlYywKPiArCQlzdHJ1Y3QgdGltZXNwZWM2
+NCBjdGltZSA9IHsgLnR2X3NlYyA9IFJFQURfT05DRShpbm9kZS0+aV9jdGltZV9zZWMpLAo+ICAJ
+CQkJCSAgICAudHZfbnNlYyA9IGNucyAmIH5JX0NUSU1FX1FVRVJJRUQgfTsKPiAgCj4gIAkJaWYg
+KHRpbWVzcGVjNjRfY29tcGFyZSgmbm93LCAmY3RpbWUpIDw9IDApIHsKPiBAQCAtMjgwOSw3ICsy
+ODA5LDcgQEAgc3RydWN0IHRpbWVzcGVjNjQgaW5vZGVfc2V0X2N0aW1lX2N1cnJlbnQoc3RydWN0
+IGlub2RlICppbm9kZSkKPiAgCS8qIFRyeSB0byBzd2FwIHRoZSBuc2VjIHZhbHVlIGludG8gcGxh
+Y2UuICovCj4gIAlpZiAodHJ5X2NtcHhjaGcoJmlub2RlLT5pX2N0aW1lX25zZWMsICZjdXIsIG5v
+dy50dl9uc2VjKSkgewo+ICAJCS8qIElmIHN3YXAgb2NjdXJyZWQsIHRoZW4gd2UncmUgKG1vc3Rs
+eSkgZG9uZSAqLwo+IC0JCWlub2RlLT5pX2N0aW1lX3NlYyA9IG5vdy50dl9zZWM7Cj4gKwkJV1JJ
+VEVfT05DRShpbm9kZS0+aV9jdGltZV9zZWMsIG5vdy50dl9zZWMpOwo+ICAJCXRyYWNlX2N0aW1l
+X25zX3hjaGcoaW5vZGUsIGNucywgbm93LnR2X25zZWMsIGN1cik7Cj4gIAkJbWd0aW1lX2NvdW50
+ZXJfaW5jKG1nX2N0aW1lX3N3YXBzKTsKPiAgCX0gZWxzZSB7Cj4gQEAgLTI4MjQsNyArMjgyNCw3
+IEBAIHN0cnVjdCB0aW1lc3BlYzY0IGlub2RlX3NldF9jdGltZV9jdXJyZW50KHN0cnVjdCBpbm9k
+ZSAqaW5vZGUpCj4gIAkJCWdvdG8gcmV0cnk7Cj4gIAkJfQo+ICAJCS8qIE90aGVyd2lzZSwga2Vl
+cCB0aGUgZXhpc3RpbmcgY3RpbWUgKi8KPiAtCQlub3cudHZfc2VjID0gaW5vZGUtPmlfY3RpbWVf
+c2VjOwo+ICsJCW5vdy50dl9zZWMgPSBSRUFEX09OQ0UoaW5vZGUtPmlfY3RpbWVfc2VjKTsKPiAg
+CQlub3cudHZfbnNlYyA9IGN1ciAmIH5JX0NUSU1FX1FVRVJJRUQ7Cj4gIAl9Cj4gIG91dDoK
 
