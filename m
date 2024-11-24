@@ -1,58 +1,82 @@
-Return-Path: <linux-kernel+bounces-420291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 004029D7868
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 22:48:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36D8A9D7856
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 22:27:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5878116240A
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 21:48:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA841162D3F
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 21:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C475175D5D;
-	Sun, 24 Nov 2024 21:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tm7XtDTo"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30B51714A5;
+	Sun, 24 Nov 2024 21:27:25 +0000 (UTC)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386A22500BA;
-	Sun, 24 Nov 2024 21:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594B42500AA;
+	Sun, 24 Nov 2024 21:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732484901; cv=none; b=Yx7YtVoJSp0zAnb90jQBCYyS/aBXa6XF0pFn9FZ5hGKB1J2sBYioP0coNj5yNtnimZhF+W+6alTP8VvGqgjxTMKN98sDc7E7FOGpC4L/iReBYQTesColRvtDnOUU9pXppCC8vcgKQKoWl8N3IHrC4yV0B40Ho8NPtcOEpzjSYXc=
+	t=1732483645; cv=none; b=evfSIWO5gZzi/C6ROE/rbkmrS5z7j5ecByWK8M3lWwhNfEbiYMuY2ZgME34IfFCI7/fGkCeQSa93FgHZSux8PL5jYqyVLbGEXv5YGM9QIh5Sb15EluHt+MLJD4Z1yxnzCMhMtbYfosr6G8hQ6QDpz08XM4WPv+gF8hpbdh9mlzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732484901; c=relaxed/simple;
-	bh=jNTAPP/MfNPEwet+Ok+/W1RZ2VIy1+gzv/XDoCfYEdc=;
+	s=arc-20240116; t=1732483645; c=relaxed/simple;
+	bh=q0zFXd4JS29b9+I/dNk67ZUXr84q4C+lpXjI7/mm3SA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X3N74drCANtgfUT66zxD1wXyNDnRQ8rvLvspU/PN03Vx1DadcwRghlnbgKVOSU7951oMPnGYzrnGhYB4b/V636hHiLBtqkOXS+2Oc1IWiCQtFuxAWaW3wlfoSO9Qme3hqLhrllJxc/aqFynwLWfeFtfGi1yQHzGNiIQiH93ex+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tm7XtDTo; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=FUIkB0nu6kVu8Kh8kg7nHVT5DQReYZ3ZBRdCsxIWzDQ=; b=tm7XtDTooTSDxUSCSm73zsVteU
-	xNt1bxswAxTe1kUbhDqRSsyw4BqsSMOgY6R/MoZBbnu4Gk0Nw6Dx2v15m13pfQF6suCXsjqGZj2+n
-	pOL4RQ0ohNtn7o/Te8+EjTMA/LFadHLAmmmHy6efDsu/5I2Aj4vNsqF1bi7B8SIwEbtX8Mn5mrYaq
-	n/CHXbj9vStw0VwSLOziTJoqYZZ3k9+/fIP8pFE2pMhl1MH6OIZ3lUEXU96VjJVs8qvQqRHYuYOEj
-	wlfhwGgt3OQJUb37navH3TrkKkKRiN3B4yvYpkO2SGRIhTutILInHoOrRo5MaTno6/1JU/9mvAPdV
-	vQYqwPaw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tFK85-0000000Awx1-2C4n;
-	Sun, 24 Nov 2024 21:26:53 +0000
-Date: Sun, 24 Nov 2024 21:26:53 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: syzbot <syzbot+aac7bff85be224de5156@syzkaller.appspotmail.com>
-Cc: akpm@linux-foundation.org, clm@fb.com, dsterba@suse.com,
-	josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [btrfs?] kernel BUG in __folio_start_writeback
-Message-ID: <Z0OaHcMWcRtohZfz@casper.infradead.org>
-References: <67432dee.050a0220.1cc393.0041.GAE@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=N9x+dW4XTh59ZRuvEJiMFt7vxBs2VkW+byr+mOek2Ua0l7I/aPX9Znq+SGVo128teynIbiSPW1nQ5PmmPOSPS5DJ3NtRjq3T+JWIe8+aZibO/R609958+5tX+hD7y0mp9NSKkTKHw3mrrHzCW15LkLDP3pDlLu70C1wo3elwzy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BA7F12008A6;
+	Sun, 24 Nov 2024 22:27:14 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A3260200464;
+	Sun, 24 Nov 2024 22:27:14 +0100 (CET)
+Received: from lsv051416.swis.nl-cdc01.nxp.com (lsv051416.swis.nl-cdc01.nxp.com [10.168.48.122])
+	by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 5A97E203C1;
+	Sun, 24 Nov 2024 22:27:13 +0100 (CET)
+Date: Sun, 24 Nov 2024 22:27:14 +0100
+From: Jan Petrous <jan.petrous@oss.nxp.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Jose Abreu <joabreu@synopsys.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Russell King <linux@armlinux.org.uk>,
+	Minda Chen <minda.chen@starfivetech.com>,
+	linux-arm-msm@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Shawn Guo <shawnguo@kernel.org>,
+	Quan Nguyen <quan@os.amperecomputing.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>, imx@lists.linux.dev,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Andrew Lunn <andrew@lunn.ch>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Keyur Chudgar <keyur@os.amperecomputing.com>,
+	Fabio Estevam <festevam@gmail.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	NXP S32 Linux Team <s32@nxp.com>
+Subject: Re: [PATCH v5 13/16] dt-bindings: net: Add DT bindings for DWMAC on
+ NXP S32G/R SoCs
+Message-ID: <Z0OaMjw0A4OadZfI@lsv051416.swis.nl-cdc01.nxp.com>
+References: <20241119-upstream_s32cc_gmac-v5-0-7dcc90fcffef@oss.nxp.com>
+ <20241119-upstream_s32cc_gmac-v5-13-7dcc90fcffef@oss.nxp.com>
+ <173203348678.1765163.1636321988738538785.robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,83 +85,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <67432dee.050a0220.1cc393.0041.GAE@google.com>
+In-Reply-To: <173203348678.1765163.1636321988738538785.robh@kernel.org>
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On Sun, Nov 24, 2024 at 05:45:18AM -0800, syzbot wrote:
+On Tue, Nov 19, 2024 at 10:24:46AM -0600, Rob Herring (Arm) wrote:
 > 
->  __fput+0x5ba/0xa50 fs/file_table.c:458
->  task_work_run+0x24f/0x310 kernel/task_work.c:239
->  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
->  exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
->  exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
->  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
->  syscall_exit_to_user_mode+0x13f/0x340 kernel/entry/common.c:218
->  do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> On Tue, 19 Nov 2024 16:00:19 +0100, Jan Petrous (OSS) wrote:
+> > Add basic description for DWMAC ethernet IP on NXP S32G2xx, S32G3xx
+> > and S32R45 automotive series SoCs.
+> > 
+> > Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+> > ---
+> >  .../devicetree/bindings/net/nxp,s32-dwmac.yaml     | 105 +++++++++++++++++++++
+> >  .../devicetree/bindings/net/snps,dwmac.yaml        |   3 +
+> >  2 files changed, 108 insertions(+)
+> > 
+> 
+> My bot found errors running 'make dt_binding_check' on your patch:
+> 
+> yamllint warnings/errors:
+> ./Documentation/devicetree/bindings/net/nxp,s32-dwmac.yaml:25:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+> 
 
-This is:
+Thanks, I will fix it in v6.
 
-        VM_BUG_ON_FOLIO(folio_test_writeback(folio), folio);
+> dtschema/dtc warnings/errors:
+> 
+> doc reference errors (make refcheckdocs):
 
-ie we've called __folio_start_writeback() on a folio which is already
-under writeback.
+I have also noticed the refcheckdocs errors, but AFAIK those are not
+connected to my commit:
 
-Higher up in the trace, we have the useful information:
+ $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-   refcheckdocs
+ Documentation/userspace-api/netlink/netlink-raw.rst: :doc:`rt_link<../../networking/netlink_spec/rt_link>`
+ Documentation/userspace-api/netlink/netlink-raw.rst: :doc:`tc<../../networking/netlink_spec/tc>`
+ Documentation/userspace-api/netlink/netlink-raw.rst: :doc:`tc<../../networking/netlink_spec/tc>`
+ Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt: Documentation/devicetree/bindings/mfd/zii,rave-sp.txt
+ Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
+ Documentation/hwmon/g762.rst: Documentation/devicetree/bindings/hwmon/g762.txt
+ Documentation/hwmon/isl28022.rst: Documentation/devicetree/bindings/hwmon/isl,isl28022.yaml
+ Documentation/translations/ja_JP/SubmittingPatches: linux-2.6.12-vanilla/Documentation/dontdiff
+ Documentation/userspace-api/netlink/index.rst: Documentation/networking/netlink_spec/index.rst
+ Documentation/userspace-api/netlink/specs.rst: Documentation/networking/netlink_spec/index.rst
+ MAINTAINERS: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+ lib/Kconfig.debug: Documentation/dev-tools/fault-injection/fault-injection.rst
 
- page: refcount:6 mapcount:0 mapping:ffff888077139710 index:0x3 pfn:0x72ae5
- memcg:ffff888140adc000
- aops:btrfs_aops ino:105 dentry name(?):"file2"
- flags: 0xfff000000040ab(locked|waiters|uptodate|lru|private|writeback|node=0|zone=1|lastcpupid=0x7ff)
- raw: 00fff000000040ab ffffea0001c8f408 ffffea0000939708 ffff888077139710
- raw: 0000000000000003 0000000000000001 00000006ffffffff ffff888140adc000
- page dumped because: VM_BUG_ON_FOLIO(folio_test_writeback(folio))
- page_owner tracks the page as allocated
+> 
+> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241119-upstream_s32cc_gmac-v5-13-7dcc90fcffef@oss.nxp.com
+> 
+> The base for the series is generally the latest rc1. A different dependency
+> should be noted in *this* patch.
 
-The interesting part of the page_owner stacktrace is:
+I have series based on v6.12 and I don't see there any v6.13-rc1.
 
-  filemap_alloc_folio_noprof+0xdf/0x500
-  __filemap_get_folio+0x446/0xbd0
-  prepare_one_folio+0xb6/0xa20
-  btrfs_buffered_write+0x6bd/0x1150
-  btrfs_direct_write+0x52d/0xa30
-  btrfs_do_write_iter+0x2a0/0x760
-  do_iter_readv_writev+0x600/0x880
-  vfs_writev+0x376/0xba0
+> 
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+> 
+> pip3 install dtschema --upgrade
+> 
+> Please check and re-submit after running the above command yourself. Note
+> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> your schema. However, it must be unset to test all examples with your schema.
+> 
 
-(ie not very interesting)
+I rechecked with fixed indentation, no any error was found.
 
-> Workqueue: btrfs-delalloc btrfs_work_helper
-> RIP: 0010:__folio_start_writeback+0xc06/0x1050 mm/page-writeback.c:3119
-> Call Trace:
->  <TASK>
->  process_one_folio fs/btrfs/extent_io.c:187 [inline]
->  __process_folios_contig+0x31c/0x540 fs/btrfs/extent_io.c:216
->  submit_one_async_extent fs/btrfs/inode.c:1229 [inline]
->  submit_compressed_extents+0xdb3/0x16e0 fs/btrfs/inode.c:1632
->  run_ordered_work fs/btrfs/async-thread.c:245 [inline]
->  btrfs_work_helper+0x56b/0xc50 fs/btrfs/async-thread.c:324
->  process_one_work kernel/workqueue.c:3229 [inline]
-
-This looks like a race?
-
-process_one_folio() calls
-btrfs_folio_clamp_set_writeback calls
-btrfs_subpage_set_writeback:
-
-        spin_lock_irqsave(&subpage->lock, flags);
-        bitmap_set(subpage->bitmaps, start_bit, len >> fs_info->sectorsize_bits)
-;
-        if (!folio_test_writeback(folio))
-                folio_start_writeback(folio);
-        spin_unlock_irqrestore(&subpage->lock, flags);
-
-so somebody else set writeback after we tested for writeback here.
-
-One thing that comes to mind is that _usually_ we take folio_lock()
-first, then start writeback, then call folio_unlock() and btrfs isn't
-doing that here (afaict).  Maybe that's not the source of the bug?
-
-If it is, should we have a VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio)
-in __folio_start_writeback()?  Or is there somewhere that can't lock the
-folio before starting writeback?
+BR.
+/Jan
 
