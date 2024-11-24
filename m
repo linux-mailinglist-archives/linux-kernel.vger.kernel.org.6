@@ -1,118 +1,132 @@
-Return-Path: <linux-kernel+bounces-419398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0243D9D6D5C
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 10:56:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E34189D6D6E
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 11:01:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B98882814B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 09:56:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F6F0281511
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 10:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118F1186294;
-	Sun, 24 Nov 2024 09:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F30189BBB;
+	Sun, 24 Nov 2024 10:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CH2EVsJ+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n46VcJjg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2EC33987;
-	Sun, 24 Nov 2024 09:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBC915B0EF;
+	Sun, 24 Nov 2024 10:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732442201; cv=none; b=kwbDud8E3L+z6QKR7pP6CUS8Z4nV1Dz0hVjkrIuXdUdnPCAsjOjZc6mFvJt3xZUR0o7puv/ODHEVSZgTEP1aUFSynQH3ycZUV5fuy2U4zFRIhrCnotq7umpp+inMaBwAyllKAE/3Lgj18gNrpSvgU52CamspP7QBTfWb0UFEvS0=
+	t=1732442469; cv=none; b=tEYdN/ZjMnROQhJN7jlxrjJwhklmCRuyaPSK90r8RiUNc3RwsBSi4IP8iH4V0milLqAUNYWpQJpipYlLHSeE3zogrHbKq0xgQgKRkShZ6cgi50t38P/t1uAIkzuxNb+IMDkOr7r8PisSy91Q9VlYU3suwTbXSOSdsj3ZeXA6xv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732442201; c=relaxed/simple;
-	bh=FtzR8QfDziwOhvMSs+hEciy3op5O9l9NexN6HGEXINU=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=pB+wtr2zqrULM2+voyZ0HVo6EG/J63TVJqAId7CJujzak4pD63BOREZjEX/e+R9uCKU4c2Mku+PMfOMQNudfZAmGHCcxLypoo0CEmLhzXQcHt7H4VdNETujYt0dVfOQ55u8+RA+cDcRior674kCYuwlysFn1gxYXYu5CsBdK6bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CH2EVsJ+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D0F0C4CECC;
-	Sun, 24 Nov 2024 09:56:40 +0000 (UTC)
+	s=arc-20240116; t=1732442469; c=relaxed/simple;
+	bh=wsiWmyEwu4YNSWKps6tXSxMb1RutH3lVHwYYksxB0QI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KWeyQWO2f0AJqpV5P4AoqyXCbbtZDAYCGvWYOoqny2+5zPsC78Ii8jaxmDtX4zZnoQbeYE53DCsNvQYlj95UDZjiKOPtZsMdPlC+MllMHb1qf2HSZwBN3OvwmT08fAiYCprgLaN34JIOt8xSVsZrigZE0+YBNbvFX9oJV33exrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n46VcJjg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4BAB5C4CECC;
+	Sun, 24 Nov 2024 10:01:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732442200;
-	bh=FtzR8QfDziwOhvMSs+hEciy3op5O9l9NexN6HGEXINU=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=CH2EVsJ+3DLtocLj3hzQF/BkwbSDoPw4qXznAW/a864sb3SRocV79ZZbt1Yu9x7FR
-	 +dBb4hhB3CiyRtE3NeDbzbNEEXNClNvsX1p3dzmutxrSiWLyhqb7tLFIHiG5Ix6y6W
-	 4WMEp7m5SVg/A8enQyqS7y6EBbzi8gzXQJvD2HgVv8wWFbpXdUHJZ7UqfqsLuz5H9z
-	 OCMVgS91Y3FaQWsFa6fKdlY6tt/iDZnWP8c8aAcoP6SB6T2Ztc5ppQC3HQS/aG5uSs
-	 Wslv6kOxZ5GF/SrhoJ7uiZtMqTV0KECJ/j1jDDHcjY1u2fAGVLxVY3EdKhJQZLtmzU
-	 SgYRe8X9bDGnw==
-Date: Sun, 24 Nov 2024 10:56:38 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Frank Li <Frank.Li@nxp.com>
-CC: =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, imx@lists.linux.dev,
- dlemoal@kernel.org, maz@kernel.org, tglx@linutronix.de, jdmason@kudzu.us
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v8_2/6=5D_PCI=3A_endpoint=3A_Add_RC-to-EP?=
- =?US-ASCII?Q?_doorbell_support_using_platform_MSI_controller?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20241124071100.ts34jbnosiipnx2x@thinkpad>
-References: <20241116-ep-msi-v8-0-6f1f68ffd1bb@nxp.com> <20241116-ep-msi-v8-2-6f1f68ffd1bb@nxp.com> <20241124071100.ts34jbnosiipnx2x@thinkpad>
-Message-ID: <113B93C0-8384-431A-BE4D-AA98B67C342A@kernel.org>
+	s=k20201202; t=1732442469;
+	bh=wsiWmyEwu4YNSWKps6tXSxMb1RutH3lVHwYYksxB0QI=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=n46VcJjgrQWg0gin39QbCuRxut/3Z6IzIUIsS+sA6JJhsNlhmpwMOA2dt1vQVIvND
+	 j7SJcwl+wVsEfO7O4ghrHgc1be6Rdw1HqEI4AcestZ2n0itBv42YAVWCneNjHIgoCZ
+	 mygIpyE3WS+CjRTQor1pQU5LmAokbv55T2amxL1EbCGajXkI23X9eE4K1qVhamTwEd
+	 ywBORZnCVPdabGTVTvvD4VKOFZi+sHmEZQljpEc924++gMEBbpC7Sd4QZHwLNQU+O4
+	 7aJ+sbJ6PMo/UIKt/rM/kUxqslFKGLYNPl2fMekUvHt8Un2p35vtbC+8ujdfihUkYg
+	 FCnT17QsUseYw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3072EE66887;
+	Sun, 24 Nov 2024 10:01:09 +0000 (UTC)
+From: Maud Spierings via B4 Relay <devnull+maud_spierings.hotmail.com@kernel.org>
+Subject: [PATCH v3 0/4] Asus vivobook s15 improvements
+Date: Sun, 24 Nov 2024 11:00:56 +0100
+Message-Id: <20241124-asus_qcom_display-v3-0-002b723b1920@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFj5QmcC/4XNywrCMBAF0F8pWRvJo09X/odIGdPEDrRNTWqwl
+ P67aXEjCC7vcO+ZhXjtUHtyShbidECPdohBHhKiWhjummITMxFMpJzznIJ/+vqhbF836McOZqp
+ 0ZkwhKilTRuJudNrgazcv15hb9JN18/4i8O360YT8oQVOGS0zqIypRMoAzq2desDuGFtk84L4a
+ 4hoALsZU2ZFHnvfxrqub6RDhTz4AAAA
+X-Change-ID: 20241116-asus_qcom_display-ce5ff7293340
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Douglas Anderson <dianders@chromium.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Maud Spierings <maud_spierings@hotmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732442467; l=1685;
+ i=maud_spierings@hotmail.com; s=20241110; h=from:subject:message-id;
+ bh=wsiWmyEwu4YNSWKps6tXSxMb1RutH3lVHwYYksxB0QI=;
+ b=wMo89KlcYiVtbpv3CmvyQ2to4ZkboF/CtjQQKLMntm1f+0+og1b/bOfmCy+L0Or5QNGBGlBGG
+ /8olbMCxBN/DUoRth+saS1ecD+A9h0S6NfXITmKyvBoxJ6A5KS9emRq
+X-Developer-Key: i=maud_spierings@hotmail.com; a=ed25519;
+ pk=CeFKVnZvRfX2QjB1DpdiAe2N+MEjwLEB9Yhx/OAcxRc=
+X-Endpoint-Received: by B4 Relay for maud_spierings@hotmail.com/20241110
+ with auth_id=273
+X-Original-From: Maud Spierings <maud_spierings@hotmail.com>
+Reply-To: maud_spierings@hotmail.com
+
+Improves several parts of the devicetree:
+1. The eDP panel bindings
+2. Add a lid switch
+3. Add bluetooth and describe wlan (depends on [1])
+
+[1]: https://lore.kernel.org/all/20241007-x1e80100-pwrseq-qcp-v1-0-f7166510ab17@linaro.org/
+
+---
+I seem to get a warning that the pci17cb vendor is undocumented (wlan)
+I can find this compatible in
+Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+But pci17cb doesn't really seem like a vendor name to me, I have ignored
+this warning for now.
+
+Changes in v3:
+- Fixed commit message formatting (line wrapping)
+- Fixed bad indentation (lid switch pinctrl)
+- Fixed bluetooth addition and added wifi description
+- Link to v2: https://lore.kernel.org/r/20241123-asus_qcom_display-v2-0-a0bff8576024@hotmail.com
+
+Changes in v2:
+- Add missing gpiokeys include in the lid switch patch
+- Add depends on for the bluetooth patch
+- Link to v1: https://lore.kernel.org/r/20241123-asus_qcom_display-v1-0-85a9ff9240aa@hotmail.com
+
+---
+Maud Spierings (4):
+      dt-bindings: display: panel: samsung,atna56ac03: Document ATNA56AC03
+      arm64: dts: qcom: x1e80100-vivobook-s15: Use the samsung,atna33xc20 panel driver
+      arm64: dts: qcom: x1e80100-vivobook-s15: Add lid switch
+      arm64: dts: qcom: x1e80100-vivobook-s15: Add bluetooth
+
+ .../bindings/display/panel/samsung,atna33xc20.yaml |   2 +
+ .../boot/dts/qcom/x1e80100-asus-vivobook-s15.dts   | 201 ++++++++++++++++++++-
+ 2 files changed, 202 insertions(+), 1 deletion(-)
+---
+base-commit: 98fb106aa5265aab0d857a942c410a753b470cc0
+change-id: 20241116-asus_qcom_display-ce5ff7293340
+
+Best regards,
+-- 
+Maud Spierings <maud_spierings@hotmail.com>
 
 
-
-On 24 November 2024 08:11:00 CET, Manivannan Sadhasivam <manivannan=2Esadh=
-asivam@linaro=2Eorg> wrote:
->On Sat, Nov 16, 2024 at 09:40:42AM -0500, Frank Li wrote:
->> +static int pci_epc_alloc_doorbell(struct pci_epc *epc, struct pci_epf =
-*epf)
->> +{
->> +	struct device *dev =3D epc->dev=2Eparent;
->> +	u16 num_db =3D epf->num_db;
->> +	int i =3D 0;
->> +	int ret;
->> +
->> +	guard(mutex)(&epc->lock);
->> +
->> +	ret =3D platform_device_msi_init_and_alloc_irqs(dev, num_db, pci_epc_=
-write_msi_msg);
->> +	if (ret) {
->> +		dev_err(dev, "Failed to allocate MSI, may miss 'msi-parent' at your =
-DTS\n");
->
->No need to mention 'msi-parent'=2E Just 'Failed to allocate MSI' is enoug=
-h=2E
-
-If you look at the existing pcie_ep device tree nodes for all SoCs, you wi=
-ll see that it is very rare to see an EP node which specifies msi-parent=2E
-
-I guess that makes sense, since before this series, AFAICT, msi-parent was=
- completely unused, so there was no need for an EP node to specify it=2E
-
-I'm okay to change the error print as you suggested, but in that case I re=
-ally think that we should add a comment above the check, something suggesti=
-ve like:
-
-/*
- * The pcie_ep DT node has to specify
- * 'msi-parent' for EP doorbell support to work=2E
- * Right now only GIC ITS is supported=2E
- * If you have GIC ITS and reached this print,
- * perhaps you are missing 'msi-parent' in DT?
- */
-if (ret) {
-        dev_err(dev, "Failed to allocate MSI\n");
-        return -ENODEV;
-}
-
-
-Kind regards,
-Niklas
 
