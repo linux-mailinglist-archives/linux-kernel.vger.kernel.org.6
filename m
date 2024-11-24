@@ -1,286 +1,137 @@
-Return-Path: <linux-kernel+bounces-420120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD5319D7545
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:33:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F60E9D75F6
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:35:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01B9C1688AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:33:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B885FC43795
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E303D1B412A;
-	Sun, 24 Nov 2024 14:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EDQXtLg1"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBAE1B85DB;
+	Sun, 24 Nov 2024 14:45:20 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC3419E961
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 14:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F32A1ABEC1
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 14:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732459130; cv=none; b=n5xtg/Vcf1uMA9n+Cj20bbyIMIrtLe96ECkNts1sWVjEuaL8NgV/mWlxn3LksUMeca86DWctK7VCK7Bb24erxuZT/Qva4dHmq2oxeIiRmg47lazlG5rPdLyNay5cIAYmbTF8AMhoqCp75K/2JJvRNaxUvxpfVUr2ZDpdMR0vPb8=
+	t=1732459520; cv=none; b=LMhkRJe/T+ZnZ9yj2SuO9WTPJUVE9Eq8BOToCfC3J5zjTu/vYjADMf3ie+I9HCqAqPEaQJUXTZIRQ45KjcZwBGLiMeKqrysOjX7OKQPZijRVfQLpsbyUM1V1OJc1sQ8IpVozY+B/vIybBM+VsqDF0xSuJ/6X6KuC39kz9ldHVbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732459130; c=relaxed/simple;
-	bh=isjGjqlidHC79ZLTF03jv/21hLxdq7ghhqNq50AP0SI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mvRZDVPviUZHUhQ+tGtWu8n356GYKa5AhFuAh4Y7HrqzutqS8mxumcU56CzO33W+zqTCW2qp0ypkH0oDFHgv5h3Scg1mAo6kYGX2LXT5T5LbUGhaFxf60iCUlUebnZUWgZlog4vHWCX7qG0DeS/rwbOl3OyCGSb1YMA7kcwp+6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EDQXtLg1; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-724e1742d0dso1757564b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 06:38:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732459128; x=1733063928; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=MXCY6EyQ5ICJyfv/tJQrr5Lem3XCz+vNyHRaV4HuQGs=;
-        b=EDQXtLg1YXfOBj/shliQbp1MYkIlAHn/iB2jEmoTfzmbwj1KkO7g31ZqqiUWZZ0ET/
-         zUXPdaM+BGzLmSz2gIr4btJQaNOvoewW43GIpvznPw1S8F5n3x/6soyNL2JAy12fxejX
-         +pM+L/XrV1iVP3cktEJs4yHbVLBXQ6HOE/Mu4DBHwTEiv4okXNpoeCyx78qbPGEuCCun
-         gUOvGbnQqLtZ7ee1NylXKGNR0nTrbiLpB6zlm7t1SEPOTvEU/a0+2cTJHXIVodoVVDiP
-         pr2EGmGX3f5YqclZ9C2mZMABP3F8abQp1Ks0bHUNoOK4Z6jQiIvfp0duvYEdYF484yTx
-         v5HA==
+	s=arc-20240116; t=1732459520; c=relaxed/simple;
+	bh=pX9HTsqn9W2wm96NKL0wmgtrriOmr6tTltrOiYNrewc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HCwN0kqJcyvWZjzEZcmzuNyYJAGhTfq9eZdmACyldSQS7+R730HqqK99XeekPyZEho1AGm863r1xtCk9CIUN6OnlXTi7EGNYa89zjh/kudR+UoVBVcNuM/zu3FPUJLXh5VWFtJxcwhiZi1Vg9J462fZ9+Qyp6i//3UlEoQQQJ/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a7634d8538so31211785ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 06:45:18 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732459128; x=1733063928;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MXCY6EyQ5ICJyfv/tJQrr5Lem3XCz+vNyHRaV4HuQGs=;
-        b=X9qL/euNfphE/m6MoyGj2e0xn0z++PIcyTcdb2IGGUqxaGf0g3SVHD6rf/gXhlDj76
-         /QfcmRYS9auVAuAqC8BHcW64rV2BzMZDteKjUaF4gwYbwVxcajlN8/hcHVFDWxlQK58H
-         g8y/XvP8KQyC/o1Hwni/uxXLnHvdJ0MS5iTWvZ6TgWbQer2Y8H6rYa5g7H2ckKAi8MNC
-         t7/mODJq9Dg2e1oekkzmvvV0NHeTyztEp2GzAXJplerPmy5zjaFR5sE/WWUKRlmGhzzT
-         PdFavMFRdeimce0UH4ewp8MLYG+/v2dyJeQ0uvXuugDbrB/4+Ihb2RVCD/mvKxpOmvB6
-         kLdg==
-X-Forwarded-Encrypted: i=1; AJvYcCWjb4zOkptqQ1HDmQCMOyYnRfZqMbEDOVm1K4gBsr1GvwDUswwVkGrn6DiiscAk/0wdS4MiO1GoRB6u0W0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIwUZZPrqS4QWOnkSdUOLwsneuLJUDqy/eq4bwM19/nnyjrHQr
-	e7E/J6pDvSbf2vBGRTh3AppVwcakMjGaGy1aZKAvLvuXfeLLHv8HAi6rdsNE8g==
-X-Gm-Gg: ASbGncu8ZIfJ+NnNVw2bV9l4XI/BpWcMi98op4LQAojQkr7p+K1kHlVfB64R+6DlA7O
-	WYXwrQjvjSU89akZpXR1ekQy3ilDMHVxs35lHKPVLYh4WXhz+Fq9X9NXFv4b1at3G34doLXdyBa
-	0ur1h0e+jXb0eaVgbM2VOk3bci9C5kJ3+EaMh1HxN1DwhhCMI47Dvvy9so2GcXIKPGIZRWkuexj
-	8zgzFvkpR0wHrus20pPzCVVR6F+pvAxJS1ovXy4C88xK2xU+pIN1UDpSZHc
-X-Google-Smtp-Source: AGHT+IGUYdNBQyl/4X7lky6FWTh3PlUIHJNEByI3IDGXwvkIIW1v1nfc0TsyL72NMdiksJeZISQVKA==
-X-Received: by 2002:a05:6a00:1709:b0:71e:98a:b6b4 with SMTP id d2e1a72fcca58-724df5ef7f8mr10750073b3a.11.1732459128405;
-        Sun, 24 Nov 2024 06:38:48 -0800 (PST)
-Received: from thinkpad ([36.255.17.192])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de532d59sm4653362b3a.130.2024.11.24.06.38.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Nov 2024 06:38:47 -0800 (PST)
-Date: Sun, 24 Nov 2024 20:08:39 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v8 0/7] PCI: dwc: opitimaze RC Host/EP pci_fixup_addr()
-Message-ID: <20241124143839.hg2yj462h22rftqa@thinkpad>
-References: <20241119-pci_fixup_addr-v8-0-c4bfa5193288@nxp.com>
+        d=1e100.net; s=20230601; t=1732459517; x=1733064317;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=E7Ls8UtoQy1GOcuv3+txAfuwcTatgUFjZL8Pkknxg2s=;
+        b=XfvMXEn1j3YUrmjrBQY9wejuoJK6hxK7KGzQxr8m70GoqKukXCKHlaChqJz1INEDh8
+         Q05ElieZMoa88I9AEAz3BuK0qJSeUBXBM6gM6x4NFrwbICczLg8hcbGptj2+/D8TfaFC
+         N3LfyQ97Zp0Z6VMdzq9p20Vs32Nvx+ERycSZzAccpVeq2rhjqS66Y5urkkxDNK8L1NqB
+         S53mxiC1sxlIDX+qIX0TsoYUKAvIr6ST9APJkx0wKP/jYyZakGnYv8Kp2zWaqLI/d59x
+         sM9j5Kk32DUwyRM0lpzv8CC9usFoSyB2FLcN42AwzDcAX8e0uCw5EOQ+o174BwkkWvCX
+         ZVbg==
+X-Forwarded-Encrypted: i=1; AJvYcCW7xwkAepgjGH7984kPU/Ggjf+JijB/VgbAlo7G54JEukpc3VAv4SUwZ1d6DVlVHLzSHVwIfz+0JYgxWg8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYpiNWfEBuPbFOGmM4X88WBUoIrZDmx+T9zxU2ceWW8xYwwcww
+	aj1hil43SNUzIuOB9DTFZaaR/JF7bTOOhjjzTjpjyNTEiMDvLW1SZXT4y7Eohxu4oErgG2gwx7I
+	ZxcMltN+5LKtZlJ2YKRc3juehIfq1AeolSBo3lY0AaiwdZnTMcb1YiLI=
+X-Google-Smtp-Source: AGHT+IHQgYYrnaMJFsLMkrwdp+jLj3mmTJuGHlOvachPdAtBu0X7pCoEnCr0DYJskDKOMBG6wceMWBxnE7PU0GK6rZef39MUmWGC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241119-pci_fixup_addr-v8-0-c4bfa5193288@nxp.com>
+X-Received: by 2002:a05:6e02:1a03:b0:3a7:8320:9ab with SMTP id
+ e9e14a558f8ab-3a79ad748aemr104199595ab.8.1732459517611; Sun, 24 Nov 2024
+ 06:45:17 -0800 (PST)
+Date: Sun, 24 Nov 2024 06:45:17 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67433bfd.050a0220.1cc393.0042.GAE@google.com>
+Subject: [syzbot] [btrfs?] WARNING in btrfs_put_transaction (3)
+From: syzbot <syzbot+d6ba71ce7a916cf10094@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 19, 2024 at 02:44:18PM -0500, Frank Li wrote:
-> == RC side:
-> 
->             ┌─────────┐                    ┌────────────┐
->  ┌─────┐    │         │ IA: 0x8ff8_0000    │            │
->  │ CPU ├───►│   ┌────►├─────────────────┐  │ PCI        │
->  └─────┘    │   │     │ IA: 0x8ff0_0000 │  │            │
->   CPU Addr  │   │  ┌─►├─────────────┐   │  │ Controller │
-> 0x7ff8_0000─┼───┘  │  │             │   │  │            │
->             │      │  │             │   │  │            │   PCI Addr
-> 0x7ff0_0000─┼──────┘  │             │   └──► IOSpace   ─┼────────────►
->             │         │             │      │            │    0
-> 0x7000_0000─┼────────►├─────────┐   │      │            │
->             └─────────┘         │   └──────► CfgSpace  ─┼────────────►
->              BUS Fabric         │          │            │    0
->                                 │          │            │
->                                 └──────────► MemSpace  ─┼────────────►
->                         IA: 0x8000_0000    │            │  0x8000_0000
->                                            └────────────┘
-> 
-> Current dwc implimemnt, pci_fixup_addr() call back is needed when bus
-> fabric convert cpu address before send to PCIe controller.
-> 
->     bus@5f000000 {
->             compatible = "simple-bus";
->             #address-cells = <1>;
->             #size-cells = <1>;
->             ranges = <0x80000000 0x0 0x70000000 0x10000000>;
-> 
->             pcie@5f010000 {
->                     compatible = "fsl,imx8q-pcie";
->                     reg = <0x5f010000 0x10000>, <0x8ff00000 0x80000>;
->                     reg-names = "dbi", "config";
->                     #address-cells = <3>;
->                     #size-cells = <2>;
->                     device_type = "pci";
->                     bus-range = <0x00 0xff>;
->                     ranges = <0x81000000 0 0x00000000 0x8ff80000 0 0x00010000>,
->                              <0x82000000 0 0x80000000 0x80000000 0 0x0ff00000>;
->             ...
->             };
->     };
-> 
-> Device tree already can descript all address translate. Some hardware
-> driver implement fixup function by mask some bits of cpu address. Last
-> pci-imx6.c are little bit better by fetch memory resource's offset to do
-> fixup.
-> 
-> static u64 imx_pcie_cpu_addr_fixup(struct dw_pcie *pcie, u64 cpu_addr)
-> {
-> 	...
-> 	entry = resource_list_first_type(&pp->bridge->windows, IORESOURCE_MEM);
-> 	return cpu_addr - entry->offset;
-> }
-> 
-> But it is not good by using IORESOURCE_MEM to fix up io/cfg address map
-> although address translate is the same as IORESOURCE_MEM.
-> 
-> This patches to fetch untranslate range information for PCIe controller
-> (pcie@5f010000: ranges). So current config ATU without cpu_fixup_addr().
-> 
-> == EP side:
-> 
->                    Endpoint
->   ┌───────────────────────────────────────────────┐
->   │                             pcie-ep@5f010000  │
->   │                             ┌────────────────┐│
->   │                             │   Endpoint     ││
->   │                             │   PCIe         ││
->   │                             │   Controller   ││
->   │           bus@5f000000      │                ││
->   │           ┌──────────┐      │                ││
->   │           │          │ Outbound Transfer     ││
->   │┌─────┐    │  Bus     ┼─────►│ ATU  ──────────┬┬─────►
->   ││     │    │  Fabric  │Bus   │                ││PCI Addr
->   ││ CPU ├───►│          │Addr  │                ││0xA000_0000
->   ││     │CPU │          │0x8000_0000            ││
->   │└─────┘Addr└──────────┘      │                ││
->   │       0x7000_0000           └────────────────┘│
->   └───────────────────────────────────────────────┘
-> 
-> bus@5f000000 {
->         compatible = "simple-bus";
->         ranges = <0x80000000 0x0 0x70000000 0x10000000>;
-> 
->         pcie-ep@5f010000 {
->                 reg = <0x5f010000 0x00010000>,
->                       <0x80000000 0x10000000>;
->                 reg-names = "dbi", "addr_space";
->                 ...                ^^^^
->         };
->         ...
-> };
-> 
-> Add `bus_addr_base` to configure the outbound window address for CPU write.
-> The BUS fabric generally passes the same address to the PCIe EP controller,
-> but some BUS fabrics convert the address before sending it to the PCIe EP
-> controller.
-> 
-> Above diagram, CPU write data to outbound windows address 0x7000_0000,
-> Bus fabric convert it to 0x8000_0000. ATU should use BUS address
-> 0x8000_0000 as input address and convert to PCI address 0xA000_0000.
-> 
-> Previously, `cpu_addr_fixup()` was used to handle address conversion. Now,
-> the device tree provides this information.
-> 
-> The both pave the road to eliminate ugle cpu_fixup_addr() callback function.
-> 
+Hello,
 
-Series looks good to me. Thanks a lot for your persistence! But it missed 6.13
-cycle. So let's get it merged early once 6.13-rc1 is out.
+syzbot found the following issue on:
 
-- Mani
+HEAD commit:    bf9aa14fc523 Merge tag 'timers-core-2024-11-18' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1050cae8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=48190c1cdf985419
+dashboard link: https://syzkaller.appspot.com/bug?extid=d6ba71ce7a916cf10094
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Changes in v8:
-> - Add mani's review tages
-> - use rename use_dt_ranges to use_parent_dt_ranges
-> - Add dev_warn_once to reminder to fix their dt file and remove
-> cpu_fixup_addr() callback.
-> - rename dw_pcie_get_untranslate_addr() to dw_pcie_get_parent_addr()
-> - Link to v7: https://lore.kernel.org/r/20241029-pci_fixup_addr-v7-0-8310dc24fb7c@nxp.com
-> 
-> Changes in v7:
-> - fix
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202410291546.kvgEWJv7-lkp@intel.com/
-> - Link to v6: https://lore.kernel.org/r/20241028-pci_fixup_addr-v6-0-ebebcd8fd4ff@nxp.com
-> 
-> Changes in v6:
-> - merge RC and EP to one thread!
-> - Link to v5: https://lore.kernel.org/r/20241015-pci_fixup_addr-v5-0-ced556c85270@nxp.com
-> 
-> Changes in v5:
-> - update address order in diagram patches.
-> - remove confused 0x5f00_0000 range
-> - update patch1's commit message.
-> - Link to v4: https://lore.kernel.org/r/20241008-pci_fixup_addr-v4-0-25e5200657bc@nxp.com
-> 
-> Changes in v4:
-> - Improve commit message by add driver source code path.
-> - Link to v3: https://lore.kernel.org/r/20240930-pci_fixup_addr-v3-0-80ee70352fc7@nxp.com
-> 
-> Changes in v3:
-> - see each patch
-> - Link to v2: https://lore.kernel.org/r/20240926-pci_fixup_addr-v2-0-e4524541edf4@nxp.com
-> 
-> Changes in v2:
-> - see each patch
-> - Link to v1: https://lore.kernel.org/r/20240924-pci_fixup_addr-v1-0-57d14a91ec4f@nxp.com
-> 
-> ---
-> Frank Li (7):
->       of: address: Add parent_bus_addr to struct of_pci_range
->       PCI: dwc: Use devicetree 'ranges' property to get rid of cpu_addr_fixup() callback
->       PCI: dwc: ep: Add bus_addr_base for outbound window
->       PCI: imx6: Remove cpu_addr_fixup()
->       dt-bindings: PCI: fsl,imx6q-pcie-ep: Add compatible string fsl,imx8q-pcie-ep
->       PCI: imx6: Pass correct sub mode when calling phy_set_mode_ext()
->       PCI: imx6: Add i.MX8Q PCIe Endpoint (EP) support
-> 
->  .../devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml | 38 ++++++++++++++-
->  drivers/of/address.c                               |  2 +
->  drivers/pci/controller/dwc/pci-imx6.c              | 46 +++++++++--------
->  drivers/pci/controller/dwc/pcie-designware-ep.c    | 18 ++++++-
->  drivers/pci/controller/dwc/pcie-designware-host.c  | 57 +++++++++++++++++++++-
->  drivers/pci/controller/dwc/pcie-designware.c       |  9 ++++
->  drivers/pci/controller/dwc/pcie-designware.h       |  8 +++
->  include/linux/of_address.h                         |  1 +
->  8 files changed, 155 insertions(+), 24 deletions(-)
-> ---
-> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-> change-id: 20240924-pci_fixup_addr-a8568f9bbb34
-> 
-> Best regards,
-> ---
-> Frank Li <Frank.Li@nxp.com>
-> 
+Unfortunately, I don't have any reproducer for this issue yet.
 
--- 
-மணிவண்ணன் சதாசிவம்
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-bf9aa14f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a86e66fb23d0/vmlinux-bf9aa14f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fccf5aa8139f/bzImage-bf9aa14f.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d6ba71ce7a916cf10094@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5346 at fs/btrfs/transaction.c:144 btrfs_put_transaction+0x356/0x3c0 fs/btrfs/transaction.c:144
+Modules linked in:
+CPU: 0 UID: 0 PID: 5346 Comm: btrfs-transacti Not tainted 6.12.0-syzkaller-01782-gbf9aa14fc523 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:btrfs_put_transaction+0x356/0x3c0 fs/btrfs/transaction.c:144
+Code: 89 da e8 0d c5 10 08 48 bd 00 00 00 00 00 fc ff df e9 02 fe ff ff e8 09 12 de fd 90 0f 0b 90 e9 0d fd ff ff e8 fb 11 de fd 90 <0f> 0b 90 e9 84 fd ff ff e8 ed 11 de fd 90 0f 0b 90 e9 a1 fd ff ff
+RSP: 0018:ffffc9000d2f7b40 EFLAGS: 00010293
+RAX: ffffffff83b6d7e5 RBX: ffff88804d306358 RCX: ffff888000728000
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000001
+RBP: dffffc0000000000 R08: ffffffff83b6d50f R09: 1ffff11009a60c02
+R10: dffffc0000000000 R11: ffffed1009a60c03 R12: ffff88804d306028
+R13: ffffc9000d2f7d40 R14: ffff88804d306000 R15: ffff888043e54bf8
+FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fff3827ffb0 CR3: 00000000458e4000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ btrfs_cleanup_transaction+0x562/0x1ca0 fs/btrfs/disk-io.c:4805
+ transaction_kthread+0x307/0x500 fs/btrfs/disk-io.c:1610
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
