@@ -1,391 +1,117 @@
-Return-Path: <linux-kernel+bounces-419331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B6EA9D6C8F
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 04:34:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02128161710
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 03:34:51 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218712E414;
-	Sun, 24 Nov 2024 03:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="oWBN9JSG"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9C4D9D6C91
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 04:46:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B9627468;
-	Sun, 24 Nov 2024 03:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D45C28165D
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 03:46:52 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5AF2746B;
+	Sun, 24 Nov 2024 03:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FXuXoRT1"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC8110E3;
+	Sun, 24 Nov 2024 03:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732419286; cv=none; b=vAtOm7pVPaOjn8yhr8sAS8W5zogkqUOXMh4svOgW22hXG0ZkjdhbLg5ahg7GoguNtAw7vkoGrcIX04g/I+f0fZdeqyQGtHXxeJF/ajxd0rcfmm+pdquP1+F0u43dicUhWQhZNqrwY8FNqC2nNjtDLs9DhnnOaIB+w6IE5idTmWg=
+	t=1732420006; cv=none; b=uBk9EWkZezBPb5e9/s6MkEgxSQB2951QrTPv938nq6TFoW4tLzg3U1VIto3vWh9pOsu40wetRkmVEGcnZL91PPm9TgTfkjGs9DGZYQH1czmtcG6F1Qavf075vsqsERNgo6fGcqxq45Z6K0umhvUf7UtjQPiVosUFXVZTnxQsmCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732419286; c=relaxed/simple;
-	bh=LxmED/Y9CmN47OA6i++y010iWeZAsDhoah8s8HRK+Mw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ABf7ChfaDTd9hGjk6/CEGyUXFDzZQY0CCCr2u8ZJ2Is2Yo9PKRFSKCY12lPsF1YFuRLWPHKB5IQLgAZfnBs9wTuNlEDeJ1f9GIbukANdl/uWmlDLpvFXyrvXSZYJdt4m4ZBOQGDz5k1p5NzxA4KYlj54paBbrSqz5friVzyZcl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=oWBN9JSG; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DDA9A4C7;
-	Sun, 24 Nov 2024 04:34:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732419261;
-	bh=LxmED/Y9CmN47OA6i++y010iWeZAsDhoah8s8HRK+Mw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oWBN9JSGbUtStolcgC081xjW6gI7nhQrkhNiQii9gxOsSuRozzjckBxhbGj1hxqdc
-	 tXdAy08CSQV/71DnfMGpnFPJjDfCes16XerXWr0RHig/KNgiQaih4ZqE9XCtaE4bR0
-	 Q2GFIqpGnykZw084sw8R46YpvwZQv3kY0b0Us1xs=
-Date: Sun, 24 Nov 2024 05:34:32 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Jai Luthra <jai.luthra@ideasonboard.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Naushir Patuck <naush@raspberrypi.com>,
-	Vinay Varma <varmavinaym@gmail.com>
-Subject: Re: [PATCH v2 3/3] media: i2c: imx219: Scale the pixel rate for
- analog binning
-Message-ID: <20241124033432.GF19573@pendragon.ideasonboard.com>
-References: <20241121-imx219_fixes-v2-0-7b068a60ea40@ideasonboard.com>
- <20241121-imx219_fixes-v2-3-7b068a60ea40@ideasonboard.com>
- <npwwmrap6l3pfs6uuh5jxssrox5dp6h3bcvw4ihqqxrlhcmdks@vbyqxsakhlwg>
+	s=arc-20240116; t=1732420006; c=relaxed/simple;
+	bh=4OWydb0uad+cSg6XEwN8/7A1yX2vzbSXD+Cg2vpFN7I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nFkNpbr/zTcTFLKF8861CeYlvigHtdUKyrMhbmYgejEv5eOrgpVQFBM24YP67HXjdxNU+SUV/nWzjsce8j82brESLcwtY0vNCDCHGPlhoIMcv7xoUDcNMyIo2MydLUAEJhnz1T7FIst/+Yqv5oB8duIcyGBZJQ/0xBELS6WjUUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FXuXoRT1; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-724e14b90cfso1547523b3a.2;
+        Sat, 23 Nov 2024 19:46:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732420004; x=1733024804; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aRKUntj3FsK+vGHd9SV+LXgOh6pOpY3AJO079Y2j5WQ=;
+        b=FXuXoRT1GWj8lzIRvlGcGh1Sm6x+cy1HCLd24z5ZbWY+mZQGNIrF+rRU0rPbWIoWYw
+         qdqGiiIhicyjB3bNdRnxMR3IpFB2LK0gqBEcCOTDzVmM49aD/JE3brcH3k7X05DIu2ZP
+         +RphpHDIrrAuVPy1zsEhzBa7szp+2fuDdvHDMrNQzZ9haSx27QUQlaI7ORc5wKdP0a/K
+         XtLwU6z4QyVme4+M8BXMFubMz5+fIniwy+/6H0ICFtvHRYLrhTeJeO4xsV7C8iYmhYJb
+         6zBJka/mYewG1pSvS30uBL6fuNw9mQHhy5H3aQ6W5BLpwcFD2MG927yFbSzwZOCJvb67
+         2UBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732420004; x=1733024804;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aRKUntj3FsK+vGHd9SV+LXgOh6pOpY3AJO079Y2j5WQ=;
+        b=i9OxDQVw1tt+aEaRbNnIlARHXhoEX4AeQjyi97tqPNS0B/75ZUbgD513MdLB6JvAAx
+         691Z9XgDxA4ahrDxJ5pq0Bo29QWbjGLAY8sf71JlqEWeVN0ZLzyy/GadtReYaro1jfVG
+         bC9hS1HdM4ArSDZlU4RUufgL1g2FkOxRKfc1Xcn+Y59ieBTkQFV4NdmzC+metqy3wpNh
+         WNqeejLiMDuffAH64APWSDhdBJJ2jRg0+1SxelFp/oWvta0ebLpo+y09C5C0mTTa8MMG
+         HEHdlrcFtJqKCRwcWv95Y1lIS/JrOwpzAJ5biL1TeKxuayh4xjGN3qhWETOrV3J8u8yL
+         8swQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUja+DmdQrQLgy8hTahtsQNytkriH2BmgBehlXni2MWGPITANsCQavcAh2OCthnP3WIK8WMr0R0T0cnkyM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjFPkzStKm3ZD4+GYXxuEykz/ioN/IGvUXyE9spWgI1MUZE9Sm
+	eYu/n33LIZlBEnOftofNxy8d90uLqB2eLrhUGKhYN39Gdkb0tbYX
+X-Gm-Gg: ASbGncs5Fql0RpvZxAvYnHEX7U4E3/70BwAZRZONBC9MXyNHoPrXdo1li6ovi8ZKDOc
+	TPGFcePTd6pGChrvW85/uJRK75O7qoLwpL4+3g/EIPSAjVTBo8gDO4Ttj8hS3eEtAvE6yUIf7oy
+	//UcZ1l+8TVdYk0Hl66QfXeKHDQ5zfzKfysYLoxKqHKH1vfksv6poy46v71Fd9PabOCDejKJ0j9
+	PoVV/BLJ73Q3qq8viru4BgY5CliqNNlb+TgC/ih4/+DAJRSmkWl5eibJpjUBcTkTA==
+X-Google-Smtp-Source: AGHT+IGWUhyHxJw2GTBVS8wlNIoRKldDZEJ375GOA+jsgLyxqixCLrsZZxBLJKqoDI/MNjeYJ7KA9g==
+X-Received: by 2002:a17:902:ce87:b0:20c:9936:f0ab with SMTP id d9443c01a7336-2129fd7044fmr113255335ad.47.1732420004120;
+        Sat, 23 Nov 2024 19:46:44 -0800 (PST)
+Received: from localhost.localdomain ([119.28.17.178])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc12f22sm39789455ad.186.2024.11.23.19.46.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Nov 2024 19:46:43 -0800 (PST)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	adobriyan@gmail.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: [PATCH] fs: fix proc_handler for sysctl_nr_open
+Date: Sun, 24 Nov 2024 11:46:36 +0800
+Message-ID: <20241124034636.325337-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.41.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <npwwmrap6l3pfs6uuh5jxssrox5dp6h3bcvw4ihqqxrlhcmdks@vbyqxsakhlwg>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 22, 2024 at 11:31:58AM +0100, Jacopo Mondi wrote:
-> On Thu, Nov 21, 2024 at 05:38:04PM +0530, Jai Luthra wrote:
-> > When the analog binning mode is used for high framerate operation,
-> > the pixel rate is effectively doubled. Account for this when setting up
-> > the pixel clock rate, and applying the vblank and exposure controls.
-> >
-> > The previous logic only used analog binning for 8-bit modes, but normal
-> > binning limits the framerate on 10-bit 480p [1]. So with this patch we
-> > switch to using special binning (with 2x pixel rate) for all formats of
-> > 480p mode and 8-bit 1232p.
-> >
-> > To do this cleanly, re-introduce the book-keeping for which binning mode
-> > is used with which resolution/format.
-> 
-> I think the patch is correct, however this goes a bit in the opposite
-> direction of making the driver freely configurable. IOW the more we
-> store in modes, the harder it will become to freely configure the
-> sensor. I know there are different opinions on how much this is
-> actually an issue, with valid arguments on both sides, but as I recall
-> freely configurable was a goal of Laurent's series, let me cc him
-> explicitly.
+Use proc_douintvec_minmax() instead of proc_dointvec_minmax() to handle
+sysctl_nr_open, because its data type is unsigned int, not int.
 
-Correct. I would like the binning configuration to be computed by the
-driver, not hardcoded. Let's do better than this.
+Fixes: 9b80a184eaad ("fs/file: more unsigned file descriptors")
+Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+---
+ fs/file_table.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > [1]: https://github.com/raspberrypi/linux/issues/5493
-> >
-> > Co-developed-by: Naushir Patuck <naush@raspberrypi.com>
-> > Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
-> > Co-developed-by: Vinay Varma <varmavinaym@gmail.com>
-> > Signed-off-by: Vinay Varma <varmavinaym@gmail.com>
-> > Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> > ---
-> >  drivers/media/i2c/imx219.c | 138 ++++++++++++++++++++++++++++++---------------
-> >  1 file changed, 94 insertions(+), 44 deletions(-)
-> >
-> > diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> > index 970e6362d0ae3a9078daf337155e83d637bc1ca1..ec795569361987ae30bff234e97fa34600bf5975 100644
-> > --- a/drivers/media/i2c/imx219.c
-> > +++ b/drivers/media/i2c/imx219.c
-> > @@ -149,6 +149,18 @@
-> >  #define IMX219_PIXEL_ARRAY_WIDTH	3280U
-> >  #define IMX219_PIXEL_ARRAY_HEIGHT	2464U
-> >
-> > +enum binning_mode {
-> > +	BINNING_NONE = IMX219_BINNING_NONE,
-> > +	BINNING_X2 = IMX219_BINNING_X2,
-> > +	BINNING_ANALOG_X2 = IMX219_BINNING_X2_ANALOG,
-> > +};
-> > +
-> > +enum binning_bit_depths {
-> > +	BINNING_IDX_8_BIT,
-> > +	BINNING_IDX_10_BIT,
-> > +	BINNING_IDX_MAX
-> > +};
-> > +
-> >  /* Mode : resolution and related config&values */
-> >  struct imx219_mode {
-> >  	/* Frame width */
-> > @@ -158,6 +170,9 @@ struct imx219_mode {
-> >
-> >  	/* V-timing */
-> >  	unsigned int vts_def;
-> > +
-> > +	/* binning mode based on format code */
-> > +	enum binning_mode binning[BINNING_IDX_MAX];
-> >  };
-> >
-> >  static const struct cci_reg_sequence imx219_common_regs[] = {
-> > @@ -293,24 +308,40 @@ static const struct imx219_mode supported_modes[] = {
-> >  		.width = 3280,
-> >  		.height = 2464,
-> >  		.vts_def = 3526,
-> > +		.binning = {
-> > +			[BINNING_IDX_8_BIT] = BINNING_NONE,
-> > +			[BINNING_IDX_10_BIT] = BINNING_NONE,
-> > +		},
-> >  	},
-> >  	{
-> >  		/* 1080P 30fps cropped */
-> >  		.width = 1920,
-> >  		.height = 1080,
-> >  		.vts_def = 1763,
-> > +		.binning = {
-> > +			[BINNING_IDX_8_BIT] = BINNING_NONE,
-> > +			[BINNING_IDX_10_BIT] = BINNING_NONE,
-> > +		},
-> >  	},
-> >  	{
-> >  		/* 2x2 binned 30fps mode */
-> >  		.width = 1640,
-> >  		.height = 1232,
-> >  		.vts_def = 1763,
-> > +		.binning = {
-> > +			[BINNING_IDX_8_BIT] = BINNING_ANALOG_X2,
-> > +			[BINNING_IDX_10_BIT] = BINNING_X2,
-> > +		},
-> >  	},
-> >  	{
-> >  		/* 640x480 30fps mode */
-> >  		.width = 640,
-> >  		.height = 480,
-> >  		.vts_def = 1763,
-> > +		.binning = {
-> > +			[BINNING_IDX_8_BIT] = BINNING_ANALOG_X2,
-> > +			[BINNING_IDX_10_BIT] = BINNING_ANALOG_X2,
-> > +		},
-> >  	},
-> >  };
-> >
-> > @@ -337,6 +368,9 @@ struct imx219 {
-> >
-> >  	/* Two or Four lanes */
-> >  	u8 lanes;
-> > +
-> > +	/* Binning mode */
-> > +	enum binning_mode binning;
-> >  };
-> >
-> >  static inline struct imx219 *to_imx219(struct v4l2_subdev *_sd)
-> > @@ -362,6 +396,36 @@ static u32 imx219_get_format_code(struct imx219 *imx219, u32 code)
-> >  	return imx219_mbus_formats[i];
-> >  }
-> >
-> > +static u32 imx219_get_format_bpp(const struct v4l2_mbus_framefmt *format)
-> > +{
-> > +	switch (format->code) {
-> > +	case MEDIA_BUS_FMT_SRGGB8_1X8:
-> > +	case MEDIA_BUS_FMT_SGRBG8_1X8:
-> > +	case MEDIA_BUS_FMT_SGBRG8_1X8:
-> > +	case MEDIA_BUS_FMT_SBGGR8_1X8:
-> > +		return 8;
-> > +
-> > +	case MEDIA_BUS_FMT_SRGGB10_1X10:
-> > +	case MEDIA_BUS_FMT_SGRBG10_1X10:
-> > +	case MEDIA_BUS_FMT_SGBRG10_1X10:
-> > +	case MEDIA_BUS_FMT_SBGGR10_1X10:
-> > +	default:
-> > +		return 10;
-> > +	}
-> > +}
-> > +
-> > +static int imx219_get_rate_factor(struct imx219 *imx219)
-> > +{
-> > +	switch (imx219->binning) {
-> > +	case BINNING_NONE:
-> > +	case BINNING_X2:
-> > +		return 1;
-> > +	case BINNING_ANALOG_X2:
-> > +		return 2;
-> > +	}
-> > +	return -EINVAL;
-> > +}
-> > +
-> >  /* -----------------------------------------------------------------------------
-> >   * Controls
-> >   */
-> > @@ -373,10 +437,12 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
-> >  	struct i2c_client *client = v4l2_get_subdevdata(&imx219->sd);
-> >  	const struct v4l2_mbus_framefmt *format;
-> >  	struct v4l2_subdev_state *state;
-> > +	int rate_factor;
-> >  	int ret = 0;
-> >
-> >  	state = v4l2_subdev_get_locked_active_state(&imx219->sd);
-> >  	format = v4l2_subdev_state_get_format(state, 0);
-> > +	rate_factor = imx219_get_rate_factor(imx219);
-> >
-> >  	if (ctrl->id == V4L2_CID_VBLANK) {
-> >  		int exposure_max, exposure_def;
-> > @@ -405,7 +471,7 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
-> >  		break;
-> >  	case V4L2_CID_EXPOSURE:
-> >  		cci_write(imx219->regmap, IMX219_REG_EXPOSURE,
-> > -			  ctrl->val, &ret);
-> > +			  ctrl->val / rate_factor, &ret);
-> >  		break;
-> >  	case V4L2_CID_DIGITAL_GAIN:
-> >  		cci_write(imx219->regmap, IMX219_REG_DIGITAL_GAIN,
-> > @@ -422,7 +488,7 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
-> >  		break;
-> >  	case V4L2_CID_VBLANK:
-> >  		cci_write(imx219->regmap, IMX219_REG_VTS,
-> > -			  format->height + ctrl->val, &ret);
-> > +			  (format->height + ctrl->val) / rate_factor, &ret);
-> >  		break;
-> >  	case V4L2_CID_HBLANK:
-> >  		cci_write(imx219->regmap, IMX219_REG_HTS,
-> > @@ -463,7 +529,8 @@ static const struct v4l2_ctrl_ops imx219_ctrl_ops = {
-> >
-> >  static unsigned long imx219_get_pixel_rate(struct imx219 *imx219)
-> >  {
-> > -	return (imx219->lanes == 2) ? IMX219_PIXEL_RATE : IMX219_PIXEL_RATE_4LANE;
-> > +	return ((imx219->lanes == 2) ? IMX219_PIXEL_RATE :
-> > +		IMX219_PIXEL_RATE_4LANE) * imx219_get_rate_factor(imx219);
-> >  }
-> >
-> >  /* Initialize control handlers */
-> > @@ -592,29 +659,12 @@ static int imx219_set_framefmt(struct imx219 *imx219,
-> >  {
-> >  	const struct v4l2_mbus_framefmt *format;
-> >  	const struct v4l2_rect *crop;
-> > -	unsigned int bpp;
-> > -	u64 bin_h, bin_v;
-> > +	u32 bpp;
-> >  	int ret = 0;
-> >
-> >  	format = v4l2_subdev_state_get_format(state, 0);
-> >  	crop = v4l2_subdev_state_get_crop(state, 0);
-> > -
-> > -	switch (format->code) {
-> > -	case MEDIA_BUS_FMT_SRGGB8_1X8:
-> > -	case MEDIA_BUS_FMT_SGRBG8_1X8:
-> > -	case MEDIA_BUS_FMT_SGBRG8_1X8:
-> > -	case MEDIA_BUS_FMT_SBGGR8_1X8:
-> > -		bpp = 8;
-> > -		break;
-> > -
-> > -	case MEDIA_BUS_FMT_SRGGB10_1X10:
-> > -	case MEDIA_BUS_FMT_SGRBG10_1X10:
-> > -	case MEDIA_BUS_FMT_SGBRG10_1X10:
-> > -	case MEDIA_BUS_FMT_SBGGR10_1X10:
-> > -	default:
-> > -		bpp = 10;
-> > -		break;
-> > -	}
-> > +	bpp = imx219_get_format_bpp(format);
-> >
-> >  	cci_write(imx219->regmap, IMX219_REG_X_ADD_STA_A,
-> >  		  crop->left - IMX219_PIXEL_ARRAY_LEFT, &ret);
-> > @@ -625,28 +675,8 @@ static int imx219_set_framefmt(struct imx219 *imx219,
-> >  	cci_write(imx219->regmap, IMX219_REG_Y_ADD_END_A,
-> >  		  crop->top - IMX219_PIXEL_ARRAY_TOP + crop->height - 1, &ret);
-> >
-> > -	switch (crop->width / format->width) {
-> > -	case 1:
-> > -	default:
-> > -		bin_h = IMX219_BINNING_NONE;
-> > -		break;
-> > -	case 2:
-> > -		bin_h = bpp == 8 ? IMX219_BINNING_X2_ANALOG : IMX219_BINNING_X2;
-> > -		break;
-> > -	}
-> > -
-> > -	switch (crop->height / format->height) {
-> > -	case 1:
-> > -	default:
-> > -		bin_v = IMX219_BINNING_NONE;
-> > -		break;
-> > -	case 2:
-> > -		bin_v = bpp == 8 ? IMX219_BINNING_X2_ANALOG : IMX219_BINNING_X2;
-> 
-> So if I got this right, another way of handling this would be to
-> 
-> 		bin_v = (bpp == 8 || (format->width == 640 && format->height = 480)
->                       ? IMX219_BINNING_X2_ANALOG : IMX219_BINNING_X2;
-> 
-> 
-> I'm not sure how much better this is, as then freely configure the
-> sensor at (random numbers) 720x480@10bpp would not use analog binning
-> while it might be beneficial. Actually knowing what analog mode is how
-> it shuold be used would help, but if I recall correctly it wasn't
-> clear from documentation or not fully clarified by Sony ?
-> 
-> When it comes to scaling PIXEL_RATE, the above switch could be moved
-> to set_pad_format and store imx219->binning to be
-> 1) used here
-> 2) used in s_ctrl
-> 
-> like this patch does already.
-> 
-> Opinions ?
-> 
-> > -		break;
-> > -	}
-> > -
-> > -	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_H, bin_h, &ret);
-> > -	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_V, bin_v, &ret);
-> > +	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_H, imx219->binning, &ret);
-> > +	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_V, imx219->binning, &ret);
-> >
-> >  	cci_write(imx219->regmap, IMX219_REG_X_OUTPUT_SIZE,
-> >  		  format->width, &ret);
-> > @@ -851,6 +881,21 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
-> >  		int exposure_max;
-> >  		int exposure_def;
-> >  		int hblank;
-> > +		int pixel_rate;
-> > +
-> > +		/* Update binning mode based on format */
-> > +		switch (imx219_get_format_bpp(format)) {
-> > +		case 8:
-> > +			imx219->binning = mode->binning[BINNING_IDX_8_BIT];
-> > +			break;
-> > +
-> > +		case 10:
-> > +			imx219->binning = mode->binning[BINNING_IDX_10_BIT];
-> > +			break;
-> > +
-> > +		default:
-> > +			imx219->binning = BINNING_NONE;
-> > +		}
-> >
-> >  		/* Update limits and set FPS to default */
-> >  		__v4l2_ctrl_modify_range(imx219->vblank, IMX219_VBLANK_MIN,
-> > @@ -879,6 +924,11 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
-> >  					 IMX219_PPL_MAX - mode->width,
-> >  					 1, IMX219_PPL_MIN - mode->width);
-> >  		__v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
-> > +
-> > +		/* Scale the pixel rate based on the mode specific factor */
-> > +		pixel_rate = imx219_get_pixel_rate(imx219);
-> > +		__v4l2_ctrl_modify_range(imx219->pixel_rate, pixel_rate,
-> > +					 pixel_rate, 1, pixel_rate);
-> >  	}
-> >
-> >  	return 0;
-
+diff --git a/fs/file_table.c b/fs/file_table.c
+index 976736be47cb..502b81f614d9 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -128,7 +128,7 @@ static struct ctl_table fs_stat_sysctls[] = {
+ 		.data		= &sysctl_nr_open,
+ 		.maxlen		= sizeof(unsigned int),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_dointvec_minmax,
++		.proc_handler	= proc_douintvec_minmax,
+ 		.extra1		= &sysctl_nr_open_min,
+ 		.extra2		= &sysctl_nr_open_max,
+ 	},
 -- 
-Regards,
+2.41.1
 
-Laurent Pinchart
 
