@@ -1,133 +1,155 @@
-Return-Path: <linux-kernel+bounces-419396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E38D9D6D56
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 10:49:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FA939D6D59
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 10:55:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D108B2111F
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 09:49:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02DEE2814FC
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 09:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3361B15B0EF;
-	Sun, 24 Nov 2024 09:49:46 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1BC178378;
+	Sun, 24 Nov 2024 09:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V+VjuBz3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770F11714CF
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 09:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1B133987;
+	Sun, 24 Nov 2024 09:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732441785; cv=none; b=EGCzdKomZGMn9g9981+cq1xduaGZbOlRo5ganRb9FJmYa3vT3VuoPVdEhTtFF81nziROKudlE1a46qaQ3AbzQPwh79KbpAnCcFiLpFs1/cqvIc2AxT/JRGsVvfaroN75kvJFduBLLfUN+wZGOtnvyFXR8+MrNR933AMjMMFKsYo=
+	t=1732442101; cv=none; b=o6Wh505r61n1d83L8ukzCWCmpgAFHDeXj7hD5IYGtaO/SJpcgZmXivZxz42Xva90BUUi1+ahscRrynbO07wchywRtZtHa3iOL0By3u2mWP8Viw8rt2adoKEgnp8j1Zwy7eUrt9VHnrUc+BqBeSeu5iHDveIh6WbLmBrhU7MBv1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732441785; c=relaxed/simple;
-	bh=VQjlZzpEPLSHhJ+LVVkeqa2lj7Tm8/9zXD5QsVtxOEw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DO9W9aeT3XQlVb09uqJgmkZBqBzdDhpABbC6z+ROjy/gpbDfoeqZJrwLD74QYjJPWtrRklgzWggxLIYRbTS7UA9lPYHs0x5fW/jD6GPsa5VHEa1MNAC+7uSHdiJqe3ZmQ05I1h0RV15FZqi5/ZO3tbphWogk9uOsykr3nO8alkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tF9FD-0005zL-Kf; Sun, 24 Nov 2024 10:49:31 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tF9FD-002ND9-0Y;
-	Sun, 24 Nov 2024 10:49:31 +0100
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tF9FD-00CgUp-09;
-	Sun, 24 Nov 2024 10:49:31 +0100
-Date: Sun, 24 Nov 2024 10:49:31 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
-	Dent Project <dentproject@linuxfoundation.org>,
-	kernel@pengutronix.de,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH RFC net-next v3 18/27] net: pse-pd: Fix missing PI
- of_node description
-Message-ID: <Z0L2q-pUYufcOKra@pengutronix.de>
-References: <20241121-feature_poe_port_prio-v3-0-83299fa6967c@bootlin.com>
- <20241121-feature_poe_port_prio-v3-18-83299fa6967c@bootlin.com>
+	s=arc-20240116; t=1732442101; c=relaxed/simple;
+	bh=Ju2NM1n+0JxWamVT9l0hVU7x1rv4ubx8xQIT9My6QYk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kHbQUAhkdnYFIxeuw+6GITXN960U+/+ZMggJnF2El4gXmcPSfTviWGqRYVef1tBBU3N2ZoM1TexdAcHdSENJaDEvvLXvYPAvDlyfbBMcafIjAlbszzcndZhQPYNFpSTkrJTewQJOJEjWt/eSmLOUxijJ6BWKiO4W0P8MlsKgAZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V+VjuBz3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9148C4CECC;
+	Sun, 24 Nov 2024 09:54:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732442100;
+	bh=Ju2NM1n+0JxWamVT9l0hVU7x1rv4ubx8xQIT9My6QYk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=V+VjuBz3M2ue73E7lMnXXRLpEMM7hgAd7mSeeavHv32Y2D95Hs8++0LfMS/raknvk
+	 sPP9tCyUWBysl99B9STd1INyd6TJj7a4sQ9YAetrlz/qoIq/b5NAhoaUX0L7FnsNHc
+	 l+g3WsY4ivUDcV14eg04YW05wmZ9gj9s8LF7KuDqQTrquQanBCYd4+oGFIed0c1zZR
+	 bM72NbA4bmwELwWeXgI8m8+g45R8LLQ79N2feK+VkXlvuSGgxPwkdTxOBbx08vWs3f
+	 kSdGKUFx77j8nwecyrmzJ8Fj0iOqg2Lfy64NWHUgV1jd0GlT9Ax8t9up1XYkgufeU8
+	 5Tvf6A2bNrI7Q==
+Date: Sun, 24 Nov 2024 10:54:56 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>, 
+	lkml <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
+Subject: [GIT PULL] i2c-host for v6.13, part 2
+Message-ID: <bomhuajtvdsac6bsb5di6sixmr7pflgnmy7axmbpo6qwswm27d@bjwwk3mr5tbu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <20241121-feature_poe_port_prio-v3-18-83299fa6967c@bootlin.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 21, 2024 at 03:42:44PM +0100, Kory Maincent wrote:
-> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
-> 
-> The PI of_node was not assigned in the regulator_config structure, leading
-> to failures in resolving the correct supply when different power supplies
-> are assigned to multiple PIs of a PSE controller. This fix ensures that the
-> of_node is properly set in the regulator_config, allowing accurate supply
-> resolution for each PI.
-> 
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+Hi Wolfram,
 
-Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
+please find the description for the second part of the pull 
+request.
 
-> ---
-> 
-> Changes in v3:
-> - New patch
-> ---
->  drivers/net/pse-pd/pse_core.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/net/pse-pd/pse_core.c b/drivers/net/pse-pd/pse_core.c
-> index 8b5a9e7fd9c5..d4cf5523194d 100644
-> --- a/drivers/net/pse-pd/pse_core.c
-> +++ b/drivers/net/pse-pd/pse_core.c
-> @@ -419,6 +419,7 @@ devm_pse_pi_regulator_register(struct pse_controller_dev *pcdev,
->  	rconfig.dev = pcdev->dev;
->  	rconfig.driver_data = pcdev;
->  	rconfig.init_data = rinit_data;
-> +	rconfig.of_node = pcdev->pi[id].np;
->  
->  	rdev = devm_regulator_register(pcdev->dev, rdesc, &rconfig);
->  	if (IS_ERR(rdev)) {
-> 
-> -- 
-> 2.34.1
-> 
-> 
+Thank you again for accepting this second part. I believe we've
+now included all the accepted patches for I2C. For the next
+release, I plan to focus on clearing out leftovers from the past.
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+As always, feel free to advise or correct the tag description.
+I'm always open to suggestions and never bothered by them.
+
+Thank you,
+Andi
+
+The following changes since commit 1b3073291ddbe23fede7e0dd1b6f5635e370f8ba:
+
+  Merge tag 'i2c-host-6.13-p1' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-mergewindow (2024-11-18 08:35:47 +0100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-6.13-p2
+
+for you to fetch changes up to 68e7aa7ae92f5d5af1a3bfd0aae566e687b980fe:
+
+  MAINTAINERS: transfer i2c-aspeed maintainership from Brendan to Ryan (2024-11-22 22:17:43 +0100)
+
+----------------------------------------------------------------
+i2c-host updates for v6.13, part 2
+
+Improvements and refactoring:
+ - Qualcomm I2C now uses the generic device property functions.
+ - Nomadik controller updated to use of_match_device().
+ - Fixed the Baud Rate Counter (BRCR) calculation and handling in
+   the Nomadik controller, enabling support for frequencies above
+   1 MHz.
+
+New feature support:
+ - Added support for frequencies up to 3.4 MHz on Nomadik I2C.
+ - DesignWare now accounts for bus capacitance and clock
+   optimisation (declared as new parameters in the binding) to
+   improve the calculation of signal rise and fall times
+   (t_high and t_low).
+ - Added atomic transfer support to the Xilinx IIC controller.
+
+New Hardware support:
+ - DWAPB I2C controller on FUJITSU-MONAKA (new ACPI HID).
+ - Allwinner A523 (new compatible ID).
+ - Mobileye EyeQ6H (new compatible ID).
+
+Maintenance:
+ - Ryan replaces Brendan as the maintainer for the ASPEED
+   controller.
+
+----------------------------------------------------------------
+Andre Przywara (1):
+      dt-bindings: i2c: mv64xxx: Add Allwinner A523 compatible string
+
+Bartosz Golaszewski (1):
+      i2c: qup: use generic device property accessors
+
+Brendan Higgins (1):
+      MAINTAINERS: transfer i2c-aspeed maintainership from Brendan to Ryan
+
+Manikanta Guntupalli (2):
+      i2c: xiic: Relocate xiic_i2c_runtime_suspend and xiic_i2c_runtime_resume to facilitate atomic mode
+      i2c: xiic: Add atomic transfer support
+
+Michael Wu (2):
+      dt-bindings: i2c: snps,designware-i2c: declare bus capacitance and clk freq optimized
+      i2c: designware: determine HS tHIGH and tLOW based on HW parameters
+
+Théo Lebrun (6):
+      dt-bindings: i2c: nomadik: add mobileye,eyeq6h-i2c bindings
+      dt-bindings: i2c: nomadik: support 400kHz < clock-frequency <= 3.4MHz
+      i2c: nomadik: switch from of_device_is_compatible() to of_match_device()
+      i2c: nomadik: support Mobileye EyeQ6H I2C controller
+      i2c: nomadik: fix BRCR computation
+      i2c: nomadik: support >=1MHz speed modes
+
+Yoshihiro Furudera (1):
+      i2c: designware: Add ACPI HID for DWAPB I2C controller on FUJITSU-MONAKA
+
+ .../bindings/i2c/marvell,mv64xxx-i2c.yaml          |   1 +
+ .../bindings/i2c/snps,designware-i2c.yaml          |  18 ++
+ .../devicetree/bindings/i2c/st,nomadik-i2c.yaml    |  13 +-
+ MAINTAINERS                                        |   2 +-
+ drivers/i2c/busses/i2c-designware-common.c         |   5 +
+ drivers/i2c/busses/i2c-designware-core.h           |   6 +
+ drivers/i2c/busses/i2c-designware-master.c         |  23 +-
+ drivers/i2c/busses/i2c-designware-platdrv.c        |   1 +
+ drivers/i2c/busses/i2c-nomadik.c                   |  87 ++++---
+ drivers/i2c/busses/i2c-qup.c                       |   4 +-
+ drivers/i2c/busses/i2c-xiic.c                      | 287 +++++++++++++++++----
+ 11 files changed, 348 insertions(+), 99 deletions(-)
 
