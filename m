@@ -1,165 +1,315 @@
-Return-Path: <linux-kernel+bounces-420310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E1AC9D789D
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 23:39:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D7189D78EF
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 23:48:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B508AB23997
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 22:39:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A9DFB25E1F
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 22:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936D517A597;
-	Sun, 24 Nov 2024 22:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A10618B470;
+	Sun, 24 Nov 2024 22:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fv2Ix7zx"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Oql5kt1L"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2048.outbound.protection.outlook.com [40.107.244.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3EB13D246
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 22:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732487974; cv=none; b=e/GXuRf5BQa46PGswykUO0568YW6QZfcjMxGnMlijLhRp5CLz3HM8+Uji7wc/chmXrmtz29Lg8rUpQwinhxxAYShxKQFb5tZB0gJt2mrUZU0eRov5HLXnJb53mJRmZK0aM5Z71iKVBn/7MiqFpO/TltdJLCHjV5uRC1+Gr+50L8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732487974; c=relaxed/simple;
-	bh=UNkljXU1Th/F00ACjUWkzyCBqCMg14NM52aU91eCHhQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ny+PMGYNJeiP856yb0RddNr/kWLnFvLRou0Kn49XSfovfNUvkLnlnTJDVLayfnLcNlrujYCFkVzOS1eM8aF/otYuRSNbKGLemd3ZFd1v2bDXWkIcs00pLpvSlaItfPTjjj3sFcL/FXrlNbNopGcSApTTsiNLX4q5ir8NZfHYyaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=fv2Ix7zx; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa535eed875so207338966b.3
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 14:39:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732487971; x=1733092771; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mpf35aOuOMsH6rt6rf3g/KIHnIy4FQVAsb8BgJLC2NU=;
-        b=fv2Ix7zxxV4pHJhd6LqglDctLnPe/TV6akclbxldlI1vDNqerat5YVGArvB6CnJkFa
-         bNp4IVytSXl18gyNixkuNZxT+648N4PIa1vrmVKP5KwEwtunmfzt4gvcTO0BzqWAkjTG
-         W5+fljBggbRifugqaU4lbp24YrXGyDUK3w1hQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732487971; x=1733092771;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Mpf35aOuOMsH6rt6rf3g/KIHnIy4FQVAsb8BgJLC2NU=;
-        b=H7nSodKFdmc7lyYh3fB7naxIsA43H9yuctTz42Y4j1TSnnZLS2L3AufXDMSUgLazDn
-         9nXSWJ7Ac8TyCRsAbqyAInvw0ooARlHj/BEC1e+nNVX8BlJ1eGjR/t8/Xki9cbDzhyDH
-         gp+9a3Euwp4RWtG6I24ctxPB8VZrFaNFc/2ir/6b2YpGjRuVD6kQFCnTXOY122OcgCcS
-         6t6+KKG659AVc/Q53S7ysNRacIRwkGj4ckaO052K13/3nOO7Vhkk94ueWC0iYc26Vg4w
-         hHNWw32jn7ARrFWqFNWXTtcHQwULEukn31Td8kLuLdMZMgYVMMw8q+Ph0kUQGPo81Hzt
-         YOCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmoZ+y4MLmHXCpAHI1dsE0HZSIrzTKrNCH8KtpRbb9gN36Io26vOk7vgtcjBE1Vr+yXaP0y6pXL6ICv40=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2nb/rsZDCPN0/aHPEQG52FrdA4EbFmSR1lVkJS8qYF6cDOcKR
-	Rumj1nKLm9H/k5XBQClwE8EaqYz2wiBzcAtWzArEqq4hqNQ4FcGDUdCLgfSp5XKcuJjF+y8ds5j
-	kxpzojw==
-X-Gm-Gg: ASbGnctVqlS7B609izcC1Lm3cklk6qJBPYt+VTFdPTWxhH0by3Vm84Pdi1hW3jjnkrw
-	4hDnHJfZgKmqk/7dcRWvo0PJ0D8kRi8A8tB/zCG051X52R91tE85D5bmnlAzy1JwbBTP+iUOMIa
-	GhQjRDuE9kB2wxV3RNjSc0gHFG8nGbu8+x3U90pvSHGZprEob/8xoCHxbV1Gi0PA5YancKt8GMw
-	6D5ajYpyG/9BLqYy7FCwZOgAB4OXiXAfdDErUbVDeYvqclaKcbm54Pzj/KBfqfA2dx4vkESgWZV
-	SXqyIutadjxT2kyA4efHiq6F
-X-Google-Smtp-Source: AGHT+IE6lOhiV8AUT/AWS4FxtQDaY+UUJb+dcT6oiv5c4kdJ6oVocf3Xy+ko/9QcAtCv0+EgmZjhoA==
-X-Received: by 2002:a17:907:770f:b0:a9a:c57f:964f with SMTP id a640c23a62f3a-aa509e78de1mr1013130566b.16.1732487971011;
-        Sun, 24 Nov 2024 14:39:31 -0800 (PST)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa53299ff77sm253678566b.73.2024.11.24.14.39.28
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Nov 2024 14:39:29 -0800 (PST)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9e8522445dso555372066b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 14:39:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWMuLXFkj2Rv8iTnYhTqqmEZVKz6sdCp+E/S+8kLf+Hygu7eXeVi9Y85SwTWtoW+8LPpf2KQO/YUC/PAd0=@vger.kernel.org
-X-Received: by 2002:a17:906:2191:b0:aa5:d1c:3dac with SMTP id
- a640c23a62f3a-aa50d1c4062mr889546766b.36.1732487968121; Sun, 24 Nov 2024
- 14:39:28 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4477E188591;
+	Sun, 24 Nov 2024 22:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732488296; cv=fail; b=IxRwqB6bTZN8jLUaMRwyrLdoUv1qHbVGCprpXZlIW8gM9umvZzcG3O47VwDGzi2FlV32lXyU8LdGF2WKhUFAKyVrJ/+d6sASdwpTX3OLcN9Duxiaifk1QhrgoGGimrSmgAGI8YPg5EP8WDZbQHjSkhd2cmgG+xXMVQdnBfWM5TM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732488296; c=relaxed/simple;
+	bh=4Lc2wTnFyPssVqH6gpFBZorb6I5BEEOqetchfSp5deQ=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 Content-Type:MIME-Version; b=keOq9Tg3npMgBhanjWgpNLrhYtNY9zlZUfDZsfQG9Ybgsf9vTPCfIZ7C/Ev5FJD1cs1sbdWlu3E1d2XeUtZ5wyWyY0JXsHbYrr9Xfrb1OmxZTZBc5aakNnbfExbX97ZfS3UsNDPeLw6QkOvVVHktXTsQ5x4uIjmtRmX8iOk949I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Oql5kt1L; arc=fail smtp.client-ip=40.107.244.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Gd1qo9j82+7xPlfB6txnunry9X2ATTDXG1e0xByAdqnZRG3qjv4d/ICVDKvEwhLI44dHpxPFiVP9VjRgR4L18gv8WD2GjfwogjONLAgNLOxZY+mofoM7QeziDcCg3J2NU/cpvQcLQxeDiBsEvZmqqOxfDHLDEWw6X6ybrSIntftkbRea3oihKtULWN0455EN/OZAQgniHHbJUdr+ewd445Ddk9D0X69HoY5RBtemaTIfQdEocF1NrBRR79/Zj7zSAzKxLIgLVdNayNKzVXl9BEC61k8GBcBOZ5h6YgT9XvJgX6Jm3Ka7YsQt3Ycb50pOtdWNRDjglO5puGCm9dFTkA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=u0QE3J1WdM7jKNj2BilNkmIsq6SZVH90JFNJu4ZcePI=;
+ b=qps/HECtnRQBM21U4zz5zyFg/5LtBTOax82pzbT5/CZiOV5GooHad9/Lt7aEpWZhq75EBPn2Pw6X4p4dvvBsB1O5ZjC8ci0fIHge2eF5lyEAc+cykUT11QSn8nf4m0cvigAtyy1o81MskbYKzCV4Pzk7GfOmggbx/D3aBZsPOkUTgSvcgA2p3Hv4CKv2zgPYfqtfzW/VRM8QrE93jAVnCkNvdCEIeskcK0hF4tHo9b0eppE1BOt2L3P1WPFXoqcvfYu/zbKi9qvTEoZ9URhnag4PmUwdCGzCHX4LAbQJDgqpnRpRTQWfMigaFsms9G4yDd+rIfNOXfWT5JzZjWpi4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=u0QE3J1WdM7jKNj2BilNkmIsq6SZVH90JFNJu4ZcePI=;
+ b=Oql5kt1Lvo5u9CHXKYDxpO0fdAo6Nocew8kf+oSQojVmZA6f15PIiX1qd22N4Nz6zF5H602BuaCDJW9Nn5bYlHcOyesA5K+Mb1P3ZXWZ8bJGohdiEc8ZGOPkPcLQTTBBqVe8EYCY4Q83io69LoeYWB7A1gV3LEzGFlahLB4lYTAGFSmPuuKbLcIE5DS98WjVHI0LRkjqnvysbcw87YfCrfI98C3S49FU0ElBxTqJY6sQS9Uc+YNCmbbWE+ZbANkQ6YYm1zJAiOgZVpLYdNrDap9ltX3xTSQ7n48Lj/ZLZf9leQBQSQYuVEHQfT9DhUb75SI/q1yDPLunGkzUOVQTLA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ CH3PR12MB9023.namprd12.prod.outlook.com (2603:10b6:610:17b::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.27; Sun, 24 Nov
+ 2024 22:44:49 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%4]) with mapi id 15.20.8182.018; Sun, 24 Nov 2024
+ 22:44:49 +0000
+References: <27381b50b65a218da99a2448023b774dd75540df.1732239628.git-series.apopple@nvidia.com>
+ <20241122182013.GA2435164@bhelgaas>
+User-agent: mu4e 1.10.8; emacs 29.4
+From: Alistair Popple <apopple@nvidia.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: dan.j.williams@intel.com, linux-mm@kvack.org, lina@asahilina.net,
+ zhang.lyra@gmail.com, gerald.schaefer@linux.ibm.com,
+ vishal.l.verma@intel.com, dave.jiang@intel.com, logang@deltatee.com,
+ bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
+ will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
+ dave.hansen@linux.intel.com, ira.weiny@intel.com, willy@infradead.org,
+ djwong@kernel.org, tytso@mit.edu, linmiaohe@huawei.com, david@redhat.com,
+ peterx@redhat.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev,
+ linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+ jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com
+Subject: Re: [PATCH v3 10/25] pci/p2pdma: Don't initialise page refcount to one
+Date: Mon, 25 Nov 2024 09:39:54 +1100
+In-reply-to: <20241122182013.GA2435164@bhelgaas>
+Message-ID: <87ed30s142.fsf@nvdebian.thelocal>
+Content-Type: text/plain
+X-ClientProxiedBy: SY5P282CA0035.AUSP282.PROD.OUTLOOK.COM
+ (2603:10c6:10:206::18) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0edca3e5d2194cdf9812a8ccb42216e9@AcuMS.aculab.com>
- <CAHk-=wik4GHHXNXgzK-4S=yK=7BsNnrvEnSX3Funu6BFr=Pryw@mail.gmail.com>
- <b90410d3f213496ebfdd2f561281791b@AcuMS.aculab.com> <CAHk-=wgq1eEoUFK5mSUM6d53USDRaWY4G+ctTNEw9w_PsUqf1w@mail.gmail.com>
-In-Reply-To: <CAHk-=wgq1eEoUFK5mSUM6d53USDRaWY4G+ctTNEw9w_PsUqf1w@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 24 Nov 2024 14:39:11 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wh0oKkRHHqnft8mHaz5nuZNEspGQ5HW4oPJmGGwmccF1w@mail.gmail.com>
-Message-ID: <CAHk-=wh0oKkRHHqnft8mHaz5nuZNEspGQ5HW4oPJmGGwmccF1w@mail.gmail.com>
-Subject: Re: [PATCH v2] x86: Allow user accesses to the base of the guard page
-To: David Laight <David.Laight@aculab.com>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>, "bp@alien8.de" <bp@alien8.de>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@kernel.org>, 
-	Mikel Rychliski <mikel@mikelr.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|CH3PR12MB9023:EE_
+X-MS-Office365-Filtering-Correlation-Id: 41197f55-8e94-4596-83a4-08dd0cd99a3e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|366016|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?SQdupjQbXUDBKMP8At6jHBYgD4Dsp1Ekh/AlAOhycVowikOBhhRmzN1fpU/D?=
+ =?us-ascii?Q?mGB77mIjwCCTq2TyNvdVk1QsCBM03xcuJQ3oYKq8s4Q2oT8VpCgJTxA5b0I3?=
+ =?us-ascii?Q?wZ0hLrpTCAyyNvL3EhmRmNb+td+qy8LIhfyFhq1b+cIP5etXRCsNaLu6iPr0?=
+ =?us-ascii?Q?rGtnqSdIhaxPq+jMWEf4V8MZrkEKkCWbq/lhzVxCzkj0590QXV5vRLlmYzy9?=
+ =?us-ascii?Q?fqyky4CC6LXDvzIxjeOWnaLLigatwboOdZEijSrUrbB+cMN2zMsYONQ8YQtT?=
+ =?us-ascii?Q?fn8SFkpee2zynYVVSGY0lanssrGbPcnB5Vfbah5hCytCXhh2lrinYk23Tuy0?=
+ =?us-ascii?Q?t4ai2tXvnZDsZPWYUE2hKYC8yUt4qpg72B3a9m1m48p3GZLlwKv4vuLzLoFb?=
+ =?us-ascii?Q?zd854bBzL1Cw5xKvuY+DP9xC5x7oFo8ON5qQtJNnRRFd1KtZ4tmMZDua+UZC?=
+ =?us-ascii?Q?e3gpCY+BIkBYGfNtZUYv23R96EvARDEUIaAMiv+1dCQ77l4esG67xJ5e8e0c?=
+ =?us-ascii?Q?vPOPutqmDvoQa8XlF2QsE6/6a6zgFiABNbzZiPFi88k8ZSr2noP12CD9pM1T?=
+ =?us-ascii?Q?VvHSkD3vyRJteVJN02CKOW0YNqkV7ibqou1dU/s8YNxxcMtGpNNfFNwDWVsy?=
+ =?us-ascii?Q?qpESSCYPv5SHOSMcUjIf65U0aOxKgVEL3Qz9snXWb87UhOwFNZmXjjLtW1tm?=
+ =?us-ascii?Q?aa32PFAZ19hzl1l3uQdph8ELHQlHGNjKNi9UtV+YKQyFnuhWX5jFzhuDaejZ?=
+ =?us-ascii?Q?YUunuv97utO1ttmNXK4iliJNrrUUSY56jE7mGlBWikx0Ruje500zF4c+EqhD?=
+ =?us-ascii?Q?peTnn1lUWp/iGumLvRpCJ0k+jGZmybGzHSnKwkyHnJ1e3BvgSmmfkZpu2cdm?=
+ =?us-ascii?Q?vXI4K/oMboqlai8/RhOv3xBbhTI5SXkC9J8aWqh/uzK9GoWAPmPXGV2hCMHu?=
+ =?us-ascii?Q?v+GiAOYpKAdkTL+S1FidEvInLWUvXg+zKbML1pkL0uRgwx2RuKCxL1j/m6eN?=
+ =?us-ascii?Q?75vy+czvKAomJevQ4ky6ZMABsb0Ass9Pih+7qacfU+vkste2IHSfatMlhLoW?=
+ =?us-ascii?Q?NKdBC8SXxdvRQE/U8rLgQ+jzZhT5j0eoENxm5lXy54gB410bUFMY+4cMVMpa?=
+ =?us-ascii?Q?MrjF4dlEs53BXAv9811ezx0zyRfjcITDHFtgAobjC7t5mYKXempH9TLBlKFv?=
+ =?us-ascii?Q?fapRdja1cXRz17oXj3Qhqpoult4vwQPpmY1rLQ6OgIft7kEeUcStqNniPFiW?=
+ =?us-ascii?Q?n+gf2RkWcirj+U03DFjHu1CT6dnlOjakSyGWh8cSrXzKR8e5lFGqZtbJZT9v?=
+ =?us-ascii?Q?QxyWO1swRiXXmK5pAk6HiR0RHeG6drAceEooINXMouhV1GJ9wH2QH3ufjUEg?=
+ =?us-ascii?Q?Whu++pw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?gzfwcbVtGjHfUlO1myAyhYK7Xk8LDiw1rPsr0EATWKyG/HwfFLAwppKvMbVK?=
+ =?us-ascii?Q?k1eErJuHq3ACCCIyIfK92woa4VUQhw1RW5qF4rbzi8r+jYnXybpfTfow3Mxk?=
+ =?us-ascii?Q?nuOU8CfFdBkoAQNy7YroY+SpUVmrKmKqnED5KHb6jlmfXUROaqMwJWTvrgzs?=
+ =?us-ascii?Q?jsBn5u6Ce8mtOzBPpHMiiW0U4TZRxG6RTo5hdl0XmkklP0gTYB7AU6fgdC+r?=
+ =?us-ascii?Q?UxgxZfCl7RVaCB2oZYbvP034OrcbsetDtB7kbLKbtwI08gIPvZcJh0d1F6Nx?=
+ =?us-ascii?Q?sJYPpngTmb6GJGrBC55K3nG5t7700LUC3UPuHVtHzwGvRuSpkfLKJkajg6uD?=
+ =?us-ascii?Q?xSsBi/aC8izVhndnF7+7n4KtsmS/uryo/htfvny+PdnHC1dK0hI4hqE40IAG?=
+ =?us-ascii?Q?Jim1NamIezu5yG7QwzVwHDsZAd4kowZpDNqPw8eVNetpzkCNZVet+Z5CEpnz?=
+ =?us-ascii?Q?sLMldADIzBuVJjy6ka2nxlZ2We7DdXo7dnjE6+xEzSBuKqD/6mIWpttiuBzi?=
+ =?us-ascii?Q?ChX4n1djkSNTI4c6C+B/YyaLjFzeX4hdfpDXRnVrN8uGxXGyZ5sxdQxx1NRg?=
+ =?us-ascii?Q?bMSNOe8SHg4/fOc7WYpr1n0/SJN7wEwrcIva4LcC0DiTn4V7ktsU20FdxmiM?=
+ =?us-ascii?Q?+8UnvBBpYRnX9tdQ8qn+n5/S1FMBLLX3Wt4FONgf0EblzW/dqFt2bhzv09kD?=
+ =?us-ascii?Q?di7BO87wz7J9nLGJw/Xjcya2bg/+UuxMvuGYRIgjUQxWKmoOhvsFkxC1JDy8?=
+ =?us-ascii?Q?A5U40OztCqj+MTkva1axApfJHUsBiJOj/epWgJWMnI7uCxerlJTy/SC1fZoV?=
+ =?us-ascii?Q?ro0fJsa9NitAwLUSQiRNFY9rmIq5TOy5aU8I8DZ08PcCekOgKM8QL7+9y6kq?=
+ =?us-ascii?Q?YYK/XyUA5XWNxARRjQsyohzVMSXlltyyG03renjRjQK2PwOQi6VTgF5AJJNm?=
+ =?us-ascii?Q?ju58FhDyz9FH6GgjgmcFLu+yFuKFf41mt+LfANyN1npSNcTYo4uAy5fnmTAV?=
+ =?us-ascii?Q?P6cMAqCybpNwLLsyFVEJgdYqTmW0TNVgdREAqutMmg42qgurcyqO6eztlBd5?=
+ =?us-ascii?Q?35iXZPcyOscEIqaIRJZIMj/X9X6CtPexLs8CInvwtUOdTO27vosdXAhv90sF?=
+ =?us-ascii?Q?ELB/5SFk7oUg72srSbNCRZJNzqNmg5KFRZNd5GlJYYlDdMpJt3QNIrdHupPo?=
+ =?us-ascii?Q?vMI3fsdl9/CoBfeeN9ePdhBq3RqB2IZak8uTwBuRa/qcxVIFkEDaQ6Y8FDjA?=
+ =?us-ascii?Q?ex65oVzawFKJlztbwSNQTVNhDqMFzE1UybkoRM0V33R/j6DExIMpczhPAvPX?=
+ =?us-ascii?Q?Mglh1+RtFbrbFDEI2DhTwL3q1RbslBSUPoRO8vlJn1TyPF4NdBfTPPwSpowR?=
+ =?us-ascii?Q?sbfCmGJ32/qGMu2sw98/kHYw3eXZmUco11VtTx+bjL/mMcqpIR6gsu4Ozzji?=
+ =?us-ascii?Q?1JUzS1mAJ7uPfSZbH1koPMgXo4dsVakhLtT2zZubieNOPtJKBoIy6mtfug3f?=
+ =?us-ascii?Q?tH8BhDN5VaZ9Hl100UKbCD87ca0pM43qiCQYJR1GXBd/zQ896iz7AKlkk0FK?=
+ =?us-ascii?Q?a2booJKTryCsUdOdoGyL7fRtnsNb3sM0T/ideNb6?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41197f55-8e94-4596-83a4-08dd0cd99a3e
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Nov 2024 22:44:49.5571
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BC8pCDxCxdfKnPPrH/ZX+H1JtV0tDGsYYa/Gg9RF48lJ+M0NVAuyyZz+50q227Pw6KXv9eaoK3eLoW2lBmwVxQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9023
 
-On Sun, 24 Nov 2024 at 14:03, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+
+Bjorn Helgaas <helgaas@kernel.org> writes:
+
+> On Fri, Nov 22, 2024 at 12:40:31PM +1100, Alistair Popple wrote:
+>> The reference counts for ZONE_DEVICE private pages should be
+>> initialised by the driver when the page is actually allocated by the
+>> driver allocator, not when they are first created. This is currently
+>> the case for MEMORY_DEVICE_PRIVATE and MEMORY_DEVICE_COHERENT pages
+>> but not MEMORY_DEVICE_PCI_P2PDMA pages so fix that up.
+>> 
+>> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+>> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
 >
-> On Sun, 24 Nov 2024 at 12:49, David Laight <David.Laight@aculab.com> wrote:
-> >
-> > Doesn't that just need a <= changed to < ?
-> > (And possibly of name)
+> Previously suggested tweaks to subject line prefix and content:
+> https://lore.kernel.org/all/20240629212851.GA1484889@bhelgaas/
+> https://lore.kernel.org/all/20240910134745.GA577955@bhelgaas/
+
+Apologies Bjorn, I was so focussed on the DAX bits of this series which
+had grown significantly and forgot to update the P2PDMA stuff. It's
+largely independent of the DAX changes anyway, so unless you disagree I
+think it would be best if I split it out into a separate series. Thanks
+for taking a look.
+
+> I had the impression that you agreed there was the potential for some
+> confusion here, but it doesn't look like it was addressed.
 >
-> Well, more importantly, it means that we can't use the same helper
-> function at all.
+> So again, a PCI patch labeled "don't init refcount to one" where the
+> content initializes the refcount to one in p2pdma.c is still confusing
+> since (IIUC) the subject line refers to the NON-PCI code.
+>
+> Maybe some sort of "move refcount init from X to p2pdma" or addition
+> of *who* is no longer initializing refcount to one would clear this
+> up.
 
-Oh, the 'sbb' trick also ends up being one byte off if we increase
-USER_PTR_MAX from being the "maximum valid address" to being "one past
-the max valid address".
+To be clear I fully agree with the above, I just failed to do it.
 
-And yeah, none of this *matters*, since "one byte off" is then covered
-by the fact that we have that guard page, but this just ends up
-annoying me sense of how it all *should* work.
+ - Alistair
 
-I'm starting to think that instead of changing the USER_PTR_MAX value
-(that was selected to be the right constant for things that don't care
-about the size), we just say "the slow case of access_ok() takes a
-tiny hit".
+>> ---
+>> 
+>> Changes since v2:
+>> 
+>>  - Initialise the page refcount for all pages covered by the kaddr
+>> ---
+>>  drivers/pci/p2pdma.c | 13 +++++++++++--
+>>  mm/memremap.c        | 17 +++++++++++++----
+>>  mm/mm_init.c         | 22 ++++++++++++++++++----
+>>  3 files changed, 42 insertions(+), 10 deletions(-)
+>> 
+>> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
+>> index 4f47a13..2c5ac4a 100644
+>> --- a/drivers/pci/p2pdma.c
+>> +++ b/drivers/pci/p2pdma.c
+>> @@ -140,13 +140,22 @@ static int p2pmem_alloc_mmap(struct file *filp, struct kobject *kobj,
+>>  	rcu_read_unlock();
+>>  
+>>  	for (vaddr = vma->vm_start; vaddr < vma->vm_end; vaddr += PAGE_SIZE) {
+>> -		ret = vm_insert_page(vma, vaddr, virt_to_page(kaddr));
+>> +		struct page *page = virt_to_page(kaddr);
+>> +
+>> +		/*
+>> +		 * Initialise the refcount for the freshly allocated page. As
+>> +		 * we have just allocated the page no one else should be
+>> +		 * using it.
+>> +		 */
+>> +		VM_WARN_ON_ONCE_PAGE(!page_ref_count(page), page);
+>> +		set_page_count(page, 1);
+>> +		ret = vm_insert_page(vma, vaddr, page);
+>>  		if (ret) {
+>>  			gen_pool_free(p2pdma->pool, (uintptr_t)kaddr, len);
+>>  			return ret;
+>>  		}
+>>  		percpu_ref_get(ref);
+>> -		put_page(virt_to_page(kaddr));
+>> +		put_page(page);
+>>  		kaddr += PAGE_SIZE;
+>>  		len -= PAGE_SIZE;
+>>  	}
+>> diff --git a/mm/memremap.c b/mm/memremap.c
+>> index 40d4547..07bbe0e 100644
+>> --- a/mm/memremap.c
+>> +++ b/mm/memremap.c
+>> @@ -488,15 +488,24 @@ void free_zone_device_folio(struct folio *folio)
+>>  	folio->mapping = NULL;
+>>  	folio->page.pgmap->ops->page_free(folio_page(folio, 0));
+>>  
+>> -	if (folio->page.pgmap->type != MEMORY_DEVICE_PRIVATE &&
+>> -	    folio->page.pgmap->type != MEMORY_DEVICE_COHERENT)
+>> +	switch (folio->page.pgmap->type) {
+>> +	case MEMORY_DEVICE_PRIVATE:
+>> +	case MEMORY_DEVICE_COHERENT:
+>> +		put_dev_pagemap(folio->page.pgmap);
+>> +		break;
+>> +
+>> +	case MEMORY_DEVICE_FS_DAX:
+>> +	case MEMORY_DEVICE_GENERIC:
+>>  		/*
+>>  		 * Reset the refcount to 1 to prepare for handing out the page
+>>  		 * again.
+>>  		 */
+>>  		folio_set_count(folio, 1);
+>> -	else
+>> -		put_dev_pagemap(folio->page.pgmap);
+>> +		break;
+>> +
+>> +	case MEMORY_DEVICE_PCI_P2PDMA:
+>> +		break;
+>> +	}
+>>  }
+>>  
+>>  void zone_device_page_init(struct page *page)
+>> diff --git a/mm/mm_init.c b/mm/mm_init.c
+>> index 4ba5607..0489820 100644
+>> --- a/mm/mm_init.c
+>> +++ b/mm/mm_init.c
+>> @@ -1015,12 +1015,26 @@ static void __ref __init_zone_device_page(struct page *page, unsigned long pfn,
+>>  	}
+>>  
+>>  	/*
+>> -	 * ZONE_DEVICE pages are released directly to the driver page allocator
+>> -	 * which will set the page count to 1 when allocating the page.
+>> +	 * ZONE_DEVICE pages other than MEMORY_TYPE_GENERIC and
+>> +	 * MEMORY_TYPE_FS_DAX pages are released directly to the driver page
+>> +	 * allocator which will set the page count to 1 when allocating the
+>> +	 * page.
+>> +	 *
+>> +	 * MEMORY_TYPE_GENERIC and MEMORY_TYPE_FS_DAX pages automatically have
+>> +	 * their refcount reset to one whenever they are freed (ie. after
+>> +	 * their refcount drops to 0).
+>>  	 */
+>> -	if (pgmap->type == MEMORY_DEVICE_PRIVATE ||
+>> -	    pgmap->type == MEMORY_DEVICE_COHERENT)
+>> +	switch (pgmap->type) {
+>> +	case MEMORY_DEVICE_PRIVATE:
+>> +	case MEMORY_DEVICE_COHERENT:
+>> +	case MEMORY_DEVICE_PCI_P2PDMA:
+>>  		set_page_count(page, 0);
+>> +		break;
+>> +
+>> +	case MEMORY_DEVICE_FS_DAX:
+>> +	case MEMORY_DEVICE_GENERIC:
+>> +		break;
+>> +	}
+>>  }
+>>  
+>>  /*
+>> -- 
+>> git-series 0.9.1
 
-Kind of like Mikel Rychliski's patch, but we can certainly do better,
-ie something like
-
-  --- a/arch/x86/include/asm/uaccess_64.h
-  +++ b/arch/x86/include/asm/uaccess_64.h
-  @@ -101,8 +101,9 @@ static inline bool __access_ok(..
-                return valid_user_address(ptr);
-        } else {
-                unsigned long sum = size + (__force unsigned long)ptr;
-  +             unsigned long max = runtime_const_ptr(USER_PTR_MAX)+1;
-
-  -             return valid_user_address(sum) && sum >= (__force
-unsigned long)ptr;
-  +             return sum <= max && sum >= (__force unsigned long)ptr;
-        }
-   }
-   #define __access_ok __access_ok
-
-would seem like it should work, and now doesn't make the fast-cases be
-off by one.
-
-Yes, it adds a "add 1" to the runtime path (instead of the init-time
-constant fixup), which is admittedly annoying. But this really
-*should* be the slow path.
-
-We do have a few annoying non-constant access_ok() calls in core code.
-The iter code uses access_ok + raw_copy_to_user, because it's evil and
-bad. I'm really not sure why it does that. I think it's *purely* bad
-history, ie we used to do access_ok() far away from the iov_iter copy,
-and then did __copy_from_user(), and then at some point it got changed
-to have the access_ok() closer, rather than just use
-"copy_from_user()".
-
-So I get the feeling that those access_ok() cases could be removed
-entirely in favor of just using the right user copy function. Getting
-rid of the whole silly size checking thing.
-
-David, does that patch above work for you?
-
-           Linus
 
