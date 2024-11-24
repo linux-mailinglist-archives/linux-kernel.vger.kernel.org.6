@@ -1,155 +1,118 @@
-Return-Path: <linux-kernel+bounces-419397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FA939D6D59
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 10:55:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0243D9D6D5C
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 10:56:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02DEE2814FC
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 09:55:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B98882814B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 09:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1BC178378;
-	Sun, 24 Nov 2024 09:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118F1186294;
+	Sun, 24 Nov 2024 09:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V+VjuBz3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CH2EVsJ+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1B133987;
-	Sun, 24 Nov 2024 09:55:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2EC33987;
+	Sun, 24 Nov 2024 09:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732442101; cv=none; b=o6Wh505r61n1d83L8ukzCWCmpgAFHDeXj7hD5IYGtaO/SJpcgZmXivZxz42Xva90BUUi1+ahscRrynbO07wchywRtZtHa3iOL0By3u2mWP8Viw8rt2adoKEgnp8j1Zwy7eUrt9VHnrUc+BqBeSeu5iHDveIh6WbLmBrhU7MBv1w=
+	t=1732442201; cv=none; b=kwbDud8E3L+z6QKR7pP6CUS8Z4nV1Dz0hVjkrIuXdUdnPCAsjOjZc6mFvJt3xZUR0o7puv/ODHEVSZgTEP1aUFSynQH3ycZUV5fuy2U4zFRIhrCnotq7umpp+inMaBwAyllKAE/3Lgj18gNrpSvgU52CamspP7QBTfWb0UFEvS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732442101; c=relaxed/simple;
-	bh=Ju2NM1n+0JxWamVT9l0hVU7x1rv4ubx8xQIT9My6QYk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kHbQUAhkdnYFIxeuw+6GITXN960U+/+ZMggJnF2El4gXmcPSfTviWGqRYVef1tBBU3N2ZoM1TexdAcHdSENJaDEvvLXvYPAvDlyfbBMcafIjAlbszzcndZhQPYNFpSTkrJTewQJOJEjWt/eSmLOUxijJ6BWKiO4W0P8MlsKgAZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V+VjuBz3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9148C4CECC;
-	Sun, 24 Nov 2024 09:54:59 +0000 (UTC)
+	s=arc-20240116; t=1732442201; c=relaxed/simple;
+	bh=FtzR8QfDziwOhvMSs+hEciy3op5O9l9NexN6HGEXINU=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=pB+wtr2zqrULM2+voyZ0HVo6EG/J63TVJqAId7CJujzak4pD63BOREZjEX/e+R9uCKU4c2Mku+PMfOMQNudfZAmGHCcxLypoo0CEmLhzXQcHt7H4VdNETujYt0dVfOQ55u8+RA+cDcRior674kCYuwlysFn1gxYXYu5CsBdK6bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CH2EVsJ+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D0F0C4CECC;
+	Sun, 24 Nov 2024 09:56:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732442100;
-	bh=Ju2NM1n+0JxWamVT9l0hVU7x1rv4ubx8xQIT9My6QYk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=V+VjuBz3M2ue73E7lMnXXRLpEMM7hgAd7mSeeavHv32Y2D95Hs8++0LfMS/raknvk
-	 sPP9tCyUWBysl99B9STd1INyd6TJj7a4sQ9YAetrlz/qoIq/b5NAhoaUX0L7FnsNHc
-	 l+g3WsY4ivUDcV14eg04YW05wmZ9gj9s8LF7KuDqQTrquQanBCYd4+oGFIed0c1zZR
-	 bM72NbA4bmwELwWeXgI8m8+g45R8LLQ79N2feK+VkXlvuSGgxPwkdTxOBbx08vWs3f
-	 kSdGKUFx77j8nwecyrmzJ8Fj0iOqg2Lfy64NWHUgV1jd0GlT9Ax8t9up1XYkgufeU8
-	 5Tvf6A2bNrI7Q==
-Date: Sun, 24 Nov 2024 10:54:56 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>, 
-	lkml <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
-Subject: [GIT PULL] i2c-host for v6.13, part 2
-Message-ID: <bomhuajtvdsac6bsb5di6sixmr7pflgnmy7axmbpo6qwswm27d@bjwwk3mr5tbu>
+	s=k20201202; t=1732442200;
+	bh=FtzR8QfDziwOhvMSs+hEciy3op5O9l9NexN6HGEXINU=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=CH2EVsJ+3DLtocLj3hzQF/BkwbSDoPw4qXznAW/a864sb3SRocV79ZZbt1Yu9x7FR
+	 +dBb4hhB3CiyRtE3NeDbzbNEEXNClNvsX1p3dzmutxrSiWLyhqb7tLFIHiG5Ix6y6W
+	 4WMEp7m5SVg/A8enQyqS7y6EBbzi8gzXQJvD2HgVv8wWFbpXdUHJZ7UqfqsLuz5H9z
+	 OCMVgS91Y3FaQWsFa6fKdlY6tt/iDZnWP8c8aAcoP6SB6T2Ztc5ppQC3HQS/aG5uSs
+	 Wslv6kOxZ5GF/SrhoJ7uiZtMqTV0KECJ/j1jDDHcjY1u2fAGVLxVY3EdKhJQZLtmzU
+	 SgYRe8X9bDGnw==
+Date: Sun, 24 Nov 2024 10:56:38 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Frank Li <Frank.Li@nxp.com>
+CC: =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, imx@lists.linux.dev,
+ dlemoal@kernel.org, maz@kernel.org, tglx@linutronix.de, jdmason@kudzu.us
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v8_2/6=5D_PCI=3A_endpoint=3A_Add_RC-to-EP?=
+ =?US-ASCII?Q?_doorbell_support_using_platform_MSI_controller?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20241124071100.ts34jbnosiipnx2x@thinkpad>
+References: <20241116-ep-msi-v8-0-6f1f68ffd1bb@nxp.com> <20241116-ep-msi-v8-2-6f1f68ffd1bb@nxp.com> <20241124071100.ts34jbnosiipnx2x@thinkpad>
+Message-ID: <113B93C0-8384-431A-BE4D-AA98B67C342A@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Wolfram,
 
-please find the description for the second part of the pull 
-request.
 
-Thank you again for accepting this second part. I believe we've
-now included all the accepted patches for I2C. For the next
-release, I plan to focus on clearing out leftovers from the past.
+On 24 November 2024 08:11:00 CET, Manivannan Sadhasivam <manivannan=2Esadh=
+asivam@linaro=2Eorg> wrote:
+>On Sat, Nov 16, 2024 at 09:40:42AM -0500, Frank Li wrote:
+>> +static int pci_epc_alloc_doorbell(struct pci_epc *epc, struct pci_epf =
+*epf)
+>> +{
+>> +	struct device *dev =3D epc->dev=2Eparent;
+>> +	u16 num_db =3D epf->num_db;
+>> +	int i =3D 0;
+>> +	int ret;
+>> +
+>> +	guard(mutex)(&epc->lock);
+>> +
+>> +	ret =3D platform_device_msi_init_and_alloc_irqs(dev, num_db, pci_epc_=
+write_msi_msg);
+>> +	if (ret) {
+>> +		dev_err(dev, "Failed to allocate MSI, may miss 'msi-parent' at your =
+DTS\n");
+>
+>No need to mention 'msi-parent'=2E Just 'Failed to allocate MSI' is enoug=
+h=2E
 
-As always, feel free to advise or correct the tag description.
-I'm always open to suggestions and never bothered by them.
+If you look at the existing pcie_ep device tree nodes for all SoCs, you wi=
+ll see that it is very rare to see an EP node which specifies msi-parent=2E
 
-Thank you,
-Andi
+I guess that makes sense, since before this series, AFAICT, msi-parent was=
+ completely unused, so there was no need for an EP node to specify it=2E
 
-The following changes since commit 1b3073291ddbe23fede7e0dd1b6f5635e370f8ba:
+I'm okay to change the error print as you suggested, but in that case I re=
+ally think that we should add a comment above the check, something suggesti=
+ve like:
 
-  Merge tag 'i2c-host-6.13-p1' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-mergewindow (2024-11-18 08:35:47 +0100)
+/*
+ * The pcie_ep DT node has to specify
+ * 'msi-parent' for EP doorbell support to work=2E
+ * Right now only GIC ITS is supported=2E
+ * If you have GIC ITS and reached this print,
+ * perhaps you are missing 'msi-parent' in DT?
+ */
+if (ret) {
+        dev_err(dev, "Failed to allocate MSI\n");
+        return -ENODEV;
+}
 
-are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-6.13-p2
-
-for you to fetch changes up to 68e7aa7ae92f5d5af1a3bfd0aae566e687b980fe:
-
-  MAINTAINERS: transfer i2c-aspeed maintainership from Brendan to Ryan (2024-11-22 22:17:43 +0100)
-
-----------------------------------------------------------------
-i2c-host updates for v6.13, part 2
-
-Improvements and refactoring:
- - Qualcomm I2C now uses the generic device property functions.
- - Nomadik controller updated to use of_match_device().
- - Fixed the Baud Rate Counter (BRCR) calculation and handling in
-   the Nomadik controller, enabling support for frequencies above
-   1 MHz.
-
-New feature support:
- - Added support for frequencies up to 3.4 MHz on Nomadik I2C.
- - DesignWare now accounts for bus capacitance and clock
-   optimisation (declared as new parameters in the binding) to
-   improve the calculation of signal rise and fall times
-   (t_high and t_low).
- - Added atomic transfer support to the Xilinx IIC controller.
-
-New Hardware support:
- - DWAPB I2C controller on FUJITSU-MONAKA (new ACPI HID).
- - Allwinner A523 (new compatible ID).
- - Mobileye EyeQ6H (new compatible ID).
-
-Maintenance:
- - Ryan replaces Brendan as the maintainer for the ASPEED
-   controller.
-
-----------------------------------------------------------------
-Andre Przywara (1):
-      dt-bindings: i2c: mv64xxx: Add Allwinner A523 compatible string
-
-Bartosz Golaszewski (1):
-      i2c: qup: use generic device property accessors
-
-Brendan Higgins (1):
-      MAINTAINERS: transfer i2c-aspeed maintainership from Brendan to Ryan
-
-Manikanta Guntupalli (2):
-      i2c: xiic: Relocate xiic_i2c_runtime_suspend and xiic_i2c_runtime_resume to facilitate atomic mode
-      i2c: xiic: Add atomic transfer support
-
-Michael Wu (2):
-      dt-bindings: i2c: snps,designware-i2c: declare bus capacitance and clk freq optimized
-      i2c: designware: determine HS tHIGH and tLOW based on HW parameters
-
-Théo Lebrun (6):
-      dt-bindings: i2c: nomadik: add mobileye,eyeq6h-i2c bindings
-      dt-bindings: i2c: nomadik: support 400kHz < clock-frequency <= 3.4MHz
-      i2c: nomadik: switch from of_device_is_compatible() to of_match_device()
-      i2c: nomadik: support Mobileye EyeQ6H I2C controller
-      i2c: nomadik: fix BRCR computation
-      i2c: nomadik: support >=1MHz speed modes
-
-Yoshihiro Furudera (1):
-      i2c: designware: Add ACPI HID for DWAPB I2C controller on FUJITSU-MONAKA
-
- .../bindings/i2c/marvell,mv64xxx-i2c.yaml          |   1 +
- .../bindings/i2c/snps,designware-i2c.yaml          |  18 ++
- .../devicetree/bindings/i2c/st,nomadik-i2c.yaml    |  13 +-
- MAINTAINERS                                        |   2 +-
- drivers/i2c/busses/i2c-designware-common.c         |   5 +
- drivers/i2c/busses/i2c-designware-core.h           |   6 +
- drivers/i2c/busses/i2c-designware-master.c         |  23 +-
- drivers/i2c/busses/i2c-designware-platdrv.c        |   1 +
- drivers/i2c/busses/i2c-nomadik.c                   |  87 ++++---
- drivers/i2c/busses/i2c-qup.c                       |   4 +-
- drivers/i2c/busses/i2c-xiic.c                      | 287 +++++++++++++++++----
- 11 files changed, 348 insertions(+), 99 deletions(-)
+Kind regards,
+Niklas
 
