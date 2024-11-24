@@ -1,85 +1,120 @@
-Return-Path: <linux-kernel+bounces-420187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C679D7691
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:20:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EDC1164C9E
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:20:29 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2BDF53365;
-	Sun, 24 Nov 2024 17:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="e5gRR55a"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05B6B9D773E
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 19:20:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77601433AB
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 17:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8653EB2514C
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:24:52 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6C35BAF0;
+	Sun, 24 Nov 2024 17:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T2it6MTE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872BB2500C9;
+	Sun, 24 Nov 2024 17:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732468827; cv=none; b=t/lMrcUnoE+ZaFvRokvJnTVyk/gPhA7M8WGph5R35jtWdzhWA3LDx7Ux/WzxgH2kW7JlhLkUFeHiBg8c3ef06o6afY/n9wlpb5HFdVpljYbBX4EFi2XKic+1gO+v0SMBGT/tM3sDxrDm4oo+r8PrymzNsFI8at9rCESjYCs8cCM=
+	t=1732469084; cv=none; b=E3GyKPymsp971ZMlzRzm+qYE6sSiiFZp7nf+cAKKPd49lz//1Fa2C0yL0yf0zVLErVo/jnuugyJ6zRuXxwxUrqRFThVWp9FYbcBnMrDecUN1dHXCVQ2NZBj/2FkPfbUmJXeYsorJr+y/eFoGDedHEwnPhTeENBo55lsrlDTH6ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732468827; c=relaxed/simple;
-	bh=oTVUStx1Sq8VhcICsbjF8KXRzqMXiVCnwCfJV/n/i6s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t4OQa5+iivdSabu852qtU3JWrYD/nqNnIEzzc+COxMDSXlRBJG8P0I9VF6Pol+DwxgBsxHgVytRwBDhSTnMAIZr89KMTe5tDY1Piq9uURZCtATf2Dtc/0VfBy3yyPYxWbavzSePSf+CEjdsYN3SisoAWZZlJ3iMwPOWAypo/nqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=e5gRR55a; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <7d74caae-6a4c-43e6-ae5e-d2955a9a9fcf@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732468821;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eB/DaOTNV+23hCf9768jgIKuISC0rsE5LCF1LNpxYYc=;
-	b=e5gRR55aJN4T5yDft72qC0iZ0glYBjzo7FdPXuOpqRm+xfJ8qVzvGbF88tDZX4S0MdXYaX
-	BC81uiBuzuGOluq4uJ/1rnue8Ldbsg/9JMwpbbzk1eFSAEez/tZbWP59C6qWf6ysHusFpe
-	qUoxhEzLAuAe/5germ6xgp0o2824smg=
-Date: Sun, 24 Nov 2024 22:50:07 +0530
+	s=arc-20240116; t=1732469084; c=relaxed/simple;
+	bh=gBS9Xb9J9aUTspgdk8YKdUceNEXMi87MEJY9qeNPAok=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qqt0Oov4uukaWPdnEmCfq5n5nHGt7vt62KM3gYzzkiEe0qF09KoqSIIYCiXgPa43w9kRelVrYCoAiaBWnyaYnzMksJtKAXkQg/Cz+oV7GTCjobOAuj0hf2DmOfHKMaxVdapc7kPuP9tSkzEQIyPC3FYieORRhsFoobGTrp+WZ1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T2it6MTE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E091C4CECC;
+	Sun, 24 Nov 2024 17:24:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732469084;
+	bh=gBS9Xb9J9aUTspgdk8YKdUceNEXMi87MEJY9qeNPAok=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=T2it6MTEWkKftEs8ueslPHX9WP2/Vz5Aas4YWxOyRhB1xfRm5cU1jZunQz5PDCbBa
+	 /FqN4dbzriaKVB6HQwxsLAtLKoIWdPzRues6FXvEckJicaktWHVXyyNg4NN8jj5erf
+	 ItVpUhT0FCDxzhubVPTBtrWWDC9EBjws4xpsiFsoEfVYck04uu9nCw+aScEEvXO8XY
+	 qmmrad3EnGkrqZcC3j/e8LWfY6wOQYyHjZeFTA5jjicaXptQaC9R72FXTxYWOKF0C1
+	 BKmyEAykZqT2gM24uMcxXNpz2OQtbuQZwLkMRG6XSX/9tE8EV7YRWVpbEbUqqM/LP7
+	 pZoi4OxzUyp1Q==
+Date: Sun, 24 Nov 2024 17:24:33 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, David
+ Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>,
+ linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-pwm@vger.kernel.org
+Subject: Re: [PATCH v5 12/16] iio: adc: ad7944: add support for SPI offload
+Message-ID: <20241124172433.78079a9c@jic23-huawei>
+In-Reply-To: <20241115-dlech-mainline-spi-engine-offload-2-v5-12-bea815bd5ea5@baylibre.com>
+References: <20241115-dlech-mainline-spi-engine-offload-2-v5-0-bea815bd5ea5@baylibre.com>
+	<20241115-dlech-mainline-spi-engine-offload-2-v5-12-bea815bd5ea5@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 3/7] drm/tidss: Remove extra K2G check
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Devarsh Thakkar <devarsht@ti.com>, Jyri Sarha <jyri.sarha@iki.fi>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Jonathan Cormier <jcormier@criticallink.com>
-References: <20241021-tidss-irq-fix-v1-0-82ddaec94e4a@ideasonboard.com>
- <20241021-tidss-irq-fix-v1-3-82ddaec94e4a@ideasonboard.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
-In-Reply-To: <20241021-tidss-irq-fix-v1-3-82ddaec94e4a@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
+On Fri, 15 Nov 2024 14:18:51 -0600
+David Lechner <dlechner@baylibre.com> wrote:
 
-
-On 10/21/24 19:37, Tomi Valkeinen wrote:
-> We check if the platform is K2G in dispc_k3_clear_irqstatus(), and
-> return early if so. This cannot happen, as the _k3_ functions are never
-> called on K2G in the first place. So remove the check.
+> This adds support for SPI offload to the ad7944 driver. This allows
+> reading data at the max sample rate of 2.5 MSPS.
 > 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+One request for some documentation on the storagebits value.
+
+Otherwise looks good to me.
+
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+Note I'm giving tags because it might not all go through my tree +
+it's big and complex so they have the advantage I won't read things
+again if I've already tagged them (probably!)
+
+Jonathan
 
 
-Reviewed-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+> @@ -129,13 +144,33 @@ static const struct ad7944_chip_info _name##_chip_info = {		\
+>  		},							\
+>  		IIO_CHAN_SOFT_TIMESTAMP(1),				\
+>  	},								\
+> +	/* basically the same minus soft timestamp plus sampling freq */\
+> +	.offload_channels = {						\
+> +		{							\
+> +			.type = IIO_VOLTAGE,				\
+> +			.indexed = 1,					\
+> +			.differential = _diff,				\
+> +			.channel = 0,					\
+> +			.channel2 = _diff ? 1 : 0,			\
+> +			.scan_index = 0,				\
+> +			.scan_type.sign = _diff ? 's' : 'u',		\
+> +			.scan_type.realbits = _bits,			\
+> +			.scan_type.storagebits = 32,			\
 
-Regards
-Aradhya
+Add a comment somewhere here on why it jumps up to 32 bits.
 
-[...]
+> +			.scan_type.endianness = IIO_CPU,		\
+> +			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW)	\
+> +					| BIT(IIO_CHAN_INFO_SCALE)	\
+> +					| BIT(IIO_CHAN_INFO_SAMP_FREQ),	\
+> +			.info_mask_separate_available =			\
+> +				BIT(IIO_CHAN_INFO_SAMP_FREQ),		\
+> +		},							\
+> +	},								\
+>  }
+
+
 
