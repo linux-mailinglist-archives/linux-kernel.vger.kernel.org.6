@@ -1,87 +1,115 @@
-Return-Path: <linux-kernel+bounces-420138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E95389D7765
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 19:35:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B319D7575
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:44:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61081168623
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:44:33 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872531E517;
+	Sun, 24 Nov 2024 15:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="g1HoafMf"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14753B3745E
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:42:16 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B182500CE;
-	Sun, 24 Nov 2024 15:42:04 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD1B2500B2
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 15:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F70E2500AE
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 15:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732462924; cv=none; b=dFR6j3p4uRcbnqtEv7UexgWoDYbWfnp94cJtJ3EWHH6sYoWNyHWCeuUVJhUeAz6PIR32/Fjdl839yYgOuoKz4C+pYhvOtS4UvMvJBn/+eq8LZ6oNaT2qRC9nZsOJBoB2m681D+fgLFC8E3U64LU5CBamvd3ttehI0GWQObXL3Ps=
+	t=1732463070; cv=none; b=gi4P167NrOvC9AO5Dx5BZi2ajw9uuwbuWp50m9ADQuYWq9ijkCWvThQsF/2FcbMpgTlzOOPwiOiCAfXY9rjuX8U0wRZnJOD7YB7q/NjKc9+s5+0Et8+AjGomfj/0raltRgk+9+CagYVoZoAfpLlfDA9lmNQA4RH25hynRxy9wBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732462924; c=relaxed/simple;
-	bh=Z/KQKu+c5WEklNo+Yt688x1xWLnf+a3nL7woaIVkYp8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cPhzDTV5gGG1FOw4YuoJDZg504GZ8V8aUhTXU1m+xo4xHKeFq5t0SQorzGW+z+PK/5+F2oQuP40bMfgrF5z3wXnockObnvGUyGN5SlKKS2vEvKVhxRuakfjAGp/VCDbTBr3JuipsFncGEzEPUrKGJEqhZa1nBg7+bjwDByOFVsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83e5dc9f6a4so436480639f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 07:42:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732462922; x=1733067722;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=coRcVNZpynG+ZxE9nHIs5dACc/byHyLl4kWizERwmks=;
-        b=cYPPbymdsprRey8w19iH4cZSg3/GwCx6agPFDsXEUldYQDQjDujeJj/E8roZb4gXgO
-         iCJm+cd8oKJY4lTXyEMPp+ftw4MpkfkrHSsTIW1Utx7AiyC6j13qNJamQf3xV8QGJm5f
-         qIbCHkYKiwVxvrINQ1tNiS50kgyFwqIjncwmtv0cg3bz0bDwqIwmrTXV5MgIqa97iaL2
-         qWIxFUJf0JHDlkwN5t8MKwKtNAd6RsczH223vYi82t4ehdJC06tLvzxvBoTN6GJSdcuv
-         XMy7rUUhPa84/JlpguHLSBumR13o/atjh3IPnImsiyJcgJBdNpA6I8qHUVznx7SuKa83
-         oUCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDhLNdC3W6ZS/Dr4Srn+zPAYCKhKTIu5yQxeiZHNCCB5E34VxzqVPb/AuHhmQJqYj+4YP7lwq4w9Kso2g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZz538uIpZsLbYLCJ65wUC1D0xfdWWsj2g10wRZY1jsrCJADst
-	ileYQVGXH7CsTkQuxUst38+9RP+a0bj/fw4TGVqyvZseeFWM8k1MepztV3sZHVFutMFa05Wz3qB
-	NgMqDIsNJ1deSZmjX+rUFLdJWrQE9KYqs+iJxCaA5QFjokCxTGUalniw=
-X-Google-Smtp-Source: AGHT+IHVizeF5m7kAeRVtJocK86791i3Jl+BSPmPJQC/yyO7LSgAuZfVEZxbxgS3AmzKG/QoMRGMAfCa1aWO1ZoTb6LsAKrTEJK5
+	s=arc-20240116; t=1732463070; c=relaxed/simple;
+	bh=QNq3MShJzyYlomkqqFJXRMbUOwOZK6Ab2LhATuvDetU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CsuhBV+hPRRkx8l5dCkBh57WnGyPssRVwqx4Idog/Ze3OZXzzpiUHT5Xeblyty9iTgRG1miI8TvTcm67AEucSe5YoR5SXDxaNWUpYhjpsIIXmbwX//QsIMRZhgYIOXPerguQY6bpOsbLR6estEAQqgLWTE1KFFkVfmS3NhEI7pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=g1HoafMf; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=y9Hk
+	iHe/0Z2kAZzsl1L90rtLwOAih1e5v4jOo9Fx4Fk=; b=g1HoafMfG2kGQHKq5v+T
+	eclHraaBQRJB9/9szYXokYChEuyYjs5EIz5ldggAfDNwiR8TP4HRwxlk9Y/+ynZB
+	vOAc5DXTj1rRRcs036gGATb/uJ9Dmjs0bodI7Z/4y6qgfeRoMzPw16J5qWn2KPSf
+	xSVMFQls7AAVQ8TXqXaKp7Dmv1WiDau95qYVasoXs8j8IwHR5a5Ui1GeFOGkJZi9
+	KivmKCnPfM7f+RtB52A9Ik8U+T0jA6p01Gz2kfXuWt1njFU8n//dDBzFFn+d9wQE
+	rKIvoELXZnhgslE3Cv1fLcZlmPyUoq4vCSKubLCUviQc0EmcILzQxr4EqHXuhRu0
+	Sg==
+Received: (qmail 2190154 invoked from network); 24 Nov 2024 16:44:24 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Nov 2024 16:44:24 +0100
+X-UD-Smtp-Session: l3s3148p1@90GKfaongq1ehhYY
+Date: Sun, 24 Nov 2024 16:44:24 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] i2c-host for v6.13, part 2
+Message-ID: <Z0NJ2HjyP0KrKKWx@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	linux-i2c <linux-i2c@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+References: <bomhuajtvdsac6bsb5di6sixmr7pflgnmy7axmbpo6qwswm27d@bjwwk3mr5tbu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a8f:b0:3a7:a58b:557e with SMTP id
- e9e14a558f8ab-3a7a58b693bmr48683065ab.12.1732462922271; Sun, 24 Nov 2024
- 07:42:02 -0800 (PST)
-Date: Sun, 24 Nov 2024 07:42:02 -0800
-In-Reply-To: <tencent_C2474B031BD225AABA42BB7D33FC9E861B08@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6743494a.050a0220.1cc393.0043.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] WARNING in hfsplus_unlink
-From: syzbot <syzbot+028180f480a74961919c@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="UZ5dABewy86X1etV"
+Content-Disposition: inline
+In-Reply-To: <bomhuajtvdsac6bsb5di6sixmr7pflgnmy7axmbpo6qwswm27d@bjwwk3mr5tbu>
 
-Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+--UZ5dABewy86X1etV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Reported-by: syzbot+028180f480a74961919c@syzkaller.appspotmail.com
-Tested-by: syzbot+028180f480a74961919c@syzkaller.appspotmail.com
+Hi Andi,
 
-Tested on:
+> Thank you again for accepting this second part. I believe we've
+> now included all the accepted patches for I2C. For the next
+> release, I plan to focus on clearing out leftovers from the past.
 
-commit:         9f16d5e6 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=162c375f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e92fc420ca55fe33
-dashboard link: https://syzkaller.appspot.com/bug?extid=028180f480a74961919c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=177319c0580000
+Please note that I dropped the xiic patches. There was a valid review
+comment pointing out NULL-pointer problems. This needs at least one more
+cycle.
 
-Note: testing is done by a robot and is best-effort only.
+> As always, feel free to advise or correct the tag description.
+> I'm always open to suggestions and never bothered by them.
+
+I shortened it a little but not much. Check my pull request.
+
+Thanks for your work!
+
+   Wolfram
+
+
+--UZ5dABewy86X1etV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmdDSdgACgkQFA3kzBSg
+KbaDkg/9EkvJ6bHU/kTtVg7UbKCl7sf6WGia8wulh9d5kxr7u/p4jnr5/uSJUypp
+bGj635Ea7hGUZs7KZsTLGrbg81wWX0v9Idd49CrG18bLHFXx5yoKJU13OTE5c5y/
+0GcNPHHtPCH1chlZZVh5kc1KBCtrA5iPmQODqchVvk0H+PgsViSHGW/FfMof/T06
+BnR02bb9gQWRFerccLcIwrzvSlQSuhOKRFHjow6v8vmjZvr3No+uIQr1sxW16uTY
+mcC6WpyyGSotpUItGCOklPtSloX7CoZEBXxSBQ0KnH8hQil3HQPvneLphOccia1v
+a85jN6ZHOJchKKuUeLKjMbXXfHv07VGqHHaOBq5DSTuoRQtaAPchkXQo/9PpOLln
+nRizRQHZOgpGxNqbvkAIJMVbLvAgrneLgWntK0xHaRzCMsdemUjiKfgeEzPtEj/t
+4gLy7AlQcaZNMeiBXp+Qr/AFB+IFzVBMlX0nptV2mAPY254Gks+5+wXIS7gwYrsc
+5RWiOLv5KjguBQYVUViyd03C06ZH0z2s+0IE1A2tjhsPWmTm/nDCz20/MaZat9u1
+dxclF6yvqzEsXXMQugAjOO19ipfKNguvQ0oWcok68cUMZvY4mWfedJyFy9IeE11j
+lHsrZkQx0uatfCxy1lUO/olCODb34VEXx/7frAwojw5fbKPm8Ok=
+=9+ho
+-----END PGP SIGNATURE-----
+
+--UZ5dABewy86X1etV--
 
