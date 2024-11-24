@@ -1,96 +1,146 @@
-Return-Path: <linux-kernel+bounces-420161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 055579D7605
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:40:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE7529D760A
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:41:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFAFE2829F5
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:40:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 929822834EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3FCA18B468;
-	Sun, 24 Nov 2024 16:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1BD18A6D4;
+	Sun, 24 Nov 2024 16:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BcHso7FN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jc9AB0Vb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC82188591;
-	Sun, 24 Nov 2024 16:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A7A188591
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 16:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732466419; cv=none; b=XvMvymEGT+hEpRI6uAlUp9sqvSY+2MQVX4gwoHQurx+XZF+3kUPX1cixxebpbS+McgW/d4Yutcyj8hH0/UoGjX0ZRTrFYxgw2nDBPh0limAyJ4HbYx1X7q6oVoV3HvjDEfkv3OO+DAfXKx5ByfzkPRV1I8NloJumy7DYyQoDrBc=
+	t=1732466501; cv=none; b=WgP05FeThCPWQDHsUbk9zDvk/dWWhF59mML4iQ8aJL7dnPYfZigvLlGREze1wGCKegISqH/2bbPkegBC1rib+RbwgJN3xSn1QrhtR4URAN4QsGb8r9o3i2sGvlyfRyUI2n5ulcWn7bB+JZEVAG6nJDdRHN+0O3FEqjRXYMkZBJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732466419; c=relaxed/simple;
-	bh=ff6MOp1koNCPydpHXMFqMXScTcgzcrX7XCuPo8+XNJU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=afsZxqlwOvBZxCErf0+XiFfpJXwh0oM8kPxyhilI6oQrKpJRgZWl/WH6W6c8/mAdUlGwFuuQaulrunERx+xUb13OrFZcTyeOu+OlxeeO6xtkaKTKjJddXzki9V7KLZymaL9We62HQOpkXC7U1Opu2HhSrqs7Nrs8Hm77/kWMQ88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BcHso7FN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17B3BC4CECC;
-	Sun, 24 Nov 2024 16:40:13 +0000 (UTC)
+	s=arc-20240116; t=1732466501; c=relaxed/simple;
+	bh=kD8V7wEaAgQ1Y78HhvcyEpwD0B7CEafpldX0hsH9Nz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jY/HYYs+Wn1D5IEyYwEzTAfoYfcj78iwlo84rFjpqZlbjzNW+kSIyuzu6zkZEcajgdZPt4CRsDJ+YLxvc40rZ4VhwIMv/f0XrnMAc3PAPo2EIGBeK3f9LiKWsoZxYTr73pCZ8DrkkTFigThMZORRxc7FfD7KH5vav6cJDl7bCdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jc9AB0Vb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88473C4CECC;
+	Sun, 24 Nov 2024 16:41:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732466418;
-	bh=ff6MOp1koNCPydpHXMFqMXScTcgzcrX7XCuPo8+XNJU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BcHso7FNSv4Bl1MbQgwndisE5PDRqh7I0IWqx9wFZQuA34hqkwFkuG2uzc2iGKECb
-	 N+8dsmizM7GWcAbxDXALJTsr7e7Ucbcua6dAAYDbC/KmlrRXiBrAmz4RsmvaSyuF7Z
-	 lIS10ujumHhgUn79BGBFlV+Vl+zO84lgnbxhIELU0vW7miInSa6KNkPksCs83idZrL
-	 XVOnZhAdrb9GjESgX8gqmRWb0sCKCRXwOonLa3YQGVFdPOeuTJQOaeJaTMjhIIHUS3
-	 9B5b2E0Fcz3ymm+CGEIXLGaU+YJWmIjkj4aHqy/DGGsq5RuEKd8TnCQihNmB7Iq/ms
-	 TSgxCLTnZ3Khg==
-Date: Sun, 24 Nov 2024 16:40:09 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, David
- Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>,
- linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v5 02/16] spi: offload: add support for hardware
- triggers
-Message-ID: <20241124164009.41395009@jic23-huawei>
-In-Reply-To: <20241115-dlech-mainline-spi-engine-offload-2-v5-2-bea815bd5ea5@baylibre.com>
-References: <20241115-dlech-mainline-spi-engine-offload-2-v5-0-bea815bd5ea5@baylibre.com>
-	<20241115-dlech-mainline-spi-engine-offload-2-v5-2-bea815bd5ea5@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1732466500;
+	bh=kD8V7wEaAgQ1Y78HhvcyEpwD0B7CEafpldX0hsH9Nz8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jc9AB0VbNP+6nHDswQYSJI/u8u3R7P18gKj+ETQiRNrwkutvJqZ9Li6TQotV0ldbY
+	 caoLGDaqMkrDz7/WkXKF07TV8xSkPu52YhuTyYsPQTDR2/VvnXkCDbgSe7gS83aKSj
+	 sndrHoVsqKQDwwDUeinAdb5hFoy53MYatDkF0826AZLoQdbfat9aCnMpe0lBnryVV8
+	 V+BFmN6DTWO5r/HWAnkWMwi0Geb1s1lHCcnZ7voO+2Ve8X4CNmTQiTKCoMn7LDH9VQ
+	 7o2yWRgjhUCccRgY4zZDI5xDebAtsHXY3gUAQHqbQPmrAct0QiQ2IiFYudfAM0BmFc
+	 Ol80zV2wZt/tg==
+Date: Sun, 24 Nov 2024 11:41:39 -0500
+From: Sasha Levin <sashal@kernel.org>
+To: Dave Airlie <airlied@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Sima Vetter <sima@ffwll.ch>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [git pull] drm for 6.13-rc1
+Message-ID: <Z0NXQ6iRK43x6WbG@sashalap>
+References: <CAPM=9txbfH8vf-YjwTXEYL729a6r2eeLBxCJc3MSD-t5jXVA-w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAPM=9txbfH8vf-YjwTXEYL729a6r2eeLBxCJc3MSD-t5jXVA-w@mail.gmail.com>
 
-On Fri, 15 Nov 2024 14:18:41 -0600
-David Lechner <dlechner@baylibre.com> wrote:
+On Thu, Nov 21, 2024 at 10:25:45AM +1000, Dave Airlie wrote:
+>Hi Linus,
+>
+>This is the main drm pull request for 6.13.
+>
+>I've done a test merge into your tree, there were two conflicts both
+>of which seem easy enough to resolve for you.
+>
+>There's a lot of rework, the panic helper support is being added to
+>more drivers, v3d gets support for HW superpages, scheduler
+>documentation, drm client and video aperture reworks, some new
+>MAINTAINERS added, amdgpu has the usual lots of IP refactors, Intel
+>has some Pantherlake enablement and xe is getting some SRIOV bits, but
+>just lots of stuff everywhere.
+>
+>Let me know if there are any issues,
 
-> Extend SPI offloading to support hardware triggers.
-> 
-> This allows an arbitrary hardware trigger to be used to start a SPI
-> transfer that was previously set up with spi_optimize_message().
-> 
-> A new struct spi_offload_trigger is introduced that can be used to
-> configure any type of trigger. It has a type discriminator and a union
-> to allow it to be extended in the future. Two trigger types are defined
-> to start with. One is a trigger that indicates that the SPI peripheral
-> is ready to read or write data. The other is a periodic trigger to
-> repeat a SPI message at a fixed rate.
-> 
-> There is also a spi_offload_hw_trigger_validate() function that works
-> similar to clk_round_rate(). It basically asks the question of if we
-> enabled the hardware trigger what would the actual parameters be. This
-> can be used to test if the requested trigger type is actually supported
-> by the hardware and for periodic triggers, it can be used to find the
-> actual rate that the hardware is capable of.
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-LGTM
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Hey Dave,
+
+After the PR was merged, I've started seeing boot failures reported by
+KernelCI:
+
+[    4.395400] mediatek-drm mediatek-drm.5.auto: bound 1c014000.merge (ops 0xffffd35fd12975f8)
+[    4.396155] mediatek-drm mediatek-drm.5.auto: bound 1c000000.ovl (ops 0xffffd35fd12977b8)
+[    4.411951] mediatek-drm mediatek-drm.5.auto: bound 1c002000.rdma (ops 0xffffd35fd12989c0)
+[    4.536837] mediatek-drm mediatek-drm.5.auto: bound 1c004000.ccorr (ops 0xffffd35fd1296cf0)
+[    4.545181] mediatek-drm mediatek-drm.5.auto: bound 1c005000.aal (ops 0xffffd35fd1296a80)
+[    4.553344] mediatek-drm mediatek-drm.5.auto: bound 1c006000.gamma (ops 0xffffd35fd12972b0)
+[    4.561680] mediatek-drm mediatek-drm.5.auto: bound 1c014000.merge (ops 0xffffd35fd12975f8)
+[    4.570025] ------------[ cut here ]------------
+[    4.574630] refcount_t: underflow; use-after-free.
+[    4.579416] WARNING: CPU: 6 PID: 81 at lib/refcount.c:28 refcount_warn_saturate+0xf4/0x148
+[    4.587670] Modules linked in:
+[    4.590714] CPU: 6 UID: 0 PID: 81 Comm: kworker/u32:3 Tainted: G        W          6.12.0 #1 cab58e2e59020ebd4be8ada89a65f465a316c742
+[    4.602695] Tainted: [W]=WARN
+[    4.605649] Hardware name: Acer Tomato (rev2) board (DT)
+[    4.610947] Workqueue: events_unbound deferred_probe_work_func
+[    4.616768] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    4.623715] pc : refcount_warn_saturate+0xf4/0x148
+[    4.628493] lr : refcount_warn_saturate+0xf4/0x148
+[    4.633270] sp : ffff8000807639c0
+[    4.636571] x29: ffff8000807639c0 x28: ffff34ff4116c640 x27: ffff34ff4368e080
+[    4.643693] x26: ffffd35fd1299ac8 x25: ffff34ff46c8c410 x24: 0000000000000000
+[    4.650814] x23: ffff34ff4368e080 x22: 00000000fffffdfb x21: 0000000000000002
+[    4.657934] x20: ffff34ff470c6000 x19: ffff34ff410c7c10 x18: 0000000000000006
+[    4.665055] x17: 666678302073706f x16: 2820656772656d2e x15: ffff800080763440
+[    4.672176] x14: 0000000000000000 x13: 2e656572662d7265 x12: ffffd35fd2ed14f0
+[    4.679297] x11: 0000000000000001 x10: 0000000000000001 x9 : ffffd35fd0342150
+[    4.686418] x8 : c0000000ffffdfff x7 : ffffd35fd2e21450 x6 : 00000000000affa8
+[    4.693539] x5 : ffffd35fd2ed1498 x4 : 0000000000000000 x3 : 0000000000000000
+[    4.700660] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff34ff40932580
+[    4.707781] Call trace:
+[    4.710216]  refcount_warn_saturate+0xf4/0x148 (P)
+[    4.714993]  refcount_warn_saturate+0xf4/0x148 (L)
+[    4.719772]  kobject_put+0x110/0x118
+[    4.723335]  put_device+0x1c/0x38
+[    4.726638]  mtk_drm_bind+0x294/0x5c0
+[    4.730289]  try_to_bring_up_aggregate_device+0x16c/0x1e0
+[    4.735673]  __component_add+0xbc/0x1c0
+[    4.739495]  component_add+0x1c/0x30
+[    4.743058]  mtk_disp_rdma_probe+0x140/0x210
+[    4.747314]  platform_probe+0x70/0xd0
+[    4.750964]  really_probe+0xc4/0x2a8
+[    4.754527]  __driver_probe_device+0x80/0x140
+[    4.758870]  driver_probe_device+0x44/0x120
+[    4.763040]  __device_attach_driver+0xc0/0x108
+[    4.767470]  bus_for_each_drv+0x8c/0xf0
+[    4.771294]  __device_attach+0xa4/0x198
+[    4.775117]  device_initial_probe+0x1c/0x30
+[    4.779286]  bus_probe_device+0xb4/0xc0
+[    4.783109]  deferred_probe_work_func+0xb0/0x100
+[    4.787714]  process_one_work+0x18c/0x420
+[    4.791712]  worker_thread+0x30c/0x418
+[    4.795449]  kthread+0x128/0x138
+[    4.798665]  ret_from_fork+0x10/0x20
+[    4.802229] ---[ end trace 0000000000000000 ]---
+
+I don't think that I'll be able to bisect further as I don't have the
+relevant hardware available.
+
+-- 
+Thanks,
+Sasha
 
