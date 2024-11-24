@@ -1,60 +1,75 @@
-Return-Path: <linux-kernel+bounces-420238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DB7E9D774A
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 19:26:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A766162F73
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:26:21 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7855013C80E;
-	Sun, 24 Nov 2024 18:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="uOf4dNQf"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CB889D7757
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 19:29:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2DB8472;
-	Sun, 24 Nov 2024 18:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C334283661
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:29:57 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79A613AD11;
+	Sun, 24 Nov 2024 18:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OIh7KkQ6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1DB2500BF
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 18:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732472776; cv=none; b=hm/L6Cdpt2/zEmXNrI/ej19ZplmiM4EGh6Yf52y3pBFoyuk8WsjI5lK8qLN166lSuefCMNRi75dJBEChiS9RP7tO3wpb0Y3DOPpL7wGaDonkqJu4ln/RCuX8HclXrDZjVauqoZr1f1xr9oV0xyYY/zw3LaE+XU1Nn0s27JKxW9E=
+	t=1732472993; cv=none; b=fM3QSGaiARlwP7jEKMyobI6xdJAeHPKJZX9EXzLS98MdasN9NwoBjsTVcYcPY3Wpck0GI//RB2+29gLT9A2T/p28Pgca3LqAtE8H5XpZAoxlC8IIoolE/s2ozlg2NRJTjFj5nyOXKdO0EcRynQNMIB/2HV+zHNNgEZxXrYyYT/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732472776; c=relaxed/simple;
-	bh=DH18F10m5G/gZ2tTVGnVgwuxuuLGOnK88bK7HsnZM4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qy6XDZchiEilGMGze3eUATHiKlwKryscz9cGdN74GDzyPCVOKyxRSpBXz/obOFSsECM26sCzcuRvi/PX2yJ11XehzjYFLgzmPcDsQAjHgq7DNc/xiVPtsjenxvOxNa581MJaFp/57grujN6VX+WETC36pARCTHZA06CV6HYxs+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=uOf4dNQf; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=60ZM+jjLFMPY8vkmsUoFxwVXHX4iGEuWdH+B2g2Nw6U=; b=uOf4dNQf39N/i74HpLJP4vmQ/P
-	Ak8ksilXZfBdlQihBfvGD1xRMdSyVHsykubvjqLHawx25a0hLf0auxNFCAUi3ZuKDz46wl8SWCujR
-	SVtuUMWkkB757xw9hJ2JEPY7LSDwz32Fy8AKLK1V11/v22Yl9AC3Cq9GioFeCzeVcjS/xCofH8YoN
-	sMX8x293B+SyltVCYmNSWOE2E0zVgmZKnUZq/ntqcxR0Wd/AdeTJ9hyaeEkfhV4E2k+kfTD9fQkTe
-	1kCEV6SyEJZOuk07E+s+otpylKmwBKS1ocYMWaCFprdIYFQH5NvQpD3uaNwo3FU24vCqt22eUvPM/
-	GDCe7HMw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tFHJE-00000001HeX-0L2w;
-	Sun, 24 Nov 2024 18:26:12 +0000
-Date: Sun, 24 Nov 2024 18:26:12 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 09/26] target_core_configfs: avoid pointless cred
- reference count bump
-Message-ID: <20241124182612.GW3387508@ZenIV>
-References: <20241124-work-cred-v1-0-f352241c3970@kernel.org>
- <20241124-work-cred-v1-9-f352241c3970@kernel.org>
+	s=arc-20240116; t=1732472993; c=relaxed/simple;
+	bh=dP0bzyNubEDFeNzTdvB4Y/xpX3U8Uv9N03wZTvGUAvY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Ur7KhkHXEnKVFAp+60RJjdoKBXGZvN/wlfffJWAFAmRrjzjuqyosMup6vlPB6vYzKspgAQtByveSpE0NvVVghOo/rLZ66fpBJfJhwVcHy2sQLbLlI21DH3TjqR0xPrvqvCm7S8CUUrGUElTy7vATKBtMqN0B7QzhEG3xv8LuYww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OIh7KkQ6; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732472991; x=1764008991;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=dP0bzyNubEDFeNzTdvB4Y/xpX3U8Uv9N03wZTvGUAvY=;
+  b=OIh7KkQ6N3QDeTDQ/yLAqQce942zOZcgA8CROlxXg7qkbpfOwp1b3wYG
+   oGRBtP4uQgbT/FMlhk2ytkCUdcY0gIOsC2wPvRI0iALpRvVWkDFJVrGfp
+   Pasd2BPEB1Br98Hb9JI4YUvJUUCZS5yUFRoFuyNhaULxk/hbkYmf2zNSZ
+   gUq0s/U1u1Q9aWXkSXiDVrYOP7uOrov+Ix6OtuklOwDd1TVZwDIkIGARg
+   vIRdZhEdkuHOcxJeWY/NVjEgTBoEI5RHPCRJ2sQe+s7pJEgOAZrSrU0fA
+   YmlPNnO6dUKJ01BRwdAmWw9sP2TA1TgvueBUcz++FJVJTNTVMX3Db7FmY
+   Q==;
+X-CSE-ConnectionGUID: mnJUEzaDRj21e/CMmyRl3A==
+X-CSE-MsgGUID: ZBw1lFHYSEiAwfrunt1GNw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="36238243"
+X-IronPort-AV: E=Sophos;i="6.12,181,1728975600"; 
+   d="scan'208";a="36238243"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2024 10:29:50 -0800
+X-CSE-ConnectionGUID: hWLYSnh2T1SBfUt1AZUa4w==
+X-CSE-MsgGUID: p8R2RRVHSJKoTJJ3Ja1wCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,181,1728975600"; 
+   d="scan'208";a="114335693"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 24 Nov 2024 10:29:48 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tFHMg-00059Z-0E;
+	Sun, 24 Nov 2024 18:29:46 +0000
+Date: Mon, 25 Nov 2024 02:29:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Christoph Hellwig <hch@lst.de>
+Subject: ERROR: modpost: "_savefpr_24" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko]
+ undefined!
+Message-ID: <202411250241.BJ1Z95fp-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,40 +78,131 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241124-work-cred-v1-9-f352241c3970@kernel.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sun, Nov 24, 2024 at 02:43:55PM +0100, Christian Brauner wrote:
-> The creds are allocated via prepare_kernel_cred() which has already
-> taken a reference.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  drivers/target/target_core_configfs.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
-> index ec7a5598719397da5cadfed12a05ca8eb81e46a9..d102ab79c56dd7977465f7455749e6e7a2c9fba1 100644
-> --- a/drivers/target/target_core_configfs.c
-> +++ b/drivers/target/target_core_configfs.c
-> @@ -3756,10 +3756,9 @@ static int __init target_core_init_configfs(void)
->  		ret = -ENOMEM;
->  		goto out;
->  	}
-> -	old_cred = override_creds(get_new_cred(kern_cred));
-> +	old_cred = override_creds(kern_cred);
->  	target_init_dbroot();
->  	put_cred(revert_creds(old_cred));
-> -	put_cred(kern_cred);
+Hi Samuel,
 
-FWIW, I agree with Amir - 
- 	revert_creds(old_cred);
-	put_cred(kern_cred);
-might be easier to follow.  In effect, you have two scopes here -
-from prepare_kernel_cred() to put_cred() and, nested in it,
-from override_creds() to revert_creds().
+FYI, the error/warning still remains.
 
-I'm not saying that __cleanup() is the right tool in those cases,
-but the closing brackets of those scopes would be better off
-separated.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   9f16d5e6f220661f73b36a4be1b21575651d8833
+commit: a28e4b672f042eb38d9b09f9d1fdf58c07052da4 drm/amd/display: use ARCH_HAS_KERNEL_FPU_SUPPORT
+date:   6 months ago
+config: powerpc64-randconfig-003-20241113 (https://download.01.org/0day-ci/archive/20241125/202411250241.BJ1Z95fp-lkp@intel.com/config)
+compiler: powerpc64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241125/202411250241.BJ1Z95fp-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411250241.BJ1Z95fp-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iommu/iova.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_kunit_helpers.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_buddy_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_cmdline_parser_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_connector_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_damage_helper_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_dp_mst_helper_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_exec_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_format_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_framebuffer_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_gem_shmem_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_managed_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_mm_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_modes_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_plane_helper_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_probe_helper_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_rect_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/panel/panel-abt-y030xx067a.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/panel/panel-innolux-ej030na.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/panel/panel-orisetech-ota5601a.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/lontium-lt9611uxc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/sil-sii8620.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tiny/bochs.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-ram.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-raw-ram.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-slimbus.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-w1.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/ublk_drv.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/misc/open-dice.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/arizona.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/ssbi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/qcom-pm8008.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/nd_pmem.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvdimm/nd_virtio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/scsi_common.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/advansys.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/BusLogic.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/atp870u.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/ppa.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/imm.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spi/spi-fsl-lib.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spi/spi-omap2-mcspi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_cif.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_mf624.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cdrom/cdrom.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/vivaldi-fmap.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/tests/input_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rtc/lib_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rtc/rtc-goldfish.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rtc/rtc-tps65910.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/i2c/busses/i2c-ali1563.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/i2c/busses/i2c-qup.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/tuners/tda9887.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/rc/rc-core.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/radio/si470x/radio-si470x-common.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/crypto/xilinx/zynqmp-aes-gcm.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/crypto/atmel-sha204a.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-a4tech.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-apple.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-cherry.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-dr.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-emsff.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-google-stadiaff.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-gyration.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-kensington.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-keytouch.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-kye.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-lenovo.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-magicmouse.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-maltron.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-petalynx.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-primax.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-razer.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-saitek.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-sjoy.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-sunplus.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-gaff.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-tivo.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-twinhan.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-zpff.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-waltop.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/of/of_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iio/adc/xilinx-ams.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwtracing/intel_th/intel_th_msu_sink.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvmem/nvmem_brcm_nvram.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-aspeed.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-gpio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx8mq-interconnect.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/corsair-cpro.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwmon/mr75203.o
+ERROR: modpost: "_restfpr_20" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+ERROR: modpost: "_restfpr_26" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+ERROR: modpost: "_savegpr1_27" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+ERROR: modpost: "_savegpr1_25" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+ERROR: modpost: "_restfpr_28" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+ERROR: modpost: "_savegpr1_29" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+ERROR: modpost: "_savefpr_20" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+ERROR: modpost: "_restfpr_15" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+>> ERROR: modpost: "_savefpr_24" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+>> ERROR: modpost: "_savefpr_28" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+WARNING: modpost: suppressed 54 unresolved symbol warnings because there were too many)
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
