@@ -1,154 +1,193 @@
-Return-Path: <linux-kernel+bounces-420158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A9969D75E6
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:29:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3313C9D75EE
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:32:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A979C165932
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:29:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1A8B165DEC
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65719189F45;
-	Sun, 24 Nov 2024 16:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED59B18A93C;
+	Sun, 24 Nov 2024 16:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RLE+Gyas"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JEvyY+us"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77E32500B1;
-	Sun, 24 Nov 2024 16:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411DF2500AF;
+	Sun, 24 Nov 2024 16:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732465784; cv=none; b=TBJq1OxtcJBl5JSFPPjNCniVMV9l6vGNK98G6KrSRKG7wP7TLsDG9NNN8KtEUCk3Pht8FlnCip2oHmjYn6PbAvgZWDpDrXXAnHOV5clh2vB3SqjkhNd7oEBJbvf7fqLw472UdiACbbpxv2rvZHeILQi61WjM//gh/Nwkg1NjGls=
+	t=1732465971; cv=none; b=PoHYPUZVspo1ErZ/F7Wuf559WXvrAqt94oozOHUGkodE5/fKkPAaOQsevvU41jSVYFTCAr4cl+5/x6U5t03KvwYfcnnNRPuZ2tJfr8spbXEFU3Z4B0w0yyOTSCcEYwYVAiP6D0vWpuoUjI6FMutxrWiB/AK/ST2X8xwm8lbqx6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732465784; c=relaxed/simple;
-	bh=h3HMakiSc3Yi/We9ZVKmd1w16G+zsylyS7d42MMaPH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GBR7KzF9O+eBbIb22wcYciZ0ugi9jo7517X3Zh5Ard5HoVBP+brNzJB7pxuRCX83cTM/wrzBF80LhF4xV11rjTriVE0g15UFYFgDYYRdBUZGu62ta6t1QDZWy9qdZGhsKuahGWnybJQjO/qFHOJyfoD1PRWUZHYspYH050QpAyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RLE+Gyas; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08816C4CECC;
-	Sun, 24 Nov 2024 16:29:43 +0000 (UTC)
+	s=arc-20240116; t=1732465971; c=relaxed/simple;
+	bh=f6MqTaThXHiv7ctzSpq6dEgS0E7d2u5IGehjqemBuFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=r2Y0bNSEe77udwLB7j9qFUwBFmSlJx01ZbHBYAf/UtpAl9CAzPYmiqPwleiHntGQZ7aodSwGbGxpy49mim2eqTa1xjExL8LZr38Gy+kSa0H4qgo6LGJIvA5IW1AoXuB7yKdwzkkUSMuzC5WqTlxzaQr0XpDY/AXQHj47nEY2bpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JEvyY+us; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7F4DC4CECC;
+	Sun, 24 Nov 2024 16:32:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732465784;
-	bh=h3HMakiSc3Yi/We9ZVKmd1w16G+zsylyS7d42MMaPH4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RLE+GyasF/xkcYooj+dwtWSgr6RX/CEWvjqc6Dt2qNIQg8VTrHdPBCqKyoJwNVf1p
-	 NWVP3mQX1RzQXS04O7Gpf93d+gmdO21c8R0fHHMtUPqPMdDwydBYz7n/u9kYZf80na
-	 x37+G9NMMKB9igcNtrn3dBKKb2/I24OcTKNN/BU6gzLwMRfibbtvhy74j4rke3UlRz
-	 gJ0bbp7Z3J2NpQXuK2YB5Cx52slLIQ7QWIYAQBH+9DUp62yzKSF0wjrCbVQYaRx4Xb
-	 JlcjdKSemQSxBo0Rm1p/Z1HeYfztE67IE1U9OoB3NEMkfA/5NU6QHH/2d8rYRTCI56
-	 Kh+uasP1ilAPQ==
-Date: Sun, 24 Nov 2024 11:29:42 -0500
-From: Sasha Levin <sashal@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [GIT PULL] Devicetree updates for v6.13
-Message-ID: <Z0NUdoG17EwuCigT@sashalap>
-References: <20241118210730.GA3331421-robh@kernel.org>
+	s=k20201202; t=1732465970;
+	bh=f6MqTaThXHiv7ctzSpq6dEgS0E7d2u5IGehjqemBuFg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JEvyY+us/11p4rR5ISmZ+PWPjfbyV2+x7g86iySrXAClfh8WjY1MY9lp7BBCZe091
+	 HiFC8luDJfDPX4MEG+L/9K7YbSXRmupKPn+fE8b+9c6YrR9syKdmqBY8sjdFsr751r
+	 n9XB+gXqlakEwSw9lNX8xh55QjcswhgCex0gnE6DDbZUeAmbIkI5YbG5dFFNFiWyxm
+	 dvogF+BjrwhWgYe0h2/riVPhhUxcnkd5XZ7+06+taLzGd/j1O0fLzBm0L255V31nip
+	 pgCNZllEfJnbanw7kLG9iAFYzqBNyy6t+Whl5UWzwGVco7ELjacw0jemrTj5TNbBcC
+	 of0KnvkAH6ueA==
+Date: Sun, 24 Nov 2024 16:32:41 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, David
+ Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>,
+ linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-pwm@vger.kernel.org
+Subject: Re: [PATCH v5 01/16] spi: add basic support for SPI offloading
+Message-ID: <20241124163241.4699161f@jic23-huawei>
+In-Reply-To: <20241115-dlech-mainline-spi-engine-offload-2-v5-1-bea815bd5ea5@baylibre.com>
+References: <20241115-dlech-mainline-spi-engine-offload-2-v5-0-bea815bd5ea5@baylibre.com>
+	<20241115-dlech-mainline-spi-engine-offload-2-v5-1-bea815bd5ea5@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20241118210730.GA3331421-robh@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Rob,
+On Fri, 15 Nov 2024 14:18:40 -0600
+David Lechner <dlechner@baylibre.com> wrote:
 
-On Mon, Nov 18, 2024 at 03:07:30PM -0600, Rob Herring wrote:
->      of: WARN on deprecated #address-cells/#size-cells handling
+> Add the basic infrastructure to support SPI offload providers and
+> consumers.
+> 
+> SPI offloading is a feature that allows the SPI controller to perform
+> transfers without any CPU intervention. This is useful, e.g. for
+> high-speed data acquisition.
+> 
+> SPI controllers with offload support need to implement the get_offload
+> and put_offload callbacks and can use the devm_spi_offload_alloc() to
+> allocate offload instances.
+> 
+> SPI peripheral drivers will call devm_spi_offload_get() to get a
+> reference to the matching offload instance. This offload instance can
+> then be attached to a SPI message to request offloading that message.
+> 
+> It is expected that SPI controllers with offload support will check for
+> the offload instance in the SPI message in the ctlr->optimize_message()
+> callback and handle it accordingly.
+> 
+> CONFIG_SPI_OFFLOAD is intended to be a select-only option. Both
+> consumer and provider drivers should `select SPI_OFFLOAD` in their
+> Kconfig to ensure that the SPI core is built with offload support.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
 
-With the commit above, I've started seeing boot warnings on a few
-platforms that KernelCI is testing. One example is:
-
-[    0.047792] ------------[ cut here ]------------
-[    0.047803] Missing '#address-cells' in /firmware
-[    0.047873] WARNING: CPU: 0 PID: 1 at drivers/of/base.c:106 of_bus_n_addr_cells+0x90/0xf0
-[    0.047900] Modules linked in:
-[    0.047917] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0 #1 933ab9971ff4d5dc58cb378a96f64c7f72e3454d
-[    0.047935] Hardware name: Google juniper sku16 board (DT)
-[    0.047947] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    0.047961] pc : of_bus_n_addr_cells+0x90/0xf0
-[    0.047974] lr : of_bus_n_addr_cells+0x90/0xf0
-[    0.047987] sp : ffff80008008ba50
-[    0.047997] x29: ffff80008008ba50 x28: ffffcc9644c19060 x27: ffffcc9644b60118
-[    0.048016] x26: 0000000000000000 x25: ffff119d7f5c3fe8 x24: ffff80008008bb80
-[    0.048034] x23: ffff80008008bb7c x22: ffffcc96441dc0f0 x21: ffffcc9644522170
-[    0.048053] x20: ffffcc96454964ed x19: ffff119d7f5c3e28 x18: 0000000000000006
-[    0.048071] x17: 64656c62616e655f x16: 0000000000000100 x15: ffff80008008b4d0
-[    0.048090] x14: 0000000000000000 x13: 657261776d726966 x12: ffffcc96452d14f0
-[    0.048108] x11: 0000000000000001 x10: 0000000000000001 x9 : ffffcc9642742150
-[    0.048126] x8 : c0000000ffffdfff x7 : ffffcc9645221450 x6 : 00000000000affa8
-[    0.048145] x5 : ffffcc96452d1498 x4 : 0000000000000000 x3 : 0000000000000000
-[    0.048163] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff119d40288000
-[    0.048182] Call trace:
-[    0.048192]  of_bus_n_addr_cells+0x90/0xf0 (P)
-[    0.048207]  of_bus_n_addr_cells+0x90/0xf0 (L)
-[    0.048222]  of_n_addr_cells+0x24/0x38
-[    0.048235]  of_bus_default_count_cells+0x30/0x60
-[    0.048251]  __of_get_address+0xb4/0x1c0
-[    0.048264]  __of_address_to_resource+0x4c/0x198
-[    0.048278]  of_address_to_resource+0x20/0x38
-[    0.048292]  of_device_alloc+0x80/0x1a0
-[    0.048306]  of_platform_device_create_pdata+0x5c/0x138
-[    0.048321]  of_platform_bus_create+0x15c/0x398
-[    0.048335]  of_platform_populate+0x58/0x110
-[    0.048350]  of_platform_default_populate_init+0x98/0xf8
-[    0.048366]  do_one_initcall+0x60/0x320
-[    0.048382]  kernel_init_freeable+0x20c/0x420
-[    0.048397]  kernel_init+0x28/0x1e8
-[    0.048410]  ret_from_fork+0x10/0x20
-[    0.048424] ---[ end trace 0000000000000000 ]---
-[    0.048445] ------------[ cut here ]------------
-[    0.048455] Missing '#size-cells' in /firmware
-[    0.048495] WARNING: CPU: 0 PID: 1 at drivers/of/base.c:133 of_bus_n_size_cells+0x90/0xf0
-[    0.048513] Modules linked in:
-[    0.048526] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W          6.12.0 #1 933ab9971ff4d5dc58cb378a96f64c7f72e3454d
-[    0.048544] Tainted: [W]=WARN
-[    0.048553] Hardware name: Google juniper sku16 board (DT)
-[    0.048563] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    0.048576] pc : of_bus_n_size_cells+0x90/0xf0
-[    0.048589] lr : of_bus_n_size_cells+0x90/0xf0
-[    0.048602] sp : ffff80008008ba50
-[    0.048611] x29: ffff80008008ba50 x28: ffffcc9644c19060 x27: ffffcc9644b60118
-[    0.048630] x26: 0000000000000000 x25: ffff119d7f5c3fe8 x24: ffff80008008bb80
-[    0.048649] x23: ffff80008008bb7c x22: ffffcc96441dc0f0 x21: ffffcc96445221a8
-[    0.048667] x20: ffffcc96454964ed x19: ffff119d7f5c3e28 x18: 0000000000000006
-[    0.048686] x17: 64656c62616e655f x16: 0000000000000100 x15: ffff80008008b4d0
-[    0.048704] x14: 0000000000000000 x13: 657261776d726966 x12: ffffcc96452d14f0
-[    0.048722] x11: 0000000000000001 x10: 0000000000000001 x9 : ffffcc9642742150
-[    0.048740] x8 : c0000000ffffdfff x7 : ffffcc9645221450 x6 : 00000000000affa8
-[    0.048758] x5 : ffffcc96452d1498 x4 : 0000000000000000 x3 : 0000000000000000
-[    0.048776] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff119d40288000
-[    0.048794] Call trace:
-[    0.048803]  of_bus_n_size_cells+0x90/0xf0 (P)
-[    0.048817]  of_bus_n_size_cells+0x90/0xf0 (L)
-[    0.048831]  of_n_size_cells+0x24/0x38
-[    0.048845]  of_bus_default_count_cells+0x40/0x60
-[    0.048859]  __of_get_address+0xb4/0x1c0
-[    0.048872]  __of_address_to_resource+0x4c/0x198
-[    0.048885]  of_address_to_resource+0x20/0x38
-[    0.048899]  of_device_alloc+0x80/0x1a0
-[    0.048912]  of_platform_device_create_pdata+0x5c/0x138
-[    0.048928]  of_platform_bus_create+0x15c/0x398
-[    0.048942]  of_platform_populate+0x58/0x110
-[    0.048956]  of_platform_default_populate_init+0x98/0xf8
-[    0.048970]  do_one_initcall+0x60/0x320
-[    0.048983]  kernel_init_freeable+0x20c/0x420
-[    0.048997]  kernel_init+0x28/0x1e8
-[    0.049009]  ret_from_fork+0x10/0x20
-[    0.049021] ---[ end trace 0000000000000000 ]---
+A few additional comments, but basically fine.
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
 
--- 
-Thanks,
-Sasha
+> diff --git a/drivers/spi/spi-offload.c b/drivers/spi/spi-offload.c
+> new file mode 100644
+> index 000000000000..5ded7aecf9fc
+> --- /dev/null
+> +++ b/drivers/spi/spi-offload.c
+
+...
+
+> +/**
+> + * devm_spi_offload_get() - Get an offload instance
+> + * @dev: Device for devm purposes
+> + * @spi: SPI device to use for the transfers
+> + * @config: Offload configuration
+> + *
+> + * Peripheral drivers call this function to get an offload instance that meets
+> + * the requirements specified in @config. If no suitable offload instance is
+> + * available, -ENODEV is returned.
+> + *
+> + * Return: Offload instance or error on failure.
+> + */
+> +struct spi_offload *devm_spi_offload_get(struct device *dev,
+> +					 struct spi_device *spi,
+> +					 const struct spi_offload_config *config)
+> +{
+> +	struct spi_controller_and_offload *resource;
+> +	int ret;
+> +
+> +	if (!spi || !config)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	if (!spi->controller->get_offload)
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	resource = kzalloc(sizeof(*resource), GFP_KERNEL);
+> +	if (!resource)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	resource->controller = spi->controller;
+> +	resource->offload = spi->controller->get_offload(spi, config);
+> +	ret = PTR_ERR_OR_ZERO(resource->offload);
+> +	if (ret) {
+Why not simply
+	if (IS_ERR(resource->offload) {
+		kfree(resource);
+		return resource->offload;
+	}
+> +		kfree(resource);
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	ret = devm_add_action_or_reset(dev, spi_offload_put, resource);
+> +	if (ret)
+> +		return ERR_PTR(ret);
+> +
+> +	return resource->offload;
+> +}
+> +EXPORT_SYMBOL_GPL(devm_spi_offload_get);
+
+> diff --git a/include/linux/spi/spi-offload.h b/include/linux/spi/spi-offload.h
+> new file mode 100644
+> index 000000000000..81b115fc89bf
+> --- /dev/null
+> +++ b/include/linux/spi/spi-offload.h
+
+> +
+> +MODULE_IMPORT_NS(SPI_OFFLOAD);
+
+This is rarely done in headers. (only pwm.h does it I think)
+I'd push it down into code that uses this.
+
+It might be worth splitting the header into a spi-offload-provider.h
+and spi-offload-consumer.h with a common spi-offload-types.h included
+by both.
+
+
+> diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+> index 8497f4747e24..c2b24a0909ea 100644
+> --- a/include/linux/spi/spi.h
+> +++ b/include/linux/spi/spi.h
+> @@ -31,6 +31,9 @@ struct spi_transfer;
+>  struct spi_controller_mem_ops;
+>  struct spi_controller_mem_caps;
+>  struct spi_message;
+> +struct spi_controller_offload_ops;
+
+Not used so introduce it only when needed (I guess in a later patch).
+
+
+
+
+
 
