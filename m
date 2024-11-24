@@ -1,116 +1,201 @@
-Return-Path: <linux-kernel+bounces-420136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 278089D7568
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:39:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DE95162F0F
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:39:16 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD072500B3;
-	Sun, 24 Nov 2024 15:39:15 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15EDC9D7572
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:42:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE90C2500A0
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 15:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFC36285CC5
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:42:08 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55D918028;
+	Sun, 24 Nov 2024 15:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VW9I/rjh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8DB2500B5;
+	Sun, 24 Nov 2024 15:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732462754; cv=none; b=kacJU/m9DlDx/BCRi0XlGUE33FX3VgX+Wm+bb7ZsPk5rlAFYh6+CE+CrQG3MvWBAh3pa2vFTns1NSw7mWBnYU9XOD4TxKzn3o4ykln6t/Al+U+FD8xsElxBkdBHfmmVwKo+F6n741f3DJFw+FaebWDmNRS15kUokn9oRaknTVmk=
+	t=1732462923; cv=none; b=UbXX9RTlBu/ypzxPvi8r6WeAh5liQiZEWUP6Mup4Yb3RZ5SMhixUcaMUw5XapY1RQfftHIODweLHxz/2KkwUphEv6tKv2kDc9IvPRdPTkpp4SYVieKf80uAg/yzNjkzYZmXbX25QEBNRQrfVV9vyGHH0ow9qkQYvpm9727KHvcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732462754; c=relaxed/simple;
-	bh=LcAaAMKbZ4aEcHmen/ASdShf07/Bxw97knUWb7lv3GA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GrLTPIOIP4YGUrYSNAKJT4p3PcgYGua/mr5saYPz0Ge+6OV8xu91oLfjwHgJd8c6KyCXB7BQEmfA6a7HooqSLv/GziD6uB2AxydBrLNPVagnWT1+a/rn78S9oaYCGYfPawVC1mjtkOHXZS0Y5bJALwV1ijgQPwGsc0Ug1MAPh8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-214-kr0LpHBoOaOFWzUcO5J6Qw-1; Sun, 24 Nov 2024 15:39:03 +0000
-X-MC-Unique: kr0LpHBoOaOFWzUcO5J6Qw-1
-X-Mimecast-MFC-AGG-ID: kr0LpHBoOaOFWzUcO5J6Qw
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 24 Nov
- 2024 15:39:00 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 24 Nov 2024 15:39:00 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Linus Torvalds' <torvalds@linux-foundation.org>, 'Andrew Cooper'
-	<andrew.cooper3@citrix.com>, "'bp@alien8.de'" <bp@alien8.de>, "'Josh
- Poimboeuf'" <jpoimboe@kernel.org>
-CC: "'x86@kernel.org'" <x86@kernel.org>, "'linux-kernel@vger.kernel.org'"
-	<linux-kernel@vger.kernel.org>, 'Arnd Bergmann' <arnd@kernel.org>, "'Mikel
- Rychliski'" <mikel@mikelr.com>, 'Thomas Gleixner' <tglx@linutronix.de>,
-	"'Ingo Molnar'" <mingo@redhat.com>, 'Borislav Petkov' <bp@alien8.de>, 'Dave
- Hansen' <dave.hansen@linux.intel.com>, "'H. Peter Anvin'" <hpa@zytor.com>
-Subject: [PATCH v2] x86: Allow user accesses to the base of the guard page
-Thread-Topic: [PATCH v2] x86: Allow user accesses to the base of the guard
- page
-Thread-Index: Ads+hc9sKIgnrLHqRG2ra9Mk31sA5w==
-Date: Sun, 24 Nov 2024 15:39:00 +0000
-Message-ID: <0edca3e5d2194cdf9812a8ccb42216e9@AcuMS.aculab.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1732462923; c=relaxed/simple;
+	bh=6lZXEv8fFFcVuaGzeVxG1JLdTfJSYtJER5SG0TtwLgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=oOrtX+52lvoHPi2Nvo2zrOKo5HU3dWOtP3hQCQZf/8HVLFQLUvcCgBhqENOf0kiAuiVj504uahG4MmcAwmyAE4WIGB3HlKSQkpLF029xXXiR/88iiU/EwUKBg0ZbhKIE9yzA6t7NrjI9Cfs+HG7RK/Czv7fif5uZUpmdNZutMcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VW9I/rjh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B9F9C4CECC;
+	Sun, 24 Nov 2024 15:42:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732462922;
+	bh=6lZXEv8fFFcVuaGzeVxG1JLdTfJSYtJER5SG0TtwLgk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=VW9I/rjh28otYiLXHjndSsjBMdW8BNFTyRFsz924f45+hHCZfeKoZarqHGpDYNhm+
+	 Ga2dkFTkZBemeIvlPRV/hNt6odyNgbYaixTr3tTyVpT0W1ZV/BhgWTC779fagIiUHw
+	 EHNtAFfsabZ87JJlIzjX/jjODmtoY0FF/ARGJAY6C54LTCvpUDvc5k0TkSrBTD7NUw
+	 roqv0Ysikj73kG1JMxaDsv3fY9ZqnifBQGNXYAUV3JRvG5fZydVvBV+a5rgJ0mBMM/
+	 TY8XD9pdhnR9PeZGbtHefipx0S/csR6T+DkjqpfAKooBRy5+wA+hw0NXJC5tb35PvX
+	 mGgTR8ofH1I0g==
+Date: Sun, 24 Nov 2024 16:41:59 +0100
+From: Wolfram Sang <wsa@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: [PULL REQUEST] i2c-for-6.13-part2
+Message-ID: <Z0NJRyAhq2B0Sgtb@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: bn4nS-GD5Yb3jJcbcu0HXqT_soEEKdllySYk828Ixw0_1732462742
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="DXVLMZnuPrAFu+S+"
+Content-Disposition: inline
+
+
+--DXVLMZnuPrAFu+S+
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-__access_ok() calls valid_user_address() with the address after
-the last byte of the user buffer.
-It is valid for a buffer to end with the last valid user address
-so valid_user_address() must allow accesses to the base of the
-guard page.
+The following changes since commit 9f16d5e6f220661f73b36a4be1b21575651d8833:
 
-Fixes: 86e6b1547b3d0 ("x86: fix user address masking non-canonical speculat=
-ion issue")
-Signed-off-by: David Laight <david.laight@aculab.com>
----
+  Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm (2024-=
+11-23 16:00:50 -0800)
 
-v2: Rewritten commit message.
+are available in the Git repository at:
 
- arch/x86/kernel/cpu/common.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-=
+6.13-part2
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 06a516f6795b..ca327cfa42ae 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -2389,12 +2389,12 @@ void __init arch_cpu_finalize_init(void)
- =09alternative_instructions();
-=20
- =09if (IS_ENABLED(CONFIG_X86_64)) {
--=09=09unsigned long USER_PTR_MAX =3D TASK_SIZE_MAX-1;
-+=09=09unsigned long USER_PTR_MAX =3D TASK_SIZE_MAX;
-=20
- =09=09/*
- =09=09 * Enable this when LAM is gated on LASS support
- =09=09if (cpu_feature_enabled(X86_FEATURE_LAM))
--=09=09=09USER_PTR_MAX =3D (1ul << 63) - PAGE_SIZE - 1;
-+=09=09=09USER_PTR_MAX =3D (1ul << 63) - PAGE_SIZE;
- =09=09 */
- =09=09runtime_const_init(ptr, USER_PTR_MAX);
-=20
---=20
-2.17.1
+for you to fetch changes up to 16470f60666618830cb9f0b8dfafd34a838c6dbd:
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+  MAINTAINERS: transfer i2c-aspeed maintainership from Brendan to Ryan (202=
+4-11-24 16:03:51 +0100)
 
+----------------------------------------------------------------
+i2c-for-6.13-part2
+
+Andi was super busy the last weeks, so this pull requests contains one
+series (nomadik) and a number of smaller additions which were ready to
+go but got nearly overlooked. Despite the late collection, they have been
+properly reviewed and have been in -next for 6 days now in Andi's tree.
+
+New feature support:
+ - Added support for frequencies up to 3.4 MHz on Nomadik I2C.
+ - DesignWare now accounts for bus capacitance and clock
+   optimisation (declared as new parameters in the binding) to
+   improve the calculation of signal rise and fall times
+   (t_high and t_low).
+
+New Hardware support:
+ - DWAPB I2C controller on FUJITSU-MONAKA (new ACPI HID).
+ - Allwinner A523 (new compatible ID).
+ - Mobileye EyeQ6H (new compatible ID).
+
+----------------------------------------------------------------
+Andre Przywara (1):
+      dt-bindings: i2c: mv64xxx: Add Allwinner A523 compatible string
+
+Bartosz Golaszewski (1):
+      i2c: qup: use generic device property accessors
+
+Brendan Higgins (1):
+      MAINTAINERS: transfer i2c-aspeed maintainership from Brendan to Ryan
+
+Michael Wu (2):
+      dt-bindings: i2c: snps,designware-i2c: declare bus capacitance and cl=
+k freq optimized
+      i2c: designware: determine HS tHIGH and tLOW based on HW parameters
+
+Th=C3=A9o Lebrun (6):
+      dt-bindings: i2c: nomadik: add mobileye,eyeq6h-i2c bindings
+      dt-bindings: i2c: nomadik: support 400kHz < clock-frequency <=3D 3.4M=
+Hz
+      i2c: nomadik: switch from of_device_is_compatible() to of_match_devic=
+e()
+      i2c: nomadik: support Mobileye EyeQ6H I2C controller
+      i2c: nomadik: fix BRCR computation
+      i2c: nomadik: support >=3D1MHz speed modes
+
+Yoshihiro Furudera (1):
+      i2c: designware: Add ACPI HID for DWAPB I2C controller on FUJITSU-MON=
+AKA
+
+
+with much appreciated quality assurance from
+----------------------------------------------------------------
+Andy Shevchenko (2):
+      (Rev.) i2c: designware: determine HS tHIGH and tLOW based on HW param=
+eters
+      (Rev.) i2c: designware: Add ACPI HID for DWAPB I2C controller on FUJI=
+TSU-MONAKA
+
+Krzysztof Kozlowski (1):
+      (Rev.) dt-bindings: i2c: snps,designware-i2c: declare bus capacitance=
+ and clk freq optimized
+
+Linus Walleij (6):
+      (Rev.) i2c: nomadik: support >=3D1MHz speed modes
+      (Rev.) i2c: nomadik: fix BRCR computation
+      (Rev.) i2c: nomadik: support Mobileye EyeQ6H I2C controller
+      (Rev.) i2c: nomadik: switch from of_device_is_compatible() to of_matc=
+h_device()
+      (Rev.) dt-bindings: i2c: nomadik: support 400kHz < clock-frequency <=
+=3D 3.4MHz
+      (Rev.) dt-bindings: i2c: nomadik: add mobileye,eyeq6h-i2c bindings
+
+Neil Armstrong (1):
+      (Rev.) i2c: qup: use generic device property accessors
+
+Rob Herring (Arm) (2):
+      (Rev.) dt-bindings: i2c: nomadik: support 400kHz < clock-frequency <=
+=3D 3.4MHz
+      (Rev.) dt-bindings: i2c: nomadik: add mobileye,eyeq6h-i2c bindings
+
+ .../bindings/i2c/marvell,mv64xxx-i2c.yaml          |  1 +
+ .../bindings/i2c/snps,designware-i2c.yaml          | 18 +++++
+ .../devicetree/bindings/i2c/st,nomadik-i2c.yaml    | 13 ++--
+ MAINTAINERS                                        |  2 +-
+ drivers/i2c/busses/i2c-designware-common.c         |  5 ++
+ drivers/i2c/busses/i2c-designware-core.h           |  6 ++
+ drivers/i2c/busses/i2c-designware-master.c         | 23 +++++-
+ drivers/i2c/busses/i2c-designware-platdrv.c        |  1 +
+ drivers/i2c/busses/i2c-nomadik.c                   | 87 +++++++++++++-----=
+----
+ drivers/i2c/busses/i2c-qup.c                       |  4 +-
+ 10 files changed, 115 insertions(+), 45 deletions(-)
+
+--DXVLMZnuPrAFu+S+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmdDSUMACgkQFA3kzBSg
+KbY2ww/+I70uEj51jiW+x5uROwV2zc0sl6ZSnuGxYNsQ1nCyHXGTkG23SouI2oCr
+48jgrWGIEHPiovnoSuLZzf7ZvECHJCeUQ7ztMOiW9hdFt+0Q6/HjdiQXWORQfcfJ
+ig56M+T8i8N6pxKC0Od20AKNwrlKUjGDUK9CKEZQlhg5GZJL/BOIQ+PVbdXcWC7A
+rX5+opMFcs/iCo/MZIBAjm0c1qTcqng6T19to9k6YLuskrGc2kU1R9OxDYt+CvNm
+g+oqQij/9RM+dns3lihztZmvuWfxxrFhTTZ4/sB9GU4x8VUi5aKZQQwmkhNNDdqz
+pPOCK+aFSAz3I25zvIk8q+Rut+eVn8zpyP0izcYcXFKK62HFUZmti7GgQyFqpw65
+JNXecvpCVwV+LqAEFQBT/lZpf8YS+I77Pi8rC1SB3/nmTc0mQh+uhMUEjg6UazMn
+XBzr9umkaZNN5wH/QHUxL1MKy81AVPd++WYMvXMzU8MwOLXXtCm/eCS+nvevRKY2
+9ou6OuZK7la18DO3ayd8FOKd3w9381vW4a/4tHhzjGIN/gAHSsvLtPckBbqJjqtQ
+q0yOKZOVD+VLlnieV0wuNuGUzKQSuuM9xnJJecBNGve4VtQ+avy4dLdhE6SVgyhF
+5+/MfYKEsycd/h5Y0r4x2ZNFXmRQsgNJYDAmXCIqWMSYx/9CFeM=
+=xkc4
+-----END PGP SIGNATURE-----
+
+--DXVLMZnuPrAFu+S+--
 
