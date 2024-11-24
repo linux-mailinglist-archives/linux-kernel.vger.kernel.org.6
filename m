@@ -1,61 +1,57 @@
-Return-Path: <linux-kernel+bounces-419485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 748139D6EB4
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 13:51:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF2A9D6EAA
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 13:50:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E286B16215E
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 12:50:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81AB7281629
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 12:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D341A0B07;
-	Sun, 24 Nov 2024 12:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546E51A7ADE;
+	Sun, 24 Nov 2024 12:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HwN0E9DE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UVdgOD/6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4C21D79BB;
-	Sun, 24 Nov 2024 12:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B301A3035;
+	Sun, 24 Nov 2024 12:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732452101; cv=none; b=QbUbp5DRYFv4wz5sczMtMXRgHJjzlV+F7OQ0cfwlNcDr/bn+TUuCS8J+O64fn8x1/t7pJe5PPwI0KlSBRw0xmbyV9ckKvacpjiBHP/Ml+Kzg3ZkwEjp4sZw+KScKy9JBsklM055TC/9RdYMfGGxZG06HAb/yqyj8ezD/6l71vLA=
+	t=1732452112; cv=none; b=Wle0QHKH68/inJqFx54CBuT4tdWi6FDoholtGiyaJxGUhy+QFT9k73Z3PYeAl5WmY7+kPfqnkHTiHWkMs+mAlIOkPohgUlweYIZPeaS0S6VjlsTZimbjxjbzrBOgdtnoluCcBPiSTYGMe/Hj3i5giqEvYVMW+C6RSRTZ3hSYPh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732452101; c=relaxed/simple;
-	bh=dStXZbOZ68pcA4OHVXBepn0T/jxDTGEotO0Yx2wAYpY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rNnmj16TCoItZP+TVdVpE0+8Jgda85ZrHPpI7KmQtQGtFYUMu9ctXmU34E7gQj3JYZJhk3rvwoCuLEOwh84i4/h1d9ePmDRXUCC5Si7k6VxQTSwx6TDBwuFJZaiNy+/Vjxkj+fVghw5Zef2p8lmFvGF3qJISsGVW5Xl/Kl5oZ7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HwN0E9DE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F906C4CECC;
-	Sun, 24 Nov 2024 12:41:40 +0000 (UTC)
+	s=arc-20240116; t=1732452112; c=relaxed/simple;
+	bh=ICKaszo58/M5MTx56qX3+bvtjH6Qm1RGqc6/gEmFHjY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RDZvIJ+E1pnw/QRmYd9jjwnxEdu3EWhvg1LkUzqHJuYA7QHsSv6hNmD+am7zdIUF0y1z6YpDlaMhuPGawk9WgCVszPKKXumjJlaRD9C3XZaUlzVFd/KNlw/bRbG2ZiaBw6APtAuFaqOa3Y1Ci331I717uudUhWKApyjctbD5+Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UVdgOD/6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DD3FC4CECC;
+	Sun, 24 Nov 2024 12:41:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732452101;
-	bh=dStXZbOZ68pcA4OHVXBepn0T/jxDTGEotO0Yx2wAYpY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HwN0E9DEmZCKeREnvGXJsZWRyV3xbZ0F1jMyJFHWjLxFmdHOXpkDhH93uVFmSwOPt
-	 aq05rowdwa7MJSAuDqcuNS4r3logfcF+cP9cGH5iEB28zHxsoZSDVLU/OvsR8qSvgT
-	 PnpA3bZRPyXnCGpguAms7Kb0V+TBOqyNEljxUBQpDGEUSlnm36JlHEdWvNxSoZgo6Z
-	 IsfUxsFHUUY4IV7tbGiViiL0/P5Uuk4JDrETWRB1ukqxDH4U/JKtv/oyrScHQ/fVOl
-	 Aj5n3ShN/4L8ZGnteuJ7wAjSUlSTx6nIRi+U93gFvBoTE5FR/k0q0nFCyfB86bl+n0
-	 LK7nsPiO8U5Ag==
+	s=k20201202; t=1732452112;
+	bh=ICKaszo58/M5MTx56qX3+bvtjH6Qm1RGqc6/gEmFHjY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UVdgOD/6SUSEPxCYvSubrs3tQoGa844K3nQHV9MWtP4j3ELy7hQDRoHPexy8pNyRw
+	 7uerOq2q8hNQUmBrHj32gRUdNGUDi/k+BAlWcyD2FFb4MHmYCE6l8Iykg1De5HRL5/
+	 ZkQ0DdYTINFOYIZKMX9izVplk/+dHJxKmLsoiap0guBJ/1tjYgnptFHuolbZR2px99
+	 Lk6fdSo+u1j8mf7maE4KqRFTbltYvh23D3t7AqPVcHNANU9w+1oOneECRyfAPlXuWn
+	 ErXGWJMCbZDtjTkCktSLzn/BGRaLG7P9Ri++cD7bRlfbAmHjjEy+DGSXIvaHgA9TgU
+	 002kVxfDvfWOg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	syzbot+3b6b32dc50537a49bb4a@syzkaller.appspotmail.com,
 	Sasha Levin <sashal@kernel.org>,
-	will@kernel.org,
-	shuah@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 7/7] kselftest/arm64: Don't leak pipe fds in pac.exec_sign_all()
-Date: Sun, 24 Nov 2024 07:41:18 -0500
-Message-ID: <20241124124126.3336691-7-sashal@kernel.org>
+	viro@zeniv.linux.org.uk,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.15 1/6] epoll: annotate racy check
+Date: Sun, 24 Nov 2024 07:41:37 -0500
+Message-ID: <20241124124149.3336868-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241124124126.3336691-1-sashal@kernel.org>
-References: <20241124124126.3336691-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,40 +60,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.119
+X-stable-base: Linux 5.15.173
 Content-Transfer-Encoding: 8bit
 
-From: Mark Brown <broonie@kernel.org>
+From: Christian Brauner <brauner@kernel.org>
 
-[ Upstream commit 27141b690547da5650a420f26ec369ba142a9ebb ]
+[ Upstream commit 6474353a5e3d0b2cf610153cea0c61f576a36d0a ]
 
-The PAC exec_sign_all() test spawns some child processes, creating pipes
-to be stdin and stdout for the child. It cleans up most of the file
-descriptors that are created as part of this but neglects to clean up the
-parent end of the child stdin and stdout. Add the missing close() calls.
+Epoll relies on a racy fastpath check during __fput() in
+eventpoll_release() to avoid the hit of pointlessly acquiring a
+semaphore. Annotate that race by using WRITE_ONCE() and READ_ONCE().
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Link: https://lore.kernel.org/r/20241111-arm64-pac-test-collisions-v1-1-171875f37e44@kernel.org
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Link: https://lore.kernel.org/r/66edfb3c.050a0220.3195df.001a.GAE@google.com
+Link: https://lore.kernel.org/r/20240925-fungieren-anbauen-79b334b00542@brauner
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reported-by: syzbot+3b6b32dc50537a49bb4a@syzkaller.appspotmail.com
+Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/arm64/pauth/pac.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/eventpoll.c            | 6 ++++--
+ include/linux/eventpoll.h | 2 +-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/arm64/pauth/pac.c b/tools/testing/selftests/arm64/pauth/pac.c
-index b743daa772f55..5a07b3958fbf2 100644
---- a/tools/testing/selftests/arm64/pauth/pac.c
-+++ b/tools/testing/selftests/arm64/pauth/pac.c
-@@ -182,6 +182,9 @@ int exec_sign_all(struct signatures *signed_vals, size_t val)
- 		return -1;
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index b60edddf17870..7413b4a6ba282 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -696,7 +696,8 @@ static int ep_remove(struct eventpoll *ep, struct epitem *epi)
+ 	to_free = NULL;
+ 	head = file->f_ep;
+ 	if (head->first == &epi->fllink && !epi->fllink.next) {
+-		file->f_ep = NULL;
++		/* See eventpoll_release() for details. */
++		WRITE_ONCE(file->f_ep, NULL);
+ 		if (!is_file_epoll(file)) {
+ 			struct epitems_head *v;
+ 			v = container_of(head, struct epitems_head, epitems);
+@@ -1460,7 +1461,8 @@ static int attach_epitem(struct file *file, struct epitem *epi)
+ 			spin_unlock(&file->f_lock);
+ 			goto allocate;
+ 		}
+-		file->f_ep = head;
++		/* See eventpoll_release() for details. */
++		WRITE_ONCE(file->f_ep, head);
+ 		to_free = NULL;
  	}
+ 	hlist_add_head_rcu(&epi->fllink, file->f_ep);
+diff --git a/include/linux/eventpoll.h b/include/linux/eventpoll.h
+index 3337745d81bd6..0c0d00fcd131f 100644
+--- a/include/linux/eventpoll.h
++++ b/include/linux/eventpoll.h
+@@ -42,7 +42,7 @@ static inline void eventpoll_release(struct file *file)
+ 	 * because the file in on the way to be removed and nobody ( but
+ 	 * eventpoll ) has still a reference to this file.
+ 	 */
+-	if (likely(!file->f_ep))
++	if (likely(!READ_ONCE(file->f_ep)))
+ 		return;
  
-+	close(new_stdin[1]);
-+	close(new_stdout[0]);
-+
- 	return 0;
- }
- 
+ 	/*
 -- 
 2.43.0
 
