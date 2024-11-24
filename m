@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-419737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 810749D725B
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:06:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 027739D71C6
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 14:54:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6D1EB2B01F
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 13:53:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA6512897CC
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 13:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F741E4101;
-	Sun, 24 Nov 2024 13:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD661E47A8;
+	Sun, 24 Nov 2024 13:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T6LqQG59"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VhgsHv3g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A681B393B;
-	Sun, 24 Nov 2024 13:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD7D1B393B;
+	Sun, 24 Nov 2024 13:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732455467; cv=none; b=GGeQjQkm6jNxTDRktF7BXOjRtflAgv7qn9hy5LaByiOgkBMDmXQUqCP1El3pGEb1mAoonJbnP24WskWzml8tBF40lfOZMzGzgkSNG5I0AO/URYdMsN38n7qkOcbrKp9DMRmk7EbgbPFi1mXQfGNnBhdX+5D9+67KsCjJ55PV+wY=
+	t=1732455471; cv=none; b=YBOD1sARWOMdap1vI5XL2DMx3EIn+5ELiTgJsy5q6xD9FegXJX2XQSH9JuQR29T03u4qCGYHdZD+az38JnyIb3cKICfC7japQOVXMvAKgUdecXjyVFfhqJv2tPqB6w/HOg1768TnTh4Iti0RkgHIH+/P+EuAF1aSxW7Enz5xh6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732455467; c=relaxed/simple;
-	bh=oddvh8vUISydeyfq5mfog7VYlX2ELwy6ZEqEGG+WSTA=;
+	s=arc-20240116; t=1732455471; c=relaxed/simple;
+	bh=V6S5MdxUmQ3fdq5coagMohxAg3fw0nkc2PZWB5gcInA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W7X1hre1gEfHclXzvF8aSVeAPkQWCX8cJaUlym2xTOigO17OVwRiYb34j2OHUbqN+CsWaoaC3rSDyf/KzJtGTBVig71xALnxiVrOv6JmyDu4fQmo/GlUh8xHmkkjJhTRZvcdGU9VswM4iizS1EbTcbVfihdO+gPDdlGZeSQVfGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T6LqQG59; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BA4DC4CECC;
-	Sun, 24 Nov 2024 13:37:44 +0000 (UTC)
+	 MIME-Version; b=Wi2AGcCSHozrO0z4FFJRHXPtrd50Agow+tGO34cBDFkiWLz+5AYO3EAHK26AXzWQxYxfBP2VB7Knvly5l/vqUY+o7V/o/eDFnflK27igFpEyY6iVbPtMckoKjpVwmSLWYrOCievgGOGeQmKKXgk/+iJnLqgKFmE33BFqcRvSMxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VhgsHv3g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F7CAC4CECC;
+	Sun, 24 Nov 2024 13:37:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732455467;
-	bh=oddvh8vUISydeyfq5mfog7VYlX2ELwy6ZEqEGG+WSTA=;
+	s=k20201202; t=1732455471;
+	bh=V6S5MdxUmQ3fdq5coagMohxAg3fw0nkc2PZWB5gcInA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=T6LqQG594rggJg616z+AprVS0oBKvhuQUhFN/lve14UN3BEZBXSKHZPbjsKcjKxXa
-	 UEyV0m0Jc9Bcctsnlele7Wx1CfCE7goryR4oQvI8wV34RP8B55190jaiKbom8a+uFW
-	 wp72lA5GnKCuNvVigpIbPTw2jnG0EtQ6TpJvFyN0s41dtGW4mz+zRZA4yktGo6fAW4
-	 bxwGZyUc93waRJ2TvFFMt5F19EuA0mFeqhpu8F2okLKJGEO4x14E931U2IZvtcpvyI
-	 ts3z2/ZNVoWQCGHjYq9jiGa+zGpqh515XwO9kMj5uvENaFkzPAhh4vL5lwQtpaSH7i
-	 0p5g27ASuvzqQ==
+	b=VhgsHv3gnMIakqZkPM2KX9YwizQEhUM7nkSiRMXSZm86obsEz/LCuSl+2NccXNKyi
+	 uKJi2ZFS9ZFlyrpSOAGy8Watb6MiEGxR50i4GZ4ku4nho/M0nAPU7tQCmdIOH2Hz29
+	 OrTYn5k4cx4NwEdaImgl8B04nhZC4UUNtUo6blXU/CpMas2RJJqn2PJEdOoHCKj3CT
+	 tbrqv60JNcxmyrOwi/epdiy6Db1w4BQyQMgzfAaxLKvkld4KHwd4DNItaC5FDZjP3O
+	 2f7MvWN4mltEam1XZnZjdFcNZAMZ7yZdnEBrU4pzIqQusI2jVjZSlut3luS+L1zSBy
+	 u6Bz+7R6J+bmg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Ausef Yousof <Ausef.Yousof@amd.com>,
-	Charlene Liu <charlene.liu@amd.com>,
+Cc: Aurabindo Pillai <aurabindo.pillai@amd.com>,
+	Dillon Varone <dillon.varone@amd.com>,
 	Zaeem Mohamed <zaeem.mohamed@amd.com>,
 	Daniel Wheeler <daniel.wheeler@amd.com>,
 	Alex Deucher <alexander.deucher@amd.com>,
@@ -57,19 +57,15 @@ Cc: Ausef Yousof <Ausef.Yousof@amd.com>,
 	airlied@gmail.com,
 	simona@ffwll.ch,
 	nicholas.kazlauskas@amd.com,
-	Charlene.Liu@amd.com,
-	chiahsuan.chung@amd.com,
-	hamza.mahfooz@amd.com,
-	Nicholas.Susanto@amd.com,
-	sungjoon.kim@amd.com,
-	roman.li@amd.com,
-	zhongwei.zhang@amd.com,
-	michael.strauss@amd.com,
+	alvin.lee2@amd.com,
+	charlene.liu@amd.com,
+	hamishclaxton@gmail.com,
+	sohaib.nadeem@amd.com,
 	amd-gfx@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.12 080/107] drm/amd/display: Remove hw w/a toggle if on DP2/HPO
-Date: Sun, 24 Nov 2024 08:29:40 -0500
-Message-ID: <20241124133301.3341829-80-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 081/107] drm/amd/display: parse umc_info or vram_info based on ASIC
+Date: Sun, 24 Nov 2024 08:29:41 -0500
+Message-ID: <20241124133301.3341829-81-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241124133301.3341829-1-sashal@kernel.org>
 References: <20241124133301.3341829-1-sashal@kernel.org>
@@ -84,53 +80,41 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.12.1
 Content-Transfer-Encoding: 8bit
 
-From: Ausef Yousof <Ausef.Yousof@amd.com>
+From: Aurabindo Pillai <aurabindo.pillai@amd.com>
 
-[ Upstream commit b4c804628485af2b46f0d24a87190735cac37d61 ]
+[ Upstream commit 2551b4a321a68134360b860113dd460133e856e5 ]
 
-[why&how]
-Applying a hw w/a only relevant to DIG FIFO causing corruption
-using HPO, do not apply the w/a if on DP2/HPO
+An upstream bug report suggests that there are production dGPUs that are
+older than DCN401 but still have a umc_info in VBIOS tables with the
+same version as expected for a DCN401 product. Hence, reading this
+tables should be guarded with a version check.
 
-Reviewed-by: Charlene Liu <charlene.liu@amd.com>
-Signed-off-by: Ausef Yousof <Ausef.Yousof@amd.com>
+Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3678
+Reviewed-by: Dillon Varone <dillon.varone@amd.com>
+Signed-off-by: Aurabindo Pillai <aurabindo.pillai@amd.com>
 Signed-off-by: Zaeem Mohamed <zaeem.mohamed@amd.com>
 Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../drm/amd/display/dc/clk_mgr/dcn35/dcn35_clk_mgr.c  | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn35/dcn35_clk_mgr.c b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn35/dcn35_clk_mgr.c
-index 7d68006137a97..3bd0d46c17010 100644
---- a/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn35/dcn35_clk_mgr.c
-+++ b/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn35/dcn35_clk_mgr.c
-@@ -132,6 +132,8 @@ static void dcn35_disable_otg_wa(struct clk_mgr *clk_mgr_base, struct dc_state *
- 	for (i = 0; i < dc->res_pool->pipe_count; ++i) {
- 		struct pipe_ctx *old_pipe = &dc->current_state->res_ctx.pipe_ctx[i];
- 		struct pipe_ctx *new_pipe = &context->res_ctx.pipe_ctx[i];
-+		struct clk_mgr_internal *clk_mgr_internal = TO_CLK_MGR_INTERNAL(clk_mgr_base);
-+		struct dccg *dccg = clk_mgr_internal->dccg;
- 		struct pipe_ctx *pipe = safe_to_lower
- 			? &context->res_ctx.pipe_ctx[i]
- 			: &dc->current_state->res_ctx.pipe_ctx[i];
-@@ -148,8 +150,13 @@ static void dcn35_disable_otg_wa(struct clk_mgr *clk_mgr_base, struct dc_state *
- 		new_pipe->stream_res.stream_enc &&
- 		new_pipe->stream_res.stream_enc->funcs->is_fifo_enabled &&
- 		new_pipe->stream_res.stream_enc->funcs->is_fifo_enabled(new_pipe->stream_res.stream_enc);
--		if (pipe->stream && (pipe->stream->dpms_off || dc_is_virtual_signal(pipe->stream->signal) ||
--			!pipe->stream->link_enc) && !stream_changed_otg_dig_on) {
-+		bool has_active_hpo = dccg->ctx->dc->link_srv->dp_is_128b_132b_signal(old_pipe) && dccg->ctx->dc->link_srv->dp_is_128b_132b_signal(new_pipe);
-+
-+		if (!has_active_hpo && !dccg->ctx->dc->link_srv->dp_is_128b_132b_signal(pipe) &&
-+					(pipe->stream && (pipe->stream->dpms_off || dc_is_virtual_signal(pipe->stream->signal) ||
-+					!pipe->stream->link_enc) && !stream_changed_otg_dig_on)) {
-+
-+
- 			/* This w/a should not trigger when we have a dig active */
- 			if (disable) {
- 				if (pipe->stream_res.tg && pipe->stream_res.tg->funcs->immediate_disable_crtc)
+diff --git a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
+index c9a6de110b742..902491669cbc7 100644
+--- a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
++++ b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
+@@ -3127,7 +3127,9 @@ static enum bp_result bios_parser_get_vram_info(
+ 	struct atom_data_revision revision;
+ 
+ 	// vram info moved to umc_info for DCN4x
+-	if (info && DATA_TABLES(umc_info)) {
++	if (dcb->ctx->dce_version >= DCN_VERSION_4_01 &&
++		dcb->ctx->dce_version < DCN_VERSION_MAX &&
++		info && DATA_TABLES(umc_info)) {
+ 		header = GET_IMAGE(struct atom_common_table_header,
+ 					DATA_TABLES(umc_info));
+ 
 -- 
 2.43.0
 
