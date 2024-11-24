@@ -1,125 +1,178 @@
-Return-Path: <linux-kernel+bounces-420140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 803F69D757B
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:48:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B04D168553
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:48:39 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2DE2186E27;
-	Sun, 24 Nov 2024 15:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E2lf8B3d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8AD9D76EE
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:53:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109B32500C6;
-	Sun, 24 Nov 2024 15:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30590B24AD9
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:55:09 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBE318872F;
+	Sun, 24 Nov 2024 15:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U2XLAOxp"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE602500AF;
+	Sun, 24 Nov 2024 15:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732463317; cv=none; b=WC9tPa+pJLmfhcE/OmIX/cGPxWh0f0GwTS/We7oOlQAH6oit90Bgr9DWjMh4OXaVgic69HtSG4bwGUg6a/tqdflQmMzCsbQGTIVmhef//L7lgSPocFn2jnMB7Yf/z+/z7uMmwbXf2ua1IlDSo1bBxBHIrMAJJ72jx9vPQV5pHBY=
+	t=1732463701; cv=none; b=TJMytnjTHMWMbSovXBgPy4MD1I89ogB4eKGJ75iaSE/WxCZU93Wpbb4H7mr05Z/hY2uJShcd3FdFT311ztj9RNYFCbJRtVmjQcIZgwXqq0GpiNuRd/dt6eq8022pfEY/3+90bfosyuHH8+ffGy4HMpjjTrDgJjrTWYG4ib87IDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732463317; c=relaxed/simple;
-	bh=hFy8l4XZP0/+kbC7Zjr0Hr9qaIpfqI/wYZHM5yGyXOQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cUF1bn9vtrVjHewVKw3Qx6OyO5cmCm35PNNnZmZwX4mW4bSQSWvFwhPCYnOUg5NCWIeC05QX+Qi5YnuZ4pG+KocnyG4g2wGyNAuNO82h6WNutHxXN8aki52xtQvaq0RHAxcXj0mNSFTBF/3vh74CGtRTLzggux6ON2t25l/QaVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E2lf8B3d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 854B6C4CECC;
-	Sun, 24 Nov 2024 15:48:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732463316;
-	bh=hFy8l4XZP0/+kbC7Zjr0Hr9qaIpfqI/wYZHM5yGyXOQ=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=E2lf8B3dr6gbecqvE0H2OIcnahCDfgeIYX/bez9XGZPrtUam3k12sU1mHpWH+Zbpj
-	 D5Va2nN7CsQy+2ZIRTkDLY2vr5nc9qRfe6Nvmwmxh+9uce4JELhKjByjOlFAtxD4CC
-	 zmxY93akVN6/N/Il18BQeXeDK1yeigpgfK01i4YlIBQRglaJ6FMP3eL/8KVceEmMLp
-	 Tzb4MPWLwywBE2PP3sIKMQRCmtgB6uGuU22F141mxRPEo45l0oHvhe/tujneyUjOGP
-	 F+9+Rx7rsDpG/e5JW4MdoGdKg6xi4p4IKe7RFxYFbeUkCg8Q0BA90Sp4iuZNU0y2xl
-	 IbSIWXAe+urqw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FDF1E668B2;
-	Sun, 24 Nov 2024 15:48:36 +0000 (UTC)
-From: Sasha Finkelstein via B4 Relay <devnull+fnkl.kernel.gmail.com@kernel.org>
-Date: Sun, 24 Nov 2024 16:48:28 +0100
-Subject: [PATCH] dmaengine: apple-admac: Avoid accessing registers in probe
+	s=arc-20240116; t=1732463701; c=relaxed/simple;
+	bh=hBB43uLUvtVLudvJZphIjsE/oW7XwZubOuwpW2wKCp0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TTQzanqJlvE5GNAwB1E/Bf8KBAmgKxBlmuXGgq9JSuKvUCtywtbUn2USE1omkGVTMxIBViTxZjZEb2EGYMT8eav/ERy9NsYF85zf20dg78dUl/QkRG4KXsBsSI8xN6qDrCcKbA+6xA1H3HW60WC7x3OUmP16NU1he5tUO81AAVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U2XLAOxp; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AODXEuR026475;
+	Sun, 24 Nov 2024 15:54:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2LMsnLvwZd9AdnctdkEDNz7vNj9k49C4JvFhUO0R80I=; b=U2XLAOxpgKNQTecY
+	PPwGgIhE0oGWPC/dL/hf1Sca2wSqQrn/yLf+ShpG2LkyvTE+dxLhdvEvt+9RNTEj
+	/npaoGfs8jn+tvN727SXfJaPYVf22Wnh3qLpSVOs0I7Jp5C+/G/3QnLnkbRdIDwp
+	MOU26/VwWhO4uteAZiPbOWF0QfaQSg5h2QVwZUmBgaMtVuJr39ZJxuaurOrQuDnw
+	c00pTFb41lnDkjeR/bYDv/Kso7Xj4Us4yzznWM0CsYobj9ZSkbDyOGRg7wC8exRg
+	12gll+oakqB5xq6wvu2gbPyRNh0iqQujmX2g4BZzNAPm24ubBHukZay+V+rVyqhd
+	PD4IoA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 433626ah2n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 24 Nov 2024 15:54:34 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AOFsXSM025493
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 24 Nov 2024 15:54:33 GMT
+Received: from [10.216.28.62] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 24 Nov
+ 2024 07:54:26 -0800
+Message-ID: <0b4db909-6029-40e6-8e1d-a7ecdc731b25@quicinc.com>
+Date: Sun, 24 Nov 2024 21:24:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] arm64: dts: qcom: x1e80100-hp-x14: dt for HP Omnibook
+ X Laptop 14
+To: <jens.glathe@oldschoolsolutions.biz>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        "Douglas
+ Anderson" <dianders@chromium.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Jessica Zhang <quic_jesszhan@quicinc.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Kalle Valo
+	<kvalo@kernel.org>, "David Airlie" <airlied@gmail.com>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+        Thomas Zimmermann
+	<tzimmermann@suse.de>,
+        Maxime Ripard <mripard@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>
+References: <20241124-hp-omnibook-x14-v1-0-e4262f0254fa@oldschoolsolutions.biz>
+ <20241124-hp-omnibook-x14-v1-4-e4262f0254fa@oldschoolsolutions.biz>
+Content-Language: en-US
+From: Krishna Kurapati <quic_kriskura@quicinc.com>
+In-Reply-To: <20241124-hp-omnibook-x14-v1-4-e4262f0254fa@oldschoolsolutions.biz>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241124-admac-power-v1-1-58f2165a4d55@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAMtKQ2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDQyMT3cSU3MRk3YL88tQiXfM0Y6Nko0RDC1ODRCWgjoKi1LTMCrBp0bG
- 1tQAYOnwwXQAAAA==
-X-Change-ID: 20241124-admac-power-7f32c2a1850a
-To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Vinod Koul <vkoul@kernel.org>, 
- =?utf-8?q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Sasha Finkelstein <fnkl.kernel@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732463315; l=1574;
- i=fnkl.kernel@gmail.com; s=20241124; h=from:subject:message-id;
- bh=fzYr2mOnaTThuwM8nzcfIvcWzFVACOsEp4j04pez3Us=;
- b=RMWELGTjitjliRQGKVjh9SJeijRLX/Kvt/3E/LLmmy3YJdBhs3xVJh9TFlJpN0Hg+IxvsqdiH
- zT/+9C3lwZEAHnQOhKvdsR7FrdibkKVGBpZb3XTTIDy4zEzccMhr/E3
-X-Developer-Key: i=fnkl.kernel@gmail.com; a=ed25519;
- pk=aSkp1PdZ+eF4jpMO6oLvz/YfT5XkBUneWwyhQrOgmsU=
-X-Endpoint-Received: by B4 Relay for fnkl.kernel@gmail.com/20241124 with
- auth_id=283
-X-Original-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
-Reply-To: fnkl.kernel@gmail.com
-
-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
-
-The ADMAC attached to the AOP has complex power sequencing, and is
-power gated when the probe callback runs. Move the register reads
-to other functions, where we can guarantee that the hardware is
-switched on.
-
-Fixes: 568aa6dd641f ("dmaengine: apple-admac: Allocate cache SRAM to channels")
-Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
----
- drivers/dma/apple-admac.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/dma/apple-admac.c b/drivers/dma/apple-admac.c
-index 9588773dd2eb670a2f6115fdaef39a0e88248015..037ec38730cf980eee11ebb8ec17be7623879cf8 100644
---- a/drivers/dma/apple-admac.c
-+++ b/drivers/dma/apple-admac.c
-@@ -153,6 +153,8 @@ static int admac_alloc_sram_carveout(struct admac_data *ad,
- {
- 	struct admac_sram *sram;
- 	int i, ret = 0, nblocks;
-+	ad->txcache.size = readl_relaxed(ad->base + REG_TX_SRAM_SIZE);
-+	ad->rxcache.size = readl_relaxed(ad->base + REG_RX_SRAM_SIZE);
- 
- 	if (dir == DMA_MEM_TO_DEV)
- 		sram = &ad->txcache;
-@@ -912,12 +914,7 @@ static int admac_probe(struct platform_device *pdev)
- 		goto free_irq;
- 	}
- 
--	ad->txcache.size = readl_relaxed(ad->base + REG_TX_SRAM_SIZE);
--	ad->rxcache.size = readl_relaxed(ad->base + REG_RX_SRAM_SIZE);
--
- 	dev_info(&pdev->dev, "Audio DMA Controller\n");
--	dev_info(&pdev->dev, "imprint %x TX cache %u RX cache %u\n",
--		 readl_relaxed(ad->base + REG_IMPRINT), ad->txcache.size, ad->rxcache.size);
- 
- 	return 0;
- 
-
----
-base-commit: 9f16d5e6f220661f73b36a4be1b21575651d8833
-change-id: 20241124-admac-power-7f32c2a1850a
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: lxCHzPHjaX0cEGapYD-t7fbp5ETk8hmH
+X-Proofpoint-ORIG-GUID: lxCHzPHjaX0cEGapYD-t7fbp5ETk8hmH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 clxscore=1011 phishscore=0 spamscore=0 adultscore=0
+ impostorscore=0 mlxscore=0 malwarescore=0 suspectscore=0 mlxlogscore=898
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411240138
 
 
+
+On 11/24/2024 6:50 PM, Jens Glathe via B4 Relay wrote:
+> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> 
+> Introduce device tree for the HP Omnibook X Laptop 14-fe0750ng
+> (hp-omnibook-x14). It is a Laptop based on the Qualcomm Snapdragon
+> X Elite SoC. There seem to be other SKUs, some with Wifi-7 (WCN7850)
+> instead of Wifi-6E (WCN6855). This dt explicitly supports WCN6855,
+> I haven't found a good way yet to describe both.
+> 
+> PDF link: https://www8.hp.com/h20195/V2/GetPDF.aspx/c08989140
+> 
+> Supported features:
+> 
+> - Keyboard (no function keys though)
+> - Display
+> - PWM brightness control (works via brightnessctl)
+> - Touchpad
+> - Touchscreen
+> - PCIe ports (pcie4, pcie6a)
+> - USB type-c, type-a
+> - WCN6855 Wifi-6E
+> - WCN6855 Bluetooth
+> - ADSP and CDSP
+> - X1 GPU
+> - GPIO Keys (Lid switch)
+> - Audio definition (works via USB)
+> 
+> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+
+[...]
+
+> +
+> +&usb_mp {
+> +	status = "okay";
+> +};
+> +
+> +&usb_mp_dwc3 {
+> +	phys = <&usb_mp_hsphy0>;
+> +	phy-names = "usb2-0";
+> +};
+> +
+> +&usb_mp_hsphy0 {
+> +	vdd-supply = <&vreg_l2e_0p8>;
+> +	vdda12-supply = <&vreg_l3e_1p2>;
+> +
+> +	phys = <&eusb3_repeater>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_mp_qmpphy0 {
+> +	vdda-phy-supply = <&vreg_l3e_1p2>;
+> +	vdda-pll-supply = <&vreg_l3c_0p8>;
+> +
+> +	status = "okay";
+> +};
+> 
+
+The above QMP MP PHy is unused in the above DWC3 node. If the port is 
+only HS capable, please don't enable the QMP node.
+
+Regarfds,
+Krishna,
 
