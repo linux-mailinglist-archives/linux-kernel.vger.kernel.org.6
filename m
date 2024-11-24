@@ -1,575 +1,149 @@
-Return-Path: <linux-kernel+bounces-420231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B435D9D7734
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 19:16:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 353051635D0
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:16:04 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40935139587;
-	Sun, 24 Nov 2024 18:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="mbfWYdOl"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D888C9D779D
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:03:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802AB2500AF;
-	Sun, 24 Nov 2024 18:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42376B2F094
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:16:41 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4E3140E3C;
+	Sun, 24 Nov 2024 18:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="H6G2n2Gi"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18232500AF
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 18:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732472161; cv=none; b=HcVTWVwrkdr+4ZCPaOW9FV8DJ0mmidlc8/R3ZkT0RI1nU+YnGgBjcV7zwVVw6Z1YCn0XHSA+wiLbp3IAUOqVeN8EWvnXodEDNJULR6iVWOanXAW1Q4vL0/R9pUM/194SfL5T5MSnw7Et4l2Q2sFaXL5Kg/YDYMxZFbKovggmw0g=
+	t=1732472190; cv=none; b=PNKOBOF1GDTCme1EzbbO2jN2f3zeN9ZAiB6LHKzSiW5qfTjYjH+d0JOgf6YO76pveTOOmuERpclfXGHBFnsQxWCMvRRvP329f23ug2w7S2Pefx6bzP3q9imRhpOFk/DUEcSMchPCepPTFiAR2S2dWLau0ldSkg58uvDs8ryjfFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732472161; c=relaxed/simple;
-	bh=VT6OEDno3ADIaU4wCzIpE1gSLqK6rvW4nFrS+N9J1W4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RQXpQQfJ8LpVF/Et7Pai4rDQVJcCdlmDYuip/PxEscKIEhhQve2L6+nTu+GZPeJEaddN2WwkIdYnuJEH6Gc/+h71n9h+RM32Y+RUMKbfXx3Ppg1289mzv6wTPuf0wTh4N5jAqjQaE/i0qYqpuk045Cdy3KmJ3JnmbF7a5/4lpLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=mbfWYdOl; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1732472147; x=1733076947; i=w_armin@gmx.de;
-	bh=5HhAmy5sW1bJaXAa0VtwBDTTGbcW0yIg+LgI+SYtm24=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=mbfWYdOlBZOXIncapHKWR6fr1aKpN4wqQNbmjITv0RDH1M9VR3XfgEva1hlfavKM
-	 td7m2fnbo0Ly0obYVA2idUGm5sqCJEboPbS7Q2LqD5hs9p9Zgncojxc+7TxMuqsdK
-	 XxJLOieZeILSIcCnSPLFenmeXcRh1iyO1XGUYxglLCTM9ejwhBXSM7q+Ej11to3cR
-	 pwbm4UdsESozUJVbFo7cRDE0/XxCYb2WtxL3cRQUqWGFtUQz21qb2/uyGONP8bUSj
-	 uXifMj4m3Wlp9qLFkE2Xi+c59qcSaG8wQKBQhTj5XHpk2PEiN/2+7SdGqcWCsO7jA
-	 rIFQ+skjTkmLEwtYeg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.14] ([141.30.226.119]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MdNcG-1tobxr0iJs-00altk; Sun, 24
- Nov 2024 19:15:47 +0100
-Message-ID: <13eb4319-b323-463a-99af-db3fa9e5508b@gmx.de>
-Date: Sun, 24 Nov 2024 19:15:45 +0100
+	s=arc-20240116; t=1732472190; c=relaxed/simple;
+	bh=o4MjSo4mZwOargpNyRXKDM3WAx4EGKBua34HXhvV8V4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cblsSDVee4JCAFqTwXw4fiyPe1hBoh/a9cqdr3vAYordEo2EwHKOlwiGrN/QUZI2mklSAr1NPvcCCiuWcGt/Xy+I/sSvtYVokxnMTxxPzxFjicYVZdZ8zOyUP4hyuFZql1eKbsmSc9k5Vkz6klfg/UGYtLMImw8DVvpFJc7wx6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=H6G2n2Gi; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa543c4db92so113854866b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 10:16:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1732472187; x=1733076987; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9nEvmX/RSuTdFkbcUkssWby2DmD3HY/Zsgoyaq7a18g=;
+        b=H6G2n2Giqq46Pwuhsi9yoFEiOm2Nb534rrMwP3Nv6ItWmCL96dYAdFE1DkCBP2xJ/Y
+         32/Dylu8HLRu0qETVmmWMdg8DiNiBqr6vsg0Y3RsnsV4Y/DsUQsoJv4wfOrZneBRF/SP
+         GHy3vwDlT3GHF1JuQh42tQjHcBFFLfv7SrgBE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732472187; x=1733076987;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9nEvmX/RSuTdFkbcUkssWby2DmD3HY/Zsgoyaq7a18g=;
+        b=Ljh05lqFVFNwpAGANeDFMLc7dDAbXcxnRMmFEJpsIGnn8rCd4PByFsGszkVOEEkd8h
+         avAKcDsl5n6Pmz0UC2tTcBy0Z2x/V2h2fDZdEbb+j/lTDSRC58IMRh14LAqk/ssGv//p
+         aoObNZyMTzqQbUAKnqIMm0D0lGa2xucwa5WcHJnAMX1P1g9lin+IZ/a2Hf7tl6KjvMtF
+         AAECopHPs+odpxKb4aCqbV/4ECDrbJF3GrhM63ipwkB+GnagXRuMkcxTnHEx7dDucME4
+         BNLGUmKdmSTN0f3xv6HrfiecQeeqJGqjqKHENLIEz8LqqJHqpMfsllfZiH6fE3arj0Mx
+         HAnA==
+X-Forwarded-Encrypted: i=1; AJvYcCXeo17wU7doLBcRXRPcJjNGzyctS/F4Girc4Xhh9eY2q1XEnB7SH9cXSGJmVxehh1sMwTs0MFHa52W7qk8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyDM3E8mnhjsfttIBzRnNOmaBjPLbL1WHx++V6+oajiT28qlm2
+	ziyZK7UaseGbLuReOr1xyuD+QufbFFvP7ed0rcYsyzEyO8T0dA6L+ItSoP+ziwdk0O+0Xg5KGyp
+	ie9Y1vw==
+X-Gm-Gg: ASbGnct9x3TNCayiSZJXjTYPxW8ovU1Pb5bTh+NYuN1LWxXQMHseJMLVrk5RYttE2wZ
+	agpKxI09zExwtnfHQf8ePDR0fuIK40VoG5xDT72lOvarHbifUWqRJUNa/2ySOGSv6zRVwphD1Y0
+	C3EJwJtcUJtiraGI978jBhmNFa6o7EpW1eCTFbN4/eyf5IRGOavtHJkbJpRuLpdr+XO9r/r4X1T
+	BiLP9f2qAJ/yffsr20q7J7bC7FpzKmygTJ4pC0OC8hxOdv/B6M41MFvJiU2CTpWkTAkLPvrpjmo
+	pIUCWkCCiELDw7QfQuIQtC80
+X-Google-Smtp-Source: AGHT+IGFxFiXmFjr4813nlw99H7PPjjetltJZznt/7XBVRymL9uKcwOE3W8+SdAuxlVEIoTJDjnntg==
+X-Received: by 2002:a17:906:32cc:b0:aa5:2e09:ff0f with SMTP id a640c23a62f3a-aa52e0a191cmr500969366b.37.1732472186766;
+        Sun, 24 Nov 2024 10:16:26 -0800 (PST)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b28f6b3sm373997666b.23.2024.11.24.10.16.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 24 Nov 2024 10:16:25 -0800 (PST)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa51b8c5f4dso292160666b.2
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 10:16:25 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUjUzdCBvCuSHrisAkViiTjdTSMErtWoIkMfPFrgVpjbw8mRkOxC9ZS/fxdPEMmTZZ/H3mcDOwHUhal264=@vger.kernel.org
+X-Received: by 2002:a17:906:3ca2:b0:aa5:1ef5:261e with SMTP id
+ a640c23a62f3a-aa51ef5266fmr695134766b.17.1732472185004; Sun, 24 Nov 2024
+ 10:16:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 7/9] power: supply: core: implement extension API
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Sebastian Reichel <sre@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>,
- Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- chrome-platform@lists.linux.dev
-References: <20241111-power-supply-extensions-v4-0-7240144daa8e@weissschuh.net>
- <20241111-power-supply-extensions-v4-7-7240144daa8e@weissschuh.net>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20241111-power-supply-extensions-v4-7-7240144daa8e@weissschuh.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Fa7jtuFGVE6u4S7I7P2TEWtyVFWH0/REETXcyNZ7TtfVRncIOiB
- nk3YNvuikwQ+aCdAe1LdLikEc4y88HX5XLAnx6XkdNlgvSGKG7e6QoKr9L86xcVDnq3lGHG
- GYgwZzuICujaNJIyHrUm+cA+Gm+BLvXoB9346kCevj5Oy0kOQR9wPsiBHpSNSslwQzCE6FV
- Rh9BvdMuZaUUXuTD33KEA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:fW7L0aL3kdU=;9V8JAHhlV/Wq+HOHAlkcjjvBhzC
- 4BZ9RsDKJrrPPx4aj60NxLHDrByqgiT6BFhL/vSjOGeDUK8g10G8imdYfu3MB7vCVPMCoEpMO
- kNlOZxxcuGsYLm49w/+m5hW58Bf52nUPUAMkgkqLHQ2rublc4VtzYFksl2+Qx7CniK9mwTwux
- OhVJ4q1BaJdA3To0A/AUJBbYmBSOF6OeFNjX1XIioGMcFHAj6MKM6222b1TXlS2IH8yMua2QJ
- PTi2dcBUnO+s0ecHF/J63ylc1RrvFO3jNLg1obNe9ox0rDy3508q5ptsip2B0667T7tDjDO/W
- wZl8zEb9nW1Atxd7ZeUJGIZ7fIrlWGjBSYLsoqaTqYi+7tPytUEdEkaAy26kZZ5o0TAHg1chF
- t5JJIkz9HbuTGg5uLPO3RaeDOxVtBE5ESl3BQVBW9pSa5UDL4TjzhTtGnlDEIqL4VElzWKkZQ
- T7f8R71hV/aDuyzOV/iUrxVH2O48empM3vcpfOLdg6hUyPjNAPo+IKcqWD4sU3Z1BJLbWzSod
- P/LEw+GTQYHacZ+37VfQXeE5cKyDA09YkXsxREO26gcRMiGJWHyfEDbTxydrBqU+maxVtiP/B
- yMCUwHGIYOz9lK/sXPhtk1p0jP14476C+4/nbco9mn0pSLbkjhXcW6JUVzfIFAVDifa8DkdVS
- 7g5wV2GWzz0q6Ah+RwgiIYbCyRI4aAjzJRRcGj/9Gm7SyWqT46+KC7Bo3WrC7XzvBVg0zr5fL
- exF9pWM+nI0Edw8mYGS8E/wgMoZNsHNMugvBQ/IGje6vgEPIEpnCsALRdTzmHhRWfsqkf8LnW
- ZtAWrOzEmeuFgz2IySMkfs0Xg0MvVAkr92/7So3AZZRgltiIDAWqFOlUVgtMLSPe4RLgGVF7C
- MgWBMj3NioRo7XSeSIh1t0Be1tdloweYiFdmKGT8XYWjSWRrKN2kZIcqWKxaOFSNBukqggjYX
- yWGfxMOkNwVIoyGJQe0ims9Fcjeox/2X3am3qMnLPLpMsLmDcHfZVaxuUAZ36r2ta77zyjj92
- KqkXHXEDwvnbu0cpmTVxBa4fzew9r+J+6EKEwUeXe+0ftZ9XB/sMtREjavXrDmvuCvAB4rJZq
- 2/i0UFFVw8+MgoRwmp6BcS7ZAoXHkF
+References: <cover.1730166635.git.jpoimboe@kernel.org> <82cbb9983fef5ecf6f1cb33661e977172d40a7e6.1730166635.git.jpoimboe@kernel.org>
+ <20241029032735.pw3bg64bpneqnfhk@treble.attlocal.net> <76bb85ceeb854e3ab68d87f846515306@AcuMS.aculab.com>
+ <20241115230653.hfvzyf3aqqntgp63@jpoimboe> <CAHk-=wgLCzEwa=S4hZFGeOPjix-1_fDrsqR-QLaBcDM-fgkvhw@mail.gmail.com>
+ <20241121214011.iiup2fdwsys7hhts@jpoimboe> <CAHk-=wigHm2J4LkUL1=y_H8zGwM0JsK2CrWyLNbz9fvXfbaBQA@mail.gmail.com>
+ <20241122001223.t4uywacusrplpefq@jpoimboe> <CAHk-=whm4fEYrzrrRrqEhELLFz2xNCMT9be+J0uiR_EwXwa0DA@mail.gmail.com>
+ <20241122031115.5aasuktqrp2sidfj@jpoimboe> <CAHk-=wjJt49tgtmYv42bXU3h0Txb+mQZEOHseahA4EcK6s=BxA@mail.gmail.com>
+ <CAHk-=wiL0TepguMNaR65ZdkkiBEoi4hTE7PwG3bBO1c5SOXmWw@mail.gmail.com>
+ <CAHk-=wj4LHCiD8f75q-jf7mu7Jyn-wHgGoni6WSQtdh7+HtGNw@mail.gmail.com> <2d7744d7ce504b288c3f1356f27910ec@AcuMS.aculab.com>
+In-Reply-To: <2d7744d7ce504b288c3f1356f27910ec@AcuMS.aculab.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 24 Nov 2024 10:16:08 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgCDMrjKc7foeV5zHRL_ioRZqqu-XKN5q9fN5NFCpgXZQ@mail.gmail.com>
+Message-ID: <CAHk-=wgCDMrjKc7foeV5zHRL_ioRZqqu-XKN5q9fN5NFCpgXZQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/6] x86/uaccess: Avoid barrier_nospec() in 64-bit __get_user()
+To: David Laight <David.Laight@aculab.com>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Waiman Long <longman@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, 
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Andrew Cooper <andrew.cooper3@citrix.com>, 
+	Mark Rutland <mark.rutland@arm.com>, "Kirill A . Shutemov" <kirill@shutemov.name>
+Content-Type: text/plain; charset="UTF-8"
 
-Am 11.11.24 um 22:40 schrieb Thomas Wei=C3=9Fschuh:
+On Sun, 24 Nov 2024 at 08:11, David Laight <David.Laight@aculab.com> wrote:
+>
+> Is there an 'unsafe_get_user_nofault()' that uses a trap handler
+> that won't fault in a page?
 
-> Various drivers, mostly in platform/x86 extend the ACPI battery driver
-> with additional sysfs attributes to implement more UAPIs than are
-> exposed through ACPI by using various side-channels, like WMI,
-> nonstandard ACPI or EC communication.
->
-> While the created sysfs attributes look similar to the attributes
-> provided by the powersupply core, there are various deficiencies:
->
-> * They don't show up in uevent payload.
-> * They can't be queried with the standard in-kernel APIs.
-> * They don't work with triggers.
-> * The extending driver has to reimplement all of the parsing,
-> formatting and sysfs display logic.
-> * Writing a extension driver is completely different from writing a
-> normal power supply driver.
->
-> This extension API avoids all of these issues.
-> An extension is just a "struct power_supply_ext" with the same kind of
-> callbacks as in a normal "struct power_supply_desc".
->
-> The API is meant to be used via battery_hook_register(), the same way as
-> the current extensions.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> ---
->   drivers/power/supply/power_supply.h       |  14 +++
->   drivers/power/supply/power_supply_core.c  | 155 ++++++++++++++++++++++=
-++++++--
->   drivers/power/supply/power_supply_sysfs.c |  22 ++++-
->   include/linux/power_supply.h              |  32 ++++++
->   4 files changed, 213 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/power/supply/power_supply.h b/drivers/power/supply/=
-power_supply.h
-> index 5dabbd895538003096b62d03fdd0201b82b090e6..4c3e602c416cec556173a8eb=
-1a3114c13ded71b7 100644
-> --- a/drivers/power/supply/power_supply.h
-> +++ b/drivers/power/supply/power_supply.h
-> @@ -9,6 +9,8 @@
->    *  Modified: 2004, Oct     Szabolcs Gyurko
->    */
->
-> +#include <linux/lockdep.h>
-> +
->   struct device;
->   struct device_type;
->   struct power_supply;
-> @@ -17,6 +19,18 @@ extern int power_supply_property_is_writeable(struct =
-power_supply *psy,
->   					      enum power_supply_property psp);
->   extern bool power_supply_has_property(struct power_supply *psy,
->   				      enum power_supply_property psp);
-> +extern bool power_supply_ext_has_property(const struct power_supply_ext=
- *ext,
-> +					  enum power_supply_property psp);
-> +
-> +struct power_supply_ext_registration {
-> +	struct list_head list_head;
-> +	const struct power_supply_ext *ext;
-> +	void *data;
-> +};
-> +
-> +#define power_supply_for_each_extension(pos, psy) \
-> +	lockdep_assert_held(&(psy)->extensions_sem); \
-> +	list_for_each_entry(pos, &(psy)->extensions, list_head)
->
->   #ifdef CONFIG_SYSFS
->
-> diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/su=
-pply/power_supply_core.c
-> index 502b07468b93dfb7f5a6c2092588d931a7d015f2..bf3054ed034e091adefcdbf9=
-8873a108b4c90fde 100644
-> --- a/drivers/power/supply/power_supply_core.c
-> +++ b/drivers/power/supply/power_supply_core.c
-> @@ -81,6 +81,7 @@ static int __power_supply_changed_work(struct device *=
-dev, void *data)
->
->   static void power_supply_changed_work(struct work_struct *work)
->   {
-> +	int ret;
->   	unsigned long flags;
->   	struct power_supply *psy =3D container_of(work, struct power_supply,
->   						changed_work);
-> @@ -88,6 +89,16 @@ static void power_supply_changed_work(struct work_str=
-uct *work)
->   	dev_dbg(&psy->dev, "%s\n", __func__);
->
->   	spin_lock_irqsave(&psy->changed_lock, flags);
-> +
-> +	if (unlikely(psy->update_groups)) {
-> +		psy->update_groups =3D false;
-> +		spin_unlock_irqrestore(&psy->changed_lock, flags);
-> +		ret =3D sysfs_update_groups(&psy->dev.kobj, power_supply_dev_type.gro=
-ups);
-> +		if (ret)
-> +			dev_warn(&psy->dev, "failed to update sysfs groups: %pe\n", ERR_PTR(=
-ret));
-> +		spin_lock_irqsave(&psy->changed_lock, flags);
-> +	}
-> +
->   	/*
->   	 * Check 'changed' here to avoid issues due to race between
->   	 * power_supply_changed() and this routine. In worst case
-> @@ -1196,15 +1207,37 @@ static bool psy_desc_has_property(const struct p=
-ower_supply_desc *psy_desc,
->   	return found;
->   }
->
-> +bool power_supply_ext_has_property(const struct power_supply_ext *psy_e=
-xt,
-> +				   enum power_supply_property psp)
-> +{
-> +	bool found =3D false;
-> +	int i;
-> +
-> +	for (i =3D 0; i < psy_ext->num_properties; i++) {
-> +		if (psy_ext->properties[i] =3D=3D psp) {
-> +			found =3D true;
-> +			break;
-> +		}
-> +	}
-> +
-> +	return found;
+Nope. I was thinking about the same thing, but we actually don't look
+up the fault handler early - we only do it at failure time.
 
-Can we just return false here and directly return true when the property i=
-s found?
+So the pagefault_disable() thus acts as the failure trigger that makes
+us look up the fault handler. Without that, we'd never even check if
+there's a exception note on the instruction.
 
-> +}
-> +
->   bool power_supply_has_property(struct power_supply *psy,
->   			       enum power_supply_property psp)
->   {
-> +	struct power_supply_ext_registration *reg;
-> +
->   	if (psy_desc_has_property(psy->desc, psp))
->   		return true;
->
->   	if (power_supply_battery_info_has_prop(psy->battery_info, psp))
->   		return true;
->
-> +	power_supply_for_each_extension(reg, psy)
-> +		if (power_supply_ext_has_property(reg->ext, psp))
-> +			return true;
-> +
->   	return false;
->   }
->
-> @@ -1212,12 +1245,21 @@ int power_supply_get_property(struct power_suppl=
-y *psy,
->   			    enum power_supply_property psp,
->   			    union power_supply_propval *val)
->   {
-> +	struct power_supply_ext_registration *reg;
-> +
->   	if (atomic_read(&psy->use_cnt) <=3D 0) {
->   		if (!psy->initialized)
->   			return -EAGAIN;
->   		return -ENODEV;
->   	}
->
-> +	guard(rwsem_read)(&psy->extensions_sem);
-> +
-> +	power_supply_for_each_extension(reg, psy) {
-> +		if (power_supply_ext_has_property(reg->ext, psp))
-> +			return reg->ext->get_property(psy, reg->ext, reg->data, psp, val);
-> +	}
+> I'd also have thought that the trap handler for unsafe_get_user()
+> would jump to the Efault label having already done user_access_end().
+> But maybe it doesn't work out that way?
 
-Maybe we can use scoped_guard() here?
+I actually at one point had a local version that did exactly that,
+because it allowed us to avoid doing the user_access_end in the
+exception path.
 
-> +
->   	if (psy_desc_has_property(psy->desc, psp))
->   		return psy->desc->get_property(psy, psp, val);
->   	else if (power_supply_battery_info_has_prop(psy->battery_info, psp))
-> @@ -1231,7 +1273,23 @@ int power_supply_set_property(struct power_supply=
- *psy,
->   			    enum power_supply_property psp,
->   			    const union power_supply_propval *val)
->   {
-> -	if (atomic_read(&psy->use_cnt) <=3D 0 || !psy->desc->set_property)
-> +	struct power_supply_ext_registration *reg;
-> +
-> +	if (atomic_read(&psy->use_cnt) <=3D 0)
-> +		return -ENODEV;
-> +
-> +	guard(rwsem_read)(&psy->extensions_sem);
-> +
-> +	power_supply_for_each_extension(reg, psy) {
-> +		if (power_supply_ext_has_property(reg->ext, psp)) {
-> +			if (reg->ext->set_property)
-> +				return reg->ext->set_property(psy, reg->ext, reg->data, psp, val);
-> +			else
-> +				return -ENODEV;
-> +		}
-> +	}
+It got ugly. In particular, it gets really ugly for the
+"copy_to/from_user()" case where we want to be byte-accurate, and a
+64-bit access fails, and we go back to doing the last few accesses one
+byte at a time.
 
-Same as above.
+See the exception table in arch/x86/lib/copy_user_64.S where it jumps
+to .Lcopy_user_tail for an example of this.
 
-> +
-> +	if (!psy->desc->set_property)
->   		return -ENODEV;
->
->   	return psy->desc->set_property(psy, psp, val);
-> @@ -1241,7 +1299,22 @@ EXPORT_SYMBOL_GPL(power_supply_set_property);
->   int power_supply_property_is_writeable(struct power_supply *psy,
->   					enum power_supply_property psp)
->   {
-> -	return psy->desc->property_is_writeable && psy->desc->property_is_writ=
-eable(psy, psp);
-> +	struct power_supply_ext_registration *reg;
-> +
-> +	power_supply_for_each_extension(reg, psy) {
+Yes, yes, you could just do a "stac" again in the exception path to
+undo the fact that the fault handler would have turned off user
+accesses again...
 
-Missing guard here.
+But look at that copy_user_64 code again and you'll see that it's
+actually a generic replacement for "rep movs" with fault handling, and
+can be used for the "copy_from_kernel_nofault" cases too.
 
-> +		if (power_supply_ext_has_property(reg->ext, psp)) {
-> +			if (reg->ext->property_is_writeable)
-> +				return reg->ext->property_is_writeable(psy, reg->ext,
-> +								       reg->data, psp);
-> +			else
-> +				return -ENODEV;
-> +		}
-> +	}
-> +
-> +	if (!psy->desc->property_is_writeable)
-> +		return -ENODEV;
-> +
-> +	return psy->desc->property_is_writeable(psy, psp);
->   }
->
->   void power_supply_external_power_changed(struct power_supply *psy)
-> @@ -1260,6 +1333,67 @@ int power_supply_powers(struct power_supply *psy,=
- struct device *dev)
->   }
->   EXPORT_SYMBOL_GPL(power_supply_powers);
->
-> +static int power_supply_update_sysfs_and_hwmon(struct power_supply *psy=
-)
-> +{
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&psy->changed_lock, flags);
-> +	psy->update_groups =3D true;
-> +	spin_unlock_irqrestore(&psy->changed_lock, flags);
-> +
-> +	power_supply_changed(psy);
-> +
-> +	power_supply_remove_hwmon_sysfs(psy);
-> +	return power_supply_add_hwmon_sysfs(psy);
+So I decided that it was just too ugly for words to have the fault
+handler basically change the state of the faultee that way.
 
-Do we need some locking here or is this ok?
-
-> +}
-> +
-> +int power_supply_register_extension(struct power_supply *psy, const str=
-uct power_supply_ext *ext,
-> +				    void *data)
-> +{
-> +	struct power_supply_ext_registration *reg;
-> +	size_t i;
-> +
-> +	guard(rwsem_write)(&psy->extensions_sem);
-> +
-> +	power_supply_for_each_extension(reg, psy)
-> +		if (reg->ext =3D=3D ext)
-> +			return -EEXIST;
-> +
-> +	for (i =3D 0; i < ext->num_properties; i++)
-> +		if (power_supply_has_property(psy, ext->properties[i]))
-> +			return -EEXIST;
-> +
-> +	reg =3D kmalloc(sizeof(*reg), GFP_KERNEL);
-> +	if (!reg)
-> +		return -ENOMEM;
-> +
-> +	reg->ext =3D ext;
-> +	reg->data =3D data;
-> +	list_add(&reg->list_head, &psy->extensions);
-> +
-> +	return power_supply_update_sysfs_and_hwmon(psy);
-
-We need to clean up *reg here should power_supply_update_sysfs_and_hwmon()=
- fail.
-
-> +}
-> +EXPORT_SYMBOL_GPL(power_supply_register_extension);
-> +
-> +void power_supply_unregister_extension(struct power_supply *psy, const =
-struct power_supply_ext *ext)
-> +{
-> +	struct power_supply_ext_registration *reg;
-> +
-> +	guard(rwsem_write)(&psy->extensions_sem);
-> +
-> +	power_supply_for_each_extension(reg, psy) {
-> +		if (reg->ext =3D=3D ext) {
-> +			list_del(&reg->list_head);
-> +			kfree(reg);
-> +			power_supply_update_sysfs_and_hwmon(psy);
-> +			return;
-> +		}
-> +	}
-> +
-> +	dev_warn(&psy->dev, "Trying to unregister invalid extension");
-> +}
-> +EXPORT_SYMBOL_GPL(power_supply_unregister_extension);
-> +
->   static void power_supply_dev_release(struct device *dev)
->   {
->   	struct power_supply *psy =3D to_power_supply(dev);
-> @@ -1414,6 +1548,9 @@ __power_supply_register(struct device *parent,
->   	}
->
->   	spin_lock_init(&psy->changed_lock);
-> +	init_rwsem(&psy->extensions_sem);
-> +	INIT_LIST_HEAD(&psy->extensions);
-> +
->   	rc =3D device_add(dev);
->   	if (rc)
->   		goto device_add_failed;
-> @@ -1426,13 +1563,15 @@ __power_supply_register(struct device *parent,
->   	if (rc)
->   		goto register_thermal_failed;
->
-> -	rc =3D power_supply_create_triggers(psy);
-> -	if (rc)
-> -		goto create_triggers_failed;
-> +	scoped_guard(rwsem_read, &psy->extensions_sem) {
-> +		rc =3D power_supply_create_triggers(psy);
-> +		if (rc)
-> +			goto create_triggers_failed;
->
-> -	rc =3D power_supply_add_hwmon_sysfs(psy);
-> -	if (rc)
-> -		goto add_hwmon_sysfs_failed;
-> +		rc =3D power_supply_add_hwmon_sysfs(psy);
-> +		if (rc)
-> +			goto add_hwmon_sysfs_failed;
-> +	}
->
->   	/*
->   	 * Update use_cnt after any uevents (most notably from device_add()).
-> diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/s=
-upply/power_supply_sysfs.c
-> index 99bfe1f03eb8326d38c4e2831c9670313b42e425..2cf25bacd7a1bb66e5a72629=
-bffaa6d16bfbf3be 100644
-> --- a/drivers/power/supply/power_supply_sysfs.c
-> +++ b/drivers/power/supply/power_supply_sysfs.c
-> @@ -268,6 +268,23 @@ static ssize_t power_supply_show_enum_with_availabl=
-e(
->   	return count;
->   }
->
-> +static ssize_t power_supply_show_charge_behaviour(struct device *dev,
-> +						  struct power_supply *psy,
-> +						  union power_supply_propval *value,
-> +						  char *buf)
-> +{
-> +	struct power_supply_ext_registration *reg;
-> +
-
-Missing guard here.
-
-Thanks,
-Armin Wolf
-
-> +	power_supply_for_each_extension(reg, psy) {
-> +		if (power_supply_ext_has_property(reg->ext, POWER_SUPPLY_PROP_CHARGE_=
-BEHAVIOUR))
-> +			return power_supply_charge_behaviour_show(dev, reg->ext->charge_beha=
-viours,
-> +								  value->intval, buf);
-> +	}
-> +
-> +	return power_supply_charge_behaviour_show(dev, psy->desc->charge_behav=
-iours,
-> +						  value->intval, buf);
-> +}
-> +
->   static ssize_t power_supply_format_property(struct device *dev,
->   					    bool uevent,
->   					    struct device_attribute *attr,
-> @@ -307,8 +324,7 @@ static ssize_t power_supply_format_property(struct d=
-evice *dev,
->   	case POWER_SUPPLY_PROP_CHARGE_BEHAVIOUR:
->   		if (uevent) /* no possible values in uevents */
->   			goto default_format;
-> -		ret =3D power_supply_charge_behaviour_show(dev, psy->desc->charge_beh=
-aviours,
-> -							 value.intval, buf);
-> +		ret =3D power_supply_show_charge_behaviour(dev, psy, &value, buf);
->   		break;
->   	case POWER_SUPPLY_PROP_MODEL_NAME ... POWER_SUPPLY_PROP_SERIAL_NUMBER=
-:
->   		ret =3D sysfs_emit(buf, "%s\n", value.strval);
-> @@ -385,6 +401,8 @@ static umode_t power_supply_attr_is_visible(struct k=
-object *kobj,
->   	if (attrno =3D=3D POWER_SUPPLY_PROP_TYPE)
->   		return mode;
->
-> +	guard(rwsem_read)(&psy->extensions_sem);
-> +
->   	if (power_supply_has_property(psy, attrno)) {
->   		if (power_supply_property_is_writeable(psy, attrno) > 0)
->   			mode |=3D S_IWUSR;
-> diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
-> index b98106e1a90f34bce5129317a099f363248342b9..016e44cb3eb5eb7ace01a032=
-661f65a5d81a522f 100644
-> --- a/include/linux/power_supply.h
-> +++ b/include/linux/power_supply.h
-> @@ -15,6 +15,8 @@
->   #include <linux/device.h>
->   #include <linux/workqueue.h>
->   #include <linux/leds.h>
-> +#include <linux/rwsem.h>
-> +#include <linux/list.h>
->   #include <linux/spinlock.h>
->   #include <linux/notifier.h>
->
-> @@ -281,6 +283,27 @@ struct power_supply_desc {
->   	int use_for_apm;
->   };
->
-> +struct power_supply_ext {
-> +	u8 charge_behaviours;
-> +	const enum power_supply_property *properties;
-> +	size_t num_properties;
-> +
-> +	int (*get_property)(struct power_supply *psy,
-> +			    const struct power_supply_ext *ext,
-> +			    void *data,
-> +			    enum power_supply_property psp,
-> +			    union power_supply_propval *val);
-> +	int (*set_property)(struct power_supply *psy,
-> +			    const struct power_supply_ext *ext,
-> +			    void *data,
-> +			    enum power_supply_property psp,
-> +			    const union power_supply_propval *val);
-> +	int (*property_is_writeable)(struct power_supply *psy,
-> +				     const struct power_supply_ext *ext,
-> +				     void *data,
-> +				     enum power_supply_property psp);
-> +};
-> +
->   struct power_supply {
->   	const struct power_supply_desc *desc;
->
-> @@ -300,10 +323,13 @@ struct power_supply {
->   	struct delayed_work deferred_register_work;
->   	spinlock_t changed_lock;
->   	bool changed;
-> +	bool update_groups;
->   	bool initialized;
->   	bool removing;
->   	atomic_t use_cnt;
->   	struct power_supply_battery_info *battery_info;
-> +	struct rw_semaphore extensions_sem; /* protects "extensions" */
-> +	struct list_head extensions;
->   #ifdef CONFIG_THERMAL
->   	struct thermal_zone_device *tzd;
->   	struct thermal_cooling_device *tcd;
-> @@ -878,6 +904,12 @@ devm_power_supply_register(struct device *parent,
->   extern void power_supply_unregister(struct power_supply *psy);
->   extern int power_supply_powers(struct power_supply *psy, struct device=
- *dev);
->
-> +extern int power_supply_register_extension(struct power_supply *psy,
-> +					   const struct power_supply_ext *ext,
-> +					   void *data);
-> +extern void power_supply_unregister_extension(struct power_supply *psy,
-> +					      const struct power_supply_ext *ext);
-> +
->   #define to_power_supply(device) container_of(device, struct power_supp=
-ly, dev)
->
->   extern void *power_supply_get_drvdata(struct power_supply *psy);
->
+            Linus
 
