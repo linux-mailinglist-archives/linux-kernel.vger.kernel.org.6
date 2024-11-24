@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-420144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EC749D75A3
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:00:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE50A9D75A7
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:02:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 039D5284EE2
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:00:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 742D5285262
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 16:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FC718B475;
-	Sun, 24 Nov 2024 16:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F854188938;
+	Sun, 24 Nov 2024 16:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PU2Uo9sr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dDWOK3C0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361FAFC1D;
-	Sun, 24 Nov 2024 16:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EAC2500C6;
+	Sun, 24 Nov 2024 16:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732464028; cv=none; b=nm2J1kP908M79qnk+TTKg6Ptf3e0J6SB/PeTI/HFwMIZnAcmhm+nMEKeEIzfyRdPFIPoG+j3NbDNZpTtg22NXrArfUKoH8p9GABRXFvul6teUz7zEaoZ3j0jQeZXKgWtOoJ7O3JKJgroyx4pKGS7iBM7p2chK9/4Qex1p0guMSk=
+	t=1732464127; cv=none; b=JDQnGn79HxdxA2hz6jkgOAkDvdN4M1NTydlj7jTwCUAnTqUvT5mBH6rGCHolzm9hFZXJpCmBLqh2MiL/IMvBFROaLdhr4jOXbxi+Ff5gHbPDRFFoqPUc8iCG9VR1BcGo3AyX8tX4l56UpYfc1qOOFCChbjMMv8F+qAcHfKiPps0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732464028; c=relaxed/simple;
-	bh=yPM2R8H9WSiMzfazSl3eDQEsjHow+ps+HZ013vUoWM0=;
+	s=arc-20240116; t=1732464127; c=relaxed/simple;
+	bh=0grkUlSSt+CBbPaRjx1R/V5AdzNtLdNvHIfPzoapiAE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lqt4gZD5+I29N5467CivbdJkQtKNAa9hq+mXZn7jzeerC7zRhTHm0uy5oGutNj/1Dlyd9lldTsUCniJfhstWRvPXF+YWq+usSiiESX0D4y7y8DK4IRo01QvkhYih+xkaM1vDzCnBnX5ArQw6tpIzyVDXuN5YlHzscmVJidDKRj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PU2Uo9sr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C9ADC4CECC;
-	Sun, 24 Nov 2024 16:00:22 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Wf+gzQsEatQYNBrHozRA1y+Ufp9cxkTDkmziUiyfzuiYd8/aAuuzgazQ1beSUS5+/PXTouciYpgds44FtrrftQ0UH86K4oRdPKARVH8oiua//9lHn6RhK42c4bagK+YMEg62KvTyoVtY/UaKTitTrNC3R3AOWRT2Ji5gIaiI7Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dDWOK3C0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE9B1C4CECC;
+	Sun, 24 Nov 2024 16:02:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732464027;
-	bh=yPM2R8H9WSiMzfazSl3eDQEsjHow+ps+HZ013vUoWM0=;
+	s=k20201202; t=1732464125;
+	bh=0grkUlSSt+CBbPaRjx1R/V5AdzNtLdNvHIfPzoapiAE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PU2Uo9srwS7CExnm1A2xUMMtL4KmTtO2tz2KGYRMKbBfO0vOyrGMrRURu3OH6gTtp
-	 x2HbFW7wY/s0VCL8OPkxM4gqJXrE5Sh1bqlPwpwscICdmJWaCiG1lLO6dWzGe4+Lz4
-	 B6y9oeH7xAzY/gL/+gig/EYGNMWxsTchZBd23YG3rZj4NyCINU0T6Owy41i3rdyNBg
-	 5Ho/uF4eECx2g2PvVTi/IHMDvmo82T23+faaVYE1jQEokRZbw1vY/qsK/FqpkhuzB4
-	 +qWVPA0Zxz5xBrdlFFGdfpdS9enw0krH/D/1mU/0F1LtFKvjhBgHw097IfCnsrNZDT
-	 wQwUGV7fHLL3w==
-Message-ID: <55088a30-c32e-4012-ac9d-755df085f6b0@kernel.org>
-Date: Sun, 24 Nov 2024 17:00:20 +0100
+	b=dDWOK3C0T3eSiiggspDBe5yCGnmmeN9olqtnxw1FaSdkbowkYcnS+NIyX6wapuft0
+	 kWpYdq4WHV6L/urN2ZhpLVE/7se5RjrhvSvsuUL8p3XilNGbMGioEqQ2vmpyzZ0blt
+	 cQ4gj+rcuQZCFYrnY/yyF8lIdQ3IB5Kt7eqjq+f3dor2/1bq54ofiqDVrB5Wm6kw3b
+	 bDsdiI2wn66BkZ2t2jAlaTT3wjlg4G3v1t1x/HY1RKJA5vhm5lB4QPX57qf0eZjRu+
+	 HX7BmkZ/ZsApAtWLTfUzVKYUBfUbvWtCAtor5osdJomhdV4emaoDYE1KQeCQ+CNQ9n
+	 TRuGGEQX+mAbQ==
+Message-ID: <f0d983f7-5f60-4cb7-9522-ef4429359c52@kernel.org>
+Date: Sun, 24 Nov 2024 17:01:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] dt-bindings: display: panel: samsung,atna56ac03:
- Document ATNA56AC03
-To: maud_spierings@hotmail.com, Neil Armstrong <neil.armstrong@linaro.org>,
+Subject: Re: [PATCH 1/6] dt-bindings: display: panel: Add another panel for
+ RG35XX Plus (Rev6)
+To: Hironori KIKUCHI <kikuchan98@gmail.com>, linux-kernel@vger.kernel.org
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
  Jessica Zhang <quic_jesszhan@quicinc.com>,
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
  David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Douglas Anderson
- <dianders@chromium.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20241124-asus_qcom_display-v3-0-002b723b1920@hotmail.com>
- <20241124-asus_qcom_display-v3-1-002b723b1920@hotmail.com>
+ Conor Dooley <conor+dt@kernel.org>, Paul Cercueil <paul@crapouillou.net>,
+ Christophe Branchereau <cbranchereau@gmail.com>,
+ Ryan Walklin <ryan@testtoast.com>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org
+References: <20241124080220.1657238-1-kikuchan98@gmail.com>
+ <20241124080220.1657238-2-kikuchan98@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,20 +109,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241124-asus_qcom_display-v3-1-002b723b1920@hotmail.com>
+In-Reply-To: <20241124080220.1657238-2-kikuchan98@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/11/2024 11:00, Maud Spierings via B4 Relay wrote:
-> From: Maud Spierings <maud_spierings@hotmail.com>
-> 
-> The Samsung ATNA56AC03 panel is an AMOLED eDP panel.
-> It is similar to the ATNA33xc20 except it is larger and has a different
-> resolution.
-> 
-> Signed-off-by: Maud Spierings <maud_spierings@hotmail.com>
+On 24/11/2024 09:02, Hironori KIKUCHI wrote:
+> +++ b/Documentation/devicetree/bindings/display/panel/anbernic,rg35xx-plus-rev6-panel.yaml
+> @@ -0,0 +1,60 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/panel/anbernic,rg35xx-plus-rev6-panel.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Anbernic RG35XX series (YLM-LBV0345001H-V2) 3.45" 640x480 24-bit IPS LCD panel
+> +
+> +maintainers:
+> +  - Hironori KIKUCHI <kikuchan98@gmail.com>
+> +
+> +allOf:
+> +  - $ref: panel-common.yaml#
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: anbernic,rg35xx-plus-rev6-panel
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Everything is the same here. Add new compatible to existing schema
+respecting compatibility (fallback) or not (no fallback).
+
 
 Best regards,
 Krzysztof
