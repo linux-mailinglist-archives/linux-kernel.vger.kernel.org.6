@@ -1,250 +1,74 @@
-Return-Path: <linux-kernel+bounces-420343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 850A69D792E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 00:45:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 756029D7930
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 00:49:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C573B162FFB
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 23:45:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D23E162EBD
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 23:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C4418C337;
-	Sun, 24 Nov 2024 23:45:20 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A72188907;
+	Sun, 24 Nov 2024 23:49:33 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B233187876
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 23:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9FA2500BD
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 23:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732491919; cv=none; b=rVaXrwCEFP0w0CMi19DTxO1NL9IpjNJHwjG0S0NLjCkrPDkH/UapBjAQdmFap4MDBSbMypnSgI7sP4jurVNg8hOEIY/VRcfu2kfHvdn8AM33kDvxh9Nvi2RQ6VNVYslnKAHsAojPddXzCQ3eHNqmn5LKqY84otVXasKWJgaVuCo=
+	t=1732492173; cv=none; b=m87wZthjZrMVUgA0I6nj7MRn962XOWzyhmHgdjUXQIwstElWmdOXTZuQ/mKJUJA7UwkP7AoVlybMyL3smfPh0bVJ6xJxsYBXChVs+RkmO2ShTzQc4NYS3kQA9hYCdMwfPx2riSaQSO3f4EGR80xQfgTbuwzOXnuGc+/O9ny2sTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732491919; c=relaxed/simple;
-	bh=smUYyrCLkdRDH2mpiUzMLMC2V22OoaIyqVr45fM1iqA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=p1PnDY8gfddW/srYKS2Y3enJY1YDsJ27g52aWUFPzYmwec8MiMZPks9TGHE3WUuCEtEd6tLFD0YCXaNTXOsKymsvsrchsH4e39bshIAun6AhVxpwMeYzVZ1DW3aRMmo+CoLTn87vPmiwILI69DvgIJuDf8CCZOe/xmoM0txQpJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a79f4c0729so30078255ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 15:45:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732491916; x=1733096716;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Oat+2qA7Q0ufZ/Dd4W5pvvZZ0PL3NirgEemK1HNiSh4=;
-        b=dAe5NjQ0DYiXfH8RqK7ldSQappxLEMOcQTez5mcIulijG0+1oiQa50UCRhVwobf9q5
-         cQRvpVQpfTebjilZiqFyk7TLkP/ogwLb1X00hp3NP5bxZ4WMsWsZEq1o/NMoCKf3PGxl
-         Oua1iGXoiPHt8pMC6muezhy1ZUMUMEPZCvxn572gNaySM/6Ifb2La1FI+DjKFrGqtbuC
-         r6CxZ0HcAc7VrKZERuN7fAeyb1xp+fc4Ch9bBCKTyfmKULWQTmyLlkObdvxxqb+t5GCf
-         I3WPa+e/1adrIkspnnbviYivloXGQWr+ANf9MoIEs0ULh5NcW2qzAnEDB93qRg32yVip
-         dYIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKn4+HCretTkEpUeipSV3sIuv2zlANbV1aJMdi7nZ5qPM431A6t0CtqjcHi4FmJDy2hcflMtXzcoj5i0o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkyNEfy2Y8BEHmLtPwsYwwJCiX0U2ptBMfn+WYaYklzqMyKBmb
-	/l0hRs3A+vzGyHll7Ddy1j1vLFtNQ0QTNgRbuCXDRlE9BrkO/AlxkYjGdUCif7dOi/FgVMpJHIr
-	6fNHzJCG3qFfl4jvQmuBQnf5a51HLCAyj7kEc6rQef6nQoUo/1nOXrQg=
-X-Google-Smtp-Source: AGHT+IFGv2R9mgy6Z0LQT28/VmegRk01/POPe38adyGOopSedS1tGj6fliea1AZXNEzxz4H5KgS6qL2Wr0yHo1s2i+JxuAgIH0q7
+	s=arc-20240116; t=1732492173; c=relaxed/simple;
+	bh=A60pLmrFlf33ViNTep1IvpJ9/R0k4yfQ/PAdr/rjsZE=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=phhu86jvf4v7ZWTW0S95Ahup4enft2tVi6HR5aweQwdam34G4p9jPYhmF9oRyntxOIdV6K3tYlM1zku6Vi3cAI/ppVKh/GyBjmcCAEMOFSTyfkbAWHMoskEh3w5nlJkNM59kn3zEtMx/AsdG0nbmjSqrrc1LSWIyHO2Jw27IWQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77CF4C4CECC;
+	Sun, 24 Nov 2024 23:49:32 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1tFMMs-00000006vif-2PRj;
+	Sun, 24 Nov 2024 18:50:18 -0500
+Message-ID: <20241124234940.017394686@goodmis.org>
+User-Agent: quilt/0.68
+Date: Sun, 24 Nov 2024 18:49:40 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 0/6] tracing: Last minute updates for v6.13
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:168c:b0:3a7:8cdd:c0d2 with SMTP id
- e9e14a558f8ab-3a79ab76051mr110215815ab.0.1732491916441; Sun, 24 Nov 2024
- 15:45:16 -0800 (PST)
-Date: Sun, 24 Nov 2024 15:45:16 -0800
-In-Reply-To: <00000000000009ff2e061ce633d7@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6743ba8c.050a0220.1cc393.0050.GAE@google.com>
-Subject: Re: [syzbot] [net?] possible deadlock in ip_mroute_setsockopt
-From: syzbot <syzbot+e227429f6fa77945d7e4@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-syzbot has found a reproducer for the following issue on:
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace/for-next
 
-HEAD commit:    fcc79e1714e8 Merge tag 'net-next-6.13' of git://git.kernel..
-git tree:       net-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1448b75f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=275de99a754927af
-dashboard link: https://syzkaller.appspot.com/bug?extid=e227429f6fa77945d7e4
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=175459c0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10dc0ee8580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/8b723ddc7543/disk-fcc79e17.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ca8fd756cdfc/vmlinux-fcc79e17.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/778b3623fb8d/bzImage-fcc79e17.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e227429f6fa77945d7e4@syzkaller.appspotmail.com
-
-lo speed is unknown, defaulting to 1000
-lo speed is unknown, defaulting to 1000
-iwpm_register_pid: Unable to send a nlmsg (client = 2)
-infiniband syz0: RDMA CMA: cma_listen_on_dev, error -98
-======================================================
-WARNING: possible circular locking dependency detected
-6.12.0-syzkaller-05480-gfcc79e1714e8 #0 Not tainted
-------------------------------------------------------
-syz-executor233/5845 is trying to acquire lock:
-ffffffff8fce2348 (rtnl_mutex){+.+.}-{4:4}, at: ip_mroute_setsockopt+0x15b/0x1190 net/ipv4/ipmr.c:1370
-
-but task is already holding lock:
-ffff88807cfc0aa8 (&smc->clcsock_release_lock){+.+.}-{4:4}, at: smc_setsockopt+0x1c3/0xe50 net/smc/af_smc.c:3056
-
-which lock already depends on the new lock.
+Head SHA1: ef0d4186083127d2f99ed04e051fd94ba061d253
 
 
-the existing dependency chain (in reverse order) is:
+Mathieu Desnoyers (5):
+      tracing: Move it_func[0] comment to the relevant context
+      tracing: Remove __idx variable from __DO_TRACE
+      rcupdate_trace: Define rcu_tasks_trace lock guard
+      tracing: Remove conditional locking from __DO_TRACE()
+      tracing: Remove cond argument from __DECLARE_TRACE_SYSCALL
 
--> #3 (&smc->clcsock_release_lock){+.+.}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
-       smc_switch_to_fallback+0x35/0xdb0 net/smc/af_smc.c:902
-       smc_sendmsg+0x11f/0x530 net/smc/af_smc.c:2771
-       sock_sendmsg_nosec net/socket.c:711 [inline]
-       __sock_sendmsg+0x221/0x270 net/socket.c:726
-       __sys_sendto+0x363/0x4c0 net/socket.c:2197
-       __do_sys_sendto net/socket.c:2204 [inline]
-       __se_sys_sendto net/socket.c:2200 [inline]
-       __x64_sys_sendto+0xde/0x100 net/socket.c:2200
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Thomas Gleixner (1):
+      tracing: Record task flag NEED_RESCHED_LAZY.
 
--> #2 (sk_lock-AF_INET){+.+.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       lock_sock_nested+0x48/0x100 net/core/sock.c:3622
-       lock_sock include/net/sock.h:1617 [inline]
-       sock_set_reuseaddr+0x17/0x60 net/core/sock.c:781
-       siw_create_listen+0x196/0xfe0 drivers/infiniband/sw/siw/siw_cm.c:1776
-       iw_cm_listen+0x15e/0x230 drivers/infiniband/core/iwcm.c:585
-       cma_iw_listen drivers/infiniband/core/cma.c:2668 [inline]
-       rdma_listen+0x941/0xd60 drivers/infiniband/core/cma.c:3953
-       cma_listen_on_dev+0x3e3/0x6f0 drivers/infiniband/core/cma.c:2727
-       cma_add_one+0x7d7/0xcd0 drivers/infiniband/core/cma.c:5357
-       add_client_context+0x536/0x8b0 drivers/infiniband/core/device.c:727
-       enable_device_and_get+0x1e6/0x440 drivers/infiniband/core/device.c:1338
-       ib_register_device+0x10d4/0x13e0 drivers/infiniband/core/device.c:1449
-       siw_device_register drivers/infiniband/sw/siw/siw_main.c:72 [inline]
-       siw_newlink+0x9d9/0xe50 drivers/infiniband/sw/siw/siw_main.c:452
-       nldev_newlink+0x5c0/0x640 drivers/infiniband/core/nldev.c:1795
-       rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
-       rdma_nl_rcv+0x6dd/0x9e0 drivers/infiniband/core/netlink.c:259
-       netlink_unicast_kernel net/netlink/af_netlink.c:1321 [inline]
-       netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1347
-       netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1891
-       sock_sendmsg_nosec net/socket.c:711 [inline]
-       __sock_sendmsg+0x221/0x270 net/socket.c:726
-       ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2583
-       ___sys_sendmsg net/socket.c:2637 [inline]
-       __sys_sendmsg+0x269/0x350 net/socket.c:2669
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (lock#7){+.+.}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
-       cma_init+0x1e/0x140 drivers/infiniband/core/cma.c:5438
-       do_one_initcall+0x248/0x880 init/main.c:1266
-       do_initcall_level+0x157/0x210 init/main.c:1328
-       do_initcalls+0x3f/0x80 init/main.c:1344
-       kernel_init_freeable+0x435/0x5d0 init/main.c:1577
-       kernel_init+0x1d/0x2b0 init/main.c:1466
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #0 (rtnl_mutex){+.+.}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
-       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
-       ip_mroute_setsockopt+0x15b/0x1190 net/ipv4/ipmr.c:1370
-       do_ip_setsockopt+0x129f/0x3cd0 net/ipv4/ip_sockglue.c:948
-       ip_setsockopt+0x63/0x100 net/ipv4/ip_sockglue.c:1417
-       smc_setsockopt+0x275/0xe50 net/smc/af_smc.c:3064
-       do_sock_setsockopt+0x3af/0x720 net/socket.c:2313
-       __sys_setsockopt net/socket.c:2338 [inline]
-       __do_sys_setsockopt net/socket.c:2344 [inline]
-       __se_sys_setsockopt net/socket.c:2341 [inline]
-       __x64_sys_setsockopt+0x1ee/0x280 net/socket.c:2341
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  rtnl_mutex --> sk_lock-AF_INET --> &smc->clcsock_release_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&smc->clcsock_release_lock);
-                               lock(sk_lock-AF_INET);
-                               lock(&smc->clcsock_release_lock);
-  lock(rtnl_mutex);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor233/5845:
- #0: ffff88807cfc0aa8 (&smc->clcsock_release_lock){+.+.}-{4:4}, at: smc_setsockopt+0x1c3/0xe50 net/smc/af_smc.c:3056
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5845 Comm: syz-executor233 Not tainted 6.12.0-syzkaller-05480-gfcc79e1714e8 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
- __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- __mutex_lock_common kernel/locking/mutex.c:585 [inline]
- __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
- ip_mroute_setsockopt+0x15b/0x1190 net/ipv4/ipmr.c:1370
- do_ip_setsockopt+0x129f/0x3cd0 net/ipv4/ip_sockglue.c:948
- ip_setsockopt+0x63/0x100 net/ipv4/ip_sockglue.c:1417
- smc_setsockopt+0x275/0xe50 net/smc/af_smc.c:3064
- do_sock_setsockopt+0x3af/0x720 net/socket.c:2313
- __sys_setsockopt net/socket.c:2338 [inline]
- __do_sys_setsockopt net/socket.c:2344 [inline]
- __se_sys_setsockopt net/socket.c:2341 [inline]
- __x64_sys_setsockopt+0x1ee/0x280 net/socket.c:2341
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f018ec824a9
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe0c6806e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00007ffe0c6808b8 RCX: 00007f018ec824a9
-RDX: 00000000000000d2 RSI: 0000000000000000 RDI: 0000000000000005
-RBP: 00007f018ecf5610 R08: 0000000000000000 R09: 00007ffe0c6808b8
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffe0c6808a8 R14: 0000000000000001 R15: 0
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+----
+ Documentation/trace/ftrace.rst |  4 +++
+ include/linux/rcupdate_trace.h |  5 +++
+ include/linux/trace_events.h   |  1 +
+ include/linux/tracepoint.h     | 70 +++++++++++++++---------------------------
+ kernel/trace/trace.c           |  2 ++
+ kernel/trace/trace_output.c    | 14 ++++++++-
+ 6 files changed, 49 insertions(+), 47 deletions(-)
 
