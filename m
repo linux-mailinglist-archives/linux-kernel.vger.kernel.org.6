@@ -1,107 +1,73 @@
-Return-Path: <linux-kernel+bounces-420216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16C7C9D779C
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:02:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99D7D9D76FB
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:56:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C62CB364EF
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:57:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34DC0162E3C
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCDF14A088;
-	Sun, 24 Nov 2024 17:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1358D136658;
+	Sun, 24 Nov 2024 17:56:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alyssa.is header.i=@alyssa.is header.b="SFcF02ZV";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LVVY2pME"
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Zr4OYZPW"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999E013C67C;
-	Sun, 24 Nov 2024 17:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328327DA9E;
+	Sun, 24 Nov 2024 17:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732471034; cv=none; b=iyqxLlw7h1adVvL76bkNiLpICMNLsMGPBvdvbpc35AIpc/inwWFaoj4/1S7fXDtMmRUaAvtCRHxaxoIPeIG9F890wKBLiTfLIl7T7iE7tt7Va/H+D6TJVcMtpdDnuS7muaW+ujGFkFMt9K0jjeJv/TIDYFYZA6t209KxUeL/puM=
+	t=1732471000; cv=none; b=P5Mp9D6OGhGk553s3/oxtZkpJthuJXkJBs6fIkRGIUj48uHupdHTUCpw07f2bR78DhwISklFckFlpl5VmY8TMlgH+E0G9ST22iU47kap6r9RBU31xhpC13moH6zlMF1O5k3rW7LvbkoR7fyyedYI9v4+Uix7UQ0wghW+tdU2P1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732471034; c=relaxed/simple;
-	bh=AoEYjMpCajo5+LVgExvIA8kQRuPmtSTPy30HlAvW1gQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D+6CklfYws8PbGOZmWxN79qTxppMNlJQq0Egk6IF8wlzu8WZhGEo96OrQMNJTyhSAOYyrk/mwnhRLgO+4rUvfZhhTmr4Qir0gdGX8HQjpBiwIgnNHCjJSZ5wiF6hqDJtUUOHGokbsAhw76ntmlexioQsHMkpxk+VCe93+9F+/o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alyssa.is; spf=pass smtp.mailfrom=alyssa.is; dkim=pass (2048-bit key) header.d=alyssa.is header.i=@alyssa.is header.b=SFcF02ZV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LVVY2pME; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alyssa.is
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alyssa.is
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfout.phl.internal (Postfix) with ESMTP id 9D86213800F4;
-	Sun, 24 Nov 2024 12:57:10 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Sun, 24 Nov 2024 12:57:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alyssa.is; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm3; t=1732471030; x=1732557430; bh=PsTjrP/zN41TGyrwJbyG0
-	aUjZNZR/ScZKsMHHcShUo0=; b=SFcF02ZVRnIOjHXLkFXTZn+EW2a1u/wti3xDg
-	2RvIIcyXO9thMqNVLMK2lwt7Ww/NpKDTXZs0J0UjDIwobe8hrjycw9eHvMueSvkR
-	lp+jL1YnMnqygKtYhnR9vjvgAhPpOQuF530GDWrX5evp2w3fO5+wfi8xcoa6ZFDb
-	Mzn5XiMJK+i/0D25bZIVCVWgyJGLjIkL4Us9JV7mBjip2yA6kkqWGIjaHh6Viqq2
-	yKjq8fEnrmBvC9Ejd7zZ3/wQidgc8n7o1gKI8+DSfi96qAnYwpee1KVsHOVfLgav
-	EBJoxbb/xnnD6ohk4kWQhA/URPqCLG42dShCZaeModUUHyglA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1732471030; x=1732557430; bh=PsTjrP/zN41TGyrwJbyG0aUjZNZR/ScZKsM
-	HHcShUo0=; b=LVVY2pME1KMQV3KQQG1v6EV8YQvd5SZvu2FDqzaXuZQ21/VmeCS
-	S7MfPWUNLp1SrGGAwhH7Yks85zWJyXBtYfYdQBYe/BGiuVnSShErR31WQZwjSQMY
-	xWdZnpgokSDOjV7OzAFKcxvat30rSusowyzjzozFJjnzVUPe1+rK3qjHO/A3q26k
-	Yq745UKGuMMs7j61my3qVD7BfvUcs307XYHs8OPuVaStOtcSAQAfeZS0bUO8Iknr
-	g5brspR7zkT8ZYtzw1CGi0K2gtNm0hPPVbBYv4oEDnY9Z8VvU2XFH9lGKH2w/r3P
-	hUZFZwAMFFjnBjl1LizKr4VEBmg0/DYElOw==
-X-ME-Sender: <xms:9WhDZ7bvjRPO7TsMe6n7ByV65EORoxcBcaNSY1QYpyT9KIvgPlcpiA>
-    <xme:9WhDZ6awivCEXngBZKoSbyY-BEq8x2ITVPJQdfM-cjTq_bPmAhmTIrsmvl6IGMKxk
-    JWVXMqdqk68hFHEaQ>
-X-ME-Received: <xmr:9WhDZ9-yKsrHfAQmMvS8QxGF9v4SofKdBVzv0SL9_G26GRg24okIg71K_DWbrDlwqCkPid23v0QISFYEjARYu0DSbtfY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeefgddutdeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfh
-    rhhomheptehlhihsshgrucftohhsshcuoehhihesrghlhihsshgrrdhisheqnecuggftrf
-    grthhtvghrnhepheekgfdtveettdekuddugeeugfdujeehuefgleegtedthfffudfhhedu
-    hfduuefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    ephhhisegrlhihshhsrgdrihhspdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhht
-    phhouhhtpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrohgshhes
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlse
-    hlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheprghsrghhiheslhhi
-    shhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehmrghrtggrnhesmhgrrhgtrghnrd
-    hsthdprhgtphhtthhopegrlhihshhsrgesrhhoshgvnhiifigvihhgrdhiohdprhgtphht
-    thhopehsvhgvnhesshhvvghnphgvthgvrhdruggvvhdprhgtphhtthhopeguvghvihgtvg
-    htrhgvvgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:9WhDZxrvWf0HJPlprkcU5lnN4jwaTtUu-HI-ch8GLdVHVE23VT-u0Q>
-    <xmx:9WhDZ2ruV-BRnbplcVWHv0LzGdKc-ZDit0FyrJUQEtzVHG1EpQl_Jg>
-    <xmx:9WhDZ3RbQrw6auqmQRzCeO5WN1HKUllulWWELWDft4Ug-x4BgMh4NA>
-    <xmx:9WhDZ-q5-B_ZbCDiqAxRR8nm-2xmFgxaa87Yd5bW_baJ58ztK1dXDA>
-    <xmx:9mhDZzjvnv4bavyDmMnm8P7Cu4JUAH-O8IX-672Awuc0VwC_9rXz32Bn>
-Feedback-ID: i12284293:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 24 Nov 2024 12:57:08 -0500 (EST)
-Received: by mbp.qyliss.net (Postfix, from userid 1000)
-	id E2160A8A6; Sun, 24 Nov 2024 18:57:06 +0100 (CET)
-From: Alyssa Ross <hi@alyssa.is>
-To: Hector Martin <marcan@marcan.st>,
-	Sven Peter <sven@svenpeter.dev>,
+	s=arc-20240116; t=1732471000; c=relaxed/simple;
+	bh=omKfrIu9Szug/NDSWVuj7hq1/WQIb1fsz5nxzoOP0tc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=PNAIQJJcc5WR6hKc/okGWapf2qdeIhb0pUuI0weCnQtmrz3ezDAxWBzg3s48AXAApYhbUrYX9SszCZbt2tVNu8QUTPV+I0wqKCxuBKEdYi0ihNJFGvd35g+jusVdVZ3nUbzLXe8fp/ciJg5sk4sJAIlTc12/Vd5mhlIxfqaTNVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Zr4OYZPW; arc=none smtp.client-ip=192.19.144.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 30E61C0005CA;
+	Sun, 24 Nov 2024 09:56:38 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 30E61C0005CA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1732470998;
+	bh=omKfrIu9Szug/NDSWVuj7hq1/WQIb1fsz5nxzoOP0tc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Zr4OYZPWdIrszxHZdD9AqxfrZHoS9RzwmIKI/4D7j3Qp0/ixhkl/WVYrdYL6d4u2g
+	 jwRoxERLcwMTJQF7vrKgvM6/HQG7t9MwjhqwJEy7IGr+neiFv99FbbsFdzCO4vZ2mO
+	 94eKMyFG8gmOicgTdnRdFc8nlO+tjDv79+PzBjXM=
+Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id C09E418041CAC6;
+	Sun, 24 Nov 2024 09:56:37 -0800 (PST)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: bcm-kernel-feedback-list@broadcom.com,
+	Sam Edwards <cfsworks@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	=?iso-8859-2?q?Rafa=B3_Mi=B3ecki?= <rafal@milecki.pl>,
+	William Zhang <william.zhang@broadcom.com>,
+	Anand Gore <anand.gore@broadcom.com>,
+	Kursad Oney <kursad.oney@broadcom.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
+	Conor Dooley <conor+dt@kernel.org>,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: apple: t8112: fix typo in comment
-Date: Sun, 24 Nov 2024 18:56:19 +0100
-Message-ID: <20241124175619.230330-1-hi@alyssa.is>
-X-Mailer: git-send-email 2.47.0
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Sam Edwards <CFSworks@gmail.com>
+Subject: Re: [PATCH v2 1/2] arm64: dts: broadcom: bcmbca: bcm4908: Reserve CFE stub area
+Date: Sun, 24 Nov 2024 09:56:37 -0800
+Message-ID: <20241124175637.718510-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241005050155.61103-2-CFSworks@gmail.com>
+References: <20241005050155.61103-1-CFSworks@gmail.com> <20241005050155.61103-2-CFSworks@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -110,42 +76,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-j493 is the M2 13-inch MacBook Pro, as specified in the model set below.
-The M1 13-inch MacBook Pro is j293, and is from 2020.
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-Fixes: 2d5ce3fbef32 ("arm64: dts: apple: t8112: Initial t8112 (M2) device trees")
-Signed-off-by: Alyssa Ross <hi@alyssa.is>
----
- arch/arm64/boot/dts/apple/t8112-j493.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri,  4 Oct 2024 22:01:54 -0700, Sam Edwards <cfsworks@gmail.com> wrote:
+> The CFE bootloader places a stub program in the first page of physical
+> memory to hold the secondary CPUs until the boot CPU writes the release
+> address, but does not splice a /reserved-memory node into the FDT to
+> protect it. If Linux overwrites this program before execution reaches
+> smp_prepare_cpus(), the secondary CPUs may become inaccessible.
+> 
+> This is only a problem with CFE, and then only until the secondary CPUs
+> are brought online. Ideally, there would be some hypothetical mechanism
+> we could use to indicate that this area of memory is sensitive only
+> during boot. But as there is none, and since it is such a small amount
+> of memory, it is easiest to reserve it unconditionally.
+> 
+> Therefore, add a /reserved-memory node to bcm4908.dtsi to protect the
+> first 4KiB of physical memory.
+> 
+> Signed-off-by: Sam Edwards <CFSworks@gmail.com>
+> ---
 
-diff --git a/arch/arm64/boot/dts/apple/t8112-j493.dts b/arch/arm64/boot/dts/apple/t8112-j493.dts
-index 0ad908349f55..10f7c635e4d5 100644
---- a/arch/arm64/boot/dts/apple/t8112-j493.dts
-+++ b/arch/arm64/boot/dts/apple/t8112-j493.dts
-@@ -1,18 +1,18 @@
- // SPDX-License-Identifier: GPL-2.0+ OR MIT
- /*
-- * Apple MacBook Pro (13-inch, M1, 2022)
-+ * Apple MacBook Pro (13-inch, M2, 2022)
-  *
-  * target-type: J493
-  *
-  * Copyright The Asahi Linux Contributors
-  */
- 
- /dts-v1/;
- 
- #include "t8112.dtsi"
- #include "t8112-jxxx.dtsi"
- #include <dt-bindings/leds/common.h>
- 
- / {
- 	compatible = "apple,j493", "apple,t8112", "apple,arm-platform";
- 	model = "Apple MacBook Pro (13-inch, M2, 2022)";
-
-base-commit: 9f16d5e6f220661f73b36a4be1b21575651d8833
--- 
-2.47.0
-
+Applied to https://github.com/Broadcom/stblinux/commits/devicetree-arm64/next, thanks!
+--
+Florian
 
