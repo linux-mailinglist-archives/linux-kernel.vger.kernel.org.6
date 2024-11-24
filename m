@@ -1,195 +1,144 @@
-Return-Path: <linux-kernel+bounces-419502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC109D6EDF
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 13:55:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 690C29D6EE7
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 13:56:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89CE81621BB
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 12:54:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FA73B2712F
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 12:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8BB3190057;
-	Sun, 24 Nov 2024 12:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBAD18E056;
+	Sun, 24 Nov 2024 12:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhCWp8+Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TBNRls1O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C9B18C92F;
-	Sun, 24 Nov 2024 12:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8FE18CC1C;
+	Sun, 24 Nov 2024 12:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732452207; cv=none; b=WA/aMa+XY+2mDC/IOrQsxwttiAns4y8JRRehasADFHghLw0UQ4oKzS/pHscFoiuht6Pthg0m20Wdaf1jxtqs8MJhutNbKpDfmxZX7zveYKa31be7p3LAvUxaxe/O1tfXC7IHXPMOZhB1N+DjJKRcKEW04jWacXsj4BLfGsD3Ha4=
+	t=1732452319; cv=none; b=j+CLJ/RalFS9E4oPxtJEFpRbvLodibfCSHC0CeH0Tln0hyLyopNC+G+wtZ12AEyaV7r0/aAqhbXkPoUA3Eg2q5brjU5SqAzyQE7+R3BlMewCdwusOViu1AZJzTJ7vBOODnfM2FN3rPJbKORTENddyjOxdPyuopobmMFFOve9skk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732452207; c=relaxed/simple;
-	bh=/Q111bk9ppM7RAlVGQNEPtozwwO/NImA489FG/ufEWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=az1UKvto4NP71UV5zgHtvOQR07cWd5P022oFaZ5swqNAg+fWMQhWzm9566cPez0EtsfsEK4EA6SNPHZ6SZG7AEQS89MHyrHGrSoUiayMjioJO+LmHIp09J9EyXUvV2HYi6hho0SlIIHYB2UMVSzwg1T3hfjbcmi9RN7n7R8OXJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bhCWp8+Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36628C4CECC;
-	Sun, 24 Nov 2024 12:43:25 +0000 (UTC)
+	s=arc-20240116; t=1732452319; c=relaxed/simple;
+	bh=oirgsQnHBfGFNBrWVg1xmJLEkU3WZRxplluiMQ+96mc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZQlxT+zqyDDzvz7uxwHPnt/y0+5pRJmroTcFUnDTqMxsMrkL70Ysig/0AyTHOBvLt6TXodAzYvjrjn0d4COlYNWk0tG9MXnp6ONcn96Mo49iSffq43b6pmEFTlgxSQmGASmFrzozYE4lgwKG0C1qWSmKNGbLAKiKyG8vWRYhL88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TBNRls1O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B5F0C4CECC;
+	Sun, 24 Nov 2024 12:45:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732452207;
-	bh=/Q111bk9ppM7RAlVGQNEPtozwwO/NImA489FG/ufEWE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bhCWp8+YLKtwoDZkzIoFCPk08DgXl16+QzWcAb/eM2vwBdvW5qqVFA9TcpFxgaIqp
-	 bpxuJuewT851JU4AUA7kKfeWdzpTM6ZQyBnwYC6pUzTNsKXEgqVvgML/bg7i1cAsMM
-	 PQFZBBHSgL4maMbQ/h6txERjVKwdBWYwUXbb/fajWCOI31iOYoPq/tRXCUPwVKgJlE
-	 LFv6lJMeMTIPSg08jiybBKARY6EKssf0u+9OKRh+7MxIugU7gg3PaebIbanpoa6cWd
-	 z2McDjaTGcyoE5YDgtJ/YKOvoZ80W2xT5Um4RcMEivQR85tIRJNm50eJVdgTGDXz6M
-	 FshTsbKBKWRtw==
-Date: Sun, 24 Nov 2024 12:43:20 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] iio: light: veml6030: add support for triggered
- buffer
-Message-ID: <20241124124320.4237c67e@jic23-huawei>
-In-Reply-To: <1f5d62d0-42af-4eda-846d-cd0d57b5c6d5@gmail.com>
-References: <20241110-veml6030_triggered_buffer-v2-1-ecda3b6ed77f@gmail.com>
-	<20241123151634.303aa860@jic23-huawei>
-	<1f5d62d0-42af-4eda-846d-cd0d57b5c6d5@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1732452318;
+	bh=oirgsQnHBfGFNBrWVg1xmJLEkU3WZRxplluiMQ+96mc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TBNRls1OTpbIZsa3DtJaC6aT9U5xvRKNhAr0lBffagq/oDK4XAyVYg9Y0tSNOHnP5
+	 r/Zj6+E9zcZYk/xWQYUF30rJZ7AS+WuBsmga7u1PPl68ZYR+3J9giyh2eBl+Do8lPE
+	 //yYhzn2PdrZFsYAnHhYa1NBZgbWg+HNPDmKBvhjdCZPxCts0/uexa4V8dMSa5SyUN
+	 WwN4ogy1TdrnuN9Wbf2yqhYTwpcGB5+v7C2tgVK7eaPyEgWrJIc2mjx+2SK1mfyg26
+	 8mUzfpC5z7XAnhPgjFEffnFnvUeC+WlJA4Qja36eyeYrnSZ/3fvnx0D/kFParBudnO
+	 wiC2wDUtvSBKg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Lukas Wunner <lukas@wunner.de>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Sasha Levin <sashal@kernel.org>,
+	davem@davemloft.net,
+	linux-crypto@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 1/6] crypto: ecdsa - Avoid signed integer overflow on signature decoding
+Date: Sun, 24 Nov 2024 07:45:06 -0500
+Message-ID: <20241124124516.3337485-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.12.1
+Content-Transfer-Encoding: 8bit
 
-On Sat, 23 Nov 2024 22:15:11 +0100
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+From: Lukas Wunner <lukas@wunner.de>
 
-> On 23/11/2024 16:16, Jonathan Cameron wrote:
-> > On Sun, 10 Nov 2024 18:49:05 +0100
-> > Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
-> >   
-> >> All devices supported by this driver (currently veml6030, veml6035
-> >> and veml7700) have two 16-bit channels, and can profit for the same
-> >> configuration to support data access via triggered buffers.
-> >>
-> >> The measurements are stored in two 16-bit consecutive registers
-> >> (addresses 0x04 and 0x05) as little endian, unsigned data.
-> >>
-> >> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>  
-> > Hi Javier,
-> > 
-> > We have to be a little careful with pushing data from the stack.
-> > Need to makes sure holes are zero filled.
-> > 
-> > Jonathan
-> >   
-> >> diff --git a/drivers/iio/light/veml6030.c b/drivers/iio/light/veml6030.c
-> >> index ccb43dfd5cf7..ce9af9a0e933 100644
-> >> --- a/drivers/iio/light/veml6030.c
-> >> +++ b/drivers/iio/light/veml6030.c  
-> >   
-> >>  
-> >>  static const struct regmap_config veml6030_regmap_config = {
-> >> @@ -889,6 +928,35 @@ static irqreturn_t veml6030_event_handler(int irq, void *private)
-> >>  	return IRQ_HANDLED;
-> >>  }
-> >>  
-> >> +static irqreturn_t veml6030_trigger_handler(int irq, void *p)
-> >> +{
-> >> +	struct iio_poll_func *pf = p;
-> >> +	struct iio_dev *iio = pf->indio_dev;
-> >> +	struct veml6030_data *data = iio_priv(iio);
-> >> +	unsigned int reg;
-> >> +	int ch, ret, i = 0;
-> >> +	struct {
-> >> +		u16 chans[2];  
-> > There is a hole here...   
-> >> +		aligned_s64 timestamp;
-> >> +	} scan;
-> >> +
-> >> +	iio_for_each_active_channel(iio, ch) {
-> >> +		ret = regmap_read(data->regmap, VEML6030_REG_DATA(ch),
-> >> +				  &reg);
-> >> +		if (ret)
-> >> +			goto done;
-> >> +
-> >> +		scan.chans[i++] = reg;  
-> > This fills in at least 1 channel, but maybe not the second.  
-> >> +	}
-> >> +  
-> > So this leaks random stack data I think.
-> > 
-> > Upshot, when holes are involved or not all the channels are set, need
-> > memset(&scan, 0, sizeof(scan));
-> > for the structure on the stack which will zero the holes as well as
-> > both channels.
-> > 
-> > Ancient article on this: https://lwn.net/Articles/417989/
-> > 
-> > We get away with it when they are in the iio_priv space because they are
-> > kzalloc + if we do leak data due to changes in configured channels it's
-> > just old sensor data which is (I think) never a security problem!
-> >   
-> >> +	iio_push_to_buffers_with_timestamp(iio, &scan, pf->timestamp);
-> >> +
-> >> +done:
-> >> +	iio_trigger_notify_done(iio->trig);
-> >> +
-> >> +	return IRQ_HANDLED;
-> >> +}
-> >> +
-> >>  static int veml6030_set_info(struct iio_dev *indio_dev)
-> >>  {
-> >>  	struct veml6030_data *data = iio_priv(indio_dev);
-> >> @@ -1077,6 +1145,12 @@ static int veml6030_probe(struct i2c_client *client)
-> >>  	if (ret < 0)
-> >>  		return ret;
-> >>  
-> >> +	ret = devm_iio_triggered_buffer_setup(&client->dev, indio_dev, NULL,
-> >> +					      veml6030_trigger_handler, NULL);
-> >> +	if (ret)
-> >> +		return dev_err_probe(&client->dev, ret,
-> >> +				     "Failed to register triggered buffer");
-> >> +
-> >>  	return devm_iio_device_register(&client->dev, indio_dev);
-> >>  }
-> >>  
-> >>
-> >> ---
-> >> base-commit: 9dd2270ca0b38ee16094817f4a53e7ba78e31567
-> >> change-id: 20241106-veml6030_triggered_buffer-a38886ca4cce
-> >>
-> >> Best regards,  
-> >   
-> 
-> 
-> Hi Jonathan,
-> 
-> thanks a lot for your explanation and the link, it makes perfect sense.
-> By the way, when I moved this struct from the iio_priv to the function,
-> I took a look at some existing code, and a couple of them might have the
-> same issue:
-> 
-> - temperature/tmp006.c: it also has a hole between the two 16-bit
-> channels and the timestamp (aligned(8)), but it is not set to zero.
-> 
-> - adc/ti-ads1119.c: the scan consists of an unsigned int and the
-> timestamp (aligned(8)). I believe there is a hole there as well.
-> 
-> I did not go over all drivers (most of them store the scan struct in the
-> iio_priv space anyway), but at least those two look suspicious.
-> 
-> Should I fix (e.g. memset) those two I mentioned?
+[ Upstream commit 3b0565c703503f832d6cd7ba805aafa3b330cb9d ]
 
-Please do.  Thanks!
+When extracting a signature component r or s from an ASN.1-encoded
+integer, ecdsa_get_signature_rs() subtracts the expected length
+"bufsize" from the ASN.1 length "vlen" (both of unsigned type size_t)
+and stores the result in "diff" (of signed type ssize_t).
 
-Jonathan
+This results in a signed integer overflow if vlen > SSIZE_MAX + bufsize.
 
+The kernel is compiled with -fno-strict-overflow, which implies -fwrapv,
+meaning signed integer overflow is not undefined behavior.  And the
+function does check for overflow:
 
-> 
-> Best regards,
-> Javier Carrasco
-> 
+       if (-diff >= bufsize)
+               return -EINVAL;
+
+So the code is fine in principle but not very obvious.  In the future it
+might trigger a false-positive with CONFIG_UBSAN_SIGNED_WRAP=y.
+
+Avoid by comparing the two unsigned variables directly and erroring out
+if "vlen" is too large.
+
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ crypto/ecdsa.c | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
+
+diff --git a/crypto/ecdsa.c b/crypto/ecdsa.c
+index d5a10959ec281..80ef16ae6a40b 100644
+--- a/crypto/ecdsa.c
++++ b/crypto/ecdsa.c
+@@ -36,29 +36,24 @@ static int ecdsa_get_signature_rs(u64 *dest, size_t hdrlen, unsigned char tag,
+ 				  const void *value, size_t vlen, unsigned int ndigits)
+ {
+ 	size_t bufsize = ndigits * sizeof(u64);
+-	ssize_t diff = vlen - bufsize;
+ 	const char *d = value;
+ 
+-	if (!value || !vlen)
++	if (!value || !vlen || vlen > bufsize + 1)
+ 		return -EINVAL;
+ 
+-	/* diff = 0: 'value' has exacly the right size
+-	 * diff > 0: 'value' has too many bytes; one leading zero is allowed that
+-	 *           makes the value a positive integer; error on more
+-	 * diff < 0: 'value' is missing leading zeros
++	/*
++	 * vlen may be 1 byte larger than bufsize due to a leading zero byte
++	 * (necessary if the most significant bit of the integer is set).
+ 	 */
+-	if (diff > 0) {
++	if (vlen > bufsize) {
+ 		/* skip over leading zeros that make 'value' a positive int */
+ 		if (*d == 0) {
+ 			vlen -= 1;
+-			diff--;
+ 			d++;
+-		}
+-		if (diff)
++		} else {
+ 			return -EINVAL;
++		}
+ 	}
+-	if (-diff >= bufsize)
+-		return -EINVAL;
+ 
+ 	ecc_digits_from_bytes(d, vlen, dest, ndigits);
+ 
+-- 
+2.43.0
 
 
