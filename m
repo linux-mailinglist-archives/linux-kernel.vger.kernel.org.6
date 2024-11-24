@@ -1,144 +1,155 @@
-Return-Path: <linux-kernel+bounces-420272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C65F9D7808
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:57:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A7DA9D780F
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 21:12:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B12222820EB
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 19:57:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E83CB22CA9
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D3015B97D;
-	Sun, 24 Nov 2024 19:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6305615C15E;
+	Sun, 24 Nov 2024 20:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bigX6Htv"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="oq3J4W5D"
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98832500A0
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 19:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B96036C;
+	Sun, 24 Nov 2024 20:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732478230; cv=none; b=XlNJQEZwu8/LjzcR7gdLTIv3D2qfuwKQm3UZPU2I1VWMhqbj9AnvgXuYYyE7ecE7Te8mcPPJNIVKNOG2AeGEFnOPipbPLIiUpm270F1yAvmrtWLDoYqbLWt9EbiB/2MneSZrthuRFp1+Ibzwu9oownoPeiwXaQ08ChwnruMgD+8=
+	t=1732479151; cv=none; b=dHT1IAw2X+uKUG9hHIy3cZHKHkH1pjuXAT5GTxO5rlv67bZFKPIMaXt1BUjhPmBuQ8Yq2b9+FqD/u5CEe4aI7QVJsK1jkkHeZU6QIS0f10uQyUOIUGVVzlqeiwpAxIyPoFyurBWw/zoTWidc9/6+O5O2vmrdPgRWsanI3Xr/zPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732478230; c=relaxed/simple;
-	bh=OcNnfOETQ9CK3MaYLJJ9ZxKWUCVW7lfZvl2yfrAIWII=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mtjU0VHieES+CyrHnxC8xFk4qGbesHozN8mBNAhdxm9QJDYaYxXMT6zyJn0wWDlU7IfIl3sIr56MdgB5Xy/Ah+Opr8PdFKBY8rBXcP+WfWUp4uVvWpDy4krg3OIJ4CzkyfjPOBJVNdska7Wa6bCTkjGxWGOKxGJsEvxFV2pnDEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bigX6Htv; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4668194603cso148141cf.1
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 11:57:08 -0800 (PST)
+	s=arc-20240116; t=1732479151; c=relaxed/simple;
+	bh=ynqyixvm2rjUp9IOH82m4L0Ic1fb+euGKq6l6ona/zY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CyEMUYv6SYP+H4hUb5cp+TY9WDiA9BILFfUJtFuyT6rwLSFV04IrmExIynd9/PeVfK4LgevJfyilWvpVWExrNAr6ct0twL1eHiOoPfxHrjDIX7C5XvXOG06/q64b3YQV2WBkA8qjH9jbGjlyg2DxcjzCGdo8gcmDwY/Bgp35g5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=oq3J4W5D; arc=none smtp.client-ip=217.72.192.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732478228; x=1733083028; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ydgtc14DZFpEcBW19X27uxPsYRsPBfImUkfn8msMgnw=;
-        b=bigX6HtvT9fuCWuWZ83Jx0Fg+7XOhz6PShXKo3XZNKAfm/JDYKy/mPjTBdpJMw2Glo
-         XZFSph4FUfuVs/Rz+xwpd1QjNhG/7LHYFhGoC/qT0DeEzIHwefhOS5hw5R/1SzZVwcdK
-         JOSRpyogg9ilDV6P4U03r6pXq9f6z3Ps45X0cH02jnjCZwQQMCZ3Oiu9nrHCBixQGjob
-         kDRgfkwkUkJ7UhtNSg9T3xjkyWzOIdKbZr/4fODJD0Uz0Yzv2DIZcQJFKBpoiAYObFqq
-         66qVIpAV9PH1h0MjGyEJEcYDY1euSb7sjZXfxMVcD6nRF/Sk4UlWJmqHfR0UOavOQNsK
-         mQDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732478228; x=1733083028;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ydgtc14DZFpEcBW19X27uxPsYRsPBfImUkfn8msMgnw=;
-        b=qrYphe+khQHEdliOhwXNVCDmyNmVnm/YhpIQGrpUaxsSqJKBSS82KjSeubJHUpLanG
-         WlHfbrAqst450JqDXK0iigyhSprWTAsRBFo/tDb+v5dQr9/ybogWndpjTVg/Nli36dj+
-         YKJrxfX2KteNk2p8e2dfhTWNVWSZRFswAf/5LXVnlW9898T7QULgdoTjnJYpc6KFIIgc
-         7DC/JiS75pwr0SGp9NEH7onagpaP11hmH3y61Bbf2EP+c791KK5eR/N4Gh7B/EFEJvRJ
-         WkyFR65lhw0v0LLJk+8yxy8jzeKmdfZniPs/0lt7ezZhtsjpnjagkpVncwY+Y1EHRS7o
-         XCdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZBqbH6brzVWbGR4+/iM0i9qMMAWYi97y0WFYCZRKx4NNXVnjXcmSOf2kR0g1c1Dt2ZUKH8m6mjqwXrUo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1YPFF49yGOdJoNbrQEevcyHHP0IccVLskSYxHSOVk3hvZXIfw
-	JMALPvpa4KW2Ybi8Aak7okDypkffBiMZ7aeRG38j+wgCHLy3RQaVTrACBKc5y68nfDJiWJnchqc
-	u/hEIgFgzV+Vt3/m7yiAYNzK0V89cekIuQQIX
-X-Gm-Gg: ASbGncvgQA8WK5jCfQ86TMOONHs3wLBY7gpZvXpBwRPbqkxePNHLde9wLc57s56274o
-	ODGxEdRYpgmrBREcmn2ITc0+aOMUq0t/1SoJlPQDx1f1lg4IcU5k1cM8AD1nn5g==
-X-Google-Smtp-Source: AGHT+IEA0e8lCBFPAtVyOffPIrAlSanvsYtSOuzXTjPA1NcAopy48+uF2AbLjCTIrBPX0rYRUwiU7jwTUnp1FXB3rug=
-X-Received: by 2002:ac8:660f:0:b0:466:861a:f633 with SMTP id
- d75a77b69052e-466861af6a1mr1683291cf.5.1732478227528; Sun, 24 Nov 2024
- 11:57:07 -0800 (PST)
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1732479139; x=1733083939;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=ynqyixvm2rjUp9IOH82m4L0Ic1fb+euGKq6l6ona/zY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=oq3J4W5D1gmqjCBarmwEU9Rk9o3lSke6G6Fe1i40xbdKxRDLS8PsZCMX3woyV+hC
+	 An9vk9uUbJ7GPbvarGczRh4uJq0eZFc1emsvI00LAsy9tvecQrjYZMI5wpPcgPxsT
+	 BAh2V1gORj29+vJYJCtMzE9yuttwAZWLe4fKIMe5+vaUg3aDYItNaO2VlSWz4LhOF
+	 SgttJA661Mj+WvGnQV3R10RaIYCTzIOVvLBugjoxrhMDS68LunW9Nl96qJ2GaQuw9
+	 VAKsOMsm8A3L82w89AyMxjZbjGJZr1up4dHyuCtJnagMTqvCTggiw738m1XaeHvv1
+	 4zDn2wgGB4s/wDQHZg==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.0.174] ([91.64.229.215]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MXYAj-1tDVBQ0uJ5-00OiAI; Sun, 24 Nov 2024 20:58:15 +0100
+Message-ID: <0455ab38-fd58-4b93-9656-5745c2f62f89@oldschoolsolutions.biz>
+Date: Sun, 24 Nov 2024 20:58:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122035922.3321100-1-andrii@kernel.org> <20241122110737.GP24774@noisy.programming.kicks-ass.net>
- <CAJuCfpFvHwjMDdFGjCfg+fta2=Ccif7XReTH6TpC+V+PZ1JmAQ@mail.gmail.com>
- <CAJuCfpFy27B3B=4QvATTzaM44Ferf1scbt0JCdrCdj2gzo52+A@mail.gmail.com> <20241123203543.GC20633@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241123203543.GC20633@noisy.programming.kicks-ass.net>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Sun, 24 Nov 2024 11:56:56 -0800
-Message-ID: <CAJuCfpGM7rX6EBLSpjY-go1N-mbc_ObgjeggTLgE4rOR4mXDDA@mail.gmail.com>
-Subject: Re: [PATCH v5 tip/perf/core 0/2] uprobes: speculative lockless
- VMA-to-uprobe lookup
-To: akpm@linux-foundation.org, Peter Zijlstra <peterz@infradead.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, mingo@kernel.org, torvalds@linux-foundation.org, 
-	oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org, 
-	paulmck@kernel.org, willy@infradead.org, mjguzik@gmail.com, 
-	brauner@kernel.org, jannh@google.com, mhocko@kernel.org, vbabka@suse.cz, 
-	shakeel.butt@linux.dev, hannes@cmpxchg.org, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, david@redhat.com, arnd@arndb.de, 
-	viro@zeniv.linux.org.uk, hca@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] arm64: dts: qcom: x1e80100-hp-x14: dt for HP Omnibook
+ X Laptop 14
+To: Krishna Kurapati <quic_kriskura@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Douglas Anderson <dianders@chromium.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Kalle Valo <kvalo@kernel.org>, David Airlie <airlied@gmail.com>,
+ Conor Dooley <conor+dt@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>
+References: <20241124-hp-omnibook-x14-v1-0-e4262f0254fa@oldschoolsolutions.biz>
+ <20241124-hp-omnibook-x14-v1-4-e4262f0254fa@oldschoolsolutions.biz>
+ <0b4db909-6029-40e6-8e1d-a7ecdc731b25@quicinc.com>
+Content-Language: en-US
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <0b4db909-6029-40e6-8e1d-a7ecdc731b25@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:LaIDgpAhSCbFpwAaThtHz90n64aey9SlwaHk0+mqX/KFMT6ppV5
+ FqkGHIcjwYtnASxdeuABOrVF6ZeyCdU9BDIlGhnv83yiZeNluPeWv0KRyM0Ncdf5L9/64JE
+ tdhOtJmComQGYwL38Lm0SuxkTxHmNga2gT7dsgjVNk+jrA/IOdapLnOEO+sn5oJ9vxxWsVn
+ UUwLDExljqSQotxMEYRHA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:mkB2p6G99c0=;wxgmyBo2+zCMAptP7a+gEhTrgnt
+ zcbz/mLa/k0sRzL4qWqqh7xl3xcBO6sDStN2mHEUNgQ46+L8QwrrDCc+okdMyEz+vwR43rzie
+ /9XNRQuWdj3z2rbUL4PaZpHyQU88mJ+cEhzdh0SVBj9oCTzF6O4Yj7phd4CErOk3Um9KO+Gyb
+ UajfoJ4twLU+UJdis9/bpABf6dTm4HCn2qmTQralMTwh2NQ4XIACCnvnNE7GtWDPYIJ3BfB1n
+ 0cvbDgsz8kS7kPDaDgaXATJfz2yijgYCd7xCCNy9XoPa2ufoz3ZEYnfoPJiVS1g3CVzwtx1jy
+ kBQeqVLfUcoU6B3kXo22GXBctp72o2T3h0U8sdf0zTF4P9dTUarBEjSK4ziaqlYdYPwPrf301
+ jineSDoMsg8lgrR0n2aOXA2k7FvkechHLP5iu2qkPheXJcfoKVnxYtBlab6ps0WkAue0yB0Bh
+ 0vaYJxMS/W5waMWZR3oEkqomcoFKdniYvSS0y/zNzdpdmsq9pwnvVtQ1LS3nV6CW3x5M8XukQ
+ 4po/kQhQO1KY0s36VIly2VM1nfao9DszJJ6ANWYId84CIQ5U3a5jbgNV5gcE+unaia9QQDKFM
+ 5srdX9S/OOT19Is1Y1/pWoO07Lzyw5EulhwK93bwGrQGv3Vn6ciUDUvZcaFhwkBSyPUDyplNa
+ LaOeG3ZbeFFqykynDUeBsrHyxc3ThOiH7H7GnAcKUeVTkyxNhL67vLOF+kk3v6MyaQirFQ2bs
+ /lGhYarfrw1JeSRXxku84Otij32VsHd/gtwkT3Dn8YNG43Jl8IXrT95Nj9JzA1tTTVFgfA+u+
+ VSen8/KOkFiXxeNTa12DyBM+ocuHO2YuAk6/1zgCEH/dRH8VKL2bObD0sxx8MV9ZsD
 
-On Sat, Nov 23, 2024 at 12:35=E2=80=AFPM Peter Zijlstra <peterz@infradead.o=
-rg> wrote:
+
+On 24.11.24 16:54, Krishna Kurapati wrote:
 >
-> On Fri, Nov 22, 2024 at 09:48:11AM -0800, Suren Baghdasaryan wrote:
-> > On Fri, Nov 22, 2024 at 7:04=E2=80=AFAM Suren Baghdasaryan <surenb@goog=
-le.com> wrote:
-> > >
-> > > On Fri, Nov 22, 2024 at 3:07=E2=80=AFAM Peter Zijlstra <peterz@infrad=
-ead.org> wrote:
-> > > >
-> > > > On Thu, Nov 21, 2024 at 07:59:20PM -0800, Andrii Nakryiko wrote:
-> > > >
-> > > > > Andrii Nakryiko (2):
-> > > > >   uprobes: simplify find_active_uprobe_rcu() VMA checks
-> > > > >   uprobes: add speculative lockless VMA-to-inode-to-uprobe resolu=
-tion
-> > > >
-> > > > Thanks, assuming Suren is okay with me carrying his patches through=
- tip,
-> > > > I'll make this land in tip/perf/core after -rc1.
-> > >
-> > > No objections from me. Thanks!
-> >
-> > I just fixed a build issue in one of my patches for an odd config, so
-> > please use the latest version of the patchset from here:
-> > https://lore.kernel.org/all/20241122174416.1367052-1-surenb@google.com/
 >
-> updated, thanks!
+> On 11/24/2024 6:50 PM, Jens Glathe via B4 Relay wrote:
+>> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+>>
+> [...]
+>
+>> +
+>> +&usb_mp {
+>> +=C2=A0=C2=A0=C2=A0 status =3D "okay";
+>> +};
+>> +
+>> +&usb_mp_dwc3 {
+>> +=C2=A0=C2=A0=C2=A0 phys =3D <&usb_mp_hsphy0>;
+>> +=C2=A0=C2=A0=C2=A0 phy-names =3D "usb2-0";
+>> +};
+>> +
+>> +&usb_mp_hsphy0 {
+>> +=C2=A0=C2=A0=C2=A0 vdd-supply =3D <&vreg_l2e_0p8>;
+>> +=C2=A0=C2=A0=C2=A0 vdda12-supply =3D <&vreg_l3e_1p2>;
+>> +
+>> +=C2=A0=C2=A0=C2=A0 phys =3D <&eusb3_repeater>;
+>> +
+>> +=C2=A0=C2=A0=C2=A0 status =3D "okay";
+>> +};
+>> +
+>> +&usb_mp_qmpphy0 {
+>> +=C2=A0=C2=A0=C2=A0 vdda-phy-supply =3D <&vreg_l3e_1p2>;
+>> +=C2=A0=C2=A0=C2=A0 vdda-pll-supply =3D <&vreg_l3c_0p8>;
+>> +
+>> +=C2=A0=C2=A0=C2=A0 status =3D "okay";
+>> +};
+>>
+>
+> The above QMP MP PHy is unused in the above DWC3 node. If the port is
+> only HS capable, please don't enable the QMP node.
+>
+Oh its the other way round I guess. Thank you for the hint. It should be:
 
-Hi Andrew,
-I just noticed that patches from an old version of my patchset are
-present in mm-unstable, more specifically these two:
++&usb_mp_dwc3 {
++=C2=A0=C2=A0=C2=A0 phys =3D <&usb_mp_hsphy0>, <&usb_mp_qmpphy0>;
++=C2=A0=C2=A0=C2=A0 phy-names =3D "usb2-0", "usb3-0";
++};
 
-fb23aacd2a14 "mm: convert mm_lock_seq to a proper seqcount"
-549aeb99ccf1 "mm: introduce mmap_lock_speculation_{begin|end}"
+The port is USB2 and USB3 capable, and this was the intent. Noted for v2.
 
-Peter will be merging the latest version into tip/perf/core, so this
-will cause a conflict at some point.
-It should be easy to update them in mm-unstable to the latest version
-[1]. I was able to revert the old ones and apply the new ones without
-any merge conflict. If possible, please update them instead of
-dropping them from mm-unstable. Some patches I'm preparing to post
-have dependencies on this patchset.
-Thanks,
-Suren.
+with best regards
 
-[1] https://lore.kernel.org/all/20241122174416.1367052-1-surenb@google.com/
+Jens Glathe
+
 
