@@ -1,183 +1,177 @@
-Return-Path: <linux-kernel+bounces-420331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8723D9D78F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 23:49:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E309D78F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 23:58:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16981160ECE
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 22:49:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9187281B57
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 22:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1279D17B506;
-	Sun, 24 Nov 2024 22:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C0B15F3FF;
+	Sun, 24 Nov 2024 22:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q9aku3O8"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OD9IRBdA"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F751714CF
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 22:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C09A2500BD
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 22:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732488565; cv=none; b=RdgIo/8Jzj5maYGyB+lxkBmds9FfjRCfnju86t/W6XLbJ1E1BCTVbwn3S3VehRmzbHVUwsddhViga4gwRKrdeZ5jxxcWJErmhWv1GCHCLh4FIeYezL8rWYWOorUE/tTop9H477WM9HwKCBayaTEgTiN/n7fgSxyUuNO65WM57UY=
+	t=1732489120; cv=none; b=CQNeUr0mZMQCy52MLP+7FJVHGQVO87MnfYdFcIewVrwvfHvXFkuqb8xXFeP5Bs9czSkA/eqRAYULvds99fVQrRGsWu9Bl8FoV0ymi02+ulHunrXcZwxmMZZeC6sCWINKau7ZOTM6YrepsezV7Ma8XUPYi7tl9d8lkMZmg9yZnf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732488565; c=relaxed/simple;
-	bh=gfnHJjwfgdKmCRW2N48UfWJk5ORO21VNu9CS8MFAIjI=;
+	s=arc-20240116; t=1732489120; c=relaxed/simple;
+	bh=ZjuAMRHwncamsNIrC2i1xY9kC1cOxqLCQI7RzXBW4ws=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Skbup/FzpZf1IZTQfx/kx5PssAemXxgnuV970JaANbI19GJY9UnWKWVSCW6fP2A/HOg6s8DwoTtLuyaFbMSDiLUCEDnwhm4fTqGoG23/h3ku3F/MeKrAisEN1TQNk8/zTT+aK3qjf2ynI70/f05/IbQeO2RGwN4+brAvaHUpJxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q9aku3O8; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-724f42c1c38so934375b3a.1
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 14:49:23 -0800 (PST)
+	 To:Cc:Content-Type; b=FJ0DRWU/OHARusWu6hW/ki1eAJ9xHf8MpliPVEBOdBe8af8Wy4Ncfd3mMbKlemXLzghLxJN6tf+pePFd1ThtfPNe+ppG59NaJlpCs2sK5gJ/2i+EZpeP+1TDESXlEdegm3ESzQEoqx6kaJsR0e3xcwf6wn/k12HpPHaVVdEhr48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OD9IRBdA; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9ed49edd41so636508566b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 14:58:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732488562; x=1733093362; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732489117; x=1733093917; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zX0nE7NDEdfGZrNZGwPLqU9rN5UAwEYfOh7fGJZubFM=;
-        b=q9aku3O8wNEEExJX+0bVdDkXZuHby/dpXe7BjFBdPHNRLd0xFeEzybjNuRDHtiNGu/
-         3z+qqLSeBJjyqYUfbcUOjIucPGIIXSETKCn1IMacN3XTA+HS0Z/orqTx8BJbzCn027F4
-         GS1GFB1zaho+b3SZb1+blK/sudbiElFVSOQOwP9q1jRF/z5DwDmfH8SRinZsANRoiPd9
-         Ke1kePLih0prfBJ6JDGKzQGrF/amubh0eP1tgvRL1nOA+pXpwS8/dUhUuXmEqWnervr7
-         4DL7EQc8y3bQLaGF34mQZM8pE6z1IZpxCATxHS6l5TvpatIiDc7KlrKOgrzVD/sJ1RC2
-         8mAw==
+        bh=pJZn4r1Q1mVyx8xe9OjWZIQdyqdlmM4KAqXOvCd7B8A=;
+        b=OD9IRBdA8we4BX6JnH12xhIZOt1R5ZGazfOjcXp97JDviG5Hm4RQ4HShustqG+8GfL
+         oYaHeufh+q2O90iEL3l8JGqI3zIIT81RkJ37qAcSuVEjweQV4jb9BBucgKjD+LT1il4E
+         OmU+lyy4BOeyVfgpi0hhVBqgVADgrFR8QIBYnibtIQm/s/WFmsyt0gyxqpc0r57110Gn
+         Y+5PCGVT2MUw9J4Ipu2t4EN/ZjNO6RfD5XezvaJNqX8bAkmxN6iZDWH0rQYBxe1PPDOl
+         LtChqLtoixKbLgyPnkjwBBfqE0CP+60U8kUcPjX68gmX86zOsGRJmyVTpdA0qT00QP3B
+         qzsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732488562; x=1733093362;
+        d=1e100.net; s=20230601; t=1732489117; x=1733093917;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zX0nE7NDEdfGZrNZGwPLqU9rN5UAwEYfOh7fGJZubFM=;
-        b=bJpQ3j4y55QX4wIz3/F/lK7pN9+0MKHaZJu2Y1B++StPpPPA6pTxjDmdY/Kw6BRHjQ
-         /n5F/2rSShFCe2N6UkJVMjthS5vWFhImZCxNehwATCbUOBRa6sU5Uz9qC119H6VKh/np
-         EEpPyeocFnWNVTADI5u4zIFLW4ZILVmSSP0vWidfbrbi5NCJiBCSKVAofueIZV20vs1T
-         sX1bfpP18ajbzZg0IRARMvAR/kU+3I15SVdaeUlxpIQojt2eqEaPtR/PxxNujJr8YNwy
-         60Gfm96WxDKr3MeXI7IblDPtSplXiNnzm62rRAT0YgGFbTkstdl9quGp8+NJDg6RVcir
-         y7Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxBdYqz3S7YYv/l9q7TSUDNhp9LUWEA8TJqxbK3Utx/nqfi+cVGDhU9/pjtEUDFh10akw1Hr1QztqRobw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZELFiyA9U07bZ3VY0QCRMCLy5PnTs06XFTMhaXImkf3O5t4NP
-	f5TPzppWN4r52tmaG36JSj+tY66sKccc69qxS33dw6FjbmsVR5ufR2+9v8B8LtdDs4+A6G2tv4J
-	N/rUdUy+exnTQdPJLwXcOxa9I4XF57fou0vkttQwn2rKCthInxDOL
-X-Gm-Gg: ASbGnctz4YQ9FRoYsbFb0VvrGCFEqAlqIVzXjT5Fwhe2cUCUFxHWsPVA5mM2iNyByqj
-	/8Jb3IZxcoKJ8ZksKCcsKDDFgu8lzL2eqsCGrG0xyofqCSA5Rwmbvfwx+C7jfds8=
-X-Google-Smtp-Source: AGHT+IGly1+z6aeNBztEpVOsbXsN+8Ek9BfoSxWOu5bkpC+Sbuna4B2/9T9dhULWPlo4Oyv5U12MRtr3xKrQOEwO3aE=
-X-Received: by 2002:a05:6a00:c81:b0:720:36c5:b548 with SMTP id
- d2e1a72fcca58-724df684b57mr13854174b3a.16.1732488562364; Sun, 24 Nov 2024
- 14:49:22 -0800 (PST)
+        bh=pJZn4r1Q1mVyx8xe9OjWZIQdyqdlmM4KAqXOvCd7B8A=;
+        b=VrFWhx92aNiS1c0V/ZailEwq4DW96OTvaOpnRtJRS/NJ97SXbVMtCmz1kfPK/AXNGd
+         +awf2KIRlq/X0V18+zVNYVwgx6QYjC6CrTom80yMb3ROE2UPc4Cgj3B9rzcawY7RDtF+
+         wqHFoP9W1WUi6balK7lcwyYs0Zd8fTZkfRPsHmyT+4UdXLAHJIzxGZYw7p4ekP8LnJ3e
+         3NSjTlYRHesB3K5LWjYI7mdLNkj26pUdG/StNCdmeQi1/6kprapy08TkXVnCobW0z/pA
+         oYwLnxyvH7pl5Y5Zxj2cIFlDzh809Pv3RIHX5xo5nzLgXhkgb+brW4YIo7SC+a4GrYRA
+         EsWw==
+X-Forwarded-Encrypted: i=1; AJvYcCXjyFH7dAWc3KGGJkrNXuJbWekX2rNW86kZsvkajqk7B/j/t7+ovlYMjEhnRaWCN+GwJE1VGJZuiZRWN54=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQGs03oG+26nzMRj2RWyUsP0moqCw1d6S9JyYBY5g71rf6Y/nF
+	/zlnwzJ39kokWvP2xKlMqNXgikbTwXrfugS3rTRvQaOdlf38e154T3iAt6V6fQp4DYJI+oVLgW+
+	9sssSy6kNlZLaKKGVPl72gMA0KVk=
+X-Gm-Gg: ASbGncuhPSxTk2346UR5YbwfCmLxO9ZnvUzfIbmbczRv1ChcCMg3qi7i4rritMBm7FS
+	2e0SZkMrQYYXIawJt3bjFhZGGCNr8NA==
+X-Google-Smtp-Source: AGHT+IEaat5Lo3zoMYsazU224LzNHL+gn1VeSlwrawrhbYhupgnxEoxvfhiEmoJgbcjr0GtT2Xt1R2cw4sPlnm4+GLM=
+X-Received: by 2002:a17:906:2189:b0:aa5:2f8a:b958 with SMTP id
+ a640c23a62f3a-aa52f8aca44mr565291566b.52.1732489116886; Sun, 24 Nov 2024
+ 14:58:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6743acf4.050a0220.1cc393.004d.GAE@google.com>
-In-Reply-To: <6743acf4.050a0220.1cc393.004d.GAE@google.com>
-From: Marco Elver <elver@google.com>
-Date: Sun, 24 Nov 2024 23:48:46 +0100
-Message-ID: <CANpmjNMQ7ZVG0i9j1K7J0yKrtfrFfHi6kXaA7FLKmX5T4yWXTw@mail.gmail.com>
-Subject: Re: [syzbot] [perf?] [trace?] KCSAN: assert: race in srcu_gp_start_if_needed
-To: syzbot <syzbot+16a19b06125a2963eaee@syzkaller.appspotmail.com>
-Cc: acme@kernel.org, adrian.hunter@intel.com, 
-	alexander.shishkin@linux.intel.com, irogers@google.com, jolsa@kernel.org, 
-	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	mark.rutland@arm.com, mhiramat@kernel.org, mingo@redhat.com, 
-	namhyung@kernel.org, oleg@redhat.com, peterz@infradead.org, 
-	syzkaller-bugs@googlegroups.com, RCU <rcu@vger.kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>
+References: <CAPM=9txbfH8vf-YjwTXEYL729a6r2eeLBxCJc3MSD-t5jXVA-w@mail.gmail.com>
+ <Z0NXQ6iRK43x6WbG@sashalap>
+In-Reply-To: <Z0NXQ6iRK43x6WbG@sashalap>
+From: Dave Airlie <airlied@gmail.com>
+Date: Mon, 25 Nov 2024 08:58:25 +1000
+Message-ID: <CAPM=9tw5eTBCDn93GyrMjF3r_kDbr2-v1GgKdZECFNupqakDFw@mail.gmail.com>
+Subject: Re: [git pull] drm for 6.13-rc1
+To: Sasha Levin <sashal@kernel.org>, javier.carrasco.cruz@gmail.com, 
+	CK Hu <ck.hu@mediatek.com>, wenst@chromium.org, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Sima Vetter <sima@ffwll.ch>, 
+	dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-+Cc RCU
+On Mon, 25 Nov 2024 at 02:41, Sasha Levin <sashal@kernel.org> wrote:
+>
+> On Thu, Nov 21, 2024 at 10:25:45AM +1000, Dave Airlie wrote:
+> >Hi Linus,
+> >
+> >This is the main drm pull request for 6.13.
+> >
+> >I've done a test merge into your tree, there were two conflicts both
+> >of which seem easy enough to resolve for you.
+> >
+> >There's a lot of rework, the panic helper support is being added to
+> >more drivers, v3d gets support for HW superpages, scheduler
+> >documentation, drm client and video aperture reworks, some new
+> >MAINTAINERS added, amdgpu has the usual lots of IP refactors, Intel
+> >has some Pantherlake enablement and xe is getting some SRIOV bits, but
+> >just lots of stuff everywhere.
+> >
+> >Let me know if there are any issues,
+>
+> Hey Dave,
+>
+> After the PR was merged, I've started seeing boot failures reported by
+> KernelCI:
 
-On Sun, 24 Nov 2024 at 23:47, syzbot
-<syzbot+16a19b06125a2963eaee@syzkaller.appspotmail.com> wrote:
+I'll add the mediatek names I see who touched anything in the area recently.
+
+Dave.
 >
-> Hello,
+> [    4.395400] mediatek-drm mediatek-drm.5.auto: bound 1c014000.merge (ops 0xffffd35fd12975f8)
+> [    4.396155] mediatek-drm mediatek-drm.5.auto: bound 1c000000.ovl (ops 0xffffd35fd12977b8)
+> [    4.411951] mediatek-drm mediatek-drm.5.auto: bound 1c002000.rdma (ops 0xffffd35fd12989c0)
+> [    4.536837] mediatek-drm mediatek-drm.5.auto: bound 1c004000.ccorr (ops 0xffffd35fd1296cf0)
+> [    4.545181] mediatek-drm mediatek-drm.5.auto: bound 1c005000.aal (ops 0xffffd35fd1296a80)
+> [    4.553344] mediatek-drm mediatek-drm.5.auto: bound 1c006000.gamma (ops 0xffffd35fd12972b0)
+> [    4.561680] mediatek-drm mediatek-drm.5.auto: bound 1c014000.merge (ops 0xffffd35fd12975f8)
+> [    4.570025] ------------[ cut here ]------------
+> [    4.574630] refcount_t: underflow; use-after-free.
+> [    4.579416] WARNING: CPU: 6 PID: 81 at lib/refcount.c:28 refcount_warn_saturate+0xf4/0x148
+> [    4.587670] Modules linked in:
+> [    4.590714] CPU: 6 UID: 0 PID: 81 Comm: kworker/u32:3 Tainted: G        W          6.12.0 #1 cab58e2e59020ebd4be8ada89a65f465a316c742
+> [    4.602695] Tainted: [W]=WARN
+> [    4.605649] Hardware name: Acer Tomato (rev2) board (DT)
+> [    4.610947] Workqueue: events_unbound deferred_probe_work_func
+> [    4.616768] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [    4.623715] pc : refcount_warn_saturate+0xf4/0x148
+> [    4.628493] lr : refcount_warn_saturate+0xf4/0x148
+> [    4.633270] sp : ffff8000807639c0
+> [    4.636571] x29: ffff8000807639c0 x28: ffff34ff4116c640 x27: ffff34ff4368e080
+> [    4.643693] x26: ffffd35fd1299ac8 x25: ffff34ff46c8c410 x24: 0000000000000000
+> [    4.650814] x23: ffff34ff4368e080 x22: 00000000fffffdfb x21: 0000000000000002
+> [    4.657934] x20: ffff34ff470c6000 x19: ffff34ff410c7c10 x18: 0000000000000006
+> [    4.665055] x17: 666678302073706f x16: 2820656772656d2e x15: ffff800080763440
+> [    4.672176] x14: 0000000000000000 x13: 2e656572662d7265 x12: ffffd35fd2ed14f0
+> [    4.679297] x11: 0000000000000001 x10: 0000000000000001 x9 : ffffd35fd0342150
+> [    4.686418] x8 : c0000000ffffdfff x7 : ffffd35fd2e21450 x6 : 00000000000affa8
+> [    4.693539] x5 : ffffd35fd2ed1498 x4 : 0000000000000000 x3 : 0000000000000000
+> [    4.700660] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff34ff40932580
+> [    4.707781] Call trace:
+> [    4.710216]  refcount_warn_saturate+0xf4/0x148 (P)
+> [    4.714993]  refcount_warn_saturate+0xf4/0x148 (L)
+> [    4.719772]  kobject_put+0x110/0x118
+> [    4.723335]  put_device+0x1c/0x38
+> [    4.726638]  mtk_drm_bind+0x294/0x5c0
+> [    4.730289]  try_to_bring_up_aggregate_device+0x16c/0x1e0
+> [    4.735673]  __component_add+0xbc/0x1c0
+> [    4.739495]  component_add+0x1c/0x30
+> [    4.743058]  mtk_disp_rdma_probe+0x140/0x210
+> [    4.747314]  platform_probe+0x70/0xd0
+> [    4.750964]  really_probe+0xc4/0x2a8
+> [    4.754527]  __driver_probe_device+0x80/0x140
+> [    4.758870]  driver_probe_device+0x44/0x120
+> [    4.763040]  __device_attach_driver+0xc0/0x108
+> [    4.767470]  bus_for_each_drv+0x8c/0xf0
+> [    4.771294]  __device_attach+0xa4/0x198
+> [    4.775117]  device_initial_probe+0x1c/0x30
+> [    4.779286]  bus_probe_device+0xb4/0xc0
+> [    4.783109]  deferred_probe_work_func+0xb0/0x100
+> [    4.787714]  process_one_work+0x18c/0x420
+> [    4.791712]  worker_thread+0x30c/0x418
+> [    4.795449]  kthread+0x128/0x138
+> [    4.798665]  ret_from_fork+0x10/0x20
+> [    4.802229] ---[ end trace 0000000000000000 ]---
 >
-> syzbot found the following issue on:
->
-> HEAD commit:    42d9e8b7ccdd Merge tag 'powerpc-6.13-1' of git://git.kerne..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10a00778580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3d7fd5be0e73b8b
-> dashboard link: https://syzkaller.appspot.com/bug?extid=16a19b06125a2963eaee
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/ef231513adc7/disk-42d9e8b7.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/54caaac5960b/vmlinux-42d9e8b7.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/85b5a6566143/bzImage-42d9e8b7.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+16a19b06125a2963eaee@syzkaller.appspotmail.com
->
-> ==================================================================
-> BUG: KCSAN: assert: race in srcu_get_delay kernel/rcu/srcutree.c:658 [inline]
-> BUG: KCSAN: assert: race in srcu_funnel_gp_start kernel/rcu/srcutree.c:1089 [inline]
-> BUG: KCSAN: assert: race in srcu_gp_start_if_needed+0x808/0x9f0 kernel/rcu/srcutree.c:1339
->
-> race at unknown origin, with assert no writes to 0xffffffff8676ffc8 of 8 bytes by task 6285 on cpu 0:
->  srcu_get_delay kernel/rcu/srcutree.c:658 [inline]
->  srcu_funnel_gp_start kernel/rcu/srcutree.c:1089 [inline]
->  srcu_gp_start_if_needed+0x808/0x9f0 kernel/rcu/srcutree.c:1339
->  __call_srcu kernel/rcu/srcutree.c:1384 [inline]
->  __synchronize_srcu+0x114/0x150 kernel/rcu/srcutree.c:1432
->  synchronize_srcu+0x1ae/0x1d0
->  uprobe_unregister_sync+0x1a/0x20 kernel/events/uprobes.c:1328
->  __probe_event_disable kernel/trace/trace_uprobe.c:1138 [inline]
->  probe_event_disable+0x1f5/0x240 kernel/trace/trace_uprobe.c:1222
->  trace_uprobe_register+0xbb/0x3c0 kernel/trace/trace_uprobe.c:1512
->  perf_trace_event_unreg+0x6c/0x1a0 kernel/trace/trace_event_perf.c:162
->  perf_uprobe_destroy+0x6a/0xf0 kernel/trace/trace_event_perf.c:345
->  _free_event+0x7ca/0xa10 kernel/events/core.c:5357
->  put_event kernel/events/core.c:5454 [inline]
->  perf_event_release_kernel+0x61a/0x670 kernel/events/core.c:5579
->  perf_release+0x1f/0x30 kernel/events/core.c:5589
->  __fput+0x17a/0x6d0 fs/file_table.c:450
->  ____fput+0x1c/0x30 fs/file_table.c:478
->  task_work_run+0x13a/0x1a0 kernel/task_work.c:239
->  resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
->  exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
->  exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
->  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
->  syscall_exit_to_user_mode+0xa8/0x120 kernel/entry/common.c:218
->  do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> value changed: 0x0000000000000000 -> 0x0000000000000001
->
-> Reported by Kernel Concurrency Sanitizer on:
-> CPU: 0 UID: 0 PID: 6285 Comm: syz.1.1056 Not tainted 6.12.0-syzkaller-08756-g42d9e8b7ccdd #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> ==================================================================
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
+> I don't think that I'll be able to bisect further as I don't have the
+> relevant hardware available.
 >
 > --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion visit https://groups.google.com/d/msgid/syzkaller-bugs/6743acf4.050a0220.1cc393.004d.GAE%40google.com.
+> Thanks,
+> Sasha
 
