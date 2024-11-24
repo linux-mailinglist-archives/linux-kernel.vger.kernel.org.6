@@ -1,124 +1,120 @@
-Return-Path: <linux-kernel+bounces-420297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B48B9D7876
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 23:10:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D33FF9D787C
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 23:14:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81BE6B23791
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 22:10:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B4ED282AE4
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 22:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81E816F8F5;
-	Sun, 24 Nov 2024 22:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DB1175D39;
+	Sun, 24 Nov 2024 22:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="ZNJxW32m"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="S/dhdC82"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3062500C2;
-	Sun, 24 Nov 2024 22:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5885213A244
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 22:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732486249; cv=none; b=n/RIq1dGBAwiewBuTNCqadscePviC9DfdBubljwLOy0f8ezlm4eHSPi7iomQz5faMLXNIbX2WwvNbTC1J8IQ8Ip/SejPcLuqcBe5sPHP+lWIrVcVpDzcdHbDQK9P6CJjJorynau+CbF9aoBm2dkigzCZn6h+9RN5VshYh3HN4mk=
+	t=1732486491; cv=none; b=FgvToaoEU/N+zsNl/5X4UnGaS344oqhouGv0Ivs784dxxy+th8NerkJv4aArDlrtV4ykuV4TbhVnMXWQQ7ofkCIttHE7KYOJRNDSeWtuFehzczsCRHP814Na78YSYshakUneMp20+x4PuC8OIHgHwgDKLxeEq9nv2ijNRzQDy2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732486249; c=relaxed/simple;
-	bh=uXTxtY3GGLfY9YToycHfI2w8jR4zpNaqfpMsxvQkf4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KHbZ67zYSzVJl1O8Ev1NbB4P8LLuJ5c77NlnknnXyT+8up38duY3nIVhoOcSBLMnVBj61pYzagShP2/yUbYHEt/+N49NlCwPYfWt28Ljt25LrWosIWrlC15ZbYdEw3Oevx+E9j3IfCUkiNAdFjEvjMmZBd9gorkPGmhEMwf5yRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=ZNJxW32m; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=IodPNdQkMHcfqmOdrLYoj7E2O5XjRNaT+YiBQ78dkDk=; b=ZNJxW32mTSIhE0qH
-	g0wLe69ck2vIWfX0YoOatZqS+4hpXZUzFOib4i2+oOwFmxwV9uvutegkL53CddsFCaigJqt17wDMb
-	jjp/ux9bbTDIc4m3Bf1Fw0nD5Ex/WUdYI4LW8hAFZKqosgis4n+YivyLd5roMnMc+4wPS8dqcolDi
-	xzys31pVjhm6dysoN93qcRzevcOQXlAwa9/VA5eX5vqLMdjuYVKPAw4ruxtkfvKDAn4iGkHB3/k//
-	B+cqhYEdF+CsJCh5sfr8vgBouvX5ldY0WiOEw/QQiB2LjqyU4sb3PAZyvDFxsyak7VVrZCYWHvjN3
-	KclKDeILh3Af6AKxqw==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1tFKoK-001mws-09;
-	Sun, 24 Nov 2024 22:10:32 +0000
-Date: Sun, 24 Nov 2024 22:10:31 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Mateusz Guzik <mjguzik@gmail.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Hao-ran Zheng <zhenghaoran@buaa.edu.cn>, brauner@kernel.org,
-	jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, baijiaju1990@gmail.com,
-	21371365@buaa.edu.cn,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RFC] metadata updates vs. fetches (was Re: [PATCH v4] fs: Fix
- data race in inode_set_ctime_to_ts)
-Message-ID: <Z0OkVxY3CW9fV8tp@gallifrey>
-References: <61292055a11a3f80e3afd2ef6871416e3963b977.camel@kernel.org>
- <20241124094253.565643-1-zhenghaoran@buaa.edu.cn>
- <20241124174435.GB620578@frogsfrogsfrogs>
- <wxwj3mxb7xromjvy3vreqbme7tugvi7gfriyhtcznukiladeoj@o7drq3kvflfa>
- <20241124215014.GA3387508@ZenIV>
+	s=arc-20240116; t=1732486491; c=relaxed/simple;
+	bh=5LCkleFSbaQtCG4x5qMTLCfSc8sP2dhui/dkVkiMwDE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U9htDjhogbgGaahhir2B3vlfJ97lb+9oX8GIDv87Y/25NhKLdKbp8HTT0oR0TngB95qyFDe37tgpv4Bh0clD3sC8vgPx9WZSGu89Pro50Ta17yxi9et+9wh3lf0oCnDCbPjENug2896l9GApN+kj3BpY75ti7pFoXgd1GQsbIwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=S/dhdC82; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id E31732C057D;
+	Mon, 25 Nov 2024 11:14:44 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1732486484;
+	bh=O92f3zpvDXMuVRxHboYfiuDPDnXc3HizrQNIyXRegKc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=S/dhdC82RKL8iLHFbf11HkRVSyYLF029dKO0Wr3EqDBstSXR/RtetQnHYnls/aSrh
+	 L5LOeh/eM8RFzkbb+fT7zMXZf8j9C4j7hiuhqlmQfQLGopYozj8EEHuWst+jlIr6Hv
+	 qvISQp3LbjxPI69eDGe1BWJ9jQSefynyVrMi2+zylelaspj/7QI0cYeMRv8ibVOR85
+	 XqR0tStSwboM3+M99N6R9gpwsnO69FsLrFD4NkCetzUU5ro2haT8LemZZzApU9LLPY
+	 BDLeTrcAnFiYwYSxqcTjXY26XP+S5sccCkehgkyA1AN4UH05O+H16yGa8XcnwFmcOo
+	 BVZdWeEwyqWgg==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B6743a5540000>; Mon, 25 Nov 2024 11:14:44 +1300
+Received: from markto-dl.ws.atlnz.lc (markto-dl.ws.atlnz.lc [10.33.23.16])
+	by pat.atlnz.lc (Postfix) with ESMTP id BEAE713ED95;
+	Mon, 25 Nov 2024 11:14:44 +1300 (NZDT)
+Received: by markto-dl.ws.atlnz.lc (Postfix, from userid 1155)
+	id B2DED40678; Mon, 25 Nov 2024 11:14:44 +1300 (NZDT)
+From: Mark Tomlinson <mark.tomlinson@alliedtelesis.co.nz>
+To: gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mark Tomlinson <mark.tomlinson@alliedtelesis.co.nz>
+Subject: [PATCH] usb: host: max3421-hcd: Correctly abort a USB request.
+Date: Mon, 25 Nov 2024 11:14:30 +1300
+Message-ID: <20241124221430.1106080-1-mark.tomlinson@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20241124215014.GA3387508@ZenIV>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 22:04:40 up 200 days,  9:18,  1 user,  load average: 0.00, 0.00,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=Gam0nhXL c=1 sm=1 tr=0 ts=6743a554 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=VlfZXiiP6vEA:10 a=9JeQPKVsZYsqtNgjPSQA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-* Al Viro (viro@zeniv.linux.org.uk) wrote:
-> [Linus Cc'd]
-> On Sun, Nov 24, 2024 at 06:56:57PM +0100, Mateusz Guzik wrote:
-> 
-> > However, since both sec and nsec are updated separately and there is no
-> > synchro, reading *both* can still result in values from 2 different
-> > updates which is a bug not addressed by any of the above. To my
-> > underestanding of the vfs folk take on it this is considered tolerable.
-> 
-> Well...   You have a timestamp changing.  A reader might get the value
-> before change, the value after change *or* one of those with nanoseconds
-> from another.  It's really hard to see the scenario where that would
-> be a problem - theoretically something might get confused seeing something
-> like
-> 	Jan 14 1995 12:34:49.214 ->
-> 	Jan 14 1995 12:34:49.137 ->
-> 	Nov 23 2024 14:09:17.137
-> but... what would that something be?
+If the current USB request was aborted, the spi thread would not respond
+to any further requests. This is because the "curr_urb" pointer would
+not become NULL, so no further requests would be taken off the queue.
+The solution here is to set the "urb_done" flag, as this will cause the
+correct handling of the URB. Also clear interrupts that should only be
+expected if an URB is in progress.
 
-make?
-i.e. if the change was from:
- a) mmm dd yyyy hh::MM::00:950 ->
- b) mmm dd yyyy hh::MM::01:950 ->
- c) mmm dd yyyy hh::MM::01:200 ->
-   
-If you read (b) then you'd think that the file was 750ms newer
-than it really was; which is a long time these days.
+Fixes: 2d53139f3162 ("Add support for using a MAX3421E chip as a host dri=
+ver.")
+Signed-off-by: Mark Tomlinson <mark.tomlinson@alliedtelesis.co.nz>
+---
+ drivers/usb/host/max3421-hcd.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-Dave
+diff --git a/drivers/usb/host/max3421-hcd.c b/drivers/usb/host/max3421-hc=
+d.c
+index 9fe4f48b1898..0881fdd1823e 100644
+--- a/drivers/usb/host/max3421-hcd.c
++++ b/drivers/usb/host/max3421-hcd.c
+@@ -779,11 +779,17 @@ max3421_check_unlink(struct usb_hcd *hcd)
+ 				retval =3D 1;
+ 				dev_dbg(&spi->dev, "%s: URB %p unlinked=3D%d",
+ 					__func__, urb, urb->unlinked);
+-				usb_hcd_unlink_urb_from_ep(hcd, urb);
+-				spin_unlock_irqrestore(&max3421_hcd->lock,
+-						       flags);
+-				usb_hcd_giveback_urb(hcd, urb, 0);
+-				spin_lock_irqsave(&max3421_hcd->lock, flags);
++				if (urb =3D=3D max3421_hcd->curr_urb) {
++					max3421_hcd->urb_done =3D 1;
++					max3421_hcd->hien &=3D ~(BIT(MAX3421_HI_HXFRDN_BIT) |
++							       BIT(MAX3421_HI_RCVDAV_BIT));
++				} else {
++					usb_hcd_unlink_urb_from_ep(hcd, urb);
++					spin_unlock_irqrestore(&max3421_hcd->lock,
++							       flags);
++					usb_hcd_giveback_urb(hcd, urb, 0);
++					spin_lock_irqsave(&max3421_hcd->lock, flags);
++				}
+ 			}
+ 		}
+ 	}
+--=20
+2.47.0
 
-> We could add a seqcount, but stat(2) and friends already cost more than
-> they should, IMO...
-> 
-> Linus, do you see any good reasons to bother with that kind of stuff?
-> It's not the first time such metadata update vs. read atomicity comes
-> up, maybe we ought to settle that for good and document the decision
-> and reasons for it.
-> 
-> This time it's about timestamp (seconds vs. nanoseconds), but there'd
-> been mode vs. uid vs. gid mentioned in earlier threads.
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
 
