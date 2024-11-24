@@ -1,316 +1,160 @@
-Return-Path: <linux-kernel+bounces-420183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23DFD9D77B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:09:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 589A79D7689
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:18:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 416B8B32ACB
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:16:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1156E281D3E
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122BC664C6;
-	Sun, 24 Nov 2024 17:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792594CB47;
+	Sun, 24 Nov 2024 17:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kOeOsLwM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mrhdaA5I"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304242F26;
-	Sun, 24 Nov 2024 17:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2F929A9
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 17:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732468580; cv=none; b=k/8Go08miSVscLUE8iE8pjshI0uMTCR7TQkaV9CvsJrN5lZhkpnedaWBWhu3BYZwHYRZv8HMLK1tt/JB1g4bNVfKapH+p8AQrZ8HrnYo40KK46E+Ij2BcQuYSNtm3uY/XMJSgI1k04ZKjTNPFUK2CrZrRQStQuQBKahNO5tfKiU=
+	t=1732468728; cv=none; b=GrPjb9I8mL06ddIfEcS1n37pg91STO8MkBY86N3MrqzB+2RiPaNapJnOMWBVfy1xDGohhX88uzJ4C4pvpXPdqKzFQl2utXwMJnTnDEPqH2Yhgtzdv7bT0khD7TmW1X35Sr685tm/Wa19MeeDHEPFYyI+dpOj2iwSMpy9/IxI/bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732468580; c=relaxed/simple;
-	bh=VRP7CbA7NftH98hfcv3UFTbJShvhcpRDqJgwqEKPEaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H7s6Krm3gx8T3hMdJELmuNczjG40SlNBQKquOv8FN0uEgyQpZWQBKcKKoaYws4nGynyzPfg2EQJTcfsmwDZK5xuY7E+NfVw8TJ8xbyuevke1DTFASvAnkZ6pxB/8OiTUjKBm0Q5ek4SwX4eGSWaJCfM28cE9blsLHcj4bdFSX8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kOeOsLwM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7570C4CECC;
-	Sun, 24 Nov 2024 17:16:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732468579;
-	bh=VRP7CbA7NftH98hfcv3UFTbJShvhcpRDqJgwqEKPEaM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kOeOsLwMcN0E9LYE02V7ufeiLLI5molVXJSa0EQyDk93g7czMp4fEaEbqxVwntzCw
-	 vC7qYRgY6hxufrUSaZA4UjKcjwJ93APFW4tCq+arF7fRTyeAzV3KjN9stnZeQq3jip
-	 MPANV4R0n8Up5e2TxpSyvnOe6Xr4+x0F+9rVL26d6NdEwTmWrTwGFWj3B5BNln5cx3
-	 k3l3NYnWJRDHdDXLDyO1Ao8t8x0NtCzj7tiwOOrevfXlKhnncgkp0bcgFI2MKBF+2y
-	 7srRfAnXkF+Qt7FeB/EF8KUfyrdOZOUumnjp/7+BAMfP/ctWwP1VVO7KDynmsHrjsJ
-	 2HGHxDBhZpNTg==
-Date: Sun, 24 Nov 2024 17:16:09 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, David
- Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>,
- linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v5 10/16] iio: buffer-dmaengine: add
- devm_iio_dmaengine_buffer_setup_ext2()
-Message-ID: <20241124171609.50c6c3a8@jic23-huawei>
-In-Reply-To: <20241115-dlech-mainline-spi-engine-offload-2-v5-10-bea815bd5ea5@baylibre.com>
-References: <20241115-dlech-mainline-spi-engine-offload-2-v5-0-bea815bd5ea5@baylibre.com>
-	<20241115-dlech-mainline-spi-engine-offload-2-v5-10-bea815bd5ea5@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732468728; c=relaxed/simple;
+	bh=ANAnCIYHAWmite6yRXvMGFMZIrDwaBsUx0Ghfk8jkLo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FYqxYRce0/HWHxoLlKl0gsKFu/cUFY+qX80fc/h0SgNNXDlryAl/lqfRtp++ufiE1HLApFLMF3ORoJ9DUQ6kioS+sWw01+ozPK+mei81HRFOyAo8SYmVGDDco6PWOga9qyBHKI+bbtzXQXQx0D6pEyMNJJCdKyqjaXJiwyMtMr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mrhdaA5I; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <e2828b26-8ee9-4140-a377-647f5ae12e2f@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732468723;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ieKeNrjRlWIp/ahnSzxx5vcgmp88GQGFoU97oRvhtNg=;
+	b=mrhdaA5IQLSwh/ZdBDKZw/omZH5HciRWHjkJoprV2SXDl4T5dBeGXVTz61hTN0zhjK6GDm
+	ybbVdOotVhexvWgHgydcXCP1lI7FuX6DegRitY+q9oN1Ark9xmK+ub7lO7C3OY/m///6xM
+	iWQcXEZPcEH5Ot9ojIVqgUnNthGhIcA=
+Date: Sun, 24 Nov 2024 22:48:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Subject: Re: [PATCH 1/7] drm/tidss: Fix issue in irq handling causing
+ irq-flood issue
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Devarsh Thakkar <devarsht@ti.com>, Jyri Sarha <jyri.sarha@iki.fi>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Jonathan Cormier <jcormier@criticallink.com>, Bin Liu <b-liu@ti.com>,
+ stable@vger.kernel.org
+References: <20241021-tidss-irq-fix-v1-0-82ddaec94e4a@ideasonboard.com>
+ <20241021-tidss-irq-fix-v1-1-82ddaec94e4a@ideasonboard.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+In-Reply-To: <20241021-tidss-irq-fix-v1-1-82ddaec94e4a@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 15 Nov 2024 14:18:49 -0600
-David Lechner <dlechner@baylibre.com> wrote:
+Hi Tomi, Devarsh,
 
-> Add a new devm_iio_dmaengine_buffer_setup_ext2() function to handle
-> cases where the DMA channel is managed by the caller rather than being
-> requested and released by the iio_dmaengine module.
+On 10/21/24 19:37, Tomi Valkeinen wrote:
+> It has been observed that sometimes DSS will trigger an interrupt and
+> the top level interrupt (DISPC_IRQSTATUS) is not zero, but the VP and
+> VID level interrupt-statuses are zero.
+
+Does this mean that there was a legitimate interrupt that potentially
+went unrecognized? Or that there was a, for the lack of a better word,
+fake interrupt trigger that doesn't need handling but just clearing?
+
 > 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-Fresh read and I'm wondering if the lifetimes in here can be managed
-more simply either by pushing the DMA channel get down, or dragging
-the release up.   Basically I'd like to see them at the same level
-of nesting in the code.  If it ends up being necessary to duplicate
-more code that is fine if it makes this easier to reason about.
+> As the top level irqstatus is supposed to tell whether we have VP/VID
+> interrupts, the thinking of the driver authors was that this particular
+> case could never happen. Thus the driver only clears the DISPC_IRQSTATUS
+> bits which has corresponding interrupts in VP/VID status. So when this
+> issue happens, the driver will not clear DISPC_IRQSTATUS, and we get an
+> interrupt flood.
+> 
+> It is unclear why the issue happens. It could be a race issue in the
+> driver, but no such race has been found. It could also be an issue with
+> the HW. However a similar case can be easily triggered by manually
+> writing to DISPC_IRQSTATUS_RAW. This will forcibly set a bit in the
+> DISPC_IRQSTATUS and trigger an interrupt, and as the driver never clears
+> the bit, we get an interrupt flood.
+> 
+> To fix the issue, always clear DISPC_IRQSTATUS. The concern with this
+> solution is that if the top level irqstatus is the one that triggers the
+> interrupt, always clearing DISPC_IRQSTATUS might leave some interrupts
+> unhandled if VP/VID interrupt statuses have bits set. However, testing
+> shows that if any of the irqstatuses is set (i.e. even if
+> DISPC_IRQSTATUS == 0, but a VID irqstatus has a bit set), we will get an
+> interrupt.
 
-Jonathan
+Does this mean if VID/VP irqstatus has been set right around the time
+the equivalent DISPC_IRQSTATUS bit is being cleared, the equivalent
+DISPC_IRQSTATUS bit is going to get set again, and make the driver
+handle the event as we expect it to?
 
+> 
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> Co-developed-by: Bin Liu <b-liu@ti.com>
+> Signed-off-by: Bin Liu <b-liu@ti.com>
+> Co-developed-by: Devarsh Thakkar <devarsht@ti.com>
+> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+> Co-developed-by: Jonathan Cormier <jcormier@criticallink.com>
+> Signed-off-by: Jonathan Cormier <jcormier@criticallink.com>
+> Fixes: 32a1795f57ee ("drm/tidss: New driver for TI Keystone platform Display SubSystem")
+> Cc: stable@vger.kernel.org
 > ---
+>  drivers/gpu/drm/tidss/tidss_dispc.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
 > 
-> v5 changes: none
-> 
-> v4 changes:
-> * This replaces "iio: buffer-dmaengine: generalize requesting DMA channel"
-> ---
->  drivers/iio/buffer/industrialio-buffer-dmaengine.c | 107 +++++++++++++++------
->  include/linux/iio/buffer-dmaengine.h               |   5 +
->  2 files changed, 81 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/iio/buffer/industrialio-buffer-dmaengine.c b/drivers/iio/buffer/industrialio-buffer-dmaengine.c
-> index 054af21dfa65..602cb2e147a6 100644
-> --- a/drivers/iio/buffer/industrialio-buffer-dmaengine.c
-> +++ b/drivers/iio/buffer/industrialio-buffer-dmaengine.c
-> @@ -33,6 +33,7 @@ struct dmaengine_buffer {
->  	struct iio_dma_buffer_queue queue;
->  
->  	struct dma_chan *chan;
-> +	bool owns_chan;
->  	struct list_head active;
->  
->  	size_t align;
-> @@ -216,28 +217,23 @@ static const struct iio_dev_attr *iio_dmaengine_buffer_attrs[] = {
->   * Once done using the buffer iio_dmaengine_buffer_free() should be used to
->   * release it.
->   */
-> -static struct iio_buffer *iio_dmaengine_buffer_alloc(struct device *dev,
-> -	const char *channel)
-> +static struct iio_buffer *iio_dmaengine_buffer_alloc(struct dma_chan *chan,
-> +						     bool owns_chan)
+> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
+> index 1ad711f8d2a8..f81111067578 100644
+> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
+> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
+> @@ -780,24 +780,20 @@ static
+>  void dispc_k3_clear_irqstatus(struct dispc_device *dispc, dispc_irq_t clearmask)
 >  {
->  	struct dmaengine_buffer *dmaengine_buffer;
->  	unsigned int width, src_width, dest_width;
->  	struct dma_slave_caps caps;
-> -	struct dma_chan *chan;
->  	int ret;
+>  	unsigned int i;
+> -	u32 top_clear = 0;
 >  
->  	dmaengine_buffer = kzalloc(sizeof(*dmaengine_buffer), GFP_KERNEL);
-> -	if (!dmaengine_buffer)
-> -		return ERR_PTR(-ENOMEM);
-> -
-> -	chan = dma_request_chan(dev, channel);
-> -	if (IS_ERR(chan)) {
-> -		ret = PTR_ERR(chan);
-> -		goto err_free;
-> +	if (!dmaengine_buffer) {
-> +		ret = -ENOMEM;
-> +		goto err_release;
+>  	for (i = 0; i < dispc->feat->num_vps; ++i) {
+> -		if (clearmask & DSS_IRQ_VP_MASK(i)) {
+> +		if (clearmask & DSS_IRQ_VP_MASK(i))
+>  			dispc_k3_vp_write_irqstatus(dispc, i, clearmask);
+> -			top_clear |= BIT(i);
+> -		}
 >  	}
->  
->  	ret = dma_get_slave_caps(chan, &caps);
->  	if (ret < 0)
-> -		goto err_release;
-> +		goto err_free;
->  
->  	/* Needs to be aligned to the maximum of the minimums */
->  	if (caps.src_addr_widths)
-> @@ -252,6 +248,7 @@ static struct iio_buffer *iio_dmaengine_buffer_alloc(struct device *dev,
->  
->  	INIT_LIST_HEAD(&dmaengine_buffer->active);
->  	dmaengine_buffer->chan = chan;
-> +	dmaengine_buffer->owns_chan = owns_chan;
->  	dmaengine_buffer->align = width;
->  	dmaengine_buffer->max_size = dma_get_max_seg_size(chan->device->dev);
->  
-> @@ -263,10 +260,12 @@ static struct iio_buffer *iio_dmaengine_buffer_alloc(struct device *dev,
->  
->  	return &dmaengine_buffer->queue.buffer;
->  
-> -err_release:
-> -	dma_release_channel(chan);
->  err_free:
->  	kfree(dmaengine_buffer);
-> +err_release:
-This ends up oddly miss balanced.  If you get an error here, why
-not just do the release at the caller instead?
+>  	for (i = 0; i < dispc->feat->num_planes; ++i) {
+> -		if (clearmask & DSS_IRQ_PLANE_MASK(i)) {
+> +		if (clearmask & DSS_IRQ_PLANE_MASK(i))
+>  			dispc_k3_vid_write_irqstatus(dispc, i, clearmask);
+> -			top_clear |= BIT(4 + i);
+> -		}
+>  	}
 
-> +	if (owns_chan)
-> +		dma_release_channel(chan);
-> +
->  	return ERR_PTR(ret);
->  }
->  
-> @@ -282,12 +281,38 @@ void iio_dmaengine_buffer_free(struct iio_buffer *buffer)
->  		iio_buffer_to_dmaengine_buffer(buffer);
->  
->  	iio_dma_buffer_exit(&dmaengine_buffer->queue);
-> -	dma_release_channel(dmaengine_buffer->chan);
-> -
->  	iio_buffer_put(buffer);
-> +
-> +	if (dmaengine_buffer->owns_chan)
-> +		dma_release_channel(dmaengine_buffer->chan);
->  }
->  EXPORT_SYMBOL_NS_GPL(iio_dmaengine_buffer_free, IIO_DMAENGINE_BUFFER);
->  
-> +static struct iio_buffer
-> +*__iio_dmaengine_buffer_setup_ext(struct iio_dev *indio_dev,
-> +				  struct dma_chan *chan, bool owns_chan,
-> +				  enum iio_buffer_direction dir)
-> +{
-> +	struct iio_buffer *buffer;
-> +	int ret;
-> +
-> +	buffer = iio_dmaengine_buffer_alloc(chan, owns_chan);
-> +	if (IS_ERR(buffer))
-> +		return ERR_CAST(buffer);
-> +
-> +	indio_dev->modes |= INDIO_BUFFER_HARDWARE;
-> +
-> +	buffer->direction = dir;
-> +
-> +	ret = iio_device_attach_buffer(indio_dev, buffer);
-> +	if (ret) {
-> +		iio_dmaengine_buffer_free(buffer);
-Note that if you did push the free out to the caller for owns_chan
-as suggested above this would need to never free the buffer as
-that would be done if necessary at the caller for this...
+nit: Maybe these for-loop braces could be dropped as well.
 
-> +		return ERR_PTR(ret);
-> +	}
-> +
-> +	return buffer;
-> +}
-> +
->  /**
->   * iio_dmaengine_buffer_setup_ext() - Setup a DMA buffer for an IIO device
->   * @dev: DMA channel consumer device
-> @@ -308,24 +333,13 @@ struct iio_buffer *iio_dmaengine_buffer_setup_ext(struct device *dev,
->  						  const char *channel,
->  						  enum iio_buffer_direction dir)
->  {
-> -	struct iio_buffer *buffer;
-> -	int ret;
-> -
-> -	buffer = iio_dmaengine_buffer_alloc(dev, channel);
-> -	if (IS_ERR(buffer))
-> -		return ERR_CAST(buffer);
-> -
-> -	indio_dev->modes |= INDIO_BUFFER_HARDWARE;
-> -
-> -	buffer->direction = dir;
-> +	struct dma_chan *chan;
->  
-> -	ret = iio_device_attach_buffer(indio_dev, buffer);
-> -	if (ret) {
-> -		iio_dmaengine_buffer_free(buffer);
-> -		return ERR_PTR(ret);
-> -	}
-> +	chan = dma_request_chan(dev, channel);
-> +	if (IS_ERR(chan))
-> +		return ERR_CAST(chan);
->  
-> -	return buffer;
-> +	return __iio_dmaengine_buffer_setup_ext(indio_dev, chan, true, dir);
-As above, why not just free the channel here if this fails? Thus matching
-the dma_request_chan just above.
+Otherwise, LGTM,
+
+Reviewed-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+
+Regards
+Aradhya
 
 
->  }
->  EXPORT_SYMBOL_NS_GPL(iio_dmaengine_buffer_setup_ext, IIO_DMAENGINE_BUFFER);
->  
-> @@ -362,6 +376,37 @@ int devm_iio_dmaengine_buffer_setup_ext(struct device *dev,
->  }
->  EXPORT_SYMBOL_NS_GPL(devm_iio_dmaengine_buffer_setup_ext, IIO_DMAENGINE_BUFFER);
->  
-> +/**
-> + * devm_iio_dmaengine_buffer_setup_ext2() - Setup a DMA buffer for an IIO device
-> + * @dev: Device for devm ownership
-> + * @indio_dev: IIO device to which to attach this buffer.
-> + * @chan: DMA channel
-> + * @dir: Direction of buffer (in or out)
-> + *
-> + * This allocates a new IIO buffer with devm_iio_dmaengine_buffer_alloc()
-> + * and attaches it to an IIO device with iio_device_attach_buffer().
-> + * It also appends the INDIO_BUFFER_HARDWARE mode to the supported modes of the
-> + * IIO device.
-> + *
-> + * This is the same as devm_iio_dmaengine_buffer_setup_ext() except that the
-> + * caller manages requesting and releasing the DMA channel.
-
-I'd like the name to make that clearer.  ext2 is too vague.
-
-> + */
-> +int devm_iio_dmaengine_buffer_setup_ext2(struct device *dev,
-> +					 struct iio_dev *indio_dev,
-> +					 struct dma_chan *chan,
-> +					 enum iio_buffer_direction dir)
-> +{
-> +	struct iio_buffer *buffer;
-> +
-> +	buffer = __iio_dmaengine_buffer_setup_ext(indio_dev, chan, false, dir);
-> +	if (IS_ERR(buffer))
-> +		return PTR_ERR(buffer);
-> +
-> +	return devm_add_action_or_reset(dev, __devm_iio_dmaengine_buffer_free,
-> +					buffer);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(devm_iio_dmaengine_buffer_setup_ext2, IIO_DMAENGINE_BUFFER);
-> +
->  MODULE_AUTHOR("Lars-Peter Clausen <lars@metafoo.de>");
->  MODULE_DESCRIPTION("DMA buffer for the IIO framework");
->  MODULE_LICENSE("GPL");
-> diff --git a/include/linux/iio/buffer-dmaengine.h b/include/linux/iio/buffer-dmaengine.h
-> index 81d9a19aeb91..7bdb979b59f2 100644
-> --- a/include/linux/iio/buffer-dmaengine.h
-> +++ b/include/linux/iio/buffer-dmaengine.h
-> @@ -11,6 +11,7 @@
->  
->  struct iio_dev;
->  struct device;
-> +struct dma_chan;
->  
->  void iio_dmaengine_buffer_free(struct iio_buffer *buffer);
->  struct iio_buffer *iio_dmaengine_buffer_setup_ext(struct device *dev,
-> @@ -26,6 +27,10 @@ int devm_iio_dmaengine_buffer_setup_ext(struct device *dev,
->  					struct iio_dev *indio_dev,
->  					const char *channel,
->  					enum iio_buffer_direction dir);
-> +int devm_iio_dmaengine_buffer_setup_ext2(struct device *dev,
-> +					 struct iio_dev *indio_dev,
-> +					 struct dma_chan *chan,
-> +					 enum iio_buffer_direction dir);
->  
->  #define devm_iio_dmaengine_buffer_setup(dev, indio_dev, channel)	\
->  	devm_iio_dmaengine_buffer_setup_ext(dev, indio_dev, channel,	\
-> 
-
+[..]
 
