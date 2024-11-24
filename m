@@ -1,177 +1,167 @@
-Return-Path: <linux-kernel+bounces-419647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30B079D7104
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 14:43:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A83CF9D73B5
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 15:46:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5773B3AE4E
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 13:31:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCA9FB24F5D
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 13:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1214A18C035;
-	Sun, 24 Nov 2024 13:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5591AAE10;
+	Sun, 24 Nov 2024 13:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cP3E+set"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aPMsCNqT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5309C18BC0F;
-	Sun, 24 Nov 2024 13:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7034318C01E
+	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 13:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732453918; cv=none; b=axe6plOPFOW4PUC41aB+XgJAVOFZ07Gf3puXLFT/O5eDbMErWK6c+GesWtV70FezQP+N4PcdK+1V1FeTZENpeg5nU58zRIp7fvKhWWmz8dI+gs6nQ+4ct4yspAYyXcvkPNU2CyNpVitmdKCcP/cAibFp3vpeS//FFhv/vfQpmxw=
+	t=1732454071; cv=none; b=UW13edT8ivf3MOd81vnWoHFhPv3Z5aXNtyHjyd/n+jfGMZ5mAqUywp/f3mqqUzuE2eC1JHL+ieGgFjew3nDsaLxbLHg8nqhxu3GYgFDkwtpmbfAbJxykKkOUQeNjNIC2MseDX17vvkeKBd1+3Xgf+JQz7FLIUOG2kJg+vRUvVIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732453918; c=relaxed/simple;
-	bh=zi1Nik3oVB0GVhoCU7U+pD67YTGF2NyJviA5EqMdlbA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QAXjvfe6m/giGvOaYTJCBhwCEgKJGSyotfvO9rH5kpPd0TtayfpjI6aBKXopIKatB9Z1FhXTMHT+qjxAOrxxufCj34vh4s0wExJEsX9Nmk0uAm+NZGzVOFtb9M6mzLmVbP3J+ZRzyroPujNNRD1rHbGopnKMbbgkKqKjPNNmCAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cP3E+set; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62F12C4CECC;
-	Sun, 24 Nov 2024 13:11:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732453917;
-	bh=zi1Nik3oVB0GVhoCU7U+pD67YTGF2NyJviA5EqMdlbA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cP3E+setDamTQY6Tn6cU3xggQdt/ukF2pA4bH8ulNFtMf7sv48NoidFHz5d4OXt89
-	 /V0uHtq2ypYyH4SbmHHjemrqexHECRJHNTKa/R/H2vlKf9S+D9hoNNnICDTjSqU/sN
-	 BoRd+GQBnB/u26J2RZaXGdpZIPQY+7gqB3vUV/CAqU2NusOD3hcmY7tai/GYj8p3he
-	 ujy7Km2geDpqYA+0NAjbrv8LDfcyI0qGuCBktOiIlfzUIkY2/T2R2JaAswKhE5kD8c
-	 lSbs+2OLYPUw7x6xdd92gTdyYf15kG9tIgWS2+R0yX21sEd7g3LrIDtIhllnWmPSch
-	 BvyAR5+4Z7oPg==
-Date: Sun, 24 Nov 2024 13:11:47 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, Marcelo Schmitt
- <marcelo.schmitt@analog.com>, lars@metafoo.de,
- Michael.Hennerich@analog.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: iio: adc: adi,ad4000: Add PulSAR
-Message-ID: <20241124131147.0d616f82@jic23-huawei>
-In-Reply-To: <ZzuGtvdrD6D06rEp@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1731626099.git.marcelo.schmitt@analog.com>
-	<a155d0d0fb1d9b5eece86099af9b5c0fb76dcac2.1731626099.git.marcelo.schmitt@analog.com>
-	<0b8a2d07-feea-409f-a850-7ee0c752a949@baylibre.com>
-	<Zzsj9_HVBO5wrJv_@debian-BULLSEYE-live-builder-AMD64>
-	<ZzuGtvdrD6D06rEp@debian-BULLSEYE-live-builder-AMD64>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732454071; c=relaxed/simple;
+	bh=aaf6mgxiFIZ4KUt3qR5b9Zp2zfPeoHch/KAwVeYdx5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AdG+ymDYVKy/8jbit8clO9Orllh/X+OjeDeWQ+jLcb1qA5QLxwfaI3qe6ZjM4vQ1li8mtLSUMkbZE1QkeCoEPSc0mV992GmRIWalok1eWck474On499+ZrAS1tNUT4nFGHSzZl52o7dwFXLOm0aOICC4zn+iQC6ECUPKXy39ZW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aPMsCNqT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732454068;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eQYCp4g/idPG8DYRDVHAD0jqFgBNqHKqLtG7vbr7Lm8=;
+	b=aPMsCNqTEF00j2n3nq2nkDM8NXlAn4rObML0LSIut+i0AGFLJAffBNuZZDQh9B9p+50Sc9
+	A5IMz8i3G0GUBAVbrjDtBNUobTF42/P0YRH3fOTYf6jJ9XPsLwJuCOH/ldfLPpp45Av5d2
+	C6LcL86HHKeSb346h3SPU7SZqrk8HsA=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-412-c-_t-oEQNh-5KC7aPSDk0Q-1; Sun,
+ 24 Nov 2024 08:14:24 -0500
+X-MC-Unique: c-_t-oEQNh-5KC7aPSDk0Q-1
+X-Mimecast-MFC-AGG-ID: c-_t-oEQNh-5KC7aPSDk0Q
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 631761956089;
+	Sun, 24 Nov 2024 13:14:22 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.44])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 993331955F43;
+	Sun, 24 Nov 2024 13:14:18 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun, 24 Nov 2024 14:14:02 +0100 (CET)
+Date: Sun, 24 Nov 2024 14:13:57 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>, mhiramat@kernel.org,
+	mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 6.12 1/5] uprobes: sanitiize xol_free_insn_slot()
+Message-ID: <20241124131357.GA28360@redhat.com>
+References: <20241124124623.3337983-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241124124623.3337983-1-sashal@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Mon, 18 Nov 2024 15:25:58 -0300
-Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
+Hi Sasha,
 
-> On 11/18, Marcelo Schmitt wrote:
-> > On 11/15, David Lechner wrote:  
-> > > On 11/14/24 5:50 PM, Marcelo Schmitt wrote:  
-> > > > Extend the AD4000 series device tree documentation to also describe
-> > > > PulSAR devices.
-> > > > 
-> > > > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > > > ---
-> > > >  .../bindings/iio/adc/adi,ad4000.yaml          | 115 +++++++++++++++++-
-> > > >  1 file changed, 114 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
-> > > > index e413a9d8d2a2..35049071a9de 100644
-> > > > --- a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
-> > > > +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
-> > > > @@ -19,6 +19,21 @@ description: |
-> > > >      https://www.analog.com/media/en/technical-documentation/data-sheets/ad4020-4021-4022.pdf
-> > > >      https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4001.pdf
-> > > >      https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4003.pdf
-> > > > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7685.pdf
-> > > > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7686.pdf
-> > > > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7687.pdf
-> > > > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7688.pdf
-> > > > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7690.pdf
-> > > > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7691.pdf
-> > > > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7693.pdf
-> > > > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7694.pdf
-> > > > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7942.pdf
-> > > > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7946.pdf
-> > > > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7980.pdf
-> > > > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7982.pdf
-> > > > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7983.pdf
-> > > > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7984.pdf
-> > > > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7988-1_7988-5.pdf  
-> > > 
-> > > It would be nice to sort these lowest number first.  
-> > 
-> > Ack
-> >   
-> Actually, I didn't get how I'm expected to sort those.
-> Isn't ad4000 < ad7685?
-> Or did you mean to put adaq at the end?
-> 
-> ad4000-4004-4008.pdf
-> ...
-> ad4020-4021-4022.pdf
-> ad7685.pdf
-> ...
-> ad7988-1_7988-5.pdf
-> adaq4001.pdf
-> adaq4003.pdf
-> 
-> 
-> [...]
-> >   
-> > > And with this many chips, it can be easy to overlook a small difference
-> > > in one chips, like ad7694 not having VIO pin, so is it really fallback
-> > > compatible? Easier to just avoid the question and not have fallbacks.
-> > >   
-> > The absence of a VIO pin does not change how the driver handles the devices.
-> > They are compatible from software perspective.
-> >   
-> [...]
-> > > >  
-> > > >  allOf:
-> > > > +  # AD7694 doesn't have a VIO pin  
-> > > 
-> > > It sounds like using not: could make this if: a lot shorter.  
-> > 
-> > Ack
-> >   
-> > > 
-> > > Also, it looks like ad7983 doesn't have the pin either.  
-> > 
-> > Ack  
-> 
-> I forgot the ad4000 driver fails if VIO is not provided so I was wrong when I
-> said AD7694 was software compatible with the other ADCs.
-> I see now AD7694 also doesn't have SDI pin.
-> Aside from the VIO and SDI pins, AD7694 is similar to AD7685 both being 16-bit
-> precision 250kSPS pseudo-differential ADCs.
-> The AD7683 part you mentioned is similar to AD7988-1, both 16-bit
-> pseudo-differential 100kSPS.
-> To avoid complicating things, I'm dropping support for AD7694.
-> AD7685 and AD7988-1 are the parts with features similar to AD7694 and AD7683,
-> respectively.
+but why do you think it makes sense to backport these "uprobes" cleanups?
 
-General rule is that fallbacks only work if a part is a strict subset
-functionality wise or identical.   If we get it wrong, then that's fine
-as the more specific compatible allows us to fix things up even for
-dt files that are in products, but if we know there are incompatibilities
-or things we want to check for in the binding then don't do fallbacks in
-the first palce.   E.g. if there is a pin that is only on a fancy device
-then even if it will work fine with a driver binding to the simpler one, we
-may want to not use a fallback because we want the dt-binding to verify
-the pin is only provided for the more sophisticated device.
+Oleg.
 
-Gets fuzzy however in some cases!
-
-Usually what DT maintainers are looking for is a clear statement of how
-the devices are different.
-
-Jonathan
-
+On 11/24, Sasha Levin wrote:
+>
+> From: Oleg Nesterov <oleg@redhat.com>
+>
+> [ Upstream commit c7b4133c48445dde789ed30b19ccb0448c7593f7 ]
+>
+> 1. Clear utask->xol_vaddr unconditionally, even if this addr is not valid,
+>    xol_free_insn_slot() should never return with utask->xol_vaddr != NULL.
+>
+> 2. Add a comment to explain why do we need to validate slot_addr.
+>
+> 3. Simplify the validation above. We can simply check offset < PAGE_SIZE,
+>    unsigned underflows are fine, it should work if slot_addr < area->vaddr.
+>
+> 4. Kill the unnecessary "slot_nr >= UINSNS_PER_PAGE" check, slot_nr must
+>    be valid if offset < PAGE_SIZE.
+>
+> The next patches will cleanup this function even more.
+>
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Link: https://lore.kernel.org/r/20240929144235.GA9471@redhat.com
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  kernel/events/uprobes.c | 21 +++++++++------------
+>  1 file changed, 9 insertions(+), 12 deletions(-)
+>
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 4b52cb2ae6d62..cc605df73d72f 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -1683,8 +1683,8 @@ static unsigned long xol_get_insn_slot(struct uprobe *uprobe)
+>  static void xol_free_insn_slot(struct task_struct *tsk)
+>  {
+>  	struct xol_area *area;
+> -	unsigned long vma_end;
+>  	unsigned long slot_addr;
+> +	unsigned long offset;
+>
+>  	if (!tsk->mm || !tsk->mm->uprobes_state.xol_area || !tsk->utask)
+>  		return;
+> @@ -1693,24 +1693,21 @@ static void xol_free_insn_slot(struct task_struct *tsk)
+>  	if (unlikely(!slot_addr))
+>  		return;
+>
+> +	tsk->utask->xol_vaddr = 0;
+>  	area = tsk->mm->uprobes_state.xol_area;
+> -	vma_end = area->vaddr + PAGE_SIZE;
+> -	if (area->vaddr <= slot_addr && slot_addr < vma_end) {
+> -		unsigned long offset;
+> -		int slot_nr;
+> -
+> -		offset = slot_addr - area->vaddr;
+> -		slot_nr = offset / UPROBE_XOL_SLOT_BYTES;
+> -		if (slot_nr >= UINSNS_PER_PAGE)
+> -			return;
+> +	offset = slot_addr - area->vaddr;
+> +	/*
+> +	 * slot_addr must fit into [area->vaddr, area->vaddr + PAGE_SIZE).
+> +	 * This check can only fail if the "[uprobes]" vma was mremap'ed.
+> +	 */
+> +	if (offset < PAGE_SIZE) {
+> +		int slot_nr = offset / UPROBE_XOL_SLOT_BYTES;
+>
+>  		clear_bit(slot_nr, area->bitmap);
+>  		atomic_dec(&area->slot_count);
+>  		smp_mb__after_atomic(); /* pairs with prepare_to_wait() */
+>  		if (waitqueue_active(&area->wq))
+>  			wake_up(&area->wq);
+> -
+> -		tsk->utask->xol_vaddr = 0;
+>  	}
+>  }
+>
+> --
+> 2.43.0
+>
 
 
