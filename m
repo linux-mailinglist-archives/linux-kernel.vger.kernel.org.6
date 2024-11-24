@@ -1,149 +1,178 @@
-Return-Path: <linux-kernel+bounces-420233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D888C9D779D
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:03:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E779D7735
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 19:16:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42376B2F094
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:16:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0B8E282E27
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4E3140E3C;
-	Sun, 24 Nov 2024 18:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4FC13A86C;
+	Sun, 24 Nov 2024 18:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="H6G2n2Gi"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MTDk3Zvj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18232500AF
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 18:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF9A224FA;
+	Sun, 24 Nov 2024 18:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732472190; cv=none; b=PNKOBOF1GDTCme1EzbbO2jN2f3zeN9ZAiB6LHKzSiW5qfTjYjH+d0JOgf6YO76pveTOOmuERpclfXGHBFnsQxWCMvRRvP329f23ug2w7S2Pefx6bzP3q9imRhpOFk/DUEcSMchPCepPTFiAR2S2dWLau0ldSkg58uvDs8ryjfFo=
+	t=1732472189; cv=none; b=g6oFbySKHztvKvSasE71UuKQz9gHB11luBT7ij+w7y0VHzMBeKg+TcxYDPDipAvsV9kb2/57FSyiQPqgz6CnOjRqe89fUi68Ni+b5hJ7dBthfQfOXpUpACa1xaoEXNmHBmhGCmcKDV7rTaF7iuFyyodiuCA5NBbW35y3yTOa1XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732472190; c=relaxed/simple;
-	bh=o4MjSo4mZwOargpNyRXKDM3WAx4EGKBua34HXhvV8V4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cblsSDVee4JCAFqTwXw4fiyPe1hBoh/a9cqdr3vAYordEo2EwHKOlwiGrN/QUZI2mklSAr1NPvcCCiuWcGt/Xy+I/sSvtYVokxnMTxxPzxFjicYVZdZ8zOyUP4hyuFZql1eKbsmSc9k5Vkz6klfg/UGYtLMImw8DVvpFJc7wx6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=H6G2n2Gi; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa543c4db92so113854866b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 10:16:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732472187; x=1733076987; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9nEvmX/RSuTdFkbcUkssWby2DmD3HY/Zsgoyaq7a18g=;
-        b=H6G2n2Giqq46Pwuhsi9yoFEiOm2Nb534rrMwP3Nv6ItWmCL96dYAdFE1DkCBP2xJ/Y
-         32/Dylu8HLRu0qETVmmWMdg8DiNiBqr6vsg0Y3RsnsV4Y/DsUQsoJv4wfOrZneBRF/SP
-         GHy3vwDlT3GHF1JuQh42tQjHcBFFLfv7SrgBE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732472187; x=1733076987;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9nEvmX/RSuTdFkbcUkssWby2DmD3HY/Zsgoyaq7a18g=;
-        b=Ljh05lqFVFNwpAGANeDFMLc7dDAbXcxnRMmFEJpsIGnn8rCd4PByFsGszkVOEEkd8h
-         avAKcDsl5n6Pmz0UC2tTcBy0Z2x/V2h2fDZdEbb+j/lTDSRC58IMRh14LAqk/ssGv//p
-         aoObNZyMTzqQbUAKnqIMm0D0lGa2xucwa5WcHJnAMX1P1g9lin+IZ/a2Hf7tl6KjvMtF
-         AAECopHPs+odpxKb4aCqbV/4ECDrbJF3GrhM63ipwkB+GnagXRuMkcxTnHEx7dDucME4
-         BNLGUmKdmSTN0f3xv6HrfiecQeeqJGqjqKHENLIEz8LqqJHqpMfsllfZiH6fE3arj0Mx
-         HAnA==
-X-Forwarded-Encrypted: i=1; AJvYcCXeo17wU7doLBcRXRPcJjNGzyctS/F4Girc4Xhh9eY2q1XEnB7SH9cXSGJmVxehh1sMwTs0MFHa52W7qk8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyDM3E8mnhjsfttIBzRnNOmaBjPLbL1WHx++V6+oajiT28qlm2
-	ziyZK7UaseGbLuReOr1xyuD+QufbFFvP7ed0rcYsyzEyO8T0dA6L+ItSoP+ziwdk0O+0Xg5KGyp
-	ie9Y1vw==
-X-Gm-Gg: ASbGnct9x3TNCayiSZJXjTYPxW8ovU1Pb5bTh+NYuN1LWxXQMHseJMLVrk5RYttE2wZ
-	agpKxI09zExwtnfHQf8ePDR0fuIK40VoG5xDT72lOvarHbifUWqRJUNa/2ySOGSv6zRVwphD1Y0
-	C3EJwJtcUJtiraGI978jBhmNFa6o7EpW1eCTFbN4/eyf5IRGOavtHJkbJpRuLpdr+XO9r/r4X1T
-	BiLP9f2qAJ/yffsr20q7J7bC7FpzKmygTJ4pC0OC8hxOdv/B6M41MFvJiU2CTpWkTAkLPvrpjmo
-	pIUCWkCCiELDw7QfQuIQtC80
-X-Google-Smtp-Source: AGHT+IGFxFiXmFjr4813nlw99H7PPjjetltJZznt/7XBVRymL9uKcwOE3W8+SdAuxlVEIoTJDjnntg==
-X-Received: by 2002:a17:906:32cc:b0:aa5:2e09:ff0f with SMTP id a640c23a62f3a-aa52e0a191cmr500969366b.37.1732472186766;
-        Sun, 24 Nov 2024 10:16:26 -0800 (PST)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b28f6b3sm373997666b.23.2024.11.24.10.16.25
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Nov 2024 10:16:25 -0800 (PST)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa51b8c5f4dso292160666b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 10:16:25 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUjUzdCBvCuSHrisAkViiTjdTSMErtWoIkMfPFrgVpjbw8mRkOxC9ZS/fxdPEMmTZZ/H3mcDOwHUhal264=@vger.kernel.org
-X-Received: by 2002:a17:906:3ca2:b0:aa5:1ef5:261e with SMTP id
- a640c23a62f3a-aa51ef5266fmr695134766b.17.1732472185004; Sun, 24 Nov 2024
- 10:16:25 -0800 (PST)
+	s=arc-20240116; t=1732472189; c=relaxed/simple;
+	bh=FXsuG6lDU1uWF4iyfoWnk1dMCf5iIc4lUECmwOYM7NI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Njvj9+YjxlD+36/v/tHdZwUi0+SsN/7XRGvi1yJ2YWb0NFa5raswckYPtQ8hX5Mfzaim40MGH8mpVN+Xxc9g7CCtuPPqsm6ckbG00KzF2DL16JtA5X4yh9cS5QYgZr7n4dkKwUKZGjRL//oTYHlP7Krbv+0lXK8CMafQTEK80VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MTDk3Zvj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34B58C4CECC;
+	Sun, 24 Nov 2024 18:16:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732472189;
+	bh=FXsuG6lDU1uWF4iyfoWnk1dMCf5iIc4lUECmwOYM7NI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MTDk3Zvj5ymz6fVnlE+/RNU3sFjfxXMQD3YKBM9SWCCGQBH1axe6GglrIBT4Xl4La
+	 jVhLsjbCZNDOX5ratGwNf+hOzHc6BdmWj9ezDWuC8gVPicoU+XjYblGvmoNDrg63H+
+	 IbQ2578o8YNjhiU7xqcxqHejin/I2000YsZD+EjduSvqw7Rx7uOrnw3dDsL48X/nML
+	 bt6u4fIOcztBeSFZpB+nzzX5m0IQiTGx8br3W12eduMOm5ONdDkpUt9RDgW3xjBVoU
+	 bOpFaevOAe85TvRCYCW0DcSfyhgWgBICxavtJ00k3feA+WEm8EHUHu9Tu0NXISlWuG
+	 W+CMYU9Jh1KLg==
+Date: Sun, 24 Nov 2024 18:16:22 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ eraretuya@gmail.com
+Subject: Re: [PATCH v2 08/22] iio: accel: adxl345: initialize FIFO delay
+ value for SPI
+Message-ID: <20241124181622.6df37d30@jic23-huawei>
+In-Reply-To: <20241117182651.115056-9-l.rubusch@gmail.com>
+References: <20241117182651.115056-1-l.rubusch@gmail.com>
+	<20241117182651.115056-9-l.rubusch@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1730166635.git.jpoimboe@kernel.org> <82cbb9983fef5ecf6f1cb33661e977172d40a7e6.1730166635.git.jpoimboe@kernel.org>
- <20241029032735.pw3bg64bpneqnfhk@treble.attlocal.net> <76bb85ceeb854e3ab68d87f846515306@AcuMS.aculab.com>
- <20241115230653.hfvzyf3aqqntgp63@jpoimboe> <CAHk-=wgLCzEwa=S4hZFGeOPjix-1_fDrsqR-QLaBcDM-fgkvhw@mail.gmail.com>
- <20241121214011.iiup2fdwsys7hhts@jpoimboe> <CAHk-=wigHm2J4LkUL1=y_H8zGwM0JsK2CrWyLNbz9fvXfbaBQA@mail.gmail.com>
- <20241122001223.t4uywacusrplpefq@jpoimboe> <CAHk-=whm4fEYrzrrRrqEhELLFz2xNCMT9be+J0uiR_EwXwa0DA@mail.gmail.com>
- <20241122031115.5aasuktqrp2sidfj@jpoimboe> <CAHk-=wjJt49tgtmYv42bXU3h0Txb+mQZEOHseahA4EcK6s=BxA@mail.gmail.com>
- <CAHk-=wiL0TepguMNaR65ZdkkiBEoi4hTE7PwG3bBO1c5SOXmWw@mail.gmail.com>
- <CAHk-=wj4LHCiD8f75q-jf7mu7Jyn-wHgGoni6WSQtdh7+HtGNw@mail.gmail.com> <2d7744d7ce504b288c3f1356f27910ec@AcuMS.aculab.com>
-In-Reply-To: <2d7744d7ce504b288c3f1356f27910ec@AcuMS.aculab.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 24 Nov 2024 10:16:08 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgCDMrjKc7foeV5zHRL_ioRZqqu-XKN5q9fN5NFCpgXZQ@mail.gmail.com>
-Message-ID: <CAHk-=wgCDMrjKc7foeV5zHRL_ioRZqqu-XKN5q9fN5NFCpgXZQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/6] x86/uaccess: Avoid barrier_nospec() in 64-bit __get_user()
-To: David Laight <David.Laight@aculab.com>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Waiman Long <longman@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, 
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Andrew Cooper <andrew.cooper3@citrix.com>, 
-	Mark Rutland <mark.rutland@arm.com>, "Kirill A . Shutemov" <kirill@shutemov.name>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, 24 Nov 2024 at 08:11, David Laight <David.Laight@aculab.com> wrote:
->
-> Is there an 'unsafe_get_user_nofault()' that uses a trap handler
-> that won't fault in a page?
+On Sun, 17 Nov 2024 18:26:37 +0000
+Lothar Rubusch <l.rubusch@gmail.com> wrote:
 
-Nope. I was thinking about the same thing, but we actually don't look
-up the fault handler early - we only do it at failure time.
+> Add the possibility to delay FIFO access when SPI is used. According to
+> the datasheet this is needed for the adxl345. When initialization
+> happens over SPI the need for delay is to be signalized, and the delay
+> will be used.
+A specific reference to a section of the specification might be useful
+here.
 
-So the pagefault_disable() thus acts as the failure trigger that makes
-us look up the fault handler. Without that, we'd never even check if
-there's a exception note on the instruction.
+One trivial comment inline, but otherwise looks fine to me.
 
-> I'd also have thought that the trap handler for unsafe_get_user()
-> would jump to the Efault label having already done user_access_end().
-> But maybe it doesn't work out that way?
+> 
+> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> ---
+>  drivers/iio/accel/adxl345.h      | 2 +-
+>  drivers/iio/accel/adxl345_core.c | 6 +++++-
+>  drivers/iio/accel/adxl345_i2c.c  | 2 +-
+>  drivers/iio/accel/adxl345_spi.c  | 3 +++
+>  4 files changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iio/accel/adxl345.h b/drivers/iio/accel/adxl345.h
+> index cf4132715c..4ba493f636 100644
+> --- a/drivers/iio/accel/adxl345.h
+> +++ b/drivers/iio/accel/adxl345.h
+> @@ -62,7 +62,7 @@ struct adxl345_chip_info {
+>  };
+>  
+>  int adxl345_core_probe(struct device *dev, struct regmap *regmap,
+> -		       int irq,
+> +		       int irq, bool fifo_delay_default,
+>  		       int (*setup)(struct device*, struct regmap*));
+>  
+>  #endif /* _ADXL345_H_ */
+> diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl345_core.c
+> index 902bd3568b..51b229cc44 100644
+> --- a/drivers/iio/accel/adxl345_core.c
+> +++ b/drivers/iio/accel/adxl345_core.c
+> @@ -22,6 +22,7 @@ struct adxl34x_state {
+>  	int irq;
+>  	const struct adxl345_chip_info *info;
+>  	struct regmap *regmap;
+> +	bool fifo_delay; /* delay: delay is needed for SPI */
+>  };
+>  
+>  #define ADXL345_CHANNEL(index, axis) {					\
+> @@ -199,13 +200,14 @@ static const struct iio_info adxl345_info = {
+>   * @dev:	Driver model representation of the device
+>   * @regmap:	Regmap instance for the device
+>   * @irq:	Interrupt handling for async usage
+> + * @fifo_delay_default: Using FIFO with SPI needs delay
+>   * @setup:	Setup routine to be executed right before the standard device
+>   *		setup
+>   *
+>   * Return: 0 on success, negative errno on error
+>   */
+>  int adxl345_core_probe(struct device *dev, struct regmap *regmap,
+> -		       int irq,
+> +		       int irq, bool fifo_delay_default,
+>  		       int (*setup)(struct device*, struct regmap*))
+>  {
+>  	struct adxl34x_state *st;
+> @@ -234,6 +236,8 @@ int adxl345_core_probe(struct device *dev, struct regmap *regmap,
+>  	if (!st->info)
+>  		return -ENODEV;
+>  
+> +	st->fifo_delay = fifo_delay_default;
+> +
+>  	indio_dev->name = st->info->name;
+>  	indio_dev->info = &adxl345_info;
+>  	indio_dev->modes = INDIO_DIRECT_MODE;
+> diff --git a/drivers/iio/accel/adxl345_i2c.c b/drivers/iio/accel/adxl345_i2c.c
+> index 604b706c29..fa1b7e7026 100644
+> --- a/drivers/iio/accel/adxl345_i2c.c
+> +++ b/drivers/iio/accel/adxl345_i2c.c
+> @@ -27,7 +27,7 @@ static int adxl345_i2c_probe(struct i2c_client *client)
+>  	if (IS_ERR(regmap))
+>  		return dev_err_probe(&client->dev, PTR_ERR(regmap), "Error initializing regmap\n");
+>  
+> -	return adxl345_core_probe(&client->dev, regmap, client->irq, NULL);
+> +	return adxl345_core_probe(&client->dev, regmap, client->irq, false, NULL);
+>  }
+>  
+>  static const struct adxl345_chip_info adxl345_i2c_info = {
+> diff --git a/drivers/iio/accel/adxl345_spi.c b/drivers/iio/accel/adxl345_spi.c
+> index 39e7d71e1d..75940d9c1c 100644
+> --- a/drivers/iio/accel/adxl345_spi.c
+> +++ b/drivers/iio/accel/adxl345_spi.c
+> @@ -12,6 +12,7 @@
+>  #include "adxl345.h"
+>  
+>  #define ADXL345_MAX_SPI_FREQ_HZ		5000000
+> +#define ADXL345_MAX_FREQ_NO_FIFO_DELAY	1500000
+>  
+>  static const struct regmap_config adxl345_spi_regmap_config = {
+>  	.reg_bits = 8,
+> @@ -41,10 +42,12 @@ static int adxl345_spi_probe(struct spi_device *spi)
+>  	if (spi->mode & SPI_3WIRE)
+>  		return adxl345_core_probe(&spi->dev, regmap,
+>  					  spi->irq,
+> +					  spi->max_speed_hz > ADXL345_MAX_FREQ_NO_FIFO_DELAY,
+>  					  adxl345_spi_setup);
+>  	else
+>  		return adxl345_core_probe(&spi->dev, regmap,
+>  					  spi->irq,
+> +					  spi->max_speed_hz > ADXL345_MAX_FREQ_NO_FIFO_DELAY,
 
-I actually at one point had a local version that did exactly that,
-because it allowed us to avoid doing the user_access_end in the
-exception path.
+use a local variable to establish this without the very long line.
 
-It got ugly. In particular, it gets really ugly for the
-"copy_to/from_user()" case where we want to be byte-accurate, and a
-64-bit access fails, and we go back to doing the last few accesses one
-byte at a time.
+>  					  NULL);
+>  }
+>  
 
-See the exception table in arch/x86/lib/copy_user_64.S where it jumps
-to .Lcopy_user_tail for an example of this.
-
-Yes, yes, you could just do a "stac" again in the exception path to
-undo the fact that the fault handler would have turned off user
-accesses again...
-
-But look at that copy_user_64 code again and you'll see that it's
-actually a generic replacement for "rep movs" with fault handling, and
-can be used for the "copy_from_kernel_nofault" cases too.
-
-So I decided that it was just too ugly for words to have the fault
-handler basically change the state of the faultee that way.
-
-            Linus
 
