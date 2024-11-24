@@ -1,227 +1,136 @@
-Return-Path: <linux-kernel+bounces-419431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8F5F9D6E09
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 12:40:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EAC89D6E0C
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 12:48:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DA44B2114E
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 11:40:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0548161A4D
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 11:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CDF188714;
-	Sun, 24 Nov 2024 11:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A523218893C;
+	Sun, 24 Nov 2024 11:48:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="FcQwNb1N"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eWMUMG72"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F967CF16;
-	Sun, 24 Nov 2024 11:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B8E3BB24;
+	Sun, 24 Nov 2024 11:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732448424; cv=none; b=toyM+1UrOPdiXjajNz6o+eMxuP1VzXyHhwwiGhcxo3+Gdja6JuxIvgxwcKHtp+hacjHlx/8XWyZiUQJ9XpQtKCO2HgOa2zrAyvvZSvxeSibb793Oub1vQL59nbTvVyyuj/u9OYc3SPR+cj5L9zrdjo6NKJ0R5syxGZVI+l3GNyw=
+	t=1732448891; cv=none; b=pEITZ5DoUB/7rK+259kQV7qotVvkY2DBnwkpErGSvmC2eO2W+v/dbiiWgqg3O8Ej5AAUdvoYRfZrh7GbeazWyRBSHuheUYxZD62DxHavj5ax5jLTrxwBQBqzL1JOGfNPFW5dTf0i4Yoki9OZYcrMgGaNlMnXffA7n6a3azcOOhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732448424; c=relaxed/simple;
-	bh=1bhDdSxVvYJHrSbY9Pm9YLToIwNMuQRQ/r+JsdA9se0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=as6Wm7pV1SF1V145uiAZ9fiq/79Tjfoo0w1ewLlcidCT6xiTKgnYIE5fZ28NpZLe/h7+DIuwIPJvMZO5BIJKuiIwc8jMmPDoP5b6dSMhmFtUmszmjQDGTvN+Mf4P0B6JzV8kn5OuVBSonNloFuAiN8woTck+EWRNBD+phrosQqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=FcQwNb1N; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=J3BQnHmMzJvRzOGoxvKw6fbWVPHb009ceAjCw5kM6Qk=; b=FcQwNb1Nxc86U2alMAKKQijXNV
-	5BVPN2Tp0UqXl5qkKq7DIEA9jHHTZucMj98AqTokHXNRwUyIYA8rM24FF58r/vPu+ZYbRoW2jUbRl
-	h7dyNgeBbYFl5ytnPtVTFb5TOMurDcszoejPbvXlSH3IDz/1rhecHcctN4oSqyJSxx1KQkiHYRabV
-	R3lNBZcleSSsxMWX6EP2N66v1A0ZuQbbPNe5hE9Exqdhe/igS7mIls5fVDaWtfOL7AbPq3EuTaLm6
-	cNM67DvtSyO7z0aytWmPPOYY1Euod7ueersLrJYo2CMRdXIK5kD/BhUcsfPqzXHFMMB78ZsAzpwYl
-	vHoAjocQ==;
-Received: from i5e86190f.versanet.de ([94.134.25.15] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tFAyF-00047c-Or; Sun, 24 Nov 2024 12:40:07 +0100
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, quentin.schulz@cherry.de, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Heiko Stuebner <heiko.stuebner@cherry.de>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject:
- Re: [PATCH v3 1/2] dt-bindings: phy: Add Rockchip MIPI CSI/DSI PHY schema
-Date: Sun, 24 Nov 2024 12:40:06 +0100
-Message-ID: <8454190.T7Z3S40VBb@diego>
-In-Reply-To: <udad4qf3o7kt45nuz6gxsvsmprh4rnyfxfogopmih6ucznizih@7oj2jrnlfonz>
-References:
- <20241113221018.62150-1-heiko@sntech.de>
- <20241113221018.62150-2-heiko@sntech.de>
- <udad4qf3o7kt45nuz6gxsvsmprh4rnyfxfogopmih6ucznizih@7oj2jrnlfonz>
+	s=arc-20240116; t=1732448891; c=relaxed/simple;
+	bh=HEkvAW2uXzYYGNQB348wpthueAicu5dMe/S9f8kW4gg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hWjvGpoPQyKYecawZCMeohqTOOWRrz7aY0EwvakIlHz9GxdSlCUp6mp5RhUFBP2prkS+384ysXjmw/OVYaKzFi8+DMZzN91S79HC4BopXqZ2kt9rC/uHjdQMDiLN6elvSZHNjmH24bdcT/rEMbwq/wKmxS5YoNLyZrTOB9Objn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eWMUMG72; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2549E240003;
+	Sun, 24 Nov 2024 11:47:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1732448880;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Oi1vwQlwjx5nx2feXQ31yCzJSrxxT7L8l/BotDlHXuU=;
+	b=eWMUMG72VQ+252L5CR7PQ++DETQ4f/PvArlH0SNYLQL2nhHQqSIeexCqVjuOAnj0wB31Sn
+	EuUChFtTxHm4XceLF0hdTsdhK6yNPrgW323KFHAa2+O6EByCaw1v2j9alYv0zsVO2PkiQs
+	NysVP6yPeEu6C0mQvpG8sqxGxaXDqhgFo5iIhM9fVNuiT160LfXHFteOxtoc/1owQkI72q
+	0z5yQoZEiiiMQvotHQEHjUR1t1o+5wa4mb/bGJ3FDlUufaZlRzWruSHWxEDZFOl4+9GDxa
+	qDbRBqKLDhm4lyZt1HgzvEPoor9GQfph1x3ObClGy523JPrWMd94dJOCM3pB+A==
+Date: Sun, 24 Nov 2024 12:47:56 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
+ <donald.hunter@gmail.com>, Rob Herring <robh@kernel.org>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-doc@vger.kernel.org, Kyle Swenson
+ <kyle.swenson@est.tech>, Dent Project <dentproject@linuxfoundation.org>,
+ kernel@pengutronix.de, Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH RFC net-next v3 03/27] net: pse-pd: Avoid setting max_uA
+ in regulator constraints
+Message-ID: <20241124124756.2e54d2e8@kmaincent-XPS-13-7390>
+In-Reply-To: <Z0F2SVsBOR-EOQJ-@pengutronix.de>
+References: <20241121-feature_poe_port_prio-v3-0-83299fa6967c@bootlin.com>
+	<20241121-feature_poe_port_prio-v3-3-83299fa6967c@bootlin.com>
+	<Z0F2SVsBOR-EOQJ-@pengutronix.de>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-Am Freitag, 22. November 2024, 19:49:20 CET schrieb Sebastian Reichel:
-> Hi,
-> 
-> On Wed, Nov 13, 2024 at 11:10:17PM +0100, Heiko Stuebner wrote:
-> > From: Heiko Stuebner <heiko.stuebner@cherry.de>
-> > 
-> > Add dt-binding schema for the MIPI CSI/DSI PHY found on
-> > Rockchip RK3588 SoCs.
-> > 
-> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
-> > ---
-> >  .../phy/rockchip,rk3588-mipi-dcphy.yaml       | 82 +++++++++++++++++++
-> >  1 file changed, 82 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/phy/rockchip,rk3588-mipi-dcphy.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/phy/rockchip,rk3588-mipi-dcphy.yaml b/Documentation/devicetree/bindings/phy/rockchip,rk3588-mipi-dcphy.yaml
-> > new file mode 100644
-> > index 000000000000..5ee8d7246fa0
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/phy/rockchip,rk3588-mipi-dcphy.yaml
-> > @@ -0,0 +1,82 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/phy/rockchip,rk3588-mipi-dcphy.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Rockchip MIPI CSI/DSI PHY with Samsung IP block
-> > +
-> > +maintainers:
-> > +  - Guochun Huang <hero.huang@rock-chips.com>
-> > +  - Heiko Stuebner <heiko@sntech.de>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - rockchip,rk3576-mipi-dcphy
-> > +      - rockchip,rk3588-mipi-dcphy
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  "#phy-cells":
-> > +    const: 0
-> 
-> I would expect an argument to select between D-PHY and C-PHY mode,
-> so that the binding is ready for it even when the driver does not
-> yet support it. E.g. something like
-> 
->   '#phy-cells':
->     const: 1
->     description: |
->       Supported modes are:
->         - PHY_TYPE_DPHY
->         - PHY_TYPE_CPHY
->       See include/dt-bindings/phy/phy.h for constants.
-> 
-> This would match how it works for the naneng Combo PHY to switch
-> between PCIe/SATA/USB3. Also Mediatek CSI DC-PHY handles it that
-> way upstream (with just D-PHY being supported). I see that the
-> driver stack you send upstream expects, that the PHY user (e.g.
-> the DSI controller) instead manually calls phy_set_mode(phy, <mode>).
-> To me it seems more sensible to just get this automaically from DT.
+Hello Oleksij,
 
-The mode-selection for the phy is definitly tied to the hardware-design.
-Depending on how the board is designed, it'll always do either D-PHY
-or C-PHY mode.
+On Sat, 23 Nov 2024 07:29:29 +0100
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
 
-I guess it mostly just feels strange when so far the parameter was
-used to identify say an individual clock from the clock controller.
+> Hi Kory,
+>=20
+> On Thu, Nov 21, 2024 at 03:42:29PM +0100, Kory Maincent wrote:
+> > From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+> >=20
+> > Setting the max_uA constraint in the regulator API imposes a current
+> > limit during the regulator registration process. This behavior conflicts
+> > with preserving the maximum PI power budget configuration across reboot=
+s.
+> >=20
+> > Instead, compare the desired current limit to MAX_PI_CURRENT in the
+> > pse_pi_set_current_limit() function to ensure proper handling of the
+> > power budget. =20
+>=20
+> Not enough coffee :) I still didn't correctly understood the problem.
 
-But reading the Medietek discussion (up to [0]) it looks like that is
-a nice way to do this, so I'll adapt things in the next version.
+Don't worry, if you don't understand as a PSE Maintainer no one will. The c=
+ause
+is the commit message.
+=20
+> MAX_PI_CURRENT is the hard limit according to the standard, so it is the
+> intial limit anyway. Why it is bad to set it on registration? It feels
+> still better compared to have no limit on init. Or do i'm missing
+> things?
 
+Using constraints.max_uA to set the max current limit will cause regulator =
+core
+to call the set_current_limit callback when registering a regulator. This c=
+all
+will be done using MAX_PI_CURRENT (1,92A) limit.
 
-Heiko
+Is see two issues to this:
+- There is a chance the power budget of the supply will be not sufficient f=
+or
+  all the PIs configured to MAX_PI_CURRENT. On that case the power budget of
+  the supply is exceeded and the next PI of the PSE power domain can't probe
+  with success. It will have -ERANGE error returned from
+  devm_regulator_register() call. So the PSE driver can't probe with succes=
+s.
+- The PI current limit is reset at each boot. The next patch series will ta=
+ckle
+  permanent configuration feature of the PD692x0. This will conflict as
+  we want to keep the PI current limit saved.
 
+Another solution would be to add a no_apply_max_uA_constraint flag.
 
-[0] https://lore.kernel.org/all/20230608200552.GA3303349-robh@kernel.org/
-
-
-> Otherwise the whole series LGTM.
-> 
-> Greetings,
-> 
-> -- Sebastian
-> 
-> > +  clocks:
-> > +    maxItems: 2
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: pclk
-> > +      - const: ref
-> > +
-> > +  resets:
-> > +    maxItems: 4
-> > +
-> > +  reset-names:
-> > +    items:
-> > +      - const: m_phy
-> > +      - const: apb
-> > +      - const: grf
-> > +      - const: s_phy
-> > +
-> > +  rockchip,grf:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description:
-> > +      Phandle to the syscon managing the 'mipi dcphy general register files'.
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - clocks
-> > +  - clock-names
-> > +  - resets
-> > +  - reset-names
-> > +  - "#phy-cells"
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/rockchip,rk3588-cru.h>
-> > +    #include <dt-bindings/reset/rockchip,rk3588-cru.h>
-> > +
-> > +    soc {
-> > +      #address-cells = <2>;
-> > +      #size-cells = <2>;
-> > +
-> > +      phy@feda0000 {
-> > +        compatible = "rockchip,rk3588-mipi-dcphy";
-> > +        reg = <0x0 0xfeda0000 0x0 0x10000>;
-> > +        clocks = <&cru PCLK_MIPI_DCPHY0>,
-> > +                 <&cru CLK_USBDPPHY_MIPIDCPPHY_REF>;
-> > +        clock-names = "pclk", "ref";
-> > +        resets = <&cru SRST_M_MIPI_DCPHY0>,
-> > +                 <&cru SRST_P_MIPI_DCPHY0>,
-> > +                 <&cru SRST_P_MIPI_DCPHY0_GRF>,
-> > +                 <&cru SRST_S_MIPI_DCPHY0>;
-> > +        reset-names = "m_phy", "apb", "grf", "s_phy";
-> > +        rockchip,grf = <&mipidcphy0_grf>;
-> > +        #phy-cells = <0>;
-> > +      };
-> > +    };
-> 
-
-
-
-
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
