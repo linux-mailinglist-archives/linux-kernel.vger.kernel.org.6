@@ -1,58 +1,71 @@
-Return-Path: <linux-kernel+bounces-420202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12FD09D77C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 20:13:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D64A29D76D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 18:45:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2628B3176D
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:45:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 706E4164189
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 17:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB167346D;
-	Sun, 24 Nov 2024 17:45:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E6F7FBAC;
+	Sun, 24 Nov 2024 17:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="oTOWb0yL"
-Received: from mx1.riseup.net (mx1.riseup.net [198.252.153.129])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="lbZTG1Mk"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941136F307
-	for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 17:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417F75464B;
+	Sun, 24 Nov 2024 17:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732470349; cv=none; b=fq8n4x+EFJRpqbaJrCH2f5VB1xXp/U5QYrpixvJv+ebhjXiN+p2ESoAEcHk5BbmdT9elPAVTIg/Ddew+yfy7NDouarX+5bKy0/qBURqI7iWJKKijznPiI1RmonoLJmWCSssqsrFeeHaejIRbBH9Oy67abezc2HNfBizSNeeGhow=
+	t=1732470334; cv=none; b=LHtzvRFWasmLhn+4bnflsi32wHoq8Q25ZH+653Dl1l3mzRO+68VZyH9aTBdxRTGS98U75iEFwO4Epa7i3RP391C2J43/49Ddux51a27K9V/wz7QIfhCWfAJ5E1JZXfGcnP2Wv9hAsiQD838J3VcBJOx3A2Ek7FTIqAbkLF/wDVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732470349; c=relaxed/simple;
-	bh=EjTKw52XEP5sDYgOb2I3+VAHq2/8LE6N9diKnI/zHnA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t4cT6lytQ4UwfJ6q7Vvr9SMTkTJ+aYOIMDY11Acu6mwnQxt6HBuF8MEdAUx2jFI/B8EHTybWUeYzqaWkNFZMoYAa9Hk7X2k/DTFkxXq0hPvA0GCfWcD0dYkDVrzyc/VmFDvyVdzPmENBYz/BeIPmmlbzW4Z6US+bp7U73NDVeIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=oTOWb0yL; arc=none smtp.client-ip=198.252.153.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
-Received: from fews01-sea.riseup.net (fews01-sea-pn.riseup.net [10.0.1.109])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	s=arc-20240116; t=1732470334; c=relaxed/simple;
+	bh=KJiwNKB+6HY4s6PD4bB+NeEGvWMCyutvgtWEsQJTrvE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JcmgWMkwXBXMkSjJkKiU6z6o+E1unCZSUbwCsGmnkcs3/yqlEUPxYV/bWjpgvAInpVPWf7Dg3pJSvaGHjhmjrcEes9iwoBJLbomHo3jaPsVsNGHL5XViTmkJlaw39CqFfv/96CQsXyLUN6BEEjS5NsBrtBTmvTzLUWXKFTnK5nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=lbZTG1Mk; arc=none smtp.client-ip=192.19.144.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 4372AC000C6E;
+	Sun, 24 Nov 2024 09:45:32 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 4372AC000C6E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1732470332;
+	bh=KJiwNKB+6HY4s6PD4bB+NeEGvWMCyutvgtWEsQJTrvE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=lbZTG1Mkb0L/Jx10XXxz7b6ZTbbN8ncH9TAxu3AwewBIkWOT+sMwAKfPZtKCIrP4w
+	 YFYGPPcjt820H3YJ4g6xLTjl59uB7A8oOf4Wy5e72PBB2ugkanqrq1wgZ23yrgV+by
+	 MiC0NkL/FEVyeHrM2CVBxYu6j7EytreyBk0IM0SM=
+Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mx1.riseup.net (Postfix) with ESMTPS id 4XxGTG328NzDqh4;
-	Sun, 24 Nov 2024 17:45:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-	t=1732470341; bh=EjTKw52XEP5sDYgOb2I3+VAHq2/8LE6N9diKnI/zHnA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=oTOWb0yLvr9PEyqaXfG0i3isZjjM7yeVZ9x8O2QDWGHVBDccdBo84AMeKUV4buqXW
-	 +36x8DpsVw3ieWYn6gHPOihcuFRHVXgU6/sdzM4g0YY2qTsNr65mczk/oFpolhig7D
-	 z6DNjbBQ0Iaeox994kTNJBpfZKZ+4dE5pyviDBGw=
-X-Riseup-User-ID: A59CE217345DDF0B2EE92A352F7C9AB5DEDF285CB89B9ED4039D291B389A1692
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	 by fews01-sea.riseup.net (Postfix) with ESMTPSA id 4XxGTD6yLKzJsBP;
-	Sun, 24 Nov 2024 17:45:36 +0000 (UTC)
-From: Fernando Fernandez Mancera <ffmancera@riseup.net>
-To: linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de,
-	x86@kernel.org,
-	Fernando Fernandez Mancera <ffmancera@riseup.net>
-Subject: [PATCH RESEND] x86/cpu/topology: remove limit of CPUs due to noapic on x86_64
-Date: Sun, 24 Nov 2024 18:45:07 +0100
-Message-ID: <20241124174510.2561-1-ffmancera@riseup.net>
+	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id D296718041CAC6;
+	Sun, 24 Nov 2024 09:45:31 -0800 (PST)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: bcm-kernel-feedback-list@broadcom.com,
+	"Rob Herring (Arm)" <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Hauke Mehrtens <hauke@hauke-m.de>,
+	=?iso-8859-2?q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm: dts: broadcom: Remove unused and undocumented properties
+Date: Sun, 24 Nov 2024 09:45:31 -0800
+Message-ID: <20241124174531.716317-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241115193904.3624350-1-robh@kernel.org>
+References: <20241115193904.3624350-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,60 +74,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On x86_64 the command line parameter "noapic" should not limit the
-number of possible CPUs, as it only limits the use of IRQ sharing or
-device IRQ remapping. Only on x86_32 the command line parameter
-"nolapic" limits the number of possible CPUs to one. This restores the
-behavior previous to the rework of possible CPU management.
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-Fixes: 7c0edad3643f ("x86/cpu/topology: Rework possible CPU management")
-Signed-off-by: Fernando Fernandez Mancera <ffmancera@riseup.net>
----
-RESEND: original patch https://lkml.org/lkml/2024/9/7/160
----
- arch/x86/kernel/cpu/topology.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+On Fri, 15 Nov 2024 13:39:01 -0600, "Rob Herring (Arm)" <robh@kernel.org> wrote:
+> Remove properties which are both unused in the kernel and undocumented.
+> Most likely they are leftovers from downstream.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
 
-diff --git a/arch/x86/kernel/cpu/topology.c b/arch/x86/kernel/cpu/topology.c
-index 621a151ccf7d..5f10a010e35a 100644
---- a/arch/x86/kernel/cpu/topology.c
-+++ b/arch/x86/kernel/cpu/topology.c
-@@ -428,10 +428,16 @@ void __init topology_apply_cmdline_limits_early(void)
- {
- 	unsigned int possible = nr_cpu_ids;
- 
--	/* 'maxcpus=0' 'nosmp' 'nolapic' 'disableapic' 'noapic' */
--	if (!setup_max_cpus || ioapic_is_disabled || apic_is_disabled)
-+	/* 'maxcpus=0' 'nosmp' */
-+	if (!setup_max_cpus)
- 		possible = 1;
- 
-+#if defined(CONFIG_X86_32)
-+	/* 'nolapic' 'disableapic' 'noapic' */
-+	if (apic_is_disabled || ioapic_is_disabled)
-+		possible = 1;
-+#endif
-+
- 	/* 'possible_cpus=N' */
- 	possible = min_t(unsigned int, max_possible_cpus, possible);
- 
-@@ -443,8 +449,14 @@ void __init topology_apply_cmdline_limits_early(void)
- 
- static __init bool restrict_to_up(void)
- {
--	if (!smp_found_config || ioapic_is_disabled)
-+	if (!smp_found_config)
- 		return true;
-+
-+#if defined(CONFIG_X86_32)
-+	if (ioapic_is_disabled)
-+		return true;
-+#endif
-+
- 	/*
- 	 * XEN PV is special as it does not advertise the local APIC
- 	 * properly, but provides a fake topology for it so that the
--- 
-2.46.2
-
+Applied to https://github.com/Broadcom/stblinux/commits/devicetree/next, thanks!
+--
+Florian
 
