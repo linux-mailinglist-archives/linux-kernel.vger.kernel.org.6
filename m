@@ -1,211 +1,349 @@
-Return-Path: <linux-kernel+bounces-419434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-419435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64A099D6E14
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 13:29:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A962C9D6E18
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 13:39:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24510281148
-	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 12:29:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35488161A2F
+	for <lists+linux-kernel@lfdr.de>; Sun, 24 Nov 2024 12:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013BF189BA2;
-	Sun, 24 Nov 2024 12:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1994918870F;
+	Sun, 24 Nov 2024 12:39:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="chhyFUda"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02olkn2044.outbound.protection.outlook.com [40.92.50.44])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QP9Altwm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2F32C80;
-	Sun, 24 Nov 2024 12:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.50.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732451349; cv=fail; b=h5eTw6vdT+zNT8qDybS+MHG5gCl7vlDWYPs8IXz3ke3PFWe2xlde5IswekAJAUpStsITZ0Ltc0RH7s+GMoMY31Q/uiYnyV65A0K3aUyDXwT88U5/HjmLAWE8KkIxRZ7KtdmdB0AmrXKUWy1pnULioYaTChWam3nql4yRgVebfAQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732451349; c=relaxed/simple;
-	bh=bCIZP4oCFKcZG5GJEyxocxru6kF3XRoxBloXErb4CFo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jqJrdK6BXYRpaDp6MkZNFF4LA+qygItBJcaY38db0cQIUGDlTu7n2YaNDK/SzAseM9T7rDd4Wl6g4ILpXdaDykymdnJ6MOc+84p046iv/dz72TgFj2j9gk1KSpiVSJCtH8KfI9lBo1SPUxE8dgMgu+l1sqUiVzUTeIg25uiDvM0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=chhyFUda; arc=fail smtp.client-ip=40.92.50.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lFq0uNUDEpm7Y5WFj75TJA9jeF2tXg51F7B+mQ6b+FJso6MQs1LLUYIZxb9Jq7Foq/66B5lPl6vuVsxSXmT0ZgH1RkuIBv2MqbelzxYq20h6v3iPBLFahW1SxqikQ47fsBUNtwvOgBnyPgOm5H3huBs6gbxuJhWRBvaA6zWgmCmi6yudvSuCGcuZuDPw0WVM3qOP9+KiOh6VHb2pO4BNX+s87OQr2Fvai+BldL8xyiqiQJgyxviIfdRNf0+nGdXOsEhBdVfX+ZgYs7a3MvCppbVYwcw0vcRgrF+ojjUC5szu87lOfqPakmFzPzv9xn2UcSzNjL+IeJeqPSqsEb72tg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MGGS3klio0UUsKLYs6iSA54Yomidx+mPyy/obJ3W4EA=;
- b=dpbUPsxAjpDEKCncHhFB/fkzGXUhLc8wwlQz8gcZEkpaTa3TJJ8ss4/PBAidtyKS0YAt7sxdvJT/RNHObhPJXf0TdXVteBViUBHuKwyQYsWlqYKVfpktTsDVq4NN86azuXbKEljTsl985DOUVy8CMTFi0vXNhXseDxt71pSwZRV0H/GJj6Y1Arb0aZk3e4FPwWka3JZBvHnhYg0BFgcJSmXsrDsZv+CT/H36wGv4AHcUvVb5WCOhZGufz9rp0mCWM5ROtOX+JSkPpLhgXE+F6x+ysMTdq3fc5jkszcNCkoVLtgBB5ozc3Owe96Hv4HvHKvBYdoBawUGVVWz/VXKj/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MGGS3klio0UUsKLYs6iSA54Yomidx+mPyy/obJ3W4EA=;
- b=chhyFUdatmLzocY2Of5KWOhAh/xQqL3ompjOF+w9A7QQmm6s1cDuBC6FTld/JGLbfqoeOWfG9eU+g6f0uB/TWpIR72JvSofhOOJJ4XwUXhZc+ti6gCJmDZoUYWoJYpRAaPeIR4lW1Q03BLfVyBp6XD5QSPdw2P4cQX1xpuYdDa6fAMCEIr3Bh7bGSm6d6RIdcpo4APjegzoniJ2k5R5KHa1CjaCSA0b4szBCD8eIMq423QBH4yw/vZTOxEmnO0Kr9X1EwdxiO2sLEf3gp0wiRkR6vIhOKIBp3OfVaWj9Wwmaw8pZkILH9jQz76DYMZMgFmR0lonxq/kUHpX4ajDORg==
-Received: from VE1P189MB1024.EURP189.PROD.OUTLOOK.COM (2603:10a6:800:149::13)
- by AS2P189MB2470.EURP189.PROD.OUTLOOK.COM (2603:10a6:20b:595::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.18; Sun, 24 Nov
- 2024 12:29:04 +0000
-Received: from VE1P189MB1024.EURP189.PROD.OUTLOOK.COM
- ([fe80::4c0a:a901:4d3c:e0bb]) by VE1P189MB1024.EURP189.PROD.OUTLOOK.COM
- ([fe80::4c0a:a901:4d3c:e0bb%4]) with mapi id 15.20.8158.024; Sun, 24 Nov 2024
- 12:29:04 +0000
-Message-ID:
- <VE1P189MB1024FED800B8291EFAA52B15E32D2@VE1P189MB1024.EURP189.PROD.OUTLOOK.COM>
-Date: Sun, 24 Nov 2024 13:29:02 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] dt-bindings: display: panel: samsung,atna56ac03:
- Document ATNA56AC03
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Douglas Anderson
- <dianders@chromium.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20241124-asus_qcom_display-v3-0-002b723b1920@hotmail.com>
- <20241124-asus_qcom_display-v3-1-002b723b1920@hotmail.com>
- <k27rqbfvuon3uppgyhcfhcmlqv7ritbn35fmhuljnw2ievqnia@rey3cljv2p2n>
-Content-Language: en-US
-From: Maud Spierings <maud_spierings@hotmail.com>
-In-Reply-To: <k27rqbfvuon3uppgyhcfhcmlqv7ritbn35fmhuljnw2ievqnia@rey3cljv2p2n>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM0PR04CA0091.eurprd04.prod.outlook.com
- (2603:10a6:208:be::32) To VE1P189MB1024.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:800:149::13)
-X-Microsoft-Original-Message-ID:
- <90015c1b-f654-4460-a4d7-af0c2123d500@hotmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F652309A9;
+	Sun, 24 Nov 2024 12:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732451955; cv=none; b=NWFdX+bJuPlytyL3UAxhBMQfmLvhdjYlbMOBujWGrf6OVb8lh1p3TjPbipDQSSYGZ4eQ6Sqi6THNwN8QRXVsdmEFIDqTRCiJTEf3UDNMVK6hDtrEQLmDb1uEhArZ107uuRXAg3A2AwDBk4M28T8kYovTf/UIPAs+XJ7A3imSo2c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732451955; c=relaxed/simple;
+	bh=oB24oEeXtMiSwVGU8Tk3Vj+pu0zXMpSnHrrdgLJ8UgQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ltyjFEVDkK1gozKaTzwD6INhQFeQOE8hvApiIRdEPtDWZzU+fN3eEQok4P943EJImpSIB9eUQs6pfaWXpS6Dt860Xe3d12rTqBDolX1V989mE8vLmNlQjzpxfNV36Z1GI1YwsbN0odcACsplVhzDp1Pe2BiSHVFI9tsCiJ8328w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QP9Altwm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75907C4CECC;
+	Sun, 24 Nov 2024 12:39:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732451954;
+	bh=oB24oEeXtMiSwVGU8Tk3Vj+pu0zXMpSnHrrdgLJ8UgQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QP9AltwmQXUc/bvt/aFpDjTjXRO4U/CxQeDjocQzVgjYZNKBTcOpMFHgpM6G9WxhW
+	 hLeRibIAaXp7IS2qmRvldMTnGetVzocl6nY0UblZf9garayWCjwHmLACvv3bKi1hEf
+	 SyqSQjQEnUN8L7ZfKFX20aPgFRw9pp4/CiyPQsEqROREvEmIDyPNnp+9+A/rOkNYxC
+	 7TaxC+gqKSUmV5jxEqToR2V3FmDKTe78m6i005/L6gWnC83kij3834mxDYnxsTHfl9
+	 /W5772k8juOaMdaDBUl+R7HdCi/nHqsZpzcQWVQ1GsfAMpfVTqg2eqOpoYbHZM/sFj
+	 qAZZCN8ENuV+Q==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Niklas Schnelle <schnelle@linux.ibm.com>,
+	Gerd Bayer <gbayer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Sasha Levin <sashal@kernel.org>,
+	gor@linux.ibm.com,
+	agordeev@linux.ibm.com,
+	gerald.schaefer@linux.ibm.com,
+	jroedel@suse.de,
+	mjrosato@linux.ibm.com,
+	lukas@wunner.de,
+	linux-s390@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 01/19] s390/pci: Sort PCI functions prior to creating virtual busses
+Date: Sun, 24 Nov 2024 07:38:36 -0500
+Message-ID: <20241124123912.3335344-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: VE1P189MB1024:EE_|AS2P189MB2470:EE_
-X-MS-Office365-Filtering-Correlation-Id: f511afa6-8780-49b0-218a-08dd0c83957c
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|5072599009|461199028|19110799003|6090799003|8060799006|15080799006|440099028|3412199025|4302099013|10035399004|1602099012;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?THB5bWNHeTAySHBsV21SWnExRUswdmVDcENwL2s0VHRldDBDRWI4Y05qUGE3?=
- =?utf-8?B?N1NtcHhwbzU2L1pJTUJqaXpUMngxN2tUTHBXNXdaUGFKU3J3YWZoWEVQZExU?=
- =?utf-8?B?b0N3SWdmSVorL0dOWUdTSFJxRVR5YWprUkJmN0I0NGxvS202RWlaclhqYzhJ?=
- =?utf-8?B?Rm9OVXFwUWh1Nk52dVZmVHhNYlo1aDhIdnprU1ZySytBalExYzN2eGNra25H?=
- =?utf-8?B?Uk5FTGFOaGtUL3lnU1BsYmQxQXlDM0tWZ0puSjh4aG5SSkltcVdkcndGK29q?=
- =?utf-8?B?eUR4dkQvWG03enpZYmYveHRyZzdwZm1TSWFZaXBDRkQ4UmgrVGcwRGZQL0tr?=
- =?utf-8?B?UVVrTE9aYW5SQlVrQU9BeVljbTVzTGdrbDdMOXM0U0FJNGdpYitXVmgvc0RV?=
- =?utf-8?B?OHd1OTVQa0toSTV1K0dNQXAxMTlZZml4QTFvSkhlNllaQmNhaTVPYnZodTFa?=
- =?utf-8?B?L3dGWDR0TWs3NFd4bFE0VVZ0K3djbDJra3lVUEdxSDBMYjdDYWJHVGwrQ2Nn?=
- =?utf-8?B?dG5HNmEydjRwa0U4K2xOd284Wm5lTGg5VkRPSGZrbjZQa2d4d1NXcE5JaFVE?=
- =?utf-8?B?SjdvMlJ4TW1zREdSaUYyRHJld0o5NGRZeWRrVG4wQWM4ODBmNFJjOEErd1FP?=
- =?utf-8?B?czRrSGpqK0FmTDRpQ0FDaHFlT2R4KzVsM2hCUXZJNjFhZzkzVFh0Y3lIOXlF?=
- =?utf-8?B?OENMNmJlK2x2OTd5UDlxOXhJMGlRTDlLeE1QdFZ6eEhmQU5CWjczb0JJSGoy?=
- =?utf-8?B?VU94d090YW9XdWQ2aE42Q1VnZlduS0wvTGZvTG04cGh0U3NqaXhBNFEvOFcw?=
- =?utf-8?B?YW9xT0I0aVFHN3dQdkd6djNreDVjM3UvaGVxZFByd1JwQ3hhWU9kdDdNaFR0?=
- =?utf-8?B?cUx2SDM4SlM2TGVJVW94QW5Wa1pRMFdQM1BnY01EaHQycnhQUXUvV3NFTXpl?=
- =?utf-8?B?dUxuQWNpYzlUWTJNR3BLY1JXR2JIMXFhbzMrZHRwOVlITm9pbTUxY2cwNldt?=
- =?utf-8?B?d0RDQjJrRmxHUFlWZ21tY0YvWkFEc0lWTlJuY3Bmb2d6eVJVaUJTSDBwSlA3?=
- =?utf-8?B?V3ZGeWw4b0tqSlhGR0kvMTR1YllXSHJaUVpIRVM5bU1TTVlrMnV3TGo3Q1JN?=
- =?utf-8?B?MkZxUXVCaC9mQ1UwNkNuWW9acC8yWnR2VlNKWkRkYmRRWHU5L2Q1SDcxeEh4?=
- =?utf-8?B?NmxMdW9aQ2xPVWI0aFI2VEtmWFB0U2l2S2FzUGxDMkdDQU1aUXdDdEpqQkxB?=
- =?utf-8?B?a0gxZmQ0QTIwU0pHU1NHdWplWFZESVg4WTYrOUpVZ0xHdCtqODlTNGdCZnhL?=
- =?utf-8?B?VmJlTDhPL08xMDVQRkRIam9qSzh4MHpkSGNOV0Z5RktWYmVaTVc3S2pVeXVs?=
- =?utf-8?B?aGE1U0xkSWlwOW83QU90SWFsU0hSQlJpczdvbXRueWZXT0xUVGZhU3AyR0cr?=
- =?utf-8?B?UkJRUXI0SEl3VzJGQzA4dEM3RFN6eDZTazdSVThleURBcGQyR05kZjMvY0Mz?=
- =?utf-8?B?TDBnd3M5cFVXZWR2blh5V0JrMnlHdHJYNzB5VlV4bFNrVllnRm9TbU5hOEFu?=
- =?utf-8?B?dUIxUT09?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?S1ZLOStTdUZmVEhqUzE0VTVwcXNXZW9xSWJxeEJDd0t6d0Fzci9RT01kQTRR?=
- =?utf-8?B?NzNLZFhyTVdNaldzekFRdktFaE1UTFU5ZklRemdMN1pkUE1FbkRzOGNHRitF?=
- =?utf-8?B?VXk4U3lzdko2Vi9KaXcrajRUYzIzS0Z5Z2dLVW5xSlNJY1JYak85d2VSMDRE?=
- =?utf-8?B?K2JicjdhaHczSHRDQVJSNGhsVnR5TVZnMVhyRDlPWVUxaXhnMkhHdm5wQkln?=
- =?utf-8?B?SklsZVdpR0pPaUloZE9nS0lNdmtSVWgxVjRZN05yVThYNU9DSUIwbklqK1NO?=
- =?utf-8?B?TEt6NU50dkNLY0tBRnNCRFlVWDhqZE13R2x6bWF6MTByNmRnOHhnQUpXeTc1?=
- =?utf-8?B?Q3RmWGZKMVZHTGY3Vm1IR28ycGI2TDFkWmxXU1VyR3UvZmc2U1I1RDBUbjJQ?=
- =?utf-8?B?S202RXprYVM3aytXcHpxVGJnY21pOC9OcXAxU3k0WUFHTE1oaDVCT2hYemlO?=
- =?utf-8?B?emhzYmRtd05tZ2FvYytzSllEa1NQakVRd2tnaml4WEZPTFgyZlNMbW9XWUxt?=
- =?utf-8?B?dm5JVmx3d0hPRXJiOXBLRXRFRDJta29qa2s0aXZuTFZld1B2cE1PUmsxWStP?=
- =?utf-8?B?UlhsMjZNYUJCN1lDYjdEbkt4Qm1qOHpKWGdXTVlXWnZFQzlGaGpOZzZJMGJ0?=
- =?utf-8?B?STdyYjk3ay81bks0SFhvaEp2YlJtRVlIZUs1RUJWK1VPTDQrVWtHZmtmRUhQ?=
- =?utf-8?B?UGRueDQvUENvOFhYY0k2L3c1ckFQWlJxRmFwMjZteTVNVG5oZGROSzZ5cU1W?=
- =?utf-8?B?TWk3Mlg0SzNPTFFhenkrOUV1bFIybEVGVWx6UG1zTklrR0I4UENqWEZMK1Js?=
- =?utf-8?B?SE41Nk9VRlowYldtQ0xmT0JoUU9uRGJQMUZRd1l3Rmc2V01HUHAxZ0tVWWhi?=
- =?utf-8?B?cEpDaUIxVWhEN0hna2hxWWM4cm1TcXZEbk1pQVI4RE1DWkEzdVhBVFU4WHly?=
- =?utf-8?B?WVo0SHV2Rm81bCs1WnZLTlM1ZHFKdnFtKzhYMDV3enJvcXE1cjFJeTY4TGNw?=
- =?utf-8?B?OEFYN3Npei9mcHB5WFRYY1NYZEFvVWJ3WEN6N1I5eHRTWGpMNlU4Z0l5Y2lO?=
- =?utf-8?B?dXVIbXoyYTZuUjNVMjRpTFBMUUxhYUJzMWdabFRjSTBPL2JzYk5oeUdid0s0?=
- =?utf-8?B?b0oySkkzSk9qUlpFZ3c1ak1BU2JWdWFjaEU0RzdLWGFYcldOa25mSTdWYWgw?=
- =?utf-8?B?eUlHc1lleUVYajgxR3hlS25ScFdUM0EwekJpcFViWkZ6WHVZT0xlOWZtTGFV?=
- =?utf-8?B?V1pLNmxsMnFqbG9QdVRwS0xyb2xVMmxNRm5NZ1BuNENSN0l6ck9SY2RhYSta?=
- =?utf-8?B?MERrVHFSM0tES0lRZkVScUJXUzY3Yzh2MU5WeXpjVkNSbWhzMGFxNWMyeFBX?=
- =?utf-8?B?M1pEMGUrQXc5U2hpa0REd0F4QUN6aGxueFJPR05Td0gyTlRHYVQxT2FjK3FB?=
- =?utf-8?B?YTlXcnV3eFUyUmlFSU42UXo3ZC93MTM2MmtGTm9BN3RQbE1pV0N6Vi91WmFI?=
- =?utf-8?B?R1N5WTNSQ2FvQjV2WHRYeTgyTzFMYkN3SjNxdnY5NXY4SG9YMzl4MVhJY0pw?=
- =?utf-8?B?UjNJRHlRMVBPWFhiTDh3QWJEYzAyd1NFVkh4aU9XLzlBR0ZHUCt0Y2RmeHhB?=
- =?utf-8?B?NkpWSHJ0dDFaTnBTOFdHZWJkRTZSVEtrVThjSU1lVmJCRlUrbUUyeUJPeDZa?=
- =?utf-8?B?dTV6UkcvWjhDMmprVG9Cb2xmTWNJUUNKMHJIaEhkNEhjam51WGFZUkFxN2NS?=
- =?utf-8?Q?IFuwLwFXMsRpT+vIJt/n0NAfpxf84CRlgPygy4i?=
-X-OriginatorOrg: sct-15-20-7719-19-msonline-outlook-3b3e0.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: f511afa6-8780-49b0-218a-08dd0c83957c
-X-MS-Exchange-CrossTenant-AuthSource: VE1P189MB1024.EURP189.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Nov 2024 12:29:04.7520
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2P189MB2470
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.12.1
+Content-Transfer-Encoding: 8bit
 
-On 11/24/24 12:00 PM, Krzysztof Kozlowski wrote:
-> On Sun, Nov 24, 2024 at 11:00:57AM +0100, Maud Spierings wrote:
->> The Samsung ATNA56AC03 panel is an AMOLED eDP panel.
->> It is similar to the ATNA33xc20 except it is larger and has a different
->> resolution.
->>
->> Signed-off-by: Maud Spierings <maud_spierings@hotmail.com>
->> ---
-> <form letter>
-> This is a friendly reminder during the review process.
->
-> It looks like you received a tag and forgot to add it.
->
-> If you do not know the process, here is a short explanation: Please add
-> Acked-by/Reviewed-by/Tested-by tags when posting new versions, under
-> or above your Signed-off-by tag. Tag is "received", when provided
-> in a message replied to you on the mailing list. Tools like b4 can help
-> here. However, there's no need to repost patches *only* to add the tags.
-> The upstream maintainer will do that for tags received on the version
-> they apply.
->
-> https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
->
-> If a tag was not added on purpose, please state why and what changed.
-> </form letter>
->
-> Best regards,
-> Krzysztof
->
-I did indeed completely miss it, only focussed on the correction, Should 
-I make a new version?
-Also this is my first time replying on the list so I hope this goes well.
+From: Niklas Schnelle <schnelle@linux.ibm.com>
 
-When I add one of these tags it should be in the commit message of that 
-patch below three dashes?
+[ Upstream commit 0467cdde8c4320bbfdb31a8cff1277b202f677fc ]
 
+Instead of relying on the observed but not architected firmware behavior
+that PCI functions from the same card are listed in ascending RID order
+in clp_list_pci() ensure this by sorting. To allow for sorting separate
+the initial clp_list_pci() and creation of the virtual PCI busses.
 
-Best regards,
-Maud
+Note that fundamentally in our per-PCI function hotplug design non RID
+order of discovery is still possible. For example when the two PFs of
+a two port NIC are hotplugged after initial boot and in descending RID
+order. In this case the virtual PCI bus would be created by the second
+PF using that PF's UID as domain number instead of that of the first PF.
+Thus the domain number would then change from the UID of the second PF
+to that of the first PF on reboot but there is really nothing we can do
+about that since changing domain numbers at runtime seems even worse.
+This only impacts the domain number as the RIDs are consistent and thus
+even with just the second PF visible it will show up in the correct
+position on the virtual bus.
+
+Reviewed-by: Gerd Bayer <gbayer@linux.ibm.com>
+Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/s390/include/asm/pci.h |  5 ++-
+ arch/s390/pci/pci.c         | 69 ++++++++++++++++++++++++++++++++-----
+ arch/s390/pci/pci_clp.c     | 12 ++++---
+ arch/s390/pci/pci_event.c   | 13 ++++---
+ 4 files changed, 82 insertions(+), 17 deletions(-)
+
+diff --git a/arch/s390/include/asm/pci.h b/arch/s390/include/asm/pci.h
+index 9d920ced60475..45e87c7c122a6 100644
+--- a/arch/s390/include/asm/pci.h
++++ b/arch/s390/include/asm/pci.h
+@@ -130,6 +130,7 @@ struct zpci_dev {
+ 	u16		vfn;		/* virtual function number */
+ 	u16		pchid;		/* physical channel ID */
+ 	u16		maxstbl;	/* Maximum store block size */
++	u16		rid;		/* RID as supplied by firmware */
+ 	u8		pfgid;		/* function group ID */
+ 	u8		pft;		/* pci function type */
+ 	u8		port;
+@@ -210,12 +211,14 @@ extern struct airq_iv *zpci_aif_sbv;
+ ----------------------------------------------------------------------------- */
+ /* Base stuff */
+ struct zpci_dev *zpci_create_device(u32 fid, u32 fh, enum zpci_state state);
++int zpci_add_device(struct zpci_dev *zdev);
+ int zpci_enable_device(struct zpci_dev *);
+ int zpci_disable_device(struct zpci_dev *);
+ int zpci_scan_configured_device(struct zpci_dev *zdev, u32 fh);
+ int zpci_deconfigure_device(struct zpci_dev *zdev);
+ void zpci_device_reserved(struct zpci_dev *zdev);
+ bool zpci_is_device_configured(struct zpci_dev *zdev);
++int zpci_scan_devices(void);
+ 
+ int zpci_hot_reset_device(struct zpci_dev *zdev);
+ int zpci_register_ioat(struct zpci_dev *, u8, u64, u64, u64, u8 *);
+@@ -225,7 +228,7 @@ void zpci_update_fh(struct zpci_dev *zdev, u32 fh);
+ 
+ /* CLP */
+ int clp_setup_writeback_mio(void);
+-int clp_scan_pci_devices(void);
++int clp_scan_pci_devices(struct list_head *scan_list);
+ int clp_query_pci_fn(struct zpci_dev *zdev);
+ int clp_enable_fh(struct zpci_dev *zdev, u32 *fh, u8 nr_dma_as);
+ int clp_disable_fh(struct zpci_dev *zdev, u32 *fh);
+diff --git a/arch/s390/pci/pci.c b/arch/s390/pci/pci.c
+index bd9624c20b802..b7efa96776eac 100644
+--- a/arch/s390/pci/pci.c
++++ b/arch/s390/pci/pci.c
+@@ -29,6 +29,7 @@
+ #include <linux/pci.h>
+ #include <linux/printk.h>
+ #include <linux/lockdep.h>
++#include <linux/list_sort.h>
+ 
+ #include <asm/isc.h>
+ #include <asm/airq.h>
+@@ -785,7 +786,6 @@ struct zpci_dev *zpci_create_device(u32 fid, u32 fh, enum zpci_state state)
+ 	struct zpci_dev *zdev;
+ 	int rc;
+ 
+-	zpci_dbg(1, "add fid:%x, fh:%x, c:%d\n", fid, fh, state);
+ 	zdev = kzalloc(sizeof(*zdev), GFP_KERNEL);
+ 	if (!zdev)
+ 		return ERR_PTR(-ENOMEM);
+@@ -805,6 +805,19 @@ struct zpci_dev *zpci_create_device(u32 fid, u32 fh, enum zpci_state state)
+ 	mutex_init(&zdev->fmb_lock);
+ 	mutex_init(&zdev->kzdev_lock);
+ 
++	return zdev;
++
++error:
++	zpci_dbg(0, "crt fid:%x, rc:%d\n", fid, rc);
++	kfree(zdev);
++	return ERR_PTR(rc);
++}
++
++int zpci_add_device(struct zpci_dev *zdev)
++{
++	int rc;
++
++	zpci_dbg(1, "add fid:%x, fh:%x, c:%d\n", zdev->fid, zdev->fh, zdev->state);
+ 	rc = zpci_init_iommu(zdev);
+ 	if (rc)
+ 		goto error;
+@@ -816,15 +829,13 @@ struct zpci_dev *zpci_create_device(u32 fid, u32 fh, enum zpci_state state)
+ 	spin_lock(&zpci_list_lock);
+ 	list_add_tail(&zdev->entry, &zpci_list);
+ 	spin_unlock(&zpci_list_lock);
+-
+-	return zdev;
++	return 0;
+ 
+ error_destroy_iommu:
+ 	zpci_destroy_iommu(zdev);
+ error:
+-	zpci_dbg(0, "add fid:%x, rc:%d\n", fid, rc);
+-	kfree(zdev);
+-	return ERR_PTR(rc);
++	zpci_dbg(0, "add fid:%x, rc:%d\n", zdev->fid, rc);
++	return rc;
+ }
+ 
+ bool zpci_is_device_configured(struct zpci_dev *zdev)
+@@ -1082,6 +1093,49 @@ bool zpci_is_enabled(void)
+ 	return s390_pci_initialized;
+ }
+ 
++static int zpci_cmp_rid(void *priv, const struct list_head *a,
++			const struct list_head *b)
++{
++	struct zpci_dev *za = container_of(a, struct zpci_dev, entry);
++	struct zpci_dev *zb = container_of(b, struct zpci_dev, entry);
++
++	/*
++	 * PCI functions without RID available maintain original order
++	 * between themselves but sort before those with RID.
++	 */
++	if (za->rid == zb->rid)
++		return za->rid_available > zb->rid_available;
++	/*
++	 * PCI functions with RID sort by RID ascending.
++	 */
++	return za->rid > zb->rid;
++}
++
++static void zpci_add_devices(struct list_head *scan_list)
++{
++	struct zpci_dev *zdev, *tmp;
++
++	list_sort(NULL, scan_list, &zpci_cmp_rid);
++	list_for_each_entry_safe(zdev, tmp, scan_list, entry) {
++		list_del_init(&zdev->entry);
++		zpci_add_device(zdev);
++	}
++}
++
++int zpci_scan_devices(void)
++{
++	LIST_HEAD(scan_list);
++	int rc;
++
++	rc = clp_scan_pci_devices(&scan_list);
++	if (rc)
++		return rc;
++
++	zpci_add_devices(&scan_list);
++	zpci_bus_scan_busses();
++	return 0;
++}
++
+ static int __init pci_base_init(void)
+ {
+ 	int rc;
+@@ -1111,10 +1165,9 @@ static int __init pci_base_init(void)
+ 	if (rc)
+ 		goto out_irq;
+ 
+-	rc = clp_scan_pci_devices();
++	rc = zpci_scan_devices();
+ 	if (rc)
+ 		goto out_find;
+-	zpci_bus_scan_busses();
+ 
+ 	s390_pci_initialized = 1;
+ 	return 0;
+diff --git a/arch/s390/pci/pci_clp.c b/arch/s390/pci/pci_clp.c
+index 6f55a59a08711..f7430086e9739 100644
+--- a/arch/s390/pci/pci_clp.c
++++ b/arch/s390/pci/pci_clp.c
+@@ -164,8 +164,10 @@ static int clp_store_query_pci_fn(struct zpci_dev *zdev,
+ 	zdev->port = response->port;
+ 	zdev->uid = response->uid;
+ 	zdev->fmb_length = sizeof(u32) * response->fmb_len;
+-	zdev->rid_available = response->rid_avail;
+ 	zdev->is_physfn = response->is_physfn;
++	zdev->rid_available = response->rid_avail;
++	if (zdev->rid_available)
++		zdev->rid = response->rid;
+ 	if (!s390_pci_no_rid && zdev->rid_available)
+ 		zdev->devfn = response->rid & ZPCI_RID_MASK_DEVFN;
+ 
+@@ -407,6 +409,7 @@ static int clp_find_pci(struct clp_req_rsp_list_pci *rrb, u32 fid,
+ 
+ static void __clp_add(struct clp_fh_list_entry *entry, void *data)
+ {
++	struct list_head *scan_list = data;
+ 	struct zpci_dev *zdev;
+ 
+ 	if (!entry->vendor_id)
+@@ -417,10 +420,11 @@ static void __clp_add(struct clp_fh_list_entry *entry, void *data)
+ 		zpci_zdev_put(zdev);
+ 		return;
+ 	}
+-	zpci_create_device(entry->fid, entry->fh, entry->config_state);
++	zdev = zpci_create_device(entry->fid, entry->fh, entry->config_state);
++	list_add_tail(&zdev->entry, scan_list);
+ }
+ 
+-int clp_scan_pci_devices(void)
++int clp_scan_pci_devices(struct list_head *scan_list)
+ {
+ 	struct clp_req_rsp_list_pci *rrb;
+ 	int rc;
+@@ -429,7 +433,7 @@ int clp_scan_pci_devices(void)
+ 	if (!rrb)
+ 		return -ENOMEM;
+ 
+-	rc = clp_list_pci(rrb, NULL, __clp_add);
++	rc = clp_list_pci(rrb, scan_list, __clp_add);
+ 
+ 	clp_free_block(rrb);
+ 	return rc;
+diff --git a/arch/s390/pci/pci_event.c b/arch/s390/pci/pci_event.c
+index d4f19d33914cb..47f934f4e828e 100644
+--- a/arch/s390/pci/pci_event.c
++++ b/arch/s390/pci/pci_event.c
+@@ -340,6 +340,7 @@ static void __zpci_event_availability(struct zpci_ccdf_avail *ccdf)
+ 			zdev = zpci_create_device(ccdf->fid, ccdf->fh, ZPCI_FN_STATE_CONFIGURED);
+ 			if (IS_ERR(zdev))
+ 				break;
++			zpci_add_device(zdev);
+ 		} else {
+ 			/* the configuration request may be stale */
+ 			if (zdev->state != ZPCI_FN_STATE_STANDBY)
+@@ -349,10 +350,14 @@ static void __zpci_event_availability(struct zpci_ccdf_avail *ccdf)
+ 		zpci_scan_configured_device(zdev, ccdf->fh);
+ 		break;
+ 	case 0x0302: /* Reserved -> Standby */
+-		if (!zdev)
+-			zpci_create_device(ccdf->fid, ccdf->fh, ZPCI_FN_STATE_STANDBY);
+-		else
++		if (!zdev) {
++			zdev = zpci_create_device(ccdf->fid, ccdf->fh, ZPCI_FN_STATE_STANDBY);
++			if (IS_ERR(zdev))
++				break;
++			zpci_add_device(zdev);
++		} else {
+ 			zpci_update_fh(zdev, ccdf->fh);
++		}
+ 		break;
+ 	case 0x0303: /* Deconfiguration requested */
+ 		if (zdev) {
+@@ -381,7 +386,7 @@ static void __zpci_event_availability(struct zpci_ccdf_avail *ccdf)
+ 		break;
+ 	case 0x0306: /* 0x308 or 0x302 for multiple devices */
+ 		zpci_remove_reserved_devices();
+-		clp_scan_pci_devices();
++		zpci_scan_devices();
+ 		break;
+ 	case 0x0308: /* Standby -> Reserved */
+ 		if (!zdev)
+-- 
+2.43.0
 
 
