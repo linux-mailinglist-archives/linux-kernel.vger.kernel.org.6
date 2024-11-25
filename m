@@ -1,87 +1,174 @@
-Return-Path: <linux-kernel+bounces-420942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BF099D8494
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:35:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0E5D165539
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:35:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C3B1A01C3;
-	Mon, 25 Nov 2024 11:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="TeBz95p6"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CB7E9D8582
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:39:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B39186294;
-	Mon, 25 Nov 2024 11:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732534519; cv=none; b=VY28gY3jhYrUM3wnfoRIGdo/wf3vyJYBkxVqVQ3YYGAu51h83sc728+bhBgFMIeEefQE2D4jCeY1JJm9Jn2RVi+pm8rsosmwE+0mVLynlqCBMD2gfd+taAdPeU3oaLnBMVedRdXzlBrTmASSPiQNQToQPhTFEFa3KtDpsiBGshQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732534519; c=relaxed/simple;
-	bh=evyCuPrt3JcpoIWUWgILgOOz042DZOqslNwNTg8rq6Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M49IuahYxkcyX0nb59KgilpvFlBrXVnkj+jccaOlqZFFlUw8YIp74YyFLmQWqRpclSUuUmH6E5/fG9elFRrApRVQ3ckemjR7Dp4HR+73vyWxpy8kxFJoSXIsuYw9jHEfyA9uYkCa+Ta58oo1ncYxDQX7T42yONhX/bbxLla2yaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=TeBz95p6; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AD98B46DB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:36:00 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F158D1993B5;
+	Mon, 25 Nov 2024 11:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="mjQUA8su"
+Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4XxkCF5Dtgz9sZP;
-	Mon, 25 Nov 2024 12:35:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1732534505;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7iJeUKBPm/FEIhTBZ51JqJOYigpfXL5/NXhpGKBiNNc=;
-	b=TeBz95p6cf7Ct6vYtjTYoNNTt0mFiiExDSGKJQ1D6rkpLEjeZpbqJkUEZzcYDWQb809e7M
-	fre9lO4RTINwKTPv1YHNi31zg0tMDZIHgJbOW5883ympi32P/WUtU+qis3haLMXaZTigEk
-	9995aOZDR3l/vdFSc5OKxnlenPaT2grlIMyXfiZ7ovPV+rc2x6c+8lXNqfAW/lTC1IbEz7
-	EaOtrHJokKEKRErtd30tnfvB/eshZOyQYSu9K1Fo5ioqFoNWVc7pw/Ep54UqOCsLJynt0X
-	xDmPm8TCje9fyXLATTsGkcc6M1Mp8WyoqJHHevAUSmgofXYoWuL2LF7WnKqThQ==
-Message-ID: <b3a64de3-353c-4214-a876-f44d3f1de07b@mailbox.org>
-Date: Mon, 25 Nov 2024 12:35:04 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94833185949;
+	Mon, 25 Nov 2024 11:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732534555; cv=none; b=OH1mafqePR8092av+lbzWGHBV8FnBMR0I/w/Td4UGu6XD1raYNXqlD8eoTozYZ36+6Z8TTGfNqrhI32s6HH4NmS5kDjpVf7VUMKWm4zAlX1xh2BCvWqnPgJOR2cVlnGvLlQkUmw7s52Fstrv62wrMP/9q+xviYupjYSs3Bedmnk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732534555; c=relaxed/simple;
+	bh=g8q8sCd93QsVu18YmyqSF3AQU4Vitxthmm9JvxVX9h8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QYF4nwTPMioTSbQqZWzYzQXXl+h8i0WvLlwW8EZNC9oGGVxrEw6WB5vNiQb1Tt7JHeK43kW9BUGbON2r3XL0wvR+nIg+JOqhZHB5OG0OvZC5gcqrFZIBYRMgy0VXatMPOMXrXZOBAEMX2sZ0OLyj5X+900+xrRj8vC1HvuaGVss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=mjQUA8su; arc=none smtp.client-ip=72.21.196.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1732534554; x=1764070554;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=qI5cqPydCy6loaD3+vJjer5igPbaebhQ8NFF6WG1rWg=;
+  b=mjQUA8suhOoW+Boj17ABhzBzdi2p8yXCp09xXrqqismcEFYsdmaBp2Qq
+   dvpGn4UJwX0eCRrI2+w9RZSjdj8e0Lgo+3tU0fHUkOtP4TLbCLgJsrCuE
+   osjEUag1j2MeAKyhprJ2CPSMF9mvVIPhi72ol7127ElDvfJzPW1TeV4pF
+   k=;
+X-IronPort-AV: E=Sophos;i="6.12,182,1728950400"; 
+   d="scan'208";a="445805720"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.124.125.6])
+  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 11:35:51 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:10311]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.43.2:2525] with esmtp (Farcaster)
+ id f8329d89-d797-48b5-9e29-b69abe8c08e8; Mon, 25 Nov 2024 11:35:50 +0000 (UTC)
+X-Farcaster-Flow-ID: f8329d89-d797-48b5-9e29-b69abe8c08e8
+Received: from EX19D016UWA004.ant.amazon.com (10.13.139.119) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.217) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 25 Nov 2024 11:35:49 +0000
+Received: from 88665a51a6b2.amazon.com (10.106.179.51) by
+ EX19D016UWA004.ant.amazon.com (10.13.139.119) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 25 Nov 2024 11:35:47 +0000
+From: Cristian Prundeanu <cpru@amazon.com>
+To: <cpru@amazon.com>
+CC: <kprateek.nayak@amd.com>, <abuehaze@amazon.com>, <alisaidi@amazon.com>,
+	<benh@kernel.crashing.org>, <blakgeof@amazon.com>, <csabac@amazon.com>,
+	<doebel@amazon.com>, <gautham.shenoy@amd.com>, <joseph.salisbury@oracle.com>,
+	<dietmar.eggemann@arm.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-tip-commits@vger.kernel.org>,
+	<mingo@redhat.com>, <peterz@infradead.org>, <x86@kernel.org>
+Subject: Re: [PATCH 0/2] [tip: sched/core] sched: Disable PLACE_LAG and RUN_TO_PARITY and move them to sysctl
+Date: Mon, 25 Nov 2024 05:35:35 -0600
+Message-ID: <20241125113535.88583-1-cpru@amazon.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241017052000.99200-1-cpru@amazon.com>
+References: <20241017052000.99200-1-cpru@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH AUTOSEL 6.12 079/107] Revert "drm/amd/display: Block UHBR
- Based On USB-C PD Cable ID"
-To: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-References: <20241124133301.3341829-1-sashal@kernel.org>
- <20241124133301.3341829-79-sashal@kernel.org>
-From: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>
-Content-Language: en-CA
-In-Reply-To: <20241124133301.3341829-79-sashal@kernel.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 7748cd16edbb6a14f78
-X-MBO-RS-META: 49edaesm5ea51jryu1wbphehxgxtgeya
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D035UWB001.ant.amazon.com (10.13.138.33) To
+ EX19D016UWA004.ant.amazon.com (10.13.139.119)
 
-On 2024-11-24 14:29, Sasha Levin wrote:
-> From: Ausef Yousof <Ausef.Yousof@amd.com>
+Here are more results with recent 6.12 code, and also using SCHED_BATCH.
+The control tests were run anew on Ubuntu 22.04 with the current pre-built
+kernels 6.5 (baseline) and 6.8 (regression out of the box).
+
+When updating mysql from 8.0.30 to 8.4.2, the regression grew even larger.
+Disabling PLACE_LAG and RUN _TO_PARITY improved the results more than
+using SCHED_BATCH.
+
+Kernel   | default  | NO_PLACE_LAG and | SCHED_BATCH | mysql
+         | config   | NO_RUN_TO_PARITY |             | version
+---------+----------+------------------+-------------+---------
+6.8      | -15.3%   |                  |             | 8.0.30
+6.12-rc7 | -11.4%   | -9.2%            | -11.6%      | 8.0.30
+         |          |                  |             |
+6.8      | -18.1%   |                  |             | 8.4.2
+6.12-rc7 | -14.0%   | -10.2%           | -12.7%      | 8.4.2
+---------+----------+------------------+-------------+---------
+
+Confidence intervals for all tests are smaller than +/- 0.5%.
+
+I expect to have the repro package ready by the end of the week. Thank you
+for your collective patience and efforts to confirm these results.
+
+
+On 2024-11-01, Peter Zijlstra wrote:
+
+>> (At the risk of stating the obvious, using SCHED_BATCH only to get back to 
+>> the default CFS performance is still only a workaround,
+>
+> It is not really -- it is impossible to schedule all the various
+> workloads without them telling us what they really like. The quest is to
+> find interfaces that make sense and are implementable. But fundamentally
+> tasks will have to start telling us what they need. We've long since ran
+> out of crystal balls.
+
+Completely agree that the best performance is obtained when the tasks are
+individually tuned to the scheduler and explicitly set running parameters.
+This isn't different from before.
+
+But shouldn't our gold standard for default performance be CFS? There is a
+significant regression out of the box when using EEVDF; how is seeking
+additional tuning just to recover the lost performance not a workaround?
+
+(Not to mention that this additional tuning means shifting the burden on
+many users who may not be familiar enough with scheduler functionality.
+We're essentially asking everyone to spend considerable effort to maintain
+status quo from kernel 6.5.)
+
+
+On 2024-11-14, Joseph Salisbury wrote:
+
+> This is a confirmation that we are also seeing a 9% performance
+> regression with the TPCC benchmark after v6.6-rc1.  We narrowed down the
+> regression was caused due to commit:
+> 86bfbb7ce4f6 ("sched/fair: Add lag based placement")
 > 
-> [ Upstream commit d7b86a002cf7e1b55ec311c11264f70d079860b9 ]
+> This regression was reported via this thread:
+> https://lore.kernel.org/lkml/1c447727-92ed-416c-bca1-a7ca0974f0df@oracle.com/
 > 
-> This reverts commit 4f01a68751194d05280d659a65758c09e4af04d6.
+> Phil Auld suggested to try turning off the PLACE_LAG sched feature. We
+> tested with NO_PLACE_LAG and can confirm it brought back 5% of the
+> performance loss.  We do not yet know what effect NO_PLACE_LAG will have
+> on other benchmarks, but it indeed helps TPCC.
 
-Which was patch 16 in this series...
+Thank you for confirming the regression. I've been monitoring performance
+on the v6.12-rcX tags since this thread started, and the results have been
+largely constant.
+
+I've also tested other benchmarks to verify whether (1) the regression
+exists and (2) the patch proposed in this thread negatively affects them.
+On postgresql and wordpress/nginx there is a regression which is improved
+when applying the patch; on mongo and mariadb no regression manifested, and
+the patch did not make their performance worse.
 
 
--- 
-Earthling Michel Dänzer       \        GNOME / Xwayland / Mesa developer
-https://redhat.com             \               Libre software enthusiast
+On 2024-11-19, Dietmar Eggemann wrote:
+
+> #cat /etc/systemd/system/mysql.service
+>
+> [Service]
+> CPUSchedulingPolicy=batch
+> ExecStart=/usr/local/mysql/bin/mysqld_safe
+
+This is the approach I used as well to get the results above.
+
+> My hunch is that this is due to the 'connection' threads (1 per virtual
+> user) running in SCHED_BATCH. I yet have to confirm this by only
+> changing the 'connection' tasks to SCHED_BATCH.
+
+Did you have a chance to run with this scenario?
 
