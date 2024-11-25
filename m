@@ -1,193 +1,175 @@
-Return-Path: <linux-kernel+bounces-420466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D5669D7B2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 06:29:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9371C9D7B28
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 06:26:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B93DB21576
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 05:29:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF069B21B47
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 05:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939021547DE;
-	Mon, 25 Nov 2024 05:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1351607A4;
+	Mon, 25 Nov 2024 05:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="RPfydfjG"
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ghEuYAx2"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B6D22094;
-	Mon, 25 Nov 2024 05:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF094D9FB;
+	Mon, 25 Nov 2024 05:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732512548; cv=none; b=WFWooxSVHP246GMg/7H7aFciUElfKnRfUf5K0bpYftc4XYsDnT+we50ME7Yh9KKuyh/3dZaaf4oFa3o4jDsN8UBeFW5/9Fj9lAoqJdNwWwbpD5OOmkOVyJZxeWgypMe7BCv/tHaZXv8gpWdn60YhYU2piBIVczHqDV4koD67ZNw=
+	t=1732512402; cv=none; b=SKHtbtX7LUzjyDxbBA0dbdTzyWKjEGH/vV6GJugP+7tY9XGFWfOcgHFcsJSUIHhrPIjE2yplzb/hhC3VxxkWqJ0cHmI+6E6PDXYKi+9hMJYx5WjcMCyEtBStgLRXLkfC6VG/clZ3QMRl5fW6fOyTQpFdnEuzHvbN6hVk1+emIuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732512548; c=relaxed/simple;
-	bh=WhGfH44uOWuqfiQ+1HGXFTBV0xtJgZuU8WoyuTiwZ88=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TsWMLXwlcQsG6TyY7s9YID2AEJ48Lb5ZC1z6r6II4PEPH2A4atehijhkFXn4wmdrSqUOsMPCwpDr5uP9irV8ghGftttRP3wj8KmP7fwrW7389F23EQO4mTF+OCidWRcdjRmTfyX0GpM7kFTMW1fKSMzdoTiTU7wL+VWv7sRjNVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=RPfydfjG; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1732512440;
-	bh=qFxpG8oiTuFR/oM1UavFZ1H9iDZRvho+bF3xzFS261Y=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=RPfydfjGuMqs0o/sBdtaFgLhPDi+eBKjf85ZvXatd4R5p8phYHvu04sq109D1Twti
-	 ITfNroHE1jZ8wpp5OKH4/7BbMqkp3lj+G9SMikRpas252Hh0C2T1du2Wiz4oaBZKMm
-	 sOH2KA/fQyEZlM3roC9T4KIU/93zLCv7gljmHprs=
-X-QQ-mid: bizesmtpsz12t1732512395t1ikju
-X-QQ-Originating-IP: oVP2gR0uifCWo9pzVCTcmaT4unDvBj/p6jai9oRHTQI=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 25 Nov 2024 13:26:33 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 294461770020459058
-From: WangYuli <wangyuli@uniontech.com>
-To: ping.cheng@wacom.com,
-	jason.gerecke@wacom.com,
-	jikos@kernel.org,
-	bentiss@kernel.org
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	benjamin.tissoires@redhat.com,
-	jkosina@suse.cz,
-	guanwentao@uniontech.com,
-	zhanjun@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>,
-	Zhenxing Chen <chenzhenxing@uniontech.com>,
-	Xu Rao <raoxu@uniontech.com>
-Subject: [PATCH] HID: wacom: fix when get product name maybe null pointer
-Date: Mon, 25 Nov 2024 13:26:16 +0800
-Message-ID: <B31757FE8E1544CF+20241125052616.18261-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1732512402; c=relaxed/simple;
+	bh=jlmVrUQm4JzI02JcNEr+Qb2LtCPkCl7Mq8KI9AlIjKc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=C5fDGeaSsG4vyoS7UEhYMTbSH9mgZrRHwceXsx3dVrfD3n+9zIUH8KBkkXQDKHLuqmMma6J7Pz0H+LrtlQdKAkgigNYhY071uB4sLDBpWFoR5dVcASPsCSWYX2Gcq2AU+TfkhhCiT7SmZyMo8+kC0SIdm5NEJdzuUcUr9vYaAJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ghEuYAx2; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AOLueWd032678;
+	Mon, 25 Nov 2024 05:26:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	D+ZYEE/zzBwnUzJvbR5Du6cdh0vKFOvucrO6qTaMoQg=; b=ghEuYAx27+p/Ea7D
+	XRANJn7zSZF7KMV1wM74QSkYZp4tQpxOYcnUypUWXAYs2XDfKZj9F2kkd8iRmj1N
+	KD+QYZXl5+MWuv9E05dv/VZqxLTRgEr2yq+DxyKODR9hv0lTST43ZN8ZXN6p0Flx
+	K66nOgOIQky0ykZcdAHBLtxrmeQ4K96k3a2NGPIFeHBoPzSPs3j2NXOKNPdUMKD0
+	o2oVk8lj+M7ddgpTSJSO01ilFyYeZ5bec97djdn3McNpNRr1hYrFArmv3LzepGm5
+	hKn+M9Bm0E2GM2qkauI0c/GV6q0ntcpHrA5xFgjU7rxAEUdz+cg0ES7mR/sCS8W1
+	bWyb9w==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 433626bhbd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 05:26:32 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AP5QVnF000648
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 05:26:32 GMT
+Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 24 Nov
+ 2024 21:26:26 -0800
+Message-ID: <8e0ffc82-e205-4ea9-8b84-7437564e28cd@quicinc.com>
+Date: Mon, 25 Nov 2024 10:56:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/4] i2c: i2c-qcom-geni: Enable i2c controller sharing
+ between two subsystems
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <konrad.dybcio@linaro.org>,
+        <andersson@kernel.org>, <andi.shyti@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <conor+dt@kernel.org>, <agross@kernel.org>,
+        <devicetree@vger.kernel.org>, <vkoul@kernel.org>, <linux@treblig.org>,
+        <dan.carpenter@linaro.org>, <Frank.Li@nxp.com>,
+        <konradybcio@kernel.org>, <bryan.odonoghue@linaro.org>,
+        <krzk+dt@kernel.org>, <robh@kernel.org>
+CC: <quic_vdadhani@quicinc.com>
+References: <20241113161413.3821858-1-quic_msavaliy@quicinc.com>
+ <20241113161413.3821858-5-quic_msavaliy@quicinc.com>
+ <37762281-4903-4b2d-8f44-3cc4d988558d@oss.qualcomm.com>
+ <cbbb78c9-54ec-453a-92ec-6b174bd3d9cb@quicinc.com>
+ <8508988c-a74b-4f65-8060-30a0cb5afa64@oss.qualcomm.com>
+Content-Language: en-US
+From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+In-Reply-To: <8508988c-a74b-4f65-8060-30a0cb5afa64@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MRY6qckr/MVJmSK1gVUht7fMUP9y2srBhDUVvM1npV73FtunHH7jOdwM
-	JvUxsnSslqwRNbfFzaJvE6nWgOpKzbiHckFerq4C5TfARHyNylMpxo9lOzTVf7OWkHIe9C5
-	2zUzz2MDq7AGnJUoVHj/QK45vJz42yDVo7kC/CsdfY3LLfbu8iYZMvXZ7K/HQHOGVO3WSmJ
-	2VWTvJI5/1UUXYFcrKYxQkC6wt1Jf3hnI+zHsnWNLHPKN7u9+lcGUHxwbK1oETOUtl8u6Wi
-	6a0utFDMx2Y4y29NLymc+WPPxatHLXf1gyn+UUFAbevRma3D8TtPLCUeHisdQZ0sMOR3hp3
-	pxeVsEdDaxPDs1YUpKRDUHY7nd6OO7jDuPCCwDJBBxRhRMIlgvhLLTW71hqlT94+cg7aqYw
-	QMTmr1uBFrCpRfy4feAZPSiQMOEiH4Bj/RNDKAMvYS2ZhP6jpl7ys1ZiHcD41qYdOZfTvOX
-	CiliGQkbCqbYCZuzAQM3WxZGhz9n6H1d+2bbudGmB7yP7+XqpLHrtSFs+BAxf/75Jy7ZZXl
-	NmZ3cdQI/cSN0TYJGfhTTI02+r28VRKq+aqTdxcUwUDlx8cefilurViFaMx8ullIkHMDqiT
-	lKcz8W4x4GWf7GIfQX0xyPyt7MttkgKEGLtSWXlUX4woNFjcEraQefHiACMxDGVGtWf7AWy
-	tBJxx1ESAtqJ5aIh5UjAnCSpzDQ5DvsWEdla0KC4Nj0iZIv2zl9RtDeXB3xHg//9DER5yBB
-	RE5bZxHr82Z2gfJThjnVrLX60huMLO1xJKSciWlJv3BBZ9Py+y1VlLBA27pQJCOHIUD5cjn
-	a5BZc9ao+S5VSHGRvqubC7soAynzMrpjq6uIJ+n7ra8d0Q+n7AkHLQm0OyQ5RYYaHf4lnyF
-	xm5P90bbclGY8mQqrXMTHmkZmo9A15VKM6CKLGbg1x9QHVoZZJPqoYlNpmkO2Wa+x2klWtD
-	lVwuipZJf0oEHoueZejrs8AS4V7W7rNeffD0nWEV5PUOTmySny10kIcxDbdZDrsF+9zGZGs
-	OMI+nepf2K1TJA+QNI3wHX4OjgQeBVwBwNur/RZA==
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-X-QQ-RECHKSPAM: 0
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: PpiuLxYIcGv_VCr_T94ghVE-J62wyQTm
+X-Proofpoint-ORIG-GUID: PpiuLxYIcGv_VCr_T94ghVE-J62wyQTm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 clxscore=1015 phishscore=0 spamscore=0 adultscore=0
+ impostorscore=0 mlxscore=0 malwarescore=0 suspectscore=0 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411250044
 
-Due to incorrect dev->product reporting by certain devices, null
-pointer dereferences occur when dev->product is empty, leading to
-potential system crashes.
+Thanks Konrad !
 
-This issue was found on EXCELSIOR DL37-D05 device with
-Loongson-LS3A6000-7A2000-DL37 motherboard.
+On 11/22/2024 7:12 PM, Konrad Dybcio wrote:
+> On 18.11.2024 6:45 AM, Mukesh Kumar Savaliya wrote:
+>> Thanks for the review konrad !
+>>
+>> On 11/16/2024 12:58 AM, Konrad Dybcio wrote:
+>>> On 13.11.2024 5:14 PM, Mukesh Kumar Savaliya wrote:
+>>>> Add support to share I2C controller in multiprocessor system in a mutually
+>>>> exclusive way. Use "qcom,shared-se" flag in a particular i2c instance node
+>>>> if the usecase requires i2c controller to be shared.
+>>>
+>>> Can we read back some value from the registers to know whether such sharing
+>>> takes place?
+>> Actually, HW register doesn't provide such mechanism, it's add on feature if SE is programmed for GSI mode.
+> 
+> So it's more of an unwritten contract between subsystems.. okay
+> 
+yes, purely SW flag based decision.
+>>>
+>>>> Sharing of I2C SE(Serial engine) is possible only for GSI mode as client
+>>>> from each processor can queue transfers over its own GPII Channel. For
+>>>> non GSI mode, we should force disable this feature even if set by user
+>>>> from DT by mistake.
+>>>
+>>> The DT is to be taken authoritatively
+>>>
+>> To clarify - Does it mean i should not have SW disable this feature OR override  ? And let it continue in non GSI mode even it's not going to work ?
+> 
+> If a configuration is invalid, you should return -EINVAL from probe,
+> with an appropriate error message.
+> 
+Sure, i agree. I will make a change here and will bail out with an error 
+and print logs  if (gi2c->se.shared_geni_se == true). Thanks for this 
+suggestion.
 
-Kernel logs:
-[   56.470885] usb 4-3: new full-speed USB device number 4 using ohci-pci
-[   56.671638] usb 4-3: string descriptor 0 read error: -22
-[   56.671644] usb 4-3: New USB device found, idVendor=056a, idProduct=0374, bcdDevice= 1.07
-[   56.671647] usb 4-3: New USB device strings: Mfr=1, Product=2, SerialNumber=3
-[   56.678839] hid-generic 0003:056A:0374.0004: hiddev0,hidraw3: USB HID v1.10 Device [HID 056a:0374] on usb-0000:00:05.0-3/input0
-[   56.697719] CPU 2 Unable to handle kernel paging request at virtual address 0000000000000000, era == 90000000066e35c8, ra == ffff800004f98a80
-[   56.697732] Oops[#1]:
-[   56.697734] CPU: 2 PID: 2742 Comm: (udev-worker) Tainted: G           OE      6.6.0-loong64-desktop #25.00.2000.015
-[   56.697737] Hardware name: Inspur CE520L2/C09901N000000000, BIOS 2.09.00 10/11/2024
-[   56.697739] pc 90000000066e35c8 ra ffff800004f98a80 tp 9000000125478000 sp 900000012547b8a0
-[   56.697741] a0 0000000000000000 a1 ffff800004818b28 a2 0000000000000000 a3 0000000000000000
-[   56.697743] a4 900000012547b8f0 a5 0000000000000000 a6 0000000000000000 a7 0000000000000000
-[   56.697745] t0 ffff800004818b2d t1 0000000000000000 t2 0000000000000003 t3 0000000000000005
-[   56.697747] t4 0000000000000000 t5 0000000000000000 t6 0000000000000000 t7 0000000000000000
-[   56.697748] t8 0000000000000000 u0 0000000000000000 s9 0000000000000000 s0 900000011aa48028
-[   56.697750] s1 0000000000000000 s2 0000000000000000 s3 ffff800004818e80 s4 ffff800004810000
-[   56.697751] s5 90000001000b98d0 s6 ffff800004811f88 s7 ffff800005470440 s8 0000000000000000
-[   56.697753]    ra: ffff800004f98a80 wacom_update_name+0xe0/0x300 [wacom]
-[   56.697802]   ERA: 90000000066e35c8 strstr+0x28/0x120
-[   56.697806]  CRMD: 000000b0 (PLV0 -IE -DA +PG DACF=CC DACM=CC -WE)
-[   56.697816]  PRMD: 0000000c (PPLV0 +PIE +PWE)
-[   56.697821]  EUEN: 00000000 (-FPE -SXE -ASXE -BTE)
-[   56.697827]  ECFG: 00071c1d (LIE=0,2-4,10-12 VS=7)
-[   56.697831] ESTAT: 00010000 [PIL] (IS= ECode=1 EsubCode=0)
-[   56.697835]  BADV: 0000000000000000
-[   56.697836]  PRID: 0014d000 (Loongson-64bit, Loongson-3A6000)
-[   56.697838] Modules linked in: wacom(+) bnep bluetooth rfkill qrtr nls_iso8859_1 nls_cp437 snd_hda_codec_conexant snd_hda_codec_generic ledtrig_audio snd_hda_codec_hdmi snd_hda_intel snd_intel_dspcfg snd_hda_codec snd_hda_core snd_hwdep snd_pcm snd_timer snd soundcore input_leds mousedev led_class joydev deepin_netmonitor(OE) fuse nfnetlink dmi_sysfs ip_tables x_tables overlay amdgpu amdxcp drm_exec gpu_sched drm_buddy radeon drm_suballoc_helper i2c_algo_bit drm_ttm_helper r8169 ttm drm_display_helper spi_loongson_pci xhci_pci cec xhci_pci_renesas spi_loongson_core hid_generic realtek gpio_loongson_64bit
-[   56.697887] Process (udev-worker) (pid: 2742, threadinfo=00000000aee0d8b4, task=00000000a9eff1f3)
-[   56.697890] Stack : 0000000000000000 ffff800004817e00 0000000000000000 0000251c00000000
-[   56.697896]         0000000000000000 00000011fffffffd 0000000000000000 0000000000000000
-[   56.697901]         0000000000000000 1b67a968695184b9 0000000000000000 90000001000b98d0
-[   56.697906]         90000001000bb8d0 900000011aa48028 0000000000000000 ffff800004f9d74c
-[   56.697911]         90000001000ba000 ffff800004f9ce58 0000000000000000 ffff800005470440
-[   56.697916]         ffff800004811f88 90000001000b98d0 9000000100da2aa8 90000001000bb8d0
-[   56.697921]         0000000000000000 90000001000ba000 900000011aa48028 ffff800004f9d74c
-[   56.697926]         ffff8000054704e8 90000001000bb8b8 90000001000ba000 0000000000000000
-[   56.697931]         90000001000bb8d0 9000000006307564 9000000005e666e0 90000001752359b8
-[   56.697936]         9000000008cbe400 900000000804d000 9000000005e666e0 0000000000000000
-[   56.697941]         ...
-[   56.697944] Call Trace:
-[   56.697945] [<90000000066e35c8>] strstr+0x28/0x120
-[   56.697950] [<ffff800004f98a80>] wacom_update_name+0xe0/0x300 [wacom]
-[   56.698000] [<ffff800004f9ce58>] wacom_parse_and_register+0x338/0x900 [wacom]
-[   56.698050] [<ffff800004f9d74c>] wacom_probe+0x32c/0x420 [wacom]
-[   56.698099] [<9000000006307564>] hid_device_probe+0x144/0x260
-[   56.698103] [<9000000005e65d68>] really_probe+0x208/0x540
-[   56.698109] [<9000000005e661dc>] __driver_probe_device+0x13c/0x1e0
-[   56.698112] [<9000000005e66620>] driver_probe_device+0x40/0x100
-[   56.698116] [<9000000005e6680c>] __device_attach_driver+0x12c/0x180
-[   56.698119] [<9000000005e62bc8>] bus_for_each_drv+0x88/0x160
-[   56.698123] [<9000000005e66468>] __device_attach+0x108/0x260
-[   56.698126] [<9000000005e63918>] device_reprobe+0x78/0x100
-[   56.698129] [<9000000005e62a68>] bus_for_each_dev+0x88/0x160
-[   56.698132] [<9000000006304e54>] __hid_bus_driver_added+0x34/0x80
-[   56.698134] [<9000000005e62bc8>] bus_for_each_drv+0x88/0x160
-[   56.698137] [<9000000006304df0>] __hid_register_driver+0x70/0xa0
-[   56.698142] [<9000000004e10fe4>] do_one_initcall+0x104/0x320
-[   56.698146] [<9000000004f38150>] do_init_module+0x90/0x2c0
-[   56.698151] [<9000000004f3a3d8>] init_module_from_file+0xb8/0x120
-[   56.698155] [<9000000004f3a590>] idempotent_init_module+0x150/0x3a0
-[   56.698159] [<9000000004f3a890>] sys_finit_module+0xb0/0x140
-[   56.698163] [<900000000671e4e8>] do_syscall+0x88/0xc0
-[   56.698166] [<9000000004e12404>] handle_syscall+0xc4/0x160
-[   56.698171] Code: 0011958f  00150224  5800cd85 <2a00022c> 00150004  4000c180  0015022c  03400000  03400000
-[   56.698192] ---[ end trace 0000000000000000 ]---
-
-Fixes: 09dc28acaec7 ("HID: wacom: Improve generic name generation")
-Reported-by: Zhenxing Chen <chenzhenxing@uniontech.com>
-Co-developed-by: Xu Rao <raoxu@uniontech.com>
-Signed-off-by: Xu Rao <raoxu@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/hid/wacom_sys.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/hid/wacom_sys.c b/drivers/hid/wacom_sys.c
-index 2bc45b24075c..9843b52bd017 100644
---- a/drivers/hid/wacom_sys.c
-+++ b/drivers/hid/wacom_sys.c
-@@ -2241,7 +2241,8 @@ static void wacom_update_name(struct wacom *wacom, const char *suffix)
- 		if (hid_is_usb(wacom->hdev)) {
- 			struct usb_interface *intf = to_usb_interface(wacom->hdev->dev.parent);
- 			struct usb_device *dev = interface_to_usbdev(intf);
--			product_name = dev->product;
-+			if (dev->product != NULL)
-+				product_name = dev->product;
- 		}
- 
- 		if (wacom->hdev->bus == BUS_I2C) {
--- 
-2.45.2
-
+>>>>
+>>>> I2C driver just need to mark first_msg and last_msg flag to help indicate
+>>>> GPI driver to take lock and unlock TRE there by protecting from concurrent
+>>>> access from other EE or Subsystem.
+>>>>
+>>>> gpi_create_i2c_tre() function at gpi.c will take care of adding Lock and
+>>>> Unlock TRE for the respective transfer operations.
+>>>>
+>>>> Since the GPIOs are also shared between two SS, do not unconfigure them
+>>>> during runtime suspend. This will allow other SS to continue to transfer
+>>>> the data without any disturbance over the IO lines.
+>>>>
+>>>> For example, Assume an I2C EEPROM device connected with an I2C controller.
+>>>> Each client from ADSP and APPS processor can perform i2c transactions
+>>>> without any disturbance from each other.
+>>>>
+>>>> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+>>>> ---
+>>>
+>>> [...]
+>>>
+>>>>        } else {
+>>>>            gi2c->gpi_mode = false;
+>>>> +
+>>>> +        /* Force disable shared SE case for non GSI mode */
+>>>> +        gi2c->se.shared_geni_se = false;
+>>>
+>>> Doing this silently sounds rather odd..
+>> we can have Some SW logging added ?
+> 
+> Normally such overrides mandate a warning/notice, but as I said above,
+> we should disallow such combinations altogether for sanity
+> 
+Sure, taken cared with above suggestion.
+> Konrad
 
