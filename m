@@ -1,191 +1,223 @@
-Return-Path: <linux-kernel+bounces-421088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A2039D867E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:34:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD499D86BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:44:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA14B281B9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:34:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01862164C27
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7901AAE1E;
-	Mon, 25 Nov 2024 13:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F711AC456;
+	Mon, 25 Nov 2024 13:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="T6C6ggwd"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2054.outbound.protection.outlook.com [40.107.21.54])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y59Y8pyj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D8F18C322;
-	Mon, 25 Nov 2024 13:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732541689; cv=fail; b=hDhjt5/SXtYxn0Fys8BoGKqcNMlPLCht3lMLs/7IoWja/CQnelIYFXFzI3vYJycacEa3ifB5YB8+cFxHoSnnaJGJygosmzy8KbpcrDTkDSZf4s30iplo1keCDSqqw9ws1IPanJg9LaLYA/gfxJGqymUfkBpu2A8xIMVS8Bh8Csc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732541689; c=relaxed/simple;
-	bh=RRnTaF68u7EGb7C19w317NoPWlh0Rp2xpJdd9gBLIcY=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=jisBd5pklEB+y0ZwhSPGnK/xV25NGmdz5hr7xg2dsfC1O3gRiJmDiNG7+6+OlQRGWFg7dnXGT9kmL5kKcFIARdlCuIWN7vMXQdBQjIuiv84Ql25SVMd9eVResgQsj20eIYysxkVkSiQyXMrYg+j/OAUH2Vug2to66M+BawReAT8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=T6C6ggwd; arc=fail smtp.client-ip=40.107.21.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ST9NonN/dee26wMEuC//1TnaCsfKHAO6Cbf2ftzamf8DlS0u9Rm3zIUKaLvaMlYjYxPt3FVMxSTUDDY7ED3d7JAuiNUAUVcgU5i5aMgY0hzFt5KJHXGf2nhBsu/ia1vDmUwdyUS/c0rcqVzhMCNuCyuUpEFLKKy9V6fJWsUhyjSTntobIrgfwkmLva0zy2pgnJidjS3ccmZ4GwLnqk6CoS02YNcZMvS7e94OazCFLAkJ2Fm8GwkpWKfSGWDY1EgomWLowejS+T49iG37TDHC9JBX9Vzxb7l+WWWcOdaXYUCMHLIC3ZJDcNxUrWY4VADxDqZskMCXfVGrxIq19nHCVQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ai1v46WTup8sFF2Z2AC6a25GYbSY2ANB9udVAi6sqsM=;
- b=svjnUyvmF8BnfdiJr22TNsSh92fb+KUj7Zyc/Fqn28ge+CJLqitYsR9rryJU1CABMzoXcI6FIy06PXrx06X+b7PeheyH5vCoMUcfcE1pFEd4iejuonw5zra9KIdMY4zLjQg8HbmrVLv2sskPxSZdNWB6IXoh7KXosuW08m3n+WLFsucl15VcVQrqoPhgfbAGTuFppqMj5d3VmmQ7fuhEMecO7wwU2UqnxUd8k290EhCznMazm2oWgIPD075lG5b35oav4CEREM5Ujcmkl0h0fylyhwx3J+FSuqH/4fYf4jcRWCW/8zAHofrnjKHY7+b3KMQK7TIotaeGkfQTmcmuSg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ai1v46WTup8sFF2Z2AC6a25GYbSY2ANB9udVAi6sqsM=;
- b=T6C6ggwdsXJGiEdBxMTR5BRJVouR2yhVCcQfm+PrIyabd27GkJas3+kyz9KQjUd13xvR6vbCePSwf65Gd0iYjJ7JTBL25PmZfIxr8KzD8gRc+H57c9bGRZ0kBOEbC4WijShOUP01Ud5wmB+qZtDaG3QZhUkb1z222DwimaBEqz3/CwBX0DVQJw4LT/2E4dzg1KuueWfW41jKDep2q+ZWrfRCr1GB8/a9ghYpYuJaInlROhXGhDJI/zRfAqCG18Cmpy+oWSIFwFQKSsq7BMCfqCH03/AUwA4OWBfsYTeeT46yt1O/ySpWhpdaBCPMpuEjjCRVFU25VVMM7fJkRFIXjQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM0PR0402MB3937.eurprd04.prod.outlook.com (2603:10a6:208:5::22)
- by AS8PR04MB8769.eurprd04.prod.outlook.com (2603:10a6:20b:340::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.21; Mon, 25 Nov
- 2024 13:34:43 +0000
-Received: from AM0PR0402MB3937.eurprd04.prod.outlook.com
- ([fe80::4e37:f56b:8a3e:bff0]) by AM0PR0402MB3937.eurprd04.prod.outlook.com
- ([fe80::4e37:f56b:8a3e:bff0%4]) with mapi id 15.20.8048.020; Mon, 25 Nov 2024
- 13:34:43 +0000
-From: carlos.song@nxp.com
-To: o.rempel@pengutronix.de,
-	kernel@pengutronix.de,
-	andi.shyti@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	festevam@gmail.com,
-	frank.li@nxp.com
-Cc: linux-i2c@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] i2c: imx: switch different pinctrl state in different system power status
-Date: Mon, 25 Nov 2024 21:43:22 +0800
-Message-Id: <20241125134322.1611845-1-carlos.song@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: AS4P191CA0053.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:20b:657::29) To AM0PR0402MB3937.eurprd04.prod.outlook.com
- (2603:10a6:208:5::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3599A1AB50C
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732542251; cv=none; b=shQD45FHMgI4Cica0cz8WzSW/MXJCO0butxR7NocoxZJQdjaF2fwysBjHfCU2NYaTRpYy0UNTQSwjXThjj1DbgXcvyD8jiltf8xiq4u8qA3BX91w0fRFJWQ26b4SOhDEYWO2Njl3oZxYvLmIaZCR/uahmnkPvDrO7tRp1gAO2lc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732542251; c=relaxed/simple;
+	bh=NdpHPl91yCIP6m0C14SiDShavK1QjUgunTuuG3bOhFo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gcBjg2erWsXYr11c3v3u2E7TSFLbgC3t9NxNm1HYJX+yjey4Yk96EkZqvtYNLCGsEQlbLdBClxFlKiAscz6yNoA9OWKRvNcuXXjwoCGOPwrusbNErhndjKGhggKNcIenB31xYcm/uyQsPxScRaA4s/uh+EaQg15D6EpIQZEMHig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y59Y8pyj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732542248;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DhhNcg4tt2EmSYnWuYxYmElmP5/JIvyr3LxTavuF7BY=;
+	b=Y59Y8pyjva25Kga6pBTuEuB4JQQc3p/y9EAGyGx6hetOhNd1wtm8ZPROfoLsuWDP/CVfoe
+	sgpnEJVQty4lCbfTkoXY8IvCPYilF8o3WJ2EnDUfa+x+4RyY7gZcGo1x5JtRz9vdFBb+Ty
+	2gOAjyIQ0AIXdtMLAiQCBy37oDCu7pI=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-32-8Uc9-YlqMReFzmjhTELH7g-1; Mon, 25 Nov 2024 08:44:06 -0500
+X-MC-Unique: 8Uc9-YlqMReFzmjhTELH7g-1
+X-Mimecast-MFC-AGG-ID: 8Uc9-YlqMReFzmjhTELH7g
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-aa52d371666so195646766b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 05:44:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732542245; x=1733147045;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DhhNcg4tt2EmSYnWuYxYmElmP5/JIvyr3LxTavuF7BY=;
+        b=dXEBAfETdU62QMOAEI298MXq7v7EA7OMgYH4swkhmZEK35W41tABUFH1oZS9PsL+Oc
+         P/ekBLI4ypnshNLsPRs7ILDaatMDYvnrgFkqId4CQk+HhEt1dAH2fNFKPfHY8rrDtAMe
+         QXTPoDwKNN2eC57Oc8MsAeKnPaV0Yug3CxhXmIupsfjSLBG1dhO0uC44OgrHchh4SbGK
+         JuBgUOz2Y7Kp/vdnqAfrpqGLKkgHslua3/UlzpDdYaR6dYljCuaQLNbMhzOGZsY8vPnQ
+         VipcnIzFIMqo4npbWmXzEQThE70iY+iRvNZTv/4MFDRFBijAXnc6utT0lvEOPI1gwvFI
+         9pwg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvAeVtBUdXMnRiqAU7FkoH4+IbzBEyZduBa8Dj7lO7FO0h0jMfhDqOEzhRktH0KXUmd/T+kzvvbwbr7cQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGodvSNmmt+d3tyldmONmJNS90eTvVM6p+BnWlfoLWja/LUUMp
+	Sq0oR285knif3RqrLbmWfBlCn8h6yYF1/DpiojqKMShQ7xsrR5V8ie0MQ05S+sYq+X2zttO56zO
+	zdB1vgjG02e53HyTomNvRPkiilwQs7f7QM/2ygfrRVL9KrOHbyuUCnmnx37m2aA==
+X-Gm-Gg: ASbGncvYTRQ2H64LZcI0regL0woX7i6xrNC109PEg9sj7rfRpnSH5wP8qZe4k9AiD3y
+	g87b9fqhgH/cr2LBhxdZ4Q5rtQKrsQfeFzey1jm8NBZW58PTE0WjHaNQ3F3kLB+c/QlcFUrROme
+	IKyOwKQnuTxnGPnT/9ugGz5cepiVXcMSdhiX2fh8kGdbOJrrFhkyMyJBeSn9+k7DeI6rGelyjBk
+	xfz+qdWjCJMsJk68vu78Tpqpw5+UyrDY0BvL5Z11JjYPSx0jippiGJ2Ctcy3gUMPOiln1IYgBkV
+	JnOpuWR5ecGny0NpGY2pmDOQBtFA2UDE1zTXJ55NbvDKie4xKUnTHlEjdAHYyVXwxIwf2XBRPll
+	30iKhZbpyZJU+SX5lWz4A01Gv
+X-Received: by 2002:a17:907:7639:b0:a9a:3cec:b322 with SMTP id a640c23a62f3a-aa509d3fd2amr1095067566b.45.1732542244913;
+        Mon, 25 Nov 2024 05:44:04 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEI1u01TNhqvUqYHqTS4lo03ToXCKST9SdpaSegeiA7kHV4Twp87DS4sYBUS8u3Ao7Hu2Ds1g==
+X-Received: by 2002:a17:907:7639:b0:a9a:3cec:b322 with SMTP id a640c23a62f3a-aa509d3fd2amr1095065666b.45.1732542244558;
+        Mon, 25 Nov 2024 05:44:04 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b28f88bsm465710466b.2.2024.11.25.05.44.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 05:44:04 -0800 (PST)
+Message-ID: <33e7dbc8-0d29-4905-a28c-e562151a837a@redhat.com>
+Date: Mon, 25 Nov 2024 14:44:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM0PR0402MB3937:EE_|AS8PR04MB8769:EE_
-X-MS-Office365-Filtering-Correlation-Id: c6b06f30-20e2-4163-b84d-08dd0d55eb69
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ORgCW+PqPlag0PW56SXxThRkTY0PQzBKvKrOxD+L0s3jqTE+Gm+JEohpi8ZL?=
- =?us-ascii?Q?3xdaojEGVSkZ/pLN65HdRQBGwyqemZKOFADnkCOJos/nh5DO/3pQUpZ4dNYg?=
- =?us-ascii?Q?cEY+5d3JWJ0ZxahuiV8dVfkYWsWoEFut0L5NCL84v+WmrlsLcLrQMtLxUbiV?=
- =?us-ascii?Q?wg2de5jdQHl/MsVCbKsS9wqtnVO9fHVJQZ7R9cXSah0cQJnVw5jSFpylKL1Y?=
- =?us-ascii?Q?N6A4qwOI2klBIVJKoMWVLts1nG6s0MiGnqYFVHcFYKGCyowCv7I9DF0sqWMs?=
- =?us-ascii?Q?jFg9zyGKlevVbWwqOXjIMvM0nQx4v+xPgZ6SUvgNL4cOPbiF83mMgGp3lzLi?=
- =?us-ascii?Q?lVaLhf4dwOYsnUPZPnuazJo2+AppFipLAY9Z/GB1bkv+JHwo7+bx3yblSmlN?=
- =?us-ascii?Q?hkAZqdFrYXaR3+g3jee0SN6nM9GHmPNme2/JEZLfIod3EmMwz1TgaXPMHi8d?=
- =?us-ascii?Q?xrwC9DDf5CbFSdTl7hh2JDr9TBtUVycNjbJxdwrNg92avLLIWUgt+SxZi/Vo?=
- =?us-ascii?Q?pnVwLCR2ZzUWQm2g4ZwpietWOVZ3+nUtoSwEzVO5O44AJvAbWJcu/MKHRMer?=
- =?us-ascii?Q?xQlgnkUXo8fSV5kbcgYud3jDYRlRk3WmOCx0DgS6kufooUiShSRKtWB0/ClE?=
- =?us-ascii?Q?kHq5XNI/2KhYERVOpcunyEya/UE8BhiXrJ8lMXJD58lxCEgJB+nOecpjU6kr?=
- =?us-ascii?Q?fVF3LpY5UJN+Nt6zvCkOT23EVPAf1k2KzXDgQDIdSTvls2IXZbuHWOzlkWry?=
- =?us-ascii?Q?E/jFIzhs/1Vj7g6BPOcJveImL8sytJHscwrRwl8qiq+zydfPPfIumbeRExgB?=
- =?us-ascii?Q?KsuU5+vrWNsJmvQXw+GwUMg4FUcaBGVwqpvJEcfd9K6DoJuK2gNFLdgFTM4D?=
- =?us-ascii?Q?0qab0/luYtVzpA/YRSTcE/jsO0HlOZ6oK5QBmH6ZtD6AG4IaKndBHBYVjgwK?=
- =?us-ascii?Q?59AhvlN0r4UBDxDDy9+5VePzAASjsJItIDNf4ZNBl7lqq5J0BbDbuL8QHJJd?=
- =?us-ascii?Q?GApZ0cE75W9uFSEkNv+xdbTE7oTAksbwzUAnqGFw3oDx6ftAYhco04BVQhI3?=
- =?us-ascii?Q?T2L11+g7je3SdgUPdVK0QguDeM7gcrQ/bkKeEAfeHBMcbBzVpNpxTZ8P0GN4?=
- =?us-ascii?Q?nSm9Vrxk9zejWPU4HJVyBqbTS3npmqAU/5xPuMGe9y3scuFu8y2YJEKMQ5Rj?=
- =?us-ascii?Q?nG4FUwCxMLO9/rHm4xXo3AYWaoX9hs8kVJcqYYH0/FN5yttWUw24OvJROgav?=
- =?us-ascii?Q?cihaTVMMZbS2DxE6YHEIg2jM8jADTH3faHqeJs96DUN1h+eNyMIDzcyKjGmc?=
- =?us-ascii?Q?dwuqTRnuHSYHR1+2AM4L/8yM0acwhyQkIOOb3N04aUH+P57IZ/KXUv9t6sLq?=
- =?us-ascii?Q?R03q/eRPrhB63voSOG6MJKLFAGKhd/AauMU+vZquKdiJ0h3iKA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR0402MB3937.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?VWmhxbN+c5p7mN/SuuJgy1+m43qHbaxQ394SrbKyQQzYgd4q/q15jQ+hP1hF?=
- =?us-ascii?Q?psL2IbuNjgbWnqa0BktIlo5TXwOf+2bNkkF/iEzevTs5IKU7/mDVUov0cG7k?=
- =?us-ascii?Q?NWH5ZUpL+FK3eXQY/WcfRNueg92xlDTrd3oXUpK5GKD6ZNUbNt/VQevUbFFZ?=
- =?us-ascii?Q?ierm479OlWEJjQNPYS4Fng2s+rwf2WUBeBZQG9oZy7F/udSDqd4mXxPsORVQ?=
- =?us-ascii?Q?gexU8Mev/r2ZcEgbeTKUiSACjxtMrS5ZQqDZctPzHHiyxZKtXrkdpLM+yoen?=
- =?us-ascii?Q?j/ylrTWwD6T7flHtJYnO/UKtgAVwSHnHaFueMDhZgYNyBdtx4I7E67nhlNyR?=
- =?us-ascii?Q?LDRoL1mzBAk+v6c2fDb3TRoMlaA1F8HF7YBvOqS9aUb0KV+QD/oLxWVVhC9N?=
- =?us-ascii?Q?b3EiM7ULSFJR5uH+Qu85qjHxPEzA6IqcWTuPGDQIRylxcEBzZqeJA385x1Va?=
- =?us-ascii?Q?AQMBrf45qlzfN9PXvLiqzQ6QPEyob7TJrGgm6fDhnV1HpWC8+90Va/LVwWh7?=
- =?us-ascii?Q?9rBRJ7oKnP3CKo+rmm57fobUsx3ikeL/VDRrUY5DPnLD+EmuPurm8vemtLr3?=
- =?us-ascii?Q?gDKY2XuyyRovd4uC8cuSj9bazzMxYPuK/qs4PVUjmOCcYthirYK1nk/paBUQ?=
- =?us-ascii?Q?bi8zI8e7CBCWhsHlgrbB8Zz2dXOzd/i7l4QJao1/pZid/FEeuzCG7mjls1DV?=
- =?us-ascii?Q?RkqQaazbRWVpRcxvv4KqM4lxzBNnXnzSWl7O/GjXEpUpGrIEomj040Ex6GCo?=
- =?us-ascii?Q?A89NKOgTdrqpybpw0R/4Vb9yY0USvORM7r/8dHdXI57eJLn2r+kuD9eq4lBY?=
- =?us-ascii?Q?zlJ6TO0HDDIAFBxWSLjkfnPOrQ8MB1JFf17G3yfAwO629lMj2q3D+QTEmhTX?=
- =?us-ascii?Q?hGjjmt40zDIZ348OuO7SWZv/+UB94fEQXsrPadT4+KJbBxPsW1EbZReKceG7?=
- =?us-ascii?Q?o/AN9fKkwuB5ZE/5VSkraF3nu4LBVlS+hVlUIf+sANGUwOyWm6svnDJ9X5VU?=
- =?us-ascii?Q?NODXwJ5jbG4F5mlCaAsxIbcRyEkKfnHjIP/RpsXZgAr0G7tzjbxPSyOWeGTg?=
- =?us-ascii?Q?lBa2yb/N3vjnVBdx1epZm90Hs6SjNaTfoxdHSEYzTLg2DON+Leg8v8eKo3b+?=
- =?us-ascii?Q?VSDiU+spwU5zIhuDch02I5cAGrdO7pLViH1erwv5IFTDl9KJOUMrUey61qL6?=
- =?us-ascii?Q?JbzEzIS2j1CP5JA5Oip8FtZyJ4NNOgF0knVYOjltGtfrAQWDG0bnHcBe5INS?=
- =?us-ascii?Q?u5QARAu9pfcqJ4hJNsrLiL5bFkYf1hP4xF74cwf6JEL1zoJiiOPxMm5vzCb4?=
- =?us-ascii?Q?HJvnfsB9iAstGh5gIZgzJC+tpB00Y24ibumngF9pw2yjXKjcb/74Oupl91Wo?=
- =?us-ascii?Q?b9JA75adALJJzH/6hdirZDCOuEZvzkB3R9lREFCyhLFz5u90AgAc22yauB+v?=
- =?us-ascii?Q?TrHME1A509jl0961ZpS1g4/lMu85gZhbmJSzbFHGaH2pnzsufKrPaAq7hbs9?=
- =?us-ascii?Q?NNKpgAH9xuqKkUOVC1S3+VozhhmhGL+kiibobfR66XMAUc0+1NHCHN61FojX?=
- =?us-ascii?Q?ogamHPn05Djp5Io4MC4yzGYNSVCl09VEyx72K2hN?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6b06f30-20e2-4163-b84d-08dd0d55eb69
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR0402MB3937.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2024 13:34:43.3732
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QxnpeQVSbIyRQTrTll+XhfudzTrVar+qTlGXXaags+p/yZ3mo946LfXgX8tCU5tC/VsPa/eEN8zw5iqwe4yKRw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8769
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a
+ subdevice
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, Yunke Cao <yunkec@chromium.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>
+References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
+ <5b5f3bb7-7933-4861-be81-30345e333395@redhat.com>
+ <CANiDSCta62P5+1aR9Ks8c6sd3_grCV3C+Le=UjKGkiohyf0R2g@mail.gmail.com>
+ <20241110151426.GD6002@pendragon.ideasonboard.com>
+ <CANiDSCsTNuQRXwMqA_YmX4MJ-A8eTi_rEpkd+Qv=Qwbbrj18Yg@mail.gmail.com>
+ <123bfac4-389a-400a-8104-afc27124b75d@redhat.com>
+ <20241125125834.GC32280@pendragon.ideasonboard.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241125125834.GC32280@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Carlos Song <carlos.song@nxp.com>
+Hi,
 
-Switch different pinctrl state in different system power status.
+On 25-Nov-24 1:58 PM, Laurent Pinchart wrote:
+> On Mon, Nov 25, 2024 at 01:39:05PM +0100, Hans de Goede wrote:
+>> Hi Ricardo,
+>>
+>> On 10-Nov-24 5:07 PM, Ricardo Ribalda wrote:
+>>> On Sun, 10 Nov 2024 at 16:14, Laurent Pinchart
+>>> <laurent.pinchart@ideasonboard.com> wrote:
+>>
+>> <snip>
+>>
+>>>>>> Here is what I have in mind for this:
+>>>>>>
+>>>>>> 1. Assume that the results of trying a specific fmt do not change over time.
+>>>>>>
+>>>>>> 2. Only allow userspace to request fmts which match one of the enum-fmts ->
+>>>>>>    enum-frame-sizes -> enum-frame-rates tripplet results
+>>>>>>    (constrain what userspace requests to these)
+>>>>>>
+>>>>>> 3. Run the equivalent of tryfmt on all possible combinations (so the usaul
+>>>>>>    3 levels nested loop for this) on probe() and cache the results
+>>>>>>
+>>>>>> 4. Make try_fmt / set_fmt not poweron the device but instead constrain
+>>>>>>    the requested fmt to one from our cached fmts
+>>>>>>
+>>>>>> 5. On stream-on do the actual power-on + set-fmt + verify that we get
+>>>>>>    what we expect based on the cache, and otherwise return -EIO.
+>>>>>
+>>>>> Can we start powering up the device during try/set fmt and then
+>>>>> implement the format caching as an improvement?
+>>>>
+>>>> This sounds worth trying. We'll need to test it on a wide range of
+>>>> devices though, both internal and external.
+>>>
+>>> For what is worth, we have been running something similar to
+>>> https://lore.kernel.org/linux-media/20220920-resend-powersave-v5-2-692e6df6c1e2@chromium.org/
+>>> in ChromeOS and it has worked fine....
+>>>
+>>> But I am pretty sure that it has issues with async controls :S
+>>
+>> Interesting that is actually a lot more aggressive (as in doing a
+>> usb_autopm_put_interface() often) then what I expected when you said:
+>>
+>> "Can we start powering up the device during try/set fmt"
+>>
+>> As I mentioned in my other emails what I think would worth nicely
+>> is delay the initial usb_autopm_get_interface() till we need it
+>> and then just leave the camera on till /dev/video# gets closed.
+>>
+>> That idea is based on dividing apps in 2 groups:
+>>
+>> 1. Apps just temporarily opening /dev/video# nodes for discovery,
+>> where we ideally would not power-up the camera.
+>>
+>> 2. Apps (could even be the same app) opening /dev/video# for
+>> a longer time because it actually want to use the camera
+>> at the moment of opening and which close the /dev/video# node
+>> when done with the camera.
+>>
+>> Your code seems to also covers a 3th group of apps:
+>>
+>> 3. Apps opening /dev/video# for a long time, while not using
+>> it all the time.
+>>
+>> Although it would be nice to also cover those, IMHO those are
+>> not well behaved apps and I'm not sure if we need to cover those.
+> 
+> Is that right ? Isn't it better for an application to keep the device
+> open to avoid open delays or even open failures when it wants to use the
+> device ?
 
-Signed-off-by: Carlos Song <carlos.song@nxp.com>
----
- drivers/i2c/busses/i2c-imx.c | 2 ++
- 1 file changed, 2 insertions(+)
+Keeping devices open has advantages and disadvantages. E.g. keeping
+/dev/input/event# nodes open will also typically lead to e.g.
+touchscreens staying powered on.
 
-diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
-index f751d231ded8..cf8931a8013d 100644
---- a/drivers/i2c/busses/i2c-imx.c
-+++ b/drivers/i2c/busses/i2c-imx.c
-@@ -1859,6 +1859,7 @@ static int i2c_imx_runtime_suspend(struct device *dev)
- 	struct imx_i2c_struct *i2c_imx = dev_get_drvdata(dev);
- 
- 	clk_disable(i2c_imx->clk);
-+	pinctrl_pm_select_sleep_state(dev);
- 
- 	return 0;
- }
-@@ -1868,6 +1869,7 @@ static int i2c_imx_runtime_resume(struct device *dev)
- 	struct imx_i2c_struct *i2c_imx = dev_get_drvdata(dev);
- 	int ret;
- 
-+	pinctrl_pm_select_default_state(dev);
- 	ret = clk_enable(i2c_imx->clk);
- 	if (ret)
- 		dev_err(dev, "can't enable I2C clock, ret=%d\n", ret);
--- 
-2.34.1
+Generally speaking it is not unheard of to expect userspace to
+behave in a certain way for things like this for power-consumption
+reasons.
+
+I guess the question is how far do we want to go inside the uvc
+driver to avoid userspace needing to close the /dev/video# nodes
+when unused.
+
+Ricardo's patch from here:
+
+https://lore.kernel.org/linux-media/20220920-resend-powersave-v5-2-692e6df6c1e2@chromium.org/
+
+goes all the way and if I understand Ricardo correctly this is
+already in use in ChromeOS ?
+
+So we could also go with this. Maybe put it behind a Kconfig option
+for a while ?
+
+AFAICT the only thing which needs to be figured out there is async
+controls.
+
+I think we can simply set a long autosuspend delay on devices with
+async controls to deal with that ?
+
+I have a Logitech QuickCam Orbit (non AF) UVC camera which has
+pan + tilt controls and AFAICT these work fine with v4l2-ctl
+which immediately closes the /dev/video# node after the set-ctrl
+command. But I'm not sure if I have tested this without the camera
+streaming at the time. Anyways that is at least one camera I can test.
+
+Regards,
+
+Hans
+
 
 
