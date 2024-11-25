@@ -1,184 +1,79 @@
-Return-Path: <linux-kernel+bounces-420676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD0FA9D8207
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:16:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFC959D8208
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:16:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DDC52819B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:16:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3640D281A11
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:16:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A00190067;
-	Mon, 25 Nov 2024 09:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF74A190696;
+	Mon, 25 Nov 2024 09:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QXoIGlem"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RmiHhwjB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBD51607A4;
-	Mon, 25 Nov 2024 09:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F1C19048D;
+	Mon, 25 Nov 2024 09:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732526188; cv=none; b=nspLErwQ37RiUVT+ZI6aBip8EQJ2rBOGK+AKfjCxBosyuGT07Hfl6Y2u1J2XQKURi0jc7wWSeQzuwQSNkkwiTlmuM51LagfPe/bUaRjlB7c5iw1LezEMdD79YIKUwJrZZ/3a7Qs+GlA9lDVca1ENQhDVayv02K0oqoSwRwTSicI=
+	t=1732526190; cv=none; b=aFXTmnMCYhwRZBTy0Xy7LnyCZegh08XO4w7KauK+4tPJBI+PFC3gg0FvcsVQs0COc+y5zXMRiZCkwR5HHp8/i3oQM0A7P065DD1GGkwFiD7Jnh9HOxR+HCO/v/RZiE8wP0etgboL6EAMrY2xwvUHAJjbV2k0sBiO8HpAlV5erS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732526188; c=relaxed/simple;
-	bh=Ym3EiDg7mNxjj7Q/yW5OsCcdl3INhejPJO0EFm4ddJY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=utqk0H3XPrpPthPj55o3wigmG7jCMomgmRBib+mXopjACYZlDJBdvDjBDcwfK8alIiOcP8wFoG2UghmTgiqae7WaDfsWcw0VdE+iNUukRmaLLfTaw8H7KVaE/crtQaKuMYlzrYheS8/X1fXcEKAMzuxNvGm+uxi/G4QyNL8WLIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QXoIGlem; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ffb0bbe9c8so20250101fa.0;
-        Mon, 25 Nov 2024 01:16:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732526184; x=1733130984; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=olq9+ei4v6Ju6C86DLjepiM3XIsHf+3+X4kBYZA1YwM=;
-        b=QXoIGlem7+Cnjrv4zmoVCx2kf4RcFzzTakSlCE6iFk5MZQPJN419QXwJE/+LdVyVmt
-         E1EfeLCnWv12AU1QYaihn5MblDXBV3xSc1WrMb5mcDp+jx1BQiD6w45RRqhw8gvkpfr2
-         NNxycnleXmukP9g8yLmXAVtCa33zluSKN2hlaJ6t5ai+vs1fdCyMWGWZbX3nzM2aE1gm
-         vsPRXEpB9n362CuCquiYqNVU2MO5++0+IT305yiAqOZemUaxhBCjTn92sMZdZvljEhP+
-         3PeJVuP6p0wS3D6j8ebnXN9YUNWIc411geZXNAylGJNC+mYeSlIQC2aYUg965WE1BdSS
-         8B6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732526184; x=1733130984;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=olq9+ei4v6Ju6C86DLjepiM3XIsHf+3+X4kBYZA1YwM=;
-        b=ex9aEUo0J4Al8WLdU04qUGVFSi9cxdeoi4GX+th2vNTSzAgAy1V5uuduzL2/6Fy9rz
-         z5kyL3mhZcexn25gBIr8B4nciu2kvHPQhBGS8nucuE6wE0ktzlhTx9IAc4YHZ/Qu260d
-         d0v7ZT108zlG6BYbyfHLL8GvhtCHFzfW27j3ISGZZM+F1z0ZP+8wIvzqEcMFhKOv5ZAT
-         KI6w/jcmqwpNEipBL96sWTnahLrolW++aUSyoZniPtzJCgK+q3ozQD1Z1uF17WfcPBo8
-         PPyW5fUHLfVZmXTXWV44UeISDhAbI6biMBsWJkbBXQyRMEfR962sjmkO80n2dG02qatf
-         N0EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBAlFoDCawysjcYbyI76Kfjtdlh8ffoZ2mEBKjQ3kyo+bKUBFhuFTFmTccCioIL/3eqAzgJ1x7Svsx@vger.kernel.org, AJvYcCVBreMueU/+Aj41WimNqQT6j5NvOtR//SZ4bzRodTTnkhUoT/hdaoo59SrjbljQx9SobootsYVaCHkKh1Sh@vger.kernel.org, AJvYcCWoChwVb6/u35xY3iKrERiX4ltECIzVmnmhwv7LTxmDkB4cbUCY72X1UhDn26GMFrV7UrOIiHsu8uvY@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsEkZqPisCRqINTOb85IfBVBBXi5ap+6UNXYsI4ygLNcJ1z5kQ
-	eo97Ko6CgoXLU8WH1T0os1a8CESLIj6hy83UhHVoBcc2FFjInmn5oFGI0Q==
-X-Gm-Gg: ASbGncu9J41FLn/acB53p9ba6/cw1+qde60ofsgNu4ZBsF1jx6vtCxUMjdIpMCUr7/a
-	nJG5W2PazKdtU+7LI+ZrihD/hsLRH2OLCrU6FbwcCayJ7I2xwzicUNi9dRIRpbAZYOehi/GucRk
-	hIjS8KW7SHNVEc6eYiuZCoC0c42/oycq5OUwQ6amBn2dsBbaYJYLCK66kH9KB2qdjAdSgpIRYYm
-	x98oxxCcgchYrPZ70Bas5z1YChHe9KU6FGZp352lhvo3uwK2A+L/13sxbkx8po=
-X-Google-Smtp-Source: AGHT+IEGABj/Ef3ZOUL9jxvGYKhb8A2rcL1PRQVmqdpD8nEJOAbqtF+JuWXEScWBdvDhbAV8OsVGxQ==
-X-Received: by 2002:a2e:b891:0:b0:2ff:78be:e02d with SMTP id 38308e7fff4ca-2ffa7123e2emr52176651fa.11.1732526183996;
-        Mon, 25 Nov 2024 01:16:23 -0800 (PST)
-Received: from [172.16.183.207] ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffae43dac4sm11321591fa.55.2024.11.25.01.16.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 01:16:23 -0800 (PST)
-Message-ID: <964035d9-cccd-4e12-af71-00ca39cc3596@gmail.com>
-Date: Mon, 25 Nov 2024 11:16:22 +0200
+	s=arc-20240116; t=1732526190; c=relaxed/simple;
+	bh=0k7jgGvkFXzafjUapZMYG1Qcle4a+6D/0t/ThVVD23g=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=iXYT3rPA2Ysm3ESp6UOYdUYgKsFtZp+wUQwTWHqjAXOlWzNPvWtO9fFqgdQXYKRs0RztcH72wsVxMrJvIGvMb/zAzhdLISL04ssbcxLDlL2yiqAm00UPeF/zxpwl+cbt22eK/lWR369gV4yKnK3RjEBsmjA7UzbEedmq8SbNiTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RmiHhwjB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 772EFC4CECE;
+	Mon, 25 Nov 2024 09:16:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732526189;
+	bh=0k7jgGvkFXzafjUapZMYG1Qcle4a+6D/0t/ThVVD23g=;
+	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
+	b=RmiHhwjBNeTuge8/ebrVQFewoge1S35Ob75fEqEVLj4IZb5EuKI7ZiYIUn0ZK60T0
+	 y6MxkdbKCbojE/THM3VGgR2xTx1TY8QeDBmLixxXQ+CwJ8pAGojZZlVEEn85HuLnTA
+	 slsTF9clpq3Vm1vecEd297c/C2GlytGzOD9vpLAD/4PVug9KJp80nzikGN02k7OB+h
+	 l3wa4IeZzsbbFO6cESNxumWpnc+ooZaWV1x5DE1p4e59AvWx4Ow2/uT+1rt+Sba1dc
+	 RlRl4T6APZhshFRXzu3wPZUea5LXWvXo5pVyRssie73KpTmcPQVd39/T4SK0eQW1vh
+	 /N6nMYNpbm0PA==
+Message-ID: <7e21ca957adf9bea6df99767cc28fe82@kernel.org>
+Date: Mon, 25 Nov 2024 09:16:27 +0000
+From: "Maxime Ripard" <mripard@kernel.org>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v4 03/10] drm/tests: hdmi: return meaningful value from
+ set_connector_edid()
+In-Reply-To: <20241122-hdmi-mode-valid-v4-3-2fee4a83ab79@linaro.org>
+References: <20241122-hdmi-mode-valid-v4-3-2fee4a83ab79@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev, "Andrzej
+ Hajda" <andrzej.hajda@intel.com>, "Chen-Yu Tsai" <wens@csie.org>, "Dave
+ Stevenson" <dave.stevenson@raspberrypi.com>, "David Airlie" <airlied@gmail.com>, "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>, "Jonas Karlman" <jonas@kwiboo.se>, "Laurent
+ Pinchart" <Laurent.pinchart@ideasonboard.com>, "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime
+ Ripard" <mripard@kernel.org>, =?utf-8?b?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, "Neil
+ Armstrong" <neil.armstrong@linaro.org>, "Raspberry Pi Kernel Maintenance" <kernel-list@raspberrypi.com>, "Robert
+ Foss" <rfoss@kernel.org>, "Samuel Holland" <samuel@sholland.org>, "Simona
+ Vetter" <simona@ffwll.ch>, "Thomas Zimmermann" <tzimmermann@suse.de>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/8] iio: gts: Simplify using __free
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1732105157.git.mazziesaccount@gmail.com>
- <5efc30d832275778d1f48d7e2c75b1ecc63511d5.1732105157.git.mazziesaccount@gmail.com>
- <20241123163713.2ec03a37@jic23-huawei>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20241123163713.2ec03a37@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-Hi Jonathan,
-
-Thanks once again for the review :)
-
-On 23/11/2024 18:37, Jonathan Cameron wrote:
-> On Thu, 21 Nov 2024 10:20:07 +0200
-> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+On Fri, 22 Nov 2024 11:12:59 +0200, Dmitry Baryshkov wrote:
+> The set_connector_edid() function returns a bogus 0, performing the
+> check on the connector->funcs->fill_modes() result internally. Make the
+> function pass the fill_modes()'s return value to the caller and move
+> corresponding checks to the caller site.
 > 
->> The error path in the gain_to_scaletables() uses goto for unwinding an
->> allocation on failure. This can be slightly simplified by using the
->> automated free when exiting the scope.
->>
->> Use __free(kfree) and drop the goto based error handling.
->>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->>
->> ---
->>
->> Revision history:
->>    v1 => v2:
->>    - patch number changed because a change was added to the series.
->>    - rebased on iio/testing to avoid conflicts with queued fixes
->> ---
->>   drivers/iio/industrialio-gts-helper.c | 19 ++++++++-----------
->>   1 file changed, 8 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/iio/industrialio-gts-helper.c b/drivers/iio/industrialio-gts-helper.c
->> index 291c0fc332c9..602d3d338e66 100644
->> --- a/drivers/iio/industrialio-gts-helper.c
->> +++ b/drivers/iio/industrialio-gts-helper.c
->> @@ -4,6 +4,7 @@
->>    * Copyright (c) 2023 Matti Vaittinen <mazziesaccount@gmail.com>
->>    */
->>   
->> +#include <linux/cleanup.h>
->>   #include <linux/device.h>
->>   #include <linux/errno.h>
->>   #include <linux/export.h>
->> @@ -167,8 +168,8 @@ static int iio_gts_gain_cmp(const void *a, const void *b)
->>   
->>   static int gain_to_scaletables(struct iio_gts *gts, int **gains, int **scales)
->>   {
->> -	int i, j, new_idx, time_idx, ret = 0;
->> -	int *all_gains;
->> +	int ret, i, j, new_idx, time_idx;
->> +	int *all_gains __free(kfree) = NULL;
-> See the docs in cleanup.h (added recently).
 > 
-> Constructor and destructor should go together.   Dan wrote good docs on this
-> (which are now in cleanup.h) so I'll not go into why!
+> [ ... ]
 
-I went through the cleanup.h, and noticed the nice explanation for the 
-pitfall where we have multiple "scoped operations" with specific 
-ordering required. I didn't see other reasoning beyond that - I do hope 
-I didn't miss anything.
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 
-I find introducing variables mid-function very confusing. Only exception 
-for this has been introducing temporary variables at the start of a 
-block, to reduce the scope. I would still like to avoid this when it 
-isn't absolutely necessary, as it bleeds my eyes :)
-
-I really don't see why we would have other cleanups which required 
-specific ordering with the allocated "all_gains".
-
-Anyways, if you think we really have a problem here, would it then 
-suffice if I moved the:
-
-         gain_bytes = array_size(gts->num_hwgain, sizeof(int));
-         all_gains = kcalloc(gts->num_itime, gain_bytes, GFP_KERNEL);
-         if (!all_gains)
-                 return -ENOMEM;
-
-to the beginning of the function, and the "int *all_gains __free(kfree) 
-= NULL;" as last variable declaration?
-
-(This is not optimal as we will then do the allocation even if 
-converting gains to scales failed - but I don't think this is a real 
-problem as this should never happen after the driver is proven working 
-for the first time).
-
-> Upshot is this goes where you do the kcalloc, not up here.
-
-*whining* "but, but, but ... it is ugly..." :)
-
-Yours,
-	-- Matti
+Thanks!
+Maxime
 
