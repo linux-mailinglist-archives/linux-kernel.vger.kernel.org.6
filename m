@@ -1,47 +1,50 @@
-Return-Path: <linux-kernel+bounces-421481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A42859D8BD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:02:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 365919D8CAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 20:12:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FEECB322D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:01:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3DD3286BEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8588B1B87E1;
-	Mon, 25 Nov 2024 18:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADEB1BD00C;
+	Mon, 25 Nov 2024 19:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VokZd+Rb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="BsG9J1qH"
+Received: from forward502a.mail.yandex.net (forward502a.mail.yandex.net [178.154.239.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB55041C92;
-	Mon, 25 Nov 2024 18:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707741BCA19
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 19:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732557643; cv=none; b=F5GH7qKEVDRvdjMQt9WhHypLc7UPJQ0x91d2SVvFsQQsEoVu5t1grSN3Q26pzh651LIigLh1eg6IazNkyBzU4j8AvccKhhztzgw0TJr3aNTvni2isc5U6H1/1y2BlWjA2FyoR6o+g09m5w4t73S43GBfhDVPtS2RpVeeQta4pvs=
+	t=1732561952; cv=none; b=BtLCiEPZmqTfi2IGCy3+3pu0lhdTqkFJEAgA7WrzKu8gqp4HlfcJ2z9HKiNVcXJzizdMUpwnM9BLaxP5u9pneyXVy5+2Aiz6MCi1/jbhyMKte7L5NGBd/a2ebLaNtO9qG2PQlQOxoYTisv9mDlPUcx0JG9B2KeFQiivG+Bs5974=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732557643; c=relaxed/simple;
-	bh=t3yRoPdOkAQ3koYhuWnWz98SIxwom1UcZJLowruDFBA=;
+	s=arc-20240116; t=1732561952; c=relaxed/simple;
+	bh=JC+fXeUoKkNrn2Em1uen8majeM3HYSrMt/SoB32f7S0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ejMDNcwAmCoJ2fr/RLGwU1uku/fCR+budFKaVnwwGrbPgBgauW3xuS0kCjM8jaSuQnzirz6RRjq0K6Aq7KXe71Dkl+CHrOlzEzWIS1QsX3fYCZYCj2RJ9A48cUOG9igXFt4oxhf2qWmoqTn5RjbwT+8uiCnS41F+xF/i8Ve5VVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VokZd+Rb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFE31C4CECE;
-	Mon, 25 Nov 2024 18:00:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732557643;
-	bh=t3yRoPdOkAQ3koYhuWnWz98SIxwom1UcZJLowruDFBA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VokZd+RbKt6UB85x6xWElXAwbPr4mTJFV8HfDkNJRPHLHt+R9/tUYQL4Vh2gTta3M
-	 hYDukxVDWC19woR6U0zhlpDYlwE3Cg80DWztFGf3gx/v2qgHq9/OmVcKpmTKWWfnP/
-	 10O2Dnydyyy8qQ0n8WL0QhfKyPEEFNFSS8dH1AAGAGHN3lQbbI0qcL37I5JDuA0Joo
-	 r/A87nC/NpBet3U43P6e2iW8OYZZCPadOr74srO35Hq5nTwMXmv4VVMkjm7x5JzNC0
-	 eV5kKB7SbRv+WD1aDCrU6mQA4KRimo8MIg3IB8sV8WiwFIk2QlOmi6o6ObEFZYLprE
-	 avuvaL2TfsAYA==
-Message-ID: <936fc52e-95a7-48f6-85bb-13dbc10ddb71@kernel.org>
-Date: Mon, 25 Nov 2024 19:00:36 +0100
+	 In-Reply-To:Content-Type; b=nqs2qLMQV6/FKXsw8D1E5bbcyaP151BsTadGJrRdDi9HMDUpSEr4cXJVp9BFLEnEjxL2z36p144hEAdTAkEW6aK00SoGT8PdQ8tADknsPXfZQKfIa2L637zOLhJqN26eMyTMVbzVGFsgpQ2uK1oakq3DxXYaPCb2qq1N1g5yJR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=BsG9J1qH; arc=none smtp.client-ip=178.154.239.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net [IPv6:2a02:6b8:c15:2e9d:0:640:5e79:0])
+	by forward502a.mail.yandex.net (Yandex) with ESMTPS id A9AE661399;
+	Mon, 25 Nov 2024 21:01:48 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id l1cKLClOm8c0-wNvFb8PZ;
+	Mon, 25 Nov 2024 21:01:48 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1732557708; bh=JC+fXeUoKkNrn2Em1uen8majeM3HYSrMt/SoB32f7S0=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=BsG9J1qHyrSKfozgTI22QFATltSIY+/cexzIxcFgkxjjCFVfh8JjgWD1rtx0mjGLL
+	 LfGyaWkwYEFqlJ/5UFV/9Q4a2iuOtmU4wyaa5YDyomhKf6aXl3vn1q10vJxV52uqvO
+	 Th01mImLH0hAOH7Im3tsN9EibB7RaoIn+uw+P+mc=
+Authentication-Results: mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <4689f014-2885-42b9-91a4-ff8b8133599f@yandex.ru>
+Date: Mon, 25 Nov 2024 21:01:47 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,94 +52,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V6 3/4] dt-bindings: interconnect: Add generic compatible
- qcom,epss-l3-perf
-To: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
- Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Odelu Kukatla <quic_okukatla@quicinc.com>,
- Mike Tipton <quic_mdtipton@quicinc.com>, Sibi Sankar
- <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241125174511.45-1-quic_rlaggysh@quicinc.com>
- <20241125174511.45-4-quic_rlaggysh@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: userfaultfd: two-step UFFDIO_API always gives -EINVAL
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241125174511.45-4-quic_rlaggysh@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To: Peter Xu <peterx@redhat.com>
+Cc: Linux kernel <linux-kernel@vger.kernel.org>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>
+References: <2d35e5f7-2edc-4ef0-b71b-82186c0627b0@yandex.ru>
+ <Z0Se4BuVfqwjeCWV@x1n> <b0818813-5a4c-4621-9810-dc7443a23dd1@yandex.ru>
+ <Z0Ssq15MQd3rimBr@x1n> <da978e8c-2a72-4b7b-ae67-41e6ff0d5089@yandex.ru>
+ <Z0SwOILi4R4g9JBa@x1n> <9b68a811-ffed-4595-83a6-0ef78a7de806@yandex.ru>
+ <Z0S3isgc-QlEF7oW@x1n>
+From: stsp <stsp2@yandex.ru>
+In-Reply-To: <Z0S3isgc-QlEF7oW@x1n>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 25/11/2024 18:45, Raviteja Laggyshetty wrote:
-> EPSS instance on sc7280, sm8250 SoCs, use PERF_STATE register instead of
-
-
-This should explain that these devices are actually 100% compatible.
-
-> REG_L3_VOTE to scale L3 clocks, hence adding a new generic
-> compatible "qcom,epss-l3-perf" for these targets.
-
-Not the best reason... You add one more generic compatible, because
-devices are different? With such reason answer is: no, do not add
-generic compatibles, because they are not generic.
-
-The entire point of having generic compatibles is that they really are
-generic. Here you prove that they are not generic, so why creating one
-more generic compatible which might not be generic at all?
-
-I already expressed above concerns multiple times:
-1. In previous versions of this patchset
-2. In other threads
-
-I am not against this change, but I am not going to Ack it. Get acks
-from other maintainers, I am not happy with multiple
-generic-but-actually-not-generic compatibles. I think that is poor approach.
-
-Best regards,
-Krzysztof
+25.11.2024 20:44, Peter Xu пишет:
+> Apps who tracks snapshots needs the unmodified pages before being written.
+> Those cannot rely on kernel resolution because it needs more than "if the
+> page is written" - it also needs the page data before being written.
+Say I am writing a frame grabber
+(not exactly, but very close to).
+I monitor the video buffer of another
+process, and "snapshot" it with some
+frequency. I only need to know what
+pages were modified, to reduce the
+bandwidth to an absolute minimum,
+and if the process is not playing - then
+to not grab anything until it resumes.
+UFFD_FEATURE_PAGEFAULT_FLAG_WP
+works quite well for me already, but
+I envision a huge boost with
+UFFD_FEATURE_WP_ASYNC.
+What would you suggest for that usage
+scenario?
 
