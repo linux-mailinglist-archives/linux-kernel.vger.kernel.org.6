@@ -1,120 +1,161 @@
-Return-Path: <linux-kernel+bounces-420696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B23779D823D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:29:11 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52A511635B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:29:08 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6F21917D4;
-	Mon, 25 Nov 2024 09:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QP/GEmsD"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 116579D8248
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:32:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855AD190696;
-	Mon, 25 Nov 2024 09:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57180B2750F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:29:35 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A33190485;
+	Mon, 25 Nov 2024 09:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HuJqErMZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9014319006B
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 09:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732526940; cv=none; b=Ywvw5zNricDkwjlh9INcECLv/jI00dziTgvrdKYzuIitIsBkOsiR/49yVSX4NLEcWiyNWTIzV6Sr0bwYWLBK6X/WpAmKK9l0KdIIaCesctyAO/eDBYdcJJ0y44ogCm/j3ODD/kMdtn9FqjWKJiyn375iGYG/KugMC2DSFHXlo18=
+	t=1732526970; cv=none; b=jCZOq+OpyMbldIntYHNwsnXWQ+d+DpsF5sSNhetIb6teKtc7EjWgPflxK3lkdbENefC5rGN7/1RUQTviPAqz+cI6ehpJrjRBWy/8QId/fgUlKc0jyEPfnwOj2Cnj3qlg9o87NregEKBP+UQvedU+AjM9VauVSsw8GciEzDxJaVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732526940; c=relaxed/simple;
-	bh=Gy/c40HnFX5lfiJDX3MOa3xqCqS/HefmnZXSHoaVp4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fnRHVWrHUtnoVfetWhpol6KzDE3ueHQbBc9L2L3FravcDE9cxwGwaGznrorN+mHy7xDVpE3ki2WT+2vbxDbKuZEdCbwVd6Wnt8iy2PDzSQ0WirpmZa+4jiWgXG2TLFxBsGHiVE6bZBaEQ5lYQtgIV5OQdbdfgFM/qJaW9Sr9MHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QP/GEmsD; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=tof/qubOSp2l2+fEKOwuosAzk3Cq2zkdUc2ew5U+ClY=; b=QP/GEmsDW9dwpTcMSXBtlWSDQa
-	BtKxUYI2UBHxhyox+GAvlHSLQsmeIjY9mHEevSS4LnRuvQalQaQwBVB6/IQdsE8Qvqq5+p8SKx4kK
-	a1/QMBDIMdDnnfYt8h7Wt7kf7ZfnZ65DdAT87j4cwMgVJDGHR6vQawzBhqfDjx4TEJx6YwzIq1Zs0
-	ceeFPmqfF5I+e9f8lL6kH2iHarw68UYj9FKtHEd/rMQTWzq0zthEXon2GIb2IA/rD70s77MXVX7NF
-	KVTP/zjTMDI4vda1vuPo2QhzonjEjOWXLKkZm/WfBdyYoQj4h/stwq9GhX45idUl/SI8N/zX/7De9
-	E5Kw1Kyw==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tFVOp-000000014OY-2RGD;
-	Mon, 25 Nov 2024 09:28:55 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A783730026A; Mon, 25 Nov 2024 10:28:54 +0100 (CET)
-Date: Mon, 25 Nov 2024 10:28:54 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: jpoimboe@redhat.com, linux-kernel@vger.kernel.org,
-	Fangrui Song <i@maskray.me>, llvm@lists.linux.dev
-Subject: Re: [PATCH 1/9] objtool: Generic annotation infrastructure
-Message-ID: <20241125092854.GG24774@noisy.programming.kicks-ass.net>
-References: <20241122121016.372005127@infradead.org>
- <20241122121555.621070802@infradead.org>
- <20241124031640.GA3646332@thelio-3990X>
+	s=arc-20240116; t=1732526970; c=relaxed/simple;
+	bh=l/q2gxxyKo7+bYwAJ2zy18y5mBbZiypPDofxassGcHA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=A2PF4Dl6eAOhryQIDMNXxcgbA+IehUA6apKgQtXnPBnvukiR/npP13QRn2ltEQzFJGkbRuY4JRhp+tXqm3l2beDZB0csQNKd5Uq6v9KZEDUGfz6W/3AK0IRmtnecC2bUALnbgon3iHRAxQfcCBL6tRR09ShBBDlAiqDvQzCPyLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HuJqErMZ; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732526969; x=1764062969;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=l/q2gxxyKo7+bYwAJ2zy18y5mBbZiypPDofxassGcHA=;
+  b=HuJqErMZZxi3MvugqAARWP73dko8UxpIZsOZ3ybaZu5YdPGJs5TGTR42
+   AZtbdbbW4DDuONUUiBmDFiqYdeAvbYdX+4jemcLhaGKVYa5KU1WR5FYI4
+   WKEdd2KnxYKRlvoDLuHxW73imRtbbv3g8uTKL7Fbw/PEdwZDvW1RsfGsq
+   5yo+7Qqt97JAFUs0bH6W2LRpIjPAzXmvbtEru/rsEMutQhkWQGCGvaCNE
+   TJzgxE+4+NVihg/0yKXgAEm5b9krSWdvoB77ZUALqo6hr03B2rKA4sQ+9
+   sDgehZREGIzMtflIr/eX/ejG1qaEtY88KFAnZStFh90EQ2OQ7zhjG2ZAf
+   A==;
+X-CSE-ConnectionGUID: aHmpZeNcSwqZ4EEJkF+yYQ==
+X-CSE-MsgGUID: v4uQWPeeQPGR81uqVpbOXA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="50032649"
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="50032649"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 01:29:27 -0800
+X-CSE-ConnectionGUID: 7QBII2+CSEi2FEIoGsVC1w==
+X-CSE-MsgGUID: vhG3nDZhRvSETyB5fdRrUw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="91167848"
+Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.243])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 01:29:21 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>, =?utf-8?Q?Ma=C3=ADra?= Canal
+ <mairacanal@riseup.net>, Haneen Mohammed <hamohammed.sa@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>, Melissa Wen <melissa.srw@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>
+Cc: arthurgrillo@riseup.net, jeremie.dautheribes@bootlin.com,
+ miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
+ seanpaul@google.com, nicolejadeyee@google.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Louis
+ Chauvet <louis.chauvet@bootlin.com>
+Subject: Re: [PATCH RFC v2 11/18] drm/vkms: Introduce config for CRTC name
+In-Reply-To: <20241122-google-remove-crtc-index-from-parameter-v2-11-81540742535a@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20241122-google-remove-crtc-index-from-parameter-v2-0-81540742535a@bootlin.com>
+ <20241122-google-remove-crtc-index-from-parameter-v2-11-81540742535a@bootlin.com>
+Date: Mon, 25 Nov 2024 11:29:17 +0200
+Message-ID: <87r06zy842.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241124031640.GA3646332@thelio-3990X>
+Content-Type: text/plain
 
-On Sat, Nov 23, 2024 at 08:16:40PM -0700, Nathan Chancellor wrote:
-> On Fri, Nov 22, 2024 at 01:10:17PM +0100, Peter Zijlstra wrote:
-> > Avoid endless .discard.foo sections for each annotation, create a
-> > single .discard.annotate section that takes an annotation type along
-> > with the instruction.
-> > 
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ...
-> > --- a/tools/objtool/check.c
-> > +++ b/tools/objtool/check.c
-> > @@ -2373,6 +2373,49 @@ static int read_unwind_hints(struct objt
-> >  	return 0;
-> >  }
-> >  
-> > +static int read_annotate(struct objtool_file *file, void (*func)(int type, struct instruction *insn))
-> > +{
-> > +	struct section *sec;
-> > +	struct instruction *insn;
-> > +	struct reloc *reloc;
-> > +	int type;
-> > +
-> > +	sec = find_section_by_name(file->elf, ".discard.annotate");
-> > +	if (!sec)
-> > +		return 0;
-> > +
-> > +	if (!sec->rsec)
-> > +		return 0;
-> > +
-> > +	if (sec->sh.sh_entsize != 8) {
-> > +		static bool warned = false;
-> > +		if (!warned) {
-> > +			WARN("%s: dodgy linker, sh_entsize != 8", sec->name);
-> 
-> Thanks to Fangrui, this has been resolved in LLVM main:
-> 
-> https://github.com/llvm/llvm-project/commit/d4bed617f4378873d7ddf4b53c041e7b39d1a9ca
-> https://github.com/ClangBuiltLinux/linux/issues/2057#issuecomment-2495675374
-> 
-> I have built a version of LLVM from main and verified that this warning
-> does not trigger with that version, while it does with LLVM 19.1.4.
+On Fri, 22 Nov 2024, Louis Chauvet <louis.chauvet@bootlin.com> wrote:
+> As a CRTC will be a directory in ConfigFS, add the name configuration for
+> CRTC name so we will be able to reflect the configfs directory name in the
+> drm name.
+>
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> ---
+>  drivers/gpu/drm/vkms/vkms_config.c | 5 +++++
+>  drivers/gpu/drm/vkms/vkms_config.h | 2 ++
+>  drivers/gpu/drm/vkms/vkms_crtc.c   | 2 +-
+>  3 files changed, 8 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/vkms/vkms_config.c b/drivers/gpu/drm/vkms/vkms_config.c
+> index a2539fb56b602569b75748fdf9c4784f104b0bff..3252f657ce515c0193a8c0e709bfe861feba0aca 100644
+> --- a/drivers/gpu/drm/vkms/vkms_config.c
+> +++ b/drivers/gpu/drm/vkms/vkms_config.c
+> @@ -37,6 +37,10 @@ struct vkms_config *vkms_config_alloc_default(bool enable_writeback, bool enable
+>  	if (!crtc)
+>  		goto err_alloc;
+>  	crtc->writeback = enable_writeback;
+> +	crtc->name = kzalloc(sizeof("Main CRTC"), GFP_KERNEL);
+> +	if (!crtc->name)
+> +		goto err_alloc;
+> +	sprintf(crtc->name, "Main CRTC");
 
-Excellent, thanks for getting this sorted.
+Ditto, kstrdup()
 
-Since there's a fair number of llvm releases between the minimally
-supported version to build a kernel with and this fix, I'll leave the
-warning as non fatal.
+>  
+>  	encoder = vkms_config_create_encoder(vkms_config);
+>  	if (!encoder)
+> @@ -219,6 +223,7 @@ void vkms_config_delete_crtc(struct vkms_config_crtc *vkms_config_crtc,
+>  		}
+>  	}
+>  
+> +	kfree(vkms_config_crtc->name);
+>  	kfree(vkms_config_crtc);
+>  }
+>  
+> diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
+> index 4223edd94ec270915dd658c0b5efd489554d33a5..4a4c16dea7855cf36060986ef247be698974fafc 100644
+> --- a/drivers/gpu/drm/vkms/vkms_config.h
+> +++ b/drivers/gpu/drm/vkms/vkms_config.h
+> @@ -29,6 +29,7 @@ struct vkms_config {
+>   * struct vkms_config_crtc
+>   *
+>   * @link: Link to the others CRTCs
+> + * @name: Name of the CRTC
+>   * @possible_planes: List of planes that can be used with this CRTC
+>   * @possible_encoders: List of encoders that can be used with this CRTC
+>   * @crtc: Internal usage. This pointer should never be considered as valid. It can be used to
+> @@ -38,6 +39,7 @@ struct vkms_config {
+>  struct vkms_config_crtc {
+>  	struct list_head link;
+>  
+> +	char *name;
+>  	bool writeback;
+>  	struct xarray possible_planes;
+>  	struct xarray possible_encoders;
+> diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
+> index 3825fba57c012f84cbe67114e053dcd7fcfa283d..25a3d97a362afd0d40f3e023d9cce985d447a880 100644
+> --- a/drivers/gpu/drm/vkms/vkms_crtc.c
+> +++ b/drivers/gpu/drm/vkms/vkms_crtc.c
+> @@ -292,7 +292,7 @@ struct vkms_crtc *vkms_crtc_init(struct vkms_device *vkms_device,
+>  
+>  	vkms_crtc = drmm_crtc_alloc_with_planes(dev, struct vkms_crtc, base,
+>  						primary, cursor,
+> -						&vkms_crtc_funcs, NULL);
+> +						&vkms_crtc_funcs, config->name);
+>  	if (IS_ERR(vkms_crtc)) {
+>  		DRM_DEV_ERROR(dev->dev, "Failed to init CRTC\n");
+>  		return vkms_crtc;
 
-One question; is there any other means of setting entsize aside from
-(ab)using SHF_MERGE ? The (GNU) as documetation for .section only
-mentions entsize in combination with SHF_MERGE.
-
+-- 
+Jani Nikula, Intel
 
