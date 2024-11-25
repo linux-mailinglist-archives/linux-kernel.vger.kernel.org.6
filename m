@@ -1,313 +1,271 @@
-Return-Path: <linux-kernel+bounces-421558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 083329D8CD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 20:30:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A7B4168E8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:30:16 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22BA01BD01E;
-	Mon, 25 Nov 2024 19:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="O343naaT"
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2074.outbound.protection.outlook.com [40.107.104.74])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B93C49D8CDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 20:33:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7E017C7CA;
-	Mon, 25 Nov 2024 19:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732563011; cv=fail; b=OSvskMZFS4g86jsAdTNWocSvHoPazZJhpDT8RbMlz5sPvD0y3e2gM5yUIdcbMhlSpZtAfIaZWMAHGLz9NjtVaxCgxj4Ik1wtfmHGKq7ojSJBfgcpm/mqodkIjAdUZtI7uu65ZrugmHJklEL/WVZginzwgU2B5yuKlmj7cdDfypA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732563011; c=relaxed/simple;
-	bh=TLAEsjNv0ngfovY/kAjtngeaW0ytXffY1AeOiic1TXs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=GVj5lXUwwv7Qlneg3VdtATPPkxcNiDawmNaYzaek03U/hkZAAxsHa0pfmn6Vi8gTrxR/pHIByjs2DwKFqsLd6ykH6dMeYbPJjmB4wIMLKMUdx6196i4AXrdVzWFJshZ4OS3Yk7LDUFxB3gMVks5oTDGmoUaULICWDWQBTDqz/EA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=O343naaT; arc=fail smtp.client-ip=40.107.104.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yG+6EOZKOQsGQ4lB+XKNXAcFi8ATxBWioXKHoG6nndKH+dAbq1KxELMwPaEU/H0czgtSn3lPZtfkxSQmrrGWIKynNg+CxtTB6mDtsvjDIPw2d/RdGVzWOGakcFS5tXtN7xgS0Kzzkp/PqEZ1vQ//UNbDYcIEi7Wtr7QDfCW8snptiEHOtasoU66s2hqDCx7nLB23O3qVzwEtgK2dwUVUGr9kH/PQpfaesP3A3PlRPtkoY8cyhaxFjIdh/5oeLyROSrPXKSUf5sYfjdinxBqy8lxBm5BdNbn0WQgR2+fFa3D63RrzxRi5ji3al+0ZLAjiOUYpnYHDb2n5CH7u91AKtw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nvL2K8HtHiS2mkxAKaLwOL+QRdBph3La61cqErZKqRk=;
- b=G4N1pZPAGzlF7ZayLuWjFzmElHH0WZNwWQkx+IZBbhRHlS9puhvbah+ivaIGXzmNCdm4RGyzax1nXYIj/N3gM2CXOGvwvPB9EcPMxyK7iyaA9mRZKMgt/et42rKum07AnoifiIRO4iAI2E1/UH/sEeDN65JQ/43AlKQe65TXrCxxQWA5Y06zBKQGH034eQ4gKbQCtt0rd9BKySCPVRJNh5Bbbg/Po+PK30q3gsSqic5Y0SJVzP29X8qVobcRv+5AeMoEpQ482huHkIpNDpQWnzqLXfTddNHw5lj3dF5/ivLtlPfUsmRY2OnlXAkqGnrSBdmqeHH8zTk99QUdjlMddA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nvL2K8HtHiS2mkxAKaLwOL+QRdBph3La61cqErZKqRk=;
- b=O343naaTp+sbENb08wQYHuL+Q1z0uDt10zbcSePt+EnQ5+oX1jsXBs4bmw0mj/mPJEw8+3stH8tvUQ6WMX9GQP+hje8d5CJnradh0gDBAXaUtKz1HytZB6BkTkaoUHWMwFcie0ULSxDdtSz/75ihFbS0eIe2mzHgesNa4xoVZoS2YsLHhkhHSneCxYma/12Xcn9cWYUeZqDr3Q/klug4If0df3wuIBkRsCNMP4uQH/2hpj38Pvmgu0P5CJv9aAPjsgcs0Gz/NGGp6KEx0uM2K3R9boHuGGvemrFJM15M1JU+yb2oT8uLSLmWBIJwiGNk8iu067h7U+xjDipJ0/kInw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DU4PR04MB10982.eurprd04.prod.outlook.com (2603:10a6:10:589::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.27; Mon, 25 Nov
- 2024 19:30:06 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8182.019; Mon, 25 Nov 2024
- 19:30:06 +0000
-Date: Mon, 25 Nov 2024 14:29:56 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Bjorn Helgaas <bhelgaas@google.com>, Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	alyssa@rosenzweig.io, bpf@vger.kernel.org, broonie@kernel.org,
-	jgg@ziepe.ca, joro@8bytes.org, lgirdwood@gmail.com, maz@kernel.org,
-	p.zabel@pengutronix.de, robin.murphy@arm.com, will@kernel.org
-Subject: Re: [PATCH v6 1/2] PCI: Add enable_device() and disable_device()
- callbacks for bridges
-Message-ID: <Z0TQNOTeASXJWU8N@lizhi-Precision-Tower-5810>
-References: <20241118-imx95_lut-v6-0-a2951ba13347@nxp.com>
- <20241118-imx95_lut-v6-1-a2951ba13347@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241118-imx95_lut-v6-1-a2951ba13347@nxp.com>
-X-ClientProxiedBy: PH7P220CA0048.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:510:32b::19) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B40AB22D38
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:33:18 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26351B87CE;
+	Mon, 25 Nov 2024 19:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ebq2W0+D"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD311552FC
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 19:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732563192; cv=none; b=TDJaSAUUzHtPQIyPjuLM7JFuxcoA5aoSYXIMv4a07h8J6M8eF98AxOugdrAPEWTwgm0Nnjzi8TuZp8a4OSdyLR4bx3JlJPzf0KZwpkDfQaSsGJ4DUmMAd2pCJkIeBEwg8hZGBqPHix8XLFFLfb7nNYsG/8yQqvbXtX1eMIJTLg8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732563192; c=relaxed/simple;
+	bh=7cYtgsP3Su6K2SrZ/UMJuDt2M7yXmwcaLawh0yeObls=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=E6nx/oXQY5+vLYYq8dRyyITZZuXjXYEawJAbmSbTGBfxXnXIDr45MEcZuS3khGAFjDKPBlnBgWTrzP9Zb8WOVl+qeZvbbTRmqc0M4v1g40KObSFxPnKUeBxikU5Nlo87XtrvT/EFcw5wIVBzIyS2ZzKQEvCSjSp0zXNaV1qtoEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ebq2W0+D; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732563190;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fltlq3QdnTcV73dsBXR/sCICcjYVCQiAqJanAUwRHIM=;
+	b=ebq2W0+D+YFobY4rUy2Ks1NaxhLT4V8G8n9DawlbiklcMn2EVkD5yXsGBjHgWpSkGW7TIv
+	mMl4F64Not2L5qCUU6GPqjixpcDJW+XFGWT+LZRGZUMM+TaX4oQxBYBXrACggJsjDyGapn
+	Hy2QPhan5eMTNt5jtoBqoj2gb2//HY4=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-22-Ohfg3OH9N0CN0gZSqgsEGQ-1; Mon, 25 Nov 2024 14:33:08 -0500
+X-MC-Unique: Ohfg3OH9N0CN0gZSqgsEGQ-1
+X-Mimecast-MFC-AGG-ID: Ohfg3OH9N0CN0gZSqgsEGQ
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4667e12c945so29666751cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:33:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732563188; x=1733167988;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fltlq3QdnTcV73dsBXR/sCICcjYVCQiAqJanAUwRHIM=;
+        b=p7RvQueDi/9sMVZJ2cscMP1wtloZYvDIeZg5hs2NSSQktRDu+2eDSKolMLytjjcAkI
+         Lt9LsJu2sHt9IjWTPHsORONRRK77jk9qUVUpvfiRlBcXtcoGDHAGeBrVr1KqR/gHn0/+
+         ry6ReCZxY4sZzSeQO2zvWnQYML4Um2OHbpbL4xwg4vGRdfU86iiscCuO2Z9FK4RZbQ5X
+         nB0lHFYi3OOEcLxKApLSEw1BZdCzbrnjwnAx6i71ksfGdRBphq1O3iPv8BOBqxZeCqEx
+         MMuCm4SxRgE6Ml3fJa0Hm62eRr27CpZoVr8rU81ALZz/cgB//sEXFTKcy+1RFEu5cAjp
+         xh4w==
+X-Forwarded-Encrypted: i=1; AJvYcCVAVzIoXfPGL42Gxj/Ii/vLn5HFKF9nn0YJW843YNaZcBfHKX9HXh5h+1MYlXlUKiFvWYRKiXIB7LDLyBM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK/TK4gMLuOnz0hXIU9BQCSen4S/IclstQtkf69u7UmEHklk2E
+	qjUZ4QC8+EVr6mV4mq1VwDY+rdZA95+ipc+WlaX25ihkqO++JuZIdlqNWa5fscMZtwsh57ksQJ2
+	snTes1UXlJfonXKjEIa952uZymhQhKonknY4znu+3P0kKPO0TLu7YsyGTCDEcSw==
+X-Gm-Gg: ASbGncuFfcBmyndKSZ3Ri3n3JhzqQCqG0kgd3K5twVpIY/xwlZW6wY1NY36ejeovZdv
+	Mn+cMI/s8UpboJ9oC3IbUnYP9QGqYqLZM/3GCEwqNdIoureKetyiFPDEZfFY8FAJBczrRt/HihI
+	s2rWBc2MWjsgjas+OJwNXDGEvjxt0uFpaW/HhuTehaxIMMEPltQ9d0TcM20tpIhc7IDG/NhRPEV
+	54rw+F0GD2oVsJUQ+UNgSE5/mLipGcd6P8yTK1uI99wgyVU4KRCS9w9HjsXuiHmJ9QTlGQb9dxr
+	3IZ3rS1zhMh8QNNq2wd3
+X-Received: by 2002:ac8:7f54:0:b0:461:15fc:7f85 with SMTP id d75a77b69052e-4653d61ddefmr217084411cf.42.1732563187740;
+        Mon, 25 Nov 2024 11:33:07 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFL2hTdhpW7tee3jxoLX3AQbNrP/nM/dP2pQw36W1PjAM8f4c7WwlRZkVInLnPDA/eGwgbN8w==
+X-Received: by 2002:ac8:7f54:0:b0:461:15fc:7f85 with SMTP id d75a77b69052e-4653d61ddefmr217083911cf.42.1732563187174;
+        Mon, 25 Nov 2024 11:33:07 -0800 (PST)
+Received: from ?IPV6:2601:408:c180:2530:d041:4c25:86b8:e76a? ([2601:408:c180:2530:d041:4c25:86b8:e76a])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4669dcc25f4sm6565191cf.74.2024.11.25.11.33.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 11:33:06 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <5d269249-afd1-44f5-8faf-9ac11d9a3beb@redhat.com>
+Date: Mon, 25 Nov 2024 14:33:04 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU4PR04MB10982:EE_
-X-MS-Office365-Filtering-Correlation-Id: e20b8f46-b191-44a9-59d1-08dd0d8790fd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|52116014|366016|921020|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?dTGYzS1U4QtMi0b22cGROPDoCek5InIDHMSAhzyaTuikHLMSkfHAxK9lriP2?=
- =?us-ascii?Q?IU6pUY4UWz6QzR5t3k5NgA6eiqfASruE+X0ulDc7x0ek2FixnL4WYZOlfn5a?=
- =?us-ascii?Q?NP4KllR6NYdMIsIvWYF1JI4RFaH8wzA0DlE3RHUC8EstsAQ6ehe/1i2+kGN2?=
- =?us-ascii?Q?Z/FUHZ/vQsBJVzFFPAkKyUW0W5cS2TPFDT4fKuleO4w4WE/xbY6/vAWY7Ui8?=
- =?us-ascii?Q?HESqnMoc/YRseJye6pX1EbOpgjZYaM3nAc+QNmoLNnsPRtUsz/wq9VjTYuuI?=
- =?us-ascii?Q?jvHoE3Z3rA4PRcAGGcJz7HmR3Uv9jUCNFUQZgge2YtKax/tjIrkyuXJPWkta?=
- =?us-ascii?Q?wy3iYc2UPC4Iit3vmFln68vEl7GRLhkdOVOt5j7WIVvroP2Nw8UbQqt+L4Ze?=
- =?us-ascii?Q?hRktB9dm3nLJFE94adc7lseH1WCv7unHm7qg0E2/Cyg7NDJCevnVsgghdRSN?=
- =?us-ascii?Q?+/IJMiIhLfqs9ysnP6PY7MY11g+iXkg3J7+YaNpUm66GVauT1Ip7FGXIftFH?=
- =?us-ascii?Q?UqPcv7m1hSz3OIOdGb1Ilga7Z9duRIMELhBXYr67blnccVsy87AAiS+020fA?=
- =?us-ascii?Q?MIVKVBSKPfUoqdQFZAHOCP1jqHd7n3vYOz9z9jpNJyPiBfBB4tNbex4x3M66?=
- =?us-ascii?Q?sP5QdJl35vYcMonl0AjJ2g9PvwHSAu5U+VRiS5ZZkwsRrgzf0qjcBnEXONDK?=
- =?us-ascii?Q?9Xr9q9JCdeZJhL+V1pjOPojkb0COIG9WjqpYhqpIjOKiZKByo1IPk0ytcOPf?=
- =?us-ascii?Q?SV4/vJVW95VHvdqYqZUQ2nAFJUQ8lia6vIT92rot+9AAi8ibAyaYDbQAhVWt?=
- =?us-ascii?Q?aXK9v0ZABF7jWK68Bv8+S38iXr3lIQq1Rw91M8wTGxRlk8asN100I0iFaxvW?=
- =?us-ascii?Q?nD/OFgn0Q0h4+SJh4XWu7AUapN8vj0R3BFrsI7zv7EjUOpFPCbt+dzdO3jDn?=
- =?us-ascii?Q?+xZwpuIluLjwCMIjgMxrhoxd805LEwi5U0mREWIWMgYg9FibCFaMno6U4VPb?=
- =?us-ascii?Q?fU205ZlozeW8OR6wqz01ok5wQOss/CBZOIvt6KwsNEkbhif+oYLW0Zj28sqh?=
- =?us-ascii?Q?VZ6HKJxkyrVhu0tVyT/g4RKYn/tWt6vN55ERT2+P3R7p6sGwTxrmrGKKXp4K?=
- =?us-ascii?Q?j7eU8bHgmJeJOOc86X53bD9USWE+hlxpIAKv6ShEOH2XdmNLkw9L50cXNJh2?=
- =?us-ascii?Q?bK1y228dvviO2BVmxd768X/hyP7DCu8UG9k+HYCJp/VVOO5M++v/s+Jxb4Kc?=
- =?us-ascii?Q?fa5c4NTanfPaIW9VuCcaS/1bdJo5WkuSlHaYDQhq3D/jwsAZLrbaW6cLi6mf?=
- =?us-ascii?Q?bryw6k9xuBTQOSt/x6j9f84GyCFB3RMRZtpQB7iTEbblrPZqLNvo3KtOhPCp?=
- =?us-ascii?Q?RxwDJ+GP1LUXQKKyCj3QBceU2epBXTOPjo3mP/fsMLK+2nHxXjrY7ZnWmaBu?=
- =?us-ascii?Q?rNrYG07/JaA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(52116014)(366016)(921020)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?44jXBry3235W51J/1VKjuuWcDgoOolr2FR2h2+XNfryjCRa2OUi6Ro4HX8Th?=
- =?us-ascii?Q?F2MJANlJcmmkWEkD5o2nAvgpFZ/oKWhVji0n3sWi8emEeog+z/zb6zigPkkc?=
- =?us-ascii?Q?0vC8nn8ITVSDuU5i/29jff3G7cAAoGhFthfxQ4GJ/1T4rJCDZQt4zM1P68eO?=
- =?us-ascii?Q?8fa25lljoNAoVBYxwlVSwtnjcaXLtZCWQag3CM++kdRwdI20JQ23BNpI3oNm?=
- =?us-ascii?Q?C2dlqtlkSY6Nl99Vun+BgwN7e2ULQs42+IYLgP+Mhnrt1jpEzw5n3QOzQN5f?=
- =?us-ascii?Q?5CenteCpDbN+OvJHTv5cWCFncZVgMZ1J3A91OfrpXmLeVJqdHncSq2jpWGW5?=
- =?us-ascii?Q?vINwMnE9syB6Zus181yNW5L3NmOCSuOVD6ubNj187jNy/E5BnyKegqAJYEno?=
- =?us-ascii?Q?aalYd7AIi91hlZf752pdgDqXTZNc0JhSz8R0ZcYb24Rp33py5fwC2Xx6hypw?=
- =?us-ascii?Q?xMw/GqOzKwwetFNN/I8ddKlBQCcbw/9Df5sl+E/CRqvEz2XVX44GseSTgsmc?=
- =?us-ascii?Q?1fVW4cMn6uKJPE91xp48goG/c5rH77oVdwO+IZ5s6gzfyi5yyWpq1VTuAipY?=
- =?us-ascii?Q?YdC3sDzmIhp7z3AZqlma0T6zTcn8l5qeJMIIljHPLB+3dEsoSyusRXTZ4PTK?=
- =?us-ascii?Q?gbN5lG2+pbNTWhnNzRKIOFeIU8xtm+8fZ9Zje1az2zhSJZwYxIjsZy0qAq9Y?=
- =?us-ascii?Q?lCIfB7bp7cQB+nmP58UCSSEc7XLTg8hJEOIoHMtXDifGJHM6bX6PybDA6Inu?=
- =?us-ascii?Q?nCBRrSDgUpT9HRYcDojY7gwfDeeGuGRxAoaG00U9E2N/h8dIrSBp2hr8GTSX?=
- =?us-ascii?Q?jQRN34g+LXrzusiUSl3GtVY7Scp8JRc0ZhtWqoulPYH6Kd0txMy5H8kuVd7Y?=
- =?us-ascii?Q?SLVpRehnAwLPm1URgHoP8jXEJDJ0FY7a1yL5k0dR4LhyagOHfGLxgULeQ0lA?=
- =?us-ascii?Q?DdMhOhlCVWwm8enSSx4VYQ7kFgqpte8xaZfPnq4Y3unMrEl9vMdtCuIfvOMR?=
- =?us-ascii?Q?RpjxE69gov+54+Q5KHqPpCxv+XxzwKXoXOdA5ZHQysZG7yqfpu5IixTHjqV2?=
- =?us-ascii?Q?L3yQM2GXyPTRB1RB1xx1haSKmZjzK9XUH7IiQWZm6PEMRJxspXMEtGYI5GUG?=
- =?us-ascii?Q?Utoxge4XOkzdsHkeLYocFs9x3X1nRFbkGRgoaecOYmci9npvB+qbmi4StsOX?=
- =?us-ascii?Q?lN5ews8oXBg3FIdgKvPfWOkXRHz+AJMoygopNTMnnhKe933IWhAnEEsE8Srs?=
- =?us-ascii?Q?W2/zZXFWURTai3lGIbs1aZmf+lsdS6RN68Ctf+/z0Nu9WR/G52FinUcESVBp?=
- =?us-ascii?Q?DcE5g4VBnKTkxFG3jHxtVSbk9h2moUnt58xT5dzSTVxHbY1IwWnWJVS7PErN?=
- =?us-ascii?Q?9vpspNQKveO30WhYSXXVHkqE0R59MDS1iRanSxavAAEBVFQLA235lfOe4zCQ?=
- =?us-ascii?Q?6dVlkU9XbaNFot+2o14Ztp/sOJ4NFXSlIQ+DK+ModgSbED0Ns2xgbrn02d2W?=
- =?us-ascii?Q?Eqo2cT0Fo1q9L7ad81VSBW3lKQCxbhTOpyYrh/cEzqqHLPek/Hu1TdtIGUrc?=
- =?us-ascii?Q?CYLbexfu6RGIoEH7r+l/GmA9pPkKG4A1NNWRtJik?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e20b8f46-b191-44a9-59d1-08dd0d8790fd
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2024 19:30:06.2348
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: R+ZS2cLbSpdbJk7AnwowbqeGcol54lE1/D0dn232cBcGmZMl87HGE4A+YsvutdflY3TeVF+IMnXD0zR/BgUDHA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10982
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sparc/pci: Make pci_poke_lock a raw_spinlock_t.
+To: Guenter Roeck <linux@roeck-us.net>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Will Deacon <will@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>
+References: <20241009161041.1018375-1-bigeasy@linutronix.de>
+ <20241009161041.1018375-2-bigeasy@linutronix.de>
+ <7656395b-58fc-4874-a9f3-6d934e2ef7ee@roeck-us.net>
+ <20241125085314.1iSDFulg@linutronix.de>
+ <b776ca37-d51c-47e2-b3bb-aee8e7910630@roeck-us.net>
+ <20241125174336.8nEhFXIw@linutronix.de>
+ <c77c77d4-7f6e-450c-97d5-39dc50d81b1a@roeck-us.net>
+ <20241125181231.XpOsxxHx@linutronix.de>
+ <72991b83-173e-492e-a4aa-5049304c1bd0@roeck-us.net>
+Content-Language: en-US
+In-Reply-To: <72991b83-173e-492e-a4aa-5049304c1bd0@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 18, 2024 at 03:24:27PM -0500, Frank Li wrote:
-> Some PCIe host bridges require special handling when enabling or disabling
-> PCIe Endpoints. For example, the i.MX95 platform has a lookup table to map
-> Requester IDs to StreamIDs, which are used by the SMMU and MSI controller
-> to identify the source of DMA accesses.
->
-> Without this mapping, DMA accesses may target unintended memory, which
-> would corrupt memory or read the wrong data.
->
-> Add a host bridge .enable_device() hook the imx6 driver can use to
-> configure the Requester ID to StreamID mapping. The hardware table isn't
-> big enough to map all possible Requester IDs, so this hook may fail if no
-> table space is available. In that case, return failure from
-> pci_enable_device().
->
-> It might make more sense to make pci_set_master() decline to enable bus
-> mastering and return failure, but it currently doesn't have a way to return
-> failure.
->
-> Reviewed-by: Marc Zyngier <maz@kernel.org>
-> Tested-by: Marc Zyngier <maz@kernel.org>
-> Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-Bjon:
+On 11/25/24 2:23 PM, Guenter Roeck wrote:
+> On 11/25/24 10:12, Sebastian Andrzej Siewior wrote:
+>> On 2024-11-25 09:59:09 [-0800], Guenter Roeck wrote:
+>>> On 11/25/24 09:43, Sebastian Andrzej Siewior wrote:
+>>>> On 2024-11-25 09:01:33 [-0800], Guenter Roeck wrote:
+>>>>> Unfortunately it doesn't make a difference.
+>>>>
+>>>> stunning. It looks like the exact same error message.
+>>>>
+>>>
+>>> I think it uses
+>>>
+>>> #define spin_lock_irqsave(lock, flags)                          \
+>>> do {                                                            \
+>>>          raw_spin_lock_irqsave(spinlock_check(lock), flags);     \
+>>> } while (0)
+>>>
+>>> from include/linux/spinlock.h, meaning your patch doesn't really 
+>>> make a difference.
+>>
+>> The difference comes from DEFINE_SPINLOCK vs DEFINE_RAW_SPINLOCK. There
+>> is the .lock_type init which goes from LD_WAIT_CONFIG to LD_WAIT_SPIN.
+>> And this is all it matters.
+>>
+>
+> Ah, now I get it. Thanks for the explanation. And it turns out my log 
+> was wrong.
+> I must have taken it from the old image. Sorry for that.
+>
+> That specific backtrace isn't seen anymore. But there is another one.
+>
+> [    1.779653] =============================
+> [    1.779860] [ BUG: Invalid wait context ]
+> [    1.780139] 6.12.0+ #1 Not tainted
+> [    1.780394] -----------------------------
+> [    1.780600] swapper/0/1 is trying to lock:
+> [    1.780824] 0000000001b68888 (cpu_map_lock){....}-{3:3}, at: 
+> map_to_cpu+0x10/0x80
+> [    1.781393] other info that might help us debug this:
+> [    1.781624] context-{5:5}
+> [    1.781838] 3 locks held by swapper/0/1:
+> [    1.782055]  #0: fffff800042b90f8 (&dev->mutex){....}-{4:4}, at: 
+> __driver_attach+0x80/0x160
+> [    1.782345]  #1: fffff800040f2c18 
+> (&desc->request_mutex){+.+.}-{4:4}, at: __setup_irq+0xa0/0x6e0
+> [    1.782632]  #2: fffff800040f2ab0 
+> (&irq_desc_lock_class){....}-{2:2}, at: __setup_irq+0xc8/0x6e0
+> [    1.782912] stack backtrace:
+> [    1.783172] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 
+> 6.12.0+ #1
+> [    1.783498] Call Trace:
+> [    1.783734] [<00000000004e31d0>] __lock_acquire+0xa50/0x3160
+> [    1.783971] [<00000000004e63e8>] lock_acquire+0xe8/0x340
+> [    1.784191] [<00000000010f0dbc>] _raw_spin_lock_irqsave+0x3c/0x80
+> [    1.784417] [<000000000043ed90>] map_to_cpu+0x10/0x80
+> [    1.784633] [<000000000042b2b8>] sun4u_irq_enable+0x18/0x80
+> [    1.784854] [<00000000004fb6b4>] irq_enable+0x34/0xc0
+> [    1.785069] [<00000000004fb7b8>] __irq_startup+0x78/0xe0
+> [    1.785287] [<00000000004fb8f0>] irq_startup+0xd0/0x1a0
+> [    1.785503] [<00000000004f85b4>] __setup_irq+0x5f4/0x6e0
+> [    1.785726] [<00000000004f8754>] request_threaded_irq+0xb4/0x1a0
+> [    1.785950] [<0000000000439930>] power_probe+0x70/0xe0
+> [    1.786165] [<0000000000c13a68>] platform_probe+0x28/0x80
+> [    1.786382] [<0000000000c11178>] really_probe+0xb8/0x340
+> [    1.786599] [<0000000000c115a4>] driver_probe_device+0x24/0xe0
+> [    1.786820] [<0000000000c117cc>] __driver_attach+0x8c/0x160
+> [    1.787039] [<0000000000c0ef74>] bus_for_each_dev+0x54/0xc0
+>
+> After replacing cpu_map_lock with a raw spinlock, I get:
+>
+> [    2.015140] =============================
+> [    2.015247] [ BUG: Invalid wait context ]
+> [    2.015419] 6.12.0+ #1 Not tainted
+> [    2.015564] -----------------------------
+> [    2.015668] swapper/0/1 is trying to lock:
+> [    2.015791] fffff80004870610 (&mm->context.lock){....}-{3:3}, at: 
+> __schedule+0x410/0x5b0
+> [    2.016306] other info that might help us debug this:
+> [    2.016451] context-{5:5}
+> [    2.016539] 3 locks held by swapper/0/1:
+> [    2.016652]  #0: 0000000001d11f38 (key_types_sem){++++}-{4:4}, at: 
+> __key_create_or_update+0x5c/0x4c0
+> [    2.016934]  #1: 0000000001d1b850 
+> (asymmetric_key_parsers_sem){++++}-{4:4}, at: 
+> asymmetric_key_preparse+0x18/0xa0
+> [    2.017197]  #2: fffff8001f811a98 (&rq->__lock){-.-.}-{2:2}, at: 
+> __schedule+0xdc/0x5b0
+> [    2.017412] stack backtrace:
+> [    2.017551] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 
+> 6.12.0+ #1
+> [    2.017800] Call Trace:
+> [    2.017910] [<00000000004e31d0>] __lock_acquire+0xa50/0x3160
+> [    2.018062] [<00000000004e63e8>] lock_acquire+0xe8/0x340
+> [    2.018192] [<00000000010f0dbc>] _raw_spin_lock_irqsave+0x3c/0x80
+> [    2.018341] [<00000000010e5050>] __schedule+0x410/0x5b0
+> [    2.018469] [<00000000010e5ae4>] schedule+0x44/0x1c0
+> [    2.018591] [<00000000010f0684>] schedule_timeout+0xa4/0x100
+> [    2.018730] [<00000000010e668c>] __wait_for_common+0xac/0x1a0
+> [    2.018869] [<00000000010e6878>] wait_for_completion_state+0x18/0x40
+> [    2.019022] [<000000000048ad18>] call_usermodehelper_exec+0x138/0x1c0
+> [    2.019177] [<000000000052eb40>] __request_module+0x160/0x2e0
+> [    2.019316] [<00000000009ba6dc>] crypto_alg_mod_lookup+0x17c/0x280
+> [    2.019466] [<00000000009ba990>] crypto_alloc_tfm_node+0x30/0x100
+> [    2.019614] [<00000000009dcc5c>] 
+> public_key_verify_signature+0xbc/0x260
+> [    2.019772] [<00000000009ded8c>] x509_check_for_self_signed+0xac/0x280
+> [    2.019928] [<00000000009dddec>] x509_cert_parse+0x14c/0x220
+> [    2.020065] [<00000000009dea08>] x509_key_preparse+0x8/0x1e0
+>
+> The problem here is
+>
+> typedef struct {
+>         spinlock_t              lock;        <--
+>         unsigned long           sparc64_ctx_val;
+>         unsigned long           hugetlb_pte_count;
+>         unsigned long           thp_pte_count;
+>         struct tsb_config       tsb_block[MM_NUM_TSBS];
+>         struct hv_tsb_descr     tsb_descr[MM_NUM_TSBS];
+>         void                    *vdso;
+>         bool                    adi;
+>         tag_storage_desc_t      *tag_store;
+>         spinlock_t              tag_lock;
+> } mm_context_t;
+>
+> Replacing that with a raw spinlock just triggers the next one.
+>
+> [    2.035384] =============================
+> [    2.035490] [ BUG: Invalid wait context ]
+> [    2.035660] 6.12.0+ #3 Not tainted
+> [    2.035802] -----------------------------
+> [    2.035906] kworker/u4:3/48 is trying to lock:
+> [    2.036036] 0000000001b6a790 (ctx_alloc_lock){....}-{3:3}, at: 
+> get_new_mmu_context+0x14/0x280
+> [    2.036558] other info that might help us debug this:
+> [    2.036697] context-{5:5}
+> [    2.036784] 4 locks held by kworker/u4:3/48:
+> [    2.036906]  #0: fffff80004838a70 
+> (&sig->cred_guard_mutex){+.+.}-{4:4}, at: bprm_execve+0xc/0x8e0
+> [    2.037169]  #1: fffff80004838b08 
+> (&sig->exec_update_lock){+.+.}-{4:4}, at: begin_new_exec+0x344/0xbe0
+> [    2.037411]  #2: fffff800047fc940 (&p->alloc_lock){+.+.}-{3:3}, at: 
+> begin_new_exec+0x3a0/0xbe0
+> [    2.037639]  #3: fffff80004848610 (&mm->context.lock){....}-{2:2}, 
+> at: begin_new_exec+0x41c/0xbe0
+>
+> Fixing that finally gives me a clean run. Nevertheless, that makes me 
+> wonder:
+> Should I just disable CONFIG_PROVE_RAW_LOCK_NESTING for sparc runtime 
+> tests ?
 
-    I need fix some for patch 2.
-    Can I keep your ack tag (v4)?
+If no one is tryng to ever enable PREEMPT_RT on SPARC, I suppose you 
+could disable CONFIG_PROVE_RAW_LOCK_NESTING to avoid the trouble.
 
-Frank
+Cheers,
+Longman
 
-> ---
-> Change from v5 to v6
-> - Add Marc testedby and Reviewed-by tag
-> - Add Mani's acked tag
->
-> Change from v4 to v5
-> - Add two static help functions
-> int pci_host_bridge_enable_device(dev);
-> void pci_host_bridge_disable_device(dev);
-> - remove tags because big change
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> Reviewed-by: Marc Zyngier <maz@kernel.org>
-> Tested-by: Marc Zyngier <maz@kernel.org>
->
-> Change from v3 to v4
-> - Add Bjorn's ack tag
->
-> Change from v2 to v3
-> - use Bjorn suggest's commit message.
-> - call disable_device() when error happen.
->
-> Change from v1 to v2
-> - move enable(disable)device ops to pci_host_bridge
-> ---
->  drivers/pci/pci.c   | 36 +++++++++++++++++++++++++++++++++++-
->  include/linux/pci.h |  2 ++
->  2 files changed, 37 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 67013df89a694..4735bc665ab3b 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -2055,6 +2055,28 @@ int __weak pcibios_enable_device(struct pci_dev *dev, int bars)
->  	return pci_enable_resources(dev, bars);
->  }
->
-> +static int pci_host_bridge_enable_device(struct pci_dev *dev)
-> +{
-> +	struct pci_host_bridge *host_bridge = pci_find_host_bridge(dev->bus);
-> +	int err;
-> +
-> +	if (host_bridge && host_bridge->enable_device) {
-> +		err = host_bridge->enable_device(host_bridge, dev);
-> +		if (err)
-> +			return err;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void pci_host_bridge_disable_device(struct pci_dev *dev)
-> +{
-> +	struct pci_host_bridge *host_bridge = pci_find_host_bridge(dev->bus);
-> +
-> +	if (host_bridge && host_bridge->disable_device)
-> +		host_bridge->disable_device(host_bridge, dev);
-> +}
-> +
->  static int do_pci_enable_device(struct pci_dev *dev, int bars)
->  {
->  	int err;
-> @@ -2070,9 +2092,13 @@ static int do_pci_enable_device(struct pci_dev *dev, int bars)
->  	if (bridge)
->  		pcie_aspm_powersave_config_link(bridge);
->
-> +	err = pci_host_bridge_enable_device(dev);
-> +	if (err)
-> +		return err;
-> +
->  	err = pcibios_enable_device(dev, bars);
->  	if (err < 0)
-> -		return err;
-> +		goto err_enable;
->  	pci_fixup_device(pci_fixup_enable, dev);
->
->  	if (dev->msi_enabled || dev->msix_enabled)
-> @@ -2087,6 +2113,12 @@ static int do_pci_enable_device(struct pci_dev *dev, int bars)
->  	}
->
->  	return 0;
-> +
-> +err_enable:
-> +	pci_host_bridge_disable_device(dev);
-> +
-> +	return err;
-> +
->  }
->
->  /**
-> @@ -2270,6 +2302,8 @@ void pci_disable_device(struct pci_dev *dev)
->  	if (atomic_dec_return(&dev->enable_cnt) != 0)
->  		return;
->
-> +	pci_host_bridge_disable_device(dev);
-> +
->  	do_pci_disable_device(dev);
->
->  	dev->is_busmaster = 0;
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index a17edc6c28fda..5f75c30f263be 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -596,6 +596,8 @@ struct pci_host_bridge {
->  	u8 (*swizzle_irq)(struct pci_dev *, u8 *); /* Platform IRQ swizzler */
->  	int (*map_irq)(const struct pci_dev *, u8, u8);
->  	void (*release_fn)(struct pci_host_bridge *);
-> +	int (*enable_device)(struct pci_host_bridge *bridge, struct pci_dev *dev);
-> +	void (*disable_device)(struct pci_host_bridge *bridge, struct pci_dev *dev);
->  	void		*release_data;
->  	unsigned int	ignore_reset_delay:1;	/* For entire hierarchy */
->  	unsigned int	no_ext_tags:1;		/* No Extended Tags */
->
-> --
-> 2.34.1
->
 
