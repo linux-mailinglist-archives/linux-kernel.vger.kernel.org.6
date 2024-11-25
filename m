@@ -1,111 +1,90 @@
-Return-Path: <linux-kernel+bounces-420590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DDCE9D7CFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:34:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C55559D7D02
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:36:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D35E8B23477
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:34:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3557CB221D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC79418BBBB;
-	Mon, 25 Nov 2024 08:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73AE1885B8;
+	Mon, 25 Nov 2024 08:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DDIv0taD"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EBtpqW2y"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32184185955
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 08:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0EB185955
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 08:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732523685; cv=none; b=VJIfUWmFOXeKNzn4oIVLQFewdEvEpcwjTprUMcSxWxrLMjAZcYIn2Cj+leC2Cq/L3NpCdqZSFt1ioXyAzxPtTjmCFIhZBdr+/oU1jXpuGwInbWJoCb0ytVZ6sgA3O/FkPHYF5wPJgmNStqDjKVsCDWt4f3t3wwXX8z+GcoexsUE=
+	t=1732523779; cv=none; b=V+sEDRaTNEUDISAvHf29cJejONJr1erc+xoopq3hchKSCihXHO8RfvnUhbQ5LGx9WRSd98K8IQaK351kUCbpVJRSRoGzluD3V0bJoEicubZa+/jHN9Qox3tsJf+EWYUWykoLdWD8XwhgYnytG3Bm0KKqD4mrKtGrrZsWIuT7WcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732523685; c=relaxed/simple;
-	bh=5Nhv1Mm0+fbxtk2KdzQJbKFpjj2DWs2QHyapg7sOW0E=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CM2alNbZ+ji2ox2OoLuSoynI8bxFBC7toTV7IXNSpyuvRPt/Gm/xkGAUvhJxSjORrxS5JVZKQPNA430qQ+o+MWwvK/0Ij430pvEPPhdeMvHSALd7WrL1BoV74xhhP69fKuWWWmZVipoPqQLt2kB4ORLqmeSpda/E0g6B1IAu6t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DDIv0taD; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9e8522445dso599668466b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 00:34:41 -0800 (PST)
+	s=arc-20240116; t=1732523779; c=relaxed/simple;
+	bh=LFZPIyR6ASWo+Qpc5QWBNipe1NMG6Z5pRSj8OUn4/Ik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gM6D+EJe+NgnE3L+c6eG6e7RgUms05hKlr69T7LvaRG1nQc2K/ojV5Q5l0/YYEvYn5dd9JQM/kqG/4uSuMTB8TVYphX3fjxXNBryIFE5EHKjkVQjtqNERRNj4siFzWBGBWBG88yZfoTvfghqWGGwiOaBVf525VRHIgY7sHfOU1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EBtpqW2y; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7fc2b84bc60so561273a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 00:36:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1732523680; x=1733128480; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1732523777; x=1733128577; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vg0D/GXC726IE1EJTMsV29mWCwy+CAcBXGOGjtO3CHw=;
-        b=DDIv0taDA8NxOu9j0vaARHXUXN4/MCxzDydDyuQWYRsU6gz+vewnPcxNbF5zL0IQUy
-         qBwx06I22FYw0quLmSmGeCa46iLIfjgp7JD+lcl+HAPlFLsBk6Ln4ZF8AGjC5iyBYbFy
-         gqp2M9QOQJY/OtQYJoRLyFJL3EPUYc+kCmwnbkfWl5TfRImvmS6ntM3BftwNAWDiQTws
-         9zy90N3EpUfI6BJBEh59TNYWyH56oSdrtTpUp8jG2m3TTaGd45+H4miYskgztd+fSZi0
-         8oVkI98JzMyUzc30rRJTLJQOoUmCYv6sLWr0j/GmAeMsOY+mmKo69aM7HoYritTbnsWu
-         BtNA==
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=c8y7knWYoVm5AIz2hT27XuGr0+HUiUQTJYnoybECw00=;
+        b=EBtpqW2yQiYaRs3qYDJDJ8uQLJlW/QPrLDXtzx5xgTPsJK4BlwJdeEDv/waGgFcs8M
+         vw49mMwu7towAFIDcoXP+TMCGlfaNSkNTs/zcz4q/R3Lz4psamjZ7m1nKCtHpBGZ5A9b
+         GQk+rtHrtle/7camii2l08F4wJc9OiQmLciOk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732523680; x=1733128480;
+        d=1e100.net; s=20230601; t=1732523777; x=1733128577;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vg0D/GXC726IE1EJTMsV29mWCwy+CAcBXGOGjtO3CHw=;
-        b=kdRMCvhRaFNhHYfgr/BTvzu+8weD50wKX98IjNN8ilKSckoEMd5E5PFTuXk2T+O6Qi
-         YtSzDNPxELeHV7TweHfycW4EQiUvfSzhg3ZhEJ/0UbEnA/dEVI5jlMUg8NxVypionx+1
-         6xmWt7lM9btXtfFgDf+W+siTlXNksBUbtuubr4eYvkrzSx1LpMBGFydvNEvKsUIxIrDz
-         D+7Bvp0IycM3jZXKWJWSQkYVzzkt09WpEyvmKk8hybQoaPdZ9BOcQy0zUCgztECP8gmV
-         JVYoV/IssRquOcR2pO4MqvqY7TvsHDbkdHkqku7l73LxqKH4CBaVwMGRA66wuUgJBtTz
-         jW5g==
-X-Forwarded-Encrypted: i=1; AJvYcCViQiLxYT9tgAjFyXgEJHwSvT+by9V+ToE9krYjMKQoyXKyB42IKVkSMysQXBswC8fRaESAzXImdQQTn4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqCC5BcSIR0KaTu1H10ysr08pGcsfh+Ea8mZVLygB9IPGWnTPf
-	wWCriM3/GL0nX3xfsduL3wYz3ABbmTy9PkkzUVMV81wxnI7ZUby8Kk+qpkgw6qE=
-X-Gm-Gg: ASbGnctoYq3btij1eWgqzxyslN/4Pe1stbMR9/Sp/yhwqH8hV0zE39APfooO+1e4Bpo
-	/KgthOChcpA+4/MjsxXWXOaxUBcRu87tQcjQYmfUe7oz7a4OH0zlShzUvcsdw9AtbLS2c0rPm/H
-	8Dl+qBP7vdebRB0d86jgyNBLA6ExRB+rTcMBBpgibhCBGPSwHVStcKhGoHvVZ3hePQ+1K5bPSH0
-	nLiT2vrt0/gY7V7S1+vjFQNcnP4+1ZYLS9VIq0jv28qwk5SDzxwgyUi3kJuxV0eE10BMCmWKKlL
-	jgvR01NTpY5uHhE5RTV6
-X-Google-Smtp-Source: AGHT+IHTcfEoEYoZ9eKBklAA7GYxZ5kMOqK2yZ8KaAw01uPI3MZswrc9AVeFlfapHP8sHh0b3gsj9A==
-X-Received: by 2002:a17:906:3096:b0:aa5:1d0c:3671 with SMTP id a640c23a62f3a-aa51d0c36femr719670166b.23.1732523679890;
-        Mon, 25 Nov 2024 00:34:39 -0800 (PST)
-Received: from localhost (host-79-49-220-127.retail.telecomitalia.it. [79.49.220.127])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b57c19esm433460966b.154.2024.11.25.00.34.39
+        bh=c8y7knWYoVm5AIz2hT27XuGr0+HUiUQTJYnoybECw00=;
+        b=ieUz+/yX2NBs84WLpgO4U44ZwRg+qb9rRjuhcNzo86O0so66zKZ0H4xmFXi9cUvL1/
+         LBjvgxxZb2WnCovA52D/8U2vQNAk5jPYsYgEfsDI244vlQrRgDlIe5CGr8VpeNWkMLY0
+         X3n32pN+q9VKNwwM7cYdxE93kNGe0Lzrm1+4cM3VsRwe7afzO8wCiW7R4PpbWBXHTZ+N
+         6459vVFgibSFufPFlARuvupJVRuVMHQ8uFc6IwUJlyNvWv+BDToGLCSJcYqu2Z9mh9Pc
+         Cf5FBKwCZwQTsZV0+mUBK6S2FUo6Fiz02nkvyJ7/fkXGtrkPJByTlkNQwMPXTCHLeBQ1
+         BDPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXnoMjcZmLECjviyEwvK6bpKT22JFscjCT8PAs1y9n7p/q6Al13rNkBDRui1ZNaeQs1Bzt228m3A7ce0mQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI9YD1D2QUiTZDIGUQB+KrXJ4crAmBX8gvx/MU5EFhWeYo3ysr
+	kWQIgrDG6vLog6pFluxb4vAv9p1zlNdDimPXO++bCyWjY2Y4j8/P8s/5Qk4GHg==
+X-Gm-Gg: ASbGncslpPksegatWjNVQQ8PtekSllnABJutgh5Lrtu3nFdSo1i3EFcmufztlo7nbek
+	V1oO2wQ3hO45wcAiDMg9n7tsFIdWaVTv5FZ1jcvw5NU1Waq2XAFW/Sfx/QZpboZnR7nuRQjY2dw
+	bQnjJuijyz3C8q+D38CTHg+GCobmrLiRarC3c94TddMA32N6gjsK1Syrbni0WP4AVJG11e32T7l
+	X1BzT8bP4bAbHRNAUg14N5S5+vMDrnzWDUCprvQwpVf
+X-Google-Smtp-Source: AGHT+IEpo2KdlJDaqZnS03OD0RPyKY0ulaDT8hskGK6LW/OqNmKQOfY9Vz1uB+KvJ1tLMzjf1OOoFQ==
+X-Received: by 2002:a05:6a20:244a:b0:1d9:21a0:14e0 with SMTP id adf61e73a8af0-1e09e3f0a42mr19359410637.12.1732523777046;
+        Mon, 25 Nov 2024 00:36:17 -0800 (PST)
+Received: from google.com ([2401:fa00:1:10:66a3:d18f:544f:227a])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de531b68sm5847702b3a.111.2024.11.25.00.36.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 00:34:39 -0800 (PST)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Mon, 25 Nov 2024 09:35:12 +0100
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Mon, 25 Nov 2024 00:36:16 -0800 (PST)
+Date: Mon, 25 Nov 2024 16:36:13 +0800
+From: "Sung-Chi, Li" <lschyi@chromium.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+	Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 08/10] misc: rp1: RaspberryPi RP1 misc driver
-Message-ID: <Z0Q2wJBMdN1dyJWA@apocalypse>
-References: <cover.1732444746.git.andrea.porta@suse.com>
- <c48e6b9b178cdaa01b92ae82e8fd24c2ba5f170c.1732444746.git.andrea.porta@suse.com>
- <e57c9c8b-2534-4d3a-b762-ca9c1f7dac40@lunn.ch>
+	Conor Dooley <conor+dt@kernel.org>, chrome-platform@lists.linux.dev,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: mfd: cros-ec: add properties for
+ thermal cooling cells
+Message-ID: <Z0Q2_ds3HCMaN1jQ@google.com>
+References: <20241122-extend_power_limit-v1-0-a3ecd87afa76@chromium.org>
+ <20241122-extend_power_limit-v1-2-a3ecd87afa76@chromium.org>
+ <4f5sahkxxqb5qonh676igaiadkxv2pbhbibu6wtx4yenplfn4o@yvidi4ujavhr>
+ <Z0Pl3muZx716QSed@google.com>
+ <c2e9a97e-129d-4a82-9e81-b1391b4b6ff9@kernel.org>
+ <667d4273-b3dd-4027-9266-bbd88b2f537a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -114,34 +93,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e57c9c8b-2534-4d3a-b762-ca9c1f7dac40@lunn.ch>
+In-Reply-To: <667d4273-b3dd-4027-9266-bbd88b2f537a@kernel.org>
 
-Hi Andrew,
-
-On 20:33 Sun 24 Nov     , Andrew Lunn wrote:
-> > +++ b/drivers/misc/rp1/rp1-pci.dtso
-> > @@ -0,0 +1,8 @@
-> > +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> > +
-> > +/* the dts overlay is included from the dts directory so
-> > + * it can be possible to check it with CHECK_DTBS while
-> > + * also compile it from the driver source directory.
-> > + */
-> > +
-> > +#include "arm64/broadcom/rp1.dtso"
+On Mon, Nov 25, 2024 at 08:35:01AM +0100, Krzysztof Kozlowski wrote:
+> On 25/11/2024 08:32, Krzysztof Kozlowski wrote:
+> > On 25/11/2024 03:50, Sung-Chi, Li wrote:
+> >> On Fri, Nov 22, 2024 at 08:49:14AM +0100, Krzysztof Kozlowski wrote:
+> >>> On Fri, Nov 22, 2024 at 11:47:22AM +0800, Sung-Chi Li wrote:
+> >>>> The cros_ec supports limiting the input current to act as a passive
+> >>>> thermal cooling device. Add the property '#cooling-cells' bindings, such
+> >>>> that thermal framework can recognize cros_ec as a valid thermal cooling
+> >>>> device.
+> >>>>
+> >>>> Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
+> >>>> ---
+> >>>>  Documentation/devicetree/bindings/mfd/google,cros-ec.yaml | 3 +++
+> >>>>  1 file changed, 3 insertions(+)
+> >>>>
+> >>>> diff --git a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
+> >>>> index aac8819bd00b..2b6f098057af 100644
+> >>>> --- a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
+> >>>> +++ b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
+> >>>> @@ -96,6 +96,9 @@ properties:
+> >>>>    '#gpio-cells':
+> >>>>      const: 2
+> >>>>  
+> >>>> +  '#cooling-cells':
+> >>>> +    const: 2
+> >>>
+> >>> This is not a cooling device. BTW, your commit msg is somehow circular.
 > 
-> This is probably O.K, for now, but really the tooling should be
-> extended so that DT files can be checked anywhere in the tree. I can
-> see more such embedded DT overlays appearing with time, and there is
-> nothing actually arm64 specific here, it is architecture agnostic. It
-> is just a PCIe device, there is no reason it could not be used on a
-> S390, Risc-V, or loongarch.
+> 
+> ^^^ And here which you ignored: this is not a cooling device.
+> 
 
-I completely agree with you.
+Hi, I added the explanation in the commit message in the v2 version. Please have
+a look, it should explains why it is not a cooling device.
 
-Regards,
-Andrea
+> >>> "Add cooling to make it a cooling device because it will be then cooling
+> >>> device."
+> >>>
+> >>> Power supply already provides necessary framework for managing charging
+> >>> current and temperatures. If this is to stay, you need to explain why
+> >>> this is suitable to be considered a thermal zone or system cooling
+> >>> device (not power supply or input power cooling).
+> >>>
+> >>> Best regards,
+> >>> Krzysztof
+> >>>
+> >>
+> >> Thank you, I will rephrase the commit message. The reason to not to use the
+> >> managing charging current and temperatures in the power supply framework is
+> >> that:
+> >>
+> >> - The EC may not have the thermal sensor value for the charger, and there is no
+> >>   protocol for getting the thermal sensor value for the charger (there is
+> >>   command for reading thermal sensor values, but there is no specification for
+> >>   what sensor index is for the charger, if the charger provides thermal value).
+> >> - The managing mechanism only take the charger thermal value into account, and
+> >>   I would like to control the current based on the thermal condition of the
+> >>   whole device.
+> >>
+> >> I will include these explanation in the following changes.
+> > 
+> > 
+> > This does not explain me why this is supposed to be thermal zone. I
+> > already said it, but let's repeat: This is not a thermal zone. This
+> > isn't thermal zone sensor, either.
+> 
+> 
+> And nothing from your "revised" commit msg explains why something which
+> is not a cooling device is supposed to be a cooling device.
+
+The revised commit message is sent, please have a look.
 
 > 
->       Andrew
+> 
+> Best regards,
+> Krzysztof
 
