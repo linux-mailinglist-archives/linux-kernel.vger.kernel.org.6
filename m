@@ -1,103 +1,100 @@
-Return-Path: <linux-kernel+bounces-420379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1969E9D79B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 02:15:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97C459D79B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 02:16:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3572B21173
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 01:15:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FBC0162BC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 01:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD5ED53F;
-	Mon, 25 Nov 2024 01:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rnXBNBw3"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D75E8BEC;
+	Mon, 25 Nov 2024 01:16:16 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370FF4A28;
-	Mon, 25 Nov 2024 01:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292D736D;
+	Mon, 25 Nov 2024 01:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732497309; cv=none; b=S/PD4MIKWDyZRL5kHkq5/gb2TLL0i6qwmmSdhLKb04zwHnhBFC5sbkXSas2cU8Op8QlHq3Mlc8MIkTBNTl7oayN56WJ4rp05NRDDOV5pFK+8fSbc79XGnB//B57D3Ox8l12oNzEyNLzog6vIDIeoLSikwWnxXzgjsHA9AdPA6gI=
+	t=1732497376; cv=none; b=ZheeRxYm249oWPxrnfeGnXfojeVNvifPeW05kIvllh/HQ/3kMGO5VV1/15ZUtrRndpE6aaQSbsstCgljIKPa3JVryhZ0Ph6ADMtMcFSdvPueFx84cVK19uOdhSM93y3fNdmlvHGj4/87r/Ehe1jEptxLaFkK+vitn6Q+ZMrJhKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732497309; c=relaxed/simple;
-	bh=FghVjbvvMpiTx3fdRcwk7Gj66JU3/jr9pR44rasDigk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hN6Tuwkwd83fzJwlxLT9IrPcf/yxpOhCHCB8aX83gBpACiv/UPuwsEruWa1Y1I1FMLuhsKR9tJwz5cRE6Pghh/oSekIdjAee+arrZsRjVQpUQBge3BRLhHF3FwtlbvY0uj4+MejQAA88EatZM0hCHN+mxEiwjth5FSmvZEWw1cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rnXBNBw3; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=DPJxPRNtak+qMVMCGKE8L3WE4BezG2ABg27oPUZbe3M=; b=rnXBNBw3yzZnxhJIGUHJxMVUBN
-	EsnGZV6pUmGXQxXpVRf63e/Vd8rUfLeYLeiCuW/y3D1UGsJXb2HbfAt5KYAvOuZG+tTEfascZ39GK
-	wysE9XKEahtGw5ln/xMwpeuKx427lnIvdC7QKhZoLmkrVXvTGIraQah5FRStBgD/H/+gmkjDmhv3b
-	cQkYmw57mmi1Upm1vaEeN48xakUPrJR4YVoRTAblIO72unUb+0526mATh1tloL214DPycESfDvWf3
-	ZhaKtKNPaGL1rzrlEFVWbAz+PNG9e86lO850briCSPrY29A5Wk8pFS2ym95byAghyAfEXVuVzNkSx
-	tPhIT+gQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tFNgt-0000000BA8K-3ooS;
-	Mon, 25 Nov 2024 01:15:03 +0000
-Date: Mon, 25 Nov 2024 01:15:03 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Mateusz Guzik <mjguzik@gmail.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Hao-ran Zheng <zhenghaoran@buaa.edu.cn>, brauner@kernel.org,
-	jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, baijiaju1990@gmail.com,
-	21371365@buaa.edu.cn
-Subject: Re: [RFC] metadata updates vs. fetches (was Re: [PATCH v4] fs: Fix
- data race in inode_set_ctime_to_ts)
-Message-ID: <Z0PPl_B6kxGRCZk7@casper.infradead.org>
-References: <20241124094253.565643-1-zhenghaoran@buaa.edu.cn>
- <20241124174435.GB620578@frogsfrogsfrogs>
- <wxwj3mxb7xromjvy3vreqbme7tugvi7gfriyhtcznukiladeoj@o7drq3kvflfa>
- <20241124215014.GA3387508@ZenIV>
- <CAHk-=whYakCL3tws54vLjejwU3WvYVKVSpO1waXxA-vt72Kt5Q@mail.gmail.com>
- <20241124222450.GB3387508@ZenIV>
- <Z0OqCmbGz0P7hrrA@casper.infradead.org>
- <CAHk-=whxZ=jgc7up5iNBVMhA0HRX2wAKJMNOGA6Ru9Kqb7_eVw@mail.gmail.com>
- <Z0O8ZYHI_1KAXSBF@casper.infradead.org>
- <CAHk-=whNNdB9jT+4g2ApTKohWyHwHAqB1DJkLKQF=wWAh7c+PQ@mail.gmail.com>
+	s=arc-20240116; t=1732497376; c=relaxed/simple;
+	bh=0JUlY4EbwQb26RHDO7DZrSmTrxLydlGRAUvkrJ/UYlA=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=WUSiAOMe2mXEHfGYbIm4FsDvkPaLkfMCrQUevq3Nw82S0Sff3CKyOqrTn0KTD9MrpuGmm3rvOBRP7WJmKzcQjTUty17G+sxz/rQwKaj/5Ysi3MlTHc5eojj9Vpc2ebe+OZDbpZesQb9OZDrBFHu+8pUEeb4ffPgzYJfU2HCWhYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XxSSX57r9z4f3lVg;
+	Mon, 25 Nov 2024 09:15:40 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 51DA21A0196;
+	Mon, 25 Nov 2024 09:16:00 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgCngYXOz0NnFB4BCw--.25988S3;
+	Mon, 25 Nov 2024 09:16:00 +0800 (CST)
+Subject: Re: [PATCH md-6.13 5/5] md/md-bitmap: move bitmap_{start, end}write
+ to md upper layer
+To: Xiao Ni <xni@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: song@kernel.org, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20241118114157.355749-1-yukuai1@huaweicloud.com>
+ <20241118114157.355749-6-yukuai1@huaweicloud.com>
+ <CALTww28JrdXoNXQNPxx2Sg9L2iL20jZZ80Y-qZzqcyF780M1fg@mail.gmail.com>
+ <e6843d53-c7f4-2e38-0a15-91b49afec8f1@huaweicloud.com>
+ <CALTww28ZRFo6BwqzriVpoOuqbfygKrU0HuOhhUxLe9cBBDY-ZQ@mail.gmail.com>
+ <e3319ea0-f9aa-6048-c620-4e72f2b10b31@huaweicloud.com>
+ <CALTww28kr5TzWoeMrS-W_etfhwQGQHDQ-DeakTEALUGDE9FNVA@mail.gmail.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <a450ec2a-03ae-7351-ca2a-8e9bf93c6e14@huaweicloud.com>
+Date: Mon, 25 Nov 2024 09:15:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whNNdB9jT+4g2ApTKohWyHwHAqB1DJkLKQF=wWAh7c+PQ@mail.gmail.com>
+In-Reply-To: <CALTww28kr5TzWoeMrS-W_etfhwQGQHDQ-DeakTEALUGDE9FNVA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCngYXOz0NnFB4BCw--.25988S3
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYy7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
+	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
+	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72
+	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7Mxk0
+	xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4c8EcI0Ec7CjxVAaw2AFwI0_JF
+	0_Jw1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
+	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2I
+	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK
+	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
+	0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUdHUDUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Sun, Nov 24, 2024 at 04:53:39PM -0800, Linus Torvalds wrote:
-> On Sun, 24 Nov 2024 at 15:53, Matthew Wilcox <willy@infradead.org> wrote:
-> Look, let's write 5.000950, 6.000150 and 7.000950, while there is a
-> single reader (and let's assume these are all properly ordered reads
-> and writes):
-> 
->   W1.s 5
->   W1.ns 950
->   W2.s 6
->   R.ns (950)
->   R.s (6)
->   W2.ns 150
->   W3.s 7
->   W3.ns 950
->   R.ns (950)
-> 
-> and look how the reader is happy, because it got the same nanoseconds
-> twice. But the reader thinks it had a time of 6.000950, and AT NO
-> POINT was that actually a valid time.
+Hi,
 
-I literally said that.
+在 2024/11/23 11:55, Xiao Ni 写道:
+> For normal io, endwrite is called in function
+> handle_stripe_clean_event when sh->dev[i].written has value.
+> For failed io, endwrite is called when bitmap_end has value.
+> bitmap_end is set when sh->dev[i].to_write is not NULL.
+> Which place does extra endwrite?
 
-"Now we have a time of 6:950 which is never a time that this file had,
-but it's intermediate in time between two times that the file _did_
-have, so it won't break make."
+I think it's related to the sh batch list. For example, the
+returnbi tag from handle_stripe_clean_event() doesn't check
+the written value.
+
+Thanks,
+Kuai
+
 
