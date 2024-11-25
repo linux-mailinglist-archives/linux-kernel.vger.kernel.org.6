@@ -1,75 +1,71 @@
-Return-Path: <linux-kernel+bounces-420812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6B399D8429
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:16:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 966A29D837F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:36:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E864B256B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:22:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7B41B27F1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335DA18FC70;
-	Mon, 25 Nov 2024 10:22:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F21219258A;
+	Mon, 25 Nov 2024 10:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XNYZ2/Yp"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cC2d+P8e"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229ED2AD17
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 10:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF87418755C;
+	Mon, 25 Nov 2024 10:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732530166; cv=none; b=m+XWgc5Frkwsc0nVPYQKli3D+k29aakWGirNgXZmFY5OHONEoNSn6Cx3OEGvsNlxKHS6rE1b0XSjlIAb69DGlMN2XFgQfy7Mawl30DvyywUnM0NGgaMylyyuIxu47H5VwWi8V4NsnWdGyahB4s/3YlPU6x5SVCE+/DAFByS8Ba8=
+	t=1732530184; cv=none; b=agR6UlZoM1a3xnPXU5jBK5MXkHzmctyE5ZnG+V3sgQLuhGDziuyOBl9a24Z9p8eq7FI2IkBzWCYNX28eq1/O7AShUwsE8H1cuz42pDpOhXr40ei7v6sRwzHZT1z79IdB0F09kLjDYirXRU/uFsAinF8FXFtM+H7BckSMnTgZA6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732530166; c=relaxed/simple;
-	bh=kzYf+6PScgXD4sI6yVpCX7oxhaUPc52Ia/vLyPOEo1M=;
+	s=arc-20240116; t=1732530184; c=relaxed/simple;
+	bh=vEktPLBDDcD6K+Ywf5tGYAWq1SEiHS7jR7yItctdw1k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eUeQo5EEOAX6mGHMgDuOKhDB0y985vhPPUC/YcL75VdjlW1nVlFEYF+Qx+w5Me4rz17KGhEfnd8QdDEiixQeNb7mRGG3TMMcW6PNMIT591G2zRmDdCepIiB7dPm0Ohfi7gb03gAFtJU92HXpmNmAP0ed9G/Ornzqb1Htat8myMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XNYZ2/Yp; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 84CEE40E0163;
-	Mon, 25 Nov 2024 10:22:41 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id W2qTVURu9ady; Mon, 25 Nov 2024 10:22:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1732530154; bh=CicIqlTfk/RV9e9jhUxJ8Q4nlFktb1GQ71aDtqFOiMU=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=FbR5qBBWwkrFeEXoOh7AfovYS1p66riDkVCViYUChhuTbmtwpOWGhK/ECP5zlgyd2plBZx82KbxYMekbGoog2eHzSwMs5bCHltXJl3hLv72fMv/WSY8ArjRQrJWxf5iNlYfBwzx1lClxQRgZPLuqAVkPeY1WGk2NVWU1yDb+g3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=cC2d+P8e; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F03B86B5;
+	Mon, 25 Nov 2024 11:22:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732530159;
+	bh=vEktPLBDDcD6K+Ywf5tGYAWq1SEiHS7jR7yItctdw1k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XNYZ2/Ypu6kSG+430qUE/SnvgfAik/Fo6s69E05Jp+hjoa0SeFj3zAJKPogoRFPwA
-	 Lvxli8sNHct+3/t6kCBQywrL0sCHLpquXytisdze7Y7jBeES6HGlid9S+9svF1pvA2
-	 cZcpo0tmXJhfGmW51e4VT++BTx6USr+gQLNwXWigs70U2fhw4zgEBD9b6Yuqnm2xW7
-	 Qr3j591COh8HRVqRMyXOB8BQC8n8f5DF+3jJ+9PRIf0z6QjZmzseD0rj+tRuUhtSZn
-	 dWNSIfMykuJv02SAE58CWOk6I1y2nTswZ94bsoMzPEFpkW9NYdVlR3WQ4SjcHZ9pSn
-	 OatvrWyuvyN4rIh38Ep0+w/FJihKdTZKrn1xqUF4jlV2t+uVrJPgZwwMDWkPudEbfq
-	 wxRfa+WeZ9nNBFNVhkCYA7ZV5wDZggeHhlZb5cAgcSpIbmpQyO/WnSIzafzjA4S9/B
-	 +uDgKAr+GMdl5Ah+RiS0tat4xzmMWeAkAkY/+BVV6HO18YGr467zj/Lx8hdejrkCRm
-	 ErbEBbC4pkjScf4bbcxdMWAm9CC7sqwN9WPjUiAknPpPi7A4x6FYDpV/wQ6uwno9pE
-	 l2Vd59mDPqe3nEfZG8PpjpkrkuZYkaaS31a9XZsrPYFify7kzVj8UzaP052tPLutCG
-	 s+AlBkrkNZJygfw7Fi9KsucE=
-Received: from zn.tnic (p200300ea9736a192329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:9736:a192:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6AF6140E0269;
-	Mon, 25 Nov 2024 10:22:30 +0000 (UTC)
-Date: Mon, 25 Nov 2024 11:22:23 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] x86/boot: Get rid of linux/init.h include
-Message-ID: <20241125102223.GBZ0RP375DufF0QQds@fat_crate.local>
-References: <20241122163139.GAZ0Cx63Ia9kgYgRIr@fat_crate.local>
- <Z0C3mDCngAf7ErM2@gmail.com>
- <20241122170227.GAZ0C5I-F8AUpwCAcG@fat_crate.local>
- <Z0Q0PJzTMg_Or22I@gmail.com>
+	b=cC2d+P8eBtYJZnAFLVQwSXuk8HKXOpxgMwPY3VYIEmgd0pcostPigM1+qqL0vGtSa
+	 KNo4PJzzSIzAaHge+E16wTllKnKDapBMN1EneVGXxdNsoStd9TdJ2eFk+0zoSCFRZr
+	 wFMwWgFkKmZk8BTGHVEbLVgwjsAIIoWnoY+ia/3o=
+Date: Mon, 25 Nov 2024 12:22:50 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: CK Hu =?utf-8?B?KOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"paul.elder@ideasonboard.com" <paul.elder@ideasonboard.com>,
+	"mchehab@kernel.org" <mchehab@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	Andy Hsieh =?utf-8?B?KOisneaZuueakyk=?= <Andy.Hsieh@mediatek.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Julien Stephan <jstephan@baylibre.com>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"fsylvestre@baylibre.com" <fsylvestre@baylibre.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v7 4/5] media: platform: mediatek: isp: add mediatek
+ ISP3.0 camsv
+Message-ID: <20241125102250.GO19381@pendragon.ideasonboard.com>
+References: <20241121-add-mtk-isp-3-0-support-v7-0-b04dc9610619@baylibre.com>
+ <20241121-add-mtk-isp-3-0-support-v7-4-b04dc9610619@baylibre.com>
+ <a9aa69dc8d025f0b133f33de6428ffec5a881a2a.camel@mediatek.com>
+ <20241125093953.GM19381@pendragon.ideasonboard.com>
+ <25f70693c81eb86c832378fee89792f6754b7ca0.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,77 +74,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z0Q0PJzTMg_Or22I@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <25f70693c81eb86c832378fee89792f6754b7ca0.camel@mediatek.com>
 
-On Mon, Nov 25, 2024 at 09:24:28AM +0100, Ingo Molnar wrote:
-> And if someone doesn't add the ugly KERNEL_PROPER_HEADER defines to a 
-> new header that somehow gets included into the decompressor build 
-> virally, it won't fire either. I think it's better to concentrate the 
-> uglies in the 'weird' code, ie. the decompressor.
-
-Yes, I'd need to think of something slicker...
- 
-> Also, what's the root problem being solved? The changelog says:
+On Mon, Nov 25, 2024 at 09:56:54AM +0000, CK Hu (胡俊光) wrote:
+> On Mon, 2024-11-25 at 11:39 +0200, Laurent Pinchart wrote:
+> > On Mon, Nov 25, 2024 at 06:59:59AM +0000, CK Hu (胡俊光) wrote:
+> > > On Thu, 2024-11-21 at 09:53 +0100, Julien Stephan wrote:
+> > > >
+> > > > From: Phi-bang Nguyen <pnguyen@baylibre.com>
+> > > >
+> > > > This driver provides a path to bypass the SoC ISP so that image data
+> > > > coming from the SENINF can go directly into memory without any image
+> > > > processing. This allows the use of an external ISP.
+> > > >
+> > > > Signed-off-by: Phi-bang Nguyen <pnguyen@baylibre.com>
+> > > > Signed-off-by: Florian Sylvestre <fsylvestre@baylibre.com>
+> > > > [Paul Elder fix irq locking]
+> > > > Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+> > > > Co-developed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > > Co-developed-by: Julien Stephan <jstephan@baylibre.com>
+> > > > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> > > > ---
+> > >
+> > > [snip]
+> > >
+> > > > +static const struct mtk_cam_conf camsv30_conf = {
+> > > > +       .tg_sen_mode = 0x00010002U, /* TIME_STP_EN = 1. DBL_DATA_BUS = 1 */
+> > > > +       .module_en = 0x40000001U, /* enable double buffer and TG */
+> > > > +       .imgo_con = 0x80000080U, /* DMA FIFO depth and burst */
+> > > > +       .imgo_con2 = 0x00020002U, /* DMA priority */
+> > >
+> > > Now support only one SoC, so it's not necessary make these SoC variable.
+> > > They could be constant symbol now.
+> >
+> > This I would keep as a mtk_cam_conf structure instance, as I think it
+> > makes it clear what we consider to be model-specific without hindering
+> > readability. I don't have a very strong opinion though.
 > 
->    > no collisions and ugly ifdeffery when those kernel proper headers 
->    > get shared.
+> If this is a configuration table, I would like it to be
 > 
-> But that's pretty vague - is there some recent build regression this is 
-> responding to? Which kernel headers collided with which headers used by 
-> the decompressor build?
+> {
+> .time_stp_en = true;
+> .dbl_data_bus = 1;
+> .double_buffer_en = true;
+> .tg = 0x4;
+> ...
+> }
 
-The sharing of headers has always been a PITA. Because the decompressor is
-different from kernel proper, the moment you start including kernel proper
-headers for functionality, you need to exempt or add ifdeffery or do some
-other weird dance to be able to share those headers.
+I like that too, it's more readable than raw register values.
 
-Things like below are only some examples.
+> If next SoC has only one parameter is different, we duplicate all
+> other parameter?
 
-So I'd like to separate the two namespaces and only share common functionality
-through asm/shared/ and avoid all that ugly ifdeffery and workarounds we're
-doing. Because each time we have to touch the decompressor - and we get to
-touch it a lot with the confidential computing stuff recently - it is like
-a house of cards.
+That's what we usually do when the amount of parameters is not too
+large. When it becomes larger, we sometimes split the configuration data
+in multiple chunks. For instance,
 
-I hope that makes sense.
+static const char * const family_a_clks[] = {
+	"core",
+	"io",
+};
 
-/* Use the static base for this part of the boot process */
-#undef __PAGE_OFFSET
-#define __PAGE_OFFSET __PAGE_OFFSET_BASE
-#include "../../mm/ident_map.c"
+static sont char * const family_b_clks[] = {
+	"main",
+	"ram",
+	"bus",
+};
 
-or 
+static const foo_dev_info soc_1_info = {
+	.has_time_machine = false,
+	.clks = family_a_clks,
+	.num_clks = ARRAY_SIZE(family_a_clks),
+};
 
-#define _SETUP
-#include <asm/setup.h>	/* For COMMAND_LINE_SIZE */
-#undef _SETUP
+static const foo_dev_info soc_2_info = {
+	.has_time_machine = false,
+	.clks = family_b_clks,
+	.num_clks = ARRAY_SIZE(family_b_clks),
+};
 
-/* No MITIGATION_PAGE_TABLE_ISOLATION support needed either: */
-#undef CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
+static const foo_dev_info soc_3_info = {
+	.has_time_machine = true,
+	.clks = family_b_clks,
+	.num_clks = ARRAY_SIZE(family_b_clks),
+};
 
-or
+There's no clear rule, it's on a case-by-case basis.
 
-#define KASLR_COMPRESSED_BOOT
-#include "../../lib/kaslr.c"
-
-or
-
-#ifdef CONFIG_X86_5LEVEL
-#ifdef USE_EARLY_PGTABLE_L5
-/*
- * cpu_feature_enabled() is not available in early boot code.
- * Use variable instead.
- */
-static inline bool pgtable_l5_enabled(void)
-{
-	return __pgtable_l5_enabled;
-}
-
-
+> > > > +};
+> > > > +
 
 -- 
-Regards/Gruss,
-    Boris.
+Regards,
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Laurent Pinchart
 
