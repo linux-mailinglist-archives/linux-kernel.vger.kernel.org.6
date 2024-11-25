@@ -1,128 +1,173 @@
-Return-Path: <linux-kernel+bounces-421711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28A5E9D8EE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:09:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D66839D8EEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:13:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9080169B46
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:09:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97592289C26
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35AF6194ACA;
-	Mon, 25 Nov 2024 23:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB2F1CD1E1;
+	Mon, 25 Nov 2024 23:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b8/h6TrA"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ePppu1GQ"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF71B1E480;
-	Mon, 25 Nov 2024 23:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64ED61E480
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 23:13:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732576166; cv=none; b=LXwobAvpQ9dpFPcWkN0TVgTHtVOmy9W8bT+F452Peb68jA1EBOSSW3dNvEDLSobFzNQlnMD9VMoeYs/iHWiqXHHx71VN1qawSGxOjKV8beKv3kju5EmSRptoxp8guJ4o7V58kSvEKroOpCiCQ3oP7O2nVmcorHIEP8tjqhluQWc=
+	t=1732576424; cv=none; b=BwiCJar4/iENOFl1fDU/qgdpPnDzBhfxez9bERJmBByYyWk275k4rD0V/s8QosxbXIog0O8LH5HRgaadLv5duiRDCVQlqU7hN32FmbyC0Ri9KHJ3nwnTeGiBuohFH8KZAEZ2TpmMbaCKFv1gC5HpajARzF8tnvJN1rMip7YNqlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732576166; c=relaxed/simple;
-	bh=PJCmuQ4lMcanbRMirOcCM5Bjb+hCuj2GTmNSE+zMJaA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=tPN84iDQc2xZ00uee+2YKO+nuMMkusgyG+Gnuaa2RsoJ8T6/SO0TZrp1LBWQEJlMmApd0HtVFNniYpl4fAzanQwMtKuutjl//ZEJziBvTQIjxtjvJtO/Ki5u+QsSyBF1RvdCt+H2CFfJa7jJ6IK89Vgj4AJ4+Oug79orkjN6ifs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b8/h6TrA; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-38241435528so3274564f8f.2;
-        Mon, 25 Nov 2024 15:09:24 -0800 (PST)
+	s=arc-20240116; t=1732576424; c=relaxed/simple;
+	bh=KVZsvLMcMF7B+5XJvRsy6EnNxud+pPcVbig6ZFELOP8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L/nqz1ith+hmgdU3n1aGnob5Neh3o6uzYI19GTUDEiCDNPvJJZ4FFClZAdafhus1j6vLZGS1iDuEwtXBPPdmqrNuTxAknK/cAWSFHK0q1dBUDs03ebktwk72PoSyVSrxaL48hPiLXeuHeLg1RHnw3KpdDsm1ybCSlh4OPcByr8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ePppu1GQ; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6eeac3535baso48605277b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 15:13:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732576163; x=1733180963; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wZOY2+Zq+Uw5TtuUXacSqok50DLyY9YzgfmyZp7nZkg=;
-        b=b8/h6TrAgEcBPc8lon5eZMU22GvEdILFTDZV9oXOa6xNUUtV5RMrOphbJko8V+d2Bk
-         ITejYRbumio+l5FrPtF3/TQz/RCiRAj2IGQYsAgeK2ir/iXw5SQUB2x53myIbuBqugcP
-         nAGGy2Irjxt1OHhRNqzNyCpwBRs6tgdfI+GneBJuPHFcYj6CxD4zQxY5FIajRl2hUL7F
-         0J0kfsqGNgAI5D/9nnY/gqwZ+HYlsuEoUqRvpRD1Ut9V1ALqCQOmf0UGQltP89g9n/fn
-         zDZilaf91l8UYEdYjHDYSxjnfDapxfjYk3X5GYXdVDWwyqFQSrdHgi9h4Nj5wUbGMggl
-         lIEg==
+        d=linaro.org; s=google; t=1732576420; x=1733181220; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V1h22yel4a+AVA4skUO0bIJ443dO8U6a44Jcm2JOSrU=;
+        b=ePppu1GQrtyNEEN3O/Rqt9I9B37A7SM1mzYZ4CVOy3ewo2ythDYBnSMWtVkyn/gXGw
+         KXttxQElikKcKdsuTtIWeEgYYUnA5Aqaq6FmzMgO/BqRcehUGYCWpWEZPJIw30S52DvL
+         lUbKmePHi1chJoXaTgdDyR7wSr8TOG0APpgHYxD+hZwQI+yCTMng1Q541/HDEf0TD5dO
+         YvgNo8G3q64m0wMYZZsVj8Bu5yUXgxtyAkACiTG+mYtHvy4m+Pcl0Dryl1LuybZpK+tD
+         Q41sakQ7P5DlhVMa/YMEVRxLzk0c0i7clGkt40sy2cRQqw5KEymXqkiSI4L0hjECso24
+         cbpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732576163; x=1733180963;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wZOY2+Zq+Uw5TtuUXacSqok50DLyY9YzgfmyZp7nZkg=;
-        b=shUagO2baUym7N9cB8MLwF7vSNQEP1p8tmZROw+hY4S367GA6KuMTzWdezzt3hr5Rr
-         YH8reg+o27Aep3wmfUd/EpMhAdz650LIh1ynP3On2C3PT2Or+nMCf7a0ec0/HddiwIay
-         1Xv1N68arUl9Ai5vPJSPt8pfQF4k9Uvs7ikJXlFBF6PY47LxxNr6j5pq+dZWaoSrXjP6
-         rMNRwcrRNFpt74tstKQypq4Kdfl2T+P+oz9gWdmmY75gEfDB0cNJoZnt/IRoolYCsDdT
-         8EGTja07CnaWP/FPDqEXqEtj2cPOMDhfmjdALx3PIb9Gz6wTwuRTlw97TUrCziDLlrua
-         yxWw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+1kVIHxP0sp6e5OGcVrv5b2r2Qdvxo8RBUjMZ/MY11wMlOA0DHX1TJAMTpFDA5EpV0uIWL5dlXA==@vger.kernel.org, AJvYcCXuxETze5cfa1MBwmez//NFN7pQXoyawVkaf4b3tZFJTerBxuTxHdSkBtE6sITmVLSc+6sO04k/Uri31gqP@vger.kernel.org
-X-Gm-Message-State: AOJu0YynO4/9v3r1pOe/Bk+ZEYwze2Bk3QACd+157rPm8b9atrJzevoZ
-	ZrLNtnjfZQDt/kX2OUi2ujHHk6zxBzvBHeu6Q8b/3Kn+OuECv54L
-X-Gm-Gg: ASbGnctpty+DqUwdo2Ni943qUwhd5nyTwKMpEmqJmZfosHARUEtD3jNDFqIo7Rf8uEb
-	C9hH7csdG8pyLBNtdr79tPIoXCq/ceGCdy4CqCqBUhS6XrgCp0eFtZmsin9+RfiC5CNuPdpl/Cn
-	4yxIz2nVZx86xjV5Q/bParw/CN19MMaPXy7t7l0cQwHbO8sdbkGYmcX7lJxB3fUNEmF6BDRdSAs
-	ExORlDJT/NUt/hoK1eotPUhU5SBi7X5vwIbPolVUfKaLfI3daCdE1lgK6o=
-X-Google-Smtp-Source: AGHT+IEAvhRyubWGmJrGoBa6eObFznxLem+K1BoEP7lNbFWgLmd88TKnPzPEGV/NdKFRegw7oxz2EQ==
-X-Received: by 2002:a05:6000:2c8:b0:382:4926:98e0 with SMTP id ffacd0b85a97d-38260be53f0mr12726095f8f.52.1732576163170;
-        Mon, 25 Nov 2024 15:09:23 -0800 (PST)
-Received: from [192.168.42.143] ([85.255.233.86])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fafedbcsm11803444f8f.41.2024.11.25.15.09.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 15:09:22 -0800 (PST)
-Message-ID: <4db729f9-eece-4732-8d6d-405a997ed35c@gmail.com>
-Date: Mon, 25 Nov 2024 23:10:10 +0000
+        d=1e100.net; s=20230601; t=1732576420; x=1733181220;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V1h22yel4a+AVA4skUO0bIJ443dO8U6a44Jcm2JOSrU=;
+        b=NZzL/zvBuBmA3DjlzhCvkgxtJdB+NUT3YAbhogS2kFo4rCwGKCHHof/naecd4FdM73
+         OHSmdxPsag6xlCnPLiAMlwvFNLqtPP4WSMLry139szPyc6iHyxBq0jJNwYvEOsIRk/ft
+         jeJ0Y0O6kfYxkhxZ2jU833H96Zdmqp4y3kshnmoeN/PfBz2+F7E77k0yj7OqzvFQBMc8
+         MvEhUiT5jBah0RP7Ljd0ig2kkbGlLqxNVPk9vH3+SMgQ4JiD3KCepmU38F5uMeu20ppL
+         dW8NJbnAy+oozhidDSwsbrdRj8iP2BjBVYD2RMI4wW/qx/FRLptNWIgq/yhF3712G2Wh
+         rXXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTX/bQf0ehckgMVqvOXYAaYYo3m1eTm+L7xuYHh/Ab/+OMiU9cPg4Bn3X+1kdsCZIHeCeLQ/sqcYC5lgQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw34pzfYzz4+31thFBMuygtC+9vOdbMranQ2DtPii/8T3uxOI0r
+	n+vY1cVPYixeUiWrr4rbIpoVlVb3uUvWfMqiBUv3FWLBziVR1g5/wLUZ2KdcJ6TWlKJDSElbzsV
+	nbGB+3drpK72o+59p59WbEuG4sXyfTvUMzZDnbA==
+X-Gm-Gg: ASbGnctAbX+pfNN6U2nBqZfoch46/a2lEyPLDnBmnkaH9+94CBWT7njkkuM5W5clVQg
+	uIliZAkqCzWxXEe4v0bxno0INmtdsxlw=
+X-Google-Smtp-Source: AGHT+IEgwZhiK1rR9pEss4yB2/MBxGuFiIOxpC0IuHysvYmViO2ZsmddzZAz/1H8S4RvbyNtVnUa/ZDzKpS9xj676Pc=
+X-Received: by 2002:a05:690c:3513:b0:6e3:a7b:49b3 with SMTP id
+ 00721157ae682-6eee0a63524mr158689697b3.41.1732576420404; Mon, 25 Nov 2024
+ 15:13:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] WARNING in io_pin_pages
-From: Pavel Begunkov <asml.silence@gmail.com>
-To: syzbot <syzbot+2159cbb522b02847c053@syzkaller.appspotmail.com>,
- axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-References: <67406232.050a0220.3c9d61.018e.GAE@google.com>
- <ea5487ba-bed6-4a0a-833d-262bc70cfe46@gmail.com>
-Content-Language: en-US
-In-Reply-To: <ea5487ba-bed6-4a0a-833d-262bc70cfe46@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241112170050.1612998-3-hch@lst.de> <20241122050419.21973-1-semen.protsenko@linaro.org>
+ <20241122120444.GA25679@lst.de> <CAPLW+4==a515TCD93Kp-8zC8iYyYdh92U=j_emnG5sT_d7z64w@mail.gmail.com>
+ <da02f209-8524-4281-a9d3-1b524bd966da@acm.org>
+In-Reply-To: <da02f209-8524-4281-a9d3-1b524bd966da@acm.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Mon, 25 Nov 2024 17:13:29 -0600
+Message-ID: <CAPLW+4mbxfHJbxvj1CUGSbs-oN_zfnQjWvovB+KYqbyoqtgOKg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] block: remove the ioprio field from struct request
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, linux-block@vger.kernel.org, 
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/22/24 15:02, Pavel Begunkov wrote:
-> On 11/22/24 10:51, syzbot wrote:
->> Hello,
->>
->> syzbot found the following issue on:
->>
->> HEAD commit:    ae58226b89ac Add linux-next specific files for 20241118
->> git tree:       linux-next
->> console+strace: https://syzkaller.appspot.com/x/log.txt?x=14a67378580000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=45719eec4c74e6ba
->> dashboard link: https://syzkaller.appspot.com/bug?extid=2159cbb522b02847c053
->> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=137beac0580000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=177beac0580000
->>
->> Downloadable assets:
->> disk image: https://storage.googleapis.com/syzbot-assets/fd3d650cd6b6/disk-ae58226b.raw.xz
->> vmlinux: https://storage.googleapis.com/syzbot-assets/89a0fb674130/vmlinux-ae58226b.xz
->> kernel image: https://storage.googleapis.com/syzbot-assets/92120e1c6775/bzImage-ae58226b.xz
->>
->> The issue was bisected to:
->>
->> commit 68685fa20edc5307fc893a06473c19661c236f29
->> Author: Pavel Begunkov <asml.silence@gmail.com>
->> Date:   Fri Nov 15 16:54:38 2024 +0000
->>
->>      io_uring: fortify io_pin_pages with a warning
-> 
-> Seems I wasn't too paranoid. I'll send a fix
+Hi Bart,
 
-#syz test: https://github.com/isilence/linux.git syz/sanitise-cqsq
+On Fri, Nov 22, 2024 at 4:18=E2=80=AFPM Bart Van Assche <bvanassche@acm.org=
+> wrote:
+>
+> On 11/22/24 1:55 PM, Sam Protsenko wrote:
+> > On Fri, Nov 22, 2024 at 6:04=E2=80=AFAM Christoph Hellwig <hch@lst.de> =
+wrote:
+> >>
+> >> On Thu, Nov 21, 2024 at 11:04:19PM -0600, Sam Protsenko wrote:
+> >>> Hi Christoph,
+> >>>
+> >>> This patch causes a regression on E850-96 board. Specifically, there =
+are
+> >>> two noticeable time lags when booting Debian rootfs:
+> >>
+> >> What storage driver does this board use?  Anything else interesting
+> >> about the setup?
+> >>
+> >
+> > It's an Exynos based board with eMMC, so it uses DW MMC driver, with
+> > Exynos glue layer on top of it, so:
+> >
+> >      drivers/mmc/host/dw_mmc.c
+> >      drivers/mmc/host/dw_mmc-exynos.c
+> >
+> > I'm using the regular ARM64 defconfig. Nothing fancy about this setup
+> > neither, the device tree with eMMC definition (mmc_0) is here:
+> >
+> >      arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
+> >
+> > FWIW, I was able to narrow down the issue to dd_insert_request()
+> > function. With this hack the freeze is gone:
+> >
+> > 8<-------------------------------------------------------------------->=
+8
+> > diff --git a/block/mq-deadline.c b/block/mq-deadline.c
+> > index acdc28756d9d..83d272b66e71 100644
+> > --- a/block/mq-deadline.c
+> > +++ b/block/mq-deadline.c
+> > @@ -676,7 +676,7 @@ static void dd_insert_request(struct blk_mq_hw_ctx
+> > *hctx, struct request *rq,
+> >          struct request_queue *q =3D hctx->queue;
+> >          struct deadline_data *dd =3D q->elevator->elevator_data;
+> >          const enum dd_data_dir data_dir =3D rq_data_dir(rq);
+> > -       u16 ioprio =3D req_get_ioprio(rq);
+> > +       u16 ioprio =3D 0; /* the same as old req->ioprio */
+> >          u8 ioprio_class =3D IOPRIO_PRIO_CLASS(ioprio);
+> >          struct dd_per_prio *per_prio;
+> >          enum dd_prio prio;
+> > 8<-------------------------------------------------------------------->=
+8
+> >
+> > Does it tell you anything about where the possible issue can be?
+>
+> It seems like eMMC devices do not tolerate I/O prioritization. How about
+> disabling I/O prioritization for eMMC setups? Is the ioprio cgroup
+> controller perhaps activated by the user space software that is running
+> on this setup?
+>
 
--- 
-Pavel Begunkov
+Can you please elaborate on why eMMC devices might not play well with
+prios? Do they lack some particular hardware support, like required
+commands? Also, I've noticed (probably) the same issue reported
+recently [1] for USB SSD drives. so it'd nice to have some references
+showing it's actually the case specifically for eMMC.
+
+Do you know if we have any config options to disable I/O
+prioritization? Not sure how exactly we can do that specifically for
+eMMC devices too. I'm not an expert in block layer, would appreciate
+some help with this one.
+
+For ioprio cgroup: CONFIG_BLK_CGROUP_IOPRIO option is disabled in my
+case (ARM64 defconfig), so I don't think it has to do with ioprio
+cgroup?
+
+[1] https://lore.kernel.org/all/CAP-bSRbCo7=3DwfUBZ8H7c3Q-7XSG+SB=3DR4MHHNN=
+GPvBoinsVSZg@mail.gmail.com/
+
+Thanks!
+
+> Thanks,
+>
+> Bart.
 
