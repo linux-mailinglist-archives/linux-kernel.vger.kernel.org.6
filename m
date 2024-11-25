@@ -1,98 +1,101 @@
-Return-Path: <linux-kernel+bounces-421238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5A39D887A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:50:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFA4D16A949
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:50:28 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3D31B218F;
-	Mon, 25 Nov 2024 14:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PVvc/uzr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C20E9D889C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:00:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13AE71B0F0A;
-	Mon, 25 Nov 2024 14:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8F0FB438BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:56:00 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB651B2194;
+	Mon, 25 Nov 2024 14:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="q4ssgh6G"
+Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6901B0F30
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732546226; cv=none; b=Za1nhDf88wi1rLEJu62x5eElT4C0Ea716e6fwEuSWadLliaO9FpbTSG7z7sTOwt1DZBcZ9Lrodl6lf8A8EhIZDzqZ5v7joKlahrx0RNN4bikRyMzyyDw50pgS7gVpXC5KqSXJljf4PwipMI7QDTObFOiSwmmaSc6Au/NpCyNL8w=
+	t=1732546555; cv=none; b=AZtXQI8DomoMz0sDglOfWv5eqd6nJ/9eqF7YRokylJydcKzLhOVi7F1k+R8oFQBdYyDT+zIwBIpBPHUfuz8a1y9klZYTZdkaNei7nzuXK+G+wvkgIbWy03MbhoPGf3aiHKAOiBQuI0v1Qf1Zc3fgtf8cPl5uURGGIUzCAS28WWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732546226; c=relaxed/simple;
-	bh=99mQyA2qZ3XRSB0c6XpS7M79n2aRZycujApZ3uIkYpo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tsGeFDNr8jGLp1JWMEKKSNBjmVMlbV8uLbBYCsvIBeBEi8TAvy6JIbgtkXy9sX9Zwi1+u3b9Afw7+YQX7rZOR84L2SXhdPCBi9YBVw0pXgQA8Y/LAine9hacP8gL9CUu3jdG/tokEd6Zo0P5ASvQKcX/0df3TPiUl7IuGEyA608=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PVvc/uzr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83C9EC4CECF;
-	Mon, 25 Nov 2024 14:50:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732546225;
-	bh=99mQyA2qZ3XRSB0c6XpS7M79n2aRZycujApZ3uIkYpo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PVvc/uzrJcxn7XmmAmYhT+t8FoE8vkid+dD4LCMv16oBRN1PnDuSx8volo+NYfYZa
-	 2QUuID6aCy2mDnl1Kc5XEeQ1yogaHZ/ilhu/LUGy50Yfnran1CSPf4Rza3WOEClHrh
-	 0voJDmtExgEU9Kmd3Zfifw8ddc3OfrPO0o4lJH+/1XEAPGQL4TGU1K1S/uL2L9BP8y
-	 MYeyR2wDy9wV2XtzR8kRmdObOITn/czOynR//Yng0hF4SLx6bWpEMOYgA3XepkVsLV
-	 R/J5q7XbElm9QV0zYalelFo/a+TaP6Ea+u9dcId1EaPnc2oROHixvaSsSiccBkFoQB
-	 5EI3rdBHqW2CA==
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-294ec8e1d8aso3549249fac.1;
-        Mon, 25 Nov 2024 06:50:25 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXISOtO775HryzyObbNSvO2DUXSoHJKsxvRdmNu+CcNU5Ep7Mka5jCZindMhY+ACN3+nGrcNZBWishadn4=@vger.kernel.org, AJvYcCXkNNkctlpHu4ZkbpYbxNgUUwYNcTyFJrCC3TzVcAEL9UYESxx3OYp5dtaIjJGz+20H/xCzO3fvHSg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhlqpR07FR4jc444v5+wM3+Ww14ikJD6MhR+l28Cg26yBnjD0K
-	aXLWrlSHD92/JSl8NdxIvfMaadvtUl9rufEq3QwlXCU2eepdOaygcuH3N9xpWOEaALH8ZCm7SZs
-	hEkufOI87PUsphbyCbJ9E6e2G1qk=
-X-Google-Smtp-Source: AGHT+IGYGNkEgucZwRz7z466kKbcCeUbxNUCG+3UqQmFp2twNgsbi7teNi0n6xtFYw4fvYQBpTKht0RKHRj/OPxAsf4=
-X-Received: by 2002:a05:6870:648a:b0:297:1d2a:a724 with SMTP id
- 586e51a60fabf-29720b1f5c1mr9987946fac.1.1732546224858; Mon, 25 Nov 2024
- 06:50:24 -0800 (PST)
+	s=arc-20240116; t=1732546555; c=relaxed/simple;
+	bh=GunFkVqsk6AZag4xW54NaCZhfXdukTjYnDQLy6bi5aQ=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=H/dmBu3ZnpZ9H4DkRG0ES1KYV6i3vSs55tR/H3OObqCgeXBr+Jkpy6pf4WkhVxgtpVBXnHijKf4BBIUkLHX8LyQ0sbUMKjUJr/Ler6mvASomWV9GnRoVyb1o9wuToP3Yde3ViqUrQ5V9dFAHeF7i8qjHZ5ttsNo8DwxaXsFkgh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=q4ssgh6G; arc=none smtp.client-ip=162.62.57.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1732546237; bh=HQuH7MrwMz12ht/cdRhFwy3ucGjGwmSPvp8fxHTW85s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=q4ssgh6GflwxeBIcpb3JoHMHH5xliq7dMeyul5kPSqZiN75yiw5xKCBIyosAKOgIW
+	 587JdvLT8Yi+aceSqkH3RfeSHF8yy8ps8ODk42/OcIC6ntO82fT4FeSgYEAYLy1DBL
+	 c74YPvgVTzzk3W9qT72UYeUJ7XclzQ60k5LsgvBg=
+Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id CA4240EC; Mon, 25 Nov 2024 22:50:36 +0800
+X-QQ-mid: xmsmtpt1732546236tlrap8c46
+Message-ID: <tencent_C397C636464B74750D76ED66983D37374209@qq.com>
+X-QQ-XMAILINFO: NKv2G1wnhDBn0GwVGm3wq+7FJdu8TYpX7FWjJIwal5Zn0tGg0t3XF2y+nZ9AOB
+	 3WwJN6PNLELP1oa1r3nuu8AXYytHicAdCGcUrXqrgypP1YVr+cDh4dHXvb1t4lpe+8AqXHbp3qSZ
+	 6ggVbDvLwNirq/N2SQmNI3WMByVPT8v37v3A5HfsyjtTg8S0AF6NSFhlyV2dlTZEQxLLKKNcwJjo
+	 ewLKPCIQ6Vuj4rQ73FkipY4V+Se3PI5q4JY4PHNXorJrOpk/oIfIvm8nOMEqQVK4XtNCiDUoWj8N
+	 hDwFnd3my6/8afNhdoV/MOjlSQ5f7Fqtpt2c+LTGmBuFxgSWo5GxXzFOmX9P+WHgavxP61aPf6Rg
+	 fQhH1JbG5H+zHgzEm1Qs+6hWx02iI3HvdbrUMv9DMHSfpyE4k0Elrgma9+OIpEfhO4dOVcCX7+kG
+	 o8lncr+zx7QT21k4xwr56xh9Whv3r2qlbOHCVbVUrcZEVAVaqCRsUSlBVHJINPg35pBc2eYOCp1T
+	 hy0VtRbUzL3+RzbjGIckHbGT+3r2Yq6jtp4evnnRDrFGYmOzSeFW7u7TAJT3Y4Sv23xbVg9LI43P
+	 Wy6XP3AFpt2MgD7i82unzNoJB/FNOmscVVFVK++Ih/NZuYNokgXMe/xDDvOqOuDVtzlU0t4oUZTS
+	 +TK7eue63e4adNl9/UCVXZlvs+kohjMHwY/gPr4lknhsbcta28lWW1F/QcjmaWQ83PJM0C3BaazN
+	 hijX0sUdtqGRD7vJOIInkfkSP0lBoUXeOSTlKwM0eH5Qu2iSzTzpQC7IG9HMuaWE8M/30Oa+ZrSD
+	 WgDliCRR50rHej8ylcmZO5EdUVYHlUm2hpbl9qooo0q4R+HgSFVjWvGmnTGjTQoO5XuTKGaiLpsK
+	 +hxRtXphgPCb0lDbxs6tu5TMLF0MfMWQ==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+489f78df4709ac2bfdd3@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in sco_sock_connect
+Date: Mon, 25 Nov 2024 22:50:36 +0800
+X-OQ-MSGID: <20241125145035.3872817-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <674478a5.050a0220.1cc393.0080.GAE@google.com>
+References: <674478a5.050a0220.1cc393.0080.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125132029.7241-1-patryk.wlazlyn@linux.intel.com>
- <20241125132029.7241-7-patryk.wlazlyn@linux.intel.com> <CAJZ5v0gpSCWMLxekbe2LWmfAxoJ3AzqLuJ7SAFp8+F1n1wUCtQ@mail.gmail.com>
- <9b38b1ff-1755-4648-ae2e-9c7cce94c2b1@linux.intel.com>
-In-Reply-To: <9b38b1ff-1755-4648-ae2e-9c7cce94c2b1@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 25 Nov 2024 15:50:13 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0gKSBqQCV-zj7tNfv4pEHYp90bjXBn_EN_=Nxh=ok7snw@mail.gmail.com>
-Message-ID: <CAJZ5v0gKSBqQCV-zj7tNfv4pEHYp90bjXBn_EN_=Nxh=ok7snw@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 6/8] intel_idle: Provide enter_dead() handler for SRF
-To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, rafael.j.wysocki@intel.com, len.brown@intel.com, 
-	artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com, 
-	peterz@infradead.org, tglx@linutronix.de, gautham.shenoy@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 25, 2024 at 3:48=E2=80=AFPM Patryk Wlazlyn
-<patryk.wlazlyn@linux.intel.com> wrote:
->
-> > Is this still the case with the latest firmware?
-> >
-> > If so, this could be the second patch in the series if [1-3/7] are drop=
-ped.
-> >
-> > Otherwise, I don't think it is needed any more.
-> I discussed this case with Artem or Len off-list, before.
-> The idea is to add it for SRF too, to make sure that you get PC6, even on=
- old firmware.
->
-> Just as reminder - the whole patch series is here to guard for future pla=
-tforms too.
+add conn should not put. timeout handler miss a put when !hcon.
 
-This actually is its main purpose.
+#syz test
 
-> The SRF is just the one the problem was observed on.
+diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
+index 1b8e468d24cf..78f7bca24487 100644
+--- a/net/bluetooth/sco.c
++++ b/net/bluetooth/sco.c
+@@ -143,6 +143,7 @@ static void sco_sock_timeout(struct work_struct *work)
+ 	sco_conn_lock(conn);
+ 	if (!conn->hcon) {
+ 		sco_conn_unlock(conn);
++		sco_conn_put(conn);
+ 		return;
+ 	}
+ 	sk = sco_sock_hold(conn);
+@@ -192,7 +193,6 @@ static struct sco_conn *sco_conn_add(struct hci_conn *hcon)
+ 			conn->hcon = hcon;
+ 			sco_conn_unlock(conn);
+ 		}
+-		sco_conn_put(conn);
+ 		return conn;
+ 	}
+ 
 
-So if you change intel_idle to provide :enter_dead() for all CPUs on
-all platforms, the SRF-specific patch won't be necessary any more.
 
