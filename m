@@ -1,202 +1,245 @@
-Return-Path: <linux-kernel+bounces-421100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 285C69D869D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:39:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 969429D86DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:46:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F54716AA68
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:38:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77BB7164C36
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:46:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44321ACDE8;
-	Mon, 25 Nov 2024 13:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB141ADFF8;
+	Mon, 25 Nov 2024 13:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="nfic9/aG"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2087.outbound.protection.outlook.com [40.107.22.87])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YbCcKPkA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3071C191F9E;
-	Mon, 25 Nov 2024 13:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732541841; cv=fail; b=LqyCkV6d0vgsyir2kvv5KcIZKdhp07lIcZZzK48L51ngf+Rq81WiWXeaoEIkAOZkswWahrDSdP7/AbEMWNvEeHVxMMKPZebguxt3zMj0zbZhy7IcB+TUnW3z1QodCV3ZEUFZG+sEbLVImbQI9BiEKQzuDV7sincl4VU1mi67k3Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732541841; c=relaxed/simple;
-	bh=ve5G8rCP3jHxbNoCX2QfMdqcnbMybHDFxAs68fSzDMg=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=L3CtuZQZb5iemwDGdpR20tNKvvyaJCyirw3q+ImJRkcOrDLHayTWfFUofZqGvgt+S4BTrllR5SmfuVh/wATmdtF4cp1YjvJYfSkNW/jjxZ7MuZI777a/y4MEQBFbtfCCsgNgIXEGEwvbSbmZ+asxY/ldXCnPYTwFNBjxa13VBvE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=nfic9/aG; arc=fail smtp.client-ip=40.107.22.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dZfd3uYC+V1WK+O47jpo2jtaZhe8nOh95cWhtA8I/dmM1ZYqitztO+YgaJCs/fMNnaG7Za1Xn2H/0r5k4jT1IARNyHHINhh9h9MLNCRjtrzslaINkFl1Nyfh2M77/sF8ybn5EhRUxzuhGyew6HRcsSoulKG2ILHao5OfVrDljlvu5j1XLJJ1SqlzkHJj8jTfIExKz6oz2kk66UtcuRuP9z+WUjddRiPFNchwnurDqcJNLr0O3z8j/WTov0il/cYi63QMHeuXLsh7u1pqo750WzGKFDQFczxirQWKnFi+4RqdTan0MX3UE4dkFJJUYH1hodk0NAlN36kP9HuCq4/ghw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YQr3HASoq0wMbzkVTuZl6z24UD/nEwN57QGJoClINhQ=;
- b=AcIfOtwSKzEqwODsnqUw/piBZtNxzPL1gkXsEGuaAnmYyGVw72fsCUiii17I5EL/5UTcoyOU/CRC49zlHPuW+gRISzHKJ6vqoufdMGiSTJYdId39Q/Ps8nozYqBG0kbPdHQe96tHOUytwLIB5zOb6fvixAISqJpkgJ2m5HE3B1jdiY2FwO+GJ3c4KQd653CkMs7MPqPKm44rjxrt4LV0cL7xmfqwGJ4xY/cRyEIkB6sEMLR8ACyElcKEOSxJ5HU8ordHLsMxvbF36RQk1xAsDj6eE9u1Tr6rsF9p7Tkm88yqiIStaE9eSWPYggMssu6jILgkRCbf87767Qz6bGC4Lg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YQr3HASoq0wMbzkVTuZl6z24UD/nEwN57QGJoClINhQ=;
- b=nfic9/aGmR4/0sfJhjMpjmZjdWWTTtYXz3knlmrHK0Ss9dyCmo1lzR+o2ATM/LB4X31BKD1tXdcXrHyRytMJZDYNOoMUfwxqd00Qtxt/PkK82S4GYNt4jCAhCJP1pNYysu5hJKTHYuBX3dDe/v8/Qz6towLVnAt0/tO6zCeMCn4IGqAj2J+fUZ3RmMEpC4lpwpoNWCRiMr3M0W4W7O5fKAsjYQFCn/NbEmXTy4Vvj2Gl0WVNxibGP9zAC4y+jIOSiH1NOjZCKdc+/n0saGqctj+mH60Csy+gUjQvu00NjLx8fiJ5J+aAJO0hohnpvGeQNTm0WCExHHlPxXFImV3L9w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM0PR0402MB3937.eurprd04.prod.outlook.com (2603:10a6:208:5::22)
- by AS8PR04MB8660.eurprd04.prod.outlook.com (2603:10a6:20b:42b::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.20; Mon, 25 Nov
- 2024 13:37:14 +0000
-Received: from AM0PR0402MB3937.eurprd04.prod.outlook.com
- ([fe80::4e37:f56b:8a3e:bff0]) by AM0PR0402MB3937.eurprd04.prod.outlook.com
- ([fe80::4e37:f56b:8a3e:bff0%4]) with mapi id 15.20.8048.020; Mon, 25 Nov 2024
- 13:37:14 +0000
-From: carlos.song@nxp.com
-To: o.rempel@pengutronix.de,
-	kernel@pengutronix.de,
-	andi.shyti@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	festevam@gmail.com,
-	frank.li@nxp.com,
-	francesco@dolcini.it
-Cc: linux-i2c@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] i2c: imx: add imx7d compatible string for applying errata ERR007805
-Date: Mon, 25 Nov 2024 21:45:48 +0800
-Message-Id: <20241125134548.1611923-1-carlos.song@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: AS4P192CA0037.EURP192.PROD.OUTLOOK.COM
- (2603:10a6:20b:658::28) To AM6PR0402MB3944.eurprd04.prod.outlook.com
- (2603:10a6:209:1c::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F104D18872F;
+	Mon, 25 Nov 2024 13:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732542375; cv=none; b=Ua2bo6CzCbTRrCUhvpvax6HD/ERIiQOgEQ3jdE06aLAUhLKlrX+6fvqMCUglbogyckKJCzo2sX8fGIEG/cfg16HvWsJ0me+/ojb14HTLo5MRZR2OefwnVKTrTUNI3b9VasiUCBtc5VHZRpLMDdSHk7N3kVzPX6iV/gniCCH5mnw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732542375; c=relaxed/simple;
+	bh=K6+biCOj1EJW76S/bxKgAp/0jtJ6hpnfLFl8aCpX1kk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=S9coZtUjC381a8KqG2myFJn0V8yWJocLgSO/R/boNpKxnMGb1itH5llKJTvwTs/nvT5qt8GIgSBHT+GlvyV+QNSvf+M2mS7S40uvgXalZYRJTT3vCX5+YU7J+92I3iSm//hCDufoEN06L7RdkSsD4hlqi+GcOw2ruDtHhwxsfqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YbCcKPkA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E346C4CECE;
+	Mon, 25 Nov 2024 13:46:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732542374;
+	bh=K6+biCOj1EJW76S/bxKgAp/0jtJ6hpnfLFl8aCpX1kk=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=YbCcKPkAmTxo6obVn92cj7syWiLgZkzCsB61EG4qJy8slBEBjPfbPFkqNcR4LA5Ui
+	 AdArG9hsgq4Nf95pGETmezFJD6tFGOeRX1DIb45gW2SfLjdp/Hh1tfpZi1Et/WY1/f
+	 8I+PCaVJZmdoOiRhxmAf9oqdJAPCYlX57PWIWvQg+O9hxgwkWQ6wHHMhTBM9hpGNjv
+	 o7rb8k/UKuzNvH8oNqb47kbVqQ7R0z9migtlMfEO3+QO7QyH/Zlr4xoMdK0c7NsCM/
+	 brHRWNmBUBumA1jpJMYXerB8adhqiB8vtc2xSCFoYa0elfkVwT5Q4ltnKt/7vtX7pN
+	 unI+8bHcx3+ew==
+Message-ID: <9eeae001-92b2-40da-ba75-b03c95eb7139@kernel.org>
+Date: Mon, 25 Nov 2024 14:46:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM0PR0402MB3937:EE_|AS8PR04MB8660:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3f479a89-7f7c-4613-c279-08dd0d564595
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?tAoF3TYoVIKWRniLd8BSL+8HngrdxeVKOwdWjOobuB5YxGD2VHvyVw7rKEpZ?=
- =?us-ascii?Q?WU61AXwFuTl3Y2xUiWeFeqCxvt6xaecTBFBd8nALYqLbKJFikc6x4ItdZwpx?=
- =?us-ascii?Q?BGXjMMD+PJ3KtHO+akpfVk/E4ZG/nuUELqDRrggjeZyWNSB5hCRCWQ8ZDQGQ?=
- =?us-ascii?Q?YHCVQssGSrIjlFV+wXsvaPuEcA2asgZLIJiwrdIOqizjnFzOzjbtD7mddGyC?=
- =?us-ascii?Q?3lMlOlXM/mQimIqDzktysL/oFR/G4kK2LXT3kyB2jpXdLsYnVyHEBBKPtfBp?=
- =?us-ascii?Q?BXJHpy+Zg5aDUloTnBVedVIvASYxpspCHyq0Y/KvyWoZ9It9hw0TzSAN8Mk3?=
- =?us-ascii?Q?e1LugLGH0BwVUJm4FROBOHLWrOof3Xs1GdcTrM/lqtwsJXaXFTU7wckcgchR?=
- =?us-ascii?Q?4BpNzMS4qMk6XVea1OshNmaRA5P9r+leMpmfcBtvk/T9RIkPBbFbxH+2GcRh?=
- =?us-ascii?Q?6muebT2ipoFuAgXRneRqn0jSxH9r0MARZv2ezl4jU95729QxFs06/Uf6MQ8D?=
- =?us-ascii?Q?zNOnIVxnt2HxqmSlLsl1QNu0x+Nfj7sZoqUnvzXDCcHvZ18EwXpo++oX0Naz?=
- =?us-ascii?Q?ClAmb6MPQcRqAHoqJqCZ05l1ZJzyMEOlixA5z8TeAMudAcjao+ql/z83Afiz?=
- =?us-ascii?Q?FRM3yuAFCA4SQ95HfT3e48S7gXxZJwegWaMRroo8QCCRFDulybZW8x6P7EHr?=
- =?us-ascii?Q?q6Bcksiqxh2xq/DY7VrNPY/6myK5nckJfiz/3CTmzTtybySWYBk/E0LRkMHU?=
- =?us-ascii?Q?jtI4f+7qv242+res5ezY4CaL4aamprRrWxcYL4EJCvmJEGqkH+21AzSmF9eT?=
- =?us-ascii?Q?Cc5CbqgCO7EhYe893HzL4M6FN3HzfyC5w/8OkFP5fKLVzU/eGMfznspw9l71?=
- =?us-ascii?Q?zx2Yy5Qg7FR33hvGjIgE4xSJyli1hgOLScJo3TwextaWqS7bH4N18nHzkXbw?=
- =?us-ascii?Q?elpZyz3dweKiPiBz2l8g2aOFUOU2g7+MUPKeGm26qjKZ3je7D8eqtlRjxe3U?=
- =?us-ascii?Q?bZHTm71bCifZsx6lAwSVCAtD790kgCLYfN3MpTqu3jni0CqtbfNEe8fQFrW2?=
- =?us-ascii?Q?fMXRfJb//hEx2AWmXjIlgjtpVBPIkqwDQBOfO8gLHVa2FkgRl5wYKojuh6H2?=
- =?us-ascii?Q?/laysgnLeCoUHVWd7+MAgvq+nuQO9s6kOEKqEoSgEF3mkmUqQqZtyHYpaJfC?=
- =?us-ascii?Q?GA7O0oRCZ5leW9zzfugM3QRhUmD4drUBjVX0s1uuwft0ArbkPwUoH0Dm1G4w?=
- =?us-ascii?Q?wFAAXROT/ZQs3DXEVknZLJXFuF4lvkc+Qiz2NPDih+FF7l6hClTGbhRZlbrr?=
- =?us-ascii?Q?TFeN9bzneR/iT40w+imFb9TILjG1h9humd98NTBlAzdQHgdV77bA+JV57fXI?=
- =?us-ascii?Q?EgJEVFY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR0402MB3937.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?7A/+1Boc23/N+X/sMf3Tjxf3HIHKlyNBPve2dCBumuT1zDsgi7bX7UiI2igf?=
- =?us-ascii?Q?VhjpfRS6Gs2St3xlIO8bgLztRenn3e2NgGFJ0TmyiYIeSnEfqqQYdvMIwKce?=
- =?us-ascii?Q?aXHz7BTcqw9lXpGsE5g2XtWxBBRQpm3tcO4w8/M9sHvDm417OHUEw+0n3Ej5?=
- =?us-ascii?Q?vRunP5Osxxygi0n6KybwfGIiOVCMp4/1V9698AHrxUezyvPOYrZLMtGubtI7?=
- =?us-ascii?Q?DrCrFqUo8zw+e2l+m8jm87850UHYOPBswuar07yANtimKWjhB455T2m5dVIH?=
- =?us-ascii?Q?nqLStaQV2QIx3X3bptvuMrIDY6LvF33Dg+tvCAOistQAUQjOXzZOY2Yt9sby?=
- =?us-ascii?Q?r3amZwEdVToIQN0MNVjoGXCdjXp+568NyZjCF9Nt9n+kPXptugXY7LWy8kYe?=
- =?us-ascii?Q?9/hAX2n9UJmUbCjGLxzudPfaeeSPcBiS/IOz4M8pG7cSg8agxalVdEcPnoVs?=
- =?us-ascii?Q?Gjt9kRr7Ds/7wNg3IMnfM3WAFsP2Uy2fG5KPqGceyZvFWF+Z7Za8aXpHWZ5S?=
- =?us-ascii?Q?iWI2a/CeulXrGJ2VAM5Z6bPnzAEtxq0oiPn3RVyhwBtIJNCvP6eVIXJjGJXL?=
- =?us-ascii?Q?L23zmy3j6DyDzHxtUKsPcUDrZHQpCsh6AUX8ajfoDZRnNYlQxdMp3t1CElk9?=
- =?us-ascii?Q?iBLTArIZSFGxevrVVTSZkdgN+geNCcLzKxVJqRU+UXpzQBsI2SxNvl71h48A?=
- =?us-ascii?Q?w0j2jGMPlSr0nfcLCvT24uLI+jy2vDL1Z13J1BsMduUUAasP4ya0pXr4W3To?=
- =?us-ascii?Q?l49x18gBOTdFGZN8y6mK9GYzLFrAgLyGdRvK2gxy2/A2UZFbBqIlLlYVDH9H?=
- =?us-ascii?Q?yTxiqB7c5ENmA33SuhNFYtKa+o//uWVf62B7oVuGS27PwPzB23+5nS+jlcFO?=
- =?us-ascii?Q?ZP9JJWBZB2addN3l81sl89gG2FMDaKKWIiLc9CoomaT0jf5HvyQdoJZziDmO?=
- =?us-ascii?Q?mEK5n8JieSrJGgpBMAAkQfbYvR6ZWyeB1FWOTRpITbXWGVs5RsmPub586rfa?=
- =?us-ascii?Q?032zELLsildol/nEbzRCt6HjVdyOCev5lcrFAAJNtPkegLyJghS6HjAq8gwe?=
- =?us-ascii?Q?sOuv1k85fVXUjz16uNkQJkTos6PDB0NE1xvon6eaVYyloZq2WXAZ3PQtY+gU?=
- =?us-ascii?Q?QzNlDHsJ7l93bBG098ew/NTz3EnvEdph4tIzRr1nxBG8IPjN99vNDwbU2qKw?=
- =?us-ascii?Q?9GHMWlDcRnVDzGpOiHQpLHrZIbNcLNzDDFs+jhQo2UB51d2V6W0Qtmo759Ex?=
- =?us-ascii?Q?nb72wbTkffIL542nZbo5DnY+aaW1lCDpfmoj4qQ0MbX09c874HPUlkPGkFHW?=
- =?us-ascii?Q?eCIGwrtzNo7WzsAHV3eUWtn2I5ETto8hmmPIKoLxkhI0T993ZWfypUTh56l3?=
- =?us-ascii?Q?zw/QvzUODlRcxFa4P4g5L/AfGfEeh1CKBjhodona5BsfME49hv3sUz1hgD46?=
- =?us-ascii?Q?VR5zVdbvATwnsSsr2oAROtF8fQeYj/OOKH6Wjmh8Nl5vO9ORCPcsMfF87k+Z?=
- =?us-ascii?Q?xudj/nVFCNM2GnN2ZyjJMVaPS3lLfDH6DY3XqlogjwSb5EsVF3xMIIlrkTbe?=
- =?us-ascii?Q?KSkVG4fUSWtjQJCGNIJDfDnFhRYnnZpmbR/Q/ybh?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f479a89-7f7c-4613-c279-08dd0d564595
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR0402MB3944.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2024 13:37:14.7111
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 50eh0QJ9C81ic4MRlldcrJ2dtaA6BLtfFEkR/IsWOSjBLyrjVKekzpn3LmVH2D4Dz6MZAJ9yp9CEmMhpfOFCpQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8660
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/7] dt-bindings: iio: Add adis16550 bindings
+To: Robert Budai <robert.budai@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Nuno Sa <nuno.sa@analog.com>,
+ Ramona Gradinariu <ramona.gradinariu@analog.com>,
+ Antoniu Miclaus <antoniu.miclaus@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20241125133520.24328-1-robert.budai@analog.com>
+ <20241125133520.24328-6-robert.budai@analog.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241125133520.24328-6-robert.budai@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Carlos Song <carlos.song@nxp.com>
+On 25/11/2024 14:35, Robert Budai wrote:
+> Document the ADIS16550 device devicetree bindings.
+> 
+> Co-developed-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> Signed-off-by: Ramona Gradinariu <ramona.gradinariu@analog.com>
+> Signed-off-by: Robert Budai <robert.budai@analog.com>
+> ---
+> 
+> v2:
+> - signed of by submitter
+> 
+>  .../bindings/iio/imu/adi,adis16550.yaml       | 97 +++++++++++++++++++
+>  MAINTAINERS                                   |  9 ++
+>  2 files changed, 106 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml b/Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml
+> new file mode 100644
+> index 000000000000..767b500afbaa
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml
+> @@ -0,0 +1,97 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/imu/adi,adis16550.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analog Devices ADIS16550 and similar IMUs
+> +
+> +maintainers:
+> +  - Nuno Sa <nuno.sa@analog.com>
+> +  - Ramona Gradinariu <ramona.gradinariu@analog.com>
+> +  - Antoniu Miclaus <antoniu.miclaus@analog.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,adis16550
+> +      - adi,adis16550w
 
-Compatible string "fsl,imx7d-i2c" is not exited at i2c-imx driver
-compatible string table, at the result, "fsl,imx21-i2c" will be
-matched, but it will cause errata ERR007805 not be applied in fact.
 
-So Add "fsl,imx7d-i2c" compatible string in i2c-imx driver to apply
-the errata ERR007805(https://www.nxp.com/webapp/Download?colCode=
-IMX7DS_2N09P).
+What is the difference between them? You have description and commit msg
+for this.
 
-"fsl,imx7d-i2c" already is documented in binding doc. This errata
-fix has been included in imx6_i2c_hwdata and it is the same in all
-I.MX6/7/8, so just reuse it.
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  spi-cpha: true
+> +
+> +  spi-cpol: true
+> +
+> +  spi-max-frequency:
+> +    maximum: 15000000
+> +
+> +  vdd-supply: true
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    description:
+> +      Must be the device tree identifier of the RESET pin. If specified,
 
-Signed-off-by: Carlos Song <carlos.song@nxp.com>
-Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
----
-Change for V2:
-- I have tried to fix this issue at imx7s.dtsi in V1, according to
-  the community suggestion, I make V2 patch for i2c-imx driver to
-  avoid updating the FDT to fix an errata. Discussion in V1:
-  Subject: [PATCH] ARM: dts: imx7s: change i2c compatible string for applying errata ERR007805
-  Message-ID: <20241021031148.2682015-1-carlos.song@nxp.com> (raw)
----
- drivers/i2c/busses/i2c-imx.c | 1 +
- 1 file changed, 1 insertion(+)
+Do not describe DT syntax.
+s/Must be the device tree identifier of the//
+Instead something like "RESET active low pin".
 
-diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
-index cf8931a8013d..2c782cdc26bd 100644
---- a/drivers/i2c/busses/i2c-imx.c
-+++ b/drivers/i2c/busses/i2c-imx.c
-@@ -335,6 +335,7 @@ static const struct of_device_id i2c_imx_dt_ids[] = {
- 	{ .compatible = "fsl,imx6sll-i2c", .data = &imx6_i2c_hwdata, },
- 	{ .compatible = "fsl,imx6sx-i2c", .data = &imx6_i2c_hwdata, },
- 	{ .compatible = "fsl,imx6ul-i2c", .data = &imx6_i2c_hwdata, },
-+	{ .compatible = "fsl,imx7d-i2c", .data = &imx6_i2c_hwdata, },
- 	{ .compatible = "fsl,imx7s-i2c", .data = &imx6_i2c_hwdata, },
- 	{ .compatible = "fsl,imx8mm-i2c", .data = &imx6_i2c_hwdata, },
- 	{ .compatible = "fsl,imx8mn-i2c", .data = &imx6_i2c_hwdata, },
--- 
-2.34.1
 
+> +      it will be asserted during driver probe. As the line is active low,
+> +      it should be marked GPIO_ACTIVE_LOW.
+
+This is false. It should not. Instead, it should be marked according to
+the board design. You can have there inverter.
+
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +    description: If not provided, then the internal clock is used.
+> +
+> +  adi,sync-mode:
+> +    $ref: /schemas/types.yaml#/definitions/string
+
+Do not redefine properties. You are stuck with what is there already :/
+
+> +    description: |
+> +      Configures the device SYNC pin.
+> +      scaled_sync:  Device handles internally custom scaled
+> +                    sync mode. It is stored in a designated register.
+> +    enum:
+> +      - direct_sync
+> +      - scaled_sync
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - spi-cpha
+> +  - spi-cpol
+> +  - spi-max-frequency
+> +  - vdd-supply
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        adi,sync-mode:
+> +          enum: [direct_sync, scaled_sync]
+
+This does not make sense. There is no other option in this enum. Not
+sure what you wanted to achieve here. If dependency on property then
+required, see example-schema.
+
+> +
+> +    then:
+> +      dependencies:
+> +        adi,sync-mode: [ clocks ]
+> +
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +additionalProperties: false
+
+unevaluatedProperties false
+
+
+
+Best regards,
+Krzysztof
 
