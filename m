@@ -1,80 +1,115 @@
-Return-Path: <linux-kernel+bounces-421437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D7919D8B6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:38:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F399D8B4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:30:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6E03B2BF04
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:26:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC65B1636A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5EE1B6D10;
-	Mon, 25 Nov 2024 17:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DF51B85C2;
+	Mon, 25 Nov 2024 17:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Rn/fq2xM"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DNShMXD/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B491B4F0F
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 17:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DACE19D096;
+	Mon, 25 Nov 2024 17:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732555575; cv=none; b=a/ZnBSzol8nAVxFYFRkAft/lpjJH7vd0zZGWph/K26AoEr8j+cI1N3t6pMNclFH/UjBFgMo7b2yYZ2W7tVca27TcPostDsy5/g0m9M0cnGT/mEiNf4VxZBJwilmuh17zGQ1EfRIi1o2QyzrC1jebM0zd6d0a2MaRH/CHOsNrgMg=
+	t=1732555820; cv=none; b=UWC9wz11He4hsWUejoQnaHMELF9UPLaYVjmHRBiKU81F+XWOO9gL3G3j78YHzCN3+M4FDeflODUmUqknY/seedT+Oo6GFv3TvdHxn/dP588gf52OMx7rrKxnKQ71kf33pq+LlSjBJQGX+HQdY12U6eksG08gfQo1t7ppKpdEI/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732555575; c=relaxed/simple;
-	bh=8ajswOrGYd3is1g5IE0muUlQKgtOhRHxzooMIZkkH+M=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bx2R6UBGX1y/xzwPD9Am/PSc0xI5ixGeNfGMjUvZM90c53nigG22WGmo2f0qQn4yRhXyQge2W1ZGmCq9j+Hj5m26je4uUb2D5rQJM8T29J73NDSLmvmxRZMRAH9J2mgSQxlbegsT0tDLpFtltELilq2h2tsM/bF/y532ykYy8+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Rn/fq2xM; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1732555565; x=1732814765;
-	bh=8ajswOrGYd3is1g5IE0muUlQKgtOhRHxzooMIZkkH+M=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=Rn/fq2xMimNvOnVKpzDnZiLkBZpIn5SFbsycWwxh9CPkqwctwTJRHBn/AFh/ge4uY
-	 lr1BuhI2iuOmwXnRxMlXevVOTm+EGMrxYHwcO4ikD7EtcK0LWTH3gMC2wY4gmOq7Rn
-	 Uobr+xPchhV6EWgejTuExWqWOArFDlvHWrh6sJfmwOrSI2FCR+JYlwWyjdrVIxRnUM
-	 +wsjybCMmKieIMBsLNY+lWYNC7k3sJI4WVo6+Gve8x7bpEkY6UuS5O2ScN9jj6ggJo
-	 4wa41nENiBkUfB4sDuV9j8alO+6RH9BAKT6BESENAk7mI1N2BpJm5bJqOGuHK2uDII
-	 0rMQo57775Vig==
-Date: Mon, 25 Nov 2024 17:26:03 +0000
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-From: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the bcachefs tree
-Message-ID: <L_EkkmQsB6qOPGXuF9tsZFHbNXMQcco_bdzKzow3ZXhjccVKzQJ-Ekd8SU4Ofqt9RNJccI_ZlUrjsNDGvKZuuujdUjxHcaS6qT8WkmHITL0=@proton.me>
-In-Reply-To: <20241124183507.5241d705@canb.auug.org.au>
-References: <20241124183507.5241d705@canb.auug.org.au>
-Feedback-ID: 53478694:user:proton
-X-Pm-Message-ID: 8cef4097f0ea3af5f88a6e7906a5a789c3e8c684
+	s=arc-20240116; t=1732555820; c=relaxed/simple;
+	bh=Ms6Tp0WGmGoKFqyK03ZhiTsaxbDlL4XS3o5GbsYdpFE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p0ZZgLQ8K8zb7mx2/JhBNphhwr1kvlG/QzQOgkTgJRSySTTBuAs1eKc5bc/4h7ksms2J6RTxMOKYv8QSDthCpB2gRtlQBGBPP+g6RTNcE4q6lXROSuzEOvmPG/6YiWYtTLIT+eNuzVeYVXwz8aUmq2IRDyiri4cifwSi53hDmjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DNShMXD/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99EE9C4AF0B;
+	Mon, 25 Nov 2024 17:30:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732555819;
+	bh=Ms6Tp0WGmGoKFqyK03ZhiTsaxbDlL4XS3o5GbsYdpFE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=DNShMXD/jO7JPNdkU6IBC5K5VJu1bWb2GEmZJcRuYasBkdRSIJkD3o/IYDHDujCYF
+	 jTnL/3MEsuHVoAoSAb58/OYNiTPqDzU8eAuKKDSjAc33jF7uBXPPIsX6AaJ2jBCLNy
+	 XkWZfR9hovod21iCQOmwXd1nq3wY/GlSlSZ1m47ag0uHrVXfMm1E48zwcHB+jHGM1y
+	 v/6OF8Bpm6GnYnW/khKStHXQ+yVHtgDbcR8lIKN07D+jFmFmnKA50nncjhh5W31h0l
+	 dDpf3LaoYLzmwwMMVhBczagNKILNDxYkEjhbbj6TSvt2fSUpH2seX5QSQJXCvPG1XK
+	 f8SvoqBeb8K+g==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso75097101fa.3;
+        Mon, 25 Nov 2024 09:30:19 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVMZ1AP2mS10z+vkYtKmXC6J9rwoAUBBFmJdfeaTPs3AtjcPv7i29BlqsGhSygUhkh7S3n8huYDB+5KjBgh@vger.kernel.org, AJvYcCX8ybUsdzlKStsqDLXhoiiqmvTNT70c34RdQZcbOax5/82b5yDdre5aB48XkPzHBR1ByEu6MjShE4s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA7rTXjSCEI4MkAaqzLLFcmck6d8jEhJazECu17UYxogy2OjrM
+	8AyIv4ncfS31H2WnydlySdRSr43qPOwMgJbefox2RBZqM3aVGvZ6jzZEEssYzRC1N4Z2itIMGQa
+	xobQHAG6uMtN66YFoIYjmkFu5DW8=
+X-Google-Smtp-Source: AGHT+IHqC0nzXwAN0lGa143T4VRPp60pS6sz5dfzeHFmvQbYiE+ylUyy75S0vjqWZZhPL+RVYkE1mgUFvfGxWPocXaI=
+X-Received: by 2002:a05:651c:158d:b0:2fa:d7ea:a219 with SMTP id
+ 38308e7fff4ca-2ffa718f84cmr98917471fa.37.1732555817932; Mon, 25 Nov 2024
+ 09:30:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20241125170758.518943-1-yeoreum.yun@arm.com> <20241125170758.518943-2-yeoreum.yun@arm.com>
+In-Reply-To: <20241125170758.518943-2-yeoreum.yun@arm.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 25 Nov 2024 18:30:06 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGBnYQi05qh0QZk2hVLjVhS774-nT=HLdL_kW1d7nxMVg@mail.gmail.com>
+Message-ID: <CAMj1kXGBnYQi05qh0QZk2hVLjVhS774-nT=HLdL_kW1d7nxMVg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] arm64/acpi: panic when failed to init acpi table
+ with acpi=force option
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: broonie@kernel.org, sami.mujawar@arm.com, sudeep.holla@arm.com, 
+	pierre.gondois@arm.com, hagarhem@amazon.com, catalin.marinas@arm.com, 
+	will@kernel.org, guohanjun@huawei.com, Jonathan.Cameron@huawei.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-efi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sunday, November 24th, 2024 at 8:35 AM, Stephen Rothwell <sfr@canb.auug.=
-org.au> wrote:
+On Mon, 25 Nov 2024 at 18:08, Yeoreum Yun <yeoreum.yun@arm.com> wrote:
+>
+> when the acpi=force option is used,
+> the system does not fall back to the device tree (DT).
+> If it fails to initialize the ACPI table, it cannot proceed further.
+> In such cases, the system should invoke panic() to avoid contradicting
+> the user's explicit intent, as failing or
+> proceeding with unintended behavior would violate their wishes.
+>
 
-> Hi all,
->=20
-> Commit
->=20
-> a4f3d037408e ("bcachefs: Fix evacuate_bucket tracepoint")
->=20
-> is missing a Signed-off-by from its author.
+Calling panic() at this point does not achieve anything useful,
+though. Without ACPI tables or a DT, the only way to observe this
+panic message is by using earlycon= with an explicit MMIO address, and
+it might be better to limp on instead. Is there anything bad that
+might happen because of this, other than the user's wishes getting
+violated?
 
-Looking at the commit - Kent has changed my patch significantly. So either
-there was a mistake in assigning myself as an author or he forgot to add
-my signed-off-by line.
 
-Regards, Piotr Zalewski
+> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+> Reviewed-by: Mark Brown <broonie@kernel.org>
+> ---
+>  arch/arm64/kernel/acpi.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
+> index e6f66491fbe9..efdf24ed5c3e 100644
+> --- a/arch/arm64/kernel/acpi.c
+> +++ b/arch/arm64/kernel/acpi.c
+> @@ -225,6 +225,8 @@ void __init acpi_boot_table_init(void)
+>                 pr_err("Failed to init ACPI tables\n");
+>                 if (!param_acpi_force)
+>                         disable_acpi();
+> +               else
+> +                       panic("Failed to boot with ACPI tables\n");
+>         }
+>
+>  done:
+> --
+> LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+>
 
