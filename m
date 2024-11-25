@@ -1,185 +1,150 @@
-Return-Path: <linux-kernel+bounces-420446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EEC29D7AD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 06:06:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 343479D7ADD
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 06:08:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4AB6281EAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 05:06:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF0B0281EEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 05:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB1D84039;
-	Mon, 25 Nov 2024 05:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 701A0143722;
+	Mon, 25 Nov 2024 05:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ftFMpJDl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QkAeaeFv"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DF92500C8;
-	Mon, 25 Nov 2024 05:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420FE2500C8;
+	Mon, 25 Nov 2024 05:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732511170; cv=none; b=GHtOhTx+lp7r/euhFuXHoPcY8KiBGjPaxq+6L0XfP0CsANSae6WbaGWcggKbY4o08U9XBdgyZDLZ9/oVfe8zRP0wMaMUsI1TUmFVQorpweb66Gu5nUE2dQNmbgBqjLIY306D0xyRbihpF8I/11G84HDGqeyG/Cssmxjkz2MIJtU=
+	t=1732511288; cv=none; b=k8IBXjQfJcKWi3LSW+hQePRyINHWdbmB5WkP/oBYE6bkW6ZHkKcSGDL262TrRUASCXxAu+PnvMzYUBFJw2KX8VS68YALV1oiNq57A9ANWS4j7gf+4qjGZmvfooWQ80OdRWOpT/74cfkr35yW7EFiBDhLG5nNoL5SD36UXYI/Fvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732511170; c=relaxed/simple;
-	bh=NREGBayAwFFBU4tE1Ma2gDyzoVU71MdcWhe9JFquPAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k+4WA70+Lw4Jn85P/Q2fVlraM23chlpABWIpUuPRh8u62n8DkXAO+aLhvZ3rXEWARnIZ8L5X+lYiQ63axHCSea0Gov7pml93DnB/3db70Iqm3zwWIOVauCh9H5+N2llKf0c82w2bPbdxwVA6oHObZraF1/1A60+nZ1ZUSBTecnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ftFMpJDl; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732511168; x=1764047168;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NREGBayAwFFBU4tE1Ma2gDyzoVU71MdcWhe9JFquPAI=;
-  b=ftFMpJDlnfXXH/Hu/Vhxqjml5blzP4+I0d/lcj0WGH4p1y0WPXzEvyzr
-   WHzJjk1gvbEszEukHJgiCqoLZrbCNnHvVv6/+K4FkuR3XPt159cM0LQm6
-   viK5e6FNU2VtIqDL2T1Lt1+Sglw8xnQElK28FvdFoBzMsWVkcEQ0xsbEh
-   ewILnLDrFKbVy3aJlCe5uyjZ5pcNNJ8lOZo6+98wJWv2PmVwW7SsKp33e
-   YynQfN+tMHvcoZF0CSVFUCdeN4vQ6UOeMWJxAP3XYRrtHquBZbvkb7oEi
-   ixevH4JlHSRPd/5IvUbgQtXf2GdNF3wlbDp1lueanMHme1WvYDgsReW1r
-   Q==;
-X-CSE-ConnectionGUID: ZOjcD7E9Qr2+NDNc9g2LCg==
-X-CSE-MsgGUID: ClbcwwH9S5inMSh05yN9RA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="36515036"
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="36515036"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2024 21:06:07 -0800
-X-CSE-ConnectionGUID: d/cc0nO9SLOOH97XqPNIkw==
-X-CSE-MsgGUID: suWKtIxOTi+PfZR2YkgwOg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="96212099"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 24 Nov 2024 21:06:00 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tFRIL-0005uL-2Z;
-	Mon, 25 Nov 2024 05:05:57 +0000
-Date: Mon, 25 Nov 2024 13:05:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alistair Popple <apopple@nvidia.com>, dan.j.williams@intel.com,
-	linux-mm@kvack.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Alistair Popple <apopple@nvidia.com>, lina@asahilina.net,
-	zhang.lyra@gmail.com, gerald.schaefer@linux.ibm.com,
-	vishal.l.verma@intel.com, dave.jiang@intel.com, logang@deltatee.com,
-	bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca,
-	catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au,
-	npiggin@gmail.com, dave.hansen@linux.intel.com, ira.weiny@intel.com,
-	willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
-	linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org
-Subject: Re: [PATCH v3 11/25] mm: Allow compound zone device pages
-Message-ID: <202411251251.Tjig4oaV-lkp@intel.com>
-References: <f1a93b8a38e14e2ab279ece310175334e973b970.1732239628.git-series.apopple@nvidia.com>
+	s=arc-20240116; t=1732511288; c=relaxed/simple;
+	bh=eCTbs0JZb69D9es/iL57YN+Wzq6f9RN1ifl8th7bfFg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uJabn5/96vuEpiV6LRZtMxzTHZT5yv9tpODknRhkZGq7ERuu0O506NFk4XIFAumAi2NSYO4uPXBjHrwxO9Zo0wH/Gsmlp+TxGDnolxMVsZ17AFyGMCVGJ0f9ujrtQbjQdv63V0b9LbKizrnK8L5EbNSiYXDPW1Nf/bmvzViOEWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QkAeaeFv; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AOMBjMf024879;
+	Mon, 25 Nov 2024 05:07:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=qp9FobJU5xuolasioWQMn6
+	Hkzg6cB+z8wWzmDeu0srE=; b=QkAeaeFvp2c+sW/qkifCp6dg8uOjmJRNs1Iuti
+	5qr3u9R1ES4QoS4nodYj1rEV8cmEktTWPNu7/97miXvbkNiXZ3AjbkqKT0MgLogR
+	QCGFZ91G2DypgjecUGWypCgwW1dOgCUkfgMXl6Nu/uefiGgo/rKa/5Y4ODbVMDF8
+	qT5jpredhKinpq2HDNk5/ChyVi8bHWhZOiZRdBheNCn4fCN7xUQV0e8KC0jX1iDy
+	Ul5J19BRiXMzZA+A5qI1H4hcJtJCSKnI1UB01245PjXJ9gFmKK8QeGzEO1JfO8EO
+	D7AvuTEDTBo4hlTXELrWBhHA+v2+3WCw96uobwhSA+y7HKBg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4338b8bb5u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 05:07:57 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AP57uZs000799
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 05:07:56 GMT
+Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 24 Nov 2024 21:07:51 -0800
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+To: <srinivas.kandagatla@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <amitk@kernel.org>, <thara.gopinath@gmail.com>,
+        <rafael@kernel.org>, <daniel.lezcano@linaro.org>,
+        <rui.zhang@intel.com>, <lukasz.luba@arm.com>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
+Subject: [PATCH v9 0/7] Add TSENS support for IPQ5332, IPQ5424 
+Date: Mon, 25 Nov 2024 10:37:21 +0530
+Message-ID: <20241125050728.3699241-1-quic_mmanikan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f1a93b8a38e14e2ab279ece310175334e973b970.1732239628.git-series.apopple@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: wNoyZpgLkc8IGwzbRFKO6o6Hj6ZP2-25
+X-Proofpoint-GUID: wNoyZpgLkc8IGwzbRFKO6o6Hj6ZP2-25
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ adultscore=0 mlxscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0
+ phishscore=0 malwarescore=0 suspectscore=0 mlxlogscore=751 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411250041
 
-Hi Alistair,
+IPQ5332 uses tsens v2.3.3 IP with combined interrupt for
+upper/lower and critical. IPQ5332 does not have RPM and
+kernel has to take care of TSENS enablement and calibration.
 
-kernel test robot noticed the following build errors:
+IPQ5424 also uses same tsens v2.3.3 IP and it's similar to IPQ5332
+(no RPM) hence add IPQ5424 support in this series itself.
 
-[auto build test ERROR on 81983758430957d9a5cb3333fe324fd70cf63e7e]
+This patch series adds the temperature sensor enablement,
+calibration support for IPQ5332 and IPQ5424.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Alistair-Popple/fuse-Fix-dax-truncate-punch_hole-fault-path/20241125-094004
-base:   81983758430957d9a5cb3333fe324fd70cf63e7e
-patch link:    https://lore.kernel.org/r/f1a93b8a38e14e2ab279ece310175334e973b970.1732239628.git-series.apopple%40nvidia.com
-patch subject: [PATCH v3 11/25] mm: Allow compound zone device pages
-config: powerpc-ebony_defconfig (https://download.01.org/0day-ci/archive/20241125/202411251251.Tjig4oaV-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241125/202411251251.Tjig4oaV-lkp@intel.com/reproduce)
+Changes in V9:
+	- Fixed all review comments from Konrad Dybico
+	- Detailed change logs are added to the respective patches
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411251251.Tjig4oaV-lkp@intel.com/
+V8 can be found at:
+https://lore.kernel.org/linux-arm-msm/20241115103957.1157495-1-quic_mmanikan@quicinc.com/
 
-All errors (new ones prefixed by >>):
+V7 can be found at:
+https://lore.kernel.org/linux-arm-msm/20241107140550.3260859-1-quic_mmanikan@quicinc.com/
 
-   In file included from arch/powerpc/kernel/asm-offsets.c:19:
-   In file included from include/linux/mman.h:5:
-   In file included from include/linux/mm.h:32:
->> include/linux/memremap.h:164:3: error: call to undeclared function 'page_pgmap'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     164 |                 page_pgmap(page)->type == MEMORY_DEVICE_PRIVATE;
-         |                 ^
->> include/linux/memremap.h:164:21: error: member reference type 'int' is not a pointer
-     164 |                 page_pgmap(page)->type == MEMORY_DEVICE_PRIVATE;
-         |                 ~~~~~~~~~~~~~~~~  ^
-   include/linux/memremap.h:176:3: error: call to undeclared function 'page_pgmap'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     176 |                 page_pgmap(page)->type == MEMORY_DEVICE_PCI_P2PDMA;
-         |                 ^
-   include/linux/memremap.h:176:21: error: member reference type 'int' is not a pointer
-     176 |                 page_pgmap(page)->type == MEMORY_DEVICE_PCI_P2PDMA;
-         |                 ~~~~~~~~~~~~~~~~  ^
-   include/linux/memremap.h:182:3: error: call to undeclared function 'page_pgmap'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     182 |                 page_pgmap(page)->type == MEMORY_DEVICE_COHERENT;
-         |                 ^
-   include/linux/memremap.h:182:21: error: member reference type 'int' is not a pointer
-     182 |                 page_pgmap(page)->type == MEMORY_DEVICE_COHERENT;
-         |                 ~~~~~~~~~~~~~~~~  ^
-   In file included from arch/powerpc/kernel/asm-offsets.c:19:
-   In file included from include/linux/mman.h:5:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from arch/powerpc/kernel/asm-offsets.c:19:
-   include/linux/mman.h:157:9: warning: division by zero is undefined [-Wdivision-by-zero]
-     157 |                _calc_vm_trans(flags, MAP_LOCKED,     VM_LOCKED    ) |
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/mman.h:136:21: note: expanded from macro '_calc_vm_trans'
-     136 |    : ((x) & (bit1)) / ((bit1) / (bit2))))
-         |                     ^ ~~~~~~~~~~~~~~~~~
-   include/linux/mman.h:158:9: warning: division by zero is undefined [-Wdivision-by-zero]
-     158 |                _calc_vm_trans(flags, MAP_SYNC,       VM_SYNC      ) |
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/mman.h:136:21: note: expanded from macro '_calc_vm_trans'
-     136 |    : ((x) & (bit1)) / ((bit1) / (bit2))))
-         |                     ^ ~~~~~~~~~~~~~~~~~
-   include/linux/mman.h:159:9: warning: division by zero is undefined [-Wdivision-by-zero]
-     159 |                _calc_vm_trans(flags, MAP_STACK,      VM_NOHUGEPAGE) |
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/mman.h:136:21: note: expanded from macro '_calc_vm_trans'
-     136 |    : ((x) & (bit1)) / ((bit1) / (bit2))))
-         |                     ^ ~~~~~~~~~~~~~~~~~
-   4 warnings and 6 errors generated.
-   make[3]: *** [scripts/Makefile.build:102: arch/powerpc/kernel/asm-offsets.s] Error 1
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1203: prepare0] Error 2
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:224: __sub-make] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:224: __sub-make] Error 2
-   make: Target 'prepare' not remade because of errors.
+V6 can be found at:
+https://lore.kernel.org/linux-arm-msm/20241104124413.2012794-1-quic_mmanikan@quicinc.com/
 
+V5 can be found at:
+https://lore.kernel.org/linux-arm-msm/20230721054619.2366510-1-quic_ipkumar@quicinc.com/
 
-vim +/page_pgmap +164 include/linux/memremap.h
+V4 can be found at:
+https://lore.kernel.org/linux-arm-msm/20230719104041.126718-1-quic_ipkumar@quicinc.com/
 
-   159	
-   160	static inline bool is_device_private_page(const struct page *page)
-   161	{
-   162		return IS_ENABLED(CONFIG_DEVICE_PRIVATE) &&
-   163			is_zone_device_page(page) &&
- > 164			page_pgmap(page)->type == MEMORY_DEVICE_PRIVATE;
-   165	}
-   166	
+V3 can be found at:
+https://lore.kernel.org/linux-arm-msm/20230713052732.787853-1-quic_ipkumar@quicinc.com/
+
+V2 can be found at:
+https://lore.kernel.org/linux-arm-msm/20230712113539.4029941-1-quic_ipkumar@quicinc.com/
+
+Manikanta Mylavarapu (3):
+  dt-bindings: nvmem: Add compatible for IPQ5424
+  arm64: dts: qcom: ipq5424: Add tsens node
+  arm64: dts: qcom: ipq5424: Add thermal zone nodes
+
+Praveenkumar I (4):
+  dt-bindings: thermal: tsens: Add ipq5332, ipq5424 compatible
+  thermal/drivers/tsens: Add TSENS enable and calibration support for V2
+  arm64: dts: qcom: ipq5332: Add tsens node
+  arm64: dts: qcom: ipq5332: Add thermal zone nodes
+
+ .../bindings/nvmem/qcom,qfprom.yaml           |   1 +
+ .../bindings/thermal/qcom-tsens.yaml          |  18 ++
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi         | 135 ++++++++++++
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi         | 201 ++++++++++++++++++
+ drivers/thermal/qcom/tsens-v2.c               | 178 ++++++++++++++++
+ drivers/thermal/qcom/tsens.c                  |   8 +-
+ drivers/thermal/qcom/tsens.h                  |   4 +-
+ 7 files changed, 543 insertions(+), 2 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
