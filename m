@@ -1,131 +1,475 @@
-Return-Path: <linux-kernel+bounces-421045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689A19D86AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:42:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35BBE9D8615
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:14:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1281FB3C331
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:12:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EF65B3E016
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709E81AB52F;
-	Mon, 25 Nov 2024 13:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8114F1AB53A;
+	Mon, 25 Nov 2024 13:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TZ0q2qoJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hZiA141+"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA72618D625;
-	Mon, 25 Nov 2024 13:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E700C1AC456
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732540312; cv=none; b=ZNQgJrfEEjoUmyhnZGVpk8doDfNy6Pr2QfCnneNtTr7AeBEMT/nlmSR5NH+HSDwmbPiDEiwvczvqiKnUx0LKkv14EDAne+d4aRECBUjsr+wzLHkixLjkKrWUj6u//8N00plJ/sMy+lRPmPxmj2f9wSUDamvzLeiTCfFuq+DSfyc=
+	t=1732540414; cv=none; b=ZIYHuMW6krsq+L52SPYauSJNdcX4OIyHHVqDNYZY7tF9veam2q1E5qm68l9DTSQ43XZKXRMsu70TxNkHQMuDuO4BV5KHyuaWnb+NmJW6FkzVqOuJPfnhWPO82bqdS//LFpqj8234X0msG3327xJ2+OZfDzXAEGtX4LmNEe7Sch8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732540312; c=relaxed/simple;
-	bh=77n7xr3tbx600Y8k4lOBNTIIJ0RxEAQqaxW7kBUCqsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n23zlh4f4rIWJJsla2HnBAZXDUjkYX/GAxDZ58L+pYJK1JJRFK82uSGh2A9m2G0CSfBs9O/lYjjWBWP5BAC8hlUYHU4XChq1c8NX7gYl03cfgrNyWIs7zBxTAnJ7LNHRFO2Kzl6WJiyEXCqCbhZbJWgS+Y8YXdZMT2wve+BJBWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TZ0q2qoJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B03B5C4CECE;
-	Mon, 25 Nov 2024 13:11:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732540312;
-	bh=77n7xr3tbx600Y8k4lOBNTIIJ0RxEAQqaxW7kBUCqsc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TZ0q2qoJo9jRKJO+I3SfmVlTttF0p1AgwxhCf1SlgooF56vf8YeaxCg2ghEyOMMmT
-	 +U7xBi9FzIrrBUfze98Jj55U6IzZq5w8e0Rnl2uA0d/Wem1MTj8AcPUloaJ9clj+Vm
-	 LkqPO7I/TGGaYwsvne1Oijp1UcPVl35UdTSrURNNG+tpvzgHU0DQhErnywaP7OeCAM
-	 ijMXtrvbSAEWck9so/iL0W+VlDZ9L9b3Dxc06pZE5Tsv3w/UvxXhsfzeSUirmtUCrj
-	 YcviGFpRiI0GDFOLRG984vhhUZ0xBKkBlJ19QWTqkx49xrsM7aIUNyDxdstM2LuKk+
-	 GPo61Tm+Wo5yw==
-Date: Mon, 25 Nov 2024 13:11:46 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Jiayuan Chen <mrpre@163.com>, linux-kselftest@vger.kernel.org,
-	song@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, martin.lau@linux.dev, andrii@kernel.org,
-	ast@kernel.org, kpsingh@kernel.org, jolsa@kernel.org
-Subject: Re: [PATCH kselftest] fix single bpf test
-Message-ID: <c685c171-0d2d-4ef1-82ca-386c3a2e3df6@sirena.org.uk>
-References: <20241118140608.53524-1-mrpre@163.com>
- <93d96c99-4712-4054-a36f-3c65c80ab3f8@linuxfoundation.org>
+	s=arc-20240116; t=1732540414; c=relaxed/simple;
+	bh=pahBe9uJeK4giWwQMgg8hyfLNrZGfbZzEW19vI7KqTw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nyc/5X70FlFD3wIHYKD/1ZoDmuesm2OAIFuLiSYDjTVvuAFTxtftfnloEZnb0JiewBumt9Nw24UnPZtnZEeJVdvSzDA+4a+tOt7Z5YS5x6RLiZIm3fSRe93DLaM9iLytN1Fa0tNphYLsf7fJDcwTX0LdPfCcuvRArHJVmmDbXbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hZiA141+; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cfbeed072dso5610182a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 05:13:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732540410; x=1733145210; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GOuKAurRqwxEW7RzgBYAp/EYvLRUbm2IkpTfZPzOWOI=;
+        b=hZiA141+aYzy2AjSTMzzHMvruBLHpaurjZl/dTdBMi3D/eldZft7o17eE9QXtFT4js
+         E3DViV7n4ehLpsLCH9DpGcFOP6jU4HAQGxK/3f5VKU8YDfXeUnled4CfvwYVqNb9N8Jj
+         meMl6JDtJ6fOmnt14sTGB9aqzRc3wowHkyj708rz9SUBPOrIcw39G4GzJSD04g7JkO2x
+         zotE5GHBPjxHo81P5EP7upywp56K9RS+6ktWOViHA2GU+iJw7eHbAfKE2ICfxkUppUk2
+         z9AFz6Pzcx+6SnObXKb1XhQHs8HHy8ec+GR6vU4G0/yv7BK9rfcuE7Q2vqz6jIAxHQYu
+         f3mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732540410; x=1733145210;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GOuKAurRqwxEW7RzgBYAp/EYvLRUbm2IkpTfZPzOWOI=;
+        b=KadtcwlZiOiXo8X4dUn1N3LjUaqETDc6kd8scT/Y5nxhVczFl0P11DBrsB9mNBJ7I+
+         oAJ8yB8LaadXZFtTnAPNcQQT4Dqr+dZFBzAirKhWRNDspoA4Z1tdou7maJiigZzAOGEA
+         qYyZP7+EamQP5eu2078TLal6z0Rh3z0fFQfCqGn2WMjmGGtgybKwLFkGcP5OSpTAU5Jk
+         Oo/Bkn64l3UFg7OOkSkTN6kc48HTBNZ/1q+x55riqU7tgLXTORU2Ud2WddACxKGTdOBL
+         esf8olNf1qOnebET5vw8WuQsst1uQwPXoELFDXQIhKwTs16U6K7I4rZaLXA+yioh/7dv
+         xLiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5LPwyDIuPc7CBvuHMRbaPTs3YgVCcimUshq21htgUFDvkyH+B0k9w+iigEO6kPsckVY3d7WQ4mUHqC8s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhGIaq0ZQ56HENBIxFNzr/nwLI6YI3EMV3/wCQa9mKZFYYBEDt
+	/Y+3+ZzimY5uX0xTVGcOo4TGPlHMyz0bVoqRyNoUYJB97zXQMdFThN5uJzGObw08ZaR3wQxXHhg
+	L4rvlCbQKTfKH4/6sM2+O+N/WGuE=
+X-Gm-Gg: ASbGnctDVrrpCaVmFOBLiUwK93xvnLRdNb2D1MMbCYkh6SWCauo6zKDzyaTdDF+8Ka6
+	JTxT0IfRSYmq5FsYMLLVgeP97kpfBwfM=
+X-Google-Smtp-Source: AGHT+IEJDHHK9aFeX2U6HPIBbgEC9J2u9DCe1zrwgNCxXGsyATbxwavjfPAEDqhNhIdFpunkEE5tFPReng0/Zoz9VUI=
+X-Received: by 2002:a05:6402:3899:b0:5cf:dd73:dca3 with SMTP id
+ 4fb4d7f45d1cf-5d02079ae04mr12582205a12.25.1732540409900; Mon, 25 Nov 2024
+ 05:13:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6obR2W6oqGidcei7"
-Content-Disposition: inline
-In-Reply-To: <93d96c99-4712-4054-a36f-3c65c80ab3f8@linuxfoundation.org>
-X-Cookie: This bag is recyclable.
+References: <674184c9.050a0220.1cc393.0001.GAE@google.com>
+In-Reply-To: <674184c9.050a0220.1cc393.0001.GAE@google.com>
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+Date: Mon, 25 Nov 2024 18:42:50 +0530
+Message-ID: <CAHiZj8i+q-JFpaoiCYb1Lb7-41HjH_Z_yr7fUmZ=+LVP+=hHWg@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] kernel BUG in const_folio_flags (2)
+To: syzbot <syzbot+9f9a7f73fb079b2387a6@syzkaller.appspotmail.com>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+Content-Type: multipart/mixed; boundary="000000000000b13f0c0627bc7fe5"
 
+--000000000000b13f0c0627bc7fe5
+Content-Type: multipart/alternative; boundary="000000000000b13f0a0627bc7fe3"
 
---6obR2W6oqGidcei7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--000000000000b13f0a0627bc7fe3
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 22, 2024 at 08:14:58AM -0700, Shuah Khan wrote:
+#syz test
 
-> The commit 7a6eb7c34a78 went in 4 years ago? DO we have a better
-> story for the LLVM tool chain to get rid of skipping bpf and sched_ext?
+On Sat, Nov 23, 2024 at 1:01=E2=80=AFPM syzbot <
+syzbot+9f9a7f73fb079b2387a6@syzkaller.appspotmail.com> wrote:
 
-> Running make -C tools/testing/selftests/bpf/ gave me the following error.
-> Does this mean we still can't include bpf in default run?
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    9fb2cfa4635a Merge tag 'pull-ufs' of git://git.kernel.org=
+/
+> ..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1004293058000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dc4515f1b6a4e5=
+0b7
+> dashboard link:
+> https://syzkaller.appspot.com/bug?extid=3D9f9a7f73fb079b2387a6
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for
+> Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D105ff2e8580=
+000
+>
+> Downloadable assets:
+> disk image:
+> https://storage.googleapis.com/syzbot-assets/7c0c61a15f60/disk-9fb2cfa4.r=
+aw.xz
+> vmlinux:
+> https://storage.googleapis.com/syzbot-assets/3363d84eeb74/vmlinux-9fb2cfa=
+4.xz
+> kernel image:
+> https://storage.googleapis.com/syzbot-assets/2b1a270af550/bzImage-9fb2cfa=
+4.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the
+> commit:
+> Reported-by: syzbot+9f9a7f73fb079b2387a6@syzkaller.appspotmail.com
+>
+>  madvise_pageout_page_range mm/madvise.c:609 [inline]
+>  madvise_pageout+0x326/0x820 mm/madvise.c:636
+>  madvise_vma_behavior+0x58c/0x19e0 mm/madvise.c:1045
+>  madvise_walk_vmas+0x1cf/0x2c0 mm/madvise.c:1274
+>  do_madvise+0x29d/0x700 mm/madvise.c:1461
+>  __do_sys_madvise mm/madvise.c:1477 [inline]
+>  __se_sys_madvise mm/madvise.c:1475 [inline]
+>  __x64_sys_madvise+0xa9/0x110 mm/madvise.c:1475
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+> ------------[ cut here ]------------
+> kernel BUG at include/linux/page-flags.h:309!
+> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+> CPU: 0 UID: 0 PID: 7269 Comm: syz.1.183 Not tainted
+> 6.12.0-syzkaller-00233-g9fb2cfa4635a #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 10/30/2024
+> RIP: 0010:const_folio_flags.constprop.0+0x12e/0x150
+> include/linux/page-flags.h:309
+> Code: 86 cb ff e8 f4 86 cb ff 48 8d 45 ff 48 39 c3 0f 84 38 ff ff ff e8 e=
+2
+> 86 cb ff 48 c7 c6 00 19 58 8b 48 89 df e8 e3 4b 11 00 90 <0f> 0b e8 6b 0d
+> 2d 00 e9 f1 fe ff ff e8 61 0d 2d 00 eb a3 48 89 df
+> RSP: 0018:ffffc9000c55ee30 EFLAGS: 00010293
+> RAX: 0000000000000000 RBX: ffffea0000496f80 RCX: ffffc9000c55ecd8
+> RDX: ffff88805f401e00 RSI: ffffffff81c1362d RDI: ffff88805f402244
+> RBP: 0000000000000001 R08: 0000000000000000 R09: fffffbfff203a591
+> R10: ffffffff901d2c8f R11: 0000000000000001 R12: 00000000000014df
+> R13: 0000000000000000 R14: dffffc0000000000 R15: 1ffff920018abdf4
+> FS:  00007f08b31bc6c0(0000) GS:ffff8880b8600000(0000)
+> knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000000c0025ff000 CR3: 00000000341ce000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  folio_test_locked include/linux/page-flags.h:509 [inline]
+>  next_uptodate_folio+0xac/0x4b0 mm/filemap.c:3505
+>  filemap_map_pages+0x1c6/0x16a0 mm/filemap.c:3647
+>  do_fault_around mm/memory.c:5255 [inline]
+>  do_read_fault mm/memory.c:5288 [inline]
+>  do_fault mm/memory.c:5431 [inline]
+>  do_pte_missing+0xdae/0x3e70 mm/memory.c:3965
+>  handle_pte_fault mm/memory.c:5766 [inline]
+>  __handle_mm_fault+0x100a/0x2a10 mm/memory.c:5909
+>  handle_mm_fault+0x3fa/0xaa0 mm/memory.c:6077
+>  faultin_page mm/gup.c:1187 [inline]
+>  __get_user_pages+0x8d9/0x3b50 mm/gup.c:1485
+>  __get_user_pages_locked mm/gup.c:1751 [inline]
+>  get_dump_page+0xfb/0x220 mm/gup.c:2269
+>  dump_user_range+0x135/0x8c0 fs/coredump.c:943
+>  elf_core_dump+0x2766/0x3840 fs/binfmt_elf.c:2121
+>  do_coredump+0x2c42/0x4160 fs/coredump.c:758
+>  get_signal+0x237c/0x26d0 kernel/signal.c:2903
+>  arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:337
+>  exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+>  exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+>  irqentry_exit_to_user_mode+0x13f/0x280 kernel/entry/common.c:231
+>  asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+> RIP: 0033:0x1000
+> Code: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 0=
+0
+> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 <00> 00 00 00 00
+> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> RSP: 002b:000000000000010c EFLAGS: 00010246
+> RAX: 0000000000000000 RBX: 00007f08b41363b8 RCX: 00007f08b3f7e759
+> RDX: ffffffffff600000 RSI: 0000000000000104 RDI: 8000000000000000
+> RBP: 00007f08b3ff175e R08: 0000000100000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000000 R14: 00007f08b41363b8 R15: 00007fff7656a008
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:const_folio_flags.constprop.0+0x12e/0x150
+> include/linux/page-flags.h:309
+> Code: 86 cb ff e8 f4 86 cb ff 48 8d 45 ff 48 39 c3 0f 84 38 ff ff ff e8 e=
+2
+> 86 cb ff 48 c7 c6 00 19 58 8b 48 89 df e8 e3 4b 11 00 90 <0f> 0b e8 6b 0d
+> 2d 00 e9 f1 fe ff ff e8 61 0d 2d 00 eb a3 48 89 df
+> RSP: 0018:ffffc9000c55ee30 EFLAGS: 00010293
+> RAX: 0000000000000000 RBX: ffffea0000496f80 RCX: ffffc9000c55ecd8
+> RDX: ffff88805f401e00 RSI: ffffffff81c1362d RDI: ffff88805f402244
+> RBP: 0000000000000001 R08: 0000000000000000 R09: fffffbfff203a591
+> R10: ffffffff901d2c8f R11: 0000000000000001 R12: 00000000000014df
+> R13: 0000000000000000 R14: dffffc0000000000 R15: 1ffff920018abdf4
+> FS:  00007f08b31bc6c0(0000) GS:ffff8880b8700000(0000)
+> knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fff76568ff8 CR3: 00000000341ce000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/674184c9.050a0220.1cc393=
+.0001.GAE%40google.com
+> .
+>
 
-> make -C tools/testing/selftests/bpf/
-> make: Entering directory '/linux/linux_6.12/tools/testing/selftests/bpf'
->=20
-> Auto-detecting system features:
-> ...                                    llvm: [ OFF ]
+--000000000000b13f0a0627bc7fe3
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The toolchain is in a better place now and we can run with released LLVM
-versions.  The detection above is still needed since the LLVM version
-needed is a bit newer than the version needed for the kernel itself,
-it's LLVM 18 for BPF, and not everyone has LLVM.
+<div dir=3D"ltr">#syz test<br></div><br><div class=3D"gmail_quote"><div dir=
+=3D"ltr" class=3D"gmail_attr">On Sat, Nov 23, 2024 at 1:01=E2=80=AFPM syzbo=
+t &lt;<a href=3D"mailto:syzbot%2B9f9a7f73fb079b2387a6@syzkaller.appspotmail=
+.com">syzbot+9f9a7f73fb079b2387a6@syzkaller.appspotmail.com</a>&gt; wrote:<=
+br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8e=
+x;border-left:1px solid rgb(204,204,204);padding-left:1ex">Hello,<br>
+<br>
+syzbot found the following issue on:<br>
+<br>
+HEAD commit:=C2=A0 =C2=A0 9fb2cfa4635a Merge tag &#39;pull-ufs&#39; of git:=
+//<a href=3D"http://git.kernel.org/" rel=3D"noreferrer" target=3D"_blank">g=
+it.kernel.org/</a>..<br>
+git tree:=C2=A0 =C2=A0 =C2=A0 =C2=A0upstream<br>
+console output: <a href=3D"https://syzkaller.appspot.com/x/log.txt?x=3D1004=
+2930580000" rel=3D"noreferrer" target=3D"_blank">https://syzkaller.appspot.=
+com/x/log.txt?x=3D10042930580000</a><br>
+kernel config:=C2=A0 <a href=3D"https://syzkaller.appspot.com/x/.config?x=
+=3Dc4515f1b6a4e50b7" rel=3D"noreferrer" target=3D"_blank">https://syzkaller=
+.appspot.com/x/.config?x=3Dc4515f1b6a4e50b7</a><br>
+dashboard link: <a href=3D"https://syzkaller.appspot.com/bug?extid=3D9f9a7f=
+73fb079b2387a6" rel=3D"noreferrer" target=3D"_blank">https://syzkaller.apps=
+pot.com/bug?extid=3D9f9a7f73fb079b2387a6</a><br>
+compiler:=C2=A0 =C2=A0 =C2=A0 =C2=A0gcc (Debian 12.2.0-14) 12.2.0, GNU ld (=
+GNU Binutils for Debian) 2.40<br>
+syz repro:=C2=A0 =C2=A0 =C2=A0 <a href=3D"https://syzkaller.appspot.com/x/r=
+epro.syz?x=3D105ff2e8580000" rel=3D"noreferrer" target=3D"_blank">https://s=
+yzkaller.appspot.com/x/repro.syz?x=3D105ff2e8580000</a><br>
+<br>
+Downloadable assets:<br>
+disk image: <a href=3D"https://storage.googleapis.com/syzbot-assets/7c0c61a=
+15f60/disk-9fb2cfa4.raw.xz" rel=3D"noreferrer" target=3D"_blank">https://st=
+orage.googleapis.com/syzbot-assets/7c0c61a15f60/disk-9fb2cfa4.raw.xz</a><br=
+>
+vmlinux: <a href=3D"https://storage.googleapis.com/syzbot-assets/3363d84eeb=
+74/vmlinux-9fb2cfa4.xz" rel=3D"noreferrer" target=3D"_blank">https://storag=
+e.googleapis.com/syzbot-assets/3363d84eeb74/vmlinux-9fb2cfa4.xz</a><br>
+kernel image: <a href=3D"https://storage.googleapis.com/syzbot-assets/2b1a2=
+70af550/bzImage-9fb2cfa4.xz" rel=3D"noreferrer" target=3D"_blank">https://s=
+torage.googleapis.com/syzbot-assets/2b1a270af550/bzImage-9fb2cfa4.xz</a><br=
+>
+<br>
+IMPORTANT: if you fix the issue, please add the following tag to the commit=
+:<br>
+Reported-by: <a href=3D"mailto:syzbot%2B9f9a7f73fb079b2387a6@syzkaller.apps=
+potmail.com" target=3D"_blank">syzbot+9f9a7f73fb079b2387a6@syzkaller.appspo=
+tmail.com</a><br>
+<br>
+=C2=A0madvise_pageout_page_range mm/madvise.c:609 [inline]<br>
+=C2=A0madvise_pageout+0x326/0x820 mm/madvise.c:636<br>
+=C2=A0madvise_vma_behavior+0x58c/0x19e0 mm/madvise.c:1045<br>
+=C2=A0madvise_walk_vmas+0x1cf/0x2c0 mm/madvise.c:1274<br>
+=C2=A0do_madvise+0x29d/0x700 mm/madvise.c:1461<br>
+=C2=A0__do_sys_madvise mm/madvise.c:1477 [inline]<br>
+=C2=A0__se_sys_madvise mm/madvise.c:1475 [inline]<br>
+=C2=A0__x64_sys_madvise+0xa9/0x110 mm/madvise.c:1475<br>
+=C2=A0do_syscall_x64 arch/x86/entry/common.c:52 [inline]<br>
+=C2=A0do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83<br>
+------------[ cut here ]------------<br>
+kernel BUG at include/linux/page-flags.h:309!<br>
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI<br>
+CPU: 0 UID: 0 PID: 7269 Comm: syz.1.183 Not tainted 6.12.0-syzkaller-00233-=
+g9fb2cfa4635a #0<br>
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Goo=
+gle 10/30/2024<br>
+RIP: 0010:const_folio_flags.constprop.0+0x12e/0x150 include/linux/page-flag=
+s.h:309<br>
+Code: 86 cb ff e8 f4 86 cb ff 48 8d 45 ff 48 39 c3 0f 84 38 ff ff ff e8 e2 =
+86 cb ff 48 c7 c6 00 19 58 8b 48 89 df e8 e3 4b 11 00 90 &lt;0f&gt; 0b e8 6=
+b 0d 2d 00 e9 f1 fe ff ff e8 61 0d 2d 00 eb a3 48 89 df<br>
+RSP: 0018:ffffc9000c55ee30 EFLAGS: 00010293<br>
+RAX: 0000000000000000 RBX: ffffea0000496f80 RCX: ffffc9000c55ecd8<br>
+RDX: ffff88805f401e00 RSI: ffffffff81c1362d RDI: ffff88805f402244<br>
+RBP: 0000000000000001 R08: 0000000000000000 R09: fffffbfff203a591<br>
+R10: ffffffff901d2c8f R11: 0000000000000001 R12: 00000000000014df<br>
+R13: 0000000000000000 R14: dffffc0000000000 R15: 1ffff920018abdf4<br>
+FS:=C2=A0 00007f08b31bc6c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000=
+000000<br>
+CS:=C2=A0 0010 DS: 0000 ES: 0000 CR0: 0000000080050033<br>
+CR2: 000000c0025ff000 CR3: 00000000341ce000 CR4: 00000000003526f0<br>
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000<br>
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400<br>
+Call Trace:<br>
+=C2=A0&lt;TASK&gt;<br>
+=C2=A0folio_test_locked include/linux/page-flags.h:509 [inline]<br>
+=C2=A0next_uptodate_folio+0xac/0x4b0 mm/filemap.c:3505<br>
+=C2=A0filemap_map_pages+0x1c6/0x16a0 mm/filemap.c:3647<br>
+=C2=A0do_fault_around mm/memory.c:5255 [inline]<br>
+=C2=A0do_read_fault mm/memory.c:5288 [inline]<br>
+=C2=A0do_fault mm/memory.c:5431 [inline]<br>
+=C2=A0do_pte_missing+0xdae/0x3e70 mm/memory.c:3965<br>
+=C2=A0handle_pte_fault mm/memory.c:5766 [inline]<br>
+=C2=A0__handle_mm_fault+0x100a/0x2a10 mm/memory.c:5909<br>
+=C2=A0handle_mm_fault+0x3fa/0xaa0 mm/memory.c:6077<br>
+=C2=A0faultin_page mm/gup.c:1187 [inline]<br>
+=C2=A0__get_user_pages+0x8d9/0x3b50 mm/gup.c:1485<br>
+=C2=A0__get_user_pages_locked mm/gup.c:1751 [inline]<br>
+=C2=A0get_dump_page+0xfb/0x220 mm/gup.c:2269<br>
+=C2=A0dump_user_range+0x135/0x8c0 fs/coredump.c:943<br>
+=C2=A0elf_core_dump+0x2766/0x3840 fs/binfmt_elf.c:2121<br>
+=C2=A0do_coredump+0x2c42/0x4160 fs/coredump.c:758<br>
+=C2=A0get_signal+0x237c/0x26d0 kernel/signal.c:2903<br>
+=C2=A0arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:337<br>
+=C2=A0exit_to_user_mode_loop kernel/entry/common.c:111 [inline]<br>
+=C2=A0exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]<b=
+r>
+=C2=A0irqentry_exit_to_user_mode+0x13f/0x280 kernel/entry/common.c:231<br>
+=C2=A0asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623<br>
+RIP: 0033:0x1000<br>
+Code: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 =
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 &lt;00&gt; 00 00 0=
+0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00<br>
+RSP: 002b:000000000000010c EFLAGS: 00010246<br>
+RAX: 0000000000000000 RBX: 00007f08b41363b8 RCX: 00007f08b3f7e759<br>
+RDX: ffffffffff600000 RSI: 0000000000000104 RDI: 8000000000000000<br>
+RBP: 00007f08b3ff175e R08: 0000000100000000 R09: 0000000000000000<br>
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000<br>
+R13: 0000000000000000 R14: 00007f08b41363b8 R15: 00007fff7656a008<br>
+=C2=A0&lt;/TASK&gt;<br>
+Modules linked in:<br>
+---[ end trace 0000000000000000 ]---<br>
+RIP: 0010:const_folio_flags.constprop.0+0x12e/0x150 include/linux/page-flag=
+s.h:309<br>
+Code: 86 cb ff e8 f4 86 cb ff 48 8d 45 ff 48 39 c3 0f 84 38 ff ff ff e8 e2 =
+86 cb ff 48 c7 c6 00 19 58 8b 48 89 df e8 e3 4b 11 00 90 &lt;0f&gt; 0b e8 6=
+b 0d 2d 00 e9 f1 fe ff ff e8 61 0d 2d 00 eb a3 48 89 df<br>
+RSP: 0018:ffffc9000c55ee30 EFLAGS: 00010293<br>
+RAX: 0000000000000000 RBX: ffffea0000496f80 RCX: ffffc9000c55ecd8<br>
+RDX: ffff88805f401e00 RSI: ffffffff81c1362d RDI: ffff88805f402244<br>
+RBP: 0000000000000001 R08: 0000000000000000 R09: fffffbfff203a591<br>
+R10: ffffffff901d2c8f R11: 0000000000000001 R12: 00000000000014df<br>
+R13: 0000000000000000 R14: dffffc0000000000 R15: 1ffff920018abdf4<br>
+FS:=C2=A0 00007f08b31bc6c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000=
+000000<br>
+CS:=C2=A0 0010 DS: 0000 ES: 0000 CR0: 0000000080050033<br>
+CR2: 00007fff76568ff8 CR3: 00000000341ce000 CR4: 00000000003526f0<br>
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000<br>
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400<br>
+<br>
+<br>
+---<br>
+This report is generated by a bot. It may contain errors.<br>
+See <a href=3D"https://goo.gl/tpsmEJ" rel=3D"noreferrer" target=3D"_blank">=
+https://goo.gl/tpsmEJ</a> for more information about syzbot.<br>
+syzbot engineers can be reached at <a href=3D"mailto:syzkaller@googlegroups=
+.com" target=3D"_blank">syzkaller@googlegroups.com</a>.<br>
+<br>
+syzbot will keep track of this issue. See:<br>
+<a href=3D"https://goo.gl/tpsmEJ#status" rel=3D"noreferrer" target=3D"_blan=
+k">https://goo.gl/tpsmEJ#status</a> for how to communicate with syzbot.<br>
+<br>
+If the report is already addressed, let syzbot know by replying with:<br>
+#syz fix: exact-commit-title<br>
+<br>
+If you want syzbot to run the reproducer, reply with:<br>
+#syz test: git://repo/address.git branch-or-commit-hash<br>
+If you attach or paste a git patch, syzbot will apply it before testing.<br=
+>
+<br>
+If you want to overwrite report&#39;s subsystems, reply with:<br>
+#syz set subsystems: new-subsystem<br>
+(See the list of subsystem names on the web dashboard)<br>
+<br>
+If the report is a duplicate of another one, reply with:<br>
+#syz dup: exact-subject-of-another-report<br>
+<br>
+If you want to undo deduplication, reply with:<br>
+#syz undup<br>
+<br>
+-- <br>
+You received this message because you are subscribed to the Google Groups &=
+quot;syzkaller-bugs&quot; group.<br>
+To unsubscribe from this group and stop receiving emails from it, send an e=
+mail to <a href=3D"mailto:syzkaller-bugs%2Bunsubscribe@googlegroups.com" ta=
+rget=3D"_blank">syzkaller-bugs+unsubscribe@googlegroups.com</a>.<br>
+To view this discussion visit <a href=3D"https://groups.google.com/d/msgid/=
+syzkaller-bugs/674184c9.050a0220.1cc393.0001.GAE%40google.com" rel=3D"noref=
+errer" target=3D"_blank">https://groups.google.com/d/msgid/syzkaller-bugs/6=
+74184c9.050a0220.1cc393.0001.GAE%40google.com</a>.<br>
+</blockquote></div>
 
->   GEN     /linux/linux_6.12/tools/testing/selftests/bpf/tools/build/bpfto=
-ol/vmlinux.h
-> libbpf: failed to find '.BTF' ELF section in /linux/linux_6.12/vmlinux
-> Error: failed to load BTF from /linux/linux_6.12/vmlinux: No data availab=
-le
-> make[1]: *** [Makefile:209: /linux/linux_6.12/tools/testing/selftests/bpf=
-/tools/build/bpftool/vmlinux.h] Error 195
-> make[1]: *** Deleting file '/linux/linux_6.12/tools/testing/selftests/bpf=
-/tools/build/bpftool/vmlinux.h'
-> make: *** [Makefile:369: /linux/linux_6.12/tools/testing/selftests/bpf/to=
-ols/sbin/bpftool] Error 2
-> make: Leaving directory '/linux/linux_6.12/tools/testing/selftests/bpf'
+--000000000000b13f0a0627bc7fe3--
+--000000000000b13f0c0627bc7fe5
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="40001-fix-kernel-BUG-in-const_folio_flags-2(2).patch"
+Content-Disposition: attachment; 
+	filename="40001-fix-kernel-BUG-in-const_folio_flags-2(2).patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m3x1ssgs0>
+X-Attachment-Id: f_m3x1ssgs0
 
-This bit still needs some attention - the build needs a kernel binary
-with BTF information built in via CONFIG_DEBUG_INFO_BTF.  That is
-enabled by the config fragment for BTF tests but it's not compatible
-with the arm64 defconfig since that sets CONFIG_DEBUG_INFO_REDUCED which
-isn't compatible with _BTF, and in general having it missing should be
-handled a bit more gracefully.  I believe some of the tests would run
-happily without the BTF information. =20
-
-TBH I'm a bit surprised we even tried to do this bit with LLVM not
-available...
-
---6obR2W6oqGidcei7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdEd5IACgkQJNaLcl1U
-h9BZMQf9F1MFajh28PQz3CmjPPNAkdxl8CF86T29XnOhxrfCPKuLpZNkem5jspwO
-Dg7Eu5rM36gAZyAsh+vUj+w6rsNf0XQ8cEVnXouJ98mCjjzuFZp1GKVfl3VdNEJ2
-aOGpQMtck3w1ZY/pZUU++kDcXSV9p/TnOCAjOt8HBc7V2FuQtJqvyfz2H++92CVA
-4HD3wrqqVtRDCd3APgApyRYm14eh37O8LUyMM4zcYDByC/orxJzq2dmuAxMdhqiM
-r3bwx6MIsC2GnqsrhZ+21SFN2vMUmXdt7MRZASBq7xmE3RALj2aIe0NzCG/53nV5
-6GaD8ns0JcFmbAn3gzPmJnJFd2Oj9w==
-=Afir
------END PGP SIGNATURE-----
-
---6obR2W6oqGidcei7--
+RnJvbSAyNmI4OTJkMTE2ZmFiZDAzOTVkZTRkY2RkYmViMmRmZGJkNGE3NDI2IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBTdXJhaiBTb25hd2FuZSA8c3VyYWpzb25hd2FuZTAyMTVAZ21h
+aWwuY29tPgpEYXRlOiBNb24sIDI1IE5vdiAyMDI0IDEyOjIyOjEyICswNTMwClN1YmplY3Q6IFtQ
+QVRDSF0gZml4IGtlcm5lbCBCVUcgaW4gY29uc3RfZm9saW9fZmxhZ3MgKDIpCgpzeXogdGVzdAoK
+U2lnbmVkLW9mZi1ieTogU3VyYWogU29uYXdhbmUgPHN1cmFqc29uYXdhbmUwMjE1QGdtYWlsLmNv
+bT4KLS0tCiBpbmNsdWRlL2xpbnV4L3BhZ2UtZmxhZ3MuaCB8IDYgKysrKysrCiAxIGZpbGUgY2hh
+bmdlZCwgNiBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9wYWdlLWZs
+YWdzLmggYi9pbmNsdWRlL2xpbnV4L3BhZ2UtZmxhZ3MuaAppbmRleCA5MDhlZTBhYWQuLmFiNTYy
+ZmY0NSAxMDA2NDQKLS0tIGEvaW5jbHVkZS9saW51eC9wYWdlLWZsYWdzLmgKKysrIGIvaW5jbHVk
+ZS9saW51eC9wYWdlLWZsYWdzLmgKQEAgLTMwNiw2ICszMDYsMTIgQEAgc3RhdGljIGNvbnN0IHVu
+c2lnbmVkIGxvbmcgKmNvbnN0X2ZvbGlvX2ZsYWdzKGNvbnN0IHN0cnVjdCBmb2xpbyAqZm9saW8s
+CiB7CiAJY29uc3Qgc3RydWN0IHBhZ2UgKnBhZ2UgPSAmZm9saW8tPnBhZ2U7CiAKKwkvKiBBZGQg
+YSBjaGVjayBmb3IgbiB0byBlbnN1cmUgaXQncyB3aXRoaW4gYm91bmRzLiAqLworCWlmIChuID49
+ICgxIDw8IChQQUdFX1NISUZUIC0gUEFHRV9TSElGVCkpKSB7CisJCS8vIHByX2VycigiSW52YWxp
+ZCBmb2xpbyBpbmRleDogbj0ldSwgZm9saW9fbnJfcGFnZXM9JXVcbiIsIG4sIGZvbGlvX25yX3Bh
+Z2VzKGZvbGlvKSk7CisJCXJldHVybiAtRUlOVkFMOworCX0KKwogCVZNX0JVR19PTl9QR0ZMQUdT
+KFBhZ2VUYWlsKHBhZ2UpLCBwYWdlKTsKIAlWTV9CVUdfT05fUEdGTEFHUyhuID4gMCAmJiAhdGVz
+dF9iaXQoUEdfaGVhZCwgJnBhZ2UtPmZsYWdzKSwgcGFnZSk7CiAJcmV0dXJuICZwYWdlW25dLmZs
+YWdzOwotLSAKMi4zNC4xCgo=
+--000000000000b13f0c0627bc7fe5--
 
