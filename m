@@ -1,107 +1,58 @@
-Return-Path: <linux-kernel+bounces-421489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D789D8BF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:09:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E8E9D8BFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:10:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C606A163F7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:09:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A91651636F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7511B85EC;
-	Mon, 25 Nov 2024 18:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD6B1B85E4;
+	Mon, 25 Nov 2024 18:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RadMfOcV";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="x9oJOupz";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RadMfOcV";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="x9oJOupz"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nLv0fnS3"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0171B4146;
-	Mon, 25 Nov 2024 18:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30DDEED6;
+	Mon, 25 Nov 2024 18:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732558142; cv=none; b=WTWdfz8VvajBHggmc49c6BC5TX5rPRRiAOdzf42ZSgH/3iaC0mf5RECs8jzAQk6jMhtmm6NeW7gcdi70aJWZRayodqED7gKEwZogOi3OfP9/Y+FydS4gk5lmrToF8XZoSNbNql/dCf7FzV7UEuiUeuJ6edyKEJdg+DOnAaA/4mc=
+	t=1732558229; cv=none; b=B/2bVZqs3NQviNG9ZgryBBZQkHV6MzlSSKQouUjd+/5+yUd0IzZMn/vvjSrrOJ5tBdDgjhLMkNW7N20G2j7/TJ7QZqCnNxBgawASuGFDkU8td0MY0CraeVb7X3K7qoh5j2wnT1TWch/QjA1Z0r30leO4t6e6lRICh60oTFVfsw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732558142; c=relaxed/simple;
-	bh=w7kxJO28hJuvu7d/idb2o+h8f2jsfvZ9tNM+W19lsww=;
+	s=arc-20240116; t=1732558229; c=relaxed/simple;
+	bh=wJ2KOXAGbvj5+BSWG5kc3Hj4oNXJEnFaIClYWDTF3DU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hPXa4OXKdPIWqM4KhTfE3WjBRxrh+9aJ/NwyXW7GT4yAvvYM1vfVnREAAxZ37FlBaqtfrCm2GxX/aAeU4Znz+aKj8Ck+Mtq4nWsj/hfYgwsrGxpM5GCAjQ+uN5roM2s66xZUkd1H1Pu0Xh6b24Au38XqtRr+VJwuKKvl7UXaPGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RadMfOcV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=x9oJOupz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RadMfOcV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=x9oJOupz; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 571811F453;
-	Mon, 25 Nov 2024 18:08:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732558138;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c5nBz9JB+d6ohi06eJrf2yvhifSibzaMzqiLfFX/JRA=;
-	b=RadMfOcVRxFTxBUjRKYF2Cr9+6xqNCrqQEOd0ceWi0kKzyieoVEpvB9xj2bmvSuOD2ocwE
-	jIkgVFOopCdQCCZMaUvG+L+Whr6g+qN+5w5NaMzZgjuSgxa9rOJcZEZhKtt2CXCfFhENGs
-	UWeSS6iPycLDHwLtnX5tWRnQoHbg+DM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732558138;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c5nBz9JB+d6ohi06eJrf2yvhifSibzaMzqiLfFX/JRA=;
-	b=x9oJOupzZNTdYjYUit+y+C1PmTOtVKVNR8KMZo7dEiPKJUXqIt+xWI+mU6MruCvCJ/1s0y
-	A+ar97NYr1vinQDA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=RadMfOcV;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=x9oJOupz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732558138;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c5nBz9JB+d6ohi06eJrf2yvhifSibzaMzqiLfFX/JRA=;
-	b=RadMfOcVRxFTxBUjRKYF2Cr9+6xqNCrqQEOd0ceWi0kKzyieoVEpvB9xj2bmvSuOD2ocwE
-	jIkgVFOopCdQCCZMaUvG+L+Whr6g+qN+5w5NaMzZgjuSgxa9rOJcZEZhKtt2CXCfFhENGs
-	UWeSS6iPycLDHwLtnX5tWRnQoHbg+DM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732558138;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c5nBz9JB+d6ohi06eJrf2yvhifSibzaMzqiLfFX/JRA=;
-	b=x9oJOupzZNTdYjYUit+y+C1PmTOtVKVNR8KMZo7dEiPKJUXqIt+xWI+mU6MruCvCJ/1s0y
-	A+ar97NYr1vinQDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3E59413890;
-	Mon, 25 Nov 2024 18:08:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id NpADDzq9RGcwEwAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 25 Nov 2024 18:08:58 +0000
-Date: Mon, 25 Nov 2024 19:08:57 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Atemu <git@atemu.net>, Luca Stefani <luca.stefani.ge1@gmail.com>,
-	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] btrfs: Don't block system suspend during fstrim
-Message-ID: <20241125180856.GE31418@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20240917203346.9670-1-luca.stefani.ge1@gmail.com>
- <20240917203346.9670-3-luca.stefani.ge1@gmail.com>
- <SICOALIt6xFGz_7VCBwGpUxENKZz_3Em604Vvgvh8Pi79wpvimQFBQNkDxa1kE5lwfkOU0ZSYRaiIugTDLAfM1j3HMUgM25s1rgpmmRQ9TI=@atemu.net>
- <2024111923-capsize-resonant-eed6@gregkh>
- <wnPVOgJfpl_-T0Kmx_rLagKGYDUVPe2v9-dL75Pn8evLxtS0h1PY3OGUSihwcMAJ4Q5A3heeKnYQZcPaX81_ieEwyKirOcV2ZdutRF8JgrI=@atemu.net>
- <2024112033-booted-kinswoman-6cb5@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NBkO1wt0TeX1iMvF9dTKqCfdxAIeVE89py1g5DheUvwWW8IY2LLSa16iOiHuj/QecmLjqERQFUGvoizKvpUsFZ89Eu9beJtItBP0g834QZNcK6SNs+1ppj429EgN1fGmFmHh9CuAyViodZcoQpzXFt+kPyZA7fwTk77hg8I3o24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nLv0fnS3; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=RjenwW3rN7/Sf1SgRlSuB0fbToLqYiHg0XFzxv88ukY=; b=nLv0fnS3cyW0YAlC7J8yarWZk3
+	oNcH+GbJXns04y1qqwCPOEpZFPsLygd1aG+4FhyazcsJSi7fvBPeCo+40G/bhtTMLxRrlEqBALNwg
+	o2qJYPNvFXLx6WRtf+JVXxB8Uh0PsTHDLAKzjAqFPHylu7bKOQ1FNi4qqjWtMDIxQrEM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tFdXE-00EPtw-Km; Mon, 25 Nov 2024 19:10:08 +0100
+Date: Mon, 25 Nov 2024 19:10:08 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: zhangheng <zhangheng@kylinos.cn>
+Cc: joyce.ooi@intel.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	chris.snook@gmail.com, f.fainelli@gmail.com, horms@kernel.org,
+	shannon.nelson@amd.com, jacob.e.keller@intel.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: ethernet: Use dma_set_mask_and_coherent to set DMA
+ mask
+Message-ID: <f3a7d89c-43b4-4d5a-ac70-6b14c77b4cd4@lunn.ch>
+References: <20241125033446.3290936-1-zhangheng@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -110,63 +61,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2024112033-booted-kinswoman-6cb5@gregkh>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: 571811F453
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.71 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[atemu.net,gmail.com,fb.com,toxicpanda.com,suse.com,vger.kernel.org];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:dkim,suse.cz:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.71
-X-Spam-Flag: NO
+In-Reply-To: <20241125033446.3290936-1-zhangheng@kylinos.cn>
 
-On Wed, Nov 20, 2024 at 01:17:14PM +0100, Greg Kroah-Hartman wrote:
-> On Wed, Nov 20, 2024 at 07:41:32AM +0000, Atemu wrote:
-> > Hi, 
-> > 
-> > 
-> > > What is the git commit id in LInus's tree you are referring to here?
-> > 
-> > It's 69313850dce33ce8c24b38576a279421f4c60996. Apparently marked for backport to 5.15+.
+On Mon, Nov 25, 2024 at 11:34:46AM +0800, zhangheng wrote:
+> Many drivers still have two explicit calls of dma_set_mask() and
+> dma_set_coherent_mask().
 > 
-> Please see the FAILED emails about why this was not applied, here is
-> one:
-> 	https://lore.kernel.org/r/2024101412-diaphragm-sly-ea40@gregkh
-> 
-> Have you tested and tried this commit out in these older kernels?  If
-> so, can you please send a working version so that we can apply them?
+> Let's simplify with dma_set_mask_and_coherent().
 
-The conflict was trivial, only adding the linux/freezer.h include. I've
-sent an updated version that applies to 6.6.
+Is simplification a sufficient justification?
+
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html#clean-up-patches
+
+1.6.6. Clean-up patches
+
+  Netdev discourages patches which perform simple clean-ups, which are
+  not in the context of other work. For example:
+
+  Addressing checkpatch.pl warnings
+
+  Addressing Local variable ordering issues
+
+  Conversions to device-managed APIs (devm_ helpers)
+
+  This is because it is felt that the churn that such changes produce
+  comes at a greater cost than the value of such clean-ups.
+
+What is the value of this simplification? What is the likelihood you
+have actually broken something? The problem with these sorts of
+patches is that they are often made blindly without understanding the
+code and a small percentage actually break things. As a result,
+Maintainers need to look at these patches and spend the time to
+actually understand them. I would prefer to spend that time on new
+drivers, rather than old code which works and does not really benefit
+from simplification.
+
+	Andrew
 
