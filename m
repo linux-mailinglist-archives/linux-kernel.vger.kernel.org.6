@@ -1,160 +1,179 @@
-Return-Path: <linux-kernel+bounces-421680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B70B49D8E76
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:23:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65E079D8E79
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:25:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77EC0280F0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:23:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFEAF168D97
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B22E1CB31D;
-	Mon, 25 Nov 2024 22:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67FC1CBEB9;
+	Mon, 25 Nov 2024 22:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e3UaRCR/"
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE8317F4F6
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 22:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="RTDRacyq"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA2813C80E;
+	Mon, 25 Nov 2024 22:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732573407; cv=none; b=Bk/zAbKj+K4/J0v8j3X4weSBu1dqZhDWIz+LXc4TkSSNBe5gnXh4KMQlIV7cxgAhEt3ST7+RxVkZjXNQxoHplBNAT3lAPnW4in+sXHIjpM5yr+4EwKL4gB/uO+7b/R0IUJc8K5M0mfuFTFEfgjPlduCZQsTBNpT6KjHwCFH/hvA=
+	t=1732573501; cv=none; b=rrOtDLDX1TA53X+tE8MHyQ1pM//DjOfkW7nQdJZRGLkOXhg6XAdLY4X8eDn5MzRzPQTMm6Xh0b5oU46G/UmWEdZQ3IL1u6Y276z2JTfx662tKPn1glrJb138eSDZSROu7HEfesKRC4LNY+wHTnLhvZnSL4S8qAbO7QehGT/RGUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732573407; c=relaxed/simple;
-	bh=atfV4Dmd5P2/nrEuQPiLgC2zGDowbchaOZ/HeHMgibc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gGCuAvAY8sQkSLJPVD3vSgjw8avtwoZjbfQWNCIHu6c3UgTDUkgWZIHB1atWDv98pIri4W+TqhJGWZCTbwgWP3XRkx6XcJv94W3AzYdEE2mkXk0dgV5MWBtGlwlVcSpu34RGXnZQECXVItOhVObcBJfHPDLY2ps1W9D0SAcw4Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e3UaRCR/; arc=none smtp.client-ip=209.85.222.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-85b09db4824so498566241.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:23:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732573405; x=1733178205; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fPfWzthEWoH2qXCJl59i7kJGHDW2eEE8lyzCKgg7LSc=;
-        b=e3UaRCR/M3umbpeLSryt2aVM526MgEKwMcGo+3dkHXXxIv4rvbyab0XE1R9uluLQpt
-         UOxIhEGOgvVREC1V0oDEunG51+gr3R1JJmqqhKLES2XZBJ/ohGnCwPdYWY6WxATlFI5A
-         RF3p+zKUeQ2Zkz/4BNDrop4+tx03ZAcfQR+lhbKL0j1lPU9v7K++Yjqrl38OIXxqLZvD
-         v9NgnbrHrizSDGZASx9d3e7VS+eN6Rcjf9oYm0LHiVkzBGBjwWHz7wMPLdMkYJLXNnF4
-         xkCF7lvEerYuB4Kh+Ovztx1hfVHPXsWYZbCLvB0Kh9j+fpLpRxug8oWKELoUCp5xNDE5
-         2UeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732573405; x=1733178205;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fPfWzthEWoH2qXCJl59i7kJGHDW2eEE8lyzCKgg7LSc=;
-        b=VdCGcV4dQcfqgT61/Tv1u4a+8FT4gnOlq2GBkc6t+X/bkwMdW99q+BC+7WB972VM0E
-         VxfVZJslrNMjCGSZYd31bRlD1ecK5K1HYbfOGYH6Gw5PqKG2aOBnl4pbt8lq4chGuEtT
-         5bUzh/sZ7thQTkCykXLo6Fqpq0cyJg2BJphEjnCv9HI1ZQMfuCvTVx1qvrnQ92IdpXPb
-         aURsEO0eJ27IHyz3Fl4lVf4XOCooNDi77lYGyR7fsc8n1P2GV6rWDn1L2HxiH70luJsu
-         fbKuYzyBPIEsuQ/5j9wrYo1Y9gGbVqZF/1IxMTT9pDtqrONmP/9zhJkh3gBMg0fFAdhX
-         1h9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVJP5JCAURbvfYYSosutaL3R0Apekgh8Zin69KsZIskuTOIF0OXjr8qaQAOFeJmZt9Pkkh3zA6SHCALFL4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7vw8Yv6wzF+zkBvHnnHDpBPApMe1ToLroZ+dFkisg+V2z7xS7
-	x3A0PAfVKSprKn+HXuMlBeaMDYtPio5rX9rTfP4QVAwAF3yq1did03mNRjpw9FufQk6H4YRSxem
-	G5IyFfdHSn/Z6ElS4guUvyBP/NZJ5NjkM8wCz
-X-Gm-Gg: ASbGncsj3t/xJvvHDKfjZLHzdtBkvw4N3icyPFbfmI9OEAXsbKxXAYWBH4/FMwW9whJ
-	jnZbXwlnaOj13aoTBGJnk/PI9cEqnq+tTVu0qfjzxBF2cYMOwDI9ta46bP8aj1Pr0
-X-Google-Smtp-Source: AGHT+IGqMzc1OyPSWSlieeYBzujX5tl4Y0054LB+eF4R09ye8ciu10JBJUzb6hqH9f2pJ7Sfaoe8ukBDGJNLm5dZMcY=
-X-Received: by 2002:a05:6102:161f:b0:4af:19c3:61c1 with SMTP id
- ada2fe7eead31-4af19c36469mr6481868137.27.1732573404437; Mon, 25 Nov 2024
- 14:23:24 -0800 (PST)
+	s=arc-20240116; t=1732573501; c=relaxed/simple;
+	bh=afqhdH/45pMsF5C8ZM612zCOoV610zVW1Lz3K8pKfLk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gv+tMLYp+xoel0ty9KYCYIeih8jCRK1GBs6CVNxPZqXcRYBwbqONc2GlPtT8HamcMoJp5slwx2UYoINa/DbBJ4XED4gAlR8yWNM4BVsfj55d/NNuZ0JtcS3TL1wtmJaQjkaRypXjHdlwKbz8Bg09K6ebsaQCuq5OLhohcxO1ALc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=RTDRacyq; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from skinsburskii. (unknown [131.107.8.116])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 11A8A2054599;
+	Mon, 25 Nov 2024 14:24:59 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 11A8A2054599
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1732573499;
+	bh=5TkZkgnvEk/iIKsKGYaK6XUWVYU8tjBHTxQq6VwmxwU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RTDRacyqgHH8Q6V079+mz/IsaQ7O2q8gEuB4BkKcRK2x5Y6Qv8LyCMh8e8BWxy7hz
+	 OMPkEw7QkvH7JEBzJeD2TtT6nNFkqj8ZJfOEMl+3Ua4OVes2YOpnY1lqvXVBwXO2rK
+	 TrXfPjnwR1RRtQ6hR3zhr1xebFkCktZQ4RHvqBAs=
+Date: Mon, 25 Nov 2024 14:24:57 -0800
+From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: "tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>,
+	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/hyperv: Set X86_FEATURE_TSC_RELIABLE unconditionally
+Message-ID: <20241125222457.GA28630@skinsburskii.>
+References: <173143547242.3415.16207372030310222687.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+ <SN6PR02MB41575A98314B82C498A3D312D4592@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <20241120005106.GA18115@skinsburskii.>
+ <SN6PR02MB4157121B6CD9F5CAAFB39637D4232@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107202033.2721681-1-yuzhao@google.com> <20241125152203.GA954@willie-the-truck>
-In-Reply-To: <20241125152203.GA954@willie-the-truck>
-From: Yu Zhao <yuzhao@google.com>
-Date: Mon, 25 Nov 2024 15:22:47 -0700
-Message-ID: <CAOUHufYUMYcf=uF7=2zj-PsGXePCDdsRHJGa8t-e-k9VUvYyQQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] mm/arm64: re-enable HVO
-To: Will Deacon <will@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Marc Zyngier <maz@kernel.org>, Muchun Song <muchun.song@linux.dev>, 
-	Thomas Gleixner <tglx@linutronix.de>, Douglas Anderson <dianders@chromium.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Nanyong Sun <sunnanyong@huawei.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN6PR02MB4157121B6CD9F5CAAFB39637D4232@SN6PR02MB4157.namprd02.prod.outlook.com>
 
-On Mon, Nov 25, 2024 at 8:22=E2=80=AFAM Will Deacon <will@kernel.org> wrote=
-:
->
-> Hi Yu Zhao,
->
-> On Thu, Nov 07, 2024 at 01:20:27PM -0700, Yu Zhao wrote:
-> > HVO was disabled by commit 060a2c92d1b6 ("arm64: mm: hugetlb: Disable
-> > HUGETLB_PAGE_OPTIMIZE_VMEMMAP") due to the following reason:
-> >
-> >   This is deemed UNPREDICTABLE by the Arm architecture without a
-> >   break-before-make sequence (make the PTE invalid, TLBI, write the
-> >   new valid PTE). However, such sequence is not possible since the
-> >   vmemmap may be concurrently accessed by the kernel.
-> >
-> > This series presents one of the previously discussed approaches to
-> > re-enable HugeTLB Vmemmap Optimization (HVO) on arm64.
->
-> Before jumping into the new mechanisms here, I'd really like to
-> understand how the current code is intended to work in the relatively
-> simple case where the vmemmap is page-mapped to start with (i.e. when we
-> don't need to worry about block-splitting).
->
-> In that case, who are the concurrent users of the vmemmap that we need
-> to worry about?
+On Fri, Nov 22, 2024 at 06:33:12PM +0000, Michael Kelley wrote:
+> From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com> Sent: Tuesday, November 19, 2024 4:51 PM
+> > 
+> > On Tue, Nov 12, 2024 at 07:48:06PM +0000, Michael Kelley wrote:
+> > > From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com> Sent: Tuesday,
+> > November 12, 2024 10:18 AM
+> > > >
+> > > > Enable X86_FEATURE_TSC_RELIABLE by default as X86_FEATURE_TSC_RELIABLE is
+> > > > independent from invariant TSC and should have never been gated by the
+> > > > HV_ACCESS_TSC_INVARIANT privilege.
+> > >
+> > > I think originally X86_FEATURE_TSC_RELIABLE was gated by the Hyper-V
+> > > TSC Invariant feature because otherwise VM live migration may cause
+> > > the TSC value reported by the RDTSC/RDTSCP instruction in the guest
+> > > to abruptly change frequency and value. In such cases, the TSC isn't
+> > > useable by the kernel or user space.
+> > >
+> > > Enabling the Hyper-V TSC Invariant feature fixes that by using the
+> > > hardware scaling available in more recent processors to automatically
+> > > fixup the TSC value returned by RDTSC/RDTSCP in the guest.
+> > >
+> > > Is there a practical problem that is fixed by always enabling
+> > > X86_FEATURE_TSC_RELIABLE?
+> > >
+> > 
+> > The particular problem is that HV_ACCESS_TSC_INVARIANT is not set for the
+> > nested root, which in turn leads to keeping tsc clocksource watchdog
+> > thread and TSC sycn check timer around.
+> 
+> I have trouble keeping all the different TSC "features" conceptually
+> separate. :-( The TSC frequency not changing (and the value not
+> abruptly jumping?) should already be represented by
+> X86_FEATURE_TSC_CONSTANT.  In the kernel, X86_FEATURE_TSC_RELIABLE
+> effectively only controls whether the TSC clocksource watchdog is
+> enabled, and in spite of the live migration foibles, I don't see a need
+> for that watchdog in a Hyper-V VM. So maybe it's OK to always set
+> X86_FEATURE_TSC_RELIABLE in a Hyper-V VM, as you have
+> proposed.
+> 
+> The "tsc_reliable" flag is also exposed to user space as part of the
+> /proc/cpuinfo "flags" output, so theoretically some user space
+> program could change behavior based on that flag. But that seems
+> a bit far-fetched. I know there are user space programs that check
+> the CPUID INVARIANT_TSC flag to know whether they can use
+> the raw RDTSC instruction output to do start/stop timing. The
+> Hyper-V TSC Invariant feature makes that work correctly, even
+> across live migrations.
+> 
 
-Any speculative PFN walkers who either only read `struct page[]` or
-attempt to increment page->_refcount if it's not zero.
+It sounds to me that if X86_FEATURE_TSC_CONSTANT is available on Hyper-V, then we
+can set X86_FEATURE_TSC_RELIABLE.
+Is it what you are saying?
 
-> Is it solely speculative references via
-> page_ref_add_unless() or are there others?
+Stanislav
 
-page_ref_add_unless() needs to be successful before writes can follow;
-speculative reads are always allowed.
-
-> Looking at page_ref_add_unless(), what serialises that against
-> __hugetlb_vmemmap_restore_folio()? I see there's a synchronize_rcu()
-> call in the latter, but what prevents an RCU reader coming in
-> immediately after that?
-
-In page_ref_add_unless(), the condtion `!page_is_fake_head(page) &&
-page_ref_count(page)` returns false before a PTE becomes RO.
-
-For HVO, i.e., a PTE being switched from RW to RO, page_ref_count() is
-frozen (remains zero), followed by synchronize_rcu(). After the
-switch, page_is_fake_head() is true and it appears before
-page_ref_count() is unfrozen (become non-zero), so the condition
-remains false.
-
-For de-HVO, i.e., a PTE being switched from RO to RW, page_ref_count()
-again is frozen, followed by synchronize_rcu(). Only this time
-page_is_fake_head() is false after the switch, and again it appears
-before page_ref_count() is unfrozen. To answer your question, readers
-coming in immediately after that won't be able to see non-zero
-page_ref_count() before it sees page_is_fake_head() being false. IOW,
-regarding whether it is RW, the condition can be false negative but
-never false positive.
-
-> Even if we resolve the BBM issues, we still need to get the
-> synchronisation right so that we don't e.g. attempt a cmpxchg() to a
-> read-only mapping, as the CAS instruction requires write permission on
-> arm64 even if the comparison ultimately fails.
-
-Correct. This applies to x86 as well, i.e., CAS on RO memory crashes
-the kernel, even if CAS would fail otherwise.
-
-> So please help me to understand the basics of HVO before we get bogged
-> down by the block-splitting on arm64.
-
-Gladly. Please let me know if anything from the core MM side is unclear.
+> Michael
+> 
+> > 
+> > But the live migration concern you raised is indeed still out there.
+> > 
+> > Thank you for the input Michael, I'll think more about it.
+> > 
+> > Stanislav
+> > 
+> > > Michael
+> > >
+> > > >
+> > > > To elaborate, the HV_ACCESS_TSC_INVARIANT privilege allows certain types of
+> > > > guests to opt-in to invariant TSC by writing the
+> > > > HV_X64_MSR_TSC_INVARIANT_CONTROL register. Not all guests will have this
+> > > > privilege and the hypervisor will automatically opt-in certain types of
+> > > > guests (e.g. EXO partitions) to invariant TSC, but this functionality is
+> > > > unrelated to the TSC reliability.
+> > > >
+> > > > Signed-off-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+> > > > ---
+> > > >  arch/x86/kernel/cpu/mshyperv.c |    6 +++---
+> > > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > > >
+> > > > diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+> > > > index d18078834ded..14412afcc398 100644
+> > > > --- a/arch/x86/kernel/cpu/mshyperv.c
+> > > > +++ b/arch/x86/kernel/cpu/mshyperv.c
+> > > > @@ -515,7 +515,7 @@ static void __init ms_hyperv_init_platform(void)
+> > > >  	machine_ops.crash_shutdown = hv_machine_crash_shutdown;
+> > > >  #endif
+> > > >  #endif
+> > > > -	if (ms_hyperv.features & HV_ACCESS_TSC_INVARIANT) {
+> > > > +	if (ms_hyperv.features & HV_ACCESS_TSC_INVARIANT)
+> > > >  		/*
+> > > >  		 * Writing to synthetic MSR 0x40000118 updates/changes the
+> > > >  		 * guest visible CPUIDs. Setting bit 0 of this MSR  enables
+> > > > @@ -526,8 +526,8 @@ static void __init ms_hyperv_init_platform(void)
+> > > >  		 * is called.
+> > > >  		 */
+> > > >  		wrmsrl(HV_X64_MSR_TSC_INVARIANT_CONTROL,
+> > HV_EXPOSE_INVARIANT_TSC);
+> > > > -		setup_force_cpu_cap(X86_FEATURE_TSC_RELIABLE);
+> > > > -	}
+> > > > +
+> > > > +	setup_force_cpu_cap(X86_FEATURE_TSC_RELIABLE);
+> > > >
+> > > >  	/*
+> > > >  	 * Generation 2 instances don't support reading the NMI status from
+> > > >
+> > > >
+> > >
 
