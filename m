@@ -1,159 +1,136 @@
-Return-Path: <linux-kernel+bounces-420392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B55239D79E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 02:59:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B7559D79E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 03:01:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75FF1282549
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 01:59:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E2B1282504
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 02:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A29210A1F;
-	Mon, 25 Nov 2024 01:59:21 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9EC8846F;
+	Mon, 25 Nov 2024 02:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="id2bvmbg"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB084C76
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 01:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC102624
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 02:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732499961; cv=none; b=mmxWKuwuH++2lgO5b8jmg+l1KzYHWiT3dW99hAn/dzY8cathLp1r1c7Nq0t07xBCnGmXvt5ACU2NxfsywMHeEZ3xj/ZloOYPnOH+WxMQEB6kLbiT9rkvE7dCJcx849vg32MyJ54s4uBlSQRG9y1CWMmIFx7PmoHjYFQiUjZh7Po=
+	t=1732500073; cv=none; b=pqiCTfhZR2ZspZiFnuf+s1/Y9RP1Cx8446zUQ+5Q8spxjOoY5/5WsRAbBoDsmmffUclrSZdybF4n7wZIiPgv7UBpvt6fzVQcY0WgzE33wExBirlLxTGGNreYUZMVNEfNc7Ike/nzv9yHXjeTj5/C93Pp04pZLw95iw6DKZE9pXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732499961; c=relaxed/simple;
-	bh=jOimkNeJ8PSf4wp3zHaf1e+L9kTww0qBwpT05jAXmH8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BOOBXeAzQtNlRP+hwecZKsY6iJBNnEkkD6TzfVw4tXo0sYune2eJYvo90corhuMzXcZiBCB7cqMcIScyP6YlLi+cyzYvTp7SiJ6nv2jsa5zxGjIk8OVocnr5Oeaat2NoRLP1QH2Cn5eobNlf/A2rvYiZpDDAG7PgoilT/Dhxwq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83e5dc9f6a4so460702839f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 17:59:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732499959; x=1733104759;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hyP2WlpsFyMyoLJM50Bt2iubn7mJqAwE8aaWAzJfa+c=;
-        b=fcNu2YvPrLbgVLu25SQwZKG614BPkMBOlWnJGhF8XDJZ/SUjxyzYpD59qXNpNJnyXm
-         0YQtWS3JjmlXSf4LfjgVLPP7bJuG5WdZI1wKzfwfarbkGzVFQTC4wQt9Jd+dtemuqcQm
-         YIh+czb10kL4KGGoau80LTxysU6BlvdS0jyWyXgW18j4x2jeGoanPI3ZV46ui8Fi1YsD
-         8S3CQ8VExXcAl9VTAAGET8kOZZrYs+m0djl7UF0Dd9qoB50sIfRQB4lYV4E1NJ7qGFOI
-         RX3wF3nxzyHnc+jrGRXozprTENWouiZov+shW9CRUoJsOffCV/AzVlt2jU/djVTUEf/T
-         FolA==
-X-Forwarded-Encrypted: i=1; AJvYcCXAVvXnfOAHxmT04nt6nuDwWWD30cBKgw9kxLwVtvGdslGWbF3XaIWuaUxxLzlSQ6HL54UhTXJnaMPg8ZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy90mk7E1yGYI0hddwFEY50eJvJRIrbHU+KJ7NCS5Fboioh1DWP
-	qcqs47boHnLV5XgwzDt1eNJptA26/wV52EkqrqXpsqL/x36o0Q3mTBGp39Jwy+Quc9w8HmNWBPn
-	Z90gZ3sAmrcdZGVAhO4Wy2faHHoljK6rEsx+VaXSXkd3lZkZn4ib/wYw=
-X-Google-Smtp-Source: AGHT+IHFRxvzXqxa5HEqVatsAuNcAjMnKDv88RtOzdFLbuSrRv5HTLcEaFatT/gCwmz8NTzXfOdhnMZFVUt0kZmo4lhOUJ5uxQyn
+	s=arc-20240116; t=1732500073; c=relaxed/simple;
+	bh=Imu7tZpTm/lefKmha5PMTMjh2MvOAhnkQJAOOf22eWo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aUxBok9ySZ+yByP9kv/XTZ3FsmgRSnbK93RJp1OOx/j/3R4Qrc9xXIpq4KBEGzy6w+OEIvan8eLeYcCyPYpDXiOdLvf1MbpEe/q5vWlnsG3ul4aepjU2E2NqE2VE0JBaroa3SpM70iEqCQbjzRNGhWDcnYrihYaURnkSyNqH2Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=id2bvmbg; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1732500063; x=1733104863; i=efault@gmx.de;
+	bh=F0o1tpWKnyPncbvdymvLENTDLgKKwtfdgcM2ZcF7Ov8=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=id2bvmbgL5UZ60DjEFNAMq6M7s6+ao1IUo1At3+DQ5HM/SBBFwdDuvc7hkNJMJbn
+	 78ZaTgsuoA0fTbexIFALDQ96v0V40l8rH9214fNPRwktXrpvyWQHEZU4fNuiABc9l
+	 Y9cUIKOUTpJZPQSA/XDNsyTQy/SQZ4ykntREGBD7ka7cTnTNLCuJ6kaEDG+UAUCRY
+	 He27oO18MO7p6/zvHzsFqKSywiRAjYBqQQoKSss/sMyGeXyoHqRuK/tSgio2yB5II
+	 EmcFpAiNJviNmbPg3RZXayQvoSYzew8RX0cZ4qSLtFEr0FTwBFBLiBh5YMZ9NzJnC
+	 6Z3Ui4a37kmCqr74AQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from homer.fritz.box ([91.212.106.127]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mjj87-1tyeWa2LMJ-00m0fM; Mon, 25
+ Nov 2024 03:01:03 +0100
+Message-ID: <e3142efe46edaced3e50c1dc1ea99bd970551209.camel@gmx.de>
+Subject: Re: [GIT PULL] HID for 6.13
+From: Mike Galbraith <efault@gmx.de>
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jiri Kosina
+	 <jikos@kernel.org>, linux-kernel@vger.kernel.org
+Date: Mon, 25 Nov 2024 03:01:02 +0100
+In-Reply-To: <ac800b7930c473f2653d9bdc5be0781a08d8bb58.camel@gmx.de>
+References: <nycvar.YFH.7.76.2411182207390.20286@cbobk.fhfr.pm>
+	 <CAHk-=wiUkQM3uheit2cNM0Y0OOY5qqspJgC8LkmOkJ2p2LDxcw@mail.gmail.com>
+	 <ac800b7930c473f2653d9bdc5be0781a08d8bb58.camel@gmx.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca4f:0:b0:3a7:9fff:1353 with SMTP id
- e9e14a558f8ab-3a79fff1550mr100803675ab.0.1732499958844; Sun, 24 Nov 2024
- 17:59:18 -0800 (PST)
-Date: Sun, 24 Nov 2024 17:59:18 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6743d9f6.050a0220.1cc393.0054.GAE@google.com>
-Subject: [syzbot] [hams?] KMSAN: uninit-value in sixpack_receive_buf
-From: syzbot <syzbot+c08839217d2085e56bb8@syzkaller.appspotmail.com>
-To: ajk@comnets.uni-bremen.de, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, linux-hams@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:IPN3czG86w78LxnV6bJCSC4GSanWHJNF0KsrA7CCNvt4hG/dalB
+ he0hNWlRuujMjnj+WOnW0N63L9nuOfK8RXsVIJwnRif+PTA4+z0s5kdIsfoz220LSpg+APg
+ 60ljK79VnIDtwv4mslEM37mzxbli5G+Ntu4EVmMmxSJ+GADUK6/PFsaGr8BWVXH7eqxge0u
+ bCqu4qp7NQ5kcCrb3vkNQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ua21y9aw5iY=;2oS4DSGIuZkcuDoHUiTLR/izhaf
+ uK1p+b/bTYCPbvzhgLVc0ObEXNwoxTnRd9cNuNH7sCfOkl94S27Wu83NF6d8ee7okd+g/71fl
+ JKcmO4XUy4F08K4ILhsooa9eVmVOp2Fr804OdhCEySEBcChjnV6bReZ0QdpgJK8Mw+vum+R5A
+ 1ENmceA9bMBq4Bj05F5zU27R6hyqlJtgZKjhuK18oI6BkANsCRiFdpBXuNrzZkb/u9lRJFPAz
+ VHBudT8Dji8rwWdZi61NsWju5IttjFKJewBB7dOTXyDaxqlo9HXgRQrZmNNh1JBaKJJ+OxmPn
+ WlvDnjXecm60lzUcWORdnG8usO3WSF+VSqQO8msIqSu5dLyacJjuWUkZlCvaqQfubYaU3ozMa
+ NcHrWXHu1Jnna/9aYgEjQuR+sBsu4fW6tDnMMujvvLFGA3NMaEVBWK9k2XD22QNJ6iej14+8e
+ jFgTrmBcc2lmiZCVHYN9z9rPJ6s2yykOe53UGRldXDB4Q22pA8/A8Odv1h1ubuwWZNgwV2scp
+ /YUyHLDx88idvr7VTDh8XE468fDDR9O1PcqXMrGB84bm0e5iAlL3aLFj9vrlLL+Lur0vbrtBX
+ XqewpKdCx/X5kEd7HRID0hLMJ8wlmHiXNbvROBx5cOmjQcHc9Gbb9aKeE5FdEkJfHSTQ/J22a
+ XDe2xeU5xqWxKg4nGvb689EnH1nPtoTdwzZV+W/59t/3mTyiQC3L5XMLNWygW+02nd4vSoRsW
+ TfHaepCJkgt678OK7b5mPwqxug1x+n1xFH3cK6ltzHf+9WJU6OvsSH3PXpCgvPPt4VgW4o2kW
+ ZPmCH2G3y+9X4jWkZua8Y70GnGQW40SGe4r51NE/+yQDSd6jhKmgKTQQQPWjWL4y5nF4w87eU
+ MEg2QmHCkMfHCu4mL3jZ6S8aDyL9cbZp+JaWmj3zDJetYjZ5LyFjoE8rl
 
-Hello,
+On Sun, 2024-11-24 at 09:01 +0100, Mike Galbraith wrote:
+> On Fri, 2024-11-22 at 12:13 -0800, Linus Torvalds wrote:
+> >
+> > Any ideas? Does this make anybody go "Hmm, maybe ..."
+>
+> No, but my M215 had the same issue, it bisected to 6fd47effe92b, and
+> revert via patch confirmed it.
 
-syzbot found the following issue on:
+Hopefully useful diag.
 
-HEAD commit:    bf9aa14fc523 Merge tag 'timers-core-2024-11-18' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16d7bae8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1eb27d66c540f6e6
-dashboard link: https://syzkaller.appspot.com/bug?extid=c08839217d2085e56bb8
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+[    3.769593] hid-generic 0003:046D:C52B.0003: HID-BPF toggled quirks on =
+the device: 0800
+[    3.892715] hid-generic 0003:046D:C52B.0004: HID-BPF toggled quirks on =
+the device: 0800
+[    3.895211] hid-generic 0003:046D:C52B.0005: HID-BPF toggled quirks on =
+the device: 0800
+[    4.193277] hid-generic 0003:046D:401B.0006: HID-BPF toggled quirks on =
+the device: 0800
+[    4.604769] hid-generic 0003:046D:4016.0007: HID-BPF toggled quirks on =
+the device: 0800
 
-Unfortunately, I don't have any reproducer for this issue yet.
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index 81d6c734c8bc..3ae0eef2bb9b 100644
+=2D-- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -2710,6 +2710,18 @@ static int __hid_device_probe(struct hid_device *hd=
+ev, struct hid_driver *hdrv)
+ 		if (quirks ^ hdev->quirks)
+ 			hid_info(hdev, "HID-BPF toggled quirks on the device: %04x",
+ 				 quirks ^ hdev->quirks);
++	} else {
++		unsigned int quirks =3D hid_lookup_quirk(hdev);
++
++		/*
++		 * hdev->bpf_rsize became non-zero above, quirks set to 0, and we're
++		 * back with quirks =3D HID_QUIRK_INPUT_PER_APP.. which terrifies mice?
++		 */
++		if (quirks ^ hdev->quirks) {
++			hid_info(hdev, "HID-BPF toggled quirks on the device: %04x",
++				 quirks ^ hdev->quirks);
++			hdev->quirks =3D quirks;
++		}
+ 	}
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c0c0e51a2a13/disk-bf9aa14f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/852f5ece75d3/vmlinux-bf9aa14f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4fb1796345b4/bzImage-bf9aa14f.xz
+ 	if (!hid_check_device_match(hdev, hdrv, &id))
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c08839217d2085e56bb8@syzkaller.appspotmail.com
-
-=====================================================
-BUG: KMSAN: uninit-value in sixpack_decode drivers/net/hamradio/6pack.c:938 [inline]
-BUG: KMSAN: uninit-value in sixpack_receive_buf+0x773/0x2d70 drivers/net/hamradio/6pack.c:447
- sixpack_decode drivers/net/hamradio/6pack.c:938 [inline]
- sixpack_receive_buf+0x773/0x2d70 drivers/net/hamradio/6pack.c:447
- tty_ldisc_receive_buf+0x202/0x290 drivers/tty/tty_buffer.c:391
- tty_port_default_receive_buf+0xdf/0x190 drivers/tty/tty_port.c:37
- receive_buf drivers/tty/tty_buffer.c:445 [inline]
- flush_to_ldisc+0x473/0xdb0 drivers/tty/tty_buffer.c:495
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4091 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- __do_kmalloc_node mm/slub.c:4263 [inline]
- __kmalloc_noprof+0x661/0xf30 mm/slub.c:4276
- kmalloc_noprof include/linux/slab.h:883 [inline]
- tty_buffer_alloc drivers/tty/tty_buffer.c:180 [inline]
- __tty_buffer_request_room+0x36e/0x6d0 drivers/tty/tty_buffer.c:273
- __tty_insert_flip_string_flags+0x140/0x570 drivers/tty/tty_buffer.c:309
- tty_insert_flip_char include/linux/tty_flip.h:77 [inline]
- uart_insert_char+0x39e/0xa10 drivers/tty/serial/serial_core.c:3550
- serial8250_read_char+0x1a7/0x5d0 drivers/tty/serial/8250/8250_port.c:1743
- serial8250_rx_chars drivers/tty/serial/8250/8250_port.c:1760 [inline]
- serial8250_handle_irq+0x970/0x1130 drivers/tty/serial/8250/8250_port.c:1924
- serial8250_default_handle_irq+0x120/0x2b0 drivers/tty/serial/8250/8250_port.c:1949
- serial8250_interrupt+0xc5/0x360 drivers/tty/serial/8250/8250_core.c:86
- __handle_irq_event_percpu+0x118/0xca0 kernel/irq/handle.c:158
- handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
- handle_irq_event+0xef/0x2c0 kernel/irq/handle.c:210
- handle_edge_irq+0x340/0xfb0 kernel/irq/chip.c:831
- generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
- handle_irq arch/x86/kernel/irq.c:247 [inline]
- call_irq_handler arch/x86/kernel/irq.c:259 [inline]
- __common_interrupt+0x97/0x1f0 arch/x86/kernel/irq.c:285
- common_interrupt+0x92/0xb0 arch/x86/kernel/irq.c:278
- asm_common_interrupt+0x2b/0x40 arch/x86/include/asm/idtentry.h:693
-
-CPU: 1 UID: 0 PID: 7175 Comm: kworker/u8:31 Not tainted 6.12.0-syzkaller-01782-gbf9aa14fc523 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Workqueue: events_unbound flush_to_ldisc
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
