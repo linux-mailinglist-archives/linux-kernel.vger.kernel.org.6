@@ -1,108 +1,113 @@
-Return-Path: <linux-kernel+bounces-420835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D8979D8383
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:37:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E0FA9D838A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:38:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D329A166339
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:36:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAFC1163DEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C309192D8C;
-	Mon, 25 Nov 2024 10:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCE0192B6D;
+	Mon, 25 Nov 2024 10:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gu4e2ZEH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="Xd8IKu6L"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BC71925AD;
-	Mon, 25 Nov 2024 10:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8F31922D8;
+	Mon, 25 Nov 2024 10:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732530977; cv=none; b=dqFTlIPLtCAJvB/4bcscsnUqRdcCr3tZc0cnU78Js6ksK1XylwtycAe9xsYMG0Dkc0ksE91n14AGvdwKgqkaF0/3rJhg+YDKBGxgZqp6a+Rl15Pb94LliTUW5L5PwQgk43w0P3sd/cVfwja8Eou0iXA1KRP+p/lZIXdCLDFbawU=
+	t=1732531089; cv=none; b=WsQLZv91WAL/m6IL+SGmGE3OqaIh6rgIzzF1dRwK6PeewmyZxkNatg787wtvtVF8Tug/LqxP/kHncLQZ7w3y6nao/ZpxnnaFd0V39o9EQ0X+k3vxAdFuINKvEoSAi1+ze/j0Jf+BY+b5mtJmadUYCW2AMZ2R3EThaUR9quEYcSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732530977; c=relaxed/simple;
-	bh=pQ30I//Q8MhoyQChWZx6olp6k08jb2qYE2/53OJqNp4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=HjP0Wr98/jQcVmngQwS9xj537vB+749HADIDN710DEaoNaCc2lUOdOfFj0oraCz4Q3tqeICCy8MpXIdbvrQWwBj3zJ50IOCnwFtTJxll/hx9OlweKpjSuwXyn6w0qeoaeuFoQdBs8a64i8xsish6TBb9jP6nkDnzXhhbDBUWtnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gu4e2ZEH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78A9CC4CECE;
-	Mon, 25 Nov 2024 10:36:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732530977;
-	bh=pQ30I//Q8MhoyQChWZx6olp6k08jb2qYE2/53OJqNp4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=gu4e2ZEHI5INsEA6BpUfSuVtcVONDREvgmB5vZpRyz6gFYhGWI3NltDS83/FuxNPG
-	 QBTHWjx6E1Fe89KoJ7ZyFICdgQ1SmwySW6PpZMFpSY+tMV0CSkdWoG3dmrZnz6JdH8
-	 GA5rhW1wKusoWnn3NHejn299Ka8NtIci5JsHTpriumBozxT2ZjpnUFjZYlvmRdO4no
-	 jwhB2bNzkaEWyZ7VxHy4ILdqSjhEGzwLDp7qZWNNHogExQdYAwWWWUuFKeY1b+2Br7
-	 UyOeH5awLoYiN4ppyF/oTjfHWtajuyz8dKrqIQExDCV8l0gPuFege7a753diypR6U2
-	 AJ0TIt/+Sk+MQ==
-Date: Mon, 25 Nov 2024 11:36:13 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: john.g.garry@oracle.com
-Cc: asml.silence@gmail.com, dalias@libc.org, jannh@google.com,
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v2] vfs: add RWF_NOAPPEND flag for pwritev2
-Message-ID: <Z0RTHYtaqEoffNrG@devuan>
+	s=arc-20240116; t=1732531089; c=relaxed/simple;
+	bh=VlZlsNE/Dy7IPdkqKCbXfQxWys+nXDukgkksonZo//k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JTco9ZlSFp2XhSw/k+iOwe6eukf0CQHMF6ZGWN00QJMx76sXtsFhmP2vArZaMLhOm5Q0wZ6g/re6xNrsK7R3oTG3OdKBq0cKfH8E+CFvU6+RZcwPPp9Ts1UaIM5HtRcVGS25evGT9JyIl0LX9fp8GVAjcEioDaIAvxoAEShWeCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=Xd8IKu6L; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=FUTaddpw9DQy3Ko98dppdGXimZPVJgQrfgtFNgKA05M=; b=Xd8IKu6LsrikToEfqmMyjkVSL8
+	q7kq2wLUFgCgML1CGGTXr+WWh4OtMTNGo/pP7KMTZ9gVlwFuMVCSrfB9SXVdyzhZ56JhWCYRAZSNn
+	RNqueogGhB+bHrdQMvDJD13AO+C8lla8+k4vR3kG2VGSnog7msUDAaPc0Y2oxB94VUHguu8tUNYQK
+	QlvbfqNQIcmEOLr/AQckkvEx34w9SmUI1O9nVZv6VTBg9162zXXtniXi3kKTCmnpuBEeT91eGgA6t
+	GLm4+QeOzzTFst9hoXtOYcV9qZEXSGBaPPz3vgL4RQOespU/CwRQgsOgApd1DR1p3U9a29CNcxK6d
+	GVW9bQXA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tFWTa-001WIy-1I;
+	Mon, 25 Nov 2024 18:37:55 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 25 Nov 2024 18:37:54 +0800
+Date: Mon, 25 Nov 2024 18:37:54 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Zorro Lang <zlang@redhat.com>,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [Bug report] kernel BUG at include/linux/scatterlist.h
+Message-ID: <Z0RTgsb5Va9psaIs@gondor.apana.org.au>
+References: <20241122045106.tzhvm2wrqvttub6k@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <CAMj1kXGAuJSdDWvu7D5-PT6mSbNG9FeLObnYmpHeT08eNxaJWQ@mail.gmail.com>
+ <Z0A2W1FTTPt9PeI5@gondor.apana.org.au>
+ <Z0BCtZi2YJywGJAk@gondor.apana.org.au>
+ <Z0NTLDYJQC242GMB@wunner.de>
+ <Z0OzDle-VrrXf8rW@gondor.apana.org.au>
+ <Z0RRiq-BJp8CYdNk@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BIqSCtq9xTJsXH4C"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f20a786f-156a-4772-8633-66518bd09a02@oracle.com>
+In-Reply-To: <Z0RRiq-BJp8CYdNk@wunner.de>
 
+On Mon, Nov 25, 2024 at 11:29:30AM +0100, Lukas Wunner wrote:
+>
+> crypto_akcipher_sync_encrypt() kmalloc's a buffer and copies from
+> the kernel's .rodata section to that buffer.  That's why it doesn't
+> throw the false-positive BUG_ON() on arm64:  virt_addr_valid() is
+> happy if the virtual address is in the linear map.
 
---BIqSCtq9xTJsXH4C
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 25 Nov 2024 11:36:13 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: john.g.garry@oracle.com
-Cc: asml.silence@gmail.com, dalias@libc.org, jannh@google.com,
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v2] vfs: add RWF_NOAPPEND flag for pwritev2
+That's the whole point, only kmalloced addresses are allowed for
+SG lists.  You cannot place an arbitrary virtual address into an
+SG list, it's just broken.
 
-Hi,
+> I deliberately avoided the crypto_akcipher_sync_encrypt() API
+> in rsassa-pkcs1.c because the extra buffer allocation plus copying
+> data around impacts performance for no benefit.
 
-Here's a gentle ping, as John reminded me that there's no documentation
-for this in the manual pages.  Would anyone want to send a patch?
+This is temporary.  The idea is to convert the akcipher software
+implementations over to use virtual addresses directly so that no
+unnecessary copy occurs.  Have a look at what I did with ahash:
 
-Have a lovely day!
-Alex
+https://lore.kernel.org/linux-crypto/bffef4bab1bf250bd64a3d02de53eb1fd047a96e.1730021644.git.herbert@gondor.apana.org.au/
 
+This is what I'd like to do with akcipher as well.
 
---=20
-<https://www.alejandro-colomar.es/>
+Longer term there is potentially another unnecessary copy if you
+go from a kmalloced virtual address to an akcipher hardware driver,
+but we could eliminate that by adding a flag to indicate that the
+virtual address is safe for use within an SG list.
 
---BIqSCtq9xTJsXH4C
-Content-Type: application/pgp-signature; name="signature.asc"
+> So if you absolutely positively want to use crypto_akcipher_sync_encrypt()
+> in rsassa-pkcs1.c, I can change that.  But it will come at a performance
+> cost without apparent benefit.  Are you sure (y/n)?
 
------BEGIN PGP SIGNATURE-----
+Yes.
 
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmdEUx0ACgkQnowa+77/
-2zL5cw//R5DtbUf+l6spRMZegXP9dbwI+679UF4ot29j3Kzc1sHQhAVx7+JEiNNp
-8Hk20V9GEl42mc8zC6yu8CGMKkqkSv9zeugYX3OevkJ8LbeyuHOM61dSg97ixG30
-LJVtkEZlqH4e1x/xPVhDKxA/ogDU2tCX2rUngjvK4/TZJHWcE95YkyrVwAjleoKa
-FRHk6QI5iWxdDVKtNvhn1CZeRpteV8ByYB2H2NOSK9J5QDr98DLvZ6M17e+cMjFr
-4k6t1hrSmWMB/BnqCZMqH5l8Sgs4Zhjp1HMtCyxT+Cnt4H8SQa1ufj9uHJQPzyGu
-wV+0HKLi3h9U7rq3qHY5ogRx7mU5nFcLMguk9DbiJ/4331WciTVy4cQ8/csTtZbz
-OlfeWnpkmkBMLgBHX4Z6DkXgO3jZhN1x+v0ZRIp6pOLGYNe/UhTN8jdQi44WWEyi
-s0N1+M5+CC8xozb/puzj022uCLGtrXpnDjfWmRy16pT+Kj/ieHhJzvkKVGDO9zRP
-Y5gyxYSR7nDJ11TgNN/uLWCl/hJREfMDajogr1psUVARW5PVixF6Wo9yTYny/mgs
-qaS/dSwCKyhZatO99HJA+20ti8yEpTHVAtZXijssHWuOT0MEMPrkN9vlxOpX1EeY
-lD/pu1f/H0WIb0qG33hhYhgcE2zKBA/VMXHUgxA3vAFbbdUiW3g=
-=hk8n
------END PGP SIGNATURE-----
-
---BIqSCtq9xTJsXH4C--
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
