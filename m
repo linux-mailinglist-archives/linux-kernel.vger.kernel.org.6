@@ -1,76 +1,70 @@
-Return-Path: <linux-kernel+bounces-421727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3558D9D8F35
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:35:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A999D8F3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:40:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9F6AB25557
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:35:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEE9AB23358
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D31918DF93;
-	Mon, 25 Nov 2024 23:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671BA19A2B0;
+	Mon, 25 Nov 2024 23:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UBVnvw/s"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qg6Ut+1u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E992915575D
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 23:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7681E480;
+	Mon, 25 Nov 2024 23:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732577744; cv=none; b=UKQrURio4hRXWsZmWaEEm8za+mAKl71L8kTBu8zXQkC9Hf+Au/JUwdQd99zcucIpnAZsdkY4F+ChtvaBz1pZPI/Sfn5b1zIP2eR2Oz/PQ/CeMZmtFetx6jTwy5B87WL1RnNwye/QuRrlXfdIaCrYwMqgDZZkElpD/25ZZrdFlDM=
+	t=1732578020; cv=none; b=bgQFPn1eH1/EqI5VGN3u6qwQn97OF2UQWvE/ANpoV6s1azR+NiCh6bCOSiXUzZWI62224GnYhaFWC0b+zdtKD33HsgAB3NiN7B90GuPEDKmKSz5PPlDwp4B86+y8S49XCPdA2Q4zij8FwVDFavJsyBfZ4aGfH59JqaXdkdznjaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732577744; c=relaxed/simple;
-	bh=dUjrthQ0kpDYuAQmNAl7EEvTO2ESLG+qIH5fOFb6xrk=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=d+pv3Ef9V0uDKWWii2Je8NiOwkdUBl43f/OQOr7MgLQjTLhcZ4caAapjVbFp0pMEzTWCIzl9aEJdysA/00PdUgtpL2jyL1qMX2cg95ZLyfWkwVnfNSV5GMNjtwrFFCY+OH1vNbRIRvdgfY8EdC1VG8HKXMwDv3e2rQjmcBkb2DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UBVnvw/s; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732577741;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type;
-	bh=LHNkujnPGVOLwcCFJFa4r+dxa8vb//tyNG8mnLtBoKU=;
-	b=UBVnvw/s9w8DeWBOf4C1FK0Bi7Q2GnpHf2UqkKpkf2gZtYLo3uYTN6rRhJkju0gQ9bELe6
-	9fwqIqfUNyRaU2AryDi0tNlQjaAajhPR1f/QtvNE3rUlXHxxOsC7sYN/cKNjuFuJhQ49gm
-	jB+ad1i0qkhbA8rn1pRdrtwEjj9JXyQ=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-325-bKla2iarMFuXwDgE9utLQw-1; Mon,
- 25 Nov 2024 18:35:36 -0500
-X-MC-Unique: bKla2iarMFuXwDgE9utLQw-1
-X-Mimecast-MFC-AGG-ID: bKla2iarMFuXwDgE9utLQw
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0B5E919560BE;
-	Mon, 25 Nov 2024 23:35:31 +0000 (UTC)
-Received: from localhost (unknown [10.22.80.111])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DD9CE30000DF;
-	Mon, 25 Nov 2024 23:35:29 +0000 (UTC)
-Date: Mon, 25 Nov 2024 20:35:28 -0300
-From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-To: LKML <linux-kernel@vger.kernel.org>,
-	linux-rt-users <linux-rt-users@vger.kernel.org>,
-	stable-rt <stable-rt@vger.kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Carsten Emde <C.Emde@osadl.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Daniel Wagner <daniel.wagner@suse.com>,
-	Tom Zanussi <tom.zanussi@linux.intel.com>,
-	Clark Williams <williams@redhat.com>,
-	Mark Gross <markgross@kernel.org>, Pavel Machek <pavel@denx.de>,
-	Jeff Brady <jeffreyjbrady@gmail.com>,
-	Luis Goncalves <lgoncalv@redhat.com>
-Subject: [ANNOUNCE] 5.10.229-rt121
-Message-ID: <Z0UJwBZwih0WiSMO@uudg.org>
+	s=arc-20240116; t=1732578020; c=relaxed/simple;
+	bh=/DWbhcJbPqsr/l9Ba79rt42q5uBE42dNGMfmTYIGm4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=imJfl/5CJbjEefazWTwFioNasGBn3/bdsTTkzhToH9zEN3pazFQEQ+c+SMrEj+wkAjyaEQvCdpfsWVhlhp/CcW49xGBvzNatDAYnK3NgE6TUvbxxG+l1IaxcJOPYbxO/q3Adt/M2+EQ1BJEO0Cf3ozsA5DrfW+ruX5UUXnOcpH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qg6Ut+1u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3878BC4CECE;
+	Mon, 25 Nov 2024 23:40:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732578020;
+	bh=/DWbhcJbPqsr/l9Ba79rt42q5uBE42dNGMfmTYIGm4M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qg6Ut+1u3KYMvo+RhvvkBBBbghU4yfi5BHM+/qkLSI4aGzkj2zAPteKMCi68Fg44k
+	 tWjUqkNCvuQ1hEk3DZGnbSMA0g4O83HhA/5M4eBRLJXZdc/QLpWEHX+iHYtRm7fm1W
+	 0j8CeHTW92O46DgJ6+GCfvChcVHvanmEyjtAzGOI54yvyJ/yd8DplyEhZnqzOvazPQ
+	 Gc2soh3AASNY6el/PyPRJrLT8QP+Ae/YAicw98RzktQiigrZoRCGLm+i3Ux5zNGury
+	 zv5iTQV0mai+IcQeYPBl0ZMig9fhUlJR6TzTWSgEb06WhUkWQTqjsofSwYrDB3GdvR
+	 2CE3PtX4QcdFQ==
+Date: Mon, 25 Nov 2024 15:40:17 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Christoph Hellwig <hch@lst.de>, zohar@linux.ibm.com,
+	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, corbet@lwn.net,
+	petr.pavlu@suse.com, samitolvanen@google.com, da.gomez@samsung.com,
+	akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, shuah@kernel.org, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, linux-integrity@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-api@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, wufan@linux.microsoft.com,
+	pbrobinson@gmail.com, zbyszek@in.waw.pl, mjg59@srcf.ucam.org,
+	pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com,
+	jikos@kernel.org, mkoutny@suse.com, ppavlu@suse.com,
+	petr.vorel@gmail.com, mzerqung@0pointer.de, kgold@linux.ibm.com,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v6 02/15] module: Introduce ksys_finit_module()
+Message-ID: <Z0UK4Zm85GzeLt20@bombadil.infradead.org>
+References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
+ <20241119104922.2772571-3-roberto.sassu@huaweicloud.com>
+ <20241119121402.GA28228@lst.de>
+ <ZzzwxdHbG9HynADT@bombadil.infradead.org>
+ <70952351d25817211509bf1cf43d3e665aef1481.camel@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,40 +73,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+In-Reply-To: <70952351d25817211509bf1cf43d3e665aef1481.camel@huaweicloud.com>
 
-Hello RT-list!
+On Wed, Nov 20, 2024 at 10:16:23AM +0100, Roberto Sassu wrote:
+> Again, maybe I misunderstood, but I'm not introducing any functional
+> change to the current behavior, the kernel side also provides a file
+> descriptor and module arguments as user space would do (e.g. by
+> executing insmod).
 
-I'm pleased to announce the 5.10.229-rt121 stable release.
+The commit log does an extremely poor job to make this clear, all you
+are doing here is adding a helper. The commit log should be super clear
+on that and it is not.
 
-This release is just an update to the new stable 5.10.229 version and
-no RT specific changes have been made.
-
-You can get this release via the git tree at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
-
-  branch: v5.10-rt
-  Head SHA1: 7059d5c5491f4f9bd1f7d3db8288bb131117378b
-
-Or to build 5.10.229-rt121 directly, the following patches should be applied:
-
-  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.10.tar.xz
-
-  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.10.229.xz
-
-  https://www.kernel.org/pub/linux/kernel/projects/rt/5.10/older/patch-5.10.229-rt121.patch.xz
-
-Signing key fingerprint:
-
-  9354 0649 9972 8D31 D464  D140 F394 A423 F8E6 7C26
-
-All keys used for the above files and repositories can be found on the
-following git repository:
-
-   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
-
-Enjoy!
-Luis
-
+  Luis
 
