@@ -1,107 +1,92 @@
-Return-Path: <linux-kernel+bounces-421689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 362D19D8EAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:44:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D6B89D8E94
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:34:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3D83B28691
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:34:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 141A528497F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486B71CDA01;
-	Mon, 25 Nov 2024 22:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8CC1CD219;
+	Mon, 25 Nov 2024 22:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mot/HVWZ"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LmWiQRZ2"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6031C1F20;
-	Mon, 25 Nov 2024 22:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0212A1C1AA9;
+	Mon, 25 Nov 2024 22:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732574064; cv=none; b=aINeNzkNnoyGI4/UU6yP6E3K+oLFkvnrytrSYTZm7jwU61H8oniZG87qJkbhSXB9o00+H0QqJCA25I8TOL3QKwQ9+s8kFVB12SwQ9x4/lixxHKc1yHUdONCRxUB/HcxNX/c3B233MWZSv8wCVGEECNUMjZoaYmC6EQjRHhpMw9s=
+	t=1732574085; cv=none; b=VysAtgqd19LgKfF7cqR/K6H0TEA7LMOIvr+8I1ZHYPTvm53dI1ilfspYuCWliZ3v61AN5oaHqqjmPwuGsrCdnQ7+KERIQvyXR+TaLYyLIvmKPb4SunRsPGHs3w8p736ZnSoXj6yY3zRss2Jk7zi+aV3kjxcNPzhQZ8eVyzSIY4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732574064; c=relaxed/simple;
-	bh=JId8FJHJMPrG0n9QXj3iDjW4/gQayePB/qaUjzuWQao=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lQ7wIC3lG5eWMgMYRbSoU7DHL/bk2MFWdBwKczbCY+8viHIeQ881mWeBGJFtQ5kKFjz5v3p9clI2kvfU6pUO7Gc0P1SG9jFnHXtTb5ORz3Rfj6WgjDMBBbPoykhra5V/bKErJSNK5esT2vyv6x2GZgH9+88/+lpvKvtxxGMq+Xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mot/HVWZ; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43494a20379so18792135e9.0;
-        Mon, 25 Nov 2024 14:34:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732574061; x=1733178861; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JId8FJHJMPrG0n9QXj3iDjW4/gQayePB/qaUjzuWQao=;
-        b=Mot/HVWZPdmm4kWO9PLuJPPfYJ1RjAOXo6UJwVnUXYvQhda3/WuvY2/SuA+Jo9yIjI
-         B33qfQDsep+nAn1z17VxRa9F4/HX1PUC238Fy2sLSUu847uP8KUuIZVsXYvhGhXHjm1I
-         /JEcJnKFvd5rcEeSKvy4/q0HbOTb0r/e846yC85TYO5L335RcP9jauKLgVQ+T2z8DxmU
-         0fuwalGE0nY9ykmgpAYKPjG9e4bRzruJMXe4cYCFMmqNkmtbEZ7W5Sb7aWnMIrok3xfH
-         7HxZTWw/4g9dm+jDDjtz0wE+faI6fGps8fLYA1DDz/pUcsyZYHi27e0gT2OD5Vf6WoLp
-         Ybyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732574061; x=1733178861;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JId8FJHJMPrG0n9QXj3iDjW4/gQayePB/qaUjzuWQao=;
-        b=IINqqsM264+9TLcr3Atu/wk6QZprl3kRfl7gHORH7Om6tpFMIscO/ET7G25wzlSJ4X
-         kJPtnmyCNxb5Ekg5+JAYROktKqwc6nwppNNA6DtVh+MRS/eyYIgQ899kdAsHsnV6hrWT
-         nQzFLM4z82frWGX/uN5OKETahxHTSTdQNuMM9eI43+ehXfJ44sPwuNpjpNbeP5jLzfkq
-         9in7LSJ8GSVnM/ZVC05WKFqRg16OL7sAU2fEcaFkXBq2uZP4QYyWhr8wAafBlEFVTmOd
-         lE9QOBPG0B2unU2II7MaFpOxnqe9vWTwCkUvA7SJuKqYQoSdsw6c/w3xTI9ry5cmpRJU
-         v+qw==
-X-Forwarded-Encrypted: i=1; AJvYcCX1oNObNfeUNmfeuWDjCQisqXZA0x5TVF3F3Utu/UTaCzq2nG5ncq2R4uU96JAOGvtRgNk=@vger.kernel.org, AJvYcCXVwS+ZeNJNAzSdpUFv1sL3LuAjCFwUREwSS20rc7Sb8XrVaDWvNYqlV83KBYltkV36UP84TWiISfLys+Ge@vger.kernel.org, AJvYcCXkxGprMgrhsk/ITkHT0zZDjC/qBnZEf03FgRz/WN3wdxY0EhIw9jXAHVumSxZkVeo2662VhKJ8lRmvmCX2n1rh@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhBpgfU4MnxX7RcfmyDa3Oq6pkZ6eJG4uLpAFfNwri9bAXRIzc
-	M0cXTmgmsCR8VSkoTC/d0emb5Gv/sGmfGa0BdUIFvGOyRtOgsXvJRZaLRvIGxQ0IT0ARSpjPdC5
-	A/1iM78XFYHHD4K0FPnqti+K8OOE=
-X-Gm-Gg: ASbGncs8WXnzfVGS8LpxQPbt+BVUgLv7L3QYBHm7cl3QHjMvuc6TlIAIY2OCJ3WTjBm
-	kEn7rx5xoQuORQdD/d669rThOXWfCx8c2eLK4tTbsFyjYqzE=
-X-Google-Smtp-Source: AGHT+IHCTd9BUM21DGJEF2mblcp5uJ9mo9QXafRzk1/JP2A0sIpGPIRH2edRU3Om5p7+rD8vZ5wZXQ9VLH952v3ZdIA=
-X-Received: by 2002:a05:600c:3150:b0:42f:310f:de9 with SMTP id
- 5b1f17b1804b1-433ce434707mr140832075e9.15.1732574061157; Mon, 25 Nov 2024
- 14:34:21 -0800 (PST)
+	s=arc-20240116; t=1732574085; c=relaxed/simple;
+	bh=vqyncEBIYiRi0COSKlA1L1Hk9eHMvSxMECWWfu+xJzU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V2izdBlUbaL1Iw45zTWTTpKWH2N01dojIPn3QphKbjGLEA/M0BTe3HDhXdD7mr5LZh/xOGWdQ6x3Ap5ODUdGMjB8AWV1lViH2wr/DfOBGjCjenNbL50uiq5W05Wi9tzNCl387AH1vZTtgf3ggVeFYjLu+UvkP0kXrsYgoByuIkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LmWiQRZ2; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 138E9FF803;
+	Mon, 25 Nov 2024 22:34:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1732574080;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uI1dNXH3aiw55RQEZ/xnxboM8MwVX8hRRtzJRBdnsJI=;
+	b=LmWiQRZ2ib9XD0pGKJ+Q/EJozNffaxC7IfToC4x9+HYTlZsPQ7L/6SBtbT3wdcwkfjWrTO
+	x7EqxxKvCG4oSuP0zUHGXdE8WrzOSfPKFhDfzXcpDtrmSVG8kqKxSgTOOCsVm6x6pfBU7Q
+	0ca9KbzW864Dkaz3/jkotNwQOFCrgQNo090P6vhAwuexj7gS4QKcf3soxGAzv/dSwPvq0F
+	TlOJh0kzIMHrtOu4+lq0GWkSw4viLBgRA5F64RI/KHkYvNGeWzQP7NuhPqvt0AQQdRZ3vB
+	JIcyuvabWS3cWbmHZ468P1hcApizymzPmsoFWzlhWNf2UHe2eEfH11axfWYizw==
+Date: Mon, 25 Nov 2024 23:34:39 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Artem Panfilov <panfilov.artyom@gmail.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Alexis =?iso-8859-1?Q?Lothor=E9?= <alexis.lothore@bootlin.com>,
+	thomas.petazzoni@bootlin.com
+Subject: Re: (subset) [PATCH 2/2] rtc: ab-eoz9: don't fail temperature reads
+ on undervoltage notification
+Message-ID: <173257407061.539183.6925243121054400738.b4-ty@bootlin.com>
+References: <20241122101031.68916-1-maxime.chevallier@bootlin.com>
+ <20241122101031.68916-3-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241117102857.198803-1-guanjing@cmss.chinamobile.com>
-In-Reply-To: <20241117102857.198803-1-guanjing@cmss.chinamobile.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 25 Nov 2024 14:34:10 -0800
-Message-ID: <CAADnVQ+FziJ47sGE8vwBqnPNnNc9Ny41fW7nzzNOaeWY60snaw@mail.gmail.com>
-Subject: Re: [PATCH v1] selftests/bpf: Fix unnecessary conversion to bool in 'run_subtest'
-To: guanjing <guanjing@cmss.chinamobile.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
-	Mykola Lysenko <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241122101031.68916-3-maxime.chevallier@bootlin.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Tue, Nov 19, 2024 at 1:36=E2=80=AFAM guanjing <guanjing@cmss.chinamobile=
-.com> wrote:
->
-> Fixes the following coccicheck:
->
-> tools/testing/selftests/bpf/test_loader.c:1033:64-69: WARNING: conversion=
- to bool not needed here
->
-> Fixes: 80a4129fcf20 ("selftests/bpf: Add unit tests for bpf_arena_alloc/f=
-ree_pages")
-> Signed-off-by: guanjing <guanjing@cmss.chinamobile.com>
+On Fri, 22 Nov 2024 11:10:30 +0100, Maxime Chevallier wrote:
+> The undervoltage flags reported by the RTC are useful to know if the
+> time and date are reliable after a reboot. Although the threshold VLOW1
+> indicates that the thermometer has been shutdown and time compensation
+> is off, it doesn't mean that the temperature readout is currently
+> impossible.
+> 
+> As the system is running, the RTC voltage is now fully established and
+> we can read the temperature.
+> 
+> [...]
 
-Pls use your full name.
+Applied, thanks!
 
-pw-bot: cr
+[2/2] rtc: ab-eoz9: don't fail temperature reads on undervoltage notification
+      https://git.kernel.org/abelloni/c/e0779a0dcf41
+
+Best regards,
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
