@@ -1,64 +1,56 @@
-Return-Path: <linux-kernel+bounces-421502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F709D8C2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:25:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF856168123
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:25:27 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89EDE1B87ED;
-	Mon, 25 Nov 2024 18:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kuPrOPzs"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B810E9D8C56
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:40:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DED1B85F6;
-	Mon, 25 Nov 2024 18:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DF6B285616
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:40:04 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE651B9831;
+	Mon, 25 Nov 2024 18:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="qvOqs+gp"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DCE1B652B;
+	Mon, 25 Nov 2024 18:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732559125; cv=none; b=TkfheCVerAingAGnawRZ9g8mW9hNAzqnuddZG4th2zCrX7gKMMUM6Pva/eGYaBXk5KfXsmJvs9wTckg/nDbjDyr11fEbyyid7+jKl364IIuJKZye8vrGjuVd+lZxEIOSBtOugNVJnq4DEuzsPoCvEc+gdAXmISPV01NHAHk2v6s=
+	t=1732559998; cv=none; b=aL1OVE62ZQdSVSz8DZ7jyTHTiztDCWeE60QZV35YAsHix+LEyV7uTiTWAjVCcpG/kQ+Y02x59smXAT1BvYp1zijlEpjWfaElm5el98abUJ4XPvRcnhNBy4eRvT/JCb3mHy5ZJ5Atc2crpZiVz+m4Y0s4QeMolbM6f8thF7T0lY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732559125; c=relaxed/simple;
-	bh=6aRiboS4Jxrz+jvRtPC54qrBkrsY/RgG6OavSsJocjI=;
+	s=arc-20240116; t=1732559998; c=relaxed/simple;
+	bh=QTNUyu6bIK6b/Q2YSqfwYB4dNsbfycYWitzeCgC22W4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qmx6Xz1rWFWdyEVNMeTCj0C4KAfmYeo5zkwKI+uBtv4Ghq6XlR1BlgqGwOI67B6AQzNxirsngdVLWSb1p+ljzNj7hYAPuA5xcphd7ahJMrtkWXZiPBXDpdQSjx7TaxR1Z8d2rNw/5GbV+V439n9igGl5UPu2dA8g3sHiuv9x6hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kuPrOPzs; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732559124; x=1764095124;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=6aRiboS4Jxrz+jvRtPC54qrBkrsY/RgG6OavSsJocjI=;
-  b=kuPrOPzskyaJ7Ol1sakkPUK+MUqQPEIgxPUeISFRP+F5hxK4qCVJBSwR
-   mx3xU33UXY5hgWhSO3f+7KnlH7/q3Yl7SbOg6fa699/6ClmlsFU03X/IQ
-   vaJrwCFki6vaOFrGaziwqbc9joFDjsFgPIup8TJ7eqGpSptpQpyWq+aCN
-   bbIIwXY2AvFHa8qQa2OWk3ZWpaW9dIGeWXdVy7cjI9sYx3XNwubaoti5j
-   FNWvCr7GJzoARZl3ZWib36lt+SFt4bpLItR/ptAImA2/hZy8Nj1eUL+Ey
-   LFEWfrQtNFs3faqPHyG9lnxZVqd/II32hHgS+8c6XEKd4q5XywfosOkWN
-   g==;
-X-CSE-ConnectionGUID: 7g/BMNlaRNCxoobHamNmmg==
-X-CSE-MsgGUID: lrpmkxAdQP2w7EusoaAzAw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="43751854"
-X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
-   d="scan'208";a="43751854"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 10:25:00 -0800
-X-CSE-ConnectionGUID: INFUjcOqQSy+Joj9bnk6cA==
-X-CSE-MsgGUID: OMdoFMV9SvODLT5m/kOgjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
-   d="scan'208";a="95440526"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.115.59])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 10:24:55 -0800
-Message-ID: <8bd461ba-7fbe-4f1b-91cf-d33483cb4930@intel.com>
-Date: Mon, 25 Nov 2024 20:24:48 +0200
+	 In-Reply-To:Content-Type; b=KnyhWx4AhFK5N8S4l+0tMOvMto6W0Wnpn8l9Fl+D/1K3KRDs6wgZ460HjcpewZ6umIZrMNKOFIdS5+BiFygYF1P1r8TdSxls4jD+NIVop9zY43TVnhnGknuDqLdIkoLQ8cZyHKAcqi2AfFEamrMnKkpEexIccsnRyCSOL1wNUNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=qvOqs+gp; arc=none smtp.client-ip=212.227.17.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1732559988; x=1733164788;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=gnJiQRYs6QwmyqD9t2RNLsEiCy/YJhARjRjeHI7aWpo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=qvOqs+gpOxDAAfsnnl29IgJ9+IUlCE51mEWPJVTPvdY+NlwOk3njBLdML3yfLlf6
+	 JaMJmXuYoVowRknaI7Ynjqf5W8n15UIbAFeANMBzuR/yScGckF7wFmdXpSI0HEtae
+	 Ac+KI8C4nLYgx2Qyn7VUABu6Xj1L3ahbzOhDaNsFKeF5QWVlusKSrlz1hUdhIGVCq
+	 MZ8GjBMwFSo3r/E9bFh4l0mIL0FaN8rXA7tKvVU2U5L4EfDMR1NGyOymRinbDd2FB
+	 +l6snq+qlU27a+VKFdg0DPNQbcKC92BzuTUZr7i9U58H8THxRw3ITfxgYYHCM0yTF
+	 ThPDvFkXx3pqPz9XfQ==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.0.128] ([84.175.94.57]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1N0nOF-1tad4i38WD-014thg; Mon, 25 Nov 2024 19:25:41 +0100
+Message-ID: <562bdcfd-1595-422a-884b-09c36db72737@oldschoolsolutions.biz>
+Date: Mon, 25 Nov 2024 19:25:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,51 +58,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mmc: sdhci-esdhc-imx: enable 'SDHCI_QUIRK_NO_LED' quirk
- for S32G
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
- Haibo Chen <haibo.chen@nxp.com>, Ulf Hansson <ulf.hansson@linaro.org>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>, imx@lists.linux.dev,
- linux-mmc@vger.kernel.org, s32@nxp.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
- Enric Balletbo <eballetb@redhat.com>
-References: <20241125083357.1041949-1-ciprianmarian.costea@oss.nxp.com>
+Subject: Re: [PATCH 3/4] drm/panel-edp: Add unknown BOE panel for HP Omnibook
+ X14
+To: Doug Anderson <dianders@chromium.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Kalle Valo <kvalo@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+References: <20241124-hp-omnibook-x14-v1-0-e4262f0254fa@oldschoolsolutions.biz>
+ <20241124-hp-omnibook-x14-v1-3-e4262f0254fa@oldschoolsolutions.biz>
+ <CAD=FV=V2JhWsK4-gHL72ttXdNA0U2p6YojN+DXtWxNSOjD-ZSw@mail.gmail.com>
 Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20241125083357.1041949-1-ciprianmarian.costea@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <CAD=FV=V2JhWsK4-gHL72ttXdNA0U2p6YojN+DXtWxNSOjD-ZSw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:4Rp+He4zRJWJsM20vMzGBIK+m1xvgdFn8GRdJEwqYwor5a0x0dT
+ muFVYQg/AFDhGZylCTr83u0vV58aHi/Q3SEz7ZVVyqVgYY3ij1MCenKds50zoZ3eWdkj0mA
+ +yCxQEY0braBwijbRkEbHVu8xnerxqkGM/WA7l8NOKTvkj3yBkRW7IKyOHA2MMhKhUm8PoC
+ OZsMOlHf2ohZZquptc2CA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:gHXC/Afb5ww=;DhcZEeJtIif2fug0ZyZybrBlaWU
+ VS03m8oZCAZ+kszH8zjF7VDzByZVKT4ZJy/pc2mtZnMaR9woQVSW4JMEHhew8Wq8c8XlwHJr4
+ MkoF2rcLT83exY7M6kSDb8SDIGaMGJ1HCQXLjdmat158GvOBUU5k2Nu0tDv6csiSm3fhIpYSo
+ u5QUycc02R2yvEOHO0bgBvlreaNPusLgLRWurOgUIl+cLmfESrQv6kxZ9d95D2k9QBysSB+DI
+ fb/MxclzKczwCsKFFsjPlMHUuumZtWYcnBWPwZoh1ylielLiBQk0TNH3IsD+ht2J2SoZMRHDp
+ Oblms67oDsfdZoyHqwJgcxuS6O8s8FiTA6ou64kHgOMP6Ij8zxUJupO9/exJG95dqaaz57nyf
+ J0XEFcRrbnN3iuX5M045yEFYaWk3QMccBbGOyqR5ioCfa828kxZdAPUgHuUg1HpphVSdvdRQ+
+ VKRqdRyZ+4PBheDL0vJ7ioUqBohPDC1KZo+vhiu4cB9y6XiZuWWnblLbb9qBjOSZ/xhSrNCU9
+ 0izuCfjpY+ndjyspolA1Ps1ZM5Vu6SVgAKi6B+Tib+EcprXDFQMrJt2xR7ciiCcBSEMoEYd2O
+ SsCQOcilGgrfu/8mHGrzV3AvunF/xc9rME+rCWlwwbQlKh6HC8ler98Tn9knGwoBjgjbEfiZb
+ YcrIZcxrHuk5Q2yd3rtbWklu/QKTaYrogB2jChHi3Ve001ZEqm0h9VZC2iGkeZ8yDz1V6fbza
+ UmQwLU9IPsxbpi3u20+DaCylrDiCgnInIoDhK96Rs/xaVZ6DKJTVbcqxJnzo8kOaWrCC0IKXz
+ DoTNntMxGx8XYsh0JxUyq0EL2sZl3E6Z8Dxe/Gk2SBgT8t++InsuT1GZ+nCXhkEe/7
 
-On 25/11/24 10:33, Ciprian Costea wrote:
-> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> 
-> Enable 'SDHCI_QUIRK_NO_LED' quirk for S32G2/S32G3 SoCs.
-> S32G SDHCI controller does not have a LED signal line.
-> 
-> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+Hi Doug,
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+On 25.11.24 18:53, Doug Anderson wrote:
+> Hi,
+>
+> On Sun, Nov 24, 2024 at 5:20=E2=80=AFAM Jens Glathe via B4 Relay
+> <devnull+jens.glathe.oldschoolsolutions.biz@kernel.org> wrote:
+>> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+>>
+>> [...]
+>>
+>> There are no timings in it, sadly.
+> Yeah, and like other BOE panels also no model info in the EDID. Sigh.
+> I guess "Unknown" it is until someone can officially add it.
+>
+>
+>> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+>> ---
+>>   drivers/gpu/drm/panel/panel-edp.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/=
+panel-edp.c
+>> index 8566e9cf2f82a..403679e506fa4 100644
+>> --- a/drivers/gpu/drm/panel/panel-edp.c
+>> +++ b/drivers/gpu/drm/panel/panel-edp.c
+>> @@ -1915,6 +1915,7 @@ static const struct edp_panel_entry edp_panels[] =
+=3D {
+>>          EDP_PANEL_ENTRY('B', 'O', 'E', 0x0c20, &delay_200_500_e80, "NT=
+140FHM-N47"),
+>>          EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cb6, &delay_200_500_e200, "N=
+T116WHM-N44"),
+>>          EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cfa, &delay_200_500_e50, "NV=
+116WHM-A4D"),
+>> +       EDP_PANEL_ENTRY('B', 'O', 'E', 0x0c93, &delay_200_500_e200, "Un=
+known"),
+> This is sorted incorrectly. I'll fix it for you this time while
+> applying, but in the future make sure you sort numerically. 0x0c93
+> should be before 0x0cb6.
+>
+Thank you, haven't seen it. I would have reordered it in V2, but now it
+stays that way. Yay!
 
-> ---
->  drivers/mmc/host/sdhci-esdhc-imx.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-> index d55d045ef236..e23177ea9d91 100644
-> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
-> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-> @@ -304,6 +304,7 @@ static struct esdhc_soc_data usdhc_s32g2_data = {
->  			| ESDHC_FLAG_HAVE_CAP1 | ESDHC_FLAG_HS200
->  			| ESDHC_FLAG_HS400 | ESDHC_FLAG_HS400_ES
->  			| ESDHC_FLAG_SKIP_ERR004536 | ESDHC_FLAG_SKIP_CD_WAKE,
-> +	.quirks = SDHCI_QUIRK_NO_LED,
->  };
->  
->  static struct esdhc_soc_data usdhc_imx7ulp_data = {
+with best regards
 
+Jens
+
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+>
+> Pushed to drm-misc-next:
+>
+> [3/4] drm/panel-edp: Add unknown BOE panel for HP Omnibook X14
+>        commit: c1bae6802ee9c8ad8e3c1df7ca3174d6b4b260e5
 
