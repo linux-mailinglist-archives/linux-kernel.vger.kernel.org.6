@@ -1,152 +1,135 @@
-Return-Path: <linux-kernel+bounces-420639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1ADB9D7EA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:57:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93CC69D7F60
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:59:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EF6016205D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:57:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5443B282791
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB79718E37D;
-	Mon, 25 Nov 2024 08:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A15A18FC84;
+	Mon, 25 Nov 2024 08:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Dr/JP/rg"
-Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="o/a4d4DR"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E0718FC89
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 08:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796BB18F2DD
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 08:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732525036; cv=none; b=qbD/xiSBhcAtCmU3W8qnujcGOq9u92lpKpuBhvBmTI/Kl7gLdGAFNBe9HZ0QcbLrHHS6xbLmUvf4ywkAlvrUeJ/rOy9slvf//5io5erFcREHJO4oITKj53gEdukiB1PnBxeqbv1Vk7MI+BN9RlKs3vITyN8RP/gbRQ9nzbws684=
+	t=1732525172; cv=none; b=KUMjTkOtRtgp304BZfMF83Hu+a8EnS67JyxG9lIN/je85eglacj22NETpV0MQIGDGQVuEBBW7+RZaBAH9B6lvaZHI2vGz8s5STInZPJ3I5+Lss1ubgVSCJZqwotbWRYLJjUo1VjmRbYEX1NN1UqW5uns9pHOYXj6E/rpTNnOmaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732525036; c=relaxed/simple;
-	bh=lGs7WCnVDsN7XxJSV5nbIsOaHiSpnOd0xbhnLSv2cgw=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=USyLhLAsB7dzVjYCpz6yLvusdSRsLbdeyLzmlnaFWwQlmavVODQtQ0EqWMsg7Zy62oXLnYrX2ohxSiaW6MSLTuE6tI3s+pIRhvPFVYm81QkP6Y9zX7ZffF4yKmbtxcK7CUox55xJbwMLTtcHpZrc/0GCFgCKZyL3YcdQug6yFb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Dr/JP/rg; arc=none smtp.client-ip=209.85.218.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-a9aa8895facso690669566b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 00:57:13 -0800 (PST)
+	s=arc-20240116; t=1732525172; c=relaxed/simple;
+	bh=i7/5FuBcHoE9SvUqJxL6Oe5GghPtkmFolATzHwzINu0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u118r3wreWkpPJUoMZ/A+9mPw5ESnY64wxmRooQQSasd+INkOz4EjZnaRZtzKEIy26+ctohgYZbqFIfMec4bRhb6ZcXaks9JFLHEwemiahNdCJrG8MuiszxtIZ5tKm7ymgbyiOch1RDexPIUusMLlSMZRWNF/tGYy67/bal+tdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=o/a4d4DR; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-434a099ba95so3655835e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 00:59:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1732525032; x=1733129832; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732525169; x=1733129969; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vNEkjXcR05MS0wp8vkwMgIPKD9D5sF3FToehB53AVps=;
-        b=Dr/JP/rgWuMDD8gXvo5DbToxBHJOsLqp363vitL2SMxDTGSnehP/kOR1YPCBdVCvZ+
-         +YQ1OFwBBCfdAoz5/6SGQYV3PufeSxM6fTDvRhebkdp6f3TaBSb+bDvqCmpPH1X5gACO
-         BJWyl00o9tsqeOcsE9ufEmEwbF2fxhJXTWK0cyojCBRwkR23UoCOdA2l4lSa/X+vU/dF
-         Av/TKXPbHZ+fUHdCWA7EPsGuMuOopLRmnuIGYlp2fydTIf4l74v5lTb3jTDHwZ9sBrcd
-         r3yvBMQTItzKpcxIGjhmHRz+T8TiRnSATxt9aLQvdaxhCagZ2rPv4+zLpsKGg7UA6qih
-         Q3jw==
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=i7/5FuBcHoE9SvUqJxL6Oe5GghPtkmFolATzHwzINu0=;
+        b=o/a4d4DRGE/ils80dyfhfT+oeGqmkQCaHualmAD6z6P0WSjwcjSLNEIrEUyebgO+O4
+         vKHUe1ucjik7cykuQgtGyGFzBmRvE0BPueGBXSuO1OBtvzzoRwLWfhrfT9/0zLtm7f5I
+         02e7UK+dtt0v+mFgZEmAIDDXMpObKRn1DqvRAiuvbW4OIKtkB9bC/DJjBCKEmfSMzpPO
+         3W4kuPYk6H///XGvOa9X5GaAi2rSl6pgKp8vl3lXY8Uvue4BQGvb2eDOdXTIpZN9V3iw
+         dXzHrVoWav0iB0MahdV2Mq/cKDiBWeUaTltmVqiDNFjskfjJJvZS9eohEsGaYgsO5cGO
+         cMbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732525032; x=1733129832;
+        d=1e100.net; s=20230601; t=1732525169; x=1733129969;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vNEkjXcR05MS0wp8vkwMgIPKD9D5sF3FToehB53AVps=;
-        b=WvUwFulksOH/558i7VW+h2Mnq7PFn/Z8T2XuC+/AtPEuZOPLe08gbqBDmzJ3vQnapi
-         B3kNeAoKiQEFpCAoNtlN7Z3afygwxcYTq2s6ULMJ5rMJ/7Xvs5RRByA5fBM0apZoNrRg
-         lyOm/ff4z0UUsQ5w0mw6O15l3HNahcsh7YWLBgcaswGr75obvIO/tQA/o8a5vhMVzucY
-         F80HicBKzytCrbcithtvkZ0UPqoAO8o0ytQKYcG3fQl4VmBLAIrfjrA+bSGAuioMppgb
-         UnCmmbmS62aYxjRNZ+u1LfZUT3q7d6MUKzuaDU+o9VHDOORPoMTy5KvfAxSvbU2bdgW8
-         ODTw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbN185b0PUi6ffCPxIVHj1kblD3VyCM1v3AEz0a/KeKHln4ZJ9A8HixEvu9rriUQkzrPQs+xb3a7VC0sI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ5MKGz0LQUV/tE6BgRNgZtRCc3+/Y2CaHrfQiQAnyxGHwa+PT
-	G9pkfyg4qDbu5eGBBujA7qVVbI6MI1qLlUoYNdojKebcdNgwmpiTa2Yp4T3FWnE=
-X-Gm-Gg: ASbGncuGWm9TCCD81KKig8ghPJHwX8pjN3IpG9Qha/U6KXPNJiCbbN091/RkhTGOmZo
-	2r5i5jegb6P9kewm3JSvpC7EK7eDZzk7lJ92pvYqPp08wH9KUaA7tkIkqlxoyxIVCzreK4MrwFZ
-	NQ5qrufsTzTamZcOmcU5QD0TN27Kvk2xU53K1ZRkptB83aD4H9KxwPqJ0mSDQ9Hs0r1vt+efBsQ
-	p9NfdLEnk3pZnDRcgW+VKqLpUqwFWbQZ18jp3kbcnPH8+IZeGHW5Ltjr5AJnzwJfjbkct22P3T0
-	gWM2ubK+Ei3Fgl95uRGa
-X-Google-Smtp-Source: AGHT+IH55hAqFtF1SAZEH6TDiO7aHZVwXL0OCOENrWcyyZFBIRACNLLEe84rTZrGuYqyUatS9TtS7A==
-X-Received: by 2002:a17:906:292a:b0:aa5:1cbd:def8 with SMTP id a640c23a62f3a-aa51cbdeea1mr942300566b.17.1732525032462;
-        Mon, 25 Nov 2024 00:57:12 -0800 (PST)
-Received: from localhost (host-79-49-220-127.retail.telecomitalia.it. [79.49.220.127])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b52f9b9sm442025666b.105.2024.11.25.00.57.12
+        bh=i7/5FuBcHoE9SvUqJxL6Oe5GghPtkmFolATzHwzINu0=;
+        b=mvmpOfV/Rl1Y1m+oAacQlhQg0m8gykduw4lufXT5AAn1+O4GJbFuC1z3YvGWelEVIr
+         FScwQOginmrpxN74LDqWyxesEvOS/arOf7/sOd6cnZSxv6wr677aGLk9hoQ8qoZy2r6p
+         QcyanvRS/4MI5HPWx9C9TYIhdA8XYdggymINoPWoWL2MyCzTJMYrgH84Gygys7P3tNUj
+         2kru3U05yV1tNPB9AhtaT0JwQevfE8x8gJk+0SJzclcC96eS0DFFAIz3689xaHW35hD/
+         WUu5bGF8cG1e/9xFSphBG6YKZuFINDwwhnSq+H9ncbAHjRsG5142iXGXAMqqS83mvvQi
+         RP6A==
+X-Forwarded-Encrypted: i=1; AJvYcCU1FDjNNbsx3YpQ3R6QUBvpkfyDKnRB6NKUK4KCV7DnRVqSZn/QQi83ISsAtnbC1FjcxApFL/h1bJO/Cgo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7dGng/W1k0DdHPZZb3LzsUJm/I6QhNSpknXeVfqSuPvLlDMUd
+	bHkQIjdYLi0ZEtspel5kiYMlRmONGc1PGeX+NNBTg2sprdxbwADcSRnNOgl+4gI=
+X-Gm-Gg: ASbGncv00B6+r7miMcZdnj/idQlRcN6mrrM4s0atArdD+QXo4tBb4msrsmySIehyVWx
+	R46su3tTru0LuJaRWnDTI3k0qJ2c5sqdG+Ie0Jzi9Zvl55SgZaMEmHtYrj+vdf4/ftlkvkEDbCA
+	FZrLo4JMpatDfsplCUXwq+dvbsiDapuHz0OY/VxcKMSccSWqmG6deWGxMY/sBx++S1RaiXbuWe1
+	GbSD1yxPI/z0z0EpGglDoTrXq+X0db3Q0GkSXjXw+i6NgXwDt47nwfrLSKSlwhyMmc1FKbZqCZ3
+	8H9W
+X-Google-Smtp-Source: AGHT+IGFzg1yjRJP4Ypk0s7Ng9m9o8l3VLH6bdDDuUjXCCntAcghu11wMzAwi/ewLXzqRxTzEwiSEQ==
+X-Received: by 2002:a05:600c:5105:b0:432:7c30:abe6 with SMTP id 5b1f17b1804b1-433ce494f69mr97115785e9.21.1732525168584;
+        Mon, 25 Nov 2024 00:59:28 -0800 (PST)
+Received: from localhost (p5dc6838f.dip0.t-ipconnect.de. [93.198.131.143])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b45bdb61sm183884645e9.16.2024.11.25.00.59.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 00:57:12 -0800 (PST)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Mon, 25 Nov 2024 09:57:45 +0100
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 00/10] Add support for RaspberryPi RP1 PCI device
- using a DT overlay
-Message-ID: <Z0Q8CekmPV4fAN6f@apocalypse>
-References: <cover.1732444746.git.andrea.porta@suse.com>
- <22e08939-fa89-4781-824e-1ea01648fb1b@lunn.ch>
+        Mon, 25 Nov 2024 00:59:27 -0800 (PST)
+Date: Mon, 25 Nov 2024 09:59:26 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+	Dumitru Ceclan <mitrutzceclan@gmail.com>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Nuno Sa <nuno.sa@analog.com>, Michael Walle <michael@walle.cc>, 
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Guillaume Ranquet <granquet@baylibre.com>
+Subject: Re: [PATCH 1/2] iio: adc: ad7313: fix irq number stored in static
+ info struct
+Message-ID: <76myaxinjuupszvwof355gxwqqs75yxupsy623nwrcms2g7ttu@q3vqdwmsp2ua>
+References: <20241122-iio-adc-ad7313-fix-non-const-info-struct-v1-0-d05c02324b73@baylibre.com>
+ <20241122-iio-adc-ad7313-fix-non-const-info-struct-v1-1-d05c02324b73@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6gfxeuckeycnj6tg"
 Content-Disposition: inline
-In-Reply-To: <22e08939-fa89-4781-824e-1ea01648fb1b@lunn.ch>
+In-Reply-To: <20241122-iio-adc-ad7313-fix-non-const-info-struct-v1-1-d05c02324b73@baylibre.com>
 
-Hi Andrew,
 
-On 20:26 Sun 24 Nov     , Andrew Lunn wrote:
-> > This patchset is also a first attempt to be more agnostic wrt hardware
-> > description standards such as OF devicetree and ACPI, where 'agnostic'
-> > means "using DT in coexistence with ACPI", as been already promoted
-> > by e.g. AL (see [4]). Although there's currently no evidence it will also
-> > run out of the box on purely ACPI system, it is a first step towards
-> > that direction.
-> 
-> When combined with CONFIG_PCI_DYNAMIC_OF_NODES and this patch series:
-> 
-> https://patchwork.kernel.org/project/linux-pci/cover/20241114165446.611458-1-herve.codina@bootlin.com/
+--6gfxeuckeycnj6tg
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH 1/2] iio: adc: ad7313: fix irq number stored in static
+ info struct
+MIME-Version: 1.0
 
-That's great. I'll do some tests as soon as I can start my rpi5 from ACPI,
-I saw there has been some experimentation about it and should be feasible
-to run it succesfuly.
+Hello,
 
-> 
-> It probably does work, or is very near to working. Bootlin appear to
-> have the LAN966x working on an ACPI system, and what you are adding is
-> not very different.
-> 
-> I'm also currently playing around in this area, trying to instantiate
-> some complex networking hardware using DT overlays on an ACPI system.
+first of all thanks for picking up my report.
 
-Nice!
+$Subject ~= s/ad7313/ad7173/
 
-Cheers,
-Andrea
+I wonder if it would make sense to update the ad7173 binding to also
+allow specifying the irq as the other ADCs do it and just
+unconditionally fall back to rdy-interrupt (or the other way round)?
+There is no good reason for ad7173 being special, is there?
 
-> 
->      Andrew
+Best regards
+Uwe
+
+--6gfxeuckeycnj6tg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdEPGsACgkQj4D7WH0S
+/k44pwf9Fws7f9ZbQjVBVRgv/FViyN2nZKsuVRleLmQ9df4mGl/UTGvcTgtibNSu
+RnViMuYmuvzwxfS/r9co+WR7NkuELI5scrBCdqwp5O2HUuoa3+LDfPkjJQWCISuk
+Z3jcBua8Jd+b7XKRoQii9f0bJVRTK7+x47IJPDJA9NQ4subJQ4+HW9BD+quJ4vXL
+EDDfHhZRjpelxRIXE/b7AyoO6QXCzKBUU7C1WKs1LxgSh6/BprVIdjy07tUCtXAV
+JepJ0CRARtld2UGonRxUxv8lQSD3XeXhw84Xz4fEwT0zsR8CiKreXeV2SKhmrba4
+aVcYPorirBFHYIn8fzTxbyfUonfH7Q==
+=zvzK
+-----END PGP SIGNATURE-----
+
+--6gfxeuckeycnj6tg--
 
