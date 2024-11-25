@@ -1,140 +1,195 @@
-Return-Path: <linux-kernel+bounces-421707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D9EA9D8EBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:56:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A5249D8EB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:50:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3D0DB2AE66
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:53:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFCDBB22084
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25C81BE854;
-	Mon, 25 Nov 2024 22:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE731CDA04;
+	Mon, 25 Nov 2024 22:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GBGlj8S9"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="RaKQKYJ0"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0802D1B78F3
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 22:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED84F16EB4C
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 22:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732575216; cv=none; b=oH1ndY1l907Ronal+22QRpltH+/PLuIbw31TV0qs6lPPUUNylbiqoKLiOXNy4IGfrrIdbfjDKjJN3Ynrcy7kvicpnCjIMYyjAYDc3TL1RmumYDeDIAgeA0wizFQGppKWO+NMeVW4xqE14n6qb34tHypOgzA9wMDya5QP+wihBdk=
+	t=1732574812; cv=none; b=EUuiodfp4WWnG64U+/nSmUVO9wFuZNwyiT52JbtXqB8Hp1tO5hcTKSXIkwJ/nJDS1EwSjIsdiWdoAXbjH+3q6jYBS1Onvy5et5oyTMeSHDKuRHr//LecdGZbVAaDIK44g79jPWuUz3l4ikJXI0oaXdbUMKlFLL+3C2oxI/ZdRhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732575216; c=relaxed/simple;
-	bh=z8d6Z5DoxDAN9pjge71M9GbAXIHRYZWcfYoQdcMTatw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JFh2ct9f5wOrG4VR9qw6XbaqdAhXtzH3NB9NWUdkQv+WPm3jWJdfDYjpinJIYrEK7T91vL9r4/kBqvYU/Y+Vfy46SKyn+WxXAr+xO/aH9bJAXJk7dol8YDZBheChUyNAqCv7E+eNkgiZNmZ8nSWS13ECEVSYIZnOMJuONkOO5xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GBGlj8S9; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7251d20e7f2so328712b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:53:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732575214; x=1733180014; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sf0UnYlMfG0Zaof4x8glKBufQrY/Z6YuQPrhM1VLm6E=;
-        b=GBGlj8S9Rn+gMNOfC2ZfCsVtnajoxK9s0NWZ0wkbcEvuwJQMZiaE6GU3Hov5P/uYpb
-         W1BZUWC8p24XEt07gzCK52LdtC8//yFF9+XqoQEXYocG5PcqokDs6ws8xoVqSHxRGwZe
-         dh+AgjMqVHCCQyeQ7SmIQnrvEiEA0JHsoWIsE7hit0qeOfRWtzCFOuoMDrSVwgeJ6bjd
-         wZsl/XAzoAEvrJ4b9/jj8QRt5DRFvskumuhguSpSY7wuB5H+ytKfLX/4vG0qhsd3VFef
-         9I0Uh6DnAXP9vPYAAUFsz5IUW4hNg1FBgeHSOBOmKuJCvdTLQsFnwDfBEtus7Npn8oar
-         J0AA==
+	s=arc-20240116; t=1732574812; c=relaxed/simple;
+	bh=OubevgRiMWB/iwt325cGbtu9oU9hZnkDkZtn6akmH4o=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=QXngyd0rmaE2qkmaWLKcy9LetE3o4j9Eme6gXRrWugcY75tT6zl4b5T4EQuNDhP92UzXQlKuqzArzxFfeY7j7WkAZDY3v5gZa6ZEYCWuLP8u/kNKeMJ7iTaF1aDSOZAY8G7N9IoKXDitsAv12Iizs4EREoaPWf5ecX8mhyPTNwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=RaKQKYJ0; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 399553F5E1
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 22:46:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1732574801;
+	bh=OubevgRiMWB/iwt325cGbtu9oU9hZnkDkZtn6akmH4o=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type;
+	b=RaKQKYJ0jLc2s13bRy/egIAE2ZzMB83h+qfZfIiHMU7y/4/mCAyR5zTje6v8VVB2j
+	 JPDZfhSu55OlBaKKCT0Oazq+sT5pJQX4EyOaVfhJi6esawTPrvyFzugJI9Sb7F4jdq
+	 lpaiYlmLlvohHCMbo2UkkSuwQycCz13frELhfUtJW+FvsGd3Y88gufjK3f3MywWR6F
+	 Y2qimeXXku2X8pCek87FKRIwvu/9hHCbYnfsArJfSSbvlhXnwhnfsKAOKEL2joZn7E
+	 vN8Hcvpc+32BWt1hMyIeWSf76+Hb53Tad9y70acFuMRDQj/4blBnu1BqhM6jKTE/5e
+	 rRKmnbbxRb63w==
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5d00b88beb1so5069330a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:46:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732575214; x=1733180014;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1732574801; x=1733179601;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sf0UnYlMfG0Zaof4x8glKBufQrY/Z6YuQPrhM1VLm6E=;
-        b=ocIJs+n5yj/G7fkky/Usjsur+auzwp7mWtSp+ex1gWrnaarq80UZ+EmQ2WOyPoG1F3
-         xR7TrHrdGXif8XDgnOntnTijJR0TjpJiFOg5mvqiBc3h2/CynnR8d4PZwH3/7OEEY46L
-         8aABiXicHn3xNDSm/H9Ju05Us2FlLsh2WOQlg2pp+1tZcl8OrG1V5hKNM5zzMVN1Bxkr
-         wm3n3PHJhfFSgoO8oC0raTKrg8WU6bS/l2Mo0EQccvloXwsqyjEvKMaq741RWOVRoYXz
-         rM7EAarnaCHdZWvSYNT0l+gmAx30cwbNhVYT8yIqsHxS6zxAPxoKnD5cz86zdsc08gRi
-         +/Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCXBXRnivPUm6tpxczTXKMTwSFXaCdfYWGs//tDkNvnU+x4zvXYQY7a9yVOobpemXTZenNKa1iLj5Yr6d7c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1H9+bNcLFFSZ4VnWqgqR9/ppaJibVjUaWc/7lljefnjarEttl
-	YR/tMWRHLk8U9wI6MAoksRGQsjU8rO6ZioCVKi78TqyZSblv4bSP
-X-Gm-Gg: ASbGncsXIUBOoicQwV/FXmKsQ+rpVE0e4alhmY80DlKLvjk8nZAD9W5pMCB5MVztNLJ
-	gWD1H4rU2v6nki6x4XPZmbf8wae+OxwLsu/rFP/IFmji5A/GR4OewXWXd/Lo6WWjqJSiaLOIYp8
-	NXAp6NqozW8NMjOqScAvvxUqtDlHiHKap7girjdE60ZgnRi7XlD1f9iyhNRtatMLVAhz2W/xcCX
-	LuQCn/Vuhcxr7NOFvehl/QPwJhWLDiImPvYgd1NbgVri0Lxzv+Aj0j9WLrGcqnyF+vEVgIhZA==
-X-Google-Smtp-Source: AGHT+IHPTH0aVJf2SFTOfQ/+2jgplaOyqlz3jX+/P6YUgcDzTZb1h4bhyPQfRMIO4wKu5X84qgqA/w==
-X-Received: by 2002:a05:6a00:2d10:b0:71e:2a0:b0d0 with SMTP id d2e1a72fcca58-724df645b70mr18260344b3a.13.1732575214183;
-        Mon, 25 Nov 2024 14:53:34 -0800 (PST)
-Received: from localhost.localdomain ([2804:14d:4c64:81ec:7409:107a:a63b:a3da])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724dea69e96sm6977544b3a.73.2024.11.25.14.53.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 14:53:33 -0800 (PST)
-From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-To: gregkh@linuxfoundation.org,
-	philipp.g.hortmann@gmail.com
-Cc: ~lkcamp/patches@lists.sr.ht,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] staging: rtl8723bs: fix broken code when cflag is used
-Date: Mon, 25 Nov 2024 19:45:04 -0300
-Message-ID: <20241125225308.8702-1-rodrigo.gobbi.7@gmail.com>
-X-Mailer: git-send-email 2.47.0
+        bh=OubevgRiMWB/iwt325cGbtu9oU9hZnkDkZtn6akmH4o=;
+        b=s2m/GSRCApugf33JNKfyvNL1/HqHcV62o4fmhgJTI2CFs3s0CY84Fj+Pjrwa2uhHVH
+         L+mz/e2XBCxLar/hXaO+OpF5ZboCfcZXaJmBWs6aBhsogVJOE9BR9VXUlUWJ9jdwB1Nc
+         8mg3NF3uIhQVyrse4+EWftw812yOEq1gioJ9akYDT3TFWgtOk+8n2LSmNKcj1RxftI+o
+         RyuKD5SqZXLTmiAQjzqmfoa8gyn5vzQChBt+EBxnNvdcMmaiyO3Ygrpog5qcs2jYJjdU
+         8oRx8rPJwptCS/89vIUKuXg+RPunqIkX7gkuHIR/3JhmZJho893Eaj3VwnIp90soNrYi
+         UCEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtWZjB076Xt2m0E59Y6BwrbXF4BkGfSqzbRL7vFwfQLFEZWxPHqZtdSGmUgdm0xxLTdUC6+u+vOxwAx5U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6oMi+cH+YfqnJZaPdoMW/ou2ZYOGwCNp03uXY8iDV1g+11ZAr
+	12mbOKTRT//37RavTU6dv3KyQVRSgH+jPJIhBFW3Y6MBu4JvLo5gpCKtJDDD1WRotTgBuTp7/I/
+	8/P1c+/a+buZI6P8z27N9E25Te0EECMJ6DJhnuopzvnjCLTzcr+8GTqVGzfYtYvw3s99B69z7gI
+	aEPYpGH/2CggNU/yV6MS++dOghVjxNIZFyg2FRHK4mZGef9laFBAdz
+X-Gm-Gg: ASbGnctFsUIyFWmls0orQCjAXFo5G/wfgXC1cKbSb94o1HKsfYCl76OotUn78f9sG8s
+	Pu1VK+eVfVDja5EIaoav3g9DJ9BrfgQ==
+X-Received: by 2002:a05:6402:502:b0:5d0:214b:9343 with SMTP id 4fb4d7f45d1cf-5d0214b962amr10779535a12.4.1732574800707;
+        Mon, 25 Nov 2024 14:46:40 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE1yz3LUTxqiGF6oosTIiTaCvDanaBSSbzg0RwyfHzWNbPl+WWAElMeYEwToOrnqD6mDl5R4tkbomWwHnEclno=
+X-Received: by 2002:a05:6402:502:b0:5d0:214b:9343 with SMTP id
+ 4fb4d7f45d1cf-5d0214b962amr10779521a12.4.1732574800317; Mon, 25 Nov 2024
+ 14:46:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Mitchell Augustin <mitchell.augustin@canonical.com>
+Date: Mon, 25 Nov 2024 16:46:29 -0600
+Message-ID: <CAHTA-uYp07FgM6T1OZQKqAdSA5JrZo0ReNEyZgQZub4mDRrV5w@mail.gmail.com>
+Subject: drivers/pci: (and/or KVM): Slow PCI initialization during VM boot
+ with passthrough of large BAR Nvidia GPUs on DGX H100
+To: linux-pci@vger.kernel.org, kvm@vger.kernel.org, 
+	Alex Williamson <alex.williamson@redhat.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When using an extra cflag, DBG_RX_SIGNAL_DISPLAY_RAW_DATA,
-hal_com.c file doesn't compile.
+Hello,
 
-Fixes: ec57f8641fbc ("staging: rtl8723bs: Rework 'struct _ODM_Phy_Status_Info_' coding style.")
-Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
----
-As noticed at [1], hal_com.c is not compiling with -DDBG_RX_SIGNAL_DISPLAY_RAW_DATA due
-the changes at [2] (a few statements were not replaced with the new struct).
-A little discussion was made at [1] too about how useful this cflag was or if
-the code under the cflag should be deleted. I think there is no harm to keep those things 
-as is since we can easily fix the error and someone might be interested in using that
-to further debug the driver.
-Tks and regards.
+I've been working on a bug regarding slow PCI initialization and BAR
+assignment times for Nvidia GPUs passed-through to VMs on our DGX H100
+that I originally believed to be an issue in OVMF, but upon further
+investigation, I'm now suspecting that it may be an issue somewhere in
+the kernel. (Here is the original edk2 mailing list thread, with extra
+context: https://edk2.groups.io/g/devel/topic/109651206) [0]
 
-[1] https://lore.kernel.org/linux-staging/f61d8272-4af3-40d6-a333-e7731c3fc5ae@stanley.mountain/T/#mffa281a89e67c609db9b125878d5b8d090776812
-[2] "staging: rtl8723bs: Rework 'struct _ODM_Phy_Status_Info_' coding style.", commit ec57f8641fbca07bbb61a75bd4760fd7aef86860
----
-Changelog
-v2: add missing commit msg and fixes tag;
-v1: https://lore.kernel.org/linux-staging/2024112500-authentic-primarily-b5da@gregkh/T/#mea4fba3775a1015f345dfe322854c55db0cddf43
----
- drivers/staging/rtl8723bs/hal/hal_com.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/hal/hal_com.c b/drivers/staging/rtl8723bs/hal/hal_com.c
-index 95fb38283c58..63bf6f034f61 100644
---- a/drivers/staging/rtl8723bs/hal/hal_com.c
-+++ b/drivers/staging/rtl8723bs/hal/hal_com.c
-@@ -906,7 +906,7 @@ void rtw_store_phy_info(struct adapter *padapter, union recv_frame *prframe)
- 	struct hal_com_data *pHalData =  GET_HAL_DATA(padapter);
- 	struct rx_pkt_attrib *pattrib = &prframe->u.hdr.attrib;
- 
--	struct odm_phy_info *pPhyInfo  = (PODM_PHY_INFO_T)(&pattrib->phy_info);
-+	struct odm_phy_info *pPhyInfo  = (struct odm_phy_info *)(&pattrib->phy_info);
- 	struct rx_raw_rssi *psample_pkt_rssi = &padapter->recvpriv.raw_rssi_info;
- 
- 	psample_pkt_rssi->data_rate = pattrib->data_rate;
-@@ -919,8 +919,8 @@ void rtw_store_phy_info(struct adapter *padapter, union recv_frame *prframe)
- 		psample_pkt_rssi->mimo_signal_strength[rf_path] = pPhyInfo->rx_mimo_signal_strength[rf_path];
- 		psample_pkt_rssi->mimo_signal_quality[rf_path] = pPhyInfo->rx_mimo_signal_quality[rf_path];
- 		if (!isCCKrate) {
--			psample_pkt_rssi->ofdm_pwr[rf_path] = pPhyInfo->RxPwr[rf_path];
--			psample_pkt_rssi->ofdm_snr[rf_path] = pPhyInfo->RxSNR[rf_path];
-+			psample_pkt_rssi->ofdm_pwr[rf_path] = pPhyInfo->rx_pwr[rf_path];
-+			psample_pkt_rssi->ofdm_snr[rf_path] = pPhyInfo->rx_snr[rf_path];
- 		}
- 	}
- }
--- 
-2.47.0
+When running the 6.12 kernel on a DGX H100 host with 4 GPUs passed
+through using CPU passthrough and this virt-install command[1], VMs
+using the latest OVMF version will take around 2 minutes for the guest
+kernel to boot and initialize PCI devices/BARs for the GPUs.
+Originally, I was investigating this as an issue in OVMF, because GPU
+initialization takes much less time when our host is running an OVMF
+version with this patch[2] removed (which only calculates the MMIO
+window size differently). Without that patch, the guest kernel does
+boot quickly, but we can only use the Nvidia GPUs within the guest if
+`pci=3Dnocrs pci=3Drealloc` are set in the guest (evidently since the MMIO
+windows advertised by OVMF to the kernel without this patch are
+incorrect). So, the OVMF patch being present does evidently result in
+correct MMIO windows and prevent us from needing those kernel options,
+but the VM boot time is much slower.
 
+
+In discussing this, another contributor reported slow PCIe/BAR
+initialization times for large BAR Nvidia GPUs in Linux when using VMs
+with SeaBIOS as well. This, combined with me not seeing any slowness
+when these GPUs are initialized on the host, and the fact that this
+slowness only happens when CPU passthrough is used, are leading me to
+suspect that this may actually be a problem somewhere in the KVM or
+vfio-pci stack. I did also attempt manually setting different MMIO
+window sizes using the X-PciMmio64Mb OVMF/QEMU knob, and it seems that
+any MMIO window size large enough to accommodate all GPU memory
+regions does result in this slower initialization time (but also a
+valid mapping).
+
+
+I did some profiling of the guest kernel during boot, and I've
+identified that it seems like the most time is spent in this
+pci_write_config_word() call in __pci_read_base() of
+drivers/pci/probe.c.[3] Each of those pci_write_config_word() calls
+takes about 2 seconds, but it adds up to a significant chunk of the
+initialization time since __pci_read_base() is executed somewhere
+between 20-40 times in my VM boot.
+
+
+As a point of comparison, I measured the time it took to hot-unplug
+and re-plug these GPUs after the VM booted, and observed much more
+reasonable times (under 5s for each GPU to re-initialize its memory
+regions). I've also been trying to get this hotplugging working in VMs
+where the GPUs aren't initially attached at boot, but in any such
+configuration, the memory regions for the PCI slots that the GPUs get
+attached to during hotplug are too small for the full 128GB these GPUs
+require (and I have yet to figure out a way to fix that. More details
+on that in [0]).
+
+
+I'm wondering if any other users of Nvidia GPUs or other large BAR
+GPUs in VMs with GPU and CPU passthrough have reported similar
+slowness during boot, and if anyone has any insight. If you also
+suspect this might be a kernel issue, and if there is anything I can
+provide to help identify the root causes in that case, please let me
+know.
+
+[0] https://edk2.groups.io/g/devel/topic/109651206
+
+[1]
+virt-install --name 4gpu-vm-2 --vcpus vcpus=3D16,maxvcpus=3D16 --memory
+943616 --numatune 0,mode=3Dstrict --iothreads
+1,iothreadids.iothread0.id=3D1 --cputune
+emulatorpin.cpuset=3D55,167,iothreadpin0.iothread=3D1,iothreadpin0.cpuset=
+=3D54,166,vcpupin0.vcpu=3D0,vcpupin0.cpuset=3D16,vcpupin1.vcpu=3D1,vcpupin1=
+.cpuset=3D128,vcpupin2.vcpu=3D2,vcpupin2.cpuset=3D17,vcpupin3.vcpu=3D3,vcpu=
+pin3.cpuset=3D129,vcpupin4.vcpu=3D4,vcpupin4.cpuset=3D18,vcpupin5.vcpu=3D5,=
+vcpupin5.cpuset=3D130,vcpupin6.vcpu=3D6,vcpupin6.cpuset=3D19,vcpupin7.vcpu=
+=3D7,vcpupin7.cpuset=3D131,vcpupin8.vcpu=3D8,vcpupin8.cpuset=3D20,vcpupin9.=
+vcpu=3D9,vcpupin9.cpuset=3D132,vcpupin10.vcpu=3D10,vcpupin10.cpuset=3D21,vc=
+pupin11.vcpu=3D11,vcpupin11.cpuset=3D133,vcpupin12.vcpu=3D12,vcpupin12.cpus=
+et=3D22,vcpupin13.vcpu=3D13,vcpupin13.cpuset=3D134,vcpupin14.vcpu=3D14,vcpu=
+pin14.cpuset=3D23,vcpupin15.vcpu=3D15,vcpupin15.cpuset=3D135
+--os-variant ubuntu22.04 --graphics none --noautoconsole --boot
+loader=3D/usr/share/OVMF/OVMF_CODE_4M.fd,loader_ro=3Dyes,loader_type=3Dpfla=
+sh
+--console pty,target_type=3Dserial --network network:default --network
+network:private-net --import --disk
+path=3D/var/lib/libvirt/images/4gpu-vm-2.qcow2,format=3Dqcow2,driver.queues=
+=3D16,driver.iothread=3D1
+--host-device 1b:00.0,address.type=3Dpci --host-device
+61:00.0,address.type=3Dpci --host-device c3:00.0,address.type=3Dpci
+--host-device df:00.0,address.type=3Dpci
+
+[2] https://github.com/tianocore/edk2/commit/ecb778d0ac62560aa172786ba19521=
+f27bc3f650
+
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/drivers/pci/probe.c?h=3Dv6.12#n251
+
+Thanks,
+--=20
+Mitchell Augustin
+Software Engineer - Ubuntu Partner Engineering
 
