@@ -1,212 +1,132 @@
-Return-Path: <linux-kernel+bounces-420982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 645639D85CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:02:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E0DC9D851E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:11:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77D72B2F228
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:10:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C34BA28BB26
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C0217109B;
-	Mon, 25 Nov 2024 12:10:21 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09AD19CC37;
+	Mon, 25 Nov 2024 12:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bQCJYBid"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64B52500BA
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 12:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8498617109B
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 12:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732536621; cv=none; b=sdqMVw0eJgmzQZ6wwVF3lyyKIu4Vs2neOWRb9b/0n1YGu1nd9qpUUSbIDuQqchR8o2YxZHY8AHJVF5+wa1dv35DudMydcvNXJO6Df5Xfy9+eF8uBQGnvGebGDcZKRmrCP99UAB/Ix89xnPu3DA1Vi+4rj/ooNETs7r3dl4Y4KpA=
+	t=1732536662; cv=none; b=ikNQ70Prq8MsgFRun7A5BgHbEHZyWH0bFAe8YNPA+Ls/ZXWQ+IVI5/SNC5itCGAVnMsZ6TPCCcyqkwS3dBZ4JRL94zQ9pOq+fDmE5VEufKxWeqn/p0Cq1plZdsn2LoBRIz4KjNsKrNlQXt+pUaDIdUW05KMi3i38UCS+9m7hNao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732536621; c=relaxed/simple;
-	bh=M73sL3Sv8a2AmHgvN4rmD4glFFe3PxVvIRhLWFtW5nw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dZ8ZngzTljzXhllf2Va9b9UaNjRGJDKkwhT1Zan/6yGbOK/31wRU0UjdK1ldmWv/SHdbzuZYdtqHvQK6iBdDn0BEHB8MFsz51OTLziLMq0G3gJfXRA0AXdVa2niNg9xXA+U23hNMVxYxsD4whtmpV+bTU3BY20TtmmUEg28u780=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a78c40fa96so44565235ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 04:10:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732536619; x=1733141419;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1732536662; c=relaxed/simple;
+	bh=MD2kXp9zcST7rQN7sT17fiFMKuYALRaid8lTQMGgKnY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YWRH5DSNTlAMJ4FUiVEdiEzHeQ9MFWrv9AqKkMGeRB3RAa+c0wCP02kvrMd7ls9kkje6uNaCFmSpLlJGoVwCm0iwC4sh9SM7GaEh1VGwC46mM99T5bnud19tmVQautwh09tLHAuwsBsQLuoi3/Jwl2NyBsGjwr69aC8ripTtchg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bQCJYBid; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4349fb56260so7128025e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 04:11:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732536659; x=1733141459; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=3LvNl8pxglySFNL33qrPeiBijVQsos1DSC+9lKcfot8=;
-        b=uSs/5OGW+mBZVDiI2rc3mu+nIs9l6PlTg0Pzjoydqg/PYaeiI/wzq+2GuEs4b8Rn7X
-         ju2B9kwVuwN0ubmjcM+DV9EyfJ2suOzUHTI3jRFJn0UaL0Rtq2FCRC1DUO/nBo8qOlPx
-         Vlwd5Rg47xC2KYJuc0juS7rv/yZ3T+T9SWJpYD9iUGcue7mtINrxvbjiyJkXMHi5qhkQ
-         O3md+PZeKIqYNUsbJmSKfKEfs0SRowGso6NOuN+VsNoI7Cbzip4cmheYbOhKeWsCTG3k
-         UGSmrN/NrONhLAT56auvY2KFHyDipGJGt60z785oEGkSMKyx2tg9Fv5C3U2kbW37vKqQ
-         BWaA==
-X-Forwarded-Encrypted: i=1; AJvYcCXRFMZIZsDaX1lhYQJb+XjXCJd95XJ8WwGNhmI/+vc1nV4sNgHuUGIgp1NZA7++pCujVVLobtHUWKHJkg8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzK+3r6ngmOdYBMIu88vipjXHpOHuLd/eKaxcY+JmpP5+njLnas
-	6tR4pBRfd1HIoBYCfkVnSKqobZtLsG2cEK4LYYOUw9F9yDjvw/5NG2IUDCrrE6GwpAL0zsTolMi
-	pSD8aAh4rOclcYjeuEvKU3gnGC0vJpTGIlBwYo3d032TPMAC+pq0AtYM=
-X-Google-Smtp-Source: AGHT+IEd+vL2cdCw0lS57SC5BYx4BxRT5NTSsvYSV07gZjNtWDmblGqcKb4oLqv9Oo5N2emQZ8sIpRUlN5aqNmxP7Ka5A5qCc8SG
+        bh=Ay9iD2Ui7/MFbStQyK+xjPWNY7pA8bVsVnnpt4EVpMs=;
+        b=bQCJYBidxeWwNh1lwj1KtNpajVBE1s+1G9HkRw0xjegVq5v+LoEEm+4gB2VW4p2TFn
+         Fd1isqV1s3tWu/KGLava+WI6C8J5CzpKnJydfX89m2qTysm3fKdIaWXXcvxCZOyF6Nzb
+         RpzchUH8j9y+KOvjlH8ASNSgCx6NN10crjsUZC+dYkMpaYSD4hBZeM+UAZRYBfFL+2YP
+         wsHKFm4ibV/92tdlZ6lH5N1iK1D205S0P+BEfXBd5Ftr197Py6R7wChxclOBl74X6cVN
+         Ypnrw756xoH05o6k9ONegp5jsCLuk7I+eqylmkv681rck7+uK9IbhNkWVJScWnwpqzH/
+         7qkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732536659; x=1733141459;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ay9iD2Ui7/MFbStQyK+xjPWNY7pA8bVsVnnpt4EVpMs=;
+        b=k5NCzqZDAVkESduLPFFDfWX+MI3NAmjAZy0b9oXlEax13MkzAi4li8XtEKEgsPWT/0
+         so4I6fIdHsYBkVetTdzv7zTZREho/nKMz7/s6q35pGwi5r2mBsc3K6tBuXvFGuaEJGkA
+         2cGUh9gdhw8aBaHUVYwsIdNzRuljVe8C1wl5gWrfF1u1ROYV9KlMQ6jWF2TeO7xF5l4G
+         8aRt8fIFT16oC0wi0ZU1XtuFMIAPITL9nRPgurg6QxfN6bFKwNmjVJZvAZOs0ld9VoDb
+         rrCB7e9CFfzaTdTkjZ+G5MDViBMa1Te+ECeh65PC63jrf5+mWQHVRnKraNf9YpejJzMP
+         wABg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/CCli4lnKXParp4KHgZKW7In+3plqJoe7AC1K2aH+tLz9lM1rv82GcbdnHnPKpmrEOQBiFDoqBEkA4Ns=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGNF2YiII6cuxF2MrPx41H6qmAVWEfRePKU2UmfyUkNuqwLsYG
+	y4Syw9VKCPCgfE5nLWPGN2euZRgm6NN1oyAVOgepho0QC/BuOjYlgSIlalUu+N8=
+X-Gm-Gg: ASbGnctQ4HaCPSqesDqB1ubZwYcADig7JIpPEpm0y5t8ugYYGI2LMnqemRPCmA41o8T
+	twVF6Ag36tQaw5b0/Ql1cHFGBU4G9TkGLEBWJn3ho44Hn/64xZ/iLj5+U3VBX5AkxesrzvlsLpz
+	V3FJH7V7z/Fu854JX5aQyZ7zI6VCC44rC6yFlNZpAaaqb+7Fe/e2R56L/WOW3FxQL7tv/ObZnlH
+	jO+PrhRu1boZo9QiW+2XjHTO8Z3fLEkbnrdQ9VVMwiTh+dlpOZEICo8slL7o3E=
+X-Google-Smtp-Source: AGHT+IHH9UAHPTXjXBibyKyQ4JzxX2GfjasFy+EHmbvGazyodBa+wJi65PPztAT/YiOrgJzhITmkGA==
+X-Received: by 2002:a7b:cbcd:0:b0:434:932b:a469 with SMTP id 5b1f17b1804b1-434932ba853mr49370555e9.28.1732536658895;
+        Mon, 25 Nov 2024 04:10:58 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fd0fbdcsm10168167f8f.109.2024.11.25.04.10.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 04:10:58 -0800 (PST)
+Message-ID: <c464dfb3-8d30-41e4-88ea-c7c21ee9cf92@linaro.org>
+Date: Mon, 25 Nov 2024 12:10:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1647:b0:3a7:6c6a:e2a2 with SMTP id
- e9e14a558f8ab-3a79adbb92cmr135862275ab.9.1732536618988; Mon, 25 Nov 2024
- 04:10:18 -0800 (PST)
-Date: Mon, 25 Nov 2024 04:10:18 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6744692a.050a0220.1cc393.007a.GAE@google.com>
-Subject: [syzbot] [crypto?] KMSAN: uninit-value in sw842_decompress
-From: syzbot <syzbot+e774233ff687aada969e@syzkaller.appspotmail.com>
-To: davem@davemloft.net, haren@us.ibm.com, herbert@gondor.apana.org.au, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] media: qcom: camss: reducing the repitious error
+ message string
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@quicinc.com
+References: <20241125103457.1970608-1-quic_vikramsa@quicinc.com>
+ <20241125103457.1970608-2-quic_vikramsa@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241125103457.1970608-2-quic_vikramsa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 25/11/2024 10:34, Vikram Sharma wrote:
+> Introducing a new function camss_link_err to avoid repition of
+> same error message, improving code maintainability.
+> 
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> ---
+>   drivers/media/platform/qcom/camss/camss.c | 60 ++++++++++++++---------
+>   1 file changed, 37 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+> index 9fb31f4c18ad..520c5bc7a265 100644
+> --- a/drivers/media/platform/qcom/camss/camss.c
+> +++ b/drivers/media/platform/qcom/camss/camss.c
+> @@ -1993,6 +1993,26 @@ static int camss_init_subdevices(struct camss *camss)
+>   	return 0;
+>   }
+>   
+> +/*
+> + * camss_link_entities - Register subdev nodes and create links
+> + * camss_link_err - print error in case link creation fails
+> + * @src_name: name for source of the link
+> + * @sink_name: name for sink of the link
+> + */
+> +inline void camss_link_err(struct camss *camss,
+> +			   const char *src_name,
+> +			   const char *sink_name,
+> +			   int ret)
+> +{
+> +	if (!camss || !src_name || !sink_name)
+> +		return;
 
-syzbot found the following issue on:
+You don't need this defensive coding error check, please drop.
 
-HEAD commit:    43fb83c17ba2 Merge tag 'soc-arm-6.13' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16179930580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9f17942989df952c
-dashboard link: https://syzkaller.appspot.com/bug?extid=e774233ff687aada969e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+Once done you can add
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/73f465d9c9e2/disk-43fb83c1.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ada4e5d15a14/vmlinux-43fb83c1.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9c515c61ce6f/bzImage-43fb83c1.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e774233ff687aada969e@syzkaller.appspotmail.com
-
-=====================================================
-BUG: KMSAN: uninit-value in sw842_decompress+0x7d4/0x24c0 lib/842/842_decompress.c:303
- sw842_decompress+0x7d4/0x24c0 lib/842/842_decompress.c:303
- crypto842_sdecompress+0x45/0x60 crypto/842.c:92
- scomp_acomp_comp_decomp+0x7c6/0xb90
- scomp_acomp_decompress+0x2f/0x40 crypto/scompress.c:192
- crypto_acomp_decompress include/crypto/acompress.h:265 [inline]
- zswap_decompress+0x5ff/0xa30 mm/zswap.c:981
- zswap_load+0x2b7/0x5c0 mm/zswap.c:1576
- swap_read_folio+0x6c6/0x2ac0 mm/page_io.c:634
- swap_cluster_readahead+0xb48/0xbd0 mm/swap_state.c:706
- swapin_readahead+0x205/0x1690 mm/swap_state.c:882
- do_swap_page+0xade/0x9b20 mm/memory.c:4324
- handle_pte_fault mm/memory.c:5769 [inline]
- __handle_mm_fault mm/memory.c:5909 [inline]
- handle_mm_fault+0x3f29/0xdca0 mm/memory.c:6077
- do_user_addr_fault arch/x86/mm/fault.c:1389 [inline]
- handle_page_fault arch/x86/mm/fault.c:1481 [inline]
- exc_page_fault+0x29f/0x700 arch/x86/mm/fault.c:1539
- asm_exc_page_fault+0x2b/0x30 arch/x86/include/asm/idtentry.h:623
- compat_put_bitmap+0x133/0x390 kernel/compat.c:236
- compat_set_fd_set fs/select.c:1171 [inline]
- compat_core_sys_select+0x98b/0xe20 fs/select.c:1248
- do_compat_pselect+0x50e/0x5c0 fs/select.c:1338
- __do_compat_sys_pselect6_time32 fs/select.c:1386 [inline]
- __se_compat_sys_pselect6_time32 fs/select.c:1377 [inline]
- __ia32_compat_sys_pselect6_time32+0x2dd/0x410 fs/select.c:1377
- ia32_sys_call+0x1b34/0x4180 arch/x86/include/generated/asm/syscalls_32.h:309
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0xb0/0x110 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x38/0x80 arch/x86/entry/common.c:411
- do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:449
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-
-Uninit was stored to memory at:
- next_bits+0xd7a/0xe20 lib/842/842_decompress.c:118
- sw842_decompress+0x1c3/0x24c0 lib/842/842_decompress.c:297
- crypto842_sdecompress+0x45/0x60 crypto/842.c:92
- scomp_acomp_comp_decomp+0x7c6/0xb90
- scomp_acomp_decompress+0x2f/0x40 crypto/scompress.c:192
- crypto_acomp_decompress include/crypto/acompress.h:265 [inline]
- zswap_decompress+0x5ff/0xa30 mm/zswap.c:981
- zswap_load+0x2b7/0x5c0 mm/zswap.c:1576
- swap_read_folio+0x6c6/0x2ac0 mm/page_io.c:634
- swap_cluster_readahead+0xb48/0xbd0 mm/swap_state.c:706
- swapin_readahead+0x205/0x1690 mm/swap_state.c:882
- do_swap_page+0xade/0x9b20 mm/memory.c:4324
- handle_pte_fault mm/memory.c:5769 [inline]
- __handle_mm_fault mm/memory.c:5909 [inline]
- handle_mm_fault+0x3f29/0xdca0 mm/memory.c:6077
- do_user_addr_fault arch/x86/mm/fault.c:1389 [inline]
- handle_page_fault arch/x86/mm/fault.c:1481 [inline]
- exc_page_fault+0x29f/0x700 arch/x86/mm/fault.c:1539
- asm_exc_page_fault+0x2b/0x30 arch/x86/include/asm/idtentry.h:623
-
-Uninit was created at:
- __alloc_pages_noprof+0x9a7/0xe00 mm/page_alloc.c:4774
- alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
- alloc_pages_noprof+0x1bf/0x1e0 mm/mempolicy.c:2345
- z3fold_alloc mm/z3fold.c:1036 [inline]
- z3fold_zpool_malloc+0x78f/0x1990 mm/z3fold.c:1388
- zpool_malloc+0x85/0xb0 mm/zpool.c:258
- zswap_compress mm/zswap.c:927 [inline]
- zswap_store+0x1f20/0x3650 mm/zswap.c:1460
- swap_writepage+0xa67/0x17f0 mm/page_io.c:279
- pageout mm/vmscan.c:689 [inline]
- shrink_folio_list+0x5e7f/0x7dd0 mm/vmscan.c:1367
- evict_folios+0x9813/0xbaf0 mm/vmscan.c:4589
- try_to_shrink_lruvec+0x13a3/0x1750 mm/vmscan.c:4784
- shrink_one+0x646/0xd20 mm/vmscan.c:4822
- shrink_many mm/vmscan.c:4885 [inline]
- lru_gen_shrink_node mm/vmscan.c:4963 [inline]
- shrink_node+0x451b/0x5170 mm/vmscan.c:5943
- shrink_zones mm/vmscan.c:6201 [inline]
- do_try_to_free_pages+0x820/0x2550 mm/vmscan.c:6263
- try_to_free_pages+0xbed/0x17c0 mm/vmscan.c:6513
- __perform_reclaim mm/page_alloc.c:3927 [inline]
- __alloc_pages_direct_reclaim+0x107/0x330 mm/page_alloc.c:3949
- __alloc_pages_slowpath+0x995/0x16e0 mm/page_alloc.c:4380
- __alloc_pages_noprof+0xa4c/0xe00 mm/page_alloc.c:4764
- alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
- alloc_pages_noprof+0x1bf/0x1e0 mm/mempolicy.c:2345
- vm_area_alloc_pages mm/vmalloc.c:3568 [inline]
- __vmalloc_area_node mm/vmalloc.c:3646 [inline]
- __vmalloc_node_range_noprof+0x1030/0x2740 mm/vmalloc.c:3828
- vmalloc_user_noprof+0x90/0xb0 mm/vmalloc.c:3982
- kcov_ioctl+0x5a/0x660 kernel/kcov.c:716
- __do_compat_sys_ioctl fs/ioctl.c:1004 [inline]
- __se_compat_sys_ioctl+0x80f/0x1020 fs/ioctl.c:947
- __ia32_compat_sys_ioctl+0x93/0xe0 fs/ioctl.c:947
- ia32_sys_call+0x2226/0x4180 arch/x86/include/generated/asm/syscalls_32.h:55
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0xb0/0x110 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x38/0x80 arch/x86/entry/common.c:411
- do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:449
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-
-CPU: 0 UID: 0 PID: 5784 Comm: syz-executor Not tainted 6.12.0-syzkaller-03657-g43fb83c17ba2 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-=====================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
