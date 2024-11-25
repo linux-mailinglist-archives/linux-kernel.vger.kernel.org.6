@@ -1,152 +1,147 @@
-Return-Path: <linux-kernel+bounces-420591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D8B9D7CFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:35:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DDCE9D7CFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:34:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABEA1281F79
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:35:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D35E8B23477
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A760218B482;
-	Mon, 25 Nov 2024 08:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC79418BBBB;
+	Mon, 25 Nov 2024 08:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WdooRpbQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DDIv0taD"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C31376;
-	Mon, 25 Nov 2024 08:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32184185955
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 08:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732523749; cv=none; b=nl8egGGg1Fsk/KHdIaKFQLbBJpPYlP2mwNHauds0bGI1VxB7BnCXYpDddf26oNZ7vpGunT5kUuEPVn20XDRuQwIS+HHOdaN9Kpkoedh2Hl6Qthh8rGQFKr/RhheF5XL6yVJR/bLSm3ryeaugOtRuvKi7K7ZrAgC8J//sGajSYSw=
+	t=1732523685; cv=none; b=VJIfUWmFOXeKNzn4oIVLQFewdEvEpcwjTprUMcSxWxrLMjAZcYIn2Cj+leC2Cq/L3NpCdqZSFt1ioXyAzxPtTjmCFIhZBdr+/oU1jXpuGwInbWJoCb0ytVZ6sgA3O/FkPHYF5wPJgmNStqDjKVsCDWt4f3t3wwXX8z+GcoexsUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732523749; c=relaxed/simple;
-	bh=giqjuR8SayINfQRMvdKC45TjKx+/gcQKWZAhbM6pN6g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fGalBSOrtuS5oPiAziC0eK+SGjbXU970APf/GpAWCfewYOArqp8Aq9fnbYx/4zS0y635uQ9PYVNnMR+5clzUyjjuVRKMKiELfCQhn3MpoveBz6IfSpHcUI7Lyqa3xEJTfkXlQUSbT4n5OKC4tRzdKo5PcKEFvFYdmTl2teMd2+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WdooRpbQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92E04C4CECE;
-	Mon, 25 Nov 2024 08:35:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732523748;
-	bh=giqjuR8SayINfQRMvdKC45TjKx+/gcQKWZAhbM6pN6g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WdooRpbQ5u6eHCnM9Ej4riSSEeaFmHBi7Db444box+szJzgzdapMMH6GZAbrnH2xB
-	 sqr4k2kHzpaE1OdphrsR9izJmdStKqo9AiThGJ7T6gDaKM8fssTCtZYrVZz7amT+zc
-	 hO5yUeHXDJ857s4LbyLmjJTlPaQ4J2Qe91uhQkwWvcV8ZTdSTqaYDYPJ15L6eFHa8v
-	 hnSmmgYvJgID8XBMcjzk8S4hiJmniyJq/tTGVLQdDE4CLpWd6YWS6Heppblvj9PleV
-	 rlM2nSvhr5mXoJrZ9WgS0jpEDDH1rUCHruQ9DX34ZVETxU13AlaDS3j3TMTI+Nt1yD
-	 d5VJ+yzigvTtw==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ffa8df8850so28759481fa.3;
-        Mon, 25 Nov 2024 00:35:48 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV7kN2IKSQj8bc91QuM5f5/Z/l39/wAU0qNf+204IJaVfno0X3qKq1c7yZmctxtX3g+ZPGyPl6etdBZ4bB5@vger.kernel.org, AJvYcCW3+T1SZWPaSEd8a17wBiFBk1xnpJK1ooCzelubMRDrvHw93JjKvK6y1GoE+X9LQecs237o/s48tfmXIBXC@vger.kernel.org, AJvYcCXDocWxBjQBhTQvzMiymEjQ2Wn4JFicF+LfNG4lKvLH54o6f5KBHyM3TTtV5Z7qzhyI/J0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPyTY44oFRMs5UMR4Kzm9D9J+ytNdczecI5ZSCCX5KBS6kct8h
-	cyjFDy+RCfBzUjB9RyKkrv1EfiXz/DO8aH4a517Jik7LxQUXXK9ijqw5sesSSWETVlR3dHWncSJ
-	Plado8MeO/qIzitABS7081L6BByc=
-X-Google-Smtp-Source: AGHT+IE3pYY4SyydxATz2K5n+Wei67MO86RDjcb//k8TvfxZ3L/3zJNbxC7jzwmA+XU84NJpz/HlxAZNDIhvOYStDes=
-X-Received: by 2002:a05:651c:19a2:b0:2ff:c741:db92 with SMTP id
- 38308e7fff4ca-2ffc741de13mr4309141fa.17.1732523747252; Mon, 25 Nov 2024
- 00:35:47 -0800 (PST)
+	s=arc-20240116; t=1732523685; c=relaxed/simple;
+	bh=5Nhv1Mm0+fbxtk2KdzQJbKFpjj2DWs2QHyapg7sOW0E=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CM2alNbZ+ji2ox2OoLuSoynI8bxFBC7toTV7IXNSpyuvRPt/Gm/xkGAUvhJxSjORrxS5JVZKQPNA430qQ+o+MWwvK/0Ij430pvEPPhdeMvHSALd7WrL1BoV74xhhP69fKuWWWmZVipoPqQLt2kB4ORLqmeSpda/E0g6B1IAu6t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DDIv0taD; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9e8522445dso599668466b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 00:34:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1732523680; x=1733128480; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vg0D/GXC726IE1EJTMsV29mWCwy+CAcBXGOGjtO3CHw=;
+        b=DDIv0taDA8NxOu9j0vaARHXUXN4/MCxzDydDyuQWYRsU6gz+vewnPcxNbF5zL0IQUy
+         qBwx06I22FYw0quLmSmGeCa46iLIfjgp7JD+lcl+HAPlFLsBk6Ln4ZF8AGjC5iyBYbFy
+         gqp2M9QOQJY/OtQYJoRLyFJL3EPUYc+kCmwnbkfWl5TfRImvmS6ntM3BftwNAWDiQTws
+         9zy90N3EpUfI6BJBEh59TNYWyH56oSdrtTpUp8jG2m3TTaGd45+H4miYskgztd+fSZi0
+         8oVkI98JzMyUzc30rRJTLJQOoUmCYv6sLWr0j/GmAeMsOY+mmKo69aM7HoYritTbnsWu
+         BtNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732523680; x=1733128480;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vg0D/GXC726IE1EJTMsV29mWCwy+CAcBXGOGjtO3CHw=;
+        b=kdRMCvhRaFNhHYfgr/BTvzu+8weD50wKX98IjNN8ilKSckoEMd5E5PFTuXk2T+O6Qi
+         YtSzDNPxELeHV7TweHfycW4EQiUvfSzhg3ZhEJ/0UbEnA/dEVI5jlMUg8NxVypionx+1
+         6xmWt7lM9btXtfFgDf+W+siTlXNksBUbtuubr4eYvkrzSx1LpMBGFydvNEvKsUIxIrDz
+         D+7Bvp0IycM3jZXKWJWSQkYVzzkt09WpEyvmKk8hybQoaPdZ9BOcQy0zUCgztECP8gmV
+         JVYoV/IssRquOcR2pO4MqvqY7TvsHDbkdHkqku7l73LxqKH4CBaVwMGRA66wuUgJBtTz
+         jW5g==
+X-Forwarded-Encrypted: i=1; AJvYcCViQiLxYT9tgAjFyXgEJHwSvT+by9V+ToE9krYjMKQoyXKyB42IKVkSMysQXBswC8fRaESAzXImdQQTn4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqCC5BcSIR0KaTu1H10ysr08pGcsfh+Ea8mZVLygB9IPGWnTPf
+	wWCriM3/GL0nX3xfsduL3wYz3ABbmTy9PkkzUVMV81wxnI7ZUby8Kk+qpkgw6qE=
+X-Gm-Gg: ASbGnctoYq3btij1eWgqzxyslN/4Pe1stbMR9/Sp/yhwqH8hV0zE39APfooO+1e4Bpo
+	/KgthOChcpA+4/MjsxXWXOaxUBcRu87tQcjQYmfUe7oz7a4OH0zlShzUvcsdw9AtbLS2c0rPm/H
+	8Dl+qBP7vdebRB0d86jgyNBLA6ExRB+rTcMBBpgibhCBGPSwHVStcKhGoHvVZ3hePQ+1K5bPSH0
+	nLiT2vrt0/gY7V7S1+vjFQNcnP4+1ZYLS9VIq0jv28qwk5SDzxwgyUi3kJuxV0eE10BMCmWKKlL
+	jgvR01NTpY5uHhE5RTV6
+X-Google-Smtp-Source: AGHT+IHTcfEoEYoZ9eKBklAA7GYxZ5kMOqK2yZ8KaAw01uPI3MZswrc9AVeFlfapHP8sHh0b3gsj9A==
+X-Received: by 2002:a17:906:3096:b0:aa5:1d0c:3671 with SMTP id a640c23a62f3a-aa51d0c36femr719670166b.23.1732523679890;
+        Mon, 25 Nov 2024 00:34:39 -0800 (PST)
+Received: from localhost (host-79-49-220-127.retail.telecomitalia.it. [79.49.220.127])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b57c19esm433460966b.154.2024.11.25.00.34.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2024 00:34:39 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Mon, 25 Nov 2024 09:35:12 +0100
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 08/10] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <Z0Q2wJBMdN1dyJWA@apocalypse>
+References: <cover.1732444746.git.andrea.porta@suse.com>
+ <c48e6b9b178cdaa01b92ae82e8fd24c2ba5f170c.1732444746.git.andrea.porta@suse.com>
+ <e57c9c8b-2534-4d3a-b762-ca9c1f7dac40@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241123-resolve_btfids-v1-0-927700b641d1@weissschuh.net>
- <20241123-resolve_btfids-v1-1-927700b641d1@weissschuh.net>
- <Z0ONnhIVK1Sj9J09@krava> <fa77c47c-b9c7-4013-8ccf-7ee7773c0c2d@t-8ch.de>
-In-Reply-To: <fa77c47c-b9c7-4013-8ccf-7ee7773c0c2d@t-8ch.de>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 25 Nov 2024 17:35:11 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQw9Ra8p6PtkGqhGvDZoWudsxHGW005ZotcpdqXuAMCRg@mail.gmail.com>
-Message-ID: <CAK7LNAQw9Ra8p6PtkGqhGvDZoWudsxHGW005ZotcpdqXuAMCRg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] kbuild: add dependency from vmlinux to resolve_btfids
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e57c9c8b-2534-4d3a-b762-ca9c1f7dac40@lunn.ch>
 
-On Mon, Nov 25, 2024 at 5:58=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weisss=
-chuh.net> wrote:
->
-> On 2024-11-24 21:33:34+0100, Jiri Olsa wrote:
-> > On Sat, Nov 23, 2024 at 02:33:37PM +0100, Thomas Wei=C3=9Fschuh wrote:
-> > > resolve_btfids is used by link-vmlinux.sh.
-> > > In contrast to other configuration options and targets no transitive
-> > > dependency between resolve_btfids and vmlinux.
-> > > Add an explicit one.
-> >
-> > hi,
-> > there's prepare dependency in root Makefile, isn't it enough?
->
-> It doesn't seem for me.
-> If the source of resolve_btfids is changed, it itself is recompiled as
-> per the current Makefile, but vmlinux is not relinked/BTFID'd.
+Hi Andrew,
 
+On 20:33 Sun 24 Nov     , Andrew Lunn wrote:
+> > +++ b/drivers/misc/rp1/rp1-pci.dtso
+> > @@ -0,0 +1,8 @@
+> > +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> > +
+> > +/* the dts overlay is included from the dts directory so
+> > + * it can be possible to check it with CHECK_DTBS while
+> > + * also compile it from the driver source directory.
+> > + */
+> > +
+> > +#include "arm64/broadcom/rp1.dtso"
+> 
+> This is probably O.K, for now, but really the tooling should be
+> extended so that DT files can be checked anywhere in the tree. I can
+> see more such embedded DT overlays appearing with time, and there is
+> nothing actually arm64 specific here, it is architecture agnostic. It
+> is just a PCIe device, there is no reason it could not be used on a
+> S390, Risc-V, or loongarch.
 
-If we need rebuilding vmlinux, this seems correct
+I completely agree with you.
 
-Acked-by: Masahiro Yamada <masahiroy@kernel.org>
+Regards,
+Andrea
 
-
-I can pick up this during the current MW.
-
-
-
-
-
-
-> > ifdef CONFIG_BPF
-> > ifdef CONFIG_DEBUG_INFO_BTF
-> > prepare: tools/bpf/resolve_btfids
-> > endif
-> > endif
-> >
-> > thanks,
-> > jirka
-> >
-> > >
-> > > Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> > > ---
-> > >  scripts/Makefile.vmlinux | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > >
-> > > diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-> > > index 1284f05555b97f726c6d167a09f6b92f20e120a2..599b486adb31cfb653e54=
-707b7d77052d372b7c1 100644
-> > > --- a/scripts/Makefile.vmlinux
-> > > +++ b/scripts/Makefile.vmlinux
-> > > @@ -32,6 +32,9 @@ cmd_link_vmlinux =3D                               =
-                         \
-> > >  targets +=3D vmlinux
-> > >  vmlinux: scripts/link-vmlinux.sh vmlinux.o $(KBUILD_LDS) FORCE
-> > >     +$(call if_changed_dep,link_vmlinux)
-> > > +ifdef CONFIG_DEBUG_INFO_BTF
-> > > +vmlinux: $(RESOLVE_BTFIDS)
-> > > +endif
-> > >
-> > >  # module.builtin.ranges
-> > >  # ------------------------------------------------------------------=
----------
-> > >
-> > > --
-> > > 2.47.0
-> > >
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+> 
+>       Andrew
 
