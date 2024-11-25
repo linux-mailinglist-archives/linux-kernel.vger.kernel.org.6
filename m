@@ -1,170 +1,228 @@
-Return-Path: <linux-kernel+bounces-421667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4147D9D8E2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:47:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 060F49D8E3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:54:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB25B169390
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:47:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E75F168E23
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF35B1C9DD8;
-	Mon, 25 Nov 2024 21:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDC41CB32A;
+	Mon, 25 Nov 2024 21:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="CRcJ9f2+"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P25+7WEG"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBAE14F9CF
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 21:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913AD14F9CF;
+	Mon, 25 Nov 2024 21:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732571254; cv=none; b=baV56CczhAwISGrhS0dPeE0O6FZ9AvpyIC4oLq8GISGnQ1SuPluah8G3oqYhtazmKb0F1cRLn6cFJoTT8AoPBuGpMiT1KFqIdZR4IGVrKTBThHtdIbTzn6biNkG9udHti//xQ3DtJOW1Frd3f+OV/PAIp+/CKV2vfoLtyWrffJ0=
+	t=1732571661; cv=none; b=rFFTtN2Mj3zUpb0wRmdKSZWbnQlycUUP6A1AWalGDbs6gQZgPfkHeni0C1NVx9uOOH2E6f+WEqDx7b7uWgbg6pNa2SAHv56Yigm4ZpfglGyrpgLK5J8XkB1rjKpHGg00RfuOL6x1h9tXRIZYfVyxk+K3ppkNl6K7zxTcU8EpxUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732571254; c=relaxed/simple;
-	bh=BCFEI089OstDC4wCknzDn8MmVL/CYY0GGcM3o69XVxQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fB6YvGSR7cz80OJ6HXNM47NZY19M+vZpucnMuIfcUIqdOhUvRRZ0+hIrpaN3Hzg3ZlKVhH05XT1sPs1b6cmdXlcPmNtba5sFOpyp+9FDCQuH7/OhibAgFQ6COOiUu/bxGSt64tczIgy5PEYSt0lcz/YzVGmpcsCGWMCldP7UVn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=CRcJ9f2+; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6d41d46162eso30412616d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:47:30 -0800 (PST)
+	s=arc-20240116; t=1732571661; c=relaxed/simple;
+	bh=vQghFPwOakL2/S9yKhI5LNstgvG4wXUhh2VsFjSH7VQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T5cblt6XtYcm0yGW/uuvtQ59hPbGUOxAV0qvCbH6ea+7D1s+C5vNbRqfGxvrfMdzcW2qOiiWy3FUt2Jfa1sBKCgrIx9lk+RtllfZ6gmy/DnpDUa6VjHKXaBCgOw9NhP223J7tgCvAWN/g4rSSPndvacR30jxb4E9NAJz75UIS2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P25+7WEG; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7fc2b84bc60so1232781a12.1;
+        Mon, 25 Nov 2024 13:54:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1732571250; x=1733176050; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XqWF7E0ew5gNQ6985xZJ/5/jCKh2abtLrhXPLjbHCyE=;
-        b=CRcJ9f2+ZA8k13PJZzUlQaNpBe456mQtAV9DJ9f864z7seaKTUPWPtbrxN4g6h4Htr
-         i6Ev6okjqvmmRoKJ0o8alcNtovWjojl9+ZdiTgExwE37sFeuvvgYsR4FKhJ3tuCFImkj
-         1WuIVHquLIsOEoQctlUSrmy5gV8dHaluaGeoSN8k++w0GCHboq2QlVXEfkR6zQ00HX+I
-         /7CisfOLgVCs/trBi3+30l2j3S54D2b4mC6fak4dCD96NyldVWClibMM9m5DmRnOZCsm
-         HvJ2eQbxiT+XOJUbqffchd5kxifyKGr/UF33PabY09pMcI2hFf1/s+VhBxFU57s/D65N
-         kjcQ==
+        d=gmail.com; s=20230601; t=1732571657; x=1733176457; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=hzuzKr0ugYKRDB8J/LsU5oEu9Dne18LdLC3faV0ov8s=;
+        b=P25+7WEGO1zjmAkDHdqnFX5BYqgrZfv9tC7l704H1ndR1SFw44mtNCPpF0R9dOSrzf
+         t+VZ87MRzTOLzglY8zIMRuNPbBkiGndarlhoCPu7yT5wXMBsj5hfCuDVz9Buj6MeNfr5
+         wck4/grHdICf3mwVTnzWVwlnd8gaTEUsh+05uh99NrDIXnlG7GfJ108ObzlliYdX762D
+         s7F6QzU6Ukj2M/nUZMfpJGZ7KanWfFlGDXtiLdZzMDfF0kjUdHJ8+fmIyGUKD4mVg+cG
+         HHP/402r3Fr8ps71SlxcGGEHSaV3NDl7IXmiHnWInT9Ld+KbXTnKNbP4yc+51vARgIt/
+         eGdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732571250; x=1733176050;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XqWF7E0ew5gNQ6985xZJ/5/jCKh2abtLrhXPLjbHCyE=;
-        b=f6qp116OB7C/0p25PJfomtknud9FeDpDr05I8NDQhq7xnu3cKIFWuAgJqqZSmWgQ5P
-         wvrFqgAC3pErLw+d6p2eWNNe3U5OTCfJA6BzJ9X9Qdfz0j/aRPKN0t8Fq8IQ2QIDesWY
-         oc32y0lC47E0z0WCZtzGvRxcwfNnWEqNqD1BYD0YuLJbxB83/zZp9x2X5ecT1SxJc4RW
-         rW7gFOlC2Yz9ZosbcknNprjo25o00fylZ4q8erXEHKIRvFPNthHy4qkQGLDrWbbSV9MZ
-         aWm7c+Y4qQ+IJA2OtkY7hzjjTxn8JeExYqUcbuKuC1A62fCP4uCliYDklKupdf1Fx6pD
-         s2fg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ2iJRBM0sfC1aaYflVzxEGMcKvRpYgBU05HbLsG7O+nI3ceRfnv7gl4tQ/IRxw0zLyci8LKMXk75rZqc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOTa4ybozP+qXlmCnwaPTqb7MlImOlSTo0gwvx62pxNuO9S6wQ
-	6R+llTFG2tX7M5/4a0FgUNkyOD82dRE1WOCR/a5fYvuvzaQ+H/I4NDDEDGGMDvg=
-X-Gm-Gg: ASbGncuOCvna2UvirfzvRTjDUHp76Tol0ynfNOY5yERdUXAko6Ym+5+EbZ0UYEEEr+U
-	s2Teyq+NwErMuj2wIald8o2f4OrwF7mA9VeegKXeaeNsyvLfxsh0sRmRsgmCxies/Q2FU8K7p6C
-	AtfDxY9RpufLmHD2YMZZIfuS07d7O+gaG/jnHPQcX4rBHaeAHedn1/oL+k8S16Iydpfhmi4K7KJ
-	+5zVYH5JTuXpl0/xX2DeAdqWn9vVVXA//8wmmmW9wYHB7t4
-X-Google-Smtp-Source: AGHT+IGhSINo662ZCmiw+KQ9F9w1c9zeHSlcbXLmFv0aSFwhD9uNu7MMnjUNn7TV9kplOqArqzYj3A==
-X-Received: by 2002:a05:6214:629:b0:6d4:3c10:5065 with SMTP id 6a1803df08f44-6d451345419mr187969176d6.32.1732571249894;
-        Mon, 25 Nov 2024 13:47:29 -0800 (PST)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d451a831bbsm47429646d6.27.2024.11.25.13.47.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 13:47:28 -0800 (PST)
-Date: Mon, 25 Nov 2024 16:47:24 -0500
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, nphamcs@gmail.com,
-	chengming.zhou@linux.dev, usamaarif642@gmail.com,
-	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com,
-	akpm@linux-foundation.org, linux-crypto@vger.kernel.org,
-	herbert@gondor.apana.org.au, davem@davemloft.net,
-	clabbe@baylibre.com, ardb@kernel.org, ebiggers@google.com,
-	surenb@google.com, kristen.c.accardi@intel.com,
-	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
-Subject: Re: [PATCH v4 10/10] mm: zswap: Compress batching with Intel IAA in
- zswap_batch_store() of large folios.
-Message-ID: <20241125214724.GA2405574@cmpxchg.org>
-References: <20241123070127.332773-1-kanchana.p.sridhar@intel.com>
- <20241123070127.332773-11-kanchana.p.sridhar@intel.com>
- <CAJD7tkb0WyLD3hxQ5fHWHogyW5g+eF+GrR15r0PjK9YbFO3szg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1732571657; x=1733176457;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hzuzKr0ugYKRDB8J/LsU5oEu9Dne18LdLC3faV0ov8s=;
+        b=twxrBq8p6dDS/kJNOL5w5urpkWckdZCVvXnn6n6jth4yydWJJXuWVingZAXtgMQGRG
+         QIIOAD2Yl+YxZ8ijB6WaRL/kZyA04VQeXW1gTkgLksNyel+Twcp3K4xEonpqIt6EUcPc
+         hBmm5cfhb7tF6Xje3BKYHcXE8RhW25gaaq2PnMfAh+j31jNn4QJiqSC5tNOL9khbj2L/
+         r6ALFDecdJ4NQgVRbm4EOvj4LEN9Bi+tlU49BbyR1sEnxT6DjHAxhu9q5NB/DzvFmFEQ
+         Zfy7y9Hc5zu6YJpmE6B+Qon/1gnnjYPgtdgYC08neJJ18bJDlN8Shbf+SMLyXw+ScWHV
+         Kbvw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBs20b2NfvhYrR18H4DtCx+qiP0LvyxyO7Sa4CC6ME20Xge8ErUuZIO1zAcjUwOk7Qw9GosjjxniMtpyg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyL5GKgngsDlxsMVlpgLjV3qKzmkCHDMPXHhWJRzoOTtiMtuaIo
+	Ve7EVzTurXgBm4ktinZ9uJcWw6nHecIy/Mzy6lSupGTC3myE0qJ/
+X-Gm-Gg: ASbGncv77aZS1j5kyIccxKgTfqOhFobuX3d1vevpB5TEWH+CcRC2pcqhc1XQYJXom/n
+	jLu8cv+Z9NBJFfo9t/Oc9t+0IGo74FtqUn/rto9fxeeDEkRIl3rsJMeQqIm99+Vlro/HTRrFIRD
+	JdNF0zpJ2cCGmPHE7h4Ll0CiOy9J1EwgelAYeGSGx0+mNMBaYHaO52zs52oD73ttP23iVLYF5AQ
+	2woPCIWtNhqZVeCiH73StN7oZ+RgoiGnRSY1BCtTnyvMN5WvEIkQloLNVYl/zmFvA9KIqzHxKPX
+	Lrew7yWFwvJ/v/dHWnmTe50=
+X-Google-Smtp-Source: AGHT+IED+C0OafQQHk6o0bu2TwES7zCK/XISrURigwdFInd0r+eErQQ6zCJzyDEZiFhCRJEIWrw/wQ==
+X-Received: by 2002:a17:90b:38ca:b0:2ea:3f34:f194 with SMTP id 98e67ed59e1d1-2eb0e233a0bmr17955627a91.10.1732571656766;
+        Mon, 25 Nov 2024 13:54:16 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ead02ea3ddsm10829257a91.3.2024.11.25.13.54.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 13:54:15 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <55e2fcb8-dd06-42e4-b5de-4a0b46057571@roeck-us.net>
+Date: Mon, 25 Nov 2024 13:54:14 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sparc/pci: Make pci_poke_lock a raw_spinlock_t.
+To: Waiman Long <llong@redhat.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Will Deacon <will@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>
+References: <20241009161041.1018375-1-bigeasy@linutronix.de>
+ <20241009161041.1018375-2-bigeasy@linutronix.de>
+ <7656395b-58fc-4874-a9f3-6d934e2ef7ee@roeck-us.net>
+ <20241125085314.1iSDFulg@linutronix.de>
+ <b776ca37-d51c-47e2-b3bb-aee8e7910630@roeck-us.net>
+ <20241125174336.8nEhFXIw@linutronix.de>
+ <c77c77d4-7f6e-450c-97d5-39dc50d81b1a@roeck-us.net>
+ <20241125181231.XpOsxxHx@linutronix.de>
+ <72991b83-173e-492e-a4aa-5049304c1bd0@roeck-us.net>
+ <5d269249-afd1-44f5-8faf-9ac11d9a3beb@redhat.com>
+ <dea92bd5-65e5-4c5c-bc93-5bef547c935e@roeck-us.net>
+ <2a940822-b4d4-43ea-b4f7-4294043b76ea@roeck-us.net>
+ <88f47cea-baba-4673-9bd7-7b7c3f421008@redhat.com>
+ <b0e13a75-d068-4ad3-b0d7-4834ccec3d5a@roeck-us.net>
+ <42effdc0-bfe7-49a5-a872-21a6f665fff3@redhat.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <42effdc0-bfe7-49a5-a872-21a6f665fff3@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJD7tkb0WyLD3hxQ5fHWHogyW5g+eF+GrR15r0PjK9YbFO3szg@mail.gmail.com>
 
-On Mon, Nov 25, 2024 at 12:20:01PM -0800, Yosry Ahmed wrote:
-> On Fri, Nov 22, 2024 at 11:01 PM Kanchana P Sridhar
-> <kanchana.p.sridhar@intel.com> wrote:
-> >
-> > This patch adds two new zswap API:
-> >
-> >  1) bool zswap_can_batch(void);
-> >  2) void zswap_batch_store(struct folio_batch *batch, int *errors);
-> >
-> > Higher level mm code, for instance, swap_writepage(), can query if the
-> > current zswap pool supports batching, by calling zswap_can_batch(). If so
-> > it can invoke zswap_batch_store() to swapout a large folio much more
-> > efficiently to zswap, instead of calling zswap_store().
-> >
-> > Hence, on systems with Intel IAA hardware compress/decompress accelerators,
-> > swap_writepage() will invoke zswap_batch_store() for large folios.
-> >
-> > zswap_batch_store() will call crypto_acomp_batch_compress() to compress up
-> > to SWAP_CRYPTO_BATCH_SIZE (i.e. 8) pages in large folios in parallel using
-> > the multiple compress engines available in IAA.
-> >
-> > On platforms with multiple IAA devices per package, compress jobs from all
-> > cores in a package will be distributed among all IAA devices in the package
-> > by the iaa_crypto driver.
-> >
-> > The newly added zswap_batch_store() follows the general structure of
-> > zswap_store(). Some amount of restructuring and optimization is done to
-> > minimize failure points for a batch, fail early and maximize the zswap
-> > store pipeline occupancy with SWAP_CRYPTO_BATCH_SIZE pages, potentially
-> > from multiple folios in future. This is intended to maximize reclaim
-> > throughput with the IAA hardware parallel compressions.
-> >
-> > Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
-> > Suggested-by: Yosry Ahmed <yosryahmed@google.com>
+On 11/25/24 13:29, Waiman Long wrote:
 > 
-> This is definitely not what I suggested :)
+> On 11/25/24 4:25 PM, Guenter Roeck wrote:
+>> On 11/25/24 12:54, Waiman Long wrote:
+>>>
+>>> On 11/25/24 3:23 PM, Guenter Roeck wrote:
+>>>> On 11/25/24 12:06, Guenter Roeck wrote:
+>>>>> On 11/25/24 11:33, Waiman Long wrote:
+>>>>> [ ... ]
+>>>>>>> Fixing that finally gives me a clean run. Nevertheless, that makes me wonder:
+>>>>>>> Should I just disable CONFIG_PROVE_RAW_LOCK_NESTING for sparc runtime tests ?
+>>>>>>
+>>>>>> If no one is tryng to ever enable PREEMPT_RT on SPARC, I suppose you could disable CONFIG_PROVE_RAW_LOCK_NESTING to avoid the trouble.
+>>>>>>
+>>>>>
+>>>>> SGTM. I'll do that unless someone gives me a good reason to keep it enabled.
+>>>>>
+>>>>
+>>>> Actually it can not be disabled with a configuration flag. It is
+>>>> automatically enabled. I'll have to disable PROVE_LOCKING to disable it.
+>>>>
+>>>> config PROVE_RAW_LOCK_NESTING
+>>>>         bool                    <---- no longer user configurable
+>>>>         depends on PROVE_LOCKING
+>>>>         default y
+>>>>         help
+>>>>          Enable the raw_spinlock vs. spinlock nesting checks which ensure
+>>>>          that the lock nesting rules for PREEMPT_RT enabled kernels are
+>>>>          not violated.
+>>>>
+>>>> I don't really like that, and I don't understand the logic behind it,
+>>>> but it is what it is.
+>>>>
+>>>> FWIW, the description of commit 560af5dc839 is misleading. It says "Enable
+>>>> PROVE_RAW_LOCK_NESTING _by default_" (emphasis mine). That is not what the
+>>>> commit does. It force-enables PROVE_RAW_LOCK_NESTING if PROVE_LOCKING is
+>>>> enabled. It is all or nothing.
+>>>>
+>>> I think we can relax it by
+>>>
+>>> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+>>> index 5d9eca035d47..bfdbd3fa2d29 100644
+>>> --- a/lib/Kconfig.debug
+>>> +++ b/lib/Kconfig.debug
+>>> @@ -1399,7 +1399,7 @@ config PROVE_LOCKING
+>>>   config PROVE_RAW_LOCK_NESTING
+>>>          bool
+>>>          depends on PROVE_LOCKING
+>>> -       default y
+>>> +       default y if ARCH_SUPPORTS_RT
+>>>          help
+>>>           Enable the raw_spinlock vs. spinlock nesting checks which ensure
+>>>           that the lock nesting rules for PREEMPT_RT enabled kernels are
+>>>
+>>> Sebastian, what do you think?
+>>>
+>>
+>>     depends on PROVE_LOCKING && ARCH_SUPPORTS_RT
+>>
+>> seems to make more sense to me.
 > 
-> I won't speak for Johannes here but I suspect it's not quite what he
-> wanted either.
-
-It is not.
-
-I suggested having an integrated code path where "legacy" stores of
-single pages is just the batch_size=1 case.
-
-https://lore.kernel.org/linux-mm/20241107185340.GG1172372@cmpxchg.org/
-
-> What we really need to do (and I suppose what Johannes meant, but
-> please correct me if I am wrong), is to make the existing flow work
-> with batches.
+> That will work too, but that will enforce that arches with no ARCH_SUPPORTS_RT will not be able to enable PROVE_RAW_LOCK_NESTING even if people want to try it out.
 > 
-> For example, most of zswap_store() should remain the same. It is still
-> getting a folio to compress, the only difference is that we will
-> parallelize the page compressions. zswap_store_page() is where some
-> changes need to be made. Instead of a single function that handles the
-> storage of each page, we need a vectorized function that handles the
-> storage of N pages in a folio (allocate zswap_entry's, do xarray
-> insertions, etc). This should be refactoring in a separate patch.
-> 
-> Once we have that, the logic introduced by this patch should really be
-> mostly limited to zswap_compress(), where the acomp interfacing would
-> be different based on whether batching is supported or not. This could
-> be changes in zswap_compress() itself, or maybe at this point we can
-> have a completely different path (e.g. zswap_compress_batch()). But
-> outside of that, I don't see why we should have a completely different
-> store path for the batching.
 
-+1
+No architecture will be able to enable anything because "bool" has no
+string associated with it. As mentioned before, it is all or nothing.
+Otherwise I could just configure "CONFIG_PROVE_RAW_LOCK_NESTING=n"
+for sparc and be done.
+
+Guenter
+
 
