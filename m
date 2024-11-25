@@ -1,269 +1,127 @@
-Return-Path: <linux-kernel+bounces-421673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C0399D8E58
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:09:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C079D8E5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:10:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB4B9B239EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:09:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86B58284F0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7901CB528;
-	Mon, 25 Nov 2024 22:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABD21CD1FB;
+	Mon, 25 Nov 2024 22:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W+FEHLr7"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ffjzy5xt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72BD190059
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 22:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7772190059;
+	Mon, 25 Nov 2024 22:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732572568; cv=none; b=RNIMMZYZbykoZZh70W4kiL/bnOPF4mzunfMN8NESgPI8qLuKvDGbjs+iUYLuVYcEjIRwXN2QJm6NViNWtT03uHttR/5ifxq4zhDr2EbBb/bgvb5UmpOTL7t4kFN4SQiRKxWSVi0Qn1p+n07pvDfM/1RWGvJk5KYYwel5AO/zSuE=
+	t=1732572621; cv=none; b=uDcEC1U2C6POaZ1ruLJ/v9aEjISdUBEjgO5Z6ui7B3SS+MqbpwVixTUceSmRmvXRqemBBvjobNSmTaOix8YO99CZETFlO7HJAyhQqe6lg/FynhCTPRZpLjNZVgyuKSp1Za6g1lS8eNxAIIMA9pXGDEKB6IfsKsvLidSuaT4pzTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732572568; c=relaxed/simple;
-	bh=lUmPdpv3cWFE01UvO9BTTTKy/U67ChqHO/ofw2Pa6+g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qMtRtBC2qZfqdl1n5iX1vVXIDuywMuW6739cyCtxPW7pmP+g+subQFoqBYm4yTfx5WJP4Xg25z2ZBpDvdZYS1aSFt5oaVArSyRC5RaH9UjBOKjuhAxsb3N08XR44yBDcofYUZarApjJfu5H/wwk+nBakBjWdHiP/oXUYGx5R+XQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W+FEHLr7; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6d846307673so15968666d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:09:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732572565; x=1733177365; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hkPFNXiSO82mQaladEsQkAF2R6GvjjxU5ay6NuI1SY0=;
-        b=W+FEHLr7OflDaQCK2Xdh5fnunuAdVBjHfXzw5fQP1KRPCG8s0TMLeR1fKfoKAmohEO
-         bTz3wsyuBypxwcQNApcrNK8fPI4XR6qNXJjCT2NOqecjNe8EGPjyx2XT7q3hqvlKKKuj
-         zS2kE1ZFbeW6GZARwVpVUJLAkg8SGNBHI+lCBhrXBHNRV+j/Vzs14pgNtYOPqHgAn6f8
-         +aEC70dxLiWlI3jckQmfuhjWZnOH8a18lBSxMZV36U4Cytvwlj9G+BdAMfPXSTyn+miv
-         GtFoiNEOtxxxAESAtDjALa1990YKF1yL8Z1ZL7lcLuy157IkUDo7dftbovn+aEVDKySp
-         vM8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732572565; x=1733177365;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hkPFNXiSO82mQaladEsQkAF2R6GvjjxU5ay6NuI1SY0=;
-        b=U72P0Pp0y6pZbGWp6l5ESCwKqMGgs8oekP3rJmE4LHyDT5qc76C1DuArHGfi9diHuH
-         iuzbqUSrwliudWcjmDP12xj6wL1+QiXKNOFNgYlxaHI810baULaZ+JH7V/90/BhNASz/
-         1Dejdae6CWiaiElFrop+5v5D/MVdo1m4bbe1ybjK3eIuTWOIYcLJWKl1FWKHdJ+aDSum
-         W2UzdD36qg+GsvC4Ges38cf941rpIgrkIK4qHt2Ffe0Qjd9r+cCxU6NVEuVsEgafa8DW
-         KEF10gVdH6muy7MuyInHG1a1mYcE04drSO5d1lirQdo971frtQtOe9uMilrHL1DnblOV
-         vGiA==
-X-Gm-Message-State: AOJu0YxSNXwzKIvVVGR9Av1oOEvZW0oAVsUHIwgAyRKoPkACr3iJYK/u
-	Zwy9Vct6yLNAKoldKh6fj/OV6vpncEg8tiuVCv2v+gj2nnLzL4UHLTQxIQybieA9RLnepmeL+WI
-	LIUJEJK1vmGPnZ8Q0Hprp6IIfcBcph5PJ6EtP
-X-Gm-Gg: ASbGncsFMKRUqUkIZbs91o6dLUI7xUATH8o7SFtjJMbnoJ42qYGFqMNENYMe/e5gd/r
-	Y2dOa7mMeelYCD0QJlfFHcDu+dOOe7pwE5n/+aVbFVqa2oucbVd+ixMjpAKwNsw==
-X-Google-Smtp-Source: AGHT+IGVQmYoBVpN5RvRdxpCzs9ETs2LPxJY2hxoPO9iI/z2/AoWXumN7ElMl7egPxBfuWUYtgJnTK4SOW0j/TC3aTc=
-X-Received: by 2002:ad4:5d6c:0:b0:6d4:238e:35ba with SMTP id
- 6a1803df08f44-6d450e87024mr275882526d6.21.1732572565331; Mon, 25 Nov 2024
- 14:09:25 -0800 (PST)
+	s=arc-20240116; t=1732572621; c=relaxed/simple;
+	bh=rWtYjNxuIiUd82EVHv+ephFxQzacj/HVMsSoNMYp/F0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=IfD6I/aSsJTeC/Sc4qWQ7eE+DXXijuEt44XOmq6FMjNxUPqaChAvW61TQLu4uZ1iMm1mKF/rKERUxVTm9RxmvtHTTEt0Pn/gIOvZ392A4x+Bvch/DbOOZDPufqQv5BvsxK/2fJnZDnRXnhQxYF68Xrv4EpDrIZ8irEW+LlaiCw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ffjzy5xt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E0E7C4CECE;
+	Mon, 25 Nov 2024 22:10:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732572620;
+	bh=rWtYjNxuIiUd82EVHv+ephFxQzacj/HVMsSoNMYp/F0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Ffjzy5xtwVIArgv67W6oLB01Lgyyu51uMo/mmJk6Qo+eMwJ8WsNSqvDuU+gCVwFj5
+	 Rng1p2pq5NWrvBA2eblmt9TpbP3U5Kmk9eE/qe56soRupcC3eeyc9h2Mmm1wBRdxXq
+	 VmcPWX2JEtL5bHe4qJW8vcvTmpDYybRFbxyfzRiXIgKPJ214aTAiF10bVloMIWdr6q
+	 MWAFURea45kAI1ALtpEM3lPs0jMFuRHNULiNf8Xj8Ny9sUX8K4AAL37ZU6uiK3s98R
+	 J3xSTkYuaNDLEehcad1PWVi39bVCBgpCXKOfn72IeFf0fwYIZvEeOqFDtHe5D8Bd7i
+	 /J49Q9tw+WItw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34E9C3809A00;
+	Mon, 25 Nov 2024 22:10:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241123070127.332773-1-kanchana.p.sridhar@intel.com>
- <20241123070127.332773-11-kanchana.p.sridhar@intel.com> <CAJD7tkb0WyLD3hxQ5fHWHogyW5g+eF+GrR15r0PjK9YbFO3szg@mail.gmail.com>
- <SJ0PR11MB56782CF74C6D6904DDDDAB95C92E2@SJ0PR11MB5678.namprd11.prod.outlook.com>
-In-Reply-To: <SJ0PR11MB56782CF74C6D6904DDDDAB95C92E2@SJ0PR11MB5678.namprd11.prod.outlook.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 25 Nov 2024 14:08:48 -0800
-Message-ID: <CAJD7tkY3_pCBsFJ2-+NC5JrYnSGCxsusH81bdLL-fz=G3MwibQ@mail.gmail.com>
-Subject: Re: [PATCH v4 10/10] mm: zswap: Compress batching with Intel IAA in
- zswap_batch_store() of large folios.
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "nphamcs@gmail.com" <nphamcs@gmail.com>, 
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
-	"21cnbao@gmail.com" <21cnbao@gmail.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
-	"clabbe@baylibre.com" <clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>, 
-	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com" <surenb@google.com>, 
-	"Accardi, Kristen C" <kristen.c.accardi@intel.com>, 
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next v3 00/14] selftests/bpf: migrate
+ test_flow_dissector.sh to test_progs
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173257263300.4052918.4072302246034568900.git-patchwork-notify@kernel.org>
+Date: Mon, 25 Nov 2024 22:10:33 +0000
+References: <20241120-flow_dissector-v3-0-45b46494f937@bootlin.com>
+In-Reply-To: <20241120-flow_dissector-v3-0-45b46494f937@bootlin.com>
+To: =?utf-8?q?Alexis_Lothor=C3=A9_=3Calexis=2Elothore=40bootlin=2Ecom=3E?=@codeaurora.org
+Cc: andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
+ daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
+ davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
+ ebpf@linuxfoundation.org, thomas.petazzoni@bootlin.com,
+ bastien.curutchet@bootlin.com, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
 
-[..]
-> > > Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
-> > > Suggested-by: Yosry Ahmed <yosryahmed@google.com>
-> >
-> > This is definitely not what I suggested :)
-> >
-> > I won't speak for Johannes here but I suspect it's not quite what he
-> > wanted either.
->
-> Thanks for the comments Yosry. I was attributing these suggestions noted
-> in the change log:
->
-> 5) Incorporated Johannes' suggestion to not have a sysctl to enable
->    compress batching.
-> 6) Incorporated Yosry's suggestion to allocate batching resources in the
->    cpu hotplug onlining code, since there is no longer a sysctl to control
->    batching. Thanks Yosry!
-> 7) Incorporated Johannes' suggestions related to making the overall
->    sequence of events between zswap_store() and zswap_batch_store() similar
->    as much as possible for readability and control flow, better naming of
->    procedures, avoiding forward declarations, not inlining error path
->    procedures, deleting zswap internal details from zswap.h, etc. Thanks
->    Johannes, really appreciate the direction!
->    I have tried to explain the minimal future-proofing in terms of the
->    zswap_batch_store() signature and the definition of "struct
->    zswap_batch_store_sub_batch" in the comments for this struct. I hope the
->    new code explains the control flow a bit better.
->
-> I will delete the "Suggested-by" in subsequent revs, not a problem.
+Hello:
 
-I wasn't really arguing about the tag, but rather that this
-implementation is not in the direction that we suggested.
+This series was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
 
-FWIW, the way I usually handle "Suggested-by" is if the core idea of a
-patch was suggested by someone. In this case, these are normal review
-comments that you addressed, so I wouldn't add the tag. The only case
-in which I add the tag in response to review comments is if they
-resulted in a new patch that was the reviewer's idea.
+On Wed, 20 Nov 2024 08:43:10 +0100 you wrote:
+> Hello,
+> this is the revision 3 of test_flow_dissector_migration.sh into
+> test_progs. This revision addresses comments from Stanislas, especially
+> about proper reuse of pseudo-header checksuming in new network helpers.
+> 
+> There are 2 "main" parts in test_flow_dissector.sh:
+> - a set of tests checking flow_dissector programs attachment to either
+>   root namespace or non-root namespace
+> - dissection test
+> 
+> [...]
 
-Just my 2c, perhaps others do it differently.
+Here is the summary with links:
+  - [bpf-next,v3,01/14] selftests/bpf: add a macro to compare raw memory
+    https://git.kernel.org/bpf/bpf-next/c/4d43fadb7224
+  - [bpf-next,v3,02/14] selftests/bpf: use ASSERT_MEMEQ to compare bpf flow keys
+    https://git.kernel.org/bpf/bpf-next/c/a4368790be93
+  - [bpf-next,v3,03/14] selftests/bpf: replace CHECK calls with ASSERT macros in flow_dissector test
+    https://git.kernel.org/bpf/bpf-next/c/00959b217553
+  - [bpf-next,v3,04/14] selftests/bpf: re-split main function into dedicated tests
+    https://git.kernel.org/bpf/bpf-next/c/849a01d9be57
+  - [bpf-next,v3,05/14] selftests/bpf: expose all subtests from flow_dissector
+    https://git.kernel.org/bpf/bpf-next/c/e34fa9a43e8a
+  - [bpf-next,v3,06/14] selftests/bpf: add gre packets testing to flow_dissector
+    https://git.kernel.org/bpf/bpf-next/c/1e1351e8afb3
+  - [bpf-next,v3,07/14] selftests/bpf: migrate flow_dissector namespace exclusivity test
+    https://git.kernel.org/bpf/bpf-next/c/284ed00a59dd
+  - [bpf-next,v3,08/14] selftests/bpf: Enable generic tc actions in selftests config
+    https://git.kernel.org/bpf/bpf-next/c/69251a92c54d
+  - [bpf-next,v3,09/14] selftests/bpf: move ip checksum helper to network helpers
+    https://git.kernel.org/bpf/bpf-next/c/746b1cd32e1b
+  - [bpf-next,v3,10/14] selftests/bpf: document pseudo-header checksum helpers
+    https://git.kernel.org/bpf/bpf-next/c/89fa46c107c5
+  - [bpf-next,v3,11/14] selftests/bpf: use the same udp and tcp headers in tests under test_progs
+    https://git.kernel.org/bpf/bpf-next/c/c5749a3ac71b
+  - [bpf-next,v3,12/14] selftests/bpf: add network helpers to generate udp checksums
+    https://git.kernel.org/bpf/bpf-next/c/6cc18e3ae2a3
+  - [bpf-next,v3,13/14] selftests/bpf: migrate bpf flow dissectors tests to test_progs
+    https://git.kernel.org/bpf/bpf-next/c/b15f80966c04
+  - [bpf-next,v3,14/14] selftests/bpf: remove test_flow_dissector.sh
+    https://git.kernel.org/bpf/bpf-next/c/1d8ef56c31c1
 
-[..]
-> > > @@ -276,7 +276,21 @@ int swap_writepage(struct page *page, struct
-> > writeback_control *wbc)
-> > >                  */
-> > >                 swap_zeromap_folio_clear(folio);
-> > >         }
-> > > -       if (zswap_store(folio)) {
-> > > +
-> > > +       if (folio_test_large(folio) && zswap_can_batch()) {
-> > > +               struct folio_batch batch;
-> > > +               int error = -1;
-> > > +
-> > > +               folio_batch_init(&batch);
-> > > +               folio_batch_add(&batch, folio);
-> > > +               zswap_batch_store(&batch, &error);
-> > > +
-> > > +               if (!error) {
-> > > +                       count_mthp_stat(folio_order(folio), MTHP_STAT_ZSWPOUT);
-> > > +                       folio_unlock(folio);
-> > > +                       return 0;
-> > > +               }
-> >
-> > First of all, why does the code outside of zswap has to care or be changed?
-> >
-> > We should still call zswap_store() here, and within that figure out if
-> > we can do batching or not. I am not sure what we gain by adding a
-> > separate interface here, especially that we are creating a batch of a
-> > single folio and passing it in anyway. I suspect that this leaked here
-> > from the patch that batches unrelated folios swapout, but please don't
-> > do that. This patch is about batching compression of pages in the same
-> > folio, and for that, there is no need for the code here to do anything
-> > differently or pass in a folio batch.
->
-> This was the "minimal future proofing" and "error handling simplification/
-> avoiding adding latency due to rewinds" rationale I alluded to in the
-> change log and in the comments for "struct zswap_batch_store_sub_batch"
-> respectively. This is what I was trying to articulate in terms of the benefits
-> of the new signature of zswap_batch_store().
->
-> The change in swap_writepage() was simply an illustration to show-case
-> how the reclaim batching would work, to try and explain how IAA can
-> significantly improve reclaim latency, not just zswap latency (and get
-> suggestions early-on).
->
-> I don't mind keeping swap_writepage() unchanged if the maintainers
-> feel strongly about this. I guess I am eager to demonstrate the full potential
-> of IAA, hence guilty of the minimal future-proofing.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-While I do appreciate your eagerness, I will be completely honest
-here. The change to batch reclaim of unrelated folios, while can be
-reasonable, is an order of magnitude more controversial imo. By
-tightly coupling this to this series, you are doing yourself a
-disservice tbh. I would say drop any changes specific to that for now.
-Leave that to a completely separate discussion. This is the easiest
-way to make forward progress on this series, which I am sure is what
-we all want here (and I do very much appreciate your work!).
 
-[..]
-> > I didn't look too closely at the code, but you are essentially
-> > replicating the entire  zswap store code path and making it work with
-> > batches. This is a maintenance nightmare, and the code could very
-> > easily go out-of-sync.
-> >
-> > What we really need to do (and I suppose what Johannes meant, but
-> > please correct me if I am wrong), is to make the existing flow work
-> > with batches.
-> >
-> > For example, most of zswap_store() should remain the same. It is still
-> > getting a folio to compress, the only difference is that we will
-> > parallelize the page compressions. zswap_store_page() is where some
-> > changes need to be made. Instead of a single function that handles the
-> > storage of each page, we need a vectorized function that handles the
-> > storage of N pages in a folio (allocate zswap_entry's, do xarray
-> > insertions, etc). This should be refactoring in a separate patch.
-> >
-> > Once we have that, the logic introduced by this patch should really be
-> > mostly limited to zswap_compress(), where the acomp interfacing would
-> > be different based on whether batching is supported or not. This could
-> > be changes in zswap_compress() itself, or maybe at this point we can
-> > have a completely different path (e.g. zswap_compress_batch()). But
-> > outside of that, I don't see why we should have a completely different
-> > store path for the batching.
->
-> You are absolutely right, and that is my eventual goal. I see no reason
-> why zswap_batch_store() cannot morph into a vectorized implementation
-> of zswap_store()/zswap_store_batch(). I just did not want to make a
-> drastic change in v4.
-
-I wouldn't send intermediate versions that are not the code you want
-to be merged. It's not the best use of anyone's time to send code that
-both of us agree is not what we want to merge anyway. Even if that
-means a rewrite between versions, that's not uncommon as long as you
-describe the changes in the changelog.
-
->
-> As per earlier suggestions, I have tried to derive the same structure
-> for zswap_batch_store() as is in place for zswap_store(), plus made some
-> optimizations that can only benefit the current zswap_store(), such as
-> minimizing the rewinding of state from must-have computes for a large
-> folio such as allocating zswap_entries upfront. If zswap_batch_store()
-> replaces zswap_store(), this would be an optimization over-and-above
-> the existing zswap_store().
->
-> For sure, it wouldn't make sense to maintain both versions.
->
-> There are some minimal "future-proofing" details such as:
->
-> 1) The folio_batch: This is the most contentious, I believe, because it
->      is aimed toward evolving the zswap_batch_store() interface for
->      reclaim batching, while allowing the folio-error association for the
->      partial benefits provided by (2). As mentioned earlier, I can delete this
->      in the next rev if the maintainers feel strongly about this.
-
-Yeah I would drop this for now as I mentioned earlier.
-
-> 2) int* error signature: benefit can be realized today due to the latency
->     optimization it enables from detecting errors early, localized cleanup,
->     preventing unwinding state. That said, the same benefits can be realized
->     without making it a part of the interface.
-
-If this is a pure optimization that is not needed initially, I would
-do it in a separate patch after this one. Even better if it's a follow
-up patch, this is already dense enough :)
-
-To summarize, I understand your eagerness to present all the work you
-have in mind, and I appreciate it. But it's most effective to have
-changes in independent digestible chunks wherever possible. For next
-versions, I would only include the bare minimum to support the
-compression batching and showcase its performance benefits. Extensions
-and optimizations can be added on top once this lands. This makes both
-your life and the reviewers' lives a lot easier, and ultimately gets
-things merged faster.
 
