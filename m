@@ -1,136 +1,189 @@
-Return-Path: <linux-kernel+bounces-420645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 207819D7FA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:01:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B8629D7FCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:02:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2453B25A84
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:01:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65645B26714
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5A518A93F;
-	Mon, 25 Nov 2024 09:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CB519066D;
+	Mon, 25 Nov 2024 09:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MKdrU5oo"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dDwD1bBa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9AC3D0D5
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 09:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CBC18C004;
+	Mon, 25 Nov 2024 09:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732525266; cv=none; b=qV8EjhwcjmbNe7JdS0sVVsdy+6Fqg+ysL/1EQny7kZQOnwTNqJ5QkxHK3zHSIo3Ep1vfqtNhrJ5duRl2dxSW4JItAeTd7AD0gZnN3rQ83KMw1JWDRfEIBD1mZtcadCqE4GmZ8Q0TbalHRPESFBJxnJ2fP7FTiU1TFTRmAcixhr0=
+	t=1732525295; cv=none; b=rhp39nAHQCX7sX2g7yDXzYMqFyPTBziYnyhMTy6BsDbZzsMYyXcyatQZEmJ9dO/qEgDh+8TyvMmVoGJbp8DE+NBFTY+CUWuWjb+fehHCGxfD8EKEEGFRqMvqiLZnaIdfcDzrIxGqXoHaSpzUoejs84LQq5BDYU2Bj7aUF6E1vHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732525266; c=relaxed/simple;
-	bh=xCD8RvClGzAMSnnHYQv40YACwVqG7KUnjAVXvpGmtF4=;
+	s=arc-20240116; t=1732525295; c=relaxed/simple;
+	bh=j4CgOW/UoFO3+P6ChEexl3YHtLFB7F+E1YeGfiQnv4w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jokc/Gk/KDlH52RbEpgDOicUoteq4ckfQsjTAG4GLWDJDtV2cvuGEwdFuC7C57M23JV+TL0s9dw5hNVVjRCeJfNLyOzw0cDOSn6TMlIDXHqiZ+bhvGMu5IOwCY7R/fsj3zSkPToDvz8Iu5i+NecXiqV0FKDT0xOFJQi3HhEKCHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MKdrU5oo; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43158625112so38563545e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 01:01:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1732525263; x=1733130063; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xCD8RvClGzAMSnnHYQv40YACwVqG7KUnjAVXvpGmtF4=;
-        b=MKdrU5ooq4c513v8bCyU6pBn0Zo/Rcd2cSuavl+YhsqfHK57AIaiTFnAJj6ZnYwVN8
-         p7Iw9zJpfDqu7+gld8aAEsjmxQiXCWm2Q91mQG/Gw2U9cveuVLj1JwG4cw0xVpjuGdYW
-         vSjpVwa6+x2zOBxV+qvyGfKuBzt4sMNttnPC225MR7p3W3wCNGO4UpzPnWasT/BBRn0W
-         NvYusyIWKRVtVSDKgd3MsbznngVZQgiLpdzGg0x49Onpi2HSROZgYKCza7E1CM6viaeM
-         QNF8TEPmpiiio23O152Ydxoylajb4x/D9dgQtEXIfqlLHis1jKhykMCoTdoj2nRVseSe
-         uhjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732525263; x=1733130063;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xCD8RvClGzAMSnnHYQv40YACwVqG7KUnjAVXvpGmtF4=;
-        b=djhStBeN3gFsrzOyO8CBSPieSINolDO+kWZNtYHYf26k6mF4FlLYoQSz2CxWTNHIwz
-         L2gXmMe1QpGcRpy/fRKm6W5Is8LHEKFJsjntJSqy3mrXdh7HSrYqqU+Bdsp6IhNN8KGs
-         mWCxBb2VJmt/rVIirNs27pBjjgbsv5SMxR5lm6MsXXdV3wCDrxgjHKWqJqC2/6UCKfWL
-         J3nD9aT9TqXNHHWf0brjg0nShRPDe+auIHxMkthWXQ1G5eLVq+5x9YJxuvZj6aSKVYNr
-         Bx45GbSGf4muS1/DdvJ7bTmwW5cRW248CtSDB+s7LFQK1R3AFiMpDElu3jBhfiCt9t29
-         wIJQ==
-X-Gm-Message-State: AOJu0YyG/G+VvX463+GSOXj/3fDXj+2VzbwKUnKcmPeEeIHH5ZjfeID0
-	u4MfgNfiZ237MA8OxU7tfOPJjtCs/G5NQrIphpxwvUbAjcxiSe4x0JA9m/MB8PU=
-X-Gm-Gg: ASbGncsuNk8w2MI5fQyAK8fB0j9o7F5nSzGTSnXa+r7VuE6PB9cydfiqdQieiYpcbZ8
-	+vJtuXYrxvBBPpt+0979lhsWAe/l/1aQgS7hymrQXOPs8kDyDL+7UvzlAkrviFuQdjH6LeAnM9p
-	PlGResexIUkubOoN4hjGxLnC1v/YEIjYXSeNp2HSiStkf+F4wmDkJmc3Jz2UKfz0eSIUGoYn4R9
-	6S437UJj1IATPFV+l/BM/kDS4Em3cmbcuNEHTK1K78VP7BYxvBF
-X-Google-Smtp-Source: AGHT+IE+5w5COF+F5rYltE9rBlsjm8wSrfXzUTXMOPeyu62rRfNwF3h9/qxhoIjiGq3wwkGbGBFEPQ==
-X-Received: by 2002:a05:600c:1c08:b0:434:a1e7:27da with SMTP id 5b1f17b1804b1-434a1e729c3mr2768025e9.25.1732525263461;
-        Mon, 25 Nov 2024 01:01:03 -0800 (PST)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbf2b29sm9735891f8f.107.2024.11.25.01.01.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 01:01:03 -0800 (PST)
-Date: Mon, 25 Nov 2024 10:01:01 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	michael.christie@oracle.com, Tejun Heo <tj@kernel.org>, Luca Boccassi <bluca@debian.org>
-Subject: Re: [PATCH] KVM: x86: switch hugepage recovery thread to vhost_task
-Message-ID: <hbv5uf7b2auiwyjkekmtfpu26ht7ulvapnszx7rdgwoowqdcna@pwuuodkenwgr>
-References: <20241108130737.126567-1-pbonzini@redhat.com>
- <rl5s5eykuzs4dgp23vpbagb4lntyl3uptwh54jzjjgfydynqvx@6xbbcjvb7zpn>
- <CABgObfbUzKswAjPuq_+KL9jyQegXgjSRQmc6uSm1cAXifNo_Xw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YNlmRwjs2mBE8Up89DuHwBHpBoATSP6x4CbqBKMSJv5EEZTJuvz+LfLm1P65GYTZUJ1eW/iHePIc4ffvlDyft7kt+McQzerXchMa8PRG/YY1UuUJTW9ciYre/T30QLm40+Q1ZDF3MDPiBMZCqoNsigrTgBSGPg60D6NO7tuugd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dDwD1bBa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53EFDC4CECE;
+	Mon, 25 Nov 2024 09:01:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732525294;
+	bh=j4CgOW/UoFO3+P6ChEexl3YHtLFB7F+E1YeGfiQnv4w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dDwD1bBaFeQ2VbbSqXhyFTsN4utJIqHEPh6rk3UCG+xAcS3FSE5zh9e42e3goiyZc
+	 cAMNaoXaDxrxjyLIXjw4hKSC0GfD4zDJLk9F/MshsrdY5sI2+WY06X2iGM/1WKhOSX
+	 /ZQeIB0EumP7v5M1y3V3MNDEMZaw05UrQuEPiLPmee/jPk/YznNYNIHxMlEUEkUQcz
+	 +Ksa4Kc4Jeq35jj8BYAt9n59iJ1M/O5NKk0cKaoI4b3BMXhcOZC1xnT6hGIQGbaqeQ
+	 3ZCLnrRGJf/D96UrYpDy+i3v6GystY86x/15dqDrXjqYf+dYPn1VyvfBEwsrZeJNpN
+	 +PJPFBLX3xlXQ==
+Date: Mon, 25 Nov 2024 10:01:31 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Javier Martinez Canillas <javierm@redhat.com>
+Cc: Radu Rendec <rrendec@redhat.com>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, robh@kernel.org, arnd@linaro.org, linux-kernel@vger.kernel.org, 
+	Zhipeng Wang <zhipeng.wang_1@nxp.com>, javier@dowhile0.org, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	linux-pm@vger.kernel.org
+Subject: Re: [RFC PATCH] cpufreq: dt-platdev: Fix module autoloading
+Message-ID: <20241125-eminent-devious-zebu-ec2caf@houat>
+References: <20241119111918.1732531-1-javierm@redhat.com>
+ <20241121071127.y66uoamjmroukjck@vireshk-i7>
+ <87iksh3r4x.fsf@minerva.mail-host-address-is-not-set>
+ <20241121090357.ggd4hc43n56xzo4m@vireshk-i7>
+ <87frnl3q63.fsf@minerva.mail-host-address-is-not-set>
+ <1c5e13b7472917b5fa303553da04ae16590f3105.camel@redhat.com>
+ <87cyin42mb.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qqb3ia4ee5ip4zwe"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="43rrzlpdnp4ikjdi"
 Content-Disposition: inline
-In-Reply-To: <CABgObfbUzKswAjPuq_+KL9jyQegXgjSRQmc6uSm1cAXifNo_Xw@mail.gmail.com>
+In-Reply-To: <87cyin42mb.fsf@minerva.mail-host-address-is-not-set>
 
 
---qqb3ia4ee5ip4zwe
-Content-Type: text/plain; charset=us-ascii
+--43rrzlpdnp4ikjdi
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC PATCH] cpufreq: dt-platdev: Fix module autoloading
+MIME-Version: 1.0
 
-On Mon, Nov 18, 2024 at 01:42:27PM GMT, Paolo Bonzini <pbonzini@redhat.com>=
- wrote:
-> I mean being able to send it to the threads with an effect.
-
-Understood now.
-
-> > Consequently, it's OK if a (possibly unprivileged) user stops this
-> > thread forever (they only harm themselves, not the rest of the system),
-> > correct?
+On Fri, Nov 22, 2024 at 06:09:16PM +0100, Javier Martinez Canillas wrote:
+> Radu Rendec <rrendec@redhat.com> writes:
 >=20
-> Yes, they will run with fewer huge pages and worse TLB performance.
+> Hello Radu,
+>=20
+> > On Thu, 2024-11-21 at 10:13 +0100, Javier Martinez Canillas wrote:
+> >> Viresh Kumar <viresh.kumar@linaro.org> writes:
+> >>=20
+> >> > On 21-11-24, 09:52, Javier Martinez Canillas wrote:
+> >> > > Will autload the driver for any platform that has a Device Tree no=
+de with a
+> >> > > compatible =3D "operating-points-v2" (assuming that this node will=
+ be a phandle
+> >> > > for the "operating-points-v2" property.
+> >> > >=20
+> >> > > For example, in the case of the following DT snippet:
+> >> > >=20
+> >> > > cpus {
+> >> > > =A0=A0=A0=A0=A0=A0=A0 cpu@0 {
+> >> > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 operating-points-v2=
+=A0=A0=A0=A0 =3D <&cpu0_opp_table>;
+> >> > > =A0=A0=A0=A0=A0=A0=A0 };
+> >> > > };
+> >> > >=20
+> >> > > cpu0_opp_table: opp_table {
+> >> > > =A0=A0=A0=A0=A0=A0=A0 compatible =3D "operating-points-v2";
+> >> > > ...
+> >> > > };
+> >> > >=20
+> >> > > It will autoload if OF finds the opp_table node, but it register t=
+he cpufreq-dt
+> >> > > device only if there's a cpu@0 with a "operating-points-v2" proper=
+ty.
+> >> > >=20
+> >> > > Yes, there may be false positives because the autload semantics do=
+n't exactly
+> >> > > match the criteria for the driver to "match" but I believe is bett=
+er to load it
+> >> > > and not use for those cases, than needing the driver and not autol=
+oading it.
+> >> > >=20
+> >> > > > I am not sure what's the best way forward to fix this.
+> >> > > >=20
+> >> > >=20
+> >> > > I couldn't find another way to solve it, if you have a better idea=
+ please let
+> >> > > me know. But IMO we should either workaround like this or revert t=
+he commit=20
+> >> > > that changed the driver's Kconfig symbol to be tristate.
+> >> >=20
+> >> > Yeah, this needs to be fixed and this patch is one of the ways. Lets=
+ see if Arnd
+> >> > or Rob have something to add, else can apply this patch.
+> >> >=20
+> >>=20
+> >> Ok. Please notice though that this is an RFC, since all my arm64 machi=
+nes have
+> >> their own CPUFreq driver and are not using cpufreq-dt-platdev. So I wo=
+uld not
+> >> apply it until someone actually tested the patch.
+> >
+> > I tested the patch on a Renesas R-Car S4 Spider (r8a779f0-spider.dts)
+> > board, and it didn't work. I think the problem is that the OPP table DT
+> > node does not have a corresponding device instance that is registered,
+> > and therefore no modalias uevent is reported to udev/kmod.
+> >
+>=20
+> Thanks for testing! Bummer that the workaround didn't work. But that's why
+> I asked you to test. You know, like Donald Knuth said: "Beware of bugs in
+> the above code; I have only proved it correct, not tried it" :)
+>=20
+> > FWIW, the OPP table is defined at the top of r8a779f0.dtsi and
+> > referenced just a few more lines below, where the CPU nodes are
+> > defined.
+> >
+> > As far as I understand, there are two options to fix this:
+> >    1. Revert the patch that allows the cpufreq-dt-platdev driver to be
+> >       built as a module. There's little benefit in allowing that anyway
+> >       because the overhead at init time is minimal when the driver is
+> >       unused, and driver can't be unloaded.
+> >    2. Modify the driver and create an explicit of_device_id table of
+> >       supported platforms for v2 too (like the existing one for v1) and
+> >       use that instead of the cpu0_node_has_opp_v2_prop() call and the
+> >       blacklist. That would of course also eliminate the blacklist.
+> >
+>=20
+> Agreed with this. Likely (1) is the easiest path and (2) would make the
+> driver more aligned with the rest of the kernel (that have a list of OF
+> device IDs to autoload / match instead of some custom logic).
+>=20
+> But I guess that (2) would be riskier, since not adding a platform that
+> uses v2 will cause a regression.
 
-Alright.
+Also, 2 probably wouldn't work. Devices under /cpus don't get a struct
+device created for them, so it wouldn't probe.
 
-Thanks,
-Michal
+Maxime
 
-> > It is nice indeed.
-> > I think the bugs we saw are not so serious to warrant
-> > Fixes: c57c80467f90e ("kvm: Add helper function for creating VM worker =
-threads")
-
-I'm mainly posting this because there are some people surprised this
-didn't get to 6.12. Hence I wonder if Cc: stable would be helpful here.
-
-
---qqb3ia4ee5ip4zwe
+--43rrzlpdnp4ikjdi
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ0Q8xQAKCRAt3Wney77B
-SfgSAPwP3u+ZalijELn3qaKxgwpOHg5xL05CI2GSCnjTPDyL7gD6AwoGjfAJWwG/
-N8U5cOSctHBjzIagsgUKSPmc+aCA1wM=
-=M4XR
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ0Q85AAKCRAnX84Zoj2+
+dmpJAX0cekmVgwNl35X7Nrv66juttUvAd457Z70pGQEcQUIwqsIKsyuTY/5pVwvA
+x1wK4RUBf3iuQgsNCOQgHAh6t6l/mrjILAIXQpKwSQx7UP/uBwHOz1aBU5kgqDR9
+iyG71jWhvA==
+=/4QH
 -----END PGP SIGNATURE-----
 
---qqb3ia4ee5ip4zwe--
+--43rrzlpdnp4ikjdi--
 
