@@ -1,107 +1,270 @@
-Return-Path: <linux-kernel+bounces-421703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E85C9D8EB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:48:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A8621677A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:48:48 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7579C1CDA2E;
-	Mon, 25 Nov 2024 22:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+faHWM/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66CA59D8EBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:54:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD741BBBD4;
-	Mon, 25 Nov 2024 22:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC331B2273C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:52:01 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6D81CD21C;
+	Mon, 25 Nov 2024 22:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PvPW+LUn"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DFB1B78F3
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 22:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732574913; cv=none; b=kviQhR7MtqdxnrbgGfFlWyIBEoYGUa/0jmFbLt6/ziF+/3svntzNSKa3di8w/1Ll0IgEY9h18byf6ZNT9vJB1EKCgPFu2sYi+fQkowM4c2eH78vfhhY0hty/1v1/qXaGXa7NgNtHMPfL+iaFljaUSN2XTrhzIliSaepcFnIeoCQ=
+	t=1732575115; cv=none; b=m8KRXujI6WiaHIxnjGoTGOl6W7SEYWPow4DUwk8lfCsot8w71z4IZNZbCyDlpC2+sTttH2ssDAb51ZA0XNcv1LnhE00zqoVP8JqDvpFzYSDcbpiLr5JZNDUWia5aLJNXQJ8VXnF9epAT09B912J+UBEW823+AturTgLUS28ZoHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732574913; c=relaxed/simple;
-	bh=gtIsN5q1iJLyClB2EiS8qVMSi0Ss3Ong+GdKLPobwMg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=P/dWYzxup/IpeLzyve6Ui67pxJtmfZgKj3V7WwFBOUytoky+3hfuuByTmEyFysZWHDWl3aJPXoZHeAkJjwQbuHPZEWNeIhSAVkv+GE+jA99HvVvO/bzz3PGLOPw6SKsA6O8qdcrcZ03tddHr9WQ3GH/ZJNWPhPXvi2iTJXsDDSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+faHWM/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 888AAC4CED3;
-	Mon, 25 Nov 2024 22:48:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732574913;
-	bh=gtIsN5q1iJLyClB2EiS8qVMSi0Ss3Ong+GdKLPobwMg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=E+faHWM/2qDZoA2FznIKRGquKP0uGeygeh8ImtxtvbMey5InTMOdS1stRVqnrdrBk
-	 7jCll8UmD5X4S3hBYnJ+OMycyOFe82kq/eoI9aWRlj3O8hrhdgXzuCKEUIDnI7VVP/
-	 hFC0oWROmxxdfQGrfD1VWH83XFgYJ2e7U9u82yxLyYOKEvnApI2BJIz7edsEexcNks
-	 kOm9oZdrZvV0VYUwVRcOx+w4IP9muXzD6lDymyPTvHeGCWRDwQ2ptPPuL6A7uAXums
-	 KZHBoXXsVwnwa5s0nJyye3NIR5n+Qh6LjgayCbP+Rwdcq6WisLJ+hn5zme4mPmrSjS
-	 R8mr/UZDrlYog==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80BF9D59D64;
-	Mon, 25 Nov 2024 22:48:33 +0000 (UTC)
-From: =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD_via_B4_Relay?= <devnull+cleverline1mc.gmail.com@kernel.org>
-Date: Mon, 25 Nov 2024 23:47:20 +0100
-Subject: [PATCH v4 3/3] w1: ds2482: Fix datasheet URL
+	s=arc-20240116; t=1732575115; c=relaxed/simple;
+	bh=+344/y+fqLzIptJF3tZsdyu4JrVxxXoe1f/Gvryhw/U=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=u6SJsI0FvzeNWrcG4JkSxs3B/cCvkzNyfSI+8M6pqVicHk3r0glmSb0yZFUMsXSsxm+qfManEWcaBbrmUY90ggAyr7RoxK4Hm4GM4ENGhSBj8weXH0s4Lsoj0Y1JfbGH0014rx5B62erakJZeGTUrPns8JcWaZvfvGbCIhWkUc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PvPW+LUn; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ea2b6b08e4so4901913a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:51:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732575113; x=1733179913; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j+K9zzd9fyT3ev3udb3SozcJ58KmXrRPHl4/ugcSkmM=;
+        b=PvPW+LUnk6VOz2oX0gpAd7vksTMjDS0JIscdFUI/ABBMDE7gBvhGWbQjaAfvxDCJjT
+         AphrwIEENfdqVo7QDOytS688oUz1AcAzePSSGs3FNVKe0CsLozVbYVpk1bzHLEk18vUB
+         hsl558bjFqqKOS2mkGjiYwDJmmHrG+1XrPuz5syu2kb30ECGJyNftWfW5hfGwq/S3adD
+         4ZwvA7Vu8+cI4Ndy9015aADGltZf8yZs4d6Asc3Zd3SFaZkQvSHC7Bppmk0JPB2TjvMq
+         xe7nTgHLwF7p1fyAQUQClQrbhfh1QceoFTy5lHs/cxE4cBcoJSzHtQ/EIYNJb85sMZ/D
+         aUtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732575113; x=1733179913;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=j+K9zzd9fyT3ev3udb3SozcJ58KmXrRPHl4/ugcSkmM=;
+        b=nrStoAy6ERuE0yLmttzHvscuWy0cE+3zM0fy1J8yPg50AjHBt9n6RRvEkTJum1BcfH
+         FeYoXy9phsWbOR6kY5LuRQku3Mb7hYRK6VFAoo8A7/36zXYya++EcjSfmKYJMV6+6Be6
+         wYS0uyIfVc6OrnN5WkQ5ri/or8JoUBTibEhyJf4wld8dL0xqk90cB8CzinR0IouTArdM
+         PxJcd2SPc7cNJ4pFNoXemwbw/TxAmjCUgTY18rscPsxNRq1/tcgrwxy6OLEIFluzLlvQ
+         RC0QQ8el5opg4vIgPHh5U0ctLrawZSgm5sx2rzl5lS8ZMtZ8b8SHdeNLG2RVgXBSPKWG
+         44rA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7+kNKyYZsbcK6NcULlrOXyt4H02YLUpVNL7kKCunKH5k4XqkZJVpsrHPuzkyksUL54VuaUYbR5rWEb+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxooqbtLh5S2/puJtmSnWLr2Lg5zNMW8eE3AjtkJs4frht+FmmO
+	kQDszQg6sCxRo8Wzr3zGXrvouCW3KiuVXjIw16rL2A5odQ8n71iI9N1SBuXlj1lr+KSZbb0YAZ7
+	9Vg==
+X-Google-Smtp-Source: AGHT+IGDn5rzsTqyT8Eu5D17HvR4yd+YGvsgthjfrw3EM/0fR9oVBtUfrK9/cVdHEmQS3AeJOEBBn8Ywepg=
+X-Received: from pjbhl7.prod.google.com ([2002:a17:90b:1347:b0:2ea:7d73:294e])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c4b:b0:2ea:59e3:2d2e
+ with SMTP id 98e67ed59e1d1-2eb0e2330c2mr18331895a91.10.1732575113537; Mon, 25
+ Nov 2024 14:51:53 -0800 (PST)
+Date: Mon, 25 Nov 2024 14:51:52 -0800
+In-Reply-To: <735d3a560046e4a7a9f223dc5688dcf1730280c5.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20241121201448.36170-1-adrian.hunter@intel.com>
+ <86d71f0c-6859-477a-88a2-416e46847f2f@linux.intel.com> <Z0SVf8bqGej_-7Sj@google.com>
+ <735d3a560046e4a7a9f223dc5688dcf1730280c5.camel@intel.com>
+Message-ID: <Z0T_iPdmtpjrc14q@google.com>
+Subject: Re: [PATCH 0/7] KVM: TDX: TD vcpu enter/exit
+From: Sean Christopherson <seanjc@google.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: "binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	Xiaoyao Li <xiaoyao.li@intel.com>, Yan Y Zhao <yan.y.zhao@intel.com>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Reinette Chatre <reinette.chatre@intel.com>, 
+	Weijiang Yang <weijiang.yang@intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, "dmatlack@google.com" <dmatlack@google.com>, 
+	"nik.borisov@suse.com" <nik.borisov@suse.com>, 
+	"tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>, Chao Gao <chao.gao@intel.com>, 
+	Rick P Edgecombe <rick.p.edgecombe@intel.com>, "x86@kernel.org" <x86@kernel.org>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241125-ds2482-add-reg-v4-3-475a7a08df96@gmail.com>
-References: <20241125-ds2482-add-reg-v4-0-475a7a08df96@gmail.com>
-In-Reply-To: <20241125-ds2482-add-reg-v4-0-475a7a08df96@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Stefan Wahren <stefan.wahren@chargebyte.com>, 
- Stefan Wahren <wahrenst@gmx.net>
-Cc: Ben Gardner <bgardner@wabtec.com>, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, 
- =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732574911; l=803;
- i=cleverline1mc@gmail.com; s=20241112; h=from:subject:message-id;
- bh=FRBH+G2mXI2rE0kQh36Kp8xbBiKgF4uhZuIapE+7aVw=;
- b=pHddJWKdxcbkzzfsTtlcLQ4B/Pugg0H/05LLaxmFzFxeNs0vQxfx7EjAzt69zBoea4zO+KMym
- n7Vt8uLNi8RDQHgCj0C3L4snnv3rnBDImcYUhNBohiHINpTn+r8iP1X
-X-Developer-Key: i=cleverline1mc@gmail.com; a=ed25519;
- pk=EJoEbw03UiRORQuCiEyNA8gH1Q6fIpEWnn/MyaWOWX0=
-X-Endpoint-Received: by B4 Relay for cleverline1mc@gmail.com/20241112 with
- auth_id=275
-X-Original-From: =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
-Reply-To: cleverline1mc@gmail.com
+Content-Transfer-Encoding: quoted-printable
 
-From: Kryštof Černý <cleverline1mc@gmail.com>
+On Mon, Nov 25, 2024, Kai Huang wrote:
+> On Mon, 2024-11-25 at 07:19 -0800, Sean Christopherson wrote:
+> > On Mon, Nov 25, 2024, Binbin Wu wrote:
+> > > On 11/22/2024 4:14 AM, Adrian Hunter wrote:
+> > > [...]
+> > > >    - tdx_vcpu_enter_exit() calls guest_state_enter_irqoff()
+> > > >      and guest_state_exit_irqoff() which comments say should be
+> > > >      called from non-instrumentable code but noinst was removed
+> > > >      at Sean's suggestion:
+> > > >    	https://lore.kernel.org/all/Zg8tJspL9uBmMZFO@google.com/
+> > > >      noinstr is also needed to retain NMI-blocking by avoiding
+> > > >      instrumented code that leads to an IRET which unblocks NMIs.
+> > > >      A later patch set will deal with NMI VM-exits.
+> > > >=20
+> > > In https://lore.kernel.org/all/Zg8tJspL9uBmMZFO@google.com, Sean ment=
+ioned:
+> > > "The reason the VM-Enter flows for VMX and SVM need to be noinstr is =
+they do things
+> > > like load the guest's CR2, and handle NMI VM-Exits with NMIs blocks.=
+=C2=A0 None of
+> > > that applies to TDX.=C2=A0 Either that, or there are some massive bug=
+s lurking due to
+> > > missing code."
+> > >=20
+> > > I don't understand why handle NMI VM-Exits with NMIs blocks doesn't a=
+pply to
+> > > TDX.=C2=A0 IIUIC, similar to VMX, TDX also needs to handle the NMI VM=
+-exit in the
+> > > noinstr section to avoid the unblock of NMIs due to instrumentation-i=
+nduced
+> > > fault.
+> >=20
+> > With TDX, SEAMCALL is mechnically a VM-Exit.  KVM is the "guest" runnin=
+g in VMX
+> > root mode, and the TDX-Module is the "host", running in SEAM root mode.
+> >=20
+> > And for TDH.VP.ENTER, if a hardware NMI arrives with the TDX guest is a=
+ctive,
+> > the initial NMI VM-Exit, which consumes the NMI and blocks further NMIs=
+, goes
+> > from SEAM non-root to SEAM root.  The SEAMRET from SEAM root to VMX roo=
+t (KVM)
+> > is effectively a VM-Enter, and does NOT block NMIs in VMX root (at leas=
+t, AFAIK).
+> >=20
+> > So trying to handle the NMI "exit" in a noinstr section is pointless be=
+cause NMIs
+> > are never blocked.
+>=20
+> I thought NMI remains being blocked after SEAMRET?
 
-Current link does redirect to wrong place.
+No, because NMIs weren't blocked at SEAMCALL.
 
-Signed-off-by: Kryštof Černý <cleverline1mc@gmail.com>
----
- drivers/w1/masters/ds2482.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> The TDX CPU architecture extension spec says:
+>=20
+> "
+> On transition to SEAM VMX root operation, the processor can inhibit NMI a=
+nd SMI.
+> While inhibited, if these events occur, then they are tailored to stay pe=
+nding
+> and be delivered when the inhibit state is removed. NMI and external inte=
+rrupts
+> can be uninhibited in SEAM VMX-root operation. In SEAM VMX-root operation=
+,
+> MSR_INTR_PENDING can be read to help determine status of any pending even=
+ts.
+>=20
+> On transition to SEAM VMX non-root operation using a VM entry, NMI and IN=
+TR
+> inhibit states are, by design, updated based on the configuration of the =
+TD VMCS
+> used to perform the VM entry.
+>=20
+> ...
+>=20
+> On transition to legacy VMX root operation using SEAMRET, the NMI and SMI
+> inhibit state can be restored to the inhibit state at the time of the pre=
+vious
+> SEAMCALL and any pending NMI/SMI would be delivered if not inhibited.
+> "
+>=20
+> Here NMI is inhibited in SEAM VMX root, but is never inhibited in VMX roo=
+t. =C2=A0
 
-diff --git a/drivers/w1/masters/ds2482.c b/drivers/w1/masters/ds2482.c
-index 2e5bbe11d8a0cdabd12e89e22537423749e7f9ff..52a437aa8be062def827aae012ace6b8cef58b3e 100644
---- a/drivers/w1/masters/ds2482.c
-+++ b/drivers/w1/masters/ds2482.c
-@@ -7,7 +7,7 @@
-  * It is a I2C to 1-wire bridge.
-  * There are two variations: -100 and -800, which have 1 or 8 1-wire ports.
-  * The complete datasheet can be obtained from MAXIM's website at:
-- *   http://www.maxim-ic.com/quick_view2.cfm/qv_pk/4382
-+ *   https://www.analog.com/en/products/ds2482-100.html
-  */
- 
- #include <linux/module.h>
+Yep.
 
--- 
-2.39.5
+> And the last paragraph does say "any pending NMI would be delivered if no=
+t
+> inhibited". =C2=A0
+
+That's referring to the scenario where an NMI becomes pending while the CPU=
+ is in
+SEAM, i.e. has NMIs blocked.
+
+> But I thought this applies to the case when "NMI happens in SEAM VMX root=
+", but
+> not "NMI happens in SEAM VMX non-root"?  I thought the NMI is already
+> "delivered" when CPU is in "SEAM VMX non-root", but I guess I was wrong h=
+ere..
+
+When an NMI happens in non-root, the NMI is acknowledged by the CPU prior t=
+o
+performing VM-Exit.  In regular VMX, NMIs are blocked after such VM-Exits. =
+ With
+TDX, that blocking happens for SEAM root, but the SEAMRET back to VMX root =
+will
+load interruptibility from the SEAMCALL VMCS, and I don't see any code in t=
+he
+TDX-Module that propagates that blocking to SEAMCALL VMCS.
+
+Hmm, actually, this means that TDX has a causality inversion, which may bec=
+ome
+visible with FRED's NMI source reporting.  E.g. NMI X arrives in SEAM non-r=
+oot
+and triggers a VM-Exit.  NMI X+1 becomes pending while SEAM root is active.
+TDX-Module SEAMRETs to VMX root, NMIs are unblocked, and so NMI X+1 is deli=
+vered
+and handled before NMI X.
+
+So the TDX-Module needs something like this:
+
+diff --git a/src/td_transitions/td_exit.c b/src/td_transitions/td_exit.c
+index eecfb2e..b5c17c3 100644
+--- a/src/td_transitions/td_exit.c
++++ b/src/td_transitions/td_exit.c
+@@ -527,6 +527,11 @@ void td_vmexit_to_vmm(uint8_t vcpu_state, uint8_t last=
+_td_exit, uint64_t scrub_m
+         load_xmms_by_mask(tdvps_ptr, xmm_select);
+     }
+=20
++    if (<is NMI VM-Exit =3D> SEAMRET)
++    {
++        set_guest_inter_blocking_by_nmi();
++    }
++
+     // 7.   Run the common SEAMRET routine.
+     tdx_vmm_post_dispatching();
 
 
+and then KVM should indeed handle NMI exits prior to leaving the noinstr se=
+ction.
+=20
+> > TDX is also different because KVM isn't responsible for context switchi=
+ng guest
+> > state.  Specifically, CR2 is managed by the TDX Module, and so there is=
+ no window
+> > where KVM runs with guest CR2, and thus there is no risk of clobbering =
+guest CR2
+> > with a host value, e.g. due to take a #PF due instrumentation triggerin=
+g something.
+> >=20
+> > All that said, I did forget that code that runs between guest_state_ent=
+er_irqoff()
+> > and guest_state_exit_irqoff() can't be instrumeneted.  And at least as =
+of patch 2
+> > in this series, the simplest way to make that happen is to tag tdx_vcpu=
+_enter_exit()
+> > as noinstr.  Just please make sure nothing else is added in the noinstr=
+ section
+> > unless it absolutely needs to be there.
+>=20
+> If NMI is not a concern, is below also an option?
+
+No, because instrumentation needs to be prohibited for the entire time betw=
+een
+guest_state_enter_irqoff() and guest_state_exit_irqoff().
+
+> 	guest_state_enter_irqoff();
+>=20
+> 	instructmentation_begin();
+> 	tdh_vp_enter();
+> 	instructmentation_end();
+>=20
+> 	guest_state_exit_irqoff();
+>=20
 
