@@ -1,336 +1,160 @@
-Return-Path: <linux-kernel+bounces-421564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 001839D8CF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 20:47:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E409D8CF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 20:49:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92686B23A56
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:47:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5172C2849D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F181BFE06;
-	Mon, 25 Nov 2024 19:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F291C07C0;
+	Mon, 25 Nov 2024 19:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MqXpVL8P"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2054.outbound.protection.outlook.com [40.107.220.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hhzovlRw"
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE051B219D;
-	Mon, 25 Nov 2024 19:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732564052; cv=fail; b=uKihymXULBkdTZqLfw/LjRKgTV/4EGhRMkB+N3S3TUy9mQVR4gJiLq0sDGHAWs/7D6CjH8eeGcOwUJIikDPKRCDhsbB86+HV44byknIAq179adJog5kaH2Onyf0e9WIjZryouUP+BcBtDcu/jcmpgInghFLDaazaLFZ4lTkDuyQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732564052; c=relaxed/simple;
-	bh=dFPRIk/xKpTrLRYrzDG2vB3pZqQIeSOOyv95HedAbeM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=baM95MjO9ppnFzS9790KEFj7yZosKhcVtKzcqWzOKrNIaDLwM8o5IkzagdnRcJjm6XTIrUKe/C2G5BQ9orwZvNg8wMULllVQ810ujzzXqiBU1Ui7XSuSIFbqg4+BMvg2S54DviyTznXfWbzO+jkbn6+dFe6oxwvUjiMLSJJi1j0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MqXpVL8P; arc=fail smtp.client-ip=40.107.220.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LnFwTizwxtVwefz0Cq0e+/tsRGxS4vhx1eqCT6yGqXDVRi//dvJcrA5MsL/YrgWpQ78Q4KtSkoSYHwxFD4Zr9wxbbQ8/qrXO1/Eg/BgwxCt+Mz3CD7s+D/lDtnlfv8p6S/lqVTk5iGtMk1mxHfujxIpJGc6OHmacEVXDNdEDvgd0Q+ODUE4Dvkn205bI2wB3oeUHHFRRXsvcgBSMESdNzF5l3W4uWNEmZtLIRbv3V/LMDsXv27aZXyoo8o8TL/2p69io7pfrnsj3KJT1YQRUYek6A4H+jJX4YSYryPH9Nme0MALfGsds8W37M/wj1TeILgcmuxERmsrfL+FUBCiwxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dFPRIk/xKpTrLRYrzDG2vB3pZqQIeSOOyv95HedAbeM=;
- b=C76yIffPQn+H9MFkaPt++A3zEvDMHtse2HBYCgx4elOTlRbcTNVDSX8qNiQJKiz/aETwKPxgvyvBAs+3ZBFRmPHo+UdJMlank8EoXuFrJzgjfUt1CE4/bcBDsH9pdhE+Xy3QOBhoBaLDPDw9YBnczb3eBqzqpkcUdH0+nHAhESvNDxTUmauMmw3aG76CBbtR398wRTOF5YJZ3JgC1iLmVn5EnvNpCI5odcnzuS7ja8FQtwZxK4BH3jdcCQDZE761Kggo9y3pp+aLTUD6eC9/WQ51yrFXiqIu6US2PJa26NbuhaA87PSFSvxnvT2kK7Dnnsu9za15K3pmhT5Cg1tFGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dFPRIk/xKpTrLRYrzDG2vB3pZqQIeSOOyv95HedAbeM=;
- b=MqXpVL8PjhflSuToWPQ3t6jMTbKhnccNRB997NcVP36TZ7wsAC0epomgBVLUGWtsbJPM0IS6jX6rE1rsyCs6v4I/7vGWTgW7gr7kB2vI4xnuZx9Sd45t8ITaPdEQLXa+GTG9j3SPcmwjPCU/0E/6Mm/a/1ZVr1BpEPQTMLYt2rI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) by
- PH7PR12MB6610.namprd12.prod.outlook.com (2603:10b6:510:212::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.20; Mon, 25 Nov
- 2024 19:47:27 +0000
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f]) by DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f%3]) with mapi id 15.20.8182.019; Mon, 25 Nov 2024
- 19:47:27 +0000
-Message-ID: <b08da57c-1ca1-4dc8-9c5a-550f81dd3b4f@amd.com>
-Date: Mon, 25 Nov 2024 13:47:25 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] PCI/AER: Report fatal errors of RCiEP and EP if
- link recoverd
-To: Shuai Xue <xueshuai@linux.alibaba.com>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- bhelgaas@google.com, kbusch@kernel.org, Lukas Wunner <lukas@wunner.de>
-Cc: mahesh@linux.ibm.com, oohall@gmail.com,
- sathyanarayanan.kuppuswamy@linux.intel.com
-References: <20241112135419.59491-1-xueshuai@linux.alibaba.com>
- <20241112135419.59491-3-xueshuai@linux.alibaba.com>
- <a76394c4-8746-46c0-9cb5-bf0e2e0aa9b5@amd.com>
- <22d27575-fc68-4a7f-9bce-45b91c7dfb98@linux.alibaba.com>
- <9810fadd-2b0b-410b-a8a6-89ddf7a103b9@linux.alibaba.com>
- <11282df5-9126-4b5b-82ae-5f1ef3b8aaf5@linux.alibaba.com>
-Content-Language: en-US
-From: "Bowman, Terry" <terry.bowman@amd.com>
-In-Reply-To: <11282df5-9126-4b5b-82ae-5f1ef3b8aaf5@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA0PR13CA0027.namprd13.prod.outlook.com
- (2603:10b6:806:130::32) To DS0PR12MB6390.namprd12.prod.outlook.com
- (2603:10b6:8:ce::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57B11B219D
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 19:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732564153; cv=none; b=u2JST3l64Nlon/mxukr7RFzch4pDCjSoKDj0C1i40EGOUarklT4Kz2HWoHgCzilaQApWxEeml/4kzqg+p0SKveq06Zs47tNl9zvJQ9Qgjp5GjbAtk3u1mddy2QzoV6LEM5LWKFvg8YA9W5Bb+s4kNrN25NvapLZGxCz83R/4IQU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732564153; c=relaxed/simple;
+	bh=b5FPROm5q+hhn5O8ELo7nAQdUkxygSxSN11xMKyLRL4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=U2GN7LjFyip9Q07gFRfxI+VZ/ZdHFI3Mu8uxqaXJvDwUVHlNKfNacHv2aEDEp/xLwEyIFb04Vq3CP4jQL2qxqqhuXi3tCEDXRvtWkLo0a2JG+gAU2Hg/u7XJNYueTf0VeybYodISEbN1+eYiscr89f0mHW6iG6Ggn2MkaqboqLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hhzovlRw; arc=none smtp.client-ip=209.85.217.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-4adde46ccf8so862830137.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:49:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732564150; x=1733168950; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=f3YMYMBOC1y/OpFUAEcUDMmPh9VN+m16GZQ7wshOyQQ=;
+        b=hhzovlRwvhQSnH95FRtZNZtcu3T16hzvF+M/N5UVePR6kbP2Nu7TFJqoOaXX25f6xf
+         JAkAl+RIiCEcurBtfqFV1dr/FS653NVDQMF/Sgaovoc6ROpuipxCp/fxkzzwPYrhZpN7
+         IMCnS25WWhI0H4c907c+fF0bL+6cFbWQpmqFs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732564150; x=1733168950;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f3YMYMBOC1y/OpFUAEcUDMmPh9VN+m16GZQ7wshOyQQ=;
+        b=Z0N+r2IGreQAMOfnFxT9kNJXFgunN4P2LK9kPoIgsLvVU2Jiga6JiwqYZ7EJsX2a1/
+         Uvge9CJdtGx6zayPI6YR/CaWS/h6/+D6NK+/QRY6+sl5d/SrpV49Wlc/VCsEsfAZEkDJ
+         Uk0U+u9Wnn+po+6qEnsuyRqxgQhkmgKjDO+J3EdgR9cS/S5blgwUV9utAJNRd07Tezc7
+         wcm6iyOrNCyLdkTlKNKqpQzbuBnAwpeXO3rhNMjuOf0yIaKl0+eO+kpIoHCGDfVEFpBP
+         9EIR7YwvfzliZh6ZNGjmxmrWCgMvMvl7cp1QCqQ6V1EGiNWsHe+eCBzgdeOJ1qkeV0MQ
+         +Dng==
+X-Gm-Message-State: AOJu0YwhcJWhTRXEh0Pa5OaGPngUi6GioJwCrcVnkgU9+9qGFT7IKbAp
+	IMfcYVv9LUApwUpK8K2eSPtNb256ZKsi83loUuFqr6aT1SI/lW8907hScfBF7w==
+X-Gm-Gg: ASbGncv1wVpakDXDXg4/jtzMRj29D2GRtQmcq4ioUV5NRBy89Ti0qk1mMaLB8zxVe77
+	zSeVtLW9HkPVMr4A26EsjtzEvncqgXiXQJRgCLTxEoKgLOgiwmmfDLdF0Vy50B5nQP7mVeijKr1
+	gD/uZ4XFNlG7l82Zh7ZO83Isw6/YiDl6THAVXNKE0XGm2SAzFfAJiHdbYxMtQr4fxkq2v32yMgp
+	5rxv7b8gWxXFw7JRSVTI4Qb0fVuqT324mV8AK5kbI3T2UbWToIbeNhIegauDrapANvdqtsp6n0G
+	fFhGBajcfnfP5wwhc/06ZWw+
+X-Google-Smtp-Source: AGHT+IF3i1DjM+8L9Am+OLgfA3D5+6d98KCXkJXVzSCq96ElUU+smooe1wy5gMqeM1C6j6UluK1rdw==
+X-Received: by 2002:a05:6102:3ec7:b0:4a3:c9b6:b311 with SMTP id ada2fe7eead31-4addcedab68mr14866884137.26.1732564150629;
+        Mon, 25 Nov 2024 11:49:10 -0800 (PST)
+Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4af358d2f9asm75324137.23.2024.11.25.11.49.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2024 11:49:09 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v4 0/7] media: uvcvideo: Implement the Privacy GPIO as a
+ evdev
+Date: Mon, 25 Nov 2024 19:49:05 +0000
+Message-Id: <20241125-uvc-subdev-v4-0-51e040599f1a@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6390:EE_|PH7PR12MB6610:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5adca5de-d336-459a-7d31-08dd0d89fd8b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YWcyOEVEUDY2TjVPaXVPRUFHNHNVL01qc3JSVTl5TEFOY2xxOExPZm10ZXlO?=
- =?utf-8?B?N2hRcVlNOEZMajNQYTFNNk5sUW5hTlhTa3lSUGRTSUVZT1RrMVdxTERLdEtG?=
- =?utf-8?B?WW1hQzd1ZFF2aTZlSnpSLysrbW0zOUFObjRNVHdoeDViUHNBQWNkTlY4eWgy?=
- =?utf-8?B?YjQ0ZVFxaDA2SXpTSjg1TDdUOENnaGpQWmdjdDcvbG5GeTV0U1B0VWQzZWdU?=
- =?utf-8?B?QzJCNEcrcEI4eThvQXhsK21WcmYzQmpsQjQ5aUFPNW1tT09xNVpaajZoRTQ5?=
- =?utf-8?B?VXNENzJaR2tuSU5BM1hjc3dTYU5OQ0RRMGFYR1dhcTQ5bnNvRTVmWDRPZ0lv?=
- =?utf-8?B?N3BkSFFndE5VL3M0UEVOc0hTZHg5Q3htb1NhNW82NzdySFVjVTdHWXNIVzlx?=
- =?utf-8?B?eUVXOGtRb3ZKcG1kM293MXdub29PUGQrVFE5MGlKUk1lckVkR3VKYm1meVFO?=
- =?utf-8?B?bmdHZk5iVzJ6UXQrMkEyMHBKRURUcHpWKzAxSWd4c2RwdHNHVTRGN0VldGZ1?=
- =?utf-8?B?Z3J0THYzNUkvRWFDYmkrd2FiRXpESzhZWVJWdVNHRWFZVEp1aFRUWFh3ZFd0?=
- =?utf-8?B?YWJRWUdzTHMyQkxMQlpFb3AxelBOZGF5anRIbkZmRnh6RzhiRUZxOFh6THVi?=
- =?utf-8?B?UW5Zak9CaWREYm80Z3VMdlRtYStYRk1pY1QzMkFyblhVOW1Gdnl1NDYzVVZv?=
- =?utf-8?B?RXFRTnNmU1Uxb0FFVTAzd24yUE9oQ1M3NmtYY3pmK1FTaHRJUUUzeDROZUdv?=
- =?utf-8?B?a3E0ZXg1NUFiSmZyb01mN2RGV2xVUUNxOHhsd0M0YkxXWEJicCs5dDcxVld4?=
- =?utf-8?B?b2xmMmZ0cTZNRjlHNk1lbXhuTFMwRkxpSUREQ1JnTGhFcG1YRDd4UFpQdHU4?=
- =?utf-8?B?eTN3MFVhdWE1MXY4T1lsdTE5amN5bDZSUTU3NmptUGZKMXcvbE8zQWRUS0dP?=
- =?utf-8?B?enJyRDM2bnJqSFZtKy9qVVdxamlkU0lRVEcwMjlLZTdVenJ3QTdYc0xDa2dj?=
- =?utf-8?B?M3lhbG4xNjVVYUVaTUpjV0JMbUxoYjNyL0lQRXA4L1h5Nk1iSHZ5S3lKV0w1?=
- =?utf-8?B?YlZqNXF0UUpNUWhqWjBhaDVQOXRzeHVvVWViUDA2d2tZMnhuZXg4ZUl4NUxI?=
- =?utf-8?B?anQrOWd5NE9qMUg5UzBxZ3dzRVp4ZUFMa01FZU9JOHAxdTFqWjFOTWdUd1Ju?=
- =?utf-8?B?YTRKNXQ0K2IwSGZ0RG95dUxMTXd3TktHZmU0eEZ4RmU5eVgwaEZacldqc1Jz?=
- =?utf-8?B?UVQvdnVxcjJ5UFRUbzd1N3J2TUtkVGlSM3AyVVVNWDRtUWM1Ui83RnpTQ0U4?=
- =?utf-8?B?UUNNTk8yRTlXWWJSV2VybVR1OXA5WG9Yb0RYdTlwMzdIa0c2NHR3VE0vU1B4?=
- =?utf-8?B?NEZYMDF4TnVrMlJQcFp1cHdUYnptYXk2L0pNVElmSitKSnI3ZFFvci9HL09P?=
- =?utf-8?B?aC9nWExIajQ4UkNkT0U1ZTJVcmRTVTNiSUVXa2hnZkVndWhnOUxrd0Rjelhi?=
- =?utf-8?B?OTJCeGtxRllab1czUE12bktpbDFVVXRIMjFRTHZTYmdTMDlOS01JaXRuYWtq?=
- =?utf-8?B?SU9zUmZ0OEZqRXhFSUttUEdsSXcxcnRlWGY5Q2NZZS82djRzcy9ERkpkOGp6?=
- =?utf-8?B?K1Y1SzY0bE9oSXlocWRRK3cvVXU0N0s1bTZrUTRac3RFZ21ZMVNDVU43RGRR?=
- =?utf-8?B?V0tLODFBV0JKU3VYUW5tS1BzRzU2NGR3b1grVXJWQ2IwS3Y5VWZRUWVqem9J?=
- =?utf-8?B?Nm5xcjFVeXFZVWlIYnRDM3BMdkFDNWVMUGVyc2hnTFh0cnZ3K2R2akdyV3NW?=
- =?utf-8?B?THZReFRkY3hqZEk5YXdIZz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Ym1ES2lBSTNzbzEySXJLQmNPM0FIQk5MOUV1SW9xcUhqU3FxN2h4d29UNUVS?=
- =?utf-8?B?eXdxZUNQOEd5U053ZksyYXhEYVFuem5jcmpPOFJrcmRkcWlUYWRGdGliVUxq?=
- =?utf-8?B?NE5Yc1B3ZVZQa1ZLWllpMXE5aVhkYm5hL2g3NFF3MDlPZ0Flc2gyRk9ISlIy?=
- =?utf-8?B?cklLWGtKUXpKV0FkM1JDK1pZVFhGU213ckhpMXNGYXlHNS9ScXdjamlGc1JZ?=
- =?utf-8?B?MU9DR2lmVkJoL2NRUXFCRlVYOXB4RVA2MjNYRTM1WWlTckpUa055YVU4S0xT?=
- =?utf-8?B?VHRHT1FOR21JUUtXRjJaMGljRkJCaHRoYTdQTXM2Z09IODVMUzFZR3g0Wjl5?=
- =?utf-8?B?RytRSTFJb2VIWDRhVGl2MG52WFhHNXBkcExScE5Oa203cGdnRm9ZTHFZeXVt?=
- =?utf-8?B?ZzdnTnlFN1NhM1NWSUt6TXpVZSs3K0NMNUZ1NlV6OUhJbFJJN3c5aGFSemlS?=
- =?utf-8?B?a3B6TzVrQnpGVXVHYVUxSTB0RGszNXBhWlV1MnBzazExUXlwNEZsZzVoYTNI?=
- =?utf-8?B?bnJLRmJGeldxNVphWHVXQ29RY3IwWTNGWkhPTnA4MjhMQTcydDF3VG1Pa1c2?=
- =?utf-8?B?RUQ3L1pJOTlHbFc3cFVUL1VJQXp2VVJicEVLQzE2MjhLNTBSWnVNUmhSSU03?=
- =?utf-8?B?d1d5VEpxWlVpUVdrdmJwTGdzZE9TbVkzTldlWGk3Yk9DRUx1WFpXNmZOSHhh?=
- =?utf-8?B?dXc4Sm1wVnZ5R2FMK0MzTjVod1NWU2xyT3F0VVJEY0Qwc01RSEd1M21yUzRL?=
- =?utf-8?B?aEU3d2VlNFUwcGNBTEgxNVAzS3lFMjI0ZnNVOWhObFpsb2ZmQTk4ZitrQ3RX?=
- =?utf-8?B?ZnlPWFFqVWdBcEdoMUVwRzVJSk5aelUwaDJFbGpGUEYveXJzMmlwQ2p0UHJx?=
- =?utf-8?B?bTRaUTlmYWUvWTdjU2RVdmloblFUUnBndVVUeWVxcm5TaW9zRmI3dXh2YjBm?=
- =?utf-8?B?L2hCMnBscnlsR1BydTNlSWVaZ2Jqb0JLeGkvNkp5bE80dWZmK0xBeEFEd2VO?=
- =?utf-8?B?cGpzTlU3VXBpbHJZUDc5UGlQaEN2YzFIT0xjZFFEOXFNeHl6ODRabmFDQzJp?=
- =?utf-8?B?cm1pRXpzL2ljdGFPS0paUTBVZGNFcWFKb2ZNUm9qK0wvbXhkbTZDNEErZ3Bn?=
- =?utf-8?B?RzN3MzZENStzb1ZtM0JQNG9oTTUyRVB4T2wvdm5HZTdpR2c3MGNkZzhMY1Vh?=
- =?utf-8?B?bmkzakNuMXlUamlYVTRIQ2dRUms4K0RRZC9KL0wxYTFSSk05Q0VNTFRqbkhH?=
- =?utf-8?B?R3N4MEdVa29keXh1KzVpZ3d1WGFtSHFuVDk5eXRRdlBYZ3FHK3pwY0hsTUNu?=
- =?utf-8?B?WHhLSFBkNndHcEt3clplMEdQVWo5RDRETVJKY3JLYUlJVEUrOTFCbjBhRmor?=
- =?utf-8?B?SDZZL2Z1VU4zSDVLQm1ud1g1Z0lsL1VXMXM5OVdRWjQzL295UVArRHk5WkRh?=
- =?utf-8?B?WEppOWQ1b2tOanQrb1hYVE5ialQyNnR6eFc3ZjZ5TWFVQXNnLzZUN2gwYmxv?=
- =?utf-8?B?L3A2Y2JzYy9RZ1ZZUnFsT0FJNFprR3VOWHpTVXIvM25yM3IyeEtvdFZ5R2VO?=
- =?utf-8?B?blZhaWY3SDRJWUxYYWNsZlNCQUxkTWFmYTlRSS9DTVZEL1BQN2VldElwdm8x?=
- =?utf-8?B?RUVlRWR3QjhZYi9oVjFIb21TenhUbStJcnJnY3pxdTRicEZ6MXBVVWVvQ2x0?=
- =?utf-8?B?bG00WW1VUDlIOUY0d2YzbDJuL3dJYmxUN25vYWxKRm11TDFOOEl2cmFEZTU2?=
- =?utf-8?B?YSsxL2dhbmlxMVB5a0RSakZFK204WGR6WDk5ZGRoNWtoeVc4Vi8xUmYvV0ZP?=
- =?utf-8?B?RlFaZC95TnA0T2NZbmVQeFEwSTdmVHU3aHFlOW02WFowNDhTRjBHZjdDRll0?=
- =?utf-8?B?UDJaZFFpWUppMGpxeTlKSTJQUnBkcjdOcXdvZGNIK3h0b0xneHRySHJlU1E0?=
- =?utf-8?B?aVgrWGovUlBHK2tvdCtBUnZIbVlkSXUxa2FQNnRaMEk4K1JFWWdVQks2S1hm?=
- =?utf-8?B?aUgwUkdaU2VlbVBlcTZvQWFtdlp4ZlY2eTMzbUdjVkhyeENMTFc1MHhCNHF4?=
- =?utf-8?B?dWZTMUNrc1kvVkQ0U3hMcmNzUHB0ZHZSM2RyVGhybkFhUHJOUENSYzB4cnl6?=
- =?utf-8?Q?LAVutRxSZa/dVHsjADjadlJNw?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5adca5de-d336-459a-7d31-08dd0d89fd8b
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6390.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2024 19:47:27.3889
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nenPeA1Cbh0Nf0WSH+fVcCIc2kCY31+MSMixltmIao2bMP/3tENUT9KWxqPt6/5N4J3drVH7+Vcl6A0EfnGeqQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6610
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALHURGcC/23M0Q6CIBiG4VtxHEf7f0CljrqP1gECKgdqg2Q15
+ 72Hbi1tHX7f9rwTCdY7G8g5m4i30QU39GmIQ0Z0q/rGUmfSJgyYQOBAx6hpGCtjI5WnWoiiVAB
+ VThK4e1u75xq73tJuXXgM/rW2Iy7vJ4PbTEQKVBWSc9TWmJJddOuHzo3dcfANWUqRfTWC3GmWt
+ MyNVJCj4ob/0Xyjke00TxqsyktuBCqUP3qe5zetVcoBIwEAAA==
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+ Yunke Cao <yunkec@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>, 
+ Hans de Goede <hdegoede@redhat.com>, Ricardo Ribalda <ribalda@chromium.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.13.0
 
+Some notebooks have a button to disable the camera (not to be mistaken
+with the mechanical cover). This is a standard GPIO linked to the
+camera via the ACPI table.
 
+4 years ago we added support for this button in UVC via the Privacy control.
+This has three issues:
+- If the camera has its own privacy control, it will be masked.
+- We need to power-up the camera to read the privacy control gpio.
+- Other drivers have not followed this approach and have used evdev.
 
-On 11/24/2024 11:43 PM, Shuai Xue wrote:
->
-> 在 2024/11/17 21:36, Shuai Xue 写道:
->>
->> 在 2024/11/16 20:44, Shuai Xue 写道:
->>>
->>> 在 2024/11/16 04:20, Bowman, Terry 写道:
->>>> Hi Shuai,
->>>>
->>>>
->>>> On 11/12/2024 7:54 AM, Shuai Xue wrote:
->>>>> The AER driver has historically avoided reading the configuration space of
->>>>> an endpoint or RCiEP that reported a fatal error, considering the link to
->>>>> that device unreliable. Consequently, when a fatal error occurs, the AER
->>>>> and DPC drivers do not report specific error types, resulting in logs like:
->>>>>
->>>>>    pcieport 0000:30:03.0: EDR: EDR event received
->>>>>    pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
->>>>>    pcieport 0000:30:03.0: DPC: ERR_FATAL detected
->>>>>    pcieport 0000:30:03.0: AER: broadcast error_detected message
->>>>>    nvme nvme0: frozen state error detected, reset controller
->>>>>    nvme 0000:34:00.0: ready 0ms after DPC
->>>>>    pcieport 0000:30:03.0: AER: broadcast slot_reset message
->>>>>
->>>>> AER status registers are sticky and Write-1-to-clear. If the link recovered
->>>>> after hot reset, we can still safely access AER status of the error device.
->>>>> In such case, report fatal errors which helps to figure out the error root
->>>>> case.
->>>>>
->>>>> After this patch, the logs like:
->>>>>
->>>>>    pcieport 0000:30:03.0: EDR: EDR event received
->>>>>    pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
->>>>>    pcieport 0000:30:03.0: DPC: ERR_FATAL detected
->>>>>    pcieport 0000:30:03.0: AER: broadcast error_detected message
->>>>>    nvme nvme0: frozen state error detected, reset controller
->>>>>    pcieport 0000:30:03.0: waiting 100 ms for downstream link, after activation
->>>>>    nvme 0000:34:00.0: ready 0ms after DPC
->>>>>    nvme 0000:34:00.0: PCIe Bus Error: severity=Uncorrectable (Fatal), type=Data Link Layer, (Receiver ID)
->>>>>    nvme 0000:34:00.0:   device [144d:a804] error status/mask=00000010/00504000
->>>>>    nvme 0000:34:00.0:    [ 4] DLP                    (First)
->>>>>    pcieport 0000:30:03.0: AER: broadcast slot_reset message
->>>>>
->>>>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->>>>> ---
->>>>>   drivers/pci/pci.h      |  3 ++-
->>>>>   drivers/pci/pcie/aer.c | 11 +++++++----
->>>>>   drivers/pci/pcie/dpc.c |  2 +-
->>>>>   drivers/pci/pcie/err.c |  9 +++++++++
->>>>>   4 files changed, 19 insertions(+), 6 deletions(-)
->>>>>
->>>>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
->>>>> index 0866f79aec54..6f827c313639 100644
->>>>> --- a/drivers/pci/pci.h
->>>>> +++ b/drivers/pci/pci.h
->>>>> @@ -504,7 +504,8 @@ struct aer_err_info {
->>>>>       struct pcie_tlp_log tlp;    /* TLP Header */
->>>>>   };
->>>>> -int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info);
->>>>> +int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info,
->>>>> +                  bool link_healthy);
->>>>>   void aer_print_error(struct pci_dev *dev, struct aer_err_info *info);
->>>>>   #endif    /* CONFIG_PCIEAER */
->>>>> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
->>>>> index 13b8586924ea..97ec1c17b6f4 100644
->>>>> --- a/drivers/pci/pcie/aer.c
->>>>> +++ b/drivers/pci/pcie/aer.c
->>>>> @@ -1200,12 +1200,14 @@ EXPORT_SYMBOL_GPL(aer_recover_queue);
->>>>>    * aer_get_device_error_info - read error status from dev and store it to info
->>>>>    * @dev: pointer to the device expected to have a error record
->>>>>    * @info: pointer to structure to store the error record
->>>>> + * @link_healthy: link is healthy or not
->>>>>    *
->>>>>    * Return 1 on success, 0 on error.
->>>>>    *
->>>>>    * Note that @info is reused among all error devices. Clear fields properly.
->>>>>    */
->>>>> -int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info)
->>>>> +int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info,
->>>>> +                  bool link_healthy)
->>>>>   {
->>>>>       int type = pci_pcie_type(dev);
->>>>>       int aer = dev->aer_cap;
->>>>> @@ -1229,7 +1231,8 @@ int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info)
->>>>>       } else if (type == PCI_EXP_TYPE_ROOT_PORT ||
->>>>>              type == PCI_EXP_TYPE_RC_EC ||
->>>>>              type == PCI_EXP_TYPE_DOWNSTREAM ||
->>>>> -           info->severity == AER_NONFATAL) {
->>>>> +           info->severity == AER_NONFATAL ||
->>>>> +           (info->severity == AER_FATAL && link_healthy)) {
->>>>>           /* Link is still healthy for IO reads */
->>>>>           pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_STATUS,
->>>>> @@ -1258,11 +1261,11 @@ static inline void aer_process_err_devices(struct aer_err_info *e_info)
->>>>>       /* Report all before handle them, not to lost records by reset etc. */
->>>>>       for (i = 0; i < e_info->error_dev_num && e_info->dev[i]; i++) {
->>>>> -        if (aer_get_device_error_info(e_info->dev[i], e_info))
->>>>> +        if (aer_get_device_error_info(e_info->dev[i], e_info, false))
->>>>>               aer_print_error(e_info->dev[i], e_info);
->>>>>       }
->>>> Would it be reasonable to detect if the link is intact and set the aer_get_device_error_info()
->>>> function's 'link_healthy' parameter accordingly? I was thinking the port upstream capability
->>>> link status register could be used to indicate the link viability.
->>>>
->>>> Regards,
->>>> Terry
->>> Good idea. I think pciehp_check_link_active is a good implementation to check
->>> link_healthy in aer_get_device_error_info().
->>>
->>>    int pciehp_check_link_active(struct controller *ctrl)
->>>    {
->>>        struct pci_dev *pdev = ctrl_dev(ctrl);
->>>        u16 lnk_status;
->>>        int ret;
->>>        ret = pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
->>>        if (ret == PCIBIOS_DEVICE_NOT_FOUND || PCI_POSSIBLE_ERROR(lnk_status))
->>>            return -ENODEV;
->>>        ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
->>>        ctrl_dbg(ctrl, "%s: lnk_status = %x\n", __func__, lnk_status);
->>>        return ret;
->>>    }
->>>
->>> Thank you for valuable comments.
->>>
->>> Best Regards
->>> Shuai
->> Hi, Bowman,
->>
->> After dive into the code details, I found that both dpc_reset_link() and
->> aer_root_reset() use pci_bridge_wait_for_secondary_bus() to wait for secondary
->> bus to be accessible. IMHO, pci_bridge_wait_for_secondary_bus() is better
->> robustness than function like pciehp_check_link_active(). So I think
->> reset_subordinates() is good boundary for delineating whether a link is
->> accessible.
->>
->> Besides, for DPC driver, the link status of upstream port, e.g, rootport, is
->> inactive when DPC is triggered, and is recoverd to active until
->> dpc_reset_link() success. But for AER driver, the link is active before and
->> after aer_root_reset(). As a result, the AER status will be reported twice.
->>
->
-> Hi, Bowman, and Bjorn,
->
-> Do you have any feedback or other concern?
->
-> Thank you.
->
-> Best Regards,
-> Shuai
->
-Hi Shuai,
+We tried to fix the power-up issues implementing "granular power
+saving" but it has been more complicated than anticipated...
 
-I don't have further feedback or concerns.
+This patchset implements the Privacy GPIO as a evdev.
 
-Regards,
-Terry
+The first patch of this set is already in Laurent's tree... but I
+include it to get some CI coverage.
+
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Changes in v4:
+- Remove gpio entity, it is not needed.
+- Use unit->gpio.irq in free_irq to make smatch happy.
+- Link to v3: https://lore.kernel.org/r/20241112-uvc-subdev-v3-0-0ea573d41a18@chromium.org
+
+Changes in v3:
+- CodeStyle (Thanks Sakari)
+- Re-implement as input device
+- Make the code depend on UVC_INPUT_EVDEV
+- Link to v2: https://lore.kernel.org/r/20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org
+
+Changes in v2:
+- Rebase on top of https://patchwork.linuxtv.org/project/linux-media/patch/20241106-uvc-crashrmmod-v6-1-fbf9781c6e83@chromium.org/
+- Create uvc_gpio_cleanup and uvc_gpio_deinit
+- Refactor quirk: do not disable irq
+- Change define number for MEDIA_ENT_F_GPIO
+- Link to v1: https://lore.kernel.org/r/20241031-uvc-subdev-v1-0-a68331cedd72@chromium.org
+
+---
+Ricardo Ribalda (7):
+      media: uvcvideo: Fix crash during unbind if gpio unit is in use
+      media: uvcvideo: Factor out gpio functions to its own file
+      media: uvcvideo: Re-implement privacy GPIO as an input device
+      Revert "media: uvcvideo: Allow entity-defined get_info and get_cur"
+      media: uvcvideo: Introduce UVC_QUIRK_PRIVACY_DURING_STREAM
+      media: uvcvideo: Make gpio_unit entity-less
+      media: uvcvideo: Remove UVC_EXT_GPIO entity
+
+ drivers/media/usb/uvc/Kconfig      |   2 +-
+ drivers/media/usb/uvc/Makefile     |   3 +
+ drivers/media/usb/uvc/uvc_ctrl.c   |  40 ++---------
+ drivers/media/usb/uvc/uvc_driver.c | 123 ++--------------------------------
+ drivers/media/usb/uvc/uvc_entity.c |   7 +-
+ drivers/media/usb/uvc/uvc_gpio.c   | 134 +++++++++++++++++++++++++++++++++++++
+ drivers/media/usb/uvc/uvc_status.c |  13 +++-
+ drivers/media/usb/uvc/uvc_video.c  |   4 ++
+ drivers/media/usb/uvc/uvcvideo.h   |  43 +++++++-----
+ 9 files changed, 195 insertions(+), 174 deletions(-)
+---
+base-commit: 72ad4ff638047bbbdf3232178fea4bec1f429319
+change-id: 20241030-uvc-subdev-89f4467a00b5
+
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
 
 
