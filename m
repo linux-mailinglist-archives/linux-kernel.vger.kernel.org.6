@@ -1,136 +1,209 @@
-Return-Path: <linux-kernel+bounces-420536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 062E29D7C1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:43:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32A459D7C1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:45:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C09EB212D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:43:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA4C7B20F32
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A9715442D;
-	Mon, 25 Nov 2024 07:43:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6601607A4;
+	Mon, 25 Nov 2024 07:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GTIgf8Kd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MYFrveyd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECC712EBEA
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 07:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C64C2500AE;
+	Mon, 25 Nov 2024 07:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732520600; cv=none; b=ukvx8qxRP41uDoBNtCX1yh/FLvpfA26ZTx/nQvAzO8zi/WhUN/DUVFhHMv64Qju+dauNjtimrThQvwZyFE5kZeJwDzp5L/bjAz+upIhgXuTa9HveHQe8GuomVsHMCY+91AQseyWTs6oR5l3cvE6w5Neg+M88yxlT5qhaR6n5ixY=
+	t=1732520750; cv=none; b=rR1zfDoaRC0vfGi3MHF1UiZlgSPjwcqh1R+02BgJpzS7W/l+RUYrWaj83tWJ7w6Fl5mb3dNQ2nBi82NCXO01BNujvWfkqEshDz0ZXK9e/zIj4UI/OssMzEJtra7AhtVQIzYwMA0lIcE7u6SwF99GYzBZ2x0oFuS7p/RyYu9LJ2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732520600; c=relaxed/simple;
-	bh=E0EKKqn7X4HTlWFZ1RxoZYl6EvAZKtpWxHcFzX64slw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XIBlyQRrY+0sd7QyKix6y+kIn5b5SF3oPLbzfWphNFZHFwzf35q7YCXai/tp6ftDxROYk5RZUeBM2aaLIpLnP2jenvQFBmq/vMJyUPLXX+xsBP2tuss0A3mOoFtJ1NkGGdO+3Sos7FBnYNSVIPOQrelVwg5V4DrouvzOBUK40Ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GTIgf8Kd; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732520597;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1VvwUNFaTuVcahX+3INE57hm+fmWfSpcYW0Rn94m+wI=;
-	b=GTIgf8KdEKloJ3U/p5dMcQGDllKyONabr7ar56qtRUcHU49tFlWeP126cboy3PgoqHs7mh
-	pkcHHf6CRDIp1hOMJAAZumWK7Ym5Kv1YOKZftiwYBeS9VDXZBfAEGm3P8L4GD/XRBwOstR
-	dPgIF9oNqVYQWQFq5cV7o0xNl78okq0=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-14-gnj4uum2MyeEzM9O6_IXhA-1; Mon, 25 Nov 2024 02:43:13 -0500
-X-MC-Unique: gnj4uum2MyeEzM9O6_IXhA-1
-X-Mimecast-MFC-AGG-ID: gnj4uum2MyeEzM9O6_IXhA
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3823326e95aso2193775f8f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 23:43:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732520592; x=1733125392;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1VvwUNFaTuVcahX+3INE57hm+fmWfSpcYW0Rn94m+wI=;
-        b=qB3ArSGqGj69HvogMz7YLH9czu4jFV899dEayAmhwVoa3r3b/B+Rwedu386r6m0N1E
-         enfK/9X1cfdF2u3XDou5Fjov47e0Mal5ALm/D8ouNzkLYbfKxTqmKrIfFM93fHTtBQyQ
-         Q2XPuEkvZOpH3cq8arIC30/lfXmkk5yMtgP8ZBo9PghXoOAMm03ahrob/d0HtaWqjNPd
-         v/ttVvUaUxHcxitUOnZGvLAnQhdG1OUvqjpNdkDISLZLsjaA9O3HROrFgxYFhAm7kYP+
-         lrMgDkEQ3nbEhNlbJNijq90t9XNr17j1NyxReM2+V1bq/osqzRhwH8PwJElOnkgGVhcF
-         RJcw==
-X-Forwarded-Encrypted: i=1; AJvYcCXOOYekU+TOSFlnhId5K+kQLEKmWa5HlkIKXv8uZPLVlxvsmssOVKH58z5YdVWNg5Pl2w9poNfZBf4HtNQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDpXLxCoZgVUFp8tJEz74oW95cR9TxFD6ZtVUQ9Xe0Kuu+tosu
-	27tmjhf+84aUSrNHhPNLRUUa93qYr9V1smf5VmOGQNG1BtPYjLLUv9e38btGk+bG4Fr0UOpMlaA
-	bcjPLFbNHZ3iGBVOMS62IRMLEhBUA5MuL0waTT1jLbPxGb2Nt1VY+vJUbd23qKw==
-X-Gm-Gg: ASbGncs+64Ni45G186vLk1C7AuKUvyK/rBV+UC940hxCN1lNsokWpwCI7M+Y+y+J1lm
-	iiLr5NSOjmGfDRLpJY6StpXX2FLDftgBGFhetaZNcezCo8k1fkaT5OBdMvEXGiFFQozcunIvqxO
-	bUr/fImU5qylpXOvIcJGXaTpI+IRsR+MxaMpPA3U6F274tDJZoe/OIGsvMAamINScy5M0sSOqnW
-	F0kCDgZHOl1VyurrHMI4O9UdzI/KRHlz4LrC4GFOjgwtfg8T8fTQlkRr/i7gqAkuc0AC9As+RG4
-	/kU4tI5NeSlI4zL8ZhlfbyvME/E+E4MK
-X-Received: by 2002:a05:6000:389:b0:382:37b2:87ee with SMTP id ffacd0b85a97d-38260b581b7mr9918909f8f.21.1732520592729;
-        Sun, 24 Nov 2024 23:43:12 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEx5A7vcD3V9v7iPsizhu7sDsVC8+0jvon1/O5y5Xd5c24P1QMFk3VXW80fXXQ/RkFDKtko2g==
-X-Received: by 2002:a05:6000:389:b0:382:37b2:87ee with SMTP id ffacd0b85a97d-38260b581b7mr9918898f8f.21.1732520592439;
-        Sun, 24 Nov 2024 23:43:12 -0800 (PST)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825faf9be8sm9592069f8f.24.2024.11.24.23.43.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Nov 2024 23:43:12 -0800 (PST)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Radu Rendec <rrendec@redhat.com>, robh@kernel.org, arnd@linaro.org,
- linux-kernel@vger.kernel.org, Zhipeng Wang <zhipeng.wang_1@nxp.com>,
- Maxime Ripard <mripard@kernel.org>, javier@dowhile0.org, "Rafael J.
- Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
- andreas@kemnade.info
-Subject: Re: [RFC PATCH] cpufreq: dt-platdev: Fix module autoloading
-In-Reply-To: <20241125051504.nvw4lzr4emi2vpf7@vireshk-i7>
-References: <20241119111918.1732531-1-javierm@redhat.com>
- <20241121071127.y66uoamjmroukjck@vireshk-i7>
- <87iksh3r4x.fsf@minerva.mail-host-address-is-not-set>
- <20241121090357.ggd4hc43n56xzo4m@vireshk-i7>
- <87frnl3q63.fsf@minerva.mail-host-address-is-not-set>
- <1c5e13b7472917b5fa303553da04ae16590f3105.camel@redhat.com>
- <87cyin42mb.fsf@minerva.mail-host-address-is-not-set>
- <20241125051504.nvw4lzr4emi2vpf7@vireshk-i7>
-Date: Mon, 25 Nov 2024 08:43:11 +0100
-Message-ID: <87a5dn4v3k.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1732520750; c=relaxed/simple;
+	bh=QkmKRQufxVbtOJlGOhCoU0r8+2yxxJyk9PPJcIydGG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PhofHyj+CN37BFu0tgckGwNh1Sier5xfciCPZqTw/TObDgKvRR+VUDiEUG/Yv+IekIYcyF2si1x9BHzMPtylCnvSUEqLFj0ouKZLTKlrIN1ftS1ir1FoKt1w80Pz/Yhx2+DtpSU0Y3VFM7WLZB4ZoWXVqI1lNIKd2muufhIZJ0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MYFrveyd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A65BC4CECE;
+	Mon, 25 Nov 2024 07:45:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732520749;
+	bh=QkmKRQufxVbtOJlGOhCoU0r8+2yxxJyk9PPJcIydGG4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MYFrveydLiYRWlAIyh8GYlL0YM9Q896zpfUzgrP0F9/Go8fZEYiUzoU56kg8PVMbI
+	 c0BolaJeNa1960vBUIJdWNczsAwuU5LjEenBa9nIm0/SHrtDlUGMjs0ASf9Y2QWrbi
+	 odnBkyNsXl3TUXYUj0aXwkubOMoLldrvbsHk65USwfjW0KoIiZc/H739irmyq9cjsK
+	 Jp/0N6/JvyJK7ut2EnOqctMa9QNnFqxpIK8EClS/Ro9X7CCRi1BX8TzQJx6jfDhA4b
+	 Es3cOdNVgtyzREvIT7yFzdZmmMVMlyl54De87aPPHr5dcZwxTVVMwuz9KvqfDHN1mE
+	 CY9x0i+yy68Ag==
+Date: Mon, 25 Nov 2024 08:45:46 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] dt-bindgins: display: Add Apple pre-DCP display
+ controller bindings
+Message-ID: <ksdp54qj55v7igvvcshl6y2cxpmqy7rlsh4xsixpptjn7s7wlu@76ejtq6ytvbp>
+References: <20241124-adpdrm-v1-0-3191d8e6e49a@gmail.com>
+ <20241124-adpdrm-v1-1-3191d8e6e49a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241124-adpdrm-v1-1-3191d8e6e49a@gmail.com>
 
-Viresh Kumar <viresh.kumar@linaro.org> writes:
+On Sun, Nov 24, 2024 at 11:29:24PM +0100, Sasha Finkelstein wrote:
+> Add bindings for a secondary display controller present on certain
+> Apple laptops.
+> 
+> Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
+> ---
+>  .../bindings/display/apple,display-pipe.yaml       | 59 ++++++++++++++++++++++
+>  .../bindings/display/panel/apple,summit.yaml       | 24 +++++++++
+>  2 files changed, 83 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/apple,display-pipe.yaml b/Documentation/devicetree/bindings/display/apple,display-pipe.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..bd25ddc6e09dd636c0221c854e594113f6011866
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/apple,display-pipe.yaml
 
-Hello Viresh,
+No, use fallback compatible as filename.
 
-> On 22-11-24, 18:09, Javier Martinez Canillas wrote:
->> Agreed with this. Likely (1) is the easiest path and (2) would make the
->> driver more aligned with the rest of the kernel (that have a list of OF
->> device IDs to autoload / match instead of some custom logic).
->> 
->> But I guess that (2) would be riskier, since not adding a platform that
->> uses v2 will cause a regression.
->
-> I am inclined to go with (1) here and have applied a patch from Andreas Kemnade,
-> which he sent sometime back. I have used your commit log though, since it was
-> more descriptive.
->
+> @@ -0,0 +1,59 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/apple,display-pipe.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Apple pre-DCP display controller.
+> +
+> +maintainers:
+> +  - asahi@lists.linux.dev
+> +  - Sasha Finkelstein <fnkl.kernel@gmail.com>
+> +
+> +description: |
 
-That sounds good to me, thanks for solving this issue!
+Drop |
 
-> -- 
-> viresh
->
+> +  A secondary display controller used to drive the "touchbar" on certain
+> +  Apple laptops.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +        - "apple,t8112-display-pipe"
+> +        - "apple,t8103-display-pipe"
+> +      - const: "apple,h7-display-pipe"
 
--- 
+
+This wasn't tested... Drop all quotes. Do you see any file with quotes?
+Why doing things entirely different than everyone else?
+
+> +
+> +  reg:
+> +    minItems: 3
+
+Drop
+
+> +    maxItems: 3
+> +
+> +  reg-names:
+> +    items:
+> +      - const: be
+> +      - const: fe
+> +      - const: mipi
+> +
+> +  power-domains: true
+
+List the items instead or maxItems: 1.
+
+> +
+> +  interrupts:
+> +    minItems: 2
+
+Drop
+
+> +    maxItems: 2
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: be
+> +      - const: fe
+> +
+> +  iommus: true
+
+
+maxItems: 1
+
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +additionalProperties: true
+
+This cannot be true. Must be false.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+
+This goes before additionalProperties.
+
+Missing example: that's a strong NAK and prove that this could not be
+even tested.
+
+Do you see any device schema without example? No. Do not develop things
+differently, Apple is not unique, special or exceptional.
+
+
+> diff --git a/Documentation/devicetree/bindings/display/panel/apple,summit.yaml b/Documentation/devicetree/bindings/display/panel/apple,summit.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..dc281c1f52c1ed07cc2f7f804dcfd2f3b4239d89
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/panel/apple,summit.yaml
+> @@ -0,0 +1,24 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/panel/apple,summit.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Apple "Summit" display panel.
+> +
+> +maintainers:
+> +  - asahi@lists.linux.dev
+> +  - Sasha Finkelstein <fnkl.kernel@gmail.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: apple,summit
+
+No, too generic. Panels need much more properties, this is heavily
+incomplete. See other panel bindings.
+
 Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+Krzysztof
 
 
