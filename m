@@ -1,120 +1,110 @@
-Return-Path: <linux-kernel+bounces-420729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B256F9D82A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:39:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE30D9D8298
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:39:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52101163C2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:39:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E635163C2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A386B18FC9D;
-	Mon, 25 Nov 2024 09:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6BD18C92F;
+	Mon, 25 Nov 2024 09:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aAj1LIyd"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="CAuWej14"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94999190676;
-	Mon, 25 Nov 2024 09:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B54917E00B;
+	Mon, 25 Nov 2024 09:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732527450; cv=none; b=DIeXcDY/yN9ucPpbbYcm1jdrI5gCWpxQl4LJ7Kxuhg0QdetIdMVV+iLXNbt2/XBl466U7K3jS3Tcv/hNFanyV49L7emYZnqJLzhg6ct/WtdNqo4ni75vgeIv4kBYT45kKhMu64qPs9upM4vVmTLx6p3H1jAgGKxR09C7Rv99yic=
+	t=1732527351; cv=none; b=H0qQ9Xi+9k/f3AHDB6o725bhaR2zy4Wpt7eJdpSKsQJUwn/+SJ2ZxurD87YEf0iTiLWrJsX/2lx53OnntqQqztbqbRRqLBX1nhuKw9E1JxO2VC1WDtY2pmzMUAIDJTGhMr8L8NpOtbcBaeRZLbf/xwc94ZSlAwYh5/PTBaWGXeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732527450; c=relaxed/simple;
-	bh=DSLAVJ2q2j4+qW2l9jGXFmje1cGAmPDjmJ3VRUAlu68=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UzS0xbKmpUhgd+sCCoet9XWSSFVRG1lcGu/kYQ4wAxlvnz6AuDiLgSGjiIOY6vcBUYUneMFK3dLMPg+ywuDgiY1mDZbIVGmdakbdg3RyX7CA8bsGzdVPSSR5ZOXBiz/+uMtrm7KSqn/nWguLmfgGz93hnyTm2vTZvT8BqCMMII4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aAj1LIyd; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AONdfGM017784;
-	Mon, 25 Nov 2024 09:37:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	o26imvBN67a9vqKERvDdum5IMrLcQaUa05hXb141jo0=; b=aAj1LIyd+THl6XZg
-	CIdbl12F7wNMQhZ3Z8ADWrOSuR1j8R7yHNTDnBPBGbvgFecXLPsxKwdWJ+qheFiW
-	Lps3o7ZBgoFfffickMZ167jUEIrBd3JERTGfGN0G4VaI09fVzRjEdzLBEzc/FCCC
-	U2K1PzZ6agAjcwNLYf24cXwM7/+v3UcNoPGCFDA55pUroRR3KGo7PfPpoT4t/a5C
-	cTn0JKeLPTGm6GZcBK28KJQRtXZXDoCntLtwmUsaFMtzfkjC4oeBVh0xRwNsEtbL
-	4lHLzhLWcupmjv8aNGKbGDhkRp3+8Ce7j6wGW53+fo1SibeiGAhMFI9iVLmOegu3
-	xJn8AQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 433dny3h1e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Nov 2024 09:37:25 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AP9bP3P017411
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Nov 2024 09:37:25 GMT
-Received: from liuxin-gv.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 25 Nov 2024 01:37:19 -0800
-From: Xin Liu <quic_liuxin@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_jiegan@quicinc.com>, <quic_aiquny@quicinc.com>,
-        <quic_tingweiz@quicinc.com>
-Subject: [PATCH v3 3/3] arm64: dts: qcom: qcs8300-ride: Add watchdog node
-Date: Mon, 25 Nov 2024 17:35:03 +0800
-Message-ID: <20241125093503.1162412-4-quic_liuxin@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241125093503.1162412-1-quic_liuxin@quicinc.com>
-References: <20241125093503.1162412-1-quic_liuxin@quicinc.com>
+	s=arc-20240116; t=1732527351; c=relaxed/simple;
+	bh=47pj93BkvbbtlxDpOOOfDW6m/GciuSYLivd4omBASGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=alsUL4/eGWsuGBAqYiui7Nilma7OHs97BuWH8nekLTT3mgdStFKn6oiWM664TTN98pD8tO5r4KHD9bhLiXnVwjKBtqkESrPU6SG5jY7NAA/ZOeJ2eGs+xQQwYYwy1/3IqXZ7h6QCl9/INfjelef96QdRkcP+ttYBWjuvmrBFEas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=CAuWej14; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=HXQYfqFbYHuEpAtKnrN5Ri66cSthdBXyLJzdbLH+Tyg=; b=CAuWej143vcmdFoP8d0LRNICnr
+	AaeRfPRREgp6c31jomIXPxipY8NQEhbpj4pW5AeVB44tu5o0ncz7zioS/dUqQnueJgK9NM8OvKemg
+	BW0w3+JkAv36WqcqYCjvR0neQvL89o8ejpmiTHegfdhaizZ0a08XcOUYa0FSXH3G6e8P2HtYfWkHf
+	2ujgEhm2Y55lJzmMX3sgRDpRgLB7Ra2cBDCGApWRxO3zNZtpoZvSQKlRztmL92QEqkOyF2aoHctR0
+	4eDkTVE91+u4GOLgKWgp9hm9zPIbjdFYmSEQ9CQhMTY7liFcCohuPTZurw62Pkr+aVGaMuMjXF4eO
+	fID/9WNw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tFVV6-001VRG-1K;
+	Mon, 25 Nov 2024 17:35:25 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 25 Nov 2024 17:35:24 +0800
+Date: Mon, 25 Nov 2024 17:35:24 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org,
+	yosryahmed@google.com, nphamcs@gmail.com, chengming.zhou@linux.dev,
+	usamaarif642@gmail.com, ryan.roberts@arm.com, ying.huang@intel.com,
+	21cnbao@gmail.com, akpm@linux-foundation.org,
+	linux-crypto@vger.kernel.org, davem@davemloft.net,
+	clabbe@baylibre.com, ardb@kernel.org, ebiggers@google.com,
+	surenb@google.com, kristen.c.accardi@intel.com,
+	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Subject: Re: [PATCH v4 01/10] crypto: acomp - Define two new interfaces for
+ compress/decompress batching.
+Message-ID: <Z0RE3Bn1WWANGsvK@gondor.apana.org.au>
+References: <20241123070127.332773-1-kanchana.p.sridhar@intel.com>
+ <20241123070127.332773-2-kanchana.p.sridhar@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: K3w5-ZypYIhXtUPnpvccrPzMur73tUNN
-X-Proofpoint-ORIG-GUID: K3w5-ZypYIhXtUPnpvccrPzMur73tUNN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- suspectscore=0 spamscore=0 malwarescore=0 phishscore=0 clxscore=1015
- impostorscore=0 mlxlogscore=955 adultscore=0 lowpriorityscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411250082
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241123070127.332773-2-kanchana.p.sridhar@intel.com>
 
-Add watchdog clock on the Qualcomm QCS8300 Ride platform.
+On Fri, Nov 22, 2024 at 11:01:18PM -0800, Kanchana P Sridhar wrote:
+> This commit adds batch_compress() and batch_decompress() interfaces to:
+> 
+>   struct acomp_alg
+>   struct crypto_acomp
+> 
+> This allows the iaa_crypto Intel IAA driver to register implementations for
+> the batch_compress() and batch_decompress() API, that can subsequently be
+> invoked from the kernel zswap/zram swap modules to compress/decompress
+> up to CRYPTO_BATCH_SIZE (i.e. 8) pages in parallel in the IAA hardware
+> accelerator to improve swapout/swapin performance.
+> 
+> A new helper function acomp_has_async_batching() can be invoked to query
+> if a crypto_acomp has registered these batch_compress and batch_decompress
+> interfaces.
+> 
+> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+> ---
+>  crypto/acompress.c                  |  2 +
+>  include/crypto/acompress.h          | 91 +++++++++++++++++++++++++++++
+>  include/crypto/internal/acompress.h | 16 +++++
+>  3 files changed, 109 insertions(+)
 
-Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+This should be rebased on top of my request chaining patch:
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-index 7eed19a694c3..d4e4c7a8b453 100644
---- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-@@ -265,3 +265,7 @@ &ufs_mem_phy {
- 	vdda-pll-supply = <&vreg_l5a>;
- 	status = "okay";
- };
-+
-+&watchdog {
-+    clocks = <&sleep_clk>;
-+};
+https://lore.kernel.org/linux-crypto/677614fbdc70b31df2e26483c8d2cd1510c8af91.1730021644.git.herbert@gondor.apana.org.au/
+
+Request chaining provides a perfect fit for batching.
+
+Cheers,
 -- 
-2.34.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
