@@ -1,121 +1,130 @@
-Return-Path: <linux-kernel+bounces-420660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F4B9D80B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:06:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3F4E9D80D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:06:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCAAB280DF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:06:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CFF6162A1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC1D18F2DF;
-	Mon, 25 Nov 2024 09:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C5B18FDDB;
+	Mon, 25 Nov 2024 09:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="agwDQxUW"
-Received: from forward500b.mail.yandex.net (forward500b.mail.yandex.net [178.154.239.144])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="A2CSDU5j"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041EB188010
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 09:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23C618F2D8;
+	Mon, 25 Nov 2024 09:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732525562; cv=none; b=IMhiwDnjshDuwmKKW+Kd/QUFduELtwZiJOk39tdSNITAfNP8fs6KbzkHaf45IngieMmumkxgdClREieZjXgcC83flwxfFxQRCXka3kwuVWYwPmEpulGEjCeqRgutCQ3tCkFs4hayCqQ8Pk0a3wxbtpCdDrtWulGC89PBlz807Uw=
+	t=1732525581; cv=none; b=kfVNdrQiTP1np5SpXr4Rrew0+Tv4n2nvfOnewfDy39iyYRERmy18C+Gw8zcO75BZ94z/yQethc/v1oebHvfhrNflUNUfUU1DW+uW7EzmQzy0MEBNiRC9vovHpAdl5nTscu+XM/P7pzm8AMAy+N1txTaOCOoTE0aGOCSL9vuFIAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732525562; c=relaxed/simple;
-	bh=JWC3XkTd2GO+Ofndu1/y/AaphGVRsS4eMBSmlwpg4Rg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qrfrLwxKf9LpHQuv+hhp23SHUFcDkv6RRHXIF+7tjTaTowrr/6DLEIsUGh5Ibj8CKi2aYUXQUC1UIla8AMR8bH70sQOghYXs/afKY2dQhHywfs1dFhJAcHn84P861YUVM54LdiUgm2CnYeBRPG67smHLZaWa8ur7AxyIynKtokw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=agwDQxUW; arc=none smtp.client-ip=178.154.239.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-19.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-19.sas.yp-c.yandex.net [IPv6:2a02:6b8:c1c:320f:0:640:c550:0])
-	by forward500b.mail.yandex.net (Yandex) with ESMTPS id 8D8AE60FE5;
-	Mon, 25 Nov 2024 12:05:50 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-19.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id n5Tj88fOkeA0-syUcmu4d;
-	Mon, 25 Nov 2024 12:05:50 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1732525550; bh=G3hvkv89yjkIHFEK3mF/zabPF5pLMTwnfFXj8Rw+ymM=;
-	h=In-Reply-To:Cc:Date:References:To:From:Subject:Message-ID;
-	b=agwDQxUWJb+FoVOR3X9UVO2q656OrETFGfhsNCjkyqLolNsAywi/rdurFrclELRgM
-	 npEcaJbzOtnyht14cQPCVycc5Uw9f7DK0SJMvWn2Nkv9TG+mKFtzJYwg82w/Ww5mJg
-	 TMbdOfvDLxqz9aFvgervvNObpuJDIZ2TyHmzYO/8=
-Authentication-Results: mail-nwsmtp-smtp-production-main-19.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <cf4f6457-0aac-47ba-bbe6-ec755c62c4a6@yandex.ru>
-Date: Mon, 25 Nov 2024 12:05:49 +0300
+	s=arc-20240116; t=1732525581; c=relaxed/simple;
+	bh=P9ZMDlRRm7FABa4QfREkhHCjgnFUH7DacEOVXkfquP4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=WXGFkVSqnz+VZuezOcZWt0UGuezQk5C8vwNzMGRtD3nhYFH0bZ5nOz17LG9VyI7ZZ5Lm4v9eg3dA8adqH0krv6yexd7AU+S4Pww4vBnaly3DZwiN3mJ2soWBiaVMO//ckCypKrE8VYF7qLle5Okk/Idmo8kF6ZJ6WrdUnX8E3IM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=A2CSDU5j; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AOLuNTY020661;
+	Mon, 25 Nov 2024 09:06:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	P9ZMDlRRm7FABa4QfREkhHCjgnFUH7DacEOVXkfquP4=; b=A2CSDU5jF2EGHQvn
+	3qfSWbK+PJcl2x1fuNE13h9zhS0M1tOflYVHIU+XWDBFJJwzeuBMIdTbcV7rAg6U
+	mFi5KODNGqZo6PD2sLRwn03VP3f/Ty2vthVHhu5IEiQqMuVbFqquKHLqpHaeXSzF
+	C7JOS5KQfxmWWvqKYrhDMOZ8kcYpfVakZqVHFmr0ZPtPLfTVWQniEDYwNZzI8S/a
+	KbmY2EcznSR3Xdbk5iXy7R473CXuVpQqU5JjNdnsk+dHXcreVZs8wnccFN39DQis
+	yXMkM6oFE9r1pDTZTId9smiwPo7QazLEUsb9Ek52woIPehOigSxKazAmawRG6zQn
+	phgLzw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4337tjbxrg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 09:06:15 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AP96FsH026296
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 09:06:15 GMT
+Received: from nalasex01c.na.qualcomm.com (10.47.97.35) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 25 Nov 2024 01:06:14 -0800
+Received: from nalasex01c.na.qualcomm.com ([fe80::5da8:4d0f:c16a:a1d]) by
+ nalasex01c.na.qualcomm.com ([fe80::5da8:4d0f:c16a:a1d%11]) with mapi id
+ 15.02.1544.009; Mon, 25 Nov 2024 01:06:14 -0800
+From: "Renjiang Han (QUIC)" <quic_renjiang@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Stanimir Varbanov
+	<stanimir.k.varbanov@gmail.com>,
+        "Vikash Garodia (QUIC)"
+	<quic_vgarodia@quicinc.com>,
+        "bryan.odonoghue@linaro.org"
+	<bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Rob Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor Dooley" <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio" <konradybcio@kernel.org>
+CC: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3 2/4] media: venus: core: add qcs615 platform data
+Thread-Topic: [PATCH v3 2/4] media: venus: core: add qcs615 platform data
+Thread-Index: AQHbPvvPYYY1eWJHr0iQpbQKhF55QLLHqWPggACOroD//3tXQA==
+Date: Mon, 25 Nov 2024 09:06:14 +0000
+Message-ID: <7646d1f78d25449a87c51a741250705a@quicinc.com>
+References: <20241125-add-venus-for-qcs615-v3-0-5a376b97a68e@quicinc.com>
+ <20241125-add-venus-for-qcs615-v3-2-5a376b97a68e@quicinc.com>
+ <3b3cab5c583a41d79acc75dd08ca84d6@quicinc.com>
+ <9b37a31e-9de3-4230-8a3a-4ea506ca8d0d@kernel.org>
+In-Reply-To: <9b37a31e-9de3-4230-8a3a-4ea506ca8d0d@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: userfaultfd: two-step UFFDIO_API always gives -EINVAL
-Content-Language: en-US
-From: stsp <stsp2@yandex.ru>
-To: Linux kernel <linux-kernel@vger.kernel.org>
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Peter Xu <peterx@redhat.com>
-References: <2d35e5f7-2edc-4ef0-b71b-82186c0627b0@yandex.ru>
-In-Reply-To: <2d35e5f7-2edc-4ef0-b71b-82186c0627b0@yandex.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Ny0APwcuSNB0IdBvy7Hc3fwgcwfvHhfN
+X-Proofpoint-ORIG-GUID: Ny0APwcuSNB0IdBvy7Hc3fwgcwfvHhfN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1011
+ impostorscore=0 priorityscore=1501 suspectscore=0 phishscore=0 spamscore=0
+ bulkscore=0 mlxlogscore=999 adultscore=0 mlxscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411250077
 
-23.11.2024 18:13, stsp пишет:
-> Hello.
->
-> I tried to use userfaultfd and got
-> that strange result: when I first do
-> UFFDIO_API ioctl with features = 0,
-> it succeeds. I check the needed
-> features, and they are all in place.
-> But on the second step, where I
-> request the needed features,
-> UFFDIO_API gives -EINVAL no matter
-> what features I requested (or even
-> set features to 0 again).
-With the test patch below, the
-problem can be reproduced. All
-the code in selftests suggest
-that UFFDIO_API should not be
-called twice, whereas man page
-says this:
+On Monday, November 25, 2024 4:57 PM, Krzysztof Kozlowski wrote:
+> On 25/11/2024 09:44, Renjiang Han (QUIC) wrote:
+> > On Monday, November 25, 2024 1:35 PM, Renjiang Han wrote:
+> > > Initialize the platform data and enable venus driver probe of QCS615 =
+SoC.
+> >=20
+> > Forgot to add Reviewed-by, next version will add Reviewed-by: Bryan=20
+> > O'Donoghue <bryan.odonoghue@linaro.org>
 
-```
-        After the userfaultfd object is created with userfaultfd(), the 
-applica‐
-        tion must enable it using the UFFDIO_API ioctl(2) operation. 
-This oper‐
-        ation allows a two-step handshake between the kernel and user  
-space  to
-        determine what API version and features the kernel supports, and 
-then to
-        enable  those  features  user  space wants.
-```
-But the second part doesn't work and
-is never being tested in selftests.
-So is this a documentation problem?
+> Please start using b4. You cannot add other people's tag this way - via r=
+eply to email.
+Thanks for your comment. Next version will be updated with b4.
 
-This patch can be used to make
-sure the second call doesn't work:
+> Best regards,
+> Krzysztof
 
---- a/tools/testing/selftests/mm/uffd-unit-tests.c
-+++ b/tools/testing/selftests/mm/uffd-unit-tests.c
-@@ -171,6 +171,14 @@ static int test_uffd_api(bool use_dev)
-                 goto out;
-         }
-
-+       /* Request valid feature via UFFDIO_API */
-+       uffdio_api.api = UFFD_API;
-+       uffdio_api.features = UFFD_FEATURE_PAGEFAULT_FLAG_WP;
-+       if (ioctl(uffd, UFFDIO_API, &uffdio_api)) {
-+               uffd_test_fail("UFFDIO_API should succeed but failed");
-+               exit(1);
-+       }
-+
-         uffd_test_pass();
-  out:
-         close(uffd);
 
