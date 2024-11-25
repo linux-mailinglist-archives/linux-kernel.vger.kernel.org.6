@@ -1,96 +1,86 @@
-Return-Path: <linux-kernel+bounces-420552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93B699D7C46
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:58:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E02A39D7C47
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:59:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1578AB22D22
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:58:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F73016328C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A265C18787F;
-	Mon, 25 Nov 2024 07:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKxiygkJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B6A17E8F7;
+	Mon, 25 Nov 2024 07:59:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0996116631C;
-	Mon, 25 Nov 2024 07:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A54514AD2D
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 07:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732521498; cv=none; b=nL/osyFc0BG1A09FfIj44lnclIfjveZyPyZk++iuXH+lj/QxlETg5/vPadMZUlQPKXQrjHc+FkmTc+zI74k4P34pT7KRGuAoE8VUbhwKDAntvgbEDW6Ac/HbJ4MXrthD/IVJmLClzi6I12cDZgWvRZySR2rFvbMW18YsD6PVcHg=
+	t=1732521545; cv=none; b=K+LWd/3bNuVVJ2zbwEedrVY6fjwRuoJrBTLA5sPjWeOv82QL8iUJQzYtXz+o3qyKTF4lTKIouchVqmp5uJGaKwwPCMkfkJQ9u1HKaUlwWS8wALctk/wt6NqlEYvVYVy9Zq0uGR5gQUx0YXIsDn9VpZ/y7cffE5qnHgtI8m3gZKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732521498; c=relaxed/simple;
-	bh=Y0UArdCUCqp1jXWTuN8I++4DqpKkqwf/0IT9xVTiTMg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NFYCjDbsHNO4tydfauWPZ4MXkF8JXVu5nBZ/qSvRPTv+8y7z2e8gKe/FVADuVCHQ2ksVlV21cNQZEVIVvkxlJxnwT9VyAK4vBwEeG9iuHwr7IiShLaxtCXBKLVSeY72pZqj7tYLknMaWV4XHzTEFLT45CAp36P3GeR/qloC87AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IKxiygkJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2A4DC4CECE;
-	Mon, 25 Nov 2024 07:58:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732521497;
-	bh=Y0UArdCUCqp1jXWTuN8I++4DqpKkqwf/0IT9xVTiTMg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=IKxiygkJT3a+ZOguem8SB/mP8JTzLGsoxm/mspn+AmiHm5UQg0nmASr/gP8XEWiV7
-	 pd/a3L+pB1oY4KfKDwQ3Nz2uONB5cJk5/vvKO7nSgfXGo2WsRVVdX2OO0XIFIskNk5
-	 Dqc6TvEEiuz7O5bRDtnUs3Aqb7zX51mGlCwEE2qfBbpSqz584ORhxMR024kacjFPx/
-	 Ul+GF4H//n4gBodlcFqxSQtlammembHOlEsenx/+7xQehkgDpNDsOdSbInXvXVEt78
-	 jXuuFDlZV3VFfXJf+/vkfdQ2Us0jqV/QlrWBzP63SVvI+FSfKj/0P7BeVOtzrSjOix
-	 FvQBvi3ZFPPEg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Tamir Duberstein" <tamird@gmail.com>
-Cc: "Danilo Krummrich" <dakr@kernel.org>,  "Miguel Ojeda"
- <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
-  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
-  =?utf-8?Q?Ma=C3=ADra?= Canal <mcanal@igalia.com>,  "Asahi Lina"
- <lina@asahilina.net>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v10 0/2] rust: xarray: Add a minimal abstraction for XArray
-In-Reply-To: <20241120-rust-xarray-bindings-v10-0-a25b2b0bf582@gmail.com>
-	(Tamir Duberstein's message of "Wed, 20 Nov 2024 06:48:16 -0500")
-References: <8afOg1gqssfIosuFD71f-eCLAHFSeGtzFU9qi-FzHX2T8kEkLMkk56HrWwUfVxoMCo8UlbKPaxjcJoixKhT8_g==@protonmail.internalid>
-	<20241120-rust-xarray-bindings-v10-0-a25b2b0bf582@gmail.com>
-Date: Mon, 25 Nov 2024 08:58:07 +0100
-Message-ID: <87iksb3fu8.fsf@kernel.org>
+	s=arc-20240116; t=1732521545; c=relaxed/simple;
+	bh=SCE2WmtsrmDSSAee8KmN5SMZfnebEtLwEeVqxQswg4c=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=PhNvY2+oW+XE3BMSiRAC09v0Hek2jxY5t8ASUB8frR4u8KIPYRJpgktBx682fmhJLHISWc94Xb/+VvyAfQ1QzlFSmNY+xCcpzWet0sdGrQ+8kQSryQ+aWOprA3Z0bwuXJly8BvbH+V8K2x/t4vXVF2AicsLJD47ifHa73+Y8em8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a78e952858so43868855ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 23:59:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732521542; x=1733126342;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=R+J1XfTvEGbnZYT5cgi517gy4DhClcf2cPE32t/nKLM=;
+        b=e2S0GSuO2kdsIWIqamjaQj1G5IQbs+dDbJUrkK+KGC46rO2zWDkHSRU7G062TgL8xd
+         J70mAMq8JifdyV1rcRCnUhtHyEsklCS7GJinGux22xkq57n3LWFG/HTLn/48cquNJS59
+         L8RixkiLSMfhpSvoTXJUZIYnDpdy8rQ9nBsOj+WB+DrxDo0Ov4Cwu1wK7JEQYqLahxrx
+         tmwrmadiJdbBO9G/+9za51nSzZO2jwTAJum8cee8fLS1BjQCNnoldHVJYgwNjuHdh6wy
+         m2l9EfhIV4ovQzaQg65zleE9xfKuYKBpPP3xlsxstkkimBWjA4Fjkk7sTOreooc4WFul
+         0lsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUkhCNnf8tPn8zsMaNJUPDGL8cK3hSmlAtX46FHDd/OXaivhFInw7bwjoiI6YkO9HaVDttlHFO3ocBLDp8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3CDSGh8zxonqMZldYCIiHcx4TFcR718T2obJb2gSsiisqolQn
+	yK//ambetpLg24dU/w3ysHuTof1GBjqSDKwf9qanqymFntfJGcflcLSXiQq2urU02mNpRieB3un
+	LApqSKYs4AlGCzWH58qOx+hkUTyMt+knoXmYYQxo3acVFUnMZZe2kNOs=
+X-Google-Smtp-Source: AGHT+IHho4965BcfojGJDwPeALwWVvHbmUeKaS5qZvRoO5hkxYTkMEOBrPgIfbCBfar090ONoFqz2GBQrgoK0IugYAIdhnsIvjos
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:2182:b0:3a7:6721:7ada with SMTP id
+ e9e14a558f8ab-3a79afa9c42mr99183385ab.16.1732521542788; Sun, 24 Nov 2024
+ 23:59:02 -0800 (PST)
+Date: Sun, 24 Nov 2024 23:59:02 -0800
+In-Reply-To: <CAHiZj8hLZjkoctrBfabk2Vc32xQP7BW-sVdX+Xhkjd2AGqPWWg@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67442e46.050a0220.1cc393.006e.GAE@google.com>
+Subject: Re: [syzbot] [mm?] kernel BUG in const_folio_flags (2)
+From: syzbot <syzbot+9f9a7f73fb079b2387a6@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, surajsonawane0215@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot tried to test the proposed patch but the build/boot failed:
+
+./arch/x86/include/asm/asm-offsets.h:1:10: fatal error: generated/asm-offsets.h: No such file or directory
 
 
-Hi Tamir,
+Tested on:
 
-"Tamir Duberstein" <tamird@gmail.com> writes:
-
-> This is a reimagining relative to earlier versions[0] by Asahi Lina and
-> Ma=C3=ADra Canal.
->
-> It is needed to support rust-binder, though this version only provides
-> enough machinery to support rnull.
->
-> Link: https://lore.kernel.org/rust-for-linux/20240309235927.168915-2-mcan=
-al@igalia.com/ [0]
-
-Thanks for picking this up!
-
-I am having some trouble with my benchmark system. When it comes back
-online, I'll run the `rnull` suite with these patches.
-
-Sorry for the delay.
-
-
-Best regards,
-Andreas Hindborg
-
+commit:         9f16d5e6 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c4515f1b6a4e50b7
+dashboard link: https://syzkaller.appspot.com/bug?extid=9f9a7f73fb079b2387a6
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=146fb75f980000
 
 
