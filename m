@@ -1,195 +1,103 @@
-Return-Path: <linux-kernel+bounces-420378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02F229D79B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 02:12:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1969E9D79B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 02:15:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A90892821E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 01:12:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3572B21173
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 01:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003DC8462;
-	Mon, 25 Nov 2024 01:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD5ED53F;
+	Mon, 25 Nov 2024 01:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TyRiIf62"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rnXBNBw3"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519A3624;
-	Mon, 25 Nov 2024 01:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370FF4A28;
+	Mon, 25 Nov 2024 01:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732497141; cv=none; b=grAFery+WPnR+hkq+O4j5gPGeUYGdsXnvFi08PSrnQOcPEz+Px0FmTGKiXfUNFUMkX6B2DmLc0EVQCVHv6wO2IdI2YTQ+YOaf/pabZ91ASH08ZsnOcHpB2lFMVDHf2vOdfULWJlC7qHkCMAx/mMs3m/4eay9Oum7jhgqpPJGkVU=
+	t=1732497309; cv=none; b=S/PD4MIKWDyZRL5kHkq5/gb2TLL0i6qwmmSdhLKb04zwHnhBFC5sbkXSas2cU8Op8QlHq3Mlc8MIkTBNTl7oayN56WJ4rp05NRDDOV5pFK+8fSbc79XGnB//B57D3Ox8l12oNzEyNLzog6vIDIeoLSikwWnxXzgjsHA9AdPA6gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732497141; c=relaxed/simple;
-	bh=7Khz0YV/QMX/+KytrGaz9YGDYG82vqLc5hFXwricj5Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pNGNGN4V8LDXLyWbWe4lExVfKF/CseWvAW7haljCB6/1SfTO3ufoouoEn7x3BzO4Vbu2He8NAjsous2mF9FQSIsDMdm6LfkYmktucTip5dCehzVE3oKJivoWa/yqxal5tBSfmUqdVhrQZf7vOF4NoIvr6qb8NJDDmhm05Z7TDOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TyRiIf62; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B142C4CECC;
-	Mon, 25 Nov 2024 01:12:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732497140;
-	bh=7Khz0YV/QMX/+KytrGaz9YGDYG82vqLc5hFXwricj5Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TyRiIf6290ysu3cL8x1wYsW4feRBA+Puz3JoXw8viAtzpdNEyJZDTr6yX9T7KI1Go
-	 h3jjoB0NUPhRkGZeu8fy2BzBFqdp5J3XwubAAlhonzFz6XFL5vE9h+q5ePMSFcwmRj
-	 Nv+PTlysf1uKNw3fcoDrN8PFIP4oyi9SVPJ0Kty/ARZN70xZ/OVOcXdnWc01JwvFPW
-	 2EDoO03GxmOzkbaLnfKA+XamgbfYgJZDoCUt9r3OA1Qe5MUBfGGMdbkmzid8QUmxia
-	 yb9x549gi4pg+hXsjMYKGBrm6ua3iAlcACg/1GitSSIkG3f6x8G2TaLtVj94VQgEfn
-	 cNKSMdwiwc+sw==
-Message-ID: <e767272d-1cc4-4945-82d1-efd88c724e06@kernel.org>
-Date: Mon, 25 Nov 2024 10:12:05 +0900
+	s=arc-20240116; t=1732497309; c=relaxed/simple;
+	bh=FghVjbvvMpiTx3fdRcwk7Gj66JU3/jr9pR44rasDigk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hN6Tuwkwd83fzJwlxLT9IrPcf/yxpOhCHCB8aX83gBpACiv/UPuwsEruWa1Y1I1FMLuhsKR9tJwz5cRE6Pghh/oSekIdjAee+arrZsRjVQpUQBge3BRLhHF3FwtlbvY0uj4+MejQAA88EatZM0hCHN+mxEiwjth5FSmvZEWw1cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rnXBNBw3; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=DPJxPRNtak+qMVMCGKE8L3WE4BezG2ABg27oPUZbe3M=; b=rnXBNBw3yzZnxhJIGUHJxMVUBN
+	EsnGZV6pUmGXQxXpVRf63e/Vd8rUfLeYLeiCuW/y3D1UGsJXb2HbfAt5KYAvOuZG+tTEfascZ39GK
+	wysE9XKEahtGw5ln/xMwpeuKx427lnIvdC7QKhZoLmkrVXvTGIraQah5FRStBgD/H/+gmkjDmhv3b
+	cQkYmw57mmi1Upm1vaEeN48xakUPrJR4YVoRTAblIO72unUb+0526mATh1tloL214DPycESfDvWf3
+	ZhaKtKNPaGL1rzrlEFVWbAz+PNG9e86lO850briCSPrY29A5Wk8pFS2ym95byAghyAfEXVuVzNkSx
+	tPhIT+gQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tFNgt-0000000BA8K-3ooS;
+	Mon, 25 Nov 2024 01:15:03 +0000
+Date: Mon, 25 Nov 2024 01:15:03 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Mateusz Guzik <mjguzik@gmail.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Hao-ran Zheng <zhenghaoran@buaa.edu.cn>, brauner@kernel.org,
+	jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, baijiaju1990@gmail.com,
+	21371365@buaa.edu.cn
+Subject: Re: [RFC] metadata updates vs. fetches (was Re: [PATCH v4] fs: Fix
+ data race in inode_set_ctime_to_ts)
+Message-ID: <Z0PPl_B6kxGRCZk7@casper.infradead.org>
+References: <20241124094253.565643-1-zhenghaoran@buaa.edu.cn>
+ <20241124174435.GB620578@frogsfrogsfrogs>
+ <wxwj3mxb7xromjvy3vreqbme7tugvi7gfriyhtcznukiladeoj@o7drq3kvflfa>
+ <20241124215014.GA3387508@ZenIV>
+ <CAHk-=whYakCL3tws54vLjejwU3WvYVKVSpO1waXxA-vt72Kt5Q@mail.gmail.com>
+ <20241124222450.GB3387508@ZenIV>
+ <Z0OqCmbGz0P7hrrA@casper.infradead.org>
+ <CAHk-=whxZ=jgc7up5iNBVMhA0HRX2wAKJMNOGA6Ru9Kqb7_eVw@mail.gmail.com>
+ <Z0O8ZYHI_1KAXSBF@casper.infradead.org>
+ <CAHk-=whNNdB9jT+4g2ApTKohWyHwHAqB1DJkLKQF=wWAh7c+PQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] ata: libahci_platform: support non-consecutive port
- numbers
-To: Josua Mayer <josua@solid-run.com>, Niklas Cassel <cassel@kernel.org>,
- Hans de Goede <hdegoede@redhat.com>
-Cc: Jon Nettleton <jon@solid-run.com>,
- Mikhail Anikin <mikhail.anikin@solid-run.com>,
- Yazan Shhady <yazan.shhady@solid-run.com>,
- Rabeeh Khoury <rabeeh@solid-run.com>, linux-ide@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241121-ahci-nonconsecutive-ports-v1-1-1a20f52816fb@solid-run.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20241121-ahci-nonconsecutive-ports-v1-1-1a20f52816fb@solid-run.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whNNdB9jT+4g2ApTKohWyHwHAqB1DJkLKQF=wWAh7c+PQ@mail.gmail.com>
 
-On 11/22/24 12:05 AM, Josua Mayer wrote:
-> So far ahci_platform relied on number of child nodes in firmware to
-> allocate arrays and expected port numbers to start from 0 without holes.
-> This number of ports is then set in private structure for use when
-> configuring phys and regulators.
+On Sun, Nov 24, 2024 at 04:53:39PM -0800, Linus Torvalds wrote:
+> On Sun, 24 Nov 2024 at 15:53, Matthew Wilcox <willy@infradead.org> wrote:
+> Look, let's write 5.000950, 6.000150 and 7.000950, while there is a
+> single reader (and let's assume these are all properly ordered reads
+> and writes):
 > 
-> Some platforms may not use every port of an ahci controller.
-> E.g. SolidRUN CN9130 Clearfog uses only port 1 but not port 0, leading
-> to the following errors during boot:
-> [    1.719476] ahci f2540000.sata: invalid port number 1
-> [    1.724562] ahci f2540000.sata: No port enabled
+>   W1.s 5
+>   W1.ns 950
+>   W2.s 6
+>   R.ns (950)
+>   R.s (6)
+>   W2.ns 150
+>   W3.s 7
+>   W3.ns 950
+>   R.ns (950)
 > 
-> Remove from ahci_host_priv the property nports which only makes sense
-> when enabled ports are consecutive. It is replaced with AHCI_MAX_PORTS
-> and checks for hpriv->mask_port_map, which indicates each port that is
-> enabled.
-> 
-> Update ahci_host_priv properties target_pwrs and phys from dynamically
-> allocated arrays to statically allocated to size AHCI_MAX_PORTS.
-> 
-> Update ahci_platform_get_resources to ignore holes in the port numbers
-> and enable ports defined in firmware by their reg property only.
-> 
-> When firmware does not define children it is assumed that there is
-> exactly one port, using index 0.
-> 
-> I marked this RFC because it was only tested with Linux v6.1, Marvell
-> fork, CN9130 Clearfog Pro which has only port number 1 in device-tree.
-> Further I am not completely sure if it has severe side-effects on
-> other platforms.
-> I plan to submit it again after testing on v6.13-rc1, but do welcome
-> feedback in the meantime, particularly whether this idea of supporting
-> non-consecutive ports is acceptable.
-> 
-> Signed-off-by: Josua Mayer <josua@solid-run.com>
+> and look how the reader is happy, because it got the same nanoseconds
+> twice. But the reader thinks it had a time of 6.000950, and AT NO
+> POINT was that actually a valid time.
 
-[...]
+I literally said that.
 
-
-> @@ -539,41 +544,7 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
->  		hpriv->f_rsts = flags & AHCI_PLATFORM_RST_TRIGGER;
->  	}
->  
-> -	/*
-> -	 * Too many sub-nodes most likely means having something wrong with
-> -	 * the firmware.
-> -	 */
->  	child_nodes = of_get_child_count(dev->of_node);
-> -	if (child_nodes > AHCI_MAX_PORTS) {
-> -		rc = -EINVAL;
-> -		goto err_out;
-> -	}
-
-Why remove this check ? Your platform may not need ti, but it is still valid
-for others.
-
-> -
-> -	/*
-> -	 * If no sub-node was found, we still need to set nports to
-> -	 * one in order to be able to use the
-> -	 * ahci_platform_[en|dis]able_[phys|regulators] functions.
-> -	 */
-> -	if (child_nodes)
-> -		hpriv->nports = child_nodes;
-> -	else
-> -		hpriv->nports = 1;
-
-Same here.
-
-> -
-> -	hpriv->phys = devm_kcalloc(dev, hpriv->nports, sizeof(*hpriv->phys), GFP_KERNEL);
-> -	if (!hpriv->phys) {
-> -		rc = -ENOMEM;
-> -		goto err_out;
-> -	}
-> -	/*
-> -	 * We cannot use devm_ here, since ahci_platform_put_resources() uses
-> -	 * target_pwrs after devm_ have freed memory
-> -	 */
-> -	hpriv->target_pwrs = kcalloc(hpriv->nports, sizeof(*hpriv->target_pwrs), GFP_KERNEL);
-> -	if (!hpriv->target_pwrs) {
-> -		rc = -ENOMEM;
-> -		goto err_out;
-> -	}
-
-And for platforms that actually have a valid nports with no ID holes, the above
-is OK and uses less memory...
-
-Why not simply adding code that checks the ID of the child nodes ? If there are
-no ID holes, then nothing need to change. If there are holes, then
-hpriv->nports can be set to the highest ID + 1 and you can set
-hpriv->mask_port_map as you go. With just that, you should get everything
-working with far less changes than you have here.
-
->  	if (child_nodes) {
->  		for_each_child_of_node_scoped(dev->of_node, child) {
->  			u32 port;
-> @@ -587,7 +558,7 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
->  				goto err_out;
->  			}
->  
-> -			if (port >= hpriv->nports) {
-> +			if (port >= AHCI_MAX_PORTS) {
->  				dev_warn(dev, "invalid port number %d\n", port);
->  				continue;
->  			}
-> @@ -625,6 +596,8 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
->  		 * If no sub-node was found, keep this for device tree
->  		 * compatibility
->  		 */
-> +		hpriv->mask_port_map |= BIT(0);
-> +
->  		rc = ahci_platform_get_phy(hpriv, 0, dev, dev->of_node);
->  		if (rc)
->  			goto err_out;
-> 
-> ---
-> base-commit: adc218676eef25575469234709c2d87185ca223a
-> change-id: 20241121-ahci-nonconsecutive-ports-a8911b3255a7
-> 
-> Best regards,
-
-
--- 
-Damien Le Moal
-Western Digital Research
+"Now we have a time of 6:950 which is never a time that this file had,
+but it's intermediate in time between two times that the file _did_
+have, so it won't break make."
 
