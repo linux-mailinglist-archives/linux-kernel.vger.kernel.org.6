@@ -1,120 +1,111 @@
-Return-Path: <linux-kernel+bounces-420384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4360A9D79C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 02:26:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630139D79C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 02:28:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C86DDB22794
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 01:26:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21C33282611
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 01:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A368DDBE;
-	Mon, 25 Nov 2024 01:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33368BEC;
+	Mon, 25 Nov 2024 01:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CVuzn8QU"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AX4WAESO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB87C8BEC
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 01:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A27A79F5;
+	Mon, 25 Nov 2024 01:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732498006; cv=none; b=A3QHwJI9Mow8mcgAHKAvSo2Z6evvb2cUjF2Id+F3Hno2Ph7DhuckP+V5TmIqABS9D8PJLW2BeeCy70qqv+DC2k2gt/aDD+kwnPUstjiGcgEmEAAR4nkufDew2Ap6Gj7asCU/9QO/FfXKDvc6RADgJ4muU5lY9i2L0E/WmJxUpSo=
+	t=1732498080; cv=none; b=QIz51VFDKobOIdPeq0AOzu7kSGwYLRnlBHQmq9ZCe4qv1tHHG0PcSeJNFrCzkwN4eHRLBHV7gen/Zv9Ss72pGf49t2ylhw7S2kIO4nsqqserwjg4bimicF7Nyl0cHL41zjwMxOLFyaPIuYIEMb+SyHLnH952MknCQGB7nyPAORA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732498006; c=relaxed/simple;
-	bh=mQBlwudP0DfgTUBOWsoqAJWn9pKuKv5wOYnWBD/F4ww=;
+	s=arc-20240116; t=1732498080; c=relaxed/simple;
+	bh=DNnWvILlFGSRzB5QgDXte8hNW/wYoseONDiQj9vnhRg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gal15pXYVM8V3KxGE7GIdsTEBy/WKh6g6vX2qE1B9w25d49DOmntOQ+le/MaygZQVvJ5bcplUWktgIm7uG0M2Vl0IUqzPTEnV0/0xIxCkxyJti13N0K4zj8kE2f4BRq42bW5JB5Kg/hToff/bAv/sZiMbEydWi6xc5DVzA/KqmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=CVuzn8QU; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53de582163fso153690e87.0
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 17:26:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732498003; x=1733102803; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ieFB/E3uQUpwOL5elkCs1Fu1xJKYr7cXOoEikGe05FE=;
-        b=CVuzn8QUF349aqn0HAAEETIfz8NBpU/pdoMbw5rjVP6QMsYSUCW2WP4Gri0GfAbo3I
-         XdW14yMllXmTRq7dKVEoOFn6YR+MNMWugk3nkTJGcgIzXFVbMRX0U8ieriGIyzVrcv9X
-         nI6Az/Xejr0FO+mRyvwqhuBijGhHLca6XU1aw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732498003; x=1733102803;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ieFB/E3uQUpwOL5elkCs1Fu1xJKYr7cXOoEikGe05FE=;
-        b=t5mgM38vblHLrBv5Kpdk8BnPlq8wIN/nDWCkmIjKI2/l8iHnrIwnHulrWn0CbbudMi
-         NQAjnOuBTeZWvoRcHX6Pf4089HwQQHzeNFDfYzpkou+T3iPqV1KRSwcye8UKs9ABysdS
-         wpkJ64iLP+Pb0/gXDfaZFGjbslSEA9HtC+T5fFbVDL6l0Ujek+IWqdbMqSGLhf140o3a
-         YLu47TSOYGVZ1hmOJ1B5zeAMb3S166gmBWmd2mBC3Bj3ISgomgVlRgQ+NNNjU6fWDv1d
-         c6npQ6iLGaz6NbvCB659vmG/POAw3AN6cAaKJP8Ymj4D1DVh6OiONhzW40DaYH+tIrPx
-         zijw==
-X-Forwarded-Encrypted: i=1; AJvYcCVH0yv6k5+qpQKNDy2RISCG84ZuwVJdlGkvD7y2vcv9JfnlR5zUT3uQY/bj0veDtkYxWO5JGPblUrXsJh0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv2JZYa9hnk/fk8xmR2ugQmZ4i8ZSiXBmbB4GzpGibpozutugQ
-	foUHFKmvbWYeC6fltkHhwP7JNCZDz6ivw3qWf9nA1EugBzpBv2OOU1zTSyDttbTiFjMOA7bnJoz
-	6MHJBeQ==
-X-Gm-Gg: ASbGncsfvp/3naRS9lja4dn3ajws3ym7tJBbKyGUlEyFQRAFSYYqRP6oR2ta/H2o9ix
-	XBIB9+KMUy5sWAAJqz9wmlcjDRf8MDguio4otbjv3jvVNSa7Yl2O0Gc+Qz4f51+LYr6OcF7ySDf
-	W6z9foSKQD3D7JymATwdVU9Y82nMI9XF4v/ZkCYDwtU890j1BbZznmonCJwdgv7903nFUvzgs91
-	/fQoE2E3OTZxom4Gfbi36tS926EyrGirJSg/8ih1avHEqQlD+IGNLefuKzUVLQ8s/HkYLBkL5sL
-	CJluaj5eSExxhiS3H6fD6bvd
-X-Google-Smtp-Source: AGHT+IHSMWJkyXR4slq35aDHKHpGYzbTgXcQvLolP9ysMc6tUTM/dABPT5IIj2mZu5LRGpgL1P13QQ==
-X-Received: by 2002:a05:6512:3ba2:b0:53d:85dc:7c58 with SMTP id 2adb3069b0e04-53dd39b4a8dmr7663058e87.50.1732498002795;
-        Sun, 24 Nov 2024 17:26:42 -0800 (PST)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com. [209.85.128.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa53fc0f73asm186387666b.127.2024.11.24.17.26.40
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Nov 2024 17:26:41 -0800 (PST)
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-434a044dce2so3675775e9.2
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 17:26:40 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUDILFDcXEAay2c2NDTOQFkC04N+ICsXP/KS9VPtfWOy+Z6eFgp20H0QgxKCA94XC7sWRasObRBQ4IsrfQ=@vger.kernel.org
-X-Received: by 2002:a05:6000:42c6:b0:382:5070:53a5 with SMTP id
- ffacd0b85a97d-38260b552dbmr7674736f8f.22.1732498000442; Sun, 24 Nov 2024
- 17:26:40 -0800 (PST)
+	 To:Cc:Content-Type; b=dygh7LUpDpkQkAFtGR+0Ki5p8eXIRb+Og5Zx6K9uuBbevZe6HgkRumtlMtby5GZeRpY6g1dvAcZzgQUd4SxU+BReUX1yGqEdEdkCyGTXeZZICuirCb9p8sSSRDHLDCBkD8wz2QE7WOvkBm/CI5hYbUrIOgc1XOadAADAjgSLOAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AX4WAESO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C357CC4CECC;
+	Mon, 25 Nov 2024 01:27:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732498078;
+	bh=DNnWvILlFGSRzB5QgDXte8hNW/wYoseONDiQj9vnhRg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=AX4WAESOa0b7tdHz2lOiEE/TJYAoxkPFjlCM/CfXkd3t2zw9/3TSzjNGF3WWfdOjN
+	 159vwkaEjX+gf0iadhjyCOFFULqfbH3M9oGlFcYoZWWFo7ZlK+wxpBfNydYJhQ4Uul
+	 COSCIGDYdXCFvkINkzOsVdJkRDBNK4G5H39crj6W6KG6hFasd25vNPcK8sQGhXQ1tr
+	 Mp/EpDzx+91iGEem1I+nD3MIbv5wDWod+fDyuFk6n8zFU+7psKFTvEK84mgcdMBaFM
+	 qQXE9TBTR2FialzWtJ0CY8BSMrgdW7KwBjAkQLxjQP5hvbhs81hD/wAYEY/Ca+09YG
+	 PwBkLcJ3rPcXw==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ffba235991so8314151fa.0;
+        Sun, 24 Nov 2024 17:27:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUa9ivbW+Hmct4CI+cZlazYEQBP0SUrGnqMjY3ohhQsY3wENF5EJteqCBRbW/gsJhAiZMwnJKh9919fpOiM@vger.kernel.org, AJvYcCXO/VEw3I9c7VwB3135QTsICQYZGzJK4uNK9Q86Ms9IkFM6p5g0VPs51L1GCDVoQm8Sb98oPjKoC+pX/sI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkYHKKPFefKFAkXKQBfEVNn1DzqxgnvIaJXtDn4oVMNAH4cjBT
+	3b4ZiWR1jf2jfdUuVklW+YYS4ie/5Q7SKdWRmskk/whWUO6ho6lmQKsJfTpMKsUQlb8MUqTOAgF
+	1D+qx7d020GuKtM4WarvYJsAKLuo=
+X-Google-Smtp-Source: AGHT+IG5tHgo1xe6Y37NtHha8xrtvKFdSdHXcffV7iV+asKnn8E7RqjpvhFLoqTfThLyVOYEGn8BZSbYbWOLIc63uvk=
+X-Received: by 2002:a05:6512:1249:b0:53d:d998:c8d3 with SMTP id
+ 2adb3069b0e04-53dd998c91fmr2556736e87.28.1732498077489; Sun, 24 Nov 2024
+ 17:27:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241124094253.565643-1-zhenghaoran@buaa.edu.cn>
- <20241124174435.GB620578@frogsfrogsfrogs> <wxwj3mxb7xromjvy3vreqbme7tugvi7gfriyhtcznukiladeoj@o7drq3kvflfa>
- <20241124215014.GA3387508@ZenIV> <CAHk-=whYakCL3tws54vLjejwU3WvYVKVSpO1waXxA-vt72Kt5Q@mail.gmail.com>
- <20241124222450.GB3387508@ZenIV> <Z0OqCmbGz0P7hrrA@casper.infradead.org>
- <CAHk-=whxZ=jgc7up5iNBVMhA0HRX2wAKJMNOGA6Ru9Kqb7_eVw@mail.gmail.com>
- <Z0O8ZYHI_1KAXSBF@casper.infradead.org> <CAHk-=whNNdB9jT+4g2ApTKohWyHwHAqB1DJkLKQF=wWAh7c+PQ@mail.gmail.com>
- <Z0PPl_B6kxGRCZk7@casper.infradead.org>
-In-Reply-To: <Z0PPl_B6kxGRCZk7@casper.infradead.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 24 Nov 2024 17:26:24 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgC9fB-Fq=pZQBDC0nZBWkxPRz-R95vbKjwHmSyU7Ex3w@mail.gmail.com>
-Message-ID: <CAHk-=wgC9fB-Fq=pZQBDC0nZBWkxPRz-R95vbKjwHmSyU7Ex3w@mail.gmail.com>
-Subject: Re: [RFC] metadata updates vs. fetches (was Re: [PATCH v4] fs: Fix
- data race in inode_set_ctime_to_ts)
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Mateusz Guzik <mjguzik@gmail.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Hao-ran Zheng <zhenghaoran@buaa.edu.cn>, brauner@kernel.org, 
-	jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	baijiaju1990@gmail.com, 21371365@buaa.edu.cn
+References: <20241124-kbuild-allconfig_debug_info-v1-1-07a7ac8d9a73@weissschuh.net>
+In-Reply-To: <20241124-kbuild-allconfig_debug_info-v1-1-07a7ac8d9a73@weissschuh.net>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 25 Nov 2024 10:27:21 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARURUizjHNhCKjdLSJp1mCF0HYvyOfm7n8LHmUBjYByQw@mail.gmail.com>
+Message-ID: <CAK7LNARURUizjHNhCKjdLSJp1mCF0HYvyOfm7n8LHmUBjYByQw@mail.gmail.com>
+Subject: Re: [PATCH] kconfig: prefer toolchain default for debug information choice
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 24 Nov 2024 at 17:15, Matthew Wilcox <willy@infradead.org> wrote:
+On Mon, Nov 25, 2024 at 12:59=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weiss=
+schuh.net> wrote:
 >
-> I literally said that.
+> Kconfig by default chooses the first entry of a choice setting.
+> For the "debug information" choice this is DEBUG_INFO_NONE which
+> disables debug information completely.
+>
+> The kconfig choice itself recommends to use "Toolchain default":
+>
+>         Choose which version of DWARF debug info to emit. If unsure,
+>         select "Toolchain default".
+>
+> Align the actual configuration with the recommendation by providing an
+> explicit default.
+>
+> This also enables more codepaths from allmodconfig/allyesconfig which
+> depend on debug information being available.
 
-Bah, I misunderstood you.
+Please give me some examples for "more codepaths" enabled by DEBUG_INFO
+because this is the opposite to the previous decision.
 
-Then yes, if all the writers are always in order, and you don't
-actually care about exact time matching but only ordering, I guess it
-might work.
 
-But since you need all the same barriers that you would need for just
-doing it right with a seqcount, it's not much of an advantage, and it
-doesn't give you consistency for any other kind of action.
+Commit f9b3cd24578401e7a392974b3353277286e49cee mentions:
 
-             Linus
+  all*config target ends up taking much longer and the output is much large=
+r.
+  Having this be "default off" makes sense.
+
+
+
+allmodconfig is often used for compile testing in CI/CD.
+We need to see the sufficient gain that sacrifices
+the build speed.
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
