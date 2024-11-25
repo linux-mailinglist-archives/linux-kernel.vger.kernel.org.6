@@ -1,135 +1,87 @@
-Return-Path: <linux-kernel+bounces-421362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E2309D8A27
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:21:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91DEE16A964
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:21:11 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133D51B4159;
-	Mon, 25 Nov 2024 16:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="U0dFFbIN"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E60399D8A35
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:23:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03F839FD9;
-	Mon, 25 Nov 2024 16:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A426028223C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:23:08 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B27C1B393A;
+	Mon, 25 Nov 2024 16:23:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E261AF0DC
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 16:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732551667; cv=none; b=swgHI/nynY3tSw/X6FoL4pS4cOA4oR3XBa8pWekmRTn9mrmQaSJJaAIX1q0LZBy0ifCXDQDp4KIjJbCx0Rhhmi1SMLBQVoHoejZ4s1fMlKe+2IMkIP5c9f/znj3ZzOtm4CNCVAPrdaCnU3wnQZ+NS3wzUBmm/uOjI0WJUI8ZjQI=
+	t=1732551784; cv=none; b=UkK57xUnb8PrRXhOIf0HH8C4mBn4NiQ1JtY8sdl8Tm1PdwFmef3rdVF/0njuaRYpRGniVvbCu5aRy88W6QTUR4xTajefIGZnso0BOBMjMNNkQA8iohjPuGEWTpqt09vVQYyi2mzFoNadvbJy6L2P7UttGIpII8S+KWso2ggh1oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732551667; c=relaxed/simple;
-	bh=Y6cPH0FxEJIt2pLccw1ui7BV8R9OG1nXIM6V6oXHVks=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IIUJBNZETf5LnUeOE0l7qnDBBemmFSPimHc5RZ+NWjZ/+SXnkpQXj3q4XKbEjcpxacjC901uccBQ47QiiTKL6jADbXs2+/mBZzRIkX8zUWJNRl+ObKZ7vDPppj0fD6zR6OTKolwIvjkIRFblgFfMA8IP4uM2GR+mJRmpZGQC4PM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=U0dFFbIN; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APGC4Dt025893;
-	Mon, 25 Nov 2024 16:21:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=XD4azp
-	RSiEhRk9eYI8mYqqGg9cLSzJVEFZjAQi8hw44=; b=U0dFFbINifmPXmgBnwiKDK
-	8hk7BGAUG6gr36/oecdH5Q9/HUidR0BBreezQc0+oqRU2MDiocK1ZZvB3QmXGhsS
-	CEW21C7PyfNjR2lHQVij8Yvl4oQqkCkCajNFrYBLFHaHW43qNw27TAehr0vQk+VU
-	ncpYwmmO0VSn3iHK2DBfIPS0IjSWkR2+yJd3R+wP9kq2IP44KtUoxk8gbUAZlj+p
-	xG5SZMr9xTNfMITHmFrXkreMT+uq9jiKDqZ0eZpf8uh7LnoHqei4B6P+6v5Rfnp9
-	uqoTABayTQo0OntnOQJRBg960YCB58wcFozmSPc63vS173R2p3r59MRtBpiwEiyw
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43386js5cn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Nov 2024 16:21:02 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4APGFi9s027210;
-	Mon, 25 Nov 2024 16:21:02 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 433ukj2r7w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Nov 2024 16:21:02 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4APGKwGj39715260
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 25 Nov 2024 16:20:58 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9CB1B20040;
-	Mon, 25 Nov 2024 16:20:58 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BDF0020043;
-	Mon, 25 Nov 2024 16:20:57 +0000 (GMT)
-Received: from p-imbrenda (unknown [9.152.224.66])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 25 Nov 2024 16:20:57 +0000 (GMT)
-Date: Mon, 25 Nov 2024 17:20:55 +0100
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Janosch Frank
- <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] KVM: s390: Remove one byte cmpxchg() usage
-Message-ID: <20241125172055.08b9ba5b@p-imbrenda>
-In-Reply-To: <20241125133755.14417-D-hca@linux.ibm.com>
-References: <20241125115039.1809353-1-hca@linux.ibm.com>
-	<20241125115039.1809353-3-hca@linux.ibm.com>
-	<20241125131617.13be742d@p-imbrenda>
-	<20241125133755.14417-D-hca@linux.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1732551784; c=relaxed/simple;
+	bh=7npni6cuOgv75jnjNETaMFz763fjtSTXZSYqeIF20ro=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=TRobwmlb8GIsqzUmF3Q0/gdHsjW0hI+h4QgNiI6xcbYGa2CGpx6xYYz0fqK5aAvKHm4T+w0PGragazSs9k4uYU9JR9V98BOaDW+gwRjGeJppqYugHPzV7NbY1xJ5TWJd5ldr9ShSiyVrEh92FfPtMDmDWtqYA9x+W789ZHlJ6MQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a79f4c0729so39116155ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 08:23:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732551782; x=1733156582;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Oc6gCtvj9QdIHA63OuJSzPcjtUJBYgM95nm/z9bSdNo=;
+        b=s8BBaOjtkPc5GAWU15MXYL6PQZ3yWqyK6mcdmruipEA5KJ8XvYKXUqkJDn2i45cIeq
+         0KHmrOoYNLKme19AqY3kNqlh5jwRr/Pn8kvOVPw7MK3h+btqBtcY+93y1por/CFIIXek
+         zU3d/VJCe49GfFj9FYVWxiVzQBT517WiUw717httDxBDb3crsmKCfs8W9ltYq8PLW2jR
+         5EYU9v0mNCfGyvBtSMWMSX4acdLaM84kkPe51EgUkRLDKwt/YxF2a0QWz0FwrDgxnWam
+         7vd0LuFiSOAp7d03P5Loqk/zW2q4As+HHuXDo79YNWZeR+YyeG0TcZMK9QS97nTJcgXi
+         Ktpw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+jU49MaYMRE1rStKa/YG+Sja4eAuCjgKmFfv9J9k8XQMQEj+5c68tEiWDI/3gxS5ctJH99hUUoscvS+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynNvNdttxf+xazZQm+3tdm/zgXEF/JhfUEE/OtCAyAiPuPqU/h
+	eIm0D0/eaVy6cuEIE9s6AABHdeNwrKJszeXzTjk5yciiQHxKDlJJmPlZ1sJiuW+ex9lfKHtt//r
+	Hytxp/WsF1qv3MD4Yf8sNMeUU+UhjFtumyJwNRe/sgE9QnDDjxiBSSVQ=
+X-Google-Smtp-Source: AGHT+IGWq6n4Ib0cQdBA1JdYaTFUW5FIHqJWrr4sE/PPHoVeYMfqhass8dNQRYvsbSbAzs237UnXwXoCLc/rgF87p94cUo8SMtz5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 8OrPnBHbdxDD-lz1-R5CCpI2wPXty_6N
-X-Proofpoint-GUID: 8OrPnBHbdxDD-lz1-R5CCpI2wPXty_6N
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- mlxlogscore=999 spamscore=0 suspectscore=0 phishscore=0 clxscore=1015
- mlxscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411250134
+X-Received: by 2002:a92:cdab:0:b0:3a7:6c5c:9aa4 with SMTP id
+ e9e14a558f8ab-3a79ad3f742mr141112135ab.12.1732551782383; Mon, 25 Nov 2024
+ 08:23:02 -0800 (PST)
+Date: Mon, 25 Nov 2024 08:23:02 -0800
+In-Reply-To: <tencent_C397C636464B74750D76ED66983D37374209@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6744a466.050a0220.1286eb.0004.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in sco_sock_connect
+From: syzbot <syzbot+489f78df4709ac2bfdd3@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 25 Nov 2024 14:37:55 +0100
-Heiko Carstens <hca@linux.ibm.com> wrote:
+Hello,
 
-> On Mon, Nov 25, 2024 at 01:16:17PM +0100, Claudio Imbrenda wrote:
-> > On Mon, 25 Nov 2024 12:50:38 +0100
-> > Heiko Carstens <hca@linux.ibm.com> wrote:  
-> > > @@ -128,23 +126,16 @@ static void sca_clear_ext_call(struct kvm_vcpu *vcpu)
-> > >  		struct esca_block *sca = vcpu->kvm->arch.sca;
-> > >  		union esca_sigp_ctrl *sigp_ctrl =
-> > >  			&(sca->cpu[vcpu->vcpu_id].sigp_ctrl);
-> > > -		union esca_sigp_ctrl old;
-> > >  
-> > > -		old = READ_ONCE(*sigp_ctrl);
-> > > -		expect = old.value;
-> > > -		rc = cmpxchg(&sigp_ctrl->value, old.value, 0);
-> > > +		WRITE_ONCE(sigp_ctrl->value, 9);  
-> > 
-> > that's supposed to be a 0, right?  
-> 
-> Duh... yes, of course. I added the "9" to better find the corresponding
-> code in assembly, and obviously forgot to replace it with 0 again.
-> Thanks for pointing this out!
-> 
-> Strange enough this still worked. Hmm.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-with that fixed:
+Reported-by: syzbot+489f78df4709ac2bfdd3@syzkaller.appspotmail.com
+Tested-by: syzbot+489f78df4709ac2bfdd3@syzkaller.appspotmail.com
 
-Acked-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+Tested on:
+
+commit:         9f16d5e6 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=101b775f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7393f07275e8e571
+dashboard link: https://syzkaller.appspot.com/bug?extid=489f78df4709ac2bfdd3
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=119edee8580000
+
+Note: testing is done by a robot and is best-effort only.
 
