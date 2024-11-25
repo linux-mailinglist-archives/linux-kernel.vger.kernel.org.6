@@ -1,176 +1,201 @@
-Return-Path: <linux-kernel+bounces-421328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C169D89AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:49:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C6729D89AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:50:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB53A1638EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:49:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD76F1652D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3AC1B414B;
-	Mon, 25 Nov 2024 15:49:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC331B3920;
+	Mon, 25 Nov 2024 15:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nqeSHWKC"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="JFw/6E+3"
+Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BDC44C94;
-	Mon, 25 Nov 2024 15:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4E129415;
+	Mon, 25 Nov 2024 15:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732549781; cv=none; b=oQwWBMD+yOLE+q59x1eIkJyJXq/rZaGHH7m1Cn06sYGuFH7ZdLqB65NAqfkqCFsRKHGcrCA6LUXwLWcNOu5z41a/5ZUj4oNSoR1eL7a1dMg7JgNMdSmxQo5ICcFbgsOgCgUefMB/HTtB5PE+31kjfeE4h2I9P/O9VHzegoGvqEI=
+	t=1732549819; cv=none; b=VBrNz8u44yosQK/70qnQ1y7F7g2QLU2c8o0qxpAXyGvsEkQCok1Bq+uHWlnwxnIh6C5pkpc9ksIS+H4QVCZk2SAYopNbreALKYhKUjsysrq5zxsO/q41/YZKZ+OB3qfhdIxnsjQLrft6uBWMh5PjppXNcVDyYRJVSXrZ3juD90M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732549781; c=relaxed/simple;
-	bh=BagwbimB9mVeZIN+ux/kKsFB52R0ap/BIYaUJgjIASM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=UP7wuQ7XPfcqtgK7dmO1hg2KZSMMh8sl6JbtBAKdkOMYnFpzt+0A3zLGrKEu8pw6AqUrJ5Qx38JCs13ccZ916jp2JBQXlvp2mQSfNlDqVwQkb2LWskj4aGibTxsNN9OIi+pKFR4ahQClbK2bfk5RigYC5H/yuCQBTfNl3/1mXYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nqeSHWKC; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APBML6p014123;
-	Mon, 25 Nov 2024 15:49:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BagwbimB9mVeZIN+ux/kKsFB52R0ap/BIYaUJgjIASM=; b=nqeSHWKCRQY/zgP1
-	g3ZjyvDxN0uS2glMM0Aw/mfOUFRINK/5BWY9E5MKwAXg9OxjvkTQXto7ScArCgjz
-	8AMKGO7OLxVLFAVxLxCmp6Rcmc5b2sesLjI9HuGvs+p59rDCd7hOg46W97oQC8sj
-	wcSmgR6PvljHXC63Couiul/svo3vm/FXQMPw4RA1wTz6OeSNXUDfC2rlmBxFTRxo
-	n53imkwtwwfSMHQqJhTATKQADz6EJ+NhLFzvYEOe8UAj2hFYaN09fhRUoCc/7gM4
-	rPtTZaRs2toKxWqk6avy7lDO1Z6MCgqdqT7zR2pcHw62qdsZh3+ZihaCtKNg9/4T
-	V0kz6Q==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4334dmwkau-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Nov 2024 15:49:33 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4APFnWQQ002921
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Nov 2024 15:49:32 GMT
-Received: from nalasex01c.na.qualcomm.com (10.47.97.35) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 25 Nov 2024 07:49:31 -0800
-Received: from nalasex01c.na.qualcomm.com ([fe80::5da8:4d0f:c16a:a1d]) by
- nalasex01c.na.qualcomm.com ([fe80::5da8:4d0f:c16a:a1d%11]) with mapi id
- 15.02.1544.009; Mon, 25 Nov 2024 07:49:31 -0800
-From: "Renjiang Han (QUIC)" <quic_renjiang@quicinc.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        "Vikash Garodia (QUIC)"
-	<quic_vgarodia@quicinc.com>,
-        "bryan.odonoghue@linaro.org"
-	<bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Rob Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor Dooley" <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad Dybcio" <konradybcio@kernel.org>,
-        "linux-media@vger.kernel.org"
-	<linux-media@vger.kernel.org>,
-        "linux-arm-msm@vger.kernel.org"
-	<linux-arm-msm@vger.kernel.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 1/4] dt-bindings: qcom,qcs615-venus: add support for
- video hardware
-Thread-Topic: [PATCH v3 1/4] dt-bindings: qcom,qcs615-venus: add support for
- video hardware
-Thread-Index: AQHbPvvNBcmhQ7jCvUeLTdcFK605vrLIJWyA///8ehA=
-Date: Mon, 25 Nov 2024 15:49:31 +0000
-Message-ID: <18cc654b4377463e8783de0b4659a27d@quicinc.com>
-References: <20241125-add-venus-for-qcs615-v3-0-5a376b97a68e@quicinc.com>
- <20241125-add-venus-for-qcs615-v3-1-5a376b97a68e@quicinc.com>
- <jovwobfcbc344eqrcgxeaxlz2mzgolxqaldvxzmvp5p3rxj3se@fudhzbx5hf2e>
-In-Reply-To: <jovwobfcbc344eqrcgxeaxlz2mzgolxqaldvxzmvp5p3rxj3se@fudhzbx5hf2e>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1732549819; c=relaxed/simple;
+	bh=RTrfYid/b24KKBOpAo7FxUgkZvgHSjtF2kSDoXzXJz4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Mo7J6eK452ou5cWRcnyc55d3Gczy+YLEFLxahX+CwBkksS1FlLwWhTVvgSgfQ8RwbxTMecZTKI5dXAlrR+q1+63ju2FxC2ScdLHi7qy4okWPhWIsgAUWQ1STH/VnkheV7upaVHXDl+Q9xpgB3ay0ZKkqhvYzGmWVbgQwpYdHIL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=JFw/6E+3; arc=none smtp.client-ip=207.171.188.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1732549819; x=1764085819;
+  h=message-id:date:mime-version:reply-to:subject:to:cc:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=sXgiGKvS1hQRKUZ0yjvRKDtBqyZi73E4t8r0EfZt0Gg=;
+  b=JFw/6E+379hBdoY4Ev8/5Ad/C9wUTSYErfcMIQj0fblmkPrFfuIhuMTk
+   wnr5RtInq3vL5Rb3QmA3SPau+HTizag77Q9SkPBsN/rvFgbTvgR1GGoe+
+   +NVpUo2+w6xwvL6Drky8USHzsklooHAKLnqSmuKdho+FLpinYRl0SFNbU
+   M=;
+X-IronPort-AV: E=Sophos;i="6.12,183,1728950400"; 
+   d="scan'208";a="778502928"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 15:50:11 +0000
+Received: from EX19MTAEUA001.ant.amazon.com [10.0.10.100:51692]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.10.207:2525] with esmtp (Farcaster)
+ id ae3596c7-1096-484a-ac2c-d15d58a165af; Mon, 25 Nov 2024 15:50:09 +0000 (UTC)
+X-Farcaster-Flow-ID: ae3596c7-1096-484a-ac2c-d15d58a165af
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUA001.ant.amazon.com (10.252.50.192) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Mon, 25 Nov 2024 15:50:08 +0000
+Received: from [192.168.8.103] (10.106.83.30) by EX19D022EUC002.ant.amazon.com
+ (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Mon, 25 Nov 2024
+ 15:50:07 +0000
+Message-ID: <b7d21cce-720f-4db3-bbb4-0be17e33cd09@amazon.com>
+Date: Mon, 25 Nov 2024 15:50:05 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 1XYZDBYywCo-kjBS4jw64C43yQQiHrpT
-X-Proofpoint-ORIG-GUID: 1XYZDBYywCo-kjBS4jw64C43yQQiHrpT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 mlxlogscore=999 phishscore=0 mlxscore=0
- lowpriorityscore=0 suspectscore=0 malwarescore=0 adultscore=0 spamscore=0
- impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411250132
+User-Agent: Mozilla Thunderbird
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [PATCH] KVM: x86: async_pf: check earlier if can deliver async pf
+To: Sean Christopherson <seanjc@google.com>
+CC: <pbonzini@redhat.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
+	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <david@redhat.com>,
+	<peterx@redhat.com>, <oleg@redhat.com>, <vkuznets@redhat.com>,
+	<gshan@redhat.com>, <graf@amazon.de>, <jgowans@amazon.com>,
+	<roypat@amazon.co.uk>, <derekmn@amazon.com>, <nsaenz@amazon.es>,
+	<xmarcalx@amazon.com>
+References: <20241118130403.23184-1-kalyazin@amazon.com>
+ <ZzyRcQmxA3SiEHXT@google.com>
+ <b6d32f47-9594-41b1-8024-a92cad07004e@amazon.com>
+ <Zz-gmpMvNm_292BC@google.com>
+Content-Language: en-US
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJj5ki9BQkDwmcAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOR1wD/UTcn4GbLC39QIwJuWXW0DeLoikxFBYkbhYyZ5CbtrtAA/2/rnR/zKZmyXqJ6
+ ULlSE8eWA3ywAIOH8jIETF2fCaUCzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmPmSL0FCQPCZwACGwwACgkQr5LKIKmaZPNCxAEAxwnrmyqSC63nf6hoCFCfJYQapghC
+ abLV0+PWemntlwEA/RYx8qCWD6zOEn4eYhQAucEwtg6h1PBbeGK94khVMooF
+In-Reply-To: <Zz-gmpMvNm_292BC@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D004EUA004.ant.amazon.com (10.252.50.183) To
+ EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
-T24gTW9uIDExLzI1LzIwMjQgMzo1MCBQTSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToNCj4g
-T24gTW9uLCBOb3YgMjUsIDIwMjQgYXQgMTE6MDQ6NDlBTSArMDUzMCwgUmVuamlhbmcgSGFuIHdy
-b3RlOg0KPiA+IEFkZCBzdXBwb3J0IGZvciBRdWFsY29tbSB2aWRlbyBhY2NlbGVyYXRpb24gaGFy
-ZHdhcmUgdXNlZCBmb3IgdmlkZW8gDQo+ID4gc3RyZWFtIGRlY29kaW5nIGFuZCBlbmNvZGluZyBv
-biBRQ09NIFFDUzYxNS4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBSZW5qaWFuZyBIYW4gPHF1
-aWNfcmVuamlhbmdAcXVpY2luYy5jb20+ID4NCj4gPiAtLS0NCj4gPiAgLi4uL2JpbmRpbmdzL21l
-ZGlhL3Fjb20scWNzNjE1LXZlbnVzLnlhbWwgICAgICAgICAgfCAxODIgKysrKysrKysrKysrKysr
-KysrKysrDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxODIgaW5zZXJ0aW9ucygrKQ0KPiA+IA0KPiA+
-IGRpZmYgLS1naXQgDQo+ID4gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVk
-aWEvcWNvbSxxY3M2MTUtdmVudXMueWFtbCANCj4gPiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
-ZS9iaW5kaW5ncy9tZWRpYS9xY29tLHFjczYxNS12ZW51cy55YW1sDQoNCj4gRGVwZW5kZW5jeSBm
-b3IgdGhpcyBwYXRjaCBtdXN0IGJlIG1lbnRpb25lZCBoZXJlLg0KDQo+IEFtb3VudCBvZiBkZXBl
-bmRlbmNpZXMgbWFrZSBpdCB1bm1lcmdlYWJsZSBhbmQgdW50ZXN0ZWFibGUuDQo+IEkgc3VnZ2Vz
-dCBkZWNvdXBsaW5nIGRlcGVuZGVuY2llcyBieSByZW1vdmluZyBjbG9jayBjb25zdGFudHMuDQoN
-ClRoYW5rcyBmb3IgeW91ciBjb21tZW50LCBJIHdpbGwgdHJ5IHRvIHJlbW92ZSB0aGUgY2xvY2sg
-Y29uc3RhbnRzDQphbmQgdXNlIGNsb2NrIGlkIGluc3RlYWQuDQoNCj4gPiBuZXcgZmlsZSBtb2Rl
-IDEwMDY0NA0KPiA+IGluZGV4IA0KPiA+IDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw
-MDAwMDAwMDAuLjdhM2EwMWZmMDZkOGI2MmJjMjQyNGEwYTI0ODUNCj4gPiA3Yzg2YzY4NjVmODkN
-Cj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
-bmRpbmdzL21lZGlhL3Fjb20scWNzNjE1LXZlbnVzLnlhbWwNCj4gPiBAQCAtMCwwICsxLDE4MiBA
-QA0KPiA+ICsjIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiAoR1BMLTIuMCBPUiBCU0QtMi1DbGF1
-c2UpICVZQU1MIDEuMg0KPiA+ICstLS0NCj4gPiArJGlkOiBodHRwOi8vZGV2aWNldHJlZS5vcmcv
-c2NoZW1hcy9tZWRpYS9xY29tLHFjczYxNS12ZW51cy55YW1sIw0KPiA+ICskc2NoZW1hOiBodHRw
-Oi8vZGV2aWNldHJlZS5vcmcvbWV0YS1zY2hlbWFzL2NvcmUueWFtbCMNCj4gPiArDQo+ID4gK3Rp
-dGxlOiBRdWFsY29tbSBRQ1M2MTUgVmVudXMgdmlkZW8gZW5jb2RlIGFuZCBkZWNvZGUgYWNjZWxl
-cmF0b3JzDQo+ID4gKw0KPiA+ICttYWludGFpbmVyczoNCj4gPiArICAtIFN0YW5pbWlyIFZhcmJh
-bm92IDxzdGFuaW1pci5rLnZhcmJhbm92QGdtYWlsLmNvbT4gPg0KPiA+ICsgIC0gVmlrYXNoIEdh
-cm9kaWEgPHF1aWNfdmdhcm9kaWFAcXVpY2luYy5jb20+ID4NCj4gPiArDQo+ID4gK2Rlc2NyaXB0
-aW9uOg0KPiA+ICsgIFRoZSBWZW51cyBJUCBpcyBhIHZpZGVvIGVuY29kZSBhbmQgZGVjb2RlIGFj
-Y2VsZXJhdG9yIHByZXNlbnQNCj4gPiArICBvbiBRdWFsY29tbSBwbGF0Zm9ybXMNCj4gPiArDQo+
-ID4gK2FsbE9mOg0KPiA+ICsgIC0gJHJlZjogcWNvbSx2ZW51cy1jb21tb24ueWFtbCMNCj4gPiAr
-DQo+ID4gK3Byb3BlcnRpZXM6DQo+ID4gKyAgY29tcGF0aWJsZToNCj4gPiArICAgIGNvbnN0OiBx
-Y29tLHFjczYxNS12ZW51cw0KPiA+ICsNCj4gPiArICBwb3dlci1kb21haW5zOg0KPiA+ICsgICAg
-bWluSXRlbXM6IDINCj4gPiArICAgIG1heEl0ZW1zOiAzDQo+ID4gKw0KPiA+ICsgIHBvd2VyLWRv
-bWFpbi1uYW1lczoNCj4gPiArICAgIG1pbkl0ZW1zOiAyDQo+ID4gKyAgICBpdGVtczoNCj4gPiAr
-ICAgICAgLSBjb25zdDogdmVudXMNCj4gPiArICAgICAgLSBjb25zdDogdmNvZGVjMA0KPiA+ICsg
-ICAgICAtIGNvbnN0OiBjeA0KPiA+ICsNCj4gPiArICBjbG9ja3M6DQo+ID4gKyAgICBtYXhJdGVt
-czogNQ0KPiA+ICsNCj4gPiArICBjbG9jay1uYW1lczoNCj4gPiArICAgIGl0ZW1zOg0KPiA+ICsg
-ICAgICAtIGNvbnN0OiBjb3JlDQo+ID4gKyAgICAgIC0gY29uc3Q6IGlmYWNlDQo+ID4gKyAgICAg
-IC0gY29uc3Q6IGJ1cw0KPiA+ICsgICAgICAtIGNvbnN0OiB2Y29kZWMwX2NvcmUNCj4gPiArICAg
-ICAgLSBjb25zdDogdmNvZGVjMF9idXMNCj4gPiArDQo+ID4gKyAgaW9tbXVzOg0KPiA+ICsgICAg
-bWF4SXRlbXM6IDENCj4gPiArDQo+ID4gKyAgbWVtb3J5LXJlZ2lvbjoNCj4gPiArICAgIG1heEl0
-ZW1zOiAxDQo+ID4gKw0KPiA+ICsgIGludGVyY29ubmVjdHM6DQo+ID4gKyAgICBtYXhJdGVtczog
-Mg0KPiA+ICsNCj4gPiArICBpbnRlcmNvbm5lY3QtbmFtZXM6DQo+ID4gKyAgICBpdGVtczoNCj4g
-PiArICAgICAgLSBjb25zdDogdmlkZW8tbWVtDQo+ID4gKyAgICAgIC0gY29uc3Q6IGNwdS1jZmcN
-Cj4gPiArDQo+ID4gKyAgb3BlcmF0aW5nLXBvaW50cy12MjogdHJ1ZQ0KPiA+ICsNCj4gPiArICBv
-cHAtdGFibGU6DQo+ID4gKyAgICB0eXBlOiBvYmplY3QNCj4gPiArDQo+ID4gKyAgdmlkZW8tZGVj
-b2RlcjoNCj4gPiArICAgIHR5cGU6IG9iamVjdA0KPiA+ICsNCj4gPiArICAgIGFkZGl0aW9uYWxQ
-cm9wZXJ0aWVzOiBmYWxzZQ0KPiA+ICsNCj4gPiArICAgIHByb3BlcnRpZXM6DQo+ID4gKyAgICAg
-IGNvbXBhdGlibGU6DQo+ID4gKyAgICAgICAgY29uc3Q6IHZlbnVzLWRlY29kZXINCj4gPiArDQo+
-ID4gKyAgICByZXF1aXJlZDoNCj4gPiArICAgICAgLSBjb21wYXRpYmxlDQo+ID4gKw0KPiA+ICsg
-IHZpZGVvLWVuY29kZXI6DQo+ID4gKyAgICB0eXBlOiBvYmplY3QNCg0KPiBCb3RoIG5vZGVzIGFy
-ZSB1c2VsZXNzIC0gbm8gcmVzb3VyY2VzIGhlcmUsIG5vdGhpbmcgdG8gY29udHJvbC4NCj4gRG8g
-bm90IGFkZCBub2RlcyBqdXN0IHRvIGluc3RhbnRpYXRlIExpbnV4IGRyaXZlcnMuIERyb3AgdGhl
-bS4NCkRvIHlvdSBtZWFuIEkgc2hvdWxkIHJlbW92ZSB2aWRlby1kZWNvZGVyIGFuZCB2aWRlby1l
-bmNvZGVyIGZyb20gaGVyZT8NCklmIHNvLCBkbyBJIGFsc28gbmVlZCB0byByZW1vdmUgdGhlc2Ug
-dHdvIG5vZGVzIGZyb20gdGhlIGR0c2kgZmlsZSBhbmQgYWRkDQp0aGVtIGluIHRoZSBxY3M2MTUt
-cmlkZS5kdHMgZmlsZT8NCg0KPiBCZXN0IHJlZ2FyZHMsDQo+IEtyenlzenRvZg0K
+
+
+On 21/11/2024 21:05, Sean Christopherson wrote:
+> On Thu, Nov 21, 2024, Nikita Kalyazin wrote:
+>> On 19/11/2024 13:24, Sean Christopherson wrote:
+>>> None of this justifies breaking host-side, non-paravirt async page faults.  If a
+>>> vCPU hits a missing page, KVM can schedule out the vCPU and let something else
+>>> run on the pCPU, or enter idle and let the SMT sibling get more cycles, or maybe
+>>> even enter a low enough sleep state to let other cores turbo a wee bit.
+>>>
+>>> I have no objection to disabling host async page faults, e.g. it's probably a net
+>>> negative for 1:1 vCPU:pCPU pinned setups, but such disabling needs an opt-in from
+>>> userspace.
+>>
+>> That's a good point, I didn't think about it.  The async work would still
+>> need to execute somewhere in that case (or sleep in GUP until the page is
+>> available).
+> 
+> The "async work" is often an I/O operation, e.g. to pull in the page from disk,
+> or over the network from the source.  The *CPU* doesn't need to actively do
+> anything for those operations.  The I/O is initiated, so the CPU can do something
+> else, or go idle if there's no other work to be done.
+> 
+>> If processing the fault synchronously, the vCPU thread can also sleep in the
+>> same way freeing the pCPU for something else,
+> 
+> If and only if the vCPU can handle a PV async #PF.  E.g. if the guest kernel flat
+> out doesn't support PV async #PF, or the fault happened while the guest was in an
+> incompatible mode, etc.
+> 
+> If KVM doesn't do async #PFs of any kind, the vCPU will spin on the fault until
+> the I/O completes and the page is ready.
+
+I ran a little experiment to see that by backing guest memory by a file 
+on FUSE and delaying response to one of the read operations to emulate a 
+delay in fault processing.
+
+1. Original (the patch isn't applied)
+
+vCPU thread (disk-sleeping):
+
+[<0>] kvm_vcpu_block+0x62/0xe0
+[<0>] kvm_arch_vcpu_ioctl_run+0x240/0x1e30
+[<0>] kvm_vcpu_ioctl+0x2f1/0x860
+[<0>] __x64_sys_ioctl+0x87/0xc0
+[<0>] do_syscall_64+0x47/0x110
+[<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+Async task (disk-sleeping):
+
+[<0>] folio_wait_bit_common+0x116/0x2e0
+[<0>] filemap_fault+0xe5/0xcd0
+[<0>] __do_fault+0x30/0xc0
+[<0>] do_fault+0x9a/0x580
+[<0>] __handle_mm_fault+0x684/0x8a0
+[<0>] handle_mm_fault+0xc9/0x220
+[<0>] __get_user_pages+0x248/0x12c0
+[<0>] get_user_pages_remote+0xef/0x470
+[<0>] async_pf_execute+0x99/0x1c0
+[<0>] process_one_work+0x145/0x360
+[<0>] worker_thread+0x294/0x3b0
+[<0>] kthread+0xdb/0x110
+[<0>] ret_from_fork+0x2d/0x50
+[<0>] ret_from_fork_asm+0x1a/0x30
+
+2. With the patch applied (no async task)
+
+vCPU thread (disk-sleeping):
+
+[<0>] folio_wait_bit_common+0x116/0x2e0
+[<0>] filemap_fault+0xe5/0xcd0
+[<0>] __do_fault+0x30/0xc0
+[<0>] do_fault+0x36f/0x580
+[<0>] __handle_mm_fault+0x684/0x8a0
+[<0>] handle_mm_fault+0xc9/0x220
+[<0>] __get_user_pages+0x248/0x12c0
+[<0>] get_user_pages_unlocked+0xf7/0x380
+[<0>] hva_to_pfn+0x2a2/0x440
+[<0>] __kvm_faultin_pfn+0x5e/0x90
+[<0>] kvm_mmu_faultin_pfn+0x1ec/0x690
+[<0>] kvm_tdp_page_fault+0xba/0x160
+[<0>] kvm_mmu_do_page_fault+0x1cc/0x210
+[<0>] kvm_mmu_page_fault+0x8e/0x600
+[<0>] vmx_handle_exit+0x14c/0x6c0
+[<0>] kvm_arch_vcpu_ioctl_run+0xeb1/0x1e30
+[<0>] kvm_vcpu_ioctl+0x2f1/0x860
+[<0>] __x64_sys_ioctl+0x87/0xc0
+[<0>] do_syscall_64+0x47/0x110
+[<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+In both cases the fault handling code is blocked and the pCPU is free 
+for other tasks.  I can't see the vCPU spinning on the IO to get 
+completed if the async task isn't created.  I tried that with and 
+without async PF enabled by the guest (MSR_KVM_ASYNC_PF_EN).
+
+What am I missing?
+
+>> so the amount of work to be done looks equivalent (please correct me
+>> otherwise).  What's the net gain of moving that to an async work in the host
+>> async fault case? "while allowing interrupt delivery into the guest." -- is
+>> this the main advantage?
+
 
