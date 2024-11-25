@@ -1,126 +1,99 @@
-Return-Path: <linux-kernel+bounces-421610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE0769D8D81
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:44:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9A929D8D89
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:48:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81F271675AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 20:44:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B724FB27789
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 20:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBB06F06D;
-	Mon, 25 Nov 2024 20:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4EF1C3F34;
+	Mon, 25 Nov 2024 20:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JgDvR45z"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XSom5f/u"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 546D31C1F29
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 20:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAC310E9;
+	Mon, 25 Nov 2024 20:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732567448; cv=none; b=ODmbXotVW98D3k3WemUOhV2Ah1pEkiCHHdFSl3TojTxXSnxlQM20z2CccPDJb+S7fyMp/M+nq1UWwj/3GRGNqwZBv6cJrRgFd+apB0vhHuA6UKgpEyfiSHyokn9p81wVpMAkDXEMWHQmLF69TMiaHRC5R5Xq1jwaUaAFC6eFf+Q=
+	t=1732567534; cv=none; b=b6poNqhccTIMHDrtdgOZrv4uxMZShdREDZPQ3wENdDq/3lDn/etkUCX0s/BrbKQJDv/h9VE3JwI38G3cKPX3KsXoHeHHfhxTXAteECtmdZlyqpgXuah22bguq6zEZKTUCX5CnEnT8PKwIC9PImq1/BUjWAqxglj0U7OLCWFhFpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732567448; c=relaxed/simple;
-	bh=65PaTC/HbYF99a5Hco8G4c56d0dIVvfFhv3aGlzXe6s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GH/QaGB+J4hyTgHz3N/MfnsA1qOgV5p1WUkEDj97xq22vd+10WrQzEe332/sIvYTa6OhB8lyyFRCfyKHAbFA9yA8qEbUpboa6r/ZCGA4qxiRLTlZCLdaX1NSg+fObvUVXOPAp9VzcyBDTtfSlE4FqHJepkgV9Herei6mWsAJfds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JgDvR45z; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3823f1ed492so3297747f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 12:44:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732567446; x=1733172246; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=x1h1xtXn9O10xHO5yhfOYksISIXiohDCPtwyyzzpp7c=;
-        b=JgDvR45zn0v6FfiWd/NmlSKC/1l22LWPok+RxFX/t+D4H7U7gWOnLvClKqE4Wbe0dM
-         fY7Ym9xvtijOdc+6X+k8r4hmjefoDocJ8zygg9MMPtXPJuNrYTMrH7kBklBMhbyVkjiF
-         FDDnuL6XGbtKD/IV8hs0TUa78jjuEeuPgAX6aEX0oz5cdvgg/c5USAKMQ+Df5UEkyAE5
-         9+C6DC8XsRpoIF+RealNI8JGcVhksiYeuLjsJMnP1Sk/D0Zb6m9SvxwyfHUWTfDRGHGP
-         8G53XFhEHPCHHu0MPRASFUzzOQ67HprRaVjww4vAoeRphGDPNtlz+F93n3LFmMUyeo2P
-         zuLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732567446; x=1733172246;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x1h1xtXn9O10xHO5yhfOYksISIXiohDCPtwyyzzpp7c=;
-        b=bPEuZtkQcROgtzpqSa/Nn7UrmZgFRotgEkbUHDLqw3HD7OiA4LrO13WALATlGUQrE3
-         ufwoZI7RwJ8o6IGtVD9Qxdta7+tTuFH9aWymWhR1qh7gIOFPMnFjnql+3urSYtFNbhmj
-         8NSqMiUObkGJaLEs12XSGxvH4LdWWT2jqxkagCV22yZJrArhxMRwP6ps/mHDZRk+Ci0h
-         GqWESIVLRNFV09u31H8qVqGyrGNGkjfKRMbd4gZ2MOrBCSn/wrg28zb4XveeipjWin8m
-         RLM72lfwICv8+Aj5SmKDEPtsCHQqoE1+P87o+sJ3onzXuzFLL7JTXt8jMPOS0ZqP8qUw
-         4qyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDd69J1s5qDmVLQyhQixnFMJeUgqZAw23w2UETvy1t82Mv5TPHGD77jrij7baK6iJRKpTRiK1oL+MPYvk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPVz0fnff45wihTXx2bYNDs5ufy9WUy7IOF/q3ktFcX1h+VO4v
-	cgO+ABcKeVjZj5rg6z9i9HOcj3Qm21VLSe0tIkzc8vr+q/ZgrsHi8aPS270G
-X-Gm-Gg: ASbGncs0l66fUGJrETL6VvUM5W68PKQ85T9kZeI3CNL25rlViS5y4oAsyS6PpIa5uTw
-	yqgjyPnkwF8N0Xh7XgUmGMxaJGsltldMH6XlKGpY8yqtFYskiIh3dm+bEq1yzVqMiZ0JqjL5pOc
-	fIwpBAfdm6ind3fXhx8RoqofIX26T3bwzhxWvoQFL88BDgGKbGTsOUjPfab8d3Fn9niutISlfYj
-	n4i22LQULX+mBE5R1DQ3euZ9JjbipR602ch/DxUZq4vBokcIefOxSWr
-X-Google-Smtp-Source: AGHT+IHssahZ5xMx0eGbMBprIparMFGBhoC0dy8hQmg3uwMTfWj3iM1TXoLQpEyUGD6jJBL4P82ZfA==
-X-Received: by 2002:a5d:6c66:0:b0:382:485b:f976 with SMTP id ffacd0b85a97d-385bfaf1e19mr665293f8f.15.1732567445589;
-        Mon, 25 Nov 2024 12:44:05 -0800 (PST)
-Received: from [192.168.0.100] ([188.24.69.164])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbc3289sm11337185f8f.64.2024.11.25.12.44.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 12:44:05 -0800 (PST)
-Message-ID: <2da70bdc-97d5-4bef-bb66-3becf40c54ec@gmail.com>
-Date: Mon, 25 Nov 2024 22:44:06 +0200
+	s=arc-20240116; t=1732567534; c=relaxed/simple;
+	bh=IRQ3p7xvMF2xP94VeKQK96iNDsUgfbDNl7/OcO4QKhA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=iyv+ohNJeKGMVr865UUq/THntHceuvUVA9NjHOo8yfplNlZVOJuTkeITFvDPyDEprQ7bsw5zant5qdCxSGeyX5FuXGornYWL9mGwXuGo0dFoMWJXb0FBf7lPev1XrS2khwXQX4dLh3jFk7c5ZbzaDntEa4YBOwzxQQiYrzF5QYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=XSom5f/u; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1732567524;
+	bh=uw/f6R2/0BbiSVDePPonblAeC8H35guE5lqJwMPMFFU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=XSom5f/u7g/tGnoRiKaNihkp2jokyboWPZcIyV1frNaeX0AYP057enYM1B0/+1MhX
+	 RGmNPrCKHj7D6ib7Ygv0XsoJQJTTx3fln2cRxt/VzZNSQvTNYvgIhYbLK1sO4Dw2wd
+	 OS+igfclkGod7wVL4DHNTrYF8zoxk98H9Cr8hBn4LctcsOsy20R6AqT09c3c0MrX+a
+	 QQ3/dPsd7Wb6DoppImMwNNifKJT05q3lWu7n2Gnq2AevBl5x1IWd1E6r1jljs6/e7c
+	 b6X1jGVQpH5vnrBIja24XwlvgVL8heq4y8lhwTYozywCkCf4j2wwdEbjr2o9aKJgtQ
+	 OsL8SEl4aFxhA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XxyQC5vSBz4xfc;
+	Tue, 26 Nov 2024 07:45:23 +1100 (AEDT)
+Date: Tue, 26 Nov 2024 07:45:25 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mark Brown <broonie@kernel.org>
+Cc: "=?UTF-8?B?Q3PDs2vDoXMs?= Bence" <csokas.bence@prolan.hu>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the spi-fixes tree
+Message-ID: <20241126074525.6131a32b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] regmap: detach regmap from dev on regmap_exit
-To: Mark Brown <broonie@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J . Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org
-References: <20241122151631.220609-1-demonsingur@gmail.com>
- <3b35bd30-c4ca-459d-985e-d221a5cda2c8@sirena.org.uk>
-From: Cosmin Tanislav <demonsingur@gmail.com>
-Content-Language: en-US
-In-Reply-To: <3b35bd30-c4ca-459d-985e-d221a5cda2c8@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/d5vlNIEe9ajGaeP4bho/XYA";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/d5vlNIEe9ajGaeP4bho/XYA
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 11/25/24 2:22 PM, Mark Brown wrote:
-> On Fri, Nov 22, 2024 at 05:16:30PM +0200, Cosmin Tanislav wrote:
-> 
->> +int regmap_detach_dev(struct device *dev, struct regmap *map)
->> +{
->> +	if (!dev)
->> +		return 0;
->> +
->> +	return devres_release(dev, dev_get_regmap_release,
->> +			      dev_get_regmap_match, (void *)map->name);
->> +}
->> +EXPORT_SYMBOL_GPL(regmap_detach_dev);
-> 
-> Why is this exported?
-> 
+Commit
 
-I only did it because regmap_attach_dev() was also exported.
-I can make it static for V2.
+  1c6f3eb4f394 ("spi: atmel-quadspi: Fix register name in verbose logging f=
+unction")
 
->> @@ -1445,6 +1457,7 @@ void regmap_exit(struct regmap *map)
->>   {
->>   	struct regmap_async *async;
->>   
->> +	regmap_detach_dev(map->dev, map);
->>   	regcache_exit(map);
->>   
->>   	regmap_debugfs_exit(map);
-> 
-> The one caller is in the same file so it can be static.
+is missing a Signed-off-by from its author.
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/d5vlNIEe9ajGaeP4bho/XYA
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdE4eUACgkQAVBC80lX
+0GxJmwf/Y/W6tr/zUMwsGqdwKqehlfDch1QVRXVt7h9+Iw+Neoevc0N3bxwliEdR
+GjzHlrlKc/J3b9Cdy/L7U+WXU4l/wi+TiG3cKpMGThPr9JzYcWRSXpXiU0Li/RwE
+uZSwdYc8k6Vtaiy3nsSzUAwpsYQaT9mTeM11J4Z02vAljVyfXc6TvHmKbEpFeTG2
+DXFaeR/kfc/92PUqDvqlIUGKdWTk61S+tPEkUXdeDpcD/RAgZ7GvENFpd6i+UcSH
+Y5PG8alFEtuc38DI+lyBIdKVrHBj9qyBV2x31hx6mmzW+FYzDwk6xHuT2WiqMUG8
+FGymReteK2ZW8c0f+jynn/bKUAErAw==
+=TSMf
+-----END PGP SIGNATURE-----
+
+--Sig_/d5vlNIEe9ajGaeP4bho/XYA--
 
