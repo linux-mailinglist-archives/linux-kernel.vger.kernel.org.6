@@ -1,137 +1,332 @@
-Return-Path: <linux-kernel+bounces-421059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C6259D868D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:37:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2479D9D8618
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:14:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E99FB3A749
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:21:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BB03163987
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F360C1AE863;
-	Mon, 25 Nov 2024 13:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71241AB500;
+	Mon, 25 Nov 2024 13:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="NBNYps3J"
-Received: from mx-rz-1.rrze.uni-erlangen.de (mx-rz-1.rrze.uni-erlangen.de [131.188.11.20])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="KgblkpEc"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864D21AAE39;
-	Mon, 25 Nov 2024 13:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA5718D625;
+	Mon, 25 Nov 2024 13:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732540856; cv=none; b=MsgwQyykAb3bdDa1Vfw4tAPDQlwpQoiCup89+VkZTOhIvS5E4lzR9i15u26EB7mOs1urfqyqRJFJp6NkY9ekLFWesVNvk9JpnsGiLN3qbuo0nVkgXEJCBKRB4lYZs+5x0vDxYK9ZnPnRcf9s2oSkO7fk7JLkCU4Q/Y9qv6DxsPI=
+	t=1732540481; cv=none; b=CcyyHhzJPsPS2LlQEO02Hetrr8BpIkEmZ/FcLhVUDX0KDFPIXyqpmoH6iIUxzQIGvIkXMBZc2wD4U8RCkFiINaf99yvjAM8e0ilut4h56XKvcsAtVI+09cxMKL44S2oCcvL18/z3BATzWtwsnt84k7ihv/Gmpi5hyFkEnlCz4mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732540856; c=relaxed/simple;
-	bh=nEVLGdrVZPb6enKB7EY1THDhzmHqOu2kfzHjyYRrzkc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z8IG6CtVhaLcoiyAztFZxicbH6a53bjwVDoHHMGb4yfZ2RPdd/CoBxGQpVemTFjwGA+ovO5b0KeSrDggtart5JHoGTJk1kw8SyznvQJYELGeYElQaPKSI2Dkj/WggSSeUVtDP77u/VnAOBvfUUwYbQaktdteHM/DwIsx2dhEFoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=NBNYps3J; arc=none smtp.client-ip=131.188.11.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
-Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-rz-1.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4XxmQ33NzRz8sgN;
-	Mon, 25 Nov 2024 14:14:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
-	t=1732540475; bh=s7L96CAwEKK5QfK2TjaVOwN2FZlsfrSEHf8b4H+HNBw=;
-	h=From:To:Cc:Subject:Date:From:To:CC:Subject;
-	b=NBNYps3J6duIbL9N74MP7us9Tt+5PZZ7xnoiByEkX5+Ytx9KcVhPqgRrGkWnqhRLO
-	 SbqWb8nX29JzxmEIAUzgj4T31iC8f+IdOLf4Me8nYBy86tF49Od4MAPW1FMXMJ+u0o
-	 zOh4+YAijBJcGrlWRkQWJy9w2BZ9TUUgjdJejLEYbFzkhbOggpB2MZi/niRic0EOqw
-	 GHxmuNlgWuCtYww5HJ5Kwc7Ch2J50FK3gXAyMtLbVbToEw9Zeaad/kIc8aKPJTsupq
-	 GKgixmVprWU/c2+AKBibUPHE4ffxnQID7xWDyLaRFgryBEFtEypIEjZHajA9mhzaLo
-	 leTnyyVXOnnkQ==
-X-Virus-Scanned: amavisd-new at boeck4.rrze.uni-erlangen.de (RRZE)
-X-RRZE-Flag: Not-Spam
-X-RRZE-Submit-IP: 131.188.47.107
-Received: from faui76b (faui76b.informatik.uni-erlangen.de [131.188.47.107])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: U2FsdGVkX1+XNSxb4JLlG+hslXpIVCWhXOsiQT88hzM=)
-	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4XxmQ10rlfz8slJ;
-	Mon, 25 Nov 2024 14:14:33 +0100 (CET)
-From: Martin Ottens <martin.ottens@fau.de>
-To: 
-Cc: Martin Ottens <martin.ottens@fau.de>,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] net/sched: tbf: correct backlog statistic for GSO packets
-Date: Mon, 25 Nov 2024 14:13:55 +0100
-Message-Id: <20241125131356.932264-1-martin.ottens@fau.de>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1732540481; c=relaxed/simple;
+	bh=CQtsHJU0qGE7Ktt/yXbeObFkV2M6Mq2IQfdFzNfaISQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MAAeO0HWmXXvIBfv22zKoHCZLujoJi530t2jARBtS7dB2ssdVWEFVXNz7ISodwSKzUdkX1wn9kkzfvReh5bJG2AS5jX90x9fyO2ddQY99/YrRLVhtjNPbzZ9iJKgeb33rPq+1+oENcVLCkMdzIFclYIp88IpDO89EI5ptFwHJr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=KgblkpEc; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C73376B5;
+	Mon, 25 Nov 2024 14:14:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732540456;
+	bh=CQtsHJU0qGE7Ktt/yXbeObFkV2M6Mq2IQfdFzNfaISQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KgblkpEcZHzu0fKhbZ0KaerOSkBogepUh54me2PEvbW7NI52r7DGGuJ7TFXPY6xjk
+	 TDS9w9AMRqbRAlVnyYj/MFxXQJoy+QKnU5YXrfT8RRPcoEEmc9MK9vmreq6mcJFPw2
+	 rnXNym1vCOixFQkCWqqu4X3YKKVLC0+quWo4e47g=
+Date: Mon, 25 Nov 2024 15:14:28 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Armin Wolf <W_Armin@gmx.de>, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, Yunke Cao <yunkec@chromium.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>, stable@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v3 0/8] media: uvcvideo: Implement the Privacy GPIO as a
+ evdev
+Message-ID: <20241125131428.GD32280@pendragon.ideasonboard.com>
+References: <20241112-uvc-subdev-v3-0-0ea573d41a18@chromium.org>
+ <bd68178f-1de9-491f-8209-f67065d29283@redhat.com>
+ <CANiDSCtjpPG3XzaEOEeczZWO5gL-V_sj_Fv5=w82D6zKC9hnpw@mail.gmail.com>
+ <20241114230630.GE31681@pendragon.ideasonboard.com>
+ <CANiDSCt_bQ=E1fkpH1SAft1UXiHc2WYZgKDa8sr5fggrd7aiJg@mail.gmail.com>
+ <d0dd293e-550b-4377-8a73-90bcfe8c2386@redhat.com>
+ <CANiDSCvS1qEfS9oY=R05YhdRQJZmAjDCxVXxfVO4-=v4W1jTDg@mail.gmail.com>
+ <5a199058-edab-4f9d-9e09-52305824f3bf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <5a199058-edab-4f9d-9e09-52305824f3bf@redhat.com>
 
-When the length of a GSO packet in the tbf qdisc is larger than the burst
-size configured the packet will be segmented by the tbf_segment function.
-Whenever this function is used to enqueue SKBs, the backlog statistic of
-the tbf is not increased correctly. This can lead to underflows of the
-'backlog' byte-statistic value when these packets are dequeued from tbf.
+On Mon, Nov 25, 2024 at 01:01:14PM +0100, Hans de Goede wrote:
+> On 18-Nov-24 5:47 PM, Ricardo Ribalda wrote:
+> > On Mon, 18 Nov 2024 at 16:43, Hans de Goede wrote:
+> >> On 15-Nov-24 9:20 AM, Ricardo Ribalda wrote:
+> >>> On Fri, 15 Nov 2024 at 00:06, Laurent Pinchart wrote:
+> 
+> <snip>
+> 
+> >>>> How do you handle cameras that suffer from
+> >>>> UVC_QUIRK_PRIVACY_DURING_STREAM ?
+> >>>
+> >>> For those b) does not work.
+> >>
+> >> I already suspected as much, but it is good to have this
+> >> confirmed.
+> >>
+> >> I'm afraid that from a userspace API pov cameras with a GPIO
+> >> which only works when powered-on need to be treated the same as
+> >> cameras which only have UVC_CT_PRIVACY_CONTROL IOW in this case
+> >> keep exporting V4L2_CID_PRIVACY instead of switching to evdev
+> >> with SW_CAMERA_LENS_COVER.
+> >>
+> >> Unfortunately this will make the GPIO handling code in the UVC
+> >> driver somewhat more involved since now we have both uAPI-s for
+> >> GPIOs depending on UVC_QUIRK_PRIVACY_DURING_STREAM.
+> >>
+> >> But I think that this makes sense, this way we end up offering
+> >> 2 uAPIs depending on the hw capabilities:
+> >>
+> >> 1. evdev with SW_CAMERA_LENS_COVER which always reports a reliable
+> >> state + events on the state changing without needing to power-up
+> >> the camera.
+> >>
+> >> 2. V4L2_CID_PRIVACY for the case where the camera needs to be
+> >> powered-on (/dev/video opened) and where the ctrl possibly needs
+> >> to be polled.
+> >>
+> >> Assuming we can all agree on this split based on hw capabilities
+> >> I think that we must document this somewhere in the media subsystem
+> >> documentation. We can then also write down there that
+> >> SW_CAMERA_LENS_COVER only applies to internal cameras.
+> > 
+> > I do not think that it is worth it to keep UVC_CT_PRIVACY_CONTROL for
+> > the two devices that have connected the GPIO's pull up to the wrong
+> > power rail.
+> > Now that the GPIO can be used from userspace, I expect that those
+> > errors will be found early in the design process and never reach
+> > production stage.
+> > 
+> > 
+> > If we use UVC_CT_PRIVACY_CONTROL for thes two devices:
+> > - userspace will have to implement two different APIs
+> > - the driver will have to duplicate the code.
+> > - all that code will be very difficult to test: there are only 2
+> > devices affected and it requires manual intervention to properly test
+> > it.
+> > 
+> > I think that UVC_QUIRK_PRIVACY_DURING_STREAM is a good compromise and
+> > the main user handles it properly.
+> 
+> Ok, as you wish. Lets go with using SW_CAMERA_LENS_COVER for the 2 models with
+> UVC_QUIRK_PRIVACY_DURING_STREAM too.
+> 
+> <snip>
+> 
+> >>>> Is there any ACPI- or WMI-provided information that could assist with
+> >>>> associating a privacy GPIO with a camera ?
+> 
+> I just realized I did not answer this question from Laurent
+> in my previous reply.
+> 
+> No unfortunately there is no ACPI- or WMI-provided information that
+> could assist with associating ACPI/WMI camera privacy controls with
+> a specific camera. Note that these are typically not exposed as a GPIO,
+> but rather as some vendor firmware interface.
+> 
+> Thinking more about this I'm starting to believe more and more
+> that the privacy-control stuff should be handled by libcamera
+> and then specifically by the pipeline-handler, with some helper
+> code to share functionality where possible.
+> 
+> E.g. on IPU6 equipped Windows laptops there may be some ACPI/WMI
+> driver which provides a /dev/input/event# SW_CAMERA_LENS_COVER node.
 
-Reproduce the bug:
-Ensure that the sender machine has GSO enabled. Configured the tbf on
-the outgoing interface of the machine as follows (burstsize = 1 MTU):
-$ tc qdisc add dev <oif> root handle 1: tbf rate 50Mbit burst 1514 latency 50ms
+Using an event device means that the user would need permissions to
+access it. Would distributions be able to tell the device apart from
+other event devices such as mouse/keyboard, where a logged user may not
+have permission to access all event devices in a multi-seat system ?
+Would compositors be able to ignore the device to let libcamera handle
+it ?
 
-Send bulk TCP traffic out via this interface, e.g., by running an iPerf3
-client on this machine. Check the qdisc statistics:
-$ tc -s qdisc show dev <oif>
+> So I would expect the IPU6 pipeline-handler to search for such a
+> /dev/input/event# node and then expose that to users of the camera
+> through a to-be-defined API (I'm thinking a read-only control).
+> 
+> The code to find the event node can be shared, because this would
+> e.g. likely also apply to some IPU3 designs as well as upcoming
+> IPU7 designs.
+> 
+> <snip>
+> 
+> >>>> We could include the evdev in the MC graph. That will of course only be
+> >>>> possible if the kernel knows about that association in the first place.
+> >>>> At least the 1st category of devices would benefit from this.
+> >>
+> >> Yes I was thinking about adding a link to the MC graph for this too.
+> >>
+> >> Ricardo I notice that in this v3 series you still create a v4l2-subdev
+> >> for the GPIO handling and then add an ancillary link for the GPIO subdev
+> >> to the mc-graph. But I'm not sure how that is helpful. Userspace would
+> >> still need to do parent matching, but then match the evdev parent to
+> >> the subdev after getting the subdev from the mc. In that case it might
+> >> as well look at the physical (USB-interface) parent of the MC/video
+> >> node and do parent matching on that avoiding the need to go through
+> >> the MC at all.
+> >>
+> >> I think using the MC could still be useful by adding a new type of
+> >> ancillary link to the MC API which provides a file-path as info to
+> >> userspace rather then a mc-link and then just directly provide
+> >> the /dev/input/event# path through this new API?
 
-The 'backlog' byte-statistic has incorrect values while traffic is
-transferred, e.g., high values due to u32 underflows. When the transfer
-is stopped, the value is != 0, which should never happen.
+I don't think we need that. MC can model any type of entity and report
+the device major:minor. That plus ancillary links should give us most of
+what we need, the only required addition should be a new MC entity
+function.
 
-This patch fixes this bug by updating the statistics correctly, even if
-single SKBs of a GSO SKB cannot be enqueued.
+> >> I guess that extending the MC API like this might be a bit of
+> >> a discussion. But it would already make sense to have this for
+> >> the existing input device for the snapshot button.
+> > 
+> > The driver creates a v4l2-subdevice for every entity, and the gpio
+> > today is modeled as an entity.
+> 
+> Ok I see that explains why the subdevice is there, thank you.
+> 
+> > The patchset just adds an ancillary link as Sakari suggested.
+> > I am not against removing the gpio entity all together if it is not needed.
+> 
+> Right unlike other entities which are really part of the UVC
+> specification, the GPIO is not a "real" UVC entity.
+> 
+> So I wonder if, after switching to SW_CAMERA_LENS_COVER, having
+> this as a v4l2-subdevice buys us anything ? If not I think removing
+> it might be a good idea.
+> 
+> As for the ancillary link, that was useful to have when the API
+> was a v4l2-ctrl on the subdevice. Just like I doubt if having
+> the subdevice at all gives us any added value, I also doubt if
+> having the ancillary link gives us any added value.
+> 
+> > Now that we are brainstorming here... what about adding a control that
+> > contains the name of the input device (eventX)? Is that a horrible
+> > idea?
+> 
+> I don't know, my initial reaction is that does not feel right to me.
+> 
+> >>>>>> We can specify
+> >>>>>> that SW_CAMERA_LENS_COVER only applies to device internal
+> >>>>>> cameras, but then it is up to userspace to determine which
+> >>>>>> cameras that are.
+> >>>>>
+> >>>>> I am working on wiring up this to userspace right now.. I will report
+> >>>>> back if it cannot do it.
+> >>
+> >> Ricardo, great, thank you!
+> 
+> Ricardo, any status update on this ?
+> 
+> <snip>
+> 
+> >>>> Assuming the kernel could report the association between an evdev and
+> >>>> camera, we would need to report which evdev SW_CAMERA_LENS_COVER
+> >>>> originates from all the way from the evdev to the consumer of the event.
+> >>>> How well is that supported in standard Linux system architectures ? If
+> >>>> I'm not mistaken libinput will report the originating device, but how
+> >>>> far up the stack is it propagated ? And which component would we expect
+> >>>> to consume those events, should the camera evdev be managed by e.g.
+> >>>> libcamera ?
+> >>
+> >> Good questions. Looking back at our 2 primary use-cases:
+> >>
+> >> a) Having an app which is using (trying to use) the camera show
+> >> a notification to the user that the camera is turned-off by
+> >> a privacy switch .
+> >>
+> >> b) Showing on on-screen-display (OSD) with a camera /
+> >> crossed-out-camera icon when the switch is toggled, similar to how
+> >> muting speakers/mic show an OSD . Laptop vendor Windows add-on
+> >> software does this and I know that some users have been asking
+> >> for this.
+> >>
+> >> I think we have everything to do b) in current compositors
+> >> like gnome-shell. Using an evdev with SW_CAMERA_LENS_COVER
+> >> would even be a lot easier for b) then the current
+> >> V4L2_CID_PRIVACY API.
+> >>
+> >> a) though is a lot harder. We could open up access to
+> >> the relevant /dev/input/event# node using a udev uaccess
+> >> tag so that users who can access /dev/video# nodes also
+> >> get raw access to that /dev/input/event# node and then
+> >> libcamera could indeed provide this information that way.
+> >> I think that is probably the best option.
+> >>
+> >> At least for the cases where the camera on/off switch
+> >> does not simply make the camera completely disappear.
+> >>
+> >> That case is harder. atm that case is not handled at all
+> >> though. So even just getting b) to work for that case
+> >> would be nice / an improvement.
+> >>
+> >> Eventually if we give libcamera access to event#
+> >> nodes which advertise SW_CAMERA_LENS_COVER (and no other
+> >> privacy sensitive information) then libcamera could even
+> >> separately offer some API for apps to just get that value
+> >> if there is no camera to associate it with.
+> >>
+> >> Actually thinking more about it libcamera probably might
+> >> be the right place for some sort of "no cameras found
+> >> have you tried hitting your camera privacy-switch" API.
+> >> That is some API to query if such a message should be
+> >> shown to the user. But that is very much future work.
+> > 
+> > Are standard apps expected to use libcamera directly or they should
+> > use pipewire?
+> > Maybe a) Should be pipewire's task?
+> 
+> Standard apps are supposed to use pipewire, but IMHO this is
+> really too low-level for pipewire to handle itself.
+> 
+> Also see my remarks above about how I think this needs to
+> be part of the pipeline handler. Since e.g. associating
+> a /dev/input/event# SW_CAMERA_LENS_COVER node with a specific
+> UVC camera is going to be UVC specific solution.
+> 
+> For other pipeline-handlers combined with vendor fw-interfaces
+> offering SW_CAMERA_LENS_COVER support I do not think that there
+> is going to be a way to actually associate the 2. So we will
+> likely simply have the pipeline handler for e.g. IPU6 simply
+> associate any SW_CAMERA_LENS_COVER with the normal (non IR)
+> user facing camera.
+> 
+> Since we need this different ways to map a /dev/input/event#
+> SW_CAMERA_LENS_COVER node to a specific camera this really
+> needs to be done in libcamera IMHO.
+> 
+> And I think this also solves the question about needing
+> a kernel  API to associate the /dev/input/event# with
+> a specific /dev/video#. At least for now I think we don't
+> need an API and instead we can simply walk sysfs to find
+> the common USB-interface parent to associate the 2.
+> 
+> See how xawtv associates the alsa and /dev/video# parts
+> of tv-grabber cards for an example.
 
-Signed-off-by: Martin Ottens <martin.ottens@fau.de>
----
- net/sched/sch_tbf.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/net/sched/sch_tbf.c b/net/sched/sch_tbf.c
-index f1d09183ae63..ef7752f9d0d9 100644
---- a/net/sched/sch_tbf.c
-+++ b/net/sched/sch_tbf.c
-@@ -220,17 +220,18 @@ static int tbf_segment(struct sk_buff *skb, struct Qdisc *sch,
- 	skb_list_walk_safe(segs, segs, nskb) {
- 		skb_mark_not_on_list(segs);
- 		qdisc_skb_cb(segs)->pkt_len = segs->len;
--		len += segs->len;
- 		ret = qdisc_enqueue(segs, q->qdisc, to_free);
- 		if (ret != NET_XMIT_SUCCESS) {
- 			if (net_xmit_drop_count(ret))
- 				qdisc_qstats_drop(sch);
- 		} else {
- 			nb++;
-+			len += segs->len;
- 		}
- 	}
- 	sch->q.qlen += nb;
--	if (nb > 1)
-+	sch->qstats.backlog += len;
-+	if (nb > 0)
- 		qdisc_tree_reduce_backlog(sch, 1 - nb, prev_len - len);
- 	consume_skb(skb);
- 	return nb > 0 ? NET_XMIT_SUCCESS : NET_XMIT_DROP;
 -- 
-2.39.5
+Regards,
 
+Laurent Pinchart
 
