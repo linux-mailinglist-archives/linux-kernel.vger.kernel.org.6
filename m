@@ -1,59 +1,93 @@
-Return-Path: <linux-kernel+bounces-421666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FDC69D8E2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:45:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4147D9D8E2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:47:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FB6F28484C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:45:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB25B169390
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1401CBEB9;
-	Mon, 25 Nov 2024 21:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF35B1C9DD8;
+	Mon, 25 Nov 2024 21:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Jk07RcnT"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="CRcJ9f2+"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A57170A13;
-	Mon, 25 Nov 2024 21:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBAE14F9CF
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 21:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732571137; cv=none; b=fbUtxDnZOGsevSaNratnR2AdH/6+sFzsK6Q8+GG8LvVYNPsLh8gOtmy1OjPB/HsBu9PKAYef+wGzlI5xqYdqfoJWHWeA3/Z3n1zw6eBxeKzmnQtGTZ1SvGgUeoWh/IRI7h608/MuDbQSUTTQ2Biy0Y2oyRDnwGjskhJwvIBpEuQ=
+	t=1732571254; cv=none; b=baV56CczhAwISGrhS0dPeE0O6FZ9AvpyIC4oLq8GISGnQ1SuPluah8G3oqYhtazmKb0F1cRLn6cFJoTT8AoPBuGpMiT1KFqIdZR4IGVrKTBThHtdIbTzn6biNkG9udHti//xQ3DtJOW1Frd3f+OV/PAIp+/CKV2vfoLtyWrffJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732571137; c=relaxed/simple;
-	bh=OrMs8lEhcqXUeK33oxxahSi8bwqqYvqLvxUh5RyWMUE=;
+	s=arc-20240116; t=1732571254; c=relaxed/simple;
+	bh=BCFEI089OstDC4wCknzDn8MmVL/CYY0GGcM3o69XVxQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CchHxXgWSyL+9VlafIiUK259G58XwPyoHcgwqefdrgJT0VrJTuaY3aojfka1uBXrgXlEJAB9R1lSZZcpBn+72powWtmSSS29oVBivnflg+d9A9boMsuJXvZr6NBsOehRIga8n0j6/o/5q9n3yCivM1bkhiL5SCGjyH1XY8jP5Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Jk07RcnT; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id AC5574AD;
-	Mon, 25 Nov 2024 22:45:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732571111;
-	bh=OrMs8lEhcqXUeK33oxxahSi8bwqqYvqLvxUh5RyWMUE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jk07RcnTtEglS9cQPq/G4Rr14ybxfJecda+aVXqfhAHjRi46In2LBi/1/k3677ECN
-	 WNBZzG0BEhGoklh98zi/Y0PQjgVgosDxRnI4FB8yXmLNfpnKthL8V+gfLaasoucsg8
-	 JF96f1ywbxgpNaBSz7YQ4CHG2EIJvbPWeoxIcOxI=
-Date: Mon, 25 Nov 2024 23:45:23 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Ricardo Ribalda <ribalda@chromium.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	Yunke Cao <yunkec@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v3 2/8] media: uvcvideo: Factor out gpio functions to its
- own file
-Message-ID: <20241125214523.GW19381@pendragon.ideasonboard.com>
-References: <20241112-uvc-subdev-v3-0-0ea573d41a18@chromium.org>
- <20241112-uvc-subdev-v3-2-0ea573d41a18@chromium.org>
- <7da09249-f2ff-4a0c-8a06-1594b02ce87a@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fB6YvGSR7cz80OJ6HXNM47NZY19M+vZpucnMuIfcUIqdOhUvRRZ0+hIrpaN3Hzg3ZlKVhH05XT1sPs1b6cmdXlcPmNtba5sFOpyp+9FDCQuH7/OhibAgFQ6COOiUu/bxGSt64tczIgy5PEYSt0lcz/YzVGmpcsCGWMCldP7UVn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=CRcJ9f2+; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6d41d46162eso30412616d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:47:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1732571250; x=1733176050; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XqWF7E0ew5gNQ6985xZJ/5/jCKh2abtLrhXPLjbHCyE=;
+        b=CRcJ9f2+ZA8k13PJZzUlQaNpBe456mQtAV9DJ9f864z7seaKTUPWPtbrxN4g6h4Htr
+         i6Ev6okjqvmmRoKJ0o8alcNtovWjojl9+ZdiTgExwE37sFeuvvgYsR4FKhJ3tuCFImkj
+         1WuIVHquLIsOEoQctlUSrmy5gV8dHaluaGeoSN8k++w0GCHboq2QlVXEfkR6zQ00HX+I
+         /7CisfOLgVCs/trBi3+30l2j3S54D2b4mC6fak4dCD96NyldVWClibMM9m5DmRnOZCsm
+         HvJ2eQbxiT+XOJUbqffchd5kxifyKGr/UF33PabY09pMcI2hFf1/s+VhBxFU57s/D65N
+         kjcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732571250; x=1733176050;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XqWF7E0ew5gNQ6985xZJ/5/jCKh2abtLrhXPLjbHCyE=;
+        b=f6qp116OB7C/0p25PJfomtknud9FeDpDr05I8NDQhq7xnu3cKIFWuAgJqqZSmWgQ5P
+         wvrFqgAC3pErLw+d6p2eWNNe3U5OTCfJA6BzJ9X9Qdfz0j/aRPKN0t8Fq8IQ2QIDesWY
+         oc32y0lC47E0z0WCZtzGvRxcwfNnWEqNqD1BYD0YuLJbxB83/zZp9x2X5ecT1SxJc4RW
+         rW7gFOlC2Yz9ZosbcknNprjo25o00fylZ4q8erXEHKIRvFPNthHy4qkQGLDrWbbSV9MZ
+         aWm7c+Y4qQ+IJA2OtkY7hzjjTxn8JeExYqUcbuKuC1A62fCP4uCliYDklKupdf1Fx6pD
+         s2fg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ2iJRBM0sfC1aaYflVzxEGMcKvRpYgBU05HbLsG7O+nI3ceRfnv7gl4tQ/IRxw0zLyci8LKMXk75rZqc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOTa4ybozP+qXlmCnwaPTqb7MlImOlSTo0gwvx62pxNuO9S6wQ
+	6R+llTFG2tX7M5/4a0FgUNkyOD82dRE1WOCR/a5fYvuvzaQ+H/I4NDDEDGGMDvg=
+X-Gm-Gg: ASbGncuOCvna2UvirfzvRTjDUHp76Tol0ynfNOY5yERdUXAko6Ym+5+EbZ0UYEEEr+U
+	s2Teyq+NwErMuj2wIald8o2f4OrwF7mA9VeegKXeaeNsyvLfxsh0sRmRsgmCxies/Q2FU8K7p6C
+	AtfDxY9RpufLmHD2YMZZIfuS07d7O+gaG/jnHPQcX4rBHaeAHedn1/oL+k8S16Iydpfhmi4K7KJ
+	+5zVYH5JTuXpl0/xX2DeAdqWn9vVVXA//8wmmmW9wYHB7t4
+X-Google-Smtp-Source: AGHT+IGhSINo662ZCmiw+KQ9F9w1c9zeHSlcbXLmFv0aSFwhD9uNu7MMnjUNn7TV9kplOqArqzYj3A==
+X-Received: by 2002:a05:6214:629:b0:6d4:3c10:5065 with SMTP id 6a1803df08f44-6d451345419mr187969176d6.32.1732571249894;
+        Mon, 25 Nov 2024 13:47:29 -0800 (PST)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d451a831bbsm47429646d6.27.2024.11.25.13.47.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2024 13:47:28 -0800 (PST)
+Date: Mon, 25 Nov 2024 16:47:24 -0500
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, nphamcs@gmail.com,
+	chengming.zhou@linux.dev, usamaarif642@gmail.com,
+	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com,
+	akpm@linux-foundation.org, linux-crypto@vger.kernel.org,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	clabbe@baylibre.com, ardb@kernel.org, ebiggers@google.com,
+	surenb@google.com, kristen.c.accardi@intel.com,
+	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Subject: Re: [PATCH v4 10/10] mm: zswap: Compress batching with Intel IAA in
+ zswap_batch_store() of large folios.
+Message-ID: <20241125214724.GA2405574@cmpxchg.org>
+References: <20241123070127.332773-1-kanchana.p.sridhar@intel.com>
+ <20241123070127.332773-11-kanchana.p.sridhar@intel.com>
+ <CAJD7tkb0WyLD3hxQ5fHWHogyW5g+eF+GrR15r0PjK9YbFO3szg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,361 +96,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7da09249-f2ff-4a0c-8a06-1594b02ce87a@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJD7tkb0WyLD3hxQ5fHWHogyW5g+eF+GrR15r0PjK9YbFO3szg@mail.gmail.com>
 
-On Mon, Nov 25, 2024 at 03:45:38PM +0100, Hans de Goede wrote:
-> Hi Ricardo,
+On Mon, Nov 25, 2024 at 12:20:01PM -0800, Yosry Ahmed wrote:
+> On Fri, Nov 22, 2024 at 11:01 PM Kanchana P Sridhar
+> <kanchana.p.sridhar@intel.com> wrote:
+> >
+> > This patch adds two new zswap API:
+> >
+> >  1) bool zswap_can_batch(void);
+> >  2) void zswap_batch_store(struct folio_batch *batch, int *errors);
+> >
+> > Higher level mm code, for instance, swap_writepage(), can query if the
+> > current zswap pool supports batching, by calling zswap_can_batch(). If so
+> > it can invoke zswap_batch_store() to swapout a large folio much more
+> > efficiently to zswap, instead of calling zswap_store().
+> >
+> > Hence, on systems with Intel IAA hardware compress/decompress accelerators,
+> > swap_writepage() will invoke zswap_batch_store() for large folios.
+> >
+> > zswap_batch_store() will call crypto_acomp_batch_compress() to compress up
+> > to SWAP_CRYPTO_BATCH_SIZE (i.e. 8) pages in large folios in parallel using
+> > the multiple compress engines available in IAA.
+> >
+> > On platforms with multiple IAA devices per package, compress jobs from all
+> > cores in a package will be distributed among all IAA devices in the package
+> > by the iaa_crypto driver.
+> >
+> > The newly added zswap_batch_store() follows the general structure of
+> > zswap_store(). Some amount of restructuring and optimization is done to
+> > minimize failure points for a batch, fail early and maximize the zswap
+> > store pipeline occupancy with SWAP_CRYPTO_BATCH_SIZE pages, potentially
+> > from multiple folios in future. This is intended to maximize reclaim
+> > throughput with the IAA hardware parallel compressions.
+> >
+> > Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
+> > Suggested-by: Yosry Ahmed <yosryahmed@google.com>
 > 
-> On 12-Nov-24 6:30 PM, Ricardo Ribalda wrote:
-> > This is just a refactor patch, no new functionality is added.
-> > 
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> This is definitely not what I suggested :)
 > 
-> I guess this patch may need to change depending on if we want
-> to keep the GPIO handling as a UVC entity or not.
+> I won't speak for Johannes here but I suspect it's not quite what he
+> wanted either.
+
+It is not.
+
+I suggested having an integrated code path where "legacy" stores of
+single pages is just the batch_size=1 case.
+
+https://lore.kernel.org/linux-mm/20241107185340.GG1172372@cmpxchg.org/
+
+> What we really need to do (and I suppose what Johannes meant, but
+> please correct me if I am wrong), is to make the existing flow work
+> with batches.
 > 
-> Laurent what is your take on this, should this stay as
-> a struct uvc_entity; or should the gpio_desc and input_device
-> be stored directly inside struct uvc_device as is done for
-> the snapshot-button input_device?
-
-If we stop exposing it as a subdev I'd rather not create a uvc_entity.
-
-> Also de we want a separate input_device for this or do
-> we re-use the snapshot button one ?
+> For example, most of zswap_store() should remain the same. It is still
+> getting a folio to compress, the only difference is that we will
+> parallelize the page compressions. zswap_store_page() is where some
+> changes need to be made. Instead of a single function that handles the
+> storage of each page, we need a vectorized function that handles the
+> storage of N pages in a folio (allocate zswap_entry's, do xarray
+> insertions, etc). This should be refactoring in a separate patch.
 > 
-> Since my plan is to open-up the permission on the device with
-> the SW_CAMERA_LENS_COVER to be equal to the /dev/video#
-> permissions sharing has the downside of allowing keylogging
-> of the snapshot button.
+> Once we have that, the logic introduced by this patch should really be
+> mostly limited to zswap_compress(), where the acomp interfacing would
+> be different based on whether batching is supported or not. This could
+> be changes in zswap_compress() itself, or maybe at this point we can
+> have a completely different path (e.g. zswap_compress_batch()). But
+> outside of that, I don't see why we should have a completely different
+> store path for the batching.
 
-Given that the only standardized usage of the button is to inform
-applications they should capture a still image, I don't think that's
-much of a problem. Devices can also report that their button is a
-generic purpose button, but I would still expect its function to be
-camera-related.
-
-Can anyone think of an attack vector ?
-
-> Either way (one or 2 input-devices) I don't have a strong
-> preference.
-> 
-> > ---
-> >  drivers/media/usb/uvc/Makefile     |   3 +-
-> >  drivers/media/usb/uvc/uvc_driver.c | 119 +------------------------------------
-> >  drivers/media/usb/uvc/uvc_gpio.c   | 118 ++++++++++++++++++++++++++++++++++++
-> >  drivers/media/usb/uvc/uvcvideo.h   |   8 +++
-> >  4 files changed, 131 insertions(+), 117 deletions(-)
-> > 
-> > diff --git a/drivers/media/usb/uvc/Makefile b/drivers/media/usb/uvc/Makefile
-> > index 4f9eee4f81ab..85514b6e538f 100644
-> > --- a/drivers/media/usb/uvc/Makefile
-> > +++ b/drivers/media/usb/uvc/Makefile
-> > @@ -1,6 +1,7 @@
-> >  # SPDX-License-Identifier: GPL-2.0
-> >  uvcvideo-objs  := uvc_driver.o uvc_queue.o uvc_v4l2.o uvc_video.o uvc_ctrl.o \
-> > -		  uvc_status.o uvc_isight.o uvc_debugfs.o uvc_metadata.o
-> > +		  uvc_status.o uvc_isight.o uvc_debugfs.o uvc_metadata.o \
-> > +		  uvc_gpio.o
-> >  ifeq ($(CONFIG_MEDIA_CONTROLLER),y)
-> >  uvcvideo-objs  += uvc_entity.o
-> >  endif
-> > diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
-> > index cd13bf01265d..5b48768a4f7f 100644
-> > --- a/drivers/media/usb/uvc/uvc_driver.c
-> > +++ b/drivers/media/usb/uvc/uvc_driver.c
-> > @@ -8,7 +8,6 @@
-> >  
-> >  #include <linux/atomic.h>
-> >  #include <linux/bits.h>
-> > -#include <linux/gpio/consumer.h>
-> >  #include <linux/kernel.h>
-> >  #include <linux/list.h>
-> >  #include <linux/module.h>
-> > @@ -775,9 +774,9 @@ static const u8 uvc_media_transport_input_guid[16] =
-> >  	UVC_GUID_UVC_MEDIA_TRANSPORT_INPUT;
-> >  static const u8 uvc_processing_guid[16] = UVC_GUID_UVC_PROCESSING;
-> >  
-> > -static struct uvc_entity *uvc_alloc_new_entity(struct uvc_device *dev, u16 type,
-> > -					       u16 id, unsigned int num_pads,
-> > -					       unsigned int extra_size)
-> > +struct uvc_entity *uvc_alloc_new_entity(struct uvc_device *dev, u16 type,
-> > +					u16 id, unsigned int num_pads,
-> > +					unsigned int extra_size)
-> >  {
-> >  	struct uvc_entity *entity;
-> >  	unsigned int num_inputs;
-> > @@ -1240,118 +1239,6 @@ static int uvc_parse_control(struct uvc_device *dev)
-> >  	return 0;
-> >  }
-> >  
-> > -/* -----------------------------------------------------------------------------
-> > - * Privacy GPIO
-> > - */
-> > -
-> > -static void uvc_gpio_event(struct uvc_device *dev)
-> > -{
-> > -	struct uvc_entity *unit = dev->gpio_unit;
-> > -	struct uvc_video_chain *chain;
-> > -	u8 new_val;
-> > -
-> > -	if (!unit)
-> > -		return;
-> > -
-> > -	new_val = gpiod_get_value_cansleep(unit->gpio.gpio_privacy);
-> > -
-> > -	/* GPIO entities are always on the first chain. */
-> > -	chain = list_first_entry(&dev->chains, struct uvc_video_chain, list);
-> > -	uvc_ctrl_status_event(chain, unit->controls, &new_val);
-> > -}
-> > -
-> > -static int uvc_gpio_get_cur(struct uvc_device *dev, struct uvc_entity *entity,
-> > -			    u8 cs, void *data, u16 size)
-> > -{
-> > -	if (cs != UVC_CT_PRIVACY_CONTROL || size < 1)
-> > -		return -EINVAL;
-> > -
-> > -	*(u8 *)data = gpiod_get_value_cansleep(entity->gpio.gpio_privacy);
-> > -
-> > -	return 0;
-> > -}
-> > -
-> > -static int uvc_gpio_get_info(struct uvc_device *dev, struct uvc_entity *entity,
-> > -			     u8 cs, u8 *caps)
-> > -{
-> > -	if (cs != UVC_CT_PRIVACY_CONTROL)
-> > -		return -EINVAL;
-> > -
-> > -	*caps = UVC_CONTROL_CAP_GET | UVC_CONTROL_CAP_AUTOUPDATE;
-> > -	return 0;
-> > -}
-> > -
-> > -static irqreturn_t uvc_gpio_irq(int irq, void *data)
-> > -{
-> > -	struct uvc_device *dev = data;
-> > -
-> > -	uvc_gpio_event(dev);
-> > -	return IRQ_HANDLED;
-> > -}
-> > -
-> > -static int uvc_gpio_parse(struct uvc_device *dev)
-> > -{
-> > -	struct uvc_entity *unit;
-> > -	struct gpio_desc *gpio_privacy;
-> > -	int irq;
-> > -
-> > -	gpio_privacy = devm_gpiod_get_optional(&dev->intf->dev, "privacy",
-> > -					       GPIOD_IN);
-> > -	if (IS_ERR_OR_NULL(gpio_privacy))
-> > -		return PTR_ERR_OR_ZERO(gpio_privacy);
-> > -
-> > -	irq = gpiod_to_irq(gpio_privacy);
-> > -	if (irq < 0)
-> > -		return dev_err_probe(&dev->intf->dev, irq,
-> > -				     "No IRQ for privacy GPIO\n");
-> > -
-> > -	unit = uvc_alloc_new_entity(dev, UVC_EXT_GPIO_UNIT,
-> > -				    UVC_EXT_GPIO_UNIT_ID, 0, 1);
-> > -	if (IS_ERR(unit))
-> > -		return PTR_ERR(unit);
-> > -
-> > -	unit->gpio.gpio_privacy = gpio_privacy;
-> > -	unit->gpio.irq = irq;
-> > -	unit->gpio.bControlSize = 1;
-> > -	unit->gpio.bmControls = (u8 *)unit + sizeof(*unit);
-> > -	unit->gpio.bmControls[0] = 1;
-> > -	unit->get_cur = uvc_gpio_get_cur;
-> > -	unit->get_info = uvc_gpio_get_info;
-> > -	strscpy(unit->name, "GPIO", sizeof(unit->name));
-> > -
-> > -	list_add_tail(&unit->list, &dev->entities);
-> > -
-> > -	dev->gpio_unit = unit;
-> > -
-> > -	return 0;
-> > -}
-> > -
-> > -static int uvc_gpio_init_irq(struct uvc_device *dev)
-> > -{
-> > -	struct uvc_entity *unit = dev->gpio_unit;
-> > -	int ret;
-> > -
-> > -	if (!unit || unit->gpio.irq < 0)
-> > -		return 0;
-> > -
-> > -	ret = request_threaded_irq(unit->gpio.irq, NULL, uvc_gpio_irq,
-> > -				   IRQF_ONESHOT | IRQF_TRIGGER_FALLING |
-> > -				   IRQF_TRIGGER_RISING,
-> > -				   "uvc_privacy_gpio", dev);
-> > -
-> > -	unit->gpio.initialized = !ret;
-> > -
-> > -	return ret;
-> > -}
-> > -
-> > -static void uvc_gpio_deinit(struct uvc_device *dev)
-> > -{
-> > -	if (!dev->gpio_unit || !dev->gpio_unit->gpio.initialized)
-> > -		return;
-> > -
-> > -	free_irq(dev->gpio_unit->gpio.irq, dev);
-> > -}
-> > -
-> >  /* ------------------------------------------------------------------------
-> >   * UVC device scan
-> >   */
-> > diff --git a/drivers/media/usb/uvc/uvc_gpio.c b/drivers/media/usb/uvc/uvc_gpio.c
-> > new file mode 100644
-> > index 000000000000..453739acbe8f
-> > --- /dev/null
-> > +++ b/drivers/media/usb/uvc/uvc_gpio.c
-> > @@ -0,0 +1,118 @@
-> > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > +/*
-> > + *      uvc_gpio.c  --  USB Video Class driver
-> > + *
-> > + *      Copyright 2024 Google LLC
-> > + */
-> > +
-> > +#include <linux/kernel.h>
-> > +#include <linux/gpio/consumer.h>
-> > +#include "uvcvideo.h"
-> > +
-> > +static void uvc_gpio_event(struct uvc_device *dev)
-> > +{
-> > +	struct uvc_entity *unit = dev->gpio_unit;
-> > +	struct uvc_video_chain *chain;
-> > +	u8 new_val;
-> > +
-> > +	if (!unit)
-> > +		return;
-> > +
-> > +	new_val = gpiod_get_value_cansleep(unit->gpio.gpio_privacy);
-> > +
-> > +	/* GPIO entities are always on the first chain. */
-> > +	chain = list_first_entry(&dev->chains, struct uvc_video_chain, list);
-> > +	uvc_ctrl_status_event(chain, unit->controls, &new_val);
-> > +}
-> > +
-> > +static int uvc_gpio_get_cur(struct uvc_device *dev, struct uvc_entity *entity,
-> > +			    u8 cs, void *data, u16 size)
-> > +{
-> > +	if (cs != UVC_CT_PRIVACY_CONTROL || size < 1)
-> > +		return -EINVAL;
-> > +
-> > +	*(u8 *)data = gpiod_get_value_cansleep(entity->gpio.gpio_privacy);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int uvc_gpio_get_info(struct uvc_device *dev, struct uvc_entity *entity,
-> > +			     u8 cs, u8 *caps)
-> > +{
-> > +	if (cs != UVC_CT_PRIVACY_CONTROL)
-> > +		return -EINVAL;
-> > +
-> > +	*caps = UVC_CONTROL_CAP_GET | UVC_CONTROL_CAP_AUTOUPDATE;
-> > +	return 0;
-> > +}
-> > +
-> > +static irqreturn_t uvc_gpio_irq(int irq, void *data)
-> > +{
-> > +	struct uvc_device *dev = data;
-> > +
-> > +	uvc_gpio_event(dev);
-> > +	return IRQ_HANDLED;
-> > +}
-> > +
-> > +int uvc_gpio_parse(struct uvc_device *dev)
-> > +{
-> > +	struct uvc_entity *unit;
-> > +	struct gpio_desc *gpio_privacy;
-> > +	int irq;
-> > +
-> > +	gpio_privacy = devm_gpiod_get_optional(&dev->intf->dev, "privacy",
-> > +					       GPIOD_IN);
-> > +	if (IS_ERR_OR_NULL(gpio_privacy))
-> > +		return PTR_ERR_OR_ZERO(gpio_privacy);
-> > +
-> > +	irq = gpiod_to_irq(gpio_privacy);
-> > +	if (irq < 0)
-> > +		return dev_err_probe(&dev->udev->dev, irq,
-> > +				     "No IRQ for privacy GPIO\n");
-> > +
-> > +	unit = uvc_alloc_new_entity(dev, UVC_EXT_GPIO_UNIT,
-> > +				    UVC_EXT_GPIO_UNIT_ID, 0, 1);
-> > +	if (IS_ERR(unit))
-> > +		return PTR_ERR(unit);
-> > +
-> > +	unit->gpio.gpio_privacy = gpio_privacy;
-> > +	unit->gpio.irq = irq;
-> > +	unit->gpio.bControlSize = 1;
-> > +	unit->gpio.bmControls = (u8 *)unit + sizeof(*unit);
-> > +	unit->gpio.bmControls[0] = 1;
-> > +	unit->get_cur = uvc_gpio_get_cur;
-> > +	unit->get_info = uvc_gpio_get_info;
-> > +	strscpy(unit->name, "GPIO", sizeof(unit->name));
-> > +
-> > +	list_add_tail(&unit->list, &dev->entities);
-> > +
-> > +	dev->gpio_unit = unit;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +int uvc_gpio_init_irq(struct uvc_device *dev)
-> > +{
-> > +	struct uvc_entity *unit = dev->gpio_unit;
-> > +	int ret;
-> > +
-> > +	if (!unit || unit->gpio.irq < 0)
-> > +		return 0;
-> > +
-> > +	ret = request_threaded_irq(unit->gpio.irq, NULL, uvc_gpio_irq,
-> > +				   IRQF_ONESHOT | IRQF_TRIGGER_FALLING |
-> > +				   IRQF_TRIGGER_RISING,
-> > +				   "uvc_privacy_gpio", dev);
-> > +
-> > +	unit->gpio.initialized = !ret;
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +void uvc_gpio_deinit(struct uvc_device *dev)
-> > +{
-> > +	if (!dev->gpio_unit || !dev->gpio_unit->gpio.initialized)
-> > +		return;
-> > +
-> > +	free_irq(dev->gpio_unit->gpio.irq, dev);
-> > +}
-> > diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> > index 965a789ed03e..91ed59b54d9a 100644
-> > --- a/drivers/media/usb/uvc/uvcvideo.h
-> > +++ b/drivers/media/usb/uvc/uvcvideo.h
-> > @@ -673,6 +673,9 @@ do {									\
-> >  extern struct uvc_driver uvc_driver;
-> >  
-> >  struct uvc_entity *uvc_entity_by_id(struct uvc_device *dev, int id);
-> > +struct uvc_entity *uvc_alloc_new_entity(struct uvc_device *dev, u16 type,
-> > +					u16 id, unsigned int num_pads,
-> > +					unsigned int extra_size);
-> >  
-> >  /* Video buffers queue management. */
-> >  int uvc_queue_init(struct uvc_video_queue *queue, enum v4l2_buf_type type,
-> > @@ -817,4 +820,9 @@ void uvc_debugfs_cleanup_stream(struct uvc_streaming *stream);
-> >  size_t uvc_video_stats_dump(struct uvc_streaming *stream, char *buf,
-> >  			    size_t size);
-> >  
-> > +/* gpio */
-> > +int uvc_gpio_parse(struct uvc_device *dev);
-> > +int uvc_gpio_init_irq(struct uvc_device *dev);
-> > +void uvc_gpio_deinit(struct uvc_device *dev);
-> > +
-> >  #endif
-> > 
-
--- 
-Regards,
-
-Laurent Pinchart
++1
 
