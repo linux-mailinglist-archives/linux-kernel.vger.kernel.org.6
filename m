@@ -1,212 +1,132 @@
-Return-Path: <linux-kernel+bounces-420767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 106999D830B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:08:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 735459D8314
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:10:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 181D8B26FE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:54:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40FDA287611
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080601917EB;
-	Mon, 25 Nov 2024 09:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A403E199EA8;
+	Mon, 25 Nov 2024 10:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lMczVk/9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WmWSKIYy"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3223B1426C
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 09:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419081922E1
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 10:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732528459; cv=none; b=r5Q3RP3q4QDFRYkL7T+mryh5fD5SScMBuoJdJpUOI6HENbuRYg3Kw8YyKZKcp6VDl+77Q6YRamYbzZyVVAmb87zwHHsma0ndYUdNK4EbGsVNcZEGtUjlmeGevVyLMhmHq0vNCh5+NvFOS6ICF4gISGmxrwozc2C84QafBRFVeek=
+	t=1732529316; cv=none; b=iCT0QZJXvJU6z6rE+Mbp9uluC6tsQSHL5SILtMEIu6a0eIzDWRnNdc/Y1bdSI02cwHzJBvBOx/g2U40aDXZfUDejloUfmmelEqHskVGGLqn6lIP290fADaasG7Hv/rH8giaE5Zmof0prSY7hCKFUUSFYR8mpQCIkyGQydNihccI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732528459; c=relaxed/simple;
-	bh=gHwhc9KOj+cZOKgz6vnfOwrkoWHADDCUrI4b85vHXZU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=dAADppA5DDFLkkN6X863BWwACFWIik7W+ZlRqvxKxjGp039lF0JruUNcWqavSsUqvs5G3mNLlV+lo9dAGdiBp9iS/Sg5fvfK/Hzt3cRqcgFlVOOJkVDFUUlXxrrXWMUY3YUF9rDI4S2sEvuO6u8ful2d1zONwP3ZTqzEpl3G1lM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lMczVk/9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83E66C4CECE;
-	Mon, 25 Nov 2024 09:54:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732528458;
-	bh=gHwhc9KOj+cZOKgz6vnfOwrkoWHADDCUrI4b85vHXZU=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=lMczVk/9qHRbpvCrq8ba1p9XJuA8bG0ah5VZ2pqm+iJOGtf8fzPLdlFM9ekqgWZVE
-	 foVecCQ0M+aJhzfqe1b7/EVG4G1LQrBQqLNrz2rIFoaz8Wy60NLDzyKSATDntDRhL6
-	 sPb4iwn6p14aZO71BuMl6jKae0t6X5g0/0fTRKWwTUPS/H9nwlCn/opvNctQmC2EOT
-	 qxPXhdVfE71NQ9dpFIK5OpXbR33qtgcgg0k8AredCIi7D88hOzJebQNdrCdO2us24X
-	 tMOVCdqY4iZYGMpF3dZQVqQZ23LHbicoQ2a1zWgSIdZSb8MD5rAdU52QxYQwX4MyLK
-	 BIy+tV55lERfQ==
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 7D977120007F;
-	Mon, 25 Nov 2024 04:54:17 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Mon, 25 Nov 2024 04:54:17 -0500
-X-ME-Sender: <xms:SUlEZxarIomWgDBfYUpFRPiACFv_RC-6ohnAC1XLVwwPVu4UFBYygQ>
-    <xme:SUlEZ4a4tp2ubRUMlhs6MGQNT2rFmFbUBB8E3luBqRj0MvX16sEY7szqLRHNwpQHc
-    Fbnt5W8a9_cOJyPZuY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeehgddtkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugeskhgvrhhnvghlrd
-    horhhgqeenucggtffrrghtthgvrhhnpeejjeffteetfeetkeeijedugeeuvdfgfeefiedt
-    udeikeeggeefkefhudfhlefhveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihht
-    hidquddvkeehudejtddvgedqvdekjedttddvieegqdgrrhhnugeppehkvghrnhgvlhdroh
-    hrghesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphho
-    uhhtpdhrtghpthhtohephigrnhhghihinhhglhhirghngheshhhurgifvghirdgtohhmpd
-    hrtghpthhtohepjhhirhhishhlrggshieskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    hhgtrgeslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopehstghhnhgvlhhlvgeslh
-    hinhhugidrihgsmhdrtghomhdprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghn
-    khhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepihhlphhordhjrghrvh
-    hinhgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehgrhgvghhkhhes
-    lhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigsehroh
-    gvtghkqdhushdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:SUlEZz9NfZcfSTk8fPD7GnnF8v0MgUhnKZPwIzhi1AThxqwh-41UFg>
-    <xmx:SUlEZ_rptzDEQ8VbabBqcI9OXz9R1dYTHFsX6Iod1P3hZwGVYHXydQ>
-    <xmx:SUlEZ8r_QLW8Nj-JXAKOtL_ZXQd84njCSjcJ0tnATm-u3f2mK9KeYQ>
-    <xmx:SUlEZ1QBmw3rvoWngG0nuXJqH08fvqhQQHvrDXP5M9RzKAJGftLytA>
-    <xmx:SUlEZ0qaPpJ7-Tpbpd0-Zwaapie9pYIN-M5p8GP7_rmEc2ureKVLd9XL>
-Feedback-ID: i36794607:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 51D622220071; Mon, 25 Nov 2024 04:54:17 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1732529316; c=relaxed/simple;
+	bh=zRFTU0CSm45BCgyzjxndpiefx1AXH1El990vWzmV4Xg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZHST6Ebr4Rh3kkfA1D376QePsdvYcMW6eFm0xP4EJqqIfSqWKRVygnaEhImbsCX+lwVg+3DYEDUIy5EPcMZGMN/k8viLsX87qsrE9WtITxvKKAMMuPH4eVe464EtAtRhwiE3WSf+edEre1Hj8dFyO3JMw3g4UTvLqoU1ZSgamng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WmWSKIYy; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=bXmqZfne9wIEAoo4ONpQDgj54jhO/Xmxv8yTtbrY0pg=; b=WmWSKIYyS0X84wqKwhW8CrvIJN
+	r6ShI5FW0t3pCK/0k4oIDB9N2s1pYE9o0cKtV/qQmbbVqF9VKn9ZwtInKPVmU92oXkKnjcqy+ru5d
+	BT2FttN+UjTiqWlCOsI2D3J2KdPAEUfDllzbkDmyJemWsUy0UTRUrEl9vJVDX6NjsndKkclz5071M
+	kanfcAiT35y11lrVbRi8T8rZVkIqMlq6ZmOFQezsBbFo3JB0tSbcQ4gyy5NANbMgANjDaDL/IfHwc
+	4SmjbuN8+uBduxp1OI2qq7kj7affI12F7YYxndSrGFl5C2h97WE3MXC+4NjAxAzMF2rLBGKlpYlML
+	aWDGtJ2w==;
+Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tFW11-000000014f3-04Du;
+	Mon, 25 Nov 2024 10:08:23 +0000
+Received: from dwoodhou by i7.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tFW0z-000000000kn-0s7a;
+	Mon, 25 Nov 2024 10:08:21 +0000
+From: David Woodhouse <dwmw2@infradead.org>
+To: kexec@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	linux-kernel@vger.kernel.org,
+	Simon Horman <horms@kernel.org>,
+	Dave Young <dyoung@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	jpoimboe@kernel.org,
+	bsz@amazon.de
+Subject: [RFC PATCH v3 00/20] x86/kexec: Add exception handling for relocate_kernel and further yak-shaving
+Date: Mon, 25 Nov 2024 09:54:30 +0000
+Message-ID: <20241125100815.2512-1-dwmw2@infradead.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 25 Nov 2024 10:53:46 +0100
-From: "Arnd Bergmann" <arnd@kernel.org>
-To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
-Cc: "Guenter Roeck" <linux@roeck-us.net>,
- "Niklas Schnelle" <schnelle@linux.ibm.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Jiri Slaby" <jirislaby@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- linux-serial@vger.kernel.org, "Heiko Carstens" <hca@linux.ibm.com>,
- linux-kernel@vger.kernel.org, "Yang Yingliang" <yangyingliang@huawei.com>
-Message-Id: <00f5e842-3ee9-4d83-8836-0ff4f703fa3c@app.fastmail.com>
-In-Reply-To: <Z0QtZky8Sr7qUW7v@smile.fi.intel.com>
-References: <20240405152924.252598-1-schnelle@linux.ibm.com>
- <20240405152924.252598-2-schnelle@linux.ibm.com>
- <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net>
- <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
- <472eb22a-dcb1-4fbb-bf2c-a4173706bc7a@app.fastmail.com>
- <27685942-fb62-44c5-86ed-98beb547ffed@roeck-us.net>
- <744920ba-551c-466b-ac5c-2607b81261a0@app.fastmail.com>
- <Z0QtZky8Sr7qUW7v@smile.fi.intel.com>
-Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Sender: David Woodhouse <dwmw2@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, Nov 25, 2024, at 08:55, Andy Shevchenko wrote:
-> On Fri, Nov 22, 2024 at 08:24:37PM +0100, Arnd Bergmann wrote:
->> On Fri, Nov 22, 2024, at 18:22, Guenter Roeck wrote:
->> 
->> This looks like a bug in drivers/tty/serial/8250/8250_platform.c
->> to me, not something the architectures did wrong. My impression
->> from __serial8250_isa_init_ports() is that this is supposed
->> to initialize exactly the ports in the old_serial_port[]
->> array, which is filled only on alpha, m68k and x86 but not
->> on the other ones.
->
->> Andy moved this code in ffd8e8bd26e9 ("serial: 8250: Extract
->> platform driver"), but I don't think this move by itself
->> changed anything.
->
-> Yep. the idea was to purely split this code out of the core
-> library parts. I was not intending any functional changes.
+Debugging kexec failures is painful, as anything going wrong in execution
+of the critical relocate_kernel() function tends to just lead to a triple
+fault. Thus leading to *weeks* of my life that I won't get back. Having
+hacked something up for my own use, I figured I should share it...
 
-Ok.
+Add a CONFIG_KEXEC_DEBUG option which sets up a trivial exception handler
+in that environment, and outputs to the early_printk serial console if
+configured. Currently only I/O-based 8250 serial ports are supported, but
+that could be extended.
 
-> I believe it's a preexisted bug, but if you can point out to
-> the breakage I made, please do it, so I would be able to fix
-> ASAP.
->
->> serial8250_setup_port() is where it ends up using the
->> uninitialized serial8250_ports[index] contents. Since 
->> port->iotype is not set to anything here, it defaults to
->> '0', which happens to be UPIO_PORT.
->
-> Btw, we have a new constant to tell the 8250 core that IO type is not set,
-> but that one is not used here.
+While we're here, clean the code up a little and fix some other problems.
+Most notably, load a suitable GDT on the way back into the kernel after a
+KEXEC_PRESERVE_CONTEXT invocation instead of trusting the called code to
+do so. And explicitly map the control_code_page into the identmap used by
+relocate_kernel() instead of depending on it being in the same superpage
+as something else that gets mapped.
 
-So I see serial8250_setup_port() setting "up->cur_iotype = 0xFF"
-by first calling serial8250_init_port(), this is the "not
-set" value you mean, right?.
+I should probably bring the i386 version into line with this, although
+the lack of rip-based addressing makes all the PIC code a bit harder.
 
-Right after that it calls serial8250_set_defaults(),
-which sets "up->cur_iotype = p->iotype;", which may or
-may not be initialized here.
+David Woodhouse (20):
+      x86/kexec: Ensure control_code_page is mapped in kexec page tables
+      x86/kexec: Restore GDT on return from preserve_context kexec
+      x86/kexec: Clean up and document register use in relocate_kernel_64.S
+      x86/kexec: Use named labels in swap_pages in relocate_kernel_64.S
+      x86/kexec: Only swap pages for preserve_context mode
+      x86/kexec: Allocate PGD for x86_64 transition page tables separately
+      x86/kexec: Copy control page into place in machine_kexec_prepare()
+      x86/kexec: Invoke copy of relocate_kernel() instead of the original
+      x86/kexec: Move relocate_kernel to kernel .data section
+      x86/kexec: Add data section to relocate_kernel
+      x86/kexec: Drop page_list argument from relocate_kernel()
+      x86/kexec: Eliminate writes through kernel mapping of relocate_kernel page
+      x86/kexec: Clean up register usage in relocate_kernel()
+      x86/kexec: Mark relocate_kernel page as ROX instead of RWX
+      x86/kexec: Add CONFIG_KEXEC_DEBUG option
+      x86/kexec: Debugging support: load a GDT
+      x86/kexec: Debugging support: Load an IDT and basic exception entry points
+      x86/kexec: Debugging support: Dump registers on exception
+      x86/kexec: Add 8250 serial port output
+      [DO NOT MERGE] x86/kexec: Add int3 in kexec path for testing
 
-The possible calls chains I see leading up to
-serial8250_setup_port() are:
-
-serial8250_register_8250_port(): here we first initialize
-  the iotype incorrectly, then set uart->port.iotype and
-  call serial8250_set_defaults() again to fix it.
-
-module_init(serial8250_init): relies on the first
-  serial8250_set_defaults() for the ISA ports since they
-  are always UPIO_PORT, but sets the other ones (pnp, acpi,
-  platform_data) correctly.
-
-early_serial_setup(): called only on non-ISA platforms,
-  shouldn't need to call serial8250_isa_init_ports() at
-  all.
-
-console_initcall(univ8250_console_init): Not completely
-  sure here, it seems this now only allows ports that
-  are registered from one of the methods above
-
-Can you have a look at the patch below? I think this
-correctly removes the broken serial8250_set_defaults()
-while also still adding it in the one case that relies
-on the implied version.
-
-This does however revert f4c23a140d80 ("serial: 8250:
-fix null-ptr-deref in serial8250_start_tx()") and
-might bring back the bug came from opening an
-uninitialized uart. On the other hand, I don't see
-why that doesn't also crash from accessing the invalid
-I/O port on the same architectures.
-
-       Arnd
-
-diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
-index 5f9f06911795..5b72309611cb 100644
---- a/drivers/tty/serial/8250/8250_core.c
-+++ b/drivers/tty/serial/8250/8250_core.c
-@@ -358,8 +358,6 @@ struct uart_8250_port *serial8250_setup_port(int index)
- 
- 	up->ops = &univ8250_driver_ops;
- 
--	serial8250_set_defaults(up);
--
- 	return up;
- }
- 
-diff --git a/drivers/tty/serial/8250/8250_platform.c b/drivers/tty/serial/8250/8250_platform.c
-index 66fd6d5d4835..d3c1668add58 100644
---- a/drivers/tty/serial/8250/8250_platform.c
-+++ b/drivers/tty/serial/8250/8250_platform.c
-@@ -94,6 +94,10 @@ static void __init __serial8250_isa_init_ports(void)
- 		port->regshift = old_serial_port[i].iomem_reg_shift;
- 
- 		port->irqflags |= irqflag;
-+
-+		serial8250_set_defaults(port);
-+
-+		/* Allow Intel CE4100 and jailhouse to override defaults */
- 		if (serial8250_isa_config != NULL)
- 			serial8250_isa_config(i, &up->port, &up->capabilities);
- 	}
+ arch/x86/Kconfig.debug               |   8 +
+ arch/x86/include/asm/kexec.h         |  34 +++-
+ arch/x86/include/asm/sections.h      |   1 +
+ arch/x86/kernel/callthunks.c         |   6 +
+ arch/x86/kernel/early_printk.c       |   6 +
+ arch/x86/kernel/machine_kexec_64.c   | 127 ++++++++----
+ arch/x86/kernel/relocate_kernel_64.S | 385 +++++++++++++++++++++++++++--------
+ arch/x86/kernel/vmlinux.lds.S        |  16 +-
 
 
