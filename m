@@ -1,146 +1,237 @@
-Return-Path: <linux-kernel+bounces-420778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B3F9D8302
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:06:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 842199D8305
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:07:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9B77163A75
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:06:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49AE2164D4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A689C191F7E;
-	Mon, 25 Nov 2024 10:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61A9191F7A;
+	Mon, 25 Nov 2024 10:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j9iqC30b"
-Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FolWW5fB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94060156962;
-	Mon, 25 Nov 2024 10:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FBB18FC70;
+	Mon, 25 Nov 2024 10:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732529178; cv=none; b=qiBEQUXK5Euk0OrJbTYYSBXxThOiFWCr2peJI0IbegBQBTdCAQwnFV+WnD0agmMrFJ/9sMSFqy226fYUCwriIAl1yYeIgSfItmNahKh3lqNJmhHNlbSt4V32mV6C6ydoX1VweJlfUdl8Q09AsST1+F1ZIgxHvYm6jIcde7zAGyM=
+	t=1732529220; cv=none; b=QoBC1v7zb4SvDnMSmXqiwZE+u6SALrzQw3sy/WGhdTZfWKFMZ6TFgwtuqQL+2PL70OT4eHs/1sa8Ri6O/1sZ1QNxhZR6yNFl9MkC7PRKf2G4bSoUmIkQb4XdFZT4Z9oFZe2jlOxidBbztqWlUfNKfldqn5fc+qbMf6NYF6ddD0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732529178; c=relaxed/simple;
-	bh=UOThc3b93MmdjWLKZ3YHh6qM55YpPcWryivzMSZuqFA=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=EfOQK7yEjy/ljYs3WEFTL+DqBz24AFaScvYpaDdroxGWjuEizqVs/5KkeuI5WCGOmYTGcLmfeKdoUqWHSoBEBX8gSSYEIVbFWw3JpMt3cybNFHLZaRhFF3vxsIDWt873lqlSqMdIBMJakc7+7T4GV/cn/9r5ArHKsmI6TQd9wpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j9iqC30b; arc=none smtp.client-ip=209.85.214.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-212583bd467so41714495ad.3;
-        Mon, 25 Nov 2024 02:06:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732529176; x=1733133976; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:cc:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+3NtaabvUmPRFjMjNpaL6YcolhVFVdItTli/OILgxGw=;
-        b=j9iqC30bO9/6zucExNV4Ckt7IxTDKDCBxptvUfFqz4luiUeD5pKs7L4kDtxdwTRXRZ
-         NI17BzpdbHZDdwC8hDIcnii/reJNMD4KIDVji26pyVjpN9nt64JSHi+685GdRbvlJyXW
-         P/pYQiLkykO/PP/jAyiPCtLitLMORjC8UVr/Y6qDwpHNtyKXrDdMbXM6PgqXFaVSTFPR
-         t3S7+zkwRo7dpmaolzjEEvL6mWGOfbryij082vy6LBCIJwM1vVfaFIvIoiznOk00ypkg
-         88ipQNYwnLkM5qTyCnupo+UBG2hawNkxgjcFtMCEgV5CS9hgL/n0jwmIkY1WsLEICNf0
-         +7Vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732529176; x=1733133976;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:cc:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+3NtaabvUmPRFjMjNpaL6YcolhVFVdItTli/OILgxGw=;
-        b=IZGHvzx8Tnr4eJBo6GLly3OyVxUceKgeocwpsw7+B9O1mCRlqgaJMz7kbAp5M6Xd0f
-         GAWtaF+wYCoPOsjNuIZIKep3IEzW8NKkMOOwLoEwqLz4ApzSjbNW2DyBybiTqDL6M2Yv
-         PToRQbN4jGl+RhDQ6uEFtl+AMh+61Qf7Qmkr7n+STWU2w97hzc2SiWSxHFd7Np8XBXTM
-         uY2RFD/UHce9dXsVYtv9xGcxy0UAz4v7khURz704s87ENhmONoEclEuHwTCzO8GKA4BQ
-         ybkraINaq15PR6ZAhpJY9bgRMYSgPkZcVLFyZWYwaxEhDiP0vkAZ9ZKe0kVS2+ZL9nmE
-         ioYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMtlnfVDHPgPtFlkQvxXj82JBk461VVSl/OMaVifHAs1vYMbiTuDpAU8kDkD53uHnlh+XfRp/sYOTb@vger.kernel.org, AJvYcCV56zGwb+CWPkg9dpOpaPVqIjasY6IcFcmuSSJ905S7RpYqT4e5dsyDIx0oIHxhErP+Vlsp8IsKpcquDwNk@vger.kernel.org, AJvYcCW6Dpxo4VDyG5W+yzxRNVmDq35HXh2i+zpQE4vTWMRad2QLNFi1zYmagfWlkiCWcLIzO3mg5TBuVBjZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgS9CFjTExxW1OezE1F4xHpbi0NuvYNL7Tp/rOQjYFESFlKQCV
-	9GhM5ocC3jBf7Di2uGJwZ6mx0yii08D+pVV3kH1qnam9ZJjLSkia
-X-Gm-Gg: ASbGncu7V4tDX4VLcjjl2/1439JVRwe3OMZ1wnEKLBZ/BZiKCqqhCOUm4glE8bvKSCx
-	je59vUqNDbuISBeAGP5ar2FXC37aAJ6e86mf4OFJQI4vFyM+pSHeRdUjV22AQDinZEb34Mk/c3H
-	ulOPnC3Yec/846fMKkCIVbuElN8TEN5vURMvRNkk9MnavxDk+HEG5IVYBj5T+gqNJcGfoox9wyd
-	s1XtmheUqTfRpOVksNauQHJEIiIaoLAfg==
-X-Google-Smtp-Source: AGHT+IEkrIBkU0kksKhlyCcZZn5FcNKqYFGe1JjIsnZSYTKhWsKjEk+jkzD+EU534TMoVqDbZ2NxhQ==
-X-Received: by 2002:a17:902:e741:b0:211:fb2b:7053 with SMTP id d9443c01a7336-2129fd240ffmr164761745ad.33.1732529175741;
-        Mon, 25 Nov 2024 02:06:15 -0800 (PST)
-Received: from [127.0.0.1] ([2a0d:2683:c100::bf])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc13239sm60710905ad.177.2024.11.25.02.06.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 02:06:15 -0800 (PST)
-Message-ID: <062192c5-4482-4c83-b127-fae0942ab114@gmail.com>
-Date: Mon, 25 Nov 2024 18:05:58 +0800
+	s=arc-20240116; t=1732529220; c=relaxed/simple;
+	bh=4+LwyAoWXuU5c8R6nAp/SXhCM73ANBz+hBntxt8d0dE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YYxNdEq8CtMEZ6X6dafcgBZEPa2Gp7fmKfAlFzIORGAuyuArHfYhCWXxsUpBgyMayrQ+GZ/Nm3KUwLo1Rl68PPlEeregPQzINHmCPLrDQxYh0p+Tq3EthH6j2h/jJbwSU2pBHrsk0Gz1odm4kLPtf9qoat5JsZ7um4Spf+GXJR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FolWW5fB; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732529219; x=1764065219;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=4+LwyAoWXuU5c8R6nAp/SXhCM73ANBz+hBntxt8d0dE=;
+  b=FolWW5fBmeQluNdkSj8fYV+UQN79A/RQ3o6yUZ0XW+xscEskIhJVjIgc
+   afjRW56lUMZ9RBkpfkyjfgqjs7nS6BZNm+owJXVvGo5K/v2D4lDsGbMqo
+   Kb1pW3wDEJqIvaOBqGJfO/9AJCMWdSqgj8yqWFTJCtZjzXcoPlyC/n9WB
+   YGkjAYEjyv7tgUBXwEOSgHYzV7Dq6YPSSh8yDv/Fjaa0JFgz07GHyAPDI
+   YOFQoNZ4xzb55l2KYsF/NuS4MFdGzRTg3KvGIkh/OfRU7vSJ1Wx2UOro3
+   GBaS3hif2ACOnHdUzoiy/oizY9j9innz6a54kABuumNlT3aQlgBbqC4zY
+   g==;
+X-CSE-ConnectionGUID: WLUTI0IuR/WC6x8kOlWTTQ==
+X-CSE-MsgGUID: YNWHUGS+TOKbJ0ZXSvw2AQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="36407166"
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="36407166"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 02:06:58 -0800
+X-CSE-ConnectionGUID: S7g53tQrShOWletAM/l4IA==
+X-CSE-MsgGUID: 1mnhKEulQ5Oqkueb6TyvNQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="122062004"
+Received: from sschumil-mobl2.ger.corp.intel.com (HELO [10.245.246.1]) ([10.245.246.1])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 02:06:57 -0800
+Message-ID: <65ace546a7d55c2d6170ca88a48d3de402db2645.camel@linux.intel.com>
+Subject: Re: [PATCH AUTOSEL 6.12 3/5] locking/ww_mutex: Adjust to lockdep
+ nest_lock requirements
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com, will@kernel.org
+Date: Mon, 25 Nov 2024 11:06:38 +0100
+In-Reply-To: <20241124124623.3337983-3-sashal@kernel.org>
+References: <20241124124623.3337983-1-sashal@kernel.org>
+	 <20241124124623.3337983-3-sashal@kernel.org>
+Autocrypt: addr=thomas.hellstrom@linux.intel.com; prefer-encrypt=mutual;
+ keydata=mDMEZaWU6xYJKwYBBAHaRw8BAQdAj/We1UBCIrAm9H5t5Z7+elYJowdlhiYE8zUXgxcFz360SFRob21hcyBIZWxsc3Ryw7ZtIChJbnRlbCBMaW51eCBlbWFpbCkgPHRob21hcy5oZWxsc3Ryb21AbGludXguaW50ZWwuY29tPoiTBBMWCgA7FiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQuBaTVQrGBr/yQAD/Z1B+Kzy2JTuIy9LsKfC9FJmt1K/4qgaVeZMIKCAxf2UBAJhmZ5jmkDIf6YghfINZlYq6ixyWnOkWMuSLmELwOsgPuDgEZaWU6xIKKwYBBAGXVQEFAQEHQF9v/LNGegctctMWGHvmV/6oKOWWf/vd4MeqoSYTxVBTAwEIB4h4BBgWCgAgFiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwwACgkQuBaTVQrGBr/P2QD9Gts6Ee91w3SzOelNjsus/DcCTBb3fRugJoqcfxjKU0gBAKIFVMvVUGbhlEi6EFTZmBZ0QIZEIzOOVfkaIgWelFEH
+Organization: Intel Sweden AB, Registration Number: 556189-6027
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-3.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: troymitchell988@gmail.com, linux-riscv@lists.infradead.org,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] riscv: spacemit: add i2c support to K1 SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>, Andi Shyti
- <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-References: <20241125-k1-i2c-master-v4-0-0f3d5886336b@gmail.com>
- <5d69e1db-2ec5-445d-9336-9345c918722a@kernel.org>
-Content-Language: en-US
-From: Troy Mitchell <troymitchell988@gmail.com>
-In-Reply-To: <5d69e1db-2ec5-445d-9336-9345c918722a@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
+On Sun, 2024-11-24 at 07:46 -0500, Sasha Levin wrote:
+> From: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com>
+>=20
+> [ Upstream commit 823a566221a5639f6c69424897218e5d6431a970 ]
+>=20
+> When using mutex_acquire_nest() with a nest_lock, lockdep refcounts
+> the
+> number of acquired lockdep_maps of mutexes of the same class, and
+> also
+> keeps a pointer to the first acquired lockdep_map of a class. That
+> pointer
+> is then used for various comparison-, printing- and checking
+> purposes,
+> but there is no mechanism to actively ensure that lockdep_map stays
+> in
+> memory. Instead, a warning is printed if the lockdep_map is freed and
+> there are still held locks of the same lock class, even if the
+> lockdep_map
+> itself has been released.
+>=20
+> In the context of WW/WD transactions that means that if a user
+> unlocks
+> and frees a ww_mutex from within an ongoing ww transaction, and that
+> mutex happens to be the first ww_mutex grabbed in the transaction,
+> such a warning is printed and there might be a risk of a UAF.
+>=20
+> Note that this is only problem when lockdep is enabled and affects
+> only
+> dereferences of struct lockdep_map.
+>=20
+> Adjust to this by adding a fake lockdep_map to the acquired context
+> and
+> make sure it is the first acquired lockdep map of the associated
+> ww_mutex class. Then hold it for the duration of the WW/WD
+> transaction.
+>=20
+> This has the side effect that trying to lock a ww mutex *without* a
+> ww_acquire_context but where a such context has been acquire, we'd
+> see
+> a lockdep splat. The test-ww_mutex.c selftest attempts to do that, so
+> modify that particular test to not acquire a ww_acquire_context if it
+> is not going to be used.
+>=20
+> Signed-off-by: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Link:
+> https://lkml.kernel.org/r/20241009092031.6356-1-thomas.hellstrom@linux.in=
+tel.com
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-On 2024/11/25 16:06, Krzysztof Kozlowski wrote:
-> On 25/11/2024 07:49, Troy Mitchell wrote:
->> Hi all,
->>
->> This patch implements I2C driver for the SpacemiT K1 SoC,
->> providing basic support for I2C read/write communication which
->> compatible with standard I2C bus specifications.
->>
->> In this version, the driver defaults to use fast-speed-mode and
->> interrupts for transmission, and does not support DMA, high-speed mode, or FIFO.
->>
->> The docs of I2C can be found here, in chapter 16.1 I2C [1]
->>
->> Link: https://developer.spacemit.com/documentation?token=Rn9Kw3iFHirAMgkIpTAcV2Arnkf#part5 [1]
->> ---
->> Change in v4:
->> - Patch #1:
->> 	- Change the default value of clock-frequency from 100000 to
->> 	  400000. This is to correspond to the driver's default value.
->> 	- Drop the minimum of clock-frequency
->> 	- Modify the description of clock-frequency
-> 
-> Explain why do you request re-review.
-> 
-> <form letter>
-> This is a friendly reminder during the review process.
-> 
-> It looks like you received a tag and forgot to add it.
-> 
-> If you do not know the process, here is a short explanation:
-> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-> versions, under or above your Signed-off-by tag. Tag is "received", when
-> provided in a message replied to you on the mailing list. Tools like b4
-> can help here. However, there's no need to repost patches *only* to add
-> the tags. The upstream maintainer will do that for tags received on the
-> version they apply.
-> 
-> https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
-> 
-> If a tag was not added on purpose, please state why and what changed.
-> </form letter>
-> 
-> Best regards,
-> Krzysztof
-Thank you, I accidentally forgot to add it, and it was not intentional.
+It looks like the last version was not picked for this patch.
 
--- 
-Troy Mitchell
+https://lore.kernel.org/all/172918113162.1279674.6570518059490493206@2413eb=
+b6fbb6/T/
+
+The version in this autosel patch regresses the locking api selftests
+and should not be backported. Same for the corresponding backports for
+6.11 and 6.6. Let me know if I should reply separately to those.
+
+Thanks,
+Thomas
+
+> ---
+> =C2=A0include/linux/ww_mutex.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 14 +=
++++++++++++++
+> =C2=A0kernel/locking/test-ww_mutex.c |=C2=A0 8 +++++---
+> =C2=A02 files changed, 19 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
+> index bb763085479af..a401a2f31a775 100644
+> --- a/include/linux/ww_mutex.h
+> +++ b/include/linux/ww_mutex.h
+> @@ -65,6 +65,16 @@ struct ww_acquire_ctx {
+> =C2=A0#endif
+> =C2=A0#ifdef CONFIG_DEBUG_LOCK_ALLOC
+> =C2=A0	struct lockdep_map dep_map;
+> +	/**
+> +	 * @first_lock_dep_map: fake lockdep_map for first locked
+> ww_mutex.
+> +	 *
+> +	 * lockdep requires the lockdep_map for the first locked
+> ww_mutex
+> +	 * in a ww transaction to remain in memory until all
+> ww_mutexes of
+> +	 * the transaction have been unlocked. Ensure this by
+> keeping a
+> +	 * fake locked ww_mutex lockdep map between
+> ww_acquire_init() and
+> +	 * ww_acquire_fini().
+> +	 */
+> +	struct lockdep_map first_lock_dep_map;
+> =C2=A0#endif
+> =C2=A0#ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
+> =C2=A0	unsigned int deadlock_inject_interval;
+> @@ -146,7 +156,10 @@ static inline void ww_acquire_init(struct
+> ww_acquire_ctx *ctx,
+> =C2=A0	debug_check_no_locks_freed((void *)ctx, sizeof(*ctx));
+> =C2=A0	lockdep_init_map(&ctx->dep_map, ww_class->acquire_name,
+> =C2=A0			 &ww_class->acquire_key, 0);
+> +	lockdep_init_map(&ctx->first_lock_dep_map, ww_class-
+> >mutex_name,
+> +			 &ww_class->mutex_key, 0);
+> =C2=A0	mutex_acquire(&ctx->dep_map, 0, 0, _RET_IP_);
+> +	mutex_acquire_nest(&ctx->first_lock_dep_map, 0, 0, &ctx-
+> >dep_map, _RET_IP_);
+> =C2=A0#endif
+> =C2=A0#ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
+> =C2=A0	ctx->deadlock_inject_interval =3D 1;
+> @@ -185,6 +198,7 @@ static inline void ww_acquire_done(struct
+> ww_acquire_ctx *ctx)
+> =C2=A0static inline void ww_acquire_fini(struct ww_acquire_ctx *ctx)
+> =C2=A0{
+> =C2=A0#ifdef CONFIG_DEBUG_LOCK_ALLOC
+> +	mutex_release(&ctx->first_lock_dep_map, _THIS_IP_);
+> =C2=A0	mutex_release(&ctx->dep_map, _THIS_IP_);
+> =C2=A0#endif
+> =C2=A0#ifdef DEBUG_WW_MUTEXES
+> diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-
+> ww_mutex.c
+> index 10a5736a21c22..5d58b2c0ef98b 100644
+> --- a/kernel/locking/test-ww_mutex.c
+> +++ b/kernel/locking/test-ww_mutex.c
+> @@ -62,7 +62,8 @@ static int __test_mutex(unsigned int flags)
+> =C2=A0	int ret;
+> =C2=A0
+> =C2=A0	ww_mutex_init(&mtx.mutex, &ww_class);
+> -	ww_acquire_init(&ctx, &ww_class);
+> +	if (flags & TEST_MTX_CTX)
+> +		ww_acquire_init(&ctx, &ww_class);
+> =C2=A0
+> =C2=A0	INIT_WORK_ONSTACK(&mtx.work, test_mutex_work);
+> =C2=A0	init_completion(&mtx.ready);
+> @@ -90,7 +91,8 @@ static int __test_mutex(unsigned int flags)
+> =C2=A0		ret =3D wait_for_completion_timeout(&mtx.done,
+> TIMEOUT);
+> =C2=A0	}
+> =C2=A0	ww_mutex_unlock(&mtx.mutex);
+> -	ww_acquire_fini(&ctx);
+> +	if (flags & TEST_MTX_CTX)
+> +		ww_acquire_fini(&ctx);
+> =C2=A0
+> =C2=A0	if (ret) {
+> =C2=A0		pr_err("%s(flags=3D%x): mutual exclusion failure\n",
+> @@ -679,7 +681,7 @@ static int __init test_ww_mutex_init(void)
+> =C2=A0	if (ret)
+> =C2=A0		return ret;
+> =C2=A0
+> -	ret =3D stress(2047, hweight32(STRESS_ALL)*ncpus, STRESS_ALL);
+> +	ret =3D stress(2046, hweight32(STRESS_ALL)*ncpus, STRESS_ALL);
+> =C2=A0	if (ret)
+> =C2=A0		return ret;
+> =C2=A0
+
 
