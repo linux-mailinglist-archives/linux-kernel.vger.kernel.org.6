@@ -1,101 +1,119 @@
-Return-Path: <linux-kernel+bounces-421244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C20E9D889C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:00:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3920E9D8882
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:52:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8F0FB438BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:56:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C40B4167F69
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB651B2194;
-	Mon, 25 Nov 2024 14:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1D11B2193;
+	Mon, 25 Nov 2024 14:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="q4ssgh6G"
-Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TRa5pCoU"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6901B0F30
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED08A1B2186;
+	Mon, 25 Nov 2024 14:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732546555; cv=none; b=AZtXQI8DomoMz0sDglOfWv5eqd6nJ/9eqF7YRokylJydcKzLhOVi7F1k+R8oFQBdYyDT+zIwBIpBPHUfuz8a1y9klZYTZdkaNei7nzuXK+G+wvkgIbWy03MbhoPGf3aiHKAOiBQuI0v1Qf1Zc3fgtf8cPl5uURGGIUzCAS28WWg=
+	t=1732546360; cv=none; b=JQ3F00WXyMKDVExJEdSUM0e93nY9Ive5zaTK80F/8bpQbPQ8O1FjEhJv4TdMZR9jbXbUDuBpRIXbp2YeXWvDoqgEOIoskZVFLFMBJydxlD7W/iBmfaViTBWHs473QQFYNjJcOvmUzGhot33247bNEWibCI02lvRzjpc9Vv6lCms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732546555; c=relaxed/simple;
-	bh=GunFkVqsk6AZag4xW54NaCZhfXdukTjYnDQLy6bi5aQ=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=H/dmBu3ZnpZ9H4DkRG0ES1KYV6i3vSs55tR/H3OObqCgeXBr+Jkpy6pf4WkhVxgtpVBXnHijKf4BBIUkLHX8LyQ0sbUMKjUJr/Ler6mvASomWV9GnRoVyb1o9wuToP3Yde3ViqUrQ5V9dFAHeF7i8qjHZ5ttsNo8DwxaXsFkgh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=q4ssgh6G; arc=none smtp.client-ip=162.62.57.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1732546237; bh=HQuH7MrwMz12ht/cdRhFwy3ucGjGwmSPvp8fxHTW85s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=q4ssgh6GflwxeBIcpb3JoHMHH5xliq7dMeyul5kPSqZiN75yiw5xKCBIyosAKOgIW
-	 587JdvLT8Yi+aceSqkH3RfeSHF8yy8ps8ODk42/OcIC6ntO82fT4FeSgYEAYLy1DBL
-	 c74YPvgVTzzk3W9qT72UYeUJ7XclzQ60k5LsgvBg=
-Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id CA4240EC; Mon, 25 Nov 2024 22:50:36 +0800
-X-QQ-mid: xmsmtpt1732546236tlrap8c46
-Message-ID: <tencent_C397C636464B74750D76ED66983D37374209@qq.com>
-X-QQ-XMAILINFO: NKv2G1wnhDBn0GwVGm3wq+7FJdu8TYpX7FWjJIwal5Zn0tGg0t3XF2y+nZ9AOB
-	 3WwJN6PNLELP1oa1r3nuu8AXYytHicAdCGcUrXqrgypP1YVr+cDh4dHXvb1t4lpe+8AqXHbp3qSZ
-	 6ggVbDvLwNirq/N2SQmNI3WMByVPT8v37v3A5HfsyjtTg8S0AF6NSFhlyV2dlTZEQxLLKKNcwJjo
-	 ewLKPCIQ6Vuj4rQ73FkipY4V+Se3PI5q4JY4PHNXorJrOpk/oIfIvm8nOMEqQVK4XtNCiDUoWj8N
-	 hDwFnd3my6/8afNhdoV/MOjlSQ5f7Fqtpt2c+LTGmBuFxgSWo5GxXzFOmX9P+WHgavxP61aPf6Rg
-	 fQhH1JbG5H+zHgzEm1Qs+6hWx02iI3HvdbrUMv9DMHSfpyE4k0Elrgma9+OIpEfhO4dOVcCX7+kG
-	 o8lncr+zx7QT21k4xwr56xh9Whv3r2qlbOHCVbVUrcZEVAVaqCRsUSlBVHJINPg35pBc2eYOCp1T
-	 hy0VtRbUzL3+RzbjGIckHbGT+3r2Yq6jtp4evnnRDrFGYmOzSeFW7u7TAJT3Y4Sv23xbVg9LI43P
-	 Wy6XP3AFpt2MgD7i82unzNoJB/FNOmscVVFVK++Ih/NZuYNokgXMe/xDDvOqOuDVtzlU0t4oUZTS
-	 +TK7eue63e4adNl9/UCVXZlvs+kohjMHwY/gPr4lknhsbcta28lWW1F/QcjmaWQ83PJM0C3BaazN
-	 hijX0sUdtqGRD7vJOIInkfkSP0lBoUXeOSTlKwM0eH5Qu2iSzTzpQC7IG9HMuaWE8M/30Oa+ZrSD
-	 WgDliCRR50rHej8ylcmZO5EdUVYHlUm2hpbl9qooo0q4R+HgSFVjWvGmnTGjTQoO5XuTKGaiLpsK
-	 +hxRtXphgPCb0lDbxs6tu5TMLF0MfMWQ==
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+489f78df4709ac2bfdd3@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in sco_sock_connect
-Date: Mon, 25 Nov 2024 22:50:36 +0800
-X-OQ-MSGID: <20241125145035.3872817-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <674478a5.050a0220.1cc393.0080.GAE@google.com>
-References: <674478a5.050a0220.1cc393.0080.GAE@google.com>
+	s=arc-20240116; t=1732546360; c=relaxed/simple;
+	bh=QVqsjbY2A65/p12XFRQzt9ytvhYNWbSd7slA96gpmFg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IkkkMbWqZHlrWTi4FxAQOkcr7ecbh3JnRzCEILm6OOBhBgYqqNa87k8k6taaP9fYboI1ohw1v8mYKbzyVEklz7FQc4TwXxY/Ltc3u1penuvTa5Jlxrsl9Up8N4cw4n79GhUTed675OoPtA4tZ+Ollzf4ltU5GmJsjdZLApt+lUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TRa5pCoU; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb388e64b0so49741751fa.0;
+        Mon, 25 Nov 2024 06:52:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732546357; x=1733151157; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QVqsjbY2A65/p12XFRQzt9ytvhYNWbSd7slA96gpmFg=;
+        b=TRa5pCoUBL6M5mwD4/uswtbNtQCg+40g6PUPkvMerJq/XCe856zKmqsJcQ4E900zx1
+         QG4H5sRuXaQD8FhKoA6GxHkzXze03zV1O4P1//cVGBNm2MKot77lNgiLSmEmWP42mpYh
+         AkHKRz9Vm8LwKbVdB5KcEnD2SajvWp69woGy3vBXy5FUFQsnSsbTf08rm7SVqZl/Fcsd
+         ur4cFREZX7o8G0ElPooUGyUTXigDAKRQdrUgPznABUZ5AdDPRtUuv6Gt+cJyh4eg28Qw
+         VJ/dHMQNDKBqSR/S2ulL9SIogE7BixB/iWgCZJDbopbdboOL5GzB8axIKkyngowRnd1B
+         RDXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732546357; x=1733151157;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QVqsjbY2A65/p12XFRQzt9ytvhYNWbSd7slA96gpmFg=;
+        b=BAD/K2acIb9Qe5xoRdbLu1U70Seg/NkzhlO6UDZpcYcZyk5aa2ywMrU3hvTmZvAzt3
+         raBek1PEzEFv6SOBC4Wg6W8ut3RYWuZgE3rOIYukmD19c/VWEbmVcoz6zj/DS3aS3yqV
+         qkx3dzuRW8i4nUU3eTwS433SK5vBiuZZlmRzp77kHX9xSsGlSXzST/1FRcGnPcCLEwQx
+         kbhJ9wINl3FRn9zdK5NRkA8QkHD3udmXo1ZTcYRrSzfz11bEys2kJmKY90jpJxj0Lvtc
+         ZYjYE9JB9C3qdU75CXfcPY2K1+8w74xPh/3EsQ2U88BXOFdLOBb7RkZWAGceyQ8rMdYW
+         ToQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGghftv00gX+RLuawJ7TCtoAogL3omdAY5xO4S/Mt6uyK7BAUFMqnu8K4SKGviMRlFsLOUsCBTGKunbMc=@vger.kernel.org, AJvYcCXaq4sfksKRV5LypxDrKoVpWBU10OU8ont3ksuHB+jJhfYzTihCeQJRWYRw+Fo1prYjAhR5fG4gGZQt9Zo4LS8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMcNOQoeG2+hAuStJ1Bu0wv6UmgykU0qF6c4/zz2m3ObryHccC
+	nXVnA64w2s1I1BxDONLKyhQ74TIADlvZ3kzgnxry7SHhBuCb5wXsK/Rftgow9QUcC/O94f6V1Lk
+	fX8kejlIqH71CdkJIE69BirfmH3Q4+w==
+X-Gm-Gg: ASbGncuDjd3ZJ0QTKkSxBMaXm8PW/z3dQeYF3/6C3TstwwZSrcT6wSeGZ6H9Q+8+6FZ
+	BZvDjpkoRWmH0zzGxneUZn8HDGJjuDxWEHoSHo2QT02K3d6E=
+X-Google-Smtp-Source: AGHT+IGIxVUnaZzWVoNS0iqledoHLlHjgp7D+/aJV0PR2cDLUIcxUQW6ZxkMGMwoCRPkbd9IyQOiYIay3qCmNCcHvhI=
+X-Received: by 2002:a05:651c:504:b0:2ff:5185:49e2 with SMTP id
+ 38308e7fff4ca-2ffa7187ce9mr59652961fa.36.1732546356793; Mon, 25 Nov 2024
+ 06:52:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241120-rust-xarray-bindings-v10-0-a25b2b0bf582@gmail.com>
+ <20241120-rust-xarray-bindings-v10-1-a25b2b0bf582@gmail.com> <CAH5fLgjpE7a1jy+W-ZdscrR3D3FrO21iVNd1L-7WY0jGcwQ9mA@mail.gmail.com>
+In-Reply-To: <CAH5fLgjpE7a1jy+W-ZdscrR3D3FrO21iVNd1L-7WY0jGcwQ9mA@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 25 Nov 2024 09:52:00 -0500
+Message-ID: <CAJ-ks9nusk9GAy5myshNVg+w1w_J-awBZqPVupmpjjwuc1Eo-w@mail.gmail.com>
+Subject: Re: [PATCH v10 1/2] rust: types: add `ForeignOwnable::PointedTo`
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-add conn should not put. timeout handler miss a put when !hcon.
+On Mon, Nov 25, 2024 at 9:49=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> On Wed, Nov 20, 2024 at 12:48=E2=80=AFPM Tamir Duberstein <tamird@gmail.c=
+om> wrote:
+> >
+> > Allow implementors to specify the foreign pointer type; this exposes
+> > information about the pointed-to type such as its alignment.
+> >
+> > This requires the trait to be `unsafe` since it is now possible for
+> > implementors to break soundness by returning a misaligned pointer.
+> >
+> > Encoding the pointer type in the trait (and avoiding pointer casts)
+> > allows the compiler to check that implementors return the correct
+> > pointer type. This is preferable to directly encoding the alignment in
+> > the trait using a constant as the compiler would be unable to check it.
+> >
+> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+>
+> I'm not super convinced by this way forward. It introduces more casts
+> to/from c_void in code using it, and forces us to expose internal
+> types such as ArcInner. Does anyone else have thoughts on this?
 
-#syz test
-
-diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
-index 1b8e468d24cf..78f7bca24487 100644
---- a/net/bluetooth/sco.c
-+++ b/net/bluetooth/sco.c
-@@ -143,6 +143,7 @@ static void sco_sock_timeout(struct work_struct *work)
- 	sco_conn_lock(conn);
- 	if (!conn->hcon) {
- 		sco_conn_unlock(conn);
-+		sco_conn_put(conn);
- 		return;
- 	}
- 	sk = sco_sock_hold(conn);
-@@ -192,7 +193,6 @@ static struct sco_conn *sco_conn_add(struct hci_conn *hcon)
- 			conn->hcon = hcon;
- 			sco_conn_unlock(conn);
- 		}
--		sco_conn_put(conn);
- 		return conn;
- 	}
- 
-
+It's certainly a trade-off. The alternative (something like exposing
+`const ALIGNMENT: usize`) would nullify the compiler's ability to
+check implementations.
 
