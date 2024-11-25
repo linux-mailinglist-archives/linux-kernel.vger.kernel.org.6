@@ -1,57 +1,47 @@
-Return-Path: <linux-kernel+bounces-420620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C069D7D69
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:48:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B50609D7D6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:49:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B643163B04
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:48:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 687A51614F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142FB18E05F;
-	Mon, 25 Nov 2024 08:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F77718E351;
+	Mon, 25 Nov 2024 08:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="PL42K0JP"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lk3X7+SQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC7C187FFA;
-	Mon, 25 Nov 2024 08:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732524420; cv=pass; b=G0HETxbLJEnqP72tSoUAwcAiEAL7TKg8NNE0M5BSIgoi0Rww5Iw3CDZqu/NbdaO8uJANYvUCdwxlBtCpH/oOMYEOwS+NkFcdNHM3kP3tqVZFPJUR+2WFUVG+lZXNwQ9+Ijt/Ff5IYyE4vfrCySSCJteUh9YCqfRuApO0skOWl20=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732524420; c=relaxed/simple;
-	bh=e1En9PQVXqNcwAXcqNs9tQ807fcqRs6/ktTLr4l1Glk=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ayviT1vcMGzXgdIcZoJqztDqNazhXJ0pfsAgOb7dER8YCe6/3THkL6avFYPzukRIDrYj78+Qyc9iG6qpEOOzwiuFrKNFMvTxppj1dDmG7bAbbour+eqmo+VIjtkQg551I/iLVLVpktWJxYyWP0CB2BVikOXqGR6e/tuaZx2i/y0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=PL42K0JP; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732524394; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=iUYh7pzi65OnS0zqrCMfqK/t3TY7YJJXj/uClXLQW+B0YJUKrdWYZeCTEvb7LZHnRmSmid0x7CO6ILr35sFyN31F1tlbmxVjr2S9MkEuWsrdj0hotWp2NZp0svex7p4ye/n10ydM1IzneMGkIA+1hvNyjuOzpfka3NEC7u3sANs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732524394; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=+sk1r8aQy43AApAPgbjVxugE4qjBNaId9ez4+SgBDdI=; 
-	b=LS96NSUGtLwkp4X4DDpCYjBAd6x3OixmouvahITVyiGkfH5TUjsOImHOXLUubF8tiifCSdx0F9s8FyUwAgEnEksKv+V6k1LCR8I5jvWLb2OrohYI34qZfqM0gXY2eHsAJztMmqc2lpXQvgn0ySWMFHODJfbWRibQBpUzdv3MH6w=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732524394;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=+sk1r8aQy43AApAPgbjVxugE4qjBNaId9ez4+SgBDdI=;
-	b=PL42K0JPtu3UFwNXLBy8DWUkGB8bCTjC56PcLaRsSO5fCm9Vhpz98YHy95b5KUYJ
-	y5gGKoVEFIGcDpXcA5S/7q+sGACKOnwNIRBeccUJAQIno7UagfypkN99yy7XxwSaPA1
-	p/Fpyiojsb375dtLzaqwFK+j2lelUTAMnWjFiVwo=
-Received: by mx.zohomail.com with SMTPS id 1732524390105684.1325081970928;
-	Mon, 25 Nov 2024 00:46:30 -0800 (PST)
-Message-ID: <18721453-75dc-4350-a97f-38debc90639d@collabora.com>
-Date: Mon, 25 Nov 2024 13:46:30 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11B4187FFA;
+	Mon, 25 Nov 2024 08:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732524514; cv=none; b=MdRpo3JoMgzdMf2hBrrl4XBkHJnXMJlZl24ItF0gxGh/TdIMuQwtJjZzvwv4Wm22PH/0z6kxqXpq0HuXGj85qqlCKCjQENfzn7uE/fwWK3MAWpWm8RMTdcJbYbljw5IU0TThAeLkib0c6yT8uS3nzJCY5YDNORb6hlxdjiOf8Zs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732524514; c=relaxed/simple;
+	bh=fzJ3KCZU5VC9Cp5LnB3M9aueHXE0SfajwbyUngpM5cA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JwSDrAN2LuABeEPWiSMyvoTeF79kqfLfSawU5vpX0+GoJpaWDzqSMtXVAbR2s+nZzTqxutTDZF4+s1f1vXK7baGmbsc3X84Blka3f/NM9jfS8nFwTp20jmGYLWwYEnExRaxmGx9WlUyrxRjAXyNKrxcEKNx4vw794vzkWap5gnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lk3X7+SQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E375C4CED1;
+	Mon, 25 Nov 2024 08:48:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732524514;
+	bh=fzJ3KCZU5VC9Cp5LnB3M9aueHXE0SfajwbyUngpM5cA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Lk3X7+SQDLUrhKkoRtfhpxUus4IWjZiiqE0y4tavBIWVnxiJzvD9Mz0L9zxzDAHe/
+	 uFhXS4QFkjBAzRkpO88TH7P7j5Ogt7PFVRKmNVRP8rDtBfayUp3leeIZPDheqLECBp
+	 e3fMGmqHvZADgy6lPxZUKlMhgAh8qvzvOSiwU8eT1ekrKd6dimgIkiVy6fqLiuALbF
+	 5/BVWctNnVXJqRPCRNIy3kIITWGpxv3YfbzZUGrPJwORXP+7SXP/8uPD0Det9lSOES
+	 nac1hNCJFERQtEzEtScdh7+/9D0t7ycK87wvpMoUkUfy0oK6HCb1IaePVrM94EGOnm
+	 B0uh6e5nXpwSQ==
+Message-ID: <d31298f5-718f-45cc-9387-7412b68b5b0f@kernel.org>
+Date: Mon, 25 Nov 2024 09:48:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,99 +49,142 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, gregkh@linuxfoundation.org,
- nfraprado@collabora.com, robh@kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@collabora.com, Shuah <shuah@kernel.org>
-Subject: Re: [PATCH] selftests: Warn about skipped tests in result summary
-To: Laura Nao <laura.nao@collabora.com>
-References: <20241122155548.55495-1-laura.nao@collabora.com>
- <46dbd308-8af1-4a6d-91ec-82981e867ff4@kernel.org>
+Subject: Re: [PATCH 2/2] dt-bindings: mfd: cros-ec: add properties for thermal
+ cooling cells
+To: "Sung-Chi, Li" <lschyi@chromium.org>
+Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, chrome-platform@lists.linux.dev,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20241122-extend_power_limit-v1-0-a3ecd87afa76@chromium.org>
+ <20241122-extend_power_limit-v1-2-a3ecd87afa76@chromium.org>
+ <4f5sahkxxqb5qonh676igaiadkxv2pbhbibu6wtx4yenplfn4o@yvidi4ujavhr>
+ <Z0Pl3muZx716QSed@google.com>
+ <c2e9a97e-129d-4a82-9e81-b1391b4b6ff9@kernel.org>
+ <Z0Q4vGXbvU3j9H65@google.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <46dbd308-8af1-4a6d-91ec-82981e867ff4@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <Z0Q4vGXbvU3j9H65@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 7bit
 
-Hi Laura,
-
-Thank you for making change.
-
-On 11/22/24 11:19 PM, Shuah wrote:
-> On 11/22/24 08:55, Laura Nao wrote:
->> Update the functions that print the test totals at the end of a selftest
->> to include a warning message when skipped tests are detected. The
->> message advises users that skipped tests may indicate missing
->> configuration options and suggests enabling them to improve coverage.
+On 25/11/2024 09:43, Sung-Chi, Li wrote:
+> On Mon, Nov 25, 2024 at 08:32:19AM +0100, Krzysztof Kozlowski wrote:
+>> On 25/11/2024 03:50, Sung-Chi, Li wrote:
+>>> On Fri, Nov 22, 2024 at 08:49:14AM +0100, Krzysztof Kozlowski wrote:
+>>>> On Fri, Nov 22, 2024 at 11:47:22AM +0800, Sung-Chi Li wrote:
+>>>>> The cros_ec supports limiting the input current to act as a passive
+>>>>> thermal cooling device. Add the property '#cooling-cells' bindings, such
+>>>>> that thermal framework can recognize cros_ec as a valid thermal cooling
+>>>>> device.
+>>>>>
+>>>>> Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
+>>>>> ---
+>>>>>  Documentation/devicetree/bindings/mfd/google,cros-ec.yaml | 3 +++
+>>>>>  1 file changed, 3 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
+>>>>> index aac8819bd00b..2b6f098057af 100644
+>>>>> --- a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
+>>>>> @@ -96,6 +96,9 @@ properties:
+>>>>>    '#gpio-cells':
+>>>>>      const: 2
+>>>>>  
+>>>>> +  '#cooling-cells':
+>>>>> +    const: 2
+>>>>
+>>>> This is not a cooling device. BTW, your commit msg is somehow circular.
+>>>> "Add cooling to make it a cooling device because it will be then cooling
+>>>> device."
+>>>>
+>>>> Power supply already provides necessary framework for managing charging
+>>>> current and temperatures. If this is to stay, you need to explain why
+>>>> this is suitable to be considered a thermal zone or system cooling
+>>>> device (not power supply or input power cooling).
+>>>>
+>>>> Best regards,
+>>>> Krzysztof
+>>>>
+>>>
+>>> Thank you, I will rephrase the commit message. The reason to not to use the
+>>> managing charging current and temperatures in the power supply framework is
+>>> that:
+>>>
+>>> - The EC may not have the thermal sensor value for the charger, and there is no
+>>>   protocol for getting the thermal sensor value for the charger (there is
+>>>   command for reading thermal sensor values, but there is no specification for
+>>>   what sensor index is for the charger, if the charger provides thermal value).
+>>> - The managing mechanism only take the charger thermal value into account, and
+>>>   I would like to control the current based on the thermal condition of the
+>>>   whole device.
+>>>
+>>> I will include these explanation in the following changes.
 >>
->> Signed-off-by: Laura Nao <laura.nao@collabora.com>
->> ---
->> This patch follows up on a previous discussion[1] and aims to highlight
->> skipped tests for the user's attention.
 >>
->> [1] https://lore.kernel.org/lkml/2bb2d338-cd00-4ac2-b8bd-5579eae82637@linuxfoundation.org/
->> ---
->>   tools/testing/selftests/kselftest.h               | 4 ++++
->>   tools/testing/selftests/kselftest/ksft.py         | 3 +++
->>   tools/testing/selftests/kselftest/ktap_helpers.sh | 4 ++++
->>   3 files changed, 11 insertions(+)
->>
->> diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftests/kselftest.h
->> index 29fedf609611..d3f64b333acd 100644
->> --- a/tools/testing/selftests/kselftest.h
->> +++ b/tools/testing/selftests/kselftest.h
->> @@ -147,6 +147,10 @@ static inline void ksft_set_plan(unsigned int plan)
->>     static inline void ksft_print_cnts(void)
->>   {
->> +    if (ksft_cnt.ksft_xskip > 0)
->> +        printf(
->> +            "# Skipped tests detected. Consider enabling relevant config options to improve coverage.\n"
-Looks good. Printing the number of skipped tests would be an improvement.
-I'm thinking about a case where some tests got failed and some skipped. Would
-this warning be useful in that case?
+>> This does not explain me why this is supposed to be thermal zone. I
+>> already said it, but let's repeat: This is not a thermal zone. This
+>> isn't thermal zone sensor, either.
+> 
+> Hi, I added the explanation in the commit message in v2, in short, I need to use
+> different thermal sensors, and need finer thermal controls, so I have to use
+> thermal zone. This is included in the v2 commit message.
+You resolved nothing there. I don't care that "you need to use thermal
+sensors". That's not a valid reason. If next time you say "I need to
+make it a current regulator", shall we accept incorrect description? No.
 
-> 
-> I like this. How about printing the number of skipped tests in this
-> message also to make it easy to parse.
-> 
-> Same comment on other print messages,
-> 
->> +        );
->>       if (ksft_plan != ksft_test_num())
->>           printf("# Planned tests != run tests (%u != %u)\n",
->>               ksft_plan, ksft_test_num());
->> diff --git a/tools/testing/selftests/kselftest/ksft.py b/tools/testing/selftests/kselftest/ksft.py
->> index bf215790a89d..7675a15a1264 100644
->> --- a/tools/testing/selftests/kselftest/ksft.py
->> +++ b/tools/testing/selftests/kselftest/ksft.py
->> @@ -27,6 +27,9 @@ def set_plan(num_tests):
->>       def print_cnts():
->> +    if ksft_cnt['skip'] > 0:
->> +        print("# Skipped tests detected. Consider enabling relevant config options to improve coverage.")
->> +
->>       print(
->>           f"# Totals: pass:{ksft_cnt['pass']} fail:{ksft_cnt['fail']} xfail:0 xpass:0 skip:{ksft_cnt['skip']} error:0"
->>       )
->> diff --git a/tools/testing/selftests/kselftest/ktap_helpers.sh b/tools/testing/selftests/kselftest/ktap_helpers.sh
->> index 79a125eb24c2..a4211221ccd6 100644
->> --- a/tools/testing/selftests/kselftest/ktap_helpers.sh
->> +++ b/tools/testing/selftests/kselftest/ktap_helpers.sh
->> @@ -107,5 +107,9 @@ ktap_finished() {
->>   }
->>     ktap_print_totals() {
->> +    if [ "$KTAP_CNT_SKIP" -gt 0 ]; then
->> +        echo "# Skipped tests detected. " \
->> +            "Consider enabling relevant config options to improve coverage."
->> +    fi
->>       echo "# Totals: pass:$KTAP_CNT_PASS fail:$KTAP_CNT_FAIL xfail:0 xpass:0 skip:$KTAP_CNT_SKIP error:0"
->>   }
-> 
-> thanks,
-> -- Shuah
-> 
+I repeat multiple times: this is not a SoC cooling device, this is not a
+thermal zone and not a thermal sensor.
 
--- 
-BR,
-Muhammad Usama Anjum
+This is a power supply or charger or battery. Eventually it might be
+hardware monitoring sensor. Use appropriate properties for this category
+of device.
 
+Best regards,
+Krzysztof
 
