@@ -1,377 +1,613 @@
-Return-Path: <linux-kernel+bounces-421084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D909D8744
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:03:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB8DA9D8669
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:29:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DE60B2824A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:29:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AC1728A8B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0761AC8AE;
-	Mon, 25 Nov 2024 13:29:41 +0000 (UTC)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56311ABECD;
+	Mon, 25 Nov 2024 13:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sZqjq/bX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9D21AB52F;
-	Mon, 25 Nov 2024 13:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B1E2B9B7;
+	Mon, 25 Nov 2024 13:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732541380; cv=none; b=WH0mm+yzsDmfdPJM4MdLTG+/2GYitJ1zeas88okfVzsgnzunM4iLMpswG+pDgkKGFBUBkr+gRNeku8eMPNmH10HTF80o8RgJRKMGW5fofdfdI9rET4vuLYcBpZdwbfm92OYZZbNI4zMDYUAGsVCxQFPx4p4wZcA8oDqB0qJ+a6s=
+	t=1732541364; cv=none; b=EnD8LLYiMg8RJ/1CSUEPr1E0OtmB39WMOnPx7n4bgouU1zyBVhqsB1i+t6m/WUaHQZVwNoJYyTQWDq8fokXSJALRCgGA1FbcB7MJpMCG0xHbN4CqZvU0vj7ZbtQ1+kPT6vFrMMtyjt7hvpbIGkHvSkms4Zmf7MqjcLHyPtv7mSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732541380; c=relaxed/simple;
-	bh=Ahsf+7m3iG/GKdqKjKW2hw7ObanDERZHiY4c1Vga1cY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rOO4QVm43cYkm0bKE8mMJhuiq9H3Dmt/m6FhOxMZ5UuQnxBAWRrEHBtPBnjbYvtpEfC9MxxGXPWfiRU6NkZ30cmvs7Clfd35Y7PWGm9CC83N/GatlkiDIjfGZudmAHOtDCeVP16m5L1jXifyV+p8E8qafWZTCMTGPCZQTkJ2psk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5cfaeed515bso5848044a12.1;
-        Mon, 25 Nov 2024 05:29:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732541376; x=1733146176;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NTKrQraN2IyV/SgbyUsYqrdmAhzorxXjm9+NVhb0pbA=;
-        b=Ph+mp1XJ9Xx0+hsANxOciVcfEpTVnnRpuBIKKu7SwQlUscdLOWwXLT5/hzXv+wLtLP
-         uqUJ+D75U0RdO5iFlrsctVPGOnBeBykOWbSLl5cdY9wzPbmPH0wjBTUF85AAoK4tRbAu
-         WaE7MDH4A/L1Xqzs6Xg8Ggmz6wW3VUTISj9bMT8U5z2jSXeBiu2Cm7cKNlCwFwW5zJ9Y
-         rUpk+PHWWao0QJ5LYTXet82R+CgmlrYwoy+p1RrFgl321zWSDX457IBwdPCKmocum1aK
-         vFE9rT/OZDjf7TT+BeD7FUgqVTp7CxKovkaCsD6AbHKjcIllywq4hEFE600HPX23YzD2
-         byYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/w5Km2SRq8FWuLOLmKlVOkBzHka0KYKmuF/TrLSTqFJr8GJgstS1jtK1XXixFbLHLBzi/xLE/MREph/OxP98=@vger.kernel.org, AJvYcCVLE2ikEVe5b/FKhI/qMNZ7y6+YnQVxIeJUWIPhsMFgvyEvh8S7ViR7HLQSYHzwkzZWPiroZgXT9DvL4ec=@vger.kernel.org, AJvYcCVXW4E8BjTT2MGOU1PXv1abPQHxeACGFNcpbPQ6HFHXBLAvnF8Blt8hjNp4J5PYFtOC0eH9uL/zSUKCpL9YHw==@vger.kernel.org, AJvYcCWR/pxftpH6aJ66HTzYzL4ZPEKNtFnAx3BOav4odeWqvF0lhZZMTnocxCmgUFJiskjTEiIJqlIe6tD8x9nw@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcCO0j/eFR/u7/4SbFGP6Ea/9JBgvU0S7kvUJu3PPe1Op6Wp/L
-	m7IhR3hONLdovv+dctq6oHDCqGEj/Vs24H0hettV9wQnHAGqzOH7CFVfxdjKgBc=
-X-Gm-Gg: ASbGncvB9EmY0unFmZ9td2xEBo3/EMQ9GZzY68VYtP+a84eQcOWFmkiwD1Y3Q5er6AS
-	MDRXCNzLTo+odZ+XsGeKPxn8QWCUU9Bl3FS7NIQ7hiRNtM9poDHLP3eOnrP6FoQESFEnZlBAKe0
-	md9NCx+550ke8N7B2l0Pq5wDuQCzo53fXnu3JJLWoY+oXAFO6XxFsLiDdvtRL288D6jVNnrfz9U
-	qMCCGOZCi6kgsaV0uxIP/ReMvVPletwY6PrBGKyXyBrzSSJB7htPT7p04p3SLgg+a4RKQdvlR8j
-	VmEX
-X-Google-Smtp-Source: AGHT+IHY7/wbtxSGB+GeYcAxU+N7NhNsuHgiEEl9m2XxUy+29C33dzI7oRtOU8/37ChnJBy6XwNTTg==
-X-Received: by 2002:a17:906:c384:b0:aa5:50b6:a612 with SMTP id a640c23a62f3a-aa550b6aa04mr302909366b.61.1732541376052;
-        Mon, 25 Nov 2024 05:29:36 -0800 (PST)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa550d3a484sm140952766b.115.2024.11.25.05.29.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 05:29:35 -0800 (PST)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa51b8c5f4dso388230266b.2;
-        Mon, 25 Nov 2024 05:29:35 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV7HHu4ZOLbm168kVesnC4nnm7n+ooU2weZgD5u0vjwDtxPgZTbmI8HEtMd0wQ0Oqi00gP6Pw8jySUmwimR@vger.kernel.org, AJvYcCVuWw0HM9g0LoqSKyXnmGcM8cotYKcrz2V3HR88C1Flp3d3cC33is60zSZrSdsU+9TTxNyOwy8+nMBCqBzeAg==@vger.kernel.org, AJvYcCWlt1J7jf2G18x5P9xvhDXKOi1YFX1GEfOOdCcmnv/j81AFDUjtkihPS0lZInnLW0CqGbVPHHSMDPL7TUYmRsM=@vger.kernel.org, AJvYcCX1iUqBO/vP2Uhnh9DV4jOVAZXx+pKX9s8zdVuX1YF1SZEKLSkyc6okrcwXYP6Le8hXr1SSLITfPJvSMFg=@vger.kernel.org
-X-Received: by 2002:a17:907:7752:b0:aa5:3b1c:77a7 with SMTP id
- a640c23a62f3a-aa53b1c791amr601319166b.6.1732541374662; Mon, 25 Nov 2024
- 05:29:34 -0800 (PST)
+	s=arc-20240116; t=1732541364; c=relaxed/simple;
+	bh=wZ/ToZoCnbDhH0zW73Uf040oZnHyBPEMRNcg6jvsBvg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=No13mqMjcqv8RpFCSU+J7j8K0m5nti2190AG9U5lXC8C12mbJp1mJJDfAfsrrmYVa294VVqmyQ/Q/Os0P73jdwAL3M3Y4aYE7GmzrIs/sGv76jV/7VEjjpXvsnsBecLFZ5CMe4QN5RiC4BOH9YMwswK7M7CtNOdNyzzls/FpoQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sZqjq/bX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4444C4CECF;
+	Mon, 25 Nov 2024 13:29:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732541364;
+	bh=wZ/ToZoCnbDhH0zW73Uf040oZnHyBPEMRNcg6jvsBvg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sZqjq/bXr+36Eucn6V0N14cURfXm1mUqYKQuPtx0SstWZEfDB/5EJsbIlU4FXx3br
+	 02zVhx31E60O40LrUnBNM+QLEhfu/LEEcKmBIdJ1lijRLoeP3qfzm7BfNF26xcu6lK
+	 w1M0o3MhoWJC7zQyUghcBwBuJYjK7tAZRHapB+KN/3qpgdc5mpsyMpwJyU3LIwuTbV
+	 Ky++GoBYhxCPHvu9pjp53oWFPsnduPULsXEexFXdgsCOPsugHsbCK+1aWfuQcoenTc
+	 ghh6mBEy/Fud39e+r99IdLP878e5+9okiqcBfjjTDg2hBIA18xtJ4tCiDCkgsqLhT4
+	 s3xU1JZHES8WA==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1tFZ9T-00000008Pei-2uni;
+	Mon, 25 Nov 2024 14:29:19 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: linux-media@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	workflows@vger.kernel.org,
+	Hans Verkuil <hverkuil@xs4ll.nl>
+Subject: [PATCH] docs: media: document media multi-committers rules and process
+Date: Mon, 25 Nov 2024 14:28:58 +0100
+Message-ID: <6a3e19d75e504ebbf9cd9212faad12c005dfdfb8.1732541337.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121204220.2378181-20-samitolvanen@google.com>
-In-Reply-To: <20241121204220.2378181-20-samitolvanen@google.com>
-From: Neal Gompa <neal@gompa.dev>
-Date: Mon, 25 Nov 2024 08:28:58 -0500
-X-Gmail-Original-Message-ID: <CAEg-Je-h4NitWb2ErFGCOqt0KQfXuyKWLhpnNHCdRzZdxi018Q@mail.gmail.com>
-Message-ID: <CAEg-Je-h4NitWb2ErFGCOqt0KQfXuyKWLhpnNHCdRzZdxi018Q@mail.gmail.com>
-Subject: Re: [PATCH v6 00/18] Implement DWARF modversions
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
-	Asahi Linux <asahi@lists.linux.dev>, Sedat Dilek <sedat.dilek@gmail.com>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	"Darrick J. Wong" <djwong@kernel.org>, Donald Zickus <dzickus@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On Thu, Nov 21, 2024 at 3:42=E2=80=AFPM Sami Tolvanen <samitolvanen@google.=
-com> wrote:
->
-> Hi,
->
-> Here's v6 of the DWARF modversions series. The main motivation is
-> modversions support for Rust, which is important for distributions
-> like Android that are about to ship Rust kernel modules. Per Luis'
-> request [1], v2 dropped the Rust specific bits from the series and
-> instead added the feature as an option for the entire kernel to
-> make it easier to evaluate the benefits of this approach, and to
-> get better test coverage. Matt is addressing Rust modversion_info
-> compatibility issues in a separate patch set [2] that depends on
-> this series, and actually allows modversions to be enabled with
-> Rust.
->
-> Short background: Unlike C, Rust source code doesn't have sufficient
-> information about the final ABI, as the compiler has considerable
-> freedom in adjusting structure layout, for example, which makes
-> using a source code parser like genksyms a non-starter. Based on
-> earlier feedback, this series uses DWARF debugging information for
-> computing versions. DWARF is an established and a relatively stable
-> format, which includes all the necessary ABI details, and adding a
-> CONFIG_DEBUG_INFO dependency for Rust symbol versioning seems like a
-> reasonable trade-off as most distributions already enable it.
->
-> The first 15 patches add gendwarfksyms, a tool for computing symbol
-> versions from DWARF. When passed a list of exported symbols and
-> object files, the tool generates an expanded type string for each
-> symbol and computes symbol versions. gendwarfksyms is written in C,
-> uses libdw to process DWARF, and zlib for CRC32. Patch 16 ensures
-> that debugging information is present where we need it, patch 17
-> adds gendwarfksyms as an alternative to genksyms, and the last patch
-> adds documentation.
->
-> v6 has changes to structure expansion and the kABI stability
-> features based on our backtesting results with previous Android
-> release kernels (see the change log below). It's also based on
-> linux-kbuild/for-next to include symtypes build rule clean-ups from
-> Masahiro [3]. For your convenience, the series is also available
-> here:
->
-> https://github.com/samitolvanen/linux/commits/gendwarfksyms-v6
->
-> If you also want to test the series with actual Rust modules, this
-> branch adds Matt's latest modversion_info series:
->
-> https://github.com/samitolvanen/linux/commits/rustmodversions-v6
->
-> Sami
->
->
-> [1] https://lore.kernel.org/lkml/ZnIZEtkkQWEIGf9n@bombadil.infradead.org/
-> [2] https://lore.kernel.org/linux-modules/20241030-extended-modversions-v=
-8-0-93acdef62ce8@google.com/
-> [3] https://lore.kernel.org/linux-modules/CAK7LNAR9c+EEsOvPPn4qSq3gAFskYO=
-XVd=3Ddg8O+bKeeC-HMifw@mail.gmail.com/
->
-> ---
->
-> v6:
-> - Dropped pointer expansion limits as this affects version
->   stability when exported symbols are removed. (Patch 9)
->
-> - Changed local type definitions (in .c files) that are opaque
->   to external users to be treated as declarations even if a
->   definition is available. (Patch 9)
->
-> - Switched to zlib's CRC32 implementation per Masahiro's
->   suggestion. (Patch 12)
->
-> - Renamed struct_declonly kABI rule to simply declonly, as it
->   applies also to unions and enums, added a new rule for
->   overriding enumerator values, and refactored the examples.
->   (Patch 13)
->
-> - Added --stable support for renamed structure members and
->   also added examples. (Patch 14)
->
-> - Rebased on linux-kbuild/for-next for Masahiro's symtypes
->   build rule clean-ups. (Patch 17)
->
-> - Updated the documentation reflect --stable changes. (Patch 18)
->
-> v5: https://lore.kernel.org/lkml/20241030170106.1501763-21-samitolvanen@g=
-oogle.com/
-> - Rebased on v6.12-rc5.
->
-> - Fixed an issue with limiting structure expansion, and applied
->   Petr's clean-up. (Patch 10)
->
-> - Dropped an unnecessary return statement in error path. (Patch
->   12)
->
-> - Addressed several other smaller issues Petr brought up. (Patches
->   13, 14, and 15)
->
-> - Added a KBUILD_GENDWARFKSYMS_STABLE flag to enable --stable for
->   the entire kernel build. (Patch 18)
->
-> - Updated documentation to include KBUILD flags. (Patch 19)
->
-> - Picked up Reviewed-by tags from v4.
->
-> v4: https://lore.kernel.org/lkml/20241008183823.36676-21-samitolvanen@goo=
-gle.com/
-> - Rebased on v6.12-rc2, which now includes all the prerequisites.
->
-> - Dropped unnecessary name_only parameter for symbols.c::for_each
->   and cleaned up error handling. (Patch 3)
->
-> - Fixed anonymous scope handling to ensure unnamed DIEs don't get
->   names. (Patch 4)
->
-> - Added non-variant children to variant_type output, and included
->   DW_AT_discr_value attributes for variants. (Patch 9)
->
-> - Added another symbol pointer test case. (Patch 16)
->
-> - Picked up (Acked|Reviewed)-by tags from v3.
->
-> v3: https://lore.kernel.org/lkml/20240923181846.549877-22-samitolvanen@go=
-ogle.com/
-> - Updated SPX license headers.
->
-> - Squashed the first two patches in v2 and tried to reduce churn as
->   much as reasonable.
->
-> - Dropped patch 18 from v2 ("x86/asm-prototypes: Include
->   <asm/ptrace.h>") as it's addressed by a separate patch.
->
-> - Changed the error handling code to immediately terminate instead
->   of propagating the errors back to main, which cleaned up the code
->   quite a bit.
->
-> - Switched to the list and hashtable implementations in scripts and
->   dropped the remaining tools/include dependencies. Added a couple
->   missing list macros. (patch 1)
->
-> - Moved the genksyms CRC32 implementation to scripts/include and
->   dropped the duplicate code. (patches 2 and 14)
->
-> - Switched from ad-hoc command line parsing to getopt_long (patch 3).
->
-> - Added structure member and function parameter names to the DIE
->   output to match genksyms behavior, and tweaked the symtypes format
->   to be more parser-friendly in general based on Petr's suggestions.
->
-> - Replaced the declaration-only struct annotations with more generic
->   kABI stability rules that allow source code annotations to be used
->   where #ifndef __GENKSYMS__ was previously used.  Added support for
->   rules that can be used to exclude enumerators from versioning.
->   (patch 16)
->
-> - Per Miroslav's suggestion, added an option to hide structure
->   members from versioning when they're added to existing alignment
->   holes, for example. (patch 16)
->
-> - Per Greg's request, added documentation and example macros for the
->   --stable features, and a couple of test cases. (patches 15, 16, and
->   20)
->
-> - Fixed making symtypes files, which need to depend on .o files with
->   gendwarfksyms. (patch 19)
->
-> - Addressed several other smaller issues that Petr and Masahiro
->   kindly pointed out during the v2 review.
->
-> v2: https://lore.kernel.org/lkml/20240815173903.4172139-21-samitolvanen@g=
-oogle.com/
-> - Per Luis' request, dropped Rust-specific patches and added
->   gendwarfksyms as an alternative to genksyms for the entire
->   kernel.
->
-> - Added support for missing DWARF features needed to handle
->   also non-Rust code.
->
-> - Changed symbol address matching to use the symbol table
->   information instead of relying on addresses in DWARF.
->
-> - Added __gendwarfksyms_ptr patches to ensure the compiler emits
->   the necessary type information in DWARF even for symbols that
->   are defined in other TUs.
->
-> - Refactored debugging output and moved the more verbose output
->   behind --dump* flags.
->
-> - Added a --symtypes flag for generating a genksyms-style
->   symtypes output based on Petr's feedback, and refactored
->   symbol version calculations to be based on symtypes instead
->   of raw --dump-dies output.
->
-> - Based on feedback from Greg and Petr, added --stable flag and
->   support for reserved data structure fields and declaration-onl
->   structures. Also added examples for using these features.
->
-> - Added a GENDWARFKSYMS option and hooked up kbuild support
->   for both C and assembly code. Note that with gendwarfksyms,
->   we have to actually build a temporary .o file for calculating
->   assembly modversions.
->
-> v1: https://lore.kernel.org/lkml/20240617175818.58219-17-samitolvanen@goo=
-gle.com/
->
-> ---
->
-> Sami Tolvanen (18):
->   tools: Add gendwarfksyms
->   gendwarfksyms: Add address matching
->   gendwarfksyms: Expand base_type
->   gendwarfksyms: Add a cache for processed DIEs
->   gendwarfksyms: Expand type modifiers and typedefs
->   gendwarfksyms: Expand subroutine_type
->   gendwarfksyms: Expand array_type
->   gendwarfksyms: Expand structure types
->   gendwarfksyms: Limit structure expansion
->   gendwarfksyms: Add die_map debugging
->   gendwarfksyms: Add symtypes output
->   gendwarfksyms: Add symbol versioning
->   gendwarfksyms: Add support for kABI rules
->   gendwarfksyms: Add support for reserved and ignored fields
->   gendwarfksyms: Add support for symbol type pointers
->   export: Add __gendwarfksyms_ptr_ references to exported symbols
->   kbuild: Add gendwarfksyms as an alternative to genksyms
->   Documentation/kbuild: Add DWARF module versioning
->
->  Documentation/kbuild/gendwarfksyms.rst     |  308 ++++++
->  Documentation/kbuild/index.rst             |    1 +
->  include/linux/export.h                     |   15 +
->  kernel/module/Kconfig                      |   31 +
->  scripts/Makefile                           |    3 +-
->  scripts/Makefile.build                     |   35 +-
->  scripts/gendwarfksyms/.gitignore           |    2 +
->  scripts/gendwarfksyms/Makefile             |   12 +
->  scripts/gendwarfksyms/cache.c              |   51 +
->  scripts/gendwarfksyms/die.c                |  166 +++
->  scripts/gendwarfksyms/dwarf.c              | 1158 ++++++++++++++++++++
->  scripts/gendwarfksyms/examples/kabi.h      |  157 +++
->  scripts/gendwarfksyms/examples/kabi_ex.c   |   30 +
->  scripts/gendwarfksyms/examples/kabi_ex.h   |  263 +++++
->  scripts/gendwarfksyms/examples/symbolptr.c |   33 +
->  scripts/gendwarfksyms/gendwarfksyms.c      |  185 ++++
->  scripts/gendwarfksyms/gendwarfksyms.h      |  301 +++++
->  scripts/gendwarfksyms/kabi.c               |  333 ++++++
->  scripts/gendwarfksyms/symbols.c            |  339 ++++++
->  scripts/gendwarfksyms/types.c              |  477 ++++++++
->  20 files changed, 3893 insertions(+), 7 deletions(-)
->  create mode 100644 Documentation/kbuild/gendwarfksyms.rst
->  create mode 100644 scripts/gendwarfksyms/.gitignore
->  create mode 100644 scripts/gendwarfksyms/Makefile
->  create mode 100644 scripts/gendwarfksyms/cache.c
->  create mode 100644 scripts/gendwarfksyms/die.c
->  create mode 100644 scripts/gendwarfksyms/dwarf.c
->  create mode 100644 scripts/gendwarfksyms/examples/kabi.h
->  create mode 100644 scripts/gendwarfksyms/examples/kabi_ex.c
->  create mode 100644 scripts/gendwarfksyms/examples/kabi_ex.h
->  create mode 100644 scripts/gendwarfksyms/examples/symbolptr.c
->  create mode 100644 scripts/gendwarfksyms/gendwarfksyms.c
->  create mode 100644 scripts/gendwarfksyms/gendwarfksyms.h
->  create mode 100644 scripts/gendwarfksyms/kabi.c
->  create mode 100644 scripts/gendwarfksyms/symbols.c
->  create mode 100644 scripts/gendwarfksyms/types.c
->
->
-> base-commit: 3596c721c4348b2a964e43f9296a0c01509ba927
-> --
-> 2.47.0.371.ga323438b13-goog
->
+As the media subsystem will experiment with a multi-committers model,
+update the Maintainer's entry profile to the new rules, and add a file
+documenting the process to become a committer and to maintain such
+rights.
 
-As my Acked-by was removed, I'm sorry to say that there is no point
-for me to provide feedback since it is unwanted.
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Signed-off-by: Hans Verkuil <hverkuil@xs4ll.nl>
+---
+ Documentation/driver-api/media/index.rst      |   1 +
+ .../media/maintainer-entry-profile.rst        | 193 ++++++++++----
+ .../driver-api/media/media-committer.rst      | 252 ++++++++++++++++++
+ .../process/maintainer-pgp-guide.rst          |   2 +
+ 4 files changed, 398 insertions(+), 50 deletions(-)
+ create mode 100644 Documentation/driver-api/media/media-committer.rst
 
-I hope it lands soon, but I also hope the people here who decided that
-a person's efforts aren't worth recording because they don't
-personally know them should reflect on this too. It's a good way to
-keep people from coming into the community for the long term.
+diff --git a/Documentation/driver-api/media/index.rst b/Documentation/driver-api/media/index.rst
+index d5593182a3f9..d0c725fcbc67 100644
+--- a/Documentation/driver-api/media/index.rst
++++ b/Documentation/driver-api/media/index.rst
+@@ -26,6 +26,7 @@ Documentation/userspace-api/media/index.rst
+     :numbered:
+ 
+     maintainer-entry-profile
++    media-committer
+ 
+     v4l2-core
+     dtv-core
+diff --git a/Documentation/driver-api/media/maintainer-entry-profile.rst b/Documentation/driver-api/media/maintainer-entry-profile.rst
+index ffc712a5f632..90c6c0d9cf17 100644
+--- a/Documentation/driver-api/media/maintainer-entry-profile.rst
++++ b/Documentation/driver-api/media/maintainer-entry-profile.rst
+@@ -27,19 +27,128 @@ It covers, mainly, the contents of those directories:
+ Both media userspace and Kernel APIs are documented and the documentation
+ must be kept in sync with the API changes. It means that all patches that
+ add new features to the subsystem must also bring changes to the
+-corresponding API files.
++corresponding API documentation files.
+ 
+-Due to the size and wide scope of the media subsystem, media's
+-maintainership model is to have sub-maintainers that have a broad
+-knowledge of a specific aspect of the subsystem. It is the sub-maintainers'
+-task to review the patches, providing feedback to users if the patches are
++Due to the size and wide scope of the media subsystem, the media's
++maintainership model is to have committers that have a broad knowledge of
++a specific aspect of the subsystem. It is the committers' task to
++review the patches, providing feedback to users if the patches are
+ following the subsystem rules and are properly using the media kernel and
+ userspace APIs.
+ 
+-Patches for the media subsystem must be sent to the media mailing list
+-at linux-media@vger.kernel.org as plain text only e-mail. Emails with
+-HTML will be automatically rejected by the mail server. It could be wise
+-to also copy the sub-maintainer(s).
++Media committers
++----------------
++
++In the media subsystem, there are experienced developers that can commit
++patches directly on a development tree. These developers are called
++Media committers and are divided into the following categories:
++
++- Committers: responsible for one or more drivers within the media subsystem.
++  They can upload changes to the tree that do not affect the core or ABI.
++
++- Core committers: responsible for part of the media core. They are typically
++  responsible for one or more drivers within the media subsystem, but, besides
++  that, they can also merge patches that change the code common to multiple
++  drivers, including the kernel internal API/ABI.
++
++- Subsystem maintainers: responsible for the subsystem as a whole, with
++  access to the entire subsystem.
++
++  Only subsystem maintainers can change the userspace API/ABI.
++
++Media committers shall explicitly agree with the Kernel development process
++as described at Documentation/process/index.rst and to the Kernel
++development rules inside the Kernel documentation, including its code of
++conduct.
++
++More details about media committers can be found here:
++Documentation/driver-api/media/media-committer.rst.
++
++Media development tree
++----------------------
++
++The main development tree used by the media subsystem is hosted at LinuxTV.org,
++where we also maintain news about the subsystem, wiki pages and a patchwork
++instance where we track patches though their lifetime.
++
++The main tree used by media developers is at:
++
++https://git.linuxtv.org/media.git/
++
++.. _Media development workflow:
++
++Media development workflow
++++++++++++++++++++++++++++
++
++All changes for the media subsystem must be sent first as e-mails to the
++media mailing list, as plain text only e-mail to:
++
++  `https://subspace.kernel.org/vger.kernel.org.html <linux-media@vger.kernel.org>`_
++
++Emails with HTML will be automatically rejected by the mail server.
++It could be wise to also copy the media committer(s). You should use
++``scripts/get_maintainers.pl`` to identify whom else needs to be copied.
++Please always copy driver's authors and maintainers.
++
++Such patches needed to be based against a public branch or tag as follows:
++
++1. new Kernel releases:
++
++   Those need to be based at the ``next`` branch of that media.git tree
++
++2. During Kernel release development cycle, patches fixing bugs on a -rc
++   kernel should preferably be against the latest -rc1 Kernel. If they
++   require a previously-applied change, they need to be against the ``fixes``
++   branch;
++
++3. Patches against an already released kernel should preferably be  against
++   the latest released Kernel. If they require a previously-applied
++   change, they need to be against ``fixes``.
++
++All patches with fixes shall have:
++   - a ``Fixes:`` tag pointing to the first commit that introduced the bug;
++   - a ``Cc: stable@vger.kernel.org``
++
++Patches that were fixing bugs reported by someone else shall have:
++  - a ``Reported-by`` tag immediately followed by a ``Closes`` tag.
++
++Patches that change API/ABI shall require patches to update documentation
++accordingly at the same patch series.
++
++See Documentation/process/index.rst for more details about e-mail submission.
++
++Once a patch is submitted, it may follow either one of the workflows
++below:
++
++a. Normal workflow: patches are handled by subsystem maintainers::
++
++     +------+   +---------+   +-------+   +-------------------+   +---------+
++     |e-mail|-->|patchwork|-->|pull   |-->|maintainers merge  |-->|media.git|
++     +------+   +---------+   |request|   |at media-committers|   +---------+
++                              +-------+   +-------------------+
++
++   For this workflow, pull requests can be generated by a committer,
++   a previous committer, subsystem maintainers or by a couple of trusted
++   long-time contributors. If you are not in such group, please don't submit
++   pull requests, as they will likely be ignored.
++
++b. Committers' workflow: patches are handled by media committers::
++
++     +------+   +---------+   +-------------------+   +-----------+   +---------+
++     |e-mail|-->|patchwork|-->|committers merge   |-->|maintainers|-->|media.git|
++     +------+   +---------+   |at media-committers|   |approval   |   +---------+
++                              +-------------------+   +-----------+
++
++When patches are merged at patchwork and when merged at media-committers,
++CI bots will check for errors and may provide e-mail feedback about
++patch problems. When this happens, the e-mail author must fix them
++and send another version of the patch.
++
++Patches will only be moved to the next stage in those two workflows if they
++don't fail on CI or if there are false-positives at the CI reports.
++
++Failures during e-mail submission
+++++++++++++++++++++++++++++++++++
+ 
+ Media's workflow is heavily based on Patchwork, meaning that, once a patch
+ is submitted, the e-mail will first be accepted by the mailing list
+@@ -47,51 +156,36 @@ server, and, after a while, it should appear at:
+ 
+    - https://patchwork.linuxtv.org/project/linux-media/list/
+ 
+-If it doesn't automatically appear there after a few minutes, then
++If it doesn't automatically appear there after some time [2]_, then
+ probably something went wrong on your submission. Please check if the
+-email is in plain text\ [2]_ only and if your emailer is not mangling
++email is in plain text\ [3]_ only and if your emailer is not mangling
+ whitespaces before complaining or submitting them again.
+ 
+-You can check if the mailing list server accepted your patch, by looking at:
++To troubleshoot problems, you should first check if the mailing list
++server has accepted your patch, by looking at:
+ 
+    - https://lore.kernel.org/linux-media/
+ 
+-.. [2] If your email contains HTML, the mailing list server will simply
++If the patch is there and not at patchwork, it is likely that your e-mailer
++mangled the patch. Patchwork internally has a logic that checks if the
++received e-mail contain a valid patch. Any whitespace and new line
++breakages mangling the patch won't be recognized by patchwork, thus such
++patch will be rejected.
++
++.. [2] It usually takes a few minutes for the patch to arrive, but
++       the e-mail server is busy, so it may take up to a few hours
++       for a patch to be handled by the mail server and by the patchwork
++       instance.
++
++.. [3] If your email contains HTML, the mailing list server will simply
+        drop it, without any further notice.
+ 
++Subsystem maintainers
++---------------------
+ 
+-Media maintainers
+-+++++++++++++++++
+-
+-At the media subsystem, we have a group of senior developers that
+-are responsible for doing the code reviews at the drivers (also known as
+-sub-maintainers), and another senior developer responsible for the
+-subsystem as a whole. For core changes, whenever possible, multiple
+-media maintainers do the review.
+-
+-The media maintainers that work on specific areas of the subsystem are:
+-
+-- Remote Controllers (infrared):
+-    Sean Young <sean@mess.org>
+-
+-- HDMI CEC:
+-    Hans Verkuil <hverkuil@xs4all.nl>
+-
+-- Media controller drivers:
+-    Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+-
+-- ISP, v4l2-async, v4l2-fwnode, v4l2-flash-led-class and Sensor drivers:
+-    Sakari Ailus <sakari.ailus@linux.intel.com>
+-
+-- V4L2 drivers and core V4L2 frameworks:
+-    Hans Verkuil <hverkuil@xs4all.nl>
+-
+-The subsystem maintainer is:
+-  Mauro Carvalho Chehab <mchehab@kernel.org>
+-
+-Media maintainers may delegate a patch to other media maintainers as needed.
+-On such case, checkpatch's ``delegate`` field indicates who's currently
+-responsible for reviewing a patch.
++The subsystem maintainers are:
++  Mauro Carvalho Chehab <mchehab@kernel.org> and
++  Hans Verkuil <hverkuil@xs4all.nl>
+ 
+ Submit Checklist Addendum
+ -------------------------
+@@ -108,17 +202,14 @@ implementing the media APIs:
+ ====================	=======================================================
+ Type			Tool
+ ====================	=======================================================
+-V4L2 drivers\ [3]_	``v4l2-compliance``
++V4L2 drivers\ [4]_	``v4l2-compliance``
+ V4L2 virtual drivers	``contrib/test/test-media``
+ CEC drivers		``cec-compliance``
+ ====================	=======================================================
+ 
+-.. [3] The ``v4l2-compliance`` also covers the media controller usage inside
++.. [4] The ``v4l2-compliance`` also covers the media controller usage inside
+        V4L2 drivers.
+ 
+-Other compilance tools are under development to check other parts of the
+-subsystem.
+-
+ Those tests need to pass before the patches go upstream.
+ 
+ Also, please notice that we build the Kernel with::
+@@ -134,6 +225,8 @@ Where the check script is::
+ Be sure to not introduce new warnings on your patches without a
+ very good reason.
+ 
++Please see `Media development workflow`_ for e-mail submission rules.
++
+ Style Cleanup Patches
+ +++++++++++++++++++++
+ 
+diff --git a/Documentation/driver-api/media/media-committer.rst b/Documentation/driver-api/media/media-committer.rst
+new file mode 100644
+index 000000000000..27b85a37fb2b
+--- /dev/null
++++ b/Documentation/driver-api/media/media-committer.rst
+@@ -0,0 +1,252 @@
++Media committers
++================
++
++What is a media committer?
++--------------------------
++
++A media committer is a developer who can apply patches from other developers
++and their own patches at the
++`media-committers <https://gitlab.freedesktop.org/linux-media/media-committers>`_
++tree.
++
++It is a media committer's duty to ensure that their entries at the MAINTAINERS
++file will be kept updated, and that submitted patches for files for which
++they are listed as maintainers are timely reviewed at the mailing list,
++not waiting in patchwork as ``New`` for more than one Kernel merge cycle,
++and, if accepted, applying them at the media committer's tree.
++
++This privilege is granted with some expectation of responsibility:
++committers are people who care about the Linux Kernel as a whole and
++about the Linux media subsystem and want to help its development. It
++is also based on a trust relationship between the rest of the committers,
++maintainers and the LinuxTV community.
++
++As such, a media committer is not just someone who is capable of creating
++code, but someone who has demonstrated their ability to collaborate
++with the team, get the most knowledgeable people to review code,
++contribute high-quality code, and follow through to fix issues (in code
++or tests).
++
++.. Note::
++
++   1. If a patch introduced a regression, then it is the media committer's
++      responsibility to correct that as soon as possible. Typically the
++      patch is either reverted, or an additional patch is committed that
++      fixes the regression;
++   2. if patches are fixing bugs against already released Kernels, including
++      the reverts above mentioned, the media committer shall add the needed
++      tags.  Please see :ref:`Media development workflow` for more details.
++   3. all patches should be properly reviewed at
++      linux-media@vger.kernel.org before being merged at the
++      media-committers tree or submitted on pull requests.
++
++Becoming a media committer
++--------------------------
++
++The most important aspect of volunteering to be a committer is that you will
++be able to review and approve other people's changes, so we are looking for
++whether we think you will be good at doing that.
++
++As such, potential committers must earn enough credibility and trust from the
++LinuxTV community. To do that, developers shall be familiar with the open
++source model and have been active at the Linux Kernel community for some time,
++and, in particular, with the media subsystem.
++
++So, in addition to actually making the code changes, you are basically
++demonstrating your:
++
++- commitment to the project;
++- ability to collaborate with the team and communicate well;
++- understand of how upstream and the LinuxTV community  works
++  (policies, processes for testing, code review, ...)
++- reasonable knowledge about:
++
++  - the Kernel development process:
++    Documentation/process/index.rst
++
++  - the Media development profile:
++    Documentation/driver-api/media/maintainer-entry-profile.rst
++
++- understanding of the projects' code base and coding style;
++- ability to provide feedback to the patch authors;
++- ability to judge when a patch might be ready for review and to submit;
++- ability to write good code (last but certainly not least).
++
++It is also desirable that developers that intend to become committers
++make a best effort to attend the yearly Linux Media Summit, typically
++co-located with another Linux conference.
++
++If you are doing such tasks and have become a valued developer, an
++existing committer can nominate you to the media subsystem maintainers.
++
++The ultimate responsibility for accepting a nominated committer is up to
++the subsystem's maintainers. The committers must earn a trust relationship
++with all subsystem maintainers, as, by granting you commit rights, they will
++be delegating part of their maintenance tasks.
++
++Due to that, to become a committer or a core committer, a consensus between
++all subsystem maintainers is required, as they all need to trust a developer
++well enough to be delegated the responsibility to maintain part of the code
++and to properly review patches from third parties, in a timely manner and
++keeping the status of the reviewed code at https://patchwork.linuxtv.org
++updated.
++
++.. Note::
++
++   In order to preserve the developers that could have their commit rights
++   granted or denied as well as the subsystem maintainers who have the
++   task to accept or deny commit rights, all communication related to
++   nominating a committer, preserving commit rights or leaving such function
++   should happen in private as much as possible.
++
++Media committer's agreement
++---------------------------
++
++Once a nominated committer is accepted by all subsystem maintainers,
++they will ask if the developer is interested in the nomination and discuss
++what area(s) of the media subsystem the committer will be responsible for.
++
++Once the developer accepts being a committer, the new committer shall
++explicitly accept the Kernel development policies described under its
++Documentation/, and, in particular to the rules on this document, by writing
++an e-mail to media-committers@linuxtv.org, with a declaration of intent
++following the model below::
++
++   I, John Doe, would like to change my status to: Committer
++
++   I intend to actively develop the XYZ driver, send fixes to drivers
++   that I can test, reviewing patches and merging trivial fixes
++   for the subsystem, ...
++
++Followed by a formal declaration of agreement with the Kernel development
++rules, signed with a PGP key cross signed by other Kernel and media
++developers. Such declaration shall be::
++
++   I hereby declare that I agree with the Kernel development rules described at:
++
++   https://www.kernel.org/doc/html/latest/driver-api/media/media-committer.rst
++
++   and to the Linux Kernel development process rules.
++
++   I agree to the Code of Conduct as documented here:
++   Documentation/process/code-of-conduct.rst
++
++   I am aware that I can, at any point of time, retire. In that case, I will
++   send an e-mail to notify the subsystem maintainers for them to revoke my
++   commit rights.
++
++   I am aware that the Kernel development rules change over time.
++   By doing a new commit, I understand that I agree with the rules in effect
++   at the time of the commit.
++
++For more details about PGP sign, please read
++Documentation/process/maintainer-pgp-guide.rst and
++:ref:`kernel_org_trust_repository`.
++
++In case the kernel development process changes, by merging new commits at the
++`media-committers <https://gitlab.freedesktop.org/linux-media/media-committers>`_,
++the media committer implicitly declares that the agreement with the latest
++version of the documented process and to the contents of this file.
++
++Core committers
++---------------
++
++As described in Documentation/driver-api/media/maintainer-entry-profile.rst
++a committer may be granted with additional privileges to also be able to
++change a core file and/or media subsystem's Kernel API/ABI. The extent of
++the core committer's additional privileges will be detailed by the subsystem
++maintainers when they nominate a core committer.
++
++Existing committers may become core committers and vice versa. Such
++decisions will be taken in consensus between the subsystem maintainers.
++
++Media committers rules
++----------------------
++
++Media committers shall ensure that merged patches will not break any existing
++drivers. If it breaks, fixup or revert patches shall be merged as soon as
++possible, aiming to be merged at the same Kernel cycle the bug is reported.
++
++Media committers shall behave accordingly to the permissions granted by
++the subsystem maintainers, specially with regards of the scope of changes
++they may apply directly at the media-committers tree. Such scope can
++change overtime on a mutual greement between media committers and
++maintainers.
++
++As described at :ref:`Media development workflow`, there are workflows.
++For the committers' workflow, the following rules apply:
++
++- Each merged patch shall pass CI tests;
++
++- Media committers shall request reviews from other committers were
++  applicable, i.e. because those committers have more knowledge about
++  some areas that are changed by a patch;
++
++- No other media committer would be against the proposed changes.
++
++Patches that do not fall under the committer's workflow criteria will follow
++the normal workflow as described at :ref:`Media development workflow`.
++
++Only a subsystem maintainer can override such rules.
++
++All media committers shall ensure that patchwork will reflect the current
++status, e.g. patches shall be delegated to the media committer who is
++handling them and the patch status shall be updated according to these rules:
++
++- ``Under review``: Used if the patch requires a second opinion
++  or when it is part of a pull request;
++- ``Accepted``: Once a patch is merged at the multi-committer tree.
++- ``Superseded``: There is a newer version of the patch posted in the
++  mailing list.
++- ``Duplicated``: There was another patch doing the same thing from someone
++  else that was accepted.
++- ``Not Applicable``: Use for patch series that are not merged at media.git
++  tree (e.g. drm, dmabuf, upstream merge, etc.) but were cross-posted to the
++  linux-media mailing list.
++
++If the committer decides not to merge it, then reply by email to patch
++authors, explaining why it is not merged, and patchwork shall be updated
++accordingly with either:
++
++- ``Changes Requested``: if a new revision was requested;
++- ``Rejected``: if the proposed change won't be merged upstream.
++
++If a media committer decides to retire, it is the committer's duty to
++notify the subsystem maintainers about that decision.
++
++Maintaining media committer status
++----------------------------------
++
++A community of committers working together to move the Linux Kernel
++forward is essential to creating successful projects that are rewarding
++to work on. If there are problems or disagreements within the community,
++they can usually be solved through healthy discussion and debate.
++
++In the unhappy event that a media committer continues to disregard good
++citizenship (or actively disrupts the project), we may need to revoke
++that person's status. In such cases, if someone suggests the revocation with
++a good reason, other developers may second the motion. The final decision
++is taken by the subsystem maintainers. As the decision to become a media
++committer comes from a consensus between subsystem maintainers, a single
++subsystem maintainer not trusting the media committer anymore is enough to
++revoke committer's privileges.
++
++If a committer is inactive for more than a couple of Kernel cycles,
++maintainers will try to reach you via e-mail. If not possible, they may
++revoke your committer privileges and update MAINTAINERS file entries
++accordingly. If you wish to resume contributing later on, then contact
++the subsystem maintainers to ask if your rights can be restored.
++
++A previous committer that had his commit rights revoked can keep contributing
++to the subsystem via the normal e-mail workflow as documented at the
++:ref:`Media development workflow`.
++
++References
++----------
++
++Much of this was inspired by/copied from the committer policies of:
++
++- `Chromium <https://chromium.googlesource.com/chromium/src/+/main/docs/contributing.md>`_;
++- `WebKit <http://www.google.com/url?q=http%3A%2F%2Fwebkit.org%2Fcoding%2Fcommit-review-policy.html&sa=D&sntz=1&usg=AFrqEze4W4Lvbhue4Bywqgbv-N5J66kQgA>`_;
++- `Mozilla <http://www.google.com/url?q=http%3A%2F%2Fwww.mozilla.org%2Fhacking%2Fcommitter%2F&sa=D&sntz=1&usg=AFrqEzecK7iiXqV30jKibNmmMtzHwtYRTg>`_.
++
+diff --git a/Documentation/process/maintainer-pgp-guide.rst b/Documentation/process/maintainer-pgp-guide.rst
+index f5277993b195..795ef8d89271 100644
+--- a/Documentation/process/maintainer-pgp-guide.rst
++++ b/Documentation/process/maintainer-pgp-guide.rst
+@@ -903,6 +903,8 @@ the new default in GnuPG v2). To set it, add (or modify) the
+ 
+     trust-model tofu+pgp
+ 
++.. _kernel_org_trust_repository:
++
+ Using the kernel.org web of trust repository
+ --------------------------------------------
+ 
+-- 
+2.47.0
 
-Regardless, I've copied one of the RHEL kernel folks (Don Zickus) onto
-this thread to have his team be aware and give feedback. You'll
-probably want their feedback instead of mine.
-
-
---=20
-=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
-=BC=81/ Always, there's only one truth!
 
