@@ -1,110 +1,120 @@
-Return-Path: <linux-kernel+bounces-420383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBDBA9D79C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 02:26:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4360A9D79C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 02:26:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 159B3B22347
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 01:26:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C86DDB22794
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 01:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F51DBA50;
-	Mon, 25 Nov 2024 01:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A368DDBE;
+	Mon, 25 Nov 2024 01:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aShGrGpZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CVuzn8QU"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A85B36D;
-	Mon, 25 Nov 2024 01:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB87C8BEC
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 01:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732497969; cv=none; b=bVKl4+kacRZVe/VpZ+A0m6DfhzpGWAd36QUeiL6YpruRxQxe0aQ6R6/2xRXseoTRfF7M/eTFDEalbjGwVaHehSryJYl1lZQu34EsREuJCLPxa2w1T5Hhphtdf1ogdueZgcYHtPYhJGdFnqBVzVl8gwdg62ufIG/5Oo6ugNiO/iY=
+	t=1732498006; cv=none; b=A3QHwJI9Mow8mcgAHKAvSo2Z6evvb2cUjF2Id+F3Hno2Ph7DhuckP+V5TmIqABS9D8PJLW2BeeCy70qqv+DC2k2gt/aDD+kwnPUstjiGcgEmEAAR4nkufDew2Ap6Gj7asCU/9QO/FfXKDvc6RADgJ4muU5lY9i2L0E/WmJxUpSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732497969; c=relaxed/simple;
-	bh=HQz+Pj9xyykrRznX3d5gcoWYrH68om3Us33aK61qgmM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=haBbLQbx50UpN+xJyWUYTomiwVC/ietc7MFGWsU+hnDfZMqbBCWEWRvJBdw1f6ZsnJPg3/PchP0Is4vFT0m1AXkUTOwLCCceMqkJ+zrTwFfFd+JprXJ2TaBt2xqePzz976hhUOUP3dh14/nsmqUeUosiXhz7jdYdQQHnt7iIRiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aShGrGpZ; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732497964; x=1764033964;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=HQz+Pj9xyykrRznX3d5gcoWYrH68om3Us33aK61qgmM=;
-  b=aShGrGpZSpffXQdVlKiTAaQayfLvr2tlJE7oinDYKbqW2RO/ywxRgRQr
-   1tswtKlYkJsKVH6cZE2+79ROPm9yI3nYd1dWlFuz0ijBLGkEQRF/2+tSj
-   VfPKgaH7dloSW1bPhenahdAqqXbFvn01jzvGInQfqeAyp89SOntWcWz5b
-   cGQX6ICdxSASEiYBtz0ki5tsWm6xRcb2lPCPft28fHLI9PYXMzcouTJX1
-   4gxg6anluJmMp9hL9ps++eBdRT/g607pBd/N8KqxZkmMIWBCRpo/qrOLF
-   evezk2T0mXCHtNcepUaCzingnAmm0Tb7mkCKGT3Cczmr0soiVy8jssxNu
-   A==;
-X-CSE-ConnectionGUID: mO+Di3ylR9GHxVXigiOkQg==
-X-CSE-MsgGUID: cqA3FlyBQvei2DhZfxX4Pg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="43646340"
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="43646340"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2024 17:26:03 -0800
-X-CSE-ConnectionGUID: JV5O2ojaS46SsCVZ1qR9Gg==
-X-CSE-MsgGUID: UxullYvjS+WWPhyO3fO0hg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="96038728"
-Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.124.241.124]) ([10.124.241.124])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2024 17:26:00 -0800
-Message-ID: <86d71f0c-6859-477a-88a2-416e46847f2f@linux.intel.com>
-Date: Mon, 25 Nov 2024 09:25:56 +0800
+	s=arc-20240116; t=1732498006; c=relaxed/simple;
+	bh=mQBlwudP0DfgTUBOWsoqAJWn9pKuKv5wOYnWBD/F4ww=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gal15pXYVM8V3KxGE7GIdsTEBy/WKh6g6vX2qE1B9w25d49DOmntOQ+le/MaygZQVvJ5bcplUWktgIm7uG0M2Vl0IUqzPTEnV0/0xIxCkxyJti13N0K4zj8kE2f4BRq42bW5JB5Kg/hToff/bAv/sZiMbEydWi6xc5DVzA/KqmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=CVuzn8QU; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53de582163fso153690e87.0
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 17:26:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1732498003; x=1733102803; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ieFB/E3uQUpwOL5elkCs1Fu1xJKYr7cXOoEikGe05FE=;
+        b=CVuzn8QUF349aqn0HAAEETIfz8NBpU/pdoMbw5rjVP6QMsYSUCW2WP4Gri0GfAbo3I
+         XdW14yMllXmTRq7dKVEoOFn6YR+MNMWugk3nkTJGcgIzXFVbMRX0U8ieriGIyzVrcv9X
+         nI6Az/Xejr0FO+mRyvwqhuBijGhHLca6XU1aw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732498003; x=1733102803;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ieFB/E3uQUpwOL5elkCs1Fu1xJKYr7cXOoEikGe05FE=;
+        b=t5mgM38vblHLrBv5Kpdk8BnPlq8wIN/nDWCkmIjKI2/l8iHnrIwnHulrWn0CbbudMi
+         NQAjnOuBTeZWvoRcHX6Pf4089HwQQHzeNFDfYzpkou+T3iPqV1KRSwcye8UKs9ABysdS
+         wpkJ64iLP+Pb0/gXDfaZFGjbslSEA9HtC+T5fFbVDL6l0Ujek+IWqdbMqSGLhf140o3a
+         YLu47TSOYGVZ1hmOJ1B5zeAMb3S166gmBWmd2mBC3Bj3ISgomgVlRgQ+NNNjU6fWDv1d
+         c6npQ6iLGaz6NbvCB659vmG/POAw3AN6cAaKJP8Ymj4D1DVh6OiONhzW40DaYH+tIrPx
+         zijw==
+X-Forwarded-Encrypted: i=1; AJvYcCVH0yv6k5+qpQKNDy2RISCG84ZuwVJdlGkvD7y2vcv9JfnlR5zUT3uQY/bj0veDtkYxWO5JGPblUrXsJh0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv2JZYa9hnk/fk8xmR2ugQmZ4i8ZSiXBmbB4GzpGibpozutugQ
+	foUHFKmvbWYeC6fltkHhwP7JNCZDz6ivw3qWf9nA1EugBzpBv2OOU1zTSyDttbTiFjMOA7bnJoz
+	6MHJBeQ==
+X-Gm-Gg: ASbGncsfvp/3naRS9lja4dn3ajws3ym7tJBbKyGUlEyFQRAFSYYqRP6oR2ta/H2o9ix
+	XBIB9+KMUy5sWAAJqz9wmlcjDRf8MDguio4otbjv3jvVNSa7Yl2O0Gc+Qz4f51+LYr6OcF7ySDf
+	W6z9foSKQD3D7JymATwdVU9Y82nMI9XF4v/ZkCYDwtU890j1BbZznmonCJwdgv7903nFUvzgs91
+	/fQoE2E3OTZxom4Gfbi36tS926EyrGirJSg/8ih1avHEqQlD+IGNLefuKzUVLQ8s/HkYLBkL5sL
+	CJluaj5eSExxhiS3H6fD6bvd
+X-Google-Smtp-Source: AGHT+IHSMWJkyXR4slq35aDHKHpGYzbTgXcQvLolP9ysMc6tUTM/dABPT5IIj2mZu5LRGpgL1P13QQ==
+X-Received: by 2002:a05:6512:3ba2:b0:53d:85dc:7c58 with SMTP id 2adb3069b0e04-53dd39b4a8dmr7663058e87.50.1732498002795;
+        Sun, 24 Nov 2024 17:26:42 -0800 (PST)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com. [209.85.128.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa53fc0f73asm186387666b.127.2024.11.24.17.26.40
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 24 Nov 2024 17:26:41 -0800 (PST)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-434a044dce2so3675775e9.2
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 17:26:40 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUDILFDcXEAay2c2NDTOQFkC04N+ICsXP/KS9VPtfWOy+Z6eFgp20H0QgxKCA94XC7sWRasObRBQ4IsrfQ=@vger.kernel.org
+X-Received: by 2002:a05:6000:42c6:b0:382:5070:53a5 with SMTP id
+ ffacd0b85a97d-38260b552dbmr7674736f8f.22.1732498000442; Sun, 24 Nov 2024
+ 17:26:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] KVM: TDX: TD vcpu enter/exit
-To: seanjc@google.com, Adrian Hunter <adrian.hunter@intel.com>,
- pbonzini@redhat.com
-Cc: dave.hansen@linux.intel.com, kvm@vger.kernel.org,
- rick.p.edgecombe@intel.com, kai.huang@intel.com, reinette.chatre@intel.com,
- xiaoyao.li@intel.com, tony.lindgren@linux.intel.com, dmatlack@google.com,
- isaku.yamahata@intel.com, nik.borisov@suse.com,
- linux-kernel@vger.kernel.org, x86@kernel.org, yan.y.zhao@intel.com,
- chao.gao@intel.com, weijiang.yang@intel.com
-References: <20241121201448.36170-1-adrian.hunter@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20241121201448.36170-1-adrian.hunter@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241124094253.565643-1-zhenghaoran@buaa.edu.cn>
+ <20241124174435.GB620578@frogsfrogsfrogs> <wxwj3mxb7xromjvy3vreqbme7tugvi7gfriyhtcznukiladeoj@o7drq3kvflfa>
+ <20241124215014.GA3387508@ZenIV> <CAHk-=whYakCL3tws54vLjejwU3WvYVKVSpO1waXxA-vt72Kt5Q@mail.gmail.com>
+ <20241124222450.GB3387508@ZenIV> <Z0OqCmbGz0P7hrrA@casper.infradead.org>
+ <CAHk-=whxZ=jgc7up5iNBVMhA0HRX2wAKJMNOGA6Ru9Kqb7_eVw@mail.gmail.com>
+ <Z0O8ZYHI_1KAXSBF@casper.infradead.org> <CAHk-=whNNdB9jT+4g2ApTKohWyHwHAqB1DJkLKQF=wWAh7c+PQ@mail.gmail.com>
+ <Z0PPl_B6kxGRCZk7@casper.infradead.org>
+In-Reply-To: <Z0PPl_B6kxGRCZk7@casper.infradead.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 24 Nov 2024 17:26:24 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgC9fB-Fq=pZQBDC0nZBWkxPRz-R95vbKjwHmSyU7Ex3w@mail.gmail.com>
+Message-ID: <CAHk-=wgC9fB-Fq=pZQBDC0nZBWkxPRz-R95vbKjwHmSyU7Ex3w@mail.gmail.com>
+Subject: Re: [RFC] metadata updates vs. fetches (was Re: [PATCH v4] fs: Fix
+ data race in inode_set_ctime_to_ts)
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Mateusz Guzik <mjguzik@gmail.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Hao-ran Zheng <zhenghaoran@buaa.edu.cn>, brauner@kernel.org, 
+	jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	baijiaju1990@gmail.com, 21371365@buaa.edu.cn
+Content-Type: text/plain; charset="UTF-8"
 
-
-
-
-On 11/22/2024 4:14 AM, Adrian Hunter wrote:
-[...]
->    - tdx_vcpu_enter_exit() calls guest_state_enter_irqoff()
->      and guest_state_exit_irqoff() which comments say should be
->      called from non-instrumentable code but noinst was removed
->      at Sean's suggestion:
->    	https://lore.kernel.org/all/Zg8tJspL9uBmMZFO@google.com/
->      noinstr is also needed to retain NMI-blocking by avoiding
->      instrumented code that leads to an IRET which unblocks NMIs.
->      A later patch set will deal with NMI VM-exits.
+On Sun, 24 Nov 2024 at 17:15, Matthew Wilcox <willy@infradead.org> wrote:
 >
-In https://lore.kernel.org/all/Zg8tJspL9uBmMZFO@google.com, Sean mentioned:
-"The reason the VM-Enter flows for VMX and SVM need to be noinstr is they do things
-like load the guest's CR2, and handle NMI VM-Exits with NMIs blocks.  None of
-that applies to TDX.  Either that, or there are some massive bugs lurking due to
-missing code."
+> I literally said that.
 
-I don't understand why handle NMI VM-Exits with NMIs blocks doesn't apply to
-TDX.  IIUIC, similar to VMX, TDX also needs to handle the NMI VM-exit in the
-noinstr section to avoid the unblock of NMIs due to instrumentation-induced
-fault.
+Bah, I misunderstood you.
 
+Then yes, if all the writers are always in order, and you don't
+actually care about exact time matching but only ordering, I guess it
+might work.
+
+But since you need all the same barriers that you would need for just
+doing it right with a seqcount, it's not much of an advantage, and it
+doesn't give you consistency for any other kind of action.
+
+             Linus
 
