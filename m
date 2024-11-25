@@ -1,87 +1,93 @@
-Return-Path: <linux-kernel+bounces-421229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80FBC9D89DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:01:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 090A89D884C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:43:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8C39B46F64
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:42:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E56C166726
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783451B2183;
-	Mon, 25 Nov 2024 14:42:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8581B0F30;
+	Mon, 25 Nov 2024 14:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uQngW/k1"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vk9mW/Vg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDD316419
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB3716419;
+	Mon, 25 Nov 2024 14:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732545753; cv=none; b=MFDViQ1DrTYbFM9FrjOaCZlJa3h5aSIhs33yzeagrmo79HOPC6HgY36iybZVVDSLvXs4J9U+4Nk1Ar0TlsvwQwrYBlnd7XaUMqkmDwfAh+yLDXjohhzc45VftZXGyUEkhmJepTO5VoQ2cKZ9t3NZXgzB+/xXqMzGDKDN2TS1FDE=
+	t=1732545826; cv=none; b=HWn9c7SO6vxT/vCvSvWFyMRH22dwYLc3HrPGXBEBeZzNuOi/v4B81wQxh6t4Tpn/vN52tpxW4LkPOBU59HYPPteYEBXPTJbMY74pSvkanXrGeac61CvO3eamtUicWIuMyw3uJQnphTKOuWntMum5O/1MUMvIWAA89KuGc/g9crY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732545753; c=relaxed/simple;
-	bh=iACkCXDg/CzpXnOK8dpmgrm/S7Qydfd63Vqo29Ktq1Y=;
+	s=arc-20240116; t=1732545826; c=relaxed/simple;
+	bh=qNsE6z1OR/kXQFwA6ct5lLN1n1fexTCAU2iaWlnaU1U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pD3OVd7Afk9V8eF1hAwTpZwK1XsQZ9GBs95snstmFRKWfR5ce7wud5yeZIYCcUGQUTzMx4kDiBXln2Soa3BYWmlo7gcvlnyjsFvi6M6Y0qdQMLGGtDCkY53JAtCL3oX9jbeqJqW7uKPPJhnv5Pbg0Pf8LS+Zhh/xNkHVdAeOLPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uQngW/k1; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <060d97f1-34e6-424d-9060-b657283e9739@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732545748;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3oXr1hU3SpCJH4VXUZuIfZ1cmp8m2c58mEk8Ky+EMYg=;
-	b=uQngW/k10fEaYc1ATAOFujVAtxubSQeARsxeV6fhYM0D4AXGKAv632NbvzceVjxgTERMix
-	4zocKl9oTKjnz41NW7pfSV0Zdc9tz3y2KH+raeiyhBGxosIS53GJlgYaQ2bB4e4AXjXzJd
-	3DlwwCPCne7xD6WXe/eS2PvRHG4pVes=
-Date: Mon, 25 Nov 2024 22:42:20 +0800
+	 In-Reply-To:Content-Type; b=YfK8q+sYSW2MN4yf1Fw+1qW8k2SyW8UEFCH9IppaEl3cVNHFNyasHTpIdNl4TwKZp5MApuV7zUhDlv81aMuIOSTERuDl9eTvacyelloFozggDD3blZaaVKPXJjq1GuRGoQ4Fzt7h9odL2K6L2v7SHQLupRoMEwgGOA3s0OPha0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vk9mW/Vg; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732545826; x=1764081826;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=qNsE6z1OR/kXQFwA6ct5lLN1n1fexTCAU2iaWlnaU1U=;
+  b=Vk9mW/Vg1FsR6H1g8q3QKf8nIxh/mo4G5IpeiUzWY0SkC8pjGTTzee8t
+   gpItC56JQkc0zzGrKK8gN6dfghXRFkoHGCB3GcoL9/Yx4aHX0RCy+cj6M
+   HYI+q09mFSqR3X/3QwcPWlCyHoNDoDuAk31l5PR5Fxm7ikzjSetCyy98+
+   4EJGumP5W6pR9YiODdN2j7RjzP2/YSgfNwIhoPXOfeCBOs6AKBEcmHBay
+   1gzPTugTwysO6O99TTWMlf2+DadRk1seqsE4dIWCUto+0lewfCe8KLuR0
+   7GraT9yXS0oR9XkB6bIz21cFlB8facIqzlQSqoZLhLKm31Dn8YZkdGKcy
+   Q==;
+X-CSE-ConnectionGUID: 77CvRG+dQHO3QJM5wq5V9g==
+X-CSE-MsgGUID: jCuHsGTBSCOfRCD8ZZZpwg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="36314821"
+X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
+   d="scan'208";a="36314821"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 06:43:45 -0800
+X-CSE-ConnectionGUID: bpEC9gmkTkuGrFNsp9Q/Aw==
+X-CSE-MsgGUID: bibrCFFmQc+Ko67uHax6BQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
+   d="scan'208";a="95699680"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO [10.245.245.34]) ([10.245.245.34])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 06:43:40 -0800
+Message-ID: <883447da-aeca-41ba-99ef-038dd8ddc6b3@linux.intel.com>
+Date: Mon, 25 Nov 2024 15:43:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] drm/lsdc: Request PCI BAR
-To: Philipp Stanner <pstanner@redhat.com>,
- Sui Jingfeng <suijingfeng@loongson.cn>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20241125140228.58492-2-pstanner@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v4 5/8] x86/smp native_play_dead: Prefer
+ cpuidle_play_dead() over mwait_play_dead()
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ rafael.j.wysocki@intel.com, len.brown@intel.com,
+ artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com,
+ peterz@infradead.org, tglx@linutronix.de, gautham.shenoy@amd.com
+References: <20241125132029.7241-1-patryk.wlazlyn@linux.intel.com>
+ <20241125132029.7241-6-patryk.wlazlyn@linux.intel.com>
+ <CAJZ5v0iJ7hca68Pk1g1m=FNX6Psr3Ow-K7fvXZCcRM8PFM7EjQ@mail.gmail.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <20241125140228.58492-2-pstanner@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+In-Reply-To: <CAJZ5v0iJ7hca68Pk1g1m=FNX6Psr3Ow-K7fvXZCcRM8PFM7EjQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
-Hi,
-
-Thanks. Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
-
-[1/1] drm/lsdc: Request PCI BAR
-       https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/ca053ee3c6a7a877754e6f444ce5f520e3c0a856
+> If you first make intel_idle provide :enter_dead() for all CPUs on all
+> platforms and implement it by calling mwait_play_dead_with_hint(), you
+> won't need mwait_play_dead() any more.
+Crossed my mind, but because mwait_play_dead doesn't filter on Intel
+vendor specifically, I thought that I might break some edge case.
 
 
-On 2024/11/25 22:02, Philipp Stanner wrote:
-> lsdc currently just ioremaps its PCI BAR with pcim_iomap(). Performing
-> a region regquest additionally can make the driver more robust.
-
-'regquest' ->'request'.
-
-Please avoid typos next time, sound safer otherwise.
-
--- 
-Best regards,
-Sui
-
+I am all for simplifying.
 
