@@ -1,88 +1,108 @@
-Return-Path: <linux-kernel+bounces-420872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF0DC9D83D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:52:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF399D83D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:53:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75014289F0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:52:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FBB128A1A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02213192D91;
-	Mon, 25 Nov 2024 10:52:47 +0000 (UTC)
-Received: from mail115-79.sinamail.sina.com.cn (mail115-79.sinamail.sina.com.cn [218.30.115.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F33F1925A6;
+	Mon, 25 Nov 2024 10:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="gtFtymY9"
+Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B4FE2500B5
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 10:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35397192B90;
+	Mon, 25 Nov 2024 10:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732531966; cv=none; b=nlApFoCqr3UbqhhaYotj3IT37Kga9SahERtkWMfDSGxkuWk2bgZdQGFWIMqxZwmgxcar7HQE9uAB0KFLgyvMY5Jvm3MgrTSbrzPa4ny5h5ISsl086mK+RpUih62753rf72BIh1sqCpyq9DwX/7/PRMG33+AjjUGjI+Kufi8aOtk=
+	t=1732531967; cv=none; b=YS6o3cnJqhi/fFFIvYZfYxniTvdqnPtU7KJD0Ty6qAnslaSHs/wA2DOfH/8FGGW35Xw42dHWhkhj2lB640dS6rHeq4c7ox6jfEBql7X9cUeJZQda5tqKNP94QlwpdAZIinsGZswzshoMInoAD0MyCKvZXrj5zaVxhWCMynYRswo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732531966; c=relaxed/simple;
-	bh=0ID34OV2cxjnjPpNIv6Pze02a0yYp8TnSEA4zPf8W48=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=J1HROZaHgQQdN+M8uq63NMY/EyXE5CnxqeLpQ0+q5D0BzCP20IsX2rHzCMZgK2HMxlxsa8Gfvj33ZrpRqmxNWvr53ceYPztnXX8fIzGfnAiSUzAzZwumbRk4vp2uQwzM1Vc+VDjJcxDx8mZ3PdL9uqzJkq7H4VTLsHFnTXwzzOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.88.48.110])
-	by sina.com (10.185.250.22) with ESMTP
-	id 674456EC00001EC0; Mon, 25 Nov 2024 18:52:32 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 8749497602596
-X-SMAIL-UIID: 89358ED7F56A4D449A108EDC536286F9-20241125-185232-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+5abecb17ba9299033d79@syzkaller.appspotmail.com>
-Cc: adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org,
+	s=arc-20240116; t=1732531967; c=relaxed/simple;
+	bh=JpGjeBjmwwj4tAr/NvIpAh2+TZXeSq9SG3rXs+foLRg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cbCi9nul2IlmKLRC1ukyMc5dzfKPBqXDsAHVJRv9wkhfSvjU6OjgPu43EHdodYyb9hlT3yFiLD1LEtJaF2kgCZcZRYC6/w7PUPRu7vtYdsr/+/tzX9A2aLygKGqi1axCssy37xqCk0XgRyEy2sVHBEMTelba/qwQ4sihEEaMKSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=gtFtymY9; arc=none smtp.client-ip=168.119.48.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
+From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
+	s=2023072701; t=1732531964;
+	h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=Bk64MtqGkER1ZMPO0RH9GpVeWujqZYsCThNqF69MyRo=;
+	b=gtFtymY9JwUJFkpAL/kSf+Ma/1ghajXUrJ5yxsHGl8kT4QAt4TJkESBUOH573AEerDUtFC
+	z5/OInOsdB3Z8GCO+0hzJyWNRIYFq9K58bJ+D4bscwCdlyseZbzE6dpsXE3kbikgzBKKu1
+	JNwAgUyM1T1RyphrFdbh3rcY0SSBCMhcEY9GYTrHaJCtsPmjnDPGai7tZWw4X6DdXGUfgz
+	TWRDkp82HzI37siSO+cOpuqPB9mCab6S2h+CNEBg+Ejc6DCuyStLVq5GA/e6s1m1ReXKim
+	R0NyE/1qMexlD3AhdsLS3cI3GlEAzOSsMal/wFkhE8SoFKmNjPLXIt4j0SVkxQ==
+To: 
+Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>,
+	Rae Moar <rmoar@google.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com,
 	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	tytso@mit.edu
-Subject: Re: [syzbot] [ext4?] WARNING: locking bug in get_page_from_freelist
-Date: Mon, 25 Nov 2024 18:52:20 +0800
-Message-Id: <20241125105220.1566-1-hdanton@sina.com>
-In-Reply-To: <6743e5af.050a0220.1cc393.0055.GAE@google.com>
-References: 
+	llvm@lists.linux.dev
+Subject: [PATCH] kunit: constify return of string literals
+Date: Mon, 25 Nov 2024 11:52:39 +0100
+Message-ID: <20241125105240.44219-1-cgoettsche@seltendoof.de>
+Reply-To: cgzones@googlemail.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On Sun, 24 Nov 2024 18:49:19 -0800
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    9f16d5e6f220 Merge tag 'for-linus' of git://git.kernel.org..
-> git tree:       upstream
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=177ab75f980000
+From: Christian Göttsche <cgzones@googlemail.com>
 
-Test the idea [1]
-[1] https://lore.kernel.org/lkml/20241122155451.Mb2pmeyJ@linutronix.de/
+The function kunit_status_to_ok_not_ok() returns string literals, thus
+declare the return value as such.
 
-#syz test
+Reported by clang:
 
---- x/mm/kasan/generic.c
-+++ y/mm/kasan/generic.c
-@@ -538,7 +538,7 @@ static void __kasan_record_aux_stack(voi
- 		return;
+    ./include/kunit/test.h:143:10: warning: returning 'const char[3]' from a function with result type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+      143 |                 return "ok";
+          |                        ^~~~
+    ./include/kunit/test.h:145:10: warning: returning 'const char[7]' from a function with result type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+      145 |                 return "not ok";
+          |                        ^~~~~~~~
+    ./include/kunit/test.h:147:9: warning: returning 'const char[8]' from a function with result type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+      147 |         return "invalid";
+          |                ^~~~~~~~~
+
+Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+---
+ include/kunit/test.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/kunit/test.h b/include/kunit/test.h
+index 34b71e42fb10..ae1b57578476 100644
+--- a/include/kunit/test.h
++++ b/include/kunit/test.h
+@@ -135,7 +135,7 @@ struct kunit_case {
+ 	struct string_stream *log;
+ };
  
- 	alloc_meta->aux_stack[1] = alloc_meta->aux_stack[0];
--	alloc_meta->aux_stack[0] = kasan_save_stack(0, depot_flags);
-+	alloc_meta->aux_stack[0] = kasan_save_stack(0, 0);
- }
- 
- void kasan_record_aux_stack(void *addr)
---
+-static inline char *kunit_status_to_ok_not_ok(enum kunit_status status)
++static inline const char *kunit_status_to_ok_not_ok(enum kunit_status status)
+ {
+ 	switch (status) {
+ 	case KUNIT_SKIPPED:
+-- 
+2.45.2
+
 
