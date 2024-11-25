@@ -1,200 +1,179 @@
-Return-Path: <linux-kernel+bounces-420924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C7889D8603
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:11:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 632179D8471
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:28:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 268B1B43B7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:27:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E72411641CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09F01A4AAA;
-	Mon, 25 Nov 2024 11:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="zxmjjv1A"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2BC199E9A;
+	Mon, 25 Nov 2024 11:27:30 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D084199956;
-	Mon, 25 Nov 2024 11:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A59199924
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732534036; cv=none; b=LQ7p0mmzGEvRDSGWTjrBg8vBqneuCFMi1Wgsy3aZ0EPdSWf5dhFKZTP5ynjo7BwxHjRalpqLDi73tUDLstEpAlRgRvJtisNfSepLhyVVY6ZrmovV3880ZSZ1eAM6sHM0vJ0zbVinJjV4hN4Grv9o3HPCqrkSH+vzghXa00caTiU=
+	t=1732534049; cv=none; b=I93qdF8ZUgeAPDgZ7tXdOfUcolp/XXEcBjlGMTNiHkm5Ysi00QnRZopBbIY8SBjYVI3O4R6VejSLkcTXDfAR+MX5FwURAoYkOIueiknMnK9qHC4dLdBr5NG3Rin91cl2/iCm8OrwvnWYEK+s8HaQFhsRtpSkeqYKLFJAT+CKdJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732534036; c=relaxed/simple;
-	bh=yqstnjrt42P+hAEkFuh7ldMv05C/7jVeTbBm3kpX3SU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cx+NopkMRR7YpMDoyuFvBrhc+Z8s9YqbYEJoVXnXx9D2MlECwG5CM90wxM671fcoNH79P90QpPv1tt9AsM2TaVzKVDdqYLt+eUTU3FKRPDbfMuZn9mBGtG8pv4D8xAdbxzZraZ0zetsNdP5SyRNYuw6VLV2x+HHlQwJaM3h77X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=zxmjjv1A; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AP988sf014757;
-	Mon, 25 Nov 2024 06:27:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=hFzIi
-	r85npFsPy+19jboytsiLG3hCFkL3xdc6nTtocI=; b=zxmjjv1AxVrBnwtlbuzRY
-	nAnGwWCaCzNby4kj+vfurXj37ASKQynRCJ7M9w7PSTWFhidR/+NB60T5IThrce+d
-	Y70xq/S6kZkFnPUKxJhC40oGbIagDRUkaTIbzoRWYyt2XSPxaHHZycsfhGgeGhKW
-	ppSrp7OKus+CLa+UoPwrfykIce5icZCxmYVH0sjInjyYwEpCh1//uuxDtM0sp7rH
-	VovTc9kkHia3SNHN2xCG2rmIgk51jAkoaC9lWtmyGOhrlQlmp7P9a7WIY4EphwIB
-	wqcV/uv78I9LkkUx911iA/b2xBEW1ZVXGPrul80lbZM1TQ51+PgP1m9C8kpPGPfx
-	w==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 434pbd0hmc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Nov 2024 06:27:00 -0500 (EST)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 4APBQxUs035539
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 25 Nov 2024 06:26:59 -0500
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Mon, 25 Nov 2024 06:26:59 -0500
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Mon, 25 Nov 2024 06:26:59 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Mon, 25 Nov 2024 06:26:59 -0500
-Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.168])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4APBQnwf016096;
-	Mon, 25 Nov 2024 06:26:55 -0500
-From: Antoniu Miclaus <antoniu.miclaus@analog.com>
-To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
-CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Subject: [PATCH v2 2/2] iio: frequency: adf4371: add ref doubler and div2
-Date: Mon, 25 Nov 2024 13:26:41 +0200
-Message-ID: <20241125112643.10459-3-antoniu.miclaus@analog.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241125112643.10459-1-antoniu.miclaus@analog.com>
-References: <20241125112643.10459-1-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1732534049; c=relaxed/simple;
+	bh=A0jxxElq1VIPyp8/H7ELYFoNVxIc2DKqcvYgx3CeaB0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Ve0P1WiBPl4AdlWz6JRU8AXMy3+JjSf0BvrJ++7mOgwZWazG5n+yYg2umh/UrpAhG9Gie5oiXWE9P56Be9puH1XEKCDzqS57r8vkuDu/3XZ42RQl0ymPekbXnrxLCf2Gq2/VvcR9y0N7ImCdc3XWeByLHjI874v9mY2J8QYS/ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a78c40fa96so44231735ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 03:27:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732534045; x=1733138845;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oOYx4bcTfS5I55qpkWkBm/KlHHH9B5MVZmhVuSvCBKs=;
+        b=hmR5XzqcATPkZtKJc6PnjVWVOms90U0+hPEBcEj6ybDaT5yFSTuWa4xOfnUOGVFBwb
+         a3gu/bIl0Nq6iUvbK1tk+r/KATQw4o2aMqHPASwKKMgzk4kh4Bd+HU+sirXzdLYgzrYt
+         jpcf89L4EtiyiCpHvb9mLaG6gV81HvALQdQPzgP2pqazxXWHeu03xmlaKXL4UQJPTMav
+         ZvYf9JD26fXZ/kwQgcE876hJooBk6lVgWJjyeDSDZqey3feOgULv5uTq/9Qyqynk1kBN
+         YdRxIx+JIJRtvPkk7/eni446USALLlmk6wXkKySsMKVpNA7/Fl7iBi13uD6QRK0rVuwx
+         Gqcw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLn88ZDZUNiudnlbYoI1QCGOCzAJnKB8keMS3RwY9PoYPiYUK54YjtzPMLu8qMkMNMWvapI8ZvIsXHxbs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoN5+UpEl3OwX47eZMoNFZSGypwi++vBw1JM/PZaD/oD4jpwUR
+	yeNBC/mkJPO6UPliE4pKZ+eggd5q+5JbUhr2JtxfK6Z/MTlU7gZG/MZvrOn5f9sCLaDJNUM9Tg9
+	3t8km7ETdqfEXJs5CjLWg11qOIvkiLPHgBK5ckLQ8okJukmZWhqXKoLQ=
+X-Google-Smtp-Source: AGHT+IFezIN6xbqL+rw4RsiljB/FgKU4cxeXJhkmX9K8fvHe18MVoInO+sZ3Y0IVcnmN4/JDb5dttBEAjTj5DMJIKfIfrE3wdl8n
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:2141:b0:3a7:2194:fd3d with SMTP id
+ e9e14a558f8ab-3a79aead6bemr97462325ab.14.1732534045237; Mon, 25 Nov 2024
+ 03:27:25 -0800 (PST)
+Date: Mon, 25 Nov 2024 03:27:25 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67445f1d.050a0220.1cc393.0077.GAE@google.com>
+Subject: [syzbot] [jfs?] kernel BUG in dbAdjCtl
+From: syzbot <syzbot+c745704df615dc63086f@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: CL46mR-MHzS0bDxRrYYJ7d1PCHqGEizs
-X-Proofpoint-ORIG-GUID: CL46mR-MHzS0bDxRrYYJ7d1PCHqGEizs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- priorityscore=1501 suspectscore=0 lowpriorityscore=0 spamscore=0
- impostorscore=0 malwarescore=0 mlxlogscore=999 clxscore=1015 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411250098
 
-Add support for the reference doubler and the reference divide by 2
-clock.
+Hello,
 
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+syzbot found the following issue on:
+
+HEAD commit:    8f7c8b88bda4 Merge tag 'sched_ext-for-6.13' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=118a0ec0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=48190c1cdf985419
+dashboard link: https://syzkaller.appspot.com/bug?extid=c745704df615dc63086f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-8f7c8b88.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c5e6fdef85e9/vmlinux-8f7c8b88.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/67596a080582/bzImage-8f7c8b88.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c745704df615dc63086f@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 32768
+BUG at fs/jfs/jfs_dmap.c:2591 assert(level == bmp->db_maxlevel)
+------------[ cut here ]------------
+kernel BUG at fs/jfs/jfs_dmap.c:2591!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5328 Comm: syz.0.0 Not tainted 6.12.0-syzkaller-01892-g8f7c8b88bda4 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:dbAdjCtl+0x9be/0x9c0 fs/jfs/jfs_dmap.c:2591
+Code: e9 d7 fc ff ff e8 a2 8a 67 fe 48 c7 c7 80 48 43 8c 48 c7 c6 c0 45 43 8c ba 1f 0a 00 00 48 c7 c1 a0 4e 43 8c e8 b3 84 99 08 90 <0f> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 55 41 57 41
+RSP: 0018:ffffc9000d16f018 EFLAGS: 00010246
+RAX: 000000000000003f RBX: 000000000000000a RCX: 1cf809a453080c00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: 00000000ff000000 R08: ffffffff8174ce2c R09: 1ffff92001a2dda0
+R10: dffffc0000000000 R11: fffff52001a2dda1 R12: 0000000000000000
+R13: ffff88803ae98166 R14: 0000000000000004 R15: 1ffff110084e2089
+FS:  00007f48802f96c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2ee4f95ed8 CR3: 0000000043526000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ dbAllocDmap fs/jfs/jfs_dmap.c:2044 [inline]
+ dbAllocDmapLev+0x29c/0x4a0 fs/jfs/jfs_dmap.c:1988
+ dbAllocCtl+0x113/0x920 fs/jfs/jfs_dmap.c:1825
+ dbAllocAG+0x28f/0x10b0 fs/jfs/jfs_dmap.c:1364
+ dbAlloc+0x658/0xca0 fs/jfs/jfs_dmap.c:888
+ diNewIAG fs/jfs/jfs_imap.c:2510 [inline]
+ diAllocExt fs/jfs/jfs_imap.c:1905 [inline]
+ diAllocAG+0xa9d/0x1e50 fs/jfs/jfs_imap.c:1669
+ diAlloc+0x1d2/0x1630 fs/jfs/jfs_imap.c:1590
+ ialloc+0x8f/0x900 fs/jfs/jfs_inode.c:56
+ jfs_create+0x1be/0xbb0 fs/jfs/namei.c:92
+ lookup_open fs/namei.c:3649 [inline]
+ open_last_lookups fs/namei.c:3748 [inline]
+ path_openat+0x1c03/0x3590 fs/namei.c:3984
+ do_filp_open+0x27f/0x4e0 fs/namei.c:4014
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1398
+ do_sys_open fs/open.c:1413 [inline]
+ __do_sys_creat fs/open.c:1491 [inline]
+ __se_sys_creat fs/open.c:1485 [inline]
+ __x64_sys_creat+0x123/0x170 fs/open.c:1485
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f487f57e819
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f48802f9038 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
+RAX: ffffffffffffffda RBX: 00007f487f735fa0 RCX: 00007f487f57e819
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000e00
+RBP: 00007f487f5f175e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f487f735fa0 R15: 00007ffc9590be38
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:dbAdjCtl+0x9be/0x9c0 fs/jfs/jfs_dmap.c:2591
+Code: e9 d7 fc ff ff e8 a2 8a 67 fe 48 c7 c7 80 48 43 8c 48 c7 c6 c0 45 43 8c ba 1f 0a 00 00 48 c7 c1 a0 4e 43 8c e8 b3 84 99 08 90 <0f> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 55 41 57 41
+RSP: 0018:ffffc9000d16f018 EFLAGS: 00010246
+RAX: 000000000000003f RBX: 000000000000000a RCX: 1cf809a453080c00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: 00000000ff000000 R08: ffffffff8174ce2c R09: 1ffff92001a2dda0
+R10: dffffc0000000000 R11: fffff52001a2dda1 R12: 0000000000000000
+R13: ffff88803ae98166 R14: 0000000000000004 R15: 1ffff110084e2089
+FS:  00007f48802f96c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f48802b6fe0 CR3: 0000000043526000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
-changes in v2:
- - assign directly `device_property_read_bool`
- - use struct device *dev = &st->spi->dev;
- drivers/iio/frequency/adf4371.c | 34 +++++++++++++++++++++++++++++++--
- 1 file changed, 32 insertions(+), 2 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/iio/frequency/adf4371.c b/drivers/iio/frequency/adf4371.c
-index b27088464826..b643a08f06ed 100644
---- a/drivers/iio/frequency/adf4371.c
-+++ b/drivers/iio/frequency/adf4371.c
-@@ -41,6 +41,12 @@
- #define ADF4371_MOD2WORD_MSK		GENMASK(5, 0)
- #define ADF4371_MOD2WORD(x)		FIELD_PREP(ADF4371_MOD2WORD_MSK, x)
- 
-+/* ADF4371_REG22 */
-+#define ADF4371_REF_DOUB_MASK		BIT(5)
-+#define ADF4371_REF_DOUB(x)		FIELD_PREP(ADF4371_REF_DOUB_MASK, x)
-+#define ADF4371_RDIV2_MASK		BIT(4)
-+#define ADF4371_RDIV2(x)		FIELD_PREP(ADF4371_RDIV2_MASK, x)
-+
- /* ADF4371_REG24 */
- #define ADF4371_RF_DIV_SEL_MSK		GENMASK(6, 4)
- #define ADF4371_RF_DIV_SEL(x)		FIELD_PREP(ADF4371_RF_DIV_SEL_MSK, x)
-@@ -70,6 +76,9 @@
- #define ADF4371_MAX_FREQ_PFD		250000000UL /* Hz */
- #define ADF4371_MAX_FREQ_REFIN		600000000UL /* Hz */
- 
-+#define ADF4371_MIN_CLKIN_DOUB_FREQ	10000000ULL /* Hz */
-+#define ADF4371_MAX_CLKIN_DOUB_FREQ	125000000ULL /* Hz */
-+
- /* MOD1 is a 24-bit primary modulus with fixed value of 2^25 */
- #define ADF4371_MODULUS1		33554432ULL
- /* MOD2 is the programmable, 14-bit auxiliary fractional modulus */
-@@ -175,6 +184,8 @@ struct adf4371_state {
- 	unsigned int mod2;
- 	unsigned int rf_div_sel;
- 	unsigned int ref_div_factor;
-+	bool ref_doubler_en;
-+	bool ref_div2_en;
- 	u8 buf[10] __aligned(IIO_DMA_MINALIGN);
- };
- 
-@@ -476,6 +487,7 @@ static int adf4371_setup(struct adf4371_state *st)
- {
- 	unsigned int synth_timeout = 2, timeout = 1, vco_alc_timeout = 1;
- 	unsigned int vco_band_div, tmp;
-+	struct device *dev = &st->spi->dev;
- 	int ret;
- 
- 	/* Perform a software reset */
-@@ -497,22 +509,40 @@ static int adf4371_setup(struct adf4371_state *st)
- 			return ret;
- 	}
- 
-+	st->ref_doubler_en = device_property_read_bool(dev, "adi,reference-doubler-enable");
-+
-+	st->ref_div2_en = device_property_read_bool(dev, "adi,reference-div2-enable");
-+
- 	/* Set address in ascending order, so the bulk_write() will work */
- 	ret = regmap_update_bits(st->regmap, ADF4371_REG(0x0),
- 				 ADF4371_ADDR_ASC_MSK | ADF4371_ADDR_ASC_R_MSK,
- 				 ADF4371_ADDR_ASC(1) | ADF4371_ADDR_ASC_R(1));
- 	if (ret < 0)
- 		return ret;
-+
-+	if (st->ref_doubler_en &&
-+	    (st->clkin_freq > ADF4371_MAX_CLKIN_DOUB_FREQ ||
-+	     st->clkin_freq < ADF4371_MIN_CLKIN_DOUB_FREQ))
-+		st->ref_doubler_en = false;
-+
-+	ret = regmap_update_bits(st->regmap,  ADF4371_REG(0x22),
-+				 ADF4371_REF_DOUB_MASK |
-+				 ADF4371_RDIV2_MASK,
-+				 ADF4371_REF_DOUB(st->ref_doubler_en) |
-+				 ADF4371_RDIV2(st->ref_div2_en));
-+	if (ret < 0)
-+		return ret;
-+
- 	/*
- 	 * Calculate and maximize PFD frequency
- 	 * fPFD = REFIN × ((1 + D)/(R × (1 + T)))
- 	 * Where D is the REFIN doubler bit, T is the reference divide by 2,
- 	 * R is the reference division factor
--	 * TODO: it is assumed D and T equal 0.
- 	 */
- 	do {
- 		st->ref_div_factor++;
--		st->fpfd = st->clkin_freq / st->ref_div_factor;
-+		st->fpfd = (st->clkin_freq * (st->ref_doubler_en ? 2 : 1)) /
-+			   (st->ref_div_factor * (st->ref_div2_en ? 2 : 1));
- 	} while (st->fpfd > ADF4371_MAX_FREQ_PFD);
- 
- 	/* Calculate Timeouts */
--- 
-2.47.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
