@@ -1,129 +1,108 @@
-Return-Path: <linux-kernel+bounces-420580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61C279D7CD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:24:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEFB2163272
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:24:49 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A5D187FF4;
-	Mon, 25 Nov 2024 08:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GxH1O/A2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E9119D7CDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:25:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48CE5103F
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 08:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0E16281935
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:25:38 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECB9188CCA;
+	Mon, 25 Nov 2024 08:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="ShHmTJzs"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E385103F;
+	Mon, 25 Nov 2024 08:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732523087; cv=none; b=EOCrV15ty888FQAQAPNbWlOA7+TnOao05ngwVg4+JxzymEFdhVCgLy9yYms9gyZyqiA16p9D7K6aoa1PQ6CXKR1AZsARxo/iQRoDcYd0TqsrxkhQHvdH03H1V+jkPQCIcrzjaGWFM1OHReRdOkqM/eYYc1AdGNR0B5jbj4nvq84=
+	t=1732523131; cv=none; b=iMONq4s9pYr0UilYsuhaHxngltFmNrN6V5QTXBKuwfOP2MZfFoPHgiZiCedzZ6qPO6Hxx8ZC67Cqotjn5/aUiqT3Mw94GkYn+oU+/rFQ00n7H1ucbOH+6mFQJ6k7JlrN1VCrWpVCcwYac6SmLPl48AURxMY0q1o2659WxYfjHW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732523087; c=relaxed/simple;
-	bh=dPUNVugbmIRxF6aWi9RGx4qnGP53t1NnPpGp+0stUu0=;
+	s=arc-20240116; t=1732523131; c=relaxed/simple;
+	bh=zJPZNHvvatGfDq+PTg1NsIrBHPezuPeUrcPTMfRxqtE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WKPqZpmio+9s6Vce4baOELq450FjMcFpery+SB1OqozQD1wTPx4Zj4iHyVDNqQPBw0BaUB8MTUE/zKEGSLRDNjgOxLDBq7YM/0BeEvMB8TnDQ/1VRBmDqpxymrlQWVCPDSINtZ1y7bOKGqQrl8jrC5JFmQxTjDqV6aFO6ustbVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GxH1O/A2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DCBCC4CECE;
-	Mon, 25 Nov 2024 08:24:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732523087;
-	bh=dPUNVugbmIRxF6aWi9RGx4qnGP53t1NnPpGp+0stUu0=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=ssd0dUVilhMA7Q3RuneHFTwDUaoHut23Xb0ntF36tiCv+MHqqaPcnD0lwnx+BFJDkMnyuh4PBEZ20gPA2Xg91Y8td+px3tLkhBYnByjSitWrruGypRRuMADVFhGCGvb617RjfGznL0pBCenHkDMOwbkF4dN84vJRuu46DnPFtoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=ShHmTJzs; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1732523125;
+	bh=zJPZNHvvatGfDq+PTg1NsIrBHPezuPeUrcPTMfRxqtE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GxH1O/A2zC6PQvYSorwjvffnXOLp/MsZtwKotyXj2skgO+VXPMYg764DwqavcXGxa
-	 3BKPgOg21mH+x/OpLvxyjCstT+4Fvn/QbZLxu2h4wUUKc0NFh1xUTJSFuRcKH5MeXb
-	 54PXMUQao4i/gcPJzMB9Gx5UuY3c/yoWx59zOIuysS2dxXqkbBfsM4utCwky/pZ05e
-	 TRZLuYzUyp3FVyAJNxky4ex9vd3PUVmiQ+Q8PgYJF1tmX/XYl8ahO5Yr4NXkO9GszH
-	 xSJFyQBM2Vw1cLEiT5zDSsqe9IBJ3bg5r2oQTZ/gwdGHWgBdKiVy9MVwlXvUn1Je00
-	 +0Rcbdtv4lhbA==
-Date: Mon, 25 Nov 2024 09:24:28 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] x86/boot: Get rid of linux/init.h include
-Message-ID: <Z0Q0PJzTMg_Or22I@gmail.com>
-References: <20241122163139.GAZ0Cx63Ia9kgYgRIr@fat_crate.local>
- <Z0C3mDCngAf7ErM2@gmail.com>
- <20241122170227.GAZ0C5I-F8AUpwCAcG@fat_crate.local>
+	b=ShHmTJzs1a/OoPfTwyc+Vgpq6+4sgXAZBxZ/z5bCHSvpITjamOfJCWAmbv/KDTLMu
+	 1OTNv1czCBAwRKo5kH1YEz4wrYBOZi5S3KGDheu7bQWRruSROXM76DhAeI5/G7Iehs
+	 rfkjVp9XbDJRgP12D3E52HE3Nh40XVzjNPgtTYQw=
+Date: Mon, 25 Nov 2024 09:25:24 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: KP Singh <kpsingh@kernel.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Paul Moore <paul@paul-moore.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, audit@vger.kernel.org, 
+	selinux@vger.kernel.org
+Subject: Re: [PATCH] bpf, lsm: Fix getlsmprop hooks BTF IDs
+Message-ID: <a77471ed-1c18-4469-be4c-c9e00f8a3b80@t-8ch.de>
+References: <20241123-bpf_lsm_task_getsecid_obj-v1-1-0d0f94649e05@weissschuh.net>
+ <CAADnVQ++-VwPnem-xY+Urec0=zi71s-Pmzox+TXYgaVpshHtEA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241122170227.GAZ0C5I-F8AUpwCAcG@fat_crate.local>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQ++-VwPnem-xY+Urec0=zi71s-Pmzox+TXYgaVpshHtEA@mail.gmail.com>
 
-
-* Borislav Petkov <bp@alien8.de> wrote:
-
-> On Fri, Nov 22, 2024 at 05:55:52PM +0100, Ingo Molnar wrote:
-> > > --- a/arch/x86/boot/compressed/head_32.S
-> > > +++ b/arch/x86/boot/compressed/head_32.S
-> > > @@ -24,7 +24,6 @@
-> > >   */
-> > >  	.text
-> > >  
-> > > -#include <linux/init.h>
-> > >  #include <linux/linkage.h>
-> > >  #include <asm/segment.h>
-> > >  #include <asm/page_types.h>
-> > > @@ -32,6 +31,10 @@
-> > >  #include <asm/asm-offsets.h>
-> > >  #include <asm/bootparam.h>
-> > >  
-> > > +#ifdef KERNEL_PROPER_HEADER
-> > > +#error Do not include kernel proper namespace headers
-> > > +#endif
-> > 
-> > The canonical solution in such cases is to use the existing header 
-> > guard, ie:
-> > 
-> >  #ifdef _LINUX_INIT_H
-> >  # error Do not include kernel proper namespace headers
-> >  #endif
-> > 
-> > Then we can skip defining KERNEL_PROPER_HEADER as well, and this change 
-> > will be purely to x86 code.
+On 2024-11-24 15:45:04-0800, Alexei Starovoitov wrote:
+> On Sat, Nov 23, 2024 at 2:19 AM Thomas Weißschuh <linux@weissschuh.net> wrote:
+> >
+> > The hooks got renamed, adapt the BTF IDs.
+> > Fixes the following build warning:
+> >
+> >   BTFIDS  vmlinux
+> > WARN: resolve_btfids: unresolved symbol bpf_lsm_task_getsecid_obj
+> > WARN: resolve_btfids: unresolved symbol bpf_lsm_current_getsecid_subj
+> >
+> > Fixes: 37f670aacd48 ("lsm: use lsm_prop in security_current_getsecid")
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > ---
+> >  kernel/bpf/bpf_lsm.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+> > index 3bc61628ab251e05d7837eb27dabc3b62bcc4783..5be76572ab2e8a0c6e18a81f9e4c14812a11aad2 100644
+> > --- a/kernel/bpf/bpf_lsm.c
+> > +++ b/kernel/bpf/bpf_lsm.c
+> > @@ -375,8 +375,8 @@ BTF_ID(func, bpf_lsm_socket_socketpair)
+> >
+> >  BTF_ID(func, bpf_lsm_syslog)
+> >  BTF_ID(func, bpf_lsm_task_alloc)
+> > -BTF_ID(func, bpf_lsm_current_getsecid_subj)
+> > -BTF_ID(func, bpf_lsm_task_getsecid_obj)
+> > +BTF_ID(func, bpf_lsm_current_getlsmprop_subj)
+> > +BTF_ID(func, bpf_lsm_task_getlsmprop_obj)
 > 
-> Yap, I know, thought about it.
-> 
-> However, if we have to protect against every header, then we will have to do
-> a big
-> 
-> if defined...
-> 
-> which doesn't really work.
-> 
-> For the above example:
-> 
-> #if defined(_LINUX_INIT_H) || defined(_LINUX_LINKAGE_H)
-> 
-> and that would protect against the two headers which are included here.
-> 
-> If someone includes another one, it won't fire.
+> Maybe we can remove these two instead?
+> I couldn't come up with a reason for bpf_lsm to attach to these two.
 
-And if someone doesn't add the ugly KERNEL_PROPER_HEADER defines to a 
-new header that somehow gets included into the decompressor build 
-virally, it won't fire either. I think it's better to concentrate the 
-uglies in the 'weird' code, ie. the decompressor.
+Personally I have no idea about bps_lsm, how it works or how it is used.
+I only tried to get rid of the warning.
+If you prefer I can drop the IDs.
 
-Also, what's the root problem being solved? The changelog says:
+In my opinion this is a discussion that would have been better in
+the original patch, if the CI would have caught it.
 
-   > no collisions and ugly ifdeffery when those kernel proper headers 
-   > get shared.
 
-But that's pretty vague - is there some recent build regression this is 
-responding to? Which kernel headers collided with which headers used by 
-the decompressor build?
-
-Thanks,
-
-	Ingo
+Thomas
 
