@@ -1,102 +1,231 @@
-Return-Path: <linux-kernel+bounces-421187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D2AE9D87BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:20:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 255E39D87D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:24:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 999FA169B06
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:20:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1DB1163FBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3341AC453;
-	Mon, 25 Nov 2024 14:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9341AF0C0;
+	Mon, 25 Nov 2024 14:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HxW45hCk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b="cNdY7SNX"
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853191B0F26;
-	Mon, 25 Nov 2024 14:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904E1EAF6;
+	Mon, 25 Nov 2024 14:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732544062; cv=none; b=TKJ35bB6GfPsEj+OiRWlcdpoULYT1JeGjzl5wz18iIl5h41JdI1lbLrgyQMeAGCywjaQbEsxaaW63NkEO/SZ4rtfMTuPdHbJe7FS8IW3gyazmiCvtc+37jue7UX+1Wl8hao2tbfmWe3/aXBJg/kBtptzzisxqbLeXi/wKP7MEHQ=
+	t=1732544649; cv=none; b=jQwn37uxR1bW1VrEFKMzsZ2vYdDii0W4ZdoE7A0XK/DxMNINz9tJCBtOAKpowPtVp9CREMGZGbyzIRGJmTbsMHpS3o5PkWf+AZ5BdBXv6NeDNx0c+D0MZ7oc+HnLOp6bti9wsvr7FG2Qbqqf1FqCLBCDkmxLg2MyUjAOrSCgQ+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732544062; c=relaxed/simple;
-	bh=c1AaJIkC5ANteto4EmoCZndiq49Malo4c5lEUbHKku4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=e8ZD//IPruPYTk8HqPtU+TiTcLdfwVafGp6dy9ypDUaVHK5lvuPS9pK6kioRGsJbeYElZVpURmGDsecPa+GU8co+9hxJBvOmFs0LK1u0f9L02XsZjKB4gN7E8VLgjGzu9fAg3D/gSqIeEG5DA9nYZ3ZtW7yBo4nTEx4oroMdiyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HxW45hCk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2918C4CECF;
-	Mon, 25 Nov 2024 14:14:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732544062;
-	bh=c1AaJIkC5ANteto4EmoCZndiq49Malo4c5lEUbHKku4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=HxW45hCkVzQ8R8r544s4eAYLSN3QZ4zejuTcTRZpo0ON5SVh4r68qzvtZ2YIgst7K
-	 WwBo/3Yrq92F8Mu8RFx0SZ1o3tPBb33yjhvN5z4m7U6pBd/HCFGcNnIjpf+Faalv90
-	 Zbj9sp4Rb0f5G/VNFDvNRetZkZjZonynrCJrldJ+svVpCRYwX4Qg1skuA7o7Vez3//
-	 cEGBme5jcV4u4An0m+3+ExcBKbPzzqFnNEKM0LfyumHm5dwvJlCUcDuCetZ9PudjW+
-	 p2q4/4ruK8WHGz0MmaoICHfIde4E6YF3W+qvThAQ5T3knJyv1qRFXndXkuxh0zRxwD
-	 D+hYFus2F2DEQ==
-From: Mark Brown <broonie@kernel.org>
-To: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, corbet@lwn.net, 
- anish kumar <yesanishhere@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-sound@vger.kernel.org
-In-Reply-To: <20241121232958.46179-1-yesanishhere@gmail.com>
-References: <20241121232958.46179-1-yesanishhere@gmail.com>
-Subject: Re: [PATCH] ASoC: doc: dapm: Add location information for
- dapm-graph tool
-Message-Id: <173254406059.44664.4605735086287465083.b4-ty@kernel.org>
-Date: Mon, 25 Nov 2024 14:14:20 +0000
+	s=arc-20240116; t=1732544649; c=relaxed/simple;
+	bh=u2XUWhrR6ss2d9FlTj8Plfh2W/SE71nSefpQ0lgJHkQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tn1s/gC4abmAfOXTxV8M7//v+SKi5LRdIrmqRQT1ZMWEP9gHsAfH8I3CjZTE11ave1hLNJozMJjt3bNju+JeFYh2yop4dby4vJnc7yI9GZ+uqeoQQ0X3Tp6Kepu60RsEH9cmKP2pNXvfwz3ODkPrRv1WvHEcsIeHmvltfKryySE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=marcan.st; spf=pass smtp.mailfrom=marcan.st; dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b=cNdY7SNX; arc=none smtp.client-ip=212.63.210.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=marcan.st
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marcan.st
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: marcan@marcan.st)
+	by mail.marcansoft.com (Postfix) with ESMTPSA id 21AA341DF4;
+	Mon, 25 Nov 2024 14:14:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=marcan.st; s=default;
+	t=1732544094; bh=u2XUWhrR6ss2d9FlTj8Plfh2W/SE71nSefpQ0lgJHkQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=cNdY7SNXxqheP/0KddCcPuwen1NKykhMWb6bNamgVZXyM3ezVRM0HUdEY6L69M4CG
+	 /fJLMTvwVaUN//eLm2uXZJNQmIMbseOLk3Dk4P/EufLqPJdbZGnnniwrauJMV6Bb06
+	 SwXy0JLKwwnMfNSm3NowFr1Ywo/6TFks+sJ2VUREv3HnLhHI1EjN2p9/ab0hzDoUfx
+	 QghpKyWji6vfozrrnNHuM4gEZMSIFY4SAutMDXW3MB2W83onm+tslqNsgDLE1QCcyn
+	 ScCODCDPzEVRt0FZLpOx1dnsJ2D0KTT7YNlr9k1D9IHIYj7+Mw+W1Bc7j1+AHbY+4Y
+	 tWD9FLrZ82LBg==
+Message-ID: <a9d1568e-6240-49a4-b6a0-dcc0d9229eb1@marcan.st>
+Date: Mon, 25 Nov 2024 23:14:51 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] dt-bindgins: display: Add Apple pre-DCP display
+ controller bindings
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Sasha Finkelstein <fnkl.kernel@gmail.com>
+Cc: Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig
+ <alyssa@rosenzweig.io>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241124-adpdrm-v1-0-3191d8e6e49a@gmail.com>
+ <20241124-adpdrm-v1-1-3191d8e6e49a@gmail.com>
+ <ksdp54qj55v7igvvcshl6y2cxpmqy7rlsh4xsixpptjn7s7wlu@76ejtq6ytvbp>
+From: Hector Martin <marcan@marcan.st>
+Content-Language: en-US
+In-Reply-To: <ksdp54qj55v7igvvcshl6y2cxpmqy7rlsh4xsixpptjn7s7wlu@76ejtq6ytvbp>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
 
-On Thu, 21 Nov 2024 15:29:58 -0800, anish kumar wrote:
-> To help developers debug DAPM issues and visualize widget connectivity,
-> the dapm-graph tool provides a graphical representation of how widgets
-> and routes are connected. This commit adds the location information for
-> the tool to the documentation, making it easier for users to find and
-> use it for troubleshooting DAPM-related problems.
+On 2024/11/25 16:45, Krzysztof Kozlowski wrote:
+> On Sun, Nov 24, 2024 at 11:29:24PM +0100, Sasha Finkelstein wrote:
+>> Add bindings for a secondary display controller present on certain
+>> Apple laptops.
+>>
+>> Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
+>> ---
+>>  .../bindings/display/apple,display-pipe.yaml       | 59 ++++++++++++++++++++++
+>>  .../bindings/display/panel/apple,summit.yaml       | 24 +++++++++
+>>  2 files changed, 83 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/apple,display-pipe.yaml b/Documentation/devicetree/bindings/display/apple,display-pipe.yaml
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..bd25ddc6e09dd636c0221c854e594113f6011866
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/display/apple,display-pipe.yaml
+> 
+> No, use fallback compatible as filename.
+> 
+>> @@ -0,0 +1,59 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/display/apple,display-pipe.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Apple pre-DCP display controller.
+>> +
+>> +maintainers:
+>> +  - asahi@lists.linux.dev
+>> +  - Sasha Finkelstein <fnkl.kernel@gmail.com>
+>> +
+>> +description: |
+> 
+> Drop |
+> 
+>> +  A secondary display controller used to drive the "touchbar" on certain
+>> +  Apple laptops.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    items:
+>> +      - enum:
+>> +        - "apple,t8112-display-pipe"
+>> +        - "apple,t8103-display-pipe"
+>> +      - const: "apple,h7-display-pipe"
 > 
 > 
-> [...]
+> This wasn't tested... Drop all quotes. Do you see any file with quotes?
+> Why doing things entirely different than everyone else?
+> 
+>> +
+>> +  reg:
+>> +    minItems: 3
+> 
+> Drop
+> 
+>> +    maxItems: 3
+>> +
+>> +  reg-names:
+>> +    items:
+>> +      - const: be
+>> +      - const: fe
+>> +      - const: mipi
+>> +
+>> +  power-domains: true
+> 
+> List the items instead or maxItems: 1.
+> 
+>> +
+>> +  interrupts:
+>> +    minItems: 2
+> 
+> Drop
+> 
+>> +    maxItems: 2
+>> +
+>> +  interrupt-names:
+>> +    items:
+>> +      - const: be
+>> +      - const: fe
+>> +
+>> +  iommus: true
+> 
+> 
+> maxItems: 1
+> 
+>> +
+>> +  "#address-cells":
+>> +    const: 1
+>> +
+>> +  "#size-cells":
+>> +    const: 0
+>> +
+>> +additionalProperties: true
+> 
+> This cannot be true. Must be false.
+> 
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupts
+> 
+> This goes before additionalProperties.
+> 
+> Missing example: that's a strong NAK and prove that this could not be
+> even tested.
+> 
+> Do you see any device schema without example? No. Do not develop things
+> differently, Apple is not unique, special or exceptional.
 
-Applied to
+Krzysztof, it is entirely possible to express this same feedback without
+being condescending and rude. I'm pretty sure you can do better than this.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+> 
+> 
+>> diff --git a/Documentation/devicetree/bindings/display/panel/apple,summit.yaml b/Documentation/devicetree/bindings/display/panel/apple,summit.yaml
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..dc281c1f52c1ed07cc2f7f804dcfd2f3b4239d89
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/display/panel/apple,summit.yaml
+>> @@ -0,0 +1,24 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/display/panel/apple,summit.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Apple "Summit" display panel.
+>> +
+>> +maintainers:
+>> +  - asahi@lists.linux.dev
+>> +  - Sasha Finkelstein <fnkl.kernel@gmail.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: apple,summit
+> 
+> No, too generic. Panels need much more properties, this is heavily
+> incomplete. See other panel bindings.
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
+> 
 
-Thanks!
-
-[1/1] ASoC: doc: dapm: Add location information for dapm-graph tool
-      commit: 8697ecc3274214c65ff271a58e7abb601216f2a8
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+- Hector
 
 
