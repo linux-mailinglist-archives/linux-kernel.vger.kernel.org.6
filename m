@@ -1,237 +1,137 @@
-Return-Path: <linux-kernel+bounces-421047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B49C89D8611
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:13:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0F27163AF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:13:45 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68AB1A9B5D;
-	Mon, 25 Nov 2024 13:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ix8HfmTL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C6259D868D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:37:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF231A9B4F
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E99FB3A749
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:21:30 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F360C1AE863;
+	Mon, 25 Nov 2024 13:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="NBNYps3J"
+Received: from mx-rz-1.rrze.uni-erlangen.de (mx-rz-1.rrze.uni-erlangen.de [131.188.11.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864D21AAE39;
+	Mon, 25 Nov 2024 13:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732540410; cv=none; b=KzOn9CiDES5PvBRV3mRN5zAQmGR+3HYtpPhzvXTURFultBRFLjq/xBhjIW4PaU6ARV6pf0nNCH+r3MzEEZ39FRcwq3YNx2yKK/jbv0IFntGz7ZnEPcEH63FlYdK4KlAvZbpI3aTr0Ce/ZhajBQ1z3+1U7yYujymCan9RMhL566Q=
+	t=1732540856; cv=none; b=MsgwQyykAb3bdDa1Vfw4tAPDQlwpQoiCup89+VkZTOhIvS5E4lzR9i15u26EB7mOs1urfqyqRJFJp6NkY9ekLFWesVNvk9JpnsGiLN3qbuo0nVkgXEJCBKRB4lYZs+5x0vDxYK9ZnPnRcf9s2oSkO7fk7JLkCU4Q/Y9qv6DxsPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732540410; c=relaxed/simple;
-	bh=dhUis+L7Ycp0/25ZlPxU34H4a066EiAPbpjt5heCetc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nWIfBlHSyqyyESh/dS2QL1k0VWLSOAFm1MXbK04rZQBh0t1rlKRormzXi62Rpwl3JHLTw5fVs5+7rT2b1+49nzf9k8NocjlkbDjI6x0hATjpA6oX5/lcN7GGgkuhFoUkI3arxrtn2wUESmmh5dg6aOPcEfI3TGRY091LbDBbsys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ix8HfmTL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APB9n2E017711
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:13:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	r54gTYviKOwXlruq1v3O1F1bgn7zesVKS49rXzTVgUc=; b=ix8HfmTLUgbl55Ql
-	d/2uebYuy3y/vMgnglH7XAuG08lUY2JnwrxY6cxAofNy2bVfxiBHdJnCzEHDiPIy
-	4KA/j6IGkQK9eCBiaTummcosphmdgXKnYOtlVuPdTSCuRVSqppnHBzovwhcp+XK8
-	FIXx3kUZCjGlPgWJaQqkWGjjMKjPqZHFcnHDuAQP9hoxbiJXCAr8f51W8nCZTmpl
-	XjZC/KGisF/mELWKr+6iNoECy9jexcugSzMBOpDy4T8NjkRFTp38hUl4sfGKrgB7
-	DZ+W2qjtNokTtq2q+ojsvYQuotperTNmUpIHrMYyegc7yTpqrAE4r9VIlnkfVeUD
-	SnpzDw==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4334dmw4kr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:13:27 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4668cee0202so2493361cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 05:13:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732540406; x=1733145206;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r54gTYviKOwXlruq1v3O1F1bgn7zesVKS49rXzTVgUc=;
-        b=CeqCSmnmnDXiMcihy0q0l0mwtT+DWkWT+0bhPnEHYd+rpB2ISxDnLTJK3YOmG7WZ28
-         KmRVvyYXONABw/IYFzQHvBcDH2hnXfIVPwraHZyncsJ4nt6V8h7gOCYka3OZKhfRoo4v
-         244+r54pCBRqfAi1nhX9zYBQX9p7tCxSvWfjhjbsBiJE/kJVq66H4md7Yjj0E4GRMZVV
-         5bk6OHaEywY5jLPP9DMYgCuk04RWFlUcjXm+mqnPLcHEnBqALoO/+rMoJ7pwl1wVF0XA
-         8PJb4GUBjxEi1Ius1dVyP4+qTM2KvU19ade6LR3FTcrKWwpfiNJeLOOOSDtqJfjfmh5B
-         8Ekg==
-X-Forwarded-Encrypted: i=1; AJvYcCW0+AEzEHTrK3vE9hs0CZW+V/IEiprpFDBVAzH5YVF36Q+jNZhU41yT5f3eLQG2hcZZe2hsew9VJAvUvJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZ53yk5DOrf3JE1MHXfC3wwM9hEYiooOjuqKnJ94L03bhT1uYA
-	3npHEwgQgRD5bX65jL6rlZkED8uD+jzkz0yMVsGsAZ9B2My6ZrkwKyoz2narGsbpK8qODaeumg6
-	uOTeSgcV5TJnH/iv7TaV1a1lckZ0aeS0b0jmI9VEVHdwvbBSfoxxUlsk5LixSpmQ=
-X-Gm-Gg: ASbGncsxXiqG2BhgLgsKfAoGd+27k607Tazj3Qr73r74EPfxuMEuxBrniTJOxk8ey72
-	kGLiOxG8dIteJgTd1dQzHYxDVa0snAwXZlrXil2LKAVDn1RZbUxL6MG5WLtM5IMk4kFYXyqyE4q
-	WJHWMlColEN1OlEgffKYC23s1tYpKMe/U8UhP1uP2dhLN3wn1q7cNlvEphdt/hwmxD0noZsqJr8
-	VwLCDlKwZrIX4QJw+ANMHlvT8CA7sUKRhiwHSkZc9ALMfiTW4Bva8eN3ycPycfKZ9aAsSHBQlOC
-	xAkjBNuMpezygpqF2B9beYRYEcYI8mI=
-X-Received: by 2002:a05:622a:5a11:b0:464:af83:ba34 with SMTP id d75a77b69052e-466a176c64emr965191cf.10.1732540406285;
-        Mon, 25 Nov 2024 05:13:26 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFu15OrzuBffo2/0f07cUhKhr9ZQY4Z6CXgoi3UuBOLryZSdLxCtIaPUN/M9o9gnubIHVFfgA==
-X-Received: by 2002:a05:622a:5a11:b0:464:af83:ba34 with SMTP id d75a77b69052e-466a176c64emr965031cf.10.1732540405892;
-        Mon, 25 Nov 2024 05:13:25 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa5414cb10esm236300866b.3.2024.11.25.05.13.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 05:13:25 -0800 (PST)
-Message-ID: <7c0c1120-c2b2-40dd-8032-339cc4d4cda4@oss.qualcomm.com>
-Date: Mon, 25 Nov 2024 14:13:22 +0100
+	s=arc-20240116; t=1732540856; c=relaxed/simple;
+	bh=nEVLGdrVZPb6enKB7EY1THDhzmHqOu2kfzHjyYRrzkc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z8IG6CtVhaLcoiyAztFZxicbH6a53bjwVDoHHMGb4yfZ2RPdd/CoBxGQpVemTFjwGA+ovO5b0KeSrDggtart5JHoGTJk1kw8SyznvQJYELGeYElQaPKSI2Dkj/WggSSeUVtDP77u/VnAOBvfUUwYbQaktdteHM/DwIsx2dhEFoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=NBNYps3J; arc=none smtp.client-ip=131.188.11.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-rz-1.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4XxmQ33NzRz8sgN;
+	Mon, 25 Nov 2024 14:14:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
+	t=1732540475; bh=s7L96CAwEKK5QfK2TjaVOwN2FZlsfrSEHf8b4H+HNBw=;
+	h=From:To:Cc:Subject:Date:From:To:CC:Subject;
+	b=NBNYps3J6duIbL9N74MP7us9Tt+5PZZ7xnoiByEkX5+Ytx9KcVhPqgRrGkWnqhRLO
+	 SbqWb8nX29JzxmEIAUzgj4T31iC8f+IdOLf4Me8nYBy86tF49Od4MAPW1FMXMJ+u0o
+	 zOh4+YAijBJcGrlWRkQWJy9w2BZ9TUUgjdJejLEYbFzkhbOggpB2MZi/niRic0EOqw
+	 GHxmuNlgWuCtYww5HJ5Kwc7Ch2J50FK3gXAyMtLbVbToEw9Zeaad/kIc8aKPJTsupq
+	 GKgixmVprWU/c2+AKBibUPHE4ffxnQID7xWDyLaRFgryBEFtEypIEjZHajA9mhzaLo
+	 leTnyyVXOnnkQ==
+X-Virus-Scanned: amavisd-new at boeck4.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 131.188.47.107
+Received: from faui76b (faui76b.informatik.uni-erlangen.de [131.188.47.107])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: U2FsdGVkX1+XNSxb4JLlG+hslXpIVCWhXOsiQT88hzM=)
+	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4XxmQ10rlfz8slJ;
+	Mon, 25 Nov 2024 14:14:33 +0100 (CET)
+From: Martin Ottens <martin.ottens@fau.de>
+To: 
+Cc: Martin Ottens <martin.ottens@fau.de>,
+	Jamal Hadi Salim <jhs@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] net/sched: tbf: correct backlog statistic for GSO packets
+Date: Mon, 25 Nov 2024 14:13:55 +0100
+Message-Id: <20241125131356.932264-1-martin.ottens@fau.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] arm64: dts: qcom: qcs615: add SDHC1 and SDHC2
-To: Yuanjie Yang <quic_yuanjiey@quicinc.com>, ulf.hansson@linaro.org,
-        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        bhupesh.sharma@linaro.org, andersson@kernel.org,
-        konradybcio@kernel.org
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        quic_tingweiz@quicinc.com
-References: <20241122065101.1918470-1-quic_yuanjiey@quicinc.com>
- <20241122065101.1918470-2-quic_yuanjiey@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241122065101.1918470-2-quic_yuanjiey@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: QglN_t842ecUP_isRceavtbTP53vcEbt
-X-Proofpoint-ORIG-GUID: QglN_t842ecUP_isRceavtbTP53vcEbt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 mlxlogscore=999 phishscore=0 mlxscore=0
- lowpriorityscore=0 suspectscore=0 malwarescore=0 adultscore=0 spamscore=0
- impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411250113
+Content-Transfer-Encoding: 8bit
 
-On 22.11.2024 7:51 AM, Yuanjie Yang wrote:
-> Add SDHC1 and SDHC2 support to the QCS615 Ride platform.
-> 
-> Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcs615.dtsi | 198 +++++++++++++++++++++++++++
->  1 file changed, 198 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> index 590beb37f441..37c6ab217c96 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> @@ -399,6 +399,65 @@ qfprom: efuse@780000 {
->  			#size-cells = <1>;
->  		};
->  
-> +		sdhc_1: mmc@7c4000 {
-> +			compatible = "qcom,qcs615-sdhci", "qcom,sdhci-msm-v5";
-> +			reg = <0x0 0x007c4000 0x0 0x1000>,
-> +			      <0x0 0x007c5000 0x0 0x1000>;
-> +			reg-names = "hc",
-> +				    "cqhci";
+When the length of a GSO packet in the tbf qdisc is larger than the burst
+size configured the packet will be segmented by the tbf_segment function.
+Whenever this function is used to enqueue SKBs, the backlog statistic of
+the tbf is not increased correctly. This can lead to underflows of the
+'backlog' byte-statistic value when these packets are dequeued from tbf.
 
-There's an "ice" region at 0x007c8000
+Reproduce the bug:
+Ensure that the sender machine has GSO enabled. Configured the tbf on
+the outgoing interface of the machine as follows (burstsize = 1 MTU):
+$ tc qdisc add dev <oif> root handle 1: tbf rate 50Mbit burst 1514 latency 50ms
 
-> +
-> +			interrupts = <GIC_SPI 641 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 644 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "hc_irq",
-> +					  "pwr_irq";
-> +
-> +			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
-> +				 <&gcc GCC_SDCC1_APPS_CLK>,
-> +				 <&rpmhcc RPMH_CXO_CLK>,
-> +				 <&gcc GCC_SDCC1_ICE_CORE_CLK>;
-> +			clock-names = "iface",
-> +				      "core",
-> +				      "xo",
-> +				      "ice";
-> +
-> +			resets = <&gcc GCC_SDCC1_BCR>;
-> +
-> +			power-domains = <&rpmhpd RPMHPD_CX>;
-> +			operating-points-v2 = <&sdhc1_opp_table>;
-> +			iommus = <&apps_smmu 0x02c0 0x0>;
-> +			interconnects = <&aggre1_noc MASTER_SDCC_1 QCOM_ICC_TAG_ALWAYS
-> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-> +					 &config_noc SLAVE_SDCC_1 QCOM_ICC_TAG_ALWAYS>;
-> +			interconnect-names = "sdhc-ddr",
-> +					     "cpu-sdhc";
-> +
-> +			bus-width = <8>;
-> +			qcom,dll-config = <0x000f642c>;
-> +			qcom,ddr-config = <0x80040868>;
-> +			supports-cqe;
-> +			dma-coherent;
-> +			mmc-ddr-1_8v;
-> +			mmc-hs200-1_8v;
-> +			mmc-hs400-1_8v;
-> +			mmc-hs400-enhanced-strobe;
-> +			status = "disabled";
-> +
-> +			sdhc1_opp_table: opp-table {
-> +				compatible = "operating-points-v2";
-> +
-> +				opp-100000000 {
-> +					opp-hz = /bits/ 64 <100000000>;
-> +					required-opps = <&rpmhpd_opp_svs>;
-> +				};
+Send bulk TCP traffic out via this interface, e.g., by running an iPerf3
+client on this machine. Check the qdisc statistics:
+$ tc -s qdisc show dev <oif>
 
-I'm seeing 25/50 MHz OPPs in the docs as well
+The 'backlog' byte-statistic has incorrect values while traffic is
+transferred, e.g., high values due to u32 underflows. When the transfer
+is stopped, the value is != 0, which should never happen.
 
-[...]
+This patch fixes this bug by updating the statistics correctly, even if
+single SKBs of a GSO SKB cannot be enqueued.
 
-> +
-> +		sdhc_2: mmc@8804000 {
-> +			compatible = "qcom,qcs615-sdhci","qcom,sdhci-msm-v5";
+Signed-off-by: Martin Ottens <martin.ottens@fau.de>
+---
+ net/sched/sch_tbf.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Missing space 
+diff --git a/net/sched/sch_tbf.c b/net/sched/sch_tbf.c
+index f1d09183ae63..ef7752f9d0d9 100644
+--- a/net/sched/sch_tbf.c
++++ b/net/sched/sch_tbf.c
+@@ -220,17 +220,18 @@ static int tbf_segment(struct sk_buff *skb, struct Qdisc *sch,
+ 	skb_list_walk_safe(segs, segs, nskb) {
+ 		skb_mark_not_on_list(segs);
+ 		qdisc_skb_cb(segs)->pkt_len = segs->len;
+-		len += segs->len;
+ 		ret = qdisc_enqueue(segs, q->qdisc, to_free);
+ 		if (ret != NET_XMIT_SUCCESS) {
+ 			if (net_xmit_drop_count(ret))
+ 				qdisc_qstats_drop(sch);
+ 		} else {
+ 			nb++;
++			len += segs->len;
+ 		}
+ 	}
+ 	sch->q.qlen += nb;
+-	if (nb > 1)
++	sch->qstats.backlog += len;
++	if (nb > 0)
+ 		qdisc_tree_reduce_backlog(sch, 1 - nb, prev_len - len);
+ 	consume_skb(skb);
+ 	return nb > 0 ? NET_XMIT_SUCCESS : NET_XMIT_DROP;
+-- 
+2.39.5
 
-> +			reg = <0x0 0x08804000 0x0 0x1000>;
-> +			reg-names = "hc";
-> +
-> +			interrupts = <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "hc_irq",
-> +					  "pwr_irq";
-> +
-> +			clocks = <&gcc GCC_SDCC2_AHB_CLK>,
-> +				 <&gcc GCC_SDCC2_APPS_CLK>,
-> +				 <&rpmhcc RPMH_CXO_CLK>;
-> +			clock-names = "iface",
-> +				      "core",
-> +				      "xo";
-> +
-> +			power-domains = <&rpmhpd RPMHPD_CX>;
-> +			operating-points-v2 = <&sdhc2_opp_table>;
-> +			iommus = <&apps_smmu 0x02a0 0x0>;
-> +			resets = <&gcc GCC_SDCC2_BCR>;
-> +			interconnects = <&aggre1_noc MASTER_SDCC_2 QCOM_ICC_TAG_ALWAYS
-> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-> +					 &config_noc SLAVE_SDCC_2 QCOM_ICC_TAG_ALWAYS>;
-> +			interconnect-names = "sdhc-ddr",
-> +					     "cpu-sdhc";
-> +
-> +			bus-width = <4>;
-> +			qcom,dll-config = <0x0007642c>;
-> +			qcom,ddr-config = <0x80040868>;
-> +			dma-coherent;
-> +			status = "disabled";
-> +
-> +			sdhc2_opp_table: opp-table {
-> +				compatible = "operating-points-v2";
-> +
-
-Similarly, it can operate at 25/50 MHz too
-
-Konrad
 
