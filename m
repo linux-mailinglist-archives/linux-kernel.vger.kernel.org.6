@@ -1,149 +1,107 @@
-Return-Path: <linux-kernel+bounces-421560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B9F49D8CE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 20:35:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A092C9D8CE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 20:37:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BC7F16A1D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:37:25 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A221B87EC;
+	Mon, 25 Nov 2024 19:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jEuGuSX/"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F534B253F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:35:30 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4B31BCA0D;
-	Mon, 25 Nov 2024 19:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BcpSLoEN"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3369F1B6D1F
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 19:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3992216DEB3
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 19:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732563322; cv=none; b=TTHy+REJOkzYXbs7MeCbb3dKYGWPxVLh2WmZE9UpuzS61I2ASq4leQl20acppF+LvYdAGgEipGmeyimw9a2x/rK5IMqx42v20+3b/bFsVRl6LLCrLnPSQYIsG+mFRqfpER9HwINunUsVJlsDQR6mnB4pk4LLXryufFZN4qlUDA4=
+	t=1732563443; cv=none; b=cXwiBIxTdhzovsyLWq2svD0GF2Csv2acf1EV5ZBburhWNtMaSuKJ9X+HhWDJRFwraSwe8k6ovnqjI4Dn7gTcNzcjdSoP3k5vmYwWRB/3Ysj6XNwG8xU3MpYN0D9DfJV44sAel2uhT1TQHqXloFBetY8Ch+wO33MwFzJtU15i/sU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732563322; c=relaxed/simple;
-	bh=54RqcZIEYDefe8bmhEgsgV8Um5TmPfMXzPvftggRdAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O8zNihdCyaaro+5tnRE6+L59o21M70l/qHsf94vF0Bj6BchCKAp3tJALiucCMEvMs2iyqbRqlAXHMLY2j/79Z3VWTGpKNgNZoETaa1yyQIfT7e4fYwPLu5oFxrc5S94EpT0whh++/jDJ9lfg/J5DFxafqXNlfbdthHfLDowfwds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BcpSLoEN; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5d01db666ceso4655020a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:35:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732563319; x=1733168119; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PWhH05Bm9KZ7sByGo33urKUrEncVx+V1FdurLN08RYI=;
-        b=BcpSLoENfybDxiUzVMPvrlVVCOCvvyiUSgj5hZOcseXTNxKolmQ4BHkreWdv4fkOFe
-         7inys9jZeTMk6Etx2qSNbxyj0YDMZaMpux3Sq8n4DNX94+aBiP2TVOJjTn0eyGU0tb1E
-         xLwhRQ0qkjjI08cukiF14ca23ak+Xm0RYdMFR2dHZtcWtEK9vZiiZTzo6gVutb8ySj3b
-         F6YODdQazmtTCeQtRI7eQ/u62/fzenxKT2S+YcHYqINYy83o1eM1QDaJFj/CUg0qvBnu
-         KhJ9vydpwq7uIiUTdkX2bSGl0FLwtGHey533QAESrnRD6ON77BagwLiAJWK7sTx8Nb1B
-         R8WA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732563319; x=1733168119;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PWhH05Bm9KZ7sByGo33urKUrEncVx+V1FdurLN08RYI=;
-        b=FY8ly5DeoWR8hfz1zn/Yuo6fqD59fuwBLD44I9GTkbkYbzwKKDDiKdoRP2SneS4TJ8
-         dnAxmgz/GBO9q20AcuhNJvOviCY87yaA47TJfq7US+ZxNAA5SrP5DWhCcjo0ST8t1+Ej
-         WeOOmWFLnHGQvDiZF3YrwSETCvPesPVvtxAoYDHzcuM8sret++iL2NBILimps6eyFs5a
-         7R5D0+0vBAmrr/m4nN1orw5QNzThm5klvG9VISQOA3VzERkZ8T4UHbIjbRx7YXk9UoDD
-         nDqv9zy45XVHagfGzA2baeSa3xGF0jmAk3G0WYhFgOeI3Us+OdRIBYhgXRh8wX4qyNbt
-         NnWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWv9G8EWEVidCAiNXrbTFrVFnp2KH1oWZy95BJynBMkOz+Yw45tZZGoZm9ul6MdtKrTDL0G1eNKe1VREgw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNytmv+3y39nHaLIxa1asXTQ28QC2n1XcrSilxyhdvcpkFPHjT
-	einr9tGr6sZe+0rd6V6Io6GJUI52sD0s67O/Fg+g21F45HEgaklqJGFny05tHQ==
-X-Gm-Gg: ASbGncu8S89GediKVVtlEIGC+29DtXCJqQuUrlMLgs/p0nFwUMd9I78OBCJcRnfZxsM
-	yd1UmLLJu50IshkyKiUOabRmeP4Lsmx7BJcvAXy8Pr+iVr7MrnWLn7vXkigPAZGe9hpOKBSklnk
-	nOdrNEHVBsEFUpQ6l9xzQMoXi9WR8HcmS7eqiAMRBoniUQy6gZ1WFixjKFxVqWO+lDmV1eB2nDL
-	7tzMCyv3o0nXnA5bzBskD7WKrAXbXvtnyslf6sNrCK26g3sZsIK0hmFNwIVNoYftj1nxoGfd1kE
-	IF2eZTJGHvJE2hpb/Dg=
-X-Google-Smtp-Source: AGHT+IEOPvAAr+8PRfHA1PcyllOYQjEhFE9OlwV7vpKSDmpIC7O4Fv+Vu++U2fhwJG2qbtsaRMl7MQ==
-X-Received: by 2002:a05:6402:274b:b0:5ce:fa47:18b6 with SMTP id 4fb4d7f45d1cf-5d0205ff1cemr11001676a12.12.1732563319336;
-        Mon, 25 Nov 2024 11:35:19 -0800 (PST)
-Received: from google.com (97.176.141.34.bc.googleusercontent.com. [34.141.176.97])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa547ffb152sm235348666b.62.2024.11.25.11.35.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 11:35:18 -0800 (PST)
-Date: Mon, 25 Nov 2024 19:35:15 +0000
-From: Matt Bobrowski <mattbobrowski@google.com>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>, Paul Moore <paul@paul-moore.com>,
-	Casey Schaufler <casey@schaufler-ca.com>, bpf <bpf@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, audit@vger.kernel.org,
-	selinux@vger.kernel.org
-Subject: Re: [PATCH] bpf, lsm: Fix getlsmprop hooks BTF IDs
-Message-ID: <Z0TRc0A6Q8QUxNAe@google.com>
-References: <20241123-bpf_lsm_task_getsecid_obj-v1-1-0d0f94649e05@weissschuh.net>
- <CAADnVQ++-VwPnem-xY+Urec0=zi71s-Pmzox+TXYgaVpshHtEA@mail.gmail.com>
- <a77471ed-1c18-4469-be4c-c9e00f8a3b80@t-8ch.de>
+	s=arc-20240116; t=1732563443; c=relaxed/simple;
+	bh=IIgkdc6NtI8B4n6xjMvuZXXX6QDHqCT/HVvrCkacUnc=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=Y72vhkxmxwqPC7789uIEMy374jC22acoJCTEAKNDT6HK/a6tIO9yj6PhJWEs+dFVGgPRuTmE2IPIeI4wdFxlyzKj47NlSJ9TLhGeseiBT/LZp5mNb9iWnqWxJoLaUpGR+KGpQXZLrum9xPlmcTxm4Ig590EZ4NxeIoHNJ25cEdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jEuGuSX/; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=U5rJI5dJSpORspRIgPJSzFJ/vO7BoKUyaeN3OT2GWAw=; b=jEuGuSX/9qBEhA0/IJathPaqDi
+	Vx23+sjJ/fS7x27labYotnZhw7Iy4CfH85tGeM/lTzxhAFirO66I1qZoeULYzqJHULS07s8+HeUdn
+	J4nqssyxE4G3WZdn2rr1nef79QF11YWIfWBiydYNtw31lGLIjOGe5NPWKRRqYcKmB6/cYlKTZ1jI9
+	lQLA4qfvqITUBbJ+pmU39NiUExFCK6mzxUjlqU+K9Ml3pO2syiuxyMDecg4/875KB+ezazmp3RYXF
+	wgN2ZBDCSQEaMYdqsfq6T7Hlsdf6THtY6hFioBI5eyfmNrWKLVRjkZ8Dd1wqo37FzyZ8XtUCGRH7Q
+	y7QfI0ew==;
+Received: from [172.31.31.140] (helo=[127.0.0.1])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tFetJ-000000017lv-0s4h;
+	Mon, 25 Nov 2024 19:37:01 +0000
+Date: Mon, 25 Nov 2024 19:36:03 +0000
+From: David Woodhouse <dwmw2@infradead.org>
+To: Dave Hansen <dave.hansen@intel.com>, kexec@lists.infradead.org,
+ =?ISO-8859-1?Q?Sch=F6nherr=2C_Jan_H=2E?= <jschoenh@amazon.de>,
+ Rik van Riel <riel@surriel.com>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Kai Huang <kai.huang@intel.com>, Nikolay Borisov <nik.borisov@suse.com>,
+ linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
+ Dave Young <dyoung@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ jpoimboe@kernel.org, bsz@amazon.de
+Subject: Re: [RFC PATCH] x86/mm: Disable PTI for kernel_ident_mapping_init()
+User-Agent: K-9 Mail for Android
+In-Reply-To: <5633d50d-0d61-4d18-b43f-11311b5ec920@intel.com>
+References: <20241125100815.2512-1-dwmw2@infradead.org> <20241125100815.2512-2-dwmw2@infradead.org> <8b7cd35ab5fec39b80eda8d5907b641af14c3272.camel@infradead.org> <7f75150e9d5d358c8fdc38b591f99a252071fba0.camel@infradead.org> <7e7cb9b21f17b345d8539962093d0c030cca3e34.camel@infradead.org> <88a87314-45ad-47f7-a93a-a9a53d7e8745@intel.com> <5d385e4c06ebd218cfdc20ef4f208ee4abcfa252.camel@infradead.org> <5633d50d-0d61-4d18-b43f-11311b5ec920@intel.com>
+Message-ID: <2C6F6BDC-16B5-41B4-AA3B-F2C23F4EBB75@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a77471ed-1c18-4469-be4c-c9e00f8a3b80@t-8ch.de>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, Nov 25, 2024 at 09:25:24AM +0100, Thomas Weißschuh wrote:
-> On 2024-11-24 15:45:04-0800, Alexei Starovoitov wrote:
-> > On Sat, Nov 23, 2024 at 2:19 AM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> > >
-> > > The hooks got renamed, adapt the BTF IDs.
-> > > Fixes the following build warning:
-> > >
-> > >   BTFIDS  vmlinux
-> > > WARN: resolve_btfids: unresolved symbol bpf_lsm_task_getsecid_obj
-> > > WARN: resolve_btfids: unresolved symbol bpf_lsm_current_getsecid_subj
-> > >
-> > > Fixes: 37f670aacd48 ("lsm: use lsm_prop in security_current_getsecid")
-> > > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > > ---
-> > >  kernel/bpf/bpf_lsm.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-> > > index 3bc61628ab251e05d7837eb27dabc3b62bcc4783..5be76572ab2e8a0c6e18a81f9e4c14812a11aad2 100644
-> > > --- a/kernel/bpf/bpf_lsm.c
-> > > +++ b/kernel/bpf/bpf_lsm.c
-> > > @@ -375,8 +375,8 @@ BTF_ID(func, bpf_lsm_socket_socketpair)
-> > >
-> > >  BTF_ID(func, bpf_lsm_syslog)
-> > >  BTF_ID(func, bpf_lsm_task_alloc)
-> > > -BTF_ID(func, bpf_lsm_current_getsecid_subj)
-> > > -BTF_ID(func, bpf_lsm_task_getsecid_obj)
-> > > +BTF_ID(func, bpf_lsm_current_getlsmprop_subj)
-> > > +BTF_ID(func, bpf_lsm_task_getlsmprop_obj)
-> > 
-> > Maybe we can remove these two instead?
-> > I couldn't come up with a reason for bpf_lsm to attach to these two.
-> 
-> Personally I have no idea about bps_lsm, how it works or how it is used.
-> I only tried to get rid of the warning.
-> If you prefer I can drop the IDs.
-> 
-> In my opinion this is a discussion that would have been better in
-> the original patch, if the CI would have caught it.
+On 25 November 2024 19:13:02 GMT, Dave Hansen <dave=2Ehansen@intel=2Ecom> w=
+rote:
+>On 11/25/24 10:53, David Woodhouse wrote:
+>>> I think we have a lot of software-available space in the page table
+>>> pointer entries=2E What would folks think if we set a special bit in t=
+hose
+>>> p4d entries that said:
+>>>
+>>> 	"I don't need to be propagated to
+>>> 	the user portion of the page tables=2E"
+>>>
+>>> It would obviously get set in this code that you're trying to fix=2E I=
+t
+>>> might _also_ be able to be set in in "_USR", like here:
+>>>
+>>> #define _KERNPG_TABLE_NOENC=C2=A0 (__PP|__RW|=C2=A0=C2=A0 0|___A|=C2=
+=A0=C2=A0 0|___D|=C2=A0=C2=A0 0|=C2=A0=C2=A0 0)
+>>> #define _PAGE_TABLE_NOENC=C2=A0=C2=A0=C2=A0 (__PP|__RW|_USR|___A|=C2=
+=A0=C2=A0 0|___D|=C2=A0=C2=A0 0|=C2=A0=C2=A0 0)
+>>>
+>>> like:
+>>>
+>>> #define _USR _PAGE_USER|_PAGE_SW_WHATEVER
+>> In fact, do we even need a separate bit? Any PTE without the _PAGE_USER
+>> bit set clearly doesn't need to be mirrored into the user page
+>> tables=2E=2E=2E?
+>
+>I can't think of any exceptions where this would break off the top of my
+>head=2E It seems too simple to work=2E ;)
 
-I agree with Alexei here, we can probably just remove these
-instead. ATM, I don't think we could do anything useful with them from
-the context of a BPF LSM program anyway.
+I'll throw something together and see if it explodes=2E
 
