@@ -1,107 +1,121 @@
-Return-Path: <linux-kernel+bounces-421111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D38D39D882D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:38:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D52EF9D86B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:43:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2742BB30120
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:42:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95C401651C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2A318872F;
-	Mon, 25 Nov 2024 13:42:01 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B94A1ACDE8;
+	Mon, 25 Nov 2024 13:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="noW6Bvmd"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694EE1AAE39
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5743D18872F;
+	Mon, 25 Nov 2024 13:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732542120; cv=none; b=qG6VDPLDLyJaR9igAY6QBxW9fN+0NfHJoS1TLRjT9KxlXVKUs0oBtBZfr6+IZhS4T34dVCwhc9tQBybl5KoBQBdCHi76x9Ry0yhpGIjvj+PIUSLYnqN7Sk1j5zwuaFWT1pmta58VvLlRPY3SpPNDvqBbo044q8li0VhtUp2YP9s=
+	t=1732542184; cv=none; b=ZTKwPWDoY7mP+j7olY4Qg+aU45KVIcOPdr7O/8xaN3AkvmuInvziP3g5/jeyPvFwQVolgGYQON7ZP0FTKM6V5LAHQRHr3jmrBzA0vOhQ1yrm6Vhr/XWIVbmhzdDosEhQGm93V6K1C3i4fyKpgPa2tO0p1VlsO+RnnsvLAjk76rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732542120; c=relaxed/simple;
-	bh=IOb4xkY9FbG/hWBg/6VAOcvJsEjr0AoYgOm/SR1Q8aA=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=fyY+OlD2mTXy5LSylOhLzbvPG+9FmXC+rfTGUPmEvkOoG40TCg0IbFot60LbRS1i4ALVnQCkCdzLBkT7dsH2fhHvDwT4Z1YTmzAwMZvvg0MLnyQwf2nFdmhlYdN8jU7MsL+UiQ0xb6LiQG+g05xmU0zoAhnoyRGipFteMsMDGuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XxmyM3kjKzWfQS;
-	Mon, 25 Nov 2024 21:39:07 +0800 (CST)
-Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
-	by mail.maildlp.com (Postfix) with ESMTPS id 455F81800A7;
-	Mon, 25 Nov 2024 21:41:53 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 25 Nov 2024 21:41:52 +0800
-Subject: Re: [PATCH] mtd: ubi: Added a check for ubi_num
-To: Denis Arefev <arefev@swemel.ru>, Richard Weinberger <richard@nod.at>
-CC: Miquel Raynal <miquel.raynal@bootlin.com>, Vignesh Raghavendra
-	<vigneshr@ti.com>, Artem Bityutskiy <Artem.Bityutskiy@nokia.com>,
-	<linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20241125132354.16188-1-arefev@swemel.ru>
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <62854804-c692-0e18-94af-67efd86af61e@huawei.com>
-Date: Mon, 25 Nov 2024 21:41:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1732542184; c=relaxed/simple;
+	bh=Vh96bJoOwrNFyO6Sp6Hhb3hniflnbzfSe79opOPAAMU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VgLtNDQtl9eG+j25bmu4QfMBjsUwB1KlGPFDECFuqGKNLMBQibX0x11PPlb5iNMij+kKghmzwtcM2TzCSBHDEB5ACM4ECPbvCtfaYDsX6Y3PEsGwnXf+EvcoKzIRhSIPj2RFjsCxnJB2tH6GAr7hMDC6WU1SyL+4NIHca8jeHPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=noW6Bvmd; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ea33a70fdfso745121a91.2;
+        Mon, 25 Nov 2024 05:43:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732542182; x=1733146982; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vh96bJoOwrNFyO6Sp6Hhb3hniflnbzfSe79opOPAAMU=;
+        b=noW6Bvmdaa106xjizH8vxD6ha0cJauBwo+L+7I4cPb8XcFdE5CD9jg1rnSkO7PBC6g
+         FVLw5TQh53aC8Gd8lGI5sEGrbkoFc1DheD80KQAA9iBAGRA8K0is/AtjQHjGz7Y9Hw2h
+         k/nd8eT70bcVLFA9Fk16eJ9mzW6KdpsbvDBWW9ufMTehLbiF8PC9XULzhd1m3QtjamH1
+         L8wAq5gFmCPmXUYd7xQpnnz+CRunuzASD54dRGLe3M+TF5VYFtYO0I7pRGCRmaNd6kWW
+         9IsiGU2CcrDv7pQVXFRJhT3LrPB4wgoRsQr8a48Aqeifwds5W4eZCPHUJobxoZ1Gycx1
+         IIrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732542182; x=1733146982;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vh96bJoOwrNFyO6Sp6Hhb3hniflnbzfSe79opOPAAMU=;
+        b=NKA9tz7ByTXcekBGab1dWYOfwc5yhiVB/5Bobe5Pp/xVmyfZ53Nx9XX8i9YiQa7K67
+         VH2QkDwUG7k7I3i1sxqaYliysQW6wDjn8mGr9WRhY5M/DoL8ia5yvJPV3Ip8lR/6mjpF
+         zAbnRt5Hj/kn1B3kbZjQs/Yt+3mBIhPgd5TTtsRDwFLEd9E4z9Z2A8ApnwHZhuQySMGI
+         qAhiwaAJBqkmE2OavapcEQbmYlG/qCQ8dM/ZxEeJzLHNqjkHWdF1SbXi2/Zd7/xZtVkb
+         gpnbyNIqLaLlx/H1OshAfw70oaBy8R8VsFSBeW9PDLMmZKoELmvu+zepfAMvcZTSemnA
+         UTmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUoKxkJVNr7juowc0bIt3lbygMfM54GOuNRF7Q8WTioR6tZyDBJyzYw5QnQCe5+oynuYGyO5X3k8Bw4@vger.kernel.org, AJvYcCW6InM7epr34y62uqmjodh4KMMDQH5XQ9Z5PPRNuu6Hb6uyGvIeg0Op8gEvFQigKScRNVyX4TywurWhOH/i@vger.kernel.org, AJvYcCWA/mmnEIOLDDqpe0Ru5I4wsTbnND41y9ax716GFwFN4n92/YIqaHEI1mOmtd4CtJEthfP2t+j0DwVqeQTEHlM=@vger.kernel.org, AJvYcCWLGwMN4ENLamSDGYlTlEwpjUwq/9v8KqvG2Fdyj36DqiQOTG6lCFUV4XRTLn0P2hYkdkhqWF4IbR+h@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNa4P5OpnhgNYwPo/x9HsKUClueQMTBknHpnIdnYn6DzmExeb2
+	8UWF30AZa656b3FuUx/AGkIzGmUaROtumuRDTt1+Vh5lOLs26gRikyw/09rUZZ2FU8Bw+EjlUe+
+	8tY2bWeOC204IJHQeZTYIAQQcb7o=
+X-Gm-Gg: ASbGncsWp2ogAmuC3RJ3rGxVfk7GTuCFqMTCcLmBNksFdsX5C2oRkZvh1BvIL9BXJTv
+	sSpkkHQhvYZIEKzr9AJT6tH30Vm9zLGw=
+X-Google-Smtp-Source: AGHT+IGY3uQ6gtttopQGEvmtnMN78gZwZv98uC/pEs79Qk0Z00BiITe4CR6H5hcbiNZimM0EEV3FxfcxB0atDxrBtDA=
+X-Received: by 2002:a17:90b:4d11:b0:2ea:c2d3:a079 with SMTP id
+ 98e67ed59e1d1-2ede7daaf62mr58486a91.3.1732542182583; Mon, 25 Nov 2024
+ 05:43:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241125132354.16188-1-arefev@swemel.ru>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemk500005.china.huawei.com (7.202.194.90)
+References: <20241022213221.2383-1-dakr@kernel.org> <20241022213221.2383-6-dakr@kernel.org>
+In-Reply-To: <20241022213221.2383-6-dakr@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 25 Nov 2024 14:42:50 +0100
+Message-ID: <CANiq72moksyUHEYDXu3G_=FaLdXpNJrrihnw5QFhWaRZbdeT3A@mail.gmail.com>
+Subject: Re: [PATCH v3 05/16] rust: implement `IdArray`, `IdTable` and `RawDeviceId`
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com, 
+	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net, 
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
+	daniel.almeida@collabora.com, saravanak@google.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Fabien Parent <fabien.parent@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-ÔÚ 2024/11/25 21:23, Denis Arefev Ð´µÀ:
-> Added a check for ubi_num for negative numbers
-> If the variable ubi_num takes negative values then we get:
-> 
-> qemu-system-arm ... -append "ubi.mtd=0,0,0,-22222345" ...
-> [    0.745065]  ubi_attach_mtd_dev from ubi_init+0x178/0x218
-> [    0.745230]  ubi_init from do_one_initcall+0x70/0x1ac
-> [    0.745344]  do_one_initcall from kernel_init_freeable+0x198/0x224
-> [    0.745474]  kernel_init_freeable from kernel_init+0x18/0x134
-> [    0.745600]  kernel_init from ret_from_fork+0x14/0x28
-> [    0.745727] Exception stack(0x90015fb0 to 0x90015ff8)
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Fixes: 897a316c9e6f ("UBI: handle attach ioctl")
+On Tue, Oct 22, 2024 at 11:33=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
+>
+> +#![allow(stable_features)]
 
-Hi Denis,
-I think the problem is imported by 
-83ff59a066637a6c28844bbf43009459408240f4("UBI: support ubi_num on 
-mtd.ubi command line").
-> Signed-off-by: Denis Arefev <arefev@swemel.ru>
-> ---
->   drivers/mtd/ubi/build.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/ubi/build.c b/drivers/mtd/ubi/build.c
-> index 30be4ed68fad..dae569f48b87 100644
-> --- a/drivers/mtd/ubi/build.c
-> +++ b/drivers/mtd/ubi/build.c
-> @@ -920,7 +920,7 @@ int ubi_attach_mtd_dev(struct mtd_info *mtd, int ubi_num,
->   			return -ENFILE;
->   		}
->   	} else {
-> -		if (ubi_num >= UBI_MAX_DEVICES)
-> +		if (ubi_num < UBI_DEV_NUM_AUTO || ubi_num >= UBI_MAX_DEVICES)
->   			return -EINVAL;
+This should be possible to remove (starting with v6.11 we do this in
+the command line).
 
-The ioctl(UBI_IOCATT) already checks the 'ubi_num', so I prefer to add 
-the missing check in ubi_mtd_param_parse().
->   
->   		/* Make sure ubi_num is not busy */
-> 
+> +// Stable in Rust 1.83
+> +#![feature(const_mut_refs)]
+> +#![feature(const_ptr_write)]
+> +#![feature(const_maybe_uninit_as_mut_ptr)]
 
+`const_refs_to_cell` is also stable in 1.83, so you could move it also here=
+.
+
+Having said that, to be consistent, I would just put them above sorted
+with the rest -- the compiler can tell us and we track this elsewhere
+(just added the last two here to our issue #2 list). Either way, it is
+not a big deal, this list will be going away soon and we can
+celebrate! :)
+
+Thanks!
+
+Cheers,
+Miguel
 
