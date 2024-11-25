@@ -1,109 +1,70 @@
-Return-Path: <linux-kernel+bounces-420762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 577539D82E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:52:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 616D59D8315
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:10:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D5EC28808C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:52:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1E71B2E714
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45981922D8;
-	Mon, 25 Nov 2024 09:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qP6Pk+LC"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91DF190067;
-	Mon, 25 Nov 2024 09:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E118191F7A;
+	Mon, 25 Nov 2024 09:52:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CBB190067
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 09:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732528362; cv=none; b=PrteTH6mgebDC2DTl/75SQ5IfhbRPyNmAnaMAQEZSLSQnxaRqRCxO+9IBL9GNLBWuZs1rvQc2xoXqwURLhSI0Fs89uuTDNOWTMae0XphCkUOXZJBnGwsNZ5W2s5/lGAYrt/g6goeaQ9v8RJw1c6KmJmjYUVkQwAsqMELTHxbzHg=
+	t=1732528376; cv=none; b=Kawo/dwTyDv+W+0fFdqoyrf2LxGHwXDc0fHStFpsdwSFkfIDZ9owdYg390y/6cpY5tioFek3IHwJVf9+77n3ekMEBvQaeYQTe+rZmepcYMiVTlA9GRI/UabSOBV66nzLwWYZqD6L23gw4B1mSupd/1vZ0Qo097mCRw/gkT67+PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732528362; c=relaxed/simple;
-	bh=2tS8FIGs5XfE/2qFIHTISjAC2cAm3XxgBs/cPNnw7kI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UyxO/VUZRvlg2V+2mpu7Vd/O9mcWY52lOSOE20U4gPHzWAoLGsAeBkkAMc7H9cJ0Bp9kkFkNIOiHY06HOpGbD0ApTbgWNnvzb+Gwp6EanJqIa9Ysf0ncdrmsFuhU/mg1Kam1IhOAo20RQbgN8QISJcqpSFlXLYr5La82hkOsr4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qP6Pk+LC; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1732528357;
-	bh=2tS8FIGs5XfE/2qFIHTISjAC2cAm3XxgBs/cPNnw7kI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qP6Pk+LCYgDMpAulcmdEP+3T1YaUinBnS5Q/YXyUtee5d1kafzYxViIItesWz5ywp
-	 Lj5lB9+CLm221BhmLUGC7qAXN1mGMcry8/KkzOHY8fcmD9Z+aOwe/o9RiEdWrpKd8y
-	 lf7MubkhsxMmQBb0z/p376R+eZPuEvCihD7+VCsc24fHCywctPYXvykTy7q7jtKQpb
-	 cgtHD59rIUdVrLyd53PTEQ/7bB35w3gN11AyAbX5+oYjITIoJ+IXtskiXoBfbfI4Qp
-	 A+LFiXEMMzPqTKJod654CsxwgEuVin5Tqovg2VhRLJS7MKC4IZ7pTt+OIfoLGSkN00
-	 LHGAZ6qci66Ng==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 79B6A17E14D5;
-	Mon, 25 Nov 2024 10:52:37 +0100 (CET)
-Message-ID: <dbe132d3-94bf-4801-8d52-167cb2074038@collabora.com>
-Date: Mon, 25 Nov 2024 10:52:36 +0100
+	s=arc-20240116; t=1732528376; c=relaxed/simple;
+	bh=+e2sK3b2ZrGIZ7146JHoms4l1NTZw4VPh8lfGme3RjE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XXsctGeMrmWaAOtXPWce+qe+w04p4/VDlJBxQJE7IBXmvgKSsM9FsE/NfI1R9zExLWEXzhoXfHhIMLG/RRw0LLUCPzNqFoKUpWckbbnfSiXeSQ0FHGVV7xpWCtxM1Olfa/y0inxoXg7upAaYC4iZISXzWlssD6CLpoPw/7ZHWNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 016351692;
+	Mon, 25 Nov 2024 01:53:25 -0800 (PST)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E11523F5A1;
+	Mon, 25 Nov 2024 01:52:53 -0800 (PST)
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: sudeep.holla@arm.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	nd@arm.com,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH 0/3] small fixes for arm_ffa driver
+Date: Mon, 25 Nov 2024 09:52:48 +0000
+Message-Id: <20241125095251.366866-1-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 7/7] arm64: dts: mediatek: mt8173-elm-hana: Mark
- touchscreens and trackpads as fail
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, Wolfram Sang <wsa@kernel.org>,
- chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-kernel@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
- linux-i2c@vger.kernel.org, stable+noautosel@kernel.org
-References: <20241106093335.1582205-1-wenst@chromium.org>
- <20241106093335.1582205-8-wenst@chromium.org>
- <1246d672-4370-4db7-b4d0-368524809435@collabora.com>
- <CAGXv+5H8YwiTyk1eMSwPLuGw5sQxec4n8OKR-Qa5wz8QGH4h9w@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <CAGXv+5H8YwiTyk1eMSwPLuGw5sQxec4n8OKR-Qa5wz8QGH4h9w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Il 25/11/24 09:01, Chen-Yu Tsai ha scritto:
-> On Thu, Nov 14, 2024 at 6:36 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> Il 06/11/24 10:33, Chen-Yu Tsai ha scritto:
->>> Instead of having them all available, mark them all as "fail-needs-probe"
->>> and have the implementation try to probe which one is present.
->>>
->>> Also remove the shared resource workaround by moving the pinctrl entry
->>> for the trackpad interrupt line back into the individual trackpad nodes.
->>>
->>> Cc: <stable+noautosel@kernel.org> # Needs accompanying new driver to work
->>> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
->>> Reviewed-by: Douglas Anderson <dianders@chromium.org>
->>
->> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> 
-> Hi Angelo,
-> 
-> Could Wolfram also take this patch instead of it having to wait another cycle?
-> 
-> 
-> Thanks
-> ChenYu
+This patchset small fixes for arm_ffa driver:
+    - change ffa_device_register()'s declaration and its return value.
+    - add direct message version 2 related properties bits and some fix.
 
+Levi Yun (3):
+  firmware/arm_ffa: change ffa_device_register()'s parameters and return
+  arm_ffa.h: add properties bit related direct msg version 2
+  firmware/arm_ffa: remove __le64_to_cpu() when set uuid for direct msg
+    v2
 
-Acked-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+ drivers/firmware/arm_ffa/bus.c    | 22 +++++++++++++++-------
+ drivers/firmware/arm_ffa/driver.c | 18 +++++++-----------
+ include/linux/arm_ffa.h           | 16 ++++++++++++----
+ 3 files changed, 34 insertions(+), 22 deletions(-)
 
-Yes
+--
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
-Thanks,
-Angelo
 
