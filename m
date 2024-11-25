@@ -1,90 +1,175 @@
-Return-Path: <linux-kernel+bounces-420545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3B6D9D7C33
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:55:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B209D7C35
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:55:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9303E1632D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:55:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39915B220E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9243D155747;
-	Mon, 25 Nov 2024 07:55:04 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2873317E8F7;
+	Mon, 25 Nov 2024 07:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nQN5k0AQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E9E2500AE
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 07:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C884314AD2D;
+	Mon, 25 Nov 2024 07:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732521304; cv=none; b=Dq5LCvazlupbW8/Vhn5M3O4+BhIBcpKL6HThXnI1V+9OG2ysRIzIuPtUHMDMGnG3CViNbVGUawQL33emOY/iZjoJxDem6UWAdbL9msMmA7OqAQ4uXfJ/nPSMFcFSd9KqS4SKGAu+LQD8faE7fvIfUGVZY79XFW/wl80/eXEu/4g=
+	t=1732521326; cv=none; b=Zb5HjclqgSntot/t4tMqblQsTew+Hi7PUmqaf9kelMrIVBRkxiaJ5RSwpr2e7w5Rlq+y3KNFoBUPdemo61VGzmKSqvs2k5BSyaDan/Nv8c3Zbd26jkaEt8jt6k+I/F/v1OreyYkiX0U9YH7NjQoHZScFYzYgy3CvGXEy5dyDRaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732521304; c=relaxed/simple;
-	bh=cQCFdHI5v7iYD+faZRpRS4mdyyhWoFXP8q6aXTjO9qQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=rOiP+CR4ZsiLahlN7FurhPY+jFDutGv4Jzqj55rG1P0LMg7PvGRNZJUj20Cro3mQ1J9t+q6OjGEcGoBijpRrasSsujwyZAS6TvqKj7Om0VYf/EUM+4sCZyzi86zpiSK8VXu0JMOJIzGMm4B4TqPvJTNkTebLqfNDG5jGJN0JMYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a78421a2e1so47598005ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 23:55:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732521302; x=1733126102;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2wuzzW3kznStW1ZY2qDRz1ckqBaso2qsNpoMZ+p0v5k=;
-        b=SwqySh3uvXuQwP32fEktDiCcA/3ImsL5dSGvavxIepj6KVw6lFhzQdv6VfWivlIOdO
-         EfihuFVrJdVB5ujTpDe6/WR2tXY1SYBRC8iF36w8SMai86yx2ASZ8gFryk5710BJq7sw
-         bqQqPeI4Nd9rW3XtxMSQl4mr5599UUb0jjGq+/07q12cpuGh6ww+/hKLWL8ocxDEgaLy
-         Q6fM2j8VgBcyjhrecIvN2vjJuixUTvG+nTrlwn8UQ721Lan5u3U1Z2YIz0lNQYOa/hMo
-         DyNHDQtoC22kCfL3DGWg77uninGJfSAJgF+S9GEAwSaZFTMxLcyuishdVY/gdHUF3p27
-         VdWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUinxQsZGLs/B6UIidellCG40f0ZS8nA2aY9pfKX/TAU5JxsxDteH+jj4/9JyXy7UyapP2vcHHIbwcT8YU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrXMLzp3sWM1F7qslXNRwwlBiRc+BXnHMZIk9OdkMmsU787seM
-	8ZCoiPtLSshG/rcVE4HMmJmip9ioTDT+nXOLeAbv+HMDEpaLJ+1LHPEgxtHIdGggcwEzX8Ts/Hb
-	0JabNB9jKKIFZ4pE2ecbYc2DkcZThuRn4n0o8psqgHLaMslgxWr/qpYU=
-X-Google-Smtp-Source: AGHT+IGsewLnsQ1A1gYxwSgr2h9LCzTj4VsCBHSPniYDrfo0ClmiaqTLkpQ4+V4EWuDLmvFu3SREZrMjm2FydpjyXJ5FPiqdvfLq
+	s=arc-20240116; t=1732521326; c=relaxed/simple;
+	bh=uBnYP9aE7Pwete/XjL4x75AnL05KyLv2gT61TgDIibA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GDlWs2QpQDDUQoik1vgsyRCZ5JEjnQm8NhrhavFMhhGBaA69JwvJYE/P4RAHrZhry0/l0ZsMaaOZtf9JeOiiOwMIDUQv0ZFUkRKhfs+fdWEz6aeQr8FyM1K8Jp6NtuNCJF1Y7LmTnVsOxl4GujX1rz8n/GQgy259MRmSc9m7aIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nQN5k0AQ; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732521325; x=1764057325;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uBnYP9aE7Pwete/XjL4x75AnL05KyLv2gT61TgDIibA=;
+  b=nQN5k0AQ/e+yNJGNU0Li2hXLgj/U8aCpTdV39uD1C2+HLwnDpeI4+TNB
+   V+9jNSrEU2a6AVXpWY+5nNkfPW0Qf8551X9IMMzFtLMIBoG7umBIzdA5S
+   ltZWnRtT7oZtVkxIrceBIprRf7P6N+qQPukBoif7FKZwgoduQ8jDmekYq
+   i2jYAgKm1gDgrTtPsfOLzX35783eAN1p+F8mpVIwAWqQ8Y2men/LeR7Ho
+   KaeC5FzUMLidLTxDOpMY5lAYquRPvrDbkTe+L0hKA95hPD7GfQUpzPtiN
+   cePN/BzvvWH3lfJHXSbDS7zaN/itDnt3+qOcEXJnJ9X7gyVkdukpeOImP
+   Q==;
+X-CSE-ConnectionGUID: CpcRRbEsTA+t4CDiAR/HBw==
+X-CSE-MsgGUID: rJX6nPpxT0KfDHfQh3n6IQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="58021005"
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="58021005"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2024 23:55:24 -0800
+X-CSE-ConnectionGUID: IO1jN5scSR+/Y7f5z3vpNg==
+X-CSE-MsgGUID: j0FxLA7KQS2tRcBAchBuVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="96109231"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2024 23:55:21 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tFTwE-00000000fsL-3O9s;
+	Mon, 25 Nov 2024 09:55:18 +0200
+Date: Mon, 25 Nov 2024 09:55:18 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-serial@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
+Message-ID: <Z0QtZky8Sr7qUW7v@smile.fi.intel.com>
+References: <20240405152924.252598-1-schnelle@linux.ibm.com>
+ <20240405152924.252598-2-schnelle@linux.ibm.com>
+ <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net>
+ <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
+ <472eb22a-dcb1-4fbb-bf2c-a4173706bc7a@app.fastmail.com>
+ <27685942-fb62-44c5-86ed-98beb547ffed@roeck-us.net>
+ <744920ba-551c-466b-ac5c-2607b81261a0@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:17c8:b0:3a7:464d:36a5 with SMTP id
- e9e14a558f8ab-3a79afd0df2mr132812555ab.21.1732521302016; Sun, 24 Nov 2024
- 23:55:02 -0800 (PST)
-Date: Sun, 24 Nov 2024 23:55:01 -0800
-In-Reply-To: <CAHiZj8h7VTOdp3CnbocTn2c4QnVDQi+YeRUDACvoKgBDYi-4eg@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67442d55.050a0220.1cc393.006d.GAE@google.com>
-Subject: Re: [syzbot] [mm?] kernel BUG in const_folio_flags (2)
-From: syzbot <syzbot+9f9a7f73fb079b2387a6@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, surajsonawane0215@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <744920ba-551c-466b-ac5c-2607b81261a0@app.fastmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hello,
+On Fri, Nov 22, 2024 at 08:24:37PM +0100, Arnd Bergmann wrote:
+> On Fri, Nov 22, 2024, at 18:22, Guenter Roeck wrote:
+> > On 11/22/24 08:31, Arnd Bergmann wrote:
+> >> On Fri, Nov 22, 2024, at 16:35, Niklas Schnelle wrote:
+> >>> On Fri, 2024-11-22 at 07:18 -0800, Guenter Roeck wrote:
 
-syzbot tried to test the proposed patch but the build/boot failed:
+...
 
-failed to apply patch:
-checking file include/linux/page-flags.h
-patch: **** malformed patch at line 26:  	return &page[n].flags;
+> >> So in all four cases, the normal uart should keep working,
+> >> and if something tried to start up an ISA style 8250, I
+> >> would expect to see the new version produce the WARN()
+> >> in place of what was a NULL pointer dereference (reading
+> >> from (u8 *)0x2f8) before.
+> >> 
+> >> Since there are so many ways to set up a broken 8250,
+> >> it is still possible that something tries to add another
+> >> UPIO_PORT uart, and that this causes the WARN() to trigger,
+> >> if we find any of those, the fix is to no stop registering
+> >> broken ports.
+> >
+> > The call chain in all cases is
+> >
+> > [    0.013596] Call Trace:
+> > [    0.013796]  [<d06eb249>] dump_stack+0x9/0xc
+> > [    0.014115]  [<d000c12c>] __warn+0x94/0xbc
+> > [    0.014332]  [<d000c29c>] warn_slowpath_fmt+0x148/0x184
+> > [    0.014560]  [<d04f03d8>] set_io_from_upio+0x70/0x98
+> > [    0.014781]  [<d04f0459>] serial8250_set_defaults+0x59/0x8c
+> > [    0.015013]  [<d04efa6a>] serial8250_setup_port+0x6e/0x90
+> > [    0.015240]  [<d0ae2a12>] serial8250_isa_init_ports+0x32/0x5c
+> > [    0.015473]  [<d0ae28a1>] univ8250_console_init+0x15/0x24
+> > [    0.015698]  [<d0ad0684>] console_init+0x18/0x20
+> > [    0.015926]  [<d0acbf43>] start_kernel+0x3db/0x4cc
+> > [    0.016145]  [<d06ebc37>] _startup+0x13b/0x13b
+> >
+> > That seems unconditional. What is the architecture expected to do to
+> > prevent this call chain from being executed ?
+> 
+> This looks like a bug in drivers/tty/serial/8250/8250_platform.c
+> to me, not something the architectures did wrong. My impression
+> from __serial8250_isa_init_ports() is that this is supposed
+> to initialize exactly the ports in the old_serial_port[]
+> array, which is filled only on alpha, m68k and x86 but not
+> on the other ones.
 
+> Andy moved this code in ffd8e8bd26e9 ("serial: 8250: Extract
+> platform driver"), but I don't think this move by itself
+> changed anything.
 
+Yep. the idea was to purely split this code out of the core
+library parts. I was not intending any functional changes.
 
+I believe it's a preexisted bug, but if you can point out to
+the breakage I made, please do it, so I would be able to fix
+ASAP.
 
-Tested on:
+> serial8250_setup_port() is where it ends up using the
+> uninitialized serial8250_ports[index] contents. Since 
+> port->iotype is not set to anything here, it defaults to
+> '0', which happens to be UPIO_PORT.
 
-commit:         9f16d5e6 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c4515f1b6a4e50b7
-dashboard link: https://syzkaller.appspot.com/bug?extid=9f9a7f73fb079b2387a6
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=174b5ee8580000
+Btw, we have a new constant to tell the 8250 core that IO type is not set,
+but that one is not used here.
+
+> The reason it doesn't immediately crash and burn is that
+> this is still only setting up the structures for later
+> use, but I assume that trying to use console=ttyS0, or
+> opening /dev/ttyS0 on the uninitialized port would
+> then cause an oops.
+> 
+> The bit I'm less sure about is why the
+> serial8250_setup_port() function is called here in
+> the first place. I assume it does something for
+> /some/ architecture, but it's clearly wrong for
+> most of them.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
