@@ -1,153 +1,117 @@
-Return-Path: <linux-kernel+bounces-421303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F63B9D895C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:29:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C19EB9D895F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:30:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11E8A28244B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:29:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 632BF1649B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A721B3958;
-	Mon, 25 Nov 2024 15:29:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F03D1B4129;
+	Mon, 25 Nov 2024 15:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b="dJ+nWxZG"
-Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jQxY/GS0"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254CA195390;
-	Mon, 25 Nov 2024 15:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54CEC1B3958;
+	Mon, 25 Nov 2024 15:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732548572; cv=none; b=L8DsntzVmuxGWH3m/WJv67tJOibxVdDYCsHvStrBeqoniAJ5ICdw7lXz9hGy/fU8iyvrSzX+Lh8Jq5YlNl72BAcPfBgneiwmLIq4QZiC7KR7Lesscc7zTXGuoR2tWpKHC/QiZ707/Bz68Ql9+SorMvhzWzyHAUvYLMC3DwTupeI=
+	t=1732548605; cv=none; b=kdPWvZE+U4IY0ztk9YkT/2Z/Mz+hth4NpMVZ5vXJ1Id5zFD2sZsxSTgB/IiyET739vybca3War41M15v4TGDp7boeWQZIkaSTYGn6FdlktN4dmgCnmp5q+pHiata3RIfPwYxLTqAtz1Z08GZW/uhLcIb6IXURjCTFQx/F5Tigto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732548572; c=relaxed/simple;
-	bh=mvds+Ny0lTliJWUMz64CS0VuR5pei/dhaTjax1anOBc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dVxNg9qtimhrulIpGJ3aE8Ii12YeGP4QwTuOGeDsuVYN8D7ml0FD+Enk5AQvxJvVzFExWXJgQahYO4A6AJ4L+ZKCwebX3eIBIjog3GU9qU68DywoISxHV989p0pKZ19+Rljhl6KcFujEehE23AUOzmrBnkTqxZ+rIVupzISBqBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=marcan.st; spf=pass smtp.mailfrom=marcan.st; dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b=dJ+nWxZG; arc=none smtp.client-ip=212.63.210.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=marcan.st
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marcan.st
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: marcan@marcan.st)
-	by mail.marcansoft.com (Postfix) with ESMTPSA id 498E641A48;
-	Mon, 25 Nov 2024 15:29:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=marcan.st; s=default;
-	t=1732548567; bh=mvds+Ny0lTliJWUMz64CS0VuR5pei/dhaTjax1anOBc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=dJ+nWxZGjxwcoLlWhkuPEQg/dDouRwFC78lnhdBZQnWhTG0+DEb29pZuEkPVatXAO
-	 B17tvlgEtOkPmf7FMEDBpGaDTCmu8s8Jba3RhjHX8UpaJint1QbDKH8Oj02dGK4Ke/
-	 7FsioU8y5MGI/h7P5eYFGL8GHYy+n1vQq42CEKb0GClQBN1i8EzbDlqOQO6Hw4A9qr
-	 cDKGp00yGAhdHLJtpZ9cRs8o1xIAJsmqxSxzHdluE2hLonH7xksXilHLQwK6u//oqV
-	 86s9/TdAUe09WziXe9mmDqPLYZ49vffCGw8Leo9QCCcgAlaBDLc6n/ct1MdXJ1uLyo
-	 DwYijr47s0TAQ==
-Message-ID: <7fee8838-a365-4f33-a40f-26abab17d605@marcan.st>
-Date: Tue, 26 Nov 2024 00:29:25 +0900
+	s=arc-20240116; t=1732548605; c=relaxed/simple;
+	bh=ZuOlKDa12lf4PipoKK/WoVow7PE0n9hSDEKjxKpU14k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NyfN0B/gmS8u2xN8yZ9JZBDGKncsLmoX3WGzctDNXDCVBYbj2Gj0402xAUB5naWHmBH6/uamlhJQEPYk166MFbafJTpCmz+iAIAognr98vaLMwePReZWOclEGVxNuZ/GFgIUEMLfGQhWExEZHn8MFEuHzeakYk7WdseAsG/d5Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jQxY/GS0; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3823e45339bso3428435f8f.0;
+        Mon, 25 Nov 2024 07:30:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732548603; x=1733153403; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=R0xbIeLjaOcvNQ+T0CeTy2I+8N/GlAJgLra/IyL1M5o=;
+        b=jQxY/GS0PnTDMce/5ttdLitViGJdOKFeoOtjgFx+DD+NfEjpE9qYChA4UrEa+ZgpHe
+         UgXQ7+vwFTM8bN8j/zVYR0rTBjSli5tduXNH7md3iSm5HWL4BazPC4X+m2VgQqrt9G7N
+         8Zg7lK56Ku9ElXRfw+PyA2nVauYqbMmWkcyiHv+Al5rFRG1Ff73hQ6P7acPfIdg5dIwi
+         M22SCLEOq0YZwA0AujbxgBdFmEI50EOfI3T5l67aUsezLGXxCijSSgReO6NqEwkUKJ/9
+         JDU474U0EcBqtRNoMUj7rVaQ3c8wqZAOPPqK9Int7eNOflumFtVNRAmHcUW3uHPF6lsr
+         PR9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732548603; x=1733153403;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R0xbIeLjaOcvNQ+T0CeTy2I+8N/GlAJgLra/IyL1M5o=;
+        b=TNP8Hzv/Kuer8Xn63rUKCwB9PY91YGVVvYFAtPfTDEkfubkScMdG8bI6old2BrLWMO
+         t7dPGdwwKZuPYuLEIImRKH4vKjB82EydVuVlPVLg9UBhEYnqvjPqAniIvqkQ7bXKxyr/
+         OI3HKz0b0f7SyDUf/90ThqOeIURcRm/b2Gy+KLiWGP1IHzpfG/nbIcNvap1pddIBos/3
+         gFSJ07iLXr6f7umifagxqYiF6NZnUKFZldfyJ2Z4LUKasV4bsucMI+En6IiPUx2oTfa3
+         6gpJgoq1/lC+5Xswhr2xjIcj465k7YyN2JgypXGu+FC+I4Y7jKC6psm4gZ7/gTHxgt94
+         ewLg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrNemZEdm6dOYvlzADNO2aurJLI3f3toEmp27y4cTN3JqiIeLwYGzvh8P8lCaMDYmmPMdcKMTcToIdin0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIvQhcWUhAH7nw6Bpp+3bFyXDrefAhTdswoplHuwRHABS0HJOp
+	VxAVgI5363T4smDu8ug03vbqe3Ho7QcVteHpPDWflOWIM7ABLCDPRsS5wgqAQXI=
+X-Gm-Gg: ASbGncsISQszFWfLoyFRJgit4Af94EoECBtUXPwTYtDRQPcPUonj4Vh+3yMVONnfDQS
+	6MdAflIw0zaog2rIoyGLfHLri+bKOCEK4ou+/IpY3fKol2EPrbTXQ8aJD/n5V+f8f+TIxpRHO/N
+	woUzqGNTHezPl6MyBd7b76n0b9DPKTLpsv/ValAWIT38O/4CN2y5E77cKuDdQub8hUfk5UdpS4Z
+	0Vf7GIRlSkw3fUrlGsuFCE6DPhp+DBlhDs3Cz8YrkoLEJAmfQ==
+X-Google-Smtp-Source: AGHT+IFt32g14UZEVcid0Amb4JFft82ihixw77BhJMGM25/YsTHovebIT4JACNL3OiATfH6WP+Ec7g==
+X-Received: by 2002:a05:6000:1f8c:b0:382:424b:d0a6 with SMTP id ffacd0b85a97d-38260be2ea2mr10932384f8f.55.1732548602470;
+        Mon, 25 Nov 2024 07:30:02 -0800 (PST)
+Received: from tpt440p.. ([69.63.64.50])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fb264cdsm10836888f8f.49.2024.11.25.07.29.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2024 07:30:02 -0800 (PST)
+From: "Sicelo A. Mhlongo" <absicsz@gmail.com>
+To: linux-pm@vger.kernel.org
+Cc: pali@kernel.org,
+	sre@kernel.org,
+	linux-kernel@vger.kernel.org,
+	maemo-leste@lists.dyne.org,
+	"Sicelo A. Mhlongo" <absicsz@gmail.com>
+Subject: [PATCH] power: supply: bq27xxx_battery: do not update cached flags prematurely
+Date: Mon, 25 Nov 2024 17:29:30 +0200
+Message-ID: <20241125152945.47937-1-absicsz@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindgins: display: Add Apple pre-DCP display
- controller bindings
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Sasha Finkelstein <fnkl.kernel@gmail.com>
-Cc: Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig
- <alyssa@rosenzweig.io>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241124-adpdrm-v1-0-3191d8e6e49a@gmail.com>
- <20241124-adpdrm-v1-1-3191d8e6e49a@gmail.com>
- <ksdp54qj55v7igvvcshl6y2cxpmqy7rlsh4xsixpptjn7s7wlu@76ejtq6ytvbp>
- <a9d1568e-6240-49a4-b6a0-dcc0d9229eb1@marcan.st>
- <0dc16c95-6849-41c8-86da-d1c0c74cb3e4@kernel.org>
-From: Hector Martin <marcan@marcan.st>
-Content-Language: en-US
-In-Reply-To: <0dc16c95-6849-41c8-86da-d1c0c74cb3e4@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Commit 243f8ffc883a1 ("power: supply: bq27xxx_battery: Notify also about
+status changes") intended to notify userspace when the status changes,
+based on the flags register. However, the cached state is updated too
+early, before the flags are tested for any changes. Remove the premature
+update.
 
+Fixes: 243f8ffc883a1 ("power: supply: bq27xxx_battery: Notify also about status changes")
+Signed-off-by: Sicelo A. Mhlongo <absicsz@gmail.com>
+---
+ drivers/power/supply/bq27xxx_battery.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-On 2024/11/25 23:53, Krzysztof Kozlowski wrote:
-> On 25/11/2024 15:14, Hector Martin wrote:
->>>> +
->>>> +  "#address-cells":
->>>> +    const: 1
->>>> +
->>>> +  "#size-cells":
->>>> +    const: 0
->>>> +
->>>> +additionalProperties: true
->>>
->>> This cannot be true. Must be false.
->>>
->>>> +
->>>> +required:
->>>> +  - compatible
->>>> +  - reg
->>>> +  - interrupts
->>>
->>> This goes before additionalProperties.
->>>
->>> Missing example: that's a strong NAK and prove that this could not be
->>> even tested.
->>>
->>> Do you see any device schema without example? No. Do not develop things
->>> differently, Apple is not unique, special or exceptional.
->>
->> Krzysztof, it is entirely possible to express this same feedback without
->> being condescending and rude. I'm pretty sure you can do better than this.
-> 
-> Please kindly trim the replies from unnecessary context. It makes it
-> much easier to find new content.
-
-Noted.
- > Instead of patronizing, note that this was just pure observation - this
-> was done entirely than other bindings, which should be taken as an
-> example. Or example-schema should be taken as example... Pointing out
-> issues and inconsistencies is not rude or condescending. Basically now
-> you are condescending people's feedback which further restricts review
-> process allowing comments which you approve.
-> 
-
-No, that was certainly not pure observation. The observation is that the
-schema was inconsistent with other schemas, and was missing an example.
-The way you *expressed* that observation was unnecessarily rude and
-condescending, both in tone and message. Usage of "NAK" is strongly
-confrontational and discouraging to newcomers, and completely
-inappropriate here because the intent of the patch is clearly fine and
-it just needs some style and procedural issues fixed. "Do you ...? No."
-wording is condescending, like you're talking down to a child. The
-gratuitous Apple reference is completely unnecessary, implying we're
-attempting to be a special snowflake in any (non-technically-justified)
-way, never mind that none of us works nor has any professional
-relationship with Apple.
-
-Your observation and feedback could have been conveyed much more
-appropriately, kindly, and effectively, such as:
-
-==
-The schema is missing an example. Examples are required for schemas, as
-they are part of how the schema is tested by the automated tooling.
-Please see other schemas and `example-schema.yaml` for examples on how
-to do this, and `writing-schema.rst` for more information and how to run
-the checks.
-==
-
-- Hector
+diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/supply/bq27xxx_battery.c
+index 40c5ac7a1118..b2c65fe43d5c 100644
+--- a/drivers/power/supply/bq27xxx_battery.c
++++ b/drivers/power/supply/bq27xxx_battery.c
+@@ -1913,7 +1913,6 @@ static void bq27xxx_battery_update_unlocked(struct bq27xxx_device_info *di)
+ 		cache.flags = -1; /* read error */
+ 	if (cache.flags >= 0) {
+ 		cache.capacity = bq27xxx_battery_read_soc(di);
+-		di->cache.flags = cache.flags;
+ 
+ 		/*
+ 		 * On gauges with signed current reporting the current must be
+-- 
+2.45.2
 
 
