@@ -1,103 +1,60 @@
-Return-Path: <linux-kernel+bounces-421287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C55C69D891A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:21:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DF9A9D8921
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:22:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC9E71612D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:22:11 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3101B3930;
+	Mon, 25 Nov 2024 15:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QR3rS21M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8761F2878EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:21:42 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD081B3952;
-	Mon, 25 Nov 2024 15:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LPV4UESG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="E8GA8IgA";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LPV4UESG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="E8GA8IgA"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D75F171CD;
-	Mon, 25 Nov 2024 15:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0501A0AF0
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 15:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732548087; cv=none; b=Fwj2QsazuExx/PRLabh3U9S8gg5LBwr6GvCY4DDZ9CslK/uUUu1OPXwfCusfRClidD9+eJhLdXqXrBgBbRy6FoariCD5qClEUg/JxswVJ+fzRPprqg4KsmFt+kwkwStZsg/tR+lokBiP5OACjLQ5UUxvW1iCpvixnkc+GXJ/1eo=
+	t=1732548129; cv=none; b=TSlDEVWbk+WqrLoo2+uIAgURupM/TgpINrMTjJ7hpSy1GqrnmZz4Qslu9X9qrCaHYKbg3H/j+FiBdAh/HrHsM7srGTk9q7Nq8iv3pfOdyEGqgV6S5E7ueidlu1OF6tEGDXy/827Eww/0PtY7x1qLnMOj4pA3QSL3cfb42HE1ggo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732548087; c=relaxed/simple;
-	bh=yweQJS1T5MofFQxuCLlGNCE03LYgUUuFJ7++Wg4EkrQ=;
+	s=arc-20240116; t=1732548129; c=relaxed/simple;
+	bh=dy2fUC3Stp8CrKtZQSEcsiEhBheaz3FIUb1u3DlnIdE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mRcMFex3qqyb9gFwO0QZCEGK7GIf8k6xvNDJtaBZ60yU7rk+x7JdIJFeV55Mxo/UJ8cBrKxkiGKw0Wv9aRRr+TF6z1hLmfVzV1f++O+jIYA4kmv/pXoVE87InhCRKKzBF4XR+gswA3kwXEXaTXFwoLgGNbnUc7mQ8rARpEiqNU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LPV4UESG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=E8GA8IgA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LPV4UESG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=E8GA8IgA; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8A5E51F442;
-	Mon, 25 Nov 2024 15:21:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732548083;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tPBe0Y4n/AZ6gwF2arusg1VMijc8sZYzIsikVrciUoo=;
-	b=LPV4UESGR9i8iG116YJslgdxLPC5IE7TFL6ygnR5t+mLTPlBLfeo9Bfiq2DYg95Gu/rL8N
-	9Uk7aFSzv/Nki+7HZKaoPlVje8hU5vCPeM8LVtlfZdA6dOfMbMEJdpm2d9atvIcxVXe76w
-	deDlGjoqnSW3Vd4PU1yyn1qGVxVgOY4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732548083;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tPBe0Y4n/AZ6gwF2arusg1VMijc8sZYzIsikVrciUoo=;
-	b=E8GA8IgAkhxUfrEBIuiDiV5LfGoKIJahzaW0++YRsKY4bvmBlsOCZW4GSK4CL7ALM7JhV8
-	Mx4LEcVl8dL7vUAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=LPV4UESG;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=E8GA8IgA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732548083;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tPBe0Y4n/AZ6gwF2arusg1VMijc8sZYzIsikVrciUoo=;
-	b=LPV4UESGR9i8iG116YJslgdxLPC5IE7TFL6ygnR5t+mLTPlBLfeo9Bfiq2DYg95Gu/rL8N
-	9Uk7aFSzv/Nki+7HZKaoPlVje8hU5vCPeM8LVtlfZdA6dOfMbMEJdpm2d9atvIcxVXe76w
-	deDlGjoqnSW3Vd4PU1yyn1qGVxVgOY4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732548083;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tPBe0Y4n/AZ6gwF2arusg1VMijc8sZYzIsikVrciUoo=;
-	b=E8GA8IgAkhxUfrEBIuiDiV5LfGoKIJahzaW0++YRsKY4bvmBlsOCZW4GSK4CL7ALM7JhV8
-	Mx4LEcVl8dL7vUAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6E451137D4;
-	Mon, 25 Nov 2024 15:21:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dYupGvOVRGcWWwAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 25 Nov 2024 15:21:23 +0000
-Date: Mon, 25 Nov 2024 16:21:22 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>,
-	clm@fb.com, josef@toxicpanda.com, linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 6.12 10/19] btrfs: make
- extent_range_clear_dirty_for_io() to handle sector size < page size cases
-Message-ID: <20241125152122.GZ31418@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <20241124123912.3335344-1-sashal@kernel.org>
- <20241124123912.3335344-10-sashal@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jc3NlQOSr4AaQEFHjQBU9enO0zaU2IB8j94/+s4PFVP6UVRneK+QepdfobRzbAbB4T1x7nJMVNTYHSx1uYIALMhddxoBcFy9IhqyT6vpjNC9TP+qgo0SKEtwgBfBqG8t6bJSR9892r9DuA1p22mkcIxfI0s0whBOFAICjxhSN/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QR3rS21M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42357C4CECE;
+	Mon, 25 Nov 2024 15:22:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732548129;
+	bh=dy2fUC3Stp8CrKtZQSEcsiEhBheaz3FIUb1u3DlnIdE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QR3rS21M2KGkHEHHH8+vdXJI0OSl9SBbDyKKk7PcozxHkk3zUnqUIaDOpxeeetRgg
+	 kBNBSbIwXN7917M36RVEDC5JrNihq/Kk2RUcbG/XKlHhOom1iK5Z5RUAqpnmXRcZv1
+	 l9Ht9LmV1UkcMDcgeq6CArGanLjiQbZ+t/H9yhDVBqpB+YRHXy/GmV062UcVbRq9JD
+	 ckMwZcOGpnLlGqBbLxVjlgw4cNfxg8uakhCZ2RBlf9fXpHw4vtE+eXwKEB3sCzehHP
+	 /FS5qlpVU048kOl5H2NvfPMFCg2tlR+CuM3cuMFPEJDe7UgQpLw6XOpo8rE9xoQMML
+	 kGB8VEBsmgAsQ==
+Date: Mon, 25 Nov 2024 15:22:03 +0000
+From: Will Deacon <will@kernel.org>
+To: Yu Zhao <yuzhao@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Douglas Anderson <dianders@chromium.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Nanyong Sun <sunnanyong@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v2 0/6] mm/arm64: re-enable HVO
+Message-ID: <20241125152203.GA954@willie-the-truck>
+References: <20241107202033.2721681-1-yuzhao@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,82 +63,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241124123912.3335344-10-sashal@kernel.org>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: 8A5E51F442
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:dkim,suse.cz:mid,suse.com:email];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.21
-X-Spam-Flag: NO
+In-Reply-To: <20241107202033.2721681-1-yuzhao@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Sun, Nov 24, 2024 at 07:38:45AM -0500, Sasha Levin wrote:
-> From: Qu Wenruo <wqu@suse.com>
-> 
-> [ Upstream commit a4ef54dbb576032ba31a646a5ffc8a26a83cb92c ]
-> 
-> For btrfs with sector size < page size (e.g. 4K sector size, 64K page
-> size), and enable the sector perfect compression support, then the
-> following dirty range can lead to problems:
-> 
->    0     32K     64K     96K    128K
->    |     |///////||//////|    |/|
->                               124K
-> 
-> In above case, if we start writeback for that inode, the last dirty
-> range [124K, 128K) will not be submitted and cause reserved space
-> leakage:
-> 
-> - Start writeback for page 0
->   We find the range [32K, 96K) is suitable for compression, and queue it
->   into a workqueue to do the delayed compression and submission.
-> 
-> - Compression happens for range [32K, 96K)
->   Function extent_range_clear_dirty_for_io() is called, however it is
->   only doing full page handling, not considering any the extra bitmaps
->   for subpage cases.
-> 
->   That function will clear page dirty for both page 0 and page 64K.
-> 
-> - Writeback for the inode is done
->   Because page 64K has its dirty flag cleared, it will not be considered
->   as a writeback target.
-> 
-> This means the range [124K, 128K) will not be submitted, and reserved
-> space for it will be leaked.
-> 
-> Fix this problem by using the subpage helper to clear the dirty flag.
-> 
-> Signed-off-by: Qu Wenruo <wqu@suse.com>
-> Signed-off-by: David Sterba <dsterba@suse.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+Hi Yu Zhao,
 
-Please drop this patch from stable, it's preparatory work and has
-otherwise no effect.
+On Thu, Nov 07, 2024 at 01:20:27PM -0700, Yu Zhao wrote:
+> HVO was disabled by commit 060a2c92d1b6 ("arm64: mm: hugetlb: Disable
+> HUGETLB_PAGE_OPTIMIZE_VMEMMAP") due to the following reason:
+> 
+>   This is deemed UNPREDICTABLE by the Arm architecture without a
+>   break-before-make sequence (make the PTE invalid, TLBI, write the
+>   new valid PTE). However, such sequence is not possible since the
+>   vmemmap may be concurrently accessed by the kernel.
+> 
+> This series presents one of the previously discussed approaches to
+> re-enable HugeTLB Vmemmap Optimization (HVO) on arm64.
+
+Before jumping into the new mechanisms here, I'd really like to
+understand how the current code is intended to work in the relatively
+simple case where the vmemmap is page-mapped to start with (i.e. when we
+don't need to worry about block-splitting).
+
+In that case, who are the concurrent users of the vmemmap that we need
+to worry about? Is it solely speculative references via
+page_ref_add_unless() or are there others?
+
+Looking at page_ref_add_unless(), what serialises that against
+__hugetlb_vmemmap_restore_folio()? I see there's a synchronize_rcu()
+call in the latter, but what prevents an RCU reader coming in
+immediately after that?
+
+Even if we resolve the BBM issues, we still need to get the
+synchronisation right so that we don't e.g. attempt a cmpxchg() to a
+read-only mapping, as the CAS instruction requires write permission on
+arm64 even if the comparison ultimately fails.
+
+So please help me to understand the basics of HVO before we get bogged
+down by the block-splitting on arm64.
+
+Cheers,
+
+Will
 
