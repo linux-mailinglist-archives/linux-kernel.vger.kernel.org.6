@@ -1,180 +1,151 @@
-Return-Path: <linux-kernel+bounces-421383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90BFA9D8A9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:46:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE7A9D8ADD
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:00:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7A491675BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:46:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BE36B2A069
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A442500CB;
-	Mon, 25 Nov 2024 16:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901A31B4140;
+	Mon, 25 Nov 2024 16:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kU+H2+Zg"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="Ju4U8z5U"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51437D268
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 16:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39DD2500CB
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 16:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732553205; cv=none; b=GcgsRFXdnNvVEuQQ5u7GVdPJ9s9Lz8YNt6XzDPScinUoK+PWLZXujzGzPcTbCTI5eHEa3lV6fzaCFB43NVFu3M2EU/PoOgOsrtJdSRnEYZI0FgAEt2vOZHphblaXInd8bDXuo36JJWq/R/ULpOc6sfYXipMdHyZsLEBDJoM+j3w=
+	t=1732553339; cv=none; b=rYmqMnex8ZZJD0oLaPybjuylfV8XO53PdJKFP/uqe+75qbvFlxmka8e4iOylEi5bqiJKABjmllqa6iLWcjD1Ub51Zwb5svcXeNVSe4+ZwkiE4JgfEwCmPfptpnnwEgXrUroo7DTlwQTmcLvKXm7NcN1uX+NbCNvD6Sbz3/IgPJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732553205; c=relaxed/simple;
-	bh=TmhDZh4uJYsIr4ZcPM6+teizhg5NlbWqFLasKlVHwa4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GEumkcHVpH1V2k6ThQDukgjqtUIBJD5d0QqjGlaj0NFWsNNnDutnYkXA+XKqLzf1eFq27+BtzdModqf1O8fzmjzNmkeEDa7HAsZXuOLDH9M+GGkcX62K8z/6cSw3W1ggscem4/QmC1C6OyDpggt//b95UWS5PhaMSwBKO4dmxFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kU+H2+Zg; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53dd59a2bc1so3633517e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 08:46:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732553201; x=1733158001; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8ykbKQkuo2I4PEhIhBhe30Yc7TSw4jX5a63Tm3U6voo=;
-        b=kU+H2+ZgF2TSFVlz8DTyOx6BsROdtw4Cq99440/bkF8sW8b5BclVXQY1pLpTspStIs
-         oFpKPLOmSb111kf7ofKCkcpAgXLf0FM2agZApr4tKSK0vW8sPAGgtqw9uUfCc5c8lyA9
-         7/ogpUvmHX2a1q+jq6qYKDDRlLK9WubjHChdGWuXOOML3eRgYtJpT6/S6T7mxZlmPCZn
-         DLIo4oCyduvvw9Q9BnBwHbdKRP1VUjTMXmC4iH8MKvoMr+PXZV9w9vxMRiosjGQ9G2n/
-         mv7UDzCUA2Ha78wZsTHYUIdOx5oWn19m+yvEjeoRQNU3X00mSYZpGpaWyaJu84icjKbN
-         Z/xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732553201; x=1733158001;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8ykbKQkuo2I4PEhIhBhe30Yc7TSw4jX5a63Tm3U6voo=;
-        b=FaY4rVp482nFpMbFltCCbZDPdDU9OfrbiF6Dom0cV/sWcTFjc+PDO/8DOBjj39tohG
-         u804TiMj2qrlB00BTArYmV+InZBZ3LpWbxC6a92YOv4UXDaqiguft4R3WCVJ8uK+SB5o
-         kgmK/uNUehLS6qWdUtBCXa0hDvpj0oAIA+lXtpxnxkDymMT6T5blKHfFjtIuEKuiresG
-         CO8UwxM7d7KRD7dD+QX0Ddq0zz6a2cHrl5M/LtFWj+CXULm3S8U+fUOSe5PawiOGmo2i
-         L7wBKtmNJHGk6jU7XYMXSXl8gsfwft7ILl4qamBrOuyUYzd5pMkVrmM9/NWfgkpizODo
-         n+Jg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2GYgS/CYmEZiqBOOxIQ6jUI1m8LTGiMGFDGH+gbUHhHGPd7DT1WDfZqscOYHjT4YjUrY/ZBMxPLMgAkw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIYfv8CKzUXxXdHqxtZ+02TLpwQVABa6DxPl0/o8t0YjQPRCbP
-	RS8WMPQ30Bcyi6TZBZ9AbO1J6b6Tm7kX2AVYF09Hm2Ahk/9fN6sZ2vDK8tEqgx8=
-X-Gm-Gg: ASbGncsRsFpYUWUVy6exQMeDGVRwuTeAzSeQxudfKN1h40WR0aRkt7TVn75GEw5GJrB
-	IDSaV+toJU1DykQpqKKAx/Nr+FcMbXdOGcmPL4JGsxBsRfbOruvUuJFadlG2Uwqz0BiEvcvS8rW
-	+9Amez3svHW2xC1ErYOa7xCZmE/QRyf0F4z4dcNYsj6kifAGK9TjhBMM5Nyo3y1mSqMejL2hGq/
-	+v9keiIP1R5HqgW9Nkc8a5QMLsA3NRjYQ/8TJedzX0XkYAWf8wuIzc+WroKWngOkgPo24dERzZ4
-	HHJISQ4FTf9faboxC7QkUls+JkAFVg==
-X-Google-Smtp-Source: AGHT+IEIEs10x32BmBHwyCvNs3GkmUc0gOFBfdig3YObcsa/6Cquloa5nXm0+6tXaumC980PBV2hcw==
-X-Received: by 2002:a05:6512:1593:b0:53d:dd50:1a94 with SMTP id 2adb3069b0e04-53ddd501c1dmr3313733e87.53.1732553201410;
-        Mon, 25 Nov 2024 08:46:41 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd2451091sm1715437e87.65.2024.11.25.08.46.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 08:46:40 -0800 (PST)
-Date: Mon, 25 Nov 2024 18:46:37 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] drm/msm/adreno: Introduce ADRENO_QUIRK_NO_SYSCACHE
-Message-ID: <vfbklrbereo3j5dp2w4pvctef364sb2dqogccmaevjerkm5u43@jytwobqwvuv2>
-References: <20241125-a612-gpu-support-v2-0-b7cc38e60191@quicinc.com>
- <20241125-a612-gpu-support-v2-1-b7cc38e60191@quicinc.com>
+	s=arc-20240116; t=1732553339; c=relaxed/simple;
+	bh=Yu/+NP9AobvJs93H8yUtukZ0L4/B3zu9Nh3of63N92U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QN3A7YHc7x/LeqD0qAroaurdLPEUSJeSibArRjTVnOBGAyPdeKnfdKeUHZWomeO71YP/PWNZ30jWOUF2HlAs/Tp+nXTY2+w/zYZ9+5pCzYee/Kj3qFSRKA4U9lwAFR2w08QO6u1u/1eVn7wce0ux1d8mX/J+rbigVc6oXjSak7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=Ju4U8z5U; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5007a.ext.cloudfilter.net ([10.0.29.141])
+	by cmsmtp with ESMTPS
+	id FQGZtkxEMqvuoFcGZtQxaI; Mon, 25 Nov 2024 16:48:51 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id FcGXt9QbRvRBzFcGYtuuax; Mon, 25 Nov 2024 16:48:50 +0000
+X-Authority-Analysis: v=2.4 cv=dubdCUg4 c=1 sm=1 tr=0 ts=6744aa72
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=GtNDhlRIH4u8wNL3EA3KcA==:17
+ a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=pGLkceISAAAA:8 a=12PADHrDYx-1QOupR7YA:9 a=QEXdDO2ut3YA:10
+ a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=79KlrPkTs4rK20YKrDZnRsbA4oeLIskWUIi7/e1prQk=; b=Ju4U8z5UJHz+7Qa/ohUdgaRyQp
+	2MLPpMcTkQiq2skf1Wbftz3mSFhn/U+7KxOh3QIlX3GzcFMlSenMxBmS+gNyq1uEa99b9s1jZTwBG
+	A0uA6eWUy8AR3W/HZXxMMcuWUCaThjjqEiDRqSJlGRetRmCn++3BibgERjHfvMzz3WzfihZDx9e17
+	ftmYBlYa+foAnbcE4nHmFdO9Uo2FA+szyKQe+lWvzWrwBCZbyehyuTwhwp+XZwaHqmk22xDgesiyq
+	rSeQu7AE/WNOSGI7B+HCovz5UEsT5ZLlvWWhIe4TF3xgvZXi06UdJk+YiEB4KLZpW6ngvhOfc8AkS
+	BtA2e6rA==;
+Received: from [177.238.21.80] (port=33066 helo=[192.168.0.21])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1tFcGX-000OdC-11;
+	Mon, 25 Nov 2024 10:48:49 -0600
+Message-ID: <aefe4a2a-7adb-49b0-9d8a-32d129ad918d@embeddedor.com>
+Date: Mon, 25 Nov 2024 10:48:41 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241125-a612-gpu-support-v2-1-b7cc38e60191@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: mac80211: cfg: Initialize cnt before accessing elem
+To: Haoyu Li <lihaoyu499@gmail.com>, Johannes Berg <johannes@sipsolutions.net>
+Cc: Kees Cook <kees@kernel.org>, "Gustavo A . R . Silva"
+ <gustavoars@kernel.org>, linux-wireless@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20241123170848.309264-1-lihaoyu499@gmail.com>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20241123170848.309264-1-lihaoyu499@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 177.238.21.80
+X-Source-L: No
+X-Exim-ID: 1tFcGX-000OdC-11
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.0.21]) [177.238.21.80]:33066
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfFeGTJmWvCgot8Yk0gdbGIxlegz6w0CQlpc4/AwvsOxFPckaO/Bh0QDDOFW/cgiWXGtqjPOlEnLAQ0MSx8XRRSuBPxOJqnXR54XQzpFkV7aH37Ue0s39
+ d5rRQYkr5vZJjFwZ3MnIL+qc2TZI/jhuXOUBOJGK3sOOBQuB3IrWt0rhtk5sqVGFZGQZuE4X4r8uUcl3KWyhFLfWC/lW+9g9X/GafghXAyKF6pb1D4yWR3Oq
 
-On Mon, Nov 25, 2024 at 10:03:00PM +0530, Akhil P Oommen wrote:
-> There are a few chipsets which don't have system cache a.k.a LLC.
-> Currently, the assumption in the driver is that the system cache
-> availability correlates with the presence of GMU or RPMH, which
-> is not true. For instance, Snapdragon 6 Gen 1 has RPMH and a GPU
-> with a full blown GMU, but doesnot have a system cache. So,
-> introduce an Adreno Quirk flag to check support for system cache
-> instead of using gmu_wrapper flag.
+
+
+On 23/11/24 11:08, Haoyu Li wrote:
+> With the new __counted_by annocation in cfg80211_rnr_elems, the "cnt"
+> struct member must be set before accessing the "elem" array. Failing to
+> do so will trigger a runtime warning when enabling CONFIG_UBSAN_BOUNDS
+> and CONFIG_FORTIFY_SOURCE.
 > 
-> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+
+Nice catch. :)
+
+> Fixes: 7b6d7087031b ("wifi: cfg80211: Annotate struct cfg80211_rnr_elems with __counted_by")
+
+This should be Cc'd to stable:
+
+Cc: stable@vger.kernel.org
+
+> Signed-off-by: Haoyu Li <lihaoyu499@gmail.com>
+
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+
+Thanks
+-Gustavo
+
 > ---
->  drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 3 ++-
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 7 +------
->  drivers/gpu/drm/msm/adreno/adreno_gpu.h   | 1 +
->  3 files changed, 4 insertions(+), 7 deletions(-)
+>   net/mac80211/cfg.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> index 0c560e84ad5a..5e389f6b8b8a 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> @@ -682,6 +682,7 @@ static const struct adreno_info a6xx_gpus[] = {
->  		},
->  		.gmem = (SZ_128K + SZ_4K),
->  		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
-> +		.quirks = ADRENO_QUIRK_NO_SYSCACHE,
->  		.init = a6xx_gpu_init,
->  		.zapfw = "a610_zap.mdt",
->  		.a6xx = &(const struct a6xx_info) {
-> @@ -1331,7 +1332,7 @@ static const struct adreno_info a7xx_gpus[] = {
->  		},
->  		.gmem = SZ_128K,
->  		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
-> -		.quirks = ADRENO_QUIRK_HAS_HW_APRIV,
-> +		.quirks = ADRENO_QUIRK_HAS_HW_APRIV | ADRENO_QUIRK_NO_SYSCACHE,
->  		.init = a6xx_gpu_init,
->  		.zapfw = "a702_zap.mbn",
->  		.a6xx = &(const struct a6xx_info) {
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> index 019610341df1..a8b928d0f320 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> @@ -1863,10 +1863,6 @@ static void a7xx_llc_activate(struct a6xx_gpu *a6xx_gpu)
->  
->  static void a6xx_llc_slices_destroy(struct a6xx_gpu *a6xx_gpu)
->  {
-> -	/* No LLCC on non-RPMh (and by extension, non-GMU) SoCs */
-> -	if (adreno_has_gmu_wrapper(&a6xx_gpu->base))
-> -		return;
-> -
+> diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
+> index 61a824ec33da..6936b1303e81 100644
+> --- a/net/mac80211/cfg.c
+> +++ b/net/mac80211/cfg.c
+> @@ -1105,13 +1105,13 @@ ieee80211_copy_rnr_beacon(u8 *pos, struct cfg80211_rnr_elems *dst,
+>   {
+>   	int i, offset = 0;
+>   
+> +	dst->cnt = src->cnt;
+>   	for (i = 0; i < src->cnt; i++) {
+>   		memcpy(pos + offset, src->elem[i].data, src->elem[i].len);
+>   		dst->elem[i].len = src->elem[i].len;
+>   		dst->elem[i].data = pos + offset;
+>   		offset += dst->elem[i].len;
+>   	}
+> -	dst->cnt = src->cnt;
+>   
+>   	return offset;
+>   }
 
-Shouldn't it also be a NO_SYSCACHE check?
-
->  	llcc_slice_putd(a6xx_gpu->llc_slice);
->  	llcc_slice_putd(a6xx_gpu->htw_llc_slice);
->  }
-> @@ -1876,8 +1872,7 @@ static void a6xx_llc_slices_init(struct platform_device *pdev,
->  {
->  	struct device_node *phandle;
->  
-> -	/* No LLCC on non-RPMh (and by extension, non-GMU) SoCs */
-> -	if (adreno_has_gmu_wrapper(&a6xx_gpu->base))
-> +	if (a6xx_gpu->base.info->quirks & ADRENO_QUIRK_NO_SYSCACHE)
->  		return;
->  
->  	/*
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> index e71f420f8b3a..398be2218110 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> @@ -57,6 +57,7 @@ enum adreno_family {
->  #define ADRENO_QUIRK_HAS_HW_APRIV		BIT(3)
->  #define ADRENO_QUIRK_HAS_CACHED_COHERENT	BIT(4)
->  #define ADRENO_QUIRK_PREEMPTION			BIT(5)
-> +#define ADRENO_QUIRK_NO_SYSCACHE		BIT(6)
->  
->  /* Helper for formating the chip_id in the way that userspace tools like
->   * crashdec expect.
-> 
-> -- 
-> 2.45.2
-> 
-
--- 
-With best wishes
-Dmitry
 
