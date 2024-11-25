@@ -1,138 +1,163 @@
-Return-Path: <linux-kernel+bounces-421395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 170B99D8ADE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:01:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CB419D8AD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:58:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5B5216995E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:58:29 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0128C1B6CE3;
+	Mon, 25 Nov 2024 16:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gFfOIJRq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E31CB2C495
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:57:57 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F8D1B6CE3;
-	Mon, 25 Nov 2024 16:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C6q/3Xkc"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766AF1AD418
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 16:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5B1D268
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 16:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732553872; cv=none; b=aofuvEFvDN6DNNkG/KHa4bloKceV4q2HRxpLWfqF+UAcytKbFUGyiOTcRsTLQI+Zm6bvTnHI4ykIdWbqZri6085YVT11vpf4gsgQgIXl+X8wyX4DrZaTgffYKiqZVxdWPxunxxRSjWB/qEh9cZWohqCcOsdqMmUIHa2JvYtx0is=
+	t=1732553907; cv=none; b=I0wFY1uiZ7BN5f88Z4ue0MIWnkqH+vasCuzLRvE0kkUguzkQqPGeaHLnmAYiFe0F7XCO/6CX1ad0gcAVxZHO8e4zrH2gBTkNazgaQZjDWYMzgm3XjDHCgiJdmn7mmqI3LkVG6DvBjgmGeEL0IQ6NsfnUlDgy30gbOjTYUV6Vb44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732553872; c=relaxed/simple;
-	bh=Z6P1vbJRoR6U453YkDlYVMtfwVgpUxsKiaaruZVmf48=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Goxd1wEsrzpeKLYgy0elX+jxqxp1lewQkPQ4P0AdJj6mbD5tokKlg8HkM83axuW3F0QmW9x6zHo1uh8ciJyCBLY0rZOVPNsEX7cv7nOqT25S2o+H0Ou0uXH7UgOSdDa8SuZB9EFLa0yR0Qwrj95DebZyLE4OITKlfssoLZC3nhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C6q/3Xkc; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ffc7a2c5d5so9594831fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 08:57:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732553868; x=1733158668; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YZj7Tss77lciH17hRXQ1BEAAVY5qJ8Av4xkREtLcIzo=;
-        b=C6q/3XkcZnjbX/Dc+pu0CsMBIMkpuPt7RuWaciX7o8HIu3uODBn509F/1qGLgKcvZU
-         wOrWRU8D8e6yoNwPjuRrADOVJFRheDYB9rDEU4S+W7DCSpPK716MmntmRmmMHfkKwMbI
-         bXxRsgHpVLghj0kSbJx+MmuKRb6Ha3sbphtDAr/BPOuhN3dZOG7YBmARV2/BNGAIDeXZ
-         rDyMIZhjaapAddU/C5IdpWrMB6WN2m6IKpxRKKmzruca5IGdl1bY0XaycUeDC5xU4WSj
-         YFwGgsftG0bKYIVnKZEo8RqbDfUtEmwgluYccXI15UCvR3n1Yxp1jWND8BfS+EYeuFqQ
-         5y2g==
+	s=arc-20240116; t=1732553907; c=relaxed/simple;
+	bh=ZTPKLffCvQEZEK6o2yAQNX7IBGJkIc769lbWA7fTy2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BGuggFRpUSJtbWpS+GwyVk74vSB0tKv8UUqW/NO92J/PasPnN1nS38Uh1SDjDIRzWHIxcMgDB1WWOuj7f+3jFBccSYf64ek2z2ilmTcSxb58QhN5MN7R62MTPxoA3RoOJWr2id+nNY1FsqEfUlH7eFskZNbqjhw8BcJbcN0ZR7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gFfOIJRq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732553904;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GSzBiL5u950eGM301lTYfnD6IlyYrIXFO0OgaXC9p8U=;
+	b=gFfOIJRqgPHEB2HLYTS2wal1tbIMbbE90ykM2YBeKbPtd1nmlpwYAmcIbG0l0jRHv4Z9e5
+	KST90qTJn3lqgLuqCaNeGwgDt3Upl1FoELGUfawfTf1qFjtYqazNRnL4hI3dF8EGDT3pg6
+	ZpXs9AxuUjG5gF2K0ucZG3nfOPFS/O0=
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
+ [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-321-YlxJWUOAO067TFhr1l3zzA-1; Mon, 25 Nov 2024 11:58:22 -0500
+X-MC-Unique: YlxJWUOAO067TFhr1l3zzA-1
+X-Mimecast-MFC-AGG-ID: YlxJWUOAO067TFhr1l3zzA
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-84181aad98aso182542339f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 08:58:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732553868; x=1733158668;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YZj7Tss77lciH17hRXQ1BEAAVY5qJ8Av4xkREtLcIzo=;
-        b=eie7e1s/ZAsQlbDl7CYQArqC50E+HwzoqbwdkDesT8V5jUjbQu6g2duyVZLPvnwqz2
-         o205hbIcbtVVnQVSuk7xEIhglrf2x0EIc7TBIvpQHVFKeE6O/tKu8filGIFZqyD8NYG6
-         j/ALCcl1JJN/hDFiR17cn8JM0tMbT4NTYqDOsgPTM6Y07eVQtZImQRK+PMdYNQtwwIbN
-         RyzolklKF/ybzG4rBfP+XWD7NnfRD0f9EmMZAjdpMUeC6VcZ6HO8c/6IE8Xsd7C0tbS3
-         PgPSCF16Pv/RUk3ZJBm+7yl9R8Fty6+GJS3IyOOo718kxA/BufrZZp50T44VZcaCs8Zw
-         584Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXCK7wFYJa4uFDO+eTvHOP0fI+7g8J1IwmsLhkTZuk2OPzS+h5v/tPXmyNoTn23rwRFTjPD+eCEXRnaoHI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzv5p9iXARIk7IvQZ3c+qwrk5wy0a4iBsCmNIwFJjbqrgUDbtH5
-	axqtB0cCNq++fb3VMkNLBxySEPnl2JpE78fbjW7soXnq7zTVge5mS/PsBoI1jiaDrmwKb9nGSAk
-	rhW6fb7qnbPoLW1I2FvDtm37N9g==
-X-Gm-Gg: ASbGnctnWof//HZ2ixzUZCGebQuYN/XBjCyJOBALGHYQKA87138EyiJHpzOeNgUHP1M
-	dkAAMPZWz1HQr8qJ4CAzw/GF6uFC++1/7NfYiXfV1O/MGNA==
-X-Google-Smtp-Source: AGHT+IFQmU4WTgOVBRDGwyFzVHvE4qyUE6ZeAmezGevhgjS7K+k18MZ2tyY56i/H9+r7/w0jtwqanR4Lfl92sBz3FPU=
-X-Received: by 2002:a05:6512:6c7:b0:53d:de36:d0e5 with SMTP id
- 2adb3069b0e04-53dde36d13fmr3338826e87.14.1732553868282; Mon, 25 Nov 2024
- 08:57:48 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732553902; x=1733158702;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GSzBiL5u950eGM301lTYfnD6IlyYrIXFO0OgaXC9p8U=;
+        b=X4dov8FMd3uLoFbdHReYQVjQxOuEz8XLFQ9v+2Tj/C4rWrSaHylqGGaUBOgF2hXowO
+         8BnU1EGr34LoadgnXHFKVMQS6IH18hlLkLczBVE39qfs/Eavs8vJqRM7G75mwe8jEos/
+         2C6qXGzNLajgVRcmohrPZKnJw6rL1nBaS9SfR358iURl6YvY/+FTsHtx8+hs90Ak9/CE
+         147mhpSHaNBlEnhHUqqJrdyC+aE8h66JliJl2JqPkzaSIgemAdUOJjWrn25RQzLk0JZ0
+         tll9bOe1RDJWTaYGwdk9ZdmnpVqNo8KF99jpP9OrK4+JHM2Hodax5c+iCinFWorI7Xio
+         4UIw==
+X-Gm-Message-State: AOJu0YyfnKZttD0Hez6D4gF9stbSQM+Noy+RE9AsciPd5FrOG+Bn77Hi
+	jFHWPBCKapYK86cTZCJkU8/LqKYHxEqijNTlys0aYGVHWtYzdvR4hJZ1NdjEq3XI+67f5ScIhXw
+	+q/xTTVn1yKAAacSzYf2eEy8nPQJKhKn4/oSlaKhZ10UnNoVMxwoh5HRhsGAmPA==
+X-Gm-Gg: ASbGncvuvfZQp1ogpIcQSmh4S1sPhcKbEai/iGTGjd8v4udHcYbXivUT5mbrZH1XGHE
+	Wgt8hO14qpGKNsJ4a4EOOLazkGIfDN1WwJ2Diy30ad7BR5R20L8zc2OXsgDlF/MWcebMH6uJS8F
+	olwr0TYR8IuGPWWYXgY6gVLda1uRLRov+hUFz3t0c4ZJQK9rwU8JhDo6pUXuSj8D6LFIh1V4bfZ
+	Wbra/PIhNRAkSEZl6OdSl42rgjGE4UAY6Adtkrftg0Jw3QKxm7Div/Xn2+oc6lUZW5cL2on4Arv
+	Tw8XWo6xWKw=
+X-Received: by 2002:a05:6602:2c06:b0:83b:5221:2a87 with SMTP id ca18e2360f4ac-83ecdc32053mr1707083639f.3.1732553902233;
+        Mon, 25 Nov 2024 08:58:22 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHaG71TGELrKdnwNe8mQYHvvMOzWYYkH7rQnL1yylAURyOtN7iFiYwOhk+JkzObWCwvm/sN4A==
+X-Received: by 2002:a05:6602:2c06:b0:83b:5221:2a87 with SMTP id ca18e2360f4ac-83ecdc32053mr1707081539f.3.1732553901943;
+        Mon, 25 Nov 2024 08:58:21 -0800 (PST)
+Received: from x1n (pool-99-254-114-190.cpe.net.cable.rogers.com. [99.254.114.190])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8419314d3c5sm67497839f.7.2024.11.25.08.58.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2024 08:58:21 -0800 (PST)
+Date: Mon, 25 Nov 2024 11:58:19 -0500
+From: Peter Xu <peterx@redhat.com>
+To: stsp <stsp2@yandex.ru>
+Cc: Linux kernel <linux-kernel@vger.kernel.org>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Mike Rapoport <rppt@kernel.org>
+Subject: Re: userfaultfd: two-step UFFDIO_API always gives -EINVAL
+Message-ID: <Z0Ssq15MQd3rimBr@x1n>
+References: <2d35e5f7-2edc-4ef0-b71b-82186c0627b0@yandex.ru>
+ <Z0Se4BuVfqwjeCWV@x1n>
+ <b0818813-5a4c-4621-9810-dc7443a23dd1@yandex.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122163139.GAZ0Cx63Ia9kgYgRIr@fat_crate.local>
- <Z0C3mDCngAf7ErM2@gmail.com> <20241122170227.GAZ0C5I-F8AUpwCAcG@fat_crate.local>
- <Z0Q0PJzTMg_Or22I@gmail.com> <20241125102223.GBZ0RP375DufF0QQds@fat_crate.local>
-In-Reply-To: <20241125102223.GBZ0RP375DufF0QQds@fat_crate.local>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Mon, 25 Nov 2024 11:57:37 -0500
-Message-ID: <CAMzpN2gysxoKsjGhdSwykxQ1a_F0pZG=j6Y76QDgSmNG3V7SPg@mail.gmail.com>
-Subject: Re: [RFC PATCH] x86/boot: Get rid of linux/init.h include
-To: Borislav Petkov <bp@alien8.de>
-Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>, 
-	lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b0818813-5a4c-4621-9810-dc7443a23dd1@yandex.ru>
 
-On Mon, Nov 25, 2024 at 6:08=E2=80=AFAM Borislav Petkov <bp@alien8.de> wrot=
-e:
->
-> On Mon, Nov 25, 2024 at 09:24:28AM +0100, Ingo Molnar wrote:
-> > And if someone doesn't add the ugly KERNEL_PROPER_HEADER defines to a
-> > new header that somehow gets included into the decompressor build
-> > virally, it won't fire either. I think it's better to concentrate the
-> > uglies in the 'weird' code, ie. the decompressor.
->
-> Yes, I'd need to think of something slicker...
->
-> > Also, what's the root problem being solved? The changelog says:
-> >
-> >    > no collisions and ugly ifdeffery when those kernel proper headers
-> >    > get shared.
-> >
-> > But that's pretty vague - is there some recent build regression this is
-> > responding to? Which kernel headers collided with which headers used by
-> > the decompressor build?
->
-> The sharing of headers has always been a PITA. Because the decompressor i=
-s
-> different from kernel proper, the moment you start including kernel prope=
-r
-> headers for functionality, you need to exempt or add ifdeffery or do some
-> other weird dance to be able to share those headers.
->
-> Things like below are only some examples.
->
-> So I'd like to separate the two namespaces and only share common function=
-ality
-> through asm/shared/ and avoid all that ugly ifdeffery and workarounds we'=
-re
-> doing. Because each time we have to touch the decompressor - and we get t=
-o
-> touch it a lot with the confidential computing stuff recently - it is lik=
-e
-> a house of cards.
->
-> I hope that makes sense.
+On Mon, Nov 25, 2024 at 07:15:10PM +0300, stsp wrote:
+> 25.11.2024 18:59, Peter Xu пишет:
+> > I agree it's slightly confusing but it's intended.  It's like that since
+> > the start, so I think we should still keep the behavior.
+> > 
+> > The userapp needs to create one extra userfaultfd to detect supported
+> > features in the kernel.  To use it after a probe request, you'll need to
+> > close() the fd, redo the userfaultfd syscall to create another fd.
+> Hi Peter, thanks for info.
+> Unfortunately man page doesn't
+> say that. In fact if it did, I won't be
+> using the second userfaultfd just
+> for that, anyway. :)
 
-How about removing the kernel headers that you don't want from the
-include path?  This is a part of a broader issue where different parts
-of the kernel need different compiler flags (main kernel, VDSO, boot,
-etc.) and the current makefile structure doesn't handle that very
-well.
+But AFAIU that's the only way to probe kernel userfaultfd features.. so if
+we need a probe we need to have two fds.
 
+> 
+> Man page clearly talks about
+> "the userfaultfd object" (one object)
+> when mandating the "two-step handshake".
+> I spent hours of head-scratching
+> before went looking into the sources,
+> and even then I was confident the man
+> page is right: people should always assume
+> documentation is correct, code is buggy.
 
-Brian Gerst
+Hmm yes.  I didn't pay much attention initially, but then after I read the
+latest man-pages/, especially "UFFDIO_API(2const)" I found it looks indeed
+wrong in the doc.
+
+In this case we can't change the code because we need to keep it working
+like before to not break ABI.  We may still update the doc.
+
+IIUC the two-step was mentioned since this patch:
+
+https://lore.kernel.org/lkml/20230919190206.388896-6-axelrasmussen@google.com/#t
+
+So I also copied Axel and Mike, just to make sure I didn't miss something.
+
+> 
+> Would it be possible to re-document
+> this part? As all test-cases in kernel
+> do not use 2-steps - how about just
+> removing that part from man page?
+> Suggesting another fd would be strange. :)
+
+I would actually suggest mention another fd is needed for probing features.
+But you can wait for some comment from either Axel or Mike to double check
+that should be either removed or proposed.
+
+For man-pages contribution in case you're interested, see:
+
+https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/tree/CONTRIBUTING
+
+Thanks,
+
+-- 
+Peter Xu
+
 
