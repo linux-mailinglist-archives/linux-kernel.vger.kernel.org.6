@@ -1,229 +1,91 @@
-Return-Path: <linux-kernel+bounces-421217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E46F9D88B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:04:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 812B89D8827
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:36:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99B32169746
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:36:32 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984231B219E;
+	Mon, 25 Nov 2024 14:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d4k4ywMb"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64840B2AE6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:36:25 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777481B0F25;
-	Mon, 25 Nov 2024 14:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Oj96gdQc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KJEOAk54";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zaWIBWpT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EeY7XCXO"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51AB18F2DB;
-	Mon, 25 Nov 2024 14:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB171B218B
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732545378; cv=none; b=o8rxLuAMLotmh7d0Bn1ILWZWSR2zxCRuFBJs4fLaWk73U+HTFn1cEk+yg2CmvobI54JtIYaXg4O9WGLusTcefVKB8q4r2zp8CNs4f6rZG8ucZ1YcU8bSFbW3jB4y5KRMv8oWV+GjndvmiFKHsK8G3PMR+s59k7z+TuTmg5ogAeM=
+	t=1732545383; cv=none; b=DKfUCbUGf5sDifTl40CP0apTC4PX6L3tmXXqqsZ/aGn5XmQ1aYI9HtUA7j7CNnapNsY3bFrQcNIPGLprTDUvRmNQXjHSyqHVLs9ydr8pSi0UddUXSBF67EpV4PhLxfFc5CwDA441Zmg8TfJH1/Hzz5CXX//37E5VsNlNLMAJ5YA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732545378; c=relaxed/simple;
-	bh=jLPjVT2TL0J9iqEXf/J/xOkW83tnNHfoMCgi28K7Aqs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uUkk+XixYas2B6lWOCjz9YTrdsqctIOKS4ApHPipdvcdaTwRExtFRYJ0PXTQJ7wDl0d5HnoNc/tg2XugalKAcXYqqAsFfg7YCZ1jg+8xH8WBo+yN8ycMwu9jvvcjHQ751jLRN0g+K3cumnMwvsDxLpGjGTnTDAHPkk5e8OVSVEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Oj96gdQc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KJEOAk54; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zaWIBWpT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EeY7XCXO; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D7A251F396;
-	Mon, 25 Nov 2024 14:36:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732545375; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4rX/atjbTAdi+cXVd9hXBgI2PKFmjTNixezlzIFGYPU=;
-	b=Oj96gdQcJBIsZM1R+l0x6rsZfZW2eaYVHiqpqJhCb81I+eDYUx/uLeFN6TEGFABrqx3bpZ
-	QqQ7qqmzCWTV/0RfqAPR/wKaiDRQ61No3czGsXzi9ykoN4H/IiXWX0qqXsOGONkQ2H+sQ4
-	QXN7Nt3EpL/YnwHfih4ZkTB4sQlN6nM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732545375;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4rX/atjbTAdi+cXVd9hXBgI2PKFmjTNixezlzIFGYPU=;
-	b=KJEOAk54kvzyIw9T1p3dzYhPuVss0rYdgMLdsezsbbiGRWfmpqrR3JYld42bIKCEQa1YJz
-	2qQ4R13ZSYzvwADg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732545374; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4rX/atjbTAdi+cXVd9hXBgI2PKFmjTNixezlzIFGYPU=;
-	b=zaWIBWpTSgogTCxtaDVS+TSeZcac3PH4qUEwabkzoGMieN9gb8+TYd7F5HzuiSQejuukHy
-	FNDqCgexTUHrfIIBwY+mmHTx1+3ePcceBCFffxr9CSPDdYn5EILH56dUkLrQExKGjSUSRV
-	KNFwXjJslZ0RzWetTIluuoP3QgNOQVs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732545374;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4rX/atjbTAdi+cXVd9hXBgI2PKFmjTNixezlzIFGYPU=;
-	b=EeY7XCXOQF479j/V5JT5WYcHBm07ChAvAYaqwJ9lredcTjro8QJai0BEhLNLH5GJHE2d+X
-	wLn1G/i54kKxaOBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B3D91137D4;
-	Mon, 25 Nov 2024 14:36:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VNSNK16LRGf4SgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 25 Nov 2024 14:36:14 +0000
-Message-ID: <86b93a99-e759-45b8-b73e-1b4e3e8bd2b9@suse.cz>
-Date: Mon, 25 Nov 2024 15:36:14 +0100
+	s=arc-20240116; t=1732545383; c=relaxed/simple;
+	bh=hnxP6TXXcMZ27E1p+RYywSkk5x8YJsvdZiYDhpxzaHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FKsJKJbelCLolqpaOdEt6i4H5HmzurJ+aPNx8sCNVS4PzcjpqJ6+jXrBARPlOIRp3vmb2qFX0WjBtNzZxdgRotSqUcpce+K74NIEZTLE5e0y3oz+2zlAab2ITh9v60Rx/Eby4uqEkHHBXE0DxFRFN5TLq2uChG/eIBD6Iw0GXO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=d4k4ywMb; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=E70Jk0zQHyZ6q9JfQSQLYetgqHd5IZ7emE3coUjhMDc=; b=d4k4ywMbxVHyRIKsWgTFpbs1ne
+	HWYcLXNdrbxfVbF8w68Qn239gc5C55OehxemoNp4e0Dn3tkwVibo1C/fdFqbUXHcJHxGVkGfYDl4m
+	FKQuB/3YnnFoqUgRaq105ikikO0Op4uc44yGo7C942KsSlH3/tB8rSiLDK6jXA4WmSE0hG8ri56Nq
+	q70CGyQ0zVmWVZ5JS72Toedwp43vu8PcbepKLcgYNYiFoXdWG4bmKZZ0Z8nnuGryM54iOBr0Bb2VV
+	8phPwxKbtljlDts9n0h0MWbN70r6bpO1DYi3TRotm3xGTXUnMfRwUPKSqGRClsC5PE4Up6Ns3gHai
+	qZatyh3A==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tFaCH-0000000Byhx-1bb3;
+	Mon, 25 Nov 2024 14:36:19 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 279D530026A; Mon, 25 Nov 2024 15:36:18 +0100 (CET)
+Date: Mon, 25 Nov 2024 15:36:18 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 9/9] objtool: Collect all annotations in objtool.h
+Message-ID: <20241125143618.GQ38972@noisy.programming.kicks-ass.net>
+References: <20241122121016.372005127@infradead.org>
+ <20241122121556.560621502@infradead.org>
+ <20241122175445.tx3edadmof76yegs@jpoimboe>
+ <20241123131943.GD24774@noisy.programming.kicks-ass.net>
+ <20241125130613.GO38972@noisy.programming.kicks-ass.net>
+ <20241125134005.GP38972@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15.y 0/4] fix error handling in mmap_region() and
- refactor (hotfixes)
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, stable@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jann Horn <jannh@google.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Linus Torvalds <torvalds@linux-foundation.org>, Peter Xu
- <peterx@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>,
- "David S . Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>,
- "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
- Helge Deller <deller@gmx.de>
-References: <cover.1731667436.git.lorenzo.stoakes@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <cover.1731667436.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmx.de];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,oracle.com,google.com,vger.kernel.org,kvack.org,redhat.com,arm.com,kernel.org,davemloft.net,gaisler.com,HansenPartnership.com,gmx.de];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241125134005.GP38972@noisy.programming.kicks-ass.net>
 
-On 11/15/24 13:38, Lorenzo Stoakes wrote:
-> Critical fixes for mmap_region(), backported to 5.15.y.
+On Mon, Nov 25, 2024 at 02:40:05PM +0100, Peter Zijlstra wrote:
+> On Mon, Nov 25, 2024 at 02:06:13PM +0100, Peter Zijlstra wrote:
+> > On Sat, Nov 23, 2024 at 02:19:43PM +0100, Peter Zijlstra wrote:
+> > 
+> > > > BTW, is there a reason .discard.[un]reachable weren't converted over?
+> > > 
+> > > Completely forgot/missed them. Let me add a patch.
+> > 
+> > So this is turning into a bit of a trainwreck :/
+> > 
+> > That is, the below works, but I ended up having to include objtool.h
+> > from compiler.h, which is really unfortunate.
 > 
-> Some notes on differences from upstream:
+> Or rather, I suppose I can move unreachable() into objtool.h (or another
+> header entirely) and go include it from all the various files that call
+> it.
 > 
-> * We do NOT take commit 0fb4a7ad270b ("mm: refactor
->   map_deny_write_exec()"), as this refactors code only introduced in 6.2.
-> 
-> * We make reference in "mm: refactor arch_calc_vm_flag_bits() and arm64 MTE
->   handling" to parisc, but the referenced functionality does not exist in
->   this kernel.
-> 
-> * In this kernel is_shared_maywrite() does not exist and the code uses
->   VM_SHARED to determine whether mapping_map_writable() /
->   mapping_unmap_writable() should be invoked. This backport therefore
->   follows suit.
-> 
-> * The vma_dummy_vm_ops static global doesn't exist in this kernel, so we
->   use a local static variable in mmap_file() and vma_close().
-> 
-> * Each version of these series is confronted by a slightly different
->   mmap_region(), so we must adapt the change for each stable version. The
->   approach remains the same throughout, however, and we correctly avoid
->   closing the VMA part way through any __mmap_region() operation.
-> 
-> Lorenzo Stoakes (4):
->   mm: avoid unsafe VMA hook invocation when error arises on mmap hook
->   mm: unconditionally close VMAs on error
->   mm: refactor arch_calc_vm_flag_bits() and arm64 MTE handling
->   mm: resolve faulty mmap_region() error path behaviour
+> Only ~70 files.
 
-FWIW, looks good to me.
-
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-
->  arch/arm64/include/asm/mman.h | 10 ++--
->  include/linux/mman.h          |  7 +--
->  mm/internal.h                 | 19 ++++++++
->  mm/mmap.c                     | 86 +++++++++++++++++++++--------------
->  mm/nommu.c                    |  9 ++--
->  mm/shmem.c                    |  3 --
->  mm/util.c                     | 33 ++++++++++++++
->  7 files changed, 119 insertions(+), 48 deletions(-)
-> 
-> --
-> 2.47.0
-
+OK, done that. Fed it to the robot, lets see what comes apart.
 
