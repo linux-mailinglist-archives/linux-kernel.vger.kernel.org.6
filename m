@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-420396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8F6D9D79F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 03:07:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D850F9D79F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 03:07:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 816D728196A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 02:06:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A91DB219DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 02:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72C717548;
-	Mon, 25 Nov 2024 02:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B283D28684;
+	Mon, 25 Nov 2024 02:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OJiMbLUh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MYCyg9Na"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA864A2D;
-	Mon, 25 Nov 2024 02:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1582317C60;
+	Mon, 25 Nov 2024 02:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732500412; cv=none; b=EOJdeNuFbDGLsQ1on1m5I5TYnBjaxvu8vXCDXD64GnvsGYkjRAjL96FSoUMxQEkKZdM32HHiAFC9Wn28KxY3xlnulTlgjoUY3KzejKFPFwO2kbv/fJffhCQ+3z/6ZLGVpx3HOCjC5YJMA1zvI/R8gdgxm/le9C2hb2UL0hb29XE=
+	t=1732500413; cv=none; b=tt0ibwoTTcxm+R/5gevmUH2m13S4r7k3YYYDUOIeSELoLsyciHi/QPdfac/K9z2mxBlJuwZ9rw2sczxIFb2lmgdpQ1x7NjE4zo3wn+T9+5/Jpy73J2+3E2CvWCa+x2ZZrfVEndYUOjsm2lAQv2gB0bLwyPTrvojuK2wCMMsrGDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732500412; c=relaxed/simple;
-	bh=fKuuSMNf+Qy6m8ZOXTb7mpNsw2y4fw7IbYodhFF8XTE=;
+	s=arc-20240116; t=1732500413; c=relaxed/simple;
+	bh=Gu5Wu6oqy5RrPJGF75jiB8mV6u7GUvi00veqq4oAV6I=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=SgLX/6WRvwbPbBVXQEVCyDgq2wkrgUPkqLvP7ie0Uxv72pOgCZ2smStvDumjLV4bLf9jzF9uCPxpjAltcSTFQnsTnxyEfYMrRkx/LtKBiEVisxk5ACQdn7no/RdTFNIYuk4sLR0gSCVOSPRKrubyBeaOf4uxM9i6nQsHcyHJQm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OJiMbLUh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64D4FC4CECC;
-	Mon, 25 Nov 2024 02:06:51 +0000 (UTC)
+	 Message-Id:Subject; b=YouYvHkcsUwAr7lnYucoUGb3+BDYIMhnz19TM0OdCpaZTvMya7zS3GSYy1otCzS4xiigKUwpF3UEh+oIQd/R6sbcOOYVXFw6f5LAaOMBJvwa3+qCUfVq6md69ADuSR5rVm1/PwMYZH7mZ5XtiJeYvflmHBpvgBwTMzF+DQuXSLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MYCyg9Na; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B31A7C4CED9;
+	Mon, 25 Nov 2024 02:06:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732500411;
-	bh=fKuuSMNf+Qy6m8ZOXTb7mpNsw2y4fw7IbYodhFF8XTE=;
+	s=k20201202; t=1732500412;
+	bh=Gu5Wu6oqy5RrPJGF75jiB8mV6u7GUvi00veqq4oAV6I=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=OJiMbLUhe7rNCTkqgTcbf/1gksuekRvIEHdo7FgaTZ5Krjo4kOrZ8wyXNpfOVwwVX
-	 HAQdaEjQ5uFHcYXFHWip4rvCEvkuHnSx1c5Mjl26rB4NyCIca8qjK809oIWHmpk56W
-	 rPqk8nLn4mQwyoU6T42DPWnRGe9aK3adMADGzOZd5pWEUcl26NvWVcAnjivNmsMCe4
-	 QszW4mn4yLRtHkeu4OXCTVXJKeKrdcYfCMGvafMHTH8kbGuOcven9NrIDzgs3kJkve
-	 qKzgN0UMzpEMoSRIsbhhTL1LJgBbiCnV7wCHIcC7QaEbISlV3HZqRThvdlL5Jz1UZL
-	 24ZiZnnvzNW0A==
-Date: Sun, 24 Nov 2024 20:06:49 -0600
+	b=MYCyg9Na2ZSPDLA10+VfV7vvGR536PZbxkdwlN9SVGiZXCNzmI4JkyDU4ml3fYcz8
+	 HOYLlKb2i8HldOFxv15S6gVnl2YWa8yYMfxL9gqs9YYgLXWpcE/DVzlDug1xD9AIUs
+	 xgoTY0HkEL1a5n/pQBK1zMeJRptg9wNThp07WVrBCiIL5cFOpefCPGp8BjBHUqKHRN
+	 Kbj7ZpslOPuKDpu1i7WKRP9xiMw7t1d3k3MO99sMOmwKaAaBDL0ISNZb4MUcli10bc
+	 r/JBxZUf/mUqJvtjdoBd7DjhpSa0A2R2aT6B04oJ2vAL0JntI9gx2hsAYXZvxVmRzC
+	 wk+GWhxiBC0VA==
+Date: Sun, 24 Nov 2024 20:06:51 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,63 +50,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Dragan Cvetic <dragan.cvetic@amd.com>, linux-gpio@vger.kernel.org, 
- Herve Codina <herve.codina@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org, 
- Derek Kiernan <derek.kiernan@amd.com>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
- linux-kernel@vger.kernel.org, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
- Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>, 
- Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>, 
- Andrew Lunn <andrew@lunn.ch>, Saravana Kannan <saravanak@google.com>, 
- devicetree@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>, 
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, asahi@lists.linux.dev, 
+ David Airlie <airlied@gmail.com>, devicetree@vger.kernel.org, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
  linux-arm-kernel@lists.infradead.org, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Masahiro Yamada <masahiroy@kernel.org>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Krzysztof Wilczynski <kw@linux.com>
-To: Andrea della Porta <andrea.porta@suse.com>
-In-Reply-To: <ebb21da5cb41391421b364815705be8b4c415f8a.1732444746.git.andrea.porta@suse.com>
-References: <cover.1732444746.git.andrea.porta@suse.com>
- <ebb21da5cb41391421b364815705be8b4c415f8a.1732444746.git.andrea.porta@suse.com>
-Message-Id: <173250040873.6640.9720381303445148722.robh@kernel.org>
-Subject: Re: [PATCH v4 04/10] dt-bindings: misc: Add device specific
- bindings for RaspberryPi RP1
+ Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Hector Martin <marcan@marcan.st>, linux-kernel@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, Simona Vetter <simona@ffwll.ch>, 
+ Sven Peter <sven@svenpeter.dev>
+To: Sasha Finkelstein <fnkl.kernel@gmail.com>
+In-Reply-To: <20241124-adpdrm-v1-1-3191d8e6e49a@gmail.com>
+References: <20241124-adpdrm-v1-0-3191d8e6e49a@gmail.com>
+ <20241124-adpdrm-v1-1-3191d8e6e49a@gmail.com>
+Message-Id: <173250040970.6667.2839660338071681474.robh@kernel.org>
+Subject: Re: [PATCH 1/5] dt-bindgins: display: Add Apple pre-DCP display
+ controller bindings
 
 
-On Sun, 24 Nov 2024 11:51:41 +0100, Andrea della Porta wrote:
-> The RP1 is a MFD that exposes its peripherals through PCI BARs. This
-> schema is intended as minimal support for the clock generator and
-> gpio controller peripherals which are accessible through BAR1.
+On Sun, 24 Nov 2024 23:29:24 +0100, Sasha Finkelstein wrote:
+> Add bindings for a secondary display controller present on certain
+> Apple laptops.
 > 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
 > ---
->  .../devicetree/bindings/misc/pci1de4,1.yaml   | 74 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 75 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+>  .../bindings/display/apple,display-pipe.yaml       | 59 ++++++++++++++++++++++
+>  .../bindings/display/panel/apple,summit.yaml       | 24 +++++++++
+>  2 files changed, 83 insertions(+)
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
 
 yamllint warnings/errors:
+./Documentation/devicetree/bindings/display/apple,display-pipe.yaml:21:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
 
 dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/misc/pci1de4,1.example.dtb: clocks@c040018000: 'clock-names' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/clock/raspberrypi,rp1-clocks.yaml#
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/ebb21da5cb41391421b364815705be8b4c415f8a.1732444746.git.andrea.porta@suse.com
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241124-adpdrm-v1-1-3191d8e6e49a@gmail.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
