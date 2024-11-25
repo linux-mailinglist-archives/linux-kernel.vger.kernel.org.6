@@ -1,158 +1,160 @@
-Return-Path: <linux-kernel+bounces-421626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ED5F9D8DBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:16:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8687E9D8DC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:16:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11E78B23712
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:16:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB917B24178
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC8C1C7B8D;
-	Mon, 25 Nov 2024 21:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234561B6D1A;
+	Mon, 25 Nov 2024 21:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FP97FTA6"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y3oiHbDa"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7E029CF0;
-	Mon, 25 Nov 2024 21:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C976E18E359;
+	Mon, 25 Nov 2024 21:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732569348; cv=none; b=hv2e9UoQ67ANdoj8z3ZEtnZY3pr91f2JQ/xOq2X2zJZAOTPTC0OsXUcG+wKdUF06LFy1CZ+xGySc5/niXh0WUthYvZzCjuftXaX3/EZNjEJQvZZ+zNRDZdYhinMDRHlE7JZBmwFOuJTeHB2luskolQDU5ejVWU9gk8Mpfk6+Djk=
+	t=1732569383; cv=none; b=B6/1SuebHxqQcP3PAas8iqWAZzrAj5KlUT+oTHoKynD3AJ/TDCXfnzEVCs2jmxVVtOaeXBsxLmrwfkeUNFcd15SWPzzy+AtB3YCHwtugvfl4hGAB3guO/L8afgDHVauOq9SyJlPy77X6iVN5QNXG3IcUNFlkrfx8DZE8ZRGpZHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732569348; c=relaxed/simple;
-	bh=gZUSQSvzc5YB54ywrjqYGNjPec8n8bTjZdHFTF+U4ZQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FNf06gCxuyLqFnLkKuCUm9zvBjg3uuc2Lb8gzedoxYvyIBGoknuBKesEfe22B+Nl86FxSpc5Wd5QdFvH+7vFzhmsuyu6liDxtZOoQmN3HcwAgnSIlCpXRNHicCZMn3rmKvmb61Srq0bx7UItkjdDqL+y6BSVUB6GXMRkLmkGzjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FP97FTA6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APElRuv010591;
-	Mon, 25 Nov 2024 21:15:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	aRy7i9uA1euDkAdBW7ircoYxa+MN9A0sO7imEMW1MRs=; b=FP97FTA6tVsbL+e8
-	N2N9koDUg/N8D51CEBTxavLCzam3xpGOugoTwfhe39+/F57Gy/+tXE3kr/WtGaOP
-	zspKC3/urcUIMb0nmDUl+b+tq3nejc9Exo5RFqv8NY35SDw7cGYChNV/jT65VsSF
-	/Yakx4VaiyZcNyZGROFERachBRKp/FTjcPLoJW/ikD+/VGyCgU+GGkEwl5+0KwyO
-	ii4wE77yyRWsay+Ehy1q//k+jJ7pqx3XQ41/RafwZ+ThRwQ39qqLHmtp5haGY5JM
-	Pgrh8j3WR/1Qxf34/qXEDJyfREZTbD7iTrNQItH3cPLeiWj/6wSne4JXwP74zuVR
-	qNlb+g==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 434mx729v4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Nov 2024 21:15:41 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4APLFemB029058
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Nov 2024 21:15:40 GMT
-Received: from [10.71.111.113] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 25 Nov
- 2024 13:15:40 -0800
-Message-ID: <a76a8f0e-9710-4312-b399-2ab907c08a57@quicinc.com>
-Date: Mon, 25 Nov 2024 13:15:40 -0800
+	s=arc-20240116; t=1732569383; c=relaxed/simple;
+	bh=Kxd3jL2agBf6vwd6iXEw4ixRCMMaFRPmxbKJl/epnLY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jd5xHTXzgZ6e8Zbwuk71HBBb2RGFhiJX+pXcMhiVwtsJpvSmmXyTdsSdhhFVojhLSUxcPYaq68fditq7PLVrUFXbLnE6Ilbz0Q576DtUOlYaBebBGt//4PSUT3eNvKepc7CyTGhxrv0jTDW8kALddMO/o82UV7FkCz3fgRGjTBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y3oiHbDa; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43494a20379so18267985e9.0;
+        Mon, 25 Nov 2024 13:16:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732569379; x=1733174179; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OsMsBq/1wIMdpWsY4RKvycz22ohmv1H7HalrPjsXNQ4=;
+        b=Y3oiHbDao9/WAStszWrqRoj5XZvn4MN+GI/I43tkxgKoVCdu6ZWOjDF9xs0xDRb1ks
+         Fc9xNxnXGCREC0ORjjLZvsY0jpdowilYk8PEk0fY3WqNwqPr3H/Pm55m8kGRUWR9pfb8
+         XD4ZjIhkXKAZN8B/28cvbDVvvP1L6Urv7ydM22XnFnwoVllTdXXjkBvDUKM2jmW/radG
+         SVL2nFyW3RdKAbypioHeNi1aqp3O/1OWbdiAWKatmy+WHGuCdvA9mOYovsJGSQIEDRYB
+         oql5LxhTjc6MaBa892MtYlilPXjp8wkxtxubp7qGOPtIDd2XIMgDrI68ZbqMqa8gnzVr
+         p2sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732569379; x=1733174179;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OsMsBq/1wIMdpWsY4RKvycz22ohmv1H7HalrPjsXNQ4=;
+        b=WRO7T7LHspUoJTy5eGyDF8yusr2bpfRAtK0z5awCz8f/nGw9JzJUHinEQsyoUkiVME
+         zF1GbKHaUVsNk4OvxrQuRcBWKIX3zPoSI771sMddXr+tLkEDPKnWvNNV2QTWHRNQKD7T
+         vBKMk1yeX8D+tyrtTwrIuEK8d9pYlS+nidkcEVhJZMdFvpC4rRE30NLWxVaCrYOsQ/nA
+         DCRlUz9p8d+6FL00ktghTopN1tWEUOwfwL6xko/EWpDWft8iRuRIRreVAWRkI+At1j2W
+         DJJhraX5Mig5Xk75xguH8zOZ3qW4x7Kb+A/HyTuLnD1GO56UQ7cjEcnEB9C1OFUzEInN
+         VPNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVuXTN/HGDkhuV2wAvwNz7rrjZTYFNDdHfuGhl23B4pSYzaLkQNN/MOuVbegDgI587ex5x2P2urXfAc/0M@vger.kernel.org, AJvYcCWudmzuZRe93jvwO4NlkH7ThSoRCajh4j5FsgH8smvNikB6T4zL1qvoGa3Gwr8XC/si8xFWBDu/@vger.kernel.org, AJvYcCXuVwfMFVEUl9MIXujXdYz28RQCLiz30Zeadid7N6iCX/NHTyZy74EiF/l/1teHWKdGbshCPEMT98U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOdjOnVvZNpwTwfnVCMaP6OnmgUqsrvBZmwdw1CMQAU4Cst8ZP
+	Rk/O2RLjjfpbAt2sNLTIA48YriBPMfvA7ARLYZ0s1bIZdEtGTG3jcI6mSA==
+X-Gm-Gg: ASbGnct5P3aO3gFJZKprUTwqH6/pcrFocF2nhphfaETIq2Z1LoHpoKY2MzWCqXqRle8
+	8T8slS5WirKWNmufpHyOE+Un9t0bLDAEycpd+zScrtmCKOO/C5a8xVQs01fAQCRHdEGkNgcIBKW
+	6Ol4QhxZqbl/+7SXUl3YU4IGAYF3UzwwFRuOGR1Ud8eFKIMczJauR0Nk93PWJ0pm6+O4vMgRT8q
+	FOyOHknCmfbt6SjM9hk3Q2sPH/IRQTU/wNJFXEwO9Yo0oLZgX5/7znZVTCA145B83Yw362288EW
+	lWMt8KDb577lYJcJBBnK1OO+V4OjMeKYST1WG+JuSfWQgzxV1QPzUOkyo6Lgx5Uj3M1XRNu2
+X-Google-Smtp-Source: AGHT+IGB8RETDchcw6OuimkuCmKRcVJzDWc3LwUAvp9NJ6vv45+EyurXC6bx3NXGhM8WVH93FDd3yQ==
+X-Received: by 2002:a05:600c:4683:b0:42f:7e87:3438 with SMTP id 5b1f17b1804b1-433ce39e773mr130866255e9.0.1732569378782;
+        Mon, 25 Nov 2024 13:16:18 -0800 (PST)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-eff8-ad65-1bf6-3f21.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:eff8:ad65:1bf6:3f21])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4349ca82957sm75236295e9.33.2024.11.25.13.16.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2024 13:16:18 -0800 (PST)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 00/11] iio: fix information leaks in triggered buffers
+Date: Mon, 25 Nov 2024 22:16:08 +0100
+Message-Id: <20241125-iio_memset_scan_holes-v1-0-0cb6e98d895c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/7] dt-bindings: clock: qcom: Add SM8750 GCC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Trilok Soni
-	<quic_tsoni@quicinc.com>,
-        Satya Durga Srinivasu Prabhala
-	<quic_satyap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241112002807.2804021-1-quic_molvera@quicinc.com>
- <20241112002807.2804021-5-quic_molvera@quicinc.com>
- <vzu23hoou5rbcucrsnauq4ygxmqzuonyvxvnarsgxycc7wrnro@vpxauk6zmq36>
-Content-Language: en-US
-From: Melody Olvera <quic_molvera@quicinc.com>
-In-Reply-To: <vzu23hoou5rbcucrsnauq4ygxmqzuonyvxvnarsgxycc7wrnro@vpxauk6zmq36>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: W1FQ7tyF1K3GLgFS5QbMEhJ6HH8kSSgr
-X-Proofpoint-ORIG-GUID: W1FQ7tyF1K3GLgFS5QbMEhJ6HH8kSSgr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- mlxlogscore=992 malwarescore=0 adultscore=0 spamscore=0 mlxscore=0
- bulkscore=0 phishscore=0 lowpriorityscore=0 suspectscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411250176
+X-B4-Tracking: v=1; b=H4sIABjpRGcC/x3MQQqDMBBG4avIrA00GWnVq0gJQX/rgCaSkVIQ7
+ 97g8lu8d5IiC5T66qSMr6ikWGDrisYlxA+MTMXkHq6x1rERSX7Dpji8jiH6Ja1QE54vbpkxd+y
+ otHvGLL/7O7yv6w8bAsvrZwAAAA==
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, 
+ Antoni Pokusinski <apokusinski01@gmail.com>, 
+ Francesco Dolcini <francesco@dolcini.it>, 
+ =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>, 
+ Gregor Boirie <gregor.boirie@parrot.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>, 
+ Francesco Dolcini <francesco.dolcini@toradex.com>, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>, stable@vger.kernel.org
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732569377; l=2576;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=Kxd3jL2agBf6vwd6iXEw4ixRCMMaFRPmxbKJl/epnLY=;
+ b=Qfeds1P8y7Z9EZoxpVhjj6kyCGKOkj2NI0eU9LhGGa6YSWF0m4dOV8gOfbdGulHBQ77OB+XYu
+ c9kxzl+9urqAu6zc4xHO0bn6ilFif9o9yiVTh2kM7FihLDHS3oIQBy1
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
+This issue was found after attempting to make the same mistake for
+a driver I maintain, which was fortunately spotted by Jonathan [1].
 
+Keeping old sensor values if the channel configuration changes is known
+and not considered an issue, which is also mentioned in [1], so it has
+not been addressed by this series. That keeps most of the drivers out
+of the way because they store the scan element in iio private data,
+which is kzalloc() allocated.
 
-On 11/20/2024 12:17 AM, Krzysztof Kozlowski wrote:
-> On Mon, Nov 11, 2024 at 04:28:04PM -0800, Melody Olvera wrote:
->> From: Taniya Das <quic_tdas@quicinc.com>
->>
->> Add bindings documentation for the SM8750 General Clock Controller.
-> Subject prefix - use proper file prefix:
-> dt-bindings: clock: qcom,sm8650-gcc:
->
->> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
->> ---
->>   .../bindings/clock/qcom,sm8650-gcc.yaml       |   8 +-
->>   include/dt-bindings/clock/qcom,sm8750-gcc.h   | 226 ++++++++++++++++++
->>   2 files changed, 232 insertions(+), 2 deletions(-)
->>   create mode 100644 include/dt-bindings/clock/qcom,sm8750-gcc.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
->> index 976f29cce809..e50b5f1cad75 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
->> @@ -13,11 +13,15 @@ description: |
->>     Qualcomm global clock control module provides the clocks, resets and power
->>     domains on SM8650
->>   
->> -  See also:: include/dt-bindings/clock/qcom,sm8650-gcc.h
->> +  See also: include/dt-bindings/clock/qcom,sm8650-gcc.h
->> +            include/dt-bindings/reset/qcom,sm8750-gcc.h
->>   
->>   properties:
->>     compatible:
->> -    const: qcom,sm8650-gcc
->> +    items:
-> No need for items, simpler is just enum.
->
->> +      - enum:
->> +          - qcom,sm8650-gcc
->> +          - qcom,sm8750-gcc
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This series only addresses cases where uninitialized i.e. unknown data
+is pushed to the userspace, either due to holes in structs or
+uninitialized struct members/array elements.
 
-Hey Krzysztof; I want to draw you attention to the discussion on patch 
-v2 5/7 of this series;
-We realized these bindings don't match with the driver; notably SM8750 
-doesn't have the
-pcie1 clocks available on SM8650. To this end, it seems prudent to bring 
-back the separate
-bindings file from ps 1.
+While analyzing involved functions, I found and fixed some triviality
+(wrong function name) in the documentation of iio_dev_opaque.
 
-Thanks,
-Melody
+Link: https://lore.kernel.org/linux-iio/20241123151634.303aa860@jic23-huawei/ [1]
+
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Javier Carrasco (11):
+      iio: temperature: tmp006: fix information leak in triggered buffer
+      iio: adc: ti-ads1119: fix information leak in triggered buffer
+      iio: pressure: zpa2326: fix information leak in triggered buffer
+      iio: adc: rockchip_saradc: fix information leak in triggered buffer
+      iio: imu: kmx61: fix information leak in triggered buffer
+      iio: light: vcnl4035: fix information leak in triggered buffer
+      iio: light: bh1745: fix information leak in triggered buffer
+      iio: adc: ti-ads8688: fix information leak in triggered buffer
+      iio: dummy: iio_simply_dummy_buffer: fix information leak in triggered buffer
+      iio: light: as73211: fix information leak in triggered buffer
+      iio: core: fix doc reference to iio_push_to_buffers_with_ts_unaligned
+
+ drivers/iio/adc/rockchip_saradc.c           | 2 ++
+ drivers/iio/adc/ti-ads1119.c                | 2 ++
+ drivers/iio/adc/ti-ads8688.c                | 2 +-
+ drivers/iio/dummy/iio_simple_dummy_buffer.c | 2 +-
+ drivers/iio/imu/kmx61.c                     | 2 +-
+ drivers/iio/light/as73211.c                 | 3 +++
+ drivers/iio/light/bh1745.c                  | 2 ++
+ drivers/iio/light/vcnl4035.c                | 2 +-
+ drivers/iio/pressure/zpa2326.c              | 2 ++
+ drivers/iio/temperature/tmp006.c            | 2 ++
+ include/linux/iio/iio-opaque.h              | 2 +-
+ 11 files changed, 18 insertions(+), 5 deletions(-)
+---
+base-commit: ab376e4d674037f45d5758c1dc391bd4e11c5dc4
+change-id: 20241123-iio_memset_scan_holes-a673833ef932
+
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
