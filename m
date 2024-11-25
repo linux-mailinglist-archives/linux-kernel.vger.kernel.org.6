@@ -1,269 +1,377 @@
-Return-Path: <linux-kernel+bounces-421256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66ABF9D88D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:08:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A9F29D88B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:05:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AC10B471D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:03:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B52428565A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75851B0F06;
-	Mon, 25 Nov 2024 15:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB4C18C332;
+	Mon, 25 Nov 2024 15:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kw/bRwvA"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EHHLu3Ij"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92EF1B372C
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 15:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BA11AF0DB
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 15:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732547011; cv=none; b=GQZP7x2i9JByTHC/TLG7DytbM5WHeZRb6IE0utLAi8oJd5djOdMcpI4MMmIhBWlyq0SkalHi0Td7C2ZHNPqQ4/OkgQNftvb3oDKy1aZaPjJeeYFC4wKUVhTucgNtiFEG5GMq6gIEiaa5APZ+NatL+fs3Z/XshHlsvksvH+uWEBo=
+	t=1732547134; cv=none; b=P72aOxm7fNjMbjDCBjj5fk6xDnQhY08pOdAaYIvyNzqlZOJuANw9iW4jNqeP8PxpFm83v7OCVjALXIIeSSaD/lJu9Q8t3Xio09o+DPy+0kQYZ7uQ2wDI/wFv8bhbXQ9XQs4hf37gO1tk1ej1QYvHBgsmd2vC0dPe8XsFd6QlFAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732547011; c=relaxed/simple;
-	bh=BYAPbifOGFMbT/oNeV5H8H8GoSCuhZDyr7rtHcDE4Ro=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Wglan2YdG2IgmzKTSKHvR+/uWIswO5D5lBXZT/Y+gTykGShh/RFQlWGvhVgfwvafthyENbP1tGcY+EGG1yxlzwhjEf4G4S7gNFr54tn07KpKYNP2oNxiJKc3xCcpjf9YVlhFPx9yF2bB+ooJtiyB51GSAyKmS6DIAEI9LFywebg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kw/bRwvA; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7b66d08d529so64515285a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 07:03:26 -0800 (PST)
+	s=arc-20240116; t=1732547134; c=relaxed/simple;
+	bh=UgV0XxTTu1kmFlokedXo9obHhIV4jPG5NnJV/X0554A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i4BGC/NRzm3IlGKWkPaOIZ2kqUmXATdRhkRzMDZOlt23xLXyAI5yYDI0Jv+ev7QFGJ+nMUb2RxN7GpOQL9y+1um8bpD6NM6XxBy+J2qAT9pn/uR6W1Xdga1OyETWJt8ETKx/v2L/pOMrU+GJkefXAUQpwVUWhnGDcT71Z1Wd1LU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EHHLu3Ij; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7fc340eb006so773491a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 07:05:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732547005; x=1733151805; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1PVBG0drlljsVkEBbeau35zte0zCftwnSF7ZEns2RkI=;
-        b=kw/bRwvA4Hv77aGFCER93CVQh453hqjA/JZ5EjglGsg+xl6uLiZ1dGnTpB2PnkVxx0
-         hzj+d/0rDSmkOX57CbOC7YV7yOzKXn8/+bVWPaSU6uociwTd+IwfV5287r59PUXZE/KZ
-         boB4vLQi0IWoxtxHh8rxXN3fCJNW9n1YDib6OqV3Vo/xg09Mwlp44pYSrTE4TLTyXvuJ
-         uhG2xU2B2MrpwlmfemEmAAOmvrjTvwaQ+sHnlxpL2GX4stubQ5CYdbQQN7XBmnhIUaDn
-         AGLQfXDuOl3GMOq4v9pMS01087BKOesyNwK3ekEznWdvVRFkEPzIAmOeTMu4tuV0H1ox
-         NCGw==
+        d=chromium.org; s=google; t=1732547131; x=1733151931; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=sN5xfsl1tMVlezY7JOX6O7i9TGCGKrcDQ0i7ldPTdlo=;
+        b=EHHLu3IjPMKU0hi0K07avv3Mc22UUVODGHaIcb5RUHm0x/tCRpZzfS94p1GsJKNGe0
+         kO+4SV7YAXeZInrBq93galcZ8kT6uKXIMd6kz3yFJDTUuLs0aE33t9vjWuRRDy4tTs48
+         RqOteSJUVXDJHCxyJOCMJLkRJ3F1i9+C52f3c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732547005; x=1733151805;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1PVBG0drlljsVkEBbeau35zte0zCftwnSF7ZEns2RkI=;
-        b=VFs7hdVIQjzd47cgyFuWbT7jqlvM7FFSJgUhOrPyQh/voAS7Euat00Bjj2ORzngRK3
-         Brx9yII5OUfiscOy4FKW8CwE39cV0H/NPTImjdEQElJ2FDo4DnyMi2cR3s4ueOrvEu1M
-         PL3F4ekQ4xYqpLn1rCPukrg2otpE/yiUl1lMfqlkuHsaw9G05FF3o5bhVcGgEDfhxBsJ
-         EEZMzoleY1S0hPZsi9v8i05Q21ADwXmVYUBoPQM2YsWnaY4Z2Zsk1GbymjADdyj3Rt9k
-         eD8b1TB4ULap+AEK5STadqhB3hvXmfDfAHlfpGmz6oKVHqnvTYnyc4wGVxt1CIgxdkFL
-         KDRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUoYUvkxxiNnatYGETBBvOUOlY63P4md4UdsY25pKbhk3VkbAxyXx+gR+tK2TVVwkhC/c+cIDN3B1w0sNE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEGz0aBnCnlg7aQOGmJSuFv72JDScZZuhnfIBn+FBCFtcBLrvk
-	GVJszmTKWGfODCLHyvrz810rBRC4U9JBaPLH9Mfdsze+MOlGKt2HmlYSnrTxq9aIqfEGtTHKuIR
-	wfHcOwr6xlv4I8n5OUFLWyQc5BAxLaFfgT/kpbQ==
-X-Gm-Gg: ASbGncs9mBThJ/Z2xiv6lRChbyKQW2bRdUSrdv2CpFS4I5bAvg+pBQTSZKifCrtTTwz
-	W8EdsOYSETTDImbuXnSVCjgRTkL65DygiUA==
-X-Google-Smtp-Source: AGHT+IFM1jutegIbH3N1whIkVDo6HftuxY2rAiLT8oMAJlAXEVGXzFA7vyxDFNULJGUY40WX45oiWmYu6pzPREG0P6s=
-X-Received: by 2002:a05:620a:2947:b0:7b1:5545:7104 with SMTP id
- af79cd13be357-7b50c11a8a5mr2933373985a.2.1732547005320; Mon, 25 Nov 2024
- 07:03:25 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732547131; x=1733151931;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sN5xfsl1tMVlezY7JOX6O7i9TGCGKrcDQ0i7ldPTdlo=;
+        b=Rn14NaPlhIvzzZMdzHo0CN5cQgwXXOCEADTaO7DKRbxCwz9Qc03ujhFei3t2xyN0Jy
+         3/WbSYfDnOFWp06t8LTiBlak/CfJxMdPMmb/GTy8p09YT65Usxu7w6iqwEKOW0Nh2vNm
+         p0F+wCWRoadbywk/+Fl7T2hoeLxAuztAGzwgCYQoEKQpLX1KBLzwu3UMRsF8wfR9qQFr
+         em9xScaoq6Tk5uvcvxJW+wWLl3rYn3YAd8CEDketbWdicbqasoNccpOC+KIMap5diqzx
+         PXzFxTCDkO+4rRYoXgO8y+hqwQIhiBFXwwf3bQ4VtZ2f04kMIJJFiTNP4v0tE8EKOuTz
+         gZvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQfkxY4pz1bkPZQeG6hwzQH6qdWHQtJaTzCHLRysgFUku4XSV1Y2C0p5NdWsbJRyQCJBGMpl+zZ5asNSM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/OSpszdeCuOxmNZhn33O2X2ZYlXVAdmLvEtFQnYhjICmmls6C
+	WZMmuR8iT8z0Rc33g0rowHGf82jesBPiAcC16E6tk6J931jdnadlM8z5HjF6EruI7dpmjJo0HkE
+	=
+X-Gm-Gg: ASbGncto5HxgKcl/ntxXV2yhkJ1IZM9xVqie70DmOz9ca/QqUuC7rRkzE6nPE40AYL0
+	gq2atyycpTIDOtthl7EaMXQGILOd3dxo0WIF261BMY8/sCqRoGD19oL0mIIzisJ95vN51b7CnKf
+	SlCSCO7dVZoIOQIMixvxBL0smQchpp6rhSwT3yFVmqiJJtTrChN3UqVzSq9n/uNDMDHg1zdSO7A
+	crarfG7LgkphaKEOH/tubFvFGGAMt4YO/rm/f/+XE5FuRPKKtS3zzvtcMfhzmGN56VBmQ594RsU
+	koxSaON9cd9+pSud
+X-Google-Smtp-Source: AGHT+IERtkYl/vnGywn9JsYewwHrKwQHFrmfPSTloewgDxflLzel29EWB7VuUjsgh4Sfd8Ne+SyB0Q==
+X-Received: by 2002:a05:6a20:841e:b0:1d9:6a6b:faf4 with SMTP id adf61e73a8af0-1e09e44ac9dmr19927710637.15.1732547130815;
+        Mon, 25 Nov 2024 07:05:30 -0800 (PST)
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com. [209.85.210.182])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcc3dee7asm6768452a12.61.2024.11.25.07.05.28
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 07:05:28 -0800 (PST)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-724e1b08fc7so2795342b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 07:05:28 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWnOW9Lx6eW3YPNxvB0rC56Ql0m59GgvgrP5t3gCNzjPPDpDTimuxhPIWTLSdLdxJYWTyXzgbpWXz7HwlI=@vger.kernel.org
+X-Received: by 2002:a05:6a00:6c8e:b0:725:1951:79fd with SMTP id
+ d2e1a72fcca58-72519517cb5mr1434907b3a.26.1732547127285; Mon, 25 Nov 2024
+ 07:05:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Mon, 25 Nov 2024 20:33:14 +0530
-Message-ID: <CA+G9fYs+2mBz1y2dAzxkj9-oiBJ2Acm1Sf1h2YQ3VmBqj_VX2g@mail.gmail.com>
-Subject: pc : qnoc_probe (drivers/interconnect/qcom/icc-rpmh.c:269) :
- Dragonboard 410c - arm64 - boot failed
-To: linux-arm-msm <linux-arm-msm@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, clang-built-linux <llvm@lists.linux.dev>
-Cc: Georgi Djakov <djakov@kernel.org>, konradybcio@kernel.org, quic_okukatla@quicinc.com, 
-	quic_rlaggysh@quicinc.com, quic_jjohnson@quicinc.com
+References: <20241112-uvc-subdev-v3-0-0ea573d41a18@chromium.org>
+ <bd68178f-1de9-491f-8209-f67065d29283@redhat.com> <CANiDSCtjpPG3XzaEOEeczZWO5gL-V_sj_Fv5=w82D6zKC9hnpw@mail.gmail.com>
+ <20241114230630.GE31681@pendragon.ideasonboard.com> <CANiDSCt_bQ=E1fkpH1SAft1UXiHc2WYZgKDa8sr5fggrd7aiJg@mail.gmail.com>
+ <d0dd293e-550b-4377-8a73-90bcfe8c2386@redhat.com> <CANiDSCvS1qEfS9oY=R05YhdRQJZmAjDCxVXxfVO4-=v4W1jTDg@mail.gmail.com>
+ <5a199058-edab-4f9d-9e09-52305824f3bf@redhat.com>
+In-Reply-To: <5a199058-edab-4f9d-9e09-52305824f3bf@redhat.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 25 Nov 2024 16:05:15 +0100
+X-Gmail-Original-Message-ID: <CANiDSCsxkhZ0Dsxv9ZhkOk5JnZmSrFxq+tUoskxfHJDmSnXM5w@mail.gmail.com>
+Message-ID: <CANiDSCsxkhZ0Dsxv9ZhkOk5JnZmSrFxq+tUoskxfHJDmSnXM5w@mail.gmail.com>
+Subject: Re: [PATCH v3 0/8] media: uvcvideo: Implement the Privacy GPIO as a evdev
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Armin Wolf <W_Armin@gmx.de>, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	Yunke Cao <yunkec@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>, stable@vger.kernel.org, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 
-The arm64 Dragonboard 410c has failed with the Linux next, mainline
-and the Linux stable. Please find boot log and build links.
+On Mon, 25 Nov 2024 at 13:01, Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> Hi Ricardo,
+>
+> On 18-Nov-24 5:47 PM, Ricardo Ribalda wrote:
+> > Hi Hans
+> >
+> > On Mon, 18 Nov 2024 at 16:43, Hans de Goede <hdegoede@redhat.com> wrote:
+> >>
+> >> Hi All,
+> >>
+> >> On 15-Nov-24 9:20 AM, Ricardo Ribalda wrote:
+> >>> On Fri, 15 Nov 2024 at 00:06, Laurent Pinchart
+> >>> <laurent.pinchart@ideasonboard.com> wrote:
+>
+> <snip>
+>
+> >>>> How do you handle cameras that suffer from
+> >>>> UVC_QUIRK_PRIVACY_DURING_STREAM ?
+> >>>
+> >>> For those b) does not work.
+> >>
+> >> I already suspected as much, but it is good to have this
+> >> confirmed.
+> >>
+> >> I'm afraid that from a userspace API pov cameras with a GPIO
+> >> which only works when powered-on need to be treated the same as
+> >> cameras which only have UVC_CT_PRIVACY_CONTROL IOW in this case
+> >> keep exporting V4L2_CID_PRIVACY instead of switching to evdev
+> >> with SW_CAMERA_LENS_COVER.
+> >>
+> >> Unfortunately this will make the GPIO handling code in the UVC
+> >> driver somewhat more involved since now we have both uAPI-s for
+> >> GPIOs depending on UVC_QUIRK_PRIVACY_DURING_STREAM.
+> >>
+> >> But I think that this makes sense, this way we end up offering
+> >> 2 uAPIs depending on the hw capabilities:
+> >>
+> >> 1. evdev with SW_CAMERA_LENS_COVER which always reports a reliable
+> >> state + events on the state changing without needing to power-up
+> >> the camera.
+> >>
+> >> 2. V4L2_CID_PRIVACY for the case where the camera needs to be
+> >> powered-on (/dev/video opened) and where the ctrl possibly needs
+> >> to be polled.
+> >>
+> >> Assuming we can all agree on this split based on hw capabilities
+> >> I think that we must document this somewhere in the media subsystem
+> >> documentation. We can then also write down there that
+> >> SW_CAMERA_LENS_COVER only applies to internal cameras.
+> >
+> > I do not think that it is worth it to keep UVC_CT_PRIVACY_CONTROL for
+> > the two devices that have connected the GPIO's pull up to the wrong
+> > power rail.
+> > Now that the GPIO can be used from userspace, I expect that those
+> > errors will be found early in the design process and never reach
+> > production stage.
+> >
+> >
+> > If we use UVC_CT_PRIVACY_CONTROL for thes two devices:
+> > - userspace will have to implement two different APIs
+> > - the driver will have to duplicate the code.
+> > - all that code will be very difficult to test: there are only 2
+> > devices affected and it requires manual intervention to properly test
+> > it.
+> >
+> > I think that UVC_QUIRK_PRIVACY_DURING_STREAM is a good compromise and
+> > the main user handles it properly.
+>
+> Ok, as you wish. Lets go with using SW_CAMERA_LENS_COVER for the 2 models with
+> UVC_QUIRK_PRIVACY_DURING_STREAM too.
+>
+> <snip>
+>
+> >>>> Is there any ACPI- or WMI-provided information that could assist with
+> >>>> associating a privacy GPIO with a camera ?
+>
+> I just realized I did not answer this question from Laurent
+> in my previous reply.
+>
+> No unfortunately there is no ACPI- or WMI-provided information that
+> could assist with associating ACPI/WMI camera privacy controls with
+> a specific camera. Note that these are typically not exposed as a GPIO,
+> but rather as some vendor firmware interface.
+>
+> Thinking more about this I'm starting to believe more and more
+> that the privacy-control stuff should be handled by libcamera
+> and then specifically by the pipeline-handler, with some helper
+> code to share functionality where possible.
+>
+> E.g. on IPU6 equipped Windows laptops there may be some ACPI/WMI
+> driver which provides a /dev/input/event# SW_CAMERA_LENS_COVER node.
+>
+> So I would expect the IPU6 pipeline-handler to search for such a
+> /dev/input/event# node and then expose that to users of the camera
+> through a to-be-defined API (I'm thinking a read-only control).
+>
+> The code to find the event node can be shared, because this would
+> e.g. likely also apply to some IPU3 designs as well as upcoming
+> IPU7 designs.
+>
+> <snip>
+>
+> >>>> We could include the evdev in the MC graph. That will of course only be
+> >>>> possible if the kernel knows about that association in the first place.
+> >>>> At least the 1st category of devices would benefit from this.
+> >>
+> >> Yes I was thinking about adding a link to the MC graph for this too.
+> >>
+> >> Ricardo I notice that in this v3 series you still create a v4l2-subdev
+> >> for the GPIO handling and then add an ancillary link for the GPIO subdev
+> >> to the mc-graph. But I'm not sure how that is helpful. Userspace would
+> >> still need to do parent matching, but then match the evdev parent to
+> >> the subdev after getting the subdev from the mc. In that case it might
+> >> as well look at the physical (USB-interface) parent of the MC/video
+> >> node and do parent matching on that avoiding the need to go through
+> >> the MC at all.
+> >>
+> >> I think using the MC could still be useful by adding a new type of
+> >> ancillary link to the MC API which provides a file-path as info to
+> >> userspace rather then a mc-link and then just directly provide
+> >> the /dev/input/event# path through this new API?
+> >>
+> >> I guess that extending the MC API like this might be a bit of
+> >> a discussion. But it would already make sense to have this for
+> >> the existing input device for the snapshot button.
+> >
+> > The driver creates a v4l2-subdevice for every entity, and the gpio
+> > today is modeled as an entity.
+>
+> Ok I see that explains why the subdevice is there, thank you.
+>
+> > The patchset just adds an ancillary link as Sakari suggested.
+> > I am not against removing the gpio entity all together if it is not needed.
+>
+> Right unlike other entities which are really part of the UVC
+> specification, the GPIO is not a "real" UVC entity.
+>
+> So I wonder if, after switching to SW_CAMERA_LENS_COVER, having
+> this as a v4l2-subdevice buys us anything ? If not I think removing
+> it might be a good idea.
+>
+> As for the ancillary link, that was useful to have when the API
+> was a v4l2-ctrl on the subdevice. Just like I doubt if having
+> the subdevice at all gives us any added value, I also doubt if
+> having the ancillary link gives us any added value.
+>
+> > Now that we are brainstorming here... what about adding a control that
+> > contains the name of the input device (eventX)? Is that a horrible
+> > idea?
+>
+> I don't know, my initial reaction is that does not feel right to me.
+>
+> >>>>>> We can specify
+> >>>>>> that SW_CAMERA_LENS_COVER only applies to device internal
+> >>>>>> cameras, but then it is up to userspace to determine which
+> >>>>>> cameras that are.
+> >>>>>
+> >>>>> I am working on wiring up this to userspace right now.. I will report
+> >>>>> back if it cannot do it.
+> >>
+> >> Ricardo, great, thank you!
+>
+> Ricardo, any status update on this ?
 
-Device: Dragonboard 410c - arm64
-Boot failed: clang-19
-Configs: korg-clang-19-lkftconfig-hardening
-Boot pass: qemu-arm64 (Additional info)
+I still have not wired it to ChromeOS. But I do not expect to have any
+issues. it is relative simple to go from vdev to evdev and the other
+way around
 
-This is always reproducible.
+ # ls -la /sys/class/video4linux/video0/device/input/input*/
+drwxr-xr-x. 3 root  root     0 Nov 25 06:56 event11
 
-Dragonboard 410c - arm64:
-boot:
- * clang-nightly-lkftconfig-hardening
- * korg-clang-19-lkftconfig-hardening
+ # ls -la /sys/class/input/event11/device/device/video4linux/
+drwxr-xr-x. 3 root root 0 Nov 25 06:56 video0
+drwxr-xr-x. 3 root root 0 Nov 25 06:56 video1
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Log details:
-------------
-[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd030]
-[    0.000000] Linux version 6.12.0-next-20241125 (tuxmake@tuxmake)
-(ClangBuiltLinux clang version 19.1.4
-(https://github.com/llvm/llvm-project.git
-aadaa00de76ed0c4987b97450dd638f63a385bed), ClangBuiltLinux LLD 19.1.4
-(https://github.com/llvm/llvm-project.git
-aadaa00de76ed0c4987b97450dd638f63a385bed)) #1 SMP PREEMPT @1732509632
-[    0.000000] KASLR disabled due to lack of seed
-[    0.000000] Machine model: Qualcomm Technologies, Inc. APQ 8016 SBC
-<Trim>
-[    8.983574] videodev: Linux video capture interface: v2.00
-[    8.990308] Internal error: UBSAN: array index out of bounds:
-00000000f2005512 [#1] PREEMPT SMP
-[    8.990374] Modules linked in: qcom_rng drm_client_lib qcom_stats
-qnoc_msm8916(+) videodev videobuf2_memops videobuf2_common mc
-rpmsg_ctrl rpmsg_char display_connector phy_qcom_usb_hs drm_kms_helper
-ramoops reed_solomon socinfo rmtfs_mem fuse drm backlight ip_tables
-x_tables ipv6
-[    9.000620] CPU: 0 UID: 0 PID: 199 Comm: (udev-worker) Not tainted
-6.12.0-next-20241125 #1
-[    9.022836] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
-[    9.030902] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    9.037760] pc : qnoc_probe (drivers/interconnect/qcom/icc-rpmh.c:269)
-[    9.044439] lr : qnoc_probe (drivers/interconnect/qcom/icc-rpmh.c:0)
-[    9.048258] sp : ffff800083b93470
-[    9.052075] x29: ffff800083b93480 x28: ffff000002c2ae80 x27: ffff80007ac3d3e0
-[    9.055554] x26: ffff000002c2ae88 x25: 0000000000000000 x24: ffff000009bb7400
-[    9.062671] x23: 0000000000000000 x22: 0000000000000001 x21: ffff000004931400
-[    9.069788] x20: ffff000004931410 x19: ffff0000048e0c80 x18: ffff800083a7d0a8
-[    9.076907] x17: fffffffffffc23a2 x16: 0000000000000001 x15: 000000000000026c
-[    9.084027] x14: fffffffffffffffd x13: 0000000000000000 x12: ffff7fffba293000
-[    9.091145] x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000001
-[    9.098262] x8 : 0000000000000000 x7 : 0000000000000000 x6 : 000000000000003f
-[    9.105381] x5 : 0000000000000040 x4 : ffff00003c75d9e0 x3 : 0000000000199400
-[    9.112497] x2 : 0000000000000008 x1 : 0000000000000000 x0 : 0000000000000000
-[    9.119617] Call trace:
-[    9.126727] qnoc_probe+0x4c8/0x4d0 P
-[    9.128987] qnoc_probe+0x354/0x4d0 L
-[    9.132805] platform_probe (drivers/base/platform.c:1405)
-[    9.136624] really_probe (drivers/base/dd.c:581 drivers/base/dd.c:658)
-[    9.140443] __driver_probe_device (drivers/base/dd.c:800)
-[    9.144089] driver_probe_device (drivers/base/dd.c:830)
-[    9.148429] __driver_attach (drivers/base/dd.c:1217)
-[    9.152422] bus_for_each_dev (drivers/base/bus.c:369)
-[    9.156590] driver_attach (drivers/base/dd.c:1234)
-[    9.160495] bus_add_driver (drivers/base/bus.c:676)
-[    9.164140] driver_register (drivers/base/driver.c:247)
-[    9.167700] __platform_driver_register (drivers/base/platform.c:867)
-[    9.171520] init_module+0x20/0xfbc qnoc_msm8916
-[    9.176383] do_one_initcall (init/main.c:1250 init/main.c:1267)
-[    9.181068] do_init_module (kernel/module/main.c:2910)
-[    9.184800] load_module (kernel/module/main.c:3376)
-[    9.188618] __arm64_sys_finit_module (kernel/module/main.c:3565
-kernel/module/main.c:3577 kernel/module/main.c:3603
-kernel/module/main.c:3587 kernel/module/main.c:3587)
-[    9.192353] invoke_syscall (arch/arm64/kernel/syscall.c:50)
-[    9.197127] el0_svc_common (arch/arm64/kernel/syscall.c:139)
-[    9.200771] do_el0_svc (arch/arm64/kernel/syscall.c:152)
-[    9.204503] el0_svc (arch/arm64/kernel/entry-common.c:165
-arch/arm64/kernel/entry-common.c:178
-arch/arm64/kernel/entry-common.c:745)
-[    9.207802] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:797)
-[    9.210756] el0t_64_sync (arch/arm64/kernel/entry.S:600)
-[ 9.215189] Code: aa1303e0 97fff41c 17ffff79 d4200020 (d42aa240)
-All code
-========
+>
+> <snip>
+>
+> >>>> Assuming the kernel could report the association between an evdev and
+> >>>> camera, we would need to report which evdev SW_CAMERA_LENS_COVER
+> >>>> originates from all the way from the evdev to the consumer of the event.
+> >>>> How well is that supported in standard Linux system architectures ? If
+> >>>> I'm not mistaken libinput will report the originating device, but how
+> >>>> far up the stack is it propagated ? And which component would we expect
+> >>>> to consume those events, should the camera evdev be managed by e.g.
+> >>>> libcamera ?
+> >>
+> >> Good questions. Looking back at our 2 primary use-cases:
+> >>
+> >> a) Having an app which is using (trying to use) the camera show
+> >> a notification to the user that the camera is turned-off by
+> >> a privacy switch .
+> >>
+> >> b) Showing on on-screen-display (OSD) with a camera /
+> >> crossed-out-camera icon when the switch is toggled, similar to how
+> >> muting speakers/mic show an OSD . Laptop vendor Windows add-on
+> >> software does this and I know that some users have been asking
+> >> for this.
+> >>
+> >> I think we have everything to do b) in current compositors
+> >> like gnome-shell. Using an evdev with SW_CAMERA_LENS_COVER
+> >> would even be a lot easier for b) then the current
+> >> V4L2_CID_PRIVACY API.
+> >>
+> >> a) though is a lot harder. We could open up access to
+> >> the relevant /dev/input/event# node using a udev uaccess
+> >> tag so that users who can access /dev/video# nodes also
+> >> get raw access to that /dev/input/event# node and then
+> >> libcamera could indeed provide this information that way.
+> >> I think that is probably the best option.
+> >>
+> >> At least for the cases where the camera on/off switch
+> >> does not simply make the camera completely disappear.
+> >>
+> >> That case is harder. atm that case is not handled at all
+> >> though. So even just getting b) to work for that case
+> >> would be nice / an improvement.
+> >>
+> >> Eventually if we give libcamera access to event#
+> >> nodes which advertise SW_CAMERA_LENS_COVER (and no other
+> >> privacy sensitive information) then libcamera could even
+> >> separately offer some API for apps to just get that value
+> >> if there is no camera to associate it with.
+> >>
+> >> Actually thinking more about it libcamera probably might
+> >> be the right place for some sort of "no cameras found
+> >> have you tried hitting your camera privacy-switch" API.
+> >> That is some API to query if such a message should be
+> >> shown to the user. But that is very much future work.
+> >
+> > Are standard apps expected to use libcamera directly or they should
+> > use pipewire?
+> > Maybe a) Should be pipewire's task?
+>
+> Standard apps are supposed to use pipewire, but IMHO this is
+> really too low-level for pipewire to handle itself.
+>
+> Also see my remarks above about how I think this needs to
+> be part of the pipeline handler. Since e.g. associating
+> a /dev/input/event# SW_CAMERA_LENS_COVER node with a specific
+> UVC camera is going to be UVC specific solution.
+>
+> For other pipeline-handlers combined with vendor fw-interfaces
+> offering SW_CAMERA_LENS_COVER support I do not think that there
+> is going to be a way to actually associate the 2. So we will
+> likely simply have the pipeline handler for e.g. IPU6 simply
+> associate any SW_CAMERA_LENS_COVER with the normal (non IR)
+> user facing camera.
+>
+> Since we need this different ways to map a /dev/input/event#
+> SW_CAMERA_LENS_COVER node to a specific camera this really
+> needs to be done in libcamera IMHO.
+>
+> And I think this also solves the question about needing
+> a kernel  API to associate the /dev/input/event# with
+> a specific /dev/video#. At least for now I think we don't
+> need an API and instead we can simply walk sysfs to find
+> the common USB-interface parent to associate the 2.
+>
+> See how xawtv associates the alsa and /dev/video# parts
+> of tv-grabber cards for an example.
+>
+> Regards,
+>
+> Hans
+>
+>
+>
 
-Code starting with the faulting instruction
-===========================================
-[    9.218752] ---[ end trace 0000000000000000 ]---
-[    9.233047] note: (udev-worker)[199] exited with irqs disabled
-[    9.233245] note: (udev-worker)[199] exited with preempt_count 1
-[    9.243434] ------------[ cut here ]------------
-<trim>
-[    9.243951] WARNING: CPU: 0 PID: 0 at kernel/context_tracking.c:128
-ct_kernel_exit (kernel/context_tracking.c:153)
-[    9.248555] Modules linked in: videobuf2_v4l2 qcom_rng
-drm_client_lib qcom_stats qnoc_msm8916(+) videodev videobuf2_memops
-videobuf2_common mc rpmsg_ctrl rpmsg_char display_connector
-phy_qcom_usb_hs drm_kms_helper ramoops reed_solomon socinfo rmtfs_mem
-fuse drm backlight ip_tables x_tables ipv6
-[    9.260538] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Tainted: G      D
-          6.12.0-next-20241125 #1
-[    9.282755] Tainted: [D]=DIE
-[    9.292113] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
-[    9.292888] Unable to handle kernel read from unreadable memory at
-virtual address 0000ffffa3c44d20
-[    9.295061] pstate: 204000c5 (nzCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    9.295071] pc : ct_kernel_exit (kernel/context_tracking.c:153)
-[    9.295088] lr : ct_kernel_exit (kernel/context_tracking.c:126)
-[    9.301765] Mem abort info:
-[    9.310514] sp : ffff800082503d10
-[    9.310519] x29: ffff800082503d10 x28: ffff8000824c4ff0 x27: ffff800082509000
-[    9.310536] x26: 0000000000000000 x25: ffff0000041f9898
-[    9.317463]   ESR = 0x0000000096000004
-[    9.321618]  x24: ffff0000041f9898
-[    9.321625] x23: 0000000226f30819 x22: 0000000000000000
-[    9.325621]   EC = 0x25: DABT (current EL), IL = 32 bits
-[    9.328214]  x21: ffff00003c757ff8
-[    9.328221] x20: ffff8000824c2350 x19: ffff00003c755350
-[    9.331701]   SET = 0, FnV = 0
-[    9.338806]  x18: ffff800082514880
-[    9.338813] x17: 00000000529c6ef0 x16: 00000000529c6ef0 x15: 000000000000007e
-[    9.343850]   EA = 0, S1PTW = 0
-[    9.347659]
-[    9.347662] x14: 00000000000000c8 x13: 0000000000000004 x12: 000000000a929b85
-[    9.351058]   FSC = 0x04: level 0 translation fault
-[    9.356167]
-[    9.356171] x11: 0000000000000015 x10: 000000000682aaab x9 : 4000000000000000
-[    9.361732] Data abort info:
-[    9.364935] x8 : 4000000000000002 x7 : 0000000000005221 x6 : 0000000000055ad0
-[    9.370064]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-[    9.373179] x5 : 0000000000005469 x4 : 0000000000000093 x3 : 0000000000000006
-[    9.376580]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-[    9.383768] x2 : 0000000000000000 x1 : ffff0000041f9880 x0 : ffff7fffba293000
-[    9.386730]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[    9.388462] Call trace:
-[    9.395502] user pgtable: 4k pages, 48-bit VAs, pgdp=00000000856aa000
-[    9.400175] ct_kernel_exit+0x80/0x8c P
-[    9.401918] [0000ffffa3c44d20] pgd=0000000000000000
-[    9.408943] ct_kernel_exit+0x14/0x8c L
-[    9.408958] ct_idle_enter (kernel/context_tracking.c:321)
-[    9.411910] , p4d=0800000089bb0403
-[    9.418929] cpuidle_enter_state (drivers/cpuidle/cpuidle.c:268)
-[    9.418943] cpuidle_enter (drivers/cpuidle/cpuidle.c:391)
-[    9.418953] do_idle (kernel/sched/idle.c:155
-kernel/sched/idle.c:230 kernel/sched/idle.c:325)
-[    9.424326] , pud=080000008943e403
-[    9.431516] cpu_startup_entry (kernel/sched/idle.c:422)
-[    9.431527] rest_init+0xe0/0xe4
-[    9.436563] , pmd=0800000089bac403
-[    9.443668] start_kernel (init/main.c:1040)
-[    9.443681] __primary_switched (arch/arm64/kernel/head.S:247)
-[    9.449057] , pte=00200000910f9fc3
-[    9.451224] ---[ end trace 0000000000000000 ]---
 
-Links:
-------
-- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241125/testrun/26040307/suite/boot/test/korg-clang-19-lkftconfig-hardening/log
-- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241125/testrun/26040307/suite/boot/test/korg-clang-19-lkftconfig-hardening/details/
-- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241125/testrun/26040307/suite/boot/test/korg-clang-19-lkftconfig-hardening/history/
-- https://lkft.validation.linaro.org/scheduler/job/8004888#L2200
-- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2pKKSWo1tVldooGuq0fBz0nRD07/
-
-Build image:
------------
-- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2pKKSWo1tVldooGuq0fBz0nRD07/
-
-Steps to reproduce:
-------------
-- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2pKKSWo1tVldooGuq0fBz0nRD07/reproducer
-- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2pKKSWo1tVldooGuq0fBz0nRD07/tux_plan
-
-metadata:
-----
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-kernel config:
-https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2pKKSWo1tVldooGuq0fBz0nRD07/config
-build url: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2pKKSWo1tVldooGuq0fBz0nRD07/
-toolchain: clang-19 and clang-nightly
-config:  korg-clang-19-lkftconfig-hardening
-arch: arm64
-
---
-Linaro LKFT
-https://lkft.linaro.org
+-- 
+Ricardo Ribalda
 
