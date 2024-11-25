@@ -1,83 +1,77 @@
-Return-Path: <linux-kernel+bounces-420490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 562EA9D7B9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:41:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9B13162AB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 06:41:06 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB2716DEB3;
-	Mon, 25 Nov 2024 06:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="kwXZUS22"
-Received: from esa9.hc1455-7.c3s2.iphmx.com (esa9.hc1455-7.c3s2.iphmx.com [139.138.36.223])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 412A29D7BA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:44:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAC32500DE;
-	Mon, 25 Nov 2024 06:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.138.36.223
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA995B21D00
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 06:44:03 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E191822E5;
+	Mon, 25 Nov 2024 06:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LuLDsLlQ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AE216FF37;
+	Mon, 25 Nov 2024 06:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732516864; cv=none; b=iqaldl7N6xjIdOnc4ehEE9fTqgVoiMRXrp8eX70OLeOr0XgbuzT40g74vrBKUuJaeneeNU9vPArViRmr7HwHl6sIw0AaJTneUiaQjYAAsr+md7cT+zqN8qP/81I6gZFr35zy8+kJPVeP2Oh/KjKMebNkU/XjTERtAlVNQ0tq7aE=
+	t=1732517034; cv=none; b=fE7kZ/eQmAK9rUCtcUEXg88L8vQfHxQBkTr6z4C8wq2b8PYL9meLoKXuO68+ElivxMv1DWC68sXDmuYbJwoH0hgtbBsBzorQmYsTT82373+lCc1xKCLtW+0fZHvg6HWayEtI1LWrWS74EktBPwtGMtrVaUogwSiKv2TuQ7/EOiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732516864; c=relaxed/simple;
-	bh=R+Yrl/CXUyWG0r/M1xNa06uDoWkLDm2g2c0kpQJpGbM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DvoYPpviVhYQfVWL2qd4DV5Ni9n4eIfJzPezUKOeuqH+TqE1yNwBF/nAOxN8DBr4fRAFxcU0by9/jnOmBBg39kAxMCGfzvgyfYXcyseRgDQDApJ9hziSQhC0EhVM7S0GvPlk6FzhYjtBpt1Wll4X20mFxZq0edlaKzep+4w06zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=kwXZUS22; arc=none smtp.client-ip=139.138.36.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1732516862; x=1764052862;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=R+Yrl/CXUyWG0r/M1xNa06uDoWkLDm2g2c0kpQJpGbM=;
-  b=kwXZUS224cLkj9iK+n8tUFzpwz4z9gAMDGzK9iypAlraeyIfa43+g7FJ
-   FvcXtwNxttYGo5nUP2k33iNgnTgKPOf+KIa0DOwfnOZSvvcDJV7uoKg9I
-   2jEKqSq/+IvdVupIM6s68zVhZCBtaukCISRo5SlnWBjtGlIvd/iY7efbq
-   PKjQ6TG7reyWVglACFMMdB6DjHsl5thi6sBDksuMD3GG0zbT077wOTHGK
-   8k2tx/WoVOlUizBLdwq03xNAOsZg2ZYOax9Lwunzm7PG5ooq55Y5eZw+4
-   3m65gf1aZfPpDPihpD/KsA09sGQRX2knX579DWMp0gtiu+8UUwCCqnUWd
-   g==;
-X-CSE-ConnectionGUID: 62zT3ZINSAO/ng8aQdkjsg==
-X-CSE-MsgGUID: +sdIroXhQ/OGlMX/+iOz6w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="169897267"
-X-IronPort-AV: E=Sophos;i="6.12,182,1728918000"; 
-   d="scan'208";a="169897267"
-Received: from unknown (HELO oym-r1.gw.nic.fujitsu.com) ([210.162.30.89])
-  by esa9.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 15:39:50 +0900
-Received: from oym-m3.gw.nic.fujitsu.com (oym-nat-oym-m3.gw.nic.fujitsu.com [192.168.87.60])
-	by oym-r1.gw.nic.fujitsu.com (Postfix) with ESMTP id 8F63FD480B;
-	Mon, 25 Nov 2024 15:39:48 +0900 (JST)
-Received: from kws-ab3.gw.nic.fujitsu.com (kws-ab3.gw.nic.fujitsu.com [192.51.206.21])
-	by oym-m3.gw.nic.fujitsu.com (Postfix) with ESMTP id 1CF9FD5610;
-	Mon, 25 Nov 2024 15:39:48 +0900 (JST)
-Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
-	by kws-ab3.gw.nic.fujitsu.com (Postfix) with ESMTP id 87D952007CDDF;
-	Mon, 25 Nov 2024 15:39:47 +0900 (JST)
-Received: from iaas-rdma.. (unknown [10.167.135.44])
-	by edo.cn.fujitsu.com (Postfix) with ESMTP id 30A721A006C;
-	Mon, 25 Nov 2024 14:39:46 +0800 (CST)
-From: Li Zhijian <lizhijian@fujitsu.com>
-To: shuah@kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Li Zhijian <lizhijian@fujitsu.com>,
-	Donet Tom <donettom@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	John Hubbard <jhubbard@nvidia.com>,
-	linux-mm@kvack.org,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH for-next v4] selftests/mm: Add a few missing gitignore files
-Date: Mon, 25 Nov 2024 14:40:36 +0800
-Message-ID: <20241125064036.413536-1-lizhijian@fujitsu.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20241122074612.1582161-1-lizhijian@fujitsu.com>
-References: <20241122074612.1582161-1-lizhijian@fujitsu.com>
+	s=arc-20240116; t=1732517034; c=relaxed/simple;
+	bh=dWyWToLbYLFj6bARx0JGVSujunpFShjO9Au0BNa6nI0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B9C5Y6b71R7CR5X36vWx+5bP5iKXwF/4zN3IdxfJcAUeVWNvFL7CzYYfqU7r850hK3RzR7mQTTmHpJPcp4AEj45LLReRASv4Na/FKg2bsgtj3Wx4PrlGNGdDwiaF8kO2uA9W6Rns0D5N36omycv0aHcD1TBpdyiD3e+6x3O/1Ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LuLDsLlQ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AONji9w019665;
+	Mon, 25 Nov 2024 06:43:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=d23LlqCY+leeCGC3PRJArL
+	py8cEgDgIjY+mThSlf8us=; b=LuLDsLlQERrXGSJSVfp0e93/eWo4XUDl0yqc1c
+	X6mrAGrLpDfVnpLTez2EEJDrxFvtH4zEKYNo0/VouP4/98lCMwPoMR+IqiHdw2V7
+	EdRxaor+KRByl6Kgw3zNQqsztFXHgm+XqLrA7nMIU7yXjdNvMsQRBsW2DT4PP1uY
+	62flCMPwH8EhQFHNkesdIyv4cryZ7M4dyoxl3zY4gUtiWe2/WXQPzWY3EVV4R6EP
+	Zrkes7DVKWQXh4AiIGwCcWYmUQZWJzExhKHoyXmaSgpCJKS6UEzS3WqhQJ4Bdf0m
+	jCWSup6TKYOs6SvHzOwUZAUGvid4gtaNQrXTRGnhh876o2nw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 433626bq0n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 06:43:43 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AP6hg9m001165
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 06:43:42 GMT
+Received: from hu-yrangana-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 24 Nov 2024 22:43:38 -0800
+From: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Vinod Koul
+	<vkoul@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_yrangana@quicinc.com>
+Subject: [PATCH V5 0/2] Enable TRNG for QCS8300
+Date: Mon, 25 Nov 2024 12:13:15 +0530
+Message-ID: <20241125064317.1748451-1-quic_yrangana@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,73 +79,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-28818.005
-X-TM-AS-User-Approved-Sender: Yes
-X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-28818.005
-X-TMASE-Result: 10--9.531200-10.000000
-X-TMASE-MatchedRID: HRm6PbbemxchiKpapiFQUqoXHZz/dXlxTJDl9FKHbrk/gf7afIrQU36y
-	x7OFE28Qe+eZU8eiw0ZakcaN0kYenAtnIcpCCGR9zfqlpbtmcWgrtx/8GWh5m1c/CedjlcvkLHN
-	FiwmJRq8xepHN1Gb+gpD1bY6uTBHE77IR1AIYrusqy6shOlK/42Iw13TP8dlT2vch1fMqmI8muo
-	4pNDIMvtvWTR/WiMl9HBunSHImBEL9rLNrEHKk3k7nLUqYrlslmOb/jZZZ8UIGWfDd0b0zMaPFj
-	JEFr+olwXCBO/GKkVqOhzOa6g8KrW0MLeV6pd59t5Zx1OwHJens0JYSBlfWTr5ameoPLbalQvt6
-	QaxTfxs=
-X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: zpGUDJDXdu8tKhFQhyT62TG0z8FiKVzJ
+X-Proofpoint-ORIG-GUID: zpGUDJDXdu8tKhFQhyT62TG0z8FiKVzJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 clxscore=1015 phishscore=0 spamscore=0 adultscore=0
+ impostorscore=0 mlxscore=0 malwarescore=0 suspectscore=0 mlxlogscore=557
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411250055
 
-Compiled binary files should be added to .gitignore
-'git status' complains:
-   Untracked files:
-   (use "git add <file>..." to include in what will be committed)
-         mm/hugetlb_dio
-         mm/pkey_sighandler_tests_32
-         mm/pkey_sighandler_tests_64
+Add device-tree nodes to enable TRNG for QCS8300
 
-Cc: Donet Tom <donettom@linux.ibm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Shuah Khan <shuah@kernel.org>
-Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+This series depends on below patch series:
+https://lore.kernel.org/all/20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com/ - Reviewed
+
+Signed-off-by: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
 ---
-Cc: linux-mm@kvack.org
+Changes in v5:
+ - Remove "Reviewed-by" tag added incorrectly
+ - Link to v4: https://lore.kernel.org/all/20241122074346.4084606-1-quic_yrangana@quicinc.com/
+
+Changes in v4:
+ - Address the reg entry style
+ - Link to v3: https://lore.kernel.org/all/20241113021819.2616961-1-quic_yrangana@quicinc.com/
+
+Changes in v3:
+ - Drop DT label as per review comments
+ - Link to v2: https://lore.kernel.org/all/20241107121513.641281-1-quic_yrangana@quicinc.com/
+
+Changes in v2:
+ - Mistakenly uploaded the base dtsi change instead of marking dependency
+ - Link to v1: https://lore.kernel.org/all/20241106110002.3054839-1-quic_yrangana@quicinc.com/
+
 ---
+Yuvaraj Ranganathan (2):
+  dt-bindings: crypto: qcom,prng: document QCS8300
+  arm64: dts: qcom: qcs8300: add TRNG node
 
-Hey John,
-I added your Reviewed-by tag in this revision which have a minor
-updates. Feel free to let me know if you feel this is unsuitable.
+ Documentation/devicetree/bindings/crypto/qcom,prng.yaml | 1 +
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi                   | 5 +++++
+ 2 files changed, 6 insertions(+)
 
-Hello,
-Cover letter is here.
-
-This patch set aims to make 'git status' clear after 'make' and 'make
-run_tests' for kselftests.
----
-V4:
-
-  Use the exact filename to fix warning reported by lkp@intel.com
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202411251308.Vjm5MzVC-lkp@intel.com/
-V3:
-   nothing change, just resend it
-   (This .gitignore have not sorted, so I appended new files to the end)
-V2:
-  split as seperate patch from a small one [0]
-  [0] https://lore.kernel.org/linux-kselftest/20241015010817.453539-1-lizhijian@fujitsu.com/
----
- tools/testing/selftests/mm/.gitignore | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/tools/testing/selftests/mm/.gitignore b/tools/testing/selftests/mm/.gitignore
-index da030b43e43b..689bbd520296 100644
---- a/tools/testing/selftests/mm/.gitignore
-+++ b/tools/testing/selftests/mm/.gitignore
-@@ -51,3 +51,6 @@ hugetlb_madv_vs_map
- mseal_test
- seal_elf
- droppable
-+hugetlb_dio
-+pkey_sighandler_tests_32
-+pkey_sighandler_tests_64
 -- 
-2.44.0
+2.34.1
 
 
