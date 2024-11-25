@@ -1,132 +1,109 @@
-Return-Path: <linux-kernel+bounces-420870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C1099D83D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:52:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A53081683BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:52:10 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2013193429;
-	Mon, 25 Nov 2024 10:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V4tuBI4f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CAC69D8423
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:14:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ABCF17DFF2;
-	Mon, 25 Nov 2024 10:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64025B3BA60
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:52:30 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DC2192D9D;
+	Mon, 25 Nov 2024 10:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mf6DO0mJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF01C192B7F;
+	Mon, 25 Nov 2024 10:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732531897; cv=none; b=VUxXEAgTQ8kVvZQBstodBqkqwsBY3XHxYcZ3UbrrlaGYtO+La5gWykdbxnjVURAl1JVoFVem5jiSfrz7JhG+z7hJkrg9Ke4SdD/i5G7gi+I7dAUV7ucg6NuCwUb5dsqj9o3QO0l7wHwfekjb68W/SBohGStywJNncmMvVDp8YM4=
+	t=1732531933; cv=none; b=IVNSLf1oWC+B1jSCjKP81DYKgAV1B4zmCl2LjgOwfVuE9iOLHAkBohWWjc/OcbHQiXGVAsbL7/5Gp8ANPvClqDe667dj9CJjWcp2s6SZkLxWQwuBLqneea92hMa+XrPhzOAXS/d3XlEw9KWdI0DU8/MihxawBEs3qIRb6oVxl6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732531897; c=relaxed/simple;
-	bh=KskUYDOafEEpUyFS31TIrHEYG3ez8mPbthzKMzQhMwI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CrqJKyXSkFbzv+YFCZyFmJ6/dqCKIDC/Dsj7XZiOzEUjDBDsOl0LvJmCh9H680odDJAx+ycwA/W+stkPrxY0SRuiCKzc2FXDIjk+gRLt/+s5tenKUUqVQAoo57pLz/UPNPRA5khfcedc9dOG6Vg3YZZIEonDGm0xt1Qo+4pwXKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V4tuBI4f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8B7DC4CECE;
-	Mon, 25 Nov 2024 10:51:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732531896;
-	bh=KskUYDOafEEpUyFS31TIrHEYG3ez8mPbthzKMzQhMwI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=V4tuBI4fG0F4rZBd7otOSEQPP6MZn/49rKgMOhYw5SU195j4YAE2EbrRmgjCTH5+o
-	 ZXxT0ul5wTvdRKEeLNaFLjFPQnNIM2Gpoj63/L/Mvj8QDgRmNwoY6pm9O86+QmvuyQ
-	 XN2SQNpg9gJcILOqeBCStLERSTVoleQe20dHU8SpOxmJAGKq2uw/QFK5CdIjrqS/aC
-	 Dl6vk5qBNHqsf4QLK8OTt0oiaIJ99VZS4x5+aI2VbvYescw3ND/FLaXZCJkzxTLgzT
-	 x+EW9BoDuWlY3J2vDM/bhbJVAl0IeMKXL5pkBIZswADmG9VbMvZawktnNp6haUQv4m
-	 +bAk6pPGq8gHA==
-Message-ID: <017ae0c6-b221-4486-a2b9-d29b5a82e7de@kernel.org>
-Date: Mon, 25 Nov 2024 11:51:30 +0100
+	s=arc-20240116; t=1732531933; c=relaxed/simple;
+	bh=LQdscQoHPXFaOlKqrHrLET7Ump5Q8lvyH1vGESrIY3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tfFbywn+UTTbV18qXWpKYBJ6f36WiQJF741EBgD/2B223bLVkp3e/dJzugZjtHBhkxftnh1C4G/ck/SUBezchmzJ1zqMs5h8/o7JVpaIHyV/7OLtdSGFDMEcPyAh7pjXR1j+xut/LE0O2FX3g6JFHA87cCrzEqm8LAmvTzAPlTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mf6DO0mJ; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732531932; x=1764067932;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LQdscQoHPXFaOlKqrHrLET7Ump5Q8lvyH1vGESrIY3U=;
+  b=Mf6DO0mJ7iIYzgm+WsOj5KKkTd34S+gv2X1h3xi8rV05lIOxlobUFReg
+   W0kyuNSzkc+K43DqF0/ZBI821PoyMJsH7dAqGEFDKbGF+BaG9Yn67nPV0
+   aeQAvOZI/DF2H+uT9DxyOF5bOSi79QaEoD0mv73Okkdimb33eki+xe4Dp
+   XHwgRWRfETN96ZDnaOt4x8cR2raL1zx2BX/HF+mYCz2WTQYt+hlPbsQ+g
+   69Mw9yHizoT9aMhAaxIrs1Ull71nS0Uy7acWlqsRovKclikKDvrj97rnh
+   TqIuhUkxSemW25a7LVS4JlFVARuqvlVVj/qR4krexKHTDEhgOP0/zDSvE
+   g==;
+X-CSE-ConnectionGUID: 2TU03WTxSJS+TQmhK1CDpw==
+X-CSE-MsgGUID: gyWA0W/BRpqfL20rDm/faQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="44026379"
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="44026379"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 02:52:11 -0800
+X-CSE-ConnectionGUID: PFlaIhVYR6ux0xMNF3fvLw==
+X-CSE-MsgGUID: QHP2SAFJQ5KkxJg7O5lrnQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="128740664"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 02:52:10 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tFWhL-00000000iln-1Nzv;
+	Mon, 25 Nov 2024 12:52:07 +0200
+Date: Mon, 25 Nov 2024 12:52:07 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	Jiri Slaby <jirislaby@kernel.org>
+Subject: Re: [PATCH v1 1/1] serial: 8250_port: Assign UPIO_UNKNOWN instead of
+ its direct value
+Message-ID: <Z0RW19I9VsuBlTL-@smile.fi.intel.com>
+References: <20241125103305.1614986-1-andriy.shevchenko@linux.intel.com>
+ <ce88e017-9c2a-4963-a64c-9893e12cf6ea@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] arm64: dts: agilex5: initial support for Arrow
- AXE5-Eagle
-To: Steffen Trumtrar <s.trumtrar@pengutronix.de>,
- Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Richard Cochran <richardcochran@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-clk@vger.kernel.org, kernel@pengutronix.de
-References: <20241125-v6-12-topic-socfpga-agilex5-v2-0-864256ecc7b2@pengutronix.de>
- <20241125-v6-12-topic-socfpga-agilex5-v2-4-864256ecc7b2@pengutronix.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241125-v6-12-topic-socfpga-agilex5-v2-4-864256ecc7b2@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ce88e017-9c2a-4963-a64c-9893e12cf6ea@app.fastmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 25/11/2024 11:33, Steffen Trumtrar wrote:
-> The Arrow AXE5-Eagle is an Intel Agilex5 SoCFPGA based board with:
+On Mon, Nov 25, 2024 at 11:45:32AM +0100, Arnd Bergmann wrote:
+> On Mon, Nov 25, 2024, at 11:33, Andy Shevchenko wrote:
+> > serial8250_init_port() assings 0xFF for the unset or unknown port
+> > IO type, use predefined constant for that instead.
+> >
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > 
->    - 1x PCIe Gen4.0 edge connector
->    - 4-port USB HUB
->    - 2x 1Gb Ethernet
->    - microSD
->    - HDMI output
->    - 2x 10Gb SFP+ cages
-> 
-> As most devices aren't supported mainline yet, this is only the initial
-> support for the board.
-> 
-> Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-> ---
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Thank you!
 
-Best regards,
-Krzysztof
+> I already thought about sending the same thing, but was going
+> to wait until we have found a solution to the
+> !CONFIG_HAS_IOPORT warning.
+
+But it seems orthogonal to that... The solution in any case will
+be more verbose and intrusive than this one-liner, I think.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
