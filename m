@@ -1,87 +1,141 @@
-Return-Path: <linux-kernel+bounces-421106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42DD69D86A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:40:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C8929D86AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:41:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 085FC284B98
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:40:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C288B428F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A901618C322;
-	Mon, 25 Nov 2024 13:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945361AC44D;
+	Mon, 25 Nov 2024 13:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oLdTb8ag"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QWPwklWU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387051AB517
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D2218872F;
+	Mon, 25 Nov 2024 13:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732542011; cv=none; b=kFDopo6bfiVbgXrJcPqMlew6QFD7PMCLVaQ3snuPBQPTsVTAEEiL0taX82IXh+FAwQWY/5J9hgvCyijYVktZd6x/fM5w6g7v/9e9hBZ2wDiqKplpXZMpkmuEgztJYmW7IGA0UkydcUofaeaZJeIAoUWx+RjjNuN6LMPjfvVz6gI=
+	t=1732542023; cv=none; b=oZk9sXBBROb+nWjJ39EGdQ2uKNv3wK8bHlE9Zul24vRRNNILJlQ6HFhCKrpf6aLWcbeTqpLE+KiLq+cGyA5Rd2HaAAoBpqxoZHvsyT1VgOftzeHQ5wuUr+nLGGaznJBR9MxCa9ELptRnFxk2ySJlH0Lx9JrF4gZK8CFehQ0FhTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732542011; c=relaxed/simple;
-	bh=N+ji0oWKAqXTV3eyELHttCZ2hBamsuRxl9i4T+5SdBo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G0Lec5C18rvVYLNZ4bZnNnMmUu/oNgQCglCcJr9EkQluVXNh7Zpbl43RnpiO4blorfrqbg2n7oO+2jtcTtG0mY6iVindEgVn68bIMyzlRP6KIngPIR4coJyn0oboonYt7ehT+wEbsfRKEC+BW5NZ/sApmzP7zIJ2n3r2GY6j/kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oLdTb8ag; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=O8CEQBiDjvVdTkjgjsPUT5Xo9fuffQhYKqBOg6zyZfI=; b=oLdTb8ag6NYCJwzc0maGyEaoKf
-	PTLyRnoJny5JjCIuIGc7QkQXipUYJKLpmv8HtNxQdDDNDggs2PucYunDvUGzUqpbQJDWmQYWN/EkV
-	Wc46Adr+dhGMDS+x8WtMOz/rmgjbAFDNwgvPcEM5IVP9ufUDrgMF0zUMntL3+/K7wWXWZwnib7zeI
-	ZmBlhkX9lqjh2jvLErmYgfX/j/5r3atQ1hyX64TSLEnvS/hM4ufxECD3bEq++30Agxv2hryvV7/g0
-	A26XJYHMjmP0y3QiMSWBtZ74xN3F9kcfoAYQJITtvQFUSGBXIxhWRdAhMaFBsUs6WMlpjDu7Vdbez
-	v6Paq5+g==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tFZJu-000000015Zm-1HyC;
-	Mon, 25 Nov 2024 13:40:06 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 976E930026A; Mon, 25 Nov 2024 14:40:05 +0100 (CET)
-Date: Mon, 25 Nov 2024 14:40:05 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 9/9] objtool: Collect all annotations in objtool.h
-Message-ID: <20241125134005.GP38972@noisy.programming.kicks-ass.net>
-References: <20241122121016.372005127@infradead.org>
- <20241122121556.560621502@infradead.org>
- <20241122175445.tx3edadmof76yegs@jpoimboe>
- <20241123131943.GD24774@noisy.programming.kicks-ass.net>
- <20241125130613.GO38972@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1732542023; c=relaxed/simple;
+	bh=CWLzAsL8EJA5FdIowSi8LwAT/bKMRaCYyLXF+YP09aU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ldgbPyYwWLXH23HK6r1XqcS/RUFviFgPwhgKjGuJtqIt+/J7g6zoWw6yQxo1yXmp5aLaf1EcYfASrv2HWdPrtdS/XF9FLCgyvOvO14r8TJeFKOI1w7jJKxiXduknxu0YVfkFhoM/L/hCBI3Ad2foGexVJ/zr1BmhY7GmD1eAxA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QWPwklWU; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732542022; x=1764078022;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=CWLzAsL8EJA5FdIowSi8LwAT/bKMRaCYyLXF+YP09aU=;
+  b=QWPwklWUH+bI0zZNnU88EH6rf7QgUMeNad7Ny6jnh4gVEvx0pkdkeMjd
+   28kZQ0DIT5S85k9rFakozep4199b70BTQB9YaEiHT1kqMe207Xk0P9K1Z
+   tKD929fH3VnUesM+sSKpxii7Ms9hFFU9HjbJfPVmG75vnBStSkmtJlmyH
+   jgP8Zjr9zEPcyWMbOllzErys4KRS/ZsTS/bvYByCESiEJ8ibMD6KIRUEg
+   7ZVMPFL5X0PeJ8NE2TTpoIIC8rlddB5oN8FGAohSjZ4XuQIdNn539BwSH
+   DFJC1yoMW8580LTzwKayp+IbWI2ObEGUuVbM5dgucwFsDiU5U1/+jMBwW
+   w==;
+X-CSE-ConnectionGUID: PszW2Y5dQZK+ib58tu9fHQ==
+X-CSE-MsgGUID: U7Zx1BsYRP+0a3enMhUULA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="44029367"
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="44029367"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 05:40:21 -0800
+X-CSE-ConnectionGUID: Vqf6dgSQR/y3Xnpn7Cnk1w==
+X-CSE-MsgGUID: xukq6NshT/eYbq2TSz+lHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="92058743"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.115.59])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 05:40:16 -0800
+Message-ID: <56db8257-6da2-400d-8306-6e21d9af81f8@intel.com>
+Date: Mon, 25 Nov 2024 15:40:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241125130613.GO38972@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/7] x86/virt/tdx: Add SEAMCALL wrapper to enter/exit
+ TDX guest
+To: Dave Hansen <dave.hansen@intel.com>, pbonzini@redhat.com,
+ seanjc@google.com, kvm@vger.kernel.org, dave.hansen@linux.intel.com
+Cc: rick.p.edgecombe@intel.com, kai.huang@intel.com,
+ reinette.chatre@intel.com, xiaoyao.li@intel.com,
+ tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
+ dmatlack@google.com, isaku.yamahata@intel.com, nik.borisov@suse.com,
+ linux-kernel@vger.kernel.org, x86@kernel.org, yan.y.zhao@intel.com,
+ chao.gao@intel.com, weijiang.yang@intel.com
+References: <20241121201448.36170-1-adrian.hunter@intel.com>
+ <20241121201448.36170-2-adrian.hunter@intel.com>
+ <fa817f29-e3ba-4c54-8600-e28cf6ab1953@intel.com>
+ <0226840c-a975-42a5-9ddf-a54da7ef8746@intel.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <0226840c-a975-42a5-9ddf-a54da7ef8746@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 25, 2024 at 02:06:13PM +0100, Peter Zijlstra wrote:
-> On Sat, Nov 23, 2024 at 02:19:43PM +0100, Peter Zijlstra wrote:
+On 22/11/24 18:33, Dave Hansen wrote:
+> On 11/22/24 03:10, Adrian Hunter wrote:
+>> +struct tdh_vp_enter_tdcall {
+>> +	u64	reg_mask	: 32,
+>> +		vm_idx		:  2,
+>> +		reserved_0	: 30;
+>> +	u64	data[TDX_ERR_DATA_PART_2];
+>> +	u64	fn;	/* Non-zero for hypercalls, zero otherwise */
+>> +	u64	subfn;
+>> +	union {
+>> +		struct tdh_vp_enter_vmcall 		vmcall;
+>> +		struct tdh_vp_enter_gettdvmcallinfo	gettdvmcallinfo;
+>> +		struct tdh_vp_enter_mapgpa		mapgpa;
+>> +		struct tdh_vp_enter_getquote		getquote;
+>> +		struct tdh_vp_enter_reportfatalerror	reportfatalerror;
+>> +		struct tdh_vp_enter_cpuid		cpuid;
+>> +		struct tdh_vp_enter_mmio		mmio;
+>> +		struct tdh_vp_enter_hlt			hlt;
+>> +		struct tdh_vp_enter_io			io;
+>> +		struct tdh_vp_enter_rd			rd;
+>> +		struct tdh_vp_enter_wr			wr;
+>> +	};
+>> +};
 > 
-> > > BTW, is there a reason .discard.[un]reachable weren't converted over?
-> > 
-> > Completely forgot/missed them. Let me add a patch.
+> Let's say someone declares this:
 > 
-> So this is turning into a bit of a trainwreck :/
+> struct tdh_vp_enter_mmio {
+> 	u64	size;
+> 	u64	mmio_addr;
+> 	u64	direction;
+> 	u64	value;
+> };
 > 
-> That is, the below works, but I ended up having to include objtool.h
-> from compiler.h, which is really unfortunate.
+> How long is that going to take you to debug?
 
-Or rather, I suppose I can move unreachable() into objtool.h (or another
-header entirely) and go include it from all the various files that call
-it.
+When adding a new hardware definition, it would be sensible
+to check the hardware definition first before checking anything
+else.
 
-Only ~70 files.
+However, to stop existing members being accidentally moved,
+could add:
+
+#define CHECK_OFFSETS_EQ(reg, member) \
+	BUILD_BUG_ON(offsetof(struct tdx_module_args, reg) != offsetof(union tdh_vp_enter_args, member));
+
+	CHECK_OFFSETS_EQ(r12, tdcall.mmio.size);
+	CHECK_OFFSETS_EQ(r13, tdcall.mmio.direction);
+	CHECK_OFFSETS_EQ(r14, tdcall.mmio.mmio_addr);
+	CHECK_OFFSETS_EQ(r15, tdcall.mmio.value);
+
 
