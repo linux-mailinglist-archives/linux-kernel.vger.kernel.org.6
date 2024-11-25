@@ -1,187 +1,127 @@
-Return-Path: <linux-kernel+bounces-420986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 026159D852E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:14:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 376BF9D8531
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:15:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 887011690C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:14:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBE99163422
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5B019DF53;
-	Mon, 25 Nov 2024 12:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769A519E819;
+	Mon, 25 Nov 2024 12:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kHwsgdsV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Km27Eue9"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A34A199EB7;
-	Mon, 25 Nov 2024 12:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECA2199947
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 12:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732536837; cv=none; b=iVrX9TJ0+opfRAKwxviTl4WySd6iAbWogDBAOckdhUBH601DyJZuwQTeYMGzqQ+JGxXZ4zSxwOtYwkR6Bd5tTcWBhLhsbA1gv5yA3+iXD9hCvxrf0THDBaxLFWecD3GQDQS0ZJ9UR8PzEFb/D9r69DgJUKf2/ulZRUy7uEA2ef8=
+	t=1732536899; cv=none; b=qTmO47J0aRpfFCB9R/4OL2qpJ3NLWQkwz8HF1/iUnrTbjwn4EQHJNUR20Jl8e0Bln9T4aylzsj279dSqCTaD9uJ9Tn5le6TnyV662LlhDvjnKRcqR/VGtdoANAb8KToaeEoHM7XHG0dIiT2MLp00uf7vWg2epGditdNPN5CPy6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732536837; c=relaxed/simple;
-	bh=SfWhUEUrfi678nU8AT/o7gHzI7/+xswizzHwUz5Wdxs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hoFkLhuYcg4ZPPjB61tGLhoxJoqVVieveN5ZqrIx0INKnZRcUtwB5BGX81r79kwQIzxapiG/UqkmKLTtnSfiz3uk+F+5FsGIot2DmHtG0CXkEp6TudnQ1qwl4ti+31cSkaDoIDJIK+xAj07yezKrJLi9BKBSTYTCkbIl7YX2LzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kHwsgdsV; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732536835; x=1764072835;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SfWhUEUrfi678nU8AT/o7gHzI7/+xswizzHwUz5Wdxs=;
-  b=kHwsgdsV/Ucn3KYefDGaZP4iA35gWE22sXfS+0aKDGzzrCJZZd0ZXAQg
-   xm1ArxzhWoCYIKBwH5g++8psM/nUjj7pF00jeUULFUBWao+nzUTMqcIVy
-   iFBl+ckDFC3K7siTQSsKYPFGcxClJJsiPNZhAzTplgTL+aQZVraFGUIxL
-   2SjB+3gUmnNPHpgCXkbvFl6FsgtICPxu/m/yN2jGY9VOnCEy25Y4c7asb
-   l9rJyhAp4AWJGPujNOBjzXPNWL4ySUDA4EzqRhiCq6pM/5SDb1XlUS5SU
-   R20zz91pL3EMEHkeBabVLqeU5Yi/IAfPr2Zp8VzO5wBA5zSrQVTdXBM65
-   w==;
-X-CSE-ConnectionGUID: gBc9qQdARqqc4TMucYcM2g==
-X-CSE-MsgGUID: tLErgYjwRruJV4OQxQFdRQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="32380004"
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="32380004"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 04:13:54 -0800
-X-CSE-ConnectionGUID: 3sPjZDDxRd6cjRs0YtBVsg==
-X-CSE-MsgGUID: aOQ3YUF/QsWuP1Br+rBwpA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="91202907"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 25 Nov 2024 04:13:51 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tFXyO-0006K5-1b;
-	Mon, 25 Nov 2024 12:13:48 +0000
-Date: Mon, 25 Nov 2024 20:13:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Wolfram Sang <wsa-dev@sang-engineering.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org,
-	Cosmin Tanislav <demonsingur@gmail.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Subject: Re: [PATCH 2/3] i2c: atr: Fix lockdep for nested ATRs
-Message-ID: <202411252015.N7sBYvri-lkp@intel.com>
-References: <20241122-i2c-atr-fixes-v1-2-62c51ce790be@ideasonboard.com>
+	s=arc-20240116; t=1732536899; c=relaxed/simple;
+	bh=5+CH4sdSb4Czej5uXH8PynFRcfA8UNoarY82ZAm5vwQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YFvMCZ2L77i/jQzKHqV4apoZtUaDt9xu2SQQHfN0D1PYFK/iBRZnEHTPawwUZ/a/rDsuobzSEUV2yCakFSUH9eJe0qUcQ6WD0KjO3EiTD+b3+p0WCcDvHxx41ahOSRiSYoR/id3a+ahA1HPSyMsuhYoIDjrUSqJ0u1YwGJkabT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Km27Eue9; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4349e4e252dso9618955e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 04:14:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732536896; x=1733141696; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=X6UVB80JNVzlmdkqfMX+y9fwa3r9eW7MOnFP/RliVH8=;
+        b=Km27Eue9f+xnKzXMhunMfFzRbkQ38cPP596xux8urUzBxt+EGdSnIGTSDc8l+fNQJs
+         59TckWYXVh5nGMMSKH+3EY9Q1TS2WXKnZTb29xLmv56a6BB7v25acmcSJrRdPIuY5EoP
+         +q318zKzddV9bWKbl0b2+w97EmKWNNuBS/4raj7oojWHP4DDaDIhsUmYKjLPmByQerIq
+         AU/FuJIyPHlplHOPAHkr3mPqv/hK4TnmHfV7IKVuIO0Tn7blZZLAHmIB2tj29qQhcWBv
+         iGyNsJy5sXELgvzpLcekSjHU+O23DL+zLiTJX7bvNOGn76E45znbEqfjwGPyiZDpD0zQ
+         h38Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732536896; x=1733141696;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X6UVB80JNVzlmdkqfMX+y9fwa3r9eW7MOnFP/RliVH8=;
+        b=ZaXtQf0QUDEDHUSC/tY6PEBD5Vpidbr49JcL8Kgas+pLXg1hkqusYGXKwYMJ/ArxFf
+         WNirovTbaH2+/OU3I60Iac7/vwN6dcpauCwc3ej4T5t4Tedbs4EH39hzMHDNIUJzYKWZ
+         NMhgQRZGv0U00dQ+RCMxDKjOkZDCalAzdJspJQ3KYgIkToZLrdb3uw9MWV3SsEE0K5bW
+         8CwMfnDYQos/dsE8Z+ejsvym7CEackaiQRx0LVlgGj8/8AFZf4Ws/GydzggKmCw+hNYs
+         8WSJldNTXZ1swK3CuhCyAfs8mWTPrf6pni1t1oAiWTUkSLd03vKSawz+t+mFCC2luJBH
+         t+lw==
+X-Forwarded-Encrypted: i=1; AJvYcCWS1DovtngsU5xwaFa7IEAfAHlok/+w0q5lWMnFX4BD9Zy/Cp1weXRPfT+gyM4/PuSyFXKSEFUtzQdoU6w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybDFYpAYRAcPaVGBCxSg4EncqPXlj9LxzdpsDAodbO/E0Rx1ah
+	33l8n3/5wcTe2u1jbgvkMQhB7vRURKd7+h9cyld+5tuCo0TfoBeTbuEQE4i/Ydg=
+X-Gm-Gg: ASbGnctyhZHqp6pk+jGl20if88/9BORiY3bH2XudM04+VUXe0umTUjoDnxQyKC+XW9y
+	cu2E1CWGhR7xE0fRiX9NTq9kC9MACTRH+Cmg9Su4nstn/JxNlGRfZs5B8aF86pXRq/0icN3pnRr
+	rcWzd5BNna6CGLUJGFqH397r50PWovvtrQtjXPoefmA/wGAxv8yDQMUzNVzArqRTnRAj0pSMTR+
+	qyTXaA7tB0RuticgaPCp2toIiN6LFgbqO3qciwBn+SK2tJ7ZUOwpH+BblgxwOM=
+X-Google-Smtp-Source: AGHT+IHL5n7/E+eTCV55LW/mwE4Unl+wX5kIFsw4BH4g92rF5oirei1LF7bH/yT5C4hccVwg6ZNDEg==
+X-Received: by 2002:a5d:6d05:0:b0:37d:49a1:40c7 with SMTP id ffacd0b85a97d-38260b7843amr11618659f8f.28.1732536896598;
+        Mon, 25 Nov 2024 04:14:56 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825faf9a5asm10212032f8f.23.2024.11.25.04.14.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 04:14:56 -0800 (PST)
+Message-ID: <310ec20b-3fbd-4c0f-8705-cff96bb6e4d3@linaro.org>
+Date: Mon, 25 Nov 2024 12:14:55 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241122-i2c-atr-fixes-v1-2-62c51ce790be@ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/2] media: qcom: camss: Re-structure
+ camss_link_entities
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@quicinc.com
+References: <20241125103457.1970608-1-quic_vikramsa@quicinc.com>
+ <b27fe267-c722-4133-ad7c-bdb1ff573ee7@linaro.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <b27fe267-c722-4133-ad7c-bdb1ff573ee7@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Tomi,
+On 25/11/2024 11:57, Vladimir Zapolskiy wrote:
+> Hi Vikram,
+> 
+> On 11/25/24 12:34, Vikram Sharma wrote:
+>> Refactor the camss_link_entities function by breaking it down into
+>> three distinct functions. Each function will handle the linking of
+>> a specific entity separately, enhancing readability.
+>>
+>> Changes in V3:
+>> - Broke down the change in 2 patches. first one to functionally
+>> decompose link error message. second to restrcture the link
+>> function.
+>> - Removed the declarion of camss_link_error from header file.
+>> - Link to v2: https://lore.kernel.org/linux-arm- 
+>> msm/20241112133846.2397017-1-quic_vikramsa@quicinc.com/
+> 
+> as I said last time I don't see the value of these changes.
+> 
+> Since the changes are non-functional, then hopefully there should be
+> no issues with them, however I really miss the point of adding 65
+> lines of code for a questionable reason and at the price of increased
+> complexity.
+> 
+> Is there a good reason not to drop the series?
+I think there is value in both functional decomposition and tidying up 
+code - for example removing circuitous if/elses in favour of more 
+discreet and easy to read functions, so I'm inclined to accept this series.
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on adc218676eef25575469234709c2d87185ca223a]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Tomi-Valkeinen/i2c-atr-Allow-unmapped-addresses-from-nested-ATRs/20241125-104419
-base:   adc218676eef25575469234709c2d87185ca223a
-patch link:    https://lore.kernel.org/r/20241122-i2c-atr-fixes-v1-2-62c51ce790be%40ideasonboard.com
-patch subject: [PATCH 2/3] i2c: atr: Fix lockdep for nested ATRs
-config: i386-buildonly-randconfig-001-20241125 (https://download.01.org/0day-ci/archive/20241125/202411252015.N7sBYvri-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241125/202411252015.N7sBYvri-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411252015.N7sBYvri-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/i2c/i2c-atr.c:60: warning: Function parameter or struct member 'orig_addrs_lock_key' not described in 'i2c_atr_chan'
->> drivers/i2c/i2c-atr.c:100: warning: Function parameter or struct member 'lock_key' not described in 'i2c_atr'
-
-
-vim +60 drivers/i2c/i2c-atr.c
-
-a076a860acae77 Luca Ceresoli  2023-06-19   36  
-a076a860acae77 Luca Ceresoli  2023-06-19   37  /**
-a076a860acae77 Luca Ceresoli  2023-06-19   38   * struct i2c_atr_chan - Data for a channel.
-a076a860acae77 Luca Ceresoli  2023-06-19   39   * @adap:            The &struct i2c_adapter for the channel
-a076a860acae77 Luca Ceresoli  2023-06-19   40   * @atr:             The parent I2C ATR
-a076a860acae77 Luca Ceresoli  2023-06-19   41   * @chan_id:         The ID of this channel
-a076a860acae77 Luca Ceresoli  2023-06-19   42   * @alias_list:      List of @struct i2c_atr_alias_pair containing the
-a076a860acae77 Luca Ceresoli  2023-06-19   43   *                   assigned aliases
-a076a860acae77 Luca Ceresoli  2023-06-19   44   * @orig_addrs_lock: Mutex protecting @orig_addrs
-a076a860acae77 Luca Ceresoli  2023-06-19   45   * @orig_addrs:      Buffer used to store the original addresses during transmit
-a076a860acae77 Luca Ceresoli  2023-06-19   46   * @orig_addrs_size: Size of @orig_addrs
-a076a860acae77 Luca Ceresoli  2023-06-19   47   */
-a076a860acae77 Luca Ceresoli  2023-06-19   48  struct i2c_atr_chan {
-a076a860acae77 Luca Ceresoli  2023-06-19   49  	struct i2c_adapter adap;
-a076a860acae77 Luca Ceresoli  2023-06-19   50  	struct i2c_atr *atr;
-a076a860acae77 Luca Ceresoli  2023-06-19   51  	u32 chan_id;
-a076a860acae77 Luca Ceresoli  2023-06-19   52  
-a076a860acae77 Luca Ceresoli  2023-06-19   53  	struct list_head alias_list;
-a076a860acae77 Luca Ceresoli  2023-06-19   54  
-a076a860acae77 Luca Ceresoli  2023-06-19   55  	/* Lock orig_addrs during xfer */
-a076a860acae77 Luca Ceresoli  2023-06-19   56  	struct mutex orig_addrs_lock;
-f2d3b6b436282b Tomi Valkeinen 2024-11-22   57  	struct lock_class_key orig_addrs_lock_key;
-a076a860acae77 Luca Ceresoli  2023-06-19   58  	u16 *orig_addrs;
-a076a860acae77 Luca Ceresoli  2023-06-19   59  	unsigned int orig_addrs_size;
-a076a860acae77 Luca Ceresoli  2023-06-19  @60  };
-a076a860acae77 Luca Ceresoli  2023-06-19   61  
-a076a860acae77 Luca Ceresoli  2023-06-19   62  /**
-a076a860acae77 Luca Ceresoli  2023-06-19   63   * struct i2c_atr - The I2C ATR instance
-a076a860acae77 Luca Ceresoli  2023-06-19   64   * @parent:    The parent &struct i2c_adapter
-a076a860acae77 Luca Ceresoli  2023-06-19   65   * @dev:       The device that owns the I2C ATR instance
-a076a860acae77 Luca Ceresoli  2023-06-19   66   * @ops:       &struct i2c_atr_ops
-a076a860acae77 Luca Ceresoli  2023-06-19   67   * @priv:      Private driver data, set with i2c_atr_set_driver_data()
-a076a860acae77 Luca Ceresoli  2023-06-19   68   * @algo:      The &struct i2c_algorithm for adapters
-a076a860acae77 Luca Ceresoli  2023-06-19   69   * @lock:      Lock for the I2C bus segment (see &struct i2c_lock_operations)
-a076a860acae77 Luca Ceresoli  2023-06-19   70   * @max_adapters: Maximum number of adapters this I2C ATR can have
-a076a860acae77 Luca Ceresoli  2023-06-19   71   * @num_aliases: Number of aliases in the aliases array
-a076a860acae77 Luca Ceresoli  2023-06-19   72   * @aliases:   The aliases array
-a076a860acae77 Luca Ceresoli  2023-06-19   73   * @alias_mask_lock: Lock protecting alias_use_mask
-a076a860acae77 Luca Ceresoli  2023-06-19   74   * @alias_use_mask: Bitmask for used aliases in aliases array
-a076a860acae77 Luca Ceresoli  2023-06-19   75   * @i2c_nb:    Notifier for remote client add & del events
-a076a860acae77 Luca Ceresoli  2023-06-19   76   * @adapter:   Array of adapters
-a076a860acae77 Luca Ceresoli  2023-06-19   77   */
-a076a860acae77 Luca Ceresoli  2023-06-19   78  struct i2c_atr {
-a076a860acae77 Luca Ceresoli  2023-06-19   79  	struct i2c_adapter *parent;
-a076a860acae77 Luca Ceresoli  2023-06-19   80  	struct device *dev;
-a076a860acae77 Luca Ceresoli  2023-06-19   81  	const struct i2c_atr_ops *ops;
-a076a860acae77 Luca Ceresoli  2023-06-19   82  
-a076a860acae77 Luca Ceresoli  2023-06-19   83  	void *priv;
-a076a860acae77 Luca Ceresoli  2023-06-19   84  
-a076a860acae77 Luca Ceresoli  2023-06-19   85  	struct i2c_algorithm algo;
-a076a860acae77 Luca Ceresoli  2023-06-19   86  	/* lock for the I2C bus segment (see struct i2c_lock_operations) */
-a076a860acae77 Luca Ceresoli  2023-06-19   87  	struct mutex lock;
-f2d3b6b436282b Tomi Valkeinen 2024-11-22   88  	struct lock_class_key lock_key;
-a076a860acae77 Luca Ceresoli  2023-06-19   89  	int max_adapters;
-a076a860acae77 Luca Ceresoli  2023-06-19   90  
-a076a860acae77 Luca Ceresoli  2023-06-19   91  	size_t num_aliases;
-a076a860acae77 Luca Ceresoli  2023-06-19   92  	const u16 *aliases;
-a076a860acae77 Luca Ceresoli  2023-06-19   93  	/* Protects alias_use_mask */
-a076a860acae77 Luca Ceresoli  2023-06-19   94  	spinlock_t alias_mask_lock;
-a076a860acae77 Luca Ceresoli  2023-06-19   95  	unsigned long *alias_use_mask;
-a076a860acae77 Luca Ceresoli  2023-06-19   96  
-a076a860acae77 Luca Ceresoli  2023-06-19   97  	struct notifier_block i2c_nb;
-a076a860acae77 Luca Ceresoli  2023-06-19   98  
-3a133a4e44554b Kees Cook      2023-09-22   99  	struct i2c_adapter *adapter[] __counted_by(max_adapters);
-a076a860acae77 Luca Ceresoli  2023-06-19 @100  };
-a076a860acae77 Luca Ceresoli  2023-06-19  101  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+---
+bod
 
