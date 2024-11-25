@@ -1,108 +1,212 @@
-Return-Path: <linux-kernel+bounces-420766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 075D99D82EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:53:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 106999D830B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:08:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1CB0288D30
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:53:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 181D8B26FE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F83A1922DC;
-	Mon, 25 Nov 2024 09:53:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97399192B62
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 09:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080601917EB;
+	Mon, 25 Nov 2024 09:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lMczVk/9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3223B1426C
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 09:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732528381; cv=none; b=LjDhAVLPhLs+Iuy1ZcZtzT8cstuvSQ3X+CJ9x7b/0Sf3zXYwpz88mFfZqnCLniKrZ++zPP6j96kbOpKwPJN6/IknsQ/38KshlAEB+MdhNK/bP2E88nEz+Drn/C8uRcBNmBFoF9hpZCIMCr4rDS2Pxz/dDVdNI3laK9LyxljgG2c=
+	t=1732528459; cv=none; b=r5Q3RP3q4QDFRYkL7T+mryh5fD5SScMBuoJdJpUOI6HENbuRYg3Kw8YyKZKcp6VDl+77Q6YRamYbzZyVVAmb87zwHHsma0ndYUdNK4EbGsVNcZEGtUjlmeGevVyLMhmHq0vNCh5+NvFOS6ICF4gISGmxrwozc2C84QafBRFVeek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732528381; c=relaxed/simple;
-	bh=plYSePR17bUYbnIXW6ASTUU+nFubMYrI/KTOuQNQ8as=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QPCvwwibVxhqfeXMlosURolB6L8Pi9QyLcIFJB8BcnB2npKBCYPvQHYQaGohOogP4CuXtSNTetmA75q6EBaKTyvD83jxXHCxEE1ssXeRctl4kjNqVsf8sMHW4O47UswL9M5D6JcvZWu+y/ulCZNwTnLAsQlRt6t1i1fD4ZWgUbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 04ABF1756;
-	Mon, 25 Nov 2024 01:53:29 -0800 (PST)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id EEC823F5A1;
-	Mon, 25 Nov 2024 01:52:57 -0800 (PST)
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: sudeep.holla@arm.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	nd@arm.com,
-	Levi Yun <yeoreum.yun@arm.com>
-Subject: [PATCH 3/3] firmware/arm_ffa: remove __le64_to_cpu() when set uuid for direct msg v2
-Date: Mon, 25 Nov 2024 09:52:51 +0000
-Message-Id: <20241125095251.366866-4-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241125095251.366866-1-yeoreum.yun@arm.com>
-References: <20241125095251.366866-1-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1732528459; c=relaxed/simple;
+	bh=gHwhc9KOj+cZOKgz6vnfOwrkoWHADDCUrI4b85vHXZU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=dAADppA5DDFLkkN6X863BWwACFWIik7W+ZlRqvxKxjGp039lF0JruUNcWqavSsUqvs5G3mNLlV+lo9dAGdiBp9iS/Sg5fvfK/Hzt3cRqcgFlVOOJkVDFUUlXxrrXWMUY3YUF9rDI4S2sEvuO6u8ful2d1zONwP3ZTqzEpl3G1lM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lMczVk/9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83E66C4CECE;
+	Mon, 25 Nov 2024 09:54:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732528458;
+	bh=gHwhc9KOj+cZOKgz6vnfOwrkoWHADDCUrI4b85vHXZU=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=lMczVk/9qHRbpvCrq8ba1p9XJuA8bG0ah5VZ2pqm+iJOGtf8fzPLdlFM9ekqgWZVE
+	 foVecCQ0M+aJhzfqe1b7/EVG4G1LQrBQqLNrz2rIFoaz8Wy60NLDzyKSATDntDRhL6
+	 sPb4iwn6p14aZO71BuMl6jKae0t6X5g0/0fTRKWwTUPS/H9nwlCn/opvNctQmC2EOT
+	 qxPXhdVfE71NQ9dpFIK5OpXbR33qtgcgg0k8AredCIi7D88hOzJebQNdrCdO2us24X
+	 tMOVCdqY4iZYGMpF3dZQVqQZ23LHbicoQ2a1zWgSIdZSb8MD5rAdU52QxYQwX4MyLK
+	 BIy+tV55lERfQ==
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 7D977120007F;
+	Mon, 25 Nov 2024 04:54:17 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Mon, 25 Nov 2024 04:54:17 -0500
+X-ME-Sender: <xms:SUlEZxarIomWgDBfYUpFRPiACFv_RC-6ohnAC1XLVwwPVu4UFBYygQ>
+    <xme:SUlEZ4a4tp2ubRUMlhs6MGQNT2rFmFbUBB8E3luBqRj0MvX16sEY7szqLRHNwpQHc
+    Fbnt5W8a9_cOJyPZuY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeehgddtkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugeskhgvrhhnvghlrd
+    horhhgqeenucggtffrrghtthgvrhhnpeejjeffteetfeetkeeijedugeeuvdfgfeefiedt
+    udeikeeggeefkefhudfhlefhveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihht
+    hidquddvkeehudejtddvgedqvdekjedttddvieegqdgrrhhnugeppehkvghrnhgvlhdroh
+    hrghesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphho
+    uhhtpdhrtghpthhtohephigrnhhghihinhhglhhirghngheshhhurgifvghirdgtohhmpd
+    hrtghpthhtohepjhhirhhishhlrggshieskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    hhgtrgeslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopehstghhnhgvlhhlvgeslh
+    hinhhugidrihgsmhdrtghomhdprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghn
+    khhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepihhlphhordhjrghrvh
+    hinhgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehgrhgvghhkhhes
+    lhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigsehroh
+    gvtghkqdhushdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
+    rdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:SUlEZz9NfZcfSTk8fPD7GnnF8v0MgUhnKZPwIzhi1AThxqwh-41UFg>
+    <xmx:SUlEZ_rptzDEQ8VbabBqcI9OXz9R1dYTHFsX6Iod1P3hZwGVYHXydQ>
+    <xmx:SUlEZ8r_QLW8Nj-JXAKOtL_ZXQd84njCSjcJ0tnATm-u3f2mK9KeYQ>
+    <xmx:SUlEZ1QBmw3rvoWngG0nuXJqH08fvqhQQHvrDXP5M9RzKAJGftLytA>
+    <xmx:SUlEZ0qaPpJ7-Tpbpd0-Zwaapie9pYIN-M5p8GP7_rmEc2ureKVLd9XL>
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 51D622220071; Mon, 25 Nov 2024 04:54:17 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Mon, 25 Nov 2024 10:53:46 +0100
+From: "Arnd Bergmann" <arnd@kernel.org>
+To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
+Cc: "Guenter Roeck" <linux@roeck-us.net>,
+ "Niklas Schnelle" <schnelle@linux.ibm.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Jiri Slaby" <jirislaby@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ linux-serial@vger.kernel.org, "Heiko Carstens" <hca@linux.ibm.com>,
+ linux-kernel@vger.kernel.org, "Yang Yingliang" <yangyingliang@huawei.com>
+Message-Id: <00f5e842-3ee9-4d83-8836-0ff4f703fa3c@app.fastmail.com>
+In-Reply-To: <Z0QtZky8Sr7qUW7v@smile.fi.intel.com>
+References: <20240405152924.252598-1-schnelle@linux.ibm.com>
+ <20240405152924.252598-2-schnelle@linux.ibm.com>
+ <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net>
+ <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
+ <472eb22a-dcb1-4fbb-bf2c-a4173706bc7a@app.fastmail.com>
+ <27685942-fb62-44c5-86ed-98beb547ffed@roeck-us.net>
+ <744920ba-551c-466b-ac5c-2607b81261a0@app.fastmail.com>
+ <Z0QtZky8Sr7qUW7v@smile.fi.intel.com>
+Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-From: Levi Yun <yeoreum.yun@arm.com>
+On Mon, Nov 25, 2024, at 08:55, Andy Shevchenko wrote:
+> On Fri, Nov 22, 2024 at 08:24:37PM +0100, Arnd Bergmann wrote:
+>> On Fri, Nov 22, 2024, at 18:22, Guenter Roeck wrote:
+>> 
+>> This looks like a bug in drivers/tty/serial/8250/8250_platform.c
+>> to me, not something the architectures did wrong. My impression
+>> from __serial8250_isa_init_ports() is that this is supposed
+>> to initialize exactly the ports in the old_serial_port[]
+>> array, which is filled only on alpha, m68k and x86 but not
+>> on the other ones.
+>
+>> Andy moved this code in ffd8e8bd26e9 ("serial: 8250: Extract
+>> platform driver"), but I don't think this move by itself
+>> changed anything.
+>
+> Yep. the idea was to purely split this code out of the core
+> library parts. I was not intending any functional changes.
 
-UUID is saved in big endian format.
-i.e) For uuid "378daedc-f06b-4446-8314-40ab933c87a3",
+Ok.
 
-It should be saved in memory like:
-    37 8d ae dc
-    f0 6b 44 46
-    83 14 40 ab
-    93 3c 87 a3
+> I believe it's a preexisted bug, but if you can point out to
+> the breakage I made, please do it, so I would be able to fix
+> ASAP.
+>
+>> serial8250_setup_port() is where it ends up using the
+>> uninitialized serial8250_ports[index] contents. Since 
+>> port->iotype is not set to anything here, it defaults to
+>> '0', which happens to be UPIO_PORT.
+>
+> Btw, we have a new constant to tell the 8250 core that IO type is not set,
+> but that one is not used here.
 
-Accoding to FF-A specification[0] 15.4 FFA_MSG_SEND_DRIECT_REQ2,
-then UUID is saved in register:
-    UUID Lo  x2  Bytes[0...7] of UUID with byte 0 in the low-order bits.
-    UUID Hi  x3  Bytes[8...15] of UUID with byte 8 in the low-order bits.
+So I see serial8250_setup_port() setting "up->cur_iotype = 0xFF"
+by first calling serial8250_init_port(), this is the "not
+set" value you mean, right?.
 
-That means, we don't need to swap the uuid when it send via direct
-message request version 2, just send it as saved in memory.
+Right after that it calls serial8250_set_defaults(),
+which sets "up->cur_iotype = p->iotype;", which may or
+may not be initialized here.
 
-Remove le64_to_cpu() for uuid in direct message request version 2,
-and change uuid_regs' type to __be64 because UUID is saved in network
-byte order.
+The possible calls chains I see leading up to
+serial8250_setup_port() are:
 
-Link: https://developer.arm.com/documentation/den0077/latest [0]
-Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
----
- drivers/firmware/arm_ffa/driver.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+serial8250_register_8250_port(): here we first initialize
+  the iotype incorrectly, then set uart->port.iotype and
+  call serial8250_set_defaults() again to fix it.
 
-diff --git a/drivers/firmware/arm_ffa/driver.c b/drivers/firmware/arm_ffa/driver.c
-index a3a9cdec7389..4a6bc6520d25 100644
---- a/drivers/firmware/arm_ffa/driver.c
-+++ b/drivers/firmware/arm_ffa/driver.c
-@@ -483,13 +483,13 @@ static int ffa_msg_send_direct_req2(u16 src_id, u16 dst_id, const uuid_t *uuid,
- 	u32 src_dst_ids = PACK_TARGET_INFO(src_id, dst_id);
- 	union {
- 		uuid_t uuid;
--		__le64 regs[2];
-+		__be64 regs[2];
- 	} uuid_regs = { .uuid = *uuid };
- 	ffa_value_t ret, args = {
- 		.a0 = FFA_MSG_SEND_DIRECT_REQ2,
- 		.a1 = src_dst_ids,
--		.a2 = le64_to_cpu(uuid_regs.regs[0]),
--		.a3 = le64_to_cpu(uuid_regs.regs[1]),
-+		.a2 = uuid_regs.regs[0],
-+		.a3 = uuid_regs.regs[1],
- 	};
- 	memcpy((void *)&args + offsetof(ffa_value_t, a4), data, sizeof(*data));
+module_init(serial8250_init): relies on the first
+  serial8250_set_defaults() for the ISA ports since they
+  are always UPIO_PORT, but sets the other ones (pnp, acpi,
+  platform_data) correctly.
+
+early_serial_setup(): called only on non-ISA platforms,
+  shouldn't need to call serial8250_isa_init_ports() at
+  all.
+
+console_initcall(univ8250_console_init): Not completely
+  sure here, it seems this now only allows ports that
+  are registered from one of the methods above
+
+Can you have a look at the patch below? I think this
+correctly removes the broken serial8250_set_defaults()
+while also still adding it in the one case that relies
+on the implied version.
+
+This does however revert f4c23a140d80 ("serial: 8250:
+fix null-ptr-deref in serial8250_start_tx()") and
+might bring back the bug came from opening an
+uninitialized uart. On the other hand, I don't see
+why that doesn't also crash from accessing the invalid
+I/O port on the same architectures.
+
+       Arnd
+
+diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
+index 5f9f06911795..5b72309611cb 100644
+--- a/drivers/tty/serial/8250/8250_core.c
++++ b/drivers/tty/serial/8250/8250_core.c
+@@ -358,8 +358,6 @@ struct uart_8250_port *serial8250_setup_port(int index)
  
--- 
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+ 	up->ops = &univ8250_driver_ops;
+ 
+-	serial8250_set_defaults(up);
+-
+ 	return up;
+ }
+ 
+diff --git a/drivers/tty/serial/8250/8250_platform.c b/drivers/tty/serial/8250/8250_platform.c
+index 66fd6d5d4835..d3c1668add58 100644
+--- a/drivers/tty/serial/8250/8250_platform.c
++++ b/drivers/tty/serial/8250/8250_platform.c
+@@ -94,6 +94,10 @@ static void __init __serial8250_isa_init_ports(void)
+ 		port->regshift = old_serial_port[i].iomem_reg_shift;
+ 
+ 		port->irqflags |= irqflag;
++
++		serial8250_set_defaults(port);
++
++		/* Allow Intel CE4100 and jailhouse to override defaults */
+ 		if (serial8250_isa_config != NULL)
+ 			serial8250_isa_config(i, &up->port, &up->capabilities);
+ 	}
 
 
