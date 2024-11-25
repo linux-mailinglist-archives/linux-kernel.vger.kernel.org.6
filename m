@@ -1,225 +1,100 @@
-Return-Path: <linux-kernel+bounces-420915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1F689D8458
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:24:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F0EF9D845A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:24:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81B13284A06
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:24:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4B1316620B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B5A1991C3;
-	Mon, 25 Nov 2024 11:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1742E1993B5;
+	Mon, 25 Nov 2024 11:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lNUv0XCS"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q9JyVjr4"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25061198A25;
-	Mon, 25 Nov 2024 11:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A501990D3;
+	Mon, 25 Nov 2024 11:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732533852; cv=none; b=KBZSHiW6JNZuKs1L3C5fAHkdNCotwF8mG+qeeReCdsWUFHo8+TH6vuubcehp2SMQ86j6H0Q9tF3h/IcT+aLkEBNJnb3FgwA2e/RTt9lDupZKMzNTNH6g/4MoyD1GyqSzCaxu8jnZba1B3xTdIVG8bc525J5gYJJ84LGRHVjOU/w=
+	t=1732533870; cv=none; b=ZOire7f4i9JDAKjzTevwcckKxi6NT83SEBquN7v1MWHkGbW7AyAl+janQpNicoOIVxrwqXh92NyzaSALyOKSLX9X2LruyPsuDOsPvU1bzP/2X6oyPM38x0IZnRc7nJO60wjhwzgpxoYhJCwbX30Q1kbGg1M8xx1yneHwgRhPdRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732533852; c=relaxed/simple;
-	bh=9XSrtMyvUrSDpVncOK3Cu4eq7Kbx4R6lVGbVFgG8+ic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oq+09Ceppz1YmjHh+qVVhGogNGri4GvtJlA2lu8wo3Fbx+ikwkQuUy4p9maXTTFdtSn2RpXzYy9+GAhEGJby2jCutJApByJwwFdn9TLGwy3EvKnbv3tE4XbpHZl1oTXLBniawi3EcMFBhOrBB6jKPBfvgDPvsDztAjOpA/TtSOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lNUv0XCS; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B8A206B5;
-	Mon, 25 Nov 2024 12:23:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732533827;
-	bh=9XSrtMyvUrSDpVncOK3Cu4eq7Kbx4R6lVGbVFgG8+ic=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lNUv0XCSX8ExKTvjC7nk7Ekdpied3X/jF7Sv5GUef6pfX26pFLYWQNkKixsEbYaCc
-	 lZlC5tKn+Ke+8XtcFpuiXX3yOAKUYjQpj1XP/sD5FzDhWDWoFwV3g+dt5CQDOu2v3/
-	 7Edm0c1XkhgXFe9E+ewgTLFZDRjFFnyYB0AcFb3w=
-Date: Mon, 25 Nov 2024 13:24:00 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: Andy Hsieh <andy.hsieh@mediatek.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v7 2/5] dt-bindings: media: add mediatek ISP3.0 camsv
-Message-ID: <20241125112400.GQ19381@pendragon.ideasonboard.com>
-References: <20241121-add-mtk-isp-3-0-support-v7-0-b04dc9610619@baylibre.com>
- <20241121-add-mtk-isp-3-0-support-v7-2-b04dc9610619@baylibre.com>
+	s=arc-20240116; t=1732533870; c=relaxed/simple;
+	bh=atTGdQENg6nCHWrmtf7VN4oYXAt3UDEdIH0WpKqyH3M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gkbZEqamgTLnsB8C9FXO5TJmyz8OkaJqRK4qzdXORvFK1i738jllGjJkAV0GtByxklyjK1m7ejwMCiw1nj1IKS5+LfWxxiuPjUQQDp1ta28MfPt4uZGF46gF+wndX+WqIxoMXSaBKOwQV5MjJAPb8dLe7xoP6TKcaqgGZaMgvro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q9JyVjr4; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6eeca160f14so45680647b3.2;
+        Mon, 25 Nov 2024 03:24:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732533867; x=1733138667; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=atTGdQENg6nCHWrmtf7VN4oYXAt3UDEdIH0WpKqyH3M=;
+        b=Q9JyVjr48EpCxtzv5z6lxtOFctS+fRcHcmoD2HdhLt3pwHLLz6ap6Ykndf9Vi7lBCh
+         8bz1olrrKkGodYdD+m8nRyqPpgUfQjRy/4QSSioq7H4PrRP7ccesZPS8WriQKTXB9SZh
+         QoNQnJqMlzfitt7Y9q6S+5mGlwSFfJTO1/aeUlQi1tGYuNCXI10UiM/zRHYbNUWewChs
+         HI7IstsCGPMLDSlcSJJHfDj+JwHO3+gWdxJY/yNPnxXf/J8ygRZFxeAHK/MRr5pqyfsz
+         Oakyqru4+R9nMyFz/SWOocJfkKBH51l6D82MrYE/5AaT2yKZZkZvoGeTEiQzyLB1Kj0x
+         y9Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732533867; x=1733138667;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=atTGdQENg6nCHWrmtf7VN4oYXAt3UDEdIH0WpKqyH3M=;
+        b=sgwKVpXSvaKKDxKSONvViuZvYEUDupdx9r3PuOo2envHCCiTuQamXjl8TcAgmfOVMQ
+         /D185iYnVqemHxW1U5vEi9P/553Ka3QOOjDHloFzaA/ctsqmFnByYxuMvtd1R0R9wQVm
+         DM6KW0l7vwKWxv0tUViL3mQJhYGNXTkjU22ELga+Vbi7q2DiZ5bgFKT/qm2H3nyyBtou
+         z0pZ2nK7lXHXCgFY+b4iliKElz9Vm0gkCzWuAQ01yUe5/hvGvqi1XOs6jMa7ET7yhq6H
+         eK76DW+EycmZwevEo2nXfLOpqpUf1rrhdqyzbbIic1pzKBXdhMcjoJkoAybqq/3qg1JC
+         idIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVV2Jwwi/ercA6rBCxVaPzMABXdtzhcMzavBCU2wACyTRx8dRMN4zN3gPmHsrlcjr+lTDp4ReW/i56tj8sV@vger.kernel.org, AJvYcCVdvBB6tIcmoQ4NzhrD0Th4FI8HizZwj1Ot6KbFcuE/uvUBnvWsRFr1/w88kb3kpigNseyriDxhZ2iV@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/1dUKfeeBC3rnDUkn9ag7b+f2EinmaIaBvfgdURp+t+WrdUQ+
+	xnJI8xYrCjySi+2/uZrXMsBwQbRGJP1U2Gi8MJ+kZcM333PqQJXcJ5sHQPxWS7PiCTruWtmC20F
+	2Za5j+IS+qa7gWUbFAio6Yvi7B1I=
+X-Gm-Gg: ASbGncvTodVzNrf2zr5SoWECgEKCGh1asSW1kUX6yYAvDN6/C06LzXV20fxLHSjGe+D
+	FN/rzSRXhWgMNneR8XXlsNC174G9sKC7r
+X-Google-Smtp-Source: AGHT+IHoeHq1SaOkzoegc7LOfrsp5NCsRkFD5zT231LvZh60oKXqnaI9hhCjtdWG9vlb54GAx+il0BMwPnlOQyc601A=
+X-Received: by 2002:a05:6902:2684:b0:e38:b2f3:b7ab with SMTP id
+ 3f1490d57ef6-e38f8b346femr11037579276.24.1732533866931; Mon, 25 Nov 2024
+ 03:24:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241121-add-mtk-isp-3-0-support-v7-2-b04dc9610619@baylibre.com>
+References: <20241124-adpdrm-v1-0-3191d8e6e49a@gmail.com> <20241124-adpdrm-v1-2-3191d8e6e49a@gmail.com>
+ <10d0aa88-de2e-4856-a137-301519e58b2d@linaro.org>
+In-Reply-To: <10d0aa88-de2e-4856-a137-301519e58b2d@linaro.org>
+From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Date: Mon, 25 Nov 2024 12:24:15 +0100
+Message-ID: <CAMT+MTRWZWj=3AP7wyooXr49-W4vcm0ZbAoqPyEuNkQBMOaJfw@mail.gmail.com>
+Subject: Re: [PATCH 2/5] gpu: drm: adp: Add Apple Display Pipe driver
+To: neil.armstrong@linaro.org
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Janne Grunau <j@jannau.net>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Julien,
+On Mon, 25 Nov 2024 at 09:50, Neil Armstrong <neil.armstrong@linaro.org> wrote:
+>
+> So this controller only supports a single mode ???????
+>
+Most likely. On all devices it is connected to a single built-in display.
 
-Thank you for the patch.
-
-On Thu, Nov 21, 2024 at 09:53:16AM +0100, Julien Stephan wrote:
-> From: Phi-bang Nguyen <pnguyen@baylibre.com>
-> 
-> This adds the bindings, for the ISP3.0 camsv module embedded in
-> some Mediatek SoC, such as the mt8365
-> 
-> Signed-off-by: Phi-bang Nguyen <pnguyen@baylibre.com>
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> ---
->  .../bindings/media/mediatek,mt8365-camsv.yaml      | 109 +++++++++++++++++++++
->  MAINTAINERS                                        |   1 +
->  2 files changed, 110 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/mediatek,mt8365-camsv.yaml b/Documentation/devicetree/bindings/media/mediatek,mt8365-camsv.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..fdd07675645917fbcd692606c836efd07e50ac0c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/mediatek,mt8365-camsv.yaml
-> @@ -0,0 +1,109 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright (c) 2023 MediaTek, BayLibre
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/mediatek,mt8365-camsv.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek CAMSV 3.0
-> +
-> +maintainers:
-> +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> +  - Julien Stephan <jstephan@baylibre.com>
-> +  - Andy Hsieh <andy.hsieh@mediatek.com>
-> +
-> +description:
-> +  The CAMSV is a video capture device that includes a DMA engine connected to
-> +  the SENINF CSI-2 receivers. The number of CAMSVs depend on the SoC model.
-> +
-> +properties:
-> +  compatible:
-> +    const: mediatek,mt8365-camsv
-> +
-> +  reg:
-> +    items:
-> +      - description: camsv base
-> +      - description: img0 base
-> +      - description: tg base
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: cam clock
-> +      - description: camtg clock
-> +      - description: camsv clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: cam
-> +      - const: camtg
-> +      - const: camsv
-> +
-> +  iommus:
-> +    maxItems: 1
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: Connection to the SENINF output
-> +
-> +    required:
-> +      - port@0
-> +
-> +required:
-> +  - compatible
-> +  - interrupts
-> +  - clocks
-> +  - clock-names
-> +  - power-domains
-> +  - iommus
-> +  - ports
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/clock/mediatek,mt8365-clk.h>
-
-I would sort the headers alphabetically.
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> +    #include <dt-bindings/memory/mediatek,mt8365-larb-port.h>
-> +    #include <dt-bindings/power/mediatek,mt8365-power.h>
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        camsv@15050000 {
-> +            compatible = "mediatek,mt8365-camsv";
-> +            reg = <0 0x15050000 0 0x0040>,
-> +                  <0 0x15050208 0 0x0020>,
-> +                  <0 0x15050400 0 0x0100>;
-> +            interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_LOW>;
-> +            clocks = <&camsys CLK_CAM>,
-> +                     <&camsys CLK_CAMTG>,
-> +                     <&camsys CLK_CAMSV0>;
-> +            clock-names = "cam", "camtg", "camsv";
-> +            iommus = <&iommu M4U_PORT_CAM_IMGO>;
-> +            power-domains = <&spm MT8365_POWER_DOMAIN_CAM>;
-> +
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +                port@0 {
-> +                    reg = <0>;
-> +                    camsv1_endpoint: endpoint {
-> +                        remote-endpoint = <&seninf_camsv1_endpoint>;
-> +                    };
-> +                };
-> +            };
-> +        };
-> +    };
-> +...
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 242c54c88a4a22fc0cbe5c4fc5d7b0d0f84b329e..6147629405c8d40b00c4755a4ee27a746b26f782 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14570,6 +14570,7 @@ M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->  M:	Julien Stephan <jstephan@baylibre.com>
->  M:	Andy Hsieh <andy.hsieh@mediatek.com>
->  S:	Supported
-> +F:	Documentation/devicetree/bindings/media/mediatek,mt8365-camsv.yaml
->  F:	Documentation/devicetree/bindings/media/mediatek,mt8365-seninf.yaml
->  
->  MEDIATEK SMI DRIVER
-
--- 
-Regards,
-
-Laurent Pinchart
+Ack on all other changes, will be fixed for v2.
 
