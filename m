@@ -1,77 +1,50 @@
-Return-Path: <linux-kernel+bounces-421188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78CE89D8983
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:39:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74AA99D87C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:22:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A0C6169D45
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:21:32 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5E41B87FD;
+	Mon, 25 Nov 2024 14:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="QLJxDarv"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42681B63308
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:21:06 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14BA71B21B2;
-	Mon, 25 Nov 2024 14:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AVNaiX5U"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD70F1B2186
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741BB1B218E;
+	Mon, 25 Nov 2024 14:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732544303; cv=none; b=dFgaLktajeVTqyizCW1rPlhwcahBlb0gMtZP+GV6uRcbDsthS02+CoL3gSXyYPhPMu90BzfkBsuBI8ciBmZxM/znmy2gYDoEVuext2YSZ3TJ6squoVzAHnwFibv6gKxaCPNB2qaOVAAlWFy9HoFbkl6gB+VGpoMITPkwP/Pmpg4=
+	t=1732544305; cv=none; b=lGtNNbQ3ggM7RMjb75FoXWV4/cGfYEGnGas34UlT3RlsUEvwKEFx1SDtoZ52rYIqdVycQ+phmRPLVyBEXj5nSZDN/BJD4oWuF5SFjFCYXvtn5sxuIzqi/Xy8KdeEDWkGDvhd0fio2KVZY5hoOs9FDaAK6piN1cSI/BzxrLEii5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732544303; c=relaxed/simple;
-	bh=8gTbO0LZfixjkq6uUtLon7DMBOv2a37UPXCjBZJ2iZ8=;
+	s=arc-20240116; t=1732544305; c=relaxed/simple;
+	bh=oRAL0Zv98MtIkGgjkjv6eLyNst+zyD4K6hO99OMP7t4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cIXOM7hC2j4XNITMoBVfaWfpgq3NqCwIDX0IGgFouqyQPGb9GwBJsk4QEGLPvh6+43I0O3cRjMdN82D1AKXU5PgTe+6Db2zOpiMo4iqFJXjKcUNO2scU+rRn6+Fl1E/lH1GWfgCSLoQ/hIlJ43ik3MOb7gFWFZ6jIUc6dOZFpS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AVNaiX5U; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4349fd77b33so7871555e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 06:18:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732544300; x=1733149100; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4UZHmb0OeUd+8GPshNVOwzcpmIxly7Jn8Ce9CCCQHOg=;
-        b=AVNaiX5UtMhyLsFr8D8SfQOlwaLmWvccxYpy2xAP2//Ahs267pSpeEbLlWDqrmpAgP
-         5cdsgTZSxVkwPAKrheDdv0DLWLS+m1EWXPDPsV9yA2rQ8di3wepVhn3hxjsAe5r0OwPc
-         Z4aw09Le5MRRNyqUW3MOiI9kuSuIkf8yOZSQEj9RqEiU2O/d6B2H3Cb8r1qFqd8tbeZ5
-         V/s1LH7VNK1nrVBbm0voae0WxglKf1fYVT3C7GSvyulbcEQMxUD6fhhOnCea+Mi/UZfn
-         +66Wb43ii2tTiSd8b8V2itoWbeYtB2JDJutXXUlTs7hnNZjal/g2t6ZPUULYUobIz5bh
-         41Ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732544300; x=1733149100;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4UZHmb0OeUd+8GPshNVOwzcpmIxly7Jn8Ce9CCCQHOg=;
-        b=BzoEySSxtajpR3Rf82vwalCBQ5u+S7TTbtOuZsn58BVkNLILLOEZaSl3nENvMXGP5S
-         jTrot9cLcSPAsb0Q8wQV2OMzLedDMxFjH9Xv7oKI8tPjLWDOWxnGojFgqfVu3X1umo+r
-         d1QkLNZONS0AaLTEAkqAx8tHe7SZ1LyvrNTtAbi0+imM8MWFBy1mxZX2yfcbUK7L2UXx
-         O1FPuJdmbdA+qZVPGOVoQ/XTHGUlPiS7ZOCR3QsI6YgPTRq51jx8SNUDuVH17sc6y1Rd
-         vLTOM4UYs5qWt6VfQi41amDqP7NXW6nBgbBWIA1j0IH1l1XQwoZs+r2vM2iclKQekQMV
-         LsWw==
-X-Forwarded-Encrypted: i=1; AJvYcCV42Mr04dz/9eEX3Fp2DeVx0ZjcDT/lQEg+RV69+lIoaQROsdObF4XmhY6wXOxV2jscIKs3BsOXDFlMIdI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzghb7fslVwo5NL/p4nyqzHKxSJzIkczu55uhHqwuUh/s/d9qd+
-	nwoEQRqXU1XjAY/TQX9ApCJZmGuLxcJVF2t+GSQqhOmHav7IC9XUhwPWlusqF3o=
-X-Gm-Gg: ASbGnctknsHn+zi7nstJJn3juITWW6qk5miT6Qmq6fMWyDbflNcXRW4tj/Wig/0Pdny
-	59Cwt+XQ7S3LVs+SUunaAPcRub0sozbKoplFgwq0aiy5ON8IQEI/1ogIRAhIF7hHfWH4wDf0y0E
-	QrIBbexAwsXs74AsL2M8HUsMPBcoQdqjzfVqSfNdawxccKFMqcF0B7PHmWk08cGAbZFjph6g6xR
-	Qmr7gxTXOwlIOntoA47IuuLaZWsQ6idtHFKKRVsWNrTV0zU+VKEPBymiq2hnbA=
-X-Google-Smtp-Source: AGHT+IHqIIihdF3fumt0wugdqbgPyd4zHYslJ9WQYwGzPsEPSKNIXwv+JbkUTAaRMXwekVdAEkvLDQ==
-X-Received: by 2002:a05:600c:548d:b0:433:c463:62dd with SMTP id 5b1f17b1804b1-433ce4e73camr111806745e9.27.1732544300035;
-        Mon, 25 Nov 2024 06:18:20 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4349fba472asm36556345e9.17.2024.11.25.06.18.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 06:18:19 -0800 (PST)
-Message-ID: <0234971e-9029-4371-a0aa-7da835591351@linaro.org>
-Date: Mon, 25 Nov 2024 14:18:17 +0000
+	 In-Reply-To:Content-Type; b=mfv6ee3+CWqXv4iExkXSptebZyok4asM85XoMunTUr6m5vAlkLygBA5yUbRmO+cszXibkRVsCZ8tIH4RBqxgYCh71lXQA7ylgyXDqwA/SWSM2rROphprhCOVzmPGjmVNtPKHJS27jUGrmWT7HGYHbCtKMsrjy89rJJlNQHXX2xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=QLJxDarv; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1732544300;
+	bh=oRAL0Zv98MtIkGgjkjv6eLyNst+zyD4K6hO99OMP7t4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QLJxDarvUN6WqgnGSb3BMGONX+Rhq2xnE1BgqDed9xYFTLTMUUj3YCS3jra5NcUjs
+	 7SAAIK7HB6q0006SOmSCWiN+4JqjfadxQhCpQiaZ4yxiU1WZOuzcvuxv6aizK8hLFN
+	 9PiVrIVqyO2XMmvGek4AjHdKPvBWU6bzhSfB9nuds0HzgC/sfRsU+dMvxxSwqqa4lu
+	 jLZpe8+X+1zH8tDlgVguEJ9yC/gztgqkuBWs5Uthy1e+z5rp0TFcD7zyCF5HvfLBJ4
+	 xA2Zt8ipOswhFgneUHKsaO1b1rnZYcTQ/gUjBLE8iziboT6ReTFYVMB7CVziNBVZlZ
+	 n/isbM/oS/cQA==
+Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Xxnqb6x4vzy2R;
+	Mon, 25 Nov 2024 09:18:19 -0500 (EST)
+Message-ID: <d36281ef-bb8f-4b87-9867-8ac1752ebc1c@efficios.com>
+Date: Mon, 25 Nov 2024 09:18:18 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,35 +52,132 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/5] media: dt-bindings: Add qcom,sc7280-camss
-To: Rob Herring <robh@kernel.org>, Vikram Sharma <quic_vikramsa@quicinc.com>
-Cc: rfoss@kernel.org, todor.too@gmail.com, mchehab@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, akapatra@quicinc.com,
- hariramp@quicinc.com, andersson@kernel.org, konradybcio@kernel.org,
- hverkuil-cisco@xs4all.nl, cros-qcom-dts-watchers@chromium.org,
- catalin.marinas@arm.com, will@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20241112173032.2740119-1-quic_vikramsa@quicinc.com>
- <20241112173032.2740119-2-quic_vikramsa@quicinc.com>
- <20241115165031.GA3344225-robh@kernel.org>
+Subject: Re: [RFC PATCH 4/5] tracing: Remove conditional locking from
+ __DO_TRACE()
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>, Michael Jeanson
+ <mjeanson@efficios.com>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
+ Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org,
+ Joel Fernandes <joel@joelfernandes.org>, Jordan Rife <jrife@google.com>,
+ linux-trace-kernel@vger.kernel.org
+References: <20241123153031.2884933-1-mathieu.desnoyers@efficios.com>
+ <20241123153031.2884933-5-mathieu.desnoyers@efficios.com>
+ <CAHk-=whTjKsV5jYyq5yAxn7msQuyFdr9LB1vXcF6dOw2tubkWA@mail.gmail.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241115165031.GA3344225-robh@kernel.org>
+In-Reply-To: <CAHk-=whTjKsV5jYyq5yAxn7msQuyFdr9LB1vXcF6dOw2tubkWA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 15/11/2024 16:50, Rob Herring wrote:
->> +  reg:
->> +    maxItems: 15
->> +
->> +  reg-names:
-> reg and reg-names go after 'compatible'. See the documented ordering.
+On 2024-11-23 12:38, Linus Torvalds wrote:
+> On Sat, 23 Nov 2024 at 07:31, Mathieu Desnoyers
+> <mathieu.desnoyers@efficios.com> wrote:
+>>
+>>   include/linux/tracepoint.h | 45 ++++++++++----------------------------
+>>   1 file changed, 12 insertions(+), 33 deletions(-)
+> 
+> Thanks. This looks much more straightforward, and obviously is smaller too.
+> 
+> Side note: I realize I was the one suggesting "scoped_guard()", but
+> looking at the patch I do think that just unnecessarily added another
+> level of indentation. Since you already wrote the
+> 
+>      if (cond) {
+>          ..
+>      }
+> 
+> part as a block statement, there's no upside to the guard having its
+> own scoped block, so instead of
+> 
+>      if (cond) { \
+>          scoped_guard(preempt_notrace)           \
+>              __DO_TRACE_CALL(name, TP_ARGS(args)); \
+>      }
+> 
+> this might be simpler as just a plain "guard()" and one less indentation:
+> 
+>      if (cond) { \
+>          guard(preempt_notrace);           \
+>          __DO_TRACE_CALL(name, TP_ARGS(args)); \
+>      }
+> 
+> but by now this is just an unimportant detail.
+> 
+> I think I suggested scoped_guard() mainly because that would then just
+> make the "{ }" in the if-statement superfluous, but that's such a
+> random reason that it *really* doesn't matter.
 
-Rob, the documented ordering pertains to the dtsi and examples not to 
-the yaml right ?
+I tried the following alteration to the code, which triggers an
+unexpected compiler warning on master, but not on v6.12. I suspect
+this is something worth discussing:
 
----
-bod
+         static inline void trace_##name(proto)                          \
+         {                                                               \
+                 if (static_branch_unlikely(&__tracepoint_##name.key)) { \
+                         if (cond)                                       \
+                                 scoped_guard(preempt_notrace)           \
+                                         __DO_TRACE_CALL(name, TP_ARGS(args)); \
+                 }                                                       \
+                 if (IS_ENABLED(CONFIG_LOCKDEP) && (cond)) {             \
+                         WARN_ONCE(!rcu_is_watching(),                   \
+                                   "RCU not watching for tracepoint");   \
+                 }                                                       \
+         }
+
+It triggers this warning with gcc version 12.2.0 (Debian 12.2.0-14):
+
+In file included from ./include/trace/syscall.h:5,
+                  from ./include/linux/syscalls.h:94,
+                  from init/main.c:21:
+./include/trace/events/tlb.h: In function ‘trace_tlb_flush’:
+./include/linux/tracepoint.h:261:28: warning: suggest explicit braces to avoid ambiguous ‘else’ [-Wdangling-else]
+   261 |                         if (cond)                                       \
+       |                            ^
+./include/linux/tracepoint.h:446:9: note: in expansion of macro ‘__DECLARE_TRACE’
+   446 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),              \
+       |         ^~~~~~~~~~~~~~~
+./include/linux/tracepoint.h:584:9: note: in expansion of macro ‘DECLARE_TRACE’
+   584 |         DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+       |         ^~~~~~~~~~~~~
+./include/trace/events/tlb.h:38:1: note: in expansion of macro ‘TRACE_EVENT’
+    38 | TRACE_EVENT(tlb_flush,
+       | ^~~~~~~~~~~
+
+I suspect this is caused by the "else" at the end of the __scoped_guard() macro:
+
+#define __scoped_guard(_name, _label, args...)                          \
+         for (CLASS(_name, scope)(args);                                 \
+              __guard_ptr(_name)(&scope) || !__is_cond_ptr(_name);       \
+              ({ goto _label; }))                                        \
+                 if (0) {                                                \
+_label:                                                                 \
+                         break;                                          \
+                 } else
+
+#define scoped_guard(_name, args...)    \
+         __scoped_guard(_name, __UNIQUE_ID(label), args)
+
+AFAIU this is a new warning introduced by
+
+commit fcc22ac5baf ("cleanup: Adjust scoped_guard() macros to avoid potential warning")
+
+Thanks,
+
+Mathieu
+
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
