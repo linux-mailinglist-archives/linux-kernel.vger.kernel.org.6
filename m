@@ -1,102 +1,95 @@
-Return-Path: <linux-kernel+bounces-421518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A489D8C5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:42:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 547D29D8C5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:43:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1473616906E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:42:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A4892868EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBE21BC07E;
-	Mon, 25 Nov 2024 18:42:14 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8711B87D1;
-	Mon, 25 Nov 2024 18:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF771BAEFD;
+	Mon, 25 Nov 2024 18:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TAg7xhid"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3DE11B414E;
+	Mon, 25 Nov 2024 18:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732560134; cv=none; b=TzESmE/hpc4GwVbVVZtfGfVnKYj2BASmhTMSTGj492Fqu4rITC+igykNgHrd64MRRxfoGQm9JMBln5VcooFkKFeMyphXQos8cagLsZTvlMoTbGhFWJmMUIDzV5ng95dn5xIZ9BJTUCjErbu10OXeC4EY0YKQqKttGl1uW7eJc0U=
+	t=1732560185; cv=none; b=uoqvDcDu00oY4hufVlCAg7vpMfUHnXm1vFy6DnleI0RUVBYQ1UYgQ3maes+JldJTUkvXa2QFL+LHbMTWM6ZcRG2oUPbKSscy8l3LLIDEppiF0vJmg66S2JQ67QQxVRBqUSaH66wG34kIga0JfltcMwwwYaTFRDVNS0eoxuqFxTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732560134; c=relaxed/simple;
-	bh=dE96jZM7t+ilUzLQzwPnbdBszqCq/WutM2xvSHjMijw=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=TaKgDoGzI2yUUxDs4XjeR5Dw+bvF+R0Gy3dVt/1m9yUAdS5uwlls4iEbZCYhtHeR1UG/CGca7enwTI35LkyikRdlzRIz+Z+u0YNiSQ27mr+3EgGJCOxTBO5+jr1x0SOktDtQAhmS6vloVYxy1J9ZDyQKFHqIEvbrRU/FvNlU8c8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id B0E2D92009C; Mon, 25 Nov 2024 19:42:09 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id AAC7892009B;
-	Mon, 25 Nov 2024 18:42:09 +0000 (GMT)
-Date: Mon, 25 Nov 2024 18:42:09 +0000 (GMT)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Arnd Bergmann <arnd@kernel.org>
-cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-    Guenter Roeck <linux@roeck-us.net>, 
-    Niklas Schnelle <schnelle@linux.ibm.com>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Jiri Slaby <jirislaby@kernel.org>, 
-    =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-    linux-serial@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>, 
-    linux-kernel@vger.kernel.org, Yang Yingliang <yangyingliang@huawei.com>
-Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
-In-Reply-To: <42b1911e-c69b-4f5a-96f2-ab6d4353ea5c@app.fastmail.com>
-Message-ID: <alpine.DEB.2.21.2411251820200.44939@angie.orcam.me.uk>
-References: <20240405152924.252598-2-schnelle@linux.ibm.com> <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net> <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com> <472eb22a-dcb1-4fbb-bf2c-a4173706bc7a@app.fastmail.com>
- <27685942-fb62-44c5-86ed-98beb547ffed@roeck-us.net> <744920ba-551c-466b-ac5c-2607b81261a0@app.fastmail.com> <Z0QtZky8Sr7qUW7v@smile.fi.intel.com> <00f5e842-3ee9-4d83-8836-0ff4f703fa3c@app.fastmail.com> <Z0RSZ-YD_BozMs1n@smile.fi.intel.com>
- <be43108e-4135-4927-ba58-141836fde6af@app.fastmail.com> <Z0Re61Tk5lN2Xuxi@smile.fi.intel.com> <1a7da799-f15b-4714-a3bd-4c0b1f48fc09@app.fastmail.com> <alpine.DEB.2.21.2411251628320.44939@angie.orcam.me.uk>
- <42b1911e-c69b-4f5a-96f2-ab6d4353ea5c@app.fastmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1732560185; c=relaxed/simple;
+	bh=+NhohOKeeJop2jxV/1j/MYLQnUGaeIOGmTk1PDvMxNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n2y/IRfPUU1G9b2P1nXgQfzI5o+QQRe2lD8BHqZnxre/nsxlZVqA2IJ/JSvP3O1CVAo4uv4RtrIVnH/EQn33UJLnpLyAQt3ykBT0Gwkaiyx+d/apQDA5rYILfhuSW2rt8jxc0uturqZ44anA8tzPUidCEikOJTYx/odDUh8zEjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TAg7xhid; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45A26C4CECE;
+	Mon, 25 Nov 2024 18:43:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732560184;
+	bh=+NhohOKeeJop2jxV/1j/MYLQnUGaeIOGmTk1PDvMxNU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TAg7xhid0xYQh2ML5Jg3kSOKPApbYrUJofs/fM9rDV2XtdcagV3UhEC0RMcqmwWI+
+	 Q4+TWm5/TC6yZgmOkFcL7/8PW4OmzDA3+3nFHh0DKTvOB5QD02z7EJkYjZqaIgOINa
+	 E+4fbOEkh08BNSWFyPldtnw8ysryeNSPVDK9YgrrR0PBXOCJxi0XQKO5FAVVGzK1ZA
+	 NjYmcXL5G3sL/2cCA39rLc2UahvDBgFlYbvlW9mTlZd9NI1aczc3QqtogtoZHE+kor
+	 rthiW+wdTHMOdcNaqYUJ+WYnhMbxxJFl8BPW6J5bVKzCyVLViRZykJUWTYtdPZuKye
+	 YBv/g6fA7jMTQ==
+Date: Mon, 25 Nov 2024 18:43:00 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
+	Michael.Hennerich@analog.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: iio: adc: adi,ad4000: Add PulSAR
+Message-ID: <20241125-scarecrow-slouchy-5e8e5bc0c17b@spud>
+References: <cover.1731626099.git.marcelo.schmitt@analog.com>
+ <a155d0d0fb1d9b5eece86099af9b5c0fb76dcac2.1731626099.git.marcelo.schmitt@analog.com>
+ <0b8a2d07-feea-409f-a850-7ee0c752a949@baylibre.com>
+ <Zzsj9_HVBO5wrJv_@debian-BULLSEYE-live-builder-AMD64>
+ <ZzuGtvdrD6D06rEp@debian-BULLSEYE-live-builder-AMD64>
+ <20241124131147.0d616f82@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="YzOZhQR+d8nuzzbO"
+Content-Disposition: inline
+In-Reply-To: <20241124131147.0d616f82@jic23-huawei>
 
-On Mon, 25 Nov 2024, Arnd Bergmann wrote:
 
-> >  May I suggest to call `serial8250_isa_init_ports':
-> >
-> > 	if (IS_ENABLED(CONFIG_ISA) || IS_ENABLED(CONFIG_ALPHA) ||
-> > 	    IS_ENABLED(CONFIG_M68K) || IS_ENABLED(CONFIG_X86))
-> >
-> > then (or have an equivalent `select' in the relevant Kconfig files)?
-> 
-> Right, I think that makes sense, but I'm a little worried
-> about renumbering or incorrectly configuring the uarts on
-> a non-x86 system that might have ISA slots and also register
-> a 8250 console.
-> 
-> E.g. on the RM200, two serial ports get registered on
-> MMIO addresses:
-> 
-> arch/mips/sni/rm200.c:static struct serial8250_platform_data rm200_data[] = {
-> arch/mips/sni/rm200.c-  MEMPORT(0x160003f8, RM200_I8259A_IRQ_BASE + 4),
-> arch/mips/sni/rm200.c-  MEMPORT(0x160002f8, RM200_I8259A_IRQ_BASE + 3),
-> arch/mips/sni/rm200.c-  { },
-> arch/mips/sni/rm200.c-};
-> 
-> so these would become ports ttyS4 and ttyS5 if the first four
-> ports get reserved for ISA cards, or disappear when using the
-> default CONFIG_SERIAL_8250_NR_UARTS=4.
+--YzOZhQR+d8nuzzbO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- I think it's still the correct thing to do or ISA card ports won't be 
-accessible.  Then where there are platform ports, they ought to be given 
-precedence so that they are given lower indices.  I'm undecided as to 
-whether we actually need to get it sorted now or wait for someone with an 
-RM200 system to trigger the problem (with the possible workarounds being:
+On Sun, Nov 24, 2024 at 01:11:47PM +0000, Jonathan Cameron wrote:
+> Usually what DT maintainers are looking for is a clear statement of how
+> the devices are different.
 
-1. Do not plug any ISA cards with serial ports.
+Ye, tell us rather than make us open the datasheets or have to ask
+questions to figure out whether or not what you've got is correct.
 
-2. Set CONFIG_SERIAL_8250_RUNTIME_UARTS or "8250.nr_uarts" to 0.
+--YzOZhQR+d8nuzzbO
+Content-Type: application/pgp-signature; name="signature.asc"
 
-).  It might be quite easy to get sorted though, so I'd be leaning towards 
-at least checking how feasible it would be.
+-----BEGIN PGP SIGNATURE-----
 
-  Maciej
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0TFMwAKCRB4tDGHoIJi
+0vmjAP9nuLe7lsgNov37uozzreaO32Ax6UE1CjZUelSR2wYebAEArL1lbsnAOwPK
+WcMruNMfuYgPc6XFBMLZ4U5TQzlRrAA=
+=Fnxm
+-----END PGP SIGNATURE-----
+
+--YzOZhQR+d8nuzzbO--
 
