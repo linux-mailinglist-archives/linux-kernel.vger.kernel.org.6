@@ -1,118 +1,119 @@
-Return-Path: <linux-kernel+bounces-420881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 674D69D850C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:06:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 102899D83F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:00:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4379FB3D05B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:59:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8095281D58
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC66E194C6E;
-	Mon, 25 Nov 2024 10:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89506192589;
+	Mon, 25 Nov 2024 11:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="dRKsxhNV"
-Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="gXaf1hur"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD355192B7F;
-	Mon, 25 Nov 2024 10:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB7115383D
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732532374; cv=none; b=ZrXX42DK3O1wgas3qwok5Ed2sls3i1EriM30gMaRvWIEWPtf0ZSlsKewrjLo2qfK71b4ekf1lErVS4RdSc0gq7xZZH6CrX0y6fcnjGJ0qUccgFYXqIRErDF9rJNE1PMRIai1u1+hGBHdu51SGpJyidNufpQs7OSWVKSFngvmXoM=
+	t=1732532421; cv=none; b=prHBIzGVs20sXCoqM1CB32BmzeSox9eiIfi1HpjI+UkcOUsJQ3qx+11/4h3WhrYCswv256aDu2T+K0gi+a8ba764kvUL4KcdiDz3YFLq95It1c80zyfXsmVCATGLZyV/0vwQXxMYKXH6SEROj8y1TkyrTuYZYKFjL9yitu6vfx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732532374; c=relaxed/simple;
-	bh=GHS/SEzX4n4lOOmfdbeh+O3yKhBWSQkgZFU5DwY6NuE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FLLO7EFiDywahPrDxEqov86qiL8xqLgA25poTq0Yuuj2hGbLClEtqtqhHh1956FHTLqTYOQ6RB+Mv99BBamBvDE9byCDwgP7lbP9qknDTTed2I9N4ZrADAYCIhUGIzga1rvuEXKDe0UMFPExkRnxHGzyADcmw/zArmJB2W5t4S8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=dRKsxhNV; arc=none smtp.client-ip=168.119.48.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
-From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1732532371;
-	h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nkyprKAwDQMKqKiqTw5jnahGqPM9yDb/oFOya9sneAI=;
-	b=dRKsxhNVdxme8dJtfyhu1h1ogCJmeUhR9he/Uql+oqIjMVUD78SfSVWPlwemKtk4Tq6M0g
-	WnriIsTytTGRwsygYYm9odz0uQRi1JbVPB5O/cSlSQxQGQJGHfB0LdUXKvnCFTrTEtodj2
-	WN4DI+GP7tWTlYdVP9OwDQ+gP3qXb/mywiLKryP9qgmgwtlDfzPQA5L7/Gck+X7XP9XGlL
-	oe24CAAkJbuzf7/i6ifVWUp+md6uJ16KO5kPj9hFcXArxS1h5ba9JYD9tKUHqA1u1StATP
-	o6P0yIArBszG4c/rLlM/4phSKiZsaXmr9imst7zh9rUQ5yQ9klOwQXaAVRf5WQ==
-To: 
-Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH 1/2] lsm: constify function parameters
-Date: Mon, 25 Nov 2024 11:59:24 +0100
-Message-ID: <20241125105926.47141-2-cgoettsche@seltendoof.de>
-In-Reply-To: <20241125105926.47141-1-cgoettsche@seltendoof.de>
-References: <20241125105926.47141-1-cgoettsche@seltendoof.de>
-Reply-To: cgzones@googlemail.com
+	s=arc-20240116; t=1732532421; c=relaxed/simple;
+	bh=3d6UyV6U+9wQgJBtBnwExDF3o1uhmm9VscgFbOGYwg8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ToivMS/1PmXrPkHhC9jWSVeYeRMXnYDsVn7wgoAJRl/vRF509sDbriaMxoAT/7nbsvhgN+Ie8K+cd7YPE+u2oB+B/KUA89wZybefg2bXGJsKLwYvFNLF+Op9gFp3ZImqgeCxZKP64ThQbT7zvFA79rU1BR/PaUG2AS5QpiVBaU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=gXaf1hur; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2eade1cad26so3374912a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 03:00:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1732532417; x=1733137217; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=96MYJ9KaXB4pjcRmFCY5IfRMfIhiUGPcMDlrjury5qo=;
+        b=gXaf1hurlNIKtd+yXH1hHhqkxzBBdgrTuyIXMTMapPhe8vMaByYJKY3LUo4yuPx0oy
+         GaEnwASwwk4fB8wqTeSLVQUH3ZZ8DmuWgiD6vm/WSFer/O8ZZIRkFf5yaNLRd/1VqsTI
+         PQBK4jl5qkTKBZufY3H4O9nO1YdAOBBnRM3ik=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732532417; x=1733137217;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=96MYJ9KaXB4pjcRmFCY5IfRMfIhiUGPcMDlrjury5qo=;
+        b=j74bbpEWHyT6pD6i/2yVD2iC/3Ev4iRnQL/xU8HtvMMz+FDmfZWYxqPQQwrBK2Tadx
+         NWeqp6hkp1hL1abaOhzP33BmVzcjpdwR6YvVDc6L8HLa9AOzDi8TpxcveGxgxQZLQa43
+         dOVSgkqsoSiC0+DKKpGyoWsOfW03++4wOA7zM5s87klY2Qvhn2wAHw3sUZCF3JMO+nf4
+         GJa4Ql+PJBzXS4EUNR8fBW/y2+HGEIGsnJiTpjPTLO9S+P9fOAmeiX/ipHCoFg3+QKMW
+         x5N/7l65WpDe3N5mfSg5vhzmX0HSGdJOi80W9sKYGWMs6ueHKPHYI4MA788f8G1d0sNL
+         WBJQ==
+X-Gm-Message-State: AOJu0YzuVcFuHWAO7c87B2hx/MJ+xHZbTFYrk9Rb0MU06zJDKS7C1Gp4
+	S0pf28XQvCdtMISycmBSDcnMvidPq70XwRl6V2isOytHCzyN3x32DSY9jiEHJg==
+X-Gm-Gg: ASbGncukQCSZix8LOpj1Rrgi0y0h+Fai0KZ6TMLrMv956MTLw62+ZIgurLXgFqA7V5Y
+	QFwN7w7wOClJXzIYUI4uvwnRad5yvYcx6pe4mS23NuILfUv8hJeVzmjUmg6l55lNav7FpVx08ZP
+	k5DVyJLVfAQOvbzKlbCIWex8u8jbvQroFAxvWn4d4fd7O+wZcNQND7k7kKUWq2XaGPZkTqtB4MT
+	rTbWnxaVCxyp0RmhXIVo37oyJE9YoTPqG6Iyo6Uzcs7iTxHob8+juRNuL6aJ11dpmwxt6mXJs+4
+	4pM=
+X-Google-Smtp-Source: AGHT+IGOFYLZpRNxLdZHD1TVQKl4mUNs8aee25A9C8cycK7Rs+PtYbJTRnxLEvS3pDQwf57usVWQww==
+X-Received: by 2002:a17:90b:180f:b0:2ea:696d:7341 with SMTP id 98e67ed59e1d1-2eb0e527de1mr13709469a91.22.1732532414441;
+        Mon, 25 Nov 2024 03:00:14 -0800 (PST)
+Received: from photon-dev.. ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ead04fbcd7sm9972779a91.53.2024.11.25.03.00.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2024 03:00:13 -0800 (PST)
+From: Ajay Kaher <ajay.kaher@broadcom.com>
+To: richardcochran@gmail.com,
+	netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	nick.shi@broadcom.com,
+	ajay.kaher@broadcom.com,
+	alexey.makhalov@broadcom.com,
+	vasavi.sirnapalli@broadcom.com,
+	vamsi-krishna.brahmajosyula@broadcom.com,
+	florian.fainelli@broadcom.com
+Subject: [PATCH]  ptp: Add error handling for adjfine callback in ptp_clock_adjtime
+Date: Mon, 25 Nov 2024 10:59:54 +0000
+Message-Id: <20241125105954.1509971-1-ajay.kaher@broadcom.com>
+X-Mailer: git-send-email 2.39.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Christian Göttsche <cgzones@googlemail.com>
+ptp_clock_adjtime sets ptp->dialed_frequency even when adjfine
+callback returns an error. This causes subsequent reads to return
+an incorrect value.
 
-The functions print_ipv4_addr() and print_ipv6_addr() are called with
-string literals and do not modify these parameters internally.
+Fix this by adding error check before ptp->dialed_frequency is set.
 
-Reported by clang:
-
-    security/lsm_audit.c:324:7: warning: passing 'const char[6]' to parameter of type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
-      324 |                                                 "laddr", "lport");
-          |                                                 ^~~~~~~
-    security/lsm_audit.c:183:27: note: passing argument to parameter 'name1' here
-      183 |                                    __be16 port, char *name1, char *name2)
-          |                                                       ^
-
-Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+Fixes: 39a8cbd9ca05 ("ptp: remember the adjusted frequency")
+Signed-off-by: Ajay Kaher <ajay.kaher@broadcom.com>
 ---
- security/lsm_audit.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/ptp/ptp_clock.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-index 849e832719e2..f1fe99f2221d 100644
---- a/security/lsm_audit.c
-+++ b/security/lsm_audit.c
-@@ -171,7 +171,7 @@ int ipv6_skb_to_auditdata(struct sk_buff *skb,
- 
- static inline void print_ipv6_addr(struct audit_buffer *ab,
- 				   const struct in6_addr *addr, __be16 port,
--				   char *name1, char *name2)
-+				   const char *name1, const char *name2)
- {
- 	if (!ipv6_addr_any(addr))
- 		audit_log_format(ab, " %s=%pI6c", name1, addr);
-@@ -180,7 +180,7 @@ static inline void print_ipv6_addr(struct audit_buffer *ab,
- }
- 
- static inline void print_ipv4_addr(struct audit_buffer *ab, __be32 addr,
--				   __be16 port, char *name1, char *name2)
-+				   __be16 port, const char *name1, const char *name2)
- {
- 	if (addr)
- 		audit_log_format(ab, " %s=%pI4", name1, &addr);
+diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
+index c56cd0f..77a36e7 100644
+--- a/drivers/ptp/ptp_clock.c
++++ b/drivers/ptp/ptp_clock.c
+@@ -150,7 +150,8 @@ static int ptp_clock_adjtime(struct posix_clock *pc, struct __kernel_timex *tx)
+ 		if (ppb > ops->max_adj || ppb < -ops->max_adj)
+ 			return -ERANGE;
+ 		err = ops->adjfine(ops, tx->freq);
+-		ptp->dialed_frequency = tx->freq;
++		if (!err)
++			ptp->dialed_frequency = tx->freq;
+ 	} else if (tx->modes & ADJ_OFFSET) {
+ 		if (ops->adjphase) {
+ 			s32 max_phase_adj = ops->getmaxphase(ops);
 -- 
-2.45.2
+2.39.4
 
 
