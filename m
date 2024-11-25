@@ -1,202 +1,116 @@
-Return-Path: <linux-kernel+bounces-420737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 489499D82BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:45:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B6E19D82BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:45:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0929C281731
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:45:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B4B9163D4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8229218F2E2;
-	Mon, 25 Nov 2024 09:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB10F191473;
+	Mon, 25 Nov 2024 09:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HkS+gBPk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iHiHUsXg"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83262500B4
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 09:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC382500B4
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 09:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732527915; cv=none; b=RBfR+LdKec940gcX0wFM0VHi18SIhvzZWCCZ+aXkbKwF1ik1Gsn53gtq1nyE8zqzmyCqvdo6TxB7idd3xTMl74BFlRrXMoVdpfntsKTbfsKDwIDm+9sRkGABn7aIGFeF31DiyeRUhV+iT3onqFTWjBv/wiQO99Ohmo5Qt7k5stw=
+	t=1732527925; cv=none; b=umSM9YByl9P8FdX9mLwQ5UULH880C7FfO6+NsJoeHvELs0uyuoFFdpOV8esZ1ppNyB6xBuYZAyeGe9UOADyywTaPBXeaWFvFf3UZgxT+amdh0t747mLojWPt4spp/roOf/bIjj7cYavaiQm3cyEC75b3xfYc0qU3cTvq0lZ4FuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732527915; c=relaxed/simple;
-	bh=x028aXeuOrFWn6SSDLQRuiQSir9d+QFOOxfmn2XOey8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gpgNn3x/4Ehu1mBPZy6p6NUuNkucbr07XU8hJ5cgbqNxPqcqYwEmig4hJCsiu4nUoJ2URvCKDLuCo37SqqN0Ug8o103LlAMnaL0WyYCTi6Z9fk21KdW5LB1ziRX/ej5T2FQvIkNhMUPrwsKzYvXwG9gpplTbSu6yMR8jcJrrNic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HkS+gBPk; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732527914; x=1764063914;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=x028aXeuOrFWn6SSDLQRuiQSir9d+QFOOxfmn2XOey8=;
-  b=HkS+gBPkHW43kTq0sWGc30cw2yVGwD710yNUMW8nZOyFXQS4v3XRuY1f
-   HhZNQfUXAXYv1w33mtHc3gcIvBDFAUui4i9yy0J6s269NcR9PKlwpx1sB
-   D3MxXGNPoTfVBMhE8xbrKe7O4glLSROvw23XjSDWVbJVwVKNZhlrVQcii
-   bDs1w6WCvA6sv4X7INYx5Lpq0ATZuMmCdn/G1GjQAA7xl8LmCzMEh+umC
-   mEktxT7OLySlz7R383fqDogEcFx6H9qpS9a5VARrAoKA/pNM4HEOyQ6PU
-   2GX57mGIlzCcKUeIe6uwneXDLYtmoeac5wfrjiVYBAFhDp2DS7HzKFikD
-   Q==;
-X-CSE-ConnectionGUID: 2ORZ1sVPRmu2iECIATA++A==
-X-CSE-MsgGUID: y9Ag7IJHSSeMejIlxfpe+Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="32752376"
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="32752376"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 01:45:13 -0800
-X-CSE-ConnectionGUID: wyt/aj7uR6qy9lk/sV6QoQ==
-X-CSE-MsgGUID: +B+QqeZkT8C5sYLHFbcgTg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="96143804"
-Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.243])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 01:45:07 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Louis Chauvet <louis.chauvet@bootlin.com>, =?utf-8?Q?Ma=C3=ADra?= Canal
- <mairacanal@riseup.net>, Haneen Mohammed <hamohammed.sa@gmail.com>, Simona
- Vetter <simona@ffwll.ch>, Melissa Wen <melissa.srw@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>
-Cc: arthurgrillo@riseup.net, jeremie.dautheribes@bootlin.com,
- miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
- seanpaul@google.com, nicolejadeyee@google.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Louis
- Chauvet <louis.chauvet@bootlin.com>
-Subject: Re: [PATCH RFC v2 17/18] drm/vkms: Introduce config for connector EDID
-In-Reply-To: <20241122-google-remove-crtc-index-from-parameter-v2-17-81540742535a@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20241122-google-remove-crtc-index-from-parameter-v2-0-81540742535a@bootlin.com>
- <20241122-google-remove-crtc-index-from-parameter-v2-17-81540742535a@bootlin.com>
-Date: Mon, 25 Nov 2024 11:45:04 +0200
-Message-ID: <87o723y7dr.fsf@intel.com>
+	s=arc-20240116; t=1732527925; c=relaxed/simple;
+	bh=8GWbrppTY2SdRiB8p/3spnrWMuOqZHHKbGVh/ni1TaU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PkW6AlSbD6tPVrniOvvfsCqxbC7tlgooEUkJM2zIk6AW3VBky+PZ3gxZuTHysqGK3htGAtlgtdHo9Pxf3XmEyc8XdGNNdF1EtRy388h48gSlU5cnrSuyAiEjKMi5/P0FMxmegH1jubrXiXkt/suBV7vJtcV8WiFPmhCWQVOhAHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iHiHUsXg; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4316a44d1bbso38256665e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 01:45:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732527922; x=1733132722; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8GWbrppTY2SdRiB8p/3spnrWMuOqZHHKbGVh/ni1TaU=;
+        b=iHiHUsXgm9F0I6pbuZ/u9clJWvcF5/BTBJ3SlzENgziOY4b03DLli+kn8TgZHQy0mS
+         ZhA6bxoO/k6M8wTGPk9Jpc3Cxh2v41S3ESzvN03jkl+mhgL9rYtGtv5XEsSYDYsAuh0l
+         ViPHt0xBRzD7G8x6JNIqToLHWIKmnLhd0ELk/5R1nIe/NkVQhToF2EYa2eaUF2wjNkQ3
+         tWmVIaXMIUU4dsn05Y9LJSSAPEypqP4Nk2rBLweGm1XjYc5ruiRD8TXb6MeIqweVrS+3
+         cLx8LlhGQNGOkEoe3crTOTLQ+U4iaRwEMbb9nLNaxSCs02szSAvvyH0c0iCS8/3YncGc
+         0thA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732527922; x=1733132722;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8GWbrppTY2SdRiB8p/3spnrWMuOqZHHKbGVh/ni1TaU=;
+        b=tmbmzrgJNAnUGwk5651wRBTqH7x0YOVVbmHNJAeTlLc1/ZC6ADOWUsH2oFfjP+D5WX
+         7QyRnQS/0tSQ4eEzkd7Q2Tmyng8eiamtOOeAARjT83riFn+77K9V7svPy7Uyw4gejl87
+         e7C3uI5qcua49KxLo2vUI+/wzVQz4IV1HNDZCcbswyxymNJzluiEGvZ2J6eLUlSwoRvy
+         mEuVMxTNINwGERtdoBGlofU+Z3bRFZkB98qACTNPXhbvVyvsBdeKwsU/lxFgZY9vFGga
+         /dYjWeOaKzsvXECDBm8F6ErUS0rDQN+uW4ogApwqPJcQiQI5pXlA+NRuv+qmX2vPU7pv
+         KwqA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAcAmk/6QdRnQWzh6eGUJqZySus5wDxIkp7G/RflHtBagbvJvvMMtjp2TFfDNfLo6clenXO8Hidmw3sAg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU2nzzOK2eOvB2d332Ep1SA5K705bGN/3ciVheZ3jgw6ycn9Mh
+	Qm+NpGYhAIGNFjfC38xGBck65cUA0dF2I3unkYj3K5xozfOkERpqWvSzoQTHLod7S1L/vaQbu6c
+	RJQVoCYQw9I4RFNVJyhyI8Gh4MUVrapzvLbnb
+X-Gm-Gg: ASbGncuaSeg+x+WBmM8EbIXxDh5ONBIYw/QMIAqrFsi7gAK3Mt9HPiCoxW0c7589mq5
+	qTM1sNOy/1n1OrxLcv8En7y99TXE/q1kvTaMcisg3ykW5OriDmP6QvqG9AwhqbQ==
+X-Google-Smtp-Source: AGHT+IGMe//ja59s2KtnkXWASLS4/7cHUSPDFQmfLfQzEv/lOhx3Gg//+rAV5dCcd3lozbWK7n3eI2qxPCsTUq7WPdI=
+X-Received: by 2002:a05:600c:4fd1:b0:430:52ec:1e41 with SMTP id
+ 5b1f17b1804b1-433ce42845fmr110108165e9.17.1732527922183; Mon, 25 Nov 2024
+ 01:45:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20241123180323.255997-1-ojeda@kernel.org> <CAH5fLggg5f0KpaObVtZc7WaxHjUqbhCDsn5CwnA5-3df2HEjnw@mail.gmail.com>
+ <CANiq72moPEL5s0T3ELEDvWiE6Lz5oZv2hZnziV5A60EP65bkkQ@mail.gmail.com>
+In-Reply-To: <CANiq72moPEL5s0T3ELEDvWiE6Lz5oZv2hZnziV5A60EP65bkkQ@mail.gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 25 Nov 2024 10:45:09 +0100
+Message-ID: <CAH5fLgjEDXHGLf+fAyzZwGtX+sjuCst6P9Eg_eyLjujd2datYw@mail.gmail.com>
+Subject: Re: [PATCH] rust: kbuild: set `bindgen`'s Rust target version
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
+	Christian Poveda <git@pvdrz.com>, =?UTF-8?Q?Emilio_Cobos_=C3=81lvarez?= <emilio@crisal.io>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 22 Nov 2024, Louis Chauvet <louis.chauvet@bootlin.com> wrote:
-> To properly test the EDID reading without using the DRM override, add an
-> option to configure the EDID for a connector.
+On Mon, Nov 25, 2024 at 10:42=E2=80=AFAM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
 >
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> ---
->  drivers/gpu/drm/vkms/vkms_config.c |  1 +
->  drivers/gpu/drm/vkms/vkms_config.h |  2 ++
->  drivers/gpu/drm/vkms/vkms_output.c | 37 ++++++++++++++++++++++++++++++++++---
->  3 files changed, 37 insertions(+), 3 deletions(-)
+> On Mon, Nov 25, 2024 at 10:08=E2=80=AFAM Alice Ryhl <aliceryhl@google.com=
+> wrote:
+> >
+> > Just to double-check, the problem is that bindgen currently doesn't
+> > get any information about the rustc we're using, so it may generate
+> > code invalid on the rustc we are actually using?
 >
-> diff --git a/drivers/gpu/drm/vkms/vkms_config.c b/drivers/gpu/drm/vkms/vkms_config.c
-> index ac1a9658c5075c118d59da965ca3392355ccb2b2..1a1234d4f10fa8e5ea6bd649139ecc10c991f875 100644
-> --- a/drivers/gpu/drm/vkms/vkms_config.c
-> +++ b/drivers/gpu/drm/vkms/vkms_config.c
-> @@ -199,6 +199,7 @@ struct vkms_config_connector *vkms_config_create_connector(struct vkms_config *v
->  	xa_init_flags(&vkms_config_connector->possible_encoders, XA_FLAGS_ALLOC);
->  	vkms_config_connector->type = DRM_MODE_CONNECTOR_VIRTUAL;
->  	vkms_config_connector->status = connector_status_unknown;
-> +	vkms_config_connector->edid_blob_len = 0;
->  
->  	return vkms_config_connector;
->  }
-> diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
-> index bba56c9d8aeceac97a4339ef42ab663c5dc54e65..1220b16f6c98d1ebb0ae55d662a84fe25e1a6a02 100644
-> --- a/drivers/gpu/drm/vkms/vkms_config.h
-> +++ b/drivers/gpu/drm/vkms/vkms_config.h
-> @@ -112,6 +112,8 @@ struct vkms_config_connector {
->  	struct xarray possible_encoders;
->  	int type;
->  	enum drm_connector_status status;
-> +	char edid_blob[PAGE_SIZE];
-> +	int edid_blob_len;
->  
->  	/* Internal usage */
->  	struct drm_connector *connector;
-> diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
-> index fc6a0cdade0739b94820ed4e0924cf355137fe79..56590afb33d75465971d10a282040690840cdbee 100644
-> --- a/drivers/gpu/drm/vkms/vkms_output.c
-> +++ b/drivers/gpu/drm/vkms/vkms_output.c
-> @@ -31,13 +31,44 @@ static const struct drm_connector_funcs vkms_connector_funcs = {
->  	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
->  };
->  
-> +static int vkms_connector_read_block(void *context, u8 *buf, unsigned int block, size_t len)
-> +{
-> +	struct vkms_config_connector *config = context;
-> +
-> +	if (block * len + len > config->edid_blob_len)
+> Exactly: it doesn't at the moment, but eventually a future release could.
+>
+> Of course, people using the latest stable `rustc` would likely never
+> see an issue. But there may be people e.g. building `bindgen` on their
+> own, and thus likely picking the latest version, while using an older
+> Rust toolchain from their distribution instead of, say, `rustup`.
 
-The parameters to the read block function are a bit weird for historical
-reasons. The start offset is indicated by block number, length by
-len. The start byte offset is thus block * EDID_LENGTH! There's no
-smaller granularity for start offset. However len can be < EDID_LENGTH!
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
-So the above should be (block * EDID_LENGTH + len > edid_blob_len)
+Sounds like this might need a backport to 6.12, to prevent issues
+appearing on the LTS in the future?
 
-> +		return 1;
-> +	memcpy(buf, &config->edid_blob[block * len], len);
-
-And this should be &config->edid_blob[block * EDID_LENGTH].
-
-(Your patch would work, but just by coincidence due to the way the read
-block function is currently called.)
-
-> +	return 0;
-> +}
-> +
->  static int vkms_conn_get_modes(struct drm_connector *connector)
->  {
-> +	const struct drm_edid *drm_edid = NULL;
->  	int count;
-> +	struct vkms_config_connector *connector_cfg;
-> +	struct vkms_device *vkmsdev = drm_device_to_vkms_device(connector->dev);
-> +	struct vkms_config_connector *context = NULL;
-> +
-> +	list_for_each_entry(connector_cfg, &vkmsdev->config->connectors, link) {
-> +		if (connector_cfg->connector == connector) {
-> +			context = connector_cfg;
-> +			break;
-> +		}
-> +	}
-> +	if (context)
-> +		drm_edid = drm_edid_read_custom(connector, vkms_connector_read_block, context);
-
-Thanks for using drm_edid_read_custom() for this btw!
-
-> +
-> +	/*
-> +	 * Unconditionally update the connector. If the EDID was read
-> +	 * successfully, fill in the connector information derived from the
-> +	 * EDID. Otherwise, if the EDID is NULL, clear the connector
-> +	 * information.
-> +	 */
-> +	drm_edid_connector_update(connector, drm_edid);
-> +
-> +	count = drm_edid_connector_add_modes(connector);
->  
-> -	/* Use the default modes list from DRM */
-> -	count = drm_add_modes_noedid(connector, XRES_MAX, YRES_MAX);
-> -	drm_set_preferred_mode(connector, XRES_DEF, YRES_DEF);
-
-I don't really know anything about your use case, but don't you want to
-fall back to the above for drm_edid == NULL? *shrug*
-
-BR,
-Jani.
-
-> +	drm_edid_free(drm_edid);
->  
->  	return count;
->  }
-
--- 
-Jani Nikula, Intel
+Alice
 
