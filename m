@@ -1,161 +1,149 @@
-Return-Path: <linux-kernel+bounces-420569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788A49D7CC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:17:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 031BC16323E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:17:11 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A87188A3B;
-	Mon, 25 Nov 2024 08:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qHps3ZTU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F33DA9D7FAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:01:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D051A296;
-	Mon, 25 Nov 2024 08:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DFA5B25D58
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:01:26 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D5718F2D8;
+	Mon, 25 Nov 2024 09:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="gEAGFi+s"
+Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0C71632FA;
+	Mon, 25 Nov 2024 09:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732522622; cv=none; b=LdRoPvynl2ahONP3YmLz168ATu8fCkx9ZhXcezD8R+c1/hVuit6sVJ4JYbRQEJfZpOdTQCefEsjsOcwUG2i2uhI4ogV39/7hFGGfC2sQw7UmLHtV2kEcKhRANz0XRWho56Svu68HV1km/TUYmcIA6sBlMOGqbTxZI9ltGVY0hL0=
+	t=1732525280; cv=none; b=R7z0+GV7OdkP93rcQzt1p/n+FGhf3SsLb2fm4J8kB54+sn4+AEu4ayuqceGoZcXeiFshsx0IsIuEifUfCGUEcsCHW57K2HFRqq708RQCdtvxVczZc5Q1zZhwFO6qNYiLXjsumn0bqtfh8O7/HNE+vyOPFJJVc3uRY6Q7JQzZr+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732522622; c=relaxed/simple;
-	bh=7OU3KNfJ/Dfe6wBawEcvrltBZw15vTPQ12Vq/ibNXq4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nJKyETFiaHg5NwH3riEhdcNcF1qZBKct+E7EECUvz2dnsdpBj6Ty/WgPatpqN1IasESXs3IyZJB5hhhBqJDBQQvLKKgvwD5cnI/oeGYpwSmOxFfSPd3X+bAfWroJvcWS7jyC8mKaLxgJHuRpNyVZYvRy/m9PRZ/2pp1Nkasby4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qHps3ZTU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D3B6C4CECE;
-	Mon, 25 Nov 2024 08:16:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732522622;
-	bh=7OU3KNfJ/Dfe6wBawEcvrltBZw15vTPQ12Vq/ibNXq4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qHps3ZTUpvr0ccwvByWeEdFttsKBujWP88aF1LjZc5Qwr+qp4znhpCChdDy/+bBln
-	 Hdh22oJT7Ilp0qHGS0EKIt+pJt+Ifwq8uaxbCnfE5p9c8pZ8STh11xJ8PkT/OH+HuG
-	 ledusfZ/HR71p+skHjow+yilhTLRWGO3Tpv1qP6k245s8TvD1Fc/jWjrU94WwJhT4S
-	 4n19RHtkFoXUA6teKXjzPj+f6KopYNoOi9HRC3xvOU+rrKr8T8t7A8k1MDItTJchI+
-	 BI2sN5gzpZhfl5KbIUyIwbLYGyHkvUkbawS1ikrAlHDoQzF3KKOQHIby2NsTbd9bje
-	 up6uiWuqi5oQQ==
-Message-ID: <36e7ec59-a64a-4876-8d20-9c375297bf7a@kernel.org>
-Date: Mon, 25 Nov 2024 09:16:55 +0100
+	s=arc-20240116; t=1732525280; c=relaxed/simple;
+	bh=wM4wGY8x3MGjtpmoX6GtebwRDedZrGqXodaM5iDy2cE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RGKqI1a9KAlzQ1J0jRcCUqrIJ0S1s9ED5HJ2uurBxDCc5T7i1WnvtEt67XAs5Ed3GHa4MO06w/pnTYFcrz6Gk4VdtsERW0vlbyYvQ4OcBffMNF4AzNusEGb8pxTeW7QYolQd6Xr5Zgi58/oI3pjofst5rjQ2YOt2mwukVvpIfDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=gEAGFi+s; arc=none smtp.client-ip=46.19.9.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
+	s=default; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=8o1U+9mGkaPAD9dCFwGk4bFEjZYhCv0ayoZN7iOOFII=; b=gEAGFi+symlZA6nqcCVsAAY/Wf
+	Qau6esj8KSWRXmbj0fMXZx9yNAFb1taB5tukb1VT6aIfSzeWZPlCTf5aRWJ3WFagOjC7ftyiM+fzg
+	rPqSC98/NeFeY5ojvaDg+FtQ2GoVlmQmECKgmy7pyvi2Q8HybLquY0kU4PUTMBBnjz3uiugu4McJC
+	V1GbrTHz75bf3JG3wmRxGAiq4HG6/ctwOgFgJEwEIVSOZ2BfWU8yyoPOtHcJ91lwzjejIIt//5YYp
+	lfjXKkaeRbQqyFOmRws5H+mpS6eC21Zqs/uKWYdzK1B8HM8mkEwu+isicGrsTwLYmD4sL4vQnJLxI
+	1tXepIMQ==;
+Received: from [91.26.50.162] (port=58340 helo=and-HP-Z4..)
+	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <andrej.picej@norik.com>)
+	id 1tFUIm-00Eq70-1K;
+	Mon, 25 Nov 2024 09:18:36 +0100
+From: Andrej Picej <andrej.picej@norik.com>
+To: shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	upstream@lists.phytec.de
+Subject: [PATCH 00/15] Update PHYTEC's i.MX8MM DTSs
+Date: Mon, 25 Nov 2024 09:17:59 +0100
+Message-Id: <20241125081814.397352-1-andrej.picej@norik.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] dt-bindings: qcom,qcs615-venus: add support for
- video hardware
-To: "Renjiang Han (QUIC)" <quic_renjiang@quicinc.com>,
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: "Vikash Garodia (QUIC)" <quic_vgarodia@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "bryan.odonoghue@linaro.org" <bryan.odonoghue@linaro.org>
-References: <20241125-add-venus-for-qcs615-v3-0-5a376b97a68e@quicinc.com>
- <20241125-add-venus-for-qcs615-v3-1-5a376b97a68e@quicinc.com>
- <173251666879.249116.13599300666564865920.robh@kernel.org>
- <558dd362d6564cd58bfcf53c12d91f0a@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <558dd362d6564cd58bfcf53c12d91f0a@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - cpanel.siel.si
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - norik.com
+X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: andrej.picej@norik.com
+X-Authenticated-Sender: cpanel.siel.si: andrej.picej@norik.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On 25/11/2024 09:06, Renjiang Han (QUIC) wrote:
-> On Monday, November 25, 2024 2:38 PM, Rob Herring (Arm) wrote:
->> On Mon, 25 Nov 2024 11:04:49 +0530, Renjiang Han wrote:
->>> Add support for Qualcomm video acceleration hardware used for video 
->>> stream decoding and encoding on QCOM QCS615.
->>>
->>> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
->>> ---
->>>  .../bindings/media/qcom,qcs615-venus.yaml          | 182 +++++++++++++++++++++
->>>  1 file changed, 182 insertions(+)
->>>
-> 
->> My bot found errors running 'make dt_binding_check' on your patch:
-> 
->> yamllint warnings/errors:
-> 
->> dtschema/dtc warnings/errors:
->> Documentation/devicetree/bindings/media/qcom,qcs615-venus.example.dts:25:18: fatal error: dt-bindings/clock/qcom,qcs615-videocc.h: No such file or directory
->>    25 |         #include <dt-bindings/clock/qcom,qcs615-videocc.h>
->>       |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> compilation terminated.
->> make[2]: *** [scripts/Makefile.dtbs:129: Documentation/devicetree/bindings/media/qcom,qcs615-venus.example.dtb] Error 1
->> make[2]: *** Waiting for unfinished jobs....
->> make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1442: dt_binding_check] Error 2
->> make: *** [Makefile:224: __sub-make] Error 2
-> 
-> Thanks for your reply. "dt-bindings/clock/qcom,qcs615-videocc.h" has been added in https://lore.kernel.org/all/20241108-qcs615-mm-clockcontroller-v3-0-7d3b2d235fdf@quicinc.com/.
+Hi all,
 
-Why do you ignore rest of the email?
+these patches aim to get PHYTEC downstream kernel device-tree changes
+into the mainline for the phyCORE-i.MX8MM SoM and boards (phyBOARD-Polis
+and phyGATE-Tauri-L).
 
-> 
->> doc reference errors (make refcheckdocs):
-> 
->> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241125-add-venus-for-qcs615-v3-1-5a376b97a68e@quicinc.com
-> 
->> The base for the series is generally the latest rc1. A different dependency should be noted in *this* patch.
+Changes mainly fix suspending/resuming with different wakeup-sources and
+add missing regulators. Last 4 patches add additional overlays. Some are
+meant to be used with PHYTEC's "option tree" to add/disable optional SoM
+components (idea behind it is outlined in [1]).
 
-Read, here.
+[1] https://lore.kernel.org/all/4e7dd467-20be-43ce-936d-200ede6d511b@phytec.de/
 
 Best regards,
-Krzysztof
+Andrej
+
+Andrej Picej (3):
+  arm64: dts: imx8mm-phycore-som: Fix bluetooth wakeup source
+  arm64: dts: imx8mm-phyboard-polis: Set RTC as wakeup-source
+  arm64: dts: imx8mm-phygate-tauri-l: Set RTC as wakeup-source
+
+Dominik Haller (1):
+  arm64: dts: imx8mm-phycore-som: Add overlay for rproc
+
+Janine Hagemann (1):
+  arm64: dts: imx8mm-phyboard-polis: Add overlay for PEB-EVAL-01
+
+Teresa Remmet (5):
+  arm64: dts: imx8mm-phycore-som: Keep LDO3 on in suspend
+  arm64: dts: imx8mm-phycore-som: Remove magic-packet property
+  arm64: dts: imx8mm-phyboard-polis: Add support for PEB-AV-10
+  arm64: dts: imx8mm-phycore-som: Add no-eth phy overlay
+  arm64: dts: imx8mm-phycore-som: Add overlay to disable SPI NOR flash
+
+Yannic Moog (3):
+  arm64: dts: imx8mm-phycore-som: add descriptions to nodes
+  arm64: dts: imx8mm-phyboard-polis: add RTC description
+  arm64: dts: imx8mm: move bulk of rtc properties to carrierboards
+
+Yashwanth Varakala (2):
+  arm64: dts: imx8mm-phycore-som: Assign regulator for dsi to lvds
+    bridge
+  arm64: dts: imx8mm-phyboard-polis: Assign missing regulator for
+    bluetooth
+
+ arch/arm64/boot/dts/freescale/Makefile        |  13 +
+ .../imx8mm-phyboard-polis-peb-av-10.dtso      | 237 ++++++++++++++++++
+ .../imx8mm-phyboard-polis-peb-eval-01.dtso    |  72 ++++++
+ .../freescale/imx8mm-phyboard-polis-rdk.dts   |  11 +-
+ .../dts/freescale/imx8mm-phycore-no-eth.dtso  |  12 +
+ .../freescale/imx8mm-phycore-no-spiflash.dtso |  16 ++
+ .../dts/freescale/imx8mm-phycore-rpmsg.dtso   |  55 ++++
+ .../dts/freescale/imx8mm-phycore-som.dtsi     |  16 +-
+ .../dts/freescale/imx8mm-phygate-tauri-l.dts  |   5 +
+ 9 files changed, 427 insertions(+), 10 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-peb-av-10.dtso
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-peb-eval-01.dtso
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-phycore-no-eth.dtso
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-phycore-no-spiflash.dtso
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-phycore-rpmsg.dtso
+
+-- 
+2.34.1
+
 
