@@ -1,115 +1,113 @@
-Return-Path: <linux-kernel+bounces-421438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64F399D8B4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:30:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC65B1636A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:30:22 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DF51B85C2;
-	Mon, 25 Nov 2024 17:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DNShMXD/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7BB99D8B53
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:31:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DACE19D096;
-	Mon, 25 Nov 2024 17:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE3E928276B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:31:24 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCF91B4F15;
+	Mon, 25 Nov 2024 17:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TFJJR2aK"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B04518C322
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 17:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732555820; cv=none; b=UWC9wz11He4hsWUejoQnaHMELF9UPLaYVjmHRBiKU81F+XWOO9gL3G3j78YHzCN3+M4FDeflODUmUqknY/seedT+Oo6GFv3TvdHxn/dP588gf52OMx7rrKxnKQ71kf33pq+LlSjBJQGX+HQdY12U6eksG08gfQo1t7ppKpdEI/I=
+	t=1732555881; cv=none; b=ufvDux+innM3g5XcnuOVHTwQtitQ7BYtU0fz0EpeMwmU/1ot11nK08lrzijHkOlFcf+y0TQ8rUl2/5EGOnECBc/dWQoh5rRq6KoLx1VFyYa++nr5875ncuHzCOJJohJXger8wH/QBkk5LwgqIfOXZDhkIlXgelzUa1i/SbBBB4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732555820; c=relaxed/simple;
-	bh=Ms6Tp0WGmGoKFqyK03ZhiTsaxbDlL4XS3o5GbsYdpFE=;
+	s=arc-20240116; t=1732555881; c=relaxed/simple;
+	bh=VMK4fjARbUe5ibv5TqQ0Vem9Tq64YnTSJ7BEWN8i25Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p0ZZgLQ8K8zb7mx2/JhBNphhwr1kvlG/QzQOgkTgJRSySTTBuAs1eKc5bc/4h7ksms2J6RTxMOKYv8QSDthCpB2gRtlQBGBPP+g6RTNcE4q6lXROSuzEOvmPG/6YiWYtTLIT+eNuzVeYVXwz8aUmq2IRDyiri4cifwSi53hDmjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DNShMXD/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99EE9C4AF0B;
-	Mon, 25 Nov 2024 17:30:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732555819;
-	bh=Ms6Tp0WGmGoKFqyK03ZhiTsaxbDlL4XS3o5GbsYdpFE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DNShMXD/jO7JPNdkU6IBC5K5VJu1bWb2GEmZJcRuYasBkdRSIJkD3o/IYDHDujCYF
-	 jTnL/3MEsuHVoAoSAb58/OYNiTPqDzU8eAuKKDSjAc33jF7uBXPPIsX6AaJ2jBCLNy
-	 XkWZfR9hovod21iCQOmwXd1nq3wY/GlSlSZ1m47ag0uHrVXfMm1E48zwcHB+jHGM1y
-	 v/6OF8Bpm6GnYnW/khKStHXQ+yVHtgDbcR8lIKN07D+jFmFmnKA50nncjhh5W31h0l
-	 dDpf3LaoYLzmwwMMVhBczagNKILNDxYkEjhbbj6TSvt2fSUpH2seX5QSQJXCvPG1XK
-	 f8SvoqBeb8K+g==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso75097101fa.3;
-        Mon, 25 Nov 2024 09:30:19 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVMZ1AP2mS10z+vkYtKmXC6J9rwoAUBBFmJdfeaTPs3AtjcPv7i29BlqsGhSygUhkh7S3n8huYDB+5KjBgh@vger.kernel.org, AJvYcCX8ybUsdzlKStsqDLXhoiiqmvTNT70c34RdQZcbOax5/82b5yDdre5aB48XkPzHBR1ByEu6MjShE4s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA7rTXjSCEI4MkAaqzLLFcmck6d8jEhJazECu17UYxogy2OjrM
-	8AyIv4ncfS31H2WnydlySdRSr43qPOwMgJbefox2RBZqM3aVGvZ6jzZEEssYzRC1N4Z2itIMGQa
-	xobQHAG6uMtN66YFoIYjmkFu5DW8=
-X-Google-Smtp-Source: AGHT+IHqC0nzXwAN0lGa143T4VRPp60pS6sz5dfzeHFmvQbYiE+ylUyy75S0vjqWZZhPL+RVYkE1mgUFvfGxWPocXaI=
-X-Received: by 2002:a05:651c:158d:b0:2fa:d7ea:a219 with SMTP id
- 38308e7fff4ca-2ffa718f84cmr98917471fa.37.1732555817932; Mon, 25 Nov 2024
- 09:30:17 -0800 (PST)
+	 To:Cc:Content-Type; b=b+YOTWIYzv3ko1i5tcl3zBS2papOFs5Za214SRKOTQxBd7PIxZRcXpXQX4LkRwcaqDpwSId4K2CnrdBkfN5/eHbtJH4Ccmm0s3HkPFZ+H1YCbapi2eHwkhAnRQS+sCkRk097TUyGTLSCED9Db0CdcYYbr1HHGr3DgOzZCuDxBco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TFJJR2aK; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53de652f242so892452e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 09:31:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732555877; x=1733160677; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rILC2BxBgO2Rtw5hTimKlVPBC9bz9nfbq7eLfeQG+no=;
+        b=TFJJR2aKOYOPVZA8DzfP1npG/4ysvtYFpK5xYLb7VtoszUkYp03J/yEDMhQC+MUaTI
+         GbBTwn/H9iko3zyNwr9elZ8CUUDYeVqMVdirBvU8dnZDEAyAsXw7jyzcTicunNhfti3H
+         UrGDFtRfnuMSqNzxqDAYOoGwfmt3VR/dVy2qhYkhWwXo9e2+uEjA5i3oNRMoCnJcje0W
+         Y0ycGOtSpvvE4MZadk2ED+xXIAtKm67KrMBuI5tltqXGudiNxKFbv0GQbG8JTn4K90cj
+         vRR3r34NQwGZCroHUd0MGTCc+4j64GJLpWDck54y77ndDjguBIg31zlvPdCvjvoeB4rX
+         TaVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732555877; x=1733160677;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rILC2BxBgO2Rtw5hTimKlVPBC9bz9nfbq7eLfeQG+no=;
+        b=baDTPoLoImx7IfAWW6y5xcCpIpVV6v4Vy8nluM3EhH/ooqe1I2O06T+IGo4Br9qA8j
+         4aoREFSRbvQ+71BFrzMeb2gNpPVYXHi5xsblgQ2jrcX/eEyu3OttKuuPo/f9kwHlBRX9
+         W5OSyNcYiKxzad1epkxZk+1H0mnQUtgBPMHEOw+vN5uLnIbSjCzyJteWb9j2Gk2QfbqS
+         v/Pvo327tF8I6cc34ZRFG7hZSa4F5GDU08GLcrpPOQ2MXK65Gxs7cQl3W/fLp/QQUxaV
+         kQWAflYiStPd760+S6mXfQeZDGs6jRqDSv6YUSUP67VubmOCimU7+eW9FZGx3vOiTo1S
+         n8sw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvlP+dM3nV5G1sj2T9btzvMtnBz1KHYpd0AcKbvJQgygRPYIf9EyHA3CVIdlngkDlbdmQZCl9GlBK8eh4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk6L6SUqdXzqHpoVNFHN6h6ZI3tt7zaxoQGSV5OugqazvT1wF1
+	giH24Lq/0tuniUir5ydlJaK/zom+gDYe+SQIL6T5hxMIaDdfOYQh1rqBJv6U6uzRkdcxVjULw12
+	3kwD5g/UFzeUhyH/Kmzk8jyzcz0Xu
+X-Gm-Gg: ASbGnct8hfPAojXPbaL3UQNAVayDWgrC7DXwFf1ROCjITYuUk2+OxncmVOfUZ9Fo4nv
+	hqhjzBUSEFhDaEHFraaQfa9KTqMguZqT73SEOaCA0fThj6A==
+X-Google-Smtp-Source: AGHT+IF/Hbrb4GRi5y/7WmIm8q51cXLBDI+7dPYh6r69XJ9sv/d6gokZqewfe2klSI91UU6BZjhhk3E8QCKdInVhlyM=
+X-Received: by 2002:a05:6512:2f2:b0:53d:d405:6e5 with SMTP id
+ 2adb3069b0e04-53dd4050706mr5390957e87.47.1732555877092; Mon, 25 Nov 2024
+ 09:31:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125170758.518943-1-yeoreum.yun@arm.com> <20241125170758.518943-2-yeoreum.yun@arm.com>
-In-Reply-To: <20241125170758.518943-2-yeoreum.yun@arm.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 25 Nov 2024 18:30:06 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXGBnYQi05qh0QZk2hVLjVhS774-nT=HLdL_kW1d7nxMVg@mail.gmail.com>
-Message-ID: <CAMj1kXGBnYQi05qh0QZk2hVLjVhS774-nT=HLdL_kW1d7nxMVg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] arm64/acpi: panic when failed to init acpi table
- with acpi=force option
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: broonie@kernel.org, sami.mujawar@arm.com, sudeep.holla@arm.com, 
-	pierre.gondois@arm.com, hagarhem@amazon.com, catalin.marinas@arm.com, 
-	will@kernel.org, guohanjun@huawei.com, Jonathan.Cameron@huawei.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-efi@vger.kernel.org
+References: <20241122163139.GAZ0Cx63Ia9kgYgRIr@fat_crate.local>
+ <Z0C3mDCngAf7ErM2@gmail.com> <20241122170227.GAZ0C5I-F8AUpwCAcG@fat_crate.local>
+ <Z0Q0PJzTMg_Or22I@gmail.com> <20241125102223.GBZ0RP375DufF0QQds@fat_crate.local>
+ <CAMzpN2gysxoKsjGhdSwykxQ1a_F0pZG=j6Y76QDgSmNG3V7SPg@mail.gmail.com> <20241125170922.GDZ0SvQj8FgK0ej8F3@fat_crate.local>
+In-Reply-To: <20241125170922.GDZ0SvQj8FgK0ej8F3@fat_crate.local>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Mon, 25 Nov 2024 12:31:05 -0500
+Message-ID: <CAMzpN2gB1WKruX0UGiO72Si1KHjcC_KcbAOK=-9TAO+cmSpFQA@mail.gmail.com>
+Subject: Re: [RFC PATCH] x86/boot: Get rid of linux/init.h include
+To: Borislav Petkov <bp@alien8.de>
+Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>, 
+	lkml <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 25 Nov 2024 at 18:08, Yeoreum Yun <yeoreum.yun@arm.com> wrote:
+On Mon, Nov 25, 2024 at 12:09=E2=80=AFPM Borislav Petkov <bp@alien8.de> wro=
+te:
 >
-> when the acpi=force option is used,
-> the system does not fall back to the device tree (DT).
-> If it fails to initialize the ACPI table, it cannot proceed further.
-> In such cases, the system should invoke panic() to avoid contradicting
-> the user's explicit intent, as failing or
-> proceeding with unintended behavior would violate their wishes.
+> On Mon, Nov 25, 2024 at 11:57:37AM -0500, Brian Gerst wrote:
+> > How about removing the kernel headers that you don't want from the
+> > include path?  This is a part of a broader issue where different parts
+> > of the kernel need different compiler flags (main kernel, VDSO, boot,
+> > etc.) and the current makefile structure doesn't handle that very
+> > well.
 >
+> Right, the idea is to remove *all* include/linux/ headers from the
+> decompressor and have the build break if someone includes new ones, forci=
+ng
+> her/him to properly split such header and use asm/shared for the common s=
+tuff.
+>
+> There are examples in asm/shared/ for that already.
 
-Calling panic() at this point does not achieve anything useful,
-though. Without ACPI tables or a DT, the only way to observe this
-panic message is by using earlycon= with an explicit MMIO address, and
-it might be better to limp on instead. Is there anything bad that
-might happen because of this, other than the user's wishes getting
-violated?
+To clarify, what I meant was to remove the -Iinclude/linux flag from
+the compiler command line, instead of messing around with ifdefs.
 
 
-> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> Reviewed-by: Mark Brown <broonie@kernel.org>
-> ---
->  arch/arm64/kernel/acpi.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
-> index e6f66491fbe9..efdf24ed5c3e 100644
-> --- a/arch/arm64/kernel/acpi.c
-> +++ b/arch/arm64/kernel/acpi.c
-> @@ -225,6 +225,8 @@ void __init acpi_boot_table_init(void)
->                 pr_err("Failed to init ACPI tables\n");
->                 if (!param_acpi_force)
->                         disable_acpi();
-> +               else
-> +                       panic("Failed to boot with ACPI tables\n");
->         }
->
->  done:
-> --
-> LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
->
+Brian Gerst
 
