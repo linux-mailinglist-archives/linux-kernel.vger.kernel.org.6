@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-420525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7249D7BF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:27:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 337879D7BF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:32:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DFC328246F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:27:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8803CB21CC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8AC187FF4;
-	Mon, 25 Nov 2024 07:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507AC1531E9;
+	Mon, 25 Nov 2024 07:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SmffFX0w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QzpChmLX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E42156F3A;
-	Mon, 25 Nov 2024 07:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858F72500D8;
+	Mon, 25 Nov 2024 07:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732519644; cv=none; b=DHuu1sRySRW0+LZD0c5AdEbWfwg16B2FBrMIceoHcoLO8lccPIf4/wQYN40opZDuSBkq1it7Oy2uvvl1IgCDXYEMj4vd6RLGDyGTC+fY1PT/sGmWoQ63pvXmngmLj8gSG2UKXWQdS5CFbb4Xu3ZRQ42bcDQd3c7A25DnfVh2rjU=
+	t=1732519945; cv=none; b=fJX4Rzyb8mx5xqLEX5HfBCRohGL9eZ7iAHEueLXolp9jpXNi5jlwb3nnkEmSBhfqAP7Ce9Bp/4VDJc5iFKkh7rr+pMN3RhZtdmHWtZobZ+a+VBLonP/AC1K6mU3FDF7zLZUkbXw9mxVPW6gb9vcDDXzie/oWpnm69U71o4XWnz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732519644; c=relaxed/simple;
-	bh=o7uIlNIDs7ugl4avGsKAgxWTwVTvRmzgpxsPVfjSEvc=;
+	s=arc-20240116; t=1732519945; c=relaxed/simple;
+	bh=FwUKQ2/SnMOuxfcp6dHNTgjAOTFfQRRwa2FdtHO0dSU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=onePT68InODqO/TtY5tk7Wuyn1pR3DusURk6rLyhC7brV5rLoKqL0GTyLUIfkBgy4t6hzd/LknCycpA8JrPuZJMRO59ZSRRRnIqfDwe5Lq1/xWvqwSQc+Z3ETnkOem4f1I11qpB52xEIzPa/dNLp/H78sTmoTa4/YtXyjZfVyYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SmffFX0w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73E7BC4CECE;
-	Mon, 25 Nov 2024 07:27:20 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=VBT9O2z43Hcp9dDX/09/OLfnEX0OoXBRElN8EoaCqczw85X3Q913aTyP3DcnBzpNeNbUC7Jn+fO/xcEs38udgrBxcG8Yw4MzRc4qS32fQi9fg2LyvT0e/vrVaIcDfhml4HeBbRct96tcTXFsMZ2WcQ6wFNrUTJ5ZMKBBQpwhrMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QzpChmLX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCCBEC4CECE;
+	Mon, 25 Nov 2024 07:32:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732519644;
-	bh=o7uIlNIDs7ugl4avGsKAgxWTwVTvRmzgpxsPVfjSEvc=;
+	s=k20201202; t=1732519945;
+	bh=FwUKQ2/SnMOuxfcp6dHNTgjAOTFfQRRwa2FdtHO0dSU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SmffFX0ws1M0I7ti/gKqTWcJq7SJRLsFnhhv7sROBe9dnXjgGWW3w4glKepgLSy1V
-	 rA5cvEejcMPmxMosTyIquKC0JINf72NdrQLOEV3EkAMq50qo8mkRtOnAn7YOI28MWs
-	 YCvJ7XZ+N82HLdZKtaD3v/HDvBN1vo/5ZnzfOTuGD1tKH8sZPlsAqZRJs5P4gVd1GV
-	 rz6swXDiO9Gf8tkz+1rUA9A/+CJy89W5sp39MsjJgo/lsAvdxBqrW1z8iA/qNvv2aE
-	 shfaejdvUtEhF9XR0HK41Q1Yaxio++yV7zUNCO3eDNvI13MEewWv8n73bjr1gWlP2n
-	 E4QUpgdkFa3Xw==
-Message-ID: <aeded772-3471-44f7-bdb8-d820ddcf0c6d@kernel.org>
-Date: Mon, 25 Nov 2024 08:27:17 +0100
+	b=QzpChmLXdlxxV7uo4kUaVfqf0OHik/wBqzLXgxxbpKVCaOePk+Ge7aLkqrinoWO4N
+	 g0jmfQWeQK7XjrcDdInIokcxTcPU7u521ek+9JfJ3VjXB+bsbjtzPee77k2E1C9Fu0
+	 HZ14IPrUAQinlIj72zoOz3H3oDAwczK0tRtCWvJjlYaKIi5hGQWGzYdvQ6LRr9Rmsq
+	 /6DIH8foQ4jnytaiZps4yvc8LxwPJ7GK1JZ+0SIX0y8Pp/D6QYmBE78EiGnZronqPz
+	 WcTBGx4edumYlYv1/IOJwxurVNeYmQEAjYoAb6+A6ztyQRcHdx0JDnnjFlB1vIc251
+	 W8aHxMG9sKe0w==
+Message-ID: <c2e9a97e-129d-4a82-9e81-b1391b4b6ff9@kernel.org>
+Date: Mon, 25 Nov 2024 08:32:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] media: camif-core: Add check for clk_enable()
-To: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Cc: sylvester.nawrocki@gmail.com, mchehab@kernel.org, dron0gus@gmail.com,
- tomasz.figa@gmail.com, alim.akhtar@samsung.com, kyungmin.park@samsung.com,
- laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241123212624.6237-1-jiashengjiangcool@gmail.com>
- <b3e2ed68-092f-4ccb-a945-19e19d5c8071@kernel.org>
- <CANeGvZXjUUOhySGhMCXDp3yfTtuOKdXgMa7DTtZDpq1iXkkfhg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] dt-bindings: mfd: cros-ec: add properties for thermal
+ cooling cells
+To: "Sung-Chi, Li" <lschyi@chromium.org>
+Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, chrome-platform@lists.linux.dev,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20241122-extend_power_limit-v1-0-a3ecd87afa76@chromium.org>
+ <20241122-extend_power_limit-v1-2-a3ecd87afa76@chromium.org>
+ <4f5sahkxxqb5qonh676igaiadkxv2pbhbibu6wtx4yenplfn4o@yvidi4ujavhr>
+ <Z0Pl3muZx716QSed@google.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,31 +107,66 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <CANeGvZXjUUOhySGhMCXDp3yfTtuOKdXgMa7DTtZDpq1iXkkfhg@mail.gmail.com>
+In-Reply-To: <Z0Pl3muZx716QSed@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 24/11/2024 22:10, Jiasheng Jiang wrote:
-> Hi Krzysztof,
-> 
-> On Sun, Nov 24, 2024 at 5:50 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 23/11/2024 22:26, Jiasheng Jiang wrote:
->>> Add check for the return value of clk_enable() to gurantee the success.
+On 25/11/2024 03:50, Sung-Chi, Li wrote:
+> On Fri, Nov 22, 2024 at 08:49:14AM +0100, Krzysztof Kozlowski wrote:
+>> On Fri, Nov 22, 2024 at 11:47:22AM +0800, Sung-Chi Li wrote:
+>>> The cros_ec supports limiting the input current to act as a passive
+>>> thermal cooling device. Add the property '#cooling-cells' bindings, such
+>>> that thermal framework can recognize cros_ec as a valid thermal cooling
+>>> device.
 >>>
->>> Fixes: babde1c243b2 ("[media] V4L: Add driver for S3C24XX/S3C64XX SoC series camera interface")
->>> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+>>> Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
 >>> ---
->>>  .../media/platform/samsung/s3c-camif/camif-core.c   | 13 +++++++++++--
->>>  1 file changed, 11 insertions(+), 2 deletions(-)
+>>>  Documentation/devicetree/bindings/mfd/google,cros-ec.yaml | 3 +++
+>>>  1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
+>>> index aac8819bd00b..2b6f098057af 100644
+>>> --- a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
+>>> +++ b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
+>>> @@ -96,6 +96,9 @@ properties:
+>>>    '#gpio-cells':
+>>>      const: 2
+>>>  
+>>> +  '#cooling-cells':
+>>> +    const: 2
 >>
->> Nothing improved...
+>> This is not a cooling device. BTW, your commit msg is somehow circular.
+>> "Add cooling to make it a cooling device because it will be then cooling
+>> device."
+>>
+>> Power supply already provides necessary framework for managing charging
+>> current and temperatures. If this is to stay, you need to explain why
+>> this is suitable to be considered a thermal zone or system cooling
+>> device (not power supply or input power cooling).
+>>
+>> Best regards,
+>> Krzysztof
+>>
 > 
-> Sorry for the confusion. This series consists of two patches.
-> Only "PATCH 1/2" has been modified, while "PATCH 2/2" remains unchanged.
-> As a result, there is no changelog for "PATCH 2/2".
-It is not correctly versioned. Version is per entire patchset, simply
-use b4 (or look how any other patchset is done via lore.kernel.org).
+> Thank you, I will rephrase the commit message. The reason to not to use the
+> managing charging current and temperatures in the power supply framework is
+> that:
+> 
+> - The EC may not have the thermal sensor value for the charger, and there is no
+>   protocol for getting the thermal sensor value for the charger (there is
+>   command for reading thermal sensor values, but there is no specification for
+>   what sensor index is for the charger, if the charger provides thermal value).
+> - The managing mechanism only take the charger thermal value into account, and
+>   I would like to control the current based on the thermal condition of the
+>   whole device.
+> 
+> I will include these explanation in the following changes.
+
+
+This does not explain me why this is supposed to be thermal zone. I
+already said it, but let's repeat: This is not a thermal zone. This
+isn't thermal zone sensor, either.
+
 
 Best regards,
 Krzysztof
