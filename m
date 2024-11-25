@@ -1,197 +1,164 @@
-Return-Path: <linux-kernel+bounces-421258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD66E9D8A57
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:31:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE9EC9D88BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:06:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52F93B356B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:05:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D27F116B09D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11F91B3936;
-	Mon, 25 Nov 2024 15:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C57F1B21B8;
+	Mon, 25 Nov 2024 15:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="V3A2MUbJ"
-Received: from mail-qv1-f68.google.com (mail-qv1-f68.google.com [209.85.219.68])
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="JZpFYDpv"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BC11B392F
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 15:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD571B0F06
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 15:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732547140; cv=none; b=qI2neqBGEc1dA64AzTufi/kHtIIe+IzykIWRPcdujWbBobG8Wm+0uI8rdvaLg8YAljPTdG4bys5WH5We6Whj3ndcKiIpkJtjptCH6ENlCBhUjTtrqS/9EJmGtKakogUZy3CEFxPDYpzv9SDg+aysl9xzkXcyc+HNes9TmfAMsXA=
+	t=1732547166; cv=none; b=frHLW1JMweHm73T/Wvs48Atp02MQsUNdYsGf/BJJcDVLEstNv+P/+EoOPQB3HImwLM3l3C5Y8o1HsgN+BGUrErMMK+dehStxFgcPpNRMlM/fDncdTPVFKCg2vIK44lt6XICufsFUesV5AcG0QT/OGirWdcoXAT09uGq3GPGDj+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732547140; c=relaxed/simple;
-	bh=Bi+CayR3aJOX+1KChTDriMlvBJ7UwoRJcYh84Q6MLGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bIBcxEtLVUYo5XAlZjqdIDrTbm9foIfwzXGwtxmJ7HnuX4xxgZzuhRuct0qOwOc2otqDghSsfWmcuOmvL8F+XdxhZIY0B6BeyB8CL3dXzLVPlQa3UJJBbCyCkMIhRILQauea/3fTYEk+6L462A1F4dCP0azP+mWO/JO3FlxGrJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=V3A2MUbJ; arc=none smtp.client-ip=209.85.219.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qv1-f68.google.com with SMTP id 6a1803df08f44-6d42518f493so30960826d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 07:05:36 -0800 (PST)
+	s=arc-20240116; t=1732547166; c=relaxed/simple;
+	bh=LxMztgNW0LfIP5/lVtd+yyO75BoseyhoayRS76gWIVU=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=FMcm9/8TL1ShvRva6DKQIuyO4a8+RL/7IdDrFiaPUNC0XT1j0WToolGrz8aYgUnus2OoEa5pIhwkZAGrmCDZ4lgvs8oTzRatupNkzdDGK61QpSGMi1AQXC2PLOlIjUNMU5cBPY5i67u/4bsMRUgQp6a8u5BJHR65l5+zGb1LzuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=JZpFYDpv; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4669eecd88dso2715151cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 07:06:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1732547135; x=1733151935; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eIcIEwreB6jMpQBW0713qszSdgFb5KeefQ1lDCrxAUU=;
-        b=V3A2MUbJhu4dIadfpLtfmXCjXbm7od1xsQfu/RFf3Qb4yTudu5JKMcEa3motBpj7p7
-         IDPJUqXkR7vyArltdrWHQHwbPejvawqX6e1rM926z12M7T8t73wDU57cvxxWzVANp5tQ
-         XJQK5bgKi8URI7N39+va3KFQwGKg9oNvfchRuIrbFxh33JRlxk3Lw/4TbLW+PrR2jIYX
-         NJxbubAE+SZoWYkqLcMXP3RFBtbN9Nfkhl7X2juGc170xOEzWORLknXm2sgq7l7Wgq+o
-         eDG2Qh/cSBVsLjW6RSKf1VA0NoPtyhMSollJxP+RuWkq3NBMhdNvOg1muTt0Cx2jKdHZ
-         pScw==
+        d=szeredi.hu; s=google; t=1732547160; x=1733151960; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Odb6HwBqhVtcHxBeQOFJ5xJTqDGEvgjNBkYIdkylyWg=;
+        b=JZpFYDpvlAAVhar2x21fKe3lZ3TQf8GCZNVsmj01Yt4E4N/PWUa1l+trdnodSxDHaG
+         S3FanrbH3olK6AbR/uP/sH4JLKa9RdV9z/P5cJbnbODJG4WKAYFxnbKWx2JzXT3Mlxr0
+         0NGNYjEDTzon4QGdg/2Q62Y/X7ISFqFNNVNyM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732547135; x=1733151935;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eIcIEwreB6jMpQBW0713qszSdgFb5KeefQ1lDCrxAUU=;
-        b=tjGSmwmTTgzFm6kxEfyX6k9UPtsuZOgqyyGbkgDdha2Eng7SzLJu4HKiD7r3ITSBdR
-         vGw3gLKPH37iAWny71b2NXKtIyuERY1TfW5eEX3pa385Jg3Vt1spQk4H1TKxALiIgufu
-         cSD+uT99u8yuLB1FfQE2a/uBq4LDVGO43CShncZ8DhF76Zz4B5FNxCCnqnFXYk1zAQyr
-         6m8kEmRqR1cF3sd7gxFsSkNckp0jRh9zxtnClZ1xyWNEg8gNeziQszwbJMmOdiufzP8U
-         SvjR8tFNnqldn0iXDh4kADOoHM1q2xqf9OBU6gcWrge//SMlu/mbm/LSKCP67M7loyA5
-         2q/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUfxSmqzsB7aZr6KnWu4XeEJX0Lg3tF/LAClp1Pka0EpCCAi6sfeZrxwjNMv140Mm+zd7ffGr8UToO1gwM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpPqUmrcOF21Ca8HuArM+GfwS9vnPuvH/3/JzT3SVcOJ3H3zZy
-	OsUJYI3wXImMoYUce9RrGDRJWIXq6CHAYTuVKozOWvmF3avPrvJFntcnr/hHkg==
-X-Gm-Gg: ASbGncttp71XQVAD6mDCFjgyyOHyTSP7tyqaytydo1ILmXhybobXYtedJzxoSutDXKy
-	k6BVr4MIZGcgMttwLHiB5XfDdODzAfgSVQ5efjXu03QDy9NJZf8ii+TXT/UdailOUz5KyZEB4CQ
-	UVnB2t2xTLtsia7i+DL6QrnJDQCEty/6Y5q1NiST1hGW/K33s2pUv0RzFSJE98v4oyWS+HmlJol
-	INYQydOLnjmUNkPHLEIuXi46owztTSq00pEBSw612UBzpYos6HpSdVJw89v7y0igx4I
-X-Google-Smtp-Source: AGHT+IFQ3vwhNmqC/XSxFE5yYBxxFkA9WmddQ3gcy06Prn5QNk/WjE6EahTflZu7yCfbcojXZD+Rig==
-X-Received: by 2002:a05:6214:21a9:b0:6d4:22e9:b8b6 with SMTP id 6a1803df08f44-6d4514b68dbmr185354926d6.41.1732547135280;
-        Mon, 25 Nov 2024 07:05:35 -0800 (PST)
-Received: from rowland.harvard.edu ([140.247.181.15])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d451ab532bsm43616236d6.69.2024.11.25.07.05.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 07:05:34 -0800 (PST)
-Date: Mon, 25 Nov 2024 10:05:33 -0500
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Dingyan Li <18500469033@163.com>
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, usb-storage@lists.one-eyed-alien.net
-Subject: Re: [PATCH v1] usb: storage: add a macro for the upper limit of max
- LUN
-Message-ID: <30019a70-d496-41d5-9159-c991ac93f326@rowland.harvard.edu>
-References: <20241030083858.46907-1-18500469033@163.com>
- <56abaf44.86c3.19362571bee.Coremail.18500469033@163.com>
+        d=1e100.net; s=20230601; t=1732547160; x=1733151960;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Odb6HwBqhVtcHxBeQOFJ5xJTqDGEvgjNBkYIdkylyWg=;
+        b=Jptvs/wD5VyapZvOJa3rW2ZIruO7VE7+W5OErqHURsVwicvNKnaIk3lOU9MELfG+SC
+         IqDfERL/Lg3qv6iRVqPonfwJWWQB64wpMMXKDZWfPaG7AqjFPSZPbzHDKdauA4VSSo6h
+         47T0jiJM1bu7M1YT3qGVYWcU1Sot6TPdhSTNPN5cJSXqvg8jveXLGRxsOzu07NZiA9eo
+         2P7PXDVfT46m2qA+YsIkgAkWXw5u6ys6SJT1dpPsCA/1ekIS9oeO1JWl1tTS5sIWhzvq
+         CZozUL7UEhXa5VcAygSUwQfHfOPwCv9j86Tq3JMYvTM125A6babpUUef0hANx0mTXd3M
+         L3dQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmaUxBWSLMzqFI9DMpqvyzrRqSMecpOuXVw8Yysgn/UI+w7XM1xWIqngraw+yzAjlrNtkKpf4ETxHdXoM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFX4pbF09IcinKPaHDJhc1mYEg7PIModFUenbeVLkX8ctvsiXd
+	ZnjytyI5aBqjra0qi9Mn+GDtymknWMLFUqyzzTpvq8Tj/aQAWAZj7SSQF08umfdRWd56GjR89zJ
+	CHeMN+l3VJTXvbJEVRVo5rIXdOuZNFbIZQn82fw==
+X-Gm-Gg: ASbGncuMheYx4TUZ2wr8OUalL/EeZP68TcH4YUBp7HjDynxeK126Yw9CE0Xk14GkxRg
+	a5bij2PCW9HFgvLrax1bXiDn7BS4kSK2UJA==
+X-Google-Smtp-Source: AGHT+IGqI/9AP9tR1c34m3O1hWJP5tde7AZlFq0uo8d5BqgaPIdV+Ewn2Nb2TMQwz+/g+1aEM9UFoa/p7NSxI+zaQIA=
+X-Received: by 2002:ac8:5d07:0:b0:458:4a68:7d15 with SMTP id
+ d75a77b69052e-4653d627dfcmr176791061cf.44.1732547160336; Mon, 25 Nov 2024
+ 07:06:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <56abaf44.86c3.19362571bee.Coremail.18500469033@163.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 25 Nov 2024 16:05:49 +0100
+Message-ID: <CAJfpegvCr7hBSqU8iqKUCZ3i5wUyiiyfbCtP_NO37OGMA2RVPw@mail.gmail.com>
+Subject: [GIT PULL] fuse update for 6.13
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Nov 25, 2024 at 04:01:36PM +0800, Dingyan Li wrote:
-> Hi Experts,
-> 
-> Any thoughts on this patch?
-> 
-> Regards,
+Hi Linus,
 
-It looks fine to me.
+Please pull from:
 
-Reviewed-by: Alan Stern <stern@rowland.harvard.edu>
+git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
+tags/fuse-update-6.13
 
-Alan Stern
+- Add page -> folio conversions (Joanne Koong, Josef Bacik)
 
-> At 2024-10-30 16:38:58, "Dingyan Li" <18500469033@163.com> wrote:
-> >The meaning of this value is already used in several places,
-> >but with constant values and comments to explain it separately.
-> >It's better to have a central place to do this then use the macro
-> >in those places for better readability.
-> >
-> >Signed-off-by: Dingyan Li <18500469033@163.com>
-> >---
-> > drivers/usb/gadget/function/f_tcm.c          | 8 ++------
-> > drivers/usb/gadget/function/storage_common.h | 2 +-
-> > drivers/usb/storage/transport.c              | 8 ++------
-> > include/linux/usb/storage.h                  | 8 ++++++++
-> > 4 files changed, 13 insertions(+), 13 deletions(-)
-> >
-> >diff --git a/drivers/usb/gadget/function/f_tcm.c b/drivers/usb/gadget/function/f_tcm.c
-> >index 15bb3aa12aa8..e1914b20f816 100644
-> >--- a/drivers/usb/gadget/function/f_tcm.c
-> >+++ b/drivers/usb/gadget/function/f_tcm.c
-> >@@ -441,14 +441,10 @@ static int usbg_bot_setup(struct usb_function *f,
-> > 			pr_err("No LUNs configured?\n");
-> > 			return -EINVAL;
-> > 		}
-> >-		/*
-> >-		 * If 4 LUNs are present we return 3 i.e. LUN 0..3 can be
-> >-		 * accessed. The upper limit is 0xf
-> >-		 */
-> > 		luns--;
-> >-		if (luns > 0xf) {
-> >+		if (luns > US_BULK_MAX_LUN_LIMIT) {
-> > 			pr_info_once("Limiting the number of luns to 16\n");
-> >-			luns = 0xf;
-> >+			luns = US_BULK_MAX_LUN_LIMIT;
-> > 		}
-> > 		ret_lun = cdev->req->buf;
-> > 		*ret_lun = luns;
-> >diff --git a/drivers/usb/gadget/function/storage_common.h b/drivers/usb/gadget/function/storage_common.h
-> >index ced5d2b09234..11ac785d5eee 100644
-> >--- a/drivers/usb/gadget/function/storage_common.h
-> >+++ b/drivers/usb/gadget/function/storage_common.h
-> >@@ -131,7 +131,7 @@ static inline bool fsg_lun_is_open(struct fsg_lun *curlun)
-> > #define FSG_BUFLEN	((u32)16384)
-> > 
-> > /* Maximal number of LUNs supported in mass storage function */
-> >-#define FSG_MAX_LUNS	16
-> >+#define FSG_MAX_LUNS	(US_BULK_MAX_LUN_LIMIT + 1)
-> > 
-> > enum fsg_buffer_state {
-> > 	BUF_STATE_SENDING = -2,
-> >diff --git a/drivers/usb/storage/transport.c b/drivers/usb/storage/transport.c
-> >index 9d767f6bf722..e6bc8ecaecbb 100644
-> >--- a/drivers/usb/storage/transport.c
-> >+++ b/drivers/usb/storage/transport.c
-> >@@ -1087,13 +1087,9 @@ int usb_stor_Bulk_max_lun(struct us_data *us)
-> > 	usb_stor_dbg(us, "GetMaxLUN command result is %d, data is %d\n",
-> > 		     result, us->iobuf[0]);
-> > 
-> >-	/*
-> >-	 * If we have a successful request, return the result if valid. The
-> >-	 * CBW LUN field is 4 bits wide, so the value reported by the device
-> >-	 * should fit into that.
-> >-	 */
-> >+	/* If we have a successful request, return the result if valid. */
-> > 	if (result > 0) {
-> >-		if (us->iobuf[0] < 16) {
-> >+		if (us->iobuf[0] <= US_BULK_MAX_LUN_LIMIT) {
-> > 			return us->iobuf[0];
-> > 		} else {
-> > 			dev_info(&us->pusb_intf->dev,
-> >diff --git a/include/linux/usb/storage.h b/include/linux/usb/storage.h
-> >index 8539956bc2be..51be3bb8fccb 100644
-> >--- a/include/linux/usb/storage.h
-> >+++ b/include/linux/usb/storage.h
-> >@@ -82,4 +82,12 @@ struct bulk_cs_wrap {
-> > #define US_BULK_RESET_REQUEST   0xff
-> > #define US_BULK_GET_MAX_LUN     0xfe
-> > 
-> >+/*
-> >+ * If 4 LUNs are supported then the LUNs would be
-> >+ * numbered from 0 to 3, and the return value for
-> >+ * US_BULK_GET_MAX_LUN request would be 3. The valid
-> >+ * LUN field is 4 bits wide, the upper limit is 0x0f.
-> >+ */
-> >+#define US_BULK_MAX_LUN_LIMIT   0x0f
-> >+
-> > #endif
-> >-- 
-> >2.25.1
-> 
-> -- 
-> You received this message because you are subscribed to the Google Groups "USB Mass Storage on Linux" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to usb-storage+unsubscribe@lists.one-eyed-alien.net.
-> To view this discussion visit https://groups.google.com/a/lists.one-eyed-alien.net/d/msgid/usb-storage/56abaf44.86c3.19362571bee.Coremail.18500469033%40163.com.
+- Allow max size of fuse requests to be configurable with a sysctl
+(Joanne Koong)
+
+- Allow FOPEN_DIRECT_IO to take advantage of async code path (yangyun)
+
+- Fix large kernel reads (like a module load) in virtio_fs (Hou Tao)
+
+- Fix attribute inconsistency in case readdirplus (and plain lookup in
+corner cases) is racing with inode eviction (Zhang Tianci)
+
+- Fix a WARN_ON triggered by virtio_fs (Asahi Lina)
+
+Thanks,
+Miklos
+---
+
+Asahi Lina (1):
+      virtiofs: dax: remove ->writepages() callback
+
+Hou Tao (2):
+      virtiofs: use pages instead of pointer for kernel direct IO
+      virtiofs: use GFP_NOFS when enqueuing request through kworker
+
+Joanne Koong (14):
+      fuse: enable dynamic configuration of fuse max pages limit
+(FUSE_MAX_MAX_PAGES)
+      fuse: support folios in struct fuse_args_pages and fuse_copy_pages()
+      fuse: add support in virtio for requests using folios
+      fuse: convert cuse to use folios
+      fuse: convert readlink to use folios
+      fuse: convert readdir to use folios
+      fuse: convert reads to use folios
+      fuse: convert writes (non-writeback) to use folios
+      fuse: convert ioctls to use folios
+      fuse: convert retrieves to use folios
+      fuse: convert writebacks to use folios
+      mm/writeback: add folio_mark_dirty_lock()
+      fuse: convert direct io to use folios
+      fuse: remove pages for requests and exclusively use folios
+
+Josef Bacik (11):
+      fuse: use fuse_range_is_writeback() instead of iterating pages
+      fuse: convert readahead to use folios
+      fuse: convert fuse_send_write_pages to use folios
+      fuse: convert fuse_fill_write_pages to use folios
+      fuse: convert fuse_page_mkwrite to use folios
+      fuse: use kiocb_modified in buffered write path
+      fuse: convert fuse_do_readpage to use folios
+      fuse: convert fuse_writepage_need_send to take a folio
+      fuse: use the folio based vmstat helpers
+      fuse: convert fuse_retrieve to use folios
+      fuse: convert fuse_notify_store to use folios
+
+Zhang Tianci (1):
+      fuse: check attributes staleness on fuse_iget()
+
+yangyun (1):
+      fuse: remove useless IOCB_DIRECT in fuse_direct_read/write_iter
+
+---
+ Documentation/admin-guide/sysctl/fs.rst |  10 +
+ fs/fuse/Makefile                        |   1 +
+ fs/fuse/cuse.c                          |  29 ++-
+ fs/fuse/dax.c                           |  11 -
+ fs/fuse/dev.c                           |  66 +++--
+ fs/fuse/dir.c                           |  37 +--
+ fs/fuse/file.c                          | 449 ++++++++++++++++++--------------
+ fs/fuse/fuse_i.h                        |  68 +++--
+ fs/fuse/inode.c                         |  67 ++++-
+ fs/fuse/ioctl.c                         |  35 +--
+ fs/fuse/readdir.c                       |  33 +--
+ fs/fuse/sysctl.c                        |  40 +++
+ fs/fuse/virtio_fs.c                     |  77 +++---
+ include/linux/mm.h                      |   1 +
+ mm/folio-compat.c                       |   6 +
+ mm/page-writeback.c                     |  22 +-
+ 16 files changed, 578 insertions(+), 374 deletions(-)
+ create mode 100644 fs/fuse/sysctl.c
 
