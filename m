@@ -1,210 +1,190 @@
-Return-Path: <linux-kernel+bounces-421275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC1C49D89B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:51:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2F6A9D8A84
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:39:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C60ACB3E59B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:14:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20D8EB3074C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68AED1B4141;
-	Mon, 25 Nov 2024 15:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 103991B3934;
+	Mon, 25 Nov 2024 15:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TYVA6AMT"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P6ruaafA"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F171B3958;
-	Mon, 25 Nov 2024 15:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFDA1AC453;
+	Mon, 25 Nov 2024 15:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732547644; cv=none; b=Pg450QhdqpUy/Hrvs0wrrAtoBN31kYnQX8gIklpyve2MUF5ddck2yrZJV4foUsh9jQlreXoT5JRz/TRN1ZBwydP4rethvV2Fx1KVUkdmVrgUfqhclVGc4GngesW6BDfFTtMMDNaggTB4c6lii8fDsiIpyy21tzn+hBI14HrgIjM=
+	t=1732547595; cv=none; b=Ufi/7WQjBE694fVpXgOhkAUhVeoLybghVdZACM2dEGGoc1SHhRmg3ec0ly1J+emcPhdGvRFRuEtFVnNGxpjNdxKQWVrDHUdf5lmAHbdgCx335jiI2EAgiqdQEtnMw2lfHR1esN/lqKwQj08VT11KiuUC5qvDt2zUy1hPKf4c3kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732547644; c=relaxed/simple;
-	bh=ZkVMLpzLhNcQRs+hYBFMGEpR1j3Q+8DIRycGutk5qFw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ClhMCeNUNhVk4PeSO5DU7a+XNlX3W1or13XrwbxBcroxyRnR3EkIZKH2LhPS0Uu3yymDSmHQofKddmgfeFc4DyHuajin3NwFVEN8TJpzs7KZ29StiPNAhRzW5o5SSmKMcF8PTkmViVTUhx6Dk05JzExUFQBovdsjbF4Xm5s9y44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TYVA6AMT; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1732547595; c=relaxed/simple;
+	bh=BsyKX6vvZXO6hyTAnWAhmcMb39KdsKIPgutxDoUf/8g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bIGv1WkKnc41Kz2CCnLSNkdJSrKIHMeRzDoeoMXcc0Jt34OnOO5e6S7+0o8oFymUKRGDC6Uv/88kgRTw2HmguqpOuYog1QW5+YsShaPYGtPUxwRDSJe3JAQMXLCO1PJw5KgfF9q3EF8c1zdkBs3QXXWOABu5e2cpQzPAAXzzuvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P6ruaafA; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-431616c23b5so25845855e9.0;
-        Mon, 25 Nov 2024 07:14:02 -0800 (PST)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20cf3e36a76so44030845ad.0;
+        Mon, 25 Nov 2024 07:13:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732547641; x=1733152441; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aNqsWnnw8BGInX15AWtsvHkwZEzBkzeRqwkk8eEPsng=;
-        b=TYVA6AMT13Y2iZSJx28rs0xWcsZuO7kCR5EJS/IQcc7OnIhgQGFzkVlqn0hVleXar8
-         7iePNRgYGVAwULjc5Lc9s1i0u9LO6pAlKWsFl4C23DT+4eidAZ07zot0F2Ts+jEweKkI
-         Z7qWKScRMGfnw/iBAYko8DyIvG5Az8/elmiLdPqoBzI37Jsz45SIY9PGt3avzM14DS4o
-         D+Z1vsayaaObqWVtyTQtC3ddvAyOXJLtvuMTz4lp5QFuU/45g9UL9c8+Xmlx+gVHNLHg
-         cfhfPzTAy6xKyknOuJDwZAVH+lj9kbZQdbrI5AKu9L++/aFcffYxGGYxGtqYglbyN6v7
-         31ZA==
+        d=gmail.com; s=20230601; t=1732547593; x=1733152393; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=hWIkfUGCL9W1Zq8MHpEKhoEtRwgrNR9DLJVdVZwUULI=;
+        b=P6ruaafAcaqKRhlOZdeewkOz10xGdSsHzkKpq+gXsd3N6Zh2avrZEaPjlJrNm7m7f8
+         mCqPAOcf4LtRN8C5b+sD9Mi3c70EjcSMYPYCdI+S8/9jJsjiBHZSpYsid41LxahYSs0w
+         NJkwm9Wpt1EWhqAimrCfvErtmd2WgPB/su34jw4KFXd8FALpU6bH/WvyvudEDjgVqzU/
+         ilo15fmaAaSinOcaq4+EeL3gf3o69S8Dj5uswCYvQaTuuys5tn8skMRobsSy+GjjJ0g9
+         1rV+TYuTTRTeCrGyUQlgE1HR3iuasMgTOMkdyHJX12ujN6bC14PsH26cmLIMTG6HS57v
+         DQIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732547641; x=1733152441;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aNqsWnnw8BGInX15AWtsvHkwZEzBkzeRqwkk8eEPsng=;
-        b=iVX+ERcRMd63IhpCYZjFzU1ifJaHbDTjm2HcRlhNsO65Plzs0vAnVxiUofNxhBq7XW
-         2VwveMvhF9sS7SLe0CxOoQJixBa6aV82UzaRu2HLKXd+DwgdD4Xk0v2kVF3j4fINiCb5
-         kajSz6hmQko65eCu9R8kXn0pCxsHYQYmrjmEuqNjwHmo0xJ4kADPytk6/Dg+/CPBlQW7
-         gZwoFsdL7NPLQpzrPFCjCvTEymrzv7mafw7bDhNxNn5iDaVyxUjeOWGZvoHncUkZd/Ed
-         fYCGnPS2ma60MOzOzgA+xDlCQJxoQy4nozZcmtRDO4qwiKOEdKDepQTHTekxsgJdz1pp
-         OJ1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVt8rIpfzCR2umBpNNsYnc3OswiWA6uwNlI8PpJ/rd0sTwSDUkCezv7kE3snMB+AKoz/B4QLCooGTMgN7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnpAF4hu09KZt8UlAD5MCPF9gJwNWNlG59lrd2RmPYn7q/hoqK
-	8Ad0ek3IplMZUSQBuyvPfEWYKpEV9ub9Nm0dAxYtD3QYXP4dC/4wnZOmL1zaWys=
-X-Gm-Gg: ASbGnctvBoccqgrTE58GC2+g1AVyVYJU/UzybW2r8EGDZI5hvOVMTDVZUpErfrV0fFH
-	kdur6p9xdvP4u1L8qY03bAQRZwn4cf6rAJxe7RyS/SBLyQAhaAu8z0zsZ8ixKsHQ/cQm4d33pz8
-	qZ0y46EB9kybcIycsuzi1acQ1YPC+wryhi2LIV2wE5dEiXWyUVyIvUQJlMhdKMDuWol3F2GsjDm
-	E5X4k9hXYo3Cit1R9Oqp//YbnTXYv2qBtSAcsxzO4a7kcINGA==
-X-Google-Smtp-Source: AGHT+IF6cah2hlbidazZqbUHsgc9CVqqI7DE8AJtVnzWIsk1Hvwwpb2oG/QsWZ/8OSrcgI4JmcuFUA==
-X-Received: by 2002:a05:600c:4f52:b0:434:9ff4:24a1 with SMTP id 5b1f17b1804b1-4349ff425c8mr30466125e9.13.1732547641053;
-        Mon, 25 Nov 2024 07:14:01 -0800 (PST)
-Received: from tpt440p.. ([69.63.64.50])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433cde98988sm131219495e9.42.2024.11.25.07.13.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 07:14:00 -0800 (PST)
-From: "Sicelo A. Mhlongo" <absicsz@gmail.com>
-To: linux-pm@vger.kernel.org
-Cc: pali@kernel.org,
-	sre@kernel.org,
-	linux-kernel@vger.kernel.org,
-	maemo-leste@lists.dyne.org,
-	"Sicelo A. Mhlongo" <absicsz@gmail.com>
-Subject: [PATCH] bq27xxx: add voltage min design for bq27000 and bq27200
-Date: Mon, 25 Nov 2024 17:12:58 +0200
-Message-ID: <20241125151321.45440-1-absicsz@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1732547593; x=1733152393;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hWIkfUGCL9W1Zq8MHpEKhoEtRwgrNR9DLJVdVZwUULI=;
+        b=dLDYrFB27tBbyuKSGDtV9QWPruG967xINgo5T5vTMgHsoDGixC6gffmgYRMWqanTKA
+         FTTZ1y1WT+OGHSGkM7ML3tsHTunVcAD/afbhDWrcsahFsR7uc8S3etT8xu0MBvX60woh
+         +ZrfIour3/1Ar33KtzW70t8v2Lw64QrU3Z4w9VgPiLX/H8XxOOMxidEcZ7a0luYPmqN0
+         ELLKWhHSHYNMPbZCoWpvnza59Fp7mzfecmW2Exaiuw1+CR81KU1PzQwRzyVtD7xyZ7y/
+         6DanjuODeNpe4A++wWWDSdtMWoaInLt2Ua/Pwg3t5DKbeZOlL1dgfDHpOHuo1Pr0tfP+
+         0KkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgkpn+tm55ZciCAbuQVRn95s99zswTpeX5PeKyhVGkJ/X1BTYxc2FM3Uea9nGEln0CtxbEJkU/FtCELJo=@vger.kernel.org, AJvYcCUxM5jjSCQDhBKQCdrQzkm6/KEnY9WT5juRx9ACP5zL1wWDJXh/P18wiMm6MqrtSr/PYDBK6BWHzliBAUaA@vger.kernel.org, AJvYcCXCiWqmBLMN05haLRm90+Xayt+BMTWB9yMBC4IFuuGQn8dNn2RqP8pn2uufx0wWszGdSRkCsXSqPLnu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzmv7/99sS9M3MpRIUA/ktm5bHYv3J1yCB6woktEvRNpoaQSDJW
+	7ssmbW8AHIYO20LblSKI5GVAsDuF821IvJblg6Y72QfBNQfvPyQundnhUQ==
+X-Gm-Gg: ASbGncu9osjOZpOtgXO+vPmXN2Rh8cHTnY/OdrhrwBGO+ql0KlWvuCBdZyM1HpW8qq5
+	PxTo/G+5IMhghdM+4NALdT3/tp3AqSMzHpA54k0EW0iso1Ro22RGZ933JMKACgSp05em7qMLxEN
+	hMQLhHurp9OiA9VShOXLptaVTqd9vup1DKJpGf0lDqfiAwK7Ej1SUYN17QuEowEg1BvBlDV/WwN
+	pthYwWm3DuLYMtCP7vViJ6RWYIWqtJ+8abLoRID8kD0kW1zDCqS9uTj/MCijuavZ80OhVBdb0R8
+	+GzBcFlJOCwZ/cod4i4ha1A=
+X-Google-Smtp-Source: AGHT+IH3avj46PI2YmdHD4XdBJ/CME2+CtrwR1lq6ajtQWeRonWYz4xkncuORRFHdz7BiObxVsK+Lg==
+X-Received: by 2002:a17:902:e743:b0:20c:f261:2516 with SMTP id d9443c01a7336-2129f67b19amr188974355ad.8.1732547592793;
+        Mon, 25 Nov 2024 07:13:12 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc23a35sm66188195ad.250.2024.11.25.07.13.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 07:13:11 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <893bbd30-300f-4138-8f68-64573e1f0140@roeck-us.net>
+Date: Mon, 25 Nov 2024 07:13:09 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] dt-bindings: mfd: Add properties for thermal
+ sensor cells
+To: Krzysztof Kozlowski <krzk@kernel.org>, "Sung-Chi, Li"
+ <lschyi@chromium.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Benson Leung <bleung@chromium.org>,
+ Guenter Roeck <groeck@chromium.org>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
+ <thomas@weissschuh.net>, Jean Delvare <jdelvare@suse.com>,
+ devicetree@vger.kernel.org, chrome-platform@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
+References: <20241111074904.1059268-1-lschyi@chromium.org>
+ <20241113024000.3327161-1-lschyi@chromium.org>
+ <20241113024000.3327161-2-lschyi@chromium.org>
+ <4efe981f-f7ae-41c7-9c12-2aa3a5d2d046@roeck-us.net>
+ <eb1c249c-5f42-4878-8934-09d6ea5c43f2@kernel.org>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <eb1c249c-5f42-4878-8934-09d6ea5c43f2@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The bq27x00 gauges have an EEPROM register which contains the value of
-the voltage that should be considered to be zero battery capacity. Expose
-this to userspace using the VOLTAGE_MIN_DESIGN property.
+On 11/25/24 00:52, Krzysztof Kozlowski wrote:
+> On 13/11/2024 04:05, Guenter Roeck wrote:
+>> On 11/12/24 18:39, Sung-Chi, Li wrote:
+>>> The cros_ec supports reading thermal values from thermal sensors
+>>> connect to it. Add the property '#thermal-sensor-cells' bindings, such
+>>> that thermal framework can recognize cros_ec as a valid thermal device.
+>>>
+>>> Signed-off-by: Sung-Chi, Li <lschyi@chromium.org>
+>>> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+>>> ---
+>>>    Changes in v2:
+>>>      - Add changes for DTS binding.
+>>>    Changes in v3:
+>>>      - Remove unneeded Change-Id tag in commit message.
+>>> ---
+>>
+>> I can't apply this one (not in hwmon space), so
+>>
+>> Acked-by: Guenter Roeck <linux@roeck-us.net>
+>>
+>> with the assumption that Lee will pick it up.
+> 
+> This was merged, while I was AFK, so the ship has sailed, but let me
+> state here objection for any future discussions:
+> 
+> NAK, this is not a thermal sensor. The commit msg explains what they
+> want to achieve, but that's not a valid reason to add property from
+> different class of devices.
+> 
+> This is some hardware/temperature monitoring device or power supply, not
+> part of SoC, not integrated into any SoC thermal zone. Calling it
 
-Tested on Nokia N900 with bq27200.
+I am confused. We have several thermal sensors registering as thermal
+zone, and fan controllers registering themselves as thermal cooling devices.
 
-Signed-off-by: Sicelo A. Mhlongo <absicsz@gmail.com>
----
- drivers/power/supply/bq27xxx_battery.c | 39 +++++++++++++++++++++++++-
- include/linux/power/bq27xxx_battery.h  |  1 +
- 2 files changed, 39 insertions(+), 1 deletion(-)
+Are you saying that this is all not permitted because they are not part
+of a SoC ?
 
-diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/supply/bq27xxx_battery.c
-index 40c5ac7a1118..90a5bccfc6b9 100644
---- a/drivers/power/supply/bq27xxx_battery.c
-+++ b/drivers/power/supply/bq27xxx_battery.c
-@@ -123,6 +123,7 @@ enum bq27xxx_reg_index {
- 	BQ27XXX_DM_BLOCK,	/* Data Block */
- 	BQ27XXX_DM_DATA,	/* Block Data */
- 	BQ27XXX_DM_CKSUM,	/* Block Data Checksum */
-+	BQ27XXX_REG_SEDVF,	/* End-of-discharge Voltage */
- 	BQ27XXX_REG_MAX,	/* sentinel */
- };
- 
-@@ -159,6 +160,7 @@ static u8
- 		[BQ27XXX_DM_BLOCK] = INVALID_REG_ADDR,
- 		[BQ27XXX_DM_DATA] = INVALID_REG_ADDR,
- 		[BQ27XXX_DM_CKSUM] = INVALID_REG_ADDR,
-+		[BQ27XXX_REG_SEDVF] = 0x77,
- 	},
- 	bq27010_regs[BQ27XXX_REG_MAX] = {
- 		[BQ27XXX_REG_CTRL] = 0x00,
-@@ -184,6 +186,7 @@ static u8
- 		[BQ27XXX_DM_BLOCK] = INVALID_REG_ADDR,
- 		[BQ27XXX_DM_DATA] = INVALID_REG_ADDR,
- 		[BQ27XXX_DM_CKSUM] = INVALID_REG_ADDR,
-+		[BQ27XXX_REG_SEDVF] = 0x77,
- 	},
- 	bq2750x_regs[BQ27XXX_REG_MAX] = {
- 		[BQ27XXX_REG_CTRL] = 0x00,
-@@ -579,6 +582,7 @@ static enum power_supply_property bq27000_props[] = {
- 	POWER_SUPPLY_PROP_POWER_AVG,
- 	POWER_SUPPLY_PROP_HEALTH,
- 	POWER_SUPPLY_PROP_MANUFACTURER,
-+	POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN,
- };
- 
- static enum power_supply_property bq27010_props[] = {
-@@ -599,6 +603,7 @@ static enum power_supply_property bq27010_props[] = {
- 	POWER_SUPPLY_PROP_CYCLE_COUNT,
- 	POWER_SUPPLY_PROP_HEALTH,
- 	POWER_SUPPLY_PROP_MANUFACTURER,
-+	POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN,
- };
- 
- #define bq2750x_props bq27510g3_props
-@@ -2039,6 +2044,36 @@ static int bq27xxx_battery_voltage(struct bq27xxx_device_info *di,
- 	return 0;
- }
- 
-+/*
-+ * Return the design minimum battery Voltage in microvolts
-+ * Or < 0 if something fails.
-+ */
-+static int bq27xxx_battery_read_dmin_volt(struct bq27xxx_device_info *di,
-+					  union power_supply_propval *val)
-+{
-+	int volt;
-+
-+	/* We only have to read design minimum voltage once */
-+	if (di->voltage_min_design > 0) {
-+		val->intval = di->voltage_min_design;
-+		return 0;
-+	}
-+
-+	volt = bq27xxx_read(di, BQ27XXX_REG_SEDVF, true);
-+	if (volt < 0) {
-+		dev_err(di->dev, "error reading design min voltage\n");
-+		return volt;
-+	}
-+
-+	/* SEDVF = Design EDVF / 8 - 256 */
-+	val->intval = volt * 8000 + 2048000;
-+
-+	/* Save for later reads */
-+	di->voltage_min_design = val->intval;
-+
-+	return 0;
-+}
-+
- static int bq27xxx_simple_value(int value,
- 				union power_supply_propval *val)
- {
-@@ -2119,8 +2154,10 @@ static int bq27xxx_battery_get_property(struct power_supply *psy,
- 	 * power_supply_battery_info visible in sysfs.
- 	 */
- 	case POWER_SUPPLY_PROP_ENERGY_FULL_DESIGN:
--	case POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN:
- 		return -EINVAL;
-+	case POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN:
-+		ret = bq27xxx_battery_read_dmin_volt(di, val);
-+		break;
- 	case POWER_SUPPLY_PROP_CYCLE_COUNT:
- 		ret = bq27xxx_battery_read_cyct(di, val);
- 		break;
-diff --git a/include/linux/power/bq27xxx_battery.h b/include/linux/power/bq27xxx_battery.h
-index 5180dc9f1706..6b190639b08e 100644
---- a/include/linux/power/bq27xxx_battery.h
-+++ b/include/linux/power/bq27xxx_battery.h
-@@ -61,6 +61,7 @@ struct bq27xxx_device_info {
- 	struct bq27xxx_access_methods bus;
- 	struct bq27xxx_reg_cache cache;
- 	int charge_design_full;
-+	int voltage_min_design;
- 	bool removed;
- 	unsigned long last_update;
- 	union power_supply_propval last_status;
--- 
-2.45.2
+Guenter
 
 
