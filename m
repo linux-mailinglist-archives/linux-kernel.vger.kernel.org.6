@@ -1,300 +1,225 @@
-Return-Path: <linux-kernel+bounces-420914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 478779D8454
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:24:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F689D8458
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:24:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0887728396F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:24:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81B13284A06
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943891993BA;
-	Mon, 25 Nov 2024 11:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B5A1991C3;
+	Mon, 25 Nov 2024 11:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BFPW1ZYf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lNUv0XCS"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1EE198A19;
-	Mon, 25 Nov 2024 11:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25061198A25;
+	Mon, 25 Nov 2024 11:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732533835; cv=none; b=fIakfMI/NUr3d6YKdf8VPBSGLU+eudXUxQy7kbGkk6coV1qMa7rairQlFzd8zgYfP+WW/LQVe1FbueU5B/qu4+Bl5M6N8u9YkWB3mg/Y5/VFtr3jNpfM5ideFSHOBAmf0bD++cHjQ+uDBAxRPidMYWAlTY+/40VYj/Qtg077ThU=
+	t=1732533852; cv=none; b=KBZSHiW6JNZuKs1L3C5fAHkdNCotwF8mG+qeeReCdsWUFHo8+TH6vuubcehp2SMQ86j6H0Q9tF3h/IcT+aLkEBNJnb3FgwA2e/RTt9lDupZKMzNTNH6g/4MoyD1GyqSzCaxu8jnZba1B3xTdIVG8bc525J5gYJJ84LGRHVjOU/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732533835; c=relaxed/simple;
-	bh=QIe/5SOpMVjZG/VSB2hYXMoS58PeMejgW8vGitpkatE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qsGFLNuLRgQP1dFajzJZtZGx/7Qpp6Duz3AlSt1WJ9sxBdidmGhFAtKxpMg10qg1Xt1uGDlmLrA/rXHSdeHwilUpB2uho0U3cH6dDJ74dwg8c09E/xIt9NY1xYc9PLNpEZBeWX7IhmFBCpxKVpHKLdJwXOL9CoaKKAnwLodtX1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BFPW1ZYf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93C8AC4CED2;
-	Mon, 25 Nov 2024 11:23:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732533835;
-	bh=QIe/5SOpMVjZG/VSB2hYXMoS58PeMejgW8vGitpkatE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BFPW1ZYfPMW+dJ9yUROpIARNQCvXly4ohp5Qn5oUPqYo/oMIAuuEy+Fd+F2dtK4KF
-	 Cx8V5FmxJ1l+90OevHuzoGOrNRPZhzJLN/XBx8ydbjw5AH1W/pr5i3AlG2A4QZyrTC
-	 i6KrSC35TI7i2hsdGurUzFWeEpwp70llgz/LOdGntfZIQzmiSPe3UQRvnJ1FM8kbe2
-	 Qnbi+zC0j1edy3hG89QU/gcojGG2MT3+PsASWdeVdAW5VQF2xHGZrw+IAcayRfQOGU
-	 cwGdf4B1osx4D9hJifvN64OAmRnuJ297T2bRvjAZ6Ut+oox5+hTFAOMNt+aWxRou2N
-	 ImGGIueEM6Ykg==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ffc76368c6so7345251fa.0;
-        Mon, 25 Nov 2024 03:23:55 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV9caofwsP06dogTk3vTvU6fXA5ErgbOUlorO742uIMxPnYvOPuHGGoKyxSpeQp9bI8Apw+AA/X@vger.kernel.org, AJvYcCX9jRtlHtoealj96o0nDgKISz8kHk/06roTUajKmuQr/VQ5O+PIIOZ8D2OyBe5UPAqLF5NuGNy2vLhqGw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAc6wFi0lg4Dr7gCrXjMKM23OKgdPcB+1VTUxey++4G8K5F/s/
-	eU3+7EcIwBABLdhWj1+bIX1J8F1xDM+DQhoEzlm6whs/dV9kymG1sBSIJv3pMlZ3JxDSuYu+mTR
-	PmQid4Cj4QFuC3r7kTkYExdiRMpU=
-X-Google-Smtp-Source: AGHT+IFhv2d61B2RrHMhonRCF1TU0Ryh643ZspntrcDL5fPWsQD/5uEtjCXcqmPaftm7bstHbpjevf/xt6y0hB8K9Zs=
-X-Received: by 2002:a2e:be9f:0:b0:2ff:c77c:c71e with SMTP id
- 38308e7fff4ca-2ffc77cc9dfmr13078251fa.20.1732533833743; Mon, 25 Nov 2024
- 03:23:53 -0800 (PST)
+	s=arc-20240116; t=1732533852; c=relaxed/simple;
+	bh=9XSrtMyvUrSDpVncOK3Cu4eq7Kbx4R6lVGbVFgG8+ic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oq+09Ceppz1YmjHh+qVVhGogNGri4GvtJlA2lu8wo3Fbx+ikwkQuUy4p9maXTTFdtSn2RpXzYy9+GAhEGJby2jCutJApByJwwFdn9TLGwy3EvKnbv3tE4XbpHZl1oTXLBniawi3EcMFBhOrBB6jKPBfvgDPvsDztAjOpA/TtSOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lNUv0XCS; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B8A206B5;
+	Mon, 25 Nov 2024 12:23:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732533827;
+	bh=9XSrtMyvUrSDpVncOK3Cu4eq7Kbx4R6lVGbVFgG8+ic=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lNUv0XCSX8ExKTvjC7nk7Ekdpied3X/jF7Sv5GUef6pfX26pFLYWQNkKixsEbYaCc
+	 lZlC5tKn+Ke+8XtcFpuiXX3yOAKUYjQpj1XP/sD5FzDhWDWoFwV3g+dt5CQDOu2v3/
+	 7Edm0c1XkhgXFe9E+ewgTLFZDRjFFnyYB0AcFb3w=
+Date: Mon, 25 Nov 2024 13:24:00 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Julien Stephan <jstephan@baylibre.com>
+Cc: Andy Hsieh <andy.hsieh@mediatek.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v7 2/5] dt-bindings: media: add mediatek ISP3.0 camsv
+Message-ID: <20241125112400.GQ19381@pendragon.ideasonboard.com>
+References: <20241121-add-mtk-isp-3-0-support-v7-0-b04dc9610619@baylibre.com>
+ <20241121-add-mtk-isp-3-0-support-v7-2-b04dc9610619@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241124123912.3335344-1-sashal@kernel.org> <20241124123912.3335344-13-sashal@kernel.org>
-In-Reply-To: <20241124123912.3335344-13-sashal@kernel.org>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Mon, 25 Nov 2024 11:23:17 +0000
-X-Gmail-Original-Message-ID: <CAL3q7H4n+7ZN228X9VGvgLX9S7cw5J27cJSGSiSCHjFbY9htLQ@mail.gmail.com>
-Message-ID: <CAL3q7H4n+7ZN228X9VGvgLX9S7cw5J27cJSGSiSCHjFbY9htLQ@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 6.12 13/19] btrfs: reduce lock contention when eb
- cache miss for btree search
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Robbie Ko <robbieko@synology.com>, Filipe Manana <fdmanana@suse.com>, 
-	David Sterba <dsterba@suse.com>, clm@fb.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241121-add-mtk-isp-3-0-support-v7-2-b04dc9610619@baylibre.com>
 
-On Sun, Nov 24, 2024 at 12:46=E2=80=AFPM Sasha Levin <sashal@kernel.org> wr=
-ote:
->
-> From: Robbie Ko <robbieko@synology.com>
->
-> [ Upstream commit 99785998ed1cea142e20f4904ced26537a37bf74 ]
+Hi Julien,
 
-Why is this being picked for stable?
+Thank you for the patch.
 
-It's not a bug fix or anything critical.
-It's just a performance optimization, and it's not even one where we
-know (AFAIK) of any workload where it would give very significant
-gains to justify backporting to stable.
-
-Thanks.
-
->
-> When crawling btree, if an eb cache miss occurs, we change to use the eb
-> read lock and release all previous locks (including the parent lock) to
-> reduce lock contention.
->
-> If an eb cache miss occurs in a leaf and needs to execute IO, before this
-> change we released locks only from level 2 and up and we read a leaf's
-> content from disk while holding a lock on its parent (level 1), causing
-> the unnecessary lock contention on the parent, after this change we
-> release locks from level 1 and up, but we lock level 0, and read leaf's
-> content from disk.
->
-> Because we have prepared the check parameters and the read lock of eb we
-> hold, we can ensure that no race will occur during the check and cause
-> unexpected errors.
->
-> Reviewed-by: Filipe Manana <fdmanana@suse.com>
-> Signed-off-by: Robbie Ko <robbieko@synology.com>
-> Signed-off-by: David Sterba <dsterba@suse.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+On Thu, Nov 21, 2024 at 09:53:16AM +0100, Julien Stephan wrote:
+> From: Phi-bang Nguyen <pnguyen@baylibre.com>
+> 
+> This adds the bindings, for the ISP3.0 camsv module embedded in
+> some Mediatek SoC, such as the mt8365
+> 
+> Signed-off-by: Phi-bang Nguyen <pnguyen@baylibre.com>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Julien Stephan <jstephan@baylibre.com>
 > ---
->  fs/btrfs/ctree.c | 101 ++++++++++++++++++++++++++++++++---------------
->  1 file changed, 70 insertions(+), 31 deletions(-)
->
-> diff --git a/fs/btrfs/ctree.c b/fs/btrfs/ctree.c
-> index 0cc919d15b144..dd92acd66624f 100644
-> --- a/fs/btrfs/ctree.c
-> +++ b/fs/btrfs/ctree.c
-> @@ -1515,12 +1515,14 @@ read_block_for_search(struct btrfs_root *root, st=
-ruct btrfs_path *p,
->         struct btrfs_tree_parent_check check =3D { 0 };
->         u64 blocknr;
->         u64 gen;
-> -       struct extent_buffer *tmp;
-> -       int ret;
-> +       struct extent_buffer *tmp =3D NULL;
-> +       int ret =3D 0;
->         int parent_level;
-> -       bool unlock_up;
-> +       int err;
-> +       bool read_tmp =3D false;
-> +       bool tmp_locked =3D false;
-> +       bool path_released =3D false;
->
-> -       unlock_up =3D ((level + 1 < BTRFS_MAX_LEVEL) && p->locks[level + =
-1]);
->         blocknr =3D btrfs_node_blockptr(*eb_ret, slot);
->         gen =3D btrfs_node_ptr_generation(*eb_ret, slot);
->         parent_level =3D btrfs_header_level(*eb_ret);
-> @@ -1551,68 +1553,105 @@ read_block_for_search(struct btrfs_root *root, s=
-truct btrfs_path *p,
->                          */
->                         if (btrfs_verify_level_key(tmp,
->                                         parent_level - 1, &check.first_ke=
-y, gen)) {
-> -                               free_extent_buffer(tmp);
-> -                               return -EUCLEAN;
-> +                               ret =3D -EUCLEAN;
-> +                               goto out;
->                         }
->                         *eb_ret =3D tmp;
-> -                       return 0;
-> +                       tmp =3D NULL;
-> +                       ret =3D 0;
-> +                       goto out;
->                 }
->
->                 if (p->nowait) {
-> -                       free_extent_buffer(tmp);
-> -                       return -EAGAIN;
-> +                       ret =3D -EAGAIN;
-> +                       goto out;
->                 }
->
-> -               if (unlock_up)
-> +               if (!p->skip_locking) {
->                         btrfs_unlock_up_safe(p, level + 1);
-> -
-> -               /* now we're allowed to do a blocking uptodate check */
-> -               ret =3D btrfs_read_extent_buffer(tmp, &check);
-> -               if (ret) {
-> -                       free_extent_buffer(tmp);
-> +                       tmp_locked =3D true;
-> +                       btrfs_tree_read_lock(tmp);
->                         btrfs_release_path(p);
-> -                       return ret;
-> +                       ret =3D -EAGAIN;
-> +                       path_released =3D true;
->                 }
->
-> -               if (unlock_up)
-> -                       ret =3D -EAGAIN;
-> +               /* Now we're allowed to do a blocking uptodate check. */
-> +               err =3D btrfs_read_extent_buffer(tmp, &check);
-> +               if (err) {
-> +                       ret =3D err;
-> +                       goto out;
-> +               }
->
-> +               if (ret =3D=3D 0) {
-> +                       ASSERT(!tmp_locked);
-> +                       *eb_ret =3D tmp;
-> +                       tmp =3D NULL;
-> +               }
->                 goto out;
->         } else if (p->nowait) {
-> -               return -EAGAIN;
-> +               ret =3D -EAGAIN;
-> +               goto out;
->         }
->
-> -       if (unlock_up) {
-> +       if (!p->skip_locking) {
->                 btrfs_unlock_up_safe(p, level + 1);
->                 ret =3D -EAGAIN;
-> -       } else {
-> -               ret =3D 0;
->         }
->
->         if (p->reada !=3D READA_NONE)
->                 reada_for_search(fs_info, p, level, slot, key->objectid);
->
-> -       tmp =3D read_tree_block(fs_info, blocknr, &check);
-> +       tmp =3D btrfs_find_create_tree_block(fs_info, blocknr, check.owne=
-r_root, check.level);
->         if (IS_ERR(tmp)) {
-> +               ret =3D PTR_ERR(tmp);
-> +               tmp =3D NULL;
-> +               goto out;
-> +       }
-> +       read_tmp =3D true;
+>  .../bindings/media/mediatek,mt8365-camsv.yaml      | 109 +++++++++++++++++++++
+>  MAINTAINERS                                        |   1 +
+>  2 files changed, 110 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/mediatek,mt8365-camsv.yaml b/Documentation/devicetree/bindings/media/mediatek,mt8365-camsv.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..fdd07675645917fbcd692606c836efd07e50ac0c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/mediatek,mt8365-camsv.yaml
+> @@ -0,0 +1,109 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright (c) 2023 MediaTek, BayLibre
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/mediatek,mt8365-camsv.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +       if (!p->skip_locking) {
-> +               ASSERT(ret =3D=3D -EAGAIN);
-> +               tmp_locked =3D true;
-> +               btrfs_tree_read_lock(tmp);
->                 btrfs_release_path(p);
-> -               return PTR_ERR(tmp);
-> +               path_released =3D true;
-> +       }
+> +title: MediaTek CAMSV 3.0
 > +
-> +       /* Now we're allowed to do a blocking uptodate check. */
-> +       err =3D btrfs_read_extent_buffer(tmp, &check);
-> +       if (err) {
-> +               ret =3D err;
-> +               goto out;
->         }
+> +maintainers:
+> +  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> +  - Julien Stephan <jstephan@baylibre.com>
+> +  - Andy Hsieh <andy.hsieh@mediatek.com>
 > +
->         /*
->          * If the read above didn't mark this buffer up to date,
->          * it will never end up being up to date.  Set ret to EIO now
->          * and give up so that our caller doesn't loop forever
->          * on our EAGAINs.
->          */
-> -       if (!extent_buffer_uptodate(tmp))
-> +       if (!extent_buffer_uptodate(tmp)) {
->                 ret =3D -EIO;
-> +               goto out;
-> +       }
->
-> -out:
->         if (ret =3D=3D 0) {
-> +               ASSERT(!tmp_locked);
->                 *eb_ret =3D tmp;
-> -       } else {
-> -               free_extent_buffer(tmp);
-> -               btrfs_release_path(p);
-> +               tmp =3D NULL;
-> +       }
-> +out:
-> +       if (tmp) {
-> +               if (tmp_locked)
-> +                       btrfs_tree_read_unlock(tmp);
-> +               if (read_tmp && ret && ret !=3D -EAGAIN)
-> +                       free_extent_buffer_stale(tmp);
-> +               else
-> +                       free_extent_buffer(tmp);
->         }
-> +       if (ret && !path_released)
-> +               btrfs_release_path(p);
->
->         return ret;
->  }
-> @@ -2198,7 +2237,7 @@ int btrfs_search_slot(struct btrfs_trans_handle *tr=
-ans, struct btrfs_root *root,
->                 }
->
->                 err =3D read_block_for_search(root, p, &b, level, slot, k=
-ey);
-> -               if (err =3D=3D -EAGAIN)
-> +               if (err =3D=3D -EAGAIN && !p->nowait)
->                         goto again;
->                 if (err) {
->                         ret =3D err;
-> @@ -2325,7 +2364,7 @@ int btrfs_search_old_slot(struct btrfs_root *root, =
-const struct btrfs_key *key,
->                 }
->
->                 err =3D read_block_for_search(root, p, &b, level, slot, k=
-ey);
-> -               if (err =3D=3D -EAGAIN)
-> +               if (err =3D=3D -EAGAIN && !p->nowait)
->                         goto again;
->                 if (err) {
->                         ret =3D err;
-> --
-> 2.43.0
->
->
+> +description:
+> +  The CAMSV is a video capture device that includes a DMA engine connected to
+> +  the SENINF CSI-2 receivers. The number of CAMSVs depend on the SoC model.
+> +
+> +properties:
+> +  compatible:
+> +    const: mediatek,mt8365-camsv
+> +
+> +  reg:
+> +    items:
+> +      - description: camsv base
+> +      - description: img0 base
+> +      - description: tg base
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: cam clock
+> +      - description: camtg clock
+> +      - description: camsv clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: cam
+> +      - const: camtg
+> +      - const: camsv
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: Connection to the SENINF output
+> +
+> +    required:
+> +      - port@0
+> +
+> +required:
+> +  - compatible
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - power-domains
+> +  - iommus
+> +  - ports
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/clock/mediatek,mt8365-clk.h>
+
+I would sort the headers alphabetically.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> +    #include <dt-bindings/memory/mediatek,mt8365-larb-port.h>
+> +    #include <dt-bindings/power/mediatek,mt8365-power.h>
+> +
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        camsv@15050000 {
+> +            compatible = "mediatek,mt8365-camsv";
+> +            reg = <0 0x15050000 0 0x0040>,
+> +                  <0 0x15050208 0 0x0020>,
+> +                  <0 0x15050400 0 0x0100>;
+> +            interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_LOW>;
+> +            clocks = <&camsys CLK_CAM>,
+> +                     <&camsys CLK_CAMTG>,
+> +                     <&camsys CLK_CAMSV0>;
+> +            clock-names = "cam", "camtg", "camsv";
+> +            iommus = <&iommu M4U_PORT_CAM_IMGO>;
+> +            power-domains = <&spm MT8365_POWER_DOMAIN_CAM>;
+> +
+> +            ports {
+> +                #address-cells = <1>;
+> +                #size-cells = <0>;
+> +                port@0 {
+> +                    reg = <0>;
+> +                    camsv1_endpoint: endpoint {
+> +                        remote-endpoint = <&seninf_camsv1_endpoint>;
+> +                    };
+> +                };
+> +            };
+> +        };
+> +    };
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 242c54c88a4a22fc0cbe5c4fc5d7b0d0f84b329e..6147629405c8d40b00c4755a4ee27a746b26f782 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14570,6 +14570,7 @@ M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>  M:	Julien Stephan <jstephan@baylibre.com>
+>  M:	Andy Hsieh <andy.hsieh@mediatek.com>
+>  S:	Supported
+> +F:	Documentation/devicetree/bindings/media/mediatek,mt8365-camsv.yaml
+>  F:	Documentation/devicetree/bindings/media/mediatek,mt8365-seninf.yaml
+>  
+>  MEDIATEK SMI DRIVER
+
+-- 
+Regards,
+
+Laurent Pinchart
 
