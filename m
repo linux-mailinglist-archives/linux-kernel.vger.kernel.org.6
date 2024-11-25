@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-420528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16089D7C00
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:35:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 358659D7C04
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:36:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A45D2823FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:35:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB984163070
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7AAB154433;
-	Mon, 25 Nov 2024 07:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CBA15666D;
+	Mon, 25 Nov 2024 07:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bcI5CBFA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FYBQeD2l"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FF712EBEA;
-	Mon, 25 Nov 2024 07:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABF92119;
+	Mon, 25 Nov 2024 07:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732520107; cv=none; b=F3vQXr1PFdmPEHdNhCG1O385B5Efi0V/OPnKILuIyVfQ/fY5GnXhID+M+1QFEX1WWw6ZaP9peryA/y0cMzVLv8bBsyAK4GbV02o39pa/wxQ16t9jZP2OAQGwBYBTFs7T2XfpKMhdayx8Rw39x/InTNd//pdIIGjXXcTQlqOhl/Q=
+	t=1732520157; cv=none; b=Imgsk1TmFJQ1JEsQrmYBHfQAIDiz2J14zCYR6tc8OoSGuNQt8SiVcGC7gzDkHrETl8q5bc0a8bqTHcErQsuOD2iLPRTRbPYh6SeH5R/NSW0Q03M9YhrLz24I5tI1FFg6xWvqa0h6PJ/0Byt1pyqEn4i2y08MSpyxcnvHIZ6hbhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732520107; c=relaxed/simple;
-	bh=PlGahCAOPGJdS7XIxXteE2FZdx6pG/iupapDZEfBUxE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Lzs2gxlr06VY552W6rCjNXko8T233aRT4mgzVMx0Y8clqn+47o5x93xq5vJzKjdjeSUIZwMOrIUJwYCNd9LKb71obhBJ4Yz6DLXxBJC/4vbXutjlibA4DhaHwxA1CNr1uaGlzNCnx49p95yKG9q/m1Ofe9W3789lreLBaUpd8wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bcI5CBFA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53552C4CECE;
-	Mon, 25 Nov 2024 07:35:03 +0000 (UTC)
+	s=arc-20240116; t=1732520157; c=relaxed/simple;
+	bh=lIaPAEe/5xyZbTdWkmRj4VZ5612+TEcRS6FQjnJseEU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M7V+my0fKGA9RnW3/wyv9tUduDW8OyA4QUz5nEs6D6yh5WlkVMm/bBA/cBWfS/b3Be3hEOCWAsGWAiOLFfO6pwdgLeiXO1fXyn+I2BNI5I2lTSDqFDgtZl15JV8Bur166mP5PKpbt2oJZ6babbBiCFe4hnzIfcYyMjxqmdMpWm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FYBQeD2l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24433C4CECE;
+	Mon, 25 Nov 2024 07:35:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732520106;
-	bh=PlGahCAOPGJdS7XIxXteE2FZdx6pG/iupapDZEfBUxE=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=bcI5CBFA1xkvg7HKilmEf/9dUA9zXkwt3ce+8LGJOpVud3dvbczN6sE5FNGnQJfLh
-	 /EeOEsEf7jR7au7lLRRL6L0J5N7VLe7Ms/6KVVQi94Tei1sqfQ7v6Elab2OSK9+npl
-	 gt3Qjqh+npGoToCFzE0u4WGClTp9BcHVQIXTPdW5PHRJO6z92OkqrQ0W5aHujCT2Eq
-	 W3dAz/XjOkHyXMSs65nQc5oB54SNHTdEV4ZSO/97/c4PH/Vi4DnE0qzzaYd+wS76Oq
-	 8UqIF8O8xE3/lgy/zwY1hCFREWsLWSqt4DSYQCedtIGk6qGdoMgUK2cNl24IYdufpy
-	 d268VwsAGZwqg==
-Message-ID: <667d4273-b3dd-4027-9266-bbd88b2f537a@kernel.org>
-Date: Mon, 25 Nov 2024 08:35:01 +0100
+	s=k20201202; t=1732520157;
+	bh=lIaPAEe/5xyZbTdWkmRj4VZ5612+TEcRS6FQjnJseEU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FYBQeD2lyXCXlnVftx83jDZWSdgyZqUHTVvRuBTTDy3ezqkjuenzhlo7RjQlIUYga
+	 rWnPEYdupRjS1RF7gQd3sot/WdPfTGREwux7kvSPTzgqdoqWnLsDBZ/11zNISIg622
+	 2DdI/4lXHpOF75qE1mJipbudWC/4XDO2iklhURZzXa/4UFumF0X1+hDcJ3tGo/rWj5
+	 bxp53OREGZo16QyFvy2D0qPufDY+fxZrAQT/B5oKGYzeue4K/Btk56h2zf+OEvJVOD
+	 LRfhcUUqpk/O/150+4T5RcfMh19EQRriO+A6WwUKHoVGYCYqHRzlOFCc6F6I2cR/SU
+	 fAaN5E+j/aXsQ==
+Message-ID: <97a6c471-b146-4625-a3fa-93ee29be4c37@kernel.org>
+Date: Mon, 25 Nov 2024 08:35:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dt-bindings: mfd: cros-ec: add properties for thermal
- cooling cells
+Subject: Re: [PATCH v3 1/2] arm64: dts: qcom: qcs615: add SDHC1 and SDHC2
+To: Yuanjie Yang <quic_yuanjiey@quicinc.com>, ulf.hansson@linaro.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ bhupesh.sharma@linaro.org, andersson@kernel.org, konradybcio@kernel.org
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ quic_tingweiz@quicinc.com, quic_zhgao@quicinc.com
+References: <20241122065101.1918470-1-quic_yuanjiey@quicinc.com>
+ <20241122065101.1918470-2-quic_yuanjiey@quicinc.com>
+ <f9b01690-8940-4f8b-b142-6c2ec4db3e83@kernel.org>
+ <Z0BDYiVaLQXaMsle@cse-cd02-lnx.ap.qualcomm.com>
+ <ccbc6324-0dcb-405a-901a-12dc33a8130c@kernel.org>
+ <Z0Pe0B9LsjpRHkkS@cse-cd02-lnx.ap.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: "Sung-Chi, Li" <lschyi@chromium.org>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
- Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, chrome-platform@lists.linux.dev,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20241122-extend_power_limit-v1-0-a3ecd87afa76@chromium.org>
- <20241122-extend_power_limit-v1-2-a3ecd87afa76@chromium.org>
- <4f5sahkxxqb5qonh676igaiadkxv2pbhbibu6wtx4yenplfn4o@yvidi4ujavhr>
- <Z0Pl3muZx716QSed@google.com>
- <c2e9a97e-129d-4a82-9e81-b1391b4b6ff9@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -108,75 +107,93 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <c2e9a97e-129d-4a82-9e81-b1391b4b6ff9@kernel.org>
+In-Reply-To: <Z0Pe0B9LsjpRHkkS@cse-cd02-lnx.ap.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 25/11/2024 08:32, Krzysztof Kozlowski wrote:
-> On 25/11/2024 03:50, Sung-Chi, Li wrote:
->> On Fri, Nov 22, 2024 at 08:49:14AM +0100, Krzysztof Kozlowski wrote:
->>> On Fri, Nov 22, 2024 at 11:47:22AM +0800, Sung-Chi Li wrote:
->>>> The cros_ec supports limiting the input current to act as a passive
->>>> thermal cooling device. Add the property '#cooling-cells' bindings, such
->>>> that thermal framework can recognize cros_ec as a valid thermal cooling
->>>> device.
+On 25/11/2024 03:20, Yuanjie Yang wrote:
+> On Fri, Nov 22, 2024 at 01:35:28PM +0100, Krzysztof Kozlowski wrote:
+>> On 22/11/2024 09:40, Yuanjie Yang wrote:
+>>> On Fri, Nov 22, 2024 at 08:04:31AM +0100, Krzysztof Kozlowski wrote:
+>>>> On 22/11/2024 07:51, Yuanjie Yang wrote:
+>>>>> Add SDHC1 and SDHC2 support to the QCS615 Ride platform.
+>>>>>
+>>>>> Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+>>>>> ---
+>>>>>  arch/arm64/boot/dts/qcom/qcs615.dtsi | 198 +++++++++++++++++++++++++++
+>>>>>  1 file changed, 198 insertions(+)
+>>>>>
+>>>>> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>>>>> index 590beb37f441..37c6ab217c96 100644
+>>>>> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>>>>> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>>>>> @@ -399,6 +399,65 @@ qfprom: efuse@780000 {
+>>>>>  			#size-cells = <1>;
+>>>>>  		};
+>>>>>  
+>>>>> +		sdhc_1: mmc@7c4000 {
+>>>>> +			compatible = "qcom,qcs615-sdhci", "qcom,sdhci-msm-v5";
+>>>>> +			reg = <0x0 0x007c4000 0x0 0x1000>,
+>>>>> +			      <0x0 0x007c5000 0x0 0x1000>;
+>>>>> +			reg-names = "hc",
+>>>>> +				    "cqhci";
+>>>>> +
+>>>>> +			interrupts = <GIC_SPI 641 IRQ_TYPE_LEVEL_HIGH>,
+>>>>> +				     <GIC_SPI 644 IRQ_TYPE_LEVEL_HIGH>;
+>>>>> +			interrupt-names = "hc_irq",
+>>>>> +					  "pwr_irq";
+>>>>> +
+>>>>> +			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
+>>>>> +				 <&gcc GCC_SDCC1_APPS_CLK>,
+>>>>> +				 <&rpmhcc RPMH_CXO_CLK>,
+>>>>> +				 <&gcc GCC_SDCC1_ICE_CORE_CLK>;
+>>>>> +			clock-names = "iface",
+>>>>> +				      "core",
+>>>>> +				      "xo",
+>>>>> +				      "ice";
+>>>>> +
+>>>>> +			resets = <&gcc GCC_SDCC1_BCR>;
+>>>>> +
+>>>>> +			power-domains = <&rpmhpd RPMHPD_CX>;
+>>>>> +			operating-points-v2 = <&sdhc1_opp_table>;
+>>>>> +			iommus = <&apps_smmu 0x02c0 0x0>;
+>>>>> +			interconnects = <&aggre1_noc MASTER_SDCC_1 QCOM_ICC_TAG_ALWAYS
+>>>>> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+>>>>> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
+>>>>> +					 &config_noc SLAVE_SDCC_1 QCOM_ICC_TAG_ALWAYS>;
+>>>>> +			interconnect-names = "sdhc-ddr",
+>>>>> +					     "cpu-sdhc";
+>>>>> +
+>>>>> +			bus-width = <8>;
+>>>>> +			qcom,dll-config = <0x000f642c>;
+>>>>> +			qcom,ddr-config = <0x80040868>;
+>>>>> +			supports-cqe;
+>>>>> +			dma-coherent;
+>>>>> +			mmc-ddr-1_8v;
+>>>>> +			mmc-hs200-1_8v;
+>>>>> +			mmc-hs400-1_8v;
+>>>>> +			mmc-hs400-enhanced-strobe;
 >>>>
->>>> Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
->>>> ---
->>>>  Documentation/devicetree/bindings/mfd/google,cros-ec.yaml | 3 +++
->>>>  1 file changed, 3 insertions(+)
+>>>> These are properties of memory, not SoC. If the node is disabled, means
+>>>> memory is not attached to the SoC, right?
 >>>>
->>>> diff --git a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
->>>> index aac8819bd00b..2b6f098057af 100644
->>>> --- a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
->>>> +++ b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
->>>> @@ -96,6 +96,9 @@ properties:
->>>>    '#gpio-cells':
->>>>      const: 2
->>>>  
->>>> +  '#cooling-cells':
->>>> +    const: 2
->>>
->>> This is not a cooling device. BTW, your commit msg is somehow circular.
-
-
-^^^ And here which you ignored: this is not a cooling device.
-
->>> "Add cooling to make it a cooling device because it will be then cooling
->>> device."
->>>
->>> Power supply already provides necessary framework for managing charging
->>> current and temperatures. If this is to stay, you need to explain why
->>> this is suitable to be considered a thermal zone or system cooling
->>> device (not power supply or input power cooling).
->>>
->>> Best regards,
->>> Krzysztof
->>>
+>>>>> +			status = "disabled";
+>>> Thanks, I think qcom,dll-config and qcom,ddr-config are properties of Soc,
+>>> they are memory configurations that need to be written to the ioaddr.
+>>> And mmc-ddr-1_8v,mmc-hs200-1_8v,mmc-hs400-1_8v are bus speed config,
+>>> they indicate the bus speed at which the host contoller can operate.
+>>> If the node is disabled, which means Soc don't support these properties.
+>> No, that is not the meaning of node is disabled. When node is disabled,
+>> it means board does not have attached memory.
 >>
->> Thank you, I will rephrase the commit message. The reason to not to use the
->> managing charging current and temperatures in the power supply framework is
->> that:
->>
->> - The EC may not have the thermal sensor value for the charger, and there is no
->>   protocol for getting the thermal sensor value for the charger (there is
->>   command for reading thermal sensor values, but there is no specification for
->>   what sensor index is for the charger, if the charger provides thermal value).
->> - The managing mechanism only take the charger thermal value into account, and
->>   I would like to control the current based on the thermal condition of the
->>   whole device.
->>
->> I will include these explanation in the following changes.
+>> Move the memory related properties  to the board.
 > 
-> 
-> This does not explain me why this is supposed to be thermal zone. I
-> already said it, but let's repeat: This is not a thermal zone. This
-> isn't thermal zone sensor, either.
+> Thanks, Ok I understand, I will move the memory related
+> properties(qcom,dll-config and qcom,ddr-config) to the
+> board dts in next version.
 
-
-And nothing from your "revised" commit msg explains why something which
-is not a cooling device is supposed to be a cooling device.
-
+What? Why are you talking about these properties? My comment was not
+under these!
 
 Best regards,
 Krzysztof
