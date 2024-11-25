@@ -1,112 +1,157 @@
-Return-Path: <linux-kernel+bounces-421066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C7949D87D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:25:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4DB59D86FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:48:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E0AAB3FF5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:23:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77D75B3F345
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DF01AD9F9;
-	Mon, 25 Nov 2024 13:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67431B2192;
+	Mon, 25 Nov 2024 13:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c1YQMDvx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YkykpNRv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746691B3956;
-	Mon, 25 Nov 2024 13:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F651ABEA0;
+	Mon, 25 Nov 2024 13:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732540880; cv=none; b=ZkJVBzs7k3QHuHVYQk8ORW+QSVsKKf0LyKQ9tIBYUhvi/8sE+sxf5cwwkDa9FJBeGAOATw4CnBAQZqJFgwimI3MO3TsLWtbc7FpJqOywS/r+ysAArlW83FCAXZMdETwKsDp+/PofX4Sds4RyHMVOQ0V1qCOQa45sVNm4Q34zd60=
+	t=1732540868; cv=none; b=aUaY3xT/o0cJLzCbDeXglCemjmEMvicq+vBSzAzD/dtB2Wx+kW530fcPIgLxkROZwZ2BHjz17kufh3b4xi+tl1SbgmgpApAjs6qfuR8s0H024e8Upf9P1D9wqSlHGQwWFd2dNp4uIYTbo3jqtwFDOdInGroRJfZKTS1QYyjzPE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732540880; c=relaxed/simple;
-	bh=6Lp0IV64+HavzuhO75TCUMSNsfZbWcVXamNaEiN0TXw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YXTIK7DHUDrKBdiB1/BHFoglVk67c31dxt15PswVWKJnS4xPsog6i5O3JJqYoxAa06GfpGoaFT2eqdDeCVVBZCce3J5CD/XhHveBfw5dSelahED8K4fnOncxuoUM/ANP5NHdTOyFL4wm4aERUL4vM48BLrmPOudm6ycskzwhECM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c1YQMDvx; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732540880; x=1764076880;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=6Lp0IV64+HavzuhO75TCUMSNsfZbWcVXamNaEiN0TXw=;
-  b=c1YQMDvxEzYFqyZu7TB7WfmiIzCt2quAgpEmEvP4QCBuEIgttx76kMKx
-   hFbd6cFLyF7ZFdXBpCPjft5hVdrVJuGW1zBd2IxRIe8NjET971lsE9HrZ
-   Lchv8JJKHd6BqOYx0KR/VVFiaqRrVVgym8Hd6KIgksY7xOmL9SrOZZkl5
-   c0hCzx046gAxyL/NuoxOwxXS/5ZZZhWCsvffcSulBq24Z8q78hUGO2a6C
-   ZS+koZG8zJjUbDRxwK1MwidXWyoWwJgK4DY9cI5u9N8uLUWm2SupCnudN
-   Ojp7f4Eqitbi6vNSM35IQPDLFceMPAEMg/0JgTBYT8zovteyzuELk22px
-   Q==;
-X-CSE-ConnectionGUID: xSsbRPcGTg2OxMM1cHdDcQ==
-X-CSE-MsgGUID: 3exD20YLSRa3uJeXj0Nliw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="43145511"
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="43145511"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 05:21:20 -0800
-X-CSE-ConnectionGUID: swPvfLtbReKhSTMXeDGAQQ==
-X-CSE-MsgGUID: NqH7bS67SpmBvL7nkvax/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="91161793"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO pwlazlyn-mobl1.intel.com) ([10.245.245.34])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 05:21:15 -0800
-From: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	rafael.j.wysocki@intel.com,
-	len.brown@intel.com,
-	artem.bityutskiy@linux.intel.com,
-	dave.hansen@linux.intel.com,
-	patryk.wlazlyn@linux.intel.com,
-	peterz@infradead.org,
-	tglx@linutronix.de,
-	gautham.shenoy@amd.com
-Subject: [RFC PATCH v4 8/8] acpi_idle: Disallow play_dead with FFH cstate on AMD platforms
-Date: Mon, 25 Nov 2024 14:20:28 +0100
-Message-ID: <20241125132029.7241-9-patryk.wlazlyn@linux.intel.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241125132029.7241-1-patryk.wlazlyn@linux.intel.com>
-References: <20241125132029.7241-1-patryk.wlazlyn@linux.intel.com>
+	s=arc-20240116; t=1732540868; c=relaxed/simple;
+	bh=3Z560kziSQXi2my1WMJNnxEGuywtw7Uta9RcrJwEvHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SuooNe8ZwnTtoCOi9CmZaVxtI3RK4K5Q7VXDgNFl/4cisnYCLEltVo3upnd4MsGH9uqvaWCgZcUqIBBWREkcVxVBo2R+qRJY9YR5AL71vWj+oUW+hhKO9OvIiziennBN6Qy0GQ6zXn//BFbSF8CeBwA+qjP4FloJgegOLR388HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YkykpNRv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 610F7C4CED2;
+	Mon, 25 Nov 2024 13:21:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732540866;
+	bh=3Z560kziSQXi2my1WMJNnxEGuywtw7Uta9RcrJwEvHc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YkykpNRv7e4NVi4Q3z8ffrcHtigFITXEIxN/5bTSjYdSwaphoIBGxqmG+/Xb46TI7
+	 lHS/FY0EsAUAz1aYRprNvi6QHcyObwv8xHeGqJ05oGkRLX0e0qKg8xflK6oz4lAXf7
+	 YhDyUrt9P4stTb7wr4Cj6faNKuabUVK/uT5TkuTTJ9M8Dgc7pTuXnnsJprFpWQcWsr
+	 oJtVByZrcaZVyAzTcmcBTi8a4HHu7UG0bHWY3Xph56B8h9135/UIM79mhNBzIGU96v
+	 JXhwAWUIHHY0CyLinhprle6eH9ZMJ6gAhhpTH9YT2OXbHgesMLMXeqrXQl9GDr9GhR
+	 cR4Addly+n0lQ==
+Date: Mon, 25 Nov 2024 07:21:04 -0600
+From: Rob Herring <robh@kernel.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Dragan Cvetic <dragan.cvetic@amd.com>, linux-gpio@vger.kernel.org,
+	Herve Codina <herve.codina@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org,
+	Stefan Wahren <wahrenst@gmx.net>,
+	linux-arm-kernel@lists.infradead.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Krzysztof Wilczynski <kw@linux.com>
+Subject: Re: [PATCH v4 04/10] dt-bindings: misc: Add device specific bindings
+ for RaspberryPi RP1
+Message-ID: <20241125132104.GA1520508-robh@kernel.org>
+References: <cover.1732444746.git.andrea.porta@suse.com>
+ <ebb21da5cb41391421b364815705be8b4c415f8a.1732444746.git.andrea.porta@suse.com>
+ <173250040873.6640.9720381303445148722.robh@kernel.org>
+ <Z0RAGkBc-yz5lqN6@apocalypse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z0RAGkBc-yz5lqN6@apocalypse>
 
-Signed-off-by: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-Suggested-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
----
- drivers/acpi/processor_idle.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+On Mon, Nov 25, 2024 at 10:15:06AM +0100, Andrea della Porta wrote:
+> Hi Rob,
+> 
+> On 20:06 Sun 24 Nov     , Rob Herring (Arm) wrote:
+> > 
+> > On Sun, 24 Nov 2024 11:51:41 +0100, Andrea della Porta wrote:
+> > > The RP1 is a MFD that exposes its peripherals through PCI BARs. This
+> > > schema is intended as minimal support for the clock generator and
+> > > gpio controller peripherals which are accessible through BAR1.
+> > > 
+> > > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > > ---
+> > >  .../devicetree/bindings/misc/pci1de4,1.yaml   | 74 +++++++++++++++++++
+> > >  MAINTAINERS                                   |  1 +
+> > >  2 files changed, 75 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+> > > 
+> > 
+> > My bot found errors running 'make dt_binding_check' on your patch:
+> > 
+> > yamllint warnings/errors:
+> > 
+> > dtschema/dtc warnings/errors:
+> > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/misc/pci1de4,1.example.dtb: clocks@c040018000: 'clock-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+> > 	from schema $id: http://devicetree.org/schemas/clock/raspberrypi,rp1-clocks.yaml#
 
-diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
-index 586cc7d1d8aa..4b4ac8d55b55 100644
---- a/drivers/acpi/processor_idle.c
-+++ b/drivers/acpi/processor_idle.c
-@@ -803,7 +803,11 @@ static int acpi_processor_setup_cstates(struct acpi_processor *pr)
- 
- 		state->flags = 0;
- 
--		state->enter_dead = acpi_idle_play_dead;
-+		/* AMD doesn't want to use mwait for play dead. */
-+		bool amd_or_hygon = boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
-+				    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON;
-+		if (!(cx->entry_method == ACPI_CSTATE_FFH && amd_or_hygon))
-+			state->enter_dead = acpi_idle_play_dead;
- 
- 		if (cx->type == ACPI_STATE_C1 || cx->type == ACPI_STATE_C2)
- 			drv->safe_state_index = count;
--- 
-2.47.0
+The error comes from this schema and...
 
+> > 
+> > doc reference errors (make refcheckdocs):
+> > 
+> > See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/ebb21da5cb41391421b364815705be8b4c415f8a.1732444746.git.andrea.porta@suse.com
+> > 
+> > The base for the series is generally the latest rc1. A different dependency
+> > should be noted in *this* patch.
+> > 
+> > If you already ran 'make dt_binding_check' and didn't see the above
+> > error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> > date:
+> > 
+> > pip3 install dtschema --upgrade
+> > 
+> > Please check and re-submit after running the above command yourself. Note
+> > that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> > your schema. However, it must be unset to test all examples with your schema.
+> > 
+> 
+> Sorry about that, but even if I see that this should be the case (I've dropped
+> the clock-name property from raspberrypi,rp1-clock.yaml), I can't reproduce it
+> with:
+> 
+> # make W=1 dt_binding_check DT_SCHEMA_FILES=pci1de4,1.yaml
+
+You've limited testing to schema files matching pci1de4,1.yaml.
+
+> 
+> and the output is:
+> 
+>   CHKDT   Documentation/devicetree/bindings
+>   LINT    Documentation/devicetree/bindings
+>   DTEX    Documentation/devicetree/bindings/misc/pci1de4,1.example.dts
+>   DTC [C] Documentation/devicetree/bindings/misc/pci1de4,1.example.dtb
+> 
+> dt-schema seems up to date. Is my command line correct?
+> 
+> Many thanks,
+> Andrea
+> 
 
