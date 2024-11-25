@@ -1,110 +1,192 @@
-Return-Path: <linux-kernel+bounces-421109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D949D8889
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:55:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 068B29D86AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:41:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 237C6B2C376
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:41:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA9782881BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D2F1ABEC6;
-	Mon, 25 Nov 2024 13:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BA91AC448;
+	Mon, 25 Nov 2024 13:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DIGJmEUB"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hVMS1BIM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62F918872F;
-	Mon, 25 Nov 2024 13:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3333918872F;
+	Mon, 25 Nov 2024 13:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732542096; cv=none; b=Q8JGkBpVFk9idxWRZvZIu4QCIHe+vf1rXl0bNr+xf8U6uAgnMyJh78/Zh83Jexoz7wu2yXCf3IkpWVyJHOB2P30PsT8HmXrH0pUIFasM07oCAdccgWGmiaGbykkwGjDqelp6g+f/tzT1FDOGMTIND0u5Xs2Stax+auxxSUvH7mw=
+	t=1732542111; cv=none; b=oC1LyFPhrBiY+3tAN+qcRKmkE8YoQNBckq5NujZqSUnITtoeYJ0GFKO3DJLlqo5zo3XhlFcr3k96mezPKorzR+M1+1RzZBkasa3Dxxw5ECJQMc2gHGJTgbl9ti4Z1YXEgNfVLMBE8YQESgiAVu2XdfmxKrWWj/E50YMDsOW6AzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732542096; c=relaxed/simple;
-	bh=gmh8u5fmTOhVEwnQk+QVm4d4/vdvrfXAcKp9kKoQHJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B9AKrMjGIlzS6jFsF6qjaDmkOSj0ZQd8iQvrF5KVDWNVhiLxwo5iU7glzTksvs/Lmxqj6EOSDSnI6tvVI1xjpgUKH8PCyPlz4F27TEHk9zrXRBzAaA6bRNAcQUIi3JzuBkO566LWXmmTdBKTZjfe4Tj11g+GL6QSea70/xFRzbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DIGJmEUB; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=NUza1fQdfVZ8WT0a3jXWk6XdwOIL6+LMHU1LXuCQ2E8=; b=DIGJmEUBW9wfo3TGgFrwNniyDc
-	YxCoxwxp/98UxAgbPSDVZ4m9tVxkSmJ6fvkEOEPQWEktlc5hoj4EAM50mW2ytEoEN0bg7kLpCKJBh
-	QNhhIZ/Jb3M+WcXkROyK/DH895TIhf+3LY/tvcPTH9jTShOiPOFWcMJsgvye1koC2MKQ6zuhYVq9T
-	viF/N9+dyE9dc0xf5Zr3y4As4IHEF8f2lfxl2n4uZ+IDQnhu0sgzfRvY5aOxf/xTYiP8PdWzr2+RU
-	R3S4dWB9FQS6jkHlyEVOLO99VpAR3yYH8krG75NGIWd1nAf1GXGEyr7p0jSCC0jyhMmOcnQVVbCVW
-	aLnMhiHQ==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tFZL0-0000000BvUW-24RM;
-	Mon, 25 Nov 2024 13:41:15 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 1B76430026A; Mon, 25 Nov 2024 14:41:15 +0100 (CET)
-Date: Mon, 25 Nov 2024 14:41:15 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
-Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	irogers@google.com, james.clark@arm.com, ravi.bangoria@amd.com,
-	yu.c.chen@intel.com, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	rostedt@goodmis.org, vincent.guittot@linaro.org,
-	adrian.hunter@intel.com, kan.liang@linux.intel.com,
-	gautham.shenoy@amd.com, kprateek.nayak@amd.com,
-	juri.lelli@redhat.com, yangjihong@bytedance.com, void@manifault.com,
-	tj@kernel.org, vineethr@linux.ibm.com, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, santosh.shukla@amd.com,
-	ananth.narayan@amd.com, sandipan.das@amd.com,
-	James Clark <james.clark@linaro.org>
-Subject: Re: [PATCH v2 1/6] sched/stats: Print domain name in /proc/schedstat
-Message-ID: <20241125134115.GB38837@noisy.programming.kicks-ass.net>
-References: <20241122084452.1064968-1-swapnil.sapkal@amd.com>
- <20241122084452.1064968-2-swapnil.sapkal@amd.com>
- <20241122111253.GR24774@noisy.programming.kicks-ass.net>
- <fcefeb4d-3acb-462d-9c9b-3df8d927e522@amd.com>
+	s=arc-20240116; t=1732542111; c=relaxed/simple;
+	bh=L/Yt9qpyUYCvb0IMywip9wrijTFltgadVAr7iXLpz/I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rg/oyWCbVD4dkO1H0E8tAwH76bdajDq5cFKDbi7eVv3CIBr21eN5GJhb7JQIwU8voe1xebAbKEJDD3/bJKMARa5IlMo0chfsz96HUW+dfggHwAnGplpV3kiZB11PIWG+0YnV0jj1iD0NHDf4HykBE0d0UDScWMoOj6KZDzZU9GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hVMS1BIM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C200AC4CED3;
+	Mon, 25 Nov 2024 13:41:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732542110;
+	bh=L/Yt9qpyUYCvb0IMywip9wrijTFltgadVAr7iXLpz/I=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=hVMS1BIMq1tzki/VreQrWMspZcravSEN7ZlTougVdWUREEQ0H2LEm1/1IuyJcqrxz
+	 /ss5WkKGrF1NAwioOBXtKGCXA86jh56HsFnqcxVVqfULDp/HllGR0W7MG1KMuPsQbs
+	 rDJ1WCq206b7jmSMNpb+C7aLqn4Ujlo0DUSRAFx4uejq7g647wMAMapLL0mBOSb0qK
+	 LDLcdaUAKBp9Q41Q6SbhokjWBM7oBChKv/C+1gxYnPJV/3gO2x/BdAhAqKrEuakiYI
+	 MMVNktemmmCwU+yesMJ2nvBmfRS+5mliPX6/7f/LL7b+GhwJyzckx6ZXQtvHwCP9nC
+	 AUMOxm5XfVTrw==
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2973b53ec02so1249228fac.1;
+        Mon, 25 Nov 2024 05:41:50 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUrzj+PPcM4JLIMny+0Q4vjCEEzoymMF/Hpx5eIy8CyHxEdykOOwgVLJnmcXO8FqMQEupe+498O9yRyzN4=@vger.kernel.org, AJvYcCXKJWDIPLh5uivgNLcLIS+9OjZEmH5MGWxLiFEC2+VvjhehiLyEkyiQ+OyafhW8BcEd40vQSM6Vzzk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG5J276enSfapxsVkL5B51C0Pc1g8k3qpyRArHYWBpghluGQrf
+	2ZO+n5KNNUbrBMHdB6juAtuFqrmwmCAchjx2NxD2mNqjMe1PxIvLF7CAqKS0MImwFCKcMuPBFss
+	stvz/Jw9tVk85e5LMVRztVhwmy8E=
+X-Google-Smtp-Source: AGHT+IHD/e87Ap2edrph4Qxa0s2hD0ZHiCrBZo3g13AEtLNFggvIu8CBqrF8fCVVpcN5wVQ+J6cHC1nhdMf+2r6cUvQ=
+X-Received: by 2002:a05:6871:3a0d:b0:296:56d5:26c with SMTP id
+ 586e51a60fabf-29720c41d0dmr9104059fac.24.1732542109999; Mon, 25 Nov 2024
+ 05:41:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fcefeb4d-3acb-462d-9c9b-3df8d927e522@amd.com>
+References: <20241125132029.7241-1-patryk.wlazlyn@linux.intel.com> <20241125132029.7241-8-patryk.wlazlyn@linux.intel.com>
+In-Reply-To: <20241125132029.7241-8-patryk.wlazlyn@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 25 Nov 2024 14:41:38 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gCHzptE5kW6ScpRB-ytvi_5uCS9Mghy6Vv4680VMEbTQ@mail.gmail.com>
+Message-ID: <CAJZ5v0gCHzptE5kW6ScpRB-ytvi_5uCS9Mghy6Vv4680VMEbTQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 7/8] acpi_idle: Add FFH cstate handling
+To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	rafael.j.wysocki@intel.com, len.brown@intel.com, 
+	artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com, 
+	peterz@infradead.org, tglx@linutronix.de, gautham.shenoy@amd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 25, 2024 at 06:01:16PM +0530, Sapkal, Swapnil wrote:
-> Hello Peter,
-> 
-> On 11/22/2024 4:42 PM, Peter Zijlstra wrote:
-> > On Fri, Nov 22, 2024 at 08:44:47AM +0000, Swapnil Sapkal wrote:
-> > 
-> > > schedstat version has not been updated since this change merely adds
-> > > additional information to the domain name field and does not add a new
-> > > field altogether.
-> > 
-> > So I don't care much either way, but if an existing tool is trying to
-> > parse the domain number, it might now get confused by the extra
-> > characters. I know of no such tool, just being pedantic.
-> 
-> I will change the schedstat version so that it will not break any existing
-> tools.
-> 
-> However the domain name is under CONFIG_SCHED_DEBUG and thus incrementing
-> the schedstats version is not sufficient when this config option is
-> disabled. Is it okay for you to move domain name out of CONFIG_SCHED_DEBUG?
+On Mon, Nov 25, 2024 at 2:21=E2=80=AFPM Patryk Wlazlyn
+<patryk.wlazlyn@linux.intel.com> wrote:
+>
+> Signed-off-by: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
 
-I suppose so..
+The changes below look good to me, but the patch needs a changelog
+which should explain why it is needed or useful.
 
-> Previously, I sent couple of patches to change the schedstat layout for
-> * Correctly accounting the different types of imbalances [1]
-> * Accurately computing the task hot migrations [2] (This was your patch)
-> I would like to include these two patches that better helps justify the
-> version change. Is that okay by you?
+In this particular case, you want to change the code ordering in
+native_play_dead() so that it calls cpuidle_play_dead() first and only
+fall back to anything else if that fails.
 
-Yeah, sure.
+In particular, this needs to work when intel_idle is not in use and
+the entry method for at least one idle state in the _CST return
+package for at least one CPU is ACPI_CSTATE_FFH, so this case needs to
+be added to acpi_idle_play_dead().
+
+You may also make a note in the changelog that had there been a
+non-Intel x86 platform with a _CST returning idle states where CPU is
+ACPI_CSTATE_FFH had been the entry method, it wouldn't have been
+handled correctly today (but this is academic because of the lack of
+such platforms).
+
+Also, this can be the first patch in your series if [1-3/7] are dropped.
+
+> ---
+>  arch/x86/include/asm/cpufeatures.h | 1 +
+>  arch/x86/kernel/acpi/cstate.c      | 9 +++++++++
+>  drivers/acpi/processor_idle.c      | 2 ++
+>  include/acpi/processor.h           | 5 +++++
+>  4 files changed, 17 insertions(+)
+>
+> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cp=
+ufeatures.h
+> index ea33439a5d00..1da5e08de257 100644
+> --- a/arch/x86/include/asm/cpufeatures.h
+> +++ b/arch/x86/include/asm/cpufeatures.h
+> @@ -236,6 +236,7 @@
+>  #define X86_FEATURE_PVUNLOCK           ( 8*32+20) /* PV unlock function =
+*/
+>  #define X86_FEATURE_VCPUPREEMPT                ( 8*32+21) /* PV vcpu_is_=
+preempted function */
+>  #define X86_FEATURE_TDX_GUEST          ( 8*32+22) /* "tdx_guest" Intel T=
+rust Domain Extensions Guest */
+> +#define X86_FEATURE_NO_MWAIT_OFFLINE    ( 8*32+23) /* Don't use MWAIT st=
+ates for offlined CPUs */
+>
+>  /* Intel-defined CPU features, CPUID level 0x00000007:0 (EBX), word 9 */
+>  #define X86_FEATURE_FSGSBASE           ( 9*32+ 0) /* "fsgsbase" RDFSBASE=
+, WRFSBASE, RDGSBASE, WRGSBASE instructions*/
+> diff --git a/arch/x86/kernel/acpi/cstate.c b/arch/x86/kernel/acpi/cstate.=
+c
+> index f3ffd0a3a012..c80a3e6dba5f 100644
+> --- a/arch/x86/kernel/acpi/cstate.c
+> +++ b/arch/x86/kernel/acpi/cstate.c
+> @@ -204,6 +204,15 @@ int acpi_processor_ffh_cstate_probe(unsigned int cpu=
+,
+>  }
+>  EXPORT_SYMBOL_GPL(acpi_processor_ffh_cstate_probe);
+>
+> +void acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx)
+> +{
+> +       unsigned int cpu =3D smp_processor_id();
+> +       struct cstate_entry *percpu_entry;
+> +
+> +       percpu_entry =3D per_cpu_ptr(cpu_cstate_entry, cpu);
+> +       mwait_play_dead_with_hint(percpu_entry->states[cx->index].eax);
+> +}
+> +
+>  void __cpuidle acpi_processor_ffh_cstate_enter(struct acpi_processor_cx =
+*cx)
+>  {
+>         unsigned int cpu =3D smp_processor_id();
+> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.=
+c
+> index 698897b29de2..586cc7d1d8aa 100644
+> --- a/drivers/acpi/processor_idle.c
+> +++ b/drivers/acpi/processor_idle.c
+> @@ -590,6 +590,8 @@ static void acpi_idle_play_dead(struct cpuidle_device=
+ *dev, int index)
+>                         raw_safe_halt();
+>                 else if (cx->entry_method =3D=3D ACPI_CSTATE_SYSTEMIO) {
+>                         io_idle(cx->address);
+> +               } else if (cx->entry_method =3D=3D ACPI_CSTATE_FFH) {
+> +                       acpi_processor_ffh_play_dead(cx);
+>                 } else
+>                         return;
+>         }
+> diff --git a/include/acpi/processor.h b/include/acpi/processor.h
+> index a17e97e634a6..63a37e72b721 100644
+> --- a/include/acpi/processor.h
+> +++ b/include/acpi/processor.h
+> @@ -280,6 +280,7 @@ int acpi_processor_ffh_cstate_probe(unsigned int cpu,
+>                                     struct acpi_processor_cx *cx,
+>                                     struct acpi_power_register *reg);
+>  void acpi_processor_ffh_cstate_enter(struct acpi_processor_cx *cstate);
+> +void acpi_processor_ffh_play_dead(struct acpi_processor_cx *cx);
+>  #else
+>  static inline void acpi_processor_power_init_bm_check(struct
+>                                                       acpi_processor_flag=
+s
+> @@ -300,6 +301,10 @@ static inline void acpi_processor_ffh_cstate_enter(s=
+truct acpi_processor_cx
+>  {
+>         return;
+>  }
+> +static inline void acpi_processor_ffh_play_dead(struct acpi_processor_cx=
+ *cx)
+> +{
+> +       return;
+> +}
+>  #endif
+>
+>  static inline int call_on_cpu(int cpu, long (*fn)(void *), void *arg,
+> --
+> 2.47.0
+>
+>
 
