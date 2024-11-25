@@ -1,175 +1,119 @@
-Return-Path: <linux-kernel+bounces-420921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE3D29D8466
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:26:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62D469D8564
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:24:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95CE4285D55
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:26:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6489CB43779
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1186199924;
-	Mon, 25 Nov 2024 11:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCCE199FBB;
+	Mon, 25 Nov 2024 11:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IhmXnew/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="dvEQKzHx"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD5C197512;
-	Mon, 25 Nov 2024 11:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E2C199384;
+	Mon, 25 Nov 2024 11:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732534004; cv=none; b=Is86v19kNgUvs0upUaoqToWoQiqVDkXI09wYtBbMEj6l2jkIvBzHAe8xPxALZcCFqhrtt/QvmnH480ClZg5lUJi7Rb7A93vBc7cp3jbtf30OJYI6ZsonE+VZ/nukO/rdNHg80BHAIOPDOz/LINCWONn6JZEmTqqYGLveYN+C7a0=
+	t=1732534034; cv=none; b=snRMrjOKzHmYpxWXj6USgakURJzHqv5LyjleQPCbzMJpdsM62hM7/N3eMp1bHuiL6Nbqj43GvveXSA7GUjwNr+0e7aEUfUtiNBeojfvz4MbblKraz3zTCAo3Q707U/0WrQMc8NjxVol5fQvDfxVs0xejEgoxqAWReWdfTM79EIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732534004; c=relaxed/simple;
-	bh=SAmhCS5qACdbyhAPkjIMCCb3p3OfxfHbuOrSUE4TKKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i5jMQp89KIhgIXc3JFcS3uxhBF37XFOm5YWr+8iFn2yl1xg3ggc/xVKN+kg8bmLT7xmMPR2VuDAlmQhV+k+3Y9Jr87WfuGeuc26uoaouCQrkiCQTqrnvx4I5oQT7/t1Wrki0JoZRnlBUCQQU7a6sttVsi99ynKKyc/c+BI5spb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IhmXnew/; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732534002; x=1764070002;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SAmhCS5qACdbyhAPkjIMCCb3p3OfxfHbuOrSUE4TKKk=;
-  b=IhmXnew/1rCyrh0R53ZZoo5++bk7DZunftXDQrKnBhYF+G/P8p1FTyqh
-   sKb1b1T8b0jEDMH8jPGZWSmKeLX6wAt9CvKJo8hld9y6h6UuJOjNuDgxD
-   Z0GdXmQUL7smJKaZ9iUut3AjYhZOH5GTa4QihrSxV/RT213HtjlGnkJtS
-   XlFeSdvrKYV0iXDKxeW0mpl6DAbP0GMDgoEUlm7+fp45wZnTeaVc+7r+i
-   BA6w1ykRQU8XfFyZrrtimUQtLt5bf1+zYM/vF36+Jt4VoZjkFYlF6zLYP
-   2QkVemUGwnZK4vRgJ8r7rcA2oGERfCGzGoMSgO0SZJcmJl03G+w5PcxMA
-   Q==;
-X-CSE-ConnectionGUID: Lf1rPBuZSgupDfM+RLPIQA==
-X-CSE-MsgGUID: ibY9bQSqTWum8kAbbhZ8vg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="20224441"
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="20224441"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 03:26:41 -0800
-X-CSE-ConnectionGUID: NSLm0bmvQnqu+gHiMuKNPw==
-X-CSE-MsgGUID: ax1ggI24SKaWSlF57sbfyg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="91196429"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 03:26:39 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tFXEi-00000000jRD-1E8t;
-	Mon, 25 Nov 2024 13:26:36 +0200
-Date: Mon, 25 Nov 2024 13:26:35 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-serial@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
-	linux-kernel@vger.kernel.org,
-	Yang Yingliang <yangyingliang@huawei.com>
-Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
-Message-ID: <Z0Re61Tk5lN2Xuxi@smile.fi.intel.com>
-References: <20240405152924.252598-2-schnelle@linux.ibm.com>
- <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net>
- <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
- <472eb22a-dcb1-4fbb-bf2c-a4173706bc7a@app.fastmail.com>
- <27685942-fb62-44c5-86ed-98beb547ffed@roeck-us.net>
- <744920ba-551c-466b-ac5c-2607b81261a0@app.fastmail.com>
- <Z0QtZky8Sr7qUW7v@smile.fi.intel.com>
- <00f5e842-3ee9-4d83-8836-0ff4f703fa3c@app.fastmail.com>
- <Z0RSZ-YD_BozMs1n@smile.fi.intel.com>
- <be43108e-4135-4927-ba58-141836fde6af@app.fastmail.com>
+	s=arc-20240116; t=1732534034; c=relaxed/simple;
+	bh=zsdkLjfKIS7ym8k7MZJOfE8iGpa+ungfaX6tE6YL1IA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CwkfvPPhXqUxcmtH/NqcEAaSLaeOCv8ncRUwPhfLWTHcLFGo3Yr0YuRKSY8hzy4MMXA2Oa+BMrOssKw3O4mn/ql7l3GTJrZlEHqe0mdy5Xkr0SpG7paPnHFIY3Lh5OwVM1QpTWtjbDPBpl8NgRDsEXJSwAyViIXOp2hjfxOfxHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=dvEQKzHx; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AP98A76014880;
+	Mon, 25 Nov 2024 06:26:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=pEKfzssVGjT4ZBP3IaYmvZ6iNe4
+	nDCmepCNLwlDUjzs=; b=dvEQKzHxLOhK7UuLRRb7F/GToWm1NZ0Lw4wev08vLTc
+	UA58LOsQNT5Ohfog+8OSx2soGYy5MO6cQVUX0KcGHvS95HeftXcH3h+bgbv8/LMK
+	FTg40Ou+YQWF84wJy9mHaOvj8xLpzRSUn7GKqOGj5IGkj28WdqJMjjH+09TpHN6z
+	cQJL9OXEQl16mqFBd+Th0aDlFFKSJm14WYkXnissJRlHIZe1Qi8yHEZFh2/PAB9p
+	p/cq0CsJBZRtUnTT/aHckpnsKaB0dKo1rDKTbZCQ66EO2UFChgfDp9tQk4BcjkRX
+	AbBWO5O4BypnO83aIYgL8/bn1G4bvwBNJ0YVlA1SC0w==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 434pbd0hm8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 06:26:57 -0500 (EST)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 4APBQupN035533
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 25 Nov 2024 06:26:56 -0500
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Mon, 25 Nov
+ 2024 06:26:56 -0500
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Mon, 25 Nov 2024 06:26:56 -0500
+Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.168])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4APBQnwd016096;
+	Mon, 25 Nov 2024 06:26:51 -0500
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
+CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Subject: [PATCH v2 0/2] Add ADF4371 Reference Doubler and Reference Divider
+Date: Mon, 25 Nov 2024 13:26:39 +0200
+Message-ID: <20241125112643.10459-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <be43108e-4135-4927-ba58-141836fde6af@app.fastmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: gu6lj8nHjRvz2YbfeyJsBz7sH9UyDgNx
+X-Proofpoint-ORIG-GUID: gu6lj8nHjRvz2YbfeyJsBz7sH9UyDgNx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ priorityscore=1501 suspectscore=0 lowpriorityscore=0 spamscore=0
+ impostorscore=0 malwarescore=0 mlxlogscore=909 clxscore=1015 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411250098
 
-On Mon, Nov 25, 2024 at 12:06:16PM +0100, Arnd Bergmann wrote:
-> On Mon, Nov 25, 2024, at 11:33, Andy Shevchenko wrote:
-> > On Mon, Nov 25, 2024 at 10:53:46AM +0100, Arnd Bergmann wrote:
-> >> 
-> >> This does however revert f4c23a140d80 ("serial: 8250:
-> >> fix null-ptr-deref in serial8250_start_tx()") and
-> >> might bring back the bug came from opening an
-> >> uninitialized uart. On the other hand, I don't see
-> >> why that doesn't also crash from accessing the invalid
-> >> I/O port on the same architectures.
-> >
-> > AFAICS it does only partial revert, so I don't see how your patch
-> > may break that.
-> 
-> I think it's a complete revert, it's just not entirely obvious
-> since serial8250_setup_port() got split out by 9d86719f8769
-> ("serial: 8250: Allow using ports higher than
-> SERIAL_8250_RUNTIME_UARTS") and the original callsite got
-> moved by your ffd8e8bd26e9 ("serial: 8250: Extract platform
-> driver").
+This patch series add support for for reference doubler block and reference
+divide by 2 clock block within the ADF4371.
 
-Ah, okay.
+The doubler is useful for increasing the PFD comparison frequency which will
+result in a noise performance of the system.
 
-> What I suspect is going on with the f4c23a140d80 commit
-> is the same bug I mentioned earlier in this thread, where
-> __serial8250_isa_init_ports() just always registers
-> 'nr_uarts' (CONFIG_SERIAL_8250_RUNTIME_UARTS) ports,
-> unlike any other serial driver.
+The reference divide by 2 divides the reference signal by 2,
+resulting in a 50% duty cycle PFD frequency.
 
-But the configuration can give less than old_serial_port contains.
-See dozens of the explicit settings in the defconfigs.
+Both features were requested from customers that purchased hundreds of adf4371
+parts to use in their project. They need a way to adjust these blocks either
+from userspace or devicetree.
 
-> This used to be required before 9d86719f8769 ("serial:
-> 8250: Allow using ports higher than SERIAL_8250_RUNTIME_UARTS"),
-> but I don't see why this is still a thing now, other than
-> for using setserial on i486-class PCs with nonstandard ISA
-> ports.
-> 
-> On non-x86 machines, it only ever seems to create extra
-> ports that are likely to crash the system if opened, either
-> because they lack proper serial_in/serial_out callbacks,
-> or because the default UPIO_PORT callbacks end up poking
-> unmapped memory.
-> 
-> Do you see any reason why we can't just do the version below?
+The patch series aims to both satisfy the customer needs and be compliant with
+the current kernel. The devicetree approach was chosen since these kind of
+features are already present in the mainline kernel for parts such as adf4350.
 
-Perhaps we may do this way (it seems better to me than previous suggestions),
-but it also needs to be carefully checked against those configurations that set
-it explicitly.
+Antoniu Miclaus (2):
+  dt-bindings: iio: adf4371: add rdiv2 and doubler
+  iio: frequency: adf4371: add ref doubler and div2
 
-...
-
-If we go this way, it would be also nice to add a comment explaining that
-this is module parameter (as it's done for those ones above).
-
-> +unsigned int nr_uarts = ARRAY_SIZE(old_serial_port);;
-
-...
-
->  	/*
-> -	 * Set up initial ISA ports based on nr_uart module param, or else
-> -	 * default to CONFIG_SERIAL_8250_RUNTIME_UARTS. Note that we do not
-> -	 * need to increase nr_uarts when setting up the initial ISA ports.
-
-> +	 * Set up initial ISA ports based on nr_uart module param. Note that 
-
-Just in case it has a trailing whitespace.
-
-> +	 * we do not need to increase nr_uarts when setting up the initial
-> +	 * ISA ports.
->  	 */
+ .../bindings/iio/frequency/adf4371.yaml       | 11 ++++++
+ drivers/iio/frequency/adf4371.c               | 35 +++++++++++++++++--
+ 2 files changed, 44 insertions(+), 2 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.47.0
 
 
