@@ -1,128 +1,220 @@
-Return-Path: <linux-kernel+bounces-421011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 881909D8598
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:47:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2963016921F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:47:20 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED7C1A0B07;
-	Mon, 25 Nov 2024 12:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KQ46rnD0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE7019D872A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:55:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A0A18893C
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 12:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 096DFB2C38C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:50:04 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FD91A3035;
+	Mon, 25 Nov 2024 12:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZiuiskIL"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C128621106;
+	Mon, 25 Nov 2024 12:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732538837; cv=none; b=PW44lseiMq4q+AOPLoEkfnGhGSonX+u5ajYvF+fTBqTxczECslG89tPcyXxm3FipU06Bc6D3MNQoG0mHB/poe3uOkmwTCijIHACEJFnIZm3vsGZcg32ttXq5m9DrS0/wgHYDTfSjpo+W9aWHYKzs8r4SaFVbhtGs9zRMvvzWlD8=
+	t=1732538996; cv=none; b=FbsrfVaQxrfkj3I/3p8HR8CcLTgB/Yh4q6xfsHKYMIVnjFNAkzgD10otCefhK+QbhLMZcLfO75t9wryev5v6c8z7bIfnGPdaZhzvCi7+IOIri+oCWiU3iJh1IZPRh0Uf8+laQxtleU3mzq+AuE+6BgyM6p3uEUzRaSxndNw1SEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732538837; c=relaxed/simple;
-	bh=wDVlE+3a7Q0/blgX4dDF0Ww+r04zZ7/v7CBGXQwyzO8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WLzJhL32z8TJsLatPqXZ/LHVkFDetD2YJWp4qhBW46YI+oaqoZJzvmM4IxhPAi0siL95SO1eIxO4qQfAvt6ZIuWlZHQbJT63J4XxR7lDWfQ5DRUZwKmbWVWsV9Y0F4F+ZULLV/Ps56kyomBHwc/NCjKdEoo26j/nkyG4f3BTWHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KQ46rnD0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APAd3YX027751
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 12:47:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zeeoZnPBXUwuagoh6GBKRIxYphnRKtHZMwhi8JnP0Bo=; b=KQ46rnD0BE1BpglA
-	PXbvcmE2LBT9fkSgDXPHQnCNVdVkcuDa9uI4ea+NCjloIHX2gzldWIAbG8aYPo6g
-	qoWzOqInIEa3EG482lZCBlj5bCGUvLzY8PM8G4bUichgOh5kHgPUzSeHZ5QHZTJ3
-	02FV4Cg6/WjZOZsOQtLuvFdg8ZBjw7No1ou/iUxXyhLbpxIdbSFqGFi4bP61ko5/
-	uLfaeFZpXVLR+YUqkyQqwftQs/SibBdZyPQX0wV6tMzSC1h7r+angXi0TetxuAxs
-	RdM3d1qTuAHvd5QKs7JBPfKF6BdFUbHJDhGB3FrvE3RnapGvWyJvi3Qa8ziwXDk2
-	/nW2Hg==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43387jck03-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 12:47:14 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-46680667b3aso2742711cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 04:47:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732538833; x=1733143633;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zeeoZnPBXUwuagoh6GBKRIxYphnRKtHZMwhi8JnP0Bo=;
-        b=ZQUhIwbxS0F7czbz4KA47BTApM9xrNstwvogFyWdZqwRrOprb95/D+GHsJQJWbR1aA
-         RB8nXBFDkSwr86nFPf5gr9GwySlu5W4oehG5FUcZCi7BGKu6fN/SE69cbnhk98UvST9A
-         4U7n+j/Np8ALlWKLzBT2U/OnFk7N253hQEGRgq6MohR+iylv0Bd/f7kOZUy6eJxf43SG
-         kNn96xZoLticuwFnItsUNNB0I5c/MeOsQm0U1pi6Xa/oL+vC15tLOzOleKME8WvpXBTt
-         pQAZqO+4K4dlJspEWBs8MUaLa30qwTUZ+rzIJdkGFSots3lJ5TbTaWf38GwK3v51N88X
-         zLPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIWhB+cG9sHfNIOXHV1op4XMI6000//3+MMJCsGhrGdOS/0tDFRz6X9uU5IQpLd3s+/oNxcO9hF19K0Kk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcqRPWLWtXjBcQNS0ikeyYdcZnGIaP0pfVUAQb19EeUZTFbQ8G
-	49DOssBlwy1jpVaRcn2kfEPTGSZQcbJ6MQNtzgfJD9QLXirLhh1IAMoXf91MuHLBYIkkL6tgt9K
-	Vy9sWHPr1QZr6wxz6ULhTW/b4n91VJoko0UQNyXL7PFTKqS1lgASWDRJ/Nc8uuIQ=
-X-Gm-Gg: ASbGncvXFcmc0NjRj0adNcp5j2NJURe/TxBF3tqKJzegTWU2VbgiZlFPgAMfiAF2bbQ
-	aNI0kFw8YVQiI8xuA6u9cRp27Xd2WCHpdbAuwHxoy3L0Rgkx84Ge+4AqejBnrsnB4at1AXnh5AA
-	8O2Y6cYZ9AqV1TawrMcCUCbbm1lJNFuyKBr4BN36YIgegVAFn2VC9rRrKyfoCpKqsMn/14Lix1R
-	V4eNpMtT8kUJ54FnMNNpy7EgxvQxBK4hkG6iZsYIwBRUtwFkmjD89HCQPz7AE0m7lZ5sGRoN9PP
-	72H40/sZ/lnb1unQVlqcS36tR7lFfxs=
-X-Received: by 2002:a05:622a:1a8c:b0:460:8f9e:c48e with SMTP id d75a77b69052e-466a160e606mr367101cf.5.1732538833691;
-        Mon, 25 Nov 2024 04:47:13 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG/w1GtAxnHY4s+IA+xiplqvA3f7+lUW2gwSCR0W7ECr8U4ppsyLgiI4IDuAcDWm+Gf2BpnTQ==
-X-Received: by 2002:a05:622a:1a8c:b0:460:8f9e:c48e with SMTP id d75a77b69052e-466a160e606mr366941cf.5.1732538833276;
-        Mon, 25 Nov 2024 04:47:13 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d401f64sm4069401a12.70.2024.11.25.04.47.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 04:47:12 -0800 (PST)
-Message-ID: <421d43e0-6a6f-45ca-801c-908c66bff158@oss.qualcomm.com>
-Date: Mon, 25 Nov 2024 13:47:11 +0100
+	s=arc-20240116; t=1732538996; c=relaxed/simple;
+	bh=KqdUwYvXOSLApLa79kzMfq03gURscXfHaxVZKTwq25o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uTUixd6qsnict/27xSh/RclZqC8a/lKAlTuh9rAJ3CtoHOSsspoLm5g43k+RUND5IuVT1eyEDTDyyAFD0/TCE4bdTwp5mcWe8W9Kyh+c+YFrWjdgvDnKaUZ3F8sxiX3Y5xV5w+VUWlmmQ6xAeREQBoJRf44m0lN4nv0QsGPNaoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZiuiskIL; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 285DCA2F;
+	Mon, 25 Nov 2024 13:49:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732538970;
+	bh=KqdUwYvXOSLApLa79kzMfq03gURscXfHaxVZKTwq25o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZiuiskILJjtl8suAat9UQxTftS5eI7RPyYFu6n4jRWK18INeaXv3h2sG2vIzBaYOw
+	 9C9TjsOEJRCTuFrsOTKRlK7VL3XtJKRjcDWNoGvK65KwAF1A3CivpqAc8GVEMRf9Ir
+	 l2h6U8RrS+Fvoclm/Skvg/HtJJduDOnA4qsiRptE=
+Date: Mon, 25 Nov 2024 14:49:42 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	Yunke Cao <yunkec@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a
+ subdevice
+Message-ID: <20241125124942.GA32280@pendragon.ideasonboard.com>
+References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
+ <5b5f3bb7-7933-4861-be81-30345e333395@redhat.com>
+ <CANiDSCta62P5+1aR9Ks8c6sd3_grCV3C+Le=UjKGkiohyf0R2g@mail.gmail.com>
+ <55c76c99-dc86-41b2-84c6-d2e844530f67@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] arm64: dts: qcom: qcs8300: Add watchdog node
-To: Xin Liu <quic_liuxin@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@quicinc.com,
-        quic_jiegan@quicinc.com, quic_aiquny@quicinc.com,
-        quic_tingweiz@quicinc.com
-References: <20241125093503.1162412-1-quic_liuxin@quicinc.com>
- <20241125093503.1162412-3-quic_liuxin@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241125093503.1162412-3-quic_liuxin@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: nbXNgv8etUtDK3PtA-h7I9ZTlT7gcbA4
-X-Proofpoint-GUID: nbXNgv8etUtDK3PtA-h7I9ZTlT7gcbA4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 clxscore=1015 phishscore=0 malwarescore=0
- suspectscore=0 priorityscore=1501 mlxlogscore=853 bulkscore=0
- impostorscore=0 mlxscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411250110
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <55c76c99-dc86-41b2-84c6-d2e844530f67@redhat.com>
 
-On 25.11.2024 10:35 AM, Xin Liu wrote:
-> Add the watchdog node for QCS8300 SoC.
+On Mon, Nov 25, 2024 at 01:25:41PM +0100, Hans de Goede wrote:
+> Hi Ricardo,
 > 
-> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
-> ---
+> On 9-Nov-24 5:29 PM, Ricardo Ribalda wrote:
+> 
+> <snip>
+> 
+> >> I have been discussing UVC power-management with Laurent, also
+> >> related to power-consumption issues caused by libcamera's pipeline
+> >> handler holding open the /dev/video# node as long as the camera
+> >> manager object exists.
+> 
+> <snip>
+> 
+> >> Here is what I have in mind for this:
+> >>
+> >> 1. Assume that the results of trying a specific fmt do not change over time.
+> >>
+> >> 2. Only allow userspace to request fmts which match one of the enum-fmts ->
+> >>    enum-frame-sizes -> enum-frame-rates tripplet results
+> >>    (constrain what userspace requests to these)
+> >>
+> >> 3. Run the equivalent of tryfmt on all possible combinations (so the usaul
+> >>    3 levels nested loop for this) on probe() and cache the results
+> >>
+> >> 4. Make try_fmt / set_fmt not poweron the device but instead constrain
+> >>    the requested fmt to one from our cached fmts
+> >>
+> >> 5. On stream-on do the actual power-on + set-fmt + verify that we get
+> >>    what we expect based on the cache, and otherwise return -EIO.
+> > 
+> > Can we start powering up the device during try/set fmt and then
+> > implement the format caching as an improvement?
+> 
+> Yes, actually looking at how complex this is when e.g. also taking
+> controls into account I think that taking small steps is a good idea.
+> 
+> I have lately mostly been working on sensor drivers where delaying
+> applying format settings + all controls to stream-on is normal.
+> 
+> So that is the mental model I'm applying to uvc here, but that might
+> not be entirely applicable.
+> 
+> > Laurent mentioned that some cameras missbehave if a lot of controls
+> > are set during probing. I hope that this approach does not trigger
+> > those, and if it does it would be easier to revert if we do the work
+> > in two steps.
+> 
+> Ack, taking small steps sounds like a good plan.
+> 
+> <snip>
+> 
+> >> This should also make camera enumeration faster for apps, since
+> >> most apps / frameworks do the whole 3 levels nested loop for this
+> >> on startup, for which atm we go out to the hw, which now instead
+> >> will come from the fmts cache and thus will be much much faster,
+> >> so this should lead to a noticeable speedup for apps accessing UVC
+> >> cameras which would be another nice win.
+> >>
+> >> Downside is that the initial probe will take longer see we do
+> >> all the tryfmt-s there now. But I think that taking a bit longer
+> >> to probe while the machine is booting should not be an issue.
+> > 
+> > How do you pretend to handle the controls? Do you plan to power-up the
+> > device during s_ctrl() or set them only during streamon()?
+> > If we power-up the device during s_ctrl we need to take care of the
+> > asynchronous controls (typically pan/tilt/zoom), The device must be
+> > powered until the control finishes, and the device might never reply
+> > control_done if the firmware is not properly implemented.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Talking about powering up is a bit misleading here. What this is about
+is resuming the USB device. The device stays powered when it is
+suspended, and the value of controls is retained unless the USB device
+gets reset. The .resume() handler does not restore controls, the
+.reset_resume() handler does.
 
-Konrad
+Some UVC cameras have the USB_QUIRK_RESET_RESUME quirk set, but the
+majority doesn't. Annoyingly there's a blanket entry for all Logitech
+UVC devices in drivers/usb/core/quirks.c, which has led the uvcvideo
+driver to grow a UVC_QUIRK_NO_RESET_RESUME quirk.
+
+> > If we set the controls only during streamon, we will break some
+> > usecases. There are some video conferencing equipment that do homing
+> > during streamoff. That will be a serious API breakage.
+> 
+> How to handle controls is a good idea.
+> 
+> Based on my sensor experience my initial idea was to just cache them
+> all. Basically make set_ctrl succeed but do not actually do anyhing
+> when the camera is not already powered on and then on stream-on call
+> __v4l2_ctrl_handler_setup() to get all current values applied.
+> 
+> But as you indicate that will likely not work well with async controls,
+
+It's not all asynchronous controls, only the ones that have an impact on
+the device that can be observed without streaming. Mechanical pan/tilt
+is the main use case. We could handle those controls in a special way if
+needed.
+
+> although we already have this issue when using v4l2-ctl from the cmdline
+> on such a control and that seems to work fine. Just because we allow
+> the USB connection to sleep, does not mean that the camera cannot finish
+> doing applying the async control.
+> 
+> But I can see how some cameras might not like this and having 2 different
+> paths for different controls also is undesirable.
+> 
+> Combine that with what Laurent said about devices not liking it when
+> you set too much controls in a short time and I do think we need to
+> immediately apply ctrls.
+> 
+> I see 2 ways of doing that:
+> 
+> 1. Use pm_runtime_set_autosuspend_delay() with a delay of say 1 second
+> and then on set_ctrl do a pm_runtime_get_sync() +
+> pm_runtime_put_autosuspend() giving the camera 1 second to finish
+> applying the async ctrl (which might not be enough for e.g homing) +
+> also avoid doing suspend + resume all the time if multiple ctrls are send
+> 
+> 2. Instead of immediately powering on the camera on /dev/video# open
+> track per fh if the camera has been powered on and then on the first
+> set-ctrl, or the first other IOCTL like try/set-fmt which requires
+> the camera to be powered on power it up and then keep it on until
+> the fh is closed, since apps hitting these paths are likely to do
+> more stuff which requires the camera to be powered on.
+
+A mode of operation where a userspace action causes a state change and
+the only way to change back to the previous state is to close the device
+often leads to problems. I'd rather not do this unless we have to
+completely rule out all other options.
+
+> This should avoid apps (like udev rules) just doing a simple get-cap
+> query of powering on the camera, while at the same time preserving
+> the current behavior for apps which want to actually do something
+> with the camera, so the chance of regressions should be small.
+> 
+> I guess the time between power-up and sending the first request to
+> the camera will change slightly. But most apps which actually want
+> to do stuff with the camera will likely already do so immediately
+> after opening /dev/video# so the timing change should be negligible.
+> 
+> I guess 2. is pretty similar to your proposal to delay power-on
+> to the first set/try-fmt, which I assume also already does
+> something similar wrt controls ?
+> 
+> I think that 2. can work nicely and that would be nice to have,
+> even though it does not fix the privacy-control + power-mgmt issue.
+
+-- 
+Regards,
+
+Laurent Pinchart
 
