@@ -1,377 +1,197 @@
-Return-Path: <linux-kernel+bounces-421257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A9F29D88B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:05:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD66E9D8A57
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:31:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B52428565A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:05:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52F93B356B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB4C18C332;
-	Mon, 25 Nov 2024 15:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11F91B3936;
+	Mon, 25 Nov 2024 15:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EHHLu3Ij"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="V3A2MUbJ"
+Received: from mail-qv1-f68.google.com (mail-qv1-f68.google.com [209.85.219.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BA11AF0DB
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 15:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BC11B392F
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 15:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732547134; cv=none; b=P72aOxm7fNjMbjDCBjj5fk6xDnQhY08pOdAaYIvyNzqlZOJuANw9iW4jNqeP8PxpFm83v7OCVjALXIIeSSaD/lJu9Q8t3Xio09o+DPy+0kQYZ7uQ2wDI/wFv8bhbXQ9XQs4hf37gO1tk1ej1QYvHBgsmd2vC0dPe8XsFd6QlFAs=
+	t=1732547140; cv=none; b=qI2neqBGEc1dA64AzTufi/kHtIIe+IzykIWRPcdujWbBobG8Wm+0uI8rdvaLg8YAljPTdG4bys5WH5We6Whj3ndcKiIpkJtjptCH6ENlCBhUjTtrqS/9EJmGtKakogUZy3CEFxPDYpzv9SDg+aysl9xzkXcyc+HNes9TmfAMsXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732547134; c=relaxed/simple;
-	bh=UgV0XxTTu1kmFlokedXo9obHhIV4jPG5NnJV/X0554A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i4BGC/NRzm3IlGKWkPaOIZ2kqUmXATdRhkRzMDZOlt23xLXyAI5yYDI0Jv+ev7QFGJ+nMUb2RxN7GpOQL9y+1um8bpD6NM6XxBy+J2qAT9pn/uR6W1Xdga1OyETWJt8ETKx/v2L/pOMrU+GJkefXAUQpwVUWhnGDcT71Z1Wd1LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EHHLu3Ij; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7fc340eb006so773491a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 07:05:31 -0800 (PST)
+	s=arc-20240116; t=1732547140; c=relaxed/simple;
+	bh=Bi+CayR3aJOX+1KChTDriMlvBJ7UwoRJcYh84Q6MLGw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bIBcxEtLVUYo5XAlZjqdIDrTbm9foIfwzXGwtxmJ7HnuX4xxgZzuhRuct0qOwOc2otqDghSsfWmcuOmvL8F+XdxhZIY0B6BeyB8CL3dXzLVPlQa3UJJBbCyCkMIhRILQauea/3fTYEk+6L462A1F4dCP0azP+mWO/JO3FlxGrJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=V3A2MUbJ; arc=none smtp.client-ip=209.85.219.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f68.google.com with SMTP id 6a1803df08f44-6d42518f493so30960826d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 07:05:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732547131; x=1733151931; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sN5xfsl1tMVlezY7JOX6O7i9TGCGKrcDQ0i7ldPTdlo=;
-        b=EHHLu3IjPMKU0hi0K07avv3Mc22UUVODGHaIcb5RUHm0x/tCRpZzfS94p1GsJKNGe0
-         kO+4SV7YAXeZInrBq93galcZ8kT6uKXIMd6kz3yFJDTUuLs0aE33t9vjWuRRDy4tTs48
-         RqOteSJUVXDJHCxyJOCMJLkRJ3F1i9+C52f3c=
+        d=rowland.harvard.edu; s=google; t=1732547135; x=1733151935; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eIcIEwreB6jMpQBW0713qszSdgFb5KeefQ1lDCrxAUU=;
+        b=V3A2MUbJhu4dIadfpLtfmXCjXbm7od1xsQfu/RFf3Qb4yTudu5JKMcEa3motBpj7p7
+         IDPJUqXkR7vyArltdrWHQHwbPejvawqX6e1rM926z12M7T8t73wDU57cvxxWzVANp5tQ
+         XJQK5bgKi8URI7N39+va3KFQwGKg9oNvfchRuIrbFxh33JRlxk3Lw/4TbLW+PrR2jIYX
+         NJxbubAE+SZoWYkqLcMXP3RFBtbN9Nfkhl7X2juGc170xOEzWORLknXm2sgq7l7Wgq+o
+         eDG2Qh/cSBVsLjW6RSKf1VA0NoPtyhMSollJxP+RuWkq3NBMhdNvOg1muTt0Cx2jKdHZ
+         pScw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732547131; x=1733151931;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sN5xfsl1tMVlezY7JOX6O7i9TGCGKrcDQ0i7ldPTdlo=;
-        b=Rn14NaPlhIvzzZMdzHo0CN5cQgwXXOCEADTaO7DKRbxCwz9Qc03ujhFei3t2xyN0Jy
-         3/WbSYfDnOFWp06t8LTiBlak/CfJxMdPMmb/GTy8p09YT65Usxu7w6iqwEKOW0Nh2vNm
-         p0F+wCWRoadbywk/+Fl7T2hoeLxAuztAGzwgCYQoEKQpLX1KBLzwu3UMRsF8wfR9qQFr
-         em9xScaoq6Tk5uvcvxJW+wWLl3rYn3YAd8CEDketbWdicbqasoNccpOC+KIMap5diqzx
-         PXzFxTCDkO+4rRYoXgO8y+hqwQIhiBFXwwf3bQ4VtZ2f04kMIJJFiTNP4v0tE8EKOuTz
-         gZvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQfkxY4pz1bkPZQeG6hwzQH6qdWHQtJaTzCHLRysgFUku4XSV1Y2C0p5NdWsbJRyQCJBGMpl+zZ5asNSM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/OSpszdeCuOxmNZhn33O2X2ZYlXVAdmLvEtFQnYhjICmmls6C
-	WZMmuR8iT8z0Rc33g0rowHGf82jesBPiAcC16E6tk6J931jdnadlM8z5HjF6EruI7dpmjJo0HkE
-	=
-X-Gm-Gg: ASbGncto5HxgKcl/ntxXV2yhkJ1IZM9xVqie70DmOz9ca/QqUuC7rRkzE6nPE40AYL0
-	gq2atyycpTIDOtthl7EaMXQGILOd3dxo0WIF261BMY8/sCqRoGD19oL0mIIzisJ95vN51b7CnKf
-	SlCSCO7dVZoIOQIMixvxBL0smQchpp6rhSwT3yFVmqiJJtTrChN3UqVzSq9n/uNDMDHg1zdSO7A
-	crarfG7LgkphaKEOH/tubFvFGGAMt4YO/rm/f/+XE5FuRPKKtS3zzvtcMfhzmGN56VBmQ594RsU
-	koxSaON9cd9+pSud
-X-Google-Smtp-Source: AGHT+IERtkYl/vnGywn9JsYewwHrKwQHFrmfPSTloewgDxflLzel29EWB7VuUjsgh4Sfd8Ne+SyB0Q==
-X-Received: by 2002:a05:6a20:841e:b0:1d9:6a6b:faf4 with SMTP id adf61e73a8af0-1e09e44ac9dmr19927710637.15.1732547130815;
-        Mon, 25 Nov 2024 07:05:30 -0800 (PST)
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com. [209.85.210.182])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcc3dee7asm6768452a12.61.2024.11.25.07.05.28
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 07:05:28 -0800 (PST)
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-724e1b08fc7so2795342b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 07:05:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWnOW9Lx6eW3YPNxvB0rC56Ql0m59GgvgrP5t3gCNzjPPDpDTimuxhPIWTLSdLdxJYWTyXzgbpWXz7HwlI=@vger.kernel.org
-X-Received: by 2002:a05:6a00:6c8e:b0:725:1951:79fd with SMTP id
- d2e1a72fcca58-72519517cb5mr1434907b3a.26.1732547127285; Mon, 25 Nov 2024
- 07:05:27 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732547135; x=1733151935;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eIcIEwreB6jMpQBW0713qszSdgFb5KeefQ1lDCrxAUU=;
+        b=tjGSmwmTTgzFm6kxEfyX6k9UPtsuZOgqyyGbkgDdha2Eng7SzLJu4HKiD7r3ITSBdR
+         vGw3gLKPH37iAWny71b2NXKtIyuERY1TfW5eEX3pa385Jg3Vt1spQk4H1TKxALiIgufu
+         cSD+uT99u8yuLB1FfQE2a/uBq4LDVGO43CShncZ8DhF76Zz4B5FNxCCnqnFXYk1zAQyr
+         6m8kEmRqR1cF3sd7gxFsSkNckp0jRh9zxtnClZ1xyWNEg8gNeziQszwbJMmOdiufzP8U
+         SvjR8tFNnqldn0iXDh4kADOoHM1q2xqf9OBU6gcWrge//SMlu/mbm/LSKCP67M7loyA5
+         2q/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUfxSmqzsB7aZr6KnWu4XeEJX0Lg3tF/LAClp1Pka0EpCCAi6sfeZrxwjNMv140Mm+zd7ffGr8UToO1gwM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpPqUmrcOF21Ca8HuArM+GfwS9vnPuvH/3/JzT3SVcOJ3H3zZy
+	OsUJYI3wXImMoYUce9RrGDRJWIXq6CHAYTuVKozOWvmF3avPrvJFntcnr/hHkg==
+X-Gm-Gg: ASbGncttp71XQVAD6mDCFjgyyOHyTSP7tyqaytydo1ILmXhybobXYtedJzxoSutDXKy
+	k6BVr4MIZGcgMttwLHiB5XfDdODzAfgSVQ5efjXu03QDy9NJZf8ii+TXT/UdailOUz5KyZEB4CQ
+	UVnB2t2xTLtsia7i+DL6QrnJDQCEty/6Y5q1NiST1hGW/K33s2pUv0RzFSJE98v4oyWS+HmlJol
+	INYQydOLnjmUNkPHLEIuXi46owztTSq00pEBSw612UBzpYos6HpSdVJw89v7y0igx4I
+X-Google-Smtp-Source: AGHT+IFQ3vwhNmqC/XSxFE5yYBxxFkA9WmddQ3gcy06Prn5QNk/WjE6EahTflZu7yCfbcojXZD+Rig==
+X-Received: by 2002:a05:6214:21a9:b0:6d4:22e9:b8b6 with SMTP id 6a1803df08f44-6d4514b68dbmr185354926d6.41.1732547135280;
+        Mon, 25 Nov 2024 07:05:35 -0800 (PST)
+Received: from rowland.harvard.edu ([140.247.181.15])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d451ab532bsm43616236d6.69.2024.11.25.07.05.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2024 07:05:34 -0800 (PST)
+Date: Mon, 25 Nov 2024 10:05:33 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Dingyan Li <18500469033@163.com>
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, usb-storage@lists.one-eyed-alien.net
+Subject: Re: [PATCH v1] usb: storage: add a macro for the upper limit of max
+ LUN
+Message-ID: <30019a70-d496-41d5-9159-c991ac93f326@rowland.harvard.edu>
+References: <20241030083858.46907-1-18500469033@163.com>
+ <56abaf44.86c3.19362571bee.Coremail.18500469033@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112-uvc-subdev-v3-0-0ea573d41a18@chromium.org>
- <bd68178f-1de9-491f-8209-f67065d29283@redhat.com> <CANiDSCtjpPG3XzaEOEeczZWO5gL-V_sj_Fv5=w82D6zKC9hnpw@mail.gmail.com>
- <20241114230630.GE31681@pendragon.ideasonboard.com> <CANiDSCt_bQ=E1fkpH1SAft1UXiHc2WYZgKDa8sr5fggrd7aiJg@mail.gmail.com>
- <d0dd293e-550b-4377-8a73-90bcfe8c2386@redhat.com> <CANiDSCvS1qEfS9oY=R05YhdRQJZmAjDCxVXxfVO4-=v4W1jTDg@mail.gmail.com>
- <5a199058-edab-4f9d-9e09-52305824f3bf@redhat.com>
-In-Reply-To: <5a199058-edab-4f9d-9e09-52305824f3bf@redhat.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 25 Nov 2024 16:05:15 +0100
-X-Gmail-Original-Message-ID: <CANiDSCsxkhZ0Dsxv9ZhkOk5JnZmSrFxq+tUoskxfHJDmSnXM5w@mail.gmail.com>
-Message-ID: <CANiDSCsxkhZ0Dsxv9ZhkOk5JnZmSrFxq+tUoskxfHJDmSnXM5w@mail.gmail.com>
-Subject: Re: [PATCH v3 0/8] media: uvcvideo: Implement the Privacy GPIO as a evdev
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Armin Wolf <W_Armin@gmx.de>, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	Yunke Cao <yunkec@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>, stable@vger.kernel.org, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <56abaf44.86c3.19362571bee.Coremail.18500469033@163.com>
 
-On Mon, 25 Nov 2024 at 13:01, Hans de Goede <hdegoede@redhat.com> wrote:
->
-> Hi Ricardo,
->
-> On 18-Nov-24 5:47 PM, Ricardo Ribalda wrote:
-> > Hi Hans
-> >
-> > On Mon, 18 Nov 2024 at 16:43, Hans de Goede <hdegoede@redhat.com> wrote:
-> >>
-> >> Hi All,
-> >>
-> >> On 15-Nov-24 9:20 AM, Ricardo Ribalda wrote:
-> >>> On Fri, 15 Nov 2024 at 00:06, Laurent Pinchart
-> >>> <laurent.pinchart@ideasonboard.com> wrote:
->
-> <snip>
->
-> >>>> How do you handle cameras that suffer from
-> >>>> UVC_QUIRK_PRIVACY_DURING_STREAM ?
-> >>>
-> >>> For those b) does not work.
-> >>
-> >> I already suspected as much, but it is good to have this
-> >> confirmed.
-> >>
-> >> I'm afraid that from a userspace API pov cameras with a GPIO
-> >> which only works when powered-on need to be treated the same as
-> >> cameras which only have UVC_CT_PRIVACY_CONTROL IOW in this case
-> >> keep exporting V4L2_CID_PRIVACY instead of switching to evdev
-> >> with SW_CAMERA_LENS_COVER.
-> >>
-> >> Unfortunately this will make the GPIO handling code in the UVC
-> >> driver somewhat more involved since now we have both uAPI-s for
-> >> GPIOs depending on UVC_QUIRK_PRIVACY_DURING_STREAM.
-> >>
-> >> But I think that this makes sense, this way we end up offering
-> >> 2 uAPIs depending on the hw capabilities:
-> >>
-> >> 1. evdev with SW_CAMERA_LENS_COVER which always reports a reliable
-> >> state + events on the state changing without needing to power-up
-> >> the camera.
-> >>
-> >> 2. V4L2_CID_PRIVACY for the case where the camera needs to be
-> >> powered-on (/dev/video opened) and where the ctrl possibly needs
-> >> to be polled.
-> >>
-> >> Assuming we can all agree on this split based on hw capabilities
-> >> I think that we must document this somewhere in the media subsystem
-> >> documentation. We can then also write down there that
-> >> SW_CAMERA_LENS_COVER only applies to internal cameras.
-> >
-> > I do not think that it is worth it to keep UVC_CT_PRIVACY_CONTROL for
-> > the two devices that have connected the GPIO's pull up to the wrong
-> > power rail.
-> > Now that the GPIO can be used from userspace, I expect that those
-> > errors will be found early in the design process and never reach
-> > production stage.
-> >
-> >
-> > If we use UVC_CT_PRIVACY_CONTROL for thes two devices:
-> > - userspace will have to implement two different APIs
-> > - the driver will have to duplicate the code.
-> > - all that code will be very difficult to test: there are only 2
-> > devices affected and it requires manual intervention to properly test
-> > it.
-> >
-> > I think that UVC_QUIRK_PRIVACY_DURING_STREAM is a good compromise and
-> > the main user handles it properly.
->
-> Ok, as you wish. Lets go with using SW_CAMERA_LENS_COVER for the 2 models with
-> UVC_QUIRK_PRIVACY_DURING_STREAM too.
->
-> <snip>
->
-> >>>> Is there any ACPI- or WMI-provided information that could assist with
-> >>>> associating a privacy GPIO with a camera ?
->
-> I just realized I did not answer this question from Laurent
-> in my previous reply.
->
-> No unfortunately there is no ACPI- or WMI-provided information that
-> could assist with associating ACPI/WMI camera privacy controls with
-> a specific camera. Note that these are typically not exposed as a GPIO,
-> but rather as some vendor firmware interface.
->
-> Thinking more about this I'm starting to believe more and more
-> that the privacy-control stuff should be handled by libcamera
-> and then specifically by the pipeline-handler, with some helper
-> code to share functionality where possible.
->
-> E.g. on IPU6 equipped Windows laptops there may be some ACPI/WMI
-> driver which provides a /dev/input/event# SW_CAMERA_LENS_COVER node.
->
-> So I would expect the IPU6 pipeline-handler to search for such a
-> /dev/input/event# node and then expose that to users of the camera
-> through a to-be-defined API (I'm thinking a read-only control).
->
-> The code to find the event node can be shared, because this would
-> e.g. likely also apply to some IPU3 designs as well as upcoming
-> IPU7 designs.
->
-> <snip>
->
-> >>>> We could include the evdev in the MC graph. That will of course only be
-> >>>> possible if the kernel knows about that association in the first place.
-> >>>> At least the 1st category of devices would benefit from this.
-> >>
-> >> Yes I was thinking about adding a link to the MC graph for this too.
-> >>
-> >> Ricardo I notice that in this v3 series you still create a v4l2-subdev
-> >> for the GPIO handling and then add an ancillary link for the GPIO subdev
-> >> to the mc-graph. But I'm not sure how that is helpful. Userspace would
-> >> still need to do parent matching, but then match the evdev parent to
-> >> the subdev after getting the subdev from the mc. In that case it might
-> >> as well look at the physical (USB-interface) parent of the MC/video
-> >> node and do parent matching on that avoiding the need to go through
-> >> the MC at all.
-> >>
-> >> I think using the MC could still be useful by adding a new type of
-> >> ancillary link to the MC API which provides a file-path as info to
-> >> userspace rather then a mc-link and then just directly provide
-> >> the /dev/input/event# path through this new API?
-> >>
-> >> I guess that extending the MC API like this might be a bit of
-> >> a discussion. But it would already make sense to have this for
-> >> the existing input device for the snapshot button.
-> >
-> > The driver creates a v4l2-subdevice for every entity, and the gpio
-> > today is modeled as an entity.
->
-> Ok I see that explains why the subdevice is there, thank you.
->
-> > The patchset just adds an ancillary link as Sakari suggested.
-> > I am not against removing the gpio entity all together if it is not needed.
->
-> Right unlike other entities which are really part of the UVC
-> specification, the GPIO is not a "real" UVC entity.
->
-> So I wonder if, after switching to SW_CAMERA_LENS_COVER, having
-> this as a v4l2-subdevice buys us anything ? If not I think removing
-> it might be a good idea.
->
-> As for the ancillary link, that was useful to have when the API
-> was a v4l2-ctrl on the subdevice. Just like I doubt if having
-> the subdevice at all gives us any added value, I also doubt if
-> having the ancillary link gives us any added value.
->
-> > Now that we are brainstorming here... what about adding a control that
-> > contains the name of the input device (eventX)? Is that a horrible
-> > idea?
->
-> I don't know, my initial reaction is that does not feel right to me.
->
-> >>>>>> We can specify
-> >>>>>> that SW_CAMERA_LENS_COVER only applies to device internal
-> >>>>>> cameras, but then it is up to userspace to determine which
-> >>>>>> cameras that are.
-> >>>>>
-> >>>>> I am working on wiring up this to userspace right now.. I will report
-> >>>>> back if it cannot do it.
-> >>
-> >> Ricardo, great, thank you!
->
-> Ricardo, any status update on this ?
-
-I still have not wired it to ChromeOS. But I do not expect to have any
-issues. it is relative simple to go from vdev to evdev and the other
-way around
-
- # ls -la /sys/class/video4linux/video0/device/input/input*/
-drwxr-xr-x. 3 root  root     0 Nov 25 06:56 event11
-
- # ls -la /sys/class/input/event11/device/device/video4linux/
-drwxr-xr-x. 3 root root 0 Nov 25 06:56 video0
-drwxr-xr-x. 3 root root 0 Nov 25 06:56 video1
-
-
->
-> <snip>
->
-> >>>> Assuming the kernel could report the association between an evdev and
-> >>>> camera, we would need to report which evdev SW_CAMERA_LENS_COVER
-> >>>> originates from all the way from the evdev to the consumer of the event.
-> >>>> How well is that supported in standard Linux system architectures ? If
-> >>>> I'm not mistaken libinput will report the originating device, but how
-> >>>> far up the stack is it propagated ? And which component would we expect
-> >>>> to consume those events, should the camera evdev be managed by e.g.
-> >>>> libcamera ?
-> >>
-> >> Good questions. Looking back at our 2 primary use-cases:
-> >>
-> >> a) Having an app which is using (trying to use) the camera show
-> >> a notification to the user that the camera is turned-off by
-> >> a privacy switch .
-> >>
-> >> b) Showing on on-screen-display (OSD) with a camera /
-> >> crossed-out-camera icon when the switch is toggled, similar to how
-> >> muting speakers/mic show an OSD . Laptop vendor Windows add-on
-> >> software does this and I know that some users have been asking
-> >> for this.
-> >>
-> >> I think we have everything to do b) in current compositors
-> >> like gnome-shell. Using an evdev with SW_CAMERA_LENS_COVER
-> >> would even be a lot easier for b) then the current
-> >> V4L2_CID_PRIVACY API.
-> >>
-> >> a) though is a lot harder. We could open up access to
-> >> the relevant /dev/input/event# node using a udev uaccess
-> >> tag so that users who can access /dev/video# nodes also
-> >> get raw access to that /dev/input/event# node and then
-> >> libcamera could indeed provide this information that way.
-> >> I think that is probably the best option.
-> >>
-> >> At least for the cases where the camera on/off switch
-> >> does not simply make the camera completely disappear.
-> >>
-> >> That case is harder. atm that case is not handled at all
-> >> though. So even just getting b) to work for that case
-> >> would be nice / an improvement.
-> >>
-> >> Eventually if we give libcamera access to event#
-> >> nodes which advertise SW_CAMERA_LENS_COVER (and no other
-> >> privacy sensitive information) then libcamera could even
-> >> separately offer some API for apps to just get that value
-> >> if there is no camera to associate it with.
-> >>
-> >> Actually thinking more about it libcamera probably might
-> >> be the right place for some sort of "no cameras found
-> >> have you tried hitting your camera privacy-switch" API.
-> >> That is some API to query if such a message should be
-> >> shown to the user. But that is very much future work.
-> >
-> > Are standard apps expected to use libcamera directly or they should
-> > use pipewire?
-> > Maybe a) Should be pipewire's task?
->
-> Standard apps are supposed to use pipewire, but IMHO this is
-> really too low-level for pipewire to handle itself.
->
-> Also see my remarks above about how I think this needs to
-> be part of the pipeline handler. Since e.g. associating
-> a /dev/input/event# SW_CAMERA_LENS_COVER node with a specific
-> UVC camera is going to be UVC specific solution.
->
-> For other pipeline-handlers combined with vendor fw-interfaces
-> offering SW_CAMERA_LENS_COVER support I do not think that there
-> is going to be a way to actually associate the 2. So we will
-> likely simply have the pipeline handler for e.g. IPU6 simply
-> associate any SW_CAMERA_LENS_COVER with the normal (non IR)
-> user facing camera.
->
-> Since we need this different ways to map a /dev/input/event#
-> SW_CAMERA_LENS_COVER node to a specific camera this really
-> needs to be done in libcamera IMHO.
->
-> And I think this also solves the question about needing
-> a kernel  API to associate the /dev/input/event# with
-> a specific /dev/video#. At least for now I think we don't
-> need an API and instead we can simply walk sysfs to find
-> the common USB-interface parent to associate the 2.
->
-> See how xawtv associates the alsa and /dev/video# parts
-> of tv-grabber cards for an example.
->
+On Mon, Nov 25, 2024 at 04:01:36PM +0800, Dingyan Li wrote:
+> Hi Experts,
+> 
+> Any thoughts on this patch?
+> 
 > Regards,
->
-> Hans
->
->
->
 
+It looks fine to me.
 
--- 
-Ricardo Ribalda
+Reviewed-by: Alan Stern <stern@rowland.harvard.edu>
+
+Alan Stern
+
+> At 2024-10-30 16:38:58, "Dingyan Li" <18500469033@163.com> wrote:
+> >The meaning of this value is already used in several places,
+> >but with constant values and comments to explain it separately.
+> >It's better to have a central place to do this then use the macro
+> >in those places for better readability.
+> >
+> >Signed-off-by: Dingyan Li <18500469033@163.com>
+> >---
+> > drivers/usb/gadget/function/f_tcm.c          | 8 ++------
+> > drivers/usb/gadget/function/storage_common.h | 2 +-
+> > drivers/usb/storage/transport.c              | 8 ++------
+> > include/linux/usb/storage.h                  | 8 ++++++++
+> > 4 files changed, 13 insertions(+), 13 deletions(-)
+> >
+> >diff --git a/drivers/usb/gadget/function/f_tcm.c b/drivers/usb/gadget/function/f_tcm.c
+> >index 15bb3aa12aa8..e1914b20f816 100644
+> >--- a/drivers/usb/gadget/function/f_tcm.c
+> >+++ b/drivers/usb/gadget/function/f_tcm.c
+> >@@ -441,14 +441,10 @@ static int usbg_bot_setup(struct usb_function *f,
+> > 			pr_err("No LUNs configured?\n");
+> > 			return -EINVAL;
+> > 		}
+> >-		/*
+> >-		 * If 4 LUNs are present we return 3 i.e. LUN 0..3 can be
+> >-		 * accessed. The upper limit is 0xf
+> >-		 */
+> > 		luns--;
+> >-		if (luns > 0xf) {
+> >+		if (luns > US_BULK_MAX_LUN_LIMIT) {
+> > 			pr_info_once("Limiting the number of luns to 16\n");
+> >-			luns = 0xf;
+> >+			luns = US_BULK_MAX_LUN_LIMIT;
+> > 		}
+> > 		ret_lun = cdev->req->buf;
+> > 		*ret_lun = luns;
+> >diff --git a/drivers/usb/gadget/function/storage_common.h b/drivers/usb/gadget/function/storage_common.h
+> >index ced5d2b09234..11ac785d5eee 100644
+> >--- a/drivers/usb/gadget/function/storage_common.h
+> >+++ b/drivers/usb/gadget/function/storage_common.h
+> >@@ -131,7 +131,7 @@ static inline bool fsg_lun_is_open(struct fsg_lun *curlun)
+> > #define FSG_BUFLEN	((u32)16384)
+> > 
+> > /* Maximal number of LUNs supported in mass storage function */
+> >-#define FSG_MAX_LUNS	16
+> >+#define FSG_MAX_LUNS	(US_BULK_MAX_LUN_LIMIT + 1)
+> > 
+> > enum fsg_buffer_state {
+> > 	BUF_STATE_SENDING = -2,
+> >diff --git a/drivers/usb/storage/transport.c b/drivers/usb/storage/transport.c
+> >index 9d767f6bf722..e6bc8ecaecbb 100644
+> >--- a/drivers/usb/storage/transport.c
+> >+++ b/drivers/usb/storage/transport.c
+> >@@ -1087,13 +1087,9 @@ int usb_stor_Bulk_max_lun(struct us_data *us)
+> > 	usb_stor_dbg(us, "GetMaxLUN command result is %d, data is %d\n",
+> > 		     result, us->iobuf[0]);
+> > 
+> >-	/*
+> >-	 * If we have a successful request, return the result if valid. The
+> >-	 * CBW LUN field is 4 bits wide, so the value reported by the device
+> >-	 * should fit into that.
+> >-	 */
+> >+	/* If we have a successful request, return the result if valid. */
+> > 	if (result > 0) {
+> >-		if (us->iobuf[0] < 16) {
+> >+		if (us->iobuf[0] <= US_BULK_MAX_LUN_LIMIT) {
+> > 			return us->iobuf[0];
+> > 		} else {
+> > 			dev_info(&us->pusb_intf->dev,
+> >diff --git a/include/linux/usb/storage.h b/include/linux/usb/storage.h
+> >index 8539956bc2be..51be3bb8fccb 100644
+> >--- a/include/linux/usb/storage.h
+> >+++ b/include/linux/usb/storage.h
+> >@@ -82,4 +82,12 @@ struct bulk_cs_wrap {
+> > #define US_BULK_RESET_REQUEST   0xff
+> > #define US_BULK_GET_MAX_LUN     0xfe
+> > 
+> >+/*
+> >+ * If 4 LUNs are supported then the LUNs would be
+> >+ * numbered from 0 to 3, and the return value for
+> >+ * US_BULK_GET_MAX_LUN request would be 3. The valid
+> >+ * LUN field is 4 bits wide, the upper limit is 0x0f.
+> >+ */
+> >+#define US_BULK_MAX_LUN_LIMIT   0x0f
+> >+
+> > #endif
+> >-- 
+> >2.25.1
+> 
+> -- 
+> You received this message because you are subscribed to the Google Groups "USB Mass Storage on Linux" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to usb-storage+unsubscribe@lists.one-eyed-alien.net.
+> To view this discussion visit https://groups.google.com/a/lists.one-eyed-alien.net/d/msgid/usb-storage/56abaf44.86c3.19362571bee.Coremail.18500469033%40163.com.
 
