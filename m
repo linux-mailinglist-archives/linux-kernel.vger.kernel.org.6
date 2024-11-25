@@ -1,50 +1,75 @@
-Return-Path: <linux-kernel+bounces-421101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 960B69D8697
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:38:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A75479D86A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:39:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A647289161
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:38:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BDD01672A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE861AD3E5;
-	Mon, 25 Nov 2024 13:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2A71B2188;
+	Mon, 25 Nov 2024 13:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VwS/jUbh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DY4NKktp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31F61547CA;
-	Mon, 25 Nov 2024 13:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2DA1AE876;
+	Mon, 25 Nov 2024 13:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732541868; cv=none; b=Ioq6hjNBtWEMWdONL93msXSRJcX7aZoyTMJPwSLO8y1COFgRK4iZvzinlYLGJKwOStmfhW+XtMzVwnOQM33ul0wsfjOJ5XqND56vmn6pIlP8OvMpudmIDbrZgYgZTIlVNi0YorhTeVvEDGly8Yj3lhLY6IKxT8vS+/bEa5Rz1F0=
+	t=1732541889; cv=none; b=CGKcDUZhJShIIxp9x/MNU7cfNT1YyehOSxlGMA/rYKGF8hmS2Jims13wFGq8jblMyjtxndfMDcV9RdkFqVe6cnTtRydADdaucCrFwnpfdTeuabmrh5n/lSWY5XxnDgiT4vFx7IzV62ocJOXW8cVhRreCtFZ+vBif0+KwejBl4g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732541868; c=relaxed/simple;
-	bh=bUE8IkDavlb4kDbCuhf4PTFugvZwU8SBUGcGkI/eTdo=;
+	s=arc-20240116; t=1732541889; c=relaxed/simple;
+	bh=72TDnjkaRFahkr0C5J39hZGEnBNSuZA6QnL09B60how=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fAYSnWwxOXtYq6apOxK1nYG/xPui0l3ltR8YDnhwA7PEjL92nML98L0HsFuLYqhrBqA2/agEcczMB+YPxgUA7H+X/MfWcdbbN9cD9n1zeLjEsgR310LU6eKe5Dq6sMwN9IDKQSrdlsqjRer4Whc5QQgML3i8s6wdwnkNPNP6w/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VwS/jUbh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D6AEC4CECE;
-	Mon, 25 Nov 2024 13:37:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1732541867;
-	bh=bUE8IkDavlb4kDbCuhf4PTFugvZwU8SBUGcGkI/eTdo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VwS/jUbhRz1mh+o65iXommayDoZdNYviSUxW0tE++eQAy79LrwzyynIUmcQrG7Mqa
-	 zAYmAwC0NPeW2A6Va9BOW38/7jv0gJ6ny+KMYHP7qO+OFI3q81bS2iww33cXCUmxzs
-	 bHu+APO1QPIVVlP0en3rvMR9Xtea7Ue6h9PmSnIA=
-Date: Mon, 25 Nov 2024 14:37:19 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-Cc: philipp.g.hortmann@gmail.com, ~lkcamp/patches@lists.sr.ht,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8723bs: fix broken code when cflag is used
-Message-ID: <2024112500-authentic-primarily-b5da@gregkh>
-References: <20241124200934.156252-1-rodrigo.gobbi.7@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HCo98uskWYOz2zgRAIRrxhI+LyKETVQy2iMkFWM+2ZP3K1SVIvS/DJBf+HWw213eEPoiUe5VyCsxfZSDbJqDFrUv51BNRt15moZIXtyy7PDag+OVx9X1VXrSxxEX75+his1aA7eY2Dy+S3+TLDPTO/JbR2o4GwaKSbWuQxA66vI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DY4NKktp; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732541888; x=1764077888;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=72TDnjkaRFahkr0C5J39hZGEnBNSuZA6QnL09B60how=;
+  b=DY4NKktpXydaupK4KXIOJ2CzrrXhx2CUWdRDOOm1kaLgMZZsdQDEZcEN
+   tSn151D5R1eMZPWg6s180YynRdinAix+RS1LTUKwbGBOwS2FLvmriQSnt
+   30YxTUqB2hQE2kFiMJKzB23J38TOkHtmpNwUXzNYwI+awLR0jx6ehY+T/
+   bT5Yy4PxM75x21dkFhIAkET+IjNDVGO0DWYj6Y5QebaTgYaNMRBQpL39t
+   Bh9z1QIYETjywzYHlq+2TRPc3L1WUZWfZzDtwRP9ZdPKsuuuj3yZAVvfH
+   j4p5r3yrunYmjWJLUT+/KLIjHKQ+J4Y4vlfk7UKIigfnx4vb56vJdFanW
+   g==;
+X-CSE-ConnectionGUID: 6sVzJgN0TmqK7rUEY9aPtw==
+X-CSE-MsgGUID: xPaQzpkWSqm+WeRRAyvFBQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="43712105"
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="43712105"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 05:38:07 -0800
+X-CSE-ConnectionGUID: F6C9B0yqTQusTb5MotM9lw==
+X-CSE-MsgGUID: a7i9thOfTXWWZwYthk+WWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="122209608"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 25 Nov 2024 05:38:05 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tFZHu-0006RP-2c;
+	Mon, 25 Nov 2024 13:38:02 +0000
+Date: Mon, 25 Nov 2024 21:37:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mateusz Guzik <mjguzik@gmail.com>, dchinner@redhat.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, cem@kernel.org,
+	djwong@kernel.org, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [PATCH] xfs: use inode_set_cached_link()
+Message-ID: <202411252143.IFCZKd2V-lkp@intel.com>
+References: <20241123075105.1082661-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,78 +78,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241124200934.156252-1-rodrigo.gobbi.7@gmail.com>
+In-Reply-To: <20241123075105.1082661-1-mjguzik@gmail.com>
 
-On Sun, Nov 24, 2024 at 05:08:22PM -0300, Rodrigo Gobbi wrote:
-> Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-> ---
-> As noticed at [1], hal_com.c is not compiling with -DDBG_RX_SIGNAL_DISPLAY_RAW_DATA due
-> the changes at [2] (a few statements were not replaced with the new struct).
-> A little discussion was made at [1] too about how useful this cflag was or if the
-> code under the cflag should be deleted. I think there is no harm to keep those things
-> as is since we can easily fix the error.
-> Tks and regards.
-> 
-> [1] https://lore.kernel.org/linux-staging/f61d8272-4af3-40d6-a333-e7731c3fc5ae@stanley.mountain/T/#mffa281a89e67c609db9b125878d5b8d090776812
-> [2] "staging: rtl8723bs: Rework 'struct _ODM_Phy_Status_Info_' coding style.", commit ec57f8641fbca07bbb61a75bd4760fd7aef86860
-> ---
->  drivers/staging/rtl8723bs/hal/hal_com.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8723bs/hal/hal_com.c b/drivers/staging/rtl8723bs/hal/hal_com.c
-> index 95fb38283c58..63bf6f034f61 100644
-> --- a/drivers/staging/rtl8723bs/hal/hal_com.c
-> +++ b/drivers/staging/rtl8723bs/hal/hal_com.c
-> @@ -906,7 +906,7 @@ void rtw_store_phy_info(struct adapter *padapter, union recv_frame *prframe)
->  	struct hal_com_data *pHalData =  GET_HAL_DATA(padapter);
->  	struct rx_pkt_attrib *pattrib = &prframe->u.hdr.attrib;
->  
-> -	struct odm_phy_info *pPhyInfo  = (PODM_PHY_INFO_T)(&pattrib->phy_info);
-> +	struct odm_phy_info *pPhyInfo  = (struct odm_phy_info *)(&pattrib->phy_info);
->  	struct rx_raw_rssi *psample_pkt_rssi = &padapter->recvpriv.raw_rssi_info;
->  
->  	psample_pkt_rssi->data_rate = pattrib->data_rate;
-> @@ -919,8 +919,8 @@ void rtw_store_phy_info(struct adapter *padapter, union recv_frame *prframe)
->  		psample_pkt_rssi->mimo_signal_strength[rf_path] = pPhyInfo->rx_mimo_signal_strength[rf_path];
->  		psample_pkt_rssi->mimo_signal_quality[rf_path] = pPhyInfo->rx_mimo_signal_quality[rf_path];
->  		if (!isCCKrate) {
-> -			psample_pkt_rssi->ofdm_pwr[rf_path] = pPhyInfo->RxPwr[rf_path];
-> -			psample_pkt_rssi->ofdm_snr[rf_path] = pPhyInfo->RxSNR[rf_path];
-> +			psample_pkt_rssi->ofdm_pwr[rf_path] = pPhyInfo->rx_pwr[rf_path];
-> +			psample_pkt_rssi->ofdm_snr[rf_path] = pPhyInfo->rx_snr[rf_path];
->  		}
->  	}
->  }
-> -- 
-> 2.47.0
-> 
-> 
+Hi Mateusz,
 
-Hi,
+kernel test robot noticed the following build errors:
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+[auto build test ERROR on xfs-linux/for-next]
+[also build test ERROR on linus/master v6.12 next-20241125]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+url:    https://github.com/intel-lab-lkp/linux/commits/Mateusz-Guzik/xfs-use-inode_set_cached_link/20241125-115441
+base:   https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git for-next
+patch link:    https://lore.kernel.org/r/20241123075105.1082661-1-mjguzik%40gmail.com
+patch subject: [PATCH] xfs: use inode_set_cached_link()
+config: i386-buildonly-randconfig-003-20241125 (https://download.01.org/0day-ci/archive/20241125/202411252143.IFCZKd2V-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241125/202411252143.IFCZKd2V-lkp@intel.com/reproduce)
 
-- You did not specify a description of why the patch is needed, or
-  possibly, any description at all, in the email body.  Please read the
-  section entitled "The canonical patch format" in the kernel file,
-  Documentation/process/submitting-patches.rst for what is needed in
-  order to properly describe the change.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411252143.IFCZKd2V-lkp@intel.com/
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
+All errors (new ones prefixed by >>):
 
-thanks,
+   In file included from fs/xfs/xfs_symlink.c:7:
+   In file included from fs/xfs/xfs.h:26:
+   In file included from fs/xfs/xfs_linux.h:25:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     505 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     512 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     525 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> fs/xfs/xfs_symlink.c:52:2: error: call to undeclared function 'inode_set_cached_link'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+      52 |         inode_set_cached_link(inode, ip->i_df.if_data, pathlen);
+         |         ^
+   4 warnings and 1 error generated.
 
-greg k-h's patch email bot
+
+vim +/inode_set_cached_link +52 fs/xfs/xfs_symlink.c
+
+    30	
+    31	void
+    32	xfs_setup_cached_symlink(
+    33		struct xfs_inode	*ip)
+    34	{
+    35		struct inode		*inode = &ip->i_vnode;
+    36		xfs_fsize_t		pathlen;
+    37	
+    38		/*
+    39		 * If we have the symlink readily accessible let the VFS know where to
+    40		 * find it. This avoids calls to xfs_readlink().
+    41		 */
+    42		pathlen = ip->i_disk_size;
+    43		if (pathlen <= 0 || pathlen > XFS_SYMLINK_MAXLEN)
+    44			return;
+    45	
+    46		if (ip->i_df.if_format != XFS_DINODE_FMT_LOCAL)
+    47			return;
+    48	
+    49		if (XFS_IS_CORRUPT(ip->i_mount, !ip->i_df.if_data))
+    50			return;
+    51	
+  > 52		inode_set_cached_link(inode, ip->i_df.if_data, pathlen);
+    53	}
+    54	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
