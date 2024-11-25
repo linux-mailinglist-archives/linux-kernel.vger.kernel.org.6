@@ -1,196 +1,265 @@
-Return-Path: <linux-kernel+bounces-421651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9C039D8DFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:29:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D909D8E02
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:30:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 556A716407B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:29:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0028A164DEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E46D1C4A07;
-	Mon, 25 Nov 2024 21:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BDA1CCB4A;
+	Mon, 25 Nov 2024 21:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZiScKrlD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="IMaMPSBR"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB9D1CD2C
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 21:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716801CCEF8;
+	Mon, 25 Nov 2024 21:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732570153; cv=none; b=D2orUsC+23XZBhLjlm8ACs3wWk1i7F5/bpou9/TlOWB73KAvbdF4mf3ErGd/oRwOWoFCBTAy4OVf5sCd7O+e5PZ4Mgfcnpa88mb25D04/P/PvC25nNpph6CxpQhPTbW2FPitp4SRcZ9nNpoNifOeBWRhRZp6K9Au8Cnzp+BRWcY=
+	t=1732570215; cv=none; b=kwRvDZ1oaDQ8+xAKFpdTn6EOXVSnb0zSaZcsue5ijT0CDw+dwHPYCat+v33VpG6O/he33O2uppv0+OdnEDBTdPgojLU0Uz1jPc6ecgLIfe9G2NNEOC/ZP0CqpALg/uOZg2c3nH0MStb2NbpDOHf3ctSWxzzVZ9RyS2rL6cjdB+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732570153; c=relaxed/simple;
-	bh=pSg4rNoHPqODZ1MJfz4zv7CtK9y4fbinBSVvIYf+Vb4=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Kn5TMtp5X+2n6+GFnOBayq8dzw0Sx5hJ5pfBWtbTW6NVYFnZZ0Qi7D5/M3fngdJYzCBxKYron7UuBL6JIqwt+9IGGeI2o9ntw63BVZymPUIAoT2ZE1Ow1rM9sUdhPNT3RIdJg3F6lK2/sQ3JWhdrche+w85S1QznVXGo+T1o2L0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZiScKrlD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732570150;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IhFFHnWie4dgLZsjVCtxVVkJe9Ul6mn98yVpKoL68UY=;
-	b=ZiScKrlD4//Sy7T1IIotxOyr3fc206QWwPA+LohSLl0VaQI5Xo9crkUNSC5WN+r2IM8jI2
-	pUrjtdgs3uqQtxY8mV8ezYx1gjl3PRfe5dSG6U6QAsOigEqWozCUUmJIBz8GBFkuU/XRIN
-	mYILhGSkkRukAEpAcZUQQUJhv2exMTo=
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
- [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-66-D6mw3iiPP0i4dWyIBtNPZQ-1; Mon, 25 Nov 2024 16:29:09 -0500
-X-MC-Unique: D6mw3iiPP0i4dWyIBtNPZQ-1
-X-Mimecast-MFC-AGG-ID: D6mw3iiPP0i4dWyIBtNPZQ
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83adc5130e3so521478039f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:29:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732570148; x=1733174948;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IhFFHnWie4dgLZsjVCtxVVkJe9Ul6mn98yVpKoL68UY=;
-        b=KjTNP4QYFwBt6hHlRd08o9ay67W95HNuV68Ph6HEvEEwBDnuqNkelC8VY51SqlnhXJ
-         dH00XXxaK4/T30PLoOuHv7pR6CDiI8D+VIwlfzPOttSflDbhD/pA2qjzKfCJhJkU9KMI
-         ZJGgNzbVdKbnEBNiSPB7aCQ7MU38UNsCx7TozEPo07m6F0o4KfybSDgOyBu0sjuivso8
-         A/AS7jIQ/rJyn08b91IwS0Gg0C3ZThJeIrpNkCALiO+PuR+cgMe3k8ld7q7bWAZWNfd4
-         sVxr+KvPmcYM0CG4AWVltwEa2AcZJ8SCQmzR4DCGeRpx/Y21xFy7zcpMvK/Xsd3tMvuz
-         mSfg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2G0fgJROpKKrnDu3ugIRTdHoWukRDW0JPCBs/YinpTasvicMcvvi+0+8iMR9NUwJvptq12ryzRZbMjrQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+wIkq+jenKBtW5Plexbwvk0TV+vYHAdeHkO3z5xQTUPuDTHdF
-	AbOq4Gg4cJYfwzsiUcurY9uzmvi6jFqxzpD5xBgL5T6doLIc/L7hu5utKKJGaSx1fiZNmLd7GJH
-	QBb+2gpHfJbFubjfBkEs412TXbXMmCi4WOunZxQQbZsGZSSK9iRlsKjTXrHW4JQ==
-X-Gm-Gg: ASbGnctDoc9rFKzJJVPOK9zCGr2Qf3IPEAumfJBWmjyP6NI8YiyZ9kNsALqbrM4ngIm
-	LDLivIxEk4kEsimSAwHzntGhs6zvN/7mai42gB0wyXM5UE4+ynfue0+BHaqeOjhykR1ulFYMeRp
-	84AjMogUfFoUywRNAts85jgwQNFDo2hwXkN2hMOwicch0K3bx6WZA7/r0kqFxo5ktY3OR6VMkXD
-	LD11pijaU+y6Ksrzy+lMaoVCkan+f2o53ccO5+3nYFBUMr7U8dbS1vkRN5/go7E3TvlgAH/ZOiL
-	R80PHfvQ+kcw8q5Vmd2s
-X-Received: by 2002:a05:6602:6d8c:b0:82c:eeaa:b1e0 with SMTP id ca18e2360f4ac-83ecdcf2cecmr1347906839f.11.1732570148583;
-        Mon, 25 Nov 2024 13:29:08 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFbYxsMJgOCXTkrnEg7b2nY8gFA/PB349SqvWvV8xNHUvGqLbL877fPS8MOIyYS7Zzm56b4IA==
-X-Received: by 2002:a05:6602:6d8c:b0:82c:eeaa:b1e0 with SMTP id ca18e2360f4ac-83ecdcf2cecmr1347905039f.11.1732570148251;
-        Mon, 25 Nov 2024 13:29:08 -0800 (PST)
-Received: from ?IPV6:2601:408:c180:2530:d041:4c25:86b8:e76a? ([2601:408:c180:2530:d041:4c25:86b8:e76a])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-841a6dd1a08sm41970039f.34.2024.11.25.13.29.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 13:29:07 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <42effdc0-bfe7-49a5-a872-21a6f665fff3@redhat.com>
-Date: Mon, 25 Nov 2024 16:29:06 -0500
+	s=arc-20240116; t=1732570215; c=relaxed/simple;
+	bh=4O6BXFuQzDtPnFLXu56acl6DbuUQWT9MKV7AxwD9Dso=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=itdux1DULhvXyOV5+UoUENz6apvJPyrDohjXmLmRHYTj0BeQGWp/NxLwn5ADmn3NIbTz+qqcBtjIPEgUtoNFHWMHOADH/sVAU9Lk+ZIMN+kAESMfET3efoBNN9uE+9ygscaJBjh2Jp1epal/dlwAMyy46P/Oxo0jPOIEbeh81KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=IMaMPSBR; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=OBqvw9C3qDYIhkxocUnc72l/ACN2rkhM5PpmpOhWLfI=; b=IMaMPSBRYPv6NoiXYdzaappXwf
+	fqyl4xtfVzMsq6XB1LVKxzy6tpvZk+nTqAV1I2Yzu+NSyn2gtOzpW5GBWzNGRvT1RJJ/UEj+x/xO/
+	2vY++hWKxTrfX2MjKLAnzxS3GIgthJt61sNDWCU7gEX9WQgCX4xaLoPUUfArWvrIDAdAnbgTnPr3q
+	x6C5oK3RrQCn8ybV9nfoCrbmCdcGANVDCchNXZo/R7c4X10wKs8ISihnUjNrxTBiJoThTKbKX4gXc
+	wBXmqEVMUb2u+RWuuKS/WRcb5Vg/v/VTdtZEYJNKWMnxPbNcGJSRoPTQjbgjQznOzO3i0W6Q/LzeT
+	Wvfsizbw==;
+Date: Mon, 25 Nov 2024 22:29:46 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Mithil Bavishi <bavishimithil@gmail.com>
+Cc: Laurent.pinchart@ideasonboard.com, aaro.koskinen@iki.fi,
+ airlied@gmail.com, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, jernej.skrabec@gmail.com, jonas@kwiboo.se,
+ khilman@baylibre.com, krzk+dt@kernel.org, linux-hardening@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ neil.armstrong@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
+ quic_jesszhan@quicinc.com, rfoss@kernel.org, robh@kernel.org,
+ rogerq@kernel.org, simona@ffwll.ch, thierry.reding@gmail.com,
+ tony@atomide.com, tzimmermann@suse.de
+Subject: Re: [PATCH v3 06/10] ARM: dts: ti: omap: espresso-common: Add
+ common device tree for Samsung Galaxy Tab 2 series
+Message-ID: <20241125222946.51fa8cec@akair>
+In-Reply-To: <20241123181405.861-1-bavishimithil@gmail.com>
+References: <20241112100616.5349ad37@akair>
+	<20241123181405.861-1-bavishimithil@gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sparc/pci: Make pci_poke_lock a raw_spinlock_t.
-To: Guenter Roeck <linux@roeck-us.net>, Waiman Long <llong@redhat.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
- Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- Will Deacon <will@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>
-References: <20241009161041.1018375-1-bigeasy@linutronix.de>
- <20241009161041.1018375-2-bigeasy@linutronix.de>
- <7656395b-58fc-4874-a9f3-6d934e2ef7ee@roeck-us.net>
- <20241125085314.1iSDFulg@linutronix.de>
- <b776ca37-d51c-47e2-b3bb-aee8e7910630@roeck-us.net>
- <20241125174336.8nEhFXIw@linutronix.de>
- <c77c77d4-7f6e-450c-97d5-39dc50d81b1a@roeck-us.net>
- <20241125181231.XpOsxxHx@linutronix.de>
- <72991b83-173e-492e-a4aa-5049304c1bd0@roeck-us.net>
- <5d269249-afd1-44f5-8faf-9ac11d9a3beb@redhat.com>
- <dea92bd5-65e5-4c5c-bc93-5bef547c935e@roeck-us.net>
- <2a940822-b4d4-43ea-b4f7-4294043b76ea@roeck-us.net>
- <88f47cea-baba-4673-9bd7-7b7c3f421008@redhat.com>
- <b0e13a75-d068-4ad3-b0d7-4834ccec3d5a@roeck-us.net>
-Content-Language: en-US
-In-Reply-To: <b0e13a75-d068-4ad3-b0d7-4834ccec3d5a@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+Am Sat, 23 Nov 2024 18:14:05 +0000
+schrieb Mithil Bavishi <bavishimithil@gmail.com>:
 
-On 11/25/24 4:25 PM, Guenter Roeck wrote:
-> On 11/25/24 12:54, Waiman Long wrote:
->>
->> On 11/25/24 3:23 PM, Guenter Roeck wrote:
->>> On 11/25/24 12:06, Guenter Roeck wrote:
->>>> On 11/25/24 11:33, Waiman Long wrote:
->>>> [ ... ]
->>>>>> Fixing that finally gives me a clean run. Nevertheless, that 
->>>>>> makes me wonder:
->>>>>> Should I just disable CONFIG_PROVE_RAW_LOCK_NESTING for sparc 
->>>>>> runtime tests ?
->>>>>
->>>>> If no one is tryng to ever enable PREEMPT_RT on SPARC, I suppose 
->>>>> you could disable CONFIG_PROVE_RAW_LOCK_NESTING to avoid the trouble.
->>>>>
->>>>
->>>> SGTM. I'll do that unless someone gives me a good reason to keep it 
->>>> enabled.
->>>>
->>>
->>> Actually it can not be disabled with a configuration flag. It is
->>> automatically enabled. I'll have to disable PROVE_LOCKING to disable 
->>> it.
->>>
->>> config PROVE_RAW_LOCK_NESTING
->>>         bool                    <---- no longer user configurable
->>>         depends on PROVE_LOCKING
->>>         default y
->>>         help
->>>          Enable the raw_spinlock vs. spinlock nesting checks which 
->>> ensure
->>>          that the lock nesting rules for PREEMPT_RT enabled kernels are
->>>          not violated.
->>>
->>> I don't really like that, and I don't understand the logic behind it,
->>> but it is what it is.
->>>
->>> FWIW, the description of commit 560af5dc839 is misleading. It says 
->>> "Enable
->>> PROVE_RAW_LOCK_NESTING _by default_" (emphasis mine). That is not 
->>> what the
->>> commit does. It force-enables PROVE_RAW_LOCK_NESTING if 
->>> PROVE_LOCKING is
->>> enabled. It is all or nothing.
->>>
->> I think we can relax it by
->>
->> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
->> index 5d9eca035d47..bfdbd3fa2d29 100644
->> --- a/lib/Kconfig.debug
->> +++ b/lib/Kconfig.debug
->> @@ -1399,7 +1399,7 @@ config PROVE_LOCKING
->>   config PROVE_RAW_LOCK_NESTING
->>          bool
->>          depends on PROVE_LOCKING
->> -       default y
->> +       default y if ARCH_SUPPORTS_RT
->>          help
->>           Enable the raw_spinlock vs. spinlock nesting checks which 
->> ensure
->>           that the lock nesting rules for PREEMPT_RT enabled kernels are
->>
->> Sebastian, what do you think?
->>
->
->     depends on PROVE_LOCKING && ARCH_SUPPORTS_RT
->
-> seems to make more sense to me.
+> > > +			no-map;
+> > > +			reg = <0xA0000000 0x200000>;  
+> >
+> > If used for ramoops, then there should be a compatible = "ramoops"
+> > see Documentation/devicetree/bindings/reserved-memory/ramoops.yaml  
+> > > +		};
+> > > +
+> > > +		continuous_splash: framebuffer@bef00000{
+> > > +			reg = <0xbef00000 (1024 * 600 * 4)>;
+> > > +			no-map;
+> > > +		};
+> > > +	};
+> > > +
+> > > +	chosen { 
+> > > +		#address-cells = <1>;
+> > > +		#size-cells = <1>;
+> > > +		ranges;  
+> > 
+> > hmm, no bus here, so no need for address/size-cells, rather specify
+> > stdout-path, etc.  
+> 
+> Will be dropping rampoops_region, and chosen nodes. They were used
+> initially for debugging, since we now have drm for display and other
+> means to get logs, these are not required.
+> 
+you might want to set stdout-path in chosen for earlycon to work.
 
-That will work too, but that will enforce that arches with no 
-ARCH_SUPPORTS_RT will not be able to enable PROVE_RAW_LOCK_NESTING even 
-if people want to try it out.
+> > > +	i2c-gpio-5 {
+> > > +		compatible = "i2c-gpio";
+> > > +		sda-gpios = <&gpio4 2 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+> > > +		scl-gpios = <&gpio4 3 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+> > > +		i2c-gpio,delay-us = <10>;
+> > > +		#address-cells = <1>;
+> > > +		#size-cells = <0>;  
+> > hmm, no pinmux here?   
+> 
+> Cannot seem to find it in the muxset given in vendor kernel.
 
-Cheers,
-Longman
+If in doubt, you can get it via busybox devmem from a working system,
+look in the reference manual for the gpios, I think they are at:
+for sda: 0x4A1000DE 
+for scl: 0x4A1000E0
+Now you need Mode 3 with input pullup.
 
+> These are placeholders for now and hold other devices like smb136
+> charger, stmpe811 adc etc. Drivers for which I need to upstream first.
+> 
+> https://github.com/MightyM17/linux_pvr/blob/testing/arch/arm/boot/dts/omap4-samsung-espresso7.dts#L10-L24
+> 
+> So for now is it better to drop them?
+> 
+keep them and add comments for the devices without driver/binding, so
+people can get in touch regarding driver testing, etc.
+
+E.g. like this one:
+https://elixir.bootlin.com/linux/v6.12/source/arch/arm/boot/dts/nxp/imx/imx50-kobo-aura.dts#L138
+
+Regarding missing devices:
+btw: you know that the wm1811 is covered by the wm8994 driver?
+
+[...]
+> > It might be an idea to use a dedicated wakeup irq instead of
+> > explicitely specifying WAKEUP_EN like you did for the uart.
+> > That counts for other occurances of WAKEUP_EN as well.  
+> 
+> Could you point out to some examples having this change?
+> I have just followed how muxset mentioned it. I assume this can be
+> worked on later as well.
+> 
+Look around for pmx_core in the devicetrees, you find e.g:
+in motorola-mapphone-common.dtsi:
+
+        tmp105@48 {
+                compatible = "ti,tmp105";
+                reg = <0x48>;
+                pinctrl-0 = <&tmp105_irq>;
+                pinctrl-names = "default";
+                /* kpd_row0.gpio_178 */
+                interrupts-extended = <&gpio6 18 IRQ_TYPE_EDGE_FALLING
+                                       &omap4_pmx_core 0x14e>;
+                interrupt-names = "irq", "wakeup";
+                wakeup-source;
+        };
+
+and of course the uart interrupts in your submission. There is an
+offset of 0x40 between things in OMAP4_IOPAD and &omap4_pmx_core 0x...
+
+So you replace some WAKEUP_EN with such a wakeup interrupt and
+wakeup-source property. You do not need to do that for stuff in the
+wakeup domain (GPIO1). That should work for any i2c device with
+interrupts. With that, you can control wakeup from suspend via
+/sys/i2c/devices/X-YY/power/wakeup (or maybe power/wakeup of subdevices
+thereof.
+
+Regarding Wifi or Bluetooth wakeup, I doubt that WAKEUP_EN has any
+effect. If BT or Wifi wakeup is enabled, the gpio is kept active so
+power consumption is elevated anyways and nothing sleeps what can be
+woken up by WAKEUP_EN unless the driver supports a dedicated wakeup irq.
+
+So I think, replace the WAKEUP_EN for wakeup irqs for i2c stuff and
+remove the WAKEUP_EN in wifi/bt if it has no effect there.
+ 
+> > generic node names:
+> > pmic@48  
+> 
+> Changed.
+> 
+> > > +	accelerometer@18 {
+> > > +		compatible = "bosch,bma254";
+> > > +		reg = <0x18>;
+> > > +		vdd-supply = <&ldo4>;
+> > > +		vddio-supply = <&ldo5>;
+> > > +		interrupt-parent = <&gpio4>;
+> > > +		interrupts = <25 (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_EDGE_RISING)>,
+> > > +			<26 (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_EDGE_RISING)>;  
+> > 
+> > this looks odd, binding says IRQ_TYPE_EDGE_RISING. Why do you think you
+> > need both? After something is rising, it is high, so both seem not to
+> > make sense.  
+> 
+> https://github.com/torvalds/linux/commit/5640fed3035e88c3ce1361e6fc93f4e72468f307
+> This was worked on before the above mentioned change, hence the confusion.
+> bma180 schema wants both the interrupts, I do not know why, but now it has
+> moved to the bma255 schema which makes more sense.
+> Fixed it according to new schema.
+> 
+> > +		mount-matrix =  "-1",  "0",  "0",
+> > +				"0",  "1",  "0",
+> > +				"0",  "0", "1";  
+> 
+> > hmm, checking twice, since I mixed up something earlier. This just
+> > inverts x values, so we are mirroring across y-z plane, that does not
+> > look like a rotation matrix, so it does not describe how it is mounted.
+> > Eg. the n900 has two -1 in there, that is a turn by 180 degree.
+> > 
+> > Your mount-matrix would be achieved, by cutting the chip into ultra
+> > thin slices, sorting them upside down and glueing that together. I
+> > doubt somebody does that.  
+> 
+> Went through the mount matrix docs multiple times. It seems fairly
+> straightforward for the accelerometer. being just a matrix that we can
+> multiply to get a desired result.
+
+In your opinion, you can use the matrix for any kind of conversion of
+the values. which can mathematically be done. Which a matrix you can
+scale things e.g. too. But there is also the scale parameter. So I
+doubt that there are limits what should be done with that matrix.
+
+In my understanding, the matrix is for describing how the chip is
+rotated towards the rest of the device not for anything else.
+bosch,bma255.yaml clearly says:
+ mount-matrix:
+    description: an optional 3x3 mounting rotation matrix.
+
+*rotation*
+
+> My intention is to flip the x values thus having a -1 in there.
+
+And I do not have an idea how the chip can be turned in the device to
+require that kind of matrix ... 180 degree turns need two flips ...
+
+> What I do not understand is the logic of how you came to the conclusion
+> of "cutting the chip into ultra thin slices, sorting them upside down and
+> glueing". 
+besides of this hypothetical operation.
+
+> The matrix seems correct and works as intended as well.
+
+So maybe the chip is weird and maybe that is the most practical way is
+to correct that weidness with the matrix as well and throw away any
+dogmatics. Checking..
+ 
+Comparing with n900
+Datasheets: I do not find a datasheet for the BMA254, but for some
+similar chips:
+https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bma253-ds000.pdf
+https://www.geeetech.com/Documents/BST-BMA180-DS000.pdf
+
+vs.
+
+https://www.st.com/resource/en/datasheet/lis302dl.pdf
+
+No flipping in the axis direction between the them. So either both
+n900 and espresso would need single mirroring (=flip one axis) or none.
+
+So if n900 matrix is correct, than you need another -1 in there to have
+some 180 degree rotation.
+
+Regards,
+Andreas
 
