@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-420646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F33DA9D7FAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:01:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 845509D7FF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:03:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DFA5B25D58
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:01:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13654B27167
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D5718F2D8;
-	Mon, 25 Nov 2024 09:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171D318FC65;
+	Mon, 25 Nov 2024 09:02:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="gEAGFi+s"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="DA0YIWZd"
 Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0C71632FA;
-	Mon, 25 Nov 2024 09:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6BD187849;
+	Mon, 25 Nov 2024 09:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732525280; cv=none; b=R7z0+GV7OdkP93rcQzt1p/n+FGhf3SsLb2fm4J8kB54+sn4+AEu4ayuqceGoZcXeiFshsx0IsIuEifUfCGUEcsCHW57K2HFRqq708RQCdtvxVczZc5Q1zZhwFO6qNYiLXjsumn0bqtfh8O7/HNE+vyOPFJJVc3uRY6Q7JQzZr+w=
+	t=1732525376; cv=none; b=X0uyF4ZZJSUS12smzx/Zj1h29q6urXyfRvi35OqLgn1ghIYrorgNIlo5zKy9X1p6tqK7mFi2kCyHWajZaaJBqR0zzKaSNCHIeYv8lk5FydF+N2aBqztLz5KZS3B4ID9QR9pqD2egxbduAbdMqP97Oh6Ee/22N1xN7eqsyorSa10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732525280; c=relaxed/simple;
-	bh=wM4wGY8x3MGjtpmoX6GtebwRDedZrGqXodaM5iDy2cE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RGKqI1a9KAlzQ1J0jRcCUqrIJ0S1s9ED5HJ2uurBxDCc5T7i1WnvtEt67XAs5Ed3GHa4MO06w/pnTYFcrz6Gk4VdtsERW0vlbyYvQ4OcBffMNF4AzNusEGb8pxTeW7QYolQd6Xr5Zgi58/oI3pjofst5rjQ2YOt2mwukVvpIfDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=gEAGFi+s; arc=none smtp.client-ip=46.19.9.99
+	s=arc-20240116; t=1732525376; c=relaxed/simple;
+	bh=Uda7953howVUmeNOhjn5oQVxx2RPhTS5RXjowq0nkqU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=huydMVxqo0BYteI+NFe4OsJjsjm8yAZp+pmmL42UPapp0mpsdNaG+1DSRjzr13fcGD1fbKMJxeChxfqhKa7SwJn3qSjSReUT/Efz00/BIRw2Yz5B3FM96p9SElwA55olp4So8NbxJun1iwsVK23X7escD6/skfitr9nIBorVRS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=DA0YIWZd; arc=none smtp.client-ip=46.19.9.99
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
-	s=default; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
+	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=8o1U+9mGkaPAD9dCFwGk4bFEjZYhCv0ayoZN7iOOFII=; b=gEAGFi+symlZA6nqcCVsAAY/Wf
-	Qau6esj8KSWRXmbj0fMXZx9yNAFb1taB5tukb1VT6aIfSzeWZPlCTf5aRWJ3WFagOjC7ftyiM+fzg
-	rPqSC98/NeFeY5ojvaDg+FtQ2GoVlmQmECKgmy7pyvi2Q8HybLquY0kU4PUTMBBnjz3uiugu4McJC
-	V1GbrTHz75bf3JG3wmRxGAiq4HG6/ctwOgFgJEwEIVSOZ2BfWU8yyoPOtHcJ91lwzjejIIt//5YYp
-	lfjXKkaeRbQqyFOmRws5H+mpS6eC21Zqs/uKWYdzK1B8HM8mkEwu+isicGrsTwLYmD4sL4vQnJLxI
-	1tXepIMQ==;
+	bh=8lEkVLzppht425ev0cm54WY5kvUL/Y39nOpsptm+9Ao=; b=DA0YIWZdrFTMRJKivwK+y4vlDi
+	f3NStfIfYkEeE+DBnP+weK5f1ouJZH/bZXad7M7rTNHFcXm6IW0t/uL/xpCKEcXhrRJEyG5X9HMKd
+	HLIJqnjxBPoCZWadlIAEQrUUaZxTrxN9eedCsw54cbWYYtWizKmph0WhLW7G4dVLuwNdIA2AD8uG7
+	jkvt0fWJVwbwq9Glv+7Zof9h+2MakNgNgn67qPZtWMazX3sKDNIjaxRg1Xae6FeBWOWnqJ/P2NG8w
+	Sq64wZlNaDGLAovoCOXmcsx+vNWEBVABikNYUIp+wBTUetzR/7jsho3Ru/ANsel4CC+sTHHoesA0L
+	K7O/l0KQ==;
 Received: from [91.26.50.162] (port=58340 helo=and-HP-Z4..)
 	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <andrej.picej@norik.com>)
-	id 1tFUIm-00Eq70-1K;
+	id 1tFUIn-00Eq70-0P;
 	Mon, 25 Nov 2024 09:18:36 +0100
 From: Andrej Picej <andrej.picej@norik.com>
 To: shawnguo@kernel.org,
@@ -60,10 +61,12 @@ Cc: imx@lists.linux.dev,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	upstream@lists.phytec.de
-Subject: [PATCH 00/15] Update PHYTEC's i.MX8MM DTSs
-Date: Mon, 25 Nov 2024 09:17:59 +0100
-Message-Id: <20241125081814.397352-1-andrej.picej@norik.com>
+Subject: [PATCH 01/15] arm64: dts: imx8mm-phycore-som: Keep LDO3 on in suspend
+Date: Mon, 25 Nov 2024 09:18:00 +0100
+Message-Id: <20241125081814.397352-2-andrej.picej@norik.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241125081814.397352-1-andrej.picej@norik.com>
+References: <20241125081814.397352-1-andrej.picej@norik.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,67 +85,40 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-Hi all,
+From: Teresa Remmet <t.remmet@phytec.de>
 
-these patches aim to get PHYTEC downstream kernel device-tree changes
-into the mainline for the phyCORE-i.MX8MM SoM and boards (phyBOARD-Polis
-and phyGATE-Tauri-L).
+LDO3 is also used as switch for enabling VDD_3V3_S and need to
+be kept on during suspend. Disabling this can lead to an unwanted
+reset during resume.
 
-Changes mainly fix suspending/resuming with different wakeup-sources and
-add missing regulators. Last 4 patches add additional overlays. Some are
-meant to be used with PHYTEC's "option tree" to add/disable optional SoM
-components (idea behind it is outlined in [1]).
+Set LDO3 to 2,5V as the voltage should be fix.
 
-[1] https://lore.kernel.org/all/4e7dd467-20be-43ce-936d-200ede6d511b@phytec.de/
+Signed-off-by: Teresa Remmet <t.remmet@phytec.de>
+Signed-off-by: Andrej Picej <andrej.picej@norik.com>
+---
+ arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Best regards,
-Andrej
-
-Andrej Picej (3):
-  arm64: dts: imx8mm-phycore-som: Fix bluetooth wakeup source
-  arm64: dts: imx8mm-phyboard-polis: Set RTC as wakeup-source
-  arm64: dts: imx8mm-phygate-tauri-l: Set RTC as wakeup-source
-
-Dominik Haller (1):
-  arm64: dts: imx8mm-phycore-som: Add overlay for rproc
-
-Janine Hagemann (1):
-  arm64: dts: imx8mm-phyboard-polis: Add overlay for PEB-EVAL-01
-
-Teresa Remmet (5):
-  arm64: dts: imx8mm-phycore-som: Keep LDO3 on in suspend
-  arm64: dts: imx8mm-phycore-som: Remove magic-packet property
-  arm64: dts: imx8mm-phyboard-polis: Add support for PEB-AV-10
-  arm64: dts: imx8mm-phycore-som: Add no-eth phy overlay
-  arm64: dts: imx8mm-phycore-som: Add overlay to disable SPI NOR flash
-
-Yannic Moog (3):
-  arm64: dts: imx8mm-phycore-som: add descriptions to nodes
-  arm64: dts: imx8mm-phyboard-polis: add RTC description
-  arm64: dts: imx8mm: move bulk of rtc properties to carrierboards
-
-Yashwanth Varakala (2):
-  arm64: dts: imx8mm-phycore-som: Assign regulator for dsi to lvds
-    bridge
-  arm64: dts: imx8mm-phyboard-polis: Assign missing regulator for
-    bluetooth
-
- arch/arm64/boot/dts/freescale/Makefile        |  13 +
- .../imx8mm-phyboard-polis-peb-av-10.dtso      | 237 ++++++++++++++++++
- .../imx8mm-phyboard-polis-peb-eval-01.dtso    |  72 ++++++
- .../freescale/imx8mm-phyboard-polis-rdk.dts   |  11 +-
- .../dts/freescale/imx8mm-phycore-no-eth.dtso  |  12 +
- .../freescale/imx8mm-phycore-no-spiflash.dtso |  16 ++
- .../dts/freescale/imx8mm-phycore-rpmsg.dtso   |  55 ++++
- .../dts/freescale/imx8mm-phycore-som.dtsi     |  16 +-
- .../dts/freescale/imx8mm-phygate-tauri-l.dts  |   5 +
- 9 files changed, 427 insertions(+), 10 deletions(-)
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-peb-av-10.dtso
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-peb-eval-01.dtso
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-phycore-no-eth.dtso
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-phycore-no-spiflash.dtso
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-phycore-rpmsg.dtso
-
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi b/arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi
+index 6069678244f3..7761acc5c510 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi
+@@ -161,11 +161,13 @@ reg_vcc_enet: ldo3 {
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 				regulator-max-microvolt = <2500000>;
+-				regulator-min-microvolt = <1500000>;
++				regulator-min-microvolt = <2500000>;
+ 				regulator-name = "VCC_ENET_2V5 (LDO3)";
+ 
+ 				regulator-state-mem {
+-					regulator-off-in-suspend;
++					regulator-on-in-suspend;
++					regulator-suspend-max-microvolt = <2500000>;
++					regulator-suspend-min-microvolt = <2500000>;
+ 				};
+ 			};
+ 
 -- 
 2.34.1
 
