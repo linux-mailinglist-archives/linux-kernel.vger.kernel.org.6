@@ -1,281 +1,340 @@
-Return-Path: <linux-kernel+bounces-421555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1202B9D8CCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 20:24:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F57A9D8CD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 20:25:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54F55B25208
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:23:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EF40287CEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:25:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313971B86F7;
-	Mon, 25 Nov 2024 19:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7383F1BC063;
+	Mon, 25 Nov 2024 19:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kMjN0+xN"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="PFmXGeHc"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011013.outbound.protection.outlook.com [52.101.70.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A54C1B86CC;
-	Mon, 25 Nov 2024 19:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732562603; cv=none; b=nKEHARrnYkqbF7vfbJqUL0xINWkfKbA2yC4g2k+n9/bv/c1kbb5sLUIrudxFmFv0+bcHLbowMAcvD+ijnBuajJI/0w6/A1lk1zRs6YZsI7bHtDiZ1ujm24JinutGRpaE/A0/xX2WvyIO7Yf5SJT7slK5b+RXT4+Yfy1eSA5fogE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732562603; c=relaxed/simple;
-	bh=uD3VVH5IFBkk9PNr4IfFqS2jXB7+BeEdSpayqPxcjEY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Itanf7M3EO0Gs86JRBvZhCbubZSMV3a3AjH05cqOZ3aY/VC6khr0W3VqvX4cdukwFzFTiPPva4qzBK7W7SmVptdfGpXcVqZd8KDA2LQ7Bqy9pmUhETwXNQMhR4QkSWdhI1QNiErkNszV3DJ9GHEZAH/J2Cwwg4HaswSSmz74Kd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kMjN0+xN; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7e6d04f74faso3371947a12.1;
-        Mon, 25 Nov 2024 11:23:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732562601; x=1733167401; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=MHY2iHAQXEJzX8CnVChA63hkESjHb9bSUAORyU0PDi8=;
-        b=kMjN0+xNMMR/IMjn5Or+lbYgwTbTsaLP1M66C7OS9qe0mvmisUXFKB9joqH3gp1ZcA
-         3clJVjPu06qwT4IDj5dkbC7k/d1N+dDjB56ijb8VTkaLQiiNzd51B8zFEy8JjPSNtylK
-         DkAdH/gPPR32aYnacWXzUNbr6Ekl4F+EBMinba326rgnBOAVZilTson6Bh+Kdvm70Wfb
-         nWO8+bTVo3vg6QmRKNeItCduzCSfRMH3iCo4eQOQ2wnknuHISsIDrK+EOGSUcLXIGZC+
-         v2qJA52Uo5LgUbDLJD+9js0JN5u4a5AxPC/6/M77O00gNN4U0N69AY340X98c3shgGBK
-         bTGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732562601; x=1733167401;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MHY2iHAQXEJzX8CnVChA63hkESjHb9bSUAORyU0PDi8=;
-        b=PIXA6isU3+xMO5kHYYJtY7I2YfqbW2u+iJQ+Q5uQzAm2ZOs2G8/gYUe1ckcJA1vY1x
-         etdvlu/jLogp2FkxBci5OG5iPtM5aPGXRCzygl/ljoHxjkAn5TtXIu29T1WfXQVqbWQF
-         G/PrzAmlT1poot+hEMpRVyZwqColK/03NNu+R7bPfps5HBvO2ucd+gTJ3oJok3jX7dfg
-         OjERriglQxJ5XOsTFj+wK4WEdoI3dXsq0pGRKUYpqS7HRCPFESCWRS7LvWHtl4FDUjS6
-         jS9iqu6yKzl9j6I6qVVymZFsUcoLLdrWDlRw7VhuT+4Z/h0TK0gbp/2T9PoONtZHhRoM
-         htOA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0lX05n9FG6JfVGYaJmSDWucxrzJX7KbgGEK54fiE6We310xVnsugNZ0YA1oT5sv3rzkIQLVlaFM7K43o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFSAbAlyQz1s+qrtkEc790V5a7mh7K8xeClu4KqLwIm7kt/GxZ
-	1Lwf/d9/1enUWSl8F6pODFKucJ1LwRQA9EyVFcc1VCD3ku2ksQMNMw6PxQ==
-X-Gm-Gg: ASbGncs4Www/nfEDRf1LEHqCTdSGPTIpTl9Zc8bdeJF3m1f5OnXssakIWvwgvj5O+jC
-	1R1r9T/GD74fGohAJ9WDk/emjrBf0KW4xceO0hRWyMAhTMFRwGVtNVv6qrYAnFETkK3okcpAuEr
-	CCzxCf6PnB6GpVkhVfNe3DJPqgngfR9bYhZPVkBEpsLtU3/7cu1gtoeENoW1e62MJsDTqbtG9HA
-	bHOk8qDqBiTgbArt1/+wd2mDm0rxhp/d10jfMNVw9cXQQejpYy/yW1G7IaIsStPdeTwhpTVuGL9
-	5n1M3Tc1KMsuHBby25SjizI=
-X-Google-Smtp-Source: AGHT+IFrGoyF8pMmDXmXBFA/pYoykofDtEnV/1KH/ZaDlZFg4jNobS1QYxHSplclgV8ni+14c4AvUg==
-X-Received: by 2002:a17:902:d482:b0:212:3f13:d4bc with SMTP id d9443c01a7336-214e7065fa5mr7916655ad.27.1732562600679;
-        Mon, 25 Nov 2024 11:23:20 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dbff326sm68665595ad.151.2024.11.25.11.23.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 11:23:19 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <72991b83-173e-492e-a4aa-5049304c1bd0@roeck-us.net>
-Date: Mon, 25 Nov 2024 11:23:18 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF651B86CC;
+	Mon, 25 Nov 2024 19:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732562699; cv=fail; b=XCittVIBpNaFAD9froURIJ4we54PKnQtgEzTU5ur7xJljHzhX1z2j7Z5UEpji5n3ZCgHKHm9UiGsJ3crqUcTscouWLWBb96XRjc2l8LqteNvcbMeflnOht5k70rt2SvhRPi5eNzywMSpVsfsJk3Y7KTfPTfYJ6XgJzl+Vr4Kp4Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732562699; c=relaxed/simple;
+	bh=gVRdKA4vZEo1gI0IvY+Knn7dtPSzy3Y8MBChSgKcatU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=qkmpsOZaSLzaXQRjjo2S+nQJ+cejB76QKfHnXc2YEHGCS/LYglMyAAunBvhoP3wLvV9NxKCFR4lWweFE+bwEVxympvcpu1BHkFWKvz53oQXY57P75xE2ZFhMAu5g1u5P8of1fnNwuwaFYeqiRLh38GJasDfR7ao4FhEGxkdhJcI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=PFmXGeHc; arc=fail smtp.client-ip=52.101.70.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=V06kks34F4V4KxCjd3AmRHy7yYSXeYhoWmrYzIXaChOLdK3DJiYDuYiP8RK1y64GG4OQKoKCwov40WHnEEx7ZXXYpIsxJu23SVqlcCSrxwYgGZEwOiCz5bHxcPWBJVH3U93t8V37SP7bjiuQ9kjKNFPTk3lws6Jx9EKAtTXFcDtN8JeoKIOlhq7hkLRWAjmBGt4HMoiRYxWSAsuH9zBJpGNLpuqHh+W9JNjd/qRDjrz2PWgKbrWsbEFHfznIkFac6a+xidr8PpcWANp+jMUo+Sue+CmH9RyZJmDQiYebfhvqU9bEWco3zLj0Ds9VZeMlwpU3lTrVneDVNeAk5mnGUA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TSFwS48kL2a9UubSNR2I9a210XsscyekzE4UQ9PdPY8=;
+ b=uAbMYu7WmBF4CpURsRNLvGLba5mLNpM9COgXsbxcTxawdyBy7c283z+Q4hclg2RoRQR7uu987Oiv94unEJvt9ExhILdHV4QXL2BZE9MvCxfnZSSDATi5gUXKCFV5gDUTHXakCIoL3aMpOcgMI6x/Mz1aPPct3scdb4mMTvCuKDaOZCvcFXaTY3g4wpwxSVPZDP7xF9SH3SmJF6a6EtBAeFZuojPsJREKOjyV+IhFvYKHjF1LpAuCG6th35nPgako4e5gNRwBqTLs0jHI02vFahZwiFrI2o/Mrn/Wqo7/U3dV+r11uWmOa1eoekT/U+anCQtwCgZGT0COX5lX5tljHQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TSFwS48kL2a9UubSNR2I9a210XsscyekzE4UQ9PdPY8=;
+ b=PFmXGeHca9fRZcjmGnaMA06EYCWh59aAQunJCWDIozKgLnRYj6lMDzzRtFVcjGKeTsmuBb/okIlD/ZSZ0ErDaO90lxbD8k/bDoTAn8MA3VChyZSmpQyZ/v42xDbto4n7njarlx1F1HR4s/GvplTiYuN2FYtZcXVVb5ZvZGb9pzRTgEI4u6M+an3h7NJGplWex1PJ5Oruu4Zdu8HdoFvbzi+81ggQe3EEsVvlVTOp+dLogKGKKWB56inCu+agI+UGsaY/faet9OHewlwdMJ9a4jDnzLSQAknG/tAL5/3E3AC5xLA8gpH5luS1NTSWkoZwRBkBxVHa70wrNgeEVdACHg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS8PR04MB8103.eurprd04.prod.outlook.com (2603:10a6:20b:3b3::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.20; Mon, 25 Nov
+ 2024 19:24:50 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8182.019; Mon, 25 Nov 2024
+ 19:24:50 +0000
+Date: Mon, 25 Nov 2024 14:24:44 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Haibo Chen <haibo.chen@nxp.com>, Lars-Peter Clausen <lars@metafoo.de>,
+	"open list:NXP i.MX 7D/6SX/6UL/93 AND VF610 ADC DRIVER" <linux-iio@vger.kernel.org>,
+	"open list:NXP i.MX 7D/6SX/6UL/93 AND VF610 ADC DRIVER" <imx@lists.linux.dev>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 1/2] iio: adc: vf610_adc: use devm_* and
+ dev_err_probe() to simple code
+Message-ID: <Z0TO/OL5DQWSMLfG@lizhi-Precision-Tower-5810>
+References: <20241111213859.3317909-1-Frank.Li@nxp.com>
+ <20241123152637.27a66403@jic23-huawei>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241123152637.27a66403@jic23-huawei>
+X-ClientProxiedBy: PH7P220CA0073.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:510:32c::20) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sparc/pci: Make pci_poke_lock a raw_spinlock_t.
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
- Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
- "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>
-References: <20241009161041.1018375-1-bigeasy@linutronix.de>
- <20241009161041.1018375-2-bigeasy@linutronix.de>
- <7656395b-58fc-4874-a9f3-6d934e2ef7ee@roeck-us.net>
- <20241125085314.1iSDFulg@linutronix.de>
- <b776ca37-d51c-47e2-b3bb-aee8e7910630@roeck-us.net>
- <20241125174336.8nEhFXIw@linutronix.de>
- <c77c77d4-7f6e-450c-97d5-39dc50d81b1a@roeck-us.net>
- <20241125181231.XpOsxxHx@linutronix.de>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20241125181231.XpOsxxHx@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB8103:EE_
+X-MS-Office365-Filtering-Correlation-Id: b1dc8866-85b2-4d1e-073d-08dd0d86d493
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?JUmm9jq7pnFbIWf+mMJHRGV621WM5zSBRo8uPIdAg+qcsTPqegIQIx52jBca?=
+ =?us-ascii?Q?NW210v7wKDT4cEejhRkjFRo/hnAcRZOUqGN88Kge0IZwNpDXfii0wwVHt/01?=
+ =?us-ascii?Q?LF+Jryrz5p9NFOirK1/pP4fW5yf0Ia84w1jMDrYGINgTDKS/ExUnfAq4haL9?=
+ =?us-ascii?Q?6EpISgzMkir/Ii3UhMWhf8qNRPZxutlj33dSe+iesTfBkrmOKNmk/wBaobJ2?=
+ =?us-ascii?Q?/13R69cZ5q92tmqPk/me4sDfSRVTYi1Hl8TDwxIqlISHN3ZxUvH8SZ7XUjcF?=
+ =?us-ascii?Q?A+3OPlyDEhEqObwPtqv2qxkaaJzsZgxyZ1M8saEVoEH/MnFiGgXw1H+IdSa4?=
+ =?us-ascii?Q?QiL9CXTx5tbtGaTK7bnaewQH/KfZvCiENW/TO6qn1JIXwb2FTcigNIuf35my?=
+ =?us-ascii?Q?AwDjCmMZDNQe8CeezMJQH+myh+g4hw6jiMeIHidQb6pNCMv3vmvJVIBlO72o?=
+ =?us-ascii?Q?AUUg+p9y5PhqRhZif5gWo0qwh5QOuevkv5LJSj1aH41YIQMIIO0vWvii6R4g?=
+ =?us-ascii?Q?U7jv8BIpZwNvYT2LkphMP3wa4GkPTxb7NDElP57/qCDsmxhEjZyhVjNu3J/q?=
+ =?us-ascii?Q?9g0mPkIJx9Q6N+qVYxbVAKqG2zQBB80BYEoSnaiG5i+JKuo+c3GoRV0n1V5b?=
+ =?us-ascii?Q?wRI1ffYhiNfxVVVeSHo1DwP2bouEYKpD7qosXHpzm2h04vPu62LQyoVnE5hB?=
+ =?us-ascii?Q?d8ZJCw3ykK3TgzTMIsXg3IMbE+voSpS8j1u+ef/2tB2Htohr3B+KQdkiBEgH?=
+ =?us-ascii?Q?hiAf8LEJyTOo6KMXKoltRqLrYqKamprKVICNjTqHJg+Dno0QRt6cVKxTeHux?=
+ =?us-ascii?Q?Po+MyJqaSgM2a0NJcMdQCzuKDz8EDNs3hOcmGgJs711WYRDgmwFMp3zEsUXp?=
+ =?us-ascii?Q?b2LZ8v5xIIuZvs1WLIXWEdzHl4DLeiCwYMsSwUic/Fk4NnKobmJE/8KHYZTW?=
+ =?us-ascii?Q?TBlYmZ1SDhdmLwD+adcxo2o43u46moS8X0zfXklO+LzQIJMoUKyspd0Y9f9w?=
+ =?us-ascii?Q?QIQc7U00jyG4Gm2jNkw6YyZXltT3GF+Ns/adlhl6FV/OkmdSeOcWQHcLWAu8?=
+ =?us-ascii?Q?nyJiTglH2zGgJCsKdRMZJE0N/al3ldobTtjCnOSK4fYUMdJFHDNlKx8JLS+C?=
+ =?us-ascii?Q?60LFJ/LA997yG9jDq+K6n9pzpcIn3p9wRmPNp8VEeldFHbU0rvCV3Qv6Ps+3?=
+ =?us-ascii?Q?kRlnv3L+UP/0ETuvEWRTP6GOIInoC6DQyAwxjcFe/zw6IQ4XrnhNuvYVTIKJ?=
+ =?us-ascii?Q?HMsSXhGCSi0tLF6zPXW3FITaX6pia8PB7GGrV0jF2pK9o2FsIFz2HAUZDnxi?=
+ =?us-ascii?Q?bYC4/acrmDGBT7iQXtylMgok3Kk80lvD6hfCkua7uAd4cFndrY9+whiS7PXM?=
+ =?us-ascii?Q?WbGGoes+jzVx5hUPDZiffj/kC2FvY9MOSgi9oAAcUWbbSWE8lQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ZpUebmDIN+re+4gLmKO5q/utAGxPogO9hx9SkuHLTQboOWu+50jUtBHfSiYO?=
+ =?us-ascii?Q?ZfG/Uwsbg3M9tIkX2l12dCo86XeyC+Trd03uUvMcRivZeElmkHIQe8oL6cs2?=
+ =?us-ascii?Q?/maiQad2fsmKY5E47EhmEXURCmZOZk8qZs3LSuVuqv7QKSVQ+HEeaedWMLQR?=
+ =?us-ascii?Q?5HfXWUtSbLoFCq/8xU+/3ImhdvNz3+gjLgtXV5+vNvpFvoqVS9FJx9REXMaj?=
+ =?us-ascii?Q?lt521WeWBj97uYvWRUratC1nkR7vYW4foYVu4AJ2Uskg3UA/3Ap656SIim6E?=
+ =?us-ascii?Q?FA/EmGy5TkQ9OU+i5fY7QJ3fS5keBePvPujM7pudLmd35+ZKmJKDNV2rARZl?=
+ =?us-ascii?Q?+vrLzvJ3kr1DAjYNskT/RtfHTgX7BkDL5zleo0NovkIOoX8qZQPAJeiRLb/c?=
+ =?us-ascii?Q?1u+s9P/QaAPqeShO4+Eh31zUOyUO2teDWjkalGXP7Ai8TGo8xYanah0yV1d3?=
+ =?us-ascii?Q?eNZzo5tmsXImboWByn/xx6PVNjHezmiF1oUglAhQER1yT0s64LL/3Z1qA5lT?=
+ =?us-ascii?Q?kLO2pE4lp3JZ2yGh9Zd8Y50CbfkvhjHjiLX6SS/gI2zSUfivqXbH3xkGwGho?=
+ =?us-ascii?Q?x3eVyezjej9GfJ2GTQPdt8v/P4Xwd0/jz34bzaFPji8I9S3ntWUAjUReyjTX?=
+ =?us-ascii?Q?g6uPZXvBC10t6ykMoRzUdNjX1eDQmN7aZACMOW/LUyTgHtSlK9weL0sD4PY2?=
+ =?us-ascii?Q?kjYmQr4HqyWnvsYl0VEZvEL67dNb8VqB0+PFOIwu5WPhi15SV37lDPiqesj1?=
+ =?us-ascii?Q?ejMBsGJ46fImIIZgtYs5fZvQXN5NZZVjYxUIj1mDb3y02RlxgJtAr87WA0rS?=
+ =?us-ascii?Q?6aTMW/1FZAJQdfQHjDiMU6bc2ELutGMTAeB4ZfFnsc3HYaSgi90cR65UCehi?=
+ =?us-ascii?Q?rmYIDIYoCZZDqMX0wYfxbdQlfiZY0UvUtNkuZHffwVXF1JqC8I4fNiHvspxk?=
+ =?us-ascii?Q?K4CyW61n7ZG+6UtkHQ+3AYqGObDsQ76zl4SPyYRBpjOFLo7hYYuRf3hBfqyP?=
+ =?us-ascii?Q?QejcwQp2QsRdouBB+veLsNBnaJmTEtiafiXE/cWeTphRnE6t806TyI52pfFj?=
+ =?us-ascii?Q?ToG1NxErtYKvbf4ua60AxVWy1rhiOAQaZjhQHDB7Ll7/EXAJzBCdlYbqSxc8?=
+ =?us-ascii?Q?a/SrqDDQ9mrL6TJBUmH9c8GFXkZ2zM/by2BIhJ2AevRhAd0+VkAJZvyOAhoW?=
+ =?us-ascii?Q?ffUy8OfeVH7h/jp8TrRw+YZyvGl6Gs220DJwEn8p3ChnTFfJo/PHLY50Edug?=
+ =?us-ascii?Q?TFzddzr9gxn7c/VdaWXyk7CrlXnx/xrOpk8FuAOMVMfe2vdlPbgr7zBV+jAM?=
+ =?us-ascii?Q?D5QT49SKlxBtSHVyE0xnpMOmEHzKL13Yqoz5okdpGpsyZi7dV6837H5nDQgE?=
+ =?us-ascii?Q?DIj3A3vs1BC8nIQs9SVqR/3pHrEmUmH1cySj8thiHmxc2UGt0QynZMFnSCn6?=
+ =?us-ascii?Q?qf0K5Rk1PRdpblGc1qsTGGjvo13iEtCsi4ubAzcy0AtTAMyq4f8cUeuKBGTO?=
+ =?us-ascii?Q?iqFovW0iJ+PfQSFaourSoXMS/YzvuYZSp/Vl/+wkNMMj0Tu4Rn+y8Dlx4njA?=
+ =?us-ascii?Q?iWYN8iMVwJxeNikN7TA=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b1dc8866-85b2-4d1e-073d-08dd0d86d493
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2024 19:24:50.0512
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UvfVUsUJsKYz0ebBJbeMqgimiCp/Zmtc+pWiA6d4/UZ99bqomK7OtPYRe7Uvl+CkEeRX9HW+t/2ToMgdQnag+g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8103
 
-On 11/25/24 10:12, Sebastian Andrzej Siewior wrote:
-> On 2024-11-25 09:59:09 [-0800], Guenter Roeck wrote:
->> On 11/25/24 09:43, Sebastian Andrzej Siewior wrote:
->>> On 2024-11-25 09:01:33 [-0800], Guenter Roeck wrote:
->>>> Unfortunately it doesn't make a difference.
->>>
->>> stunning. It looks like the exact same error message.
->>>
->>
->> I think it uses
->>
->> #define spin_lock_irqsave(lock, flags)                          \
->> do {                                                            \
->>          raw_spin_lock_irqsave(spinlock_check(lock), flags);     \
->> } while (0)
->>
->> from include/linux/spinlock.h, meaning your patch doesn't really make a difference.
-> 
-> The difference comes from DEFINE_SPINLOCK vs DEFINE_RAW_SPINLOCK. There
-> is the .lock_type init which goes from LD_WAIT_CONFIG to LD_WAIT_SPIN.
-> And this is all it matters.
-> 
+On Sat, Nov 23, 2024 at 03:26:37PM +0000, Jonathan Cameron wrote:
+> On Mon, 11 Nov 2024 16:38:58 -0500
+> Frank Li <Frank.Li@nxp.com> wrote:
+>
+> > Use devm_* and dev_err_probe() simplify probe function and remove
+> > vf610_adc_remove().
+> >
+> > Reviewed-by: Haibo Chen <haibo.chen@nxp.com>
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Hi Frank,
+>
+> One (hopefully final) question inline.
+>
+> Jonathan
+>
+> > ---
+> > Change from v3 to v4
+> > - keep vref_uv as u32
+> > - keep original regulator part and only add
+> > devm_add_action_or_reset(&pdev->dev, vf610_adc_remove, info)
+> >
+> > Change from v2 to v3
+> > - change vref_uv to int from u32 to fix below warning
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202411070633.NIrO7Ert-lkp@intel.com/
+> > smatch warnings:
+> > drivers/iio/adc/vf610_adc.c:857 vf610_adc_probe() warn: unsigned 'info->vref_uv' is never less than zero.
+> >
+> > vim +857 drivers/iio/adc/vf610_adc.c
+> >
+> > Change from v1 to v2
+> > - add Haibo's review tag
+> > ---
+> >  drivers/iio/adc/vf610_adc.c | 79 ++++++++++++-------------------------
+> >  1 file changed, 26 insertions(+), 53 deletions(-)
+> >
+> > diff --git a/drivers/iio/adc/vf610_adc.c b/drivers/iio/adc/vf610_adc.c
+> > index 4d83c12975c53..d4b778799755b 100644
+> > --- a/drivers/iio/adc/vf610_adc.c
+> > +++ b/drivers/iio/adc/vf610_adc.c
+> > @@ -814,6 +814,14 @@ static const struct of_device_id vf610_adc_match[] = {
+> >  };
+> >  MODULE_DEVICE_TABLE(of, vf610_adc_match);
+> >
+> > +static void vf610_adc_action_remove(void *d)
+> > +{
+> > +	struct vf610_adc *info = d;
+> > +
+> > +	if (info->vref)
+> > +		regulator_disable(info->vref);
+>
+> Why is the check on info->vref needed?
+> vref is required to reach the point where this callback is registered.
+>
+> > +}
+> > +
+> >  static int vf610_adc_probe(struct platform_device *pdev)
+> >  {
+> >  	struct device *dev = &pdev->dev;
+> > @@ -823,10 +831,8 @@ static int vf610_adc_probe(struct platform_device *pdev)
+> >  	int ret;
+> >
+> >  	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(struct vf610_adc));
+> > -	if (!indio_dev) {
+> > -		dev_err(&pdev->dev, "Failed allocating iio device\n");
+> > -		return -ENOMEM;
+> > -	}
+> > +	if (!indio_dev)
+> > +		return dev_err_probe(&pdev->dev, -ENOMEM, "Failed allocating iio device\n");
+> >
+> >  	info = iio_priv(indio_dev);
+> >  	info->dev = &pdev->dev;
+> > @@ -842,17 +848,12 @@ static int vf610_adc_probe(struct platform_device *pdev)
+> >  	ret = devm_request_irq(info->dev, irq,
+> >  				vf610_adc_isr, 0,
+> >  				dev_name(&pdev->dev), indio_dev);
+> > -	if (ret < 0) {
+> > -		dev_err(&pdev->dev, "failed requesting irq, irq = %d\n", irq);
+> > -		return ret;
+> > -	}
+> > +	if (ret < 0)
+> > +		return dev_err_probe(&pdev->dev, ret, "failed requesting irq, irq = %d\n", irq);
+> >
+> > -	info->clk = devm_clk_get(&pdev->dev, "adc");
+> > -	if (IS_ERR(info->clk)) {
+> > -		dev_err(&pdev->dev, "failed getting clock, err = %ld\n",
+> > -						PTR_ERR(info->clk));
+> > -		return PTR_ERR(info->clk);
+> > -	}
+> > +	info->clk = devm_clk_get_enabled(&pdev->dev, "adc");
+> > +	if (IS_ERR(info->clk))
+> > +		return dev_err_probe(&pdev->dev, PTR_ERR(info->clk), "failed getting clock\n");
+> >
+> >  	info->vref = devm_regulator_get(&pdev->dev, "vref");
+> >  	if (IS_ERR(info->vref))
+> > @@ -862,6 +863,10 @@ static int vf610_adc_probe(struct platform_device *pdev)
+> >  	if (ret)
+> >  		return ret;
+> >
+> > +	ret = devm_add_action_or_reset(&pdev->dev, vf610_adc_action_remove, info);
+>
+> As above, but this time if info->vref is not set, we have already returned so it
+> must be set and doesn't need checking the callback.
 
-Ah, now I get it. Thanks for the explanation. And it turns out my log was wrong.
-I must have taken it from the old image. Sorry for that.
+Yes, you are right. Needn't check it at callback.
 
-That specific backtrace isn't seen anymore. But there is another one.
-
-[    1.779653] =============================
-[    1.779860] [ BUG: Invalid wait context ]
-[    1.780139] 6.12.0+ #1 Not tainted
-[    1.780394] -----------------------------
-[    1.780600] swapper/0/1 is trying to lock:
-[    1.780824] 0000000001b68888 (cpu_map_lock){....}-{3:3}, at: map_to_cpu+0x10/0x80
-[    1.781393] other info that might help us debug this:
-[    1.781624] context-{5:5}
-[    1.781838] 3 locks held by swapper/0/1:
-[    1.782055]  #0: fffff800042b90f8 (&dev->mutex){....}-{4:4}, at: __driver_attach+0x80/0x160
-[    1.782345]  #1: fffff800040f2c18 (&desc->request_mutex){+.+.}-{4:4}, at: __setup_irq+0xa0/0x6e0
-[    1.782632]  #2: fffff800040f2ab0 (&irq_desc_lock_class){....}-{2:2}, at: __setup_irq+0xc8/0x6e0
-[    1.782912] stack backtrace:
-[    1.783172] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0+ #1
-[    1.783498] Call Trace:
-[    1.783734] [<00000000004e31d0>] __lock_acquire+0xa50/0x3160
-[    1.783971] [<00000000004e63e8>] lock_acquire+0xe8/0x340
-[    1.784191] [<00000000010f0dbc>] _raw_spin_lock_irqsave+0x3c/0x80
-[    1.784417] [<000000000043ed90>] map_to_cpu+0x10/0x80
-[    1.784633] [<000000000042b2b8>] sun4u_irq_enable+0x18/0x80
-[    1.784854] [<00000000004fb6b4>] irq_enable+0x34/0xc0
-[    1.785069] [<00000000004fb7b8>] __irq_startup+0x78/0xe0
-[    1.785287] [<00000000004fb8f0>] irq_startup+0xd0/0x1a0
-[    1.785503] [<00000000004f85b4>] __setup_irq+0x5f4/0x6e0
-[    1.785726] [<00000000004f8754>] request_threaded_irq+0xb4/0x1a0
-[    1.785950] [<0000000000439930>] power_probe+0x70/0xe0
-[    1.786165] [<0000000000c13a68>] platform_probe+0x28/0x80
-[    1.786382] [<0000000000c11178>] really_probe+0xb8/0x340
-[    1.786599] [<0000000000c115a4>] driver_probe_device+0x24/0xe0
-[    1.786820] [<0000000000c117cc>] __driver_attach+0x8c/0x160
-[    1.787039] [<0000000000c0ef74>] bus_for_each_dev+0x54/0xc0
-
-After replacing cpu_map_lock with a raw spinlock, I get:
-
-[    2.015140] =============================
-[    2.015247] [ BUG: Invalid wait context ]
-[    2.015419] 6.12.0+ #1 Not tainted
-[    2.015564] -----------------------------
-[    2.015668] swapper/0/1 is trying to lock:
-[    2.015791] fffff80004870610 (&mm->context.lock){....}-{3:3}, at: __schedule+0x410/0x5b0
-[    2.016306] other info that might help us debug this:
-[    2.016451] context-{5:5}
-[    2.016539] 3 locks held by swapper/0/1:
-[    2.016652]  #0: 0000000001d11f38 (key_types_sem){++++}-{4:4}, at: __key_create_or_update+0x5c/0x4c0
-[    2.016934]  #1: 0000000001d1b850 (asymmetric_key_parsers_sem){++++}-{4:4}, at: asymmetric_key_preparse+0x18/0xa0
-[    2.017197]  #2: fffff8001f811a98 (&rq->__lock){-.-.}-{2:2}, at: __schedule+0xdc/0x5b0
-[    2.017412] stack backtrace:
-[    2.017551] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0+ #1
-[    2.017800] Call Trace:
-[    2.017910] [<00000000004e31d0>] __lock_acquire+0xa50/0x3160
-[    2.018062] [<00000000004e63e8>] lock_acquire+0xe8/0x340
-[    2.018192] [<00000000010f0dbc>] _raw_spin_lock_irqsave+0x3c/0x80
-[    2.018341] [<00000000010e5050>] __schedule+0x410/0x5b0
-[    2.018469] [<00000000010e5ae4>] schedule+0x44/0x1c0
-[    2.018591] [<00000000010f0684>] schedule_timeout+0xa4/0x100
-[    2.018730] [<00000000010e668c>] __wait_for_common+0xac/0x1a0
-[    2.018869] [<00000000010e6878>] wait_for_completion_state+0x18/0x40
-[    2.019022] [<000000000048ad18>] call_usermodehelper_exec+0x138/0x1c0
-[    2.019177] [<000000000052eb40>] __request_module+0x160/0x2e0
-[    2.019316] [<00000000009ba6dc>] crypto_alg_mod_lookup+0x17c/0x280
-[    2.019466] [<00000000009ba990>] crypto_alloc_tfm_node+0x30/0x100
-[    2.019614] [<00000000009dcc5c>] public_key_verify_signature+0xbc/0x260
-[    2.019772] [<00000000009ded8c>] x509_check_for_self_signed+0xac/0x280
-[    2.019928] [<00000000009dddec>] x509_cert_parse+0x14c/0x220
-[    2.020065] [<00000000009dea08>] x509_key_preparse+0x8/0x1e0
-
-The problem here is
-
-typedef struct {
-         spinlock_t              lock;		<--
-         unsigned long           sparc64_ctx_val;
-         unsigned long           hugetlb_pte_count;
-         unsigned long           thp_pte_count;
-         struct tsb_config       tsb_block[MM_NUM_TSBS];
-         struct hv_tsb_descr     tsb_descr[MM_NUM_TSBS];
-         void                    *vdso;
-         bool                    adi;
-         tag_storage_desc_t      *tag_store;
-         spinlock_t              tag_lock;
-} mm_context_t;
-
-Replacing that with a raw spinlock just triggers the next one.
-
-[    2.035384] =============================
-[    2.035490] [ BUG: Invalid wait context ]
-[    2.035660] 6.12.0+ #3 Not tainted
-[    2.035802] -----------------------------
-[    2.035906] kworker/u4:3/48 is trying to lock:
-[    2.036036] 0000000001b6a790 (ctx_alloc_lock){....}-{3:3}, at: get_new_mmu_context+0x14/0x280
-[    2.036558] other info that might help us debug this:
-[    2.036697] context-{5:5}
-[    2.036784] 4 locks held by kworker/u4:3/48:
-[    2.036906]  #0: fffff80004838a70 (&sig->cred_guard_mutex){+.+.}-{4:4}, at: bprm_execve+0xc/0x8e0
-[    2.037169]  #1: fffff80004838b08 (&sig->exec_update_lock){+.+.}-{4:4}, at: begin_new_exec+0x344/0xbe0
-[    2.037411]  #2: fffff800047fc940 (&p->alloc_lock){+.+.}-{3:3}, at: begin_new_exec+0x3a0/0xbe0
-[    2.037639]  #3: fffff80004848610 (&mm->context.lock){....}-{2:2}, at: begin_new_exec+0x41c/0xbe0
-
-Fixing that finally gives me a clean run. Nevertheless, that makes me wonder:
-Should I just disable CONFIG_PROVE_RAW_LOCK_NESTING for sparc runtime tests ?
-
-Thanks,
-Guenter
-
+Frank
+>
+> > +	if (ret)
+> > +		return ret;
+> > +
+> >  	info->vref_uv = regulator_get_voltage(info->vref);
+> >
+> >  	device_property_read_u32_array(dev, "fsl,adck-max-frequency", info->max_adck_rate, 3);
+> > @@ -879,52 +884,21 @@ static int vf610_adc_probe(struct platform_device *pdev)
+> >  	indio_dev->channels = vf610_adc_iio_channels;
+> >  	indio_dev->num_channels = ARRAY_SIZE(vf610_adc_iio_channels);
+> >
+> > -	ret = clk_prepare_enable(info->clk);
+> > -	if (ret) {
+> > -		dev_err(&pdev->dev,
+> > -			"Could not prepare or enable the clock.\n");
+> > -		goto error_adc_clk_enable;
+> > -	}
+> > -
+> >  	vf610_adc_cfg_init(info);
+> >  	vf610_adc_hw_init(info);
+> >
+> > -	ret = iio_triggered_buffer_setup(indio_dev, &iio_pollfunc_store_time,
+> > -					NULL, &iio_triggered_buffer_setup_ops);
+> > -	if (ret < 0) {
+> > -		dev_err(&pdev->dev, "Couldn't initialise the buffer\n");
+> > -		goto error_iio_device_register;
+> > -	}
+> > +	ret = devm_iio_triggered_buffer_setup(&pdev->dev, indio_dev, &iio_pollfunc_store_time,
+> > +					      NULL, &iio_triggered_buffer_setup_ops);
+> > +	if (ret < 0)
+> > +		return dev_err_probe(&pdev->dev, ret, "Couldn't initialise the buffer\n");
+> >
+> >  	mutex_init(&info->lock);
+> >
+> > -	ret = iio_device_register(indio_dev);
+> > -	if (ret) {
+> > -		dev_err(&pdev->dev, "Couldn't register the device.\n");
+> > -		goto error_adc_buffer_init;
+> > -	}
+> > +	ret = devm_iio_device_register(&pdev->dev, indio_dev);
+> > +	if (ret)
+> > +		return dev_err_probe(&pdev->dev, ret, "Couldn't register the device.\n");
+> >
+> >  	return 0;
+> > -
+> > -error_adc_buffer_init:
+> > -	iio_triggered_buffer_cleanup(indio_dev);
+> > -error_iio_device_register:
+> > -	clk_disable_unprepare(info->clk);
+> > -error_adc_clk_enable:
+> > -	regulator_disable(info->vref);
+> > -
+> > -	return ret;
+> > -}
+> > -
+> > -static void vf610_adc_remove(struct platform_device *pdev)
+> > -{
+> > -	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
+> > -	struct vf610_adc *info = iio_priv(indio_dev);
+> > -
+> > -	iio_device_unregister(indio_dev);
+> > -	iio_triggered_buffer_cleanup(indio_dev);
+> > -	regulator_disable(info->vref);
+> > -	clk_disable_unprepare(info->clk);
+> >  }
+> >
+> >  static int vf610_adc_suspend(struct device *dev)
+> > @@ -972,7 +946,6 @@ static DEFINE_SIMPLE_DEV_PM_OPS(vf610_adc_pm_ops, vf610_adc_suspend,
+> >
+> >  static struct platform_driver vf610_adc_driver = {
+> >  	.probe          = vf610_adc_probe,
+> > -	.remove         = vf610_adc_remove,
+> >  	.driver         = {
+> >  		.name   = DRIVER_NAME,
+> >  		.of_match_table = vf610_adc_match,
+>
 
