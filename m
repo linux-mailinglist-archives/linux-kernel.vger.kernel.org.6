@@ -1,189 +1,113 @@
-Return-Path: <linux-kernel+bounces-421189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFBE49D8960
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:30:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78CE89D8983
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:39:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF9A3B6348F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:21:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42681B63308
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D618A1B3927;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14BA71B21B2;
 	Mon, 25 Nov 2024 14:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="H+cevGem"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AVNaiX5U"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E1C1AC43A;
-	Mon, 25 Nov 2024 14:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD70F1B2186
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732544304; cv=none; b=b2fh06PblXEdtAOoOQTwReL6TLldOd2Kl2JPT8jXbiiCBSd3tnI4GRFGYobi+lTksVvQ1FoAiw6OOZNaM3CxgZPc0z5CYleDrsypgIOD7hcghoH0TO6TtDvYKnv3w2CsemXHUopQQAHhHjTUXDIch1VHWCJn7UzRLYdKgaFoUXA=
+	t=1732544303; cv=none; b=dFgaLktajeVTqyizCW1rPlhwcahBlb0gMtZP+GV6uRcbDsthS02+CoL3gSXyYPhPMu90BzfkBsuBI8ciBmZxM/znmy2gYDoEVuext2YSZ3TJ6squoVzAHnwFibv6gKxaCPNB2qaOVAAlWFy9HoFbkl6gB+VGpoMITPkwP/Pmpg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732544304; c=relaxed/simple;
-	bh=ctKaHozUO/AF5HxRZu2PDlbW3TqhY8CFwoyHMb0IeSs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FIInlr2S4b5pzvDtbmXDJKxXmjcZ8uAWAdDMc2d0bagWIADEJ3TXChc+XID+WlX1yzg9zkMEjDNCjeQEvnhQLEZNeWE9AriDtFGGzmIK1fvhWW1XwtMuv1VKt9QU8k5lrYdDowBvp0RXMU9d35xTIgzE099SKXGRqjPEyvRcBjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=H+cevGem; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=0CpnDX6Kj6QjGvsPvwmG1odLi3Od9wlHP45GP/9BOjM=; b=H+cevGemSW77UIbdNcAojB8NTj
-	bJmKFTIXMFvPs+AD71OPUoxZhfyGCPTLEBL/Vd7YajXQ4BzTsQCrhgBz9y/HgIiYBIqGRraKJ5Lg9
-	jvB/E8rmxyuWpgoADigpPrtm4FqpgTEh+9+EEqKHB+haPmw4QS2pvFYYEAJGDeE7dYGc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tFZuf-00EOi2-0z; Mon, 25 Nov 2024 15:18:05 +0100
-Date: Mon, 25 Nov 2024 15:18:05 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Frank Sae <Frank.Sae@motor-comm.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, xiaogang.fan@motor-comm.com,
-	fei.zhang@motor-comm.com, hua.sun@motor-comm.com
-Subject: Re: [PATCH net-next v2 05/21] motorcomm:yt6801: Implement the
- fxgmac_start function
-Message-ID: <82e1860b-cbbf-4c82-9f1b-bf4a283e3585@lunn.ch>
-References: <20241120105625.22508-1-Frank.Sae@motor-comm.com>
- <20241120105625.22508-6-Frank.Sae@motor-comm.com>
- <95675880-1b93-4916-beee-e5feb6531009@lunn.ch>
- <ba24293a-77b1-4106-84d2-81ff343fc90f@motor-comm.com>
+	s=arc-20240116; t=1732544303; c=relaxed/simple;
+	bh=8gTbO0LZfixjkq6uUtLon7DMBOv2a37UPXCjBZJ2iZ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cIXOM7hC2j4XNITMoBVfaWfpgq3NqCwIDX0IGgFouqyQPGb9GwBJsk4QEGLPvh6+43I0O3cRjMdN82D1AKXU5PgTe+6Db2zOpiMo4iqFJXjKcUNO2scU+rRn6+Fl1E/lH1GWfgCSLoQ/hIlJ43ik3MOb7gFWFZ6jIUc6dOZFpS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AVNaiX5U; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4349fd77b33so7871555e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 06:18:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732544300; x=1733149100; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4UZHmb0OeUd+8GPshNVOwzcpmIxly7Jn8Ce9CCCQHOg=;
+        b=AVNaiX5UtMhyLsFr8D8SfQOlwaLmWvccxYpy2xAP2//Ahs267pSpeEbLlWDqrmpAgP
+         5cdsgTZSxVkwPAKrheDdv0DLWLS+m1EWXPDPsV9yA2rQ8di3wepVhn3hxjsAe5r0OwPc
+         Z4aw09Le5MRRNyqUW3MOiI9kuSuIkf8yOZSQEj9RqEiU2O/d6B2H3Cb8r1qFqd8tbeZ5
+         V/s1LH7VNK1nrVBbm0voae0WxglKf1fYVT3C7GSvyulbcEQMxUD6fhhOnCea+Mi/UZfn
+         +66Wb43ii2tTiSd8b8V2itoWbeYtB2JDJutXXUlTs7hnNZjal/g2t6ZPUULYUobIz5bh
+         41Ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732544300; x=1733149100;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4UZHmb0OeUd+8GPshNVOwzcpmIxly7Jn8Ce9CCCQHOg=;
+        b=BzoEySSxtajpR3Rf82vwalCBQ5u+S7TTbtOuZsn58BVkNLILLOEZaSl3nENvMXGP5S
+         jTrot9cLcSPAsb0Q8wQV2OMzLedDMxFjH9Xv7oKI8tPjLWDOWxnGojFgqfVu3X1umo+r
+         d1QkLNZONS0AaLTEAkqAx8tHe7SZ1LyvrNTtAbi0+imM8MWFBy1mxZX2yfcbUK7L2UXx
+         O1FPuJdmbdA+qZVPGOVoQ/XTHGUlPiS7ZOCR3QsI6YgPTRq51jx8SNUDuVH17sc6y1Rd
+         vLTOM4UYs5qWt6VfQi41amDqP7NXW6nBgbBWIA1j0IH1l1XQwoZs+r2vM2iclKQekQMV
+         LsWw==
+X-Forwarded-Encrypted: i=1; AJvYcCV42Mr04dz/9eEX3Fp2DeVx0ZjcDT/lQEg+RV69+lIoaQROsdObF4XmhY6wXOxV2jscIKs3BsOXDFlMIdI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzghb7fslVwo5NL/p4nyqzHKxSJzIkczu55uhHqwuUh/s/d9qd+
+	nwoEQRqXU1XjAY/TQX9ApCJZmGuLxcJVF2t+GSQqhOmHav7IC9XUhwPWlusqF3o=
+X-Gm-Gg: ASbGnctknsHn+zi7nstJJn3juITWW6qk5miT6Qmq6fMWyDbflNcXRW4tj/Wig/0Pdny
+	59Cwt+XQ7S3LVs+SUunaAPcRub0sozbKoplFgwq0aiy5ON8IQEI/1ogIRAhIF7hHfWH4wDf0y0E
+	QrIBbexAwsXs74AsL2M8HUsMPBcoQdqjzfVqSfNdawxccKFMqcF0B7PHmWk08cGAbZFjph6g6xR
+	Qmr7gxTXOwlIOntoA47IuuLaZWsQ6idtHFKKRVsWNrTV0zU+VKEPBymiq2hnbA=
+X-Google-Smtp-Source: AGHT+IHqIIihdF3fumt0wugdqbgPyd4zHYslJ9WQYwGzPsEPSKNIXwv+JbkUTAaRMXwekVdAEkvLDQ==
+X-Received: by 2002:a05:600c:548d:b0:433:c463:62dd with SMTP id 5b1f17b1804b1-433ce4e73camr111806745e9.27.1732544300035;
+        Mon, 25 Nov 2024 06:18:20 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4349fba472asm36556345e9.17.2024.11.25.06.18.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 06:18:19 -0800 (PST)
+Message-ID: <0234971e-9029-4371-a0aa-7da835591351@linaro.org>
+Date: Mon, 25 Nov 2024 14:18:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ba24293a-77b1-4106-84d2-81ff343fc90f@motor-comm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/5] media: dt-bindings: Add qcom,sc7280-camss
+To: Rob Herring <robh@kernel.org>, Vikram Sharma <quic_vikramsa@quicinc.com>
+Cc: rfoss@kernel.org, todor.too@gmail.com, mchehab@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, akapatra@quicinc.com,
+ hariramp@quicinc.com, andersson@kernel.org, konradybcio@kernel.org,
+ hverkuil-cisco@xs4all.nl, cros-qcom-dts-watchers@chromium.org,
+ catalin.marinas@arm.com, will@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20241112173032.2740119-1-quic_vikramsa@quicinc.com>
+ <20241112173032.2740119-2-quic_vikramsa@quicinc.com>
+ <20241115165031.GA3344225-robh@kernel.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241115165031.GA3344225-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> > RGMII is unusual, you normally want RGMII_ID. Where are the 2ns delays
-> > added?
-> > 
-> 
-> Yes, you are right. PHY_INTERFACE_MODE_RGMII should be PHY_INTERFACE_MODE_RGMII_ID.
-> YT6801 NIC integrated with YT8531S phy, and the 2ns delays added in the phy driver.
-> https://elixir.bootlin.com/linux/v6.12/source/drivers/net/phy/motorcomm.c#L895
+On 15/11/2024 16:50, Rob Herring wrote:
+>> +  reg:
+>> +    maxItems: 15
+>> +
+>> +  reg-names:
+> reg and reg-names go after 'compatible'. See the documented ordering.
 
-But if you pass PHY_INTERFACE_MODE_RGMII to the PHY it is not adding
-the 2ns delay. So how does this work now?
+Rob, the documented ordering pertains to the dtsi and examples not to 
+the yaml right ?
 
-> >> +int fxgmac_start(struct fxgmac_pdata *pdata)
-> >> +{
-> >> +	struct fxgmac_hw_ops *hw_ops = &pdata->hw_ops;
-> >> +	u32 val;
-> >> +	int ret;
-> >> +
-> >> +	if (pdata->dev_state != FXGMAC_DEV_OPEN &&
-> >> +	    pdata->dev_state != FXGMAC_DEV_STOP &&
-> >> +	    pdata->dev_state != FXGMAC_DEV_RESUME) {
-> >> +		yt_dbg(pdata, " dev_state err:%x\n", pdata->dev_state);
-> >> +		return 0;
-> >> +	}
-> >> +
-> >> +	if (pdata->dev_state != FXGMAC_DEV_STOP) {
-> >> +		hw_ops->reset_phy(pdata);
-> >> +		hw_ops->release_phy(pdata);
-> >> +		yt_dbg(pdata, "reset phy.\n");
-> >> +	}
-> >> +
-> >> +	if (pdata->dev_state == FXGMAC_DEV_OPEN) {
-> >> +		ret = fxgmac_phy_connect(pdata);
-> >> +		if (ret < 0)
-> >> +			return ret;
-> >> +
-> >> +		yt_dbg(pdata, "fxgmac_phy_connect.\n");
-> >> +	}
-> >> +
-> >> +	phy_init_hw(pdata->phydev);
-> >> +	phy_resume(pdata->phydev);
-> > 
-> > The MAC should not be doing this.
-> 
-> Does this mean deleting 'phy_resume(pdata->phydev)'?
-
-There are only a few phylib API calls you should be using
-
-phy_connect() or one of its variants.
-phy_start()
-phy_stop()
-phy_disconnect()
-
-Those four are the core. Those should be all you need to minimum
-support.
-
-phy_support_asym_pause()
-phy_support_eee()
-phy_speed_up()
-phy_speed_down()
-
-and these are just nice to have to let phylib know about things the
-MAC supports, so phylib can manage the PHY to make them available to
-the MAC. This is the API between the MAC driver and phylib. phylib
-will then manage the PHY. Any time you want to use a phy_* function,
-look to see if other MAC drivers do. If they don't you should not
-either.
-
-> >> +	hw_ops->pcie_init(pdata);
-> >> +	if (test_bit(FXGMAC_POWER_STATE_DOWN, &pdata->powerstate)) {
-> >> +		yt_err(pdata,
-> >> +		       "fxgmac powerstate is %lu when config power up.\n",
-> >> +		       pdata->powerstate);
-> >> +	}
-> >> +
-> >> +	hw_ops->config_power_up(pdata);
-> >> +	hw_ops->dismiss_all_int(pdata);
-> >> +	ret = hw_ops->init(pdata);
-> >> +	if (ret < 0) {
-> >> +		yt_err(pdata, "fxgmac hw init error.\n");
-> >> +		return ret;
-> >> +	}
-> >> +
-> >> +	fxgmac_napi_enable(pdata);
-> >> +	ret = fxgmac_request_irqs(pdata);
-> >> +	if (ret < 0)
-> >> +		return ret;
-> >> +
-> >> +	/* Config interrupt to level signal */
-> >> +	val = rd32_mac(pdata, DMA_MR);
-> >> +	fxgmac_set_bits(&val, DMA_MR_INTM_POS, DMA_MR_INTM_LEN, 2);
-> >> +	fxgmac_set_bits(&val, DMA_MR_QUREAD_POS, DMA_MR_QUREAD_LEN, 1);
-> >> +	wr32_mac(pdata, val, DMA_MR);
-> >> +
-> >> +	hw_ops->enable_mgm_irq(pdata);
-> >> +	hw_ops->set_interrupt_moderation(pdata);
-> >> +
-> >> +	if (pdata->per_channel_irq) {
-> >> +		fxgmac_enable_msix_irqs(pdata);
-> >> +		ret = fxgmac_phy_irq_enable(pdata, true);
-> >> +		if (ret < 0)
-> >> +			goto dis_napi;
-> >> +	}
-> >> +
-> >> +	fxgmac_enable_rx_tx_ints(pdata);
-> >> +	phy_speed_up(pdata->phydev);
-> >> +	genphy_soft_reset(pdata->phydev);
-> > 
-> > More things the MAC driver should not be doing.
-> 
-> Does this mean deleting 'phy_speed_up(pdata->phydev);' and 'genphy_soft_reset(pdata->phydev);' ?
-
-Two things here:
-
-phy_speed_up()/phy_speed_down() is part of suspend/resume when using
-WoL. This code has nothing to do with that. So why is it here?
-
-There should not be any need to call genphy_soft_reset(). You should
-figure out why you need it, because it could be a PHY driver bug, or a
-MAC driver bug.
-
-	Andrew
+---
+bod
 
