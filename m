@@ -1,180 +1,222 @@
-Return-Path: <linux-kernel+bounces-421041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C8E79D85FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:09:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3EC59D8600
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:11:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 063371698C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:09:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A462228552A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102D31A9B43;
-	Mon, 25 Nov 2024 13:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1199F1AA789;
+	Mon, 25 Nov 2024 13:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EqcbqpLw"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UUcXxkII";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="J1DDOBWP"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF09567D
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732540149; cv=none; b=YGwfoklaBDUVBRQKuNiWTxKV9Ugz7Fz+zn/k4Lrk9ilM5C5d3S2tjvkuK53t3W3CWiB4rp2rbiWzYKat7/01wevuAC22vmUeHJpjvYW3zoRZ/EWTXJlYYrPSqgMJSO+95cZkBDfxBxwWJMoOvIyUF3rPMqX8FhHA4ZxnRK79Yus=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732540149; c=relaxed/simple;
-	bh=VlPn8ENRAtequbTvdk1TY+7P5PTASYER46wU/7kPzKU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iyGjUrOV6Cuf8QUSELQA2SdYhfHMsPeOhRwWsCFBn7/j3cb2Q3XZjGlOTQle11eyTalAhfU1Qj3fDLu8qmu75Gr0NB4KRT1YJqSSHCpjo20LdfdJMyDEqI1uw46RFVbVCBIkCXigEcab8HEC09f6er3Al/ctbHO2GLehv6sZg3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EqcbqpLw; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e3892396200so3693157276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 05:09:06 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31A3567D;
+	Mon, 25 Nov 2024 13:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732540273; cv=fail; b=mwCrlRyoUZqO0CcbECpo4kdGv/lyBJ4ktFaU1JMJ/6dnMNaB34Z6GPkatENTf1Ih1M8QOn9xPbzsnKZbFmfg/SO2tfjJPqWZ9St5rAUq2lOEZwnU3UtN8PVqbAgvWqPGHFeGqbHoEOjFwlt4s2Tog6hUFNrnExfxv+oUxYnk6bI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732540273; c=relaxed/simple;
+	bh=Ol6NGslWeERGFtvJAnKbaZailgJoB+L3/zYd52za2As=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=EPdcbUHdmsuOXA/CefKjpUL5xVN6aL9iFVuBWNL0o86cdKu+LvECFqdQrWizJxS9ISeU5jKk6BgGyRuEe6PhN59ySz38V3HTdLbrYh9YqTIAWYiheHfn3JMa9QmWjo8TlpXq+Dbb3yrdtSEnSIzv4YQC+6f42UO/QvLOIibZei0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=UUcXxkII; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=J1DDOBWP; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AP6flaX003734;
+	Mon, 25 Nov 2024 13:11:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=fVAJTo7zbea4PGaPf8
+	8kFLZxOW1MT2u/eAnqv6LhYEI=; b=UUcXxkIISw5QFtLVyL/t6V/pVHRa/QFvqB
+	bFdRl9c+cZk/v4gbGaoEV9PFFod69CXHlqrCYLmzuMx++qI24Wuxk+oECt5kizfC
+	Lo3ir8Srpi+EnfNh2Y7wSHmHaX5CpIR6orgm2lObmsNDOHievWQlKOwz205WoltE
+	PYAUSlDymM+1wNZ268EuvcS3EQobXDodNsz75Qw7k2aTJwo/7aawXx+b54RjsWbq
+	I2VIHIzZk/gqne5mS+95PiLeGRvfCw5S0lLfBBxzUMnCv1e0rQiQ07WpdO4f8GAc
+	2Esy2jLFpgznxLpNCEMIvg4FTwVaRDPp4i+9BAGQl/tJOhTUxCwg==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43384e3185-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 25 Nov 2024 13:11:02 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4APCF17Z002614;
+	Mon, 25 Nov 2024 13:11:02 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2048.outbound.protection.outlook.com [104.47.58.48])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4335g7qkva-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 25 Nov 2024 13:11:01 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ML334S1SlNS266uaIdHotHsOGwg32hoVyMyiRX5wVn9wwX5nkbh7RK5yklVgC/0tvR0bXAb0NRAmkqgL0z1SLz4V+u9sOpXhjAQd2y2vu8UrBH4N0mTsFOTvjsI9zKsHrINKZX39tDSenQAVtvgPUHJPaUNEoyYARpkpa7kn7nzifki84aAKl6c7AJmFdraVXMjFmtcUQNIvgQlvhibFVdUevhoCGbRDoHGNTvaqiAwsyYKlZRQtCqs8ptN8GjOJsYRCtzM+TStPjtpm8ShZMoBrpj7dISrzj5iMIcDaG4iLCKETe+6cQb9kB7Tp+9O5ZTQ9nZFDLFPufrhkBIj/xg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fVAJTo7zbea4PGaPf88kFLZxOW1MT2u/eAnqv6LhYEI=;
+ b=IjQF5htiGW4MbGr6UBRHlD80x7Hs2r7BYnhRYP2/Jhfl290Ag3aOro+QOTUGvyV8n7roNKJ677gj0kRxS0rq8yH82CAQ3HdMfn0HyAqoF+9X1cV4GkwCTRToXEX0OzS8t0EMqPfD0X2YKIBisC+KOSpJutDDMDxT+G94v88keo6GUD0LTdxebG0PwapNURbWc/3o/gzKo+6J9VEJwKbrvQYkpglDhHcPqgyxSjmdJQDHDnhcv689PAgp4/NmguTwTb/krtMjMLrRELWIu5xpiYY2kMEF3bMTOc4yeQMxP0U9UgSUC/AatFmnNriuVuaw6nm3YXkPN5sH6H0Ypwa2Tg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732540146; x=1733144946; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zwW5X2yVuOQxgzZYA2AkwTQIodjDxTG3chKlKalzE/A=;
-        b=EqcbqpLwoxKMdg9dCgMUc8if2wpoRREZwezWgSX424dpyTAuifXFOGCqFUpWkPYMMv
-         2SzCj2LVED/AKyCa2xAoN4XTgCdAUdTmN2LvS3H2GuOKFJ4dso4adwFlBCbPRuWXQFM1
-         R5/cToYuDcJwP0LwBwrGAQY6xcCZXuTlTsGl6xI3ObcxT8lO3tHZOepMBpCbr4DXeIzo
-         AgeTB28b3iHHd07u3X87VCsbD7WUosOxlxH8cTgjTpy89xxlq0GJkr3JcvX4B36DIaTx
-         /qobglp7mi7HQgm2uoRef+o87vQK+9SFREGC8CavF6HWhwz/fWOjf/+wTQ69LDKziLLw
-         /M0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732540146; x=1733144946;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zwW5X2yVuOQxgzZYA2AkwTQIodjDxTG3chKlKalzE/A=;
-        b=PPfN4S220GoMxMIYA3QFhmAuxMRdBTci/Uw0ZhPC0SWPZMHe5qYFrM1Wa24ZYNZzh6
-         eMTfvPtzEFmn/qLe8Wu2W/Mt3oiZKxPpJ25xPv2ClhKug58iHkyG5EvHmbSD8qdUg0HK
-         V1yQubGQV6E0W2Zs4vDfQztnFbr3gB0qRflIqzcp41Skh8kzCW31Q7siHa3XadwARRY5
-         ppqJ1FsOxhc1qPegK8S8aO2+3RyESI/4bZSAUBQLmxRJ6DYLLLN9dO0aT+UMbDTHwVnp
-         xMWdVU3APJ1hrjlssm0+ZCZdhqgBKESV33c4JJw7iVWewNF+Mw217GSvxy+lxTQPME3P
-         6iPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWAOa4BYToes9RxQ9ZQD82pq45v6K7JuswFZl8EG46FE9eFwO3/EhOGD7GTR34T4kasjt2pDcaiTo7f4VI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2aPyw3YaD4LKwLG9UelzaUyisdxs3/dKrI2QSjlpagyikVWHu
-	lEDpXz2COVKi+C8SuUFPCTiHQ4wKiRVOrG+MY+gQ4IhW8XZh7eG6zdHdJ+qh1W3lNeCsc01h7gl
-	mwXAVlwIk7s/OhQIwqZXsbAqgPhAxPm8azEIIOA==
-X-Gm-Gg: ASbGncvKhoCJswZ30ovUllUiZA7TY4V+qR+8lSG2nYDEsnio3d1orLyx3HcufAqyVJe
-	h8VUkhTwBBoyORjeYuCJ14ZJUQI41MoH0
-X-Google-Smtp-Source: AGHT+IEF6uaB71EPxvIZeVbVSPO+NaBbT0xZwtt8FC3so2FjgVG6CW+VGCBir21UFRKHNtvL6RUoiWhliSlp9tWY5cM=
-X-Received: by 2002:a05:6902:1106:b0:e2b:cf75:2840 with SMTP id
- 3f1490d57ef6-e38f8b0aad8mr10473196276.5.1732540144455; Mon, 25 Nov 2024
- 05:09:04 -0800 (PST)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fVAJTo7zbea4PGaPf88kFLZxOW1MT2u/eAnqv6LhYEI=;
+ b=J1DDOBWPRbCmUn7J+uJaizgnDEexTtYM7STO8Yp5iahMXlEYEEVqCdEJPdaSvLcMyRvtoD897KPlV38ZIlrNcjeSKHAPtQqIX6OSd9rwh08V+L9najLi+PKMp6ZkPim1Kr898J4FbZJKKdy/Fqkm+oClgETldV3biDDfoTdQmYU=
+Received: from DS7PR10MB5134.namprd10.prod.outlook.com (2603:10b6:5:3a1::23)
+ by CH3PR10MB7355.namprd10.prod.outlook.com (2603:10b6:610:131::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.21; Mon, 25 Nov
+ 2024 13:10:59 +0000
+Received: from DS7PR10MB5134.namprd10.prod.outlook.com
+ ([fe80::39b2:9b47:123b:fc63]) by DS7PR10MB5134.namprd10.prod.outlook.com
+ ([fe80::39b2:9b47:123b:fc63%5]) with mapi id 15.20.8182.019; Mon, 25 Nov 2024
+ 13:10:59 +0000
+Date: Mon, 25 Nov 2024 08:10:56 -0500
+From: Chuck Lever <chuck.lever@oracle.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 15/26] nfs/nfs4recover: avoid pointless cred reference
+ count bump
+Message-ID: <Z0R3YExU4TT1V4FH@tissot.1015granger.net>
+References: <20241124-work-cred-v1-0-f352241c3970@kernel.org>
+ <20241124-work-cred-v1-15-f352241c3970@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241124-work-cred-v1-15-f352241c3970@kernel.org>
+X-ClientProxiedBy: CH2PR07CA0043.namprd07.prod.outlook.com
+ (2603:10b6:610:5b::17) To DS7PR10MB5134.namprd10.prod.outlook.com
+ (2603:10b6:5:3a1::23)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241123071006.14294-1-andy-ld.lu@mediatek.com>
-In-Reply-To: <20241123071006.14294-1-andy-ld.lu@mediatek.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 25 Nov 2024 14:08:28 +0100
-Message-ID: <CAPDyKFpr9KZxx4_-jW8ovqcr4BCfDcm4teHEVOgZ69GrUddJ2g@mail.gmail.com>
-Subject: Re: [PATCH] mmc: mtk-sd: Add support for ignoring cmd response CRC
-To: Andy-ld Lu <andy-ld.lu@mediatek.com>
-Cc: angelogioacchino.delregno@collabora.com, matthias.bgg@gmail.com, 
-	wenbin.mei@mediatek.com, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR10MB5134:EE_|CH3PR10MB7355:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8d853f95-3551-4b42-afb1-08dd0d529aa4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?lCqWX8Wzv0cdsf9J6RTg5Jtenrtt4e5gDnGRHRYTfjjjlkhZ0AmGS1dKZusB?=
+ =?us-ascii?Q?GsXSmz1catfRmdb4zdz78GOuI2A3szn6Z7KYKd/gRKYsjS1j/ar9za8UYrNo?=
+ =?us-ascii?Q?y8IGoqtJA2HSQecdj6kGGZORI2vJwjnX0j/FIWWffBkkxGaK75x7jktJC+lA?=
+ =?us-ascii?Q?pfj9M++oZ1yoa/tfRVSxox//0B00SBt9K+fYLu4HYfOfKtOaZnIzg4n07mlY?=
+ =?us-ascii?Q?xFs+toPQgnODcvtuw2dljq3pXywU5Nb5fsLnJ6PLgWS2sam3AoxzV+9QZVvr?=
+ =?us-ascii?Q?Tkpx0wgVrst1blTSaHy00LuoOjG8VxGOlyVwdKOV+VL1bQV9pifZyNQAeB71?=
+ =?us-ascii?Q?312evYddT3jAj4IzjjxrLlHRtrnFlaxzafkjsN2JyzGzaSQOE+/5nwn2zahH?=
+ =?us-ascii?Q?ai42owMebhspkb7BIbtGHd96JvdM5oBPTef/xbjZSXXSKf/iiCdkwGFzltFB?=
+ =?us-ascii?Q?BYAZCx8tOtM8IEz4jE5hQwimmZQAGsb9hqURXKYxlovb6pV59Xn2kb1lzDIW?=
+ =?us-ascii?Q?leKfUVD60GSekBM6bI4CUYGjeynaP2sT/2PDocgu4k+YqWpR0HEeIcNFjmuh?=
+ =?us-ascii?Q?l2YDnMGmu9G6oseiV110IOfCe4RhIxDfFwXyFqtm5wydUXNQb+8JjjkVLUdn?=
+ =?us-ascii?Q?Cyg+u3J66/Lo8T9XZgKyefRqvjHuEV/9SljI7BdHbJjdhY5INaHTX9ZUDiqv?=
+ =?us-ascii?Q?jGBy6LlZbHC8U3JUMPHxcgrjh5t/SnMopAFaQxRoq8fWsbptZ0RvImqGrZGK?=
+ =?us-ascii?Q?2eA6FvQaRuXAqRCP2PQRVAqGvIj/NsNCicM7gjmoe8c5eyyqStIHsG7m7ms5?=
+ =?us-ascii?Q?MlwilZY3Xr6lKDWf5ygw2Lxq+24qHlcB+IvXy4sVa007bWeXSl6pB+sOGujN?=
+ =?us-ascii?Q?OXYwbMxTjl8adzKej3ANiC/PDeX58OJTkWsfBa+NFHFpv15U/GDf6wiFvhNv?=
+ =?us-ascii?Q?EJUyc6PwRa488IHHfD7jO92/SQHq4Zf11uDqqMy2sMmKxImmjt5l8ATBeqzn?=
+ =?us-ascii?Q?1oOd21k+emKodImHrSsYh4BGudezmEQxlE4h2nIO62GwT8rkSwzgfPujhds4?=
+ =?us-ascii?Q?fgs0op/SGnYz2peR+Q/voPh3kE5TpyNXbiJ5tjtWwJPT/MFlSNM3CmGmVMgU?=
+ =?us-ascii?Q?UKtZmQNz4gUrK7N7TpCLGE+h3njH1lN4Eau7bVyj6HgS8BzdavbTCcVUq3UQ?=
+ =?us-ascii?Q?bxZ5zLKNOkQFverIPHBRjNMLJg5GfuEaUoKB0BtZWyWCkbFX1yAcArSX5gez?=
+ =?us-ascii?Q?NWeF3i8jONDRvZ6m1VLwK5oiYAlRK07kMoIOGb7TIyFxcAHK67mHl0TzydCH?=
+ =?us-ascii?Q?yc4fZMQ9FzVG5xkcAmgFc/1pnNuThm9W5uymeEuB4DKArA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR10MB5134.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?5qzOwZfhVSKBx4LDjyGAtMBLHns3tZ7ICROq386tQuYv1AONsZWGzh0/ICJO?=
+ =?us-ascii?Q?YoFJMJnpYVLHi10pZ4PCoo/i73udiSOfIDBP9r+6eqzdlt4muCMtC6WjYI3l?=
+ =?us-ascii?Q?uNR0jSqwI8t9FDM0jWkw/gO5Xj2JqRW7gF6QOtWR9jde0UWCvhHZwA+H5xm7?=
+ =?us-ascii?Q?w8Q6mioVaPF22MxoXVzHtguIV/fvYbhAnmwchZqKPsxbHv3STnL/3MaEPSLb?=
+ =?us-ascii?Q?vIvM0cQLz9oZ5wmDjO1Ge0SK4YfZIzmPlvVMNndIziUyOj2KbOBy6N5rpTzs?=
+ =?us-ascii?Q?JPga9a1wqp5K3Mur8vB+jQGpJ6omxLeFCMZUZTIytUBy2ahcvZKgK9dpztWb?=
+ =?us-ascii?Q?9UG+bbQXhaMkIalftfhbO5FrdRJIDh1JDOcOHGn+bN15ZywUZW4Of863cwEj?=
+ =?us-ascii?Q?1mMj5XUZ0MlZrlilFJd2UEGcsDfDzFTfXKEW8rRjUrfOHKBQikt6JkJZg5oQ?=
+ =?us-ascii?Q?wsK7VzKAB16Kq5cDeO+ceBXQ2XkjxqWtpAPqGzmd4n6zqmCC1yfUfuvkFf6s?=
+ =?us-ascii?Q?vymc4xryrw1Oi6gG7735xZcEOshd/lZi3SUhowpFFwb4S1v+b5zvIn7xaI7c?=
+ =?us-ascii?Q?+B5717nx8cexA3RTmO/dbJbWE9/uZSncyZ0FF/pM6VVxjuYM3a1HmNzzLtr/?=
+ =?us-ascii?Q?mn0oqJY/ziK71Be0W8qO3QMn09NoRHn6FHmTY+LuEQrvEqqbhrI4S51DBiGl?=
+ =?us-ascii?Q?wuTeQd8Yw+VJi6Q3zd9bRu0qesyotE85YS+Oo6PP2CMVxSg2a3/jNMyiu0yO?=
+ =?us-ascii?Q?1HlBxPHhqwKw5KrmBTV6Ki8bTqSWTmijyHSolfr2GwppkR5Zv2KZ5fr51DFh?=
+ =?us-ascii?Q?yj6y1PeeZyszqAXKmUQGqd9KjURua9ut3tEmCHTtyv5Aas7bgcxrPM/mmRca?=
+ =?us-ascii?Q?TodL95Ijr3VWzgNjUxfotB1N5u1aNaO7r1HHva6ZeLx3ti+rUWpBpkhtMfB6?=
+ =?us-ascii?Q?5b6CVwpFm7FS4d3R9Z0onBOHsJxWzHUfPHXeqbqCF4DD36vESzaxt9MJJxPM?=
+ =?us-ascii?Q?h0xRjMMnltBqkuFWS/RSnRWXQ0YfesdzkuoeUxyD0GaG+ABff7UU+5wqyBJU?=
+ =?us-ascii?Q?gDmUu16U37eRybct9mD7KmPRB1qRTAoRXdDolQdQE/rXQOUgDs2wZ5crZ1Wu?=
+ =?us-ascii?Q?C+gdsnsWH+HZ9hIWOaXWCfdtkj2hrJ2BtlNTEGCsYVdfwzwdQL0l9VJO1udP?=
+ =?us-ascii?Q?ZQIhGz5s/mB64/Ho2Wi5CAVsrMhSL4ZphpzvKeLUk+9URXhPdOWi9F25RZ96?=
+ =?us-ascii?Q?j9IBaTZx0X6JFKf3dX6lzNgMylgez7XF/0y8b57Qh0jYJ9ivCrnu+tzLRxCv?=
+ =?us-ascii?Q?dLavH19lfCpA6oAULVybGBLAvc7y59pocyFEDOqSaKX67c+eXpHLjOeehR1L?=
+ =?us-ascii?Q?KQtfXjIWDGP430GBonB/JSKmjme1D7Nh20rgTFcinRurkQ+4FSWDC8oaOCR7?=
+ =?us-ascii?Q?NTxeASfG8D5LWajQZctAIyOZPUlsK91H3bSc/6Pmp8Ub9+Fc3ymIQJf/2453?=
+ =?us-ascii?Q?dax5d1R6wja8XSSmnc88jnAx0JrAarEPEUcHbKVyApKyxECYq3hH358kbzBV?=
+ =?us-ascii?Q?8Ee83I6HMf17m9e2+pz6PT2dgTmUkNeGL7VC+26s?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	JpkJ/kETxoUCqduUeGqA43Ye1GbFAjGNw4xJMLy13/QupJbOUVdgcIiWhwUkoiGWqsH4dQ/lUReFkoNT1kbBpZSsc197gwMh7YyvamOIj7bXxKksfLiETwqRGlaHrqcSh/ZQywUVJh0xfr30bQNKoDLP2r34UvmOwbTtrfrqD2s6/gMA6Q5Ig8b09FZuvAze+aBEVDyrvHn9v1kYSVOt2Wqv2vL7VjL8rm4UbwgKolP2FYuqD5Dp5y77aIe/O3Ac0H05ytRp2oKztzja3C6Lzs10ZJu9LAnN2GBbEoXT63XIB+Ph6W24t2dYrjYLRD9WIZ9lve2IAVWswzKeOPIF/XLZpPBLjhoq9VqXLBXVx1XvwR54bEotImS+My56uHt7KhHu9xP6DdrzidP20JazWreBnXtTJAJ93ek7GASUJ0RSZqaG1GDJIvT0nrBcS9Cz9FYt0D2FIAXLFZOoEpnNQULJKXm/AC6THD+2wYeDUx6P6E8x7AbX2lkLdBlw0OMWaMHWeA+2p2w8TMc37vc1Bn+HEk13en/oJNqerYVeoBYujM+O7zEvdmbIqA31djHuDGByvThcH4gr/3WHv89w+MIktxJH5j8b3wMuiY+U23Q=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d853f95-3551-4b42-afb1-08dd0d529aa4
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR10MB5134.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2024 13:10:59.1500
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wB0deT6bGbL8bKuEpQypUTatLWJCIx1eSt64n4GOQD0QFqorZVfnXjKtRfTIRuEYwojsyfiMyYJkNFFGh63f3Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7355
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-25_08,2024-11-25_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=954
+ phishscore=0 adultscore=0 suspectscore=0 malwarescore=0 bulkscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2409260000 definitions=main-2411250112
+X-Proofpoint-GUID: -lzHTt9T8QuS6w_3aAU8Vqi1rai0e1FL
+X-Proofpoint-ORIG-GUID: -lzHTt9T8QuS6w_3aAU8Vqi1rai0e1FL
 
-On Sat, 23 Nov 2024 at 08:10, Andy-ld Lu <andy-ld.lu@mediatek.com> wrote:
->
-> The current process flow does not handle MMC requests that are indicated
-> to ignore the command response CRC. For instance, cmd12 and cmd48 from
-> mmc_cqe_recovery() are marked to ignore CRC, but they are not matched to
-> the appropriate response type in msdc_cmd_find_resp(). As a result, they
-> are defaulted to 'MMC_RSP_NONE', which means no response is expected.
->
-> This commit adds a new flag 'MMC_RSP_R1B_NO_CRC' to work alongside the
-> existing 'MMC_RSP_R1_NO_CRC' for the following process flow. It fixes the
-> response type setting in msdc_cmd_find_resp() and adds the logic to ignore
-> CRC in msdc_cmd_done().
-
-In fact, MMC_RSP_R1_NO_CRC is not being used by the MMC core. So, host
-drivers that check this flag shouldn't need to. In other words, we
-should remove that flag entirely.
-
-That said, introducing MMC_RSP_R1B_NO_CRC as the $subject patch
-suggests, makes sense to me. However, I prefer if we can make it used
-by the mmc core, so please change mmc_cqe_recovery() to use it too.
-
-Kind regards
-Uffe
-
->
-> Signed-off-by: Andy-ld Lu <andy-ld.lu@mediatek.com>
+On Sun, Nov 24, 2024 at 02:44:01PM +0100, Christian Brauner wrote:
+> No need for the extra reference count bump.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 > ---
->  drivers/mmc/host/mtk-sd.c | 11 +++++++++--
->  include/linux/mmc/core.h  |  1 +
->  2 files changed, 10 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-> index efb0d2d5716b..5d669f985a82 100644
-> --- a/drivers/mmc/host/mtk-sd.c
-> +++ b/drivers/mmc/host/mtk-sd.c
-> @@ -1097,11 +1097,13 @@ static inline u32 msdc_cmd_find_resp(struct msdc_host *host,
->         u32 resp;
->
->         switch (mmc_resp_type(cmd)) {
-> -               /* Actually, R1, R5, R6, R7 are the same */
-> +       /* Actually, R1, R5, R6, R7 are the same */
->         case MMC_RSP_R1:
-> +       case MMC_RSP_R1_NO_CRC:
->                 resp = 0x1;
->                 break;
->         case MMC_RSP_R1B:
-> +       case MMC_RSP_R1B_NO_CRC:
->                 resp = 0x7;
->                 break;
->         case MMC_RSP_R2:
-> @@ -1305,6 +1307,7 @@ static bool msdc_cmd_done(struct msdc_host *host, int events,
->  {
->         bool done = false;
->         bool sbc_error;
-> +       bool ignore_crc = false;
->         unsigned long flags;
->         u32 *rsp;
->
-> @@ -1329,6 +1332,10 @@ static bool msdc_cmd_done(struct msdc_host *host, int events,
->                 return true;
->         rsp = cmd->resp;
->
-> +       if (mmc_resp_type(cmd) == MMC_RSP_R1_NO_CRC ||
-> +           mmc_resp_type(cmd) == MMC_RSP_R1B_NO_CRC)
-> +               ignore_crc = true;
-> +
->         sdr_clr_bits(host->base + MSDC_INTEN, cmd_ints_mask);
->
->         if (cmd->flags & MMC_RSP_PRESENT) {
-> @@ -1351,7 +1358,7 @@ static bool msdc_cmd_done(struct msdc_host *host, int events,
->                          * CRC error.
->                          */
->                         msdc_reset_hw(host);
-> -               if (events & MSDC_INT_RSPCRCERR) {
-> +               if (events & MSDC_INT_RSPCRCERR && !ignore_crc) {
->                         cmd->error = -EILSEQ;
->                         host->error |= REQ_CMD_EIO;
->                 } else if (events & MSDC_INT_CMDTMO) {
-> diff --git a/include/linux/mmc/core.h b/include/linux/mmc/core.h
-> index 56972bd78462..076e1c71a07e 100644
-> --- a/include/linux/mmc/core.h
-> +++ b/include/linux/mmc/core.h
-> @@ -66,6 +66,7 @@ struct mmc_command {
->
->  /* Can be used by core to poll after switch to MMC HS mode */
->  #define MMC_RSP_R1_NO_CRC      (MMC_RSP_PRESENT|MMC_RSP_OPCODE)
-> +#define MMC_RSP_R1B_NO_CRC     (MMC_RSP_PRESENT|MMC_RSP_OPCODE|MMC_RSP_BUSY)
->
->  #define mmc_resp_type(cmd)     ((cmd)->flags & (MMC_RSP_PRESENT|MMC_RSP_136|MMC_RSP_CRC|MMC_RSP_BUSY|MMC_RSP_OPCODE))
->
-> --
-> 2.34.1
->
+>  fs/nfsd/nfs4recover.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
+> index 2834091cc988b1403aa2908f69e336f2fe4e0922..5b1d36b26f93450bb14d1d922feeeb6c35399fd5 100644
+> --- a/fs/nfsd/nfs4recover.c
+> +++ b/fs/nfsd/nfs4recover.c
+> @@ -81,8 +81,7 @@ nfs4_save_creds(const struct cred **original_creds)
+>  
+>  	new->fsuid = GLOBAL_ROOT_UID;
+>  	new->fsgid = GLOBAL_ROOT_GID;
+> -	*original_creds = override_creds(get_new_cred(new));
+> -	put_cred(new);
+> +	*original_creds = override_creds(new);
+>  	return 0;
+>  }
+>  
+> 
+> -- 
+> 2.45.2
+> 
+> 
+
+Acked-by: Chuck Lever <chuck.lever@oracle.com>
+
+-- 
+Chuck Lever
 
