@@ -1,171 +1,119 @@
-Return-Path: <linux-kernel+bounces-421281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4FD19D8901
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:18:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FFB4161EA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:18:44 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75281B393B;
-	Mon, 25 Nov 2024 15:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wmq8HQFi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC10C9D8961
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:30:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EF61714AC;
-	Mon, 25 Nov 2024 15:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4CDEB382C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:19:22 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B8E1B3934;
+	Mon, 25 Nov 2024 15:19:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0B9171CD;
+	Mon, 25 Nov 2024 15:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732547921; cv=none; b=p7ph1idGgccK8tP+PF//4bZBza8pBO1F4frKaGjhKofLBBBOFmWbU5h2/BWRyMps2TGCJ7C+Wp/qDE3/YxEym+11J1jVMybWrknhGxaBVeWdHGfvFJIe15o6hdxqCQ8VremLYglpyrLvR7eR9A4LU0TCNUcyQl3g0owzAsV9tSs=
+	t=1732547956; cv=none; b=qkMNlupixideU9AI+lbB+2bStr2nWkahizh1lrXuanuB9RtR9TScPV2/y3etFKrueEEDx8cOr9gkvYdhX1dLmjCj92ngdz6RGLBPjTgqXUKe2/EKfLDN7oX6Uox5mq+xXYVzvVL6aUlEKtOotlpZkbCWILSFlwM9hOgBPhSsreo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732547921; c=relaxed/simple;
-	bh=X7JqZLtQ3bni3tHdVbRaOXV/whaW1WmbALUZDh6XMDs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VLv1fZyN4aZFEWH+jNmIY4X9Y5phsmq4l06UkNYVSk+RMlMOE+CfWV9XUMw00nT6pYH6n6vtiQGIRI8qU+R1hmselOcO6O3O9i4QinJWy9RmtkG5rtEH2qsmDvxCl45Bynrm27681YNSUquAerYzrX6kKidZjl3qowvYW1ZEvzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wmq8HQFi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E0CBC4CECE;
-	Mon, 25 Nov 2024 15:18:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732547920;
-	bh=X7JqZLtQ3bni3tHdVbRaOXV/whaW1WmbALUZDh6XMDs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Wmq8HQFiA0/D93V4dKKrQ09dEzj9Zp6at/Fi2MjM2fnJ1U0GufpCc51xqiHcw5HIr
-	 oQA7rdvtXps+ZSDK9Kci25qBNaL6oCnuiCsahNMVx8+OK9x2w/1Ol/TIBiE4RGhDNx
-	 mKuBwNKaR6ikCA5wDzqwcjCLyc4/tMYyAEEAcYLEXJ5aQILuXtTMY48GzZN+CFLh/F
-	 W60E7SiJn8rl97p+204XrrbL9HtuaF2mKqjXPRoHCUoRdCEUZGZdE3x3iKgOnXR8SP
-	 AGacBQF1NiK1nNM4H5JEOV6jGTjreAwWfN99j9klwNNDM2B8ws6YPinog1Vdw6gx1i
-	 mdhjgp0+HaSIA==
-Message-ID: <61541768-1b32-4473-a569-850323a6c7a1@kernel.org>
-Date: Mon, 25 Nov 2024 16:18:34 +0100
+	s=arc-20240116; t=1732547956; c=relaxed/simple;
+	bh=xEpte8eBmmW0xPcX9oq49i5AgBNK902Y26wJxaJvDoE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kOgUR2fUZHp2QDKLzftsdRq7cXG5StxQDW7Hw5jdbB64J70V4if0xrok7+C2mpillWIzW9Jwx/lbnGquqLHO0s56y9NheYVk/NE/ztCJX3WUfjuuZMkTRGzl6Ht3MdvMZ+j1MBWHbmjv3Okv9SFK0TJpnNB+RCk2bnrw0od1ftc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF6511692;
+	Mon, 25 Nov 2024 07:19:43 -0800 (PST)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D9A1B3F66E;
+	Mon, 25 Nov 2024 07:19:11 -0800 (PST)
+Date: Mon, 25 Nov 2024 15:18:57 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Zorro Lang <zlang@redhat.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH for-next/fixes] arm64/mm: Fix false-positive
+ !virt_addr_valid() for kernel image
+Message-ID: <Z0SVYSew0gIgSdAe@J2N7QTR9R3>
+References: <90667b2b7f773308318261f96ebefd1a67133c4c.1732464395.git.lukas@wunner.de>
+ <CAMj1kXFvJGHr_iv6bFQfb89XqPFrNWH7-rV7SFy4QBSWXYC4RA@mail.gmail.com>
+ <CAMj1kXER7AbNyUDjtij6Ni0jVRMg11xvyhkCMKAxaKbx=dsgcQ@mail.gmail.com>
+ <Z0RJaU4wjU5WeQb4@wunner.de>
+ <Z0RWcgrQASMIleRn@J2N7QTR9R3>
+ <Z0SOZhtJohCNxX6_@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] dt-bindings: mfd: Add properties for thermal
- sensor cells
-To: Guenter Roeck <linux@roeck-us.net>, "Sung-Chi, Li" <lschyi@chromium.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Benson Leung <bleung@chromium.org>,
- Guenter Roeck <groeck@chromium.org>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
- <thomas@weissschuh.net>, Jean Delvare <jdelvare@suse.com>,
- devicetree@vger.kernel.org, chrome-platform@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
-References: <20241111074904.1059268-1-lschyi@chromium.org>
- <20241113024000.3327161-1-lschyi@chromium.org>
- <20241113024000.3327161-2-lschyi@chromium.org>
- <4efe981f-f7ae-41c7-9c12-2aa3a5d2d046@roeck-us.net>
- <eb1c249c-5f42-4878-8934-09d6ea5c43f2@kernel.org>
- <893bbd30-300f-4138-8f68-64573e1f0140@roeck-us.net>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <893bbd30-300f-4138-8f68-64573e1f0140@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z0SOZhtJohCNxX6_@wunner.de>
 
-On 25/11/2024 16:13, Guenter Roeck wrote:
-> On 11/25/24 00:52, Krzysztof Kozlowski wrote:
->> On 13/11/2024 04:05, Guenter Roeck wrote:
->>> On 11/12/24 18:39, Sung-Chi, Li wrote:
->>>> The cros_ec supports reading thermal values from thermal sensors
->>>> connect to it. Add the property '#thermal-sensor-cells' bindings, such
->>>> that thermal framework can recognize cros_ec as a valid thermal device.
->>>>
->>>> Signed-off-by: Sung-Chi, Li <lschyi@chromium.org>
->>>> Acked-by: Conor Dooley <conor.dooley@microchip.com>
->>>> ---
->>>>    Changes in v2:
->>>>      - Add changes for DTS binding.
->>>>    Changes in v3:
->>>>      - Remove unneeded Change-Id tag in commit message.
->>>> ---
->>>
->>> I can't apply this one (not in hwmon space), so
->>>
->>> Acked-by: Guenter Roeck <linux@roeck-us.net>
->>>
->>> with the assumption that Lee will pick it up.
->>
->> This was merged, while I was AFK, so the ship has sailed, but let me
->> state here objection for any future discussions:
->>
->> NAK, this is not a thermal sensor. The commit msg explains what they
->> want to achieve, but that's not a valid reason to add property from
->> different class of devices.
->>
->> This is some hardware/temperature monitoring device or power supply, not
->> part of SoC, not integrated into any SoC thermal zone. Calling it
+On Mon, Nov 25, 2024 at 03:49:10PM +0100, Lukas Wunner wrote:
+> On Mon, Nov 25, 2024 at 10:50:48AM +0000, Mark Rutland wrote:
+> > On Mon, Nov 25, 2024 at 10:54:49AM +0100, Lukas Wunner wrote:
+> > > Other arches do not seem to be concerned about this and
+> > > let virt_addr_valid() return true for the kernel image.
+> > > It's not clear why arm64 is special and needs to return false.
+> > > 
+> > > However, I agree there's hardly ever a reason to DMA from/to the
+> > > .text section.  From a security perspective, constraining this to
+> > > .rodata seems reasonable to me and I'll be happy to amend the patch
+> > > to that effect if that's the consensus.
+> > 
+> > Instead, can we update the test to use lm_alias() on the symbols in
+> > question? That'll convert a kernel image address to its linear map
+> > alias, and then that'll work with virt_addr_valid(), virt_to_phys(),
+> > etc.
 > 
-> I am confused. We have several thermal sensors registering as thermal
-> zone, and fan controllers registering themselves as thermal cooling devices.
+> Do you mean that sg_set_buf() should pass the address to lm_alias()
+> if it points into the kernel image?
+
+No; I meant that the test could use lm_alias() on the test vectors
+before passing those to sg_set_buf(), when the test code knows by
+construction that those vectors happen to be part of the kernel image.
+That'll work on all architectures.
+
+That said, looking at the code it appears that testmgr.c can be built as
+a module, so the test vectors could be module/vmalloc addresses rather
+than virt/linear or image addresses. Given that, I don't think the
+changes suggested here are sufficient, as module addresses should still
+be rejected.
+
+Can we kmemdup() the test vector data first? That'd give us a legitimate
+virt/linear address that we can use.
+
+> That would require a helper to determine whether it's a kernel image
+> address or not.  It seems we do not have such a cross-architecture
+> helper (but maybe I'm missing something).  (I am adding an arm64-specific
+> one in the proposed patch.)
 > 
-> Are you saying that this is all not permitted because they are not part
-> of a SoC ?
+> So this doesn't look like a viable approach.
+> 
+> Also, I'd expect pushback against an sg_set_buf() change which is
+> only necessary to accommodate arm64.  I'd expect the obvious question
+> to be asked, which is why arm64's virt_addr_valid() can't behave like
+> any other architecture's.  And honestly I wouldn't know what to answer.
 
+I don't think arm64 is doing anything wrong here; an image address is
+*not* a virt/linear address, and we only fix that up in virt_to_*() as a
+best-effort thing. I think other architectures which accept that are
+signing themselves up for subtle bugs that we're trying to prevent
+early.
 
-These are fine, because they monitor or cool down the SoC.  Sensor can
-be under the die.  Fan for battery or for battery charger also would be
-fine, because it is a real cooling device.  It literally cools.
-
-But treating battery charger as cooling device is not correct, IMHO.
-Battery charger does not cool anything down and already we have there
-properties for managing thermal and current aspects.
-
-BTW, if power supply bindings miss some thermal aspects, then let's grow
-the common binding first and agree on common aspects.
-
-
-Best regards,
-Krzysztof
+Mark.
 
