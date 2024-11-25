@@ -1,305 +1,135 @@
-Return-Path: <linux-kernel+bounces-421541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19B809D8CAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 20:12:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 036DA9D8CB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 20:14:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF6A8287851
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:12:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C66A1678B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD08F1C07D1;
-	Mon, 25 Nov 2024 19:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84111C1F29;
+	Mon, 25 Nov 2024 19:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJlrXSAE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="IF/Jhwkd"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B7A1BD9EA;
-	Mon, 25 Nov 2024 19:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732561893; cv=none; b=T2Gt7T5X2vWesUq2Ji0CM0kafc5qg9WGkxX48P+jx7G/N9/bPujwoz1ERu0DzS/+YBG9sD8ypqm6d4VckAKDyS7Tb6LZIynVoa4Jj7CGBJu8o9hMz/+YINZrxhB+SENzjIi+ffbViMPwLRHTYuKgAsfTCe7J1VhA2efG/zqYbYQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732561893; c=relaxed/simple;
-	bh=e4Ose0uMUjMmkh4AKPWrHnUqyE8LOsb5mURXMCmGfes=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=U0dmmz6RzPb8mCz/d1g4k48FICXTWGsj+f2w/eaZHz+gjZj6dhwTFhnAm3mR+5Q/xXgymzAvJIM9O/p5/mo78gvxzepmin049wjGuiebolydgXNKjyKtr9ofM0x09Dh/GG0kiH4Sr22zRpkrjpesOH5rB4V5ksG/s3SRwMUTSdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJlrXSAE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3C738C4CED8;
-	Mon, 25 Nov 2024 19:11:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732561892;
-	bh=e4Ose0uMUjMmkh4AKPWrHnUqyE8LOsb5mURXMCmGfes=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=FJlrXSAEgDyyEzXnDxAbLM3d2S8WE8PPWp4SGOvHoE3SRSse125f3fVUeRDh4unnV
-	 iCcBAcGclYXZShbf2Q98iPFVphY5ICP/SZ7zo76kn7tzZGuYNcJ8iyrE5eA/IjmihC
-	 MhmLeDF5kKFVEVh0wh6kinz0WqNd5yuKg3sJhUWqrjG+JWlpmM9/7TKQQSWCQvWiVB
-	 Y00ONNd2NpY9if9ARbFWlouFan/yh97FyJCiuyX468zl7pigB8f0oEBalg+aO14NkA
-	 8fZqpUsQrNxXI4MI2ioAI8FuBnHkzjakcUTaBvSJWgBZDJBBSaLXWQAVzWV6yK9qZi
-	 ZEvz24oovJqmw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31477D59D62;
-	Mon, 25 Nov 2024 19:11:31 +0000 (UTC)
-From: Maud Spierings via B4 Relay <devnull+maud_spierings.hotmail.com@kernel.org>
-Date: Mon, 25 Nov 2024 20:11:19 +0100
-Subject: [PATCH v4 3/3] arm64: dts: qcom: x1e80100-vivobook-s15: Add
- bluetooth
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D30D1B87CE;
+	Mon, 25 Nov 2024 19:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732561990; cv=pass; b=mAQ/VEyZRldXzgURIQLh6Zqg28SIuWOf8CJ53gFRu7E6dBAaITBD+2WQivE/t7w4IKp8cOQeWFlZm8xoCArdV7LFIYSpX0XwKWGvCbw4Lix9GaXl+a4859FamFWMayZbMMzYqDGI1X5cOxEv3d9ILrlGjjKeIzLyVku49HtERjQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732561990; c=relaxed/simple;
+	bh=5eVs72eXyRS9l42wO+n07JdTbk/+v9s9nJxBkMS5Mu4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NVQqIt3xI16QYD4OgzkPwouOd3XJVKmhwz2G2VUEyMLVC1AvSN/hPMmcLe9K6/8mYxQTn44qieLWvfYl538LI+YRQTZ/1CRZdKVrRgN2IgRK+iZsgZwtbzeFwRXH8ZUx/hINw24ZUvm2m2Qng/2gklK44RsdBtTPHm4XXNG6cw0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=IF/Jhwkd; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1732561891; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=AQ+fK8pZBszsVDlx+Z/SHz8j4YYA07x0lFPi3/F8soKU7jQx0AcUWZFkrJuLnOfETzFH8xDYXsU23BCxNsBXnvukMDO0i7CqNcSQn9f0Tm2Vhni+8xlsxaJhzqA0soMGsDGokQtTgKGGdck2d0mQakbjhlOECX2GvZcTvx0fpTQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1732561891; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=VI6iB72IM9pOeXA3Ahtpe9ntVlB4bLMrZkLxC+m0GCo=; 
+	b=ZqaReYXI3yMlq/kG/24NrDsk5UiAPogcX+U98S2vKtl3OmnyR/BmgSULaNR6oyxZSBcI31uDQMuecdYdM+ZqjhIFMO32zzCnpGaM9jG0dGlAW7I6OHFChVA11PJHYvXtJytmDTarzfAPM5oEHknoSdhWhOS1UpirhhPiUcm9sI8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
+	dmarc=pass header.from=<detlev.casanova@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732561891;
+	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=VI6iB72IM9pOeXA3Ahtpe9ntVlB4bLMrZkLxC+m0GCo=;
+	b=IF/JhwkdPjvuzgIS8SskNCIgBqz8pLJ9CLo/iWplRZZCy7mPF4ZRPjEZWXnzrU6n
+	3OPBSf9YeaXaGYcMZ3NkawBA6zCPkrU45xhqfTaMmAMUjoOcgiYIbXkuZj9Yw1TYEXy
+	gLSWpVVddBG9VuFDgc8aMbKNRMWDM+1+ol7ybMFk=
+Received: by mx.zohomail.com with SMTPS id 1732561888245996.3404772030888;
+	Mon, 25 Nov 2024 11:11:28 -0800 (PST)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: Andy Yan <andyshrk@163.com>
+Cc: linux-kernel@vger.kernel.org, Sandy Huang <hjc@rock-chips.com>,
+ Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>,
+ Andy Yan <andy.yan@rock-chips.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Heiko Stuebner <heiko.stuebner@cherry.de>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Dragan Simic <dsimic@manjaro.org>, Alexey Charkov <alchark@gmail.com>,
+ Jianfeng Liu <liujianfeng1994@gmail.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ kernel@collabora.com, Algea Cao <algea.cao@rock-chips.com>
+Subject: Re: [PATCH v4 0/3] drm: rockchip: vop2: Add VP clock resets support
+Date: Mon, 25 Nov 2024 14:11:26 -0500
+Message-ID: <12567182.O9o76ZdvQC@bootstrap>
+In-Reply-To: <3e8f91fa.8700.1936251b29e.Coremail.andyshrk@163.com>
+References:
+ <20241115162120.83990-1-detlev.casanova@collabora.com>
+ <3e8f91fa.8700.1936251b29e.Coremail.andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241125-asus_qcom_display-v4-3-61a4da162406@hotmail.com>
-References: <20241125-asus_qcom_display-v4-0-61a4da162406@hotmail.com>
-In-Reply-To: <20241125-asus_qcom_display-v4-0-61a4da162406@hotmail.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Douglas Anderson <dianders@chromium.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Maud Spierings <maud_spierings@hotmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732561888; l=5286;
- i=maud_spierings@hotmail.com; s=20241110; h=from:subject:message-id;
- bh=wdOa0N8KHPMX5NFa1s7lkSPCqpVrGjP75/YMLeUp4+4=;
- b=SYaMZMJ9vsKg6quNg8DKPIDfG2FpZhCve9sGVjnq+2CeAFpWYkutC5D/pGFfFxJZQQi9NhdwS
- KFCoh1l8XdnBoc0A/g9QQPADW3c4Ue7VfG258wcIFyLayriVu/XQFxE
-X-Developer-Key: i=maud_spierings@hotmail.com; a=ed25519;
- pk=CeFKVnZvRfX2QjB1DpdiAe2N+MEjwLEB9Yhx/OAcxRc=
-X-Endpoint-Received: by B4 Relay for maud_spierings@hotmail.com/20241110
- with auth_id=273
-X-Original-From: Maud Spierings <maud_spierings@hotmail.com>
-Reply-To: maud_spierings@hotmail.com
+X-ZohoMailClient: External
 
-From: Maud Spierings <maud_spierings@hotmail.com>
+Hi Andy,
 
-Add bluetooth for the asus vivobook s15
-Describe wlan configuration
+Yes, the issue can be reproduced with the details in patch 2/3 [1].
 
-Signed-off-by: Maud Spierings <maud_spierings@hotmail.com>
----
- .../boot/dts/qcom/x1e80100-asus-vivobook-s15.dts   | 164 +++++++++++++++++++++
- 1 file changed, 164 insertions(+)
+[1]: https://lore.kernel.org/linux-arm-kernel/20241115162120.83990-3-detlev.casanova@collabora.com/T/#m82b38f4a83c4793bb82919bf736b2f6bd804a283
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-index 7269f8e7709988657b363004875163a69142f16c..53e5b28f000db42693294f4111cbdc44c3914963 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-@@ -18,6 +18,11 @@ / {
- 	compatible = "asus,vivobook-s15", "qcom,x1e80100";
- 	chassis-type = "laptop";
- 
-+	aliases {
-+		serial0 = &uart21;
-+		serial1 = &uart14;
-+	};
-+
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 		pinctrl-0 = <&hall_int_n_default>;
-@@ -152,6 +157,102 @@ vph_pwr: regulator-vph-pwr {
- 		regulator-always-on;
- 		regulator-boot-on;
- 	};
-+
-+	vreg_wcn_0p95: regulator-wcn-0p95 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_WCN_0P95";
-+		regulator-min-microvolt = <950000>;
-+		regulator-max-microvolt = <950000>;
-+
-+		vin-supply = <&vreg_wcn_3p3>;
-+	};
-+
-+	vreg_wcn_1p9: regulator-wcn-1p9 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_WCN_1P9";
-+		regulator-min-microvolt = <1900000>;
-+		regulator-max-microvolt = <1900000>;
-+
-+		vin-supply = <&vreg_wcn_3p3>;
-+	};
-+
-+	vreg_wcn_3p3: regulator-wcn-3p3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_WCN_3P3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&tlmm 214 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&wcn_sw_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	wcn7850-pmu {
-+		compatible = "qcom,wcn7850-pmu";
-+
-+		vdd-supply = <&vreg_wcn_0p95>;
-+		vddio-supply = <&vreg_l15b_1p8>;
-+		vddaon-supply = <&vreg_wcn_0p95>;
-+		vdddig-supply = <&vreg_wcn_0p95>;
-+		vddrfa1p2-supply = <&vreg_wcn_1p9>;
-+		vddrfa1p8-supply = <&vreg_wcn_1p9>;
-+
-+		wlan-enable-gpios = <&tlmm 117 GPIO_ACTIVE_HIGH>;
-+		bt-enable-gpios = <&tlmm 116 GPIO_ACTIVE_HIGH>;
-+
-+		pinctrl-0 = <&wcn_wlan_en>;
-+		pinctrl-1 = <&wcn_bt_en>;
-+		pinctrl-names = "default";
-+
-+		regulators {
-+			vreg_pmu_rfa_cmn: ldo0 {
-+				regulator-name = "vreg_pmu_rfa_cmn";
-+			};
-+
-+			vreg_pmu_aon_0p59: ldo1 {
-+				regulator-name = "vreg_pmu_aon_0p59";
-+			};
-+
-+			vreg_pmu_wlcx_0p8: ldo2 {
-+				regulator-name = "vreg_pmu_wlcx_0p8";
-+			};
-+
-+			vreg_pmu_wlmx_0p85: ldo3 {
-+				regulator-name = "vreg_pmu_wlmx_0p85";
-+			};
-+
-+			vreg_pmu_btcmx_0p85: ldo4 {
-+				regulator-name = "vreg_pmu_btcmx_0p85";
-+			};
-+
-+			vreg_pmu_rfa_0p8: ldo5 {
-+				regulator-name = "vreg_pmu_rfa_0p8";
-+			};
-+
-+			vreg_pmu_rfa_1p2: ldo6 {
-+				regulator-name = "vreg_pmu_rfa_1p2";
-+			};
-+
-+			vreg_pmu_rfa_1p8: ldo7 {
-+				regulator-name = "vreg_pmu_rfa_1p8";
-+			};
-+
-+			vreg_pmu_pcie_0p9: ldo8 {
-+				regulator-name = "vreg_pmu_pcie_0p9";
-+			};
-+
-+			vreg_pmu_pcie_1p8: ldo9 {
-+				regulator-name = "vreg_pmu_pcie_1p8";
-+			};
-+		};
-+	};
- };
- 
- &apps_rsc {
-@@ -197,6 +298,13 @@ vreg_l14b_3p0: ldo14 {
- 			regulator-max-microvolt = <3072000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
-+
-+		vreg_l15b_1p8: ldo15 {
-+			regulator-name = "vreg_l15b_1p8";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
- 	};
- 
- 	regulators-1 {
-@@ -475,6 +583,23 @@ &pcie4_phy {
- 	status = "okay";
- };
- 
-+&pcie4_port0 {
-+	wifi@0 {
-+		compatible = "pci17cb,1107";
-+		reg = <0x10000 0x0 0x0 0x0 0x0>;
-+
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
-+		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
-+		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
-+	};
-+};
-+
- &pcie6a {
- 	perst-gpios = <&tlmm 152 GPIO_ACTIVE_LOW>;
- 	wake-gpios = <&tlmm 154 GPIO_ACTIVE_LOW>;
-@@ -624,6 +749,45 @@ tpad_default: tpad-default-state {
- 		function = "gpio";
- 		bias-disable;
- 	};
-+
-+	wcn_bt_en: bt-en-state {
-+		pins = "gpio116";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		output-low;
-+		bias-pull-down;
-+	};
-+
-+	wcn_sw_en: wcn-sw-en-state {
-+		pins = "gpio214";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+	};
-+
-+	wcn_wlan_en: wlan-en-state {
-+		pins = "gpio117";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+	};
-+};
-+
-+&uart14 {
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "qcom,wcn7850-bt";
-+		max-speed = <3200000>;
-+
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
-+	};
- };
- 
- &usb_1_ss0_hsphy {
+Detlev.
 
--- 
-2.47.1
+On Monday, 25 November 2024 02:55:41 EST Andy Yan wrote:
+> Hello Detlev,
+> 
+> At 2024-11-16 00:20:39, "Detlev Casanova" <detlev.casanova@collabora.com> 
+wrote:
+> >The clock reset must be used when the VOP is configured. Skipping it can
+> >put the VOP in an unknown state where the HDMI signal is either lost or
+> >not matching the selected mode.
+> 
+> Can you provide some detail about how to reproduce this issue ?
+> If we can reproduce this issue, we might be able to do a more deep analysis.
+> >This adds support for rk3588(s) based SoCs.
+> >
+> >Changes since v3:
+> >- Rebased on drm-misc-next
+> >- Reword first patch subject
+> >- Reorder commits for different trees
+> >
+> >Changes since v2:
+> >- Rebase on latest master
+> >- Add details on how to reproduce the issue
+> >
+> >Changes since v1:
+> >- Add AXI and AHB clock resets
+> >- Set maxItems for !rk3588 in vop2 bindings
+> >
+> >Detlev Casanova (3):
+> >  dt-bindings: display: vop2: Add VP clock resets
+> >  drm/rockchip: vop2: Add clock resets support
+> >  arm64: dts: rockchip: Add VOP clock resets for rk3588s
+> > 
+> > .../display/rockchip/rockchip-vop2.yaml       | 40 +++++++++++++++++++
+> > arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 12 ++++++
+> > drivers/gpu/drm/rockchip/rockchip_drm_vop2.c  | 30 ++++++++++++++
+> > 3 files changed, 82 insertions(+)
+
+
 
 
 
