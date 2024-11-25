@@ -1,139 +1,124 @@
-Return-Path: <linux-kernel+bounces-420906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E7019D8591
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:43:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB4719D845D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:24:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B7E4163FF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:24:53 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3496F199935;
+	Mon, 25 Nov 2024 11:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VoYQSvnA"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77FDEB3AE9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:19:42 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E4C1991D9;
-	Mon, 25 Nov 2024 11:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zrGMFYhN"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4B21990CE
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F59198A32;
+	Mon, 25 Nov 2024 11:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732533574; cv=none; b=Y94NnynN802CyrDS6pXmSt851xvv4+z7QkYYD1V21UI47dOc5jIQNRGh6YzSknIXhftiGZXsgOB1/jg2kNIGjtz/XzdbVVGENaXYXA7T0/2Fynogv/K0fEBPl1iFU4c/XOwI7SHwM8W8tze3vryAIsImdRNCkAIA87sHk4gvpU8=
+	t=1732533888; cv=none; b=R/VBRncVzQU4giWmyVpizQmA/SRpzB2V2/Ngua7WWGfDsmcxuFJFczELekSEbugJKLXEiL8pNwTRyb3aYxH+Z+q9k9q8bFQKqc35vdOnxd3rR0ltRMZv3HKQMuaJnJzHUeS+RePNR+5fmF6nAtLCwt3GcorSpXIIr/YeWy/YpJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732533574; c=relaxed/simple;
-	bh=Odxo28YgY8IxCqvnmsPfSmoQ/gO7glAU6dllmdvSMgI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WJD89Lr6k8AEh4VPLn6+eWZ0mzOYC/3E53WBvWq5th3BJKbGnbMNAQmn/cUmFBPWBMz81VNMJdj08ANt+21UsUlSmjyYNl6KMGAmGcjmfI4HADh0i7n5x5sGFWk21GMfziUI02GWsBwHN+J2TqxdIkDHfAMMlJo4XC7jZLc1I+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zrGMFYhN; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ffb0bbe9c8so21866021fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 03:19:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732533571; x=1733138371; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9+uhR74hcAQidbntjWvBDULQoiBq+eDvtJid0uWUA5U=;
-        b=zrGMFYhNrwlrpKvsfX0Gx1z0PJnNfYth3jwhvPrj1RKgAU2aDHkK/pz/yOM/sfdjlE
-         dJVAA6PPSaPNSZ8fzQDdxdnNXec8jS67RvyUurnTF1Hd+PAp97G+eTlIP0aPpr4edAEV
-         AemTb2M9U2V8qF0bPJqWcfS7DQksXPIbRDDq41hcfmHFwRWHvj4pxKhiOTqT/jB3RNvv
-         1zkrlP7bPcu0HHO6TWQcwXb9inFI1f8WOV/okmBju+s5g2SUKgV28r39tgfCIC2M7NTr
-         ibYvuLdW5Ji4eTIQXwkUlQFQjk8e5dRIH62t+mYuShpLIcvVKGZ1ld2Bl4u0FH4GOFzn
-         5E/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732533571; x=1733138371;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9+uhR74hcAQidbntjWvBDULQoiBq+eDvtJid0uWUA5U=;
-        b=Vx3E7z7ImPAGjP0cBIYrP5gvLYW8AIa6JgD4BuYySfEWHqmeD0md/qnjKL8+6OeKL+
-         YlkhDRur6qZzXj3snHCsCGYvLOmjyYtlEjcqi9F/eeJMlmUTjqdxNYbu7jdw/Y8/nKrs
-         d6L6HkY9lWt78qzqDLyBMJblMW42x9+TgZ/1yL9MsY5uccM2YR4tH0gyxudfHxNBwXV5
-         DDObDFlqBNUuRA0b42ijhWJzUEAxty+sctBeM2zHnD+p67kFvP5A+JA2gw3pdAXr2EMX
-         uJ87GO4jg35quaXkmjk2rUEqc6AuwhnoBy5FUd6OqZKwaPGmx77RB6RFxRnRE8qk2xZT
-         pC9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVKx8PmQ/FgClljw/rBEMIK7CCwaXodVP+QbupF6JSXacNruuB1AwsRpno1lxeO7MyfJ2jPw45JBUGiKjo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4K9MJr+V6M7VAyzH+KLvnLC0vmM+ceLnHPY4EBn14xD4rO94T
-	oaNvSPsuBwj1Cj8YMpM+wGVq1ARIkU6vBJX0dwYVylfIGrD9/3cKMXs9/q8v/si/w6xk8+I/yUx
-	YhJ+TE9tcPdRz6xEm72jI3PBLhY00oMHQwEA+4egzRX1CoLP1rNLh
-X-Gm-Gg: ASbGncvOEOFueXCTprFam7TyJ+4m5HPEhEDMntZo3DiqGaHwRxe1ks/gSigNaS8cWoR
-	sh1Axv3kl0HwFcKzDnmQlP/GGLmtOO7o2n/4zUlZOl+b8xTFnb0mHjZ6sLGfQ4pRY
-X-Google-Smtp-Source: AGHT+IEgCCRUAYMNMXm5YVXYCKuprgewhzC/7WL+dMW78lmj7ZW701M50sfY6JHIy0GViN5Pu9wq2jsz24kqE82o+aI=
-X-Received: by 2002:a2e:a556:0:b0:2fb:5da7:47a7 with SMTP id
- 38308e7fff4ca-2ffa7197a78mr61355421fa.25.1732533571061; Mon, 25 Nov 2024
- 03:19:31 -0800 (PST)
+	s=arc-20240116; t=1732533888; c=relaxed/simple;
+	bh=bufTrmZZEmz3z0SOZC4QdSCJjdahdcMLTexlKlGjLM4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XuQwTpCJdEGNeMjUfvwWRa3Io0MxQC82Udt8opP4L/aiWdrUbQp5ZMyCk3ftNQ1Pf2l2gOfUozqrTS/dYEe2gNTWk87rlXcPkYdQhnJ0ua95UI45z8xIpBFrIzc2ypXV5wqdXP8l5Hkldx0VHR7u1WojQr2AyUB9UkiMeXp7JL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VoYQSvnA; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APAqEjH020661;
+	Mon, 25 Nov 2024 11:19:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=cCgvjCjtlR+ZQzoMmAJsBY
+	TLeELTO+RMuHAcI8dwO/I=; b=VoYQSvnAFhoxHSeeAQTAHkc6UHfd6Ijq0t+SRG
+	vrtyBV3Td+YIRzzU4iEE78/krwXAQLwesZVqvCKSZsQVAaTZekMt0sf7o9Yw6xwL
+	Ah0avUO5/40fEcnb5aU+888aA2waaX8Bd2ChOk+IEvLCsFI92f67Y6qrtJxnf7EQ
+	Kb6WBU+uQy3NNrzHON7Lr+m1osRoSFZmmdikotoVkGN/ErIwGEwiYs5vsMsBoinI
+	xRicBENRpciXIdm3z9ByJuXWklZV376d8EpFJ0D/xcgvUSKI/6g4MZzLBnfsCcHw
+	cTU8sfILHjf7tiTm6ligltwgDdtBB4h87ehpwNDPksCcJr3A==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4337tjcakq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 11:19:38 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4APBJbjL008505
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 11:19:37 GMT
+Received: from hu-yrangana-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 25 Nov 2024 03:19:33 -0800
+From: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
+To: Thara Gopinath <thara.gopinath@gmail.com>,
+        Herbert Xu
+	<herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio" <konradybcio@kernel.org>,
+        Bhupesh Sharma
+	<bhupesh.sharma@linaro.org>
+CC: <linux-crypto@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_yrangana@quicinc.com>
+Subject: [PATCH V2 0/2] Add QCrypto support for QCS8300
+Date: Mon, 25 Nov 2024 16:49:21 +0530
+Message-ID: <20241125111923.2218374-1-quic_yrangana@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122234811.60455-1-frederic@kernel.org> <20241123101312.GA12843@redhat.com>
- <CACT4Y+YQGLtD0673Oxm2=0mHy9cSx1wTPtVCyxjORSv47M+vUw@mail.gmail.com> <20241125111254.GB20402@redhat.com>
-In-Reply-To: <20241125111254.GB20402@redhat.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 25 Nov 2024 12:19:19 +0100
-Message-ID: <CACT4Y+YBO_1oYccnQdZrS_o1G2bSSPBmYBdjsMXN_8d2zncbQA@mail.gmail.com>
-Subject: Re: [PATCH] posix-timers: Target group sigqueue to current task only
- if not exiting
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, Anthony Mallet <anthony.mallet@laas.fr>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 29Jq7ffVKqMxKcmn50LUGHkDJQRsTQdZ
+X-Proofpoint-ORIG-GUID: 29Jq7ffVKqMxKcmn50LUGHkDJQRsTQdZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
+ impostorscore=0 priorityscore=1501 suspectscore=0 phishscore=0 spamscore=0
+ bulkscore=0 mlxlogscore=832 adultscore=0 mlxscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411250097
 
-On Mon, 25 Nov 2024 at 12:13, Oleg Nesterov <oleg@redhat.com> wrote:
->
-> On 11/25, Dmitry Vyukov wrote:
-> >
-> > On Sat, 23 Nov 2024 at 11:13, Oleg Nesterov <oleg@redhat.com> wrote:
-> > >
-> > > On 11/23, Frederic Weisbecker wrote:
-> > > >
-> > > > - * the same thread group as the target process, which avoids
-> > > > - * unnecessarily waking up a potentially idle task.
-> > > > + * the same thread group as the target process and its sighand is
-> > > > + * stable, which avoids unnecessarily waking up a potentially idle task.
-> > > >   */
-> > > >  static inline struct task_struct *posixtimer_get_target(struct k_itimer *tmr)
-> > > >  {
-> > > >       struct task_struct *t = pid_task(tmr->it_pid, tmr->it_pid_type);
-> > > >
-> > > > -     if (t && tmr->it_pid_type != PIDTYPE_PID && same_thread_group(t, current))
-> > > > +     if (t && tmr->it_pid_type != PIDTYPE_PID &&
-> > > > +         same_thread_group(t, current) && !current->exit_state)
-> > > >               t = current;
-> > >
-> > > Thanks!
-> > >
-> > > Acked-by: Oleg Nesterov <oleg@redhat.com>
-> >
-> > Can't the group leader be exiting as well?
->
-> It can. It is even possible that the group leader is already a zombie.
->
-> But this is fine. release_task(zombie-or-exiting-leader) (which does __exit_signal()
-> and clears ->sighand) won't be called until all the sub-threads have exited.
->
-> And. If all the sub-threads (and the group leader) have exited, then send_sigqueue()
-> makes no sense, the whole process is dead. so we do not care if lock_task_sighand()
-> fails in this case.
+Document QCS8300 support for QCrypto driver and add QCE 
+and Crypto BAM DMA nodes.
 
-Ah, I see. Thanks.
+This series depends on below patch series:
+https://lore.kernel.org/all/20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com/ - Reviewed
 
-> > Though, that's still an
-> > improvements. People usually don't do that (exiting from main w/o
-> > killing the process).
->
-> See above. Nothing to improve, AFAICS.
->
-> > So thanks for the fix.
->
-> Yes, thank you Anthony and Frederic!
->
-> Oleg.
->
+Signed-off-by: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
+---
+Changes in v2:
+ - Set the interconnect tag to QCOM_ICC_TAG_ALWAYS instead of passing 0(no TAG). 
+ - Link to v1:  https://lore.kernel.org/all/20241113055830.2918347-1-quic_yrangana@quicinc.com/
+
+---
+Yuvaraj Ranganathan (2):
+  dt-bindings: crypto: qcom-qce: document the QCS8300 crypto engine
+  arm64: dts: qcom: qcs8300: add QCrypto nodes
+
+ .../devicetree/bindings/crypto/qcom-qce.yaml  |  1 +
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi         | 24 +++++++++++++++++++
+ 2 files changed, 25 insertions(+)
+
+-- 
+2.34.1
+
 
