@@ -1,227 +1,167 @@
-Return-Path: <linux-kernel+bounces-421129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A0599D8718
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:51:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 081F49D871A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:51:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90C40163811
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:51:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87F9716688C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3630319258B;
-	Mon, 25 Nov 2024 13:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311F21AF0CD;
+	Mon, 25 Nov 2024 13:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UzfCl3WX"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fkqjqmqN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE3A1ADFE2
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D991AF0B5
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732542656; cv=none; b=L3ZEJ3BwlwD1V+P4bRy8WztptOm+BwgevYoOo+XYDXjZa3ASqa8kgjDwfzoPYGcqxa5XCxD08lHLXQKGVT0+M/+R+2hTijk7n7CEofo618ia+n83Jw2Dd+t9HUlwJfEShdCkvtLHoPfERKrXB66cANK6iqdF673Grsc6353u/a4=
+	t=1732542688; cv=none; b=CiugPGCgxphdu9LQo2zbxj2U6/6jqucZ29AIRc3iU2cLOIsDeIZTHoE7hozdRhKio5OT4QenWwgMgpNvzlN/sW8ltA86ZsOWynCrum4hLyCo1QKoiJLX+wB1MT1lJKBSOvU6nU17B4E8HWBWxJGmS5NbVLKeFJdEC30U/3MSlwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732542656; c=relaxed/simple;
-	bh=ilHRhOQtmU52tJoi5rkYul1Wi+LJB1Spyhoz3pG+2eo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NVIe2hul/ZedQCYS19SVDiAphKRSSgJaHi5+9CxJhuK+72I1s1r4gq7Hh9myJ+W1aF4WhTmSay4wm7wQ/FXS8JZJbmuMzA8O/iH/wR4OXDUcWLu/kM4/axkSh3g29sIqYY68/X8uQl2OYuzlRgA/rCTmILJQ2sge4G+SFbJ8UBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UzfCl3WX; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2ea8d322297so3434197a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 05:50:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732542654; x=1733147454; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cDipKvIOUX7uzCSO1YayfVZOqbIm+XO2gEj1lWmD+x0=;
-        b=UzfCl3WX3ZtaBfJ+hDm0B0/ai5qn+FF89wlyfpXW300kqGXGdlsRr8SeAvXiDQp5cO
-         nKwJsUpn4tG/hLsppa18XJZL03+xhcU0AFXOPJh8bECwjt/fZ4BUECxyBO1CuUo9oqH3
-         4bzWcL2hoWuJTw1slqtq3zDALc+t4JnH9CArA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732542654; x=1733147454;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cDipKvIOUX7uzCSO1YayfVZOqbIm+XO2gEj1lWmD+x0=;
-        b=LbuQdUtSpLYVtuJugpuShis0f0nNUghkn1/5EWXFFz6/LAPZ5dTs0D22bq2yJr4cBo
-         P1b2UdY8VV/mp6n0DO3J568tuzXN7dX6PvZv+c4U5bhMHlYeo9GMWyTIFaioT2ZP6qs7
-         C8n7joKXl+m+1amMAp38++U97qrYJg6kUArHAfHMhqmFktFI1PVqyWTizTUX4X9sJ0v1
-         P/CMQTj7B0kobmCvPODS0PGHirRzgskuEL4rthT6KAnDsfFFFtP9XN/TUWgGKX95c4GU
-         JaGcd4L6BJQXt1R4Ns05TUlnmc/BYQsEWTARrEhlBdpTvsvQTuw7s1n9O7mto9FkZdwZ
-         oa6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW1Acb6ADj/vtdnWI1872i5TNRdSbX1mT/AW+qL7FXEQSCg43ZsT4lIOwdqgTzVvD/iTGOmtpklFRLJTrQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjB1lsxvueY23CVasaXCoCRUCo61HryiyZvRG3AmK8bGeep1el
-	z7N4i2Y1Lk3WSOa1BpdmqynlLWumXIVRpLls2Xsn3HNz0f18i9pdmQil+Mh3hK8wtNyCf6LHG54
-	=
-X-Gm-Gg: ASbGncvh8z+vzpSFt3m4XhfhQsYwCaIqNwwUpJLcEE+THcSQHIvbY9xcJFQP0W9Pffh
-	Oqj06//E7IDvqnKqg8ffc6mLEX2HW2fFt5HXo/KKsmvS37HqMr/uAE35FZue1NWgJDlx+U6vhe0
-	4k+i+t7kWpfK8atvTYiSKvN36oYu24rrf3kl9UrB2YWp10k5DRu8U31EQh30WCbQDxrUmPHnDia
-	o29a1JonDnKRdJSZ/ofl3M6JTWOSdqTOu8nTfcOuIaX7MbAoBYfkkLnA6fe5x3sHxbrQPG4+FTV
-	HUN8E+8GMrcRcIlc
-X-Google-Smtp-Source: AGHT+IEc+uK7aFRxHdPYL1HTdcpQ/+Q0kEzX7CtiLmOuPq/EdjDdEQvmNW3JAQOQq/pOEyTw3o7VKw==
-X-Received: by 2002:a17:90b:1c10:b0:2ea:9f38:993c with SMTP id 98e67ed59e1d1-2eb0e5277f6mr16171386a91.18.1732542653951;
-        Mon, 25 Nov 2024 05:50:53 -0800 (PST)
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com. [209.85.215.173])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2eb0cffcc20sm6670177a91.17.2024.11.25.05.50.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 05:50:53 -0800 (PST)
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7fbbe0fb0b8so3109751a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 05:50:52 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUwVioZpxijZLxLymE0oxN5NlM3owHHW3gVbNtFZIXt9aCzWJCpdkmuoyo3t7yM5XsJB1jpyiSzFCrgXME=@vger.kernel.org
-X-Received: by 2002:a05:6a21:4890:b0:1e0:c243:cffc with SMTP id
- adf61e73a8af0-1e0c243d07amr6508648637.36.1732542652324; Mon, 25 Nov 2024
- 05:50:52 -0800 (PST)
+	s=arc-20240116; t=1732542688; c=relaxed/simple;
+	bh=b/xDcNgHmFl8rKmdpCvpIoRImffNPXL78sWyibQPD7M=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=chFpr8miQGt8G5ceyQyAL2vZAcsQ6FN4xIflvEMsRlAWlg6yRoDXkTgzbtpOJhGwLBXl/7+O+d1K3Vq1aWjw/Sl2djF0ZpXWLeTR8IxjkBxZei1Ai8aJj9TuC1N9UH6wVLe7n8TAxjBG8XHDu+wWhICnmQM0mxoD6ah8+I/QyEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fkqjqmqN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDADAC4CED2
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:51:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732542688;
+	bh=b/xDcNgHmFl8rKmdpCvpIoRImffNPXL78sWyibQPD7M=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=fkqjqmqNzOXvxFuWxwOXiGjrxhD9X9gIgEjlsFQeE4IGGF19QuzBSMoO8aVed6FTj
+	 oBqG2skEbE/wEaQ0kWUj3/QTLX0TMK9otzbfOs/g9vSUI4luJMad2w0vzUK3za4Uy9
+	 VMQ8WekPgUHk6j/xF71Uh8+tUGXsEhXOSyz9NwfrPvLAB0tLaWXYSmRYaNAeOh+7T3
+	 0QTXpEksyh1xs4B+LgUT5mhaZ93JFPOCc52jeOSw73KY+26Z6saF/q3usjUgi7n4ba
+	 Ble9/aBrRYBpe9Z+Fy6dGoXgpFTWwnXwLKgwxbYTl6sCW6el3wmCie4PNNBjDa7MFZ
+	 qfDbuTsNts+8A==
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id EEF071200066;
+	Mon, 25 Nov 2024 08:51:26 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Mon, 25 Nov 2024 08:51:26 -0500
+X-ME-Sender: <xms:3oBEZ7XtfIa05c4nb-UGxWSNPwaZLHRJhbBkVK6GzHser_Lu2uXH6Q>
+    <xme:3oBEZznwk-EQga7xWLhZyKB7w-bdG70WJRxHPTEZaT-DZn-oKBWEqP8zALWXCc9I5
+    MubbhBMWaUpyNOEkGA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeehgdehiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugeskhgvrhhnvghlrd
+    horhhgqeenucggtffrrghtthgvrhhnpeejjeffteetfeetkeeijedugeeuvdfgfeefiedt
+    udeikeeggeefkefhudfhlefhveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihht
+    hidquddvkeehudejtddvgedqvdekjedttddvieegqdgrrhhnugeppehkvghrnhgvlhdroh
+    hrghesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphho
+    uhhtpdhrtghpthhtohephigrnhhghihinhhglhhirghngheshhhurgifvghirdgtohhmpd
+    hrtghpthhtohepjhhirhhishhlrggshieskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    hhgtrgeslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopehstghhnhgvlhhlvgeslh
+    hinhhugidrihgsmhdrtghomhdprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghn
+    khhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepihhlphhordhjrghrvh
+    hinhgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehgrhgvghhkhhes
+    lhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigsehroh
+    gvtghkqdhushdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
+    rdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:3oBEZ3bWvM-OeoNQG3eWTUtm5KAvJUfZBviEZZDAV2H8Eulc07GTDw>
+    <xmx:3oBEZ2XAwGkOuI5fJvqVrwYFPRE419D55N5S9O6YZB3QXLurm5H7Qg>
+    <xmx:3oBEZ1ltTGPEJmJHLjwMj37acX7iltNoU9Vlu8ET1IH9KMOE0wBYuQ>
+    <xmx:3oBEZzchu25dpbazZ_oElvabJKrRS-gaY98kC8jQLv1CUU3KreukTQ>
+    <xmx:3oBEZ_Ef1ghYAHc4oRcdXP1BDCh0D-_IUq7nWIa0M7JFagkYqtgVSFdW>
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id BC0FF2220072; Mon, 25 Nov 2024 08:51:26 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
- <5b5f3bb7-7933-4861-be81-30345e333395@redhat.com> <CANiDSCta62P5+1aR9Ks8c6sd3_grCV3C+Le=UjKGkiohyf0R2g@mail.gmail.com>
- <20241110151426.GD6002@pendragon.ideasonboard.com> <CANiDSCsTNuQRXwMqA_YmX4MJ-A8eTi_rEpkd+Qv=Qwbbrj18Yg@mail.gmail.com>
- <123bfac4-389a-400a-8104-afc27124b75d@redhat.com> <20241125125834.GC32280@pendragon.ideasonboard.com>
- <33e7dbc8-0d29-4905-a28c-e562151a837a@redhat.com>
-In-Reply-To: <33e7dbc8-0d29-4905-a28c-e562151a837a@redhat.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 25 Nov 2024 14:50:40 +0100
-X-Gmail-Original-Message-ID: <CANiDSCv0U=i2ZSd0abfP1JYrY-HVKa5t_7qAea+9KCog5P2PVg@mail.gmail.com>
-Message-ID: <CANiDSCv0U=i2ZSd0abfP1JYrY-HVKa5t_7qAea+9KCog5P2PVg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a subdevice
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	Yunke Cao <yunkec@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>
-Content-Type: text/plain; charset="UTF-8"
+Date: Mon, 25 Nov 2024 14:50:56 +0100
+From: "Arnd Bergmann" <arnd@kernel.org>
+To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
+Cc: "Guenter Roeck" <linux@roeck-us.net>,
+ "Niklas Schnelle" <schnelle@linux.ibm.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Jiri Slaby" <jirislaby@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ linux-serial@vger.kernel.org, "Heiko Carstens" <hca@linux.ibm.com>,
+ linux-kernel@vger.kernel.org, "Yang Yingliang" <yangyingliang@huawei.com>
+Message-Id: <1a7da799-f15b-4714-a3bd-4c0b1f48fc09@app.fastmail.com>
+In-Reply-To: <Z0Re61Tk5lN2Xuxi@smile.fi.intel.com>
+References: <20240405152924.252598-2-schnelle@linux.ibm.com>
+ <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net>
+ <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
+ <472eb22a-dcb1-4fbb-bf2c-a4173706bc7a@app.fastmail.com>
+ <27685942-fb62-44c5-86ed-98beb547ffed@roeck-us.net>
+ <744920ba-551c-466b-ac5c-2607b81261a0@app.fastmail.com>
+ <Z0QtZky8Sr7qUW7v@smile.fi.intel.com>
+ <00f5e842-3ee9-4d83-8836-0ff4f703fa3c@app.fastmail.com>
+ <Z0RSZ-YD_BozMs1n@smile.fi.intel.com>
+ <be43108e-4135-4927-ba58-141836fde6af@app.fastmail.com>
+ <Z0Re61Tk5lN2Xuxi@smile.fi.intel.com>
+Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Mon, 25 Nov 2024 at 14:44, Hans de Goede <hdegoede@redhat.com> wrote:
+On Mon, Nov 25, 2024, at 12:26, Andy Shevchenko wrote:
+> On Mon, Nov 25, 2024 at 12:06:16PM +0100, Arnd Bergmann wrote:
+>> What I suspect is going on with the f4c23a140d80 commit
+>> is the same bug I mentioned earlier in this thread, where
+>> __serial8250_isa_init_ports() just always registers
+>> 'nr_uarts' (CONFIG_SERIAL_8250_RUNTIME_UARTS) ports,
+>> unlike any other serial driver.
 >
-> Hi,
->
-> On 25-Nov-24 1:58 PM, Laurent Pinchart wrote:
-> > On Mon, Nov 25, 2024 at 01:39:05PM +0100, Hans de Goede wrote:
-> >> Hi Ricardo,
-> >>
-> >> On 10-Nov-24 5:07 PM, Ricardo Ribalda wrote:
-> >>> On Sun, 10 Nov 2024 at 16:14, Laurent Pinchart
-> >>> <laurent.pinchart@ideasonboard.com> wrote:
-> >>
-> >> <snip>
-> >>
-> >>>>>> Here is what I have in mind for this:
-> >>>>>>
-> >>>>>> 1. Assume that the results of trying a specific fmt do not change over time.
-> >>>>>>
-> >>>>>> 2. Only allow userspace to request fmts which match one of the enum-fmts ->
-> >>>>>>    enum-frame-sizes -> enum-frame-rates tripplet results
-> >>>>>>    (constrain what userspace requests to these)
-> >>>>>>
-> >>>>>> 3. Run the equivalent of tryfmt on all possible combinations (so the usaul
-> >>>>>>    3 levels nested loop for this) on probe() and cache the results
-> >>>>>>
-> >>>>>> 4. Make try_fmt / set_fmt not poweron the device but instead constrain
-> >>>>>>    the requested fmt to one from our cached fmts
-> >>>>>>
-> >>>>>> 5. On stream-on do the actual power-on + set-fmt + verify that we get
-> >>>>>>    what we expect based on the cache, and otherwise return -EIO.
-> >>>>>
-> >>>>> Can we start powering up the device during try/set fmt and then
-> >>>>> implement the format caching as an improvement?
-> >>>>
-> >>>> This sounds worth trying. We'll need to test it on a wide range of
-> >>>> devices though, both internal and external.
-> >>>
-> >>> For what is worth, we have been running something similar to
-> >>> https://lore.kernel.org/linux-media/20220920-resend-powersave-v5-2-692e6df6c1e2@chromium.org/
-> >>> in ChromeOS and it has worked fine....
-> >>>
-> >>> But I am pretty sure that it has issues with async controls :S
-> >>
-> >> Interesting that is actually a lot more aggressive (as in doing a
-> >> usb_autopm_put_interface() often) then what I expected when you said:
-> >>
-> >> "Can we start powering up the device during try/set fmt"
-> >>
-> >> As I mentioned in my other emails what I think would worth nicely
-> >> is delay the initial usb_autopm_get_interface() till we need it
-> >> and then just leave the camera on till /dev/video# gets closed.
-> >>
-> >> That idea is based on dividing apps in 2 groups:
-> >>
-> >> 1. Apps just temporarily opening /dev/video# nodes for discovery,
-> >> where we ideally would not power-up the camera.
-> >>
-> >> 2. Apps (could even be the same app) opening /dev/video# for
-> >> a longer time because it actually want to use the camera
-> >> at the moment of opening and which close the /dev/video# node
-> >> when done with the camera.
-> >>
-> >> Your code seems to also covers a 3th group of apps:
-> >>
-> >> 3. Apps opening /dev/video# for a long time, while not using
-> >> it all the time.
-> >>
-> >> Although it would be nice to also cover those, IMHO those are
-> >> not well behaved apps and I'm not sure if we need to cover those.
-> >
-> > Is that right ? Isn't it better for an application to keep the device
-> > open to avoid open delays or even open failures when it wants to use the
-> > device ?
->
-> Keeping devices open has advantages and disadvantages. E.g. keeping
-> /dev/input/event# nodes open will also typically lead to e.g.
-> touchscreens staying powered on.
->
-> Generally speaking it is not unheard of to expect userspace to
-> behave in a certain way for things like this for power-consumption
-> reasons.
->
-> I guess the question is how far do we want to go inside the uvc
-> driver to avoid userspace needing to close the /dev/video# nodes
-> when unused.
->
-> Ricardo's patch from here:
->
-> https://lore.kernel.org/linux-media/20220920-resend-powersave-v5-2-692e6df6c1e2@chromium.org/
->
-> goes all the way and if I understand Ricardo correctly this is
-> already in use in ChromeOS ?
+> But the configuration can give less than old_serial_port contains.
+> See dozens of the explicit settings in the defconfigs.
 
-It is in use on just some devices. I try to not diverge from upstream if I can.
+I don't see any of the upstream defconfigs doing this
+though, the only ones setting CONFIG_SERIAL_8250_RUNTIME_UARTS
+are those that have an empty old_serial_port[]. 
 
->
-> So we could also go with this. Maybe put it behind a Kconfig option
-> for a while ?
+Note that SERIAL_PORT_DFNS is only defined on x86, alpha
+and m68k (for q40), which are the main PC-like platforms.
+I see that all three have identical definitions of
+SERIAL_PORT_DFNS, so I think these should just be moved
+next to the __serial8250_isa_init_ports definition, with
+the entire thing moved into a separate ISA driver or
+an #ifdef around it. This is of course not the problem
+at hand, but it would help separate the x86/isa and
+non-x86 platform device cases further.
 
-I can try to work on a new version of the patch, including support for
-async controls the way I described in my previous email.
-Let me know what you think.
+>> This used to be required before 9d86719f8769 ("serial:
+>> 8250: Allow using ports higher than SERIAL_8250_RUNTIME_UARTS"),
+>> but I don't see why this is still a thing now, other than
+>> for using setserial on i486-class PCs with nonstandard ISA
+>> ports.
+>> 
+>> On non-x86 machines, it only ever seems to create extra
+>> ports that are likely to crash the system if opened, either
+>> because they lack proper serial_in/serial_out callbacks,
+>> or because the default UPIO_PORT callbacks end up poking
+>> unmapped memory.
+>> 
+>> Do you see any reason why we can't just do the version below?
+>
+> Perhaps we may do this way (it seems better to me than previous 
+> suggestions), but it also needs to be carefully checked against
+> those configurations that set it explicitly.
 
->
-> AFAICT the only thing which needs to be figured out there is async
-> controls.
->
-> I think we can simply set a long autosuspend delay on devices with
-> async controls to deal with that ?
->
-> I have a Logitech QuickCam Orbit (non AF) UVC camera which has
-> pan + tilt controls and AFAICT these work fine with v4l2-ctl
-> which immediately closes the /dev/video# node after the set-ctrl
-> command. But I'm not sure if I have tested this without the camera
-> streaming at the time. Anyways that is at least one camera I can test.
->
-> Regards,
->
-> Hans
->
->
+Yes, at least to make sure that the numbering of the uarts
+does not change. I expect it's actually the same, but don't
+know for sure.
 
+> If we go this way, it would be also nice to add a comment explaining that
+> this is module parameter (as it's done for those ones above).
+>
+>> +unsigned int nr_uarts = ARRAY_SIZE(old_serial_port);;
 
--- 
-Ricardo Ribalda
+Right.
+
+     Arnd
 
