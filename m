@@ -1,135 +1,119 @@
-Return-Path: <linux-kernel+bounces-420947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D529D84A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:41:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C1A9D84A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:43:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42CDA168C99
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:42:53 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1BB199935;
+	Mon, 25 Nov 2024 11:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GvAO4zUc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B29ED2851CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:41:03 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF4F1991C1;
-	Mon, 25 Nov 2024 11:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Oxc3piw6"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBC617DFFD
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E629192D91
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732534859; cv=none; b=u5Fy6RqjzzxUeldfxpFRYTU4PSHi0LTB82yYQmclnYQSg5okWuXWc7mD2ZZPdeA7IEcTeTPbbLu2juBcEUsfFcxK/+DhYzQ6H+mUQ/xNtvPfUNIl9oGB2t5jn3hV1YnqKaPQO/cfHhF9pRnVTIHF4fP9LrXbfC4ol4McsKnJQ6s=
+	t=1732534970; cv=none; b=cg0VgQ4I8evHIYUCLN4wBk8Oh1qir7FJnuWaeyaHW0zTvRk7WiJDc0UYbkJ/ISP/SZnsn/Y/9f6HkLJ8LSFyedHlzAgBPwbRhYknSQF2FYwmQeq2DN/UpQCvfTYLVKM5C1VRKKFQcgZWvIbH8nusJDpWNH/AlfLzohNQ9Tud918=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732534859; c=relaxed/simple;
-	bh=IZ7RAJrWHPGd5SAlQW1VbMKLcYyV1OEzAUU/YZlPS8U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MwHXsI5du2d246cRksLzsYYjU12xgAhQJyBCFOp0aJUVq1u4UiSZLYfTIFe7FDL19E2Is4cVXP5v14ISMmHbCoW7Ig5EDpLiKg5mE/8nwV4U27eZSoSJ/n/TVg2SRSa/nTrcX9aoqZxFbWcX4ViWtlCEHc4XXYJ4H/W3l75g9BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Oxc3piw6; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa549f2f9d2so160867566b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 03:40:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1732534855; x=1733139655; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IZ7RAJrWHPGd5SAlQW1VbMKLcYyV1OEzAUU/YZlPS8U=;
-        b=Oxc3piw6sv6iZWvdmIlao0RZaIh2vKqNhkaT5SKJv2ibjNmPTko1bcZeoKJQjmvGMJ
-         bcGkHBDc7HXe4387hrdSus/Qx1k8Vm/0r3QYddXiOQDhk0UC2tGgC6EM11mDKTY1FhRi
-         zMIeU7JeCtMSnQ7Izp72mhSMNwD1WrpK2nVJJ0VEDzXZ77HUhIME4YBcfL9V/opZpn+S
-         13ZoqRGBLHch/IUcMKagQpSXedRbBiIcNU/+PkpQkUky2MuZzF65wHir33kSDzQ9uzpC
-         zBQGVS1FCRmEZ+JJO6j06OKEQp3y9JFnfpdpj/KoQ7iVDGpJf5XiqGFqfC07grNsGiQR
-         awrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732534855; x=1733139655;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IZ7RAJrWHPGd5SAlQW1VbMKLcYyV1OEzAUU/YZlPS8U=;
-        b=TQNMy6ZFe2JnvXyviuvUtxFRGseNdkcwf6XHnt2MdNga8AgD9oVbyOyjXO/rzMxa62
-         n66mtJWrSI9fiBEIxLyCCqbjkMY7jiEMvuOUKU0qNSaHhxVjaXsanQOtqQNsBNjnj4wZ
-         lv9tuKbQwwavE3HMB9bn2QXXr2ADCJDQkfgotcjF9l8QG28S5BINxIPB//D5AWdioJU8
-         KT895iMobTHXlDF3NlAru1GWx4CdDhVDaBUeQEZqlBVu9ETAWaWKgCltbj+xZWpRsFfq
-         5CVBNjtC/EC90w+RGqThFNN9gEmLYUH3VclVNp1oMUBDIofrO7nbH6POVbuch7h1WRjC
-         9GTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDjbRgtcpBmk/0FVVSkdijzLQwzU5xyBhsaoa0nKhipkZzws/pjW+gaY7AMhkLh3HPj/rZ0etIpCUfld8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJTFakyocL/mLxfe16r6PuNeHt5nKjutc7TiLa8CofBsSBIPKB
-	XzKd5i81ORgxpGsN7aYChsXkTS95kP/BRpLUSjq96BOtPhALnz2Jiq7Kj+bZYPisjT/JE/22p7D
-	d9Q8s4qhwFPSOPOytrjiZf6grDecXzpMxB35Clw==
-X-Gm-Gg: ASbGnctW/nvM183YHN/yUiFailAbxAluCaWxqMqcjUy0Bpujd6hCPxhYg/0UQTcTAzM
-	Bx50fmv3cJKzAd1k6GeKxGhpBhdqU4w==
-X-Google-Smtp-Source: AGHT+IFk4zrHYHYPotVR3J/Utck40BuZFP5wCCmZOmAvQz1ezOSjvFoTP5wC/kKdBk+FRaO27EYR1J+Zg6na7ZpnoRk=
-X-Received: by 2002:a17:907:7847:b0:aa5:d7c:2acf with SMTP id
- a640c23a62f3a-aa50d7c2dbdmr784007066b.12.1732534855535; Mon, 25 Nov 2024
- 03:40:55 -0800 (PST)
+	s=arc-20240116; t=1732534970; c=relaxed/simple;
+	bh=/tvYCZ2YN+fHWCx8kb6FLlRxDsTEAuSmzNv0Qt9XmIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uXgNWZi54yPeLRuZwsk7KBlkZYSw+NNqalDCIKCuSBEvHH2NTiIna+jcn305PcxgPcEL8k931VgynYgW8Ivkt8b2mpARLPpr0W3Mn3AN3HTvNX+816s7PBZ19tkddAR1w9OULx0d5jeWXontGkMIYYyoTjbQZ+Dee2lEehCfJAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GvAO4zUc; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732534970; x=1764070970;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/tvYCZ2YN+fHWCx8kb6FLlRxDsTEAuSmzNv0Qt9XmIY=;
+  b=GvAO4zUcy2WdqsGEzBRSSAISsUFwqV0ahhonrIHNUwKmsZddCYxxrqUd
+   pl0O1J6hwJcR0ZVTqDInkdczQATz9b4JTtoS+9rRNPYwjYsbpIe1u4DoO
+   7cm41ksF4x8PP+tqrvf5PywHlgmsJ8YLiPP0fDeBm8Nd2HFb7OL5PKXMA
+   egx6QP+RVJc/ISH0bvY5OV/V6CsNE4mH4iKx/yyLSvUpMwogld6Fm33uu
+   2UwUFrAoTNI4YzDKfa/yHSu103g4GjvQzQtDuEfYF1A1oSeXmB7eY3u63
+   F8MT8gVwr1v0GTy/4PXylgPiiJsWbh6OyhPPBzdD86LZ4L60X/nYBBlq8
+   w==;
+X-CSE-ConnectionGUID: eelbconuTJaRFizfUYeHSA==
+X-CSE-MsgGUID: 2XiaGqeWQhGUvo8/xIo5nA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="43699120"
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="43699120"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 03:42:49 -0800
+X-CSE-ConnectionGUID: MTmHcvOASc+QL/oqKW29QQ==
+X-CSE-MsgGUID: yoIqH574SOqq/islBK6hdA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="95654008"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 25 Nov 2024 03:42:46 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tFXUK-0006GH-0h;
+	Mon, 25 Nov 2024 11:42:44 +0000
+Date: Mon, 25 Nov 2024 19:42:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mateusz Guzik <mjguzik@gmail.com>, tglx@linutronix.de, bp@alien8.de,
+	andy@kernel.org, akpm@linux-foundation.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [PATCH 2/2] string: retire bcmp()
+Message-ID: <202411251926.sIYJ9sEV-lkp@intel.com>
+References: <20241123094729.1099378-3-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122152856.3533625-1-neelx@suse.com> <20241122154253.GZ24774@noisy.programming.kicks-ass.net>
- <CAPjX3FfDTdUvMCDJCP8tAeNeaYSWj9mSsrMmE=VP0kWAdJTSVQ@mail.gmail.com> <20241125100108.GH24774@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241125100108.GH24774@noisy.programming.kicks-ass.net>
-From: Daniel Vacek <neelx@suse.com>
-Date: Mon, 25 Nov 2024 12:40:44 +0100
-Message-ID: <CAPjX3FdTe=5sA8M6GjjNYSGRgJY42z_n+AnJC7ZSBwY=XLTFJw@mail.gmail.com>
-Subject: Re: [PATCH] sched/fair: properly serialize the cfs_rq h_load calculation
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241123094729.1099378-3-mjguzik@gmail.com>
 
-On Mon, Nov 25, 2024 at 11:01=E2=80=AFAM Peter Zijlstra <peterz@infradead.o=
-rg> wrote:
->
-> On Fri, Nov 22, 2024 at 06:33:31PM +0100, Daniel Vacek wrote:
-> > On Fri, Nov 22, 2024 at 4:42=E2=80=AFPM Peter Zijlstra <peterz@infradea=
-d.org> wrote:
-> > >
-> > > On Fri, Nov 22, 2024 at 04:28:55PM +0100, Daniel Vacek wrote:
-> > > > Make sure the given cfs_rq's h_load is always correctly updated. Th=
-is
-> > > > prevents a race between more CPUs eventually updating the same hier=
-archy
-> > > > of h_load_next return pointers.
-> > >
-> > > Is there an actual problem observed?
-> >
-> > Well, that depends. Do we care about correct (exact) load calculation
-> > every time?
->
-> The whole load balancer is full of races. And typically it all more or
-> less works out.
->
-> I mean, the worst case is typically a spurious migration, which will get
-> 'fixed' up the next round.
->
-> Only if behaviour gets to be really bad/stupid do we tend to try and fix
-> this.
->
-> Now your patch didn't look awful :-), but it would make a stronger case
-> if you'd done it because you observed it doing stupid and it now no
-> longer does stupid and your workload improves.
+Hi Mateusz,
 
-Well, the original motivation were crashes reported on s390 before
-commit 0e9f02450da0.
-That commit addresses these crashes but not the failed load
-calculation. This patch addresses both issues. As a result it makes
-the scheduler more correct and deterministic and less racy. The
-question is if we strictly need that or if we are happy with it for
-the price? And the price looks quite fair to me as the lock could be
-acquired only once per jiffy.
+kernel test robot noticed the following build errors:
 
-Note that the load calculation fails more often than the observed
-crashes. Crash is just a special case of a failure depending on the
-actual cgroup hierarchy and relation of where are the tasks racing
-being woken within that hierarchy.
+[auto build test ERROR on kees/for-next/hardening]
+[also build test ERROR on tip/master tip/x86/core linus/master v6.12 next-20241125]
+[cannot apply to tip/auto-latest]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Mateusz-Guzik/x86-callthunks-s-bcmp-memcmp/20241125-110959
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/hardening
+patch link:    https://lore.kernel.org/r/20241123094729.1099378-3-mjguzik%40gmail.com
+patch subject: [PATCH 2/2] string: retire bcmp()
+config: arm-footbridge_defconfig (https://download.01.org/0day-ci/archive/20241125/202411251926.sIYJ9sEV-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241125/202411251926.sIYJ9sEV-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411251926.sIYJ9sEV-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "bcmp" [fs/fat/fat.ko] undefined!
+>> ERROR: modpost: "bcmp" [fs/isofs/isofs.ko] undefined!
+>> ERROR: modpost: "bcmp" [fs/nfsd/nfsd.ko] undefined!
+>> ERROR: modpost: "bcmp" [drivers/net/slip/slhc.ko] undefined!
+>> ERROR: modpost: "bcmp" [drivers/usb/core/usbcore.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
