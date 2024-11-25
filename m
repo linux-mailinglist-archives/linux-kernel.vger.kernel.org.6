@@ -1,62 +1,61 @@
-Return-Path: <linux-kernel+bounces-420842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7639E9D8395
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:41:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4F199D8398
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:41:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BA32284591
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:41:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD80C162F91
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08BB194A65;
-	Mon, 25 Nov 2024 10:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA63196446;
+	Mon, 25 Nov 2024 10:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="nqGJcLfQ"
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="Mdb4xOeL"
 Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3740192D7E;
-	Mon, 25 Nov 2024 10:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B8B1426C;
+	Mon, 25 Nov 2024 10:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732531235; cv=none; b=i4W0ljPdcK3h+2flWjqH4Z2WDPJ4s53h/xdMm5bF3NZ+YegialndgN3nMC3FBEsd9OVcHO47Dcj+JSlRmltMwm1OPfo+cnZgGZw8WeOwuEZDqAIulGsq3TR3d/BrH2AalbnBxB8zY06AD76LerRNhhRiGBUu9hx8f7D6fkkG72E=
+	t=1732531236; cv=none; b=EWuKFtJbUE2AdFPp8xBuvnkcewWG4rBIiciA+U9oBsqHt95nBo3hhO6W1+7IslQFtjqyFLURr4BNl9FV3/yD4aukBPTb9C9ohAvEieHPN2Rwvwjk5KTZ6duyLoZhH300xFS1kQnVYxba8piciX19lQj9Bd74prmbxMrQlrDykZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732531235; c=relaxed/simple;
-	bh=1o2+SCKbPMlZSfhshov97BHiZ6npLENrivJUl/obBl0=;
+	s=arc-20240116; t=1732531236; c=relaxed/simple;
+	bh=RiX1qAPwXOtMydW3Bf48L9hzhNoJhOnr+55MkoLjnyI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qoj4a5zs1bFXQZyexigvl1LUhMGqELN1rtey/zVovcns7tsMbMzKnQMX4MHaQfhYwCeTjyTiE9Srmn0hCeO65o2tk2MLA0ERta3t4ivK8Vi08S/He9pqQFtsbgp2s9FLIS+LO6AZNTEFIQibf/Wk+lk4l9lxXCs6lHuiaQqjpAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=nqGJcLfQ; arc=none smtp.client-ip=168.119.48.163
+	 MIME-Version:Content-Type; b=WEwHpd2b7xsN4Fgak6CTMmG++kOi5KWJ05g4X5RrR6O5StsoQtgUgso74HRldCr2hb/Dsue/GwgkWSyOoB477BQ0X89IDHT6SzYJIUwUcMbiHVN8J0tNcTcvJypfQYIDOCgI4pxlkCNTKIWAB0A8zWKT3XNXg1xPiBS4+S755t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=Mdb4xOeL; arc=none smtp.client-ip=168.119.48.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
 From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1732531224;
+	s=2023072701; t=1732531225;
 	h=from:from:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=g0u/9xnJFmCzCIsRXywH2TwoCekIvWc3+cszQ3gofsI=;
-	b=nqGJcLfQpuCPVU4svGCFemBiN+Nqp+1R16Nvd1Z8RvKusipz8MFxJLNdU2uhjFvntoOYSb
-	Xj1L3BtASdJeevaSB18S7Dl4G9iVy2NeKuB5bVvlEQ/00Zw4mWcB4rc9Y8T8msyZ1lYG1X
-	9EFJuwkmLAYq+yC2ipfy3AxGyZxlF/Jc9QDPrMphpZ2z7VT/m3D7jllOSk539ISoY/tFbc
-	kSn7Zr8qrh9mhI/pb9WE7RVtWlm2DpAmQRLqFEX0I9t3ojiACy+XuvtER8YjGVp+0wWSGE
-	NlMPqw/DtS7g8Ao5UdD3jNlwW46B8Yn6PoWxwEILbI/QoEnLV0D9q/lx/AKSKA==
+	bh=uXJbjp9TEMr3wvQ+2vZpGMNVJ7tkSZTdw7fouyXGnz0=;
+	b=Mdb4xOeLmRxHgooUx3JOijX3+LMSlj4GRxvTHEPWd1og60SnG27YZkYD2Ceyjx+7B333QM
+	ZyLgYWtMHFmpAS4jQ0VS7zdfJq9cQ9qMI1VXAh2OJqLOjuiladwhEQxhs5QkMpM4d+88/j
+	YY61kw6/zF9K2N5hNSbT40SYIj6CvC8CdzV+bU9xHoZrZXIDj3azO4Pssrl2ovpBnSmIzD
+	Mv0etwsaWtD04zX2lsGfDFSxo61zYM7APvut1Mn8G6dTOzCPF4BW7lPtuQElc1iacTmQXf
+	8qW38Pn8ScwYATLiIG45X5y8yS2CZ7A99XQg1RtL/r9qa9EeW8r4/TzXlS2Ylw==
 To: linux-security-module@vger.kernel.org
 Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	"Theodore Ts'o" <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Muchun Song <muchun.song@linux.dev>,
 	Serge Hallyn <serge@hallyn.com>,
 	Julia Lawall <Julia.Lawall@inria.fr>,
 	Nicolas Palix <nicolas.palix@imag.fr>,
 	linux-kernel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
+	linux-mm@kvack.org,
 	cocci@inria.fr
-Subject: [PATCH 03/11] ext4: reorder capability check last
-Date: Mon, 25 Nov 2024 11:39:55 +0100
-Message-ID: <20241125104011.36552-2-cgoettsche@seltendoof.de>
+Subject: [PATCH 04/11] hugetlbfs: reorder capability check last
+Date: Mon, 25 Nov 2024 11:39:56 +0100
+Message-ID: <20241125104011.36552-3-cgoettsche@seltendoof.de>
 In-Reply-To: <20241125104011.36552-1-cgoettsche@seltendoof.de>
 References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
 Reply-To: cgzones@googlemail.com
@@ -88,24 +87,22 @@ It can lead to three undesired cases:
 
 Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 ---
- fs/ext4/balloc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/hugetlbfs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ext4/balloc.c b/fs/ext4/balloc.c
-index 8042ad873808..c48fd36b2d74 100644
---- a/fs/ext4/balloc.c
-+++ b/fs/ext4/balloc.c
-@@ -649,8 +649,8 @@ static int ext4_has_free_clusters(struct ext4_sb_info *sbi,
- 	/* Hm, nope.  Are (enough) root reserved clusters available? */
- 	if (uid_eq(sbi->s_resuid, current_fsuid()) ||
- 	    (!gid_eq(sbi->s_resgid, GLOBAL_ROOT_GID) && in_group_p(sbi->s_resgid)) ||
--	    capable(CAP_SYS_RESOURCE) ||
--	    (flags & EXT4_MB_USE_ROOT_BLOCKS)) {
-+	    (flags & EXT4_MB_USE_ROOT_BLOCKS) ||
-+	    capable(CAP_SYS_RESOURCE)) {
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index a4441fb77f7c..e4f6790c1638 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -1508,7 +1508,7 @@ static int can_do_hugetlb_shm(void)
+ {
+ 	kgid_t shm_group;
+ 	shm_group = make_kgid(&init_user_ns, sysctl_hugetlb_shm_group);
+-	return capable(CAP_IPC_LOCK) || in_group_p(shm_group);
++	return in_group_p(shm_group) || capable(CAP_IPC_LOCK);
+ }
  
- 		if (free_clusters >= (nclusters + dirty_clusters +
- 				      resv_clusters))
+ static int get_hstate_idx(int page_size_log)
 -- 
 2.45.2
 
