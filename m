@@ -1,119 +1,160 @@
-Return-Path: <linux-kernel+bounces-421239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3920E9D8882
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:52:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BAEF9D89A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:49:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C40B4167F69
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:52:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F7F5B298B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1D11B2193;
-	Mon, 25 Nov 2024 14:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9901B0F29;
+	Mon, 25 Nov 2024 14:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TRa5pCoU"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q26UpezS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED08A1B2186;
-	Mon, 25 Nov 2024 14:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233C01B218A;
+	Mon, 25 Nov 2024 14:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732546360; cv=none; b=JQ3F00WXyMKDVExJEdSUM0e93nY9Ive5zaTK80F/8bpQbPQ8O1FjEhJv4TdMZR9jbXbUDuBpRIXbp2YeXWvDoqgEOIoskZVFLFMBJydxlD7W/iBmfaViTBWHs473QQFYNjJcOvmUzGhot33247bNEWibCI02lvRzjpc9Vv6lCms=
+	t=1732546374; cv=none; b=Sn26Qjrmi0i++zG3uxCZPEdfy/9dDsSSY6yrCvkRzH0F0w/9AlPoIncOYeDmwErUEdQw1l74t2ijyAilxN1XdlEW1cfmB9tWXbObTpVNkPtr/W9tzUYAvVwbC87466aR3Z8IkUJNuLOkqKDYYPE/vDxEnINO5U4D3wLWKYHBu8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732546360; c=relaxed/simple;
-	bh=QVqsjbY2A65/p12XFRQzt9ytvhYNWbSd7slA96gpmFg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IkkkMbWqZHlrWTi4FxAQOkcr7ecbh3JnRzCEILm6OOBhBgYqqNa87k8k6taaP9fYboI1ohw1v8mYKbzyVEklz7FQc4TwXxY/Ltc3u1penuvTa5Jlxrsl9Up8N4cw4n79GhUTed675OoPtA4tZ+Ollzf4ltU5GmJsjdZLApt+lUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TRa5pCoU; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb388e64b0so49741751fa.0;
-        Mon, 25 Nov 2024 06:52:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732546357; x=1733151157; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QVqsjbY2A65/p12XFRQzt9ytvhYNWbSd7slA96gpmFg=;
-        b=TRa5pCoUBL6M5mwD4/uswtbNtQCg+40g6PUPkvMerJq/XCe856zKmqsJcQ4E900zx1
-         QG4H5sRuXaQD8FhKoA6GxHkzXze03zV1O4P1//cVGBNm2MKot77lNgiLSmEmWP42mpYh
-         AkHKRz9Vm8LwKbVdB5KcEnD2SajvWp69woGy3vBXy5FUFQsnSsbTf08rm7SVqZl/Fcsd
-         ur4cFREZX7o8G0ElPooUGyUTXigDAKRQdrUgPznABUZ5AdDPRtUuv6Gt+cJyh4eg28Qw
-         VJ/dHMQNDKBqSR/S2ulL9SIogE7BixB/iWgCZJDbopbdboOL5GzB8axIKkyngowRnd1B
-         RDXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732546357; x=1733151157;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QVqsjbY2A65/p12XFRQzt9ytvhYNWbSd7slA96gpmFg=;
-        b=BAD/K2acIb9Qe5xoRdbLu1U70Seg/NkzhlO6UDZpcYcZyk5aa2ywMrU3hvTmZvAzt3
-         raBek1PEzEFv6SOBC4Wg6W8ut3RYWuZgE3rOIYukmD19c/VWEbmVcoz6zj/DS3aS3yqV
-         qkx3dzuRW8i4nUU3eTwS433SK5vBiuZZlmRzp77kHX9xSsGlSXzST/1FRcGnPcCLEwQx
-         kbhJ9wINl3FRn9zdK5NRkA8QkHD3udmXo1ZTcYRrSzfz11bEys2kJmKY90jpJxj0Lvtc
-         ZYjYE9JB9C3qdU75CXfcPY2K1+8w74xPh/3EsQ2U88BXOFdLOBb7RkZWAGceyQ8rMdYW
-         ToQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGghftv00gX+RLuawJ7TCtoAogL3omdAY5xO4S/Mt6uyK7BAUFMqnu8K4SKGviMRlFsLOUsCBTGKunbMc=@vger.kernel.org, AJvYcCXaq4sfksKRV5LypxDrKoVpWBU10OU8ont3ksuHB+jJhfYzTihCeQJRWYRw+Fo1prYjAhR5fG4gGZQt9Zo4LS8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMcNOQoeG2+hAuStJ1Bu0wv6UmgykU0qF6c4/zz2m3ObryHccC
-	nXVnA64w2s1I1BxDONLKyhQ74TIADlvZ3kzgnxry7SHhBuCb5wXsK/Rftgow9QUcC/O94f6V1Lk
-	fX8kejlIqH71CdkJIE69BirfmH3Q4+w==
-X-Gm-Gg: ASbGncuDjd3ZJ0QTKkSxBMaXm8PW/z3dQeYF3/6C3TstwwZSrcT6wSeGZ6H9Q+8+6FZ
-	BZvDjpkoRWmH0zzGxneUZn8HDGJjuDxWEHoSHo2QT02K3d6E=
-X-Google-Smtp-Source: AGHT+IGIxVUnaZzWVoNS0iqledoHLlHjgp7D+/aJV0PR2cDLUIcxUQW6ZxkMGMwoCRPkbd9IyQOiYIay3qCmNCcHvhI=
-X-Received: by 2002:a05:651c:504:b0:2ff:5185:49e2 with SMTP id
- 38308e7fff4ca-2ffa7187ce9mr59652961fa.36.1732546356793; Mon, 25 Nov 2024
- 06:52:36 -0800 (PST)
+	s=arc-20240116; t=1732546374; c=relaxed/simple;
+	bh=oqhy9e2J5epV4x7uNnvqT47Lb5Y9aVgtKCBMDtMl5w8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l0rYkTYyIuFfBZQsI3sLU8vtGdbT1pAEh/OGkSzO5ioykcD+xVyjqWiuLGSY9vQspbvDN7daO0tfsMtxMGXUq6lUkvoOyksgCRWzztJveIbHWp4HM9iJSaW/N2WK6ql1TfJq5KmM7yIVYrRNAlajk15LvhshnSHc/zn4FHGD5no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q26UpezS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E070C4CECE;
+	Mon, 25 Nov 2024 14:52:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732546373;
+	bh=oqhy9e2J5epV4x7uNnvqT47Lb5Y9aVgtKCBMDtMl5w8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q26UpezSdvx5Gfgz5TLt3/VHkChCuOBtRwN4IhDyJwrFHZZdGQINMYtUzjaBAgP25
+	 JSVqC6XcxoN9DpW4nnnsi6I5+YQKvFNkLaAe4ZC2LZU0+8xHop+JNpoYu5sjkpYdQU
+	 EU5dICDKEh93MF1q15c9/6QbM8OZnXZ9JhiZi1z4riRIhPXO0NQ4SG9ITmd17dP88P
+	 SQrhc/hZUt5r7Aiz0Kak0JUmdvn+GSMQFruQWgGrWDW1P7q4zR6EsdWlDtwL8QXS0H
+	 svi407GcA10F7VjrPJVRYbilLsSSHQ1OcleNgxr3pOZvBqa3xdWRVOTdZyJaIrg6fm
+	 OSKb9Tp/pkuwA==
+Date: Mon, 25 Nov 2024 07:52:51 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	linux-kernel@vger.kernel.org, Nicolas Schier <nicolas@fjasle.eu>,
+	linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH] kconfig: prefer toolchain default for debug information
+ choice
+Message-ID: <20241125145251.GA2067874@thelio-3990X>
+References: <20241124-kbuild-allconfig_debug_info-v1-1-07a7ac8d9a73@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120-rust-xarray-bindings-v10-0-a25b2b0bf582@gmail.com>
- <20241120-rust-xarray-bindings-v10-1-a25b2b0bf582@gmail.com> <CAH5fLgjpE7a1jy+W-ZdscrR3D3FrO21iVNd1L-7WY0jGcwQ9mA@mail.gmail.com>
-In-Reply-To: <CAH5fLgjpE7a1jy+W-ZdscrR3D3FrO21iVNd1L-7WY0jGcwQ9mA@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Mon, 25 Nov 2024 09:52:00 -0500
-Message-ID: <CAJ-ks9nusk9GAy5myshNVg+w1w_J-awBZqPVupmpjjwuc1Eo-w@mail.gmail.com>
-Subject: Re: [PATCH v10 1/2] rust: types: add `ForeignOwnable::PointedTo`
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241124-kbuild-allconfig_debug_info-v1-1-07a7ac8d9a73@weissschuh.net>
 
-On Mon, Nov 25, 2024 at 9:49=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> On Wed, Nov 20, 2024 at 12:48=E2=80=AFPM Tamir Duberstein <tamird@gmail.c=
-om> wrote:
-> >
-> > Allow implementors to specify the foreign pointer type; this exposes
-> > information about the pointed-to type such as its alignment.
-> >
-> > This requires the trait to be `unsafe` since it is now possible for
-> > implementors to break soundness by returning a misaligned pointer.
-> >
-> > Encoding the pointer type in the trait (and avoiding pointer casts)
-> > allows the compiler to check that implementors return the correct
-> > pointer type. This is preferable to directly encoding the alignment in
-> > the trait using a constant as the compiler would be unable to check it.
-> >
-> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
->
-> I'm not super convinced by this way forward. It introduces more casts
-> to/from c_void in code using it, and forces us to expose internal
-> types such as ArcInner. Does anyone else have thoughts on this?
+Hi Thomas,
 
-It's certainly a trade-off. The alternative (something like exposing
-`const ALIGNMENT: usize`) would nullify the compiler's ability to
-check implementations.
+On Sun, Nov 24, 2024 at 04:58:04PM +0100, Thomas Weißschuh wrote:
+> Kconfig by default chooses the first entry of a choice setting.
+> For the "debug information" choice this is DEBUG_INFO_NONE which
+> disables debug information completely.
+> 
+> The kconfig choice itself recommends to use "Toolchain default":
+> 
+> 	Choose which version of DWARF debug info to emit. If unsure,
+> 	select "Toolchain default".
+> 
+> Align the actual configuration with the recommendation by providing an
+> explicit default.
+> 
+> This also enables more codepaths from allmodconfig/allyesconfig which
+> depend on debug information being available.
+> 
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> ---
+>  lib/Kconfig.debug | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index 5d9eca035d470f7ba0c5ff932c37fd5869174269..0aefcd103d9012cd8067e5594404358b0e977644 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -240,6 +240,7 @@ config AS_HAS_NON_CONST_ULEB128
+>  choice
+>  	prompt "Debug information"
+>  	depends on DEBUG_KERNEL
+> +	default DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
+>  	help
+>  	  Selecting something other than "None" results in a kernel image
+>  	  that will include debugging info resulting in a larger kernel image.
+> 
+> ---
+> base-commit: 9f16d5e6f220661f73b36a4be1b21575651d8833
+> change-id: 20241124-kbuild-allconfig_debug_info-f7449ba15be6
+> 
+> Best regards,
+> -- 
+> Thomas Weißschuh <linux@weissschuh.net>
+> 
+
+I am not the biggest fan of this because it appears to have around a 5%
+penalty in compilation times when I benchmarked building allmodconfig
+with and without this change.
+
+With LLVM 19.1.4:
+
+  Benchmark 1: DEBUG_INFO_NONE
+    Time (mean ± σ):     715.858 s ±  0.531 s    [User: 38038.311 s, System: 3718.784 s]
+    Range (min … max):   715.271 s … 716.307 s    3 runs
+
+  Benchmark 2: DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
+    Time (mean ± σ):     760.749 s ±  0.172 s    [User: 40699.800 s, System: 3817.819 s]
+    Range (min … max):   760.617 s … 760.943 s    3 runs
+
+  Summary
+    DEBUG_INFO_NONE ran
+      1.06 ± 0.00 times faster than DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
+
+With GCC 14.2.0:
+
+  Benchmark 1: DEBUG_INFO_NONE
+    Time (mean ± σ):     830.524 s ±  0.342 s    [User: 43901.642 s, System: 4515.917 s]
+    Range (min … max):   830.135 s … 830.777 s    3 runs
+
+  Benchmark 2: DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
+    Time (mean ± σ):     873.663 s ±  0.150 s    [User: 46102.416 s, System: 4968.065 s]
+    Range (min … max):   873.565 s … 873.836 s    3 runs
+
+  Summary
+    DEBUG_INFO_NONE ran
+      1.05 ± 0.00 times faster than DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT
+
+I understand the desire to have CONFIG_DEBUG_INFO_BTF be selected with
+allmodconfig for the sake of coverage but that is going to add up for
+builders doing many builds a day.
+
+Maybe we could add a fragment to kernel/configs for easily flipping
+this? Another alternative that I have thought about recently is allowing
+developers to specify a directory that holds out of tree config
+fragments (KBUILD_FRAGMENTS_DIR?) that would be searched like
+kernel/configs and arch/*/configs, so that people could maintain their
+own fragments for easily doing something like:
+
+  allmodconfig debug_info_btf.config
+
+during configuration. Regardless though, if others find this new default
+desirable, I am fine with it.
+
+Cheers,
+Nathan
 
