@@ -1,128 +1,152 @@
-Return-Path: <linux-kernel+bounces-420636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B159D7E75
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:57:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1ADB9D7EA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:57:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E11A72827D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:57:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EF6016205D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 091C618F2E2;
-	Mon, 25 Nov 2024 08:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB79718E37D;
+	Mon, 25 Nov 2024 08:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jDSmjSvW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Dr/JP/rg"
+Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A5D7082C;
-	Mon, 25 Nov 2024 08:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E0718FC89
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 08:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732525017; cv=none; b=tCugTVowcCFNe+I7b1kgq17QJM6JJemjhCIShrBnYLA/WN50V/XmEATkKYLxNo/ctVuzhR/WAy/YN2WdSdYx87DsXXA07gTW90D4Jq8Iwr/sjWWRWlqXkYj/Wefc5psMsW/MMiKIG6UrvQ4AsIItoE0XiWQbfKQWoqqvX1yhvC0=
+	t=1732525036; cv=none; b=qbD/xiSBhcAtCmU3W8qnujcGOq9u92lpKpuBhvBmTI/Kl7gLdGAFNBe9HZ0QcbLrHHS6xbLmUvf4ywkAlvrUeJ/rOy9slvf//5io5erFcREHJO4oITKj53gEdukiB1PnBxeqbv1Vk7MI+BN9RlKs3vITyN8RP/gbRQ9nzbws684=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732525017; c=relaxed/simple;
-	bh=/2thwBwdSdxcmXP+yLSwfkseZXTpwCP/GHULab9We/s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dj6EXadnQXqj79NXhUTNAR5ckkDQDueAof5EsZ3rfoFgDlgNbwEaHL0XuVBjCJvr+QWdiFjstvTKnhMHViAf6bOU4nvDBjw3cvk451r+38GefFqMaNXnE1B0XJQrTRg5FJojkS4TnbvI0tG8MCdESr7Jnx/LE7zbWbtLd1rzwdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jDSmjSvW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01A8CC4CECE;
-	Mon, 25 Nov 2024 08:56:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732525016;
-	bh=/2thwBwdSdxcmXP+yLSwfkseZXTpwCP/GHULab9We/s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jDSmjSvWqa4D7cRCpOVaLi7KCh7MuxYJUzVh5Up72YeaLtr+wlSOogaFktD/wg+on
-	 +9/ygvBrNZzJjaItTw6SXMxBWQEAb4fdCiqoRgsheV+K27POJ84nqVXCCY3TN/xvUH
-	 DDSP+MbvLU6JIcxoPVVJdV7FO4k2bd4uorG9Vn6wE/Ca/kg+3fzNQCvTg3bBKQZt1P
-	 FgwG2hUfK2BfZ78IBaoj8CXfBDoUI45ocrOBJM0XfwA9htBkpcD0PKlnnTuGndp9wG
-	 /NCGPmsep+/sm+5pljPbqufKVShq3KaWI69yAQb/g9NfNUw2wD3Q4Zk6jY1ynCyeK4
-	 2z5PMhRULhXBg==
-Message-ID: <9b37a31e-9de3-4230-8a3a-4ea506ca8d0d@kernel.org>
-Date: Mon, 25 Nov 2024 09:56:49 +0100
+	s=arc-20240116; t=1732525036; c=relaxed/simple;
+	bh=lGs7WCnVDsN7XxJSV5nbIsOaHiSpnOd0xbhnLSv2cgw=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=USyLhLAsB7dzVjYCpz6yLvusdSRsLbdeyLzmlnaFWwQlmavVODQtQ0EqWMsg7Zy62oXLnYrX2ohxSiaW6MSLTuE6tI3s+pIRhvPFVYm81QkP6Y9zX7ZffF4yKmbtxcK7CUox55xJbwMLTtcHpZrc/0GCFgCKZyL3YcdQug6yFb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Dr/JP/rg; arc=none smtp.client-ip=209.85.218.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-a9aa8895facso690669566b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 00:57:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1732525032; x=1733129832; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vNEkjXcR05MS0wp8vkwMgIPKD9D5sF3FToehB53AVps=;
+        b=Dr/JP/rgWuMDD8gXvo5DbToxBHJOsLqp363vitL2SMxDTGSnehP/kOR1YPCBdVCvZ+
+         +YQ1OFwBBCfdAoz5/6SGQYV3PufeSxM6fTDvRhebkdp6f3TaBSb+bDvqCmpPH1X5gACO
+         BJWyl00o9tsqeOcsE9ufEmEwbF2fxhJXTWK0cyojCBRwkR23UoCOdA2l4lSa/X+vU/dF
+         Av/TKXPbHZ+fUHdCWA7EPsGuMuOopLRmnuIGYlp2fydTIf4l74v5lTb3jTDHwZ9sBrcd
+         r3yvBMQTItzKpcxIGjhmHRz+T8TiRnSATxt9aLQvdaxhCagZ2rPv4+zLpsKGg7UA6qih
+         Q3jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732525032; x=1733129832;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vNEkjXcR05MS0wp8vkwMgIPKD9D5sF3FToehB53AVps=;
+        b=WvUwFulksOH/558i7VW+h2Mnq7PFn/Z8T2XuC+/AtPEuZOPLe08gbqBDmzJ3vQnapi
+         B3kNeAoKiQEFpCAoNtlN7Z3afygwxcYTq2s6ULMJ5rMJ/7Xvs5RRByA5fBM0apZoNrRg
+         lyOm/ff4z0UUsQ5w0mw6O15l3HNahcsh7YWLBgcaswGr75obvIO/tQA/o8a5vhMVzucY
+         F80HicBKzytCrbcithtvkZ0UPqoAO8o0ytQKYcG3fQl4VmBLAIrfjrA+bSGAuioMppgb
+         UnCmmbmS62aYxjRNZ+u1LfZUT3q7d6MUKzuaDU+o9VHDOORPoMTy5KvfAxSvbU2bdgW8
+         ODTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVbN185b0PUi6ffCPxIVHj1kblD3VyCM1v3AEz0a/KeKHln4ZJ9A8HixEvu9rriUQkzrPQs+xb3a7VC0sI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ5MKGz0LQUV/tE6BgRNgZtRCc3+/Y2CaHrfQiQAnyxGHwa+PT
+	G9pkfyg4qDbu5eGBBujA7qVVbI6MI1qLlUoYNdojKebcdNgwmpiTa2Yp4T3FWnE=
+X-Gm-Gg: ASbGncuGWm9TCCD81KKig8ghPJHwX8pjN3IpG9Qha/U6KXPNJiCbbN091/RkhTGOmZo
+	2r5i5jegb6P9kewm3JSvpC7EK7eDZzk7lJ92pvYqPp08wH9KUaA7tkIkqlxoyxIVCzreK4MrwFZ
+	NQ5qrufsTzTamZcOmcU5QD0TN27Kvk2xU53K1ZRkptB83aD4H9KxwPqJ0mSDQ9Hs0r1vt+efBsQ
+	p9NfdLEnk3pZnDRcgW+VKqLpUqwFWbQZ18jp3kbcnPH8+IZeGHW5Ltjr5AJnzwJfjbkct22P3T0
+	gWM2ubK+Ei3Fgl95uRGa
+X-Google-Smtp-Source: AGHT+IH55hAqFtF1SAZEH6TDiO7aHZVwXL0OCOENrWcyyZFBIRACNLLEe84rTZrGuYqyUatS9TtS7A==
+X-Received: by 2002:a17:906:292a:b0:aa5:1cbd:def8 with SMTP id a640c23a62f3a-aa51cbdeea1mr942300566b.17.1732525032462;
+        Mon, 25 Nov 2024 00:57:12 -0800 (PST)
+Received: from localhost (host-79-49-220-127.retail.telecomitalia.it. [79.49.220.127])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b52f9b9sm442025666b.105.2024.11.25.00.57.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2024 00:57:12 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Mon, 25 Nov 2024 09:57:45 +0100
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 00/10] Add support for RaspberryPi RP1 PCI device
+ using a DT overlay
+Message-ID: <Z0Q8CekmPV4fAN6f@apocalypse>
+References: <cover.1732444746.git.andrea.porta@suse.com>
+ <22e08939-fa89-4781-824e-1ea01648fb1b@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] media: venus: core: add qcs615 platform data
-To: "Renjiang Han (QUIC)" <quic_renjiang@quicinc.com>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- "Vikash Garodia (QUIC)" <quic_vgarodia@quicinc.com>,
- "bryan.odonoghue@linaro.org" <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20241125-add-venus-for-qcs615-v3-0-5a376b97a68e@quicinc.com>
- <20241125-add-venus-for-qcs615-v3-2-5a376b97a68e@quicinc.com>
- <3b3cab5c583a41d79acc75dd08ca84d6@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <3b3cab5c583a41d79acc75dd08ca84d6@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22e08939-fa89-4781-824e-1ea01648fb1b@lunn.ch>
 
-On 25/11/2024 09:44, Renjiang Han (QUIC) wrote:
-> On Monday, November 25, 2024 1:35 PM, Renjiang Han wrote:
->> Initialize the platform data and enable venus driver probe of QCS615 SoC.
+Hi Andrew,
+
+On 20:26 Sun 24 Nov     , Andrew Lunn wrote:
+> > This patchset is also a first attempt to be more agnostic wrt hardware
+> > description standards such as OF devicetree and ACPI, where 'agnostic'
+> > means "using DT in coexistence with ACPI", as been already promoted
+> > by e.g. AL (see [4]). Although there's currently no evidence it will also
+> > run out of the box on purely ACPI system, it is a first step towards
+> > that direction.
 > 
-> Forgot to add Reviewed-by, next version will add Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> When combined with CONFIG_PCI_DYNAMIC_OF_NODES and this patch series:
+> 
+> https://patchwork.kernel.org/project/linux-pci/cover/20241114165446.611458-1-herve.codina@bootlin.com/
 
-Please start using b4. You cannot add other people's tag this way - via
-reply to email.
+That's great. I'll do some tests as soon as I can start my rpi5 from ACPI,
+I saw there has been some experimentation about it and should be feasible
+to run it succesfuly.
 
-Best regards,
-Krzysztof
+> 
+> It probably does work, or is very near to working. Bootlin appear to
+> have the LAN966x working on an ACPI system, and what you are adding is
+> not very different.
+> 
+> I'm also currently playing around in this area, trying to instantiate
+> some complex networking hardware using DT overlays on an ACPI system.
+
+Nice!
+
+Cheers,
+Andrea
+
+> 
+>      Andrew
 
