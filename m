@@ -1,153 +1,120 @@
-Return-Path: <linux-kernel+bounces-421473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 853D59D8BC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:59:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7EEF9D8BA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:53:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 026D6162A46
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:59:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58ED62866E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B8A1BBBDD;
-	Mon, 25 Nov 2024 17:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4CC1B6D03;
+	Mon, 25 Nov 2024 17:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gQrA9CMm"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K1GdwETX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3801B81B2
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 17:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C4D41C92;
+	Mon, 25 Nov 2024 17:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732557543; cv=none; b=qvueH+BasUsUCtTH/Pidm7B2Q/HMNi0ObjypDSlPFM1CeAa01YjethA3mWpDvyWqoY+Hpw5Y6WS56RQ94E4oFV5i0/2IyFop47cNu0o3ZqpWdm/O1jSNMu+NcTLwrMDuHC5NnkXC8AwS7zqZAVVZUFRvJM1y1cJgd984gXMekdA=
+	t=1732557208; cv=none; b=VO7EdncpNqcZ02ApyTF7CTGgkQ2aG24PuexrLxZFDgPGFmruNdfLK6hG5EcBWp/OOxUCuJF2azjq5umcB/NQbD0lNHY5kpm5j0wnUiVGZxCuyML25LVf+lKfii5vN26ltaBqvvCyYaPQnEXyrU4pIfQagSGkGvNDlu1wXMRUtek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732557543; c=relaxed/simple;
-	bh=iqPKUKL9ELh3ItkoROVJPLFbP84xRrkUj8+Scx+N17c=;
+	s=arc-20240116; t=1732557208; c=relaxed/simple;
+	bh=Sy85kf3vcC34kSnYFUkbxzk6hppjvfyhk9EOtB98BRU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DVIgaeC70Ac3nf9u2H24Oe9uGZV+bSIAOPm4bI97CzHwVODIA+1v/ld8+s4n1qrlKqWUjXOHe47VzvinhK1wf9ynYwieugmU6kP/poX46AUlrVVIoji5FnYrEk0ojFIY+5ZcNICd7dgdJikagv/0lLlWxei5okhLWXz8h/0t8YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gQrA9CMm; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9a68480164so671073466b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 09:59:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732557538; x=1733162338; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xXLqvBkzwwQHV9WjuiXet8nTMU/3s9BgOxGDDiZ4odc=;
-        b=gQrA9CMmCaWZwVSS/xT05BFBWm1NfFY4CVgMqNeh0Ng00YsDHz+P9hgB/CKtiqaMSg
-         t+Rca45yl2T0LTACo3BM3I3H/Pe3m3HtrJbIMJINymWcgkzUwnxq/clKvdh2SpXmeyPj
-         WItr0wkLE1le5RSv0wESTigx2NQlKFWykrrJs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732557538; x=1733162338;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xXLqvBkzwwQHV9WjuiXet8nTMU/3s9BgOxGDDiZ4odc=;
-        b=v8EgmeK4EasNJYQqQxEvdJp8gOIlwJqVI4CQVf2XE1cTqaaYRgpS2p9UkqfqdebPaS
-         uvadU3GVfySy0vQKJZol7eI1V+1lxLoibXiz5AnDZJKBfEGdc0zinXN97SJpK/hxcUni
-         0vnEk3lk0WYMyANgZ9VDfcT+WkUR53JlTEn6D1QsRkDN6XKtoRtoLynR9BuDyJaHxYtl
-         i2Ssfw9ChpdSGg/4Ncn3ekEqvYL1nVWBDwmR6mNLyZupzevWWDNbWkyC4goj1R/sjNYu
-         X78GFe/byrkr1y/tw1DNHgfDmB2jcatopmTXHbX+lUvWHlQKyy9G07V7WD5YuxqHe7hk
-         MXVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDMaLEW19WHIMTSZdvv5nwkTstSZgLI6o2w2/9vdbzRURV7bI4aM51vI+B61hCXL30puFnGxTWyx8Rs/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBu2bWy1hkjUDQzoEqHDR1xM60bOM1eIdo5y7FfpUOZLGqhes6
-	LHIZrN3p0Fwdu/ppIbfR3VUzNJEFpRRinmpRXvA6b0FwjgTgsgCwYMW3dzJMG7fiuCd7WuByQ+H
-	O+8c8Rg==
-X-Gm-Gg: ASbGnct9kY1tlq01M7H4a+nv+5Pq+gs04uAPbDfryeWxsq5jpUmVNZkbieM27/264Dl
-	HTo/UtIavNu+FMcZQAyhCqvg9Y1Y7KTAYcAjd/jjUKibuEKJo8qwKqbIp86ZsYQV5npJeEEdXCH
-	GGkM6YIJ1xlYh9T7vDXng/gfte3i3hFyxEcFGmIcBvMRzPUUnEKrDs384s/m2e63gqvzbiiuRp1
-	C2vDcRTAhxtvfFTuBu2ge65/Kll6fKqnmfCAXdUvVbXVb+msbMBOa9lB/LMUTJ1+0LdH63/X/Zo
-	DNn5ZxUdDMLeOfNJkAYSdvlu
-X-Google-Smtp-Source: AGHT+IHXUHi9QCxLZBaekZ2P1EPkR8ukyg58vpOgVkl0dhyGfIBMdQccT1s7JAxY0foo44Vwp9O3Lg==
-X-Received: by 2002:a17:906:3187:b0:aa1:f73b:be43 with SMTP id a640c23a62f3a-aa50997d791mr1283526166b.32.1732557538510;
-        Mon, 25 Nov 2024 09:58:58 -0800 (PST)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com. [209.85.128.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b28ffc5sm485608066b.15.2024.11.25.09.58.58
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 09:58:58 -0800 (PST)
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-434a2033562so5757515e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 09:58:58 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXwJN6MoDH/hFDXRDF49x1T8SjNdJ9UbTxzEmQ4Y9un4N8jPhFflBZOlW08YF7I9HiAY1gHhRY/gXGLz9s=@vger.kernel.org
-X-Received: by 2002:a17:906:18a2:b0:aa5:3b5c:f640 with SMTP id
- a640c23a62f3a-aa53b5cffafmr703474466b.54.1732557119666; Mon, 25 Nov 2024
- 09:51:59 -0800 (PST)
+	 To:Cc:Content-Type; b=F9/bSFCe9XzJaWuswZF06YkHDIvSou+yWVSLxUacaWI7ZKc4s0Pdp4c1z72KEBh6KxCrW9I4QdB4rxHq/RDMiSIBP6/PXKADvALJv8DBtYe/66XA7RvS1in1MC74SprGzegpI1yTEW+GV+m7aqkGRH0rzq10ksitjc0HHtStrcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K1GdwETX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE2C9C4CECE;
+	Mon, 25 Nov 2024 17:53:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732557206;
+	bh=Sy85kf3vcC34kSnYFUkbxzk6hppjvfyhk9EOtB98BRU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=K1GdwETXZNvu7Zbuh0jWSBrXqxRg9qF8odzr6B98um053N8lDx5269wpk2/udcf0f
+	 jQMVR5DX3UNXws5aHNY+WW3vWJpHwtMRe6SyutsbNodcuWMX4VyOfZqfddv8N6XyXH
+	 AjCeh+TffRKNaq2fgP9Qb1lefC+ho6CMwp/As9BGp0NeUD/mc9eeUDWRYeSRU3+ieZ
+	 kuL7xTlYKAirRFwD4PAa+PNEmDC0vTHKwZYNy9I1XD6FDGnZLQEhJRLDitO+5zKT7h
+	 K9UQ8CcaZAxgwoKwcLe0XPXZXGXxDB61vA+Mbdeyor2Z8Oa0XDCPCy2NE/cFZxVc2x
+	 u614aGFNtItQQ==
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ffc1f72a5bso13919911fa.1;
+        Mon, 25 Nov 2024 09:53:26 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV8orN/CHdkKtV33MFdLrY53ehaeA+N4xVst22uw6hbk6bqQSEuCK/QNDlp9z0WQ41+UN5B6v0RTkPFWJy3@vger.kernel.org, AJvYcCXk/IIXppDC+Jr+oDfS6Hy9ZIDeLqHexX2kiXK38DoGpL9f4dqjyxg9lUOUL1ANDmX5OO2qikc+B0k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGNivP49LbNpq1Ih6SX6NLipUwKBD1s2MGefWjZpusu7OlRH/G
+	Y5HazVKLDKn6hjA1hAOkNyQgTtC4jCPi9jT6Qvfvp4z3xgbOCpd8cUrhfCiXqzrb9HmfAZBmHuB
+	PN5SmO8lDK9RjFQk/i52pgFfyJlM=
+X-Google-Smtp-Source: AGHT+IErTOjhBpAu53njDQQIpCJYn5/RbRSbWCA8X67r2W2Xsb5NbVmoZQeuB8i563OKA0Jfwogv9HqgM6n2g9Vol8c=
+X-Received: by 2002:a05:651c:199e:b0:2ff:b3f0:68d9 with SMTP id
+ 38308e7fff4ca-2ffcc281ea0mr1089891fa.3.1732557205067; Mon, 25 Nov 2024
+ 09:53:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241123153031.2884933-1-mathieu.desnoyers@efficios.com>
- <20241123153031.2884933-5-mathieu.desnoyers@efficios.com> <CAHk-=whTjKsV5jYyq5yAxn7msQuyFdr9LB1vXcF6dOw2tubkWA@mail.gmail.com>
- <d36281ef-bb8f-4b87-9867-8ac1752ebc1c@efficios.com> <20241125142606.GG38837@noisy.programming.kicks-ass.net>
- <c70b4864-737b-4604-a32e-38e0b087917d@intel.com>
-In-Reply-To: <c70b4864-737b-4604-a32e-38e0b087917d@intel.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 25 Nov 2024 09:51:43 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjcCQ4-0f68bWMLuFnj9r9Hwg4YnXDBg8-K7z6ygq=iEQ@mail.gmail.com>
-Message-ID: <CAHk-=wjcCQ4-0f68bWMLuFnj9r9Hwg4YnXDBg8-K7z6ygq=iEQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/5] tracing: Remove conditional locking from __DO_TRACE()
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
-	Michael Jeanson <mjeanson@efficios.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, 
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org, 
-	Joel Fernandes <joel@joelfernandes.org>, Jordan Rife <jrife@google.com>, 
-	linux-trace-kernel@vger.kernel.org
+References: <20241125170758.518943-1-yeoreum.yun@arm.com> <20241125170758.518943-3-yeoreum.yun@arm.com>
+ <CAMj1kXG4A4h3=bZC6kSrwsZa7p4RZ-uN5N67pZUFLOQ2RJE64w@mail.gmail.com> <Z0S3wiugr0JML/cV@e129823.arm.com>
+In-Reply-To: <Z0S3wiugr0JML/cV@e129823.arm.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 25 Nov 2024 18:53:14 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXFOdGaYiVWOyFEK+Lz97YdzAu+AWj5trZBTL+Xc_DXnmA@mail.gmail.com>
+Message-ID: <CAMj1kXFOdGaYiVWOyFEK+Lz97YdzAu+AWj5trZBTL+Xc_DXnmA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] efi/fdt: ignore dtb when acpi option is used with force
+To: Levi Yun <yeoreum.yun@arm.com>
+Cc: broonie@kernel.org, sami.mujawar@arm.com, sudeep.holla@arm.com, 
+	pierre.gondois@arm.com, hagarhem@amazon.com, catalin.marinas@arm.com, 
+	will@kernel.org, guohanjun@huawei.com, Jonathan.Cameron@huawei.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-efi@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 25 Nov 2024 at 07:35, Przemek Kitszel
-<przemyslaw.kitszel@intel.com> wrote:
+On Mon, 25 Nov 2024 at 18:46, Levi Yun <yeoreum.yun@arm.com> wrote:
 >
-> At one point I had a version that did:
->         if (0)
-> label: ;
->         else
->                 for (....)
+> Hi Ard.
+>
+> > I take it this is working around buggy firmware that passes both a DT
+> > and ACPI tables, and the DT in question is broken?
+> >
+> > If so, this should be fixed in the firmware. The EFI stub does not
+> > reason at all about ACPI boot vs DT boot, and I would prefer to keep
+> > it that way, especially because this code is shared with other
+> > architectures. For instance, the meaning of acpi= could differ between
+> > architectures, or they may not implement ACPI in the first place.
+>
+> What I concern is that It doesntt necessary to check DT
+> otherwise if the FDT variable in variable storage's contents is
+> corrupted, it would complain while it check in early_init_dt_scan()
+> thou the dt isn't used in boot process.
+>
 
-Well, that is impressively ugly.
+The DT is not stored in a variable.
 
-> but it is goto-jumping back in the code
+If CONFIG_EFI_ARMSTUB_DTB_LOADER is enabled, it may be provided via
+dtb= on the command line, but I have little sympathy for a user that
+passes both dtb= *and* acpi=force, so this is a scenario that we can
+ignore.
 
-I'm not sure why you think *that* is a problem. It does look like it
-avoids the dangling else issue, which seems to be the more immediate
-problem.
+Otherwise, it is taken from a EFI config table, which is just a
+<guid,addr> tuple describing a location in physical memory where the
+firmware has placed a DT. If the firmware puts a corrupted DT there,
+the firmware should be fixed instead.
 
-(Of course, "immediate" is all very relative - the use-case that
-triggered this is going away anyway and being replaced by a regular
-'guard()').
+acpi=force is intended to force the use of ACPI tables on a system
+that provides both.
 
-That said, I have a "lovely" suggestion. Instead of the "if(0)+goto"
-games, I think you can just do this:
+> also, although acpi= could differ from architecture, the force option's menaing
+> seems the same over architecture (ignore DT boot with ACPI tables).
+>
+> So I think the check the "acpi=force" option to prevent loading DT seems
+> good.
+>
 
-  #define scoped_guard(_name, args...)                                   \
-         for (CLASS(_name, scope)(args), *_once = (void *)1; _once &&    \
-              (__guard_ptr(_name)(&scope) || !__is_cond_ptr(_name));     \
-              _once = NULL)
+The EFI stub does not care about ACPI vs DT boot, and I'd prefer to
+keep it that way unless there is a good reason.
 
-which avoids the whole UNIQUE_NAME on the label too.
-
-Yeah, yeah, if somebody has nested uses of scoped_guard(), they will
-have shadowing of the "_once" variable and extrawarn enables -Wshadow.
-
-But dammit, that isn't actually an error, and I think -Wshadow is bad
-for these situations. Nested temporary variables in macros shouldn't
-warn. Oh well.
-
-Is there a way to shut up -Wshadow on a per-variable basis? My
-google-fu is too weak.
-
-Did I test the above macro? Don't be silly. All my code works on first
-try. Except when it doesn't.
-
-          Linus
+Which real-world problem does this patch aim to solve?
 
