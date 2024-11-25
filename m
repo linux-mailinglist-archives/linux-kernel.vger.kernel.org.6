@@ -1,212 +1,107 @@
-Return-Path: <linux-kernel+bounces-421688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 899F49D8E93
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:34:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 362D19D8EAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:44:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 490AF2837D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:34:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3D83B28691
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B771CCEF8;
-	Mon, 25 Nov 2024 22:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486B71CDA01;
+	Mon, 25 Nov 2024 22:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OelOhQ1z"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mot/HVWZ"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4181C1AA9
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 22:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6031C1F20;
+	Mon, 25 Nov 2024 22:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732574040; cv=none; b=DDAGvHGXvTZKidqGn9DCW9deDx8KUdn1xR+3RxN+xriKAHcoZLZ4+iA5vKelrLInbWXMUf0xvg34PQxqWilN+4sh22w1DOhWtfnRHWj5vj2jzrptm1UE2ke3NafFnGRtaK+qnR9zZLDTCSnka1zbwQSceZDtIW+V/TebSQ3fNXw=
+	t=1732574064; cv=none; b=aINeNzkNnoyGI4/UU6yP6E3K+oLFkvnrytrSYTZm7jwU61H8oniZG87qJkbhSXB9o00+H0QqJCA25I8TOL3QKwQ9+s8kFVB12SwQ9x4/lixxHKc1yHUdONCRxUB/HcxNX/c3B233MWZSv8wCVGEECNUMjZoaYmC6EQjRHhpMw9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732574040; c=relaxed/simple;
-	bh=adgyRui2A4t8Aa+g1+2n3f/hHSgZeA3iXYdd1QHol10=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LKU3bUO/Z2DdCG8ejj9G/Ts+DBhA7ckivO6+5K1AMS4ycmEKJYuMukH2laSaU3SQh+Amh/QDzykSwYauYnrDs0LqvEpWCSknjHxqeCrdBWKSgYGobL54Qe53sD34Z4Ck/BD0BTw41jJbWtnfrQmY+6WX264i/eQi02+JY9OD4gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OelOhQ1z; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732574037;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Msze4ierWMuNBzYGEwYpJUYKJXMDVB3/3xNduYebKtM=;
-	b=OelOhQ1zoPBQQ6UrPJbJy1RnI1xQxpu+sCdYc+WrsBl/hVNWk7IVkEWZ6FMlH8ze9hOUDp
-	mboKCudBoMSR0Ls/c7LDSG1LcPkgyZf+G7n2yPQWEC9DCz9IpJIqrzj0knd8xPXD+4XnLx
-	YH80tchqYKEM2yODT2lWU79mIm+xC80=
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
- [209.85.166.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-616-2DLQlWQNMWKAxOH7mq_cXQ-1; Mon, 25 Nov 2024 17:33:55 -0500
-X-MC-Unique: 2DLQlWQNMWKAxOH7mq_cXQ-1
-X-Mimecast-MFC-AGG-ID: 2DLQlWQNMWKAxOH7mq_cXQ
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-841a54a66a2so116110039f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:33:55 -0800 (PST)
+	s=arc-20240116; t=1732574064; c=relaxed/simple;
+	bh=JId8FJHJMPrG0n9QXj3iDjW4/gQayePB/qaUjzuWQao=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lQ7wIC3lG5eWMgMYRbSoU7DHL/bk2MFWdBwKczbCY+8viHIeQ881mWeBGJFtQ5kKFjz5v3p9clI2kvfU6pUO7Gc0P1SG9jFnHXtTb5ORz3Rfj6WgjDMBBbPoykhra5V/bKErJSNK5esT2vyv6x2GZgH9+88/+lpvKvtxxGMq+Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mot/HVWZ; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43494a20379so18792135e9.0;
+        Mon, 25 Nov 2024 14:34:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732574061; x=1733178861; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JId8FJHJMPrG0n9QXj3iDjW4/gQayePB/qaUjzuWQao=;
+        b=Mot/HVWZPdmm4kWO9PLuJPPfYJ1RjAOXo6UJwVnUXYvQhda3/WuvY2/SuA+Jo9yIjI
+         B33qfQDsep+nAn1z17VxRa9F4/HX1PUC238Fy2sLSUu847uP8KUuIZVsXYvhGhXHjm1I
+         /JEcJnKFvd5rcEeSKvy4/q0HbOTb0r/e846yC85TYO5L335RcP9jauKLgVQ+T2z8DxmU
+         0fuwalGE0nY9ykmgpAYKPjG9e4bRzruJMXe4cYCFMmqNkmtbEZ7W5Sb7aWnMIrok3xfH
+         7HxZTWw/4g9dm+jDDjtz0wE+faI6fGps8fLYA1DDz/pUcsyZYHi27e0gT2OD5Vf6WoLp
+         Ybyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732574035; x=1733178835;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Msze4ierWMuNBzYGEwYpJUYKJXMDVB3/3xNduYebKtM=;
-        b=Zxl2pIr2sIrV1tg6rrwaSbUrTAIXurIRmBGEaqiPQ13loxsNhSRcMNjvlkawOCD+Ht
-         ceHByoMXI/UCUlfJRhRSiqUCAKuvMi9oVPoLVxi/gJqG9NTwpORisUGSbFirYVz+PXCp
-         1HIUAUU299dRSafk6d143Rn8xdrN+bIewCardmbMTwFDzLWeXcGT3vB+1YXZ5LFmfe4n
-         uOFmj3JscMrMeZib6ZKpqOjG5UOz0VpdNLIvj2fAtWxcBYS78PHr+TEXS4biNgT0c11X
-         kuhWfi258Xat1ukTBVPoSwIPM879YsaD+h6T6kgfNCJcRXGIr3ExW9cxfX/N2gL2Pxua
-         jINQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYGsfBAWB3lmMKP8qppNOq16Dz8UB6BwYmfb4Xr5nNDwrychhnLKr1Qfv37KnH4hToC3HaLuJKLfvB4g4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+p8IOOKbUzFKVACwrnTqa4Z2rgIKGCMFSuwnSeanGRtJm0I+f
-	1LaitY1X5KQDFqUp4ZcG2/KlwZ/6tExdjCnGekHn7YPJa4EILTfSvUnqFnnJqG7i/40Y3voFF7l
-	y9Bj6ViYhqbmWDXhlHzHzgpvGw5dHKaGhqFZP9ZQUPwUKTQq8S3aIk+PoZ6qa1Q==
-X-Gm-Gg: ASbGncu05XWdEqPtMpUCa6mU6EK6dq1DORdnsykZIOAOjIbxbaECao3ZsatEom74yNC
-	BFp4zfhqT9xrH7xsgALF6MF2OSF7pGJ8NgcWqa/tvxTdF/St+FOq9N2LiW7w+amd4vxmbecKC90
-	ivwpsIZqUOx4NV0GT89wJbriBNedzcZPXWM+AclTcm6pRx2WxwJAIxwmllz3KboIPqYp9bI4nRI
-	3bATxbi5ktCVHfbCoEmmwJ8bmwEXjKxfEFuQR4v7CtrqwbZE/OtQkO/oAi2TH4PJmj6H+AtBA0w
-	80lT5RiFagYYduOh1Ta1
-X-Received: by 2002:a05:6602:164c:b0:82d:129f:acb6 with SMTP id ca18e2360f4ac-83ecdd3a4acmr1400824639f.14.1732574035055;
-        Mon, 25 Nov 2024 14:33:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF5kiqJDkqBCBfHrXKZVwZjB+U39K7Io0NV43Xa9HO3Z1whr1biVbTicDSfDUi4as1q2vKhlw==
-X-Received: by 2002:a05:6602:164c:b0:82d:129f:acb6 with SMTP id ca18e2360f4ac-83ecdd3a4acmr1400822039f.14.1732574034716;
-        Mon, 25 Nov 2024 14:33:54 -0800 (PST)
-Received: from ?IPV6:2601:408:c180:2530:d041:4c25:86b8:e76a? ([2601:408:c180:2530:d041:4c25:86b8:e76a])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e1fdab893bsm967695173.70.2024.11.25.14.33.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 14:33:54 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <bfcb530d-10e4-4ec7-b216-0b54d5089bfc@redhat.com>
-Date: Mon, 25 Nov 2024 17:33:50 -0500
+        d=1e100.net; s=20230601; t=1732574061; x=1733178861;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JId8FJHJMPrG0n9QXj3iDjW4/gQayePB/qaUjzuWQao=;
+        b=IINqqsM264+9TLcr3Atu/wk6QZprl3kRfl7gHORH7Om6tpFMIscO/ET7G25wzlSJ4X
+         kJPtnmyCNxb5Ekg5+JAYROktKqwc6nwppNNA6DtVh+MRS/eyYIgQ899kdAsHsnV6hrWT
+         nQzFLM4z82frWGX/uN5OKETahxHTSTdQNuMM9eI43+ehXfJ44sPwuNpjpNbeP5jLzfkq
+         9in7LSJ8GSVnM/ZVC05WKFqRg16OL7sAU2fEcaFkXBq2uZP4QYyWhr8wAafBlEFVTmOd
+         lE9QOBPG0B2unU2II7MaFpOxnqe9vWTwCkUvA7SJuKqYQoSdsw6c/w3xTI9ry5cmpRJU
+         v+qw==
+X-Forwarded-Encrypted: i=1; AJvYcCX1oNObNfeUNmfeuWDjCQisqXZA0x5TVF3F3Utu/UTaCzq2nG5ncq2R4uU96JAOGvtRgNk=@vger.kernel.org, AJvYcCXVwS+ZeNJNAzSdpUFv1sL3LuAjCFwUREwSS20rc7Sb8XrVaDWvNYqlV83KBYltkV36UP84TWiISfLys+Ge@vger.kernel.org, AJvYcCXkxGprMgrhsk/ITkHT0zZDjC/qBnZEf03FgRz/WN3wdxY0EhIw9jXAHVumSxZkVeo2662VhKJ8lRmvmCX2n1rh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhBpgfU4MnxX7RcfmyDa3Oq6pkZ6eJG4uLpAFfNwri9bAXRIzc
+	M0cXTmgmsCR8VSkoTC/d0emb5Gv/sGmfGa0BdUIFvGOyRtOgsXvJRZaLRvIGxQ0IT0ARSpjPdC5
+	A/1iM78XFYHHD4K0FPnqti+K8OOE=
+X-Gm-Gg: ASbGncs8WXnzfVGS8LpxQPbt+BVUgLv7L3QYBHm7cl3QHjMvuc6TlIAIY2OCJ3WTjBm
+	kEn7rx5xoQuORQdD/d669rThOXWfCx8c2eLK4tTbsFyjYqzE=
+X-Google-Smtp-Source: AGHT+IHCTd9BUM21DGJEF2mblcp5uJ9mo9QXafRzk1/JP2A0sIpGPIRH2edRU3Om5p7+rD8vZ5wZXQ9VLH952v3ZdIA=
+X-Received: by 2002:a05:600c:3150:b0:42f:310f:de9 with SMTP id
+ 5b1f17b1804b1-433ce434707mr140832075e9.15.1732574061157; Mon, 25 Nov 2024
+ 14:34:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sparc/pci: Make pci_poke_lock a raw_spinlock_t.
-To: Guenter Roeck <linux@roeck-us.net>, Waiman Long <llong@redhat.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
- Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
- Will Deacon <will@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>
-References: <20241009161041.1018375-1-bigeasy@linutronix.de>
- <20241009161041.1018375-2-bigeasy@linutronix.de>
- <7656395b-58fc-4874-a9f3-6d934e2ef7ee@roeck-us.net>
- <20241125085314.1iSDFulg@linutronix.de>
- <b776ca37-d51c-47e2-b3bb-aee8e7910630@roeck-us.net>
- <20241125174336.8nEhFXIw@linutronix.de>
- <c77c77d4-7f6e-450c-97d5-39dc50d81b1a@roeck-us.net>
- <20241125181231.XpOsxxHx@linutronix.de>
- <72991b83-173e-492e-a4aa-5049304c1bd0@roeck-us.net>
- <5d269249-afd1-44f5-8faf-9ac11d9a3beb@redhat.com>
- <dea92bd5-65e5-4c5c-bc93-5bef547c935e@roeck-us.net>
- <2a940822-b4d4-43ea-b4f7-4294043b76ea@roeck-us.net>
- <88f47cea-baba-4673-9bd7-7b7c3f421008@redhat.com>
- <b0e13a75-d068-4ad3-b0d7-4834ccec3d5a@roeck-us.net>
- <42effdc0-bfe7-49a5-a872-21a6f665fff3@redhat.com>
- <55e2fcb8-dd06-42e4-b5de-4a0b46057571@roeck-us.net>
-Content-Language: en-US
-In-Reply-To: <55e2fcb8-dd06-42e4-b5de-4a0b46057571@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241117102857.198803-1-guanjing@cmss.chinamobile.com>
+In-Reply-To: <20241117102857.198803-1-guanjing@cmss.chinamobile.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Mon, 25 Nov 2024 14:34:10 -0800
+Message-ID: <CAADnVQ+FziJ47sGE8vwBqnPNnNc9Ny41fW7nzzNOaeWY60snaw@mail.gmail.com>
+Subject: Re: [PATCH v1] selftests/bpf: Fix unnecessary conversion to bool in 'run_subtest'
+To: guanjing <guanjing@cmss.chinamobile.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
+	Mykola Lysenko <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 11/25/24 4:54 PM, Guenter Roeck wrote:
-> On 11/25/24 13:29, Waiman Long wrote:
->>
->> On 11/25/24 4:25 PM, Guenter Roeck wrote:
->>> On 11/25/24 12:54, Waiman Long wrote:
->>>>
->>>> On 11/25/24 3:23 PM, Guenter Roeck wrote:
->>>>> On 11/25/24 12:06, Guenter Roeck wrote:
->>>>>> On 11/25/24 11:33, Waiman Long wrote:
->>>>>> [ ... ]
->>>>>>>> Fixing that finally gives me a clean run. Nevertheless, that 
->>>>>>>> makes me wonder:
->>>>>>>> Should I just disable CONFIG_PROVE_RAW_LOCK_NESTING for sparc 
->>>>>>>> runtime tests ?
->>>>>>>
->>>>>>> If no one is tryng to ever enable PREEMPT_RT on SPARC, I suppose 
->>>>>>> you could disable CONFIG_PROVE_RAW_LOCK_NESTING to avoid the 
->>>>>>> trouble.
->>>>>>>
->>>>>>
->>>>>> SGTM. I'll do that unless someone gives me a good reason to keep 
->>>>>> it enabled.
->>>>>>
->>>>>
->>>>> Actually it can not be disabled with a configuration flag. It is
->>>>> automatically enabled. I'll have to disable PROVE_LOCKING to 
->>>>> disable it.
->>>>>
->>>>> config PROVE_RAW_LOCK_NESTING
->>>>>         bool                    <---- no longer user configurable
->>>>>         depends on PROVE_LOCKING
->>>>>         default y
->>>>>         help
->>>>>          Enable the raw_spinlock vs. spinlock nesting checks which 
->>>>> ensure
->>>>>          that the lock nesting rules for PREEMPT_RT enabled 
->>>>> kernels are
->>>>>          not violated.
->>>>>
->>>>> I don't really like that, and I don't understand the logic behind it,
->>>>> but it is what it is.
->>>>>
->>>>> FWIW, the description of commit 560af5dc839 is misleading. It says 
->>>>> "Enable
->>>>> PROVE_RAW_LOCK_NESTING _by default_" (emphasis mine). That is not 
->>>>> what the
->>>>> commit does. It force-enables PROVE_RAW_LOCK_NESTING if 
->>>>> PROVE_LOCKING is
->>>>> enabled. It is all or nothing.
->>>>>
->>>> I think we can relax it by
->>>>
->>>> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
->>>> index 5d9eca035d47..bfdbd3fa2d29 100644
->>>> --- a/lib/Kconfig.debug
->>>> +++ b/lib/Kconfig.debug
->>>> @@ -1399,7 +1399,7 @@ config PROVE_LOCKING
->>>>   config PROVE_RAW_LOCK_NESTING
->>>>          bool
->>>>          depends on PROVE_LOCKING
->>>> -       default y
->>>> +       default y if ARCH_SUPPORTS_RT
->>>>          help
->>>>           Enable the raw_spinlock vs. spinlock nesting checks which 
->>>> ensure
->>>>           that the lock nesting rules for PREEMPT_RT enabled 
->>>> kernels are
->>>>
->>>> Sebastian, what do you think?
->>>>
->>>
->>>     depends on PROVE_LOCKING && ARCH_SUPPORTS_RT
->>>
->>> seems to make more sense to me.
->>
->> That will work too, but that will enforce that arches with no 
->> ARCH_SUPPORTS_RT will not be able to enable PROVE_RAW_LOCK_NESTING 
->> even if people want to try it out.
->>
+On Tue, Nov 19, 2024 at 1:36=E2=80=AFAM guanjing <guanjing@cmss.chinamobile=
+.com> wrote:
 >
-> No architecture will be able to enable anything because "bool" has no
-> string associated with it. As mentioned before, it is all or nothing.
-> Otherwise I could just configure "CONFIG_PROVE_RAW_LOCK_NESTING=n"
-> for sparc and be done.
+> Fixes the following coccicheck:
+>
+> tools/testing/selftests/bpf/test_loader.c:1033:64-69: WARNING: conversion=
+ to bool not needed here
+>
+> Fixes: 80a4129fcf20 ("selftests/bpf: Add unit tests for bpf_arena_alloc/f=
+ree_pages")
+> Signed-off-by: guanjing <guanjing@cmss.chinamobile.com>
 
-Yes, you are right.
+Pls use your full name.
 
-Cheers,
-Longman
-
+pw-bot: cr
 
