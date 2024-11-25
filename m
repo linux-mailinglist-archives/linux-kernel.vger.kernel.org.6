@@ -1,144 +1,117 @@
-Return-Path: <linux-kernel+bounces-420574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA599D7CCB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:19:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A5E09D7CCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:20:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD09D281547
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:19:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AB751627FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791DE18C92F;
-	Mon, 25 Nov 2024 08:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C2D188704;
+	Mon, 25 Nov 2024 08:20:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="GxoXJ/22"
-Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="p0bGCS2L"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EFA187FFA;
-	Mon, 25 Nov 2024 08:18:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27CE1A296;
+	Mon, 25 Nov 2024 08:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732522729; cv=none; b=uSqU2QEd01a3RP1ObCr4FaLGjN2Ecpa1IECh7yGf0K6DF7A68Cme2TGVJc1yjkaY0yMp/k+Odn840u6/Cz3NzyII0MZ2ga6ETEAyeXT1bN1/VKHtddm13IYvPV4gm/NYwQ/85bnDWB4nYU5tl2tZ7sOFLnI+h/nsuMfpckerm20=
+	t=1732522847; cv=none; b=rQocgxcJaVDlv63+MKgGzSFTPcZpA8BdAGHVValem7O153IFtJeWoDY+xaDEB8fympJqTaiREl5aImxwbb+3Xl77PqPUyLaZQharhjeH+hNv3LbjVU9At68ZplgzuqAgk1KzGCp4QcPcJjN7lVvzumrZVshiXD4vXj5XNsdAGsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732522729; c=relaxed/simple;
-	bh=ZX1ZqI1YZjNHBFyWQbcbP5xLEDCCE8n1EjqmEndKfwQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HkpMeuic74Wt9xEpAJ1vkGqtext9xi5ZeogkplLnC7XmIlUD9LuiTos/sToWpYdKbX/U/PWS5bUEEKGuBeDYX0OUVG1SYaySs6/Kv7JHgu+0J+6dkD1AfC4kfxpJLpjvE8M50ryu9R4G3eq1+PIv4UtLxGOpy2s7uNf1p9OZXfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=GxoXJ/22; arc=none smtp.client-ip=46.19.9.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
-	s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=Fz+uR78BPobXOPH4VNcUExmCEFHzoQ3zmdQQSjSRm7U=; b=GxoXJ/22YO08Nfly/PaSQVMVDF
-	MFDzqtH5rkViWvXSw5zVi9dNzgF2gAwYLVQ/ESC53yGPfSuID2S+L16QqJBk3nbqDBZoQtXWD4qfS
-	pQW0oADXfBY4JcFtEnVNbr+jNTWsOYDA+L3o3GD5sfGsYGHcR148W0t1d4i3RsnMKorEgaBRFaGkY
-	VgmRs87Y8GpHk2tUqUlgcxWQMboCHd7sz3Z0EMohPTwZRd9QTScsr6W46hhrlo8rxKJFShjYXns0+
-	cSSHMomdSIkSCyv/AElkJJo4XpLw+fufuGyFEn2azhL4OT6e0tRTlrmG3fd+ZkavxxL6oc3sqYfxt
-	nKoFceTQ==;
-Received: from [91.26.50.162] (port=58340 helo=and-HP-Z4..)
-	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <andrej.picej@norik.com>)
-	id 1tFUIx-00Eq70-0B;
-	Mon, 25 Nov 2024 09:18:46 +0100
-From: Andrej Picej <andrej.picej@norik.com>
-To: shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	upstream@lists.phytec.de
-Subject: [PATCH 15/15] arm64: dts: imx8mm-phycore-som: Add overlay to disable SPI NOR flash
-Date: Mon, 25 Nov 2024 09:18:14 +0100
-Message-Id: <20241125081814.397352-16-andrej.picej@norik.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241125081814.397352-1-andrej.picej@norik.com>
-References: <20241125081814.397352-1-andrej.picej@norik.com>
+	s=arc-20240116; t=1732522847; c=relaxed/simple;
+	bh=tuFGzuKT9Kp+P4m5tTUOZPtcMxp0g2nRys84C2P3StE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g0BjAQMuyBqvvrIrOaPBco4JDINmC64RafvlRnSc0Rl4UD4QqQmZMWuJ7RcX4OhgBujT7WcFCMsblt/YN35zRnuvUZuWhG8dJFUESRLoFFxiS8ENs8vNVUDVkE3YUzLKI6nIQPPJpr84IvWC2vjm5xNeeX+NkJ2WbTkPEAd7ejM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=p0bGCS2L; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1732522839;
+	bh=tuFGzuKT9Kp+P4m5tTUOZPtcMxp0g2nRys84C2P3StE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p0bGCS2LNemliJfdmxMqG9vlusdYA7kTxyNQaWFWmsCVbYVnbVpOFCxkHXUg0uaVC
+	 CQUyna8F5V6HlTf0Uc7dCxD2AsUi8JT7jXdcwy6cYDo/N0pH2Y/2W8XzTlgbuXLrjJ
+	 jSmZBju27GRXD4w5l7yo81d4b6CFkDkx4/o1bJ1g=
+Date: Mon, 25 Nov 2024 09:20:37 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH 3/3] kbuild: propagate CONFIG_WERROR to resolve_btfids
+Message-ID: <f7764e9b-6254-42af-94b8-41562a18b58b@t-8ch.de>
+References: <20241123-resolve_btfids-v1-0-927700b641d1@weissschuh.net>
+ <20241123-resolve_btfids-v1-3-927700b641d1@weissschuh.net>
+ <CAADnVQL4_8-Y0O3Gar-+q7XKMU6_tY8atEddWB2KsR+DCUZ7WQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cpanel.siel.si
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - norik.com
-X-Get-Message-Sender-Via: cpanel.siel.si: authenticated_id: andrej.picej@norik.com
-X-Authenticated-Sender: cpanel.siel.si: andrej.picej@norik.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+In-Reply-To: <CAADnVQL4_8-Y0O3Gar-+q7XKMU6_tY8atEddWB2KsR+DCUZ7WQ@mail.gmail.com>
 
-From: Teresa Remmet <t.remmet@phytec.de>
+On 2024-11-24 15:38:40-0800, Alexei Starovoitov wrote:
+> On Sat, Nov 23, 2024 at 5:33 AM Thomas Weißschuh <linux@weissschuh.net> wrote:
+> >
+> > Use CONFIG_WERROR to also fail on warnings emitted by resolve_btfids.
+> > Allow the CI bots to prevent the introduction of new warnings.
+> >
+> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > ---
+> >  scripts/link-vmlinux.sh | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
+> > index a9b3f34a78d2cd4514e73a728f1a784eee891768..61f1f670291351a276221153146d66001eca556c 100755
+> > --- a/scripts/link-vmlinux.sh
+> > +++ b/scripts/link-vmlinux.sh
+> > @@ -274,7 +274,11 @@ vmlinux_link vmlinux
+> >  # fill in BTF IDs
+> >  if is_enabled CONFIG_DEBUG_INFO_BTF; then
+> >         info BTFIDS vmlinux
+> > -       ${RESOLVE_BTFIDS} vmlinux
+> > +       RESOLVE_BTFIDS_ARGS=""
+> > +       if is_enabled CONFIG_WERROR; then
+> > +               RESOLVE_BTFIDS_ARGS=" --fatal-warnings "
+> > +       fi
+> > +       ${RESOLVE_BTFIDS} ${RESOLVE_BTFIDS_ARGS} vmlinux
+> 
+> I'm not convinced we need to fail the build when functions are renamed.
+> These warns are eventually found and fixed.
 
-There are SoM variants with no SPI NOR flash populated. Add overlay to be
-able to support this.
+The same could be said for most other build warnings.
+CONFIG_WERROR is a well-known opt-in switch for exactly this behavior.
 
-Signed-off-by: Teresa Remmet <t.remmet@phytec.de>
-Signed-off-by: Andrej Picej <andrej.picej@norik.com>
----
- arch/arm64/boot/dts/freescale/Makefile           |  2 ++
- .../freescale/imx8mm-phycore-no-spiflash.dtso    | 16 ++++++++++++++++
- 2 files changed, 18 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mm-phycore-no-spiflash.dtso
+Fixing these warnings before they hit mainline has various
+advantages. The author introducing the warning knows about the full
+impact of their change, discussions can be had when everybody still
+has the topic fresh on their mind and other unrelated people don't get
+confused, like me or [0].
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index da6ddce6b7c7..6dcefd58996d 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -126,11 +126,13 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mm-phyboard-polis-rdk.dtb
- imx8mm-phyboard-polis-peb-av-10-dtbs += imx8mm-phyboard-polis-rdk.dtb imx8mm-phyboard-polis-peb-av-10.dtbo
- imx8mm-phyboard-polis-peb-eval-01-dtbs += imx8mm-phyboard-polis-rdk.dtb imx8mm-phyboard-polis-peb-eval-01.dtbo
- imx8mm-phycore-no-eth-dtbs += imx8mm-phyboard-polis-rdk.dtb imx8mm-phycore-no-eth.dtbo
-+imx8mm-phycore-no-spiflash-dtbs += imx8mm-phyboard-polis-rdk.dtb imx8mm-phycore-no-spiflash.dtbo
- imx8mm-phycore-rpmsg-dtbs += imx8mm-phyboard-polis-rdk.dtb imx8mm-phycore-rpmsg.dtbo
- 
- dtb-$(CONFIG_ARCH_MXC) += imx8mm-phyboard-polis-peb-av-10.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mm-phyboard-polis-peb-eval-01.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mm-phycore-no-eth.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mm-phycore-no-spiflash.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mm-phycore-rpmsg.dtb
- 
- dtb-$(CONFIG_ARCH_MXC) += imx8mm-phygate-tauri-l.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm-phycore-no-spiflash.dtso b/arch/arm64/boot/dts/freescale/imx8mm-phycore-no-spiflash.dtso
-new file mode 100644
-index 000000000000..71918a3241d5
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mm-phycore-no-spiflash.dtso
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2024 PHYTEC Messtechnik GmbH
-+ * Author: Teresa Remmet <t.remmet@phytec.de>
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+&flexspi {
-+	status = "disabled";
-+};
-+
-+&som_flash {
-+	status = "disabled";
-+};
--- 
-2.34.1
+The "eventually fixed" part seems to have been me the last two times :-)
 
+Given the fairly simple implementation, in my opinion this is worth doing.
+
+Please note that I have two fairly trivial changes for a v2 and would
+also like to get some feedback from Masahiro, especially for patch 1.
+
+
+Thomas
+
+[0] https://lore.kernel.org/lkml/20241113093703.9936-1-laura.nao@collabora.com/
 
