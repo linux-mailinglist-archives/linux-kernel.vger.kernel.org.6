@@ -1,112 +1,138 @@
-Return-Path: <linux-kernel+bounces-420868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53FAA9D841E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:12:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 025069D8578
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:35:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1219AB3AF74
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:51:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A303BB3B2CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336CD194AC7;
-	Mon, 25 Nov 2024 10:51:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A622500B5;
-	Mon, 25 Nov 2024 10:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E1F199237;
+	Mon, 25 Nov 2024 10:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cm0Tl8Jv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F962500B5;
+	Mon, 25 Nov 2024 10:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732531868; cv=none; b=fl0ZN61u0IVv64bBSaOkHZPiWJR9erK0QxZJ6Mv/WqA1y6+EExCzKdtnrzUlhKhmm2xA5bj8sFC8Ybe0QSVJ4PaDAdxsauUEJpXzINnUZZGx39XppUc/wpfOZ0bsO9EVQLzIqdDVviZtfWYrYDzZgK9fQYigj7c1xCe2iWkmDrU=
+	t=1732531870; cv=none; b=i9ca+dmP6eOty5hfum0/jS7JpV2bO902wuTfv44i4TE/nY/kGZ+deRgXR87EdlBEAUr7RXqa5iI9w8svICn3y8AYMGt8lffeEqtaRKkUsPf5UBC8z4aQ1sAP0HJRQhEmxRhRsEFjuVL71WlB2FB0lMYc2KQ9/YD2yVAU3a8bm6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732531868; c=relaxed/simple;
-	bh=/yWyw62R/SG0tLxmmOZ9UjT8tj2zZAL5Cpw4RfSWPvU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TEG4y32LbhF3MhnFgzxNtxOA/7HUp3/amxbKvHzPKoYBW3GTD/iCcNYGF8v3pRO/efXmG6KyeevUp79e/O8QXGbB7LNpTxYdn2omFOVLciruZiPLDxpNave3VerGKBQ/4BNnc6dWEXiD0tVJmMADozTKf9xLxDQMc+V/++c+AzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3355E1692;
-	Mon, 25 Nov 2024 02:51:35 -0800 (PST)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 36CA93F66E;
-	Mon, 25 Nov 2024 02:51:03 -0800 (PST)
-Date: Mon, 25 Nov 2024 10:50:48 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Zorro Lang <zlang@redhat.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH for-next/fixes] arm64/mm: Fix false-positive
- !virt_addr_valid() for kernel image
-Message-ID: <Z0RWcgrQASMIleRn@J2N7QTR9R3>
-References: <90667b2b7f773308318261f96ebefd1a67133c4c.1732464395.git.lukas@wunner.de>
- <CAMj1kXFvJGHr_iv6bFQfb89XqPFrNWH7-rV7SFy4QBSWXYC4RA@mail.gmail.com>
- <CAMj1kXER7AbNyUDjtij6Ni0jVRMg11xvyhkCMKAxaKbx=dsgcQ@mail.gmail.com>
- <Z0RJaU4wjU5WeQb4@wunner.de>
+	s=arc-20240116; t=1732531870; c=relaxed/simple;
+	bh=QDA4su++mMVwrM0wfQhlVkImR4PRtky1DFc/fV5/ay4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g5Jjk1pWpWy8qNZlP41YxllMX+xsI0vK+5T5bVd7VMdR4qEnIuFOUNrX8loB+KrJZt/7TGYg7UzOKEd0crjK1ihMgj3dAbbFf0oDQVW2fpWuJ9MGVQX0UgrB8tbquyk2aCEs2BR2uc2iDUS80lkKN+uUTmSZR6D4BFK944hhsrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cm0Tl8Jv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4D68C4CED2;
+	Mon, 25 Nov 2024 10:51:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732531870;
+	bh=QDA4su++mMVwrM0wfQhlVkImR4PRtky1DFc/fV5/ay4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Cm0Tl8JvCmtgOO1gLFNdx1FEwL5ZjOzwyJzTkp5KkUbi3mYgKmOpBqTXEEa/t+nuQ
+	 xWqnff8yLK3wzd/ILHFJSbOncOlQB4QUtz+TLxmN7zDsm0I3smB7Um5Yr2+lJq3t2G
+	 K4IlbsF25j8bs06WRr8Mlc1fnkBCTtjpoBDWxrjHUMKqb5fA8jo08SpML8RHXCSeZ3
+	 ea+hmyoXjSAkNOLv21jguXXfPyTWH8uiB/WDp1EkS2o749hzCx3D2dFwMX5cIo7qhJ
+	 iAhyAN2WEPEO25JmDCOrZjSzzIH7RhowzffGPMkLEzqQJLNVtZj+TZN/xsJp2Wg0Eq
+	 jG1tRk0NLGLEA==
+Message-ID: <14110c3d-4aee-49a9-8cc2-fbeac298f1ff@kernel.org>
+Date: Mon, 25 Nov 2024 11:51:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z0RJaU4wjU5WeQb4@wunner.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] arm64: dts: agilex5: add gmac nodes
+To: Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+ Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Richard Cochran <richardcochran@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-clk@vger.kernel.org, kernel@pengutronix.de
+References: <20241125-v6-12-topic-socfpga-agilex5-v2-0-864256ecc7b2@pengutronix.de>
+ <20241125-v6-12-topic-socfpga-agilex5-v2-2-864256ecc7b2@pengutronix.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241125-v6-12-topic-socfpga-agilex5-v2-2-864256ecc7b2@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 25, 2024 at 10:54:49AM +0100, Lukas Wunner wrote:
-> On Sun, Nov 24, 2024 at 06:13:26PM +0100, Ard Biesheuvel wrote:
-> > > On Sun, 24 Nov 2024 at 17:16, Lukas Wunner <lukas@wunner.de> wrote:
-> > > > Zorro reports a false-positive BUG_ON() when running crypto selftests on
-> > > > boot:  Since commit 1e562deacecc ("crypto: rsassa-pkcs1 - Migrate to
-> > > > sig_alg backend"), test_sig_one() invokes an RSA verify operation with a
-> > > > test vector in the kernel's .rodata section.  The test vector is passed
-> > > > to sg_set_buf(), which performs a virt_addr_valid() check.
-> > > >
-> > > > On arm64, virt_addr_valid() returns false for kernel image addresses
-> > > > such as this one, even though they're valid virtual addresses.
-> > > > x86 returns true for kernel image addresses, so the BUG_ON() does not
-> > > > occur there.  In fact, x86 has been doing so for 16 years, i.e. since
-> > > > commit af5c2bd16ac2 ("x86: fix virt_addr_valid() with
-> > > > CONFIG_DEBUG_VIRTUAL=y, v2").
-> > > >
-> > > > Do the same on arm64 to avoid the false-positive BUG_ON() and to achieve
-> > > > consistent virt_addr_valid() behavior across arches.
-> [...]
-> > that doesn't mean doing DMA from the kernel image is a great
-> > idea. Allocations in the linear map are rounded up to cacheline size
-> > to ensure that they are safe for non-coherent DMA, but this does not
-> > apply to the kernel image. .rodata should still be safe in this
-> > regard, but the general idea of allowing kernel image addresses in
-> > places where DMA'able virtual addresses are expected is something we
-> > should consider with care.
+On 25/11/2024 11:33, Steffen Trumtrar wrote:
+> The Agilex5 provides three Synopsys XGMAC ethernet cores, that can be
+> used to transmit and receive data at 10M/100M/1G/2.5G over ethernet
+> connections and enables support for Time Sensitive Networking (TSN)
+> applications.
 > 
-> Other arches do not seem to be concerned about this and
-> let virt_addr_valid() return true for the kernel image.
-> It's not clear why arm64 is special and needs to return false.
+> Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+> ---
+>  arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi | 87 ++++++++++++++++++++++++++
+>  1 file changed, 87 insertions(+)
 > 
-> However, I agree there's hardly ever a reason to DMA from/to the
-> .text section.  From a security perspective, constraining this to
-> .rodata seems reasonable to me and I'll be happy to amend the patch
-> to that effect if that's the consensus.
+> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+> index b1debf0317d0576f7b00200e9593481671183faa..647ccd0b5a66b68fab745d443b975c12d6ce63df 100644
+> --- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
+> @@ -141,6 +141,93 @@ soc: soc@0 {
+>  		device_type = "soc";
+>  		interrupt-parent = <&intc>;
+>  
+> +		gmac0: ethernet@10810000 {
+> +			compatible = "altr,socfpga-stmmac-a10-s10",
 
-Instead, can we update the test to use lm_alias() on the symbols in
-question? That'll convert a kernel image address to its linear map
-alias, and then that'll work with virt_addr_valid(), virt_to_phys(),
-etc.
 
-I don't think it's generally a good idea to relax virt_addr_valid() to
-accept addresses outside of the linear map, regardless of what other
-architectures do. We've had issues in the past with broken conversions,
-and the fixups in virt_to_phys() is really only there as a best-effort
-way to not crash and allow the warning messages to get out.
+That's odd compatible, this is not Arria10 SoC, neither Stratix 10.
 
-Mark.
+Best regards,
+Krzysztof
 
