@@ -1,144 +1,124 @@
-Return-Path: <linux-kernel+bounces-420939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF0E9D8505
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:04:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D71DC9D848D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:35:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A60D7B2403D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:34:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A16A1620F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3B2194A44;
-	Mon, 25 Nov 2024 11:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8A2192D73;
+	Mon, 25 Nov 2024 11:35:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ReKwAG6x"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QTikfHGb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C876192D73
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176C3A35;
+	Mon, 25 Nov 2024 11:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732534459; cv=none; b=Ub/Mi/HfckxFEjn83ihsKxhbD2lgR3Z/Wz5I6W+8LGyh3Cauzcl0e7jfGNL7HatNznyRAV3zsrVF2BmbprMuKcqAWuwVZDAQ0aI/Bf1sf5S3zU47ZNwpjE21H2HwQIBB9FIBDJe0IS1+e7nduOf6T8kS8SxflXIW0FpztHzQMx0=
+	t=1732534501; cv=none; b=BL3g12YdMklSq1HcXs6WG9++Q45+Zt+bZfCQh1a7E3wAEWqVcqYWLTBCazYjzqw9UiZNul5fAFRfFm0i3MIV7ExbMsDPVtsNA4yD89J5c6re40aKXZs1ASglW50XL1J4BqpzfRriWWBtPsTp1Wc8tMhczddtH5lIzHzFNyu69jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732534459; c=relaxed/simple;
-	bh=oKiIL23t9JON49nCNZT6Ou8nEPC13GPtL4HwJhWTs4o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YRq9uNRhKO/UpFIz4RltLYAJhTiR6eF9T6wMjFzjy7755o2M761PEzPkDAhCh6/KHbUHl0G5SC4gGO46SCr1sfrwpqJJiorGKVOocpWHLWVWW5/y8ui3YhAF1iv+UoRZrUf4K0WhYZ+OLYHevOKPwStjmxIP22g/FIAKEybOT7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ReKwAG6x; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732534456;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QOFP6FdjF7HR5DJ0NsQmq4Ef0zujb0dhq0/nwgl+fPQ=;
-	b=ReKwAG6xggBXaHM0846BJLqrG1U3HtaIF6bfC1jba60opx5dw2+TDs8ph7rrsgYIQBRygm
-	G31BUmR0nuumOQGhPzE9dwfIsDvIMDCZVfbAXdYYkGu9P0wK9R5eqJH+etgxbyOAkDF2HF
-	5Ok34sL08A9NdYzQTpyrgxyNgY3pLAE=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-577-Zln_6ueCNbGetlkj-xUUXg-1; Mon, 25 Nov 2024 06:34:15 -0500
-X-MC-Unique: Zln_6ueCNbGetlkj-xUUXg-1
-X-Mimecast-MFC-AGG-ID: Zln_6ueCNbGetlkj-xUUXg
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2120c877e75so46203545ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 03:34:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732534454; x=1733139254;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QOFP6FdjF7HR5DJ0NsQmq4Ef0zujb0dhq0/nwgl+fPQ=;
-        b=rnASOhwUFMNC9YKc/dIhuNkI3Xf2CFFiBpnK9z8GJ1ijPYyaINv/BOZlCjHsxiDbmC
-         5cqQ/Eh6603goFcRjgp0YsxAYfB53bQFhBiy31wK3//kZWoX5go0msI5H6utk12qGHgu
-         PzcTjEJ3uAnIbjEAZd+7mtc5FEWUUyC3OAd0DWamQpiNKzdn7lGaIHJqErwn1dTbhkhM
-         B82H5lHVpweZDSqMUHIhAzW1vmv2d5ZGGWy5d2H+apwoS1Ke/j1BpKGAlL/rVv7S+BNE
-         WDUpIXGvQ4V+uC9jDXa6h1PHRSnmZx17tuAb/hj9No+KLaCeIQQd3jumKABwNcTD2/dj
-         SV6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVhCU0oZvB2m+0eh4DbonFrdtz44UISO5vkIiLLE9gnt2wtxCoQO//hpz1FN972n06nanfonIjo2xao8aQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6QdJIF+NGEZymiIpppt+qY7qyRII7erryutkEXlKdaMm6X3XZ
-	l9zK2mikl45sclTVE+sxDCo+mFbubAbSAm9/a2nYlijWhkqVOsFzT5P1Cq0NHRjCSEIkMUBGSXQ
-	aBabVa+x3NJAB9RRayhu1jetpTakxaobW/GqWEGKN/Buph47qsplFUt+NAxPIcHNtA1Gn7vQsWo
-	HFRIg73k8hVrLkRck2d0BTS9iNeaVJGDTOu4B9
-X-Gm-Gg: ASbGnctCCgXY4+EefNFga7L6PAqr+JZRH0jgeiyN+Cr76KQmybQ92WGQ/ZCXhoEZxtZ
-	0oNuhaO91J+VqrRlvP4pDcQPgo8keGg==
-X-Received: by 2002:a17:902:f64c:b0:212:6981:7587 with SMTP id d9443c01a7336-2129fd0fc42mr208252775ad.24.1732534454152;
-        Mon, 25 Nov 2024 03:34:14 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHblig9i49prrqDlUeZETVKtu2gFAI4HQKWoBxXGngksx/l9PRt93GGuLopiLDUeU5NzeAE1cUQ0J/uiU3YMRU=
-X-Received: by 2002:a17:902:f64c:b0:212:6981:7587 with SMTP id
- d9443c01a7336-2129fd0fc42mr208252465ad.24.1732534453881; Mon, 25 Nov 2024
- 03:34:13 -0800 (PST)
+	s=arc-20240116; t=1732534501; c=relaxed/simple;
+	bh=nE25ptCziZyt2rMRHylAZKkIrgFhXXYeTgMji1bGAKg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LzZfTOIkNGc4/vwg8yJQ0Zima5EhAfv806hVAJDAdim/vb2qyLONRge+hVcY6+o4z3eXqYDs//MVwJsOJUYpZDpiwDkD85WY20D49pdPKOdznYnbGNBXe2h8ttDyZKkPN368Y05h6IXalifq+/UsYI6QOms1nruxKr7HIrg3xBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QTikfHGb; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732534499; x=1764070499;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=nE25ptCziZyt2rMRHylAZKkIrgFhXXYeTgMji1bGAKg=;
+  b=QTikfHGbb0C1mgvnGXy+IoXPPEkGF4xVlsM+CmIt32JV/paUe6EKPCVi
+   PCpzjRv3oypgpCJG54gXTkx+8wxV4s0WqoA8HkXBAQEsTaw3q4bo1ADdK
+   OanAY9Mvq55p/FjNGe++xTBbuixIWdC55nYJyB71CSbv8lXLDGvNIh771
+   6O2vORU3v80MAxesgW9R0xnfl83zFV+SlMjDWe2K3DgFbTtmOmrb00Fz6
+   h7D2N3lVWiCzPyiqBab7x1rws1ZJRIigCTpactW5SlByM31jyE3bxqUMl
+   EunZ1oQLMmMNB/jF4cLTdgLa9VdnyYh+foYnXnf5U4dpbkgAbYfQ4NDnv
+   Q==;
+X-CSE-ConnectionGUID: Y5vE7nf5QjmoGAHOgiIoEg==
+X-CSE-MsgGUID: NKzm5fOATGKhEvTe1XDM8Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="50045451"
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="50045451"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 03:34:58 -0800
+X-CSE-ConnectionGUID: 0BxQcY3oQbKrYL87XFVbnw==
+X-CSE-MsgGUID: haB6bASuTg2S/4F5fGHPoQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="122077147"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.115.59])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 03:34:53 -0800
+Message-ID: <87125f6d-8912-41ad-b01f-f6e68f8a6a89@intel.com>
+Date: Mon, 25 Nov 2024 13:34:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125104011.36552-1-cgoettsche@seltendoof.de> <20241125104011.36552-7-cgoettsche@seltendoof.de>
-In-Reply-To: <20241125104011.36552-7-cgoettsche@seltendoof.de>
-From: Andreas Gruenbacher <agruenba@redhat.com>
-Date: Mon, 25 Nov 2024 12:34:02 +0100
-Message-ID: <CAHc6FU5t0cB=+9ijwx26NUEck1YS7304ue_5FRwqXRzBq14jjA@mail.gmail.com>
-Subject: Re: [PATCH 08/11] gfs2: reorder capability check last
-To: cgzones@googlemail.com
-Cc: linux-security-module@vger.kernel.org, Serge Hallyn <serge@hallyn.com>, 
-	Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>, 
-	linux-kernel@vger.kernel.org, gfs2@lists.linux.dev, cocci@inria.fr
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/7] KVM: TDX: restore host xsave state when exit from the
+ guest TD
+To: Chao Gao <chao.gao@intel.com>
+Cc: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
+ dave.hansen@linux.intel.com, rick.p.edgecombe@intel.com,
+ kai.huang@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com,
+ tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
+ dmatlack@google.com, isaku.yamahata@intel.com, nik.borisov@suse.com,
+ linux-kernel@vger.kernel.org, x86@kernel.org, yan.y.zhao@intel.com,
+ weijiang.yang@intel.com
+References: <20241121201448.36170-1-adrian.hunter@intel.com>
+ <20241121201448.36170-5-adrian.hunter@intel.com> <Z0AbZWd/avwcMoyX@intel.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <Z0AbZWd/avwcMoyX@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 25, 2024 at 11:46=E2=80=AFAM Christian G=C3=B6ttsche
-<cgoettsche@seltendoof.de> wrote:
-> From: Christian G=C3=B6ttsche <cgzones@googlemail.com>
->
-> capable() calls refer to enabled LSMs whether to permit or deny the
-> request.  This is relevant in connection with SELinux, where a
-> capability check results in a policy decision and by default a denial
-> message on insufficient permission is issued.
-> It can lead to three undesired cases:
->   1. A denial message is generated, even in case the operation was an
->      unprivileged one and thus the syscall succeeded, creating noise.
->   2. To avoid the noise from 1. the policy writer adds a rule to ignore
->      those denial messages, hiding future syscalls, where the task
->      performs an actual privileged operation, leading to hidden limited
->      functionality of that task.
->   3. To avoid the noise from 1. the policy writer adds a rule to permit
->      the task the requested capability, while it does not need it,
->      violating the principle of least privilege.
->
-> Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
-> ---
->  fs/gfs2/quota.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/gfs2/quota.h b/fs/gfs2/quota.h
-> index f462d9cb3087..988f38dc5b2c 100644
-> --- a/fs/gfs2/quota.h
-> +++ b/fs/gfs2/quota.h
-> @@ -44,8 +44,8 @@ static inline int gfs2_quota_lock_check(struct gfs2_ino=
-de *ip,
->         int ret;
->
->         ap->allowed =3D UINT_MAX; /* Assume we are permitted a whole lot =
-*/
-> -       if (capable(CAP_SYS_RESOURCE) ||
-> -           sdp->sd_args.ar_quota =3D=3D GFS2_QUOTA_OFF)
-> +       if (sdp->sd_args.ar_quota =3D=3D GFS2_QUOTA_OFF ||
-> +           capable(CAP_SYS_RESOURCE))
->                 return 0;
->         ret =3D gfs2_quota_lock(ip, NO_UID_QUOTA_CHANGE, NO_GID_QUOTA_CHA=
-NGE);
->         if (ret)
-> --
-> 2.45.2
+On 22/11/24 07:49, Chao Gao wrote:
+>> +static void tdx_restore_host_xsave_state(struct kvm_vcpu *vcpu)
+>> +{
+>> +	struct kvm_tdx *kvm_tdx = to_kvm_tdx(vcpu->kvm);
+>> +
+>> +	if (static_cpu_has(X86_FEATURE_XSAVE) &&
+>> +	    kvm_host.xcr0 != (kvm_tdx->xfam & kvm_caps.supported_xcr0))
+>> +		xsetbv(XCR_XFEATURE_ENABLED_MASK, kvm_host.xcr0);
+>> +	if (static_cpu_has(X86_FEATURE_XSAVES) &&
+>> +	    /* PT can be exposed to TD guest regardless of KVM's XSS support */
+>> +	    kvm_host.xss != (kvm_tdx->xfam &
+>> +			 (kvm_caps.supported_xss | XFEATURE_MASK_PT |
+>> +			  XFEATURE_MASK_CET_USER | XFEATURE_MASK_CET_KERNEL)))
+> 
+> Should we drop CET/PT from this series? I think they are worth a new
+> patch/series.
+> 
+>> +		wrmsrl(MSR_IA32_XSS, kvm_host.xss);
+>> +	if (static_cpu_has(X86_FEATURE_PKU) &&
+> 
+> How about using cpu_feature_enabled()? It is used in kvm_load_host_xsave_state()
+> It handles the case where CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS is not
+> enabled.
 
-Applied, thanks.
+Seems reasonable
 
-Andreas
+> 
+>> +	    (kvm_tdx->xfam & XFEATURE_MASK_PKRU))
+>> +		write_pkru(vcpu->arch.host_pkru);
+> 
+> If host_pkru happens to match the hardware value after TD-exits, the write can
+> be omitted, similar to what is done above for xss and xcr0.
+> 
+>> +}
 
 
