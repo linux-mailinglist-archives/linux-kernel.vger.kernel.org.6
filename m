@@ -1,136 +1,184 @@
-Return-Path: <linux-kernel+bounces-420387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A2779D79D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 02:40:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EFC29D79D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 02:44:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35CD6163583
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 01:40:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 934E41636CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 01:44:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766AF8BEC;
-	Mon, 25 Nov 2024 01:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CACDEAC7;
+	Mon, 25 Nov 2024 01:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oBwL+HEH"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mir+povm"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4A510F9;
-	Mon, 25 Nov 2024 01:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15FA810F9;
+	Mon, 25 Nov 2024 01:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732498850; cv=none; b=N6vtLaNPg1jUHpWlWWmgyw6I2Da7QvWkLYSBLSFoEumRczt4lwspJRYv1dcingrxxwXRAXI0KEVFkywPgg29oNrm5bK9hbeJPddfg/80fkLYxRIgwO9E4Wsy2hAHVq+PmKE3mrkpdpvPoQQSskJAXPpQ/rhsA8+tLZ8wFEp1k8E=
+	t=1732499086; cv=none; b=LFYix3JRbHzyhGJ4oY1dBpD9yjWkMwO63sIjmQBmWn//g9V2O40EIgY0gReyRAPqQUyoKa8F+QdAYdhMQfUSsAjaV8vXbGDwebdCb5pz9GcMna7N08KIYJQfNvYjw79iJiMQt6mmx2GmRVsR4l551fHWjS7Uk67gC/mHDUYYI4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732498850; c=relaxed/simple;
-	bh=RNynLa3D71yXKZo5ph4znbLIrR1RmU989NjkTpzsmCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=R+8TrveTjQOHdkm9K1D/lGK0dwSFo/vixIaQpfjw30gTaVC7+38SvRjXBnsYttV/P5ZPriWI7bPioSmh3BfNd0oAKpfuwvJlIXhTSHaLP7RZXFHuH0jGb5ib7FC8x9dDWd7VQtMET4TSm9c/xEYxw/9liMuDOdHVGePtzDgg0Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=oBwL+HEH; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1732498842;
-	bh=74zMZ3A2JI82wk/5PqLD3lnpmdhAK4niEM69Z9DRGNg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=oBwL+HEHBOV5CPR3547nRvfU5OzIY5T6XykSaPxQmgqQ+BhAnLLRCAOQNnevwHzb+
-	 k5YUVwdtD2+SBsfr0wBa6UiCuW2pwXZ+6oaN6ADRNybgZh/TyHBlQX/fC7LzsCrztc
-	 /rricS7XpAwDaY5rlDsxYixWVNOz+CVgTm0jMk0HkzTCxP6V9Y79QIAeO/HfIaYm5l
-	 yKouMBI8zVrBHIyyGg7Trh2z25/XX+LmSr6Y5e82m/m2tEFondWbzVrfuDhPHGZngS
-	 LUMk33+7DLjhqggNoBQ1DBZcHQyOn2mlhVCxgl+DA1d/JJtNHdAUo7E51mtGajV21H
-	 WI8inSrfVXF2w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XxT1P6bkYz4x6J;
-	Mon, 25 Nov 2024 12:40:41 +1100 (AEDT)
-Date: Mon, 25 Nov 2024 12:40:44 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Drew Fustini <dfustini@tenstorrent.com>, Emil Renner Berthing
- <emil.renner.berthing@canonical.com>, Jakub Kicinski <kuba@kernel.org>,
- Jisheng Zhang <jszhang@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Michal Wilczynski <m.wilczynski@samsung.com>
-Subject: linux-next: manual merge of the mailbox tree with Linus' tree
-Message-ID: <20241125124044.1437e2eb@canb.auug.org.au>
+	s=arc-20240116; t=1732499086; c=relaxed/simple;
+	bh=wTMdRmUB6ZsWBhv8uPeSdAAH33/P1tWe4+yZBvYk+hQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tFjqMTS3/BPKGziEiOpCIXSQUgQ/cK+ZBo+/3wGrvoKTgIjSypfz5jaEzex1t4qoj/KeDgMbPDXr3jz4+XXLl+tTB6rlAf1r2teEukcrrtcNwasi4Fi8fFr/MV+lnzFnx8zdq/qaLyoCTJhKw6aiEDet4SypfJMM97zFfOOMhFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mir+povm; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AP0L7tV006014;
+	Mon, 25 Nov 2024 01:44:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	iGaYT6nZ/4PiLaqqfZNnRdCsS1EzHLa59yqMFNnJ2X0=; b=mir+povmuBtEd5+T
+	2oYJoTZ6tUh3oQjLy+JCRBFablP+gvIZ3jv/kQhennjTmAnUonm+Z0NG9zUsr1e+
+	NxpvPmv0YsWHalX7TGuPuelOe9lLnAgdHdI7iNOvAfp5Nx8OGuAkLXFODcDxh/sU
+	kA2jFyZ/KcTbtgbfUaLjmSifdhXG1/nfDRQdirRZR17GppZyTeEfbz5w1z8jexQ/
+	HeGjUl7ZJJBOQu+unX7CK/WjMrVTTsO6xSN+2I+C84gr5I1izKxijDvaz9wOs3A7
+	uMRGBUtWD0+PvS6qpstLBjqva72EYLn53DRI00HQ05TDE7NqCQcDqxGvFMYaWU9h
+	+Up4rw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4336cfk4gq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 01:44:23 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AP1iMhU025369
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 01:44:22 GMT
+Received: from [10.64.16.151] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 24 Nov
+ 2024 17:44:15 -0800
+Message-ID: <10413094-500f-4044-b4e3-8ce83fee3dbd@quicinc.com>
+Date: Mon, 25 Nov 2024 09:44:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/wvtL.voW4dsX+nXja+H4ya.";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/9] drm/msm/dpu: Add SM6150 support
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Krishna
+ Manikandan" <quic_mkrishn@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Catalin
+ Marinas" <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Li Liu
+	<quic_lliu6@quicinc.com>,
+        Xiangxu Yin <quic_xiangxuy@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <20241122-add-display-support-for-qcs615-platform-v3-0-35252e3a51fe@quicinc.com>
+ <20241122-add-display-support-for-qcs615-platform-v3-5-35252e3a51fe@quicinc.com>
+ <bhylewwvztm7gsmkjwo6asceuph2jlqgvy2lhocdvg6r7y4i6w@duvbnsko3xg2>
+Content-Language: en-US
+From: fange zhang <quic_fangez@quicinc.com>
+In-Reply-To: <bhylewwvztm7gsmkjwo6asceuph2jlqgvy2lhocdvg6r7y4i6w@duvbnsko3xg2>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ALnY4WQC7U_GidKZVMBIyRRX_D5Sz7vY
+X-Proofpoint-ORIG-GUID: ALnY4WQC7U_GidKZVMBIyRRX_D5Sz7vY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ spamscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 malwarescore=0
+ mlxscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411250013
 
---Sig_/wvtL.voW4dsX+nXja+H4ya.
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the mailbox tree got a conflict in:
+On 2024/11/22 18:07, Dmitry Baryshkov wrote:
+> On Fri, Nov 22, 2024 at 05:56:48PM +0800, Fange Zhang wrote:
+>> From: Li Liu <quic_lliu6@quicinc.com>
+>>
+>> Add definitions for the display hardware used on the Qualcomm SM6150
+>> platform.
+>>
+>> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
+>> Signed-off-by: Fange Zhang <quic_fangez@quicinc.com>
+>> ---
+>>   .../gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h | 263 +++++++++++++++++++++
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c     |   1 +
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     |   1 +
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   1 +
+>>   4 files changed, 266 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..e8b7f694b885d69a9bbfaa85b0faf0c7af677a75
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h
+>> @@ -0,0 +1,263 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#ifndef _DPU_5_3_SM6150_H
+>> +#define _DPU_5_3_SM6150_H
+>> +
+>> +	}, {
+>> +		.name = "intf_2", .id = INTF_2,
+>> +		.base = 0x6b000, .len = 0x2c0,
+>> +		.features = INTF_SC7180_MASK,
+>> +		.type = INTF_NONE,
+>> +		.controller_id = 0,
+>> +		.prog_fetch_lines_worst_case = 24,
+>> +		.intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 28),
+>> +		.intr_vsync = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 29),
+> 
+> Please drop. No need to declare missing blocks.
+got it, will remove this block in the next patch
+> 
+> Other than that:
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
+> 
+>> +	}, {
+>> +		.name = "intf_3", .id = INTF_3,
+>> +		.base = 0x6b800, .len = 0x280,
+>> +		.features = INTF_SC7180_MASK,
+>> +		.type = INTF_DP,
+>> +		.controller_id = MSM_DP_CONTROLLER_1,
+>> +		.prog_fetch_lines_worst_case = 24,
+>> +		.intr_underrun = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 30),
+>> +		.intr_vsync = DPU_IRQ_IDX(MDP_SSPP_TOP0_INTR, 31),
+>> +	},
+>> +};
+>> +
+> 
 
-  MAINTAINERS
-
-between commits:
-
-  f920ce04c399 ("dt-bindings: net: Add T-HEAD dwmac support")
-  33a1a01e3afa ("net: stmmac: Add glue layer for T-HEAD TH1520 SoC")
-
-from Linus' tree and commits:
-
-  5d4d263e1c6b ("mailbox: Introduce support for T-head TH1520 Mailbox drive=
-r")
-  b2cf36e4a2ac ("dt-bindings: mailbox: Add thead,th1520-mailbox bindings")
-
-from the mailbox tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc MAINTAINERS
-index 78b9e776963f,5a406a4ab9cf..000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -20103,10 -19869,10 +20103,12 @@@ L:	linux-riscv@lists.infradead.or
-  S:	Maintained
-  T:	git https://github.com/pdp7/linux.git
-  F:	Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
-+ F:	Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml
- +F:	Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml
-  F:	arch/riscv/boot/dts/thead/
-  F:	drivers/clk/thead/clk-th1520-ap.c
-+ F:	drivers/mailbox/mailbox-th1520.c
- +F:	drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
-  F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
- =20
-  RNBD BLOCK DRIVERS
-
---Sig_/wvtL.voW4dsX+nXja+H4ya.
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdD1ZwACgkQAVBC80lX
-0Gx9Ugf/Wth+8OzPd1aQmWfK6TVnG6enP36NGLWvPgFaQ0wR31iq29a+P1im7isZ
-vG0JnriqeAo/eztQxhqkk6ezOXVBb/ikBPP0SZIQAwa6j0UmSx8BP2ehuU9EEwwg
-Tsns4Kq9sZebN/s+xRdG671sp9TQK69AEphdMMjt/qZdTK2snNV3/yMsFNpt/RS2
-OTsUbsS58oVooD2/rhXS3Bj+tXPs5Zvl2oTc3X+K6AeC78V1P7NeDmD3B1VknhmL
-DJFhQ4CLDAfIRCFpB5z/gUCdHZkG4f2TJU9XiLzJvKYPtF5dTchke7FdCJOz8EXq
-FyRJYe1vLkKAiWEYETx1StKianAtsA==
-=+7NU
------END PGP SIGNATURE-----
-
---Sig_/wvtL.voW4dsX+nXja+H4ya.--
 
