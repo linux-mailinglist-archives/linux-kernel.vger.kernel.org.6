@@ -1,89 +1,61 @@
-Return-Path: <linux-kernel+bounces-421318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12B569D8990
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:42:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 636DA9D89FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:11:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD9302818BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:42:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AB45B30094
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E381B4133;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E061B4138;
 	Mon, 25 Nov 2024 15:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NDwYwJWA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BFn18wbN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6C1194AC7;
-	Mon, 25 Nov 2024 15:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F7B1AC448;
+	Mon, 25 Nov 2024 15:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732549358; cv=none; b=moL/XoHRPZla1oMCMUxmn2vonrU2UN/vFJuh5KI1G8OlMXC3rXoKegXs/ZwDGgIRsPj43SbvSpmskjByv9GnB1Qv2FwQUzA8EkbMs2mFIVChCRFWgUTqohlLG4G8ConpkRywp2SdvN57Zs0RLYXkABI+B5nro7g6Atk1/jx7Ltk=
+	t=1732549358; cv=none; b=UdxYc72GF+3Rp1+aIfsYsHkqEdiN/s1p8DkSRn4NloPEssbn2yJpBpFix8evKi/i+n3I6+CEAFfBODa6+4Ub344yTAvNNhYsRARxB8aTT3leMzmMFsnE0K8xpOVf4zeCF0nwllag7fv3ZtpKre45FRCkOH1XhyTjue1quXLBYco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732549358; c=relaxed/simple;
-	bh=PHNaIPtpLuflPnpJjfvTbyAjLze0dyFGxfUjiiH5os4=;
+	bh=1uGaURJFL+k5ljmFzecqQ8yWrYUK0nMYqG+LAJjeIHI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RylIf9gSYH83mkxxWMezvvjdBUiZ/KDYDPsxEMOrXKlca+OA9GzVVeTkpkn9b02K4RHXCTx388QfL4s8SmvftfJSTi/53489sZTbnJwT4M4iCc3K7faJyYBoreTeL7RWiPM8dXzQi1BuWyYUO9o6yxfWpmknz5xMbXMIcKesHwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NDwYwJWA; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732549358; x=1764085358;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PHNaIPtpLuflPnpJjfvTbyAjLze0dyFGxfUjiiH5os4=;
-  b=NDwYwJWAmDWfARUU5ia83Xf41rVNBevJEm24/O+lIfOxsS6L4qVQ7zPP
-   h8tLyoyPRglsD/v1xtfInynzQcEVB7Y/uIO5znzLuCac0sRHZjrioyr2W
-   toie+jHt6WW4336EeFPwDHEUZ19IV1ynuem96Pvga0qFecUOwLdnPXuCm
-   OATjHNWUR3oJEtga9AuqmhOhxMTIYQOb2tHT92S7rzlSrX7Yu7maJj/Ln
-   l4xq6ZAASHXOi8Pm9ZcNfdThTK+i1MHecMQkzeKaGIU8cZUsXZFkv7YmL
-   jNy8pi1dovOGzHXSS9bw8ge4EOPtQ/HBKkigxvgCONM9xBLSDg+m45zin
-   Q==;
-X-CSE-ConnectionGUID: L5SYgwg5ROmZkFQ+SXbpPg==
-X-CSE-MsgGUID: ydSb2VYMSlKA8spWLN4yrA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="43730032"
-X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
-   d="scan'208";a="43730032"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 07:42:37 -0800
-X-CSE-ConnectionGUID: bzEZwAKjQW2g2CdWiyFcbA==
-X-CSE-MsgGUID: nyxvDbfiSsecwblypaGx6A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="96359634"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 07:42:33 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tFbEM-00000000xSn-2zQW;
-	Mon, 25 Nov 2024 17:42:30 +0200
-Date: Mon, 25 Nov 2024 17:42:30 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-serial@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
-	linux-kernel@vger.kernel.org,
-	Yang Yingliang <yangyingliang@huawei.com>
-Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
-Message-ID: <Z0Sa5nnKIQm7h-CA@smile.fi.intel.com>
-References: <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
- <472eb22a-dcb1-4fbb-bf2c-a4173706bc7a@app.fastmail.com>
- <27685942-fb62-44c5-86ed-98beb547ffed@roeck-us.net>
- <744920ba-551c-466b-ac5c-2607b81261a0@app.fastmail.com>
- <Z0QtZky8Sr7qUW7v@smile.fi.intel.com>
- <00f5e842-3ee9-4d83-8836-0ff4f703fa3c@app.fastmail.com>
- <Z0RSZ-YD_BozMs1n@smile.fi.intel.com>
- <be43108e-4135-4927-ba58-141836fde6af@app.fastmail.com>
- <Z0Re61Tk5lN2Xuxi@smile.fi.intel.com>
- <1a7da799-f15b-4714-a3bd-4c0b1f48fc09@app.fastmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kUz8L5ni7cWQXlWfuH+HgzqxP8XCJPxXIIHNVIaWeA+7kkca1CYXOAzkzEepoO4sYMl1rzCdxnyg0Q2DU/miXu5z7mb9b7Ka8ySlihYTObZep1qwBgIjnV0XOmC0xONOQuhYKisufL3ZOSIQnPHBcYZOyb0sZNYHL0eYFrtBvA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BFn18wbN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7527FC4CECF;
+	Mon, 25 Nov 2024 15:42:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732549358;
+	bh=1uGaURJFL+k5ljmFzecqQ8yWrYUK0nMYqG+LAJjeIHI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BFn18wbNBs9mU22Xhw9Zgov43fj3pg71n5DMdBZHf6WRMLk/8lF5sqU+d0szP/hAW
+	 NoL865FCb3Y1lP7w0x/8DHaUtmdmI/u2ITwf/35eRs49f7BVgkRGx1efszV2AaEW+v
+	 3wZ0/+grTY09h3Koc2ZB94MmOHL/Xgd/Xu1L4J1dJ/iUz7c3L4ZV8t0+O2h68T0wWe
+	 SF2Z86cBkS5reM9Ycfn8yqiGC8LN7SfgYamIf7KMj4i3KrMwoXkThoxM0ncvoKCytR
+	 YB6uyXHgPBFX8AA6clWyVCRw2Hvf3xT18MJ4Y/RtbDDKGzNG3/JKR3i29I9qdNlJLM
+	 ZRTuaIm0+B9Pw==
+Date: Mon, 25 Nov 2024 08:42:35 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+	Linux PM <linux-pm@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	clang-built-linux <llvm@lists.linux.dev>,
+	Georgi Djakov <djakov@kernel.org>, konradybcio@kernel.org,
+	quic_okukatla@quicinc.com, quic_rlaggysh@quicinc.com,
+	quic_jjohnson@quicinc.com
+Subject: Re: pc : qnoc_probe (drivers/interconnect/qcom/icc-rpmh.c:269) :
+ Dragonboard 410c - arm64 - boot failed
+Message-ID: <20241125154235.GC2067874@thelio-3990X>
+References: <CA+G9fYs+2mBz1y2dAzxkj9-oiBJ2Acm1Sf1h2YQ3VmBqj_VX2g@mail.gmail.com>
+ <CA+G9fYvh8n=CTCmcCdLViH=o-UXH1Euncn+7YuYkvt5O-k8NMg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,70 +64,211 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1a7da799-f15b-4714-a3bd-4c0b1f48fc09@app.fastmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <CA+G9fYvh8n=CTCmcCdLViH=o-UXH1Euncn+7YuYkvt5O-k8NMg@mail.gmail.com>
 
-On Mon, Nov 25, 2024 at 02:50:56PM +0100, Arnd Bergmann wrote:
-> On Mon, Nov 25, 2024, at 12:26, Andy Shevchenko wrote:
-> > On Mon, Nov 25, 2024 at 12:06:16PM +0100, Arnd Bergmann wrote:
-
-...
-
-> >> What I suspect is going on with the f4c23a140d80 commit
-> >> is the same bug I mentioned earlier in this thread, where
-> >> __serial8250_isa_init_ports() just always registers
-> >> 'nr_uarts' (CONFIG_SERIAL_8250_RUNTIME_UARTS) ports,
-> >> unlike any other serial driver.
-> >
-> > But the configuration can give less than old_serial_port contains.
-> > See dozens of the explicit settings in the defconfigs.
+On Mon, Nov 25, 2024 at 08:43:44PM +0530, Naresh Kamboju wrote:
+> [Small correction]
 > 
-> I don't see any of the upstream defconfigs doing this
-> though, the only ones setting CONFIG_SERIAL_8250_RUNTIME_UARTS
-> are those that have an empty old_serial_port[]. 
-
-A-ha, a good catch. I haven't checked the actual contents of the
-old_serial_port for those configurations.
-
-> Note that SERIAL_PORT_DFNS is only defined on x86, alpha
-> and m68k (for q40), which are the main PC-like platforms.
-> I see that all three have identical definitions of
-> SERIAL_PORT_DFNS, so I think these should just be moved
-> next to the __serial8250_isa_init_ports definition, with
-> the entire thing moved into a separate ISA driver or
-> an #ifdef around it. This is of course not the problem
-> at hand, but it would help separate the x86/isa and
-> non-x86 platform device cases further.
-
-It's nice idea, but yes, we can think about it later.
-
-> >> This used to be required before 9d86719f8769 ("serial:
-> >> 8250: Allow using ports higher than SERIAL_8250_RUNTIME_UARTS"),
-> >> but I don't see why this is still a thing now, other than
-> >> for using setserial on i486-class PCs with nonstandard ISA
-> >> ports.
-> >> 
-> >> On non-x86 machines, it only ever seems to create extra
-> >> ports that are likely to crash the system if opened, either
-> >> because they lack proper serial_in/serial_out callbacks,
-> >> or because the default UPIO_PORT callbacks end up poking
-> >> unmapped memory.
-> >> 
-> >> Do you see any reason why we can't just do the version below?
+> On Mon, 25 Nov 2024 at 20:33, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
 > >
-> > Perhaps we may do this way (it seems better to me than previous 
-> > suggestions), but it also needs to be carefully checked against
-> > those configurations that set it explicitly.
+> > The arm64 Dragonboard 410c has failed with the Linux next, mainline
+> > and the Linux stable. Please find boot log and build links.
 > 
-> Yes, at least to make sure that the numbering of the uarts
-> does not change. I expect it's actually the same, but don't
-> know for sure.
+> This boot regression is noticed only on Dragonboard 845c.
+> Linux next-20241125 tag.
+> 
+> Good: next-20241122
+> Bad: next-20241125
 
-Me neither. And the issue with NULL pointer dereference needs to be retested.
+Can you bisect to see what change introduced this?
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> >
+> > Device: Dragonboard 410c - arm64
+> > Boot failed: clang-19
+> > Configs: korg-clang-19-lkftconfig-hardening
+> > Boot pass: qemu-arm64 (Additional info)
+> >
+> > This is always reproducible.
+> >
+> > Dragonboard 410c - arm64:
+> > boot:
+> >  * clang-nightly-lkftconfig-hardening
+> >  * korg-clang-19-lkftconfig-hardening
+> >
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> >
+> > Log details:
+> > ------------
+> > [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd030]
+> > [    0.000000] Linux version 6.12.0-next-20241125 (tuxmake@tuxmake)
+> > (ClangBuiltLinux clang version 19.1.4
+> > (https://github.com/llvm/llvm-project.git
+> > aadaa00de76ed0c4987b97450dd638f63a385bed), ClangBuiltLinux LLD 19.1.4
+> > (https://github.com/llvm/llvm-project.git
+> > aadaa00de76ed0c4987b97450dd638f63a385bed)) #1 SMP PREEMPT @1732509632
+> > [    0.000000] KASLR disabled due to lack of seed
+> > [    0.000000] Machine model: Qualcomm Technologies, Inc. APQ 8016 SBC
+> > <Trim>
+> > [    8.983574] videodev: Linux video capture interface: v2.00
+> > [    8.990308] Internal error: UBSAN: array index out of bounds:
+> > 00000000f2005512 [#1] PREEMPT SMP
+> > [    8.990374] Modules linked in: qcom_rng drm_client_lib qcom_stats
+> > qnoc_msm8916(+) videodev videobuf2_memops videobuf2_common mc
+> > rpmsg_ctrl rpmsg_char display_connector phy_qcom_usb_hs drm_kms_helper
+> > ramoops reed_solomon socinfo rmtfs_mem fuse drm backlight ip_tables
+> > x_tables ipv6
+> > [    9.000620] CPU: 0 UID: 0 PID: 199 Comm: (udev-worker) Not tainted
+> > 6.12.0-next-20241125 #1
+> > [    9.022836] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
+> > [    9.030902] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> > [    9.037760] pc : qnoc_probe (drivers/interconnect/qcom/icc-rpmh.c:269)
+> > [    9.044439] lr : qnoc_probe (drivers/interconnect/qcom/icc-rpmh.c:0)
+> > [    9.048258] sp : ffff800083b93470
+> > [    9.052075] x29: ffff800083b93480 x28: ffff000002c2ae80 x27: ffff80007ac3d3e0
+> > [    9.055554] x26: ffff000002c2ae88 x25: 0000000000000000 x24: ffff000009bb7400
+> > [    9.062671] x23: 0000000000000000 x22: 0000000000000001 x21: ffff000004931400
+> > [    9.069788] x20: ffff000004931410 x19: ffff0000048e0c80 x18: ffff800083a7d0a8
+> > [    9.076907] x17: fffffffffffc23a2 x16: 0000000000000001 x15: 000000000000026c
+> > [    9.084027] x14: fffffffffffffffd x13: 0000000000000000 x12: ffff7fffba293000
+> > [    9.091145] x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000001
+> > [    9.098262] x8 : 0000000000000000 x7 : 0000000000000000 x6 : 000000000000003f
+> > [    9.105381] x5 : 0000000000000040 x4 : ffff00003c75d9e0 x3 : 0000000000199400
+> > [    9.112497] x2 : 0000000000000008 x1 : 0000000000000000 x0 : 0000000000000000
+> > [    9.119617] Call trace:
+> > [    9.126727] qnoc_probe+0x4c8/0x4d0 P
+> > [    9.128987] qnoc_probe+0x354/0x4d0 L
+> > [    9.132805] platform_probe (drivers/base/platform.c:1405)
+> > [    9.136624] really_probe (drivers/base/dd.c:581 drivers/base/dd.c:658)
+> > [    9.140443] __driver_probe_device (drivers/base/dd.c:800)
+> > [    9.144089] driver_probe_device (drivers/base/dd.c:830)
+> > [    9.148429] __driver_attach (drivers/base/dd.c:1217)
+> > [    9.152422] bus_for_each_dev (drivers/base/bus.c:369)
+> > [    9.156590] driver_attach (drivers/base/dd.c:1234)
+> > [    9.160495] bus_add_driver (drivers/base/bus.c:676)
+> > [    9.164140] driver_register (drivers/base/driver.c:247)
+> > [    9.167700] __platform_driver_register (drivers/base/platform.c:867)
+> > [    9.171520] init_module+0x20/0xfbc qnoc_msm8916
+> > [    9.176383] do_one_initcall (init/main.c:1250 init/main.c:1267)
+> > [    9.181068] do_init_module (kernel/module/main.c:2910)
+> > [    9.184800] load_module (kernel/module/main.c:3376)
+> > [    9.188618] __arm64_sys_finit_module (kernel/module/main.c:3565
+> > kernel/module/main.c:3577 kernel/module/main.c:3603
+> > kernel/module/main.c:3587 kernel/module/main.c:3587)
+> > [    9.192353] invoke_syscall (arch/arm64/kernel/syscall.c:50)
+> > [    9.197127] el0_svc_common (arch/arm64/kernel/syscall.c:139)
+> > [    9.200771] do_el0_svc (arch/arm64/kernel/syscall.c:152)
+> > [    9.204503] el0_svc (arch/arm64/kernel/entry-common.c:165
+> > arch/arm64/kernel/entry-common.c:178
+> > arch/arm64/kernel/entry-common.c:745)
+> > [    9.207802] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:797)
+> > [    9.210756] el0t_64_sync (arch/arm64/kernel/entry.S:600)
+> > [ 9.215189] Code: aa1303e0 97fff41c 17ffff79 d4200020 (d42aa240)
+> > All code
+> > ========
+> >
+> > Code starting with the faulting instruction
+> > ===========================================
+> > [    9.218752] ---[ end trace 0000000000000000 ]---
+> > [    9.233047] note: (udev-worker)[199] exited with irqs disabled
+> > [    9.233245] note: (udev-worker)[199] exited with preempt_count 1
+> > [    9.243434] ------------[ cut here ]------------
+> > <trim>
+> > [    9.243951] WARNING: CPU: 0 PID: 0 at kernel/context_tracking.c:128
+> > ct_kernel_exit (kernel/context_tracking.c:153)
+> > [    9.248555] Modules linked in: videobuf2_v4l2 qcom_rng
+> > drm_client_lib qcom_stats qnoc_msm8916(+) videodev videobuf2_memops
+> > videobuf2_common mc rpmsg_ctrl rpmsg_char display_connector
+> > phy_qcom_usb_hs drm_kms_helper ramoops reed_solomon socinfo rmtfs_mem
+> > fuse drm backlight ip_tables x_tables ipv6
+> > [    9.260538] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Tainted: G      D
+> >           6.12.0-next-20241125 #1
+> > [    9.282755] Tainted: [D]=DIE
+> > [    9.292113] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
+> > [    9.292888] Unable to handle kernel read from unreadable memory at
+> > virtual address 0000ffffa3c44d20
+> > [    9.295061] pstate: 204000c5 (nzCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> > [    9.295071] pc : ct_kernel_exit (kernel/context_tracking.c:153)
+> > [    9.295088] lr : ct_kernel_exit (kernel/context_tracking.c:126)
+> > [    9.301765] Mem abort info:
+> > [    9.310514] sp : ffff800082503d10
+> > [    9.310519] x29: ffff800082503d10 x28: ffff8000824c4ff0 x27: ffff800082509000
+> > [    9.310536] x26: 0000000000000000 x25: ffff0000041f9898
+> > [    9.317463]   ESR = 0x0000000096000004
+> > [    9.321618]  x24: ffff0000041f9898
+> > [    9.321625] x23: 0000000226f30819 x22: 0000000000000000
+> > [    9.325621]   EC = 0x25: DABT (current EL), IL = 32 bits
+> > [    9.328214]  x21: ffff00003c757ff8
+> > [    9.328221] x20: ffff8000824c2350 x19: ffff00003c755350
+> > [    9.331701]   SET = 0, FnV = 0
+> > [    9.338806]  x18: ffff800082514880
+> > [    9.338813] x17: 00000000529c6ef0 x16: 00000000529c6ef0 x15: 000000000000007e
+> > [    9.343850]   EA = 0, S1PTW = 0
+> > [    9.347659]
+> > [    9.347662] x14: 00000000000000c8 x13: 0000000000000004 x12: 000000000a929b85
+> > [    9.351058]   FSC = 0x04: level 0 translation fault
+> > [    9.356167]
+> > [    9.356171] x11: 0000000000000015 x10: 000000000682aaab x9 : 4000000000000000
+> > [    9.361732] Data abort info:
+> > [    9.364935] x8 : 4000000000000002 x7 : 0000000000005221 x6 : 0000000000055ad0
+> > [    9.370064]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+> > [    9.373179] x5 : 0000000000005469 x4 : 0000000000000093 x3 : 0000000000000006
+> > [    9.376580]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> > [    9.383768] x2 : 0000000000000000 x1 : ffff0000041f9880 x0 : ffff7fffba293000
+> > [    9.386730]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> > [    9.388462] Call trace:
+> > [    9.395502] user pgtable: 4k pages, 48-bit VAs, pgdp=00000000856aa000
+> > [    9.400175] ct_kernel_exit+0x80/0x8c P
+> > [    9.401918] [0000ffffa3c44d20] pgd=0000000000000000
+> > [    9.408943] ct_kernel_exit+0x14/0x8c L
+> > [    9.408958] ct_idle_enter (kernel/context_tracking.c:321)
+> > [    9.411910] , p4d=0800000089bb0403
+> > [    9.418929] cpuidle_enter_state (drivers/cpuidle/cpuidle.c:268)
+> > [    9.418943] cpuidle_enter (drivers/cpuidle/cpuidle.c:391)
+> > [    9.418953] do_idle (kernel/sched/idle.c:155
+> > kernel/sched/idle.c:230 kernel/sched/idle.c:325)
+> > [    9.424326] , pud=080000008943e403
+> > [    9.431516] cpu_startup_entry (kernel/sched/idle.c:422)
+> > [    9.431527] rest_init+0xe0/0xe4
+> > [    9.436563] , pmd=0800000089bac403
+> > [    9.443668] start_kernel (init/main.c:1040)
+> > [    9.443681] __primary_switched (arch/arm64/kernel/head.S:247)
+> > [    9.449057] , pte=00200000910f9fc3
+> > [    9.451224] ---[ end trace 0000000000000000 ]---
+> >
+> > Links:
+> > ------
+> > - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241125/testrun/26040307/suite/boot/test/korg-clang-19-lkftconfig-hardening/log
+> > - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241125/testrun/26040307/suite/boot/test/korg-clang-19-lkftconfig-hardening/details/
+> > - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241125/testrun/26040307/suite/boot/test/korg-clang-19-lkftconfig-hardening/history/
+> > - https://lkft.validation.linaro.org/scheduler/job/8004888#L2200
+> > - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2pKKSWo1tVldooGuq0fBz0nRD07/
+> >
+> > Build image:
+> > -----------
+> > - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2pKKSWo1tVldooGuq0fBz0nRD07/
+> >
+> > Steps to reproduce:
+> > ------------
+> > - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2pKKSWo1tVldooGuq0fBz0nRD07/reproducer
+> > - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2pKKSWo1tVldooGuq0fBz0nRD07/tux_plan
+> >
+> > metadata:
+> > ----
+> 
+> git repo:  https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> git sha: 85a2dd7d7c8152cb125712a1ecae1d0a6ccac250
+> 
+> > kernel config:
+> > https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2pKKSWo1tVldooGuq0fBz0nRD07/config
+> > build url: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2pKKSWo1tVldooGuq0fBz0nRD07/
+> > toolchain: clang-19 and clang-nightly
+> > config:  korg-clang-19-lkftconfig-hardening
+> > arch: arm64
+> >
+> > --
+> > Linaro LKFT
+> > https://lkft.linaro.org
+> 
+> - Naresh
+> 
 
