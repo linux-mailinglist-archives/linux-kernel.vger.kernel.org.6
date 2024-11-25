@@ -1,56 +1,73 @@
-Return-Path: <linux-kernel+bounces-421596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AC759D8D63
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:26:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F41B49D8D66
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:31:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DB89163E39
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 20:26:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AADF1637EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 20:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6986B1C1AB6;
-	Mon, 25 Nov 2024 20:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8121BC9F0;
+	Mon, 25 Nov 2024 20:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LLj5/Q8H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lT4bFiQS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2EA71474DA;
-	Mon, 25 Nov 2024 20:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2F514F9CF
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 20:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732566359; cv=none; b=dS85AYzqQEdis3xd1MGRMl4N6xqlMtwIZlEScsiasvBjWU6VS4K89UXADLCIxCJlpbig1uyqs1X2uKooVnYRVjD+A7KY6AnhKUyv+4Tt0LEryLVCVdISSAaPOtM0xksgnp0krxyb+k1f/bT6S7ggHRfLirovSkn1nYuMsT8WUb4=
+	t=1732566672; cv=none; b=rRfmryekbIfWyjHHgeXzkp8rh60pWNYIhRrW5NKLUinSx/mr2uOh5dgwbqWGzWJftVAqtCLMEKu1TMMTRocrQRedyjHjD6aD2faxaD1GwvZKgwKgwIMbaRANrGRByRZNOV+gKKdg5tgIqDCWT6XpsVm+dlyiU6EwGc89quNvRTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732566359; c=relaxed/simple;
-	bh=8jsQqV/JAdH/4WqNZPRszaS+d2oH+0cJL7Gbblyi89o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ksgTNrxB4vQ2cUGj8JQCCCoyDvLX4RCXLcmT0HNvf5akJQ7pk1lcB2O3ipQnidIm4Snm0IAEhm48ubiLqJBbCAf52mGJkJlDCvgIGgbN81yCn/9VvwLERJ78O+U4Dp/F/EwIvoTAGI3PAIDmXqgQ5YnxfetcTynqX7ml3hPlaJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LLj5/Q8H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05261C4CECE;
-	Mon, 25 Nov 2024 20:25:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732566358;
-	bh=8jsQqV/JAdH/4WqNZPRszaS+d2oH+0cJL7Gbblyi89o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LLj5/Q8HiDDzav6wNVFSx+UxySxy2c1VFzp3mEXgslUAteT+qPQYq1+jHB5B+gyXb
-	 pLlcdKRxiqUQuhKrR48hn867jY0h3VS3I8zyntejYFKcPmXrnPnxeoIt2xCyuJ4zTu
-	 Okg3pju0ZBzh3WmN4glU44eWxgke8Gi6ZB5/OYxCPLUlxxLSDdivepbUX5lJMlg3vn
-	 LCSSWvbiyGnnxnp19URjM8N3OdEJRpDh0dHpM0BkP03PXbdrKMHkwUjIazGUIIDeTa
-	 XPsTPWlpUMmSr6d2xtrWFLiDsPrbM+JiAGWZHaAgvxv1D2wgYQgI6zd0bspinRafdK
-	 CeDS3t12KJhMw==
-Date: Mon, 25 Nov 2024 21:25:53 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-	x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH 1/6] x86: move zmm exclusion list into CPU feature flag
-Message-ID: <Z0TdUYCPJNzuPaaU@gmail.com>
-References: <20241125041129.192999-1-ebiggers@kernel.org>
- <20241125041129.192999-2-ebiggers@kernel.org>
- <Z0Q2ali5rvtmj1z9@gmail.com>
- <20241125180814.GA1242949@google.com>
+	s=arc-20240116; t=1732566672; c=relaxed/simple;
+	bh=p2ssI5EsbtaTPo1K3sGX1Uf1+9ANLZRHrglRJAtZCco=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LIcwOLwmug9MHNQhcJ7gqs6CrstW5YI9iuI+oB2uxMneLiZvA/iqbnIeUXd10gDyPF92Zg2HKATt+vWHr033iiNAseP0UX9PQWVnjYjTCLia9jQVAnx4AZEEyIItD8PykGwky2/3P1HwuWBEhpU3Omu93otCu0GRMLCzROF33Iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lT4bFiQS; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732566671; x=1764102671;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=p2ssI5EsbtaTPo1K3sGX1Uf1+9ANLZRHrglRJAtZCco=;
+  b=lT4bFiQSMWJSYqRs7XIwH9gMFeqRwWaR4pP4Lwkvd97Nd1qdp3OryXnV
+   vVks3/wZ7nlCIfCksEJaTK1poDBHhCPuLRKg3S1FiOhgfwm/rW4H83Y0j
+   yCcQXumfulgGfc6tUqz4KjsFKmYIOxbT8k8EsGEX3DggZ/NXquJXDVe+M
+   SRIzyd0YDtyF6a/glXLqkAaFM2JIOJeG9YKuRRD1JUaUlrXtOK8+tYDCr
+   e3/tpEaAasBx3XcEHxrot0k99ZUa6s2GCr24FhL/F+UEjAweBRUhrMZ/7
+   nHwUHL3uyfYb/qL57GLwmqFq+aZRi98I2C/eYJAPKKhQ1wtEnzqwHAq/D
+   g==;
+X-CSE-ConnectionGUID: EJgc1G6hTvaGDhzvK2WaYg==
+X-CSE-MsgGUID: YvokcrIERSCBH9p3errSlA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="43193850"
+X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
+   d="scan'208";a="43193850"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 12:31:11 -0800
+X-CSE-ConnectionGUID: bCzzwSebTo2LtKp/xtVyog==
+X-CSE-MsgGUID: jD9KFIczRYCUq+khFy67OA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
+   d="scan'208";a="91801112"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 25 Nov 2024 12:31:09 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tFfje-0006m9-2R;
+	Mon, 25 Nov 2024 20:31:06 +0000
+Date: Tue, 26 Nov 2024 04:30:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: Julien Massot <julien.massot@iot.bzh>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: drivers/remoteproc/rcar_rproc.c:45:20: sparse: sparse: incorrect
+ type in argument 1 (different address spaces)
+Message-ID: <202411260438.Tinbxw1D-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,67 +76,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241125180814.GA1242949@google.com>
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   9f16d5e6f220661f73b36a4be1b21575651d8833
+commit: 285892a74f1370a12249f765c6a4e3b16194852e remoteproc: Add Renesas rcar driver
+date:   2 years, 11 months ago
+config: mips-randconfig-r122-20241114 (https://download.01.org/0day-ci/archive/20241126/202411260438.Tinbxw1D-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce: (https://download.01.org/0day-ci/archive/20241126/202411260438.Tinbxw1D-lkp@intel.com/reproduce)
 
-* Eric Biggers <ebiggers@kernel.org> wrote:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411260438.Tinbxw1D-lkp@intel.com/
 
-> On Mon, Nov 25, 2024 at 09:33:46AM +0100, Ingo Molnar wrote:
-> > 
-> > * Eric Biggers <ebiggers@kernel.org> wrote:
-> > 
-> > > From: Eric Biggers <ebiggers@google.com>
-> > > 
-> > > Lift zmm_exclusion_list in aesni-intel_glue.c into the x86 CPU setup
-> > > code, and add a new x86 CPU feature flag X86_FEATURE_PREFER_YMM that is
-> > > set when the CPU is on this list.
-> > > 
-> > > This allows other code in arch/x86/, such as the CRC library code, to
-> > > apply the same exclusion list when deciding whether to execute 256-bit
-> > > or 512-bit optimized functions.
-> > > 
-> > > Note that full AVX512 support including zmm registers is still exposed
-> > > to userspace and is still supported for in-kernel use.  This flag just
-> > > indicates whether in-kernel code should prefer to use ymm registers.
-> > > 
-> > > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> > > ---
-> > >  arch/x86/crypto/aesni-intel_glue.c | 22 +---------------------
-> > >  arch/x86/include/asm/cpufeatures.h |  1 +
-> > >  arch/x86/kernel/cpu/intel.c        | 22 ++++++++++++++++++++++
-> > >  3 files changed, 24 insertions(+), 21 deletions(-)
-> > 
-> > Acked-by: Ingo Molnar <mingo@kernel.org>
-> > 
-> > I suppose you'd like to carry this in the crypto tree?
-> 
-> I am planning to carry CRC-related patches myself
-> (https://lore.kernel.org/lkml/20241117002244.105200-12-ebiggers@kernel.org/).
+sparse warnings: (new ones prefixed by >>)
+   drivers/remoteproc/rcar_rproc.c:28:12: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *va @@     got void [noderef] __iomem * @@
+   drivers/remoteproc/rcar_rproc.c:28:12: sparse:     expected void *va
+   drivers/remoteproc/rcar_rproc.c:28:12: sparse:     got void [noderef] __iomem *
+>> drivers/remoteproc/rcar_rproc.c:45:20: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *addr @@     got void *va @@
+   drivers/remoteproc/rcar_rproc.c:45:20: sparse:     expected void const volatile [noderef] __iomem *addr
+   drivers/remoteproc/rcar_rproc.c:45:20: sparse:     got void *va
 
-Sounds good!
+vim +45 drivers/remoteproc/rcar_rproc.c
 
-> 
-> > 
-> > > +/*
-> > > + * This is a list of Intel CPUs that are known to suffer from downclocking when
-> > > + * zmm registers (512-bit vectors) are used.  On these CPUs, when the kernel
-> > > + * executes SIMD-optimized code such as cryptography functions or CRCs, it
-> > > + * should prefer 256-bit (ymm) code to 512-bit (zmm) code.
-> > > + */
-> > 
-> > One speling nit, could you please do:
-> > 
-> >   s/ymm/YMM
-> >   s/zmm/ZMM
-> > 
-> > ... to make it consistent with how the rest of the x86 code is 
-> > capitalizing the names of FPU vector register classes. Just like
-> > we are capitalizing CPU and CRC properly ;-)
-> > 
-> 
-> Will do, thanks.
+    40	
+    41	static int rcar_rproc_mem_release(struct rproc *rproc,
+    42					   struct rproc_mem_entry *mem)
+    43	{
+    44		dev_dbg(&rproc->dev, "unmap memory: %pa\n", &mem->dma);
+  > 45		iounmap(mem->va);
+    46	
+    47		return 0;
+    48	}
+    49	
 
-Thank you!
-
-	Ingo
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
