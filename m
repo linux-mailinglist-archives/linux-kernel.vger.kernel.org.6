@@ -1,174 +1,226 @@
-Return-Path: <linux-kernel+bounces-420592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C55559D7D02
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:36:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B5679D7D06
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:38:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3557CB221D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:36:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90FBD163642
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73AE1885B8;
-	Mon, 25 Nov 2024 08:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B961E18C907;
+	Mon, 25 Nov 2024 08:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EBtpqW2y"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="MgHQWlu1"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0EB185955
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 08:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A7A18A959
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 08:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732523779; cv=none; b=V+sEDRaTNEUDISAvHf29cJejONJr1erc+xoopq3hchKSCihXHO8RfvnUhbQ5LGx9WRSd98K8IQaK351kUCbpVJRSRoGzluD3V0bJoEicubZa+/jHN9Qox3tsJf+EWYUWykoLdWD8XwhgYnytG3Bm0KKqD4mrKtGrrZsWIuT7WcQ=
+	t=1732523881; cv=none; b=JK5K+aRfNmZZkp5EQwKAxMy1O+sSlfVrM3Nwvc/TZRfLs/TH+k+zQFZcoPZEhxosZ4alLdBBRLECiTMCRaOPQUq6Y0AmaZw4UGASeUXo+Lhq5i0J/UdMeH4XDI6/4y4AYiJyS+BbC0ZJ51vdYKP7ezm2KvaacMbyTFvT1ZtQK/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732523779; c=relaxed/simple;
-	bh=LFZPIyR6ASWo+Qpc5QWBNipe1NMG6Z5pRSj8OUn4/Ik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gM6D+EJe+NgnE3L+c6eG6e7RgUms05hKlr69T7LvaRG1nQc2K/ojV5Q5l0/YYEvYn5dd9JQM/kqG/4uSuMTB8TVYphX3fjxXNBryIFE5EHKjkVQjtqNERRNj4siFzWBGBWBG88yZfoTvfghqWGGwiOaBVf525VRHIgY7sHfOU1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EBtpqW2y; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7fc2b84bc60so561273a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 00:36:17 -0800 (PST)
+	s=arc-20240116; t=1732523881; c=relaxed/simple;
+	bh=oSo4OIpSVx6i5YQ9jErVlOU0MzohFWjjfjhgST8rLIM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nj1hdhNv05z4UtB8CJGlhqNIVe4k9+E498vkZhtiwJ+kaCLjn7cCb8Zy88YMHfj/daxqUGdoOfwC4z58hBpxkrZ+mlldUFZObQese5iWFfk0o88utr39YWycqq2Zs1wQXpGVN7TkpSuhJ3IJ3+VK4eAyGpa2/ndEZYFvsv9f7ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=MgHQWlu1; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e38863a8700so576200276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 00:37:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732523777; x=1733128577; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=c8y7knWYoVm5AIz2hT27XuGr0+HUiUQTJYnoybECw00=;
-        b=EBtpqW2yQiYaRs3qYDJDJ8uQLJlW/QPrLDXtzx5xgTPsJK4BlwJdeEDv/waGgFcs8M
-         vw49mMwu7towAFIDcoXP+TMCGlfaNSkNTs/zcz4q/R3Lz4psamjZ7m1nKCtHpBGZ5A9b
-         GQk+rtHrtle/7camii2l08F4wJc9OiQmLciOk=
+        d=raspberrypi.com; s=google; t=1732523879; x=1733128679; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jhf7UJAgjkqS9IEr+4/OYITR2vHwr6435xJDHVHDw+g=;
+        b=MgHQWlu1VVAV2bZfkxSoD7T6ADCRHdhup+Zggm286dJ7bWQIBY0mov6OJXSf+2K5r/
+         IjnVAXUsHxBRKkZrF0POWZCo58FrKKQFjCdbVeAb2dXh8X+f8kbsjEBi2tl4V9oI15hH
+         KxEoZSCfEGOus8/C9hTqWvJ0d8jW6SH1K4PS9NKqJEqS29ypw8EqMW7f0esjJzTzyYxT
+         MSbgiGwwzH5d273lzyr+6cmiktY+T/q4mo7acCyI2wGxy4RuQDcRkFzKaDKo08pQ6Ngj
+         S9TbMtwRFWIPlF8RZodpmnUSDj3fjLxXlFC0KiEKjEorCXMPSiUAqDzvTTXE+VuyE2JC
+         zoPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732523777; x=1733128577;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c8y7knWYoVm5AIz2hT27XuGr0+HUiUQTJYnoybECw00=;
-        b=ieUz+/yX2NBs84WLpgO4U44ZwRg+qb9rRjuhcNzo86O0so66zKZ0H4xmFXi9cUvL1/
-         LBjvgxxZb2WnCovA52D/8U2vQNAk5jPYsYgEfsDI244vlQrRgDlIe5CGr8VpeNWkMLY0
-         X3n32pN+q9VKNwwM7cYdxE93kNGe0Lzrm1+4cM3VsRwe7afzO8wCiW7R4PpbWBXHTZ+N
-         6459vVFgibSFufPFlARuvupJVRuVMHQ8uFc6IwUJlyNvWv+BDToGLCSJcYqu2Z9mh9Pc
-         Cf5FBKwCZwQTsZV0+mUBK6S2FUo6Fiz02nkvyJ7/fkXGtrkPJByTlkNQwMPXTCHLeBQ1
-         BDPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXnoMjcZmLECjviyEwvK6bpKT22JFscjCT8PAs1y9n7p/q6Al13rNkBDRui1ZNaeQs1Bzt228m3A7ce0mQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI9YD1D2QUiTZDIGUQB+KrXJ4crAmBX8gvx/MU5EFhWeYo3ysr
-	kWQIgrDG6vLog6pFluxb4vAv9p1zlNdDimPXO++bCyWjY2Y4j8/P8s/5Qk4GHg==
-X-Gm-Gg: ASbGncslpPksegatWjNVQQ8PtekSllnABJutgh5Lrtu3nFdSo1i3EFcmufztlo7nbek
-	V1oO2wQ3hO45wcAiDMg9n7tsFIdWaVTv5FZ1jcvw5NU1Waq2XAFW/Sfx/QZpboZnR7nuRQjY2dw
-	bQnjJuijyz3C8q+D38CTHg+GCobmrLiRarC3c94TddMA32N6gjsK1Syrbni0WP4AVJG11e32T7l
-	X1BzT8bP4bAbHRNAUg14N5S5+vMDrnzWDUCprvQwpVf
-X-Google-Smtp-Source: AGHT+IEpo2KdlJDaqZnS03OD0RPyKY0ulaDT8hskGK6LW/OqNmKQOfY9Vz1uB+KvJ1tLMzjf1OOoFQ==
-X-Received: by 2002:a05:6a20:244a:b0:1d9:21a0:14e0 with SMTP id adf61e73a8af0-1e09e3f0a42mr19359410637.12.1732523777046;
-        Mon, 25 Nov 2024 00:36:17 -0800 (PST)
-Received: from google.com ([2401:fa00:1:10:66a3:d18f:544f:227a])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de531b68sm5847702b3a.111.2024.11.25.00.36.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 00:36:16 -0800 (PST)
-Date: Mon, 25 Nov 2024 16:36:13 +0800
-From: "Sung-Chi, Li" <lschyi@chromium.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
-	Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, chrome-platform@lists.linux.dev,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: mfd: cros-ec: add properties for
- thermal cooling cells
-Message-ID: <Z0Q2_ds3HCMaN1jQ@google.com>
-References: <20241122-extend_power_limit-v1-0-a3ecd87afa76@chromium.org>
- <20241122-extend_power_limit-v1-2-a3ecd87afa76@chromium.org>
- <4f5sahkxxqb5qonh676igaiadkxv2pbhbibu6wtx4yenplfn4o@yvidi4ujavhr>
- <Z0Pl3muZx716QSed@google.com>
- <c2e9a97e-129d-4a82-9e81-b1391b4b6ff9@kernel.org>
- <667d4273-b3dd-4027-9266-bbd88b2f537a@kernel.org>
+        d=1e100.net; s=20230601; t=1732523879; x=1733128679;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Jhf7UJAgjkqS9IEr+4/OYITR2vHwr6435xJDHVHDw+g=;
+        b=GB3XYCj1Yg9Wcez32YkIh5TlcD5M6q0C2h5jIkjG9OWi/22Xn3G1sfjoQL2J7G/mbD
+         4zLfdKDApIO2h6NjXHBFWl9GNDTMHA+kwOitQ16oP9LdMQG+oonbJqhpX41FKGMTSVBh
+         Bjgsc4VTwk/704e65OqZRpm7KbNh7xbr7qr2W8Wco0NcCiIe5b7CLT+wGShwpGOdPeyI
+         o5O/Q/+XCJyD2mpM2EhYVSv17acu+nu8SJy05J7CBpkNWZTEC689dM74nieP53nFGIvS
+         AZXZyz2GyRHY40BOzjxIO6EVlEE7RgJZd1vqeLWB4bXUPCNXcpKy9aiFlz5H/Lawmrl1
+         whgw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/l2xLAQ9LpQDZlkKR64DcV9cjFAPbHOM74L/2wym2qIEiYjT+vnT+nxfOykPHwX0RfhW3+XsKB7Ld2Tg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxBcNUjx5yaJSzOKvzCZ6xX/5d2udruefCev6WoHwZ/sKZtH4Q
+	QPgnsjl8kJr0grBbrTOQg0Dgyok5PXURNOYBk1CT1ECScjmnkSaUo8ViyfVX/Zytq7QYEkxYjJ5
+	zpZNWuMPeEEnzonh7z33Q4jXlbgbmGudarsHTMQ==
+X-Gm-Gg: ASbGncvKcNI/5ZoWna6An5VmSRt1iSCEKJUdQdAUyQgYNMf1RT5QfBiddCx5mTWsFdN
+	LU1vudRDELdA1nI3lAd+UtQl12zE/hwC91AVczXJEHYpVndn9ceFPpb3174gPn3w=
+X-Google-Smtp-Source: AGHT+IFqUQwBayan6EHR2PgI6nhPiQUSS+N/6Yi2pVJ6bDreyN7dWTXfIQHNKenhX/VU25atPq9Gdlp6/SGHZtv9xLM=
+X-Received: by 2002:a05:690c:670d:b0:6e6:c8b:4ae3 with SMTP id
+ 00721157ae682-6eee0a49b45mr44025007b3.10.1732523878855; Mon, 25 Nov 2024
+ 00:37:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <667d4273-b3dd-4027-9266-bbd88b2f537a@kernel.org>
+References: <20241122084152.1841419-1-naush@raspberrypi.com>
+ <20241122084152.1841419-6-naush@raspberrypi.com> <xy44zndazbw7ehpzbc6hexgptjymevvupjhuy2x6zxp54qtepm@vlbb6js62cq4>
+ <CAEmqJPrrAhhukn2H4nUhe1njVi-dyW9q=u1h8YgafvJGbYRG6Q@mail.gmail.com>
+ <xadxi6rjcnmgjiqhinqnawj3mgps4b3xp6ftozap4ps6q5xaz7@bsdwrrkyniwt>
+ <deremuh7mawzt6ke3c67fvzfyuksmuwon3dhorxbm5mr5rllmf@fbj2f5qvfpjd> <20241124070428.GG19573@pendragon.ideasonboard.com>
+In-Reply-To: <20241124070428.GG19573@pendragon.ideasonboard.com>
+From: Naushir Patuck <naush@raspberrypi.com>
+Date: Mon, 25 Nov 2024 08:37:22 +0000
+Message-ID: <CAEmqJPrDvhz+np4MxKiwfrKyjxG0HnO45T+U2=Bpbmm6MW1uXg@mail.gmail.com>
+Subject: Re: [PATCH v1 5/5] drivers: media: bcm2835-unicam: Correctly handle
+ FS + FE ISR condition
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Hans Verkuil <hverkuil@xs4all.nl>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, linux-media@vger.kernel.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Dave Stevenson <dave.stevenson@raspberrypi.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Nov 25, 2024 at 08:35:01AM +0100, Krzysztof Kozlowski wrote:
-> On 25/11/2024 08:32, Krzysztof Kozlowski wrote:
-> > On 25/11/2024 03:50, Sung-Chi, Li wrote:
-> >> On Fri, Nov 22, 2024 at 08:49:14AM +0100, Krzysztof Kozlowski wrote:
-> >>> On Fri, Nov 22, 2024 at 11:47:22AM +0800, Sung-Chi Li wrote:
-> >>>> The cros_ec supports limiting the input current to act as a passive
-> >>>> thermal cooling device. Add the property '#cooling-cells' bindings, such
-> >>>> that thermal framework can recognize cros_ec as a valid thermal cooling
-> >>>> device.
-> >>>>
-> >>>> Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
-> >>>> ---
-> >>>>  Documentation/devicetree/bindings/mfd/google,cros-ec.yaml | 3 +++
-> >>>>  1 file changed, 3 insertions(+)
-> >>>>
-> >>>> diff --git a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-> >>>> index aac8819bd00b..2b6f098057af 100644
-> >>>> --- a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-> >>>> +++ b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-> >>>> @@ -96,6 +96,9 @@ properties:
-> >>>>    '#gpio-cells':
-> >>>>      const: 2
-> >>>>  
-> >>>> +  '#cooling-cells':
-> >>>> +    const: 2
-> >>>
-> >>> This is not a cooling device. BTW, your commit msg is somehow circular.
-> 
-> 
-> ^^^ And here which you ignored: this is not a cooling device.
-> 
+On Sun, 24 Nov 2024 at 07:04, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> On Fri, Nov 22, 2024 at 03:48:11PM +0100, Jacopo Mondi wrote:
+> >
+> > With Hans Sakari and Laurent in cc for real now
+> >
+> > On Fri, Nov 22, 2024 at 03:41:31PM +0100, Jacopo Mondi wrote:
+> > > On Fri, Nov 22, 2024 at 11:40:26AM +0000, Naushir Patuck wrote:
+> > > > On Fri, 22 Nov 2024 at 11:16, Jacopo Mondi wrote:
+> > > > > On Fri, Nov 22, 2024 at 08:41:52AM +0000, Naushir Patuck wrote:
+> > > > > > This change aligns the FS/FE interrupt handling with the Raspberry Pi
+> > > > > > kernel downstream Unicam driver.
+> > > > > >
+> > > > > > If we get a simultaneous FS + FE interrupt for the same frame, it cannot
+> > > > > > be marked as completed and returned to userland as the framebuffer will
+> > > > > > be refilled by Unicam on the next sensor frame. Additionally, the
+> > > > > > timestamp will be set to 0 as the FS interrupt handling code will not
+> > > > > > have run yet.
+> > > > > >
+> > > > > > To avoid these problems, the frame is considered dropped in the FE
+> > > > > > handler, and will be returned to userland on the subsequent sensor frame.
+> > > > > >
+> > > > > > Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
+> > > > > > ---
+> > > > > >  .../media/platform/broadcom/bcm2835-unicam.c  | 39 +++++++++++++++++--
+> > > > > >  1 file changed, 35 insertions(+), 4 deletions(-)
+> > > > > >
+> > > > > > diff --git a/drivers/media/platform/broadcom/bcm2835-unicam.c b/drivers/media/platform/broadcom/bcm2835-unicam.c
+> > > > > > index f10064107d54..0d2aa25d483f 100644
+> > > > > > --- a/drivers/media/platform/broadcom/bcm2835-unicam.c
+> > > > > > +++ b/drivers/media/platform/broadcom/bcm2835-unicam.c
+> > > > > > @@ -773,10 +773,26 @@ static irqreturn_t unicam_isr(int irq, void *dev)
+> > > > > >                        * as complete, as the HW will reuse that buffer.
+> > > > > >                        */
+> > > > > >                       if (node->cur_frm && node->cur_frm != node->next_frm) {
+> > > > > > +                             /*
+> > > > > > +                              * This condition checks if FE + FS for the same
+> > > > > > +                              * frame has occurred. In such cases, we cannot
+> > > > > > +                              * return out the frame, as no buffer handling
+> > > > > > +                              * or timestamping has yet been done as part of
+> > > > > > +                              * the FS handler.
+> > > > > > +                              */
+> > > > > > +                             if (!node->cur_frm->vb.vb2_buf.timestamp) {
+> > > > > > +                                     dev_dbg(unicam->v4l2_dev.dev,
+> > > > > > +                                             "ISR: FE without FS, dropping frame\n");
+> > > > > > +                                     continue;
+> > > > > > +                             }
+> > > > > > +
+> > > > > >                               unicam_process_buffer_complete(node, sequence);
+> > > > > > +                             node->cur_frm = node->next_frm;
+> > > > > > +                             node->next_frm = NULL;
+> > > > > >                               inc_seq = true;
+> > > > > > +                     } else {
+> > > > > > +                             node->cur_frm = node->next_frm;
+> > > > > >                       }
+> > > > > > -                     node->cur_frm = node->next_frm;
+> > > > > >               }
+> > > > > >
+> > > > > >               /*
+> > > > > > @@ -812,10 +828,25 @@ static irqreturn_t unicam_isr(int irq, void *dev)
+> > > > > >                                       i);
+> > > > > >                       /*
+> > > > > >                        * Set the next frame output to go to a dummy frame
+> > > > > > -                      * if we have not managed to obtain another frame
+> > > > > > -                      * from the queue.
+> > > > > > +                      * if no buffer currently queued.
+> > > > > >                        */
+> > > > > > -                     unicam_schedule_dummy_buffer(node);
+> > > > > > +                     if (!node->next_frm ||
+> > > > > > +                         node->next_frm == node->cur_frm) {
+> > > > > > +                             unicam_schedule_dummy_buffer(node);
+> > > > > > +                     } else if (unicam->node[i].cur_frm) {
+> > > > > > +                             /*
+> > > > > > +                              * Repeated FS without FE. Hardware will have
+> > > > > > +                              * swapped buffers, but the cur_frm doesn't
+> > > > > > +                              * contain valid data. Return cur_frm to the
+> > > > > > +                              * queue.
+> > > > >
+> > > > > So the buffer gets silently recycled ? Or should it be returned with
+> > > > > errors to userspace ?
+> > > >
+> > > > The buffer silently gets recycled and we dequeue when we are sure it
+> > > > is valid and will not get overwritten.  If we were to return to
+> > >
+> > > I haven't find in the v4l2 specs any reference to what the behaviour
+> > > should be.
+> > >
+> > > If I can summarize it: When a frame capture is aborted after the DMA
+> > > transfer has already started, should the corresponding capture buffer
+> > > be returned to the user in error state or the frame drop can go
+> > > silently ignored ?
+>
+> If the DMA tranfer is aborted, I would return the buffer to userspace.
+> This will indicate a frame loss better than deducing it from a gap in
+> the sequence numbers.
+>
+> Is the DMA really aborted here though ?
 
-Hi, I added the explanation in the commit message in the v2 version. Please have
-a look, it should explains why it is not a cooling device.
+No, the DMA continues, causing possilbe overwrite/tearing in the
+framebuffer.  Hence we defer returning it until we can ensure we don't
+overwrite into the buffer on the next frame.
 
-> >>> "Add cooling to make it a cooling device because it will be then cooling
-> >>> device."
-> >>>
-> >>> Power supply already provides necessary framework for managing charging
-> >>> current and temperatures. If this is to stay, you need to explain why
-> >>> this is suitable to be considered a thermal zone or system cooling
-> >>> device (not power supply or input power cooling).
-> >>>
-> >>> Best regards,
-> >>> Krzysztof
-> >>>
-> >>
-> >> Thank you, I will rephrase the commit message. The reason to not to use the
-> >> managing charging current and temperatures in the power supply framework is
-> >> that:
-> >>
-> >> - The EC may not have the thermal sensor value for the charger, and there is no
-> >>   protocol for getting the thermal sensor value for the charger (there is
-> >>   command for reading thermal sensor values, but there is no specification for
-> >>   what sensor index is for the charger, if the charger provides thermal value).
-> >> - The managing mechanism only take the charger thermal value into account, and
-> >>   I would like to control the current based on the thermal condition of the
-> >>   whole device.
-> >>
-> >> I will include these explanation in the following changes.
-> > 
-> > 
-> > This does not explain me why this is supposed to be thermal zone. I
-> > already said it, but let's repeat: This is not a thermal zone. This
-> > isn't thermal zone sensor, either.
-> 
-> 
-> And nothing from your "revised" commit msg explains why something which
-> is not a cooling device is supposed to be a cooling device.
+Naush
 
-The revised commit message is sent, please have a look.
 
-> 
-> 
-> Best regards,
-> Krzysztof
+>
+> > > Cc-ing Hans Sakari and Laurent for opinions.
+> > >
+> > > > userspace with an error, there is still a race condition on the name
+> > > > frame/buffer which will also have to return as error.
+> > >
+> > > I'm sorry I didn't get this part :)
+> > >
+> > > > > > +                              */
+> > > > > > +                             spin_lock(&node->dma_queue_lock);
+> > > > > > +                             list_add_tail(&node->cur_frm->list,
+> > > > > > +                                           &node->dma_queue);
+> > > > > > +                             spin_unlock(&node->dma_queue_lock);
+> > > > > > +                             node->cur_frm = node->next_frm;
+> > > > > > +                             node->next_frm = NULL;
+> > > > > > +                     }
+> > > > > >               }
+> > > > > >
+> > > > > >               unicam_queue_event_sof(unicam);
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
