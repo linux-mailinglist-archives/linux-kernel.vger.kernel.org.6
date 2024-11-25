@@ -1,186 +1,158 @@
-Return-Path: <linux-kernel+bounces-421195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49BD09D87CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:23:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42E5116370E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:23:04 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3F11AF0C5;
-	Mon, 25 Nov 2024 14:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="ePzmS8iw"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FCD99D87D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:24:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43CCEAF6;
-	Mon, 25 Nov 2024 14:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14C2328F8DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:24:37 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615F81AF0D6;
+	Mon, 25 Nov 2024 14:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RWul6A7Z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382571AF0A1
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732544579; cv=none; b=XA7fSBFF5OCc1w8tFj4F3UVPHxi2tfs0Rc3iRgOI+XJhCNXMRkYpiGGcSUF5R78/LZZVDA+rDId91gwcXq6p1kIilrRLBSWBoakNQ9rEfGXK5iyRJpycQYcJC329JMf5HCSlfsmG2lDKM36kNDNMvzf0/6UyCrom7hcK66n4W1E=
+	t=1732544669; cv=none; b=MtUybdfo5n78Sku6OfQVMg5aEKSOc96WVxMQk6ZjQ3zo0NzKIPhSLJSa72Dsh9xHpCEhx++OL2ynO1+9EL+4o7EBLna/8UcfI/ehqnbIPGa9VlxzERZtpcOUU+0Sf+9xHjM1YDpSL75YiWOEWa6xK0VhASgh6N8ScIfNCF79SzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732544579; c=relaxed/simple;
-	bh=SG0jvqLVog//QTlMMQhzLqPOC5yAbeI7oA5YQ850jqw=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=biSEZD2dTWOD5L5jLYgqgmNgHOYv4OneYIGyjHAKvB8ywJuj+sKHnGoG2GejMAfCkHprYuP8eR8SxXDzCb+gGyxnavj3k+dNeKF2HMj0ckF8BbltkdBds4MlGq3pr96mHrMKYnD9NyLoKLMPSgpP45c+MIBTt3KaCX/gUy+tMh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=ePzmS8iw; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APDrtju014880;
-	Mon, 25 Nov 2024 09:22:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=ofJdo
-	U+dIwUs841cv12FL6guNefCzeKBMVmj1OZwFts=; b=ePzmS8iwfJ1z1XjF6Asqq
-	YNlqcC7PaOil1JVefILKO2oCHdRtEfVFKqxKhWi4Lo381oxE1fuOO7BQtWB1OjCs
-	r7Te26TBoV8NLUBrpjulpFBzskWHcE8B4ZVTKhMLyDaA5uRgRtF8OtzFfamceOQ8
-	39z+6mToeeBzlP4DzPb9yDhaRSy1So9JtmJ3djwFSvT4NiS8aBE7YoMPyBwn2HSb
-	ERpk+MfNKLgGVOdcGmX+8g2nQPkUqWFE+zPWLyWQNGrQFYzs+NxkY2ueDoCZLhoC
-	t1yqXDeEQbdjSzUwDPd/3dZhN/xWDi5PWPDUXWSJVDH211ZXT+g0zoUVKZOv2UgQ
-	Q==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 434pbd1813-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Nov 2024 09:22:43 -0500 (EST)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 4APEMgTb032092
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 25 Nov 2024 09:22:42 -0500
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Mon, 25 Nov
- 2024 09:22:42 -0500
-Received: from ASHBMBX9.ad.analog.com ([fe80::e370:92d6:3366:81e5]) by
- ASHBMBX9.ad.analog.com ([fe80::e370:92d6:3366:81e5%20]) with mapi id
- 15.02.0986.014; Mon, 25 Nov 2024 09:22:42 -0500
-From: "Budai, Robert" <Robert.Budai@analog.com>
-To: "Budai, Robert" <Robert.Budai@analog.com>,
-        Lars-Peter Clausen
-	<lars@metafoo.de>,
-        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
-        "Sa,
- Nuno" <Nuno.Sa@analog.com>,
-        "Gradinariu, Ramona"
-	<Ramona.Gradinariu@analog.com>,
-        "Miclaus, Antoniu"
-	<Antoniu.Miclaus@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>, "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: RE: [PATCH 0/7] adis16550-v2
-Thread-Topic: [PATCH 0/7] adis16550-v2
-Thread-Index: AQHbPz7pSPeUMR9QEk6zMP7RDy8im7LH6pGg
-Date: Mon, 25 Nov 2024 14:22:41 +0000
-Message-ID: <7f065b32ec8043b5bf6d902184f39d96@analog.com>
-References: <20241125133520.24328-1-robert.budai@analog.com>
-In-Reply-To: <20241125133520.24328-1-robert.budai@analog.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-dg-ref: =?us-ascii?Q?PG1ldGE+PGF0IGFpPSIwIiBubT0iYm9keS50eHQiIHA9ImM6XHVzZXJzXHJi?=
- =?us-ascii?Q?dWRhaVxhcHBkYXRhXHJvYW1pbmdcMDlkODQ5YjYtMzJkMy00YTQwLTg1ZWUt?=
- =?us-ascii?Q?NmI4NGJhMjllMzViXG1zZ3NcbXNnLWY1ZjA3Y2QzLWFiMjctMTFlZi1iYWU1?=
- =?us-ascii?Q?LWRjMWJhMTgxMTNjZVxhbWUtdGVzdFxmNWYwN2NkNC1hYjI3LTExZWYtYmFl?=
- =?us-ascii?Q?NS1kYzFiYTE4MTEzY2Vib2R5LnR4dCIgc3o9IjQyODIiIHQ9IjEzMzc3MDEw?=
- =?us-ascii?Q?OTYwMjE4NzkxNCIgaD0iRDREYzZIQ0ZhdHNEWDJLaWtYc2YzOE9TdDMwPSIg?=
- =?us-ascii?Q?aWQ9IiIgYmw9IjAiIGJvPSIxIiBjaT0iY0FBQUFFUkhVMVJTUlVGTkNnVUFB?=
- =?us-ascii?Q?RW9DQUFDS1NtZTRORC9iQWJMcTNkNkczRWtVc3VyZDNvYmNTUlFEQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUhBQUFBRGFBUUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUVBQVFBQkFBQUFmcHljV2dBQUFBQUFBQUFBQUFBQUFKNEFBQUJo?=
- =?us-ascii?Q?QUdRQWFRQmZBSE1BWlFCakFIVUFjZ0JsQUY4QWNBQnlBRzhBYWdCbEFHTUFk?=
- =?us-ascii?Q?QUJ6QUY4QVpnQmhBR3dBY3dCbEFGOEFaZ0J2QUhNQWFRQjBBR2tBZGdCbEFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBRUFBQUFBQUFBQUFnQUFBQUFBbmdBQUFHRUFaQUJwQUY4QWN3QmxB?=
- =?us-ascii?Q?R01BZFFCeUFHVUFYd0J3QUhJQWJ3QnFBR1VBWXdCMEFITUFYd0IwQUdrQVpR?=
- =?us-ascii?Q?QnlBREVBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQVFBQUFBQUFB?=
- =?us-ascii?Q?QUFDQUFBQUFBQ2VBQUFBWVFCa0FHa0FYd0J6QUdVQVl3QjFBSElBWlFCZkFI?=
- =?us-ascii?Q?QUFjZ0J2QUdvQVpRQmpBSFFBY3dCZkFIUUFhUUJsQUhJQU1nQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUJBQUFBQUFBQUFBSUFBQUFBQUE9PSIv?=
- =?us-ascii?Q?PjwvbWV0YT4=3D?=
-x-dg-rorf: true
-x-dg-refone: QmxBR01BZFFCeUFHVUFYd0J3QUhJQWJ3QnFBR1VBWXdCMEFITUFYd0JtQUdFQWJBQnpBR1VBWHdCbUFHOEFjd0JwQUhRQWFRQjJBR1VBQUFBOEFBQUFBQUFBQUdFQVpBQnBBRjhBY3dCbEFHTUFkUUJ5QUdVQVh3QndBSElBYndCcUFHVUFZd0IwQUhNQVh3QjBBR2tBWlFCeUFERUFBQUE4QUFBQUFBQUFBR0VBWkFCcEFGOEFjd0JsQUdNQWRRQnlBR1VBWHdCd0FISUFid0JxQUdVQVl3QjBBSE1BWHdCMEFHa0FaUUJ5QURJQUFBQT0iLz48L21ldGE+
-x-adiruleop-newscl: Rule Triggered
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1732544669; c=relaxed/simple;
+	bh=PAApblf5/yOuk9I4BzfC+hcjl0lxlkL+IWpwS5snJeE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OkWwpxElgZZ48GBOBVKX6XEqbJWPbtqL+938fs1AiPh17PnZJMfSy5DYJ9tkHRtiFxKF9vqnsHF4jaCLn4hhlfPZh9G2w/6dcJ6kHOPGomBg+8KFaY7uxGC1Ymz3uq3YOk436m5Zlfb6VcTCQT9TwV/tDsESUBZxx9EfrE0Rkg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RWul6A7Z; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732544666;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OAej4OPlBRSwRD5hkCmUtBDLkFXG4Wh3poAJBOLJFhM=;
+	b=RWul6A7ZYPPS8a2sxq+lD/MpD4oDa82ZEkOV+ptOGHhLYQd/5+eeBu+KOn42yKvDsIjd66
+	ES0vimhSfPzr9jPI10mpPmt9tolwuhlEn+9Uy401L9mXlSw7HoLTweMGLo4BibkWh8R/hX
+	t8ZDjAd1HY9D3q8LwJNdryT08nDVRhw=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-381-IgkAagQ3PAaiDPT0SfWkzw-1; Mon, 25 Nov 2024 09:24:24 -0500
+X-MC-Unique: IgkAagQ3PAaiDPT0SfWkzw-1
+X-Mimecast-MFC-AGG-ID: IgkAagQ3PAaiDPT0SfWkzw
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-aa52bfbdfebso167458466b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 06:24:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732544663; x=1733149463;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OAej4OPlBRSwRD5hkCmUtBDLkFXG4Wh3poAJBOLJFhM=;
+        b=nsFmz3fjwTyDeBZGYVSnO8KJJ7eus2Iv8Ne5wjrfboZcnBGH1ZnbvOZc5m0SrCaQX+
+         tDTFzZG4MBc8AIAvk6gptEVxS5M5LKjDo4VVxuUwloygWer/4gjAuawLxrE+WgvbLOYh
+         mE6YfMAO5vaOcVy2uD6FuL0+SpjV+alttua5LZM6Ks3OStAH/GgGz7jgXD+qEP/JlMTZ
+         MyFJJ/+jdkYH3Wz9g9mYrAEQ7eE61E5enejj8lD5LD+8+IRSgE/8R5lV6wssMkAA4IbD
+         +QqyVwJEZZfsEfogiP/j+UF/MbvCkxUa5W+M+WysJWwLz0uoCXNmLc3nqfoXqJcA3ryA
+         6HyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbHe8A0JEVh5yJJl7K3/qgTD4CIEthuI2fq5W61LZpx4UB90UX9zqXXJbGy2M1IbOWB4K+PSYukFMT1CM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCA+PJ7fmTUMHC/QZj72MII0P4lBmFN8ws1o522fFPTsYsxeCJ
+	86RhmxV33zM5wZ9ozelEhY9UTdxvb/fJGWNmdchr5ywGECpVqXUnOfDzkfKqPV0U0KQT3abiBwa
+	2DOIWlw3e+m/0dUI8UfZM+Y8AgTR74giiTWy6vBM2kRRUAer2hLKrZ2q923aPLg==
+X-Gm-Gg: ASbGncsgDlIrbPfRExLSxlINsFlqw1x5+FSzJPgbi92/g+Sps3983nJXizl1Px/31UU
+	HMbTVPeyAH92lwVvuCVfGdtcFnJK5T/WaO26G22Y+scjNaWQUEv0X1VW9Q9OolCg7Fdo0XCTONH
+	LHwG8LLcBhHsutNi2MESYmWPz4ZU1hMjmZIci5x3noEQduK7ulOP1ZTMlORwnOxPvWXPeiu5jni
+	UMdtj6fL/4Csgy/1uA5vlemFI4OzREQCHkJGIUXy5dJCTtXwT77qR1ce/AHg4DIRqRhyGDV+JfC
+	77N2e31aUT6GZhmsTbyiwZOF64cM8CgN2BrWlXZ7LYvHEBGCNFiNq4OM0MVohQJvo52h778uqvs
+	ugoW0srDmmHuLpZtU8OHe2Szk
+X-Received: by 2002:a17:906:3194:b0:aa5:274b:60ee with SMTP id a640c23a62f3a-aa5274b69famr1018207466b.39.1732544663471;
+        Mon, 25 Nov 2024 06:24:23 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHoGDD47dfwy9wZFvAqX4WMcfksgKqNJCU6tx7BOnVPBVTlVWMX5EUDMfzlOkKD2trMBOUnQw==
+X-Received: by 2002:a17:906:3194:b0:aa5:274b:60ee with SMTP id a640c23a62f3a-aa5274b69famr1018205166b.39.1732544663087;
+        Mon, 25 Nov 2024 06:24:23 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa537b4eae7sm302808966b.99.2024.11.25.06.24.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 06:24:22 -0800 (PST)
+Message-ID: <a321900c-2be7-4fe8-b693-4a185f1d5aa4@redhat.com>
+Date: Mon, 25 Nov 2024 15:24:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-GUID: Dnl2RKIYo1XTGXrJZpK0YK9yXPBWsfTu
-X-Proofpoint-ORIG-GUID: Dnl2RKIYo1XTGXrJZpK0YK9yXPBWsfTu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- priorityscore=1501 suspectscore=0 lowpriorityscore=0 spamscore=0
- impostorscore=0 malwarescore=0 mlxlogscore=999 clxscore=1015 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411250122
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] media: uvcvideo: Support partial control reads and
+ minor changes
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, stable@vger.kernel.org
+References: <20241120-uvc-readless-v4-0-4672dbef3d46@chromium.org>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241120-uvc-readless-v4-0-4672dbef3d46@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Missed -v2 flag at format-patch command. Should I resend them?
+Hi Ricardo,
 
-> -----Original Message-----
-> From: Robert Budai <robert.budai@analog.com>
-> Sent: Monday, November 25, 2024 3:35 PM
-> To: Lars-Peter Clausen <lars@metafoo.de>; Hennerich, Michael
-> <Michael.Hennerich@analog.com>; Sa, Nuno <Nuno.Sa@analog.com>;
-> Gradinariu, Ramona <Ramona.Gradinariu@analog.com>; Miclaus, Antoniu
-> <Antoniu.Miclaus@analog.com>; Jonathan Cameron <jic23@kernel.org>; Rob
-> Herring <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Cono=
-r
-> Dooley <conor+dt@kernel.org>; Jonathan Corbet <corbet@lwn.net>; Budai,
-> Robert <Robert.Budai@analog.com>; linux-iio@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
-> doc@vger.kernel.org
-> Subject: [PATCH 0/7] adis16550-v2
->=20
-> Version 2 of adding adis16550 and adis16550w device driver for iio.
->=20
-> Robert Budai (7):
->   iio: imu: adis: Remove documented not used elements
->   iio: imu: adis: Add custom ops struct
->   iio: imu: adis: Add reset to custom ops
->   iio: imu: adis: Add DIAG_STAT register size
->   dt-bindings: iio: Add adis16550 bindings
->   iio: imu: adis16550: add adis16550 support
->   docs: iio: add documentation for adis16550 driver
->=20
->  .../bindings/iio/imu/adi,adis16550.yaml       |   97 ++
->  Documentation/iio/adis16550.rst               |  389 ++++++
->  Documentation/iio/index.rst                   |    1 +
->  MAINTAINERS                                   |    9 +
->  drivers/iio/imu/Kconfig                       |   13 +
->  drivers/iio/imu/Makefile                      |    1 +
->  drivers/iio/imu/adis.c                        |   31 +-
->  drivers/iio/imu/adis16550.c                   | 1203 +++++++++++++++++
->  include/linux/iio/imu/adis.h                  |   34 +-
->  9 files changed, 1762 insertions(+), 16 deletions(-)
->  create mode 100644
-> Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml
->  create mode 100644 Documentation/iio/adis16550.rst
->  create mode 100644 drivers/iio/imu/adis16550.c
->=20
-> --
-> 2.34.1
+On 20-Nov-24 4:26 PM, Ricardo Ribalda wrote:
+> Some cameras do not return all the bytes requested from a control
+> if it can fit in less bytes. Eg: returning 0xab instead of 0x00ab.
+> Support these devices.
+> 
+> Also, now that we are at it, improve uvc_query_ctrl() logging.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+
+Thank you for your patches, I have pushed both patches to:
+
+https://gitlab.freedesktop.org/linux-media/users/uvc/-/commits/next/
+
+now.
+
+Regards,
+
+Hans
+
+
+
+> ---
+> Changes in v4:
+> - Improve comment.
+> - Keep old likely(ret == size)
+> - Link to v3: https://lore.kernel.org/r/20241118-uvc-readless-v3-0-d97c1a3084d0@chromium.org
+> 
+> Changes in v3:
+> - Improve documentation.
+> - Do not change return sequence.
+> - Use dev_ratelimit and dev_warn_once
+> - Link to v2: https://lore.kernel.org/r/20241008-uvc-readless-v2-0-04d9d51aee56@chromium.org
+> 
+> Changes in v2:
+> - Rewrite error handling (Thanks Sakari)
+> - Discard 2/3. It is not needed after rewriting the error handling.
+> - Link to v1: https://lore.kernel.org/r/20241008-uvc-readless-v1-0-042ac4581f44@chromium.org
+> 
+> ---
+> Ricardo Ribalda (2):
+>       media: uvcvideo: Support partial control reads
+>       media: uvcvideo: Add more logging to uvc_query_ctrl()
+> 
+>  drivers/media/usb/uvc/uvc_video.c | 22 +++++++++++++++++++++-
+>  1 file changed, 21 insertions(+), 1 deletion(-)
+> ---
+> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+> change-id: 20241008-uvc-readless-23f9b8cad0b3
+> 
+> Best regards,
 
 
