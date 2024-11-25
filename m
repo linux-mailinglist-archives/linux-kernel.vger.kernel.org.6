@@ -1,82 +1,199 @@
-Return-Path: <linux-kernel+bounces-420761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58CAD9D832E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:14:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 397D49D8306
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:07:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6D05B2EECA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:52:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DECDB2EB5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFF71922F0;
-	Mon, 25 Nov 2024 09:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="FPReAO52"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F579191F9E;
+	Mon, 25 Nov 2024 09:49:37 +0000 (UTC)
+Received: from out198-20.us.a.mail.aliyun.com (out198-20.us.a.mail.aliyun.com [47.90.198.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E1D191F92;
-	Mon, 25 Nov 2024 09:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D8912B17C;
+	Mon, 25 Nov 2024 09:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732528327; cv=none; b=XwVAqPEWAAV/7wEWCDeT05wP0NiGc/VUq2azTfseMyD2qGNschEkD9vWH3o/To9wU3hjAtxFYK0zdYuDfaqxQmDprJVk3kb+a3Q1Pf75UwhZjlY1FI4yHQSBguxAP2XgF4w3Ikk0kaWiU7+YLX6CXlM8d+Zk7ttQ5tXE0r66NsA=
+	t=1732528176; cv=none; b=rkJ+cpchJ3ASPzC1C9hhdg/m8JNHB+mhP4mHhg21JYym76oaTKw/HpLNvDLvVAwIfxfRu0bI+dW/2/kTZRnqa1uZy5U3mImDFF1p+a+pzFF0CrOCNtRKmtvlxzapzsiMeWhEGwBAoTuYd7iRA73p+crYrokuxW0clvd7aqVROHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732528327; c=relaxed/simple;
-	bh=Z815E4KFw6x29F6Ky1bHtLzzSkCGOhfmU/4Z27hrZKI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kqMSR9lCV1WKic8/EDJS2DJIh+R1R35DTeXy8avjlkrzlKOkc0o90y93hh52P17Frvr675ooKpC4Anxuab5x1LSNLAsjE7QN+V3Nno6ppsrpg9m378KnetxpRFsmIhopNE7HGBBLJ/JjBXgHvMEDg67MKCpQ7B/mWJsrrWZpq2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=FPReAO52; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1732528313;
-	bh=xXQGNKC9g/gxVu2UclehtcajTzlHUR7Br/voSKreqhc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=FPReAO52M8K8BxzdE6potA9MO88w945boEz40ZsO5Q56AgeXdZoYGBVRs8PYdAS45
-	 5tx/j8HuHZYirKCbFL7AvrenQAlbNWj11NttW9TxgEOU+8sUbCQBK0SnOnvEyV2YV4
-	 3d/gHTibFuBwZZlSjD4FWyCdScra+4NeQ5fgi9kKyQIaz5yXtte7zaL1GAV8EulKTc
-	 58tMqJmDP2O1MPaqYkXRXHbTQvWDcx+MCyZKT7oxs7OaJtC5nlqmliWjDXqbPRBNNo
-	 Wek/UR9WPBCqD+kkZIvoNYw2ZNYWs38hg3wYml8Gn6j3ZyWmm3+LRhWOXenm8tkcXN
-	 J4MZP461zq/6A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xxgw83vlyz4xcr;
-	Mon, 25 Nov 2024 20:51:52 +1100 (AEDT)
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-To: linux-edac@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, bp@alien8.de, tony.luck@intel.com
-In-Reply-To: <20241112084134.411964-1-mpe@ellerman.id.au>
-References: <20241112084134.411964-1-mpe@ellerman.id.au>
-Subject: Re: [PATCH] EDAC/powerpc: Remove PPC_MAPLE drivers
-Message-Id: <173252811445.21628.11243334718451760345.b4-ty@ellerman.id.au>
-Date: Mon, 25 Nov 2024 20:48:34 +1100
+	s=arc-20240116; t=1732528176; c=relaxed/simple;
+	bh=oVpkyRX5ML3zfya5CuT278HfRoLX4XGPkPbPJqJcckE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B2swinK+eFQRgYvbe4wLOcTaNBIX2y4vsbQtrPnyV1gOHRm4Ik1Uc/xbVwqZOEz38jFumyVSzPi5b/15706EKnIcb1bxRU8NhMKiH1s4goaVNH1c6TRIeqZV12fafChD50XU4ecjTP1pgcZ+GUBAzu540CqjQCQI9Y4PmRUlcPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com; spf=pass smtp.mailfrom=motor-comm.com; arc=none smtp.client-ip=47.90.198.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motor-comm.com
+Received: from 10.0.2.15(mailfrom:Frank.Sae@motor-comm.com fp:SMTPD_---.aLoTznl_1732528160 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Mon, 25 Nov 2024 17:49:20 +0800
+Message-ID: <11e26658-670f-49fa-8001-0654670b541e@motor-comm.com>
+Date: Mon, 25 Nov 2024 17:49:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 09/21] motorcomm:yt6801: Implement some hw_ops
+ function
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ xiaogang.fan@motor-comm.com, fei.zhang@motor-comm.com, hua.sun@motor-comm.com
+References: <20241120105625.22508-1-Frank.Sae@motor-comm.com>
+ <20241120105625.22508-10-Frank.Sae@motor-comm.com>
+ <46206a81-e230-411c-8a78-d461d238b171@lunn.ch>
+Content-Language: en-US
+From: Frank Sae <Frank.Sae@motor-comm.com>
+In-Reply-To: <46206a81-e230-411c-8a78-d461d238b171@lunn.ch>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Tue, 12 Nov 2024 19:41:34 +1100, Michael Ellerman wrote:
-> These two drivers are only buildable for the powerpc "maple" platform
-> (CONFIG_PPC_MAPLE), which has now been removed, see
-> commit 62f8f307c80e ("powerpc/64: Remove maple platform").
-> 
-> Remove the drivers.
-> 
-> 
-> [...]
+Hi Andrew,
 
-Applied to powerpc/next.
+On 2024/11/23 09:03, Andrew Lunn wrote:
+> It took a lot of effort to find your MDIO code. And MDIO bus driver
+> makes a good patch on its own.
+> 
 
-[1/1] EDAC/powerpc: Remove PPC_MAPLE drivers
-      https://git.kernel.org/powerpc/c/3c592ce7991cdf03bc7d139d790ce58c82c5903b
+Sorry about that.
+There is too many codes in yt6801_hw.c file. If I put the MDIO bus driver
+in one patch, it's would be very difficult to limit to 15 patches. 
 
-cheers
+>> +static int mdio_loop_wait(struct fxgmac_pdata *pdata, u32 max_cnt)
+>> +{
+>> +	u32 val, i;
+>> +
+>> +	for (i = 0; i < max_cnt; i++) {
+>> +		val = rd32_mac(pdata, MAC_MDIO_ADDRESS);
+>> +		if ((val & MAC_MDIO_ADDR_BUSY) == 0)
+>> +			break;
+>> +
+>> +		fsleep(10);
+>> +	}
+>> +
+>> +	if (i >= max_cnt) {
+>> +		WARN_ON(1);
+>> +		yt_err(pdata, "%s timeout. used cnt:%d, reg_val=%x.\n",
+>> +		       __func__, i + 1, val);
+>> +
+>> +		return -ETIMEDOUT;
+>> +	}
+> 
+> Please replace this using one of the helpers in
+> include/linux/iopoll.h.
+> 
+>> +#define PHY_WR_CONFIG(reg_offset)		(0x8000205 + ((reg_offset) * 0x10000))
+>> +static int fxgmac_phy_write_reg(struct fxgmac_pdata *pdata, u32 reg_id, u32 data)
+>> +{
+>> +	int ret;
+>> +
+>> +	wr32_mac(pdata, data, MAC_MDIO_DATA);
+>> +	wr32_mac(pdata, PHY_WR_CONFIG(reg_id), MAC_MDIO_ADDRESS);
+>> +	ret = mdio_loop_wait(pdata, PHY_MDIO_MAX_TRY);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	yt_dbg(pdata, "%s, id:%x %s, ctrl:0x%08x, data:0x%08x\n", __func__,
+>> +	       reg_id, (ret == 0) ? "ok" : "err", PHY_WR_CONFIG(reg_id), data);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +#define PHY_RD_CONFIG(reg_offset)		(0x800020d + ((reg_offset) * 0x10000))
+>> +static int fxgmac_phy_read_reg(struct fxgmac_pdata *pdata, u32 reg_id)
+>> +{
+>> +	u32 val;
+>> +	int ret;
+>> +
+>> +	wr32_mac(pdata, PHY_RD_CONFIG(reg_id), MAC_MDIO_ADDRESS);
+>> +	ret =  mdio_loop_wait(pdata, PHY_MDIO_MAX_TRY);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	val = rd32_mac(pdata, MAC_MDIO_DATA);  /* Read data */
+>> +	yt_dbg(pdata, "%s, id:%x ok, ctrl:0x%08x, val:0x%08x.\n", __func__,
+>> +	       reg_id, PHY_RD_CONFIG(reg_id), val);
+>> +
+>> +	return val;
+>> +}
+> 
+> And where is the rest of the MDIO bus driver?
+
+There is no separate reset of MDIO bus driver.
+
+> 
+>> +static int fxgmac_config_flow_control(struct fxgmac_pdata *pdata)
+>> +{
+>> +	u32 val = 0;
+>> +	int ret;
+>> +
+>> +	fxgmac_config_tx_flow_control(pdata);
+>> +	fxgmac_config_rx_flow_control(pdata);
+>> +
+>> +	/* Set auto negotiation advertisement pause ability */
+>> +	if (pdata->tx_pause || pdata->rx_pause)
+>> +		val |= ADVERTISE_PAUSE_CAP | ADVERTISE_PAUSE_ASYM;
+>> +
+>> +	ret = phy_modify(pdata->phydev, MII_ADVERTISE,
+>> +			 ADVERTISE_PAUSE_CAP | ADVERTISE_PAUSE_ASYM, val);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	return phy_modify(pdata->phydev, MII_BMCR, BMCR_RESET, BMCR_RESET);
+>> +}
+> 
+> 
+> Yet more code messing with the PHY. This all needs to go.
+> 
+>> +static int fxgmac_phy_clear_interrupt(struct fxgmac_pdata *pdata)
+>> +{
+>> +	u32 stats_pre, stats;
+>> +
+>> +	if (mutex_trylock(&pdata->phydev->mdio.bus->mdio_lock) == 0) {
+>> +		yt_dbg(pdata, "lock not ready!\n");
+>> +		return 0;
+>> +	}
+>> +
+>> +	stats_pre = fxgmac_phy_read_reg(pdata, PHY_INT_STATUS);
+>> +	if (stats_pre < 0)
+>> +		goto unlock;
+>> +
+>> +	stats = fxgmac_phy_read_reg(pdata, PHY_INT_STATUS);
+>> +	if (stats < 0)
+>> +		goto unlock;
+>> +
+>> +	phy_unlock_mdio_bus(pdata->phydev);
+>> +
+>> +#define LINK_DOWN	0x800
+>> +#define LINK_UP		0x400
+>> +#define LINK_CHANGE	(LINK_DOWN | LINK_UP)
+>> +	if ((stats_pre & LINK_CHANGE) != (stats & LINK_CHANGE)) {
+>> +		yt_dbg(pdata, "phy link change\n");
+>> +		return 1;
+>> +	}
+>> +
+>> +	return 0;
+>> +unlock:
+>> +	phy_unlock_mdio_bus(pdata->phydev);
+>> +	yt_err(pdata, "fxgmac_phy_read_reg err!\n");
+>> +	return  -ETIMEDOUT;
+>> +}
+> 
+> You need to rework your PHY interrupt handling. The PHY driver is
+> responsible for handing the interrupt registers in the PHY. Ideally
+> you just want to export an interrupt to phylib, so it can do all the
+> work.
+
+I'm sorry. Could you please give me more information about export
+ an interrupt to phylib?
+
+> 
+> 	Andrew
 
