@@ -1,206 +1,206 @@
-Return-Path: <linux-kernel+bounces-421224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF18F9D883A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:40:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC4429D883B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:40:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A833828A8B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:40:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C78D289D67
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7780B1B2182;
-	Mon, 25 Nov 2024 14:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF571B0F29;
+	Mon, 25 Nov 2024 14:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="3P6gKlf4"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="WYPZNpiO"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A812116419;
-	Mon, 25 Nov 2024 14:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4501B0F22
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732545607; cv=none; b=XzDnJnjjLLtHEhEjygS0vMXCWV+BYCEMkoiz/Hs1AeDOCZ1ZDwS8FmWuh0pJBXY03hb+Sj90G60WHiGinIRR5mKDlRBBLjcgRNjd3mvjkzMk3JysksKVRMJO21rPHlxBSwYFq72jme/VzFu28TVUGKom6TY+Reegb3HEAthy5yk=
+	t=1732545634; cv=none; b=pC+x1T+h19bnmwYfCfTJy3Y2koIfpNrYxTWudncUX+fyH7qHCV5DBMSqtnDiyw8RY0/gD2LVEGfJQysqi9Zq/y9UIkqL2Ye0BL/f6iH36zdW6MzAWATWX9GyWv9Mm9EX1rmp5VT5nKLlvy6/jfXPuh2q3roSufwYkFAgJ0lEgDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732545607; c=relaxed/simple;
-	bh=no0iSacVIbqAzRpeeuWFxDaWomFW1YKjQT7MAj8tdb0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MV9Qb3eXgfKBvSjuw7gpmCnYBnP8ZfWRwF9Dy5GhcmBKI3diTZDc3G7LwDKErosTYWP+WMT76uEKOx89xgq87eyws5I3e3ydntZG7FkHF2vgaZNGk8LmAYC5EktYZ6e+IDl6cPByhRoUFbLzFju1ll3xX3RBEyJvkAEBxwKj27c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=3P6gKlf4; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=CbRa1KYMMLQGdG25mz0RDUzqlaf9wwEr5gH4UxtL00A=; b=3P6gKlf4cmZSVMzg3cEfPS3Hck
-	Uw0GfpfUqPOakxo9mVjPLxeKL2k+XjJt6QjdmqJrFxdNjMIQj/uqPex00LoJohjxpSjyHZrrAxeZq
-	UZRDv2OWhaTqJP8E+9AkTU3PIw+f9Rm25eq3uXqhHEDtM95Xb48CKIsL7Yyg4gJABzC8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tFaFp-00EOnk-R5; Mon, 25 Nov 2024 15:39:57 +0100
-Date: Mon, 25 Nov 2024 15:39:57 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Frank Sae <Frank.Sae@motor-comm.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, xiaogang.fan@motor-comm.com,
-	fei.zhang@motor-comm.com, hua.sun@motor-comm.com
-Subject: Re: [PATCH net-next v2 09/21] motorcomm:yt6801: Implement some
- hw_ops function
-Message-ID: <cd57707a-2d7e-4549-aab1-d0bd6c24ad35@lunn.ch>
-References: <20241120105625.22508-1-Frank.Sae@motor-comm.com>
- <20241120105625.22508-10-Frank.Sae@motor-comm.com>
- <46206a81-e230-411c-8a78-d461d238b171@lunn.ch>
- <11e26658-670f-49fa-8001-0654670b541e@motor-comm.com>
+	s=arc-20240116; t=1732545634; c=relaxed/simple;
+	bh=QuFr33PxWwiOkN1ep41/1P8oQdyw21yNSIU94tRsxqc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YpTMUOkqrKuMCkyxDS1U296F1bcXWc9RoqF6TEGuYQBhub8mmBLckV+zJgO2lG0Ddx4Mu1m8unjvzWHRlXX8GLA+RF7a0Fp3WsckfwZHA0h42+0rDCeDz7yQotPgPoMj9tH2n/eGZpcvuOj4y/mXBT5Lw6kcj7Jt2ow+hUEAc4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=WYPZNpiO; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ffc1009a06so15473931fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 06:40:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732545630; x=1733150430; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wkpi3C3Erb5LcuJAqMaLXJb2wxyVOmfXm6CfHhPKV4Y=;
+        b=WYPZNpiOhpKZysKRFs2kaAnvnxiecQhipbKPwliqXu5LnV/UPbeW6V81X4j5xP7BqQ
+         BAjFMO6EVE0JuxkkYdpakLONI+8No4YWGbhl0y9yoeSXqspvO57u+lutwJa0XHxK5wS4
+         a9vCEYUIQFaMwWbOoD0X8fpG1HibedNIYTQImfIOMdiE6btVMzBAYqJ4FmELG11nw734
+         7adxlQu5uLkiotruDX+nAVwmNaNW1spA9LHECceHN7Su4SQrs1FIFdc/ruIH1M8jEvXo
+         iw3DOU/5Os/GUjGXSQX5Uo5nnS2GTqsRQvoxQB/4JYCa35eGwliwfWPnHxvBUuIkS5XO
+         PTlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732545630; x=1733150430;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wkpi3C3Erb5LcuJAqMaLXJb2wxyVOmfXm6CfHhPKV4Y=;
+        b=T8JAf4plpW9CXEe9zGnN5Gs1kikFNfGqD3yDZXZyB7Rz2tWp6Xw6k/Oakzxu88r5xf
+         TdS6Gnlv1splDCkijuD3G3hdf2MQgg50JqluSaE7ZpwD2mOjlKRIBA7zFyUCvOZLVGMQ
+         APf5K1Qjl/l9FfOEvitVYto7R3D0inwzIdbtb8LL1VuG51pJupkF6dENW10Xn2e1KQBB
+         mXF63dkJm1cxZ8f4VKwbJrD+eNqeKJP7wRZemyrttQ2qV8vDGHc1UdyeoTGKwOx57DM1
+         b3WBQJFiBiVBNrhh5J7jgvpFxtWQe1OEGhaTzyTN23vf3+aLKAfPCDXo+DZR5pPabGmk
+         h1NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXiX1G7Tyj7tSER2QQaBqMfvc2ryIDM/LCxo3YZv8dvhGkYuDoFZKHrz+3Qz7RlEPcCAZk6ZQ1zCA//cI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6YzDkjfsvHt0vMUk9dBctQGJCvbg7qgdwF3aC++vgOTuWP59K
+	AnE7Rp/KSWyRhvML4NWy1Tt7nMvp1hUSrma/DfqvBFjJEIHyWvsjvmvvEeYfgbNIWFx4LkokrGs
+	Zn7GosKkpf1gyJ/5oV3Su2EjgBMX8V5rr30BZuQ==
+X-Gm-Gg: ASbGnctcwBn5QVSZfyv9MebH3tEvKlcElZVctovHoXvlIRvKt9g5ROm+vuUwhbxhfub
+	9cXLzVjPrJq0eQgq+A7Q5ZwZldzmofA==
+X-Google-Smtp-Source: AGHT+IGylk1WBc/171m1MnIZm+s014KvRI8FCTVhJrxpcS9ekQI1Zx3waN0H0Og4c/z7YunW3cfM693tp/5+vZLQ61k=
+X-Received: by 2002:a2e:87d0:0:b0:2ff:bc48:a0d0 with SMTP id
+ 38308e7fff4ca-2ffbc48a360mr28445671fa.6.1732545629740; Mon, 25 Nov 2024
+ 06:40:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <11e26658-670f-49fa-8001-0654670b541e@motor-comm.com>
+References: <20241121-add-mtk-isp-3-0-support-v7-0-b04dc9610619@baylibre.com>
+ <20241121-add-mtk-isp-3-0-support-v7-4-b04dc9610619@baylibre.com> <d17dfb29f60bfa1889aa554ef16c9ddec272520d.camel@mediatek.com>
+In-Reply-To: <d17dfb29f60bfa1889aa554ef16c9ddec272520d.camel@mediatek.com>
+From: Julien Stephan <jstephan@baylibre.com>
+Date: Mon, 25 Nov 2024 15:40:18 +0100
+Message-ID: <CAEHHSvbScBhn=6rSOApQ=K9JEpwL6JPpJnJy929mLXHhxQ=3FQ@mail.gmail.com>
+Subject: Re: [PATCH v7 4/5] media: platform: mediatek: isp: add mediatek
+ ISP3.0 camsv
+To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+Cc: "mchehab@kernel.org" <mchehab@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"robh@kernel.org" <robh@kernel.org>, =?UTF-8?B?QW5keSBIc2llaCAo6Kyd5pm655qTKQ==?= <Andy.Hsieh@mediatek.com>, 
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
+	"laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, 
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"paul.elder@ideasonboard.com" <paul.elder@ideasonboard.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"fsylvestre@baylibre.com" <fsylvestre@baylibre.com>, "pnguyen@baylibre.com" <pnguyen@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 25, 2024 at 05:49:19PM +0800, Frank Sae wrote:
-> Hi Andrew,
-> 
-> On 2024/11/23 09:03, Andrew Lunn wrote:
-> > It took a lot of effort to find your MDIO code. And MDIO bus driver
-> > makes a good patch on its own.
-> > 
-> 
-> Sorry about that.
-> There is too many codes in yt6801_hw.c file. If I put the MDIO bus driver
-> in one patch, it's would be very difficult to limit to 15 patches. 
+Le lun. 25 nov. 2024 =C3=A0 09:14, CK Hu (=E8=83=A1=E4=BF=8A=E5=85=89) <ck.=
+hu@mediatek.com> a =C3=A9crit :
+>
+> Hi, Julien:
+>
+> On Thu, 2024-11-21 at 09:53 +0100, Julien Stephan wrote:
+> > External email : Please do not click links or open attachments until yo=
+u have verified the sender or the content.
+> >
+> >
+> > From: Phi-bang Nguyen <pnguyen@baylibre.com>
+> >
+> > This driver provides a path to bypass the SoC ISP so that image data
+> > coming from the SENINF can go directly into memory without any image
+> > processing. This allows the use of an external ISP.
+> >
+> > Signed-off-by: Phi-bang Nguyen <pnguyen@baylibre.com>
+> > Signed-off-by: Florian Sylvestre <fsylvestre@baylibre.com>
+> > [Paul Elder fix irq locking]
+> > Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+> > Co-developed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Co-developed-by: Julien Stephan <jstephan@baylibre.com>
+> > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+> > ---
+>
+> [snip]
+>
+> > +static void mtk_camsv30_update_buffers_add(struct mtk_cam_dev *cam_dev=
+,
+> > +                                          struct mtk_cam_dev_buffer *b=
+uf)
+> > +{
+> > +       mtk_camsv30_img0_write(cam_dev, CAMSV_IMGO_SV_BASE_ADDR, buf->d=
+addr);
+> > +}
+> > +
+>
+> [snip]
+>
+> > +static void mtk_camsv30_fbc_inc(struct mtk_cam_dev *cam_dev)
+> > +{
+> > +       unsigned int fbc_val;
+> > +
+> > +       if (pm_runtime_resume_and_get(cam_dev->dev) < 0) {
+>
+> I think this pm_runtime_resume_and_get() is not necessary.
+> mtk_camsv30_fbc_inc() is called only in mtk_cam_vb2_buf_queue().
+> But when buf_list is empty, mtk_camsv30_update_buffers_add() is called be=
+fore this function.
+> But mtk_camsv30_update_buffers_add() does not call pm_runtime_resume_and_=
+get() and it works normally.
+> So this function is not necessary to call pm_runtime_resume_and_get().
 
-You can easily limit this to 15 patches. Throw away 75% of the driver
-for the moment. Do enough to get link and then send/receive
-frames. Forget the rest. You don't need statistics, ethtool, WoL, and
-everything else in the first submission. They can all be added later.
+Hi CK,
 
-You need reviewers in order to get your driver merged. If you give
-them a huge driver which is hard to find what they are interested in,
-they won't review it, and it will not get merged. So break it up into
-a number of patchsets. A minimum driver to just send/receive should be
-nice and small, and can be split into 15 patches making it nice and
-easy to find bits reviewers are interested in. That should get
-reviewed and merged. Then add more and more features in nice small
-chunks which are easy to review.
+This one is actually needed because .buf_queue can be called before
+.start_streaming in case a user requests to prepare buffers before
+streaming.
+But you are right, if a user requests to alloc buffer before streaming
+mtk_camsv_update_buffers_address will be called without pm. Streaming
+still works because in start streaming we call
+mtk_camsv_update_buffers_address again.
+So maybe I should put the pm stuff in mtk_cam_vb2_buf_queue ?
 
-> >> +static int mdio_loop_wait(struct fxgmac_pdata *pdata, u32 max_cnt)
-> >> +{
-> >> +	u32 val, i;
-> >> +
-> >> +	for (i = 0; i < max_cnt; i++) {
-> >> +		val = rd32_mac(pdata, MAC_MDIO_ADDRESS);
-> >> +		if ((val & MAC_MDIO_ADDR_BUSY) == 0)
-> >> +			break;
-> >> +
-> >> +		fsleep(10);
-> >> +	}
-> >> +
-> >> +	if (i >= max_cnt) {
-> >> +		WARN_ON(1);
-> >> +		yt_err(pdata, "%s timeout. used cnt:%d, reg_val=%x.\n",
-> >> +		       __func__, i + 1, val);
-> >> +
-> >> +		return -ETIMEDOUT;
-> >> +	}
-> > 
-> > Please replace this using one of the helpers in
-> > include/linux/iopoll.h.
-> > 
-> >> +#define PHY_WR_CONFIG(reg_offset)		(0x8000205 + ((reg_offset) * 0x10000))
-> >> +static int fxgmac_phy_write_reg(struct fxgmac_pdata *pdata, u32 reg_id, u32 data)
-> >> +{
-> >> +	int ret;
-> >> +
-> >> +	wr32_mac(pdata, data, MAC_MDIO_DATA);
-> >> +	wr32_mac(pdata, PHY_WR_CONFIG(reg_id), MAC_MDIO_ADDRESS);
-> >> +	ret = mdio_loop_wait(pdata, PHY_MDIO_MAX_TRY);
-> >> +	if (ret < 0)
-> >> +		return ret;
-> >> +
-> >> +	yt_dbg(pdata, "%s, id:%x %s, ctrl:0x%08x, data:0x%08x\n", __func__,
-> >> +	       reg_id, (ret == 0) ? "ok" : "err", PHY_WR_CONFIG(reg_id), data);
-> >> +
-> >> +	return ret;
-> >> +}
-> >> +
-> >> +#define PHY_RD_CONFIG(reg_offset)		(0x800020d + ((reg_offset) * 0x10000))
-> >> +static int fxgmac_phy_read_reg(struct fxgmac_pdata *pdata, u32 reg_id)
-> >> +{
-> >> +	u32 val;
-> >> +	int ret;
-> >> +
-> >> +	wr32_mac(pdata, PHY_RD_CONFIG(reg_id), MAC_MDIO_ADDRESS);
-> >> +	ret =  mdio_loop_wait(pdata, PHY_MDIO_MAX_TRY);
-> >> +	if (ret < 0)
-> >> +		return ret;
-> >> +
-> >> +	val = rd32_mac(pdata, MAC_MDIO_DATA);  /* Read data */
-> >> +	yt_dbg(pdata, "%s, id:%x ok, ctrl:0x%08x, val:0x%08x.\n", __func__,
-> >> +	       reg_id, PHY_RD_CONFIG(reg_id), val);
-> >> +
-> >> +	return val;
-> >> +}
-> > 
-> > And where is the rest of the MDIO bus driver?
-> 
-> There is no separate reset of MDIO bus driver.
-
-rest, not reset.
-
-An MDIO driver is generally two to five functions to do bus
-transactions, and then one or two functions to allocate the bus
-structure, fill in the members and register the bus, and maybe a
-function to undo that. I would expect these all to be in one
-patch. They are not.
-
-At some point, you need to justify your hw_ops structure. Why do you
-have this? At the moment it just obfuscate the code. Maybe there is a
-good reason for it, but given the size of the driver i've not been
-able to find it.
-
-> >> +#define LINK_DOWN	0x800
-> >> +#define LINK_UP		0x400
-> >> +#define LINK_CHANGE	(LINK_DOWN | LINK_UP)
-> >> +	if ((stats_pre & LINK_CHANGE) != (stats & LINK_CHANGE)) {
-> >> +		yt_dbg(pdata, "phy link change\n");
-> >> +		return 1;
-> >> +	}
-> >> +
-> >> +	return 0;
-> >> +unlock:
-> >> +	phy_unlock_mdio_bus(pdata->phydev);
-> >> +	yt_err(pdata, "fxgmac_phy_read_reg err!\n");
-> >> +	return  -ETIMEDOUT;
-> >> +}
-> > 
-> > You need to rework your PHY interrupt handling. The PHY driver is
-> > responsible for handing the interrupt registers in the PHY. Ideally
-> > you just want to export an interrupt to phylib, so it can do all the
-> > work.
-> 
-> I'm sorry. Could you please give me more information about export
->  an interrupt to phylib?
-
-I would actually suggest you first just let phylib poll the PHY. That
-gets you something working. You can add interrupt support in a later
-patchset. For ideas, look at ksz_common.c:
-
-ds->user_mii_bus->irq[phy] = irq;
-
-You have a whole tree of source code you can look at, there are other
-examples of MAC drivers exporting an interrupt controller. And you
-might find other ways to do this, look at other MAC drivers. There is
-nothing special here, so don't invent something new, copy what other
-MAC drivers do.
+Cheers
+Julien
 
 
-	Andrew
+>
+> In other register setting function, please also check this pm function is=
+ necessary or not.
+>
+> Regards,
+> CK
+>
+> > +               dev_err(cam_dev->dev, "failed to get pm_runtime\n");
+> > +               return;
+> > +       }
+> > +
+> > +       fbc_val =3D mtk_camsv30_read(cam_dev, CAMSV_IMGO_FBC);
+> > +       fbc_val |=3D CAMSV_IMGO_FBC_RCNT_INC;
+> > +       mtk_camsv30_write(cam_dev, CAMSV_IMGO_FBC, fbc_val);
+> > +       fbc_val &=3D ~CAMSV_IMGO_FBC_RCNT_INC;
+> > +       mtk_camsv30_write(cam_dev, CAMSV_IMGO_FBC, fbc_val);
+> > +
+> > +       pm_runtime_put_autosuspend(cam_dev->dev);
+> > +}
+> > +
+>
+> >
+>
+> ************* MEDIATEK Confidentiality Notice ********************
+> The information contained in this e-mail message (including any
+> attachments) may be confidential, proprietary, privileged, or otherwise
+> exempt from disclosure under applicable laws. It is intended to be
+> conveyed only to the designated recipient(s). Any use, dissemination,
+> distribution, printing, retaining or copying of this e-mail (including it=
+s
+> attachments) by unintended recipient(s) is strictly prohibited and may
+> be unlawful. If you are not an intended recipient of this e-mail, or beli=
+eve
+> that you have received this e-mail in error, please notify the sender
+> immediately (by replying to this e-mail), delete any and all copies of
+> this e-mail (including any attachments) from your system, and do not
+> disclose the content of this e-mail to any other person. Thank you!
 
