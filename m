@@ -1,179 +1,133 @@
-Return-Path: <linux-kernel+bounces-421385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5C59D8A9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:49:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 516729D8AA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:52:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AE8F28521F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:49:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14885284196
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D013D1B4F14;
-	Mon, 25 Nov 2024 16:49:17 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB941B5823;
+	Mon, 25 Nov 2024 16:52:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="crigx/jD"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676E42500CB
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 16:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D641AD418;
+	Mon, 25 Nov 2024 16:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732553357; cv=none; b=SOiJL36/mtLvgugOcLKS4E4SezVI8EiRcTCPW9+aVXt7QA9lcgzBO0KJP9D306rMFOudthnkrd5ZBE9mX6YvChWWAGWZYIxK3NER63w6puX52k/Wu0FrdQydTd19KUfCQsYATR4jBh9vJjRiCaBXO/F3v+M92x8nkHMvQz+mWqE=
+	t=1732553519; cv=none; b=sszjI/trTfUTKFhhiqma2tjjAB10uUDLxtlTypWz0+DDMTu7u1jlwfqJEhus+If2bi42y5Kaia0D2nl07vlpcfxU/GiimgTrnqIszz3VVFUwCeAOgQzxo6IoFcGw6VwDs5+urz8wKIRJW2TjVIg74z7slG2m9re8ezJjNFLzoNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732553357; c=relaxed/simple;
-	bh=tBrIDJnwfaedc+zAMdzQ1wawa1FPXByLFUjT25OBP9Y=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=LFRt7krCrIXGkppd01sNq+wmmxnjKvFJKXZq+mIu9K6w+6SlN9hzkARip02CC2fwhBc2yawWi4iPkwZ49x7R9cirtlSqujo98dOm7YAx8gDU9ryosB2NH6MWSeHxyIWAa1kqQ4GfTWWosX/o60kd9wxsJ7oRgTGkJWwfCT/VH1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-108-LFKPZf0nMcmSP7eaJJZjww-1; Mon, 25 Nov 2024 16:49:03 +0000
-X-MC-Unique: LFKPZf0nMcmSP7eaJJZjww-1
-X-Mimecast-MFC-AGG-ID: LFKPZf0nMcmSP7eaJJZjww
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 25 Nov
- 2024 16:49:00 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Mon, 25 Nov 2024 16:49:00 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Linus Torvalds' <torvalds@linux-foundation.org>
-CC: Andrew Cooper <andrew.cooper3@citrix.com>, "bp@alien8.de" <bp@alien8.de>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, "x86@kernel.org" <x86@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnd Bergmann
-	<arnd@kernel.org>, Mikel Rychliski <mikel@mikelr.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: RE: [PATCH v2] x86: Allow user accesses to the base of the guard page
-Thread-Topic: [PATCH v2] x86: Allow user accesses to the base of the guard
- page
-Thread-Index: Ads+hc9sKIgnrLHqRG2ra9Mk31sA5wAHDeIAAAF5AvAABnPCQwAjWkKw
-Date: Mon, 25 Nov 2024 16:48:59 +0000
-Message-ID: <4e2ed7a9cbf54eeabe9be7764141f0d2@AcuMS.aculab.com>
-References: <0edca3e5d2194cdf9812a8ccb42216e9@AcuMS.aculab.com>
- <CAHk-=wik4GHHXNXgzK-4S=yK=7BsNnrvEnSX3Funu6BFr=Pryw@mail.gmail.com>
- <b90410d3f213496ebfdd2f561281791b@AcuMS.aculab.com>
- <CAHk-=wgq1eEoUFK5mSUM6d53USDRaWY4G+ctTNEw9w_PsUqf1w@mail.gmail.com>
- <CAHk-=wh0oKkRHHqnft8mHaz5nuZNEspGQ5HW4oPJmGGwmccF1w@mail.gmail.com>
-In-Reply-To: <CAHk-=wh0oKkRHHqnft8mHaz5nuZNEspGQ5HW4oPJmGGwmccF1w@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1732553519; c=relaxed/simple;
+	bh=2rDqu+/4OieE9s4NHsH9Ous00WhWEbKGEdf8CwyIUTc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Lxd22EHBIxLNVkmk0NPUFIm2cFrZA3OWr98+ydbs3n3WXPZ6QmwyySRReiEkMr+jrAe3ymo5bFx5DL+jkhhrx1DHj2AicJ0pJMeU3BQjdYKV+tpVDFSth71Ml7bqjU3enmYOwYq9/5qQZ6KBVP0A1hBLj/WI6lX9vb7dJ1L5/bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=crigx/jD; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-21285c1b196so44440595ad.3;
+        Mon, 25 Nov 2024 08:51:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732553517; x=1733158317; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MtUn9lt5gw5xGS0lfaSG6+NKW+5RIPrQ8eMvyuD2pds=;
+        b=crigx/jD9xOplcVym5uoMN4OfsuFCghe37T+cRhzeRXIiXp9ZwlzPXr0SZq7mBv/W1
+         QU91KcIGKwezp/9NKyufNungLVVFT7rE/dg+ZYY3bqepxDewI1QIgFfw9I1OMfX7G7GO
+         rYBZHTm0Zkyxgy8SydhK59BB14bUbkmIkWpEmWmx0Dm1NDYQ3XtbndPovzNybTNCb8Hk
+         GMniKKStGymzwHZdBu8LQh8e9RLhjzKD8bndDfmXWgTYegAOiUo/zJyxXfXYzIzIZzTY
+         OFEXFLM+ms3vqlCUbmpKLcvA255q2ySnV9eSkT3gKzFaswvNJ8MydFyKXdZVhGgUa4GR
+         xs0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732553517; x=1733158317;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MtUn9lt5gw5xGS0lfaSG6+NKW+5RIPrQ8eMvyuD2pds=;
+        b=jubR0e9k0vZgOuReNUEoth6AH9gGdgpxLMwDyKv0Qed8DSroexrLVeNuIl2NrPx4ZB
+         2/QyV7/7VFI3vR87nCNnGWkbmRe1JwKwZPtNWarnuhpBhKgwg6Oymn+f3au1vFPudrbo
+         Q6PsPj5tFxtP24pbg1PKASx0xS44Wkg02ZGCtpT+yof9M66soTMZl4poX6BtGrERDN3H
+         W1GSaULABleBT1ojYLlat9nj5VePcz9jKySvX5uQWEfN1NxTDlTPzF9P5e2V7GszCDZ5
+         R0Iz5/N4w2lyCigLS9Jp1jDpBvZpBZCuOI2ooFhblmsdQZ0lTGk8OGUAH/pZF1MH8FXB
+         ddBw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYz7RJfg35hjrQzvODm8MsRwufGudu6JNh3Vp3bvOaF8IDlvm3K27i6Am4r/LB0JjWe+9/TDeDR/e8sb27@vger.kernel.org, AJvYcCXChtYedRDyhTU4QP8+c721A2oq8nfMmkSCydDyz1qPUxrrGeR9ilPdWEUeEf0p3X/V1+B/AxWYFW0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiiHclcOOyHCa1p4TMdeqgaTQtr7rUGbHptgcVfO3h+qJALdZS
+	xb4KK24YujLg4DgYbEmf2JSDQXlVvMzu1fwqwij9EcBC6zWa4tSa
+X-Gm-Gg: ASbGncspaTqDDa6QBBD9joiGXt04pjzAQy8K83trz/ORJXORSR3Y8UbcMU8JjaoUxcr
+	fXQ7guDmSIgZNTcBkQU1AggUia0sy9fSpfpUAKiaur9/ZRLezZ84C3JUwMyovdhouuqxtYFHSmC
+	QeNJTGdnEjn/34Q62iPog+ZUpZoFe0OI+7/1csGhwpteDbIQjUXW5VmRS5qenCZein1eCt6kS6G
+	yoY0fEbz8m6H51wZmciOdXuZjhv/w0KGmOQgS5YIjIU93X3M72WthwLVKsK9AaBmA==
+X-Google-Smtp-Source: AGHT+IF1b8SEIuY7pSRwqzWQ7mPcZgZAK0pcvKoIaS7ug2WaDSKDkMZOsUR2pmo2Gs/K2dxHnsFHEg==
+X-Received: by 2002:a17:902:ce8c:b0:20b:707c:d688 with SMTP id d9443c01a7336-2129f67b0a9mr133164315ad.18.1732553517556;
+        Mon, 25 Nov 2024 08:51:57 -0800 (PST)
+Received: from localhost.localdomain ([49.206.113.92])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc2214esm67126995ad.236.2024.11.25.08.51.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2024 08:51:57 -0800 (PST)
+From: Saru2003 <sarvesh20123@gmail.com>
+To: minchan@kernel.org,
+	senozhatsky@chromium.org
+Cc: philipp.reisner@linbit.com,
+	lars.ellenberg@linbit.com,
+	christoph.boehmwalder@linbit.com,
+	corbet@lwn.net,
+	terrelln@fb.com,
+	linux-kernel@vger.kernel.org,
+	drbd-dev@lists.linbit.com,
+	linux-doc@vger.kernel.org,
+	Saru2003 <sarvesh20123@gmail.com>
+Subject: [PATCH v2] Documentation: zram: fix dictionary spelling
+Date: Mon, 25 Nov 2024 22:21:22 +0530
+Message-Id: <20241125165122.17521-1-sarvesh20123@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241125024927.GA440697@google.com>
+References: <20241125024927.GA440697@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: QXEcHPNCOyuLIa_IigkkhRzxDORJ4BchhEowuDPE2eA_1732553342
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 
-RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMjQgTm92ZW1iZXIgMjAyNCAyMjozOQ0KPiAN
-Cj4gT24gU3VuLCAyNCBOb3YgMjAyNCBhdCAxNDowMywgTGludXMgVG9ydmFsZHMNCj4gPHRvcnZh
-bGRzQGxpbnV4LWZvdW5kYXRpb24ub3JnPiB3cm90ZToNCj4gPg0KPiA+IE9uIFN1biwgMjQgTm92
-IDIwMjQgYXQgMTI6NDksIERhdmlkIExhaWdodCA8RGF2aWQuTGFpZ2h0QGFjdWxhYi5jb20+IHdy
-b3RlOg0KPiA+ID4NCj4gPiA+IERvZXNuJ3QgdGhhdCBqdXN0IG5lZWQgYSA8PSBjaGFuZ2VkIHRv
-IDwgPw0KPiA+ID4gKEFuZCBwb3NzaWJseSBvZiBuYW1lKQ0KPiA+DQo+ID4gV2VsbCwgbW9yZSBp
-bXBvcnRhbnRseSwgaXQgbWVhbnMgdGhhdCB3ZSBjYW4ndCB1c2UgdGhlIHNhbWUgaGVscGVyDQo+
-ID4gZnVuY3Rpb24gYXQgYWxsLg0KPiANCj4gT2gsIHRoZSAnc2JiJyB0cmljayBhbHNvIGVuZHMg
-dXAgYmVpbmcgb25lIGJ5dGUgb2ZmIGlmIHdlIGluY3JlYXNlDQo+IFVTRVJfUFRSX01BWCBmcm9t
-IGJlaW5nIHRoZSAibWF4aW11bSB2YWxpZCBhZGRyZXNzIiB0byBiZWluZyAib25lIHBhc3QNCj4g
-dGhlIG1heCB2YWxpZCBhZGRyZXNzIi4NCj4gDQo+IEFuZCB5ZWFoLCBub25lIG9mIHRoaXMgKm1h
-dHRlcnMqLCBzaW5jZSAib25lIGJ5dGUgb2ZmIiBpcyB0aGVuIGNvdmVyZWQNCj4gYnkgdGhlIGZh
-Y3QgdGhhdCB3ZSBoYXZlIHRoYXQgZ3VhcmQgcGFnZSwgYnV0IHRoaXMganVzdCBlbmRzIHVwDQo+
-IGFubm95aW5nIG1lIHNlbnNlIG9mIGhvdyBpdCBhbGwgKnNob3VsZCogd29yay4NCg0KTWF5YmUg
-d2UgbmVlZCB0byBsb29rIGF0IHdoYXQgdGhpcyBjb2RlIGlzIHRyeWluZyB0byBhY2hpZXZlLg0K
-SXQgc2VlbXMgdG8gYmUgdHJ5aW5nIHRvIGRvIHR3byBkaWZmZXJlbnQgdGhpbmdzOg0KMSkgU3Rv
-cCByZWFsIHVzZXIgYWNjZXNzZXMgdG8ga2VybmVsIG1lbW9yeS4NCjIpIFN0b3Agc3BlY3VsYXRp
-dmUgYWNjZXNzZXMgdG8gdXNlci1kZWZpbmVkIGtlcm5lbCBhZGRyZXNzZXMuIA0KDQpCdXQgdGhl
-eSBnZXQgcmF0aGVyIG1peGVkIHRvZ2V0aGVyIGluIHRoaXMgcGF0dGVybjoNCisJaWYgKGNhbl9k
-b19tYXNrZWRfdXNlcl9hY2Nlc3MoKSkNCisJCWZyb20gPSBtYXNrZWRfdXNlcl9hY2Nlc3NfYmVn
-aW4oZnJvbSk7DQorCWVsc2UgaWYgKCF1c2VyX3JlYWRfYWNjZXNzX2JlZ2luKGZyb20sIHNpemVv
-ZigqZnJvbSkpKQ0KKwkJcmV0dXJuIC1FRkFVTFQ7DQorCXVuc2FmZV9nZXRfdXNlcih2YWwsIGZy
-b20sIEVmYXVsdCk7DQorCXVzZXJfYWNjZXNzX2VuZCgpOw0KKwkqZGVzdCA9IHZhbDsNCisJcmV0
-dXJuIDA7DQorRWZhdWx0Og0KKwl1c2VyX2FjY2Vzc19lbmQoKTsNCisJcmV0dXJuIC1FRkFVTFQ7
-DQoNCndoZXJlIHRoZSBtYXNrZWQgYWRkcmVzcyBkZXNpZ25lZCB0byBzdG9wIHNwZWN1bGF0aXZl
-IGFjY2Vzc2VzIGlzDQp1c2VkIGZvciBhIHJlYWwgYWNjZXNzLg0KDQpJIHdhcyBsb29raW5nIGF0
-IHRoZSBlcG9sbCBjb2RlLg0KSXQgZG9lcyBhbiBlYXJseSBhY2Nlc3Nfb2soKSBhbmQgdGhlbiB0
-d28gX19wdXRfdXNlcigpIGNhbGxzIHRvIHdyaXRlIGEgMzJiaXQNCmFuZCA2NGJpdCB2YWx1ZSAo
-d2l0aCBhbiBhcmNoaXRlY3R1cmUgZGVwZW5kYW50IHN0cmlkZSBvciAxMiBvciAxNiBieXRlcyku
-DQoNCldpdGggYWNjZXNzX29rKCkgKHBvc3NpYmx5IGp1c3QgY2hlY2tpbmcgdGhlIGJhc2UgYWRk
-cmVzcyBpZiB0aGVyZSBpcyBhDQpndWFyZCBwYWdlKSBpdCBkb2Vzbid0IG1hdHRlciB3aGljaCBv
-cmRlciB0aGUgYWNjZXNzZXMgYXJlIGRvbmUgaW4uDQpCdXQgbWFza2VkX3VzZXJfYWNjZXNzX2Jl
-Z2luKCkgaXMgZ29pbmcgdG8gY29udmVydCBhIGtlcm5lbCBhZGRyZXNzIHRvIH4wLA0KdGhpcyBp
-cyBmaW5lIGZvciBzcGVjdWxhdGl2ZSBhY2Nlc3NlcyBidXQgZm9yIHJlYWwgYWNjZXNzZXMgaXQg
-YmVjb21lcw0KaW1wZXJhdGl2ZSB0aGF0IHRoZSBmaXJzdCBhZGRyZXNzIGlzIHRvIHRoZSBiYXNl
-IGFkZHJlc3MuDQooT3RoZXJ3aXNlIHRoZSBhY2Nlc3NlcyB3aWxsIGdvIHRvIHBhZ2UgMCBhdCB0
-aGUgYm90dG9tIG9mIHVzZXJzcGFjZQ0Kd2hpY2ggKElJUkMpIGl0IGhhcyB0byBwb3NzaWJsZSB0
-byBtYXAgLSBzbyB3b24ndCBhbHdheXMgZmF1bHQuKQ0KDQpSZWx5aW5nIG9uIHRoYXQgc2VlbXMg
-ZGFuZ2Vyb3VzLg0KDQpTbyBwZXJoYXBzIHJlbmFtZSB0aGluZ3MgYSBiaXQgc28gdGhlIGFib3Zl
-IHN0YXJ0czoNCglpZiAoaGF2ZV9ndWFyZF9wYWdlKCkpDQoJCWZyb20gPSBib3VuZF90b19ndWFy
-ZF9wYWdlX3VzZXJfYWNjZXNzX2JlZ2luKGZyb20pOw0KVGhlIGRlZmF1bHQgYm91bmRfdG9fZ3Vh
-cmRfcGFnZSgpIHdvdWxkIGJlIG1pbihhZGRyLCBndWFyZF9wYWdlKS4NCkFyY2hpdGVjdHVyZXMg
-dGhhdCBoYXZlICdzcGVjdWxhdGl2ZSByZWFkIGlzc3Vlcycgd291bGQgbmVlZA0KdGhhdCBtaW4o
-KSB0byBiZSBkb25lIHdpdGhvdXQgYSBicmFuY2ggKGVnIHdpdGggY21vdikgYnV0DQpvdGhlcnMg
-bWF5IG5vdCBjYXJlLg0KDQpwcGMsIG9mIGNvdXJzZSwgbmVlZHMgdGhlIGxlbmd0aCAoSSBkb24n
-dCBrbm93IHdoZXRoZXIgYSBndWFyZCBwYWdlDQp3b3VsZCBoZWxwIG9yIGlzIG5lZWRlZCkuDQoN
-CkFmdGVyIHRoYXQgdGhlIG9yZGVyIG9mIHRoZSBhY2Nlc3NlcyBkb2Vzbid0IG1hdHRlciAtIHBy
-b3ZpZGVkIHRoZXkNCmRvbid0IGhhdmUgcGFnZSBzaXplZCBqdW1wcy4NCg0KVGhlbiByZW5hbWUg
-VVNFUl9QVFJfTUFYIHRvIFVTRVJfR1VBUkRfUEFHRV9BRERSRVNTLg0KQWZ0ZXIgYWxsIGl0IGRv
-ZXNuJ3QgbWF0dGVyIGF0IGFsbCB3aGVyZSB0aGUgdW53YW50ZWQgc3BlY3VsYXRpdmUNCnJlYWRz
-IGVuZCB1cCAtIHByb3ZpZGVkIGl0IGlzbid0IGEgdXNlci1kZWZpbmVkIGtlcm5lbCBhZGRyZXNz
-Lg0KVGhlIGJhc2Ugb2YgdGhlIGd1YXJkIHBhZ2UgaXMgYXMgZ29vZCBhcyBhbnl3aGVyZSBlbHNl
-Lg0KDQo+IEknbSBzdGFydGluZyB0byB0aGluayB0aGF0IGluc3RlYWQgb2YgY2hhbmdpbmcgdGhl
-IFVTRVJfUFRSX01BWCB2YWx1ZQ0KPiAodGhhdCB3YXMgc2VsZWN0ZWQgdG8gYmUgdGhlIHJpZ2h0
-IGNvbnN0YW50IGZvciB0aGluZ3MgdGhhdCBkb24ndCBjYXJlDQo+IGFib3V0IHRoZSBzaXplKSwg
-d2UganVzdCBzYXkgInRoZSBzbG93IGNhc2Ugb2YgYWNjZXNzX29rKCkgdGFrZXMgYQ0KPiB0aW55
-IGhpdCIuDQo+IA0KPiBLaW5kIG9mIGxpa2UgTWlrZWwgUnljaGxpc2tpJ3MgcGF0Y2gsIGJ1dCB3
-ZSBjYW4gY2VydGFpbmx5IGRvIGJldHRlciwNCj4gaWUgc29tZXRoaW5nIGxpa2UNCj4gDQo+ICAg
-LS0tIGEvYXJjaC94ODYvaW5jbHVkZS9hc20vdWFjY2Vzc182NC5oDQo+ICAgKysrIGIvYXJjaC94
-ODYvaW5jbHVkZS9hc20vdWFjY2Vzc182NC5oDQo+ICAgQEAgLTEwMSw4ICsxMDEsOSBAQCBzdGF0
-aWMgaW5saW5lIGJvb2wgX19hY2Nlc3Nfb2soLi4NCj4gICAgICAgICAgICAgICAgIHJldHVybiB2
-YWxpZF91c2VyX2FkZHJlc3MocHRyKTsNCj4gICAgICAgICB9IGVsc2Ugew0KPiAgICAgICAgICAg
-ICAgICAgdW5zaWduZWQgbG9uZyBzdW0gPSBzaXplICsgKF9fZm9yY2UgdW5zaWduZWQgbG9uZylw
-dHI7DQo+ICAgKyAgICAgICAgICAgICB1bnNpZ25lZCBsb25nIG1heCA9IHJ1bnRpbWVfY29uc3Rf
-cHRyKFVTRVJfUFRSX01BWCkrMTsNCj4gDQo+ICAgLSAgICAgICAgICAgICByZXR1cm4gdmFsaWRf
-dXNlcl9hZGRyZXNzKHN1bSkgJiYgc3VtID49IChfX2ZvcmNlDQo+IHVuc2lnbmVkIGxvbmcpcHRy
-Ow0KPiAgICsgICAgICAgICAgICAgcmV0dXJuIHN1bSA8PSBtYXggJiYgc3VtID49IChfX2ZvcmNl
-IHVuc2lnbmVkIGxvbmcpcHRyOw0KPiAgICAgICAgIH0NCj4gICAgfQ0KPiAgICAjZGVmaW5lIF9f
-YWNjZXNzX29rIF9fYWNjZXNzX29rDQo+IA0KPiB3b3VsZCBzZWVtIGxpa2UgaXQgc2hvdWxkIHdv
-cmssIGFuZCBub3cgZG9lc24ndCBtYWtlIHRoZSBmYXN0LWNhc2VzIGJlDQo+IG9mZiBieSBvbmUu
-DQoNCkkgZG9uJ3QgdGhpbmsgaXQgcmVhbGx5IG1hdHRlcnMgd2hldGhlciBhY2Nlc3Nfb2soKSBy
-ZXR1cm5zIDAgb3INCmEgbGF0ZXIgYWNjZXNzIGZhdWx0cy4NClBhcnRpY3VsYXJseSBpbiB0aGUg
-Y29ybmVyIGNhc2Ugb2YgYW4gYWNjZXNzIHRvIHRoZSBiYXNlIG9mIHRoZSBndWFyZCBwYWdlLg0K
-DQo+IA0KPiBZZXMsIGl0IGFkZHMgYSAiYWRkIDEiIHRvIHRoZSBydW50aW1lIHBhdGggKGluc3Rl
-YWQgb2YgdGhlIGluaXQtdGltZQ0KPiBjb25zdGFudCBmaXh1cCksIHdoaWNoIGlzIGFkbWl0dGVk
-bHkgYW5ub3lpbmcuIEJ1dCB0aGlzIHJlYWxseQ0KPiAqc2hvdWxkKiBiZSB0aGUgc2xvdyBwYXRo
-Lg0KDQpUaGVyZSBpcyBubyByZWFsIHJlYXNvbiB3aHkgeW91IGNhbid0IGhhdmUgdHdvIGNvbnN0
-YW50cyB0aGF0IGFyZQ0Kb25lIGFwYXJ0Lg0KDQo+IFdlIGRvIGhhdmUgYSBmZXcgYW5ub3lpbmcg
-bm9uLWNvbnN0YW50IGFjY2Vzc19vaygpIGNhbGxzIGluIGNvcmUgY29kZS4NCj4gVGhlIGl0ZXIg
-Y29kZSB1c2VzIGFjY2Vzc19vayArIHJhd19jb3B5X3RvX3VzZXIsIGJlY2F1c2UgaXQncyBldmls
-IGFuZA0KPiBiYWQuIEknbSByZWFsbHkgbm90IHN1cmUgd2h5IGl0IGRvZXMgdGhhdC4gSSB0aGlu
-ayBpdCdzICpwdXJlbHkqIGJhZA0KPiBoaXN0b3J5LCBpZSB3ZSB1c2VkIHRvIGRvIGFjY2Vzc19v
-aygpIGZhciBhd2F5IGZyb20gdGhlIGlvdl9pdGVyIGNvcHksDQo+IGFuZCB0aGVuIGRpZCBfX2Nv
-cHlfZnJvbV91c2VyKCksIGFuZCB0aGVuIGF0IHNvbWUgcG9pbnQgaXQgZ290IGNoYW5nZWQNCj4g
-dG8gaGF2ZSB0aGUgYWNjZXNzX29rKCkgY2xvc2VyLCByYXRoZXIgdGhhbiBqdXN0IHVzZQ0KPiAi
-Y29weV9mcm9tX3VzZXIoKSIuDQoNCklzIHRoZXJlIHN0aWxsIGFuIGFjY2Vzc19vaygpIGluIGlv
-dmVjX2ltcG9ydCAoSSd2ZSBub3QgZ290IGEgdHJlZSBoYW5keSkuDQpBbGwgc2VlbWVkIHRvbyBm
-YXIgYXdheSBmcm9tIGFueSBhY3R1YWwgY29weSB0byBtZS4NCihJSVJDIHRoZXJlIGlzIGEgcHJl
-dHR5IHBvaW50bGVzcyAnZGlyZWN0aW9uJyBmbGFnIGFzIHdlbGw/KQ0KDQo+IFNvIEkgZ2V0IHRo
-ZSBmZWVsaW5nIHRoYXQgdGhvc2UgYWNjZXNzX29rKCkgY2FzZXMgY291bGQgYmUgcmVtb3ZlZA0K
-PiBlbnRpcmVseSBpbiBmYXZvciBvZiBqdXN0IHVzaW5nIHRoZSByaWdodCB1c2VyIGNvcHkgZnVu
-Y3Rpb24uIEdldHRpbmcNCj4gcmlkIG9mIHRoZSB3aG9sZSBzaWxseSBzaXplIGNoZWNraW5nIHRo
-aW5nLg0KDQpUaGF0IHdvdWxkIGJlIGEgcGxhbi4NCldvdWxkIGJlIGludGVyZXN0aW5nIHRvIHVu
-cmF2ZWwgd2hhdCBpb191cmluZyAob3Igd2FzIGl0IGJwZikgd2FzDQpkb2luZyB3aGVyZSBpdCBj
-YXN0cyBhICdsb25nJyB0byBhIHVzZXIgcG9pbnRlciBqdXN0IHRvIHZhbGlkYXRlIGl0Lg0KDQo+
-IERhdmlkLCBkb2VzIHRoYXQgcGF0Y2ggYWJvdmUgd29yayBmb3IgeW91Pw0KDQpZb3UgYXJlIHRo
-ZSBib3NzIDotKQ0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBC
-cmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdp
-c3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+Fixes a typo in the ZRAM documentation where 'dictioary' was
+misspelled. Corrected it to 'dictionary' in the example usage
+of 'algorithm_params'.
+
+Signed-off-by: Sarveshwaar SS <sarvesh20123@gmail.com>
+---
+ Documentation/admin-guide/blockdev/zram.rst | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/admin-guide/blockdev/zram.rst b/Documentation/admin-guide/blockdev/zram.rst
+index 678d70d6e1c3..dbf2b4f47ec3 100644
+--- a/Documentation/admin-guide/blockdev/zram.rst
++++ b/Documentation/admin-guide/blockdev/zram.rst
+@@ -119,14 +119,14 @@ compression algorithm to use external pre-trained dictionary, pass full
+ path to the `dict` along with other parameters::
+ 
+ 	#pass path to pre-trained zstd dictionary
+-	echo "algo=zstd dict=/etc/dictioary" > /sys/block/zram0/algorithm_params
++	echo "algo=zstd dict=/etc/dictionary" > /sys/block/zram0/algorithm_params
+ 
+ 	#same, but using algorithm priority
+-	echo "priority=1 dict=/etc/dictioary" > \
++	echo "priority=1 dict=/etc/dictionary" > \
+ 		/sys/block/zram0/algorithm_params
+ 
+ 	#pass path to pre-trained zstd dictionary and compression level
+-	echo "algo=zstd level=8 dict=/etc/dictioary" > \
++	echo "algo=zstd level=8 dict=/etc/dictionary" > \
+ 		/sys/block/zram0/algorithm_params
+ 
+ Parameters are algorithm specific: not all algorithms support pre-trained
+-- 
+2.34.1
 
 
