@@ -1,177 +1,143 @@
-Return-Path: <linux-kernel+bounces-420897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 652489D841A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:10:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBB2416797B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:10:53 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E452B195B37;
-	Mon, 25 Nov 2024 11:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XhAOqtb9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB769D84DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:52:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A2D192589;
-	Mon, 25 Nov 2024 11:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DFDBB3CFEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:11:18 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57278195B33;
+	Mon, 25 Nov 2024 11:11:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15B7195808
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732533050; cv=none; b=NBNA6iqD1/2QxoPQujQRC8er0aQAkAkDEchgZZLDfczv4zrhWKnsJSo7SzAv7d+99DrzaEta09MAu3a1JHu8M3rAtS0UvvVPcZsbe+IuZi1/30+lEYZlfGYqw2V6GkG9X0fLSdwbTtK6qZAYHV+D6ayq+LxUq2RfmEUtiLbZzIg=
+	t=1732533073; cv=none; b=RiDgohRiS+C3gTEivuy+hxRZ+SrxSvatanZ12q9+ommPdQJRcB2pqFBYGmDm8UBDCJhBmm2RzcbvK4QbOpxd27hmPhgiMiGHzDgWhTcuT2AsVuMSDjmHLCxQbxQ5bQIuKDPRD5rXPJ2mLl0f016Xyj/oQpG99ZrsVtynupgZ80w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732533050; c=relaxed/simple;
-	bh=mzdUoYSo8U5mMFN+HnRKNXhF4nTnOARWiNB1Z+Bwclg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rDFbrrmhKL17hkmjONXSFhAvwuk8WU0EJUANaA1/ygxxUcIfH5mjF+7Wxh5jncB0KFU7jaalTsu9iaq55BhqXgcEf1tzRl3FSIziI9f4unxrd6deLeMnmUDPtQlaqpbf02ZHhTYx15mVgXLAR1M7lc+IZSa3pHIUenb9opZl5E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XhAOqtb9; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732533049; x=1764069049;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=mzdUoYSo8U5mMFN+HnRKNXhF4nTnOARWiNB1Z+Bwclg=;
-  b=XhAOqtb9J+ge8GPX+YYb4Ci7h2uDu+LJ17UwVguu2DLuqLzsSvfv5gGC
-   CU0Jwc0WitE6vIh5vfWnl3wRe/79lGLgHvDvyPPAcDZrHWrFVMXMWTCTk
-   aDi0LXLB/V+J8ey4SfEw2YV+wj6wWlWI34/VrqE9//f6trVt/kPaAnhwF
-   KBt1TbUznG0/WHPLsdDxRC5Z2+RpA6aaNdD54xdYz0kyY49306Fhi9DD3
-   rQXXRdEclptBpqFiFrvERYpsiy6A+PcOiV4zYQVMv0oNeTaYSehHcZz/h
-   bW1zpGYe4mXg+OHd8FTailpmJkUA3welaqFQYdPsNkAwU3XRB/SW07kwE
-   A==;
-X-CSE-ConnectionGUID: iGWZyahvTAGEOFUApXDCHQ==
-X-CSE-MsgGUID: 84OHOioBQdGB4EEiBirS+w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="32884689"
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="32884689"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 03:10:48 -0800
-X-CSE-ConnectionGUID: MfymY+8zRSqny8Xy6KGkmg==
-X-CSE-MsgGUID: h2Ger/bZScCM52AfSgpu4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="91361137"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.115.59])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 03:10:43 -0800
-Message-ID: <a42183ab-a25a-423e-9ef3-947abec20561@intel.com>
-Date: Mon, 25 Nov 2024 13:10:37 +0200
+	s=arc-20240116; t=1732533073; c=relaxed/simple;
+	bh=Zvk+REZdcqAUn4OMNgXtHrhczsQPPHrd249PTacDycc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W19NEIprtCkgMFPs8GrbcBCEvMYZYE9xHrQoEMWtVlCD3pLS2YTC3i3vsfRwyvdXmx/BxB/x0P0I/Ca09KxA16OGe4RNwuuXGEZPldPRwW7GLYjOURy+6sW6cWbZFbPmKz/CMluib1twmeF8RfQm2sG5RLAjM0rFfdR7zamqqpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 184CE1FCD
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 03:11:40 -0800 (PST)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C8D613F66E
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 03:11:09 -0800 (PST)
+Date: Mon, 25 Nov 2024 11:10:51 +0000
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: cgzones@googlemail.com
+Cc: linux-security-module@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Richard Weinberger <richard@nod.at>,
+	Zhihao Cheng <chengzhihao1@huawei.com>,
+	Serge Hallyn <serge@hallyn.com>,
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-mtd@lists.infradead.org,
+	cocci@inria.fr
+Subject: Re: [PATCH 06/11] ubifs: reorder capability check last
+Message-ID: <Z0RbO1lSXoUnAtxj@e110455-lin.cambridge.arm.com>
+References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
+ <20241125104011.36552-5-cgoettsche@seltendoof.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] KVM: TDX: restore host xsave state when exit from the
- guest TD
-To: Chao Gao <chao.gao@intel.com>
-Cc: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
- dave.hansen@linux.intel.com, rick.p.edgecombe@intel.com,
- kai.huang@intel.com, reinette.chatre@intel.com, xiaoyao.li@intel.com,
- tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
- dmatlack@google.com, isaku.yamahata@intel.com, nik.borisov@suse.com,
- linux-kernel@vger.kernel.org, x86@kernel.org, yan.y.zhao@intel.com,
- weijiang.yang@intel.com
-References: <20241121201448.36170-1-adrian.hunter@intel.com>
- <20241121201448.36170-5-adrian.hunter@intel.com> <Z0AbZWd/avwcMoyX@intel.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <Z0AbZWd/avwcMoyX@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241125104011.36552-5-cgoettsche@seltendoof.de>
 
-On 22/11/24 07:49, Chao Gao wrote:
->> +static void tdx_restore_host_xsave_state(struct kvm_vcpu *vcpu)
->> +{
->> +	struct kvm_tdx *kvm_tdx = to_kvm_tdx(vcpu->kvm);
->> +
->> +	if (static_cpu_has(X86_FEATURE_XSAVE) &&
->> +	    kvm_host.xcr0 != (kvm_tdx->xfam & kvm_caps.supported_xcr0))
->> +		xsetbv(XCR_XFEATURE_ENABLED_MASK, kvm_host.xcr0);
->> +	if (static_cpu_has(X86_FEATURE_XSAVES) &&
->> +	    /* PT can be exposed to TD guest regardless of KVM's XSS support */
->> +	    kvm_host.xss != (kvm_tdx->xfam &
->> +			 (kvm_caps.supported_xss | XFEATURE_MASK_PT |
->> +			  XFEATURE_MASK_CET_USER | XFEATURE_MASK_CET_KERNEL)))
+Hi Christian,
+
+On Mon, Nov 25, 2024 at 11:39:58AM +0100, Christian Göttsche wrote:
+> From: Christian Göttsche <cgzones@googlemail.com>
 > 
-> Should we drop CET/PT from this series? I think they are worth a new
-> patch/series.
-
-This is not really about CET/PT
-
-What is happening here is that we are calculating the current
-MSR_IA32_XSS value based on the TDX Module spec which says the
-TDX Module sets MSR_IA32_XSS to the XSS bits from XFAM.  The
-TDX Module does that literally, from TDX Module source code:
-
-	#define XCR0_SUPERVISOR_BIT_MASK            0x0001FD00
-and
-	ia32_wrmsr(IA32_XSS_MSR_ADDR, xfam & XCR0_SUPERVISOR_BIT_MASK);
-
-For KVM, rather than:
-
-			kvm_tdx->xfam &
-			 (kvm_caps.supported_xss | XFEATURE_MASK_PT |
-			  XFEATURE_MASK_CET_USER | XFEATURE_MASK_CET_KERNEL)
-
-it would be more direct to define the bits and enforce them
-via tdx_get_supported_xfam() e.g.
-
-/* 
- * Before returning from TDH.VP.ENTER, the TDX Module assigns:
- *   XCR0 to the TD’s user-mode feature bits of XFAM (bits 7:0, 9)
- *   IA32_XSS to the TD's supervisor-mode feature bits of XFAM (bits 8, 16:10)
- */
-#define TDX_XFAM_XCR0_MASK	(GENMASK(7, 0) | BIT(9))
-#define TDX_XFAM_XSS_MASK	(GENMASK(16, 10) | BIT(8))
-#define TDX_XFAM_MASK		(TDX_XFAM_XCR0_MASK | TDX_XFAM_XSS_MASK)
-
-static u64 tdx_get_supported_xfam(const struct tdx_sys_info_td_conf *td_conf)
-{
-	u64 val = kvm_caps.supported_xcr0 | kvm_caps.supported_xss;
-
-	/* Ensure features are in the masks */
-	val &= TDX_XFAM_MASK;
-
-	if ((val & td_conf->xfam_fixed1) != td_conf->xfam_fixed1)
-		return 0;
-
-	val &= td_conf->xfam_fixed0;
-
-	return val;
-}
-
-and then:
-
-	if (static_cpu_has(X86_FEATURE_XSAVE) &&
-	    kvm_host.xcr0 != (kvm_tdx->xfam & TDX_XFAM_XCR0_MASK))
-		xsetbv(XCR_XFEATURE_ENABLED_MASK, kvm_host.xcr0);
-	if (static_cpu_has(X86_FEATURE_XSAVES) &&
-	    kvm_host.xss != (kvm_tdx->xfam & TDX_XFAM_XSS_MASK))
-		wrmsrl(MSR_IA32_XSS, kvm_host.xss);
-
+> capable() calls refer to enabled LSMs whether to permit or deny the
+> request.  This is relevant in connection with SELinux, where a
+> capability check results in a policy decision and by default a denial
+> message on insufficient permission is issued.
+> It can lead to three undesired cases:
+>   1. A denial message is generated, even in case the operation was an
+>      unprivileged one and thus the syscall succeeded, creating noise.
+>   2. To avoid the noise from 1. the policy writer adds a rule to ignore
+>      those denial messages, hiding future syscalls, where the task
+>      performs an actual privileged operation, leading to hidden limited
+>      functionality of that task.
+>   3. To avoid the noise from 1. the policy writer adds a rule to permit
+>      the task the requested capability, while it does not need it,
+>      violating the principle of least privilege.
 > 
->> +		wrmsrl(MSR_IA32_XSS, kvm_host.xss);
->> +	if (static_cpu_has(X86_FEATURE_PKU) &&
+> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+> ---
+>  drivers/gpu/drm/panthor/panthor_drv.c | 2 +-
+>  fs/ubifs/budget.c                     | 5 +++--
+>  2 files changed, 4 insertions(+), 3 deletions(-)
 > 
-> How about using cpu_feature_enabled()? It is used in kvm_load_host_xsave_state()
-> It handles the case where CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS is not
-> enabled.
-> 
->> +	    (kvm_tdx->xfam & XFEATURE_MASK_PKRU))
->> +		write_pkru(vcpu->arch.host_pkru);
-> 
-> If host_pkru happens to match the hardware value after TD-exits, the write can
-> be omitted, similar to what is done above for xss and xcr0.
+> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+> index ac7e53f6e3f0..2de0c3627fbf 100644
+> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> @@ -791,7 +791,7 @@ static int group_priority_permit(struct drm_file *file,
+>  		return 0;
+>  
+>  	/* Higher priorities require CAP_SYS_NICE or DRM_MASTER */
+> -	if (capable(CAP_SYS_NICE) || drm_is_current_master(file))
+> +	if (drm_is_current_master(file) || capable(CAP_SYS_NICE))
+>  		return 0;
+>  
+>  	return -EACCES;
 
-True.  It might be better to make restoring PKRU a separate
-patch so that the commit message can explain why it needs to
-be done here.
+Can the patch above be split into a separate one? It's for a different subsystem than ubifs.
 
+Otherwise, it looks good to me, so you can add my Reviewed-by to the new patch.
+
+Best regards,
+Liviu
+
+> diff --git a/fs/ubifs/budget.c b/fs/ubifs/budget.c
+> index d76eb7b39f56..6137aeadec3f 100644
+> --- a/fs/ubifs/budget.c
+> +++ b/fs/ubifs/budget.c
+> @@ -256,8 +256,9 @@ long long ubifs_calc_available(const struct ubifs_info *c, int min_idx_lebs)
+>   */
+>  static int can_use_rp(struct ubifs_info *c)
+>  {
+> -	if (uid_eq(current_fsuid(), c->rp_uid) || capable(CAP_SYS_RESOURCE) ||
+> -	    (!gid_eq(c->rp_gid, GLOBAL_ROOT_GID) && in_group_p(c->rp_gid)))
+> +	if (uid_eq(current_fsuid(), c->rp_uid) ||
+> +	    (!gid_eq(c->rp_gid, GLOBAL_ROOT_GID) && in_group_p(c->rp_gid)) ||
+> +	    capable(CAP_SYS_RESOURCE))
+>  		return 1;
+>  	return 0;
+>  }
+> -- 
+> 2.45.2
+> 
+
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
 
