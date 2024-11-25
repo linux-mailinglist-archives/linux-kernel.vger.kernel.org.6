@@ -1,124 +1,140 @@
-Return-Path: <linux-kernel+bounces-421508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 930D49D8C3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:31:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9042A9D8C3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:32:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F78A284AFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:31:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32D7B1673ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD821B87FF;
-	Mon, 25 Nov 2024 18:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6341B87F4;
+	Mon, 25 Nov 2024 18:32:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHjScz9a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qaqZg3qy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9051B3948;
-	Mon, 25 Nov 2024 18:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CA71B3948;
+	Mon, 25 Nov 2024 18:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732559504; cv=none; b=fGsEz3QhmpcEqSQP26KhFiXckLNLC7K7oHPxbV7tbm0PjbwMf3nGIBX1SwXy0bkGKZbU18o78mmncoNS5s2YG/QS1tLrEcEVoORvjKTvjkxKBK6xKUrpMk/JbagdnPV6dSdqDMAjW5+64LOjB461r4iBZJsm7pDNZc64WXVNKkM=
+	t=1732559560; cv=none; b=rtVMDXa7R3t5YUDqqSy51DmgG4Dqs5IhZn9JopAANHLmqMu/1QMjf61o8KdFpYz5wgVUM9pw/KAaQNPqznF4w9NuP+HJeNNbb2z5ekB7acd8x6mygv1SdAs7cmqs3Sbjm+FGZVUXZF2tMVT7NfCKX3alsbCv6b2g+KpWc6PnypY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732559504; c=relaxed/simple;
-	bh=Poe+Ou4l+6O6W5GecO5bjPgSMkD4GLn8esqFU0IFep0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gQoBHyTxKNHGXgG4FK9byxYmW4Hm+6CcghumOd32j+QfPkwFWvObmM5cw9hgvVPb2YpE/+uxJRWK6/SnWOsBtHrSvK4F6sHY60YcVEX1xmcpey1bahKCg8TXtAydQX7ZURTIo1KHE2wro3/PaxerxQhxHgwWe/pQCD480ntrm10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GHjScz9a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57FE8C4CECE;
-	Mon, 25 Nov 2024 18:31:41 +0000 (UTC)
+	s=arc-20240116; t=1732559560; c=relaxed/simple;
+	bh=xGbywVVkPjUuFusey+m/hpMXPkCVQz+XV36WyNQsUJI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VWwAwZKWXiEZq0Kf5Jk1gf1/94T3i2q14evz8tNSd3eB0oqpWsdXy4OmroSJeJtZJlDB1RFHMy/vh96kX9rMv3hRgW1HXp+4pX962ZQzNBMB62awuJvh3NO9Ul9vxzilEGon0CElfvM9ltnDnNXLbtF/41bEata95HxxPvRP3tY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qaqZg3qy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B32E4C4CECF;
+	Mon, 25 Nov 2024 18:32:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732559503;
-	bh=Poe+Ou4l+6O6W5GecO5bjPgSMkD4GLn8esqFU0IFep0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GHjScz9aVfpCAkTBN/9qcqFS2GM8NcozocB3Ngl4I5WsSxkiYYgT0LE1+75tHpd2+
-	 TH52RI5H2/kwNEAnH4tn3z59Mg/ueM7FpdF2AEm6xZAVDi2a0Wo6EbwxdHmq1PruRg
-	 Lo/CG25loTPKwEHAPjTNqG50WaUDd/0KfHNS9PrnT1ci2K1zmBxi1j2bfy+pAy7sHt
-	 2s+UTR24ODjCd3yY+dNCXFvDCNpXaVbSMPU7EoDCJrZFDf1L9Gj1uIhH0GOiDHlhdt
-	 tO3/PI7GhGAzTZzT/iN3VeudKSaqIZsG7ljG89IjKwEpI7kgUA+MwyNE1viXe7ZzrW
-	 KtvSbvgQKHpkw==
-Date: Mon, 25 Nov 2024 18:31:39 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Vaishnav Achath <vaishnav.a@ti.com>
-Cc: peter.ujfalusi@gmail.com, vkoul@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	u-kumar1@ti.com, j-choudhary@ti.com, vigneshr@ti.com
-Subject: Re: [PATCH 2/2] dmaengine: ti: k3-udma: Add TX channel data in AM62A
- CSIRX DMSS
-Message-ID: <20241125-hardener-jockey-d8d57f6a9430@spud>
-References: <20241125083914.2934815-1-vaishnav.a@ti.com>
- <20241125083914.2934815-2-vaishnav.a@ti.com>
+	s=k20201202; t=1732559559;
+	bh=xGbywVVkPjUuFusey+m/hpMXPkCVQz+XV36WyNQsUJI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=qaqZg3qyW+mtqqruvm/BbxURkwyb6r4TNtNiIiQdKnsKdzdMVi+WNLdG/WVjxAt6A
+	 bG4eFj4n3aqbibIs04/5nUTlSmtwCreH11xcOE2YaLwBvzdrUP3yLtDr+6mk3kZmJt
+	 Z7jSPBA8MKTdc4QdHPAbVTwCnQRfQOCZrK+5QxIthYx62tCBCYVy/hdbesXVEShQpT
+	 e1XEx9AbH92I3oD1dOtgeLWu/JAk5olhTIVhMHv41E0oyhlo0H3J5FidG9i+c0UHdU
+	 FHnrkF5T4MPavw24GjhW2pyD2dxLFcnUlcbQtzlGzXMo8Jx/WAAj9EGvX9Da6ytyDG
+	 8aQK5qJJD7hog==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53de8ecb39bso51397e87.2;
+        Mon, 25 Nov 2024 10:32:39 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCViWiku8JCtflRQ94vCtk5PKy828f3A7q3gsFjtQ4JYoOuhVl2n4GLBVdClQNDK2MvYFiZHvkJKCC8=@vger.kernel.org, AJvYcCWbwvLOywzUL+CyCBz2BOMPHuRYxxJuFN0dMWdMhOmr7rZ2H/hD0h5E3cF9E1GczKMwEnDEg/wuSXW2dJdK@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTyZKKSJw92JMPH1S7VY/0OBOi1c722ywd4TYTY5S+TsWF6Bpv
+	LfYWWflnKyIaQWIx0iwVnKXhj8Pnb+vL8fVyk2yOQn5W58EFALteWzq+n4nsfFyvsAmQ9i+8hRz
+	KxaiExHMhKO3PCxssmnpjaQlJdj4=
+X-Google-Smtp-Source: AGHT+IEI5lh+gdVQA6Lfo+mqAgaN7ISHNMJK2qv+IO6iBdjzAZ8YC8sotGUI4xE/3Qnhh909nMOiz6Tdlkt/WiVkV/8=
+X-Received: by 2002:a05:6512:224d:b0:53a:16b:f14f with SMTP id
+ 2adb3069b0e04-53dd36a114dmr6317807e87.19.1732559557837; Mon, 25 Nov 2024
+ 10:32:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ONFPeZ2tioFdg7FB"
-Content-Disposition: inline
-In-Reply-To: <20241125083914.2934815-2-vaishnav.a@ti.com>
+References: <20241125170758.518943-1-yeoreum.yun@arm.com> <20241125170758.518943-3-yeoreum.yun@arm.com>
+ <CAMj1kXG4A4h3=bZC6kSrwsZa7p4RZ-uN5N67pZUFLOQ2RJE64w@mail.gmail.com>
+ <Z0S3wiugr0JML/cV@e129823.arm.com> <CAMj1kXFOdGaYiVWOyFEK+Lz97YdzAu+AWj5trZBTL+Xc_DXnmA@mail.gmail.com>
+ <Z0S+zP3u4781zNwo@e129823.arm.com>
+In-Reply-To: <Z0S+zP3u4781zNwo@e129823.arm.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 25 Nov 2024 19:32:26 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXHysummq5dG==gOmQr2DgtU5Ee0_tJbjGagRJniAee1vA@mail.gmail.com>
+Message-ID: <CAMj1kXHysummq5dG==gOmQr2DgtU5Ee0_tJbjGagRJniAee1vA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] efi/fdt: ignore dtb when acpi option is used with force
+To: Levi Yun <yeoreum.yun@arm.com>
+Cc: broonie@kernel.org, sami.mujawar@arm.com, sudeep.holla@arm.com, 
+	pierre.gondois@arm.com, hagarhem@amazon.com, catalin.marinas@arm.com, 
+	will@kernel.org, guohanjun@huawei.com, Jonathan.Cameron@huawei.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-efi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 25 Nov 2024 at 19:16, Levi Yun <yeoreum.yun@arm.com> wrote:
+>
+> Hi Ard.
+>
+> >
+> > The DT is not stored in a variable.
+> >
+> > If CONFIG_EFI_ARMSTUB_DTB_LOADER is enabled, it may be provided via
+> > dtb= on the command line, but I have little sympathy for a user that
+> > passes both dtb= *and* acpi=force, so this is a scenario that we can
+> > ignore.
+> >
+> > Otherwise, it is taken from a EFI config table, which is just a
+> > <guid,addr> tuple describing a location in physical memory where the
+> > firmware has placed a DT. If the firmware puts a corrupted DT there,
+> > the firmware should be fixed instead.
+> >
+> > acpi=force is intended to force the use of ACPI tables on a system
+> > that provides both.
+> >
+> > > also, although acpi= could differ from architecture, the force option's menaing
+> > > seems the same over architecture (ignore DT boot with ACPI tables).
+> > >
+> > > So I think the check the "acpi=force" option to prevent loading DT seems
+> > > good.
+> > >
+> >
+> > The EFI stub does not care about ACPI vs DT boot, and I'd prefer to
+> > keep it that way unless there is a good reason.
+> >
+> > Which real-world problem does this patch aim to solve?
+>
+> Well. I had lack of explaination. In case of Juno platform, it loads
+> FDT from "Fdt" variable from the storage and install it into
+> configuration table with corrupted Fdt because of FDT stored in variable
+> storage was corrupted.
+>
+> In that siutation, If it loads corrupted fdt, it prints error message
+> while sanity check in early_init_dt_scan().
+> This kind of error message would be confused to user because
+> user already specifies to boot with acpi table only with acpi=force
+> option.
+>
+> anyway, what kind of way to install fdt into configuraiton table is not
+> matter. but when the dt installed in configuration table isn't valid,
+> it could produce the error message which seems violate user specified
+> option.
+>
+> unless check the acpi=force to ignore DT, I think it would require to
+> check the installed DT in configuration table or passed should have
+> simple sanity check doen in early_init_dt_scan() so that error messsage
+> which makes some confusion for this situation.
+>
 
---ONFPeZ2tioFdg7FB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for explaining the issue in more detail. Juno is a development
+platform with a highly unusual boot stack so I don't think we need to
+accommodate its quirks in the upstream kernel.
 
-On Mon, Nov 25, 2024 at 02:09:14PM +0530, Vaishnav Achath wrote:
-> J722S/AM67 uses the same BCDMA CSIRX IP as AM62A, but it supports
-> TX channels as well in addition to RX.
-
-This doesn't make sense. You say that the am62a doesn't have a tx
-channel ("but it supports TX as well") but then modify the struct for
-the am62a to add a tx channel. Does that not break things on the am62a?
-
-
-> Add the BCDMA TCHAN information
-> in the am62a_dmss_csi_soc_data so as to support all the platforms in the
-> family with same compatible. UDMA_CAP2_TCHAN_CNT indicates the presence
-> of TX channels and it will be 0 for platforms without TX support.
->=20
-> Signed-off-by: Vaishnav Achath <vaishnav.a@ti.com>
-> ---
->=20
-> CSI2RX capture test results on J722S EVM with IMX219:
-> https://gist.github.com/vaishnavachath/e2eaed62ee8f53428ee9b830aaa02cc3
->=20
->  drivers/dma/ti/k3-udma.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/dma/ti/k3-udma.c b/drivers/dma/ti/k3-udma.c
-> index b3f27b3f9209..4130f50979d4 100644
-> --- a/drivers/dma/ti/k3-udma.c
-> +++ b/drivers/dma/ti/k3-udma.c
-> @@ -4340,6 +4340,8 @@ static struct udma_match_data j721e_mcu_data =3D {
-> =20
->  static struct udma_soc_data am62a_dmss_csi_soc_data =3D {
->  	.oes =3D {
-> +		.bcdma_tchan_data =3D 0x800,
-> +		.bcdma_tchan_ring =3D 0xa00,
->  		.bcdma_rchan_data =3D 0xe00,
->  		.bcdma_rchan_ring =3D 0x1000,
->  	},
-> --=20
-> 2.34.1
->=20
-
---ONFPeZ2tioFdg7FB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0TCiwAKCRB4tDGHoIJi
-0gqKAQCe0SNMHmEZbd+OGYhiCx7AYYLgWcuj+9LCVKpPMbWabwEAiFTaZHesxW8J
-aUSOcYWESY5yll72kHHkfgMC1TCh/Q4=
-=6NNf
------END PGP SIGNATURE-----
-
---ONFPeZ2tioFdg7FB--
+And I still don't think this is something worth fixing in general.
+Even if the machine description should be taken from ACPI tables only,
+the DT /chosen node is always used as a conduit by the EFI stub, and
+there are cases, e.g., for initrd info or the kaslr seed, where this
+information might come from the bootloader, such as older GRUB builds.
 
