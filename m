@@ -1,145 +1,191 @@
-Return-Path: <linux-kernel+bounces-420411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABB0A9D7A33
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 03:50:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 570449D7A37
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 03:50:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B792280E1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 02:50:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF442B22799
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 02:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDFBF16426;
-	Mon, 25 Nov 2024 02:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695A63A1BF;
+	Mon, 25 Nov 2024 02:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aKF2TFYa"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hPfKyTaH"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D346C846F
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 02:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB0316426;
+	Mon, 25 Nov 2024 02:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732503012; cv=none; b=hYzAB3iaxXz8wxNESlJPsSrzNa8t32YxOhE99m8Vx0Ub3AFhEXiiEo00xYcEGNvLXHvPlG9c6bVppfJ953iHWI6tjhnvXQ6oT+NOwQbIuKc3QFnVxPtmdci1E63ADePu/DeCsRJyGiHmFdjAYl/6lRuOi7UhKu8k2elgChiPSpY=
+	t=1732503026; cv=none; b=RrmIpTQJ5g/8pter13LCjYCDBhnkjl5p0lygOv85jUj/O9ZpKGfm8x6YRwfulyFCgzxWC0uZ5RQGV+ycm3pfsSHxe7EUmHnxNSykwykO/Q28TSeCCC6ZC2Bm5fva4e7BkqKof0mraMrSjhZnWmfnc4Z440lFx7KZRfAQscsqG7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732503012; c=relaxed/simple;
-	bh=9xWE7hQ80NTsubhmPzd5LMYo1B+VsjDN48zEUFNEFDA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GcTtYnbqKpbEJ4BeA8OywjnxGSybFYbYt4qIdRaabihp43bODrPDj9X9qxR3TW+iqApqZZZZC0BLR8gZhNWSb49UHK53l7DbPgFkFDKZ8cOlw77UVKesB60fg3NUzTqhYxfRbsxIFlzQDyQwFW8ZZF0M6Jnz+xSp2yJ3Bn85/7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aKF2TFYa; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7242f559a9fso3893322b3a.1
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 18:50:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732503010; x=1733107810; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LuaL5qYMw6VKISBfy57xcOAOGx2kf2U0nHPjc0yVGaY=;
-        b=aKF2TFYal75cyB+eski0+oeXjwto0FStjBNyKUSsVTvtOaBVLHznOd/C9XHGy5hbm/
-         puedsijJr/5B+wvH373XUaG6r/b10nqnYpO85UKcTa7cuVX+OPMopVG4bFiwGY5hvVZW
-         Bej1/m4L9+2BxMKpVSdwsXzA838VYHJADpccM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732503010; x=1733107810;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LuaL5qYMw6VKISBfy57xcOAOGx2kf2U0nHPjc0yVGaY=;
-        b=DLNqkbaIkHVLvdN+xqmnR6rlNPUGS9iWelspT1KSUIOVelEfcOvVGjfpmN5njBwgKK
-         mvo9aDuOcBmZZx/QRs6jrOQ6y1s4fVpeGmmCIS07ZRKeaHnPXBw67ddcR8dNTFxSgCZY
-         X9ya37Eiy62yYhu6WFAFUDQB1ihCTYx5j+Jk9qhgWB0cvWIOJQaWJq5945pJI9ahiUlo
-         LDqeF0q7Q5aZhTVOMwhiLN8fBKCYrrOg/7Ss2MK9fN1nejXf5bimRm8vsHh6/QaM5Brm
-         /4o4bP7mKscbaPBnThzo8Lx3ynLvzUVF/e7DXKBJKP4Mb0CoexQZrN8wZr0lhwEjHmnN
-         73Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCW88iLw/ndRDfFnxf7JSxFVjFDzmzOuXaTZrQj8PTGC8BBJ0nLDaglhfhDgliTjcVNabRRuKhhABZA7WLE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaDztRvmYDAqD+r8gIpneobJFPItoZpClNu+VHb/pSF0szga93
-	DLEkc9+kP4Ivt8fBpY7+mOBshOe92KOu7cK0SDyN+CnHvSXtAnQvgkBUeoTyGxB2Nelu88uWWSE
-	=
-X-Gm-Gg: ASbGnctmdKdQKlSo/PqeFM70zUzj0eDa9THil8lTvJhr/WVRRK8wGDVGjfjnQhgMqlp
-	RzWHZEZSTy1iA3bQslisoO30Iztm+QVNVGxCpQNS8ZQQB50xns7gHFADgroMfGMaYorny4gQzqj
-	/ULFsLQqnScvXi5ERe/RuykjE+213v0bhk5S1NdEs21wOhisDBkNTvoX01fqzD2DL+mNMqFMM67
-	nYb1IvAt4SmrMkrbUqeMSCpBBlwiYhx0QZ7LmWVSebF
-X-Google-Smtp-Source: AGHT+IGheYjz/Tntpw9/GolL/DMsSlt5WgODtQmt2XRXREaZkoneuXtaerczDwb+tPVqlQ7KhsD3lA==
-X-Received: by 2002:a17:903:230e:b0:212:b2b:6f1d with SMTP id d9443c01a7336-2129fd23d8amr180049005ad.32.1732503010250;
-        Sun, 24 Nov 2024 18:50:10 -0800 (PST)
-Received: from google.com ([2401:fa00:1:10:66a3:d18f:544f:227a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc1596esm53695155ad.189.2024.11.24.18.50.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Nov 2024 18:50:09 -0800 (PST)
-Date: Mon, 25 Nov 2024 10:50:06 +0800
-From: "Sung-Chi, Li" <lschyi@chromium.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
-	Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, chrome-platform@lists.linux.dev,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: mfd: cros-ec: add properties for
- thermal cooling cells
-Message-ID: <Z0Pl3muZx716QSed@google.com>
-References: <20241122-extend_power_limit-v1-0-a3ecd87afa76@chromium.org>
- <20241122-extend_power_limit-v1-2-a3ecd87afa76@chromium.org>
- <4f5sahkxxqb5qonh676igaiadkxv2pbhbibu6wtx4yenplfn4o@yvidi4ujavhr>
+	s=arc-20240116; t=1732503026; c=relaxed/simple;
+	bh=Wb7udg6f6WlWIVRznyRZ5dJaS/EB1LSznmDtXmQMjXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=BYqY2ORKUEdnpBEfluu8/G4CQTNes17BU5GbfHJzMfYOnY3rtmsgFTcfvm8ciGLUA46CgWF4wTClHI+pag5TkTBhcJ0ztJLtvDE0u0FPlDP6njTfWaMIP6L87h4LrCL+4PxU8ell4jgvZG1/uyI9ghzs3l/jeMNZu1ciICPXoN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hPfKyTaH; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1732503018;
+	bh=buOGDOvkQSlB1d0liMwWjmUqiraMhq41+/X9feNo1vg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=hPfKyTaHgw0SFsOrHPoD16gPSTWWhxa3JxxgEIL6bas70z+uai1bac4mjpjXHzYzV
+	 X5AnCVOizr5a51pRt1RCYS4ill0cxrBUq0kNBf3yNlk4BSujJS44OUicgS/TiS5PvG
+	 OGL40yFQzgShZJQLTQ9KMpHiEvMRcSuXNKRzd/LPo3I4AqPe807W5xbQh9/v9OxPWI
+	 1WyiEQ9HLYNZMOlHWD1F6h/wjg/TSGKo19wsKKGkt9iaFjOj1SDyoE9UGS8RR9G0AS
+	 jLLmBW47Q7OdFzERS8riUuCs4dFjS9Lsgu7oRYV2gGz5ZvNvAGjXQ1o3NaP42cTdtY
+	 BFmCpsrxyW5jA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XxVYj2qmzz4xdL;
+	Mon, 25 Nov 2024 13:50:16 +1100 (AEDT)
+Date: Mon, 25 Nov 2024 13:50:19 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Daniel Palmer <daniel@0x0f.com>, Finn Thain <fthain@linux-m68k.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the rtc tree with Linus' tree
+Message-ID: <20241125135019.2f2653ff@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4f5sahkxxqb5qonh676igaiadkxv2pbhbibu6wtx4yenplfn4o@yvidi4ujavhr>
+Content-Type: multipart/signed; boundary="Sig_/F3JPDUXrmbqvj=F/7TpOu2p";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Fri, Nov 22, 2024 at 08:49:14AM +0100, Krzysztof Kozlowski wrote:
-> On Fri, Nov 22, 2024 at 11:47:22AM +0800, Sung-Chi Li wrote:
-> > The cros_ec supports limiting the input current to act as a passive
-> > thermal cooling device. Add the property '#cooling-cells' bindings, such
-> > that thermal framework can recognize cros_ec as a valid thermal cooling
-> > device.
-> > 
-> > Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
-> > ---
-> >  Documentation/devicetree/bindings/mfd/google,cros-ec.yaml | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-> > index aac8819bd00b..2b6f098057af 100644
-> > --- a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-> > +++ b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-> > @@ -96,6 +96,9 @@ properties:
-> >    '#gpio-cells':
-> >      const: 2
-> >  
-> > +  '#cooling-cells':
-> > +    const: 2
-> 
-> This is not a cooling device. BTW, your commit msg is somehow circular.
-> "Add cooling to make it a cooling device because it will be then cooling
-> device."
-> 
-> Power supply already provides necessary framework for managing charging
-> current and temperatures. If this is to stay, you need to explain why
-> this is suitable to be considered a thermal zone or system cooling
-> device (not power supply or input power cooling).
-> 
-> Best regards,
-> Krzysztof
-> 
+--Sig_/F3JPDUXrmbqvj=F/7TpOu2p
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thank you, I will rephrase the commit message. The reason to not to use the
-managing charging current and temperatures in the power supply framework is
-that:
+Hi all,
 
-- The EC may not have the thermal sensor value for the charger, and there is no
-  protocol for getting the thermal sensor value for the charger (there is
-  command for reading thermal sensor values, but there is no specification for
-  what sensor index is for the charger, if the charger provides thermal value).
-- The managing mechanism only take the charger thermal value into account, and
-  I would like to control the current based on the thermal condition of the
-  whole device.
+Today's linux-next merge of the rtc tree got a conflict in:
 
-I will include these explanation in the following changes.
+  arch/m68k/mvme147/config.c
+
+between commits:
+
+  2a9517b6f9c4 ("m68k: mvme147: Make mvme147_sched_init() __init")
+  077b33b9e283 ("m68k: mvme147: Reinstate early console")
+
+from Linus' tree and commit:
+
+  1ec371bab200 ("m68k: mvme147, mvme16x: Adopt rtc-m48t59 platform driver")
+
+from the rtc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/m68k/mvme147/config.c
+index 824c42a302c6,2e8f41636efb..000000000000
+--- a/arch/m68k/mvme147/config.c
++++ b/arch/m68k/mvme147/config.c
+@@@ -32,11 -33,9 +33,10 @@@
+  #include <asm/mvme147hw.h>
+  #include <asm/config.h>
+ =20
+ +#include "mvme147.h"
+ =20
+  static void mvme147_get_model(char *model);
+ -extern void mvme147_sched_init(void);
+ +static void __init mvme147_sched_init(void);
+- extern int mvme147_hwclk (int, struct rtc_time *);
+  extern void mvme147_reset (void);
+ =20
+ =20
+@@@ -162,56 -179,3 +180,31 @@@ static u64 mvme147_read_clk(struct cloc
+  	return ticks;
+  }
+ =20
+- static int bcd2int (unsigned char b)
+- {
+- 	return ((b>>4)*10 + (b&15));
+- }
+-=20
+- int mvme147_hwclk(int op, struct rtc_time *t)
+- {
+- 	if (!op) {
+- 		m147_rtc->ctrl =3D RTC_READ;
+- 		t->tm_year =3D bcd2int (m147_rtc->bcd_year);
+- 		t->tm_mon  =3D bcd2int(m147_rtc->bcd_mth) - 1;
+- 		t->tm_mday =3D bcd2int (m147_rtc->bcd_dom);
+- 		t->tm_hour =3D bcd2int (m147_rtc->bcd_hr);
+- 		t->tm_min  =3D bcd2int (m147_rtc->bcd_min);
+- 		t->tm_sec  =3D bcd2int (m147_rtc->bcd_sec);
+- 		m147_rtc->ctrl =3D 0;
+- 		if (t->tm_year < 70)
+- 			t->tm_year +=3D 100;
+- 	} else {
+- 		/* FIXME Setting the time is not yet supported */
+- 		return -EOPNOTSUPP;
+- 	}
+- 	return 0;
+- }
+-=20
+ +static void scc_delay(void)
+ +{
+ +	__asm__ __volatile__ ("nop; nop;");
+ +}
+ +
+ +static void scc_write(char ch)
+ +{
+ +	do {
+ +		scc_delay();
+ +	} while (!(in_8(M147_SCC_A_ADDR) & BIT(2)));
+ +	scc_delay();
+ +	out_8(M147_SCC_A_ADDR, 8);
+ +	scc_delay();
+ +	out_8(M147_SCC_A_ADDR, ch);
+ +}
+ +
+ +void mvme147_scc_write(struct console *co, const char *str, unsigned int =
+count)
+ +{
+ +	unsigned long flags;
+ +
+ +	local_irq_save(flags);
+ +	while (count--)	{
+ +		if (*str =3D=3D '\n')
+ +			scc_write('\r');
+ +		scc_write(*str++);
+ +	}
+ +	local_irq_restore(flags);
+ +}
+
+--Sig_/F3JPDUXrmbqvj=F/7TpOu2p
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdD5esACgkQAVBC80lX
+0GxqOAgAobzlvUfzm6fWmwlSt7CcC+LM4ENxgrZ1d0VRE9kjcZRX7ZgvtkswgEPO
+35X6Dsp7yH3zYETEO80KJR/aS309RSFtoJEuXDyZ/D0UFyQMsnR1Qc10RXfTm4UU
+0jX2p9JkaVYRKoTieaeP1dZXg6ocvpEjvCCB3TM0u7N/hgDhqK6pHCFH0v1zIaZq
+Lpk+f28Z8VZmBQBkkn/M7wbTmJ9lw7hjyqMd2x7L2iqOmhJeK5ESXU0lTkkBEwzx
+Kx3yMI1qTxsibJSzO9oW5XaArJyW98XRlP1bMlaiu0tj8aLUW741c/37U5xoX5U9
+nF8gXgAFt5Kcs4aPJ9fdjU11ygXjAg==
+=UGGq
+-----END PGP SIGNATURE-----
+
+--Sig_/F3JPDUXrmbqvj=F/7TpOu2p--
 
