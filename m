@@ -1,142 +1,195 @@
-Return-Path: <linux-kernel+bounces-420377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 246AB9D79B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 02:09:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02F229D79B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 02:12:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBE6028221F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 01:09:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A90892821E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 01:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344ED8462;
-	Mon, 25 Nov 2024 01:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003DC8462;
+	Mon, 25 Nov 2024 01:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NbQBNF29"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TyRiIf62"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EF017C60;
-	Mon, 25 Nov 2024 01:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519A3624;
+	Mon, 25 Nov 2024 01:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732496974; cv=none; b=U2bU5erQ4F8HpbdajW7ExHiif1pAOOjKCQJP9xiww/Y2ycYH6RC9fUTP4Wvunlqka09Sgf3Prxl9ebZjK7ISXYieuEthwea2fZj1uyQbRDIOmnU33/JSiEeVZKZVaQnB4rPLDJICvh7mZdI1W66EB8cHNqqDESvH4Bkk63Bx+L0=
+	t=1732497141; cv=none; b=grAFery+WPnR+hkq+O4j5gPGeUYGdsXnvFi08PSrnQOcPEz+Px0FmTGKiXfUNFUMkX6B2DmLc0EVQCVHv6wO2IdI2YTQ+YOaf/pabZ91ASH08ZsnOcHpB2lFMVDHf2vOdfULWJlC7qHkCMAx/mMs3m/4eay9Oum7jhgqpPJGkVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732496974; c=relaxed/simple;
-	bh=MrizqgFeahr33sqTryZ723cEdfval7sND/3f8Nu1bL8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=FPuO83MPLTLuR98MN0+kANVB1TgdW+/lG7j2odVDWtO0ypWTsRLy7D043BxgocC0LG0Hp3cDT5ybJbvAWRfYIi6aN+w+eNJsHnnwpf1fPuTeCorZvxE9AUz0W/JNEiAidGv289M2pqS0b59UklLnOmRLfBK+C3VDp40Dq9DISsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=NbQBNF29; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1732496961;
-	bh=NPFuZFCQNR5Yu8G5vMI1GfSK3jYB5bbGOIq1W9kVn5g=;
-	h=Date:From:To:Cc:Subject:From;
-	b=NbQBNF29Uba8no9mBtJ+Wc0Wgbl3WeuldOP/xHU6ibA4QAdkI+sNtfM9iG3yO2KpO
-	 rLexf67fC8h5ApDEiax8Jt4kqchMBrYBLr5oEctti5GRy8moQ4imLxQk2t4SUBPcTb
-	 BPdonLMvwJc4CwVu7ec/dB0VXLyvCiTfEdxSOfYaJ+JhZVdw1Ppe74JA8TqyBy7ueF
-	 /h0RPOG3Nxjw7DQa7nE20XET9dNG5tFT00mBUclJ5OrJOO92xh3ClghKajmrKwE+bV
-	 dkEmERGmd4F3PrYaK8ahMyDeaIcb/yHgdZ45jYdDrd7J8ZNJ2VD4gnSuPSeBLj6neB
-	 rIxEgoTL3aoMQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XxSKD2Jjkz4xcr;
-	Mon, 25 Nov 2024 12:09:20 +1100 (AEDT)
-Date: Mon, 25 Nov 2024 12:09:21 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Lucas De Marchi <lucas.demarchi@intel.com>, Thomas =?UTF-8?B?SGVsbHN0?=
- =?UTF-8?B?csO2bQ==?= <thomas.hellstrom@linux.intel.com>, DRM XE List
- <intel-xe@lists.freedesktop.org>
-Cc: Jani Nikula <jani.nikula@intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Matt Atwood <matthew.s.atwood@intel.com>,
- Matt Roper <matthew.d.roper@intel.com>
-Subject: linux-next: manual merge of the drm-xe tree with Linus' tree
-Message-ID: <20241125120921.1bbc1930@canb.auug.org.au>
+	s=arc-20240116; t=1732497141; c=relaxed/simple;
+	bh=7Khz0YV/QMX/+KytrGaz9YGDYG82vqLc5hFXwricj5Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pNGNGN4V8LDXLyWbWe4lExVfKF/CseWvAW7haljCB6/1SfTO3ufoouoEn7x3BzO4Vbu2He8NAjsous2mF9FQSIsDMdm6LfkYmktucTip5dCehzVE3oKJivoWa/yqxal5tBSfmUqdVhrQZf7vOF4NoIvr6qb8NJDDmhm05Z7TDOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TyRiIf62; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B142C4CECC;
+	Mon, 25 Nov 2024 01:12:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732497140;
+	bh=7Khz0YV/QMX/+KytrGaz9YGDYG82vqLc5hFXwricj5Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TyRiIf6290ysu3cL8x1wYsW4feRBA+Puz3JoXw8viAtzpdNEyJZDTr6yX9T7KI1Go
+	 h3jjoB0NUPhRkGZeu8fy2BzBFqdp5J3XwubAAlhonzFz6XFL5vE9h+q5ePMSFcwmRj
+	 Nv+PTlysf1uKNw3fcoDrN8PFIP4oyi9SVPJ0Kty/ARZN70xZ/OVOcXdnWc01JwvFPW
+	 2EDoO03GxmOzkbaLnfKA+XamgbfYgJZDoCUt9r3OA1Qe5MUBfGGMdbkmzid8QUmxia
+	 yb9x549gi4pg+hXsjMYKGBrm6ua3iAlcACg/1GitSSIkG3f6x8G2TaLtVj94VQgEfn
+	 cNKSMdwiwc+sw==
+Message-ID: <e767272d-1cc4-4945-82d1-efd88c724e06@kernel.org>
+Date: Mon, 25 Nov 2024 10:12:05 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/TRQk6h/duJpsAjl_b/MgMX=";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] ata: libahci_platform: support non-consecutive port
+ numbers
+To: Josua Mayer <josua@solid-run.com>, Niklas Cassel <cassel@kernel.org>,
+ Hans de Goede <hdegoede@redhat.com>
+Cc: Jon Nettleton <jon@solid-run.com>,
+ Mikhail Anikin <mikhail.anikin@solid-run.com>,
+ Yazan Shhady <yazan.shhady@solid-run.com>,
+ Rabeeh Khoury <rabeeh@solid-run.com>, linux-ide@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241121-ahci-nonconsecutive-ports-v1-1-1a20f52816fb@solid-run.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20241121-ahci-nonconsecutive-ports-v1-1-1a20f52816fb@solid-run.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---Sig_/TRQk6h/duJpsAjl_b/MgMX=
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 11/22/24 12:05 AM, Josua Mayer wrote:
+> So far ahci_platform relied on number of child nodes in firmware to
+> allocate arrays and expected port numbers to start from 0 without holes.
+> This number of ports is then set in private structure for use when
+> configuring phys and regulators.
+> 
+> Some platforms may not use every port of an ahci controller.
+> E.g. SolidRUN CN9130 Clearfog uses only port 1 but not port 0, leading
+> to the following errors during boot:
+> [    1.719476] ahci f2540000.sata: invalid port number 1
+> [    1.724562] ahci f2540000.sata: No port enabled
+> 
+> Remove from ahci_host_priv the property nports which only makes sense
+> when enabled ports are consecutive. It is replaced with AHCI_MAX_PORTS
+> and checks for hpriv->mask_port_map, which indicates each port that is
+> enabled.
+> 
+> Update ahci_host_priv properties target_pwrs and phys from dynamically
+> allocated arrays to statically allocated to size AHCI_MAX_PORTS.
+> 
+> Update ahci_platform_get_resources to ignore holes in the port numbers
+> and enable ports defined in firmware by their reg property only.
+> 
+> When firmware does not define children it is assumed that there is
+> exactly one port, using index 0.
+> 
+> I marked this RFC because it was only tested with Linux v6.1, Marvell
+> fork, CN9130 Clearfog Pro which has only port number 1 in device-tree.
+> Further I am not completely sure if it has severe side-effects on
+> other platforms.
+> I plan to submit it again after testing on v6.13-rc1, but do welcome
+> feedback in the meantime, particularly whether this idea of supporting
+> non-consecutive ports is acceptable.
+> 
+> Signed-off-by: Josua Mayer <josua@solid-run.com>
 
-Hi all,
+[...]
 
-Today's linux-next merge of the drm-xe tree got a conflict in:
 
-  include/drm/intel/xe_pciids.h
+> @@ -539,41 +544,7 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
+>  		hpriv->f_rsts = flags & AHCI_PLATFORM_RST_TRIGGER;
+>  	}
+>  
+> -	/*
+> -	 * Too many sub-nodes most likely means having something wrong with
+> -	 * the firmware.
+> -	 */
+>  	child_nodes = of_get_child_count(dev->of_node);
+> -	if (child_nodes > AHCI_MAX_PORTS) {
+> -		rc = -EINVAL;
+> -		goto err_out;
+> -	}
 
-between commit:
+Why remove this check ? Your platform may not need ti, but it is still valid
+for others.
 
-  493454445c95 ("drm/xe: switch to common PCI ID macros")
+> -
+> -	/*
+> -	 * If no sub-node was found, we still need to set nports to
+> -	 * one in order to be able to use the
+> -	 * ahci_platform_[en|dis]able_[phys|regulators] functions.
+> -	 */
+> -	if (child_nodes)
+> -		hpriv->nports = child_nodes;
+> -	else
+> -		hpriv->nports = 1;
 
-from Linus' tree and commit:
+Same here.
 
-  ae78ec0a52c4 ("drm/xe/ptl: Add another PTL PCI ID")
+> -
+> -	hpriv->phys = devm_kcalloc(dev, hpriv->nports, sizeof(*hpriv->phys), GFP_KERNEL);
+> -	if (!hpriv->phys) {
+> -		rc = -ENOMEM;
+> -		goto err_out;
+> -	}
+> -	/*
+> -	 * We cannot use devm_ here, since ahci_platform_put_resources() uses
+> -	 * target_pwrs after devm_ have freed memory
+> -	 */
+> -	hpriv->target_pwrs = kcalloc(hpriv->nports, sizeof(*hpriv->target_pwrs), GFP_KERNEL);
+> -	if (!hpriv->target_pwrs) {
+> -		rc = -ENOMEM;
+> -		goto err_out;
+> -	}
 
-from the drm-xe tree.
+And for platforms that actually have a valid nports with no ID holes, the above
+is OK and uses less memory...
 
-I fixed it up (I deleted the file and added the following merge fix patch)
-and can carry the fix as necessary. This is now fixed as far as linux-next
-is concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
+Why not simply adding code that checks the ID of the child nodes ? If there are
+no ID holes, then nothing need to change. If there are holes, then
+hpriv->nports can be set to the highest ID + 1 and you can set
+hpriv->mask_port_map as you go. With just that, you should get everything
+working with far less changes than you have here.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 25 Nov 2024 12:05:38 +1100
-Subject: [PATCH] fix up for "drm/xe/ptl: Add another PTL PCI ID"
+>  	if (child_nodes) {
+>  		for_each_child_of_node_scoped(dev->of_node, child) {
+>  			u32 port;
+> @@ -587,7 +558,7 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
+>  				goto err_out;
+>  			}
+>  
+> -			if (port >= hpriv->nports) {
+> +			if (port >= AHCI_MAX_PORTS) {
+>  				dev_warn(dev, "invalid port number %d\n", port);
+>  				continue;
+>  			}
+> @@ -625,6 +596,8 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
+>  		 * If no sub-node was found, keep this for device tree
+>  		 * compatibility
+>  		 */
+> +		hpriv->mask_port_map |= BIT(0);
+> +
+>  		rc = ahci_platform_get_phy(hpriv, 0, dev, dev->of_node);
+>  		if (rc)
+>  			goto err_out;
+> 
+> ---
+> base-commit: adc218676eef25575469234709c2d87185ca223a
+> change-id: 20241121-ahci-nonconsecutive-ports-a8911b3255a7
+> 
+> Best regards,
 
-interacting with "drm/xe: switch to common PCI ID macros" from Linus'
-tree.
----
- include/drm/intel/pciids.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/drm/intel/pciids.h b/include/drm/intel/pciids.h
-index 32480b5563db..7883384acd5e 100644
---- a/include/drm/intel/pciids.h
-+++ b/include/drm/intel/pciids.h
-@@ -829,6 +829,7 @@
- 	MACRO__(0xB092, ## __VA_ARGS__), \
- 	MACRO__(0xB0A0, ## __VA_ARGS__), \
- 	MACRO__(0xB0A1, ## __VA_ARGS__), \
--	MACRO__(0xB0A2, ## __VA_ARGS__)
-+	MACRO__(0xB0A2, ## __VA_ARGS__), \
-+	MACRO__(0xB0B0, ## __VA_ARGS__)
-=20
- #endif /* __PCIIDS_H__ */
---=20
-2.45.2
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/TRQk6h/duJpsAjl_b/MgMX=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdDzkEACgkQAVBC80lX
-0GzECgf/YC2AiNdRic9ux2wvMJJ0CemZuFLuK4Jj/J+4zj0Ps/EzgjHiLrA2HqQ7
-kW+qK7baw9lusW2LXKKYi/nx4W+83umMJrwlnwYNdTAxAIsawoYO9UCYy/7Sd5mi
-I0Hi0U6g6FUss6vfItrjocpQIiBjoKifkNNHvVZhXSDfIz5nneQ8Ykq6FrcZ1Mlz
-JDe5GvT07Mcb8MNXqnwpUDV4rIVf/7btkkXJk+j3yo8ad9as8KHNalNA2ezp+EiP
-pYm3SYJ3i8k9lNmIKy7CEhFzk2eLw7UUTkAK3d+V9xqi/yT7+Ei1lKfB39ZBtcsS
-doxGBTR2wAzC3GqBZl5hy//xiDTHNQ==
-=vlyl
------END PGP SIGNATURE-----
-
---Sig_/TRQk6h/duJpsAjl_b/MgMX=--
+-- 
+Damien Le Moal
+Western Digital Research
 
