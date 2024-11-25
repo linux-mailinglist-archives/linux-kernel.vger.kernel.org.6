@@ -1,148 +1,112 @@
-Return-Path: <linux-kernel+bounces-421731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AFDE9D8F43
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:42:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2998016A5F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:42:45 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE0F1990A2;
-	Mon, 25 Nov 2024 23:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="GXio01ht"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D65499D8F59
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:53:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18132195B18
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 23:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BDFB28B02F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:53:37 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767581CD214;
+	Mon, 25 Nov 2024 23:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LhzcJKQc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF88B18DF93;
+	Mon, 25 Nov 2024 23:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732578164; cv=none; b=M8gGkD71MQnAJvXetLWl2ZnsrfZvPsoOTCSZHxXgXAB0UlbTsoOgWF9WmPIRtIAALGvds7psFcGcxIunf+E487qbX0w7Ta1HQavjucFCxv4+dYtQgSU0ASj8AmNfrA3/hGuq7JITR4iq3ji3p7VLqZ7xE6gSkBFyCD9RPD2n6WA=
+	t=1732578809; cv=none; b=OodHxDxeRxktYjRWvfkZQj2ZARwxI0jQ4yMOXIeH34ak6z/fZv4yjHYZhHiGaVu9ckTeTftrqNbRh4PjWJoP+2q/1XrTlieyhip9dHvZ8Zs4mdPv892LZYGXrato9iX70Saxd++j5o0i9j0wOAmK/hMUNESM+2HqTlGd/ruimvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732578164; c=relaxed/simple;
-	bh=zgIoM2cQCqvG8J1zUjANPmHbeDMqdfjQm6lIEkAVUz4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=X3TcxXtSsLzB2t0o13xZyhZN9T5fZ5cpaya2BfN2Ke68+2HzBEXAIgImhLL8644ycDln9aiG9h9WKhC56Lrw2NP7QBL9lIfBNEIj8KNjGKiBLcr8Pz7eluHd4rWSrMyar+UJsXzFYQ5XlPXPZvmAXVk+SEsHKS2/OReXIsvlw1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=GXio01ht; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id BACAB2C02E1;
-	Tue, 26 Nov 2024 12:42:31 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1732578151;
-	bh=mUKJmR0JfGbxBM7LBtbbbcz8JTQTr4Xcl4ZgJ53UcJo=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=GXio01htU7WUyfJOT7hGon3sHr+vwb/kEYethhgFK9cn7SElGR61+g9pdixJU6V6R
-	 0fYzxlNHWqn/+9V2feck3vxXTVJ3AG+/pglFfkdnaXvld0EDRGJlLgMKLdHVZijNsq
-	 DkvNsJSelKnWXdbVBFXJJFhEAz1b/hYvQlA7H51FDMUyZAhKZEJCoyXFW/vmF2b5P1
-	 dHbmXwTaXWFS7JzGWsV/wYuJRQjZZWSboPAXYWVudXIrCeMiL37NxIbU23qMfRD7RY
-	 yhl8TSPaYQBXtQEZaRYaaM15UV/DXQVmNFeQMk6LHZh/0MA73hwNp3swFpmE83t/xP
-	 RYYH9rXsNeWoA==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B67450b670000>; Tue, 26 Nov 2024 12:42:31 +1300
-Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 9B1C313EDFA;
-	Tue, 26 Nov 2024 12:42:31 +1300 (NZDT)
-Message-ID: <66daf1a8-efb7-4fef-92cd-eb680c7832fa@alliedtelesis.co.nz>
-Date: Tue, 26 Nov 2024 12:42:31 +1300
+	s=arc-20240116; t=1732578809; c=relaxed/simple;
+	bh=rFUNPbzQlq88yUnuIXu1GlgkAuvdh0NSAiK2v1NpN/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y6kiGPus38XkEeFh6QBnXzBCd2D37poWMPPBp6ZlWXyc7GGqIKQRUtAbq6WLhFhxzaez1EUrc0xnaWw3S/awfgqMUc8QyC7uIEMlEViKuZkdnehqPghjOinrV3Yj0LbL9o1HMzXf34YdhvNOO7q3XTqupnarohljX+lvk+CHeuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LhzcJKQc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 553D5C4CECE;
+	Mon, 25 Nov 2024 23:53:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732578809;
+	bh=rFUNPbzQlq88yUnuIXu1GlgkAuvdh0NSAiK2v1NpN/o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LhzcJKQcyFCUtosPxA+fxXKVzVwR4Vkwbo6QZyWXGiFw8yo9yb3mm94PD1VjqWv5W
+	 /OtRDdB2tST/ixbp15laVL/v2rNiInFajj2iwkx7M/NM/tTSG9DKHh8zJQYpnFmP7O
+	 SCW4o5ZMD37qIHr2rq7jVi9K4f04PWnR3Vqtg0e+ywUGH29iOmTrI/pHCiULi/YpXE
+	 esTZD4gBlY8jiGnH4ws4QeI1T3ro3CF4bi568anQt56mASop4f3LrJuqjgfVk88OAb
+	 2QoGVKi6RGtwOlbSjgza6CrRBRoMo1W+7YxTleKhIEXy1Cy2FVVOxfVePtny/I/wth
+	 HBOpG2FQSS/Pw==
+Date: Mon, 25 Nov 2024 15:53:26 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com, corbet@lwn.net, petr.pavlu@suse.com,
+	samitolvanen@google.com, da.gomez@samsung.com,
+	akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, shuah@kernel.org, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, linux-integrity@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-api@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, wufan@linux.microsoft.com,
+	pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de,
+	mjg59@srcf.ucam.org, pmatilai@redhat.com, jannh@google.com,
+	dhowells@redhat.com, jikos@kernel.org, mkoutny@suse.com,
+	ppavlu@suse.com, petr.vorel@gmail.com, mzerqung@0pointer.de,
+	kgold@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v6 07/15] digest_cache: Allow registration of digest list
+ parsers
+Message-ID: <Z0UN9ub0iztWvgLi@bombadil.infradead.org>
+References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
+ <20241119104922.2772571-8-roberto.sassu@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH] [MIPS] Place __kernel_entry at the beginning of text
- section
-To: Rong Xu <xur@google.com>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, Masahiro Yamada <masahiroy@kernel.org>,
- Klara Modin <klarasmodin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicolas Schier <nicolas@fjasle.eu>,
- "Maciej W. Rozycki" <macro@orcam.me.uk>, linux-mips@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241125230953.3090508-1-xur@google.com>
-Content-Language: en-US
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-In-Reply-To: <20241125230953.3090508-1-xur@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=Gam0nhXL c=1 sm=1 tr=0 ts=67450b67 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=1XWaLZrsAAAA:8 a=3W2ps74RiJH85kM3-o0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=mSD0U8-EzHfD161T-4u9:22
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241119104922.2772571-8-roberto.sassu@huaweicloud.com>
 
+On Tue, Nov 19, 2024 at 11:49:14AM +0100, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> Introduce load_parser() to load a kernel module containing a
+> parser for the requested digest list format (compressed kernel modules are
+> supported). Kernel modules are searched in the
+> /lib/modules/<kernel ver>/security/integrity/digest_cache directory.
+> 
+> load_parser() calls ksys_finit_module() to load a kernel module directly
+> from the kernel. request_module() cannot be used at this point, since the
+> reference digests of modprobe and the linked libraries (required for IMA
+> appraisal) might not be yet available, resulting in modprobe execution
+> being denied.
 
-On 26/11/24 12:09, Rong Xu wrote:
-> Mark __kernel_entry as ".head.text" and place HEAD_TEXT before
-> TEXT_TEXT in the linker script. This ensures that __kernel_entry
-> will be placed at the beginning of text section.
->
-> Drop mips from scripts/head-object-list.txt.
->
-> Signed-off-by: Rong Xu <xur@google.com>
-> Reported-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+You are doing a full solution implementation of loading modules in-kernel.
+Appraisals of modules is just part of the boot process, some module
+loading may need firmware to loading to get some functinality to work
+for example some firmware to get a network device up or a GPU driver.
+So module loading alone is not the only thing which may require
+IMA appraisal, and this solution only addresses modules. There are other
+things which may be needed other than firmware, eBPF programs are
+another example.
 
-Works for me on my RTL9302C based board
+It sounds more like you want to provide or extend LSM hooks fit your
+architecture and make kernel_read_file() LSM hooks optionally use it to
+fit this model.
 
-Tested-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Because this is just for a *phase* in boot, which you've caught because
+a catch-22 situaton, where you didn't have your parsers loaded. Which is
+just a reflection that you hit that snag. It doesn't prove all snags
+will be caught yet.
 
-> ---
->   arch/mips/kernel/head.S        | 1 +
->   arch/mips/kernel/vmlinux.lds.S | 1 +
->   scripts/head-object-list.txt   | 1 -
->   3 files changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/mips/kernel/head.S b/arch/mips/kernel/head.S
-> index e90695b2b60e..6d5fc498c6f9 100644
-> --- a/arch/mips/kernel/head.S
-> +++ b/arch/mips/kernel/head.S
-> @@ -26,6 +26,7 @@
->   
->   #include <kernel-entry-init.h>
->   
-> +	__HEAD
+And you only want to rely on this .. in-kernel loading solution only
+early on boot, is there a way to change this over to enable regular
+operation later?
 
-I'm not and expert on any of this but... should this go below the 
-setup_c0_status_* macros (just before the CONFIG_NO_EXCEPT_FILL) line? I 
-don't think it makes any actual difference but as a reader it feels more 
-logical that the __HEAD annotation is applying to the .fill and 
-__kernel_entry.
-
->   	/*
->   	 * For the moment disable interrupts, mark the kernel mode and
->   	 * set ST0_KX so that the CPU does not spit fire when using
-> diff --git a/arch/mips/kernel/vmlinux.lds.S b/arch/mips/kernel/vmlinux.lds.S
-> index d575f945d422..c9c1ba85ac7b 100644
-> --- a/arch/mips/kernel/vmlinux.lds.S
-> +++ b/arch/mips/kernel/vmlinux.lds.S
-> @@ -62,6 +62,7 @@ SECTIONS
->   	_text = .;	/* Text and read-only data */
->   	_stext = .;
->   	.text : {
-> +		HEAD_TEXT
->   		TEXT_TEXT
->   		SCHED_TEXT
->   		LOCK_TEXT
-> diff --git a/scripts/head-object-list.txt b/scripts/head-object-list.txt
-> index fd5d00bac447..f12b4a7b8406 100644
-> --- a/scripts/head-object-list.txt
-> +++ b/scripts/head-object-list.txt
-> @@ -23,7 +23,6 @@ arch/m68k/coldfire/head.o
->   arch/m68k/kernel/head.o
->   arch/m68k/kernel/sun3-head.o
->   arch/microblaze/kernel/head.o
-> -arch/mips/kernel/head.o
->   arch/nios2/kernel/head.o
->   arch/openrisc/kernel/head.o
->   arch/parisc/kernel/head.o
->
-> base-commit: 3596c721c4348b2a964e43f9296a0c01509ba927
+ Luis
 
