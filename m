@@ -1,96 +1,108 @@
-Return-Path: <linux-kernel+bounces-421138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41AD69D873D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:02:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F26919D8738
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:00:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DB9BB2E8D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:59:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8384D165CCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBDF1AE863;
-	Mon, 25 Nov 2024 13:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C593F1ADFFE;
+	Mon, 25 Nov 2024 13:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G4jYnK1H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="UpQQ/ruA"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3821ADFF1
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E50C1AB52F
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732543175; cv=none; b=SYBOba9ti/vvJjD0lsSnMqRbu4rQSmU6JMe2UpJcbJdfT09i1L6jjRjdKTIYIfpx5JSXFvZ594fkdM1/POPVZAMq1nMMuiCc1US+IaQJ6Yv6Yto8ciY9+cMJSXEjN15oGCTqm//yqQ06LiTOXpdQDbIMzBeKkngCN0XnnLaSRZQ=
+	t=1732543195; cv=none; b=H5ACj2+BIrwQBu2gtgM/tRlAZkwUcMy9RP4g16AhxC5o22OcifTIHRc1whwotgOdMZrYgZrASxQeN0RRzKWZb3I9CqcD9xFD6oN0bI6U2Oj8jQ3hyZmYo8uLcUdx/DO8SC9Ku8YvDSTWYUwpIBK6KeyqcUbxlJ8GLfajfZFvjJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732543175; c=relaxed/simple;
-	bh=ucAXv8kZ12VdJYQNdB6I+hwZKHGi3nJZiEs0F3G7qrI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RrbEUx/JcrOPWQL76Mq2XLAws2cDwTLHSM95cucXKboOJo4Rthg2oX2dOYeSeXHYziO8D4ObRJWPUClPE/Mhph7ZCNTNf2OiujrQcYlvF+UptcXaqXQIEKkyOEGXVg9zL6f9au5iGEPib6SudjL2rG4HoPNFw4ddQCO0L//zVLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G4jYnK1H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BA9CC4CECE;
-	Mon, 25 Nov 2024 13:59:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732543174;
-	bh=ucAXv8kZ12VdJYQNdB6I+hwZKHGi3nJZiEs0F3G7qrI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=G4jYnK1HTsvPIfacNb/NJRXwWcl201z57V7DT9T4Ki7WUujm6XuQSSBmhaUymXY9O
-	 eeM98xHpUdRW+5tbURoiWxFkkcSbOKl/niDgU+UjId6uaRdjrWz6gcO8MRFhXSRsrX
-	 7jPR6uGgU7hbIeKahgJXxif3t+0hr7tk7SukGkaUXwPYJjE34pG72ST8wPpXPIqTQB
-	 1lsTRmJfygwb5Rnev+HjbciFSzOwpOKpKzQ/kFTtVP56yr3r67VKktwf0MMX0WJbXG
-	 jclfumjVCz9qDCKWkffMZdfdY5Hh+bwIaFdNa0ez8xDbaPy6NF9lb1+CCBhNIHL47R
-	 1qpWjN2NIfSUA==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Parth Pancholi <parth105105@gmail.com>,  Pratyush Yadav
- <pratyush@kernel.org>,  Michael Walle <mwalle@kernel.org>,  Miquel Raynal
- <miquel.raynal@bootlin.com>,  Richard Weinberger <richard@nod.at>,
-  Vignesh Raghavendra <vigneshr@ti.com>,  Parth Pancholi
- <parth.pancholi@toradex.com>,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mtd: spi-nor: macronix: remove mx25u25635f from
- parts list to enable SFDP
-In-Reply-To: <0525af7c-f9a9-4dfc-9fed-97efc438b2b8@linaro.org> (Tudor
-	Ambarus's message of "Mon, 11 Nov 2024 10:49:12 +0000")
-References: <20241105105844.257676-1-parth105105@gmail.com>
-	<0525af7c-f9a9-4dfc-9fed-97efc438b2b8@linaro.org>
-Date: Mon, 25 Nov 2024 13:59:32 +0000
-Message-ID: <mafs0iksb5s8r.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1732543195; c=relaxed/simple;
+	bh=E8nIC1QMQF0fv1CW6rYzP9Cy3c+iEgEnoJ86Z+Jxk7g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NnCJ5zuVbgIG64x4Ii2CfZ5wemRLLwVdcRl6b7bqwZNgl+7RaBPjoZUuifc9CylMKbvaGQhdoPf5tT6XigoA1k5KGchUzHaCRp4CdE7LhwY+uGQfGumDVR6AIztwq6Q6Rns31E9OVtLnHpPcn9WAgmzQ5no74INVvVDjrpCuhAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=UpQQ/ruA; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ffa3e8e917so39562891fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 05:59:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1732543191; x=1733147991; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E8nIC1QMQF0fv1CW6rYzP9Cy3c+iEgEnoJ86Z+Jxk7g=;
+        b=UpQQ/ruA98jopTJVOsqsQkJQZKduuIcLlnNCDuLXJW9ZSBt3xDLBNa5pweO6yvOiVD
+         rK0dMD4DO1ie2+/WHUZyoawKH0oJjFsuDhhoeAYMJdejPgg6+AemF/OqSz2JGWZsGQss
+         bz4fl2+b4wwrl+AuJ6yoeOzYdV9LrVeTISrXbTf5Rt41iFUPJcX8cBQIwYRvx9UhWBcs
+         8V1nYo5LVrJIVeCUOw6SPWmyen/6rUCyl8VtaoayUG0hMlYH3+tNFDZjbLx09rs2wdzP
+         7h1jsmZe2jf5nG0cKeVskXV0xZ0Ut25Ff/u7oqjwxQaGM6CZQcHP+Jval/3nzqBQiz13
+         JEfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732543191; x=1733147991;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E8nIC1QMQF0fv1CW6rYzP9Cy3c+iEgEnoJ86Z+Jxk7g=;
+        b=rdsuAooKgB3OwCyfEbmA4ARm8ucrRMhdLqkc5vPUX+WseezwD5LJPC2JbsCCEfKeDd
+         029rA6YgI6rv15sI4o1CI7tBMKqVy9WguwklSumW04/2aJfZAkRIvKHHPL2OYFaSET1U
+         MFikv9CU6AcVwvcihA2l8LoPDlSRtH7xw0vJyrVScsO/DsIv6rvM3fXkDe3u1uSCBRgx
+         Quqv9mplZxkr5pEWc8M57VoiO/IpP+QiTVYopl9I1s+fFkLBsY0hEYrnAXAssesE0R4l
+         BsCs0zYD13DON0X24TGS77xkE+h8I75fKmOOQ7T/9HkjAfQhfqXKjLL95LpVgGZyFov6
+         QZWg==
+X-Forwarded-Encrypted: i=1; AJvYcCXoTb7Zik+L4Ognon2heg0I9ez2q32K1ct3U1Sg1y9RTxWcP+JDUleOrPh3OvVseoa1exN052swUz21HaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7hD5qoRPLNE7WQmmE5hdU/VpAF6UmiJ5i//9nyugbybW6pptj
+	KsSkvgnQZG1ulw/u/DsXzXRN5mEnNdo9Hcq9cRFV7r4sA41X5m6Q8nbrulVL4gi41o3/NltHfEs
+	iQrwoEqXl7PEf0Jwd0z/F9tQFkcFjzj1i5teCxg==
+X-Gm-Gg: ASbGncvnz3XKam//j96pgydxPwKtJb52bIaqx8sDDoiD5UDl0lyBY9UHEjB+8kTh6yF
+	Lp3NO8XAAubrcet0Kfi5i3d6c/1JJNXq3qfMDpMoJv7ch8+rFt9DYnI8JWhg0
+X-Google-Smtp-Source: AGHT+IH73yZTyIDCHHrbFTIalkWywowb8ZZKOHo5jE0IO/R7trvqjhf5t9qKLZtCvrgKQHzQR0Gp6IUGA3oU75IteeY=
+X-Received: by 2002:ac2:46d6:0:b0:53d:d3ff:85f1 with SMTP id
+ 2adb3069b0e04-53dd3ff8ef1mr4515352e87.42.1732543191117; Mon, 25 Nov 2024
+ 05:59:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20241118222828.240530-1-max.kellermann@ionos.com>
+ <CAOi1vP8Ni3s+NGoBt=uB0MF+kb5B-Ck3cBbOH=hSEho-Gruffw@mail.gmail.com>
+ <c32e7d6237e36527535af19df539acbd5bf39928.camel@kernel.org>
+ <CAKPOu+-orms2QBeDy34jArutySe_S3ym-t379xkPmsyCWXH=xw@mail.gmail.com>
+ <CA+2bHPZUUO8A-PieY0iWcBH-AGd=ET8uz=9zEEo4nnWH5VkyFA@mail.gmail.com>
+ <CAKPOu+8k9ze37v8YKqdHJZdPs8gJfYQ9=nNAuPeWr+eWg=yQ5Q@mail.gmail.com>
+ <CA+2bHPZW5ngyrAs8LaYzm__HGewf0De51MvffNZW4h+WX7kfwA@mail.gmail.com>
+ <CAO8a2SiRwVUDT8e3fN1jfFOw3Z92dtWafZd8M6MHB57D3d_wvg@mail.gmail.com> <CAO8a2SiN+cnsK5LGMV+6jZM=VcO5kmxkTH1mR1bLF6Z5cPxH9A@mail.gmail.com>
+In-Reply-To: <CAO8a2SiN+cnsK5LGMV+6jZM=VcO5kmxkTH1mR1bLF6Z5cPxH9A@mail.gmail.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Mon, 25 Nov 2024 14:59:39 +0100
+Message-ID: <CAKPOu+8u1Piy9KVvo+ioL93i2MskOvSTn5qqMV14V6SGRuMpOw@mail.gmail.com>
+Subject: Re: [PATCH] fs/ceph/mds_client: give up on paths longer than PATH_MAX
+To: Alex Markuze <amarkuze@redhat.com>
+Cc: Patrick Donnelly <pdonnell@redhat.com>, Jeff Layton <jlayton@kernel.org>, 
+	Ilya Dryomov <idryomov@gmail.com>, Venky Shankar <vshankar@redhat.com>, xiubli@redhat.com, 
+	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org, dario@cure53.de, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 11 2024, Tudor Ambarus wrote:
+On Mon, Nov 25, 2024 at 2:24=E2=80=AFPM Alex Markuze <amarkuze@redhat.com> =
+wrote:
+> Max, could you add a cap on the retry count to your original patch?
 
-> On 11/5/24 10:58 AM, Parth Pancholi wrote:
->> From: Parth Pancholi <parth.pancholi@toradex.com>
->> 
->> The Macronix mx25u25635f flash device supports SFDP initialization.
->> This commit removes the specific mx25u25635f entry (NOR ID 0xc22539),
->> along with its size and flags, from the NOR parts list. By removing
->> this entry, both mx25u25635f and mx25u25645g (which share the same
->> NOR ID) will utilize the generic flash driver configuration.
->> 
->> This change allows both devices (mx25u25635f and mx25u25645g) to
->> leverage SFDP-defined parameters, enabling dual and quad read
->> operations without the need for manual adjustment of no_sfdp_flags.
->
-> I'm fine with this. We may re-add an entry when BP is used or if someone
-> reports there's a flash with this ID that doesn't support SFDP, which
-> has a reasonable amount of probability for macronix flashes, but I'm ok
-> taking the risk and fixing it afterwards if reported.
+Before I wrote code that's not useful at all: I don't quite get why
+retry on buffer overflow is necessary at all. It looks like it once
+seemed to be a useful kludge, but then 1b71fe2efa31 ("ceph analog of
+cifs build_path_from_dentry() race fix") added the read_seqretry()
+check which, to my limited understanding, is a more robust
+implementation of rename detection.
 
-Sounds good. Would be a good idea to queue it early after -rc1 so it
-gets some time to bake in linux-next.
-
-Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
-
--- 
-Regards,
-Pratyush Yadav
+Max
 
