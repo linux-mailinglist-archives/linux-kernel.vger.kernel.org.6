@@ -1,123 +1,125 @@
-Return-Path: <linux-kernel+bounces-421709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A7F9D8EDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:03:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCCC69D8EE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:07:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97ED0167BF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:03:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AFAA169CA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894F3193067;
-	Mon, 25 Nov 2024 23:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03091B3941;
+	Mon, 25 Nov 2024 23:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TmLwbmiG"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="XAw4xmdx"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F1E1E480;
-	Mon, 25 Nov 2024 23:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6790B1E480;
+	Mon, 25 Nov 2024 23:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732575810; cv=none; b=Gvm+LQ2ShWlJ0lsq6pBn9qdIuDU+PnG6jeR5nPaIHp/6xtfDAU8BVA+sLNokfBRQ1PNWUoxUSKPFaca+F3nVdBQMuUZhwfieSdpEFcba0+Jmr1otQRtxNcjB9C435u4KK9aeRruQCZEJlfnFTAyqyIzTA1rpS0moPblTwTsF2YQ=
+	t=1732576047; cv=none; b=mgKq59m/yKiqzSjtG41SayBsp4qxL9HZswGaAU6NnEkxKL7xgByAjgpZFO+YHDZa6QBAqzT2NLksKAsbTEd3QgOXneenohHePeiq9Ej0hfdcgDrhiaV1k2HsjhZZ5XL3m7hKBCaiH8pfZX6nYi20jeSP1KPqeE59B88fEJ9IxSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732575810; c=relaxed/simple;
-	bh=BTgCLY4gPo5YU7+/1T0opHXi45vHwObPtguryl+EQn8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pJp62v83hCw+G4RF0lprVZmKHz+CqwrY/YOkBTYj7TYw3Ebf8xuy1Yi/Yl0FvHqvbp+KT4UNt3HSpqq2Ftzlp6FfFfC7FKqqvMOB3km27cZv0U5MuoEhODVEXbxRZTV1tv/S/xlHiq2gUjoOSIa7JOLXxnOfA08efcQFr36/zlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TmLwbmiG; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-724fc1aaa91so2040435b3a.3;
-        Mon, 25 Nov 2024 15:03:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732575808; x=1733180608; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xuBQyBjyiv7huPo6jrNQOgiInPpnVquxsBmCx5xtbh4=;
-        b=TmLwbmiGZC3A1iN9tV0HUEGBY83mEffWUuxWXXElheJwTSluPrLcrpZAHbc0yiOK+5
-         GEi5xfCr0lLKNM+qj0agWNCoj3XaWwXvzaW5UTqzAhDFUxE2GT5rfTDb7gvcRZDC5jVH
-         6+bpYOyOgC7U3fH1IbQ5EoA1QBmVTVPuyVFPMlgCV5sf84wRbd4eX6W1dJyJSlvQwEtE
-         PhiBh1InU9uLVImX/SjWGewOoKUgAfRT6eU7S5y2bOrFYHsFoO6YxJR89bsV5gK5XYsh
-         XsN+RZTnT9UWdNPzIKeyLrQp7YRwuvwDXEjyTS65zCeYnWO0BztJCIOgiGJBIrkW7sFi
-         aBig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732575808; x=1733180608;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xuBQyBjyiv7huPo6jrNQOgiInPpnVquxsBmCx5xtbh4=;
-        b=lqbP7m9BQuA7eC4Rzvi7j8TxjjIq9TG6Xo6ueYXJ30xy1+NGl50G/IT7Zll8zgRkLv
-         XFsp20+LyKLvkU3OavJqjFf07qDw3NgNT+GepKDYXX1+zvYlUfOLepR5WjK7RKiRXxJI
-         I5F8vgSahtA9wlfoZnfGYPnjuUdeYsT2cMh8WaTyT7CMm2RxfXIhNIexD7IttlKQP+HT
-         PcVIU4U4SPRnmicoVW1j4QGoIE8ZedmYb3guuTVyXJwT+PQTnkf5lp8ylgOarD3hqp3v
-         27GOpkGqiYuL7eZSwg8icDS6YOrvNvewG3esfcc5D5zfbX284ffdLqv26dd4sxEbWdwi
-         3hYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWEvRJjAT8xMJkazsVazVTgd619gQpH1jrKHZjW3FvCDAY8mCnNmetzjcQhejd5f7pmbi15L1PNbo=@vger.kernel.org, AJvYcCXIYX6R94B0c+IolssxRYeYXDYdqR1oSTQZksAwnzA+w3Ac4EZB5V4kIEOBRjs1+f+rKf30xD30lqGJ1h78@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2Zu/YynrVTYNLcO38WEb3LgLekt/kF0Pf/60q6lHQLfCiv1Gj
-	1hy9AaS6UYgVnSinFJ5u2nQV4SeQPqiImZNUBCONRG7vI2vFWYsS3YjlICHA
-X-Gm-Gg: ASbGnct9OY7Kq7j6jpxN0y6L4r1oOss7avPSz8ff8Y1kb8g9bviv0XKAdJVLddnKlmu
-	5+hkfObdz/20f/Vg3HuJX4gDst4mGQ9nHNJZCGdY5oRhBuLtMLvp2DQaqEwh2DdDzCvmUuTdHRy
-	W822xpRATIDv5A0dJMVDfQRmopXvDgcwHE5tMG7lEKkw+Yln/nIhBfuWsSAHrPka2E07UJ+PsEa
-	OUlZHyDjw7W6zlw+o/Elyl3WOVwQp/e0EwFLmAAvUiAEvDlBURVAGWnQnX8dANAYeHs5g==
-X-Google-Smtp-Source: AGHT+IG6AXPDCYJGJA9eS6z8KHwouPg9F8SAnH5vC/g4EXpThiKCm0nwTPWcfl5V9ZtwDkBTENhzhQ==
-X-Received: by 2002:a17:90b:3889:b0:2ea:735d:91e1 with SMTP id 98e67ed59e1d1-2eb0e3314e8mr18190853a91.19.1732575807722;
-        Mon, 25 Nov 2024 15:03:27 -0800 (PST)
-Received: from localhost.localdomain ([177.10.12.67])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2eb0cff70c1sm7392871a91.15.2024.11.25.15.03.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 15:03:27 -0800 (PST)
-From: "Rafael V. Volkmer" <rafael.v.volkmer@gmail.com>
-To: wbg@kernel.org
-Cc: david@lechnology.com,
-	linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	"Rafael V. Volkmer" <rafael.v.volkmer@gmail.com>
-Subject: [PATCH] counter: add COUNTER_FUNCTION_DISABLE for energy saving
-Date: Mon, 25 Nov 2024 20:02:20 -0300
-Message-Id: <20241125230220.9994-1-rafael.v.volkmer@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1732576047; c=relaxed/simple;
+	bh=+lfGohwuR97mU5HxNgXuGfnRwlDPqgNmpJ3ELBsOXjo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f7X2W42w63e9ueytq9A9liBIudFyf6CoMvILT6Wrn/AGZ+TVXT27WNkGgguh7nRrBvhBctfFNqCRjz7g9+Beukg0f+BlUnD/HIa+EeS+CtejnyU2kwcFp8YwUVxYawUg7/o7PaP6Qh6otugI3MaxbKY2YRAG5rc3waJ3sooUS0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=XAw4xmdx; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Xy1Z458N2zlgVnN;
+	Mon, 25 Nov 2024 23:07:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1732576042; x=1735168043; bh=o9fVWxijBFqZDAMDhn0yP2y3
+	eJvptu/TPVSxNtR12YU=; b=XAw4xmdx58Bcd4qXvRK69DLQTJbRfdOSxF3N93hH
+	loZRRkVGfxUKs0lpP+avk0hIdLtjN/8g1hztyvrFWYvk8Tn6ckA90bpNsuCXDtGG
+	sE0n9RZnd+0iOQUivMIs6S+d1FPi02K3WDlKiHqGqVDURxMcbrOnDyCLwarI3Cyj
+	ydAUezVPWrXw1kJoGAd+DRiq+xL6Cw0k/ECXSuKLnr7H7tY3ABBF/7MjhRTtfgGb
+	IifvNFwRaFrJkVWCcXYc4ZXEdUf/Glrn+LpiQap5egh9v8DB2FbNhikqRb+gUFSn
+	YrLlmc7+w7vmfAQ2nvGPnRFDo4okVl8NUjv+aa4gX3Fs1A==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id Vj10AufvVppq; Mon, 25 Nov 2024 23:07:22 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Xy1Z10bcdzlgVXv;
+	Mon, 25 Nov 2024 23:07:20 +0000 (UTC)
+Message-ID: <87f1bb6b-6a8e-4bfd-8c1f-d63c857a176e@acm.org>
+Date: Mon, 25 Nov 2024 15:07:18 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: ufs: core: Do not hold any lock in ufshcd_hba_stop
+To: Avri Altman <avri.altman@wdc.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241124110747.206651-1-avri.altman@wdc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20241124110747.206651-1-avri.altman@wdc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add `COUNTER_FUNCTION_DISABLE` to the `counter_function` enum in the
-counter API. This allows file operations to signal other drivers to
-disable hardware resources, reducing energy consumption in
-power-sensitive scenarios.
+On 11/24/24 3:07 AM, Avri Altman wrote:
+> This change is motivated by Bart's suggestion in [1], which enables to
+> further reduce the scsi host lock usage in the ufs driver. The reason
+> why it make sense, because although the legacy interrupt is disabled by
+> some but not all ufshcd_hba_stop() callers, it is safe to nest
+> disable_irq() calls as it checks the irq depth.
+> 
+> [1] https://lore.kernel.org/linux-scsi/c58e4fce-0a74-4469-ad16-f1edbd670728@acm.org/
+> 
+> Suggested-by: Bart Van Assche <bvanassche@acm.org>
+> Signed-off-by: Avri Altman <avri.altman@wdc.com>
+> ---
+>   drivers/ufs/core/ufshcd.c | 9 ++-------
+>   1 file changed, 2 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+> index acc3607bbd9c..09a5ff49da5a 100644
+> --- a/drivers/ufs/core/ufshcd.c
+> +++ b/drivers/ufs/core/ufshcd.c
+> @@ -4811,16 +4811,11 @@ EXPORT_SYMBOL_GPL(ufshcd_make_hba_operational);
+>    */
+>   void ufshcd_hba_stop(struct ufs_hba *hba)
+>   {
+> -	unsigned long flags;
+>   	int err;
+>   
+> -	/*
+> -	 * Obtain the host lock to prevent that the controller is disabled
+> -	 * while the UFS interrupt handler is active on another CPU.
+> -	 */
+> -	spin_lock_irqsave(hba->host->host_lock, flags);
+> +	ufshcd_disable_irq(hba);
+>   	ufshcd_writel(hba, CONTROLLER_DISABLE,  REG_CONTROLLER_ENABLE);
+> -	spin_unlock_irqrestore(hba->host->host_lock, flags);
+> +	ufshcd_enable_irq(hba);
+>   
+>   	err = ufshcd_wait_for_register(hba, REG_CONTROLLER_ENABLE,
+>   					CONTROLLER_ENABLE, CONTROLLER_DISABLE,
 
-Previously, tests with Texas Instruments' eQEP modules revealed that
-hardware resources remained active unless the driver was removed,
-offering no user command to stop the count. This approach exposed the
-fragility of these resources.
+Shouldn't the ufshcd_enable_irq() call be moved below the 
+ufshcd_wait_for_register() call? Otherwise a race condition could cause
+the interrupt handler to be triggered while the controller is being
+disabled.
 
-To address this, introduce a new enum option in the counter API to
-receive commands for disabling the hardware. This ensures the hardware
-enters an idle, power-saving state when not in use.
+Thanks,
 
-Signed-off-by: Rafael V. Volkmer <rafael.v.volkmer@gmail.com>
----
- include/uapi/linux/counter.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/include/uapi/linux/counter.h b/include/uapi/linux/counter.h
-index 008a691c254b..6f9a6ef878cf 100644
---- a/include/uapi/linux/counter.h
-+++ b/include/uapi/linux/counter.h
-@@ -145,6 +145,7 @@ enum counter_function {
- 	COUNTER_FUNCTION_QUADRATURE_X2_A,
- 	COUNTER_FUNCTION_QUADRATURE_X2_B,
- 	COUNTER_FUNCTION_QUADRATURE_X4,
-+	COUNTER_FUNCTION_DISABLE,
- };
- 
- /* Signal values */
--- 
-2.25.1
-
+Bart.
 
