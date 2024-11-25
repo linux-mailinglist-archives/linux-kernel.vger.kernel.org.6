@@ -1,141 +1,146 @@
-Return-Path: <linux-kernel+bounces-420585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D63A9D7CEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:31:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19E809D7CED
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:32:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3E871634EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:31:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D160B2820D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2217E188591;
-	Mon, 25 Nov 2024 08:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF43D18BBBB;
+	Mon, 25 Nov 2024 08:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VM5qWAB7"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FvvfBgW6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18EDD18C32C
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 08:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E60118B47C;
+	Mon, 25 Nov 2024 08:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732523494; cv=none; b=Z75X/gFCW62UO9t/q0AEqG/SnnISXUT1PwxCign6EE2wnbBw+NYJGH30/Ua/+wRH19fxhgsGLrALZcOWHd65FTQsUb7RZ6/uk6AbrJeXHi1cvwK1SgxkwNKgv426I/K/0ov1zZtFIRo+7eom1P5c4gGZv0RqHui6CorZ25LZ1dg=
+	t=1732523505; cv=none; b=fiujcGHiCwcBGuY/9a5YBlaq+YySez03/1LtvnjAqaf0Cd1iq5FlpUdrPwhzf4sLkYgdkxZ4Gi9cQG9T92c9BVjRO+qV+sZ0vHAuzjGn8t2c4KSZM3Zs9rkQDCC3nSA7GJrktmx7aO0E6Big0JF4uo1yw0n3gOrW3hpUc4DSHto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732523494; c=relaxed/simple;
-	bh=ktJPK16HT87IqUYNk6xW4DxEM+thEREPtW8kVjrlImY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iR/7YNlKYu2bdFlqj/nrpysru/82tfYNOc1eBcHMMSMLYYyQBuzez2wdhCjkDhJK2r/ECFXrmD6RKVG6l5p/ibZcwVxnzzN3cHzHNQxjxxBM12geuGqfUQm9UE+xllhDWCaouuyLnPxdRnE6stR7Q8SREJ+7cfFtSDIoGMI6l6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VM5qWAB7; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-21288402a26so37629935ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 00:31:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732523492; x=1733128292; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=POCxcDAs1OPhEdapqaVu7R6Wv3Kn60gIQbQM6aiBFqA=;
-        b=VM5qWAB78aQWuRBbdou8G1Lxim/wNWk60mcDRo60vJLSYcU2bsc3nTyJ6M8rRYc+rL
-         P11itXOS/f3ubQpn7G3qFhp4Bwj3lBru6Hfirx0dR+e7VOOcens2t1IUh9eRpuh+bi4a
-         5oq3Vkg6xqAdT9G/6zVRXYAgjrAo0+RvSEiao=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732523492; x=1733128292;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=POCxcDAs1OPhEdapqaVu7R6Wv3Kn60gIQbQM6aiBFqA=;
-        b=Y/g8RHCvEm4XCIdlNvyGk357U4yRlwC1VrhfrOzDaVB2TFS/9uh/PmD/STiuIpcQiL
-         oE12b4gEWIK3G1bYrqwHNUUJmcrUFP1n6tjk8qrBA1t1Xn+ohKncKc213bo5asICZ5K5
-         LXvaXg7O3vzRP2PqQDp8Di75ZeZFjPNVKNLj8yt+AFPkMVIJeZqCTWP6vxs00nuVzuN8
-         rJcUS1YnX67bkytbgIIHjEu50JNYcd96wdYzfW+espGge5gI6tE6YibusyYm4F9nkA5p
-         IGM2axcJOPyta0/96/1xtmm18SCnVefPzCHdy6GEA1bXooZSVLMwOEBmrI/CfZJT4B/u
-         2hyA==
-X-Forwarded-Encrypted: i=1; AJvYcCU65nemVJp8urin9JmGgssEI4m2efXQwN1wwT1HMtiq+ytf+90ricQjFsrsNTlr4hf7D3YBOlE/2/+14gY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFMtRb0KYnXOSEXpaBtPPIiYEGkWITux0hFK4LsBNF1wiR5vuo
-	enzxg7/uTv0HW6G4x8BMJSV/XgTwpxWjnNtRjshdKDzB3ViKAk4NFgitiwaOTA==
-X-Gm-Gg: ASbGncv4kpIUxWs89gGjG3QUfwgIVgxTCOkFKksLcYlcSai4uzp0kLAlDuMrNjB0WKf
-	whuHCgbQxTiCc63Ivi/FV2sY3ocmhra2mCW2jW3LZdMpx4zyFLOzPdD5LFuwxe3moojDKtukGo4
-	PBy+fewY3U6K8Qqzrr0lOl+4x+9/htXvhGgqe2dHYjDnnVuj+XEkuLn4Cn+FgPAx7B+0+bFgPav
-	G8e6B2Hh0QQX1BiWRHcJXrUkDoA7JIaqBdjei+0EZ9ixw/FJ8dsOVJqw+2Hj1c4EFmwAQsP
-X-Google-Smtp-Source: AGHT+IHSb4l363kSqeAiiJcrwoOGnozawSDBYK+oCcUIkkFt6/AtetpUnMMRtlfX7k/Ckh1KEU4bSg==
-X-Received: by 2002:a17:902:f685:b0:20c:9326:559 with SMTP id d9443c01a7336-2129f240de5mr179893455ad.29.1732523492519;
-        Mon, 25 Nov 2024 00:31:32 -0800 (PST)
-Received: from lschyi-p920.tpe.corp.google.com ([2401:fa00:1:10:66a3:d18f:544f:227a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dbfece2sm59090025ad.157.2024.11.25.00.31.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 00:31:32 -0800 (PST)
-From: Sung-Chi Li <lschyi@chromium.org>
-Date: Mon, 25 Nov 2024 16:31:17 +0800
-Subject: [PATCH v2 2/2] dt-bindings: mfd: cros-ec: add properties for
- thermal cooling cells
+	s=arc-20240116; t=1732523505; c=relaxed/simple;
+	bh=ft3wXjI0+l/wQog3RRWcR9KQksP82bwQ7eVg0sMG4oU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XUtlv1D9M8llS8VkDD/0pMJdfkul/JCRKiPBmGiBFtiK2ZwTDMbo9dc3LBwmWwILa5V5w760Hn1fF1fbJfLRMF9tpy5mhy/5iiZBT38/jCZsiR+406IwHQ3EMUmBWs5KyyIxkT4J0Y3Ssm2sBDUDA7hyKeWp56VMSfCHH1vHamY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FvvfBgW6; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732523503; x=1764059503;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ft3wXjI0+l/wQog3RRWcR9KQksP82bwQ7eVg0sMG4oU=;
+  b=FvvfBgW6mqEnFllBnWdPMkqBiOfyD66CnPlf7FO1kS9F70fUf8nBHaUv
+   T2jolBWIDVyC2s1EEawAK4bHgWRdF90CtPKAomVLbLYLW+CfI3nq3rq6d
+   eI5hiw7IH+nuymYYuFpW7wwEPrf/gosCtsMOcnjvmfvIOeEzC0QXhCKR5
+   dgqlADmNOAGv1935nF7nRIq/wz/EW0WOEzTb2RQUf672tN/4Qn6Shbf9w
+   fqmcs8cQz3hJXCrmxxaRvQyMR+xBHqcAb/ZMA4+lIBTVfzv1BPXi+2rH/
+   a1P8CcdEcZAzdS0CbF2k/If4h91AFLXL/SqGLnYV83C/cdqg6FVRZxD3j
+   g==;
+X-CSE-ConnectionGUID: IqgGa7jORl2Ja1PLrJ5p3Q==
+X-CSE-MsgGUID: O1Jx4C7WSoSlc7PPnNWbBA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="36533932"
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="36533932"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 00:31:42 -0800
+X-CSE-ConnectionGUID: fNEAcZkUSvKCB2DVgR9nnw==
+X-CSE-MsgGUID: 1b+LAubpRfau9lk6vbi80g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="91085932"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa010.jf.intel.com with ESMTP; 25 Nov 2024 00:31:40 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 549462D3; Mon, 25 Nov 2024 10:31:38 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Cloud Hsu <cloudhsu@google.com>,
+	Chris Koch <chrisko@google.com>
+Subject: [PATCH v1 1/1] x86/Documentation: Update algo in init_size description of boot protocol
+Date: Mon, 25 Nov 2024 10:31:36 +0200
+Message-ID: <20241125083136.1540424-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241125-extend_power_limit-v2-2-c3266a86e9b1@chromium.org>
-References: <20241125-extend_power_limit-v2-0-c3266a86e9b1@chromium.org>
-In-Reply-To: <20241125-extend_power_limit-v2-0-c3266a86e9b1@chromium.org>
-To: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
- Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: chrome-platform@lists.linux.dev, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Sung-Chi Li <lschyi@chromium.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732523485; l=1439;
- i=lschyi@chromium.org; s=20241113; h=from:subject:message-id;
- bh=ktJPK16HT87IqUYNk6xW4DxEM+thEREPtW8kVjrlImY=;
- b=FpMKgfM5p9IzbPe7guqbp4Vjag/aqYKH4JxQjr2hWl48PN/wyJux8YdE/6fm8+fY0+2OLaW7c
- ohiglj075PQC4cCEHOJcL5SCqRAmB2aBhq+byXp6ug7DAA8KeGSGApQ
-X-Developer-Key: i=lschyi@chromium.org; a=ed25519;
- pk=nE3PJlqSK35GdWfB4oVLOwi4njfaUZRhM66HGos9P6o=
+Content-Transfer-Encoding: 8bit
 
-A charger chip is connect to the ChromeOS Embedded Controller (EC).
-When external power input into the system, current would go through the
-charger chip, generating heat in the system. The EC supports limiting
-the input current, thus reducing the generated heat. As a result, EC is
-a simulated passive cooling device.
+The init_size description of boot protocol has an example of the runtime
+start address for the compressed bzImage. For non-relocatable kernel
+it relies on the pref_address value (if not 0), but for relocatable case
+only pays respect to the load_addres and kernel_alignment, and it is
+inaccurate for the latter. Boot loader must consider the pref_address
+as the Linux kernel relocates to it before being decompressed as nicely
+described in the commit 43b1d3e68ee7 message.
 
-We cannot reuse the existing charge managing mechanism in the power
-framework due to:
+Due to this inaccuracy some of the bootloaders (*) made a mistake in
+the calculations and if kernel image is big enough, this may lead to
+unbootable configurations.
 
-- The power framework requires the charger to expose its thermal status,
-  which is not a supported functionality on EC.
-- We need to use different thermal sensors to run thermal control,
-  rather than using thermal sensor on the charger.
+*)
+  In particular, kexec-tools missed that and resently got a couple of
+  changes which will be part of v2.0.30 release. For the record,
+  the 43b1d3e68ee7 fixed only kernel kexec implementation and also missed
+  to update the init_size description.
 
-Add the property '#cooling-cells' bindings, such that thermal framework
-can recognize cros_ec as a valid thermal cooling device.
+While at it, make an example C-like looking as it's done elsewhere in
+the document and fix indentation, so the syntax highliting will work
+properly in some editors (vim).
 
-Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
+Fixes: 43b1d3e68ee7 ("kexec: Allocate kernel above bzImage's pref_address")
+Fixes: d297366ba692 ("x86: document new bzImage fields")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- Documentation/devicetree/bindings/mfd/google,cros-ec.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/arch/x86/boot.rst | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-index aac8819bd00b..2b6f098057af 100644
---- a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-+++ b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-@@ -96,6 +96,9 @@ properties:
-   '#gpio-cells':
-     const: 2
+diff --git a/Documentation/arch/x86/boot.rst b/Documentation/arch/x86/boot.rst
+index 4fd492cb4970..01f08d94e8df 100644
+--- a/Documentation/arch/x86/boot.rst
++++ b/Documentation/arch/x86/boot.rst
+@@ -896,10 +896,19 @@ Offset/size:	0x260/4
  
-+  '#cooling-cells':
-+    const: 2
+   The kernel runtime start address is determined by the following algorithm::
+ 
+-	if (relocatable_kernel)
+-	runtime_start = align_up(load_address, kernel_alignment)
+-	else
+-	runtime_start = pref_address
++    if ( relocatable_kernel ) {
++      if ( load_address < pref_address )
++        load_address = pref_address;
++      runtime_start = align_up(load_address, kernel_alignment);
++    } else {
++      runtime_start = pref_address;
++    }
 +
-   gpio-controller: true
++Hence the necessary memory window location and size can be estimated by
++a boot loader as::
++
++    memory_window_start = runtime_start;
++    memory_window_size = init_size;
  
-   typec:
-
+ ============	===============
+ Field name:	handover_offset
 -- 
-2.47.0.371.ga323438b13-goog
+2.43.0.rc1.1336.g36b5255a03ac
 
 
