@@ -1,232 +1,155 @@
-Return-Path: <linux-kernel+bounces-421331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E53559D89ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:07:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 064189D89BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:52:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31F48B389DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:51:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0E5528557A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D672A1B3930;
-	Mon, 25 Nov 2024 15:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18351B4152;
+	Mon, 25 Nov 2024 15:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gjO4UDMQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WTx1VQW2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578C22AD25;
-	Mon, 25 Nov 2024 15:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1399B1AF0A9;
+	Mon, 25 Nov 2024 15:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732549845; cv=none; b=sIaF01Vt5B3kiomMg2jMnpXzSnIqNv8InuPye64RMxx//SC8isUoNIbNHDr1fxpIb9xPHXvozC/P0J4Be9PVFWSuecRXvSslh/IdTBSr9qRFmigyWVKadfvN/oQBjvnJq9tUWvpMuBc2BG/775O6v7jrXuTlq+/UgAAaCUCZh3s=
+	t=1732549952; cv=none; b=rHzFkRKP6ekyNPsPWHWBzdVXwsNj1k4qdjKFqWlDGO8BmDDFaAbevvZMnb3hc7qRKQ3zsEHjaKT+idLhsUeZUK9Xb1pN1ckF0XKZ2fr9fb/DUuitnu0QATiIhRBoe2pBpp4UZrhW0PnD9ycX5LP4MgqsnlwSV3JRJyXLpvJnEUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732549845; c=relaxed/simple;
-	bh=Kme1QEATTdDXWpUTB7ZrHqVVLGnnbgY6alpay1KwBXw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kymZUlEViDOBnHOPYb0i3uat7GMhnlqLROJ+xV6MhPHIQJRUxfPl3CStJ2WqelLT5VfpiSN82MgWsgWL5Wg7XpG3Lgu/Thfg4LLqdeKM/qISi2mmILas9UUn9SkORtyYE0GRlKr898eR+0KRDKfHHPXE0Ux1Munyc2zac9FM2C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gjO4UDMQ; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1732549952; c=relaxed/simple;
+	bh=44XADmBY7482aBrna1Gf1jtuO1UMXA5lIwwU6HOjwtg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F2MLTSlwhuJdBEpLIJkQjm6RqTMOmwjzloeqkOUsFgkU+caD47Victaa1flQ6NBa/+irmujDUXdV9AFwnJ13vSeQhKKrdXjXJb6Ak4gSPKzXvljHTdYChWEx7K/f1baAO50IxBhGaNMmAbkI5tS2lgExd0ViK/HC0s32xKr+9ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WTx1VQW2; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732549844; x=1764085844;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=Kme1QEATTdDXWpUTB7ZrHqVVLGnnbgY6alpay1KwBXw=;
-  b=gjO4UDMQkY1PR+n0x2UOYH6qd1mPGLh7aV6FDuadN14JYiPf+PGoqIlp
-   4PTP5/vxkvPCbo1cYfsRpkRZyGfOn4liRGPb11jLmVSGGcS/g1Q9EadCk
-   1iBlX1xSkriQG+J2wgzURnfG2NSOcMBym41gnRIv+xWkhhYE3H+GKt+sK
-   au90VBQH9rQWfm+pyUrs76NIki6jR3Bwt/2ImaFK+BCmK5YoLKyCNBw+i
-   hmGvoGK5JUmTNpXTp6qL6GT6gJpbtk5/NND4kxnLu2TTuxb4+k0LW9YdS
-   EpXQTqmnnVLAV5kZLYZiE6HdGrkqyhSqMD0a6c1PBXSOzQi0lghT7bUa3
-   g==;
-X-CSE-ConnectionGUID: EqhvDY4ESmSv7thpOmwHGA==
-X-CSE-MsgGUID: KahumHkSSzKmXOk4XNty8w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="32722928"
+  t=1732549951; x=1764085951;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=44XADmBY7482aBrna1Gf1jtuO1UMXA5lIwwU6HOjwtg=;
+  b=WTx1VQW25AvY0EJtptsu3xTRPPqJ1SdXC3wA+IYPSM2jMJI4vuAW7c5Y
+   edd7fR2uzibRiO1R/AgGnAewWmHM1pS80Vu/UTR1ZtUjB+YoaUl5WY3d/
+   7xEWUBPwOyMYUhG7dWIY7nfD1QD3pqe91LBxAv89cza1FnrC3KE8J8D6S
+   segw7O/JFNMWmJ0HtelGub3jQKoNod5Y8N5rOOa2qHGd8HT9ODdrgFPVV
+   kqy3W5UR2REpybOduP9U3TyzUyPukzAD0TvDWuNupj/BNsVxSgepEKa5v
+   oOz8amUqy9/CJcgwJY45Xh4UXekwTq0o/KakdNHhVcNrDx1coHsb8lHjn
+   A==;
+X-CSE-ConnectionGUID: HD0av90vQm+rK5kRcBtZ3A==
+X-CSE-MsgGUID: GJWMk6EJQV6SFfTbsTBbDg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="36446799"
 X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
-   d="scan'208";a="32722928"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 07:50:43 -0800
-X-CSE-ConnectionGUID: nO7IimL1Qye2xQ55t/Vk/g==
-X-CSE-MsgGUID: 1+VcP7MrQIKYMUqmT3To6w==
+   d="scan'208";a="36446799"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 07:52:14 -0800
+X-CSE-ConnectionGUID: 23u/Xv/eTCemOL/ogk5O2w==
+X-CSE-MsgGUID: F2vfipoVSsmBDXbO0I+SIw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
-   d="scan'208";a="122246591"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO [10.245.246.22]) ([10.245.246.22])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 07:50:42 -0800
-Message-ID: <087e0b9f45888b75c6ac2455c022349e28a72e07.camel@linux.intel.com>
-Subject: Re: [PATCH AUTOSEL 6.11 3/5] locking/ww_mutex: Adjust to lockdep
- nest_lock requirements
-From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-To: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com, will@kernel.org
-Date: Mon, 25 Nov 2024 16:50:37 +0100
-In-Reply-To: <20241124124643.3338173-3-sashal@kernel.org>
-References: <20241124124643.3338173-1-sashal@kernel.org>
-	 <20241124124643.3338173-3-sashal@kernel.org>
-Autocrypt: addr=thomas.hellstrom@linux.intel.com; prefer-encrypt=mutual;
- keydata=mDMEZaWU6xYJKwYBBAHaRw8BAQdAj/We1UBCIrAm9H5t5Z7+elYJowdlhiYE8zUXgxcFz360SFRob21hcyBIZWxsc3Ryw7ZtIChJbnRlbCBMaW51eCBlbWFpbCkgPHRob21hcy5oZWxsc3Ryb21AbGludXguaW50ZWwuY29tPoiTBBMWCgA7FiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQuBaTVQrGBr/yQAD/Z1B+Kzy2JTuIy9LsKfC9FJmt1K/4qgaVeZMIKCAxf2UBAJhmZ5jmkDIf6YghfINZlYq6ixyWnOkWMuSLmELwOsgPuDgEZaWU6xIKKwYBBAGXVQEFAQEHQF9v/LNGegctctMWGHvmV/6oKOWWf/vd4MeqoSYTxVBTAwEIB4h4BBgWCgAgFiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwwACgkQuBaTVQrGBr/P2QD9Gts6Ee91w3SzOelNjsus/DcCTBb3fRugJoqcfxjKU0gBAKIFVMvVUGbhlEi6EFTZmBZ0QIZEIzOOVfkaIgWelFEH
-Organization: Intel Sweden AB, Registration Number: 556189-6027
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-3.fc39) 
+   d="scan'208";a="128823369"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 25 Nov 2024 07:52:07 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tFbNc-0006ZF-1m;
+	Mon, 25 Nov 2024 15:52:04 +0000
+Date: Mon, 25 Nov 2024 23:51:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alistair Popple <apopple@nvidia.com>, dan.j.williams@intel.com,
+	linux-mm@kvack.org
+Cc: oe-kbuild-all@lists.linux.dev, Alistair Popple <apopple@nvidia.com>,
+	lina@asahilina.net, zhang.lyra@gmail.com,
+	gerald.schaefer@linux.ibm.com, vishal.l.verma@intel.com,
+	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
+	jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
+	will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
+	dave.hansen@linux.intel.com, ira.weiny@intel.com,
+	willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
+	linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org
+Subject: Re: [PATCH v3 11/25] mm: Allow compound zone device pages
+Message-ID: <202411252342.LUEKRmrY-lkp@intel.com>
+References: <f1a93b8a38e14e2ab279ece310175334e973b970.1732239628.git-series.apopple@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f1a93b8a38e14e2ab279ece310175334e973b970.1732239628.git-series.apopple@nvidia.com>
 
-On Sun, 2024-11-24 at 07:46 -0500, Sasha Levin wrote:
-> From: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com>
->=20
-> [ Upstream commit 823a566221a5639f6c69424897218e5d6431a970 ]
->=20
-> When using mutex_acquire_nest() with a nest_lock, lockdep refcounts
-> the
-> number of acquired lockdep_maps of mutexes of the same class, and
-> also
-> keeps a pointer to the first acquired lockdep_map of a class. That
-> pointer
-> is then used for various comparison-, printing- and checking
-> purposes,
-> but there is no mechanism to actively ensure that lockdep_map stays
-> in
-> memory. Instead, a warning is printed if the lockdep_map is freed and
-> there are still held locks of the same lock class, even if the
-> lockdep_map
-> itself has been released.
->=20
-> In the context of WW/WD transactions that means that if a user
-> unlocks
-> and frees a ww_mutex from within an ongoing ww transaction, and that
-> mutex happens to be the first ww_mutex grabbed in the transaction,
-> such a warning is printed and there might be a risk of a UAF.
->=20
-> Note that this is only problem when lockdep is enabled and affects
-> only
-> dereferences of struct lockdep_map.
->=20
-> Adjust to this by adding a fake lockdep_map to the acquired context
-> and
-> make sure it is the first acquired lockdep map of the associated
-> ww_mutex class. Then hold it for the duration of the WW/WD
-> transaction.
->=20
-> This has the side effect that trying to lock a ww mutex *without* a
-> ww_acquire_context but where a such context has been acquire, we'd
-> see
-> a lockdep splat. The test-ww_mutex.c selftest attempts to do that, so
-> modify that particular test to not acquire a ww_acquire_context if it
-> is not going to be used.
->=20
-> Signed-off-by: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Link:
-> https://lkml.kernel.org/r/20241009092031.6356-1-thomas.hellstrom@linux.in=
-tel.com
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+Hi Alistair,
 
-Commit introduces regressions and should not be backported. See
-discussion for corresponding 6.12 patch.
+kernel test robot noticed the following build errors:
 
-/Thomas
+[auto build test ERROR on 81983758430957d9a5cb3333fe324fd70cf63e7e]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Alistair-Popple/fuse-Fix-dax-truncate-punch_hole-fault-path/20241125-094004
+base:   81983758430957d9a5cb3333fe324fd70cf63e7e
+patch link:    https://lore.kernel.org/r/f1a93b8a38e14e2ab279ece310175334e973b970.1732239628.git-series.apopple%40nvidia.com
+patch subject: [PATCH v3 11/25] mm: Allow compound zone device pages
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20241125/202411252342.LUEKRmrY-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241125/202411252342.LUEKRmrY-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411252342.LUEKRmrY-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/mm.h:32,
+                    from arch/sh/kernel/asm-offsets.c:14:
+   include/linux/memremap.h: In function 'is_device_private_page':
+>> include/linux/memremap.h:164:17: error: implicit declaration of function 'page_pgmap' [-Wimplicit-function-declaration]
+     164 |                 page_pgmap(page)->type == MEMORY_DEVICE_PRIVATE;
+         |                 ^~~~~~~~~~
+>> include/linux/memremap.h:164:33: error: invalid type argument of '->' (have 'int')
+     164 |                 page_pgmap(page)->type == MEMORY_DEVICE_PRIVATE;
+         |                                 ^~
+   include/linux/memremap.h: In function 'is_pci_p2pdma_page':
+   include/linux/memremap.h:176:33: error: invalid type argument of '->' (have 'int')
+     176 |                 page_pgmap(page)->type == MEMORY_DEVICE_PCI_P2PDMA;
+         |                                 ^~
+   include/linux/memremap.h: In function 'is_device_coherent_page':
+   include/linux/memremap.h:182:33: error: invalid type argument of '->' (have 'int')
+     182 |                 page_pgmap(page)->type == MEMORY_DEVICE_COHERENT;
+         |                                 ^~
+   make[3]: *** [scripts/Makefile.build:102: arch/sh/kernel/asm-offsets.s] Error 1
+   make[3]: Target 'prepare' not remade because of errors.
+   make[2]: *** [Makefile:1203: prepare0] Error 2
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:224: __sub-make] Error 2
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:224: __sub-make] Error 2
+   make: Target 'prepare' not remade because of errors.
 
 
+vim +/page_pgmap +164 include/linux/memremap.h
 
-> ---
-> =C2=A0include/linux/ww_mutex.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 14 +=
-+++++++++++++
-> =C2=A0kernel/locking/test-ww_mutex.c |=C2=A0 8 +++++---
-> =C2=A02 files changed, 19 insertions(+), 3 deletions(-)
->=20
-> diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
-> index bb763085479af..a401a2f31a775 100644
-> --- a/include/linux/ww_mutex.h
-> +++ b/include/linux/ww_mutex.h
-> @@ -65,6 +65,16 @@ struct ww_acquire_ctx {
-> =C2=A0#endif
-> =C2=A0#ifdef CONFIG_DEBUG_LOCK_ALLOC
-> =C2=A0	struct lockdep_map dep_map;
-> +	/**
-> +	 * @first_lock_dep_map: fake lockdep_map for first locked
-> ww_mutex.
-> +	 *
-> +	 * lockdep requires the lockdep_map for the first locked
-> ww_mutex
-> +	 * in a ww transaction to remain in memory until all
-> ww_mutexes of
-> +	 * the transaction have been unlocked. Ensure this by
-> keeping a
-> +	 * fake locked ww_mutex lockdep map between
-> ww_acquire_init() and
-> +	 * ww_acquire_fini().
-> +	 */
-> +	struct lockdep_map first_lock_dep_map;
-> =C2=A0#endif
-> =C2=A0#ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
-> =C2=A0	unsigned int deadlock_inject_interval;
-> @@ -146,7 +156,10 @@ static inline void ww_acquire_init(struct
-> ww_acquire_ctx *ctx,
-> =C2=A0	debug_check_no_locks_freed((void *)ctx, sizeof(*ctx));
-> =C2=A0	lockdep_init_map(&ctx->dep_map, ww_class->acquire_name,
-> =C2=A0			 &ww_class->acquire_key, 0);
-> +	lockdep_init_map(&ctx->first_lock_dep_map, ww_class-
-> >mutex_name,
-> +			 &ww_class->mutex_key, 0);
-> =C2=A0	mutex_acquire(&ctx->dep_map, 0, 0, _RET_IP_);
-> +	mutex_acquire_nest(&ctx->first_lock_dep_map, 0, 0, &ctx-
-> >dep_map, _RET_IP_);
-> =C2=A0#endif
-> =C2=A0#ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
-> =C2=A0	ctx->deadlock_inject_interval =3D 1;
-> @@ -185,6 +198,7 @@ static inline void ww_acquire_done(struct
-> ww_acquire_ctx *ctx)
-> =C2=A0static inline void ww_acquire_fini(struct ww_acquire_ctx *ctx)
-> =C2=A0{
-> =C2=A0#ifdef CONFIG_DEBUG_LOCK_ALLOC
-> +	mutex_release(&ctx->first_lock_dep_map, _THIS_IP_);
-> =C2=A0	mutex_release(&ctx->dep_map, _THIS_IP_);
-> =C2=A0#endif
-> =C2=A0#ifdef DEBUG_WW_MUTEXES
-> diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-
-> ww_mutex.c
-> index 78719e1ef1b11..8faa8f720bc8f 100644
-> --- a/kernel/locking/test-ww_mutex.c
-> +++ b/kernel/locking/test-ww_mutex.c
-> @@ -62,7 +62,8 @@ static int __test_mutex(unsigned int flags)
-> =C2=A0	int ret;
-> =C2=A0
-> =C2=A0	ww_mutex_init(&mtx.mutex, &ww_class);
-> -	ww_acquire_init(&ctx, &ww_class);
-> +	if (flags & TEST_MTX_CTX)
-> +		ww_acquire_init(&ctx, &ww_class);
-> =C2=A0
-> =C2=A0	INIT_WORK_ONSTACK(&mtx.work, test_mutex_work);
-> =C2=A0	init_completion(&mtx.ready);
-> @@ -90,7 +91,8 @@ static int __test_mutex(unsigned int flags)
-> =C2=A0		ret =3D wait_for_completion_timeout(&mtx.done,
-> TIMEOUT);
-> =C2=A0	}
-> =C2=A0	ww_mutex_unlock(&mtx.mutex);
-> -	ww_acquire_fini(&ctx);
-> +	if (flags & TEST_MTX_CTX)
-> +		ww_acquire_fini(&ctx);
-> =C2=A0
-> =C2=A0	if (ret) {
-> =C2=A0		pr_err("%s(flags=3D%x): mutual exclusion failure\n",
-> @@ -679,7 +681,7 @@ static int __init test_ww_mutex_init(void)
-> =C2=A0	if (ret)
-> =C2=A0		return ret;
-> =C2=A0
-> -	ret =3D stress(2047, hweight32(STRESS_ALL)*ncpus, STRESS_ALL);
-> +	ret =3D stress(2046, hweight32(STRESS_ALL)*ncpus, STRESS_ALL);
-> =C2=A0	if (ret)
-> =C2=A0		return ret;
-> =C2=A0
+   159	
+   160	static inline bool is_device_private_page(const struct page *page)
+   161	{
+   162		return IS_ENABLED(CONFIG_DEVICE_PRIVATE) &&
+   163			is_zone_device_page(page) &&
+ > 164			page_pgmap(page)->type == MEMORY_DEVICE_PRIVATE;
+   165	}
+   166	
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
