@@ -1,128 +1,151 @@
-Return-Path: <linux-kernel+bounces-420558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC5A09D7C52
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:02:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD4A49D7C56
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:06:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72F40282640
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:02:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EE64B22327
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC9C1714CF;
-	Mon, 25 Nov 2024 08:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D544187FF4;
+	Mon, 25 Nov 2024 08:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="A5GMbgja"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3A92500D5;
-	Mon, 25 Nov 2024 08:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kd2l48Hc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6178827;
+	Mon, 25 Nov 2024 08:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732521748; cv=none; b=Ulhc5CyOsk6jRJI/91DyZSn/BhwQzcxV6VxfIn7jGhyZKYHBo6W/NPfiw7dDPiVPLwEeZVV1yUVZnlaUG/OErBLYTKlh0WSKU0Wgh7QsGd3J+iA8TPnC5oLhgfuOF6PyWzeuuY77Q9WVhskCudhL2xHzeoBn5IoW4pN28XJwbng=
+	t=1732521968; cv=none; b=ecNjS5tfqnWAAqtZwOc4hHzJmzCL42bTjFKn3y0cHrzY/RLAnFjETDvP4t/Vnm2qzUxbTlLs6C0rK+f+Ebjzw8buxCNvB6mU56FooH06TFOmJ1Ij14MA/yZwFOLd1V6nKNMHbPqZmlYbzlRuDjVtCOTe5Xe4PNDOzL9kJrZ3gqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732521748; c=relaxed/simple;
-	bh=PsOdm12MrlwKZegNo+S1+FmJ9rMaTJQ1GPPbnbBfyQM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=KA9YtbxJP4fc5TyWwr+6bk5kknexr4GThKTuKTqZpya0tbg93kYnmj7Jdpm+ETaMmPj8Nxx9sml0ZpfqiElVniN/sVAnoZf13tt7oureyurcMMlhZE8b1EI3dCh/hrvEErnm1y9zwIR3fIMujj+h85y94Q2SzeP31FjETvmjUNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=A5GMbgja reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=Fjsdmbs2DLuWnuyk2HsxKqRdXQhCdYZjv3t6l2WF5m0=; b=A
-	5GMbgjaJoQw6WAv9JYRJ6rF3yQay+3/63wU8VrI8HOw8u4QOHMB0dVVFZigyzC3s
-	lpC2x7DLpOcGyun71FUA1FWauRGuc3kbZ9pQvarbokjO3BLEbrTWwxArjwCvrI1C
-	vXQJIdQOpgzzpSuHMaUOjTU3DZPMgjlHo8W0g3gwVE=
-Received: from 18500469033$163.com (
- [2001:0DB8:6ca2:a596:4eef:3859:5c34:2a04, 52.131.113.184] ) by
- ajax-webmail-wmsvr-40-123 (Coremail) ; Mon, 25 Nov 2024 16:01:36 +0800
- (CST)
-Date: Mon, 25 Nov 2024 16:01:36 +0800 (CST)
-From: "Dingyan Li" <18500469033@163.com>
-To: gregkh@linuxfoundation.org, stern@rowland.harvard.edu
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	usb-storage@lists.one-eyed-alien.net
-Subject: Re:[PATCH v1] usb: storage: add a macro for the upper limit of max
- LUN
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <20241030083858.46907-1-18500469033@163.com>
-References: <20241030083858.46907-1-18500469033@163.com>
-X-NTES-SC: AL_Qu2YAPmZvk4i4CKbYOkfmkgbhek8X8q5uPQj3IBeOJ5+jAnp+yQ6TW5SInTW4se0FzGTmgmGSiBk289mf5Zyb40Wj8mf/yvwNFtCAWzJXRhGVg==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1732521968; c=relaxed/simple;
+	bh=dpPPy5YDFoAWcqG5N+i72aqHivusJrXT3+3sy3jMemQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HvVkMQpZGjv0PvFU0iBjiSlspo0/qZOTtdduoyPW3xWsXXJOGjeq7gJ5zuI6tb4l5mj28t+fmEfbLF+76grr7i3kYCCSPxvbxW5tEcVV17GPNWZ30bT6jgvs1CKI9MZd+5EANW3I5vtTJbQZeOjqmm67bGWrks3UoT2H01VvH9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kd2l48Hc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A29DCC4CECE;
+	Mon, 25 Nov 2024 08:06:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732521968;
+	bh=dpPPy5YDFoAWcqG5N+i72aqHivusJrXT3+3sy3jMemQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kd2l48Hcgo8DEatTnIcLx7p7qz/g3tLDlCbupbL5mfA6D8GqPmOYod+N12TR25CMF
+	 6ErwmnSeynH0KAi1DVMF5aE1YN8yah/UVJoz3ns1JpamLrK2VNKIMSi72zvNhfOPoO
+	 4sPFFnX1a9mTtaeni67a9cJkds/F2OA50lzrzASZSLwaIxP4P3oNNs6TmwVyKGLSC3
+	 peCbgxMhoiGTpswxHxuGl7fmZf/W8WFho4Jk1VPjkPXx2pmUH2KFBoro0AjvrfTxYc
+	 DEhaDBGvS3GQB904OHl6XChBoQdG5VfZmmfKDedbOhmKR+FGsjiAeu5Pyx/hZd0pY5
+	 Y1+kNDvv0uOUA==
+Message-ID: <5d69e1db-2ec5-445d-9336-9345c918722a@kernel.org>
+Date: Mon, 25 Nov 2024 09:06:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <56abaf44.86c3.19362571bee.Coremail.18500469033@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:eygvCgDnz4HgLkRnw00vAA--.59492W
-X-CM-SenderInfo: jprykiiquwmiitt6il2tof0z/1tbioBagy2dCFEWY3wADst
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] riscv: spacemit: add i2c support to K1 SoC
+To: Troy Mitchell <troymitchell988@gmail.com>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-riscv@lists.infradead.org, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241125-k1-i2c-master-v4-0-0f3d5886336b@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241125-k1-i2c-master-v4-0-0f3d5886336b@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-SGkgRXhwZXJ0cywKCkFueSB0aG91Z2h0cyBvbiB0aGlzIHBhdGNoPwoKUmVnYXJkcywKCgpBdCAy
-MDI0LTEwLTMwIDE2OjM4OjU4LCAiRGluZ3lhbiBMaSIgPDE4NTAwNDY5MDMzQDE2My5jb20+IHdy
-b3RlOgo+VGhlIG1lYW5pbmcgb2YgdGhpcyB2YWx1ZSBpcyBhbHJlYWR5IHVzZWQgaW4gc2V2ZXJh
-bCBwbGFjZXMsCj5idXQgd2l0aCBjb25zdGFudCB2YWx1ZXMgYW5kIGNvbW1lbnRzIHRvIGV4cGxh
-aW4gaXQgc2VwYXJhdGVseS4KPkl0J3MgYmV0dGVyIHRvIGhhdmUgYSBjZW50cmFsIHBsYWNlIHRv
-IGRvIHRoaXMgdGhlbiB1c2UgdGhlIG1hY3JvCj5pbiB0aG9zZSBwbGFjZXMgZm9yIGJldHRlciBy
-ZWFkYWJpbGl0eS4KPgo+U2lnbmVkLW9mZi1ieTogRGluZ3lhbiBMaSA8MTg1MDA0NjkwMzNAMTYz
-LmNvbT4KPi0tLQo+IGRyaXZlcnMvdXNiL2dhZGdldC9mdW5jdGlvbi9mX3RjbS5jICAgICAgICAg
-IHwgOCArKy0tLS0tLQo+IGRyaXZlcnMvdXNiL2dhZGdldC9mdW5jdGlvbi9zdG9yYWdlX2NvbW1v
-bi5oIHwgMiArLQo+IGRyaXZlcnMvdXNiL3N0b3JhZ2UvdHJhbnNwb3J0LmMgICAgICAgICAgICAg
-IHwgOCArKy0tLS0tLQo+IGluY2x1ZGUvbGludXgvdXNiL3N0b3JhZ2UuaCAgICAgICAgICAgICAg
-ICAgIHwgOCArKysrKysrKwo+IDQgZmlsZXMgY2hhbmdlZCwgMTMgaW5zZXJ0aW9ucygrKSwgMTMg
-ZGVsZXRpb25zKC0pCj4KPmRpZmYgLS1naXQgYS9kcml2ZXJzL3VzYi9nYWRnZXQvZnVuY3Rpb24v
-Zl90Y20uYyBiL2RyaXZlcnMvdXNiL2dhZGdldC9mdW5jdGlvbi9mX3RjbS5jCj5pbmRleCAxNWJi
-M2FhMTJhYTguLmUxOTE0YjIwZjgxNiAxMDA2NDQKPi0tLSBhL2RyaXZlcnMvdXNiL2dhZGdldC9m
-dW5jdGlvbi9mX3RjbS5jCj4rKysgYi9kcml2ZXJzL3VzYi9nYWRnZXQvZnVuY3Rpb24vZl90Y20u
-Ywo+QEAgLTQ0MSwxNCArNDQxLDEwIEBAIHN0YXRpYyBpbnQgdXNiZ19ib3Rfc2V0dXAoc3RydWN0
-IHVzYl9mdW5jdGlvbiAqZiwKPiAJCQlwcl9lcnIoIk5vIExVTnMgY29uZmlndXJlZD9cbiIpOwo+
-IAkJCXJldHVybiAtRUlOVkFMOwo+IAkJfQo+LQkJLyoKPi0JCSAqIElmIDQgTFVOcyBhcmUgcHJl
-c2VudCB3ZSByZXR1cm4gMyBpLmUuIExVTiAwLi4zIGNhbiBiZQo+LQkJICogYWNjZXNzZWQuIFRo
-ZSB1cHBlciBsaW1pdCBpcyAweGYKPi0JCSAqLwo+IAkJbHVucy0tOwo+LQkJaWYgKGx1bnMgPiAw
-eGYpIHsKPisJCWlmIChsdW5zID4gVVNfQlVMS19NQVhfTFVOX0xJTUlUKSB7Cj4gCQkJcHJfaW5m
-b19vbmNlKCJMaW1pdGluZyB0aGUgbnVtYmVyIG9mIGx1bnMgdG8gMTZcbiIpOwo+LQkJCWx1bnMg
-PSAweGY7Cj4rCQkJbHVucyA9IFVTX0JVTEtfTUFYX0xVTl9MSU1JVDsKPiAJCX0KPiAJCXJldF9s
-dW4gPSBjZGV2LT5yZXEtPmJ1ZjsKPiAJCSpyZXRfbHVuID0gbHVuczsKPmRpZmYgLS1naXQgYS9k
-cml2ZXJzL3VzYi9nYWRnZXQvZnVuY3Rpb24vc3RvcmFnZV9jb21tb24uaCBiL2RyaXZlcnMvdXNi
-L2dhZGdldC9mdW5jdGlvbi9zdG9yYWdlX2NvbW1vbi5oCj5pbmRleCBjZWQ1ZDJiMDkyMzQuLjEx
-YWM3ODVkNWVlZSAxMDA2NDQKPi0tLSBhL2RyaXZlcnMvdXNiL2dhZGdldC9mdW5jdGlvbi9zdG9y
-YWdlX2NvbW1vbi5oCj4rKysgYi9kcml2ZXJzL3VzYi9nYWRnZXQvZnVuY3Rpb24vc3RvcmFnZV9j
-b21tb24uaAo+QEAgLTEzMSw3ICsxMzEsNyBAQCBzdGF0aWMgaW5saW5lIGJvb2wgZnNnX2x1bl9p
-c19vcGVuKHN0cnVjdCBmc2dfbHVuICpjdXJsdW4pCj4gI2RlZmluZSBGU0dfQlVGTEVOCSgodTMy
-KTE2Mzg0KQo+IAo+IC8qIE1heGltYWwgbnVtYmVyIG9mIExVTnMgc3VwcG9ydGVkIGluIG1hc3Mg
-c3RvcmFnZSBmdW5jdGlvbiAqLwo+LSNkZWZpbmUgRlNHX01BWF9MVU5TCTE2Cj4rI2RlZmluZSBG
-U0dfTUFYX0xVTlMJKFVTX0JVTEtfTUFYX0xVTl9MSU1JVCArIDEpCj4gCj4gZW51bSBmc2dfYnVm
-ZmVyX3N0YXRlIHsKPiAJQlVGX1NUQVRFX1NFTkRJTkcgPSAtMiwKPmRpZmYgLS1naXQgYS9kcml2
-ZXJzL3VzYi9zdG9yYWdlL3RyYW5zcG9ydC5jIGIvZHJpdmVycy91c2Ivc3RvcmFnZS90cmFuc3Bv
-cnQuYwo+aW5kZXggOWQ3NjdmNmJmNzIyLi5lNmJjOGVjYWVjYmIgMTAwNjQ0Cj4tLS0gYS9kcml2
-ZXJzL3VzYi9zdG9yYWdlL3RyYW5zcG9ydC5jCj4rKysgYi9kcml2ZXJzL3VzYi9zdG9yYWdlL3Ry
-YW5zcG9ydC5jCj5AQCAtMTA4NywxMyArMTA4Nyw5IEBAIGludCB1c2Jfc3Rvcl9CdWxrX21heF9s
-dW4oc3RydWN0IHVzX2RhdGEgKnVzKQo+IAl1c2Jfc3Rvcl9kYmcodXMsICJHZXRNYXhMVU4gY29t
-bWFuZCByZXN1bHQgaXMgJWQsIGRhdGEgaXMgJWRcbiIsCj4gCQkgICAgIHJlc3VsdCwgdXMtPmlv
-YnVmWzBdKTsKPiAKPi0JLyoKPi0JICogSWYgd2UgaGF2ZSBhIHN1Y2Nlc3NmdWwgcmVxdWVzdCwg
-cmV0dXJuIHRoZSByZXN1bHQgaWYgdmFsaWQuIFRoZQo+LQkgKiBDQlcgTFVOIGZpZWxkIGlzIDQg
-Yml0cyB3aWRlLCBzbyB0aGUgdmFsdWUgcmVwb3J0ZWQgYnkgdGhlIGRldmljZQo+LQkgKiBzaG91
-bGQgZml0IGludG8gdGhhdC4KPi0JICovCj4rCS8qIElmIHdlIGhhdmUgYSBzdWNjZXNzZnVsIHJl
-cXVlc3QsIHJldHVybiB0aGUgcmVzdWx0IGlmIHZhbGlkLiAqLwo+IAlpZiAocmVzdWx0ID4gMCkg
-ewo+LQkJaWYgKHVzLT5pb2J1ZlswXSA8IDE2KSB7Cj4rCQlpZiAodXMtPmlvYnVmWzBdIDw9IFVT
-X0JVTEtfTUFYX0xVTl9MSU1JVCkgewo+IAkJCXJldHVybiB1cy0+aW9idWZbMF07Cj4gCQl9IGVs
-c2Ugewo+IAkJCWRldl9pbmZvKCZ1cy0+cHVzYl9pbnRmLT5kZXYsCj5kaWZmIC0tZ2l0IGEvaW5j
-bHVkZS9saW51eC91c2Ivc3RvcmFnZS5oIGIvaW5jbHVkZS9saW51eC91c2Ivc3RvcmFnZS5oCj5p
-bmRleCA4NTM5OTU2YmMyYmUuLjUxYmUzYmI4ZmNjYiAxMDA2NDQKPi0tLSBhL2luY2x1ZGUvbGlu
-dXgvdXNiL3N0b3JhZ2UuaAo+KysrIGIvaW5jbHVkZS9saW51eC91c2Ivc3RvcmFnZS5oCj5AQCAt
-ODIsNCArODIsMTIgQEAgc3RydWN0IGJ1bGtfY3Nfd3JhcCB7Cj4gI2RlZmluZSBVU19CVUxLX1JF
-U0VUX1JFUVVFU1QgICAweGZmCj4gI2RlZmluZSBVU19CVUxLX0dFVF9NQVhfTFVOICAgICAweGZl
-Cj4gCj4rLyoKPisgKiBJZiA0IExVTnMgYXJlIHN1cHBvcnRlZCB0aGVuIHRoZSBMVU5zIHdvdWxk
-IGJlCj4rICogbnVtYmVyZWQgZnJvbSAwIHRvIDMsIGFuZCB0aGUgcmV0dXJuIHZhbHVlIGZvcgo+
-KyAqIFVTX0JVTEtfR0VUX01BWF9MVU4gcmVxdWVzdCB3b3VsZCBiZSAzLiBUaGUgdmFsaWQKPisg
-KiBMVU4gZmllbGQgaXMgNCBiaXRzIHdpZGUsIHRoZSB1cHBlciBsaW1pdCBpcyAweDBmLgo+KyAq
-Lwo+KyNkZWZpbmUgVVNfQlVMS19NQVhfTFVOX0xJTUlUICAgMHgwZgo+Kwo+ICNlbmRpZgo+LS0g
-Cj4yLjI1LjEK
+On 25/11/2024 07:49, Troy Mitchell wrote:
+> Hi all,
+> 
+> This patch implements I2C driver for the SpacemiT K1 SoC,
+> providing basic support for I2C read/write communication which
+> compatible with standard I2C bus specifications.
+> 
+> In this version, the driver defaults to use fast-speed-mode and
+> interrupts for transmission, and does not support DMA, high-speed mode, or FIFO.
+> 
+> The docs of I2C can be found here, in chapter 16.1 I2C [1]
+> 
+> Link: https://developer.spacemit.com/documentation?token=Rn9Kw3iFHirAMgkIpTAcV2Arnkf#part5 [1]
+> ---
+> Change in v4:
+> - Patch #1:
+> 	- Change the default value of clock-frequency from 100000 to
+> 	  400000. This is to correspond to the driver's default value.
+> 	- Drop the minimum of clock-frequency
+> 	- Modify the description of clock-frequency
+
+Explain why do you request re-review.
+
+<form letter>
+This is a friendly reminder during the review process.
+
+It looks like you received a tag and forgot to add it.
+
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
+
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
+
+Best regards,
+Krzysztof
 
