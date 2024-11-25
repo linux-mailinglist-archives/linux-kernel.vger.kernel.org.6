@@ -1,101 +1,142 @@
-Return-Path: <linux-kernel+bounces-420376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 269989D79B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 02:08:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 246AB9D79B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 02:09:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F99EB21DC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 01:07:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBE6028221F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 01:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A018BEC;
-	Mon, 25 Nov 2024 01:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344ED8462;
+	Mon, 25 Nov 2024 01:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fvqk/7DM"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NbQBNF29"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A34BE4A
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 01:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EF017C60;
+	Mon, 25 Nov 2024 01:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732496871; cv=none; b=iJ4nPYC+jf43PwviNQGzARdFJrTl70v53uKdy5FqxLB4l+uwPPv3GvrfnoNpoHZFDZSNgF83WWlR2h7PajFOusRyiGol0NJGIXtGovRZ32LvBsvH87dqpXusJujS+35VIufounGinDewfb8lAzpL6aKMS3UM86qD0xCc7J1AeR4=
+	t=1732496974; cv=none; b=U2bU5erQ4F8HpbdajW7ExHiif1pAOOjKCQJP9xiww/Y2ycYH6RC9fUTP4Wvunlqka09Sgf3Prxl9ebZjK7ISXYieuEthwea2fZj1uyQbRDIOmnU33/JSiEeVZKZVaQnB4rPLDJICvh7mZdI1W66EB8cHNqqDESvH4Bkk63Bx+L0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732496871; c=relaxed/simple;
-	bh=Zyft1p8BKzVPHJKKM8dRsZ8hHf5nnaQuyeZe7XSgq/g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tUjobAHziqJnDmrVldxrJWUVLbot6epgOaKrHMniu+qmaLngF0hCV3YWwQZpo6qm112Fo8pFBm3gNfnM5C7DENI5U290khP7N8a5K0LiZ9SsLnKHymkD4mSDJelVUONp+fB3GPgCPgITUoBRdN55NGWYWc9+QI8bh9N9h6PNApI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fvqk/7DM; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37ed3bd6114so2270280f8f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 17:07:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732496868; x=1733101668; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Zyft1p8BKzVPHJKKM8dRsZ8hHf5nnaQuyeZe7XSgq/g=;
-        b=Fvqk/7DMQqim1X1CrIHSs3BZ+mdI3VV8GYux6wSflK00D/zXDUoSR5+V6z8NQKueLC
-         vGXVrOlIuXZiXVecjTEE7r1KSk9TnSznwrLOYa4A0F5DSyiD/CHzMlFyebEmSLnh2LKb
-         evl2dwb7rIp8I3ad8cVVG67bWHeav2OTBFNfU3wWvIkcapyQfip3kWHytbmFkNIxQzh1
-         2U1qVGUtKWMDjSTMQdj0CLf/dtAuKOl5o+UqbmJpKR55vX1s2tn11a++pONSdzvBJRmX
-         J8KGV7z/GIAR27TzDK+wh/obmmUY03Xm/hPshHdtkObqOvJa3dn/+2bav6yvhGwiTdE8
-         Zf6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732496868; x=1733101668;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zyft1p8BKzVPHJKKM8dRsZ8hHf5nnaQuyeZe7XSgq/g=;
-        b=PBN+oWr5zbSJGvlPZoem9qJHT6y7NSYjrjOWsGWa1QBXXhsoBkPmf3Pbpi4sU/nLNP
-         H+P9hJPSjOqUWWMx+9vws9YqteteRhW1fp1V9TLvOtqUP3/dVWofC4DVy6YUol35n8NA
-         QbANOj0aOw+r4IM+Fa2BQa8iB4Vlb8E5dCvrHEZ3e3Gu3lJKjwhz2WVitDf47aSnfqT0
-         D/X4ym94qcbgsHOH50St0A6746S1ngluv5LhoxLvTgOSfz+9cknjAb7Ufh0E/M/yUax4
-         rdoJMIXghT5zcTnfhaoDl4eruthp/SyRZgRQBXNyEUZUhHh2xpSTPt0UjENnSwgDLLi+
-         L0Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCVL+jBLIrxeCziMd62VOwRVEIhEci48Fbc9q8p72B/0nFk5a1AXDAfuMDYKI840sA6dAcS8WVA7iNr+cJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUUxEuKvfSAoBAI+tWKdLfqN8VaV4CcrBtGe7ZzXW5FjQemLGd
-	k1hQtJ9eRJ7OxiEwaSA3r4AjfQNQvR+EcWGolvpKMWxYLkxGmu7aR0PFNwiXlaE=
-X-Gm-Gg: ASbGncsbNPtuwil9STginESa5I778MrOouNEHnizV9JlELAb0TeVUJd//IXQfqy5zpd
-	9b+mNScsPD1T49JqccQzLqADPlVDaA8GFroSApQojifMIoH9Y85XzQcC/NaaXmohu7+thJ0bEEq
-	1IVUVJe3VO0hoL8UVZ/O5hwD8HJza4qOdLM75xHCr3rrQxbnqa2U0kLpeRRzgXecbfDfQxT+W3G
-	9AdSHsxeZ8MjrZwV5qZ4fCGHOmyQrLM+NKuC+ucV6u98jcQSANI0OuZsdXUZIs=
-X-Google-Smtp-Source: AGHT+IHhoeFb+Wf/gYrX78mfl6z1x1kaYwgpE8ZNovkFpwSxzWiADNjuxgKT0GRkBF+vDAWZZizWWQ==
-X-Received: by 2002:a05:6000:797:b0:382:5066:326f with SMTP id ffacd0b85a97d-38260b5b0bcmr8716564f8f.17.1732496867967;
-        Sun, 24 Nov 2024 17:07:47 -0800 (PST)
-Received: from [192.168.0.30] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fd04ec7sm8938616f8f.110.2024.11.24.17.07.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Nov 2024 17:07:46 -0800 (PST)
-Message-ID: <b1ff464f-9243-4e91-8dde-b31fac61e08c@linaro.org>
-Date: Mon, 25 Nov 2024 01:07:45 +0000
+	s=arc-20240116; t=1732496974; c=relaxed/simple;
+	bh=MrizqgFeahr33sqTryZ723cEdfval7sND/3f8Nu1bL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=FPuO83MPLTLuR98MN0+kANVB1TgdW+/lG7j2odVDWtO0ypWTsRLy7D043BxgocC0LG0Hp3cDT5ybJbvAWRfYIi6aN+w+eNJsHnnwpf1fPuTeCorZvxE9AUz0W/JNEiAidGv289M2pqS0b59UklLnOmRLfBK+C3VDp40Dq9DISsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=NbQBNF29; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1732496961;
+	bh=NPFuZFCQNR5Yu8G5vMI1GfSK3jYB5bbGOIq1W9kVn5g=;
+	h=Date:From:To:Cc:Subject:From;
+	b=NbQBNF29Uba8no9mBtJ+Wc0Wgbl3WeuldOP/xHU6ibA4QAdkI+sNtfM9iG3yO2KpO
+	 rLexf67fC8h5ApDEiax8Jt4kqchMBrYBLr5oEctti5GRy8moQ4imLxQk2t4SUBPcTb
+	 BPdonLMvwJc4CwVu7ec/dB0VXLyvCiTfEdxSOfYaJ+JhZVdw1Ppe74JA8TqyBy7ueF
+	 /h0RPOG3Nxjw7DQa7nE20XET9dNG5tFT00mBUclJ5OrJOO92xh3ClghKajmrKwE+bV
+	 dkEmERGmd4F3PrYaK8ahMyDeaIcb/yHgdZ45jYdDrd7J8ZNJ2VD4gnSuPSeBLj6neB
+	 rIxEgoTL3aoMQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XxSKD2Jjkz4xcr;
+	Mon, 25 Nov 2024 12:09:20 +1100 (AEDT)
+Date: Mon, 25 Nov 2024 12:09:21 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Lucas De Marchi <lucas.demarchi@intel.com>, Thomas =?UTF-8?B?SGVsbHN0?=
+ =?UTF-8?B?csO2bQ==?= <thomas.hellstrom@linux.intel.com>, DRM XE List
+ <intel-xe@lists.freedesktop.org>
+Cc: Jani Nikula <jani.nikula@intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Matt Atwood <matthew.s.atwood@intel.com>,
+ Matt Roper <matthew.d.roper@intel.com>
+Subject: linux-next: manual merge of the drm-xe tree with Linus' tree
+Message-ID: <20241125120921.1bbc1930@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] clk: qcom: common: Add support for power-domain
- attachment
-To: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241125-b4-linux-next-24-11-18-clock-multiple-power-domains-v2-0-a5e7554d7e45@linaro.org>
- <20241125-b4-linux-next-24-11-18-clock-multiple-power-domains-v2-2-a5e7554d7e45@linaro.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241125-b4-linux-next-24-11-18-clock-multiple-power-domains-v2-2-a5e7554d7e45@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/TRQk6h/duJpsAjl_b/MgMX=";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 25/11/2024 01:00, Bryan O'Donoghue wrote:
-> per which
+--Sig_/TRQk6h/duJpsAjl_b/MgMX=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-for each
+Hi all,
+
+Today's linux-next merge of the drm-xe tree got a conflict in:
+
+  include/drm/intel/xe_pciids.h
+
+between commit:
+
+  493454445c95 ("drm/xe: switch to common PCI ID macros")
+
+from Linus' tree and commit:
+
+  ae78ec0a52c4 ("drm/xe/ptl: Add another PTL PCI ID")
+
+from the drm-xe tree.
+
+I fixed it up (I deleted the file and added the following merge fix patch)
+and can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 25 Nov 2024 12:05:38 +1100
+Subject: [PATCH] fix up for "drm/xe/ptl: Add another PTL PCI ID"
+
+interacting with "drm/xe: switch to common PCI ID macros" from Linus'
+tree.
+---
+ include/drm/intel/pciids.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/include/drm/intel/pciids.h b/include/drm/intel/pciids.h
+index 32480b5563db..7883384acd5e 100644
+--- a/include/drm/intel/pciids.h
++++ b/include/drm/intel/pciids.h
+@@ -829,6 +829,7 @@
+ 	MACRO__(0xB092, ## __VA_ARGS__), \
+ 	MACRO__(0xB0A0, ## __VA_ARGS__), \
+ 	MACRO__(0xB0A1, ## __VA_ARGS__), \
+-	MACRO__(0xB0A2, ## __VA_ARGS__)
++	MACRO__(0xB0A2, ## __VA_ARGS__), \
++	MACRO__(0xB0B0, ## __VA_ARGS__)
+=20
+ #endif /* __PCIIDS_H__ */
+--=20
+2.45.2
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/TRQk6h/duJpsAjl_b/MgMX=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdDzkEACgkQAVBC80lX
+0GzECgf/YC2AiNdRic9ux2wvMJJ0CemZuFLuK4Jj/J+4zj0Ps/EzgjHiLrA2HqQ7
+kW+qK7baw9lusW2LXKKYi/nx4W+83umMJrwlnwYNdTAxAIsawoYO9UCYy/7Sd5mi
+I0Hi0U6g6FUss6vfItrjocpQIiBjoKifkNNHvVZhXSDfIz5nneQ8Ykq6FrcZ1Mlz
+JDe5GvT07Mcb8MNXqnwpUDV4rIVf/7btkkXJk+j3yo8ad9as8KHNalNA2ezp+EiP
+pYm3SYJ3i8k9lNmIKy7CEhFzk2eLw7UUTkAK3d+V9xqi/yT7+Ei1lKfB39ZBtcsS
+doxGBTR2wAzC3GqBZl5hy//xiDTHNQ==
+=vlyl
+-----END PGP SIGNATURE-----
+
+--Sig_/TRQk6h/duJpsAjl_b/MgMX=--
 
