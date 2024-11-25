@@ -1,127 +1,190 @@
-Return-Path: <linux-kernel+bounces-421498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18C519D8C1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:18:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDCBF9D8C21
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:23:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61A6B28504F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:18:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5098FB22394
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAB31B87EF;
-	Mon, 25 Nov 2024 18:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3C21B87C3;
+	Mon, 25 Nov 2024 18:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F5L82hgK"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="GTMydJJs"
+Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazolkn19011036.outbound.protection.outlook.com [52.103.64.36])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B9E1B85F6
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 18:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732558695; cv=none; b=FKhDdvmSP+/YToR9tkymigjDiSphTWiOO+RhUADuqIv+Hc/w3GHTLYaIIVoldmqcS/G2Dq4sPEYj4ehP0f1QSyOgBFYW65EinQaQArhQ28vNVXnWyhDZYPN146x+nL2H+B3/U8Z0BxIzfYmo84A3LOEcatoKn5jroNKFLnAREBY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732558695; c=relaxed/simple;
-	bh=vHUrN6KaMC8V6+4NtMOWs1nW4Ry+ynEyHCgD9VvbB0Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GSvh86FHSvZUXuzaWFRBpKoz2HOb9/a2RajtMMJcIu7hmg1oTyrKgYLruOFQdq9fbSTUe+91Xu2QxR8Gv2UPDkNnvOO2hinnfdhY1YGFTUkGidN1dT11r4BbS9UWjFnTXcf/2n7+iJ8F9uRnqMPsjGeCXZFZt6Ed8uMPhSXl/zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F5L82hgK; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-724fc1aaa91so1818325b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 10:18:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732558693; x=1733163493; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ldJd5HmPlYA9vRJ3waB7JY0x/C5bJVvNHMbZnqNh4V8=;
-        b=F5L82hgKZIwPPyynBGEBPrxbJo6hKiPUDzKmrzpWHj2R5o0x24oBjS9WZxQV6x8vEf
-         vxEeRe4KvsscUm3Wz6Li1OdnmgSAnnx8a+AVj2cgj2Jq4yhzMDQSq5sXPBuMAdKoUUA+
-         sBqOn4rZlO2U6+SZTDdcDWtpoTN+Qo7C8KeY/X5+H7lG3vpoq4uso6F/X/300KmZ+pFU
-         2nTcXkD5OTWRfwUmqI8OIL/b3KeWHDXEYNiInyApSay+Wqbx87tCPQrmUDyDGUurkwzG
-         XCGzHKecuLTx/oXG8RweG6ov7/0wQei3LK4/TqVFc4gSpQXym9BzK5z2JiopQrSPJgAH
-         wmAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732558693; x=1733163493;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ldJd5HmPlYA9vRJ3waB7JY0x/C5bJVvNHMbZnqNh4V8=;
-        b=EUI7aCMfqFUR2/Pz6wQNiFOPVihAYvzvbV03v5U5k7HwfDx8kFH3tF8AC0cfTeoO0k
-         AOBVPrtstNJxCWQK7ctkcHV9qMa/NALCKr9eF6KjSK8ZSYyI/g6Ngkx4nPokV4vh1R7w
-         5r1ed9xTGRQlWh/pKdxmkVUu6xbLPLqZXNiETexWzCzZ+2JqP+yH/jPVc08ggX4TOH0e
-         YjsX08S8wzPj6fIH+EZT6EWoscXvvXGQUdseN3GpueKTvttjBXRYS/HTOKNjAjgTf4wu
-         GR31C62K/7/YTa/hzC/b45aHuFHKWbgV6LUPVYB1Po9oEWDQL+K4WMCZP59Tic8i0uJW
-         hKYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwDX+8JEekPS50qIN6yN1ICsneZMRp1/0DmKMK8BGzcSc3cj5yfRE9+Cp6WgLP7YhzKeEQD8WY8whxF1U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4vZQxlvbQDOS8SVDt5bx5Gbe0q0moBEX7xnGvFlgddLyx7m7H
-	ZHmgMR4H+SNlutcooMfdW3T9c2UWiKQbbpd3e2aWniwisXN84tYL
-X-Gm-Gg: ASbGncvTGd0KETgOT9NUorVYvYqHcNmppiZeiSHsZNhbk4iYuj8EpAKZbsM+mSs5MgC
-	OHVaPo/gfs5/zAXcYeHJErvKl9oYWH3XiEqLoSmsz22ZD0sjkhIk6FP4pLDp9I0YSKsxqXnqajH
-	JPIV42PVNJQ0FML1z3QlWccry/Voj/YgKfU83gXRLXQG/y5I/VSDwM9Qi8dT0TQjEN6vQ7LDtWz
-	31z16jzAIEfwz8c+Aj70CbQx0kCWKi318vX+Tf5DG0qvyPcTqjMKjog7K+OynwN
-X-Google-Smtp-Source: AGHT+IHqEcIQqXHxqa0100tDdVvYAO+DYT1SBu7yLiqvuZikuC4XnVPIO7PeJRv5/19OhYr67h7wjg==
-X-Received: by 2002:a05:6a00:17a1:b0:71e:7c25:8217 with SMTP id d2e1a72fcca58-724df6a4ac4mr17569909b3a.25.1732558693364;
-        Mon, 25 Nov 2024 10:18:13 -0800 (PST)
-Received: from tc.hsd1.or.comcast.net ([2601:1c2:c104:170:2d2:ed5d:17c9:e364])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de454aa1sm6753629b3a.4.2024.11.25.10.18.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 10:18:13 -0800 (PST)
-From: Leo Stone <leocstone@gmail.com>
-To: syzbot+35a21b6aade7af3c7b3a@syzkaller.appspotmail.com
-Cc: chao@kernel.org,
-	jaegeuk@kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [syzbot] [f2fs?] WARNING in f2fs_delete_entry
-Date: Mon, 25 Nov 2024 10:18:10 -0800
-Message-ID: <20241125181810.190792-1-leocstone@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <6740a00c.050a0220.363a1b.0144.GAE@google.com>
-References: <6740a00c.050a0220.363a1b.0144.GAE@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610631B3943
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 18:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.64.36
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732558967; cv=fail; b=gPlx3iKeNvTu2K7Let6ljE5CxGJajmOz45vQ/zD6azidOaKvnBuD2kVaRcyyejIKeLm4FvVqM7M4UL4+FdWuuXlwBm+SFwrKymlvz90Eu/u6octZ2gGStzXL0A1WxM1WTATEQHILuOV8XDrPCDdoKNffvaTJvlJLRn0J6Us3pvo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732558967; c=relaxed/simple;
+	bh=Jzm4vNGsx5D6qtZNa5S7vxNzhO3d+/949+AOSayQm0g=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=S1DsyKoaDZ3ypHsFuCikAnHQqmA06++Gq8neNHW0uL1KgnsaYuL7maIrY3k3e0MagZ02d8xnh44v44V/x9vA/F/id0sAkjT8lBBVCxvvPPO+Vczu/yQm0zKRI7AIBNJwzSGmWa07k0msajCbJD9f6eZRqKBYENEAH686uo64T84=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=GTMydJJs; arc=fail smtp.client-ip=52.103.64.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OrGcJTqQo1NKsqKbdskl90VFU+4maFcLMV3NLAFKAyfNSlBrOZdGM2ksIxpnMB8aDx7Zs1aw0UbjOdMH07bYBbCng1wIjqYcGoK4G9DVXusmUd0ubJB1lFp5DA+plHrDenjpR7E4eOjviRE59iFDggCKIQalhgGQxmnVP/ALZPh6qdrGGXcqoNKD1Y3LGqPk/bSAlnojL+Cr5131auzUea5vBHct4GfCRiWbpKQPGMTyiLqJ5K0SSsIiNTXqDtL8X+k+oC+gyn6a0kmvvShavo2HrQhwMTEdAFm6pAc4qMuAhm9KPZhdwEW4RPky6b7QsgM+le5omMpfhpyH48U/vQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Jzm4vNGsx5D6qtZNa5S7vxNzhO3d+/949+AOSayQm0g=;
+ b=mJi41tHM3blNcwKpGhVb/9QIE5hmhXrGuoQ+MjLJhWMvs5oPxBqPwAOPU9xQice9AI20QSqLiX67LfI8O0SrbB2tpP+JGrn7XEVQyVG11/sRPDUepwS35Ur9H4Ycly6Xnov+f5ppHeldWsdcemYxIzboCJIiUlWlQhwbIOBDAaAcZdwZqE9wPjL1W4+ha4Jb1x/5Da0RO82O12SYpu/87OC1wU9GBfZcdmWEaQWcn3ZUTrfhUh4zAr0uxbXzDCQMaSUkzqJBM+28xWOg1FN/479eNekBouKFjpt1Uq8hEN/YtRf+7cTlh6usq5e/N+C6Za8W2HFgUHlwaD80eeNcJg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Jzm4vNGsx5D6qtZNa5S7vxNzhO3d+/949+AOSayQm0g=;
+ b=GTMydJJsPDJOjfIfMdbjTJP/8CJcziiOuO1uiIxuB5g4ttAwtHXw3FQCW9YaxbtiO1hNhuS27nvU2srocVFOE0gxhF28mJZo85TjpmD4Px/Ui305ef1c5D+mbHz5Mj/Za/CBvNUcahjmaRzI/9WbVyVQqj8bac8nSd0Qi95Ns1ZbKiqBWtglDeQdcBe5XdyZ2mtAaRENAjUZSmqcq6WjnrB0TnIPbC8AIfgZYtVF51+iwwvCxTGs68v/rvzdkzfH61m3Macmw+7WkAo6attdWI5Tr78+X7tuHmcm+n9SJj8bjewlbbBrkFg6uC1PQlkJj0OW7WnB9tM/evamBGUekQ==
+Received: from TYZPR01MB4209.apcprd01.prod.exchangelabs.com
+ (2603:1096:400:1c6::12) by SEZPR01MB5674.apcprd01.prod.exchangelabs.com
+ (2603:1096:101:131::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.20; Mon, 25 Nov
+ 2024 18:22:42 +0000
+Received: from TYZPR01MB4209.apcprd01.prod.exchangelabs.com
+ ([fe80::8f93:1206:1c13:f5d2]) by TYZPR01MB4209.apcprd01.prod.exchangelabs.com
+ ([fe80::8f93:1206:1c13:f5d2%4]) with mapi id 15.20.8182.018; Mon, 25 Nov 2024
+ 18:22:42 +0000
+From: Rachel Taylor <rachel.apolloleads@outlook.com>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: Taking a look at the NRF Retail Show 2025
+Thread-Topic: Taking a look at the NRF Retail Show 2025
+Thread-Index: Ads6qYX0u1P3By/8S/Sm1YbjbgHE6AEvXrYg
+Disposition-Notification-To: Rachel Taylor <rachel.apolloleads@outlook.com>
+Date: Mon, 25 Nov 2024 18:22:42 +0000
+Message-ID:
+ <TYZPR01MB42090E8E777C8D5A99E958518D2E2@TYZPR01MB4209.apcprd01.prod.exchangelabs.com>
+References:
+ <TYZPR01MB42096D1E5DB5976BFC6968678D202@TYZPR01MB4209.apcprd01.prod.exchangelabs.com>
+In-Reply-To:
+ <TYZPR01MB42096D1E5DB5976BFC6968678D202@TYZPR01MB4209.apcprd01.prod.exchangelabs.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR01MB4209:EE_|SEZPR01MB5674:EE_
+x-ms-office365-filtering-correlation-id: 83acbc66-62e0-4dce-4634-08dd0d7e26ec
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|8060799006|461199028|7042599007|15080799006|8062599003|19110799003|3412199025|102099032|440099028;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?u5qqXMgtJOSHDJ/Owl0dx3gUuYV2Kb+6Bf3rm8DECJY9QcuJJ7NfMatcUP53?=
+ =?us-ascii?Q?kbn+KRn82yHE7/ErpJWm2dcwTOiSjApF8/yqk9NsUaN1rZ4XAmgymOeg8BuQ?=
+ =?us-ascii?Q?wuoD3RrNML9Zgui8Hadv6pwW+Epcn4AspAMU36XPhXEzLhi76fyJaB+xJWD0?=
+ =?us-ascii?Q?KiOx331b/iUieBmoBIsssn4UJ2f8/Wwpo39mp8RZjbl/xTlomyfRyumme+Mz?=
+ =?us-ascii?Q?KhN1Ss651ong0FdoihOLgRplvNP1TSzpqZfcy7vdrUo0pyL4VYhSQgTwaCCb?=
+ =?us-ascii?Q?T3UzT3Bzi5UCjwQ9Lt3J9qOu7itjEGtAKWPIX3chjV5ss8TTExa0twByer/E?=
+ =?us-ascii?Q?afCnPn7gRgIcMMd5XRJ0oddICuHPvMkx78RLTezblt3f2nEvuGkRajdsRq83?=
+ =?us-ascii?Q?fGKWRSlYgBJGGzm50bKt0oO9XKeLJISXULdJ57AeOSFPNc2DT0FQIvNYnMtq?=
+ =?us-ascii?Q?pZ3NhKSEz8d09qLF2kGvGmpKplOmCi7KKbJJOAqcOM6Czfc8dyi0Mq7NJPvn?=
+ =?us-ascii?Q?RLx+MLpaSpfMf8KOstI+KpRnDEw6In9c56qXwYddZnTTfBlTw2uo9tqNHV7N?=
+ =?us-ascii?Q?/Cy6xnPfeEjez5Sd4KuGGIYD8cfb+Wh60AjhzNaUTQ0LyxuqiMmCja4gB+GA?=
+ =?us-ascii?Q?+likps0Trvgp8cxDWD84EVTZ4mL7U1ti5fTbbbbrEx0PZZD+tRdfGFJYmWkJ?=
+ =?us-ascii?Q?8BzATL4OyNzG6zQ5f10ocP1m4hrJaonL5capwAn6L2PoeYHJbNMrspoln7rS?=
+ =?us-ascii?Q?uRuO3D3txj33YxiJO7woVvKylOQ+7Bs3z7hhVKOqNT3oWg3idNd9PLCGGrhR?=
+ =?us-ascii?Q?+16Pa6TzodJ5jvNa7wHX8cOr9dkPDCcHe+Z9K9DJ3FWr/ILROHG0DMZyiF25?=
+ =?us-ascii?Q?pxfIz0ItOqaA0n5UvArNKYtXNDYbBX+wHZIu0Ai5sDQkoZdmkkQn6pOYkQzW?=
+ =?us-ascii?Q?//gmpwLefuYnfza9971HIfaDrceU36c90jRUDV9jcG9I5rQi6oSPYA37bD0Q?=
+ =?us-ascii?Q?jSELF0Dw22N2jlduy4iG/urDbrn2zk8Cv/N/NRMvko+0YqQ=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?Hyca6vY12LTIfmsIGq8tReJZkFagTaya/SfuDsilR9fEvRoE8QFQLj0v+ZNq?=
+ =?us-ascii?Q?TKN6zEvOXFQVXjaVQwuCp5RGH7JZntBhXvBjH/m3YGkg6uUC+WEux3u8tveF?=
+ =?us-ascii?Q?XRNAQHosnxFLaDVWeMxsUV8S7ZIpyBQ4p6+CAxPPvx4jhCVaRR81g5BRbT8J?=
+ =?us-ascii?Q?e4S4ZDXDenZgmS8ZPPNekU4OUVXg8TAPRPKdkv7xZFODQmQWMsT34a6OwDX2?=
+ =?us-ascii?Q?irh39+AdxOILT4QjA2EPVOJIewifLfXOm9mG0Ne6V2LcEwwhQ/ek3TAoTeFI?=
+ =?us-ascii?Q?VFDI87YaRq8MokuJ0vqLC/2OCHSVnqotI9hs0AOLRzF4RCTlJRpbCfZ4S/YO?=
+ =?us-ascii?Q?fX6yyXr/+NyyrayaltSBUC5TEsV4vFy4hXhuKvpCDPw5dqxc7TXvPoXoaU/7?=
+ =?us-ascii?Q?XVISpo3BIHWvKlu/GDlBlQ/ercBWn1jZM0yqAgVc81NRu9vmn6+/0Hrd3Ipw?=
+ =?us-ascii?Q?NSYr8/8VObfKnhK1TuFC/x3L6JIY9tQKHkieTR0ofUIW7PrLOehDmPqzcmd/?=
+ =?us-ascii?Q?5Rg9pWWjleS9t2zsvolpyc3WOijy4V3clP5JctvWtnnf28QmdZBXzSzaYsBn?=
+ =?us-ascii?Q?IrVkxCLxVSzY41C9XEhqtBYazRBMZvOcePm6SoQ9BFkCCWmC2YKS0l8cQilZ?=
+ =?us-ascii?Q?kPnbSrpB+93N+skP16R6JTzcVqqQGfu3Lvox+sM3HZpTSiZAUTz40X2BoZP8?=
+ =?us-ascii?Q?vLXEgkB6l27IaD7qG33Llsjr3V3Ntay7Od5tmsT/A2zhbUdLjor9i4Ur1dXQ?=
+ =?us-ascii?Q?mBhcWyevSSdRj9Wb1gDw7X/iWlZffwdsJbiwqod8qhk05wVnUP/9PhI6boXD?=
+ =?us-ascii?Q?TJIdexJfgYiF8+q3Hr6PROYdm1uiw72Ga6O/9pzkzao4vhmxKoiA15/Xxlhr?=
+ =?us-ascii?Q?y1ExOKHZkSzOyfD0LkEwpB2UhOIJm45YSUi2SwAvEHkGGhwjSamVpwb7tI7n?=
+ =?us-ascii?Q?9XqTu90rQvcqIkyjN0p6uHCewsTUNUCM3tgr8idDvsTvXGF3ObIsmagmF9vz?=
+ =?us-ascii?Q?6iLJjvkmD9OcfXe7wG2fL6U8UMvdTSlq2LUN4DQtxI5HumJCHsfgJKSHocpn?=
+ =?us-ascii?Q?GVOuB+f2vANdVwp/kAHqxB5qbaBWY1qD9ZybBw9QXil0WJ0x239kSz3WjWas?=
+ =?us-ascii?Q?o0CZXxHr/T8eOpWBZTofS7wbv1p4dZxuLjECI5k5dY0dIvE9PDca+cKOeodN?=
+ =?us-ascii?Q?J9aJZauRJeQOdowvGwYs3iwxWRet73V/8hGUxZQM16MH95vMjggn2G20vroM?=
+ =?us-ascii?Q?9pQ7pkgjztjeRA2JP8KZ?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR01MB4209.apcprd01.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 83acbc66-62e0-4dce-4634-08dd0d7e26ec
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Nov 2024 18:22:42.6504
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR01MB5674
 
-This is the same exact image as in:
-https://syzkaller.appspot.com/bug?extid=b01a36acd7007e273a83
+Hi ,
 
-This is the diff of the reproducers:
+Just wanted to make sure you received my previous email. Can you let me kno=
+w if you have any questions or concerns?
 
-diff --git a/repro_f2fs_86.c b/repro_f2fs_arm.c
-index e9473a9..b96d52f 100644
---- a/repro_f2fs_86.c
-+++ b/repro_f2fs_arm.c
-@@ -1,4 +1,4 @@
--// https://syzkaller.appspot.com/bug?id=ce049cbd95a443ac6ed3f6f4bad09498d3692995
-+// https://syzkaller.appspot.com/bug?id=64df843cec772943672cee2084811aa72fd41ff8
- // autogenerated by syzkaller (https://github.com/google/syzkaller)
- 
- #define _GNU_SOURCE
-@@ -24,7 +24,13 @@
- #include <linux/loop.h>
- 
- #ifndef __NR_memfd_create
--#define __NR_memfd_create 319
-+#define __NR_memfd_create 279
-+#endif
-+#ifndef __NR_mmap
-+#define __NR_mmap 222
-+#endif
-+#ifndef __NR_unlinkat
-+#define __NR_unlinkat 35
- #endif
- 
- static unsigned long long procid;
+If yes please let me know your thoughts, I will be glad to share more infor=
+mation for your reference
 
-#syz dup: WARNING in f2fs_unlink
+I'm waiting for your response.
+
+Regards
+Rachel Taylor
+Demand Generation Manager
+Apollo Leads Hub Inc.,
+
+Please reply with REMOVE if you don't wish to receive further emails
+
+-----Original Message-----
+From: Rachel Taylor <rachel.apolloleads@outlook.com>=20
+Sent: Tuesday, November 19, 2024 11:09 AM
+To: linux-kernel@vger.kernel.org
+Subject: Taking a look at the NRF Retail Show 2025
+
+Hi ,
+
+Hope this email finds you well
+
+I am reaching out to let you know that we have a list of attendees in NRF 2=
+025 Retail's Big Show=20
+
+Attendees count: 20,000 Leads
+
+Contact Information: Company Name, Web URL, Contact Name, Title, Direct Ema=
+il, Phone Number, FAX Number, Mailing Address, Industry, Employee Size, Ann=
+ual Sales.
+
+Please let me know if you are interested in acquiring this list, I can shar=
+e pricing information for you review
+
+I would like to thank you for never keeping me waiting for your reply
+
+Regards
+Rachel Taylor
+Demand Generation Manager
+Apollo Leads Hub Inc.,
+
+Please reply with REMOVE if you don't wish to receive further emails
 
 
