@@ -1,189 +1,128 @@
-Return-Path: <linux-kernel+bounces-421009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D1BC9D867D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:34:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 881909D8598
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:47:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2963016921F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:47:20 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED7C1A0B07;
+	Mon, 25 Nov 2024 12:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KQ46rnD0"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71127B30AB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:43:20 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B521A0B07;
-	Mon, 25 Nov 2024 12:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OG4NUTFR"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F7C1552E3;
-	Mon, 25 Nov 2024 12:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A0A18893C
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 12:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732538592; cv=none; b=btz6bg6iIH74Y6wGmwtWVcKJPYf+6Lw6wqOCWXiuescp6fx18zo+zexPm/PW4BUtMW6tyIgMSMMaLqwtM3KlD/ruxvLaDIP/PRD2c/O1bBBSfpICku5HZqOoYg8KG361TaGAXTPM+3ESVPzaaswYpKBYNjVbfCo3UnI8qH8mgmw=
+	t=1732538837; cv=none; b=PW44lseiMq4q+AOPLoEkfnGhGSonX+u5ajYvF+fTBqTxczECslG89tPcyXxm3FipU06Bc6D3MNQoG0mHB/poe3uOkmwTCijIHACEJFnIZm3vsGZcg32ttXq5m9DrS0/wgHYDTfSjpo+W9aWHYKzs8r4SaFVbhtGs9zRMvvzWlD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732538592; c=relaxed/simple;
-	bh=//JnPDEH0l1vfKzZTtmvIktKX1t11vSXsJkyLu9qdn4=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BuAqRyWMgAuSHtLUKdU4BDHrjg2k2AbS8ml3K6jlP7t4K5bF/kuGdiTGlmGuVALlzgxO4TfwCidkj1RaIy/o+MjmliRh6d2eQfDNzmXbB8ldLwMgEIjiTwHGjeX/li0Y0/9VmR6f2KThuGnReY4MZ1DpV+mh9KP2GsDDVm+oR/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OG4NUTFR; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434a2f3bae4so1558035e9.3;
-        Mon, 25 Nov 2024 04:43:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732538589; x=1733143389; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=oD/QgJahcfnToWDDwsHEJMn7c05e3uM5Rszb7udPu3s=;
-        b=OG4NUTFRxKb8DSFnvtTHGOo17K4rbQb+ENn2fp/3Jbqkx+PIbyADc08pLMylTWOnVn
-         GI5WyRT3L9SFkpl4sqZzdSez1VG+cdsCLQVm2fAzBeQQlImbyr+xptx4MnkPzv77gu94
-         24iDg+VIbuNnv143YnJWR03/1n5ioJC1sgsBXQN4hkhZfGFdYa8XjjRptufYvM1Gs7uQ
-         Ipb4bcMakA6VN0FE/Y2jx4+BFDwT6GXi80bDj+9c+/1eC0ViW3vrJ7xYDKGcuLwX/kcO
-         tQi/Sk3Ru7aNz11VNCmY3UpTvnGd4zO0z+yeznkfxcu/lYvDjfNC8lNinwNW2/mcMREC
-         xpzw==
+	s=arc-20240116; t=1732538837; c=relaxed/simple;
+	bh=wDVlE+3a7Q0/blgX4dDF0Ww+r04zZ7/v7CBGXQwyzO8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WLzJhL32z8TJsLatPqXZ/LHVkFDetD2YJWp4qhBW46YI+oaqoZJzvmM4IxhPAi0siL95SO1eIxO4qQfAvt6ZIuWlZHQbJT63J4XxR7lDWfQ5DRUZwKmbWVWsV9Y0F4F+ZULLV/Ps56kyomBHwc/NCjKdEoo26j/nkyG4f3BTWHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KQ46rnD0; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APAd3YX027751
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 12:47:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	zeeoZnPBXUwuagoh6GBKRIxYphnRKtHZMwhi8JnP0Bo=; b=KQ46rnD0BE1BpglA
+	PXbvcmE2LBT9fkSgDXPHQnCNVdVkcuDa9uI4ea+NCjloIHX2gzldWIAbG8aYPo6g
+	qoWzOqInIEa3EG482lZCBlj5bCGUvLzY8PM8G4bUichgOh5kHgPUzSeHZ5QHZTJ3
+	02FV4Cg6/WjZOZsOQtLuvFdg8ZBjw7No1ou/iUxXyhLbpxIdbSFqGFi4bP61ko5/
+	uLfaeFZpXVLR+YUqkyQqwftQs/SibBdZyPQX0wV6tMzSC1h7r+angXi0TetxuAxs
+	RdM3d1qTuAHvd5QKs7JBPfKF6BdFUbHJDhGB3FrvE3RnapGvWyJvi3Qa8ziwXDk2
+	/nW2Hg==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43387jck03-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 12:47:14 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-46680667b3aso2742711cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 04:47:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732538589; x=1733143389;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oD/QgJahcfnToWDDwsHEJMn7c05e3uM5Rszb7udPu3s=;
-        b=ZJE+khTDz21dRhlYv4xkql9azKltExTv7xze28w/8ZwD/GxPmhfNkKgGPETGGvBRnw
-         mTkQOj4H/XHOeW73qK+VmSBnkVIuwNgxzlZMjkYJnbzUiMvnSrcc6amrLtWTZ4xR9sjw
-         5DqVdN1C+q9nHq75hZsbPpLf7MbNyojunlnQBq04B19woRDFUPuQWTkoI/GF/yhc3CPU
-         68atUlGu/PRRlcg+vtF9Wm4CEq5U/LIwvHXgcVGDqb2CqvBwU/v5XOPpbvExUGqRQuoh
-         rGanK9aJTsDx5LaKqwgvcpKWz/bTKfXd/VCyaiPm8WwZBT5a/zdTNc3oNNmTCIc3+ATF
-         /YSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOSOwHFSSzb9LWuRrrXoMh0hckNe7xtPkL0Emm+p9VdbjEWPfvarheoavo0UPHqKyCXy9Yn2anVmQ=@vger.kernel.org, AJvYcCVpZTB5g0DhXD+K+MYA8DptcDI73MCTYziLSHYLGb69IRoLWk8cbHPjd8kV/Fy0VZvcTjg6KhcAyrvh+kA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNU6Pjcvw78KQIbgwG6j1kyAPq5OAm8+QIj6rU2HCFUEALbJSI
-	hjDukiZHhJ9wXyWaeeQkNAIRlsIHxmuG2nmt+QOf+YaEHINd++RH
-X-Gm-Gg: ASbGncsoLx7RwwgBi3kNZFjqvkCSbzhoVTvl12CMPtBBq/KBXa/QFFuBgvQsnpx6FDw
-	p+X60yrzQfynpVtxNyUeC2CwhS7dFd/fGe8xIAN/iq/j9FbnwakBPMuJVV0H/kVvJunY8TgCWf3
-	/9Yj3w/85xQ68PJ/8Ri+NEh5v1ZNufrcJxBocxjDj+B4+KBV+heyK+wwKyYbhYhNQNpv8FyIzk0
-	0UhYYTlUB5lH3vAYOciOUd5fZ6obyqvgc1WhQj7TH7KFZPOaofOtwTGNXESlWH+1uRRH7AtUi4w
-	TTqYgg==
-X-Google-Smtp-Source: AGHT+IHO6C4GC4v7/G4VYy/Jt8htlwAc1ke0AFX5Xj4sqJfxpTcCxLqwuJMk3AQHitvn6YSumcDc4A==
-X-Received: by 2002:a05:600c:46c4:b0:432:cbe5:4f09 with SMTP id 5b1f17b1804b1-433ce411003mr113060105e9.4.1732538589030;
-        Mon, 25 Nov 2024 04:43:09 -0800 (PST)
-Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbedf35sm10229371f8f.99.2024.11.25.04.43.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 04:43:08 -0800 (PST)
-Message-ID: <674470dc.5d0a0220.119e75.b012@mx.google.com>
-X-Google-Original-Message-ID: <Z0Rw2pKlNpVIMSar@Ansuel-XPS.>
-Date: Mon, 25 Nov 2024 13:43:06 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>,
-	upstream@airoha.com, ulf.hansson@linaro.org
-Subject: Re: [PATCH v2] cpufreq: airoha: Add EN7581 Cpufreq SMC driver
-References: <20241017190809.16942-1-ansuelsmth@gmail.com>
- <20241119072054.64hi347qmv7ng3un@vireshk-i7>
- <673c549c.5d0a0220.3a3476.517a@mx.google.com>
- <20241119104421.hqsil2uvklxok7lz@vireshk-i7>
+        d=1e100.net; s=20230601; t=1732538833; x=1733143633;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zeeoZnPBXUwuagoh6GBKRIxYphnRKtHZMwhi8JnP0Bo=;
+        b=ZQUhIwbxS0F7czbz4KA47BTApM9xrNstwvogFyWdZqwRrOprb95/D+GHsJQJWbR1aA
+         RB8nXBFDkSwr86nFPf5gr9GwySlu5W4oehG5FUcZCi7BGKu6fN/SE69cbnhk98UvST9A
+         4U7n+j/Np8ALlWKLzBT2U/OnFk7N253hQEGRgq6MohR+iylv0Bd/f7kOZUy6eJxf43SG
+         kNn96xZoLticuwFnItsUNNB0I5c/MeOsQm0U1pi6Xa/oL+vC15tLOzOleKME8WvpXBTt
+         pQAZqO+4K4dlJspEWBs8MUaLa30qwTUZ+rzIJdkGFSots3lJ5TbTaWf38GwK3v51N88X
+         zLPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIWhB+cG9sHfNIOXHV1op4XMI6000//3+MMJCsGhrGdOS/0tDFRz6X9uU5IQpLd3s+/oNxcO9hF19K0Kk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcqRPWLWtXjBcQNS0ikeyYdcZnGIaP0pfVUAQb19EeUZTFbQ8G
+	49DOssBlwy1jpVaRcn2kfEPTGSZQcbJ6MQNtzgfJD9QLXirLhh1IAMoXf91MuHLBYIkkL6tgt9K
+	Vy9sWHPr1QZr6wxz6ULhTW/b4n91VJoko0UQNyXL7PFTKqS1lgASWDRJ/Nc8uuIQ=
+X-Gm-Gg: ASbGncvXFcmc0NjRj0adNcp5j2NJURe/TxBF3tqKJzegTWU2VbgiZlFPgAMfiAF2bbQ
+	aNI0kFw8YVQiI8xuA6u9cRp27Xd2WCHpdbAuwHxoy3L0Rgkx84Ge+4AqejBnrsnB4at1AXnh5AA
+	8O2Y6cYZ9AqV1TawrMcCUCbbm1lJNFuyKBr4BN36YIgegVAFn2VC9rRrKyfoCpKqsMn/14Lix1R
+	V4eNpMtT8kUJ54FnMNNpy7EgxvQxBK4hkG6iZsYIwBRUtwFkmjD89HCQPz7AE0m7lZ5sGRoN9PP
+	72H40/sZ/lnb1unQVlqcS36tR7lFfxs=
+X-Received: by 2002:a05:622a:1a8c:b0:460:8f9e:c48e with SMTP id d75a77b69052e-466a160e606mr367101cf.5.1732538833691;
+        Mon, 25 Nov 2024 04:47:13 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG/w1GtAxnHY4s+IA+xiplqvA3f7+lUW2gwSCR0W7ECr8U4ppsyLgiI4IDuAcDWm+Gf2BpnTQ==
+X-Received: by 2002:a05:622a:1a8c:b0:460:8f9e:c48e with SMTP id d75a77b69052e-466a160e606mr366941cf.5.1732538833276;
+        Mon, 25 Nov 2024 04:47:13 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d401f64sm4069401a12.70.2024.11.25.04.47.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 04:47:12 -0800 (PST)
+Message-ID: <421d43e0-6a6f-45ca-801c-908c66bff158@oss.qualcomm.com>
+Date: Mon, 25 Nov 2024 13:47:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241119104421.hqsil2uvklxok7lz@vireshk-i7>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] arm64: dts: qcom: qcs8300: Add watchdog node
+To: Xin Liu <quic_liuxin@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@quicinc.com,
+        quic_jiegan@quicinc.com, quic_aiquny@quicinc.com,
+        quic_tingweiz@quicinc.com
+References: <20241125093503.1162412-1-quic_liuxin@quicinc.com>
+ <20241125093503.1162412-3-quic_liuxin@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241125093503.1162412-3-quic_liuxin@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: nbXNgv8etUtDK3PtA-h7I9ZTlT7gcbA4
+X-Proofpoint-GUID: nbXNgv8etUtDK3PtA-h7I9ZTlT7gcbA4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ lowpriorityscore=0 clxscore=1015 phishscore=0 malwarescore=0
+ suspectscore=0 priorityscore=1501 mlxlogscore=853 bulkscore=0
+ impostorscore=0 mlxscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2411250110
 
-On Tue, Nov 19, 2024 at 04:14:21PM +0530, Viresh Kumar wrote:
-> On 19-11-24, 10:04, Christian Marangi wrote:
-> > On Tue, Nov 19, 2024 at 12:50:54PM +0530, Viresh Kumar wrote:
-> > > On 17-10-24, 21:07, Christian Marangi wrote:
-> > > > Add simple Cpufreq driver for Airoha EN7581 SoC that control CPU
-> > > > frequency scaling with SMC APIs.
-> > > > 
-> > > > All CPU share the same frequency and can't be controlled independently.
-> > > > Current shared CPU frequency is returned by the related SMC command.
-> > > > 
-> > > > Add SoC compatible to cpufreq-dt-plat block list as a dedicated cpufreq
-> > > > driver is needed with OPP v2 nodes declared in DTS.
-> > > > 
-> > > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > > > ---
-> > > > Changes v2:
-> > > > - Fix kernel bot error with missing slab.h and bitfield.h header
-> > > > - Limit COMPILE_TEST to ARM64 due to smcc 1.2
-> > > 
-> > > Hi,
-> > > 
-> > > Sorry for delay at my side to review this driver.
-> > > 
-> > > Now that I looked at it, I don't see a lot of special stuff happening in the
-> > > driver. There are many other platforms with similar situation. What we have done
-> > > for all them, which rely on OPPs coming from DT, is to add a clk for the CPUs
-> > > and do all this magically smcc stuff from clk_get_rate() and clk_set_rate().
-> > > Once that is done, you should be able to reuse the cpufreq-dt driver as is.
-> > > 
-> > > So a CPU clk is the only missing thing in your case I guess.
-> > >
-> > 
-> > Hi Viresh,
-> > 
-> > thanks a lot for the follow-up. I will see what I can do, 2 main problem
-> > I see is that, contrary to other driver, for this Airoha SoC, there are
-> > no parents or no clock to enable... It's really just entirely handled by
-> > ATF and smccc call.
-> > 
-> > And also the SMCCC requires an index and not the clock itself. This was
-> > handy for a cpufreq driver as it passed the OPP index
+On 25.11.2024 10:35 AM, Xin Liu wrote:
+> Add the watchdog node for QCS8300 SoC.
 > 
-> Right, but the OPP table for the CPU must contain frequencies too, isn't it ? So
-> you already have index to frequency conversion available ?
-> 
-> Can't you just add a clk driver for the CPU, which uses OPP core to parse the
-> OPP table of the CPU and set a clk-index table in the clk driver ? So once the
-> clk driver gets a request for a particular frequency, it just finds the
-> respective index and sets it ?
-> 
-> > problematic for a
-> > clock driver as set_rate pass the clock. So I guess I will have to
-> > define the OPP phandle also in the clock node struct. (and map it?)
-> 
-> I am not suggesting a clk in DT, but just in code, added by a cpufreq driver for
-> your platform, which at the end creates cpufreq-dt device. There are many which
-> are creating the device on the fly, like tegra20-cpufreq.c.
-> 
-> > The main problem in doing that is the performance hit on having to cycle
-> > every time the OPPs to find the correct index...
-> 
-> I think it would be traversing an array in the clk driver eventually and that
-> won't be that bad ?
-> 
-> > (yes they really implemented this thing with the ATF specifically with
-> > the cpufreq scenario in mind)
->
+> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+> ---
 
-Hi Viresh,
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-sorry for the delay... I checked the example and other cpufreq driver
-that register a simple cpufreq-dt. None of the current driver implements
-a full clk provider internally and I have some fear it might be
-problematic to have mixed stuff, eventually I feel I should implement a
-small clk driver that implements determine_rate, set_rate, a compatible
-and all sort. And still we would have the double reference of OPP
-Index->Freq Clock->OPP index.
-
-I wonder if a much easier and better solution for this is (similar to
-how we do with suspend and resume) add entry in the struct
-cpufreq_dt_platform_data, to permit to define simple .target_index and
-.get and overwrite the default one cpufreq-dt.
-
-This permits to both reduce greatly the airoha-cpufreq driver, register
-a simple cpufreq-dt and prevent any kind of overhead. After all the
-.target_index and .get doesn't do anything fancy, they just call the OPP
-set and clk get rate.
-
-What do you think? Changes are really trivial since this is already
-implemented for suspend and resume.
-
--- 
-	Ansuel
+Konrad
 
