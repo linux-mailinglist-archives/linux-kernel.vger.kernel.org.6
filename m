@@ -1,109 +1,127 @@
-Return-Path: <linux-kernel+bounces-421429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3A759D8B68
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:37:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 515829D8B2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:19:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78A8DB2BD7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:18:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEA16163EFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6191B5EBC;
-	Mon, 25 Nov 2024 17:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF0A1B6D0F;
+	Mon, 25 Nov 2024 17:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXBrj6Iu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="grBbqD6t"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FFE191F91;
-	Mon, 25 Nov 2024 17:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74879192D6C
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 17:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732555103; cv=none; b=JGRBoeVW9qgi7LyHa+WIxRqmBjlLkyHeJvR5zs5uBJvIqDzcoo69nE+AKV8/KApoZZVYZRzfJJL2wN1aPcZ9fFnEby0tmizNG6fONi4GoAT7QN/i2e1zhp0/YPZtL/mS1wv9T9NOqP0HVLNt2mPRij1VSbWxtaxy8qchAnFLqEo=
+	t=1732555164; cv=none; b=Yz8nlpw9BToUbedUaA6PF0rylEDaZVBkHrZVDBZxgDqSxC/FShWfzw0opzB3KVEpYNn6VfHErb0uLnsbddbE2f2k5XoEbw/2+o+vnJhl8NqrpjqfFUwW4FKEnvo/PQOSlVeT4FEjgvwYuKMVjHIBjomkhoVnhD5gBul3inSXhgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732555103; c=relaxed/simple;
-	bh=qv6niZQQLx41Nb3bAK4/DqwOTz0gNYInH/aOd0ZHP5Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UVPOCflx9VtmPCZCu6rCXEflUExKzsyKKPgD3mGjHmMW2nTmIdBXxdrrZ14is6eIHiDAkdTbsT4Yk0IzFelJS/JApag/JVxO8sXeRnZ13+siCtds6WU4ArEQE0AsteM6mbxpkI/ZmhuYMdtPYlwZMYyu5Kq9qbFK49xfJ6Jc7j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZXBrj6Iu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D65FC4CECE;
-	Mon, 25 Nov 2024 17:18:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732555101;
-	bh=qv6niZQQLx41Nb3bAK4/DqwOTz0gNYInH/aOd0ZHP5Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZXBrj6IuAF5G6BpBhuEPFvZZil8n3Bv9F83nD0V7elY/08uEX0qYJnG8VtJvg+rPF
-	 +MQo0eziSsDuxn0oWFN9mpdGPSDmxnrI3ZyoRYDYSPn8n9IX7UJlIsXGeskah7SMi6
-	 IvK8LzvP4OURw+nVdEoMVxPqEYXEXYJukbb/6ayMV7LAc2XTRgnSLoucIV/7KSZFNe
-	 kR+rKUo6bJEOhCBlFzDWX9fjlSZVQOl9ed2Nd39sPgREn7GNfoYiQA9ogfIJ60JRCd
-	 W2EZZRbXtog6nBqZB9HmFFzyMlteGGwm5ApheBEYUpYTaigwTexC+qf+nY+HuIWuPM
-	 OibVcG8IvttDg==
-Date: Mon, 25 Nov 2024 17:18:14 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: ardb@kernel.org, sami.mujawar@arm.com, sudeep.holla@arm.com,
-	pierre.gondois@arm.com, hagarhem@amazon.com,
-	catalin.marinas@arm.com, will@kernel.org, guohanjun@huawei.com,
-	Jonathan.Cameron@huawei.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] efi/fdt: ignore dtb when acpi option is used with
- force
-Message-ID: <458d865b-5e3f-4c5b-94b3-8f4368d27677@sirena.org.uk>
-References: <20241125170758.518943-1-yeoreum.yun@arm.com>
- <20241125170758.518943-3-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1732555164; c=relaxed/simple;
+	bh=TiUNDOaFRB1I0ZknfKQ4oNwpmZSuTLCus9pbIcS9U6Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IjtRvz39eBTGuybHMbJ4z/SFFGX+FsPozX3iWwpmQT37EHbc0jez+6WK3pMVbBtoOdk1Ug/Zdz2RPiJiUNfZnNROZpG0avrtkL3DOrOOPaIDcLUVrrIA4Qc7E5TC/fKFLhzKxYZUBiKf4TOONhRFfXnAhgBryH33DAZ1nkc95AU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=grBbqD6t; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ffba235991so15272521fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 09:19:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732555159; x=1733159959; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rMzxcC5wsaZiCOOJDSmAWDv3eoVe+TCnixOaVa1nGDY=;
+        b=grBbqD6t/EAQGWREj5VLPmoDIO4EqiMefO4LYW1tgV3I2XEYakL3INQklpYGQThE1O
+         WLdhapOyd5TT8w6r0v9EV0/2N9GSZXy3x34IR0dTPusJTQS1osFfVyDaMZC+e+zvc6yA
+         t5U6F+u/SuN0uEQR/sZ70+n0gLM0m3UzKmlas=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732555159; x=1733159959;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rMzxcC5wsaZiCOOJDSmAWDv3eoVe+TCnixOaVa1nGDY=;
+        b=Ce0wyXBF/E4LfmJp06AubR+4cA2OlsPnbC5NdO+12y65Utw+0ipuoWO5GXUNUkRFAm
+         q70aTz9H30ttMHJ8uRJhCxDYLhhOfIEBCiJllXYx6EZg9SgHovp/sd8Xa+MiFPB4PZDU
+         HjnHXrHhurza7uLGCuPkClbSBBJHfa/rqDbT/9H9PHMKP0ALAPAuVUidsQ5WdHHwsLWA
+         Kv9oXHvscVEes9+2wC0OEakw9jWi6RYsrT73t0ZwtIH98PiE2xThV45hgtamab7HXsA2
+         /y++XTL2/SPPSa6qS8cVqAb8KvIN2GPL2jtzudWtIUNSeWsdeNFYDfbWP9vR8BNj9/MB
+         N0og==
+X-Forwarded-Encrypted: i=1; AJvYcCWLmisgvXtNl4ZCs4s45Gqmha14Htle9QO5qHR7nhZanZb8YuKNAn479D3kBXusokmBbh9OIPXVWu+jV84=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkHX5MuZoq+gGscIXpHZYMAamv5aSCO2VSHGWKoqRodlmn0D7q
+	gacNjAIc6sPvV7XoZGXyuamSxjkx+rFzAJjgVn5w7vGJC8pDB7sSzzPEJnMNwnhAoOgSdmBrvOQ
+	=
+X-Gm-Gg: ASbGncsA/DXa0L/M5IW4pVATOY1zDBqLSSU/E++cnK/jV6XmXHcP+v+WLPdxKSVcD4c
+	Md/SgSTCvAxqfv7yB0i/ylhrP1bugdc4m75mLGg4Q2sTUuQvHRmLgZr2FcD6EdFBKUL+elEdkbM
+	8vPA2tFm58GGggBNm0Q/RYCGyD1ppctva+uHd1T/+V0yJaWRXN4GZgq644A2+n/pwnEg5c7jdAJ
+	GBRP2YLt4Ef7WyKxNsZv3jYOgZlaAHEnppv5sQrPAF9H4F03hJI3TAGq4LmQ7AlhZy+Ku/X3X0Z
+	QK6zFbuWvhOU0Q==
+X-Google-Smtp-Source: AGHT+IEPQDVsb4NbYgC11LUHRYx4RCXQGIEiodn8HrIJjT+PClLGGh2AFIws22sZlU1kwEJiVb8sIw==
+X-Received: by 2002:a05:6512:3d93:b0:53d:e5fd:a431 with SMTP id 2adb3069b0e04-53de884b61emr53544e87.19.1732555159592;
+        Mon, 25 Nov 2024 09:19:19 -0800 (PST)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd24459casm1728020e87.51.2024.11.25.09.19.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 09:19:18 -0800 (PST)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53dd668c5easo3264650e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 09:19:18 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVuASKkwwXy2c18bwg9WioIzdIUFiYIg7jR9oM2QniaYV8j6Nn08IZXmDrDXrVPsvMQxskjdLjpH7q7iA8=@vger.kernel.org
+X-Received: by 2002:a05:6512:b8e:b0:53d:ced5:e9f3 with SMTP id
+ 2adb3069b0e04-53de884971dmr59574e87.25.1732555157694; Mon, 25 Nov 2024
+ 09:19:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="YV9P+puc7MWUbFlk"
-Content-Disposition: inline
-In-Reply-To: <20241125170758.518943-3-yeoreum.yun@arm.com>
-X-Cookie: This bag is recyclable.
-
-
---YV9P+puc7MWUbFlk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241124-asus_qcom_display-v3-0-002b723b1920@hotmail.com> <20241124-asus_qcom_display-v3-1-002b723b1920@hotmail.com>
+In-Reply-To: <20241124-asus_qcom_display-v3-1-002b723b1920@hotmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 25 Nov 2024 09:19:06 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=XjWT16wC_cpnC-Y5=eSvnj7rXY1z2ENyWZQYDawmjs8g@mail.gmail.com>
+Message-ID: <CAD=FV=XjWT16wC_cpnC-Y5=eSvnj7rXY1z2ENyWZQYDawmjs8g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] dt-bindings: display: panel: samsung,atna56ac03:
+ Document ATNA56AC03
+To: maud_spierings@hotmail.com
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 25, 2024 at 05:07:58PM +0000, Yeoreum Yun wrote:
+Hi,
 
->  	unsigned long fdt_addr =3D 0;
->  	unsigned long fdt_size =3D 0;
-> +	bool acpi_force =3D false;
-> +
->=20
+On Sun, Nov 24, 2024 at 2:01=E2=80=AFAM Maud Spierings via B4 Relay
+<devnull+maud_spierings.hotmail.com@kernel.org> wrote:
+>
+> From: Maud Spierings <maud_spierings@hotmail.com>
+>
+> The Samsung ATNA56AC03 panel is an AMOLED eDP panel.
+> It is similar to the ATNA33xc20 except it is larger and has a different
+> resolution.
+>
+> Signed-off-by: Maud Spierings <maud_spierings@hotmail.com>
+> ---
+>  Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml =
+| 2 ++
+>  1 file changed, 2 insertions(+)
 
-Extra blank line added here.
+Pushed just this patch to drm-misc-next:
 
->  	if (!IS_ENABLED(CONFIG_EFI_ARMSTUB_DTB_LOADER) ||
-> -	    efi_get_secureboot() !=3D efi_secureboot_mode_disabled) {
-> +	    efi_get_secureboot() !=3D efi_secureboot_mode_disabled ||
-> +			acpi_force) {
+[1/4] dt-bindings: display: panel: samsung,atna56ac03: Document ATNA56AC03
+      commit: b1fe820d03e2e1b89315faf99f1065bdb4146a8f
 
-Should this line be aligned with the prior one?
-
-The actual change looks sensible to me.
-
---YV9P+puc7MWUbFlk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdEsVUACgkQJNaLcl1U
-h9AsWAf/QSGOqMYYd+eYGMnHrnZ0AgaaXNLrw3M3ayw57Jy3VehHfp4Mgm7JX++h
-m/UHDaEswp+qVz6C1OAGrjwewp2VAkZuDckWvnQ2SjHgh3k2lWdG8yXkb1Wm6zT4
-4untrM/28KHrRhsbKYdD6NXzKGyY5wO3zj0mEmo5RhZPcm++kytZASVdCsNF2auf
-GQ7qGHrHxPAs9EJCHiF5FOr8mIXfvnSlRi693POc3RwX3WupYjlnfM9yoSnan01N
-HfocNpYGRYXxiMN1vuDoTFWmyMM9bO1TIUzzStOIT8oJHlFmmtYmycSQpTN/J7QM
-r/Y4X6sQ2Xwj3qYQXyZEH31pi/ltkg==
-=NKy0
------END PGP SIGNATURE-----
-
---YV9P+puc7MWUbFlk--
+-Doug
 
