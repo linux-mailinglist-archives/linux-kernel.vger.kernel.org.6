@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-420976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44FB49D8503
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:04:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF2F9D85D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:04:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB11D1633A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:04:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7443EB2FDCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32CAA199EB7;
-	Mon, 25 Nov 2024 12:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAAB419146E;
+	Mon, 25 Nov 2024 12:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GCRAvJGp"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oZRmCsGY"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA27013774D;
-	Mon, 25 Nov 2024 12:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B24D199FB0;
+	Mon, 25 Nov 2024 12:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732536261; cv=none; b=aZyvGLcDLG8moDWBJ57arP2RKM8p+0XqomTvWEx7+2tLPEkwkxKDZLHgVGMyZdmjETOMCwxQNkQBygFg3TAlrLgYGrjRA4U7ekh0dx8yl1PGHXnGJ9GKsNX6CDdWfR1fmpS94bW1rRBJeYaU5dvuW1wj5qlJczFHG2AO9jukKyk=
+	t=1732536264; cv=none; b=ZCZXFGHfrqLlfA4zeJFqs6fk6rJJP0TTz50d2aOMVtcvbogeNtedM8FL1rZux0sBfEMU9DfpxXevcy6NnLLka2acZs84HtsljQBMBBonnw2oma8W2I+9gxm4D08Li7Q0D0/GRo2iJWzeVNBH+uNtjnWZB0Esf7gKNMxT5Gp3JQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732536261; c=relaxed/simple;
+	s=arc-20240116; t=1732536264; c=relaxed/simple;
 	bh=efeNB/rKqi3tpa04/LtQ2JCpX8cpJMScuUTG9pnf4Z8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ENwYjXXcj+tuVUjJi1Oh7w4FGFjvbCp+RHK+nwWjQNHdpZl9QLnekphrtHhjJwhDYO7gfxIQAj114lldXR26q4RKD+8++V+wmJlzCeuWdWA96ipnQqSeGEjEiuvEP3QPcgUMXiqk/k2CR6wiWDtglaOWVFTnzldB+gOvu09fO2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GCRAvJGp; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:Content-Type; b=WNEMZZ2OFDPVnVeopv0QMum/CmULxsK00ploXbd84aE9Lk6rFgQ5JqRW6KO7u/lpGW1xHB69pANNrZ7zmF5F/vnpNmL3bJiP3QkYiHYNLZXWJRqQG7kC7EaAngwSCOc+02GGOXduDCSs2InfqzOUPL/1l5h9J9xCOxGhC49lE0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oZRmCsGY; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1732536256;
+	s=mail; t=1732536260;
 	bh=efeNB/rKqi3tpa04/LtQ2JCpX8cpJMScuUTG9pnf4Z8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GCRAvJGpPGX26CoTYnsb2eoDBqZi5XJcZfpbBt7jCBQgV5rCx8NJgGxqWL1x8CoD+
-	 9Gf2I8UIZ8vin/e+DlEWH6A1D4j3HWv3SpatgZ2zoBgNT4cGdFBfZXSqSXQZc8PIzA
-	 WOv/LE56HrsqMqpvhDtLP+GewLrfTWmoSlQdYxvmU2wPGxuZOMq8a52k/xor0zL4Lh
-	 zYyHKNEaFYb+WjBSGEfgRm4oTcwo2Ca5waMI/i/MoQ8lzRfmi2WJ774dW76W/BWTdK
-	 bs1T27300oMLKYnRFz7gCbL79f/P93Zy2EoliEY0QjPYi98n1cMGWT/qMdqB+E8ZSR
-	 JuERgB62fFkfQ==
+	b=oZRmCsGYOdveIcb8wwttSsU6Wlj1roQjWzv2TWzf2vXlfQzSuk05qbe+TOnseUF5n
+	 g4V9rctEtM5879qAXAl1JtSuEtvxFNUvVUolmEKKOqoI3bWTwDoDGFt6y1a2XZyEI5
+	 EMr8aLDFViRzbg8Wf9sJeu9f8HCzTQVCqQoQtNA5doFIIbhdm4ud8z2N/EEHPRR4tO
+	 UYl+6EsrK27JpO8dFzADaQE4BZwLXl1l2AnDsBFmtUd1Lbf3i0ZhY8WTDhgAwaWxFi
+	 3K6zcdOX7Ol43nTyc6Q449i3BpUrwCjvXwPWPAfix5u7EEBs7I7LONdUxU9HYYD1gG
+	 zM8qO5O2zKVTQ==
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3F48017E3624;
-	Mon, 25 Nov 2024 13:04:16 +0100 (CET)
-Message-ID: <1986c5d3-c897-4218-8a60-02ec69c28ae9@collabora.com>
-Date: Mon, 25 Nov 2024 13:04:15 +0100
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1223B17E3626;
+	Mon, 25 Nov 2024 13:04:20 +0100 (CET)
+Message-ID: <a9353ff0-ff29-474d-bfbe-4275d7eb36e8@collabora.com>
+Date: Mon, 25 Nov 2024 13:04:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
