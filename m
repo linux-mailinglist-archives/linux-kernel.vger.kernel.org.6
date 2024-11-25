@@ -1,287 +1,221 @@
-Return-Path: <linux-kernel+bounces-421670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 559769D8E3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:00:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07CC19D8E54
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:08:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E6A7289E47
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:00:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91B73162CB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E7B1CB31D;
-	Mon, 25 Nov 2024 22:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612521CBE8B;
+	Mon, 25 Nov 2024 22:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jtT8OH1g"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uod5sVLY"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F738188724;
-	Mon, 25 Nov 2024 22:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F79118F2D8
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 22:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732572046; cv=none; b=SO4Yhli0xLvEzjUeRE/PFyY/VtZ3FGxAo0rUn3H42PV0wTAINBtyDgmqnXGvErKZzmL3CCIQw6hz+ZO5rfjdcrHgPlX9JoSofv2CbV3q2Vv6J9fXzzNGQev5LLF0NP6aZgkpF56hFaN2goi2akO4NVdfYx0CbFqdTXUxsMWkm1I=
+	t=1732572504; cv=none; b=ebHHnWC7yIk6LsN4wDeLhzVM+SrK1nCmgTNsjyBtakunuKXkSZbr0aA7TAG9G4x4y9AYt50I61r2II2WT4mG/NSgIOm5I4VxI9KAdEe86GugQKTff0q8v60rV2E1cAs3wMxiIUDJmMhbziuCga8RyHGZNWj67BakUFZiwaXxEHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732572046; c=relaxed/simple;
-	bh=8u41YQYJmclz4J1+W4jjBdW970YpXjz0B0zRJrxDJeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZxFgXoQps9af15q0WxQhqn6ZasDP3Vi9H7lI3NcGsiRniC+9LjelHWjv6P+xzRi5634D1+GsfRHtg3UEAX4jyAS+b1duwCQ3LKY7fGOHGC763qHL23LWeGpYLW7T1fRgscoiHcc4snQxuiTt9jKC1rp4rv3q1j5Pu8XS8/zFT+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jtT8OH1g; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732572044; x=1764108044;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8u41YQYJmclz4J1+W4jjBdW970YpXjz0B0zRJrxDJeI=;
-  b=jtT8OH1gAKB/EFXdpoxb/lMh0FHJv/Ib3FkBr+Rx9tJsLvsWW2sgnN1v
-   0vQ9lNbZ80aK+ruWF4Q/lS/E9sjkmbgbWW6LOM7EehaNrF7nvuN+67iIs
-   oDptyxVxaYVLrE+5viTWEl1XeofTM6gczUTXNFmdtFSUV+s3xxHQ+yh8i
-   Ppg7oq/TpsIz8cgO5c5nAzpakmjC9ZeGUw5tXi2lDtiauofSfXdvuRw5L
-   0Xtr+BIjVMcYHcCVG1NlzfwaTV32bK6OmH0gPd3ALiyGZF/vNBPk4oT9K
-   5hy/ZXf8DTVm/RXxbhtFYqnCKRz+mLd2XIwUhYQpleBa1hqEsogTd2rn6
-   Q==;
-X-CSE-ConnectionGUID: 3nr6UKoeTV2KP4vHQQYeyg==
-X-CSE-MsgGUID: eojPfOP9TKe2hH30oXIHRQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="20296349"
-X-IronPort-AV: E=Sophos;i="6.12,184,1728975600"; 
-   d="scan'208";a="20296349"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 14:00:44 -0800
-X-CSE-ConnectionGUID: cKVLpf+gTy66x7ByZR0p+g==
-X-CSE-MsgGUID: cg4RE0S0TOiuq/058H8hxA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,184,1728975600"; 
-   d="scan'208";a="96482843"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.110.188])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 14:00:43 -0800
-Date: Mon, 25 Nov 2024 14:00:41 -0800
-From: Alison Schofield <alison.schofield@intel.com>
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Yao Xingtao <yaoxt.fnst@fujitsu.com>, Li Ming <ming4.li@intel.com>,
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
-Subject: Re: [PATCH 0/3] cxl/core: Enable Region creation on x86 with Low Mem
- Hole
-Message-ID: <Z0Tzif55CcHuujJ-@aschofie-mobl2.lan>
-References: <20241122155226.2068287-1-fabio.m.de.francesco@linux.intel.com>
+	s=arc-20240116; t=1732572504; c=relaxed/simple;
+	bh=xNz1w0/+f9nkgC6K+YBMLNPP16IhNrqOslyvuYbdvbw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mMHLHgCEwgv0Q1TNKPzIH2G1NxIbO1gJcQnX8ieSyLOsjLsXTrKZPbWhuEuxt7d65iJb0lmFt9k3xc2YPo4uXZLBftDSQyry7AFDawvREsOKhlv0nGHY09Cs8UtXW3KGjT8ss1rlTY63Lb5RusWuG+oyQvTgMvUOyv1mWeMmb/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Uod5sVLY; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e3882273bc8so4548228276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:08:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732572501; x=1733177301; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2eAVON7HGIpJamTV+1ul/jOyH9ikQLUzIAIpUaFRKeE=;
+        b=Uod5sVLY0p8ExaykKTLYWBIUCmPh1jw/tLGJEwSb94gyL3xbylgYCHzvTSMpixyWLs
+         oehxgoImPCoECxnDt13/jox3vrUSlHdTtW3A93mLNZgCt9AU5ZVHxve8XUagHti+WJps
+         IbPP1TdwG6ZtE4Q7nkFOWyrI353sl0W09YsPgBV/2EPgHTsgIdBr8wy3OWfhNgqule4O
+         aLKrfN8AtsACvBr8ouVb6huQFHKRkMvRk9e8RDrK3AzyTlHyi/EVjNrbGDcALLHGD/R8
+         QJKLt2i1UmM4z0Yd5UNesHHsD2XduwgpnpFYWgOKZcH5A3cTi6gHHGDSKE9wtCOn0csH
+         2LPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732572501; x=1733177301;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2eAVON7HGIpJamTV+1ul/jOyH9ikQLUzIAIpUaFRKeE=;
+        b=VOTsIxej14R29FrVWWb9Ik2X9R7XU4lh8BggR8x4ABfe7zA6Z4UQPXtdBCa4v1/rU7
+         r65ORxCwXQTZ4AikMiMf5KX/vZgE3HKWozhHF0UKSfvHbkJOdKtSmrW7Jndu5WnKLiA9
+         s3xOiIHcpWMQSZl3rY2bXarWIOKd/l8TeYag1WzN510KRK1VudtzGAOt4V0eY9QSTDF+
+         MSVyXMWrCxsv+XnMUMfD4xyP3+SrW7c7V7m5SQngrkiW7T11hjhwUUmf00F3VyxL+N5+
+         rcgt3PkV/YDrXqLMhGRC3duTaEvb7CSszKP72XVXzXVJrvhQ97x3h6+9bvuXijMLftbz
+         jlJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWNkzc3gSKtchIchL1+jv1GerjeiJ2nRpHtImUkxh1CjOClk64Pc6n4abG0nmt7EHoRZrSVVpIgV5Y3pdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtBYG0J4Fh/GxUo6nKsID1pg76F3f0pPVO9w4P7sppYvTuiEWv
+	2yjvOjgeerIyP/cFt8FZGTJgqD61sDNWybKjDSDZaITbZTr340Cv0WQ22Qtfb5K7n35Mg58ZZU3
+	WaRMiOpBQAzAaKxFzD9eYiI8B9MZwLFleej6YSQ==
+X-Gm-Gg: ASbGncsKK79ADTO5ucoPB1mMJAzbEq3DJHB6mk1xvx+SnYdfJ9uHLcqK1Q4yWzkzH64
+	5Da1yUHEcOT4pnzk8u2jk6JVJCSV/HMMkqA2mTq/9cRvvlA==
+X-Google-Smtp-Source: AGHT+IH3FXdPBpJiJnoxYtZf5OcPuzoBCcHTS63VZoNzGC8i3tQMMu8CiFEfyuzsoE5SpSq1X+HyPrst164d4mk4PR4=
+X-Received: by 2002:a05:6902:2b85:b0:e38:bec9:527d with SMTP id
+ 3f1490d57ef6-e38f8b22061mr11846744276.26.1732572501125; Mon, 25 Nov 2024
+ 14:08:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241122155226.2068287-1-fabio.m.de.francesco@linux.intel.com>
+References: <20241122-add-display-support-for-qcs615-platform-v3-0-35252e3a51fe@quicinc.com>
+ <20241122-add-display-support-for-qcs615-platform-v3-9-35252e3a51fe@quicinc.com>
+ <azdmcs7uafw3n6cqbq4ei66oybzhtyvdyz2xl4wtaf3u5zextb@vdhbs6wnbeg4> <520419eb-cedf-465b-a14a-12d97ab257a0@quicinc.com>
+In-Reply-To: <520419eb-cedf-465b-a14a-12d97ab257a0@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 26 Nov 2024 00:08:10 +0200
+Message-ID: <CAA8EJpqvkeMWgeWCx9D-HcJhRfipZJdEvpvag0wk-WXazkPahA@mail.gmail.com>
+Subject: Re: [PATCH v3 9/9] arm64: dts: qcom: Add display support for QCS615
+ RIDE board
+To: fange zhang <quic_fangez@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Krishna Manikandan <quic_mkrishn@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Li Liu <quic_lliu6@quicinc.com>, 
+	Xiangxu Yin <quic_xiangxuy@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 22, 2024 at 04:51:51PM +0100, Fabio M. De Francesco wrote:
-> The CXL Fixed Memory Window Structure (CFMWS) describes zero or more Host
-> Physical Address (HPA) windows that are associated with each CXL Host
-> Bridge. Each window represents a contiguous HPA that may be interleaved
-> with one or more targets (CXL v3.1 - 9.18.1.3).
-> 
-> The Low Memory Hole (LMH) of x86 is a range of addresses of physical low
-> memory to which systems cannot send transactions. On those systems, BIOS
-> publishes CFMWS which communicate the active System Physical Address (SPA)
-> ranges that map to a subset of the Host Physical Address (HPA) ranges. The
-> SPA range trims out the hole, and capacity in the endpoint is lost with no
-> SPA to map to CXL HPA in that hole.
-> 
-> In the early stages of CXL Regions construction and attach on platforms
-> with Low Memory Holes, the driver fails and returns an error because it
-> expects that the CXL Endpoint Decoder range is a subset of the Root
-> Decoder's.
-> 
-> Then detect SPA/HPA misalignment and allow CXL Regions construction and 
-> attach if and only if the misalignment is due to x86 Low Memory Holes.
-> 
+On Mon, 25 Nov 2024 at 09:39, fange zhang <quic_fangez@quicinc.com> wrote:
+>
+>
+>
+> On 2024/11/22 18:22, Dmitry Baryshkov wrote:
+> > On Fri, Nov 22, 2024 at 05:56:52PM +0800, Fange Zhang wrote:
+> >> From: Li Liu <quic_lliu6@quicinc.com>
+> >>
+> >> Add display MDSS and DSI configuration for QCS615 RIDE board.
+> >> QCS615 has a DP port, and DP support will be added in a later patch.
+> >>
+> >> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
+> >> Signed-off-by: Fange Zhang <quic_fangez@quicinc.com>
+> >> ---
+> >>   arch/arm64/boot/dts/qcom/qcs615-ride.dts | 76 ++++++++++++++++++++++++++++++++
+> >>   1 file changed, 76 insertions(+)
+> >>
+> >> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> >> index ee6cab3924a6d71f29934a8debba3a832882abdd..cc7dadc411ab79b9e60ccb15eaff84ea5f997c4c 100644
+> >> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> >> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> >> @@ -202,6 +202,82 @@ &gcc {
+> >>               <&sleep_clk>;
+> >>   };
+> >>
+> >> +&i2c2 {
+> >> +    clock-frequency = <400000>;
+> >> +    status = "okay";
+> >> +
+> >> +    ioexp: gpio@3e {
+> >> +            compatible = "semtech,sx1509q";
+> >> +            reg = <0x3e>;
+> >> +            interrupt-parent = <&tlmm>;
+> >> +            interrupts = <58 0>;
+> >> +            gpio-controller;
+> >> +            #gpio-cells = <2>;
+> >> +            interrupt-controller;
+> >> +            #interrupt-cells = <2>;
+> >> +            semtech,probe-reset;
+> >> +    };
+> >> +
+> >> +    i2c-mux@77 {
+> >> +            compatible = "nxp,pca9542";
+> >> +            reg = <0x77>;
+> >> +            #address-cells = <1>;
+> >> +            #size-cells = <0>;
+> >> +            i2c@0 {
+> >> +                    reg = <0>;
+> >> +                    #address-cells = <1>;
+> >> +                    #size-cells = <0>;
+> >> +
+> >> +                    anx7625@58 {
+> >> +                            compatible = "analogix,anx7625";
+> >> +                            reg = <0x58>;
+> >> +                            interrupt-parent = <&ioexp>;
+> >> +                            interrupts = <0 0>;
+> >> +                            enable-gpios = <&tlmm 4 GPIO_ACTIVE_HIGH>;
+> >> +                            reset-gpios = <&tlmm 5 GPIO_ACTIVE_HIGH>;
+> >> +                            wakeup-source;
+> >> +
+> >> +                            ports {
+> >> +                                    #address-cells = <1>;
+> >> +                                    #size-cells = <0>;
+> >> +
+> >> +                                    port@0 {
+> >> +                                            reg = <0>;
+> >> +                                            anx_7625_in: endpoint {
+> >> +                                                    remote-endpoint = <&mdss_dsi0_out>;
+> >> +                                            };
+> >> +                                    };
+> >> +
+> >> +                                    port@1 {
+> >> +                                            reg = <1>;
+> >> +                                            anx_7625_out: endpoint {
+> >> +                                            };
+> >
+> > Where is it connected? Is it DP port? USB-C? eDP?
+> yes, it's DP port
 
-Hi Fabio,
+So, I'd expect to see a dp-connector node at the end, not the
+unterminated anx7625.
 
-I took this for a test drive in cxl-test - thanks for that patch!
-
-Here's a couple of observations on what users will see. Just stirring
-the pot here, not knowing if there is, or even needs to be an explanation
-to userspace about LMH.
-
-1) Users will see that the endpoint decoders intend to map more than the
-root decoder. Users may question their trimmed region size.
-
-2) At least in this example, I don't think users can re-create this
-region in place, ie via hotplug.  Once this region is destroyed, we
-default to creating a smaller, aligned region, in its place.
-
-cxl-cli output is appended showing the auto created region, it's decoders,
-and then the creation of a user requested region, not exactly in its
-place.
-
-
-Upon load of cxl-test:
-
-# cxl list -r region0 --decoders -u
-[
-  {
-    "root decoders":[
-      {
-        "decoder":"decoder0.0",
-        "resource":"0xf010000000",
-        "size":"768.00 MiB (805.31 MB)",
-        "interleave_ways":1,
-        "max_available_extent":0,
-        "volatile_capable":true,
-        "qos_class":42,
-        "nr_targets":1
-      }
-    ]
-  },
-  {
-    "port decoders":[
-      {
-        "decoder":"decoder1.0",
-        "resource":"0xf010000000",
-        "size":"1024.00 MiB (1073.74 MB)",
-        "interleave_ways":1,
-        "region":"region0",
-        "nr_targets":1
-      },
-      {
-        "decoder":"decoder6.0",
-        "resource":"0xf010000000",
-        "size":"1024.00 MiB (1073.74 MB)",
-        "interleave_ways":2,
-        "interleave_granularity":4096,
-        "region":"region0",
-        "nr_targets":2
-      }
-    ]
-  },
-  {
-    "endpoint decoders":[
-      {
-        "decoder":"decoder10.0",
-        "resource":"0xf010000000",
-        "size":"1024.00 MiB (1073.74 MB)",
-        "interleave_ways":2,
-        "interleave_granularity":4096,
-        "region":"region0",
-        "dpa_resource":"0",
-        "dpa_size":"512.00 MiB (536.87 MB)",
-        "mode":"ram"
-      },
-      {
-        "decoder":"decoder13.0",
-        "resource":"0xf010000000",
-        "size":"1024.00 MiB (1073.74 MB)",
-        "interleave_ways":2,
-        "interleave_granularity":4096,
-        "region":"region0",
-        "dpa_resource":"0",
-        "dpa_size":"512.00 MiB (536.87 MB)",
-        "mode":"ram"
-      }
-    ]
-  }
-]
-
-After destroying the auto region, root decoder show the 768MiB available:
-
-# cxl list -d decoder0.0 -u
-{
-  "decoder":"decoder0.0",
-  "resource":"0xf010000000",
-  "size":"768.00 MiB (805.31 MB)",
-  "interleave_ways":1,
-  "max_available_extent":"768.00 MiB (805.31 MB)",
-  "volatile_capable":true,
-  "qos_class":42,
-  "nr_targets":1
-}
+> >
+> >> +                                    };
+> >> +                            };
+> >> +                    };
+> >> +            };
+> >> +    };
+> >> +};
+> >> +
+> >> +&mdss {
+> >> +    status = "okay";
+> >> +};
+> >> +
+> >> +&mdss_dsi0 {
+> >> +    vdda-supply = <&vreg_l11a>;
+> >> +    status = "okay";
+> >> +};
+> >> +
+> >> +&mdss_dsi0_out {
+> >> +    remote-endpoint = <&anx_7625_in>;
+> >> +    data-lanes = <0 1 2 3>;
+> >> +};
+> >> +
+> >> +&mdss_dsi0_phy {
+> >> +    vdds-supply = <&vreg_l5a>;
+> >> +    status = "okay";
+> >> +};
+> >> +
+> >>   &qupv3_id_0 {
+> >>      status = "okay";
+> >>   };
+> >>
+> >> --
+> >> 2.34.1
+> >>
+> >
+>
 
 
-# cxl create-region -d decoder0.0 -m mem5 mem4
-{
-  "region":"region0",
-  "resource":"0xf010000000",
-  "size":"512.00 MiB (536.87 MB)",
-  "type":"ram",
-  "interleave_ways":2,
-  "interleave_granularity":256,
-  "decode_state":"commit",
-
-snip
-
-# cxl list -r region0 --decoders -u
-[
-  {
-    "root decoders":[
-      {
-        "decoder":"decoder0.0",
-        "resource":"0xf010000000",
-        "size":"768.00 MiB (805.31 MB)",
-        "interleave_ways":1,
-        "max_available_extent":"256.00 MiB (268.44 MB)",
-        "volatile_capable":true,
-        "qos_class":42,
-        "nr_targets":1
-      }
-    ]
-  },
-  {
-    "port decoders":[
-      {
-        "decoder":"decoder1.0",
-        "resource":"0xf010000000",
-        "size":"512.00 MiB (536.87 MB)",
-        "interleave_ways":1,
-        "region":"region0",
-        "nr_targets":1
-      },
-      {
-        "decoder":"decoder6.0",
-        "resource":"0xf010000000",
-        "size":"512.00 MiB (536.87 MB)",
-        "interleave_ways":2,
-        "interleave_granularity":256,
-        "region":"region0",
-        "nr_targets":2
-      }
-    ]
-  },
-  {
-    "endpoint decoders":[
-      {
-        "decoder":"decoder10.0",
-        "resource":"0xf010000000",
-        "size":"512.00 MiB (536.87 MB)",
-        "interleave_ways":2,
-        "interleave_granularity":256,
-        "region":"region0",
-        "dpa_resource":"0",
-        "dpa_size":"256.00 MiB (268.44 MB)",
-        "mode":"ram"
-      },
-      {
-        "decoder":"decoder13.0",
-        "resource":"0xf010000000",
-        "size":"512.00 MiB (536.87 MB)",
-        "interleave_ways":2,
-        "interleave_granularity":256,
-        "region":"region0",
-        "dpa_resource":"0",
-        "dpa_size":"256.00 MiB (268.44 MB)",
-        "mode":"ram"
-      }
-    ]
-  }
-]
-
+-- 
+With best wishes
+Dmitry
 
