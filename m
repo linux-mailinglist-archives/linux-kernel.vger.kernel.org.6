@@ -1,221 +1,186 @@
-Return-Path: <linux-kernel+bounces-421671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07CC19D8E54
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:08:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D6919D8E57
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:09:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91B73162CB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:08:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FE8AB23D33
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612521CBE8B;
-	Mon, 25 Nov 2024 22:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD10A1CBE8B;
+	Mon, 25 Nov 2024 22:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uod5sVLY"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T/Li71Hr"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F79118F2D8
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 22:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74059188724;
+	Mon, 25 Nov 2024 22:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732572504; cv=none; b=ebHHnWC7yIk6LsN4wDeLhzVM+SrK1nCmgTNsjyBtakunuKXkSZbr0aA7TAG9G4x4y9AYt50I61r2II2WT4mG/NSgIOm5I4VxI9KAdEe86GugQKTff0q8v60rV2E1cAs3wMxiIUDJmMhbziuCga8RyHGZNWj67BakUFZiwaXxEHE=
+	t=1732572514; cv=none; b=b6YLhLgDXTpiqLyooMHlWAT+kHBQFuTmzSfQM6m5Z+V7KbX8o1tr2PTen9Dj9dz7XnBabloeTu9cATgUTWg8aUwOZiewvzOK0eQo0/TEGvmpJGDKqatnAgRNhaj7cOoBykCbs8/Q7Q23OcqmzcpThuUtAqxKgJJbNxdv0He7LgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732572504; c=relaxed/simple;
-	bh=xNz1w0/+f9nkgC6K+YBMLNPP16IhNrqOslyvuYbdvbw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mMHLHgCEwgv0Q1TNKPzIH2G1NxIbO1gJcQnX8ieSyLOsjLsXTrKZPbWhuEuxt7d65iJb0lmFt9k3xc2YPo4uXZLBftDSQyry7AFDawvREsOKhlv0nGHY09Cs8UtXW3KGjT8ss1rlTY63Lb5RusWuG+oyQvTgMvUOyv1mWeMmb/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Uod5sVLY; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e3882273bc8so4548228276.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:08:21 -0800 (PST)
+	s=arc-20240116; t=1732572514; c=relaxed/simple;
+	bh=I4HyOboDP12ePyDeC4l0EQTmYf7GSoYtqq7nwcHd8ac=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rso4pSKTGY0CW7/x0kgCsAJbYCwTEK6x8YjcWxbGSLWp+a16GpumItDo41tN1eqgvOPDOo8AXBXxanYMEJLnL+eQ001qA7e6a0AYYZMhSXgqTnzUhkldgg3YanZz8dNeDYYZv/mR3zqKPbUAHuFLwXgU1ZVNpDD0+ZIhTMzYFdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T/Li71Hr; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3823eaad37aso3724357f8f.0;
+        Mon, 25 Nov 2024 14:08:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732572501; x=1733177301; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2eAVON7HGIpJamTV+1ul/jOyH9ikQLUzIAIpUaFRKeE=;
-        b=Uod5sVLY0p8ExaykKTLYWBIUCmPh1jw/tLGJEwSb94gyL3xbylgYCHzvTSMpixyWLs
-         oehxgoImPCoECxnDt13/jox3vrUSlHdTtW3A93mLNZgCt9AU5ZVHxve8XUagHti+WJps
-         IbPP1TdwG6ZtE4Q7nkFOWyrI353sl0W09YsPgBV/2EPgHTsgIdBr8wy3OWfhNgqule4O
-         aLKrfN8AtsACvBr8ouVb6huQFHKRkMvRk9e8RDrK3AzyTlHyi/EVjNrbGDcALLHGD/R8
-         QJKLt2i1UmM4z0Yd5UNesHHsD2XduwgpnpFYWgOKZcH5A3cTi6gHHGDSKE9wtCOn0csH
-         2LPg==
+        d=gmail.com; s=20230601; t=1732572511; x=1733177311; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=5p1qnifDyO3syun60fDSCevkveV/3toJASW8RyuXXOQ=;
+        b=T/Li71Hr5GCm1bbcjJ50qWmZYOq9LBX7ejVvdmcsUjjc1ZI5KLhDROjbsIrV5dE3W8
+         NMGYLKURpkYJFJ45wWYjhM/UQAfeYPOGk+Uth8w+9yIvmaLTbbPDsI+s1H2aGlxRB9ju
+         lQYjeb2E99LM36sL027FTOMhO3vUxQtqxjPWnx5C5e865Plv2aYmfkwUX8VEVoM/EW/f
+         jse5NoMWw4KqQYM6gWfgiKE7aIZGOqAUDF4mwnOlGGvwo74f9HesJ57541q9Gqq3icyj
+         4VjWg/Wfcz14aKlHTdNsg2Y6hL/S8cuCJ0d3CtAS1lCkgxvIW+P//YMRf6W/M5NbYBEA
+         7+8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732572501; x=1733177301;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2eAVON7HGIpJamTV+1ul/jOyH9ikQLUzIAIpUaFRKeE=;
-        b=VOTsIxej14R29FrVWWb9Ik2X9R7XU4lh8BggR8x4ABfe7zA6Z4UQPXtdBCa4v1/rU7
-         r65ORxCwXQTZ4AikMiMf5KX/vZgE3HKWozhHF0UKSfvHbkJOdKtSmrW7Jndu5WnKLiA9
-         s3xOiIHcpWMQSZl3rY2bXarWIOKd/l8TeYag1WzN510KRK1VudtzGAOt4V0eY9QSTDF+
-         MSVyXMWrCxsv+XnMUMfD4xyP3+SrW7c7V7m5SQngrkiW7T11hjhwUUmf00F3VyxL+N5+
-         rcgt3PkV/YDrXqLMhGRC3duTaEvb7CSszKP72XVXzXVJrvhQ97x3h6+9bvuXijMLftbz
-         jlJw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNkzc3gSKtchIchL1+jv1GerjeiJ2nRpHtImUkxh1CjOClk64Pc6n4abG0nmt7EHoRZrSVVpIgV5Y3pdM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtBYG0J4Fh/GxUo6nKsID1pg76F3f0pPVO9w4P7sppYvTuiEWv
-	2yjvOjgeerIyP/cFt8FZGTJgqD61sDNWybKjDSDZaITbZTr340Cv0WQ22Qtfb5K7n35Mg58ZZU3
-	WaRMiOpBQAzAaKxFzD9eYiI8B9MZwLFleej6YSQ==
-X-Gm-Gg: ASbGncsKK79ADTO5ucoPB1mMJAzbEq3DJHB6mk1xvx+SnYdfJ9uHLcqK1Q4yWzkzH64
-	5Da1yUHEcOT4pnzk8u2jk6JVJCSV/HMMkqA2mTq/9cRvvlA==
-X-Google-Smtp-Source: AGHT+IH3FXdPBpJiJnoxYtZf5OcPuzoBCcHTS63VZoNzGC8i3tQMMu8CiFEfyuzsoE5SpSq1X+HyPrst164d4mk4PR4=
-X-Received: by 2002:a05:6902:2b85:b0:e38:bec9:527d with SMTP id
- 3f1490d57ef6-e38f8b22061mr11846744276.26.1732572501125; Mon, 25 Nov 2024
- 14:08:21 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732572511; x=1733177311;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5p1qnifDyO3syun60fDSCevkveV/3toJASW8RyuXXOQ=;
+        b=lVeIevZagsaECDb9n9I0EtWzUtoocsNEym7+vMy9QBlcdZZgjTSVUa4Ed+aJWx7zbG
+         dd/bN1tAMVrtjCp+rbYwzbQ//c0jluVWP7NSxLnOIcjc97q7Iu9EYLhmMoWuSTwFaUXz
+         rpFUxKFF7dQl0281MMCYxMoMf+Sol834dRZGtcVh41DCFfj8AOww9wTu20/qZfaqNdEl
+         HbGUyBQAezaf+81CLnPoIu4oUE/5M3kUdAqItvBdPTGJCsszwCMIUKXDYxW/pFj8MyKq
+         7N67OA9NAoqpLG4HU3F9pCfQ+TVTik/zNSD5jTi68IouTrjiUI2o//8gtAAZexCLrmE5
+         QZzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfFayvWD/m/BFf6MBBGVjPk0K+whv7w7inomFB9FyKLE5mvhWhCuA6ZwTFchzyyO80zaY9PFPV8iNDWw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywyiaj4g2iXQEb3Zax/p+kkDGau/LVZoqdMJNa9XSqSbQ0KXIBU
+	zNOehEw84TtihTOVwVT3aD3CLx4iXKwZ2rG36PY3hwtTgA1MLP5E
+X-Gm-Gg: ASbGnctw8UNzO/z0BkHGHVzwOQnc8QzP6TQ6O5p5NyF1lL+14spL+FnqaqHYHG8OuT/
+	9n+fr7PbVl2qewjbO5gP9iBBCeaU8SFtmELaYt2JCVG6XnGx26/3dDuikFTswbvOheRu4ZCIIZx
+	S613bCFbeoua+iqFRm1OEoxMq523Pd5eyOXq0mzeLRqfzuPC0rQtASkw0zmP2EbfRvGOkmqa6k1
+	L6b/GEIRX9i0XkXp90gkf+uGekLQGrxkWjy64pfHvVq8/VSxDuCgRd3c2KIT+0Q3PVg5O9Zgd4r
+	H4Ya3C8cNyfX5UEdK+f/
+X-Google-Smtp-Source: AGHT+IGnQjTvmDMaQ3a1S/VFy020fQCmStmaocgu+w5qhbJEjuZOEmo/xkIima9mzHiKFIO/vrAtJg==
+X-Received: by 2002:a5d:6484:0:b0:382:5a29:199 with SMTP id ffacd0b85a97d-385bfae8583mr790184f8f.11.1732572510547;
+        Mon, 25 Nov 2024 14:08:30 -0800 (PST)
+Received: from ?IPV6:2a01:e34:ecab:8c20:136b:ac23:1f6:8240? ([2a01:e34:ecab:8c20:136b:ac23:1f6:8240])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fad6723sm11630220f8f.16.2024.11.25.14.08.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 14:08:29 -0800 (PST)
+Message-ID: <fd7754e4-2d93-4d77-81d1-13326165cf6a@gmail.com>
+Date: Mon, 25 Nov 2024 23:08:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122-add-display-support-for-qcs615-platform-v3-0-35252e3a51fe@quicinc.com>
- <20241122-add-display-support-for-qcs615-platform-v3-9-35252e3a51fe@quicinc.com>
- <azdmcs7uafw3n6cqbq4ei66oybzhtyvdyz2xl4wtaf3u5zextb@vdhbs6wnbeg4> <520419eb-cedf-465b-a14a-12d97ab257a0@quicinc.com>
-In-Reply-To: <520419eb-cedf-465b-a14a-12d97ab257a0@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 26 Nov 2024 00:08:10 +0200
-Message-ID: <CAA8EJpqvkeMWgeWCx9D-HcJhRfipZJdEvpvag0wk-WXazkPahA@mail.gmail.com>
-Subject: Re: [PATCH v3 9/9] arm64: dts: qcom: Add display support for QCS615
- RIDE board
-To: fange zhang <quic_fangez@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krishna Manikandan <quic_mkrishn@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Li Liu <quic_lliu6@quicinc.com>, 
-	Xiangxu Yin <quic_xiangxuy@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [BUG?] media: ipu6 / ov01a10 webcam not detected
+To: "Cao, Bingbu" <bingbu.cao@intel.com>,
+ "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+References: <cb2c20c3-e9f9-4758-92bc-43591946ed9d@gmail.com>
+ <50811f23-4d59-4ea3-9259-042e7bf557fa@gmail.com>
+ <DM8PR11MB5653FF8ED0A4E9BA67B42CF799272@DM8PR11MB5653.namprd11.prod.outlook.com>
+ <82148acf-3998-47b7-8fad-ba0118662cf9@gmail.com>
+ <DM8PR11MB565358EF5A7F96CD1A364C5F99202@DM8PR11MB5653.namprd11.prod.outlook.com>
+Content-Language: en-US, fr
+From: Nicolas Lorin <androw95220@gmail.com>
+Autocrypt: addr=androw95220@gmail.com; keydata=
+ xjMEY1VgjBYJKwYBBAHaRw8BAQdAz2n7kjNHne7ZkxorNsqC6fW9enBx9zGLd5L8iYFVaprN
+ JU5pY29sYXMgTG9yaW4gPGFuZHJvdzk1MjIwQGdtYWlsLmNvbT7CtQQTFgoAXQIbAwUJCWYB
+ gAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgAIZARYhBFiBbK6iLbQ0x0TKoL3p1BRts4Ek
+ BQJjoy18GBhoa3BzOi8va2V5cy5vcGVucGdwLm9yZwAKCRC96dQUbbOBJGeWAP479DfET1mN
+ k5stAx1NoauJjUgqxFsCQnN0FRRKkERzgAD+M9EWStug/IJWh/i0oMufsUJUU1Liqm7zbSRZ
+ /uLVbgPOOARjVWCMEgorBgEEAZdVAQUBAQdA7+DEoQ7KinwNOZmseIdLPEkAYpayeJM0f5Be
+ Y5mPsgwDAQgHwn4EGBYKACYWIQRYgWyuoi20NMdEyqC96dQUbbOBJAUCY1VgjAIbDAUJCWYB
+ gAAKCRC96dQUbbOBJBfXAQDNSRfNEZhM7p3hq5AikRiJ0tEWQ52iChfQ+IhbfK8PKAEAzhBt
+ bREc3AKOcWQ7+PPLOL7ztWFKc3xykDOLoxHrcQ4=
+In-Reply-To: <DM8PR11MB565358EF5A7F96CD1A364C5F99202@DM8PR11MB5653.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 25 Nov 2024 at 09:39, fange zhang <quic_fangez@quicinc.com> wrote:
+Thanks!
+Got no help from Dell.
+
+Somebody seems to have some clue here 
+https://bugzilla.redhat.com/show_bug.cgi?id=2316918#c22
+
+The non-secure mode doesn't seem to be an issue.
+
+Nicolas Lorin
+
+Le 19/11/2024 à 05:26, Cao, Bingbu a écrit :
+> Nicolas,
 >
+> The IPU should be enforced to run in secure mode(not the `secure boot`)
+> in product, no BIOS option for it. I suggest you get support from vendor
+> to check.
 >
+> ------------------------------------------------------------------------
+> BRs,
+> Bingbu Cao
 >
-> On 2024/11/22 18:22, Dmitry Baryshkov wrote:
-> > On Fri, Nov 22, 2024 at 05:56:52PM +0800, Fange Zhang wrote:
-> >> From: Li Liu <quic_lliu6@quicinc.com>
-> >>
-> >> Add display MDSS and DSI configuration for QCS615 RIDE board.
-> >> QCS615 has a DP port, and DP support will be added in a later patch.
-> >>
-> >> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
-> >> Signed-off-by: Fange Zhang <quic_fangez@quicinc.com>
-> >> ---
-> >>   arch/arm64/boot/dts/qcom/qcs615-ride.dts | 76 ++++++++++++++++++++++++++++++++
-> >>   1 file changed, 76 insertions(+)
-> >>
-> >> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-> >> index ee6cab3924a6d71f29934a8debba3a832882abdd..cc7dadc411ab79b9e60ccb15eaff84ea5f997c4c 100644
-> >> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-> >> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-> >> @@ -202,6 +202,82 @@ &gcc {
-> >>               <&sleep_clk>;
-> >>   };
-> >>
-> >> +&i2c2 {
-> >> +    clock-frequency = <400000>;
-> >> +    status = "okay";
-> >> +
-> >> +    ioexp: gpio@3e {
-> >> +            compatible = "semtech,sx1509q";
-> >> +            reg = <0x3e>;
-> >> +            interrupt-parent = <&tlmm>;
-> >> +            interrupts = <58 0>;
-> >> +            gpio-controller;
-> >> +            #gpio-cells = <2>;
-> >> +            interrupt-controller;
-> >> +            #interrupt-cells = <2>;
-> >> +            semtech,probe-reset;
-> >> +    };
-> >> +
-> >> +    i2c-mux@77 {
-> >> +            compatible = "nxp,pca9542";
-> >> +            reg = <0x77>;
-> >> +            #address-cells = <1>;
-> >> +            #size-cells = <0>;
-> >> +            i2c@0 {
-> >> +                    reg = <0>;
-> >> +                    #address-cells = <1>;
-> >> +                    #size-cells = <0>;
-> >> +
-> >> +                    anx7625@58 {
-> >> +                            compatible = "analogix,anx7625";
-> >> +                            reg = <0x58>;
-> >> +                            interrupt-parent = <&ioexp>;
-> >> +                            interrupts = <0 0>;
-> >> +                            enable-gpios = <&tlmm 4 GPIO_ACTIVE_HIGH>;
-> >> +                            reset-gpios = <&tlmm 5 GPIO_ACTIVE_HIGH>;
-> >> +                            wakeup-source;
-> >> +
-> >> +                            ports {
-> >> +                                    #address-cells = <1>;
-> >> +                                    #size-cells = <0>;
-> >> +
-> >> +                                    port@0 {
-> >> +                                            reg = <0>;
-> >> +                                            anx_7625_in: endpoint {
-> >> +                                                    remote-endpoint = <&mdss_dsi0_out>;
-> >> +                                            };
-> >> +                                    };
-> >> +
-> >> +                                    port@1 {
-> >> +                                            reg = <1>;
-> >> +                                            anx_7625_out: endpoint {
-> >> +                                            };
-> >
-> > Where is it connected? Is it DP port? USB-C? eDP?
-> yes, it's DP port
-
-So, I'd expect to see a dp-connector node at the end, not the
-unterminated anx7625.
-
-> >
-> >> +                                    };
-> >> +                            };
-> >> +                    };
-> >> +            };
-> >> +    };
-> >> +};
-> >> +
-> >> +&mdss {
-> >> +    status = "okay";
-> >> +};
-> >> +
-> >> +&mdss_dsi0 {
-> >> +    vdda-supply = <&vreg_l11a>;
-> >> +    status = "okay";
-> >> +};
-> >> +
-> >> +&mdss_dsi0_out {
-> >> +    remote-endpoint = <&anx_7625_in>;
-> >> +    data-lanes = <0 1 2 3>;
-> >> +};
-> >> +
-> >> +&mdss_dsi0_phy {
-> >> +    vdds-supply = <&vreg_l5a>;
-> >> +    status = "okay";
-> >> +};
-> >> +
-> >>   &qupv3_id_0 {
-> >>      status = "okay";
-> >>   };
-> >>
-> >> --
-> >> 2.34.1
-> >>
-> >
->
-
-
--- 
-With best wishes
-Dmitry
+>> -----Original Message-----
+>> From: Nicolas Lorin <androw95220@gmail.com>
+>> Sent: Tuesday, November 19, 2024 3:09 AM
+>> To: Cao, Bingbu <bingbu.cao@intel.com>; sakari.ailus@linux.intel.com
+>> Cc: linux-kernel@vger.kernel.org; linux-media@vger.kernel.org
+>> Subject: Re: [BUG?] media: ipu6 / ov01a10 webcam not detected
+>>
+>> Bingdu,
+>>
+>> How can I enforce secure mode? I didn't find any way to change that.
+>>
+>> The computer is running Dell BIOS firmware 1.24.0. What do you mean
+>> with correct?
+>>
+>> Regards,
+>>
+>> Nicolas Lorin
+>>
+>> Le 18/11/2024 à 05:46, Cao, Bingbu a écrit :
+>>> Nicolas,
+>>>
+>>> Why was your IPU device  running on non-secure mode?
+>>> `intel-ipu6 0000:00:05.0: IPU6 in non-secure mode touch 0x0 mask
+>> 0xff`
+>>> Could you please confirm that you are running with a correct
+>> IFWI(BIOS)?
+>>>
+>>> -------------------------------------------------------------------
+>> ---
+>>> --
+>>> BRs,
+>>> Bingbu Cao
+>>>
+>>>> -----Original Message-----
+>>>> From: Nicolas Lorin<androw95220@gmail.com>
+>>>> Sent: Saturday, November 16, 2024 2:06 PM
+>>>> To: Cao, Bingbu<bingbu.cao@intel.com>;sakari.ailus@linux.intel.com
+>>>> Cc:linux-kernel@vger.kernel.org;linux-media@vger.kernel.org
+>>>> Subject: Re: [BUG?] media: ipu6 / ov01a10 webcam not detected
+>>>>
+>>>> Same thing on latest mainline:
+>>>>
+>>>>     󱞪 uname -a
+>>>> Linux androwbook 6.12.0-rc7-1-git #1 SMP PREEMPT_DYNAMIC Fri, 15
+>> Nov
+>>>> 2024 23:35:35 +0000 x86_64 GNU/Linux
+>>>>
+>>>> dmesg also show this after stopping repeating the two lines:
+>>>>
+>>>> [   17.272302] pci 0000:00:05.0: deferred probe pending: intel-
+>> ipu6:
+>>>> IPU6 bridge init failed
+>>>>
+>>>> --
+>>>> Nicolas Lorin
 
