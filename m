@@ -1,80 +1,64 @@
-Return-Path: <linux-kernel+bounces-421290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B9329D8A3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:26:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60FD89D894B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:27:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 951F6B6610F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:23:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E14D82819BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:27:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B143F1B3944;
-	Mon, 25 Nov 2024 15:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DFB1B3954;
+	Mon, 25 Nov 2024 15:27:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F8vKl1G/"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Dy9MnAF4"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DD718C345;
-	Mon, 25 Nov 2024 15:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E56F199FD0;
+	Mon, 25 Nov 2024 15:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732548180; cv=none; b=kZAa1q5XXAd7ZO3Q2gctwKU5uyn0sPhtQ+gfKyh4qtVaO+ATMRo0drDvruCqyEsTuo+EjhGnms1Sx5TdwdpuH/3uwoW4Xgy7b8omT+gsWK/qfce/tLE98aqS+k15qc0xi0O/NctowhbAXMPM7NGVqeCaXU3YHwlM2JJzAKTEUqg=
+	t=1732548419; cv=none; b=mV7aKAH3R95JvLlyDq5D3wKgYDmalRwLRZPaSRCvqqjykUSpnrTpGVvj3gxJNj94wn98Cje66JB18o5E80QF/Y2+9/vgdEa3EukwC0Jf50x3tUYfiL0Vb79P81IJlVXevNvG5e0eKrxfQoOXLWiWVAlcjUFkM5darAr8EwxpNWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732548180; c=relaxed/simple;
-	bh=jjfffoSdffwZDcXh85Zc3K0LtTwymYrtKYWfLl9rkDI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WEushQ2Fwyxoxdow6qrJz9Mb1l8j6HQVCaNnAh/GFovoOPdjAXh0MHxeTjReS8SYs8XhFnbysHSlxZVwgUb95tsgQ1HGbrrXUk8ivx4QtVSf0AojIQtB/nQPl9z5SuBLTR/6k3IkLotV6ZLqzp0D78ovqie5/pqUdQOOCGJtLdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F8vKl1G/; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7f8b01bd40dso3195075a12.0;
-        Mon, 25 Nov 2024 07:22:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732548177; x=1733152977; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=pA5keJmCUO7eMYiuFODcV9OmUyA9RUw96yl+dfKJWZU=;
-        b=F8vKl1G/ysF6HtKVb3UauYPo0Vic/x7ySq2Z6L52aMrve7r7jUdqdPkByUby6Ftk8M
-         B2WDimQU6QDVEZ19b2cUjKCxO+ORu5+wiqDA8SMMsm1t8fOksS+VRexEVPNQZFmAfdyD
-         ei6skvuKfBnmxl7/ocNuu+Tfj18/FkCAmZhTBWT9sM0/znuEBahsDswAGujg7DrOzeiZ
-         fADbsQM/laP9Pd8gZfF74nZrKPpIZnDUHepqd4qld7Bj/rpwO4/VeP0Epjc0zMuTzS+C
-         nPUhBnCIgLaV7ooYxNgA6Nn3eXjIJqQd41nHVJsJNEIb7bbhMKln2EpblhkZI+BYJw6y
-         A9oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732548177; x=1733152977;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pA5keJmCUO7eMYiuFODcV9OmUyA9RUw96yl+dfKJWZU=;
-        b=KLlXGC/FkHzNCmrAN+me252S5fMHGSWU4QZpw3LPe9ceYgH4hREvZQGpRJHkw+x0i2
-         fKrS9+yESvkQL4zJEhhpfQUtKG1r0frTul95ttzDfzqt8kxpqNASN8H9wrS8VJbVhX9I
-         hukWgwbW08HMkJvLlaugMSsvQbfBAt4yBShXeCEnzTsL4BgVljPR5LyVGT/Gg+9C08iK
-         FbYndix6JvgOP0bOw8ogT+SpjGx+hoeSQS4kmixDmddYDzX7Hay0msKN0UIKQmbpuckD
-         yuHYhNlWLljqjAXrUxqeOAq47zsslrcp7qyZHXD3VvLv6ru743jPpXS9OT/TK3fu4UHT
-         R/Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTLsDN/mlws1xgriroFcvYrfXEDNNybA5hmcni3veMa0gLWK7aESye2qWv/8oxOQHTWwBO84hCgBQekw==@vger.kernel.org, AJvYcCVnOIFb0/v7hSQy3bgg4+IwiZNZQGrDhmYxC/NQAYZHCxaXPnJk74SvD+F64nVZrNmPfQyrImW13KyC+yCB@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC5pREwfAJbDYhoU5knr+QPuqcQE76ptVCUMZQVPI6a0qfREGn
-	uAz04CUJd5z4LAfBB8UNdBTGpkF8rr3e7xIdpR72k6SFBgevszHdagubkA==
-X-Gm-Gg: ASbGncuJnWFMNlp/a6cJIvOJ1ITP6IHmMFv/eH7btxG/V6ePV09KLdYzR7tClyOcxcz
-	lMJEqKOQgy5ANJEMpuK/cuULSLcBGcVUVO0olFBRWsPtvF0fQYwLi7JpzKQ5dgjTEg08W7IaL1V
-	sZbji13tk54m4hTwxz7WBOwe4ZKjINM+l3jVtDAsLx/3fHM1Bi6u1DEe7x412qY83DQdZQlnClk
-	iiQFRlMbi0ijFcG0uztUqz3c978YuGTzh3B+6rd3phIwTGrm6pErj2a8dQUiyv1VConFCYkZYxN
-	5TBQ+r1/eGkcxS3Q2hLWbtc=
-X-Google-Smtp-Source: AGHT+IEgiIh8M72lh4VSB6EkU9yUrwERGhfYKyRL8dVCHnNR+ajhKa6zMXiPKeR4BpgIejOhfhJrcw==
-X-Received: by 2002:a17:902:e943:b0:212:10ea:a4a1 with SMTP id d9443c01a7336-21283c86ac6mr258919105ad.15.1732548177132;
-        Mon, 25 Nov 2024 07:22:57 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de4549a1sm6753301b3a.24.2024.11.25.07.22.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 07:22:56 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <7acbc41a-f822-4464-8bcb-b7379fa78a86@roeck-us.net>
-Date: Mon, 25 Nov 2024 07:22:55 -0800
+	s=arc-20240116; t=1732548419; c=relaxed/simple;
+	bh=oTFi8I23DaO8+WXyQ9nQwK41e2f6j/VbN37hCDTad7U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=An6CtgOCLckHrYoup5I+NgWiWrZHPhnNcFAbPbydERsFtIcgXunuYQ2d+tSCgLEwAPGxpCVOqxDRkvHqQZ3Svwu7U0B2vCPgGDxvC9vttevhDz6xGcOIqkBpQA3iGtpVHOrrrT5Nim0MVto/j4Y9RXDGAkYU7S0S8ZPYY2wEUxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Dy9MnAF4; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APBlfgd028895;
+	Mon, 25 Nov 2024 16:26:17 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	J3iU4957LIS/H10yjQyEKVHjKHXAXZQsDhA8RML+rwE=; b=Dy9MnAF4bXAHtXxw
+	MHgwNFWZKTyu3ZLMY7dAq6jeFyj0NJxrGzKuvHMK/L8g/jPKwJIoefaf3HV8BUPV
+	2GepDWrgQpTotVIWaKEpEAiHbhGNvll4vJx2YVY3YcMcwGLwBptYu5DXc99U2w8L
+	yErJJUS9mGwc/clGqMxEW3r0r4RUs5BLuHLkoyRhgo4CXITltOM90kOyN8caqh7U
+	Kkn98GP1dwafDhmCDwYbnX/fOJHIjheHNWY5/1ZWuB4VWH+AX4reqdDnFNKoDI7F
+	7foAXFNmm9/EMd8Wy59GJQkB5403jr4SAwOUtLRaD6w2U9YFLF5lcNnpohT8oUSK
+	KWFB8w==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4336tfg57c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 16:26:17 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 713F240045;
+	Mon, 25 Nov 2024 16:24:52 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A23B62A1036;
+	Mon, 25 Nov 2024 16:23:47 +0100 (CET)
+Received: from [10.129.178.212] (10.129.178.212) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 25 Nov
+ 2024 16:23:46 +0100
+Message-ID: <a4908b60-9b81-4d87-942e-d581946bcc82@foss.st.com>
+Date: Mon, 25 Nov 2024 16:23:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,104 +66,244 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/4] hwmon: (acpi_power_meter) Fix update the power
- trip points on failure
-To: Huisong Li <lihuisong@huawei.com>, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: jdelvare@suse.com, liuyonglong@huawei.com, zhanjie9@hisilicon.com,
- zhenglifeng1@huawei.com
-References: <20241125093415.21719-1-lihuisong@huawei.com>
- <20241125093415.21719-3-lihuisong@huawei.com>
+Subject: Re: [PATCH 1/5] dt-bindings: PCI: Add STM32MP25 PCIe root complex
+ bindings
+To: Rob Herring <robh@kernel.org>
+CC: <lpieralisi@kernel.org>, <kw@linux.com>,
+        <manivannan.sadhasivam@linaro.org>, <bhelgaas@google.com>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <p.zabel@pengutronix.de>, <cassel@kernel.org>,
+        <quic_schintav@quicinc.com>, <fabrice.gasnier@foss.st.com>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20241112161925.999196-1-christian.bruel@foss.st.com>
+ <20241112161925.999196-2-christian.bruel@foss.st.com>
+ <20241115163603.GA3188739-robh@kernel.org>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20241125093415.21719-3-lihuisong@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Christian Bruel <christian.bruel@foss.st.com>
+In-Reply-To: <20241115163603.GA3188739-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On 11/25/24 01:34, Huisong Li wrote:
-> The power trip points maintained in local should not be updated when '_PTP'
-> method fails to evaluate.
+
+
+On 11/15/24 17:36, Rob Herring wrote:
+> On Tue, Nov 12, 2024 at 05:19:21PM +0100, Christian Bruel wrote:
+>> Document the bindings for STM32MP25 PCIe Controller configured in
+>> root complex mode.
+>> Supports 4 legacy interrupts and MSI interrupts from the ARM
+>> GICv2m controller.
+>>
+>> Allow tuning to change payload (default 128B) thanks to the
+>> st,max-payload-size entry.
+>> Can also limit the Maximum Read Request Size on downstream devices to the
+>> minimum possible value between 128B and 256B.
+>>
+>> STM32 PCIE may be in a power domain which is the case for the STM32MP25
+>> based boards.
+>> Supports wake# from wake-gpios
+>>
+>> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+>> ---
+>>   .../bindings/pci/st,stm32-pcie-host.yaml      | 149 ++++++++++++++++++
+>>   1 file changed, 149 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/pci/st,stm32-pcie-host.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/pci/st,stm32-pcie-host.yaml b/Documentation/devicetree/bindings/pci/st,stm32-pcie-host.yaml
+>> new file mode 100644
+>> index 000000000000..d7d360b63a08
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pci/st,stm32-pcie-host.yaml
+>> @@ -0,0 +1,149 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/pci/st,stm32-pcie-host.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: STM32MP25 PCIe root complex driver
+>> +
+>> +maintainers:
+>> +  - Christian Bruel <christian.bruel@foss.st.com>
+>> +
+>> +description:
+>> +  PCIe root complex controller based on the Synopsys DesignWare PCIe core.
+>> +
+>> +select:
+>> +  properties:
+>> +    compatible:
+>> +      const: st,stm32mp25-pcie-rc
+>> +  required:
+>> +    - compatible
+>> +
+>> +allOf:
+>> +  - $ref: /schemas/pci/pci-host-bridge.yaml#
+>> +  - $ref: /schemas/pci/snps,dw-pcie-common.yaml#
 > 
-> Signed-off-by: Huisong Li <lihuisong@huawei.com>
-> ---
->   drivers/hwmon/acpi_power_meter.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
+> snps,dw-pcie.yaml instead of these 2.
 > 
-> diff --git a/drivers/hwmon/acpi_power_meter.c b/drivers/hwmon/acpi_power_meter.c
-> index 4c3314e35d30..95da73858a0b 100644
-> --- a/drivers/hwmon/acpi_power_meter.c
-> +++ b/drivers/hwmon/acpi_power_meter.c
-> @@ -292,8 +292,8 @@ static ssize_t set_trip(struct device *dev, struct device_attribute *devattr,
->   	struct sensor_device_attribute *attr = to_sensor_dev_attr(devattr);
->   	struct acpi_device *acpi_dev = to_acpi_device(dev);
->   	struct acpi_power_meter_resource *resource = acpi_dev->driver_data;
-> +	unsigned long temp, trip_bk;
->   	int res;
-> -	unsigned long temp;
->   
->   	res = kstrtoul(buf, 10, &temp);
->   	if (res)
-> @@ -302,8 +302,11 @@ static ssize_t set_trip(struct device *dev, struct device_attribute *devattr,
->   	temp = DIV_ROUND_CLOSEST(temp, 1000);
->   
->   	mutex_lock(&resource->lock);
-> +	trip_bk = resource->trip[attr->index - 7];
->   	resource->trip[attr->index - 7] = temp;
->   	res = set_acpi_trip(resource);
-> +	if (!res)
-> +		resource->trip[attr->index - 7] = trip_bk;
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: st,stm32mp25-pcie-rc
+>> +
+>> +  reg:
+>> +    items:
+>> +      - description: Data Bus Interface (DBI) registers.
+>> +      - description: PCIe configuration registers.
+>> +
+>> +  reg-names:
+>> +    items:
+>> +      - const: dbi
+>> +      - const: config
+>> +
+>> +  resets:
+>> +    maxItems: 1
+>> +
+>> +  reset-names:
+>> +    const: core
+> 
+> -names with a single entry is kind of pointless.
 
-Unless I am missing something, this restores the old value if setting
-the new value succeeded. Please explain.
+ok, will update the driver accordinly
 
-Thanks,
-Guenter
+> 
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +    description: PCIe system clock
+>> +
+>> +  clock-names:
+>> +    const: core
+>> +
+>> +  phys:
+>> +    maxItems: 1
+>> +
+>> +  phy-names:
+>> +    const: pcie-phy
+>> +
+>> +  num-lanes:
+>> +    const: 1
+>> +
+>> +  msi-parent:
+>> +    maxItems: 1
+> 
+> Just 'msi-parent: true'. It's already only ever 1 entry.
+> 
+>> +
+>> +  reset-gpios:
+>> +    description: GPIO controlled connection to PERST# signal
+>> +    maxItems: 1
+>> +
+>> +  wake-gpios:
+>> +    description: GPIO controlled connection to WAKE# input signal
+>> +    maxItems: 1
+>> +
+> 
+>> +  st,limit-mrrs:
+>> +    description: If present limit downstream MRRS to 256B
+>> +    type: boolean
+>> +
+>> +  st,max-payload-size:
+>> +    description: Maximum Payload size to use
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    enum: [128, 256]
+>> +    default: 128
+> 
+> IIRC, other hosts have similar restrictions, so you should be able to do
+> the same and imply it from the compatible. Though I'm open to a common
+> property as Bjorn suggested.
+> 
+>> +
+>> +  wakeup-source: true
+>> +
+>> +  power-domains:
+>> +    maxItems: 1
+>> +
+>> +  access-controllers:
+>> +    maxItems: 1
+>> +
+>> +if:
+>> +  required:
+>> +    - wakeup-source
+>> +then:
+>> +  required:
+>> +    - wake-gpios
+> 
+> This can be just:
+> 
+> dependentRequired:
+>    wakeup-source: [ wake-gpios ]
+> 
+> (dependentRequired supercedes dependencies)
+> 
+>> +
+>> +required:
+>> +  - interrupt-map
+>> +  - interrupt-map-mask
+>> +  - ranges
+>> +  - resets
+>> +  - reset-names
+>> +  - clocks
+>> +  - clock-names
+>> +  - phys
+>> +  - phy-names
+>> +
+>> +unevaluatedProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/st,stm32mp25-rcc.h>
+>> +    #include <dt-bindings/gpio/gpio.h>
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +    #include <dt-bindings/phy/phy.h>
+>> +    #include <dt-bindings/reset/st,stm32mp25-rcc.h>
+>> +
+>> +    pcie@48400000 {
+>> +        compatible = "st,stm32mp25-pcie-rc";
+>> +        device_type = "pci";
+>> +        num-lanes = <1>;
+>> +        reg = <0x48400000 0x400000>,
+>> +              <0x10000000 0x10000>;
+>> +        reg-names = "dbi", "config";
+>> +        #interrupt-cells = <1>;
+>> +        interrupt-map-mask = <0 0 0 7>;
+>> +        interrupt-map = <0 0 0 1 &intc 0 0 GIC_SPI 264 IRQ_TYPE_LEVEL_HIGH>,
+>> +                        <0 0 0 2 &intc 0 0 GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>,
+>> +                        <0 0 0 3 &intc 0 0 GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>,
+>> +                        <0 0 0 4 &intc 0 0 GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>;
+>> +        #address-cells = <3>;
+>> +        #size-cells = <2>;
+>> +        ranges = <0x01000000 0 0x10010000 0x10010000 0 0x10000>,
+>> +                 <0x02000000 0 0x10020000 0x10020000 0 0x7fe0000>,
+>> +                 <0x42000000 0 0x18000000 0x18000000 0 0x8000000>;
+>> +        bus-range = <0x00 0xff>;
+> 
+> Don't need this unless it's restricted to less than bus 0-255.
+> 
+>> +        clocks = <&rcc CK_BUS_PCIE>;
+>> +        clock-names = "core";
+>> +        phys = <&combophy PHY_TYPE_PCIE>;
+>> +        phy-names = "pcie-phy";
+>> +        resets = <&rcc PCIE_R>;
+>> +        reset-names = "core";
+>> +        msi-parent = <&v2m0>;
+>> +        wakeup-source;
+>> +        wake-gpios = <&gpioh 5 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+>> +        access-controllers = <&rifsc 76>;
+>> +        power-domains = <&CLUSTER_PD>;
+>> +    };
+>> -- 
+>> 2.34.1
+>>
 
->   	mutex_unlock(&resource->lock);
->   
->   	if (res)
+thanks
 
 
