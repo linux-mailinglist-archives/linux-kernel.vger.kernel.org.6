@@ -1,108 +1,118 @@
-Return-Path: <linux-kernel+bounces-420873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AF399D83D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:53:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 267ED9D83DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:53:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FBB128A1A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:53:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E158428A7EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F33F1925A6;
-	Mon, 25 Nov 2024 10:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB79F194137;
+	Mon, 25 Nov 2024 10:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="gtFtymY9"
-Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="ZYfrj838"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35397192B90;
-	Mon, 25 Nov 2024 10:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B3E192B7F;
+	Mon, 25 Nov 2024 10:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732531967; cv=none; b=YS6o3cnJqhi/fFFIvYZfYxniTvdqnPtU7KJD0Ty6qAnslaSHs/wA2DOfH/8FGGW35Xw42dHWhkhj2lB640dS6rHeq4c7ox6jfEBql7X9cUeJZQda5tqKNP94QlwpdAZIinsGZswzshoMInoAD0MyCKvZXrj5zaVxhWCMynYRswo=
+	t=1732531988; cv=none; b=LL014ecsm0RxFp2j6JTA1aRtZ9xZbuyeHRUxHDBWmOFLe412SSrY/RAjZPAX5RD3SuBoDmieejcCWZafeFrUcsVo0nb5laoTTlSwUPC7PG4XGQtMNL4CJVBKBsy40uqIMaS6vqGlm3GyYRkuroc5nYYnXp7AvuRTxzdgjsGnt3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732531967; c=relaxed/simple;
-	bh=JpGjeBjmwwj4tAr/NvIpAh2+TZXeSq9SG3rXs+foLRg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cbCi9nul2IlmKLRC1ukyMc5dzfKPBqXDsAHVJRv9wkhfSvjU6OjgPu43EHdodYyb9hlT3yFiLD1LEtJaF2kgCZcZRYC6/w7PUPRu7vtYdsr/+/tzX9A2aLygKGqi1axCssy37xqCk0XgRyEy2sVHBEMTelba/qwQ4sihEEaMKSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=gtFtymY9; arc=none smtp.client-ip=168.119.48.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
-From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1732531964;
-	h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=Bk64MtqGkER1ZMPO0RH9GpVeWujqZYsCThNqF69MyRo=;
-	b=gtFtymY9JwUJFkpAL/kSf+Ma/1ghajXUrJ5yxsHGl8kT4QAt4TJkESBUOH573AEerDUtFC
-	z5/OInOsdB3Z8GCO+0hzJyWNRIYFq9K58bJ+D4bscwCdlyseZbzE6dpsXE3kbikgzBKKu1
-	JNwAgUyM1T1RyphrFdbh3rcY0SSBCMhcEY9GYTrHaJCtsPmjnDPGai7tZWw4X6DdXGUfgz
-	TWRDkp82HzI37siSO+cOpuqPB9mCab6S2h+CNEBg+Ejc6DCuyStLVq5GA/e6s1m1ReXKim
-	R0NyE/1qMexlD3AhdsLS3cI3GlEAzOSsMal/wFkhE8SoFKmNjPLXIt4j0SVkxQ==
-To: 
-Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>,
-	Rae Moar <rmoar@google.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH] kunit: constify return of string literals
-Date: Mon, 25 Nov 2024 11:52:39 +0100
-Message-ID: <20241125105240.44219-1-cgoettsche@seltendoof.de>
-Reply-To: cgzones@googlemail.com
+	s=arc-20240116; t=1732531988; c=relaxed/simple;
+	bh=3jcBf0eL6Gi2Rg6poX5bDC7FF84+Wlh4gqM+ewFsiIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jYvaKV1DcopHj1cuWcO07QHiYEa48InQTHdm/X5+kAwTYTKYIDzStXooseAr8+xyIk2HcGv8YqmncUfVftm/ODkR5Lu43Z0knjzNaaYUlfOSpmo0CJXNSg+wJ7ozjGNc0ISpqX7tgiFCgNmEV1T0gO72XuQPWs7EWnX0CRXat1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=ZYfrj838; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 1E756262A7;
+	Mon, 25 Nov 2024 11:52:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1732531978;
+	bh=hmQWA+nwpDDcGMMWDzj5b5llGkioHK+B9GAwscWHsf8=;
+	h=Received:From:To:Subject;
+	b=ZYfrj838yqQBq+MD5xjL1RdFq/zTs84dqXtTqrLEVI0BvgjI7PabTQ+4t8f3ceZx1
+	 +bgbcTJZG7kJm4sOAnseL56ApNbSwEcXv/OEmNp6qXqdzdEkw1FK5JlaHxMKxaFuzT
+	 Mvi8WDOvCkgBqs6ZuhRkXzc0NC56CBxP7xMrpBfZ4ltng4O+6hYdQvaxyo0xd/x+aK
+	 a7I2mVi6aU8U9duQei/4IcijBLyfFagIRTjS5R4R4qCxTPaulnhlTbOLpex4GQvrdX
+	 d86c5tDbtN75uV2MqQ/fauaRApXM9BOtbWOQmhUhhqHd8TNHTBcouEc1vNdB8K8C75
+	 8VrGTNu6GvA9g==
+Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
+	id ADFCE7F996; Mon, 25 Nov 2024 11:52:57 +0100 (CET)
+Date: Mon, 25 Nov 2024 11:52:57 +0100
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+	p.zabel@pengutronix.de, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, glx@linutronix.de,
+	vkoul@kernel.org, kishon@kernel.org, aisheng.dong@nxp.com,
+	agx@sigxcpu.org, francesco@dolcini.it, frank.li@nxp.com,
+	dmitry.baryshkov@linaro.org
+Subject: Re: [DO NOT MERGE PATCH v4 16/19] arm64: dts: imx8qxp: Add display
+ controller subsystem
+Message-ID: <Z0RXCYZ_7fBvpcvd@gaggiata.pivistrello.it>
+References: <20241125093316.2357162-1-victor.liu@nxp.com>
+ <20241125093316.2357162-17-victor.liu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241125093316.2357162-17-victor.liu@nxp.com>
 
-From: Christian Göttsche <cgzones@googlemail.com>
+On Mon, Nov 25, 2024 at 05:33:13PM +0800, Liu Ying wrote:
+> Add display controller subsystem in i.MX8qxp SoC.
+> 
+> Signed-off-by: Liu Ying <victor.liu@nxp.com>
 
-The function kunit_status_to_ok_not_ok() returns string literals, thus
-declare the return value as such.
+...
 
-Reported by clang:
+> diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+> index 05138326f0a5..35cc82cbbcd1 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+> @@ -20,6 +20,27 @@ / {
+>  	#size-cells = <2>;
+>  
+>  	aliases {
+> +		dc0 = &dc0;
+> +		dc0-constframe0 = &dc0_constframe0;
+> +		dc0-constframe1 = &dc0_constframe1;
+> +		dc0-constframe4 = &dc0_constframe4;
+> +		dc0-constframe5 = &dc0_constframe5;
+> +		dc0-display-engine0 = &dc0_display_engine0;
+> +		dc0-display-engine1 = &dc0_display_engine1;
+> +		dc0-extdst0 = &dc0_extdst0;
+> +		dc0-extdst1 = &dc0_extdst1;
+> +		dc0-extdst4 = &dc0_extdst4;
+> +		dc0-extdst5 = &dc0_extdst5;
+> +		dc0-fetchlayer0 = &dc0_fetchlayer0;
+> +		dc0-fetchwarp2 = &dc0_fetchwarp2;
+> +		dc0-framegen0 = &dc0_framegen0;
+> +		dc0-framegen1 = &dc0_framegen1;
+> +		dc0-layerblend0 = &dc0_layerblend0;
+> +		dc0-layerblend1 = &dc0_layerblend1;
+> +		dc0-layerblend2 = &dc0_layerblend2;
+> +		dc0-layerblend3 = &dc0_layerblend3;
+> +		dc0-tcon0 = &dc0_tcon0;
+> +		dc0-tcon1 = &dc0_tcon1;
 
-    ./include/kunit/test.h:143:10: warning: returning 'const char[3]' from a function with result type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
-      143 |                 return "ok";
-          |                        ^~~~
-    ./include/kunit/test.h:145:10: warning: returning 'const char[7]' from a function with result type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
-      145 |                 return "not ok";
-          |                        ^~~~~~~~
-    ./include/kunit/test.h:147:9: warning: returning 'const char[8]' from a function with result type 'char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
-      147 |         return "invalid";
-          |                ^~~~~~~~~
+what would you use those aliases for?
 
-Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
----
- include/kunit/test.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/kunit/test.h b/include/kunit/test.h
-index 34b71e42fb10..ae1b57578476 100644
---- a/include/kunit/test.h
-+++ b/include/kunit/test.h
-@@ -135,7 +135,7 @@ struct kunit_case {
- 	struct string_stream *log;
- };
- 
--static inline char *kunit_status_to_ok_not_ok(enum kunit_status status)
-+static inline const char *kunit_status_to_ok_not_ok(enum kunit_status status)
- {
- 	switch (status) {
- 	case KUNIT_SKIPPED:
--- 
-2.45.2
+Francesco
 
 
