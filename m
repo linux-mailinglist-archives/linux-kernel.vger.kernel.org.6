@@ -1,154 +1,156 @@
-Return-Path: <linux-kernel+bounces-420482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A04149D7B7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:14:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CAB79D7B82
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:15:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1CAF281EE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 06:14:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2574162858
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 06:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3F916D9DF;
-	Mon, 25 Nov 2024 06:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19363158DC4;
+	Mon, 25 Nov 2024 06:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mPmTpsZz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gY3k5qBX"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2087A364D6;
-	Mon, 25 Nov 2024 06:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3ED1126C10;
+	Mon, 25 Nov 2024 06:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732515282; cv=none; b=jzyE1qOQXh+idf11HBLZuznSQ0+eFU5HVwxiiKRAF7e6OZX9iVE7rEGxgHHxWL+QrCzUzD7S/rPgLNsBEYkhu41l3WWhbE4f4ZgSCyS3t5GU0p39Bjku9SGK9DAHSe5dxIsPDwKQdbybVFcPgIRfTn+LM8IypMlekcu/pJpTHNo=
+	t=1732515314; cv=none; b=kGdUazgRLBTyutVKizsQJ90hHD9NwH8+u1cy0i6OCeAeZhhs1+Lem9jwBzu0eZ7MUXMhTTuROyU+wmYkf9hxhmwtXx9IfrzCNQMUChcmuH6LxXSF0zNwHpjY5x9FZT2z7LSCMrmV9cr7FEhV8mv/gTkO9ygOYXqwEKoVeVJtsA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732515282; c=relaxed/simple;
-	bh=ZwinL8/1U53BksoUcwrkFOscCyNv4jQRQn8e4Z7FM/c=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=iXApOBcmFuKIg1kiMKKUB5vH5pEg5oLDxI+tBc1YaCjSKtBjjDUr5ayg+hlcQB3ig846jdKdzE558f6G7PtzEL9DLPvmsCrTpAmU6wVWZpaJ5Okw8X+MHoanQjQopCOT9Ol0ms6fDW87XJD5UZTggOVlmYBmoQND2YuriY2ZEa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mPmTpsZz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31AEEC4CECE;
-	Mon, 25 Nov 2024 06:14:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732515281;
-	bh=ZwinL8/1U53BksoUcwrkFOscCyNv4jQRQn8e4Z7FM/c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mPmTpsZz9Z/TG2HE4ihMvas4pho6Wg5xUfeiWyhwkPdStPe6cRF8QpawUX2YLE1JY
-	 tMdWP8HEkVAP9Tz4D7oljmepnoSOkvuk9eQFWi7fQC4zBOr0gDtTSiVnJK52ToaoQs
-	 4EqoQcNfqjAPT8ZJU8OZlI2+go6s0N+RwTNQQ7TnWzs5IRipONxCMR+9tVJRegwdJB
-	 lWIk45XMod5RGPP6PwWBmsg/ZOXgOvnMLIhZijD+waH/SHESna6eS3pxtbzQ+XoIlA
-	 rSnFbkh5arENyhHbJ+4UWBiGH0LxZEcc1Yv8rtaMXBhO4iCmHcIp9spkL3atgkI9+6
-	 hJXbU8xTGcEzQ==
-Date: Mon, 25 Nov 2024 15:14:37 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Li Huafei <lihuafei1@huawei.com>
-Cc: <acme@kernel.org>, <peterz@infradead.org>, <mingo@redhat.com>,
- <namhyung@kernel.org>, <mark.rutland@arm.com>,
- <alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
- <irogers@google.com>, <adrian.hunter@intel.com>,
- <kan.liang@linux.intel.com>, <dima@secretsauce.net>,
- <aleksander.lobakin@intel.com>, <linux-perf-users@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] perf probe: Clear all structure fields in
- clear_perf_{probe, trace}_event()
-Message-Id: <20241125151437.9cb726157de25cfba0a44665@kernel.org>
-In-Reply-To: <20241114105451.90273-1-lihuafei1@huawei.com>
-References: <20241114105451.90273-1-lihuafei1@huawei.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732515314; c=relaxed/simple;
+	bh=xZT8uDzQLD3WGPDstYmAFf1K/W/AMWG40gxcaYJlKJs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ggT9iMJgAJFph018mkPcT7A8tKaZ0GVhak+yJdysq/10inYtZLYQgNJ9+0DbzkDYEQrfqyKq2cq0a+OPDM8U7DyQnQJ8mGYUVT4smANTq7va/6ERo2w+OSYljYBpXLbvkI9HR6K+03dn0ylGPPC34cdcDJIA1MJfLjSaaZNeaCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gY3k5qBX; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=bp25c6I4zGTEwI7csgchTtystGBN5Cj90/+RDTD+rwg=; b=gY3k5qBXsRh8GM5k24qJPu1eK5
+	qF1WQUMBvm8d+B8+V8nLQtVGAhovpS3zQtp3jXCxsrjwklmRYxQOfNigD9pIWG2/Fq/P7+VKvtknt
+	l2Sl8GNpyNNa0SxRrzhdeUkkzZo6x7T0Bc42yga7XekDgW0irrgQR03Vm1/rarh6EJeQEJwiomOcp
+	de8aVibnA74N3KmM6XIp6zGo6CaJ8unBebKLVqfLs/3hq7VZdSfZEgPh2PDWwdD8/GmOYlJopK6XS
+	+ow/Q89QaiYzO58k3OrRvJZ9Y+l5N2WVwD5RtnWNpDo8oi0TC2mnAdgfF3E+FcEaR+i+mMh7dpYEh
+	H6NNJf9Q==;
+Received: from [50.53.2.24] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tFSNL-000000079Xv-334B;
+	Mon, 25 Nov 2024 06:15:11 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Jassi Brar <jaswinder.singh@linaro.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Nuno Sa <nuno.sa@analog.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	dmaengine@vger.kernel.org
+Subject: [PATCH] linux/dmaengine.h: fix a few kernel-doc warnings
+Date: Sun, 24 Nov 2024 22:15:08 -0800
+Message-ID: <20241125061508.165099-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 14 Nov 2024 18:54:51 +0800
-Li Huafei <lihuafei1@huawei.com> wrote:
+The comment block for "Interleaved Transfer Request" should not begin
+with "/**" since it is not in kernel-doc format.
 
-> I added two probe events:
-> 
->   # perf probe -f -a schedule+8
->   Added new event:
->     probe:schedule       (on schedule+8)
-> 
->   You can now use it in all perf tools, such as:
-> 
->           perf record -e probe:schedule -aR sleep 1
-> 
->   # perf probe -f -a schedule+20
->   Added new event:
->     probe:schedule_1     (on schedule+20)
-> 
->   You can now use it in all perf tools, such as:
-> 
->           perf record -e probe:schedule_1 -aR sleep 1
-> 
-> However, 'perf probe -l' shows the same offset:
-> 
->   # perf probe -l
->     probe:schedule       (on schedule+8@kernel/sched/core.c)
->     probe:schedule_1     (on schedule+8@kernel/sched/core.c)
-> 
-> __show_perf_probe_events() does not clean up the 'pev' content when
-> parsing the rawlist. If the 'pev->offset' is not set while processing
-> the next probe event string, the offset value of the previous event will
-> be used.  After adding debug information, it was found that indeed there
-> was line number information when processing 'probe:schedule_1', so the
-> offset was not set and used the offset from 'probe:schedule'.
-> 
-> To fix this, clear all the fields of the structures in
-> clear_perf_{probe, trace}_event(). not just the allocated fields.
-> 
+Fix doc name for enum sum_check_flags.
 
-Looks good to me.
+Fix all (4) missing struct member warnings.
 
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Use "Warning:" for one "Note:" in enum dma_desc_metadata_mode since
+scripts/kernel-doc does not allow more than one Note:
+per function or identifier description.
 
-Thanks!
+This leaves around 49 kernel-doc warnings like:
+  include/linux/dmaengine.h:43: warning: Enum value 'DMA_OUT_OF_ORDER' not described in enum 'dma_status'
 
-> Fixes: d8f9da240495 ("perf tools: Use zfree() where applicable")
-> Signed-off-by: Li Huafei <lihuafei1@huawei.com>
-> ---
-> Changes in v2:
->  - Do the cleanup in clear_perf_{probe, trace}_event().
->  - Refine the subject and the commit log.
-> 
-> v1: https://lore.kernel.org/lkml/20241108181909.3515716-1-lihuafei1@huawei.com/
-> ---
->  tools/perf/util/probe-event.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
-> index a17c9b8a7a79..47903bb56fc6 100644
-> --- a/tools/perf/util/probe-event.c
-> +++ b/tools/perf/util/probe-event.c
-> @@ -2376,8 +2376,8 @@ void clear_perf_probe_event(struct perf_probe_event *pev)
->  			field = next;
->  		}
->  	}
-> -	pev->nargs = 0;
->  	zfree(&pev->args);
-> +	memset(pev, 0, sizeof(*pev));
->  }
->  
->  #define strdup_or_goto(str, label)	\
-> @@ -2475,7 +2475,7 @@ void clear_probe_trace_event(struct probe_trace_event *tev)
->  		}
->  	}
->  	zfree(&tev->args);
-> -	tev->nargs = 0;
-> +	memset(tev, 0, sizeof(*tev));
->  }
->  
->  struct kprobe_blacklist_node {
-> -- 
-> 2.25.1
-> 
+and another scripts/kernel-doc problem with it not being able to parse
+some typedefs.
 
+Fixes: b14dab792dee ("DMAEngine: Define interleaved transfer request api"), Jassi Brar
+Fixes: ad283ea4a3ce ("async_tx: add sum check flags")
+Fixes: 272420214d26 ("dmaengine: Add DMA_CTRL_REUSE")
+Fixes: f067025bc676 ("dmaengine: add support to provide error result from a DMA transation")
+Fixes: d38a8c622a1b ("dmaengine: prepare for generic 'unmap' data")
+Fixes: 5878853fc938 ("dmaengine: Add API function dmaengine_prep_peripheral_dma_vec()")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jassi Brar <jaswinder.singh@linaro.org>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Paul Cercueil <paul@crapouillou.net>
+Cc: Nuno Sa <nuno.sa@analog.com>
+Cc: Vinod Koul <vkoul@kernel.org>
+Cc: dmaengine@vger.kernel.org
+---
+ include/linux/dmaengine.h |   13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+--- linux-next-20241122.orig/include/linux/dmaengine.h
++++ linux-next-20241122/include/linux/dmaengine.h
+@@ -84,7 +84,7 @@ enum dma_transfer_direction {
+ 	DMA_TRANS_NONE,
+ };
+ 
+-/**
++/*
+  * Interleaved Transfer Request
+  * ----------------------------
+  * A chunk is collection of contiguous bytes to be transferred.
+@@ -223,7 +223,7 @@ enum sum_check_bits {
+ };
+ 
+ /**
+- * enum pq_check_flags - result of async_{xor,pq}_zero_sum operations
++ * enum sum_check_flags - result of async_{xor,pq}_zero_sum operations
+  * @SUM_CHECK_P_RESULT - 1 if xor zero sum error, 0 otherwise
+  * @SUM_CHECK_Q_RESULT - 1 if reed-solomon zero sum error, 0 otherwise
+  */
+@@ -286,7 +286,7 @@ typedef struct { DECLARE_BITMAP(bits, DM
+  *	pointer to the engine's metadata area
+  *   4. Read out the metadata from the pointer
+  *
+- * Note: the two mode is not compatible and clients must use one mode for a
++ * Warning: the two modes are not compatible and clients must use one mode for a
+  * descriptor.
+  */
+ enum dma_desc_metadata_mode {
+@@ -594,9 +594,13 @@ struct dma_descriptor_metadata_ops {
+  * @phys: physical address of the descriptor
+  * @chan: target channel for this operation
+  * @tx_submit: accept the descriptor, assign ordered cookie and mark the
++ * @desc_free: driver's callback function to free a resusable descriptor
++ *	after completion
+  * descriptor pending. To be pushed on .issue_pending() call
+  * @callback: routine to call after this operation is complete
++ * @callback_result: error result from a DMA transaction
+  * @callback_param: general parameter to pass to the callback routine
++ * @unmap: hook for generic DMA unmap data
+  * @desc_metadata_mode: core managed metadata mode to protect mixed use of
+  *	DESC_METADATA_CLIENT or DESC_METADATA_ENGINE. Otherwise
+  *	DESC_METADATA_NONE
+@@ -827,6 +831,9 @@ struct dma_filter {
+  * @device_prep_dma_memset: prepares a memset operation
+  * @device_prep_dma_memset_sg: prepares a memset operation over a scatter list
+  * @device_prep_dma_interrupt: prepares an end of chain interrupt operation
++ * @device_prep_peripheral_dma_vec: prepares a scatter-gather DMA transfer,
++ *	where the address and size of each segment is located in one entry of
++ *	the dma_vec array.
+  * @device_prep_slave_sg: prepares a slave dma operation
+  * @device_prep_dma_cyclic: prepare a cyclic dma operation suitable for audio.
+  *	The function takes a buffer of size buf_len. The callback function will
 
