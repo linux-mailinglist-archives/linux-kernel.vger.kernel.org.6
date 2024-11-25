@@ -1,112 +1,117 @@
-Return-Path: <linux-kernel+bounces-421732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D65499D8F59
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:53:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B97D9D8F6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 01:04:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BDFB28B02F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:53:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E584228B0A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767581CD214;
-	Mon, 25 Nov 2024 23:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2EC9EBE;
+	Tue, 26 Nov 2024 00:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LhzcJKQc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="OFZwcmGG"
+Received: from out203-205-221-153.mail.qq.com (out203-205-221-153.mail.qq.com [203.205.221.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF88B18DF93;
-	Mon, 25 Nov 2024 23:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF98338C;
+	Tue, 26 Nov 2024 00:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732578809; cv=none; b=OodHxDxeRxktYjRWvfkZQj2ZARwxI0jQ4yMOXIeH34ak6z/fZv4yjHYZhHiGaVu9ckTeTftrqNbRh4PjWJoP+2q/1XrTlieyhip9dHvZ8Zs4mdPv892LZYGXrato9iX70Saxd++j5o0i9j0wOAmK/hMUNESM+2HqTlGd/ruimvQ=
+	t=1732579438; cv=none; b=PLMOkA1GYnp4y4yI8EoF2SEvAPHxfvpupvi7MKE0KeCKvWixsMh1ZDEpmvqk/VcNfaO0w8IBQufZK4lZLVF9ZMqDO4vkCN4IXFxpDx8rX1ehNY+4Zyfg/YL8j4B5YNq5619eVG7gOHRQ+sxGhKDHZaHS46Fb3EOA5KLV8LSniLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732578809; c=relaxed/simple;
-	bh=rFUNPbzQlq88yUnuIXu1GlgkAuvdh0NSAiK2v1NpN/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y6kiGPus38XkEeFh6QBnXzBCd2D37poWMPPBp6ZlWXyc7GGqIKQRUtAbq6WLhFhxzaez1EUrc0xnaWw3S/awfgqMUc8QyC7uIEMlEViKuZkdnehqPghjOinrV3Yj0LbL9o1HMzXf34YdhvNOO7q3XTqupnarohljX+lvk+CHeuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LhzcJKQc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 553D5C4CECE;
-	Mon, 25 Nov 2024 23:53:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732578809;
-	bh=rFUNPbzQlq88yUnuIXu1GlgkAuvdh0NSAiK2v1NpN/o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LhzcJKQcyFCUtosPxA+fxXKVzVwR4Vkwbo6QZyWXGiFw8yo9yb3mm94PD1VjqWv5W
-	 /OtRDdB2tST/ixbp15laVL/v2rNiInFajj2iwkx7M/NM/tTSG9DKHh8zJQYpnFmP7O
-	 SCW4o5ZMD37qIHr2rq7jVi9K4f04PWnR3Vqtg0e+ywUGH29iOmTrI/pHCiULi/YpXE
-	 esTZD4gBlY8jiGnH4ws4QeI1T3ro3CF4bi568anQt56mASop4f3LrJuqjgfVk88OAb
-	 2QoGVKi6RGtwOlbSjgza6CrRBRoMo1W+7YxTleKhIEXy1Cy2FVVOxfVePtny/I/wth
-	 HBOpG2FQSS/Pw==
-Date: Mon, 25 Nov 2024 15:53:26 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com, corbet@lwn.net, petr.pavlu@suse.com,
-	samitolvanen@google.com, da.gomez@samsung.com,
-	akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
-	serge@hallyn.com, shuah@kernel.org, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, linux-integrity@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, wufan@linux.microsoft.com,
-	pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de,
-	mjg59@srcf.ucam.org, pmatilai@redhat.com, jannh@google.com,
-	dhowells@redhat.com, jikos@kernel.org, mkoutny@suse.com,
-	ppavlu@suse.com, petr.vorel@gmail.com, mzerqung@0pointer.de,
-	kgold@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v6 07/15] digest_cache: Allow registration of digest list
- parsers
-Message-ID: <Z0UN9ub0iztWvgLi@bombadil.infradead.org>
-References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
- <20241119104922.2772571-8-roberto.sassu@huaweicloud.com>
+	s=arc-20240116; t=1732579438; c=relaxed/simple;
+	bh=fUNJ80SuJ8WQzdOAj9efemdaOVcbEBNjwXpgh/9VbFc=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=Lxjf5VpaeuXJwsbXPhNjiNi2/SgZQ5Ks5sZWiL3Y8JN0Mnj1CQNQgItFzvST40bw7etOtixPT0NEh5sv3MzHkTyeN9pPLf74Wiilo7vFbgfu4eH//mBV74Efqg3tcIwQ6ozj+XAqdVJqaWc24f4iKU2in1kA1i37q7ORnT/3M3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=OFZwcmGG; arc=none smtp.client-ip=203.205.221.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1732579124; bh=DdtSH62a/TcfUSUvHD9fIFZE2o4K/mMbePNPRDE+ndQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=OFZwcmGGMntkhZClmetzkZnQj0i0U6VAq4qVIU4spxsWuQruXtu4xoDs420bgDty5
+	 TNg94jLkQrkZDeoMZLq1OdAHAmSNsqhgnVYTI1UNYxSpc1uHrUP6Sk4Wr+vCTMY2Wb
+	 ttrH+YOpizuX9+QSQI1PFsJ/Ze/0vD9SAT/+wCnQ=
+Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id EAAAD8C6; Tue, 26 Nov 2024 07:58:42 +0800
+X-QQ-mid: xmsmtpt1732579122t73whe790
+Message-ID: <tencent_10C852E0467D89872ECD2EFCCC9C27D68606@qq.com>
+X-QQ-XMAILINFO: No7DFzN00JnRS+KonxtdRDDNLY42y33ta+1sq9ysNhI+1MftiWFRKrnKTf8/Pe
+	 OTyeyGfCTXwibjScYXaKQ9+xAYbI8+YPARwIH8cjNFNgar9l3m9qScPnrBY52s4AHZsN4hTvwZ9R
+	 zbLzVVqNVUk+rykjGo/+CjWVISgPCqkHyFKDegSp/dyJQ9aBTQDjRE0CGbKOGlmZUsMNg9CgD2MZ
+	 Cn2AvY9T/7J+/tR20eJg+r81FZT221Vy8C/KJoiFU+gE/Up81QOjiimtSsVr0wqqRXkDdls13TUN
+	 /g0MwPILylwgnJxrWnIE8p74p8msSCmBo8BssWU7YsspTZ0lzyRen/JNFj6y1VqTVC+NpDoWwhY4
+	 tqc9+V1U856CtLBREeu3k1XBex1oZx81Y2zjZhRquGe8rzxg4Z7+oqEC5fno4qKsE4Xt16XDf77W
+	 8Q96D6a8fruGLSEX1n65O+QTQti8sQxoxFdb8WNp13xx5tHWPBqgGQpzonW/lmH8C5+tf6iW+3YB
+	 reYSLn9meY6PjxSoCZe7oAaQ9yN56udmNoazdARoMU4OWwvuv1haVdciQ/s00OAXxUDKAJrsXQiv
+	 LOHPDjy7NmvoU1xGENOfZ1XDeZ2amnQ5+mGaUzE//+bxoF+Oza4pq6jmNbeJicevanCm/3zuqkjB
+	 7BQDuPGR9MKTK+aLH11B8q0rdWdtp4VltRuY0GNfDPBNDJW/Mx6CVN+vPRdfUE66NcQ8R8oOQpvh
+	 1ZEw7FOu+zC67+d5Cm/VNAv0iWtVDMgtqJAJEwZpMmyLDVibQxRrJ35zy3G4gm5VsnVykQZtOZ4r
+	 PGnAda3xgsSzzyxYynNO0M2AqTdhM6g6MB/uLSB5C7GcGkzGNlVC2THb0pIxPebL9P1fOiPzOJ7o
+	 tyycIRk8ClNa5kddxf+xad+Ad1pp2c1Q==
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+489f78df4709ac2bfdd3@syzkaller.appspotmail.com
+Cc: johan.hedberg@gmail.com,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	luiz.dentz@gmail.com,
+	marcel@holtmann.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] Bluetooth: SCO: remove the redundant sco_conn_put
+Date: Tue, 26 Nov 2024 07:58:43 +0800
+X-OQ-MSGID: <20241125235842.3918699-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <674478a5.050a0220.1cc393.0080.GAE@google.com>
+References: <674478a5.050a0220.1cc393.0080.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241119104922.2772571-8-roberto.sassu@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 19, 2024 at 11:49:14AM +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> Introduce load_parser() to load a kernel module containing a
-> parser for the requested digest list format (compressed kernel modules are
-> supported). Kernel modules are searched in the
-> /lib/modules/<kernel ver>/security/integrity/digest_cache directory.
-> 
-> load_parser() calls ksys_finit_module() to load a kernel module directly
-> from the kernel. request_module() cannot be used at this point, since the
-> reference digests of modprobe and the linked libraries (required for IMA
-> appraisal) might not be yet available, resulting in modprobe execution
-> being denied.
+When adding conn, it is necessary to increase and retain the conn reference
+count at the same time.
 
-You are doing a full solution implementation of loading modules in-kernel.
-Appraisals of modules is just part of the boot process, some module
-loading may need firmware to loading to get some functinality to work
-for example some firmware to get a network device up or a GPU driver.
-So module loading alone is not the only thing which may require
-IMA appraisal, and this solution only addresses modules. There are other
-things which may be needed other than firmware, eBPF programs are
-another example.
+Another problem was fixed along the way, conn_put is missing when hcon is NULL
+in the timeout routine.
 
-It sounds more like you want to provide or extend LSM hooks fit your
-architecture and make kernel_read_file() LSM hooks optionally use it to
-fit this model.
+Fixes: e6720779ae61 ("Bluetooth: SCO: Use kref to track lifetime of sco_conn")
+Reported-and-tested-by: syzbot+489f78df4709ac2bfdd3@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=489f78df4709ac2bfdd3
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ net/bluetooth/sco.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Because this is just for a *phase* in boot, which you've caught because
-a catch-22 situaton, where you didn't have your parsers loaded. Which is
-just a reflection that you hit that snag. It doesn't prove all snags
-will be caught yet.
+diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
+index 1b8e468d24cf..78f7bca24487 100644
+--- a/net/bluetooth/sco.c
++++ b/net/bluetooth/sco.c
+@@ -143,6 +143,7 @@ static void sco_sock_timeout(struct work_struct *work)
+ 	sco_conn_lock(conn);
+ 	if (!conn->hcon) {
+ 		sco_conn_unlock(conn);
++		sco_conn_put(conn);
+ 		return;
+ 	}
+ 	sk = sco_sock_hold(conn);
+@@ -192,7 +193,6 @@ static struct sco_conn *sco_conn_add(struct hci_conn *hcon)
+ 			conn->hcon = hcon;
+ 			sco_conn_unlock(conn);
+ 		}
+-		sco_conn_put(conn);
+ 		return conn;
+ 	}
+ 
+-- 
+2.43.0
 
-And you only want to rely on this .. in-kernel loading solution only
-early on boot, is there a way to change this over to enable regular
-operation later?
-
- Luis
 
