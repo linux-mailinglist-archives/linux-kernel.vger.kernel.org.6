@@ -1,136 +1,234 @@
-Return-Path: <linux-kernel+bounces-420891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EBA39D8405
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:04:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A8949D840C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:06:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75D2A168EB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:04:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D19DE167819
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9538196446;
-	Mon, 25 Nov 2024 11:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2D819597F;
+	Mon, 25 Nov 2024 11:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rCIutpk5";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xCGeebeg"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DWW6Akio"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B909192589;
-	Mon, 25 Nov 2024 11:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A29194AD1
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732532677; cv=none; b=Piu/uTyHPk0RFhZlFwtx61DyWlYmeTS8OZrJOC20ITdx5P6VIXiEGdaECD038aoze7VnRtS+2cMJLHdbniC+ApsT55UIBQMqQtszQig87yu+nxqNMh4idUm152lgzwGkq3HCX5Hkb+5PU+XDCYg1Py2SWEheOKj1OZc5ckC0IOc=
+	t=1732532799; cv=none; b=hPc/ns+i4NUqLc8MHHMmOagfWoZlF5nffngh9Zkf9xoDDuKhHFc98xTpQ2j9n6LwhKnaVCcLC4lO+rFGdToPwEOnSwJJnCYtW33LtSk4j5iOVHgbVXVJAbKDOKON6h318PtkkNtAqO/eMlOr4NuLa6nXhNpMHqyUfUDg59Imzyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732532677; c=relaxed/simple;
-	bh=mLOKU6wvbcxO9YVuTXH2X6BlYFhxP4NcQud1R9FrTaU=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=LV4R6j4HFru3SJxScRyKRXohqrRfyGoo/a6wSewe7Tu+YXk1e3tQdGWhnL2IpUSZ4P/Ns93bjLpVMxvxleYYrnNWVy2Hmd/4JQAPtifmwLqHGxIXWAWOp8x7Ky4XjvlpcGUFVSrH2wyRLRkGZ0wnB3E4DV2tpwtNSu1ylzPzl3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rCIutpk5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xCGeebeg; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 25 Nov 2024 11:04:32 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732532673;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PerBfEWaibwe9ifvwUDPARS2RmRFDUHjPLDBghBqxVs=;
-	b=rCIutpk54U+QPUYUmlf9K65Osfg7vwX/A/01e9vD+oxL7KyEKQGWKE0FNntW7Lyjp+JL9b
-	Jqnw7lVRzO4hEayq5PDPR88RyS9+rEWn5/uUNyyTetEp0f8VH+RArvM0zPJjruJZs228te
-	kIMu71oC8avDAwEACbw5QX1b7wwEUd/CsHEFoGo4TwaZuu4IOWVkESnhojytjWiiZgB4Gw
-	csBH5zJ6xKES5RPzX4DY9C6iQ0FG/l3duC5MhrP8IXmZmjEmiR/6rWnOamN+8t6eAg4ANv
-	Q0aPpS/AapECf5O1BfM+DKGyrN65NJ2CGL1hLCCGNGHnlLWToJ8R8wxjf0fbpw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732532673;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PerBfEWaibwe9ifvwUDPARS2RmRFDUHjPLDBghBqxVs=;
-	b=xCGeebegu84pPj7SSQkIkRrnN/qXXkrOEiDgenKO4EgIBgTWJBiA6/73P9qwblD7hF94uA
-	W/P5okX4119ZTVAw==
-From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/urgent] x86/mm: Carve out INVLPG inline asm for use by others
-Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <ZyulbYuvrkshfsd2@antipodes>
-References: <ZyulbYuvrkshfsd2@antipodes>
+	s=arc-20240116; t=1732532799; c=relaxed/simple;
+	bh=IUu7ElnEKRhylBYLNIvGx+7F6jbYVwpoxJaickF20/Y=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Bq5GTnIMJKXflmWx1Wj96dAundkqNMvj85JTPG1Ko3bV9OT+fqx9IGEhPXuFBqraTCTrRuhljePcJ17ZQpqvljrUohSDhZ7GjCbPiGAiI2iZ0yD9yPVDWBhcq3J5Ryy+FgYMx2zf3kV1sAb/eOSE8Q4BlTNaSXsJbrLNSGIoQQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DWW6Akio; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B278C4AF09;
+	Mon, 25 Nov 2024 11:06:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732532798;
+	bh=IUu7ElnEKRhylBYLNIvGx+7F6jbYVwpoxJaickF20/Y=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=DWW6Akiox3vuPa2+Qh7G3rYFhAUr5KxbtY9/OwfSAZ7VXu9CduMt7mfF2PjpmwN3n
+	 fh7e3Y8HnPqbNMMBBc0/QBplFjDclGBoA4ZIIdiwL2VCdFjx/pvcUt8Q1clKWqsXLM
+	 tL8RQS+27fWfm4bl7xKCGVcOgSFVq91mf4rsqm/zDnr+A6v2+LbdV3Fe4pcrdphuFF
+	 t4XOAtMbHpLoRaqvo7ihFoGbs/lVt+h/p4im6HBle4Z6uUlatnOoCEKgSN1Krp+gFG
+	 DHvG+8HXALMg4A8otYr750kqB+EWygvwg6MS4WRn8NAsOd6v4cUZlCGg8lWVp1GyVR
+	 Lzco1v+MvY0Rg==
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 4902C1200043;
+	Mon, 25 Nov 2024 06:06:37 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Mon, 25 Nov 2024 06:06:37 -0500
+X-ME-Sender: <xms:PVpEZyZ6Fice8eRJ9xGHb_rYQjeg9clz744uXlUn7haHlm0dXNgxqw>
+    <xme:PVpEZ1ZCTq3dU6W5AaaEdP0fcXT3iam1cS75P-TU9z6ScWGNDxWJoLsacotNBZJrA
+    zEjVQbDt2SAdnRqkJE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeehgddvfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugeskhgvrhhnvghlrd
+    horhhgqeenucggtffrrghtthgvrhhnpeejjeffteetfeetkeeijedugeeuvdfgfeefiedt
+    udeikeeggeefkefhudfhlefhveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihht
+    hidquddvkeehudejtddvgedqvdekjedttddvieegqdgrrhhnugeppehkvghrnhgvlhdroh
+    hrghesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphho
+    uhhtpdhrtghpthhtohephigrnhhghihinhhglhhirghngheshhhurgifvghirdgtohhmpd
+    hrtghpthhtohepjhhirhhishhlrggshieskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    hhgtrgeslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopehstghhnhgvlhhlvgeslh
+    hinhhugidrihgsmhdrtghomhdprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghn
+    khhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepihhlphhordhjrghrvh
+    hinhgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehgrhgvghhkhhes
+    lhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigsehroh
+    gvtghkqdhushdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
+    rdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:PVpEZ8_ak8z6AJG8vkacyS3MJZUwpOA2O3wRhUEp9ZLpfWu_euGM7w>
+    <xmx:PVpEZ0qQQW-HhDGLBRP3s45DrWbc6UsbLRyhoiQP_P0grTHcTY9J5g>
+    <xmx:PVpEZ9qvCLPjz-ZCQXC5eDS2m43nT8k5qzhX6d3Fb0bM6OQuHhZXQw>
+    <xmx:PVpEZyRYj7LXrVQJizwpHs43l5MtQ3VPXUcM0k6E5R9XtIDvb6qWJA>
+    <xmx:PVpEZ9pwBrz1FHUu76jZd-9gd0PPyBH6su2j-7m9IJWlpLjR0lGbD3oz>
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 137602220071; Mon, 25 Nov 2024 06:06:36 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173253267297.412.14240274224411885362.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+Date: Mon, 25 Nov 2024 12:06:16 +0100
+From: "Arnd Bergmann" <arnd@kernel.org>
+To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
+Cc: "Guenter Roeck" <linux@roeck-us.net>,
+ "Niklas Schnelle" <schnelle@linux.ibm.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Jiri Slaby" <jirislaby@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ linux-serial@vger.kernel.org, "Heiko Carstens" <hca@linux.ibm.com>,
+ linux-kernel@vger.kernel.org, "Yang Yingliang" <yangyingliang@huawei.com>
+Message-Id: <be43108e-4135-4927-ba58-141836fde6af@app.fastmail.com>
+In-Reply-To: <Z0RSZ-YD_BozMs1n@smile.fi.intel.com>
+References: <20240405152924.252598-1-schnelle@linux.ibm.com>
+ <20240405152924.252598-2-schnelle@linux.ibm.com>
+ <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net>
+ <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
+ <472eb22a-dcb1-4fbb-bf2c-a4173706bc7a@app.fastmail.com>
+ <27685942-fb62-44c5-86ed-98beb547ffed@roeck-us.net>
+ <744920ba-551c-466b-ac5c-2607b81261a0@app.fastmail.com>
+ <Z0QtZky8Sr7qUW7v@smile.fi.intel.com>
+ <00f5e842-3ee9-4d83-8836-0ff4f703fa3c@app.fastmail.com>
+ <Z0RSZ-YD_BozMs1n@smile.fi.intel.com>
+Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Mon, Nov 25, 2024, at 11:33, Andy Shevchenko wrote:
+> On Mon, Nov 25, 2024 at 10:53:46AM +0100, Arnd Bergmann wrote:
+>> 
+>> This does however revert f4c23a140d80 ("serial: 8250:
+>> fix null-ptr-deref in serial8250_start_tx()") and
+>> might bring back the bug came from opening an
+>> uninitialized uart. On the other hand, I don't see
+>> why that doesn't also crash from accessing the invalid
+>> I/O port on the same architectures.
+>
+> AFAICS it does only partial revert, so I don't see how your patch
+> may break that.
 
-Commit-ID:     f1d84b59cbb9547c243d93991acf187fdbe9fbe9
-Gitweb:        https://git.kernel.org/tip/f1d84b59cbb9547c243d93991acf187fdbe9fbe9
-Author:        Borislav Petkov (AMD) <bp@alien8.de>
-AuthorDate:    Tue, 19 Nov 2024 12:21:32 +01:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 25 Nov 2024 11:28:02 +01:00
+I think it's a complete revert, it's just not entirely obvious
+since serial8250_setup_port() got split out by 9d86719f8769
+("serial: 8250: Allow using ports higher than
+SERIAL_8250_RUNTIME_UARTS") and the original callsite got
+moved by your ffd8e8bd26e9 ("serial: 8250: Extract platform
+driver").
 
-x86/mm: Carve out INVLPG inline asm for use by others
+What I suspect is going on with the f4c23a140d80 commit
+is the same bug I mentioned earlier in this thread, where
+__serial8250_isa_init_ports() just always registers
+'nr_uarts' (CONFIG_SERIAL_8250_RUNTIME_UARTS) ports,
+unlike any other serial driver.
 
-No functional changes.
+This used to be required before 9d86719f8769 ("serial:
+8250: Allow using ports higher than SERIAL_8250_RUNTIME_UARTS"),
+but I don't see why this is still a thing now, other than
+for using setserial on i486-class PCs with nonstandard ISA
+ports.
 
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/r/ZyulbYuvrkshfsd2@antipodes
----
- arch/x86/include/asm/tlb.h | 4 ++++
- arch/x86/mm/tlb.c          | 3 ++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+On non-x86 machines, it only ever seems to create extra
+ports that are likely to crash the system if opened, either
+because they lack proper serial_in/serial_out callbacks,
+or because the default UPIO_PORT callbacks end up poking
+unmapped memory.
 
-diff --git a/arch/x86/include/asm/tlb.h b/arch/x86/include/asm/tlb.h
-index 580636c..4d3c9d0 100644
---- a/arch/x86/include/asm/tlb.h
-+++ b/arch/x86/include/asm/tlb.h
-@@ -34,4 +34,8 @@ static inline void __tlb_remove_table(void *table)
- 	free_page_and_swap_cache(table);
+Do you see any reason why we can't just do the version below?
+
+        Arnd
+
+diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
+index 5f9f06911795..5b72309611cb 100644
+--- a/drivers/tty/serial/8250/8250_core.c
++++ b/drivers/tty/serial/8250/8250_core.c
+@@ -358,8 +358,6 @@ struct uart_8250_port *serial8250_setup_port(int index)
+ 
+ 	up->ops = &univ8250_driver_ops;
+ 
+-	serial8250_set_defaults(up);
+-
+ 	return up;
  }
  
-+static inline void invlpg(unsigned long addr)
-+{
-+	asm volatile("invlpg (%0)" ::"r" (addr) : "memory");
-+}
- #endif /* _ASM_X86_TLB_H */
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index b0d5a64..a2becb8 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -20,6 +20,7 @@
- #include <asm/cacheflush.h>
- #include <asm/apic.h>
- #include <asm/perf_event.h>
-+#include <asm/tlb.h>
+diff --git a/drivers/tty/serial/8250/8250_platform.c b/drivers/tty/serial/8250/8250_platform.c
+index 66fd6d5d4835..7675536b6396 100644
+--- a/drivers/tty/serial/8250/8250_platform.c
++++ b/drivers/tty/serial/8250/8250_platform.c
+@@ -33,8 +33,6 @@
+ unsigned int share_irqs = SERIAL8250_SHARE_IRQS;
+ unsigned int skip_txen_test;
  
- #include "mm_internal.h"
+-unsigned int nr_uarts = CONFIG_SERIAL_8250_RUNTIME_UARTS;
+-
+ #include <asm/serial.h>
  
-@@ -1140,7 +1141,7 @@ STATIC_NOPV void native_flush_tlb_one_user(unsigned long addr)
- 	bool cpu_pcide;
+ /*
+@@ -50,6 +48,8 @@ static const struct old_serial_port old_serial_port[] = {
+ 	SERIAL_PORT_DFNS /* defined in asm/serial.h */
+ };
  
- 	/* Flush 'addr' from the kernel PCID: */
--	asm volatile("invlpg (%0)" ::"r" (addr) : "memory");
-+	invlpg(addr);
++unsigned int nr_uarts = ARRAY_SIZE(old_serial_port);;
++
+ serial8250_isa_config_fn serial8250_isa_config;
+ void serial8250_set_isa_configurator(serial8250_isa_config_fn v)
+ {
+@@ -65,9 +65,9 @@ static void __init __serial8250_isa_init_ports(void)
+ 		nr_uarts = UART_NR;
  
- 	/* If PTI is off there is no user PCID and nothing to flush. */
- 	if (!static_cpu_has(X86_FEATURE_PTI))
+ 	/*
+-	 * Set up initial ISA ports based on nr_uart module param, or else
+-	 * default to CONFIG_SERIAL_8250_RUNTIME_UARTS. Note that we do not
+-	 * need to increase nr_uarts when setting up the initial ISA ports.
++	 * Set up initial ISA ports based on nr_uart module param. Note that 
++	 * we do not need to increase nr_uarts when setting up the initial
++	 * ISA ports.
+ 	 */
+ 	for (i = 0; i < nr_uarts; i++)
+ 		serial8250_setup_port(i);
+@@ -94,6 +94,10 @@ static void __init __serial8250_isa_init_ports(void)
+ 		port->regshift = old_serial_port[i].iomem_reg_shift;
+ 
+ 		port->irqflags |= irqflag;
++
++		serial8250_set_defaults(up);
++
++		/* Allow Intel CE4100 and jailhouse to override defaults */
+ 		if (serial8250_isa_config != NULL)
+ 			serial8250_isa_config(i, &up->port, &up->capabilities);
+ 	}
+diff --git a/drivers/tty/serial/8250/Kconfig b/drivers/tty/serial/8250/Kconfig
+index 5b1cc009b977..3bf27cecf82e 100644
+--- a/drivers/tty/serial/8250/Kconfig
++++ b/drivers/tty/serial/8250/Kconfig
+@@ -198,17 +198,6 @@ config SERIAL_8250_NR_UARTS
+ 	  PCI enumeration and any ports that may be added at run-time
+ 	  via hot-plug, or any ISA multi-port serial cards.
+ 
+-config SERIAL_8250_RUNTIME_UARTS
+-	int "Number of 8250/16550 serial ports to register at runtime"
+-	depends on SERIAL_8250
+-	range 0 SERIAL_8250_NR_UARTS
+-	default "4"
+-	help
+-	  Set this to the maximum number of serial ports you want
+-	  the kernel to register at boot time.  This can be overridden
+-	  with the module parameter "nr_uarts", or boot-time parameter
+-	  8250.nr_uarts
+-
+ config SERIAL_8250_EXTENDED
+ 	bool "Extended 8250/16550 serial driver options"
+ 	depends on SERIAL_8250
 
