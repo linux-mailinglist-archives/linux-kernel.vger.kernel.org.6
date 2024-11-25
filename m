@@ -1,53 +1,87 @@
-Return-Path: <linux-kernel+bounces-421687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ABA39D8E8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:33:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E6E616AEF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:33:15 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F50C1CB31D;
-	Mon, 25 Nov 2024 22:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="SLcs1C5I"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 899F49D8E93
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:34:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3BD1C1AA9
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 22:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 490AF2837D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:34:04 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B771CCEF8;
+	Mon, 25 Nov 2024 22:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OelOhQ1z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4181C1AA9
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 22:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732573993; cv=none; b=JU5+bJ5G3E1y4AIR513xFd8u0J/asKNs9kOX1xJ2/mIE+31tTn8Y0h32fOuQ9sUOmWgLZEO/U27FCdvbg/Y3gcB1xuoWmXqwLQ+0eRqvwSU5FCkfgGKUBXXvejF4H/4ozA/oqKfNg4xoYfSCown3gpktdb6kx4kUi3cIRfc4wZo=
+	t=1732574040; cv=none; b=DDAGvHGXvTZKidqGn9DCW9deDx8KUdn1xR+3RxN+xriKAHcoZLZ4+iA5vKelrLInbWXMUf0xvg34PQxqWilN+4sh22w1DOhWtfnRHWj5vj2jzrptm1UE2ke3NafFnGRtaK+qnR9zZLDTCSnka1zbwQSceZDtIW+V/TebSQ3fNXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732573993; c=relaxed/simple;
-	bh=tbINTU/Dl97JGtIyL/9GsACDD+Xncink5kZ9VmwH+Vs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JQq/WeoQ6FQnG8raiZqGyIBi8qdlW3OGFmPfAeebqMoFeOdb7gLyyBBBVIBNf4wUTtR0s5MR+pV1WIEXCgUKLY85qEcP1b2f6EHLZ5wXrxjMrFl7ovOvxT+CXxDngn0XEMJinmOsEEaIIJ5twPr/peD+6iol7GCXz3pgiOlukFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=SLcs1C5I; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=B396JNk2S3O9embWWP/GtQqDR3zSeL68MQw2q9D629s=; b=SLcs1C5IOSGowt0/ST8LpfNyuw
-	gSLDpIDB+32l3Hmmj7uhwjKxBE7R8oPnK/Itvmu8XoZVtvYSmaFkTf8uN+qLcAjV5ZD2vaJLv9PMU
-	F7sZqrq56VphD0buzl6qu+Q5BQW/+EORLLeOyk7OmcROJCip1ndgEYi6HyKt8Re+IrcrKQeL00UbT
-	FEIDNTwcQ7repYr2V4Hj1tUtIFk1tv4mCYlHUJxDJqd6jkRplpCrKVKfxmr1eCSkU3kO2aZvq7+au
-	CRT52FmpXVGvE0q62L5AZgfgKTq2MbCPkiHDjRWBBCrOK/4ygne5T+obzEyesQe9m5BWx69Zg/lRx
-	HTTslVmA==;
-Received: from [187.36.213.55] (helo=[192.168.1.103])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tFhda-00CsrK-Ml; Mon, 25 Nov 2024 23:32:58 +0100
-Message-ID: <53db4581-5db7-41a2-89ae-694324f8db83@igalia.com>
-Date: Mon, 25 Nov 2024 19:32:51 -0300
+	s=arc-20240116; t=1732574040; c=relaxed/simple;
+	bh=adgyRui2A4t8Aa+g1+2n3f/hHSgZeA3iXYdd1QHol10=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=LKU3bUO/Z2DdCG8ejj9G/Ts+DBhA7ckivO6+5K1AMS4ycmEKJYuMukH2laSaU3SQh+Amh/QDzykSwYauYnrDs0LqvEpWCSknjHxqeCrdBWKSgYGobL54Qe53sD34Z4Ck/BD0BTw41jJbWtnfrQmY+6WX264i/eQi02+JY9OD4gQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OelOhQ1z; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732574037;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Msze4ierWMuNBzYGEwYpJUYKJXMDVB3/3xNduYebKtM=;
+	b=OelOhQ1zoPBQQ6UrPJbJy1RnI1xQxpu+sCdYc+WrsBl/hVNWk7IVkEWZ6FMlH8ze9hOUDp
+	mboKCudBoMSR0Ls/c7LDSG1LcPkgyZf+G7n2yPQWEC9DCz9IpJIqrzj0knd8xPXD+4XnLx
+	YH80tchqYKEM2yODT2lWU79mIm+xC80=
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com
+ [209.85.166.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-616-2DLQlWQNMWKAxOH7mq_cXQ-1; Mon, 25 Nov 2024 17:33:55 -0500
+X-MC-Unique: 2DLQlWQNMWKAxOH7mq_cXQ-1
+X-Mimecast-MFC-AGG-ID: 2DLQlWQNMWKAxOH7mq_cXQ
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-841a54a66a2so116110039f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:33:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732574035; x=1733178835;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Msze4ierWMuNBzYGEwYpJUYKJXMDVB3/3xNduYebKtM=;
+        b=Zxl2pIr2sIrV1tg6rrwaSbUrTAIXurIRmBGEaqiPQ13loxsNhSRcMNjvlkawOCD+Ht
+         ceHByoMXI/UCUlfJRhRSiqUCAKuvMi9oVPoLVxi/gJqG9NTwpORisUGSbFirYVz+PXCp
+         1HIUAUU299dRSafk6d143Rn8xdrN+bIewCardmbMTwFDzLWeXcGT3vB+1YXZ5LFmfe4n
+         uOFmj3JscMrMeZib6ZKpqOjG5UOz0VpdNLIvj2fAtWxcBYS78PHr+TEXS4biNgT0c11X
+         kuhWfi258Xat1ukTBVPoSwIPM879YsaD+h6T6kgfNCJcRXGIr3ExW9cxfX/N2gL2Pxua
+         jINQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWYGsfBAWB3lmMKP8qppNOq16Dz8UB6BwYmfb4Xr5nNDwrychhnLKr1Qfv37KnH4hToC3HaLuJKLfvB4g4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+p8IOOKbUzFKVACwrnTqa4Z2rgIKGCMFSuwnSeanGRtJm0I+f
+	1LaitY1X5KQDFqUp4ZcG2/KlwZ/6tExdjCnGekHn7YPJa4EILTfSvUnqFnnJqG7i/40Y3voFF7l
+	y9Bj6ViYhqbmWDXhlHzHzgpvGw5dHKaGhqFZP9ZQUPwUKTQq8S3aIk+PoZ6qa1Q==
+X-Gm-Gg: ASbGncu05XWdEqPtMpUCa6mU6EK6dq1DORdnsykZIOAOjIbxbaECao3ZsatEom74yNC
+	BFp4zfhqT9xrH7xsgALF6MF2OSF7pGJ8NgcWqa/tvxTdF/St+FOq9N2LiW7w+amd4vxmbecKC90
+	ivwpsIZqUOx4NV0GT89wJbriBNedzcZPXWM+AclTcm6pRx2WxwJAIxwmllz3KboIPqYp9bI4nRI
+	3bATxbi5ktCVHfbCoEmmwJ8bmwEXjKxfEFuQR4v7CtrqwbZE/OtQkO/oAi2TH4PJmj6H+AtBA0w
+	80lT5RiFagYYduOh1Ta1
+X-Received: by 2002:a05:6602:164c:b0:82d:129f:acb6 with SMTP id ca18e2360f4ac-83ecdd3a4acmr1400824639f.14.1732574035055;
+        Mon, 25 Nov 2024 14:33:55 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF5kiqJDkqBCBfHrXKZVwZjB+U39K7Io0NV43Xa9HO3Z1whr1biVbTicDSfDUi4as1q2vKhlw==
+X-Received: by 2002:a05:6602:164c:b0:82d:129f:acb6 with SMTP id ca18e2360f4ac-83ecdd3a4acmr1400822039f.14.1732574034716;
+        Mon, 25 Nov 2024 14:33:54 -0800 (PST)
+Received: from ?IPV6:2601:408:c180:2530:d041:4c25:86b8:e76a? ([2601:408:c180:2530:d041:4c25:86b8:e76a])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e1fdab893bsm967695173.70.2024.11.25.14.33.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 14:33:54 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <bfcb530d-10e4-4ec7-b216-0b54d5089bfc@redhat.com>
+Date: Mon, 25 Nov 2024 17:33:50 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,88 +89,124 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/5] drm/vkms: Switch to managed for encoder
-To: Louis Chauvet <louis.chauvet@bootlin.com>,
- Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
- Melissa Wen <melissa.srw@gmail.com>,
- Haneen Mohammed <hamohammed.sa@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Simona Vetter <simona.vetter@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
- linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
- miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
- seanpaul@google.com, nicolejadeyee@google.com
-References: <20241122-google-vkms-managed-v5-0-1ab60403e960@bootlin.com>
- <20241122-google-vkms-managed-v5-2-1ab60403e960@bootlin.com>
+Subject: Re: [PATCH] sparc/pci: Make pci_poke_lock a raw_spinlock_t.
+To: Guenter Roeck <linux@roeck-us.net>, Waiman Long <llong@redhat.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Will Deacon <will@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>
+References: <20241009161041.1018375-1-bigeasy@linutronix.de>
+ <20241009161041.1018375-2-bigeasy@linutronix.de>
+ <7656395b-58fc-4874-a9f3-6d934e2ef7ee@roeck-us.net>
+ <20241125085314.1iSDFulg@linutronix.de>
+ <b776ca37-d51c-47e2-b3bb-aee8e7910630@roeck-us.net>
+ <20241125174336.8nEhFXIw@linutronix.de>
+ <c77c77d4-7f6e-450c-97d5-39dc50d81b1a@roeck-us.net>
+ <20241125181231.XpOsxxHx@linutronix.de>
+ <72991b83-173e-492e-a4aa-5049304c1bd0@roeck-us.net>
+ <5d269249-afd1-44f5-8faf-9ac11d9a3beb@redhat.com>
+ <dea92bd5-65e5-4c5c-bc93-5bef547c935e@roeck-us.net>
+ <2a940822-b4d4-43ea-b4f7-4294043b76ea@roeck-us.net>
+ <88f47cea-baba-4673-9bd7-7b7c3f421008@redhat.com>
+ <b0e13a75-d068-4ad3-b0d7-4834ccec3d5a@roeck-us.net>
+ <42effdc0-bfe7-49a5-a872-21a6f665fff3@redhat.com>
+ <55e2fcb8-dd06-42e4-b5de-4a0b46057571@roeck-us.net>
 Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-In-Reply-To: <20241122-google-vkms-managed-v5-2-1ab60403e960@bootlin.com>
+In-Reply-To: <55e2fcb8-dd06-42e4-b5de-4a0b46057571@roeck-us.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi Louis,
 
-On 22/11/24 13:27, Louis Chauvet wrote:
-> The current VKMS driver uses non-managed function to create encoders. It
-> is not an issue yet, but in order to support multiple devices easily,
-> convert this code to use drm and device managed helpers.
-> 
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+On 11/25/24 4:54 PM, Guenter Roeck wrote:
+> On 11/25/24 13:29, Waiman Long wrote:
+>>
+>> On 11/25/24 4:25 PM, Guenter Roeck wrote:
+>>> On 11/25/24 12:54, Waiman Long wrote:
+>>>>
+>>>> On 11/25/24 3:23 PM, Guenter Roeck wrote:
+>>>>> On 11/25/24 12:06, Guenter Roeck wrote:
+>>>>>> On 11/25/24 11:33, Waiman Long wrote:
+>>>>>> [ ... ]
+>>>>>>>> Fixing that finally gives me a clean run. Nevertheless, that 
+>>>>>>>> makes me wonder:
+>>>>>>>> Should I just disable CONFIG_PROVE_RAW_LOCK_NESTING for sparc 
+>>>>>>>> runtime tests ?
+>>>>>>>
+>>>>>>> If no one is tryng to ever enable PREEMPT_RT on SPARC, I suppose 
+>>>>>>> you could disable CONFIG_PROVE_RAW_LOCK_NESTING to avoid the 
+>>>>>>> trouble.
+>>>>>>>
+>>>>>>
+>>>>>> SGTM. I'll do that unless someone gives me a good reason to keep 
+>>>>>> it enabled.
+>>>>>>
+>>>>>
+>>>>> Actually it can not be disabled with a configuration flag. It is
+>>>>> automatically enabled. I'll have to disable PROVE_LOCKING to 
+>>>>> disable it.
+>>>>>
+>>>>> config PROVE_RAW_LOCK_NESTING
+>>>>>         bool                    <---- no longer user configurable
+>>>>>         depends on PROVE_LOCKING
+>>>>>         default y
+>>>>>         help
+>>>>>          Enable the raw_spinlock vs. spinlock nesting checks which 
+>>>>> ensure
+>>>>>          that the lock nesting rules for PREEMPT_RT enabled 
+>>>>> kernels are
+>>>>>          not violated.
+>>>>>
+>>>>> I don't really like that, and I don't understand the logic behind it,
+>>>>> but it is what it is.
+>>>>>
+>>>>> FWIW, the description of commit 560af5dc839 is misleading. It says 
+>>>>> "Enable
+>>>>> PROVE_RAW_LOCK_NESTING _by default_" (emphasis mine). That is not 
+>>>>> what the
+>>>>> commit does. It force-enables PROVE_RAW_LOCK_NESTING if 
+>>>>> PROVE_LOCKING is
+>>>>> enabled. It is all or nothing.
+>>>>>
+>>>> I think we can relax it by
+>>>>
+>>>> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+>>>> index 5d9eca035d47..bfdbd3fa2d29 100644
+>>>> --- a/lib/Kconfig.debug
+>>>> +++ b/lib/Kconfig.debug
+>>>> @@ -1399,7 +1399,7 @@ config PROVE_LOCKING
+>>>>   config PROVE_RAW_LOCK_NESTING
+>>>>          bool
+>>>>          depends on PROVE_LOCKING
+>>>> -       default y
+>>>> +       default y if ARCH_SUPPORTS_RT
+>>>>          help
+>>>>           Enable the raw_spinlock vs. spinlock nesting checks which 
+>>>> ensure
+>>>>           that the lock nesting rules for PREEMPT_RT enabled 
+>>>> kernels are
+>>>>
+>>>> Sebastian, what do you think?
+>>>>
+>>>
+>>>     depends on PROVE_LOCKING && ARCH_SUPPORTS_RT
+>>>
+>>> seems to make more sense to me.
+>>
+>> That will work too, but that will enforce that arches with no 
+>> ARCH_SUPPORTS_RT will not be able to enable PROVE_RAW_LOCK_NESTING 
+>> even if people want to try it out.
+>>
+>
+> No architecture will be able to enable anything because "bool" has no
+> string associated with it. As mentioned before, it is all or nothing.
+> Otherwise I could just configure "CONFIG_PROVE_RAW_LOCK_NESTING=n"
+> for sparc and be done.
 
-Reviewed-by: Maíra Canal <mcanal@igalia.com>
+Yes, you are right.
 
-Best Regards,
-- Maíra
-
-> ---
->   drivers/gpu/drm/vkms/vkms_output.c | 12 +++---------
->   1 file changed, 3 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
-> index 570823ecb28f589e6323036590ec05a2f633bc9b..ab9affa75b66ce9f00fe025052439405206144ec 100644
-> --- a/drivers/gpu/drm/vkms/vkms_output.c
-> +++ b/drivers/gpu/drm/vkms/vkms_output.c
-> @@ -13,10 +13,6 @@ static const struct drm_connector_funcs vkms_connector_funcs = {
->   	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
->   };
->   
-> -static const struct drm_encoder_funcs vkms_encoder_funcs = {
-> -	.destroy = drm_encoder_cleanup,
-> -};
-> -
->   static int vkms_conn_get_modes(struct drm_connector *connector)
->   {
->   	int count;
-> @@ -84,8 +80,8 @@ int vkms_output_init(struct vkms_device *vkmsdev)
->   
->   	drm_connector_helper_add(connector, &vkms_conn_helper_funcs);
->   
-> -	ret = drm_encoder_init(dev, encoder, &vkms_encoder_funcs,
-> -			       DRM_MODE_ENCODER_VIRTUAL, NULL);
-> +	ret = drmm_encoder_init(dev, encoder, NULL,
-> +				DRM_MODE_ENCODER_VIRTUAL, NULL);
->   	if (ret) {
->   		DRM_ERROR("Failed to init encoder\n");
->   		return ret;
-> @@ -95,7 +91,7 @@ int vkms_output_init(struct vkms_device *vkmsdev)
->   	ret = drm_connector_attach_encoder(connector, encoder);
->   	if (ret) {
->   		DRM_ERROR("Failed to attach connector to encoder\n");
-> -		goto err_attach;
-> +		return ret;
->   	}
->   
->   	if (vkmsdev->config->writeback) {
-> @@ -108,7 +104,5 @@ int vkms_output_init(struct vkms_device *vkmsdev)
->   
->   	return 0;
->   
-> -err_attach:
-> -	drm_encoder_cleanup(encoder);
->   	return ret;
->   }
-> 
+Cheers,
+Longman
 
 
