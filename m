@@ -1,89 +1,108 @@
-Return-Path: <linux-kernel+bounces-421728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59A999D8F3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:40:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C68479D8F3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:40:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEE9AB23358
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:40:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B6C3168F7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671BA19A2B0;
-	Mon, 25 Nov 2024 23:40:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72CAA195FE3;
+	Mon, 25 Nov 2024 23:40:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qg6Ut+1u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MWK10U9L"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7681E480;
-	Mon, 25 Nov 2024 23:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961DE1946C3
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 23:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732578020; cv=none; b=bgQFPn1eH1/EqI5VGN3u6qwQn97OF2UQWvE/ANpoV6s1azR+NiCh6bCOSiXUzZWI62224GnYhaFWC0b+zdtKD33HsgAB3NiN7B90GuPEDKmKSz5PPlDwp4B86+y8S49XCPdA2Q4zij8FwVDFavJsyBfZ4aGfH59JqaXdkdznjaY=
+	t=1732578045; cv=none; b=LxSpOvJTehNB8nQhe01KGGRQUGreJ3HZDnVzUHVr47THjI46GReiz2GxhQIKjriyM6ZKi8moHJMr4ZNP65/d/NHmOFA1oRM4uEgxvaxevO7L7XaaBu1i4SIMXCgDtEkMEAr1LvhyTkvYuL3qcAHk+vQlXullq//gxZhdb/MUM6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732578020; c=relaxed/simple;
-	bh=/DWbhcJbPqsr/l9Ba79rt42q5uBE42dNGMfmTYIGm4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=imJfl/5CJbjEefazWTwFioNasGBn3/bdsTTkzhToH9zEN3pazFQEQ+c+SMrEj+wkAjyaEQvCdpfsWVhlhp/CcW49xGBvzNatDAYnK3NgE6TUvbxxG+l1IaxcJOPYbxO/q3Adt/M2+EQ1BJEO0Cf3ozsA5DrfW+ruX5UUXnOcpH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qg6Ut+1u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3878BC4CECE;
-	Mon, 25 Nov 2024 23:40:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732578020;
-	bh=/DWbhcJbPqsr/l9Ba79rt42q5uBE42dNGMfmTYIGm4M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qg6Ut+1u3KYMvo+RhvvkBBBbghU4yfi5BHM+/qkLSI4aGzkj2zAPteKMCi68Fg44k
-	 tWjUqkNCvuQ1hEk3DZGnbSMA0g4O83HhA/5M4eBRLJXZdc/QLpWEHX+iHYtRm7fm1W
-	 0j8CeHTW92O46DgJ6+GCfvChcVHvanmEyjtAzGOI54yvyJ/yd8DplyEhZnqzOvazPQ
-	 Gc2soh3AASNY6el/PyPRJrLT8QP+Ae/YAicw98RzktQiigrZoRCGLm+i3Ux5zNGury
-	 zv5iTQV0mai+IcQeYPBl0ZMig9fhUlJR6TzTWSgEb06WhUkWQTqjsofSwYrDB3GdvR
-	 2CE3PtX4QcdFQ==
-Date: Mon, 25 Nov 2024 15:40:17 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Christoph Hellwig <hch@lst.de>, zohar@linux.ibm.com,
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, corbet@lwn.net,
-	petr.pavlu@suse.com, samitolvanen@google.com, da.gomez@samsung.com,
-	akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
-	serge@hallyn.com, shuah@kernel.org, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, linux-integrity@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, wufan@linux.microsoft.com,
-	pbrobinson@gmail.com, zbyszek@in.waw.pl, mjg59@srcf.ucam.org,
-	pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com,
-	jikos@kernel.org, mkoutny@suse.com, ppavlu@suse.com,
-	petr.vorel@gmail.com, mzerqung@0pointer.de, kgold@linux.ibm.com,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v6 02/15] module: Introduce ksys_finit_module()
-Message-ID: <Z0UK4Zm85GzeLt20@bombadil.infradead.org>
-References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
- <20241119104922.2772571-3-roberto.sassu@huaweicloud.com>
- <20241119121402.GA28228@lst.de>
- <ZzzwxdHbG9HynADT@bombadil.infradead.org>
- <70952351d25817211509bf1cf43d3e665aef1481.camel@huaweicloud.com>
+	s=arc-20240116; t=1732578045; c=relaxed/simple;
+	bh=yqQVvq8lTMFOR8WCOuWvtJi0k78O9tLZ+qeTmTRIjWc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gRjCHanDcW5xdjMItvtua/SUWv6FQRGBnRF3QjtvCfU7J64thMo9XKGahH+lR6yAk6+SsB1M2/1l1gb+VzL/DaIp4mRDxaQ85GVN/aQTsZAb07O3tCOI2KfSC/iEU5rhK/FMf/6iyEvmBk9oJK9Y/hxuWHeSnQS+R1O7UpBpcXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MWK10U9L; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cfbeed072dso6266332a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 15:40:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1732578042; x=1733182842; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2RlY2ZMrYaHz582xTT+rxAcAIIF8NSzQOVmJaoBAXy8=;
+        b=MWK10U9Leb/CPT5z9mcQXhekcSooaq09nYLciqyj5BfP8kf3u2Ny20a3QUjKKyk12g
+         FnOm58HPYZ7qrefQd78/33ojSGFIYXM3ifQUsVMvgbMYAfLMendVrglxmaMNrbwoEtoG
+         W5RTon32iqWOdmSNSrB3ttsB8hw54oUFiWXNU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732578042; x=1733182842;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2RlY2ZMrYaHz582xTT+rxAcAIIF8NSzQOVmJaoBAXy8=;
+        b=Xl+MNR0ds041wTpgwtEuv4ojsEP9pgUewykBQca9uZOMESvSAwnz0c7uOBh4H91Inl
+         19rk2NyjdxFYazfAbG1gPmMxDd8t7Kog1HWCNLTkQG2Siez7Qdody4t+aMLK5qsh+0rp
+         6UBA8NNNbM2v7ebXSdclYu1qiP7X8mAKHuDPN9qKuIoIFfPOmO2ybFRRDHa6boIn8IIa
+         xjDVZ/g42KVDWb5TYX89uMQADDhUL5Bc6IPEzzJxppEpbOCOYBcPEwkkLlU2uV9N+VX9
+         fp8LbpvfjqDZLoDbVTCfLt7xGoRmkxHOoZn96MeddNjfiWh4awgKI0oj+lOfJGfFvvjS
+         NcLA==
+X-Gm-Message-State: AOJu0YzWW2Y8KwIPYbcENaHHVppOUGz0m6eDWv7z2CjWTksklAw6LAj3
+	mI2erwQdae0HNdwNQkOjPOmrxswN+1Ip+tjMIsVIENAfQIgJebjRdgqTZ+VBXWbgcKksmK+avW+
+	q68g84w==
+X-Gm-Gg: ASbGnctM//RBFJpG5yli/zTIs+pQSPY8hx/VS396eRyw1Zm1/ahtrYJvaxbQV/fbbR8
+	zmIKsKgofnRgtagBkwDKhU8OUr/L4KAz6SeR2mG5Bz67PK+4OVV7Tsr/JfPqrsZYbcai0AjS8+G
+	9vBjgk+IoczmZXXIp+mu7gm9RF8YwJzg4N/kbFMBRDpufx1NxzxuEo9pLxGzwUqfnqMEYwbfnYp
+	SK8JtzGwefIhhWK/atUGnzmp0XTM5DATEWQ91I1TsSixLLAxENCL3MSQfqXOtV37aDEvqPt40qo
+	QC1cG+DQSaO13Ix0gCwURtlp
+X-Google-Smtp-Source: AGHT+IHlkDIx79pdZ3NEFU3tIxZbJB0dP3B14Bb75JveeeWKxW87NZIAKIqdwf7/eruxQT6eYedlVg==
+X-Received: by 2002:a17:906:b3a5:b0:aa2:c98:a078 with SMTP id a640c23a62f3a-aa50a08cee0mr1158916866b.57.1732578041787;
+        Mon, 25 Nov 2024 15:40:41 -0800 (PST)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa549a5fe40sm251806766b.134.2024.11.25.15.40.39
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 15:40:40 -0800 (PST)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa51bf95ce1so519229666b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 15:40:39 -0800 (PST)
+X-Received: by 2002:a17:907:7795:b0:aa5:31e7:96a with SMTP id
+ a640c23a62f3a-aa531e75d44mr806950466b.32.1732578039007; Mon, 25 Nov 2024
+ 15:40:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <70952351d25817211509bf1cf43d3e665aef1481.camel@huaweicloud.com>
+References: <202411210651.CD8B5A3B98@keescook>
+In-Reply-To: <202411210651.CD8B5A3B98@keescook>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 25 Nov 2024 15:40:22 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjMagH_5-_8KhAOJ+YSjXUR5FELYxFgqtWBHOhKyUzGxA@mail.gmail.com>
+Message-ID: <CAHk-=wjMagH_5-_8KhAOJ+YSjXUR5FELYxFgqtWBHOhKyUzGxA@mail.gmail.com>
+Subject: Re: [GIT PULL] execve updates for v6.13-rc1 (take 2)
+To: Kees Cook <kees@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "Eric W. Biederman" <ebiederm@xmission.com>, 
+	Nir Lichtman <nir@lichtman.org>, Tycho Andersen <tandersen@netflix.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 20, 2024 at 10:16:23AM +0100, Roberto Sassu wrote:
-> Again, maybe I misunderstood, but I'm not introducing any functional
-> change to the current behavior, the kernel side also provides a file
-> descriptor and module arguments as user space would do (e.g. by
-> executing insmod).
+On Thu, 21 Nov 2024 at 06:53, Kees Cook <kees@kernel.org> wrote:
+>
+> Please pull these execve updates for v6.13-rc1 (take 2). I've dropped
+> the argv[0] vs "comm" setting patches. We'll work on the better solution
+> for the next merge window.
 
-The commit log does an extremely poor job to make this clear, all you
-are doing here is adding a helper. The commit log should be super clear
-on that and it is not.
+Yeah, I was pulling this, and then noted that the selftest is now
+documented to be that garbage.
 
-  Luis
+So I unpulled again.
+
+           Linus
 
