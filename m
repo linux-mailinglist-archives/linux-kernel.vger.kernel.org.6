@@ -1,129 +1,144 @@
-Return-Path: <linux-kernel+bounces-420938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B61779D85F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:09:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DF0E9D8505
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:04:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F85BB34119
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:34:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A60D7B2403D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C8819CC2D;
-	Mon, 25 Nov 2024 11:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3B2194A44;
+	Mon, 25 Nov 2024 11:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KE5ryPwa"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ReKwAG6x"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF541922FC
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C876192D73
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732534436; cv=none; b=s9mdYE8h5Uh3HxfEzd6EbjycHIHdk36zqF7U3bFa2Xns3r+l/pHIpoHgbEaZ/84E3blxvupOBybTpbQEhsE9whaffzC/w2nVh3zdNxYfx+ZvTtkOvwHDMQT40Y/6LozVqhrtlfkMu68twklofMyBRBCVdUBoT/2zXRufvyY5OKA=
+	t=1732534459; cv=none; b=Ub/Mi/HfckxFEjn83ihsKxhbD2lgR3Z/Wz5I6W+8LGyh3Cauzcl0e7jfGNL7HatNznyRAV3zsrVF2BmbprMuKcqAWuwVZDAQ0aI/Bf1sf5S3zU47ZNwpjE21H2HwQIBB9FIBDJe0IS1+e7nduOf6T8kS8SxflXIW0FpztHzQMx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732534436; c=relaxed/simple;
-	bh=NUDgmZFcDa9nu5S4aDFg96KUr5KYAWfbDYZxM2bAyc0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mj7a2xMWUkkoZ7rMG3gya9NlTeY3Fk6MyB8gbsChwB2kaRU4pda6M3FqW8pMuswSw7my3CLTvp7IO0V92LcBUmoAWIs81bp8H6l8pNUQFFDrXWimGiK3rQ69rjfRVi4w71btYsp9BYJIohzufaM+0tadJnAAQuOyamKEQ2iUdBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KE5ryPwa; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4314f38d274so54999815e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 03:33:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1732534433; x=1733139233; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mTM76Mdzqwb1GuClwHSoU2f/CrBS4pEthO5eWu6Q3V0=;
-        b=KE5ryPwaKfisM8l9Z0ES/TuGTYpyl4Nws/lhHxGZk3vHICknmkeZMEQ80W1FODVwNx
-         3cwbfFdKkGRXNNtqEHSQ/yidDjFumlj+u+yqtPnjfT/NzHwdyto4Mgarz0Aks7KoUUrJ
-         2t6aaW+Quda+EUkCy7JlTLdDbQd0THuPr2zqWeNPUh08moMR86YAbDywNIg64mm0wNMo
-         gnptv6Uu3Wz/Ru3z8xs/ObHfTndFyBG81FTLeQkuv+sHxqqbU0L/nMDRK7ID0V7u8dn6
-         22dsXfbZqIjC6CIHX2C1TQV7nO/g2OlGGe7oIpImq7I30BUisD+ZGccF+vJVyZZGuL/+
-         GZ8g==
+	s=arc-20240116; t=1732534459; c=relaxed/simple;
+	bh=oKiIL23t9JON49nCNZT6Ou8nEPC13GPtL4HwJhWTs4o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YRq9uNRhKO/UpFIz4RltLYAJhTiR6eF9T6wMjFzjy7755o2M761PEzPkDAhCh6/KHbUHl0G5SC4gGO46SCr1sfrwpqJJiorGKVOocpWHLWVWW5/y8ui3YhAF1iv+UoRZrUf4K0WhYZ+OLYHevOKPwStjmxIP22g/FIAKEybOT7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ReKwAG6x; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732534456;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QOFP6FdjF7HR5DJ0NsQmq4Ef0zujb0dhq0/nwgl+fPQ=;
+	b=ReKwAG6xggBXaHM0846BJLqrG1U3HtaIF6bfC1jba60opx5dw2+TDs8ph7rrsgYIQBRygm
+	G31BUmR0nuumOQGhPzE9dwfIsDvIMDCZVfbAXdYYkGu9P0wK9R5eqJH+etgxbyOAkDF2HF
+	5Ok34sL08A9NdYzQTpyrgxyNgY3pLAE=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-577-Zln_6ueCNbGetlkj-xUUXg-1; Mon, 25 Nov 2024 06:34:15 -0500
+X-MC-Unique: Zln_6ueCNbGetlkj-xUUXg-1
+X-Mimecast-MFC-AGG-ID: Zln_6ueCNbGetlkj-xUUXg
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2120c877e75so46203545ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 03:34:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732534433; x=1733139233;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mTM76Mdzqwb1GuClwHSoU2f/CrBS4pEthO5eWu6Q3V0=;
-        b=RPXhvtFQXRiCtfMw7gyfdoO68BhyA3oA8wchw3TGCVQVkfThxDJEsoFhx+gOJBIMVA
-         nRF/GeNZ4hTX4EEo34TK4GXTas9m85EXWjH92oQqE51qZxycvHumdszPFdHYKeQEbHu3
-         c7E3FrticNobdX3a5n7QcXSIfmfvuGUqUO3e0PzY+R/3K+bWzpV9BcnCnCcCy6Kbe/vt
-         48mEPzEwN66QAEWY3iwnVBzFT0UIKjdpu/wPlbRp506nbHrM11uxfPQEYON47yYPmU2L
-         HlHeMna+HEU4wdzOAxG7NcsygyBhdAebofCaGGaIzm6uRtAIXAgRi+SOdGlXYjotpYgs
-         7BUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkyLPvUjKHqHq3wuNyFqV2NlnkA4v9uLuNnf4ueQ9DFlEW4LH3kKTyWocwXqqllBglCnCQ1+5IfK6hXcQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yztc79DCqc7lCn/lTM5WvEzp29DLSL4JNFRtesbjWUfXzo2Zwx8
-	8KALy1nXKVVWOwHFj4APdlMzvyUD4VQXoegJ8kph+BJm97DE/tfEkfoxmfSyAKk=
-X-Gm-Gg: ASbGnculpo+R3XSzQ1dzm18DJGKvH+pXnUyHeVdJbitSWl4R4MQuArkaywKtvd2B5zY
-	W7OyesKUFMXN5COROPFfkewk+qHhP3MG8cRLUINqYKvM8VszfqsjN5tnO8oJ0+9sEphj9LXZZ88
-	m4NX7SakNhMYnrg3frCaOlukaUYq0UvaJXT918uOI+hG6Or5kOVN17tGyH+ySr3My/2T2P4WwFX
-	MAw2MndpvIleUswm9K+O6nv4IaZPDwyeXAIQbAv
-X-Google-Smtp-Source: AGHT+IFYVyoFFMSqiR1Kn1O5xE8JxWbX8XxZKjBgzdjMtFSUnEr6pflHMkezvxbC5V+qeE5ilJxAfA==
-X-Received: by 2002:a05:600c:3ac3:b0:431:4b88:d407 with SMTP id 5b1f17b1804b1-433ce410255mr123612545e9.5.1732534432768;
-        Mon, 25 Nov 2024 03:33:52 -0800 (PST)
-Received: from localhost ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432f643e65bsm174028585e9.0.2024.11.25.03.33.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 03:33:52 -0800 (PST)
-Date: Mon, 25 Nov 2024 12:33:52 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Junjie Fu <fujunjie1@qq.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org, dave.hansen@intel.com
-Subject: Re: [PATCH] mm/mempolicy: Fix decision-making issues for memory
- migration during NUMA balancing
-Message-ID: <Z0RgoOHMRFCTM1JB@tiehlicka>
-References: <tencent_57D6CF437AF88E48DD5C5BD872753C43280A@qq.com>
+        d=1e100.net; s=20230601; t=1732534454; x=1733139254;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QOFP6FdjF7HR5DJ0NsQmq4Ef0zujb0dhq0/nwgl+fPQ=;
+        b=rnASOhwUFMNC9YKc/dIhuNkI3Xf2CFFiBpnK9z8GJ1ijPYyaINv/BOZlCjHsxiDbmC
+         5cqQ/Eh6603goFcRjgp0YsxAYfB53bQFhBiy31wK3//kZWoX5go0msI5H6utk12qGHgu
+         PzcTjEJ3uAnIbjEAZd+7mtc5FEWUUyC3OAd0DWamQpiNKzdn7lGaIHJqErwn1dTbhkhM
+         B82H5lHVpweZDSqMUHIhAzW1vmv2d5ZGGWy5d2H+apwoS1Ke/j1BpKGAlL/rVv7S+BNE
+         WDUpIXGvQ4V+uC9jDXa6h1PHRSnmZx17tuAb/hj9No+KLaCeIQQd3jumKABwNcTD2/dj
+         SV6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVhCU0oZvB2m+0eh4DbonFrdtz44UISO5vkIiLLE9gnt2wtxCoQO//hpz1FN972n06nanfonIjo2xao8aQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6QdJIF+NGEZymiIpppt+qY7qyRII7erryutkEXlKdaMm6X3XZ
+	l9zK2mikl45sclTVE+sxDCo+mFbubAbSAm9/a2nYlijWhkqVOsFzT5P1Cq0NHRjCSEIkMUBGSXQ
+	aBabVa+x3NJAB9RRayhu1jetpTakxaobW/GqWEGKN/Buph47qsplFUt+NAxPIcHNtA1Gn7vQsWo
+	HFRIg73k8hVrLkRck2d0BTS9iNeaVJGDTOu4B9
+X-Gm-Gg: ASbGnctCCgXY4+EefNFga7L6PAqr+JZRH0jgeiyN+Cr76KQmybQ92WGQ/ZCXhoEZxtZ
+	0oNuhaO91J+VqrRlvP4pDcQPgo8keGg==
+X-Received: by 2002:a17:902:f64c:b0:212:6981:7587 with SMTP id d9443c01a7336-2129fd0fc42mr208252775ad.24.1732534454152;
+        Mon, 25 Nov 2024 03:34:14 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHblig9i49prrqDlUeZETVKtu2gFAI4HQKWoBxXGngksx/l9PRt93GGuLopiLDUeU5NzeAE1cUQ0J/uiU3YMRU=
+X-Received: by 2002:a17:902:f64c:b0:212:6981:7587 with SMTP id
+ d9443c01a7336-2129fd0fc42mr208252465ad.24.1732534453881; Mon, 25 Nov 2024
+ 03:34:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_57D6CF437AF88E48DD5C5BD872753C43280A@qq.com>
+References: <20241125104011.36552-1-cgoettsche@seltendoof.de> <20241125104011.36552-7-cgoettsche@seltendoof.de>
+In-Reply-To: <20241125104011.36552-7-cgoettsche@seltendoof.de>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Date: Mon, 25 Nov 2024 12:34:02 +0100
+Message-ID: <CAHc6FU5t0cB=+9ijwx26NUEck1YS7304ue_5FRwqXRzBq14jjA@mail.gmail.com>
+Subject: Re: [PATCH 08/11] gfs2: reorder capability check last
+To: cgzones@googlemail.com
+Cc: linux-security-module@vger.kernel.org, Serge Hallyn <serge@hallyn.com>, 
+	Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>, 
+	linux-kernel@vger.kernel.org, gfs2@lists.linux.dev, cocci@inria.fr
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun 24-11-24 03:09:35, Junjie Fu wrote:
-> When handling a page fault caused by NUMA balancing (do_numa_page), it is
-> necessary to decide whether to migrate the current page to another node or
-> keep it on its current node. For pages with the MPOL_PREFERRED memory
-> policy, it is sufficient to check whether the first node set in the
-> nodemask is the same as the node where the page is currently located. If
-> this is the case, the page should remain in its current state. Otherwise,
-> migration to another node should be attempted.
-> 
-> Because the definition of MPOL_PREFERRED is as follows: "This mode sets the
-> preferred node for allocation. The kernel will try to allocate pages from
-> this node first and fall back to nearby nodes if the preferred node is low
-> on free memory. If the nodemask specifies more than one node ID, the first
-> node in the mask will be selected as the preferred node."
-> 
-> Thus, if the node where the current page resides is not the first node in
-> the nodemask, it is not the PREFERRED node, and memory migration can be
-> attempted.
-> 
-> However, in the original code, the check only verifies whether the current
-> node exists in the nodemask (which may or may not be the first node in the
-> mask). This could lead to a scenario where, if the current node is not the
-> first node in the nodemask, the code incorrectly decides not to attempt
-> migration to other nodes.
-> 
-> This behavior is clearly incorrect. If the target node for migration and
-> the page's current NUMA node are both within the nodemask but neither is
-> the first node, they should be treated with the same priority, and
-> migration attempts should proceed.
+On Mon, Nov 25, 2024 at 11:46=E2=80=AFAM Christian G=C3=B6ttsche
+<cgoettsche@seltendoof.de> wrote:
+> From: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+>
+> capable() calls refer to enabled LSMs whether to permit or deny the
+> request.  This is relevant in connection with SELinux, where a
+> capability check results in a policy decision and by default a denial
+> message on insufficient permission is issued.
+> It can lead to three undesired cases:
+>   1. A denial message is generated, even in case the operation was an
+>      unprivileged one and thus the syscall succeeded, creating noise.
+>   2. To avoid the noise from 1. the policy writer adds a rule to ignore
+>      those denial messages, hiding future syscalls, where the task
+>      performs an actual privileged operation, leading to hidden limited
+>      functionality of that task.
+>   3. To avoid the noise from 1. the policy writer adds a rule to permit
+>      the task the requested capability, while it does not need it,
+>      violating the principle of least privilege.
+>
+> Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+> ---
+>  fs/gfs2/quota.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/gfs2/quota.h b/fs/gfs2/quota.h
+> index f462d9cb3087..988f38dc5b2c 100644
+> --- a/fs/gfs2/quota.h
+> +++ b/fs/gfs2/quota.h
+> @@ -44,8 +44,8 @@ static inline int gfs2_quota_lock_check(struct gfs2_ino=
+de *ip,
+>         int ret;
+>
+>         ap->allowed =3D UINT_MAX; /* Assume we are permitted a whole lot =
+*/
+> -       if (capable(CAP_SYS_RESOURCE) ||
+> -           sdp->sd_args.ar_quota =3D=3D GFS2_QUOTA_OFF)
+> +       if (sdp->sd_args.ar_quota =3D=3D GFS2_QUOTA_OFF ||
+> +           capable(CAP_SYS_RESOURCE))
+>                 return 0;
+>         ret =3D gfs2_quota_lock(ip, NO_UID_QUOTA_CHANGE, NO_GID_QUOTA_CHA=
+NGE);
+>         if (ret)
+> --
+> 2.45.2
 
-The code is clearly confusing but is there any actual problem to be
-solved? IIRC although we do keep nodemask for MPOL_PREFERRED
-policy we do not allow to set more than a single node to be set there.
-Have a look at mpol_new_preferred
+Applied, thanks.
 
--- 
-Michal Hocko
-SUSE Labs
+Andreas
+
 
