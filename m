@@ -1,191 +1,163 @@
-Return-Path: <linux-kernel+bounces-421469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CA1E9D8BC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:57:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01CA116150D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:57:18 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956F21B87C1;
-	Mon, 25 Nov 2024 17:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZVULCjqS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B3C9D8BC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:59:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4B241C92;
-	Mon, 25 Nov 2024 17:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B5CF2823F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:59:05 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 091A01B87C2;
+	Mon, 25 Nov 2024 17:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="FdAYo7Ov"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942BA41C92;
+	Mon, 25 Nov 2024 17:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732557435; cv=none; b=ti0ZSXGYXM1eyOnjh7sZdQnjE1TicURQuWzMj8RGS1mVH1GfLz4g0AnTmreVOyOGY2rgtuasy/hLxv6g4EZgXpusJesX4ejY0VaokX6EOqvv+VQXIyP8qEGtQYrwQ3VD9bK55J/I5c9nQw3ikbDlKfPMqmEI3BGDfVu8G80NYp0=
+	t=1732557540; cv=none; b=K+9RIiWt8tHMij+YBFxUN/2m8GVU2QwpPuYTdeuO+wLAx1MqCw7hNdKhePgz9gHOpkAybC7NDveLp764PpcVkpYKkERc83swQv5d9H8gP8+K1GcLsFWoIg7ln2siIFXKx8AAVstv1Wfy99D+JLc4aNgx5zbj1Ci04aQGpdXjLwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732557435; c=relaxed/simple;
-	bh=YT80/O07exbvHiZ+p9AkVjVIlP6bA4gVhumiRx2cpMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L5NoW71f6uLr1tfiPEWtvWtpeEo5yagGHRo1BB/bI2PXYmyUcibarBDhfJHCfDBz7UwF9fX2IEt6ztb8cYDqNUI+9lBAuEnBQG/GCaH9dpg9vZGHQILIPVXtuNkqK0ZrhXuk1ycF3KMHRRKMaPRm3ObolDxW1cTpOgXo08UWANM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZVULCjqS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27CE7C4CECE;
-	Mon, 25 Nov 2024 17:57:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732557434;
-	bh=YT80/O07exbvHiZ+p9AkVjVIlP6bA4gVhumiRx2cpMQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZVULCjqSsIb0LXPSlZyPC2PFqGBC5GWZV9VygVQJCaHmCukbrllCD2+2kMufKAt6C
-	 DUUTIFUzWrt59m/ZOupB9zxZtF4PlZ1SstJ7X95XT6tMgvZQzzbBVA3NSPGIEzqDzJ
-	 fTZ1YOWfxPQ2qh7ns+ChNaA+IUMqpk1K2Mi/ici5FgCzV1wFStmAzFnHy3zoYUiIiz
-	 qSUR/+r2XROh4UFAhYFVkUGEF3N+pzaT2SSU7puzkrzZ5Jx4zxbS6USciAlDDIpkeb
-	 1GBYxmPB2dEHERR0qeX1JtrNE6SnVivkPAsOKsHmdwgAZdXXnXhvfTvERPUMZCWLnf
-	 SsBah5iTrcd6Q==
-Received: by pali.im (Postfix)
-	id 4A4365DA; Mon, 25 Nov 2024 18:57:05 +0100 (CET)
-Date: Mon, 25 Nov 2024 18:57:05 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: "Sicelo A. Mhlongo" <absicsz@gmail.com>
-Cc: linux-pm@vger.kernel.org, sre@kernel.org, linux-kernel@vger.kernel.org,
-	maemo-leste@lists.dyne.org
-Subject: Re: [PATCH] bq27xxx: add voltage min design for bq27000 and bq27200
-Message-ID: <20241125175705.hxcyesdsexcmhdtr@pali>
-References: <20241125151321.45440-1-absicsz@gmail.com>
+	s=arc-20240116; t=1732557540; c=relaxed/simple;
+	bh=n8qNvPhIENuhEkCNGBgzMSTobgwxXDh174nIOMaxw5o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LDykMrtSIRV7iM5/IGC1F3dsCAa1jU4BzN3xbUgsjBvEtimHcp2fPTJtv3tDMjKr5oFGzozqhI8KHPns2s0xRlOtk3CZAAiWlqdMKWEYgZqSpKsQXkKuCcDLUsqCxgpTrIlIVLitSNVmQptedte+VsC0hfJC33gq7zO4BSiR7b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=FdAYo7Ov; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1732557538; x=1764093538;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=n8qNvPhIENuhEkCNGBgzMSTobgwxXDh174nIOMaxw5o=;
+  b=FdAYo7Oviggsf2n7c+tmFLRkwDP2x7XVqnigJcDYyN1CMmQdFuPwELVx
+   27e5//HG5oYX2OH4WictdwyvZfW0Ft+zjMgqHF74HiW+R894Ux0mlt+5w
+   D6kFXm8eNhnd9guqxMzP02a43GgGu14gskNe2qF177ZJLXhRSdbaJdJBl
+   L46hKQTLJBeniCuR7ZHfNogQohuUwDdlUekkhHtTo3wEKlQUpegqTsYvh
+   ZcSwPmFlORaKabwrwh2W9NKAJlIjE/jTaHj9EQzPhiNoMy/AY/A6ZDCVA
+   Z2OOXMvJPv5eL4qFjXsytrJ5BcnusmJ1ocPT2JxT8rRn9IX1qhzWvokz6
+   g==;
+X-CSE-ConnectionGUID: QcIy3zy5RLCJ7zVSqoxwVg==
+X-CSE-MsgGUID: s+nZnrjkQmqtK/1xBE7ywA==
+X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
+   d="scan'208";a="38361993"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Nov 2024 10:58:51 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 25 Nov 2024 10:58:35 -0700
+Received: from valentina.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Mon, 25 Nov 2024 10:58:32 -0700
+From: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+To: <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
+	<ycliang@andestech.com>, <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	<peterlin@andestech.com>, <samuel.holland@sifive.com>,
+	<conor.dooley@microchip.com>, <alexghiti@rivosinc.com>,
+	<ruanjinjie@huawei.com>, <takakura@valinux.co.jp>, <conor+dt@kernel.org>,
+	<jassisinghbrar@gmail.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<valentina.fernandezalanis@microchip.com>
+CC: <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+Subject: [PATCH v4 0/4] Add Microchip IPC mailbox
+Date: Mon, 25 Nov 2024 17:58:14 +0000
+Message-ID: <20241125175818.213108-1-valentina.fernandezalanis@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241125151321.45440-1-absicsz@gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
 
-On Monday 25 November 2024 17:12:58 Sicelo A. Mhlongo wrote:
-> The bq27x00 gauges have an EEPROM register which contains the value of
-> the voltage that should be considered to be zero battery capacity. Expose
-> this to userspace using the VOLTAGE_MIN_DESIGN property.
-> 
-> Tested on Nokia N900 with bq27200.
-> 
-> Signed-off-by: Sicelo A. Mhlongo <absicsz@gmail.com>
+Hello all,
 
-Looks good,
+This series adds support for the Microchip Inter-Processor Communication
+(IPC) mailbox driver.
 
-Acked-by: Pali Rohár <pali@kernel.org>
+Microchip's family of RISC-V SoCs typically has one or more clusters
+that can be configured to run in Asymmetric Multi-Processing (AMP) mode.
 
-> ---
->  drivers/power/supply/bq27xxx_battery.c | 39 +++++++++++++++++++++++++-
->  include/linux/power/bq27xxx_battery.h  |  1 +
->  2 files changed, 39 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/supply/bq27xxx_battery.c
-> index 40c5ac7a1118..90a5bccfc6b9 100644
-> --- a/drivers/power/supply/bq27xxx_battery.c
-> +++ b/drivers/power/supply/bq27xxx_battery.c
-> @@ -123,6 +123,7 @@ enum bq27xxx_reg_index {
->  	BQ27XXX_DM_BLOCK,	/* Data Block */
->  	BQ27XXX_DM_DATA,	/* Block Data */
->  	BQ27XXX_DM_CKSUM,	/* Block Data Checksum */
-> +	BQ27XXX_REG_SEDVF,	/* End-of-discharge Voltage */
->  	BQ27XXX_REG_MAX,	/* sentinel */
->  };
->  
-> @@ -159,6 +160,7 @@ static u8
->  		[BQ27XXX_DM_BLOCK] = INVALID_REG_ADDR,
->  		[BQ27XXX_DM_DATA] = INVALID_REG_ADDR,
->  		[BQ27XXX_DM_CKSUM] = INVALID_REG_ADDR,
-> +		[BQ27XXX_REG_SEDVF] = 0x77,
->  	},
->  	bq27010_regs[BQ27XXX_REG_MAX] = {
->  		[BQ27XXX_REG_CTRL] = 0x00,
-> @@ -184,6 +186,7 @@ static u8
->  		[BQ27XXX_DM_BLOCK] = INVALID_REG_ADDR,
->  		[BQ27XXX_DM_DATA] = INVALID_REG_ADDR,
->  		[BQ27XXX_DM_CKSUM] = INVALID_REG_ADDR,
-> +		[BQ27XXX_REG_SEDVF] = 0x77,
->  	},
->  	bq2750x_regs[BQ27XXX_REG_MAX] = {
->  		[BQ27XXX_REG_CTRL] = 0x00,
-> @@ -579,6 +582,7 @@ static enum power_supply_property bq27000_props[] = {
->  	POWER_SUPPLY_PROP_POWER_AVG,
->  	POWER_SUPPLY_PROP_HEALTH,
->  	POWER_SUPPLY_PROP_MANUFACTURER,
-> +	POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN,
->  };
->  
->  static enum power_supply_property bq27010_props[] = {
-> @@ -599,6 +603,7 @@ static enum power_supply_property bq27010_props[] = {
->  	POWER_SUPPLY_PROP_CYCLE_COUNT,
->  	POWER_SUPPLY_PROP_HEALTH,
->  	POWER_SUPPLY_PROP_MANUFACTURER,
-> +	POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN,
->  };
->  
->  #define bq2750x_props bq27510g3_props
-> @@ -2039,6 +2044,36 @@ static int bq27xxx_battery_voltage(struct bq27xxx_device_info *di,
->  	return 0;
->  }
->  
-> +/*
-> + * Return the design minimum battery Voltage in microvolts
-> + * Or < 0 if something fails.
-> + */
-> +static int bq27xxx_battery_read_dmin_volt(struct bq27xxx_device_info *di,
-> +					  union power_supply_propval *val)
-> +{
-> +	int volt;
-> +
-> +	/* We only have to read design minimum voltage once */
-> +	if (di->voltage_min_design > 0) {
-> +		val->intval = di->voltage_min_design;
-> +		return 0;
-> +	}
-> +
-> +	volt = bq27xxx_read(di, BQ27XXX_REG_SEDVF, true);
-> +	if (volt < 0) {
-> +		dev_err(di->dev, "error reading design min voltage\n");
-> +		return volt;
-> +	}
-> +
-> +	/* SEDVF = Design EDVF / 8 - 256 */
-> +	val->intval = volt * 8000 + 2048000;
-> +
-> +	/* Save for later reads */
-> +	di->voltage_min_design = val->intval;
-> +
-> +	return 0;
-> +}
-> +
->  static int bq27xxx_simple_value(int value,
->  				union power_supply_propval *val)
->  {
-> @@ -2119,8 +2154,10 @@ static int bq27xxx_battery_get_property(struct power_supply *psy,
->  	 * power_supply_battery_info visible in sysfs.
->  	 */
->  	case POWER_SUPPLY_PROP_ENERGY_FULL_DESIGN:
-> -	case POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN:
->  		return -EINVAL;
-> +	case POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN:
-> +		ret = bq27xxx_battery_read_dmin_volt(di, val);
-> +		break;
->  	case POWER_SUPPLY_PROP_CYCLE_COUNT:
->  		ret = bq27xxx_battery_read_cyct(di, val);
->  		break;
-> diff --git a/include/linux/power/bq27xxx_battery.h b/include/linux/power/bq27xxx_battery.h
-> index 5180dc9f1706..6b190639b08e 100644
-> --- a/include/linux/power/bq27xxx_battery.h
-> +++ b/include/linux/power/bq27xxx_battery.h
-> @@ -61,6 +61,7 @@ struct bq27xxx_device_info {
->  	struct bq27xxx_access_methods bus;
->  	struct bq27xxx_reg_cache cache;
->  	int charge_design_full;
-> +	int voltage_min_design;
->  	bool removed;
->  	unsigned long last_update;
->  	union power_supply_propval last_status;
-> -- 
-> 2.45.2
-> 
+The Microchip IPC is used to send messages between processors using
+an interrupt signaling mechanism. The driver uses the RISC-V Supervisor
+Binary Interface (SBI) to communicate with software running in machine
+mode (M-mode) to access the IPC hardware block.
+
+Additional details on the Microchip vendor extension and the IPC
+function IDs described in the driver can be found in the following
+documentation:
+
+https://github.com/linux4microchip/microchip-sbi-ecall-extension
+
+The PIC64GX MPU has a Mi-V IHC block, this will be added to the PIC64GX
+dts after the initial upstreaming [1].
+
+[1] https://patchwork.kernel.org/project/linux-riscv/patch/20240725121609.13101-18-pierre-henry.moussay@microchip.com/
+
+Changes in v4:
+- specify that microchip,miv-ihc-rtl-v2 is intended for use with MIV IHC Soft IP
+- drop items array and use const value for compatible strings
+- add a contraint to microchip,ihc-chan-disabled-mask property
+- minor improvements to "'#mbox-cells' description
+
+Changes in v3:
+- Fix incorrent formatting around '=' in dt binding examples
+- Add per compatible descriptions in dt binding
+- Add '>' in certain dt binding descriptions to keep paragraphs maintained
+- export __cpuid_to_hartid_map to compile mailbox driver as module
+- Drop unused enum ipc_irq_type
+- rename struct mchp_ipc_probe to mchp_ipc_mbox_info
+- rename struct ipc_chan_info to mchp_ipc_sbi_chan
+- rename struct microchip_ipc to mchp_ipc_sbi_mbox
+- use phys_addr_t for __pa()
+- drop mchp_ipc_get_chan_id function
+- use num_chans in mbox_controller
+- Fix buf_base_tx and buf_base_rx sizes using max and kmalloc
+
+Changes in v2:
+- use kmalloc and __pa() instead of DMA API
+- fix size of buf_base to avoid potential buffer overflow
+- add kernel doc for exported functions (mchp_ipc_get_chan_id)
+- use EXPORT_SYMBOL_GPL instead of EXPORT_SYMBOL
+- drop unnecessary blank line and fix alignment issues
+- drop of_match_ptr
+- move MODULE_DEVICE_TABLE next to the definition
+- reword subject from riscv: asm: vendorid_list to riscv: sbi: vendorid_list
+- remove the word "driver" from dt-binding commit subject
+- make interrupt-names a required property for all cases
+- add dependency on COMPILE_TEST and ARCH_MICROCHIP
+
+Regards,
+Valentina
+
+Valentina Fernandez (4):
+  riscv: sbi: vendorid_list: Add Microchip Technology to the vendor list
+  riscv: export __cpuid_to_hartid_map
+  dt-bindings: mailbox: add binding for Microchip IPC mailbox controller
+  mailbox: add Microchip IPC support
+
+ .../bindings/mailbox/microchip,sbi-ipc.yaml   | 111 ++++
+ arch/riscv/include/asm/vendorid_list.h        |   1 +
+ arch/riscv/kernel/smp.c                       |   1 +
+ drivers/mailbox/Kconfig                       |  13 +
+ drivers/mailbox/Makefile                      |   2 +
+ drivers/mailbox/mailbox-mchp-ipc-sbi.c        | 504 ++++++++++++++++++
+ include/linux/mailbox/mchp-ipc.h              |  33 ++
+ 7 files changed, 665 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml
+ create mode 100644 drivers/mailbox/mailbox-mchp-ipc-sbi.c
+ create mode 100644 include/linux/mailbox/mchp-ipc.h
+
+-- 
+2.34.1
+
 
