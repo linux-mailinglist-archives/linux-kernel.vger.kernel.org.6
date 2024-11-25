@@ -1,109 +1,167 @@
-Return-Path: <linux-kernel+bounces-421209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A483E9D8803
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:30:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29C459D8809
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:31:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AB6C167827
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:30:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B16C5166B8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C8E1B0F2D;
-	Mon, 25 Nov 2024 14:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804C01B0F29;
+	Mon, 25 Nov 2024 14:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ol6YLCIK"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y3AC8aU2"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833291AC8AE
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBE21922E9;
+	Mon, 25 Nov 2024 14:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732545035; cv=none; b=M/Gn4J3uHer9rCjol8WOxiu+sUR0DbUMnTovOB/EqUgL0yR/Mto1YeZJXZfwpRYxJfRu0tuw5gvkVDSmZ2QUgpyLjPZ8J8NsYLX7G1ywDmiz6Azit5Gjwk6sjLlQhGvs7uZg5chO7h1ucs8XaBBJeud12upmxp/RisZFHLrBOk8=
+	t=1732545057; cv=none; b=oAgxx0n9l05ty5Nf+l9JW45Ygr78t5EqdCFcpjWkq3MGgXczHRxATUFsl3ff2FOpMwoBNrjjeRSle0qSQMUfKIkqIZBeXWo6ix9Qk/n04LcNmJoKGIzqEviTsWLWKRndH+nHwt0ncLisyiMtDeO+uToZ0gWXj1T+3iwa42AKafA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732545035; c=relaxed/simple;
-	bh=dmYeT7WagzkwY7FoSyZv+LRd3sqPOyrA/5puocpIySw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VQk6B/E2BNnt+jb50GM82rtjpK1WlayIIgVu/xZBnH+P1i8eKEMaNuUBiLoCNZsjXlonH/kXRGG+ZwZWYZc6BN0dr/4nTQE5JXchhHAbMhe+fX2beh8sBRQvRjEppkT23r4JR3lGqReboGhvPPMPweKvFnC6EdVhhES7yI9uomo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ol6YLCIK; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5cfc264b8b6so11585a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 06:30:33 -0800 (PST)
+	s=arc-20240116; t=1732545057; c=relaxed/simple;
+	bh=jjlYlEF3VSNlLImiTd+v25/yYobIAhdJC23Q3KZcxCI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lI8vH/V56Y+Ltu7CuTzwnPC9CPri/I0+9WRuoZbKe9qIPdI/7UDI8DS112FsCGkG0UBlgt30v3ZxIHi++MgTWFvGXwwpV2bkuER/HDg8n+SUoPmf2JiDXb7rdpOz7xoEV30RS4NeTdwmG6dDmBfvUVEPAUWuEugprOKB6YvaZ7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y3AC8aU2; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7f8b01bd40dso3145049a12.0;
+        Mon, 25 Nov 2024 06:30:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732545032; x=1733149832; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=dmYeT7WagzkwY7FoSyZv+LRd3sqPOyrA/5puocpIySw=;
-        b=ol6YLCIKEEREbo9liHfVf0ccFFuoJ+G4UTKvlW3s9ax0W7rwxAs2rv2opqra1OSVog
-         Fc0qrajL8RHU4TQuhO6jEYmDdTOJtLBoBKK+39xt242YNTjQ7bsxGc0I7wXEcuTduEbq
-         JMhf4/aH0nYR3ocDy/S4dV5OEmU4Jva2zw+Mnbz/arU1i5NtVzqnasAJUl9A67n/Jjsf
-         QO8tye20IEmNUdsU0kQVvt7n5w3ALnNzFHJXbQogQL9kUDa092qka5SBIzE96jD+YY5J
-         Rg6mzTn3W2bShGXlWojcaQM9uX3nHQrJ8ffWmOA6Y1khk3Htvqh9F+4I+s2b4s/60y7O
-         F2IA==
+        d=gmail.com; s=20230601; t=1732545055; x=1733149855; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MqXFbqIyeGY2h3r6ZVQVITO4Q1XyQCzf6ScOHS9hGkY=;
+        b=Y3AC8aU2XQXZPJw26CduT0c2g/bgAvjCYT6cPV5I4zbbWGJ8p3lqNeYqOp+BFueQij
+         6ST8qnBE0Bh1HDBiJwTJkNJtYfoHtZL8uC6ezr8CnMHk8Yu3xxF/gQSuGc8LZeUOeRQx
+         rQlwjwqfE0P2khFHTSieSNmS6wHbpiOKiFem++yaPG7IIKKeo9sfd7O8vluldBcLajls
+         oAPgpPXmNgLaoSf4DRb4BrCDaN/qNu4ON9qM6myUuTSZnQOEFHKXWWYMXpUq4b+NVprf
+         IGWkRQKooRXS4+DBBPSI69IRVh/IVOC4GcgKhabLL8+kVXUaRNKFnXqjHJhxxCbysaaW
+         WLIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732545032; x=1733149832;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dmYeT7WagzkwY7FoSyZv+LRd3sqPOyrA/5puocpIySw=;
-        b=BBEA6evoYxn2Kwg7i95yyo9UI60i212eZ+OZ4neUPo9J5jTwLOzbfmqlaJJXxDauwW
-         o3nuXUHDUsvTKV6Wc8HzTAG4HEjBiZ3qf3zNZp+R5fA6Us2w+dxt8CfJVgGkbGv20uTm
-         1/z/Gb1q7ttgOhQf8Lc/67ew4TIjzUQfVp1cFOaISeEhl8bDPIU+BjkhiDWryNCEVlud
-         SSw2ZNDMXhg9r25VibRJr6lC2mcNXkQP7ckmw3aPvEaEFnoDCQZ69dzc2ck3+y1rqx2s
-         PdnMVmbsMU/s9S8aoNYMTAs30tPOcSmHnq+8Nn0Nww4vDkN9ufT48HHio5u16SOBl5ii
-         XcMg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbvDsqAFLUt496ys9OIk2D4yniVZCL/QT1WTAdj0yUKI83nT28TftWs6ouERyc7gqGRtmLRiORIOwF9So=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/OraNC84JQvnG4+8xRFQgZzHEt8HAZdIYziTHff3sFnZO5Sl7
-	VyPL9bggt+ANRPOPSqcr6r1XEQUwcIqvW3G5LYoZGkPtlFBHa/jyfv0DTtHo3U8D/BnfDQ5YyTA
-	JdiWqlZ/aoWOqn2P8z/+IRB+paKKIZOEnJbun
-X-Gm-Gg: ASbGncuIoDfsatFHpyTF4k7ApqoSug+GJiKNpqFDcYxBO3I167lUSwUt3LUgOJs/PcQ
-	0nwNLbA23i2ZEbaECD92/hS+BvTh7H+OeBkyiHdAOONJvv/s5vZGDfz1Uy5sN9CKL
-X-Google-Smtp-Source: AGHT+IFWKEzbGpUOrfyOjGRqTC5/oGFC/C8dANhbCDJLguS07R1QYiU2nCXA2rPbI2+60Dcss+8N/xSO3iPMdyVL4co=
-X-Received: by 2002:a05:6402:d48:b0:5d0:28dc:b2cd with SMTP id
- 4fb4d7f45d1cf-5d037fffe79mr164939a12.1.1732545031685; Mon, 25 Nov 2024
- 06:30:31 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732545055; x=1733149855;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MqXFbqIyeGY2h3r6ZVQVITO4Q1XyQCzf6ScOHS9hGkY=;
+        b=VpfSZqid6TW+YuSqqBkp6xAHcfqnOLV+w166PMOVCoEXOHgnDuO9Tvd1MN6um390lS
+         mImjJ+TYBquShs+8SwYMo1Nz/HbToTltobxL7EZaqIqp1rByKKU42nbpaKmUwEW0xMsu
+         zNhHN5WOu+em3wVzTW1S08P7B4nxdina+mf/9fJ8qB+VysWRlR6AX5kBNsvVGGnfrt9U
+         KbdD1HUDrawvr54Ja6mkyQQXLOAboFy295mv2VeocQcs/HJ6nNLAooGnxBjWwZqV4Rgk
+         YRogPTFnN8EmL+33qBXb72EY33DSRvrZ6AK85FFvyu2KtidDXMp839hBa+FNYSyOfCNs
+         U35A==
+X-Forwarded-Encrypted: i=1; AJvYcCWmhxd2rxZBDOlONbwfzoakSMyS2bbnhXhkVdMFq2dbWFXQzcdqAQsKU0l/u89N8fzZhewxTQtj9WjQ8hw=@vger.kernel.org, AJvYcCXa6VGI4ygQtzmSHpfK13kSQPUAEJ15M9Y7SsoKoBO9CQ3SjMXLO1IcHeiTn2IOJx7tY5Q+wJJ3+ASmPw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+IAMwkrNquzLb9kXSa7j+uM0M6ZHJZVxoymXV79rhy6nrwh/s
+	GIA4pGeGRiCkls2jPsZ1uJ7QVsLAv52C1u1jt72n94tVmsGC1sEX
+X-Gm-Gg: ASbGncuYj1CocRoqU2yYZWn926RNsVs/24uMqmkSYAKao4atO2SlZ6WmrzQg+V7uYNA
+	LbyTzqVaBe2Q3S1h2+5dTNg3KTT4BhnCN3ygKjWphv3ngGN35EWJpWurmJKqo1nNDIsoUzWEPqp
+	3QvvsZdwQpdn3GqBnD06EXcctHysbCWlzd2P5q6pQOriZihWe+AVZoZ6jjRMIKOW37E93GEtE7p
+	fh61wxU/5r+BP+c+h3uCmzjQX6oK+uD74gksZNYN4T4kyJtKTr4oVzmwXGVJ2lI
+X-Google-Smtp-Source: AGHT+IFIcwZszMi/Vg8/3dtE3gpAx3lKCraJsEP4/6Ioz7DziT3l4Fb16+gWv0+6iwcwILIUI7piEA==
+X-Received: by 2002:a17:903:228d:b0:20f:ae7f:a433 with SMTP id d9443c01a7336-2129fe09467mr175950955ad.2.1732545055030;
+        Mon, 25 Nov 2024 06:30:55 -0800 (PST)
+Received: from [192.168.0.203] ([14.139.108.62])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc2a763sm65037285ad.273.2024.11.25.06.30.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 06:30:54 -0800 (PST)
+Message-ID: <d4695943-51b8-40f2-bf2c-3a6436081887@gmail.com>
+Date: Mon, 25 Nov 2024 20:00:48 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241123-extended-modversions-v10-0-0fa754ffdee3@google.com>
- <20241123-extended-modversions-v10-1-0fa754ffdee3@google.com> <87mshntv10.fsf@mpe.ellerman.id.au>
-In-Reply-To: <87mshntv10.fsf@mpe.ellerman.id.au>
-From: Matthew Maurer <mmaurer@google.com>
-Date: Mon, 25 Nov 2024 06:30:20 -0800
-Message-ID: <CAGSQo02PiWgAVR2x38JxQgCQr5UVHyn+S7+TQ9oto-hTSh32tQ@mail.gmail.com>
-Subject: Re: [PATCH v10 1/5] modules: Support extended MODVERSIONS info
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Jonathan Corbet <corbet@lwn.net>, linuxppc-dev@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: sg: fix slab-use-after-free Read in sg_release
+To: dgilbert@interlog.com
+Cc: James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzbot+7efb5850a17ba6ce098b@syzkaller.appspotmail.com
+References: <20241120125944.88095-1-surajsonawane0215@gmail.com>
+Content-Language: en-US
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+In-Reply-To: <20241120125944.88095-1-surajsonawane0215@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
->
-> I already acked version 8, which AFAICS is identical to this version
-> (for this patch at least).
->
-> Not sure if you dropped my ack on purpose, but here have another one :)
->
-> Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
->
-> cheers
+On 11/20/24 18:29, Suraj Sonawane wrote:
+> Fix a use-after-free bug in `sg_release`,
+> detected by syzbot with KASAN:
+> 
+> BUG: KASAN: slab-use-after-free in lock_release+0x151/0xa30
+> kernel/locking/lockdep.c:5838
+> __mutex_unlock_slowpath+0xe2/0x750 kernel/locking/mutex.c:912
+> sg_release+0x1f4/0x2e0 drivers/scsi/sg.c:407
+> 
+> Root Cause:
+> In `sg_release`, the function `kref_put(&sfp->f_ref, sg_remove_sfp)`
+> is called before releasing the `open_rel_lock` mutex. The `kref_put`
+> call may decrement the reference count of `sfp` to zero, triggering
+> its cleanup through `sg_remove_sfp`. This cleanup includes scheduling
+> deferred work via `sg_remove_sfp_usercontext`, which ultimately frees
+> `sfp`.
+> 
+> After `kref_put`, `sg_release` continues to unlock `open_rel_lock` and
+> may reference `sfp` or `sdp`. If `sfp` has already been freed, this
+> results in a slab-use-after-free error.
+> 
+> Fix:
+> The `kref_put(&sfp->f_ref, sg_remove_sfp)` call is moved after unlocking
+> the `open_rel_lock` mutex. This ensures:
+> - No references to `sfp` or `sdp` occur after the reference count is
+>    decremented.
+> - Cleanup functions such as sg_remove_sfp and sg_remove_sfp_usercontext
+>    can safely execute without impacting the mutex handling in `sg_release`.
+> 
+> The fix has been tested and validated by syzbot. This patch closes the bug
+> reported at the following syzkaller link and ensures proper sequencing of
+> resource cleanup and mutex operations, eliminating the risk of
+> use-after-free errors in `sg_release`.
+> 
+> Reported-by: syzbot+7efb5850a17ba6ce098b@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=7efb5850a17ba6ce098b
+> Tested-by: syzbot+7efb5850a17ba6ce098b@syzkaller.appspotmail.com
+> Fixes: cc833acbee9d ("sg: O_EXCL and other lock handling ")
+> Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+> ---
+>   drivers/scsi/sg.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+> index f86be197f..457d54171 100644
+> --- a/drivers/scsi/sg.c
+> +++ b/drivers/scsi/sg.c
+> @@ -393,7 +393,6 @@ sg_release(struct inode *inode, struct file *filp)
+>   
+>   	mutex_lock(&sdp->open_rel_lock);
+>   	scsi_autopm_put_device(sdp->device);
+> -	kref_put(&sfp->f_ref, sg_remove_sfp);
+>   	sdp->open_cnt--;
+>   
+>   	/* possibly many open()s waiting on exlude clearing, start many;
+> @@ -405,6 +404,7 @@ sg_release(struct inode *inode, struct file *filp)
+>   		wake_up_interruptible(&sdp->open_wait);
+>   	}
+>   	mutex_unlock(&sdp->open_rel_lock);
+> +	kref_put(&sfp->f_ref, sg_remove_sfp);
+>   	return 0;
+>   }
+>   
 
-It was not removed intentionally, thanks for the re-ack :)
+Hello!
+
+I wanted to follow up on the patch I submitted. I was wondering if you 
+had a chance to review it and if there are any comments or feedback.
+
+Thank you for your time and consideration. I look forward to your response.
+
+Best regards,
+Suraj Sonawane
 
