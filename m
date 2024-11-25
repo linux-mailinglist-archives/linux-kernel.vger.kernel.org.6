@@ -1,180 +1,138 @@
-Return-Path: <linux-kernel+bounces-421542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EC879D8CB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 20:13:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43AF39D8CA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 20:11:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9137166544
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:11:44 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C95A1BD00C;
+	Mon, 25 Nov 2024 19:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="URsTvXtI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CEEAB29B55
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:12:36 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755801B86F6;
-	Mon, 25 Nov 2024 19:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TzQO8MEO"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE201B4156;
-	Mon, 25 Nov 2024 19:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889BC40C03;
+	Mon, 25 Nov 2024 19:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732561905; cv=none; b=o82ratBDxhSsdVC/Q1Fx2zvJYqEi8PxmFgJNKJI1cALqE43v0PKLAJ9cEQYN1x8MTXbEzqUlPqq73qAeswEY9jIYu4L4fNhtcgKDbk6BJKaycmvnW7cc4GGB/6AsHk+GwpgvJXr/yPll3hAyzuM+NM1BVfD9kimeEkgcAvawvSQ=
+	t=1732561891; cv=none; b=Wsg6l5hALZ/FB0UizRWALZiStE72mEW4xTbcD7MVQJ95UE7XI+SkQh2WMFEe8wrXDA8W/ZyLcMgXJFHEAzrgzqxSIY+RZNSee/c1hUBTES3m64UPYGGglNi34fUERFm1gmth1s4EOsCIzO7dAzlqZ0rjs3GBnuRv4eSXRWEd2Hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732561905; c=relaxed/simple;
-	bh=gSWynXHPHwRX+s2/nBHSwE30eRysNM3/W0t9ECCySZ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ancd/tgb0sTmviC7Hc0MZhITu6aJZX03L5JPq0CpqLGf1AGXZKNUmDxaFl9/u8o7/fdSqwoQCOf1D5i6q6HcHm167+uYNAvOJPl9oI3S6N0D7Bl5DFLGB9dNhcC/ybab+bcrk1K8prKYeT2IQhjH6zUq2UVwa2XV6cdgC2+fBLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TzQO8MEO; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aa52a5641f8so411724166b.3;
-        Mon, 25 Nov 2024 11:11:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732561902; x=1733166702; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7IDfP23brxN+2T++cCx4X5R5Pibf8jiPLu8znBbw6ag=;
-        b=TzQO8MEO0YSl3HVzfO/nTJnksCt2b0FDTeMOBLuWk0CQZK8y4PSiP8dJ/nWR7jX06d
-         K9yARmvR/OuFI2SGzK+LULFHq9PwCtzAqYSuQnQJXiCcRlYeZennMrRNZGXQ3y5w0ZNi
-         ddK7GpJajlnurE65AcBrNhHRWWvZtX+z0yIGIX1mlKBw3r53ulU2pBHD74V+PHhXjwGo
-         c8614eaCrWjv0TEtAgN5z6cl/6N5xYB/x/01A9iOCKeaQie+uxgmljgfX/rJlmSdiQE+
-         ZzzPRB17rBuUSv29whhO0I221xE8e6JHT0POyncHzZ5ibantMw9iiETRCs8khBTZc0hS
-         w5ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732561902; x=1733166702;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7IDfP23brxN+2T++cCx4X5R5Pibf8jiPLu8znBbw6ag=;
-        b=lygCv12WwmJb6ZmQTn+DTxcDmxH/HJ+xOWdZTMkpb0+kJhYoZHdOtvJZw6vMhvmlJp
-         V584cSZGHgMVQ+kUZO/aUjpEEg9Ze8/SFMFn3cgfbHHH+KVKU1FwS/JNMYqfJ+g9R1QU
-         nsk9KujEwaC0f9+dfgAE6uSx+254RT9t4uUQGpV5Lm4bMaL0lX+Y2y2TckfZmgLmR6Zj
-         iQKWgCV1ZM+9rb1gkRy53/e1L70GW5FThHBWOKDBRUBQI+XuPBjxcoeHXivHmGqid4up
-         IgNsvQ4HwyblOlWulWuYPXMWnCqLUsNtqhcKZP1QYhKkOqCWHlNpnux2+AnfVo4WuhjP
-         H5wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNr8yuVXXDbS1nHs71ry1zgFXKyQKHCIgvvjijgUyi5iX7WtoHE1qc4m1JOtlEwpRQQLcc9U8lzQnGWPs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuMYqILq484NjwTzHM7MOAUkNrn7NqcE5yBLfpTCvs3MpKrL3V
-	hN80s1YFYMY5yYV5LZubWOpfwHkExmDjneqBzLnmazJ/VdOMCXz1
-X-Gm-Gg: ASbGnct7YCCd3Jc2Hw02AAr1Q3U8tqaE7kNoYHtyTF9kQG26V/mXNOUTHeZJLJ8J7Eq
-	7f89Uk4EVSXq2uS+nWdXIzR7YXyQUl5qjfmLdTOOErFRNIIQiINshruJpV9Q8i9gdW6hd7rewuq
-	iMWBOgoalY0rUbLoXowL8I1nmNkVYbg7+/0/pTQoNlE3i0SDVJO6NBOCIWD2TNZKX9BfzIdrBg2
-	d7zO4MKN/fPWXmE5l+XWeTCHMVt4x4Sl6m8YQ9PHqdVQkcojB7amKGzzUXj3cxw/xm0eGYe1soH
-	+w==
-X-Google-Smtp-Source: AGHT+IFZBEe3oi2NXw/tkyV1McqqXsCNGrLSxvbm4IIwYZtunoceviOn3M3Yn0JcekmYk/blhqCdBQ==
-X-Received: by 2002:a17:906:31c5:b0:aa5:225f:47d9 with SMTP id a640c23a62f3a-aa5225fb282mr964846866b.29.1732561902078;
-        Mon, 25 Nov 2024 11:11:42 -0800 (PST)
-Received: from [192.168.178.20] (dh207-43-247.xnet.hr. [88.207.43.247])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b52fe94sm497858766b.96.2024.11.25.11.11.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 11:11:41 -0800 (PST)
-Message-ID: <d136d201-7aa5-4bab-8437-c44e0c54e0e4@gmail.com>
-Date: Mon, 25 Nov 2024 20:10:42 +0100
+	s=arc-20240116; t=1732561891; c=relaxed/simple;
+	bh=eFUTVbLHQaMj7xbeYC7nH7CHXsIUv43Pb2cwsd9S9X4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bLMb1u2/NTXQbzoO4NZXgCWma8lWeT9nPa/Px8hBKwufNcbwMPDyZaFBUD6tcYb7b6dX1BuIykuawbzf1pydooLNx0qyarYiQUpAFnyHJF0V3eY4X9xT1Ke0n6OgB7joIsMPGfEWL3K17o+AbJKT7n7TcKnJo+TMwRX3AKX4vro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=URsTvXtI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0ADA5C4CECE;
+	Mon, 25 Nov 2024 19:11:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732561891;
+	bh=eFUTVbLHQaMj7xbeYC7nH7CHXsIUv43Pb2cwsd9S9X4=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=URsTvXtICky+cYvwmMQh/znQ2zUfi51g7JaSoz8xIKxbmaUbChqU41od8klBB42kv
+	 Wcd5zlMMy91tkXqVUw7xdC7RyfEMnHJQVPYOVILa7MFkmvCKn7bwnxaPENsehRkwGS
+	 foVLg/slZCDJue6fSSjWYA/lAVssHT7IjAqHKax3EVwTb85HzwTUFIuq5yox1wKwYp
+	 0sXBwlOMWuNr2XzGk06yjNzs780ceTySxoBr4mABG5PsGuSCyFjdhpkUImlxI/q/ES
+	 2Ze62LrjbTWYvcbX7fcxwhpB3OdvrTVeU188uFXcatKV18YsvLy/kYNUualmCC+DI1
+	 tVOt/pt0U1pMA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED2C2D3B7C1;
+	Mon, 25 Nov 2024 19:11:30 +0000 (UTC)
+From: Maud Spierings via B4 Relay <devnull+maud_spierings.hotmail.com@kernel.org>
+Subject: [PATCH v4 0/3] Asus vivobook s15 improvements
+Date: Mon, 25 Nov 2024 20:11:16 +0100
+Message-Id: <20241125-asus_qcom_display-v4-0-61a4da162406@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PROBLEM] make bindeb-pkg: When just one source line in a single
- driver is changed, all driver are rebuilt?
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-Cc: Linux Kernel Build System <linux-kbuild@vger.kernel.org>,
- Masahiro Yamada <masahiroy@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Bagas Sanjaya <bagasdotme@gmail.com>
-References: <f96d57c9-efda-4781-a395-a7c5fec7f2ad@gmail.com>
- <9748bda4-0db8-4c70-a321-c7189d575cbc@t-8ch.de>
- <f50cd6ae-0d99-4836-b268-c9c86da448d8@alu.unizg.hr>
- <b21160de-8f12-4796-8df1-2188b5fc93e0@t-8ch.de>
-Content-Language: en-US
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-In-Reply-To: <b21160de-8f12-4796-8df1-2188b5fc93e0@t-8ch.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANTLRGcC/4XNTQ6CMBAF4KuQrq1pp+XPlfcwhhRopQlQbLGRE
+ O5uIS40krh8k/e+mZGTVkuHTtGMrPTaadOHwA8RqhrR3yTWdcgICHBKaYKFe7jiXpmuqLUbWjH
+ hSsZKpZAzxgkKu8FKpZ+bebmG3Gg3GjttLzxdr28N2I7mKSY4i0WuVA6cCHFuzNgJ3R5DC62eh
+ 78GBEOQUqksTpPQ+zXYp8H3DBYMQqBMgZU0B/JtLMvyAn/F1wY8AQAA
+X-Change-ID: 20241116-asus_qcom_display-ce5ff7293340
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Douglas Anderson <dianders@chromium.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Maud Spierings <maud_spierings@hotmail.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732561888; l=1871;
+ i=maud_spierings@hotmail.com; s=20241110; h=from:subject:message-id;
+ bh=eFUTVbLHQaMj7xbeYC7nH7CHXsIUv43Pb2cwsd9S9X4=;
+ b=Id8inyzU8O10Eg3QvPqZBZb3O9cdwzrt+zEAv1gLliZeIDkn0BpXbQbU3ituB1KbKD2Oq/Un1
+ KL8Rilx5LdnBnDuxOrqAA70SGOU/b3GC+LmHg1q/9QWAS1Lm1gdygyJ
+X-Developer-Key: i=maud_spierings@hotmail.com; a=ed25519;
+ pk=CeFKVnZvRfX2QjB1DpdiAe2N+MEjwLEB9Yhx/OAcxRc=
+X-Endpoint-Received: by B4 Relay for maud_spierings@hotmail.com/20241110
+ with auth_id=273
+X-Original-From: Maud Spierings <maud_spierings@hotmail.com>
+Reply-To: maud_spierings@hotmail.com
 
-On 11/23/24 15:57, Thomas Weißschuh wrote:
-> Hi Mirsad,
-> 
-> On 2024-11-23 02:53:09+0100, Mirsad Todorovac wrote:
->> Hi, Mr. Weißschuh,
-> 
-> Call me Thomas, please :-)
+Improves several parts of the devicetree:
+1. The eDP panel bindings
+2. Add a lid switch
+3. Add bluetooth and describe wlan (depends on [1])
 
-It will be my honour, thanks :-)
+[1]: https://lore.kernel.org/all/20241007-x1e80100-pwrseq-qcp-v1-0-f7166510ab17@linaro.org/
 
->> On 11/21/24 22:43, Thomas Weißschuh wrote:
->>
->>> On 2024-11-21 22:18:58+0100, Mirsad Todorovac wrote:
->>>> I am perplexed now at 6.12 stable vanilla tree, and I've noticed that after changing just one
->>>> line in ./drivers/gpu/drm/xe/tests/xe_migrate.c:226:5-11, all unrelated drivers are being BTF'd, SIGNED,
->>>> and INSTALL-ed:
->>>>
->>>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/aht10.ko
->>>>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/coretemp.ko
->>>>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/atxp1.ko
->>>>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/corsair-cpro.ko
->>>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/adt7475.ko
->>>>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/axi-fan-control.ko
->>>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/as370-hwmon.ko
->>>>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/chipcap2.ko
->>>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/aquacomputer_d5next.ko
->>>>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/coretemp.ko
->>>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/applesmc.ko
->>>>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/corsair-psu.ko
->>>>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/corsair-cpro.ko
->>>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/asus_rog_ryujin.ko
->>>>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/cros_ec_hwmon.ko
->>>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/asc7621.ko
->>>>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/da9052-hwmon.ko
->>>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/atxp1.ko
->>>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/axi-fan-control.ko
->>>>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/corsair-psu.ko
->>>>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/da9055-hwmon.ko
->>>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/chipcap2.ko
->>>>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/cros_ec_hwmon.ko
->>>>   STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/da9052-hwmon.ko
->>>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/coretemp.ko
->>>>   SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/corsair-cpro.ko
->>>>   INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/dell-smm-hwmon.ko
->>> This happens when the vermagic is changed. The vermagic is linked into
->>> each module. And after relinking all the other steps also need to be
->>> done.
->>> Building the Debian package increases the build number which ends up in
->>> the vermagic and therefore all modules.
->>> Also there is CONFIG_LOCALVERSION_AUTO which may be involved.
->>
->> Yes, I use CONFIG_LOCALVERSION_AUTO because it saves a lot of trouble in bisecting.
->>
->> This vermagic manipulation is beyond my grasp. I understand that
->> modules must match kernel version, for internal ABI often changes. But
->> not between builds of the same source? Am I thinking right?
-> 
-> The ABI doesn't change between builds of the same source tree which is
-> why there are no actual rebuilds ("CC") of all modules.
+---
+I seem to get a warning that the pci17cb vendor is undocumented (wlan)
+I can find this compatible in
+Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+But pci17cb doesn't really seem like a vendor name to me, I have ignored
+this warning for now.
 
-That is actually more precise.
+Changes in v4:
+- Fixed the pin parameters for the backlight enable pin
+- Fixed the wcn_sw_en drive-strength, this was not in the acpi table I
+  checked.
+- Fixed the ordering of several nodes in the bluetooth/wifi patch
+- Link to v3: https://lore.kernel.org/r/20241124-asus_qcom_display-v3-0-002b723b1920@hotmail.com
 
-> But your usage of bindeb-pkg bumps the version string
-> (also without CONFIG_LOCALVERSION_AUTO) and this needs to end up in each
-> module file which explains the LD/BTF/SIGN/INSTALL steps.
+Changes in v3:
+- Fixed commit message formatting (line wrapping)
+- Fixed bad indentation (lid switch pinctrl)
+- Fixed bluetooth addition and added wifi description
+- Link to v2: https://lore.kernel.org/r/20241123-asus_qcom_display-v2-0-a0bff8576024@hotmail.com
 
-I see. I hoped there is a way around this.
+Changes in v2:
+- Add missing gpiokeys include in the lid switch patch
+- Add depends on for the bluetooth patch
+- Link to v1: https://lore.kernel.org/r/20241123-asus_qcom_display-v1-0-85a9ff9240aa@hotmail.com
 
-CONFIG_LOCALVERSION_AUTO is very useful when compared to manually keeping tracks of commits.
+---
+Maud Spierings (3):
+      arm64: dts: qcom: x1e80100-vivobook-s15: Use the samsung,atna33xc20 panel driver
+      arm64: dts: qcom: x1e80100-vivobook-s15: Add lid switch
+      arm64: dts: qcom: x1e80100-vivobook-s15: Add bluetooth
 
-Once upon a time, about a year or two ago, I told Mr. Bagas Sanjaya how a list of applied diffs
-could be added to the kernel manifest instead of just config-${VERSION} and "-dirty" flag.
-
-Thanks.
+ .../boot/dts/qcom/x1e80100-asus-vivobook-s15.dts   | 203 ++++++++++++++++++++-
+ 1 file changed, 202 insertions(+), 1 deletion(-)
+---
+base-commit: 5f48de798324665d18f539ee09a61de1a9221f33
+change-id: 20241116-asus_qcom_display-ce5ff7293340
 
 Best regards,
-Mirsad
+-- 
+Maud Spierings <maud_spierings@hotmail.com>
 
-> [..]
 
 
