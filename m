@@ -1,153 +1,146 @@
-Return-Path: <linux-kernel+bounces-421147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA8199D875E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:08:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BCC59D896C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:34:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90684284678
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:08:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 877A7B33E89
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F39E1AF0A4;
-	Mon, 25 Nov 2024 14:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BA01AF0B8;
+	Mon, 25 Nov 2024 14:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jABr0Sxo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WYkJpU4f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B154F192B7F
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8969A192B7F;
+	Mon, 25 Nov 2024 14:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732543725; cv=none; b=RaVo9Reiz/trGhIuPxLCqzKGfssj+TS1X0H1TMp/d07+JO2Y3YfPEcFTZcwFwLPHzXUHHq5XQap44WgMgzqueF6jIB21DNU0vSaEg3LxDw6VwPoVbEuRvSqOJos4HkVqcZQhNUGlERNNbSFhzgyuJvguxMBCFfKUwl/drvW+wpw=
+	t=1732543821; cv=none; b=f/F/1A4x+rcVSXuMieDsoUYISazkXG68E0nilqkuLFR+s64IQRpy9mDXNi4MvukrPQhNtcPZqY9jp1Jg/1eRoyaXFBdk0S+2EuF/ab9oCiUjZCFQIC2UKVzDXyQWqIPcyvqKY1XJmQnkNIebp0aBJ0OZ3P0NXMrs+c9to6ksVx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732543725; c=relaxed/simple;
-	bh=9mZj+Myfyn4zAS/fV1XKLWnrBevMIO5z7V2EUTRR7KU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VKncCv77/9qYh9xT2L4yn8jCk5pnCFaX+dkVNTNCErIFPsU9WX81gENnk7Xni+Zb1jCtF/dGVfxDsCUFEjq31EAfm/yHs4pLVtYIBP0lPEptc4WGSEzejZMf4X+qvlZrgYs6hwo0d7J05rUf6rlzX+Xq00BZibfHgmXQnzxfxLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jABr0Sxo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31828C4CECE;
-	Mon, 25 Nov 2024 14:08:44 +0000 (UTC)
+	s=arc-20240116; t=1732543821; c=relaxed/simple;
+	bh=lZvVNtEbq/joGnuPDT54Ur4lHMroM/AsKH4ca1Rb2jw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rsw0qYolE/TmOFk996JrfxfpTKhnkrOljJpnOhodR4+peJDwPkxlhsmsziRCiJlLanD6uQ9J1GEARdHSTL6KHo9tAacBOu6O49Bq3cWuWFl12B0WEaH0n2aZYg095Qzcel9mR29nF0sApilI8Dc9Q2XASWPNryT2Ek/S0Awn9RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WYkJpU4f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5948CC4CECE;
+	Mon, 25 Nov 2024 14:10:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732543725;
-	bh=9mZj+Myfyn4zAS/fV1XKLWnrBevMIO5z7V2EUTRR7KU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jABr0Sxo2H33yfz8qkjLSEVKj26GgNoMhWXI50rEhlUxG+VtEvCcvbxUHKxBGoftf
-	 sVOqlIkMeemdYr61sTkw6reKO6/elr3QQy2Q0vYDnOPZdXoDZWvoTILGTwNlVcogyL
-	 s31cHAu+TAr1I4cah2HcM1cq4AbAP1yBwo9HrnPDiFASngZZlpRhSPuTzZYlINdC8+
-	 mJtfeSY+6jz95AnG0Cex2QnEosXyH6b7UcYTJ08r676xnVrWN8YtL6DaLWib/AZ+jY
-	 gh5LNYUJllBMUslHyw+D15PWZqwmUkWPzDGOlZGB9zw3cwYMlZe575QY7awwHp6fLD
-	 1HHKBOpLhqrLg==
-Date: Mon, 25 Nov 2024 15:08:41 +0100
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Mike Galbraith <efault@gmx.de>, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jikos@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] HID for 6.13
-Message-ID: <yq7byjaea3rfrfbttc6ngwnajiqvxl6xdhscyfmroraq2lr7bj@fvd4t2clnhz3>
-References: <nycvar.YFH.7.76.2411182207390.20286@cbobk.fhfr.pm>
- <CAHk-=wiUkQM3uheit2cNM0Y0OOY5qqspJgC8LkmOkJ2p2LDxcw@mail.gmail.com>
- <ac800b7930c473f2653d9bdc5be0781a08d8bb58.camel@gmx.de>
+	s=k20201202; t=1732543821;
+	bh=lZvVNtEbq/joGnuPDT54Ur4lHMroM/AsKH4ca1Rb2jw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=WYkJpU4fOMfXxXSpHo5HCdil8kw2CZEmFPGhTEAAaLw1C8fXHLRRvukJaUGoX+77l
+	 oN2GpxyCMKa49aRTX6G6e8zTUk4QsEIOf6YedP20ytgtgkSUS+Ms/ZOwgNnZGkgUQ/
+	 FItudqn+mTJRjmQ29/FMvTorM2rtu3szyWSV4jm2sZT69R675NmS5kzd7X6IIoCzfr
+	 LyfFTGeofohlgCumrA+1ZzEY+uK6MTpRFzSlJVRzwzYbxGia3qkwnPqtguRxLFJye9
+	 ezhxbta/JurORZJKwMwchhzWMqvsnyYW2N8ytXTbrfj7VvkNc5Pr8UHDUIgWSfENBD
+	 ZONEWmZg45+UA==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v2 00/29] cred: rework {override,revert}_creds()
+Date: Mon, 25 Nov 2024 15:09:56 +0100
+Message-Id: <20241125-work-cred-v2-0-68b9d38bb5b2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ac800b7930c473f2653d9bdc5be0781a08d8bb58.camel@gmx.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADWFRGcC/22NwQ6CMBBEf8X07JJ2KSqe/A/DoZQFGrQ1W4Iaw
+ r/bcvb4MjNvVhGJHUVxPayCaXHRBZ8AjwdhR+MHAtclFihRK4Ua3oEnsEwdlLpuT5WupLygSP0
+ XU+8+u+veJG5NJGjZeDtmw9PEmbjIIlAKUOfN6OIc+LvfLyov/z0tCiT0ZYUpsWV9lreJ2NOjC
+ DyIZtu2H2SUPNDHAAAA
+X-Change-ID: 20241124-work-cred-349b65450082
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+ Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, 
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-355e8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3601; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=lZvVNtEbq/joGnuPDT54Ur4lHMroM/AsKH4ca1Rb2jw=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS7tHqwli0uDjK8fPNkYxGflf1nO9nJt2+LaH7dFPFif
+ 8nXvZuvdJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEykYTojw8RLFXN8mTIt7+RP
+ N77u+2myZu+e8ob6nazCJ5+f++09+xrDP3uFrKB38ZovVs1cWaTnWa+vOO0r04uaP+73e5odHbW
+ 6GAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Nov 24 2024, Mike Galbraith wrote:
-> On Fri, 2024-11-22 at 12:13 -0800, Linus Torvalds wrote:
-> > On Mon, 18 Nov 2024 at 13:16, Jiri Kosina <jikos@kernel.org> wrote:
-> > >
-> > > please pull from
-> > >
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-linus-2024111801
-> > >
-> > > to receive HID subsystem queue for 6.13 merge window.
-> >
-> > Hmm. There's something odd going on here. My mouse scroll-wheel
-> > stopped working (Logitech MX Anywhere 3), and this pull would look
-> > like the prime suspect.
-> >
-> > The mouse otherwise works, so it's not that the mouse isn't found,
-> > it's literally just the scroll-wheel functionality that doesn't work.
-> >
-> > Oddly enough, if I remove and re-insert the Logitech wireless dongle,
-> > the scroll wheel works again. So it's not some kind of complete
-> > breakage - but it also wasn't a one-time fluke thing, in that it
-> > happened twice in a row when rebooting into a new kernel.
-> >
-> > Any ideas? Does this make anybody go "Hmm, maybe ..."
-> 
-> No, but my M215 had the same issue, it bisected to 6fd47effe92b, and
-> revert via patch confirmed it.
-> 
+For the v6.13 cycle we switched overlayfs to a variant of
+override_creds() that doesn't take an extra reference. To this end I
+suggested introducing {override,revert}_creds_light() which overlayfs
+could use.
 
-Thanks a lot for the bisect (and the logs in the followup message).
-
-I was puzzled at first but after a few tests today I think I found out
-the reason (I'll detail it below).
-
-So I am currently contemplating 3 options:
-
-1. just revert 6fd47effe92b (and e14e0eaeb040, the matching selftests
-addition), quick and easy, and postpone the inclusion of a fixed
-6fd47effe92b in 6.14
-
-2. try to generically fix 6fd47effe92b (in hid-core), but it will likely
-won't be done today as I'm just back from sick leave and have 3 weeks of
-pending emails to process too and this requires some more brain than
-just a "let's try this"
-
-3. fix hid-logitech-hidpp as it assumes it can only have one input per
-node attached to it (again, not easy as probably some testing is
-required).
-
-So, Linus, depending on how much annoying this bug is for you, feel free
-to revert 6fd47effe92b right now in your tree or wait a few more days
-for me to find an appropriate fix for 2. or 3.
+This seems to work rather well. This series follow Linus advice and
+unifies the separate helpers and simply makes {override,revert}_creds()
+do what {override,revert}_creds_light() currently does. Caller's that
+really need the extra reference count can take it manually.
 
 ---
-Reason of this bug:
-The idea of 6fd47effe92b, was to be able to call hid_bpf_rdesc_fixup()
-once per reprobe of the device.
-However, because the bpf filter can now change the quirk value, the call
-had to be moved before the driver gets bound (which was previously
-ensuring the unicity of the call).
+Changes in v2:
+- Remove confusion around dangling pointer.
+- Use the revert_creds(old) + put_cred(new) pattern instead of
+  put_cred(revert_creds(old)).
+- Fill in missing justifications in various commit message why not using
+  a separate reference count is safe.
+- Make get_new_cred() argument const to easily use it during the
+  conversion.
+- Get rid of get_new_cred() completely at the end of the series.
+- Link to v1: https://lore.kernel.org/r/20241124-work-cred-v1-0-f352241c3970@kernel.org
 
-The net effect is that now, in the case hid-generic gets loaded first and
-then the specific driver gets loaded once the disk is available, the
-value of ->quirks is not reset, but kept to the value that was set by
-hid-generic (HID_QUIRK_INPUT_PER_APP).
-
-Once hid-logitech-hidpp kicks in, that quirk is now set, which creates 2
-inputs for the single mouse: one keyboard for fancy shortcuts, and one
-mouse node.
-
-However, hid-logitech-hidpp expects only one input node to be attached
-(it stores it into hidpp->input), and when a wheel event is received,
-because there is some processing with high-resolution wheel events, the
-wheel event is injected into hidpp->input. And of course, when
-HID_QUIRK_INPUT_PER_APP is set, hidpp->input gets the keyboard node,
-which doesn't have wheel event type, and the events are ignored.
 ---
+Christian Brauner (29):
+      tree-wide: s/override_creds()/override_creds_light(get_new_cred())/g
+      cred: return old creds from revert_creds_light()
+      tree-wide: s/revert_creds()/put_cred(revert_creds_light())/g
+      cred: remove old {override,revert}_creds() helpers
+      tree-wide: s/override_creds_light()/override_creds()/g
+      tree-wide: s/revert_creds_light()/revert_creds()/g
+      firmware: avoid pointless reference count bump
+      sev-dev: avoid pointless cred reference count bump
+      target_core_configfs: avoid pointless cred reference count bump
+      aio: avoid pointless cred reference count bump
+      binfmt_misc: avoid pointless cred reference count bump
+      coredump: avoid pointless cred reference count bump
+      nfs/localio: avoid pointless cred reference count bumps
+      nfs/nfs4idmap: avoid pointless reference count bump
+      nfs/nfs4recover: avoid pointless cred reference count bump
+      nfsfh: avoid pointless cred reference count bump
+      open: avoid pointless cred reference count bump
+      ovl: avoid pointless cred reference count bump
+      cifs: avoid pointless cred reference count bump
+      cifs: avoid pointless cred reference count bump
+      smb: avoid pointless cred reference count bump
+      io_uring: avoid pointless cred reference count bump
+      acct: avoid pointless reference count bump
+      cgroup: avoid pointless cred reference count bump
+      trace: avoid pointless cred reference count bump
+      dns_resolver: avoid pointless cred reference count bump
+      cachefiles: avoid pointless cred reference count bump
+      nfsd: avoid pointless cred reference count bump
+      cred: remove unused get_new_cred()
 
-Clearly, hid-logitech-hidpp would require a fix too, but OTOH, it might
-not be the only driver confused by an extra quirk being set depending of
-if hid-generic ever handled the device or not.
-
-So the more I think of it, the more the revert makes sense to me.
-
-Please tell me if you want me to send the revert or if you'll just apply
-it yourself.
-
-Cheers,
-Benjamin
+ Documentation/security/credentials.rst |  5 ----
+ drivers/crypto/ccp/sev-dev.c           |  2 +-
+ fs/backing-file.c                      | 20 +++++++-------
+ fs/nfsd/auth.c                         |  3 +-
+ fs/nfsd/filecache.c                    |  2 +-
+ fs/nfsd/nfs4recover.c                  |  3 +-
+ fs/nfsd/nfsfh.c                        |  1 -
+ fs/open.c                              | 11 ++------
+ fs/overlayfs/dir.c                     |  4 +--
+ fs/overlayfs/util.c                    |  4 +--
+ fs/smb/server/smb_common.c             | 10 ++-----
+ include/linux/cred.h                   | 26 ++++--------------
+ kernel/cred.c                          | 50 ----------------------------------
+ 13 files changed, 27 insertions(+), 114 deletions(-)
+---
+base-commit: e7675238b9bf4db0b872d5dbcd53efa31914c98f
+change-id: 20241124-work-cred-349b65450082
 
 
