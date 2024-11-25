@@ -1,73 +1,59 @@
-Return-Path: <linux-kernel+bounces-421527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E539C9D8C6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:49:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB4AE9D8C71
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:50:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A49BCB2CB1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:48:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E12816A9DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456B01BB6B8;
-	Mon, 25 Nov 2024 18:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE9A1BB6B3;
+	Mon, 25 Nov 2024 18:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kjye1Ri1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="utwzIvjI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E9E1B85CA;
-	Mon, 25 Nov 2024 18:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD251B87ED;
+	Mon, 25 Nov 2024 18:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732560516; cv=none; b=FJgl8YTUPiXzeQ4h+DiEIt1FteN0HqtVAwxTU8XvdM1Vrl4bZX3PteueLdad/CkCNIMsb9xr4ZlWiSFKk2SsVL5gIiIX6X2GRRlHTQNZw9E2vkvbmUWvBt1hyR7Wq2fUE6B+DlDbJpsLCiauj8DwrNWJLzgT8/6NKPBk5kirUV0=
+	t=1732560609; cv=none; b=nU1w7dvALtbQfhtkK14qo2TK1xudyMkaZ430t/NMhisCD5QquOPN93enPeerFvQG2fDiKocwrxFc38PDOUGfaEeQXxgQNrjuDaOSh7kbMl+L7hY/6VM/0kk8FVpmSzlMUama1wQpaadi52sJTPNTZQ7lny8pAQCu+Vd8v1oyOlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732560516; c=relaxed/simple;
-	bh=iIoOus4blNmLJvI367kCSBxRvmQLM+vJ+uL517h3aaA=;
+	s=arc-20240116; t=1732560609; c=relaxed/simple;
+	bh=hy3kAK8dBc/P3+3R55Y4KPBRh40qNF5lRW24dklHEck=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bascef8rtvh3JSnvUkMdpTy5FmvW1lVF+BV5hrqKShT5cP/QqjjrppVF1FrahDlvq3ZdorbyLgqgpuXS/IsUfA+cWiCPRfsc+voXvlzK62B88VTTC3A6AAvpfrioDZH+TbSBHi6VKEqc+31+DbwHDaTzz6aP2UG46wUqK/3acCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kjye1Ri1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18686C4CECE;
-	Mon, 25 Nov 2024 18:48:32 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ol/wjQwS2fZAU/vzqKduYx6BVAUNJOJrOwrSxyz90KLyYPiFUcQGeSi/uyPdrg67ddK9VAWuasyl0JW8USmHO+ZrtDRtqirFzrXUZ6SDmwzYPOIklrTt0b7h3XygYknOe/oT99IL8x78Tk6nmbWQ+YPRyxb+quAObJha9bunsFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=utwzIvjI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E89A1C4CECE;
+	Mon, 25 Nov 2024 18:50:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732560516;
-	bh=iIoOus4blNmLJvI367kCSBxRvmQLM+vJ+uL517h3aaA=;
+	s=k20201202; t=1732560609;
+	bh=hy3kAK8dBc/P3+3R55Y4KPBRh40qNF5lRW24dklHEck=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kjye1Ri15GPM/2NjsSO7bpfi3t1tkh6/0ikAD89I8KHnorIec93jo3Ul//+0Dn6xG
-	 Dz2/a4+IaJGu0TUP1GHj4YfWxjd+uhqyUmo5rZGa53My4VtPyIdLoePH2grM/Gxx2h
-	 QPIH77cJ6ShYAXPaSzgmghCnCQ/vBT0t64wadjbbhXWar4NZVyVhisfCsDnYPw4rNT
-	 J21D28kIztoBwmsvlNkA6UkamD7ZIzyPDrtu+lAr1vXKfr+HJQY0PlJscYZxTpGIYE
-	 4AGJOZFQyjw1rtjvxNoiojHFy8ZOu5JRt2AJy1I5NHBAjMhZlpy6rkI6Dl5zSOkKl6
-	 JaVHtFb8nwXWA==
-Date: Mon, 25 Nov 2024 18:48:30 +0000
+	b=utwzIvjIoQOdm92rT9kk+/2iCQSk50Y8rkF7YdlCMdiwTPh43CZuCPmAWXTmFzpqw
+	 fo3h3ctWTbUyO824tEwrbqjlTvuDVFhCbjsH5iHKoZzhDzdMTFDzrYoPYWWWFx7O9j
+	 Nn8dzi2tX1JUyz3pzWwbjlOmzID+WLM71Mt9+i1V5JdpgoC4xi6wPYJmXA065Czd6f
+	 LFxDJDEmyl9kgrj8Gg+gcXIWyX3DXFL5cJQVA1fSYDo+1/1l75Q5E6Yfb53M7DNof2
+	 TlFaU5gDtK4YFtL0M26ZLzODmGb7FGXUOxUGjVIMMBsBx8okouvlMzMBdbB7/EZBgK
+	 ujT8i2hECHunw==
+Date: Mon, 25 Nov 2024 18:50:04 +0000
 From: Conor Dooley <conor@kernel.org>
-To: "Encarnacion, Cedric justine" <Cedricjustine.Encarnacion@analog.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	"Sabau, Radu bogdan" <Radu.Sabau@analog.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	"Torreno, Alexis Czezar" <AlexisCzezar.Torreno@analog.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH 1/2] dt-bindings: hwmon: (pmbus/adp1050): Add bindings
- for adp1051, adp1055 and ltp8800
-Message-ID: <20241125-clever-unpeeled-61362034cf24@spud>
-References: <20241120035826.3920-1-cedricjustine.encarnacion@analog.com>
- <20241120035826.3920-2-cedricjustine.encarnacion@analog.com>
- <20241120-process-hulk-ecedcbf088f7@spud>
- <e2e10b1e-cce3-409c-9327-178cbf4b0d64@roeck-us.net>
- <20241123-paced-osmosis-007bf72c4b02@spud>
- <20241123-submersed-overdue-ce999ccccc72@spud>
- <PH0PR03MB69389916EC3C46C3A1F228AE8E2E2@PH0PR03MB6938.namprd03.prod.outlook.com>
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: Add SM8750 MPSS and CDSP
+Message-ID: <20241125-culinary-twig-29b2b67af221@spud>
+References: <20241122085623.19988-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,87 +61,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="a4xeAmARkWBmeFmd"
+	protocol="application/pgp-signature"; boundary="XBqM4UBW3vx0FdUJ"
 Content-Disposition: inline
-In-Reply-To: <PH0PR03MB69389916EC3C46C3A1F228AE8E2E2@PH0PR03MB6938.namprd03.prod.outlook.com>
+In-Reply-To: <20241122085623.19988-1-krzysztof.kozlowski@linaro.org>
 
 
---a4xeAmARkWBmeFmd
-Content-Type: text/plain; charset=iso-8859-1
+--XBqM4UBW3vx0FdUJ
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 25, 2024 at 02:44:32AM +0000, Encarnacion, Cedric justine wrote:
-> > On Sat, Nov 23, 2024 at 07:56:21PM +0000, Conor Dooley wrote:
-> > > On Wed, Nov 20, 2024 at 10:00:19AM -0800, Guenter Roeck wrote:
-> > > > On 11/20/24 09:11, Conor Dooley wrote:
-> > > > > On Wed, Nov 20, 2024 at 11:58:25AM +0800, Cedric Encarnacion wrot=
-e:
-> > > > > > add dt-bindings for adp1051, adp1055, and ltp8800 pmbus.
-> > > > > >      ADP1051: 6 PWM for I/O Voltage, I/O Current, Temperature
-> > > > > >      ADP1055: 6 PWM for I/O Voltage, I/O Current, Power, Temper=
-ature
-> > > > > >      LTP8800-1A/-2/-4A: 150A/135A/200A DC/DC =B5Module Regulator
-> > > > > >
-> > > > > > Co-developed-by: Alexis Czezar Torreno
-> > <alexisczezar.torreno@analog.com>
-> > > > > > Signed-off-by: Alexis Czezar Torreno <alexisczezar.torreno@anal=
-og.com>
-> > > > > > Signed-off-by: Cedric Encarnacion
-> > <cedricjustine.encarnacion@analog.com>
-> > > > >
-> > > > > Why did you drop my ack?
-> > > > > https://lore.kernel.org/all/20241106-linoleum-kebab-
-> > decf14f54f76@spud/
-> > > > >
-> > > >
-> > > > There:
-> > > >
-> > > > > +    enum:
-> > > > > +      - adi,adp1050
-> > > > > +      - adi,adp1051
-> > > > > +      - adi,adp1055
-> > > > >
-> > > >
-> > > > Here:
-> > > >
-> > > > >> +    enum:
-> > > > >> +      - adi,adp1050
-> > > > >> +      - adi,adp1051
-> > > > >> +      - adi,adp1055
-> > > > >> +      - adi,ltp8800   <--
-> > > >
-> > > > This is a combination of two patch series. I'd personally hesitant =
-to carry
-> > > > Acks along in such situations.
-> > >
-> > > Ah, I didn't notice that. Thanks for pointing it out. Cedric, in the
-> > > future please mention things like this if you drop an ack.
-> >=20
-> > Whoops, forgot to mention that Cedric can grab the ack from the link
-> > above when they resubmit.
+On Fri, Nov 22, 2024 at 09:56:22AM +0100, Krzysztof Kozlowski wrote:
+> Add remote processor PAS loaders for SM8750 MPSS (modem) and CDSP
+> processors.  Both are compatible with earlier SM8650 with minor
+> differences:
+> 1. SM8750 CDSP has one more sixth shutdown interrupt.
+> 2. SM8750 MPSS lacks fifth memory region for Qlink Logging, according to
+>    downstream sources.  There might be other differences, because the
+>    modem currently crashes after starting.
 >=20
-> Okay. I will be carrying on acks in the future for cases like this.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-I mean, I don't disagree with Guenter that in this case he would
-hesitate to carry the ack as I probably would drop it too.
-The difference compared to what happened here is that I would mention
-/why/ I dropped it.
-If you're going to carry it while merging two series and resetting the
-patch number, it's good to reference where you got the ack from to
-avoid confusing people, particularly given the patch was modified
-compared to what got acked.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
---a4xeAmARkWBmeFmd
+--XBqM4UBW3vx0FdUJ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0TGfgAKCRB4tDGHoIJi
-0jzGAQCnTzuHvmQrqBEoH6S7P+Si69DXAWR9mQvLGRyvDxIObQD/ad/f6nCtiHM4
-9BCEFdcooDYlT2W/I8QN8v4X8BS+JQ4=
-=41g9
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0TG3AAKCRB4tDGHoIJi
+0hjJAP910O0tTk+WuQEq+rvPO367XFc11RrVOfesMzbRZNwk3gD/XUcqjAfrbcaR
+71l/bVl0yE5gGqlBFOtACKDsJuxIqg8=
+=Jps6
 -----END PGP SIGNATURE-----
 
---a4xeAmARkWBmeFmd--
+--XBqM4UBW3vx0FdUJ--
 
