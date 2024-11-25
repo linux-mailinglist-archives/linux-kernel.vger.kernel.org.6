@@ -1,119 +1,130 @@
-Return-Path: <linux-kernel+bounces-420478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB0D9D7B62
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 06:58:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 293219D7B6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:05:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D4B9281DF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 05:58:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A75DF162965
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 06:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8692157A6C;
-	Mon, 25 Nov 2024 05:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8938016F0E8;
+	Mon, 25 Nov 2024 06:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RWOa61CU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RNWBb/gi"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA71F376;
-	Mon, 25 Nov 2024 05:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7928A2500AC;
+	Mon, 25 Nov 2024 06:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732514294; cv=none; b=gtcjVm8UtSEVV6C4npXe+W12OxlKjRHr+qCVUMhPu+4IwqIQ365uXK8icsf++BIlcoGRqinCxVa/lVVEmaX1U9l2o0U2do89R95dckxU/Eewfw6gSCo06jeBU4mTXzczRgo+jwMxs1sNyYZJaNULapKoIKUAUqwUD95Mkr95exQ=
+	t=1732514738; cv=none; b=S0iDLGHW9xmiTh8MY/a9JFSG8Q9DCelVsz+88YtzDZM9xMZObf4hfpPSC3aOkw3mVINt2qoOCmrbJxuucNbgoErsxmJUsJuHmr9QvBuLvVWAFhmSB9+4mbIgwLCkhmRIE6soG6yNpokqUgYE7CmpGSCWn+t2RSbrSvPSz4LaUFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732514294; c=relaxed/simple;
-	bh=Fuk7F5EN1TIxoq7wyjhMmvw7/e0hDH5BfzC2Yk/onvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mCbbW6deiNlWaK4ZKzDMFBZmxLXtzjJWwXNE8qH40kGQf0Q7fyqjQC7oaHOBhPCh4Jjxgsl5hdwjqfyKFvU/otIPqcNlqX8TTSwQ7dix08R/DEKE4As6kukYYA2F3mQD2zdMTxd3x2bdRtN9sutnMbSDBvz+RZUOAKVRfb+n/kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RWOa61CU; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732514293; x=1764050293;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Fuk7F5EN1TIxoq7wyjhMmvw7/e0hDH5BfzC2Yk/onvA=;
-  b=RWOa61CUxz17sCpgdEaLYSl+bZPjpEAcBY854OwOqeJ6lwd7NLQ53Dxk
-   v3oo7QIl2f7M6yHIUn7oZ0t4Zgve6s0z3Jf80IzkD46X20+6l0qp7/4aw
-   5rzusEIVjkz+kXR3EPDu2uhL5CF8a0pOYoRIPe43+NDBAr5oixFUeYByN
-   CtIRKZ59+i60SMS05Ti8Xcil58zNDbpEF2aCfuL7ncX6bS8MOqp+TRulp
-   EGTdPXXUOXRPxUrFQWvF22qV+0YyfiRqYxjdz2l3X+NzhWlECut+T2/Km
-   9Whr642DlcpPgQRI+v8HRM9Wuxx9/NAQQzi5NCLoMq7cYqrf5lnGT+Bd+
-   A==;
-X-CSE-ConnectionGUID: 6c2PsIc5Tk6ycaVzI4QfBg==
-X-CSE-MsgGUID: QpyqrbCjTse68DQJHDSnUg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="32543697"
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="32543697"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2024 21:58:12 -0800
-X-CSE-ConnectionGUID: FdzviD5tSn6kysloyZ4QsA==
-X-CSE-MsgGUID: /svRNchCSzmU+nyrbUUfJQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="91286439"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 24 Nov 2024 21:58:10 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tFS6p-0005vx-2c;
-	Mon, 25 Nov 2024 05:58:07 +0000
-Date: Mon, 25 Nov 2024 13:57:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: Li Zhijian <lizhijian@fujitsu.com>, linux-kselftest@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, shuah@kernel.org,
-	linux-kernel@vger.kernel.org, Li Zhijian <lizhijian@fujitsu.com>,
-	Donet Tom <donettom@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: Re: [PATCH for-next v3] selftests/mm: Add a few missing gitignore
- files
-Message-ID: <202411251308.Vjm5MzVC-lkp@intel.com>
-References: <20241122074612.1582161-1-lizhijian@fujitsu.com>
+	s=arc-20240116; t=1732514738; c=relaxed/simple;
+	bh=an8rWgreDm74MFOtPYXXmdZtuxQirXtzQLDHzx7rjA8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IfPd06HlQ8ZWpyV/hSn5ldsFJvXkHrQwwjJYe+E3JfRgMsjODXteLBmTBLSYduTnZo+zYK3CdWjD724GdkJU1E6a2oSNyW4q5K3U7QUPoKuRmSOp9H+7INbaq19pSLR2SEjn6+qX1ZxVzTPwm9k04rCetXjQXh1DeYg+apsW0jE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RNWBb/gi; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AP0K1bn027857;
+	Mon, 25 Nov 2024 06:00:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Lnh/3KAUnuT2JLXbUybTyaOGYoch3HRaIrGB4ANrgSE=; b=RNWBb/gikWhN9mSV
+	lsdWKiPC1j3km7+m4Y1Z43eXT5mrd+stk4o+brv+QgK9qwoBwqXmrFPTP1Wjo4mA
+	TG5kix/BsVg+U2FqU30Jd0NuPkL9PzcqfhWgsnO4QpgGiVa7UmYvJdwewuT87oq1
+	nUOMDE0o9IF5syJFpuBMAVN0QZc832a4er/UTj0EJWp7B3EqvSPP1v2a9XT8TZ4S
+	A5QSTmiliwJRRQhYtvbPYlTxKLQbpIWglcdJwdoCtWy0R6kkwZEj2FkgCQprzHVv
+	nVRPp18kqGket4s7J2QUzxsWIHqSCe09CVxy2tmX6lkLGtZKJDe1i5h+gQCKz4hU
+	ElQUNA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 433792bgpw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 06:00:28 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AP60RaQ020971
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 06:00:28 GMT
+Received: from [10.217.238.57] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 24 Nov
+ 2024 22:00:23 -0800
+Message-ID: <214a7342-cf0e-4ef0-a555-d09bb3ea6301@quicinc.com>
+Date: Mon, 25 Nov 2024 11:30:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241122074612.1582161-1-lizhijian@fujitsu.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 2/2] arm64: dts: qcom: qcs8300: enable the inline
+ crypto engine
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Herbert Xu
+	<herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio" <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>
+References: <20241122132044.30024-1-quic_yrangana@quicinc.com>
+ <20241122132044.30024-3-quic_yrangana@quicinc.com>
+ <bb2da224-2c0a-41de-b458-0c5314ecd90b@kernel.org>
+Content-Language: en-US
+From: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
+In-Reply-To: <bb2da224-2c0a-41de-b458-0c5314ecd90b@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: H0Eo19SySGUSQeH9okahagMboPhGsGew
+X-Proofpoint-GUID: H0Eo19SySGUSQeH9okahagMboPhGsGew
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=724 clxscore=1015 impostorscore=0 mlxscore=0 phishscore=0
+ priorityscore=1501 lowpriorityscore=0 bulkscore=0 suspectscore=0
+ adultscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411250049
 
-Hi Li,
+Hi Krzysztof,
 
-kernel test robot noticed the following build warnings:
+Same mistake is done for this patch series as well.
 
-[auto build test WARNING on v6.12]
-[cannot apply to akpm-mm/mm-everything linus/master next-20241122]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I sincerely apologize for the inconvenience. I will remove the tag
+in the next patch series.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Li-Zhijian/selftests-mm-Add-a-few-missing-gitignore-files/20241125-095645
-base:   v6.12
-patch link:    https://lore.kernel.org/r/20241122074612.1582161-1-lizhijian%40fujitsu.com
-patch subject: [PATCH for-next v3] selftests/mm: Add a few missing gitignore files
-config: um-i386_defconfig (https://download.01.org/0day-ci/archive/20241125/202411251308.Vjm5MzVC-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241125/202411251308.Vjm5MzVC-lkp@intel.com/reproduce)
+Thanks,
+Yuvaraj.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411251308.Vjm5MzVC-lkp@intel.com/
 
-All warnings (new ones prefixed by >>):
+On 11/22/2024 8:25 PM, Krzysztof Kozlowski wrote:
+> On 22/11/2024 14:20, Yuvaraj Ranganathan wrote:
+>> Add an ICE node to qcs8300 SoC description and enable it by adding a
+>> phandle to the UFS node.
+>>
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> This did not happen. Provide a proof (lore link).
+> 
+> Best regards,
+> Krzysztof
 
-   tools/testing/selftests/arm64/tags/.gitignore: warning: ignored by one of the .gitignore files
-   tools/testing/selftests/arm64/tags/Makefile: warning: ignored by one of the .gitignore files
-   tools/testing/selftests/arm64/tags/tags_test.c: warning: ignored by one of the .gitignore files
->> tools/testing/selftests/mm/pkey_sighandler_tests.c: warning: ignored by one of the .gitignore files
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
