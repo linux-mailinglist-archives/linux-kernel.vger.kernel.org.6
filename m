@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-421702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 864729D8EB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:52:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACB4F9D8EB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:48:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B32CB2ACC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:48:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 713A9284B93
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9481CEE8C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686891CEE8A;
 	Mon, 25 Nov 2024 22:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uWlU2svr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IVzBC1Xp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09A11B85C2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C094916EB4C;
 	Mon, 25 Nov 2024 22:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732574913; cv=none; b=EzhN4EVL7R7+OpYx50dp66lS6ehl4RO2upJk472Q+3/DNyVdGtiP1vYg6KtZKgp1dl3B1VoVBo17J666FmPxZKxQw3JbOnxKh/q8hGC5aWsF+jF2NkPk2Kg3SVMOvaRKW5IlGs7m5F9VJIXQa7XCn0W7dvs+D4cB6Gi+Vwq8UfM=
+	t=1732574913; cv=none; b=l5fmsakyj/YG12XiYSu04ZL+AgNWXERp/2vceCmlicIZYMaDmB4wVFC/oORMNFawRT2qgrma5BwNf2IQ5gXKZtZ93EMk9D4jR9771Ez+ABW7CnXsElJFPuXT3joS8tEUj5fRuYIToS9QEorNIXECYM9XzYGD+vZJm+HQ8+aC9l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732574913; c=relaxed/simple;
-	bh=pO2keMzXgEkbE5sL9Kcr9lbyFhjffvi7oTNNc+i1d8U=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qLG3L8Bo1n2eEZeiAM0la7bFRVLRrHiUy6V/bpDDqZTGNl3NA+hQKfWZNeqP0W/puEnhDLiSG9s+FnBo4Uxbn2eS4Zg+wUEP6qRjpmqltBlqpekiE3euWz3hF9ncYaA1TQKIAzcILxg+guYu+VRxl7HI669FZf0EYmZzDI8M8BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uWlU2svr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 620F2C4CECE;
+	bh=1YvxV8C4GkKt1E6xAgYL7xkTCqRPwy3DRHYl12fL4dI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=UBT97MvDB3guz0Oj8msXzTky9hWIDGWFzLPBj5rTFq6LkgfdV2CuR/pORSoWEpnM/BxPYbyMrtnRsGyuCk4b+soZO9JusUgdKUdCtaQcNpm4KUmwbLnA5KahHRCSYoVp6YLq7Whie+zFeEBHOpn8RKLm6up7igwENrHTRKqSBpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IVzBC1Xp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7008EC4CED2;
 	Mon, 25 Nov 2024 22:48:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1732574913;
-	bh=pO2keMzXgEkbE5sL9Kcr9lbyFhjffvi7oTNNc+i1d8U=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=uWlU2svrkA0gP17Fj+qR441QKlVGFTug/EmP5Q53ovh3mMwKG5JXlyyN0ynik3JwJ
-	 4Wrj8jCLKnDLVjPwD3jmPOTRsdSOI4FwpeH8a38V4OwqWvGw3CsWV05bH1kVAvPoXp
-	 ulW2dHMxIqiJuH7/lL2lI0Ie0lFtg5J40vY6lva1WRzWklnn+PT/d4tfUu1mqsFoSl
-	 rbsXC7hTK5G5DJxmYV6HyXZYVsB0Y08mpiR+hGaj3F3wDFq746vfocO5+OqIGFloP+
-	 MzYgvRRC9VHC9cNU4HvswbRqJmvGMAXIExCa9SHkCxw0xU6Dshjn2EBZDvUkdAeT+c
-	 bu5ch+Ggr4wWw==
+	bh=1YvxV8C4GkKt1E6xAgYL7xkTCqRPwy3DRHYl12fL4dI=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=IVzBC1XpwCvbhtnrTMj+xdAI4nZuiMTM/hB2QL7klazQDRDPBsEKBQgDsTHQFAzvL
+	 1pFoR+w6XqhB7LoJgBwFs4908OODXXPTybe3Jj5p4FsjsgNjZk9+ESrUF2pUmwrpNE
+	 vUzBVL6Jjlx1wyqkx605EZf0V1jKOBd6UQ3XQ3JR5AetoqzhSqW4fVEl1KIUTShp8/
+	 yFNb3UO8iUjP9tYEj85Xnt3GcFIy9us0bS1bZTmExs8d/GLznuyBMLD4yTQXCvXC9Z
+	 ZpfrjTqg9soNFdzXKlAqAVEgMx+8o6macdDkVODrSpmluwL+10dk0OzRP3Z1C8zhbd
+	 hmGWc+Rjpcmvg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47836D59D64;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C1CD59D80;
 	Mon, 25 Nov 2024 22:48:33 +0000 (UTC)
 From: =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD_via_B4_Relay?= <devnull+cleverline1mc.gmail.com@kernel.org>
-Subject: [PATCH v4 0/3] Add support for attaching a regulator to w1: ds2482
-Date: Mon, 25 Nov 2024 23:47:17 +0100
-Message-Id: <20241125-ds2482-add-reg-v4-0-475a7a08df96@gmail.com>
+Date: Mon, 25 Nov 2024 23:47:18 +0100
+Subject: [PATCH v4 1/3] dt-bindings: w1: ds2482: Add vcc-supply property
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,11 +54,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAHX+RGcC/2XMTQqDMBCG4auUrJuSTOJfV71H6WJMRg1ULUkJL
- eLdG4WC6Oy+geedWCDvKLDraWKeogtuHNLQ5xMzHQ4tcWfTZiBAy3TcBtAlcLSWe2p5Q1KBEGg
- Lm7OEXp4a91mD90fanQvv0X/XfpTL95/K9qkoueDGlLqusEYJ+a3t0T0vZuzZkoqw4QAHDoljh
- kIRFdpisedqy/WBq8RLkdtGVabSmd7yeZ5/2IyqqyoBAAA=
-X-Change-ID: 20241111-ds2482-add-reg-fe13200ad7d6
+Message-Id: <20241125-ds2482-add-reg-v4-1-475a7a08df96@gmail.com>
+References: <20241125-ds2482-add-reg-v4-0-475a7a08df96@gmail.com>
+In-Reply-To: <20241125-ds2482-add-reg-v4-0-475a7a08df96@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
  Stefan Wahren <stefan.wahren@chargebyte.com>, 
@@ -68,11 +66,11 @@ Cc: Ben Gardner <bgardner@wabtec.com>, linux-kernel@vger.kernel.org,
  =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>, 
  Conor Dooley <conor.dooley@microchip.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732574911; l=1233;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732574911; l=796;
  i=cleverline1mc@gmail.com; s=20241112; h=from:subject:message-id;
- bh=pO2keMzXgEkbE5sL9Kcr9lbyFhjffvi7oTNNc+i1d8U=;
- b=2BAjBzvZaE3p6IhXIFmvoeZgH2Lo++Q7MUTZrCKoKD26uHvwyBEbrdmoKzoXmtmklWjMGdfNr
- lDpOmyEpjDIDnJxSEJz1r9eiphUc+3oXPil3iYOB59i+lozQfSt9LJk
+ bh=WhOk1GuCMyF4Uqf/5Sr9VOiQAo2chWTloYZnv0gVBic=;
+ b=Mt0KSI5VQmxEkYJyd8KMircjnZuR1rnRl422s8YGfgHGL+Ovv5LmXtQg/tf4DB0L965lnLizP
+ fis4uIHSCgNBSYIZJp5MgSD1nOXviUd8ZS0Tpcgs0VlcZ27MobjYgrN
 X-Developer-Key: i=cleverline1mc@gmail.com; a=ed25519;
  pk=EJoEbw03UiRORQuCiEyNA8gH1Q6fIpEWnn/MyaWOWX0=
 X-Endpoint-Received: by B4 Relay for cleverline1mc@gmail.com/20241112 with
@@ -80,41 +78,33 @@ X-Endpoint-Received: by B4 Relay for cleverline1mc@gmail.com/20241112 with
 X-Original-From: =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
 Reply-To: cleverline1mc@gmail.com
 
-Implemented changes requested in review.
+From: Kryštof Černý <cleverline1mc@gmail.com>
+
+ds2482 has a VCC pin, accepting 2.9-5.5 V.
 
 Signed-off-by: Kryštof Černý <cleverline1mc@gmail.com>
+Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 ---
-Changes in v4:
-- Using dev_err_probe() instead of dev_err() for the regulator error.
-- Corrected patch order.
-- Link to v3: https://lore.kernel.org/r/20241124-ds2482-add-reg-v3-0-806df39c9454@gmail.com
-
-Changes in v3:
-- Switched from regulator_enable() to devm_regulator_get_enable()
-- Removed obvious comments.
-- Link to v2: https://lore.kernel.org/r/20241122-ds2482-add-reg-v2-0-a5a03ee74da7@gmail.com
-
-Changes in v2:
-- Removed property description
-- Changed commit message of binding commit
-- Link to v1: https://lore.kernel.org/r/20241115-ds2482-add-reg-v1-0-cc84b9aba126@gmail.com
-
----
-Kryštof Černý (3):
-      dt-bindings: w1: ds2482: Add vcc-supply property
-      w1: ds2482: Add regulator support
-      w1: ds2482: Fix datasheet URL
-
  Documentation/devicetree/bindings/w1/maxim,ds2482.yaml | 2 ++
- drivers/w1/masters/ds2482.c                            | 8 +++++++-
- 2 files changed, 9 insertions(+), 1 deletion(-)
----
-base-commit: 6d59cab07b8d74d0f0422b750038123334f6ecc2
-change-id: 20241111-ds2482-add-reg-fe13200ad7d6
+ 1 file changed, 2 insertions(+)
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/w1/maxim,ds2482.yaml b/Documentation/devicetree/bindings/w1/maxim,ds2482.yaml
+index 422becc6e1fa8d58665c5586ebdc611cd0b2c760..fe6b3f9a3f8bbd00366c3e36aad3ffa72ec1a31f 100644
+--- a/Documentation/devicetree/bindings/w1/maxim,ds2482.yaml
++++ b/Documentation/devicetree/bindings/w1/maxim,ds2482.yaml
+@@ -25,6 +25,8 @@ properties:
+   reg:
+     maxItems: 1
+ 
++  vcc-supply: true
++
+ required:
+   - compatible
+   - reg
+
 -- 
-Kryštof Černý <cleverline1mc@gmail.com>
+2.39.5
 
 
 
