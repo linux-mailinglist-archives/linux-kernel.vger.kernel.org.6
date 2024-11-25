@@ -1,221 +1,168 @@
-Return-Path: <linux-kernel+bounces-420427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B45739D7A6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 04:49:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E7DA162AB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 03:49:21 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6C52AEE9;
-	Mon, 25 Nov 2024 03:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2htSCWkY"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2051.outbound.protection.outlook.com [40.107.223.51])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 072AD9D7A72
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 04:50:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDA67FD;
-	Mon, 25 Nov 2024 03:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732506556; cv=fail; b=m22+aZnbgmyJ424JSBbwEvxekAlFlX3ZNVMb5NjNbJeB5nrBvwLqwnwie9OVPoMAIrA2yajQWlwWGuU18EGOnWpR8qYPfb40z89Rp7os8nr+gzs6lnD9jBLWPOutw7uSDCj2w8lHbpZ1iNfGTIr5EUB0njytwXIBIJBDzwhHvoQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732506556; c=relaxed/simple;
-	bh=CB9vTufXjeL2HLP/GyIbkyRAx+kZVah92Cg458BY8rY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=f6czmuQbR8bvldFy4CfyD+RKG7pMv6N2EkcR+jrsNSR+LApzxuHbX97w1dF56XaDd8A5YwyQ32ZPf5fmYifAbTVI2CF0bISECWgtLkyO2Guwv9EJvOZeZFCA9XSNSDCk/BF6UfcfLB+XUpkt+T+5PpNrqLA0TxXwzNMHmAehRfs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2htSCWkY; arc=fail smtp.client-ip=40.107.223.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vCw2u1rOUsXdZea82+fdUiP2tuPVY80Trj0gBavBB6u3A28pvwM6QnHu6by6Qijp1Rl/XSOTzbSOy7GJddyFdV18ND+jEDBxnIBPHwbuBQjNGNvkxkdtfRzg0Uj7ApQib8jU/HgVuSvvy3RCvD4M5GQVeE+6XaM7nYdklhV7V+C2MDozTHen/K1oyZrJaCi0xPIzOE6KxIqbpgTo+2vZL+ug4LBNRZXyTdapkWZrx/KKErVTIYmGmGi57kUe8K0YRLaBsRnD+Zxick46iR0aTcX6cd9EK56jNfUYSNoo3z/D4fmcC9vX6Ic++jtfgLEXpMSXXOghbD/GC8skY0mHjg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=muSTnc86zl4XOUwTXzoDD3yX18LOlL+yA7ntXogKrJc=;
- b=vkXufznuKWEP0A6pfUEKUH9kLwNLCbLh5JFPdft8DRC5mYZ1Brb84FC95FGa2UMFM6Ips/hvRNpm6ow9mQ29DrGPNfUYyeEL5P938KiWYuBkNm81SlvAQ5K04p4wt+DbE2o4TdU/6speA86Nvewi8TZxFXvQ8ceQiScm3JjRd464d97cMmZvBxg1KjCw4SBy8Te7ay7aq1/R9r97sQzegZhJ7wrMjQAxdLhhQbs8Jt9NkqlITLBjGDcvjIY4QC+fRVr5aRo4dUhQV1OCAiAM85A+NY08cOr1c6eRizt0OUqNpwIXLt/GNFR8RCedoJ7CkhF+ieh2FLeodJL1pCQCPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=muSTnc86zl4XOUwTXzoDD3yX18LOlL+yA7ntXogKrJc=;
- b=2htSCWkY41Nbw/OS/g9ujlFFsiQ7NzPgWSv68RGsyUO7AkQKfiv4zu/4GldKZ/GFHSnRvZ05z2Hx5Wf0jHWSoBxxem3Llf9ariPs4e2lAuuHyX/EUexTMNjZTA571hr6qDA54qKi0/PqCMby69GVM+Nonuf/54mQldYJywwlHAE=
-Received: from SA1PR03CA0023.namprd03.prod.outlook.com (2603:10b6:806:2d3::28)
- by SJ2PR12MB9209.namprd12.prod.outlook.com (2603:10b6:a03:558::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.18; Mon, 25 Nov
- 2024 03:49:10 +0000
-Received: from SA2PEPF00003F61.namprd04.prod.outlook.com
- (2603:10b6:806:2d3:cafe::2d) by SA1PR03CA0023.outlook.office365.com
- (2603:10b6:806:2d3::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.20 via Frontend
- Transport; Mon, 25 Nov 2024 03:49:10 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF00003F61.mail.protection.outlook.com (10.167.248.36) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8182.16 via Frontend Transport; Mon, 25 Nov 2024 03:49:09 +0000
-Received: from [10.252.195.191] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 24 Nov
- 2024 21:47:56 -0600
-Message-ID: <94d6c785-d79d-4055-bdcd-76076eae899a@amd.com>
-Date: Mon, 25 Nov 2024 09:17:22 +0530
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9B9728206D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 03:50:09 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDAA245003;
+	Mon, 25 Nov 2024 03:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pM7uCdbK"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65EE7FD;
+	Mon, 25 Nov 2024 03:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732506601; cv=none; b=W2y0XhSAzueNyvNCI9aCmbmfZL/p1vTrTBjoWvECZeqFWRfcI58mPkKXy4V454xhQGai+VYUu+Jn3FsNuQhL2eB/MMqZ2Hxsk1eHfEG8o57YG98E4s8yF3HWn449MMM+3PjWv3Cu+vJqPXtTfgIGBpI2R3qaaw/8NW7I9T6xhj8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732506601; c=relaxed/simple;
+	bh=yGkrOcQYKfN/Q/cfyq/QHkdJ4b2lQxJIJS6gM76K6hw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=EnCt/enOo/8f2yZ1CQdaxCM0A653ceUZy12zEdszJ/GskE3G+qJT7FyMOkkwk0myjN0rsazAV7xG1/dV9xlrr7FV1XMWOJXfAUo3qz0XDp8zo//0RBt2KJlIdHOHBFUIFiHH1j2ygjkyrs0ixWKifBHJiAvBvpAI91JMmZHH4aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pM7uCdbK; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AOMsbKQ015810;
+	Mon, 25 Nov 2024 03:49:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	uvbsf9el7uMW77H3pL6L/UKqOplk12CWDa7RDN1jpdw=; b=pM7uCdbKaGZqb+AM
+	pEEsnCti07F5qO6LU6O1BpyFK+atAVIy51C+SWtlVPpt9wj+M3AWNq2ZvLBrFr+D
+	aRc6tEi30fPDZ6K6q1yQJWHw50HbY2M32yVwZAXl3LtxBWfya0FrY6eaVHynQ6UN
+	WVCXjeSLsQimwXSrRZe/9BzLBrG4kU0fMmrUdqCIg64v2dGinXcissJbP9w3jcX5
+	jRGpXhU/3F3pBGtOks/OiW4Ir++E4IE+uxRSo91xr3Sk4L8EFhaWWRx5Or/rXkGa
+	kc3h3m82jGpKVbhp3h+MYGVwqSrOoIbmNG84ZwbUDU21GSPgI6+QDcMtkOxAgY2l
+	5t75Kw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 433792b8yt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 03:49:54 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AP3nrjB023470
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 03:49:53 GMT
+Received: from nalasex01c.na.qualcomm.com (10.47.97.35) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 24 Nov 2024 19:49:53 -0800
+Received: from nalasex01c.na.qualcomm.com ([fe80::5da8:4d0f:c16a:a1d]) by
+ nalasex01c.na.qualcomm.com ([fe80::5da8:4d0f:c16a:a1d%11]) with mapi id
+ 15.02.1544.009; Sun, 24 Nov 2024 19:49:53 -0800
+From: "Renjiang Han (QUIC)" <quic_renjiang@quicinc.com>
+To: "bryan.odonoghue@linaro.org" <bryan.odonoghue@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>,
+        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        "Vikash Garodia (QUIC)" <quic_vgarodia@quicinc.com>,
+        "bryan.odonoghue@linaro.org" <bryan.odonoghue@linaro.org>,
+        "Mauro Carvalho
+ Chehab" <mchehab@kernel.org>
+CC: "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "Taniya Das
+ (QUIC)" <quic_tdas@quicinc.com>
+Subject: RE: [PATCH 0/2] Use APIs in gdsc genpd to switch gdsc mode for venus
+ v4 core
+Thread-Topic: [PATCH 0/2] Use APIs in gdsc genpd to switch gdsc mode for venus
+ v4 core
+Thread-Index: AQHbPMnFuhcs0/Hoi02bEw0vEs1J7rLEhxwAgALQD9A=
+Date: Mon, 25 Nov 2024 03:49:53 +0000
+Message-ID: <2212eace0ed44c439da117fb05f2b1db@quicinc.com>
+References: <20241122-switch_gdsc_mode-v1-0-365f097ecbb0@quicinc.com>
+ <f7c31279-8492-484c-94c4-893d98f53afb@linaro.org>
+In-Reply-To: <f7c31279-8492-484c-94c4-893d98f53afb@linaro.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [sos-linux-ext-patches] [PATCH v2 1/6] sched/stats: Print domain
- name in /proc/schedstat
-To: Peter Zijlstra <peterz@infradead.org>
-CC: <mingo@redhat.com>, <acme@kernel.org>, <namhyung@kernel.org>,
-	<irogers@google.com>, <james.clark@arm.com>, <ravi.bangoria@amd.com>,
-	<yu.c.chen@intel.com>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<rostedt@goodmis.org>, <vincent.guittot@linaro.org>,
-	<adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
-	<gautham.shenoy@amd.com>, <kprateek.nayak@amd.com>, <juri.lelli@redhat.com>,
-	<yangjihong@bytedance.com>, <void@manifault.com>, <tj@kernel.org>,
-	<vineethr@linux.ibm.com>, <linux-kernel@vger.kernel.org>,
-	<linux-perf-users@vger.kernel.org>, <santosh.shukla@amd.com>,
-	<ananth.narayan@amd.com>, <sandipan.das@amd.com>, James Clark
-	<james.clark@linaro.org>
-References: <20241122084452.1064968-1-swapnil.sapkal@amd.com>
- <20241122084452.1064968-2-swapnil.sapkal@amd.com>
- <12995871-3186-4265-b1f5-520252b9757f@amd.com>
- <20241122110853.GQ24774@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
-In-Reply-To: <20241122110853.GQ24774@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003F61:EE_|SJ2PR12MB9209:EE_
-X-MS-Office365-Filtering-Correlation-Id: 449aa44c-594a-489e-0cbd-08dd0d041e8d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bDJraDFubk1WakN3dkJjQzN2dHFRR2FNNmprS3o2OU0vOE1kcWo0SEQwblJ6?=
- =?utf-8?B?djY0L3JpUUU1R285cStvOEJLaFBxTEtVckxzcUZEVFNmWjBTZE82T25sRVFG?=
- =?utf-8?B?eE1lbmFpeXlKbWhORTh0T2J0Rno4Qkl1V3FyMlY1M0V5WmZ1WDVGeW00SGRo?=
- =?utf-8?B?enJub2lmUGhZeVNuZ2xhWnVjK2V5UWpyQVNNNTF5SVpvcnpHdndNQml0YlJo?=
- =?utf-8?B?bGlyRTRFRldNdXptMVJTS0tsK2lPWGtScG1LL1EwLzlXNmVFY3lWM3B5YjhL?=
- =?utf-8?B?RjB3RExXUDYrMHo4bkJDdFdDak1WNXh1QVZvYThTMTBQRzNYVStGMHROWnlp?=
- =?utf-8?B?K2ZTeDBOTldJYllSNkc1cmc0NDF1emkyWWdhQWVscUw1YWtIR0RFSERZTUwz?=
- =?utf-8?B?czFRZ1NEQjNWUldBT09lQ0tOZ3JkZ2VpaWVuL0l2V1pCUElGL0d5Mkd1SVdh?=
- =?utf-8?B?aXMyQ1ZpdWk4cnVucjNSdXVUTkRDK1pTZGpyRE5HS1pBNEQ1dklDZUJZb0cz?=
- =?utf-8?B?aWdTVnA0Yjd3SDdZZFBsR09LYzh0TTl4ME1mZmlCbDlWQzNzQkVMOG9aUXFG?=
- =?utf-8?B?NmRGL0FyaWpTeGE3M0lINkFocXJnSmJCM05VK3dTTllsdFBrd01uN2sybTNr?=
- =?utf-8?B?TG1JdW0yQzFDczduc1FGZGFxUStLeWlvelFOV2l4QU5jdEliczdUWVdLanlq?=
- =?utf-8?B?QWFveTVabkVuYkV1c0pjVE9iVUxGRjBNdGYvY0c5Z1VxdzJCSGZBOTRyWlpa?=
- =?utf-8?B?QXhXWlB6OG1xdTgzbEdONlpKeWlMR2FWRy9wYmt2T3FwbEJFNVg4cURsdW0v?=
- =?utf-8?B?SU50MVZKbzNxWHJPOWlabGYwV2g1di9peFVFS096SGVtMnpzMU1DTEJzQjc2?=
- =?utf-8?B?bm9FRjRRbEJGeS9Ja3cvZFpsNGxhYjRRSjhlYm5DcW1CWmZDWHBVY0YzWXdF?=
- =?utf-8?B?azBrMndqbjVxN3pyT1pEcW5Fdi9VS3hrdjVIeTNQbWh1dnJFZzN2VXNUNVFN?=
- =?utf-8?B?OUVpVEdra0RybVRhWjdHWUpyYmZEVitNRTh4SG5lTGdackE1aDJwUllSaTNo?=
- =?utf-8?B?OFhVaThVL0g1TEhhMjVjSlFKV2F3VDAxeVdSTUIwRE5ZeW5kTUxSSWVqRGF4?=
- =?utf-8?B?WGhDN3JYRlhwN1F3Ymxha3JXdmx6aGthcmlpRnlUbVhqd0Qwa0d4T1hnbGpN?=
- =?utf-8?B?dzJJVEE5SmtMdm9oYXhpNmkrMGdJanRJTjY4QTN4b0RkV0E4MDlKOGpTUFlo?=
- =?utf-8?B?NGJZcEdNcTVOOGYwNEpaY0YrUGNuTWU0dk8vYXFEWVI1cFFZWE1RY2cyVThq?=
- =?utf-8?B?MTAxL0gzdmYxV3Zpd0JNQk1vUmQ2ZmFpNXlHdnpZUUpPOXkwdVdnTGxRTnl2?=
- =?utf-8?B?WW9oK0RrRjhBeHBGbVBIaHAreENMWEdVUmxMN1ZNamR0aWhCcnAyNktIMUpM?=
- =?utf-8?B?czM5dGdLSGtWeE9OZnB3LzVUR2xyeGE3eVlna05sU2RQOWNiSEp6ZFAzUXV2?=
- =?utf-8?B?SnVsOXd6ZFp4MlVIUE5qY3JxNEg3L0sxRUpDVVRlVU4rWVFuOU9WU2FiTGVn?=
- =?utf-8?B?QWlPNGJxb0tyZDJmdmRhSTRSNVR1QnpnRm5lV3F0SGNVY2tvZVdXSXpFY0Ns?=
- =?utf-8?B?UzltRjAzeVljQlpaWVEzT21NbWVXcFc4SnpqMFlxWGNaQWQwTkw0WGErTHo5?=
- =?utf-8?B?NDZiTFdVQkNtSlRqb09aNkxsNTZRVWZLV2F0RlJBZTl5TnlSNGI3eGtKQ0Vi?=
- =?utf-8?B?QnMxazRzeit4S25PZlZacW9HdzVIODlJSVUvNjlxRHVraHFrT2htMmVRdHlm?=
- =?utf-8?B?KzAxeTQxVXVuNzZEQUZnVitPRHdtRmVER3N0dWoxR011TXpZWnVadlVXUVNU?=
- =?utf-8?B?aFd3bzVxOWtnQlRnc01wUk5nckRINzJzTmt2OUxwNXBqOFdPOWZEWFJ6RnVp?=
- =?utf-8?Q?Viv2rHaw6vjqeCn1mvv18yMu7rb8i1as?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2024 03:49:09.9287
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 449aa44c-594a-489e-0cbd-08dd0d041e8d
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003F61.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9209
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: J-OYa_v6RuDto-3M_0e0Anahkr8saN6V
+X-Proofpoint-GUID: J-OYa_v6RuDto-3M_0e0Anahkr8saN6V
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=930 clxscore=1015 impostorscore=0 mlxscore=0 phishscore=0
+ priorityscore=1501 lowpriorityscore=0 bulkscore=0 suspectscore=0
+ adultscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411250029
 
-Hi Peter,
+On Saturday, November 23, 2024 8:19 AM, Bryan O'Donoghue wrote:
+> On 22/11/2024 10:31, Renjiang Han wrote:
+> > The Venus driver requires vcodec GDSC to be ON in SW mode for clock=20
+> > operations and move it back to HW mode to gain power benefits.=20
+> > Earlier, as there is no interface to switch the GDSC mode from GenPD=20
+> > framework, the GDSC is moved to HW control mode as part of GDSC enable=
+=20
+> > callback and venus driver is writing to its POWER_CONTROL register to=20
+> > keep the GDSC ON from SW whereever required. But the POWER_CONTROL=20
+> > register addresses are not constant and can vary across the variants.
+> >=20
+> > Also as per the HW recommendation, the GDSC mode switching needs to be=
+=20
+> > controlled from respective GDSC register and this is a uniform=20
+> > approach across all the targets. Hence use dev_pm_genpd_set_hwmode()=20
+> > API which controls GDSC mode switching using its respective GDSC regist=
+er.
+> >=20
+> > Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com> >
+> > ---
+> > Renjiang Han (1):
+> >        venus: pm_helpers: Use dev_pm_genpd_set_hwmode to switch GDSC=20
+> > mode on V4
+> >=20
+> > Taniya Das (1):
+> >        clk: qcom: videocc: Use HW_CTRL_TRIGGER flag for video GDSC's
+> >=20
+> >   drivers/clk/qcom/videocc-sc7180.c              |  2 +-
+> >   drivers/clk/qcom/videocc-sdm845.c              |  4 ++--
+> >   drivers/media/platform/qcom/venus/pm_helpers.c | 10 +++++-----
+> >   3 files changed, 8 insertions(+), 8 deletions(-)
+> > ---
+> > base-commit: 63b3ff03d91ae8f875fe8747c781a521f78cde17
+> > change-id: 20241122-switch_gdsc_mode-b658ea233c2a
+> >=20
+> > Best regards,
 
-On 11/22/2024 4:38 PM, Peter Zijlstra wrote:
-> On Fri, Nov 22, 2024 at 02:25:22PM +0530, Sapkal, Swapnil wrote:
->> On 11/22/2024 2:14 PM, Swapnil Sapkal wrote:
->>> From: K Prateek Nayak <kprateek.nayak@amd.com>
->>>
->>> Currently, there does not exist a straightforward way to extract the
->>> names of the sched domains and match them to the per-cpu domain entry in
->>> /proc/schedstat other than looking at the debugfs files which are only
->>> visible after enabling "verbose" debug after commit 34320745dfc9
->>> ("sched/debug: Put sched/domains files under the verbose flag")
->>>
->>> Since tools like `perf sched schedstat` require displaying per-domain
->>> information in user friendly manner, display the names of sched domain,
->>> alongside their level in /proc/schedstat if CONFIG_SCHED_DEBUG is enabled.
->>>
->>> Domain names also makes the /proc/schedstat data unambiguous when some
->>> of the cpus are offline. For example, on a 128 cpus AMD Zen3 machine
->>> where CPU0 and CPU64 are SMT siblings and CPU64 is offline:
->>>
->>> Before:
->>>       cpu0 ...
->>>       domain0 ...
->>>       domain1 ...
->>>       cpu1 ...
->>>       domain0 ...
->>>       domain1 ...
->>>       domain2 ...
->>>
->>> After:
->>>       cpu0 ...
->>>       domain0:MC ...
->>>       domain1:PKG ...
->>>       cpu1 ...
->>>       domain0:SMT ...
->>>       domain1:MC ...
->>>       domain2:PKG ...
->>>
->>> schedstat version has not been updated since this change merely adds
->>> additional information to the domain name field and does not add a new
->>> field altogether.
->>>
->>> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
->>> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
->>> Tested-by: James Clark <james.clark@linaro.org>
->>
->> Signed-off-by: Swapnil Sapkal <swapnil.sapkal@amd.com>
-> 
-> Surely you mean either acked-by or reviewed-by ? Otherwise I suggest you
-> re-read the documentation on tags.
+> What's your test strategy here ? What platforms have you tested this on ?
 
-I took over the series from Ravi but forgot to add my S-o-b. I will make 
-sure to include it from next time onward.
+> What help do you need ?
+Since the GDSC flag has been changed to HW_CTRL_TRIGGER, the v4 core needs =
+to use
+dev_pm_genpd_set_hwmode to switch the GDSC mode like v6. The video codec ha=
+s
+been verified on SC7180 and the result is OK. The same verification has bee=
+n done on
+the latest QCS615 and the result is also OK.
+In addition, since the videocc of QCS615 uses the HW_CTRL_TRIGGER flag, QCS=
+615 and
+SC7180 both use the v4 core in venus. So the v4 core needs to use
+dev_pm_genpd_set_hwmode to switch the GDSC mode like v6.
 
---
-Thanks and Regards,
-Swapnil
+> ---
+> bod
 
