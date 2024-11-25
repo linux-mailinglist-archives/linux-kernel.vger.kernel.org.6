@@ -1,108 +1,139 @@
-Return-Path: <linux-kernel+bounces-420904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D4E49D8433
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:18:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E7019D8591
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:43:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A9A5287211
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:18:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77FDEB3AE9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:19:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2DD194C7D;
-	Mon, 25 Nov 2024 11:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E4C1991D9;
+	Mon, 25 Nov 2024 11:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iQL03Ujf"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zrGMFYhN"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAFD1922FD;
-	Mon, 25 Nov 2024 11:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4B21990CE
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732533514; cv=none; b=CbCP+xBMlEWAF108w2sLpIYHRFD35BIaTwM0R5oYhwmSv4oROhXS7+zlirgushhUX8cx7oDmnX1jyQ0HS25YB83Fwu/iM0VhAqyRQeG7vOaMabZYx6cNZRo8j4uac0AYOicnWVR9e8G3qB2Hr+DvjRAKaNK6U5G5KkeR7kVBFjk=
+	t=1732533574; cv=none; b=Y94NnynN802CyrDS6pXmSt851xvv4+z7QkYYD1V21UI47dOc5jIQNRGh6YzSknIXhftiGZXsgOB1/jg2kNIGjtz/XzdbVVGENaXYXA7T0/2Fynogv/K0fEBPl1iFU4c/XOwI7SHwM8W8tze3vryAIsImdRNCkAIA87sHk4gvpU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732533514; c=relaxed/simple;
-	bh=6B04KsZo6t6s0pI8aF1kaG1Lzd9HUwRpD74QomBAbcQ=;
+	s=arc-20240116; t=1732533574; c=relaxed/simple;
+	bh=Odxo28YgY8IxCqvnmsPfSmoQ/gO7glAU6dllmdvSMgI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ICvIUZGlNU5lyumXJN6BTr6mpp+6NYgX78c1RSOaVqttKxM0ODnXC0zQqE0rDbrNhQ7yk389w05iDrsGgPSXffcaSsQPoQHYMxKTPeiN3ExWFVrGpOSHvV4fTNHRZVunoRFcE6DJHCdLTNPxIROqpAg6SiWgFVfJeLWyYrCCxSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iQL03Ujf; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ffbea0acc2so10582821fa.1;
-        Mon, 25 Nov 2024 03:18:32 -0800 (PST)
+	 To:Cc:Content-Type; b=WJD89Lr6k8AEh4VPLn6+eWZ0mzOYC/3E53WBvWq5th3BJKbGnbMNAQmn/cUmFBPWBMz81VNMJdj08ANt+21UsUlSmjyYNl6KMGAmGcjmfI4HADh0i7n5x5sGFWk21GMfziUI02GWsBwHN+J2TqxdIkDHfAMMlJo4XC7jZLc1I+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zrGMFYhN; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ffb0bbe9c8so21866021fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 03:19:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732533511; x=1733138311; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732533571; x=1733138371; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BdTs+yXvHV2VkvZOleuVL8AIilS9h/9TJ0CS202URO0=;
-        b=iQL03Ujf/pH0GISur+awajdxELajdcEeLSBT2+vVYYr41sm1thyfzhzsoTOZ+LWB5t
-         S/cwROSTjTts5RJYRa/J4GqMl24KL7oCvldwxh5D+9G6TpxDLyrn5xbTnO9joZCgOKzx
-         qKTRpJp8Uy4F/UrZE5DM5ojDNpm8o7h5y+VrDEt90gPq/LAZkwmvThm7aVGVTeB36M/T
-         dUc8d+l9WIRVFLnEO2iJDBjZ+UXNcKMNcJBmVCGszEInw8AQ/gi568t6R0HBLH73f91n
-         jk/uzG4x7AGqaYr2iF6N3ayTIDOQ621LPDr+l2Uvwty+fpBiWsScxuemljGINkH9p6L7
-         8oeg==
+        bh=9+uhR74hcAQidbntjWvBDULQoiBq+eDvtJid0uWUA5U=;
+        b=zrGMFYhNrwlrpKvsfX0Gx1z0PJnNfYth3jwhvPrj1RKgAU2aDHkK/pz/yOM/sfdjlE
+         dJVAA6PPSaPNSZ8fzQDdxdnNXec8jS67RvyUurnTF1Hd+PAp97G+eTlIP0aPpr4edAEV
+         AemTb2M9U2V8qF0bPJqWcfS7DQksXPIbRDDq41hcfmHFwRWHvj4pxKhiOTqT/jB3RNvv
+         1zkrlP7bPcu0HHO6TWQcwXb9inFI1f8WOV/okmBju+s5g2SUKgV28r39tgfCIC2M7NTr
+         ibYvuLdW5Ji4eTIQXwkUlQFQjk8e5dRIH62t+mYuShpLIcvVKGZ1ld2Bl4u0FH4GOFzn
+         5E/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732533511; x=1733138311;
+        d=1e100.net; s=20230601; t=1732533571; x=1733138371;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BdTs+yXvHV2VkvZOleuVL8AIilS9h/9TJ0CS202URO0=;
-        b=vMk1dLHsEEVil2U0ZQhzTg6OQFdruCO5zMR0HwR8YI/Ve8m7Oa+u7icgCGvfCb/6ho
-         754Gxn+QlMmU35LdM2iXmQgxLCd0FPmZD4JnB4AGVzM/uX9WGfqjZDzXHe0k7zzIzucH
-         DYKOPdhptDlVasuovzZkCEXfR8WakTGYQWpnZAq1i2yuV4kTtQ6Wxi2aqVugE6bgU1IF
-         Qm+A2gzE4KyIqJUHbAYVI4ySz3ITUiQ2AiaiJf5WF4HqMEVhpc2hyQJ15+KWvJKMq3ma
-         CVszuP1LGcBVucK+WDh0SpeAvh4JEsHs2zwi/JgiI4lLUA/RnrVrTzdH9fpWoAei3VrL
-         dMHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWp10TZ1OEc4SLHhf/DXRWS7BdXhrMUquQ4KeNSEDawTlFE8Sef6z8X8SL+w3RH8eR3X4tM@vger.kernel.org, AJvYcCXVe5PR6bhBO91SKViMfj4kxpwSjqesTMEUO0UwccaAYApcnvbVCn5dgvIWP4zoYFZfkrOma7g/t2z//TQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyX8fHqOYJ3Wu98tYmTNde5EmHqIqS5W8aq6foBtTcUSYSM+kSJ
-	zE+jDFeIs8fmHB6Twj3f0FWPZCz9ZgLr2peHhnVSQ7TqQCRn5vqU9SNK1yxao80EGzPML86rP+h
-	1a3+eqKsbhKHhGLoCu8X+x4zJzMU=
-X-Gm-Gg: ASbGncvHqBMkcv4TDSCSBp5a4OMuNDstP2rb+uUhiuWSphrLHfnlgPN7VLUJ6X9gnNy
-	ubSQmjwwB986wcr837mLOLeiB2zlxcjM=
-X-Google-Smtp-Source: AGHT+IGrV2G7XuEDge18atcEwTobuvAC/IfIeeHl5buAnYkMXfeXyvtF4Gz6f1OITlD/141JIhoAwC2zgZbcvFEfhmE=
-X-Received: by 2002:a05:6512:3ba2:b0:53d:d139:6c21 with SMTP id
- 2adb3069b0e04-53dd369fbbbmr5835086e87.18.1732533510747; Mon, 25 Nov 2024
- 03:18:30 -0800 (PST)
+        bh=9+uhR74hcAQidbntjWvBDULQoiBq+eDvtJid0uWUA5U=;
+        b=Vx3E7z7ImPAGjP0cBIYrP5gvLYW8AIa6JgD4BuYySfEWHqmeD0md/qnjKL8+6OeKL+
+         YlkhDRur6qZzXj3snHCsCGYvLOmjyYtlEjcqi9F/eeJMlmUTjqdxNYbu7jdw/Y8/nKrs
+         d6L6HkY9lWt78qzqDLyBMJblMW42x9+TgZ/1yL9MsY5uccM2YR4tH0gyxudfHxNBwXV5
+         DDObDFlqBNUuRA0b42ijhWJzUEAxty+sctBeM2zHnD+p67kFvP5A+JA2gw3pdAXr2EMX
+         uJ87GO4jg35quaXkmjk2rUEqc6AuwhnoBy5FUd6OqZKwaPGmx77RB6RFxRnRE8qk2xZT
+         pC9w==
+X-Forwarded-Encrypted: i=1; AJvYcCVKx8PmQ/FgClljw/rBEMIK7CCwaXodVP+QbupF6JSXacNruuB1AwsRpno1lxeO7MyfJ2jPw45JBUGiKjo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4K9MJr+V6M7VAyzH+KLvnLC0vmM+ceLnHPY4EBn14xD4rO94T
+	oaNvSPsuBwj1Cj8YMpM+wGVq1ARIkU6vBJX0dwYVylfIGrD9/3cKMXs9/q8v/si/w6xk8+I/yUx
+	YhJ+TE9tcPdRz6xEm72jI3PBLhY00oMHQwEA+4egzRX1CoLP1rNLh
+X-Gm-Gg: ASbGncvOEOFueXCTprFam7TyJ+4m5HPEhEDMntZo3DiqGaHwRxe1ks/gSigNaS8cWoR
+	sh1Axv3kl0HwFcKzDnmQlP/GGLmtOO7o2n/4zUlZOl+b8xTFnb0mHjZ6sLGfQ4pRY
+X-Google-Smtp-Source: AGHT+IEgCCRUAYMNMXm5YVXYCKuprgewhzC/7WL+dMW78lmj7ZW701M50sfY6JHIy0GViN5Pu9wq2jsz24kqE82o+aI=
+X-Received: by 2002:a2e:a556:0:b0:2fb:5da7:47a7 with SMTP id
+ 38308e7fff4ca-2ffa7197a78mr61355421fa.25.1732533571061; Mon, 25 Nov 2024
+ 03:19:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112-slub-percpu-caches-v1-0-ddc0bdc27e05@suse.cz>
- <20241112-slub-percpu-caches-v1-2-ddc0bdc27e05@suse.cz> <ZzYsBu_rJWSAcAYf@pc636>
- <cc7f24b8-4de5-4023-b40b-5f62287aafe8@suse.cz> <Zz3YDI4Bb04opI2d@pc636> <a4bd2aef-6402-49e0-9ad6-f353c5200ee7@suse.cz>
-In-Reply-To: <a4bd2aef-6402-49e0-9ad6-f353c5200ee7@suse.cz>
-From: Uladzislau Rezki <urezki@gmail.com>
-Date: Mon, 25 Nov 2024 12:18:19 +0100
-Message-ID: <CA+KHdyXH5X=J2ontChFVUqFx15=VVng23H4gh_o-2Vzfo+mmjw@mail.gmail.com>
-Subject: Re: [PATCH RFC 2/6] mm/slub: add sheaf support for batching
- kfree_rcu() operations
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Suren Baghdasaryan <surenb@google.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Pekka Enberg <penberg@kernel.org>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	rcu@vger.kernel.org, maple-tree@lists.infradead.org
+References: <20241122234811.60455-1-frederic@kernel.org> <20241123101312.GA12843@redhat.com>
+ <CACT4Y+YQGLtD0673Oxm2=0mHy9cSx1wTPtVCyxjORSv47M+vUw@mail.gmail.com> <20241125111254.GB20402@redhat.com>
+In-Reply-To: <20241125111254.GB20402@redhat.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 25 Nov 2024 12:19:19 +0100
+Message-ID: <CACT4Y+YBO_1oYccnQdZrS_o1G2bSSPBmYBdjsMXN_8d2zncbQA@mail.gmail.com>
+Subject: Re: [PATCH] posix-timers: Target group sigqueue to current task only
+ if not exiting
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, Anthony Mallet <anthony.mallet@laas.fr>
 Content-Type: text/plain; charset="UTF-8"
 
-> On 11/20/24 13:37, Uladzislau Rezki wrote:
-> > Thank you. Let me try to start moving it into mm/. I am thinking to place
-> > it to the slab_common.c file. I am not sure if it makes sense to have a
-> > dedicated file name for this purpose.
+On Mon, 25 Nov 2024 at 12:13, Oleg Nesterov <oleg@redhat.com> wrote:
 >
-> Yeah sounds good. slub.c is becoming rather large and this should not
-> interact with SLUB internals heavily anyway, slab_common.c makes sense.
-> Thanks!
+> On 11/25, Dmitry Vyukov wrote:
+> >
+> > On Sat, 23 Nov 2024 at 11:13, Oleg Nesterov <oleg@redhat.com> wrote:
+> > >
+> > > On 11/23, Frederic Weisbecker wrote:
+> > > >
+> > > > - * the same thread group as the target process, which avoids
+> > > > - * unnecessarily waking up a potentially idle task.
+> > > > + * the same thread group as the target process and its sighand is
+> > > > + * stable, which avoids unnecessarily waking up a potentially idle task.
+> > > >   */
+> > > >  static inline struct task_struct *posixtimer_get_target(struct k_itimer *tmr)
+> > > >  {
+> > > >       struct task_struct *t = pid_task(tmr->it_pid, tmr->it_pid_type);
+> > > >
+> > > > -     if (t && tmr->it_pid_type != PIDTYPE_PID && same_thread_group(t, current))
+> > > > +     if (t && tmr->it_pid_type != PIDTYPE_PID &&
+> > > > +         same_thread_group(t, current) && !current->exit_state)
+> > > >               t = current;
+> > >
+> > > Thanks!
+> > >
+> > > Acked-by: Oleg Nesterov <oleg@redhat.com>
+> >
+> > Can't the group leader be exiting as well?
 >
-Got it :)
+> It can. It is even possible that the group leader is already a zombie.
+>
+> But this is fine. release_task(zombie-or-exiting-leader) (which does __exit_signal()
+> and clears ->sighand) won't be called until all the sub-threads have exited.
+>
+> And. If all the sub-threads (and the group leader) have exited, then send_sigqueue()
+> makes no sense, the whole process is dead. so we do not care if lock_task_sighand()
+> fails in this case.
 
-Thanks!
+Ah, I see. Thanks.
 
--- 
-Uladzislau Rezki
+> > Though, that's still an
+> > improvements. People usually don't do that (exiting from main w/o
+> > killing the process).
+>
+> See above. Nothing to improve, AFAICS.
+>
+> > So thanks for the fix.
+>
+> Yes, thank you Anthony and Frederic!
+>
+> Oleg.
+>
 
