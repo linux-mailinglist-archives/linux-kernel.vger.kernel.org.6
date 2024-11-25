@@ -1,124 +1,135 @@
-Return-Path: <linux-kernel+bounces-420720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 853CE9D828A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:37:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E99E69D8281
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:36:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24CFD1634E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:37:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C310161EF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397E21A76CC;
-	Mon, 25 Nov 2024 09:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61AFA199384;
+	Mon, 25 Nov 2024 09:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LC1WsC7v"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DVD1zrZG"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194991922ED
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 09:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4687198A25;
+	Mon, 25 Nov 2024 09:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732527310; cv=none; b=AvxxYSE0f7F5Eu7Lboxs23GFm1346IQL+qwkrwMa3GLDB64qldIALKNBn0Lx/6VXLE9zueuJLIWP1gtAix+e5DFadKUfZJWQQLWYZ7srHc4JlJ0HARPCd7wPO4QF31YsDTr8m19orw7S7yiNBzbxgCScNCoqrJB90H76zuLu+1Q=
+	t=1732527284; cv=none; b=a4HqiAn5hbQ3ZTEq0SHxutleM+Sx0N9Sf5aEFqb70Exbuxp0grW0akjjHnsyFdEtn+cY166I95hLZwUmZgg7s8lQqX5xBGtLaKGRQQlI105vJ+eslXd0PAfp6Vm/H2DWJr5s/KZyu2cEP9kbtaTmrBFnZg+wC+uYxEg9H9reDlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732527310; c=relaxed/simple;
-	bh=jaT2gMZATI1cr2w+kBtCP6nseVsxavYfNusYFbNNQeg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tDeI9Lhcjom8sQrhST0yL6lT0XcOmlgOQPxdI5V8TdFMrPbypgNmOuhDrJWXzQgtJYcBiPWbN3mML4vKuIiIVNdgZN+Cw9xTfkiLrVhn6gAvYFV6tl2CjQCHhBldOVEe0MSf9VZoC17CzgqPzWyOV5Jvoo/WcpkkQSWHDe3J44w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LC1WsC7v; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5cfc264b8b6so8387a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 01:35:08 -0800 (PST)
+	s=arc-20240116; t=1732527284; c=relaxed/simple;
+	bh=aEd8JicAIhvbCPxzPqoHzg82D93ao+tgZQjfIKhBIxA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LjHTXI/Sa5zvyCvSIIeCdG06Pqshv/WS6azpmlZ6vLhuYc4QHA+c1/IE+c8Y9MkTTuWXkGtrjd8wFSzwEpgTrc1ZNs1zuEveJkq4tJw87Mp7EQdMX7FKPtY+EhUYomaXE4PrWc7Mlurw4LK0LSeHDEtKZ8CH6JGKMDcpZB2cUVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DVD1zrZG; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53dd9e853ccso2188163e87.1;
+        Mon, 25 Nov 2024 01:34:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732527307; x=1733132107; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jaT2gMZATI1cr2w+kBtCP6nseVsxavYfNusYFbNNQeg=;
-        b=LC1WsC7vumtgFuP6Cv9Yu8t1TMXoT6wbw7rxEaaVq1teHsOm9l3az9HUMRmSSAdcec
-         yGGQYM9bs7ELHgZjkSenvYVkcgsujwFxZaAaQgSG9lBayHhlLlNeppF2JGZt4cejK3nG
-         Jw5aCvZlATCCXiBaxqR6b5PgzxAvesl8zL1hFKrlb6Fo6Ct7D02KGPLvdRxF8lgbRpDo
-         C8/JN1PSpOH/1DnolDcNNCiGqYWJ1hsYWQ/nF7AvTTeTfsMfQmB/Uc6ijDsKuzoHD0HI
-         YdWH2XAvRWL7n7nA0mqzMwvL1F9/Al2BL10ifZC4zoJZlSSavarFEB1prweZYn16pu3u
-         gcDw==
+        d=gmail.com; s=20230601; t=1732527281; x=1733132081; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=X9wuvld3OUKP0Z53IhY2KuPlXHoSpFVfKj48/VMdmqw=;
+        b=DVD1zrZGpRln2BD90M4ZhzMvcKz0Sm0S1KDSkbxIxDXUQhyzBa/mX/vqcFeXEXrPeK
+         khXRc1xmV23NXtYsRtNpFY/hZX8sHvqT2kci3g5jGnynGWGF+Xijubt3zSNimqpegKmo
+         fple0XxMuFR7TQP4eNsqhSIDLYb3ByDLkVVXiwBaucevf1wE0RAJmplpjxEkQ3quV9Cn
+         7wnZEqnQcVhvGSwBsJb07ILR1o5hDH8TMWfShl1VazQ1lGDAJfivrqBGv8X7hO5tOF9Z
+         QjPHituBsouzrVH+hCRGct4ph5vt/QT203z7mHjMbQEHaInMr/tE4Rn51zbUx8fXXA+G
+         E/Tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732527307; x=1733132107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jaT2gMZATI1cr2w+kBtCP6nseVsxavYfNusYFbNNQeg=;
-        b=oap56OIFSQznIL9Z3KCUQHkdWazpMpE3N647JQWlXhg3lhC35gajAgxE8LvY1wh1bv
-         LNXHzfLkKj43+Xov+ZFAW2lNZZgzBlcOmVd3IVUGV9Vp0esx/HasZeUX/fk49o9Dc4j3
-         g/GEDtPfpMQOV7OZ55ZG+7dfrOMDV0tgkHdvZyUCWFJV+UbrQ9R3hqmv4t9NtMa+k9QE
-         AEyTFPsJWP5pda9t1+BVyDO7tJp2PSDT1sozvEWemnzkl3ZM3EtcWRyMVt2vPpOXpnNh
-         9/i2G5YT6JEt/VwHZwkA6W2lUjbQnKwUlE0bkG3aghvM7/4sQyok10/Aq9txBWgUVUSj
-         gLIg==
-X-Forwarded-Encrypted: i=1; AJvYcCXCM7q73X2NaOyg7E+6JMTvMEAubvQ4o8u7Ws/yxYpVeYo92vAlMfp7uO3pbFGvWjg1Fb83ln+6E05p6mA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfP/oZLD/x2f6GXgdtGkBsnNp3PgtSKSOkji8AztFdIvu0CxJ1
-	B1m8XwyRvPEJdyvzazCJdA8K1SEos/EK43bk6S2YSzUFeOdTPhqim3gkxWElL6gyElk4dVQ4zXX
-	953gUJRFiC8BuCr1618RGxX2aJJ/fQCM3wmZm
-X-Gm-Gg: ASbGncvBtasLnAWC/bfYjN5UDrjeV/rJnL1LK44+FwVg/gr4lo6UHJjoZeky6YwXyui
-	7/2fyYL0vfyCvqocTogqTiPp7hU2AyyKq
-X-Google-Smtp-Source: AGHT+IGTmrlfZpaacQIL7m1sVBbpke3zA30uDeHjmOTDx5UHOJssl129/RankrUjb/fulgjiVDxdQ2FhiBHkvVnjtVM=
-X-Received: by 2002:aa7:ce09:0:b0:5d0:3ddd:c773 with SMTP id
- 4fb4d7f45d1cf-5d03dddc84bmr69002a12.4.1732527307223; Mon, 25 Nov 2024
- 01:35:07 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732527281; x=1733132081;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X9wuvld3OUKP0Z53IhY2KuPlXHoSpFVfKj48/VMdmqw=;
+        b=PlHHf0GCdilAzNsKEwklL+W/0Qs6GbfjH0fnLjO+XU+8qTr+tiEfE7VfIgx8o0PZGk
+         qGZrzHpPjHxWOgJBaiSK2qgc8PnDWlR9g9eLP2Mdw49zYmFNxzNlqofsYWKgi9nQE7rn
+         KdDVWkt8pBQXfLPNKwXbF7ivwu+oWi12iCs6TfocVk6widf9sw0uglnx06RyZHO43bH0
+         EjiabUOMvUT6KEO5JYWDLhFhuDGkaduLoUWOvwImhe2tuwueLQsTjVPb3ShAUuVisaSS
+         rXkqz9w+etsA1/J92s1Y2oY67cNHXp1xytOy8Scza6Dm6ACDXR4oZ2Y+gFDRrbQ9GQQQ
+         aZXw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+tZIHLqcY2o6GIacCwpBNZrTVA1lL+g/6AJIKYsgyKMM+6+1TI8EN6ROdJg3fQkmLdDgDa9+5wAcJoJ9D@vger.kernel.org, AJvYcCWhAc2MRBOma4yZi2Od/yQ4hecC/M2v+Rg1p7nFtb4DYE+lVTYadT/EkTcIx58Hp1qn4RayRXTZ6aTB@vger.kernel.org, AJvYcCXkzKCJSobccBFROeEulLEUoE5rMVFwB4HKdFZCYoRh91xN3j8Woh2fEtXI/UDsXF3uDHzOHK9+DS8O@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWlw9uOnpgaUfROdm0mwDCUYZHCubOFgYxuxUjiLnipSEzil5w
+	4XIZgz2S2c1A7gvF6ZaM5PBGvEggKojG2dQqCoak2o5cQl1UYudI
+X-Gm-Gg: ASbGncuThXzJdqZRxfhXAVzHag20FlZ47iR5IP/QI5LUdASgKocznWXkDMi/MFd15az
+	b4kHJovXoJPsTOmYjw4ij5ux1WlFa5moHnU5OJsSvB7RPPIzzrRJ3j6+NpD5hatK8VXTaotW/o3
+	Nz38LvvbkRbHQTqDOJb7t2GHuGdHTe1EwKvIXWB9nAamKWS6GsJzyNOeiEVKF6oqosEY2g4ZzPQ
+	eZaP35oBZ2nH6vSRP/MVVhDA+zMpPlzdco65LT2qWrZKu9lSlZ7AR6VjTwCRS0=
+X-Google-Smtp-Source: AGHT+IH2bSfrof1H1g/If9fx94RrbmySHIGMr5WYjh6HzkcR7IBfZjdkbF15PwCGVeWGPT9q5mdpMw==
+X-Received: by 2002:ac2:5688:0:b0:536:741a:6bad with SMTP id 2adb3069b0e04-53dd35a4cc1mr5876768e87.12.1732527280572;
+        Mon, 25 Nov 2024 01:34:40 -0800 (PST)
+Received: from [172.16.183.207] ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53ddab93a2esm1218463e87.257.2024.11.25.01.34.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 01:34:38 -0800 (PST)
+Message-ID: <bda7eaff-1315-46d0-83b4-a14060c2af1c@gmail.com>
+Date: Mon, 25 Nov 2024 11:34:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121204220.2378181-20-samitolvanen@google.com>
- <CA+icZUX-gf8624z8u+h-W8KeddCruYDng-4vTggNGwC61NzfNA@mail.gmail.com> <CA+icZUWSKygQJNiODzdauNiHz2Di-2eSGGmd-fgBrFpdyh_HgA@mail.gmail.com>
-In-Reply-To: <CA+icZUWSKygQJNiODzdauNiHz2Di-2eSGGmd-fgBrFpdyh_HgA@mail.gmail.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Mon, 25 Nov 2024 11:34:30 +0200
-Message-ID: <CABCJKudwpKX1_j46Tp6=eAJ0JU2zWE15+c8OFq9LMAnSqwesOw@mail.gmail.com>
-Subject: Re: [PATCH v6 00/18] Implement DWARF modversions
-To: sedat.dilek@gmail.com
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
-	Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/8] iio: accel: kx022a: Use cleanup.h helpers
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1732105157.git.mazziesaccount@gmail.com>
+ <037985fe50fe79c79b9df95fa7b4e577378f9a60.1732105157.git.mazziesaccount@gmail.com>
+ <20241123164223.25656985@jic23-huawei>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20241123164223.25656985@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
+Hello Jonathan,
 
-On Sat, Nov 23, 2024 at 1:23=E2=80=AFPM Sedat Dilek <sedat.dilek@gmail.com>=
- wrote:
->
-> > BTW, I am testing with the latest kmod-git and pahole-git.
-> >
-> > I will give this a try when Linux v6.12.1 is released.
-> >
->
-> I have a prolonged build-time of +22,75 per cent.
-> Compared gendwarfksyms-v5 + Linux-v6.12.0 VS. gendwarfksyms-v6 + Linux-v6=
-.12.1
->
-> Is this a known issue?
+Thanks again!
 
-In my tests, compared to a genksyms defconfig build with debugging
-information, v5 was slightly faster, and v6 was 5.6% slower. This is
-because the expansion limits were dropped in this version to ensure
-version stability when exports are removed. See the explanation here:
+On 23/11/2024 18:42, Jonathan Cameron wrote:
+> On Thu, 21 Nov 2024 10:20:23 +0200
+> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+> 
+>> A few functions in KX022A need to use mutex for protecting the
+>> enabling/disabling of the measurement while configurations are being
+>> made. Some of the functions can be slightly simplified by using the
+>> __cleanup based scoped mutexes, which allows dropping the goto based
+>> unlocking at error path.
+>>
+>> Simplify error paths using guard(mutex).
+>>
+>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> Now we have guard(), the main reason (I think) for the
+> combined on + lock and off + unlock paths is gone. So can
+> we just flatten those and do the locking at caller.
 
-https://lore.kernel.org/linux-modules/20241120215454.GA3512979@google.com/
+I did consider this too :)
 
-I did profile this quickly and most of the time seems to be spent in
-libdw looking up attributes. We might be able to speed this up by
-limiting the number of attributes we look up depending on the DIE
-type, but I haven't had time to look into it yet. I'll take a closer
-look when I'm back from my vacation in about three weeks.
+Why I decided to keep it as it is, (even though we need the extra 
+mutex_unlock() at certain error path) is because I kind of like the 
+lock+off and unlock+on functions. This locking does not protect data, 
+but really a sequence of operations that needs to be done while sensor 
+is OFF state. It's almost like a doc saying that "please, ensure the 
+sensor is OFF for the following operations" :)
 
-Sami
+(Another thing is that we do claim the direct mode in write_raw, and 
+goto is still handy for releasing it. Scoped guards won't play nicely 
+with goto. Yes, we could probably use the __cleanup for direct mode, but 
+I still like the lock+off, unlock+on for the reason above)
+
+Yours,
+	-- Matti
 
