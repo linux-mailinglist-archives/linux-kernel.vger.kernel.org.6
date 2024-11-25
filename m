@@ -1,277 +1,362 @@
-Return-Path: <linux-kernel+bounces-421141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE2479D87B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:19:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDC629D874B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:04:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10C85B29BD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:02:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 507C91648FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:04:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755821AE863;
-	Mon, 25 Nov 2024 14:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825D11AF0A7;
+	Mon, 25 Nov 2024 14:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UTu3xqdQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gU0oHvHD"
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE15E190685
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6587192B7F
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732543362; cv=none; b=OFtDwDg2zHts0VKSvB3nPepUvhnyud+B6nJJ2oD+9rgWCcgI25825b77LPRNunoxK5jy03dtBc0eBck5XyWBh9eS4v5ZnaPp5xptt468eIR7gK0dHhRfvbhmQ7mk7UH4nq3v3ZZsBgnuHdBk/thWm54t4OwixnEnNk3+wKnJgxU=
+	t=1732543477; cv=none; b=ZUJlLHkGncBSsdDrHrwt00tUKF/jD9tYXJQQLM4UuiytlX8zoodZ+jqcuX682Umb+sfM4d0SC6SwZkeg1OAOzOSEti9+yub5y0cvQX+8wA9hCmBPEBpaNsqfc3cHKJCOY3gxfPQJ96R4IgTraraLMgwFOBUOHAG4jQxvoP0v+6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732543362; c=relaxed/simple;
-	bh=2kqe0jV8UOVDVyyY1uhJQWcfx1ukgxallOU96cbp8iA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xs+nB98FLVIcXuxCEDGeCmrE26VtrMwN51/kwgRAklMB9KqmSmE0q+/KulzBUpdVRfVwf7HjbVYvNFUH98J070mYwTjU7Mv+tSf5ADS+CTgPqrjioYt1TCT8kp+b0l10zZGhXrMipoupYlUeTKXDt1NhWk1gxTz6XL4gQu3e9wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UTu3xqdQ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732543359;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jKIFmCIAm34aRVwzvltyN/iUoRYjxx0VJdpzyCrfLFg=;
-	b=UTu3xqdQQ0fktcO+bOi80tEJok4SMEYxvzunqZveT42OxUxH+z+LMsYwDcdUwdOPxhOlCp
-	Tu4kDq2cEE+lrGPZjH8Nbq9I5pz5kOU0bodPEWnR7Unc3O8vqTuP7ADhzwQIXG/y6ro3gI
-	PodtFwFz6/Adeiwlj49X4qaBUSDoB5M=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-144-ZsND6SpqMNq17sGzW_sVYA-1; Mon, 25 Nov 2024 09:02:38 -0500
-X-MC-Unique: ZsND6SpqMNq17sGzW_sVYA-1
-X-Mimecast-MFC-AGG-ID: ZsND6SpqMNq17sGzW_sVYA
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-aa5438c6b13so91621866b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 06:02:38 -0800 (PST)
+	s=arc-20240116; t=1732543477; c=relaxed/simple;
+	bh=SYB5GH1mmBB+VsU+I6gGuPVqopmmWNMekXlpDrzXIzI=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=oAWt8R3uHxHH89Kvy/h/wNr+1KTfEUWPc8qLpR/YsgLjlPNsHISHRVjHdGb5hA6zoV44awXXQDYlMX80y54aK0x6Sw2wnY+hEeD2i3+8vZ9D2BBC+2wb1dLSxTDwph8qMoRZEpeGSqV87/CeD5rIvFCVyt1mtaKZQk6AFKnMYpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gU0oHvHD; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-515192490c3so471409e0c.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 06:04:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732543474; x=1733148274; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=AvMibFWbbW0D6iGkpr8k5tIQAWSiMspQ5qpQzH9tADA=;
+        b=gU0oHvHDJ4U2Pm9VepxbEZtw8TXy0mgz89G5DqE5qz7w/pwmgqkmbuDNT5LA087KTG
+         xhk7WMA5L7Y/596MoyJsBM3tcERmIFARVsyuyakuOUms2Y1Fb9Ru+uTG5/GPMyJfLT6x
+         wSUrWaJ8agPX4uDoSksLz5ZW9TgmOyR9yU2x0Zv+EBNF1Mw3SINE3oBlKvuNHAJD1Aqz
+         j5NaYb/3MvB2hLwHTZOgrXcMoS70MfUUOp/Ws67Y0ZKNIGDqWgxf3hPpGA9lTAdLCXLI
+         UXIz5hrgeZNUcunybM7iU83TbqWQm5Mljg/X2pny3KsW5b3TlrXD04YWa0bck+Gn2d98
+         zpVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732543357; x=1733148157;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jKIFmCIAm34aRVwzvltyN/iUoRYjxx0VJdpzyCrfLFg=;
-        b=al9GRceZfcmC4FqPxnA4MEdJ8+j7Y9z1nBscGUAtF0fCHzqRSyqH74/fSCJzqD8fwB
-         NRBcQKKZtEUm+bpRnneXgX2iXtbAMwVyc7WD03c9vZop8WuQVYuctSRzSBuBaWMJF5DG
-         rAgD1Wuj4rWBr22xIGZ6k1QTijQVKRo5ziqZpKeZDK5p6w3fWVrli0XZLenPcLPohd5o
-         ab8cfngUAwSBxdmR3dx5Ka3iIW3hc4FD2QXlI+erf4XddeAU+dwAyVGKFeU2dYNQZX5J
-         umg/aJm8Wvr5xjUaiwvbJ2rE1WiKkiWyM+QrhAHjlBOKBqzXf+2i7xQ4PQ+0JFHjZg77
-         NExA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4MZeYUdW2cp2QtzjiWLXQNMbWHqMePFhYfJ9IRvZxFAzm8f2bc96kQRZbKHrV6Nk0Mf2klBZxj64t0BY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzohsqE8q0LYWrROlA65cJqOsJcK6RNOgp+annmEkdSsBcYtsis
-	E8MLOGScI2OMvkAPZ7zNEhmuK2QT9V08FpZpEbILgB/8E4P5M1Z9k++c0EAqxsCDKX7qG3iXlmR
-	OPAvfUzSVNWsOKyz9IRyyLJB1ZTBGRXToZzn1pC46wmASKZcgCgOyfBXPzpcsDg==
-X-Gm-Gg: ASbGncut92gBZxUbbyH0sUwV5sA16lYTvAxLfATd3WVdzcX4k9juLlq6XnJd8rGZWVc
-	0ieQFmoPoLXitOmto0gJ9Rbt+f1/AEOunS8rzS/F/vNXKQwNo40dzpeyUUwL4mFmPPm/n3aAcOG
-	zaPLP9fZ7DbXu1ET9dNBC0Hj5I63ufZf1yDucVq8XGaKT1CY2YnGZ1OM9zqhs+2j70pBqaJlsmm
-	3JYzK6GnPsQxpFulMHh7vhjNAjtjIUJnmSfOCmxrFa+0v2sUD430LNlnpd/uu3yd0/nNNYJuKo/
-	ClhK3QFtmek7/h75QpTOIncAl1vBdj2qm+Y8+Qrf4T8lzlb/sji0WEJ4AsKpBNL8FIaxwyh6N9A
-	02fVQQD++H05ZWQRcLhgwRc/Y
-X-Received: by 2002:a17:906:9d2:b0:a9a:13f8:60b9 with SMTP id a640c23a62f3a-aa509985a54mr1120672066b.36.1732543356409;
-        Mon, 25 Nov 2024 06:02:36 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE9+wHVbUjV3LBaM/yXLc/GetZOs7jYVDpUQdNWTC9wR95rKXX7sHH99H7KjHhcvth85h0Rfw==
-X-Received: by 2002:a17:906:9d2:b0:a9a:13f8:60b9 with SMTP id a640c23a62f3a-aa509985a54mr1120648966b.36.1732543354313;
-        Mon, 25 Nov 2024 06:02:34 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b2effbdsm466839066b.51.2024.11.25.06.02.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 06:02:33 -0800 (PST)
-Message-ID: <9779fcb0-e28d-4651-b04c-ca492e30c452@redhat.com>
-Date: Mon, 25 Nov 2024 15:02:33 +0100
+        d=1e100.net; s=20230601; t=1732543474; x=1733148274;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AvMibFWbbW0D6iGkpr8k5tIQAWSiMspQ5qpQzH9tADA=;
+        b=JpJ8H+ZXI0vEyznmwmsnnLf6Y9jjTMuxgRtqtrvey/wZUwo0PAfxPbl0wi41G3kKaa
+         18pMnrdeTmSLm1ypoT7uz130j8i4oL16v5hoMe9DqVpG1f5d5AKo+UYxbjXjr5IsOgC5
+         K65zXaH+P0SjxPIosCCfXJHXRnAAXZcrc3ISRDb79Xo/nqAjYCcBBHF8xLaXHDXEk++w
+         RscZtF+817sb30lSH8MWihVmDQv4JCokY6INkdPLBW3ceGddrn1i7iFncJ0rZAxW1eRP
+         h/8N93D7Q8h9BkocgVMtQou5pSjyKlfZ/0Xjhl23s8juTdmpDgDejlkcEh99NQGnUAMo
+         6HmA==
+X-Gm-Message-State: AOJu0YyhLcn3a3IxdA2oHVqkcO7YLVc2i6BLKTJOa/6m188npSmGvy/y
+	740qyz2Z22f/Ird7wgexN3yxlnhIuV7P8UmgXe+OPu60A1d3JWZ0gVPUdHZAn+4rnN0WSEr4+/b
+	z6iJAS3kctH345IXkmxhv7t32TU+sYe97iEuAKWJ/ZYXLmpCD8I4=
+X-Gm-Gg: ASbGncsq7qGtC98t+b9PTUtUyp+qcicow8BZ10lmY3ppkIRQPFI9BSKbgmm8QSXShFc
+	f2bSq4V2evTwmceFqN/I6QDxLD6jQrW08qA==
+X-Google-Smtp-Source: AGHT+IG4fq3o3LIW4i9cU82pcMC1WwjRdtQbbu4OTpF4HtXWJWzh5Vy0V7HfDoMKtSUZH5fuAXf7ft90u6MBQqOu/3E=
+X-Received: by 2002:a05:6122:488b:b0:50d:7a14:ddf6 with SMTP id
+ 71dfb90a1353d-51500ae18b0mr12929685e0c.10.1732543473312; Mon, 25 Nov 2024
+ 06:04:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a
- subdevice
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, Yunke Cao <yunkec@chromium.org>,
- Hans Verkuil <hverkuil@xs4all.nl>
-References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
- <5b5f3bb7-7933-4861-be81-30345e333395@redhat.com>
- <CANiDSCta62P5+1aR9Ks8c6sd3_grCV3C+Le=UjKGkiohyf0R2g@mail.gmail.com>
- <55c76c99-dc86-41b2-84c6-d2e844530f67@redhat.com>
- <CANiDSCtvLB=tWb7ZCFCw9gn26R2xHnOf=yTLj+M_4AuQKYvgOQ@mail.gmail.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <CANiDSCtvLB=tWb7ZCFCw9gn26R2xHnOf=yTLj+M_4AuQKYvgOQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Mon, 25 Nov 2024 19:34:22 +0530
+Message-ID: <CA+G9fYuaWJYQcxQ=3UqQbbuD_YNdOS_KB46N=mh47rxE049f-Q@mail.gmail.com>
+Subject: korg-clang-19-lkftconfig-hardening: TI x15 board - PC is at
+ edma_probe (drivers/dma/ti/edma.c
+To: open list <linux-kernel@vger.kernel.org>, clang-built-linux <llvm@lists.linux.dev>, 
+	dmaengine@vger.kernel.org, lkft-triage@lists.linaro.org
+Cc: peter.ujfalusi@gmail.com, Vinod Koul <vkoul@kernel.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Nathan Chancellor <nathan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Ricardo,
+The arm TI x15 board boot has failed with the Linux next, mainline
+and the Linux stable. Please find boot log and build links.
 
-On 25-Nov-24 2:39 PM, Ricardo Ribalda wrote:
-> On Mon, 25 Nov 2024 at 13:25, Hans de Goede <hdegoede@redhat.com> wrote:
->>
->> Hi Ricardo,
->>
->> On 9-Nov-24 5:29 PM, Ricardo Ribalda wrote:
->>
->> <snip>
->>
->>>> I have been discussing UVC power-management with Laurent, also
->>>> related to power-consumption issues caused by libcamera's pipeline
->>>> handler holding open the /dev/video# node as long as the camera
->>>> manager object exists.
->>
->> <snip>
->>
->>>> Here is what I have in mind for this:
->>>>
->>>> 1. Assume that the results of trying a specific fmt do not change over time.
->>>>
->>>> 2. Only allow userspace to request fmts which match one of the enum-fmts ->
->>>>    enum-frame-sizes -> enum-frame-rates tripplet results
->>>>    (constrain what userspace requests to these)
->>>>
->>>> 3. Run the equivalent of tryfmt on all possible combinations (so the usaul
->>>>    3 levels nested loop for this) on probe() and cache the results
->>>>
->>>> 4. Make try_fmt / set_fmt not poweron the device but instead constrain
->>>>    the requested fmt to one from our cached fmts
->>>>
->>>> 5. On stream-on do the actual power-on + set-fmt + verify that we get
->>>>    what we expect based on the cache, and otherwise return -EIO.
->>>
->>> Can we start powering up the device during try/set fmt and then
->>> implement the format caching as an improvement?
->>
->> Yes, actually looking at how complex this is when e.g. also taking
->> controls into account I think that taking small steps is a good idea.
->>
->> I have lately mostly been working on sensor drivers where delaying
->> applying format settings + all controls to stream-on is normal.
->>
->> So that is the mental model I'm applying to uvc here, but that might
->> not be entirely applicable.
->>
->>> Laurent mentioned that some cameras missbehave if a lot of controls
->>> are set during probing. I hope that this approach does not trigger
->>> those, and if it does it would be easier to revert if we do the work
->>> in two steps.
->>
->> Ack, taking small steps sounds like a good plan.
->>
->> <snip>
->>
->>>> This should also make camera enumeration faster for apps, since
->>>> most apps / frameworks do the whole 3 levels nested loop for this
->>>> on startup, for which atm we go out to the hw, which now instead
->>>> will come from the fmts cache and thus will be much much faster,
->>>> so this should lead to a noticeable speedup for apps accessing UVC
->>>> cameras which would be another nice win.
->>>>
->>>> Downside is that the initial probe will take longer see we do
->>>> all the tryfmt-s there now. But I think that taking a bit longer
->>>> to probe while the machine is booting should not be an issue.
->>>
->>> How do you pretend to handle the controls? Do you plan to power-up the
->>> device during s_ctrl() or set them only during streamon()?
->>> If we power-up the device during s_ctrl we need to take care of the
->>> asynchronous controls (typically pan/tilt/zoom), The device must be
->>> powered until the control finishes, and the device might never reply
->>> control_done if the firmware is not properly implemented.
->>> If we set the controls only during streamon, we will break some
->>> usecases. There are some video conferencing equipment that do homing
->>> during streamoff. That will be a serious API breakage.
->>
->> How to handle controls is a good idea.
->>
->> Based on my sensor experience my initial idea was to just cache them
->> all. Basically make set_ctrl succeed but do not actually do anyhing
->> when the camera is not already powered on and then on stream-on call
->> __v4l2_ctrl_handler_setup() to get all current values applied.
->>
->> But as you indicate that will likely not work well with async controls,
->> although we already have this issue when using v4l2-ctl from the cmdline
->> on such a control and that seems to work fine.
-> 
-> -----
->> Just because we allow
->> the USB connection to sleep, does not mean that the camera cannot finish
->> doing applying the async control.
->>
-> Not sure what you mean with this sentence. Could you explain it
-> differently? Sorry
-> 
->> But I can see how some cameras might not like this and having 2 different
->> paths for different controls also is undesirable.
->>
->> Combine that with what Laurent said about devices not liking it when
->> you set too much controls in a short time and I do think we need to
->> immediately apply ctrls.
->>
->> I see 2 ways of doing that:
->>
->> 1. Use pm_runtime_set_autosuspend_delay() with a delay of say 1 second
->> and then on set_ctrl do a pm_runtime_get_sync() +
->> pm_runtime_put_autosuspend() giving the camera 1 second to finish
->> applying the async ctrl (which might not be enough for e.g homing) +
->> also avoid doing suspend + resume all the time if multiple ctrls are send
-> 
-> What about 1.5:
-> 
-> during s_ctrl():
-> usb_autopm_get_interface()
-> if the control is UVC_CTRL_FLAG_ASYNCHRONOUS.
->        usb_autopm_get_interface()
-> set the actual control in the hardware
-> usb_autopm_put_interface()
-> 
-> during uvc_ctrl_status_event():
->    usb_autopm_put_interface()
+The boot failed with clang tool chain and PASS with gcc-13.
 
-How do we match this to the usb_autopm_get_interface()
-call ? At a minimum we would need some counter to
-track pending (not acked through status interrupt urb)
-async control requests and only do the put() if that
-counter >= 1 (and then decrease the counter).
+Device: TI x15 device
+Boot pass: gcc-13
+Boot failed: clang-19
+Configs: korg-clang-19-lkftconfig-hardening
+Boot pass: qemu-armv7 (Additional info)
 
-We don't want to do unbalanced puts here in case of
-buggy cameras sending unexpected / too many
-ctrl status events.
+This is always reproducible.
 
-> during close():
->    send all the missing usb_autopm_put_interface()
+x15 beagleboard:
+  boot:
+    * clang-nightly-lkftconfig-hardening
+    * korg-clang-19-lkftconfig-hardening
 
-Except for my one remark this is an interesting
-proposal.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Maybe also do a dev_warn() if there are missing
-usb_autopm_put_interface() calls pending on close() ?
+Log details:
+------------
+[    0.000000] Booting Linux on physical CPU 0x0
+[    0.000000] Linux version 6.12.0 (tuxmake@tuxmake) (ClangBuiltLinux
+clang version 19.1.4 (https://github.com/llvm/llvm-project.git
+aadaa00de76ed0c4987b97450dd638f63a385bed), ClangBuiltLinux LLD 19.1.4
+(https://github.com/llvm/llvm-project.git
+aadaa00de76ed0c4987b97450dd638f63a385bed)) #1 SMP @1732428891
+[    0.000000] CPU: ARMv7 Processor [412fc0f2] revision 2 (ARMv7), cr=30c5387d
+<>
+[    3.543395] pcieport 0000:00:00.0: PME: Signaling with IRQ 136
+[    3.556976] Internal error: Oops - undefined instruction: 0 [#1] SMP ARM
+[    3.563720] Modules linked in:
+[    3.566802] CPU: 1 UID: 0 PID: 41 Comm: kworker/u10:2 Not tainted 6.12.0 #1
+[    3.573822] Hardware name: Generic DRA74X (Flattened Device Tree)
+[    3.579956] Workqueue: events_unbound deferred_probe_work_func
+[    3.585815] PC is at edma_probe (drivers/dma/ti/edma.c:0)
+[    3.590026] LR is at devm_kmalloc (drivers/base/devres.c:839)
+[    3.594329] pc : lr : psr: 60000013
+[    3.600616] sp : f00f5938  ip : 00070007  fp : efcd8728
+[    3.605865] r10: c3cd2c10  r9 : c3c17a40  r8 : c3cd2c00
+[    3.611145] r7 : 00000002  r6 : 00000000  r5 : 00000003  r4 : 00000001
+[    3.617706] r3 : 00000001  r2 : 00000002  r1 : 00000002  r0 : c3ba8340
+[    3.624267] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment user
+[    3.631439] Control: 30c5387d  Table: 80203000  DAC: 55555555
+[    3.637207] Register r0 information: slab kmalloc-rnd-01-128 start
+c3ba8300 pointer offset 64 size 128
+[    3.646575] Register r1 information: non-paged memory
+[    3.651672] Register r2 information: non-paged memory
+[    3.656768] Register r3 information: non-paged memory
+[    3.661834] Register r4 information: non-paged memory
+[    3.666931] Register r5 information: non-paged memory
+[    3.671997] Register r6 information: NULL pointer
+[    3.676727] Register r7 information: non-paged memory
+[    3.681823] Register r8 information: slab kmalloc-rnd-06-1k start
+c3cd2c00 pointer offset 0 size 1024
+[    3.691101] Register r9 information: slab kmalloc-rnd-14-512 start
+c3c17a00 pointer offset 64 size 512
+[    3.700469] Register r10 information: slab kmalloc-rnd-06-1k start
+c3cd2c00 pointer offset 16 size 1024
+[    3.709960] Register r11 information: non-slab/vmalloc memory
+[    3.715728] Register r12 information: non-paged memory
+[    3.720886] Process kworker/u10:2 (pid: 41, stack limit = 0x0678741b)
+[    3.727386] Stack: (0xf00f5938 to 0xf00f6000)
+[    3.731750] 5920:
+    00000001 c132a2a0
+[    3.739990] 5940: c3cd2c10 c23d2304 c23d2304 efcd8728 00000001
+c3d10fc0 c290fabc 00000000
+[    3.748199] 5960: 00000001 00000000 c24d4c98 c1326cd4 c1d88d7d
+c1d251f2 efcd8728 3f45655f
+[    3.756408] 5980: c24d4c98 fc8f9ed5 f00f5a98 c1327924 ffffffff
+c06fa4e0 00000000 00000000
+[    3.764648] 59a0: 00000000 00000000 00000000 00000000 00000000
+00000000 00000000 42aa2a98
+[    3.772857] 59c0: 42aa2a98 c3cd2c10 c23d2304 c23d2304 3f45655f
+c24d4c98 fc8f9ed5 f00f5a98
+[    3.781097] 59e0: 00000001 c0ddeafc c3cd2c10 c23d2304 00000000
+c0ddb238 c3cd2c10 c23d2304
+[    3.789306] 5a00: c24d4ca0 000000ab 00000001 c0dda2bc 60000013
+efcd8728 c3cd2c10 c3cd2c10
+[    3.797515] 5a20: c24d4ca0 000000ab c24d4c98 fc8f9ed5 00000001
+c0ddaf48 c3cd2c10 c23d2304
+[    3.805755] 5a40: f00f5a98 00000000 c28e1b00 c0ddae00 c0ddaccc
+c0ddaccc 00000000 f00f5a68
+[    3.813964] 5a60: 00000001 c0dd733c c28e1b6c c2e39038 c28e1b00
+42aa2a98 c3cd2c10 c3cd2c54
+[    3.822204] 5a80: 00000000 00000001 00000000 c28e1b00 00000000
+c0dda0d4 c3cd2c10 00000001
+[    3.830413] 5aa0: 00000100 42aa2a98 c3cd2c10 c24d4c8c c28e1b00
+c1a466d0 c3cd2c10 c0dd75a8
+[    3.838653] 5ac0: c3cd2c10 c3cd3410 00000000 c3cd3410 c3cd2c10
+efcd878c 00000001 c0dd2cbc
+[    3.846862] 5ae0: 42aa2a98 00000000 00000000 00000000 c3cd2c00
+efcd8728 c3cd2c10 efcd878c
+[    3.855072] 5b00: 00000000 c13298d8 efcd8728 c3cd3410 c221d2a0
+00000000 00000000 efcd878c
+[    3.863311] 5b20: c1843838 c1329b70 c2c10c10 c3cd3410 00000000
+00000000 00000000 00000000
+[    3.871520] 5b40: 00000000 00000000 00000000 00000000 00000000
+00000000 42aa2a98 efcd8728
+[    3.879760] 5b60: c221d2a0 c1843838 efcd842c 00000000 c3cd3410
+00000001 c24c3718 c1329dec
+[    3.887969] 5b80: 00000001 c1cfa6f6 c3d11f40 efcd8590 f00f5be0
+00000001 00000000 c1cfa6f6
+[    3.896179] 5ba0: c1dffe3e c0a2de8c 00000000 00000000 c1d88d7d
+c3cd3410 c221d50c efcd842c
+[    3.904418] 5bc0: 00000000 00000000 43300000 00000000 00100000
+00000000 00000200 00000000
+[    3.912628] 5be0: 00000002 c1b14540 ff9e82f0 ff9e82f0 00000001
+00000001 00000001 00000000
+[    3.920867] 5c00: 42aa2a98 c3cd3410 c230f244 c230f244 3f45655f
+c24d4c98 fc8f9ed5 f00f5cd8
+[    3.929077] 5c20: 00000001 c0ddeafc c3cd3410 c230f244 00000000
+c0ddb238 c3cd3410 c230f244
+[    3.937316] 5c40: c24d4ca0 000000ab 00000001 c0dda2bc 60000013
+ffffffff c3cd3410 c3cd3410
+[    3.945526] 5c60: c24d4ca0 000000ab c24d4c98 fc8f9ed5 00000001
+c0ddaf48 c3cd3410 c230f244
+[    3.953735] 5c80: f00f5cd8 00000000 c28e1b00 c0ddae00 c0ddaccc
+c0ddaccc 00000000 f00f5ca8
+[    3.961975] 5ca0: 00000001 c0dd733c c28e1b6c c3873938 c28e1b00
+42aa2a98 c3cd3410 c3cd3454
+[    3.970184] 5cc0: 00000000 00000001 00000000 c28e1b00 c221d50c
+c0dda0d4 c3cd3410 00000001
+[    3.978424] 5ce0: 00000100 42aa2a98 c3cd3410 c24d4c8c c28e1b00
+c1a466d0 c3cd3410 c0dd75a8
+[    3.986633] 5d00: c3cd3410 c2c10c10 00000000 c2c10c10 c3cd3410
+efcd8490 00000001 c0dd2cbc
+[    3.994842] 5d20: 42aa2a98 00000000 00000000 00000000 c3cd3400
+efcd842c c3cd3410 efcd8490
+[    4.003082] 5d40: c221d50c c13298d8 efcd842c c2c10c10 c221d2a0
+c221d50c 00000000 efcd8490
+[    4.011291] 5d60: 00000000 c1329b70 00000000 c2c10c10 43300000
+00000000 43300003 00000000
+[    4.019500] 5d80: ff9e8254 00000200 00000000 00000000 00000000
+00000000 42aa2a98 efcd842c
+[    4.027740] 5da0: c221d2a0 00000000 efc76d7c 00000000 c2c10c10
+00000001 c291ab0d c1329dec
+[    4.035949] 5dc0: 00000001 f00f5eb8 c2c10c10 efc76d7c c3a37d40
+c2c10c00 c230f168 c221d2a0
+[    4.044189] 5de0: f00f5eb8 c0a2d154 c2c10c10 c230f168 c230f168
+3f45655f c24d4c98 fc8f9ed5
+[    4.052398] 5e00: c291ab0d c0ddeafc c2c10c10 c230f168 00000000
+c0ddb238 c2c10c10 c230f168
+[    4.060607] 5e20: c24d4ca0 00000001 c291ab0d c0dda2bc 60000013
+efc76d7c c2c10c10 c2c10c10
+[    4.068847] 5e40: c24d4ca0 00000001 c24d4c98 fc8f9ed5 c291ab0d
+c0ddaf48 c2c10c10 c230f168
+[    4.077056] 5e60: f00f5eb8 00000000 c28e1b00 c0ddae00 c0ddaccc
+c0ddaccc 00000000 f00f5e88
+[    4.085296] 5e80: c291ab0d c0dd733c c28e1b6c c38733b8 c28e1b00
+42aa2a98 c2c10c10 c2c10c54
+[    4.093505] 5ea0: 00000000 00000001 00000000 c28e1b00 c291ab00
+c0dda0d4 c2c10c10 00000001
+[    4.101745] 5ec0: c291ab0d 42aa2a98 c2c10c10 c24d4c8c c28e1b00
+c1a466d0 00000000 c0dd75a8
+[    4.109954] 5ee0: c23fe4dc c2c10c10 c29106d4 c23fe4f8 00000000
+00000004 c291ab0d c0ddaa60
+[    4.118164] 5f00: c29c0f80 c23fe500 c282e400 c291ab80 0000000a
+c04783d4 f00f5f70 c1805e20
+[    4.126403] 5f20: 00000000 00000002 42aa2a98 c29e1bc0 c29c0f98
+c29c0fd0 c29c0fac c282e400
+[    4.134613] 5f40: c29c0f80 c29c0fac c29e1bc0 c282e420 c246b274
+00000402 00000000 c047a89c
+[    4.142852] 5f60: c29c4300 c047a5ec c29c0f80 00000040 c29e22a4
+c29c4314 c29c4300 c047a5ec
+[    4.151062] 5f80: c29c0f80 c29e1bc0 00000000 c04810d4 c29c1b40
+c0480f9c 00000000 00000000
+[    4.159271] 5fa0: 00000000 00000000 00000000 c040029c 00000000
+00000000 00000000 00000000
+[    4.167510] 5fc0: 00000000 00000000 00000000 00000000 00000000
+00000000 00000000 00000000
+[    4.175720] 5fe0: 00000000 00000000 00000000 00000000 00000013
+00000000 00000000 00000000
+[    4.183959] Call trace:
+[    4.183959] edma_probe from platform_probe (drivers/base/platform.c:1404)
+[    4.191589] platform_probe from really_probe (drivers/base/dd.c:581
+drivers/base/dd.c:658)
+[    4.197021] really_probe from __driver_probe_device (drivers/base/dd.c:800)
+[    4.202972] __driver_probe_device from driver_probe_device
+(drivers/base/dd.c:830)
+[    4.209564] driver_probe_device from __device_attach_driver
+(drivers/base/dd.c:959)
+[    4.216308] __device_attach_driver from bus_for_each_drv
+(drivers/base/bus.c:459)
+[    4.222778] bus_for_each_drv from __device_attach (drivers/base/dd.c:1030)
+[    4.228576] __device_attach from bus_probe_device (drivers/base/bus.c:536)
+[    4.234344] bus_probe_device from device_add (drivers/base/core.c:3679)
+[    4.239807] device_add from of_platform_device_create_pdata
+(drivers/of/platform.c:186)
+[    4.246368] of_platform_device_create_pdata from
+of_platform_bus_create (drivers/of/platform.c:381)
+[    4.254150] of_platform_bus_create from of_platform_populate
+(drivers/of/platform.c:469)
+[    4.260833] of_platform_populate from sysc_probe (drivers/bus/ti-sysc.c:3269)
+[    4.266601] sysc_probe from platform_probe (drivers/base/platform.c:1404)
+[    4.271697] platform_probe from really_probe (drivers/base/dd.c:581
+drivers/base/dd.c:658)
+[    4.277130] really_probe from __driver_probe_device (drivers/base/dd.c:800)
+[    4.283081] __driver_probe_device from driver_probe_device
+(drivers/base/dd.c:830)
+[    4.289672] driver_probe_device from __device_attach_driver
+(drivers/base/dd.c:959)
+[    4.296417] __device_attach_driver from bus_for_each_drv
+(drivers/base/bus.c:459)
+[    4.302886] bus_for_each_drv from __device_attach (drivers/base/dd.c:1030)
+[    4.308685] __device_attach from bus_probe_device (drivers/base/bus.c:536)
+[    4.314453] bus_probe_device from device_add (drivers/base/core.c:3679)
+[    4.319915] device_add from of_platform_device_create_pdata
+(drivers/of/platform.c:186)
+[    4.326477] of_platform_device_create_pdata from
+of_platform_bus_create (drivers/of/platform.c:381)
+[    4.334259] of_platform_bus_create from of_platform_populate
+(drivers/of/platform.c:469)
+[    4.340911] of_platform_populate from simple_pm_bus_probe
+(drivers/bus/simple-pm-bus.c:0)
+[    4.347320] simple_pm_bus_probe from platform_probe
+(drivers/base/platform.c:1404)
+[    4.353179] platform_probe from really_probe (drivers/base/dd.c:581
+drivers/base/dd.c:658)
+[    4.358612] really_probe from __driver_probe_device (drivers/base/dd.c:800)
+[    4.364593] __driver_probe_device from driver_probe_device
+(drivers/base/dd.c:830)
+[    4.371154] driver_probe_device from __device_attach_driver
+(drivers/base/dd.c:959)
+[    4.377899] __device_attach_driver from bus_for_each_drv
+(drivers/base/bus.c:459)
+[    4.384399] bus_for_each_drv from __device_attach (drivers/base/dd.c:1030)
+[    4.390167] __device_attach from bus_probe_device (drivers/base/bus.c:536)
+[    4.395965] bus_probe_device from deferred_probe_work_func
+(drivers/base/dd.c:124)
+[    4.402435] deferred_probe_work_func from process_scheduled_works
+(include/linux/atomic/atomic-arch-fallback.h:457
+include/linux/jump_label.h:261 include/trace/events/workqueue.h:110
+kernel/workqueue.c:3234 kernel/workqueue.c:3310)
+[    4.409729] process_scheduled_works from worker_thread
+(include/linux/list.h:373 kernel/workqueue.c:946
+kernel/workqueue.c:3392)
+[    4.416015] worker_thread from kthread (kernel/kthread.c:391)
+[    4.420928] kthread from ret_from_fork (arch/arm/kernel/entry-common.S:138)
+[    4.425659] Exception stack(0xf00f5fb0 to 0xf00f5ff8)
+[    4.430755] 5fa0:                                     00000000
+00000000 00000000 00000000
+[    4.438964] 5fc0: 00000000 00000000 00000000 00000000 00000000
+00000000 00000000 00000000
+[    4.447204] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[ 4.453857] Code: e3a03001 13540001 e5c03002 1a000006 (e7ffdefe)
+All code
+========
 
-> This way:
-> - we do not have an artificial delay that might not work for all the use cases
-> - cameras with noncompliant async controls will have the same PM
-> behaviour as now  (will be powered on until close() )
-> 
-> We do the same with the rest of the actions that require hardware access, like:
-> https://lore.kernel.org/linux-media/20220920-resend-powersave-v5-2-692e6df6c1e2@chromium.org/
-> 
-> This way:
-> - Apps that do not need to access the hardware, do not wake it up, and
-> we do not break usecases.
-> 
-> Next steps will be:
->  - cache the formats
->  - move the actual set_ctrl to streamon... but if we can do that I
-> would argue than we can move completely to the control framework.
+Code starting with the faulting instruction
+===========================================
+[    4.459960] ---[ end trace 0000000000000000 ]---
+[    4.464630] note: kworker/u10:2[41] exited with irqs disabled
 
-Right I had forgotten that the UVC driver does not use the control
-framework. I think moving to that would be a prerequisite for moving
-the set_ctrl to stream_on.
+Links:
+- https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v6.12-9073-g9f16d5e6f220/testrun/26029148/suite/boot/test/korg-clang-19-lkftconfig-hardening/details/
+- https://lkft.validation.linaro.org/scheduler/job/8004562#L2109
+- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2pHgoZfhSxCBwwjm4YIlCiyWlfE
+- https://storage.tuxsuite.com/public/linaro/lkft/builds/2pHgnVqB6fC9d8asA1VUZJ0NRxT/
 
-Regards,
+Build image:
+-----------
+- https://storage.tuxsuite.com/public/linaro/lkft/builds/2pHgnVqB6fC9d8asA1VUZJ0NRxT/
 
-Hans
+metadata:
+----
+Linux version: 6.12.0
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2pHgnVqB6fC9d8asA1VUZJ0NRxT/config
+build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2pHgnVqB6fC9d8asA1VUZJ0NRxT/
+toolchain: clang-19 and clang-nightly
+config:  korg-clang-19-lkftconfig-hardening
+arch: TI x15
 
+--
+Linaro LKFT
+https://lkft.linaro.org
 
