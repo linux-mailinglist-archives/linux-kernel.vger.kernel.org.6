@@ -1,93 +1,101 @@
-Return-Path: <linux-kernel+bounces-421390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 311E59D8AAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:54:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7CBC168AEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:54:25 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FAE51B4126;
-	Mon, 25 Nov 2024 16:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cSTTDs13"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC9769D8AE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:02:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2AD1B4F1A
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 16:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2278D289FA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:02:28 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD9C1B6CF6;
+	Mon, 25 Nov 2024 17:02:23 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010411B3930;
+	Mon, 25 Nov 2024 17:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732553664; cv=none; b=kclA3PSX/S3RwvpqHTdB31DbK2m5wYNb51/oKI2ZvoTQWgeK6bXu75Hjxannl3+ZhJofoJGh7piop/lhPsVAWuvJJ5Ak8t+lenURFoTuVDZ4aM0ZZ+sY66z4M3pdunLMOIlqY0x0qpHtjDWTW/5MuZ8Bxa2G+oFLSQFPZ70MjTo=
+	t=1732554143; cv=none; b=KXOz57Y3XQS8S866AIaiThujShrbLrQwqxRhpl14AwxJBsdasbtlnCVS6cu4KH8emwMz08GgJNUbrzdqWDfUOX/TTe1+n9tJmrcI+nWdPpUCaCcSvEL/PYixQGuKHuERttDH/XyTINFOCdvYY1O14q0JigTV6S2zVCqYVx3akzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732553664; c=relaxed/simple;
-	bh=c0VUMZ8rfmZkitQIw08eoA7A5Ca9RrLrwdiRP1Yx4TQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ti1UYuc0cvgGed2co8sWuiAR2me3jUA7LL8Q/hLQwB9djBx+iIv/B8XRWxa2n1d8+tSt32CqpiVj7VmXnzwLEGX0e/dpuGMtD2OdSPvgd1dM9gk/rec7woOQbEHduh3RsT2mQZQlI0Bx9LD8/V4lItSNNqWgMwPKFXlmufTvT2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cSTTDs13; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=E2Re+/DWcuGRoj5t1bYoz9VASCPFYUF6fXcLL5oeIGw=; b=cSTTDs13q0Voxav85dJNtCfvAi
-	h81tDHDatyKXr2upRiEwNTU79fp2G3CrMDM9CH7p/bsB/Bg+MFOQga1+lc3O9eYRv1a78+ZdHxppx
-	i2weMhHN8GimiArPA4CjzM1we1WbpchmxYuKodE3h6tr46yF8ZV/gCsd89HW+Lx8w76pY6+WrjAzH
-	m6/6jswOEczit9ogAhMsmihVa+We1ukh+OYmDGh6NqGa1vQyoJkIecOckrB7b8uJ06qsLklKpNbKv
-	YINxw9HrOl9Pxc0xCrLKyp7GwKRS/Xb4YFDiVmAYUR+bXLjR8Sf2Za2cyOhJwXJwmGRMxuzDQjg2f
-	h853yH8w==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tFcLW-000000016tq-18sH;
-	Mon, 25 Nov 2024 16:53:58 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 7EE8730026A; Mon, 25 Nov 2024 17:53:57 +0100 (CET)
-Date: Mon, 25 Nov 2024 17:53:57 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Wei Yang <richard.weiyang@gmail.com>, akpm@linux-foundation.org,
-	andrii@kernel.org, jannh@google.com, Liam.Howlett@oracle.com,
-	lorenzo.stoakes@oracle.com, vbabka@suse.cz, mhocko@kernel.org,
-	shakeel.butt@linux.dev, hannes@cmpxchg.org, david@redhat.com,
-	willy@infradead.org, brauner@kernel.org, oleg@redhat.com,
-	arnd@arndb.de, zhangpeng.00@bytedance.com, linmiaohe@huawei.com,
-	viro@zeniv.linux.org.uk, hca@linux.ibm.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] mm: introduce
- mmap_lock_speculate_{try_begin|retry}
-Message-ID: <20241125165357.GA16789@noisy.programming.kicks-ass.net>
-References: <20241122174416.1367052-1-surenb@google.com>
- <20241122174416.1367052-3-surenb@google.com>
- <20241125005804.libwzfcz6d5zeyi4@master>
- <CAJuCfpF+ZdD3-gTSLr1iwpa=fefUyL5dLoy8vGpv=v7LABnjNw@mail.gmail.com>
+	s=arc-20240116; t=1732554143; c=relaxed/simple;
+	bh=4/SIKWMo3PgwM8oMuJ2GgHkJIaJAXvE90KQc+A/BcBc=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=kaX5/SxTW/Oeu6al++Yry8sX0vSn6Zvy/65ZD+XGX4Ee8dDvgh6mZNpfwMmvjJbJdM6ldvgL6TRQwcsoOhAyM/T1OSEfS4YFsj+nqwmiYwrF2oTjzmbiu8ZnNIKlpOK6imUBkpk7/vjeVfO8ecSA6PbxF34a+NK+Xv9Wm1BsBGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id DEA8A92009C; Mon, 25 Nov 2024 17:54:11 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id DA07C92009B;
+	Mon, 25 Nov 2024 16:54:11 +0000 (GMT)
+Date: Mon, 25 Nov 2024 16:54:11 +0000 (GMT)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Arnd Bergmann <arnd@kernel.org>
+cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+    Guenter Roeck <linux@roeck-us.net>, 
+    Niklas Schnelle <schnelle@linux.ibm.com>, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Jiri Slaby <jirislaby@kernel.org>, 
+    =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+    linux-serial@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>, 
+    linux-kernel@vger.kernel.org, Yang Yingliang <yangyingliang@huawei.com>
+Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
+In-Reply-To: <1a7da799-f15b-4714-a3bd-4c0b1f48fc09@app.fastmail.com>
+Message-ID: <alpine.DEB.2.21.2411251628320.44939@angie.orcam.me.uk>
+References: <20240405152924.252598-2-schnelle@linux.ibm.com> <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net> <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com> <472eb22a-dcb1-4fbb-bf2c-a4173706bc7a@app.fastmail.com>
+ <27685942-fb62-44c5-86ed-98beb547ffed@roeck-us.net> <744920ba-551c-466b-ac5c-2607b81261a0@app.fastmail.com> <Z0QtZky8Sr7qUW7v@smile.fi.intel.com> <00f5e842-3ee9-4d83-8836-0ff4f703fa3c@app.fastmail.com> <Z0RSZ-YD_BozMs1n@smile.fi.intel.com>
+ <be43108e-4135-4927-ba58-141836fde6af@app.fastmail.com> <Z0Re61Tk5lN2Xuxi@smile.fi.intel.com> <1a7da799-f15b-4714-a3bd-4c0b1f48fc09@app.fastmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJuCfpF+ZdD3-gTSLr1iwpa=fefUyL5dLoy8vGpv=v7LABnjNw@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Mon, Nov 25, 2024 at 08:18:38AM -0800, Suren Baghdasaryan wrote:
+On Mon, 25 Nov 2024, Arnd Bergmann wrote:
 
-> > >+static inline bool mmap_lock_speculate_retry(struct mm_struct *mm, unsigned int seq)
-> > >+{
-> > >+      return do_read_seqcount_retry(&mm->mm_lock_seq, seq);
-> >
-> > Just curious why we don't use read_seqcount_retry().
-> >
-> > Looks this is the only user outside seqlock.h.
+> > But the configuration can give less than old_serial_port contains.
+> > See dozens of the explicit settings in the defconfigs.
 > 
-> Ah, good eye! read_seqcount_retry() would be better.
+> I don't see any of the upstream defconfigs doing this
+> though, the only ones setting CONFIG_SERIAL_8250_RUNTIME_UARTS
+> are those that have an empty old_serial_port[]. 
 > 
-> Peter, do you want me to post a new patchset or you can patch it when
-> picking it up?
+> Note that SERIAL_PORT_DFNS is only defined on x86, alpha
+> and m68k (for q40), which are the main PC-like platforms.
 
-Fixed up my local copy, thanks!
+ May I suggest to call `serial8250_isa_init_ports':
+
+	if (IS_ENABLED(CONFIG_ISA) || IS_ENABLED(CONFIG_ALPHA) ||
+	    IS_ENABLED(CONFIG_M68K) || IS_ENABLED(CONFIG_X86))
+
+then (or have an equivalent `select' in the relevant Kconfig files)?
+
+ The whole point of this legacy setup is to poke at ISA serial ports that 
+have been wired by jumpers or similar means (sometimes just hardwired) to 
+their designated ISA port I/O locations.  Sometimes it means LPC rather 
+than real ISA, but LPC stuff should mostly be covered by platform bindings 
+rather than just blind poking, which may only be needed for platforms that 
+have some kind of a generic config and no DT or other way (such as ACPI or 
+ISA PNP) to discover actual ports.
+
+> I see that all three have identical definitions of
+> SERIAL_PORT_DFNS, so I think these should just be moved
+> next to the __serial8250_isa_init_ports definition, with
+> the entire thing moved into a separate ISA driver or
+> an #ifdef around it. This is of course not the problem
+> at hand, but it would help separate the x86/isa and
+> non-x86 platform device cases further.
+
+ This SERIAL_PORT_DFNS definition is just original ISA stuff, so it does 
+apply universally across CONFIG_ISA platforms.  Original ISA option cards 
+have had no way to discover other than by blind-poking (or giving port I/O 
+locations by hand via a kernel parameter).
+
+  Maciej
 
