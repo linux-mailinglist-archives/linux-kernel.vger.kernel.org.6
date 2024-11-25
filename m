@@ -1,212 +1,215 @@
-Return-Path: <linux-kernel+bounces-420851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA63C9D83A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:43:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF749D8391
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:40:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 734C6288C7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:43:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DAB3161549
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0494192D75;
-	Mon, 25 Nov 2024 10:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC874192B76;
+	Mon, 25 Nov 2024 10:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="jSKVqFEx"
-Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DeaGLV9d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9DF1AB501;
-	Mon, 25 Nov 2024 10:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CC31426C;
+	Mon, 25 Nov 2024 10:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732531242; cv=none; b=UXkNvetqqVNon92V5oOEegDzy/h2OPTvoBceg8rYs8HQezown9JqWK2/8l95dRCuwrpLwMXDJmjxgImeDVxnkSMtXLEC3OjyhAstfRVnT9Yn2dSFtMLovv1zt6Vfao2nr8hk3VMxYvroKoF6Yr8t0G6mFcCHqv5oy3DsNORceqw=
+	t=1732531229; cv=none; b=EsyWV5O/bvm9FNxu2Mq9Md++R+rRSPCVoTH183x9O3WzgQGrbJE1P4f3TKICVT96DKkXezKVwexA/i0MSKNkoQ35EdQ6gYrbYgqHcRpw/Kts8LE2XyPQ6skWxFV0vBpI2crlm0R8n99EhJjT0PczGhYZyIG5TMfemBCjiA/pyaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732531242; c=relaxed/simple;
-	bh=PSaQOMGKr/Ve7TwzTNQdr5+VuDZ1b8z2M3mr2p+Da48=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cdF0w3KwqYHlUYh6ZcK5yD2Tiq/YZh6rh07JW338ABTxn8qJ4KhhDySzsQWTAgRaCPIft5BzuxzC/aPsd2Ggjlq1EVw3VDDObqiy1FToh2PBlDqzRLsvACnrfFtmiY1EFQxTDztX/QVEevmpy9NNl9/ofVPLcqQM2h+SeEMFHbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=jSKVqFEx; arc=none smtp.client-ip=168.119.48.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
-From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1732531238;
-	h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5x0yPCIryoiXTXe24z13INkplAFzoVmn1x49aPuCCtY=;
-	b=jSKVqFExQSaxinJXOrSxNiS3t8Eipge1vhRHBNJjhjCz4n+7KScfgPxBuo3b46kSVLhJ2j
-	0UXhFTBuKx0joSbRghed5bds0gNwtkpqrBXIrEoXXXFKSX8qE9F0glBVwfeSpHJWMuHfz2
-	nVV0HJum8Ip7bUeU4cuswj8g9PjYLTmNs5vzPTZx7cQt/KD5M6+XKYaJ51YvSi/48XcQ/0
-	7c37i7/iZ5dQQDciVeEFDG76UYubJI3Gk7iK28SGmDxf2ZG2FeVzk1vdHvZ91lOAfTaaut
-	JWZBvLX+qbBYQn1/zRqcUXDbxu5PwSHYCEUrJraSUnNW55PMAPFq39B1zB9tFw==
-To: linux-security-module@vger.kernel.org
-Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	Serge Hallyn <serge@hallyn.com>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	linux-kernel@vger.kernel.org,
-	cocci@inria.fr
-Subject: [PATCH 01/11] coccinelle: Add script to reorder capable() calls
-Date: Mon, 25 Nov 2024 11:40:04 +0100
-Message-ID: <20241125104011.36552-11-cgoettsche@seltendoof.de>
-In-Reply-To: <20241125104011.36552-1-cgoettsche@seltendoof.de>
-References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
-Reply-To: cgzones@googlemail.com
+	s=arc-20240116; t=1732531229; c=relaxed/simple;
+	bh=G/datk7oqw8cvx8u/D+KjPxZE1wz9JwUDpwNoNpXq08=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CBC6Mzn6OsngZW3jeCuy1uvDre5Vv2zi07QAnlqZPOPJe+Q4gkgqL+6nRELp2D8/nyVg/WVS30pLTP6stZsbawhY1+tfKzDrxesM3ouAYFCT5VemVFMGXbT/hQIAfKi0oo+Zqiq9KVrPdthVrfDm3Vv48ieR50Jzv0DkUnpgUEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DeaGLV9d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97C19C4CED7;
+	Mon, 25 Nov 2024 10:40:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732531228;
+	bh=G/datk7oqw8cvx8u/D+KjPxZE1wz9JwUDpwNoNpXq08=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=DeaGLV9dFKeZX8SdwkbUCcJvGlCUNmbJhHsjjSOhdCzceuOqp4AJw8iypFwr1YDDr
+	 WQzfikkP1If+nWFK2VDlTyvtMtHkVgHlurDU8RiU5XzD2FQKcE6x9hDBbEckk8XIuN
+	 CrZoO+p/l1nynlTmt/hHjn7e62wAI/47F10+uTHu+Aj0zv9yg1N22UNnDnbkYvw1v0
+	 +fHRyp3+j3cU3t7AdBIZt6+m2tpvh6wvg/PeQtYWRypkvVSw8XLlD6KfJHqQlatI1v
+	 e9FpwI8xzYcL0DVrJU/zehyVfWmArR+qecQfFikGl8a9j3h4liZQRZuPE/810VzOwk
+	 xbHdZAeo6R+Jg==
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2958ddf99a7so4029201fac.2;
+        Mon, 25 Nov 2024 02:40:28 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXOVOgTQdBvMNzQwCbdrXhBIzKuyjZ44VgkFQ1D1qobm7Epq2ijwltrabnv7LFioglxZZlWFNcPZ0c=@vger.kernel.org, AJvYcCXwLUvVxM9x1Yq8iLZitVDN1hZ5Y0WQXc4Cuq4WqcrjfYXP0ldxv1pV7e5UTuk0Wo5I0jQv96FZ+rf1IdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7L5JN4ExS/2vkdfpJUhkkisPsRE2Yw7JQSj63GTM6fQoKDG7t
+	IHBgwcBuA+qiUmt78qL3M/dk7ByRJCSDK2qCcXbBgfLdnUkDncFj7H0GzxB5kxo33bLNkDpwa+u
+	oKqGNxP6NORyDD6+rcqlOtASfIzA=
+X-Google-Smtp-Source: AGHT+IFiaXeJWjqSVoTy9CvZGyuaBmr9EOAWhed2l/+YyOu7nEZz9EjLiJLrW3DAeiYqUVLxmdTHhoXactj/7Gr5zPs=
+X-Received: by 2002:a05:6871:68c:b0:288:c383:788d with SMTP id
+ 586e51a60fabf-29720c37be8mr10707079fac.21.1732531227786; Mon, 25 Nov 2024
+ 02:40:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CAJZ5v0imu3DZbUb6P=UGP5G9ffxS6MbnRb-2zx7pXNTrxS1Z1A@mail.gmail.com>
+ <Z0NeGF4ryCe_b5rr@sashalap> <CAHk-=wje48UTJPEpriFX9A-XjfRUiqeDyEbUEMBnsCJ_KQK-rA@mail.gmail.com>
+In-Reply-To: <CAHk-=wje48UTJPEpriFX9A-XjfRUiqeDyEbUEMBnsCJ_KQK-rA@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 25 Nov 2024 11:40:12 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jKPDrpcqk2tG8UNba3z2JL5XTUJeWcatErKC+i7om2JQ@mail.gmail.com>
+Message-ID: <CAJZ5v0jKPDrpcqk2tG8UNba3z2JL5XTUJeWcatErKC+i7om2JQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Thermal control updates for v6.13-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>, Sasha Levin <sashal@kernel.org>, 
+	Lukasz Luba <lukasz.luba@arm.com>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Linux PM <linux-pm@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>
+Content-Type: multipart/mixed; boundary="000000000000651ed90627ba5c09"
 
-From: Christian Göttsche <cgzones@googlemail.com>
+--000000000000651ed90627ba5c09
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-capable() calls refer to enabled LSMs whether to permit or deny the
-request.  This is relevant in connection with SELinux, where a
-capability check results in a policy decision and by default a denial
-message on insufficient permission is issued.
-It can lead to three undesired cases:
-  1. A denial message is generated, even in case the operation was an
-     unprivileged one and thus the syscall succeeded, creating noise.
-  2. To avoid the noise from 1. the policy writer adds a rule to ignore
-     those denial messages, hiding future syscalls, where the task
-     performs an actual privileged operation, leading to hidden limited
-     functionality of that task.
-  3. To avoid the noise from 1. the policy writer adds a rule to permit
-     the task the requested capability, while it does not need it,
-     violating the principle of least privilege.
+Sasha, thanks for the report!
 
-Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
----
- MAINTAINERS                                |  1 +
- scripts/coccinelle/api/capable_order.cocci | 98 ++++++++++++++++++++++
- 2 files changed, 99 insertions(+)
- create mode 100644 scripts/coccinelle/api/capable_order.cocci
+Linus, thanks for the analysis!
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e7f017097701..ab5ea47b61e2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5106,6 +5106,7 @@ S:	Supported
- F:	include/linux/capability.h
- F:	include/uapi/linux/capability.h
- F:	kernel/capability.c
-+F:	scripts/coccinelle/api/capable_order.cocci
- F:	security/commoncap.c
- 
- CAPELLA MICROSYSTEMS LIGHT SENSOR DRIVER
-diff --git a/scripts/coccinelle/api/capable_order.cocci b/scripts/coccinelle/api/capable_order.cocci
-new file mode 100644
-index 000000000000..4150d91b0f33
---- /dev/null
-+++ b/scripts/coccinelle/api/capable_order.cocci
-@@ -0,0 +1,98 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+///
-+/// Checks for capable() calls of the left side of a binary expression.
-+/// Reordering might avoid needless checks, LSM log messages, and more
-+/// restrictive LSM security policies (e.g. SELinux).
-+/// Can report false positives if the righthand side contains a nested
-+/// capability check or has side effects.
-+///
-+// Confidence: Moderate
-+// Copyright: (C) 2024 Christian Göttsche.
-+// Options: --no-includes --include-headers
-+// Keywords: capable, ns_capable, sockopt_ns_capable
-+//
-+
-+virtual patch
-+virtual context
-+virtual org
-+virtual report
-+
-+//----------------------------------------------------------
-+//  Pattern to ignore
-+//----------------------------------------------------------
-+
-+@ignore@
-+identifier F1 = { capable, ns_capable, sockopt_ns_capable };
-+identifier F2 = { capable, ns_capable, sockopt_ns_capable };
-+binary operator op,op1,op2;
-+expression E;
-+position p;
-+@@
-+
-+(
-+F1@p(...) op F2(...)
-+|
-+E op1 F1@p(...) op2 F2(...)
-+)
-+
-+
-+//----------------------------------------------------------
-+//  For patch mode
-+//----------------------------------------------------------
-+
-+@ depends on patch@
-+identifier F = { capable, ns_capable, sockopt_ns_capable };
-+binary operator op,op1,op2;
-+expression E,E1,E2;
-+expression list EL;
-+position p != ignore.p;
-+@@
-+
-+(
-+-  F@p(EL) op E
-++  E op F(EL)
-+|
-+-  E1 op1 F@p(EL) op2 E2
-++  E1 op1 E2 op2 F(EL)
-+)
-+
-+
-+//----------------------------------------------------------
-+//  For context mode
-+//----------------------------------------------------------
-+
-+@r1 depends on !patch exists@
-+identifier F = { capable, ns_capable, sockopt_ns_capable };
-+binary operator op,op1,op2;
-+expression E, E1, E2;
-+position p != ignore.p;
-+@@
-+
-+(
-+*  F@p(...) op E
-+|
-+*  E1 op1 F@p(...) op2 E2
-+)
-+
-+
-+//----------------------------------------------------------
-+//  For org mode
-+//----------------------------------------------------------
-+
-+@script:python depends on org@
-+p << r1.p;
-+@@
-+
-+cocci.print_main("WARNING opportunity for capable reordering",p)
-+
-+
-+//----------------------------------------------------------
-+//  For report mode
-+//----------------------------------------------------------
-+
-+@script:python depends on report@
-+p << r1.p;
-+@@
-+
-+msg = "WARNING opportunity for capable reordering"
-+coccilib.report.print_report(p[0], msg)
--- 
-2.45.2
+On Sun, Nov 24, 2024 at 7:40=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Sun, 24 Nov 2024 at 09:10, Sasha Levin <sashal@kernel.org> wrote:
+> >
+> > On Mon, Nov 18, 2024 at 11:23:46AM +0100, Rafael J. Wysocki wrote:
+> > >Hi Linus,
+> > >
+> > >Please pull from the tag
+> > >
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+> > > thermal-6.13-rc1
+> >
+> > Hi Rafael,
+> >
+> > After merging this PR into linus-next, KernelCI started reporting boot
+> > failures on a few platforms:
+> >
+> > [    6.921489] [00000000000000d0] user address but active_mm is swapper
+>
+> This is an odd arm64 way of saying "NULL pointer dereference in kernel".
+>
+> The NULL pointer is in the user space address range, so it
+> superficially looks like it's trying to do a user access.
+>
+> People are more used to the x86 page fault error reporting (and
+> honestly - they are a bit better worded in this case too).
+>
+> If I did the disassembly correctly, the code disassembles to
+>
+>         cbz     x7, 0x168
+>         mov     x5, x7
+>         stp     x6, x7, [x20, #24]
+>         mov     w19, #0x0
+>         ldr     x0, [x5, #208]!      <--- faulting instruction
+>
+> which does match that address 00000000000000d0 does match "x5+208",
+> since x5 is NULL.
+>
+> Matching it up manually with my build (different config, different
+> compiler, so different register allocation), it's this:
+>
+> // drivers/thermal/gov_power_allocator.c:527:   if (last_passive) {
+>         cbz     x6, .L177       // last_passive,
+> .L134:
+> // drivers/thermal/gov_power_allocator.c:595:
+> list_for_each_entry(instance, &td->thermal_instances, trip_node) {
+>         mov     x5, x6  // _21, last_passive
+> // drivers/thermal/gov_power_allocator.c:529:
+> params->trip_max =3D last_passive;
+>         stp     x0, x6, [x21, 24]       // first_passive, last_passive,
+> // drivers/thermal/gov_power_allocator.c:593:   int ret =3D 0;
+>         mov     w19, 0  // <retval>,
+> // drivers/thermal/gov_power_allocator.c:595:
+> list_for_each_entry(instance, &td->thermal_instances, trip_node) {
+>         ldr     x0, [x5, 208]!  // __mptr, MEM[(const struct
+> thermal_trip_desc *)prephitmp_29].thermal_instances.next
+>
+> so it looks like it is that
+>
+>         list_for_each_entry(instance, &td->thermal_instances, trip_node) =
+{
+>
+> with the 'td' being NULL.
+>
+> The code seems to do that
+>
+>         const struct thermal_trip_desc *td =3D
+> trip_to_trip_desc(params->trip_max);
+>
+> So apparently params->trip_max is NULL.
+>
+> That's where I stopped looking. It's almost certainly due to  commit
+> 0dc23567c206 ("thermal: core: Move lists of thermal instances to trip
+> descriptors") but I don't know the code.
+>
+> Over to Rafael and Lukasz,
 
+You are right, the above commit introduced this issue and there is one
+more hint on it in Sasha's call trace, which is
+thermal_tripless_zone_device_register() used for registering the
+thermal zone.  Of course, this means that there are no trip points in
+that zone, so params->trip_max is NULL in check_power_actors() and it
+needs to be explicitly checked against NULL.
+
+Previously, the check was not needed because the list of thermal
+instances was located in the thermal zone object, so walking it would
+just produce no results.
+
+IOW, something like the attached patch is needed.
+
+Thanks, Rafael
+
+--000000000000651ed90627ba5c09
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="thermal-gov_power_allocator-fix-null-deref.patch"
+Content-Disposition: attachment; 
+	filename="thermal-gov_power_allocator-fix-null-deref.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m3wwbphu0>
+X-Attachment-Id: f_m3wwbphu0
+
+RnJvbTogUmFmYWVsIEouIFd5c29ja2kgPHJhZmFlbC5qLnd5c29ja2lAaW50ZWwuY29tPgpTdWJq
+ZWN0OiBbUEFUQ0ggdjFdIHRoZXJtYWw6IGdvdl9wb3dlcl9hbGxvY2F0b3I6IEFkZCBtaXNzaW5n
+IE5VTEwgcG9pbnRlciBjaGVjawoKQ29tbWl0IDBkYzIzNTY3YzIwNiAoInRoZXJtYWw6IGNvcmU6
+IE1vdmUgbGlzdHMgb2YgdGhlcm1hbCBpbnN0YW5jZXMKdG8gdHJpcCBkZXNjcmlwdG9ycyIpIG92
+ZXJsb29rZWQgdGhlIGNhc2UgaW4gd2hpY2ggdGhlIFBvd2VyIEFsbG9jYXRvcgpnb3Zlcm5vciBh
+dHRlbXB0cyB0byBiaW5kIHRvIGEgdHJpcGxlc3MgdGhlcm1hbCB6b25lIGFuZCBwYXJhbXMtPnRy
+aXBfbWF4CmlzIE5VTEwgaW4gY2hlY2tfcG93ZXJfYWN0b3JzKCkuCgpObyBwb3dlciBhY3RvcnMg
+Y2FuIGJlIGZvdW5kIGluIHRoYXQgY2FzZSwgc28gY2hlY2tfcG93ZXJfYWN0b3JzKCkgbmVlZHMK
+dG8gYmUgbWFkZSByZXR1cm4gMCB0aGVuIHRvIHJlc3RvcmUgaXRzIHByZXZpb3VzIGJlaGF2aW9y
+LgoKRml4ZXM6IDBkYzIzNTY3YzIwNiAoInRoZXJtYWw6IGNvcmU6IE1vdmUgbGlzdHMgb2YgdGhl
+cm1hbCBpbnN0YW5jZXMgdG8gdHJpcCBkZXNjcmlwdG9ycyIpCkNsb3NlczogaHR0cHM6Ly9sb3Jl
+Lmtlcm5lbC5vcmcvbGludXgtcG0vWjBOZUdGNHJ5Q2VfYjVyckBzYXNoYWxhcC8KUmVwb3J0ZWQt
+Ynk6IFNhc2hhIExldmluIDxzYXNoYWxAa2VybmVsLm9yZz4KU2lnbmVkLW9mZi1ieTogUmFmYWVs
+IEouIFd5c29ja2kgPHJhZmFlbC5qLnd5c29ja2lAaW50ZWwuY29tPgotLS0KIGRyaXZlcnMvdGhl
+cm1hbC9nb3ZfcG93ZXJfYWxsb2NhdG9yLmMgfCAgICA3ICsrKysrKy0KIDEgZmlsZSBjaGFuZ2Vk
+LCA2IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKCkluZGV4OiBsaW51eC1wbS9kcml2ZXJz
+L3RoZXJtYWwvZ292X3Bvd2VyX2FsbG9jYXRvci5jCj09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KLS0tIGxpbnV4LXBtLm9y
+aWcvZHJpdmVycy90aGVybWFsL2dvdl9wb3dlcl9hbGxvY2F0b3IuYworKysgbGludXgtcG0vZHJp
+dmVycy90aGVybWFsL2dvdl9wb3dlcl9hbGxvY2F0b3IuYwpAQCAtNTg4LDEwICs1ODgsMTUgQEAg
+c3RhdGljIHZvaWQgYWxsb3dfbWF4aW11bV9wb3dlcihzdHJ1Y3QgdAogc3RhdGljIGludCBjaGVj
+a19wb3dlcl9hY3RvcnMoc3RydWN0IHRoZXJtYWxfem9uZV9kZXZpY2UgKnR6LAogCQkJICAgICAg
+c3RydWN0IHBvd2VyX2FsbG9jYXRvcl9wYXJhbXMgKnBhcmFtcykKIHsKLQljb25zdCBzdHJ1Y3Qg
+dGhlcm1hbF90cmlwX2Rlc2MgKnRkID0gdHJpcF90b190cmlwX2Rlc2MocGFyYW1zLT50cmlwX21h
+eCk7CisJY29uc3Qgc3RydWN0IHRoZXJtYWxfdHJpcF9kZXNjICp0ZDsKIAlzdHJ1Y3QgdGhlcm1h
+bF9pbnN0YW5jZSAqaW5zdGFuY2U7CiAJaW50IHJldCA9IDA7CiAKKwlpZiAoIXBhcmFtcy0+dHJp
+cF9tYXgpCisJCXJldHVybiAwOworCisJdGQgPSB0cmlwX3RvX3RyaXBfZGVzYyhwYXJhbXMtPnRy
+aXBfbWF4KTsKKwogCWxpc3RfZm9yX2VhY2hfZW50cnkoaW5zdGFuY2UsICZ0ZC0+dGhlcm1hbF9p
+bnN0YW5jZXMsIHRyaXBfbm9kZSkgewogCQlpZiAoIWNkZXZfaXNfcG93ZXJfYWN0b3IoaW5zdGFu
+Y2UtPmNkZXYpKSB7CiAJCQlkZXZfd2FybigmdHotPmRldmljZSwgInBvd2VyX2FsbG9jYXRvcjog
+JXMgaXMgbm90IGEgcG93ZXIgYWN0b3JcbiIsCg==
+--000000000000651ed90627ba5c09--
 
