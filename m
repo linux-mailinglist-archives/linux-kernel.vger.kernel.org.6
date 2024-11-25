@@ -1,95 +1,474 @@
-Return-Path: <linux-kernel+bounces-420530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DD389D7C07
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:37:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D170D9D7C08
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:38:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFDDE2810C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:37:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62E96162AF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37FDE15442D;
-	Mon, 25 Nov 2024 07:37:04 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB3C13D26B;
+	Mon, 25 Nov 2024 07:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qux3YVYb"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BEC2119;
-	Mon, 25 Nov 2024 07:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359572119
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 07:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732520223; cv=none; b=LqCKn0PCn0tdy/Pw9ouuLEjcwXmX+t+bZc0CQ0ujSZ1M6VsjZ9DLZY5A29wj7/+rB525hafL/1Nr6vPo43HBviBwFBkEagBNITG3K/jfmSEWkEcgQxZfBdw1+Bbit5Z5EmuUqnGARI9pCOSLLHdIILtDfgOkk4EdjPE+vNVfLMI=
+	t=1732520283; cv=none; b=uqnUDOZf6gp3+t10ybx2FQWOqWjUXaIYbZHpV9i3h7pW5WQQfLX5u/KndOvVGTs/klrmCzeENSiCZjxv2Lpb1ryAsR9j6eEr5mdj534UnvJBi5E96gNSXNW6h5OFUZ3bAewqp83oozi96awYc+IMroKXFn1TFS+6bKewRiBklAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732520223; c=relaxed/simple;
-	bh=ykyCCKl8gtxzVQHKbbY6Y3XWba4Xq2lT14Me0ZDDDvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ORtjvUlpj17uaKOCBob12m1sPIQthj4BhyWKKOTMBQSj21D3lqNUQu6oCis6cTi0UxUavfGlbPAUH7zgK7dkSya+n6RH6PkXEg+EZmJz+3whE9+uRDYJAdSvx6ZwYt+zuyOB4exTVafq3ARfYUTytm5HJFBH9NRo5Ck+anb+uis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 703A768D09; Mon, 25 Nov 2024 08:36:58 +0100 (CET)
-Date: Mon, 25 Nov 2024 08:36:58 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk,
-	linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] block: remove the ioprio field from struct request
-Message-ID: <20241125073658.GA15834@lst.de>
-References: <20241112170050.1612998-3-hch@lst.de> <20241122050419.21973-1-semen.protsenko@linaro.org> <20241122120444.GA25679@lst.de> <CAPLW+4==a515TCD93Kp-8zC8iYyYdh92U=j_emnG5sT_d7z64w@mail.gmail.com>
+	s=arc-20240116; t=1732520283; c=relaxed/simple;
+	bh=vqY78FShxCVwuQZ0UtSUsYC78qmOuXQXxACVQK/C0Iw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FGoJkV3sDQFUdtnUAWwRRocH92SGy/fQbTQs/axn7+AEE+H0y8ZKkKgVWbRsxuUSQCa85K3ipFQYbAKEOABxcyXKQc+aQm/XeTHKGZLtK5B5UgdDZF3dB03eOGU3qOTFNBcxRYPCy/gt6qk/yh7mYNOcBySCfexYOuMhPaKnkYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qux3YVYb; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5ceca0ec4e7so5125129a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 23:38:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732520279; x=1733125079; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4szE9y2WiOKFihl4XYOUIQoRfmtA+WfBfKiPdMgX1To=;
+        b=Qux3YVYbaFudXX29sdwXYbT78XvCprbGM28rkC20v751M3y0Ioum8fUmdeoU9FRuNt
+         3f+2u7BTaTsiN9E+zmsGas08tZ7fsh5Vkv/01rzIUgpME8XHtYamnrk4xRVPNaH4R7xE
+         YhwU52xnXeiZol6sOPray08AtmN4t6wqpBxkYqSbaD7Necs7SkdGuZMRRjQ1jqbqn/HK
+         dWw3NM0tn6OGUwH6Hfax2Nmv4Eq0TtZGb+24/cdJYL77BUcq4OQEWe+beqkJImRvszN4
+         /N4BIXp5plcbPX5XtxuQAWGhLC4cJoLF2UKl/Hs0XxDIRLsTJMgN4SKyyjjSa1JYrbnL
+         VDJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732520279; x=1733125079;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4szE9y2WiOKFihl4XYOUIQoRfmtA+WfBfKiPdMgX1To=;
+        b=nx0iMGQ2ZAVIosDkb75FAB38LkgJYnjb++IhhS7vUZZS5SZHREFfmPWb4/LPihStOy
+         xEN2HYv4PVtzYvz+zTXS/umtP0vfyM1CWM7ebWOks+3/O8Ll6sQ6Cp7yH6MQV3CC4dQY
+         +r5sXHdfugjw5Yf1Ti6ecaBNFR4GHOoBUvh/JWD6sKppdV5TTgh9v/0+nmdIMLlSHvjg
+         GStNkUBXXo2S0UtgumhSr9S2B5jxf7B8qnh7ZvTDGF81QCQdUMrhsz/pS79fKYdEFDCN
+         XyOiZ5AWfcIroDHh+x7gkO9AP5UusaoPy9ZJ1T5l19nYnci7UzVUtaSliSxj665dPnNT
+         PMgg==
+X-Forwarded-Encrypted: i=1; AJvYcCWfs2D9HudiE1AlXqJLPqJIXOpEPDkCOxZIVscqA0zMzeAPkxwvcV4NlYOG7P5V2dwhoQfh4kiCvLXsrf0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9tuT3eKg92xRJWPEHPVQBMYEPG90Rf9jZ/wNjfJ6xhPgDgj0g
+	/OuSVe0ueHLVi+72HraNuPz7E33W9XQ/YCXhr9u/PQ6HKE8Qve5Uw++SnznEkY04u/BIgxA6vYE
+	CrUK9pDeE74w67KXrQwrRZCmKx4Q=
+X-Gm-Gg: ASbGncsAXKpCyjeMO/2oLyiBvDXU9pC0teVjblIz8nQDPo96U/xx+8JEfZHLBKwKHMQ
+	jEP5LMTQJm0rfWlCqoatKZT+uUHhHvBI=
+X-Google-Smtp-Source: AGHT+IFKRyMXoIY8huAKqgNhKrKzrjkrO1j0GmsOCasVRIrWXML2lQmF3g1WlJNHTPCuJNfgWKyIdsPoUCepYzOvMMY=
+X-Received: by 2002:a05:6402:2105:b0:5cf:6592:4680 with SMTP id
+ 4fb4d7f45d1cf-5d020625e80mr11972670a12.17.1732520279238; Sun, 24 Nov 2024
+ 23:37:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPLW+4==a515TCD93Kp-8zC8iYyYdh92U=j_emnG5sT_d7z64w@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <674184c9.050a0220.1cc393.0001.GAE@google.com>
+In-Reply-To: <674184c9.050a0220.1cc393.0001.GAE@google.com>
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+Date: Mon, 25 Nov 2024 13:07:21 +0530
+Message-ID: <CAHiZj8iT3F2NqkDd3XqLoO5mwU4VKHTa_1mJ_f23BmKmiL=T0g@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] kernel BUG in const_folio_flags (2)
+To: syzbot <syzbot+9f9a7f73fb079b2387a6@syzkaller.appspotmail.com>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+Content-Type: multipart/mixed; boundary="000000000000cfa7150627b7cff2"
 
-On Fri, Nov 22, 2024 at 03:55:23PM -0600, Sam Protsenko wrote:
-> It's an Exynos based board with eMMC, so it uses DW MMC driver, with
-> Exynos glue layer on top of it, so:
-> 
->     drivers/mmc/host/dw_mmc.c
->     drivers/mmc/host/dw_mmc-exynos.c
-> 
-> I'm using the regular ARM64 defconfig. Nothing fancy about this setup
-> neither, the device tree with eMMC definition (mmc_0) is here:
-> 
->     arch/arm64/boot/dts/exynos/exynos850-e850-96.dts
+--000000000000cfa7150627b7cff2
+Content-Type: multipart/alternative; boundary="000000000000cfa7140627b7cff0"
 
-Thanks.  eMMC itself never looks at the ioprio field.
+--000000000000cfa7140627b7cff0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> FWIW, I was able to narrow down the issue to dd_insert_request()
-> function. With this hack the freeze is gone:
+#syz test
 
-Sounds like it isn't the driver that matters here, but the scheduler.
+On Sat, Nov 23, 2024 at 1:01=E2=80=AFPM syzbot <
+syzbot+9f9a7f73fb079b2387a6@syzkaller.appspotmail.com> wrote:
 
-> 
-> 8<-------------------------------------------------------------------->8
-> diff --git a/block/mq-deadline.c b/block/mq-deadline.c
-> index acdc28756d9d..83d272b66e71 100644
-> --- a/block/mq-deadline.c
-> +++ b/block/mq-deadline.c
-> @@ -676,7 +676,7 @@ static void dd_insert_request(struct blk_mq_hw_ctx
-> *hctx, struct request *rq,
->         struct request_queue *q = hctx->queue;
->         struct deadline_data *dd = q->elevator->elevator_data;
->         const enum dd_data_dir data_dir = rq_data_dir(rq);
-> -       u16 ioprio = req_get_ioprio(rq);
-> +       u16 ioprio = 0; /* the same as old req->ioprio */
->         u8 ioprio_class = IOPRIO_PRIO_CLASS(ioprio);
->         struct dd_per_prio *per_prio;
->         enum dd_prio prio;
-> 8<-------------------------------------------------------------------->8
-> 
-> Does it tell you anything about where the possible issue can be?
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    9fb2cfa4635a Merge tag 'pull-ufs' of git://git.kernel.org=
+/
+> ..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1004293058000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dc4515f1b6a4e5=
+0b7
+> dashboard link:
+> https://syzkaller.appspot.com/bug?extid=3D9f9a7f73fb079b2387a6
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for
+> Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D105ff2e8580=
+000
+>
+> Downloadable assets:
+> disk image:
+> https://storage.googleapis.com/syzbot-assets/7c0c61a15f60/disk-9fb2cfa4.r=
+aw.xz
+> vmlinux:
+> https://storage.googleapis.com/syzbot-assets/3363d84eeb74/vmlinux-9fb2cfa=
+4.xz
+> kernel image:
+> https://storage.googleapis.com/syzbot-assets/2b1a270af550/bzImage-9fb2cfa=
+4.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the
+> commit:
+> Reported-by: syzbot+9f9a7f73fb079b2387a6@syzkaller.appspotmail.com
+>
+>  madvise_pageout_page_range mm/madvise.c:609 [inline]
+>  madvise_pageout+0x326/0x820 mm/madvise.c:636
+>  madvise_vma_behavior+0x58c/0x19e0 mm/madvise.c:1045
+>  madvise_walk_vmas+0x1cf/0x2c0 mm/madvise.c:1274
+>  do_madvise+0x29d/0x700 mm/madvise.c:1461
+>  __do_sys_madvise mm/madvise.c:1477 [inline]
+>  __se_sys_madvise mm/madvise.c:1475 [inline]
+>  __x64_sys_madvise+0xa9/0x110 mm/madvise.c:1475
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+> ------------[ cut here ]------------
+> kernel BUG at include/linux/page-flags.h:309!
+> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+> CPU: 0 UID: 0 PID: 7269 Comm: syz.1.183 Not tainted
+> 6.12.0-syzkaller-00233-g9fb2cfa4635a #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 10/30/2024
+> RIP: 0010:const_folio_flags.constprop.0+0x12e/0x150
+> include/linux/page-flags.h:309
+> Code: 86 cb ff e8 f4 86 cb ff 48 8d 45 ff 48 39 c3 0f 84 38 ff ff ff e8 e=
+2
+> 86 cb ff 48 c7 c6 00 19 58 8b 48 89 df e8 e3 4b 11 00 90 <0f> 0b e8 6b 0d
+> 2d 00 e9 f1 fe ff ff e8 61 0d 2d 00 eb a3 48 89 df
+> RSP: 0018:ffffc9000c55ee30 EFLAGS: 00010293
+> RAX: 0000000000000000 RBX: ffffea0000496f80 RCX: ffffc9000c55ecd8
+> RDX: ffff88805f401e00 RSI: ffffffff81c1362d RDI: ffff88805f402244
+> RBP: 0000000000000001 R08: 0000000000000000 R09: fffffbfff203a591
+> R10: ffffffff901d2c8f R11: 0000000000000001 R12: 00000000000014df
+> R13: 0000000000000000 R14: dffffc0000000000 R15: 1ffff920018abdf4
+> FS:  00007f08b31bc6c0(0000) GS:ffff8880b8600000(0000)
+> knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000000c0025ff000 CR3: 00000000341ce000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  folio_test_locked include/linux/page-flags.h:509 [inline]
+>  next_uptodate_folio+0xac/0x4b0 mm/filemap.c:3505
+>  filemap_map_pages+0x1c6/0x16a0 mm/filemap.c:3647
+>  do_fault_around mm/memory.c:5255 [inline]
+>  do_read_fault mm/memory.c:5288 [inline]
+>  do_fault mm/memory.c:5431 [inline]
+>  do_pte_missing+0xdae/0x3e70 mm/memory.c:3965
+>  handle_pte_fault mm/memory.c:5766 [inline]
+>  __handle_mm_fault+0x100a/0x2a10 mm/memory.c:5909
+>  handle_mm_fault+0x3fa/0xaa0 mm/memory.c:6077
+>  faultin_page mm/gup.c:1187 [inline]
+>  __get_user_pages+0x8d9/0x3b50 mm/gup.c:1485
+>  __get_user_pages_locked mm/gup.c:1751 [inline]
+>  get_dump_page+0xfb/0x220 mm/gup.c:2269
+>  dump_user_range+0x135/0x8c0 fs/coredump.c:943
+>  elf_core_dump+0x2766/0x3840 fs/binfmt_elf.c:2121
+>  do_coredump+0x2c42/0x4160 fs/coredump.c:758
+>  get_signal+0x237c/0x26d0 kernel/signal.c:2903
+>  arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:337
+>  exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+>  exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+>  irqentry_exit_to_user_mode+0x13f/0x280 kernel/entry/common.c:231
+>  asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+> RIP: 0033:0x1000
+> Code: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 0=
+0
+> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 <00> 00 00 00 00
+> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> RSP: 002b:000000000000010c EFLAGS: 00010246
+> RAX: 0000000000000000 RBX: 00007f08b41363b8 RCX: 00007f08b3f7e759
+> RDX: ffffffffff600000 RSI: 0000000000000104 RDI: 8000000000000000
+> RBP: 00007f08b3ff175e R08: 0000000100000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000000 R14: 00007f08b41363b8 R15: 00007fff7656a008
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:const_folio_flags.constprop.0+0x12e/0x150
+> include/linux/page-flags.h:309
+> Code: 86 cb ff e8 f4 86 cb ff 48 8d 45 ff 48 39 c3 0f 84 38 ff ff ff e8 e=
+2
+> 86 cb ff 48 c7 c6 00 19 58 8b 48 89 df e8 e3 4b 11 00 90 <0f> 0b e8 6b 0d
+> 2d 00 e9 f1 fe ff ff e8 61 0d 2d 00 eb a3 48 89 df
+> RSP: 0018:ffffc9000c55ee30 EFLAGS: 00010293
+> RAX: 0000000000000000 RBX: ffffea0000496f80 RCX: ffffc9000c55ecd8
+> RDX: ffff88805f401e00 RSI: ffffffff81c1362d RDI: ffff88805f402244
+> RBP: 0000000000000001 R08: 0000000000000000 R09: fffffbfff203a591
+> R10: ffffffff901d2c8f R11: 0000000000000001 R12: 00000000000014df
+> R13: 0000000000000000 R14: dffffc0000000000 R15: 1ffff920018abdf4
+> FS:  00007f08b31bc6c0(0000) GS:ffff8880b8700000(0000)
+> knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fff76568ff8 CR3: 00000000341ce000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/674184c9.050a0220.1cc393=
+.0001.GAE%40google.com
+> .
+>
 
-Can you dump the ioprities you see here with and without the reverted
-patch?
+--000000000000cfa7140627b7cff0
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+<div dir=3D"ltr">#syz test<br></div><br><div class=3D"gmail_quote"><div dir=
+=3D"ltr" class=3D"gmail_attr">On Sat, Nov 23, 2024 at 1:01=E2=80=AFPM syzbo=
+t &lt;<a href=3D"mailto:syzbot%2B9f9a7f73fb079b2387a6@syzkaller.appspotmail=
+.com">syzbot+9f9a7f73fb079b2387a6@syzkaller.appspotmail.com</a>&gt; wrote:<=
+br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8e=
+x;border-left:1px solid rgb(204,204,204);padding-left:1ex">Hello,<br>
+<br>
+syzbot found the following issue on:<br>
+<br>
+HEAD commit:=C2=A0 =C2=A0 9fb2cfa4635a Merge tag &#39;pull-ufs&#39; of git:=
+//<a href=3D"http://git.kernel.org/" rel=3D"noreferrer" target=3D"_blank">g=
+it.kernel.org/</a>..<br>
+git tree:=C2=A0 =C2=A0 =C2=A0 =C2=A0upstream<br>
+console output: <a href=3D"https://syzkaller.appspot.com/x/log.txt?x=3D1004=
+2930580000" rel=3D"noreferrer" target=3D"_blank">https://syzkaller.appspot.=
+com/x/log.txt?x=3D10042930580000</a><br>
+kernel config:=C2=A0 <a href=3D"https://syzkaller.appspot.com/x/.config?x=
+=3Dc4515f1b6a4e50b7" rel=3D"noreferrer" target=3D"_blank">https://syzkaller=
+.appspot.com/x/.config?x=3Dc4515f1b6a4e50b7</a><br>
+dashboard link: <a href=3D"https://syzkaller.appspot.com/bug?extid=3D9f9a7f=
+73fb079b2387a6" rel=3D"noreferrer" target=3D"_blank">https://syzkaller.apps=
+pot.com/bug?extid=3D9f9a7f73fb079b2387a6</a><br>
+compiler:=C2=A0 =C2=A0 =C2=A0 =C2=A0gcc (Debian 12.2.0-14) 12.2.0, GNU ld (=
+GNU Binutils for Debian) 2.40<br>
+syz repro:=C2=A0 =C2=A0 =C2=A0 <a href=3D"https://syzkaller.appspot.com/x/r=
+epro.syz?x=3D105ff2e8580000" rel=3D"noreferrer" target=3D"_blank">https://s=
+yzkaller.appspot.com/x/repro.syz?x=3D105ff2e8580000</a><br>
+<br>
+Downloadable assets:<br>
+disk image: <a href=3D"https://storage.googleapis.com/syzbot-assets/7c0c61a=
+15f60/disk-9fb2cfa4.raw.xz" rel=3D"noreferrer" target=3D"_blank">https://st=
+orage.googleapis.com/syzbot-assets/7c0c61a15f60/disk-9fb2cfa4.raw.xz</a><br=
+>
+vmlinux: <a href=3D"https://storage.googleapis.com/syzbot-assets/3363d84eeb=
+74/vmlinux-9fb2cfa4.xz" rel=3D"noreferrer" target=3D"_blank">https://storag=
+e.googleapis.com/syzbot-assets/3363d84eeb74/vmlinux-9fb2cfa4.xz</a><br>
+kernel image: <a href=3D"https://storage.googleapis.com/syzbot-assets/2b1a2=
+70af550/bzImage-9fb2cfa4.xz" rel=3D"noreferrer" target=3D"_blank">https://s=
+torage.googleapis.com/syzbot-assets/2b1a270af550/bzImage-9fb2cfa4.xz</a><br=
+>
+<br>
+IMPORTANT: if you fix the issue, please add the following tag to the commit=
+:<br>
+Reported-by: <a href=3D"mailto:syzbot%2B9f9a7f73fb079b2387a6@syzkaller.apps=
+potmail.com" target=3D"_blank">syzbot+9f9a7f73fb079b2387a6@syzkaller.appspo=
+tmail.com</a><br>
+<br>
+=C2=A0madvise_pageout_page_range mm/madvise.c:609 [inline]<br>
+=C2=A0madvise_pageout+0x326/0x820 mm/madvise.c:636<br>
+=C2=A0madvise_vma_behavior+0x58c/0x19e0 mm/madvise.c:1045<br>
+=C2=A0madvise_walk_vmas+0x1cf/0x2c0 mm/madvise.c:1274<br>
+=C2=A0do_madvise+0x29d/0x700 mm/madvise.c:1461<br>
+=C2=A0__do_sys_madvise mm/madvise.c:1477 [inline]<br>
+=C2=A0__se_sys_madvise mm/madvise.c:1475 [inline]<br>
+=C2=A0__x64_sys_madvise+0xa9/0x110 mm/madvise.c:1475<br>
+=C2=A0do_syscall_x64 arch/x86/entry/common.c:52 [inline]<br>
+=C2=A0do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83<br>
+------------[ cut here ]------------<br>
+kernel BUG at include/linux/page-flags.h:309!<br>
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI<br>
+CPU: 0 UID: 0 PID: 7269 Comm: syz.1.183 Not tainted 6.12.0-syzkaller-00233-=
+g9fb2cfa4635a #0<br>
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Goo=
+gle 10/30/2024<br>
+RIP: 0010:const_folio_flags.constprop.0+0x12e/0x150 include/linux/page-flag=
+s.h:309<br>
+Code: 86 cb ff e8 f4 86 cb ff 48 8d 45 ff 48 39 c3 0f 84 38 ff ff ff e8 e2 =
+86 cb ff 48 c7 c6 00 19 58 8b 48 89 df e8 e3 4b 11 00 90 &lt;0f&gt; 0b e8 6=
+b 0d 2d 00 e9 f1 fe ff ff e8 61 0d 2d 00 eb a3 48 89 df<br>
+RSP: 0018:ffffc9000c55ee30 EFLAGS: 00010293<br>
+RAX: 0000000000000000 RBX: ffffea0000496f80 RCX: ffffc9000c55ecd8<br>
+RDX: ffff88805f401e00 RSI: ffffffff81c1362d RDI: ffff88805f402244<br>
+RBP: 0000000000000001 R08: 0000000000000000 R09: fffffbfff203a591<br>
+R10: ffffffff901d2c8f R11: 0000000000000001 R12: 00000000000014df<br>
+R13: 0000000000000000 R14: dffffc0000000000 R15: 1ffff920018abdf4<br>
+FS:=C2=A0 00007f08b31bc6c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000=
+000000<br>
+CS:=C2=A0 0010 DS: 0000 ES: 0000 CR0: 0000000080050033<br>
+CR2: 000000c0025ff000 CR3: 00000000341ce000 CR4: 00000000003526f0<br>
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000<br>
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400<br>
+Call Trace:<br>
+=C2=A0&lt;TASK&gt;<br>
+=C2=A0folio_test_locked include/linux/page-flags.h:509 [inline]<br>
+=C2=A0next_uptodate_folio+0xac/0x4b0 mm/filemap.c:3505<br>
+=C2=A0filemap_map_pages+0x1c6/0x16a0 mm/filemap.c:3647<br>
+=C2=A0do_fault_around mm/memory.c:5255 [inline]<br>
+=C2=A0do_read_fault mm/memory.c:5288 [inline]<br>
+=C2=A0do_fault mm/memory.c:5431 [inline]<br>
+=C2=A0do_pte_missing+0xdae/0x3e70 mm/memory.c:3965<br>
+=C2=A0handle_pte_fault mm/memory.c:5766 [inline]<br>
+=C2=A0__handle_mm_fault+0x100a/0x2a10 mm/memory.c:5909<br>
+=C2=A0handle_mm_fault+0x3fa/0xaa0 mm/memory.c:6077<br>
+=C2=A0faultin_page mm/gup.c:1187 [inline]<br>
+=C2=A0__get_user_pages+0x8d9/0x3b50 mm/gup.c:1485<br>
+=C2=A0__get_user_pages_locked mm/gup.c:1751 [inline]<br>
+=C2=A0get_dump_page+0xfb/0x220 mm/gup.c:2269<br>
+=C2=A0dump_user_range+0x135/0x8c0 fs/coredump.c:943<br>
+=C2=A0elf_core_dump+0x2766/0x3840 fs/binfmt_elf.c:2121<br>
+=C2=A0do_coredump+0x2c42/0x4160 fs/coredump.c:758<br>
+=C2=A0get_signal+0x237c/0x26d0 kernel/signal.c:2903<br>
+=C2=A0arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:337<br>
+=C2=A0exit_to_user_mode_loop kernel/entry/common.c:111 [inline]<br>
+=C2=A0exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]<b=
+r>
+=C2=A0irqentry_exit_to_user_mode+0x13f/0x280 kernel/entry/common.c:231<br>
+=C2=A0asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623<br>
+RIP: 0033:0x1000<br>
+Code: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 =
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 &lt;00&gt; 00 00 0=
+0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00<br>
+RSP: 002b:000000000000010c EFLAGS: 00010246<br>
+RAX: 0000000000000000 RBX: 00007f08b41363b8 RCX: 00007f08b3f7e759<br>
+RDX: ffffffffff600000 RSI: 0000000000000104 RDI: 8000000000000000<br>
+RBP: 00007f08b3ff175e R08: 0000000100000000 R09: 0000000000000000<br>
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000<br>
+R13: 0000000000000000 R14: 00007f08b41363b8 R15: 00007fff7656a008<br>
+=C2=A0&lt;/TASK&gt;<br>
+Modules linked in:<br>
+---[ end trace 0000000000000000 ]---<br>
+RIP: 0010:const_folio_flags.constprop.0+0x12e/0x150 include/linux/page-flag=
+s.h:309<br>
+Code: 86 cb ff e8 f4 86 cb ff 48 8d 45 ff 48 39 c3 0f 84 38 ff ff ff e8 e2 =
+86 cb ff 48 c7 c6 00 19 58 8b 48 89 df e8 e3 4b 11 00 90 &lt;0f&gt; 0b e8 6=
+b 0d 2d 00 e9 f1 fe ff ff e8 61 0d 2d 00 eb a3 48 89 df<br>
+RSP: 0018:ffffc9000c55ee30 EFLAGS: 00010293<br>
+RAX: 0000000000000000 RBX: ffffea0000496f80 RCX: ffffc9000c55ecd8<br>
+RDX: ffff88805f401e00 RSI: ffffffff81c1362d RDI: ffff88805f402244<br>
+RBP: 0000000000000001 R08: 0000000000000000 R09: fffffbfff203a591<br>
+R10: ffffffff901d2c8f R11: 0000000000000001 R12: 00000000000014df<br>
+R13: 0000000000000000 R14: dffffc0000000000 R15: 1ffff920018abdf4<br>
+FS:=C2=A0 00007f08b31bc6c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000=
+000000<br>
+CS:=C2=A0 0010 DS: 0000 ES: 0000 CR0: 0000000080050033<br>
+CR2: 00007fff76568ff8 CR3: 00000000341ce000 CR4: 00000000003526f0<br>
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000<br>
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400<br>
+<br>
+<br>
+---<br>
+This report is generated by a bot. It may contain errors.<br>
+See <a href=3D"https://goo.gl/tpsmEJ" rel=3D"noreferrer" target=3D"_blank">=
+https://goo.gl/tpsmEJ</a> for more information about syzbot.<br>
+syzbot engineers can be reached at <a href=3D"mailto:syzkaller@googlegroups=
+.com" target=3D"_blank">syzkaller@googlegroups.com</a>.<br>
+<br>
+syzbot will keep track of this issue. See:<br>
+<a href=3D"https://goo.gl/tpsmEJ#status" rel=3D"noreferrer" target=3D"_blan=
+k">https://goo.gl/tpsmEJ#status</a> for how to communicate with syzbot.<br>
+<br>
+If the report is already addressed, let syzbot know by replying with:<br>
+#syz fix: exact-commit-title<br>
+<br>
+If you want syzbot to run the reproducer, reply with:<br>
+#syz test: git://repo/address.git branch-or-commit-hash<br>
+If you attach or paste a git patch, syzbot will apply it before testing.<br=
+>
+<br>
+If you want to overwrite report&#39;s subsystems, reply with:<br>
+#syz set subsystems: new-subsystem<br>
+(See the list of subsystem names on the web dashboard)<br>
+<br>
+If the report is a duplicate of another one, reply with:<br>
+#syz dup: exact-subject-of-another-report<br>
+<br>
+If you want to undo deduplication, reply with:<br>
+#syz undup<br>
+<br>
+-- <br>
+You received this message because you are subscribed to the Google Groups &=
+quot;syzkaller-bugs&quot; group.<br>
+To unsubscribe from this group and stop receiving emails from it, send an e=
+mail to <a href=3D"mailto:syzkaller-bugs%2Bunsubscribe@googlegroups.com" ta=
+rget=3D"_blank">syzkaller-bugs+unsubscribe@googlegroups.com</a>.<br>
+To view this discussion visit <a href=3D"https://groups.google.com/d/msgid/=
+syzkaller-bugs/674184c9.050a0220.1cc393.0001.GAE%40google.com" rel=3D"noref=
+errer" target=3D"_blank">https://groups.google.com/d/msgid/syzkaller-bugs/6=
+74184c9.050a0220.1cc393.0001.GAE%40google.com</a>.<br>
+</blockquote></div>
+
+--000000000000cfa7140627b7cff0--
+--000000000000cfa7150627b7cff2
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="20001-fix-kernel-BUG-in-const_folio_flags-2.patch"
+Content-Disposition: attachment; 
+	filename="20001-fix-kernel-BUG-in-const_folio_flags-2.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m3wptffr0>
+X-Attachment-Id: f_m3wptffr0
+
+RnJvbSAyNmI4OTJkMTE2ZmFiZDAzOTVkZTRkY2RkYmViMmRmZGJkNGE3NDI2IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBTdXJhaiBTb25hd2FuZSA8c3VyYWpzb25hd2FuZTAyMTVAZ21h
+aWwuY29tPgpEYXRlOiBNb24sIDI1IE5vdiAyMDI0IDEyOjIyOjEyICswNTMwClN1YmplY3Q6IFtQ
+QVRDSF0gZml4IGtlcm5lbCBCVUcgaW4gY29uc3RfZm9saW9fZmxhZ3MgKDIpCgpzeXogdGVzdAoK
+U2lnbmVkLW9mZi1ieTogU3VyYWogU29uYXdhbmUgPHN1cmFqc29uYXdhbmUwMjE1QGdtYWlsLmNv
+bT4KLS0tCiBpbmNsdWRlL2xpbnV4L3BhZ2UtZmxhZ3MuaCB8IDYgKysrKysrCiAxIGZpbGUgY2hh
+bmdlZCwgNiBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9wYWdlLWZs
+YWdzLmggYi9pbmNsdWRlL2xpbnV4L3BhZ2UtZmxhZ3MuaAppbmRleCA5MDhlZTBhYWQuLmFiNTYy
+ZmY0NSAxMDA2NDQKLS0tIGEvaW5jbHVkZS9saW51eC9wYWdlLWZsYWdzLmgKKysrIGIvaW5jbHVk
+ZS9saW51eC9wYWdlLWZsYWdzLmgKQEAgLTMwNiw2ICszMDYsMTIgQEAgc3RhdGljIGNvbnN0IHVu
+c2lnbmVkIGxvbmcgKmNvbnN0X2ZvbGlvX2ZsYWdzKGNvbnN0IHN0cnVjdCBmb2xpbyAqZm9saW8s
+CiB7CiAJY29uc3Qgc3RydWN0IHBhZ2UgKnBhZ2UgPSAmZm9saW8tPnBhZ2U7CiAKKwlsb25nIGlu
+dCBucl9wYWdlcyA9IGZvbGlvX25yX3BhZ2VzKGZvbGlvKTsKKwlpZiAobiA+PSBucl9wYWdlcykg
+eworCQlwcl9lcnIoIkludmFsaWQgZm9saW8gaW5kZXg6IG49JXUsIGZvbGlvX25yX3BhZ2VzPSV1
+XG4iLCBuLCBmb2xpb19ucl9wYWdlcyhmb2xpbykpOworCQlyZXR1cm4gLUVJTlZBTDsKKwl9CisK
+IAlWTV9CVUdfT05fUEdGTEFHUyhQYWdlVGFpbChwYWdlKSwgcGFnZSk7CiAJVk1fQlVHX09OX1BH
+RkxBR1MobiA+IDAgJiYgIXRlc3RfYml0KFBHX2hlYWQsICZwYWdlLT5mbGFncyksIHBhZ2UpOwog
+CXJldHVybiAmcGFnZVtuXS5mbGFnczsKLS0gCjIuMzQuMQoK
+--000000000000cfa7150627b7cff2--
 
