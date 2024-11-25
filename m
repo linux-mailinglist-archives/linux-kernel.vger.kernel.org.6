@@ -1,101 +1,159 @@
-Return-Path: <linux-kernel+bounces-421398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC9769D8AE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:02:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 785CF9D8AAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:55:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2278D289FA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:02:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CE081689F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD9C1B6CF6;
-	Mon, 25 Nov 2024 17:02:23 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010411B3930;
-	Mon, 25 Nov 2024 17:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6FF1B6CEB;
+	Mon, 25 Nov 2024 16:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K6m4bXD7"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD08E1B0F15;
+	Mon, 25 Nov 2024 16:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732554143; cv=none; b=KXOz57Y3XQS8S866AIaiThujShrbLrQwqxRhpl14AwxJBsdasbtlnCVS6cu4KH8emwMz08GgJNUbrzdqWDfUOX/TTe1+n9tJmrcI+nWdPpUCaCcSvEL/PYixQGuKHuERttDH/XyTINFOCdvYY1O14q0JigTV6S2zVCqYVx3akzY=
+	t=1732553711; cv=none; b=qHhwafqRNsyqzDqx3nAAYiZghVteiZdm7wIjGXCXiL5mkZjl93cO53riHfwL12jfLUDzAyg3fxlgYVOD6zPEWmVBKHpn9KoaUD2TK5JSUVvxHpInWDZFewDB12Y2O+yLL/x+7FKdBCap6pI/LUDMKtdF0qqKNsSxCw6I6tvYKkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732554143; c=relaxed/simple;
-	bh=4/SIKWMo3PgwM8oMuJ2GgHkJIaJAXvE90KQc+A/BcBc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=kaX5/SxTW/Oeu6al++Yry8sX0vSn6Zvy/65ZD+XGX4Ee8dDvgh6mZNpfwMmvjJbJdM6ldvgL6TRQwcsoOhAyM/T1OSEfS4YFsj+nqwmiYwrF2oTjzmbiu8ZnNIKlpOK6imUBkpk7/vjeVfO8ecSA6PbxF34a+NK+Xv9Wm1BsBGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id DEA8A92009C; Mon, 25 Nov 2024 17:54:11 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id DA07C92009B;
-	Mon, 25 Nov 2024 16:54:11 +0000 (GMT)
-Date: Mon, 25 Nov 2024 16:54:11 +0000 (GMT)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Arnd Bergmann <arnd@kernel.org>
-cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-    Guenter Roeck <linux@roeck-us.net>, 
-    Niklas Schnelle <schnelle@linux.ibm.com>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Jiri Slaby <jirislaby@kernel.org>, 
-    =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-    linux-serial@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>, 
-    linux-kernel@vger.kernel.org, Yang Yingliang <yangyingliang@huawei.com>
-Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
-In-Reply-To: <1a7da799-f15b-4714-a3bd-4c0b1f48fc09@app.fastmail.com>
-Message-ID: <alpine.DEB.2.21.2411251628320.44939@angie.orcam.me.uk>
-References: <20240405152924.252598-2-schnelle@linux.ibm.com> <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net> <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com> <472eb22a-dcb1-4fbb-bf2c-a4173706bc7a@app.fastmail.com>
- <27685942-fb62-44c5-86ed-98beb547ffed@roeck-us.net> <744920ba-551c-466b-ac5c-2607b81261a0@app.fastmail.com> <Z0QtZky8Sr7qUW7v@smile.fi.intel.com> <00f5e842-3ee9-4d83-8836-0ff4f703fa3c@app.fastmail.com> <Z0RSZ-YD_BozMs1n@smile.fi.intel.com>
- <be43108e-4135-4927-ba58-141836fde6af@app.fastmail.com> <Z0Re61Tk5lN2Xuxi@smile.fi.intel.com> <1a7da799-f15b-4714-a3bd-4c0b1f48fc09@app.fastmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1732553711; c=relaxed/simple;
+	bh=+a0pZS2lWqZSlu33D1ccUnxq7uVqXrjVeP02nmmIABM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WyMZrwYPoxb5H6X5HiQonGwsdz2CcoXSMJp8uS2LjwwCO3tKQ/L9RsMfTn9zXJKVBkZA4wR0jyCuPlcVcGcPdWmfQYk7kY9RQ3W0YBJa10EhuaUwFcy4spC2nNmGsUlwESgmF6RqX78omGaOIL1Ojs1Q1IM0CjomtwbVcSg6PBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K6m4bXD7; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4316a44d1bbso42768925e9.3;
+        Mon, 25 Nov 2024 08:55:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732553708; x=1733158508; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y1e6I4plSDngJ//b0GeYuFdjW4/93fbKbdHUyBRYwFo=;
+        b=K6m4bXD7nSiKQMBeGy7GnSin9Kax6j5OwpdHBACyvERfSw7N0OYuCoijy3axBUNNh5
+         /NPXks3OTVT5hxktG1oESOiHY+X8E5SoFk2N6fMSJF+d21208QBQwXUtBO+uLEO4k5aE
+         IlbvYtDNEkwz5pW+ycCCpb60x4D+WWrToND+ccHr+1q/QJhLzg1+ZTNRc4A//zDGUT/o
+         /A0UoAuehgxtY0TkNkZtsiLp1HOeNVSHxwJWEEgcBY9x5RITKDfRoCUo2a3SStG2otDv
+         A0WwpRcViTyNx1SqS+eSvALJPB6nsfQsfyDapr+eli5iHsD4Q9rHQB7Alscyt1wVfBaz
+         odTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732553708; x=1733158508;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y1e6I4plSDngJ//b0GeYuFdjW4/93fbKbdHUyBRYwFo=;
+        b=qMA20elopTAKKtNKe/Suq95wfv5I69QBNcHG3diXEzF5psHXmuVYor82+3g6t9hBFs
+         MuSDpCjOy1b1JNVbRiBcdPoUY4DSfUg9Dh8UgHfUnwceUAWOAqvjhPFIFo/YiBApNgwd
+         3VhJ3j/FyMcvhecPB7N5IFTNYG328KTvGTGhx3ijXeHWWmvN6q1A5MpvDnRbGsksN3VZ
+         3l+WhAm/lUmcDhb6XRwEKjoMTkI4IOWM9XIGgOKwBkRGx8olYBEoD4EXM9rU1BhO2v6X
+         q/2QH7AsbMi1LGj97UG0lwltlQ4v4FayPqitLFoO94+JfzsbE6x7Gd7JVDCZg3CIJo4L
+         3LEg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSFIH4F1lP9ofJqpm/437+YBWYqC1eHYqCq2+sMm9l8SCZ+RrXid/DdAVIUbukv92Z7S2a2vyNlskNKp5179Q=@vger.kernel.org, AJvYcCWus5VoPw6fN38SrbyTnr6qCHNlmjeuTkNIy3/SaUft9+DA7uIwyf7ZOTzj2z4lbbwVAMMS50GUopqS@vger.kernel.org, AJvYcCXpWVPpdj3D2SInyAFzSMPS9rVR4URvjrnUthZBwV52XXDtI3W7yO5MuLuChOrnWOreD0w9fGE7xYRAnuvI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw62Nz/A585o0oOAKg5dME3agf3KOBBl8uaZlxLDr0QxEPEgkQw
+	GOBGvdc02/+F2OKFFAVcujoCCv0HqoRQWmwZWlkpeBXljWrn4DJj
+X-Gm-Gg: ASbGnctLUleiTBMNds9Uk/4GFyjRu4ANCZphfmp/jvKzWQfvFZ0wsU9ETlpnxtBhnvD
+	WM5jfo8vGlEb+FhvsCv3X0qEn/2VL/WqPUbigz9oOsUYVVVGZLuTWzhpIbuCA7iVl7hP1BCsdHb
+	YhPuXqs1sZ41mjfIx+u36zjfW9FuKjw8ZIN/VuwePU8Y+JiTIMQrHwk6mMILHyJzC6Jo3gO1kyo
+	WZei5tWxa33X/z6Amwvnhsvg/9s+JTUKm7WvH322rZ+NuGNUJ0V/102Fu4Ps0KJCeRut6rvyu1m
+	to6AsVM6tXMJunWq2cnY8Q94aoX3ikCRr8wLh/+UWmXdRtnIrlXR13Wi+F/NK8r705sv9qDHqc3
+	hL70=
+X-Google-Smtp-Source: AGHT+IHcHez04x+2UBFPsY0MEQtZz1yMSZy3M2bsqI9vo6NcLRLlcDYUkZQtCjEOmGo/SjwWMUB4gA==
+X-Received: by 2002:a05:600c:4fd6:b0:434:a1d3:a326 with SMTP id 5b1f17b1804b1-434a1d3a436mr19177275e9.6.1732553707801;
+        Mon, 25 Nov 2024 08:55:07 -0800 (PST)
+Received: from ?IPV6:2003:df:bf0d:b400:df4b:11b0:899:faa8? (p200300dfbf0db400df4b11b00899faa8.dip0.t-ipconnect.de. [2003:df:bf0d:b400:df4b:11b0:899:faa8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b01e103bsm204792825e9.9.2024.11.25.08.55.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 08:55:07 -0800 (PST)
+Message-ID: <4d179a7a-3cf3-451c-9718-d20da6db69f6@gmail.com>
+Date: Mon, 25 Nov 2024 17:55:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 1/1] rust: Add bindings for device properties
+To: Rob Herring <robh@kernel.org>, Dirk Behme <dirk.behme@de.bosch.com>
+Cc: Saravana Kannan <saravanak@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+References: <20241122081257.1776925-1-dirk.behme@de.bosch.com>
+ <CAL_JsqJ-cFq4jyFDnCWKy1b+7pNt8Tb11QF8vGoMb2G_4=dpBw@mail.gmail.com>
+Content-Language: de-AT-frami, en-US
+From: Dirk Behme <dirk.behme@gmail.com>
+In-Reply-To: <CAL_JsqJ-cFq4jyFDnCWKy1b+7pNt8Tb11QF8vGoMb2G_4=dpBw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 25 Nov 2024, Arnd Bergmann wrote:
+Hi Rob,
 
-> > But the configuration can give less than old_serial_port contains.
-> > See dozens of the explicit settings in the defconfigs.
+On 25.11.24 16:35, Rob Herring wrote:
+> On Fri, Nov 22, 2024 at 2:13 AM Dirk Behme <dirk.behme@de.bosch.com> wrote:
+>>
+>> From: "Rob Herring (Arm)" <robh@kernel.org>
+>>
+>> The device property API is a firmware agnostic API for reading
+>> properties from firmware (DT/ACPI) devices nodes and swnodes.
+>>
+>> While the C API takes a pointer to a caller allocated variable/buffer,
+>> the rust API is designed to return a value and can be used in struct
+>> initialization. Rust generics are also utilized to support different
+>> sizes of properties (e.g. u8, u16, u32).
+>>
+>> To build and run the Examples as `rustdoc` tests the kernel Kconfig
+>> options `CONFIG_OF` and `CONFIG_OF_UNITTEST` need to be enabled
+>> additionally. Besides the default `rustdoc` test options
+>> `CONFIG_KUNIT` and `CONFIG_RUST_KERNEL_DOCTESTS`. This even works
+>> on non-ARM architectures as a test device tree is built into the
+>> kernel, then.
+>>
+>> The Integer trait is proposed by Alic Ryhl [1].
+>>
+>> Link: https://lore.kernel.org/rust-for-linux/CAH5fLgiXPZqKpWSSNdx-Ww-E9h2tOLcF3_8Y4C_JQ0eU8EMwFw@mail.gmail.com/ [1]
+>> Co-developed-by: Dirk Behme <dirk.behme@de.bosch.com>
+>> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+>> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+>> ---
+>>
+>> This is an update of Rob's initial patch
 > 
-> I don't see any of the upstream defconfigs doing this
-> though, the only ones setting CONFIG_SERIAL_8250_RUNTIME_UARTS
-> are those that have an empty old_serial_port[]. 
-> 
-> Note that SERIAL_PORT_DFNS is only defined on x86, alpha
-> and m68k (for q40), which are the main PC-like platforms.
+> I have my own updates on it based on the discussion. It's a bit
+> different because I've reworked the C API to better mesh with Rust
+> needs. 
 
- May I suggest to call `serial8250_isa_init_ports':
+Great, that sounds really good!
 
-	if (IS_ENABLED(CONFIG_ISA) || IS_ENABLED(CONFIG_ALPHA) ||
-	    IS_ENABLED(CONFIG_M68K) || IS_ENABLED(CONFIG_X86))
+> I just haven't sent it out because I've been busy with other
+> things and it's the merge window.
 
-then (or have an equivalent `select' in the relevant Kconfig files)?
+No problem and totally understood!
 
- The whole point of this legacy setup is to poke at ISA serial ports that 
-have been wired by jumpers or similar means (sometimes just hardwired) to 
-their designated ISA port I/O locations.  Sometimes it means LPC rather 
-than real ISA, but LPC stuff should mostly be covered by platform bindings 
-rather than just blind poking, which may only be needed for platforms that 
-have some kind of a generic config and no DT or other way (such as ACPI or 
-ISA PNP) to discover actual ports.
+> You asked me if I was going to work on this and I did. If you want to
+> do it, just say so. I'm always happy for less work.
 
-> I see that all three have identical definitions of
-> SERIAL_PORT_DFNS, so I think these should just be moved
-> next to the __serial8250_isa_init_ports definition, with
-> the entire thing moved into a separate ISA driver or
-> an #ifdef around it. This is of course not the problem
-> at hand, but it would help separate the x86/isa and
-> non-x86 platform device cases further.
+Sorry! I have worked on the review comments and thought sharing them
+might help. If this is not the case, then sorry again. Of course,
+please share what you have. And ignore this one, then.
 
- This SERIAL_PORT_DFNS definition is just original ISA stuff, so it does 
-apply universally across CONFIG_ISA platforms.  Original ISA option cards 
-have had no way to discover other than by blind-poking (or giving port I/O 
-locations by hand via a kernel parameter).
+Thanks
 
-  Maciej
+Dirk
+
+
 
