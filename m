@@ -1,117 +1,133 @@
-Return-Path: <linux-kernel+bounces-420575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A5E09D7CCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:20:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AB751627FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:20:51 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C2D188704;
-	Mon, 25 Nov 2024 08:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="p0bGCS2L"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CFBB9D7CD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:22:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27CE1A296;
-	Mon, 25 Nov 2024 08:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33450281C96
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:22:20 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7C118A6C1;
+	Mon, 25 Nov 2024 08:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPXbVsMS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852D31891AB
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 08:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732522847; cv=none; b=rQocgxcJaVDlv63+MKgGzSFTPcZpA8BdAGHVValem7O153IFtJeWoDY+xaDEB8fympJqTaiREl5aImxwbb+3Xl77PqPUyLaZQharhjeH+hNv3LbjVU9At68ZplgzuqAgk1KzGCp4QcPcJjN7lVvzumrZVshiXD4vXj5XNsdAGsQ=
+	t=1732522925; cv=none; b=rKFNKuHkcSLYGJTLhiiAO+r/T4uS5eX7ET+2GPMdq+qPI6t5/WIpgcP4cZNE9J2RO1Tisps0bYL/AFlIf4NdegekwFG6agkLVaxLeE1fpXDpRy0sFCPnx/BtunVST5h9KxzezCgtuRT6qU4etFSYBJMX2nelKO9znMMAmAo6JJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732522847; c=relaxed/simple;
-	bh=tuFGzuKT9Kp+P4m5tTUOZPtcMxp0g2nRys84C2P3StE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g0BjAQMuyBqvvrIrOaPBco4JDINmC64RafvlRnSc0Rl4UD4QqQmZMWuJ7RcX4OhgBujT7WcFCMsblt/YN35zRnuvUZuWhG8dJFUESRLoFFxiS8ENs8vNVUDVkE3YUzLKI6nIQPPJpr84IvWC2vjm5xNeeX+NkJ2WbTkPEAd7ejM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=p0bGCS2L; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1732522839;
-	bh=tuFGzuKT9Kp+P4m5tTUOZPtcMxp0g2nRys84C2P3StE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p0bGCS2LNemliJfdmxMqG9vlusdYA7kTxyNQaWFWmsCVbYVnbVpOFCxkHXUg0uaVC
-	 CQUyna8F5V6HlTf0Uc7dCxD2AsUi8JT7jXdcwy6cYDo/N0pH2Y/2W8XzTlgbuXLrjJ
-	 jSmZBju27GRXD4w5l7yo81d4b6CFkDkx4/o1bJ1g=
-Date: Mon, 25 Nov 2024 09:20:37 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>
-Subject: Re: [PATCH 3/3] kbuild: propagate CONFIG_WERROR to resolve_btfids
-Message-ID: <f7764e9b-6254-42af-94b8-41562a18b58b@t-8ch.de>
-References: <20241123-resolve_btfids-v1-0-927700b641d1@weissschuh.net>
- <20241123-resolve_btfids-v1-3-927700b641d1@weissschuh.net>
- <CAADnVQL4_8-Y0O3Gar-+q7XKMU6_tY8atEddWB2KsR+DCUZ7WQ@mail.gmail.com>
+	s=arc-20240116; t=1732522925; c=relaxed/simple;
+	bh=xROjWPEhO8+wkfJVqdO4Z/wOTCC1ASqUQ4sOHICwTIM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VaQQvcFT6CnL1CQ+ZsvFzHplEBuusU/DD0sOGyp/9zzzgwKSIpHdSjq2FnEZ7GhOP3gqxzdkLK/0SgbsEYNkgXxjODE1qD5Ze208unVqzHVLHnb8ctEanEJfnWt59/ouL/WvzlOePY/bDxa651ueeu2XbbCYtbxyQRVn3OpF+CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vPXbVsMS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18BD5C4CED1
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 08:22:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732522925;
+	bh=xROjWPEhO8+wkfJVqdO4Z/wOTCC1ASqUQ4sOHICwTIM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=vPXbVsMSgjg6yItDcx3gMsSTTxoVmXkc3IQRIoWnDkioaWRihfzBqdkyX1qCoHGpR
+	 hau6ISDi0Un+OK3JCqXX0RNwKXK5SfdiWiMS3VcRa2HbrwmzYgUZe9U4rVUgViQ2z3
+	 eQumzoBWtKglY9sl9x2vo07sX6siYmX2GratoO4FuDDh8ra7bc5CVkYw7+rrD7asiZ
+	 hsCkM37WttIr2Y8lhgAtiEimCrdnlEdbMKXhQfHtsh0kcGgCJgmStLY+IaLMZARIFp
+	 VceieibakAYunYJ/+bcLxaF/UaslpNPdAK4cQ9PoM+a55E3+Rpaw8IK5HriNSFFkfH
+	 LZAUrnTK7xEUg==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53de50a3885so537596e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 00:22:05 -0800 (PST)
+X-Gm-Message-State: AOJu0YyXiMDeIGDesSZ8kSvrQ74ITpQQXE3ZO+a+T7Ghn74USx2thhEI
+	LU9yrHRH2l/vZAvLhOPnJ2YFUx88UZbqoxq4dtBUQhd3p3fM/zF/lQix/4yXvQ6vBDe9X2KH7TS
+	qTuUQzJhhbYPYCziNpoSQF63OSQY=
+X-Google-Smtp-Source: AGHT+IG707/fdlHfFmqYMxh/2ER+J1Pc/fc+RV0pBKBj/TXSJmLTnJZZVDG9t7lA4XqdCRDPoJkMEKRacdW6ZShbAnA=
+X-Received: by 2002:a05:6512:3195:b0:53d:dda2:e8fc with SMTP id
+ 2adb3069b0e04-53ddda2e95bmr1898915e87.21.1732522923506; Mon, 25 Nov 2024
+ 00:22:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQL4_8-Y0O3Gar-+q7XKMU6_tY8atEddWB2KsR+DCUZ7WQ@mail.gmail.com>
+References: <20241125072308.421686-1-lizhijian@fujitsu.com>
+In-Reply-To: <20241125072308.421686-1-lizhijian@fujitsu.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 25 Nov 2024 17:21:26 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASAfvb4Z59QF8cBgFJPLhi-dfOGYwB_J5+1GGanYTe-Aw@mail.gmail.com>
+Message-ID: <CAK7LNASAfvb4Z59QF8cBgFJPLhi-dfOGYwB_J5+1GGanYTe-Aw@mail.gmail.com>
+Subject: Re: [PATCH] gitignore: Don't ignore 'tags' directory
+To: Li Zhijian <lizhijian@fujitsu.com>
+Cc: linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>, 
+	Kris Van Hees <kris.van.hees@oracle.com>, rostedt@goodmis.org, 
+	kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-11-24 15:38:40-0800, Alexei Starovoitov wrote:
-> On Sat, Nov 23, 2024 at 5:33 AM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> >
-> > Use CONFIG_WERROR to also fail on warnings emitted by resolve_btfids.
-> > Allow the CI bots to prevent the introduction of new warnings.
-> >
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > ---
-> >  scripts/link-vmlinux.sh | 6 +++++-
-> >  1 file changed, 5 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-> > index a9b3f34a78d2cd4514e73a728f1a784eee891768..61f1f670291351a276221153146d66001eca556c 100755
-> > --- a/scripts/link-vmlinux.sh
-> > +++ b/scripts/link-vmlinux.sh
-> > @@ -274,7 +274,11 @@ vmlinux_link vmlinux
-> >  # fill in BTF IDs
-> >  if is_enabled CONFIG_DEBUG_INFO_BTF; then
-> >         info BTFIDS vmlinux
-> > -       ${RESOLVE_BTFIDS} vmlinux
-> > +       RESOLVE_BTFIDS_ARGS=""
-> > +       if is_enabled CONFIG_WERROR; then
-> > +               RESOLVE_BTFIDS_ARGS=" --fatal-warnings "
-> > +       fi
-> > +       ${RESOLVE_BTFIDS} ${RESOLVE_BTFIDS_ARGS} vmlinux
-> 
-> I'm not convinced we need to fail the build when functions are renamed.
-> These warns are eventually found and fixed.
+On Mon, Nov 25, 2024 at 4:23=E2=80=AFPM Li Zhijian <lizhijian@fujitsu.com> =
+wrote:
+>
+> LKP reported warnings [1] regarding files being ignored:
+>    tools/testing/selftests/arm64/tags/.gitignore: warning: ignored by one=
+ of the .gitignore files
+>    tools/testing/selftests/arm64/tags/Makefile: warning: ignored by one o=
+f the .gitignore files
+>    tools/testing/selftests/arm64/tags/tags_test.c: warning: ignored by on=
+e of the .gitignore files
+>
+> These warnings were generated by ./scripts/misc-check. Although these fil=
+es
+> are tracked by Git and the warnings are false positives, adjusting the
+> .gitignore entries will prevent these warnings and ensure a smoother scri=
+pt
+> execution.
 
-The same could be said for most other build warnings.
-CONFIG_WERROR is a well-known opt-in switch for exactly this behavior.
+You do not need to mention a special tool because you can see them
+when building the kernel with W=3D1.
 
-Fixing these warnings before they hit mainline has various
-advantages. The author introducing the warning knows about the full
-impact of their change, discussions can be had when everybody still
-has the topic fresh on their mind and other unrelated people don't get
-confused, like me or [0].
-
-The "eventually fixed" part seems to have been me the last two times :-)
-
-Given the fairly simple implementation, in my opinion this is worth doing.
-
-Please note that I have two fairly trivial changes for a v2 and would
-also like to get some feedback from Masahiro, especially for patch 1.
+You can say "Building the kernel with W=3D1 shows ..."
 
 
-Thomas
 
-[0] https://lore.kernel.org/lkml/20241113093703.9936-1-laura.nao@collabora.com/
+>
+> [1] https://lore.kernel.org/linux-kselftest/202411251308.Vjm5MzVC-lkp@int=
+el.com/
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+> ---
+>  .gitignore | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/.gitignore b/.gitignore
+> index 56972adb5031..e63dbba823cd 100644
+> --- a/.gitignore
+> +++ b/.gitignore
+> @@ -130,6 +130,9 @@ series
+>  tags
+>  TAGS
+
+Unfortunately, GIT does not support "only match to regular files",
+but you can make the intention clearer:
+
+
+# ctags files
+tags
+!tags/
+TAGS
+
+
+
+You can add "!tags/" right below "tags".
+Then, your comment is unnecessary.
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
