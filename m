@@ -1,145 +1,154 @@
-Return-Path: <linux-kernel+bounces-420811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D839D8358
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:27:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6B399D8429
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:16:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA918B23697
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:21:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E864B256B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80F01917F9;
-	Mon, 25 Nov 2024 10:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335DA18FC70;
+	Mon, 25 Nov 2024 10:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MifKZJkE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XNYZ2/Yp"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C77314375C
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 10:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229ED2AD17
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 10:22:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732530068; cv=none; b=ZD/snoIg1uMENcxIez+UJ9Nq1BXZ11fCiFMa5y39WuANmnhqNQzEm6n9jfSHiUMovp1qAzJiGYEH1e/N9SiJ+D0qC2bTvGGs+xilyWt40SvffC8Z8qbyoTvD/r6XJWMKEp3VLP4OMIFCeeF1r4TiDBCpXMdo8uEUhLi+vDbSuLw=
+	t=1732530166; cv=none; b=m+XWgc5Frkwsc0nVPYQKli3D+k29aakWGirNgXZmFY5OHONEoNSn6Cx3OEGvsNlxKHS6rE1b0XSjlIAb69DGlMN2XFgQfy7Mawl30DvyywUnM0NGgaMylyyuIxu47H5VwWi8V4NsnWdGyahB4s/3YlPU6x5SVCE+/DAFByS8Ba8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732530068; c=relaxed/simple;
-	bh=xpvBYbkskz9nfzZeBeLFJGvW3z7Q9Lc5XNvoSkh4TFA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kP6rxvuQkdlOBYkiPSGw1GxkMzDsJqwrhgYmmwMcWnXKkVokPSEOTHU9PfwBmYR4TG1tC9l6JtofsEeH6821fnpXwn+ZQMk0qqoMOcjakAYNEyqkZ9CpCPrtBkioCXAB8z0S83WP8Mtd71cd7c1OXUbIfjF59D1YQkW2QVcL5dQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MifKZJkE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732530065;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=n67Q0KoljJvBSt9cf1LGCKowbJla5BRsh7Nzu+TSZUQ=;
-	b=MifKZJkEV17oDxzYALKNMwPNmT1EAcOAL1epwACmksWK/C+96vASp7po9RRAhp+0BF6PZx
-	aWsGfz/nld5QVWEzUoly8eUNp/SWg+PEP6ruyFVfJLarT1gUYehN7mpQYyc3jh5u2s0MYc
-	RwNDkII3y334MlXkKJqoMaXi18UHNj0=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-140-nenB_5tyPBenD1nLgp1IkQ-1; Mon,
- 25 Nov 2024 05:21:01 -0500
-X-MC-Unique: nenB_5tyPBenD1nLgp1IkQ-1
-X-Mimecast-MFC-AGG-ID: nenB_5tyPBenD1nLgp1IkQ
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	s=arc-20240116; t=1732530166; c=relaxed/simple;
+	bh=kzYf+6PScgXD4sI6yVpCX7oxhaUPc52Ia/vLyPOEo1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eUeQo5EEOAX6mGHMgDuOKhDB0y985vhPPUC/YcL75VdjlW1nVlFEYF+Qx+w5Me4rz17KGhEfnd8QdDEiixQeNb7mRGG3TMMcW6PNMIT591G2zRmDdCepIiB7dPm0Ohfi7gb03gAFtJU92HXpmNmAP0ed9G/Ornzqb1Htat8myMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XNYZ2/Yp; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 84CEE40E0163;
+	Mon, 25 Nov 2024 10:22:41 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id W2qTVURu9ady; Mon, 25 Nov 2024 10:22:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1732530154; bh=CicIqlTfk/RV9e9jhUxJ8Q4nlFktb1GQ71aDtqFOiMU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XNYZ2/Ypu6kSG+430qUE/SnvgfAik/Fo6s69E05Jp+hjoa0SeFj3zAJKPogoRFPwA
+	 Lvxli8sNHct+3/t6kCBQywrL0sCHLpquXytisdze7Y7jBeES6HGlid9S+9svF1pvA2
+	 cZcpo0tmXJhfGmW51e4VT++BTx6USr+gQLNwXWigs70U2fhw4zgEBD9b6Yuqnm2xW7
+	 Qr3j591COh8HRVqRMyXOB8BQC8n8f5DF+3jJ+9PRIf0z6QjZmzseD0rj+tRuUhtSZn
+	 dWNSIfMykuJv02SAE58CWOk6I1y2nTswZ94bsoMzPEFpkW9NYdVlR3WQ4SjcHZ9pSn
+	 OatvrWyuvyN4rIh38Ep0+w/FJihKdTZKrn1xqUF4jlV2t+uVrJPgZwwMDWkPudEbfq
+	 wxRfa+WeZ9nNBFNVhkCYA7ZV5wDZggeHhlZb5cAgcSpIbmpQyO/WnSIzafzjA4S9/B
+	 +uDgKAr+GMdl5Ah+RiS0tat4xzmMWeAkAkY/+BVV6HO18YGr467zj/Lx8hdejrkCRm
+	 ErbEBbC4pkjScf4bbcxdMWAm9CC7sqwN9WPjUiAknPpPi7A4x6FYDpV/wQ6uwno9pE
+	 l2Vd59mDPqe3nEfZG8PpjpkrkuZYkaaS31a9XZsrPYFify7kzVj8UzaP052tPLutCG
+	 s+AlBkrkNZJygfw7Fi9KsucE=
+Received: from zn.tnic (p200300ea9736a192329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:9736:a192:329c:23ff:fea6:a903])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 29BCC19560A1;
-	Mon, 25 Nov 2024 10:21:00 +0000 (UTC)
-Received: from pasta.fast.eng.rdu2.dc.redhat.com (unknown [10.45.225.117])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8907E1956052;
-	Mon, 25 Nov 2024 10:20:58 +0000 (UTC)
-From: Andreas Gruenbacher <agruenba@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andreas Gruenbacher <agruenba@redhat.com>,
-	gfs2@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] gfs2 changes for 6.13
-Date: Mon, 25 Nov 2024 11:20:56 +0100
-Message-ID: <20241125102057.1505150-1-agruenba@redhat.com>
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6AF6140E0269;
+	Mon, 25 Nov 2024 10:22:30 +0000 (UTC)
+Date: Mon, 25 Nov 2024 11:22:23 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] x86/boot: Get rid of linux/init.h include
+Message-ID: <20241125102223.GBZ0RP375DufF0QQds@fat_crate.local>
+References: <20241122163139.GAZ0Cx63Ia9kgYgRIr@fat_crate.local>
+ <Z0C3mDCngAf7ErM2@gmail.com>
+ <20241122170227.GAZ0C5I-F8AUpwCAcG@fat_crate.local>
+ <Z0Q0PJzTMg_Or22I@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z0Q0PJzTMg_Or22I@gmail.com>
 
-Dear Linus,
+On Mon, Nov 25, 2024 at 09:24:28AM +0100, Ingo Molnar wrote:
+> And if someone doesn't add the ugly KERNEL_PROPER_HEADER defines to a 
+> new header that somehow gets included into the decompressor build 
+> virally, it won't fire either. I think it's better to concentrate the 
+> uglies in the 'weird' code, ie. the decompressor.
 
-please consider pulling the following gfs2 changes.
+Yes, I'd need to think of something slicker...
+ 
+> Also, what's the root problem being solved? The changelog says:
+> 
+>    > no collisions and ugly ifdeffery when those kernel proper headers 
+>    > get shared.
+> 
+> But that's pretty vague - is there some recent build regression this is 
+> responding to? Which kernel headers collided with which headers used by 
+> the decompressor build?
 
-The top two commits have only been added to for-next a couple of days ago; they
-fix a NULL pointer dereference in a previous patch in this pull request and an
-unlikely race in the same code.  These fixes have passed several days of heavy
-testing, so I hope you can agree to including them.
+The sharing of headers has always been a PITA. Because the decompressor is
+different from kernel proper, the moment you start including kernel proper
+headers for functionality, you need to exempt or add ifdeffery or do some
+other weird dance to be able to share those headers.
 
-Thanks,
-Andreas
+Things like below are only some examples.
 
-The following changes since commit 721068dec4ec3cc625d8737d4dfa0ff0aa795cd1:
+So I'd like to separate the two namespaces and only share common functionality
+through asm/shared/ and avoid all that ugly ifdeffery and workarounds we're
+doing. Because each time we have to touch the decompressor - and we get to
+touch it a lot with the confidential computing stuff recently - it is like
+a house of cards.
 
-  Merge tag 'gfs2-v6.10-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2 (2024-09-23 11:55:17 -0700)
+I hope that makes sense.
 
-are available in the Git repository at:
+/* Use the static base for this part of the boot process */
+#undef __PAGE_OFFSET
+#define __PAGE_OFFSET __PAGE_OFFSET_BASE
+#include "../../mm/ident_map.c"
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git tags/gfs2-for-6.13
+or 
 
-for you to fetch changes up to ffd1cf0443a208b80e40100ed02892d2ec74c7e9:
+#define _SETUP
+#include <asm/setup.h>	/* For COMMAND_LINE_SIZE */
+#undef _SETUP
 
-  gfs2: Prevent inode creation race (2024-11-19 13:05:41 +0100)
+/* No MITIGATION_PAGE_TABLE_ISOLATION support needed either: */
+#undef CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
 
-----------------------------------------------------------------
-gfs2 changes
+or
 
-- Fix the code that cleans up left-over unlinked files.  Various fixes
-  and minor improvements in deleting files cached or held open remotely.
+#define KASLR_COMPRESSED_BOOT
+#include "../../lib/kaslr.c"
 
-- Simplify the use of dlm's DLM_LKF_QUECVT flag.
+or
 
-- A few other minor cleanups.
+#ifdef CONFIG_X86_5LEVEL
+#ifdef USE_EARLY_PGTABLE_L5
+/*
+ * cpu_feature_enabled() is not available in early boot code.
+ * Use variable instead.
+ */
+static inline bool pgtable_l5_enabled(void)
+{
+	return __pgtable_l5_enabled;
+}
 
-----------------------------------------------------------------
-Andreas Gruenbacher (20):
-      gfs2: Rename GLF_VERIFY_EVICT to GLF_VERIFY_DELETE
-      gfs2: Initialize gl_no_formal_ino earlier
-      gfs2: Allow immediate GLF_VERIFY_DELETE work
-      gfs2: Fix unlinked inode cleanup
-      gfs2: Faster gfs2_upgrade_iopen_glock wakeups
-      gfs2: Rename GIF_{DEFERRED -> DEFER}_DELETE
-      gfs2: Rename dinode_demise to evict_behavior
-      gfs2: Return enum evict_behavior from gfs2_upgrade_iopen_glock
-      gfs2: Minor delete_work_func cleanup
-      gfs2: Clean up delete work processing
-      gfs2: Call gfs2_queue_verify_delete from gfs2_evict_inode
-      gfs2: Update to the evict / remote delete documentation
-      gfs2: Use mod_delayed_work in gfs2_queue_try_to_evict
-      gfs2: Randomize GLF_VERIFY_DELETE work delay
-      gfs2: Use get_random_u32 in gfs2_orlov_skip
-      gfs2: Make gfs2_inode_refresh static
-      gfs2: gfs2_evict_inode clarification
-      gfs2: Simplify DLM_LKF_QUECVT use
-      gfs2: Only defer deletes when we have an iopen glock
-      gfs2: Prevent inode creation race
 
-Qianqiang Liu (1):
-      KMSAN: uninit-value in inode_go_dump (5)
 
- fs/gfs2/glock.c    | 107 ++++++++++++++++++++---------------------------------
- fs/gfs2/glock.h    |   7 ++++
- fs/gfs2/glops.c    |  11 +++++-
- fs/gfs2/incore.h   |   4 +-
- fs/gfs2/inode.c    |   1 +
- fs/gfs2/inode.h    |   2 -
- fs/gfs2/lock_dlm.c |  29 +++++++++++++--
- fs/gfs2/rgrp.c     |   6 +--
- fs/gfs2/super.c    |  89 +++++++++++++++++++++++++++-----------------
- 9 files changed, 142 insertions(+), 114 deletions(-)
+-- 
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
