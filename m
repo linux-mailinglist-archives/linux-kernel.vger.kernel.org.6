@@ -1,158 +1,145 @@
-Return-Path: <linux-kernel+bounces-421051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9D9B9D861F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:16:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F25C9D8620
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:16:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F425285712
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:16:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25FDC287634
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B10A192D67;
-	Mon, 25 Nov 2024 13:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gt0uXa6B"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305D41ABEC1;
+	Mon, 25 Nov 2024 13:16:24 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B578A18A6BA
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3125119F49E
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732540573; cv=none; b=SHJSL/8GQvcAbLUPG1Ado6Zc5a46LFFsskgBsVC4w83EY+QlDZ65TK8I5JV+ko9l8isVNeeBUiTb/zTM0ukyHVD/x2dRB+Q+E5NGK54xukPR1TUTXl2mNuqlR4l8BIk5zbUAggbDNPBoQcM7THz+PPgIA5Ue5kcPnAzNGs9gwTg=
+	t=1732540583; cv=none; b=ohi0zmgR3F1LP3mPngsKpq/UhSyVXMQ1BDVJ0UqexYH7vBoFeJWh9fytwTmYXLKO616k2MSM7sys5ogqVsG4FjqSY+XBtn095rG+AVUmzXg9uoPB8sGGdPgWOprV9H4XyTdLTlZhEsEksFTnma/QBHhr+7HNbFgPrUyaEgbb/mM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732540573; c=relaxed/simple;
-	bh=gsKd3hb9ZCLyyPW+gu43DBldlrCV1evqec/JECaRSZ4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Rm3el5w2f1LaQJ21CyjPjyNKWyIP6J5a7Ey8rO5pktPSv9tDEn58/mCeYD5Y+JfCAqnkxYfGfOtzq9YtyIcJqLoeev7Q1bKofEJOvZuOxZ9NEQeMEyc+QH1FIvuGaHRQQ2G6dp6kRwJ1ErJnAWHORco1aQQbrRx56rTFUetPvxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gt0uXa6B; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-434a2f3bae4so1878245e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 05:16:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732540570; x=1733145370; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rNSe8A4X72eX+krq9irFan2BInCT8GLtodoqFddP0BY=;
-        b=gt0uXa6BZzCNlnIlpVCp7TkSbWNUMTZIhLzzYV54Ygk+D9HrNYA8Nhd5Jfo0AJ8nYV
-         TtoGTQKdi6KxmGRgnY9krjkPVDS9NCqb84ExGJ+qEW/R5hYYINjlrQunLFF4TZbHFctV
-         slD40Qe8wJThrp8vZpxJZAv0U2BbQ8/E/8QQa6FfMaUGBPXJ5AAXzdsnSoxLsnyKvt+e
-         KcrZk3ToPweFftmq3JAaa5xoY+3BNsOq8yoH0enQ6bzJRLIKd2UQ6uN2wxWiGFDAW2v2
-         J9nbskCjQHD+zfGx7orFKs8DrFtVJx3naNldUA4mWePOXzUVYJsxfwOrWewPq+f+D5cv
-         /8GQ==
+	s=arc-20240116; t=1732540583; c=relaxed/simple;
+	bh=roIkGxppyk36vBN5Aa6eHc1RlxwoOMeS01gUbDbG0fQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=UXBqut0t5+PLVu9HatK3iL4fbN+WOgHS0fy95r6J3u01ZE1hMP4u9HWObBvmVeVs319dRJ8iUNL5lHpIfXrxL/+wDIliN2HoB1en5FNseNcy/6dqwyNt6wh8jsn928t8kJb2G/J/MZZnDMFrAe8KEmSPSkjZni5ldfZKo9xE6qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a77a2d9601so53350535ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 05:16:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732540570; x=1733145370;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rNSe8A4X72eX+krq9irFan2BInCT8GLtodoqFddP0BY=;
-        b=OAzJ6X3W29P9PnnWPg8rVRQge+eqJN5//tHXCyo6L/Y3fJxV/nY5kkmGgZSTtYP9Jl
-         OxJVNW+VuFj9PQOUHEWOnIkEtYfEtPM01LB5z3GFba1niynpbrsBH9k/Yaymk9+7phIF
-         nzhf3RrICKDHKUcYHAVqkqIyC7M0QoMmyW+EUrna4BXZH8TooGcXz32gbBal1El4Tu6X
-         rup0xHeCPMRFmtNTV8W8fVb5xUT63ADarXvxPsJk4kx11Fx6zG5rbuPMNoFWnMdow88q
-         4iJxUXSWkl2TkAy792xzbOuMt2rXyHFakvWk+IsPowPYqGzhqtQwNngMIWLKeghSJHmm
-         WNhg==
-X-Forwarded-Encrypted: i=1; AJvYcCXOK6UT3okOniIBHRl0KTm+LN3D5QTRVcZ+xf9vx1TEnGQBrnTgZfrmdMVRJzmsw59EhW5yvRRiDz4DWD4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXeQn2MevmREKiMPCDyvF08Dk41zfPqobRgfqThj9QScSiP8mc
-	sacvo0wFhIXDz0EPyHq6mLLxdcrm12m/nylzUEf3oBX32FI0ulWPG3SDFD2vmlw=
-X-Gm-Gg: ASbGnctwH+mPqFkVKTy4iaVdH3v7vAW/51abzr/H47tkTPSeEXCPvxFEn1IRiI6V9F6
-	bDYs1A51kRWLm2TVb9O5/K8BOpfvOi/OeWrxCK+mBJD659L6Y32Cu9wVX7+fZ/75FVdWtOVysRP
-	BUSygx3hZ56XAFAoe46DsgQQce5+3lVMwaNWV8Ix7e98A2pjzXVTnz0w2ObJG/eFLtMRu33il1V
-	0OT6tZI4EkZYOClKsqXVVT3AYMjB5wgGTRKptxkdMsBUotn1LKNvVsNE+QpHBTlz3lyccB6ikB7
-	Vy0QGv9tmz2/ywnKBbFarK0fBbI=
-X-Google-Smtp-Source: AGHT+IEW90vTWXzKP0+A5/PY4aSbYc0IFzHeJgOYo0pEkGOlAkr3IdZEHYei+L9Azyi/uj4duLGLyA==
-X-Received: by 2002:a05:6000:2102:b0:382:3419:46e6 with SMTP id ffacd0b85a97d-38260be1efcmr8739174f8f.52.1732540569999;
-        Mon, 25 Nov 2024 05:16:09 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:9dc0:6c46:415c:5f8b? ([2a01:e0a:982:cbb0:9dc0:6c46:415c:5f8b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fad60c3sm10632716f8f.2.2024.11.25.05.16.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 05:16:09 -0800 (PST)
-Message-ID: <81e46854-13e1-426f-8e0c-549a36ab5b3d@linaro.org>
-Date: Mon, 25 Nov 2024 14:16:08 +0100
+        d=1e100.net; s=20230601; t=1732540581; x=1733145381;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tUeEscvPl0THsXTCcyvV67cLrpataPHdN4bYi/SNHVE=;
+        b=i7TEUJwN2QWh1mOsaHMjtJ5zFN8PmU6coC0YhNgXHzQMtDqhAs7OuncZwCZtiKcQzS
+         aBmsnUIBahAJ/ktphlZWifGaq/QeH2ixw0qXGr5n9WHJNZsD7hulzAwmqWZZ7AfDWVbe
+         1Av+UfV7mP7pvUTr7fz4Ta6c46RSXwwFfOEsBr74C7rfMO8//Wh5rBAoZ4h15P5xNwr2
+         Dlu2ZBiyqmBOt73AVnUKHx0iMt52MtP2BG9wMNOr6l6v+cvj3PgBqaqlZap0TdoiUb1h
+         PkRj07hrVq6yS0eFVDWklldKXLmQSv0l2zB7sxJicbFp3nthCE7gmh16FKziN2eRSjVt
+         CMFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqeV56kLPtMmG8bzrZzsun/yA0IpqydjJeSsKJsmNEYbd5Q10nnR+yeW1TPq2QJzCH2OIHnQ463IHFuck=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCYeUDHCGXOk/MekviSktTWQnP30PGbVu133fArO59kSO6G6W0
+	qqkezN3uGdEuX6iUdeiBNesZb+m4+KEb6imZaNmaBCIw7RiVqEhIwq1a+gWp2r+kU+eUaiR+p4R
+	nBJfSyxCSjILIbdtXPVf2gpegj3oS2wb1iX0RSCr73I91ZXdS5f94uRk=
+X-Google-Smtp-Source: AGHT+IFZP3MFmJFXYawZzjM1WHJDr4FPegED77nU69hwDq7WZ9qe3AIs018Ze5kDsiDe4gsMBEXzftjOoB3DZW6FcP1ToXBaj05U
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 2/5] gpu: drm: adp: Add Apple Display Pipe driver
-To: Sasha Finkelstein <fnkl.kernel@gmail.com>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jessica Zhang
- <quic_jesszhan@quicinc.com>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Janne Grunau <j@jannau.net>
-References: <20241124-adpdrm-v1-0-3191d8e6e49a@gmail.com>
- <20241124-adpdrm-v1-2-3191d8e6e49a@gmail.com>
- <10d0aa88-de2e-4856-a137-301519e58b2d@linaro.org>
- <CAMT+MTRWZWj=3AP7wyooXr49-W4vcm0ZbAoqPyEuNkQBMOaJfw@mail.gmail.com>
- <c6b0273f-16f3-4469-a4b8-9564f7355400@linaro.org>
- <CAMT+MTS3Nmy=RzsE4wUf=jHBsu8ghyyqpXWPyB8qoR+W3EUscw@mail.gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <CAMT+MTS3Nmy=RzsE4wUf=jHBsu8ghyyqpXWPyB8qoR+W3EUscw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1547:b0:3a7:629a:8be8 with SMTP id
+ e9e14a558f8ab-3a79acfca70mr162786835ab.3.1732540581438; Mon, 25 Nov 2024
+ 05:16:21 -0800 (PST)
+Date: Mon, 25 Nov 2024 05:16:21 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <674478a5.050a0220.1cc393.0081.GAE@google.com>
+Subject: [syzbot] [net?] WARNING in call_netdevice_notifiers_info (2)
+From: syzbot <syzbot+9b66539a997baee14f5d@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 25/11/2024 14:14, Sasha Finkelstein wrote:
-> On Mon, 25 Nov 2024 at 13:57, <neil.armstrong@linaro.org> wrote:
->>
->> On 25/11/2024 12:24, Sasha Finkelstein wrote:
->>> On Mon, 25 Nov 2024 at 09:50, Neil Armstrong <neil.armstrong@linaro.org> wrote:
->>>>
->>>> So this controller only supports a single mode ???????
->>>>
->>> Most likely. On all devices it is connected to a single built-in display.
->>>
->>> Ack on all other changes, will be fixed for v2.
->>
->> OK, so instead make the panel driver return this single mode
->> and from the display driver just filter out anything that's
->> not ADP_SCREEN_VSIZE & ADP_SCREEN_HSIZE.
-> 
-> Not sure i follow, you want the mode hardcoded in the panel driver
-> and the controller driver to fetch and return that?
+Hello,
 
-Yes, like a classic panel driver.
+syzbot found the following issue on:
 
-Neil
+HEAD commit:    fcc79e1714e8 Merge tag 'net-next-6.13' of git://git.kernel..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=14ffd75f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=275de99a754927af
+dashboard link: https://syzkaller.appspot.com/bug?extid=9b66539a997baee14f5d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1539da626e54/disk-fcc79e17.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d44dbcc68df2/vmlinux-fcc79e17.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/76fdad1309ae/bzImage-fcc79e17.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9b66539a997baee14f5d@syzkaller.appspotmail.com
+
+RTNL: assertion failed at net/core/dev.c (1987)
+WARNING: CPU: 0 PID: 12 at net/core/dev.c:1987 call_netdevice_notifiers_info+0x106/0x110 net/core/dev.c:1987
+Modules linked in:
+CPU: 0 UID: 0 PID: 12 Comm: kworker/u8:1 Not tainted 6.12.0-syzkaller-05480-gfcc79e1714e8 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: bond0 bond_mii_monitor
+RIP: 0010:call_netdevice_notifiers_info+0x106/0x110 net/core/dev.c:1987
+Code: cc cc cc cc e8 2b 74 fd f7 c6 05 ec 80 70 06 01 90 48 c7 c7 20 5e 0e 8d 48 c7 c6 00 5e 0e 8d ba c3 07 00 00 e8 db 6c be f7 90 <0f> 0b 90 90 e9 73 ff ff ff 90 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc900001176d8 EFLAGS: 00010246
+RAX: a4b68b757b823100 RBX: ffff88805a365ac0 RCX: ffff88801befda00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff8155fe42 R09: 1ffffffff203c906
+R10: dffffc0000000000 R11: fffffbfff203c907 R12: dffffc0000000000
+R13: 1ffff92000022ee0 R14: 0000000000000004 R15: ffffc90000117720
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffeb14c9ff8 CR3: 000000000e738000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ netdev_state_change+0x11f/0x1a0 net/core/dev.c:1378
+ linkwatch_do_dev+0x112/0x170 net/core/link_watch.c:177
+ ethtool_op_get_link+0x15/0x60 net/ethtool/ioctl.c:62
+ bond_check_dev_link+0x1f1/0x3f0 drivers/net/bonding/bond_main.c:873
+ bond_miimon_inspect drivers/net/bonding/bond_main.c:2740 [inline]
+ bond_mii_monitor+0x49a/0x3170 drivers/net/bonding/bond_main.c:2962
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
