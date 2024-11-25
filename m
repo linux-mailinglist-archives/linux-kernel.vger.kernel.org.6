@@ -1,51 +1,64 @@
-Return-Path: <linux-kernel+bounces-421221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD1509D882C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:38:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E202163E9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:38:07 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9D61B0F25;
-	Mon, 25 Nov 2024 14:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="N5Z4I4YD"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1BE79D8838
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:39:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A580416419;
-	Mon, 25 Nov 2024 14:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8692C2878F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:39:31 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9CD1B0F2D;
+	Mon, 25 Nov 2024 14:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f29per6y"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCEC16419;
+	Mon, 25 Nov 2024 14:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732545484; cv=none; b=IhyHmdZzSQinn/iqkWafdYbi9PsCB7HofAVXbDmHbs2ScSld/lMPpPbh2jenzvFHxHAzys0OjUf9U7cZrBs/WNyD6IDWl9DWXRoSCCtqeEPmuey0FcE2b8sKZKF+rsYTHcOx5HddY56iFQ7dROxBt3qtm69PKgITAayyoUEaLrY=
+	t=1732545566; cv=none; b=udkYsHh4FIwHReH0mo6szMnS4y5u2KmpZvjcYVRoBFSB2+zcq431Ihpkq+y635Si4bcDhHQVzGHleBElJDYoWKSNdniVQWTxvWVz/SoJcOMH3AX7NAddy4rskSo6tB+0b8HFsLW9fAuKowQCvf7SzCueXK5H7QE9Hbct7MPuS0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732545484; c=relaxed/simple;
-	bh=LAHssef6DoLue75QVqb4uwrLzdjY64IUlkaE8Cl0yKY=;
+	s=arc-20240116; t=1732545566; c=relaxed/simple;
+	bh=jQAOxEulifX9JAhYbllSyYvMlOUUXbwE51VuzcuqbO8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u+tOthPiBCh7ra3O+NWd98LEULGIu3hjkRlStwfhR8VggRRijrWWBcW4hFFMfx5BJ1b8oQUvDc2FW6BA7fMZnCULezakRbNmdNLZAWpIRlXoMqWqa9+bZD57UHqJ4yrbmMhrXjqGbmEsbc6q3MmkMm3KUscNZEg5zr756Nhg4G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=N5Z4I4YD; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=1J2qpV2V6Ep395c4GdNijbZbpMm+WSwMQ5mc7jMGpvU=; b=N5Z4I4YD/wNb7/Hc7lg5wLa/HW
-	u0H/P+k1qIHcJxywH9nKf8rG9X/ziIjAmhv0i0PlofX6mdlRPa5MY3wIKqD9JnbjmK11Y0+cIKWgO
-	sB5LLZzUKQ7VCaiXaGXjqMOlkZ1vh1w2dES4UqGVT7lzdG6bizAsiqkLLJWvcck+EG6dxrRRdlxzL
-	FgmTqZ0VDo6uyeRCOGtrxbKgGaPNdSeejElth4GZKvZhob6c18jM6PyqPuwkcnqT9sUlUd9aUZ0U9
-	m25OCBE0sl9LS803g8fZmXxRu7m3yhi9JsDhWV29GY1Kwx8dum9pjAwQHrt+1l0ShETUz8cE70tFH
-	mHVkXVNw==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tFaDt-000000016OR-34u1;
-	Mon, 25 Nov 2024 14:37:58 +0000
-Message-ID: <1322e260-57f0-47c5-b28e-41817feae8a7@infradead.org>
-Date: Mon, 25 Nov 2024 06:37:52 -0800
+	 In-Reply-To:Content-Type; b=tH1PzlYugLQ/mlMUVe7gkO4kWEJmA9MJ0qxuzItkt0Q0l4rAvKxGwItGOi0ibvpBt9S5IAj+n+mlEGZiGfOU08QWcDaozKSlHgo1JQnPmSj2hBGvoI0sVs4AxcqIESis11X0ZF8ffYnh6G9PXFlSNe3PjJ80pp3rD/XF1gqtIxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f29per6y; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732545566; x=1764081566;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=jQAOxEulifX9JAhYbllSyYvMlOUUXbwE51VuzcuqbO8=;
+  b=f29per6yjCgTY+dQGLiVSZ9O6DWj2M36qRz6onXVVu0PeTMy5oa50yfG
+   LWF8HYdP9R2Pw51R2zj3FuAsv5151+iP37l8I+bbRrmCOVyBzzZGxfOyY
+   5xdHHr1GMW8FaEOM4fe3gDj+yNUtv2FOOGL4XdhtV+L6igyL35BA6/He7
+   LFi7oRd1pHsO8Qdtcqqu0W2Fz2AMfD17R+B1bTX+VSoyrYWXENMD21fBD
+   dohjnpqOg/WDOYHCwtHYcoa7PbvJZbS8AaoDp7sxCLOs7vF75JFY2Tz1o
+   tZjTiu+0wI15QPKoue3ZHpxcbBlBbTZu+3HzznJXPpCfy+P8YqRTk+WxT
+   A==;
+X-CSE-ConnectionGUID: kXqhNeBHTj6LgpTP755R3w==
+X-CSE-MsgGUID: FyhzSCMxQ1SsppopAyOjJg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="43155643"
+X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
+   d="scan'208";a="43155643"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 06:39:25 -0800
+X-CSE-ConnectionGUID: osQG5IQkRqSupgvPl8rubQ==
+X-CSE-MsgGUID: ugzGiG99TX++FUpyb7pXVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
+   d="scan'208";a="91418769"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO [10.245.245.34]) ([10.245.245.34])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 06:39:20 -0800
+Message-ID: <92bf50eb-e260-4c7d-a157-b830b6c4e835@linux.intel.com>
+Date: Mon, 25 Nov 2024 15:39:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,62 +66,26 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] x86/Documentation: Update algo in init_size
- description of boot protocol
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Jonathan Corbet <corbet@lwn.net>, Cloud Hsu <cloudhsu@google.com>,
- Chris Koch <chrisko@google.com>
-References: <20241125105005.1616154-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [RFC PATCH v4 3/8] ACPI: processor_idle: Use
+ acpi_idle_play_dead() for all C-states
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ rafael.j.wysocki@intel.com, len.brown@intel.com,
+ artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com,
+ peterz@infradead.org, tglx@linutronix.de, gautham.shenoy@amd.com
+References: <20241125132029.7241-1-patryk.wlazlyn@linux.intel.com>
+ <20241125132029.7241-4-patryk.wlazlyn@linux.intel.com>
+ <CAJZ5v0iD30S1EyfqtV1_RDrxTCDmgbOA60njkdWpNzmpEAGXhw@mail.gmail.com>
 Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20241125105005.1616154-1-andriy.shevchenko@linux.intel.com>
+From: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+In-Reply-To: <CAJZ5v0iD30S1EyfqtV1_RDrxTCDmgbOA60njkdWpNzmpEAGXhw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 11/25/24 2:49 AM, Andy Shevchenko wrote:
-> The init_size description of boot protocol has an example of the runtime
-> start address for the compressed bzImage. For non-relocatable kernel
-> it relies on the pref_address value (if not 0), but for relocatable case
-> only pays respect to the load_addres and kernel_alignment, and it is
-> inaccurate for the latter. Boot loader must consider the pref_address
-> as the Linux kernel relocates to it before being decompressed as nicely
-> described in the commit 43b1d3e68ee7 message.
-> 
-> Due to this inaccuracy some of the bootloaders (*) made a mistake in
-> the calculations and if kernel image is big enough, this may lead to
-> unbootable configurations.
-> 
-> *)
->   In particular, kexec-tools missed that and resently got a couple of
->   changes which will be part of v2.0.30 release. For the record,
->   the 43b1d3e68ee7 fixed only kernel kexec implementation and also missed
->   to update the init_size description.
-> 
-> While at it, make an example C-like looking as it's done elsewhere in
-> the document and fix indentation as presribed by the reStructuredText
-> specifications, so the syntax highliting will work properly.
-> 
-> Fixes: 43b1d3e68ee7 ("kexec: Allocate kernel above bzImage's pref_address")
-> Fixes: d297366ba692 ("x86: document new bzImage fields")
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> 
-> v2: fixed the style to follow both rST and kernel conventions (Ingo, Randy)
-> 
->  Documentation/arch/x86/boot.rst | 17 +++++++++++++----
->  1 file changed, 13 insertions(+), 4 deletions(-)
-
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
--- 
-~Randy
+> This already is in the queue of patches to be merged during the 6.13
+> merge window.
+>
+> I gather that it has been included here for completeness.
+As in the previous email.
+Just an update to the series. Purely RFC. I'll rebase when we all agree.
 
