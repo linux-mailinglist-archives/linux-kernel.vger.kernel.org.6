@@ -1,209 +1,109 @@
-Return-Path: <linux-kernel+bounces-420537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32A459D7C1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:45:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD0949D7C22
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:49:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA4C7B20F32
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:45:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 621E1B212F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6601607A4;
-	Mon, 25 Nov 2024 07:45:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB13E17AE1D;
+	Mon, 25 Nov 2024 07:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MYFrveyd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="el8Y6miP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C64C2500AE;
-	Mon, 25 Nov 2024 07:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DC52500CD;
+	Mon, 25 Nov 2024 07:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732520750; cv=none; b=rR1zfDoaRC0vfGi3MHF1UiZlgSPjwcqh1R+02BgJpzS7W/l+RUYrWaj83tWJ7w6Fl5mb3dNQ2nBi82NCXO01BNujvWfkqEshDz0ZXK9e/zIj4UI/OssMzEJtra7AhtVQIzYwMA0lIcE7u6SwF99GYzBZ2x0oFuS7p/RyYu9LJ2c=
+	t=1732520970; cv=none; b=S2x62Zmt4afbnIIKQIJchMxVqYEEIS+pDsZ1DM9ejNpi+gXtlbl9PofEr4MGEqYpESu99N/vLMBoMgP1ory9aI3WuKVu5X5XsQFWlM4H0d7m+yXsG2juLFLV354ZHpppXwtsWjMufJSrhpEvlKdXRqnJTH7JV0u45b/W7G/N2JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732520750; c=relaxed/simple;
-	bh=QkmKRQufxVbtOJlGOhCoU0r8+2yxxJyk9PPJcIydGG4=;
+	s=arc-20240116; t=1732520970; c=relaxed/simple;
+	bh=Q9pwQZ367/dYdTXJasRylk1GyYiolNOY2J8AWlFyzwE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PhofHyj+CN37BFu0tgckGwNh1Sier5xfciCPZqTw/TObDgKvRR+VUDiEUG/Yv+IekIYcyF2si1x9BHzMPtylCnvSUEqLFj0ouKZLTKlrIN1ftS1ir1FoKt1w80Pz/Yhx2+DtpSU0Y3VFM7WLZB4ZoWXVqI1lNIKd2muufhIZJ0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MYFrveyd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A65BC4CECE;
-	Mon, 25 Nov 2024 07:45:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732520749;
-	bh=QkmKRQufxVbtOJlGOhCoU0r8+2yxxJyk9PPJcIydGG4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MYFrveydLiYRWlAIyh8GYlL0YM9Q896zpfUzgrP0F9/Go8fZEYiUzoU56kg8PVMbI
-	 c0BolaJeNa1960vBUIJdWNczsAwuU5LjEenBa9nIm0/SHrtDlUGMjs0ASf9Y2QWrbi
-	 odnBkyNsXl3TUXYUj0aXwkubOMoLldrvbsHk65USwfjW0KoIiZc/H739irmyq9cjsK
-	 Jp/0N6/JvyJK7ut2EnOqctMa9QNnFqxpIK8EClS/Ro9X7CCRi1BX8TzQJx6jfDhA4b
-	 Es3cOdNVgtyzREvIT7yFzdZmmMVMlyl54De87aPPHr5dcZwxTVVMwuz9KvqfDHN1mE
-	 CY9x0i+yy68Ag==
-Date: Mon, 25 Nov 2024 08:45:46 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sasha Finkelstein <fnkl.kernel@gmail.com>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] dt-bindgins: display: Add Apple pre-DCP display
- controller bindings
-Message-ID: <ksdp54qj55v7igvvcshl6y2cxpmqy7rlsh4xsixpptjn7s7wlu@76ejtq6ytvbp>
-References: <20241124-adpdrm-v1-0-3191d8e6e49a@gmail.com>
- <20241124-adpdrm-v1-1-3191d8e6e49a@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=F50a61czkaJ7KiRmhhr1rbQcwBuZ1CCF8H140hDaekrrikaowaLFXbYoh44E4zfd54SQB8SyNC+4NhLe2clVH2UsRIXK1H+mJF24FLeptxfDsXqKZmrTGYSYHkkkAU3Y9ZrD9MVnvSai909IlUERvt1IMpHnsL56A8ksTsR+P8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=el8Y6miP; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732520968; x=1764056968;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Q9pwQZ367/dYdTXJasRylk1GyYiolNOY2J8AWlFyzwE=;
+  b=el8Y6miPxY0C37BHWkIBdk5kLS4dSNquIddkqTV3xmiCC41e2uI6oh0b
+   H+M1Kjb51ThO0ab3ruMl2KHhu8z06SJsE2dIQ9/d7NGLTjgpt3SQPWagq
+   UHuu9Zg1Um9Q18jPWiSHV7Q9fsxp/T3AwwFyjjf798AIUXd8bkn1767dl
+   w5DbRH/Flk5K1YBUfiXUQ28vZ4IdaJPKQyQPG8hcznR4fnkGXKvk6ZrYa
+   foYW2YnRq5w99hWTfKtloYWR1XL8ARftJOdhMHzYSdICn5V54gcR88ldO
+   zykL0LGofx0BPnf09P3LBNit0Z1xEKmC/txSg4NSiMkX9L63/wm4HMQ1R
+   w==;
+X-CSE-ConnectionGUID: 0TXTjPXJQNudr5DmyHKGRQ==
+X-CSE-MsgGUID: Ke2qRtTQQu647/b0M8xDgg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="32740347"
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="32740347"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2024 23:49:28 -0800
+X-CSE-ConnectionGUID: pxY7O9fcSuGdYlHOInkmPg==
+X-CSE-MsgGUID: R4o3wtvdTCW5wO1mRjziiw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="122036046"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2024 23:49:25 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tFTqU-00000000fmp-1knr;
+	Mon, 25 Nov 2024 09:49:22 +0200
+Date: Mon, 25 Nov 2024 09:49:22 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Raag Jadav <raag.jadav@intel.com>, gregkh@linuxfoundation.org,
+	linus.walleij@linaro.org, mika.westerberg@linux.intel.com,
+	broonie@kernel.org, pierre-louis.bossart@linux.dev,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH v1 1/5] devres: Introduce devm_kmemdup_array()
+Message-ID: <Z0QsAm3FdZDJ8kY0@smile.fi.intel.com>
+References: <20241123200527.7830-1-raag.jadav@intel.com>
+ <20241123200527.7830-2-raag.jadav@intel.com>
+ <Z0LPyMed-4a8cajD@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241124-adpdrm-v1-1-3191d8e6e49a@gmail.com>
+In-Reply-To: <Z0LPyMed-4a8cajD@google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Sun, Nov 24, 2024 at 11:29:24PM +0100, Sasha Finkelstein wrote:
-> Add bindings for a secondary display controller present on certain
-> Apple laptops.
+On Sun, Nov 24, 2024 at 07:03:36AM +0000, Dmitry Torokhov wrote:
+> On Sun, Nov 24, 2024 at 01:35:23AM +0530, Raag Jadav wrote:
+> > Introduce '_array' variant of devm_kmemdup() for the users which lack
+> > multiplication overflow check.
 > 
-> Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
-> ---
->  .../bindings/display/apple,display-pipe.yaml       | 59 ++++++++++++++++++++++
->  .../bindings/display/panel/apple,summit.yaml       | 24 +++++++++
->  2 files changed, 83 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/apple,display-pipe.yaml b/Documentation/devicetree/bindings/display/apple,display-pipe.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..bd25ddc6e09dd636c0221c854e594113f6011866
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/apple,display-pipe.yaml
+> I am not sure that this new helper is needed. Unlike allocators for
+> brand new objects, such as kmalloc_array(), devm_kmemdup() makes a copy
+> of already existing object, which is supposed to be a valid object and
+> therefore will have a reasonable size. So there should be no chance for
+> hitting this overflow unless the caller is completely confused and calls
+> devm_kmemdup() with random arguments (in which case all bets are off).
 
-No, use fallback compatible as filename.
+Don't we want to have a code more robust even if all what you say applies?
+Also this makes the call consistent with zillions of others from the alloc
+family of calls in the Linux kernel.
 
-> @@ -0,0 +1,59 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/apple,display-pipe.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Apple pre-DCP display controller.
-> +
-> +maintainers:
-> +  - asahi@lists.linux.dev
-> +  - Sasha Finkelstein <fnkl.kernel@gmail.com>
-> +
-> +description: |
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Drop |
-
-> +  A secondary display controller used to drive the "touchbar" on certain
-> +  Apple laptops.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +        - "apple,t8112-display-pipe"
-> +        - "apple,t8103-display-pipe"
-> +      - const: "apple,h7-display-pipe"
-
-
-This wasn't tested... Drop all quotes. Do you see any file with quotes?
-Why doing things entirely different than everyone else?
-
-> +
-> +  reg:
-> +    minItems: 3
-
-Drop
-
-> +    maxItems: 3
-> +
-> +  reg-names:
-> +    items:
-> +      - const: be
-> +      - const: fe
-> +      - const: mipi
-> +
-> +  power-domains: true
-
-List the items instead or maxItems: 1.
-
-> +
-> +  interrupts:
-> +    minItems: 2
-
-Drop
-
-> +    maxItems: 2
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: be
-> +      - const: fe
-> +
-> +  iommus: true
-
-
-maxItems: 1
-
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 0
-> +
-> +additionalProperties: true
-
-This cannot be true. Must be false.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-
-This goes before additionalProperties.
-
-Missing example: that's a strong NAK and prove that this could not be
-even tested.
-
-Do you see any device schema without example? No. Do not develop things
-differently, Apple is not unique, special or exceptional.
-
-
-> diff --git a/Documentation/devicetree/bindings/display/panel/apple,summit.yaml b/Documentation/devicetree/bindings/display/panel/apple,summit.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..dc281c1f52c1ed07cc2f7f804dcfd2f3b4239d89
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/panel/apple,summit.yaml
-> @@ -0,0 +1,24 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/panel/apple,summit.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Apple "Summit" display panel.
-> +
-> +maintainers:
-> +  - asahi@lists.linux.dev
-> +  - Sasha Finkelstein <fnkl.kernel@gmail.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: apple,summit
-
-No, too generic. Panels need much more properties, this is heavily
-incomplete. See other panel bindings.
-
-Best regards,
-Krzysztof
 
 
