@@ -1,113 +1,178 @@
-Return-Path: <linux-kernel+bounces-421439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7BB99D8B53
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:31:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68CBB9D8B72
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:40:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE3E928276B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:31:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1F9BB2CED9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCF91B4F15;
-	Mon, 25 Nov 2024 17:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F5F14D43D;
+	Mon, 25 Nov 2024 17:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TFJJR2aK"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q9Zxfdjv"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B04518C322
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 17:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A0618C322
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 17:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732555881; cv=none; b=ufvDux+innM3g5XcnuOVHTwQtitQ7BYtU0fz0EpeMwmU/1ot11nK08lrzijHkOlFcf+y0TQ8rUl2/5EGOnECBc/dWQoh5rRq6KoLx1VFyYa++nr5875ncuHzCOJJohJXger8wH/QBkk5LwgqIfOXZDhkIlXgelzUa1i/SbBBB4c=
+	t=1732555904; cv=none; b=r9YZCHYLXsV6U8rvU/07Jep12xFiCahBb5n9Y2v0StiUwrunXDKXnsVYqPnmbIGuhtmhbCUFPLfHoB/J05uZKCiDhycg7mK6M89iAEu0yYBLHPWWcMTBflWTWGy6w63lub+7dkF/KHJoaaf/KPBAUArh58/ARY16eZ2BCGH+Rvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732555881; c=relaxed/simple;
-	bh=VMK4fjARbUe5ibv5TqQ0Vem9Tq64YnTSJ7BEWN8i25Y=;
+	s=arc-20240116; t=1732555904; c=relaxed/simple;
+	bh=8AvedBOtdtQew9svzqYDe8+6dGe6UB/k3OZ9TUGyqP8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b+YOTWIYzv3ko1i5tcl3zBS2papOFs5Za214SRKOTQxBd7PIxZRcXpXQX4LkRwcaqDpwSId4K2CnrdBkfN5/eHbtJH4Ccmm0s3HkPFZ+H1YCbapi2eHwkhAnRQS+sCkRk097TUyGTLSCED9Db0CdcYYbr1HHGr3DgOzZCuDxBco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TFJJR2aK; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53de652f242so892452e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 09:31:19 -0800 (PST)
+	 To:Cc:Content-Type; b=G+ei7MKM9fNwto+LjbgWeGjBrSJiQkJGlQ/45Lv3PhenM7Tj0Qq52rLT9UVAb6iFUerrQJkn5bXOvpPOMRqiLQMlmHSRkTsOJXzjfyC5D1VZ2xxS6Z4K4JbeIBFXi4oQz8lYUPM9q7H53seQiVZ1kQvUY/J6oOHDMuvtVtrX8og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q9Zxfdjv; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4668caacfb2so357001cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 09:31:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732555877; x=1733160677; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732555900; x=1733160700; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rILC2BxBgO2Rtw5hTimKlVPBC9bz9nfbq7eLfeQG+no=;
-        b=TFJJR2aKOYOPVZA8DzfP1npG/4ysvtYFpK5xYLb7VtoszUkYp03J/yEDMhQC+MUaTI
-         GbBTwn/H9iko3zyNwr9elZ8CUUDYeVqMVdirBvU8dnZDEAyAsXw7jyzcTicunNhfti3H
-         UrGDFtRfnuMSqNzxqDAYOoGwfmt3VR/dVy2qhYkhWwXo9e2+uEjA5i3oNRMoCnJcje0W
-         Y0ycGOtSpvvE4MZadk2ED+xXIAtKm67KrMBuI5tltqXGudiNxKFbv0GQbG8JTn4K90cj
-         vRR3r34NQwGZCroHUd0MGTCc+4j64GJLpWDck54y77ndDjguBIg31zlvPdCvjvoeB4rX
-         TaVQ==
+        bh=cO1wp9JV30HhfT5H5hY0d7rnb/YcMaPbWSQ96zslJfA=;
+        b=q9ZxfdjvIyDF1+Vni5vYhLxXJ5x6Lxzo3to17PbHy4Gwl0XnZBXuP1Qo4spAWX2/Xe
+         gAOyXdwN26Qn/rYLlGjDAbPB9wZJfErAVRyhm0CtlzFRx2StPDItR0t9a6Vf0AsuvU1Y
+         21/r4kON/VWcBuRLu1Sh1j7pgwr4hN1eJNeRGkBmxB7GZCBtTQBBl7jxJs9bQeEaX7MP
+         Qvy9ffmAaeS7BZHSiePXFyalO6o6OOrvcZhr1NnKizBgAeQB8rE0+t1TZaWeVk7r4hMm
+         XxPVTegzyLzsBDOrSxiXvPXnCNU4Pa1zfViP6L8FAlgWC0s2LiwfBHM2Y1ZNZ/DFcD7B
+         MZBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732555877; x=1733160677;
+        d=1e100.net; s=20230601; t=1732555900; x=1733160700;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rILC2BxBgO2Rtw5hTimKlVPBC9bz9nfbq7eLfeQG+no=;
-        b=baDTPoLoImx7IfAWW6y5xcCpIpVV6v4Vy8nluM3EhH/ooqe1I2O06T+IGo4Br9qA8j
-         4aoREFSRbvQ+71BFrzMeb2gNpPVYXHi5xsblgQ2jrcX/eEyu3OttKuuPo/f9kwHlBRX9
-         W5OSyNcYiKxzad1epkxZk+1H0mnQUtgBPMHEOw+vN5uLnIbSjCzyJteWb9j2Gk2QfbqS
-         v/Pvo327tF8I6cc34ZRFG7hZSa4F5GDU08GLcrpPOQ2MXK65Gxs7cQl3W/fLp/QQUxaV
-         kQWAflYiStPd760+S6mXfQeZDGs6jRqDSv6YUSUP67VubmOCimU7+eW9FZGx3vOiTo1S
-         n8sw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvlP+dM3nV5G1sj2T9btzvMtnBz1KHYpd0AcKbvJQgygRPYIf9EyHA3CVIdlngkDlbdmQZCl9GlBK8eh4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxk6L6SUqdXzqHpoVNFHN6h6ZI3tt7zaxoQGSV5OugqazvT1wF1
-	giH24Lq/0tuniUir5ydlJaK/zom+gDYe+SQIL6T5hxMIaDdfOYQh1rqBJv6U6uzRkdcxVjULw12
-	3kwD5g/UFzeUhyH/Kmzk8jyzcz0Xu
-X-Gm-Gg: ASbGnct8hfPAojXPbaL3UQNAVayDWgrC7DXwFf1ROCjITYuUk2+OxncmVOfUZ9Fo4nv
-	hqhjzBUSEFhDaEHFraaQfa9KTqMguZqT73SEOaCA0fThj6A==
-X-Google-Smtp-Source: AGHT+IF/Hbrb4GRi5y/7WmIm8q51cXLBDI+7dPYh6r69XJ9sv/d6gokZqewfe2klSI91UU6BZjhhk3E8QCKdInVhlyM=
-X-Received: by 2002:a05:6512:2f2:b0:53d:d405:6e5 with SMTP id
- 2adb3069b0e04-53dd4050706mr5390957e87.47.1732555877092; Mon, 25 Nov 2024
- 09:31:17 -0800 (PST)
+        bh=cO1wp9JV30HhfT5H5hY0d7rnb/YcMaPbWSQ96zslJfA=;
+        b=nBsc2Sl92CC3MUtDtzAQ+vhPZKNQELI5ekBFwhp0nAo3W3ho9LyzNiH9K1sae48+fR
+         qCUVIooreykyUxy1kfuSHAKS7rss3Y3GjZZEa8U8B+mUYIsU+bKL/7dzqtvVQjlVS4KO
+         0DJHAALDQt6J8vOSinTtoCAFNJqv4grumo1s8kliZXwVMCNFT1XEZV8AwxdEf6eyw/kx
+         +xtbTngzVMkwjodp8s1d33BVDno7XJGObeUMVi0L1UCIezDGNrAwFOx3hpTqZ80Xsbsc
+         atkE1teBU6MOwO0MVRXktEMqpDj1mo4UjDjvr+BTBLgMlTO3DC7yKlqSb+uZACuDjhZV
+         ymvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXrtlsJqxN52i5LGO4EueutydPlVVwrGfUb9ai9uFMmu0CpJkx0giGwpgpA/0SWF/So9F7oUrxnl0u8/Uk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3mDuJBIq8DclJmM7b+pJKNCCg4aKLsDQjwabDwzqxq2/m9/lw
+	UrTRMQslQ4jQMZK5VemAXO/7Ws24B/diE+clHUyWlyIBb8+VfQI3YV70pTuuyihyDtGJk86A62Z
+	6I1tA1ehRVVUEgAH76wHi2lpoGCjfmrBMrPzBt5BmLcdjAWr2HFACpyg=
+X-Gm-Gg: ASbGncv1rhpcrJcplVTaYg6jFwgceF5N22JwE52P+gF2BDoEVXpuyC1+6OU4Bcs4tKy
+	RWvOihhAhwF7UM7YsBh12+Q2efYcX92Y=
+X-Google-Smtp-Source: AGHT+IEasE6Xd86F7HdWoNwURd8zT59VinAYw5bxbwFoVlYFu7U2PDmBvOnvEcXAQ9Xxdr4i4ZYHlAQnNOLFmL/y5cY=
+X-Received: by 2002:a05:622a:4c10:b0:466:8887:6751 with SMTP id
+ d75a77b69052e-466888768f5mr5020911cf.23.1732555899774; Mon, 25 Nov 2024
+ 09:31:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122163139.GAZ0Cx63Ia9kgYgRIr@fat_crate.local>
- <Z0C3mDCngAf7ErM2@gmail.com> <20241122170227.GAZ0C5I-F8AUpwCAcG@fat_crate.local>
- <Z0Q0PJzTMg_Or22I@gmail.com> <20241125102223.GBZ0RP375DufF0QQds@fat_crate.local>
- <CAMzpN2gysxoKsjGhdSwykxQ1a_F0pZG=j6Y76QDgSmNG3V7SPg@mail.gmail.com> <20241125170922.GDZ0SvQj8FgK0ej8F3@fat_crate.local>
-In-Reply-To: <20241125170922.GDZ0SvQj8FgK0ej8F3@fat_crate.local>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Mon, 25 Nov 2024 12:31:05 -0500
-Message-ID: <CAMzpN2gB1WKruX0UGiO72Si1KHjcC_KcbAOK=-9TAO+cmSpFQA@mail.gmail.com>
-Subject: Re: [RFC PATCH] x86/boot: Get rid of linux/init.h include
-To: Borislav Petkov <bp@alien8.de>
-Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>, 
-	lkml <linux-kernel@vger.kernel.org>
+References: <20241124074318.399027-1-00107082@163.com> <CAJuCfpHviS-pw=2=BNTxp1TnphjuiqWGgZnq84EHvbz08iQ6eg@mail.gmail.com>
+ <70bad55f.b656.19362cca6ee.Coremail.00107082@163.com>
+In-Reply-To: <70bad55f.b656.19362cca6ee.Coremail.00107082@163.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 25 Nov 2024 09:31:28 -0800
+Message-ID: <CAJuCfpHho8se-f4cnvk0g1YLNzhvG3q8QTYmvMmweUnGAhtA=g@mail.gmail.com>
+Subject: Re: Abnormal values show up in /proc/allocinfo
+To: David Wang <00107082@163.com>
+Cc: kent.overstreet@linux.dev, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 25, 2024 at 12:09=E2=80=AFPM Borislav Petkov <bp@alien8.de> wro=
-te:
+On Mon, Nov 25, 2024 at 2:10=E2=80=AFAM David Wang <00107082@163.com> wrote=
+:
 >
-> On Mon, Nov 25, 2024 at 11:57:37AM -0500, Brian Gerst wrote:
-> > How about removing the kernel headers that you don't want from the
-> > include path?  This is a part of a broader issue where different parts
-> > of the kernel need different compiler flags (main kernel, VDSO, boot,
-> > etc.) and the current makefile structure doesn't handle that very
-> > well.
 >
-> Right, the idea is to remove *all* include/linux/ headers from the
-> decompressor and have the build break if someone includes new ones, forci=
-ng
-> her/him to properly split such header and use asm/shared for the common s=
-tuff.
+> Hi,
 >
-> There are examples in asm/shared/ for that already.
+> Some update
+>
+> I reproduce the abnormal values of "func:compaction_alloc" today, just on=
+ce. But I have not found a deterministic procedure yet.
+> Seems to me, it happens when kcompactd starts to work
+>
+>     ret_from_fork(100.000% 57/57)
+>         kthread(100.000% 57/57)
+>             kcompactd(100.000% 57/57)
+>                 compact_node(100.000% 57/57)
+>                     compact_zone(100.000% 57/57)
+>                         migrate_pages(100.000% 57/57)
+>                             migrate_pages_batch(100.000% 57/57)
+>                                 compaction_alloc(100.000% 57/57)
+>
+>
+> Maybe, kcompactd mess up information needed by memory tracking? Just a wi=
+ld guess.
+> And those negative signed values, and underflowed unsigned values could a=
+lso be the side-effect of memory compaction.
+> A wilder guess....
 
-To clarify, what I meant was to remove the -Iinclude/linux flag from
-the compiler command line, instead of messing around with ifdefs.
+Ok, thanks! I think that's enough for me to start digging. Will post
+an update once I find something.
+Thanks,
+Suren.
 
-
-Brian Gerst
+>
+>
+>
+> FYI
+> David
+>
+>
+>
+>
+> At 2024-11-25 08:35:54, "Suren Baghdasaryan" <surenb@google.com> wrote:
+> >On Sat, Nov 23, 2024 at 11:43=E2=80=AFPM David Wang <00107082@163.com> w=
+rote:
+> >>
+> >> Hi,
+> >>
+> >> I am running 6.12.0 for a week, and today I notice several strange
+> >> items in /proc/allocinfo:
+> >>
+> >>        -4096 18446744073709551615 mm/filemap.c:3787 func:do_read_cache=
+_folio
+> >>  -1946730496 18446744073709076340 mm/filemap.c:1952 func:__filemap_get=
+_folio
+> >>   -903294976 18446744073709331085 mm/readahead.c:263 func:page_cache_r=
+a_unbounded
+> >>   -353054720 18446744073709465421 mm/shmem.c:1769 func:shmem_alloc_fol=
+io
+> >>  10547565210        0 mm/compaction.c:1880 func:compaction_alloc
+> >>   -156487680 18446744073709513411 mm/memory.c:1064 func:folio_prealloc
+> >>  -2422685696 18446744073708960140 mm/memory.c:1062 func:folio_prealloc
+> >>  -2332479488 18446744073708982163 fs/btrfs/extent_io.c:635 [btrfs] fun=
+c:btrfs_alloc_page_array
+> >>
+> >> some values are way too large, seems like corrupted/uninitialized, and=
+ values for compaction_alloc
+> >> are inconsistent: non-zero size with zero count.
+> >>
+> >> I do not know when those data became this strange, and I have not rebo=
+ot my system yet.
+> >> Do you guys need extra information before I reboot my system and start=
+ed to try reproducing?
+> >
+> >Hi David,
+> >Thanks for reporting. Can you share your .config file? Also, do you
+> >see these abnormal values shortly after boot or does it take time for
+> >them to get into abnormal state?
+> >I'll take a look on Monday and see if there is an obvious issue and if
+> >I can reproduce this.
+> >Thanks,
+> >Suren.
+> >
+> >>
+> >>
+> >> Thanks
+> >> David
+> >>
+> >>
+> >>
+> >>
 
