@@ -1,88 +1,76 @@
-Return-Path: <linux-kernel+bounces-420669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DABB9D81F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:12:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D44E89D81F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:14:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8503280F5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:12:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 057B7B2194F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D4818FDBE;
-	Mon, 25 Nov 2024 09:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636C218FDBA;
+	Mon, 25 Nov 2024 09:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VS3Yg2Fy"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Njuiiomy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3D718D64B;
-	Mon, 25 Nov 2024 09:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC9D18D64B;
+	Mon, 25 Nov 2024 09:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732525958; cv=none; b=kWwCxgEYZf9iyowu5eppKZcIPDVDilpXTRdGswsPNXE1V2dVZDtQDkAJ2BZNr/UTC/AHRc2IMpFk7GtlgEgXvStSX77RK7TYP7Tto5ys9U/afTaYf9rTdC/hspVfoOQshiv1A1DQvdXiymRurz1U8yQ7UUmCcr9Q/Da5wVC5wlI=
+	t=1732526042; cv=none; b=IEJKVxTz1vgzDetX8IgrLJnIJ9nAQVVUU5oxTsrOJXBPFxJUPTbWK02YKL2CEtjjciQ8yYeklOsh8eCY21JSKaKAlLS5hjFTbaEuKRJiGYqmSMYG/WzhgUST1m7nEo8sa8QANI10f+FYp2+2NkP8nhgqbMjD/vziCnDpoqwzgYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732525958; c=relaxed/simple;
-	bh=FxMn6TL+VYIg036551yfzlt+21LR1IpuCjYwCyQ2h9c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u2ZtTUZqNHWuF2y1f+xZocHv/cm1FUcE/tchjO/G/cMt/jtACjTmp0wCCWmKxF0JNJeOPit5rXN+aBt4/HaXRAkQ7Zzq0Le3Dt8+X5tT+qusnmaXia5DOpipUzn9L8On7bT0lZcBVSrA/nEfVkDt5JHg65eJEtwd9uzI/fq/DCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VS3Yg2Fy; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1732525955;
-	bh=FxMn6TL+VYIg036551yfzlt+21LR1IpuCjYwCyQ2h9c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VS3Yg2FyjgBl7sASXqV9u0a+4D4FICUlGvzEpmRjmjbwo05VWxWYv+t9ccs2ICdR/
-	 l0ZVW1vwHn+knU1q3ebm0PO2LclYUeJIcK4dgYt4JnEQ09Fvq5tDP5xfVkmy3BmZmB
-	 EKo4a1d5yVGuGfv46sr6jcBj6+qtJsgDyaw+WeSvH+s2Z37zjHODfb9R2E9a3HBUFg
-	 QmuWz07c7o7KRDO84D1aa1/kNuw1In5aaCfFdD5glmbrcc5w0+UgbbmWf5pglrctMO
-	 XcogWUjiGrRSxBgwgFtLLrut0PLr8h0VORSZi3bRIJXje5Z4YtDHqUhGicRAa0SsCK
-	 100VXAqn890Wg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B68B917E1330;
-	Mon, 25 Nov 2024 10:12:34 +0100 (CET)
-Message-ID: <8b6657df-7813-4964-92c1-1a85b8390eed@collabora.com>
-Date: Mon, 25 Nov 2024 10:12:34 +0100
+	s=arc-20240116; t=1732526042; c=relaxed/simple;
+	bh=1XQUPazAG20tbs4O/Rn/xERWfHbxiKgQ/YgDItpVwZA=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=mhexOvcWVf2Rhs1BY8kO7HX6IPW58EdkAKoWPUXaY7rvRX9sOaJ7vaOvXutm8qTC1takHXNym1lEK0FXoAr18TiCKQQxFiqboIctalV0YWoLQQiXItU03v0qkROrf9KeAjSOAbGIccu5PBRUBIckUpS0les/b7UiT7ao9JgcBo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Njuiiomy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC643C4CECE;
+	Mon, 25 Nov 2024 09:14:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732526042;
+	bh=1XQUPazAG20tbs4O/Rn/xERWfHbxiKgQ/YgDItpVwZA=;
+	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
+	b=NjuiiomyOxo9MIeolvgNU5/PdZ8uJVY3aZYnHAiMjOY/fWRhiffon/RO4gq9Xt/eh
+	 o/9UwTIymkTPJKSxnPeIqr/+Pqxtgw2rxUE1VyYMbAzCXL/0f2wRU6JGYcnbllv1F4
+	 tbl9/GZcHjMnpXarIsNYN1dcA4u6dQRB2tU0DHeGhcKvmUn+x/D4Zcc9JA2EapnbdR
+	 TD+8rzRSex7h1JL9U6oGwEYRbPIu6LM7Vje1mwpRlkjRai0F52GdF43nTpTQCyZdy3
+	 e3vuamCeaJTGU17s23RDnxasS5vzQ/GEXJDnTM12bovr7VKE6u0kk8CnXAgoUoZNK6
+	 2b+pOjVmoTZTA==
+Message-ID: <b83f53e7bffcc7de692c2e478e083928@kernel.org>
+Date: Mon, 25 Nov 2024 09:13:59 +0000
+From: "Maxime Ripard" <mripard@kernel.org>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v4 01/10] drm/tests: hdmi: handle empty modes in
+ find_preferred_mode()
+In-Reply-To: <20241122-hdmi-mode-valid-v4-1-2fee4a83ab79@linaro.org>
+References: <20241122-hdmi-mode-valid-v4-1-2fee4a83ab79@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev, "Andrzej
+ Hajda" <andrzej.hajda@intel.com>, "Chen-Yu Tsai" <wens@csie.org>, "Dave
+ Stevenson" <dave.stevenson@raspberrypi.com>, "David Airlie" <airlied@gmail.com>, "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>, "Jonas Karlman" <jonas@kwiboo.se>, "Laurent
+ Pinchart" <Laurent.pinchart@ideasonboard.com>, "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime
+ Ripard" <mripard@kernel.org>, =?utf-8?b?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, "Neil
+ Armstrong" <neil.armstrong@linaro.org>, "Raspberry Pi Kernel Maintenance" <kernel-list@raspberrypi.com>, "Robert
+ Foss" <rfoss@kernel.org>, "Samuel Holland" <samuel@sholland.org>, "Simona
+ Vetter" <simona@ffwll.ch>, "Thomas Zimmermann" <tzimmermann@suse.de>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mmc: mtk-sd: Add support for ignoring cmd response CRC
-To: Andy-ld Lu <andy-ld.lu@mediatek.com>, ulf.hansson@linaro.org,
- matthias.bgg@gmail.com, wenbin.mei@mediatek.com
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20241123071006.14294-1-andy-ld.lu@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241123071006.14294-1-andy-ld.lu@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-Il 23/11/24 08:09, Andy-ld Lu ha scritto:
-> The current process flow does not handle MMC requests that are indicated
-> to ignore the command response CRC. For instance, cmd12 and cmd48 from
-> mmc_cqe_recovery() are marked to ignore CRC, but they are not matched to
-> the appropriate response type in msdc_cmd_find_resp(). As a result, they
-> are defaulted to 'MMC_RSP_NONE', which means no response is expected.
+On Fri, 22 Nov 2024 11:12:57 +0200, Dmitry Baryshkov wrote:
+> If the connector->modes list is empty, then list_first_entry() returns a
+> bogus entry. Change that to use list_first_entry_or_null().
 > 
-> This commit adds a new flag 'MMC_RSP_R1B_NO_CRC' to work alongside the
-> existing 'MMC_RSP_R1_NO_CRC' for the following process flow. It fixes the
-> response type setting in msdc_cmd_find_resp() and adds the logic to ignore
-> CRC in msdc_cmd_done().
-> 
-> Signed-off-by: Andy-ld Lu <andy-ld.lu@mediatek.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 
-
+Thanks!
+Maxime
 
