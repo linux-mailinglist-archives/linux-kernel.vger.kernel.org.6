@@ -1,468 +1,159 @@
-Return-Path: <linux-kernel+bounces-420429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 729F59D7A73
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 04:50:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CFFE9D7A94
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 04:58:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33409281CE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 03:50:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27A4A281E4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 03:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F00374CB;
-	Mon, 25 Nov 2024 03:50:20 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B3E4F8A0;
+	Mon, 25 Nov 2024 03:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZuLuSzej"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2C86EB4C
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 03:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F542500C8;
+	Mon, 25 Nov 2024 03:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732506619; cv=none; b=QvR4tkeBC0O2pieQ84MSlquUOjttd6TAHW3zYQLYxepcxInywCOnegb8HeW8e3CynW4M5Iw0mLFCaVgZooejzrBSTCrHH0Knc+Ck/Lu5clWXoqbts4/1idKyKWa0XlUx5NfdmeSFzCy/OV5FvneVUALlBCr6BVh+dqldYx844bM=
+	t=1732507126; cv=none; b=uUFoAjMY3O2p1WuGHZKKJ1u2oPP9nyK7Mlmd8HTdm0uIhHHSH3oc5vfqc28h9/40uK3mJBYHdyhrWMsIKLe3e7JTAM9E5Xk36hO6Xi4QQ3BGZJIkfgKtds79Cyuwc/7bwW8KJo5ijRcM6bMnrcNBReq/m/3tu90pbvcdO1HV8fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732506619; c=relaxed/simple;
-	bh=grSWf9m/ByqnxFDNHxiET3R01mPFPrUEgUmOESmOLYM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lLpjWjNfKKCjEg5DAIrEuOQlVmL9+vuXxyHflU/ufaaMJKqtsTCvFA+mfgZwR6PsagSVws78vb55okQH9aRezTuZpBaoYr3elFZWDNiL0/CrAUq9y2Vcz3lrMuH5vLy6tvngfy6w11CyHkMnC61OC2kZSoLHw9sepVd0Ha60KV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-841a3f2aebfso21156939f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 19:50:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732506616; x=1733111416;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BnzPYDG7ibbxn2GLmMWaZoAYyinp5DyikidJhDJE28Y=;
-        b=VYP36vZtxeAG0WK1lCXd3uSP8/iNteNSisFOgxuMhqXojzIS7fqd80d69jWyHPp4Et
-         j/sVevrrNStqs/rtnyOj0rI/W0YLnCjsSHPUZ9CB1K1A5OYkmwYnnZfS190HqJEKDyos
-         lbLvNWDqr5g5Xs536emnFzSxhQm1faUuZIASwDXzXLa0bN0NwsN8/J92viAZy2KRbh6d
-         XUYxvNp7OAW5clFGBeC/5CVP1trvgNGWOab1AF/BPAmLM8Aa0J4+YftsNYu8gSdcCZDc
-         LNaHSN1KfzchAoYVTVuTIEXCmaEbwrLo0xoiXXuyB/YIyqZMysdTgCRmVQklNegLsDio
-         JLPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXUTpyJLOSwvVdeCO+lVhAtBgVz2SWgQTs76gC01GAKDcIRZERgZsrlz/yMJhHejb6Kps6R+vJe4dRKLVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN+R9ZeAbi5qynLKyKSXGZbGNyckpbX/4p0M3WBAboU71AvMnZ
-	6ymtCRO7KDKQrcrHdimBqW7oowNa2ldJYSkwNKV3EeHdGVn4ftvftX7UyMhRVFf/bPdu6Fw3oCI
-	4sDrpG3WWp4+jY2YtT0vocezW2+BhjNANExa1JeBHlSzdNsTod7w17XA=
-X-Google-Smtp-Source: AGHT+IFgQUvrCHsLhF3yJ7VJx/bv1HR/HlMLT76o4b95NSvlCBKHSznbSOILwP1soLQAbromYNEj4rq/O9YEMqDdVIufIY2wt5lJ
+	s=arc-20240116; t=1732507126; c=relaxed/simple;
+	bh=neQUOlOJW1u87EBBFoOioJrDEn84H5u5RrK+fg1NqW8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=DKzjvH8oLLATGSsCcA/QF2IUcVIlpuO4yhOdOIU7qDERxF55w3OgGNWVrd17PI/eBtgTJc8i/xw6GIiP/R0RbLXQ+CnKPQpa5rvuMf0j9i9gu/3zAkipjGaF8Fk7UqMXXmspRh9WfXrIlgb0f1GGq6ne+sUdEyZKehFERT/N+Uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZuLuSzej; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD360C4CECE;
+	Mon, 25 Nov 2024 03:58:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732507125;
+	bh=neQUOlOJW1u87EBBFoOioJrDEn84H5u5RrK+fg1NqW8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZuLuSzejZ7FLOYuaFnDZzdoRjHCcyMaJw+XbPuLMZZhKsrWhitqCyluVLWKEiu2TW
+	 1gqSLD6ZLoFqsnqOucoUB25jz93oZgakSulkzSOkMgvZWgsj2fqxMSbFtcZapJe2DG
+	 JUejI858vsAJhXHxP+gsHbpt46tvL+LOuFD5IWEBy0nZTH9uSKLyUckVNyqlR0tF3S
+	 QyH0tj1dlDRAIoKQgX0qpuRzK5d0ouJQfMI2r/gmU9pK4lsovBWXPYHza/6pKGR5cx
+	 a1uTHG9GevuGwWD3rGSzk0/IUiAtteg5SZnxBuowksj53Ry5HnVXnzG/eUY3cJZ6w5
+	 VvlsPhKvBBNbw==
+Date: Mon, 25 Nov 2024 12:58:40 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Borislav Petkov
+ <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar
+ <mingo@redhat.com>, Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ x86@kernel.org
+Subject: Re: [PATCH] x86/ftrace: fix boot time slowdown
+Message-Id: <20241125125840.72ff35d6ee542b2c176852af@kernel.org>
+In-Reply-To: <20241124140705.2883-1-rppt@kernel.org>
+References: <20241124140705.2883-1-rppt@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1609:b0:3a7:7c07:c001 with SMTP id
- e9e14a558f8ab-3a79aff16cbmr100231725ab.23.1732506616056; Sun, 24 Nov 2024
- 19:50:16 -0800 (PST)
-Date: Sun, 24 Nov 2024 19:50:16 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6743f3f8.050a0220.1cc393.0058.GAE@google.com>
-Subject: [syzbot] [ocfs2?] possible deadlock in ocfs2_read_blocks
-From: syzbot <syzbot+eb5c9acb3e83269a22d8@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Sun, 24 Nov 2024 16:07:05 +0200
+Mike Rapoport <rppt@kernel.org> wrote:
 
-syzbot found the following issue on:
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> 
+> Steven Rostedt reported slowdown by over 30ms caused by commit 9bfc4824fd48
+> ("x86/module: prepare module loading for ROX allocations of text")
+> 
+>   Before:
+> 
+>    # cat /sys/kernel/tracing/dyn_ftrace_total_info
+>   57695 pages:231 groups: 9
+>   ftrace boot update time = 14733459 (ns)
+>   ftrace module total update time = 449016 (ns)
+> 
+>   After:
+> 
+>    # cat /sys/kernel/tracing/dyn_ftrace_total_info
+>   57708 pages:231 groups: 9
+>   ftrace boot update time = 47195374 (ns)
+>   ftrace module total update time = 592080 (ns)
+> 
+> The slowdown happened because initial patching of kernel code for ftrace
+> was switched from text_poke_early() to text_poke() to accommodate ftrace
+> updates of module text allocated as ROX.
+> 
+> Restore the use of text_poke_early() for boot time patching of the kernel
+> code.
+> 
 
-HEAD commit:    cfba9f07a1d6 Add linux-next specific files for 20241122
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=14fcbec0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=45719eec4c74e6ba
-dashboard link: https://syzkaller.appspot.com/bug?extid=eb5c9acb3e83269a22d8
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Looks good to me.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/be35516c7ba5/disk-cfba9f07.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/70295210dc7d/vmlinux-cfba9f07.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8b5d044072ee/bzImage-cfba9f07.xz
+Thank you!
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+eb5c9acb3e83269a22d8@syzkaller.appspotmail.com
-
-ocfs2: Mounting device (7,8) on (node local, slot 0) with ordered data mode.
-======================================================
-WARNING: possible circular locking dependency detected
-6.12.0-next-20241122-syzkaller #0 Not tainted
-------------------------------------------------------
-syz.8.2761/14732 is trying to acquire lock:
-ffff88802606a468 (&oi->ip_io_mutex){+.+.}-{4:4}, at: ocfs2_read_blocks+0x228/0x1600 fs/ocfs2/buffer_head_io.c:233
-
-but task is already holding lock:
-ffff88802606a640 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#4){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:818 [inline]
-ffff88802606a640 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#4){+.+.}-{4:4}, at: ocfs2_group_extend+0x229/0xb30 fs/ocfs2/resize.c:296
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #11 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#4){+.+.}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       down_write+0x99/0x220 kernel/locking/rwsem.c:1577
-       inode_lock include/linux/fs.h:818 [inline]
-       ocfs2_reserve_suballoc_bits+0x192/0x4eb0 fs/ocfs2/suballoc.c:786
-       ocfs2_reserve_cluster_bitmap_bits+0xc5/0x1d0 fs/ocfs2/suballoc.c:1132
-       ocfs2_local_alloc_reserve_for_window fs/ocfs2/localalloc.c:1125 [inline]
-       ocfs2_local_alloc_slide_window fs/ocfs2/localalloc.c:1261 [inline]
-       ocfs2_reserve_local_alloc_bits+0x95e/0x2870 fs/ocfs2/localalloc.c:669
-       ocfs2_reserve_clusters_with_limit+0x1b8/0xb60 fs/ocfs2/suballoc.c:1166
-       ocfs2_symlink+0x13a9/0x2d90 fs/ocfs2/namei.c:1919
-       vfs_symlink+0x137/0x2e0 fs/namei.c:4669
-       do_symlinkat+0x222/0x3a0 fs/namei.c:4695
-       __do_sys_symlink fs/namei.c:4716 [inline]
-       __se_sys_symlink fs/namei.c:4714 [inline]
-       __x64_sys_symlink+0x7a/0x90 fs/namei.c:4714
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #10 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#3){+.+.}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       down_write+0x99/0x220 kernel/locking/rwsem.c:1577
-       inode_lock include/linux/fs.h:818 [inline]
-       ocfs2_reserve_local_alloc_bits+0x132/0x2870 fs/ocfs2/localalloc.c:636
-       ocfs2_reserve_clusters_with_limit+0x1b8/0xb60 fs/ocfs2/suballoc.c:1166
-       ocfs2_reserve_clusters fs/ocfs2/suballoc.c:1227 [inline]
-       ocfs2_lock_allocators+0x30a/0x630 fs/ocfs2/suballoc.c:2746
-       ocfs2_extend_allocation+0x4ed/0x1c20 fs/ocfs2/file.c:589
-       ocfs2_extend_no_holes+0x1f6/0x4a0 fs/ocfs2/file.c:1027
-       ocfs2_acquire_dquot+0x64d/0xb80 fs/ocfs2/quota_global.c:848
-       dqget+0x770/0xeb0 fs/quota/dquot.c:975
-       ocfs2_setattr+0xe99/0x1f00 fs/ocfs2/file.c:1233
-       notify_change+0xbca/0xe90 fs/attr.c:552
-       chown_common+0x501/0x850 fs/open.c:778
-       do_fchownat+0x16a/0x240 fs/open.c:809
-       __do_sys_lchown fs/open.c:834 [inline]
-       __se_sys_lchown fs/open.c:832 [inline]
-       __x64_sys_lchown+0x85/0xa0 fs/open.c:832
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #9 (&ocfs2_quota_ip_alloc_sem_key){++++}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       down_write+0x99/0x220 kernel/locking/rwsem.c:1577
-       ocfs2_create_local_dquot+0x1de/0x1d70 fs/ocfs2/quota_local.c:1231
-       ocfs2_acquire_dquot+0x833/0xb80 fs/ocfs2/quota_global.c:878
-       dqget+0x770/0xeb0 fs/quota/dquot.c:975
-       ocfs2_setattr+0xe99/0x1f00 fs/ocfs2/file.c:1233
-       notify_change+0xbca/0xe90 fs/attr.c:552
-       chown_common+0x501/0x850 fs/open.c:778
-       do_fchownat+0x16a/0x240 fs/open.c:809
-       __do_sys_lchown fs/open.c:834 [inline]
-       __se_sys_lchown fs/open.c:832 [inline]
-       __x64_sys_lchown+0x85/0xa0 fs/open.c:832
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #8 (&dquot->dq_lock){+.+.}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
-       wait_on_dquot fs/quota/dquot.c:354 [inline]
-       dqget+0x6e6/0xeb0 fs/quota/dquot.c:970
-       __dquot_initialize+0x468/0xec0 fs/quota/dquot.c:1503
-       __ext4_new_inode+0x852/0x4380 fs/ext4/ialloc.c:992
-       ext4_xattr_inode_create fs/ext4/xattr.c:1486 [inline]
-       ext4_xattr_inode_lookup_create+0xca3/0x2030 fs/ext4/xattr.c:1596
-       ext4_xattr_block_set+0x274/0x3980 fs/ext4/xattr.c:1916
-       ext4_xattr_set_handle+0xce0/0x1580 fs/ext4/xattr.c:2458
-       __ext4_set_acl+0x54a/0x640 fs/ext4/acl.c:217
-       ext4_set_acl+0x468/0x760 fs/ext4/acl.c:259
-       set_posix_acl fs/posix_acl.c:954 [inline]
-       vfs_set_acl+0x7fd/0xa60 fs/posix_acl.c:1133
-       do_set_acl+0xf4/0x180 fs/posix_acl.c:1278
-       do_setxattr fs/xattr.c:633 [inline]
-       filename_setxattr+0x325/0x430 fs/xattr.c:665
-       path_setxattrat+0x440/0x510 fs/xattr.c:713
-       __do_sys_lsetxattr fs/xattr.c:754 [inline]
-       __se_sys_lsetxattr fs/xattr.c:750 [inline]
-       __x64_sys_lsetxattr+0xbf/0xe0 fs/xattr.c:750
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #7 (&ei->xattr_sem){++++}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1524
-       ext4_readpage_inline+0x36/0x6b0 fs/ext4/inline.c:518
-       ext4_read_folio+0x174/0x340 fs/ext4/inode.c:3185
-       filemap_read_folio+0x14b/0x630 mm/filemap.c:2366
-       filemap_create_folio mm/filemap.c:2497 [inline]
-       filemap_get_pages+0x100a/0x2540 mm/filemap.c:2555
-       filemap_read+0x45c/0xf50 mm/filemap.c:2646
-       __kernel_read+0x513/0x9d0 fs/read_write.c:523
-       integrity_kernel_read+0xb0/0x100 security/integrity/iint.c:28
-       ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:480 [inline]
-       ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
-       ima_calc_file_hash+0xae6/0x1b30 security/integrity/ima/ima_crypto.c:568
-       ima_collect_measurement+0x520/0xb10 security/integrity/ima/ima_api.c:293
-       process_measurement+0x1351/0x1fb0 security/integrity/ima/ima_main.c:372
-       ima_file_check+0xd9/0x120 security/integrity/ima/ima_main.c:572
-       security_file_post_open+0xb9/0x280 security/security.c:3121
-       do_open fs/namei.c:3830 [inline]
-       path_openat+0x2ccd/0x3590 fs/namei.c:3987
-       do_filp_open+0x27f/0x4e0 fs/namei.c:4014
-       do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
-       do_sys_open fs/open.c:1417 [inline]
-       __do_sys_openat fs/open.c:1433 [inline]
-       __se_sys_openat fs/open.c:1428 [inline]
-       __x64_sys_openat+0x247/0x2a0 fs/open.c:1428
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #6 (mapping.invalidate_lock){++++}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1524
-       filemap_invalidate_lock_shared include/linux/fs.h:873 [inline]
-       page_cache_ra_unbounded+0x143/0x8c0 mm/readahead.c:226
-       do_async_mmap_readahead mm/filemap.c:3231 [inline]
-       filemap_fault+0x82a/0x1950 mm/filemap.c:3330
-       __do_fault+0x135/0x460 mm/memory.c:4907
-       do_read_fault mm/memory.c:5322 [inline]
-       do_fault mm/memory.c:5456 [inline]
-       do_pte_missing mm/memory.c:3979 [inline]
-       handle_pte_fault+0x3c01/0x66b0 mm/memory.c:5801
-       __handle_mm_fault mm/memory.c:5944 [inline]
-       handle_mm_fault+0x1106/0x1bb0 mm/memory.c:6112
-       faultin_page mm/gup.c:1187 [inline]
-       __get_user_pages+0x1c82/0x49e0 mm/gup.c:1485
-       __get_user_pages_locked mm/gup.c:1751 [inline]
-       get_dump_page+0x155/0x2f0 mm/gup.c:2269
-       dump_user_range+0x14d/0x970 fs/coredump.c:943
-       elf_core_dump+0x3e9f/0x4790 fs/binfmt_elf.c:2127
-       do_coredump+0x214b/0x2e60 fs/coredump.c:758
-       get_signal+0x140b/0x1750 kernel/signal.c:3001
-       arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
-       exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
-       exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
-       irqentry_exit_to_user_mode+0x7e/0x250 kernel/entry/common.c:231
-       exc_page_fault+0x590/0x8c0 arch/x86/mm/fault.c:1542
-       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-
--> #5 (&mm->mmap_lock){++++}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __might_fault+0xc6/0x120 mm/memory.c:6751
-       _inline_copy_from_user include/linux/uaccess.h:162 [inline]
-       _copy_from_user+0x2a/0xc0 lib/usercopy.c:18
-       copy_from_user include/linux/uaccess.h:212 [inline]
-       __blk_trace_setup kernel/trace/blktrace.c:626 [inline]
-       blk_trace_ioctl+0x1ad/0x9a0 kernel/trace/blktrace.c:740
-       blkdev_ioctl+0x40c/0x6a0 block/ioctl.c:682
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #4 (&q->debugfs_mutex){+.+.}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
-       blk_mq_init_sched+0x3fa/0x830 block/blk-mq-sched.c:473
-       elevator_init_mq+0x20e/0x320 block/elevator.c:610
-       add_disk_fwnode+0x10d/0xf80 block/genhd.c:413
-       sd_probe+0xba6/0x1100 drivers/scsi/sd.c:4024
-       really_probe+0x2b8/0xad0 drivers/base/dd.c:658
-       __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
-       driver_probe_device+0x50/0x430 drivers/base/dd.c:830
-       __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
-       bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:459
-       __device_attach_async_helper+0x22d/0x300 drivers/base/dd.c:987
-       async_run_entry_fn+0xa8/0x420 kernel/async.c:129
-       process_one_work kernel/workqueue.c:3229 [inline]
-       process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
-       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
-       kthread+0x2f0/0x390 kernel/kthread.c:389
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #3 (&q->q_usage_counter(queue)#50){++++}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       blk_queue_enter+0xe1/0x600 block/blk-core.c:328
-       blk_mq_alloc_request+0x4fa/0xaa0 block/blk-mq.c:652
-       scsi_alloc_request drivers/scsi/scsi_lib.c:1222 [inline]
-       scsi_execute_cmd+0x177/0x1090 drivers/scsi/scsi_lib.c:304
-       read_capacity_16+0x2b4/0x1450 drivers/scsi/sd.c:2655
-       sd_read_capacity drivers/scsi/sd.c:2824 [inline]
-       sd_revalidate_disk+0x1013/0xbce0 drivers/scsi/sd.c:3734
-       sd_probe+0x9fa/0x1100 drivers/scsi/sd.c:4010
-       really_probe+0x2b8/0xad0 drivers/base/dd.c:658
-       __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
-       driver_probe_device+0x50/0x430 drivers/base/dd.c:830
-       __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
-       bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:459
-       __device_attach_async_helper+0x22d/0x300 drivers/base/dd.c:987
-       async_run_entry_fn+0xa8/0x420 kernel/async.c:129
-       process_one_work kernel/workqueue.c:3229 [inline]
-       process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
-       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
-       kthread+0x2f0/0x390 kernel/kthread.c:389
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #2 (&q->limits_lock){+.+.}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
-       queue_limits_start_update include/linux/blkdev.h:949 [inline]
-       loop_reconfigure_limits+0x43f/0x900 drivers/block/loop.c:998
-       loop_set_block_size drivers/block/loop.c:1473 [inline]
-       lo_simple_ioctl drivers/block/loop.c:1496 [inline]
-       lo_ioctl+0x1351/0x1f50 drivers/block/loop.c:1559
-       blkdev_ioctl+0x57d/0x6a0 block/ioctl.c:693
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&q->q_usage_counter(io)#24){++++}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       bio_queue_enter block/blk.h:75 [inline]
-       blk_mq_submit_bio+0x1536/0x23a0 block/blk-mq.c:3092
-       __submit_bio+0x2c6/0x560 block/blk-core.c:629
-       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
-       submit_bio_noacct_nocheck+0x4d3/0xe30 block/blk-core.c:739
-       ocfs2_read_blocks+0x8c3/0x1600 fs/ocfs2/buffer_head_io.c:330
-       ocfs2_read_inode_block_full fs/ocfs2/inode.c:1593 [inline]
-       ocfs2_read_inode_block+0x106/0x1e0 fs/ocfs2/inode.c:1605
-       ocfs2_get_clusters+0x3d2/0xbd0 fs/ocfs2/extent_map.c:615
-       ocfs2_extent_map_get_blocks+0x24c/0x7d0 fs/ocfs2/extent_map.c:668
-       ocfs2_read_virt_blocks+0x313/0xb20 fs/ocfs2/extent_map.c:983
-       ocfs2_read_dir_block fs/ocfs2/dir.c:508 [inline]
-       ocfs2_find_entry_el fs/ocfs2/dir.c:715 [inline]
-       ocfs2_find_entry+0x43b/0x2780 fs/ocfs2/dir.c:1080
-       ocfs2_find_files_on_disk+0xff/0x360 fs/ocfs2/dir.c:1981
-       ocfs2_lookup_ino_from_name+0xb1/0x1e0 fs/ocfs2/dir.c:2003
-       _ocfs2_get_system_file_inode fs/ocfs2/sysfile.c:136 [inline]
-       ocfs2_get_system_file_inode+0x305/0x7b0 fs/ocfs2/sysfile.c:112
-       ocfs2_init_global_system_inodes+0x32c/0x730 fs/ocfs2/super.c:457
-       ocfs2_initialize_super fs/ocfs2/super.c:2248 [inline]
-       ocfs2_fill_super+0x2f5b/0x5760 fs/ocfs2/super.c:994
-       mount_bdev+0x20a/0x2d0 fs/super.c:1693
-       legacy_get_tree+0xee/0x190 fs/fs_context.c:662
-       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
-       do_new_mount+0x2be/0xb40 fs/namespace.c:3507
-       do_mount fs/namespace.c:3847 [inline]
-       __do_sys_mount fs/namespace.c:4057 [inline]
-       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&oi->ip_io_mutex){+.+.}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
-       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
-       ocfs2_read_blocks+0x228/0x1600 fs/ocfs2/buffer_head_io.c:233
-       ocfs2_read_inode_block_full fs/ocfs2/inode.c:1593 [inline]
-       ocfs2_read_inode_block+0x106/0x1e0 fs/ocfs2/inode.c:1605
-       ocfs2_assign_bh fs/ocfs2/dlmglue.c:2414 [inline]
-       ocfs2_inode_lock_full_nested+0x300/0x1be0 fs/ocfs2/dlmglue.c:2509
-       ocfs2_group_extend+0x246/0xb30 fs/ocfs2/resize.c:298
-       ocfs2_ioctl+0x771/0x7d0 fs/ocfs2/ioctl.c:873
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  &oi->ip_io_mutex --> &ocfs2_sysfile_lock_key[args->fi_sysfile_type]#3 --> &ocfs2_sysfile_lock_key[args->fi_sysfile_type]#4
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#4);
-                               lock(&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#3);
-                               lock(&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#4);
-  lock(&oi->ip_io_mutex);
-
- *** DEADLOCK ***
-
-2 locks held by syz.8.2761/14732:
- #0: ffff88803503e420 (sb_writers#15){.+.+}-{0:0}, at: mnt_want_write_file+0x5e/0x200 fs/namespace.c:559
- #1: ffff88802606a640 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#4){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:818 [inline]
- #1: ffff88802606a640 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#4){+.+.}-{4:4}, at: ocfs2_group_extend+0x229/0xb30 fs/ocfs2/resize.c:296
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 14732 Comm: syz.8.2761 Not tainted 6.12.0-next-20241122-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
- __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- __mutex_lock_common kernel/locking/mutex.c:585 [inline]
- __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
- ocfs2_read_blocks+0x228/0x1600 fs/ocfs2/buffer_head_io.c:233
- ocfs2_read_inode_block_full fs/ocfs2/inode.c:1593 [inline]
- ocfs2_read_inode_block+0x106/0x1e0 fs/ocfs2/inode.c:1605
- ocfs2_assign_bh fs/ocfs2/dlmglue.c:2414 [inline]
- ocfs2_inode_lock_full_nested+0x300/0x1be0 fs/ocfs2/dlmglue.c:2509
- ocfs2_group_extend+0x246/0xb30 fs/ocfs2/resize.c:298
- ocfs2_ioctl+0x771/0x7d0 fs/ocfs2/ioctl.c:873
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f9bc837e819
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f9bc91df038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f9bc8535fa0 RCX: 00007f9bc837e819
-RDX: 00000000200000c0 RSI: 0000000040046f01 RDI: 0000000000000004
-RBP: 00007f9bc83f175e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f9bc8535fa0 R15: 00007ffd4ccc6f68
- </TASK>
+> Reported-by: Steven Rostedt <rostedt@goodmis.org>
+> Closes: https://lore.kernel.org/all/20241118132501.4eddb46c@gandalf.local.home
+> Fixes: 9bfc4824fd48 ("x86/module: prepare module loading for ROX allocations of text")
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> ---
+>  arch/x86/kernel/ftrace.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+> index 4dd0ad6c94d6..9e50288abbaa 100644
+> --- a/arch/x86/kernel/ftrace.c
+> +++ b/arch/x86/kernel/ftrace.c
+> @@ -111,7 +111,7 @@ static int ftrace_verify_code(unsigned long ip, const char *old_code)
+>   */
+>  static int __ref
+>  ftrace_modify_code_direct(unsigned long ip, const char *old_code,
+> -			  const char *new_code)
+> +			  const char *new_code, struct module *mod)
+>  {
+>  	int ret = ftrace_verify_code(ip, old_code);
+>  	if (ret)
+> @@ -120,6 +120,8 @@ ftrace_modify_code_direct(unsigned long ip, const char *old_code,
+>  	/* replace the text with the new text */
+>  	if (ftrace_poke_late) {
+>  		text_poke_queue((void *)ip, new_code, MCOUNT_INSN_SIZE, NULL);
+> +	} else if (!mod) {
+> +		text_poke_early((void *)ip, new_code, MCOUNT_INSN_SIZE);
+>  	} else {
+>  		mutex_lock(&text_mutex);
+>  		text_poke((void *)ip, new_code, MCOUNT_INSN_SIZE);
+> @@ -145,7 +147,7 @@ int ftrace_make_nop(struct module *mod, struct dyn_ftrace *rec, unsigned long ad
+>  	 * just modify the code directly.
+>  	 */
+>  	if (addr == MCOUNT_ADDR)
+> -		return ftrace_modify_code_direct(ip, old, new);
+> +		return ftrace_modify_code_direct(ip, old, new, mod);
+>  
+>  	/*
+>  	 * x86 overrides ftrace_replace_code -- this function will never be used
+> @@ -164,7 +166,7 @@ int ftrace_make_call(struct dyn_ftrace *rec, unsigned long addr)
+>  	new = ftrace_call_replace(ip, addr);
+>  
+>  	/* Should only be called when module is loaded */
+> -	return ftrace_modify_code_direct(rec->ip, old, new);
+> +	return ftrace_modify_code_direct(rec->ip, old, new, NULL);
+>  }
+>  
+>  /*
+> 
+> base-commit: 9f16d5e6f220661f73b36a4be1b21575651d8833
+> -- 
+> 2.45.2
+> 
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
