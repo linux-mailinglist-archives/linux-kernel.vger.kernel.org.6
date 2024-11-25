@@ -1,83 +1,92 @@
-Return-Path: <linux-kernel+bounces-421484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 311D69D8BE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:04:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D90A9D8BEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:06:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAB42161881
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:04:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D4C516509C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1291B6D14;
-	Mon, 25 Nov 2024 18:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B63A1B87D9;
+	Mon, 25 Nov 2024 18:06:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="bl3yB5Eb"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2059.outbound.protection.outlook.com [40.107.20.59])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Ozbsb9xx"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2081.outbound.protection.outlook.com [40.107.220.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230C617548;
-	Mon, 25 Nov 2024 18:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.59
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2BD017548;
+	Mon, 25 Nov 2024 18:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.81
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732557836; cv=fail; b=X9krF8NS72+qmykq1xgnu5rNw9oHczqKSX8gWgrJIyH8WQOhVbXEc81VSWe/MrzyIZM6ccocZCuILKDnxKFNccBgcPRFRWEVCa5iDNUxk/YlJ/NdbAD1wp9tuESdnmwRVOeSlGcZ4t2lPKiKRFrw26PaS0c0PqYbLJ5gGzuheCo=
+	t=1732557963; cv=fail; b=mCKFdWnWrCEcQX39NSmxgQ2FhW7c50eEPkroeaybeWKmV7rHZYgtjdNU9YL26yJ+RQ7/0hdPN/T7oZdI/hYUGOPIKQiiD0J3/yjCM7q/mUsH61vKF91be/rKRqo8+nG2OWXRfwI16RE6XHp8mZq76ynNtZTGuD2FZP2z/AyiYm8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732557836; c=relaxed/simple;
-	bh=+wm4c3hV/SvH2TaFKeJguWajsQ74n6vtVr8JS0I/DbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=gY46iziAQdP+M9+ptHMtfDajMB3+qqfgiejf8hHRblJh7cWXV3ZvVUOc/8CU7KeuTm4JZXhHNwF/JBQ5aytJZbu5wJrLxK3OcTrsduTTup5k5KxwdReozE+OeRFT68nN2X68N3PpMwYeBzcDcm6I1nhbiS1jamQdBL9690kBOLg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=bl3yB5Eb; arc=fail smtp.client-ip=40.107.20.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1732557963; c=relaxed/simple;
+	bh=XtbyKUwrl8NvJK3xgmzVgo4A9fSyRd38U/eQ9iqgw0A=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=i248gOErf6YqHRxzEt4NZy1hRSBwPSqnVsBvflu9WpVrP36kaYeghfEG+0eRrh+DtjmZvxwdIK3YMLM5OEQ59cndReNJpsvCnMbOFsHi7yIueaUQ4y7Yo3yjn0/DzCalk3NEnmvKU9zJbC/p6RVA8qF4bQvkhOg+oZiMHRKftNs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Ozbsb9xx; arc=fail smtp.client-ip=40.107.220.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qiraVifA7fug/HUbLm71fugLYTWu3lSPMSlgQkZ2OalB54pxWLVmBIdQp8D00TZ1x9x0GvQkPQEyCVCjmoZVZwNrMkojUnu0QdEGN+HSWSKL0mWxbHP9WlnuDGow3xRYnEr0whWk+e1wA1et6mxuT2LQtMdvLCkICvsp12ugMc7PZgNWaI8fY30njOGFY8DTkkI1Gx4zP0T4Z+2sL/SHhyesTzLB+PM168vm5/K1N4O6pcCrhGa0hYzSSACa4GbDqfRjGFTljw7niOaslQNofe18672k6MqqjjOslVOlSC/nkhHY3nao4EJjttZ2xIuJCFwhPO3/bNYhNoaPTgZmvQ==
+ b=q/V7jnfJvDUILE8vb6pf97Sxw+PSl2kIZfEr5Yr2CEARryy+pa9QptAYEMsGx78iQLaSJuqNJLEP77bLCdXZUXn/kXg+yxH6IsH+WR3q1DvZE640wbAT2n22gFORWLaHj3iLlnU1s3EZvXDbRhbynmeNCrNBcT8IhXIchSeM+V8rctfWKrWTOV2EWDOhn96VX2aZRNie8PCYbTXdQfoIU2ffZ9bNuRg0GAgTvCCQlEdPgYrRhqTk2N/SK+tuVD9nOyhXYFOxjNjjQsNDUvbQYjCiBYCs8mqGHmbHx1s0KXu2CjuvVeiUziyPydZap6lhiEJocI0ZJIcd22IP6829oQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y7fl9Uae1Z9Fg3YjdhqAdx6KjoKc+0zavZU0ar+jKIs=;
- b=osX85tQTh0l1LjENanxHVUBP7W7vgUPJggemUljV5RA7Sjm/ZYkYdXxjbjoyO3dNKG4KgZzhJXa48NTwt3Cm7UEwmFXAjs26MlnuoK7xILNNwXHIxNx7FcuKZ1RFzBMJvyO8GflP12M3VmmV+kz1+fZtmXsp1HPPX0+wYxWCi2KqnCen1p9CvylJNpS0hZaDWK1Akiaco7ZXXToQXQXso0PoVgYlx2d9f8xIi7W87gXDPOM2QVD6W1pmOV+/2IzHjCBEmiODY3LfPaGarrh9M5xyQRTUNjr0FNARAGtAiX1quW8ON5Hg9GcWPLi4TC8tz3D/NDdMJ4UX/Q48czdyTQ==
+ bh=of9arVcuY+Zk+7tAmxzqXYiMi9sUwQS+Ff29qCbKqOs=;
+ b=qNmRnoBBGahbX8cNTaq0JTmzShrZC3v9QQuM8XzNIt6Uuk0svbFzV+3DNVQw9EdasUOabGMnnsbbXD5+2vDbT3qD0nNArh4zPKts0CdZGLe03VX60L7MZFooFevDhZDRPZHEENmrEmr2DCR03pMIR0q6mvjbVljboaYeIQit9BGUZ8W6yjhwYw8Usq3tu2iOEw5KxQVEtrlrFgMivu3gd5hJuO/+X3oU8okpEVahJctIL+KXMWJiGIp/GHjaSd/zJyFuxZMOkS/k+h3tM94XYJF4421LjSTunW564+qyI1FIqbakQ8bBWsinnJOSK37Zexq9K1voGnGJnZr0xbsZ1w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y7fl9Uae1Z9Fg3YjdhqAdx6KjoKc+0zavZU0ar+jKIs=;
- b=bl3yB5EbD4rfWtNHUIGwsjUf/75aVBvRXPh56tVhT3AY5dWa5VLW7IFB0B8K00g60qH7hmQwEPuVQIhRzqLAkSWvdaTrLXMBk28UTRV/8d6afUKFV1yLUUt8CFl7ygVbokq1dGUKHUkyGmCdhEPg5qRP6Hxzex3GkNkOw9uuCS1mkdLZsGoLD8QL9zL9W14kDeE44hdxEqD4pTNVy94hlPDd/fCtyUjcltI3Tddunto5RpzgZ5BOwDbiMU8w+8/IoPYsNHpR/DMb11UFD58qpnPMvlSfZ05eGg3UGdXUdouTLVexnstuYaosahwkz8qpEc9fFZ4oz3KPmhvbLWZ+bQ==
+ bh=of9arVcuY+Zk+7tAmxzqXYiMi9sUwQS+Ff29qCbKqOs=;
+ b=Ozbsb9xxjC7QjGvxdDstV1hhXZXPLnnSxu0YeevjgZnBZ5iinSIkhVLSkkOI/cgoDbBrACqBhZKy4kEKYAOjsEE6p35yX7urZnUFUoQ+1fPg212nkj/DbQ3zgITK7F/Bt14ZNm4NzQi4iy492foyHt9PYoBn+97Xjb1+2BMCWyU=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by GV1PR04MB10154.eurprd04.prod.outlook.com (2603:10a6:150:1ac::17) with
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5688.namprd12.prod.outlook.com (2603:10b6:510:130::9)
+ by IA1PR12MB6020.namprd12.prod.outlook.com (2603:10b6:208:3d4::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.19; Mon, 25 Nov
- 2024 18:03:51 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8182.019; Mon, 25 Nov 2024
- 18:03:50 +0000
-Date: Mon, 25 Nov 2024 13:03:37 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	imx@lists.linux.dev, Niklas Cassel <cassel@kernel.org>,
-	dlemoal@kernel.org, maz@kernel.org, tglx@linutronix.de,
-	jdmason@kudzu.us
-Subject: Re: [PATCH v8 2/6] PCI: endpoint: Add RC-to-EP doorbell support
- using platform MSI controller
-Message-ID: <Z0S7+U5W2DOmzdJL@lizhi-Precision-Tower-5810>
-References: <20241116-ep-msi-v8-0-6f1f68ffd1bb@nxp.com>
- <20241116-ep-msi-v8-2-6f1f68ffd1bb@nxp.com>
- <20241124071100.ts34jbnosiipnx2x@thinkpad>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241124071100.ts34jbnosiipnx2x@thinkpad>
-X-ClientProxiedBy: CY5PR13CA0029.namprd13.prod.outlook.com (2603:10b6:930::6)
- To AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.20; Mon, 25 Nov
+ 2024 18:05:59 +0000
+Received: from PH7PR12MB5688.namprd12.prod.outlook.com
+ ([fe80::b26b:9164:45e2:22d5]) by PH7PR12MB5688.namprd12.prod.outlook.com
+ ([fe80::b26b:9164:45e2:22d5%4]) with mapi id 15.20.8182.019; Mon, 25 Nov 2024
+ 18:05:59 +0000
+Message-ID: <573fc7db-f6c8-4a0d-b709-d113dc479652@amd.com>
+Date: Mon, 25 Nov 2024 12:04:21 -0600
+User-Agent: Mozilla Thunderbird
+Reply-To: michael.day@amd.com
+Subject: Re: [PATCH v5 0/2] mm: Refactor KVM guest_memfd to introduce guestmem
+ library
+To: Elliot Berman <quic_eberman@quicinc.com>,
+ Paolo Bonzini <pbonzini@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Sean Christopherson <seanjc@google.com>, Fuad Tabba <tabba@google.com>,
+ Ackerley Tng <ackerleytng@google.com>, Mike Rapoport <rppt@kernel.org>,
+ David Hildenbrand <david@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Jonathan Corbet <corbet@lwn.net>, Trond Myklebust <trondmy@kernel.org>,
+ Anna Schumaker <anna@kernel.org>, Mike Marshall <hubcap@omnibond.com>,
+ Martin Brandenburg <martin@omnibond.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: James Gowans <jgowans@amazon.com>, linux-fsdevel@vger.kernel.org,
+ kvm@vger.kernel.org, linux-coco@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-nfs@vger.kernel.org,
+ devel@lists.orangefs.org, linux-arm-kernel@lists.infradead.org
+References: <20241122-guestmem-library-v5-0-450e92951a15@quicinc.com>
+From: Mike Day <michael.day@amd.com>
+Content-Language: en-US
+In-Reply-To: <20241122-guestmem-library-v5-0-450e92951a15@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: CY8PR12CA0008.namprd12.prod.outlook.com
+ (2603:10b6:930:4e::12) To PH7PR12MB5688.namprd12.prod.outlook.com
+ (2603:10b6:510:130::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,235 +94,177 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GV1PR04MB10154:EE_
-X-MS-Office365-Filtering-Correlation-Id: 30ffa3ac-dccc-4512-4fb7-08dd0d7b8425
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5688:EE_|IA1PR12MB6020:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0bf7946c-e7fa-4200-a489-08dd0d7bd08c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|52116014|38350700014;
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eEUvM1dkR082Rk50YjNBNGpEKytqc3lrcFI5SFk5VEpiUW9DS2JUT2xLZUlX?=
- =?utf-8?B?bkExaDF3Ry9PNEZUNllNNHVnVGIrSm5JOUMrMHNYVEthRnVxalE1RDQwQWJy?=
- =?utf-8?B?TzZFQ0xJYzhvaDRpVWZmSGJ0ajJ5QUpHQjgzR1Z6cWxYMDJxTUxPdUVFaUVO?=
- =?utf-8?B?dGZxdlRBNmFJZTJ3NXFrM09oeTUwMEM5WmZub1NrTERCKzhTcFZvZEFJSkZW?=
- =?utf-8?B?QWk1SDR6ZytNMU5zN1NPN0xrV05UQ1J2b1JuUHZVOGdzOTFHd1BRMyt3V0Rr?=
- =?utf-8?B?dnlZNVZ4bjdKMjFrblUySjc1YVhWcnBLRDg2ckN5cjlqVXFlM0xOeG1jTnhY?=
- =?utf-8?B?L0hEN0dJMUJmTDZMR0MzM283K04xcHlFM1ZoRnVYS1hiZHRaS1M2MWZZVHVX?=
- =?utf-8?B?SjNJaSt4SmdOOUtadmNnd3hNK09EcE1mb3VvM2FFYTVlcFZyZWZJbkxrQ0px?=
- =?utf-8?B?UkhyYU4wTTEybWpGbGtXYllrcGtTQzMxVXNLSTlmWHFmU3dVVUxlQlBNNVh5?=
- =?utf-8?B?ZWZBODdaQjcrQmNCVVR5cnRnS0pad1lFV2hqYktKSmhFamkwVThycndBVWNZ?=
- =?utf-8?B?c2JGQ1haYUI3aHJmWGMySlBONnFmZG1RdnE0UFFOL1AveGVZdEwyTWNQeUdP?=
- =?utf-8?B?RG1GQ0M3NWlpR3pSUTBtZTE3YWdUKytaTnBsa3dKVUJYZDh1aWZHeDA4Wk1C?=
- =?utf-8?B?YzcrTjVmendKWjN1K1hUMTdPS0NOUmd5MTdVSjRrVmo4RVRHQi84dHI5ZWlD?=
- =?utf-8?B?TkFQRy9tMlpDTWxiVzdWTU9scmZyOEVSREtyVlVGejZGNVNKb0Q4cGNzYW83?=
- =?utf-8?B?RVFNYkhIVjJodWl6VnVMcFc3VStTcWJDTmdtVEpiRXEyNE91NklJZnV6M0Vh?=
- =?utf-8?B?emMwekRMOWVQRm1PTnpBaWowYWlsN04ybUZLcWkyQVdYV1JWbEZBZUZNUmJh?=
- =?utf-8?B?V2k3aEpMeXpUNFNmbUh1NFIzNEhHSXM2bUcvYk1DdlQ1ZEw0eUJnaXBXSml6?=
- =?utf-8?B?Q0NXdk9SS1hrdGlwaGhLazZUdzZQYlEwY0wzYU9IbjFaTHFZSjM3NW5IMWlV?=
- =?utf-8?B?Ykc4SEgrZGJOdk1lU0V2Qktzak02NmZyTmdzLy9xbkNneUVVVmlLRldLcytU?=
- =?utf-8?B?cXl3WWFUVFJOK3VwVHQ0ODBQMTZDSy84UDNkNXMxWUNzb1ljU05wVEFBeXB3?=
- =?utf-8?B?dlh1eFVRQk5LdG11WnN5NzRYZzhFOFBXc3dGWUhWTUNDLzg4Uno4bmszTDNl?=
- =?utf-8?B?QnlrUkRmRUZOVENMR2RsK2dJNGV0SVI1eUVFR2pkczNtK3dpS0J1Vk9UYmhK?=
- =?utf-8?B?Si9TZkFEdCtnZzFzNHVnZFVTM2t1Rkx2dVdYRnNRSkozaTZ0ZHJDZTlVRE0r?=
- =?utf-8?B?cmhGaTVpRk5EVTBhZGliNS81NjFzbDQxMWlMdHh4WktaT0VqS3JyODlTV3JR?=
- =?utf-8?B?WHBCZjd5YUx3aTBQVi9pa1VYSEN4Z3BMaWhXWWRScUNGSC9CRzlLalZMbjk3?=
- =?utf-8?B?L3VsY244b0VYdlVGU0ozSGE5b1o3UGNYckJzbGdXVnZ3YkFFK3hObjdNczNo?=
- =?utf-8?B?ZHo0eG9ReWZkcmJ5RVRkRGFxQVJGdnQ0TmpRVW1TcGM3K0phbTZLWm9BbC9F?=
- =?utf-8?B?Vmh6VWpPRS9HUFVGVlJmVWZkVklpQVBjT25kaXE1QVV0S3hzZDJ4M0l5cmh6?=
- =?utf-8?B?aVE2dXNtWWdCcDBSdU1XM0crRjBhYVhITi8rSCtqdG1YT0pPeWZlaUw4WUFp?=
- =?utf-8?B?b3BpY0ltVmZ6SzZidjk0R2ZQWVFsY1R4VGpzWDlidXh2Nm43SXlaN2tUZXY3?=
- =?utf-8?B?VlU4UVZrK2lqZmtzZ3ZmRms2SHdxTEhIc1FaYkIzMnNiUi9WRk45WFpvN2Zr?=
- =?utf-8?B?OFpITmZCdS84RlB1M2FidGRVbG9SSWJaTHRpcFIxUS9ZK3c9PQ==?=
+	=?utf-8?B?TGxTdGJLcDFuSmR3OHNmZEhadHpCM1BLMVVYQUxSWTVjYkJLcm9hUXFmWXkv?=
+ =?utf-8?B?MEFXMytTckl1bVRtc2JhaVVmV0wwUkFaNnNlZkFsdzhzemthYUlSdWtlTjRR?=
+ =?utf-8?B?V2VFVC9yOWdmTWwvUU5HMTltYXZ0OEJWck1sNGRkNWFmR0JpRkFRTU05VVFj?=
+ =?utf-8?B?bHRBZzJSZG5OdDBjTkJiRXN6TXNXKy9mb2FwNldCM0RhV1ZHUFBOMzJ0b1NR?=
+ =?utf-8?B?MHNUQzVDM04zYWtRdStra0RDSEc1TjBEL3ZleFVVWC84Q0pkYVExQ0NCNlpB?=
+ =?utf-8?B?WUR0WGhxMmIwQjVBbzh3RmtpaWdpajU1TlhORlBmUThkVy9OWkVScHV2bHU4?=
+ =?utf-8?B?cVFjVlF0M3h2VEpzaFBUQzduLzhnL1dkS1BvWmRiOVg1TklJSUdtcTJtRHEx?=
+ =?utf-8?B?MGZUM3J3R05JSjFOMUJhZHdsS1NSSjVacTByT1FOSlo4ellWWGpRUC94cGww?=
+ =?utf-8?B?NmJ3NHJZNHVrS2dMb0ZWZUJHMVJGSitleS9COGVnKzNSKzB1ejRCcFZRZThX?=
+ =?utf-8?B?UEJhbDE0RUtDSDBQNG5SN0RqZXZpM1ZMbitRRTFKZEIzWTUvT3poMEVSdTBY?=
+ =?utf-8?B?cFcvbFlUcnJBbU9leDdGTkZBMlJGWDBRVlNETGNIUU5WdDRrckxKUUNsajBu?=
+ =?utf-8?B?USthSloraHhvNi9ua2J4MVpFTk5XS05qY2JzNVNTcXpURVNhQXJ4M1RUb3R0?=
+ =?utf-8?B?WTBiOHh4WTdQYlNEMzZ6alppMzBSWGZYeWVtdUlOeEY3NEwyZmVkNzVHRUIz?=
+ =?utf-8?B?WjhJb1FSQXlTNXpvWk0wUENZMURQTFdBVXJYenlaZkpjQXNETzJnMTZZOFM0?=
+ =?utf-8?B?dTYzMk1lSmhieU16UVNIYU42N01pSHo5TEtNd1JIbTJ6TVU0MHd4SjBwdmgr?=
+ =?utf-8?B?K0RuK3daNGFobEFOU2l4TGY2R3VBZ2lMS05EMDNWejhIMFVwV0tHNUlZMXBm?=
+ =?utf-8?B?bXV3VmkydXBLUHFlb2VNdXgrL3hmb1FtY2dwTE1aY2lkNEE0OGdGeWRJSFRY?=
+ =?utf-8?B?RlN1YlAyQVppcGZJTGxSMS9uYkRKbXFHek5oeHpXenFubzZzTTN6MkdSckVu?=
+ =?utf-8?B?NnZkWkFyWjc3ZXJ6dlhpQnk0NzU0QnNTV1BSdndjVEpXaXBzTlNuNXY0OHlu?=
+ =?utf-8?B?RWV2cjY5N1BRUW96bWFNVzhBRnNHWWRNeUYyYmhjREtRdFFFMktmQjUxTHBO?=
+ =?utf-8?B?RkZFS2NzdXkvQ2NKRXF3aDlIajdhV2hrMXh3b1JJN1dtRC9mYy9qdWxqMzEw?=
+ =?utf-8?B?WXVBaHBEUU15SDMrSFhSV0J4azlycjg2cjRtK2o1VENZU09EYmE5RjZzVXFi?=
+ =?utf-8?B?aStLZ2pVVWNOUU1pSkpQWnV5eDVZZFd3S0hXaHM2aU8wSEc4TkRCSElHby9U?=
+ =?utf-8?B?THRNU0d0Y0JycnJ5OVo0aHEzRzQ4MGtqVm9IaWlmcXp4RmxLYkE0UndVWDVK?=
+ =?utf-8?B?VUROU1c3c3gzeDhxa2lkcG9iWHJZd2NIMDYrVnNRZHJIbVFmaStpdzZMdDZi?=
+ =?utf-8?B?NEQyNldsTGhVQVZkL1BsUlExK3lXU1A5cklvdG50aWFsa1NBdi80NHpqU3Ax?=
+ =?utf-8?B?OGx4ektRMnNqemRtenF4VWE1OU5HRWRFbGdhNEQzNTd0ZnptRFRwOGZ4MW9r?=
+ =?utf-8?B?WEIwY2M3Y1Q5L0hhdEFaQlZESm9ueDFVYzRveVZWZi9ET1dvT2RZczRwUmFH?=
+ =?utf-8?B?WmdvWXZIVy9Sb2xvTlVVOE92ZWdlak8yWG1OL1dSMVhVcnpaR0EzRG1WM1Ev?=
+ =?utf-8?B?UHJZdlQ3NExvNENzcmFCSnkwNC9vTURZS2JoSElnL3F0THBLc0N0MzZiZ2JX?=
+ =?utf-8?Q?J4zLJhs8OYRlFN1Zk6HAAU8da4m00F+fQSPNU=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5688.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZCttL1BPT1hpdHVyNi9PcUtRZXN0K01sZGExS3FTSExERG5UNithOVIxeFhH?=
- =?utf-8?B?Z05zS2gwL3MraXNTa1oxWDhOa1A1cUFNMUZBMXhaMm4yVDBWbEpEOENZK3FV?=
- =?utf-8?B?Tnd6N3F2dmtIVFF4QWhXNWNXRU9GOHNBdk01emoyWTRneVRTaFd1ZHAwclZ2?=
- =?utf-8?B?Q0xNOGJOWW44M1JwVmIwdU1OMWY4ZG9vRTZmbElDUnorZFlOMjF2RUJPWnBS?=
- =?utf-8?B?OUlkcXltRUtLSXlrZXJEaWljcXJZTmdLMnNyTlV0QVJFdjBVQ3RUandSajBU?=
- =?utf-8?B?OEk0NDEyOG1IU044U0RLdmx2WkR6SnVSQ2swWXFjMVByUVNWL0ZqemxMeDZ5?=
- =?utf-8?B?THBXeDgyNVZqLzVVWUlTZkRVNkx6Nk9YNkxzWmlENEpkMjNUWnFzNElINzFX?=
- =?utf-8?B?UFNBUzZRMC9PMi9zRUFWcUJVUUhFbEFNNmdzb1RXMEhZQ2F4YVUzSDhVNzFF?=
- =?utf-8?B?TFdoeG1mbzY4cEY3ZHlySmVnMG44NmVENWtaZDVyYmpCdTVDVnM5NE1BbWF5?=
- =?utf-8?B?Rmp0aDlQTlppQXdBVjBCVm1jbjM4V1o1eU5rMXNkVmpGaVJOTEh5SWJmbGtU?=
- =?utf-8?B?b0RFQ01pLzdaQjVXQ3NGQ1dXYVJIVGEwWUQ4ZVhkeHNWdXpacUN2SmtyT3h1?=
- =?utf-8?B?Qm4zT2JvM1RTVk85NjFHajM2UGs2VkQxZnVzc3ZVcURSRnVPME12b0d3Vkht?=
- =?utf-8?B?dEFwTmR2dVY3RnZFdHFTMzdhemh2R0I2RXpBVFpJbThJSWZ4ZG4zUnZITStq?=
- =?utf-8?B?MjFNajI4ZUdSbnBtR25Ya1oyUk5SOXppYTMrOWtkeXo4akFIR2hEY0Jab09O?=
- =?utf-8?B?SkpRc0Y2aHRmS2Z4NFM0TGdjZlMwUGladzhteDdhQUJLbW43SllBWWRBaXpJ?=
- =?utf-8?B?cnREMkV2T0s4eWxZM2grMFJlbDZjeFdIcko3R01rS0lvSXBRdEZZYjNGS3Q0?=
- =?utf-8?B?MTlpT2lDNk9ZSWFmcGRPbXJYOXgxL0tCVjN3UWo5cFdyQjVua1BYMXloTVZO?=
- =?utf-8?B?UjZncUZWOVRCUWEvcW9mS2dXUmV3cVZPMHNOWGQveityeThlNDdtVzJvYjdU?=
- =?utf-8?B?d3FYS2w1WmIvcVM3UVBSK01tZUhSakNtQkN5LzR3aHJnL1NQaEJQa2JPK2s5?=
- =?utf-8?B?VmNsamVqNndXaUpDM0tBU0NrNld5S2NiYnBuWmNhYjczQWdhWjhQTVltcUJH?=
- =?utf-8?B?dVZzTnFIdDRIdG9FdlFKVXRNV29QaGh4TnhwcHA2WE9sdS9iNlYySXo0R05T?=
- =?utf-8?B?dFc1aERSemZ5bTNrSVFZNGQxR244bFgxOTZJNnJPWWFmdnZiTHlZam1ncEk4?=
- =?utf-8?B?SkFRUFc0dGNwME9wUGQwbU9WbElsbzFtNmhzak51S1h6QmZoRW5LODM1cUlx?=
- =?utf-8?B?c1B0ekwwdWN5dUUwZjZBMm45cXN1QU1KYTZKc3Npd01CTVlvSURodWtqa0hK?=
- =?utf-8?B?NnAyb2d0OHlHMGpYMTZIMit1Z0ZxY1JSUUhFYmRNcHNlZ1VTM1ZFeFBIYnd3?=
- =?utf-8?B?NEozaVRSbkJKQ3gyMVpxa0RjN3IrOWl1eEpVbGlBQlhzK1d2Y0ZxcHBHZ3A3?=
- =?utf-8?B?NWVuV3k0WFJNSzQya2lPNDA4YWd1bjFpRFdTYzYrU3ZrelBWaTIyQlg0OTVu?=
- =?utf-8?B?NTAwM2tVNzhWUGxlRkRSL1dBSFc1NUdmQjMwa0t2QlBLZktDRXROV0ovSGlT?=
- =?utf-8?B?L056MjR0Z1JqeUFqYTVoQzlqZjhYODNBSzhoeEVKQU1RMmFvekRwVHJLZ3o5?=
- =?utf-8?B?OWRhOXlsS2FxUHJKeDNVZzZjSjB3YkpYQU5XaXB4ZkNQaVBGa2cxYmh1dGMr?=
- =?utf-8?B?Q2NIbnZKRm9vZk1MOGp2ZTdRTmVCMmFRMi9DUmJwZGE0WmhhaWt6ZGlwYVVV?=
- =?utf-8?B?WW54ZnEwcHdWOWRUdXBkdllBSmtQbG05Qitmb0hDUElDMVRaTjhqVUkzWVVP?=
- =?utf-8?B?K2Zac0ZYaGR1bE9mV2pOMTAwbWIxUC8vM2FvTUZVek85UWxUc1Nrc09KWFVt?=
- =?utf-8?B?QVpxdW94NmlZYXBZMjhpVzZ0YiszcFFTVHFjZlMxNTFadkhZT1ZjVTJzNWhJ?=
- =?utf-8?B?dEdPUUprRU5wWFlDVVNyMkxCNHJydDg4TjZYV2g1eUZUQVFMWGJHUmFtNUNw?=
- =?utf-8?Q?o1HTORhZXdbvq0jna64zNmHDc?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 30ffa3ac-dccc-4512-4fb7-08dd0d7b8425
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
+	=?utf-8?B?REFJekdQTXZYMUxoSGZPMFl2blJuT3NYYXdaQ1B6TGt5aGZ3cnZZLzd1MEY3?=
+ =?utf-8?B?UE9kUFowdUZqUElPb3hmL1FFRlhpR09zTjN6aXRMU2RERENMbDJjRzNtRTBI?=
+ =?utf-8?B?c3dkeWJ5ckZLOXB6VlhtZHlmNXlzL3lDTzltYTgyck4zTWJXcE8yNFFxcWlo?=
+ =?utf-8?B?QS82OGxrMjhoNTZ5UVRlVVFKUGE5RXNxUy9EMkNRVDU4VnFEeTBqRlAzQVVn?=
+ =?utf-8?B?VWswVEpqMFJzbTc1enVjOU9zS2hyUlVsOTY4MjVUajJxY2xJazBpNnphYXZw?=
+ =?utf-8?B?SHEvdUJRdURNU3d3OGNKcjJaU3lWQTlCSWFNK3hZUUtTSzB1Rk9WRkc0UUtk?=
+ =?utf-8?B?ZmRmOUJKdnZyL2dGSisrSWFTZFZBWWFwZU8wa3ZVN2VDRENET1dDQ2dMS3M1?=
+ =?utf-8?B?K0pIQjBPSFE0WU1iTk1RazFINitDNDNmREFvVC9rQlJCZW15Ly9GamNvRTVG?=
+ =?utf-8?B?TFBMcW5BMlVwaXpCUCtscnlHNllaSmdKME4wV1Y1aGFrRXdOWXc2OFBaVlRU?=
+ =?utf-8?B?WlFXQ3lTYnVhb0NIdnFYcTdNa2FNRUxyMWJTWDBIMm0wUkVhMGI4UHpCK1FK?=
+ =?utf-8?B?Z0huOElOR2VCNmI3bCtrVmpWMGJPUmdJRFdVa015aU9RN3hRMjNTQjhmSjIw?=
+ =?utf-8?B?d3RiR3ZIdHJ3NldXcEZJa2JHVjNZVk4xenRleVUvc1dhUDlWVW1tVUtkYThs?=
+ =?utf-8?B?OU85ZXdncDRFRXJCSzhtZk81WGZpc1A2NzJDdC9sTWFoNk1xSi81eSswU1pC?=
+ =?utf-8?B?dzc1dktYVXgyU0FBK0d4c2c5KzgwN3ROckpvL3ZBNGwxWlBGMno3U1AzNzUy?=
+ =?utf-8?B?aTRPR3JHS003UFAxUmxVbTl0eDh3Z2lIclJLck9kYnVxMTc2aVlDY3B3UDdD?=
+ =?utf-8?B?MUN1TXdkQTJkTlJvbDQzd3dmRllXYk9vMVlHRG9jOHg1SFI5QzJrWmcvMzhQ?=
+ =?utf-8?B?anc5ZDdnK2UzOW9CQU8zVHV0ODNVWVhpZWFjZXpkTUtxaDVHeTJIVDgrSERM?=
+ =?utf-8?B?MXkxMldJZ3AvMDhMM3A3NHB2L3p1K3UrYjBpV0RmazFBZEVWQW16WTAvZDBu?=
+ =?utf-8?B?eWR2U1BoVGNmUzlCRW5tTGk2aVBNUURGKzN0R0xFclllY2ZHakdPVnZvbUwv?=
+ =?utf-8?B?SHFhRXpaVW9uT2tlVkIvcG05c1E3bzVSTTc2Z2ZmVFQrTy9xOU5iRCt6NHZv?=
+ =?utf-8?B?MUtWNE90d1ErN1BKM3Q4enNGM2ZXRFc5dngvajZuK3IxeVVrZ1dyZFd1cWNJ?=
+ =?utf-8?B?aU9LdlJJSjJ4YmFlQnVhdFE4c3ZMaExWQUhWbDFVcUU1eUxmZXA2STZCaExF?=
+ =?utf-8?B?NmhvcVVlcTJkeFhzZjRhQmRnT1ZmQVZXdkRkeUh1Zkp5ZUxDS2VwY0xub1h0?=
+ =?utf-8?B?eER6SjA2alBFS0kwUlg0REQ3Q0ZMMExGbXpFWWFHS3BOYUs4K0dFa1ZJZXBQ?=
+ =?utf-8?B?b2dJVjBuSEJQMzRqQkJmSDN0YWEra3Y0Q1VzRS9EdGJJSUJJWkpxNVJwQXMy?=
+ =?utf-8?B?aUJZZ200M0dTY0NpT1FjTnNJTVpnbjNkVDZrNmhDQk1kd2JTcmtIY3pkSGVh?=
+ =?utf-8?B?MDFuL0FLWUdHb2FjaGU3bnYxdUlmWll4S0h6NmVXREMyVnF4dDNFbzNqTFha?=
+ =?utf-8?B?V2pIbEJKRHkwbXdqSm52WmNRU01nLytEa0NGb1FwSlpwWVBIUXppVGNaTzNI?=
+ =?utf-8?B?bkxlUnZ5OHBXeWN5bjVaS0taSFJITGxnTjd4cFhTSmpnamF0bmIweDkzWUJK?=
+ =?utf-8?B?S2Rnd0JBakkzZUQwUjhKeU1EUEhJZm1FUVRFK2hLRE85VkswZVlDWnNHN3cx?=
+ =?utf-8?B?UXF1RjJ3d29EUTg1UTc0bC9SN2RFV2E1cm5uZzlzdkdSOXNaMlVDWkdaeWo3?=
+ =?utf-8?B?YU1jeEhQbE1YMGxyQkNvVnI2aTFCTCtCKzgyU1ZTQ3FGQWpmdXpMaGFPNDJN?=
+ =?utf-8?B?Z3lFT0VFZVBKVFJod1R1R1FmZ3pBRkxScVdSTDNoTjBzVkVCbk1OOHl2dkc1?=
+ =?utf-8?B?SmM1dXVmbzhLUlAwQUtGYkxKQnJ3UHdPV3VsbHZFSHlqN3ZTSUR5eFNPWDBX?=
+ =?utf-8?B?SU0yNW14bVg3bzhFRi9XcFdHUTdSN1pzVjF6VWZpbXpSSHBCTGExSzJmb1Uy?=
+ =?utf-8?Q?fRQiD7cZbULbYaKWBqhEpuH21?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0bf7946c-e7fa-4200-a489-08dd0d7bd08c
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5688.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2024 18:03:50.8907
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2024 18:05:58.9093
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VtgbCjvGEodO5tboe69+4XnZZ8vePoXrqzAL5i1yITrbdemJBhfji9jD/8XsfiYOt/rTdP00h8hwQRzpr9TS4A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10154
+X-MS-Exchange-CrossTenant-UserPrincipalName: fIl9Swjn6fgZq33yxWtZQVTAaScxr/VET+NSgrf9LP8MZn+f8Tsgc+K4IjE6FC9O17pPTFlx5TrJ4BuEGEEL/A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6020
 
-On Sun, Nov 24, 2024 at 12:41:00PM +0530, Manivannan Sadhasivam wrote:
-> On Sat, Nov 16, 2024 at 09:40:42AM -0500, Frank Li wrote:
-> > Doorbell feature is implemented by mapping the EP's MSI interrupt
-> > controller message address to a dedicated BAR in the EPC core. It is the
-> > responsibility of the EPF driver to pass the actual message data to be
-> > written by the host to the doorbell BAR region through its own logic.
-> >
-> > Tested-by: Niklas Cassel <cassel@kernel.org>
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > ---
-> > change from v5 to v8
-> > -none
-> >
-> > Change from v4 to v5
-> > - Remove request_irq() in pci_epc_alloc_doorbell() and leave to EP function
-> > driver, so ep function driver can register differece call back function for
-> > difference doorbell events and set irq affinity to differece CPU core.
-> > - Improve error message when MSI allocate failure.
-> >
-> > Change from v3 to v4
-> > - msi change to use msi_get_virq() avoid use msi_for_each_desc().
-> > - add new struct for pci_epf_doorbell_msg to msi msg,virq and irq name.
-> > - move mutex lock to epc function
-> > - initialize variable at declear place.
-> > - passdown epf to epc*() function to simplify code.
-> > ---
-> >  drivers/pci/endpoint/Makefile     |  2 +-
-> >  drivers/pci/endpoint/pci-ep-msi.c | 99 +++++++++++++++++++++++++++++++++++++++
-> >  include/linux/pci-ep-msi.h        | 15 ++++++
-> >  include/linux/pci-epf.h           | 16 +++++++
-> >  4 files changed, 131 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/pci/endpoint/Makefile b/drivers/pci/endpoint/Makefile
-> > index 95b2fe47e3b06..a1ccce440c2c5 100644
-> > --- a/drivers/pci/endpoint/Makefile
-> > +++ b/drivers/pci/endpoint/Makefile
-> > @@ -5,4 +5,4 @@
-> >
-> >  obj-$(CONFIG_PCI_ENDPOINT_CONFIGFS)	+= pci-ep-cfs.o
-> >  obj-$(CONFIG_PCI_ENDPOINT)		+= pci-epc-core.o pci-epf-core.o\
-> > -					   pci-epc-mem.o functions/
-> > +					   pci-epc-mem.o pci-ep-msi.o functions/
-> > diff --git a/drivers/pci/endpoint/pci-ep-msi.c b/drivers/pci/endpoint/pci-ep-msi.c
-> > new file mode 100644
-> > index 0000000000000..7868a529dce37
-> > --- /dev/null
-> > +++ b/drivers/pci/endpoint/pci-ep-msi.c
-> > @@ -0,0 +1,99 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * PCI Endpoint *Controller* (EPC) MSI library
-> > + *
-> > + * Copyright (C) 2024 NXP
-> > + * Author: Frank Li <Frank.Li@nxp.com>
-> > + */
-> > +
-> > +#include <linux/cleanup.h>
-> > +#include <linux/device.h>
-> > +#include <linux/slab.h>
->
-> Please sort alphabetically.
->
-> > +#include <linux/module.h>
-> > +#include <linux/msi.h>
-> > +#include <linux/pci-epc.h>
-> > +#include <linux/pci-epf.h>
-> > +#include <linux/pci-ep-cfs.h>
-> > +#include <linux/pci-ep-msi.h>
-> > +
-> > +static bool pci_epc_match_parent(struct device *dev, void *param)
-> > +{
-> > +	return dev->parent == param;
-> > +}
-> > +
-> > +static void pci_epc_write_msi_msg(struct msi_desc *desc, struct msi_msg *msg)
-> > +{
-> > +	struct pci_epc *epc __free(pci_epc_put) = NULL;
-> > +	struct pci_epf *epf;
-> > +
-> > +	epc = pci_epc_get_fn(pci_epc_match_parent, desc->dev);
->
-> You were passing 'epc->dev.parent' to platform_device_msi_init_and_alloc_irqs().
-> So 'desc->dev' should be the EPC parent, right? If so, you can do:
->
-> 	epc = pci_epc_get(dev_name(msi_desc_to_dev(desc)));
->
-> since we are reusing the parent dev name for EPC.
 
-I think it is not good to depend on hidden situation, "name is the same."
-May it change in future because no one will realize here depend on the same
-name and just think it is trivial update for device name.
 
->
-> > +	if (!epc)
-> > +		return;
-> > +
-> > +	/* Only support one EPF for doorbell */
-> > +	epf = list_first_entry_or_null(&epc->pci_epf, struct pci_epf, list);
->
-> Why don't you impose this restriction in pci_epf_alloc_doorbell() itself?
+On 11/22/24 11:29, Elliot Berman wrote:
+> In preparation for adding more features to KVM's guest_memfd, refactor
+> and introduce a library which abtracts some of the core-mm decisions
+> about managing folios associated with guest memory. The goal of the
+> refactor serves two purposes:
+> 
+> 1. Provide an easier way to reason about memory in guest_memfd. KVM
+>     needs to support multiple confidentiality models (TDX, SEV, pKVM, Arm
+>     CCA). These models support different semantics for when the host
+>     can(not) access guest memory. An abstraction for the allocator and
+>     managing the state of pages will make it eaiser to reason about the
+>     state of folios within the guest_memfd.
+> 
+> 2. Provide a common implementation for other users such as Gunyah [1] and
+>     guestmemfs [2].
+> 
+> In this initial series, I'm seeking comments for the line I'm drawing
+> between library and user (KVM). I've not introduced new functionality in
+> this series; the first new feature will probably be Fuad's mappability
+> patches [3].
+> 
+> I've decided to only bring out the address_space from guest_memfd as it
+> seemed the simplest approach. In the current iteration, KVM "attaches"
+> the guestmem to the inode. I expect we'll want to provide some helpers
+> for inode, file, and vm operations when it's relevant to
+> mappability/accessiblity/faultability.
+> 
+> I'd appreciate any feedback, especially on how much we should pull into
+> the guestmem library.
+> 
+> [1]: https://lore.kernel.org/lkml/20240222-gunyah-v17-0-1e9da6763d38@quicinc.com/
+> [2]: https://lore.kernel.org/all/20240805093245.889357-1-jgowans@amazon.com/
+> [3]: https://lore.kernel.org/all/20241010085930.1546800-3-tabba@google.com/
+> 
+> Changes in v5:
+> - Free all folios when the owner removes detaches the guestmem
+> - Link to v4: https://lore.kernel.org/r/20241120-guestmem-library-v4-0-0c597f733909@quicinc.com
+> 
+> Changes in v4:
+> - Update folio_free() to add address_space mapping instead of
+>    invalidate_folio/free_folio path.
+> - Link to v3: https://lore.kernel.org/r/20241113-guestmem-library-v3-0-71fdee85676b@quicinc.com
+> 
+> Changes in v3:
+>   - Refactor/extract only the address_space
+>   - Link to v2: https://lore.kernel.org/all/20240829-guest-memfd-lib-v2-0-b9afc1ff3656@quicinc.com/
+> 
+> Changes in v2:
+> - Significantly reworked to introduce "accessible" and "safe" reference
+>    counters
+> - Link to v1: https://lore.kernel.org/r/20240805-guest-memfd-lib-v1-0-e5a29a4ff5d7@quicinc.com
+> 
+> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
 
-This is callback from platform_device_msi_init_and_alloc_irqs(). So it is
-actually restriction at pci_epf_alloc_doorbell().
+Tested-by: Mike Day <michael.day@amd.com>
 
->
-> > +
-> > +	if (epf && epf->db_msg && desc->msi_index < epf->num_db)
-> > +		memcpy(&epf->db_msg[desc->msi_index].msg, msg, sizeof(*msg));
-> > +}
-> > +
-> > +static void pci_epc_free_doorbell(struct pci_epc *epc, struct pci_epf *epf)
-> > +{
-> > +	guard(mutex)(&epc->lock);
-> > +
-> > +	platform_device_msi_free_irqs_all(epc->dev.parent);
-> > +}
-> > +
-> > +static int pci_epc_alloc_doorbell(struct pci_epc *epc, struct pci_epf *epf)
-> > +{
-> > +	struct device *dev = epc->dev.parent;
-> > +	u16 num_db = epf->num_db;
-> > +	int i = 0;
-> > +	int ret;
-> > +
-> > +	guard(mutex)(&epc->lock);
-> > +
-> > +	ret = platform_device_msi_init_and_alloc_irqs(dev, num_db, pci_epc_write_msi_msg);
-> > +	if (ret) {
-> > +		dev_err(dev, "Failed to allocate MSI, may miss 'msi-parent' at your DTS\n");
->
-> No need to mention 'msi-parent'. Just 'Failed to allocate MSI' is enough.
->
-> > +		return -ENOMEM;
->
-> -ENODEV?
->
-> - Mani
->
-> --
-> மணிவண்ணன் சதாசிவம்
+> ---
+> Elliot Berman (2):
+>        filemap: Pass address_space mapping to ->free_folio()
+>        mm: guestmem: Convert address_space operations to guestmem library
+> 
+>   Documentation/filesystems/locking.rst |   2 +-
+>   MAINTAINERS                           |   2 +
+>   fs/nfs/dir.c                          |  11 +-
+>   fs/orangefs/inode.c                   |   3 +-
+>   include/linux/fs.h                    |   2 +-
+>   include/linux/guestmem.h              |  34 ++++++
+>   mm/Kconfig                            |   3 +
+>   mm/Makefile                           |   1 +
+>   mm/filemap.c                          |   9 +-
+>   mm/guestmem.c                         | 201 ++++++++++++++++++++++++++++++++++
+>   mm/secretmem.c                        |   3 +-
+>   mm/vmscan.c                           |   4 +-
+>   virt/kvm/Kconfig                      |   1 +
+>   virt/kvm/guest_memfd.c                |  98 +++++------------
+>   14 files changed, 290 insertions(+), 84 deletions(-)
+> ---
+> base-commit: 5cb1659f412041e4780f2e8ee49b2e03728a2ba6
+> change-id: 20241112-guestmem-library-68363cb29186
+> 
+> Best regards,
 
