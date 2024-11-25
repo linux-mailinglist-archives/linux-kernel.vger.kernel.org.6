@@ -1,122 +1,108 @@
-Return-Path: <linux-kernel+bounces-420903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A55409D842F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:17:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D4E49D8433
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:18:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BDB0285073
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:17:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A9A5287211
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1746D196D8F;
-	Mon, 25 Nov 2024 11:17:23 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2DD194C7D;
+	Mon, 25 Nov 2024 11:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iQL03Ujf"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E941957F4;
-	Mon, 25 Nov 2024 11:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAFD1922FD;
+	Mon, 25 Nov 2024 11:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732533442; cv=none; b=iLzJgcUXSTuG4nDdt68p3ainIz48sMV5x0WudVWA+7pW0WwkxLqMWULqkxqPDjzNGbepVtAtjfTzraZhhDHUya3RfWJGEDBlib1GWGHguN/qrnq5dGYs6o4o0uRse2haq44zYwJ2suVU0UY/TDpaXo25ns127oXJciuqkj6qSz8=
+	t=1732533514; cv=none; b=CbCP+xBMlEWAF108w2sLpIYHRFD35BIaTwM0R5oYhwmSv4oROhXS7+zlirgushhUX8cx7oDmnX1jyQ0HS25YB83Fwu/iM0VhAqyRQeG7vOaMabZYx6cNZRo8j4uac0AYOicnWVR9e8G3qB2Hr+DvjRAKaNK6U5G5KkeR7kVBFjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732533442; c=relaxed/simple;
-	bh=t9f0IJVRvpgoAynSVDmk0FH/l1uYvOSxS687jMDVYdc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:Content-Type; b=TiBsCw6C9xIqfg/Qm0GuviOSGg2PrRYOlEVa7caBu3ev9JDmbh2/rMYtgU8gVaIbwm2clpUDdxU6oMzaklzrr6NwApxnGXlt5WhyNtMEe6Zi/p09oMHD6wwicoUVpTs1LInOt5Q5ro4oXv1m+YZJmbqvEXFMWfsWowjUMClxq+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Xxjmz4lqSzRhnR;
-	Mon, 25 Nov 2024 19:15:47 +0800 (CST)
-Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id 73FCB180105;
-	Mon, 25 Nov 2024 19:17:15 +0800 (CST)
-Received: from [10.174.179.155] (10.174.179.155) by
- kwepemg500017.china.huawei.com (7.202.181.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 25 Nov 2024 19:17:14 +0800
-Message-ID: <887cd8f6-3e49-410c-8b36-9e617c34ca6f@huawei.com>
-Date: Mon, 25 Nov 2024 19:17:13 +0800
+	s=arc-20240116; t=1732533514; c=relaxed/simple;
+	bh=6B04KsZo6t6s0pI8aF1kaG1Lzd9HUwRpD74QomBAbcQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ICvIUZGlNU5lyumXJN6BTr6mpp+6NYgX78c1RSOaVqttKxM0ODnXC0zQqE0rDbrNhQ7yk389w05iDrsGgPSXffcaSsQPoQHYMxKTPeiN3ExWFVrGpOSHvV4fTNHRZVunoRFcE6DJHCdLTNPxIROqpAg6SiWgFVfJeLWyYrCCxSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iQL03Ujf; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ffbea0acc2so10582821fa.1;
+        Mon, 25 Nov 2024 03:18:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732533511; x=1733138311; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BdTs+yXvHV2VkvZOleuVL8AIilS9h/9TJ0CS202URO0=;
+        b=iQL03Ujf/pH0GISur+awajdxELajdcEeLSBT2+vVYYr41sm1thyfzhzsoTOZ+LWB5t
+         S/cwROSTjTts5RJYRa/J4GqMl24KL7oCvldwxh5D+9G6TpxDLyrn5xbTnO9joZCgOKzx
+         qKTRpJp8Uy4F/UrZE5DM5ojDNpm8o7h5y+VrDEt90gPq/LAZkwmvThm7aVGVTeB36M/T
+         dUc8d+l9WIRVFLnEO2iJDBjZ+UXNcKMNcJBmVCGszEInw8AQ/gi568t6R0HBLH73f91n
+         jk/uzG4x7AGqaYr2iF6N3ayTIDOQ621LPDr+l2Uvwty+fpBiWsScxuemljGINkH9p6L7
+         8oeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732533511; x=1733138311;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BdTs+yXvHV2VkvZOleuVL8AIilS9h/9TJ0CS202URO0=;
+        b=vMk1dLHsEEVil2U0ZQhzTg6OQFdruCO5zMR0HwR8YI/Ve8m7Oa+u7icgCGvfCb/6ho
+         754Gxn+QlMmU35LdM2iXmQgxLCd0FPmZD4JnB4AGVzM/uX9WGfqjZDzXHe0k7zzIzucH
+         DYKOPdhptDlVasuovzZkCEXfR8WakTGYQWpnZAq1i2yuV4kTtQ6Wxi2aqVugE6bgU1IF
+         Qm+A2gzE4KyIqJUHbAYVI4ySz3ITUiQ2AiaiJf5WF4HqMEVhpc2hyQJ15+KWvJKMq3ma
+         CVszuP1LGcBVucK+WDh0SpeAvh4JEsHs2zwi/JgiI4lLUA/RnrVrTzdH9fpWoAei3VrL
+         dMHw==
+X-Forwarded-Encrypted: i=1; AJvYcCWp10TZ1OEc4SLHhf/DXRWS7BdXhrMUquQ4KeNSEDawTlFE8Sef6z8X8SL+w3RH8eR3X4tM@vger.kernel.org, AJvYcCXVe5PR6bhBO91SKViMfj4kxpwSjqesTMEUO0UwccaAYApcnvbVCn5dgvIWP4zoYFZfkrOma7g/t2z//TQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX8fHqOYJ3Wu98tYmTNde5EmHqIqS5W8aq6foBtTcUSYSM+kSJ
+	zE+jDFeIs8fmHB6Twj3f0FWPZCz9ZgLr2peHhnVSQ7TqQCRn5vqU9SNK1yxao80EGzPML86rP+h
+	1a3+eqKsbhKHhGLoCu8X+x4zJzMU=
+X-Gm-Gg: ASbGncvHqBMkcv4TDSCSBp5a4OMuNDstP2rb+uUhiuWSphrLHfnlgPN7VLUJ6X9gnNy
+	ubSQmjwwB986wcr837mLOLeiB2zlxcjM=
+X-Google-Smtp-Source: AGHT+IGrV2G7XuEDge18atcEwTobuvAC/IfIeeHl5buAnYkMXfeXyvtF4Gz6f1OITlD/141JIhoAwC2zgZbcvFEfhmE=
+X-Received: by 2002:a05:6512:3ba2:b0:53d:d139:6c21 with SMTP id
+ 2adb3069b0e04-53dd369fbbbmr5835086e87.18.1732533510747; Mon, 25 Nov 2024
+ 03:18:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: =?UTF-8?B?TW96aWxsYSBUaHVuZGVyYmlyZCDmtYvor5XniYg=?=
-From: Li Lingfeng <lilingfeng3@huawei.com>
-Subject: [bug report] deploying both NFS client and server on the same machine
- triggle hungtask
-To: <Dai.Ngo@oracle.com>, Chuck Lever <chuck.lever@oracle.com>, Jeff Layton
-	<jlayton@kernel.org>, NeilBrown <neilb@suse.de>, <okorniev@redhat.com>,
-	<tom@talpey.com>, <trond.myklebust@hammerspace.com>
-CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Yu Kuai
-	<yukuai1@huaweicloud.com>, Hou Tao <houtao1@huawei.com>, "zhangyi (F)"
-	<yi.zhang@huawei.com>, yangerkun <yangerkun@huawei.com>,
-	<chengzhihao1@huawei.com>, Li Lingfeng <lilingfeng3@huawei.com>, Li Lingfeng
-	<lilingfeng@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemg500017.china.huawei.com (7.202.181.81)
+References: <20241112-slub-percpu-caches-v1-0-ddc0bdc27e05@suse.cz>
+ <20241112-slub-percpu-caches-v1-2-ddc0bdc27e05@suse.cz> <ZzYsBu_rJWSAcAYf@pc636>
+ <cc7f24b8-4de5-4023-b40b-5f62287aafe8@suse.cz> <Zz3YDI4Bb04opI2d@pc636> <a4bd2aef-6402-49e0-9ad6-f353c5200ee7@suse.cz>
+In-Reply-To: <a4bd2aef-6402-49e0-9ad6-f353c5200ee7@suse.cz>
+From: Uladzislau Rezki <urezki@gmail.com>
+Date: Mon, 25 Nov 2024 12:18:19 +0100
+Message-ID: <CA+KHdyXH5X=J2ontChFVUqFx15=VVng23H4gh_o-2Vzfo+mmjw@mail.gmail.com>
+Subject: Re: [PATCH RFC 2/6] mm/slub: add sheaf support for batching
+ kfree_rcu() operations
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Suren Baghdasaryan <surenb@google.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Pekka Enberg <penberg@kernel.org>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	rcu@vger.kernel.org, maple-tree@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi, we have found a hungtask issue recently.
+> On 11/20/24 13:37, Uladzislau Rezki wrote:
+> > Thank you. Let me try to start moving it into mm/. I am thinking to place
+> > it to the slab_common.c file. I am not sure if it makes sense to have a
+> > dedicated file name for this purpose.
+>
+> Yeah sounds good. slub.c is becoming rather large and this should not
+> interact with SLUB internals heavily anyway, slab_common.c makes sense.
+> Thanks!
+>
+Got it :)
 
-Commit 7746b32f467b ("NFSD: add shrinker to reap courtesy clients on low
-memory condition") adds a shrinker to NFSD, which causes NFSD to try to
-obtain shrinker_rwsem when starting and stopping services.
+Thanks!
 
-Deploying both NFS client and server on the same machine may lead to the
-following issue, since they will share the global shrinker_rwsem.
-
-     nfsd                            nfs
-                             drop_cache // hold shrinker_rwsem
-                             write back, wait for rpc_task to exit
-// stop nfsd threads
-svc_set_num_threads
-// clean up xprts
-svc_xprt_destroy_all
-                             rpc_check_timeout
-                              rpc_check_connected
-                              // wait for the connection to be disconnected
-unregister_shrinker
-// wait for shrinker_rwsem
-
-Normally, the client's rpc_task will exit after the server's nfsd thread
-has processed the request.
-When all the server's nfsd threads exit, the client’s rpc_task is expected
-to detect the network connection being disconnected and exit.
-However, although the server has executed svc_xprt_destroy_all before
-waiting for shrinker_rwsem, the network connection is not actually
-disconnected. Instead, the operation to close the socket is simply added
-to the task_works queue.
-
-svc_xprt_destroy_all
-  ...
-  svc_sock_free
-   sockfd_put
-    fput_many
-     init_task_work // ____fput
-     task_work_add // add to task->task_works
-
-The actual disconnection of the network connection will only occur after
-the current process finishes.
-do_exit
-  exit_task_work
-   task_work_run
-   ...
-    ____fput // close sock
-
-Although it is not a common practice to deploy NFS client and server on
-the same machine, I think this issue still needs to be addressed,
-otherwise it will cause all processes trying to acquire the shrinker_rwsem
-to hang.
-
-I don't have any ideas yet on how to solve this problem, does anyone have
-any suggestions?
-
-Thanks.
-
+-- 
+Uladzislau Rezki
 
