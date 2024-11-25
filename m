@@ -1,63 +1,67 @@
-Return-Path: <linux-kernel+bounces-421377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C079D8A72
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:34:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1A39D8A7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:38:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09797286379
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:34:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90F6316375E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672241B4F0D;
-	Mon, 25 Nov 2024 16:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD051B6CFF;
+	Mon, 25 Nov 2024 16:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W5tdSjzS"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="X5nCCmgO"
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4CA1B4F14;
-	Mon, 25 Nov 2024 16:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAD71B4F3D
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 16:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732552441; cv=none; b=jjViQSGH2w8pxwkV27tYm1GnBM+H1VlK7zF6TpIisdzdE8K94x58ziCWYAtkKv2lTVb6i/7PTzR5iVvEhCaCBCEbTV6lCR+sv47qBILheo+l82TByIWgYfBx1Zi9tvpUk/Gxul8gpr55tuq7vT1kOLYUhRCuH8SR56EzPJQr8PU=
+	t=1732552665; cv=none; b=PLsFI1KNT/FkBYq7RtMQcYC28ScwZEL7fAmntMqMjPFyO1sGZ44feqUfRg4J6vw0ytOt2+Bgekf1TINDIW00wS/h3T0x8A3pikoduyDutM7v0GmXcPGzs3ykVthJ/RWtAYbkCWDNBffnfUdfkRuHI9rK6p4r+w249TFuDiYyvC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732552441; c=relaxed/simple;
-	bh=96PuKBE5JdD/eHc81yMjwJcQQ3cQw2hp2B/5v603J3Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=Awnd8vjxAZYrcWKjoKHTa33tTAR2JlLCCFpyNGYkYJuB331Krr9a4fNYUlB9cBpCKVKdc/DiAodv/6AcZsOWI9J2xj4y3uJo5PSYNwYNX1RW+bNjDH+HkKpp4SlFlCxVHRY46P93xG7yAo9ijsToCoLRWGZX216IqjboiMKuqWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W5tdSjzS; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APB1067008874;
-	Mon, 25 Nov 2024 16:33:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pR35uQh0Vz3rmWy5iymN95hYXiXemTleILwxkaib3ac=; b=W5tdSjzSh67jGWDA
-	7bRbeXbiyl/TuBhIkQEdnKDbVazfAXrwsDmZahah0gyWHX/pERxDAJC67LOK1WvN
-	Gisi/pFCcaAPi24xfuQv0cBZZEpTMe8VMb4fkqS/qBRGwgjTU+ygPLh6jT6d9XE5
-	Q0AAyamiZhxVfI6CQqODXDOOgvdqYDp9b4dHksBUTknp4kAap99QCjFb3znshzrd
-	KLOOUXkr9L2LeJTTdZfset1KGAoH9xNyqZRZ1cVeu4G5u+QxgMbr0gE3drZ8gAPt
-	+UQJU8MJBaVrTI06tNz5qYfSRjyR/CrTgDj/E1piHK89do6+WPId5txN1xgiGIWL
-	sFPT5w==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 433626df41-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Nov 2024 16:33:39 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4APGXcAi017720
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 25 Nov 2024 16:33:38 GMT
-Received: from [10.213.111.143] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 25 Nov
- 2024 08:33:33 -0800
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Date: Mon, 25 Nov 2024 22:03:01 +0530
-Subject: [PATCH v2 2/2] drm/msm/a6xx: Add support for Adreno 612
+	s=arc-20240116; t=1732552665; c=relaxed/simple;
+	bh=wz0d94cMgk2jCkE3+IUok1zC9AYzGdZePCRqqYnV2r4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=mhR5iGx0U6U5ZaO2zabbgvdA/P7KzSynhjI8Xs5/9tQrqIJ/7UMX5Myqn3zsovPzpJhAsAxZAFhY3tPZ1YC6kxeshYBW03MizXpwyK6Azcd1V3+WVc3xTUsnWMC/Ljs6l2iKb8Lo8UhPNq5xdmNdpddYHPTT8XokViyiDfQuXZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=X5nCCmgO; arc=none smtp.client-ip=35.89.44.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
+Received: from eig-obgw-6001a.ext.cloudfilter.net ([10.0.30.140])
+	by cmsmtp with ESMTPS
+	id Fa2PtP4gMvH7lFc5itmJkS; Mon, 25 Nov 2024 16:37:38 +0000
+Received: from md-in-79.webhostbox.net ([43.225.55.182])
+	by cmsmtp with ESMTPS
+	id Fc5ftNuvM2Zy0Fc5htPkKi; Mon, 25 Nov 2024 16:37:38 +0000
+X-Authority-Analysis: v=2.4 cv=Q4EZ4J2a c=1 sm=1 tr=0 ts=6744a7d2
+ a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
+ a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=-pn6D5nKLtMA:10 a=e5mUnYsNAAAA:8
+ a=vU9dKmh3AAAA:8 a=gA2AQYKQ_t_7bDYX36IA:9 a=QEXdDO2ut3YA:10
+ a=Vxmtnl_E_bksehYqCbjh:22 a=rsP06fVo5MYu2ilr0aT5:22 a=ZCPYImcxYIQFgLOT52_G:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
+	; s=default; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=/R/8ktimgFp1MMUEeMZMmyHbqIU8LGVD2WqjYNvUGFE=; b=X5nCCmgOO/4M6SaRVygGHlMosa
+	Z2I+Vtjx8InQ77ZPoBVhdqpZH03tjmrnott8KX8q+r2oExie8CzkwaNK9+Lrvf6kNTKRQm4V6O0pm
+	1/ScB5APAJGpSWNMQcGYsojceruQ39f2QIh7RdwfNZT5pcXHV6zy56uvndWuKE9v+tTOMAYmbXs05
+	1gaSl0P3Yf6ysklEzf9M1Ug0/xzPMm3XrUaW+lbzTLwobqtHYqYbwomBiXEVnAaO8FN7vO2n5FSSu
+	EKnPl+cxmfewNjwnx+rkV+iHoahG8gOZ4jtmBD0pc4lsKQmEwKTB+VxfZ3I9qI08JbL+aJsrAbgEY
+	6ta38asA==;
+Received: from [122.165.245.213] (port=38110 helo=[127.0.1.1])
+	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <parthiban@linumiz.com>)
+	id 1tFc5Y-001iXQ-1j;
+	Mon, 25 Nov 2024 22:07:28 +0530
+From: Parthiban Nallathambi <parthiban@linumiz.com>
+Subject: [PATCH 0/2] drm/imagination: add reset handling
+Date: Mon, 25 Nov 2024 22:07:02 +0530
+Message-Id: <20241125-pvr-reset-v1-0-b437b8052948@linumiz.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,232 +70,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20241125-a612-gpu-support-v2-2-b7cc38e60191@quicinc.com>
-References: <20241125-a612-gpu-support-v2-0-b7cc38e60191@quicinc.com>
-In-Reply-To: <20241125-a612-gpu-support-v2-0-b7cc38e60191@quicinc.com>
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Jie Zhang
-	<quic_jiezh@quicinc.com>,
-        Akhil P Oommen <quic_akhilpo@quicinc.com>,
-        "Konrad
- Dybcio" <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732552405; l=6457;
- i=quic_akhilpo@quicinc.com; s=20240726; h=from:subject:message-id;
- bh=UujJJJ2qBaLMZpgFIWVNQifU/7BDaePIDcmsc4etJ1A=;
- b=W1fGmzxPtB18c8izwU/kDQMHA6OPNZL5EzfeM71zIUbTFB0RLwVZttxCALA+8ajfCsKlGVBzz
- vmn3Fx2DoZEBDhSG5bMCLkv1Rloyl9/6k5NG3IFKE3lQ5aoEtS1xtFW
-X-Developer-Key: i=quic_akhilpo@quicinc.com; a=ed25519;
- pk=lmVtttSHmAUYFnJsQHX80IIRmYmXA4+CzpGcWOOsfKA=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: F_tJt68fNsCtpwMgIX4SILIyNMav6pG2
-X-Proofpoint-ORIG-GUID: F_tJt68fNsCtpwMgIX4SILIyNMav6pG2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 clxscore=1015 phishscore=0 spamscore=0 adultscore=0
- impostorscore=0 mlxscore=0 malwarescore=0 suspectscore=0 mlxlogscore=999
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411250138
+X-B4-Tracking: v=1; b=H4sIAK6nRGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQyNT3YKyIt2i1OLUEl2DRCPztKTEVNPUpGQloPqCotS0zAqwWdGxtbU
+ A7ZjsblsAAAA=
+To: Frank Binns <frank.binns@imgtec.com>, 
+ Matt Coster <matt.coster@imgtec.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Parthiban Nallathambi <parthiban@linumiz.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732552647; l=1066;
+ i=parthiban@linumiz.com; s=20241125; h=from:subject:message-id;
+ bh=wz0d94cMgk2jCkE3+IUok1zC9AYzGdZePCRqqYnV2r4=;
+ b=prlb1b6SvCi9nOD4ZuXRpjN3ycPphZdm3U7z2CuLxBqeP06ltjCHnpgCBs4WZrh3PWYzKtMzq
+ I3feoCWA7x9D0nKi9/eRCw41q3mazGk/LyHX3DVTG5x4ceRX/F5m/MQ
+X-Developer-Key: i=parthiban@linumiz.com; a=ed25519;
+ pk=PrcMZ/nwnHbeXNFUFUS833wF3DAX4hziDHEbBp1eNb8=
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - linumiz.com
+X-BWhitelist: no
+X-Source-IP: 122.165.245.213
+X-Source-L: No
+X-Exim-ID: 1tFc5Y-001iXQ-1j
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([127.0.1.1]) [122.165.245.213]:38110
+X-Source-Auth: parthiban@linumiz.com
+X-Email-Count: 3
+X-Org: HG=dishared_whb_net_legacy;ORG=directi;
+X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfOGIoTp+qmVwfP5sf0sRfAVP7P2BCwKmnT12RbLASYAiNdGEoTBWdLqjCJbmfWtWpWrqEi8S9ZpwOnLVNqq07+cB1GtSm7VNahwmhdmjkBEN+kJD/+I1
+ yzBalTAIovbtL3v9BnErDhzbJu5I1GDcr6dNfGLa3kA2e6bdhznUM+/QUXw1Nfy5GX2z3tBK4jE/O03xOM4njKmqp7B8WzjOHOY=
 
-From: Jie Zhang <quic_jiezh@quicinc.com>
+reset control is included in platforms from Allwinner, specifically
+A133, A733. Add reset control from devicetree and these changes are
+tested with A133 based helper board, which will be upstremed after
+Allwinner power domain controller.
 
-Add support for Adreno 612 GPU found in SM6150/QCS615 chipsets.
-A612 falls under ADRENO_6XX_GEN1 family and is a cut down version
-of A615 GPU.
+Firmware is used from [1].
 
-A612 has a new IP called Reduced Graphics Management Unit or RGMU
-which is a small state machine which helps to toggle GX GDSC
-(connected to CX rail) to implement IFPC feature. It doesn't support
-any other features of a full fledged GMU like clock control, resource
-voting to rpmh etc. So we need linux clock driver support like other
-gmu-wrapper implementations to control gpu core clock and gpu GX gdsc.
-Since there is no benefit with enabling RGMU at the moment, RGMU is
-entirely skipped in this patch.
+[1]: https://gitlab.freedesktop.org/imagination/linux-firmware/-/issues/5
 
-Signed-off-by: Jie Zhang <quic_jiezh@quicinc.com>
-Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
 ---
- drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 15 +++++++++++++
- drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 35 ++++++++++++++++++++++++-------
- drivers/gpu/drm/msm/adreno/adreno_gpu.h   | 11 +++++++---
- 3 files changed, 50 insertions(+), 11 deletions(-)
+Parthiban Nallathambi (2):
+      dt-bindings: gpu: add reset control property
+      drm/imagination: add reset control support
 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-index 5e389f6b8b8a..633a966a0c39 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-@@ -705,6 +705,21 @@ static const struct adreno_info a6xx_gpus[] = {
- 			{ 157, 3 },
- 			{ 127, 4 },
- 		),
-+	}, {
-+		.chip_ids = ADRENO_CHIP_IDS(0x06010200),
-+		.family = ADRENO_6XX_GEN1,
-+		.fw = {
-+			[ADRENO_FW_SQE] = "a630_sqe.fw",
-+		},
-+		.gmem = (SZ_128K + SZ_4K),
-+		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
-+		.init = a6xx_gpu_init,
-+		.a6xx = &(const struct a6xx_info) {
-+			.hwcg = a612_hwcg,
-+			.protect = &a630_protect,
-+			.gmu_cgc_mode = 0x00000022,
-+			.prim_fifo_threshold = 0x00080000,
-+		},
- 	}, {
- 		.chip_ids = ADRENO_CHIP_IDS(0x06010500),
- 		.family = ADRENO_6XX_GEN1,
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-index a8b928d0f320..1af7bbed457a 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-@@ -504,15 +504,26 @@ static void a6xx_set_hwcg(struct msm_gpu *gpu, bool state)
- 
- 	if (adreno_is_a630(adreno_gpu))
- 		clock_cntl_on = 0x8aa8aa02;
--	else if (adreno_is_a610(adreno_gpu))
-+	else if (adreno_is_a610(adreno_gpu) || adreno_is_a612(adreno_gpu))
- 		clock_cntl_on = 0xaaa8aa82;
- 	else if (adreno_is_a702(adreno_gpu))
- 		clock_cntl_on = 0xaaaaaa82;
- 	else
- 		clock_cntl_on = 0x8aa8aa82;
- 
--	cgc_delay = adreno_is_a615_family(adreno_gpu) ? 0x111 : 0x10111;
--	cgc_hyst = adreno_is_a615_family(adreno_gpu) ? 0x555 : 0x5555;
-+	if (adreno_is_a612(adreno_gpu))
-+		cgc_delay = 0x11;
-+	else if (adreno_is_a615_family(adreno_gpu))
-+		cgc_delay = 0x111;
-+	else
-+		cgc_delay = 0x10111;
-+
-+	if (adreno_is_a612(adreno_gpu))
-+		cgc_hyst = 0x55;
-+	else if (adreno_is_a615_family(adreno_gpu))
-+		cgc_delay = 0x555;
-+	else
-+		cgc_delay = 0x5555;
- 
- 	gmu_write(&a6xx_gpu->gmu, REG_A6XX_GPU_GMU_AO_GMU_CGC_MODE_CNTL,
- 			state ? adreno_gpu->info->a6xx->gmu_cgc_mode : 0);
-@@ -600,6 +611,9 @@ static void a6xx_calc_ubwc_config(struct adreno_gpu *gpu)
- 		gpu->ubwc_config.ubwc_swizzle = 0x7;
- 	}
- 
-+	if (adreno_is_a612(gpu))
-+		gpu->ubwc_config.highest_bank_bit = 13;
-+
- 	if (adreno_is_a618(gpu))
- 		gpu->ubwc_config.highest_bank_bit = 14;
- 
-@@ -1165,7 +1179,7 @@ static int hw_init(struct msm_gpu *gpu)
- 		gpu_write(gpu, REG_A6XX_CP_LPAC_PROG_FIFO_SIZE, 0x00000020);
- 
- 	/* Setting the mem pool size */
--	if (adreno_is_a610(adreno_gpu)) {
-+	if (adreno_is_a610(adreno_gpu) || adreno_is_a612(adreno_gpu)) {
- 		gpu_write(gpu, REG_A6XX_CP_MEM_POOL_SIZE, 48);
- 		gpu_write(gpu, REG_A6XX_CP_MEM_POOL_DBG_ADDR, 47);
- 	} else if (adreno_is_a702(adreno_gpu)) {
-@@ -1199,7 +1213,7 @@ static int hw_init(struct msm_gpu *gpu)
- 
- 	/* Enable fault detection */
- 	if (adreno_is_a730(adreno_gpu) ||
--	    adreno_is_a740_family(adreno_gpu))
-+	    adreno_is_a740_family(adreno_gpu) || adreno_is_a612(adreno_gpu))
- 		gpu_write(gpu, REG_A6XX_RBBM_INTERFACE_HANG_INT_CNTL, (1 << 30) | 0xcfffff);
- 	else if (adreno_is_a690(adreno_gpu))
- 		gpu_write(gpu, REG_A6XX_RBBM_INTERFACE_HANG_INT_CNTL, (1 << 30) | 0x4fffff);
-@@ -2076,6 +2090,9 @@ static int a6xx_pm_resume(struct msm_gpu *gpu)
- 	if (!ret)
- 		msm_devfreq_resume(gpu);
- 
-+	if (!(a6xx_gpu->base.info->quirks & ADRENO_QUIRK_NO_SYSCACHE))
-+		a6xx_llc_activate(a6xx_gpu);
-+
- 	return ret;
- }
- 
-@@ -2115,6 +2132,9 @@ static int a6xx_pm_suspend(struct msm_gpu *gpu)
- 
- 	trace_msm_gpu_suspend(0);
- 
-+	if (!(a6xx_gpu->base.info->quirks & ADRENO_QUIRK_NO_SYSCACHE))
-+		a6xx_llc_deactivate(a6xx_gpu);
-+
- 	msm_devfreq_suspend(gpu);
- 
- 	mutex_lock(&a6xx_gpu->gmu.lock);
-@@ -2480,11 +2500,8 @@ struct msm_gpu *a6xx_gpu_init(struct drm_device *dev)
- 		  config->info->family == ADRENO_7XX_GEN2 ||
- 		  config->info->family == ADRENO_7XX_GEN3;
- 
--	a6xx_llc_slices_init(pdev, a6xx_gpu, is_a7xx);
--
- 	ret = a6xx_set_supported_hw(&pdev->dev, config->info);
- 	if (ret) {
--		a6xx_llc_slices_destroy(a6xx_gpu);
- 		kfree(a6xx_gpu);
- 		return ERR_PTR(ret);
- 	}
-@@ -2503,6 +2520,8 @@ struct msm_gpu *a6xx_gpu_init(struct drm_device *dev)
- 		return ERR_PTR(ret);
- 	}
- 
-+	a6xx_llc_slices_init(pdev, a6xx_gpu, is_a7xx);
-+
- 	/*
- 	 * For now only clamp to idle freq for devices where this is known not
- 	 * to cause power supply issues:
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-index 398be2218110..a6462a255611 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-+++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-@@ -421,6 +421,11 @@ static inline int adreno_is_a610(const struct adreno_gpu *gpu)
- 	return adreno_is_revn(gpu, 610);
- }
- 
-+static inline int adreno_is_a612(const struct adreno_gpu *gpu)
-+{
-+	return gpu->info->chip_ids[0] == 0x06010200;
-+}
-+
- static inline int adreno_is_a618(const struct adreno_gpu *gpu)
- {
- 	return adreno_is_revn(gpu, 618);
-@@ -490,9 +495,9 @@ static inline int adreno_is_a610_family(const struct adreno_gpu *gpu)
- {
- 	if (WARN_ON_ONCE(!gpu->info))
- 		return false;
--
--	/* TODO: A612 */
--	return adreno_is_a610(gpu) || adreno_is_a702(gpu);
-+	return adreno_is_a610(gpu) ||
-+	       adreno_is_a612(gpu) ||
-+	       adreno_is_a702(gpu);
- }
- 
- /* TODO: 615/616 */
+ .../devicetree/bindings/gpu/img,powervr-rogue.yaml       |  3 +++
+ drivers/gpu/drm/imagination/pvr_device.h                 |  8 ++++++++
+ drivers/gpu/drm/imagination/pvr_drv.c                    |  5 +++++
+ drivers/gpu/drm/imagination/pvr_power.c                  | 16 +++++++++++++++-
+ 4 files changed, 31 insertions(+), 1 deletion(-)
+---
+base-commit: adc218676eef25575469234709c2d87185ca223a
+change-id: 20241125-pvr-reset-0a27fbae5ebc
 
+Best regards,
 -- 
-2.45.2
+Parthiban Nallathambi <parthiban@linumiz.com>
 
 
