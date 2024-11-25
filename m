@@ -1,146 +1,120 @@
-Return-Path: <linux-kernel+bounces-421513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB3199D8C4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:38:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB399D8C53
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:38:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21623168F9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:38:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6205D1690DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F7C1B982C;
-	Mon, 25 Nov 2024 18:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340051BCA1C;
+	Mon, 25 Nov 2024 18:38:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jegiaw9c"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="l2IPbOZ8"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6E41B87D1;
-	Mon, 25 Nov 2024 18:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735181B87F2;
+	Mon, 25 Nov 2024 18:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732559878; cv=none; b=bAByo0wmZ3ogBlntz/l3YbG48nfOP/n5hwLDbfR860thRY20DMXjiIFESUwwqVVtXTV7QbNhxjsoKZf1RlerrmZ1WIBJ84XxlN1uUbVhkQdnk33/I64/KrZ2YFxumMm4xrfbz95kpVlBdcMwMeVGUgcl6AXdbZNdc4+0KysWl1I=
+	t=1732559880; cv=none; b=sm3EB3GsQIg/Ial+aAk0SI0vwzqy8IiuMp9Xwslw3YFU+Od8SlAjG2qT0W99IznbbOxMgOjHUwEm4sMXyX3GqZ2M6yvx9L7k/rxB+oTCosOvUmzcD6GVbQ9qwthLw6do0XXMWR3I5JcuNu+OAxzRXkP0HZIftbzfAkDaQZxy1HA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732559878; c=relaxed/simple;
-	bh=NugYv08BYe3lPbqHN7RyGw+0SkIfxnLo5ulV53qN6GY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uyTQ8opK4r6nDhuyePgpj0xAid4kjR2WFjsxvC8yh2GZ08YL7prQFtIoDT9xWeSTYYwObR2j/d6AB6L+pL4dxm9UP8gaBeFJ5ry2SF0Qd/A1ppuG9DLwiwpq96oB6kOL27hECUFGjz2CyaXCc1DSbW8766XCVRX9x96QaRezPr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jegiaw9c; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732559877; x=1764095877;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NugYv08BYe3lPbqHN7RyGw+0SkIfxnLo5ulV53qN6GY=;
-  b=jegiaw9clSt2LXQd23ZSh+rzCHDPIQBRGTb/2Lxuu8w3iDCmNy60m9S2
-   +kLCPEHMKNWbpU+TtvZPBAPULfHOEdAKAvQCmeX02QhAm8kK5hgwOpeo0
-   +CcT16t3EeYlq7hp/wtrDVbQr81N0WlOTo6oinHjMV4amR+W9P+XPcjxr
-   ZUOTp1jISze4z8f4s0I8w0Big70uhrdBmBYivoIbDwjiWCczLzu4Qspjb
-   CsOdXU+sVqyj9bjBn6PjOHxA11/lT9ykpA1J5E9zqauOQl/W37mbQdjgW
-   la3IekozuM4IgAb/2qeHCdXc2taZ2DnGmVL3FtlTsMGJkUmU7IjXcK+ZA
-   g==;
-X-CSE-ConnectionGUID: OKl105fST5qJwxsN0B0aQw==
-X-CSE-MsgGUID: nh59LpzMTkyLTNuC3V4rYw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="44067841"
-X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
-   d="scan'208";a="44067841"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 10:37:57 -0800
-X-CSE-ConnectionGUID: 9Ztr9UmaQ/u4ZklK+K4cTQ==
-X-CSE-MsgGUID: QnN19mWuTwSd2yAZjkt4Pw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
-   d="scan'208";a="122213339"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 25 Nov 2024 10:37:52 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tFdxx-0006h3-2i;
-	Mon, 25 Nov 2024 18:37:45 +0000
-Date: Tue, 26 Nov 2024 02:36:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mateusz Guzik <mjguzik@gmail.com>, dchinner@redhat.com
-Cc: oe-kbuild-all@lists.linux.dev, cem@kernel.org, djwong@kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: Re: [PATCH] xfs: use inode_set_cached_link()
-Message-ID: <202411260215.6DW8BfsK-lkp@intel.com>
-References: <20241123075105.1082661-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1732559880; c=relaxed/simple;
+	bh=/Gr6t9ocBQeZBn/ggKREg8SSt92d4sIva6PWwF+sDAQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=H04ImvkAvAIcyIzkAH5uoxlHhgL3aCtWRj7pKMI5PxXQx4HxSUP8/ZMfxJiarYAzMLzTcmmG92bTSzBF3yAm4QW5iOseZTlRu97pJb+jgQ5zKWSrbPP8wsNwciuGMLC3PvgqPyVewkJ1FBYEC6m2ogexQ5Ajq+1p0JTmMpA004M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=l2IPbOZ8; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1732559851; x=1733164651; i=wahrenst@gmx.net;
+	bh=/Gr6t9ocBQeZBn/ggKREg8SSt92d4sIva6PWwF+sDAQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=l2IPbOZ83yyVN5C62FVjQpg9L9T9I3PuqIQZGsYE0V7P8Ca0YrYHrg0QKqUOk6A0
+	 nvivP/UBr9/rsKjFwct8ox3klXXgtNCquuen0CBcvBnRAcNtVtPL128N+iQc6kbxX
+	 Utc0yXrXw1DVFLAmx3zm6OVhMLDe6ZnfR443AUX/a3yOMGXC5Ahn2hJWr3KT2VCV+
+	 1UteyWwb2JhPRnmXVSWx7BLSEa7n6tqMwzbaZzjP9RE9SNPcDtws/Vwspqjirj5Fz
+	 9plhQmZWnAgebASfLVMQM4yT8J6isRNVImNtIcuq6ddBIqCtiBYKgF6ZO3S2ITLz5
+	 bO8f8yQ34lv4vjd5vg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.105] ([37.4.251.153]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MLR1f-1synV20GfL-00Tt8W; Mon, 25
+ Nov 2024 19:37:31 +0100
+Message-ID: <3eafa938-0ca2-4228-aecf-fa85a6706dfa@gmx.net>
+Date: Mon, 25 Nov 2024 19:37:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241123075105.1082661-1-mjguzik@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 10/10] arm64: defconfig: Enable RP1 misc/clock/gpio
+ drivers
+To: Andrea della Porta <andrea.porta@suse.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof Wilczynski <kw@linux.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
+ <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+ Masahiro Yamada <masahiroy@kernel.org>,
+ Herve Codina <herve.codina@bootlin.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>
+References: <cover.1732444746.git.andrea.porta@suse.com>
+ <2292350a8bcf583129f93996c8a6ad5572813d9a.1732444746.git.andrea.porta@suse.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <2292350a8bcf583129f93996c8a6ad5572813d9a.1732444746.git.andrea.porta@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:cw0mRjyGqPC7iEtwkdW1b0Idq/JJr/O/fH2smwdrV/GCTqk69Xy
+ mEQmW4QY30EfEqAJDhDlsQKu5mZmys48AboknAavj0peWiC6NlTZz9Ex/tuO+cpq0iVl4I1
+ cG5dyAykgemkK1UoFVvl0aokepZrmyLQTnDbE0xgdSo6wF1DTM9qMPAGhlfnxM2bDlAUMxv
+ rB/PfGLfijJLqSOf1oQiA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:NFw/cKnOJFE=;daKFu2pia/80N7+H6SoNzr+ZOrz
+ zMz9kf7f/7Y1YCwyCYLXAARmNikFYr8XPybmGBNnGnPh0+uCKri64IDy8yKX8NxVm043+Gz2v
+ jopKDLpYvAzwFoczor8aB4KbFXQWgwIkWxUF6YiRDBPWaqz8FrEFAxvXk3LsLlfNtbmpv6rCW
+ iiCHMyX+cn0JhlApWvoJ2+zF4hrd51+wNXkLFfrKO7In0WTsMAMVdxOddHfuZHQIZ62HbglTJ
+ N+8vmpY5/jGbcxoAJPNfLSliXMieqCj6mQj8died23KxQ2/kAH7p14Fn+JWkE0fOOklGmvpGk
+ Bmoe3amZJPrUYPAPw2N5ldC1jDcS2AXY7HaiXwgcWzTXkJS/CH0G1QpeuGVzmMy2UsK8npK7e
+ o0/QD5qpRoL71Nlb0UBDKy/YK+eseOxrBmEEIeKHgAM/+bXeHonOV+u+ByktX7BMV8ZmuxQSg
+ C+YsxVuXrrUNPDy5UBs1VF7wPt+ArIlltaSKyjsXfh+i5BocqIP6OWdqsz8djWBtgLWLHiWsp
+ dWLwhmJQ3bbYjpB3S2ZRmTcVVxXi9JYT/t8FeVRDh5DwN7x4esxgbvDXJ9ykBCYmJdEYRYDF/
+ CG1WOL/Keon9d++OAdm47rCgKncXEwHWT2gtmWxjwE2aeGSlpclazKW4gXbmF38j6UcLWW4S5
+ hlNZSXwm7/AtruQdTBKA2Ht71peJA2d2xkKjsIiCz+cFKtQDavO8+QgyfZRBzrC/T1D+y9Vub
+ 0Or8CWD58y4LRpev0GajmWFqQJxL99pBZGTK6doK/raLn0Z1eZl55AjQkCOQGCk5HtT4bjc2q
+ fXbVKU7s+8FCHA1/H0zUlJrlGTrvnhVxhJGdtcoTk1QdGFLXel9dZdQwCAlZND7GyISqGApDW
+ 5lhDEzy04XDrf414hZzDAKcA/545oCuYSrgQWR9H3xttkt+8q6YQb7E4d
 
-Hi Mateusz,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on xfs-linux/for-next]
-[also build test ERROR on linus/master v6.12 next-20241125]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Mateusz-Guzik/xfs-use-inode_set_cached_link/20241125-115441
-base:   https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git for-next
-patch link:    https://lore.kernel.org/r/20241123075105.1082661-1-mjguzik%40gmail.com
-patch subject: [PATCH] xfs: use inode_set_cached_link()
-config: i386-randconfig-001-20241125 (https://download.01.org/0day-ci/archive/20241126/202411260215.6DW8BfsK-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241126/202411260215.6DW8BfsK-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411260215.6DW8BfsK-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   fs/xfs/xfs_symlink.c: In function 'xfs_setup_cached_symlink':
->> fs/xfs/xfs_symlink.c:52:9: error: implicit declaration of function 'inode_set_cached_link' [-Werror=implicit-function-declaration]
-      52 |         inode_set_cached_link(inode, ip->i_df.if_data, pathlen);
-         |         ^~~~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-
-vim +/inode_set_cached_link +52 fs/xfs/xfs_symlink.c
-
-    30	
-    31	void
-    32	xfs_setup_cached_symlink(
-    33		struct xfs_inode	*ip)
-    34	{
-    35		struct inode		*inode = &ip->i_vnode;
-    36		xfs_fsize_t		pathlen;
-    37	
-    38		/*
-    39		 * If we have the symlink readily accessible let the VFS know where to
-    40		 * find it. This avoids calls to xfs_readlink().
-    41		 */
-    42		pathlen = ip->i_disk_size;
-    43		if (pathlen <= 0 || pathlen > XFS_SYMLINK_MAXLEN)
-    44			return;
-    45	
-    46		if (ip->i_df.if_format != XFS_DINODE_FMT_LOCAL)
-    47			return;
-    48	
-    49		if (XFS_IS_CORRUPT(ip->i_mount, !ip->i_df.if_data))
-    50			return;
-    51	
-  > 52		inode_set_cached_link(inode, ip->i_df.if_data, pathlen);
-    53	}
-    54	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Am 24.11.24 um 11:51 schrieb Andrea della Porta:
+> Select the RP1 drivers needed to operate the PCI endpoint containing
+> several peripherals such as Ethernet and USB Controller. This chip is
+> present on RaspberryPi 5.
+>
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
 
