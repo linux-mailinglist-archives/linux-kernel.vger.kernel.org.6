@@ -1,201 +1,161 @@
-Return-Path: <linux-kernel+bounces-421316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2860F9D8987
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:40:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B083D168E39
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:40:24 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0ACC1B4123;
-	Mon, 25 Nov 2024 15:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UOlx82X4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12B569D8990
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:42:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121621AF0B5;
-	Mon, 25 Nov 2024 15:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD9302818BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:42:47 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E381B4133;
+	Mon, 25 Nov 2024 15:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NDwYwJWA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6C1194AC7;
+	Mon, 25 Nov 2024 15:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732549222; cv=none; b=sv+Npylt9PNZjRdQENYoaGDCCsc0hQUhMUVPxSj0Q8W18DMGZfWIsRQnyelryOQdKP6aRxUJZ6jcReV+Mk63Q7e2wgj1D9V2c3HSGHG2G6TQfGPT3Q2d6EsHdsbCj2SqHgO08w4qIqxvOIM4YXVtYjTS0jnZceN84CLOj9ympQ4=
+	t=1732549358; cv=none; b=moL/XoHRPZla1oMCMUxmn2vonrU2UN/vFJuh5KI1G8OlMXC3rXoKegXs/ZwDGgIRsPj43SbvSpmskjByv9GnB1Qv2FwQUzA8EkbMs2mFIVChCRFWgUTqohlLG4G8ConpkRywp2SdvN57Zs0RLYXkABI+B5nro7g6Atk1/jx7Ltk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732549222; c=relaxed/simple;
-	bh=IsIi8uedJB2d9ynke7rCIfulXuPxooj9TCcL71ClcMc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sOLDU8HcxNJPoUXl4AVRzoe3llw+d51ovsGeorqvSDcmEjChW7+V2tk80LBdwQKznrk/WZT7HKAYEM1JsbuckRh+nj7W15TCWWqeChzzEGkES+R8fjhY5fUFWT1dHgp9l21fZlGeFJ6vYD9zTxrbAtQDmbU94X0y1rTcFREiiF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UOlx82X4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EF9CC4CECE;
-	Mon, 25 Nov 2024 15:40:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732549219;
-	bh=IsIi8uedJB2d9ynke7rCIfulXuPxooj9TCcL71ClcMc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=UOlx82X4RX72arozgLh4e2tPa5MBNgO9Qi33L80gyMCT5HjS3dpmJp3XcrgrLgn3z
-	 sLdYwVrnPcuZZK6sYdsz07Uby1Ub0Yq1ymSivQwLuoP+hnYgxZ8ZvLHm2puHpEKFzo
-	 Zd4eIt9Z9J4zPlr8vaS8GS+lEpuk3+AxWZSuZJYvVvWw69g8pNKdcnSlqXP0EoarjU
-	 DFNpMRE4VMztfKHAdv8F+FMlCsVbwyZF6PpHE2WqVgpqLNqQNCi2NDx69cpoSp4+vl
-	 y1l9ocGmPLRxnohePvYVpIx7zPpWzDskSICF3wCmjm0G7d6xyhzlczV4vCrkEMyVYv
-	 XCoI3aMIq981w==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-Cc: <tudor.ambarus@linaro.org>,  <michael@walle.cc>,  <broonie@kernel.org>,
-  <pratyush@kernel.org>,  <richard@nod.at>,  <vigneshr@ti.com>,
-  <miquel.raynal@bootlin.com>,  <robh@kernel.org>,  <conor+dt@kernel.org>,
-  <krzk+dt@kernel.org>,  <venkatesh.abbarapu@amd.com>,
-  <linux-spi@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
-  <linux-mtd@lists.infradead.org>,  <nicolas.ferre@microchip.com>,
-  <alexandre.belloni@bootlin.com>,  <claudiu.beznea@tuxon.dev>,
-  <michal.simek@amd.com>,  <linux-arm-kernel@lists.infradead.org>,
-  <alsa-devel@alsa-project.org>,  <patches@opensource.cirrus.com>,
-  <git@amd.com>,  <amitrkcian2002@gmail.com>,  <beanhuo@micron.com>
-Subject: Re: [RFC PATCH 0/2] Add support for stacked and parallel memories
-In-Reply-To: <20241026075347.580858-1-amit.kumar-mahapatra@amd.com> (Amit
-	Kumar Mahapatra's message of "Sat, 26 Oct 2024 13:23:45 +0530")
-References: <20241026075347.580858-1-amit.kumar-mahapatra@amd.com>
-Date: Mon, 25 Nov 2024 15:40:15 +0000
-Message-ID: <mafs08qt75nkw.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1732549358; c=relaxed/simple;
+	bh=PHNaIPtpLuflPnpJjfvTbyAjLze0dyFGxfUjiiH5os4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RylIf9gSYH83mkxxWMezvvjdBUiZ/KDYDPsxEMOrXKlca+OA9GzVVeTkpkn9b02K4RHXCTx388QfL4s8SmvftfJSTi/53489sZTbnJwT4M4iCc3K7faJyYBoreTeL7RWiPM8dXzQi1BuWyYUO9o6yxfWpmknz5xMbXMIcKesHwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NDwYwJWA; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732549358; x=1764085358;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PHNaIPtpLuflPnpJjfvTbyAjLze0dyFGxfUjiiH5os4=;
+  b=NDwYwJWAmDWfARUU5ia83Xf41rVNBevJEm24/O+lIfOxsS6L4qVQ7zPP
+   h8tLyoyPRglsD/v1xtfInynzQcEVB7Y/uIO5znzLuCac0sRHZjrioyr2W
+   toie+jHt6WW4336EeFPwDHEUZ19IV1ynuem96Pvga0qFecUOwLdnPXuCm
+   OATjHNWUR3oJEtga9AuqmhOhxMTIYQOb2tHT92S7rzlSrX7Yu7maJj/Ln
+   l4xq6ZAASHXOi8Pm9ZcNfdThTK+i1MHecMQkzeKaGIU8cZUsXZFkv7YmL
+   jNy8pi1dovOGzHXSS9bw8ge4EOPtQ/HBKkigxvgCONM9xBLSDg+m45zin
+   Q==;
+X-CSE-ConnectionGUID: L5SYgwg5ROmZkFQ+SXbpPg==
+X-CSE-MsgGUID: ydSb2VYMSlKA8spWLN4yrA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="43730032"
+X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
+   d="scan'208";a="43730032"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 07:42:37 -0800
+X-CSE-ConnectionGUID: bzEZwAKjQW2g2CdWiyFcbA==
+X-CSE-MsgGUID: nyxvDbfiSsecwblypaGx6A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="96359634"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 07:42:33 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tFbEM-00000000xSn-2zQW;
+	Mon, 25 Nov 2024 17:42:30 +0200
+Date: Mon, 25 Nov 2024 17:42:30 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-serial@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
+	linux-kernel@vger.kernel.org,
+	Yang Yingliang <yangyingliang@huawei.com>
+Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
+Message-ID: <Z0Sa5nnKIQm7h-CA@smile.fi.intel.com>
+References: <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
+ <472eb22a-dcb1-4fbb-bf2c-a4173706bc7a@app.fastmail.com>
+ <27685942-fb62-44c5-86ed-98beb547ffed@roeck-us.net>
+ <744920ba-551c-466b-ac5c-2607b81261a0@app.fastmail.com>
+ <Z0QtZky8Sr7qUW7v@smile.fi.intel.com>
+ <00f5e842-3ee9-4d83-8836-0ff4f703fa3c@app.fastmail.com>
+ <Z0RSZ-YD_BozMs1n@smile.fi.intel.com>
+ <be43108e-4135-4927-ba58-141836fde6af@app.fastmail.com>
+ <Z0Re61Tk5lN2Xuxi@smile.fi.intel.com>
+ <1a7da799-f15b-4714-a3bd-4c0b1f48fc09@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1a7da799-f15b-4714-a3bd-4c0b1f48fc09@app.fastmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Sat, Oct 26 2024, Amit Kumar Mahapatra wrote:
+On Mon, Nov 25, 2024 at 02:50:56PM +0100, Arnd Bergmann wrote:
+> On Mon, Nov 25, 2024, at 12:26, Andy Shevchenko wrote:
+> > On Mon, Nov 25, 2024 at 12:06:16PM +0100, Arnd Bergmann wrote:
 
-Hi Amit,
+...
 
-I've been meaning to look into this proposal for some time now, but one
-thing or another kept coming up and I never got around to it. Well, I'll
-try to get some of my thoughts out with this reply. I still haven't
-looked very deeply into the past discussions, so apologies if I bring up
-something that was already discussed.
+> >> What I suspect is going on with the f4c23a140d80 commit
+> >> is the same bug I mentioned earlier in this thread, where
+> >> __serial8250_isa_init_ports() just always registers
+> >> 'nr_uarts' (CONFIG_SERIAL_8250_RUNTIME_UARTS) ports,
+> >> unlike any other serial driver.
+> >
+> > But the configuration can give less than old_serial_port contains.
+> > See dozens of the explicit settings in the defconfigs.
+> 
+> I don't see any of the upstream defconfigs doing this
+> though, the only ones setting CONFIG_SERIAL_8250_RUNTIME_UARTS
+> are those that have an empty old_serial_port[]. 
 
-> Hello Everyone,
->
-> Following an email discussion with Miquel regarding the binding changes
-> and overall architecture for implementing support for stacked and parallel
-> memories, I=E2=80=99m sharing this RFC to initiate a discussion on the pr=
-oposed
-> updates to current bindings and to finalize the implementation
-> architecture.
->
-> Before diving into the main topic, here is some background on stacked and
-> parallel memories.
->
-> The AMD QSPI controller supports two advanced connection modes(Stacked and
-> Parallel) which allow the controller to treat two different flashes as one
-> storage.
->
-> Stacked:
-> Flashes share the same SPI bus, but different CS line, controller driver
-> asserts the CS of the flash to which it needs to communicate. Stacked mode
-> is a software abstraction rather than a controller feature or capability.
-> At any given time, the controller communicates with one of the two
-> connected flash devices, as determined by the requested address and data
-> length. If an operation starts on one flash and ends on the other, the
-> core needs to split it into two separate operations and adjust the data
-> length accordingly.
->
-> Parallel(Multi-CS):
-> Both the flashes have their separate SPI bus, CS of both the flashes will
-> be asserted/de-asserted at the same time. In this mode data will be split
-> across both the flashes by enabling the STRIPE setting in the controller.
-> Parallel mode is a controller feature where if the STRIPE bit is set then
-> the controller internally handles the data split during data write to the
-> flashes and while reading data from the flash the controller internally
-> merges data from both the flashes before writing to the controller FIFO.
-> If STRIPE is not enabled, then same data will be sent to both the devices.
-> In parallel mode both the flashes should be identical.
->
-> For more information on the modes please feel free to go through the
-> controller flash interface below [1].
->
-> Mirochip QSPI controller[2] also supports "Dual Parallel 8-bit IO mode",
-> but they call it "Twin Quad Mode".
->
-> Initially in [3] [4] [5] Miquel had tried to extend MTD-CONCAT driver to
-> support Stacked mode, but the bindings were not accepted. So, the
-> MTD-CONCAT approach was dropped and the DT bindings that got accepted
-> [6] [7] [8] that describes the two flash devices as being one. SPI core
-> changes to support the above bindings were added [9]. While adding the
-> support in SPI-NOR  Tudor provided additional feedback, leading to a
-> discussion on updating the current stacked and parallel DT bindings.
->
-> Proposed Solution:
-> The solution has two parts:
->
-> 1. Update MTD-CONCAT
->    Update MTD-CONCAT to create virtual concatinated mtd devices as defined
->    in the device tree.
+A-ha, a good catch. I haven't checked the actual contents of the
+old_serial_port for those configurations.
 
-From a very quick look, it seems mtdconcat should already do most of
-what you want with "stacked mode". The tricky bits might be devicetree
-design, but from the software perspective, I think mtdconcat makes
-perfect sense. You leave all the complexity to the SPI NOR layer since
-it already handles them, and just use the higher-level MTD layer to
-virtually concatenate devices. Adding a new layer between MTD and SPI
-NOR makes little sense because mtdconcat is already that layer. Another
-benefit of this would be you can just as easily concatenate any kinds of
-flashes you want; they don't have to be the same.
+> Note that SERIAL_PORT_DFNS is only defined on x86, alpha
+> and m68k (for q40), which are the main PC-like platforms.
+> I see that all three have identical definitions of
+> SERIAL_PORT_DFNS, so I think these should just be moved
+> next to the __serial8250_isa_init_ports definition, with
+> the entire thing moved into a separate ISA driver or
+> an #ifdef around it. This is of course not the problem
+> at hand, but it would help separate the x86/isa and
+> non-x86 platform device cases further.
 
-I think this is a much simpler problem to solve compared to parallel
-mode. Once you figure out the devicetree stuff, and I think the
-mtdconcat changes should be simple and not too controversial. So I think
-you should split the parallel and stacked support into two independent
-series. This way you make progress without having to wait for
-discussions around parallel mode support to settle.
+It's nice idea, but yes, we can think about it later.
 
->
-> 2. Add a New Layer
->    Add a new layer between the SPI-NOR and MTD layers to support stacked
->    and parallel configurations. This new layer will be part of spi-nor,
->    located in mtd/spi-nor/, can be included/excluded via Kconfig, will be
->    maintained by AMD and will:
->
->    - During probing, store information from all connected flashes in
->      stacked or parallel mode and present them as a single device to the
-> 	 MTD layer.
+> >> This used to be required before 9d86719f8769 ("serial:
+> >> 8250: Allow using ports higher than SERIAL_8250_RUNTIME_UARTS"),
+> >> but I don't see why this is still a thing now, other than
+> >> for using setserial on i486-class PCs with nonstandard ISA
+> >> ports.
+> >> 
+> >> On non-x86 machines, it only ever seems to create extra
+> >> ports that are likely to crash the system if opened, either
+> >> because they lack proper serial_in/serial_out callbacks,
+> >> or because the default UPIO_PORT callbacks end up poking
+> >> unmapped memory.
+> >> 
+> >> Do you see any reason why we can't just do the version below?
+> >
+> > Perhaps we may do this way (it seems better to me than previous 
+> > suggestions), but it also needs to be carefully checked against
+> > those configurations that set it explicitly.
+> 
+> Yes, at least to make sure that the numbering of the uarts
+> does not change. I expect it's actually the same, but don't
+> know for sure.
 
-As I mentioned above, I do not think you should do stacked flashes this
-way.
+Me neither. And the issue with NULL pointer dereference needs to be retested.
 
->    - Register callbacks and manage MTD device registration within the new
->      layer instead of spi-nor/core.c.
->    - Make minimal changes in spi-nor/core.c, as stacked and parallel
->      handling will be managed by the new layer on top of SPI-NOR.
->    - Handle odd byte count requests from the MTD layer during flash
->      operations in parallel mode.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-You'd also probably have to add support in SPI MEM to signal the
-controller to use parallel mode. You don't want to use parallel mode all
-the time since you'd need to do "normal" operations as well such as
-reading/writing status registers, reading flash ID, SFDP, etc. That is
-yet another "cost" parallel mode support has -- it adds another thing to
-SPI MEM (I'm not saying the cost isn't necessarily worth it -- just
-pointing it out).
 
-From the SPI NOR side, this layer would have to make sure both flashes
-get configured with the exact same settings. That would need SPI NOR to
-export how it configured a flash, ideally in a stable, well-defined
-format. It would also have to ask SPI NOR to construct the SPI MEM ops
-for it, and then edit them to set the "parallel mode" bit. Perhaps the
-dirmap op templates can come in handy here.
-
-It's hard to say much more without seeing the code. It would be
-interesting to see how you can manage to get this layer work without too
-much intrusion in the core.
-
-[...]
-
---=20
-Regards,
-Pratyush Yadav
 
