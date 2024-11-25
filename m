@@ -1,128 +1,124 @@
-Return-Path: <linux-kernel+bounces-420615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 412979D7D4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:47:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4123F1627FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:47:08 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB97A192B8A;
-	Mon, 25 Nov 2024 08:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JjF+E8bb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A8549D7D62
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:48:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03940192589;
-	Mon, 25 Nov 2024 08:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36D94B25895
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:48:33 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B303018E023;
+	Mon, 25 Nov 2024 08:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Pazxyk1+"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14EFA19B3E2;
+	Mon, 25 Nov 2024 08:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732524342; cv=none; b=SV023uIjOpCxpq3onO7LWiQ+MvrWw4zKZMnvbMRNFkXbNJP18s+aqaDEl3lUy+yj0nOMxODqPghNLtds8+q5IIb7fP45oO4T4f+go+ZA3wKZoXf4YnBDDyUlcjIRTUaicaEqvuHiUmF0BVsf9W4V3Kl6rYjR1xsQLSNB8QnZtg0=
+	t=1732524354; cv=none; b=di3US80Y70ae4VGAd1ewXDDsnbr/EvcSyV5Y3UnO1mB+caw3hGMTO++TiG7SifPG7Fosuqz0y1dff9hxPu+KqRb+MMBI44rV8+QUbKgOn/oAYyAzyVdhthCcbjK6W0zo3MVxKMTgADnbfjIipLoNgod5Gmf2yLajBTAZt7OkjKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732524342; c=relaxed/simple;
-	bh=MlYKTlgCk2VqWlaL2lOdbiVgFlYs7XmruCBEZzL/bRs=;
+	s=arc-20240116; t=1732524354; c=relaxed/simple;
+	bh=EbW/+vGDDAweSBEPxCkWGq8mUAoK99u9rmU2Gdm/eQk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kMaZ4q7MG6esgssO/JgAT1chofZW4oPJGO+Z9RcmmDeve+31wzSFrUc4+ih3psJvgsamquYpyd5qGABD4od4Tlag88BoWDZ9jU03ARFgteirwYZqjUjw6bkD0XfTBlPK5gcQCxZvpKHT5iVLtGiv1jetNzrcWzq+vADiJX5JiUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JjF+E8bb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96ED1C4CED7;
-	Mon, 25 Nov 2024 08:45:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732524341;
-	bh=MlYKTlgCk2VqWlaL2lOdbiVgFlYs7XmruCBEZzL/bRs=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=a3DjysNroezs6K+jx5bElrBuINMF+jH13iUDb30IvcvjYSlvc4SmgJTwL/iVAv9AbzNkK5WuwJGc6XbMAeAl9E2+h+FCTP6oX1AeMKI/j58z5O3gpahxe5/jheX/wVl8kVpOz8TebuO0MyNQzoZEkhnNMfg15HRVe1X9nI5rKkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Pazxyk1+; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1732524349;
+	bh=EbW/+vGDDAweSBEPxCkWGq8mUAoK99u9rmU2Gdm/eQk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JjF+E8bbnPUiq8PTeqpMXuBMWJBUfqcXfJfYA3cvwr5EtMQ2gbhMxkld6OohC2Hpg
-	 Yh49NchUw9qjiucYbn8j5At8tRANyf8bu5SNKGh2lEtZ/+5GNbyKNY0fMGI4Db8TkD
-	 UaOV+KWx4Wze8PZwLWeTo1pB10HaR9tRYe6fgET8ZW2C3gSzHBijo+H7WWwu9eII9A
-	 x6CdyC9N19pc4IEuBjqyrkAADAXT14bOnS8KPbxK0yqAMhYMgpEyoNO7P1OQzH1Sim
-	 JzeFOYKgl6LjwZw/RRhJB9xrMb5LuRMnAmkrA+/+JR87ET4fgDELMpqtN1Fvx2alOl
-	 y4CuLCqJAAI5Q==
-Date: Mon, 25 Nov 2024 09:45:36 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
-	Cloud Hsu <cloudhsu@google.com>, Chris Koch <chrisko@google.com>
-Subject: Re: [PATCH v1 1/1] x86/Documentation: Update algo in init_size
- description of boot protocol
-Message-ID: <Z0Q5MIjy0yx6jyNq@gmail.com>
-References: <20241125083136.1540424-1-andriy.shevchenko@linux.intel.com>
- <d2dfc0a4-d9dc-4dd2-a669-097dcf3491b5@infradead.org>
+	b=Pazxyk1+oZW0W5Z7Oxy5RXBYyxNwlLYxeBnK8MpMZxpfCsq1j1CbdEI4aojV3aKbP
+	 Vdj83ubzxpNSCRSfa+xzovSrWZRPqD0F393J5nAk0Ve8Kg5d0S8YT1NEp5UnubVzAx
+	 En7RqVzMpJo+mk5/fXyCV4LbK5o/7ZMlLoWCgXAA=
+Date: Mon, 25 Nov 2024 09:45:48 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH] kconfig: prefer toolchain default for debug information
+ choice
+Message-ID: <b204ba9d-beaf-4d8b-9bc3-22d88acf8b6a@t-8ch.de>
+References: <20241124-kbuild-allconfig_debug_info-v1-1-07a7ac8d9a73@weissschuh.net>
+ <CAK7LNARURUizjHNhCKjdLSJp1mCF0HYvyOfm7n8LHmUBjYByQw@mail.gmail.com>
+ <CAK7LNATgCBzesiPzyQarGY8308jZ1rC5zC2e6xZCw0UmaB=qyw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d2dfc0a4-d9dc-4dd2-a669-097dcf3491b5@infradead.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNATgCBzesiPzyQarGY8308jZ1rC5zC2e6xZCw0UmaB=qyw@mail.gmail.com>
 
+On 2024-11-25 10:36:45+0900, Masahiro Yamada wrote:
+> On Mon, Nov 25, 2024 at 10:27 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> >
+> > On Mon, Nov 25, 2024 at 12:59 AM Thomas Weißschuh <linux@weissschuh.net> wrote:
+> > >
+> > > Kconfig by default chooses the first entry of a choice setting.
+> > > For the "debug information" choice this is DEBUG_INFO_NONE which
+> > > disables debug information completely.
+> > >
+> > > The kconfig choice itself recommends to use "Toolchain default":
+> > >
+> > >         Choose which version of DWARF debug info to emit. If unsure,
+> > >         select "Toolchain default".
+> > >
+> > > Align the actual configuration with the recommendation by providing an
+> > > explicit default.
+> > >
+> > > This also enables more codepaths from allmodconfig/allyesconfig which
+> > > depend on debug information being available.
+> >
+> > Please give me some examples for "more codepaths" enabled by DEBUG_INFO
+> > because this is the opposite to the previous decision.
 
-* Randy Dunlap <rdunlap@infradead.org> wrote:
+It's really only the BTF stuff. IIRC there was some very minor
+arch-specific things, too but these should not matter.
 
-> Hi Andy,
-> 
-> On 11/25/24 12:31 AM, Andy Shevchenko wrote:
-> > The init_size description of boot protocol has an example of the runtime
-> > start address for the compressed bzImage. For non-relocatable kernel
-> > it relies on the pref_address value (if not 0), but for relocatable case
-> > only pays respect to the load_addres and kernel_alignment, and it is
-> > inaccurate for the latter. Boot loader must consider the pref_address
-> > as the Linux kernel relocates to it before being decompressed as nicely
-> > described in the commit 43b1d3e68ee7 message.
-> > 
-> > Due to this inaccuracy some of the bootloaders (*) made a mistake in
-> > the calculations and if kernel image is big enough, this may lead to
-> > unbootable configurations.
-> > 
-> > *)
-> >   In particular, kexec-tools missed that and resently got a couple of
-> >   changes which will be part of v2.0.30 release. For the record,
-> >   the 43b1d3e68ee7 fixed only kernel kexec implementation and also missed
-> >   to update the init_size description.
-> > 
-> > While at it, make an example C-like looking as it's done elsewhere in
-> > the document and fix indentation, so the syntax highliting will work
-> > properly in some editors (vim).
-> > 
-> > Fixes: 43b1d3e68ee7 ("kexec: Allocate kernel above bzImage's pref_address")
-> > Fixes: d297366ba692 ("x86: document new bzImage fields")
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> >  Documentation/arch/x86/boot.rst | 17 +++++++++++++----
-> >  1 file changed, 13 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/Documentation/arch/x86/boot.rst b/Documentation/arch/x86/boot.rst
-> > index 4fd492cb4970..01f08d94e8df 100644
-> > --- a/Documentation/arch/x86/boot.rst
-> > +++ b/Documentation/arch/x86/boot.rst
-> > @@ -896,10 +896,19 @@ Offset/size:	0x260/4
-> >  
-> >    The kernel runtime start address is determined by the following algorithm::
-> >  
-> > -	if (relocatable_kernel)
-> > -	runtime_start = align_up(load_address, kernel_alignment)
-> > -	else
-> > -	runtime_start = pref_address
-> > +    if ( relocatable_kernel ) {
-> > +      if ( load_address < pref_address )
-> 
-> What's up with the extra spaces around ( and ) ... and inconsistent with
-> the lines below?
+> > Commit f9b3cd24578401e7a392974b3353277286e49cee mentions:
+> >
+> >   all*config target ends up taking much longer and the output is much larger.
+> >   Having this be "default off" makes sense.
+> >
+> >
+> >
+> > allmodconfig is often used for compile testing in CI/CD.
+> > We need to see the sufficient gain that sacrifices
+> > the build speed.
 
-Also, even pseudocode should follow the kernel's coding style and use 
-tabs in particular - which it already does in (some...) other places of 
-this document, such as the 'Sample Boot Configuration' chapter.
+Thanks for that pointer.
+It feels wrong to me to deviate from the pure meaning of "allyesconfig"
+for one specific usecase.
+The CI systems presumably have to adapt the configs to various
+constraint anyways (the thread in [0] comes to mind).
+So they can disable debuginfo if they so desire.
 
-Thanks,
+Especially as the kconfig help text explicitly recommends to enable this
+if unsure.
 
-	Ingo
+> Presumably, DEBUG_INFO_BTF is the one because you submitted
+> some patches at the same time.
+
+Yes, it's about DEBUG_INFO_BTF.
+But it was not the first series where the BTF stuff was surprisingly not
+compiled in an all{yes,mod}config.
+
+> Are there some compile errors that are not detected
+> when DEBUG_INFO_BTF is disabled?
+
+Not in the current kernel, these would have been detected by at least
+the randconfig builds.
+
+[0] https://lore.kernel.org/lkml/202411221744.1a298e1e-lkp@intel.com/
 
