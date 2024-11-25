@@ -1,137 +1,158 @@
-Return-Path: <linux-kernel+bounces-421625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA139D8DB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:15:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ED5F9D8DBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:16:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD4BF169F72
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:15:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11E78B23712
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CEA218FC92;
-	Mon, 25 Nov 2024 21:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC8C1C7B8D;
+	Mon, 25 Nov 2024 21:15:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P9XC+PUl"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FP97FTA6"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C8E29CF0;
-	Mon, 25 Nov 2024 21:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7E029CF0;
+	Mon, 25 Nov 2024 21:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732569342; cv=none; b=W5+3zn3s5xSugzPvrmb5bb4IIlt+CMIx1ZM2MKT7b5z8oMt2PP7dTsF4TPyfmzT/GaQSyTxzuFioSkyU6nFJwKm2wnDt40MQnIc05grYVPFSpI1igJpTkpqMvyw465MpvdXsUX2KJ6JWl6Irz5AWxeyvvTtui7bqf0iZCEQg458=
+	t=1732569348; cv=none; b=hv2e9UoQ67ANdoj8z3ZEtnZY3pr91f2JQ/xOq2X2zJZAOTPTC0OsXUcG+wKdUF06LFy1CZ+xGySc5/niXh0WUthYvZzCjuftXaX3/EZNjEJQvZZ+zNRDZdYhinMDRHlE7JZBmwFOuJTeHB2luskolQDU5ejVWU9gk8Mpfk6+Djk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732569342; c=relaxed/simple;
-	bh=VNKvbazTlr7tqJe/5NFn4HfqZ8zi0nHjhSm4KUsjBSw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=m3c29oElqqBsVw/Agth9RtMsoKRqolhR1QLgJRpAvWEVUQ74vyqdgDMgoBFXOrNRWiQ8KFaIPh/7JlQlKVXFOcygTVo6jKPKmzlnzO80zwQ+Zm9KQR+RwnBh7xuYygA49mC4oLeyDbnWdBWbT+oqn9s6YGR+7h+SJZ4tI1lZy1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P9XC+PUl; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7ea9739647bso3879309a12.0;
-        Mon, 25 Nov 2024 13:15:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732569340; x=1733174140; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ZHTGGztVRlr02UorCZLeEgiwydMSFEuesYKwn9RtUI=;
-        b=P9XC+PUl6PVo2vv8E6YcpSbp3I1i3TWWwlx8SZLnCvNm8s14N5+YrR1w+MD87E+Dng
-         V7Pt9sqoinqfBmDsHBu+Z0Vz0cBWitSfwfWI+cYvnXJsAy2ty2u2ZzeMUDrpj8MXgXVK
-         iFSrq3WB9CxWM8vW25AoM7VLVLmysmgCk8om77DtS2kCtPNCr16JAkdwUTfcaBSu5u+f
-         wkRPDu2GqBcJJRjig0+6sq8w9FI6ALUIV3O4L21k0xKhxai6N243najZA8xlZ4y0vx4d
-         AMUarY4dQNif164DrtsKWFObFkH9M7vrSiPVOXBTM4LVZHorHOZ0ih5lGUhLe32tjhT6
-         Qm2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732569340; x=1733174140;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0ZHTGGztVRlr02UorCZLeEgiwydMSFEuesYKwn9RtUI=;
-        b=qMr0cTxVH/vrTtUMX4pw6TBIZqzNPCDw2WzeSHUM4V74sm2b9aNDUd5GeRWGem6UJB
-         Ui4qb2PAvvwi9zXTKpJv0FgW6jIkaQF3BWPArnJidyZcszfbHD63F7o0jJiCO/G21stl
-         /Vx7VEcfN2k2/yNf52oTNIqdDqxHkJ0YTjzYWZEN54BISpL4jTQobuLG16BiOhi3LENg
-         hr07+VEcGQzfV6oy+GnNN+hN9Uj57IJW2+LMhhO4axUczjh+x4uFsAPYDVIbcUYz3xBh
-         gHxHrAoLxhZyT3fx4Oy8FNF2J5W3yvowhNxy2eOHXZeHi5l68+V1BNTkIqiXgFyAxE8Y
-         4hUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUodHKvieddkk4TOpJG5MhDGz2M045/yvcjyetKKvgb6LrYoEFuTLko4Yk0UUZeFtZGMEt7b3CrSghza9w=@vger.kernel.org, AJvYcCWYEus1+7WaFCyZmD+8bHVFF1Nu7Pf20bvus6zonSlzZLLSfwr+0/VTWgQNxetfKvT5FlfBqsNFldk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQBO+vbmORkymimRpn/yMLTFzVJtDKSC5RH/vnF2uMQ29PsRoW
-	pF36WWcAn4rPZmI17F9sqRlGtGzdwo7aR+ccS5NaZpqH0jf+l80q
-X-Gm-Gg: ASbGncvbzIlGHmtldX7gt397Dccw9K3dgRk4d7P7ruzm57UwGv5N3Ul5jbqycGb4OHk
-	szAgbksOlIntmvcfv4izb/AAHbLB9ZKRRKguptTepSKRTq9eKw78gK8eeJ2rD7D65CB3KPkambs
-	lTL3jYO28PUu+WODMhm6jhudYrvjqOs8SaACI5XfseCGt3VaR1VtBx+PuAWWiI5eX7b1kVkM6Lw
-	3fgRVHYrrqqfUCMTlpIS691OrTN2N8oPaEz9TZ7Cc/1Au8YDg==
-X-Google-Smtp-Source: AGHT+IHrsrU0BqzKKN0+sv8jhNnr6cs9rDOsCM8lLkVi9yLVElzX7tpOkme2fiVg4jFUx0MfT1dtog==
-X-Received: by 2002:a05:6a20:c89b:b0:1dc:1147:a632 with SMTP id adf61e73a8af0-1e09e5cb4c5mr23461978637.37.1732569339517;
-        Mon, 25 Nov 2024 13:15:39 -0800 (PST)
-Received: from desky.home.arpa ([2605:59c8:492:c300:8a72:2d07:5f93:a09b])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de454967sm6907470b3a.19.2024.11.25.13.15.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 13:15:39 -0800 (PST)
-From: bschnei@gmail.com
-X-Google-Original-From: ben@bens.haus
-To: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Benjamin Schneider <ben@bens.haus>,
-	=?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>
-Subject: [PATCH] cpufreq: enable 1200Mhz clock speed for armada-37xx
-Date: Mon, 25 Nov 2024 13:14:52 -0800
-Message-ID: <20241125211452.14987-1-ben@bens.haus>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1732569348; c=relaxed/simple;
+	bh=gZUSQSvzc5YB54ywrjqYGNjPec8n8bTjZdHFTF+U4ZQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FNf06gCxuyLqFnLkKuCUm9zvBjg3uuc2Lb8gzedoxYvyIBGoknuBKesEfe22B+Nl86FxSpc5Wd5QdFvH+7vFzhmsuyu6liDxtZOoQmN3HcwAgnSIlCpXRNHicCZMn3rmKvmb61Srq0bx7UItkjdDqL+y6BSVUB6GXMRkLmkGzjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FP97FTA6; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APElRuv010591;
+	Mon, 25 Nov 2024 21:15:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	aRy7i9uA1euDkAdBW7ircoYxa+MN9A0sO7imEMW1MRs=; b=FP97FTA6tVsbL+e8
+	N2N9koDUg/N8D51CEBTxavLCzam3xpGOugoTwfhe39+/F57Gy/+tXE3kr/WtGaOP
+	zspKC3/urcUIMb0nmDUl+b+tq3nejc9Exo5RFqv8NY35SDw7cGYChNV/jT65VsSF
+	/Yakx4VaiyZcNyZGROFERachBRKp/FTjcPLoJW/ikD+/VGyCgU+GGkEwl5+0KwyO
+	ii4wE77yyRWsay+Ehy1q//k+jJ7pqx3XQ41/RafwZ+ThRwQ39qqLHmtp5haGY5JM
+	Pgrh8j3WR/1Qxf34/qXEDJyfREZTbD7iTrNQItH3cPLeiWj/6wSne4JXwP74zuVR
+	qNlb+g==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 434mx729v4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 21:15:41 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4APLFemB029058
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 21:15:40 GMT
+Received: from [10.71.111.113] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 25 Nov
+ 2024 13:15:40 -0800
+Message-ID: <a76a8f0e-9710-4312-b399-2ab907c08a57@quicinc.com>
+Date: Mon, 25 Nov 2024 13:15:40 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/7] dt-bindings: clock: qcom: Add SM8750 GCC
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Trilok Soni
+	<quic_tsoni@quicinc.com>,
+        Satya Durga Srinivasu Prabhala
+	<quic_satyap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241112002807.2804021-1-quic_molvera@quicinc.com>
+ <20241112002807.2804021-5-quic_molvera@quicinc.com>
+ <vzu23hoou5rbcucrsnauq4ygxmqzuonyvxvnarsgxycc7wrnro@vpxauk6zmq36>
+Content-Language: en-US
+From: Melody Olvera <quic_molvera@quicinc.com>
+In-Reply-To: <vzu23hoou5rbcucrsnauq4ygxmqzuonyvxvnarsgxycc7wrnro@vpxauk6zmq36>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: W1FQ7tyF1K3GLgFS5QbMEhJ6HH8kSSgr
+X-Proofpoint-ORIG-GUID: W1FQ7tyF1K3GLgFS5QbMEhJ6HH8kSSgr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ mlxlogscore=992 malwarescore=0 adultscore=0 spamscore=0 mlxscore=0
+ bulkscore=0 phishscore=0 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411250176
 
-From: Benjamin Schneider <ben@bens.haus>
 
-This frequency was disabled because of stability problems whose source could
-not be accurately identified[1]. After seven months of testing, the evidence
-points to an incorrectly configured bootloader as the source of the historical
-instability. Testing was performed on two A3720 devices with this frequency
-enabled and the ondemand policy in use. Marvell merged[2] changes to their
-bootloader source needed to address the stability issue. This driver should
-expose this frequency option to users.
 
-[1] https://github.com/torvalds/linux/commit/484f2b7c61b9ae58cc00c5127bcbcd9177af8dfe
-[2] https://github.com/MarvellEmbeddedProcessors/mv-ddr-marvell/pull/44
+On 11/20/2024 12:17 AM, Krzysztof Kozlowski wrote:
+> On Mon, Nov 11, 2024 at 04:28:04PM -0800, Melody Olvera wrote:
+>> From: Taniya Das <quic_tdas@quicinc.com>
+>>
+>> Add bindings documentation for the SM8750 General Clock Controller.
+> Subject prefix - use proper file prefix:
+> dt-bindings: clock: qcom,sm8650-gcc:
+>
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+>> ---
+>>   .../bindings/clock/qcom,sm8650-gcc.yaml       |   8 +-
+>>   include/dt-bindings/clock/qcom,sm8750-gcc.h   | 226 ++++++++++++++++++
+>>   2 files changed, 232 insertions(+), 2 deletions(-)
+>>   create mode 100644 include/dt-bindings/clock/qcom,sm8750-gcc.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
+>> index 976f29cce809..e50b5f1cad75 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
+>> @@ -13,11 +13,15 @@ description: |
+>>     Qualcomm global clock control module provides the clocks, resets and power
+>>     domains on SM8650
+>>   
+>> -  See also:: include/dt-bindings/clock/qcom,sm8650-gcc.h
+>> +  See also: include/dt-bindings/clock/qcom,sm8650-gcc.h
+>> +            include/dt-bindings/reset/qcom,sm8750-gcc.h
+>>   
+>>   properties:
+>>     compatible:
+>> -    const: qcom,sm8650-gcc
+>> +    items:
+> No need for items, simpler is just enum.
+>
+>> +      - enum:
+>> +          - qcom,sm8650-gcc
+>> +          - qcom,sm8750-gcc
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Signed-off-by: Benjamin Schneider <ben@bens.haus>
-Reviewed-by: Pali Rohár <pali@kernel.org>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
----
- drivers/cpufreq/armada-37xx-cpufreq.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+Hey Krzysztof; I want to draw you attention to the discussion on patch 
+v2 5/7 of this series;
+We realized these bindings don't match with the driver; notably SM8750 
+doesn't have the
+pcie1 clocks available on SM8650. To this end, it seems prudent to bring 
+back the separate
+bindings file from ps 1.
 
-diff --git a/drivers/cpufreq/armada-37xx-cpufreq.c b/drivers/cpufreq/armada-37xx-cpufreq.c
-index bea41ccabf1f..f28a4435fba7 100644
---- a/drivers/cpufreq/armada-37xx-cpufreq.c
-+++ b/drivers/cpufreq/armada-37xx-cpufreq.c
-@@ -102,11 +102,7 @@ struct armada_37xx_dvfs {
- };
- 
- static struct armada_37xx_dvfs armada_37xx_dvfs[] = {
--	/*
--	 * The cpufreq scaling for 1.2 GHz variant of the SOC is currently
--	 * unstable because we do not know how to configure it properly.
--	 */
--	/* {.cpu_freq_max = 1200*1000*1000, .divider = {1, 2, 4, 6} }, */
-+	{.cpu_freq_max = 1200*1000*1000, .divider = {1, 2, 4, 6} },
- 	{.cpu_freq_max = 1000*1000*1000, .divider = {1, 2, 4, 5} },
- 	{.cpu_freq_max = 800*1000*1000,  .divider = {1, 2, 3, 4} },
- 	{.cpu_freq_max = 600*1000*1000,  .divider = {2, 4, 5, 6} },
--- 
-2.47.1
-
+Thanks,
+Melody
 
