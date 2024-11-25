@@ -1,57 +1,55 @@
-Return-Path: <linux-kernel+bounces-421523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 348D09D8C62
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:45:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A85EF9D8C67
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:48:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2E1D281166
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:45:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16DBBB2C1B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B771B983E;
-	Mon, 25 Nov 2024 18:44:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531EA1B983F;
+	Mon, 25 Nov 2024 18:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="AA+RMvFl"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="UbvvzZVu"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4EA1B87F9
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 18:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732560298; cv=pass; b=aSOriaNTCeAu8smGdhbaNkVxmYBxB4w2OY/HodrLIKOd6gvr8DvguORcbAgks3L0HDyREG84JK3YoVvBXUXgYZTK2fUhHy6xhY94FEM8gmgNeEN9rPssCA4Hp4PjHx2ZOI3gYjdgfOpbJQn4uZ+Ga9Iup2rAU11c0sp8L0e2+Vg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732560298; c=relaxed/simple;
-	bh=98971YftLtogfAjqCobFcMvMek8cNjuZQQjyOQpbSeY=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=NhJVz2QDp3HxEnZndEvY2tH0DxEpYrcktNlQyjHqBZt1kvJN6X7rkeywJwUUfcEPjNXat+5NrPD4GPQFaiPdHBo2gJC+fG9W0lVsOklvbM8khdaa2s986157pnKNbzINaj8L6llJFLP2eqb1rGUNEhDvNZg0UWf6O0rGRGC2zCk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=AA+RMvFl; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732560292; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=hGWx4TzRPgP6AkJUFy4fyun1NIQEmwle/3dktbPpF1sAXufE3DhU8y/NUVDOBYMjFKeXjH6wPrzdo8t2EhhUN1zaKWNeaYS6VcxPws18ouh69h9BwMCqsJKW3xQHMlpAaJxUpnVraCdmSSOK5Bjgqamko0FeiaU9qiLhyM0ilgc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732560292; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=mPRmRCWPFe8ce+yKDjvgaOMgt7zw/rnMu5Mp1rD7p5Q=; 
-	b=labroysQFaMEhQqaEvSG4RB5BVTPJyPfxSQdPY3qAF8Ij2PSlcRHoUm6wXMZODmXhbZWGy5MuV0NQvH7Mf3+26OiP48vseZe+V9yiyrlLL1pWQrxfOlEZ50Gv/K+rPenbRghzplr+UoGf1P8DWQA5XUHeSOnZikivaiH6Ie2d3k=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732560292;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=mPRmRCWPFe8ce+yKDjvgaOMgt7zw/rnMu5Mp1rD7p5Q=;
-	b=AA+RMvFl4xnYGlEQ1ZTpgmgNlkZHtWxeI3UVLCt3lgzfHnpX/O1xBpPsxRIArPsI
-	IfZcQvKrfD2hIJhgE8R3oQyfSmQCmgF5PIBh+/BKKU/I0gYvL+TGfp2bZCZ+uK9NmCX
-	QoU/D+vPqnoMriLriIpsPBxszQQJQ+dj097xRiPc=
-Received: by mx.zohomail.com with SMTPS id 1732560290720156.73913293865894;
-	Mon, 25 Nov 2024 10:44:50 -0800 (PST)
-Message-ID: <20a1d49a-1f5d-4d3d-b59d-29b9791b72bd@collabora.com>
-Date: Mon, 25 Nov 2024 23:44:46 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDEF1B415F;
+	Mon, 25 Nov 2024 18:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732560400; cv=none; b=cNLTBCCuUkrjMNk7drOFKy+PgtQRzPnossz3090WDWXNpVL/xxNxg4iwrvdcqxDeIvLo6qENjgTjWqR/PvqKv0sGWb2NSNkpc5ylkLUp3yJdVfg3M+Dg9rh6vltZ2lI8Jh4iwHyl0NiGs65MQlSdeQkanx/WIBXemrspl4cWuWg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732560400; c=relaxed/simple;
+	bh=TtCTNFPcZR1bxUiEExyk0yCLrSQrn/3Cwwf3KVjbDlw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Lb6E9Gw1RsZXKEhNs4FKOCD3cM4hr1xRFtLOyoZLEoLQXzWcouDtKD/lURfs2uuVIrsRGrlTFCwCJG/E3cIGne4Z72vlq/C+sGnynKNEEiDIfdj4H4Px5M3BhpKyMdR10VWuiOrLlgp8SE67+o5otWV1rqcypm7j+oN1qxBOiUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=UbvvzZVu; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1732560372; x=1733165172; i=wahrenst@gmx.net;
+	bh=emLMo1HXRsgcAfvEKOdWs2P0cK3UlzUQkPf6wBXgm10=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=UbvvzZVuPhUnZZ0ypsubMf5GycjB/MfzmOzYT9ifDG6BGk4ZJbJFQFHV8s+rEUsV
+	 WS4loA48l08T6kZktUQOSB4VgFMp4eL4NAso/Nzq5L87QtyUyV6BrfE7hMASZF/5H
+	 BhkA+I+XZhJgNp6hkOt1ontjIiKg/Bmss+UOJMSdXePrCju9YO3CVJ5ZufjhUXQTd
+	 gU9yNhm5Lb4WUB1SaUWqdW3le/B5C0LpHTuBN9kEzBfsLmg09mRvoHwKCrymvMXqh
+	 odUeh71KSybRhii8wsDDHvAaDWntc6yIUa4HxU0SYXmks3OG6mAKL8d8ezGodrhRt
+	 /R5O8QYESgcL6H6CHw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.105] ([37.4.251.153]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MK3Vu-1szdNq0QvO-00KkV2; Mon, 25
+ Nov 2024 19:46:12 +0100
+Message-ID: <0c6fa2cc-3a7e-4db2-bbad-7c19a876937e@gmx.net>
+Date: Mon, 25 Nov 2024 19:46:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,47 +57,136 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, Linux kernel <linux-kernel@vger.kernel.org>
-Subject: Re: userfaultfd: two-step UFFDIO_API always gives -EINVAL
-To: stsp <stsp2@yandex.ru>, Peter Xu <peterx@redhat.com>
-References: <2d35e5f7-2edc-4ef0-b71b-82186c0627b0@yandex.ru>
- <Z0Se4BuVfqwjeCWV@x1n> <b0818813-5a4c-4621-9810-dc7443a23dd1@yandex.ru>
- <Z0Ssq15MQd3rimBr@x1n> <da978e8c-2a72-4b7b-ae67-41e6ff0d5089@yandex.ru>
- <Z0SwOILi4R4g9JBa@x1n> <9b68a811-ffed-4595-83a6-0ef78a7de806@yandex.ru>
- <Z0S3isgc-QlEF7oW@x1n> <4689f014-2885-42b9-91a4-ff8b8133599f@yandex.ru>
+Subject: Re: [PATCH v4 06/10] pinctrl: rp1: Implement RaspberryPi RP1 gpio
+ support
+To: Andrea della Porta <andrea.porta@suse.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof Wilczynski <kw@linux.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
+ <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+ Masahiro Yamada <masahiroy@kernel.org>,
+ Herve Codina <herve.codina@bootlin.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>
+References: <cover.1732444746.git.andrea.porta@suse.com>
+ <1257f76168ae03dba027bd33e6fca31b8df29c35.1732444746.git.andrea.porta@suse.com>
 Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <4689f014-2885-42b9-91a4-ff8b8133599f@yandex.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <1257f76168ae03dba027bd33e6fca31b8df29c35.1732444746.git.andrea.porta@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:BPxstd5PG9ii50gxD3QFzCia8ZtZfz1FrMC9GEaSmohukVFc8pM
+ 4pPyBwPOV1gpyguV4e7aOdGci0vuMRPoCFFJC2WjtJ5SAOdZLn3B1ru/Y0lJ9+yTQylu76E
+ cNd94z5KkcKxxBU8JWjbgVMQDNVmNZ/pvxmKODJa+97tmp8HqcWWqqg2Vbr4gJcqwonmHx3
+ Wus5KRt3hTWH9+DKCYRgA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:TfkttF/NobQ=;RJQ4AN65XloMCZXRYId0Lyvr73F
+ STq7YLJ96O9szCp1wZFJ6wAEVftm4lorvf5J29jJywz0XoJlQd3vu+DpEXsdfv5L8U3Jcau5m
+ y7+81SXU61H3xi+IKKSzVx3VR5CZpAwv4vm6Dawqnb5l+XutNhhkCLj3DMIRISaSJmsfaM0hs
+ OkX7zCbA3ftjGQ1yExO/PCnfKNNHdaWj1X7W/nV6P4kSGKyxM6ISrifJ5CNFo+veLzHbX3WMy
+ iq3ggFg/+IDdXJhPC79ycPS06lAuznETUlU8hCUGGkxnTzQWAIaA91vr94Cp7N68oUA07isWf
+ lWnJY0+feGQsID6+dItAG2Z/05faSirflzo/mVclsdThy//3g7iHqCS1mSiDYVNwZEOMn9w0G
+ raiXOkVBT6V1wFa2KqydLYrn6v3Cv35EIlRp/pfLRISJd18rTWyNbmUabckxAygEXN9SDm7Qh
+ 9iE05MqyBT0v6IBZXKKIwvGVRVPLJXjGDF5OJmhy7xq9aZ5LrbMkHimJB0WraFbUwYpClZBdx
+ KPT3bMzcwFFRXIBDnNMjJHbnjcrDx/s1Kzs7F89BIV/29MnTL908vmRnFtXMMaGGHK4nL2UcL
+ Bs0HihL+qt3qPQREKCVVz2BFn9+U3Ti2zBYePgOhFHBlYJ5XqNLLB0x5SiR/L46PoYYT55W4B
+ 8SFVAJAzPvaUUWscxr6fFGrSVe49kuoeEtSUM2NOTrQZZ/ZwUiWKBL0tyuifHv5dp8TYfNNUp
+ SrdVq5yiLr7/C7KDqGYyTgHeHXRqFzidU7szXanNfFNnsPeFDMpFHstFzxZbR/9go/tXgNB4m
+ yU4iu1GFK0sYJifORjsDW992/kjvcNR27Hd3rxi+zsJm/CawqVzn0/0cJQ7L4dYtz8YrD08tK
+ 3QPwR8eTcEaMfbCVTuGXAaEWtjzyBbRLLGhD/ecm0jYZx6wAy55022I/J
 
-On 11/25/24 11:01 PM, stsp wrote:
-> 25.11.2024 20:44, Peter Xu пишет:
->> Apps who tracks snapshots needs the unmodified pages before being written.
->> Those cannot rely on kernel resolution because it needs more than "if the
->> page is written" - it also needs the page data before being written.
-> Say I am writing a frame grabber
-> (not exactly, but very close to).
-> I monitor the video buffer of another
-> process, and "snapshot" it with some
-> frequency. I only need to know what
-> pages were modified, to reduce the
-> bandwidth to an absolute minimum,
-> and if the process is not playing - then
-> to not grab anything until it resumes.
-> UFFD_FEATURE_PAGEFAULT_FLAG_WP
-> works quite well for me already, but
-> I envision a huge boost with
-> UFFD_FEATURE_WP_ASYNC.
-> What would you suggest for that usage
-> scenario?
-The UFFD_FEATURE_WP_ASYNC was designed for exactly this case.
-The IOCTL will return you the modified pages. An example of usage
-can be found in selftest/mm/pagemap_ioctl.c.
+Hi Andrea,
 
--- 
-BR,
-Muhammad Usama Anjum
+Am 24.11.24 um 11:51 schrieb Andrea della Porta:
+> The RP1 is an MFD supporting a gpio controller and /pinmux/pinctrl.
+> Add minimum support for the gpio only portion. The driver is in
+> pinctrl folder since upcoming patches will add the pinmux/pinctrl
+> support where the gpio part can be seen as an addition.
+>
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>   MAINTAINERS                   |   1 +
+>   drivers/pinctrl/Kconfig       |  11 +
+>   drivers/pinctrl/Makefile      |   1 +
+>   drivers/pinctrl/pinctrl-rp1.c | 789 ++++++++++++++++++++++++++++++++++
+>   4 files changed, 802 insertions(+)
+>   create mode 100644 drivers/pinctrl/pinctrl-rp1.c
+...
+> +
+> +static int rp1_pinctrl_probe(struct platform_device *pdev)
+> +{
+> +	struct regmap *gpio_regmap, *rio_regmap, *pads_regmap;
+> +	struct rp1_pinctrl *pc = &rp1_pinctrl_data;
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	struct gpio_irq_chip *girq;
+> +	int err, i;
+> +
+> +	pc->dev = dev;
+> +	pc->gpio_chip = rp1_gpio_chip;
+> +	pc->gpio_chip.parent = dev;
+> +
+> +	pc->gpio_base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(pc->gpio_base))
+> +		return dev_err_probe(dev, PTR_ERR(pc->gpio_base), "could not get GPIO IO memory\n");
+> +
+> +	pc->rio_base = devm_platform_ioremap_resource(pdev, 1);
+> +	if (IS_ERR(pc->rio_base))
+> +		return dev_err_probe(dev, PTR_ERR(pc->rio_base), "could not get RIO IO memory\n");
+> +
+> +	pc->pads_base = devm_platform_ioremap_resource(pdev, 2);
+> +	if (IS_ERR(pc->pads_base))
+> +		return dev_err_probe(dev, PTR_ERR(pc->pads_base), "could not get PADS IO memory\n");
+> +
+> +	gpio_regmap = devm_regmap_init_mmio(dev, pc->gpio_base,
+> +					    &rp1_pinctrl_regmap_cfg);
+> +	if (IS_ERR(gpio_regmap))
+> +		return dev_err_probe(dev, PTR_ERR(gpio_regmap), "could not init GPIO regmap\n");
+> +
+> +	rio_regmap = devm_regmap_init_mmio(dev, pc->rio_base,
+> +					   &rp1_pinctrl_regmap_cfg);
+> +	if (IS_ERR(rio_regmap))
+> +		return dev_err_probe(dev, PTR_ERR(rio_regmap), "could not init RIO regmap\n");
+> +
+> +	pads_regmap = devm_regmap_init_mmio(dev, pc->pads_base,
+> +					    &rp1_pinctrl_regmap_cfg);
+> +	if (IS_ERR(pads_regmap))
+> +		return dev_err_probe(dev, PTR_ERR(pads_regmap), "could not init PADS regmap\n");
+> +
+> +	for (i = 0; i < RP1_NUM_BANKS; i++) {
+> +		const struct rp1_iobank_desc *bank = &rp1_iobanks[i];
+> +		int j;
+> +
+> +		for (j = 0; j < bank->num_gpios; j++) {
+> +			struct rp1_pin_info *pin =
+> +				&pc->pins[bank->min_gpio + j];
+> +			int reg_off;
+> +
+> +			pin->num = bank->min_gpio + j;
+> +			pin->bank = i;
+> +			pin->offset = j;
+> +
+> +			reg_off = bank->gpio_offset + pin->offset
+> +				  * sizeof(u32) * 2;
+Just a nit: the first * belongs in the line above
 
+Except of this:
+
+Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
 
