@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-420653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 845509D7FF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:03:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D58109D7FFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:03:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13654B27167
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:03:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98220283B41
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171D318FC65;
-	Mon, 25 Nov 2024 09:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6F518E05F;
+	Mon, 25 Nov 2024 09:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="DA0YIWZd"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="FepjHvPc"
 Received: from cpanel.siel.si (cpanel.siel.si [46.19.9.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6BD187849;
-	Mon, 25 Nov 2024 09:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7260190485;
+	Mon, 25 Nov 2024 09:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.9.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732525376; cv=none; b=X0uyF4ZZJSUS12smzx/Zj1h29q6urXyfRvi35OqLgn1ghIYrorgNIlo5zKy9X1p6tqK7mFi2kCyHWajZaaJBqR0zzKaSNCHIeYv8lk5FydF+N2aBqztLz5KZS3B4ID9QR9pqD2egxbduAbdMqP97Oh6Ee/22N1xN7eqsyorSa10=
+	t=1732525380; cv=none; b=EuYOFBSYD5ueIqn5xfuH6D5LFrQuM4Xrv1Q2It5ML/sJgKvtU6ACZ4qxSNwwm5jna2s7e5L7Pmu46mEjc1M47h4I2uRkR7I+fcGGGzwGe5k0DhFZJj3G+8GoosBHtCWDG68VWMcxP8ZRN8MLQCbK4CbuU5LPPFzh6MWEgbzkCBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732525376; c=relaxed/simple;
-	bh=Uda7953howVUmeNOhjn5oQVxx2RPhTS5RXjowq0nkqU=;
+	s=arc-20240116; t=1732525380; c=relaxed/simple;
+	bh=KlS2Fm1vD1XgNW8+r3sF9L/0rvt4PdEVKRqTQhMdNjA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=huydMVxqo0BYteI+NFe4OsJjsjm8yAZp+pmmL42UPapp0mpsdNaG+1DSRjzr13fcGD1fbKMJxeChxfqhKa7SwJn3qSjSReUT/Efz00/BIRw2Yz5B3FM96p9SElwA55olp4So8NbxJun1iwsVK23X7escD6/skfitr9nIBorVRS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=DA0YIWZd; arc=none smtp.client-ip=46.19.9.99
+	 MIME-Version; b=C1cN+82gIV4YQvdboO9kzXPPMVdktRgaNd+Dt22j1uCc2IKaIlzKcPB24EY4fomWiS5hBHsDVgn32/oygFOMBl9FHPF1eoxvP+hegxH1FJ0bErGfjIiDCHeQMa2fPWESnn0ILVTg/ZtoblR6mcB9F4HHqOsQhy5gKpnAMpOAkCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=FepjHvPc; arc=none smtp.client-ip=46.19.9.99
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
@@ -36,18 +36,18 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=8lEkVLzppht425ev0cm54WY5kvUL/Y39nOpsptm+9Ao=; b=DA0YIWZdrFTMRJKivwK+y4vlDi
-	f3NStfIfYkEeE+DBnP+weK5f1ouJZH/bZXad7M7rTNHFcXm6IW0t/uL/xpCKEcXhrRJEyG5X9HMKd
-	HLIJqnjxBPoCZWadlIAEQrUUaZxTrxN9eedCsw54cbWYYtWizKmph0WhLW7G4dVLuwNdIA2AD8uG7
-	jkvt0fWJVwbwq9Glv+7Zof9h+2MakNgNgn67qPZtWMazX3sKDNIjaxRg1Xae6FeBWOWnqJ/P2NG8w
-	Sq64wZlNaDGLAovoCOXmcsx+vNWEBVABikNYUIp+wBTUetzR/7jsho3Ru/ANsel4CC+sTHHoesA0L
-	K7O/l0KQ==;
+	bh=fhotsrxHfKTgb/uu1BGoR5rFJUT8/x1ISfSu/K39MtM=; b=FepjHvPcSeDHJ6tWzp4hEdtyeb
+	d7TQifMCIgTAG9QljC4Tk2U38QKVZ6UKUJcel5gN+wRCbvS8rWBB/9AiGJsuxUvT+5Hssb7MbPt7s
+	aYps98qSNO27uWpNFj32h45wNULpqWt22/46nVQMWGuvyXL6YMjnn6sn4f/D3JTzm3uCYIvbCdSOe
+	CoxbDA6frE/tcgpRbxMIA7Pcc1NMD40+RcaZx8PebIvr5lwJVdN/CQbG4K88tv2rpH0pW3HIkbTPR
+	j+u1el1NMPPnt+MnpH/avk/m9+aT1pxYtCqObMzidq0ajekXt4IVvFuk5ILVuSwrOAd2/kZ9vHcUJ
+	wZPaS8zQ==;
 Received: from [91.26.50.162] (port=58340 helo=and-HP-Z4..)
 	by cpanel.siel.si with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96.2)
 	(envelope-from <andrej.picej@norik.com>)
-	id 1tFUIn-00Eq70-0P;
-	Mon, 25 Nov 2024 09:18:36 +0100
+	id 1tFUIn-00Eq70-2i;
+	Mon, 25 Nov 2024 09:18:37 +0100
 From: Andrej Picej <andrej.picej@norik.com>
 To: shawnguo@kernel.org,
 	s.hauer@pengutronix.de,
@@ -61,9 +61,9 @@ Cc: imx@lists.linux.dev,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	upstream@lists.phytec.de
-Subject: [PATCH 01/15] arm64: dts: imx8mm-phycore-som: Keep LDO3 on in suspend
-Date: Mon, 25 Nov 2024 09:18:00 +0100
-Message-Id: <20241125081814.397352-2-andrej.picej@norik.com>
+Subject: [PATCH 02/15] arm64: dts: imx8mm-phycore-som: Fix bluetooth wakeup source
+Date: Mon, 25 Nov 2024 09:18:01 +0100
+Message-Id: <20241125081814.397352-3-andrej.picej@norik.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241125081814.397352-1-andrej.picej@norik.com>
 References: <20241125081814.397352-1-andrej.picej@norik.com>
@@ -85,39 +85,36 @@ X-Source:
 X-Source-Args: 
 X-Source-Dir: 
 
-From: Teresa Remmet <t.remmet@phytec.de>
+Not using pull-up on the host wake-up line triggers the wake up
+immediately after device enters suspend. Fix this by enabling internal
+pull-up and setting interrupt triggering on the falling edge.
 
-LDO3 is also used as switch for enabling VDD_3V3_S and need to
-be kept on during suspend. Disabling this can lead to an unwanted
-reset during resume.
-
-Set LDO3 to 2,5V as the voltage should be fix.
-
-Signed-off-by: Teresa Remmet <t.remmet@phytec.de>
 Signed-off-by: Andrej Picej <andrej.picej@norik.com>
 ---
- arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-rdk.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi b/arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi
-index 6069678244f3..7761acc5c510 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm-phycore-som.dtsi
-@@ -161,11 +161,13 @@ reg_vcc_enet: ldo3 {
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-max-microvolt = <2500000>;
--				regulator-min-microvolt = <1500000>;
-+				regulator-min-microvolt = <2500000>;
- 				regulator-name = "VCC_ENET_2V5 (LDO3)";
- 
- 				regulator-state-mem {
--					regulator-off-in-suspend;
-+					regulator-on-in-suspend;
-+					regulator-suspend-max-microvolt = <2500000>;
-+					regulator-suspend-min-microvolt = <2500000>;
- 				};
- 			};
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-rdk.dts b/arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-rdk.dts
+index 5eacbd9611ee..31d5c57d3c24 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-rdk.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mm-phyboard-polis-rdk.dts
+@@ -255,7 +255,7 @@ bluetooth {
+ 		device-wakeup-gpios = <&gpio2 8 GPIO_ACTIVE_HIGH>;
+ 		interrupt-names = "host-wakeup";
+ 		interrupt-parent = <&gpio2>;
+-		interrupts = <9 IRQ_TYPE_EDGE_BOTH>;
++		interrupts = <9 IRQ_TYPE_EDGE_FALLING>;
+ 		max-speed = <2000000>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&pinctrl_bt>;
+@@ -332,7 +332,7 @@ pinctrl_bt: btgrp {
+ 		fsl,pins = <
+ 			MX8MM_IOMUXC_SD1_DATA4_GPIO2_IO6	0x00
+ 			MX8MM_IOMUXC_SD1_DATA6_GPIO2_IO8	0x00
+-			MX8MM_IOMUXC_SD1_DATA7_GPIO2_IO9	0x00
++			MX8MM_IOMUXC_SD1_DATA7_GPIO2_IO9	0x140
+ 		>;
+ 	};
  
 -- 
 2.34.1
