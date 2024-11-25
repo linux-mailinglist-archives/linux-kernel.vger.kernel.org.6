@@ -1,157 +1,125 @@
-Return-Path: <linux-kernel+bounces-420866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B992E9D83E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:59:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 107D89D84C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:49:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F0EDB3A9B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:51:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD5ECB3AC84
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F68E195B1A;
-	Mon, 25 Nov 2024 10:50:44 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB0E197512;
+	Mon, 25 Nov 2024 10:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LtU6m7yF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03921940B3;
-	Mon, 25 Nov 2024 10:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925CE196C9B;
+	Mon, 25 Nov 2024 10:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732531844; cv=none; b=jCScvSjiwHwdd42OriygoVg//hzx+MEbBfSTYe9up3W6LOj27Mb52Flf2GOHzRpa0LFCd5vLpmQAd26fnhgfaIeCxogdpk7o4c0/LFE/LgtsA01uuX0lDgj2txHu+jqcJNM0CAwoEE2eY9aLtIb7HAKzkc6bY9roVKevEds8lfQ=
+	t=1732531851; cv=none; b=kuGFQtPLLH7hCIJGOB4GkDRfrEEdcmvZ6Fkl+j6z8NgQqRl2bGtuwgD7HHj3TXS4JxpxGRtFwc2Rf1DIgMxM8vh0GdfEmcCtNwTiTpvSuKwZK1FEGUmsgWbyG3ue2kVS5hqyvjSzkxSuGVkSwHpMOYilkujgrxnHJfUbvgJXaUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732531844; c=relaxed/simple;
-	bh=9hXOVBNdgVCWJqpNWpCcCp/Lejcixifw+eGIIr0WdSA=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=n7jBh8BM/34jO6ZC24NXeC2b2cebAxa0sesGb2pUZT7BLydH1PPVkB+X69c95LOm0xdBeNIEtPtjw5GA6C+RIlUs2/v1MyZ1WxR5EhmCqkRTczY2wRdoFtIaIGlq3se0R2lDYmXCYLmKQxuWRmduF80/b71lXOxzao3xmEcF9q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XxjCT0KHrz4f3jXK;
-	Mon, 25 Nov 2024 18:50:13 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B6D8F1A0197;
-	Mon, 25 Nov 2024 18:50:31 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgCngYV1VkRnOnwnCw--.39352S3;
-	Mon, 25 Nov 2024 18:50:31 +0800 (CST)
-Subject: Re: [PATCH] block: iocost: ensure hweight_inuse is at least 1
-To: =?UTF-8?B?5oi05Z2k5rW3IFRvbnkgRGFp?= <daikunhai@didiglobal.com>,
- Yu Kuai <yukuai1@huaweicloud.com>, "tj@kernel.org" <tj@kernel.org>,
- "josef@toxicpanda.com" <josef@toxicpanda.com>,
- "axboe@kernel.dk" <axboe@kernel.dk>
-Cc: "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <3B8BC663-3B34-454D-AE79-4FCE50001D6E@didiglobal.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <3e69ac2d-aa3b-2065-2bb6-d3888fddfe5a@huaweicloud.com>
-Date: Mon, 25 Nov 2024 18:50:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1732531851; c=relaxed/simple;
+	bh=Wbhswxh37Wsna+ix6qPk9ORg48ErC/7MoQ3F/8voSKY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bt/KeZI+hV8RBvbfhw/yT0uvG8CXdpi53evuLzl6XARGol7Drd/p+XzGYGoTzWN2ZJBdN3FO226/IBGa6yAOvGaSqDeHSQuENPxLjFlZ+9+y/H4vohGZjsTm9IYOvcvbhLFDiJNZfDdqbynjudG61KGsH9UuXf0iXBEAyM5AIRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LtU6m7yF; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732531850; x=1764067850;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Wbhswxh37Wsna+ix6qPk9ORg48ErC/7MoQ3F/8voSKY=;
+  b=LtU6m7yFiCUM/0qe3iYS0EqZwR19PFOqkoy2UaNUGB5sfHp1g2eu0t6/
+   jZ+FhfwJkeWGaDucd64O+T4sK7r6uK6VbgcdWTinEMk13R/ofXkw8zcnn
+   btMu7ePRNlszVOH5481RF+VwIe5JOGzLchZUhN3kV6k+Iz9T5TcGfrSTn
+   /Gz41Hwnr9BgEcaKMcDJ39I2JJTtSCRXKoLmMtS84jeTIvpoZCq6RIXfc
+   MZp5c7YOAyqkydNiyPvKcn0fg8hMMEwxhM/R6rBysUAMSe4WHRJuOInki
+   f7V/F/pb1hNaFqcr+BIPMKzjcLRXez54+LtvXKBxDFlvdvN5TVzMkF50E
+   g==;
+X-CSE-ConnectionGUID: oKwSd+wZQ2W7FnfMMXQx1g==
+X-CSE-MsgGUID: DKd2mCeSSXidgzx5O26ZNA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="32881419"
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="32881419"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 02:50:49 -0800
+X-CSE-ConnectionGUID: eu7W6qbbRPiqV/jKpZ1QQw==
+X-CSE-MsgGUID: 2jMbpPspRtiqi5Jn2t9yHA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="91185077"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 02:50:45 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tFWfy-00000000ikZ-0tV6;
+	Mon, 25 Nov 2024 12:50:42 +0200
+Date: Mon, 25 Nov 2024 12:50:41 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
+	Cloud Hsu <cloudhsu@google.com>, Chris Koch <chrisko@google.com>
+Subject: Re: [PATCH v1 1/1] x86/Documentation: Update algo in init_size
+ description of boot protocol
+Message-ID: <Z0RWgYk24V-Fewlr@smile.fi.intel.com>
+References: <20241125083136.1540424-1-andriy.shevchenko@linux.intel.com>
+ <d2dfc0a4-d9dc-4dd2-a669-097dcf3491b5@infradead.org>
+ <Z0Q5MIjy0yx6jyNq@gmail.com>
+ <Z0RVgdhYu17lINZz@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <3B8BC663-3B34-454D-AE79-4FCE50001D6E@didiglobal.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCngYV1VkRnOnwnCw--.39352S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7KF4rKFy7tr18Jr1DCw4kJFb_yoW5JryDpr
-	WrW3WYyFZrGF4I93WrKr129wn0vws3WF4xKrn3Z3yxCr48Gr9Ikr1xKF4DW34rXrsaqr4I
-	vw17KFyrG3y7Cr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z0RVgdhYu17lINZz@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi
+On Mon, Nov 25, 2024 at 12:46:25PM +0200, Andy Shevchenko wrote:
+> On Mon, Nov 25, 2024 at 09:45:36AM +0100, Ingo Molnar wrote:
+> > * Randy Dunlap <rdunlap@infradead.org> wrote:
+> > > On 11/25/24 12:31 AM, Andy Shevchenko wrote:
 
-在 2024/11/24 21:44, 戴坤海 Tony Dai 写道:
-> In fact, we did encounter such a special situation where the kernel printed out `iocg: invalid donation weights in /a/b/c: active=1 donating=1 after=0`, and then it immediately panic. I analyzed the code but could not figure out how this happened; it might be a concurrency issue or some other hidden bug.
+...
 
-Do you have a reporducer for this? I'd like to take a look at the
-WARN first.
+> > > > -	if (relocatable_kernel)
+> > > > -	runtime_start = align_up(load_address, kernel_alignment)
+> > > > -	else
+> > > > -	runtime_start = pref_address
+> > > > +    if ( relocatable_kernel ) {
+> > > > +      if ( load_address < pref_address )
+> > > 
+> > > What's up with the extra spaces around ( and ) ... and inconsistent with
+> > > the lines below?
+> 
+> I can remove them. This file has a lot of inconsistencies it seems...
+> 
+> > Also, even pseudocode should follow the kernel's coding style and use 
+> > tabs in particular - which it already does in (some...) other places of 
+> > this document, such as the 'Sample Boot Configuration' chapter.
+> 
+> The problem is that reStructuredText syntax requires that indentation.
+> I may follow the rules after the rST requirements, though.
 
-Thanks,
-Kuai
+v2 has just been sent:
+https://lore.kernel.org/r/20241125105005.1616154-1-andriy.shevchenko@linux.intel.com
 
-> 
-> Our kernel is not the latest, but it includes the patch edaa26334c117a584add6053f48d63a988d25a6e (iocost: Fix divide-by-zero on donation from low hweight cgroup).
-> 
-> ﻿在 2024/11/22 16:16，“Yu Kuai”<yukuai1@huaweicloud.com <mailto:yukuai1@huaweicloud.com>> 写入:
-> 
-> 
-> Hi,
-> 
-> 
-> 在 2024/11/22 15:26, Kunhai Dai 写道:
->> The hweight_inuse calculation in transfer_surpluses() could potentially
->> result in a value of 0, which would lead to division by zero errors in
->> subsequent calculations that use this value as a divisor.
->>
->> Signed-off-by: Kunhai Dai <daikunhai@didiglobal.com <mailto:daikunhai@didiglobal.com>>
->> ---
->> block/blk-iocost.c | 7 ++++---
->> 1 file changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/block/blk-iocost.c b/block/blk-iocost.c
->> index 384aa15e8260..65cdb55d30cc 100644
->> --- a/block/blk-iocost.c
->> +++ b/block/blk-iocost.c
->> @@ -1999,9 +1999,10 @@ static void transfer_surpluses(struct list_head *surpluses, struct ioc_now *now)
->> parent = iocg->ancestors[iocg->level - 1];
->>
->> /* b' = gamma * b_f + b_t' */
->> - iocg->hweight_inuse = DIV64_U64_ROUND_UP(
->> - (u64)gamma * (iocg->hweight_active - iocg->hweight_donating),
->> - WEIGHT_ONE) + iocg->hweight_after_donation;
->> + iocg->hweight_inuse = max_t(u64, 1,
->> + DIV64_U64_ROUND_UP(
->> + (u64)gamma * (iocg->hweight_active - iocg->hweight_donating),
->> + WEIGHT_ONE) + iocg->hweight_after_donation);
-> 
-> 
-> I'm confused, how could DIV64_U64_Round_UP() end up less than 1?
-> 
-> 
-> #define DIV64_U64_ROUND_UP(ll, d) \
-> ({ u64 _tmp = (d); div64_u64((ll) + _tmp - 1, _tmp); })
-> 
-> 
-> AFAIK, the only case that could happen is that
-> iocg->hweight_active - iocg->hweight_donating is 0, then I don't
-> get it now how cound active iocg donate all the hweight, if this
-> really happend perhaps the better solution is to avoid such case.
-> 
-> 
-> Thanks,
-> Kuai
-> 
-> 
->>
->> /* w' = s' * b' / b'_p */
->> inuse = DIV64_U64_ROUND_UP(
->>
-> 
-> 
-> 
-> 
-> 
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
