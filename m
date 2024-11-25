@@ -1,143 +1,133 @@
-Return-Path: <linux-kernel+bounces-420898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADB769D84DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:52:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D5429D841F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:13:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1193163F24
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:13:27 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A974C1957F4;
+	Mon, 25 Nov 2024 11:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cdIJybL3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DFDBB3CFEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:11:18 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57278195B33;
-	Mon, 25 Nov 2024 11:11:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15B7195808
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E79A192589
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732533073; cv=none; b=RiDgohRiS+C3gTEivuy+hxRZ+SrxSvatanZ12q9+ommPdQJRcB2pqFBYGmDm8UBDCJhBmm2RzcbvK4QbOpxd27hmPhgiMiGHzDgWhTcuT2AsVuMSDjmHLCxQbxQ5bQIuKDPRD5rXPJ2mLl0f016Xyj/oQpG99ZrsVtynupgZ80w=
+	t=1732533206; cv=none; b=VA5HdAsEd7cE1V7PsHDTxhvTet531t5Vs0AbYE9mi4dZfMHNQbNPKkU2Ssp+u2eN3iXLQMRKtoI/u4/iDmg6VTNP4TqxRmdlJ9v5Kf10hLIYvIIj1gxTpx45L7DQk3Yc20y7HzwgJu07hxA54DoJh6MFLqq6BgcqTmR4LzmY1N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732533073; c=relaxed/simple;
-	bh=Zvk+REZdcqAUn4OMNgXtHrhczsQPPHrd249PTacDycc=;
+	s=arc-20240116; t=1732533206; c=relaxed/simple;
+	bh=UBA5pWAXJXjiPjQfLbZewotmmeYaWwUO6H+GsspPZ9g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W19NEIprtCkgMFPs8GrbcBCEvMYZYE9xHrQoEMWtVlCD3pLS2YTC3i3vsfRwyvdXmx/BxB/x0P0I/Ca09KxA16OGe4RNwuuXGEZPldPRwW7GLYjOURy+6sW6cWbZFbPmKz/CMluib1twmeF8RfQm2sG5RLAjM0rFfdR7zamqqpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 184CE1FCD
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 03:11:40 -0800 (PST)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C8D613F66E
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 03:11:09 -0800 (PST)
-Date: Mon, 25 Nov 2024 11:10:51 +0000
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: cgzones@googlemail.com
-Cc: linux-security-module@vger.kernel.org,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Richard Weinberger <richard@nod.at>,
-	Zhihao Cheng <chengzhihao1@huawei.com>,
-	Serge Hallyn <serge@hallyn.com>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-mtd@lists.infradead.org,
-	cocci@inria.fr
-Subject: Re: [PATCH 06/11] ubifs: reorder capability check last
-Message-ID: <Z0RbO1lSXoUnAtxj@e110455-lin.cambridge.arm.com>
-References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
- <20241125104011.36552-5-cgoettsche@seltendoof.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u2KxutKRsPIjbFDV65aK3gtTo7ChgsKifDEesfIQ5XpXaj/kfUzcU81GJsT0QLEbcKJJ0DWFbdsLrtlVTnkiPPtpzwe3SzsDIhw+8UJCr5YFauyLs4S5VrfpnlzoaQv097aH+dKfcNii1GZE6sAJ7T8GaOhVRh9l2IiS30vLa/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cdIJybL3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732533202;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0ZkZA5pwjwFqi/eSkNb/emSlu1fA+t1L7liPWLVhFnM=;
+	b=cdIJybL3gJvdhPxZqcJSBkZS41NjTAVLTMFro2vOdRi92E0vBigNAjPC5v+jeS6vO3sBHG
+	9gHu8BcE6CLRl2U5tMsWhiPrgsDonvWoJb9pPOVIuzPqRKsBuafe4gQxWTmmStrtsrerbI
+	FBtEZSKxF5tZVMQXYBSBFFtgxFx8JgY=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-263-2dqHrVn3NHO-zPInN1wgWA-1; Mon,
+ 25 Nov 2024 06:13:20 -0500
+X-MC-Unique: 2dqHrVn3NHO-zPInN1wgWA-1
+X-Mimecast-MFC-AGG-ID: 2dqHrVn3NHO-zPInN1wgWA
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C50C3195FE06;
+	Mon, 25 Nov 2024 11:13:18 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.207])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id DE4061956086;
+	Mon, 25 Nov 2024 11:13:15 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 25 Nov 2024 12:12:59 +0100 (CET)
+Date: Mon, 25 Nov 2024 12:12:55 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Anthony Mallet <anthony.mallet@laas.fr>
+Subject: Re: [PATCH] posix-timers: Target group sigqueue to current task only
+ if not exiting
+Message-ID: <20241125111254.GB20402@redhat.com>
+References: <20241122234811.60455-1-frederic@kernel.org>
+ <20241123101312.GA12843@redhat.com>
+ <CACT4Y+YQGLtD0673Oxm2=0mHy9cSx1wTPtVCyxjORSv47M+vUw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241125104011.36552-5-cgoettsche@seltendoof.de>
+In-Reply-To: <CACT4Y+YQGLtD0673Oxm2=0mHy9cSx1wTPtVCyxjORSv47M+vUw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Hi Christian,
+On 11/25, Dmitry Vyukov wrote:
+>
+> On Sat, 23 Nov 2024 at 11:13, Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > On 11/23, Frederic Weisbecker wrote:
+> > >
+> > > - * the same thread group as the target process, which avoids
+> > > - * unnecessarily waking up a potentially idle task.
+> > > + * the same thread group as the target process and its sighand is
+> > > + * stable, which avoids unnecessarily waking up a potentially idle task.
+> > >   */
+> > >  static inline struct task_struct *posixtimer_get_target(struct k_itimer *tmr)
+> > >  {
+> > >       struct task_struct *t = pid_task(tmr->it_pid, tmr->it_pid_type);
+> > >
+> > > -     if (t && tmr->it_pid_type != PIDTYPE_PID && same_thread_group(t, current))
+> > > +     if (t && tmr->it_pid_type != PIDTYPE_PID &&
+> > > +         same_thread_group(t, current) && !current->exit_state)
+> > >               t = current;
+> >
+> > Thanks!
+> >
+> > Acked-by: Oleg Nesterov <oleg@redhat.com>
+>
+> Can't the group leader be exiting as well?
 
-On Mon, Nov 25, 2024 at 11:39:58AM +0100, Christian Göttsche wrote:
-> From: Christian Göttsche <cgzones@googlemail.com>
-> 
-> capable() calls refer to enabled LSMs whether to permit or deny the
-> request.  This is relevant in connection with SELinux, where a
-> capability check results in a policy decision and by default a denial
-> message on insufficient permission is issued.
-> It can lead to three undesired cases:
->   1. A denial message is generated, even in case the operation was an
->      unprivileged one and thus the syscall succeeded, creating noise.
->   2. To avoid the noise from 1. the policy writer adds a rule to ignore
->      those denial messages, hiding future syscalls, where the task
->      performs an actual privileged operation, leading to hidden limited
->      functionality of that task.
->   3. To avoid the noise from 1. the policy writer adds a rule to permit
->      the task the requested capability, while it does not need it,
->      violating the principle of least privilege.
-> 
-> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
-> ---
->  drivers/gpu/drm/panthor/panthor_drv.c | 2 +-
->  fs/ubifs/budget.c                     | 5 +++--
->  2 files changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-> index ac7e53f6e3f0..2de0c3627fbf 100644
-> --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> @@ -791,7 +791,7 @@ static int group_priority_permit(struct drm_file *file,
->  		return 0;
->  
->  	/* Higher priorities require CAP_SYS_NICE or DRM_MASTER */
-> -	if (capable(CAP_SYS_NICE) || drm_is_current_master(file))
-> +	if (drm_is_current_master(file) || capable(CAP_SYS_NICE))
->  		return 0;
->  
->  	return -EACCES;
+It can. It is even possible that the group leader is already a zombie.
 
-Can the patch above be split into a separate one? It's for a different subsystem than ubifs.
+But this is fine. release_task(zombie-or-exiting-leader) (which does __exit_signal()
+and clears ->sighand) won't be called until all the sub-threads have exited.
 
-Otherwise, it looks good to me, so you can add my Reviewed-by to the new patch.
+And. If all the sub-threads (and the group leader) have exited, then send_sigqueue()
+makes no sense, the whole process is dead. so we do not care if lock_task_sighand()
+fails in this case.
 
-Best regards,
-Liviu
+> Though, that's still an
+> improvements. People usually don't do that (exiting from main w/o
+> killing the process).
 
-> diff --git a/fs/ubifs/budget.c b/fs/ubifs/budget.c
-> index d76eb7b39f56..6137aeadec3f 100644
-> --- a/fs/ubifs/budget.c
-> +++ b/fs/ubifs/budget.c
-> @@ -256,8 +256,9 @@ long long ubifs_calc_available(const struct ubifs_info *c, int min_idx_lebs)
->   */
->  static int can_use_rp(struct ubifs_info *c)
->  {
-> -	if (uid_eq(current_fsuid(), c->rp_uid) || capable(CAP_SYS_RESOURCE) ||
-> -	    (!gid_eq(c->rp_gid, GLOBAL_ROOT_GID) && in_group_p(c->rp_gid)))
-> +	if (uid_eq(current_fsuid(), c->rp_uid) ||
-> +	    (!gid_eq(c->rp_gid, GLOBAL_ROOT_GID) && in_group_p(c->rp_gid)) ||
-> +	    capable(CAP_SYS_RESOURCE))
->  		return 1;
->  	return 0;
->  }
-> -- 
-> 2.45.2
-> 
+See above. Nothing to improve, AFAICS.
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+> So thanks for the fix.
+
+Yes, thank you Anthony and Frederic!
+
+Oleg.
+
 
