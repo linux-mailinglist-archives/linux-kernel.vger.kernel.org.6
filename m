@@ -1,190 +1,121 @@
-Return-Path: <linux-kernel+bounces-420934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33039D8485
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:32:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 816F39D8487
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:32:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5420F165D70
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:32:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13D5916260B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A798A191F7E;
-	Mon, 25 Nov 2024 11:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F23D18FDDB;
+	Mon, 25 Nov 2024 11:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KcurNP7D"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lFr5KN1U"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266AB1822F8
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:31:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979F410F7
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732534323; cv=none; b=JzQJPo/r06EfCBdW7lzKFXv7mPspSoV9ecM50BsM5DSnoxMrIiyBU48pJp1TvyxxJaw295WWjhxjWKwyeR4D5wF6+bqUYX4JH18Wt5mRuC7i61ZxOiwPwavTMjEUI0/1SInOyr6YGStnosVZEhP2AM0LjIpISWRGur+Z3AmnqKU=
+	t=1732534338; cv=none; b=TKkgCWtrMoRFh6OKyryNer8GJ8YaIltIO/xND8OtfLWq+fZUFU9wpTOIsvm1chKaIRoMc5g4BZJnaEbEosJru0tMc64oPfUuhS0nzn9DmAnROB4YL2lxE5XBeMaIfeAgsoUlJSu/Dh7Nwia9OIlaiOJyeu2F/VzmJ8xqr3+iWE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732534323; c=relaxed/simple;
-	bh=VfaoqwC3aHM1knkvNccvy7OdoduhLovRnssK9pdK4SE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B7U+qTjCUeLM+7u21wr9PnLCpWfZSv7ek9nry8r9/71kv6XBggSq6kD+lzLHOzAXYHFYZphZeU92hxUeB4Y7BwUGqzZAkCf4Ulpu0+e8j7KN/NRVStVGly0bfJtJceOLgdup9plc8XNleijEB9mVSAiNdns0RrPKqT02zp2aFNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KcurNP7D; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3822e64b2d8so139940f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 03:31:59 -0800 (PST)
+	s=arc-20240116; t=1732534338; c=relaxed/simple;
+	bh=IJyZfLY2s0yZ6rO7Oz9oDF9No5CuXyzpVy8AxSjRid0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p+3EG2Z7Icdbrxa28M+6HGSCEON/tNx+5oe0dYsBJhBudVzasB3x9pJYsfY87XE+v2xA4cadacDxcjAk3Zm6+pOKK7aYeigpHzyjDjp/Z/9eeqdEn5UgzgKU/ve4OErXQf7KAlUN8aaoRqAK3WS3Mqe73sM7/sID8cIAc21eoOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lFr5KN1U; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a10588f3so3993055e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 03:32:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732534318; x=1733139118; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=e8Wv19A1bT9AdcO1eIiCsoo2+HEB2gOEPf7mZ4PlWVE=;
-        b=KcurNP7DT5y9A0whxQ5Q0BTnB3B+28LLOOw3YMqVl+RzWgQT7hRCjxuQUln/Z3yeFx
-         m/oMF4xvefFq/Q+wuHPZWbnYntfkA67lr/Uw5G1DAgZI8PcMwdPn19g1iZixijxevE/d
-         u+IVDqojT76gKpZ+9JpwhciDT1albxYUbB+PwkZTsFlaD28cFQcm/uuao+UcTYeb81Vg
-         /eXV7R7kxgYi+OXZX+c5DFI2v66XJXR7kYitiYfFXjCe6tOCFjWIm+ZPqyZTapjOZvy9
-         eUtqKmd87Y+bQ08pJJjss9xvII4V+Jwy49KI5RJ21gd7x1W9C66UdhtM3LDqVJ0JKJ2N
-         dlBw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732534335; x=1733139135; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QMIy+2ZGZlYbGjuPDyKFDMT/8RFkHAkPW/l+lHB1Ssg=;
+        b=lFr5KN1UdVXhHkhMlT9Tlqyx6ePt1XfonltvvRjPt8ax6KdEWWA3APdhv1Q5z4ympZ
+         SXwaeilxH1spLvtZQMLx2MqW200UyjqzLaRj3yVr6+Rsb66xcKrXNUoGB+Hf1WYyrBbz
+         /V5OewHHwFEMH0QTkjVT4YtcJv85d46derB9/fqHXE3+B/YBPdUkwrUF89qNbXHjqHz6
+         DzwZNxHZPaJg5ySSeYi6mmIqtFN9eA9ee5uVq1VVev9RXwbnC71kxJlcqy+8LA9G+OSO
+         mP08Aq+Aq5gXVTgKK2LhYwrgfoIxDocjRwdHe0tY7NmKUdSPqLEkhwCpokIVCsT89eB9
+         AN2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732534318; x=1733139118;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e8Wv19A1bT9AdcO1eIiCsoo2+HEB2gOEPf7mZ4PlWVE=;
-        b=IQHzUxDDw7cyqN2EQDaJct+uO/eUogc0wTd+O5VNG7lK0JP4ygII6Z2jnxK/LJ8FMh
-         ejXyvUdN3GISrt1pdPhGJLgcMOIjMk3OwPyst8ZbevRK+1zfIENGmt+jXofnDKNy1BhS
-         Rw6I8SCUgfQe+ySwKN1MQl+y1zpd4UDfCctmD7SFFhXuOCtTV03xjVzgvOF2wjLGNB/5
-         vMLwX7Sb2kkvNlrhZ4bj7Z6aAOnYW+W0usb2oUVOXcXQf6KFaBFDLUctn4flj8VncG6L
-         omiZGwmhy97LPiv9dGFpae4rSpHM1tTKtzW1VTH5Z3BNdhJ3Hzw8TcsKsqGW7qmnkUpt
-         Q2EA==
-X-Forwarded-Encrypted: i=1; AJvYcCVmPfAPPxOhOcTip9YnJGeli0WhVSg9qNYZOBCmGnOyaSTAW4LX4GOb9GmnKRcHIEkD3QB4JD33GwVrNoc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXN0qjIpkdvXcLYMktuyeXcpbC/ysTZC6HowjGU0YPCGg+l4Nd
-	lgP6s2CEAYyMIseeWTT8+VOBDldZ/9rJROFpp5qWLDMFKhehUygc34zIjFPRRNY=
-X-Gm-Gg: ASbGncvbMDHverPPhWqcoWUaveQmEQXvmF3Ka6i1YhiEGreYdC1FPkZQyZcilNNPr50
-	fJ8pORE5zStj/VUI8QC5fwDdlUw8ANmzSAAl91CvrpUhvpVfVQUircTKG7QCTKeOMrTxMxNJZYa
-	l+pXIwfkA/B+qu7JF+RKuy89Nt9NG7Qe0tRIGX2AoirP4i3u2CBlT1HI1YFxnnt6eBtSx3hvREM
-	95+MuFzFr7Nlb9O7HoBru3zgQW8c39DpJ/jLGvhZlN8qmqY89jHR4WwZP8G9bBL
-X-Google-Smtp-Source: AGHT+IEuJgVQ/3kRqMUZT7ea0+HiraoHdr6/RW/HL4Dpdd6NgqSwWNAzu054OHnIqEMfQzPdBzjozw==
-X-Received: by 2002:a5d:5983:0:b0:382:3c7b:9b2 with SMTP id ffacd0b85a97d-38260bf57f2mr3747908f8f.14.1732534318420;
-        Mon, 25 Nov 2024 03:31:58 -0800 (PST)
-Received: from krzk-bin.. ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433cde98988sm125091995e9.42.2024.11.25.03.31.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 03:31:57 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Sasha Levin <sashal@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	Conor Dooley <conor@kernel.org>
-Subject: [PATCH] of: Add Google Juniper to excluded default cells list
-Date: Mon, 25 Nov 2024 12:31:51 +0100
-Message-ID: <20241125113151.107812-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1732534335; x=1733139135;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QMIy+2ZGZlYbGjuPDyKFDMT/8RFkHAkPW/l+lHB1Ssg=;
+        b=s4oXcDGlFcSEdu+OUIfYH+L1OzQaa0gh3ggoKvfvDu6tFT9hglAq4rUMT45M+1kvGh
+         woS1gGtAoNJT7YBj9TV2/g/b+XtSrwAqDDo8qmI/dB965GEXgbTijPRZDOMozoNfBVNL
+         lIxZcQgr5s/whh/QiB5WPdCyTfLZz6PJcznHCCA1p1ihaCg01bKe+0G3HkN31MPEuCQx
+         7hsTd1u2VplQ+48GVDZ2WQjsyo0wVBzJinDdJwKwcxZr+o/I4lyfSjJSWBjSSl60grRx
+         M36Epqk9BvvckwoSx3r3Kud15EBPt7iyJ7Y6fuBdw2IlFgd2S5SbWViL5pvkgbBnzAYp
+         7ajg==
+X-Forwarded-Encrypted: i=1; AJvYcCWilsHKpz4ULo/x1LGqWFzBqOMkHKD+NHdjPjack7G9Ay8ZYFMwilIAVg1hTkR2ifBDWqxBe2QjXHTqSXQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy07zNOU5RiyNHfTW1aMgxhGJyK5VOIFTW1xY09A3l0bC7gqtRN
+	EGe8miuMR2PGpZ/rDgRsGnCn4SMn4j1cIWKbAkyY3SaPdJSzJTjC+m+1cAj9Or0=
+X-Gm-Gg: ASbGnctjWhUiyNYanmCHC4HJ+sqXFttpqYgYRy7T6qX97MbonlT7ImG7+HEpwJr4cy5
+	8eYIbxuX8EYMi5YywKuqpiDVrYtECn6tNhz9LusLe4NRgL74kelZsxNuB405oVut/JLcXinUser
+	gjQ+DrLJIWY+I/y+gBk+shrxA+WXzlBuVNUd0lp8uVsymj85y0xhFEPrRnJohuDqSxRtDdykY1s
+	cC+QAPJc9b7v6JSznwlHGzFaf/Lwnv+sCP1XQvA+9AjZ6rZW+029vkFC9ywt9Z6/gNZWfz3f64q
+	BImnS5F94VathA==
+X-Google-Smtp-Source: AGHT+IFS+7K0lEJaKeykwcJTAWzQZ4yXS8JJlRIPKoQmKX+XT9czJ5uZIfuXu4QgSvNX8SY83S/kkw==
+X-Received: by 2002:a7b:c7da:0:b0:434:9499:9e87 with SMTP id 5b1f17b1804b1-4349499a073mr49405845e9.25.1732534335055;
+        Mon, 25 Nov 2024 03:32:15 -0800 (PST)
+Received: from [192.168.0.172] (88-127-185-239.subs.proxad.net. [88.127.185.239])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbc3dfasm10487119f8f.76.2024.11.25.03.32.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 03:32:14 -0800 (PST)
+Message-ID: <dad2ecb7-e624-49c2-a7d5-0ff53b6a1686@baylibre.com>
+Date: Mon, 25 Nov 2024 12:32:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] ASoc: mediatek: mt8365: Don't use "proxy" headers
+To: Mark Brown <broonie@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Nicolas Belin <nbelin@baylibre.com>, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, Liam Girdwood <lgirdwood@gmail.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+References: <20241031102725.2447711-1-andriy.shevchenko@linux.intel.com>
+ <ZykbMlshvlwCaeGJ@smile.fi.intel.com>
+ <d7bf7863-fd24-4f8e-8cd0-d84867a997bb@sirena.org.uk>
+Content-Language: en-US
+From: Alexandre Mergnat <amergnat@baylibre.com>
+In-Reply-To: <d7bf7863-fd24-4f8e-8cd0-d84867a997bb@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Google Juniper platforms have a very old bootloader which populates
-/firmware node without proper address/size-cells leading to warnings:
+Hello Andy.
 
-  Missing '#address-cells' in /firmware
-  WARNING: CPU: 0 PID: 1 at drivers/of/base.c:106 of_bus_n_addr_cells+0x90/0xf0
-  Modules linked in:
-  CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0 #1 933ab9971ff4d5dc58cb378a96f64c7f72e3454d
-  Hardware name: Google juniper sku16 board (DT)
-  ...
-  Missing '#size-cells' in /firmware
-  WARNING: CPU: 0 PID: 1 at drivers/of/base.c:133 of_bus_n_size_cells+0x90/0xf0
-  Modules linked in:
-  CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W          6.12.0 #1 933ab9971ff4d5dc58cb378a96f64c7f72e3454d
-  Tainted: [W]=WARN
-  Hardware name: Google juniper sku16 board (DT)
+Actually, after test it, "linux/of_gpio.h" isn't needed at all anymore.
 
-The platform won't receive updated bootloader/firmware so add it to
-excluded platform list to silence the warning.
+That mean all added include in this patch aren't required.
 
-Reported-by: Sasha Levin <sashal@kernel.org>
-Closes: https://lore.kernel.org/all/Z0NUdoG17EwuCigT@sashalap/
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Conor Dooley <conor@kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/of/base.c | 26 ++++++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index a8b0c42bdc8e..13f0b2877ee0 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -56,6 +56,16 @@ DEFINE_MUTEX(of_mutex);
-  */
- DEFINE_RAW_SPINLOCK(devtree_lock);
- 
-+/*
-+ * List of machines running old firmware without explicit #address-cells and
-+ * #size-cells values for parent nodes, which are most likely not going get any
-+ * update.
-+ */
-+static const char * const excluded_default_cells_compats[] = {
-+	"google,juniper",
-+	NULL
-+};
-+
- bool of_node_name_eq(const struct device_node *np, const char *name)
- {
- 	const char *node_name;
-@@ -91,6 +101,17 @@ static bool __of_node_is_type(const struct device_node *np, const char *type)
- 	IS_ENABLED(CONFIG_SPARC) \
- )
- 
-+static bool excluded_default_cells_machines(void)
-+{
-+	/* Do not repeat the machine checks for every bus */
-+	static int excluded_machine = -1;
-+
-+	if (excluded_machine < 0)
-+		excluded_machine = of_machine_compatible_match(excluded_default_cells_compats);
-+
-+	return !!excluded_machine;
-+}
-+
- int of_bus_n_addr_cells(struct device_node *np)
- {
- 	u32 cells;
-@@ -103,7 +124,7 @@ int of_bus_n_addr_cells(struct device_node *np)
- 		 * is deprecated. Any platforms which hit this warning should
- 		 * be added to the excluded list.
- 		 */
--		WARN_ONCE(!EXCLUDED_DEFAULT_CELLS_PLATFORMS,
-+		WARN_ONCE(!EXCLUDED_DEFAULT_CELLS_PLATFORMS && !excluded_default_cells_machines(),
- 			  "Missing '#address-cells' in %pOF\n", np);
- 	}
- 	return OF_ROOT_NODE_ADDR_CELLS_DEFAULT;
-@@ -125,12 +146,13 @@ int of_bus_n_size_cells(struct device_node *np)
- 	for (; np; np = np->parent) {
- 		if (!of_property_read_u32(np, "#size-cells", &cells))
- 			return cells;
-+
- 		/*
- 		 * Default root value and walking parent nodes for "#size-cells"
- 		 * is deprecated. Any platforms which hit this warning should
- 		 * be added to the excluded list.
- 		 */
--		WARN_ONCE(!EXCLUDED_DEFAULT_CELLS_PLATFORMS,
-+		WARN_ONCE(!EXCLUDED_DEFAULT_CELLS_PLATFORMS && !excluded_default_cells_machines(),
- 			  "Missing '#size-cells' in %pOF\n", np);
- 	}
- 	return OF_ROOT_NODE_SIZE_CELLS_DEFAULT;
+On 04/11/2024 22:12, Mark Brown wrote:
+> On Mon, Nov 04, 2024 at 09:06:26PM +0200, Andy Shevchenko wrote:
+>> On Thu, Oct 31, 2024 at 12:27:25PM +0200, Andy Shevchenko wrote:
+>>> Update header inclusions to follow IWYU (Include What You Use)
+>>> principle.
+> 
+>> Hmm... I think we are waiting for somebody to Ack / review this change?
+> 
+> Yes.
+
 -- 
-2.43.0
-
+Regards,
+Alexandre
 
