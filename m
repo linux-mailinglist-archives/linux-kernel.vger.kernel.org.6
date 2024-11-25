@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-421029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF84D9D85D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:04:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 085ED9D85FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:10:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BA711696BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:04:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5EEAB39D3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E5A1A76A4;
-	Mon, 25 Nov 2024 13:04:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31EC1A7060;
+	Mon, 25 Nov 2024 13:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+OBS5o0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SlcPsmsw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D7A18A6C1
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5063414F9D9
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732539849; cv=none; b=qXBGpyZlG3Ewr/dtISyeZ4T8OXYH1D0TA0FXdTOVKLPtMxTYMasU2HKo/IKXIfkiyoBc8uzG05rgxtFqH9nFZipx9oayw4vluIBQcJoiv1qSc3J8uUic7P9eZoSzuLb/GwB1rlh97EEP8m4qTeoA7dIyk0OoKGcn6Y9UrMekbN0=
+	t=1732539857; cv=none; b=uklqGhyya1DepSZ6l1k9lrNTt8zwkEVhJRQdzdSkjkuYtYdbXIkX3UaCBLi2VM/qgZ2GotckVllAylaxg7BVl7bxU/CBCwWPQKyVgRUnG8DNSpm9MaLiANSRELda2Zd756gA0RZZS3VFYcQRJHz7JaP0Hij9tYFWBcsXsEkdccc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732539849; c=relaxed/simple;
-	bh=KHvW4Onn19WYFMw2iYzTcZkbAoTI3RCvTBDCiMQzLB4=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=FmktZUDOd+qUDLzxeSONn1RYavvbdwj+5TOIGHGLdLbE1LF6wflD0q1YEQuvMFnDNnnEyENzY6bzUs4lzhjo7yeInmSvXiy/nRcURc/4uwtISa1SgDlPqhGUTMfFcZYo2hU4t7QeeucaPru/dcjsLUOa/Jza8rOSY4fHPYxcZg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L+OBS5o0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19B4AC4CECE;
-	Mon, 25 Nov 2024 13:04:08 +0000 (UTC)
+	s=arc-20240116; t=1732539857; c=relaxed/simple;
+	bh=r7HHe0SIRB/Xhhuek+OVQ0KZeGyRWxN7kMyA6beaWWg=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=msVLMpB2TJOeHpz0q3HLRTgeg96zNqpSxTJGxn5DWzzS1TWR2JG2bZeRvPMlWVTdgw59pjz6u+twuqRoiKRHwo+0J72BNxHbzFFg6Cuh4ZdQRQ3doSLFfNDQp+lABypq02kthu3w2cgcSaq/t5Q6wVdMSkWlroirY11niaCPEDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SlcPsmsw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 868D6C4CECE;
+	Mon, 25 Nov 2024 13:04:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732539849;
-	bh=KHvW4Onn19WYFMw2iYzTcZkbAoTI3RCvTBDCiMQzLB4=;
+	s=k20201202; t=1732539856;
+	bh=r7HHe0SIRB/Xhhuek+OVQ0KZeGyRWxN7kMyA6beaWWg=;
 	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=L+OBS5o0qFxjQi0Wv4YmbLOAscDUh0xzwRIjHxUZTGyJmolfYpRXPSwr1qLq8XZQw
-	 AouBExp4obsp9u3wnyE7oN5dB9rSCIG+hRGOj1ztJ+FEnI74HDH7Eoc4EJYxnnApZb
-	 3OmkWW/P4Iuylwz8ld8aLiiNTJKhVH6FpnsLlaZJ4kwRQE7Jkumj8CngZN66HYszEB
-	 KL34/NcPT3FkcMVMgSDP6uyGBMO3XrKeif3HJ+wgKwA4KFypsPySDdttBCrmRH5x7c
-	 V8vbtSF6EqiZzNgANJ2SRoji2ngxiUXNEQiIDIpBkdQSCcrGunzXu509trYVc+7Bdx
-	 6s9hkXD8p4DKg==
-Message-ID: <ebed01d2da63995dce745cf9a4a6e676@kernel.org>
-Date: Mon, 25 Nov 2024 13:04:07 +0000
+	b=SlcPsmswDWw1qUPky6PGkkOP4b2wa0bm4kONi0Jn/5VHClT7MdVQIlp82tbtoAlAk
+	 XMwmLYaCB1CpkKCUEaBCkT7zLP4BuTBdDo6HgzugoQQXJVzj4K6LLQbknKVX/69E0L
+	 7EbuaLl2NKQ5KDfCAjNwIC15K1sVB1chuXPqUMwG242zNz9mLJKJ68Klk5HiR2VDms
+	 mk5iMuIgz7gD3zvfAdAeNWCPmrF67KuHh4mdy0RuN0LOW7A6sSV0W6tnYmM07bpstZ
+	 qOlwraK5aKm1jL8jR822jS+GKjsx0dMIZrmzNU1T5B1dwxNZgncyZvRRD9qCDH9R6u
+	 OPMw4ZChAm2Pg==
+Message-ID: <fd7766b66026ffbab54db6f134940efc@kernel.org>
+Date: Mon, 25 Nov 2024 13:04:14 +0000
 From: "Maxime Ripard" <mripard@kernel.org>
 To: "Louis Chauvet" <louis.chauvet@bootlin.com>
-Subject: Re: [PATCH v5 2/5] drm/vkms: Switch to managed for encoder
-In-Reply-To: <20241122-google-vkms-managed-v5-2-1ab60403e960@bootlin.com>
-References: <20241122-google-vkms-managed-v5-2-1ab60403e960@bootlin.com>
+Subject: Re: [PATCH v5 3/5] drm/vkms: Switch to managed for crtc
+In-Reply-To: <20241122-google-vkms-managed-v5-3-1ab60403e960@bootlin.com>
+References: <20241122-google-vkms-managed-v5-3-1ab60403e960@bootlin.com>
 Cc: arthurgrillo@riseup.net, dri-devel@lists.freedesktop.org, jeremie.dautheribes@bootlin.com, linux-kernel@vger.kernel.org, miquel.raynal@bootlin.com, nicolejadeyee@google.com, seanpaul@google.com, thomas.petazzoni@bootlin.com, "David
  Airlie" <airlied@gmail.com>, "Haneen Mohammed" <hamohammed.sa@gmail.com>, "Maarten
  Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
@@ -59,12 +59,12 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-On Fri, 22 Nov 2024 17:27:57 +0100, Louis Chauvet wrote:
-> The current VKMS driver uses non-managed function to create encoders. It
-> is not an issue yet, but in order to support multiple devices easily,
+On Fri, 22 Nov 2024 17:27:58 +0100, Louis Chauvet wrote:
+> The current VKMS driver uses managed function to create crtc, but
+> don't use it to properly clean the crtc workqueue. It is not an
+> issue yet, but in order to support multiple devices easily,
 > convert this code to use drm and device managed helpers.
 > 
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 > 
 > [ ... ]
 
