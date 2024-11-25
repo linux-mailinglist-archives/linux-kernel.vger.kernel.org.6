@@ -1,61 +1,83 @@
-Return-Path: <linux-kernel+bounces-421033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E4B49D8668
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:29:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B4AA9D85F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:08:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 162B7B2B241
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:06:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05C8416A06E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477D01A7060;
-	Mon, 25 Nov 2024 13:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07771AB6ED;
+	Mon, 25 Nov 2024 13:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="U/XPvRQk"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CO0wVyLw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C823B944F
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DEF51AB507;
+	Mon, 25 Nov 2024 13:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732539981; cv=none; b=WXDTqeYb6rmCrKnw2L2EWfWLXGFRCQQL/ylcQSnxnFTuSSI1fjMhj9SDzUshICaxeNN7/orZK6RJrl24OqP+Nn5N/okiAumlXQHwv3jIzKUj3c8Ltuz3tvM2y/tzlBmvJo1gVNA8ila7WY8kg7tiQtl9Uf+0YgKiL0Jd3LPcM4o=
+	t=1732540026; cv=none; b=MZcX6Ba8UZNRBDJg0mPGk3ZTxwFm7/Il6ikwxU9ozA6EBxV7ju5DZDHOK+q2c57ZUJjspiJEKkHB0u7Tc6K6XoEJfi1+ZxgLL0Dq4tWuEGujMFLqzzPIbVdLOdaErFtPiV0XjEyoN66G6V7P4LyJb035BfjSnJCq8takgqFK5u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732539981; c=relaxed/simple;
-	bh=/mTxK42kQw/NgDBhW8SAlwKIoRCuxo6KOsUR3kl0vIY=;
+	s=arc-20240116; t=1732540026; c=relaxed/simple;
+	bh=NYAR6zx9csg70XZRm5JpbFd7GI76A8LuONb3G1EzATg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u6dRBI6kP1urPXldpc/XwwSpWDJC+CrYPp5zMUJzjpr2bavDPIycvWvWXK17SdArDO1CCrosovMTb++8N8Ip/ycLv3TFfg6niHiWtubC2uYZ12UYz3fvLh2CQF72r01MnzYcVpE6MYtfjLLFiIIWtTvBZ6IgsxDYmLqtYsoIlNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=U/XPvRQk; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=BDWepXKCNHOnMhRlWOQYgQhKCM8U0HzCSU9nFM4FrxU=; b=U/XPvRQk9X4RdtaVJOj6PMO/Kx
-	rzQ9tumW17HmP7W3urRSvRM95a6t11i8jgi5Jw/CMmt8LLL9rHOCnN170XeBm49uJ5leiY90510DO
-	XULrVECdOxI2MWUMjHKVc+A97v0MjWNQ39Mz9l9OJ/mBummq5xmsvVu+1YV1DPXy598f4XB4XXlh8
-	6hk/8BNxOMQJEnSqs28qz3L/cyAgIjAUwKqRvOJAH2exRpTlSpF29oPHNDgg1Wi4ZJUx/wDCN19l8
-	TrGjYxMPWy792UiPLq1ZwEXBBH8lOynNhimq8hJWSfdG2kiYwQH/D0oZZYkSHWZ7EFwTVkV+jiuid
-	PbgJNTfQ==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tFYn7-0000000BtOI-0Bsy;
-	Mon, 25 Nov 2024 13:06:14 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 81B8030026A; Mon, 25 Nov 2024 14:06:13 +0100 (CET)
-Date: Mon, 25 Nov 2024 14:06:13 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 9/9] objtool: Collect all annotations in objtool.h
-Message-ID: <20241125130613.GO38972@noisy.programming.kicks-ass.net>
-References: <20241122121016.372005127@infradead.org>
- <20241122121556.560621502@infradead.org>
- <20241122175445.tx3edadmof76yegs@jpoimboe>
- <20241123131943.GD24774@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ml0DZLfvzPYa2XptZM4v2meFXiI6UJO+2X2/9zdvj7WwbVNwZ7jsbc0a1K15pbIHNm6YK1zQhgNCXsJUXruKZEsMj6SgH2/Pd6w0zPDu37YoBGc8ka6zTzuVTm4dFhCR4fH8mljYduv1+IrGm4D6KrEQZZGikm8humQs3u8d8fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CO0wVyLw; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732540024; x=1764076024;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NYAR6zx9csg70XZRm5JpbFd7GI76A8LuONb3G1EzATg=;
+  b=CO0wVyLwimVZGmXfaCBwDh3QetCeYsNUvBcN2hwIGpTTiHVOdDdkxtNN
+   jOgr0tCb4OSK4WPrIkhiuK41mcFHfvY0RHxLPgRcy1dCMPSzlorkiMgNR
+   QQMezoyhVW5vat7ByjwXbkWKaSihqBBLlItRSzvqTadrhb/356h8+ImNZ
+   8uFLSx5GaX9yVTggTGbRpDS6eMCPBIHSascF9yHNZDw49u5J8+KAIFikw
+   uTJVOBvTYWCfMrrlhBY7tNqB/AIfjMJsGxWlTwqtxhhX3oVL0CwIbhg8y
+   xM+iGbW2wYTtSsSAyoCmB2Og5t1uduM4fYk72LCVkNoKMRRZnBn3OJVpn
+   A==;
+X-CSE-ConnectionGUID: boliNkj7SGGq2CIzeeviag==
+X-CSE-MsgGUID: fmFoQ79HQ1SdKc7ISmK/Aw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="32016928"
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="32016928"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 05:07:03 -0800
+X-CSE-ConnectionGUID: WuTFLlVwQfulv7lZjSsbhg==
+X-CSE-MsgGUID: UXvWF2SVR4ybBFbmaR/pkw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="96324026"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 25 Nov 2024 05:07:00 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tFYnp-0006PZ-0X;
+	Mon, 25 Nov 2024 13:06:57 +0000
+Date: Mon, 25 Nov 2024 21:06:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: Catdeo Zhang <catdeo.zhang@unisoc.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, catdeo.zhang@unisoc.com,
+	cixi.geng@linux.dev, wade.shu@unisoc.com, jiawang.yu@unisoc.com,
+	hehe.li@unisoc.com
+Subject: Re: [PATCH] net/sipa: Spreadtrum IPA driver code
+Message-ID: <202411252057.ShDClRfV-lkp@intel.com>
+References: <20241122014541.1234644-1-catdeo.zhang@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,422 +86,219 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241123131943.GD24774@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241122014541.1234644-1-catdeo.zhang@unisoc.com>
 
-On Sat, Nov 23, 2024 at 02:19:43PM +0100, Peter Zijlstra wrote:
+Hi Catdeo,
 
-> > BTW, is there a reason .discard.[un]reachable weren't converted over?
-> 
-> Completely forgot/missed them. Let me add a patch.
+kernel test robot noticed the following build warnings:
 
-So this is turning into a bit of a trainwreck :/
+[auto build test WARNING on net-next/main]
+[also build test WARNING on net/main linus/master horms-ipvs/master v6.12 next-20241125]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-That is, the below works, but I ended up having to include objtool.h
-from compiler.h, which is really unfortunate.
+url:    https://github.com/intel-lab-lkp/linux/commits/Catdeo-Zhang/net-sipa-Spreadtrum-IPA-driver-code/20241125-094101
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20241122014541.1234644-1-catdeo.zhang%40unisoc.com
+patch subject: [PATCH] net/sipa: Spreadtrum IPA driver code
+config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20241125/202411252057.ShDClRfV-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241125/202411252057.ShDClRfV-lkp@intel.com/reproduce)
 
---- a/arch/loongarch/include/asm/bug.h
-+++ b/arch/loongarch/include/asm/bug.h
-@@ -4,6 +4,7 @@
- 
- #include <asm/break.h>
- #include <linux/stringify.h>
-+#include <linux/objtool.h>
- 
- #ifndef CONFIG_DEBUG_BUGVERBOSE
- #define _BUGVERBOSE_LOCATION(file, line)
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -311,7 +311,7 @@ SYM_CODE_END(xen_error_entry)
- 	call	\cfunc
- 
- 	/* For some configurations \cfunc ends up being a noreturn. */
--	REACHABLE
-+	ANNOTATE_REACHABLE
- 
- 	jmp	error_return
- .endm
-@@ -532,7 +532,7 @@ SYM_CODE_START(\asmsym)
- 	call	\cfunc
- 
- 	/* For some configurations \cfunc ends up being a noreturn. */
--	REACHABLE
-+	ANNOTATE_REACHABLE
- 
- 	jmp	paranoid_exit
- 
---- a/arch/x86/include/asm/bug.h
-+++ b/arch/x86/include/asm/bug.h
-@@ -92,7 +92,7 @@ do {								\
- do {								\
- 	__auto_type __flags = BUGFLAG_WARNING|(flags);		\
- 	instrumentation_begin();				\
--	_BUG_FLAGS(ASM_UD2, __flags, ASM_REACHABLE);		\
-+	_BUG_FLAGS(ASM_UD2, __flags, ANNOTATE_REACHABLE);	\
- 	instrumentation_end();					\
- } while (0)
- 
---- a/arch/x86/include/asm/irq_stack.h
-+++ b/arch/x86/include/asm/irq_stack.h
-@@ -101,7 +101,7 @@
- 
- #define ASM_CALL_ARG0							\
- 	"call %c[__func]				\n"		\
--	ASM_REACHABLE
-+	ANNOTATE_REACHABLE
- 
- #define ASM_CALL_ARG1							\
- 	"movq	%[arg1], %%rdi				\n"		\
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -3,6 +3,7 @@
- #define __LINUX_COMPILER_H
- 
- #include <linux/compiler_types.h>
-+#include <linux/objtool.h>
- 
- #ifndef __ASSEMBLY__
- 
-@@ -107,37 +108,10 @@ void ftrace_likely_update(struct ftrace_
- # define barrier_before_unreachable() do { } while (0)
- #endif
- 
--/* Unreachable code */
- #ifdef CONFIG_OBJTOOL
--/*
-- * These macros help objtool understand GCC code flow for unreachable code.
-- * The __COUNTER__ based labels are a hack to make each instance of the macros
-- * unique, to convince GCC not to merge duplicate inline asm statements.
-- */
--#define __stringify_label(n) #n
--
--#define __annotate_reachable(c) ({					\
--	asm volatile(__stringify_label(c) ":\n\t"			\
--			".pushsection .discard.reachable\n\t"		\
--			".long " __stringify_label(c) "b - .\n\t"	\
--			".popsection\n\t");				\
--})
--#define annotate_reachable() __annotate_reachable(__COUNTER__)
--
--#define __annotate_unreachable(c) ({					\
--	asm volatile(__stringify_label(c) ":\n\t"			\
--		     ".pushsection .discard.unreachable\n\t"		\
--		     ".long " __stringify_label(c) "b - .\n\t"		\
--		     ".popsection\n\t" : : "i" (c));			\
--})
--#define annotate_unreachable() __annotate_unreachable(__COUNTER__)
--
- /* Annotate a C jump table to allow objtool to follow the code flow */
- #define __annotate_jump_table __section(".rodata..c_jump_table,\"a\",@progbits #")
--
- #else /* !CONFIG_OBJTOOL */
--#define annotate_reachable()
--#define annotate_unreachable()
- #define __annotate_jump_table
- #endif /* CONFIG_OBJTOOL */
- 
---- a/include/linux/instrumentation.h
-+++ b/include/linux/instrumentation.h
-@@ -6,12 +6,11 @@
- 
- #include <linux/objtool.h>
- #include <linux/stringify.h>
--#include <linux/args.h>
- 
- /* Begin/end of an instrumentation safe region */
- #define __instrumentation_begin(c) ({					\
- 	asm volatile(__stringify(c) ": nop\n\t"				\
--		     __ASM_ANNOTATE(CONCATENATE(c, b), ANNOTYPE_INSTR_BEGIN)	\
-+		     __ASM_ANNOTATE(__ASM_BREF(c), ANNOTYPE_INSTR_BEGIN)\
- 		     : : "i" (c));					\
- })
- #define instrumentation_begin() __instrumentation_begin(__COUNTER__)
-@@ -49,7 +48,7 @@
-  */
- #define __instrumentation_end(c) ({					\
- 	asm volatile(__stringify(c) ": nop\n\t"				\
--		     __ASM_ANNOTATE(CONCATENATE(c, b), ANNOTYPE_INSTR_END)		\
-+		     __ASM_ANNOTATE(__ASM_BREF(c), ANNOTYPE_INSTR_END)	\
- 		     : : "i" (c));					\
- })
- #define instrumentation_end() __instrumentation_end(__COUNTER__)
---- a/include/linux/objtool.h
-+++ b/include/linux/objtool.h
-@@ -1,6 +1,7 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #ifndef _LINUX_OBJTOOL_H
- #define _LINUX_OBJTOOL_H
-+#ifndef LINKER_SCRIPT
- 
- #include <linux/objtool_types.h>
- 
-@@ -45,21 +46,19 @@
- #define STACK_FRAME_NON_STANDARD_FP(func)
- #endif
- 
--#define ASM_REACHABLE							\
--	"998:\n\t"							\
--	".pushsection .discard.reachable\n\t"				\
--	".long 998b\n\t"						\
--	".popsection\n\t"
--
- #define __ASM_ANNOTATE(s, x)					\
- 	".pushsection .discard.annotate_insn,\"M\",@progbits,8\n\t"	\
- 	".long " __stringify(s) " - .\n\t"			\
- 	".long " __stringify(x) "\n\t"				\
- 	".popsection\n\t"
- 
--#define ASM_ANNOTATE(x)						\
--	"911:\n\t"						\
--	__ASM_ANNOTATE(911b, x)
-+#define __ASM_BREF(s)	s ## b
-+
-+#define _ASM_ANNOTATE(s, x)					\
-+	__stringify(s) ":\n\t"					\
-+	__ASM_ANNOTATE(__ASM_BREF(s), x)
-+
-+#define ASM_ANNOTATE(x)		_ASM_ANNOTATE(__COUNTER__, x)
- 
- #else /* __ASSEMBLY__ */
- 
-@@ -109,14 +108,6 @@
- #endif
- .endm
- 
--
--.macro REACHABLE
--.Lhere_\@:
--	.pushsection .discard.reachable
--	.long	.Lhere_\@
--	.popsection
--.endm
--
- .macro ANNOTATE type:req
- .Lhere_\@:
- 	.pushsection .discard.annotate_insn,"M",@progbits,8
-@@ -135,14 +126,11 @@
- #define STACK_FRAME_NON_STANDARD(func)
- #define STACK_FRAME_NON_STANDARD_FP(func)
- #define ASM_ANNOTATE(x)
--#define ASM_REACHABLE
- #else
- .macro UNWIND_HINT type:req sp_reg=0 sp_offset=0 signal=0
- .endm
- .macro STACK_FRAME_NON_STANDARD func:req
- .endm
--.macro REACHABLE
--.endm
- .macro ANNOTATE type:req
- .endm
- #endif
-@@ -180,12 +168,17 @@
-  */
- #define ANNOTATE_UNRET_BEGIN		ASM_ANNOTATE(ANNOTYPE_UNRET_BEGIN)
- 
-+#define ANNOTATE_REACHABLE		ASM_ANNOTATE(ANNOTYPE_REACHABLE)
-+#define ANNOTATE_UNREACHABLE		ASM_ANNOTATE(ANNOTYPE_UNREACHABLE)
-+
- #else
- #define ANNOTATE_NOENDBR		ANNOTATE type=ANNOTYPE_NOENDBR
- #define ANNOTATE_RETPOLINE_SAFE		ANNOTATE type=ANNOTYPE_RETPOLINE_SAFE
- #define ANNOTATE_IGNORE_ALTERNATIVE	ANNOTATE type=ANNOTYPE_IGNORE_ALTS
- #define ANNOTATE_INTRA_FUNCTION_CALL	ANNOTATE type=ANNOTYPE_INTRA_FUNCTION_CALL
- #define ANNOTATE_UNRET_BEGIN		ANNOTATE type=ANNOTYPE_UNRET_BEGIN
-+#define ANNOTATE_REACHABLE		ANNOTATE type=ANNOTYPE_REACHABLE
-+#define ANNOTATE_UNREACHABLE		ANNOTATE type=ANNOTYPE_UNREACHABLE
- #endif
- 
- #if defined(CONFIG_NOINSTR_VALIDATION) && \
-@@ -195,4 +188,13 @@
- #define VALIDATE_UNRET_BEGIN
- #endif
- 
-+#define annotate_reachable() ({			\
-+	asm volatile (ANNOTATE_REACHABLE);	\
-+})
-+
-+#define annotate_unreachable() ({		\
-+	asm volatile (ANNOTATE_UNREACHABLE);	\
-+})
-+
-+#endif /* LINKER_SCRIPT */
- #endif /* _LINUX_OBJTOOL_H */
---- a/include/linux/objtool_types.h
-+++ b/include/linux/objtool_types.h
-@@ -64,5 +64,7 @@ struct unwind_hint {
- #define ANNOTYPE_UNRET_BEGIN		5
- #define ANNOTYPE_IGNORE_ALTS		6
- #define ANNOTYPE_INTRA_FUNCTION_CALL	7
-+#define ANNOTYPE_REACHABLE		8
-+#define ANNOTYPE_UNREACHABLE		9
- 
- #endif /* _LINUX_OBJTOOL_TYPES_H */
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -627,95 +627,6 @@ static struct instruction *find_last_ins
- 	return insn;
- }
- 
--/*
-- * Mark "ud2" instructions and manually annotated dead ends.
-- */
--static int add_dead_ends(struct objtool_file *file)
--{
--	struct section *rsec;
--	struct reloc *reloc;
--	struct instruction *insn;
--	uint64_t offset;
--
--	/*
--	 * Check for manually annotated dead ends.
--	 */
--	rsec = find_section_by_name(file->elf, ".rela.discard.unreachable");
--	if (!rsec)
--		goto reachable;
--
--	for_each_reloc(rsec, reloc) {
--		if (reloc->sym->type == STT_SECTION) {
--			offset = reloc_addend(reloc);
--		} else if (reloc->sym->local_label) {
--			offset = reloc->sym->offset;
--		} else {
--			WARN("unexpected relocation symbol type in %s", rsec->name);
--			return -1;
--		}
--
--		insn = find_insn(file, reloc->sym->sec, offset);
--		if (insn)
--			insn = prev_insn_same_sec(file, insn);
--		else if (offset == reloc->sym->sec->sh.sh_size) {
--			insn = find_last_insn(file, reloc->sym->sec);
--			if (!insn) {
--				WARN("can't find unreachable insn at %s+0x%" PRIx64,
--				     reloc->sym->sec->name, offset);
--				return -1;
--			}
--		} else {
--			WARN("can't find unreachable insn at %s+0x%" PRIx64,
--			     reloc->sym->sec->name, offset);
--			return -1;
--		}
--
--		insn->dead_end = true;
--	}
--
--reachable:
--	/*
--	 * These manually annotated reachable checks are needed for GCC 4.4,
--	 * where the Linux unreachable() macro isn't supported.  In that case
--	 * GCC doesn't know the "ud2" is fatal, so it generates code as if it's
--	 * not a dead end.
--	 */
--	rsec = find_section_by_name(file->elf, ".rela.discard.reachable");
--	if (!rsec)
--		return 0;
--
--	for_each_reloc(rsec, reloc) {
--		if (reloc->sym->type == STT_SECTION) {
--			offset = reloc_addend(reloc);
--		} else if (reloc->sym->local_label) {
--			offset = reloc->sym->offset;
--		} else {
--			WARN("unexpected relocation symbol type in %s", rsec->name);
--			return -1;
--		}
--
--		insn = find_insn(file, reloc->sym->sec, offset);
--		if (insn)
--			insn = prev_insn_same_sec(file, insn);
--		else if (offset == reloc->sym->sec->sh.sh_size) {
--			insn = find_last_insn(file, reloc->sym->sec);
--			if (!insn) {
--				WARN("can't find reachable insn at %s+0x%" PRIx64,
--				     reloc->sym->sec->name, offset);
--				return -1;
--			}
--		} else {
--			WARN("can't find reachable insn at %s+0x%" PRIx64,
--			     reloc->sym->sec->name, offset);
--			return -1;
--		}
--
--		insn->dead_end = false;
--	}
--
--	return 0;
--}
--
- static int create_static_call_sections(struct objtool_file *file)
- {
- 	struct static_call_site *site;
-@@ -2345,6 +2256,7 @@ static int read_annotate(struct objtool_
- 	struct section *sec;
- 	struct instruction *insn;
- 	struct reloc *reloc;
-+	uint64_t offset;
- 	int type, ret;
- 
- 	sec = find_section_by_name(file->elf, ".discard.annotate_insn");
-@@ -2366,8 +2278,19 @@ static int read_annotate(struct objtool_
- 	for_each_reloc(sec->rsec, reloc) {
- 		type = *(u32 *)(sec->data->d_buf + (reloc_idx(reloc) * sec->sh.sh_entsize) + 4);
- 
--		insn = find_insn(file, reloc->sym->sec,
--				 reloc->sym->offset + reloc_addend(reloc));
-+		offset = reloc->sym->offset + reloc_addend(reloc);
-+		insn = find_insn(file, reloc->sym->sec, offset);
-+
-+		/*
-+		 * Reachable annotations are 'funneh' and act on the previous instruction :/
-+		 */
-+		if (type == ANNOTYPE_REACHABLE || type == ANNOTYPE_UNREACHABLE) {
-+			if (insn)
-+				insn = prev_insn_same_sec(file, insn);
-+			else if (offset == reloc->sym->sec->sh.sh_size)
-+				insn = find_last_insn(file, reloc->sym->sec);
-+		}
-+
- 		if (!insn) {
- 			WARN("bad .discard.annotate_insn entry: %d of type %d", reloc_idx(reloc), type);
- 			return -1;
-@@ -2459,6 +2382,14 @@ static int __annotate_late(struct objtoo
- 		insn->unret = 1;
- 		break;
- 
-+	case ANNOTYPE_REACHABLE:
-+		insn->dead_end = false;
-+		break;
-+
-+	case ANNOTYPE_UNREACHABLE:
-+		insn->dead_end = true;
-+		break;
-+
- 	default:
- 		break;
- 	}
-@@ -2605,14 +2536,6 @@ static int decode_sections(struct objtoo
- 	if (ret)
- 		return ret;
- 
--	/*
--	 * Must be after add_call_destinations() such that it can override
--	 * dead_end_function() marks.
--	 */
--	ret = add_dead_ends(file);
--	if (ret)
--		return ret;
--
- 	ret = add_jump_table_alts(file);
- 	if (ret)
- 		return ret;
-@@ -2621,6 +2544,10 @@ static int decode_sections(struct objtoo
- 	if (ret)
- 		return ret;
- 
-+	/*
-+	 * Must be after add_call_destinations() such that it can override
-+	 * dead_end_function() marks.
-+	 */
- 	ret = read_annotate(file, __annotate_late);
- 	if (ret)
- 		return ret;
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411252057.ShDClRfV-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/net/sipa/sipa_core.c:31: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+    * SPRD IPA contains a number of common fifo
+
+
+vim +31 drivers/net/sipa/sipa_core.c
+
+    29	
+    30	/**
+  > 31	 * SPRD IPA contains a number of common fifo
+    32	 * in the current Unisoc, mainly includes USB, WIFI, PCIE, AP etc.
+    33	 */
+    34	static struct sipa_cmn_fifo_info sipa_cmn_fifo_statics[SIPA_CFIFO_MAX] = {
+    35		{
+    36			.cfifo_name = "sprd,usb-ul",
+    37			.tx_fifo = "sprd,usb-ul-tx",
+    38			.rx_fifo = "sprd,usb-ul-rx",
+    39			.relate_ep = SIPA_EP_USB,
+    40			.src_id = SIPA_TERM_USB,
+    41			.dst_id = SIPA_TERM_AP,
+    42			.is_to_ipa = 1,
+    43			.is_pam = 1,
+    44		},
+    45		{
+    46			.cfifo_name = "sprd,wifi-ul",
+    47			.tx_fifo = "sprd,wifi-ul-tx",
+    48			.rx_fifo = "sprd,wifi-ul-rx",
+    49			.relate_ep = SIPA_EP_WIFI,
+    50			.src_id = SIPA_TERM_WIFI1,
+    51			.dst_id = SIPA_TERM_AP,
+    52			.is_to_ipa = 1,
+    53			.is_pam = 1,
+    54		},
+    55		{
+    56			.cfifo_name = "sprd,pcie-ul",
+    57			.tx_fifo = "sprd,pcie-ul-tx",
+    58			.rx_fifo = "sprd,pcie-ul-rx",
+    59			.relate_ep = SIPA_EP_PCIE,
+    60			.src_id = SIPA_TERM_PCIE0,
+    61			.dst_id = SIPA_TERM_AP,
+    62			.is_to_ipa = 1,
+    63			.is_pam = 1,
+    64		},
+    65		{
+    66			.cfifo_name = "sprd,wiap-dl",
+    67			.tx_fifo = "sprd,wiap-dl-tx",
+    68			.rx_fifo = "sprd,wiap-dl-rx",
+    69			.relate_ep = SIPA_EP_WIAP,
+    70			.src_id = SIPA_TERM_VAP0,
+    71			.dst_id = SIPA_TERM_AP,
+    72			.is_to_ipa = 1,
+    73			.is_pam = 1,
+    74		},
+    75		{
+    76			.cfifo_name = "sprd,map-in",
+    77			.tx_fifo = "sprd,map-in-tx",
+    78			.rx_fifo = "sprd,map-in-rx",
+    79			.relate_ep = SIPA_EP_AP,
+    80			.src_id = SIPA_TERM_AP,
+    81			.dst_id = SIPA_TERM_VCP,
+    82			.is_to_ipa = 1,
+    83			.is_pam = 0,
+    84		},
+    85		{
+    86			.cfifo_name = "sprd,usb-dl",
+    87			.tx_fifo = "sprd,usb-dl-tx",
+    88			.rx_fifo = "sprd,usb-dl-rx",
+    89			.relate_ep = SIPA_EP_USB,
+    90			.src_id = SIPA_TERM_USB,
+    91			.dst_id = SIPA_TERM_AP,
+    92			.is_to_ipa = 0,
+    93			.is_pam = 1,
+    94		},
+    95		{
+    96			.cfifo_name = "sprd,wifi-dl",
+    97			.tx_fifo = "sprd,wifi-dl-tx",
+    98			.rx_fifo = "sprd,wifi-dl-rx",
+    99			.relate_ep = SIPA_EP_WIFI,
+   100			.src_id = SIPA_TERM_WIFI1,
+   101			.dst_id = SIPA_TERM_AP,
+   102			.is_to_ipa = 0,
+   103			.is_pam = 1,
+   104		},
+   105		{
+   106			.cfifo_name = "sprd,pcie-dl",
+   107			.tx_fifo = "sprd,pcie-dl-tx",
+   108			.rx_fifo = "sprd,pcie-dl-rx",
+   109			.relate_ep = SIPA_EP_PCIE,
+   110			.src_id = SIPA_TERM_PCIE0,
+   111			.dst_id = SIPA_TERM_AP,
+   112			.is_to_ipa = 0,
+   113			.is_pam = 1,
+   114		},
+   115		{
+   116			.cfifo_name = "sprd,wiap-ul",
+   117			.tx_fifo = "sprd,wiap-ul-tx",
+   118			.rx_fifo = "sprd,wiap-ul-rx",
+   119			.relate_ep = SIPA_EP_WIAP,
+   120			.src_id = SIPA_TERM_VAP0,
+   121			.dst_id = SIPA_TERM_AP,
+   122			.is_to_ipa = 0,
+   123			.is_pam = 1,
+   124		},
+   125		{
+   126			.cfifo_name = "sprd,map0-out",
+   127			.tx_fifo = "sprd,map0-out-tx",
+   128			.rx_fifo = "sprd,map0-out-rx",
+   129			.relate_ep = SIPA_EP_AP,
+   130			.src_id = SIPA_TERM_AP,
+   131			.dst_id = SIPA_TERM_USB,
+   132			.is_to_ipa = 0,
+   133			.is_pam = 0,
+   134		},
+   135		{
+   136			.cfifo_name = "sprd,map1-out",
+   137			.tx_fifo = "sprd,map1-out-tx",
+   138			.rx_fifo = "sprd,map1-out-rx",
+   139			.relate_ep = SIPA_EP_AP,
+   140			.src_id = SIPA_TERM_AP,
+   141			.dst_id = SIPA_TERM_USB,
+   142			.is_to_ipa = 0,
+   143			.is_pam = 0,
+   144		},
+   145		{
+   146			.cfifo_name = "sprd,map2-out",
+   147			.tx_fifo = "sprd,map2-out-tx",
+   148			.rx_fifo = "sprd,map2-out-rx",
+   149			.relate_ep = SIPA_EP_AP,
+   150			.src_id = SIPA_TERM_AP,
+   151			.dst_id = SIPA_TERM_USB,
+   152			.is_to_ipa = 0,
+   153			.is_pam = 0,
+   154		},
+   155		{
+   156			.cfifo_name = "sprd,map3-out",
+   157			.tx_fifo = "sprd,map3-out-tx",
+   158			.rx_fifo = "sprd,map3-out-rx",
+   159			.relate_ep = SIPA_EP_AP,
+   160			.src_id = SIPA_TERM_AP,
+   161			.dst_id = SIPA_TERM_USB,
+   162			.is_to_ipa = 0,
+   163			.is_pam = 0,
+   164		},
+   165		{
+   166			.cfifo_name = "sprd,map4-out",
+   167			.tx_fifo = "sprd,map4-out-tx",
+   168			.rx_fifo = "sprd,map4-out-rx",
+   169			.relate_ep = SIPA_EP_AP,
+   170			.src_id = SIPA_TERM_AP,
+   171			.dst_id = SIPA_TERM_USB,
+   172			.is_to_ipa = 0,
+   173			.is_pam = 0,
+   174		},
+   175		{
+   176			.cfifo_name = "sprd,map5-out",
+   177			.tx_fifo = "sprd,map5-out-tx",
+   178			.rx_fifo = "sprd,map5-out-rx",
+   179			.relate_ep = SIPA_EP_AP,
+   180			.src_id = SIPA_TERM_AP,
+   181			.dst_id = SIPA_TERM_USB,
+   182			.is_to_ipa = 0,
+   183			.is_pam = 0,
+   184		},
+   185		{
+   186			.cfifo_name = "sprd,map6-out",
+   187			.tx_fifo = "sprd,map6-out-tx",
+   188			.rx_fifo = "sprd,map6-out-rx",
+   189			.relate_ep = SIPA_EP_AP,
+   190			.src_id = SIPA_TERM_AP,
+   191			.dst_id = SIPA_TERM_USB,
+   192			.is_to_ipa = 0,
+   193			.is_pam = 0,
+   194		},
+   195		{
+   196			.cfifo_name = "sprd,map7-out",
+   197			.tx_fifo = "sprd,map7-out-tx",
+   198			.rx_fifo = "sprd,map7-out-rx",
+   199			.relate_ep = SIPA_EP_AP,
+   200			.src_id = SIPA_TERM_AP,
+   201			.dst_id = SIPA_TERM_USB,
+   202			.is_to_ipa = 0,
+   203			.is_pam = 0,
+   204		},
+   205	};
+   206	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
