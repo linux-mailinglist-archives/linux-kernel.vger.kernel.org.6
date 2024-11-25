@@ -1,234 +1,194 @@
-Return-Path: <linux-kernel+bounces-420883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 293909D83F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:00:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B03A2168E36
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:00:33 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331D51990C3;
-	Mon, 25 Nov 2024 11:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="W3oI44UN"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 639249D83F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:01:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EB11632F6;
-	Mon, 25 Nov 2024 11:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F82C2857A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:00:59 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B10199951;
+	Mon, 25 Nov 2024 11:00:31 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828791922D3
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732532421; cv=none; b=FdEhakI2/PEuxy+fPKRWaTtRIWkDShISIkFiGfZhcCzZ/RaXSh8pIBP5fiDaT13loLlwH2LTHX59mr/SN5UYkCWoScAls3K2HE2ICL5zCO0Pz+luqelF08j53Y8opjrZVAu2dr1jNM1l1OBezmY0r/KLQ1oQo5kLT/8akpnm0KA=
+	t=1732532431; cv=none; b=SgK69OfCz7b4ewZJcHXZR6aP4aT9P1H9nKLF5/cmNq/RPvRqaIOaoM2pCgM46NUlr40zY2RJPwNRwKeoYpLFNgiKe3uaEgYq/rt5/tN7mY4c0TK5LvAxDk/mUajJQoT/0rjmRxLl9oDPa1VKwHYoGOtvT+/ZFwdin9ODMG9rsPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732532421; c=relaxed/simple;
-	bh=k9JUBHrbFirv/F/2UQa8HE0e/OFWAJLM9MtmGssX4Wc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jmYKlcjarDUEHzwLZ7bFWXKOi5sR810hI0H/9YjvIuHfvDTWE1jsXfdYdAjomnO5VY1I8D/sy98oXLJgG0VES65AcaW+9qludv4SwYUS0o7Meb/FiNneDj4l1igGjTe971EDfhTakIK2QzWfr9T6lesh5O03PQHyB29exu8NpeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=W3oI44UN; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 409236B5;
-	Mon, 25 Nov 2024 11:59:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732532396;
-	bh=k9JUBHrbFirv/F/2UQa8HE0e/OFWAJLM9MtmGssX4Wc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W3oI44UNKWw6fh24wF2C+Fzf4v+A4r3Bh0Tv3O1diIs5Y+1gHXi8KXzJnqq8aDadB
-	 rX0imuwmjCKAgmlo7moZ+guM+gdbLoY8Ixz58igrHn3Q0AxcQMwhx+mI5TjhtSXY5o
-	 5olhmf+pZQYFPsKIuZ59pGb8I+9J+LfoKL8+72bk=
-Date: Mon, 25 Nov 2024 13:00:08 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Naushir Patuck <naush@raspberrypi.com>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	linux-media@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH v1 5/5] drivers: media: bcm2835-unicam: Correctly handle
- FS + FE ISR condition
-Message-ID: <20241125110008.GH19573@pendragon.ideasonboard.com>
-References: <xy44zndazbw7ehpzbc6hexgptjymevvupjhuy2x6zxp54qtepm@vlbb6js62cq4>
- <CAEmqJPrrAhhukn2H4nUhe1njVi-dyW9q=u1h8YgafvJGbYRG6Q@mail.gmail.com>
- <xadxi6rjcnmgjiqhinqnawj3mgps4b3xp6ftozap4ps6q5xaz7@bsdwrrkyniwt>
- <deremuh7mawzt6ke3c67fvzfyuksmuwon3dhorxbm5mr5rllmf@fbj2f5qvfpjd>
- <20241124070428.GG19573@pendragon.ideasonboard.com>
- <CAEmqJPrDvhz+np4MxKiwfrKyjxG0HnO45T+U2=Bpbmm6MW1uXg@mail.gmail.com>
- <20241125092335.GL19381@pendragon.ideasonboard.com>
- <CAEmqJPo58OCosJhKZeut4=ZGQfk3CCJR_G8ZZZvmAUNTwfmKjw@mail.gmail.com>
- <20241125102707.GP19381@pendragon.ideasonboard.com>
- <CAEmqJPrDb5_L-9tv7nEuG7GoN6naKhM-vsC0tPfLQaAQYisqjg@mail.gmail.com>
+	s=arc-20240116; t=1732532431; c=relaxed/simple;
+	bh=/0gO+9PPZBmpTRgBKiYQA8NcqskyWMNhhrizpwhdH0g=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ZkmbHmOZza0kAaKpSUM1IUg6mFSHfygnQnjhul4m2+9XXkOVUSpSOeo8rJde4vAkk4sOrrfsyRmcjd1NOHJeyPkwz42OzNx/AC47k0bO8fj0vrVLriyT4RgBjU/fcP292nizZn1SGoCzvoPld8ZpLbmczXagt96bkTrBBd1RRHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tFWpN-0005oD-W5
+	for linux-kernel@vger.kernel.org; Mon, 25 Nov 2024 12:00:26 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tFWpN-00048W-02
+	for linux-kernel@vger.kernel.org;
+	Mon, 25 Nov 2024 12:00:25 +0100
+Received: from dspam.blackshift.org (localhost [127.0.0.1])
+	by bjornoya.blackshift.org (Postfix) with SMTP id 766D437CB95
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:00:25 +0000 (UTC)
+Received: from hardanger.blackshift.org (unknown [172.20.34.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bjornoya.blackshift.org (Postfix) with ESMTPS id DD4DD37CB8E;
+	Mon, 25 Nov 2024 11:00:23 +0000 (UTC)
+Received: from [172.20.34.65] (localhost [::1])
+	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id 09a3b8e0;
+	Mon, 25 Nov 2024 11:00:22 +0000 (UTC)
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Date: Mon, 25 Nov 2024 12:00:16 +0100
+Subject: [PATCH RFC can] can: mcp251xfd: mcp251xfd_get_tef_len(): fix
+ length calculation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAEmqJPrDb5_L-9tv7nEuG7GoN6naKhM-vsC0tPfLQaAQYisqjg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241125-mcp251xfd-fix-length-calculation-v1-1-974445b5f893@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIAL9YRGcC/x2NQQrCMBBFrxJm7UAntIJuBQ/gtrgYJpM2EGNJq
+ hRK7+7g8sF//+3QtCZtcHU7VP2mlt7FgE4OZOYyKaZgDL7zPREN+JLFD7TFgDFtmLVM64zCWT6
+ ZV5Pxcg49dxqIooLdLFVt+U+M8LjfnHCB53H8APHd5YV7AAAA
+X-Change-ID: 20241115-mcp251xfd-fix-length-calculation-96d4a0ed11fe
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Thomas Kopp <thomas.kopp@microchip.com>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: kernel@pengutronix.de, linux-can@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Renjaya Raga Zenta <renjaya.zenta@formulatrix.com>, stable@vger.kernel.org, 
+ Marc Kleine-Budde <mkl@pengutronix.de>
+X-Mailer: b4 0.15-dev-355e8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3857; i=mkl@pengutronix.de;
+ h=from:subject:message-id; bh=/0gO+9PPZBmpTRgBKiYQA8NcqskyWMNhhrizpwhdH0g=;
+ b=owEBbQGS/pANAwAKASg4oj56LbxvAcsmYgBnRFjDWYzc9I9kEdGkvs5QqeR/D65CdWi6/fFKU
+ KmEcgnfAluJATMEAAEKAB0WIQRQQLqG4LYE3Sm8Pl8oOKI+ei28bwUCZ0RYwwAKCRAoOKI+ei28
+ b+0jB/41neInK9Mf0znPyauvf5DXxmk8o5zRado0ezQm/M0SR+ADlJulxgHbdUcxPExqJ7yKVwE
+ jTHgqrjrF2Tbf9qpiAs1frqFykS+r8ii5ATBk2+eG6ii2X1R1tqdSBSaZNoKU03nBgQ3dz1jzBk
+ YbQqorhc3fmlK0zRkioN+owulZAE84oWKwwCr8bPekSpfYS9X4D17dERynktMZ0AMVdVyRRkmdX
+ mkV3uwQfGgWOgUDGA6kiHyhvX7XdexDMXWccEbON6ASvUOHgGQD13nxko4hERG+dqXjrHzUrrlZ
+ Jk8x9tfvx+gERFLsWt/tGooOzhwLiUZ+HmcYzgLWHEasqDSq
+X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
+ fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Naush,
+Commit b8e0ddd36ce9 ("can: mcp251xfd: tef: prepare to workaround
+broken TEF FIFO tail index erratum") introduced
+mcp251xfd_get_tef_len() to get the number of unhandled transmit events
+from the Transmit Event FIFO (TEF).
 
-On Mon, Nov 25, 2024 at 10:46:01AM +0000, Naushir Patuck wrote:
-> On Mon, 25 Nov 2024 at 10:27, Laurent Pinchart wrote:
-> > On Mon, Nov 25, 2024 at 09:46:26AM +0000, Naushir Patuck wrote:
-> > > On Mon, 25 Nov 2024 at 09:23, Laurent Pinchart wrote:
-> > > > On Mon, Nov 25, 2024 at 08:37:22AM +0000, Naushir Patuck wrote:
-> > > > > On Sun, 24 Nov 2024 at 07:04, Laurent Pinchart wrote:
-> > > > > > On Fri, Nov 22, 2024 at 03:48:11PM +0100, Jacopo Mondi wrote:
-> > > > > > >
-> > > > > > > With Hans Sakari and Laurent in cc for real now
-> > > > > > >
-> > > > > > > On Fri, Nov 22, 2024 at 03:41:31PM +0100, Jacopo Mondi wrote:
-> > > > > > > > On Fri, Nov 22, 2024 at 11:40:26AM +0000, Naushir Patuck wrote:
-> > > > > > > > > On Fri, 22 Nov 2024 at 11:16, Jacopo Mondi wrote:
-> > > > > > > > > > On Fri, Nov 22, 2024 at 08:41:52AM +0000, Naushir Patuck wrote:
-> > > > > > > > > > > This change aligns the FS/FE interrupt handling with the Raspberry Pi
-> > > > > > > > > > > kernel downstream Unicam driver.
-> > > > > > > > > > >
-> > > > > > > > > > > If we get a simultaneous FS + FE interrupt for the same frame, it cannot
-> > > > > > > > > > > be marked as completed and returned to userland as the framebuffer will
-> > > > > > > > > > > be refilled by Unicam on the next sensor frame. Additionally, the
-> > > > > > > > > > > timestamp will be set to 0 as the FS interrupt handling code will not
-> > > > > > > > > > > have run yet.
-> > > > > > > > > > >
-> > > > > > > > > > > To avoid these problems, the frame is considered dropped in the FE
-> > > > > > > > > > > handler, and will be returned to userland on the subsequent sensor frame.
-> > > > > > > > > > >
-> > > > > > > > > > > Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
-> > > > > > > > > > > ---
-> > > > > > > > > > >  .../media/platform/broadcom/bcm2835-unicam.c  | 39 +++++++++++++++++--
-> > > > > > > > > > >  1 file changed, 35 insertions(+), 4 deletions(-)
-> > > > > > > > > > >
-> > > > > > > > > > > diff --git a/drivers/media/platform/broadcom/bcm2835-unicam.c b/drivers/media/platform/broadcom/bcm2835-unicam.c
-> > > > > > > > > > > index f10064107d54..0d2aa25d483f 100644
-> > > > > > > > > > > --- a/drivers/media/platform/broadcom/bcm2835-unicam.c
-> > > > > > > > > > > +++ b/drivers/media/platform/broadcom/bcm2835-unicam.c
-> > > > > > > > > > > @@ -773,10 +773,26 @@ static irqreturn_t unicam_isr(int irq, void *dev)
-> > > > > > > > > > >                        * as complete, as the HW will reuse that buffer.
-> > > > > > > > > > >                        */
-> > > > > > > > > > >                       if (node->cur_frm && node->cur_frm != node->next_frm) {
-> > > > > > > > > > > +                             /*
-> > > > > > > > > > > +                              * This condition checks if FE + FS for the same
-> > > > > > > > > > > +                              * frame has occurred. In such cases, we cannot
-> > > > > > > > > > > +                              * return out the frame, as no buffer handling
-> > > > > > > > > > > +                              * or timestamping has yet been done as part of
-> > > > > > > > > > > +                              * the FS handler.
-> > > > > > > > > > > +                              */
-> > > > > > > > > > > +                             if (!node->cur_frm->vb.vb2_buf.timestamp) {
-> > > > > > > > > > > +                                     dev_dbg(unicam->v4l2_dev.dev,
-> > > > > > > > > > > +                                             "ISR: FE without FS, dropping frame\n");
-> > > > > > > > > > > +                                     continue;
-> > > > > > > > > > > +                             }
-> > > > > > > > > > > +
-> > > > > > > > > > >                               unicam_process_buffer_complete(node, sequence);
-> > > > > > > > > > > +                             node->cur_frm = node->next_frm;
-> > > > > > > > > > > +                             node->next_frm = NULL;
-> > > > > > > > > > >                               inc_seq = true;
-> > > > > > > > > > > +                     } else {
-> > > > > > > > > > > +                             node->cur_frm = node->next_frm;
-> > > > > > > > > > >                       }
-> > > > > > > > > > > -                     node->cur_frm = node->next_frm;
-> > > > > > > > > > >               }
-> > > > > > > > > > >
-> > > > > > > > > > >               /*
-> > > > > > > > > > > @@ -812,10 +828,25 @@ static irqreturn_t unicam_isr(int irq, void *dev)
-> > > > > > > > > > >                                       i);
-> > > > > > > > > > >                       /*
-> > > > > > > > > > >                        * Set the next frame output to go to a dummy frame
-> > > > > > > > > > > -                      * if we have not managed to obtain another frame
-> > > > > > > > > > > -                      * from the queue.
-> > > > > > > > > > > +                      * if no buffer currently queued.
-> > > > > > > > > > >                        */
-> > > > > > > > > > > -                     unicam_schedule_dummy_buffer(node);
-> > > > > > > > > > > +                     if (!node->next_frm ||
-> > > > > > > > > > > +                         node->next_frm == node->cur_frm) {
-> > > > > > > > > > > +                             unicam_schedule_dummy_buffer(node);
-> > > > > > > > > > > +                     } else if (unicam->node[i].cur_frm) {
-> > > > > > > > > > > +                             /*
-> > > > > > > > > > > +                              * Repeated FS without FE. Hardware will have
-> > > > > > > > > > > +                              * swapped buffers, but the cur_frm doesn't
-> > > > > > > > > > > +                              * contain valid data. Return cur_frm to the
-> > > > > > > > > > > +                              * queue.
-> > > > > > > > > >
-> > > > > > > > > > So the buffer gets silently recycled ? Or should it be returned with
-> > > > > > > > > > errors to userspace ?
-> > > > > > > > >
-> > > > > > > > > The buffer silently gets recycled and we dequeue when we are sure it
-> > > > > > > > > is valid and will not get overwritten.  If we were to return to
-> > > > > > > >
-> > > > > > > > I haven't find in the v4l2 specs any reference to what the behaviour
-> > > > > > > > should be.
-> > > > > > > >
-> > > > > > > > If I can summarize it: When a frame capture is aborted after the DMA
-> > > > > > > > transfer has already started, should the corresponding capture buffer
-> > > > > > > > be returned to the user in error state or the frame drop can go
-> > > > > > > > silently ignored ?
-> > > > > >
-> > > > > > If the DMA tranfer is aborted, I would return the buffer to userspace.
-> > > > > > This will indicate a frame loss better than deducing it from a gap in
-> > > > > > the sequence numbers.
-> > > > > >
-> > > > > > Is the DMA really aborted here though ?
-> > > > >
-> > > > > No, the DMA continues, causing possilbe overwrite/tearing in the
-> > > > > framebuffer.  Hence we defer returning it until we can ensure we don't
-> > > > > overwrite into the buffer on the next frame.
-> > > >
-> > > > If the DMA continues then we certainly can't return the buffer to
-> > > > userspace. Is it the next frame being DMA'ed to the same buffer, or does
-> > > > the hardware put it the buffer at the back of its queue ?
-> > >
-> > > The next frame will be DMA'ed into the same buffer in this error
-> > > condition. The hardware really only has a 2-deep buffer queue (current
-> > > + next frame), and no reliable way of telling if next has been swapped
-> > > to been swapped.
-> >
-> > OK, that makes sense.
-> >
-> > In that case, is putting the buffer back to the back of the dma_queue
-> > the right option ? Shouldn't it be kept current and "just" be completed
-> > one frame later ? Or did I misunderstand the patch ?
-> 
-> Yes, I agree that the buffer handling logic below does seem
-> contradictory.  I'm going to need time to look into this in more
-> detail, it's been quite some time since I looked into this.  I would
-> suggest we remove this particular patch from the series until I get a
-> better understanding of the change.
+As the TEF has no head index, the driver uses the TX-FIFO's tail index
+instead, assuming that send frames are completed.
 
-Fine with me.
+When calculating the number of unhandled TEF events, that commit
+didn't take mcp2518fd erratum DS80000789E 6. into account. According
+to that erratum, the FIFOCI bits of a FIFOSTA register, here the
+TX-FIFO tail index might be corrupted.
 
-> > > > > > > > Cc-ing Hans Sakari and Laurent for opinions.
-> > > > > > > >
-> > > > > > > > > userspace with an error, there is still a race condition on the name
-> > > > > > > > > frame/buffer which will also have to return as error.
-> > > > > > > >
-> > > > > > > > I'm sorry I didn't get this part :)
-> > > > > > > >
-> > > > > > > > > > > +                              */
-> > > > > > > > > > > +                             spin_lock(&node->dma_queue_lock);
-> > > > > > > > > > > +                             list_add_tail(&node->cur_frm->list,
-> > > > > > > > > > > +                                           &node->dma_queue);
-> > > > > > > > > > > +                             spin_unlock(&node->dma_queue_lock);
-> > > > > > > > > > > +                             node->cur_frm = node->next_frm;
-> > > > > > > > > > > +                             node->next_frm = NULL;
-> > > > > > > > > > > +                     }
-> > > > > > > > > > >               }
-> > > > > > > > > > >
-> > > > > > > > > > >               unicam_queue_event_sof(unicam);
+However here it seems the bit indicating that the TX-FIFO is
+empty (MCP251XFD_REG_FIFOSTA_TFERFFIF) is not correct while the
+TX-FIFO tail index is.
 
+Assume that the TX-FIFO is indeed empty if:
+- Chip's head and tail index are equal (len == 0).
+- The TX-FIFO is less than half full.
+  (The TX-FIFO empty case has already been checked at the
+   beginning of this function.)
+- No free buffers in the TX ring.
+
+If the TX-FIFO is assumed to be empty, assume that the TEF is full and
+return the number of elements in the TX-FIFO (which equals the number
+of TEF elements).
+
+If these assumptions are false, the driver might read to many objects
+from the TEF. mcp251xfd_handle_tefif_one() checks the sequence numbers
+and will refuse to process old events.
+
+Reported-by: Renjaya Raga Zenta <renjaya.zenta@formulatrix.com>
+Closes: https://patch.msgid.link/CAJ7t6HgaeQ3a_OtfszezU=zB-FqiZXqrnATJ3UujNoQJJf7GgA@mail.gmail.com
+Fixes: b8e0ddd36ce9 ("can: mcp251xfd: tef: prepare to workaround broken TEF FIFO tail index erratum")
+Not-yet-Cc: stable@vger.kernel.org
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+---
+ drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c | 29 ++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c b/drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c
+index d3ac865933fdf6c4ecdd80ad4d7accbff51eb0f8..e94321849fd7e69ed045eaeac3efec52fe077d96 100644
+--- a/drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c
++++ b/drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c
+@@ -21,6 +21,11 @@ static inline bool mcp251xfd_tx_fifo_sta_empty(u32 fifo_sta)
+ 	return fifo_sta & MCP251XFD_REG_FIFOSTA_TFERFFIF;
+ }
+ 
++static inline bool mcp251xfd_tx_fifo_sta_less_than_half_full(u32 fifo_sta)
++{
++	return fifo_sta & MCP251XFD_REG_FIFOSTA_TFHRFHIF;
++}
++
+ static inline int
+ mcp251xfd_tef_tail_get_from_chip(const struct mcp251xfd_priv *priv,
+ 				 u8 *tef_tail)
+@@ -147,7 +152,29 @@ mcp251xfd_get_tef_len(struct mcp251xfd_priv *priv, u8 *len_p)
+ 	BUILD_BUG_ON(sizeof(tx_ring->obj_num) != sizeof(len));
+ 
+ 	len = (chip_tx_tail << shift) - (tail << shift);
+-	*len_p = len >> shift;
++	len >>= shift;
++
++	/* According to mcp2518fd erratum DS80000789E 6. the FIFOCI
++	 * bits of a FIFOSTA register, here the TX-FIFO tail index
++	 * might be corrupted.
++	 *
++	 * However here it seems the bit indicating that the TX-FIFO
++	 * is empty (MCP251XFD_REG_FIFOSTA_TFERFFIF) is not correct
++	 * while the TX-FIFO tail index is.
++	 *
++	 * We assume the TX-FIFO is empty, i.e. all pending CAN frames
++	 * haven been send, if:
++	 * - Chip's head and tail index are equal (len == 0).
++	 * - The TX-FIFO is less than half full.
++	 *   (The TX-FIFO empty case has already been checked at the
++	 *    beginning of this function.)
++	 * - No free buffers in the TX ring.
++	 */
++	if (len == 0 && mcp251xfd_tx_fifo_sta_less_than_half_full(fifo_sta) &&
++	    mcp251xfd_get_tx_free(tx_ring) == 0)
++		len = tx_ring->obj_num;
++
++	*len_p = len;
+ 
+ 	return 0;
+ }
+
+---
+base-commit: fcc79e1714e8c2b8e216dc3149812edd37884eef
+change-id: 20241115-mcp251xfd-fix-length-calculation-96d4a0ed11fe
+
+Best regards,
 -- 
-Regards,
+Marc Kleine-Budde <mkl@pengutronix.de>
 
-Laurent Pinchart
+
 
