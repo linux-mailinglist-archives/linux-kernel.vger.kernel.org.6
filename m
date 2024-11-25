@@ -1,91 +1,99 @@
-Return-Path: <linux-kernel+bounces-420457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C95F39D7B08
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 06:15:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 311259D7B15
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 06:19:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68752162CDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 05:15:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C2ABB21A50
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 05:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839E080038;
-	Mon, 25 Nov 2024 05:15:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2F513AD39;
+	Mon, 25 Nov 2024 05:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EjjjLmpw"
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F75XnEPV"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798ED155A2F
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 05:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E7D12C470
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 05:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732511710; cv=none; b=joquPFjZgbhtldUnXot6y4hT3Uz2kX7lAQqc3/zk7AxA1jDCJzSILSpu4HZ15k5Pk75xZqbAUnGmsijKeOctQadKVtgg5GheEeIqsZQHxWutvwxrxeTAWH6okYN5VsR8++wQimZFk0clsdK7Q9ZvCQ3XyuJqRzyyY2l72rrGMDM=
+	t=1732511938; cv=none; b=HHOj0/5Hy3ByxJMh2yDNc8xLtqu3joFZgmh3Y+sofWMpqfHWIQPoXqlvSOuZLf60EmYkwiyFhkDn/TOM9SCUoaVQdb4N0FbnqljCTQ6EMY2YUTpvkqEycpLWoGVnriGPA/iKIrGHPG4t1oegEbqM5CaadTq1DHBkf5mUca/ieM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732511710; c=relaxed/simple;
-	bh=GZQKvifqnOXtDMiUwvHAbDlHXTsnlY8fC6x4xaJ6hLQ=;
+	s=arc-20240116; t=1732511938; c=relaxed/simple;
+	bh=d1Dut7jE5J/B+Susaxwzt3MhoFXRYaj51BZEMNt/SE0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FAHNJBcEcbW8/vxNgIqJXnQPZfGGzbflIS9jnXTAUNGk6Dzqj7NaywRouuBJLaqOnlQiqcGKdh0MJRupNDNRYGFzhVBE80fPzeZ2h8CckWMmbtnGrdCEm/W0fd2+GFh9D8kOWUEkIwqwN3194tPd9Et0wLGzHb/yY3cMBBKkNzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EjjjLmpw; arc=none smtp.client-ip=209.85.210.48
+	 Content-Type:Content-Disposition:In-Reply-To; b=WffqRkqHLrJkn6MQ1daJipAqchONFes7feqdWCedTtEOY5C4yyTX8tVFkxRHQcsjg2w2eZ/hfnk/H7kG4k9ADLdlouPc1T1bBBcKlntnTZ3qFkh0PiNDdcduOx3tXEasNiafKQDfaKnv+dpgRI5AgJ7c8AGGw5Yra5OSnltzzf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F75XnEPV; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-71d4182b2cbso468756a34.2
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 21:15:08 -0800 (PST)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-724e1742d0dso2046800b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 21:18:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732511707; x=1733116507; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1732511936; x=1733116736; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZXYxVqnEJhk2+ud56x2f1HTA5C+EoDeziNEkUyfUzPw=;
-        b=EjjjLmpwHVX5mgA928wq8eKNjtOggoJ6R/aJHJcY33AynKdP5olp3napDUq5Sfoh0S
-         +XQ0fNPM7b/NWXjTkibO4c6i7450UWr99Iym1j5XZ3faNhfgQmqKCg2eObT4f52wvh/t
-         qinTmi7fpg9BCbx73BEvlZgFVfNHbFOGSiGYxzmY3vCapusuQnCvcMAdyouTLYkLmzTc
-         OePq2uR62IG0rDbDL3m8rwKldXXdJXWv1hyja1vebLLDcWwGuQXVLNb60di5nlKUplyI
-         zM2pCOENx8gklht+g+BuE7EO1UaReq2fhV7y0LIV/tUbhigdDLTu/9MYtoaJX2Sz/Acu
-         QNZw==
+        bh=CaT7XHkUStAmSWQ7uMJ9CTvA+0ljM0SSdqJ8hkuHKAE=;
+        b=F75XnEPV6jOcnDPr1TfsQRj1v/hPdgVb07WuHhBqCGPgUN/havzAhLkJK1NHdb04ch
+         qqRtm2TBiOtCjEHduQpeLdaBl0LSrWeR315Q2q0aotDT/W7Nneqlv/1Ve2qVHRoQ/ISs
+         2/2s5soASIkYzPne+kURguvr7AfNPyAc9B5fhou63U6sfZg5XZW75CGzeaWq9OFKnG2j
+         XNw9HR7Uho3WNCrhwviTkmyu/LHOM/dFHK5V+Xz+zhFzz/wRxd9dquf6hIgOtICBOm3P
+         idgRFeNYa01ngQ5s6T5+aDcqN+Wqt5fQrBNlzIRqckJvjx0jWHcvFY0rRqiZKpFFf8U2
+         Qd6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732511707; x=1733116507;
+        d=1e100.net; s=20230601; t=1732511936; x=1733116736;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZXYxVqnEJhk2+ud56x2f1HTA5C+EoDeziNEkUyfUzPw=;
-        b=Htm7QhnL4zwzctD+UXTWPw7SgkoGwXnTrXma6Nk6JUtVHzORunHn+lJs5D8RZiSolE
-         VizWG6XXpO4QeQvp1rBfVK1FLWsbtiwny+PB1CoF302pOGeoY36CN3q02EzCBkDl6tlY
-         gYZDArLbRwpAmaVF1MU54ZpkkTA5JTM4aZQIsZENxI3wOAe/yYuPf6NnqoXwkY4nyXTm
-         Zco+/QG/2lvxp4A+o1hSouXc/OmyPeEZIRXFJOGPznxqRMZBumUOHgACWsyA6fe5V63Y
-         DfvontYhyTnr9kFhvfCRGhLVklOgasiky0sOg2CNtq96Qu5jy7BWf4TkZ/GbKteFBJh/
-         ljjA==
-X-Forwarded-Encrypted: i=1; AJvYcCXVQU3HgkqorIcGd/e9ws9QCw12AV0C5TJg6XnrA9Shn8E/yLM5LL1W/d6yIZtjh7VDkm0xVVlrpWSINHM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/GY7CULFZ9aq8MEtpjHRcJHrWxa5oKcsYXIRkQnzn/wlNqbyp
-	5hwNxsaPWAUoC6OwWDewIVBHFjZeDIaYGvxepN0DMxXcQTWjEap2xstgzN/GajE=
-X-Gm-Gg: ASbGncuQ3syEBDlRz0Z5WMZBfJYJ583T0a8UFISK49OcBvu6VwVb2eTKDxrC5mDO0LV
-	OeakGeEuLK+p4buT4TSgT/bXppi5yjnPKRr1zbMUyE85ElyIMpZZwJHnukaixJTbK2wNXavQxEw
-	ezAlbvHY5heKMVCXospI53DKbQxu4jUNgfGEePENDjKUFDB8DgNSCCdJx5H3WhHkePUG7wWAgGc
-	8wRhKjwOwdh/jpW8ViGcSil9nZilsrn/SMF1+w4v4YSzaf8yCH8
-X-Google-Smtp-Source: AGHT+IGBOXcBuIivLmEuv7VtFjk7upyEtRB+SK3bfE8xFdtOYrf7Pj10DGIfwgFhA1L4nmL6RBU41A==
-X-Received: by 2002:a05:6830:3787:b0:718:1935:a860 with SMTP id 46e09a7af769-71c04add024mr11264098a34.0.1732511707515;
-        Sun, 24 Nov 2024 21:15:07 -0800 (PST)
+        bh=CaT7XHkUStAmSWQ7uMJ9CTvA+0ljM0SSdqJ8hkuHKAE=;
+        b=e2UqBGdynYeVnVQnMfy3hgIbrdQIlz91a0MXEkkfylPvajGlafdFeVw70EQF90MUk3
+         H5/6qR4cGXTrF83xMIk4wnmGejyvIDVOmM8hwgw3UnTSx4le+e6vZYjexbL38LzSZm3V
+         pxP70U0wHsYKwTS3oG8JfmRH+g/YAHgv/uignesIX5T9teX0qTxxJNCzEf0DB0ZSmS5W
+         yawg8EwrHtC38ZWRx6o+kt2gT/h7xGYo9PerL3XeBFEV6SNSyqhbTUd+yWkCrsgMuNvJ
+         5f65fP7mu7XD3ynfIgU1SFPVq3rUdkFyL5eAhqgV7kXlSHhm1QMyRI2EnttMpS6RaBMn
+         zzAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWk+fUBAQwl+bcnCi+8MGzMc3n+/AcmR7hZOrjnpFBR8CGUuZUFUZ4S1NsY9bHqLUNBt07XXPq9Fy7rqM8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEldphQPLmrVOYrvV1CO/Dug7nAt27/1yCf+3Xbbnm1Sicn0G6
+	CV8WGnqmrHoYGTiqLFSZEd43QCBt6VrgKkUe89fL9phwi4zfACkbazDyM0TtnLE=
+X-Gm-Gg: ASbGncvvgLWezKac1nJ36NoFOw2VxSojfAF14k0/FK9smEFaE+3jYZX3HxSzMcDSjow
+	H/0HjEYijNZupPHfA5GxxdGGrW16YvYZKE3LiIR6/o4eiQpd2X0tfM41nEHE/P9s5T2pmINMgr6
+	z2PS7ClgEXPCHXGDUeG0qgXyi1Xtdo8wCxHJlIxrkKMHsoBBbd0XiY7dfJ+rYAKt63eikTgmwAg
+	mDYnjzCN/lmQubBYC2FkWEAvvCcEfFblN2O2ENwzJqNkYZeJPPc
+X-Google-Smtp-Source: AGHT+IGe6EIORCJn7aV9npBgDcZpDnf5jw/DaCFfKxvU0lKTbT+0M9zATqm1b+aolILMH8BpHhsBzw==
+X-Received: by 2002:a05:6a00:2d10:b0:71e:4a51:2007 with SMTP id d2e1a72fcca58-724df3c77ffmr14298594b3a.4.1732511936149;
+        Sun, 24 Nov 2024 21:18:56 -0800 (PST)
 Received: from localhost ([122.172.86.146])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcc3ddc8bsm5672854a12.60.2024.11.24.21.15.06
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de474c9fsm5506878b3a.44.2024.11.24.21.18.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Nov 2024 21:15:06 -0800 (PST)
-Date: Mon, 25 Nov 2024 10:45:04 +0530
+        Sun, 24 Nov 2024 21:18:55 -0800 (PST)
+Date: Mon, 25 Nov 2024 10:48:53 +0530
 From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: Radu Rendec <rrendec@redhat.com>, robh@kernel.org, arnd@linaro.org,
-	linux-kernel@vger.kernel.org, Zhipeng Wang <zhipeng.wang_1@nxp.com>,
-	Maxime Ripard <mripard@kernel.org>, javier@dowhile0.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
-	andreas@kemnade.info
-Subject: Re: [RFC PATCH] cpufreq: dt-platdev: Fix module autoloading
-Message-ID: <20241125051504.nvw4lzr4emi2vpf7@vireshk-i7>
-References: <20241119111918.1732531-1-javierm@redhat.com>
- <20241121071127.y66uoamjmroukjck@vireshk-i7>
- <87iksh3r4x.fsf@minerva.mail-host-address-is-not-set>
- <20241121090357.ggd4hc43n56xzo4m@vireshk-i7>
- <87frnl3q63.fsf@minerva.mail-host-address-is-not-set>
- <1c5e13b7472917b5fa303553da04ae16590f3105.camel@redhat.com>
- <87cyin42mb.fsf@minerva.mail-host-address-is-not-set>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>,
+	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Connor Abbott <cwabbott0@gmail.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 01/11] opp: core: implement dev_pm_opp_get_bw
+Message-ID: <20241125051853.taeysx2nhmrwoyde@vireshk-i7>
+References: <20241119-topic-sm8x50-gpu-bw-vote-v2-0-4deb87be2498@linaro.org>
+ <20241119-topic-sm8x50-gpu-bw-vote-v2-1-4deb87be2498@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,19 +102,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87cyin42mb.fsf@minerva.mail-host-address-is-not-set>
+In-Reply-To: <20241119-topic-sm8x50-gpu-bw-vote-v2-1-4deb87be2498@linaro.org>
 
-On 22-11-24, 18:09, Javier Martinez Canillas wrote:
-> Agreed with this. Likely (1) is the easiest path and (2) would make the
-> driver more aligned with the rest of the kernel (that have a list of OF
-> device IDs to autoload / match instead of some custom logic).
+On 19-11-24, 18:56, Neil Armstrong wrote:
+> Add and implement the dev_pm_opp_get_bw() to retrieve
+> the OPP's bandwidth in the same way as the dev_pm_opp_get_voltage()
+> helper.
 > 
-> But I guess that (2) would be riskier, since not adding a platform that
-> uses v2 will cause a regression.
+> Retrieving bandwidth is required in the case of the Adreno GPU
+> where the GPU Management Unit can handle the Bandwidth scaling.
+> 
+> The helper can get the peak or average bandwidth for any of
+> the interconnect path.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  drivers/opp/core.c     | 25 +++++++++++++++++++++++++
+>  include/linux/pm_opp.h |  7 +++++++
+>  2 files changed, 32 insertions(+)
+> 
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 494f8860220d97fc690ebab5ed3b7f5f04f22d73..864b9b99b0129acaffaf45c584c5f34b8bababed 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -106,6 +106,31 @@ static bool assert_single_clk(struct opp_table *opp_table)
+>  	return !WARN_ON(opp_table->clk_count > 1);
+>  }
+>  
+> +/**
+> + * dev_pm_opp_get_bw() - Gets the bandwidth corresponding to an opp
+> + * @opp:	opp for which voltage has to be returned for
 
-I am inclined to go with (1) here and have applied a patch from Andreas Kemnade,
-which he sent sometime back. I have used your commit log though, since it was
-more descriptive.
+                              bandwidth
+
+> + * @peak:	select peak or average bandwidth
+> + * @index:	bandwidth index
+> + *
+> + * Return: bandwidth in kBps, else return 0
+> + */
+> +unsigned long dev_pm_opp_get_bw(struct dev_pm_opp *opp, bool peak, int index)
+> +{
+> +	if (IS_ERR_OR_NULL(opp)) {
+> +		pr_err("%s: Invalid parameters\n", __func__);
+> +		return 0;
+> +	}
+> +
+> +	if (index > opp->opp_table->path_count)
+> +		return 0;
+> +
+> +	if (!opp->bandwidth)
+> +		return 0;
+> +
+> +	return peak ? opp->bandwidth[index].peak : opp->bandwidth[index].avg;
+> +}
+> +EXPORT_SYMBOL_GPL(dev_pm_opp_get_bw);
+> +
+>  /**
+>   * dev_pm_opp_get_voltage() - Gets the voltage corresponding to an opp
+>   * @opp:	opp for which voltage has to be returned for
+> diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
+> index 6424692c30b71fca471a1b7d63e018605dd9324b..cd9a257b8e7766d6c8631351a10a845c88414a74 100644
+> --- a/include/linux/pm_opp.h
+> +++ b/include/linux/pm_opp.h
+> @@ -106,6 +106,8 @@ struct dev_pm_opp_data {
+>  struct opp_table *dev_pm_opp_get_opp_table(struct device *dev);
+>  void dev_pm_opp_put_opp_table(struct opp_table *opp_table);
+>  
+> +unsigned long dev_pm_opp_get_bw(struct dev_pm_opp *opp, bool peak, int index);
+> +
+>  unsigned long dev_pm_opp_get_voltage(struct dev_pm_opp *opp);
+>  
+>  int dev_pm_opp_get_supplies(struct dev_pm_opp *opp, struct dev_pm_opp_supply *supplies);
+> @@ -209,6 +211,11 @@ static inline struct opp_table *dev_pm_opp_get_opp_table_indexed(struct device *
+>  
+>  static inline void dev_pm_opp_put_opp_table(struct opp_table *opp_table) {}
+>  
+> +static inline unsigned long dev_pm_opp_get_bw(struct dev_pm_opp *opp, bool peak, int index)
+> +{
+> +	return 0;
+> +}
+> +
+>  static inline unsigned long dev_pm_opp_get_voltage(struct dev_pm_opp *opp)
+>  {
+>  	return 0;
+
+Applied. Thanks.
 
 -- 
 viresh
