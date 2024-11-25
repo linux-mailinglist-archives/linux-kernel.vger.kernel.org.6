@@ -1,128 +1,124 @@
-Return-Path: <linux-kernel+bounces-421214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DE469D881A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:33:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8A039D881D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:33:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C8101668E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:33:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88CB628D0A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC1F1B2187;
-	Mon, 25 Nov 2024 14:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDAB1B0F36;
+	Mon, 25 Nov 2024 14:33:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CR+cQKHE"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QrfPLDME"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CEC91AC44D
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F47C1AC44D
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732545177; cv=none; b=TQ1XV+NNQdBP0KwlcyJ5urLRDEnrIjnEpeyqQ+nRhwN08UJzvttpOKAo2Mo6W8kp7K4sSSwke66Ig9uydL+uQfCEiptGMDEZElpcTnVPpXGUCQtUGg5Jd6EL31hQpKZpgKbImtvOIB7UWeoi3nCr9HRxbcBfPMaZqFUzqKipF2U=
+	t=1732545191; cv=none; b=Kx3ZT3Zddb86SGgATw6cfnx3Sv81rtgCNUkmyu0456En91WFXF6lYbeg+T70DUHmlkp7P9G/8QAhg0W1LKu3CZDwX/pFBY6ekl+dzKNBwhokIMIHju5Wz2F66l50DiJm6/UwN53r8hvGhxqelxSVnYspZaSr/PteFlP2MKihgjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732545177; c=relaxed/simple;
-	bh=HgNXDurU1Y6/iVHhxRcPHbCNyKwUgMFho7p6ih9pzg0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PA9lx6Ovek7eVGY7RDXnaoxBtnCJeoTG/oSQXM0VUXZ6ewlJ1+kh3hgfIBIE6yCd5RGvJ9/s2S2XFEnTgZAIP8TNkukwj8LogK/DhK7UZv4PTr75TQeAf5mIR27K4HypVcTsuckqgGtWWs6D/gbgfTBdwQxYoIPN7mBVPEOufPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CR+cQKHE; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4315c1c7392so41755675e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 06:32:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732545175; x=1733149975; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=J+Y0HXpyKgeDtrQhAYRPzCv1yrc8XspvZqRwVQTSQoQ=;
-        b=CR+cQKHEDl89HnHZ3BI77rrrIKLQCINdHlBd0ZbnE+T2FD60yysJ6wd558KnT1+4aV
-         qnVrHdvJQWfF3PjyQeb6ePZPy3iZhNIXPtrky4A2neJijJjT8kgz8H8D6ZW5GQsZ2t6a
-         1YMEpA2pyOFzE1N/tb2fXtRSM2VP1gJQFw3xgEglI4vez2OKczj8RqmGtJXXcBbYEHxZ
-         91vkhGCGmLREIa8Lim43LF4pZDCPaPVvPSx0dY8MXJBekG9zlWvsnEnoq6SVONEgZckp
-         Rg3JNWcFQPZCWY2UMLbuIpXTXveinDrDbm6WiDobJKjNLNUd0deAzAa+2zRUPUjRgrHe
-         LNsA==
+	s=arc-20240116; t=1732545191; c=relaxed/simple;
+	bh=Qn+b6ULbHlpt1jjPuozeG76v5+tmKAZ3os+xCJI2X84=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NDYF2FMaTVXgPemIIyPIJElMIe54A6/KFgrRl1SjI7jy1apLF4nRJToXkxQYfaa0o5wZpr+3GhsB7v8h9xdanWa4cT1Bg7HEMfOGro80QKWIYdl2bQ+ob/Fk8G/bDqV5qhklYss7UMhJ8jzUGH/URPp2txTRn7YJp4TNxkel1YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QrfPLDME; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732545188;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Qn+b6ULbHlpt1jjPuozeG76v5+tmKAZ3os+xCJI2X84=;
+	b=QrfPLDMEGeEVSqFkQadgCGzcpbHGqjY4wMllQDUZ/oA3PScG0rnEO9+IEKDC5HQbde+azS
+	78GrHp8kPqUUdQzOq6Pylk2hKkGOU1SF62odjTGoqxzbWjCBu0aevRuDjSXkZdOTZMO6aw
+	JD6v4tg9zXInDL04HnTJ/fxzyUBuvfs=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-615-1auLqiBLNVunmsInU6T0Pw-1; Mon, 25 Nov 2024 09:33:06 -0500
+X-MC-Unique: 1auLqiBLNVunmsInU6T0Pw-1
+X-Mimecast-MFC-AGG-ID: 1auLqiBLNVunmsInU6T0Pw
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5cfc0df81easo4644084a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 06:33:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732545175; x=1733149975;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J+Y0HXpyKgeDtrQhAYRPzCv1yrc8XspvZqRwVQTSQoQ=;
-        b=bM+d1JWJPudx7MdZky2GcG0uCFFnQoVLRi1+pvFE+pzOJry/VBApRbVupvRn4nkrRP
-         e/KF1o1w4qSdyVUkTyK5N3LuRLtgSgogdFwJHaFFM3nRQBu5lUc+DiEHU51OpX+BSr2d
-         EahileSCbhPb0onYp1N8SIgMYoIMOepX+Y8VDFH4+pSXRzdghVtFU9/cZPFldyMppv+n
-         Mc1InXCkANUc3z0yTI8kFsyf6srUmJzJpTtdokbf9n4SSQrly46/O/36MCHIdCFXGc1l
-         jpo86dY6Y9PB36TdaZknnW3jKlkqRvtDZvXq7oTSMhPh6AI1UFxa9jFdGgmXVOltXiLT
-         xcSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqPh+ymuFPQ9F2Na05iHXLBSVJ9282b+S1NkXLOjjuwZL1NgVyskqU4wT5jFlQgC+4QuHMIoYDesvNwNs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWQSykow7XStMa7TmL7Vzwl4aNdXDfQ+pMPvYzncK+LEgf/D1J
-	qRtciNQfEoJDULPriocnZNNxRidhUtHhvDlhfj364vu/9IZiV+LZRf/yzkD5Jtw=
-X-Gm-Gg: ASbGnctbpARPyQsdZzYQXbKWeXBldwLLqTmqwCPUSWmDL9uQf5LCxezyVEXYTdRPU5t
-	GOA9pWTbxwgRldpiSTwa11udig8FcxOtqLpiuraSbLmPbBvyXsx0ayIjhxftULeALorALR3V51+
-	7fJTlzSuMSmQ2qsdROmie2i5Qh/HRJflwmk2C4j5NHssuMpHXzEBcr3cTUX5FytL5hWO33eoCHd
-	vVrIl/4OpCiSW/NC+K+0/7i3Nq/LU8LBuHJ6n5t1+HW4/1KB57E5R4NnjeE2Rg=
-X-Google-Smtp-Source: AGHT+IHLpdEqvHkFDrmf7iYo+O6NcGKzmFklgROp89/Mv/+qWdOXbu1wuq8DK5pShhF7HXcnisT0Zg==
-X-Received: by 2002:a5d:588f:0:b0:382:4851:46d2 with SMTP id ffacd0b85a97d-38260b45c95mr12173123f8f.1.1732545174756;
-        Mon, 25 Nov 2024 06:32:54 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fb36612sm10492934f8f.59.2024.11.25.06.32.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 06:32:54 -0800 (PST)
-Message-ID: <7876986a-0164-4004-a8c7-43439e30fcbb@linaro.org>
-Date: Mon, 25 Nov 2024 14:32:53 +0000
+        d=1e100.net; s=20230601; t=1732545185; x=1733149985;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qn+b6ULbHlpt1jjPuozeG76v5+tmKAZ3os+xCJI2X84=;
+        b=XPVPtlPiJ6e2dItpwGN+sr6mIs+73rF69xqE79+/vpH6jgRmleNO/5BsXHAlc8LklK
+         ij4dNOKu8VfhO3JMAVJb0UKddFIcC8TmVWbI+ecIsuLOznOhf7wPQFnlNmyusSX67mmv
+         x3uKwnVGYvhVcWQakQsG1EkhBfAPVjdl6mnPDkeNzc0R7GQs7tnE8mohqLpke904ZMp2
+         KYJRVelAIoyUHHfDw9E1ip6tnt1g834drzmPpaksnF/bjG/rO2uznx/aVqlWgps5EXvF
+         Mlv9MCreGoVmxU8kVJebbdyU0PSdtNkFdLwrVL/f8PUcJg3x5oywinoJVbQcd951cAq0
+         eUzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmrZgroncCwqna6gScu+6lvHQBp5UwolVtFRtnGJoZyogsPdD0cvM+V7lSBcc0dtWTirbK2/C1OgbDL9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN+6GsqwQA84K5pWxmkn0yrve4LpWJUWopvbM5g6l5wWIRILHc
+	wh+47zEv6VmFG6aGGcI4Jqmsepfv7cUr6ydBauAIp5QLotSEN0BGZiB+1e7ogwGN+PEMsoQFPgI
+	8EqBSy844O7idkQYcCZkeoJfhmYeAslXuaPyW9bM/aeIia51wZe1xsGHR1FCOcRT1csNyKy0N0v
+	2eDnghgBm6j2gE6NRE34aRiFO6dI/nyXZH0DW8
+X-Gm-Gg: ASbGncskYUwvApSMfRv3dSvOAfTblUHI9/n2oiJA3hPSbrZSRSjgAXoDWZCc7oQSh+Y
+	Qh7x3Oi0ANBjmwpoG8LF1vKG8J/1Y
+X-Received: by 2002:a05:6402:2686:b0:5cf:d341:dfec with SMTP id 4fb4d7f45d1cf-5d0073daa0cmr17638323a12.0.1732545185579;
+        Mon, 25 Nov 2024 06:33:05 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFdCqEdULNd6cF7hPz8sD3hmROqZwCvCy3SMA6nukUKDBvFTRfZbusOR8nHOeyYxuqRGri9L1xRDyGB9J+PRK8=
+X-Received: by 2002:a05:6402:2686:b0:5cf:d341:dfec with SMTP id
+ 4fb4d7f45d1cf-5d0073daa0cmr17638292a12.0.1732545185266; Mon, 25 Nov 2024
+ 06:33:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/5] media: dt-bindings: Add qcom,sc7280-camss
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Vikram Sharma <quic_vikramsa@quicinc.com>
-Cc: rfoss@kernel.org, todor.too@gmail.com, mchehab@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, akapatra@quicinc.com,
- hariramp@quicinc.com, andersson@kernel.org, konradybcio@kernel.org,
- hverkuil-cisco@xs4all.nl, cros-qcom-dts-watchers@chromium.org,
- catalin.marinas@arm.com, will@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20241112173032.2740119-1-quic_vikramsa@quicinc.com>
- <20241112173032.2740119-2-quic_vikramsa@quicinc.com>
- <20241115165031.GA3344225-robh@kernel.org>
- <0234971e-9029-4371-a0aa-7da835591351@linaro.org>
- <f1ff6df1-89f3-4e63-bea7-2404fefe81f8@kernel.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <f1ff6df1-89f3-4e63-bea7-2404fefe81f8@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241118222828.240530-1-max.kellermann@ionos.com>
+ <CAOi1vP8Ni3s+NGoBt=uB0MF+kb5B-Ck3cBbOH=hSEho-Gruffw@mail.gmail.com>
+ <c32e7d6237e36527535af19df539acbd5bf39928.camel@kernel.org>
+ <CAKPOu+-orms2QBeDy34jArutySe_S3ym-t379xkPmsyCWXH=xw@mail.gmail.com>
+ <CA+2bHPZUUO8A-PieY0iWcBH-AGd=ET8uz=9zEEo4nnWH5VkyFA@mail.gmail.com>
+ <CAKPOu+8k9ze37v8YKqdHJZdPs8gJfYQ9=nNAuPeWr+eWg=yQ5Q@mail.gmail.com>
+ <CA+2bHPZW5ngyrAs8LaYzm__HGewf0De51MvffNZW4h+WX7kfwA@mail.gmail.com>
+ <CAO8a2SiRwVUDT8e3fN1jfFOw3Z92dtWafZd8M6MHB57D3d_wvg@mail.gmail.com>
+ <CAO8a2SiN+cnsK5LGMV+6jZM=VcO5kmxkTH1mR1bLF6Z5cPxH9A@mail.gmail.com> <CAKPOu+8u1Piy9KVvo+ioL93i2MskOvSTn5qqMV14V6SGRuMpOw@mail.gmail.com>
+In-Reply-To: <CAKPOu+8u1Piy9KVvo+ioL93i2MskOvSTn5qqMV14V6SGRuMpOw@mail.gmail.com>
+From: Alex Markuze <amarkuze@redhat.com>
+Date: Mon, 25 Nov 2024 16:32:54 +0200
+Message-ID: <CAO8a2SizOPGE6z0g3qFV4E_+km_fxNx8k--9wiZ4hUG8_XE_6A@mail.gmail.com>
+Subject: Re: [PATCH] fs/ceph/mds_client: give up on paths longer than PATH_MAX
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: Patrick Donnelly <pdonnell@redhat.com>, Jeff Layton <jlayton@kernel.org>, 
+	Ilya Dryomov <idryomov@gmail.com>, Venky Shankar <vshankar@redhat.com>, xiubli@redhat.com, 
+	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org, dario@cure53.de, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25/11/2024 14:30, Krzysztof Kozlowski wrote:
-> On 25/11/2024 15:18, Bryan O'Donoghue wrote:
->> On 15/11/2024 16:50, Rob Herring wrote:
->>>> +  reg:
->>>> +    maxItems: 15
->>>> +
->>>> +  reg-names:
->>> reg and reg-names go after 'compatible'. See the documented ordering.
->>
->> Rob, the documented ordering pertains to the dtsi and examples not to
->> the yaml right ?
-> 
-> 
-> The coding style indeed is explicit that it applies to DTS, however same
-> rules apply to the bindings as well.  I just did not cover bindings when
-> writing DTS coding style.
-> 
-> Best regards,
-> Krzysztof
+You and Illia agree on this point. I'll wait for replies and take your
+original patch into the testing branch unless any concerns are raised.
 
-ACK, thanks for the clarification.
+On Mon, Nov 25, 2024 at 3:59=E2=80=AFPM Max Kellermann <max.kellermann@iono=
+s.com> wrote:
+>
+> On Mon, Nov 25, 2024 at 2:24=E2=80=AFPM Alex Markuze <amarkuze@redhat.com=
+> wrote:
+> > Max, could you add a cap on the retry count to your original patch?
+>
+> Before I wrote code that's not useful at all: I don't quite get why
+> retry on buffer overflow is necessary at all. It looks like it once
+> seemed to be a useful kludge, but then 1b71fe2efa31 ("ceph analog of
+> cifs build_path_from_dentry() race fix") added the read_seqretry()
+> check which, to my limited understanding, is a more robust
+> implementation of rename detection.
+>
+> Max
+>
 
----
-bod
 
