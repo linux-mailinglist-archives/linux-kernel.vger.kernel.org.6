@@ -1,209 +1,103 @@
-Return-Path: <linux-kernel+bounces-420823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA1A29D836A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:33:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C8D99D836B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:33:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BC122878E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:33:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1D80162F20
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7268B1925B6;
-	Mon, 25 Nov 2024 10:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DeUGQbWW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A471192B60;
+	Mon, 25 Nov 2024 10:33:38 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DDD1922D8;
-	Mon, 25 Nov 2024 10:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911671917D7
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 10:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732530799; cv=none; b=hL7U/+rEBBqN6V7I/gYCeciQGMy1R9zeIrU+t2pVk7TA4mToUz9Xrh432P+JDEoo9A5A8dYieHQs7f6rjSCSuUpwdDOFZOGQWREJmG2e4SrdWCoH4GwNtMKa4nxURwvqK63GQqVE8lXDT9+xgrYoMA73AphvjCjaiH0Wuh41r4k=
+	t=1732530818; cv=none; b=l05odrR/+U7Avii74aBiNvA7/QKOltiuifw9Qhcpalivdl9NK9dTR2rwjn/nAQu+yzrKgExmZhZcwn2XwWXzfbkZ891AIrLp2EwWM0tPmjwLLFMCOlaADlAYqITI7/UNVNeNtnZK7Qp/D2ubWB1dS02mbhkTLShaDnN0xqQzDfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732530799; c=relaxed/simple;
-	bh=+uoflAdRYVjlXIXkWYl+rqDb6tX7x77CG5QG31XMhDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PCvrg/0JMoJqI2kg+q/YAWlK6WdRdwWNafewKsBhr6ix/j1hciAFnw+LZEU2xCuDmBlQ8wTiNYE4Bt8/gkjvhbScznnhpSKxB1lOqQPacPOGWpv1UZp14ZPFR8SvY/t4cSJmsQhpvz0bXiRx4vodfAk8jJgYUDVsKA8QDDxL6Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DeUGQbWW; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732530797; x=1764066797;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+uoflAdRYVjlXIXkWYl+rqDb6tX7x77CG5QG31XMhDI=;
-  b=DeUGQbWWwAGLKFrfnhWaN4kTyaUX2CFkOi1C3b9PaiQzFJwS5z0wT0ag
-   u/NKN3eYtO//2VjMHmhAiF4iK2uBnQBzFRjqcCObnzQnik+nMLcsdooxG
-   Wl3ib8JRuS51kORDNIU7Yf39LbVGznAQcvUSBzn7DQDvLw/ddg5g85yU7
-   frYTENgBvfb5QauUn0Uvc+/WiHyP+raS5oZoCsf8Fx3GBH343+s4/Lg3p
-   WBMdd0Z68XoLM6XxWiJb0fqA5W6EIjn7MfRPWZZmx1ydeRRUUS0YIJeAY
-   Qcspu0EPRAepeQL6wBn9XRnAGCPX0gO29Ny16d93Dv+eVYsqw4nCCXHMR
-   g==;
-X-CSE-ConnectionGUID: jJ2eQBg0Q2aUZImms5m4dQ==
-X-CSE-MsgGUID: Plg1/tWQRnaNKF/mYrrUsg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="32371655"
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="32371655"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 02:33:17 -0800
-X-CSE-ConnectionGUID: GfjgBMg3RAWvB8I8zIFbfQ==
-X-CSE-MsgGUID: xpEPjXOcTXKRhlZygFSOsg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="91574611"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 02:33:14 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tFWP1-00000000iJJ-3hFg;
-	Mon, 25 Nov 2024 12:33:11 +0200
-Date: Mon, 25 Nov 2024 12:33:11 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-serial@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
-	linux-kernel@vger.kernel.org,
-	Yang Yingliang <yangyingliang@huawei.com>
-Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
-Message-ID: <Z0RSZ-YD_BozMs1n@smile.fi.intel.com>
-References: <20240405152924.252598-1-schnelle@linux.ibm.com>
- <20240405152924.252598-2-schnelle@linux.ibm.com>
- <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net>
- <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
- <472eb22a-dcb1-4fbb-bf2c-a4173706bc7a@app.fastmail.com>
- <27685942-fb62-44c5-86ed-98beb547ffed@roeck-us.net>
- <744920ba-551c-466b-ac5c-2607b81261a0@app.fastmail.com>
- <Z0QtZky8Sr7qUW7v@smile.fi.intel.com>
- <00f5e842-3ee9-4d83-8836-0ff4f703fa3c@app.fastmail.com>
+	s=arc-20240116; t=1732530818; c=relaxed/simple;
+	bh=gCRzn4LNOBE5nMygWBX5OlLmC+fRJ/rT8vbWN7CMr/4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jtFMi9Itpa4MQj7Bpb+MVatqT/6Z/B6y4w489H8LsHI7ENyFU/0znip0bBf3CA0nFrSj7u8AlnoI6zJ4sYPIvxzLdj1K7E37Tw7FCEydiFx3zl5uHXWgYFtJyOGN/u1WDSmY7YNZ44MaUnbk43rchf2ZcxLfwNoag8mXKJGh0B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.trumtrar.info)
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <s.trumtrar@pengutronix.de>)
+	id 1tFWPO-0001Fo-Oi; Mon, 25 Nov 2024 11:33:34 +0100
+From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Subject: [PATCH v2 0/4] ARM64: dts: intel: agilex5: add nodes and new board
+Date: Mon, 25 Nov 2024 11:33:19 +0100
+Message-Id: <20241125-v6-12-topic-socfpga-agilex5-v2-0-864256ecc7b2@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00f5e842-3ee9-4d83-8836-0ff4f703fa3c@app.fastmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAG9SRGcC/43NTQ7CIBCG4asY1o4ZqPbHlfcwXbQw0ElMIVBJT
+ dO7iz2By+dbvN8mEkWmJO6nTUTKnNjPBep8EnoaZkfAplgoVFeJFUKuQSpYfGANyWsb3ACD4xe
+ tN+jQmsq0tmtRi1IIkSyvR/3ZF0+cFh8/x1mWv/W/bpaAMKqxbpoWqUZ6BJrde4l+5vViSPT7v
+ n8BNcoDkcsAAAA=
+X-Change-ID: 20241030-v6-12-topic-socfpga-agilex5-90fd3d8f980c
+To: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, linux-clk@vger.kernel.org, kernel@pengutronix.de, 
+ Steffen Trumtrar <s.trumtrar@pengutronix.de>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, Nov 25, 2024 at 10:53:46AM +0100, Arnd Bergmann wrote:
-> On Mon, Nov 25, 2024, at 08:55, Andy Shevchenko wrote:
-> > On Fri, Nov 22, 2024 at 08:24:37PM +0100, Arnd Bergmann wrote:
-> >> On Fri, Nov 22, 2024, at 18:22, Guenter Roeck wrote:
-> >> 
-> >> This looks like a bug in drivers/tty/serial/8250/8250_platform.c
-> >> to me, not something the architectures did wrong. My impression
-> >> from __serial8250_isa_init_ports() is that this is supposed
-> >> to initialize exactly the ports in the old_serial_port[]
-> >> array, which is filled only on alpha, m68k and x86 but not
-> >> on the other ones.
-> >
-> >> Andy moved this code in ffd8e8bd26e9 ("serial: 8250: Extract
-> >> platform driver"), but I don't think this move by itself
-> >> changed anything.
-> >
-> > Yep. the idea was to purely split this code out of the core
-> > library parts. I was not intending any functional changes.
-> 
-> Ok.
-> 
-> > I believe it's a preexisted bug, but if you can point out to
-> > the breakage I made, please do it, so I would be able to fix
-> > ASAP.
-> >
-> >> serial8250_setup_port() is where it ends up using the
-> >> uninitialized serial8250_ports[index] contents. Since 
-> >> port->iotype is not set to anything here, it defaults to
-> >> '0', which happens to be UPIO_PORT.
-> >
-> > Btw, we have a new constant to tell the 8250 core that IO type is not set,
-> > but that one is not used here.
-> 
-> So I see serial8250_setup_port() setting "up->cur_iotype = 0xFF"
-> by first calling serial8250_init_port(), this is the "not
-> set" value you mean, right?.
+This series adds the gpio0 and gmac nodes to the socfpga_agilex5.dtsi.
 
-Yes, and we have a constant for that, I'll send a patch to make it clear.
+An initial devicetree for a new board (Arrow AXE5-Eagle) is also added.
+Currently only QSPI and network are functional as all other hardware
+currently lacks mainline support.
 
-> Right after that it calls serial8250_set_defaults(),
-> which sets "up->cur_iotype = p->iotype;", which may or
-> may not be initialized here.
-> 
-> The possible calls chains I see leading up to
-> serial8250_setup_port() are:
-> 
-> serial8250_register_8250_port(): here we first initialize
->   the iotype incorrectly, then set uart->port.iotype and
->   call serial8250_set_defaults() again to fix it.
-> 
-> module_init(serial8250_init): relies on the first
->   serial8250_set_defaults() for the ISA ports since they
->   are always UPIO_PORT, but sets the other ones (pnp, acpi,
->   platform_data) correctly.
-> 
-> early_serial_setup(): called only on non-ISA platforms,
->   shouldn't need to call serial8250_isa_init_ports() at
->   all.
-> 
-> console_initcall(univ8250_console_init): Not completely
->   sure here, it seems this now only allows ports that
->   are registered from one of the methods above
-> 
-> Can you have a look at the patch below? I think this
-> correctly removes the broken serial8250_set_defaults()
-> while also still adding it in the one case that relies
-> on the implied version.
-> 
-> This does however revert f4c23a140d80 ("serial: 8250:
-> fix null-ptr-deref in serial8250_start_tx()") and
-> might bring back the bug came from opening an
-> uninitialized uart. On the other hand, I don't see
-> why that doesn't also crash from accessing the invalid
-> I/O port on the same architectures.
+Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+---
+Changes in v2:
+- fix node names according to dtb_check
+- remove gpio 'status = disabled'
+- mdio0: remove setting of adi,[rt]x-internal-delay-ps. 2000 is the
+  default value
+- add Acked-by to dt-binding
+- Link to v1: https://lore.kernel.org/r/20241030-v6-12-topic-socfpga-agilex5-v1-0-b2b67780e60e@pengutronix.de
 
-AFAICS it does only partial revert, so I don't see how your patch
-may break that.
+---
+Steffen Trumtrar (4):
+      arm64: dts: agilex5: add gpio0
+      arm64: dts: agilex5: add gmac nodes
+      dt-bindings: intel: add agilex5-based Arrow AXE5-Eagle
+      arm64: dts: agilex5: initial support for Arrow AXE5-Eagle
 
-> diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
-> index 5f9f06911795..5b72309611cb 100644
-> --- a/drivers/tty/serial/8250/8250_core.c
-> +++ b/drivers/tty/serial/8250/8250_core.c
-> @@ -358,8 +358,6 @@ struct uart_8250_port *serial8250_setup_port(int index)
->  
->  	up->ops = &univ8250_driver_ops;
->  
-> -	serial8250_set_defaults(up);
-> -
->  	return up;
->  }
->  
-> diff --git a/drivers/tty/serial/8250/8250_platform.c b/drivers/tty/serial/8250/8250_platform.c
-> index 66fd6d5d4835..d3c1668add58 100644
-> --- a/drivers/tty/serial/8250/8250_platform.c
-> +++ b/drivers/tty/serial/8250/8250_platform.c
-> @@ -94,6 +94,10 @@ static void __init __serial8250_isa_init_ports(void)
->  		port->regshift = old_serial_port[i].iomem_reg_shift;
->  
->  		port->irqflags |= irqflag;
-> +
-> +		serial8250_set_defaults(port);
-> +
-> +		/* Allow Intel CE4100 and jailhouse to override defaults */
->  		if (serial8250_isa_config != NULL)
->  			serial8250_isa_config(i, &up->port, &up->capabilities);
->  	}
+ .../devicetree/bindings/arm/intel,socfpga.yaml     |   1 +
+ arch/arm64/boot/dts/intel/Makefile                 |   1 +
+ arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi     | 106 ++++++++++++++++
+ .../boot/dts/intel/socfpga_agilex5_axe5_eagle.dts  | 140 +++++++++++++++++++++
+ 4 files changed, 248 insertions(+)
+---
+base-commit: adc218676eef25575469234709c2d87185ca223a
+change-id: 20241030-v6-12-topic-socfpga-agilex5-90fd3d8f980c
 
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Steffen Trumtrar <s.trumtrar@pengutronix.de>
 
 
