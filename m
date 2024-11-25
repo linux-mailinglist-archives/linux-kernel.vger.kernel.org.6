@@ -1,78 +1,47 @@
-Return-Path: <linux-kernel+bounces-420935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 816F39D8487
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:32:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F26BE9D8489
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:33:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13D5916260B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:32:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85E00161B56
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F23D18FDDB;
-	Mon, 25 Nov 2024 11:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6154F193072;
+	Mon, 25 Nov 2024 11:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lFr5KN1U"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JKhUcyxk"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979F410F7
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DA817BED0;
+	Mon, 25 Nov 2024 11:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732534338; cv=none; b=TKkgCWtrMoRFh6OKyryNer8GJ8YaIltIO/xND8OtfLWq+fZUFU9wpTOIsvm1chKaIRoMc5g4BZJnaEbEosJru0tMc64oPfUuhS0nzn9DmAnROB4YL2lxE5XBeMaIfeAgsoUlJSu/Dh7Nwia9OIlaiOJyeu2F/VzmJ8xqr3+iWE0=
+	t=1732534402; cv=none; b=q8iqGeGhA6+d9NNmTaQc3OKYFQrWWQiuELewAyN8cpp4Ni9ay2HxS2zWv0g+ZmqL6VbcYXboCxYXTQjO9ol4oF9amfV6QukQshshKr3g6lgm2ZtWeq4whSSvcZfmP1736EpGR1C+ntY71GF+4oNlap5UTTorRjEqX/KKA6YEeR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732534338; c=relaxed/simple;
-	bh=IJyZfLY2s0yZ6rO7Oz9oDF9No5CuXyzpVy8AxSjRid0=;
+	s=arc-20240116; t=1732534402; c=relaxed/simple;
+	bh=P518NXJ0Q6lKfCMBhQpcn8O8iGY86ggsLm0eAR7/Tq8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p+3EG2Z7Icdbrxa28M+6HGSCEON/tNx+5oe0dYsBJhBudVzasB3x9pJYsfY87XE+v2xA4cadacDxcjAk3Zm6+pOKK7aYeigpHzyjDjp/Z/9eeqdEn5UgzgKU/ve4OErXQf7KAlUN8aaoRqAK3WS3Mqe73sM7/sID8cIAc21eoOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lFr5KN1U; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a10588f3so3993055e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 03:32:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732534335; x=1733139135; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QMIy+2ZGZlYbGjuPDyKFDMT/8RFkHAkPW/l+lHB1Ssg=;
-        b=lFr5KN1UdVXhHkhMlT9Tlqyx6ePt1XfonltvvRjPt8ax6KdEWWA3APdhv1Q5z4ympZ
-         SXwaeilxH1spLvtZQMLx2MqW200UyjqzLaRj3yVr6+Rsb66xcKrXNUoGB+Hf1WYyrBbz
-         /V5OewHHwFEMH0QTkjVT4YtcJv85d46derB9/fqHXE3+B/YBPdUkwrUF89qNbXHjqHz6
-         DzwZNxHZPaJg5ySSeYi6mmIqtFN9eA9ee5uVq1VVev9RXwbnC71kxJlcqy+8LA9G+OSO
-         mP08Aq+Aq5gXVTgKK2LhYwrgfoIxDocjRwdHe0tY7NmKUdSPqLEkhwCpokIVCsT89eB9
-         AN2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732534335; x=1733139135;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QMIy+2ZGZlYbGjuPDyKFDMT/8RFkHAkPW/l+lHB1Ssg=;
-        b=s4oXcDGlFcSEdu+OUIfYH+L1OzQaa0gh3ggoKvfvDu6tFT9hglAq4rUMT45M+1kvGh
-         woS1gGtAoNJT7YBj9TV2/g/b+XtSrwAqDDo8qmI/dB965GEXgbTijPRZDOMozoNfBVNL
-         lIxZcQgr5s/whh/QiB5WPdCyTfLZz6PJcznHCCA1p1ihaCg01bKe+0G3HkN31MPEuCQx
-         7hsTd1u2VplQ+48GVDZ2WQjsyo0wVBzJinDdJwKwcxZr+o/I4lyfSjJSWBjSSl60grRx
-         M36Epqk9BvvckwoSx3r3Kud15EBPt7iyJ7Y6fuBdw2IlFgd2S5SbWViL5pvkgbBnzAYp
-         7ajg==
-X-Forwarded-Encrypted: i=1; AJvYcCWilsHKpz4ULo/x1LGqWFzBqOMkHKD+NHdjPjack7G9Ay8ZYFMwilIAVg1hTkR2ifBDWqxBe2QjXHTqSXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy07zNOU5RiyNHfTW1aMgxhGJyK5VOIFTW1xY09A3l0bC7gqtRN
-	EGe8miuMR2PGpZ/rDgRsGnCn4SMn4j1cIWKbAkyY3SaPdJSzJTjC+m+1cAj9Or0=
-X-Gm-Gg: ASbGnctjWhUiyNYanmCHC4HJ+sqXFttpqYgYRy7T6qX97MbonlT7ImG7+HEpwJr4cy5
-	8eYIbxuX8EYMi5YywKuqpiDVrYtECn6tNhz9LusLe4NRgL74kelZsxNuB405oVut/JLcXinUser
-	gjQ+DrLJIWY+I/y+gBk+shrxA+WXzlBuVNUd0lp8uVsymj85y0xhFEPrRnJohuDqSxRtDdykY1s
-	cC+QAPJc9b7v6JSznwlHGzFaf/Lwnv+sCP1XQvA+9AjZ6rZW+029vkFC9ywt9Z6/gNZWfz3f64q
-	BImnS5F94VathA==
-X-Google-Smtp-Source: AGHT+IFS+7K0lEJaKeykwcJTAWzQZ4yXS8JJlRIPKoQmKX+XT9czJ5uZIfuXu4QgSvNX8SY83S/kkw==
-X-Received: by 2002:a7b:c7da:0:b0:434:9499:9e87 with SMTP id 5b1f17b1804b1-4349499a073mr49405845e9.25.1732534335055;
-        Mon, 25 Nov 2024 03:32:15 -0800 (PST)
-Received: from [192.168.0.172] (88-127-185-239.subs.proxad.net. [88.127.185.239])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbc3dfasm10487119f8f.76.2024.11.25.03.32.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 03:32:14 -0800 (PST)
-Message-ID: <dad2ecb7-e624-49c2-a7d5-0ff53b6a1686@baylibre.com>
-Date: Mon, 25 Nov 2024 12:32:13 +0100
+	 In-Reply-To:Content-Type; b=J0dpCFGpp0StWjz3xEGi942d4d9i6QK92trb9DUrkNrirtCTcAeh5O6mOYjWcTl+DPFSZzg6zWLO+jzVH87uX8CG6mbxRAtLs6ftISOZKTpK5x0en8d//bXLhS/lT5L3IrhgWDZht5pGsXcsYvJ5kNTHmhmGMfn/KuGixbfkCkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JKhUcyxk; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 30C026B5;
+	Mon, 25 Nov 2024 12:32:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732534377;
+	bh=P518NXJ0Q6lKfCMBhQpcn8O8iGY86ggsLm0eAR7/Tq8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JKhUcyxkc08xKOK/SJ8c41NOg6ASWth9+UMx9BQsVP+vk5UxO3jqBNgynxyql1GnT
+	 7avD3pc/5aQ2PCPNYaqnwMhGk7VMl7ugLQnePmCTedL4czWXxb/IYmMviOYCg9TGjP
+	 HRcL1Kb4WPMmfHxGiM55QeM4kvFbvT9WwMaAoLBc=
+Message-ID: <0ff25743-30c6-4c26-955f-c4c26578ebb6@ideasonboard.com>
+Date: Mon, 25 Nov 2024 13:33:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,42 +49,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] ASoc: mediatek: mt8365: Don't use "proxy" headers
-To: Mark Brown <broonie@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Nicolas Belin <nbelin@baylibre.com>, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, Liam Girdwood <lgirdwood@gmail.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-References: <20241031102725.2447711-1-andriy.shevchenko@linux.intel.com>
- <ZykbMlshvlwCaeGJ@smile.fi.intel.com>
- <d7bf7863-fd24-4f8e-8cd0-d84867a997bb@sirena.org.uk>
+Subject: Re: [PATCH] media: v4l: subdev: Prevent NULL routes access
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Cosmin Tanislav <demonsingur@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Hans Verkuil <hverkuil@xs4all.nl>, =?UTF-8?Q?Pawe=C5=82_Anikiel?=
+ <panikiel@google.com>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241122143717.173344-1-demonsingur@gmail.com>
+ <Z0Q3ukermwmPax2b@kekkonen.localdomain>
 Content-Language: en-US
-From: Alexandre Mergnat <amergnat@baylibre.com>
-In-Reply-To: <d7bf7863-fd24-4f8e-8cd0-d84867a997bb@sirena.org.uk>
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <Z0Q3ukermwmPax2b@kekkonen.localdomain>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hello Andy.
+Hi,
 
-Actually, after test it, "linux/of_gpio.h" isn't needed at all anymore.
-
-That mean all added include in this patch aren't required.
-
-
-On 04/11/2024 22:12, Mark Brown wrote:
-> On Mon, Nov 04, 2024 at 09:06:26PM +0200, Andy Shevchenko wrote:
->> On Thu, Oct 31, 2024 at 12:27:25PM +0200, Andy Shevchenko wrote:
->>> Update header inclusions to follow IWYU (Include What You Use)
->>> principle.
+On 25/11/2024 10:39, Sakari Ailus wrote:
+> Hi Cosmin,
 > 
->> Hmm... I think we are waiting for somebody to Ack / review this change?
+> Thanks for the patch.
 > 
-> Yes.
+> On Fri, Nov 22, 2024 at 04:37:12PM +0200, Cosmin Tanislav wrote:
+>> When using v4l2_subdev_set_routing to set a subdev's routing, and the
+>> passed routing.num_routes is 0, kmemdup is not called to populate the
+>> routes of the new routing (which is fine, since we wouldn't want to pass
+>> a possible NULL value to kmemdup).
+>>
+>> This results in subdev's routing.routes to be NULL.
+>>
+>> routing.routes is further used in some places without being guarded by
+>> the same num_routes non-zero condition.
+>>
+>> Fix it.
+> 
+> While I think moving the code to copy the routing table seems reasonable,
+> is there a need to make num_routes == 0 a special case? No memcpy()
+> implementation should access destination or source if the size is 0.
 
--- 
-Regards,
-Alexandre
+I think so too, but Cosmin convinced me that the spec says otherwise.
+
+ From the C spec I have, in "7.21.1 String function conventions":
+
+"
+Where an argument declared as size_t n specifies the length of the array 
+for a
+function, n can have the value zero on a call to that function. Unless 
+explicitly stated
+otherwise in the description of a particular function in this subclause, 
+pointer arguments
+on such a call shall still have valid values, as described in 7.1.4.
+"
+
+The memcpy section has no explicit mention that would hint otherwise.
+
+In 7.1.4 Use of library functions it says that unless explicitly stated 
+otherwise, a null pointer is an invalid value.
+
+That said, I would still consider memcpy() with size 0 always ok, 
+regardless of the src or dst, as the only memcpy implementation we need 
+to care about is the kernel's.
+
+  Tomi
+
 
