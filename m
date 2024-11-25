@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-421684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEBB59D8E87
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:31:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 528B69D8E8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:33:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A92C5B263C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:30:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8178AB26BEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393041CDFD3;
-	Mon, 25 Nov 2024 22:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F861CF2A2;
+	Mon, 25 Nov 2024 22:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ugVDIVrt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QU/jg6da"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1751CDA1E;
-	Mon, 25 Nov 2024 22:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAEA51C4A24;
+	Mon, 25 Nov 2024 22:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732573823; cv=none; b=i9t0BrDqgVgmeOI1GTu/Pw8+GpnFKD/rKFubMwmXP+6UfbvtIfkik2N/tPv8SdCDLRN93WXgLwjnJS7e8zTHKEOa/GeaIlMBzfF3OiILYmTANhTNsSE7awMSMTqt8hxRijoNusRC3e8IZn0BbnYv2mtmTY636K8jROBOfxLs3n4=
+	t=1732573828; cv=none; b=d0aYGpNVWi5qRTXjUB8pGQFbmcKaIFey9i7cCi9hpsZP45c5Xsrcrz4jKHpkcr/Sf45Zh5IJwE05CQfnyuoEukAjudoc2o7Jju2H3m+BJsmVv+/Kf7Z1Sr5Ow+j2EPBM4PW0sIRv1IlXQgHdYFs92SF75HJODlJ4An8aKb55rro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732573823; c=relaxed/simple;
-	bh=fHvnGdZ50/nq2t1zezbGmwAW7qZpIAi7AAjhKDn3FUo=;
+	s=arc-20240116; t=1732573828; c=relaxed/simple;
+	bh=3Ze8WNZVIEs/3RRPaixDwQG12MEeQYAGjjwqmum/cvE=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=l+zkkMsrEioeWKTgmM2fiXOXasPa5gUIZhpzyEJrWHSKiXmjkSoQVf0ZLfTEmjPUqBHDFJUoxfVyi+souWrVXfSGnKvRdXzmGlSCknL1HE6dsrrRNhwBvyCwp/RZ9YdSFBB9vYffOYAxi93YaKO63+yBpiRJyqZ5K2w9DdbpL2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ugVDIVrt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0240AC4CECE;
-	Mon, 25 Nov 2024 22:30:23 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=WKn7WTQqH7NxY5Viyo5bV55/R7VwycRP7eWhuEtUOG0IS2kRBkaoXlXSvaOVcK989KUmVdpdrHQAz5NyMruobKb4JnMHjEpQMwNIp83rNMICNceALcxjIcV4FUWCXaVH2xdv4rSRe4ODNKxVtaOTOHYz07yk4zSZdqyTaB9oED0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QU/jg6da; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 137BDC4CECF;
+	Mon, 25 Nov 2024 22:30:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732573823;
-	bh=fHvnGdZ50/nq2t1zezbGmwAW7qZpIAi7AAjhKDn3FUo=;
+	s=k20201202; t=1732573826;
+	bh=3Ze8WNZVIEs/3RRPaixDwQG12MEeQYAGjjwqmum/cvE=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ugVDIVrtAzyUmYxUy+qBQWrC+rtnv8uZnqZUDidRAqhXGryg/1dfgTU6wiQQEBzDD
-	 Ll+eZp0NcGFE7XoTBrs22vqDefpYgyEYWNLhiTfPi8SJ/1oTOTYDEKWk27bXPFegtb
-	 3zSDbtbq5CqynZheg20pvse87O/H3DzSAtNhKBt6goagVit0nOGUmyeFqeagqRcuUB
-	 iWjF84+L2HK6yV7hP9cLQccwuOkdifG+h37nFjbJ1WBbulvEhyNzmESPmYpcySP/G3
-	 nyGZcCnG5XTV6q31yBfG3AH/F2Rrs9leC+W2KF6ocA9EnUiUDP+Tmur0Do9gue2wcr
-	 yjkaamL/chHaQ==
+	b=QU/jg6daM+VXtQFteZuvT6AiFRUmvLdB4g3bst2ekFVhnonhTi3QgLUKn/Yc5VJhj
+	 BTLa1ztYEmbW/6Fe2fI/iVpk4lRHQWt4cAubaDt+J1bRHZ1bNQsW/YJivcHa4pfBto
+	 lCNpOu9dzvpgfFvY3PGAMjYkjp3u0Pv9eLTlIy/0UU3JTA2GxIbhL7JwTNEaOjW3Yc
+	 xe15aePfTY5/IUuXibBLH0KV02xHKnxnkwnMpr6ad+SNkAewbX9g9nZLW6X+HJ9fr2
+	 IiSJkWALgxXDwT/tgGwZ80FNjbaYhtuaJKZg01s1eM//1OBTkGvfl5F38NMqAJGOPH
+	 PHQ660GZqumyw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EADCD3809A00;
-	Mon, 25 Nov 2024 22:30:36 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF8A3809A00;
+	Mon, 25 Nov 2024 22:30:39 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,41 +51,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf] xsk: always clear DMA mapping information when unmapping
- the pool
+Subject: Re: [PATCH v3] bpftool: fix potential NULL pointer dereferencing in
+ prog_dump()
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <173257383550.4058254.12806548531670345328.git-patchwork-notify@kernel.org>
-Date: Mon, 25 Nov 2024 22:30:35 +0000
-References: <20241122112912.89881-1-larysa.zaremba@intel.com>
-In-Reply-To: <20241122112912.89881-1-larysa.zaremba@intel.com>
-To: Larysa Zaremba <larysa.zaremba@intel.com>
-Cc: bpf@vger.kernel.org, bjorn@kernel.org, magnus.karlsson@intel.com,
- maciej.fijalkowski@intel.com, jonathan.lemon@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, ast@kernel.org,
- daniel@iogearbox.net, hawk@kernel.org, john.fastabend@gmail.com,
- horms@kernel.org, przemyslaw.kitszel@intel.com, jacob.e.keller@intel.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- alasdair.mcwilliam@outlook.com
+ <173257383850.4058254.13003653135433020600.git-patchwork-notify@kernel.org>
+Date: Mon, 25 Nov 2024 22:30:38 +0000
+References: <20241121083413.7214-1-amiremohamadi@yahoo.com>
+In-Reply-To: <20241121083413.7214-1-amiremohamadi@yahoo.com>
+To: Amir Mohammadi <amirmohammadi1999.am@gmail.com>
+Cc: qmo@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, amiremohamadi@yahoo.com
 
 Hello:
 
 This patch was applied to bpf/bpf.git (master)
 by Alexei Starovoitov <ast@kernel.org>:
 
-On Fri, 22 Nov 2024 12:29:09 +0100 you wrote:
-> When the umem is shared, the DMA mapping is also shared between the xsk
-> pools, therefore it should stay valid as long as at least 1 user remains.
-> However, the pool also keeps the copies of DMA-related information that are
-> initialized in the same way in xp_init_dma_info(), but cleared by
-> xp_dma_unmap() only for the last remaining pool, this causes the problems
-> below.
+On Thu, 21 Nov 2024 12:04:13 +0330 you wrote:
+> A NULL pointer dereference could occur if ksyms
+> is not properly checked before usage in the prog_dump() function.
 > 
-> [...]
+> Fixes: b053b439b72a ("bpf: libbpf: bpftool: Print bpf_line_info during prog dump")
+> Signed-off-by: Amir Mohammadi <amiremohamadi@yahoo.com>
+> ---
+>  tools/bpf/bpftool/prog.c | 17 ++++++++++++-----
+>  1 file changed, 12 insertions(+), 5 deletions(-)
 
 Here is the summary with links:
-  - [bpf] xsk: always clear DMA mapping information when unmapping the pool
-    https://git.kernel.org/bpf/bpf/c/ac9a48a6f161
+  - [v3] bpftool: fix potential NULL pointer dereferencing in prog_dump()
+    https://git.kernel.org/bpf/bpf/c/ef3ba8c258ee
 
 You are awesome, thank you!
 -- 
