@@ -1,109 +1,140 @@
-Return-Path: <linux-kernel+bounces-420688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92D339D8228
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:24:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F54B9D822A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:25:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBDCB163396
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:24:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7B49281AAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859C5191F7E;
-	Mon, 25 Nov 2024 09:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A49B19068E;
+	Mon, 25 Nov 2024 09:24:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DT7XsLXZ"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fVAwVPMn"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914F6188907;
-	Mon, 25 Nov 2024 09:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790FA18FDDB;
+	Mon, 25 Nov 2024 09:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732526633; cv=none; b=R48m8K3XUPbkEbK3WtUKmggqZG9LM9iRvNsWykYk04Druw5tHqUNdCllzaH7sZ0+7/CCthMqu2YDUD4YHA6HYFwcVZ6vTA9BX+U323ZOxr1OgQoxqQ3symSBojW1gBsFoQqGj7Klx7b1Hhg065CxhYj7jiYxcW/hxurah2hgpcg=
+	t=1732526669; cv=none; b=DsGtXA0Rl0Toh/LJ4aHXyTx6R7UwRbEiDpU8gwxchBrrIxyqwVVu/Psekp/XK8L9Jb7c2E1YtTmqwHG9lM5hYNhYIepHvr/C8VPcSypN5ewSG4+qL8hTZ1uzmf0NlTv5rpDv3QYtCDomqfGhcro2K2/8o1yk3r4qdqmVrzb91Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732526633; c=relaxed/simple;
-	bh=qcemhaF6dxBYnXBRHVDjb/MTiKC/YiHKVVAIRb06Rdk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b0fh5QyWLeCsmnYN7x0dww+lIUznJwxjzrY8UajsL3v8AkHvs52EfqImIZI/6lE9ijaenhiJbMQHBOvWMJ+mT6s7RgyxillSNcFFh0fqT2w9brp/byQcimT/qcbpt09XuLpxQ1XFCOGQ3VChRdkdbfH6Mk9hGM+PGdA9LEGjQtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DT7XsLXZ; arc=none smtp.client-ip=209.85.216.44
+	s=arc-20240116; t=1732526669; c=relaxed/simple;
+	bh=dFAwG0pk25WHHBGzk3B7O450dnKjPQyykPlvZ7p/+cA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u46HOUPtTcmz5NO9hW21A6aqYhC7/2fj3pQjlTyP66d/KhkWkv4sNuN//oDvNOAJFprf4zBZp8rqHoHJclqAjNXxs4YiER/lEn4mjAL/WqgcYt4TYJITsWVdrObx3LpPorOZNWH66h0PiVAgsgAU/5mIUsF6Q7B0wvoi8Jvhzzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fVAwVPMn; arc=none smtp.client-ip=209.85.210.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2ea704b1c2bso714573a91.1;
-        Mon, 25 Nov 2024 01:23:51 -0800 (PST)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-724e1742d0dso2193327b3a.0;
+        Mon, 25 Nov 2024 01:24:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732526631; x=1733131431; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qcemhaF6dxBYnXBRHVDjb/MTiKC/YiHKVVAIRb06Rdk=;
-        b=DT7XsLXZJXxsI0qn5/G4zIhJeUB+AtKDS/acX9/moX23GaCb0BnMI5lAXT5u9wt2e4
-         QC1k+thNz6UiB7kawhQk7joue8ZkXbbIUUtAIZWOxc//znIz5R/FiYoXM/nV7qCoCfR8
-         7kt7mor4lB8FVwHpAlxF/2DSQ+eNn11UxPzgZ+PcVVI33N4VpdjbDI0O/nm/hpkFynrN
-         JHy0s96DQeD2xtJDEehO46Nj+jvXS9gfKwiaY54DIFqz4DWzd1Anne0rTa3cExElrKg2
-         C5Z8D9VSCBY5gqbMUWoJ1/a+ABAUtBzuVMpkxsfF0SMgXTxFnEaYOsVgvRtsz0i3s4SL
-         StIw==
+        d=gmail.com; s=20230601; t=1732526668; x=1733131468; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GH47thgLGLAwhEyFYzkW0bapLRnqQvS6F+hSbhzlTX4=;
+        b=fVAwVPMnc1VUm52eZNYvnJOeOa5E+RHYLPj+e+J2cbbH2chrIHfAHxrXMVqHpPpvUT
+         /fAqDEdhlX1EuN1quTvsox4LpagqzenJ8C5nFvHCjTL2WnGPyd4Ip0R5tiXBiByCPYgm
+         3vWs0FVZgNhhSDXm+w9W4ip1bOzR8vDGFuy6dcYUg7kptDIPaHqK9odF6nwK+vbwPhRB
+         79kowHN62D6acHYWo2ikvLgp9m6nKTKqXDbjVJdivDdUR5W1I3pp8fD3+2H+a1JvQhAC
+         edwB+aeCebH0Kvsm+6SuaW8gJr00RTs4OnDyWr8f49Q/SLBEPwm1V1Aqvm6ogfPJrJmt
+         n63g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732526631; x=1733131431;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qcemhaF6dxBYnXBRHVDjb/MTiKC/YiHKVVAIRb06Rdk=;
-        b=l6OC2MHmjLjTQsKF5bZt96y5FubfigPJGQ+MawH9hMdT2irm6pS9bPgNs5UZ1cJSb1
-         STrqM256WhhsBTmIQ2E/fXEFGMYAzjjAuWOYaXnEmoJ65R0qaMoYcQ+H7OsBOun72My3
-         xnnfYtP4kjfh8VM9xtH4fQI5w06oXsUKTat52tOdOM9E7IW8qqNO+MOrrCqgHRPJX6Qn
-         e3KG2bPBBtZq+JPSENkLq8FCg81jD5s8fsf5mDzV2psU8UeLAOZW40As/oD/9rNrJLNx
-         TVH6VA9QprCeQw8B9rmmHSBIxAcBeOnjtbK2QMAwJO1LlDJeIHCsVaXIM+mA4plUlxMu
-         /IGA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5xPVlH81THMUiP6xfYKnJ4Gez2U/KAxrqlnjmLyKVJWmGdrQlotX9CLd1OnPVlQgvXIOn13cAK40O9GG0kuw=@vger.kernel.org, AJvYcCVCMDUkKr+nIkkOYc0WD3+eGoa63xUXKcO7SV0qCgXvPBpWuTA3Agrhtbv/z30z7X86hI5tRfJMAbxeHg==@vger.kernel.org, AJvYcCVK4cQ5LYIwy5n5eFT8NyKFh+eEWkmm6QyWA6Es8AplxqJq1J52XIzhwhwYBO82WhG5NEYAgbWKbeswHsFm@vger.kernel.org, AJvYcCVzyMzuTlhgZoHLJrwbhC526Ud4MhobXwntllHiGwBiH70EK51SF55u+TRu6lNfnz0bGnSMld53@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtMhApN359VtqZj7cZaG8ivL+qSCZvKZtqk0DzfOsjpeH85hg1
-	uhd8l359c1pJu/zX/u3XJdiWadWN3/+tH075ITx+FxVGAJWsZf7psC5L9uUSGJTpFNFcORMxhn0
-	bqWG7yLiUgmiJJz+yL83s4Wb4wUQ=
-X-Gm-Gg: ASbGncslEjmmue9y+Yll1O5EuspSC8G6VU8GJlw3iPsfVcROCruDoYqZUCjADa+CtE/
-	cz5D9OvrvI6XDWTS+WLriTtmBiT2v7KI=
-X-Google-Smtp-Source: AGHT+IGOTgELQN8uyP5ueJTT51+ZqKtyOCk3LQ405zrt1L/Z+emvAyfINoiT8DvRuIQBC07HGWjHnB5guv16ACCxbfc=
-X-Received: by 2002:a17:90b:1b51:b0:2ea:580f:6c0c with SMTP id
- 98e67ed59e1d1-2eb0e024be7mr6689199a91.1.1732526630792; Mon, 25 Nov 2024
- 01:23:50 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732526668; x=1733131468;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GH47thgLGLAwhEyFYzkW0bapLRnqQvS6F+hSbhzlTX4=;
+        b=OtFm59Ta+nXeepX7phxcIqAWXP3E/hPJkBQqyhrVmR8BAU53CFwB8Uj7eQje0wIpgA
+         5uPY4gWxKU8mWUNGYRE4zyp17i46wUFWasTTKggtXXPPfBmRtrTJiBpnvHHtR+9qHKYL
+         wgToMH3AFKCCx4LWsVLqoUKxzNS4RxDK8XMOh/I9rQ0tFqvIpXcRIs+oLzt5JOfR2D+h
+         iIyQVcYXcoR44lC5cyuvCM+ZIK6UL2oTJzZd5HrDivLWfnrQ8d9fwr91I9HxaL2IHACJ
+         cI1STmalm4FwHo2Kf06XjQ6iuposZu6Hr1FNaCy1HkvJfVPKay04YHDwnPxYR/W/CDo0
+         IhQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVthfNqplpovyCoWSV+BXxtQCYbilXK75XJxBhEuokopovUF97qbelHomaed2eG6598zwwAzwbV6RVD1F+1@vger.kernel.org, AJvYcCWVq4xUivMXtoI0E3ccdZuw74Mz0Q6iuOfxORW+Q2dxQMSoe+R9wFxE+ZE+kUnw4Mxhjqps+qlHUtG8@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA47RiZEZRht77uwQGJQ8DekYLuQWZcCX1Nxg8/If7EyPJHgnq
+	nNjK7IfHIA2ET/1PvWm9466jMASf1L9lMsH3W1bebQUuBYtRumVf
+X-Gm-Gg: ASbGncsgmYS64gobbv/k2BU53WPBXiUTvBnqr70NCrRbWfpX+gyu1tX8FyDdh2VbJf+
+	BFNSkseVsk+h2kYswkRjcZYK1IbSW3MVzLg6tv+LdsBNHki0V/p7yvRK2bjRi0Dh2S4Twag940f
+	VHYHJVJ1TU/b2NKYx4t21Qa8ySIUrC/MnRkZOkkwPu/Zl6rU95kbjc75xdjShmk5qeIh10YCIM0
+	F7mz35RzlEtcd8dS4aYP6WPZ3vOHRRlj2CidJ4NLonvq3vF88vO6QoGoFYZSMQ2VS07
+X-Google-Smtp-Source: AGHT+IGH/2hu7Jr9H6sYJsbkLS36GY64EFbufco7FimN9lRF0ny00OASpXVX5qeXHk77eHloKg29MQ==
+X-Received: by 2002:a05:6a00:a8f:b0:71e:410:4764 with SMTP id d2e1a72fcca58-724df5d453fmr19361348b3a.8.1732526667715;
+        Mon, 25 Nov 2024 01:24:27 -0800 (PST)
+Received: from [192.168.0.115] ([59.188.211.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de5762b4sm5950940b3a.179.2024.11.25.01.24.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 01:24:27 -0800 (PST)
+Message-ID: <54759f1f-2575-4e84-b351-119cefed2b17@gmail.com>
+Date: Mon, 25 Nov 2024 17:24:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241123222849.350287-1-ojeda@kernel.org> <20241123222849.350287-2-ojeda@kernel.org>
- <CAH5fLggK_uL0izyDogqdxqp+UEiDbMW555zgS6jk=gw3n07f6A@mail.gmail.com>
-In-Reply-To: <CAH5fLggK_uL0izyDogqdxqp+UEiDbMW555zgS6jk=gw3n07f6A@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 25 Nov 2024 10:23:38 +0100
-Message-ID: <CANiq72nKgj0n84Q76FSsPSeaupwgEKBT0GQbO8m-KHKZb103gg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] rust: kernel: move `build_error` hidden function to
- prevent mistakes
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Trevor Gross <tmgross@umich.edu>, 
-	rust-for-linux@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] MAINTAINERS: Add entries for touchbar display driver
+To: fnkl.kernel@gmail.com, Hector Martin <marcan@marcan.st>,
+ Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, asahi@lists.linux.dev
+Cc: linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241124-adpdrm-v1-0-3191d8e6e49a@gmail.com>
+ <20241124-adpdrm-v1-5-3191d8e6e49a@gmail.com>
+Content-Language: en-US
+From: Nick Chan <towinchenmi@gmail.com>
+In-Reply-To: <20241124-adpdrm-v1-5-3191d8e6e49a@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 25, 2024 at 10:14=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
->
-> You could also put #![doc(hidden)] at the top of build_assert.rs to
-> simplify the lib.rs list. Not sure what is best.
 
-Yeah, not sure. We used outer attributes for the rest of
-`doc(hidden)`s, including in the same file, so it is probably best to
-keep it consistent, unless we decide to move all to inner ones.
 
-Thanks!
+Sasha Finkelstein via B4 Relay 於 2024/11/25 早上6:29 寫道:
+> From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+> 
+> Add the MAINTAINERS entries for the driver
+> 
+> Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
+> ---
+>  MAINTAINERS | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e7f0170977013889ca7c39b17727ba36d32e92dc..1964bb705cae0b0f12e2174fc96c5cd123d31520 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2164,6 +2164,7 @@ F:	Documentation/devicetree/bindings/arm/apple.yaml
+>  F:	Documentation/devicetree/bindings/arm/apple/*
+>  F:	Documentation/devicetree/bindings/clock/apple,nco.yaml
+>  F:	Documentation/devicetree/bindings/cpufreq/apple,cluster-cpufreq.yaml
+> +F:	Documentation/devicetree/bindings/display/apple,display-pipe.yaml
 
-Cheers,
-Miguel
+Missing F:
+Documentation/devicetree/bindings/display/panel/apple,summit.yaml
+>  F:	Documentation/devicetree/bindings/dma/apple,admac.yaml
+>  F:	Documentation/devicetree/bindings/i2c/apple,i2c.yaml
+>  F:	Documentation/devicetree/bindings/interrupt-controller/apple,*
+> @@ -2183,6 +2184,7 @@ F:	drivers/bluetooth/hci_bcm4377.c
+>  F:	drivers/clk/clk-apple-nco.c
+>  F:	drivers/cpufreq/apple-soc-cpufreq.c
+>  F:	drivers/dma/apple-admac.c
+> +F:	drivers/gpu/drm/adp/
+>  F:	drivers/pmdomain/apple/
+>  F:	drivers/i2c/busses/i2c-pasemi-core.c
+>  F:	drivers/i2c/busses/i2c-pasemi-platform.c
+> 
+
+Nick Chan
 
