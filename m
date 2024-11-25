@@ -1,138 +1,128 @@
-Return-Path: <linux-kernel+bounces-421712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F282B9D8EE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:10:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28A5E9D8EE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:09:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96D91169B0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:10:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9080169B46
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66369193067;
-	Mon, 25 Nov 2024 23:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35AF6194ACA;
+	Mon, 25 Nov 2024 23:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r1+vshw1"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b8/h6TrA"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6C2188015
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 23:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF71B1E480;
+	Mon, 25 Nov 2024 23:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732576202; cv=none; b=bUMFaQqBu43/Jx8j54RAc0Hzsfsm4goQrp/fTazwGxGpdJJyvuJaW+uA8yIOJX2N3rT113Y5MYZ6SLZOk/gBGV4C61cs0AQgF9Nyw5rifwSHWJ9L1yX2Xfr4VoL8UVE5HXPVoZk31x3aBu0PtFQmbblpe4/Wi68Mw2XXpF0Brmg=
+	t=1732576166; cv=none; b=LXwobAvpQ9dpFPcWkN0TVgTHtVOmy9W8bT+F452Peb68jA1EBOSSW3dNvEDLSobFzNQlnMD9VMoeYs/iHWiqXHHx71VN1qawSGxOjKV8beKv3kju5EmSRptoxp8guJ4o7V58kSvEKroOpCiCQ3oP7O2nVmcorHIEP8tjqhluQWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732576202; c=relaxed/simple;
-	bh=p+JwPTIdtJuhlleWphzAyu/o4Jkrz2u6YvO9LTlnK2A=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=Ny3XPeO1WIYYXOiIHZ0S131aagEurRC3UGYr2a4IiEBtqqXVmlZAnsYS32sTvQRSjLk+iH5QAjcQjYH7o8cjeKnLMJgkUZZzL2UNC8eVvQwLnvukBdCI+9aV3M8en0HKFmlQpiT9UVegtr5JcB54WY6S58Bi3P2rJoyGIb3YmR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--xur.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r1+vshw1; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--xur.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ea45ba6b9aso6089515a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 15:10:01 -0800 (PST)
+	s=arc-20240116; t=1732576166; c=relaxed/simple;
+	bh=PJCmuQ4lMcanbRMirOcCM5Bjb+hCuj2GTmNSE+zMJaA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=tPN84iDQc2xZ00uee+2YKO+nuMMkusgyG+Gnuaa2RsoJ8T6/SO0TZrp1LBWQEJlMmApd0HtVFNniYpl4fAzanQwMtKuutjl//ZEJziBvTQIjxtjvJtO/Ki5u+QsSyBF1RvdCt+H2CFfJa7jJ6IK89Vgj4AJ4+Oug79orkjN6ifs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b8/h6TrA; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-38241435528so3274564f8f.2;
+        Mon, 25 Nov 2024 15:09:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732576200; x=1733181000; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=slq9+JcUHnAWV6W5s8I4p+DaqsqfhLtbI53XDx3aDQw=;
-        b=r1+vshw1FvRlM8zcZtmA4asWM4DS4LojZlRS/oufxD5H1eiqzVkyGKWET7ii0+0m5/
-         oxm9o726vvcDtDHS8e5wq7ggmEOzZa3rDjBOreXOGFRCBbg1h3iTfs6VJ9d+jU0z/rs7
-         aVS6zXvKwEKPak6HoqDosNnSzv3iFewWm8Xlit6xbAOv14NJZGIZ69RUc/ZYylv1uJKe
-         FkZvLxsEC428kjNeavg+DcIdl9BGxzck0peVDFvbA0vqitPiNPK1y5PXiS1UH2eodSOy
-         d6yhkC8HbXehoLnwrTzRYQd1ZmiqmtA7aagoOVSIHfFvyrT1u810a+KswmsnVC2SzYkU
-         L1KQ==
+        d=gmail.com; s=20230601; t=1732576163; x=1733180963; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wZOY2+Zq+Uw5TtuUXacSqok50DLyY9YzgfmyZp7nZkg=;
+        b=b8/h6TrAgEcBPc8lon5eZMU22GvEdILFTDZV9oXOa6xNUUtV5RMrOphbJko8V+d2Bk
+         ITejYRbumio+l5FrPtF3/TQz/RCiRAj2IGQYsAgeK2ir/iXw5SQUB2x53myIbuBqugcP
+         nAGGy2Irjxt1OHhRNqzNyCpwBRs6tgdfI+GneBJuPHFcYj6CxD4zQxY5FIajRl2hUL7F
+         0J0kfsqGNgAI5D/9nnY/gqwZ+HYlsuEoUqRvpRD1Ut9V1ALqCQOmf0UGQltP89g9n/fn
+         zDZilaf91l8UYEdYjHDYSxjnfDapxfjYk3X5GYXdVDWwyqFQSrdHgi9h4Nj5wUbGMggl
+         lIEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732576200; x=1733181000;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=slq9+JcUHnAWV6W5s8I4p+DaqsqfhLtbI53XDx3aDQw=;
-        b=ksgjaKyuZFdBzA7R1hYJ5oR0J+/8YgcZquETolQi9uEd604R7ocDGE8R7f7GVkHy2V
-         dERqoIkBGw6n5aM8BoIPBFbaCBddgcayt+y81qLko7kAIFGHqRN5Md1F6mJBFQZz2glr
-         3q0qgIiCFCYtqjf9+Ggi3eCL8wGb41Gnk9BBsctUXuJocw2MNH2yycX7CYCGfWSor3g/
-         Dzu3sDTP2XEroIPJI7hOHfGM/40v5zh936AYNhcZqON9yDMV0yAkKyaqHLBylz8xXs8a
-         v6xNCP0AzkheH1dkgNzwTQJqS89BTuP4+A8XnF6VK3plaDU7+Axm42v3XE2k/fnN8mWn
-         aH8A==
-X-Forwarded-Encrypted: i=1; AJvYcCW8fV//LVOH4RiFvBUHtQUKc9Q9I9U5GvuMm7vL2sN0o9nniq/DeNQ2HNAfgA8MW/Wcq2fSUXZksOjeMBM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz67pSY74AMsO9KqH9onmmD/Ks0wZ3ejF6ebff7Z8c2UznvlR6r
-	0k+KE8wxegnWtciUrUCBLucLflqnvKrZu5Dp2G+Bxj8bkm0rC4yJ8DuqlnMisRzOdA==
-X-Google-Smtp-Source: AGHT+IFvbThfmjyDGuaAizZoPz0OQyINfR8VSt1dw1TgS4AOGYsYx+QNS2lR2VXDyrw06XvagAQ08WA=
-X-Received: from pjbph5.prod.google.com ([2002:a17:90b:3bc5:b0:2ea:7174:2101])
- (user=xur job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4d06:b0:2ea:8e42:c48
- with SMTP id 98e67ed59e1d1-2eb0e02b0fbmr18297418a91.3.1732576200597; Mon, 25
- Nov 2024 15:10:00 -0800 (PST)
-Date: Mon, 25 Nov 2024 15:09:53 -0800
+        d=1e100.net; s=20230601; t=1732576163; x=1733180963;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wZOY2+Zq+Uw5TtuUXacSqok50DLyY9YzgfmyZp7nZkg=;
+        b=shUagO2baUym7N9cB8MLwF7vSNQEP1p8tmZROw+hY4S367GA6KuMTzWdezzt3hr5Rr
+         YH8reg+o27Aep3wmfUd/EpMhAdz650LIh1ynP3On2C3PT2Or+nMCf7a0ec0/HddiwIay
+         1Xv1N68arUl9Ai5vPJSPt8pfQF4k9Uvs7ikJXlFBF6PY47LxxNr6j5pq+dZWaoSrXjP6
+         rMNRwcrRNFpt74tstKQypq4Kdfl2T+P+oz9gWdmmY75gEfDB0cNJoZnt/IRoolYCsDdT
+         8EGTja07CnaWP/FPDqEXqEtj2cPOMDhfmjdALx3PIb9Gz6wTwuRTlw97TUrCziDLlrua
+         yxWw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+1kVIHxP0sp6e5OGcVrv5b2r2Qdvxo8RBUjMZ/MY11wMlOA0DHX1TJAMTpFDA5EpV0uIWL5dlXA==@vger.kernel.org, AJvYcCXuxETze5cfa1MBwmez//NFN7pQXoyawVkaf4b3tZFJTerBxuTxHdSkBtE6sITmVLSc+6sO04k/Uri31gqP@vger.kernel.org
+X-Gm-Message-State: AOJu0YynO4/9v3r1pOe/Bk+ZEYwze2Bk3QACd+157rPm8b9atrJzevoZ
+	ZrLNtnjfZQDt/kX2OUi2ujHHk6zxBzvBHeu6Q8b/3Kn+OuECv54L
+X-Gm-Gg: ASbGnctpty+DqUwdo2Ni943qUwhd5nyTwKMpEmqJmZfosHARUEtD3jNDFqIo7Rf8uEb
+	C9hH7csdG8pyLBNtdr79tPIoXCq/ceGCdy4CqCqBUhS6XrgCp0eFtZmsin9+RfiC5CNuPdpl/Cn
+	4yxIz2nVZx86xjV5Q/bParw/CN19MMaPXy7t7l0cQwHbO8sdbkGYmcX7lJxB3fUNEmF6BDRdSAs
+	ExORlDJT/NUt/hoK1eotPUhU5SBi7X5vwIbPolVUfKaLfI3daCdE1lgK6o=
+X-Google-Smtp-Source: AGHT+IEAvhRyubWGmJrGoBa6eObFznxLem+K1BoEP7lNbFWgLmd88TKnPzPEGV/NdKFRegw7oxz2EQ==
+X-Received: by 2002:a05:6000:2c8:b0:382:4926:98e0 with SMTP id ffacd0b85a97d-38260be53f0mr12726095f8f.52.1732576163170;
+        Mon, 25 Nov 2024 15:09:23 -0800 (PST)
+Received: from [192.168.42.143] ([85.255.233.86])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fafedbcsm11803444f8f.41.2024.11.25.15.09.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 15:09:22 -0800 (PST)
+Message-ID: <4db729f9-eece-4732-8d6d-405a997ed35c@gmail.com>
+Date: Mon, 25 Nov 2024 23:10:10 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241125230953.3090508-1-xur@google.com>
-Subject: [PATCH] [MIPS] Place __kernel_entry at the beginning of text section
-From: Rong Xu <xur@google.com>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Klara Modin <klarasmodin@gmail.com>, Rong Xu <xur@google.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Chris Packham <chris.packham@alliedtelesis.co.nz>, 
-	"Maciej W. Rozycki" <macro@orcam.me.uk>, linux-mips@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] WARNING in io_pin_pages
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: syzbot <syzbot+2159cbb522b02847c053@syzkaller.appspotmail.com>,
+ axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <67406232.050a0220.3c9d61.018e.GAE@google.com>
+ <ea5487ba-bed6-4a0a-833d-262bc70cfe46@gmail.com>
+Content-Language: en-US
+In-Reply-To: <ea5487ba-bed6-4a0a-833d-262bc70cfe46@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Mark __kernel_entry as ".head.text" and place HEAD_TEXT before
-TEXT_TEXT in the linker script. This ensures that __kernel_entry
-will be placed at the beginning of text section.
+On 11/22/24 15:02, Pavel Begunkov wrote:
+> On 11/22/24 10:51, syzbot wrote:
+>> Hello,
+>>
+>> syzbot found the following issue on:
+>>
+>> HEAD commit:    ae58226b89ac Add linux-next specific files for 20241118
+>> git tree:       linux-next
+>> console+strace: https://syzkaller.appspot.com/x/log.txt?x=14a67378580000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=45719eec4c74e6ba
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=2159cbb522b02847c053
+>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=137beac0580000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=177beac0580000
+>>
+>> Downloadable assets:
+>> disk image: https://storage.googleapis.com/syzbot-assets/fd3d650cd6b6/disk-ae58226b.raw.xz
+>> vmlinux: https://storage.googleapis.com/syzbot-assets/89a0fb674130/vmlinux-ae58226b.xz
+>> kernel image: https://storage.googleapis.com/syzbot-assets/92120e1c6775/bzImage-ae58226b.xz
+>>
+>> The issue was bisected to:
+>>
+>> commit 68685fa20edc5307fc893a06473c19661c236f29
+>> Author: Pavel Begunkov <asml.silence@gmail.com>
+>> Date:   Fri Nov 15 16:54:38 2024 +0000
+>>
+>>      io_uring: fortify io_pin_pages with a warning
+> 
+> Seems I wasn't too paranoid. I'll send a fix
 
-Drop mips from scripts/head-object-list.txt.
+#syz test: https://github.com/isilence/linux.git syz/sanitise-cqsq
 
-Signed-off-by: Rong Xu <xur@google.com>
-Reported-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
- arch/mips/kernel/head.S        | 1 +
- arch/mips/kernel/vmlinux.lds.S | 1 +
- scripts/head-object-list.txt   | 1 -
- 3 files changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/mips/kernel/head.S b/arch/mips/kernel/head.S
-index e90695b2b60e..6d5fc498c6f9 100644
---- a/arch/mips/kernel/head.S
-+++ b/arch/mips/kernel/head.S
-@@ -26,6 +26,7 @@
- 
- #include <kernel-entry-init.h>
- 
-+	__HEAD
- 	/*
- 	 * For the moment disable interrupts, mark the kernel mode and
- 	 * set ST0_KX so that the CPU does not spit fire when using
-diff --git a/arch/mips/kernel/vmlinux.lds.S b/arch/mips/kernel/vmlinux.lds.S
-index d575f945d422..c9c1ba85ac7b 100644
---- a/arch/mips/kernel/vmlinux.lds.S
-+++ b/arch/mips/kernel/vmlinux.lds.S
-@@ -62,6 +62,7 @@ SECTIONS
- 	_text = .;	/* Text and read-only data */
- 	_stext = .;
- 	.text : {
-+		HEAD_TEXT
- 		TEXT_TEXT
- 		SCHED_TEXT
- 		LOCK_TEXT
-diff --git a/scripts/head-object-list.txt b/scripts/head-object-list.txt
-index fd5d00bac447..f12b4a7b8406 100644
---- a/scripts/head-object-list.txt
-+++ b/scripts/head-object-list.txt
-@@ -23,7 +23,6 @@ arch/m68k/coldfire/head.o
- arch/m68k/kernel/head.o
- arch/m68k/kernel/sun3-head.o
- arch/microblaze/kernel/head.o
--arch/mips/kernel/head.o
- arch/nios2/kernel/head.o
- arch/openrisc/kernel/head.o
- arch/parisc/kernel/head.o
-
-base-commit: 3596c721c4348b2a964e43f9296a0c01509ba927
 -- 
-2.47.0.338.g60cca15819-goog
-
+Pavel Begunkov
 
