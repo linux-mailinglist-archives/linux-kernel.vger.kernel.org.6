@@ -1,124 +1,149 @@
-Return-Path: <linux-kernel+bounces-421339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 005869D8AD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:59:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACE439D8ADA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:00:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DA55B2EBC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:59:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D499FB2CF69
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5B11B412B;
-	Mon, 25 Nov 2024 15:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D819B1B412E;
+	Mon, 25 Nov 2024 15:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eOGr/xsC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LVJrgIHv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C3C28689;
-	Mon, 25 Nov 2024 15:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D041AF0B6
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 15:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732550364; cv=none; b=NJK0CcfDkYj9Dyoxedh+AHS0IfbNhEoSz67JHz2SzFqBcEvsONs4ZW2J1Sbsza1kfwEAcMJnB8qQRJexAR24K4hgFFJ1SEDADmdwNdD3qPvSuQjHfZnw4KbzgrM+Y+uJl0tLZepLLR0nLr3XGgdAQt3dJ6bPx7XFfvA0bvjexo8=
+	t=1732550376; cv=none; b=ndEAq2ZIIicJ99AHql/6Nxiu6VG0/wGdwQ85sdcQPoNJCZH/AxiLyJinEb5eQYaErnUw8le0QmwDGsjW6jfDdEzcKRlfdKWKQDz9HGsHh0KcLu/4Hd+V04lIm6L4huohqEMhme4y2nk7LzrAWWbkYEzfgk1aSjH4tlrhDiN9KXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732550364; c=relaxed/simple;
-	bh=zws4g4V3731tgjPITUbaPsVN08n0nwJspuqfdFZJbP0=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=NL6WQAYTmHGAv6TNJrDx7AEYfA48LWAayYXfXoQqESIZCLItsmsJRmdugqMogw33Y7hVR0MXXwtqPAACkPMYsm4WlgQFupYBowExyube0B8UAn8RUH8f4/+HCOVt+pxx0R/loHrc63WEze49GFgyEyjfXVee/JI8UC2efJZ3EeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eOGr/xsC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 038F6C4CECF;
-	Mon, 25 Nov 2024 15:59:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732550364;
-	bh=zws4g4V3731tgjPITUbaPsVN08n0nwJspuqfdFZJbP0=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=eOGr/xsCjdyRqfOimzvQwdr0QJwtpRdujIkakk1oapGFJDH6yI78DrGX3nRvlTiwe
-	 p9TiaRs+Fll22ctBWgGSSxEBBdA2CvNRxMHzOMeMZjHD08fYumT4oDCnx48o5aYYCS
-	 ACMKhOW+X/osnxcKoheaE6oPe4W46S93qWOGD7r5kR3FltHa2lnvYaevkrs4Y1ZqHZ
-	 WokjPbYHmG/9ENwQ1P6pWVlH0/764znkVjuFuH30bH9lvGWm3vBnMjwWZRJF2V8Ahj
-	 w6vqularQatGTsXAlgwOVrX7M54iyD+0ttgTh5VX8gmUPWLV2ULiu/ysX98wC2/73a
-	 RtaJRkf64B45g==
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id F1D211200076;
-	Mon, 25 Nov 2024 10:59:22 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Mon, 25 Nov 2024 10:59:22 -0500
-X-ME-Sender: <xms:2p5EZySfbdE3uJABNvDQ9tCSBEOCJgPBJsZ5y_K6644uh_1SqPGGkQ>
-    <xme:2p5EZ3w2zd1p9dYiU-iBvwsYoCQAECZ-QKrQg1sL--gMpZ992P0pdzY2-ySH2TUm-
-    eG5EOEEepd0IKvP6ZE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeehgdekudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugeskhgvrhhnvghlrd
-    horhhgqeenucggtffrrghtthgvrhhnpeejjeffteetfeetkeeijedugeeuvdfgfeefiedt
-    udeikeeggeefkefhudfhlefhveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihht
-    hidquddvkeehudejtddvgedqvdekjedttddvieegqdgrrhhnugeppehkvghrnhgvlhdroh
-    hrghesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphho
-    uhhtpdhrtghpthhtohephigrnhhghihinhhglhhirghngheshhhurgifvghirdgtohhmpd
-    hrtghpthhtohepjhhirhhishhlrggshieskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    hhgtrgeslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopehstghhnhgvlhhlvgeslh
-    hinhhugidrihgsmhdrtghomhdprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghn
-    khhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepihhlphhordhjrghrvh
-    hinhgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehgrhgvghhkhhes
-    lhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigsehroh
-    gvtghkqdhushdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:2p5EZ_3yA4koQxN7csbRwSud8wTAuCeD9j0SkP9DZFPC0SATlZvtuA>
-    <xmx:2p5EZ-AvHY-fvqkZgP87mlBQhh1yX5CfWayqqg2YYFWs850lQH_iYQ>
-    <xmx:2p5EZ7hmNMfj5SYSgN8lUicGE2POS60eF-OGnWBEpXvfI4aKUZfBWg>
-    <xmx:2p5EZ6qoH6gzs__D99KHPkFDSittrVfCvskO0AqZSDg-ilfpDyHaEg>
-    <xmx:2p5EZ-gdWWIpOmL_-CxUUa3WtRY23m2JNhO1edDHldUckdaAR485QqUj>
-Feedback-ID: i36794607:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id C0CD62220071; Mon, 25 Nov 2024 10:59:22 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1732550376; c=relaxed/simple;
+	bh=bXxhz3W3PqXEJiRAVx8v6FyIkv3y1QoHxIoqaoPZfkw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jdKXPS2bnrALm/Jpu60GspLyDJhMzgAzOQBb0WniQO3aXIvRRz4nrOo7Z9svYLgYAfyTGs0hf85DOuL7sk14a5Y8L4JPH5rAkGnRRR+DSCLe+uSX8blF8JOppVeg0JaiMy1UEFo7VWdECFvwXRGLyKvTaEyddtkeDy4roOPB8Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LVJrgIHv; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732550373;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oX8scFsQuUadSRQ+mI03J3eg8Bz3TleAfCszq7nUkh0=;
+	b=LVJrgIHv+tmVoLqJRuQWt8yNODB8OCxoX48Qi+3JhW12GEmf2p0d6d7b/Hztn16T/PxHQT
+	rzCqDJMAuRGbcpP7Qp5Ddjlvxaif8+BR4LzFvY7x0g94KLNNvmmdbQSbdR5jv3cF/mPmMT
+	BI9rAgakqVHikNTBb0C5RtxOA5IjVDY=
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
+ [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-513-p3C95zwWPWS7x9SvM9ZSgQ-1; Mon, 25 Nov 2024 10:59:32 -0500
+X-MC-Unique: p3C95zwWPWS7x9SvM9ZSgQ-1
+X-Mimecast-MFC-AGG-ID: p3C95zwWPWS7x9SvM9ZSgQ
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-841a3f2aebfso78248439f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 07:59:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732550371; x=1733155171;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oX8scFsQuUadSRQ+mI03J3eg8Bz3TleAfCszq7nUkh0=;
+        b=eXqbF32GT1eV0c+MFJbpmk7ai076YT3eMLXxODb4XGpiM9gmDiGX9yndOq0cdMjk9o
+         vWxW6ZsZHcfJAOaO2UiLv3SQf/BdMxZnqqon7f+spio8XT9jQEdxKxCwI4VMt07otjvu
+         GoC952H5lEfXSBSIyOfNoDh3awRgivlFNRij755Bfup001EFQP//RbaLBYwdXSlcLTCn
+         PYvI1IyJE5NcXOkgY9TZyjMzI2mg/MyLVBzmB68Ft3k3jtkY6gL7lOQRRWC1jMB7NeJ6
+         7ZOhSxF2K1z8jV9Y/SDUpL+EEwxPoLo3mC6VUMpkEwEwM8DAqRAbsDoKUQvbAklTcvVp
+         63aw==
+X-Gm-Message-State: AOJu0YyX4/EITZ/Wbqs7gVOZpOy1EliIOv2ApAq+fOJfPBh+ymX/FgVp
+	oiRS5TVdky3wZOisEYKIAekhTtz/emLnEwTJ+tyTsWOYS7zr0Fsx2vd3LrcJehO6d0NURkp+IzZ
+	Ia1qFW8BKrmFm5WMeHkwpmpCOVfSexyqA6e7jM0daZOXGaNx4/D9eiASmLEzJ9Q==
+X-Gm-Gg: ASbGncu8it/53gie/K1INUnAe0HGCj6On19q6LMo/xmWd/hRg0dSI9D2Jfu34WkIwwm
+	MkLoUO/hdcyhX6MPOgSA+gvF9ww4ILXHQl8jCp1k7mOcfeIvq3TLLGK5pBY2RNZX5wmuh6pao9W
+	kZPSuILT4uQKApNUvoUI/jKrI1iA2NtKa+V4CGNX+LpoaUgVb4xHgMuLO/fEkS/yy2egiSeAI2g
+	eCe+1mPeOErVxVq8sCK/yk7twsDPOsDPwggTAhfN6pEMmFK2VvZUiUYTUzmGphtvfJTRham7iPC
+	wqi4pNTV8rA=
+X-Received: by 2002:a05:6602:2b04:b0:83a:c0ba:73c6 with SMTP id ca18e2360f4ac-83ecdd0bd5emr1232839739f.11.1732550371506;
+        Mon, 25 Nov 2024 07:59:31 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEwkvzDL2G70N7j3gyA0GMId6fwzgZY0oXJrjHNI1Hm8/9p5wXTfiegtUAepZaCHcyr87RWgw==
+X-Received: by 2002:a05:6602:2b04:b0:83a:c0ba:73c6 with SMTP id ca18e2360f4ac-83ecdd0bd5emr1232837639f.11.1732550371237;
+        Mon, 25 Nov 2024 07:59:31 -0800 (PST)
+Received: from x1n (pool-99-254-114-190.cpe.net.cable.rogers.com. [99.254.114.190])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83ecd419260sm183641639f.48.2024.11.25.07.59.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2024 07:59:30 -0800 (PST)
+Date: Mon, 25 Nov 2024 10:59:28 -0500
+From: Peter Xu <peterx@redhat.com>
+To: stsp <stsp2@yandex.ru>
+Cc: Linux kernel <linux-kernel@vger.kernel.org>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>
+Subject: Re: userfaultfd: two-step UFFDIO_API always gives -EINVAL
+Message-ID: <Z0Se4BuVfqwjeCWV@x1n>
+References: <2d35e5f7-2edc-4ef0-b71b-82186c0627b0@yandex.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 25 Nov 2024 16:59:00 +0100
-From: "Arnd Bergmann" <arnd@kernel.org>
-To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
-Cc: "Guenter Roeck" <linux@roeck-us.net>,
- "Niklas Schnelle" <schnelle@linux.ibm.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Jiri Slaby" <jirislaby@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- linux-serial@vger.kernel.org, "Heiko Carstens" <hca@linux.ibm.com>,
- linux-kernel@vger.kernel.org, "Yang Yingliang" <yangyingliang@huawei.com>
-Message-Id: <30a38025-afae-4bdf-a468-21ae2cd5a7b3@app.fastmail.com>
-In-Reply-To: <be43108e-4135-4927-ba58-141836fde6af@app.fastmail.com>
-References: <20240405152924.252598-1-schnelle@linux.ibm.com>
- <20240405152924.252598-2-schnelle@linux.ibm.com>
- <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net>
- <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
- <472eb22a-dcb1-4fbb-bf2c-a4173706bc7a@app.fastmail.com>
- <27685942-fb62-44c5-86ed-98beb547ffed@roeck-us.net>
- <744920ba-551c-466b-ac5c-2607b81261a0@app.fastmail.com>
- <Z0QtZky8Sr7qUW7v@smile.fi.intel.com>
- <00f5e842-3ee9-4d83-8836-0ff4f703fa3c@app.fastmail.com>
- <Z0RSZ-YD_BozMs1n@smile.fi.intel.com>
- <be43108e-4135-4927-ba58-141836fde6af@app.fastmail.com>
-Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2d35e5f7-2edc-4ef0-b71b-82186c0627b0@yandex.ru>
 
-On Mon, Nov 25, 2024, at 12:06, Arnd Bergmann wrote:
-> +unsigned int nr_uarts = ARRAY_SIZE(old_serial_port);;
-> +
+On Sat, Nov 23, 2024 at 06:13:01PM +0300, stsp wrote:
+> Hello.
+> 
+> I tried to use userfaultfd and got
+> that strange result: when I first do
+> UFFDIO_API ioctl with features = 0,
+> it succeeds. I check the needed
+> features, and they are all in place.
+> But on the second step, where I
+> request the needed features,
+> UFFDIO_API gives -EINVAL no matter
+> what features I requested (or even
+> set features to 0 again).
+> 
+> A quick look into the kernel code
+> suggests that the problem is that
+> uffd_ctx_features() doesn't check
+> user_features for being 0, and just
+> sets UFFD_FEATURE_INITIALIZED
+> with no features at all. After that,
+> userfaultfd_api() should always
+> fail with -EINVAL when doing this:
+> 
+> ctx_features = uffd_ctx_features(features);
+> ret = -EINVAL;
+> if (cmpxchg(&ctx->features, 0, ctx_features) != 0)
+>         goto err_out;
+> 
+> But I haven't checked my finding
+> by rebuilding the kernel.
+> So is this broken or am I missing
+> something?
 
-Unfortunately, this breaks on non-x86 because of the check
-added in 59cfc45f17d6 ("serial: 8250: Do nothing if nr_uarts=0").
+I agree it's slightly confusing but it's intended.  It's like that since
+the start, so I think we should still keep the behavior.
 
-I still think it's the right idea, but need to unwind further
-to make this possible, and find a different fix for the bug
-from that commit.
+The userapp needs to create one extra userfaultfd to detect supported
+features in the kernel.  To use it after a probe request, you'll need to
+close() the fd, redo the userfaultfd syscall to create another fd.
 
-      Arnd
+The kernel cannot assume features==0 to be a pure query, because not all
+userfaultfd features requires setting of a feature bit. E.g., the default
+anonymous missing traps doesn't require any feature bit to set.  So the
+initial UFFDIO_API(features=0) is the enablement of such feature.
+
+Thanks,
+
+-- 
+Peter Xu
+
 
