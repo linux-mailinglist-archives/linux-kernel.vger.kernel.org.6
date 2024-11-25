@@ -1,71 +1,66 @@
-Return-Path: <linux-kernel+bounces-420843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB5119D8396
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:41:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32D019D8498
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:36:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BB3216202E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:41:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20284B3723C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40DA194ACA;
-	Mon, 25 Nov 2024 10:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07EE7192D63;
+	Mon, 25 Nov 2024 10:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="renzaNjY"
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="E5uuCsWL"
 Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABDD193064;
-	Mon, 25 Nov 2024 10:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F704194C6E;
+	Mon, 25 Nov 2024 10:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732531235; cv=none; b=b6Dlejcz4+ob6Bd7VijiV4UqjR3JWR81dvN+oTlQ4o4mWtA8Ik5hRYAmX+keFmutjLGUZHytYtwtMkf/zOkerkc0ce1jF6ohmUJ5FQSvuzfyOGg3uONBJCb4NZYi4K/baQpQ8ZCUIaBWCQgqbsAC/hV9rzVcsrXVq0p1Ygi9TP4=
+	t=1732531238; cv=none; b=CHOUp58Z6SL6sRWBkBID6H8Rp//x2DBVWD8Ef2wQ3y7WL0h/C7UUcQgXRqhtYDwiX6K+wHt2T1XZSPAzrDGD2bAqTtiZW6+2kvBp71xUkkHS8gKBt59AQQeGcLxBfIZnuLDTXKLI0PkTo+7NVelloDJt7ROP+k3iq4CAc6TOmRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732531235; c=relaxed/simple;
-	bh=VhnL2wmSb+pfgIHkp6bvcyX/tRAnbRI3P76lLhLZZrc=;
+	s=arc-20240116; t=1732531238; c=relaxed/simple;
+	bh=cO1yPL6/mL7nkUA25VaU+cKW9bIPnwazWGqCpFKgihI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JiNoiifgIoHbhXMbwzVc84NbL/ueGpyiXMo0OIroByecsPjdnrm5vd5jcxXe8dyjPvMvVEZ2VbOC88jDu9NgKO1OwmJFlSffhViatZdzg0GPXA0XeGKjP4NPyiUeBL36UoyHLfxV1JTBc2DU3bBJ9pd+li0DJOi6wUkFqa6RfM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=renzaNjY; arc=none smtp.client-ip=168.119.48.163
+	 MIME-Version:Content-Type; b=ZjuYjhxY4XmeTo8jcP2AgS5YuxNxHOWJ+Dug0xqI3Urd1wxQY5d8dWh+azmJG5M7/uobr0H2wHTY4syDGArp9pQyqTP7oYxbuaob93cgx5oKDza3fFHG66v3lGotOX3BbNt5HZ48R48kKSqP6VhCt1TFk5KGx4xSOQCGRlaoBwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=E5uuCsWL; arc=none smtp.client-ip=168.119.48.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
 From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1732531230;
+	s=2023072701; t=1732531232;
 	h=from:from:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BnJPwZBINKy4LES6pr7BNEYT4c7M8sYvf1DiqcmfvZQ=;
-	b=renzaNjYJ9YJyG9gUtmjWqJwQ0VY7TQPB8AIE5W2eHdeqh2KtO/X4RlDCy1my/SVpQmQbZ
-	wjNEjBd+3Nx5SYzGSi/4OwNEhlCfesxm4VNww0jT0OEYCfKsxUBHnyqFZjs4qmm0yXdPXf
-	JQVxhmVSoR7oSv45zcTLYW4BjQnZhX+TQ9oYJfvSmhOwIXh5wbGCNS9yLVPQ//3K2TAHgl
-	Eb4e91BrZZEw09F7m/z/76uD9fpDEgjnOst+2rcsjNChNW2KdjtqLgROIapy8OMfgZI/BW
-	MreOsqodNcQhtkdGSCQM3CtyEM177zZSZrrnzTyeG6viMRNF26psOPQLgVZyPg==
+	bh=7wVOSUhPMHDDdyWhZb1LxKVvZ0vAeRZe7OwxlJZ3FIg=;
+	b=E5uuCsWLjd+f5UuRf0P4XipqTBXRFNmMzjfboQYwQD7a/vLFsAnUw1bZ56W3QjCp1wdjVM
+	OQqtKYGM/yAjFf3k+3k1jtPdsniFUNb11UryVGQwNUTop3xUf7ZVrtrQIjGWtilvfkdwKr
+	f5CG7nKKLyLEXJFWK+BEEtF1j1ADNYhVn9diBKye0NPtrUUqKFn0jTJ5XhnaMFybt60XFV
+	uhN5+nVRzW98zFouj+AP1ej6JEOdLWJAVW5VkO4tgX3YPw80iAP6cfcRI6i4Iann0ici2p
+	95U/wJpEbE+4mWtxePvaBHXM6KM6ysgwRRr0AE5h1TyAgH1Xmd3ufqAcedwbtQ==
 To: linux-security-module@vger.kernel.org
 Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Richard Weinberger <richard@nod.at>,
-	Zhihao Cheng <chengzhihao1@huawei.com>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
 	Serge Hallyn <serge@hallyn.com>,
 	Julia Lawall <Julia.Lawall@inria.fr>,
 	Nicolas Palix <nicolas.palix@imag.fr>,
 	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-mtd@lists.infradead.org,
+	netdev@vger.kernel.org,
 	cocci@inria.fr
-Subject: [PATCH 06/11] ubifs: reorder capability check last
-Date: Mon, 25 Nov 2024 11:39:58 +0100
-Message-ID: <20241125104011.36552-5-cgoettsche@seltendoof.de>
+Subject: [PATCH 07/11] ipv4: reorder capability check last
+Date: Mon, 25 Nov 2024 11:39:59 +0100
+Message-ID: <20241125104011.36552-6-cgoettsche@seltendoof.de>
 In-Reply-To: <20241125104011.36552-1-cgoettsche@seltendoof.de>
 References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
 Reply-To: cgzones@googlemail.com
@@ -97,39 +92,24 @@ It can lead to three undesired cases:
 
 Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 ---
- drivers/gpu/drm/panthor/panthor_drv.c | 2 +-
- fs/ubifs/budget.c                     | 5 +++--
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ net/ipv4/tcp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-index ac7e53f6e3f0..2de0c3627fbf 100644
---- a/drivers/gpu/drm/panthor/panthor_drv.c
-+++ b/drivers/gpu/drm/panthor/panthor_drv.c
-@@ -791,7 +791,7 @@ static int group_priority_permit(struct drm_file *file,
- 		return 0;
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index 0d704bda6c41..bd3d7a3d6655 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -3406,8 +3406,8 @@ EXPORT_SYMBOL(tcp_disconnect);
  
- 	/* Higher priorities require CAP_SYS_NICE or DRM_MASTER */
--	if (capable(CAP_SYS_NICE) || drm_is_current_master(file))
-+	if (drm_is_current_master(file) || capable(CAP_SYS_NICE))
- 		return 0;
- 
- 	return -EACCES;
-diff --git a/fs/ubifs/budget.c b/fs/ubifs/budget.c
-index d76eb7b39f56..6137aeadec3f 100644
---- a/fs/ubifs/budget.c
-+++ b/fs/ubifs/budget.c
-@@ -256,8 +256,9 @@ long long ubifs_calc_available(const struct ubifs_info *c, int min_idx_lebs)
-  */
- static int can_use_rp(struct ubifs_info *c)
+ static inline bool tcp_can_repair_sock(const struct sock *sk)
  {
--	if (uid_eq(current_fsuid(), c->rp_uid) || capable(CAP_SYS_RESOURCE) ||
--	    (!gid_eq(c->rp_gid, GLOBAL_ROOT_GID) && in_group_p(c->rp_gid)))
-+	if (uid_eq(current_fsuid(), c->rp_uid) ||
-+	    (!gid_eq(c->rp_gid, GLOBAL_ROOT_GID) && in_group_p(c->rp_gid)) ||
-+	    capable(CAP_SYS_RESOURCE))
- 		return 1;
- 	return 0;
+-	return sockopt_ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN) &&
+-		(sk->sk_state != TCP_LISTEN);
++	return (sk->sk_state != TCP_LISTEN) &&
++	       sockopt_ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN);
  }
+ 
+ static int tcp_repair_set_window(struct tcp_sock *tp, sockptr_t optbuf, int len)
 -- 
 2.45.2
 
