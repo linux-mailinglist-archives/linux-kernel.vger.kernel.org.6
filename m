@@ -1,283 +1,181 @@
-Return-Path: <linux-kernel+bounces-421004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A3F9D85EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:07:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E02D79D8580
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:39:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7365B169B14
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:39:17 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162811A0AF0;
+	Mon, 25 Nov 2024 12:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cN6IQY4b"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4E96B2DDE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:37:30 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FC519AD70;
-	Mon, 25 Nov 2024 12:37:21 +0000 (UTC)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB2A199EB7;
-	Mon, 25 Nov 2024 12:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A73651552E3
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 12:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732538241; cv=none; b=YOwSeUm4MdZrYp3GCisODbZAaYyjzVLCa7/hFY48FA9P8lYBw8JclyEF3Bgdps9k0JSWxI7mb3j1ht9au7TmlZBhNkO5uyEl35lB6Rljn4dMtuoTYSco17Sq6T5AjL2Ya4dZlDq9WU4S4RbDzsqsdPue/UB+uGwRLtuJuBNmyYc=
+	t=1732538353; cv=none; b=YwKBsM7N8OobH5lRojvhzegCXFY8go9ahsRXtAA50xgQpef37iXunguG816G6419S/Sf3E3DYMgsr/pLYWZ84ZEuWl4cqynRi8VcpKXNW/TNujB6kHmXPOq9pj6IbE/puvCBLyEJ3JTL9BFItehngRdVOagpK6auQ2IhPJPF/8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732538241; c=relaxed/simple;
-	bh=FXd94cOQtbf3ElQGJhsLavBZtZ3IdYaJXAS/35jCjWE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MmrqE6bypmElXuRyaxtEbPqYQlcvv4n6qvARZXzWTwrhXHYNHCd4o222WBy59mruW+JkhmGcgObITJIF6+5VCVYqg6Gi6b1gdcVwNffzQaDKMSXFWycgLEFbeysNk88RP1SxHucaNfRknUTOEUMYGcMIG/ed5RULn6+vNvCPhh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e388e1fd582so4326047276.2;
-        Mon, 25 Nov 2024 04:37:18 -0800 (PST)
+	s=arc-20240116; t=1732538353; c=relaxed/simple;
+	bh=k4iMJ84f3HreES954i68XDfttraLGB3fFuvF5aaBW5c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=It+anXNEPeMvA0BLL7vB2Cj0Thh33DIo20I5SbCTtwILOyttMb0v9ndx1LFdgUGNQ+dUso9ghHxrIKdauMKtoitc8yvZNvEhlYbkSIxJc12h+IuOCFnQ3r6/UwF2scMQCbttBms31JahzSN1o3A9X85LzEsNyUIord1DhFVcaSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cN6IQY4b; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732538350;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Yef20OpwpU9zOgOimbXnx430m9fj8MKsFysmHZ/NyCY=;
+	b=cN6IQY4b1QiZGuOS8++91pF0rH+GNmZWpyLCGt1jlQDainXNS95WAW38Am77dSMm2FfE7+
+	hZbK8GsJj/t5lnph+hqT2JFdPdDrbLda989wRoFSDgEcSVGjSAP4FcDPZl1AZEBdqUCnqB
+	DZvhaMg3WE5+zLkCMPaqdqV0lXMZqm8=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-202-08jNsFYhNUGBgAnjQNVtqw-1; Mon, 25 Nov 2024 07:39:09 -0500
+X-MC-Unique: 08jNsFYhNUGBgAnjQNVtqw-1
+X-Mimecast-MFC-AGG-ID: 08jNsFYhNUGBgAnjQNVtqw
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-53de5d603dcso177925e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 04:39:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732538237; x=1733143037;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7jDTUnR+iAlcoHbj6WgacjmHkCIwMIUy0wV0qU2IATk=;
-        b=m1paU3bnk5cGbcD80zQE2dvWayAYrpgf3UeFL0reBm7aAAC3itXdGP5p26QwQ4HN+F
-         aI+TIn8inFNd8kQcsNuVuybNyr4tTaGTqdf0g/Pd+SZcGLf7gejiKoEhKkS/AbG8Fdgh
-         KDF/8aKAZHm4oF2gBlctF7FxyJmsIml4XS4qFnz7Ndvb+L79GnIMWps2gjy8hezofe8q
-         0QqKfXgjGrQ+wrsLgMZNEkIVhQDNZxuiuVYXBvhIoXX80UgX3FQYaL+uGwN578byOQXd
-         mjlnSrdDvswrJiiyZgmrIe56lMa0bG2wNWLWv1BkQknOi79AFaSW/GgBRB6qMDT0E7p3
-         IgLA==
-X-Forwarded-Encrypted: i=1; AJvYcCXLsMqZCYF8RC+enE3l6KZNUXg1XwIHRlnNOl4eJDuSeW2dSGFSwRGkPkVPOUFyUCJMoJm/ZUBCZO2z47A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHQaKsILK5AbH2DpK/y3mBp4hoC1ZxI/cQY4lJ/HmQvesCiRB/
-	CTfbkn9JaN0eBJiNjfm2Uu9NHmDN47AlwsYb3x1P7aGJbt4t2QzZKplr3NFv
-X-Gm-Gg: ASbGnctMlMLkhoP7LGXvQRlQ8UKJMyUCHADAroJqSl5KmQ8VzhMmCQT8g7j41GRPLcu
-	KcZuwN29wj+hMpGqfr9JDZOYce8EPqgpal5HuTywWzpnxpefpjmOmwdA2G35fLzLOsV8Tb60S1m
-	ImjNkHW81DAuZnWEW2dfcKGl/Tlq4DjXshMgqRUVyFm99Vtl6W405792G4CKMT0LfVLVEEl5wdl
-	HgwBrX8SyB1/jp643rI3U8/iHWnWQCPFm//CHJDNgPJTnIMmled68zaxkF/AO9nkx2bjoz1F1hU
-	IbXypNACl2Ya+V3R
-X-Google-Smtp-Source: AGHT+IEGObkd39Ew+bSVzl7V8lMlbdsW81Lzzy3i/pprxtOI2SCLIwMFWhjFMtncYVi05jH8XN/dbg==
-X-Received: by 2002:a05:6902:18d0:b0:e33:1492:cd63 with SMTP id 3f1490d57ef6-e38f8ad733fmr9241288276.8.1732538237002;
-        Mon, 25 Nov 2024 04:37:17 -0800 (PST)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e38f604b594sm2478166276.18.2024.11.25.04.37.16
+        d=1e100.net; s=20230601; t=1732538348; x=1733143148;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yef20OpwpU9zOgOimbXnx430m9fj8MKsFysmHZ/NyCY=;
+        b=Y79VJMiryT1Wyp/hUEN9dFMiv5hKMkXuPmqAe/YSgY1zpqKMFATiYCrtRGsnPvQ33x
+         0PW6RMRa1sYcAGcW2nL5QUJTwwkXo2Mt4uV3/agDb4P26yB+QTRVH0Y73QLi4yI/po8p
+         UzFsMb4k8I2IULby+XvAgm6IzWfKeku1WHbxA8Vzm0y3SiiMH8xsFWlahrX2RSJJXJHt
+         ZLZo4KwHAuIf5kA4X8WXYco7QfBzG5QVzKHb3l3qtzXXPNLPIQO6/EukBqGThvQ1KqNA
+         hbZV0eLOiSBM3dPTax9cMIWiDSAMjRSWRoNiG0RfE2tdPVNXrUoo1oRv4cqYG1cEC2eY
+         /pJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvvTF8ZXaBSZE5yS6ducic2pYQtm55EbiHzcuKyr+j7vOMFI+hvFMIucY+ZIOZ84zME+pIpT/r+8i76h4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTzffA0g7lwmdtP6utrl8R4Zl3JW9jNhNnr6s2+EtSpXHZy6Ae
+	0pWH6SWIkioS3Z4tvHZ1eZWie+rmLcktNeZMPvLq7woHwgGoJSXLkACAKlO5KefDhwy+wfmTZI2
+	7x797MsxNS15Tj30vIp4/dd6trUFxq/GT9PiYWC5BLIsQF3/BS0bq1ZwoU0dZ1w==
+X-Gm-Gg: ASbGncvT4PxHDasornv92lRVr/nLqz78GERwjFG6BZGKHy6X3ZpJr1/IWcUkri+V4y2
+	O2bJfGcmZs0L+iTuUGHglWRy9hICDFw3TT/rdDMcnU3tI1CAH5ByfuJIaWCwYpmM4UjEwscDcCp
+	Kkefllq5TkcRD8oPKnJ4330xzspOyIGXLcJk2VYkqXjxuRHbOFmwxcwyhVdNXPwlf0jQGUPOtWY
+	l7zI2nH3m+y23k2OKdpQjD7czFtBdfyLxZbGloddASlSS42NgfTDn7YXqO0ngkwT0McGTl+ufac
+	jNxuL8h2Rsr3sP0395gIHwnkmRTkV4pPgk/XP9YVit3IbNaGHEVCpn7mLfP6yPIzWNR4Tr2Km0r
+	ZeSPQCWC2VZHZIb5SxwEa7gxd
+X-Received: by 2002:a05:6512:130b:b0:53b:4a6c:1849 with SMTP id 2adb3069b0e04-53dd39a4d14mr7171034e87.35.1732538347722;
+        Mon, 25 Nov 2024 04:39:07 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF750kOuffMEJVJ/0tYr09qlriuyREKbt1Z4XlV2p/iS4b/RkjjaPU0DnFiogipgHhxnpuvMw==
+X-Received: by 2002:a05:6512:130b:b0:53b:4a6c:1849 with SMTP id 2adb3069b0e04-53dd39a4d14mr7171018e87.35.1732538347280;
+        Mon, 25 Nov 2024 04:39:07 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa545385bbcsm211715166b.185.2024.11.25.04.39.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 04:37:16 -0800 (PST)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6eee6874ef8so26515727b3.2;
-        Mon, 25 Nov 2024 04:37:16 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW22+6eM19f508hMQ4BlWmdzJ7cnsZJuIPoZEdpphhgzJ7ds15Vjr/Vuqg3chEU4xjSdlGIs8aHplbalEw=@vger.kernel.org
-X-Received: by 2002:a05:690c:7084:b0:6ee:3f37:919c with SMTP id
- 00721157ae682-6eee08d3f6dmr113218247b3.14.1732538236154; Mon, 25 Nov 2024
- 04:37:16 -0800 (PST)
+        Mon, 25 Nov 2024 04:39:06 -0800 (PST)
+Message-ID: <123bfac4-389a-400a-8104-afc27124b75d@redhat.com>
+Date: Mon, 25 Nov 2024 13:39:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022151838.26f9925fb959.Ia80b55e934bbfc45ce0df42a3233d34b35508046@changeid>
-In-Reply-To: <20241022151838.26f9925fb959.Ia80b55e934bbfc45ce0df42a3233d34b35508046@changeid>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 25 Nov 2024 13:37:04 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWu_9-L2Te101w8hU7H_2yobJFPXSwwUmGHSJfaPWDKiQ@mail.gmail.com>
-Message-ID: <CAMuHMdWu_9-L2Te101w8hU7H_2yobJFPXSwwUmGHSJfaPWDKiQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] debugfs: add small file operations for most files
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Johannes Berg <johannes.berg@intel.com>, 
-	linux-m68k <linux-m68k@lists.linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a
+ subdevice
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, Yunke Cao <yunkec@chromium.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>
+References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
+ <5b5f3bb7-7933-4861-be81-30345e333395@redhat.com>
+ <CANiDSCta62P5+1aR9Ks8c6sd3_grCV3C+Le=UjKGkiohyf0R2g@mail.gmail.com>
+ <20241110151426.GD6002@pendragon.ideasonboard.com>
+ <CANiDSCsTNuQRXwMqA_YmX4MJ-A8eTi_rEpkd+Qv=Qwbbrj18Yg@mail.gmail.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <CANiDSCsTNuQRXwMqA_YmX4MJ-A8eTi_rEpkd+Qv=Qwbbrj18Yg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Johannes,
+Hi Ricardo,
 
-On Tue, Oct 22, 2024 at 3:19=E2=80=AFPM Johannes Berg <johannes@sipsolution=
-s.net> wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
->
-> As struct file_operations is really big, but (most) debugfs
-> files only use simple_open, read, write and perhaps seek, and
-> don't need anything else, this wastes a lot of space for NULL
-> pointers.
->
-> Add a struct debugfs_short_fops and some bookkeeping code in
-> debugfs so that users can use that with debugfs_create_file()
-> using _Generic to figure out which function to use.
->
-> Converting mac80211 to use it where possible saves quite a
-> bit of space:
->
-> 1010127  205064    1220 1216411  128f9b net/mac80211/mac80211.ko (before)
->  981199  205064    1220 1187483  121e9b net/mac80211/mac80211.ko (after)
-> -------
->  -28928 =3D ~28KiB
->
-> With a marginal space cost in debugfs:
->
->    8701     550      16    9267    2433 fs/debugfs/inode.o (before)
->   25233     325      32   25590    63f6 fs/debugfs/file.o  (before)
->    8914     558      16    9488    2510 fs/debugfs/inode.o (after)
->   25380     325      32   25737    6489 fs/debugfs/file.o  (after)
-> ---------------
->    +360      +8
->
-> (All on x86-64)
->
-> A simple spatch suggests there are more than 300 instances,
-> not even counting the ones hidden in macros like in mac80211,
-> that could be trivially converted, for additional savings of
-> about 240 bytes for each.
->
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+On 10-Nov-24 5:07 PM, Ricardo Ribalda wrote:
+> On Sun, 10 Nov 2024 at 16:14, Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
 
-Thanks for your patch, which is now commit 8dc6d81c6b2acc43 ("debugfs:
-add small file operations for most files") upstream.
+<snip>
 
-> --- a/fs/debugfs/inode.c
-> +++ b/fs/debugfs/inode.c
+>>>> Here is what I have in mind for this:
+>>>>
+>>>> 1. Assume that the results of trying a specific fmt do not change over time.
+>>>>
+>>>> 2. Only allow userspace to request fmts which match one of the enum-fmts ->
+>>>>    enum-frame-sizes -> enum-frame-rates tripplet results
+>>>>    (constrain what userspace requests to these)
+>>>>
+>>>> 3. Run the equivalent of tryfmt on all possible combinations (so the usaul
+>>>>    3 levels nested loop for this) on probe() and cache the results
+>>>>
+>>>> 4. Make try_fmt / set_fmt not poweron the device but instead constrain
+>>>>    the requested fmt to one from our cached fmts
+>>>>
+>>>> 5. On stream-on do the actual power-on + set-fmt + verify that we get
+>>>>    what we expect based on the cache, and otherwise return -EIO.
+>>>
+>>> Can we start powering up the device during try/set fmt and then
+>>> implement the format caching as an improvement?
+>>
+>> This sounds worth trying. We'll need to test it on a wide range of
+>> devices though, both internal and external.
+> 
+> For what is worth, we have been running something similar to
+> https://lore.kernel.org/linux-media/20220920-resend-powersave-v5-2-692e6df6c1e2@chromium.org/
+> in ChromeOS and it has worked fine....
+> 
+> But I am pretty sure that it has issues with async controls :S
 
-> -struct dentry *debugfs_create_file(const char *name, umode_t mode,
-> -                                  struct dentry *parent, void *data,
-> -                                  const struct file_operations *fops)
-> +struct dentry *debugfs_create_file_full(const char *name, umode_t mode,
-> +                                       struct dentry *parent, void *data=
-,
-> +                                       const struct file_operations *fop=
-s)
->  {
-> +       if (WARN_ON((unsigned long)fops &
-> +                   (DEBUGFS_FSDATA_IS_SHORT_FOPS_BIT |
-> +                    DEBUGFS_FSDATA_IS_REAL_FOPS_BIT)))
-> +               return ERR_PTR(-EINVAL);
->
+Interesting that is actually a lot more aggressive (as in doing a
+usb_autopm_put_interface() often) then what I expected when you said:
 
-This warning is triggered during boot on m68k:
+"Can we start powering up the device during try/set fmt"
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 1 at fs/debugfs/inode.c:457
-debugfs_create_file_full+0x36/0x70
-Modules linked in:
-CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted
-6.12.0-atari-11072-gdeea1aa0a8f2 #1787
-Stack from 0102fe78:
-        0102fe78 0051acfd 0051acfd 00000000 00200188 005321b8 0042af36 0051=
-acfd
-        0002459c 00000000 005321b8 000001c9 00000009 00000000 005aff3c 0060=
-f4d8
-        00024644 005321b8 000001c9 00200188 00000009 00000000 00000000 0000=
-00b8
-        00000008 01020c00 00000000 0000209c 005f13e0 00000000 00000000 0102=
-ff88
-        00200188 005321b8 000001c9 00000009 00000000 005f13fa 005139e6 0000=
-0124
-        00000000 00000000 004370c2 000020f6 000000b8 00000008 01020c00 0003=
-b03e
-Call Trace: [<00200188>] debugfs_create_file_full+0x36/0x70
- [<0042af36>] dump_stack+0xc/0x10
- [<0002459c>] __warn+0x82/0xbc
- [<00024644>] warn_slowpath_fmt+0x6e/0xc4
- [<00200188>] debugfs_create_file_full+0x36/0x70
- [<0000209c>] do_one_initcall+0x0/0x198
- [<005f13e0>] tk_debug_sleep_time_init+0x0/0x22
- [<00200188>] debugfs_create_file_full+0x36/0x70
- [<005f13fa>] tk_debug_sleep_time_init+0x1a/0x22
- [<000020f6>] do_one_initcall+0x5a/0x198
- [<0003b03e>] parse_args+0x0/0x202
- [<0000209c>] do_one_initcall+0x0/0x198
- [<0041c948>] strcpy+0x0/0x1c
- [<00070007>] alarmtimer_suspend+0x6f/0x1fc
- [<005e9628>] kernel_init_freeable+0x140/0x198
- [<0041c948>] strcpy+0x0/0x1c
- [<005e9676>] kernel_init_freeable+0x18e/0x198
- [<005f13e0>] tk_debug_sleep_time_init+0x0/0x22
- [<0042b2d2>] kernel_init+0x0/0xf2
- [<0042b2e6>] kernel_init+0x14/0xf2
- [<0042b2d2>] kernel_init+0x0/0xf2
- [<00002524>] ret_from_kernel_thread+0xc/0x14
+As I mentioned in my other emails what I think would worth nicely
+is delay the initial usb_autopm_get_interface() till we need it
+and then just leave the camera on till /dev/video# gets closed.
 
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 1 at fs/debugfs/inode.c:457
-debugfs_create_file_full+0x36/0x70
-Modules linked in:
-CPU: 0 UID: 0 PID: 1 Comm: swapper Tainted: G        W
-6.12.0-atari-11072-gdeea1aa0a8f2 #1787
-Tainted: [W]=3DWARN
-Stack from 0102fe70:
-        0102fe70 0051acfd 0051acfd 00000000 00200188 005321b8 0042af36 0051=
-acfd
-        0002459c 00000000 005321b8 000001c9 00000009 00000000 005aff3c 0060=
-f53c
-        00024644 005321b8 000001c9 00200188 00000009 00000000 00000000 0000=
-00b8
-        00000008 01020c00 00000000 0000209c 002a44f0 0029c032 005b8a1a 0102=
-ff88
-        00200188 005321b8 000001c9 00000009 00000000 002a450e 00539121 0000=
-0124
-        00000000 00000000 00462a86 002a44f0 0060f53c 000020f6 000000b8 0000=
-0008
-Call Trace: [<00200188>] debugfs_create_file_full+0x36/0x70
- [<0042af36>] dump_stack+0xc/0x10
- [<0002459c>] __warn+0x82/0xbc
- [<00024644>] warn_slowpath_fmt+0x6e/0xc4
- [<00200188>] debugfs_create_file_full+0x36/0x70
- [<0000209c>] do_one_initcall+0x0/0x198
- [<002a44f0>] deferred_probe_initcall+0x0/0x8a
- [<0029c032>] _mix_pool_bytes+0x14/0x1a
- [<00200188>] debugfs_create_file_full+0x36/0x70
- [<002a450e>] deferred_probe_initcall+0x1e/0x8a
- [<002a44f0>] deferred_probe_initcall+0x0/0x8a
- [<000020f6>] do_one_initcall+0x5a/0x198
- [<0003b03e>] parse_args+0x0/0x202
- [<0000209c>] do_one_initcall+0x0/0x198
- [<0041c948>] strcpy+0x0/0x1c
- [<00070007>] alarmtimer_suspend+0x6f/0x1fc
- [<005e9628>] kernel_init_freeable+0x140/0x198
- [<0041c948>] strcpy+0x0/0x1c
- [<005e9676>] kernel_init_freeable+0x18e/0x198
- [<002a44f0>] deferred_probe_initcall+0x0/0x8a
- [<0042b2d2>] kernel_init+0x0/0xf2
- [<0042b2e6>] kernel_init+0x14/0xf2
- [<0042b2d2>] kernel_init+0x0/0xf2
- [<00002524>] ret_from_kernel_thread+0xc/0x14
+That idea is based on dividing apps in 2 groups:
 
----[ end trace 0000000000000000 ]---
+1. Apps just temporarily opening /dev/video# nodes for discovery,
+where we ideally would not power-up the camera.
 
-> --- a/fs/debugfs/internal.h
-> +++ b/fs/debugfs/internal.h
-> @@ -18,6 +18,7 @@ extern const struct file_operations debugfs_full_proxy_=
-file_operations;
->
->  struct debugfs_fsdata {
->         const struct file_operations *real_fops;
-> +       const struct debugfs_short_fops *short_fops;
->         union {
->                 /* automount_fn is used when real_fops is NULL */
->                 debugfs_automount_t automount;
-> @@ -39,6 +40,11 @@ struct debugfs_fsdata {
->   * pointer gets its lowest bit set.
->   */
->  #define DEBUGFS_FSDATA_IS_REAL_FOPS_BIT BIT(0)
-> +/*
-> + * A dentry's ->d_fsdata, when pointing to real fops, is with
-> + * short fops instead of full fops.
-> + */
-> +#define DEBUGFS_FSDATA_IS_SHORT_FOPS_BIT BIT(1)
+2. Apps (could even be the same app) opening /dev/video# for
+a longer time because it actually want to use the camera
+at the moment of opening and which close the /dev/video# node
+when done with the camera.
 
-As the minimum alignment is 2 on m68k, you cannot use bit 1 in pointers
-for your own private use.  See also the comment at
-https://elixir.bootlin.com/linux/v6.12.1/source/include/linux/maple_tree.h#=
-L44
+Your code seems to also covers a 3th group of apps:
 
-Reverting commit 8dc6d81c6b2acc43 fixes the issue, and reduces the
-atari_defconfig kernel size by 447 bytes, according to bloat-o-meter.
+3. Apps opening /dev/video# for a long time, while not using
+it all the time.
 
-Gr{oetje,eeting}s,
+Although it would be nice to also cover those, IMHO those are
+not well behaved apps and I'm not sure if we need to cover those.
 
-                        Geert
+Although looking back at the libcamera uvc pipeline handler issue
+I fixed recently, that was actually a case of 3.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Regards,
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Hans
+
 
