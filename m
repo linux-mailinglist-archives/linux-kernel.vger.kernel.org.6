@@ -1,140 +1,121 @@
-Return-Path: <linux-kernel+bounces-420596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E2D9D7D09
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:38:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F4C89D7E86
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:57:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7D24B235F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:38:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D91E6282507
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CFE18C006;
-	Mon, 25 Nov 2024 08:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6819E18FDDA;
+	Mon, 25 Nov 2024 08:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rBhIqzTS"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="u1jt+Ilo"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B042418B47C;
-	Mon, 25 Nov 2024 08:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0324218E743;
+	Mon, 25 Nov 2024 08:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732523905; cv=none; b=SI3nzPKwuWv4L+4e7YXPRjhcjF3Fs4zUEs81uanzdOzG/Nt8H6w1ssVeLwOzLGg8ucgoTU7pQcsuqlT7uKgUQHEwCrMuLxU/aI+SqR3UUsUA4AK8Ei0xqQRr2G4lkQ+LYDUohZdFgARQjteyxKMaGnjz3kgQo4WrIcb5GDgLLwc=
+	t=1732525027; cv=none; b=FCtZSl+Cdd3DGpUhdZ8rKop92eA9XPOqZGOaXBgkYcAoPq6Da1JM2ZtcpChigJFkBKFyazF0Bqcv6+p2RwZeYl7n9yVpis6Fi1uV2xgVwIwVgIQiqJbprm+YKpToENae42o9Dnhf12Av2b+deumEbanQlBXo8siYqMlUA+jOhiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732523905; c=relaxed/simple;
-	bh=q6ID1YSLBNj16wmegqD5NXVom8VnfquGhuEwXZg0V8w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VWOQiqTxxpyGWYrZ2kyjqrhtJx2VlwWQx/G4u74hkCc/8506/R3C9hhqlJu2h7fO98S5sVXKKBosR3SpndEgQFS5ukH4wedKxho/B0yACw2EL20dtdAeexMs+LeyttYwE9z1CZArRwT2Imy/+sf90Pw+iN7fq73KaA7i8V4p1ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rBhIqzTS; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=+xt2q+vlfr3bovTTZE4n2ZJgwD+1Q9yVnx7KQddEfLw=; b=rBhIqzTSsTAhNUTC3HCG0ZHFzh
-	Tr7XwCWjtWEDjjGv6219EvUKJ+SX8f8Bv5SB2hT0rkaqnqRhFhvcQ9VsWUwxMgXtTBp/SpIv6RWSM
-	SUBom4kD1xvVzMaGBANBTZrHLo9yXpriKrRngl2Htt8cW4VmyWsgAFWlygP3b0873bhS1Pq4lV0Uk
-	5mhT4oDDfl7xFI9H/Y3EkhGSduzmieIUg3h6LJYoUfT+rmAZcsqj8uOiwQxkL2w9keGom3EuNPm71
-	hBsT0tCkN/IfL6xyAcxqgDjVIMNo8jxHjKA9SqtU1Yih1n2j1G/kfCMsstQQN2yZfdm0HQ+0/cHch
-	XDL0Ctew==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tFUbo-0000000146Q-2Rk2;
-	Mon, 25 Nov 2024 08:38:18 +0000
-Message-ID: <d2dfc0a4-d9dc-4dd2-a669-097dcf3491b5@infradead.org>
-Date: Mon, 25 Nov 2024 00:38:11 -0800
+	s=arc-20240116; t=1732525027; c=relaxed/simple;
+	bh=89H1oY7n/jVmYUnepVsRNX/uf61S+3gSfuUPRUNkwcs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZnJMAXaqoOmUNKzR0rlzTDo2SyaKeCYEgHC5qun7yU+ByZ9pWSXbECTQlh2hNRztk+gGgv3kz57VRRDFeWMoJekLSEdjFkRp85sRiWWXmJNJdNacUFV/RQEe99Zc0XDlda0m6Il4bHP+ZTxtUbulNYffnh4wKyqcHBDMsAKfzfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=u1jt+Ilo; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4AP8dJIX640452
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 25 Nov 2024 02:39:19 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1732523959;
+	bh=O0BJjjCQy7Zj+FprbmEr/wm97eZa4a7mYBEhWAQnj6g=;
+	h=From:To:CC:Subject:Date;
+	b=u1jt+Iloiunt+ZMkASgyfT4+boovhthq2c8it0Xnhmglt3kq+0F1bMyGCCSHzCtb7
+	 tRVCKAqCFsbpeB4Jde9IxVmMVF3iQ+6401s1UyfV3WBxAeO3oixeHIVKLVPlThzbFv
+	 pjwqNaKhY+5No4EWcepG/pzX9h7gkGU5ZLZw5MNw=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4AP8dJTX087175
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 25 Nov 2024 02:39:19 -0600
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 25
+ Nov 2024 02:39:18 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 25 Nov 2024 02:39:18 -0600
+Received: from uda0490681.. ([10.24.69.142])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AP8dEin127929;
+	Mon, 25 Nov 2024 02:39:15 -0600
+From: Vaishnav Achath <vaishnav.a@ti.com>
+To: <peter.ujfalusi@gmail.com>, <vkoul@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>, <j-choudhary@ti.com>,
+        <vigneshr@ti.com>, <vaishnav.a@ti.com>
+Subject: [PATCH 1/2] dt-bindings: dma: ti: k3-bcdma: Add TX channel for AM62A CSIRX BCDMA
+Date: Mon, 25 Nov 2024 14:09:13 +0530
+Message-ID: <20241125083914.2934815-1-vaishnav.a@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] x86/Documentation: Update algo in init_size
- description of boot protocol
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Jonathan Corbet <corbet@lwn.net>, Cloud Hsu <cloudhsu@google.com>,
- Chris Koch <chrisko@google.com>
-References: <20241125083136.1540424-1-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20241125083136.1540424-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Andy,
+J722S CSIRX BCDMA is based on AM62A BCDMA and supports CSI TX channels
+in addition to currently supported RX channels. Add TX channel
+properties as optional properties in the list so that the same
+compatible can be reused. K3 UDMA makes use of TCHAN_CNT
+capabilities register to identify whether platform supports
+TX channels.
 
-On 11/25/24 12:31 AM, Andy Shevchenko wrote:
-> The init_size description of boot protocol has an example of the runtime
-> start address for the compressed bzImage. For non-relocatable kernel
-> it relies on the pref_address value (if not 0), but for relocatable case
-> only pays respect to the load_addres and kernel_alignment, and it is
-> inaccurate for the latter. Boot loader must consider the pref_address
-> as the Linux kernel relocates to it before being decompressed as nicely
-> described in the commit 43b1d3e68ee7 message.
-> 
-> Due to this inaccuracy some of the bootloaders (*) made a mistake in
-> the calculations and if kernel image is big enough, this may lead to
-> unbootable configurations.
-> 
-> *)
->   In particular, kexec-tools missed that and resently got a couple of
->   changes which will be part of v2.0.30 release. For the record,
->   the 43b1d3e68ee7 fixed only kernel kexec implementation and also missed
->   to update the init_size description.
-> 
-> While at it, make an example C-like looking as it's done elsewhere in
-> the document and fix indentation, so the syntax highliting will work
-> properly in some editors (vim).
-> 
-> Fixes: 43b1d3e68ee7 ("kexec: Allocate kernel above bzImage's pref_address")
-> Fixes: d297366ba692 ("x86: document new bzImage fields")
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  Documentation/arch/x86/boot.rst | 17 +++++++++++++----
->  1 file changed, 13 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/arch/x86/boot.rst b/Documentation/arch/x86/boot.rst
-> index 4fd492cb4970..01f08d94e8df 100644
-> --- a/Documentation/arch/x86/boot.rst
-> +++ b/Documentation/arch/x86/boot.rst
-> @@ -896,10 +896,19 @@ Offset/size:	0x260/4
->  
->    The kernel runtime start address is determined by the following algorithm::
->  
-> -	if (relocatable_kernel)
-> -	runtime_start = align_up(load_address, kernel_alignment)
-> -	else
-> -	runtime_start = pref_address
-> +    if ( relocatable_kernel ) {
-> +      if ( load_address < pref_address )
+Signed-off-by: Vaishnav Achath <vaishnav.a@ti.com>
+---
+ Documentation/devicetree/bindings/dma/ti/k3-bcdma.yaml | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-What's up with the extra spaces around ( and ) ... and inconsistent with
-the lines below?
-
-> +        load_address = pref_address;
-> +      runtime_start = align_up(load_address, kernel_alignment);
-> +    } else {
-> +      runtime_start = pref_address;
-> +    }
-> +
-> +Hence the necessary memory window location and size can be estimated by
-> +a boot loader as::
-> +
-> +    memory_window_start = runtime_start;
-> +    memory_window_size = init_size;
->  
->  ============	===============
->  Field name:	handover_offset
-
+diff --git a/Documentation/devicetree/bindings/dma/ti/k3-bcdma.yaml b/Documentation/devicetree/bindings/dma/ti/k3-bcdma.yaml
+index 27b8e1636560..c748f78b313e 100644
+--- a/Documentation/devicetree/bindings/dma/ti/k3-bcdma.yaml
++++ b/Documentation/devicetree/bindings/dma/ti/k3-bcdma.yaml
+@@ -138,19 +138,22 @@ allOf:
+     then:
+       properties:
+         ti,sci-rm-range-bchan: false
+-        ti,sci-rm-range-tchan: false
+ 
+         reg:
++          minItems: 3
+           items:
+             - description: BCDMA Control /Status Registers region
+             - description: RX Channel Realtime Registers region
+             - description: Ring Realtime Registers region
++            - description: TX Channel Realtime Registers region
+ 
+         reg-names:
++          minItems: 3
+           items:
+             - const: gcfg
+             - const: rchanrt
+             - const: ringrt
++            - const: tchanrt
+ 
+       required:
+         - power-domains
 -- 
-~Randy
+2.34.1
 
 
