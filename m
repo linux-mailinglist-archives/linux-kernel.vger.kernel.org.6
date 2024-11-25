@@ -1,137 +1,153 @@
-Return-Path: <linux-kernel+bounces-421335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C65C9D89C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:55:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F8729D89CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:55:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13084280299
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:55:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A497D169198
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2841B3930;
-	Mon, 25 Nov 2024 15:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA631B4155;
+	Mon, 25 Nov 2024 15:55:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b="UBjsckh9"
-Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u9nJABZT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E346044C94;
-	Mon, 25 Nov 2024 15:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4644C1AD3F6;
+	Mon, 25 Nov 2024 15:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732550113; cv=none; b=eKdcVKAsfJyRk/LHaZDf7KTeLox/8KEUP61m3haM9/0TdNh3iuiGeoszu3tdvaj3PN7BJw/35yDBFlhLLxOXGXwfxrcFoT19wayuI8cowIdcMnmmgHN0ngm1QygxKUhcvB9AhG6umOLVI4yDgpWygOqGCbpijV8wqIccRQSRlgU=
+	t=1732550121; cv=none; b=PPe5GDBsVvFrCL10ozbhMJRi9NOiUSeFP48paujEewhuls/TzSFevDZbE3bZn43Gb0b4kLVXaSLq8mewj1tMq7aOWjLDo0RTw9hdIu5MyYr2uWV9RlxAbvZSNJMdbr/zc1xyKapW2m02Y3jzhptlfyDM8F6VHaithF6VERiSmmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732550113; c=relaxed/simple;
-	bh=Nbi7jGHMHqCOiVJdgNk+yM5Aex5D7yPTPOFZz9QtO4Y=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=ezESWFEBRnS9bUAoNQq/hlzsoFDD6TXNSFdt9KowBn/RXrsAIrPis4fJt+2/wriw8/f+OQ/qh0b9yGRnoV/3yEHrmBpmONbkSyyR1aWZElpvq8E9fUb5zVJa2T/S49/Lo+FFnwjPvpyS82baQWHFr/tCyAe6v3FhShZUmpIcxJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=marcan.st; spf=pass smtp.mailfrom=marcan.st; dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b=UBjsckh9; arc=none smtp.client-ip=212.63.210.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=marcan.st
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marcan.st
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: marcan@marcan.st)
-	by mail.marcansoft.com (Postfix) with ESMTPSA id BF2F541A48;
-	Mon, 25 Nov 2024 15:55:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=marcan.st; s=default;
-	t=1732550109; bh=Nbi7jGHMHqCOiVJdgNk+yM5Aex5D7yPTPOFZz9QtO4Y=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References;
-	b=UBjsckh9mezNpgAv1OBbxdguxzVBpMiV456rgWaUT13XQgWO+iA7HihREOcrTh7Cf
-	 9MMScOaAT2AXHeLQdaF+BpipbD6nkUaH7cwmcjECCORCcJBQ+d/g/9+1irOEhFY5Fv
-	 gpvDptEQ4r4BhTuWaHZRyt/V9sa/cSnUhu16TzQsLPcpTa3LwOkxb0O5jy6TdZ56q/
-	 vukcqHwux/0UYuDXEuRQr/ckvDjB1yI0mwVygvHum2kOYQJvsQdaNhMi5E+VPUej/t
-	 6NBI0BP2Nb/Ipwd//qkRFHAv0YZic4IykczXrOODGeKKJHxJFlfd4Gj9FoqNddkXU9
-	 Tap+AiIiLaxKg==
-Date: Mon, 25 Nov 2024 16:55:04 +0100
-From: Hector Martin <marcan@marcan.st>
-To: Maxime Ripard <mripard@kernel.org>
-CC: Sasha Finkelstein <fnkl.kernel@gmail.com>, neil.armstrong@linaro.org,
- Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Janne Grunau <j@jannau.net>
-Subject: Re: [PATCH 2/5] gpu: drm: adp: Add Apple Display Pipe driver
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20241125-gabby-furry-rooster-cf28a9@houat>
-References: <20241124-adpdrm-v1-0-3191d8e6e49a@gmail.com> <20241124-adpdrm-v1-2-3191d8e6e49a@gmail.com> <10d0aa88-de2e-4856-a137-301519e58b2d@linaro.org> <CAMT+MTRWZWj=3AP7wyooXr49-W4vcm0ZbAoqPyEuNkQBMOaJfw@mail.gmail.com> <cc71021e-b53d-4eda-bad8-abb4df13575f@marcan.st> <20241125-gabby-furry-rooster-cf28a9@houat>
-Message-ID: <891D03B0-1A2C-4C38-85F2-F8CBBAC1A5CC@marcan.st>
+	s=arc-20240116; t=1732550121; c=relaxed/simple;
+	bh=6nb7rr8QU8TGBkfRkmr1O484yACQyvb7R6mQiqhnEOM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iuPDofg7jZ+5faeEjsmOKomNRMRPPR00TO6yyy935+QZYFPf+w12BPt/8XIPJVQNSho8KncWGEFrjPAmJ7DyL5AuK+Igy+bHKNXJ3le8M+Z5v5MakvoZZkrALh9rCulTjlfMHKEu7ukuPrcqZk2hLKwgZaAa96u2QOy5rbrtsPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u9nJABZT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47456C4CED3;
+	Mon, 25 Nov 2024 15:55:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732550120;
+	bh=6nb7rr8QU8TGBkfRkmr1O484yACQyvb7R6mQiqhnEOM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=u9nJABZTLzV5WkKiT4Eu8PAtJpkNQjQyJdf46KjYxxxKMKwqIsnBaoxTBNM3pCMEu
+	 FpHXHaUfKKpEMPpyP9H7ey9+kWXJrImo2uMF3/oXtB5oOspXW/TFDfqdsexgrwvLaV
+	 +7v/kUzshQ0+LwjRirkcGLx1oUiMBpN3cVJaUmDWoheOzoYx84/wzRDOkbHPHx/1jf
+	 5KqKVM8YIitJdKrivaTW98rUCIxpkuvoTKblixie5G6Tm737u6H//Lni1ao6BMtpn6
+	 wAuEYqOkX7szicTKjgsL9Ktm8tUbIckdDPyDZf9ny+E8One1+KrDWhwYeiw8Z0FxYZ
+	 /R9Xxmni88hyA==
+Message-ID: <474cef98-4644-4838-b07c-950ad7515b73@kernel.org>
+Date: Mon, 25 Nov 2024 16:55:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] dt-bindings: qcom,qcs615-venus: add support for
+ video hardware
+To: "Renjiang Han (QUIC)" <quic_renjiang@quicinc.com>
+Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ "Vikash Garodia (QUIC)" <quic_vgarodia@quicinc.com>,
+ "bryan.odonoghue@linaro.org" <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20241125-add-venus-for-qcs615-v3-0-5a376b97a68e@quicinc.com>
+ <20241125-add-venus-for-qcs615-v3-1-5a376b97a68e@quicinc.com>
+ <jovwobfcbc344eqrcgxeaxlz2mzgolxqaldvxzmvp5p3rxj3se@fudhzbx5hf2e>
+ <18cc654b4377463e8783de0b4659a27d@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <18cc654b4377463e8783de0b4659a27d@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On November 25, 2024 4:28:00 PM GMT+01:00, Maxime Ripard <mripard@kernel=2E=
-org> wrote:
->On Mon, Nov 25, 2024 at 11:24:25PM +0900, Hector Martin wrote:
->>=20
->>=20
->> On 2024/11/25 20:24, Sasha Finkelstein wrote:
->> > On Mon, 25 Nov 2024 at 09:50, Neil Armstrong <neil=2Earmstrong@linaro=
-=2Eorg> wrote:
->> >>
->> >> So this controller only supports a single mode ???????
->> >>
->> > Most likely=2E On all devices it is connected to a single built-in di=
-splay=2E
->>=20
->> More specifically, the controller obviously supports multiple modes but
->> it is pre-initialized by the bootloader for the single hardwired
->> display's only mode=2E So as far as the driver is concerned, there is a
->> single possible mode, and there's no point in trying to be more generic
->> if there is no hardware that would use that=2E
->
->It's not only about being generic, it's also about fitting nicely in the
->usual abstractions=2E You could also always register a single panel, with
->a single timing set, and the driver would never see anything else=2E And
->still fall within the usual pattern=2E
->
->> In general, it is not possible/practical to be generic for reverse
->> engineered hardware with no specs documenting how to drive it
->> generically=2E You just can't know how to implement the options that ar=
-e
->> never used in practice=2E I spent a lot of time on exceptions to this
->> rule for the GPIO and SPI controllers, and that's not going to happen
->> for more complex hardware like MIPI DSI=2E
->
->How is GPIO or SPI even remotely related to that discussion? We are
->different maintainers, with different concerns, and different things to
->care about=2E
->
->Also, "My way or the highway" is never a great discussion opener=2E
+On 25/11/2024 16:49, Renjiang Han (QUIC) wrote:
+>>> +  video-decoder:
+>>> +    type: object
+>>> +
+>>> +    additionalProperties: false
+>>> +
+>>> +    properties:
+>>> +      compatible:
+>>> +        const: venus-decoder
+>>> +
+>>> +    required:
+>>> +      - compatible
+>>> +
+>>> +  video-encoder:
+>>> +    type: object
+> 
+>> Both nodes are useless - no resources here, nothing to control.
+>> Do not add nodes just to instantiate Linux drivers. Drop them.
+> Do you mean I should remove video-decoder and video-encoder from here?
 
-This was not an attempt to push back on the review feedback at all=2E I wa=
-s just trying to add context about *why* the controller will never be used =
-with nor support more than a single mode, not argue about how that should b=
-e implemented=2E Sorry if it came across as otherwise=2E
+Yes, that's my suggestion.
 
-GPIO and SPI are relevant not because of anything related to the kernel, b=
-ut because I was able to reverse engineer the generic features of those con=
-trollers quite comprehensively by literally probing a GPIO routed to an ext=
-ernal USB-C port with a custom test bench and an oscilloscope (for GPIO) an=
-d by using the GPIO registers along with a bespoke bare-metal test platform=
- as a "software" logic analyzer to inspect the signals generated as I twidd=
-led register bits (for SPI)=2E I'd love to have all hardware comprehensivel=
-y documented like that (I did GPIO and SPI because I wanted to, not because=
- any maintainer asked for it), but as you might imagine, this kind of deep =
-hardware RE doesn't scale and isn't practical for anything more complex, an=
-d I was just trying to convey that fact=2E
+> If so, do I also need to remove these two nodes from the dtsi file and add
 
-(Sending from mobile, apologies for the likely dodgy line wrap)
+Yes
 
+> them in the qcs615-ride.dts file?
 
--- Hector
+Well, no, how would it pass dtbs_check?
+
+Don't add nodes purely for Linux driver instantiation.
+
+Best regards,
+Krzysztof
 
