@@ -1,175 +1,105 @@
-Return-Path: <linux-kernel+bounces-420546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B209D7C35
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:55:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B4F99D7C36
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:55:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39915B220E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:55:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 273CCB22368
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2873317E8F7;
-	Mon, 25 Nov 2024 07:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDFE17AE1D;
+	Mon, 25 Nov 2024 07:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nQN5k0AQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HplA8IFp"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C884314AD2D;
-	Mon, 25 Nov 2024 07:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90492143722
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 07:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732521326; cv=none; b=Zb5HjclqgSntot/t4tMqblQsTew+Hi7PUmqaf9kelMrIVBRkxiaJ5RSwpr2e7w5Rlq+y3KNFoBUPdemo61VGzmKSqvs2k5BSyaDan/Nv8c3Zbd26jkaEt8jt6k+I/F/v1OreyYkiX0U9YH7NjQoHZScFYzYgy3CvGXEy5dyDRaw=
+	t=1732521344; cv=none; b=jJs05e2fAoK4J1o6t2jx4p9yf+aGRPUfRZMUw5lakcf5uig4drvT7jZn8MtIyE294KbFp/sZR0HQ9UQfDCB2pwH+amT19PVi7BvI58Asj0woiwhkw87srRJcV7d7V0NPAb8pV7oAyvL66/aQ59PjId3rDi8BsJiSkwLvwhW/5Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732521326; c=relaxed/simple;
-	bh=uBnYP9aE7Pwete/XjL4x75AnL05KyLv2gT61TgDIibA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GDlWs2QpQDDUQoik1vgsyRCZ5JEjnQm8NhrhavFMhhGBaA69JwvJYE/P4RAHrZhry0/l0ZsMaaOZtf9JeOiiOwMIDUQv0ZFUkRKhfs+fdWEz6aeQr8FyM1K8Jp6NtuNCJF1Y7LmTnVsOxl4GujX1rz8n/GQgy259MRmSc9m7aIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nQN5k0AQ; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732521325; x=1764057325;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uBnYP9aE7Pwete/XjL4x75AnL05KyLv2gT61TgDIibA=;
-  b=nQN5k0AQ/e+yNJGNU0Li2hXLgj/U8aCpTdV39uD1C2+HLwnDpeI4+TNB
-   V+9jNSrEU2a6AVXpWY+5nNkfPW0Qf8551X9IMMzFtLMIBoG7umBIzdA5S
-   ltZWnRtT7oZtVkxIrceBIprRf7P6N+qQPukBoif7FKZwgoduQ8jDmekYq
-   i2jYAgKm1gDgrTtPsfOLzX35783eAN1p+F8mpVIwAWqQ8Y2men/LeR7Ho
-   KaeC5FzUMLidLTxDOpMY5lAYquRPvrDbkTe+L0hKA95hPD7GfQUpzPtiN
-   cePN/BzvvWH3lfJHXSbDS7zaN/itDnt3+qOcEXJnJ9X7gyVkdukpeOImP
-   Q==;
-X-CSE-ConnectionGUID: CpcRRbEsTA+t4CDiAR/HBw==
-X-CSE-MsgGUID: rJX6nPpxT0KfDHfQh3n6IQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="58021005"
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="58021005"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2024 23:55:24 -0800
-X-CSE-ConnectionGUID: IO1jN5scSR+/Y7f5z3vpNg==
-X-CSE-MsgGUID: j0FxLA7KQS2tRcBAchBuVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="96109231"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Nov 2024 23:55:21 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tFTwE-00000000fsL-3O9s;
-	Mon, 25 Nov 2024 09:55:18 +0200
-Date: Mon, 25 Nov 2024 09:55:18 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-serial@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
-Message-ID: <Z0QtZky8Sr7qUW7v@smile.fi.intel.com>
-References: <20240405152924.252598-1-schnelle@linux.ibm.com>
- <20240405152924.252598-2-schnelle@linux.ibm.com>
- <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net>
- <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
- <472eb22a-dcb1-4fbb-bf2c-a4173706bc7a@app.fastmail.com>
- <27685942-fb62-44c5-86ed-98beb547ffed@roeck-us.net>
- <744920ba-551c-466b-ac5c-2607b81261a0@app.fastmail.com>
+	s=arc-20240116; t=1732521344; c=relaxed/simple;
+	bh=sY+E04yoWBzWsHdiLKrAoVxRmCb/INKPi2UtOEQXIUM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XQqbzA8wULaPx+U+QPKkPR55roSpuxBbYODTHTsVFfqM7zfLXL1swhY1sNTIkw6qEjIwTM9fqcbXNwwQnVeOhrhRRL8gewGtpcZmAzuUZnaT8qIjXaAHmGShAXpPJPbRkj948ukGh63blQMqntbqrCjxGzN7errFRXv1TcAfGFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HplA8IFp; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53ddeef9e4aso1907542e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 23:55:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732521341; x=1733126141; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HZIGo3yTlv6am7OV853ap+f/qjKN5h0CP3WCOH7VIhA=;
+        b=HplA8IFp3d5A3hmPJApY6NcL9mQ6Ng8MRqaMrdMH2m3PxHAslD6kfMaiJKGPHZeoF/
+         SNhf7XFFFyVzSxb+BWBsmlFOVvGKL5LkZII73Xi5kqWNic/ZZdoPbbhp+sp9Jix1lZe7
+         xwu509oPCNF446NtyvOEHjg9wQ1hT9HOAFHT8Aw0872cgMR8hQyZbybzAIYFdJ9TDCxy
+         /wjhqpVK+hpsmnBRwAOsyVhAi1O8mpHvxXeaBtepIaVBXg9mYDgAH3P0wszbV9VpabWv
+         15LToW2qI9KgujZTKRA8tQcjaV8yAGrTba5h3X07MfwXLQ9TN9MxfeqGn+Yl50XpLgo8
+         rUpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732521341; x=1733126141;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HZIGo3yTlv6am7OV853ap+f/qjKN5h0CP3WCOH7VIhA=;
+        b=HFBG00xQIJ0TPIihamb1GoCArwzW2rbJR/DbjKNqlfHIJe8JxJ+Ko7fmKV0x1ajLpd
+         63Y4GpRx+HzV6GtlzBwtSYMPPyHTzXDBMMD5RP+tM6qbBC+tPD5ySJENZRUqYWm+FtmE
+         EFVviRPMxOcGvUHuPwovQBzuOuFS8jo8RFR30IGJjmLaZSrYL6+ttoSqLW3IYlQ83vbZ
+         3qyeR14EZERjyjOmeZ53BjIuniAtzezUWLw7sw/WESZH4yRRJvgXtVlSjZ4Dsk5Y39ox
+         qfz1SMSe33b6k0/4bpoBoni1AyvVDrmSvrI4V99I0c+1iMlu1v91t40RWypzYXCAngvZ
+         cy4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWi/wRdoDbKkQYirnG2MONOudXts5sVw61UP1/6R7jDrWFSxUKlrgfpf8672bdQ1RnoBBIW99+suendFRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBeaeNZo67x3ArxyAQDPQGR5ujv58d9WSogwD0G4dWKWjuy/91
+	TTLzY0JR3UK2O35G6AILSDPSK/LwPrZABzLqRsiLB4W2TLY6u8Urphu3eSPQ29+RdceoIJrlCH+
+	q4d120eFZmVUXmMj/8CprlZ+vAjI=
+X-Gm-Gg: ASbGncvMkC0fEvQfLo2ol03ZFx+Wy/1+A03lI871x3vz2MRuN3u31YBOTHNLYGfFK51
+	Xd/Xvssyv8R1vrVtJKyIXriHSvc+UyBY=
+X-Google-Smtp-Source: AGHT+IEX2TQ1O3wTcFG51cUF7z9UVov8MJqQaloN7Rc+mJwK8eOPWnWbJfLX33PQhLuzvo0p7hG/6wBrOsprHcNtofM=
+X-Received: by 2002:a05:6512:250d:b0:53d:de72:a185 with SMTP id
+ 2adb3069b0e04-53dde72a1cfmr2753944e87.5.1732521340396; Sun, 24 Nov 2024
+ 23:55:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <744920ba-551c-466b-ac5c-2607b81261a0@app.fastmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <cover.1732368538.git.chunguang.xu@shopee.com> <e7c1d7b531cef5fdd2764719e4ca824477579083.1732368538.git.chunguang.xu@shopee.com>
+ <20241125072240.GB15647@lst.de>
+In-Reply-To: <20241125072240.GB15647@lst.de>
+From: =?UTF-8?B?6K645pil5YWJ?= <brookxu.cn@gmail.com>
+Date: Mon, 25 Nov 2024 15:55:28 +0800
+Message-ID: <CADtkEeegfVhbkA-nbaOaveqtvSpxKebB9OdaBvCsWtSFJ7P46A@mail.gmail.com>
+Subject: Re: [PATCH 2/5] nvme-tcp: no need to quiesec admin_q in nvme_tcp_teardown_io_queues()
+To: Christoph Hellwig <hch@lst.de>
+Cc: kbusch@kernel.org, axboe@kernel.dk, sagi@grimberg.me, 
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 22, 2024 at 08:24:37PM +0100, Arnd Bergmann wrote:
-> On Fri, Nov 22, 2024, at 18:22, Guenter Roeck wrote:
-> > On 11/22/24 08:31, Arnd Bergmann wrote:
-> >> On Fri, Nov 22, 2024, at 16:35, Niklas Schnelle wrote:
-> >>> On Fri, 2024-11-22 at 07:18 -0800, Guenter Roeck wrote:
-
-...
-
-> >> So in all four cases, the normal uart should keep working,
-> >> and if something tried to start up an ISA style 8250, I
-> >> would expect to see the new version produce the WARN()
-> >> in place of what was a NULL pointer dereference (reading
-> >> from (u8 *)0x2f8) before.
-> >> 
-> >> Since there are so many ways to set up a broken 8250,
-> >> it is still possible that something tries to add another
-> >> UPIO_PORT uart, and that this causes the WARN() to trigger,
-> >> if we find any of those, the fix is to no stop registering
-> >> broken ports.
+Christoph Hellwig <hch@lst.de> =E4=BA=8E2024=E5=B9=B411=E6=9C=8825=E6=97=A5=
+=E5=91=A8=E4=B8=80 15:22=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Sat, Nov 23, 2024 at 09:37:38PM +0800, brookxu.cn wrote:
+> > From: "Chunguang.xu" <chunguang.xu@shopee.com>
 > >
-> > The call chain in all cases is
-> >
-> > [    0.013596] Call Trace:
-> > [    0.013796]  [<d06eb249>] dump_stack+0x9/0xc
-> > [    0.014115]  [<d000c12c>] __warn+0x94/0xbc
-> > [    0.014332]  [<d000c29c>] warn_slowpath_fmt+0x148/0x184
-> > [    0.014560]  [<d04f03d8>] set_io_from_upio+0x70/0x98
-> > [    0.014781]  [<d04f0459>] serial8250_set_defaults+0x59/0x8c
-> > [    0.015013]  [<d04efa6a>] serial8250_setup_port+0x6e/0x90
-> > [    0.015240]  [<d0ae2a12>] serial8250_isa_init_ports+0x32/0x5c
-> > [    0.015473]  [<d0ae28a1>] univ8250_console_init+0x15/0x24
-> > [    0.015698]  [<d0ad0684>] console_init+0x18/0x20
-> > [    0.015926]  [<d0acbf43>] start_kernel+0x3db/0x4cc
-> > [    0.016145]  [<d06ebc37>] _startup+0x13b/0x13b
-> >
-> > That seems unconditional. What is the architecture expected to do to
-> > prevent this call chain from being executed ?
-> 
-> This looks like a bug in drivers/tty/serial/8250/8250_platform.c
-> to me, not something the architectures did wrong. My impression
-> from __serial8250_isa_init_ports() is that this is supposed
-> to initialize exactly the ports in the old_serial_port[]
-> array, which is filled only on alpha, m68k and x86 but not
-> on the other ones.
+> > As we quiesec admin_q in nvme_tcp_teardown_admin_queue(), so we should =
+no
+> > need to quiesec it in nvme_tcp_reaardown_io_queues(), make things simpl=
+e.
+>
+> Yes.  And this matches what RDMA is doing.  We really need to go
+> back to the attempt to consolidaste this code..
 
-> Andy moved this code in ffd8e8bd26e9 ("serial: 8250: Extract
-> platform driver"), but I don't think this move by itself
-> changed anything.
+Yes, I also think we can do it
 
-Yep. the idea was to purely split this code out of the core
-library parts. I was not intending any functional changes.
-
-I believe it's a preexisted bug, but if you can point out to
-the breakage I made, please do it, so I would be able to fix
-ASAP.
-
-> serial8250_setup_port() is where it ends up using the
-> uninitialized serial8250_ports[index] contents. Since 
-> port->iotype is not set to anything here, it defaults to
-> '0', which happens to be UPIO_PORT.
-
-Btw, we have a new constant to tell the 8250 core that IO type is not set,
-but that one is not used here.
-
-> The reason it doesn't immediately crash and burn is that
-> this is still only setting up the structures for later
-> use, but I assume that trying to use console=ttyS0, or
-> opening /dev/ttyS0 on the uninitialized port would
-> then cause an oops.
-> 
-> The bit I'm less sure about is why the
-> serial8250_setup_port() function is called here in
-> the first place. I assume it does something for
-> /some/ architecture, but it's clearly wrong for
-> most of them.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
