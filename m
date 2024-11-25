@@ -1,136 +1,277 @@
-Return-Path: <linux-kernel+bounces-421142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C664A9D875D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:08:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE2479D87B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:19:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 186B4B3416F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:03:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10C85B29BD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D5B1AE863;
-	Mon, 25 Nov 2024 14:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755821AE863;
+	Mon, 25 Nov 2024 14:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GYqgacvX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UTu3xqdQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10AF376E0
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE15E190685
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732543385; cv=none; b=hYlHOgfTzjlkQ4NyTPhJUIbRaDWKQ/WbejZL27N66yVTcznHEUMRcfGlacTNP+iU2j+1GNmUzhdEyL6VUHlGCiRkuAJnSSYZBZOH8ZByDS/F85DGc6V2g+rzdnOpLRTY3kfN/2cHe6KoB7bjEmYq9/AG8XT4dF3FBc9OKlA5P3Q=
+	t=1732543362; cv=none; b=OFtDwDg2zHts0VKSvB3nPepUvhnyud+B6nJJ2oD+9rgWCcgI25825b77LPRNunoxK5jy03dtBc0eBck5XyWBh9eS4v5ZnaPp5xptt468eIR7gK0dHhRfvbhmQ7mk7UH4nq3v3ZZsBgnuHdBk/thWm54t4OwixnEnNk3+wKnJgxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732543385; c=relaxed/simple;
-	bh=2IekofnAhK15cZIwqSrN8ORu/Sp3CPa1z5biLsoDHig=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JS5tD4wxlDL1vv78PgwfTI0PQeCXWsrZp4S30vNYOuj4oY1UWYvfPRjMdRdURntc3o41Ks3G6XV0kYiFqzyacjxL75+JUiaps4CbLNDSWNJH3xfPC1GdIyjC36uinCYmOTSMRgJzJTLj612Vu1Hnc/56ej0MUiPSzcmj58vno6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GYqgacvX; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1732543362; c=relaxed/simple;
+	bh=2kqe0jV8UOVDVyyY1uhJQWcfx1ukgxallOU96cbp8iA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xs+nB98FLVIcXuxCEDGeCmrE26VtrMwN51/kwgRAklMB9KqmSmE0q+/KulzBUpdVRfVwf7HjbVYvNFUH98J070mYwTjU7Mv+tSf5ADS+CTgPqrjioYt1TCT8kp+b0l10zZGhXrMipoupYlUeTKXDt1NhWk1gxTz6XL4gQu3e9wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UTu3xqdQ; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732543382;
+	s=mimecast20190719; t=1732543359;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=FDC6pto2u5wQTWJgEumgXmAUimdPOWzrNSwboQGTueY=;
-	b=GYqgacvXN5dR8AtQ2ZPWm8CgGphcKTkXMa/JAw1BNS4R5USYs+dSs2KmkAi8uKbip6/qId
-	ziVrIoGVCVRKtiVttCtZoOUKhb11OckGDYvok5BLROyF36/Ph0nvMMXYz7t8uRTwLZI4w+
-	AK6SZq/5hOdF17KxZKmr4358uJGe4Dg=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jKIFmCIAm34aRVwzvltyN/iUoRYjxx0VJdpzyCrfLFg=;
+	b=UTu3xqdQQ0fktcO+bOi80tEJok4SMEYxvzunqZveT42OxUxH+z+LMsYwDcdUwdOPxhOlCp
+	Tu4kDq2cEE+lrGPZjH8Nbq9I5pz5kOU0bodPEWnR7Unc3O8vqTuP7ADhzwQIXG/y6ro3gI
+	PodtFwFz6/Adeiwlj49X4qaBUSDoB5M=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-575-j4_GnA3uMjuLdCk3btyr7g-1; Mon, 25 Nov 2024 09:03:01 -0500
-X-MC-Unique: j4_GnA3uMjuLdCk3btyr7g-1
-X-Mimecast-MFC-AGG-ID: j4_GnA3uMjuLdCk3btyr7g
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-aa529e707f4so179719366b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 06:03:01 -0800 (PST)
+ us-mta-144-ZsND6SpqMNq17sGzW_sVYA-1; Mon, 25 Nov 2024 09:02:38 -0500
+X-MC-Unique: ZsND6SpqMNq17sGzW_sVYA-1
+X-Mimecast-MFC-AGG-ID: ZsND6SpqMNq17sGzW_sVYA
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-aa5438c6b13so91621866b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 06:02:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732543380; x=1733148180;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FDC6pto2u5wQTWJgEumgXmAUimdPOWzrNSwboQGTueY=;
-        b=n93d2/dnNJEb878lnGzRF63l0PVS3kMiheh/Wlg9vv2Y94SPCxGofLhuAyxFx+brks
-         yj6ylWcMIXzq792tibHPAvKKMkfAJzrGlE4Z8gu3GBnpDjBZyhPTDbPv275YljaTKfCy
-         sdzEitD8BKoN9SMp/VDHaCmhloso56eN1JGemX/PjCYWWr5V5p3FV13XIXJs6HOfIlN4
-         QiT6LNkBqS6CE1q1qT0KHRnX5uDkn6CDAt+xqj8zT1nQcUD/HEldPoZvilwV32JtMBmk
-         OiL7oED2GTqI8yUnYOexvRHPPyRzRfnA80QvUvBO+RMlSGWja2kMh6IREn89xHdYdRpr
-         AMpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXpTWfewjSLZ09rDmDsAanUSYbajD1Twb0zzHdsxACXi4OAfYjqc9DlCBCDtZJN3CDIAaRceZhesFiEa2A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNYLd1pfg1UtToW7SQIqsvHQtiQGAVPpoIjWcclqSnMuFmkON+
-	gayg1KMAHwOqRdjanPmYb0kExN1N+dIaI5Mto168adv3q/xckEcRXftXnQpHskDOASIRcQdZQ2D
-	RsEaZyMRg16tTYSUe1W21Q8HYLjWLVWvcrXzvBJhbuHAxFXPjRWEo7Iwh9UCFJQ==
-X-Gm-Gg: ASbGncuAw8R1tA78k/DfwL1z2V14WbZ+Baflpy0W8BNMoW2xmZR/o0T91hMo6LTrK3h
-	9MsLbq8gdZtXjnbhDiEEjIA0ROQve6LF0lOwuUXHhjz5VGQaZLW+wSKFAA7kRe90jPrjn+j+QUz
-	6fOieXdWnWPbhkkTcRikKaSWnJKrzC7AcfZK76zktcxM0BeEjuTtXN+2RMYN09Cwbc73qJ/o3AH
-	pJt8FPJMieEi2mRmaC7y157Adgfu/0BTQF84yVO2KpmhZUFnhNO0bMrRtTD7m/u
-X-Received: by 2002:a17:906:328b:b0:aa5:31f5:922a with SMTP id a640c23a62f3a-aa531f5930emr659886666b.19.1732543380213;
-        Mon, 25 Nov 2024 06:03:00 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHDiCZ6k982ag4d6O8/RFD5z8+azZRqNsYYVGtgwxLY+Jn66AWlV3rufysIZ2OmCphBjOoqqQ==
-X-Received: by 2002:a17:906:328b:b0:aa5:31f5:922a with SMTP id a640c23a62f3a-aa531f5930emr659853666b.19.1732543375954;
-        Mon, 25 Nov 2024 06:02:55 -0800 (PST)
-Received: from eisenberg.fritz.box ([2001:16b8:3d40:1c00:e57a:25ed:3c10:67c4])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b52fa36sm473635466b.122.2024.11.25.06.02.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 06:02:55 -0800 (PST)
-From: Philipp Stanner <pstanner@redhat.com>
-To: Sui Jingfeng <suijingfeng@loongson.cn>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Philipp Stanner <pstanner@redhat.com>,
-	Sui Jingfeng <sui.jingfeng@linux.dev>
-Subject: [PATCH v2] drm/lsdc: Request PCI BAR
-Date: Mon, 25 Nov 2024 15:02:29 +0100
-Message-ID: <20241125140228.58492-2-pstanner@redhat.com>
-X-Mailer: git-send-email 2.47.0
+        d=1e100.net; s=20230601; t=1732543357; x=1733148157;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jKIFmCIAm34aRVwzvltyN/iUoRYjxx0VJdpzyCrfLFg=;
+        b=al9GRceZfcmC4FqPxnA4MEdJ8+j7Y9z1nBscGUAtF0fCHzqRSyqH74/fSCJzqD8fwB
+         NRBcQKKZtEUm+bpRnneXgX2iXtbAMwVyc7WD03c9vZop8WuQVYuctSRzSBuBaWMJF5DG
+         rAgD1Wuj4rWBr22xIGZ6k1QTijQVKRo5ziqZpKeZDK5p6w3fWVrli0XZLenPcLPohd5o
+         ab8cfngUAwSBxdmR3dx5Ka3iIW3hc4FD2QXlI+erf4XddeAU+dwAyVGKFeU2dYNQZX5J
+         umg/aJm8Wvr5xjUaiwvbJ2rE1WiKkiWyM+QrhAHjlBOKBqzXf+2i7xQ4PQ+0JFHjZg77
+         NExA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4MZeYUdW2cp2QtzjiWLXQNMbWHqMePFhYfJ9IRvZxFAzm8f2bc96kQRZbKHrV6Nk0Mf2klBZxj64t0BY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzohsqE8q0LYWrROlA65cJqOsJcK6RNOgp+annmEkdSsBcYtsis
+	E8MLOGScI2OMvkAPZ7zNEhmuK2QT9V08FpZpEbILgB/8E4P5M1Z9k++c0EAqxsCDKX7qG3iXlmR
+	OPAvfUzSVNWsOKyz9IRyyLJB1ZTBGRXToZzn1pC46wmASKZcgCgOyfBXPzpcsDg==
+X-Gm-Gg: ASbGncut92gBZxUbbyH0sUwV5sA16lYTvAxLfATd3WVdzcX4k9juLlq6XnJd8rGZWVc
+	0ieQFmoPoLXitOmto0gJ9Rbt+f1/AEOunS8rzS/F/vNXKQwNo40dzpeyUUwL4mFmPPm/n3aAcOG
+	zaPLP9fZ7DbXu1ET9dNBC0Hj5I63ufZf1yDucVq8XGaKT1CY2YnGZ1OM9zqhs+2j70pBqaJlsmm
+	3JYzK6GnPsQxpFulMHh7vhjNAjtjIUJnmSfOCmxrFa+0v2sUD430LNlnpd/uu3yd0/nNNYJuKo/
+	ClhK3QFtmek7/h75QpTOIncAl1vBdj2qm+Y8+Qrf4T8lzlb/sji0WEJ4AsKpBNL8FIaxwyh6N9A
+	02fVQQD++H05ZWQRcLhgwRc/Y
+X-Received: by 2002:a17:906:9d2:b0:a9a:13f8:60b9 with SMTP id a640c23a62f3a-aa509985a54mr1120672066b.36.1732543356409;
+        Mon, 25 Nov 2024 06:02:36 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE9+wHVbUjV3LBaM/yXLc/GetZOs7jYVDpUQdNWTC9wR95rKXX7sHH99H7KjHhcvth85h0Rfw==
+X-Received: by 2002:a17:906:9d2:b0:a9a:13f8:60b9 with SMTP id a640c23a62f3a-aa509985a54mr1120648966b.36.1732543354313;
+        Mon, 25 Nov 2024 06:02:34 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b2effbdsm466839066b.51.2024.11.25.06.02.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 06:02:33 -0800 (PST)
+Message-ID: <9779fcb0-e28d-4651-b04c-ca492e30c452@redhat.com>
+Date: Mon, 25 Nov 2024 15:02:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a
+ subdevice
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, Yunke Cao <yunkec@chromium.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>
+References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
+ <5b5f3bb7-7933-4861-be81-30345e333395@redhat.com>
+ <CANiDSCta62P5+1aR9Ks8c6sd3_grCV3C+Le=UjKGkiohyf0R2g@mail.gmail.com>
+ <55c76c99-dc86-41b2-84c6-d2e844530f67@redhat.com>
+ <CANiDSCtvLB=tWb7ZCFCw9gn26R2xHnOf=yTLj+M_4AuQKYvgOQ@mail.gmail.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <CANiDSCtvLB=tWb7ZCFCw9gn26R2xHnOf=yTLj+M_4AuQKYvgOQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-lsdc currently just ioremaps its PCI BAR with pcim_iomap(). Performing
-a region regquest additionally can make the driver more robust.
+Hi Ricardo,
 
-Replace pcim_iomap() with the managed function pcim_iomap_region() which
-performs the request and ioremaps the BAR.
+On 25-Nov-24 2:39 PM, Ricardo Ribalda wrote:
+> On Mon, 25 Nov 2024 at 13:25, Hans de Goede <hdegoede@redhat.com> wrote:
+>>
+>> Hi Ricardo,
+>>
+>> On 9-Nov-24 5:29 PM, Ricardo Ribalda wrote:
+>>
+>> <snip>
+>>
+>>>> I have been discussing UVC power-management with Laurent, also
+>>>> related to power-consumption issues caused by libcamera's pipeline
+>>>> handler holding open the /dev/video# node as long as the camera
+>>>> manager object exists.
+>>
+>> <snip>
+>>
+>>>> Here is what I have in mind for this:
+>>>>
+>>>> 1. Assume that the results of trying a specific fmt do not change over time.
+>>>>
+>>>> 2. Only allow userspace to request fmts which match one of the enum-fmts ->
+>>>>    enum-frame-sizes -> enum-frame-rates tripplet results
+>>>>    (constrain what userspace requests to these)
+>>>>
+>>>> 3. Run the equivalent of tryfmt on all possible combinations (so the usaul
+>>>>    3 levels nested loop for this) on probe() and cache the results
+>>>>
+>>>> 4. Make try_fmt / set_fmt not poweron the device but instead constrain
+>>>>    the requested fmt to one from our cached fmts
+>>>>
+>>>> 5. On stream-on do the actual power-on + set-fmt + verify that we get
+>>>>    what we expect based on the cache, and otherwise return -EIO.
+>>>
+>>> Can we start powering up the device during try/set fmt and then
+>>> implement the format caching as an improvement?
+>>
+>> Yes, actually looking at how complex this is when e.g. also taking
+>> controls into account I think that taking small steps is a good idea.
+>>
+>> I have lately mostly been working on sensor drivers where delaying
+>> applying format settings + all controls to stream-on is normal.
+>>
+>> So that is the mental model I'm applying to uvc here, but that might
+>> not be entirely applicable.
+>>
+>>> Laurent mentioned that some cameras missbehave if a lot of controls
+>>> are set during probing. I hope that this approach does not trigger
+>>> those, and if it does it would be easier to revert if we do the work
+>>> in two steps.
+>>
+>> Ack, taking small steps sounds like a good plan.
+>>
+>> <snip>
+>>
+>>>> This should also make camera enumeration faster for apps, since
+>>>> most apps / frameworks do the whole 3 levels nested loop for this
+>>>> on startup, for which atm we go out to the hw, which now instead
+>>>> will come from the fmts cache and thus will be much much faster,
+>>>> so this should lead to a noticeable speedup for apps accessing UVC
+>>>> cameras which would be another nice win.
+>>>>
+>>>> Downside is that the initial probe will take longer see we do
+>>>> all the tryfmt-s there now. But I think that taking a bit longer
+>>>> to probe while the machine is booting should not be an issue.
+>>>
+>>> How do you pretend to handle the controls? Do you plan to power-up the
+>>> device during s_ctrl() or set them only during streamon()?
+>>> If we power-up the device during s_ctrl we need to take care of the
+>>> asynchronous controls (typically pan/tilt/zoom), The device must be
+>>> powered until the control finishes, and the device might never reply
+>>> control_done if the firmware is not properly implemented.
+>>> If we set the controls only during streamon, we will break some
+>>> usecases. There are some video conferencing equipment that do homing
+>>> during streamoff. That will be a serious API breakage.
+>>
+>> How to handle controls is a good idea.
+>>
+>> Based on my sensor experience my initial idea was to just cache them
+>> all. Basically make set_ctrl succeed but do not actually do anyhing
+>> when the camera is not already powered on and then on stream-on call
+>> __v4l2_ctrl_handler_setup() to get all current values applied.
+>>
+>> But as you indicate that will likely not work well with async controls,
+>> although we already have this issue when using v4l2-ctl from the cmdline
+>> on such a control and that seems to work fine.
+> 
+> -----
+>> Just because we allow
+>> the USB connection to sleep, does not mean that the camera cannot finish
+>> doing applying the async control.
+>>
+> Not sure what you mean with this sentence. Could you explain it
+> differently? Sorry
+> 
+>> But I can see how some cameras might not like this and having 2 different
+>> paths for different controls also is undesirable.
+>>
+>> Combine that with what Laurent said about devices not liking it when
+>> you set too much controls in a short time and I do think we need to
+>> immediately apply ctrls.
+>>
+>> I see 2 ways of doing that:
+>>
+>> 1. Use pm_runtime_set_autosuspend_delay() with a delay of say 1 second
+>> and then on set_ctrl do a pm_runtime_get_sync() +
+>> pm_runtime_put_autosuspend() giving the camera 1 second to finish
+>> applying the async ctrl (which might not be enough for e.g homing) +
+>> also avoid doing suspend + resume all the time if multiple ctrls are send
+> 
+> What about 1.5:
+> 
+> during s_ctrl():
+> usb_autopm_get_interface()
+> if the control is UVC_CTRL_FLAG_ASYNCHRONOUS.
+>        usb_autopm_get_interface()
+> set the actual control in the hardware
+> usb_autopm_put_interface()
+> 
+> during uvc_ctrl_status_event():
+>    usb_autopm_put_interface()
 
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-Reviewed-by: Sui Jingfeng <sui.jingfeng@linux.dev>
----
-Changes in v2:
-  - Add Sui's RB
----
- drivers/gpu/drm/loongson/lsdc_drv.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+How do we match this to the usb_autopm_get_interface()
+call ? At a minimum we would need some counter to
+track pending (not acked through status interrupt urb)
+async control requests and only do the put() if that
+counter >= 1 (and then decrease the counter).
 
-diff --git a/drivers/gpu/drm/loongson/lsdc_drv.c b/drivers/gpu/drm/loongson/lsdc_drv.c
-index b350bdcf1645..d373c13a007d 100644
---- a/drivers/gpu/drm/loongson/lsdc_drv.c
-+++ b/drivers/gpu/drm/loongson/lsdc_drv.c
-@@ -232,9 +232,9 @@ lsdc_create_device(struct pci_dev *pdev,
- 	lsdc_gem_init(ddev);
- 
- 	/* Bar 0 of the DC device contains the MMIO register's base address */
--	ldev->reg_base = pcim_iomap(pdev, 0, 0);
--	if (!ldev->reg_base)
--		return ERR_PTR(-ENODEV);
-+	ldev->reg_base = pcim_iomap_region(pdev, 0, "lsdc");
-+	if (IS_ERR(ldev->reg_base))
-+		return ldev->reg_base;
- 
- 	spin_lock_init(&ldev->reglock);
- 
--- 
-2.47.0
+We don't want to do unbalanced puts here in case of
+buggy cameras sending unexpected / too many
+ctrl status events.
+
+> during close():
+>    send all the missing usb_autopm_put_interface()
+
+Except for my one remark this is an interesting
+proposal.
+
+Maybe also do a dev_warn() if there are missing
+usb_autopm_put_interface() calls pending on close() ?
+
+> This way:
+> - we do not have an artificial delay that might not work for all the use cases
+> - cameras with noncompliant async controls will have the same PM
+> behaviour as now  (will be powered on until close() )
+> 
+> We do the same with the rest of the actions that require hardware access, like:
+> https://lore.kernel.org/linux-media/20220920-resend-powersave-v5-2-692e6df6c1e2@chromium.org/
+> 
+> This way:
+> - Apps that do not need to access the hardware, do not wake it up, and
+> we do not break usecases.
+> 
+> Next steps will be:
+>  - cache the formats
+>  - move the actual set_ctrl to streamon... but if we can do that I
+> would argue than we can move completely to the control framework.
+
+Right I had forgotten that the UVC driver does not use the control
+framework. I think moving to that would be a prerequisite for moving
+the set_ctrl to stream_on.
+
+Regards,
+
+Hans
 
 
