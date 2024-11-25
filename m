@@ -1,189 +1,122 @@
-Return-Path: <linux-kernel+bounces-420649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B8629D7FCD
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:02:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 339AA9D800A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:03:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65645B26714
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:01:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC628284109
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CB519066D;
-	Mon, 25 Nov 2024 09:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C97519007F;
+	Mon, 25 Nov 2024 09:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dDwD1bBa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nyDHFgMI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CBC18C004;
-	Mon, 25 Nov 2024 09:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEC619007E
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 09:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732525295; cv=none; b=rhp39nAHQCX7sX2g7yDXzYMqFyPTBziYnyhMTy6BsDbZzsMYyXcyatQZEmJ9dO/qEgDh+8TyvMmVoGJbp8DE+NBFTY+CUWuWjb+fehHCGxfD8EKEEGFRqMvqiLZnaIdfcDzrIxGqXoHaSpzUoejs84LQq5BDYU2Bj7aUF6E1vHk=
+	t=1732525409; cv=none; b=G/OMLqonUtt3cFSlGp1j3F3rhvi6Fybis0m1CALpz+o1nloOL4elQEEIsBTZFKsXIkRW7XLmf9nGTUyBSPQuF9kZi27X97UPSVeP9unXXjqZRAulTvVbJKhUjDMxXVVGAePqWeph4ntevjtjg0mGXq30S/22IC3HxPnm0T3pn8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732525295; c=relaxed/simple;
-	bh=j4CgOW/UoFO3+P6ChEexl3YHtLFB7F+E1YeGfiQnv4w=;
+	s=arc-20240116; t=1732525409; c=relaxed/simple;
+	bh=2OmXam+k7g5h8EQzhTSDSS4SU0GY+CkNe50RDJMNa2w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YNlmRwjs2mBE8Up89DuHwBHpBoATSP6x4CbqBKMSJv5EEZTJuvz+LfLm1P65GYTZUJ1eW/iHePIc4ffvlDyft7kt+McQzerXchMa8PRG/YY1UuUJTW9ciYre/T30QLm40+Q1ZDF3MDPiBMZCqoNsigrTgBSGPg60D6NO7tuugd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dDwD1bBa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53EFDC4CECE;
-	Mon, 25 Nov 2024 09:01:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732525294;
-	bh=j4CgOW/UoFO3+P6ChEexl3YHtLFB7F+E1YeGfiQnv4w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dDwD1bBaFeQ2VbbSqXhyFTsN4utJIqHEPh6rk3UCG+xAcS3FSE5zh9e42e3goiyZc
-	 cAMNaoXaDxrxjyLIXjw4hKSC0GfD4zDJLk9F/MshsrdY5sI2+WY06X2iGM/1WKhOSX
-	 /ZQeIB0EumP7v5M1y3V3MNDEMZaw05UrQuEPiLPmee/jPk/YznNYNIHxMlEUEkUQcz
-	 +Ksa4Kc4Jeq35jj8BYAt9n59iJ1M/O5NKk0cKaoI4b3BMXhcOZC1xnT6hGIQGbaqeQ
-	 3ZCLnrRGJf/D96UrYpDy+i3v6GystY86x/15dqDrXjqYf+dYPn1VyvfBEwsrZeJNpN
-	 +PJPFBLX3xlXQ==
-Date: Mon, 25 Nov 2024 10:01:31 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: Radu Rendec <rrendec@redhat.com>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, robh@kernel.org, arnd@linaro.org, linux-kernel@vger.kernel.org, 
-	Zhipeng Wang <zhipeng.wang_1@nxp.com>, javier@dowhile0.org, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	linux-pm@vger.kernel.org
-Subject: Re: [RFC PATCH] cpufreq: dt-platdev: Fix module autoloading
-Message-ID: <20241125-eminent-devious-zebu-ec2caf@houat>
-References: <20241119111918.1732531-1-javierm@redhat.com>
- <20241121071127.y66uoamjmroukjck@vireshk-i7>
- <87iksh3r4x.fsf@minerva.mail-host-address-is-not-set>
- <20241121090357.ggd4hc43n56xzo4m@vireshk-i7>
- <87frnl3q63.fsf@minerva.mail-host-address-is-not-set>
- <1c5e13b7472917b5fa303553da04ae16590f3105.camel@redhat.com>
- <87cyin42mb.fsf@minerva.mail-host-address-is-not-set>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cLawoxEPMZqg31qRiLQ3yO8aJPt2vqMvwLA4heBxyXzkgqJFOUlGTS/MSZlJ3RNLuxF8ceSAEUVrGDtDJLVY0Qbt1B/m1z57zJp6BS12zbXVmuljzmQAsX4twnM+JzOYbSA1s0JH4i2cH0b6AOsGbBrsCbjzBZyOTwv8zeJhgGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nyDHFgMI; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732525407; x=1764061407;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2OmXam+k7g5h8EQzhTSDSS4SU0GY+CkNe50RDJMNa2w=;
+  b=nyDHFgMIVJOHO2bLxHQC7ZRdFtrNpDX3BFbgCuVjPk30UvoL2PZ8ENxm
+   LvbYceji4k0w6A3oIfBJ0Jf+tmvhitt+E9Zm1Q9wPXzpMxR2TFRSp3UDl
+   lQjy5rhqX/rqJE9eGjbEaE4kn5IeTo5vTuzSrqWsS1avsZNsUAKD7pm2f
+   Lr7EWrijOwJfRnPE2fVLbBMcFhCo5QUnu2YT80wz3zpDivO1FXypS++G3
+   aGciqQQ8JlkrLlZc4MwMLbCxFDVG4CPsLm+98aHh+37IQdxSrMc59WkIj
+   o7DSyde0RSiiM1NneGuoZZYGbfm8QIB1niCxIPeEA4ygvl/ilE0JNpKC8
+   g==;
+X-CSE-ConnectionGUID: gqbnLsYmRcGfXvlX/wTzMg==
+X-CSE-MsgGUID: HbzlYNG0SMicoWhYrvUXeg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="43119537"
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="43119537"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 01:03:26 -0800
+X-CSE-ConnectionGUID: BUccMeWbS5ydhmKTy5oDuA==
+X-CSE-MsgGUID: CGuwAQ6IToSSwdzYuYJTsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="95988831"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 25 Nov 2024 01:03:24 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tFV05-00066H-2h;
+	Mon, 25 Nov 2024 09:03:21 +0000
+Date: Mon, 25 Nov 2024 17:02:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mateusz Guzik <mjguzik@gmail.com>, tglx@linutronix.de, bp@alien8.de,
+	andy@kernel.org, akpm@linux-foundation.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [PATCH 2/2] string: retire bcmp()
+Message-ID: <202411251629.TKfhELVt-lkp@intel.com>
+References: <20241123094729.1099378-3-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="43rrzlpdnp4ikjdi"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87cyin42mb.fsf@minerva.mail-host-address-is-not-set>
+In-Reply-To: <20241123094729.1099378-3-mjguzik@gmail.com>
 
+Hi Mateusz,
 
---43rrzlpdnp4ikjdi
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC PATCH] cpufreq: dt-platdev: Fix module autoloading
-MIME-Version: 1.0
+kernel test robot noticed the following build errors:
 
-On Fri, Nov 22, 2024 at 06:09:16PM +0100, Javier Martinez Canillas wrote:
-> Radu Rendec <rrendec@redhat.com> writes:
->=20
-> Hello Radu,
->=20
-> > On Thu, 2024-11-21 at 10:13 +0100, Javier Martinez Canillas wrote:
-> >> Viresh Kumar <viresh.kumar@linaro.org> writes:
-> >>=20
-> >> > On 21-11-24, 09:52, Javier Martinez Canillas wrote:
-> >> > > Will autload the driver for any platform that has a Device Tree no=
-de with a
-> >> > > compatible =3D "operating-points-v2" (assuming that this node will=
- be a phandle
-> >> > > for the "operating-points-v2" property.
-> >> > >=20
-> >> > > For example, in the case of the following DT snippet:
-> >> > >=20
-> >> > > cpus {
-> >> > > =A0=A0=A0=A0=A0=A0=A0 cpu@0 {
-> >> > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 operating-points-v2=
-=A0=A0=A0=A0 =3D <&cpu0_opp_table>;
-> >> > > =A0=A0=A0=A0=A0=A0=A0 };
-> >> > > };
-> >> > >=20
-> >> > > cpu0_opp_table: opp_table {
-> >> > > =A0=A0=A0=A0=A0=A0=A0 compatible =3D "operating-points-v2";
-> >> > > ...
-> >> > > };
-> >> > >=20
-> >> > > It will autoload if OF finds the opp_table node, but it register t=
-he cpufreq-dt
-> >> > > device only if there's a cpu@0 with a "operating-points-v2" proper=
-ty.
-> >> > >=20
-> >> > > Yes, there may be false positives because the autload semantics do=
-n't exactly
-> >> > > match the criteria for the driver to "match" but I believe is bett=
-er to load it
-> >> > > and not use for those cases, than needing the driver and not autol=
-oading it.
-> >> > >=20
-> >> > > > I am not sure what's the best way forward to fix this.
-> >> > > >=20
-> >> > >=20
-> >> > > I couldn't find another way to solve it, if you have a better idea=
- please let
-> >> > > me know. But IMO we should either workaround like this or revert t=
-he commit=20
-> >> > > that changed the driver's Kconfig symbol to be tristate.
-> >> >=20
-> >> > Yeah, this needs to be fixed and this patch is one of the ways. Lets=
- see if Arnd
-> >> > or Rob have something to add, else can apply this patch.
-> >> >=20
-> >>=20
-> >> Ok. Please notice though that this is an RFC, since all my arm64 machi=
-nes have
-> >> their own CPUFreq driver and are not using cpufreq-dt-platdev. So I wo=
-uld not
-> >> apply it until someone actually tested the patch.
-> >
-> > I tested the patch on a Renesas R-Car S4 Spider (r8a779f0-spider.dts)
-> > board, and it didn't work. I think the problem is that the OPP table DT
-> > node does not have a corresponding device instance that is registered,
-> > and therefore no modalias uevent is reported to udev/kmod.
-> >
->=20
-> Thanks for testing! Bummer that the workaround didn't work. But that's why
-> I asked you to test. You know, like Donald Knuth said: "Beware of bugs in
-> the above code; I have only proved it correct, not tried it" :)
->=20
-> > FWIW, the OPP table is defined at the top of r8a779f0.dtsi and
-> > referenced just a few more lines below, where the CPU nodes are
-> > defined.
-> >
-> > As far as I understand, there are two options to fix this:
-> >    1. Revert the patch that allows the cpufreq-dt-platdev driver to be
-> >       built as a module. There's little benefit in allowing that anyway
-> >       because the overhead at init time is minimal when the driver is
-> >       unused, and driver can't be unloaded.
-> >    2. Modify the driver and create an explicit of_device_id table of
-> >       supported platforms for v2 too (like the existing one for v1) and
-> >       use that instead of the cpu0_node_has_opp_v2_prop() call and the
-> >       blacklist. That would of course also eliminate the blacklist.
-> >
->=20
-> Agreed with this. Likely (1) is the easiest path and (2) would make the
-> driver more aligned with the rest of the kernel (that have a list of OF
-> device IDs to autoload / match instead of some custom logic).
->=20
-> But I guess that (2) would be riskier, since not adding a platform that
-> uses v2 will cause a regression.
+[auto build test ERROR on kees/for-next/hardening]
+[also build test ERROR on tip/master tip/x86/core linus/master v6.12 next-20241125]
+[cannot apply to tip/auto-latest]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Also, 2 probably wouldn't work. Devices under /cpus don't get a struct
-device created for them, so it wouldn't probe.
+url:    https://github.com/intel-lab-lkp/linux/commits/Mateusz-Guzik/x86-callthunks-s-bcmp-memcmp/20241125-110959
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/hardening
+patch link:    https://lore.kernel.org/r/20241123094729.1099378-3-mjguzik%40gmail.com
+patch subject: [PATCH 2/2] string: retire bcmp()
+config: arm-allnoconfig (https://download.01.org/0day-ci/archive/20241125/202411251629.TKfhELVt-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241125/202411251629.TKfhELVt-lkp@intel.com/reproduce)
 
-Maxime
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411251629.TKfhELVt-lkp@intel.com/
 
---43rrzlpdnp4ikjdi
-Content-Type: application/pgp-signature; name="signature.asc"
+All errors (new ones prefixed by >>):
 
------BEGIN PGP SIGNATURE-----
+>> ld.lld: error: undefined symbol: bcmp
+   >>> referenced by do_mounts.c
+   >>>               init/do_mounts.o:(parse_root_device) in archive vmlinux.a
+   >>> referenced by do_mounts.c
+   >>>               init/do_mounts.o:(parse_root_device) in archive vmlinux.a
+   >>> referenced by do_mounts.c
+   >>>               init/do_mounts.o:(parse_root_device) in archive vmlinux.a
+   >>> referenced 37 more times
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ0Q85AAKCRAnX84Zoj2+
-dmpJAX0cekmVgwNl35X7Nrv66juttUvAd457Z70pGQEcQUIwqsIKsyuTY/5pVwvA
-x1wK4RUBf3iuQgsNCOQgHAh6t6l/mrjILAIXQpKwSQx7UP/uBwHOz1aBU5kgqDR9
-iyG71jWhvA==
-=/4QH
------END PGP SIGNATURE-----
-
---43rrzlpdnp4ikjdi--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
