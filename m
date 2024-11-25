@@ -1,245 +1,215 @@
-Return-Path: <linux-kernel+bounces-421647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A98939D8DF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:24:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD42C9D8DF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:25:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6925628D0AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:24:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DA1528D1AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69BE1BFE0C;
-	Mon, 25 Nov 2024 21:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14931BDAAF;
+	Mon, 25 Nov 2024 21:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dTQbYeHD"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lclt7VWy"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE4D18E359;
-	Mon, 25 Nov 2024 21:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E9518E359;
+	Mon, 25 Nov 2024 21:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732569861; cv=none; b=ouoZy5ExRnODV4Xes0kXp8zjoHdgLb1Ys2Pt2mAs8GBZk4pXd7KzVHLsbFjJmbf8bCqXX14bQ2w8RdmMMJ3pIstvfE1YIsTaM/GtYYGL4QJI4gIjngUVNuk7aMSfqeNyhQQb4Z+Lszj6Yd924k2l75S6nAXfxYMM4y3IojumdsY=
+	t=1732569907; cv=none; b=mqGXRgUAdycRJd2ezVC8rB37IMoQwnDvY36GVugi5XPx6GJPOvtCYHOzOs1Nt7EW7iJxl9zjzxeoeoktlifdSpaHadhqdSY3vH7hhzXsZyLISXl8fGLl5+Z5B6+XsGBrW2UNqLVeaUgqgoJk3NfoMiFRdpIkG4N+JkizCdZviGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732569861; c=relaxed/simple;
-	bh=5CtDAEAGFgIRPa64S8d1hGjtFDiHuHdt+XKkD8Kc1W0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sd6/RzQByjbNRnX6I/QXBa7XGXhR2eLs2BtScZ6MQL0aq6fVAHIurQsjU6b/Gccx4kA+Kiwc3jozfaxH6btqSu0H2qbx9QDXfGKs7CYK9UVMUD93heDrUKJUFLHot9tb8jOglsDxVWVYG6l+Sm6lI22zf5ze1YNLr09KxOXL8NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dTQbYeHD; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1732569907; c=relaxed/simple;
+	bh=4848Q5qkWqEb70fQE34W69OgPLMdpL8hE5v/Ar4VtA8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LQ+gg1MCIzb5AXA7hoZk9oOpx9Vt7pySON++7hGYp/QT6DLlpawQob2DL5saBHnngtynf5n2PVFZVseTkae5f17gkE02obzxIf8LYQgu42s0ZmDCvguUAuAn7VJtu14qua5mzh3c05pAivgXoeW7NKbkXvArQ9RbgR6aucbI9Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lclt7VWy; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53ddd4705f8so2128714e87.0;
-        Mon, 25 Nov 2024 13:24:17 -0800 (PST)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-724f0f6300aso3050704b3a.2;
+        Mon, 25 Nov 2024 13:25:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732569855; x=1733174655; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0+1WZ/SbKZYL7GP2tOCW3l+o5U7i+3bfPsO9z/9LP1Y=;
-        b=dTQbYeHDUA9BFuTnvidkw5GGOzNVvOzl2K8MkXY4RR8JZ5g0jimFEkr4QGrZub6OY9
-         vTCCc6Dh867nBtkqNgKXRV8YUYa10aQC7vlefl/5v1RNmcwn6WqXaamtnvHDn8u/y/ol
-         xXyPD5XDB1D8qmlUjrMlB/b6Wr+UElNP6LHxVNFJ7QfnOgMvnnspoTCRtFDb+2n5CwvL
-         B+Gf93HwA21sdaJKfwpWugzuGg+h21pLfYJRncZrUCzANE0oVJ1HwB0FYaZtJpPeR3V3
-         AGJn+toqLtjQL9KoBv26kGO65x2q9yWMBYkkFiMXegKqKSaubj8RVd8V2JVpt/GY66lZ
-         TAdw==
+        d=gmail.com; s=20230601; t=1732569905; x=1733174705; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gqa+Ia1mupTcZQ+kmVz0wGSy22sBAI+jlh/ndLAYvgo=;
+        b=Lclt7VWy8+ZKBXaNTNxztLZx1Dibjhri2qXBCft9G7HzDkvptXGxbjkC/H8QCrtY1S
+         m0jUbkFlWIyQpPR7fYPphqnwsv9hB1GwOnPfJbdoQu87qHKDcrvgPBQZxnKSxojMTP42
+         l3raL54x0lyT0A/z6a9hXCugl1Q9UAxouRr/8tf1FLbLUZxLEoSGwzeyuM5IK15gbrBa
+         hV2EtiQKHmmQHVu5gAC9QV9QvhRa8rsct0V9z9RgE7Xl1f+cvYGJ5qI71Ca1QT01BjVx
+         oqbwGa5X13Jj1EFotM9DCJJZgaiDGfoN8V8APD/w3kH1tZ4jG/1hSdXuQTWJ+RpQ3MYn
+         krJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732569855; x=1733174655;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0+1WZ/SbKZYL7GP2tOCW3l+o5U7i+3bfPsO9z/9LP1Y=;
-        b=W8F6TD+LsM5tOYsdrLsdJ84K/Ru/Ux7CnTsYV2t5yekxvqZkAqX8LH64Jj4Obm/Jpu
-         g7tYaH+iu+cebzpWAkG4DD03jnX5Ru/zCPS49fglWAPm9FpEs+J2r9qX3dc5XqhSNCKE
-         4qJGoHY1MwRq5eZuFPf1GEuGOR6sIckblYoOJMsuFW1/RzMqcTfxtM4ExiW9/xRr5+SV
-         BMdPIuKX0elXFoE1wP82ZkCJcsVXJ7hbUGUn8iCvIhJbdiffmiofIrJ1A1aDX8uR/Q+s
-         AfaCb6I9EatyM1wPjDbL5p6pydeQPaAqwfcQT7W5nOiyT5sfWdr5XzNXP+huSjlSZXKp
-         Kwsg==
-X-Forwarded-Encrypted: i=1; AJvYcCW1Aj3zJqkZWcRkCymOMAjyEvcQ/OxEApAdw3uDv6uBsAaD32IoDYWXD5mF539QUyb5DACPpLsXMW7BmV7Z@vger.kernel.org, AJvYcCXRyClnjHsXbO71ZwdUAFTuql9VDToSCj3ukzHxNEC3COxAFXc+CKbdX29KxTKUHwGdycsic2KsCW6V@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxyvw9uOGmHX3oYpTG/Xa+k9XcFFG3a0y1rImF7lWUZnnzH7a4b
-	npgS9AQDjdoMplxYW/oPnZ807XguYUFE8Hl2eshxx6ivVmI+49/Gv4GkzWLjwzclh+0iOffVvi3
-	zPFjbfcKxA/JY5enjsXn8hFrS8jg=
-X-Gm-Gg: ASbGncuv7FDeQzb/wDzJ+oUMEBmWbG2MGptJce8CGOFq/dDoD6HTcoXgPN+mlfHLhEi
-	IvPOlNHx5yssH6+rv/pdqyugHsQbkKmGpunllqBnLO4M/ch7s8x2fcBEnsp6dDJrI
-X-Google-Smtp-Source: AGHT+IEY8/fB2/n9+nqmJCBIY3Q6rmtjh/JVWx2KCtVuohcw6+KzsNR8Ms/wRbMD1bUJRL/ev17UljKa17Tih0kFoDI=
-X-Received: by 2002:a05:6512:b9b:b0:53d:e123:fba7 with SMTP id
- 2adb3069b0e04-53de88505dbmr290218e87.26.1732569855254; Mon, 25 Nov 2024
- 13:24:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732569905; x=1733174705;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Gqa+Ia1mupTcZQ+kmVz0wGSy22sBAI+jlh/ndLAYvgo=;
+        b=KYdqnjeAXWcH2zvmEKsfYs85us21Zpmk2ngth/IG1+VPHk5FMexN1fs7ZeyX6dqoZx
+         4TIrhFRJoXORVgT53fpV4tqTnJH2BtOGRqqpmyNr17def94A4le1Cd/E7im2djyhkzIa
+         OW9VR240TrB86XI6jbFVIiMmP0bZcUx+UOmqRkq+U0poGavB+kE8l5HVuqCBSrPaNbEF
+         q20Zqfe/Dbe1B/WhMyXwz7ixFZ+BPDcVkVfX6Ib2ukI7gwgbvquabH13w6m64FlCy20i
+         Gk1UuN4Rx0qF7XEehbt7zAaVKW3GV4r6SA7oqvV5IcZYrCWG5Tgqvcc+8W5DwjegjiQe
+         0xfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5sNkwZNDD+r3q2Bzca/fX9OF2Rdu/Um++/AyGZe2L9Kami8HxnTeLV9+xFjcb7QBUiCkgiZ2FFoX1T48=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFAEYUJELuKo68ubVRxg8i86M2eYCQFiFnbGjOvrzJxFmsJ7jm
+	5GmmWyr/gV0awrl+pPdCa8zS69+bQivNNFlXTu3GZeuDXk+eZehPCvzMBQ==
+X-Gm-Gg: ASbGncvB2DUPT59oKst+9/A8I1IeMJFWb3RuXJrNvyU/v5qBqLhrSLef71oy0w7QGZU
+	xd/zh/Eq6yphKwycs9O5n82kxfDrPX5irjDTtrQ1BOlWvb7E44XQ4h4PFMwjRhcFQGYa+crpkqX
+	a+ICRDN/fUDhY7YgyUR+uUn1eY3TmY7N83nopiuLJ5UOX3wg1MTKkG2RCZ1qxXLRWx/oJkjyUep
+	IvZsRszD7ZQ69wbYBQhtVsN6ymAtaDEtBw9dVSiWj9I1ErJI7EvXsg66CCq+NcG1Lc/M5dBc6eS
+	fomKpA/PYdkzezZkwTbRfqE=
+X-Google-Smtp-Source: AGHT+IE51FD7RRx4sae+u+MEQdt5JrBBZjgFH3fbr5jAosQ5XhN8Ntpr/bI9WMCWMX5U1R5OW10IMA==
+X-Received: by 2002:a05:6a00:9aa:b0:724:ea15:fc7a with SMTP id d2e1a72fcca58-724ea16268fmr15706577b3a.16.1732569904603;
+        Mon, 25 Nov 2024 13:25:04 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de554fd6sm6888339b3a.139.2024.11.25.13.25.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 13:25:03 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <b0e13a75-d068-4ad3-b0d7-4834ccec3d5a@roeck-us.net>
+Date: Mon, 25 Nov 2024 13:25:02 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241006090548.30053-1-pali@kernel.org>
-In-Reply-To: <20241006090548.30053-1-pali@kernel.org>
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 25 Nov 2024 15:24:03 -0600
-Message-ID: <CAH2r5mtLoAsZfHHe33=WfDjLZ1PNgV-SgcN1F-o0g1XXLsoAng@mail.gmail.com>
-Subject: Re: [PATCH] cifs: Add support for parsing WSL-style symlinks
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sparc/pci: Make pci_poke_lock a raw_spinlock_t.
+To: Waiman Long <llong@redhat.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Will Deacon <will@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>
+References: <20241009161041.1018375-1-bigeasy@linutronix.de>
+ <20241009161041.1018375-2-bigeasy@linutronix.de>
+ <7656395b-58fc-4874-a9f3-6d934e2ef7ee@roeck-us.net>
+ <20241125085314.1iSDFulg@linutronix.de>
+ <b776ca37-d51c-47e2-b3bb-aee8e7910630@roeck-us.net>
+ <20241125174336.8nEhFXIw@linutronix.de>
+ <c77c77d4-7f6e-450c-97d5-39dc50d81b1a@roeck-us.net>
+ <20241125181231.XpOsxxHx@linutronix.de>
+ <72991b83-173e-492e-a4aa-5049304c1bd0@roeck-us.net>
+ <5d269249-afd1-44f5-8faf-9ac11d9a3beb@redhat.com>
+ <dea92bd5-65e5-4c5c-bc93-5bef547c935e@roeck-us.net>
+ <2a940822-b4d4-43ea-b4f7-4294043b76ea@roeck-us.net>
+ <88f47cea-baba-4673-9bd7-7b7c3f421008@redhat.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <88f47cea-baba-4673-9bd7-7b7c3f421008@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-This patch
+On 11/25/24 12:54, Waiman Long wrote:
+> 
+> On 11/25/24 3:23 PM, Guenter Roeck wrote:
+>> On 11/25/24 12:06, Guenter Roeck wrote:
+>>> On 11/25/24 11:33, Waiman Long wrote:
+>>> [ ... ]
+>>>>> Fixing that finally gives me a clean run. Nevertheless, that makes me wonder:
+>>>>> Should I just disable CONFIG_PROVE_RAW_LOCK_NESTING for sparc runtime tests ?
+>>>>
+>>>> If no one is tryng to ever enable PREEMPT_RT on SPARC, I suppose you could disable CONFIG_PROVE_RAW_LOCK_NESTING to avoid the trouble.
+>>>>
+>>>
+>>> SGTM. I'll do that unless someone gives me a good reason to keep it enabled.
+>>>
+>>
+>> Actually it can not be disabled with a configuration flag. It is
+>> automatically enabled. I'll have to disable PROVE_LOCKING to disable it.
+>>
+>> config PROVE_RAW_LOCK_NESTING
+>>         bool                    <---- no longer user configurable
+>>         depends on PROVE_LOCKING
+>>         default y
+>>         help
+>>          Enable the raw_spinlock vs. spinlock nesting checks which ensure
+>>          that the lock nesting rules for PREEMPT_RT enabled kernels are
+>>          not violated.
+>>
+>> I don't really like that, and I don't understand the logic behind it,
+>> but it is what it is.
+>>
+>> FWIW, the description of commit 560af5dc839 is misleading. It says "Enable
+>> PROVE_RAW_LOCK_NESTING _by default_" (emphasis mine). That is not what the
+>> commit does. It force-enables PROVE_RAW_LOCK_NESTING if PROVE_LOCKING is
+>> enabled. It is all or nothing.
+>>
+> I think we can relax it by
+> 
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index 5d9eca035d47..bfdbd3fa2d29 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -1399,7 +1399,7 @@ config PROVE_LOCKING
+>   config PROVE_RAW_LOCK_NESTING
+>          bool
+>          depends on PROVE_LOCKING
+> -       default y
+> +       default y if ARCH_SUPPORTS_RT
+>          help
+>           Enable the raw_spinlock vs. spinlock nesting checks which ensure
+>           that the lock nesting rules for PREEMPT_RT enabled kernels are
+> 
+> Sebastian, what do you think?
+> 
 
-commit 06a7adf318a30bdcfa1222ed6d2640e6bb266d7b
-Author: Pali Roh=C3=A1r <pali@kernel.org>
-Date:   Sat Sep 28 13:21:24 2024 +0200
+	depends on PROVE_LOCKING && ARCH_SUPPORTS_RT
 
-    cifs: Add support for parsing WSL-style symlinks
+seems to make more sense to me.
 
+Guenter
 
- led to compile warning:
-
-  CC [M]  fs/smb/client/reparse.o
-  CHECK   fs/smb/client/reparse.c
-fs/smb/client/reparse.c:679:45: warning: incorrect type in argument 4
-(different base types)
-fs/smb/client/reparse.c:679:45:    expected unsigned short [usertype] *pwcs
-fs/smb/client/reparse.c:679:45:    got restricted __le16 [usertype]
-*[assigned] symname_utf16
-
-
-Let me know if updated version needed
-
-On Sun, Oct 6, 2024 at 4:07=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org> wr=
-ote:
->
-> Linux CIFS client currently does not implement readlink() for WSL-style
-> symlinks. It is only able to detect that file is of WSL-style symlink, bu=
-t
-> is not able to read target symlink location.
->
-> Add this missing functionality and implement support for parsing content =
-of
-> WSL-style symlink.
->
-> The important note is that symlink target location stored for WSL symlink
-> reparse point (IO_REPARSE_TAG_LX_SYMLINK) is in UTF-8 encoding instead of
-> UTF-16 (which is used in whole SMB protocol and also in all other symlink
-> styles). So for proper locale/cp support it is needed to do conversion fr=
-om
-> UTF-8 to local_nls.
->
-> Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
-> ---
->  fs/smb/client/reparse.c | 49 +++++++++++++++++++++++++++++++++++++++++
->  fs/smb/common/smb2pdu.h |  9 ++++++++
->  2 files changed, 58 insertions(+)
->
-> diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
-> index a577b2d2a4fc..6e9d914bac41 100644
-> --- a/fs/smb/client/reparse.c
-> +++ b/fs/smb/client/reparse.c
-> @@ -875,6 +875,52 @@ static int parse_reparse_symlink(struct reparse_syml=
-ink_data_buffer *sym,
->                                          cifs_sb);
->  }
->
-> +static int parse_reparse_wsl_symlink(struct reparse_wsl_symlink_data_buf=
-fer *buf,
-> +                                    struct cifs_sb_info *cifs_sb,
-> +                                    struct cifs_open_info_data *data)
-> +{
-> +       int len =3D le16_to_cpu(buf->ReparseDataLength);
-> +       int symname_utf8_len;
-> +       __le16 *symname_utf16;
-> +       int symname_utf16_len;
-> +
-> +       if (len <=3D sizeof(buf->Flags)) {
-> +               cifs_dbg(VFS, "srv returned malformed wsl symlink buffer\=
-n");
-> +               return -EIO;
-> +       }
-> +
-> +       /* PathBuffer is in UTF-8 but without trailing null-term byte */
-> +       symname_utf8_len =3D len - sizeof(buf->Flags);
-> +       /*
-> +        * Check that buffer does not contain null byte
-> +        * because Linux cannot process symlink with null byte.
-> +        */
-> +       if (strnlen(buf->PathBuffer, symname_utf8_len) !=3D symname_utf8_=
-len) {
-> +               cifs_dbg(VFS, "srv returned null byte in wsl symlink targ=
-et location\n");
-> +               return -EIO;
-> +       }
-> +       symname_utf16 =3D kzalloc(symname_utf8_len * 2, GFP_KERNEL);
-> +       if (!symname_utf16)
-> +               return -ENOMEM;
-> +       symname_utf16_len =3D utf8s_to_utf16s(buf->PathBuffer, symname_ut=
-f8_len,
-> +                                           UTF16_LITTLE_ENDIAN,
-> +                                           symname_utf16, symname_utf8_l=
-en * 2);
-> +       if (symname_utf16_len < 0) {
-> +               kfree(symname_utf16);
-> +               return symname_utf16_len;
-> +       }
-> +       symname_utf16_len *=3D 2; /* utf8s_to_utf16s() returns number of =
-u16 items, not byte length */
-> +
-> +       data->symlink_target =3D cifs_strndup_from_utf16((u8 *)symname_ut=
-f16,
-> +                                                      symname_utf16_len,=
- true,
-> +                                                      cifs_sb->local_nls=
-);
-> +       kfree(symname_utf16);
-> +       if (!data->symlink_target)
-> +               return -ENOMEM;
-> +
-> +       return 0;
-> +}
-> +
->  int parse_reparse_point(struct reparse_data_buffer *buf,
->                         u32 plen, struct cifs_sb_info *cifs_sb,
->                         const char *full_path,
-> @@ -894,6 +940,9 @@ int parse_reparse_point(struct reparse_data_buffer *b=
-uf,
->                         (struct reparse_symlink_data_buffer *)buf,
->                         plen, unicode, cifs_sb, full_path, data);
->         case IO_REPARSE_TAG_LX_SYMLINK:
-> +               return parse_reparse_wsl_symlink(
-> +                       (struct reparse_wsl_symlink_data_buffer *)buf,
-> +                       cifs_sb, data);
->         case IO_REPARSE_TAG_AF_UNIX:
->         case IO_REPARSE_TAG_LX_FIFO:
->         case IO_REPARSE_TAG_LX_CHR:
-> diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
-> index c769f9dbc0b4..275184c31a89 100644
-> --- a/fs/smb/common/smb2pdu.h
-> +++ b/fs/smb/common/smb2pdu.h
-> @@ -1552,6 +1552,15 @@ struct reparse_symlink_data_buffer {
->
->  /* See MS-FSCC 2.1.2.6 and cifspdu.h for struct reparse_posix_data */
->
-> +/* For IO_REPARSE_TAG_LX_SYMLINK */
-> +struct reparse_wsl_symlink_data_buffer {
-> +       __le32  ReparseTag;
-> +       __le16  ReparseDataLength;
-> +       __u16   Reserved;
-> +       __le32  Flags;
-> +       __u8    PathBuffer[]; /* Variable Length UTF-8 string without nul=
--term */
-> +} __packed;
-> +
->  struct validate_negotiate_info_req {
->         __le32 Capabilities;
->         __u8   Guid[SMB2_CLIENT_GUID_SIZE];
-> --
-> 2.20.1
->
->
-
-
---=20
-Thanks,
-
-Steve
 
