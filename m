@@ -1,163 +1,185 @@
-Return-Path: <linux-kernel+bounces-421466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C4049D8BBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:56:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73749164313
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:55:56 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A04D1B86F6;
-	Mon, 25 Nov 2024 17:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="PYVqhKnI"
-Received: from mx-rz-2.rrze.uni-erlangen.de (mx-rz-2.rrze.uni-erlangen.de [131.188.11.21])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD9059D8BA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:48:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3D55674E;
-	Mon, 25 Nov 2024 17:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.21
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73998285FAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:48:56 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65C51B5ECB;
+	Mon, 25 Nov 2024 17:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="TJgNoJI2"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CD9EACE;
+	Mon, 25 Nov 2024 17:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732557352; cv=none; b=uThUk/m0UB8df0PKJ+r6N0cir6HGEhvXKnO/yDLWgFfeCc8W+3HZQD/5fvu7u0UXMCeNUB3Am4nXsDpDQ5sDg5BkDd9RkOQ0eZaDvNFko3e2nV4wzJyFLq8h4z+9Bes1LNx4IEYAdDwE3fKSBrWj7Vag5efzchOX1yjaMX/jrUs=
+	t=1732556931; cv=none; b=EUoe8y1u8E93ImjT0rRG/h/Te2KUi/oIXvtzdpbj2MasgpqGNp0cSNB1gwnrgkDxg5lRKXTSA3QNlNSkfCrKLr7xg3JP66rDXE+E03zPrbPldUlLCJrV52CxRheXtsKrGAFdVcbZ8KKDLoWQSPecIk4eGpr7tRnpfhDS+JVK90k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732557352; c=relaxed/simple;
-	bh=2n5055K35rCJGA6l5kVZ2fbftr0hbqsaeRPtwaIRXo4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Iu+PhTBvnXp0C8FO5nrT7enBVZVwPJ5JAn2UPPcgKvAyEpvTfoLovhvM5qjiDCUsSSfgX0Y1cynwkNHmw5a5FP+wJ4xKG1D4RdG77u57SVzxDdTtEe9tJULe2/AV56vriUFZLJDjYWjbnKrG5RmWu5u/sLuFRqcW0Azacb26JVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=PYVqhKnI; arc=none smtp.client-ip=131.188.11.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
-Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-rz-2.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4XxtRk4CTYzPk0d;
-	Mon, 25 Nov 2024 18:46:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
-	t=1732556786; bh=dCo82lIXi3PYVdCoMwds1sZA2u28NqGxUqyKmul0O8U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From:To:CC:
-	 Subject;
-	b=PYVqhKnIwS7kuQp4OABHHNpyo4aNeBMCvqQ58mDq38OiXkN+4VHhRMiIzHPf0X+kl
-	 5c5pwZYNDgTQ94KiMkeZmJInTS5txsM2mwaeaEvepO64+ri08MlGWBppj52Y2XQrPY
-	 SC1OX3TwAYqWqedpPsPq8ZHay9M2/HcY+Tmot2Xuj1vqymJqEAwAPEwnq9DwZ0F0dG
-	 s7/CwOacJLPdaztzOK0bIPczlpGkW7dZ7kjl2jB4k64OdRQQjjuu1/M7k7alGeP3CZ
-	 4M+phd2MeWm5uIeBZxLssTvfELrYvBKISNkqOn0p2Il65i+OzHRMgkTH5BB2TFCTwL
-	 KbsLpm2+zzvTA==
-X-Virus-Scanned: amavisd-new at boeck1.rrze.uni-erlangen.de (RRZE)
-X-RRZE-Flag: Not-Spam
-X-RRZE-Submit-IP: 131.188.47.107
-Received: from faui76b (faui76b.informatik.uni-erlangen.de [131.188.47.107])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: U2FsdGVkX19fnl6dDoLwzjSJCuyQ3La9nObZS0jylbs=)
-	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4XxtRh1Hy3zPk2Q;
-	Mon, 25 Nov 2024 18:46:24 +0100 (CET)
-From: Martin Ottens <martin.ottens@fau.de>
-To: 
-Cc: Martin Ottens <martin.ottens@fau.de>,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org (open list:TC subsystem),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] net/sched: tbf: correct backlog statistic for GSO packets
-Date: Mon, 25 Nov 2024 18:46:07 +0100
-Message-Id: <20241125174608.1484356-1-martin.ottens@fau.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <CANn89iJ7uOuDCzErfeymGuyaP9ECqjFK5ZF9o3cuvR3+VLWfFg@mail.gmail.com>
-References: <CANn89iJ7uOuDCzErfeymGuyaP9ECqjFK5ZF9o3cuvR3+VLWfFg@mail.gmail.com>
+	s=arc-20240116; t=1732556931; c=relaxed/simple;
+	bh=QU8g5W7ycN5999cNHJxmTMpGkTWfIsiOVebqkoN6bxg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=AGXEKCFA1liXY6FjE66dA/nYuGFNDbDaeZC9bCR5b8fK/s7RqlSaLc6QQS6axhLvx9MDjvAjXqwqrmeKheRyLuNm3Fa2OizJQivVqf11yUgFRSsVGpEZptPRggMOTzxqLVVWtu8DhqHzOHUkZAPDhx1Y9iyO8MqY4n5k48byq7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=TJgNoJI2; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1732556901; x=1733161701; i=markus.elfring@web.de;
+	bh=Mw4IHOf7vuSM3IgbSeZEcpM211mmeelhIoAZ1bfoszw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:Cc:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=TJgNoJI2MYd5w1uysLg9IeyY7WEVw14PC7DqSzFVM5ma3TQOFvgpqyYK1WC8THT3
+	 +muG8P3Pjhx+iSgWtwkuUbrr0N3UT0u7Df1d5Su9sSg9JtxhfvGmir41BH/f4YHz6
+	 7zKOb/vsCru1fcioIkrd68KRekdgMCKbPsHTM+2TBLkzHYfv1hMjSugyZw4+Mdbgd
+	 yosrduCBEStPRRIQy/dhBS4QUBoenDjZvhNRkirz5/mvuME7gmYbVRXLqApjtXHhr
+	 fgQFHrKnlYu+OTi7oH7ugVDa0KW9p3GM54pJDYc4s6bnkZp8N2L6TihPyQ6KxPKgk
+	 VjSTUOC+o7dBXB03+g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MWi5s-1tDRJl1N8q-00VWJG; Mon, 25
+ Nov 2024 18:48:21 +0100
+Message-ID: <8b3f42a3-7053-42de-a66c-92426749e246@web.de>
+Date: Mon, 25 Nov 2024 18:48:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cocci] [PATCH 01/11] coccinelle: Add script to reorder capable()
+ calls
+To: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
+ linux-security-module@vger.kernel.org, cocci@inria.fr,
+ Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
+ Serge Hallyn <serge@hallyn.com>
+References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
+ <20241125104011.36552-11-cgoettsche@seltendoof.de>
+Content-Language: en-GB
+Cc: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgoettsche@seltendoof.de>,
+ LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241125104011.36552-11-cgoettsche@seltendoof.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:9YwCxDC03gCGBHpBkoeUKi5KqlFDtnkJJ4WSt5E0FX2uGRLnXiV
+ F7W3Zyc6nb7acaCArfg6jSskMAi9znnmE0VhKyraqEXLwbRKHtJM1z8BetCa2U7JksN0EcH
+ jWRSPYJ0xMZPN9ex0Y8Yo+LX+LmIMw7hT2occdk8R9GEUSBV0vky1XA69hpZnzoKw1LCuvf
+ uJY/cHIvrs66THymFmLYg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ehWcrQ3/VbY=;FtAuX92aUZrmdkgXRSxEzHYFW1F
+ 0bH1o4r9y56HlLyRzjmljqQw7O09t4hXNL7T8YVOi5lyJaLk0yi/efoa7EZ2RSTB0rqsRXiyn
+ p8+/77QDxh39ZGkyTc1gV7OI1fAPo4UITDDWrUoOhlPKKDo6uEXJ6gwHCiQ3Gf4FrLMAO44Bl
+ oZ1xcZEFBmN9lnHpsTBjW9CKdEm/UQIMvnI4h49/v9CbgzmNmENfHXWE1TbJe27I8+rFoCWJb
+ o8xCItiZHLvAEBalLsuHtBd89NbARhQ51HSN3v3MiKwPr8PRXmUnGHVnY4ABJKSoJg3bhOMlM
+ tVRvWyXNlwVMOQ1r+gixZBVIXNGhaVXf0kDfHFkv/9XGlqMjki73hAk6q97z0sDZurpNnM91X
+ 6SfBdtatkIWcIoTGFR1AqjVVMIyco5m2YJu3htu7s6gT6a0i42vxIwOMXY6rR4qvxHQrGd04g
+ G+UYFisO75EyBKTFQk1/LlAOqM5LROEfmYadCkZtVxDzFKtSjGfErBGf+urX6hCqriEJgbRCI
+ 6nBG5fDjCkSbn2f7U9pIjwRgR2wP1QtG6NfbBMxL20mT5cOgpynSGkmyyyR+35KLknhyFG94w
+ 3TcMb4jpYy/lDY4dUukRMuatMMBLOBevpAKXCynHets5Ob9K6gPayJFPRKNrKhte+DTmpX1HW
+ r4FnPK+HQd4lnn16Y9rWrSU1XZVWCxUBcRmkPne6kXP7cxM6/WgqBdYTUAyewf4j4kvEe+Y2Q
+ vz8Jls/rKkUhcbmQdE6nVBtkU58/p4/PYs7oFnbMqn+YvhNtgOnVuzSFej0WbyZ3zlSjgrzQT
+ XufWNsNl6dayayZl40kmoR4PjLtbV0zL6tt4yckH71AEB9l8F8Ze7U7P102K76g3QiTATmZNH
+ YRXehYzCzXw/7pw6hYdXn/N/uJ2WmX+wfVmTVJNbj0pgltWMV6+ldi4/9/JyUUJ9L7pJee6Iv
+ wsj3RkkjOneFWwpq9h8+3XLiKROaMxSC6lGQHVUoCtEiQgWzUZwMH9q35T6rjxl3NCOBk4PPX
+ Sc5ImFxzYgwcmTz6fndWjEslGMVUaGKob4ZhbApkaG7PsjwMBRmeZgZi649HEQZiGjNYHyhLZ
+ 2BbK5ni70=
 
-When the length of a GSO packet in the tbf qdisc is larger than the burst
-size configured the packet will be segmented by the tbf_segment function.
-Whenever this function is used to enqueue SKBs, the backlog statistic of
-the tbf is not increased correctly. This can lead to underflows of the
-'backlog' byte-statistic value when these packets are dequeued from tbf.
+=E2=80=A6
+> +++ b/scripts/coccinelle/api/capable_order.cocci
+> @@ -0,0 +1,98 @@
+=E2=80=A6
+> +@ignore@
+> +identifier F1 =3D { capable, ns_capable, sockopt_ns_capable };
+> +identifier F2 =3D { capable, ns_capable, sockopt_ns_capable };
 
-Reproduce the bug:
-Ensure that the sender machine has GSO enabled. Configured the tbf on
-the outgoing interface of the machine as follows (burstsize = 1 MTU):
-$ tc qdisc add dev <oif> root handle 1: tbf rate 50Mbit burst 1514 latency 50ms
+May a key word repetition avoided here?
 
-Send bulk TCP traffic out via this interface, e.g., by running an iPerf3
-client on this machine. Check the qdisc statistics:
-$ tc -s qdisc show dev <oif>
++identifier F1 =3D { capable, ns_capable, sockopt_ns_capable },
++           F2 =3D { capable, ns_capable, sockopt_ns_capable };
 
-The 'backlog' byte-statistic has incorrect values while traffic is
-transferred, e.g., high values due to u32 underflows. When the transfer
-is stopped, the value is != 0, which should never happen.
 
-This patch fixes this bug by updating the statistics correctly, even if
-single SKBs of a GSO SKB cannot be enqueued.
+=E2=80=A6
+> +//----------------------------------------------------------
+> +//  For patch mode
+> +//----------------------------------------------------------
 
-Fixes: e43ac79a4bc6 ("sch_tbf: segment too big GSO packets")
-Signed-off-by: Martin Ottens <martin.ottens@fau.de>
----
- net/sched/sch_tbf.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+I suggest to omit such a comment.
 
-diff --git a/net/sched/sch_tbf.c b/net/sched/sch_tbf.c
-index f1d09183ae63..dc26b22d53c7 100644
---- a/net/sched/sch_tbf.c
-+++ b/net/sched/sch_tbf.c
-@@ -208,7 +208,7 @@ static int tbf_segment(struct sk_buff *skb, struct Qdisc *sch,
- 	struct tbf_sched_data *q = qdisc_priv(sch);
- 	struct sk_buff *segs, *nskb;
- 	netdev_features_t features = netif_skb_features(skb);
--	unsigned int len = 0, prev_len = qdisc_pkt_len(skb);
-+	unsigned int len = 0, prev_len = qdisc_pkt_len(skb), seg_len;
- 	int ret, nb;
- 
- 	segs = skb_gso_segment(skb, features & ~NETIF_F_GSO_MASK);
-@@ -219,21 +219,27 @@ static int tbf_segment(struct sk_buff *skb, struct Qdisc *sch,
- 	nb = 0;
- 	skb_list_walk_safe(segs, segs, nskb) {
- 		skb_mark_not_on_list(segs);
--		qdisc_skb_cb(segs)->pkt_len = segs->len;
--		len += segs->len;
-+		seg_len = segs->len;
-+		qdisc_skb_cb(segs)->pkt_len = seg_len;
- 		ret = qdisc_enqueue(segs, q->qdisc, to_free);
- 		if (ret != NET_XMIT_SUCCESS) {
- 			if (net_xmit_drop_count(ret))
- 				qdisc_qstats_drop(sch);
- 		} else {
- 			nb++;
-+			len += seg_len;
- 		}
- 	}
- 	sch->q.qlen += nb;
--	if (nb > 1)
-+	sch->qstats.backlog += len;
-+	if (nb > 0) {
- 		qdisc_tree_reduce_backlog(sch, 1 - nb, prev_len - len);
--	consume_skb(skb);
--	return nb > 0 ? NET_XMIT_SUCCESS : NET_XMIT_DROP;
-+		consume_skb(skb);
-+		return NET_XMIT_SUCCESS;
-+	}
-+
-+	kfree_skb(skb);
-+	return NET_XMIT_DROP;
- }
- 
- static int tbf_enqueue(struct sk_buff *skb, struct Qdisc *sch,
--- 
-2.39.5
 
+> +@ depends on patch@
+=E2=80=A6
+> +(
+> +-  F@p(EL) op E
+> ++  E op F(EL)
+> +|
+> +-  E1 op1 F@p(EL) op2 E2
+> ++  E1 op1 E2 op2 F(EL)
+> +)
+
+How do you think about to omit extra space characters at the beginning
+of any SmPL lines?
+
+
+> +//----------------------------------------------------------
+> +//  For context mode
+> +//----------------------------------------------------------
+> +
+> +@r1 depends on !patch exists@
+
+How good do the provided data fit to the operation modes =E2=80=9Corg=E2=
+=80=9D and =E2=80=9Creport=E2=80=9D?
+
+
+> +//----------------------------------------------------------
+> +//  For org mode
+> +//----------------------------------------------------------
+
+I suggest to omit such a comment.
+
+> +
+> +@script:python depends on org@
+> +p << r1.p;
+> +@@
+> +
+> +cocci.print_main("WARNING opportunity for capable reordering",p)
+
+How do you think about to use a statement like the following?
+
+coccilib.org.print_todo(p[0], "WARNING: opportunity for reordering of capa=
+ble() calls")
+
+
+> +//----------------------------------------------------------
+> +//  For report mode
+> +//----------------------------------------------------------
+
+I suggest to omit such a comment.
+
+
+> +@script:python depends on report@
+> +p << r1.p;
+> +@@
+> +
+> +msg =3D "WARNING opportunity for capable reordering"
+> +coccilib.report.print_report(p[0], msg)
+
+Can the following code variant be a bit nicer?
+
+coccilib.report.print_report(p[0], "WARNING: opportunity for reordering of=
+ capable() calls")
+
+
+Regards,
+Markus
 
