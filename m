@@ -1,113 +1,78 @@
-Return-Path: <linux-kernel+bounces-421463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAA699D8BB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:54:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EF2D163BFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:54:16 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526301B6D14;
-	Mon, 25 Nov 2024 17:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZutVKIDN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABA719D8BB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:55:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1894D1B4F24
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 17:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BD6F28677B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:55:11 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D941B87C0;
+	Mon, 25 Nov 2024 17:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="h2sxGSBL"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2064.outbound.protection.outlook.com [40.107.21.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052301B414F;
+	Mon, 25 Nov 2024 17:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.64
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732557254; cv=fail; b=Bf0l/V8/SyqE4m1p7HluhexkRwG2OxSvwgHZlpbo9bVctmbhgqXJE88mYjchxtBGf+Ru+08yxRlC3JkCDtFe11EGziScJEpAUQofQWSJao4KPbmWlInRCKIJtw/xOmV8goXZAVwr0W15r+wyVPnDxE1R9P9/UlCpov5Y7N/6zfQ=
+	t=1732557303; cv=fail; b=SjmlFOfEWBuqAkPqv9qPXjyQOaepxUF99EbFRmJIXWHWtIOuLwRgE8BLOnqRm7++70JlpmtBF/aSAh7CUyKshyxIPGS6zo9p2e16CLntYdY7y6YCo1oRmWlKh8yvaW10hPDtF9PKdqn4l2IlSTOni5Hkr61xhmcUVVi6w0SfB2E=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732557254; c=relaxed/simple;
-	bh=ylSLA+l6AXkUXwFDM8AFf04ZoTyKgdoz4QMzkr0WLM0=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=kAjR07oE/U+2aWzeujsFMdYC2E16w8eWOLuuxq/654rC+p0XZmU9q1irqFx23PAaYgb8HAWw2gKMiXq1fO2cZmDf9Xifqqq6VQTCwLwJO1JW0Fe+iMlo+1npRwVsPQKjam2QsBWvi+P2SxPaxDJQ5aSKW1cDDHYpzrD1MigMxhA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZutVKIDN; arc=fail smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732557252; x=1764093252;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=ylSLA+l6AXkUXwFDM8AFf04ZoTyKgdoz4QMzkr0WLM0=;
-  b=ZutVKIDNVY4AvrPdlYCkGNjMyrL3m417NP8zVqh5pK+4OPEOxC1E2VGP
-   lVH9i5S4g3oxcoSv/ZHF/2Cqk5SkKvqklfoojUxJF36ck7DL3vXH4GBdr
-   VJFrRaY4UhAkAXCb7nxxeoje39SDJEBMAn1qj+cYeZANyGVWXCodCJTsa
-   /LbtcVJc8y/TUL2/TkPZmEgLDcJRna1XARqQWZkg9Ce2Rpo2xjFWEA99n
-   wBcwwAagQ/AetREJZRRnoB1NmR7ffYCQ3KR1s5/K4Gvd1iqTICVU2cttk
-   l1k2kp10vVaa89zy9dYWbS+gfy4havot2dTagZudKp/vxupG+adnDbAOB
-   A==;
-X-CSE-ConnectionGUID: o9I2i+SJRTOqNvYe6qZx9Q==
-X-CSE-MsgGUID: DLtb7hX0Qi2fktI/mjSzIA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="32050953"
-X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
-   d="scan'208";a="32050953"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 09:54:11 -0800
-X-CSE-ConnectionGUID: l5XEIwhgQ2eXsvY79DqnkQ==
-X-CSE-MsgGUID: aqmYmh22RISg52Iz7rc23A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
-   d="scan'208";a="128861347"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 25 Nov 2024 09:54:11 -0800
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 25 Nov 2024 09:54:10 -0800
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 25 Nov 2024 09:54:10 -0800
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.177)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 25 Nov 2024 09:54:10 -0800
+	s=arc-20240116; t=1732557303; c=relaxed/simple;
+	bh=j6FlPcSGpU07hasCvCQ2IEtEyk/5tjUvDZsj33XdCuE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=SKq6Iww6Wzjb5yR9yY8HzLkvG6/ssqmiUn+t45ngzzvQIjRetOJOtxdFszZEetHf6axxeZ7dKgaDngQXm1XfpMdu6ghbacyLCODSYQCgSQqqNhOy++M4CRbNuB7nCcQ4NJEUVh679RDxMuZrFGnln5KUUS2Qd/iJUS80/tdlfok=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=h2sxGSBL; arc=fail smtp.client-ip=40.107.21.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sCof5ZrCkrRajEfNG+x/+rWIXGu1dECVIc1R4WtwU4udD+h6Dv3RsZfsVE0gvhVqGyPNjMTYda9MhxN5mEu1mMkVXTt+7S7GAJaCBaiK8ORyCJqEx7MSkqwnj7dRJujJ9maGcl5wKp9fZCqZE/Zdob8UpsY5Df1YO+8KZ+L3Pk2Iiri4ClyIrnsu8gveUHiByNVPe0P1saWlHNAoHLoLR3RGi9BuNesdaOu1JYZQ5QpwsIBO1TnWIyCRkduXwASwzAUlDzPkyA0UIPw1PoW8kdenF9zETHj1w+MdjnG2Y9IT2ZZsLNo5+A7Jb1epuDeWYdAqV6vCoV7VA7pkUoiZPQ==
+ b=GlDBm/ukK2Rivq0iREE1i4BxZhECRh/RfTiLYopFE1uaAeUDgzsYdqALSDODqARDh6h3N/pe21jJsNxprHd+4YrpKbzDL0P7N1nV+VZydgLWbRHtnvu1pLuJEdSE+NrX+0TQYxC23hZqIqrsYQry7fRBRn6vo+C7yNN6DteFzx+R4JmsIDx1Xf/rQk5sLKuEkoLmJr/gNsLUZ1cw13o6+oo5Dh8zi7R5zHOIxXinxfHRgonxhExVtcqHxb162LHXFJ771PCPxGO85rWiVUCCQ8INlydkDzez9GNj2YAcCz8vlbsIc/riT3qdu/39HaMD5yQUIsD8sGbxJT/MfF27Pg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AwV/uIrgii7J592fuLhXjowrXxIdrEhphvGVnlN+VUg=;
- b=Y2+hwHCHP4q0Dn0X2Z/GSbflANKhz8U1JOVRHrV8M3zKh7KcnZOSL3A4HR3JrmGJyr7P5WUvySoAjyxPFGSTP4vZI6Jg1Qhw5+mn/ffbttdFOXZ4YroblVEobGU3tjdXkbObz2MS5Zg8bXwrvY8qLmTHSzze41Wkbq7mxuMGqVXheC99WiPu2dgZi2VOqzQ6wWhFieSDzIYOJuWLLoPEHw14bXCVrshqy9cz2b5cn0n3VpFkvsZPQk4qhoqIA3B6hL6tph5CmO+RuMjbx8/v79Usd23gBWNiYZGBlHkGHHKRg/p6F6f1SBeUiRsQS5xHZOYH0u22riYwasPydp5ucQ==
+ bh=tUNLtVZ9GWZp+CVt7mAB4IWl4ogTIZsgEuID508Oi94=;
+ b=t+OjMLYxLLOveavy0u9lkmUQnYebrX/fWn2zWvCemY6fU28tYjN881ASlapofs6n9UtYuErSDiI3y0mJ/uMw7/EGfvk1JvpgUsEXebPk/vdFlFTeggrrSzEvaKCjguBflsF3SAK1ow/1X0RjnHldoEkn/tbcHpkH0p6e4d/kB7QvDmkpJodl7Wh+wIHzKIL+b90WtIJn7WSpsVOo92ad+byehu5Ow2dv3RMMDeFitnjpSAy/zW5bxpUyziKyouN9Mri8fliGfd3VJezfYL7DKjYU6WbxgIWcmgsFODherQzMDoFQvaITHdIwSoi3urIfJaTjTuMRhUn84GR34OKNEw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tUNLtVZ9GWZp+CVt7mAB4IWl4ogTIZsgEuID508Oi94=;
+ b=h2sxGSBLexTcpyavuAhbfr/1XKpBeH68iIEVk10PTNYY7HCJtPdJn3h635dmGNRgTP6NtFch8k41CCW57aOJF+V8L4xu6WlOYmA6ZFidt5Q9R3TwM5Z9Ck9dplOLKL62wvoScIcwh51l8i5X9Vl/vEan5vrGnrGhuh5DOz4Nej03nYksbbF2wJJuThDOg0Mmj0Dj+5sqJGrhqosyUD/7EM6CwjOQwvN6z3CgIa1yK0tyYif/P84If0T0IROKP5NghSzfiumLqpp91pOei0aYIxM0/z7wa2V5U39cJ0HyZIp9hjAqO0FT0K3kkzJsXF/SAeSorOW3skNBTt+cAWLMeg==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH7PR11MB6449.namprd11.prod.outlook.com (2603:10b6:510:1f7::17)
- by SA1PR11MB8521.namprd11.prod.outlook.com (2603:10b6:806:3ab::22) with
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by VI1PR04MB7133.eurprd04.prod.outlook.com (2603:10a6:800:126::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.19; Mon, 25 Nov
- 2024 17:54:08 +0000
-Received: from PH7PR11MB6449.namprd11.prod.outlook.com
- ([fe80::9a1f:5bdb:b4ab:171a]) by PH7PR11MB6449.namprd11.prod.outlook.com
- ([fe80::9a1f:5bdb:b4ab:171a%5]) with mapi id 15.20.8182.019; Mon, 25 Nov 2024
- 17:54:08 +0000
-Message-ID: <224ee788-1371-4b57-b2e8-c595aa0a2b2a@intel.com>
-Date: Mon, 25 Nov 2024 09:53:58 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c:678:6-11: ERROR:
- invalid reference to the index variable of the iterator on line 665 (fwd)
-To: Julia Lawall <julia.lawall@inria.fr>, Jinjie Ruan <ruanjinjie@huawei.com>
-CC: <oe-kbuild-all@lists.linux.dev>, <linux-kernel@vger.kernel.org>, "Paolo
- Abeni" <pabeni@redhat.com>, Jacob Keller <jacob.e.keller@intel.com>, "Simon
- Horman" <horms@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>
-References: <27f489a5-1758-c0a2-f977-bd17a26d6dbf@inria.fr>
-Content-Language: en-US
-From: Tony Nguyen <anthony.l.nguyen@intel.com>
-In-Reply-To: <27f489a5-1758-c0a2-f977-bd17a26d6dbf@inria.fr>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CY5PR19CA0062.namprd19.prod.outlook.com
- (2603:10b6:930:69::9) To BL3PR11MB6435.namprd11.prod.outlook.com
- (2603:10b6:208:3bb::9)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.21; Mon, 25 Nov
+ 2024 17:54:57 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8182.019; Mon, 25 Nov 2024
+ 17:54:57 +0000
+Date: Mon, 25 Nov 2024 12:54:50 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, florian.fainelli@broadcom.com,
+	heiko.stuebner@cherry.de, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH net] net: phy: micrel: Dynamically control external clock
+ of KSZ PHY
+Message-ID: <Z0S56m1YIFEPHA/Y@lizhi-Precision-Tower-5810>
+References: <20241125022906.2140428-1-wei.fang@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241125022906.2140428-1-wei.fang@nxp.com>
+X-ClientProxiedBy: PH7P221CA0047.NAMP221.PROD.OUTLOOK.COM
+ (2603:10b6:510:33c::19) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -115,215 +80,335 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR11MB6449:EE_|SA1PR11MB8521:EE_
-X-MS-Office365-Filtering-Correlation-Id: 113815f4-0ca4-4eef-ee22-08dd0d7a281b
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI1PR04MB7133:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4fabf89d-ec93-43ef-0d45-08dd0d7a4643
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?MGZPajBqWndTamlPbUpMem05T0dEY052aFRRVGNaMXBGYXc1VE8xUWJUanFa?=
- =?utf-8?B?SjE4QkkxbS9Rc2dQMUoyMFdmR01XN2xyUDFESVVVanh3c25aYVVqV08ySFRB?=
- =?utf-8?B?dmtvaU80RE9LSVoxU3o0Nk1pdGlBSEFRb2hUKzRRUXpmUENiZkdnUmVhTWlF?=
- =?utf-8?B?aUtGdUJ3SVBnRjJGbnhuQjJranF6Q0E2WnJ1NFpISVV6UGVkZFUxYkV6Mm1x?=
- =?utf-8?B?dTR6dG1rNWxxalg4bUwzSFdqOFhVSzR1My94SmE0RGVrMmdQc3JHOTBoeGUy?=
- =?utf-8?B?WXVVemZTbU10cm1PR291c3V5N3MrVS9mWUhwTUllZXM4YTU3MG1hSTRtQ2lo?=
- =?utf-8?B?VFlPczVxTEpQZkYzRTB1TlFoYkdOZVFVb0pBc1hVakFrYWp3d1VPb0JiUm5V?=
- =?utf-8?B?KzJqUUJic2NPeTcrWnVHVm5wSWdRQnVkYUtXSGhPTVljY0h4bUdPc2pVMHF4?=
- =?utf-8?B?U2ZUeTcwemsrSVZPajQ1YjRxOS9xNVRQMUJnd0RmMlVkeUFwZWF5VCtYd3Ix?=
- =?utf-8?B?NHdpbEllU09WZitMaDd0L241K2gyS0FPSktXT1VaL1c4QWQzbjJ6K1p2N0JQ?=
- =?utf-8?B?bDBhTEIwMzJKYkREY2VZNTN5SURkYTZ2TEtEWXZRL0xmRzcyZFZ1Q050MGRT?=
- =?utf-8?B?Tk1vU2M0cndkWHVkWEp3Z2VpSm4xcGVIdDJ0YXB0UlFHNVlOVldWd2ZtOHYr?=
- =?utf-8?B?aGgyMUduR0NaNjgzQlY1OFUwRjJtcmRJMTUySzByUXRhNUw4MzhYcFhNcVdu?=
- =?utf-8?B?MlYvTE5iV2tDOUJwWFQwSDgxYTdtcTlDV0N4aWR4TFB0YWxIWWlTNlBYY0Nh?=
- =?utf-8?B?NmFKUjR2QitSTHI0VGozZ0crU2ZueUhXeGNTSDRkN0Z6bTh4R29na3lsQnZR?=
- =?utf-8?B?QzFjN3R6cTB6eDUvcDBPTGNGcXdDOUxXTTBJaGF5MTZDV1ZHRTg5MVordTlK?=
- =?utf-8?B?aG5wYWZhMm1pcWh4TVFmbzQvWm5LNlVldTJoVjI5RTdBMUJSSkVsT3NySkhn?=
- =?utf-8?B?S28weHpBUlczdXFMV29Ya2xLTHluK1lKRXhrN1BzeEhxT3ovT0tUOGlwNHhi?=
- =?utf-8?B?TFBTSVkyalJQbHhVa25CbmZaUkxQSkUzWXcyZ3dsbGpzeVZlVlNESHc3ZGhL?=
- =?utf-8?B?TXVSUVJEVFJ6cXg4azIzR1p1TFYvNHNXTmc3TWZlVzJlN28xVGJhZEFVbFZG?=
- =?utf-8?B?cksrejFZMTBsQVppWVNJVUJvUkRrM1IwZk1EcXB1Z1AxRVhpWDhRenkyN1Bv?=
- =?utf-8?B?U1Y3aTNJUjZNSU44aG51cW1HR20wK0pIVnBvSkIxcmJpNjkvWnpUcCtjSUty?=
- =?utf-8?B?aDlLbTRIdHJQR09ZanhscG5qZk5pM2FkMWRLeWtzNkRpM0M0LzI0N1VIZHFH?=
- =?utf-8?B?MERvYmJRTzB0TFZ0bmZFMlFhRVhyWG1tMGJVbDVaVnU0TWloWTZnbVVUOEhY?=
- =?utf-8?B?dHVaWWZGOUd1aDV4cXJ5ZHBTdS9jSm94WUFIcloxKzJvNmZxaXMrbjJuY3R1?=
- =?utf-8?B?RFVIcHB2bmlvMmNENzBENEQvQVg5V1pVRHg0UG5nbUh1aHVOODFKWkZhVFZN?=
- =?utf-8?B?RlVETEZ1bk04NDM2SGpyUHFzZUFmcmJkZU44QndVb1F1a1pDOXoraWlzR2JL?=
- =?utf-8?B?TWtOSlFoZVBtTlB2RG1SQW9MQmxwQUFYdEk2cDc1K0JSbXlCVWdmSW9ybzUx?=
- =?utf-8?B?RTI5WmsySVFmR3lzbHo2THlrTDVieVpqTjNLTWdJdzhjWEJmL0NjM2NHb2Zy?=
- =?utf-8?Q?iFpi5+Y7e5VUb2YC0pomcRbE9sB/iFfI7m/PLNH?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6449.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|7416014|376014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?57zRTAOJFBAEj7zoqE1mp010McLuwYTKSLvRkiGovL9IB1IhjokHqXUOpZH4?=
+ =?us-ascii?Q?tZw6DXDuGP4+scLudMPmFVdrCK+TzFyQVBw6GDlUAbbIIqxlc5cfkj/Uhb1N?=
+ =?us-ascii?Q?/cXvusm2edPf1QerT7By3/fM/6ymfj7rtMNh+uCyJmZHz+U6xSbbqUZw1mAz?=
+ =?us-ascii?Q?gwB6wQh85MNy9mI6CyonedyLGKNuaqSDrpETr83UwCi9eWEnyw8oC0x5H0F7?=
+ =?us-ascii?Q?/5eG5iEDNa/g0SUnCfX4SwgJ2qGR2t0FdzFPjk7YqC0/jZ9txTxS2v4mW3S/?=
+ =?us-ascii?Q?CuzF2EUtbsJdaTNAFDLOiVtzbKqX+SdFY26QJvsUZ6QBRV2LnPaqOtEsaBvz?=
+ =?us-ascii?Q?+1EVzTUrtpUQtFapvwT5f7EXHOFIQwOMRrkMTy203gtplhIdAsK4d4KG2iLy?=
+ =?us-ascii?Q?60KPAXR7rbuEaHPAyu8ov6YgLyc+fE0wqMeIfuyi+UqXAtwO3TGBv3CGrCXK?=
+ =?us-ascii?Q?XzfP43n5iusEGrLoD8bMGddWnpcXTOjx9dqdy1oqfP0uDO5K/KeSFWOmj2pd?=
+ =?us-ascii?Q?2N05DK6suNXZxnau7BcgBacAbdLkShSiUZzhbznVir4DHm7+NtB3NFDk/JY9?=
+ =?us-ascii?Q?iz+BOBoppuF8OQm5JMoE9wimylE9Ad93MVjNzLpExZGVepvIBxRefF8OGEWQ?=
+ =?us-ascii?Q?1f5SD/OSIWLq7EFvo4Hl0pUoXwEpUrfaDFAHg+Np1ZQSErm8idvRwGsI6nU4?=
+ =?us-ascii?Q?tVlw56ugk2PJ/+3M9V+/3P/prJ4hNukw0FC2/7Gdr2DJstveWjC1curL4tcO?=
+ =?us-ascii?Q?ekW3ph0pT4fPP4PVN7CHetDH/CFZIxOZkfpEk4bTTCZMnth9EjMA28sqYLHr?=
+ =?us-ascii?Q?379UstNo6FdeznA2EQ9zshtwiluJe3woTIoSE8L7WnEDX09JR62hxT4Howf7?=
+ =?us-ascii?Q?KfgcEdYsxiI+AxRQYUZHqLwXUQkDBW0LKJEdRCL3xAoVWrrTieRhXDOBOIP+?=
+ =?us-ascii?Q?c8QG5/XMAHpew7KiZBmGKuUP6gbD4XQrZ0N5dy7aVufJJiIDORPL6ZI12F1o?=
+ =?us-ascii?Q?OC6byRlcXwoDZ5UOEt9/EyLd0znHR0sCFNy4WoJLZ78q7wiuEVkZaihqqsX/?=
+ =?us-ascii?Q?zPMhe8BVoIl5StvGfIZfRdV00kLFxufqw+tNLwyLRflHoRD6EePx2Trwtn/m?=
+ =?us-ascii?Q?hwGZVEk7ZY47uw36Fad6XyfeAOMKJf3k0x4ZoOYWnNM2ySBzVPAJgqKzZuNv?=
+ =?us-ascii?Q?EbTgm6k5vWYYiCrcMFxlTYrTIjR769iEqtOVElF0j9aTW1+3QR+xQiBxE/WM?=
+ =?us-ascii?Q?Y4Cp0WQIlK03AwgTjFwLyXG/8dx2BYZ1GmdL2+1N8UC2HuQjmzKA+J5/nl6+?=
+ =?us-ascii?Q?HOhc5UD1u1NMvFzpC5M6XzMmvvWDXO6jnVaAuW1DsM+1prKpEuTY44iC15wm?=
+ =?us-ascii?Q?Ym4l/Zga089KChTqX1i3lMCrlsC9+gaZHmYwPt8kNukEaFeRNw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TlNndVVsRktqMkl0VmtEaWRjVDNNZkVBYkErWVFlR29pbko1Q01UMjZLWEpH?=
- =?utf-8?B?ZjJId3A0MDlYMFR3QS9UU1RUWWgra24ydmRBTVVqWjdOdGw1M2xINkRqZFdt?=
- =?utf-8?B?T3RNSFMwTzNkLzNCcVJBMDd0bFdQeExZZi91SHk5ek5VMlNhTnVkRGlzVWpw?=
- =?utf-8?B?dGpqVHFwczZqVUlwb2RldnQvTFlWaW16SmRtZVE1QVNWOWptMEQ0a1ZQai9P?=
- =?utf-8?B?ajJaUjBIVEVFSDZPaGZySDlTeEhEcjV6a3hMNUF1L0xNWUtZbnVoQlNObkgr?=
- =?utf-8?B?QllWRVZDRHc1WVRTVWtTWXRXQnB2amNiOU0wdkpJUlBLa2t5bDBRWmxJZmpk?=
- =?utf-8?B?SVpMUnI4S1dYMmp4MEYvMFN5M0FHYThPK3ozSFlOTVZpV2lpNUwrWmlBbERP?=
- =?utf-8?B?dVduRGNwM2IwcW0rUVFZRkNmb29WakRLU0FUZCswMElzQnVaR0VVcU1YeXlB?=
- =?utf-8?B?UUFHS24zK2FSQTVjRVE4OHo0Y2JabVpkN1BpWHpGYllCVXdHQndKQUkrdWJ1?=
- =?utf-8?B?ZUg5RHRjN0M1MTJqVHNOMnRSMjlieStBdlM0WmRaeVpQQ3NYOHZRakhRdHIz?=
- =?utf-8?B?dlhPZnhlRWRkVW9rVGx3WE9JQm9GNW9DVk93c2FRZkdPcFBNb2owREUwd3lR?=
- =?utf-8?B?NnNndER0ZVhuZ05ZeWZnWTZ3WGdOTWVrbWxobVdRZHVQS0VRckNKVkZJWmUr?=
- =?utf-8?B?ekdWNml4b1ByMkhGNHJSekh5SldBQmk0QytsaWJOT25UTTFMRmFhUm5qU2Z3?=
- =?utf-8?B?MHJBTWRVZXZyb2FJOEhmdFZBazVGaEZmanBxaTE1QzBBWXFqT2FjUUVDRnhH?=
- =?utf-8?B?b2wxRDZoOWVCNXJnS0VRbGtHYVdoRUhkdVY5SEdHNWdsUm9xaW5Wa29yM0Rx?=
- =?utf-8?B?b2M1d1NaUnkxQjgrNCtMSy9BMUNmd3ZUSWk2UTk4SjZVblZTUHFNazVNSTJJ?=
- =?utf-8?B?Uy9GSzNDN1RKUVJUUm1OZDIwclpSZUY0bHRMc0pLbWUzcnZyRFR5N3lVbjB3?=
- =?utf-8?B?RmJzZHUyNGZzc2Q4K29GaE54YzdSVldlQ3F4RUJReUc2L2lmOTFsWWNQVmVh?=
- =?utf-8?B?V1NKVStXc04zcXkyamhONEsxcHBlSE81cVJBY1prWE1SOGIvbXpJamFFaFNl?=
- =?utf-8?B?YW5FU3lScjJtU1JONW5HaGRMOTVKN1oxZkQ5VGJ4Z3hHQ2k2ejFHRVIvamRZ?=
- =?utf-8?B?cDFyZ0hoYUUxd3BBYmt0SFNBcjNlVHowbS91QXVJVnpOSVUzelZHdWVqSUtQ?=
- =?utf-8?B?L2RVNWpacXh3SU9qcmdoRU9Qb0t5N1JmbEdZN2dBWDBTT00wVnFySnFiaFFk?=
- =?utf-8?B?NWh0Yk4wTHhoYXMwYkFHbHlHVTViZTZrdElEU1BFcGdHQmMvc0VLZjB2WDVW?=
- =?utf-8?B?dFlFa25KYkcyMVBPZHRuZG9GTW5ZSTFNdWdXdEtkNXlPQTVNTnJrRS9KdEtN?=
- =?utf-8?B?OEJDQVJtVkhEaStvaXlPZGM4STUwL3dvTzlxeVl3bEQ5cTNCRll0M0RkbUFs?=
- =?utf-8?B?OTZDdGZZZHhxblBGRXVkWkRuNWJyU0ZvSjlpd0FpOFA5MHFhVTBZTDBwRTho?=
- =?utf-8?B?MGxLYUlaRjlYazdLSTVJb0NxdHZRMDBwaGRwcXBpYzdwdzUrdk1wV0Y0TDZD?=
- =?utf-8?B?a3FFcFhMckVvN3B4QWpKeWFZS2NveDFxemVkVGwzMk9VZjVZZkxvb2tPVnhX?=
- =?utf-8?B?cWpoZVFPMmNNSXJVdFlsT0hwRThWb3NENm5DWDBsdHRQa3A2WVFoRWdQVXM3?=
- =?utf-8?B?clRrSGE4UkVGeUtGUlRFN0tqcytvRnVZNGorMDJ1eVhDM3VyTG1XbWVyOFIw?=
- =?utf-8?B?aWlLWUZHZWxDQUVoVDlRU09yN0ZaQ05nVHFWTkNFVGxiRWRlU0RBamt6Mzdj?=
- =?utf-8?B?a2x6MkZJaE41TElrclJlL2tyRm1vU3pmdUpwY21LTXBmNlBOUzV5MjNCZGhQ?=
- =?utf-8?B?TGR3anFFQXpVd0pMdDNUM0NZNVJOb21ZVENlUEE3cmNMbEVIWkJFdkIrcmVq?=
- =?utf-8?B?eXM0RTRac3JoMy9GOTM4V0lES2JmRDgycCtRV24wSlJFN3VmcHZMZm5BRzJj?=
- =?utf-8?B?c0dSQVlMNCsycmpNKzlPWm5yT04wdXY2NXBBZjdNZkRKaGhwSmJlWmdBMkQv?=
- =?utf-8?B?NEVDQ1VZSHNPQXZDSHJEMHNmaENIbWY1YWdVZmVIdHQ0TnRDZkJvWlRiT2FI?=
- =?utf-8?B?VHc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 113815f4-0ca4-4eef-ee22-08dd0d7a281b
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR11MB6435.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?eX2aelcCPfXnJTea7hpae2/htZO8DiMnc/aE9TwLvFeDuBLT76bNH1NSFvEi?=
+ =?us-ascii?Q?I8dnvHpJQp69AA8xFfsCIlCCbzqxSQMwc2v3idhMcx8X85kWth2tnvgKoDzm?=
+ =?us-ascii?Q?UPz2ZthZOE8xs9PS2CvQEHDWubsnr9Cl3HFUTViSwCR9ucGMwxgUrlmIKA0F?=
+ =?us-ascii?Q?U6xCVRzkKXr9wg+Yj2QflL675URxq6ZRZcTcz7A5gDUleQc6XSbEp2PHAFLb?=
+ =?us-ascii?Q?EhCyx9m4HGTLzq1f3mYku0vtkvKol88BMVBUW3RFDbYs0pfABgxYS1Rl9Fx0?=
+ =?us-ascii?Q?q4GtJOdUIEemmAmhzf5dkEtgKMqkeFOj3N6mUROcgswsgs6qRLSBsXJR0vTY?=
+ =?us-ascii?Q?b+aj7624C4X2xdo30BpNX/nkvNCJpbIQJl6Dns3eQVcehVJDu8k7+HzPZgcS?=
+ =?us-ascii?Q?uxt6dv9HJ9clPY7my8QL0MOq0TFY3xuSkUbIGSIKVRIQyAqZln7+9Cy8tzhF?=
+ =?us-ascii?Q?aVRMHkcnQyvuO7NSZeXW3ilBjel1IMfZF9Nc/+n4m9XEhpfPh9q5A8D/b4Yv?=
+ =?us-ascii?Q?xdAqVr9kcsujWCq3evEM6ZhNck1LQFl8NwVPtcBz2qHFve/NqQv/voolPZR7?=
+ =?us-ascii?Q?87umVg4SqatTd09oXJreb2UPvO6mmaFHy0PefY0DkBx50+LfzG/WUBHmDJgh?=
+ =?us-ascii?Q?aOMzgh1YFeN1caB4yCpP97fYbEstWgsNOdg6uOhMJHEnjSkiKXdpk0rYDGU+?=
+ =?us-ascii?Q?yTj+YgzFbYSHxyhAOmv2TDn5HsXESktkr4/h4qOngnUwh/pEImMxFQkVCywV?=
+ =?us-ascii?Q?fgoPWYiov722mzyYTjuvxbLVgCXenvkHaf4pIeF5uMJf252n9WSlAlcK6HtA?=
+ =?us-ascii?Q?O/PEcesaI6VvWzGzO+ewwR1DaLSefeHUo+bSppnebt+MJi/EkmUSv6VDDowe?=
+ =?us-ascii?Q?FfcoQ+YZ0abRxf+/+oXGZx9xO9+dMXn3K6TiZvtowf/vV6lf8LEkvwEzGUNU?=
+ =?us-ascii?Q?z5UPcZEVhoGhMQMnBV5pouidZIrlupLnb46PJ7EThHb3yNC0jnlG8l1ggiVl?=
+ =?us-ascii?Q?VIpIGIPpL3kLz2G5iZt6OMjS8esC41OLZoTTxdTi6B6lEpMUpMRP79nBNe5c?=
+ =?us-ascii?Q?9TCjzZYQ7qeI9sT5pN4OANVXU1mP6IYTqgxhnzUX/HdkZ8JIyA1lMdb2Gzir?=
+ =?us-ascii?Q?HZJAcoZFnshX0i1jmvWvXdJkNLZCfaviBVoJVgsZvILExCxV9GOtTcwzPHcA?=
+ =?us-ascii?Q?FRkbUTwRJ0Amt/DXiHYdJEzFSKZchNahfYpekk0j96DwqFIpNn050TP5fbxY?=
+ =?us-ascii?Q?N8yVnNfia/xAsWDYm8kYd8euEA75nGTuaE8GWocQQlEODChNPoOGMA2C0hDT?=
+ =?us-ascii?Q?0Ud+H1G2jMh9LrnxQqD4t0pJgVzS2hTLvkNKcWBMPmVkJML1ggLRrIsKoZSu?=
+ =?us-ascii?Q?xM4XzjnGorgVLNmSIe05+r09eFmQZBSzm6UfnhLBcDLLatzgUKDKLdvJcYax?=
+ =?us-ascii?Q?RWlwWLwMT9h116PApMweRS3i8d945hULQ+SHxJp08daKwYXBh7cPaDs5mY3H?=
+ =?us-ascii?Q?9ROwHuOc44zZUuq+7PHG8ow7rGvAHOH4GUck+b5pxiMbl5lQek47pHzXg7Fq?=
+ =?us-ascii?Q?B9a7PodKEQyH0uNTVUwfgrqBY4qgCqC1aWIljCre?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4fabf89d-ec93-43ef-0d45-08dd0d7a4643
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2024 17:54:08.1089
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2024 17:54:57.4373
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NJhI60nPnnMKuy1ttPMcJNkjfcWgDpheBZXVUgl8ibrB31inwt+Q5xpxXFsvJN2mupz6WKlsXkcF2d5bEWjbVu9L8CvV5Mt46IK7NE10oOw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8521
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-UserPrincipalName: DV5McTRDvTZEYZbjisMqmNDoxmKGLKbO3maZFCB6c03+2m+Mfc42UwlvnFunJ5QrjTJRm1oEiT0ipRndqm+YTA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7133
+
+On Mon, Nov 25, 2024 at 10:29:05AM +0800, Wei Fang wrote:
+> On the i.MX6ULL-14x14-EVK board, when using the 6.12 kernel, it is found
+> that after disabling the two network ports, the clk_enable_count of the
+> enet1_ref and enet2_ref clocks is not 0 (these two clocks are used as the
+> clock source of the RMII reference clock of the two KSZ8081 PHYs), but
+> there is no such problem in the 6.6 kernel.
+
+skip your debug progress, just descript the problem itself.
+
+>
+> After analysis, we found that since the commit 985329462723 ("net: phy:
+> micrel: use devm_clk_get_optional_enabled for the rmii-ref clock"), the
+> external clock of KSZ PHY has been enabled when the PHY driver probes,
+> and it can only be disabled when the PHY driver is removed. This causes
+> the clock to continue working when the system is suspended or the network
+> port is down.
+>
+> To solve this problem, the clock is enabled when resume() of the PHY
+> driver is called, and the clock is disabled when suspend() is called.
+> Since the PHY driver's resume() and suspend() interfaces are not called
+> in pairs, an additional clk_enable flag is added. When suspend() is
+
+Why  resume() and suspend() is not call paired?
 
 
+> called, the clock is disabled only if clk_enable is true. Conversely,
+> when resume() is called, the clock is enabled if clk_enable is false.
+>
+> Fixes: 985329462723 ("net: phy: micrel: use devm_clk_get_optional_enabled for the rmii-ref clock")
+> Fixes: 99ac4cbcc2a5 ("net: phy: micrel: allow usage of generic ethernet-phy clock")
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> ---
+>  drivers/net/phy/micrel.c | 103 ++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 95 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
+> index 3ef508840674..44577b5d48d5 100644
+> --- a/drivers/net/phy/micrel.c
+> +++ b/drivers/net/phy/micrel.c
+> @@ -432,10 +432,12 @@ struct kszphy_ptp_priv {
+>  struct kszphy_priv {
+>  	struct kszphy_ptp_priv ptp_priv;
+>  	const struct kszphy_type *type;
+> +	struct clk *clk;
+>  	int led_mode;
+>  	u16 vct_ctrl1000;
+>  	bool rmii_ref_clk_sel;
+>  	bool rmii_ref_clk_sel_val;
+> +	bool clk_enable;
+>  	u64 stats[ARRAY_SIZE(kszphy_hw_stats)];
+>  };
+>
+> @@ -2050,8 +2052,27 @@ static void kszphy_get_stats(struct phy_device *phydev,
+>  		data[i] = kszphy_get_stat(phydev, i);
+>  }
+>
+> +static void kszphy_enable_clk(struct kszphy_priv *priv)
+> +{
+> +	if (!priv->clk_enable && priv->clk) {
+> +		clk_prepare_enable(priv->clk);
+> +		priv->clk_enable = true;
+> +	}
+> +}
+> +
+> +static void kszphy_disable_clk(struct kszphy_priv *priv)
+> +{
+> +	if (priv->clk_enable && priv->clk) {
+> +		clk_disable_unprepare(priv->clk);
+> +		priv->clk_enable = false;
+> +	}
+> +}
 
-On 11/23/2024 7:11 AM, Julia Lawall wrote:
-> Please see lines 663-679.  Setting entry to NULL is useless.  The
-> list_for_each_entry will overwrite it, even if the list is empty.  The
-> !empty test on line 678 is likewise useless, and the !entry->free est on
-> the same line may return a meaningless value if the list is empty.
-> Consider adding a flag variable to record whether the break was taken.
+Generally, clock not check enable status, just call enable/disable pair.
 
-Hi Julia,
+Frank
 
-I believe this has already been addressed via commit a41654c3ed1d 
-("ixgbe: fix end of loop test in ixgbe_set_vf_macvlan()").
-
-Thanks,
-Tony
-
-> julia
-> 
-> ---------- Forwarded message ----------
-> Date: Fri, 22 Nov 2024 14:07:03 +0800
-> From: kernel test robot <lkp@intel.com>
-> To: oe-kbuild@lists.linux.dev
-> Cc: lkp@intel.com, Julia Lawall <julia.lawall@inria.fr>
-> Subject: drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c:678:6-11: ERROR: invalid
->       reference to the index variable of the iterator on line 665
-> 
-> BCC: lkp@intel.com
-> CC: oe-kbuild-all@lists.linux.dev
-> CC: linux-kernel@vger.kernel.org
-> TO: Jinjie Ruan <ruanjinjie@huawei.com>
-> CC: Paolo Abeni <pabeni@redhat.com>
-> CC: Jacob Keller <jacob.e.keller@intel.com>
-> CC: Tony Nguyen <anthony.l.nguyen@intel.com>
-> CC: Simon Horman <horms@kernel.org>
-> 
-> Hi Jinjie,
-> 
-> FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   28eb75e178d389d325f1666e422bc13bbbb9804c
-> commit: c1fec890458ad101ddbbc52cdd29f7bba6aa2b10 ethernet/intel: Use list_for_each_entry() helper
-> date:   1 year, 2 months ago
-> :::::: branch date: 7 hours ago
-> :::::: commit date: 1 year, 2 months ago
-> config: riscv-randconfig-r051-20241122 (https://download.01.org/0day-ci/archive/20241122/202411221358.yZAZKbuI-lkp@intel.com/config)
-> compiler: riscv64-linux-gcc (GCC) 14.2.0
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Julia Lawall <julia.lawall@inria.fr>
-> | Closes: https://lore.kernel.org/r/202411221358.yZAZKbuI-lkp@intel.com/
-> 
-> cocci warnings: (new ones prefixed by >>)
->>> drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c:678:6-11: ERROR: invalid reference to the index variable of the iterator on line 665
->     drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c:678:16-21: ERROR: invalid reference to the index variable of the iterator on line 665
-> 
-> vim +678 drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c
-> 
-> 4c7f35f679f592 drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c Alexander Duyck 2015-11-02  637
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  638  static int ixgbe_set_vf_macvlan(struct ixgbe_adapter *adapter,
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  639  				int vf, int index, unsigned char *mac_addr)
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  640  {
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  641  	struct vf_macvlans *entry;
-> 0e1ff3061cb529 drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c Tony Nguyen     2017-07-19  642  	int retval = 0;
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  643
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  644  	if (index <= 1) {
-> c1fec890458ad1 drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c Jinjie Ruan     2023-09-19  645  		list_for_each_entry(entry, &adapter->vf_mvs.l, l) {
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  646  			if (entry->vf == vf) {
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  647  				entry->vf = -1;
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  648  				entry->free = true;
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  649  				entry->is_macvlan = false;
-> 5d7daa35b9eb14 drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c Jacob Keller    2014-03-29  650  				ixgbe_del_mac_filter(adapter,
-> 5d7daa35b9eb14 drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c Jacob Keller    2014-03-29  651  						     entry->vf_macvlan, vf);
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  652  			}
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  653  		}
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  654  	}
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  655
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  656  	/*
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  657  	 * If index was zero then we were asked to clear the uc list
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  658  	 * for the VF.  We're done.
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  659  	 */
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  660  	if (!index)
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  661  		return 0;
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  662
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  663  	entry = NULL;
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  664
-> c1fec890458ad1 drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c Jinjie Ruan     2023-09-19 @665  	list_for_each_entry(entry, &adapter->vf_mvs.l, l) {
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  666  		if (entry->free)
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  667  			break;
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  668  	}
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  669
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  670  	/*
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  671  	 * If we traversed the entire list and didn't find a free entry
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  672  	 * then we're out of space on the RAR table.  Also entry may
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  673  	 * be NULL because the original memory allocation for the list
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  674  	 * failed, which is not fatal but does mean we can't support
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  675  	 * VF requests for MACVLAN because we couldn't allocate
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  676  	 * memory for the list management required.
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  677  	 */
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13 @678  	if (!entry || !entry->free)
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  679  		return -ENOSPC;
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  680
-> 0e1ff3061cb529 drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c Tony Nguyen     2017-07-19  681  	retval = ixgbe_add_mac_filter(adapter, mac_addr, vf);
-> 0e1ff3061cb529 drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c Tony Nguyen     2017-07-19  682  	if (retval < 0)
-> 0e1ff3061cb529 drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c Tony Nguyen     2017-07-19  683  		return retval;
-> 0e1ff3061cb529 drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c Tony Nguyen     2017-07-19  684
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  685  	entry->free = false;
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  686  	entry->is_macvlan = true;
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  687  	entry->vf = vf;
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  688  	memcpy(entry->vf_macvlan, mac_addr, ETH_ALEN);
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  689
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  690  	return 0;
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  691  }
-> a1cbb15c13971b drivers/net/ixgbe/ixgbe_sriov.c                Greg Rose       2011-05-13  692
-> 
-> :::::: The code at line 678 was first introduced by commit
-> :::::: a1cbb15c13971bd5d41626e9e5ced9f9de132c47 ixgbe: Add macvlan support for VF
-> 
-> :::::: TO: Greg Rose <gregory.v.rose@intel.com>
-> :::::: CC: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-> 
-
+> +
+>  static int kszphy_suspend(struct phy_device *phydev)
+>  {
+> +	struct kszphy_priv *priv = phydev->priv;
+> +	int ret;
+> +
+>  	/* Disable PHY Interrupts */
+>  	if (phy_interrupt_is_valid(phydev)) {
+>  		phydev->interrupts = PHY_INTERRUPT_DISABLED;
+> @@ -2059,7 +2080,13 @@ static int kszphy_suspend(struct phy_device *phydev)
+>  			phydev->drv->config_intr(phydev);
+>  	}
+>
+> -	return genphy_suspend(phydev);
+> +	ret = genphy_suspend(phydev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	kszphy_disable_clk(priv);
+> +
+> +	return 0;
+>  }
+>
+>  static void kszphy_parse_led_mode(struct phy_device *phydev)
+> @@ -2088,8 +2115,11 @@ static void kszphy_parse_led_mode(struct phy_device *phydev)
+>
+>  static int kszphy_resume(struct phy_device *phydev)
+>  {
+> +	struct kszphy_priv *priv = phydev->priv;
+>  	int ret;
+>
+> +	kszphy_enable_clk(priv);
+> +
+>  	genphy_resume(phydev);
+>
+>  	/* After switching from power-down to normal mode, an internal global
+> @@ -2112,6 +2142,24 @@ static int kszphy_resume(struct phy_device *phydev)
+>  	return 0;
+>  }
+>
+> +static int ksz8041_resume(struct phy_device *phydev)
+> +{
+> +	struct kszphy_priv *priv = phydev->priv;
+> +
+> +	kszphy_enable_clk(priv);
+> +
+> +	return 0;
+> +}
+> +
+> +static int ksz8041_suspend(struct phy_device *phydev)
+> +{
+> +	struct kszphy_priv *priv = phydev->priv;
+> +
+> +	kszphy_disable_clk(priv);
+> +
+> +	return 0;
+> +}
+> +
+>  static int ksz9477_resume(struct phy_device *phydev)
+>  {
+>  	int ret;
+> @@ -2150,8 +2198,11 @@ static int ksz9477_resume(struct phy_device *phydev)
+>
+>  static int ksz8061_resume(struct phy_device *phydev)
+>  {
+> +	struct kszphy_priv *priv = phydev->priv;
+>  	int ret;
+>
+> +	kszphy_enable_clk(priv);
+> +
+>  	/* This function can be called twice when the Ethernet device is on. */
+>  	ret = phy_read(phydev, MII_BMCR);
+>  	if (ret < 0)
+> @@ -2194,7 +2245,7 @@ static int kszphy_probe(struct phy_device *phydev)
+>
+>  	kszphy_parse_led_mode(phydev);
+>
+> -	clk = devm_clk_get_optional_enabled(&phydev->mdio.dev, "rmii-ref");
+> +	clk = devm_clk_get_optional(&phydev->mdio.dev, "rmii-ref");
+>  	/* NOTE: clk may be NULL if building without CONFIG_HAVE_CLK */
+>  	if (!IS_ERR_OR_NULL(clk)) {
+>  		unsigned long rate = clk_get_rate(clk);
+> @@ -2216,11 +2267,14 @@ static int kszphy_probe(struct phy_device *phydev)
+>  		}
+>  	} else if (!clk) {
+>  		/* unnamed clock from the generic ethernet-phy binding */
+> -		clk = devm_clk_get_optional_enabled(&phydev->mdio.dev, NULL);
+> +		clk = devm_clk_get_optional(&phydev->mdio.dev, NULL);
+>  		if (IS_ERR(clk))
+>  			return PTR_ERR(clk);
+>  	}
+>
+> +	if (!IS_ERR_OR_NULL(clk))
+> +		priv->clk = clk;
+> +
+>  	if (ksz8041_fiber_mode(phydev))
+>  		phydev->port = PORT_FIBRE;
+>
+> @@ -5290,15 +5344,45 @@ static int lan8841_probe(struct phy_device *phydev)
+>  	return 0;
+>  }
+>
+> +static int lan8804_suspend(struct phy_device *phydev)
+> +{
+> +	struct kszphy_priv *priv = phydev->priv;
+> +	int ret;
+> +
+> +	ret = genphy_suspend(phydev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	kszphy_disable_clk(priv);
+> +
+> +	return 0;
+> +}
+> +
+> +static int lan8841_resume(struct phy_device *phydev)
+> +{
+> +	struct kszphy_priv *priv = phydev->priv;
+> +
+> +	kszphy_enable_clk(priv);
+> +
+> +	return genphy_resume(phydev);
+> +}
+> +
+>  static int lan8841_suspend(struct phy_device *phydev)
+>  {
+>  	struct kszphy_priv *priv = phydev->priv;
+>  	struct kszphy_ptp_priv *ptp_priv = &priv->ptp_priv;
+> +	int ret;
+>
+>  	if (ptp_priv->ptp_clock)
+>  		ptp_cancel_worker_sync(ptp_priv->ptp_clock);
+>
+> -	return genphy_suspend(phydev);
+> +	ret = genphy_suspend(phydev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	kszphy_disable_clk(priv);
+> +
+> +	return 0;
+>  }
+>
+>  static struct phy_driver ksphy_driver[] = {
+> @@ -5358,9 +5442,12 @@ static struct phy_driver ksphy_driver[] = {
+>  	.get_sset_count = kszphy_get_sset_count,
+>  	.get_strings	= kszphy_get_strings,
+>  	.get_stats	= kszphy_get_stats,
+> -	/* No suspend/resume callbacks because of errata DS80000700A,
+> -	 * receiver error following software power down.
+> +	/* Because of errata DS80000700A, receiver error following software
+> +	 * power down. Suspend and resume callbacks only disable and enable
+> +	 * external rmii reference clock.
+>  	 */
+> +	.suspend	= ksz8041_suspend,
+> +	.resume		= ksz8041_resume,
+>  }, {
+>  	.phy_id		= PHY_ID_KSZ8041RNLI,
+>  	.phy_id_mask	= MICREL_PHY_ID_MASK,
+> @@ -5507,7 +5594,7 @@ static struct phy_driver ksphy_driver[] = {
+>  	.get_sset_count	= kszphy_get_sset_count,
+>  	.get_strings	= kszphy_get_strings,
+>  	.get_stats	= kszphy_get_stats,
+> -	.suspend	= genphy_suspend,
+> +	.suspend	= lan8804_suspend,
+>  	.resume		= kszphy_resume,
+>  	.config_intr	= lan8804_config_intr,
+>  	.handle_interrupt = lan8804_handle_interrupt,
+> @@ -5526,7 +5613,7 @@ static struct phy_driver ksphy_driver[] = {
+>  	.get_strings	= kszphy_get_strings,
+>  	.get_stats	= kszphy_get_stats,
+>  	.suspend	= lan8841_suspend,
+> -	.resume		= genphy_resume,
+> +	.resume		= lan8841_resume,
+>  	.cable_test_start	= lan8814_cable_test_start,
+>  	.cable_test_get_status	= ksz886x_cable_test_get_status,
+>  }, {
+> --
+> 2.34.1
+>
 
