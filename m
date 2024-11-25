@@ -1,312 +1,206 @@
-Return-Path: <linux-kernel+bounces-421223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D8569D8839
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:39:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A95251637B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:39:45 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4700F1B0F2F;
-	Mon, 25 Nov 2024 14:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uFBlL9+c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF18F9D883A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:40:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728A516419;
-	Mon, 25 Nov 2024 14:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A833828A8B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:40:14 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7780B1B2182;
+	Mon, 25 Nov 2024 14:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="3P6gKlf4"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A812116419;
+	Mon, 25 Nov 2024 14:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732545582; cv=none; b=qJV6VmjgczCCf+8J4OUKTv60tfMycWelv6If7SUc8B5piMnsgMURwpHrBaP/xDKkAGBYdlSbMBAcBHJUCNOSW30vDmis+W2KYWG61BpUscnebPCfTrmEq3Co0SqS0zX8WcLa7ShDWz95SsDMYvf1RMhFur3wrpSNBrMnVFUhUT0=
+	t=1732545607; cv=none; b=XzDnJnjjLLtHEhEjygS0vMXCWV+BYCEMkoiz/Hs1AeDOCZ1ZDwS8FmWuh0pJBXY03hb+Sj90G60WHiGinIRR5mKDlRBBLjcgRNjd3mvjkzMk3JysksKVRMJO21rPHlxBSwYFq72jme/VzFu28TVUGKom6TY+Reegb3HEAthy5yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732545582; c=relaxed/simple;
-	bh=OxRZWUUSfbFkcntmgQi1+KlkIK8zh8tts5v0ZSzKSqw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QPjkdWHt/ZjDjScDu/W/lvFqOv8H9EHNEG2XmKV27Tm8Ug4+34yGmujg5zcvb0hJQqKWB7I5fq0u0IMKRru7gx1SVDIYfZwkUXWVVQVDkwTEeK71hjkrD4+GJa6BagMbTMAF+NA5ltWABmhn8RJkzXioHbzhG22gJBgt0z0dgZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uFBlL9+c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05908C4CED3;
-	Mon, 25 Nov 2024 14:39:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732545582;
-	bh=OxRZWUUSfbFkcntmgQi1+KlkIK8zh8tts5v0ZSzKSqw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uFBlL9+cORSeazYF0mS/NvTEZccPiun4rt1yqvttQxBgxSChxB80FKbAW2HZOB+FH
-	 kJ1BbYgK+xKlRq/FUla9Sds+jT0ngj/Oaf3IU0aj3iM8kIpt5vkwRvTCO0DKxNSiv8
-	 oAAh9HyNTpn2S033sgIIbvo6sA5C63l0SmtCmQK9bdPXWg38OH3RhD/a1XppSMC1t9
-	 Yh8b5c4EU8t//VDg6Ee4wrxCElMY82nCYbrMI4Vxo1NV3dsUUY/nHXuWXuOIAHn106
-	 Z1/m7GmujJfJoMuLs1YWqH3HeJDGwJJyOjnaND0NMJ3owl4uFEMv6/blRp0yrGjHxN
-	 /OxQLKuSQLQMA==
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2967af48248so2395569fac.2;
-        Mon, 25 Nov 2024 06:39:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUKWLY2xN3LyagPkDB86jPeHYpxocJSt/CXOQiQSz7LPeTRx7/4I+SYAt0jMroyYZ7WffSj57ztzieO3B4=@vger.kernel.org, AJvYcCWAv2H4BXIWvV4X9HppsMsx2ViYefyJyEopYOOkK3/9nkUpbEajhrqlMDGAqy16IaDNKb/m7doy1QA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz8g0uKiKWBdi9zNd4RRt00v9nMhmsgf+TLMJcOPbMSvnwshX1
-	1NMgynRvpTC2fT/LBcIjQRqKDpZyvEk2Yi9rhxH6j7wBWrCr3Mvmw1dv8DVAV3MSTVHRlm9FfvW
-	d4Xvf9r5gTuguPO+1v1anJhqlW5k=
-X-Google-Smtp-Source: AGHT+IHVR7/rtOmrO214PTCq0UIh0oSdPfq7FSxmS/Kf5dPnQDZiahM7A36Pz6MWfI58TYvNZKqHbFdsvgTXxWrYJ+k=
-X-Received: by 2002:a05:6870:4192:b0:296:e00e:22e9 with SMTP id
- 586e51a60fabf-29720e5f19amr9637534fac.36.1732545581219; Mon, 25 Nov 2024
- 06:39:41 -0800 (PST)
+	s=arc-20240116; t=1732545607; c=relaxed/simple;
+	bh=no0iSacVIbqAzRpeeuWFxDaWomFW1YKjQT7MAj8tdb0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MV9Qb3eXgfKBvSjuw7gpmCnYBnP8ZfWRwF9Dy5GhcmBKI3diTZDc3G7LwDKErosTYWP+WMT76uEKOx89xgq87eyws5I3e3ydntZG7FkHF2vgaZNGk8LmAYC5EktYZ6e+IDl6cPByhRoUFbLzFju1ll3xX3RBEyJvkAEBxwKj27c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=3P6gKlf4; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=CbRa1KYMMLQGdG25mz0RDUzqlaf9wwEr5gH4UxtL00A=; b=3P6gKlf4cmZSVMzg3cEfPS3Hck
+	Uw0GfpfUqPOakxo9mVjPLxeKL2k+XjJt6QjdmqJrFxdNjMIQj/uqPex00LoJohjxpSjyHZrrAxeZq
+	UZRDv2OWhaTqJP8E+9AkTU3PIw+f9Rm25eq3uXqhHEDtM95Xb48CKIsL7Yyg4gJABzC8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tFaFp-00EOnk-R5; Mon, 25 Nov 2024 15:39:57 +0100
+Date: Mon, 25 Nov 2024 15:39:57 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Frank Sae <Frank.Sae@motor-comm.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, xiaogang.fan@motor-comm.com,
+	fei.zhang@motor-comm.com, hua.sun@motor-comm.com
+Subject: Re: [PATCH net-next v2 09/21] motorcomm:yt6801: Implement some
+ hw_ops function
+Message-ID: <cd57707a-2d7e-4549-aab1-d0bd6c24ad35@lunn.ch>
+References: <20241120105625.22508-1-Frank.Sae@motor-comm.com>
+ <20241120105625.22508-10-Frank.Sae@motor-comm.com>
+ <46206a81-e230-411c-8a78-d461d238b171@lunn.ch>
+ <11e26658-670f-49fa-8001-0654670b541e@motor-comm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125132029.7241-1-patryk.wlazlyn@linux.intel.com> <20241125132029.7241-5-patryk.wlazlyn@linux.intel.com>
-In-Reply-To: <20241125132029.7241-5-patryk.wlazlyn@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 25 Nov 2024 15:39:30 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0iBCKmp-Hs25chq_-z7-VB_+MqTPVmowACJkTz7KOUtEg@mail.gmail.com>
-Message-ID: <CAJZ5v0iBCKmp-Hs25chq_-z7-VB_+MqTPVmowACJkTz7KOUtEg@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 4/8] x86/smp: Allow calling mwait_play_dead with
- arbitrary hint
-To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	rafael.j.wysocki@intel.com, len.brown@intel.com, 
-	artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com, 
-	peterz@infradead.org, tglx@linutronix.de, gautham.shenoy@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <11e26658-670f-49fa-8001-0654670b541e@motor-comm.com>
 
-On Mon, Nov 25, 2024 at 2:21=E2=80=AFPM Patryk Wlazlyn
-<patryk.wlazlyn@linux.intel.com> wrote:
->
-> The MWAIT instruction needs different hints on different CPUs to reach
-> the most specific idle states. The current hint calculation* in
-> mwait_play_dead() code works in practice on current hardware, but it
-> fails on a recent one, Intel's Sierra Forest and possibly some future one=
-s.
-> Those newer CPUs' power efficiency suffers when the CPU is put offline.
->
->  * The current calculation is the for loop inspecting edx in
->    mwait_play_dead()
->
-> The current implementation for looking up the mwait hint for the deepest
-> cstate, in mwait_play_dead() code works by inspecting CPUID leaf 0x5 and
-> calculates the mwait hint based on the number of reported substates.
-> This approach depends on the hints associated with them to be continuous
-> in the range [0, NUM_SUBSTATES-1]. This continuity is not documented and
-> is not met on the recent Intel platforms.
->
-> For example, Intel's Sierra Forest report two cstates with two substates
-> each in cpuid leaf 5:
->
->   Name*   target cstate    target subcstate (mwait hint)
->   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->   C1      0x00             0x00
->   C1E     0x00             0x01
->
->   --      0x10             ----
->
->   C6S     0x20             0x22
->   C6P     0x20             0x23
->
->   --      0x30             ----
->
->   /* No more (sub)states all the way down to the end. */
->   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
->    * Names of the cstates are not included in the CPUID leaf 0x5, they ar=
-e
->      taken from the product specific documentation.
->
-> Notice that hints 0x20 and 0x21 are skipped entirely for the target
-> cstate 0x20 (C6), being a cause of the problem for the current cpuid
-> leaf 0x5 algorithm.
->
-> Allow cpuidle code to provide mwait play dead loop with known, mwait
-> hint for the deepest idle state on a given platform, skipping the cpuid
-> based calculation.
->
-> Signed-off-by: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+On Mon, Nov 25, 2024 at 05:49:19PM +0800, Frank Sae wrote:
+> Hi Andrew,
+> 
+> On 2024/11/23 09:03, Andrew Lunn wrote:
+> > It took a lot of effort to find your MDIO code. And MDIO bus driver
+> > makes a good patch on its own.
+> > 
+> 
+> Sorry about that.
+> There is too many codes in yt6801_hw.c file. If I put the MDIO bus driver
+> in one patch, it's would be very difficult to limit to 15 patches. 
 
-I'm going to risk saying that the changelog doesn't match the code
-changes in the patch any more.
+You can easily limit this to 15 patches. Throw away 75% of the driver
+for the moment. Do enough to get link and then send/receive
+frames. Forget the rest. You don't need statistics, ethtool, WoL, and
+everything else in the first submission. They can all be added later.
 
-The code changes are actually relatively straightforward: The bottom
-half of mwait_play_dead() is split off, so it can be called from
-multiple places.
+You need reviewers in order to get your driver merged. If you give
+them a huge driver which is hard to find what they are interested in,
+they won't review it, and it will not get merged. So break it up into
+a number of patchsets. A minimum driver to just send/receive should be
+nice and small, and can be split into 15 patches making it nice and
+easy to find bits reviewers are interested in. That should get
+reviewed and merged. Then add more and more features in nice small
+chunks which are easy to review.
 
-The other places from which to call it are cpuidle drivers
-implementing :enter_dead() callbacks that may want to use MWAIT as the
-idle state entry method.  The ACPI processor_idle driver and
-intel_idle will be updated by subsequent patches to do so.
+> >> +static int mdio_loop_wait(struct fxgmac_pdata *pdata, u32 max_cnt)
+> >> +{
+> >> +	u32 val, i;
+> >> +
+> >> +	for (i = 0; i < max_cnt; i++) {
+> >> +		val = rd32_mac(pdata, MAC_MDIO_ADDRESS);
+> >> +		if ((val & MAC_MDIO_ADDR_BUSY) == 0)
+> >> +			break;
+> >> +
+> >> +		fsleep(10);
+> >> +	}
+> >> +
+> >> +	if (i >= max_cnt) {
+> >> +		WARN_ON(1);
+> >> +		yt_err(pdata, "%s timeout. used cnt:%d, reg_val=%x.\n",
+> >> +		       __func__, i + 1, val);
+> >> +
+> >> +		return -ETIMEDOUT;
+> >> +	}
+> > 
+> > Please replace this using one of the helpers in
+> > include/linux/iopoll.h.
+> > 
+> >> +#define PHY_WR_CONFIG(reg_offset)		(0x8000205 + ((reg_offset) * 0x10000))
+> >> +static int fxgmac_phy_write_reg(struct fxgmac_pdata *pdata, u32 reg_id, u32 data)
+> >> +{
+> >> +	int ret;
+> >> +
+> >> +	wr32_mac(pdata, data, MAC_MDIO_DATA);
+> >> +	wr32_mac(pdata, PHY_WR_CONFIG(reg_id), MAC_MDIO_ADDRESS);
+> >> +	ret = mdio_loop_wait(pdata, PHY_MDIO_MAX_TRY);
+> >> +	if (ret < 0)
+> >> +		return ret;
+> >> +
+> >> +	yt_dbg(pdata, "%s, id:%x %s, ctrl:0x%08x, data:0x%08x\n", __func__,
+> >> +	       reg_id, (ret == 0) ? "ok" : "err", PHY_WR_CONFIG(reg_id), data);
+> >> +
+> >> +	return ret;
+> >> +}
+> >> +
+> >> +#define PHY_RD_CONFIG(reg_offset)		(0x800020d + ((reg_offset) * 0x10000))
+> >> +static int fxgmac_phy_read_reg(struct fxgmac_pdata *pdata, u32 reg_id)
+> >> +{
+> >> +	u32 val;
+> >> +	int ret;
+> >> +
+> >> +	wr32_mac(pdata, PHY_RD_CONFIG(reg_id), MAC_MDIO_ADDRESS);
+> >> +	ret =  mdio_loop_wait(pdata, PHY_MDIO_MAX_TRY);
+> >> +	if (ret < 0)
+> >> +		return ret;
+> >> +
+> >> +	val = rd32_mac(pdata, MAC_MDIO_DATA);  /* Read data */
+> >> +	yt_dbg(pdata, "%s, id:%x ok, ctrl:0x%08x, val:0x%08x.\n", __func__,
+> >> +	       reg_id, PHY_RD_CONFIG(reg_id), val);
+> >> +
+> >> +	return val;
+> >> +}
+> > 
+> > And where is the rest of the MDIO bus driver?
+> 
+> There is no separate reset of MDIO bus driver.
 
-The reason for it is mostly consistency: If the cpuidle driver uses a
-specific idle state for things like suspend-to-idle, it is better to
-let it decide what idle state to use for "play_dead" because it may
-know better.
+rest, not reset.
 
-Another reason is what mwait_play_dead() does to determine the MWAIT
-argument (referred to as a "hint"), but IMO it belongs in a changelog
-of a later patch because this one doesn't actually do anything about
-it.  In fact, it is not expected to change the behavior of the code.
+An MDIO driver is generally two to five functions to do bus
+transactions, and then one or two functions to allocate the bus
+structure, fill in the members and register the bus, and maybe a
+function to undo that. I would expect these all to be in one
+patch. They are not.
 
-> ---
->  arch/x86/include/asm/smp.h |  3 ++
->  arch/x86/kernel/smpboot.c  | 86 ++++++++++++++++++++------------------
->  2 files changed, 49 insertions(+), 40 deletions(-)
->
-> diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
-> index ca073f40698f..d12fab4a83c5 100644
-> --- a/arch/x86/include/asm/smp.h
-> +++ b/arch/x86/include/asm/smp.h
-> @@ -114,6 +114,7 @@ void wbinvd_on_cpu(int cpu);
->  int wbinvd_on_all_cpus(void);
->
->  void smp_kick_mwait_play_dead(void);
-> +void mwait_play_dead_with_hint(unsigned long hint);
->
->  void native_smp_send_reschedule(int cpu);
->  void native_send_call_func_ipi(const struct cpumask *mask);
-> @@ -164,6 +165,8 @@ static inline struct cpumask *cpu_llc_shared_mask(int=
- cpu)
->  {
->         return (struct cpumask *)cpumask_of(0);
->  }
-> +
-> +static inline void mwait_play_dead_with_hint(unsigned long eax_hint) { }
->  #endif /* CONFIG_SMP */
->
->  #ifdef CONFIG_DEBUG_NMI_SELFTEST
-> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-> index b5a8f0891135..d0464c7a0af5 100644
-> --- a/arch/x86/kernel/smpboot.c
-> +++ b/arch/x86/kernel/smpboot.c
-> @@ -1272,13 +1272,57 @@ void play_dead_common(void)
->         local_irq_disable();
->  }
->
-> +void __noreturn mwait_play_dead_with_hint(unsigned long eax_hint)
-> +{
-> +       struct mwait_cpu_dead *md =3D this_cpu_ptr(&mwait_cpu_dead);
-> +
-> +       /* Set up state for the kexec() hack below */
-> +       md->status =3D CPUDEAD_MWAIT_WAIT;
-> +       md->control =3D CPUDEAD_MWAIT_WAIT;
-> +
-> +       wbinvd();
-> +
-> +       while (1) {
-> +               /*
-> +                * The CLFLUSH is a workaround for erratum AAI65 for
-> +                * the Xeon 7400 series.  It's not clear it is actually
-> +                * needed, but it should be harmless in either case.
-> +                * The WBINVD is insufficient due to the spurious-wakeup
-> +                * case where we return around the loop.
-> +                */
-> +               mb();
-> +               clflush(md);
-> +               mb();
-> +               __monitor(md, 0, 0);
-> +               mb();
-> +               __mwait(eax_hint, 0);
-> +
-> +               if (READ_ONCE(md->control) =3D=3D CPUDEAD_MWAIT_KEXEC_HLT=
-) {
-> +                       /*
-> +                        * Kexec is about to happen. Don't go back into m=
-wait() as
-> +                        * the kexec kernel might overwrite text and data=
- including
-> +                        * page tables and stack. So mwait() would resume=
- when the
-> +                        * monitor cache line is written to and then the =
-CPU goes
-> +                        * south due to overwritten text, page tables and=
- stack.
-> +                        *
-> +                        * Note: This does _NOT_ protect against a stray =
-MCE, NMI,
-> +                        * SMI. They will resume execution at the instruc=
-tion
-> +                        * following the HLT instruction and run into the=
- problem
-> +                        * which this is trying to prevent.
-> +                        */
-> +                       WRITE_ONCE(md->status, CPUDEAD_MWAIT_KEXEC_HLT);
-> +                       while(1)
-> +                               native_halt();
-> +               }
-> +       }
-> +}
-> +
->  /*
->   * We need to flush the caches before going to sleep, lest we have
->   * dirty data in our caches when we come back up.
->   */
->  static inline void mwait_play_dead(void)
->  {
-> -       struct mwait_cpu_dead *md =3D this_cpu_ptr(&mwait_cpu_dead);
->         unsigned int eax, ebx, ecx, edx;
->         unsigned int highest_cstate =3D 0;
->         unsigned int highest_subcstate =3D 0;
-> @@ -1316,45 +1360,7 @@ static inline void mwait_play_dead(void)
->                         (highest_subcstate - 1);
->         }
->
-> -       /* Set up state for the kexec() hack below */
-> -       md->status =3D CPUDEAD_MWAIT_WAIT;
-> -       md->control =3D CPUDEAD_MWAIT_WAIT;
-> -
-> -       wbinvd();
-> -
-> -       while (1) {
-> -               /*
-> -                * The CLFLUSH is a workaround for erratum AAI65 for
-> -                * the Xeon 7400 series.  It's not clear it is actually
-> -                * needed, but it should be harmless in either case.
-> -                * The WBINVD is insufficient due to the spurious-wakeup
-> -                * case where we return around the loop.
-> -                */
-> -               mb();
-> -               clflush(md);
-> -               mb();
-> -               __monitor(md, 0, 0);
-> -               mb();
-> -               __mwait(eax, 0);
-> -
-> -               if (READ_ONCE(md->control) =3D=3D CPUDEAD_MWAIT_KEXEC_HLT=
-) {
-> -                       /*
-> -                        * Kexec is about to happen. Don't go back into m=
-wait() as
-> -                        * the kexec kernel might overwrite text and data=
- including
-> -                        * page tables and stack. So mwait() would resume=
- when the
-> -                        * monitor cache line is written to and then the =
-CPU goes
-> -                        * south due to overwritten text, page tables and=
- stack.
-> -                        *
-> -                        * Note: This does _NOT_ protect against a stray =
-MCE, NMI,
-> -                        * SMI. They will resume execution at the instruc=
-tion
-> -                        * following the HLT instruction and run into the=
- problem
-> -                        * which this is trying to prevent.
-> -                        */
-> -                       WRITE_ONCE(md->status, CPUDEAD_MWAIT_KEXEC_HLT);
-> -                       while(1)
-> -                               native_halt();
-> -               }
-> -       }
-> +       mwait_play_dead_with_hint(eax);
->  }
->
->  /*
-> --
-> 2.47.0
->
->
+At some point, you need to justify your hw_ops structure. Why do you
+have this? At the moment it just obfuscate the code. Maybe there is a
+good reason for it, but given the size of the driver i've not been
+able to find it.
+
+> >> +#define LINK_DOWN	0x800
+> >> +#define LINK_UP		0x400
+> >> +#define LINK_CHANGE	(LINK_DOWN | LINK_UP)
+> >> +	if ((stats_pre & LINK_CHANGE) != (stats & LINK_CHANGE)) {
+> >> +		yt_dbg(pdata, "phy link change\n");
+> >> +		return 1;
+> >> +	}
+> >> +
+> >> +	return 0;
+> >> +unlock:
+> >> +	phy_unlock_mdio_bus(pdata->phydev);
+> >> +	yt_err(pdata, "fxgmac_phy_read_reg err!\n");
+> >> +	return  -ETIMEDOUT;
+> >> +}
+> > 
+> > You need to rework your PHY interrupt handling. The PHY driver is
+> > responsible for handing the interrupt registers in the PHY. Ideally
+> > you just want to export an interrupt to phylib, so it can do all the
+> > work.
+> 
+> I'm sorry. Could you please give me more information about export
+>  an interrupt to phylib?
+
+I would actually suggest you first just let phylib poll the PHY. That
+gets you something working. You can add interrupt support in a later
+patchset. For ideas, look at ksz_common.c:
+
+ds->user_mii_bus->irq[phy] = irq;
+
+You have a whole tree of source code you can look at, there are other
+examples of MAC drivers exporting an interrupt controller. And you
+might find other ways to do this, look at other MAC drivers. There is
+nothing special here, so don't invent something new, copy what other
+MAC drivers do.
+
+
+	Andrew
 
