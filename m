@@ -1,115 +1,245 @@
-Return-Path: <linux-kernel+bounces-421645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAB8A9D8DEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:22:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A98939D8DF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:24:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B063028C649
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:22:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6925628D0AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B991CEEAA;
-	Mon, 25 Nov 2024 21:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69BE1BFE0C;
+	Mon, 25 Nov 2024 21:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="X0LB0oA6"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dTQbYeHD"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE351CDFD2;
-	Mon, 25 Nov 2024 21:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE4D18E359;
+	Mon, 25 Nov 2024 21:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732569672; cv=none; b=Cf5lx320gcbFNa0ZruXB/UkbyaGcnLS70AYSND57fOTitB1zHYckf7jPcATIFN2lKioik6IhbauVOAEEjZgiXEQH+9BbhBOHpxcjwP1W0ckYGDiWtASngPS1/vltyfkBx4S8bhQIikqfokr3SBSdgXOIu0lXP9fAefqiwcWY3ag=
+	t=1732569861; cv=none; b=ouoZy5ExRnODV4Xes0kXp8zjoHdgLb1Ys2Pt2mAs8GBZk4pXd7KzVHLsbFjJmbf8bCqXX14bQ2w8RdmMMJ3pIstvfE1YIsTaM/GtYYGL4QJI4gIjngUVNuk7aMSfqeNyhQQb4Z+Lszj6Yd924k2l75S6nAXfxYMM4y3IojumdsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732569672; c=relaxed/simple;
-	bh=6Wd648cisWtG0vCE1iOJHvoJC3FGxaahh4uPbeO3gns=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kEK3lpOY1ZDm9WeC8VQCKwXLLLZo0VUTXQEzcHMx9cPJK3FG41Mr2RheroglLTbVBemYcr69DXVmtiO4s/v1ksQYAX7qqbnZkhUNfHz4rghV0/pHJKC8zr7lsS3cNA/PNB03vWJtBHcm5uyIDpYI94wALHWDpxOQ6oZidVvYhlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=X0LB0oA6; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1732569668;
-	bh=6Wd648cisWtG0vCE1iOJHvoJC3FGxaahh4uPbeO3gns=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=X0LB0oA67iPFBkD/IcZaAnOanLZixkSywQoU7+CmLBSiXSUPZ9eo0j4LZF/9vfO4/
-	 WEv9M9JcE75WfoGbjnIIcR9oyhcpbaFD/nya/N/K4LzP09g0nKXvnDpxGt8WU84rkS
-	 XXT0b9qGS9emnHHWzXPRdPvdNHOL2ArUToPUY2EJJlPuw16CDiByN/bWedqZRmGbee
-	 8VFEOuQmR9jqB4lMdPU+kziSlWFv33kIHxh+qFzMrHdjupMzV/HUtG7tiU08hd3KpL
-	 PWV6rKv/IFCgZL9I2mw5s0d454OKH3ZfVMY8yFQiZv6TK9hT+Z2Dqp3+aPRt68/+CX
-	 kTQVTz8+r82Hw==
-Received: from [192.168.1.63] (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id AC30917E37CA;
-	Mon, 25 Nov 2024 22:21:06 +0100 (CET)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Mon, 25 Nov 2024 16:20:32 -0500
-Subject: [PATCH 5/5] thermal/drivers/mediatek/lvts: Only update IRQ enable
- for valid sensors
+	s=arc-20240116; t=1732569861; c=relaxed/simple;
+	bh=5CtDAEAGFgIRPa64S8d1hGjtFDiHuHdt+XKkD8Kc1W0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sd6/RzQByjbNRnX6I/QXBa7XGXhR2eLs2BtScZ6MQL0aq6fVAHIurQsjU6b/Gccx4kA+Kiwc3jozfaxH6btqSu0H2qbx9QDXfGKs7CYK9UVMUD93heDrUKJUFLHot9tb8jOglsDxVWVYG6l+Sm6lI22zf5ze1YNLr09KxOXL8NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dTQbYeHD; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53ddd4705f8so2128714e87.0;
+        Mon, 25 Nov 2024 13:24:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732569855; x=1733174655; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0+1WZ/SbKZYL7GP2tOCW3l+o5U7i+3bfPsO9z/9LP1Y=;
+        b=dTQbYeHDUA9BFuTnvidkw5GGOzNVvOzl2K8MkXY4RR8JZ5g0jimFEkr4QGrZub6OY9
+         vTCCc6Dh867nBtkqNgKXRV8YUYa10aQC7vlefl/5v1RNmcwn6WqXaamtnvHDn8u/y/ol
+         xXyPD5XDB1D8qmlUjrMlB/b6Wr+UElNP6LHxVNFJ7QfnOgMvnnspoTCRtFDb+2n5CwvL
+         B+Gf93HwA21sdaJKfwpWugzuGg+h21pLfYJRncZrUCzANE0oVJ1HwB0FYaZtJpPeR3V3
+         AGJn+toqLtjQL9KoBv26kGO65x2q9yWMBYkkFiMXegKqKSaubj8RVd8V2JVpt/GY66lZ
+         TAdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732569855; x=1733174655;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0+1WZ/SbKZYL7GP2tOCW3l+o5U7i+3bfPsO9z/9LP1Y=;
+        b=W8F6TD+LsM5tOYsdrLsdJ84K/Ru/Ux7CnTsYV2t5yekxvqZkAqX8LH64Jj4Obm/Jpu
+         g7tYaH+iu+cebzpWAkG4DD03jnX5Ru/zCPS49fglWAPm9FpEs+J2r9qX3dc5XqhSNCKE
+         4qJGoHY1MwRq5eZuFPf1GEuGOR6sIckblYoOJMsuFW1/RzMqcTfxtM4ExiW9/xRr5+SV
+         BMdPIuKX0elXFoE1wP82ZkCJcsVXJ7hbUGUn8iCvIhJbdiffmiofIrJ1A1aDX8uR/Q+s
+         AfaCb6I9EatyM1wPjDbL5p6pydeQPaAqwfcQT7W5nOiyT5sfWdr5XzNXP+huSjlSZXKp
+         Kwsg==
+X-Forwarded-Encrypted: i=1; AJvYcCW1Aj3zJqkZWcRkCymOMAjyEvcQ/OxEApAdw3uDv6uBsAaD32IoDYWXD5mF539QUyb5DACPpLsXMW7BmV7Z@vger.kernel.org, AJvYcCXRyClnjHsXbO71ZwdUAFTuql9VDToSCj3ukzHxNEC3COxAFXc+CKbdX29KxTKUHwGdycsic2KsCW6V@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxyvw9uOGmHX3oYpTG/Xa+k9XcFFG3a0y1rImF7lWUZnnzH7a4b
+	npgS9AQDjdoMplxYW/oPnZ807XguYUFE8Hl2eshxx6ivVmI+49/Gv4GkzWLjwzclh+0iOffVvi3
+	zPFjbfcKxA/JY5enjsXn8hFrS8jg=
+X-Gm-Gg: ASbGncuv7FDeQzb/wDzJ+oUMEBmWbG2MGptJce8CGOFq/dDoD6HTcoXgPN+mlfHLhEi
+	IvPOlNHx5yssH6+rv/pdqyugHsQbkKmGpunllqBnLO4M/ch7s8x2fcBEnsp6dDJrI
+X-Google-Smtp-Source: AGHT+IEY8/fB2/n9+nqmJCBIY3Q6rmtjh/JVWx2KCtVuohcw6+KzsNR8Ms/wRbMD1bUJRL/ev17UljKa17Tih0kFoDI=
+X-Received: by 2002:a05:6512:b9b:b0:53d:e123:fba7 with SMTP id
+ 2adb3069b0e04-53de88505dbmr290218e87.26.1732569855254; Mon, 25 Nov 2024
+ 13:24:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241125-mt8192-lvts-filtered-suspend-fix-v1-5-42e3c0528c6c@collabora.com>
-References: <20241125-mt8192-lvts-filtered-suspend-fix-v1-0-42e3c0528c6c@collabora.com>
-In-Reply-To: <20241125-mt8192-lvts-filtered-suspend-fix-v1-0-42e3c0528c6c@collabora.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Alexandre Mergnat <amergnat@baylibre.com>, 
- Balsam CHIHI <bchihi@baylibre.com>
-Cc: kernel@collabora.com, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, Hsin-Te Yuan <yuanhsinte@chromium.org>, 
- Chen-Yu Tsai <wenst@chromium.org>, 
- =?utf-8?q?Bernhard_Rosenkr=C3=A4nzer?= <bero@baylibre.com>, 
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.14.2
+References: <20241006090548.30053-1-pali@kernel.org>
+In-Reply-To: <20241006090548.30053-1-pali@kernel.org>
+From: Steve French <smfrench@gmail.com>
+Date: Mon, 25 Nov 2024 15:24:03 -0600
+Message-ID: <CAH2r5mtLoAsZfHHe33=WfDjLZ1PNgV-SgcN1F-o0g1XXLsoAng@mail.gmail.com>
+Subject: Re: [PATCH] cifs: Add support for parsing WSL-style symlinks
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Only sensors that are valid need to have their interrupts enable status
-updated based on their thresholds. Use the lvts_for_each_valid_sensor()
-helper in lvts_update_irq_mask() to ignore invalid sensors.
+This patch
 
-Currently, since the invalid sensors will always contain zeroed out
-thresholds (from kzalloc), they will always get their interrupts
-disabled on this loop. So this commit doesn't change the resulting
-interrupts configuration, but it slightly optimizes the loop by skipping
-the invalid sensors, avoids potential future surprises if at some point
-memory is no longer allocated for invalid sensors, as well as makes the
-code more obvious.
+commit 06a7adf318a30bdcfa1222ed6d2640e6bb266d7b
+Author: Pali Roh=C3=A1r <pali@kernel.org>
+Date:   Sat Sep 28 13:21:24 2024 +0200
 
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- drivers/thermal/mediatek/lvts_thermal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+    cifs: Add support for parsing WSL-style symlinks
 
-diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
-index 90f305fa6fb659ae9e3db0faf1a406ef1500adf2..ed72ede040f3b22a60fbdb44fb9bd4f2e29db6ab 100644
---- a/drivers/thermal/mediatek/lvts_thermal.c
-+++ b/drivers/thermal/mediatek/lvts_thermal.c
-@@ -346,7 +346,7 @@ static void lvts_update_irq_mask(struct lvts_ctrl *lvts_ctrl)
- 
- 	value = readl(LVTS_MONINT(lvts_ctrl->base));
- 
--	for (i = 0; i < ARRAY_SIZE(masks); i++) {
-+	lvts_for_each_valid_sensor(i, lvts_ctrl) {
- 		if (lvts_ctrl->sensors[i].high_thresh == lvts_ctrl->high_thresh
- 		    && lvts_ctrl->sensors[i].low_thresh == lvts_ctrl->low_thresh) {
- 			/*
 
--- 
-2.47.0
+ led to compile warning:
 
+  CC [M]  fs/smb/client/reparse.o
+  CHECK   fs/smb/client/reparse.c
+fs/smb/client/reparse.c:679:45: warning: incorrect type in argument 4
+(different base types)
+fs/smb/client/reparse.c:679:45:    expected unsigned short [usertype] *pwcs
+fs/smb/client/reparse.c:679:45:    got restricted __le16 [usertype]
+*[assigned] symname_utf16
+
+
+Let me know if updated version needed
+
+On Sun, Oct 6, 2024 at 4:07=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org> wr=
+ote:
+>
+> Linux CIFS client currently does not implement readlink() for WSL-style
+> symlinks. It is only able to detect that file is of WSL-style symlink, bu=
+t
+> is not able to read target symlink location.
+>
+> Add this missing functionality and implement support for parsing content =
+of
+> WSL-style symlink.
+>
+> The important note is that symlink target location stored for WSL symlink
+> reparse point (IO_REPARSE_TAG_LX_SYMLINK) is in UTF-8 encoding instead of
+> UTF-16 (which is used in whole SMB protocol and also in all other symlink
+> styles). So for proper locale/cp support it is needed to do conversion fr=
+om
+> UTF-8 to local_nls.
+>
+> Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
+> ---
+>  fs/smb/client/reparse.c | 49 +++++++++++++++++++++++++++++++++++++++++
+>  fs/smb/common/smb2pdu.h |  9 ++++++++
+>  2 files changed, 58 insertions(+)
+>
+> diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
+> index a577b2d2a4fc..6e9d914bac41 100644
+> --- a/fs/smb/client/reparse.c
+> +++ b/fs/smb/client/reparse.c
+> @@ -875,6 +875,52 @@ static int parse_reparse_symlink(struct reparse_syml=
+ink_data_buffer *sym,
+>                                          cifs_sb);
+>  }
+>
+> +static int parse_reparse_wsl_symlink(struct reparse_wsl_symlink_data_buf=
+fer *buf,
+> +                                    struct cifs_sb_info *cifs_sb,
+> +                                    struct cifs_open_info_data *data)
+> +{
+> +       int len =3D le16_to_cpu(buf->ReparseDataLength);
+> +       int symname_utf8_len;
+> +       __le16 *symname_utf16;
+> +       int symname_utf16_len;
+> +
+> +       if (len <=3D sizeof(buf->Flags)) {
+> +               cifs_dbg(VFS, "srv returned malformed wsl symlink buffer\=
+n");
+> +               return -EIO;
+> +       }
+> +
+> +       /* PathBuffer is in UTF-8 but without trailing null-term byte */
+> +       symname_utf8_len =3D len - sizeof(buf->Flags);
+> +       /*
+> +        * Check that buffer does not contain null byte
+> +        * because Linux cannot process symlink with null byte.
+> +        */
+> +       if (strnlen(buf->PathBuffer, symname_utf8_len) !=3D symname_utf8_=
+len) {
+> +               cifs_dbg(VFS, "srv returned null byte in wsl symlink targ=
+et location\n");
+> +               return -EIO;
+> +       }
+> +       symname_utf16 =3D kzalloc(symname_utf8_len * 2, GFP_KERNEL);
+> +       if (!symname_utf16)
+> +               return -ENOMEM;
+> +       symname_utf16_len =3D utf8s_to_utf16s(buf->PathBuffer, symname_ut=
+f8_len,
+> +                                           UTF16_LITTLE_ENDIAN,
+> +                                           symname_utf16, symname_utf8_l=
+en * 2);
+> +       if (symname_utf16_len < 0) {
+> +               kfree(symname_utf16);
+> +               return symname_utf16_len;
+> +       }
+> +       symname_utf16_len *=3D 2; /* utf8s_to_utf16s() returns number of =
+u16 items, not byte length */
+> +
+> +       data->symlink_target =3D cifs_strndup_from_utf16((u8 *)symname_ut=
+f16,
+> +                                                      symname_utf16_len,=
+ true,
+> +                                                      cifs_sb->local_nls=
+);
+> +       kfree(symname_utf16);
+> +       if (!data->symlink_target)
+> +               return -ENOMEM;
+> +
+> +       return 0;
+> +}
+> +
+>  int parse_reparse_point(struct reparse_data_buffer *buf,
+>                         u32 plen, struct cifs_sb_info *cifs_sb,
+>                         const char *full_path,
+> @@ -894,6 +940,9 @@ int parse_reparse_point(struct reparse_data_buffer *b=
+uf,
+>                         (struct reparse_symlink_data_buffer *)buf,
+>                         plen, unicode, cifs_sb, full_path, data);
+>         case IO_REPARSE_TAG_LX_SYMLINK:
+> +               return parse_reparse_wsl_symlink(
+> +                       (struct reparse_wsl_symlink_data_buffer *)buf,
+> +                       cifs_sb, data);
+>         case IO_REPARSE_TAG_AF_UNIX:
+>         case IO_REPARSE_TAG_LX_FIFO:
+>         case IO_REPARSE_TAG_LX_CHR:
+> diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
+> index c769f9dbc0b4..275184c31a89 100644
+> --- a/fs/smb/common/smb2pdu.h
+> +++ b/fs/smb/common/smb2pdu.h
+> @@ -1552,6 +1552,15 @@ struct reparse_symlink_data_buffer {
+>
+>  /* See MS-FSCC 2.1.2.6 and cifspdu.h for struct reparse_posix_data */
+>
+> +/* For IO_REPARSE_TAG_LX_SYMLINK */
+> +struct reparse_wsl_symlink_data_buffer {
+> +       __le32  ReparseTag;
+> +       __le16  ReparseDataLength;
+> +       __u16   Reserved;
+> +       __le32  Flags;
+> +       __u8    PathBuffer[]; /* Variable Length UTF-8 string without nul=
+-term */
+> +} __packed;
+> +
+>  struct validate_negotiate_info_req {
+>         __le32 Capabilities;
+>         __u8   Guid[SMB2_CLIENT_GUID_SIZE];
+> --
+> 2.20.1
+>
+>
+
+
+--=20
+Thanks,
+
+Steve
 
