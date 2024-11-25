@@ -1,62 +1,71 @@
-Return-Path: <linux-kernel+bounces-420845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3273C9D839D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:41:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB5119D8396
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:41:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9FCC166676
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:41:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BB3216202E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA72199E92;
-	Mon, 25 Nov 2024 10:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40DA194ACA;
+	Mon, 25 Nov 2024 10:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="fj/rRme9"
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="renzaNjY"
 Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22791925A6;
-	Mon, 25 Nov 2024 10:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABDD193064;
+	Mon, 25 Nov 2024 10:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732531238; cv=none; b=IZltobQdi+K5XmRfwLxjLYcQhPFxZy2nMzwVYnD9BBNalJrEiEirfU5mXMUeekvwBRx40a/KR+M0SuXEnw8IZ2XDHouhz2RWLpZNAUP4jV148blNxC+MdBZUbdTQILTbivvMAIOHsCPI7Ag1tgXpCWkml8TOoz9DdRP9F7BhTQk=
+	t=1732531235; cv=none; b=b6Dlejcz4+ob6Bd7VijiV4UqjR3JWR81dvN+oTlQ4o4mWtA8Ik5hRYAmX+keFmutjLGUZHytYtwtMkf/zOkerkc0ce1jF6ohmUJ5FQSvuzfyOGg3uONBJCb4NZYi4K/baQpQ8ZCUIaBWCQgqbsAC/hV9rzVcsrXVq0p1Ygi9TP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732531238; c=relaxed/simple;
-	bh=OINYhmpNgcEI4tTl8Cjxh0NZwDWWt5w395EWwdrZTOQ=;
+	s=arc-20240116; t=1732531235; c=relaxed/simple;
+	bh=VhnL2wmSb+pfgIHkp6bvcyX/tRAnbRI3P76lLhLZZrc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FBQSNiIa+pXj4xkjAcgYnHw1lIsHrmSHgg6sw1s7OSJGiwlkV/FSVVKwuqkppRTVrwVlArjuYaFgmLiN6/XC4ilTg2LCq8CtpnWwioI79zMcBNbkMaEWKN3ncCqcL2E2ZBOvcnaXb/xsaooKuPnl1rPkYBzqqe9uW57dOvlECg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=fj/rRme9; arc=none smtp.client-ip=168.119.48.163
+	 MIME-Version:Content-Type; b=JiNoiifgIoHbhXMbwzVc84NbL/ueGpyiXMo0OIroByecsPjdnrm5vd5jcxXe8dyjPvMvVEZ2VbOC88jDu9NgKO1OwmJFlSffhViatZdzg0GPXA0XeGKjP4NPyiUeBL36UoyHLfxV1JTBc2DU3bBJ9pd+li0DJOi6wUkFqa6RfM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=renzaNjY; arc=none smtp.client-ip=168.119.48.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
 From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1732531226;
+	s=2023072701; t=1732531230;
 	h=from:from:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=P6AGqeaWbUDe9y5vDnfY9zmRKUFqqfOHVoZc9OQ1JdE=;
-	b=fj/rRme9yehwZA25c2Ni1/9tPmwADULk1KpFn/cVxyAjjBhxyj8Rg7aA5iUrANhXFj3LDF
-	EVEGpnqH2qxuU7xy7zbZVAr4PN6VXR1u6SaguSc7GBpAUwBFP2HQJcV/7rETu2atweRoUA
-	DK3HuU8potvt0ji3IF7E3NaCAPi/OzmAMILLwPVEudy8K/V1Sdv63rqOny0qQy7l6LvQi7
-	Qnx0BqyipTaX8aKvcgEzC2iX2EuYf59bvAQ8Qid3xQZb/Mswa40vldOlKBAAKO8BzLXU81
-	uOeCjHBIVLuJs5xjOP6IrtRBAxUkLS0+WGDcxbdL3NWIKBOcibJLOqsDLIBdFg==
+	bh=BnJPwZBINKy4LES6pr7BNEYT4c7M8sYvf1DiqcmfvZQ=;
+	b=renzaNjYJ9YJyG9gUtmjWqJwQ0VY7TQPB8AIE5W2eHdeqh2KtO/X4RlDCy1my/SVpQmQbZ
+	wjNEjBd+3Nx5SYzGSi/4OwNEhlCfesxm4VNww0jT0OEYCfKsxUBHnyqFZjs4qmm0yXdPXf
+	JQVxhmVSoR7oSv45zcTLYW4BjQnZhX+TQ9oYJfvSmhOwIXh5wbGCNS9yLVPQ//3K2TAHgl
+	Eb4e91BrZZEw09F7m/z/76uD9fpDEgjnOst+2rcsjNChNW2KdjtqLgROIapy8OMfgZI/BW
+	MreOsqodNcQhtkdGSCQM3CtyEM177zZSZrrnzTyeG6viMRNF26psOPQLgVZyPg==
 To: linux-security-module@vger.kernel.org
 Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	Frank Haverkamp <haver@linux.ibm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Richard Weinberger <richard@nod.at>,
+	Zhihao Cheng <chengzhihao1@huawei.com>,
 	Serge Hallyn <serge@hallyn.com>,
 	Julia Lawall <Julia.Lawall@inria.fr>,
 	Nicolas Palix <nicolas.palix@imag.fr>,
 	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-mtd@lists.infradead.org,
 	cocci@inria.fr
-Subject: [PATCH 05/11] genwqe: reorder capability check last
-Date: Mon, 25 Nov 2024 11:39:57 +0100
-Message-ID: <20241125104011.36552-4-cgoettsche@seltendoof.de>
+Subject: [PATCH 06/11] ubifs: reorder capability check last
+Date: Mon, 25 Nov 2024 11:39:58 +0100
+Message-ID: <20241125104011.36552-5-cgoettsche@seltendoof.de>
 In-Reply-To: <20241125104011.36552-1-cgoettsche@seltendoof.de>
 References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
 Reply-To: cgzones@googlemail.com
@@ -88,22 +97,39 @@ It can lead to three undesired cases:
 
 Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 ---
- drivers/misc/genwqe/card_dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/panthor/panthor_drv.c | 2 +-
+ fs/ubifs/budget.c                     | 5 +++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/misc/genwqe/card_dev.c b/drivers/misc/genwqe/card_dev.c
-index 4441aca2280a..77b2d191d21c 100644
---- a/drivers/misc/genwqe/card_dev.c
-+++ b/drivers/misc/genwqe/card_dev.c
-@@ -461,7 +461,7 @@ static int genwqe_mmap(struct file *filp, struct vm_area_struct *vma)
- 		goto free_dma_map;
- 	}
+diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+index ac7e53f6e3f0..2de0c3627fbf 100644
+--- a/drivers/gpu/drm/panthor/panthor_drv.c
++++ b/drivers/gpu/drm/panthor/panthor_drv.c
+@@ -791,7 +791,7 @@ static int group_priority_permit(struct drm_file *file,
+ 		return 0;
  
--	if (capable(CAP_SYS_ADMIN) && (vsize > sizeof(dma_addr_t)))
-+	if ((vsize > sizeof(dma_addr_t)) && capable(CAP_SYS_ADMIN))
- 		*(dma_addr_t *)dma_map->k_vaddr = dma_map->dma_addr;
+ 	/* Higher priorities require CAP_SYS_NICE or DRM_MASTER */
+-	if (capable(CAP_SYS_NICE) || drm_is_current_master(file))
++	if (drm_is_current_master(file) || capable(CAP_SYS_NICE))
+ 		return 0;
  
- 	pfn = virt_to_phys(dma_map->k_vaddr) >> PAGE_SHIFT;
+ 	return -EACCES;
+diff --git a/fs/ubifs/budget.c b/fs/ubifs/budget.c
+index d76eb7b39f56..6137aeadec3f 100644
+--- a/fs/ubifs/budget.c
++++ b/fs/ubifs/budget.c
+@@ -256,8 +256,9 @@ long long ubifs_calc_available(const struct ubifs_info *c, int min_idx_lebs)
+  */
+ static int can_use_rp(struct ubifs_info *c)
+ {
+-	if (uid_eq(current_fsuid(), c->rp_uid) || capable(CAP_SYS_RESOURCE) ||
+-	    (!gid_eq(c->rp_gid, GLOBAL_ROOT_GID) && in_group_p(c->rp_gid)))
++	if (uid_eq(current_fsuid(), c->rp_uid) ||
++	    (!gid_eq(c->rp_gid, GLOBAL_ROOT_GID) && in_group_p(c->rp_gid)) ||
++	    capable(CAP_SYS_RESOURCE))
+ 		return 1;
+ 	return 0;
+ }
 -- 
 2.45.2
 
