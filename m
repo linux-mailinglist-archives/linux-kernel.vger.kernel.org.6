@@ -1,223 +1,140 @@
-Return-Path: <linux-kernel+bounces-421698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92C7E9D8EAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:45:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D9EA9D8EBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:56:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 538E328463C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:45:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3D0DB2AE66
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:53:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69C81CD21C;
-	Mon, 25 Nov 2024 22:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25C81BE854;
+	Mon, 25 Nov 2024 22:53:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gNmoRtjE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GBGlj8S9"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7451CCB20;
-	Mon, 25 Nov 2024 22:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0802D1B78F3
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 22:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732574697; cv=none; b=lzKFcHoy9xNQY+VoRrAosXl0/gMEC5pTxlI/ldeu7UG5zopOV13XD+9Sse/nJN42PYKPK+eJXtENUm4UeWsDRoIYqcN1TBpXpa0sB/aMKDqY9KpfB9YBjjouRjvMzvlZ8u63DZ3nSHbVyTcFZkZJaL9VuZTn2wCwIQTdzaV1ZDs=
+	t=1732575216; cv=none; b=oH1ndY1l907Ronal+22QRpltH+/PLuIbw31TV0qs6lPPUUNylbiqoKLiOXNy4IGfrrIdbfjDKjJN3Ynrcy7kvicpnCjIMYyjAYDc3TL1RmumYDeDIAgeA0wizFQGppKWO+NMeVW4xqE14n6qb34tHypOgzA9wMDya5QP+wihBdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732574697; c=relaxed/simple;
-	bh=d8JoIYRFa+uafz3y0UPrSTAu9B61sL4LmbhvzjrD0js=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B8eRnTtXCAyKiErpWTIy9iVDPyaU+FqiEZ70kYtfGcWLl/lTF+3sfB2GDBcWFdEsYlh1HgKvX252gPNhJwhN+FAvf3ZgOpuzArtQXFXD39RI8YWV/mCJLltT+vSuLK/pjPgdO+RK9GcQIwJepox7/yttYCcM0/WNwQ/GVpSs+OE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gNmoRtjE; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732574697; x=1764110697;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=d8JoIYRFa+uafz3y0UPrSTAu9B61sL4LmbhvzjrD0js=;
-  b=gNmoRtjENMPNJoWg4H++MTOIYfXAk8BcFe5JtxGmBI7juLxTVKpxdU08
-   4r8Zjzuc9CUwckUl9KXcelfEDYEP7eMjiDJWIau/kW94Yx/3dxjZtED2e
-   gzCjA9qLl2qYpbouUqhJpSXin51jYnkfqXAGWBL3E0FpI1agds6CUbBbS
-   Du2E00KxCTgaBTcAF5efwH32SrUnkykBdHLbIAibcE73GDTpS3qbCC0vN
-   hjttdeL5lqu+YujQnkIF65qrQMzVpnh2k7EamH8vfIDaNHa+iSYI5Wn4/
-   YcQjLZgLFzP9MpPcA3y3k3CU6VGs4Pk7IoS5zOShkwUastUkMabyBcyYE
-   g==;
-X-CSE-ConnectionGUID: AcNJGzfPRkqUoMmnGtJBqQ==
-X-CSE-MsgGUID: vYQPJ4SnSNerT6EUgnTR5Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="44088946"
-X-IronPort-AV: E=Sophos;i="6.12,184,1728975600"; 
-   d="scan'208";a="44088946"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 14:44:56 -0800
-X-CSE-ConnectionGUID: J8RwqPJwRyGTiZOlX3I/3w==
-X-CSE-MsgGUID: 1acq6WeeQyiJja+316KjSg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,184,1728975600"; 
-   d="scan'208";a="122374672"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 25 Nov 2024 14:44:52 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tFhp3-0006rx-28;
-	Mon, 25 Nov 2024 22:44:49 +0000
-Date: Tue, 26 Nov 2024 06:44:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Yao Xingtao <yaoxt.fnst@fujitsu.com>, Li Ming <ming4.li@intel.com>,
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH 2/3] cxl/core: Enable Region creation on x86 with Low
- Memory Hole
-Message-ID: <202411260633.Oq6ps76M-lkp@intel.com>
-References: <20241122155226.2068287-3-fabio.m.de.francesco@linux.intel.com>
+	s=arc-20240116; t=1732575216; c=relaxed/simple;
+	bh=z8d6Z5DoxDAN9pjge71M9GbAXIHRYZWcfYoQdcMTatw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JFh2ct9f5wOrG4VR9qw6XbaqdAhXtzH3NB9NWUdkQv+WPm3jWJdfDYjpinJIYrEK7T91vL9r4/kBqvYU/Y+Vfy46SKyn+WxXAr+xO/aH9bJAXJk7dol8YDZBheChUyNAqCv7E+eNkgiZNmZ8nSWS13ECEVSYIZnOMJuONkOO5xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GBGlj8S9; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7251d20e7f2so328712b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:53:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732575214; x=1733180014; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sf0UnYlMfG0Zaof4x8glKBufQrY/Z6YuQPrhM1VLm6E=;
+        b=GBGlj8S9Rn+gMNOfC2ZfCsVtnajoxK9s0NWZ0wkbcEvuwJQMZiaE6GU3Hov5P/uYpb
+         W1BZUWC8p24XEt07gzCK52LdtC8//yFF9+XqoQEXYocG5PcqokDs6ws8xoVqSHxRGwZe
+         dh+AgjMqVHCCQyeQ7SmIQnrvEiEA0JHsoWIsE7hit0qeOfRWtzCFOuoMDrSVwgeJ6bjd
+         wZsl/XAzoAEvrJ4b9/jj8QRt5DRFvskumuhguSpSY7wuB5H+ytKfLX/4vG0qhsd3VFef
+         9I0Uh6DnAXP9vPYAAUFsz5IUW4hNg1FBgeHSOBOmKuJCvdTLQsFnwDfBEtus7Npn8oar
+         J0AA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732575214; x=1733180014;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sf0UnYlMfG0Zaof4x8glKBufQrY/Z6YuQPrhM1VLm6E=;
+        b=ocIJs+n5yj/G7fkky/Usjsur+auzwp7mWtSp+ex1gWrnaarq80UZ+EmQ2WOyPoG1F3
+         xR7TrHrdGXif8XDgnOntnTijJR0TjpJiFOg5mvqiBc3h2/CynnR8d4PZwH3/7OEEY46L
+         8aABiXicHn3xNDSm/H9Ju05Us2FlLsh2WOQlg2pp+1tZcl8OrG1V5hKNM5zzMVN1Bxkr
+         wm3n3PHJhfFSgoO8oC0raTKrg8WU6bS/l2Mo0EQccvloXwsqyjEvKMaq741RWOVRoYXz
+         rM7EAarnaCHdZWvSYNT0l+gmAx30cwbNhVYT8yIqsHxS6zxAPxoKnD5cz86zdsc08gRi
+         +/Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCXBXRnivPUm6tpxczTXKMTwSFXaCdfYWGs//tDkNvnU+x4zvXYQY7a9yVOobpemXTZenNKa1iLj5Yr6d7c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1H9+bNcLFFSZ4VnWqgqR9/ppaJibVjUaWc/7lljefnjarEttl
+	YR/tMWRHLk8U9wI6MAoksRGQsjU8rO6ZioCVKi78TqyZSblv4bSP
+X-Gm-Gg: ASbGncsXIUBOoicQwV/FXmKsQ+rpVE0e4alhmY80DlKLvjk8nZAD9W5pMCB5MVztNLJ
+	gWD1H4rU2v6nki6x4XPZmbf8wae+OxwLsu/rFP/IFmji5A/GR4OewXWXd/Lo6WWjqJSiaLOIYp8
+	NXAp6NqozW8NMjOqScAvvxUqtDlHiHKap7girjdE60ZgnRi7XlD1f9iyhNRtatMLVAhz2W/xcCX
+	LuQCn/Vuhcxr7NOFvehl/QPwJhWLDiImPvYgd1NbgVri0Lxzv+Aj0j9WLrGcqnyF+vEVgIhZA==
+X-Google-Smtp-Source: AGHT+IHPTH0aVJf2SFTOfQ/+2jgplaOyqlz3jX+/P6YUgcDzTZb1h4bhyPQfRMIO4wKu5X84qgqA/w==
+X-Received: by 2002:a05:6a00:2d10:b0:71e:2a0:b0d0 with SMTP id d2e1a72fcca58-724df645b70mr18260344b3a.13.1732575214183;
+        Mon, 25 Nov 2024 14:53:34 -0800 (PST)
+Received: from localhost.localdomain ([2804:14d:4c64:81ec:7409:107a:a63b:a3da])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724dea69e96sm6977544b3a.73.2024.11.25.14.53.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2024 14:53:33 -0800 (PST)
+From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+To: gregkh@linuxfoundation.org,
+	philipp.g.hortmann@gmail.com
+Cc: ~lkcamp/patches@lists.sr.ht,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] staging: rtl8723bs: fix broken code when cflag is used
+Date: Mon, 25 Nov 2024 19:45:04 -0300
+Message-ID: <20241125225308.8702-1-rodrigo.gobbi.7@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241122155226.2068287-3-fabio.m.de.francesco@linux.intel.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Fabio,
+When using an extra cflag, DBG_RX_SIGNAL_DISPLAY_RAW_DATA,
+hal_com.c file doesn't compile.
 
-kernel test robot noticed the following build errors:
+Fixes: ec57f8641fbc ("staging: rtl8723bs: Rework 'struct _ODM_Phy_Status_Info_' coding style.")
+Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+---
+As noticed at [1], hal_com.c is not compiling with -DDBG_RX_SIGNAL_DISPLAY_RAW_DATA due
+the changes at [2] (a few statements were not replaced with the new struct).
+A little discussion was made at [1] too about how useful this cflag was or if
+the code under the cflag should be deleted. I think there is no harm to keep those things 
+as is since we can easily fix the error and someone might be interested in using that
+to further debug the driver.
+Tks and regards.
 
-[auto build test ERROR on cxl/next]
-[also build test ERROR on linus/master cxl/pending v6.12 next-20241125]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[1] https://lore.kernel.org/linux-staging/f61d8272-4af3-40d6-a333-e7731c3fc5ae@stanley.mountain/T/#mffa281a89e67c609db9b125878d5b8d090776812
+[2] "staging: rtl8723bs: Rework 'struct _ODM_Phy_Status_Info_' coding style.", commit ec57f8641fbca07bbb61a75bd4760fd7aef86860
+---
+Changelog
+v2: add missing commit msg and fixes tag;
+v1: https://lore.kernel.org/linux-staging/2024112500-authentic-primarily-b5da@gregkh/T/#mea4fba3775a1015f345dfe322854c55db0cddf43
+---
+ drivers/staging/rtl8723bs/hal/hal_com.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Fabio-M-De-Francesco/cxl-core-Change-match_-_by_range-calling-convention/20241125-102754
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git next
-patch link:    https://lore.kernel.org/r/20241122155226.2068287-3-fabio.m.de.francesco%40linux.intel.com
-patch subject: [PATCH 2/3] cxl/core: Enable Region creation on x86 with Low Memory Hole
-config: i386-buildonly-randconfig-001-20241125 (https://download.01.org/0day-ci/archive/20241126/202411260633.Oq6ps76M-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241126/202411260633.Oq6ps76M-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411260633.Oq6ps76M-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   ld: drivers/cxl/core/pmem.o: in function `arch_match_spa':
->> drivers/cxl/cxl.h:923: multiple definition of `arch_match_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:923: first defined here
-   ld: drivers/cxl/core/pmem.o: in function `arch_match_region':
->> drivers/cxl/cxl.h:927: multiple definition of `arch_match_region'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:927: first defined here
-   ld: drivers/cxl/core/pmem.o: in function `arch_trim_hpa_by_spa':
->> drivers/cxl/cxl.h:935: multiple definition of `arch_trim_hpa_by_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:935: first defined here
-   ld: drivers/cxl/core/regs.o: in function `arch_match_spa':
->> drivers/cxl/cxl.h:923: multiple definition of `arch_match_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:923: first defined here
-   ld: drivers/cxl/core/regs.o: in function `arch_match_region':
->> drivers/cxl/cxl.h:927: multiple definition of `arch_match_region'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:927: first defined here
-   ld: drivers/cxl/core/regs.o: in function `arch_trim_hpa_by_spa':
->> drivers/cxl/cxl.h:935: multiple definition of `arch_trim_hpa_by_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:935: first defined here
-   ld: drivers/cxl/core/memdev.o: in function `arch_match_spa':
->> drivers/cxl/cxl.h:923: multiple definition of `arch_match_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:923: first defined here
-   ld: drivers/cxl/core/memdev.o: in function `arch_match_region':
->> drivers/cxl/cxl.h:927: multiple definition of `arch_match_region'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:927: first defined here
-   ld: drivers/cxl/core/memdev.o: in function `arch_trim_hpa_by_spa':
->> drivers/cxl/cxl.h:935: multiple definition of `arch_trim_hpa_by_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:935: first defined here
-   ld: drivers/cxl/core/mbox.o: in function `arch_match_spa':
->> drivers/cxl/cxl.h:923: multiple definition of `arch_match_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:923: first defined here
-   ld: drivers/cxl/core/mbox.o: in function `arch_match_region':
->> drivers/cxl/cxl.h:927: multiple definition of `arch_match_region'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:927: first defined here
-   ld: drivers/cxl/core/mbox.o: in function `arch_trim_hpa_by_spa':
->> drivers/cxl/cxl.h:935: multiple definition of `arch_trim_hpa_by_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:935: first defined here
-   ld: drivers/cxl/core/pci.o: in function `arch_match_spa':
->> drivers/cxl/cxl.h:923: multiple definition of `arch_match_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:923: first defined here
-   ld: drivers/cxl/core/pci.o: in function `arch_match_region':
->> drivers/cxl/cxl.h:927: multiple definition of `arch_match_region'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:927: first defined here
-   ld: drivers/cxl/core/pci.o: in function `arch_trim_hpa_by_spa':
->> drivers/cxl/cxl.h:935: multiple definition of `arch_trim_hpa_by_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:935: first defined here
-   ld: drivers/cxl/core/hdm.o: in function `arch_match_spa':
->> drivers/cxl/cxl.h:923: multiple definition of `arch_match_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:923: first defined here
-   ld: drivers/cxl/core/hdm.o: in function `arch_match_region':
->> drivers/cxl/cxl.h:927: multiple definition of `arch_match_region'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:927: first defined here
-   ld: drivers/cxl/core/hdm.o: in function `arch_trim_hpa_by_spa':
->> drivers/cxl/cxl.h:935: multiple definition of `arch_trim_hpa_by_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:935: first defined here
-   ld: drivers/cxl/core/pmu.o: in function `arch_match_spa':
->> drivers/cxl/cxl.h:923: multiple definition of `arch_match_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:923: first defined here
-   ld: drivers/cxl/core/pmu.o: in function `arch_match_region':
->> drivers/cxl/cxl.h:927: multiple definition of `arch_match_region'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:927: first defined here
-   ld: drivers/cxl/core/pmu.o: in function `arch_trim_hpa_by_spa':
-   drivers/cxl/cxl.h:935: multiple definition of `arch_trim_hpa_by_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:935: first defined here
-   ld: drivers/cxl/core/cdat.o: in function `arch_match_spa':
-   drivers/cxl/cxl.h:923: multiple definition of `arch_match_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:923: first defined here
-   ld: drivers/cxl/core/cdat.o: in function `arch_match_region':
-   drivers/cxl/cxl.h:927: multiple definition of `arch_match_region'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:927: first defined here
-   ld: drivers/cxl/core/cdat.o: in function `arch_trim_hpa_by_spa':
-   drivers/cxl/cxl.h:935: multiple definition of `arch_trim_hpa_by_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:935: first defined here
-   ld: drivers/cxl/core/trace.o: in function `arch_match_spa':
-   drivers/cxl/cxl.h:923: multiple definition of `arch_match_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:923: first defined here
-   ld: drivers/cxl/core/trace.o: in function `arch_match_region':
-   drivers/cxl/cxl.h:927: multiple definition of `arch_match_region'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:927: first defined here
-   ld: drivers/cxl/core/trace.o: in function `arch_trim_hpa_by_spa':
-   drivers/cxl/cxl.h:935: multiple definition of `arch_trim_hpa_by_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:935: first defined here
-   ld: drivers/cxl/port.o: in function `arch_match_spa':
-   drivers/cxl/cxl.h:923: multiple definition of `arch_match_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:923: first defined here
-   ld: drivers/cxl/port.o: in function `arch_match_region':
-   drivers/cxl/cxl.h:927: multiple definition of `arch_match_region'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:927: first defined here
-   ld: drivers/cxl/port.o: in function `arch_trim_hpa_by_spa':
-   drivers/cxl/cxl.h:935: multiple definition of `arch_trim_hpa_by_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:935: first defined here
-   ld: drivers/perf/cxl_pmu.o: in function `arch_match_spa':
-   drivers/perf/../cxl/cxl.h:923: multiple definition of `arch_match_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:923: first defined here
-   ld: drivers/perf/cxl_pmu.o: in function `arch_match_region':
-   drivers/perf/../cxl/cxl.h:927: multiple definition of `arch_match_region'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:927: first defined here
-   ld: drivers/perf/cxl_pmu.o: in function `arch_trim_hpa_by_spa':
-   drivers/perf/../cxl/cxl.h:935: multiple definition of `arch_trim_hpa_by_spa'; drivers/cxl/core/port.o:drivers/cxl/cxl.h:935: first defined here
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [y]:
-   - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
-
-
-vim +923 drivers/cxl/cxl.h
-
-   912	
-   913	#ifdef CONFIG_CXL_ARCH_LOW_MEMORY_HOLE
-   914	bool arch_match_spa(struct cxl_root_decoder *cxlrd,
-   915			    struct cxl_endpoint_decoder *cxled);
-   916	bool arch_match_region(struct cxl_region_params *p,
-   917			       struct cxl_decoder *cxld);
-   918	void arch_trim_hpa_by_spa(struct resource *res,
-   919				  struct cxl_root_decoder *cxlrd);
-   920	#else
-   921	bool arch_match_spa(struct cxl_root_decoder *cxlrd,
-   922			    struct cxl_endpoint_decoder *cxled)
- > 923	{
-   924		return false;
-   925	}
-   926	
- > 927	bool arch_match_region(struct cxl_region_params *p,
-   928			       struct cxl_decoder *cxld)
-   929	{
-   930		return false;
-   931	}
-   932	
-   933	void arch_trim_hpa_by_spa(struct resource *res,
-   934				  struct cxl_root_decoder *cxlrd)
- > 935	{ }
-   936	#endif /* CXL_ARCH_LOW_MEMORY_HOLE */
-   937	
-
+diff --git a/drivers/staging/rtl8723bs/hal/hal_com.c b/drivers/staging/rtl8723bs/hal/hal_com.c
+index 95fb38283c58..63bf6f034f61 100644
+--- a/drivers/staging/rtl8723bs/hal/hal_com.c
++++ b/drivers/staging/rtl8723bs/hal/hal_com.c
+@@ -906,7 +906,7 @@ void rtw_store_phy_info(struct adapter *padapter, union recv_frame *prframe)
+ 	struct hal_com_data *pHalData =  GET_HAL_DATA(padapter);
+ 	struct rx_pkt_attrib *pattrib = &prframe->u.hdr.attrib;
+ 
+-	struct odm_phy_info *pPhyInfo  = (PODM_PHY_INFO_T)(&pattrib->phy_info);
++	struct odm_phy_info *pPhyInfo  = (struct odm_phy_info *)(&pattrib->phy_info);
+ 	struct rx_raw_rssi *psample_pkt_rssi = &padapter->recvpriv.raw_rssi_info;
+ 
+ 	psample_pkt_rssi->data_rate = pattrib->data_rate;
+@@ -919,8 +919,8 @@ void rtw_store_phy_info(struct adapter *padapter, union recv_frame *prframe)
+ 		psample_pkt_rssi->mimo_signal_strength[rf_path] = pPhyInfo->rx_mimo_signal_strength[rf_path];
+ 		psample_pkt_rssi->mimo_signal_quality[rf_path] = pPhyInfo->rx_mimo_signal_quality[rf_path];
+ 		if (!isCCKrate) {
+-			psample_pkt_rssi->ofdm_pwr[rf_path] = pPhyInfo->RxPwr[rf_path];
+-			psample_pkt_rssi->ofdm_snr[rf_path] = pPhyInfo->RxSNR[rf_path];
++			psample_pkt_rssi->ofdm_pwr[rf_path] = pPhyInfo->rx_pwr[rf_path];
++			psample_pkt_rssi->ofdm_snr[rf_path] = pPhyInfo->rx_snr[rf_path];
+ 		}
+ 	}
+ }
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.0
+
 
