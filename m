@@ -1,164 +1,163 @@
-Return-Path: <linux-kernel+bounces-421085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3605D9D8671
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:30:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 121179D866E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:30:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7572516AB12
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:30:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C254A284F82
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC5C1AC887;
-	Mon, 25 Nov 2024 13:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444271AF0C4;
+	Mon, 25 Nov 2024 13:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CxZIUr/h"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UbVuVKFy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A74D1AB528
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5551ADFE2
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732541394; cv=none; b=VpsmAn5NBLaF3WK9Q4NRQ232QSPvHBNPEf+P/Yq6CF5MIK7A5I0TyzR0bUJipxWTNUAM3ITZyQHaXJhtrc2+2asJ69LW19b/bmUJ+PF0FTBXhlZ+3lzi7lIW3/6v0GSDMo7AaLdGmQ5eK4dDYr8eLoArLSdlLWQYTP7N1gqcCIY=
+	t=1732541398; cv=none; b=Tig+GNVncrMtvM3ErONOaM/UL8TjxUWQX2JJI6B1YvyuvGGfmRsFnlwD29DFS7S3+C0tv+pkFUo9ydT2sMr74eZPtN4X0qr8OzvBA3oWYTBDQYo/55tjE5X8+CGC17ZmnhsDxXrVJOfGaR3K92dRdLLTYNUCotXN65azjS4YFs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732541394; c=relaxed/simple;
-	bh=An/yzXprONnMPtlpU/2I9a07cBX15M0rhhil7Q0mVKU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M/ppUqy8bf9I3TISaDUJgppUVPqsHdD6hBmNzK2n0cO/CtBahPLsJRVjgZDI9EsA34mXVL0Krw91uj9Jb11Pbz+SIzrMnzfEHm+5febl/AlZAeeq2AFaH9kbHA5eoTsvd3CAmr94ohdkxm8OgxaG0Ds9E+KQSDzV3aUwDC+HN4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CxZIUr/h; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53dd0cb9ce3so4044990e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 05:29:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732541391; x=1733146191; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ngAhAzZDfROEb9czhlQGE20UKXU9N4cRJ6/BqKJofTk=;
-        b=CxZIUr/hisUgw7oIAgeiBQ8B5mnw5dV5qCfEjwBgCb22i3mianlbHaJf1xcnteFm9p
-         Yky9tm86UguljDZBqBg8jAcUMnQdv/Hyg7CKp/7fHv+c1HTKnU1iUwSVu0qyWMAQibrF
-         GfbS0NWUYQlifpC95XxhzLjhIOTYF8GixxnMDQTsS8CJ9SjYP1aT6374Cy00Y7sL2b/B
-         CBRniYYGA4DkeGt/UT5UsGwd+rL60Q/kTCDEhgmwnHSm2H9vasMryiXpdnXAnDCmU/4D
-         krEouX9vjP/sf8ABXtpCdnw+v7IpJNUt0nWjPEHL3P85ozzTNsnkVFP08+ozSegS93uB
-         yUnQ==
+	s=arc-20240116; t=1732541398; c=relaxed/simple;
+	bh=PesfTofTxJCPwxbQmrGPe6XDw08kWo3FPvk0e+XKVFs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZuvKF5J/aBHusShHkhem5d8w1GfFgkizEVntPH7pu1QAtQzcD+5NpPLzSNzMHaCQtPKIYFvs3dFJu/yySZf/zgUS2tZtZKwhU1f/z88XVYKRb1M3s1iGkSts16d1MCyI7U82fzQe/UxzYsW1/Ymi9CpCVJSD0yDcrWVmxA/Cup0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UbVuVKFy; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732541395;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XSZe9OLEpJFtlpKYm1BLUeyX+bHHN2kmK4pTMxUedz8=;
+	b=UbVuVKFy9YWOgWPxkvzDEnWwn5nRtTTkTGO1KUoXyTG4+VfsAEISeIfzaQ+jYyd1M7kdBu
+	wvPu4yRHw1CcqssUsAFK4XB+OIn/ibCLlnQjxNEDLnTXsAC+Kl4qIeQymV6ArqE+MZjI4Z
+	Kdwg1kULh5wvE7BVCiLVXVWdxqB+fFU=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-690-V0fmlk04O2CkqYPp9cinBg-1; Mon, 25 Nov 2024 08:29:54 -0500
+X-MC-Unique: V0fmlk04O2CkqYPp9cinBg-1
+X-Mimecast-MFC-AGG-ID: V0fmlk04O2CkqYPp9cinBg
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2ffcab59cecso1070251fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 05:29:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732541391; x=1733146191;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ngAhAzZDfROEb9czhlQGE20UKXU9N4cRJ6/BqKJofTk=;
-        b=slrrWSBShAVuY4LR/aD9qNj7wXT2nNMg4o0gFfMrIY8L38eUyAqDVxuokwumZy3QwG
-         kdAM3fcaJbxfJwBrfdR1UysfEEJbDqJmrtXUledHL5Q12ziRbfuIR/soKUp7r8aatNMB
-         VUFRImh3PTg7RSlDHQqx9E3rQmuru40G7MtomHDCOAjjsH2/iN6du3FhLtiFL7KmEvO0
-         RVKqnTtJoj4GB1wZ3STlEvxzb3h+ss4hIuC4Qfc9lXmoo9Z9bekHQ3VoaLcAGI+gStDk
-         K5/wRI2ozpuBXZtLsrsojI6VbwQbHqbrgj+Skn8x0P/xeW8pIh160jroGLTKFF7xmtLl
-         0uYg==
-X-Forwarded-Encrypted: i=1; AJvYcCXCoX1IHmpUjUe6t6DaQnrY0cayIJMmtUStdcMJkal4DUiSYExMzCV9cUJJqBq2HZ82hb99y/GHZcFkkts=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBpZo4db3isJMBNl0va47IaSoQ6mXUwWXSXo4FPHrdX/5XZ0IR
-	/Jdvwmuqa/nbZibEKav2Fo2MjE3jaKM5SXTURCpd7NCUUGOd47FU4YtN+Yig+aSMiTno8l+70N2
-	gbJyRw0CHx91+xM61M7R0cU088a86oZVDK2vX
-X-Gm-Gg: ASbGncvmC180D9+qwGHFrLrfnxbsniagPllRN2vezztbwYN40cA9rrZhbwUB3scosjB
-	++aJaL7HEh2Vb9o3i1tWNApSiZ4tATlY=
-X-Google-Smtp-Source: AGHT+IGWVoplYlvnHtzBV1xQQjqDUjZdU7Ryuumdx03PRR5hYwhAqGj/hfUtcBbT39lo/UuIn0uq4Op7uwOA/EkwVcU=
-X-Received: by 2002:ac2:4f11:0:b0:539:e1c6:9d7f with SMTP id
- 2adb3069b0e04-53dd389d698mr5173159e87.25.1732541390357; Mon, 25 Nov 2024
- 05:29:50 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732541393; x=1733146193;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XSZe9OLEpJFtlpKYm1BLUeyX+bHHN2kmK4pTMxUedz8=;
+        b=EhWKcknRmnmBCHg8pzpXAN4VwRjKnPfp771zA1Cqz15jXMemnCvAOZpFJ18hN8cCGt
+         IiUoHhPyqQDD1AUXvnoc2snG2hIPGNciLjPBd4qYzQ0gJ+erOX5mQVulKCCh0khq4p4n
+         /nSVpS2n/S9hqTB6W7QONZnOPSVuHDAHuqPnWxRVNJNjVJLml+G6jm66l2m1Ot/uyLfx
+         HbZznZAjh6+ygfKAGAwql+Zk+uinoZ3yYS3Bn2f/hxoaFm5ZcKHOhK1KZ1aYXu0Q8ZmE
+         mkSQb+BXKX4R4d9FHFLMQnCs6aHp1/c5YhKGAX1qDncot659z7m5R/cZ5v2JVRavGtdb
+         Nl8A==
+X-Forwarded-Encrypted: i=1; AJvYcCX5ZfHUpWVo50XOxAlEioUL5J031MYB5tCVjVxmOCZgSLT1lFKzhkVJS696/UrG1l0KD8N+A2AqZloDB9o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywdj9P+SYAMXbm/QJR9rTeqt5hxXx+Id2BtFFGSfHmWEnCau/S2
+	KDQ8OcrLGE9rS9hRe08TWJjdTEqTRrWbEbIBMaSuseBFmuCgOnlagp2OnWT8rpnupcAL3uj9B2N
+	zkuJt2NRJxSMCb6tFGMVF8/4/jNDz1D8hgyZlkz5rSDwl9QCeJVXPUVh/bPQUaw==
+X-Gm-Gg: ASbGncsKCFNavdUailFwQrpI7jzLTFIpVtTX2UaVRDez6RyZfDqPeMiaUNTfu++D05p
+	AgW8DIeLvHd9Y5BL8czuOFrYKVhaINTTJcncwq3GW55I+BM3poMcruIljBgwNTX4s545hJtpww+
+	BK4Vp6tjgtCpArDQix5+amQP/MzYVpVvmDf8NmG1qzgCujS0K3KHeZ3A4r4WNt0J1futxxNackb
+	494PorZeW6blQ02BEorYoXgtbRKHElTXFKCRq35EiXa28I2Whpjq3yZtHiIt5yXlfpu/b465ODn
+	G3tfUDelH4Np2XeoeY2GeleCuScYWZTZx0YUMLcaLyd/7jDGmkCCjtnuu/uvx9wQXiRKqdSpoDz
+	PcvisrunxAetIbxv4gT9GIy6S
+X-Received: by 2002:a2e:8798:0:b0:2ff:bbe8:fa44 with SMTP id 38308e7fff4ca-2ffbbe8fba1mr15796911fa.1.1732541392791;
+        Mon, 25 Nov 2024 05:29:52 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHhS/2QAmcs+NhBz/uabDsITzAljDiLfLiaauKd8zpN2K9Av9BbgzQbxvChtITosy7os5nyrg==
+X-Received: by 2002:a2e:8798:0:b0:2ff:bbe8:fa44 with SMTP id 38308e7fff4ca-2ffbbe8fba1mr15796801fa.1.1732541392348;
+        Mon, 25 Nov 2024 05:29:52 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b3460d8sm464023866b.91.2024.11.25.05.29.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 05:29:52 -0800 (PST)
+Message-ID: <d240ed2e-9675-425c-acef-92ad7f5127ef@redhat.com>
+Date: Mon, 25 Nov 2024 14:29:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125131356.932264-1-martin.ottens@fau.de>
-In-Reply-To: <20241125131356.932264-1-martin.ottens@fau.de>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 25 Nov 2024 14:29:39 +0100
-Message-ID: <CANn89iJ7uOuDCzErfeymGuyaP9ECqjFK5ZF9o3cuvR3+VLWfFg@mail.gmail.com>
-Subject: Re: [PATCH] net/sched: tbf: correct backlog statistic for GSO packets
-To: Martin Ottens <martin.ottens@fau.de>
-Cc: Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, 
-	Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a
+ subdevice
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, Yunke Cao <yunkec@chromium.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>
+References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
+ <5b5f3bb7-7933-4861-be81-30345e333395@redhat.com>
+ <CANiDSCta62P5+1aR9Ks8c6sd3_grCV3C+Le=UjKGkiohyf0R2g@mail.gmail.com>
+ <55c76c99-dc86-41b2-84c6-d2e844530f67@redhat.com>
+ <20241125124942.GA32280@pendragon.ideasonboard.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241125124942.GA32280@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 25, 2024 at 2:14=E2=80=AFPM Martin Ottens <martin.ottens@fau.de=
-> wrote:
->
-> When the length of a GSO packet in the tbf qdisc is larger than the burst
-> size configured the packet will be segmented by the tbf_segment function.
-> Whenever this function is used to enqueue SKBs, the backlog statistic of
-> the tbf is not increased correctly. This can lead to underflows of the
-> 'backlog' byte-statistic value when these packets are dequeued from tbf.
->
-> Reproduce the bug:
-> Ensure that the sender machine has GSO enabled. Configured the tbf on
-> the outgoing interface of the machine as follows (burstsize =3D 1 MTU):
-> $ tc qdisc add dev <oif> root handle 1: tbf rate 50Mbit burst 1514 latenc=
-y 50ms
->
-> Send bulk TCP traffic out via this interface, e.g., by running an iPerf3
-> client on this machine. Check the qdisc statistics:
-> $ tc -s qdisc show dev <oif>
->
-> The 'backlog' byte-statistic has incorrect values while traffic is
-> transferred, e.g., high values due to u32 underflows. When the transfer
-> is stopped, the value is !=3D 0, which should never happen.
->
-> This patch fixes this bug by updating the statistics correctly, even if
-> single SKBs of a GSO SKB cannot be enqueued.
->
-> Signed-off-by: Martin Ottens <martin.ottens@fau.de>
+Hi Laurent,
 
-Please add a Fixe: tag. I think this would be
+On 25-Nov-24 1:49 PM, Laurent Pinchart wrote:
+> On Mon, Nov 25, 2024 at 01:25:41PM +0100, Hans de Goede wrote:
 
-Fixes: e43ac79a4bc6 ("sch_tbf: segment too big GSO packets")
+<snip>
 
-> ---
->  net/sched/sch_tbf.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/net/sched/sch_tbf.c b/net/sched/sch_tbf.c
-> index f1d09183ae63..ef7752f9d0d9 100644
-> --- a/net/sched/sch_tbf.c
-> +++ b/net/sched/sch_tbf.c
-> @@ -220,17 +220,18 @@ static int tbf_segment(struct sk_buff *skb, struct =
-Qdisc *sch,
->         skb_list_walk_safe(segs, segs, nskb) {
->                 skb_mark_not_on_list(segs);
->                 qdisc_skb_cb(segs)->pkt_len =3D segs->len;
-> -               len +=3D segs->len;
->                 ret =3D qdisc_enqueue(segs, q->qdisc, to_free);
->                 if (ret !=3D NET_XMIT_SUCCESS) {
->                         if (net_xmit_drop_count(ret))
->                                 qdisc_qstats_drop(sch);
->                 } else {
->                         nb++;
-> +                       len +=3D segs->len;
+>> I see 2 ways of doing that:
+>>
+>> 1. Use pm_runtime_set_autosuspend_delay() with a delay of say 1 second
+>> and then on set_ctrl do a pm_runtime_get_sync() +
+>> pm_runtime_put_autosuspend() giving the camera 1 second to finish
+>> applying the async ctrl (which might not be enough for e.g homing) +
+>> also avoid doing suspend + resume all the time if multiple ctrls are send
+>>
+>> 2. Instead of immediately powering on the camera on /dev/video# open
+>> track per fh if the camera has been powered on and then on the first
+>> set-ctrl, or the first other IOCTL like try/set-fmt which requires
+>> the camera to be powered on power it up and then keep it on until
+>> the fh is closed, since apps hitting these paths are likely to do
+>> more stuff which requires the camera to be powered on.
+> 
+> A mode of operation where a userspace action causes a state change and
+> the only way to change back to the previous state is to close the device
+> often leads to problems. I'd rather not do this unless we have to
+> completely rule out all other options.
 
-I do not think it is safe to access segs->len after qdisc_enqueue() :
-We lost ownership of segs already.
+But we already have that today. We already do the usb_autopm_get_interface()
+as soon as /dev/video# gets opened and the only way to undo it is to close
+/dev/video#.
 
-I would store the segs->len in a temporary variable before calling
-qdisc_enqueue()
+What I'm suggesting is to no longer do the usb_autopm_get_interface()
+on all opens, but only on some.
 
->                 }
->         }
->         sch->q.qlen +=3D nb;
-> -       if (nb > 1)
-> +       sch->qstats.backlog +=3D len;
-> +       if (nb > 0)
->                 qdisc_tree_reduce_backlog(sch, 1 - nb, prev_len - len);
->         consume_skb(skb);
+Where "some" are the ones where we come to the conclusion that we actually
+need to power-up the USB-bus / interface because we want to talk to
+the device.
 
-We might also call kfree_skb(skb) instead of consume_skb() if nb =3D=3D 0
+IOW delay the usb_autopm_get_interface() until the first action which
+actually requires it.
 
->         return nb > 0 ? NET_XMIT_SUCCESS : NET_XMIT_DROP;
-> --
-> 2.39.5
->
+This should be a very minimal change from the pov of USB interactions
+with the actual device, so a small change of regressions while at
+least not powering on the device during udev discovery.
+
+I guess one could argue that the cases where this is a win are so
+small that this is not worth it.
+
+Regards,
+
+Hans
+
+
 
