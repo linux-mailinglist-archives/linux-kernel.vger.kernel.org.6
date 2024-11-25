@@ -1,210 +1,238 @@
-Return-Path: <linux-kernel+bounces-421479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1115D9D8BD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:02:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D349D8BDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:03:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 567D1B2A70A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:01:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2399BB2ADCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7481BCA07;
-	Mon, 25 Nov 2024 17:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57041BBBEB;
+	Mon, 25 Nov 2024 17:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ssi.bg header.i=@ssi.bg header.b="Vz/y+APZ"
-Received: from mg.ssi.bg (mg.ssi.bg [193.238.174.37])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="rYAZmfN0";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="rYAZmfN0"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2055.outbound.protection.outlook.com [40.107.22.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A857E1BBBF7;
-	Mon, 25 Nov 2024 17:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.238.174.37
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732557597; cv=none; b=eGVacKJrGty82n6Wk6+9kr8a2O4gJOnOlWoq2YpAGPsPmNw4OW0BIVwGp43gnr7GnvKDsTUrUYTYSCY2zX3qvvvsTRu8X29e+6ag0yIpOGDmWzxtxz3zhnIiY4I7q+sE7hf8D1Nrm8hgNSDBehn0R/IR8Ff86Q84r83uXxwOblE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732557597; c=relaxed/simple;
-	bh=V5N4wSUZrBPuCZ/XKy+HU1S/9iyK0UN1290lQKfMNms=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=F3sQMqekQTwAlla21t4X6hOCBL3vuCSbO5il3ia/4l4Cvt3J4FiBMcdHU859mJYIIBW+6MkBHrcopxRsDMi38190Ct1CWcxoFG5luIZi1mNyuDarRhJOp4Fjxtn7gVfaoZgY5DDfNjq5ZxmL2iGve8Xjeofcy60nlbDgdQXnXpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg; spf=pass smtp.mailfrom=ssi.bg; dkim=pass (1024-bit key) header.d=ssi.bg header.i=@ssi.bg header.b=Vz/y+APZ; arc=none smtp.client-ip=193.238.174.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssi.bg
-Received: from mg.ssi.bg (localhost [127.0.0.1])
-	by mg.ssi.bg (Proxmox) with ESMTP id 8E5A980CAF;
-	Mon, 25 Nov 2024 19:59:44 +0200 (EET)
-Received: from ink.ssi.bg (ink.ssi.bg [193.238.174.40])
-	by mg.ssi.bg (Proxmox) with ESMTPS;
-	Mon, 25 Nov 2024 19:59:43 +0200 (EET)
-Received: from ja.ssi.bg (unknown [213.16.62.126])
-	by ink.ssi.bg (Postfix) with ESMTPSA id 37359303248;
-	Mon, 25 Nov 2024 19:59:32 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ssi.bg; s=ink;
-	t=1732557574; bh=V5N4wSUZrBPuCZ/XKy+HU1S/9iyK0UN1290lQKfMNms=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References;
-	b=Vz/y+APZW/fp7aSEDdYfl2HL12Ly4g47GuG9/uZ/SjF4n62iUW75Tjpzj8PC0DwwR
-	 KcjpelfK5wYlaKZaIbK2BecBEjiMSKOgG00anIJR5J3r+prqsxqiDA1iasgVg+kfJw
-	 aBCV8gKnx5cEDFNNupYNs/xwB5yEWAPT3ilabObE=
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by ja.ssi.bg (8.18.1/8.17.1) with ESMTP id 4APHxJKD053777;
-	Mon, 25 Nov 2024 19:59:21 +0200
-Date: Mon, 25 Nov 2024 19:59:19 +0200 (EET)
-From: Julian Anastasov <ja@ssi.bg>
-To: Jinghao Jia <jinghao7@illinois.edu>
-cc: Simon Horman <horms@verge.net.au>, Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Bill Wendling <morbo@google.com>,
-        Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-        netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-        kernel test robot <lkp@intel.com>, Ruowen Qin <ruqin@redhat.com>
-Subject: Re: [PATCH v3 net] ipvs: fix UB due to uninitialized stack access
- in ip_vs_protocol_init()
-In-Reply-To: <20241123094256.28887-1-jinghao7@illinois.edu>
-Message-ID: <8b210ce9-19d8-eefd-fc86-febdc33394f6@ssi.bg>
-References: <20241123094256.28887-1-jinghao7@illinois.edu>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D41361B87F1;
+	Mon, 25 Nov 2024 17:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.55
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732557591; cv=fail; b=ALRpyagP1d9EHEK/5V+bk8OyBtSb1kT9t45tvh44LFaon/FGVohaoIPydMezHCu7GUKKpkaTxKbqEGYdkCftlwtlKrUwSqSR7x3lolnUPL021hq95wDQpzAkFVZM6bpus65X3WEh1JoijDEHcCsbh/hmsjj0zD5tolbBizazZIY=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732557591; c=relaxed/simple;
+	bh=IX1YRl27HA9TAGWRseSqFk+YAz+W3EWG3+oJXUWwiXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ExMvrbCFWt8is6BAbKjjSyKjpwsCGYNU3zZtY6j4c5y9y/VS8/IrngcvkQQFVOvPN9Bwbl/+0t0oX7sTlyd1Omxayvd4W/Vo3vh23BU9uytqM5pXGrivRsTkUN/v6dKwF99h6Qw8Q4lPmnjaw7VGfSVBOWtyV+8peyp87N9dRRo=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=rYAZmfN0; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=rYAZmfN0; arc=fail smtp.client-ip=40.107.22.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=ymUJed9VNW9eJ+0IoBg9MTwUkJdVBwWJkxqJucdtoUzv80Kiu/lDcsxATtHFrn2JS01qqfJJLQsLEEVE5Lc2oTO7oju19NGbJX8eLcwKPkEVqSJ5Q8hgo0y5GevJShpBGwE1GsOIbCqIcOyWq2TJGYcNDvVytdtcJoUskLmhpXmZwc5utXcINPx3Xnn/QC96eYFrFiGnsVwKc730vezkefUKk2tlGhM+PwbuYC216o5m3J+XIJbikiLJ1/KzKgEjJB3amMWesxJhLVFVssbiMBlCo4n2GkYz/3jabGCWBTAM11GqAVtOdhwXM3SMVHF2z+c/9G1ETfakiX+GW/r/ZA==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IX1YRl27HA9TAGWRseSqFk+YAz+W3EWG3+oJXUWwiXo=;
+ b=gw08o/Bzc9sUi115BkREMKBIM385e//1En/kBrw6CDv6kpip5htAKBzLCxarzJAjis/mo6z9xmWrOjn7+7cCZ7kfVdLWmnAcR9hXqFxL4e4LmbQ//E2XGVkPv3xZIW6P+D/FooiMt2GNURI2y83GQq8EO6uWiaHeFT9Gutcy0O3sdtWve0yVEKJx4j9Wi9ox6FBzzOSmOu4j2r4sCmBFOwitPzpRkHTfJQLt5w+GP36yrK7hSui5TKTDUm6C7xcMOCiSL7d2q26l1wsV04Ri0yg7ZjCro6CbA/aW7DonH4Fk+Xk89cnSbB3eH6LyZjiwu+lh/6s2QGJzjYcn9NkGSw==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
+ dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IX1YRl27HA9TAGWRseSqFk+YAz+W3EWG3+oJXUWwiXo=;
+ b=rYAZmfN0oXTQKqhG8z4F1phwE4sCQCA/uK8o9MeYP4yJCwHrO1CAB0yz27d7aCLh87UpKDCa7cq7ngz6E8JwLpcudUe1SM4zrysIGKmoNfJjD7OHxjawsG/KIZUnb1lhqBCaBqVTvQbNMosJB2piCisezu9Z0h+inrCwBTTYgwM=
+Received: from AS4P189CA0022.EURP189.PROD.OUTLOOK.COM (2603:10a6:20b:5db::6)
+ by DB9PR08MB6697.eurprd08.prod.outlook.com (2603:10a6:10:2ad::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.20; Mon, 25 Nov
+ 2024 17:59:44 +0000
+Received: from AMS0EPF000001B3.eurprd05.prod.outlook.com
+ (2603:10a6:20b:5db:cafe::f0) by AS4P189CA0022.outlook.office365.com
+ (2603:10a6:20b:5db::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8182.20 via Frontend Transport; Mon,
+ 25 Nov 2024 17:59:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
+ client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
+ pr=C
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ AMS0EPF000001B3.mail.protection.outlook.com (10.167.16.167) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.12
+ via Frontend Transport; Mon, 25 Nov 2024 17:59:44 +0000
+Received: ("Tessian outbound a09d3701ea63:v490"); Mon, 25 Nov 2024 17:59:43 +0000
+X-CheckRecipientChecked: true
+X-CR-MTA-CID: f1a39ea5cc6cdcb2
+X-TessianGatewayMetadata: QD21NpZ33VEjVC7ckO4TP+iRUlPtTfLAofaMR4frFdpd3SS+41PDnDzIM+OoRAz1h2ql7PGcO+X6GWx6IqAfIKG+bLzecpGO4M5a23mVQ9JOCcLV6dr+GPk6Ff7jf4WSSeOdPQicjGVz3Rim+uyzoQ==
+X-CR-MTA-TID: 64aa7808
+Received: from Ld65a3acf902f.2
+	by 64aa7808-outbound-1.mta.getcheckrecipient.com id 066076E8-058D-4EE1-B4F7-9F7794C4AF39.1;
+	Mon, 25 Nov 2024 17:59:37 +0000
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id Ld65a3acf902f.2
+    (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+    Mon, 25 Nov 2024 17:59:37 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ui7ZONCW419R4OhHMPWU5t/F1F9gvnWjj6ppuPt5zZFhOeMVoaj9f2MgFZpUsh2XyR46P8JXAjjbCUN6Jk/7IqUk7ieA479lGF/BVKmzGQdHxas4QJpRP0TIuAEJhG5yYuEtBoKWtfEBXtiVr6FAXgTD7JtJ6IrKOaogpGiX5sHXYuAXwsGZkgcyS0qHuJV9FJAFkUg3k9CLnMq4IOIBFoG2DXKVtuYO0Ab2jjpTZ1FZxdn/H+aWvu1kUr+vtBzc/7LTKsxo0hcKIckbM6lfoD0u3s3CAOxtc7Ws4apVxVJJP+16jXQS5EGJiZiNL4scNdBZ67yd/Ch1F1ciYeS4xw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IX1YRl27HA9TAGWRseSqFk+YAz+W3EWG3+oJXUWwiXo=;
+ b=VljsxbYBfi/YK5xg3BP/o10rCX2baPY6Yv4DGIWVp00X//I6UXMJXo+Xo2KIwW9dZC6y/Z9P7/VsGoOXOPCajOp6aYYosBO/PlkyxtFY47Rf8OYSvLwn5mn6HAeu89+HMFBqCCEI+JGmZJXRAqTHbzZ7HT5s05XfzCu+QruuC96VM12dLlnGAXaZp0B0D3V8hO3yPgSQKOE3ZGbKxpoL+UWSwvoq4IvN23JCo3Ni8PVSY+wRBGI/lO8oVYpCgMiU5hX4MxL7VT7TymtLYPRNnn9UJfP07hfr7xkjGaRoZQD8b8sVSpHvDl7Eooz7v7fwAhpgIVTJNYcpEMwIJtEhPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IX1YRl27HA9TAGWRseSqFk+YAz+W3EWG3+oJXUWwiXo=;
+ b=rYAZmfN0oXTQKqhG8z4F1phwE4sCQCA/uK8o9MeYP4yJCwHrO1CAB0yz27d7aCLh87UpKDCa7cq7ngz6E8JwLpcudUe1SM4zrysIGKmoNfJjD7OHxjawsG/KIZUnb1lhqBCaBqVTvQbNMosJB2piCisezu9Z0h+inrCwBTTYgwM=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20) by DB3PR08MB10333.eurprd08.prod.outlook.com
+ (2603:10a6:10:436::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.20; Mon, 25 Nov
+ 2024 17:59:34 +0000
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739]) by GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739%4]) with mapi id 15.20.8182.019; Mon, 25 Nov 2024
+ 17:59:34 +0000
+Date: Mon, 25 Nov 2024 17:59:31 +0000
+From: Levi Yun <yeoreum.yun@arm.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: broonie@kernel.org, sami.mujawar@arm.com, sudeep.holla@arm.com,
+	pierre.gondois@arm.com, hagarhem@amazon.com,
+	catalin.marinas@arm.com, will@kernel.org, guohanjun@huawei.com,
+	Jonathan.Cameron@huawei.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] arm64/acpi: panic when failed to init acpi table
+ with acpi=force option
+Message-ID: <Z0S7A6uOHpXZbxfy@e129823.arm.com>
+References: <20241125170758.518943-1-yeoreum.yun@arm.com>
+ <20241125170758.518943-2-yeoreum.yun@arm.com>
+ <CAMj1kXGBnYQi05qh0QZk2hVLjVhS774-nT=HLdL_kW1d7nxMVg@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXGBnYQi05qh0QZk2hVLjVhS774-nT=HLdL_kW1d7nxMVg@mail.gmail.com>
+X-ClientProxiedBy: LO2P265CA0437.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:e::17) To GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-MS-TrafficTypeDiagnostic:
+	GV1PR08MB10521:EE_|DB3PR08MB10333:EE_|AMS0EPF000001B3:EE_|DB9PR08MB6697:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3972a702-5c1f-4298-5d43-08dd0d7af14d
+X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?us-ascii?Q?ZnZs8VdSw/pd1mhDxeY2z3kWZJJe5y5MKIkKDVLq+cecaOnfZIr8naGgDhxu?=
+ =?us-ascii?Q?FkWboYRD66kYwaQVacKYHaPC0fuddHPXDDJDjjIUen5qwUIpcewC4J0fCd61?=
+ =?us-ascii?Q?bvbSceNNpg3Y6oh95u3VOZyNLk8WshLcz0WKwa4FNj5Ki4d1UoTCmRz/yDdI?=
+ =?us-ascii?Q?lK1FlTGOnTU2Et+eK9RnML7nwOQdxZBioYIPx+dJ4vP1FyH4kN4AJbWXLTqw?=
+ =?us-ascii?Q?PETwWnZtLJh7G2SQPkh/0nm8hBlw7C1wAoypoqowZTu0hPzk/7qx44xuKZRr?=
+ =?us-ascii?Q?Gqsu5sIswMqQWXIxAe5sp4kqo9Pw96SNzDXYjFNDrmi3KU3VxDhlNlemMzNO?=
+ =?us-ascii?Q?4Kkr9oulcT6T8k+XYmI0pTJP5/D49oy07HO+JPbP8DMjLPKkcWgeOnOdnNY0?=
+ =?us-ascii?Q?vcqgKDQL1yNIEMo++IG/njaVlTMuDGt1bRzxdL0CrxbXAKcn8C1xF1v71Sik?=
+ =?us-ascii?Q?l3SIZXXZyZPIEIlSxVzOuIrGveHKSRYEI8w6sjp8SwB0dlQF2w4DSKX2Ha1H?=
+ =?us-ascii?Q?BpfdtUniZShxLqNbaoqjKKu8qxVcwwyVs4hzHnYAVkVPRcs1yBujfVLyO3sU?=
+ =?us-ascii?Q?uf5Wra8GYy92myLS0sYzY/zkGcbsZSrfdWmngVG71WCWwsiJbHTJMAjNvRbU?=
+ =?us-ascii?Q?YBCoYhDuUBpyJqIMe0D++h/376zVMwgjSr16rKuN4gOeQEB0Naf7Jh3lxKwx?=
+ =?us-ascii?Q?fiz3QyX5VoAqmxkX2EnM01siTxP75NmgFWKrDw0pajNpK/+PNjYJg8DZxfzf?=
+ =?us-ascii?Q?xP9njqfdPXBTHc5qSuknqm1asYtrwADXNwMX0pamR/iFN2pAO+C3BgUPB7+J?=
+ =?us-ascii?Q?s4xOU26zTrK+Air9ctJESwY0/gxpOai+7G3ozIwCCCFWK1DI/XUtps7KmYUx?=
+ =?us-ascii?Q?7LtLoL73y8U1wW2ugaub3DcJ02IoCnQrnia4iBfW8aYdKSRT9QhcJN5WSUHX?=
+ =?us-ascii?Q?g4/hwNe2jHFEmx6hGyFpB0XHFfa+n4gulN4Lp709PUPqNGAPUscwpWO2vcxl?=
+ =?us-ascii?Q?VVP1xvGGBW4ni218p0SazAD7850hBpY4BN/jKTh5f2IB+uBAIbzbg3tsre0C?=
+ =?us-ascii?Q?SYW5Qx/yVZm0ApsfyDsd0MbESbuHESX4P9me4aUEbLEW8VVJxGngXbwKwL8L?=
+ =?us-ascii?Q?szcfaDsMXHxyaqZlhwVz0a+6Ry6pM1+hQQGW3Y0KG99HF+GRB7B97DRR0b4L?=
+ =?us-ascii?Q?E6CUIFyJj07QFRm7motO6iAqUnrrRN9rz6QIBi/k4RQFtyIgswG5GeWIu/W+?=
+ =?us-ascii?Q?ZrHkGLnv3YDvAEmb6cbhCk05rlbjKSSQmjcfhsmkYNnfNNq/+whIP8LePrur?=
+ =?us-ascii?Q?xN1XJpiS40RXDWrPTY3DMd59NHXpHjUbHUSndoSSfUVfrw=3D=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10521.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR08MB10333
+Original-Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+X-EOPAttributedMessage: 0
+X-MS-Exchange-SkipListedInternetSender:
+ ip=[2603:10a6:150:163::20];domain=GV1PR08MB10521.eurprd08.prod.outlook.com
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AMS0EPF000001B3.eurprd05.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	056e270d-5e5b-4cc4-0bc5-08dd0d7aeb14
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|14060799003|376014|36860700013|35042699022|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?MBYtvZQG5gOB+BFLSsWegaoVtGs6XsUo12THsmK0Ve+/8hFK/ICFWbmPuQNu?=
+ =?us-ascii?Q?AIAxl1youoxR9mWXL4CuJaqfP3YtUqymtXhCzoi+CXU5vRnG7Y8jRJpsLgGq?=
+ =?us-ascii?Q?keO81GP3SeivPIWumvSYZXiTyU5LG6gXXiZkzmq9HPDdp1qFYEhhgkizpYm0?=
+ =?us-ascii?Q?eKFYDXHOh9bQZZF+4matrOpedmhw95brV63qI8pYowbM5vsEkZoKtXqp3h+X?=
+ =?us-ascii?Q?w2z/TZ7WBL6QZvFOKbFuMteGGFmPOyWBnsgsnfL5VYIxIeCanrs1vtmnyENs?=
+ =?us-ascii?Q?06bJ9Pm6JlwysP3i/iYd5xamuy/2cbAbFkkFxVi0cJQ+Sm8y4fzJqQpAsPu+?=
+ =?us-ascii?Q?7vi9aYpJ+JPx0Hq33VM1ArmeONxeLzHVRofjPV+IAqA/Phr+G1fIbRivmmUd?=
+ =?us-ascii?Q?9GvOnXEoAo1FO+TsRIZ0N0eV25njM6W+BjVNxurjKHEEIJecxxkq1MSZyRUM?=
+ =?us-ascii?Q?ajO7+AAknoHlW9OyAczrsfw7tz/cCovjgW6ODUaieduo/JJQXRLJwhcE9S5Q?=
+ =?us-ascii?Q?s6LEpNf6wpoemHVRj78n3grDlTXkg5JzNizQDTw6hXWZ7hqKgIMmljjQTBzh?=
+ =?us-ascii?Q?Hm1O5zsVRed23eGEkJqhl+wdXec3515mZJxmkOWqJLHnoLECkh8zM8s7tjf3?=
+ =?us-ascii?Q?eXRh5BomEUdiV0LMZM1Af7+pBdEhOYF8/UZjIod9Hk0z8GU+7sTy9/mCTi/p?=
+ =?us-ascii?Q?bMfNRwTethe+tEeHE2ZbtLFWNI31SZ5GpsRH7Xl3YB5xSOsH1rJ2oEwpccFw?=
+ =?us-ascii?Q?U4W7Kgv8q8DFypf72a0lWD+L9tnBDfq5MsDecyTugI7I8JACMtFZGPaguTOT?=
+ =?us-ascii?Q?wXehZnhy3IXBkk/iBxSi+4zFT3QYvEkyNLsgrwEvIZNWkdBuZfnqMbbybE18?=
+ =?us-ascii?Q?Y5fEGCDDn6YTwX/G0qvjm7BZpkCu1PSplI9Lwi7V35BaYSiYg2gh2zzTZ+pv?=
+ =?us-ascii?Q?00LjnKq9X48HQcDxm67Kt2Zk9YBVX+IRjhXjm7toDTlM7Tf4qBjnQWmst4bh?=
+ =?us-ascii?Q?Ra7YpEY5HvcL99Teh8RV2fpXKjOIfjZg9s+LsUB/bWJdCx9ABvyZPs9WgRTI?=
+ =?us-ascii?Q?amc+AFGGU15CBF86CJfSgm/zU2wTbKI7e40brndSkaS7a8IDqPRH7pQ6acl8?=
+ =?us-ascii?Q?vnxU8uMLZqjxID/WQPAf7Fe4rNLAvvn44aM0h+EZKxEup0h3/Teqj1ahZX6k?=
+ =?us-ascii?Q?n82RiB3xQ4Hs6IqP5iHBsZqo9+IIPG6h/V3Zoi/3aYAAxE7vWB/jYuaq2yRo?=
+ =?us-ascii?Q?Jqa6RCRULhkk/JN6XeM4cMfH7RK0Drq7fQJMwmX8xrktPHwM+0VzYtrF3LXS?=
+ =?us-ascii?Q?2hLkhmxXum6Q0o1pFqcQqFD7MMiud5OJgbNtP1i5MlBXcn51dOehqvCPqNSW?=
+ =?us-ascii?Q?IqvhWasG5Lre7FmqJcyv5Djy/UttGEZFc2+dZxjhh6UNIaouPszEBoxZ+j9I?=
+ =?us-ascii?Q?WY4zsGj4l9hsHX+Lfy3YFGgaDBe9MApv?=
+X-Forefront-Antispam-Report:
+	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:64aa7808-outbound-1.mta.getcheckrecipient.com;CAT:NONE;SFS:(13230040)(82310400026)(14060799003)(376014)(36860700013)(35042699022)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2024 17:59:44.1403
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3972a702-5c1f-4298-5d43-08dd0d7af14d
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS0EPF000001B3.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR08MB6697
 
+Hi Ard.
 
-	Hello,
+>
+> Calling panic() at this point does not achieve anything useful,
+> though. Without ACPI tables or a DT, the only way to observe this
+> panic message is by using earlycon= with an explicit MMIO address, and
+> it might be better to limp on instead. Is there anything bad that
+> might happen because of this, other than the user's wishes getting
+> violated?
 
-On Sat, 23 Nov 2024, Jinghao Jia wrote:
-
-> Under certain kernel configurations when building with Clang/LLVM, the
-> compiler does not generate a return or jump as the terminator
-> instruction for ip_vs_protocol_init(), triggering the following objtool
-> warning during build time:
-> 
->   vmlinux.o: warning: objtool: ip_vs_protocol_init() falls through to next function __initstub__kmod_ip_vs_rr__935_123_ip_vs_rr_init6()
-> 
-> At runtime, this either causes an oops when trying to load the ipvs
-> module or a boot-time panic if ipvs is built-in. This same issue has
-> been reported by the Intel kernel test robot previously.
-> 
-> Digging deeper into both LLVM and the kernel code reveals this to be a
-> undefined behavior problem. ip_vs_protocol_init() uses a on-stack buffer
-> of 64 chars to store the registered protocol names and leaves it
-> uninitialized after definition. The function calls strnlen() when
-> concatenating protocol names into the buffer. With CONFIG_FORTIFY_SOURCE
-> strnlen() performs an extra step to check whether the last byte of the
-> input char buffer is a null character (commit 3009f891bb9f ("fortify:
-> Allow strlen() and strnlen() to pass compile-time known lengths")).
-> This, together with possibly other configurations, cause the following
-> IR to be generated:
-> 
->   define hidden i32 @ip_vs_protocol_init() local_unnamed_addr #5 section ".init.text" align 16 !kcfi_type !29 {
->     %1 = alloca [64 x i8], align 16
->     ...
-> 
->   14:                                               ; preds = %11
->     %15 = getelementptr inbounds i8, ptr %1, i64 63
->     %16 = load i8, ptr %15, align 1
->     %17 = tail call i1 @llvm.is.constant.i8(i8 %16)
->     %18 = icmp eq i8 %16, 0
->     %19 = select i1 %17, i1 %18, i1 false
->     br i1 %19, label %20, label %23
-> 
->   20:                                               ; preds = %14
->     %21 = call i64 @strlen(ptr noundef nonnull dereferenceable(1) %1) #23
->     ...
-> 
->   23:                                               ; preds = %14, %11, %20
->     %24 = call i64 @strnlen(ptr noundef nonnull dereferenceable(1) %1, i64 noundef 64) #24
->     ...
->   }
-> 
-> The above code calculates the address of the last char in the buffer
-> (value %15) and then loads from it (value %16). Because the buffer is
-> never initialized, the LLVM GVN pass marks value %16 as undefined:
-> 
->   %13 = getelementptr inbounds i8, ptr %1, i64 63
->   br i1 undef, label %14, label %17
-> 
-> This gives later passes (SCCP, in particular) more DCE opportunities by
-> propagating the undef value further, and eventually removes everything
-> after the load on the uninitialized stack location:
-> 
->   define hidden i32 @ip_vs_protocol_init() local_unnamed_addr #0 section ".init.text" align 16 !kcfi_type !11 {
->     %1 = alloca [64 x i8], align 16
->     ...
-> 
->   12:                                               ; preds = %11
->     %13 = getelementptr inbounds i8, ptr %1, i64 63
->     unreachable
->   }
-> 
-> In this way, the generated native code will just fall through to the
-> next function, as LLVM does not generate any code for the unreachable IR
-> instruction and leaves the function without a terminator.
-> 
-> Zero the on-stack buffer to avoid this possible UB.
-> 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202402100205.PWXIz1ZK-lkp@intel.com/
-> Co-developed-by: Ruowen Qin <ruqin@redhat.com>
-> Signed-off-by: Ruowen Qin <ruqin@redhat.com>
-> Signed-off-by: Jinghao Jia <jinghao7@illinois.edu>
-
-	Looks good to me, thanks!
-
-Acked-by: Julian Anastasov <ja@ssi.bg>
-
-> ---
-> Changelog:
-> v2 -> v3:
-> v2: https://lore.kernel.org/lkml/20241122045257.27452-1-jinghao7@illinois.edu/
-> * Fix changelog format based on Julian's feedback
-> 
-> v1 -> v2:
-> v1: https://lore.kernel.org/lkml/20241111065105.82431-1-jinghao7@illinois.edu/
-> * Fix small error in commit message
-> * Address Julian's feedback:
->   * Make this patch target the net tree rather than net-next
->   * Add a "Fixes" tag for the initial git commit
-> 
->  net/netfilter/ipvs/ip_vs_proto.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/net/netfilter/ipvs/ip_vs_proto.c b/net/netfilter/ipvs/ip_vs_proto.c
-> index f100da4ba3bc..a9fd1d3fc2cb 100644
-> --- a/net/netfilter/ipvs/ip_vs_proto.c
-> +++ b/net/netfilter/ipvs/ip_vs_proto.c
-> @@ -340,7 +340,7 @@ void __net_exit ip_vs_protocol_net_cleanup(struct netns_ipvs *ipvs)
->  
->  int __init ip_vs_protocol_init(void)
->  {
-> -	char protocols[64];
-> +	char protocols[64] = { 0 };
->  #define REGISTER_PROTOCOL(p)			\
->  	do {					\
->  		register_ip_vs_protocol(p);	\
-> @@ -348,8 +348,6 @@ int __init ip_vs_protocol_init(void)
->  		strcat(protocols, (p)->name);	\
->  	} while (0)
->  
-> -	protocols[0] = '\0';
-> -	protocols[2] = '\0';
->  #ifdef CONFIG_IP_VS_PROTO_TCP
->  	REGISTER_PROTOCOL(&ip_vs_protocol_tcp);
->  #endif
-> -- 
-> 2.47.0
-
-Regards
-
---
-Julian Anastasov <ja@ssi.bg>
+IMHO, the most weird thing is progressing boot with acpi table although
+it failed to initailise. in this situation continuing to boot maybe
+dead in unexepceted places. I think it would be better to prevent
+futher progress by calling the panic() in this situation.
 
 
