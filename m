@@ -1,151 +1,167 @@
-Return-Path: <linux-kernel+bounces-421676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 036BB9D8E63
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:13:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C1889D8E61
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:12:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35F7CB24443
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:12:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E49BC168584
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A871CBE8B;
-	Mon, 25 Nov 2024 22:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C175F1CACF7;
+	Mon, 25 Nov 2024 22:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="RB+oMa5S"
-Received: from forwardcorp1b.mail.yandex.net (forwardcorp1b.mail.yandex.net [178.154.239.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N4aZm9p1"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23125190059
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 22:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778AB190059
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 22:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732572768; cv=none; b=B7+h4QxFb0QkYPfkuRZIvz1NtSbGwa5P/OAeK/L2Lw/NetkLfeQylkb1Fyq7Rt9h10IkWpCuo7N6any3usoqcXBabE2/R8kzyQOLkD/HSKu7TX1A05CPrZAnKazqXFp0YLpqbHIWzRKdkLWYcTImMNmH60+C5hYRL/LLN2PZM9M=
+	t=1732572729; cv=none; b=lLJ7JVyNnjJb6tb7aEejyx6gG96DWFNOqRYNd4Tv7L8ojmHEZ8EQVia28l5RU4bMAUOTxcwCI3q8u4r9GgNZqdeTEa58zh80vUSHErDdOTPwob2ZhhwSLrXJZ/vt3FmiWvR2skhgYWkRV0XWLYS21M/QJDHFtrvnQ3I3m50fom4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732572768; c=relaxed/simple;
-	bh=d1EzrEkUUc0mYs24aI7ALW1mWLJdV/eipHeDnMmkVy8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=faMCy0Ld/dVMBv9cbGyJlhxZ1z66Dyr3IZMTLiJdH+41SRyQDPALtUPNNBl6JabsCY5K56F4c0MEo9hf1dmYq9gxtljf0aw6e1SFGG00XLWKmkLUqUOeh34R359HO5yX8WmUFxAXg8fuzwNTJwosv6j080/eW2AwDZlxbe9ltGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=RB+oMa5S; arc=none smtp.client-ip=178.154.239.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
-Received: from mail-nwsmtp-smtp-corp-main-34.sas.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-34.sas.yp-c.yandex.net [IPv6:2a02:6b8:c08:f69e:0:640:3ef4:0])
-	by forwardcorp1b.mail.yandex.net (Yandex) with ESMTPS id 2ADE160B2F;
-	Tue, 26 Nov 2024 01:12:32 +0300 (MSK)
-Received: from davydov-max-lin.yandex-team.ru (unknown [2a02:6b8:b081:b6b2::1:1d])
-	by mail-nwsmtp-smtp-corp-main-34.sas.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id ECgKtw2Gca60-dw7FuPQq;
-	Tue, 26 Nov 2024 01:12:31 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
-	s=default; t=1732572751;
-	bh=qdhLndVUgTJR6LDAq5tAYJT2KGUbCHEgtBVmGgL4Bz0=;
-	h=Message-Id:Date:Cc:Subject:To:From;
-	b=RB+oMa5SpXK8mcWCDnROSNKS5EOu0/Rnk+8VCzES7hcSgA1X/UUbMxucr/nK1zmt1
-	 W+d26EIea7Ed4JUAZDrjnum8+KknudNdb3KKkkHeYiSY+eGpTa+FndGyniJEpZntQR
-	 7rmS8BQF3Ze9tCCQC2ZqteJIBLnNVX7DO6v+0Wy0=
-Authentication-Results: mail-nwsmtp-smtp-corp-main-34.sas.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
-From: Maksim Davydov <davydov-max@yandex-team.ru>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: davydov-max@yandex-team.ru,
-	den-plotnikov@yandex-team.ru,
-	gpiccoli@igalia.com,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	tglx@linutronix.de,
-	hpa@zytor.com
-Subject: [PATCH v4] x86/split_lock: fix delayed detection enabling
-Date: Tue, 26 Nov 2024 01:11:47 +0300
-Message-Id: <20241125221147.932377-1-davydov-max@yandex-team.ru>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1732572729; c=relaxed/simple;
+	bh=McZwplkugwELgpEP4OeOZtACZ23ZVvR2HDi8q9M2F54=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gq9r5vecbVAfl0339vK7svg1YtQHLQhVsvque88WLaoX7dLci8maYJ5Vg0o+TYaj/3eyFejEyZ2JKDv8TXCWxAb3xr0RyOA1PHYyh8Na+soywMvPz5MwnAL4PzOR8+sIagd76MaAkGoF4DyFh6cFS3/IzSa71gl8Fo+9Nio9IZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N4aZm9p1; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6ee7a400647so52437467b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:12:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732572726; x=1733177526; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=RGr05iKNJHbtHhaz6iDKZMDzd6vC++UBaPJYjmD+AfE=;
+        b=N4aZm9p15LS1rHKKmnoO+9OST7EZwKrPMHokhiUKIbYX9MDvk8zsK60JRQGRD3BSgQ
+         iK92/4Do+CJ9RyWgPREWjKWz6MyFbhMeW4jZ2UBV1M7QBq5HAbH3GV2rzOMRgDZ3IrSs
+         Xi+EjK36Y+lQ7tIYQ/eNYilOcMk1l8erUW9SyZKkS3cwmyxkPtqUEK/X7mCqDedvqUaz
+         YM9Rb6TycXObSnVYAWT3KHdTBlIOTP4ysiZt8ZP2wHZpRp6KiHvoQjVQWPCrvKgGya22
+         Ppfnfh7yLPGY1Akv8RRcD0cKy6UQTq6DnKk2VDM8a8aeRCers8t7qwqIWhH679d4jkI6
+         eB4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732572726; x=1733177526;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RGr05iKNJHbtHhaz6iDKZMDzd6vC++UBaPJYjmD+AfE=;
+        b=d22a0aKY0IWLUTmj8Ulc/Ohg3aUZd2oboYVPM9x/F+ILlI9uhfZE8oRwZJfVkKe6j8
+         mGP+f2d9gpPHUPSPUJ1iUeC9EGNS5RHcW6tKSgiNSivw5jHVKlB7LtIQ15Q7tNtuBL+/
+         h45cYQFNUtNL5fDwnt3Si+QoytUf2lbSVe5z9po1Jg/rsBHyZVwx6AKAgRueY4GlPNjv
+         kMfCVUbtDJ9Oc/ZKd0kNLZ890PvZsDJtv6tUrXg39nU0ziSvBXtrWAalBvysW+iuJJ7C
+         /TxwWL1z6EZ4T0cU0hrjzpiQbkH6uvMLmoqaGPasWx62QGFIZZkyCMSg7vf7YkOiF6d1
+         FYEw==
+X-Forwarded-Encrypted: i=1; AJvYcCX6Hteu6Te86KMjcRdmkZpmcqH+3K6Mgtpag/KvhCevmiWk17QA1D2bhWO2j78XSdAl7wRtLKgjHPw/S5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtWYwGbHCK5mFycEI+WH0xreWyzKEv0Xf9FfNyr1KgEUeTZ2GQ
+	BINkKR64+0tI/KJ0ycHtPl9UlXOB5+eRUH5pZtAjYZk14HU3V0REsJT3+yev2G4TClOhvkkGnxW
+	mdDpQJJJ+LLNbeCap+VctAOa82TV/uDRfSqF9WA==
+X-Gm-Gg: ASbGncuxkKCyp8PW/dQcYtB9ve4VGWITT2EqtJrnT6cMXR7VO569ZgTrylh4ZKschHJ
+	fCqQXZZMDGCKIKlRH8ot8n12gPFCaCOxncI7IpjbQbqfMhA==
+X-Google-Smtp-Source: AGHT+IHMeE1tMJvjhY7YlnbsGtnbHrVf2fxw1EomN6QywO8Yk7cLfG7wt01HeO53/ICqUTeaxSuJYhsdBLq9CwzcufI=
+X-Received: by 2002:a05:690c:600e:b0:6ee:5068:74f7 with SMTP id
+ 00721157ae682-6eee08ba0c6mr132245527b3.23.1732572726501; Mon, 25 Nov 2024
+ 14:12:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241122-add-display-support-for-qcs615-platform-v3-0-35252e3a51fe@quicinc.com>
+ <20241122-add-display-support-for-qcs615-platform-v3-7-35252e3a51fe@quicinc.com>
+ <mcvhfkh3ycrx2ganumsxlc7lx53ed55yk4syh5qev3jqqgkeqj@h5vnfpgjwtj5> <bfc87132-a63e-4f3f-99b7-1a1bd7eb60ce@quicinc.com>
+In-Reply-To: <bfc87132-a63e-4f3f-99b7-1a1bd7eb60ce@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 26 Nov 2024 00:11:55 +0200
+Message-ID: <CAA8EJpoYwGHenThgxaKcapjTng3BchpbVBfzXqBvTDGBzv2J-w@mail.gmail.com>
+Subject: Re: [PATCH v3 7/9] drm/msm/dsi: Add support for SM6150
+To: fange zhang <quic_fangez@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Krishna Manikandan <quic_mkrishn@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Li Liu <quic_lliu6@quicinc.com>, 
+	Xiangxu Yin <quic_xiangxuy@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-If the warn mode with disabled mitigation mode is used, then on each
-CPU where the split lock occurred detection will be disabled in order to
-make progress and delayed work will be scheduled, which then will enable
-detection back. Now it turns out that all CPUs use one global delayed
-work structure. This leads to the fact that if a split lock occurs on
-several CPUs at the same time (within 2 jiffies), only one CPU will
-schedule delayed work, but the rest will not. The return value of
-schedule_delayed_work_on() would have shown this, but it is not checked
-in the code.
+On Mon, 25 Nov 2024 at 04:31, fange zhang <quic_fangez@quicinc.com> wrote:
+>
+>
+>
+> On 2024/11/22 18:10, Dmitry Baryshkov wrote:
+> > On Fri, Nov 22, 2024 at 05:56:50PM +0800, Fange Zhang wrote:
+> >> From: Li Liu <quic_lliu6@quicinc.com>
+> >>
+> >> Add support for DSI 2.3.1 (block used on SM6150).
+> >>
+> >> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
+> >> Signed-off-by: Fange Zhang <quic_fangez@quicinc.com>
+> >> ---
+> >>   drivers/gpu/drm/msm/dsi/dsi_cfg.c | 4 +++-
+> >>   drivers/gpu/drm/msm/dsi/dsi_cfg.h | 1 +
+> >>   2 files changed, 4 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/msm/dsi/dsi_cfg.c b/drivers/gpu/drm/msm/dsi/dsi_cfg.c
+> >> index 10ba7d153d1cfc9015f527c911c4658558f6e29e..fe02724bddf69c2e8d6816589f4ea410fa666e5b 100644
+> >> --- a/drivers/gpu/drm/msm/dsi/dsi_cfg.c
+> >> +++ b/drivers/gpu/drm/msm/dsi/dsi_cfg.c
+> >> @@ -171,7 +171,7 @@ static const struct msm_dsi_config sdm845_dsi_cfg = {
+> >>      .num_bus_clks = ARRAY_SIZE(dsi_v2_4_clk_names),
+> >>      .io_start = {
+> >>              { 0xae94000, 0xae96000 }, /* SDM845 / SDM670 */
+> >> -            { 0x5e94000 }, /* QCM2290 / SM6115 / SM6125 / SM6375 */
+> >> +            { 0x5e94000 }, /* QCM2290 / SM6115 / SM6125 / SM6150 / SM6375 */
+> >
+> > Not true
+> Should I remove it or add it behind the SDM670?
 
-A diagram that can help to understand the bug reproduction:
-https://lore.kernel.org/all/2cd54041-253b-4e78-b8ea-dbe9b884ff9b@yandex-team.ru/
+You should not be sending patches which provide false information. Why
+did you add it to the wrong line in the first place?
 
-In order to fix the warn mode with disabled mitigation mode, delayed work
-has to be a per-CPU.
+> >
+> >>      },
+> >>   };
+> >>
+> >> @@ -286,6 +286,8 @@ static const struct msm_dsi_cfg_handler dsi_cfg_handlers[] = {
+> >>              &sdm845_dsi_cfg, &msm_dsi_6g_v2_host_ops},
+> >>      {MSM_DSI_VER_MAJOR_6G, MSM_DSI_6G_VER_MINOR_V2_3_0,
+> >>              &sdm845_dsi_cfg, &msm_dsi_6g_v2_host_ops},
+> >> +    {MSM_DSI_VER_MAJOR_6G, MSM_DSI_6G_VER_MINOR_V2_3_1,
+> >> +            &sdm845_dsi_cfg, &msm_dsi_6g_v2_host_ops},
+> >>      {MSM_DSI_VER_MAJOR_6G, MSM_DSI_6G_VER_MINOR_V2_4_0,
+> >>              &sdm845_dsi_cfg, &msm_dsi_6g_v2_host_ops},
+> >>      {MSM_DSI_VER_MAJOR_6G, MSM_DSI_6G_VER_MINOR_V2_4_1,
+> >> diff --git a/drivers/gpu/drm/msm/dsi/dsi_cfg.h b/drivers/gpu/drm/msm/dsi/dsi_cfg.h
+> >> index 4c9b4b37681b066dbbc34876c38d99deee24fc82..120cb65164c1ba1deb9acb513e5f073bd560c496 100644
+> >> --- a/drivers/gpu/drm/msm/dsi/dsi_cfg.h
+> >> +++ b/drivers/gpu/drm/msm/dsi/dsi_cfg.h
+> >> @@ -23,6 +23,7 @@
+> >>   #define MSM_DSI_6G_VER_MINOR_V2_2_0        0x20000000
+> >>   #define MSM_DSI_6G_VER_MINOR_V2_2_1        0x20020001
+> >>   #define MSM_DSI_6G_VER_MINOR_V2_3_0        0x20030000
+> >> +#define MSM_DSI_6G_VER_MINOR_V2_3_1 0x20030001
+> >>   #define MSM_DSI_6G_VER_MINOR_V2_4_0        0x20040000
+> >>   #define MSM_DSI_6G_VER_MINOR_V2_4_1        0x20040001
+> >>   #define MSM_DSI_6G_VER_MINOR_V2_5_0        0x20050000
+> >>
+> >> --
+> >> 2.34.1
+> >>
+> >
+>
 
-v4 -> v3:
-* rebased the patch onto the latest master
 
-v3 -> v2:
-* place and time of the per-CPU structure initialization were changed.
-  initcall doesn't seem to be a good place for it, so deferred
-  initialization is used.
-
-Fixes: 727209376f49 ("x86/split_lock: Add sysctl to control the misery mode")
-Signed-off-by: Maksim Davydov <davydov-max@yandex-team.ru>
----
- arch/x86/kernel/cpu/bus_lock.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/bus_lock.c b/arch/x86/kernel/cpu/bus_lock.c
-index 704e9241b964..b72235c8db3e 100644
---- a/arch/x86/kernel/cpu/bus_lock.c
-+++ b/arch/x86/kernel/cpu/bus_lock.c
-@@ -192,7 +192,13 @@ static void __split_lock_reenable(struct work_struct *work)
- {
- 	sld_update_msr(true);
- }
--static DECLARE_DELAYED_WORK(sl_reenable, __split_lock_reenable);
-+/*
-+ * In order for each CPU to schedule itself delayed work independently of the
-+ * others, delayed work struct should be per-CPU. This is not required when
-+ * sysctl_sld_mitigate is enabled because of the semaphore, that limits
-+ * the number of simultaneously scheduled delayed works to 1.
-+ */
-+static DEFINE_PER_CPU(struct delayed_work, sl_reenable);
- 
- /*
-  * If a CPU goes offline with pending delayed work to re-enable split lock
-@@ -213,7 +219,7 @@ static int splitlock_cpu_offline(unsigned int cpu)
- 
- static void split_lock_warn(unsigned long ip)
- {
--	struct delayed_work *work;
-+	struct delayed_work *work = NULL;
- 	int cpu;
- 
- 	if (!current->reported_split_lock)
-@@ -235,11 +241,17 @@ static void split_lock_warn(unsigned long ip)
- 		if (down_interruptible(&buslock_sem) == -EINTR)
- 			return;
- 		work = &sl_reenable_unlock;
--	} else {
--		work = &sl_reenable;
- 	}
- 
- 	cpu = get_cpu();
-+
-+	if (!work) {
-+		work = this_cpu_ptr(&sl_reenable);
-+		/* Deferred initialization of per-CPU struct */
-+		if (!work->work.func)
-+			INIT_DELAYED_WORK(work, __split_lock_reenable);
-+	}
-+
- 	schedule_delayed_work_on(cpu, work, 2);
- 
- 	/* Disable split lock detection on this CPU to make progress */
 -- 
-2.34.1
-
+With best wishes
+Dmitry
 
