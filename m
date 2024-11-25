@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-421577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F7A9D8D0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 20:52:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93DB09D8D0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 20:53:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFD9C16AA35
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:52:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54C9228CD33
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D871C7B8D;
-	Mon, 25 Nov 2024 19:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8E41CCEEC;
+	Mon, 25 Nov 2024 19:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wKe2+NPY"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PyTYKlh9"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627591C1F13
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 19:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFA31C8FD6
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 19:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732564334; cv=none; b=I3U/qC+4L0PC+BTjScP2L5jDdYjkDsedewxO8f5ihb4gDq0TUn1CQ1kRQlYI5NdM5a24YJo1qR8S6vy5ldC1RWQ/pGYQUCkoax5RSDpafy0x5SRoOlZr6jlT3C9uM5RPwQaFQZxVz6z5DKBSWC/5DNbUbC/HHEDeneQAr2G3L3c=
+	t=1732564336; cv=none; b=TbnJCmH0lM1pEq3Ii3+YSsk9LcpYgdHwr3b0y1KesJbl4kNKFvyHsCmum268vGKD61DEgyJ4NRziQC6Vwqqxnbu6fOI8QEolpAsUeWaNuM9UTf09PRd7DkIJqIxRnoWYB4+88zgAAi2U1zUGbuNCUMzN2Slp4IbFHD3BFm5toNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732564334; c=relaxed/simple;
-	bh=JXRMYnd0ucUfDV5Qzz/TxTcy1aNUDBMF3uGjnrjG3tE=;
+	s=arc-20240116; t=1732564336; c=relaxed/simple;
+	bh=M2SDcIOQuVxMIY2F55xh8D0sosZvE/g4I0hYYLIH2oM=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Az2+07y5baCkuFhmRs5FK8G2ywUaQmTx9YBuxwVQG8GH30md5e+jPcinYJDxRPfcxAsF9Bv8T4xsA6DR0bUTd+U6fX1eMMoI92mWdep1KrcHdaDxAyDC42W4qxM4awvdGnTBCaKLMI3MpaVkGUXiNlCcXH4kqTO0RFY8DtzCefY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wKe2+NPY; arc=none smtp.client-ip=209.85.210.201
+	 To:Cc:Content-Type; b=SeKKOeqXmfAHA9J6i5Q0zhi0N6At5lhCnt1oLXK6KERIROchk+ajnGk0HBnETjCTt+QM99k1M/dHfFuIU4V7o2cPhqa2gMbqL682wnWEYfJ53TgcFpg2R5NPB01PUIC7EKTgJfNg4vSXzqdHiO3rRhNMzpnm6QQJ0IAZR6tmO8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PyTYKlh9; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-724e565cd84so3018865b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:52:12 -0800 (PST)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-21147fea103so66660095ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:52:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732564331; x=1733169131; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732564333; x=1733169133; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lWiy5IaznfIpEZ7WIDYWdQnPT0DdeHKfKM1+RyqUBX4=;
-        b=wKe2+NPYC5z6UtHAJYhc6BtMB8HXXBrjAEBQImA+jG1Iq+763IMt/GTrZ7z4W7YUcR
-         Q7p5CBRP7pV8ahiNHKv8iJAxYXq0tyCbf60anNKzjIsKD26YQtlDfVdYfoDzZ9FEKCtV
-         WvZdf5p92PYRZYhb9b5DuiP3KV6csPZTir72/EfZSDG0P1T2nWgSSJ6MCr+2up/pv3iH
-         pXnwDaICLIj7X6kY2+Rk5SF17fyxRn8VXwspRPfzKCYw+3wxBU8obOEyUfF92fIsUhxH
-         fQyXaMy2egd1GQPbyXJjSkDB1teA6sxAHfSlSVk58OlEXIK5eSCoGtSlD+ElaAwKE7Vo
-         VDoQ==
+        bh=DuS7non9bLiEZBdtAM6QuHjrqXfHHnVYgqWyiDCcd1A=;
+        b=PyTYKlh9cZG85divNzLYEvJp+ksQqoQCVphkC62MbHGd3vFCLYCBrLS7rwYNzpGwBS
+         0ctgYgDsZSwAPumbhBl0V8B6PAx1AHfsqcdscgBH/UgFs1LUxa5/vsXl0aNphpbawlIK
+         eXyCWv4x1LNrI1FFEgL6UyJMDkuRMApml9lubWGAS/QkL6ua+I1MG8UT5L9Qz5q7CRqR
+         alY6nxI/UDMi4pYHKaHVqtaiExNadl2c+7wqST28gZSm2fk/3erR3JHdkcjM4Vj2pneO
+         tPdrKMVN5+7BC4UEqa2bDzHqspR7lQmp0Qvrnf9dLK/ijD1Z0WvDOUMbboLNZFZrLSLL
+         jFeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732564331; x=1733169131;
+        d=1e100.net; s=20230601; t=1732564333; x=1733169133;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lWiy5IaznfIpEZ7WIDYWdQnPT0DdeHKfKM1+RyqUBX4=;
-        b=oEqvupBozmf2d5UvmgLIZazOGToW7oXZ2VzN7TY/7UioENZQITaUplM2rxgFro7pdD
-         oDDqoP6k5ynV6vGEoiLfdRNrp2QBR0c3mHUyXO/f92mTyZBOjJfvHUWgMSya91xdXhQt
-         siXfqKY8vEVcpTiuV0bhJ1M6TRMGiw2YjNrpy4Kmd9UNSlnzuutZ0td48bQFrrVp1oJk
-         RTXrHUUboGyIL7qNmAu+VieN1I5EnhE2UstuqIEep8+Q0dT43qgFqJTRaOqJ6hlSzOMF
-         CmrDdvy3aCcPzBZeVCa09jE5GHc9zt7Vg7cvhOybUIDvpAn7JF7Vbs3F8i/Z9m2kqILi
-         UZzg==
-X-Gm-Message-State: AOJu0YzUcQ/frOFDWA2Sljw/N9CeoRLPSwR6dYijhFuRfA6GH+N3wagW
-	wX4xFlJSam0NhkcOGfkLAmyVKbhiZz9vf98vMbnPTTrJJfMmnaskL7oXigj7WM7BGh4ue9OPnwV
-	EBWqE1Wt+nJ5z7xJp/PL/infw7i74lGNQmyR2Rp2E0ZlME5ugClrO3u5PhhfIXOhO8h3z/w8JQK
-	SvPu0Xy0jm7+TaUnH2xIUwDr6yC2kht9ssa3TAYEzcKSWK
-X-Google-Smtp-Source: AGHT+IFHXNDeOJVe69oi2JM6BqGCpzCO91LAcGe7Rb0UVct3JkWQPPkAKq+XzFe/oHCnanpggxnzCwqTROQ6
-X-Received: from pfbf2.prod.google.com ([2002:a05:6a00:ad82:b0:724:fa30:554f])
- (user=jstultz job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:aa0e:b0:725:14fd:f62c
- with SMTP id d2e1a72fcca58-72514fdf9cfmr3665231b3a.15.1732564331587; Mon, 25
- Nov 2024 11:52:11 -0800 (PST)
-Date: Mon, 25 Nov 2024 11:51:57 -0800
+        bh=DuS7non9bLiEZBdtAM6QuHjrqXfHHnVYgqWyiDCcd1A=;
+        b=pjI+3JalNKgFkLIM2Euy61Lh9MXk1jqraw6w9K7NMHF/j1gJE6nT1LZWxSRVU1YHvO
+         gy2Z2sIej6cq9RsDjBnhTfteCa/qR3agB5GuTf2UgbF5AcjyDv5MJK8rRYAfPM31G8WV
+         Qfl27qt5gYV/YPAW2Q1lXPdW//kaeLggrDODgmXCVZwqgXNrcGvAGryVkJDSyQsPwzoW
+         KZrCx4bZ2XmDEQiB+MZAkTtfh3gRbPX4UrkRI7wbdw7cP9argLMVwLu1A1H5WwebJnEl
+         gG4JJskN6covnjtuQqBUW0Zb1IgRuLGOvS14eIA++CJQ0isCfZwQ6RbWirClRf3evu9c
+         7vLg==
+X-Gm-Message-State: AOJu0YwRfOjUwoc6RMUhGeVjqZU9ksTDkE29aJ7WJC7PoFufS7RZW6KS
+	ZfR+P+nS6erv9EDNZLPXyCEquT5tSHJhZM/x8t5Qggy5wQjLoALLI8WQ530xzR6GfZaovtQObVs
+	Hiv6gnTt7d1hV+X78s7VjUo/7zjdp3cqjvhQ5BRz/cqQciPQg2IkpxvMdW5mKgeVbyzcYaE51eN
+	Snp7Ytc5s63RlIqkwx7359LBJ2PjZLJu3CwZVM06bhEqLG
+X-Google-Smtp-Source: AGHT+IE3ZsuhtPJ/efOBhGni1a8MxByd57KWn1zoKuXK4FmRZF1mXB5+snAwLut9I7Ml3vhqR3vRy8yl4y0o
+X-Received: from plgk8.prod.google.com ([2002:a17:902:ce08:b0:20f:ae59:441e])
+ (user=jstultz job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f681:b0:20c:c631:d81f
+ with SMTP id d9443c01a7336-2129f69245cmr159206635ad.21.1732564333217; Mon, 25
+ Nov 2024 11:52:13 -0800 (PST)
+Date: Mon, 25 Nov 2024 11:51:58 -0800
 In-Reply-To: <20241125195204.2374458-1-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,9 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241125195204.2374458-1-jstultz@google.com>
 X-Mailer: git-send-email 2.47.0.371.ga323438b13-goog
-Message-ID: <20241125195204.2374458-4-jstultz@google.com>
-Subject: [RFC][PATCH v14 3/7] sched: Fix runtime accounting w/ split exec &
- sched contexts
+Message-ID: <20241125195204.2374458-5-jstultz@google.com>
+Subject: [RFC][PATCH v14 4/7] sched: Fix psi_dequeue for Proxy Execution
 From: John Stultz <jstultz@google.com>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: John Stultz <jstultz@google.com>, Joel Fernandes <joelaf@google.com>, 
@@ -90,12 +89,37 @@ Cc: John Stultz <jstultz@google.com>, Joel Fernandes <joelaf@google.com>,
 	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 
-The idea here is we want to charge the scheduler-context task's
-vruntime but charge the execution-context task's sum_exec_runtime.
+Currently, if the sleep flag is set, psi_dequeue() doesn't
+change any of the psi_flags.
 
-This way cputime accounting goes against the task actually running
-but vruntime accounting goes against the rq->donor task so we get
-proper fairness.
+This is because psi_switch_task() will clear TSK_ONCPU as well
+as other potential flags (TSK_RUNNING), and the assumption is
+that a voluntary sleep always consists of a task being dequeued
+followed shortly there after with a psi_sched_switch() call.
+
+Proxy Execution changes this expectation, as mutex-blocked tasks
+that would normally sleep stay on the runqueue. In the case where
+the mutex owning task goes to sleep, we will then deactivate the
+blocked task as well.
+
+However, in that case, the mutex-blocked task will have had
+its TSK_ONCPU cleared when it was switched off the cpu, but it
+will stay TSK_RUNNING. Then when we later dequeue it becaues of
+a sleeping-owner, as it is sleeping psi_dequeue() won't change
+any state (leaving it TSK_RUNNING), as it incorrectly expects a
+psi_task_switch() call to immediately follow.
+
+Later on when it get re enqueued, and psi_flags are set for
+TSK_RUNNING, we hit an error as the task is already TSK_RUNNING:
+  psi: inconsistent task state!
+
+To resolve this, extend the logic in psi_dequeue() so that
+if the sleep flag is set, we also check if psi_flags have
+TSK_ONCPU set (meaning the psi_task_switch is imminient) before
+we do the shortcut return.
+
+If TSK_ONCPU is not set, that means we've already swtiched away,
+and this psi_dequeue call needs to clear the flags.
 
 Cc: Joel Fernandes <joelaf@google.com>
 Cc: Qais Yousef <qyousef@layalina.io>
@@ -121,52 +145,30 @@ Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc: kernel-team@android.com
 Signed-off-by: John Stultz <jstultz@google.com>
 ---
- kernel/sched/fair.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+v13:
+* Reworked for collision
+---
+ kernel/sched/stats.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index fbdca89c677f4..ebde314e151f1 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1131,22 +1131,33 @@ static void update_tg_load_avg(struct cfs_rq *cfs_rq)
- }
- #endif /* CONFIG_SMP */
+diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
+index 8ee0add5a48a8..c313fe76a7723 100644
+--- a/kernel/sched/stats.h
++++ b/kernel/sched/stats.h
+@@ -176,8 +176,12 @@ static inline void psi_dequeue(struct task_struct *p, int flags)
+ 	 * avoid walking all ancestors twice, psi_task_switch() handles
+ 	 * TSK_RUNNING and TSK_IOWAIT for us when it moves TSK_ONCPU.
+ 	 * Do nothing here.
++	 * In the SCHED_PROXY_EXECUTION case we may do sleeping
++	 * dequeues that are not followed by a task switch, so check
++	 * TSK_ONCPU is set to ensure the task switch is imminent.
++	 * Otherwise clear the flags as usual.
+ 	 */
+-	if (flags & DEQUEUE_SLEEP)
++	if ((flags & DEQUEUE_SLEEP) && (p->psi_flags & TSK_ONCPU))
+ 		return;
  
--static s64 update_curr_se(struct rq *rq, struct sched_entity *curr)
-+static s64 update_curr_se(struct rq *rq, struct sched_entity *se)
- {
- 	u64 now = rq_clock_task(rq);
- 	s64 delta_exec;
- 
--	delta_exec = now - curr->exec_start;
-+	delta_exec = now - se->exec_start;
- 	if (unlikely(delta_exec <= 0))
- 		return delta_exec;
- 
--	curr->exec_start = now;
--	curr->sum_exec_runtime += delta_exec;
-+	se->exec_start = now;
-+	if (entity_is_task(se)) {
-+		struct task_struct *running = rq->curr;
-+		/*
-+		 * If se is a task, we account the time against the running
-+		 * task, as w/ proxy-exec they may not be the same.
-+		 */
-+		running->se.exec_start = now;
-+		running->se.sum_exec_runtime += delta_exec;
-+	} else {
-+		/* If not task, account the time against se */
-+		se->sum_exec_runtime += delta_exec;
-+	}
- 
- 	if (schedstat_enabled()) {
- 		struct sched_statistics *stats;
- 
--		stats = __schedstats_from_se(curr);
-+		stats = __schedstats_from_se(se);
- 		__schedstat_set(stats->exec_max,
- 				max(delta_exec, stats->exec_max));
- 	}
+ 	/*
 -- 
 2.47.0.371.ga323438b13-goog
 
