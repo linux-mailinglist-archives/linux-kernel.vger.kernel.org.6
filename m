@@ -1,178 +1,152 @@
-Return-Path: <linux-kernel+bounces-421440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68CBB9D8B72
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:40:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AB709D8B55
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:32:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1F9BB2CED9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:31:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A194D2817D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F5F14D43D;
-	Mon, 25 Nov 2024 17:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D285B1B6D0F;
+	Mon, 25 Nov 2024 17:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q9Zxfdjv"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H52zhZ4q"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A0618C322
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 17:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB70714D43D;
+	Mon, 25 Nov 2024 17:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732555904; cv=none; b=r9YZCHYLXsV6U8rvU/07Jep12xFiCahBb5n9Y2v0StiUwrunXDKXnsVYqPnmbIGuhtmhbCUFPLfHoB/J05uZKCiDhycg7mK6M89iAEu0yYBLHPWWcMTBflWTWGy6w63lub+7dkF/KHJoaaf/KPBAUArh58/ARY16eZ2BCGH+Rvo=
+	t=1732555952; cv=none; b=VlNA3b944T+L1QwIjlJUE3VuFZ8xL2Q0r1XYtFD9fhL3Ln0Y/2cs7ordNckFTqeO6gDl+0xbZvIDYNodol2AbIFZHU9FhEnDzGzzNuKD/SPSOXAAtgb8U1jRn5FOqjPythdbceMoF/39sixYg7uEGLM/wAfNBDBMkPrJqK4Laaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732555904; c=relaxed/simple;
-	bh=8AvedBOtdtQew9svzqYDe8+6dGe6UB/k3OZ9TUGyqP8=;
+	s=arc-20240116; t=1732555952; c=relaxed/simple;
+	bh=533O6ns9KT6+m26kcisDRO8AtxQ937NG6RCCuYdsiVI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G+ei7MKM9fNwto+LjbgWeGjBrSJiQkJGlQ/45Lv3PhenM7Tj0Qq52rLT9UVAb6iFUerrQJkn5bXOvpPOMRqiLQMlmHSRkTsOJXzjfyC5D1VZ2xxS6Z4K4JbeIBFXi4oQz8lYUPM9q7H53seQiVZ1kQvUY/J6oOHDMuvtVtrX8og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q9Zxfdjv; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4668caacfb2so357001cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 09:31:41 -0800 (PST)
+	 To:Content-Type; b=oaYs/OIAwm2pmk5KwS3y5WYyWT6asXK52habE9Ed5OMdf0HS4pnKVxLBIR6sPmllKnPAlkioz0YSz/wHuMRRegxVmN/IgYsTYcPRdVV1CObW6usrEJTaWXbHZUpzVQS5i5lPuThGb4YluTyuoA+MvAHiBfapTakXGaGNCnINS/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H52zhZ4q; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-724e7d5d5b2so3007129b3a.2;
+        Mon, 25 Nov 2024 09:32:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732555900; x=1733160700; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=gmail.com; s=20230601; t=1732555950; x=1733160750; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cO1wp9JV30HhfT5H5hY0d7rnb/YcMaPbWSQ96zslJfA=;
-        b=q9ZxfdjvIyDF1+Vni5vYhLxXJ5x6Lxzo3to17PbHy4Gwl0XnZBXuP1Qo4spAWX2/Xe
-         gAOyXdwN26Qn/rYLlGjDAbPB9wZJfErAVRyhm0CtlzFRx2StPDItR0t9a6Vf0AsuvU1Y
-         21/r4kON/VWcBuRLu1Sh1j7pgwr4hN1eJNeRGkBmxB7GZCBtTQBBl7jxJs9bQeEaX7MP
-         Qvy9ffmAaeS7BZHSiePXFyalO6o6OOrvcZhr1NnKizBgAeQB8rE0+t1TZaWeVk7r4hMm
-         XxPVTegzyLzsBDOrSxiXvPXnCNU4Pa1zfViP6L8FAlgWC0s2LiwfBHM2Y1ZNZ/DFcD7B
-         MZBw==
+        bh=S037ld6ZL9afLpj/61zbahHnRd5s/qC93kigSsGcnvk=;
+        b=H52zhZ4qFPqKbH64uQls8EbuXjBmrI1SR7Ii3bscYz4OKfdcrxj5ytlwU2jBQQTc4R
+         bviYweclwUPZ/cIMn0G3eluF0Q/ExtLLybzZ3hdl1+g8P2SiSVqFYyHBebqdKiaycUrN
+         TktPpJinb5eeiwpzmZiBLhxeu1lMyrrcC8TSa+79/BcrVyJ3JFSVnIx/LC8x/HDy7aOL
+         3dJ5ghp4hJTCsbaYLEBLPix8cwsyfN/5s6kpIFmt3TC+IU0u9fVzOZrv8YCOL/uXjQ4a
+         FLP+UqSH/YEVs7BnjJ5mwjWL0/vgCbqtbU3mxgjrSSdTqilsJzJWPTVJnlaoRtXCxg/g
+         xXTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732555900; x=1733160700;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1732555950; x=1733160750;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cO1wp9JV30HhfT5H5hY0d7rnb/YcMaPbWSQ96zslJfA=;
-        b=nBsc2Sl92CC3MUtDtzAQ+vhPZKNQELI5ekBFwhp0nAo3W3ho9LyzNiH9K1sae48+fR
-         qCUVIooreykyUxy1kfuSHAKS7rss3Y3GjZZEa8U8B+mUYIsU+bKL/7dzqtvVQjlVS4KO
-         0DJHAALDQt6J8vOSinTtoCAFNJqv4grumo1s8kliZXwVMCNFT1XEZV8AwxdEf6eyw/kx
-         +xtbTngzVMkwjodp8s1d33BVDno7XJGObeUMVi0L1UCIezDGNrAwFOx3hpTqZ80Xsbsc
-         atkE1teBU6MOwO0MVRXktEMqpDj1mo4UjDjvr+BTBLgMlTO3DC7yKlqSb+uZACuDjhZV
-         ymvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXrtlsJqxN52i5LGO4EueutydPlVVwrGfUb9ai9uFMmu0CpJkx0giGwpgpA/0SWF/So9F7oUrxnl0u8/Uk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3mDuJBIq8DclJmM7b+pJKNCCg4aKLsDQjwabDwzqxq2/m9/lw
-	UrTRMQslQ4jQMZK5VemAXO/7Ws24B/diE+clHUyWlyIBb8+VfQI3YV70pTuuyihyDtGJk86A62Z
-	6I1tA1ehRVVUEgAH76wHi2lpoGCjfmrBMrPzBt5BmLcdjAWr2HFACpyg=
-X-Gm-Gg: ASbGncv1rhpcrJcplVTaYg6jFwgceF5N22JwE52P+gF2BDoEVXpuyC1+6OU4Bcs4tKy
-	RWvOihhAhwF7UM7YsBh12+Q2efYcX92Y=
-X-Google-Smtp-Source: AGHT+IEasE6Xd86F7HdWoNwURd8zT59VinAYw5bxbwFoVlYFu7U2PDmBvOnvEcXAQ9Xxdr4i4ZYHlAQnNOLFmL/y5cY=
-X-Received: by 2002:a05:622a:4c10:b0:466:8887:6751 with SMTP id
- d75a77b69052e-466888768f5mr5020911cf.23.1732555899774; Mon, 25 Nov 2024
- 09:31:39 -0800 (PST)
+        bh=S037ld6ZL9afLpj/61zbahHnRd5s/qC93kigSsGcnvk=;
+        b=HO0cmtVskt6FV7OJ7KtXjv6k24XV2MEpNhhVw1jGO9Fpr8zgv+cx+JoFWRiP3YyC74
+         +ykujQc5+mOj7Xl5srQKiTaPGxB7HBybMcRJsIHu1MkydbwjlGXrsX7z9dbxQPUCwil0
+         y5BG8rRs54ly/YvTWN1n/282RyCBZ8KGKJDtTg8m0geoO+np0RegacLgp8wcrmMEHIJq
+         sWCp6DcmmKLXhxrF+YLg+iDL2N/rVjJ4kzch8RgI6+Nsgc+XfLUAo3jkEC/QigPhokuR
+         M1xj5nIHfWClhoVQ8ThlbMdhqjtqcgn+9Dk+7MC+zA8nbhvaFpe2XmnKb7Wgjebdzoc6
+         KV7w==
+X-Forwarded-Encrypted: i=1; AJvYcCVn7fgY1YzN60HJrLUqw5a4TtxRMPQzzucmzbWGWLGKIvsqV2cnoqlLikXxv6o8KqhQep2CGJ921NR6aU4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR8D1Tj1MHa/VzApC9jDQc+Dj6o2ttzvIGMEG8Qm/Sc4uVZZo8
+	M6fJ3CBx0wh80kW8jRvpGZSXhYoSa9cDGXPrnxhw0LxQuI1KbT839e4/kzgQhsva5DnoQVyHeLG
+	n6n/E0LdQsT+qHuCYbX/vamj6SHiFLg==
+X-Gm-Gg: ASbGnctHu7fHowFcpN3nzjvMWeFwqIHo9tTYwIr11VvR6RBsTSjki9qVnfPGmDu41Hw
+	S22bFb6CrSIee8LfrV3UXX+s0YADPLZs=
+X-Google-Smtp-Source: AGHT+IHxAodAs7gPCvqHIwOgOycxtggq7W5FbnP/w0S93qjOoZRokO5goyg0PfuwFjlSwnck/eYFCrf9aNbqK8Oi7jQ=
+X-Received: by 2002:a05:6a00:92a2:b0:720:6c6c:52a9 with SMTP id
+ d2e1a72fcca58-724df660052mr19656883b3a.18.1732555948220; Mon, 25 Nov 2024
+ 09:32:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241124074318.399027-1-00107082@163.com> <CAJuCfpHviS-pw=2=BNTxp1TnphjuiqWGgZnq84EHvbz08iQ6eg@mail.gmail.com>
- <70bad55f.b656.19362cca6ee.Coremail.00107082@163.com>
-In-Reply-To: <70bad55f.b656.19362cca6ee.Coremail.00107082@163.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 25 Nov 2024 09:31:28 -0800
-Message-ID: <CAJuCfpHho8se-f4cnvk0g1YLNzhvG3q8QTYmvMmweUnGAhtA=g@mail.gmail.com>
-Subject: Re: Abnormal values show up in /proc/allocinfo
-To: David Wang <00107082@163.com>
-Cc: kent.overstreet@linux.dev, linux-kernel@vger.kernel.org
+References: <887cd8f6-3e49-410c-8b36-9e617c34ca6f@huawei.com>
+In-Reply-To: <887cd8f6-3e49-410c-8b36-9e617c34ca6f@huawei.com>
+From: Mark Liam Brown <brownmarkliam@gmail.com>
+Date: Mon, 25 Nov 2024 18:32:00 +0100
+Message-ID: <CAN0SSYwzsVEvopiuJuQTbJkOeGhDtLLFMsetVM2m5zOa0JEwDA@mail.gmail.com>
+Subject: Re: [bug report] deploying both NFS client and server on the same
+ machine triggle hungtask
+To: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 25, 2024 at 2:10=E2=80=AFAM David Wang <00107082@163.com> wrote=
-:
+On Mon, Nov 25, 2024 at 1:48=E2=80=AFPM Li Lingfeng <lilingfeng3@huawei.com=
+> wrote:
 >
+> Hi, we have found a hungtask issue recently.
 >
-> Hi,
+> Commit 7746b32f467b ("NFSD: add shrinker to reap courtesy clients on low
+> memory condition") adds a shrinker to NFSD, which causes NFSD to try to
+> obtain shrinker_rwsem when starting and stopping services.
 >
-> Some update
+> Deploying both NFS client and server on the same machine may lead to the
+> following issue, since they will share the global shrinker_rwsem.
 >
-> I reproduce the abnormal values of "func:compaction_alloc" today, just on=
-ce. But I have not found a deterministic procedure yet.
-> Seems to me, it happens when kcompactd starts to work
+>      nfsd                            nfs
+>                              drop_cache // hold shrinker_rwsem
+>                              write back, wait for rpc_task to exit
+> // stop nfsd threads
+> svc_set_num_threads
+> // clean up xprts
+> svc_xprt_destroy_all
+>                              rpc_check_timeout
+>                               rpc_check_connected
+>                               // wait for the connection to be disconnect=
+ed
+> unregister_shrinker
+> // wait for shrinker_rwsem
 >
->     ret_from_fork(100.000% 57/57)
->         kthread(100.000% 57/57)
->             kcompactd(100.000% 57/57)
->                 compact_node(100.000% 57/57)
->                     compact_zone(100.000% 57/57)
->                         migrate_pages(100.000% 57/57)
->                             migrate_pages_batch(100.000% 57/57)
->                                 compaction_alloc(100.000% 57/57)
+> Normally, the client's rpc_task will exit after the server's nfsd thread
+> has processed the request.
+> When all the server's nfsd threads exit, the client=E2=80=99s rpc_task is=
+ expected
+> to detect the network connection being disconnected and exit.
+> However, although the server has executed svc_xprt_destroy_all before
+> waiting for shrinker_rwsem, the network connection is not actually
+> disconnected. Instead, the operation to close the socket is simply added
+> to the task_works queue.
 >
+> svc_xprt_destroy_all
+>   ...
+>   svc_sock_free
+>    sockfd_put
+>     fput_many
+>      init_task_work // ____fput
+>      task_work_add // add to task->task_works
 >
-> Maybe, kcompactd mess up information needed by memory tracking? Just a wi=
-ld guess.
-> And those negative signed values, and underflowed unsigned values could a=
-lso be the side-effect of memory compaction.
-> A wilder guess....
+> The actual disconnection of the network connection will only occur after
+> the current process finishes.
+> do_exit
+>   exit_task_work
+>    task_work_run
+>    ...
+>     ____fput // close sock
+>
+> Although it is not a common practice to deploy NFS client and server on
+> the same machine, I think this issue still needs to be addressed,
+> otherwise it will cause all processes trying to acquire the shrinker_rwse=
+m
+> to hang.
 
-Ok, thanks! I think that's enough for me to start digging. Will post
-an update once I find something.
-Thanks,
-Suren.
+I disagree with that comment. Most small companies have NFS client and
+NFS server on the same machine, the client being used to allow logins
+by users, or to support schroot or containers.
 
->
->
->
-> FYI
-> David
->
->
->
->
-> At 2024-11-25 08:35:54, "Suren Baghdasaryan" <surenb@google.com> wrote:
-> >On Sat, Nov 23, 2024 at 11:43=E2=80=AFPM David Wang <00107082@163.com> w=
-rote:
-> >>
-> >> Hi,
-> >>
-> >> I am running 6.12.0 for a week, and today I notice several strange
-> >> items in /proc/allocinfo:
-> >>
-> >>        -4096 18446744073709551615 mm/filemap.c:3787 func:do_read_cache=
-_folio
-> >>  -1946730496 18446744073709076340 mm/filemap.c:1952 func:__filemap_get=
-_folio
-> >>   -903294976 18446744073709331085 mm/readahead.c:263 func:page_cache_r=
-a_unbounded
-> >>   -353054720 18446744073709465421 mm/shmem.c:1769 func:shmem_alloc_fol=
-io
-> >>  10547565210        0 mm/compaction.c:1880 func:compaction_alloc
-> >>   -156487680 18446744073709513411 mm/memory.c:1064 func:folio_prealloc
-> >>  -2422685696 18446744073708960140 mm/memory.c:1062 func:folio_prealloc
-> >>  -2332479488 18446744073708982163 fs/btrfs/extent_io.c:635 [btrfs] fun=
-c:btrfs_alloc_page_array
-> >>
-> >> some values are way too large, seems like corrupted/uninitialized, and=
- values for compaction_alloc
-> >> are inconsistent: non-zero size with zero count.
-> >>
-> >> I do not know when those data became this strange, and I have not rebo=
-ot my system yet.
-> >> Do you guys need extra information before I reboot my system and start=
-ed to try reproducing?
-> >
-> >Hi David,
-> >Thanks for reporting. Can you share your .config file? Also, do you
-> >see these abnormal values shortly after boot or does it take time for
-> >them to get into abnormal state?
-> >I'll take a look on Monday and see if there is an obvious issue and if
-> >I can reproduce this.
-> >Thanks,
-> >Suren.
-> >
-> >>
-> >>
-> >> Thanks
-> >> David
-> >>
-> >>
-> >>
-> >>
+Mark
+--=20
+IT Infrastructure Consultant
+Windows, Linux
 
