@@ -1,312 +1,140 @@
-Return-Path: <linux-kernel+bounces-421425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B529D9D8B1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:16:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA383169143
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:16:42 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE2D1B6D1B;
-	Mon, 25 Nov 2024 17:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RUX7TPDY"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0952E9D8B63
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:34:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AA61AC453;
-	Mon, 25 Nov 2024 17:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4304CB2ED19
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:16:59 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FC41B81DC;
+	Mon, 25 Nov 2024 17:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Du/7omnc"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855791B4152;
+	Mon, 25 Nov 2024 17:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732554998; cv=none; b=PD1OEsMXqAwdo3IJ0XunMRvo9KhmvZdHSeG1KwwNlrvdRZsLYU9i95Ki2V1wDvbWs870rFsXFwEgEYfcx7zlD3ccPeUBaVYhK2h42hmSg/OepTRi54v9XDwvcOWwKcpwpmaR/eLZxc/JUJWQ5aZAveeF+OlLObJFh962cJzHqYA=
+	t=1732555013; cv=none; b=mtKI6A5g9T6/eba06RBqhN3Ql72tDZAxG7ItFrWqhQFbX6msam7OkHb2BvarhmjsBxWXMq5eAycTbphtrmNNDu7YdrkhRTauBBNvm8ILpb2byB8kfJK8AL6znre7O8604k84oQ030Uepiizdm5Qw3vPIwS0Dg/b8i9w2RN19jy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732554998; c=relaxed/simple;
-	bh=bn8N1sGMxBjiQFP1tdfrVbfhLuqU0lwEgtkxKvMiFJA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=twVtXpdx/9hR+enIdjCkW3Yp1Th+Z1YWO722RDGQom8e0bVFXYtEPAoaHNKokcPkfKJ9vUgocjhPamjfAKq/O7ZUwtaZbD8MpD2J8+U2U8cIhFONheyAlDqNd+yv1nN15vX+B/8fJkfwuCsFWsrr4U/QIczc8N8UkNivnzVU3HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RUX7TPDY; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732554993;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=OOy1ir+JYbbaetd7l4qfetb+lCDRU+An6aa01S+lbiE=;
-	b=RUX7TPDYANJNZphrQpLzYR0ZU1pPx5mxru1GIAiB1s6o47RUdqUZW0vBiwki+WuKzwcVAc
-	jT8UTbQnmWmuYb87XIm4onSYXKRFnKoWrEaLNkZHbtoTpOetY7BrlzNpXlpRP5QYhRkA0j
-	Cl6Vg7Qup19w65c3TeKp7twfZsobJPg=
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	linux-mm@kvack.org,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>
-Subject: [PATCH v2] mm: mmap_lock: optimize mmap_lock tracepoints
-Date: Mon, 25 Nov 2024 09:16:17 -0800
-Message-ID: <20241125171617.113892-1-shakeel.butt@linux.dev>
+	s=arc-20240116; t=1732555013; c=relaxed/simple;
+	bh=+4u48gpD1Jj6Cz+HFaPKL6LTmpdlPUj6k1KeEetzyOw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MbJxozWzFwX0sNj9yLPp3tGBa8flSDdRjD2G2qnzzCQWrLppXNrZcpmsPsKJ3cQUnwJ2tuzj6KsfGPtGE7OKpiXlcZpmEBvWSj7fbphPJxMFR12pmY4sLVhq6HK/HgFKlFlo4tUS77YFrzH9SP+9E0FO43tDeVzSCXq3YJqFA3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Du/7omnc; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e3889bc7ec6so4414295276.1;
+        Mon, 25 Nov 2024 09:16:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732555010; x=1733159810; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5ia/d0zzH9PgohmxMU9kgpub0xyeSlReyHlI7D5sBI8=;
+        b=Du/7omnc8mXN3Jt46IgjC19xDhQFndW31J3xlZ1lP3qJeRLaQtRZtucrtaos9okZI2
+         ZGcAI1WiMddh2uQMUqydC+7/1LfDB+SbZ6HkgdF8h4plANqypIGxGtsG7th2ukZc5CWA
+         AOBSik6FkdPdoVvGzuR5fa11xhJ7Iadze/mj04II9S6vl4CxqF6ffO/yP0OwC1vyS1+D
+         inopmV7oGo0x5PZfLozHweDuT7PJaztDtR/S0ZYhgR76rPDaRS0T9IiJy1NFx2YpZr0K
+         eYMk4Q4ZnHNKj+J5YEwW22mx7oGvLaBFywdHOjucThhRDXqDhyuzynlgHVrOycTWQRlH
+         kINg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732555010; x=1733159810;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5ia/d0zzH9PgohmxMU9kgpub0xyeSlReyHlI7D5sBI8=;
+        b=Rz5x7PpKbcP6730aAToARMATQMiUYuQb2eoUuxeS/qcGIuUCwa3b0PKRiGFq5z9QO+
+         sboHEFWlod6wz1Zsunt1NiMpBVnzZgAibFz4GWJVV4JiLld0ljHhRlNGy7stfMsq59UB
+         gpUngmSUpz6YDhzVRqOV9rcamQD5P/KW17aKaY0jLbKRw0oPvtqnY5wGE4rISG7//af9
+         4pWz6DG/1Lwrxui1lK28ooEiU2HHYTxlQ1wRZGRcJqYCJu6ZKSAy2RQRxHA4+3+h6q8L
+         xb/9kxLvoeBJhyRO6FWkKQwWH+u9ayOED8Ssg5XYQ68ViXDyfMqa/nw3q8ELysGgAPRR
+         nz3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVHQ3pWCopT+jZ1bVarX0uvBrOaxrLldxnI9PuDMppEKaiYuaq+Ie5rAQk/TlIv20OEVPZhiCRi4J98VA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEaI8omcECg9msrUyl6Qs7UxhjsgwjjjtQGu8zuWgw18SPGWZU
+	N7y3U9t7zTtOXY2iyMfT8TM9KcUEaV7Qvl2rM6CWZAh5lSq1nKJm47TC7qzfPjetM4K8fnEk66c
+	BfdoGVI+ZfWH0z1dZbEMTOuw1LAM=
+X-Gm-Gg: ASbGncvmDwz7JJIiov5iR8LHwFptZgHS2P4IZK76Vw4mTjrHxZ90Kl9ylN13jpejPlW
+	K+sH14mNuKmA6ErqTKQSaNgfVspTyB4o=
+X-Google-Smtp-Source: AGHT+IFhHP9m3zecw8OEgG02F3A9OsXXGwtA63gEpzTtaUkQlDZ70T/ymKlRRC3X1ecvprD6C1YIqfbDKWDJyty0d2g=
+X-Received: by 2002:a05:6902:33c6:b0:e38:f11c:f04e with SMTP id
+ 3f1490d57ef6-e38f8c27cf1mr9355829276.53.1732555010479; Mon, 25 Nov 2024
+ 09:16:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <CAP-bSRbCo7=wfUBZ8H7c3Q-7XSG+SB=R4MHHNNGPvBoinsVSZg@mail.gmail.com>
+In-Reply-To: <CAP-bSRbCo7=wfUBZ8H7c3Q-7XSG+SB=R4MHHNNGPvBoinsVSZg@mail.gmail.com>
+From: Chris Bainbridge <chris.bainbridge@gmail.com>
+Date: Mon, 25 Nov 2024 17:16:39 +0000
+Message-ID: <CAP-bSRab1C-_aaATfrgWjt9w0fcYUCQCG7u+TCb1FSPSd6CEaA@mail.gmail.com>
+Subject: Re: [REGRESSION] ioprio performance hangs, bisected
+To: hch@lst.de
+Cc: LKML <linux-kernel@vger.kernel.org>, axboe@kernel.dk, bvanassche@acm.org, 
+	Linux regressions mailing list <regressions@lists.linux.dev>, linux-block@vger.kernel.org, 
+	semen.protsenko@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 
-We are starting to deploy mmap_lock tracepoint monitoring across our
-fleet and the early results showed that these tracepoints are consuming
-significant amount of CPUs in kernfs_path_from_node when enabled.
+On Mon, 25 Nov 2024 at 15:44, Chris Bainbridge
+<chris.bainbridge@gmail.com> wrote:
+>
+> The commit 6975c1a486a4 ("block: remove the ioprio field from struct
+> request") appears to have introduced a performance regression. Test
+> case is the script /etc/cron.daily/locate from package `locate` (which
+> is from findutils locate on Debian). The script runs:
 
-It seems like the kernel is trying to resolve the cgroup path in the
-fast path of the locking code path when the tracepoints are enabled. In
-addition for some application their metrics are regressing when
-monitoring is enabled.
+I did a bit of debugging.
 
-The cgroup path resolution can be slow and should not be done in the
-fast path. Most userspace tools, like bpftrace, provides functionality
-to get the cgroup path from cgroup id, so let's just trace the cgroup
-id and the users can use better tools to get the path in the slow path.
+The problem is the function req_get_ioprio. The commit changed:
 
-Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
----
-
-Changes since v1:
-- Fixed commit message (Yosry).
-- Renamed memcg_id_from_mm to cgroup_id_from_mm (Yosry).
-- Fixed handling of root memcg (Yosry).
-- Fixed mem_cgroup_disabled() handling.
-- Kept mm pointer printing based on Steven's feedback.
-
- include/linux/memcontrol.h       | 22 ++++++++++++++
- include/trace/events/mmap_lock.h | 32 ++++++++++----------
- mm/mmap_lock.c                   | 50 ++------------------------------
- 3 files changed, 40 insertions(+), 64 deletions(-)
-
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 5502aa8e138e..b28180269e75 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -1046,6 +1046,23 @@ static inline void memcg_memory_event_mm(struct mm_struct *mm,
- 
- void split_page_memcg(struct page *head, int old_order, int new_order);
- 
-+static inline u64 cgroup_id_from_mm(struct mm_struct *mm)
-+{
-+	struct mem_cgroup *memcg;
-+	u64 id;
-+
-+	if (mem_cgroup_disabled())
-+		return 0;
-+
-+	rcu_read_lock();
-+	memcg = mem_cgroup_from_task(rcu_dereference(mm->owner));
-+	if (!memcg)
-+		memcg = root_mem_cgroup;
-+	id = cgroup_id(memcg->css.cgroup);
-+	rcu_read_unlock();
-+	return id;
-+}
-+
- #else /* CONFIG_MEMCG */
- 
- #define MEM_CGROUP_ID_SHIFT	0
-@@ -1466,6 +1483,11 @@ void count_memcg_event_mm(struct mm_struct *mm, enum vm_event_item idx)
- static inline void split_page_memcg(struct page *head, int old_order, int new_order)
+ static inline unsigned short req_get_ioprio(struct request *req)
  {
+-       return req->ioprio;
++       if (req->bio)
++               return req->bio->bi_ioprio;
++       return 0;
  }
-+
-+static inline u64 cgroup_id_from_mm(struct mm_struct *mm)
-+{
-+	return 0;
-+}
- #endif /* CONFIG_MEMCG */
- 
- /*
-diff --git a/include/trace/events/mmap_lock.h b/include/trace/events/mmap_lock.h
-index bc2e3ad787b3..cf9f9faf8914 100644
---- a/include/trace/events/mmap_lock.h
-+++ b/include/trace/events/mmap_lock.h
-@@ -5,6 +5,7 @@
- #if !defined(_TRACE_MMAP_LOCK_H) || defined(TRACE_HEADER_MULTI_READ)
- #define _TRACE_MMAP_LOCK_H
- 
-+#include <linux/memcontrol.h>
- #include <linux/tracepoint.h>
- #include <linux/types.h>
- 
-@@ -12,64 +13,61 @@ struct mm_struct;
- 
- DECLARE_EVENT_CLASS(mmap_lock,
- 
--	TP_PROTO(struct mm_struct *mm, const char *memcg_path, bool write),
-+	TP_PROTO(struct mm_struct *mm, bool write),
- 
--	TP_ARGS(mm, memcg_path, write),
-+	TP_ARGS(mm, write),
- 
- 	TP_STRUCT__entry(
- 		__field(struct mm_struct *, mm)
--		__string(memcg_path, memcg_path)
-+		__field(u64, memcg_id)
- 		__field(bool, write)
- 	),
- 
- 	TP_fast_assign(
- 		__entry->mm = mm;
--		__assign_str(memcg_path);
-+		__entry->memcg_id = cgroup_id_from_mm(mm);
- 		__entry->write = write;
- 	),
- 
- 	TP_printk(
--		"mm=%p memcg_path=%s write=%s",
--		__entry->mm,
--		__get_str(memcg_path),
-+		"mm=%p memcg_id=%llu write=%s",
-+		__entry->mm, __entry->memcg_id,
- 		__entry->write ? "true" : "false"
- 	)
- );
- 
- #define DEFINE_MMAP_LOCK_EVENT(name)                                    \
- 	DEFINE_EVENT(mmap_lock, name,                                   \
--		TP_PROTO(struct mm_struct *mm, const char *memcg_path,  \
--			bool write),                                    \
--		TP_ARGS(mm, memcg_path, write))
-+		TP_PROTO(struct mm_struct *mm, bool write),		\
-+		TP_ARGS(mm, write))
- 
- DEFINE_MMAP_LOCK_EVENT(mmap_lock_start_locking);
- DEFINE_MMAP_LOCK_EVENT(mmap_lock_released);
- 
- TRACE_EVENT(mmap_lock_acquire_returned,
- 
--	TP_PROTO(struct mm_struct *mm, const char *memcg_path, bool write,
--		bool success),
-+	TP_PROTO(struct mm_struct *mm, bool write, bool success),
- 
--	TP_ARGS(mm, memcg_path, write, success),
-+	TP_ARGS(mm, write, success),
- 
- 	TP_STRUCT__entry(
- 		__field(struct mm_struct *, mm)
--		__string(memcg_path, memcg_path)
-+		__field(u64, memcg_id)
- 		__field(bool, write)
- 		__field(bool, success)
- 	),
- 
- 	TP_fast_assign(
- 		__entry->mm = mm;
--		__assign_str(memcg_path);
-+		__entry->memcg_id = cgroup_id_from_mm(mm);
- 		__entry->write = write;
- 		__entry->success = success;
- 	),
- 
- 	TP_printk(
--		"mm=%p memcg_path=%s write=%s success=%s",
-+		"mm=%p memcg_id=%llu write=%s success=%s",
- 		__entry->mm,
--		__get_str(memcg_path),
-+		__entry->memcg_id,
- 		__entry->write ? "true" : "false",
- 		__entry->success ? "true" : "false"
- 	)
-diff --git a/mm/mmap_lock.c b/mm/mmap_lock.c
-index f186d57df2c6..e7dbaf96aa17 100644
---- a/mm/mmap_lock.c
-+++ b/mm/mmap_lock.c
-@@ -17,51 +17,7 @@ EXPORT_TRACEPOINT_SYMBOL(mmap_lock_start_locking);
- EXPORT_TRACEPOINT_SYMBOL(mmap_lock_acquire_returned);
- EXPORT_TRACEPOINT_SYMBOL(mmap_lock_released);
- 
--#ifdef CONFIG_MEMCG
--
--/*
-- * Size of the buffer for memcg path names. Ignoring stack trace support,
-- * trace_events_hist.c uses MAX_FILTER_STR_VAL for this, so we also use it.
-- */
--#define MEMCG_PATH_BUF_SIZE MAX_FILTER_STR_VAL
--
--#define TRACE_MMAP_LOCK_EVENT(type, mm, ...)				\
--	do {								\
--		if (trace_mmap_lock_##type##_enabled()) {		\
--			char buf[MEMCG_PATH_BUF_SIZE];                  \
--			get_mm_memcg_path(mm, buf, sizeof(buf));        \
--			trace_mmap_lock_##type(mm, buf, ##__VA_ARGS__); \
--		}							\
--	} while (0)
--
--#else /* !CONFIG_MEMCG */
--
--#define TRACE_MMAP_LOCK_EVENT(type, mm, ...)                                   \
--	trace_mmap_lock_##type(mm, "", ##__VA_ARGS__)
--
--#endif /* CONFIG_MEMCG */
--
- #ifdef CONFIG_TRACING
--#ifdef CONFIG_MEMCG
--/*
-- * Write the given mm_struct's memcg path to a buffer. If the path cannot be
-- * determined, empty string is written.
-- */
--static void get_mm_memcg_path(struct mm_struct *mm, char *buf, size_t buflen)
--{
--	struct mem_cgroup *memcg;
--
--	buf[0] = '\0';
--	memcg = get_mem_cgroup_from_mm(mm);
--	if (memcg == NULL)
--		return;
--	if (memcg->css.cgroup)
--		cgroup_path(memcg->css.cgroup, buf, buflen);
--	css_put(&memcg->css);
--}
--
--#endif /* CONFIG_MEMCG */
--
- /*
-  * Trace calls must be in a separate file, as otherwise there's a circular
-  * dependency between linux/mmap_lock.h and trace/events/mmap_lock.h.
-@@ -69,20 +25,20 @@ static void get_mm_memcg_path(struct mm_struct *mm, char *buf, size_t buflen)
- 
- void __mmap_lock_do_trace_start_locking(struct mm_struct *mm, bool write)
- {
--	TRACE_MMAP_LOCK_EVENT(start_locking, mm, write);
-+	trace_mmap_lock_start_locking(mm, write);
- }
- EXPORT_SYMBOL(__mmap_lock_do_trace_start_locking);
- 
- void __mmap_lock_do_trace_acquire_returned(struct mm_struct *mm, bool write,
- 					   bool success)
- {
--	TRACE_MMAP_LOCK_EVENT(acquire_returned, mm, write, success);
-+	trace_mmap_lock_acquire_returned(mm, write, success);
- }
- EXPORT_SYMBOL(__mmap_lock_do_trace_acquire_returned);
- 
- void __mmap_lock_do_trace_released(struct mm_struct *mm, bool write)
- {
--	TRACE_MMAP_LOCK_EVENT(released, mm, write);
-+	trace_mmap_lock_released(mm, write);
- }
- EXPORT_SYMBOL(__mmap_lock_do_trace_released);
- #endif /* CONFIG_TRACING */
--- 
-2.43.5
 
+So when req->bio is NULL this function now returns 0. But previously the values
+of req->ioprio were sometimes non-zero. If I revert the commit and then
+instrument req_get_ioprio to log where the new return value differs:
+
+  static inline unsigned short req_get_ioprio(struct request *req)
+ {
+-       return req->ioprio;
++       if (req->bio)
++       {
++              if (req->bio->bi_ioprio != req->ioprio)
++                      printk("req->bio->bi_ioprio != req->ioprio\n");
++               return req->bio->bi_ioprio;
++       }
++       if (req->ioprio != 0)
++               printk("bad ioprio 0 != %u\n", (unsigned int)req->ioprio);
++       return 0;
+ }
+
+then log shows:
+
+[   36.922906] bad ioprio 0 != 16387
+[   36.923061] bad ioprio 0 != 16387
+[   36.930186] bad ioprio 0 != 16387
+[   36.930680] bad ioprio 0 != 16387
+[   78.875421] bad ioprio 0 != 24583
+[   79.228801] bad ioprio 0 != 24583
+[   87.411118] bad ioprio 0 != 24583
+[   97.419607] bad ioprio 0 != 24583
+[   97.421059] bad ioprio 0 != 24583
+[  107.210364] bad ioprio 0 != 24583
+[  107.210775] bad ioprio 0 != 24583
+
+So, the new function is returning 0 when it would've previously returned these
+non-zero values, and returning zero breaks things.
 
