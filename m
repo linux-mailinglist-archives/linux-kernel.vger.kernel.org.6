@@ -1,75 +1,84 @@
-Return-Path: <linux-kernel+bounces-421103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A75479D86A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:39:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BDD01672A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:39:07 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2A71B2188;
-	Mon, 25 Nov 2024 13:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DY4NKktp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41F3D9D882F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:38:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2DA1AE876;
-	Mon, 25 Nov 2024 13:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B9C7B26141
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:39:24 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24991B0F04;
+	Mon, 25 Nov 2024 13:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YRjkMGbU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852191B218A;
+	Mon, 25 Nov 2024 13:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732541889; cv=none; b=CGKcDUZhJShIIxp9x/MNU7cfNT1YyehOSxlGMA/rYKGF8hmS2Jims13wFGq8jblMyjtxndfMDcV9RdkFqVe6cnTtRydADdaucCrFwnpfdTeuabmrh5n/lSWY5XxnDgiT4vFx7IzV62ocJOXW8cVhRreCtFZ+vBif0+KwejBl4g8=
+	t=1732541896; cv=none; b=e6xZlt+IB46jUGqUdwuyo0oHxDTv7Qibs1nDn6/U0FZIUAwlLsonjIxWcANU3iyjjYK9efUNdz7MEp1HG00kcpB2PQ4y5irbp5/YaWjikVJ9oDLqIpodcMEFgEdPSn0dQicRm+cPYSaHmjtqpkGrIcyZ1P509NjboC6pn9g0iQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732541889; c=relaxed/simple;
-	bh=72TDnjkaRFahkr0C5J39hZGEnBNSuZA6QnL09B60how=;
+	s=arc-20240116; t=1732541896; c=relaxed/simple;
+	bh=Q6Jj9px3SKZWIVRE0NRwNKltszOpTU80WmPxhjN8Bsw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HCo98uskWYOz2zgRAIRrxhI+LyKETVQy2iMkFWM+2ZP3K1SVIvS/DJBf+HWw213eEPoiUe5VyCsxfZSDbJqDFrUv51BNRt15moZIXtyy7PDag+OVx9X1VXrSxxEX75+his1aA7eY2Dy+S3+TLDPTO/JbR2o4GwaKSbWuQxA66vI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DY4NKktp; arc=none smtp.client-ip=198.175.65.13
+	 Content-Type:Content-Disposition:In-Reply-To; b=mE0QxF0XF+JDQ/yjbj+QcTXO+Be5BgRkTNp/q9auhzloSxxASd4PUArDKuT5rE/7k7GgtDyvuNaHRhlkBxNvzxPpnM0hoavqVDhteroOK+dlbLJlrjzdtGceY4EgJY8TRMY4rphov2KjWDJ4jXKXoqCtkO1zwpWj/pAvKr/4Kv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YRjkMGbU; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732541888; x=1764077888;
+  t=1732541891; x=1764077891;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=72TDnjkaRFahkr0C5J39hZGEnBNSuZA6QnL09B60how=;
-  b=DY4NKktpXydaupK4KXIOJ2CzrrXhx2CUWdRDOOm1kaLgMZZsdQDEZcEN
-   tSn151D5R1eMZPWg6s180YynRdinAix+RS1LTUKwbGBOwS2FLvmriQSnt
-   30YxTUqB2hQE2kFiMJKzB23J38TOkHtmpNwUXzNYwI+awLR0jx6ehY+T/
-   bT5Yy4PxM75x21dkFhIAkET+IjNDVGO0DWYj6Y5QebaTgYaNMRBQpL39t
-   Bh9z1QIYETjywzYHlq+2TRPc3L1WUZWfZzDtwRP9ZdPKsuuuj3yZAVvfH
-   j4p5r3yrunYmjWJLUT+/KLIjHKQ+J4Y4vlfk7UKIigfnx4vb56vJdFanW
-   g==;
-X-CSE-ConnectionGUID: 6sVzJgN0TmqK7rUEY9aPtw==
-X-CSE-MsgGUID: xPaQzpkWSqm+WeRRAyvFBQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="43712105"
+  bh=Q6Jj9px3SKZWIVRE0NRwNKltszOpTU80WmPxhjN8Bsw=;
+  b=YRjkMGbU+vk/Zucq+vmU8d5GrIJqJVsfg+atyyGdXpLNxCYzklxsxYkN
+   B0viqBhzp1c/uvnedrxETJpU0tMBWaIoUn/r9UI2wg93UyL1qUyd1AsFr
+   K67ms/uCL+6gPzNlbL3Nv5QEbRnIaCSFh1qRW+HIZkvV6vGQ9oVC85yG0
+   sd1xEZt2TMvGvXMwhxIUb8giosJI+Mne5ZlHucSQ+1b7RV3y8fkXg6QeJ
+   WmKZIFNh2hmWdytV0lGmr/UGT0Yxzl04HD3LE2GZ9wW0WS2IugfVxJMmO
+   ZlEnXCbT01NnOYJ4y3QvKCtfONdZEbATRkgbeQWUU2x22ZTjOBT5rZf/t
+   Q==;
+X-CSE-ConnectionGUID: do5fITCgSb6EsvjkjB0aWA==
+X-CSE-MsgGUID: QcO7nBOWRBiU1TJk3VoUEA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="36427578"
 X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="43712105"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 05:38:07 -0800
-X-CSE-ConnectionGUID: F6C9B0yqTQusTb5MotM9lw==
-X-CSE-MsgGUID: a7i9thOfTXWWZwYthk+WWQ==
+   d="scan'208";a="36427578"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 05:38:09 -0800
+X-CSE-ConnectionGUID: kM6MdTeCSYSzHTet+BE0hQ==
+X-CSE-MsgGUID: QHBkNTZSRrqt5EaNOca6zQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="122209608"
+   d="scan'208";a="96329496"
 Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 25 Nov 2024 05:38:05 -0800
+  by orviesa004.jf.intel.com with ESMTP; 25 Nov 2024 05:38:05 -0800
 Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tFZHu-0006RP-2c;
+	id 1tFZHu-0006RN-2Z;
 	Mon, 25 Nov 2024 13:38:02 +0000
-Date: Mon, 25 Nov 2024 21:37:50 +0800
+Date: Mon, 25 Nov 2024 21:37:51 +0800
 From: kernel test robot <lkp@intel.com>
-To: Mateusz Guzik <mjguzik@gmail.com>, dchinner@redhat.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, cem@kernel.org,
-	djwong@kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, Mateusz Guzik <mjguzik@gmail.com>
-Subject: Re: [PATCH] xfs: use inode_set_cached_link()
-Message-ID: <202411252143.IFCZKd2V-lkp@intel.com>
-References: <20241123075105.1082661-1-mjguzik@gmail.com>
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Huang Ying <ying.huang@intel.com>,
+	Yao Xingtao <yaoxt.fnst@fujitsu.com>, Li Ming <ming4.li@intel.com>,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH 2/3] cxl/core: Enable Region creation on x86 with Low
+ Memory Hole
+Message-ID: <202411252126.T7xKY88q-lkp@intel.com>
+References: <20241122155226.2068287-3-fabio.m.de.francesco@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,88 +87,146 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241123075105.1082661-1-mjguzik@gmail.com>
+In-Reply-To: <20241122155226.2068287-3-fabio.m.de.francesco@linux.intel.com>
 
-Hi Mateusz,
+Hi Fabio,
 
 kernel test robot noticed the following build errors:
 
-[auto build test ERROR on xfs-linux/for-next]
-[also build test ERROR on linus/master v6.12 next-20241125]
+[auto build test ERROR on cxl/next]
+[also build test ERROR on linus/master cxl/pending v6.12 next-20241125]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mateusz-Guzik/xfs-use-inode_set_cached_link/20241125-115441
-base:   https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git for-next
-patch link:    https://lore.kernel.org/r/20241123075105.1082661-1-mjguzik%40gmail.com
-patch subject: [PATCH] xfs: use inode_set_cached_link()
-config: i386-buildonly-randconfig-003-20241125 (https://download.01.org/0day-ci/archive/20241125/202411252143.IFCZKd2V-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241125/202411252143.IFCZKd2V-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Fabio-M-De-Francesco/cxl-core-Change-match_-_by_range-calling-convention/20241125-102754
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/cxl/cxl.git next
+patch link:    https://lore.kernel.org/r/20241122155226.2068287-3-fabio.m.de.francesco%40linux.intel.com
+patch subject: [PATCH 2/3] cxl/core: Enable Region creation on x86 with Low Memory Hole
+config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20241125/202411252126.T7xKY88q-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241125/202411252126.T7xKY88q-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411252143.IFCZKd2V-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411252126.T7xKY88q-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+All error/warnings (new ones prefixed by >>):
 
-   In file included from fs/xfs/xfs_symlink.c:7:
-   In file included from fs/xfs/xfs.h:26:
-   In file included from fs/xfs/xfs_linux.h:25:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     505 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     512 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     525 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
->> fs/xfs/xfs_symlink.c:52:2: error: call to undeclared function 'inode_set_cached_link'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      52 |         inode_set_cached_link(inode, ip->i_df.if_data, pathlen);
-         |         ^
-   4 warnings and 1 error generated.
-
-
-vim +/inode_set_cached_link +52 fs/xfs/xfs_symlink.c
-
-    30	
-    31	void
-    32	xfs_setup_cached_symlink(
-    33		struct xfs_inode	*ip)
-    34	{
-    35		struct inode		*inode = &ip->i_vnode;
-    36		xfs_fsize_t		pathlen;
-    37	
-    38		/*
-    39		 * If we have the symlink readily accessible let the VFS know where to
-    40		 * find it. This avoids calls to xfs_readlink().
-    41		 */
-    42		pathlen = ip->i_disk_size;
-    43		if (pathlen <= 0 || pathlen > XFS_SYMLINK_MAXLEN)
-    44			return;
-    45	
-    46		if (ip->i_df.if_format != XFS_DINODE_FMT_LOCAL)
-    47			return;
-    48	
-    49		if (XFS_IS_CORRUPT(ip->i_mount, !ip->i_df.if_data))
-    50			return;
-    51	
-  > 52		inode_set_cached_link(inode, ip->i_df.if_data, pathlen);
-    53	}
-    54	
+   In file included from drivers/dax/cxl.c:6:
+>> drivers/dax/../cxl/cxl.h:921:6: warning: no previous prototype for 'arch_match_spa' [-Wmissing-prototypes]
+     921 | bool arch_match_spa(struct cxl_root_decoder *cxlrd,
+         |      ^~~~~~~~~~~~~~
+>> drivers/dax/../cxl/cxl.h:927:6: warning: no previous prototype for 'arch_match_region' [-Wmissing-prototypes]
+     927 | bool arch_match_region(struct cxl_region_params *p,
+         |      ^~~~~~~~~~~~~~~~~
+>> drivers/dax/../cxl/cxl.h:933:6: warning: no previous prototype for 'arch_trim_hpa_by_spa' [-Wmissing-prototypes]
+     933 | void arch_trim_hpa_by_spa(struct resource *res,
+         |      ^~~~~~~~~~~~~~~~~~~~
+--
+   s390-linux-ld: drivers/cxl/core/port.o: in function `arch_match_spa':
+>> port.c:(.text+0x87c0): multiple definition of `arch_match_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x200): first defined here
+   s390-linux-ld: drivers/cxl/core/port.o: in function `arch_match_region':
+>> port.c:(.text+0x8840): multiple definition of `arch_match_region'; drivers/dax/cxl.o:cxl.c:(.text+0x280): first defined here
+   s390-linux-ld: drivers/cxl/core/port.o: in function `arch_trim_hpa_by_spa':
+>> port.c:(.text+0x88c0): multiple definition of `arch_trim_hpa_by_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x300): first defined here
+   s390-linux-ld: drivers/cxl/core/pmem.o: in function `arch_match_spa':
+   pmem.c:(.text+0xe00): multiple definition of `arch_match_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x200): first defined here
+   s390-linux-ld: drivers/cxl/core/pmem.o: in function `arch_match_region':
+   pmem.c:(.text+0xe80): multiple definition of `arch_match_region'; drivers/dax/cxl.o:cxl.c:(.text+0x280): first defined here
+   s390-linux-ld: drivers/cxl/core/pmem.o: in function `arch_trim_hpa_by_spa':
+   pmem.c:(.text+0xf00): multiple definition of `arch_trim_hpa_by_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x300): first defined here
+   s390-linux-ld: drivers/cxl/core/regs.o: in function `arch_match_spa':
+   regs.c:(.text+0x1740): multiple definition of `arch_match_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x200): first defined here
+   s390-linux-ld: drivers/cxl/core/regs.o: in function `arch_match_region':
+   regs.c:(.text+0x17c0): multiple definition of `arch_match_region'; drivers/dax/cxl.o:cxl.c:(.text+0x280): first defined here
+   s390-linux-ld: drivers/cxl/core/regs.o: in function `arch_trim_hpa_by_spa':
+   regs.c:(.text+0x1840): multiple definition of `arch_trim_hpa_by_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x300): first defined here
+   s390-linux-ld: drivers/cxl/core/memdev.o: in function `arch_match_spa':
+   memdev.c:(.text+0x3ec0): multiple definition of `arch_match_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x200): first defined here
+   s390-linux-ld: drivers/cxl/core/memdev.o: in function `arch_match_region':
+   memdev.c:(.text+0x3f40): multiple definition of `arch_match_region'; drivers/dax/cxl.o:cxl.c:(.text+0x280): first defined here
+   s390-linux-ld: drivers/cxl/core/memdev.o: in function `arch_trim_hpa_by_spa':
+   memdev.c:(.text+0x3fc0): multiple definition of `arch_trim_hpa_by_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x300): first defined here
+   s390-linux-ld: drivers/cxl/core/mbox.o: in function `arch_match_spa':
+   mbox.c:(.text+0x4f80): multiple definition of `arch_match_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x200): first defined here
+   s390-linux-ld: drivers/cxl/core/mbox.o: in function `arch_match_region':
+   mbox.c:(.text+0x5000): multiple definition of `arch_match_region'; drivers/dax/cxl.o:cxl.c:(.text+0x280): first defined here
+   s390-linux-ld: drivers/cxl/core/mbox.o: in function `arch_trim_hpa_by_spa':
+   mbox.c:(.text+0x5080): multiple definition of `arch_trim_hpa_by_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x300): first defined here
+   s390-linux-ld: drivers/cxl/core/pci.o: in function `arch_match_spa':
+   pci.c:(.text+0x3e40): multiple definition of `arch_match_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x200): first defined here
+   s390-linux-ld: drivers/cxl/core/pci.o: in function `arch_match_region':
+   pci.c:(.text+0x3ec0): multiple definition of `arch_match_region'; drivers/dax/cxl.o:cxl.c:(.text+0x280): first defined here
+   s390-linux-ld: drivers/cxl/core/pci.o: in function `arch_trim_hpa_by_spa':
+   pci.c:(.text+0x3f40): multiple definition of `arch_trim_hpa_by_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x300): first defined here
+   s390-linux-ld: drivers/cxl/core/hdm.o: in function `arch_match_spa':
+   hdm.c:(.text+0x4880): multiple definition of `arch_match_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x200): first defined here
+   s390-linux-ld: drivers/cxl/core/hdm.o: in function `arch_match_region':
+   hdm.c:(.text+0x4900): multiple definition of `arch_match_region'; drivers/dax/cxl.o:cxl.c:(.text+0x280): first defined here
+   s390-linux-ld: drivers/cxl/core/hdm.o: in function `arch_trim_hpa_by_spa':
+   hdm.c:(.text+0x4980): multiple definition of `arch_trim_hpa_by_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x300): first defined here
+   s390-linux-ld: drivers/cxl/core/pmu.o: in function `arch_match_spa':
+   pmu.c:(.text+0x340): multiple definition of `arch_match_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x200): first defined here
+   s390-linux-ld: drivers/cxl/core/pmu.o: in function `arch_match_region':
+   pmu.c:(.text+0x3c0): multiple definition of `arch_match_region'; drivers/dax/cxl.o:cxl.c:(.text+0x280): first defined here
+   s390-linux-ld: drivers/cxl/core/pmu.o: in function `arch_trim_hpa_by_spa':
+   pmu.c:(.text+0x440): multiple definition of `arch_trim_hpa_by_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x300): first defined here
+   s390-linux-ld: drivers/cxl/core/cdat.o: in function `arch_match_spa':
+   cdat.c:(.text+0x19c0): multiple definition of `arch_match_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x200): first defined here
+   s390-linux-ld: drivers/cxl/core/cdat.o: in function `arch_match_region':
+   cdat.c:(.text+0x1a40): multiple definition of `arch_match_region'; drivers/dax/cxl.o:cxl.c:(.text+0x280): first defined here
+   s390-linux-ld: drivers/cxl/core/cdat.o: in function `arch_trim_hpa_by_spa':
+   cdat.c:(.text+0x1ac0): multiple definition of `arch_trim_hpa_by_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x300): first defined here
+   s390-linux-ld: drivers/cxl/core/trace.o: in function `arch_match_spa':
+   trace.c:(.text+0x8ec0): multiple definition of `arch_match_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x200): first defined here
+   s390-linux-ld: drivers/cxl/core/trace.o: in function `arch_match_region':
+   trace.c:(.text+0x8f40): multiple definition of `arch_match_region'; drivers/dax/cxl.o:cxl.c:(.text+0x280): first defined here
+   s390-linux-ld: drivers/cxl/core/trace.o: in function `arch_trim_hpa_by_spa':
+   trace.c:(.text+0x8fc0): multiple definition of `arch_trim_hpa_by_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x300): first defined here
+   s390-linux-ld: drivers/cxl/core/region.o: in function `arch_match_spa':
+   region.c:(.text+0xca00): multiple definition of `arch_match_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x200): first defined here
+   s390-linux-ld: drivers/cxl/core/region.o: in function `arch_match_region':
+   region.c:(.text+0xce00): multiple definition of `arch_match_region'; drivers/dax/cxl.o:cxl.c:(.text+0x280): first defined here
+   s390-linux-ld: drivers/cxl/core/region.o: in function `arch_trim_hpa_by_spa':
+   region.c:(.text+0x11a80): multiple definition of `arch_trim_hpa_by_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x300): first defined here
+   s390-linux-ld: drivers/cxl/pci.o: in function `arch_match_spa':
+   pci.c:(.text+0x4cc0): multiple definition of `arch_match_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x200): first defined here
+   s390-linux-ld: drivers/cxl/pci.o: in function `arch_match_region':
+   pci.c:(.text+0x4d40): multiple definition of `arch_match_region'; drivers/dax/cxl.o:cxl.c:(.text+0x280): first defined here
+   s390-linux-ld: drivers/cxl/pci.o: in function `arch_trim_hpa_by_spa':
+   pci.c:(.text+0x4dc0): multiple definition of `arch_trim_hpa_by_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x300): first defined here
+   s390-linux-ld: drivers/cxl/mem.o: in function `arch_match_spa':
+   mem.c:(.text+0xe40): multiple definition of `arch_match_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x200): first defined here
+   s390-linux-ld: drivers/cxl/mem.o: in function `arch_match_region':
+   mem.c:(.text+0xec0): multiple definition of `arch_match_region'; drivers/dax/cxl.o:cxl.c:(.text+0x280): first defined here
+   s390-linux-ld: drivers/cxl/mem.o: in function `arch_trim_hpa_by_spa':
+   mem.c:(.text+0xf40): multiple definition of `arch_trim_hpa_by_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x300): first defined here
+   s390-linux-ld: drivers/cxl/pmem.o: in function `arch_match_spa':
+   pmem.c:(.text+0x18c0): multiple definition of `arch_match_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x200): first defined here
+   s390-linux-ld: drivers/cxl/pmem.o: in function `arch_match_region':
+   pmem.c:(.text+0x1940): multiple definition of `arch_match_region'; drivers/dax/cxl.o:cxl.c:(.text+0x280): first defined here
+   s390-linux-ld: drivers/cxl/pmem.o: in function `arch_trim_hpa_by_spa':
+   pmem.c:(.text+0x19c0): multiple definition of `arch_trim_hpa_by_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x300): first defined here
+   s390-linux-ld: drivers/cxl/security.o: in function `arch_match_spa':
+   security.c:(.text+0xb00): multiple definition of `arch_match_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x200): first defined here
+   s390-linux-ld: drivers/cxl/security.o: in function `arch_match_region':
+   security.c:(.text+0xb80): multiple definition of `arch_match_region'; drivers/dax/cxl.o:cxl.c:(.text+0x280): first defined here
+   s390-linux-ld: drivers/cxl/security.o: in function `arch_trim_hpa_by_spa':
+   security.c:(.text+0xc00): multiple definition of `arch_trim_hpa_by_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x300): first defined here
+   s390-linux-ld: drivers/cxl/port.o: in function `arch_match_spa':
+   port.c:(.text+0x840): multiple definition of `arch_match_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x200): first defined here
+   s390-linux-ld: drivers/cxl/port.o: in function `arch_match_region':
+   port.c:(.text+0x8c0): multiple definition of `arch_match_region'; drivers/dax/cxl.o:cxl.c:(.text+0x280): first defined here
+   s390-linux-ld: drivers/cxl/port.o: in function `arch_trim_hpa_by_spa':
+   port.c:(.text+0x940): multiple definition of `arch_trim_hpa_by_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x300): first defined here
+   s390-linux-ld: drivers/perf/cxl_pmu.o: in function `arch_match_spa':
+   cxl_pmu.c:(.text+0x3380): multiple definition of `arch_match_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x200): first defined here
+   s390-linux-ld: drivers/perf/cxl_pmu.o: in function `arch_match_region':
+   cxl_pmu.c:(.text+0x3400): multiple definition of `arch_match_region'; drivers/dax/cxl.o:cxl.c:(.text+0x280): first defined here
+   s390-linux-ld: drivers/perf/cxl_pmu.o: in function `arch_trim_hpa_by_spa':
+   cxl_pmu.c:(.text+0x3480): multiple definition of `arch_trim_hpa_by_spa'; drivers/dax/cxl.o:cxl.c:(.text+0x300): first defined here
 
 -- 
 0-DAY CI Kernel Test Service
