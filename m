@@ -1,131 +1,148 @@
-Return-Path: <linux-kernel+bounces-421730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F7D59D8F40
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:42:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AFDE9D8F43
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:42:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C782716A720
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:42:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2998016A5F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EC4196D9D;
-	Mon, 25 Nov 2024 23:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE0F1990A2;
+	Mon, 25 Nov 2024 23:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="fP8Jt5/E"
-Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="GXio01ht"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D743189F20;
-	Mon, 25 Nov 2024 23:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18132195B18
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 23:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732578146; cv=none; b=ZVQcffh60TaS3malLc7khT2FUqenUqiRk2Qvy4J8Qvlll1AL5Ay2ThySgKxZoB4C13bbjDgYrjdNssLvore+Ur52gHmOMG3NbJDAqPiwuHlrWKEXjM1uZuTFTrapO8mtiMOykSdWZx7LLy5VpwVXDi2bHszA4eOr7tvUeXRs51o=
+	t=1732578164; cv=none; b=M8gGkD71MQnAJvXetLWl2ZnsrfZvPsoOTCSZHxXgXAB0UlbTsoOgWF9WmPIRtIAALGvds7psFcGcxIunf+E487qbX0w7Ta1HQavjucFCxv4+dYtQgSU0ASj8AmNfrA3/hGuq7JITR4iq3ji3p7VLqZ7xE6gSkBFyCD9RPD2n6WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732578146; c=relaxed/simple;
-	bh=4AW3HXF8Zss5Wgx8tbWXkPrXII0o3lYa5kk1FEwbCSo=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=ReWeeYOHKPrVp7dCL1xGEtmZj6hz54sPpYn0jDvjTpDJJ9iDA6koUuAsM0mwnL8JsjXBYXUK/bEIlGRZeoyrLFJEOPukfAh4O3pS0P+RxlkEIkORlcR6zpJl3s1k+UT46M9+Tuk84q+p1Z6oOE92KngfBKPCeeD8SoNmQCQDj4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=fP8Jt5/E; arc=none smtp.client-ip=203.205.221.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1732578130; bh=/KxuIDjoowTbqWmLpQV6jdh8esNO7ZyBc3NaxAGU4Fw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=fP8Jt5/Ewe0q/fhG5A2iHcp2hxYy2QbO+/XjOtRA4A/C47IpzojIudXYCzPneBz/A
-	 mOTNDgEbKTFkD7suGCes77w5lr753mpBhuaSLt7M2xTkM3Xo8mQHICsYztqJqjTV/p
-	 /ghfE3UiKJYRFfQGPQsyQOtDoRp6pRHNm2TeZhJo=
-Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id A88B2EE5; Tue, 26 Nov 2024 07:42:08 +0800
-X-QQ-mid: xmsmtpt1732578128tfoslh9fx
-Message-ID: <tencent_4D663A3CE9374A970636084B0C75E3768D09@qq.com>
-X-QQ-XMAILINFO: NkHKfw09D6j8kfHQIj0j0buKXojWz+l7bwFvNjd7cBCyCODjlDN/FpPnLQeo9e
-	 ciFokYuteH6Kh9rR7DgaPmxfHhnrPqWfPmSXABKfEviMOBmJdqVfV+0nGnNULc5IfMyikKc1TYJW
-	 4sFxcyahsDOkDyqr7YDRbB5H4lNTjrnZrxoCogKrDckASdC/wyYArITCA/Afvxw6tjjkDc/66WtW
-	 eobyR/tZ+deQwKqGV/AmV29rqUECbjvRUCBMaiQgGwoOOat6D4UNwE/nV1Ws74Y83Rh01fcKx5nM
-	 MH021A7TU3kfJ9xyZCZ9+Lk7wc1ongITfyDUHrmJCWYKzvfb7H7ewtOFMZbhOGFx9LKawgTnTcBw
-	 7E9Fp9OAcmcTOGLvvfAvIVplPUoyzYuHq8cz3uq2Ydg5ZTFERzXGuhX32aC+mxJZtU37Vfuvy38x
-	 xbM5DoYEpARE4byT6rs2Sop53UI1Sk1eQBiGx7y0Ihae6nQBBfE8Tg1SiSeXigaineRttFNUrS4h
-	 gb42GBR1IeC/UHSXIw/xSpbJX5YCw5VDufizlLsy29ZpQY3WxyDJABTwVZSAPEwvrJXRibS0d8Wz
-	 2EiukS8YC9MXOWp+CAZGEN0RzVSL5Oe08rwyGgyn3rWWDTAj54cXHQjut75VK9aXfMaYUxUUKiN1
-	 J2mgiM0eYa7x0iipBDMWRnkWk6ShbdZo6V0VUxQry33u28gPGX0HhifD3Zl5ynf0PE89Nf9Df/Sc
-	 /E3yRG8SKogTC0PXQGgwM3jXa2ZCjLp4m78hbG+1NMV5z9BnTjyaR8h5Hc0EloZVFBq3utBw4c4F
-	 9cCxng2q5B6nnDL/HIi5ZzfQTVS44cHE/xsncNA5adhtIpFX8XA5ZPWPxKjVvUo2qioH6qW4Il4v
-	 S1EgReIDREwiQ+jUDsId7GxRiYAZDxkw==
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+028180f480a74961919c@syzkaller.appspotmail.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] hfsplus: restore i_nlink and flags when rename_cat fails
-Date: Tue, 26 Nov 2024 07:42:09 +0800
-X-OQ-MSGID: <20241125234208.3901871-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <674305a3.050a0220.1cc393.003b.GAE@google.com>
-References: <674305a3.050a0220.1cc393.003b.GAE@google.com>
+	s=arc-20240116; t=1732578164; c=relaxed/simple;
+	bh=zgIoM2cQCqvG8J1zUjANPmHbeDMqdfjQm6lIEkAVUz4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=X3TcxXtSsLzB2t0o13xZyhZN9T5fZ5cpaya2BfN2Ke68+2HzBEXAIgImhLL8644ycDln9aiG9h9WKhC56Lrw2NP7QBL9lIfBNEIj8KNjGKiBLcr8Pz7eluHd4rWSrMyar+UJsXzFYQ5XlPXPZvmAXVk+SEsHKS2/OReXIsvlw1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=GXio01ht; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id BACAB2C02E1;
+	Tue, 26 Nov 2024 12:42:31 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1732578151;
+	bh=mUKJmR0JfGbxBM7LBtbbbcz8JTQTr4Xcl4ZgJ53UcJo=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=GXio01htU7WUyfJOT7hGon3sHr+vwb/kEYethhgFK9cn7SElGR61+g9pdixJU6V6R
+	 0fYzxlNHWqn/+9V2feck3vxXTVJ3AG+/pglFfkdnaXvld0EDRGJlLgMKLdHVZijNsq
+	 DkvNsJSelKnWXdbVBFXJJFhEAz1b/hYvQlA7H51FDMUyZAhKZEJCoyXFW/vmF2b5P1
+	 dHbmXwTaXWFS7JzGWsV/wYuJRQjZZWSboPAXYWVudXIrCeMiL37NxIbU23qMfRD7RY
+	 yhl8TSPaYQBXtQEZaRYaaM15UV/DXQVmNFeQMk6LHZh/0MA73hwNp3swFpmE83t/xP
+	 RYYH9rXsNeWoA==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B67450b670000>; Tue, 26 Nov 2024 12:42:31 +1300
+Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id 9B1C313EDFA;
+	Tue, 26 Nov 2024 12:42:31 +1300 (NZDT)
+Message-ID: <66daf1a8-efb7-4fef-92cd-eb680c7832fa@alliedtelesis.co.nz>
+Date: Tue, 26 Nov 2024 12:42:31 +1300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH] [MIPS] Place __kernel_entry at the beginning of text
+ section
+To: Rong Xu <xur@google.com>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, Masahiro Yamada <masahiroy@kernel.org>,
+ Klara Modin <klarasmodin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicolas Schier <nicolas@fjasle.eu>,
+ "Maciej W. Rozycki" <macro@orcam.me.uk>, linux-mips@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241125230953.3090508-1-xur@google.com>
+Content-Language: en-US
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20241125230953.3090508-1-xur@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=Gam0nhXL c=1 sm=1 tr=0 ts=67450b67 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=1XWaLZrsAAAA:8 a=3W2ps74RiJH85kM3-o0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=mSD0U8-EzHfD161T-4u9:22
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-After the rename syscall fails, the unlink syscall triggers a warning in
-drop_nlink() because the i_nlink value is 0.
 
-When unlink succeeds but rename_cat fails in rename, the i_nlink and flags
-values of the inode of the new dentry should be restored.
+On 26/11/24 12:09, Rong Xu wrote:
+> Mark __kernel_entry as ".head.text" and place HEAD_TEXT before
+> TEXT_TEXT in the linker script. This ensures that __kernel_entry
+> will be placed at the beginning of text section.
+>
+> Drop mips from scripts/head-object-list.txt.
+>
+> Signed-off-by: Rong Xu <xur@google.com>
+> Reported-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 
-Reported-and-tested-by: syzbot+028180f480a74961919c@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=028180f480a74961919c
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/hfsplus/dir.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+Works for me on my RTL9302C based board
 
-diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
-index f5c4b3e31a1c..b489d22409e7 100644
---- a/fs/hfsplus/dir.c
-+++ b/fs/hfsplus/dir.c
-@@ -534,7 +534,7 @@ static int hfsplus_rename(struct mnt_idmap *idmap,
- 			  struct inode *new_dir, struct dentry *new_dentry,
- 			  unsigned int flags)
- {
--	int res;
-+	int res, unlinked_new = 0;
- 
- 	if (flags & ~RENAME_NOREPLACE)
- 		return -EINVAL;
-@@ -543,8 +543,10 @@ static int hfsplus_rename(struct mnt_idmap *idmap,
- 	if (d_really_is_positive(new_dentry)) {
- 		if (d_is_dir(new_dentry))
- 			res = hfsplus_rmdir(new_dir, new_dentry);
--		else
-+		else {
- 			res = hfsplus_unlink(new_dir, new_dentry);
-+			unlinked_new = res == 0 && d_inode(new_dentry)->i_flags & S_DEAD;
-+		}
- 		if (res)
- 			return res;
- 	}
-@@ -554,6 +556,12 @@ static int hfsplus_rename(struct mnt_idmap *idmap,
- 				 new_dir, &new_dentry->d_name);
- 	if (!res)
- 		new_dentry->d_fsdata = old_dentry->d_fsdata;
-+	else if (unlinked_new) {
-+		struct inode *inode = d_inode(new_dentry);
-+		set_nlink(inode, inode->i_nlink + 1);
-+		inode->i_flags &= ~S_DEAD;
-+	}
-+
- 	return res;
- }
- 
--- 
-2.43.0
+Tested-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 
+> ---
+>   arch/mips/kernel/head.S        | 1 +
+>   arch/mips/kernel/vmlinux.lds.S | 1 +
+>   scripts/head-object-list.txt   | 1 -
+>   3 files changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/mips/kernel/head.S b/arch/mips/kernel/head.S
+> index e90695b2b60e..6d5fc498c6f9 100644
+> --- a/arch/mips/kernel/head.S
+> +++ b/arch/mips/kernel/head.S
+> @@ -26,6 +26,7 @@
+>   
+>   #include <kernel-entry-init.h>
+>   
+> +	__HEAD
+
+I'm not and expert on any of this but... should this go below the 
+setup_c0_status_* macros (just before the CONFIG_NO_EXCEPT_FILL) line? I 
+don't think it makes any actual difference but as a reader it feels more 
+logical that the __HEAD annotation is applying to the .fill and 
+__kernel_entry.
+
+>   	/*
+>   	 * For the moment disable interrupts, mark the kernel mode and
+>   	 * set ST0_KX so that the CPU does not spit fire when using
+> diff --git a/arch/mips/kernel/vmlinux.lds.S b/arch/mips/kernel/vmlinux.lds.S
+> index d575f945d422..c9c1ba85ac7b 100644
+> --- a/arch/mips/kernel/vmlinux.lds.S
+> +++ b/arch/mips/kernel/vmlinux.lds.S
+> @@ -62,6 +62,7 @@ SECTIONS
+>   	_text = .;	/* Text and read-only data */
+>   	_stext = .;
+>   	.text : {
+> +		HEAD_TEXT
+>   		TEXT_TEXT
+>   		SCHED_TEXT
+>   		LOCK_TEXT
+> diff --git a/scripts/head-object-list.txt b/scripts/head-object-list.txt
+> index fd5d00bac447..f12b4a7b8406 100644
+> --- a/scripts/head-object-list.txt
+> +++ b/scripts/head-object-list.txt
+> @@ -23,7 +23,6 @@ arch/m68k/coldfire/head.o
+>   arch/m68k/kernel/head.o
+>   arch/m68k/kernel/sun3-head.o
+>   arch/microblaze/kernel/head.o
+> -arch/mips/kernel/head.o
+>   arch/nios2/kernel/head.o
+>   arch/openrisc/kernel/head.o
+>   arch/parisc/kernel/head.o
+>
+> base-commit: 3596c721c4348b2a964e43f9296a0c01509ba927
 
