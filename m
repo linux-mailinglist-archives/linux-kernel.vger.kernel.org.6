@@ -1,237 +1,134 @@
-Return-Path: <linux-kernel+bounces-421055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCB1A9D86F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:48:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3169F9D862E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:20:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7ABF9B2922D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:20:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E65242851D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D752E19DF53;
-	Mon, 25 Nov 2024 13:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028871AA78E;
+	Mon, 25 Nov 2024 13:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kg3CQ/1g"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N2tMF49B"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D09188A3B
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB1217D378;
+	Mon, 25 Nov 2024 13:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732540797; cv=none; b=pewYIvlFjpmgdLN9zTHzKrSsrQ0i8nfVAv5uOVB8cdQkw37Qy6Z04Gj0PZPVkcmBYt78oVD7+VWoTQ9WVFbPaQbMtmFIAID11MecJEwxMoAzFVpTRXM6Z1JE9BAkXzah3pLPUuwrRrIWsfBxUDQzRQZ3N+iK6b8pQjNq3bhAwOs=
+	t=1732540844; cv=none; b=rCmDgofZVoiy+8zxFcYjB1sg49x9U9RSs/Fe78gqnk2smsaa7ZZzdKyHz25Z3I6SZ6MCyJn4TcIU+MuLT04I7n74b0DjVT0qdJvsecZEgJ26zYJbBkfE0xZeyJ+Ge/pqdx7y8GMiQbj/eRkPvQFHi8RSO/ZlJq7PJTaIW1QAuRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732540797; c=relaxed/simple;
-	bh=usYJq9WYL+QwQJdsxE0xxVDEmAUIkoqO2CNPnHJO3sg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BfvtAfIKo74J7CmHtI4LzuED73Tm1vsMimbUqPBRlXWyNajoALJIuy5aDAi83SD/XGc36fUE9+LUi35Z8/mZgvKKWALTH0BO80o9DiwB32dPCoN4PDgBeuA50HDkEsnSdXtthktxNEkM4jexD9D7kwhAlEJxtGvniP6Xjo1MXO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kg3CQ/1g; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Uo6SdHX5t3CR9WQPsFXOrSWtNueNCLN9mds7t2K1uwo=; b=kg3CQ/1gN4zbxHsr5B00Z1T+j6
-	D1KC1Xa5vXV/hYnGo+hAp980hdpTaaaOGQfGs50nwgHzxx9E2fIIOyN6Dc3vgKFltBxGezzm46x8D
-	RGE5fGy9cK7NzLJhQop4prAsjZCM5nN3RuKjK041kB67r8zMHEgxsO4jnr3QH/UYzDJnHu/isfdy0
-	YRnevCsiU15srY9p0aemP2rv3uW1FwbIMLw0tjWkcEiioqwz2L4SWYV8n2EniDFXWi+ityjH8QLS0
-	gDsXBarTvDjsfZNGxZmpMwB7Oy8WVvffJvNoO/60sOHtQKskLEo7xCkRxZDdBAQovBomOQK11dT8g
-	4ks823Lg==;
-Received: from [54.239.6.187] (helo=edge-m3-r1-122.e-iad51.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tFZ0A-0000000Bu85-0DrN;
-	Mon, 25 Nov 2024 13:19:43 +0000
-Message-ID: <7f75150e9d5d358c8fdc38b591f99a252071fba0.camel@infradead.org>
-Subject: Re: [EXTERNAL] [RFC PATCH v3 01/20] x86/kexec: Ensure
- control_code_page is mapped in kexec page tables
-From: David Woodhouse <dwmw2@infradead.org>
-To: kexec@lists.infradead.org, =?ISO-8859-1?Q?Sch=F6nherr=2C?= "Jan H."
-	 <jschoenh@amazon.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, "Kirill A. Shutemov"
- <kirill.shutemov@linux.intel.com>, Kai Huang <kai.huang@intel.com>, Nikolay
- Borisov <nik.borisov@suse.com>,  linux-kernel@vger.kernel.org, Simon Horman
- <horms@kernel.org>, Dave Young <dyoung@redhat.com>, Peter Zijlstra
- <peterz@infradead.org>, jpoimboe@kernel.org,  bsz@amazon.de
-Date: Mon, 25 Nov 2024 13:19:41 +0000
-In-Reply-To: <8b7cd35ab5fec39b80eda8d5907b641af14c3272.camel@infradead.org>
-References: <20241125100815.2512-1-dwmw2@infradead.org>
-	 <20241125100815.2512-2-dwmw2@infradead.org>
-	 <8b7cd35ab5fec39b80eda8d5907b641af14c3272.camel@infradead.org>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-krq2nNCAWzYLFYkInkxm"
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1732540844; c=relaxed/simple;
+	bh=vqIipY8S/dF9GuFhqRSM8PmpRZsIhAL4jNaiEFIUfuM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JHp5PnTyG7wwLb42vHAtrNJ4QoUVQ5SgfY2sEtyJ8y3Om+RgGaIfsb6xUeXeziZLTqQpjyWBAS592Z6mNz9MtJeatmOQsJoNoRCp2yx/LkfYnr/6lANyKtf1MQYhprqNmVeb9DTwMxTCR2aGfh4vvnEgl9gWzLVtCzILzCBTw7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N2tMF49B; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732540843; x=1764076843;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=vqIipY8S/dF9GuFhqRSM8PmpRZsIhAL4jNaiEFIUfuM=;
+  b=N2tMF49B4Y7hm5Lmcaz6mn5PFU12OnwE+yjVLWIztG5r6qn8EsOC0DfM
+   RbS7LtL0DMk42/qitJXmZq7t16X5dmBxE0VnHfiieJNBUrTvmY3FG5/U7
+   vysXNs38uN8TvKfsr4h+KnOQfoYiZxMASKMGIcWdK8UghgX5e4/xPm2FB
+   GlTV4vyhxt33c0VcXzRK8er7yWJ6NKJwwhObedo8/MYZnwxleMaK5nBma
+   5XJPYzex2rdifYJobeiAInb4qQqVQIC8MIR0apkhY/Re/gdBBQgOHSHCk
+   /Jkivx0OgJ7Mr2hhOqhlCWxt7+ph1DrzqFCmKB17LpJLXirEQ9BmRaCyA
+   Q==;
+X-CSE-ConnectionGUID: MqHhWSV9T8udQ5GF85csjA==
+X-CSE-MsgGUID: PguFX29HToyPJ4zLEakaBA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="43145423"
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="43145423"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 05:20:43 -0800
+X-CSE-ConnectionGUID: hjoH3VLMSqOaLZZRDVhXvQ==
+X-CSE-MsgGUID: aezfjcZnRPmpZHRuE7MftA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="91161669"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO pwlazlyn-mobl1.intel.com) ([10.245.245.34])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 05:20:38 -0800
+From: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	rafael.j.wysocki@intel.com,
+	len.brown@intel.com,
+	artem.bityutskiy@linux.intel.com,
+	dave.hansen@linux.intel.com,
+	patryk.wlazlyn@linux.intel.com,
+	peterz@infradead.org,
+	tglx@linutronix.de,
+	gautham.shenoy@amd.com
+Subject: [RFC PATCH v4 0/8] SRF: Fix offline CPU preventing pc6 entry
+Date: Mon, 25 Nov 2024 14:20:20 +0100
+Message-ID: <20241125132029.7241-1-patryk.wlazlyn@linux.intel.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+
+Sending an interim RFC patch. Rebased on top of Rafael's patches and
+applied modified patch/suggestion from Gautham.
+
+Please tell me what you think. Is this approach in general is
+acceptable?
+
+When playing dead we have now the preference ordered:
+ 1. Idle driver.
+      - acpi_idle can now do FFH and calls mwait_play_dead_with_hint,
+        but we disable the handlers on AMD, because AMD doesn't want to
+        use mwait for play_dead.
+      - intel_idle have a handler for SRF. Intel platforms fallback to
+        cpuid leaf 0x5 on other platforms.
+ 2. Old mwait_play_dead() based on cpuid leaf 0x5.
+ 3. hlt_play_dead().
 
 
---=-krq2nNCAWzYLFYkInkxm
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Changes since v3:
+ * Reworded commit messages authored by me as advised by Dave.
+   Expanded the context about the mwait_play_dead code, hint computation
+   and what is a problem we observe and the patch addresses.
+ * Different play_dead methods are called now one after the other,
+   because they only return on success.
 
-On Mon, 2024-11-25 at 10:29 +0000, David Woodhouse wrote:
-> On Mon, 2024-11-25 at 09:54 +0000, David Woodhouse wrote:
-> > From: David Woodhouse <dwmw@amazon.co.uk>
-> >=20
-> > The control_code_page should be explicitly mapped into the identity
-> > mapped page tables for the relocate_kernel environment. This only seems
-> > to have worked by luck before, because it tended to be within the same
-> > 2MiB or 1GiB large page already mapped for another reason.
-> >=20
-> > A subsequent commit will reduce the control_code_page to a single 4KiB
-> > page instead of a higher-order allocation, and seems to make it much
-> > *less* likely that we get lucky with its placement. This leads to a
-> > fault when relocate_kernel() first tries to access the page through its
-> > identity-mapped virtual address.
->=20
-> This one is confusing me. Jan points out that it shouldn't be needed,
-> because the control page should come from kernel memory and thus should
-> be mapped anyway because the loop immediately below my added code adds
-> *all* of the pfn_mapped[] ranges.
+Patryk Wlazlyn (5):
+  x86/smp: Allow calling mwait_play_dead with arbitrary hint
+  x86/smp native_play_dead: Prefer cpuidle_play_dead() over
+    mwait_play_dead()
+  intel_idle: Provide enter_dead() handler for SRF
+  acpi_idle: Add FFH cstate handling
+  acpi_idle: Disallow play_dead with FFH cstate on AMD platforms
 
-I think we understand this one now; it's because of PTI. So where the
-identmap code in e.g. ident_p4d_init() calls set_pte(), set_pte() is
-actually trying to write *both* the kernel and userspace copies of the
-page table, which it expects to be in adjacent pages. But in this case
-it's just scribbling over the end of the single 4KiB page that was
-allocated for it.
+Rafael J. Wysocki (3):
+  cpuidle: Do not return from cpuidle_play_dead() on callback failures
+  cpuidle: Change :enter_dead() driver callback return type to void
+  ACPI: processor_idle: Use acpi_idle_play_dead() for all C-states
 
-This should suffice to mask the problem (testing now) but obviously it
-isn't a great solution:
+ arch/x86/include/asm/cpufeatures.h |  1 +
+ arch/x86/include/asm/smp.h         |  3 +
+ arch/x86/kernel/acpi/cstate.c      |  9 +++
+ arch/x86/kernel/smpboot.c          | 91 ++++++++++++++++--------------
+ drivers/acpi/processor_idle.c      | 23 ++++----
+ drivers/cpuidle/cpuidle.c          | 10 +++-
+ drivers/idle/intel_idle.c          | 15 +++++
+ include/acpi/processor.h           |  5 ++
+ include/linux/cpuidle.h            |  2 +-
+ 9 files changed, 103 insertions(+), 56 deletions(-)
 
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -213,7 +213,7 @@ static void *alloc_pgt_page(void *data)
-        struct page *page;
-        void *p =3D NULL;
-=20
--       page =3D kimage_alloc_control_pages(image, 0);
-+       page =3D kimage_alloc_control_pages(image, 1);
-        if (page) {
-                p =3D page_address(page);
-                clear_page(p);
+-- 
+2.47.0
 
-
---=-krq2nNCAWzYLFYkInkxm
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
-ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
-EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
-FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
-aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
-VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
-aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
-AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
-ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
-QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
-rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
-ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
-U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
-DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
-BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
-dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
-BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
-QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
-CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
-xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
-IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
-kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
-eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
-KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
-1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
-OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
-x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
-5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
-DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
-UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
-MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
-ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
-oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
-SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
-xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
-RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
-bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
-NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
-KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
-5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
-C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
-gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
-VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
-MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
-by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
-b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
-BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
-QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
-c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
-AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
-qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
-v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
-Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
-tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
-Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
-YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
-ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
-IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
-ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
-GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
-h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
-9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
-P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
-2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
-BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
-7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
-lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
-lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
-AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
-Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
-FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
-BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
-cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
-aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
-LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
-BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
-cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
-Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
-lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
-WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
-hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
-IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
-dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
-NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
-xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQxMTI1MTMxOTQxWjAvBgkqhkiG9w0BCQQxIgQgaR2rA6wJ
-qZX74hl8ls96Hy+84uD5wgfcYFhfk3xgEU0wgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
-BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
-A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
-DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
-MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
-Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
-lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgBSGLLLfM5fkJ+weqGsxF9tcZ7I4Hop450U
-uGrQiquOmq/e5gPf3BlGCWr6O8PmIz5UsYXecDYU5OWWsKNykUgWG5sf8zW99bMpHcoAcSrpdgNw
-DuxyDksVlX/oIFyOoVWf2pS5zymrOGmaJL3hLeA/1uqQ0Y3A+gDB9gfvInJ5QyC839wzW7HbDO/O
-MkOtra1BzjPLI5OFef92qYZj+OFPj1MXe0FbUa53IozaGWKtbzO0hm9Xt3aotuSl2Zwu6Wbu9wy0
-kF1pFLrUJa1itPwbRLHQ9PV3to2pcZvuds04LDdpDm6XAJptwHdNT04ET0L3Tq7E//pBFn+2/yTY
-NvmY16Y0ARi4Pez4LmjdYxC11YThhLvYPljPrlwAECn8s9UeRMoA3TQR+N2uat/14VWitp7Vboge
-LUIe3uiosfgkM41zWCWsyNyh5fcr0yS7DaD1kc8ALywhJkbdVoKHWhbZXndGgeaREYTSp02ulyfZ
-aA9reTfXpcGUm6G0H0zW2p66R2kwgN09iRrimU4Z/yRLJQqlF1INfdeLjTcltpAIaAyIsTTPb0mq
-7nAzvmTeyo6sTtKzEi8FuptlccotenkuGPiO8aKCA3vVE4QNwkTqxdHFChDJGXKclL8HyEP1wZWG
-v95bYOgamrykTYrxhhCwi6xwVIVysVYXvGu7UDLi3wAAAAAAAA==
-
-
---=-krq2nNCAWzYLFYkInkxm--
 
