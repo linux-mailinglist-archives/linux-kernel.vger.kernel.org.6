@@ -1,149 +1,87 @@
-Return-Path: <linux-kernel+bounces-421340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACE439D8ADA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:00:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BB3E9D8A55
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:30:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D499FB2CF69
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:59:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FF41B3C912
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D819B1B412E;
-	Mon, 25 Nov 2024 15:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LVJrgIHv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C5A1B4143;
+	Mon, 25 Nov 2024 16:00:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D041AF0B6
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 15:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E065C22EE5
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 16:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732550376; cv=none; b=ndEAq2ZIIicJ99AHql/6Nxiu6VG0/wGdwQ85sdcQPoNJCZH/AxiLyJinEb5eQYaErnUw8le0QmwDGsjW6jfDdEzcKRlfdKWKQDz9HGsHh0KcLu/4Hd+V04lIm6L4huohqEMhme4y2nk7LzrAWWbkYEzfgk1aSjH4tlrhDiN9KXo=
+	t=1732550406; cv=none; b=Z+gPN0buruo3xrBH16tF8r6XCAgQvsOxYNdoO7xnTiGyu/pY7mpj820gCCuVqBYgcdbdRGjv6unC9tbk1UAOmUVf6nSVTXtXeg2YYmwPyuRRanqI0uT2Xn4vVWx/jKrX6WMUJjqmkebKtUBIASqEErsO5KwGhhVLlQnMIs4DRVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732550376; c=relaxed/simple;
-	bh=bXxhz3W3PqXEJiRAVx8v6FyIkv3y1QoHxIoqaoPZfkw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jdKXPS2bnrALm/Jpu60GspLyDJhMzgAzOQBb0WniQO3aXIvRRz4nrOo7Z9svYLgYAfyTGs0hf85DOuL7sk14a5Y8L4JPH5rAkGnRRR+DSCLe+uSX8blF8JOppVeg0JaiMy1UEFo7VWdECFvwXRGLyKvTaEyddtkeDy4roOPB8Nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LVJrgIHv; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732550373;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oX8scFsQuUadSRQ+mI03J3eg8Bz3TleAfCszq7nUkh0=;
-	b=LVJrgIHv+tmVoLqJRuQWt8yNODB8OCxoX48Qi+3JhW12GEmf2p0d6d7b/Hztn16T/PxHQT
-	rzCqDJMAuRGbcpP7Qp5Ddjlvxaif8+BR4LzFvY7x0g94KLNNvmmdbQSbdR5jv3cF/mPmMT
-	BI9rAgakqVHikNTBb0C5RtxOA5IjVDY=
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
- [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-513-p3C95zwWPWS7x9SvM9ZSgQ-1; Mon, 25 Nov 2024 10:59:32 -0500
-X-MC-Unique: p3C95zwWPWS7x9SvM9ZSgQ-1
-X-Mimecast-MFC-AGG-ID: p3C95zwWPWS7x9SvM9ZSgQ
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-841a3f2aebfso78248439f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 07:59:32 -0800 (PST)
+	s=arc-20240116; t=1732550406; c=relaxed/simple;
+	bh=rCA7tN77oSxn4nSUCyaEPhyJDQp/cbJyX3dpxCtfg0s=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=AxQgJEfeHRnQlyn9CLLO0srbViQ8gUA8U+lebZ6vxVaITuuKhxMq+j/LnC3veLOl7I3QyADdc4UVcuF764pCH8n2/V+8EN66P1jApHbq3XCz2EreJLnIgZ7y0+nDBAS104NzmzWh7eUHEY6/R0HbJ9WOU324RLOBSrmY7LCfhec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a75c23283cso38219815ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 08:00:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732550371; x=1733155171;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1732550404; x=1733155204;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oX8scFsQuUadSRQ+mI03J3eg8Bz3TleAfCszq7nUkh0=;
-        b=eXqbF32GT1eV0c+MFJbpmk7ai076YT3eMLXxODb4XGpiM9gmDiGX9yndOq0cdMjk9o
-         vWxW6ZsZHcfJAOaO2UiLv3SQf/BdMxZnqqon7f+spio8XT9jQEdxKxCwI4VMt07otjvu
-         GoC952H5lEfXSBSIyOfNoDh3awRgivlFNRij755Bfup001EFQP//RbaLBYwdXSlcLTCn
-         PYvI1IyJE5NcXOkgY9TZyjMzI2mg/MyLVBzmB68Ft3k3jtkY6gL7lOQRRWC1jMB7NeJ6
-         7ZOhSxF2K1z8jV9Y/SDUpL+EEwxPoLo3mC6VUMpkEwEwM8DAqRAbsDoKUQvbAklTcvVp
-         63aw==
-X-Gm-Message-State: AOJu0YyX4/EITZ/Wbqs7gVOZpOy1EliIOv2ApAq+fOJfPBh+ymX/FgVp
-	oiRS5TVdky3wZOisEYKIAekhTtz/emLnEwTJ+tyTsWOYS7zr0Fsx2vd3LrcJehO6d0NURkp+IzZ
-	Ia1qFW8BKrmFm5WMeHkwpmpCOVfSexyqA6e7jM0daZOXGaNx4/D9eiASmLEzJ9Q==
-X-Gm-Gg: ASbGncu8it/53gie/K1INUnAe0HGCj6On19q6LMo/xmWd/hRg0dSI9D2Jfu34WkIwwm
-	MkLoUO/hdcyhX6MPOgSA+gvF9ww4ILXHQl8jCp1k7mOcfeIvq3TLLGK5pBY2RNZX5wmuh6pao9W
-	kZPSuILT4uQKApNUvoUI/jKrI1iA2NtKa+V4CGNX+LpoaUgVb4xHgMuLO/fEkS/yy2egiSeAI2g
-	eCe+1mPeOErVxVq8sCK/yk7twsDPOsDPwggTAhfN6pEMmFK2VvZUiUYTUzmGphtvfJTRham7iPC
-	wqi4pNTV8rA=
-X-Received: by 2002:a05:6602:2b04:b0:83a:c0ba:73c6 with SMTP id ca18e2360f4ac-83ecdd0bd5emr1232839739f.11.1732550371506;
-        Mon, 25 Nov 2024 07:59:31 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEwkvzDL2G70N7j3gyA0GMId6fwzgZY0oXJrjHNI1Hm8/9p5wXTfiegtUAepZaCHcyr87RWgw==
-X-Received: by 2002:a05:6602:2b04:b0:83a:c0ba:73c6 with SMTP id ca18e2360f4ac-83ecdd0bd5emr1232837639f.11.1732550371237;
-        Mon, 25 Nov 2024 07:59:31 -0800 (PST)
-Received: from x1n (pool-99-254-114-190.cpe.net.cable.rogers.com. [99.254.114.190])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83ecd419260sm183641639f.48.2024.11.25.07.59.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 07:59:30 -0800 (PST)
-Date: Mon, 25 Nov 2024 10:59:28 -0500
-From: Peter Xu <peterx@redhat.com>
-To: stsp <stsp2@yandex.ru>
-Cc: Linux kernel <linux-kernel@vger.kernel.org>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>
-Subject: Re: userfaultfd: two-step UFFDIO_API always gives -EINVAL
-Message-ID: <Z0Se4BuVfqwjeCWV@x1n>
-References: <2d35e5f7-2edc-4ef0-b71b-82186c0627b0@yandex.ru>
+        bh=LQ5HUgOXbILcqXU+BL8itF7OQWQ7AptcHc14ASFyUaA=;
+        b=mbYnYlWzZwcGznL251ra8DOMXWrH0jIbqfBSA7CJhMWuA/cX4Rl7dSJR1tsFcqMvf1
+         r4LULSZN3W8ngReYXNn+Y0/XXCnEMKv1HwQRTxykGujW8SuPd4bIK4Hwc5eCMfQzT5cj
+         Z8KecYL/0856XQ5T5wlNccR/r/GPXzjBE9bNOBAYex3d13CreE8WC5uyj0WuhlTUSVm5
+         7rMd+nTCFwTUSi5VOXddj3/ipFe0TzyLT8SsgU+/LJ1/skx37NhRVnEyC6tZnK8wLEWq
+         42CNYczhSB6jdPKFNIdzDR/fvcXIyr4xhGxfhl37mLzEeKT/gDzPdohz0aQXq6Jp5oLR
+         d26w==
+X-Gm-Message-State: AOJu0YyeQgKzkgfVrnJdzBCRD5KquVrnJnJwwYCVbFOYnCXjg2Qoo6V1
+	2ulz9BySFNeKouX4n1TNmhrSdBf2F2IiCgeBfWtKOqQKKK3fOBjQ6+sO81pzfDAdJJrz0vtkyXe
+	0QkHcXVZm18CmnaR93O/zYMa6v84H2ygQ8mPI4pYcg4bVL4hd3vTlYys=
+X-Google-Smtp-Source: AGHT+IHIb7s4QFOpJPxES8aDXyROD7H+PYUYM8HigaeeIl4gnxog0frKtM68oofnuvMKeonDgmxZEazp5VfDO3rF+al4zfPEfHan
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2d35e5f7-2edc-4ef0-b71b-82186c0627b0@yandex.ru>
+X-Received: by 2002:a05:6e02:1a8f:b0:3a7:a58b:557e with SMTP id
+ e9e14a558f8ab-3a7a58b693bmr73872635ab.12.1732550404057; Mon, 25 Nov 2024
+ 08:00:04 -0800 (PST)
+Date: Mon, 25 Nov 2024 08:00:04 -0800
+In-Reply-To: <21c2fc3f-e55a-47bb-a51b-b53e5cab1e67@suse.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67449f04.050a0220.1286eb.0003.GAE@google.com>
+Subject: Re: [syzbot] [media?] WARNING in iguanair_probe/usb_submit_urb (2)
+From: syzbot <syzbot+ffba8e636870dac0e0c0@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-usb@vger.kernel.org, mchehab@kernel.org, oneukum@suse.com, 
+	sean@mess.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Nov 23, 2024 at 06:13:01PM +0300, stsp wrote:
-> Hello.
-> 
-> I tried to use userfaultfd and got
-> that strange result: when I first do
-> UFFDIO_API ioctl with features = 0,
-> it succeeds. I check the needed
-> features, and they are all in place.
-> But on the second step, where I
-> request the needed features,
-> UFFDIO_API gives -EINVAL no matter
-> what features I requested (or even
-> set features to 0 again).
-> 
-> A quick look into the kernel code
-> suggests that the problem is that
-> uffd_ctx_features() doesn't check
-> user_features for being 0, and just
-> sets UFFD_FEATURE_INITIALIZED
-> with no features at all. After that,
-> userfaultfd_api() should always
-> fail with -EINVAL when doing this:
-> 
-> ctx_features = uffd_ctx_features(features);
-> ret = -EINVAL;
-> if (cmpxchg(&ctx->features, 0, ctx_features) != 0)
->         goto err_out;
-> 
-> But I haven't checked my finding
-> by rebuilding the kernel.
-> So is this broken or am I missing
-> something?
+Hello,
 
-I agree it's slightly confusing but it's intended.  It's like that since
-the start, so I think we should still keep the behavior.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-The userapp needs to create one extra userfaultfd to detect supported
-features in the kernel.  To use it after a probe request, you'll need to
-close() the fd, redo the userfaultfd syscall to create another fd.
+Reported-by: syzbot+ffba8e636870dac0e0c0@syzkaller.appspotmail.com
+Tested-by: syzbot+ffba8e636870dac0e0c0@syzkaller.appspotmail.com
 
-The kernel cannot assume features==0 to be a pure query, because not all
-userfaultfd features requires setting of a feature bit. E.g., the default
-anonymous missing traps doesn't require any feature bit to set.  So the
-initial UFFDIO_API(features=0) is the enablement of such feature.
+Tested on:
 
-Thanks,
+commit:         43fb83c1 Merge tag 'soc-arm-6.13' of git://git.kernel...
+git tree:       https://github.com/google/kasan.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=12b56530580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=58b000b917043826
+dashboard link: https://syzkaller.appspot.com/bug?extid=ffba8e636870dac0e0c0
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11d465c0580000
 
--- 
-Peter Xu
-
+Note: testing is done by a robot and is best-effort only.
 
