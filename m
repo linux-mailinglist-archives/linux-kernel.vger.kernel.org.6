@@ -1,133 +1,148 @@
-Return-Path: <linux-kernel+bounces-421021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A19649D85B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:56:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAAAA9D85E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:07:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66C482879F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:56:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5992B2D6F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F7F1A7060;
-	Mon, 25 Nov 2024 12:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D62199947;
+	Mon, 25 Nov 2024 12:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GU70/2Cs"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j+KkSO/s"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B541714AC;
-	Mon, 25 Nov 2024 12:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432201474DA
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 12:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732539402; cv=none; b=O5vyZ3XgPhx0wvor8pN+2BYFPNcjAmHjkuFfXVaFnYjzYYJ8OKb41xleeIDXZO2ZAatkLEBC/Q7VzErpwd5sih1CuC6u1OTpFjM7/si0Pdqdh5cJ85xxTdAJq+5Jp8J25l/yDEyKW9eN/iTZyqhHo4EaB8SBRtxibtTAtRwNNZM=
+	t=1732539476; cv=none; b=hBXdk+LqKYQLtiaijGSR7BHhGkon4md4ipM1tRGlKSwFnDwPKe5xORrcoa/N1/ZncgPGEVxnypaQM6bLdAYKyscPxzSMLH27jc4Wl2PPsKKQgAXcBE5KYancpW+QJ0wWEjOtWJk0sgrUdBF75/yM9Cuaos2751R5lO1omGTarzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732539402; c=relaxed/simple;
-	bh=xGiMg80bGNBrz6+/g1/qSVQHRAxmonKsOc2Lz3uatjg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fSzK2+EYTpU0gCQBo4H0Dy0WgcKg09ZWw7+b3s6Vb+LNStp/vtthkHy1YjTupYv2MNAjbfn5PgfSMjeuIp0Gu1ocpnxxSaiqNcr4WoiqHL/p3r737rQx7bE/OjZXsFL45Qs0CLwLLqsOdNadjn7XxQX86MjXtX4LBMWBfO2FRqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=GU70/2Cs; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F2499A2F;
-	Mon, 25 Nov 2024 13:56:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732539377;
-	bh=xGiMg80bGNBrz6+/g1/qSVQHRAxmonKsOc2Lz3uatjg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GU70/2CsBjK0UFKmlbEJMBlNqm250ISezFp3wVWprbgKmOpqeNaDDCaJfZe8sCkYg
-	 YOw2AIwOP4DYV8WTNhRpA4G4rVkpcVKQPgWV8iG/C9lTOkdMtYy0hZH9IWJinEv+u9
-	 aFFE1N/SFki5b2+HfRw2KKcpVXNESPHw0ryLp/ao=
-Date: Mon, 25 Nov 2024 14:56:29 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Ricardo Ribalda <ribalda@chromium.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	Yunke Cao <yunkec@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a
- subdevice
-Message-ID: <20241125125629.GB32280@pendragon.ideasonboard.com>
-References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
- <5b5f3bb7-7933-4861-be81-30345e333395@redhat.com>
- <CANiDSCta62P5+1aR9Ks8c6sd3_grCV3C+Le=UjKGkiohyf0R2g@mail.gmail.com>
- <20241110151426.GD6002@pendragon.ideasonboard.com>
- <CANiDSCuRbOEhWi8WtJpJSm5SOjzTRzpk=OTOV_jwbhUQMoXszw@mail.gmail.com>
- <f2638853-6c0a-49ee-9a80-28fb774cc678@redhat.com>
+	s=arc-20240116; t=1732539476; c=relaxed/simple;
+	bh=NmAtDEeeHIbvNgfXMeLVH7ObwbLrSZk2z7XkoWcaSms=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=N9ed+w+XKdJKoucrMoPW2Nk72nPzqElUzB4zGHWh/gdkOmoqcI9Sh9gIPjT/giemC7qVAeRM5rSjj1gstzgptNR4qf1zy75bTLMa5YZQyKCVk/9VWq0J7uBxcWzDWG/4tApf1OrpZAhVqLcuuR9UDgqFp3B6r+jvYs10EN2CEQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j+KkSO/s; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-432d9b8558aso30721385e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 04:57:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732539474; x=1733144274; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LK/o3FUGaKRZErsXHi8EyRs052osGciSWNJJ6Un26Ds=;
+        b=j+KkSO/sRQXLuWXPraVis7P3zDCOWFMOfi7zlbZVM8mlGWELtg0OAJgaIlkMwA4jZ8
+         cyWVh3mtMD0udmxaAlyqXORUgzSXzGVgjzvbF+nDbVgBTA1c3qD64qlzMqjNqZjgGccs
+         43X4MC4HgLJNUgPIujSGZHootPUEFhg+1F3Qsu1XC+P/qPnfL+51TB+cuTwgBZ7Ab94Y
+         2anvfNL1NfhlhWt6wn/4KYvkPeSG/yfvGsywVA5MbUDmK1iIo4yY1aXALukUCiJtFcD2
+         hCD4S/IdFC+H9aC383NRalr+ZDow7V0SbXSHhyDKzihg5YyLs1zKGfZDnaTMSLLA/Nqm
+         k7VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732539474; x=1733144274;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LK/o3FUGaKRZErsXHi8EyRs052osGciSWNJJ6Un26Ds=;
+        b=l44GYPIr3j9Klnfsapg5AoKzdhv7lpasmEymsNXrKAo5UjKU0db5KrDL8Sk8ey5cM5
+         8xGbM0Hky+ra2czFPf73RkA47g65V4FSD6MEGkG+5118Wg89DELYUuaQJTBuTs+rqsGE
+         5lvUesdlxnMg3bI7hHNOgaDzShLUCN98uDWuDXlTmDWRUsneq116tLEdEcoa91j2Z/5R
+         c0qjH2hh65wCs0A2P0miIhHTcmXPRXnxCGwSCTJqWCX5n0Twnr92njK7Qk6VOgrjl8AR
+         pr+mZPZ+xEyQqTPQ2QJZlSLZyqM34fF7X0jc1k1fj5z2QMOqwWowS0iARACDRD8spqb2
+         iLKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGWXW5/wKBAy2o2VXMGSI7A/hCZj36YfERpsfRGZ/deRut9d+T/pKnhfP6MNzVc+icIBc2u1JkPF8N44U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzS4yaa9w+Zgr12rU1uD52XKwf2qqz/TrpDX12hW9dRKXhCAAT8
+	BSO/FzGdPmRRHyX2dZAWFnDpEdi0pUKbn3KeUwg9V0slF+RncvMSgBRyVL+OyWQ=
+X-Gm-Gg: ASbGncsHr1qeRpKy7KcdfOL2VKvViw8BdJBemaUosEEJjSbEhYu6CrlYIiydaTTWJJh
+	M2Ojvmm3oG5EZQB+ola2+WcEBmHHJ9oDY3mbz3J6ablSC3xxeS0Ali9tw19WaHPUQjwyZDQc1xe
+	0SbycbVmK1rc1xYUuMbtXGAgCuFZxjq7xfIVcSnzbJF+IIXHGG0JBzNYwgW3ror83JIbUsYmLhB
+	/zwwPMOQRUNoS5UEpP/tPUu24RM1Lut7UYp3Il1TFqu8ik9A/QFsEd445PnJv2bLSJ/z41Bl+a6
+	evBUwscJgMMxBJ/u9nWoNkGi5pg=
+X-Google-Smtp-Source: AGHT+IHp9ZbYEEuOqvzmzN9bYFgBoyUQCliRxucIR2i6oG6nzBgRHtwS7cuLaCKRHjn/8s+t8OKggQ==
+X-Received: by 2002:a05:600c:1e1e:b0:42c:b603:422 with SMTP id 5b1f17b1804b1-433cdb0b504mr101998665e9.8.1732539473751;
+        Mon, 25 Nov 2024 04:57:53 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:9dc0:6c46:415c:5f8b? ([2a01:e0a:982:cbb0:9dc0:6c46:415c:5f8b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4349dc19fd3sm52076065e9.39.2024.11.25.04.57.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 04:57:53 -0800 (PST)
+Message-ID: <c6b0273f-16f3-4469-a4b8-9564f7355400@linaro.org>
+Date: Mon, 25 Nov 2024 13:57:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f2638853-6c0a-49ee-9a80-28fb774cc678@redhat.com>
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 2/5] gpu: drm: adp: Add Apple Display Pipe driver
+To: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jessica Zhang
+ <quic_jesszhan@quicinc.com>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Janne Grunau <j@jannau.net>
+References: <20241124-adpdrm-v1-0-3191d8e6e49a@gmail.com>
+ <20241124-adpdrm-v1-2-3191d8e6e49a@gmail.com>
+ <10d0aa88-de2e-4856-a137-301519e58b2d@linaro.org>
+ <CAMT+MTRWZWj=3AP7wyooXr49-W4vcm0ZbAoqPyEuNkQBMOaJfw@mail.gmail.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <CAMT+MTRWZWj=3AP7wyooXr49-W4vcm0ZbAoqPyEuNkQBMOaJfw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 25, 2024 at 01:31:49PM +0100, Hans de Goede wrote:
-> Hi Ricardo,
+On 25/11/2024 12:24, Sasha Finkelstein wrote:
+> On Mon, 25 Nov 2024 at 09:50, Neil Armstrong <neil.armstrong@linaro.org> wrote:
+>>
+>> So this controller only supports a single mode ???????
+>>
+> Most likely. On all devices it is connected to a single built-in display.
 > 
-> On 10-Nov-24 5:04 PM, Ricardo Ribalda wrote:
-> > On Sun, 10 Nov 2024 at 16:14, Laurent Pinchart wrote:
-> 
-> <snip>
-> 
-> >>> Can we start powering up the device during try/set fmt and then
-> >>> implement the format caching as an improvement?
-> >>
-> >> This sounds worth trying. We'll need to test it on a wide range of
-> >> devices though, both internal and external.
-> 
-> Ack, as mentioned in the other mail which I just send I think
-> this is worth trying.
-> 
-> > We still need a plan for asynchronous controls.
-> 
-> As I mentioned in that other email I think we can do the same there.
-> 
-> So basically delay powering up the camera from /dev/video# open till
-> the first moment we actually need to communicate to the camera and
-> track per file-handle if we did a usb_autopm_get_interface() for
-> that file-handle and if yes, then do the put-interface on file-handle
-> close.
-> 
-> > And we have to decide if we stop supporting the uvc button (maybe we
-> > can start by moving USB_VIDEO_CLASS_INPUT_EVDEV to staging and see
-> > what happens?)
-> 
-> As I mentioned in other threads I do not think that the button
-> only working changing from:
-> 
-> "only works when /dev/video# is open"
-> 
-> to:
-> 
-> "only works when streaming from /dev/video#"
-> 
-> (or actually only works when some action on the camera which
-> requires it to be powered-on has been done).
-> 
-> is a big deal, since most apps which open /dev/video# for
-> a longer time will almost always do so to actually do something
-> with the camera, at which point the button will work just as
-> before.
-> 
-> And for apps which only do a short-lived open of /dev/video#
-> the button does not work with the current code either.
-> 
-> TL;DR: IMHO it is fine if the button only works when streaming.
+> Ack on all other changes, will be fixed for v2.
 
-I'm fine with that, we can reconsider if people complain. It would be
-painful though, as it could mean reverting everything we'll build
-related to power management from now on until someone notices the new
-behaviour, which could easily take a year. The risk is low, but the
-consequences serious.
+OK, so instead make the panel driver return this single mode
+and from the display driver just filter out anything that's
+not ADP_SCREEN_VSIZE & ADP_SCREEN_HSIZE.
 
--- 
-Regards,
-
-Laurent Pinchart
+Neil
 
