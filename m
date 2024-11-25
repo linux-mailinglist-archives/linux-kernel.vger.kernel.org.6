@@ -1,104 +1,112 @@
-Return-Path: <linux-kernel+bounces-421622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5358A9D8DAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:05:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 637469D8DB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:10:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3F43B2962A
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:04:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A6781696B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63481BFE0C;
-	Mon, 25 Nov 2024 21:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8842F1BD51B;
+	Mon, 25 Nov 2024 21:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="YhwAETQr"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ifscGWLE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FBA17557C;
-	Mon, 25 Nov 2024 21:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2CDC17557C;
+	Mon, 25 Nov 2024 21:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732568681; cv=none; b=kYEJpCX0rbTUf33eOVXcDsOAztGaqD0+df/V25hPB/x14nhAGC5aD2TsrMQcULR/BrLeFb7iE3KYJcFf7pKnfA4C9luk6rI4lijLbKYD3VoE7DwE619cLZtp+KUO6xEDBK+fGb8CfB1jb/9rjrA6bxyZRDeNhm9+XpEhLStIn5A=
+	t=1732569044; cv=none; b=mBEBtjGTdSh1lvXHGscnqPNk6DzmLn/KLrznDGn9oBG3upjUFeQZOo+zNDb/LA6KgXXDMKlNkFqk/TD2JVJKiNMbUJBJtav+X1s0YqLHQ9hmXi0z7twqA+1SinuqLw3VVIuhWnycjbrVikX7XCZvueMi+3lamQhnvi2tLjezz1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732568681; c=relaxed/simple;
-	bh=X/sAH1gvGBO5cJbUmKoelplAjOvfj+hleCFSjBiMvBw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=W3C50oI+TZuOYYuos/OA3yBEsQokXWcxeJMVUatdGVlLPaGK05nATCHprhptozW6jrT81ThkpwvrJkjXGLj3aX1vx2+AlB3VLAW7ffQjofyfU9XWdEwkErDSqF1CX33gGlACi7OiAGqHUB1dNNCWwG/Nzm9s4BD1iU3AJCvMrrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=YhwAETQr; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1732568655; x=1733173455; i=markus.elfring@web.de;
-	bh=u0vETTB5T1hx/wbZtMoorZhHTLPe25PZBNpijxuojDs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=YhwAETQrwyeWGuJK78rxLQGOy2BvbF/XeGU5xzP/3l6vACki3euZbSXYQDZJKb9X
-	 TzizoMqTHHaIxS+lIt6nP8cZ9zzJMGpkcNmrmShm4FfrCFwsc6lqYgNPuOoE6MGqV
-	 ROQkR9C2npOK10n7j7SRftklfZYvjQwTx+ovQzplqVWezdbSnm/gyX0weegvEbOGc
-	 GW6IIXyozKFvMEbrk5EVeJAe/sfUfaXjZ4K/4+jyo12xVyBJY0sfJqX2/iRuSd2Qt
-	 NnOjs+GdVfy0DEgU7y7UGoJwPyJQ/uEk2D9FYGdvpbHp2kM2FwyNmguTT31slVfM1
-	 mN3Ot9c2jL8YlGibDw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MTOha-1t7skF25QS-00UAsM; Mon, 25
- Nov 2024 22:04:15 +0100
-Message-ID: <e9fc95c2-1891-45c3-bdf7-ec67426c0ddf@web.de>
-Date: Mon, 25 Nov 2024 22:04:12 +0100
+	s=arc-20240116; t=1732569044; c=relaxed/simple;
+	bh=U+Qsi7cWJv2e5EGby/fr1Mg1ssqDOJaPBL8zmp+PBGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jRN+wRhOc5nEMd5oGj6hEQG7IPtdS4aDnW0u+cVmIwTRpkT/SaRNcqaGYcYU7scduS2H9L3z3e8glg9Xn02VwO5sbEXWumluCmUPm1qigBVdXkDQbw+QSKph6GvWQfwNT78S5/iUQM8c11PHqJACWTqkEVT/Y9zLlIEchI2etAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ifscGWLE; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732569042; x=1764105042;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=U+Qsi7cWJv2e5EGby/fr1Mg1ssqDOJaPBL8zmp+PBGI=;
+  b=ifscGWLEkQnytfx0+krtGvAyw5NsF98jy/oIHCXakoCVRXNk68MjaBnU
+   kXlQsJYD/0EoBbC7tvpSZHOBjOCGU+zTKARqCZbjCBd3xk/QzEe8s3XaO
+   mbOcBoN7lZwAb7gqGgyTaoEIai28taGNJtnWhWo1WOMY/5dWl3xMGqMdi
+   ZjLG4WhN+/T/B04Xon8iGESzUXX29G/UFumT7yQNJ94sHnuCzWiULIs/n
+   8ajxZCJw32gkWESIIpFX+1wfp45PxKOWU7/AGPfLvKvK1I+V/ozZZjnvb
+   ue88DSDaSyMJDhB3OFuEBN2qJKLIwNaA2aajxb9AOV8n6I9ocazGM31/W
+   A==;
+X-CSE-ConnectionGUID: XKndI+zJR8azrd3JQ6Qbzg==
+X-CSE-MsgGUID: FBW+2jDbQLeUfGiuNBG3WA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="43767151"
+X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
+   d="scan'208";a="43767151"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 13:10:41 -0800
+X-CSE-ConnectionGUID: CPxtnh7URGmoGWYTsVyfXA==
+X-CSE-MsgGUID: rXBlmlIvReujEIk74uF9zw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
+   d="scan'208";a="91570578"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.110.188])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 13:10:40 -0800
+Date: Mon, 25 Nov 2024 13:10:38 -0800
+From: Alison Schofield <alison.schofield@intel.com>
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Huang Ying <ying.huang@intel.com>,
+	Yao Xingtao <yaoxt.fnst@fujitsu.com>, Li Ming <ming4.li@intel.com>,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
+Subject: Re: [PATCH 1/3] cxl/core: Change match_*_by_range() calling
+ convention
+Message-ID: <Z0Tnzl7fPmZkj7zp@aschofie-mobl2.lan>
+References: <20241122155226.2068287-1-fabio.m.de.francesco@linux.intel.com>
+ <20241122155226.2068287-2-fabio.m.de.francesco@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Zhang Kunbo <zhangkunbo@huawei.com>, linux-fsdevel@vger.kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: LKML <linux-kernel@vger.kernel.org>, Liao Chang <liaochang1@huawei.com>,
- Zhang Jianhua <chris.zjh@huawei.com>
-References: <20241125123055.3306313-1-zhangkunbo@huawei.com>
-Subject: Re: [PATCH] x86: fix missing declartion of init_fs
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241125123055.3306313-1-zhangkunbo@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8TCPHq7GQfcGQuJ3K7cFYdTm4SPrbLaTRSc3elRZ2VFnH5/6Cet
- vAuPtSZd7Sc3jpyzAB/hB6jaELwuDyLkMy3dcmSVG5XtpNJXL+DVFWv4OWCjMT9kvUVn12d
- AtQ/s1c2AZ+OYwLC+DUZa1hksmNECFVF43UFjvTpC1tzFLxG1/dnfMbIaAqYb0p8lOCI2Ac
- O+g9cEJK5I5JK1R8UZ4Eg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+w4bEmmUlIE=;NRu6obdZE9jmQqkMj45l72f5Wv8
- eJtEsANUiKqu4zbbQEnAkwOgOUM5WOiwLgzGJoeGYVa5wD+ngLbEyyv/gv8eJKEydLFzo3LPf
- 17wTd4WuP7HXKmV/ubi4aBbnCSdYfKMts8575d8t/FLOItP8s6OfKaLGpQ41ZCRids53wPIVV
- pHoJF5US9aXNVFAAnJJ3b5lb184sjnEMt16BCq6lR8gCTmyJm4xMnMJ8OQb00eb1O8kRYMiW/
- 7Pj2jonFvjO4yUfxKTK5dZKsTuHOVwZ5H0Xw8NdC3SY9tTxFHxhBaywEw5uZzQOec9VHeVCoc
- tEmLJluqkHXBtoBsREAq9yBOuiD3InrJlis0dNFCWbr4XAZDC0+o9LEQZfo0PVUoQt7S/7TKY
- mK3OsJe2kmdR+6BapIoWTjRe1RMfwrHxIlh5/sQb0z99V+QXdlvxN4WTqbi+7bXHMdBVtXCBR
- lbkksSLYFLW718ex7jsdD0N1e7hhz78+/+R8GatGWmz9U7gZ2df8e505woVKz6uWeRTgn8s54
- 77Y9Y3jQnF1ByXxudAxR/hn2Lt31cjTx2IjMgzq7CxEHITU/+QAqDtAc3jk2b+i6ClL55Vsnn
- HdZrDrKY4wHVi06LXSKk6lfdln3sm6x4JIdDzSRYYCLUdlOF9N7RVRGtnwAPH/VP2DYaABYhq
- w4JqUlUOii3sRxR870zVl7YlFpj7x0G1YjuUOVqbAEvMO1jqVaM+jcn3FtQmhAxXB1WcI9SyJ
- 3Aqpoy8B5kBknzfXVs6OUC2ockz0EA29Nydgw9udvehzWHb5nKM0aTHtbv8z3fCCPty0B98f0
- hdeDQdjKiTaoap6Amsi8fgS+f9L2H5PHOZk6NdEvy2I9PeWzkByMfw4k5sM5041SfmSAj7wEO
- HiNmdgmb4lDfHJdGY2+w4EuqFoC3B45KODapxVSY8qZ0DZgl6d69w9vst
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241122155226.2068287-2-fabio.m.de.francesco@linux.intel.com>
 
-> fs/fs_struct.c should include include/linux/init_task.h
->  for declaration of init_fs. This fix the sparse warning:
-=E2=80=A6
+On Fri, Nov 22, 2024 at 04:51:52PM +0100, Fabio M. De Francesco wrote:
+> In preparation for a patch that supports matching between Decoders that may
+> have larger HPA ranges than their corresponding Root Decoders or Regions,
+> change the calling convention of three match_*_by_range() to take CXL
+> Endpoint Decoders as their second arguments which later will be reused by
+> two new functions (arch_match_spa() and arch_match_region()).
 
-Please avoid a typo in the summary phrase accordingly.
+Suggest not telling the future, esp future func names.
+Here's a suggestion:
+
+Replace struct range parameter with struct cxl_endpoint_decoder of
+which range is a member in the match_*_by_range() functions.
+
+This is in preparation for expanding these helpers to perform arch
+specific region matching that requires a cxl_endpoint_decoder.
+
+No functional change. (right ?)
 
 
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.12#n94
+Code looks good!
 
-Regards,
-Markus
+Reviewed-by: Alison Schofield <alison.schofield@intel.com>
+
+snip to end
+> 
 
