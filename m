@@ -1,158 +1,269 @@
-Return-Path: <linux-kernel+bounces-421255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D45E9D88B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:05:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66ABF9D88D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:08:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D42C1B45857
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:03:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AC10B471D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6C21B3920;
-	Mon, 25 Nov 2024 15:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75851B0F06;
+	Mon, 25 Nov 2024 15:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HDYJEQns"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kw/bRwvA"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE31714287;
-	Mon, 25 Nov 2024 15:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92EF1B372C
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 15:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732547000; cv=none; b=ihp2YsU7uOuX5zD4ibAgSr1jp76M0W64vGc8XA2CCx4EqftUWzbkzc4tARjpeoCDCavIhx7qs7BYTLZEGfKcTxPRW2QWwayZXfYYxqqBDQtPCrNK5XziXxmMjU9xbNflooo6HwRiWtGv207CfuOKJXdAd6qwCOPYTeWFHIOaDys=
+	t=1732547011; cv=none; b=GQZP7x2i9JByTHC/TLG7DytbM5WHeZRb6IE0utLAi8oJd5djOdMcpI4MMmIhBWlyq0SkalHi0Td7C2ZHNPqQ4/OkgQNftvb3oDKy1aZaPjJeeYFC4wKUVhTucgNtiFEG5GMq6gIEiaa5APZ+NatL+fs3Z/XshHlsvksvH+uWEBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732547000; c=relaxed/simple;
-	bh=nzjB10c5MFrIbMQ5fSsvjDa9SRCVALQn1pK8pn1stnM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zzbyp5qfzfCCbJ7NRgo58rmJMVs3LMCxGhXwtRPBB3A/A4biEK6U3XcZ4dya8ekQVn+xn233silh6bH0C7pLwuTiNFu0B7iBIDrDLRgjabgkMEtzDsAzh3R58DNI6ZYQqJbbTyQQX0Vw9mlJg8oL70vCNJnubg+m5eJuglIcmK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HDYJEQns; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7250906bc63so918969b3a.1;
-        Mon, 25 Nov 2024 07:03:18 -0800 (PST)
+	s=arc-20240116; t=1732547011; c=relaxed/simple;
+	bh=BYAPbifOGFMbT/oNeV5H8H8GoSCuhZDyr7rtHcDE4Ro=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Wglan2YdG2IgmzKTSKHvR+/uWIswO5D5lBXZT/Y+gTykGShh/RFQlWGvhVgfwvafthyENbP1tGcY+EGG1yxlzwhjEf4G4S7gNFr54tn07KpKYNP2oNxiJKc3xCcpjf9YVlhFPx9yF2bB+ooJtiyB51GSAyKmS6DIAEI9LFywebg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kw/bRwvA; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7b66d08d529so64515285a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 07:03:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732546998; x=1733151798; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Yfg/DccKnxi61QfwM43XV0/+/kR1JqIwdzMjek81aDI=;
-        b=HDYJEQns1f0UePAOK5OuKTZivCM8UUbGwo6rEoC8V8arMTi1id1/ouaCTiXNj5w/mX
-         EadrfYhdBaOHPo7wT+dd1g1Ij4Tb4qlS1DZ3s4icoCxAfJ7eImFzBAoOumQP1r2Ij1ek
-         0wyGdf6eExfDHjnprbwU7vUdYx+S4bCB/XZdZLTbhJlJ7rBaS90rMagVsEiNtuvtAKs+
-         VqV3oZafCd/pHKo22fYNn4AXUiiKCDBkRO8sjCgWxEDTkct/T4SHcxE5nczrCvrGffTt
-         yXZJzaruERzRwTOhjUucvlzE/hADws6pcRZVk5nJU6b2LL4FVhfguCdfOTyzlgivFOpT
-         mMpA==
+        d=linaro.org; s=google; t=1732547005; x=1733151805; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1PVBG0drlljsVkEBbeau35zte0zCftwnSF7ZEns2RkI=;
+        b=kw/bRwvA4Hv77aGFCER93CVQh453hqjA/JZ5EjglGsg+xl6uLiZ1dGnTpB2PnkVxx0
+         hzj+d/0rDSmkOX57CbOC7YV7yOzKXn8/+bVWPaSU6uociwTd+IwfV5287r59PUXZE/KZ
+         boB4vLQi0IWoxtxHh8rxXN3fCJNW9n1YDib6OqV3Vo/xg09Mwlp44pYSrTE4TLTyXvuJ
+         uhG2xU2B2MrpwlmfemEmAAOmvrjTvwaQ+sHnlxpL2GX4stubQ5CYdbQQN7XBmnhIUaDn
+         AGLQfXDuOl3GMOq4v9pMS01087BKOesyNwK3ekEznWdvVRFkEPzIAmOeTMu4tuV0H1ox
+         NCGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732546998; x=1733151798;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yfg/DccKnxi61QfwM43XV0/+/kR1JqIwdzMjek81aDI=;
-        b=cDmtOWm2lKq+GXJNqN0wbS+EmS7+AQb/aJ94pIYlEdxRlmUwlpAQfhhIN2pX4OsKM3
-         Wkhwt86lgbrsKR0gypY3G/yhsViecB0rkRdW/lCnCHpZYMlQ822NMQnlFre1X+UJMlUS
-         R4P0slafGhy6OPPwX3e1ComBxhqnk6AYFKWZPbIAW7kTnDV963YyKX/awghk24vGdD9b
-         +wn5DS3CVP3EErK2U5DskUh1WBPM8svbah9YfHQG5AAlR00s0I+QSRMDqiyzIfkgcGUd
-         tMuUDXKWm7s0YVj+59j0DWUZ9ROStiJJN/cpqJHgPc4TSqFO0G2SlkbEXNfDJQCyLNPq
-         RdVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWHNwPPwJwHVvm5RmNlTmB75ej1zKEapnXdF8equQblMRvQKxGDki3TfhcQH5HjdnLMKB7CXKxKaFwephIU@vger.kernel.org, AJvYcCX3ZZpElE20Pg+SuC8Dk/MxMcctaa/XsFSnK8+FZK0MCnR5MhW0cY/ljk8p+YAmHb8D0epWaFeJHwKM@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPTuCeo1Ny2WFEeZbX6IF4FI96bP971EZaVutZGfla/A2ZyohE
-	r+K9iX9UJSmsghy6gep2+KzNLGqTcY8QdUzbqpki0O2euhdu4GPW
-X-Gm-Gg: ASbGncvL1siTNYHAq1ygOrEuTQOEwz0uqi9VtoUTgWZIZlIFmg6LdKR8DdGh6QF95rH
-	9GVDbWIMxYXNHqNNsqIMLCpxAlHZKEHUFKvpcTH7UwGo97zjijtTjvSidJ2UH3w9qqhf0LWpqmW
-	QaUpZ5uS8BXDqq6KDv4BnPjQ7VoxvKSBlZx62CgW7cGzn9ug1puUWcwD0pMuxh9Rv6V4kDFGHGL
-	T+wRpM5FmfriYysZCzqZAB4ovmlb/Zpkj7hOSPwuJLBJKBvtYrMPVCT7pENXT5ESeay
-X-Google-Smtp-Source: AGHT+IHjE12H/V8uAi6iwwQjPB/2bgurIjFDNLyLcSpLqK6GVZz5bJq2Vpx8P1om4SM6YiL6JRFESg==
-X-Received: by 2002:a05:6a00:b45:b0:724:db17:f975 with SMTP id d2e1a72fcca58-724de984d1bmr23000668b3a.12.1732546997897;
-        Mon, 25 Nov 2024 07:03:17 -0800 (PST)
-Received: from [192.168.0.115] ([59.188.211.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de454aacsm6498521b3a.11.2024.11.25.07.03.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 07:03:17 -0800 (PST)
-Message-ID: <3a6fb7fd-eb3d-428b-a37c-f04d81e7fbd0@gmail.com>
-Date: Mon, 25 Nov 2024 23:03:11 +0800
+        d=1e100.net; s=20230601; t=1732547005; x=1733151805;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1PVBG0drlljsVkEBbeau35zte0zCftwnSF7ZEns2RkI=;
+        b=VFs7hdVIQjzd47cgyFuWbT7jqlvM7FFSJgUhOrPyQh/voAS7Euat00Bjj2ORzngRK3
+         Brx9yII5OUfiscOy4FKW8CwE39cV0H/NPTImjdEQElJ2FDo4DnyMi2cR3s4ueOrvEu1M
+         PL3F4ekQ4xYqpLn1rCPukrg2otpE/yiUl1lMfqlkuHsaw9G05FF3o5bhVcGgEDfhxBsJ
+         EEZMzoleY1S0hPZsi9v8i05Q21ADwXmVYUBoPQM2YsWnaY4Z2Zsk1GbymjADdyj3Rt9k
+         eD8b1TB4ULap+AEK5STadqhB3hvXmfDfAHlfpGmz6oKVHqnvTYnyc4wGVxt1CIgxdkFL
+         KDRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoYUvkxxiNnatYGETBBvOUOlY63P4md4UdsY25pKbhk3VkbAxyXx+gR+tK2TVVwkhC/c+cIDN3B1w0sNE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEGz0aBnCnlg7aQOGmJSuFv72JDScZZuhnfIBn+FBCFtcBLrvk
+	GVJszmTKWGfODCLHyvrz810rBRC4U9JBaPLH9Mfdsze+MOlGKt2HmlYSnrTxq9aIqfEGtTHKuIR
+	wfHcOwr6xlv4I8n5OUFLWyQc5BAxLaFfgT/kpbQ==
+X-Gm-Gg: ASbGncs9mBThJ/Z2xiv6lRChbyKQW2bRdUSrdv2CpFS4I5bAvg+pBQTSZKifCrtTTwz
+	W8EdsOYSETTDImbuXnSVCjgRTkL65DygiUA==
+X-Google-Smtp-Source: AGHT+IFM1jutegIbH3N1whIkVDo6HftuxY2rAiLT8oMAJlAXEVGXzFA7vyxDFNULJGUY40WX45oiWmYu6pzPREG0P6s=
+X-Received: by 2002:a05:620a:2947:b0:7b1:5545:7104 with SMTP id
+ af79cd13be357-7b50c11a8a5mr2933373985a.2.1732547005320; Mon, 25 Nov 2024
+ 07:03:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] gpu: drm: adp: Add a backlight driver for the Summit
- LCD
-To: Krzysztof Kozlowski <krzk@kernel.org>, fnkl.kernel@gmail.com,
- Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, asahi@lists.linux.dev
-Cc: linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241124-adpdrm-v1-0-3191d8e6e49a@gmail.com>
- <20241124-adpdrm-v1-3-3191d8e6e49a@gmail.com>
- <f2181c71-db23-4d94-9afb-cb8f2fc46bea@kernel.org>
-Content-Language: en-US
-From: Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <f2181c71-db23-4d94-9afb-cb8f2fc46bea@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Mon, 25 Nov 2024 20:33:14 +0530
+Message-ID: <CA+G9fYs+2mBz1y2dAzxkj9-oiBJ2Acm1Sf1h2YQ3VmBqj_VX2g@mail.gmail.com>
+Subject: pc : qnoc_probe (drivers/interconnect/qcom/icc-rpmh.c:269) :
+ Dragonboard 410c - arm64 - boot failed
+To: linux-arm-msm <linux-arm-msm@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, clang-built-linux <llvm@lists.linux.dev>
+Cc: Georgi Djakov <djakov@kernel.org>, konradybcio@kernel.org, quic_okukatla@quicinc.com, 
+	quic_rlaggysh@quicinc.com, quic_jjohnson@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 
+The arm64 Dragonboard 410c has failed with the Linux next, mainline
+and the Linux stable. Please find boot log and build links.
 
+Device: Dragonboard 410c - arm64
+Boot failed: clang-19
+Configs: korg-clang-19-lkftconfig-hardening
+Boot pass: qemu-arm64 (Additional info)
 
-Krzysztof Kozlowski 於 2024/11/25 晚上10:49 寫道:
-> On 24/11/2024 23:29, Sasha Finkelstein via B4 Relay wrote:
->> From: Sasha Finkelstein <fnkl.kernel@gmail.com>
->>
->> This is the display panel used for the touchbar on laptops that have it.
-> 
-> 
-> ...
-> 
-> 
->> +static int summit_probe(struct mipi_dsi_device *dsi)
->> +{
->> +	struct backlight_properties props = { 0 };
->> +	struct device *dev = &dsi->dev;
->> +	struct summit_data *panel;
->> +
->> +	panel = devm_kzalloc(dev, sizeof(*panel), GFP_KERNEL);
->> +	if (!panel)
->> +		return -ENOMEM;
->> +
->> +	mipi_dsi_set_drvdata(dsi, panel);
->> +	panel->dsi = dsi;
->> +
->> +	int ret = device_property_read_u32(dev, "max-brightness", &props.max_brightness);
-> That's an undocumented property, which suggests you did not test your DTS.
+This is always reproducible.
 
-Actually, testing the DTS would not have caught this issue. For more
-context,
-all summit panels found in touch bar have a max brightness of 255, but the
-summit panel in Apple A11 devices like the iPhone X is latter found to have
-a max brightness of 2047.
+Dragonboard 410c - arm64:
+boot:
+ * clang-nightly-lkftconfig-hardening
+ * korg-clang-19-lkftconfig-hardening
 
-However, A11 cannot be properly supported right now due to not having a
-driver
-for the DART IOMMU.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-In the meantime, max-brightness could documented and be made required,
-and the
-default 255 brightness could be removed.
+Log details:
+------------
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd030]
+[    0.000000] Linux version 6.12.0-next-20241125 (tuxmake@tuxmake)
+(ClangBuiltLinux clang version 19.1.4
+(https://github.com/llvm/llvm-project.git
+aadaa00de76ed0c4987b97450dd638f63a385bed), ClangBuiltLinux LLD 19.1.4
+(https://github.com/llvm/llvm-project.git
+aadaa00de76ed0c4987b97450dd638f63a385bed)) #1 SMP PREEMPT @1732509632
+[    0.000000] KASLR disabled due to lack of seed
+[    0.000000] Machine model: Qualcomm Technologies, Inc. APQ 8016 SBC
+<Trim>
+[    8.983574] videodev: Linux video capture interface: v2.00
+[    8.990308] Internal error: UBSAN: array index out of bounds:
+00000000f2005512 [#1] PREEMPT SMP
+[    8.990374] Modules linked in: qcom_rng drm_client_lib qcom_stats
+qnoc_msm8916(+) videodev videobuf2_memops videobuf2_common mc
+rpmsg_ctrl rpmsg_char display_connector phy_qcom_usb_hs drm_kms_helper
+ramoops reed_solomon socinfo rmtfs_mem fuse drm backlight ip_tables
+x_tables ipv6
+[    9.000620] CPU: 0 UID: 0 PID: 199 Comm: (udev-worker) Not tainted
+6.12.0-next-20241125 #1
+[    9.022836] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
+[    9.030902] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    9.037760] pc : qnoc_probe (drivers/interconnect/qcom/icc-rpmh.c:269)
+[    9.044439] lr : qnoc_probe (drivers/interconnect/qcom/icc-rpmh.c:0)
+[    9.048258] sp : ffff800083b93470
+[    9.052075] x29: ffff800083b93480 x28: ffff000002c2ae80 x27: ffff80007ac3d3e0
+[    9.055554] x26: ffff000002c2ae88 x25: 0000000000000000 x24: ffff000009bb7400
+[    9.062671] x23: 0000000000000000 x22: 0000000000000001 x21: ffff000004931400
+[    9.069788] x20: ffff000004931410 x19: ffff0000048e0c80 x18: ffff800083a7d0a8
+[    9.076907] x17: fffffffffffc23a2 x16: 0000000000000001 x15: 000000000000026c
+[    9.084027] x14: fffffffffffffffd x13: 0000000000000000 x12: ffff7fffba293000
+[    9.091145] x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000001
+[    9.098262] x8 : 0000000000000000 x7 : 0000000000000000 x6 : 000000000000003f
+[    9.105381] x5 : 0000000000000040 x4 : ffff00003c75d9e0 x3 : 0000000000199400
+[    9.112497] x2 : 0000000000000008 x1 : 0000000000000000 x0 : 0000000000000000
+[    9.119617] Call trace:
+[    9.126727] qnoc_probe+0x4c8/0x4d0 P
+[    9.128987] qnoc_probe+0x354/0x4d0 L
+[    9.132805] platform_probe (drivers/base/platform.c:1405)
+[    9.136624] really_probe (drivers/base/dd.c:581 drivers/base/dd.c:658)
+[    9.140443] __driver_probe_device (drivers/base/dd.c:800)
+[    9.144089] driver_probe_device (drivers/base/dd.c:830)
+[    9.148429] __driver_attach (drivers/base/dd.c:1217)
+[    9.152422] bus_for_each_dev (drivers/base/bus.c:369)
+[    9.156590] driver_attach (drivers/base/dd.c:1234)
+[    9.160495] bus_add_driver (drivers/base/bus.c:676)
+[    9.164140] driver_register (drivers/base/driver.c:247)
+[    9.167700] __platform_driver_register (drivers/base/platform.c:867)
+[    9.171520] init_module+0x20/0xfbc qnoc_msm8916
+[    9.176383] do_one_initcall (init/main.c:1250 init/main.c:1267)
+[    9.181068] do_init_module (kernel/module/main.c:2910)
+[    9.184800] load_module (kernel/module/main.c:3376)
+[    9.188618] __arm64_sys_finit_module (kernel/module/main.c:3565
+kernel/module/main.c:3577 kernel/module/main.c:3603
+kernel/module/main.c:3587 kernel/module/main.c:3587)
+[    9.192353] invoke_syscall (arch/arm64/kernel/syscall.c:50)
+[    9.197127] el0_svc_common (arch/arm64/kernel/syscall.c:139)
+[    9.200771] do_el0_svc (arch/arm64/kernel/syscall.c:152)
+[    9.204503] el0_svc (arch/arm64/kernel/entry-common.c:165
+arch/arm64/kernel/entry-common.c:178
+arch/arm64/kernel/entry-common.c:745)
+[    9.207802] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:797)
+[    9.210756] el0t_64_sync (arch/arm64/kernel/entry.S:600)
+[ 9.215189] Code: aa1303e0 97fff41c 17ffff79 d4200020 (d42aa240)
+All code
+========
 
-> 
-> It does not look like you tested the DTS against bindings. Please run
-> `make dtbs_check W=1` (see
-> Documentation/devicetree/bindings/writing-schema.rst or
-> https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
-> for instructions).
-> 
-> Best regards,
-> Krzysztof
+Code starting with the faulting instruction
+===========================================
+[    9.218752] ---[ end trace 0000000000000000 ]---
+[    9.233047] note: (udev-worker)[199] exited with irqs disabled
+[    9.233245] note: (udev-worker)[199] exited with preempt_count 1
+[    9.243434] ------------[ cut here ]------------
+<trim>
+[    9.243951] WARNING: CPU: 0 PID: 0 at kernel/context_tracking.c:128
+ct_kernel_exit (kernel/context_tracking.c:153)
+[    9.248555] Modules linked in: videobuf2_v4l2 qcom_rng
+drm_client_lib qcom_stats qnoc_msm8916(+) videodev videobuf2_memops
+videobuf2_common mc rpmsg_ctrl rpmsg_char display_connector
+phy_qcom_usb_hs drm_kms_helper ramoops reed_solomon socinfo rmtfs_mem
+fuse drm backlight ip_tables x_tables ipv6
+[    9.260538] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Tainted: G      D
+          6.12.0-next-20241125 #1
+[    9.282755] Tainted: [D]=DIE
+[    9.292113] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
+[    9.292888] Unable to handle kernel read from unreadable memory at
+virtual address 0000ffffa3c44d20
+[    9.295061] pstate: 204000c5 (nzCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    9.295071] pc : ct_kernel_exit (kernel/context_tracking.c:153)
+[    9.295088] lr : ct_kernel_exit (kernel/context_tracking.c:126)
+[    9.301765] Mem abort info:
+[    9.310514] sp : ffff800082503d10
+[    9.310519] x29: ffff800082503d10 x28: ffff8000824c4ff0 x27: ffff800082509000
+[    9.310536] x26: 0000000000000000 x25: ffff0000041f9898
+[    9.317463]   ESR = 0x0000000096000004
+[    9.321618]  x24: ffff0000041f9898
+[    9.321625] x23: 0000000226f30819 x22: 0000000000000000
+[    9.325621]   EC = 0x25: DABT (current EL), IL = 32 bits
+[    9.328214]  x21: ffff00003c757ff8
+[    9.328221] x20: ffff8000824c2350 x19: ffff00003c755350
+[    9.331701]   SET = 0, FnV = 0
+[    9.338806]  x18: ffff800082514880
+[    9.338813] x17: 00000000529c6ef0 x16: 00000000529c6ef0 x15: 000000000000007e
+[    9.343850]   EA = 0, S1PTW = 0
+[    9.347659]
+[    9.347662] x14: 00000000000000c8 x13: 0000000000000004 x12: 000000000a929b85
+[    9.351058]   FSC = 0x04: level 0 translation fault
+[    9.356167]
+[    9.356171] x11: 0000000000000015 x10: 000000000682aaab x9 : 4000000000000000
+[    9.361732] Data abort info:
+[    9.364935] x8 : 4000000000000002 x7 : 0000000000005221 x6 : 0000000000055ad0
+[    9.370064]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+[    9.373179] x5 : 0000000000005469 x4 : 0000000000000093 x3 : 0000000000000006
+[    9.376580]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[    9.383768] x2 : 0000000000000000 x1 : ffff0000041f9880 x0 : ffff7fffba293000
+[    9.386730]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[    9.388462] Call trace:
+[    9.395502] user pgtable: 4k pages, 48-bit VAs, pgdp=00000000856aa000
+[    9.400175] ct_kernel_exit+0x80/0x8c P
+[    9.401918] [0000ffffa3c44d20] pgd=0000000000000000
+[    9.408943] ct_kernel_exit+0x14/0x8c L
+[    9.408958] ct_idle_enter (kernel/context_tracking.c:321)
+[    9.411910] , p4d=0800000089bb0403
+[    9.418929] cpuidle_enter_state (drivers/cpuidle/cpuidle.c:268)
+[    9.418943] cpuidle_enter (drivers/cpuidle/cpuidle.c:391)
+[    9.418953] do_idle (kernel/sched/idle.c:155
+kernel/sched/idle.c:230 kernel/sched/idle.c:325)
+[    9.424326] , pud=080000008943e403
+[    9.431516] cpu_startup_entry (kernel/sched/idle.c:422)
+[    9.431527] rest_init+0xe0/0xe4
+[    9.436563] , pmd=0800000089bac403
+[    9.443668] start_kernel (init/main.c:1040)
+[    9.443681] __primary_switched (arch/arm64/kernel/head.S:247)
+[    9.449057] , pte=00200000910f9fc3
+[    9.451224] ---[ end trace 0000000000000000 ]---
 
-Nick Chan
+Links:
+------
+- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241125/testrun/26040307/suite/boot/test/korg-clang-19-lkftconfig-hardening/log
+- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241125/testrun/26040307/suite/boot/test/korg-clang-19-lkftconfig-hardening/details/
+- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241125/testrun/26040307/suite/boot/test/korg-clang-19-lkftconfig-hardening/history/
+- https://lkft.validation.linaro.org/scheduler/job/8004888#L2200
+- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2pKKSWo1tVldooGuq0fBz0nRD07/
+
+Build image:
+-----------
+- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2pKKSWo1tVldooGuq0fBz0nRD07/
+
+Steps to reproduce:
+------------
+- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2pKKSWo1tVldooGuq0fBz0nRD07/reproducer
+- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2pKKSWo1tVldooGuq0fBz0nRD07/tux_plan
+
+metadata:
+----
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+kernel config:
+https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2pKKSWo1tVldooGuq0fBz0nRD07/config
+build url: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2pKKSWo1tVldooGuq0fBz0nRD07/
+toolchain: clang-19 and clang-nightly
+config:  korg-clang-19-lkftconfig-hardening
+arch: arm64
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
