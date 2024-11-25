@@ -1,127 +1,116 @@
-Return-Path: <linux-kernel+bounces-421500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 586169D8C26
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:24:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F709D8C2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:25:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF1BB1669D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:24:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF856168123
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592C81B87F0;
-	Mon, 25 Nov 2024 18:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89EDE1B87ED;
+	Mon, 25 Nov 2024 18:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e4x+JV+4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kuPrOPzs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA3A1B3943;
-	Mon, 25 Nov 2024 18:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DED1B85F6;
+	Mon, 25 Nov 2024 18:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732559037; cv=none; b=hOO9f2nEO8Mu/3Y5BZwu6WE+PNEFkPeSlgOwwcl+CJB/+u2dc0SmwVs8Hbsq6Yxp25VdtBxsJrzAPzgkbK0ggDzPxUBfsGux5I5LHRnfAKXk21B/CROw/mP1952u4EXoEsv7TbeTQp0sXT7UdsM2jjgsdrpYfQRDzNTLWdIlLr4=
+	t=1732559125; cv=none; b=TkfheCVerAingAGnawRZ9g8mW9hNAzqnuddZG4th2zCrX7gKMMUM6Pva/eGYaBXk5KfXsmJvs9wTckg/nDbjDyr11fEbyyid7+jKl364IIuJKZye8vrGjuVd+lZxEIOSBtOugNVJnq4DEuzsPoCvEc+gdAXmISPV01NHAHk2v6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732559037; c=relaxed/simple;
-	bh=FEnfJKu8BFsY79SSwoKzJxBfw021YIRRMqklGnoZg7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hj+hxgJqTRtGjbcv6tCdk0FjODjtJzPUwq/tG2nkXEF0d0D2ECNPqzueXUlncUX//+NGcbSZzj8neagGWsofQHdsJ0sniXw/mURoCOl8aMX+jxZzMLeeO/kt9i4YL2psvVEhy4NrwEJWc0UsHswbzbgCFAK/WQTr18kRJEa56ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e4x+JV+4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9533EC4CECE;
-	Mon, 25 Nov 2024 18:23:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732559037;
-	bh=FEnfJKu8BFsY79SSwoKzJxBfw021YIRRMqklGnoZg7c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e4x+JV+4TLj/641DvnEomE+s05vAVx2khLlIX+WVTOL5mMmJtzdK1df2SXXf18ttq
-	 rU9Lc+wXSWSGHHvpIbR5my06OvGj9v6wakQoQCQwANXxnS3QKRooly4tluFGZxTT3d
-	 bVJvn9QAc9I9Awj/PaDHVhue+ngtzgK57kk5zcAat+Y9YUF4hH7INKuprMfW+Yhv6W
-	 LtbJGt/Dz4JcAWnVn+ewMbpQZ9YQUNIIwKnuw+9ZGiuLKH0JW2/gwCg2pmFape3vUT
-	 nxWXbv2mwZnAeiVeQ4f95CnA+Je5+0GtSc56sZzQ2aroKTl78cazl4pNJYJcGSN4K8
-	 6fHObgWuI6vaw==
-Date: Mon, 25 Nov 2024 18:23:53 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: jic23@kernel.org, robh@kernel.org, conor+dt@kernel.org,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: iio: adf4371: add rdiv2 and doubler
-Message-ID: <20241125-rotting-brim-162582b5ad42@spud>
-References: <20241125112643.10459-1-antoniu.miclaus@analog.com>
- <20241125112643.10459-2-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1732559125; c=relaxed/simple;
+	bh=6aRiboS4Jxrz+jvRtPC54qrBkrsY/RgG6OavSsJocjI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qmx6Xz1rWFWdyEVNMeTCj0C4KAfmYeo5zkwKI+uBtv4Ghq6XlR1BlgqGwOI67B6AQzNxirsngdVLWSb1p+ljzNj7hYAPuA5xcphd7ahJMrtkWXZiPBXDpdQSjx7TaxR1Z8d2rNw/5GbV+V439n9igGl5UPu2dA8g3sHiuv9x6hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kuPrOPzs; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732559124; x=1764095124;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=6aRiboS4Jxrz+jvRtPC54qrBkrsY/RgG6OavSsJocjI=;
+  b=kuPrOPzskyaJ7Ol1sakkPUK+MUqQPEIgxPUeISFRP+F5hxK4qCVJBSwR
+   mx3xU33UXY5hgWhSO3f+7KnlH7/q3Yl7SbOg6fa699/6ClmlsFU03X/IQ
+   vaJrwCFki6vaOFrGaziwqbc9joFDjsFgPIup8TJ7eqGpSptpQpyWq+aCN
+   bbIIwXY2AvFHa8qQa2OWk3ZWpaW9dIGeWXdVy7cjI9sYx3XNwubaoti5j
+   FNWvCr7GJzoARZl3ZWib36lt+SFt4bpLItR/ptAImA2/hZy8Nj1eUL+Ey
+   LFEWfrQtNFs3faqPHyG9lnxZVqd/II32hHgS+8c6XEKd4q5XywfosOkWN
+   g==;
+X-CSE-ConnectionGUID: 7g/BMNlaRNCxoobHamNmmg==
+X-CSE-MsgGUID: lrpmkxAdQP2w7EusoaAzAw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="43751854"
+X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
+   d="scan'208";a="43751854"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 10:25:00 -0800
+X-CSE-ConnectionGUID: INFUjcOqQSy+Joj9bnk6cA==
+X-CSE-MsgGUID: OMdoFMV9SvODLT5m/kOgjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
+   d="scan'208";a="95440526"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.115.59])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 10:24:55 -0800
+Message-ID: <8bd461ba-7fbe-4f1b-91cf-d33483cb4930@intel.com>
+Date: Mon, 25 Nov 2024 20:24:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="AR3vOxY7YAd4jTmS"
-Content-Disposition: inline
-In-Reply-To: <20241125112643.10459-2-antoniu.miclaus@analog.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mmc: sdhci-esdhc-imx: enable 'SDHCI_QUIRK_NO_LED' quirk
+ for S32G
+To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
+ Haibo Chen <haibo.chen@nxp.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>, imx@lists.linux.dev,
+ linux-mmc@vger.kernel.org, s32@nxp.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
+ Enric Balletbo <eballetb@redhat.com>
+References: <20241125083357.1041949-1-ciprianmarian.costea@oss.nxp.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20241125083357.1041949-1-ciprianmarian.costea@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 25/11/24 10:33, Ciprian Costea wrote:
+> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+> 
+> Enable 'SDHCI_QUIRK_NO_LED' quirk for S32G2/S32G3 SoCs.
+> S32G SDHCI controller does not have a LED signal line.
+> 
+> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
 
---AR3vOxY7YAd4jTmS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-On Mon, Nov 25, 2024 at 01:26:40PM +0200, Antoniu Miclaus wrote:
-> Add support for reference doubler enable and reference divide by 2
-> clock.
-
-You're still missing an explanation here for why these cannot be derived
-=66rom the required output frequency vs the input frequency.
-
->=20
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
 > ---
-> no changes in v2. (added cover letter as requested)
->  .../devicetree/bindings/iio/frequency/adf4371.yaml    | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml=
- b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
-> index 1cb2adaf66f9..ef241c38520c 100644
-> --- a/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
-> +++ b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
-> @@ -40,6 +40,17 @@ properties:
->        output stage will shut down until the ADF4371/ADF4372 achieves loc=
-k as
->        measured by the digital lock detect circuitry.
-> =20
-> +  adi,reference-doubler-enable:
-> +    type: boolean
-> +    description:
-> +      If this property is present, the reference doubler block is enable=
-d.
-> +
-> +  adi,adi,reference-div2-enable:
-> +    type: boolean
-> +    description:
-> +      If this property is present, the reference divide by 2 clock is en=
-abled.
-> +      This feature can be used to provide a 50% duty cycle signal to the=
- PFD.
-> +
->  required:
->    - compatible
->    - reg
-> --=20
-> 2.47.0
->=20
+>  drivers/mmc/host/sdhci-esdhc-imx.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
+> index d55d045ef236..e23177ea9d91 100644
+> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
+> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
+> @@ -304,6 +304,7 @@ static struct esdhc_soc_data usdhc_s32g2_data = {
+>  			| ESDHC_FLAG_HAVE_CAP1 | ESDHC_FLAG_HS200
+>  			| ESDHC_FLAG_HS400 | ESDHC_FLAG_HS400_ES
+>  			| ESDHC_FLAG_SKIP_ERR004536 | ESDHC_FLAG_SKIP_CD_WAKE,
+> +	.quirks = SDHCI_QUIRK_NO_LED,
+>  };
+>  
+>  static struct esdhc_soc_data usdhc_imx7ulp_data = {
 
---AR3vOxY7YAd4jTmS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0TAuQAKCRB4tDGHoIJi
-0gGdAP0ZgwYPH6bIZifcDRAHpGwlSAIXXCWJNn0APgzsBZpCuQEAp1G65MyvRK9v
-Rv+tnTXqNsUE76LG5QDkQZr/jd9muQg=
-=d7g1
------END PGP SIGNATURE-----
-
---AR3vOxY7YAd4jTmS--
 
