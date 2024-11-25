@@ -1,221 +1,145 @@
-Return-Path: <linux-kernel+bounces-420814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B059D8349
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:25:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDDA8161126
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:25:14 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F381917F9;
-	Mon, 25 Nov 2024 10:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SVGPM0Fk"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51D839D8358
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:27:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6083C2AD17
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 10:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA918B23697
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:21:12 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80F01917F9;
+	Mon, 25 Nov 2024 10:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MifKZJkE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C77314375C
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 10:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732530312; cv=none; b=NsyzWjCkfrCfDlFltvDm56lPRdFiiq7KkfYFf9CABNzOUiWWipseiDDRMxwPrfYKA1XGsISjIUMR/EwXuQ6rOzCYbZmCgl4N9hma3HPgXDlCAFHtWel5Eu2y51smuf2qwV8737KtIQQD4J8mhSjsOD4XTWEbd3PG3Nhk4fKiHAE=
+	t=1732530068; cv=none; b=ZD/snoIg1uMENcxIez+UJ9Nq1BXZ11fCiFMa5y39WuANmnhqNQzEm6n9jfSHiUMovp1qAzJiGYEH1e/N9SiJ+D0qC2bTvGGs+xilyWt40SvffC8Z8qbyoTvD/r6XJWMKEp3VLP4OMIFCeeF1r4TiDBCpXMdo8uEUhLi+vDbSuLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732530312; c=relaxed/simple;
-	bh=QEPqafNo/oL9BVdZbdczy8x6PAT54tVxxJaH/BbS1SQ=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=AxJsGLHiLXiKkwzRzS5EmGmsJt8KDCvrgjfbiNWKk3cSs/aU/xnZcE2PWoME7W70iSJsNpyX5DFnkPgTaJyEdw+bS5nRIZYLqkTAqqCJFUugxR+Tfi0j043yQOWqQX8idQjSgq5aKKAcwJzIeK3yL/MMdWtSgbNTB2YMAmNqMPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SVGPM0Fk; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 60A19C0012;
-	Mon, 25 Nov 2024 10:24:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732530301;
+	s=arc-20240116; t=1732530068; c=relaxed/simple;
+	bh=xpvBYbkskz9nfzZeBeLFJGvW3z7Q9Lc5XNvoSkh4TFA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kP6rxvuQkdlOBYkiPSGw1GxkMzDsJqwrhgYmmwMcWnXKkVokPSEOTHU9PfwBmYR4TG1tC9l6JtofsEeH6821fnpXwn+ZQMk0qqoMOcjakAYNEyqkZ9CpCPrtBkioCXAB8z0S83WP8Mtd71cd7c1OXUbIfjF59D1YQkW2QVcL5dQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MifKZJkE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732530065;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xJJFpfF2OaBan+++5E0ZDBr6mIOGHUerMQJqN74GXvA=;
-	b=SVGPM0Fkf3Je9uOmJuAfKaWk/Z/L79pGzHVJFyTxZYZYE/uFuv8NJxGUGbf2MEEC2I6ftd
-	HGAx3lcL33gS1dqZEUfHjDBB6Kz5RDg2tmI/5+7G+veNIDfbBt8EZW7qiOukIRCiSxMvai
-	D9z/DhyYq2GD4uVDVBikfRltNCeTL1zp30yG2e2Tx4HwdY7csNn+wIhqcbGiDAzWoX5zfV
-	QxhsGsy8IX4B+9WFE3FCplLgZhF9P0hN0idH8Jb/bd1ko9sCGxTYfgoa5vi/eRUb8RyTqw
-	5RRRduY1qmkRHiVNz1ngW+RMDwUVqHE3KkB/2R0U0ljvI3cQjMupVe0SEjADuQ==
-Date: Mon, 25 Nov 2024 10:19:49 +0000
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-To: dri-devel@lists.freedesktop.org, Jani Nikula <jani.nikula@linux.intel.com>,
- =?ISO-8859-1?Q?Ma=EDra_Canal?= <mairacanal@riseup.net>,
- Haneen Mohammed <hamohammed.sa@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Melissa Wen <melissa.srw@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>
-CC: arthurgrillo@riseup.net, jeremie.dautheribes@bootlin.com,
- miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com, seanpaul@google.com,
- nicolejadeyee@google.com, linux-kernel@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_RFC_v2_17/18=5D_drm/vkms=3A_?=
- =?US-ASCII?Q?Introduce_config_for_connector_EDID?=
-In-Reply-To: <87o723y7dr.fsf@intel.com>
-References: <20241122-google-remove-crtc-index-from-parameter-v2-0-81540742535a@bootlin.com> <20241122-google-remove-crtc-index-from-parameter-v2-17-81540742535a@bootlin.com> <87o723y7dr.fsf@intel.com>
-Message-ID: <6913165B-FA17-4DED-B1D6-CA312B20576B@bootlin.com>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=n67Q0KoljJvBSt9cf1LGCKowbJla5BRsh7Nzu+TSZUQ=;
+	b=MifKZJkEV17oDxzYALKNMwPNmT1EAcOAL1epwACmksWK/C+96vASp7po9RRAhp+0BF6PZx
+	aWsGfz/nld5QVWEzUoly8eUNp/SWg+PEP6ruyFVfJLarT1gUYehN7mpQYyc3jh5u2s0MYc
+	RwNDkII3y334MlXkKJqoMaXi18UHNj0=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-140-nenB_5tyPBenD1nLgp1IkQ-1; Mon,
+ 25 Nov 2024 05:21:01 -0500
+X-MC-Unique: nenB_5tyPBenD1nLgp1IkQ-1
+X-Mimecast-MFC-AGG-ID: nenB_5tyPBenD1nLgp1IkQ
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 29BCC19560A1;
+	Mon, 25 Nov 2024 10:21:00 +0000 (UTC)
+Received: from pasta.fast.eng.rdu2.dc.redhat.com (unknown [10.45.225.117])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8907E1956052;
+	Mon, 25 Nov 2024 10:20:58 +0000 (UTC)
+From: Andreas Gruenbacher <agruenba@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andreas Gruenbacher <agruenba@redhat.com>,
+	gfs2@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] gfs2 changes for 6.13
+Date: Mon, 25 Nov 2024 11:20:56 +0100
+Message-ID: <20241125102057.1505150-1-agruenba@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: louis.chauvet@bootlin.com
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
+Dear Linus,
 
+please consider pulling the following gfs2 changes.
 
-Le 25 novembre 2024 09:45:04 UTC, Jani Nikula <jani=2Enikula@linux=2Eintel=
-=2Ecom> a =C3=A9crit=C2=A0:
->On Fri, 22 Nov 2024, Louis Chauvet <louis=2Echauvet@bootlin=2Ecom> wrote:
->> To properly test the EDID reading without using the DRM override, add a=
-n
->> option to configure the EDID for a connector=2E
->>
->> Signed-off-by: Louis Chauvet <louis=2Echauvet@bootlin=2Ecom>
->> ---
->>  drivers/gpu/drm/vkms/vkms_config=2Ec |  1 +
->>  drivers/gpu/drm/vkms/vkms_config=2Eh |  2 ++
->>  drivers/gpu/drm/vkms/vkms_output=2Ec | 37 ++++++++++++++++++++++++++++=
-++++++---
->>  3 files changed, 37 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/vkms/vkms_config=2Ec b/drivers/gpu/drm/vkm=
-s/vkms_config=2Ec
->> index ac1a9658c5075c118d59da965ca3392355ccb2b2=2E=2E1a1234d4f10fa8e5ea6=
-bd649139ecc10c991f875 100644
->> --- a/drivers/gpu/drm/vkms/vkms_config=2Ec
->> +++ b/drivers/gpu/drm/vkms/vkms_config=2Ec
->> @@ -199,6 +199,7 @@ struct vkms_config_connector *vkms_config_create_co=
-nnector(struct vkms_config *v
->>  	xa_init_flags(&vkms_config_connector->possible_encoders, XA_FLAGS_ALL=
-OC);
->>  	vkms_config_connector->type =3D DRM_MODE_CONNECTOR_VIRTUAL;
->>  	vkms_config_connector->status =3D connector_status_unknown;
->> +	vkms_config_connector->edid_blob_len =3D 0;
->> =20
->>  	return vkms_config_connector;
->>  }
->> diff --git a/drivers/gpu/drm/vkms/vkms_config=2Eh b/drivers/gpu/drm/vkm=
-s/vkms_config=2Eh
->> index bba56c9d8aeceac97a4339ef42ab663c5dc54e65=2E=2E1220b16f6c98d1ebb0a=
-e55d662a84fe25e1a6a02 100644
->> --- a/drivers/gpu/drm/vkms/vkms_config=2Eh
->> +++ b/drivers/gpu/drm/vkms/vkms_config=2Eh
->> @@ -112,6 +112,8 @@ struct vkms_config_connector {
->>  	struct xarray possible_encoders;
->>  	int type;
->>  	enum drm_connector_status status;
->> +	char edid_blob[PAGE_SIZE];
->> +	int edid_blob_len;
->> =20
->>  	/* Internal usage */
->>  	struct drm_connector *connector;
->> diff --git a/drivers/gpu/drm/vkms/vkms_output=2Ec b/drivers/gpu/drm/vkm=
-s/vkms_output=2Ec
->> index fc6a0cdade0739b94820ed4e0924cf355137fe79=2E=2E56590afb33d75465971=
-d10a282040690840cdbee 100644
->> --- a/drivers/gpu/drm/vkms/vkms_output=2Ec
->> +++ b/drivers/gpu/drm/vkms/vkms_output=2Ec
->> @@ -31,13 +31,44 @@ static const struct drm_connector_funcs vkms_connec=
-tor_funcs =3D {
->>  	=2Eatomic_destroy_state =3D drm_atomic_helper_connector_destroy_state=
-,
->>  };
->> =20
->> +static int vkms_connector_read_block(void *context, u8 *buf, unsigned =
-int block, size_t len)
->> +{
->> +	struct vkms_config_connector *config =3D context;
->> +
->> +	if (block * len + len > config->edid_blob_len)
->
->The parameters to the read block function are a bit weird for historical
->reasons=2E The start offset is indicated by block number, length by
->len=2E The start byte offset is thus block * EDID_LENGTH! There's no
->smaller granularity for start offset=2E However len can be < EDID_LENGTH!
->
->So the above should be (block * EDID_LENGTH + len > edid_blob_len)
->
->> +		return 1;
->> +	memcpy(buf, &config->edid_blob[block * len], len);
->
->And this should be &config->edid_blob[block * EDID_LENGTH]=2E
->
->(Your patch would work, but just by coincidence due to the way the read
->block function is currently called=2E)
+The top two commits have only been added to for-next a couple of days ago; they
+fix a NULL pointer dereference in a previous patch in this pull request and an
+unlikely race in the same code.  These fixes have passed several days of heavy
+testing, so I hope you can agree to including them.
 
-Thanks for those clarifications!=20
+Thanks,
+Andreas
 
->> +	return 0;
->> +}
->> +
->>  static int vkms_conn_get_modes(struct drm_connector *connector)
->>  {
->> +	const struct drm_edid *drm_edid =3D NULL;
->>  	int count;
->> +	struct vkms_config_connector *connector_cfg;
->> +	struct vkms_device *vkmsdev =3D drm_device_to_vkms_device(connector->=
-dev);
->> +	struct vkms_config_connector *context =3D NULL;
->> +
->> +	list_for_each_entry(connector_cfg, &vkmsdev->config->connectors, link=
-) {
->> +		if (connector_cfg->connector =3D=3D connector) {
->> +			context =3D connector_cfg;
->> +			break;
->> +		}
->> +	}
->> +	if (context)
->> +		drm_edid =3D drm_edid_read_custom(connector, vkms_connector_read_blo=
-ck, context);
->
->Thanks for using drm_edid_read_custom() for this btw!
->
->> +
->> +	/*
->> +	 * Unconditionally update the connector=2E If the EDID was read
->> +	 * successfully, fill in the connector information derived from the
->> +	 * EDID=2E Otherwise, if the EDID is NULL, clear the connector
->> +	 * information=2E
->> +	 */
->> +	drm_edid_connector_update(connector, drm_edid);
->> +
->> +	count =3D drm_edid_connector_add_modes(connector);
->> =20
->> -	/* Use the default modes list from DRM */
->> -	count =3D drm_add_modes_noedid(connector, XRES_MAX, YRES_MAX);
->> -	drm_set_preferred_mode(connector, XRES_DEF, YRES_DEF);
->
->I don't really know anything about your use case, but don't you want to
->fall back to the above for drm_edid =3D=3D NULL? *shrug*
+The following changes since commit 721068dec4ec3cc625d8737d4dfa0ff0aa795cd1:
 
-You are right, I will probably fallback to noedid version, at least for VI=
-RTUAL connectors=2E
+  Merge tag 'gfs2-v6.10-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2 (2024-09-23 11:55:17 -0700)
 
-Or maybe I will add something in VKMS configuration to use "empty edid", "=
-default modes_noedid" or "custom_edid"=2E
+are available in the Git repository at:
 
-This way you will be able to test all the scenarios for your userspace=2E
+  git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git tags/gfs2-for-6.13
 
-Thanks for your review,
-Louis Chauvet
+for you to fetch changes up to ffd1cf0443a208b80e40100ed02892d2ec74c7e9:
 
->BR,
->Jani=2E
->
->> +	drm_edid_free(drm_edid);
->> =20
->>  	return count;
->>  }
->
+  gfs2: Prevent inode creation race (2024-11-19 13:05:41 +0100)
+
+----------------------------------------------------------------
+gfs2 changes
+
+- Fix the code that cleans up left-over unlinked files.  Various fixes
+  and minor improvements in deleting files cached or held open remotely.
+
+- Simplify the use of dlm's DLM_LKF_QUECVT flag.
+
+- A few other minor cleanups.
+
+----------------------------------------------------------------
+Andreas Gruenbacher (20):
+      gfs2: Rename GLF_VERIFY_EVICT to GLF_VERIFY_DELETE
+      gfs2: Initialize gl_no_formal_ino earlier
+      gfs2: Allow immediate GLF_VERIFY_DELETE work
+      gfs2: Fix unlinked inode cleanup
+      gfs2: Faster gfs2_upgrade_iopen_glock wakeups
+      gfs2: Rename GIF_{DEFERRED -> DEFER}_DELETE
+      gfs2: Rename dinode_demise to evict_behavior
+      gfs2: Return enum evict_behavior from gfs2_upgrade_iopen_glock
+      gfs2: Minor delete_work_func cleanup
+      gfs2: Clean up delete work processing
+      gfs2: Call gfs2_queue_verify_delete from gfs2_evict_inode
+      gfs2: Update to the evict / remote delete documentation
+      gfs2: Use mod_delayed_work in gfs2_queue_try_to_evict
+      gfs2: Randomize GLF_VERIFY_DELETE work delay
+      gfs2: Use get_random_u32 in gfs2_orlov_skip
+      gfs2: Make gfs2_inode_refresh static
+      gfs2: gfs2_evict_inode clarification
+      gfs2: Simplify DLM_LKF_QUECVT use
+      gfs2: Only defer deletes when we have an iopen glock
+      gfs2: Prevent inode creation race
+
+Qianqiang Liu (1):
+      KMSAN: uninit-value in inode_go_dump (5)
+
+ fs/gfs2/glock.c    | 107 ++++++++++++++++++++---------------------------------
+ fs/gfs2/glock.h    |   7 ++++
+ fs/gfs2/glops.c    |  11 +++++-
+ fs/gfs2/incore.h   |   4 +-
+ fs/gfs2/inode.c    |   1 +
+ fs/gfs2/inode.h    |   2 -
+ fs/gfs2/lock_dlm.c |  29 +++++++++++++--
+ fs/gfs2/rgrp.c     |   6 +--
+ fs/gfs2/super.c    |  89 +++++++++++++++++++++++++++-----------------
+ 9 files changed, 142 insertions(+), 114 deletions(-)
+
 
