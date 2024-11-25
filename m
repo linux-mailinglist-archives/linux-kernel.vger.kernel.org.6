@@ -1,144 +1,189 @@
-Return-Path: <linux-kernel+bounces-421008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 556319D85B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:57:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D1BC9D867D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:34:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49808B2E9D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:42:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71127B30AB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589151A0700;
-	Mon, 25 Nov 2024 12:42:22 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B521A0B07;
+	Mon, 25 Nov 2024 12:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OG4NUTFR"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646051552E3
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 12:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F7C1552E3;
+	Mon, 25 Nov 2024 12:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732538541; cv=none; b=gUTwloRSbKbCp1KV3utYr7CbhB7EUGS7j43Z7tXMeIGIZIbdOc1T5ELxVaYYAjMFS/vYa9uAwbUwdGLBFSALx73f6dQLTDFaHzr+BZXf5/y+ocxSwSVQO6H7WUD4Aezb30zok2VIbL+oH6lI+ZhIySPTmOpVgKzrtbW0+jaS2iU=
+	t=1732538592; cv=none; b=btz6bg6iIH74Y6wGmwtWVcKJPYf+6Lw6wqOCWXiuescp6fx18zo+zexPm/PW4BUtMW6tyIgMSMMaLqwtM3KlD/ruxvLaDIP/PRD2c/O1bBBSfpICku5HZqOoYg8KG361TaGAXTPM+3ESVPzaaswYpKBYNjVbfCo3UnI8qH8mgmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732538541; c=relaxed/simple;
-	bh=fz/01Kr00HHPzJ/B0y5tFtjfjn4l4Z9ljQdjyGk+kEQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=blchhm22Iebv2ZdpsEiBxo0YawyyaDZ1RTYK1SAdpNzPJGbnenIk6nCuVVMnK1KLjqIukJHvGxbOgW1VRBqFCjxCF8kNoqSa9GgU0B5Np4r7ThK0kWgxpY2A2WpVjrDu/4B2WT4U6MozsNPL3d4d2zLNgAYfWdnDNOMlv0G97Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a7932544c4so40408315ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 04:42:20 -0800 (PST)
+	s=arc-20240116; t=1732538592; c=relaxed/simple;
+	bh=//JnPDEH0l1vfKzZTtmvIktKX1t11vSXsJkyLu9qdn4=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BuAqRyWMgAuSHtLUKdU4BDHrjg2k2AbS8ml3K6jlP7t4K5bF/kuGdiTGlmGuVALlzgxO4TfwCidkj1RaIy/o+MjmliRh6d2eQfDNzmXbB8ldLwMgEIjiTwHGjeX/li0Y0/9VmR6f2KThuGnReY4MZ1DpV+mh9KP2GsDDVm+oR/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OG4NUTFR; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434a2f3bae4so1558035e9.3;
+        Mon, 25 Nov 2024 04:43:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732538589; x=1733143389; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=oD/QgJahcfnToWDDwsHEJMn7c05e3uM5Rszb7udPu3s=;
+        b=OG4NUTFRxKb8DSFnvtTHGOo17K4rbQb+ENn2fp/3Jbqkx+PIbyADc08pLMylTWOnVn
+         GI5WyRT3L9SFkpl4sqZzdSez1VG+cdsCLQVm2fAzBeQQlImbyr+xptx4MnkPzv77gu94
+         24iDg+VIbuNnv143YnJWR03/1n5ioJC1sgsBXQN4hkhZfGFdYa8XjjRptufYvM1Gs7uQ
+         Ipb4bcMakA6VN0FE/Y2jx4+BFDwT6GXi80bDj+9c+/1eC0ViW3vrJ7xYDKGcuLwX/kcO
+         tQi/Sk3Ru7aNz11VNCmY3UpTvnGd4zO0z+yeznkfxcu/lYvDjfNC8lNinwNW2/mcMREC
+         xpzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732538539; x=1733143339;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7+z13xlx/JBPOgRHb3CjjH8lUVhFTpA9EJKc9fwjzVI=;
-        b=jiMSbBuPvMeT18vIg64W/ccePwU6XakMatGFQ6U0T7Vf4jBIw9BOhFQ2p6aN9sl4zc
-         VwsZf41Ohze2xoTnNMr1Wp7BxAEhS3iGaq0kfilGEiuMg3Quo0WN6oeiDfkezIfJyZAA
-         BF4MQcRZ4WbSW6YqJqtKsNZ/lRnosUSZL325MTXZJLfxsc02EXvpgoKnjujWzKssArAy
-         r3dEHxnoiDknEOtO3YkGcXtGZYVn/FpylBqgGmY68rWrG5HkoCmQicyPaFOSBjV0fC+6
-         vYEGoQYJLk+KtROLia4fUmJU4JfbyOjN+U/pPkkPe5Yjdz1SS0VwopmcJ2BXiEVsn9/r
-         DSog==
-X-Forwarded-Encrypted: i=1; AJvYcCXL3MnGL3CdHnoY9nOkhWQ1CeK8ZqJiMaCiNobspR39os5ngVx3eLlaFaF2Sti31umfDKEcAeq6w8g6LsI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKWJpQkhN6NJaLjFRwFCy4YrgKbnSPWrn7aYxHJBCG3vRMGeiE
-	ZHoNyr8de4R+1pC75/TqEH4PBxgYmiKrnesz4zzwMS0T73UGA0hTGki3ulhWs+ecYCCG6dGfLKu
-	54ZvE3xSjBoHVuydhKWPikwSbrUy1O/32QBLxC25atGZR/aeWGuohMTk=
-X-Google-Smtp-Source: AGHT+IFk+rT9P9R2gxypjuSHJDWmLqmGBi+W3GykOmsr/ojXBXuyTuB1BrjV9qIDF64l5b8sIP3diOnLaNRAw2gt4h6yiULmOC6V
+        d=1e100.net; s=20230601; t=1732538589; x=1733143389;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oD/QgJahcfnToWDDwsHEJMn7c05e3uM5Rszb7udPu3s=;
+        b=ZJE+khTDz21dRhlYv4xkql9azKltExTv7xze28w/8ZwD/GxPmhfNkKgGPETGGvBRnw
+         mTkQOj4H/XHOeW73qK+VmSBnkVIuwNgxzlZMjkYJnbzUiMvnSrcc6amrLtWTZ4xR9sjw
+         5DqVdN1C+q9nHq75hZsbPpLf7MbNyojunlnQBq04B19woRDFUPuQWTkoI/GF/yhc3CPU
+         68atUlGu/PRRlcg+vtF9Wm4CEq5U/LIwvHXgcVGDqb2CqvBwU/v5XOPpbvExUGqRQuoh
+         rGanK9aJTsDx5LaKqwgvcpKWz/bTKfXd/VCyaiPm8WwZBT5a/zdTNc3oNNmTCIc3+ATF
+         /YSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVOSOwHFSSzb9LWuRrrXoMh0hckNe7xtPkL0Emm+p9VdbjEWPfvarheoavo0UPHqKyCXy9Yn2anVmQ=@vger.kernel.org, AJvYcCVpZTB5g0DhXD+K+MYA8DptcDI73MCTYziLSHYLGb69IRoLWk8cbHPjd8kV/Fy0VZvcTjg6KhcAyrvh+kA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNU6Pjcvw78KQIbgwG6j1kyAPq5OAm8+QIj6rU2HCFUEALbJSI
+	hjDukiZHhJ9wXyWaeeQkNAIRlsIHxmuG2nmt+QOf+YaEHINd++RH
+X-Gm-Gg: ASbGncsoLx7RwwgBi3kNZFjqvkCSbzhoVTvl12CMPtBBq/KBXa/QFFuBgvQsnpx6FDw
+	p+X60yrzQfynpVtxNyUeC2CwhS7dFd/fGe8xIAN/iq/j9FbnwakBPMuJVV0H/kVvJunY8TgCWf3
+	/9Yj3w/85xQ68PJ/8Ri+NEh5v1ZNufrcJxBocxjDj+B4+KBV+heyK+wwKyYbhYhNQNpv8FyIzk0
+	0UhYYTlUB5lH3vAYOciOUd5fZ6obyqvgc1WhQj7TH7KFZPOaofOtwTGNXESlWH+1uRRH7AtUi4w
+	TTqYgg==
+X-Google-Smtp-Source: AGHT+IHO6C4GC4v7/G4VYy/Jt8htlwAc1ke0AFX5Xj4sqJfxpTcCxLqwuJMk3AQHitvn6YSumcDc4A==
+X-Received: by 2002:a05:600c:46c4:b0:432:cbe5:4f09 with SMTP id 5b1f17b1804b1-433ce411003mr113060105e9.4.1732538589030;
+        Mon, 25 Nov 2024 04:43:09 -0800 (PST)
+Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fbedf35sm10229371f8f.99.2024.11.25.04.43.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2024 04:43:08 -0800 (PST)
+Message-ID: <674470dc.5d0a0220.119e75.b012@mx.google.com>
+X-Google-Original-Message-ID: <Z0Rw2pKlNpVIMSar@Ansuel-XPS.>
+Date: Mon, 25 Nov 2024 13:43:06 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>,
+	upstream@airoha.com, ulf.hansson@linaro.org
+Subject: Re: [PATCH v2] cpufreq: airoha: Add EN7581 Cpufreq SMC driver
+References: <20241017190809.16942-1-ansuelsmth@gmail.com>
+ <20241119072054.64hi347qmv7ng3un@vireshk-i7>
+ <673c549c.5d0a0220.3a3476.517a@mx.google.com>
+ <20241119104421.hqsil2uvklxok7lz@vireshk-i7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1885:b0:3a7:8720:9de5 with SMTP id
- e9e14a558f8ab-3a79acfb902mr164933035ab.1.1732538539674; Mon, 25 Nov 2024
- 04:42:19 -0800 (PST)
-Date: Mon, 25 Nov 2024 04:42:19 -0800
-In-Reply-To: <6743ea99.050a0220.1cc393.0057.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674470ab.050a0220.1cc393.007c.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in __bch2_journal_pin_put
-From: syzbot <syzbot+73ed43fbe826227bd4e0@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241119104421.hqsil2uvklxok7lz@vireshk-i7>
 
-syzbot has found a reproducer for the following issue on:
+On Tue, Nov 19, 2024 at 04:14:21PM +0530, Viresh Kumar wrote:
+> On 19-11-24, 10:04, Christian Marangi wrote:
+> > On Tue, Nov 19, 2024 at 12:50:54PM +0530, Viresh Kumar wrote:
+> > > On 17-10-24, 21:07, Christian Marangi wrote:
+> > > > Add simple Cpufreq driver for Airoha EN7581 SoC that control CPU
+> > > > frequency scaling with SMC APIs.
+> > > > 
+> > > > All CPU share the same frequency and can't be controlled independently.
+> > > > Current shared CPU frequency is returned by the related SMC command.
+> > > > 
+> > > > Add SoC compatible to cpufreq-dt-plat block list as a dedicated cpufreq
+> > > > driver is needed with OPP v2 nodes declared in DTS.
+> > > > 
+> > > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > > > ---
+> > > > Changes v2:
+> > > > - Fix kernel bot error with missing slab.h and bitfield.h header
+> > > > - Limit COMPILE_TEST to ARM64 due to smcc 1.2
+> > > 
+> > > Hi,
+> > > 
+> > > Sorry for delay at my side to review this driver.
+> > > 
+> > > Now that I looked at it, I don't see a lot of special stuff happening in the
+> > > driver. There are many other platforms with similar situation. What we have done
+> > > for all them, which rely on OPPs coming from DT, is to add a clk for the CPUs
+> > > and do all this magically smcc stuff from clk_get_rate() and clk_set_rate().
+> > > Once that is done, you should be able to reuse the cpufreq-dt driver as is.
+> > > 
+> > > So a CPU clk is the only missing thing in your case I guess.
+> > >
+> > 
+> > Hi Viresh,
+> > 
+> > thanks a lot for the follow-up. I will see what I can do, 2 main problem
+> > I see is that, contrary to other driver, for this Airoha SoC, there are
+> > no parents or no clock to enable... It's really just entirely handled by
+> > ATF and smccc call.
+> > 
+> > And also the SMCCC requires an index and not the clock itself. This was
+> > handy for a cpufreq driver as it passed the OPP index
+> 
+> Right, but the OPP table for the CPU must contain frequencies too, isn't it ? So
+> you already have index to frequency conversion available ?
+> 
+> Can't you just add a clk driver for the CPU, which uses OPP core to parse the
+> OPP table of the CPU and set a clk-index table in the clk driver ? So once the
+> clk driver gets a request for a particular frequency, it just finds the
+> respective index and sets it ?
+> 
+> > problematic for a
+> > clock driver as set_rate pass the clock. So I guess I will have to
+> > define the OPP phandle also in the clock node struct. (and map it?)
+> 
+> I am not suggesting a clk in DT, but just in code, added by a cpufreq driver for
+> your platform, which at the end creates cpufreq-dt device. There are many which
+> are creating the device on the fly, like tegra20-cpufreq.c.
+> 
+> > The main problem in doing that is the performance hit on having to cycle
+> > every time the OPPs to find the correct index...
+> 
+> I think it would be traversing an array in the clk driver eventually and that
+> won't be that bad ?
+> 
+> > (yes they really implemented this thing with the ATF specifically with
+> > the cpufreq scenario in mind)
+>
 
-HEAD commit:    9f16d5e6f220 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10972778580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fb680913ee293bcc
-dashboard link: https://syzkaller.appspot.com/bug?extid=73ed43fbe826227bd4e0
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=111e775f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14972778580000
+Hi Viresh,
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-9f16d5e6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/15be8a79f63a/vmlinux-9f16d5e6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/82d8dde32162/bzImage-9f16d5e6.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/f0224b26c115/mount_0.gz
+sorry for the delay... I checked the example and other cpufreq driver
+that register a simple cpufreq-dt. None of the current driver implements
+a full clk provider internally and I have some fear it might be
+problematic to have mixed stuff, eventually I feel I should implement a
+small clk driver that implements determine_rate, set_rate, a compatible
+and all sort. And still we would have the double reference of OPP
+Index->Freq Clock->OPP index.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+73ed43fbe826227bd4e0@syzkaller.appspotmail.com
+I wonder if a much easier and better solution for this is (similar to
+how we do with suspend and resume) add entry in the struct
+cpufreq_dt_platform_data, to permit to define simple .target_index and
+.get and overwrite the default one cpufreq-dt.
 
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/journal_reclaim.h:30!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 4682 Comm: kworker/u5:1 Not tainted 6.12.0-syzkaller-09073-g9f16d5e6f220 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: bcachefs_journal journal_write_work
-RIP: 0010:journal_seq_pin fs/bcachefs/journal_reclaim.h:30 [inline]
-RIP: 0010:__bch2_journal_pin_put+0x121/0x130 fs/bcachefs/journal_reclaim.c:327
-Code: 9a 52 fd 31 ff 89 de e8 0d 9a 52 fd 89 d8 5b 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc e8 f8 96 52 fd 90 0f 0b e8 f0 96 52 fd 90 <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 90 90 90 90 90 90 90
-RSP: 0018:ffffc9000dcf7a10 EFLAGS: 00010293
-RAX: ffffffff84434920 RBX: 0000000000000000 RCX: ffff888000582440
-RDX: 0000000000000000 RSI: ffffffffffffffff RDI: 0000000000000000
-RBP: ffffc9000dcf7b78 R08: ffffffff84434881 R09: ffffffff8440bb88
-R10: 0000000000000004 R11: ffff888000582440 R12: dffffc0000000000
-R13: ffff88804474a500 R14: ffffffffffffffff R15: ffff88804474a500
-FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000056474e330408 CR3: 000000000e738000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bch2_journal_buf_put_final fs/bcachefs/journal.c:217 [inline]
- __bch2_journal_buf_put fs/bcachefs/journal.h:276 [inline]
- __journal_entry_close+0x80a/0xe30 fs/bcachefs/journal.c:301
- journal_write_work+0x129/0x140 fs/bcachefs/journal.c:487
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:journal_seq_pin fs/bcachefs/journal_reclaim.h:30 [inline]
-RIP: 0010:__bch2_journal_pin_put+0x121/0x130 fs/bcachefs/journal_reclaim.c:327
-Code: 9a 52 fd 31 ff 89 de e8 0d 9a 52 fd 89 d8 5b 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc e8 f8 96 52 fd 90 0f 0b e8 f0 96 52 fd 90 <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 90 90 90 90 90 90 90
-RSP: 0018:ffffc9000dcf7a10 EFLAGS: 00010293
-RAX: ffffffff84434920 RBX: 0000000000000000 RCX: ffff888000582440
-RDX: 0000000000000000 RSI: ffffffffffffffff RDI: 0000000000000000
-RBP: ffffc9000dcf7b78 R08: ffffffff84434881 R09: ffffffff8440bb88
-R10: 0000000000000004 R11: ffff888000582440 R12: dffffc0000000000
-R13: ffff88804474a500 R14: ffffffffffffffff R15: ffff88804474a500
-FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000056474e330408 CR3: 000000000e738000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+This permits to both reduce greatly the airoha-cpufreq driver, register
+a simple cpufreq-dt and prevent any kind of overhead. After all the
+.target_index and .get doesn't do anything fancy, they just call the OPP
+set and clk get rate.
 
+What do you think? Changes are really trivial since this is already
+implemented for suspend and resume.
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+-- 
+	Ansuel
 
