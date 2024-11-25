@@ -1,234 +1,201 @@
-Return-Path: <linux-kernel+bounces-421332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47FF79D89B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:52:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E09BB9D8A9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:47:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D58ED2854D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:52:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 110C9B2AD40
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1543A1AF0C5;
-	Mon, 25 Nov 2024 15:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1BA1AD3F6;
+	Mon, 25 Nov 2024 15:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QJ9LljWI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bEbcd5Md"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92C8291E;
-	Mon, 25 Nov 2024 15:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0F8291E
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 15:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732549949; cv=none; b=aBEbZBnf1bMT77Vk5cAqZ+ehaWedTi0HcJmXgHMT+a9cRy+IplOOBv8+tBCdgTEZsVwFGPU5VIEDwm4qaWS8mSceDAJ/LiRXVqXpZcAKXTHPlKx9aGQFVElEwhgRyaic0zVy5jFCgYw+Md6nmOtUxHUblIvcVUV1QiqHG1AR090=
+	t=1732550076; cv=none; b=Y/ROQEW+oQErfyv50fFI0aGbXfZxvkWFJmUaYGBjgx72xzpUAQDSfPXinpoV/ibbPFm7ttKYINIYo2/Ohezb77Wv4aD4vQpe4x9qFK7htRH9dc/PTDPIrVWjM6whbOrSGozDzuXlk34S+lV0UXOG9TtYdVXT2vaaeE5QaZgokUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732549949; c=relaxed/simple;
-	bh=/WoWitydF92Rc+lpLKLEnfGTJhdbwccFT6fc/tQiuR8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YQbvbHo3BfwpH0C15NDkTMz0oCfqpHRLKjChtq5SKg2O037hgkzt2SxBNZ6OALXYg8ENbSAs/s4JEfC39CJ5q6Oc6ZRtX56zR03d49/QTnbBw1QTDQz1bFe5XELZz91vd+FS5xI6p4lnVGlO1nYL7ZpPf9eW80PH+25PS9twrAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QJ9LljWI; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732549948; x=1764085948;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=/WoWitydF92Rc+lpLKLEnfGTJhdbwccFT6fc/tQiuR8=;
-  b=QJ9LljWIlwsJ7CLgbofar/cGCG9GWGnmKwC0qst7rQKnTR98pZUy9EKF
-   mRWLv8GfwkVQJiL6VDnpCuEsnbMn1b26d+76DmeuXKiA5CDwlrpPi5N+n
-   DKfD50CY+b47ZUznERYgh9thJmKrPmWyM1jxm3qb08/GJKTlZFq8HOfJ2
-   p/Dh51u7xwAxaGA7gBabzMKX61LkSU2Au+LhZw/buykXhsoQupekXToQ7
-   LzxeL7r9+RK2LkTkKcoc0asJVXA1Gy+4mfNu6GQWLq2uevjor+lq3ErPG
-   o/2GMjNHT+OpjnIRbY4QTSkr/Ai8tDrR1F9RyXxV9Wd2m4SjQuyqbxNHR
-   g==;
-X-CSE-ConnectionGUID: U4ce8JX9S3WWyA2U1e1KAw==
-X-CSE-MsgGUID: P3+HQHUnSHKp9OerB9Q/gg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="50074722"
-X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
-   d="scan'208";a="50074722"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 07:52:27 -0800
-X-CSE-ConnectionGUID: s8lpRx83TFCuCQxoW28YAQ==
-X-CSE-MsgGUID: y58xV3DNR5e0x6ompTZ9DA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
-   d="scan'208";a="96213492"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO [10.245.246.22]) ([10.245.246.22])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 07:52:25 -0800
-Message-ID: <0566a0ab18448a9206a92defb695dd2e5d9bd77c.camel@linux.intel.com>
-Subject: Re: [PATCH AUTOSEL 6.6 3/4] locking/ww_mutex: Adjust to lockdep
- nest_lock requirements
-From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-To: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com, will@kernel.org
-Date: Mon, 25 Nov 2024 16:52:22 +0100
-In-Reply-To: <20241124124702.3338309-3-sashal@kernel.org>
-References: <20241124124702.3338309-1-sashal@kernel.org>
-	 <20241124124702.3338309-3-sashal@kernel.org>
-Autocrypt: addr=thomas.hellstrom@linux.intel.com; prefer-encrypt=mutual;
- keydata=mDMEZaWU6xYJKwYBBAHaRw8BAQdAj/We1UBCIrAm9H5t5Z7+elYJowdlhiYE8zUXgxcFz360SFRob21hcyBIZWxsc3Ryw7ZtIChJbnRlbCBMaW51eCBlbWFpbCkgPHRob21hcy5oZWxsc3Ryb21AbGludXguaW50ZWwuY29tPoiTBBMWCgA7FiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQuBaTVQrGBr/yQAD/Z1B+Kzy2JTuIy9LsKfC9FJmt1K/4qgaVeZMIKCAxf2UBAJhmZ5jmkDIf6YghfINZlYq6ixyWnOkWMuSLmELwOsgPuDgEZaWU6xIKKwYBBAGXVQEFAQEHQF9v/LNGegctctMWGHvmV/6oKOWWf/vd4MeqoSYTxVBTAwEIB4h4BBgWCgAgFiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwwACgkQuBaTVQrGBr/P2QD9Gts6Ee91w3SzOelNjsus/DcCTBb3fRugJoqcfxjKU0gBAKIFVMvVUGbhlEi6EFTZmBZ0QIZEIzOOVfkaIgWelFEH
-Organization: Intel Sweden AB, Registration Number: 556189-6027
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-3.fc39) 
+	s=arc-20240116; t=1732550076; c=relaxed/simple;
+	bh=fDb8cXzJ6711mCKX8xueWhchOvWxtDD7B4KN9b/sYaA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=dMd7LhMSoGqiMP1dHcXz++KghfVIgWR15Acn5aRInBiYCgoYZBlQgeH6WRQSpEYTYDB0kSOEQYCgRqSsj5zq01nQZg8bW/iAkRhXWm8DdFHpq/mxVkbuoqq3jel1n8l1qc5UZR4T2Gkd4EYTYsBfwTtrfGSz7krb5BUgw7ggDZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bEbcd5Md; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1279EC4CECE;
+	Mon, 25 Nov 2024 15:54:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732550076;
+	bh=fDb8cXzJ6711mCKX8xueWhchOvWxtDD7B4KN9b/sYaA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=bEbcd5MdllLmTjnUK6AbPpSWE+ikv3T0gUc7WTfItclhhhmFTaThen+03NktGMdku
+	 zh0RBG3LnBVoBMz7fVNxS4qrFYodEdxVHYWFzwxf72zuQ+vXcA25dGY6LfkUtp0Nsw
+	 G4KOgB1nLZ8mVMQeiwIEkPjl7T96PWoIaC5M+leWztyN0BQeDqOV02YMkyaisbGqKK
+	 HItUoBI63oZOyYHbfiEXvUXBr/7S2Sf4+3MrustAHimR8WMIDm4KuV6Kc4RPRFpC12
+	 qN1edFdYAg/jvFyOEleTJ8IG05t8pX/SbYH5VXwnBGzKQ4qTn81lhB6tTAtyODN8tl
+	 v5D11hsq7UwJg==
+Date: Mon, 25 Nov 2024 15:54:34 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>
+Subject: [GIT PULL] f2fs for 6.13-rc1
+Message-ID: <Z0SdunZ61-OMaH1o@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Sun, 2024-11-24 at 07:46 -0500, Sasha Levin wrote:
-> From: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com>
->=20
-> [ Upstream commit 823a566221a5639f6c69424897218e5d6431a970 ]
->=20
-> When using mutex_acquire_nest() with a nest_lock, lockdep refcounts
-> the
-> number of acquired lockdep_maps of mutexes of the same class, and
-> also
-> keeps a pointer to the first acquired lockdep_map of a class. That
-> pointer
-> is then used for various comparison-, printing- and checking
-> purposes,
-> but there is no mechanism to actively ensure that lockdep_map stays
-> in
-> memory. Instead, a warning is printed if the lockdep_map is freed and
-> there are still held locks of the same lock class, even if the
-> lockdep_map
-> itself has been released.
->=20
-> In the context of WW/WD transactions that means that if a user
-> unlocks
-> and frees a ww_mutex from within an ongoing ww transaction, and that
-> mutex happens to be the first ww_mutex grabbed in the transaction,
-> such a warning is printed and there might be a risk of a UAF.
->=20
-> Note that this is only problem when lockdep is enabled and affects
-> only
-> dereferences of struct lockdep_map.
->=20
-> Adjust to this by adding a fake lockdep_map to the acquired context
-> and
-> make sure it is the first acquired lockdep map of the associated
-> ww_mutex class. Then hold it for the duration of the WW/WD
-> transaction.
->=20
-> This has the side effect that trying to lock a ww mutex *without* a
-> ww_acquire_context but where a such context has been acquire, we'd
-> see
-> a lockdep splat. The test-ww_mutex.c selftest attempts to do that, so
-> modify that particular test to not acquire a ww_acquire_context if it
-> is not going to be used.
->=20
-> Signed-off-by: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Link:
-> https://lkml.kernel.org/r/20241009092031.6356-1-thomas.hellstrom@linux.in=
-tel.com
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+Hi Linus,
 
-The commit introduces regressions and should not be backported, please
-see the corresponding patch for 6.12 for a discussion.
+Could you please consideri this pull request?
 
 Thanks,
-Thomas
 
+The following changes since commit eca631b8fe808748d7585059c4307005ca5c5820:
 
+  Merge tag 'f2fs-6.12-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs (2024-10-14 11:19:19 -0700)
 
+are available in the Git repository at:
 
-> ---
-> =C2=A0include/linux/ww_mutex.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 14 +=
-+++++++++++++
-> =C2=A0kernel/locking/test-ww_mutex.c |=C2=A0 8 +++++---
-> =C2=A02 files changed, 19 insertions(+), 3 deletions(-)
->=20
-> diff --git a/include/linux/ww_mutex.h b/include/linux/ww_mutex.h
-> index bb763085479af..a401a2f31a775 100644
-> --- a/include/linux/ww_mutex.h
-> +++ b/include/linux/ww_mutex.h
-> @@ -65,6 +65,16 @@ struct ww_acquire_ctx {
-> =C2=A0#endif
-> =C2=A0#ifdef CONFIG_DEBUG_LOCK_ALLOC
-> =C2=A0	struct lockdep_map dep_map;
-> +	/**
-> +	 * @first_lock_dep_map: fake lockdep_map for first locked
-> ww_mutex.
-> +	 *
-> +	 * lockdep requires the lockdep_map for the first locked
-> ww_mutex
-> +	 * in a ww transaction to remain in memory until all
-> ww_mutexes of
-> +	 * the transaction have been unlocked. Ensure this by
-> keeping a
-> +	 * fake locked ww_mutex lockdep map between
-> ww_acquire_init() and
-> +	 * ww_acquire_fini().
-> +	 */
-> +	struct lockdep_map first_lock_dep_map;
-> =C2=A0#endif
-> =C2=A0#ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
-> =C2=A0	unsigned int deadlock_inject_interval;
-> @@ -146,7 +156,10 @@ static inline void ww_acquire_init(struct
-> ww_acquire_ctx *ctx,
-> =C2=A0	debug_check_no_locks_freed((void *)ctx, sizeof(*ctx));
-> =C2=A0	lockdep_init_map(&ctx->dep_map, ww_class->acquire_name,
-> =C2=A0			 &ww_class->acquire_key, 0);
-> +	lockdep_init_map(&ctx->first_lock_dep_map, ww_class-
-> >mutex_name,
-> +			 &ww_class->mutex_key, 0);
-> =C2=A0	mutex_acquire(&ctx->dep_map, 0, 0, _RET_IP_);
-> +	mutex_acquire_nest(&ctx->first_lock_dep_map, 0, 0, &ctx-
-> >dep_map, _RET_IP_);
-> =C2=A0#endif
-> =C2=A0#ifdef CONFIG_DEBUG_WW_MUTEX_SLOWPATH
-> =C2=A0	ctx->deadlock_inject_interval =3D 1;
-> @@ -185,6 +198,7 @@ static inline void ww_acquire_done(struct
-> ww_acquire_ctx *ctx)
-> =C2=A0static inline void ww_acquire_fini(struct ww_acquire_ctx *ctx)
-> =C2=A0{
-> =C2=A0#ifdef CONFIG_DEBUG_LOCK_ALLOC
-> +	mutex_release(&ctx->first_lock_dep_map, _THIS_IP_);
-> =C2=A0	mutex_release(&ctx->dep_map, _THIS_IP_);
-> =C2=A0#endif
-> =C2=A0#ifdef DEBUG_WW_MUTEXES
-> diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-
-> ww_mutex.c
-> index 7c5a8f05497f2..02b84288865ca 100644
-> --- a/kernel/locking/test-ww_mutex.c
-> +++ b/kernel/locking/test-ww_mutex.c
-> @@ -62,7 +62,8 @@ static int __test_mutex(unsigned int flags)
-> =C2=A0	int ret;
-> =C2=A0
-> =C2=A0	ww_mutex_init(&mtx.mutex, &ww_class);
-> -	ww_acquire_init(&ctx, &ww_class);
-> +	if (flags & TEST_MTX_CTX)
-> +		ww_acquire_init(&ctx, &ww_class);
-> =C2=A0
-> =C2=A0	INIT_WORK_ONSTACK(&mtx.work, test_mutex_work);
-> =C2=A0	init_completion(&mtx.ready);
-> @@ -90,7 +91,8 @@ static int __test_mutex(unsigned int flags)
-> =C2=A0		ret =3D wait_for_completion_timeout(&mtx.done,
-> TIMEOUT);
-> =C2=A0	}
-> =C2=A0	ww_mutex_unlock(&mtx.mutex);
-> -	ww_acquire_fini(&ctx);
-> +	if (flags & TEST_MTX_CTX)
-> +		ww_acquire_fini(&ctx);
-> =C2=A0
-> =C2=A0	if (ret) {
-> =C2=A0		pr_err("%s(flags=3D%x): mutual exclusion failure\n",
-> @@ -663,7 +665,7 @@ static int __init test_ww_mutex_init(void)
-> =C2=A0	if (ret)
-> =C2=A0		return ret;
-> =C2=A0
-> -	ret =3D stress(2047, hweight32(STRESS_ALL)*ncpus, STRESS_ALL);
-> +	ret =3D stress(2046, hweight32(STRESS_ALL)*ncpus, STRESS_ALL);
-> =C2=A0	if (ret)
-> =C2=A0		return ret;
-> =C2=A0
+  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-6.13-rc1
 
+for you to fetch changes up to bc8aeb04fd80cb8cfae3058445c84410fd0beb5e:
+
+  f2fs: fix to drop all discards after creating snapshot on lvm device (2024-11-23 15:48:15 +0000)
+
+----------------------------------------------------------------
+f2fs-for-6.13-rc1
+
+This series introduces a device aliasing feature where user can carve out
+partitions but reclaim the space back by deleting aliased file in root dir.
+In addition to that, there're numerous minor bug fixes in zoned device support,
+checkpoint=disable, extent cache management, fiemap, and lazytime mount option.
+The full list of noticeable changes can be found below.
+
+Enhancement:
+ - introduce device aliasing file
+ - add stats in debugfs to show multiple devices
+ - add a sysfs node to limit max read extent count per-inode
+ - modify f2fs_is_checkpoint_ready logic to allow more data to be written with the CP disable
+ - decrease spare area for pinned files for zoned devices
+
+Bug fix:
+ - Revert "f2fs: remove unreachable lazytime mount option parsing"
+ - adjust unusable cap before checkpoint=disable mode
+ - fix to drop all discards after creating snapshot on lvm device
+ - fix to shrink read extent node in batches
+ - fix changing cursegs if recovery fails on zoned device
+ - fix to adjust appropriate length for fiemap
+ - fix fiemap failure issue when page size is 16KB
+ - fix to avoid forcing direct write to use buffered IO on inline_data inode
+ - fix to map blocks correctly for direct write
+ - fix to account dirty data in __get_secs_required()
+ - fix null-ptr-deref in f2fs_submit_page_bio()
+ - f2fs: compress: fix inconsistent update of i_blocks in release_compress_blocks and reserve_compress_blocks
+
+----------------------------------------------------------------
+Andrew Kreimer (1):
+      f2fs: fix typos
+
+Chao Yu (17):
+      f2fs: fix to account dirty data in __get_secs_required()
+      f2fs: fix to do sanity check on node blkaddr in truncate_node()
+      f2fs: multidevice: add stats in debugfs
+      f2fs: zone: introduce first_zoned_segno in f2fs_sb_info
+      f2fs: fix to avoid potential deadlock in f2fs_record_stop_reason()
+      f2fs: fix to parse temperature correctly in f2fs_get_segment_temp()
+      f2fs: clean up opened code w/ {get,set}_nid()
+      f2fs: fix to convert log type to segment data type correctly
+      f2fs: fix to map blocks correctly for direct write
+      f2fs: fix to avoid forcing direct write to use buffered IO on inline_data inode
+      f2fs: fix to do cast in F2FS_{BLK_TO_BYTES, BTYES_TO_BLK} to avoid overflow
+      f2fs: clean up w/ F2FS_{BLK_TO_BYTES,BTYES_TO_BLK}
+      f2fs: fix to requery extent which cross boundary of inquiry
+      f2fs: print message if fscorrupted was found in f2fs_new_node_page()
+      f2fs: fix to shrink read extent node in batches
+      f2fs: add a sysfs node to limit max read extent count per-inode
+      f2fs: fix to drop all discards after creating snapshot on lvm device
+
+Daeho Jeong (3):
+      f2fs: decrease spare area for pinned files for zoned devices
+      f2fs: introduce device aliasing file
+      f2fs: adjust unusable cap before checkpoint=disable mode
+
+Daniel Yang (1):
+      f2fs: replace deprecated strcpy with strscpy
+
+Jaegeuk Kim (1):
+      Revert "f2fs: remove unreachable lazytime mount option parsing"
+
+Long Li (1):
+      f2fs: fix race in concurrent f2fs_stop_gc_thread
+
+LongPing Wei (2):
+      f2fs: fix the wrong f2fs_bug_on condition in f2fs_do_replace_block
+      f2fs: clean up the unused variable additional_reserved_segments
+
+Qi Han (3):
+      f2fs: compress: fix inconsistent update of i_blocks in release_compress_blocks and reserve_compress_blocks
+      f2fs: fix f2fs_bug_on when uninstalling filesystem call f2fs_evict_inode.
+      f2fs: modify f2fs_is_checkpoint_ready logic to allow more data to be written with the CP disable
+
+Sheng Yong (2):
+      f2fs: fix changing cursegs if recovery fails on zoned device
+      f2fs: clear SBI_POR_DOING before initing inmem curseg
+
+Thorsten Blum (1):
+      f2fs: Use struct_size() to improve f2fs_acl_clone()
+
+Xiuhong Wang (1):
+      f2fs: fix fiemap failure issue when page size is 16KB
+
+Ye Bin (1):
+      f2fs: fix null-ptr-deref in f2fs_submit_page_bio()
+
+Yongpeng Yang (1):
+      f2fs: check curseg->inited before write_sum_page in change_curseg
+
+Zeng Heng (1):
+      f2fs: Fix not used variable 'index'
+
+Zhiguo Niu (3):
+      f2fs: fix to avoid use GC_AT when setting gc_mode as GC_URGENT_LOW or GC_URGENT_MID
+      f2fs: remove redundant atomic file check in defragment
+      f2fs: fix to adjust appropriate length for fiemap
+
+liuderong (1):
+      f2fs: introduce f2fs_get_section_mtime
+
+ Documentation/ABI/testing/sysfs-fs-f2fs |  13 ++-
+ Documentation/filesystems/f2fs.rst      |  44 +++++++++
+ fs/f2fs/acl.c                           |   5 +-
+ fs/f2fs/checkpoint.c                    |   2 +-
+ fs/f2fs/data.c                          | 114 ++++++++++------------
+ fs/f2fs/debug.c                         | 111 +++++++++++++++++++++-
+ fs/f2fs/extent_cache.c                  | 119 +++++++++++++++++------
+ fs/f2fs/f2fs.h                          |  38 ++++++--
+ fs/f2fs/file.c                          |  71 +++++++++++---
+ fs/f2fs/gc.c                            |  19 ++--
+ fs/f2fs/gc.h                            |   1 +
+ fs/f2fs/inode.c                         |  23 ++++-
+ fs/f2fs/node.c                          |  28 ++++--
+ fs/f2fs/recovery.c                      |   9 +-
+ fs/f2fs/segment.c                       | 161 +++++++++++++++++++++++---------
+ fs/f2fs/segment.h                       |  72 ++++++++------
+ fs/f2fs/super.c                         | 101 ++++++++++++++------
+ fs/f2fs/sysfs.c                         |  16 +++-
+ include/linux/f2fs_fs.h                 |   7 +-
+ include/uapi/linux/f2fs.h               |   1 +
+ 20 files changed, 700 insertions(+), 255 deletions(-)
 
