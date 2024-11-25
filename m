@@ -1,110 +1,92 @@
-Return-Path: <linux-kernel+bounces-420910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46B7A9D85DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:06:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF4C19D844D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:22:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB5A0B26067
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:22:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 507E6164DF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23A3199920;
-	Mon, 25 Nov 2024 11:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4761991CD;
+	Mon, 25 Nov 2024 11:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KvVUIp19"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fo2jFC+q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812F3198A25
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993E2198A19;
+	Mon, 25 Nov 2024 11:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732533755; cv=none; b=J9UvfhU3on4h/cT+7lccnFKS7oxSacPX2DbDeEFhxNWMmWoOS5mUalzWEDfz+g/uXzqYddEy/oY5S1INYDysJotporPjywrtKErZYXY9HVOC+M4fMhdzY6Emlt6HgIpcxPgNlm9YfI3GVGnB7gnp7lZC/TR8k3bCd73/ticLpww=
+	t=1732533768; cv=none; b=S7cA2f0kJbGnaONUCMuCWW+IZmZ1R+ttFbgLvIEN+TrapOv6yEOBYqIJKWHKFrOXHB2COXNCaxccP7EkCpPYa/jdSWED4QLLZi1OIkBpyY3FYIPQ+Xb/kT7SAazHbBBHpp8GvWgLnQOvFakZwvBHIxiBj3VW3Q1xd41M8Mi+ptw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732533755; c=relaxed/simple;
-	bh=uDjIS3T+skIVriAucuNnm/jHl5kw+SPTiNT5UC7q7ls=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DSybulCLMOlRwEqBsKAsX8mQHv+bQigehm+ju1/0r8k+affaR4igjntwFRI2Dc2hXKpJSPlZFDCoPAG+t0LcSMnxmcQqsZBT6ViZmyypt2uiRxzG+msNzaZomPz47ZWPQQc030Q5zuQJNCRgL/b9ihWavBL0S2nozg8aMpShXa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KvVUIp19; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732533752;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uDjIS3T+skIVriAucuNnm/jHl5kw+SPTiNT5UC7q7ls=;
-	b=KvVUIp19NfeilWaMXRWtA/Ifl732NSKNG1dYF+/q8+o34LZ+/DHy6ZzJx0LvPNGvfx0YOK
-	yICh394lFziiT+hHXj8SMkgmsHmVaHh26QcmrGe559Iwe3r16T2FnrnkrFdCEBWm8p6MaO
-	0/wwSjau/I1V7DdFRqm0Oi8ZCGKjG0Y=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-466-jLNb60ujPkqfIlq0yRySDw-1; Mon, 25 Nov 2024 06:22:31 -0500
-X-MC-Unique: jLNb60ujPkqfIlq0yRySDw-1
-X-Mimecast-MFC-AGG-ID: jLNb60ujPkqfIlq0yRySDw
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3823527eb9dso2461123f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 03:22:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732533748; x=1733138548;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uDjIS3T+skIVriAucuNnm/jHl5kw+SPTiNT5UC7q7ls=;
-        b=SGomqDUzWcWhCe59ExrJnT5bcKnvH88olUVmgu0igMopIyU84SgzK4uhR2kv7mOXUb
-         oJKm/QxqGgG05Pjf35XHlf3WesnN05AyEhFjHDuheVpx6zeNn83p+4vm5z3SVpuLcZfH
-         qUfNjA7PMBhIuxrAJsXpL3YquasOX9eP6ku91TFMCUaT9ARxlRspzTagz7ozyhIGi5Sz
-         YGmjoRXNLKQwhLVzgKKhnRJTuTFe5KEkgAqfWK+/Odngb8VS5Cx9ek+eb2v6d4eVc1NF
-         9UKycrLrCLh5/2R0WmvsFFusr2rJ8XO7Y8rCxEvbuwruAgCcsNPKA9iJQpN99e1DKJYv
-         bbbA==
-X-Gm-Message-State: AOJu0YzIx0lJEpAJTjTb6EPBCSlXO5Ah1rEQFcebfFD1wbGzFECwJxHZ
-	Y94LefETbmHQJC68NZvQcSalWRLle9pSmP9YwtQjXc8Ii3mGLy6wJ16KByxuo5HRWiZUJbp/LQb
-	/QTypjpMG9b2qFS7Nv+2nEC40puguvSfgbG96cSMMJLXffjdX7z7b/ro72XgcZwj9KCcz+6+7KK
-	k6BEvZTO/Fcwbu303PdiMoNmXHXw7so+W+lSyibHT1/vBl
-X-Gm-Gg: ASbGnctzEGJ7YvGmi1Q0nfk/HOtvzMyUhBhvFJDpCpTn6uezTqFjjEn+lLISzhbXW+q
-	NydvoeIIi8FIC5fhoX2JjJRPUIhNFAjQ/
-X-Received: by 2002:a05:6000:400b:b0:37d:4870:dedf with SMTP id ffacd0b85a97d-38260b5b997mr10052617f8f.19.1732533748640;
-        Mon, 25 Nov 2024 03:22:28 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG8RMF1eE8qGQ7deFZ6zkFBxZhw1nuFFo714Pf/H26XOtCJdb7eIMHcJamY8E6V00bW/7r8sLJJrO61LvbDfOs=
-X-Received: by 2002:a05:6000:400b:b0:37d:4870:dedf with SMTP id
- ffacd0b85a97d-38260b5b997mr10052602f8f.19.1732533748386; Mon, 25 Nov 2024
- 03:22:28 -0800 (PST)
+	s=arc-20240116; t=1732533768; c=relaxed/simple;
+	bh=6HafA0KRF/+3BM26xL0fEBf7N5sS0U2Dr7+T/CzQ1kg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tiFIRXWBFovKdqkLeua9qW1BwTXV5zDfA89JyGZeUtO+AUvDoe0gtdRpWj6LvoIjWqcqCgtmHll6W40qdAIkRCjz9b+i0v6tfkIeCvD1/AyvGI6FGU3NuXftZTW4dMLpHAqBi3yPLTC9tSnjYOckLGoi3kcqKmIdgcNvTJB53Hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fo2jFC+q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50485C4CECE;
+	Mon, 25 Nov 2024 11:22:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732533768;
+	bh=6HafA0KRF/+3BM26xL0fEBf7N5sS0U2Dr7+T/CzQ1kg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Fo2jFC+qxBxW50TiP69eT54+pqsvVbuNSALlPudGO8vXDvjz99ow5qJbHp7MkfqCw
+	 DULlPMeb+rQTNhaKc0qmuPLwC/viQCB0a+dk7E5y6Mq/6Ui0KlGLDF2M/M8lDMDzXa
+	 eKlAmswi3iyrdI3CvirrKlFj9WtJ+LKbCKqiruxothd0E/o6njZ5Y8Oh8JV8hWaXUf
+	 1oBR3r/XpWHnczXzaE9t/h0Da1JWKOte6SNNpgR0Dv0oZufjuaSfZcD9G/GuRyaKnW
+	 hi4EXtVbFltDStSVBtDFOUa/Fe9lAxlTe8flu//60FAgbJup2PwATetWdnSQ6gFS9s
+	 38o0VMpbuBC9A==
+Date: Mon, 25 Nov 2024 12:22:42 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 21/26] smb: avoid pointless cred reference count bump
+Message-ID: <20241125-fernweh-autobahn-6006e984ec8b@brauner>
+References: <20241124-work-cred-v1-0-f352241c3970@kernel.org>
+ <20241124-work-cred-v1-21-f352241c3970@kernel.org>
+ <20241124183743.GX3387508@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108130737.126567-1-pbonzini@redhat.com> <rl5s5eykuzs4dgp23vpbagb4lntyl3uptwh54jzjjgfydynqvx@6xbbcjvb7zpn>
- <CABgObfbUzKswAjPuq_+KL9jyQegXgjSRQmc6uSm1cAXifNo_Xw@mail.gmail.com> <hbv5uf7b2auiwyjkekmtfpu26ht7ulvapnszx7rdgwoowqdcna@pwuuodkenwgr>
-In-Reply-To: <hbv5uf7b2auiwyjkekmtfpu26ht7ulvapnszx7rdgwoowqdcna@pwuuodkenwgr>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Mon, 25 Nov 2024 12:22:15 +0100
-Message-ID: <CABgObfYtpW0B4uEmjne8FAq0tSJ+v4bvcukAgM2auuQWTqaGFA@mail.gmail.com>
-Subject: Re: [PATCH] KVM: x86: switch hugepage recovery thread to vhost_task
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	michael.christie@oracle.com, Tejun Heo <tj@kernel.org>, 
-	Luca Boccassi <bluca@debian.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241124183743.GX3387508@ZenIV>
 
-On Mon, Nov 25, 2024 at 10:01=E2=80=AFAM Michal Koutn=C3=BD <mkoutny@suse.c=
-om> wrote:
-> > > I think the bugs we saw are not so serious to warrant
-> > > Fixes: c57c80467f90e ("kvm: Add helper function for creating VM worke=
-r threads")
->
-> I'm mainly posting this because there are some people surprised this
-> didn't get to 6.12. Hence I wonder if Cc: stable would be helpful here.
+On Sun, Nov 24, 2024 at 06:37:43PM +0000, Al Viro wrote:
+> On Sun, Nov 24, 2024 at 02:44:07PM +0100, Christian Brauner wrote:
+> > No need for the extra reference count bump.
+> > 
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > ---
+> >  fs/smb/server/smb_common.c | 4 +---
+> >  1 file changed, 1 insertion(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/smb/server/smb_common.c b/fs/smb/server/smb_common.c
+> > index f1d770a214c8b2c7d7dd4083ef57c7130bbce52c..a3f96804f84f03c22376769dffdf60cd66f5e3d2 100644
+> > --- a/fs/smb/server/smb_common.c
+> > +++ b/fs/smb/server/smb_common.c
+> > @@ -780,7 +780,7 @@ int __ksmbd_override_fsids(struct ksmbd_work *work,
+> >  		cred->cap_effective = cap_drop_fs_set(cred->cap_effective);
+> >  
+> >  	WARN_ON(work->saved_cred);
+> > -	work->saved_cred = override_creds(get_new_cred(cred));
+> > +	work->saved_cred = override_creds(cred);
+> >  	if (!work->saved_cred) {
+> >  		abort_creds(cred);
+> >  		return -EINVAL;
+> 
+> Won't that leave a dangling pointer?
 
-Yes, the patch didn't make it to 6.12 because I wanted to get reviews
-(which I did and resulted in changes), but it is in 6.13 and Cc:
-stable is there.
-
-Paolo
-
+Afaict, the whole check doesn't make sense because I don't see how
+override_creds() could be called on a task with current->cred == NULL.
+There's no way to opt out of having current->cred set.
 
