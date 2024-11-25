@@ -1,462 +1,168 @@
-Return-Path: <linux-kernel+bounces-420724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23C529D8295
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:38:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 526339D825F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:34:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6451286FC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:38:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04150163AD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C161925B4;
-	Mon, 25 Nov 2024 09:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894D6192B73;
+	Mon, 25 Nov 2024 09:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ATPq4A/N"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2047.outbound.protection.outlook.com [40.107.21.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="edZZUv3u"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C934D194C78;
-	Mon, 25 Nov 2024 09:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732527333; cv=fail; b=FWf43YCzDxr4CW6qW4uZMKF7On6BtM9u0V1Hy2Mv4+2FZ3yWnone2DlI9LDQ+U5T3xuLppsTFtDkJtwqd8BQpfHRAdPVniKtu80iULDfwthOcOE0xXjyEYP8Bmzo7fGK8ozUib1Rzv4arD3ePVXcEab4aqCwZNc2ZllmGw6brRc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732527333; c=relaxed/simple;
-	bh=0//Ac5mIoLtyfNFV6gBPcUrgkrLVHeGtygx4RkzlR6g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KkxGjlZnJoc22ol6S9sj7vOqKNZ9LFmhlLADLFSerCPR2J3txPal/MwfxCQRJywY/foiFWYFd1MDxJNdCGeImSqJsx9XcwIUY8XQz0YzuxnGeY3hVZqcsHAXEeCDOt1rXwjyonxBs3NL2CDTMn63Vj+pjeGOv26NInlrRNSM1aE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ATPq4A/N; arc=fail smtp.client-ip=40.107.21.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EldOVN05nDd9cbi4BrOBzhS8lJNxmO2QmFt42XYoBVMVGhUT1ZUFzqktepFbqocB1dFfHsEfLZ+xIH3djqsGm1KPKS0T/PXqZFlPgWgb8JIRS90u4pFQVoqpAaNcsVK7afntAgAs3QWeRAmpKceOEOJVBD16LeeTrML9Hj2M5+gTrYJET9khBFJbZW7Z5Z70wahJFHD5XV0OhrzsYjlVRAXmliryrpiQTK3Rb6aI2fQXnA1ZFP4bfTNXcVqktN/iAjBwETecAT1GlFX1xkB+rEjZRKMsOe21x2NbXh81baGmidSxHOPjHzvWnrlyycjPwgQ1XCWIXut+rYIJBgMF8Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KlDRWuyL54wp6gCAfR0Z30yGWUbPwOprkje730daaMk=;
- b=QdWXXsbF+uIF2Y/lS8QY7VEmAA3eTpkM7yoN5Fhzhy1TWTd6TXNBrpZXfgYkoEXGfc0CzfQsu4PzOw2CANwCJPYgSxS5gao430lv41ifTE/0AQPdeGJeYCcU+npFtxysPnQ6uqL3XK9PFnUnfYoBcnfE+f8rZ972h4Rs5VyKqZBFzgFltv6vKEp7xEe2WMA52o9PUvqe5X267ZJiuQV4ZiQAk97F9Zd5KDk0IrbotfdEuSzorvBPM/LdTcY7NC9diygXiaBa+ePaZOnyeN+9hr/qkT6hgR0IdLm/quCRrtB8e06dteCauxkTsYq5fmzdRR44l7hxJrDVNkdrxByLjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KlDRWuyL54wp6gCAfR0Z30yGWUbPwOprkje730daaMk=;
- b=ATPq4A/NwkMcWbdLLi5PNZZw8S0o4m2Dxi7/ohWQsocIMhHZuryNf5VKJV47QRtljzoz42OxtpBx0VItRa6hiAPSqSnVrXaV6sPCi7G4bu3ZDObjuZxbMxnN8TzQYyMBEozabig7lVtErBgsfwY+lE7Rv6Bly9RZ0R77OkPs32s6YkIDmZoJxXhQD1WoqcutV2xH7mlRRRPvVApRSRJp3YV/nUaTQtRhNDg0WO7PkghHn41ljDqH7zOVBHpM1AYmG9AAXO/EdafrWxKMeNE22wTK3auZvUz2/CsJIk/CuTccGGRayi7k5NL+nHJLAz3Kx7rUa2f0XfbP22yu/TbiUA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by GVXPR04MB10754.eurprd04.prod.outlook.com (2603:10a6:150:225::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.27; Mon, 25 Nov
- 2024 09:35:27 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%6]) with mapi id 15.20.8182.019; Mon, 25 Nov 2024
- 09:35:27 +0000
-From: Liu Ying <victor.liu@nxp.com>
-To: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org
-Cc: p.zabel@pengutronix.de,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	glx@linutronix.de,
-	vkoul@kernel.org,
-	kishon@kernel.org,
-	aisheng.dong@nxp.com,
-	agx@sigxcpu.org,
-	francesco@dolcini.it,
-	frank.li@nxp.com,
-	dmitry.baryshkov@linaro.org
-Subject: [DO NOT MERGE PATCH v4 19/19] arm64: dts: imx8qxp-mek: Add MX8-DLVDS-LCD1 display module support
-Date: Mon, 25 Nov 2024 17:33:16 +0800
-Message-Id: <20241125093316.2357162-20-victor.liu@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241125093316.2357162-1-victor.liu@nxp.com>
-References: <20241125093316.2357162-1-victor.liu@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR01CA0131.apcprd01.prod.exchangelabs.com
- (2603:1096:4:40::35) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176611922F5;
+	Mon, 25 Nov 2024 09:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732527211; cv=none; b=EjuYirpUcz9kewLnVM8NOMGWeK6s3r/MeDJMBdSYML21PiXOPjdmwZJ2x62H5ukfXXGMm3vw0q6NGMyzvFCipI59GOUSHUlXpU24eLPXTtvPOCbraM7veYE6DCE8ZC4OhIBPe4u42R6r8nUfrrtZklQ0VGmwGib+HhHQ5bQTexs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732527211; c=relaxed/simple;
+	bh=X81NZt9qx3DE0gbvEotrk8pcmoWkcatWmTjsILlbnbI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uYJUSXGNJEXojpjgBCvtqHiUUp0z46NO4oDLX0uVci1sKXIuN9d/MGtzqf2tk6bW8VC7f6+mdDJx0P/sGYSVgWXTiwqZmVMWmq/A5SC7JnHjsnlibWg/51sjbf49WOapqXFsijNVnlH3AxXziu/YglzK8ufBmD4rGAFJLloLmwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=edZZUv3u; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ffb0bbe9c8so20462561fa.0;
+        Mon, 25 Nov 2024 01:33:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732527208; x=1733132008; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=CJd7YmDRIf/qZZRuIn1RRwsg87hhLA4wTR2jmGGoM0I=;
+        b=edZZUv3u7CuTJxhvRxwEwMA1jdaaD94Gafw/mM/pTJaiZR3H0AL547Uh48NTgITxej
+         R1OYhaoM37VOLFczBNQor8xXrlaS09PQD8Q0B3ErRMBBTdbaq40bxkeSV3U1sPd/Dsx5
+         PVUx9I7cxBcGaElQRcthKEUI+wJoj9GioNjBYFeNsFAgi1jYZ7AsuE/WLkKRw1RTsKhP
+         788k/QqI5/x2uKzyk1L7ZkWNCLYSr7rtjPevHQfQmof42TdDm5JR+mzDn7BZEOljV5Sa
+         N+dHg939o1u6+y434V3TQwyqMQdE5EYNN/f2PLS27iBs25/C9JYyURhmX8S5sBE/lGB/
+         qddw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732527208; x=1733132008;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CJd7YmDRIf/qZZRuIn1RRwsg87hhLA4wTR2jmGGoM0I=;
+        b=kxcmQM7Hd5x5wo8iPYC57eP3lDIIvyCJ/KWEZ8XuoGdfgVOOpyVL6fjpy2Dkx3IwwB
+         VKFEP8PvT3nC2NHlrrojur2uZSZZowr8zfE1t1e8FAJObMOdCaRcftk5BkS6MWs3y3qo
+         P1lp2+YYN50yAsVwkcL/QiQZxjTp3sniem4Jftol4h03v2Ige5WoI+DOn3KcD4LApVmg
+         IHQn2QdxDtFkT3WzPEeQXIJ1Ej32IivfTFTIzGAaMdUYNb2j4r8d7O/c5PlCXCR7nZal
+         f5tW/A1brRvQ/Rid32uQFB88uvUERkHt3lDxstct5WjDnuis8TSYqAzB/YbhzmRxFNgH
+         tAeA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnHSQQGTfuOXTvvOkLzLjSA5mqG2M9/DqolI7YRf75u0D3Jrafgn69FDkmflW8PLb821Y=@vger.kernel.org, AJvYcCUwJIoaLcFosdUS0zjvC9BEX1B9ThPhkN2rYiNSahE1CM3aUnvwzQTk3OugC3Lq8vqGIJ4J4FuC/QqgdV/X@vger.kernel.org, AJvYcCVcJc7Pp4RdIxgcf2rTcfxodOU183Jw5MoGAhIyxEfSiuYeABdr8Hu3QMzNoqi+3dYHTy0MPXWynCQl2JSZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0ydYdXt+bCq86ETyAxLpkRh7tvhy+tMeaDFD/51PQI94GPlte
+	DYC8WfKnY1HjxQUbFtQtBD/KtrDKbYpPvND04FwkJsKiq7nJNkHn
+X-Gm-Gg: ASbGncscHW0a1Q+1l3fysxeqFyqpcCbSL/2cVrrfRchxDecZu1+JkkUtEVcGliiNMiN
+	ikGQ5+9Oj2buCUlq5KAfl3aEWlydU8gn7EmFBrdRc1FG6jdla/q2vmxdtOqGBUEzvi2Cfc+4PmV
+	MU8dt6BzcZDqnhDKjK1+BS6ODo67ihftm4zoarOSk49s5FjFgSry5k0a34rXvk7XT5gSy6gccj6
+	ev88qjkr1jAw7Hedpufp6vQr3e/XKYn/36k2VlKzLfwO18VG+kkbRWki8PXdwW8NTrPnrVN/gZI
+	yS6zZBzHAzJ9UpfgXd6ZAL8=
+X-Google-Smtp-Source: AGHT+IFmsgLuuEjHvCGS6xK+KSUkxEbyq3M3cWUJah1M0laeKP1YjZJc3hl5ShQC/nZ44R6jc79QJg==
+X-Received: by 2002:a2e:b8d4:0:b0:2ff:557e:b418 with SMTP id 38308e7fff4ca-2ffa71bc397mr57943991fa.36.1732527207876;
+        Mon, 25 Nov 2024 01:33:27 -0800 (PST)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4349e80e51esm40436105e9.33.2024.11.25.01.33.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2024 01:33:27 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Mon, 25 Nov 2024 10:33:25 +0100
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH 3/3] kbuild: propagate CONFIG_WERROR to resolve_btfids
+Message-ID: <Z0REZczFIfGHtjsQ@krava>
+References: <20241123-resolve_btfids-v1-0-927700b641d1@weissschuh.net>
+ <20241123-resolve_btfids-v1-3-927700b641d1@weissschuh.net>
+ <CAADnVQL4_8-Y0O3Gar-+q7XKMU6_tY8atEddWB2KsR+DCUZ7WQ@mail.gmail.com>
+ <f7764e9b-6254-42af-94b8-41562a18b58b@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|GVXPR04MB10754:EE_
-X-MS-Office365-Filtering-Correlation-Id: 72f34ec2-4113-4919-1f92-08dd0d347e67
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|7416014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?4/XeDlgcN+schisSfs7xT+rwRSSypRJ9LR3U3C/NdHjX1L76Xzb2dlGItLLv?=
- =?us-ascii?Q?JnkBczi0b9WrP7aIehnHDyTrvbJoXirebAZLImbjBMa/EKRzJVfVQLRw4Ez7?=
- =?us-ascii?Q?AnXl6eSbrqSDblPhbgp6FYNnOpjP4h9s/l9WLi7C0FUi4WvoQ86TLBPi2kkU?=
- =?us-ascii?Q?3F3J4dCEBGN4T1cJNmDmb3AjfA+eK+xDb1zz6KEMSUyALMs53/z3hF6YlGjo?=
- =?us-ascii?Q?onNTe0M+dHXLCLYF1tTdPvhk5CckxxySZGGY4fowzRXiX79EbxuzHRoLHp2K?=
- =?us-ascii?Q?5zi7yGA4pxtdalb+os9FEapF5klO/ECTg9JrMBVAyxIaf1sqIIj8kbylGvkD?=
- =?us-ascii?Q?3Owv/+hPKCzsXUq8ufRtmAqcE8cwxstmmPzoTNI8YJ1i5gPO4daSZn1bnHAJ?=
- =?us-ascii?Q?pb29duqNRhff/ecJRMCN2kT+9xL5EgfJnW8tEPJOv2gaFQLZo1LjhVTbUFtX?=
- =?us-ascii?Q?wQeMLzbH/UFIu4JdPo9PtrnHO9dbf9qYAudYMMc6MgM0aAsPNlxGjJEFwGwO?=
- =?us-ascii?Q?04Dydwfoqp/Cy2fmjPKYa8sKquJj3HXKm5PqQ/zHCDnW6JvnhkATDgIrXBJr?=
- =?us-ascii?Q?tEpki8FSYZgMutbM2eSJ7tXHd5yt1xY/QlxM5XJy626zF3Nbb8iab8AQosmp?=
- =?us-ascii?Q?iIiX/Fw/T22tgtRQbKhVFLhjgqTTBvq5iv+LjEC34HDWIsgoVGCN4jaBCR1t?=
- =?us-ascii?Q?kHLpZzgfABdYUWY4Ppz1urWo/me3EXnvwcj4LNB0nWqW2zk8muAtrwbtAaMH?=
- =?us-ascii?Q?ElEfGeyxS0cACfS03UBum6aQ9Qq7ayUiAgrd09AkRzruqxndcOw93ra/t3Eq?=
- =?us-ascii?Q?5EmUWmOhft87pBmNQw9YRGQgbHWbV9Ltzi058uzWVrCpVtAFmahiNosatCgs?=
- =?us-ascii?Q?lORtlTWkRIMAGUamKkr1utqPJvSIhc9pBLcr+o/LU24grG5+FivSShpYmDMJ?=
- =?us-ascii?Q?IR0FN1giKS5gFscCwcxVkAhTcMwBv/VRPluNPBOcUjPh8Si7Fm8MptupOchk?=
- =?us-ascii?Q?Ky/lhNZ28s7HPcwXiIOVOF9TeI82gxgc51TXXMTmuPRun8zzzt+kMbHpz2Lf?=
- =?us-ascii?Q?qt3WVNcNGe0BX44seiIzIadxiYDXhGqrV4CEaQHMJEN8Ll8jwA68Cy7T9JOt?=
- =?us-ascii?Q?24oc5vLgz601DVMcBqTVxSxZr7hcMFUwTcDQVqWFM2NGto+qBdnMwGgwPz5t?=
- =?us-ascii?Q?mUM7QjLg0bfvU2eNEgN8NWtgSsemELwcEERGWP35gDSeouE0NPWE/CZ2onL+?=
- =?us-ascii?Q?l49G7dJD9M0eeqFwnJjZ/HtUn/kS2n/sktydq6WC40+UJ1mwkKDFMbycZRLs?=
- =?us-ascii?Q?HMRVoKNjHKX+WgX4RyiLWSU7TJ4NU0wRfQWxdZvc/6j7xPt4H3UeBTU7YwDE?=
- =?us-ascii?Q?/z60KW8j9xP4AMuGXEsJ66zdHHxqF/JM1Xt5I3EmnWzzsNEiwQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(7416014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?lssQBRCgOvSw3bNnhUxwtzSMmrnUxHVvQa+9gKI5KFxoRL5Sj69jqBGR0fB9?=
- =?us-ascii?Q?t8SJOfkwOrbz9ULUqWuzZSpiWZvftc6P/9mpajLn4ZoqrBY3nrFzLpjMOrGm?=
- =?us-ascii?Q?jgmnmUNxEaolGULJwfTAEUp55f5xyjleI5V68HvDQsOX/jR54RkJ8TUR4gcm?=
- =?us-ascii?Q?F0IiOnkn8zn52Y0CJ7SEuubIMBpqGHUYgnq/DkR04PiFPeaczS/2PdTLrua8?=
- =?us-ascii?Q?Ra4fr78FFNH3Yri4FrEjFnwdfvnCY+FjhEaFO1uSolP07U4hFRxo2j17W3De?=
- =?us-ascii?Q?1baRyx4BG4t+jH8od4IpaNiAbwN679+Wf+jzmA1ovWywPQzXoVO0DrxcaoCd?=
- =?us-ascii?Q?yx2TQAGh6l/Z3qy1n/eH26czj0GuITw/7R9CS1MRfA3Ovcgn7JxvrgEcRTqD?=
- =?us-ascii?Q?Xa0rNWPmESVF1sneDtqrBJtUIeF+PzERfGj8+vdJRjR10ZZp3gqRbmie7muR?=
- =?us-ascii?Q?7lNON0jlQfrzhknTmZZvmrnSe7c/ug1F28OIzTnhcppDCvB5oQ0QXuHWXMPE?=
- =?us-ascii?Q?id9NWgXRwTVScaNXuycQDXuHFnWRj6Rwd+PYIliYVdoMqLaDOvHT8pUe//OF?=
- =?us-ascii?Q?j3Zz1nMvmCiTuXw/9ikBPvIIRocvt21jikZIS4C1YojvMq3dYwrFss0Vehvi?=
- =?us-ascii?Q?+5LiP/k+Xd1Z6PmHGMn7aLDio+68f2BVnd23+3plS29m9vsEaEKkr43p2IJW?=
- =?us-ascii?Q?UY7j1QAtG+5ycMXd6YBnQ0xzcu1PLLFQVNnbXR6vnjWlKtYY/PxE6rWxC2NL?=
- =?us-ascii?Q?HtvwJ9Vmn1E/Qz5faEA63BNwaLCitJ8uhxTIMy6GgXuP07sCBgQSCi7srcmn?=
- =?us-ascii?Q?j8bMOGAQ4Lj1ZylAbE+LwEApeZaetEKgO5WUfyCKjY6PHSVd+qZETs3Ik/tz?=
- =?us-ascii?Q?3uKeFsw3EPmQZQ3BbKIl/AVfT6aukqoN1Ceoacqi9+Uxn7h+43ew8WPZvLHK?=
- =?us-ascii?Q?u+PITaAVzm4yjpfLl0wyW9GI1/yRkTTOyAk6ZJZ93lpPlAZc++Syljk2t+H8?=
- =?us-ascii?Q?UJrphy2DoCH8JQGe24mAwIzYbhpKfQ0kmZTuJ4pj+LQxiuFahKMb1oAPVcun?=
- =?us-ascii?Q?9u2zGkk3gK803yU7EM9QwCcqyHg2/lhJwnpLdNllXRsRaUZvnNZluWzIXaKL?=
- =?us-ascii?Q?6KHTdeqYj5cx1+NiZVyk1fouu6VoZOLa2ZE0M5rN6Fhg4ls/m1a/iud2C62Q?=
- =?us-ascii?Q?eGcsQmt328VLi0hE5OTvX7YfOOeGfjelUxhwvMH2WFPpDUmT+vaA5ZW/hOy1?=
- =?us-ascii?Q?u/9+M2glKDXaxCYKvsNnMJ0gqfh0MBqaVljOu/iNqpl0CkIuNtWkyoC2AHdu?=
- =?us-ascii?Q?Nw/LJe/a+8HykCeUiy6c1GMjIpWYrSq5OhgXbObeYWWrvVcARmISt5qiAhLK?=
- =?us-ascii?Q?WTCvBuuA1uz2sBlmgpvYGwV3TSE9xJyobPhJF4MqTtlGVfdT+g/v4CqaQRjg?=
- =?us-ascii?Q?sX4QMh7mLpk16UNH9SINNbFr4Iq7jZ1bil0W9Ynj0E7ozdANOw7YqWspaQx7?=
- =?us-ascii?Q?W2M+k0QgGN6kxM8O96vtTccTOMO4kIPFQBD+cr4RFuwQ+4NpjaU86DpL9FMW?=
- =?us-ascii?Q?DV4EEtIznO5ECMAq5UxaxTnEAYFhggHFE1+a734T?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 72f34ec2-4113-4919-1f92-08dd0d347e67
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2024 09:35:26.9759
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: k/fbLJ+W/rK0xtp5BRHrzdDBLili2tbip6NOwSPMXthYrHJl8PJUsE6KEfclv4tnd2RMoQsX73BtJOeWGMUAOg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10754
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f7764e9b-6254-42af-94b8-41562a18b58b@t-8ch.de>
 
-MX8-DLVDS-LCD1 display module integrates a KOE TX26D202VM0BWA LCD panel
-and a touch IC.  Add an overlay to support the LCD panel on i.MX8qxp
-MEK.  mipi_lvds_0_ldb channel0 and mipi_lvds_1_ldb channel1 send odd
-and even pixels to the panel respectively.
+On Mon, Nov 25, 2024 at 09:20:37AM +0100, Thomas Weißschuh wrote:
+> On 2024-11-24 15:38:40-0800, Alexei Starovoitov wrote:
+> > On Sat, Nov 23, 2024 at 5:33 AM Thomas Weißschuh <linux@weissschuh.net> wrote:
+> > >
+> > > Use CONFIG_WERROR to also fail on warnings emitted by resolve_btfids.
+> > > Allow the CI bots to prevent the introduction of new warnings.
+> > >
+> > > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > > ---
+> > >  scripts/link-vmlinux.sh | 6 +++++-
+> > >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
+> > > index a9b3f34a78d2cd4514e73a728f1a784eee891768..61f1f670291351a276221153146d66001eca556c 100755
+> > > --- a/scripts/link-vmlinux.sh
+> > > +++ b/scripts/link-vmlinux.sh
+> > > @@ -274,7 +274,11 @@ vmlinux_link vmlinux
+> > >  # fill in BTF IDs
+> > >  if is_enabled CONFIG_DEBUG_INFO_BTF; then
+> > >         info BTFIDS vmlinux
+> > > -       ${RESOLVE_BTFIDS} vmlinux
+> > > +       RESOLVE_BTFIDS_ARGS=""
+> > > +       if is_enabled CONFIG_WERROR; then
+> > > +               RESOLVE_BTFIDS_ARGS=" --fatal-warnings "
+> > > +       fi
+> > > +       ${RESOLVE_BTFIDS} ${RESOLVE_BTFIDS_ARGS} vmlinux
+> > 
+> > I'm not convinced we need to fail the build when functions are renamed.
+> > These warns are eventually found and fixed.
+> 
+> The same could be said for most other build warnings.
+> CONFIG_WERROR is a well-known opt-in switch for exactly this behavior.
+> 
+> Fixing these warnings before they hit mainline has various
+> advantages. The author introducing the warning knows about the full
+> impact of their change, discussions can be had when everybody still
+> has the topic fresh on their mind and other unrelated people don't get
+> confused, like me or [0].
+> 
+> The "eventually fixed" part seems to have been me the last two times :-)
+> 
+> Given the fairly simple implementation, in my opinion this is worth doing.
+> 
+> Please note that I have two fairly trivial changes for a v2 and would
+> also like to get some feedback from Masahiro, especially for patch 1.
 
-Signed-off-by: Liu Ying <victor.liu@nxp.com>
----
-v4:
-* No change.
+ok, I think it's fine to fail for CONFIG_WERROR option, for patchset:
 
-v3:
-* No change.
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-v2:
-* New patch. (Francesco)
+thanks,
+jirka
 
- arch/arm64/boot/dts/freescale/Makefile        |   4 +
- .../imx8qxp-mek-mx8-dlvds-lcd1-lvds0-odd.dtso | 183 ++++++++++++++++++
- arch/arm64/boot/dts/freescale/imx8qxp-mek.dts |  30 +++
- 3 files changed, 217 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx8qxp-mek-mx8-dlvds-lcd1-lvds0-odd.dtso
-
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 42e6482a31cb..a22476e81cc7 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -254,6 +254,10 @@ dtb-$(CONFIG_ARCH_MXC) += imx8qxp-colibri-eval-v3.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8qxp-colibri-iris.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8qxp-colibri-iris-v2.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8qxp-mek.dtb
-+
-+imx8qxp-mek-mx8-dlvds-lcd1-lvds0-odd-dtbs += imx8qxp-mek.dtb imx8qxp-mek-mx8-dlvds-lcd1-lvds0-odd.dtbo
-+dtb-$(CONFIG_ARCH_MXC) += imx8qxp-mek-mx8-dlvds-lcd1-lvds0-odd.dtb
-+
- dtb-$(CONFIG_ARCH_MXC) += imx8qxp-tqma8xqp-mba8xx.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8ulp-evk.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx93-9x9-qsb.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx8qxp-mek-mx8-dlvds-lcd1-lvds0-odd.dtso b/arch/arm64/boot/dts/freescale/imx8qxp-mek-mx8-dlvds-lcd1-lvds0-odd.dtso
-new file mode 100644
-index 000000000000..7ddd90e68754
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8qxp-mek-mx8-dlvds-lcd1-lvds0-odd.dtso
-@@ -0,0 +1,183 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright 2024 NXP
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/firmware/imx/rsrc.h>
-+
-+&{/} {
-+	panel-lvds0 {
-+		compatible = "koe,tx26d202vm0bwa";
-+		backlight = <&backlight_lvds1>;
-+		power-supply = <&reg_vcc_per_3v3>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				dual-lvds-odd-pixels;
-+
-+				panel_lvds0_in: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				dual-lvds-even-pixels;
-+
-+				panel_lvds1_in: endpoint {
-+					remote-endpoint = <&lvds1_out>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&backlight_lvds1 {
-+	status = "okay";
-+};
-+
-+&dc0_framegen0 {
-+	assigned-clocks = <&clk IMX_SC_R_DC_0_PLL_0 IMX_SC_PM_CLK_PLL>,
-+			  <&clk IMX_SC_R_DC_0 IMX_SC_PM_CLK_MISC0>;
-+	assigned-clock-parents = <0>,
-+				 <&clk IMX_SC_R_DC_0_PLL_0 IMX_SC_PM_CLK_PLL>;
-+	assigned-clock-rates = <940320000>;
-+};
-+
-+&dc0_pixel_link0 {
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@1 {
-+			reg = <1>;
-+
-+			status = "okay";
-+		};
-+	};
-+};
-+
-+&dc0_pc {
-+	status = "okay";
-+
-+	channel@0 {
-+		status = "okay";
-+	};
-+};
-+
-+&mipi_lvds_0_ldb {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	fsl,companion-ldb = <&mipi_lvds_1_ldb>;
-+	status = "okay";
-+
-+	channel@0 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0>;
-+		status = "okay";
-+
-+		port@1 {
-+			reg = <1>;
-+
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&panel_lvds0_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&mipi_lvds_0_phy {
-+	status = "okay";
-+};
-+
-+&mipi_lvds_0_pxl2dpi {
-+	fsl,companion-pxl2dpi = <&mipi_lvds_1_pxl2dpi>;
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+
-+			mipi_lvds_0_pxl2dpi_dc0_pixel_link0: endpoint@0 {
-+				status = "okay";
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+
-+			mipi_lvds_0_pxl2dpi_mipi_lvds_0_ldb_ch0: endpoint@0 {
-+				status = "okay";
-+			};
-+		};
-+	};
-+};
-+
-+&mipi_lvds_1_ldb {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	channel@1 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <1>;
-+		status = "okay";
-+
-+		port@1 {
-+			reg = <1>;
-+
-+			lvds1_out: endpoint {
-+				remote-endpoint = <&panel_lvds1_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&mipi_lvds_1_phy {
-+	status = "okay";
-+};
-+
-+&mipi_lvds_1_pwm {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pwm_mipi_lvds1>;
-+	status = "okay";
-+};
-+
-+&mipi_lvds_1_pxl2dpi {
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+
-+			mipi_lvds_1_pxl2dpi_dc0_pixel_link0: endpoint@1 {
-+				status = "okay";
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+
-+			mipi_lvds_1_pxl2dpi_mipi_lvds_1_ldb_ch1: endpoint@1 {
-+				status = "okay";
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/freescale/imx8qxp-mek.dts b/arch/arm64/boot/dts/freescale/imx8qxp-mek.dts
-index c7b4015c7bf7..cb999be00c22 100644
---- a/arch/arm64/boot/dts/freescale/imx8qxp-mek.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8qxp-mek.dts
-@@ -21,6 +21,16 @@ chosen {
- 		stdout-path = &lpuart0;
- 	};
- 
-+	backlight_lvds1: backlight-lvds1 {
-+		compatible = "pwm-backlight";
-+		pwms = <&mipi_lvds_1_pwm 0 100000 0>;
-+		brightness-levels = <0 100>;
-+		num-interpolated-steps = <100>;
-+		default-brightness-level = <100>;
-+		power-supply = <&reg_vcc_12v0>;
-+		status = "disabled";
-+	};
-+
- 	imx8x_cm4: imx8x-cm4 {
- 		compatible = "fsl,imx8qxp-cm4";
- 		mbox-names = "tx", "rx", "rxdb";
-@@ -58,6 +68,20 @@ dsp_vdev0buffer: memory@94300000 {
- 		};
- 	};
- 
-+	reg_vcc_12v0: regulator-vcc-12v0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC_12V0";
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+	};
-+
-+	reg_vcc_per_3v3: regulator-vcc-per-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC_PER_3V3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+
- 	reg_usdhc2_vmmc: usdhc2-vmmc {
- 		compatible = "regulator-fixed";
- 		regulator-name = "SD1_SPWR";
-@@ -785,6 +809,12 @@ IMX8QXP_FLEXCAN2_RX_ADMA_UART3_RX       0x06000020
- 		>;
- 	};
- 
-+	pinctrl_pwm_mipi_lvds1: mipilvds1pwmgrp {
-+		fsl,pins = <
-+			IMX8QXP_MIPI_DSI1_GPIO0_00_MIPI_DSI1_PWM0_OUT		0x00000020
-+		>;
-+	};
-+
- 	pinctrl_pcieb: pcieagrp {
- 		fsl,pins = <
- 			IMX8QXP_PCIE_CTRL0_PERST_B_LSIO_GPIO4_IO00		0x06000021
--- 
-2.34.1
-
+> 
+> 
+> Thomas
+> 
+> [0] https://lore.kernel.org/lkml/20241113093703.9936-1-laura.nao@collabora.com/
 
