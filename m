@@ -1,161 +1,133 @@
-Return-Path: <linux-kernel+bounces-421020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 761189D8606
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:12:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A19649D85B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:56:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE962B2E139
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:55:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66C482879F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B8E1A724C;
-	Mon, 25 Nov 2024 12:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F7F1A7060;
+	Mon, 25 Nov 2024 12:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bzLlGuCr"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GU70/2Cs"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE2B1714AC;
-	Mon, 25 Nov 2024 12:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B541714AC;
+	Mon, 25 Nov 2024 12:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732539341; cv=none; b=q2+/31laIJJ8eH2SfkHl95Dtt5Uvf+skOS6xOlQ6k93rKS/qjow5nlBj2JlGVAVc2Ju6wwrcYu/mX80g/lexyh8xMEZT5QSH4SxvijDMOxrKWJVLjgrDX1WQfexC/WZ1ggsoX/pdECYuC7EEEIbtweRrx59K9VwkdSWNJocVWIw=
+	t=1732539402; cv=none; b=O5vyZ3XgPhx0wvor8pN+2BYFPNcjAmHjkuFfXVaFnYjzYYJ8OKb41xleeIDXZO2ZAatkLEBC/Q7VzErpwd5sih1CuC6u1OTpFjM7/si0Pdqdh5cJ85xxTdAJq+5Jp8J25l/yDEyKW9eN/iTZyqhHo4EaB8SBRtxibtTAtRwNNZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732539341; c=relaxed/simple;
-	bh=7ZxerCMT4df627wc/dzOlE/AUo4LirhD9vT/0Nrw0vU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iRIRP1aflvQo73wHaFU9cM7qPWd3ozhAfkcSUfYcJRGKii3Q4hD6JJKAMyn9IxpEHkJ7mr6WdNCQ6ozzXK1oKa4E35/10IDnydInhvkgzIAu94Mhx8usVXwFGM+IaEAdBpjb1WAksdC8cXwB0BitvOFeaoEdlHmTapQ2ATaLHOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bzLlGuCr; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa51d32fa69so406833366b.2;
-        Mon, 25 Nov 2024 04:55:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732539336; x=1733144136; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JOdOYpXKu7Z0DySNDSX74S/kCTbVmfvQivyUmYVTtSE=;
-        b=bzLlGuCr7FHbSfm8xA8xe+KVte26U/bw3IoOGmBq2j2q/EPwEjyPSxvLs9Zb+by4iF
-         nPUMzBMGfopA4yBcYvNySGUCHUvPXE5Iiv8rhCk0puGmSu5GqA8yo7I/CrqmEcAsSzj3
-         EoJAhvMR0nboBTeMMswujMQdP3SpM9WP3E73bhChalk0hwIXzbUxN0Zej+Aicut45o/b
-         KAiOkz6O5TDDn/tkEX5HTKgfr8CWGbvq9st6GibyqfFRtFBs541rqgCqQYtOSlFZLp7W
-         d7vpPa/6XIF5awoyz8SY/aokxPLBMCW8SeFkrOl2ghBDAroUThbGCmJQukHdG8CYzqDe
-         iwdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732539336; x=1733144136;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JOdOYpXKu7Z0DySNDSX74S/kCTbVmfvQivyUmYVTtSE=;
-        b=n79VrHGGeI46Ek5/3dt/mF6enROGB33eoWMV1j5TL2bYIoLS3BFHtZf6VzjO2kgK/H
-         IxKE+uZv6ylion+FGp9Lm3LveyDXAfjbw7pcTwvxp2j4gXJ1to5SdgxA4ekCee2PuJIM
-         4e0skme/z4MljGRLy7uJyq0cBh/eqWyKfQi3+Erjk7WWzvhT2bM3mtRDueRtnZllBQlJ
-         gMWAuf7kw7GtnIiK+5OJjLBa41PVc1IK+gfpPk7F72AK8JFvhXWZMnfEC8zqLlod4DBH
-         IadIu6an6C/pvZoozhWZqPTneJW+5zsfrrOWS4TSe12f17B2BZie4Rb5OU+YRGAgWcna
-         w96A==
-X-Forwarded-Encrypted: i=1; AJvYcCU23ujTp4+gfjqMptjck6SAFJF+ScazDB2qFBlsRT0OYP/DosVMjDcHQogeasld+XexoO7LKkvCeCxl9Qq3@vger.kernel.org, AJvYcCXz4t5hw2NEXBrrWAJ0S04v/MWk+S6ucP9of2oa6w9Mkvrr1lm7DGIQGp41cTuDQ1en61svDlkhCI+9p57/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7hCRPw2A9l+8xnwNw5ln63f/BnLTS3U4RcVrPZkxW12kzg5mj
-	Yxxpih27yosnBuJzUKRSz4p2RNfyJMIgXj0CWW1+wHKlpJspr1u3yD907wkm6NlAkeCNgUnlDVe
-	r5O8qeCsdFkDZjqAtqjIS7lDaCW8=
-X-Gm-Gg: ASbGncvqPxHl3ZAmm8oLmbDXsXRiQat4dWLxf6nRygEz24e7vyJysg9bfb1mmfy5XXu
-	wdZtDBHTis/bTW3/Ba/7G+SQd9kcAULw=
-X-Google-Smtp-Source: AGHT+IHOQpOxf2C5pywg16wsMCNbEqf3GfEX+Qf32suCnfr6AabrykR++zOlktuh5rcQQE+Bwjj1aEJKziec5auQOmw=
-X-Received: by 2002:a17:907:7758:b0:aa5:3591:4208 with SMTP id
- a640c23a62f3a-aa5359144e5mr598051266b.12.1732539336217; Mon, 25 Nov 2024
- 04:55:36 -0800 (PST)
+	s=arc-20240116; t=1732539402; c=relaxed/simple;
+	bh=xGiMg80bGNBrz6+/g1/qSVQHRAxmonKsOc2Lz3uatjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fSzK2+EYTpU0gCQBo4H0Dy0WgcKg09ZWw7+b3s6Vb+LNStp/vtthkHy1YjTupYv2MNAjbfn5PgfSMjeuIp0Gu1ocpnxxSaiqNcr4WoiqHL/p3r737rQx7bE/OjZXsFL45Qs0CLwLLqsOdNadjn7XxQX86MjXtX4LBMWBfO2FRqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=GU70/2Cs; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F2499A2F;
+	Mon, 25 Nov 2024 13:56:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732539377;
+	bh=xGiMg80bGNBrz6+/g1/qSVQHRAxmonKsOc2Lz3uatjg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GU70/2CsBjK0UFKmlbEJMBlNqm250ISezFp3wVWprbgKmOpqeNaDDCaJfZe8sCkYg
+	 YOw2AIwOP4DYV8WTNhRpA4G4rVkpcVKQPgWV8iG/C9lTOkdMtYy0hZH9IWJinEv+u9
+	 aFFE1N/SFki5b2+HfRw2KKcpVXNESPHw0ryLp/ao=
+Date: Mon, 25 Nov 2024 14:56:29 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	Yunke Cao <yunkec@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a
+ subdevice
+Message-ID: <20241125125629.GB32280@pendragon.ideasonboard.com>
+References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
+ <5b5f3bb7-7933-4861-be81-30345e333395@redhat.com>
+ <CANiDSCta62P5+1aR9Ks8c6sd3_grCV3C+Le=UjKGkiohyf0R2g@mail.gmail.com>
+ <20241110151426.GD6002@pendragon.ideasonboard.com>
+ <CANiDSCuRbOEhWi8WtJpJSm5SOjzTRzpk=OTOV_jwbhUQMoXszw@mail.gmail.com>
+ <f2638853-6c0a-49ee-9a80-28fb774cc678@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=whoEWma-c-ZTj=fpXtD+1EyYimW4TwqDV9FeUVVfzwang@mail.gmail.com>
- <20241124-work-cred-v1-0-f352241c3970@kernel.org> <CAHk-=wi5ZxjGBKsseL2eNHpDVDF=W_EDZcXVfmJ2Dk2Vh7o+nQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wi5ZxjGBKsseL2eNHpDVDF=W_EDZcXVfmJ2Dk2Vh7o+nQ@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 25 Nov 2024 13:55:25 +0100
-Message-ID: <CAOQ4uxgYf2kEkYSz=AC++B6cb643Aq82En5QjwDwsSpPRf+A6w@mail.gmail.com>
-Subject: Re: [PATCH 00/26] cred: rework {override,revert}_creds()
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f2638853-6c0a-49ee-9a80-28fb774cc678@redhat.com>
 
-On Sun, Nov 24, 2024 at 7:00=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Sun, 24 Nov 2024 at 05:44, Christian Brauner <brauner@kernel.org> wrot=
-e:
-> >
-> > This series does all that. Afaict, most callers can be directly
-> > converted over and can avoid the extra reference count completely.
-> >
-> > Lightly tested.
->
-> Thanks, this looks good to me. I only had two reactions:
->
->  (a) I was surprised that using get_new_cred() apparently "just worked".
->
-> I was expecting us to have cases where the cred was marked 'const',
-> because I had this memory of us actively marking things const to make
-> sure people didn't play games with modifying the creds in-place (and
-> then casting away the const just for ref updates).
->
-> But apparently that's never the case for override_creds() users, so
-> your patch actually ended up even simpler than I expected in that you
-> didn't end up needing any new helper for just incrementing the
-> refcount on a const cred.
->
->  (b) a (slight) reaction was to wish for a short "why" on the
-> pointless reference bumps
->
-> partly to show that it was thought about, but also partly to
-> discourage people from doing it entirely mindlessly in other cases.
->
-> I mean, sometimes the reference bumps were just obviously pointless
-> because they ended up being right next to each other after being
-> exposed, like the get/put pattern in access_override_creds().
->
-> But in some other cases, like the aio_write case, I think it would
-> have been good to just say
->
->  "The refcount is held by iocb->fsync.creds that cannot change over
-> the operation"
->
-> or similar. Or - very similarly - the binfmt_misc uses "file->f_cred",
-> and again, file->f_cred is set at open time and never changed, so we
-> can rely on it staying around for the file lifetime.
->
-> I actually don't know if there were any exceptions to this (ie cases
-> where the source of the override cred could actually go away from
-> under us during the operation) where you didn't end up removing the
-> refcount games as a result.
+On Mon, Nov 25, 2024 at 01:31:49PM +0100, Hans de Goede wrote:
+> Hi Ricardo,
+> 
+> On 10-Nov-24 5:04 PM, Ricardo Ribalda wrote:
+> > On Sun, 10 Nov 2024 at 16:14, Laurent Pinchart wrote:
+> 
+> <snip>
+> 
+> >>> Can we start powering up the device during try/set fmt and then
+> >>> implement the format caching as an improvement?
+> >>
+> >> This sounds worth trying. We'll need to test it on a wide range of
+> >> devices though, both internal and external.
+> 
+> Ack, as mentioned in the other mail which I just send I think
+> this is worth trying.
+> 
+> > We still need a plan for asynchronous controls.
+> 
+> As I mentioned in that other email I think we can do the same there.
+> 
+> So basically delay powering up the camera from /dev/video# open till
+> the first moment we actually need to communicate to the camera and
+> track per file-handle if we did a usb_autopm_get_interface() for
+> that file-handle and if yes, then do the put-interface on file-handle
+> close.
+> 
+> > And we have to decide if we stop supporting the uvc button (maybe we
+> > can start by moving USB_VIDEO_CLASS_INPUT_EVDEV to staging and see
+> > what happens?)
+> 
+> As I mentioned in other threads I do not think that the button
+> only working changing from:
+> 
+> "only works when /dev/video# is open"
+> 
+> to:
+> 
+> "only works when streaming from /dev/video#"
+> 
+> (or actually only works when some action on the camera which
+> requires it to be powered-on has been done).
+> 
+> is a big deal, since most apps which open /dev/video# for
+> a longer time will almost always do so to actually do something
+> with the camera, at which point the button will work just as
+> before.
+> 
+> And for apps which only do a short-lived open of /dev/video#
+> the button does not work with the current code either.
+> 
+> TL;DR: IMHO it is fine if the button only works when streaming.
 
-I was asking myself the same question.
+I'm fine with that, we can reconsider if people complain. It would be
+painful though, as it could mean reverting everything we'll build
+related to power management from now on until someone notices the new
+behaviour, which could easily take a year. The risk is low, but the
+consequences serious.
 
-I see that cachefiles_{begin,end}_secure() bump the refcount, but they
-mostly follow a very similar pattern to the cases that do not bump the refc=
-ount,
-so I wonder if you left this out because they were hidden in those
-inline helpers
-or because of the non-trivial case of  cachefiles_determine_cache_security(=
-)
-which replaces the 'master' cache_creds?
+-- 
+Regards,
 
-Other that that, I stared at the creds code in nfsd_file_acquire_local() an=
-d
-nfsd_setuser() more than I would like to admit, with lines like:
-
-        /* discard any old override before preparing the new set */
-        put_cred(revert_creds(get_cred(current_real_cred())));
-
-And my only conclusion was this code is complicated enough,
-so it'd better not use borrowed creds..
-
-Thanks,
-Amir.
+Laurent Pinchart
 
