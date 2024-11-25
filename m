@@ -1,235 +1,190 @@
-Return-Path: <linux-kernel+bounces-420933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98AA49D8483
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:31:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B33039D8485
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:32:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F5D5169913
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:31:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5420F165D70
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205F91922F0;
-	Mon, 25 Nov 2024 11:31:41 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A798A191F7E;
+	Mon, 25 Nov 2024 11:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KcurNP7D"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590441531E9
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266AB1822F8
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732534300; cv=none; b=GYmBC6UhRGhT2wkUW9w0nj9UbLVe+WbtyUIK/SG5BDQhmkcWhccJXvNbvY3PncaxHJmyl8tM3pUAlRd2FR4EH0j/Xa2bc9SkQzo/p+0HGUiLIbct5mGIYqpIJwaulk6OeA/f09bRJiQZe5X5Nj1+ZNcFDP2hkyvpD8tbYCDd0sM=
+	t=1732534323; cv=none; b=JzQJPo/r06EfCBdW7lzKFXv7mPspSoV9ecM50BsM5DSnoxMrIiyBU48pJp1TvyxxJaw295WWjhxjWKwyeR4D5wF6+bqUYX4JH18Wt5mRuC7i61ZxOiwPwavTMjEUI0/1SInOyr6YGStnosVZEhP2AM0LjIpISWRGur+Z3AmnqKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732534300; c=relaxed/simple;
-	bh=tSR2gqF0QhQtoXA9X1m5m0/xdlXG1HpduI1LhY8jPuk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WCUc7FK1YAWjE4YnUgvF0ewGJ4dYh2S0DXcHmGxdLMVu76KsxRJiuiIvbtuzu9lDZB/Po+5k6bPbGNlgl8Y0vUHkNXntjRKo2nTicdzSLqgzX22wnlzR1MZskOoS7jE9+F8lT7IdsB3nLHQwMvgt0IaNUQTVYPRe2V24d2T+nyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xxk4H5x5Xz6K9Jr;
-	Mon, 25 Nov 2024 19:29:03 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id DE5821400CB;
-	Mon, 25 Nov 2024 19:31:34 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 25 Nov
- 2024 12:31:34 +0100
-Date: Mon, 25 Nov 2024 11:31:32 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-CC: Igor Mammedov <imammedo@redhat.com>, Shiju Jose <shiju.jose@huawei.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
-	Dongjiu Geng <gengdongjiu1@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>
-Subject: Re: [PATCH 4/6] acpi/ghes: Use HEST table offsets when preparing
- GHES records
-Message-ID: <20241125113132.000069e1@huawei.com>
-In-Reply-To: <20241122113714.04450f6b@foz.lan>
-References: <cover.1731486604.git.mchehab+huawei@kernel.org>
-	<cf60aee0059d12755c1b9deb2dddb355d8543297.1731486604.git.mchehab+huawei@kernel.org>
-	<20241120145930.00003895@huawei.com>
-	<20241122113714.04450f6b@foz.lan>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1732534323; c=relaxed/simple;
+	bh=VfaoqwC3aHM1knkvNccvy7OdoduhLovRnssK9pdK4SE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B7U+qTjCUeLM+7u21wr9PnLCpWfZSv7ek9nry8r9/71kv6XBggSq6kD+lzLHOzAXYHFYZphZeU92hxUeB4Y7BwUGqzZAkCf4Ulpu0+e8j7KN/NRVStVGly0bfJtJceOLgdup9plc8XNleijEB9mVSAiNdns0RrPKqT02zp2aFNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KcurNP7D; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3822e64b2d8so139940f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 03:31:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732534318; x=1733139118; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=e8Wv19A1bT9AdcO1eIiCsoo2+HEB2gOEPf7mZ4PlWVE=;
+        b=KcurNP7DT5y9A0whxQ5Q0BTnB3B+28LLOOw3YMqVl+RzWgQT7hRCjxuQUln/Z3yeFx
+         m/oMF4xvefFq/Q+wuHPZWbnYntfkA67lr/Uw5G1DAgZI8PcMwdPn19g1iZixijxevE/d
+         u+IVDqojT76gKpZ+9JpwhciDT1albxYUbB+PwkZTsFlaD28cFQcm/uuao+UcTYeb81Vg
+         /eXV7R7kxgYi+OXZX+c5DFI2v66XJXR7kYitiYfFXjCe6tOCFjWIm+ZPqyZTapjOZvy9
+         eUtqKmd87Y+bQ08pJJjss9xvII4V+Jwy49KI5RJ21gd7x1W9C66UdhtM3LDqVJ0JKJ2N
+         dlBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732534318; x=1733139118;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e8Wv19A1bT9AdcO1eIiCsoo2+HEB2gOEPf7mZ4PlWVE=;
+        b=IQHzUxDDw7cyqN2EQDaJct+uO/eUogc0wTd+O5VNG7lK0JP4ygII6Z2jnxK/LJ8FMh
+         ejXyvUdN3GISrt1pdPhGJLgcMOIjMk3OwPyst8ZbevRK+1zfIENGmt+jXofnDKNy1BhS
+         Rw6I8SCUgfQe+ySwKN1MQl+y1zpd4UDfCctmD7SFFhXuOCtTV03xjVzgvOF2wjLGNB/5
+         vMLwX7Sb2kkvNlrhZ4bj7Z6aAOnYW+W0usb2oUVOXcXQf6KFaBFDLUctn4flj8VncG6L
+         omiZGwmhy97LPiv9dGFpae4rSpHM1tTKtzW1VTH5Z3BNdhJ3Hzw8TcsKsqGW7qmnkUpt
+         Q2EA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmPfAPPxOhOcTip9YnJGeli0WhVSg9qNYZOBCmGnOyaSTAW4LX4GOb9GmnKRcHIEkD3QB4JD33GwVrNoc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXN0qjIpkdvXcLYMktuyeXcpbC/ysTZC6HowjGU0YPCGg+l4Nd
+	lgP6s2CEAYyMIseeWTT8+VOBDldZ/9rJROFpp5qWLDMFKhehUygc34zIjFPRRNY=
+X-Gm-Gg: ASbGncvbMDHverPPhWqcoWUaveQmEQXvmF3Ka6i1YhiEGreYdC1FPkZQyZcilNNPr50
+	fJ8pORE5zStj/VUI8QC5fwDdlUw8ANmzSAAl91CvrpUhvpVfVQUircTKG7QCTKeOMrTxMxNJZYa
+	l+pXIwfkA/B+qu7JF+RKuy89Nt9NG7Qe0tRIGX2AoirP4i3u2CBlT1HI1YFxnnt6eBtSx3hvREM
+	95+MuFzFr7Nlb9O7HoBru3zgQW8c39DpJ/jLGvhZlN8qmqY89jHR4WwZP8G9bBL
+X-Google-Smtp-Source: AGHT+IEuJgVQ/3kRqMUZT7ea0+HiraoHdr6/RW/HL4Dpdd6NgqSwWNAzu054OHnIqEMfQzPdBzjozw==
+X-Received: by 2002:a5d:5983:0:b0:382:3c7b:9b2 with SMTP id ffacd0b85a97d-38260bf57f2mr3747908f8f.14.1732534318420;
+        Mon, 25 Nov 2024 03:31:58 -0800 (PST)
+Received: from krzk-bin.. ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433cde98988sm125091995e9.42.2024.11.25.03.31.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2024 03:31:57 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Sasha Levin <sashal@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Conor Dooley <conor@kernel.org>
+Subject: [PATCH] of: Add Google Juniper to excluded default cells list
+Date: Mon, 25 Nov 2024 12:31:51 +0100
+Message-ID: <20241125113151.107812-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
 
+Google Juniper platforms have a very old bootloader which populates
+/firmware node without proper address/size-cells leading to warnings:
 
-> >   
-> > > 
-> > > Yet, keep the old code, as this is needed for migration purposes.
-> > > 
-> > > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > > ---
-> > >  hw/acpi/ghes.c | 98 ++++++++++++++++++++++++++++++++++++++++++++------
-> > >  1 file changed, 88 insertions(+), 10 deletions(-)
-> > > 
-> > > diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> > > index c93bbaf1994a..9ee25efe8abf 100644
-> > > --- a/hw/acpi/ghes.c
-> > > +++ b/hw/acpi/ghes.c
-> > > @@ -61,6 +61,23 @@
-> > >   */
-> > >  #define ACPI_GHES_GESB_SIZE                 20
-> > >  
-> > > +/*
-> > > + * Offsets with regards to the start of the HEST table stored at
-> > > + * ags->hest_addr_le, according with the memory layout map at
-> > > + * docs/specs/acpi_hest_ghes.rst.
-> > > + */
-> > > +    
-> > /*
-> >  * ACPI 6.2:
-> > 
-> > to be consistent with local style.  
-> 
-> Actually, the local style inside this file was preserved. See, before
-> this series we have:
-Ah. That's me being lazy and unclear :(
-What I meant was
+  Missing '#address-cells' in /firmware
+  WARNING: CPU: 0 PID: 1 at drivers/of/base.c:106 of_bus_n_addr_cells+0x90/0xf0
+  Modules linked in:
+  CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0 #1 933ab9971ff4d5dc58cb378a96f64c7f72e3454d
+  Hardware name: Google juniper sku16 board (DT)
+  ...
+  Missing '#size-cells' in /firmware
+  WARNING: CPU: 0 PID: 1 at drivers/of/base.c:133 of_bus_n_size_cells+0x90/0xf0
+  Modules linked in:
+  CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W          6.12.0 #1 933ab9971ff4d5dc58cb378a96f64c7f72e3454d
+  Tainted: [W]=WARN
+  Hardware name: Google juniper sku16 board (DT)
 
-/*
- * ACPI 6.2:  18.3.2.8 Generic Hardware Error Source version 2
+The platform won't receive updated bootloader/firmware so add it to
+excluded platform list to silence the warning.
 
-So open the comment with a blank line.
+Reported-by: Sasha Levin <sashal@kernel.org>
+Closes: https://lore.kernel.org/all/Z0NUdoG17EwuCigT@sashalap/
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Conor Dooley <conor@kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/of/base.c | 26 ++++++++++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/of/base.c b/drivers/of/base.c
+index a8b0c42bdc8e..13f0b2877ee0 100644
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -56,6 +56,16 @@ DEFINE_MUTEX(of_mutex);
+  */
+ DEFINE_RAW_SPINLOCK(devtree_lock);
  
-> 
-> $ git grep "ACPI " hw/acpi/ghes.c
-> hw/acpi/ghes.c: * ACPI 6.1/6.2: 18.3.2.7.1 Generic Error Data,
-> hw/acpi/ghes.c: * ACPI 6.2: 18.3.2.7.1 Generic Error Data,
-> hw/acpi/ghes.c: * ACPI 4.0: 17.3.2.7 Hardware Error Notification
-> hw/acpi/ghes.c: * ACPI 6.1: 18.3.2.7.1 Generic Error Data
-> hw/acpi/ghes.c: * ACPI 6.1: 18.3.2.7.1 Generic Error Data
-> hw/acpi/ghes.c:    /* invalid fru id: ACPI 4.0: 17.3.2.6.1 Generic Error Data,
-> hw/acpi/ghes.c:         * ACPI 6.2: 18.3.2.8 Generic Hardware Error Source version 2
-> hw/acpi/ghes.c:     * ACPI 6.1: 18.3.2.8 Generic Hardware Error Source
-> 
-> >   
-
-> > 
-> >   
-> > > +        return;
-> > > +    }
-> > > +
-> > > +    cpu_physical_memory_read(hest_addr, &num_sources, sizeof(num_sources));
-> > > +    num_sources = le32_to_cpu(num_sources);
-> > > +
-> > > +    err_source_struct = hest_addr + sizeof(num_sources);
-> > > +
-> > > +    /*
-> > > +     * Currently, HEST Error source navigates only for GHESv2 tables
-> > > +     */    
-> > 
-> > Feels like duplication of the comment below where the type check is.
-> > Maybe drop this one?  
-> 
-> If I recall correctly [1], Igor asked to place such comment, on one of
-> the past versions of this code.
-> 
-> IMO, placing it clearly there helps to identify what needs to change when
-> support for non-GHES tables is needed.
-> 
-> [1] this is the 12th version of this code - my memory is starting to fail
->     to remind were exactly each change was requested.
-Me too! :)
-
-
-> >   
-> > > +        addr += sizeof(type);
-> > > +        cpu_physical_memory_read(addr, &src_id, sizeof(src_id));
-> > > +
-> > > +        if (src_id == source_id) {
-> > > +            break;
-> > > +        }
-> > > +
-> > > +        err_source_struct += HEST_GHES_V2_TABLE_SIZE;
-> > > +    }
-> > > +    if (i == num_sources) {
-> > > +        error_setg(errp, "HEST: Source %d not found.", source_id);
-> > > +        return;
-> > > +    }
-> > > +
-> > > +    /* Navigate though table address pointers */
-> > > +    hest_err_block_addr = err_source_struct + GHES_ERR_ST_ADDR_OFFSET;
-> > > +    hest_read_ack_addr = err_source_struct + GHES_ACK_OFFSET;    
-> >   
-> > > +
-> > > +    cpu_physical_memory_read(hest_err_block_addr, &error_block_addr,
-> > > +                             sizeof(error_block_addr));    
-> > So this points to a registers  
-> > > +
-> > > +    cpu_physical_memory_read(error_block_addr, cper_addr,
-> > > +                             sizeof(*cper_addr));    
-> > and this reads the register. I'm not sure the spec defines the
-> > contents of that register to be constant.  Maybe we should avoid
-> > reading the register here and do it instead at read of the record?
-> > I 'think' you could in theory use different storage for the CPER
-> > depending on other unhandled errors or whatever else meant you didn't
-> > want a fixed location.
-> > 
-> > Or maybe just add a comment to say that the location of CPER storage
-> > is fixed.  
-> 
-> Sorry, but I missed your point. The actual offset of the error block 
-> address is defined when fw_cfg callback is called. When this happens,
-> this function is called:
-> 
-> 	void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
-> 	                          GArray *hardware_error)
-> 	{
-> 	    /* Create a read-only fw_cfg file for GHES */
-> 	    fw_cfg_add_file(s, ACPI_HW_ERROR_FW_CFG_FILE, hardware_error->data,
->         	            hardware_error->len);
-> 
-> 	    /* Create a read-write fw_cfg file for Address */
-> 	    fw_cfg_add_file_callback(s, ACPI_HW_ERROR_ADDR_FW_CFG_FILE, NULL, NULL,
-> 	        NULL, &(ags->hw_error_le), sizeof(ags->hw_error_le), false);
-> 
-> 	    fw_cfg_add_file_callback(s, ACPI_HEST_ADDR_FW_CFG_FILE, NULL, NULL,
-> 	        NULL, &(ags->hest_addr_le), sizeof(ags->hest_addr_le), false);
-> 
-> 	    ags->present = true;
-> 	}
-
-My question was intended to be a little different but was based on a misread on my part.
-I'd failed to figure out this function is called on each addition of an error
-not just once.
-
-Code is fine as is.
-
-Jonathan
-
-
-> 
-> The other calls for fw_cfg functions ensure the offset of the memory read 
-> inside the hardware_error firmware and this never changes, as such offsets
-> are defined when the hardware_firmware is built at build_ghes_error_table()
-> function. This will only change if such function is called again, which
-> would, in turn, make acpi_ghes_add_fw_cfg() be called again.
-> 
-> In any case, no matter if build_ghes_error_table()/acpi_ghes_add_fw_cfg()
-> is called only once or multiple times [1], at the time 
-> get_ghes_source_offsets() is called, such offsets are stable.
-> 
-> [1] On some tests I did adding printks, the GHES build logic and the callbacks
->     are called twice - both before loading OSPM.
-> 
->     If migration is used, I suspect that it will be called again during
->     migration but before starting OSPM. Again, when get_ghes_source_offsets()
->     is called, the offsets are fixed.
-> 
-> Thanks,
-> Mauro
++/*
++ * List of machines running old firmware without explicit #address-cells and
++ * #size-cells values for parent nodes, which are most likely not going get any
++ * update.
++ */
++static const char * const excluded_default_cells_compats[] = {
++	"google,juniper",
++	NULL
++};
++
+ bool of_node_name_eq(const struct device_node *np, const char *name)
+ {
+ 	const char *node_name;
+@@ -91,6 +101,17 @@ static bool __of_node_is_type(const struct device_node *np, const char *type)
+ 	IS_ENABLED(CONFIG_SPARC) \
+ )
+ 
++static bool excluded_default_cells_machines(void)
++{
++	/* Do not repeat the machine checks for every bus */
++	static int excluded_machine = -1;
++
++	if (excluded_machine < 0)
++		excluded_machine = of_machine_compatible_match(excluded_default_cells_compats);
++
++	return !!excluded_machine;
++}
++
+ int of_bus_n_addr_cells(struct device_node *np)
+ {
+ 	u32 cells;
+@@ -103,7 +124,7 @@ int of_bus_n_addr_cells(struct device_node *np)
+ 		 * is deprecated. Any platforms which hit this warning should
+ 		 * be added to the excluded list.
+ 		 */
+-		WARN_ONCE(!EXCLUDED_DEFAULT_CELLS_PLATFORMS,
++		WARN_ONCE(!EXCLUDED_DEFAULT_CELLS_PLATFORMS && !excluded_default_cells_machines(),
+ 			  "Missing '#address-cells' in %pOF\n", np);
+ 	}
+ 	return OF_ROOT_NODE_ADDR_CELLS_DEFAULT;
+@@ -125,12 +146,13 @@ int of_bus_n_size_cells(struct device_node *np)
+ 	for (; np; np = np->parent) {
+ 		if (!of_property_read_u32(np, "#size-cells", &cells))
+ 			return cells;
++
+ 		/*
+ 		 * Default root value and walking parent nodes for "#size-cells"
+ 		 * is deprecated. Any platforms which hit this warning should
+ 		 * be added to the excluded list.
+ 		 */
+-		WARN_ONCE(!EXCLUDED_DEFAULT_CELLS_PLATFORMS,
++		WARN_ONCE(!EXCLUDED_DEFAULT_CELLS_PLATFORMS && !excluded_default_cells_machines(),
+ 			  "Missing '#size-cells' in %pOF\n", np);
+ 	}
+ 	return OF_ROOT_NODE_SIZE_CELLS_DEFAULT;
+-- 
+2.43.0
 
 
