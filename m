@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-421212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59A289D886C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:49:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11F729D880A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:31:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DD64B65A09
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:31:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC41F289D48
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5755B1B3920;
-	Mon, 25 Nov 2024 14:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB6A1B2196;
+	Mon, 25 Nov 2024 14:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UIQUJ8LC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PMpbqfx7"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D01E1B2192;
-	Mon, 25 Nov 2024 14:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4341AE01C;
+	Mon, 25 Nov 2024 14:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732545060; cv=none; b=B1zbII18khIIG9KwNROR1b0f2UIjpsL/jO2XJtk7SZ8GVZRuhologA1qCXeVziO3YMCZeJ980kGhDclMCp5sRGMdkEEp8ZaRBqGtw7nuQZHK4d/p6MDreDRnIxlLgEWluEfdYpsEht+Nfew8+RkVco+C0YebGtEZjZFhHRBNtik=
+	t=1732545060; cv=none; b=aeviEY45ZIl/J0Ji3PEoQfET4/ySuJn7xpXPrYIjZEWDboOp3no/2QIY8Tw9iV5fyYdZPOjNt1eqhdZa+NpXf4YRZJcBpwmNiOUlMnTSRsbDsJFL06DnS+ikmq3Vc2nkxw7YpevrrzqU9GxzpAV35+e02o8U11WwwMzHrepAorE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732545060; c=relaxed/simple;
-	bh=9TsHp+EUtyUbXm7JWl9ssdkI60tPBCf5jvHvIJ5368Y=;
+	bh=Vaw2d8oop474FmniEdU/1m+YsHpuOS3//yAHGO+vuQ8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hC6E4JJ91qtyqQtgjjkAECEtrhCbmVhc7m3lRZBOWADVXnTP8EQYLNdE3xyX0/wxZgU658p2xFtUXPSSOWDQj8UHZE2b/sa+9HtZ35DY4LcItu25k52oTaO5WoaNGDckrnorepCHOsy2YaFufUbvGtbAWYgyLQybL7MgD0Y88Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UIQUJ8LC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B07DC4CECE;
-	Mon, 25 Nov 2024 14:30:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732545060;
-	bh=9TsHp+EUtyUbXm7JWl9ssdkI60tPBCf5jvHvIJ5368Y=;
+	 In-Reply-To:Content-Type; b=TTtqOTNpAHeSRAFkosfVioSETedMlbefDgKi096akJbkLlI0Kp+xAltylwC6IcG4qXjllzNcmDZSFNA921gs/ZsEc6vlMVV4cDct1BnGJlC8mVcTSP8OzuB7FC8KZCGIU6q9pkvDCOhlNboRg9UwGHfazQBmPE2crJrwKRuSOO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PMpbqfx7; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1732545056;
+	bh=Vaw2d8oop474FmniEdU/1m+YsHpuOS3//yAHGO+vuQ8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UIQUJ8LCJgofJYncA/p/gPPyEUBEqFb26l5ydW5qdmhut7VRgThFLXM/1WB6Imz16
-	 j8KQwVu7D4o6XHcy7dYYXL7em5jV+p8knNbyeCXLP5g+1KHmkUhi2O5KYyXBzUitHX
-	 l5NzZTQ2V+2ufKdBdig5pG2xiPHJB7jLXBxzjxYtN2aM0CsQ1q8uJKDVw3lldbsDOL
-	 AGb3TMjfi1w1And2KLHHCaLjivVwaen5LBaIL9wC1ILaGSoJgnWjun6ExV2Gm7wckY
-	 dsWXdtf/8DQCnFIT6OGtNyDEwK62BDPPiK6BpIgwFJkSbUEtxYFxSQIE8coTOBOFkr
-	 Ym+tE0Z8ZhMKQ==
-Message-ID: <f1ff6df1-89f3-4e63-bea7-2404fefe81f8@kernel.org>
-Date: Mon, 25 Nov 2024 15:30:50 +0100
+	b=PMpbqfx7tRj7ftNgiqW0roZHr6aM75u0vJgPaWI4eAQm+TswqxOWEGpqQzXO+IusU
+	 Wl51arWjGPupxQbWCLQBvgS4nrTD1+FkPUHF2aS9BAJCl19U7Z9T8Xbn7CrCOCOmNK
+	 Phgad/kADKL6xiTrCcamUL07P6uWWgf6RegQlgN/6CXGrmrb1pycHM84zriNYf//HX
+	 2jdFu+RC9G5+JYdmdfAXnVNBm62kr9NYx4ErvrfTaly/MbG0JJvEq75gDGnTfL64Ad
+	 WAS/Aoq8zWyOc4lBQaBnoHsoEiJYwK4SAd+LPNHIgmOWGCVZ96ABZ5JxeEsTUsgRWo
+	 /z6N6oIY4WwiQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 579FF17E36AD;
+	Mon, 25 Nov 2024 15:30:55 +0100 (CET)
+Message-ID: <f65f0a22-1214-4fad-960c-24a75b81a22b@collabora.com>
+Date: Mon, 25 Nov 2024 15:30:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,86 +56,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/5] media: dt-bindings: Add qcom,sc7280-camss
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Rob Herring <robh@kernel.org>, Vikram Sharma <quic_vikramsa@quicinc.com>
-Cc: rfoss@kernel.org, todor.too@gmail.com, mchehab@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, akapatra@quicinc.com,
- hariramp@quicinc.com, andersson@kernel.org, konradybcio@kernel.org,
- hverkuil-cisco@xs4all.nl, cros-qcom-dts-watchers@chromium.org,
- catalin.marinas@arm.com, will@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20241112173032.2740119-1-quic_vikramsa@quicinc.com>
- <20241112173032.2740119-2-quic_vikramsa@quicinc.com>
- <20241115165031.GA3344225-robh@kernel.org>
- <0234971e-9029-4371-a0aa-7da835591351@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v1 1/7] dt-bindings: display: mediatek: Add binding for
+ HDMIv2 DDC
+To: Rob Herring <robh@kernel.org>
+Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com,
+ simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, ck.hu@mediatek.com, dri-devel@lists.freedesktop.org,
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kernel@collabora.com
+References: <20241120124512.134278-1-angelogioacchino.delregno@collabora.com>
+ <20241120124512.134278-2-angelogioacchino.delregno@collabora.com>
+ <20241121210235.GA3798341-robh@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <0234971e-9029-4371-a0aa-7da835591351@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20241121210235.GA3798341-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 25/11/2024 15:18, Bryan O'Donoghue wrote:
-> On 15/11/2024 16:50, Rob Herring wrote:
->>> +  reg:
->>> +    maxItems: 15
->>> +
->>> +  reg-names:
->> reg and reg-names go after 'compatible'. See the documented ordering.
+Il 21/11/24 22:02, Rob Herring ha scritto:
+> On Wed, Nov 20, 2024 at 01:45:06PM +0100, AngeloGioacchino Del Regno wrote:
+>> Add a binding for the Display Data Channel (DDC) IP in MediaTek
+>> SoCs with version 2 HDMI TX IP.
+>>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+>>   .../mediatek/mediatek,mt8195-hdmi-ddc.yaml    | 41 +++++++++++++++++++
+>>   1 file changed, 41 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi-ddc.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi-ddc.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi-ddc.yaml
+>> new file mode 100644
+>> index 000000000000..d85e8ed2ffa7
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi-ddc.yaml
+>> @@ -0,0 +1,41 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/display/mediatek/mediatek,mt8195-hdmi-ddc.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: MediaTek HDMI Display Data Channel (DDC) v2
+>> +
+>> +maintainers:
+>> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> +  - CK Hu <ck.hu@mediatek.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    oneOf:
+>> +      - const: mediatek,mt8195-hdmi-ddc
+>> +      - items:
+>> +          - const: mediatek,mt8188-hdmi-ddc
+>> +          - const: mediatek,mt8195-hdmi-ddc
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +
+>> +  power-domains:
+>> +    maxItems: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - clocks
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    hdmi {
+>> +        hdmi_ddc: i2c {
+>> +            compatible = "mediatek,mt8195-hdmi-ddc";
+>> +            clocks = <&clk26m>;
 > 
-> Rob, the documented ordering pertains to the dtsi and examples not to 
-> the yaml right ?
+> Is this really a separate block? Doesn't really look like it. You don't
+> even have registers to interact with it.
+> 
+
+MTK DDCv2, subnode of HDMI, uses registers from the iospace of its parent, so,
+from the HDMI controller.
+
+That one is a separate block, it's just that some of its registers are mixed inside
+of the register space of the HDMI controller itself... MediaTek likes to do that a
+lot... in this case, that is because of some hotplug detection bits (and some MCU
+related ones too) being shared between the DDC controller and the HDMI one, but
+then - apart from that - the DDC controller is the DDC controller and the HDMI one
+is... the HDMI one. :-)
+
+Cheers,
+Angelo
+
+>> +        };
+>> +    };
+>> +...
+>> -- 
+>> 2.47.0
+>>
 
 
-The coding style indeed is explicit that it applies to DTS, however same
-rules apply to the bindings as well.  I just did not cover bindings when
-writing DTS coding style.
-
-Best regards,
-Krzysztof
 
