@@ -1,112 +1,220 @@
-Return-Path: <linux-kernel+bounces-420637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00ADE9D7E7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:57:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EDB29D7D0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:39:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85014B24D26
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:57:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64193B203B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613A418F2D8;
-	Mon, 25 Nov 2024 08:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CD118C004;
+	Mon, 25 Nov 2024 08:39:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="H0CA8TRf"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wb+VZV3K"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20457082C;
-	Mon, 25 Nov 2024 08:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B84D188CCA;
+	Mon, 25 Nov 2024 08:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732525025; cv=none; b=fI8RKj9UoVta28ZvVV8s8C3jDhDDvIzJBl5XFJ7SxkIyKm+cvzVEzOkK92XcvNUAYMQKezW9nwCLqbFuVra93YXSYl34VPRC7x+kFaG1u/0/nmhv8IIpV6xRwB8RJ9aDjLpcqSuw4rDE9fTIVtCONh3/fEEUUwdep4/bHVK1Ebc=
+	t=1732523969; cv=none; b=pYJa636oWzUXuHN4H4vjvyLqC5nVTfSCvL4kSx+DaTPgbT7rdh/heJ93PmUBhdeqikMFRMp3uviF0hVc1vUpjacycnW3xH7Y1UsBDaiijNwQWRws97ftypyZB76UJF1kEVwSfWGXQM/TIoxhRvPLzN0/bbIRf4p/eB9NV7d8Pds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732525025; c=relaxed/simple;
-	bh=+HHx1UwdTOZXvLeFxjB05giJcfy6ekNZV+yWUQe+dww=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KjbvJ08Iqvcq0QBD7UZ867J5sth+zVj86elhnXFBbZq6puqJ/C+klrlKzK1B0mHTmBt8EXoYvfdxQP/iFnHQ2GUvnRdXVwh3qHOCcXhzl2gowMyZ2xmLlKc/2z9pCrQt783veqlACzFBVzUBxfcYPt+F02UZdyBBfm2kNGF2u+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=H0CA8TRf; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4AP8dMvY640456
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 25 Nov 2024 02:39:22 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1732523962;
-	bh=Po8mjmkN+7GJHfNw49gxB2Jy2zXvZ8kxkXerGYlrYM0=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=H0CA8TRfI/Rz/gQAE+Qj30LTiPBJzHQ0DkKVom+HCbq1HJj7YoltVkA9o75yPacpu
-	 WedWMmvyt3uoU1TwqN+81oYy06hYFalL2qWSAz/bqS7XtStfYaWjUv6rRz9Ye6A7vB
-	 J9jQ4TsFP7uY3frMrFyc6dIg83oFfucQaPNk8eSQ=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4AP8dMlZ008987
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 25 Nov 2024 02:39:22 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 25
- Nov 2024 02:39:22 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 25 Nov 2024 02:39:22 -0600
-Received: from uda0490681.. ([10.24.69.142])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AP8dEio127929;
-	Mon, 25 Nov 2024 02:39:19 -0600
-From: Vaishnav Achath <vaishnav.a@ti.com>
-To: <peter.ujfalusi@gmail.com>, <vkoul@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>, <j-choudhary@ti.com>,
-        <vigneshr@ti.com>, <vaishnav.a@ti.com>
-Subject: [PATCH 2/2] dmaengine: ti: k3-udma: Add TX channel data in AM62A CSIRX DMSS
-Date: Mon, 25 Nov 2024 14:09:14 +0530
-Message-ID: <20241125083914.2934815-2-vaishnav.a@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241125083914.2934815-1-vaishnav.a@ti.com>
-References: <20241125083914.2934815-1-vaishnav.a@ti.com>
+	s=arc-20240116; t=1732523969; c=relaxed/simple;
+	bh=nr06fqkuz9zpacW3uVo8w69JrdlPRi65u6sEjvA77k4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HqI9l8uSYu2LFPC2bUYsYOtWIoYNXJpoR4kCioigRbgKZMmr14g4KpS+qOy6wdtpgngcgkp3lT6b736OPMfm8WejUpSoqCVq6NdbeUTGz6fjpGXHbZZiHJQVEv7aiFb8qp4AujO2l+UzZcLmw4pbNij/5XZ5BF8/c6Iv65uyuQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wb+VZV3K; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732523968; x=1764059968;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nr06fqkuz9zpacW3uVo8w69JrdlPRi65u6sEjvA77k4=;
+  b=Wb+VZV3KI6tX09VxsHe5P9jy2J1bTk5jV5/ct3gWS5oKwu3TFxbxmAw0
+   09gmqRSis6LqLV44IfJzr3XQdpe4ratNqOTR8gcVxLi8Yu43uZXJ7299q
+   xH5iE6uL/X6W0EHFnqPMMu9n2k15u1qoEWTdA0WJXDTr1OGuiZ8LWXwAn
+   mcuarFuodkYzKD8JsOtBDzAabmF+2JbMg2eVaqmmmQZaMx4H0gGQM7hlI
+   pwtchpMBrGmbqQlZvw779BVcGscFumswEf/0AjizE3we970MmEusFYR9Z
+   rkNAKMLqoTdDVsdQtDK0VA8zrpyzkuJGmyWn3ho4lc7bguPxYT7YyLlmG
+   A==;
+X-CSE-ConnectionGUID: O+l5uiuyShKgMLc3RuQr9Q==
+X-CSE-MsgGUID: gr1yt95ITb6xVXK6M2bSrw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="44011933"
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="44011933"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 00:39:27 -0800
+X-CSE-ConnectionGUID: we5vnRDFSYCGBG2Dr8gRdw==
+X-CSE-MsgGUID: N4hgFqsfTXq99OuJMNJU+Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="91315411"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 00:39:25 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id CAC2911F7E7;
+	Mon, 25 Nov 2024 10:39:22 +0200 (EET)
+Date: Mon, 25 Nov 2024 08:39:22 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Cosmin Tanislav <demonsingur@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	=?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: v4l: subdev: Prevent NULL routes access
+Message-ID: <Z0Q3ukermwmPax2b@kekkonen.localdomain>
+References: <20241122143717.173344-1-demonsingur@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241122143717.173344-1-demonsingur@gmail.com>
 
-J722S/AM67 uses the same BCDMA CSIRX IP as AM62A, but it supports
-TX channels as well in addition to RX. Add the BCDMA TCHAN information
-in the am62a_dmss_csi_soc_data so as to support all the platforms in the
-family with same compatible. UDMA_CAP2_TCHAN_CNT indicates the presence
-of TX channels and it will be 0 for platforms without TX support.
+Hi Cosmin,
 
-Signed-off-by: Vaishnav Achath <vaishnav.a@ti.com>
----
+Thanks for the patch.
 
-CSI2RX capture test results on J722S EVM with IMX219:
-https://gist.github.com/vaishnavachath/e2eaed62ee8f53428ee9b830aaa02cc3
+On Fri, Nov 22, 2024 at 04:37:12PM +0200, Cosmin Tanislav wrote:
+> When using v4l2_subdev_set_routing to set a subdev's routing, and the
+> passed routing.num_routes is 0, kmemdup is not called to populate the
+> routes of the new routing (which is fine, since we wouldn't want to pass
+> a possible NULL value to kmemdup).
+> 
+> This results in subdev's routing.routes to be NULL.
+> 
+> routing.routes is further used in some places without being guarded by
+> the same num_routes non-zero condition.
+> 
+> Fix it.
 
- drivers/dma/ti/k3-udma.c | 2 ++
- 1 file changed, 2 insertions(+)
+While I think moving the code to copy the routing table seems reasonable,
+is there a need to make num_routes == 0 a special case? No memcpy()
+implementation should access destination or source if the size is 0.
 
-diff --git a/drivers/dma/ti/k3-udma.c b/drivers/dma/ti/k3-udma.c
-index b3f27b3f9209..4130f50979d4 100644
---- a/drivers/dma/ti/k3-udma.c
-+++ b/drivers/dma/ti/k3-udma.c
-@@ -4340,6 +4340,8 @@ static struct udma_match_data j721e_mcu_data = {
- 
- static struct udma_soc_data am62a_dmss_csi_soc_data = {
- 	.oes = {
-+		.bcdma_tchan_data = 0x800,
-+		.bcdma_tchan_ring = 0xa00,
- 		.bcdma_rchan_data = 0xe00,
- 		.bcdma_rchan_ring = 0x1000,
- 	},
+> 
+> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+> ---
+>  drivers/media/v4l2-core/v4l2-subdev.c | 46 +++++++++++++--------------
+>  1 file changed, 23 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
+> index cde1774c9098d..4f0eecd7fd66f 100644
+> --- a/drivers/media/v4l2-core/v4l2-subdev.c
+> +++ b/drivers/media/v4l2-core/v4l2-subdev.c
+> @@ -605,6 +605,23 @@ subdev_ioctl_get_state(struct v4l2_subdev *sd, struct v4l2_subdev_fh *subdev_fh,
+>  			     v4l2_subdev_get_unlocked_active_state(sd);
+>  }
+>  
+> +static void subdev_copy_krouting(struct v4l2_subdev_routing *routing,
+> +				 struct v4l2_subdev_krouting *krouting)
+> +{
+> +	memset(routing->reserved, 0, sizeof(routing->reserved));
+> +
+> +	if (!krouting->routes) {
+> +		routing->num_routes = 0;
+> +		return;
+> +	}
+> +
+> +	memcpy((struct v4l2_subdev_route *)(uintptr_t)routing->routes,
+> +	       krouting->routes,
+> +	       min(krouting->num_routes, routing->len_routes) *
+> +	       sizeof(*krouting->routes));
+> +	routing->num_routes = krouting->num_routes;
+> +}
+> +
+>  static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+>  			    struct v4l2_subdev_state *state)
+>  {
+> @@ -976,7 +993,6 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+>  
+>  	case VIDIOC_SUBDEV_G_ROUTING: {
+>  		struct v4l2_subdev_routing *routing = arg;
+> -		struct v4l2_subdev_krouting *krouting;
+>  
+>  		if (!v4l2_subdev_enable_streams_api)
+>  			return -ENOIOCTLCMD;
+> @@ -984,15 +1000,7 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+>  		if (!(sd->flags & V4L2_SUBDEV_FL_STREAMS))
+>  			return -ENOIOCTLCMD;
+>  
+> -		memset(routing->reserved, 0, sizeof(routing->reserved));
+> -
+> -		krouting = &state->routing;
+> -
+> -		memcpy((struct v4l2_subdev_route *)(uintptr_t)routing->routes,
+> -		       krouting->routes,
+> -		       min(krouting->num_routes, routing->len_routes) *
+> -		       sizeof(*krouting->routes));
+> -		routing->num_routes = krouting->num_routes;
+> +		subdev_copy_krouting(routing, &state->routing);
+>  
+>  		return 0;
+>  	}
+> @@ -1016,8 +1024,6 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+>  		if (routing->num_routes > routing->len_routes)
+>  			return -EINVAL;
+>  
+> -		memset(routing->reserved, 0, sizeof(routing->reserved));
+> -
+>  		for (i = 0; i < routing->num_routes; ++i) {
+>  			const struct v4l2_subdev_route *route = &routes[i];
+>  			const struct media_pad *pads = sd->entity.pads;
+> @@ -1046,12 +1052,7 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+>  		 * the routing table.
+>  		 */
+>  		if (!v4l2_subdev_has_op(sd, pad, set_routing)) {
+> -			memcpy((struct v4l2_subdev_route *)(uintptr_t)routing->routes,
+> -			       state->routing.routes,
+> -			       min(state->routing.num_routes, routing->len_routes) *
+> -			       sizeof(*state->routing.routes));
+> -			routing->num_routes = state->routing.num_routes;
+> -
+> +			subdev_copy_krouting(routing, &state->routing);
+>  			return 0;
+>  		}
+>  
+> @@ -1064,11 +1065,7 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+>  		if (rval < 0)
+>  			return rval;
+>  
+> -		memcpy((struct v4l2_subdev_route *)(uintptr_t)routing->routes,
+> -		       state->routing.routes,
+> -		       min(state->routing.num_routes, routing->len_routes) *
+> -		       sizeof(*state->routing.routes));
+> -		routing->num_routes = state->routing.num_routes;
+> +		subdev_copy_krouting(routing, &state->routing);
+>  
+>  		return 0;
+>  	}
+> @@ -1956,6 +1953,9 @@ struct v4l2_subdev_route *
+>  __v4l2_subdev_next_active_route(const struct v4l2_subdev_krouting *routing,
+>  				struct v4l2_subdev_route *route)
+>  {
+> +	if (!routing->routes)
+> +		return NULL;
+
+Same here.
+
+> +
+>  	if (route)
+>  		++route;
+>  	else
+
 -- 
-2.34.1
+Kind regards,
 
+Sakari Ailus
 
