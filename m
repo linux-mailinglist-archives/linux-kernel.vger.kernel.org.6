@@ -1,126 +1,160 @@
-Return-Path: <linux-kernel+bounces-421679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B2C49D8E75
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:22:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B70B49D8E76
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:23:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2033D2812DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:22:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77EC0280F0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64B71CB31D;
-	Mon, 25 Nov 2024 22:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B22E1CB31D;
+	Mon, 25 Nov 2024 22:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="ZSyZ67OZ"
-Received: from forwardcorp1a.mail.yandex.net (forwardcorp1a.mail.yandex.net [178.154.239.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e3UaRCR/"
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53AA1156F3A
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 22:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE8317F4F6
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 22:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732573343; cv=none; b=CWtMrnwtMMnmMm3mygu2pGznwboH67gqAhXDPm18nXbE05V2WXScacamikh3ikJpMAgIdJMOUCy0ShQ8a5KTyWAzmLzaMPdYYOB95XRAL1BiBns208bg4+9F3w5f11J4Sso4epb3F7i0NnwSBtbZgdbmmVW4OG1O/207/jMH5Z8=
+	t=1732573407; cv=none; b=Bk/zAbKj+K4/J0v8j3X4weSBu1dqZhDWIz+LXc4TkSSNBe5gnXh4KMQlIV7cxgAhEt3ST7+RxVkZjXNQxoHplBNAT3lAPnW4in+sXHIjpM5yr+4EwKL4gB/uO+7b/R0IUJc8K5M0mfuFTFEfgjPlduCZQsTBNpT6KjHwCFH/hvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732573343; c=relaxed/simple;
-	bh=WAnc6ueCMCSt20HrwXxWpgNFZtSn1djB6/sdfn3FJsc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jlEgjZZRd1jkUiWxYISh6t/Rog07pXXRwmSQwG3mYyVikNmdjTbYMNIBV9wB2kV3OT4u2T0MMnqE5oVn30kUn8sTQHHh+a1bfkF4TegVzVxEac0mMQkDMW+N7wxz1sbucf0421pff9whqEmAlqN+shQulI1QUNdDSL1lBQBHtSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=ZSyZ67OZ; arc=none smtp.client-ip=178.154.239.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
-Received: from mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:a1f:0:640:ba2e:0])
-	by forwardcorp1a.mail.yandex.net (Yandex) with ESMTPS id EEBD160B58;
-	Tue, 26 Nov 2024 01:20:42 +0300 (MSK)
-Received: from [IPV6:2a02:6b8:b081:b6b2::1:1d] (unknown [2a02:6b8:b081:b6b2::1:1d])
-	by mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id dKgiYl2IcCg0-I7biPIeB;
-	Tue, 26 Nov 2024 01:20:42 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
-	s=default; t=1732573242;
-	bh=ZqIB+iWzek3veLfNu7hxjtu3YlB1W0REJaTr2ObFX1M=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=ZSyZ67OZQEbndL0QyOpLaaz0JBBV9B+4/TVLOiChknZxG7A86Fw9UO8Spg2mHGkZl
-	 WkVXF2DQhtcAuxTys4EtOblg1UkxMUpv9rcZkyFQpNn7qxkTFBcwEHLfXG8wiGmADK
-	 bp94a9xHTA/lk8cmjPiHwJyVcDLhpnDgyFI3FpSI=
-Authentication-Results: mail-nwsmtp-smtp-corp-main-66.iva.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
-Message-ID: <62ba9085-0872-4aab-8871-20d3720a5aee@yandex-team.ru>
-Date: Tue, 26 Nov 2024 01:20:39 +0300
+	s=arc-20240116; t=1732573407; c=relaxed/simple;
+	bh=atfV4Dmd5P2/nrEuQPiLgC2zGDowbchaOZ/HeHMgibc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gGCuAvAY8sQkSLJPVD3vSgjw8avtwoZjbfQWNCIHu6c3UgTDUkgWZIHB1atWDv98pIri4W+TqhJGWZCTbwgWP3XRkx6XcJv94W3AzYdEE2mkXk0dgV5MWBtGlwlVcSpu34RGXnZQECXVItOhVObcBJfHPDLY2ps1W9D0SAcw4Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e3UaRCR/; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-85b09db4824so498566241.2
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 14:23:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732573405; x=1733178205; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fPfWzthEWoH2qXCJl59i7kJGHDW2eEE8lyzCKgg7LSc=;
+        b=e3UaRCR/M3umbpeLSryt2aVM526MgEKwMcGo+3dkHXXxIv4rvbyab0XE1R9uluLQpt
+         UOxIhEGOgvVREC1V0oDEunG51+gr3R1JJmqqhKLES2XZBJ/ohGnCwPdYWY6WxATlFI5A
+         RF3p+zKUeQ2Zkz/4BNDrop4+tx03ZAcfQR+lhbKL0j1lPU9v7K++Yjqrl38OIXxqLZvD
+         v9NgnbrHrizSDGZASx9d3e7VS+eN6Rcjf9oYm0LHiVkzBGBjwWHz7wMPLdMkYJLXNnF4
+         xkCF7lvEerYuB4Kh+Ovztx1hfVHPXsWYZbCLvB0Kh9j+fpLpRxug8oWKELoUCp5xNDE5
+         2UeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732573405; x=1733178205;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fPfWzthEWoH2qXCJl59i7kJGHDW2eEE8lyzCKgg7LSc=;
+        b=VdCGcV4dQcfqgT61/Tv1u4a+8FT4gnOlq2GBkc6t+X/bkwMdW99q+BC+7WB972VM0E
+         VxfVZJslrNMjCGSZYd31bRlD1ecK5K1HYbfOGYH6Gw5PqKG2aOBnl4pbt8lq4chGuEtT
+         5bUzh/sZ7thQTkCykXLo6Fqpq0cyJg2BJphEjnCv9HI1ZQMfuCvTVx1qvrnQ92IdpXPb
+         aURsEO0eJ27IHyz3Fl4lVf4XOCooNDi77lYGyR7fsc8n1P2GV6rWDn1L2HxiH70luJsu
+         fbKuYzyBPIEsuQ/5j9wrYo1Y9gGbVqZF/1IxMTT9pDtqrONmP/9zhJkh3gBMg0fFAdhX
+         1h9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVJP5JCAURbvfYYSosutaL3R0Apekgh8Zin69KsZIskuTOIF0OXjr8qaQAOFeJmZt9Pkkh3zA6SHCALFL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7vw8Yv6wzF+zkBvHnnHDpBPApMe1ToLroZ+dFkisg+V2z7xS7
+	x3A0PAfVKSprKn+HXuMlBeaMDYtPio5rX9rTfP4QVAwAF3yq1did03mNRjpw9FufQk6H4YRSxem
+	G5IyFfdHSn/Z6ElS4guUvyBP/NZJ5NjkM8wCz
+X-Gm-Gg: ASbGncsj3t/xJvvHDKfjZLHzdtBkvw4N3icyPFbfmI9OEAXsbKxXAYWBH4/FMwW9whJ
+	jnZbXwlnaOj13aoTBGJnk/PI9cEqnq+tTVu0qfjzxBF2cYMOwDI9ta46bP8aj1Pr0
+X-Google-Smtp-Source: AGHT+IGqMzc1OyPSWSlieeYBzujX5tl4Y0054LB+eF4R09ye8ciu10JBJUzb6hqH9f2pJ7Sfaoe8ukBDGJNLm5dZMcY=
+X-Received: by 2002:a05:6102:161f:b0:4af:19c3:61c1 with SMTP id
+ ada2fe7eead31-4af19c36469mr6481868137.27.1732573404437; Mon, 25 Nov 2024
+ 14:23:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3] x86/split_lock: fix delayed detection enabling
-To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc: den-plotnikov@yandex-team.ru, linux-kernel@vger.kernel.org,
- x86@kernel.org, dave.hansen@linux.intel.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de
-References: <20241113142301.704057-1-davydov-max@yandex-team.ru>
- <afccb8f2-a376-266f-5477-493bbc5fb7d3@igalia.com>
-Content-Language: en-US
-From: Maksim Davydov <davydov-max@yandex-team.ru>
-In-Reply-To: <afccb8f2-a376-266f-5477-493bbc5fb7d3@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241107202033.2721681-1-yuzhao@google.com> <20241125152203.GA954@willie-the-truck>
+In-Reply-To: <20241125152203.GA954@willie-the-truck>
+From: Yu Zhao <yuzhao@google.com>
+Date: Mon, 25 Nov 2024 15:22:47 -0700
+Message-ID: <CAOUHufYUMYcf=uF7=2zj-PsGXePCDdsRHJGa8t-e-k9VUvYyQQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] mm/arm64: re-enable HVO
+To: Will Deacon <will@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Marc Zyngier <maz@kernel.org>, Muchun Song <muchun.song@linux.dev>, 
+	Thomas Gleixner <tglx@linutronix.de>, Douglas Anderson <dianders@chromium.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Nanyong Sun <sunnanyong@huawei.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi!
-Thanks a lot!
-I've rebased onto the newest master
-https://lore.kernel.org/lkml/20241125221147.932377-1-davydov-max@yandex-team.ru/
+On Mon, Nov 25, 2024 at 8:22=E2=80=AFAM Will Deacon <will@kernel.org> wrote=
+:
+>
+> Hi Yu Zhao,
+>
+> On Thu, Nov 07, 2024 at 01:20:27PM -0700, Yu Zhao wrote:
+> > HVO was disabled by commit 060a2c92d1b6 ("arm64: mm: hugetlb: Disable
+> > HUGETLB_PAGE_OPTIMIZE_VMEMMAP") due to the following reason:
+> >
+> >   This is deemed UNPREDICTABLE by the Arm architecture without a
+> >   break-before-make sequence (make the PTE invalid, TLBI, write the
+> >   new valid PTE). However, such sequence is not possible since the
+> >   vmemmap may be concurrently accessed by the kernel.
+> >
+> > This series presents one of the previously discussed approaches to
+> > re-enable HugeTLB Vmemmap Optimization (HVO) on arm64.
+>
+> Before jumping into the new mechanisms here, I'd really like to
+> understand how the current code is intended to work in the relatively
+> simple case where the vmemmap is page-mapped to start with (i.e. when we
+> don't need to worry about block-splitting).
+>
+> In that case, who are the concurrent users of the vmemmap that we need
+> to worry about?
 
-On 11/20/24 22:16, Guilherme G. Piccoli wrote:
-> On 13/11/2024 11:23, Maksim Davydov wrote:
->> If the warn mode with disabled mitigation mode is used, then on each
->> CPU where the split lock occurred detection will be disabled in order to
->> make progress and delayed work will be scheduled, which then will enable
->> detection back. Now it turns out that all CPUs use one global delayed
->> work structure. This leads to the fact that if a split lock occurs on
->> several CPUs at the same time (within 2 jiffies), only one CPU will
->> schedule delayed work, but the rest will not. The return value of
->> schedule_delayed_work_on() would have shown this, but it is not checked
->> in the code.
->>
->> A diagram that can help to understand the bug reproduction:
->> https://lore.kernel.org/all/2cd54041-253b-4e78-b8ea-dbe9b884ff9b@yandex-team.ru/
->>
->> In order to fix the warn mode with disabled mitigation mode, delayed work
->> has to be a per-CPU.
->>
->> v3 -> v2:
->> * place and time of the per-CPU structure initialization were changed.
->>    initcall doesn't seem to be a good place for it, so deferred
->>    initialization is used.
->>
->> Fixes: 727209376f49 ("x86/split_lock: Add sysctl to control the misery mode")
->> Signed-off-by: Maksim Davydov <davydov-max@yandex-team.ru>
->> ---
->>   arch/x86/kernel/cpu/intel.c | 20 ++++++++++++++++----
->>   1 file changed, 16 insertions(+), 4 deletions(-)
-> 
-> 
-> Hi Maksim, thanks for resubmitting again. I think that is indeed a valid
-> fix, but what I've also noticed is that recently (as in this week) the
-> code changed from the intel.c file to a more generic one, since AMD is
-> enabling split lock detection in their CPUs apparently [0].
-> 
-> So, I'd suggest you to rebase against 6.13-rc, that would likely
-> increase the chances of a merge. Once you do that, I can try to test it
-> as well, though I don't personally have an Intel CPU with that feature
-> (but some friends have it).
-> 
-> Cheers,
-> 
-> 
-> Guilherme
-> 
-> 
-> [0] https://lore.kernel.org/r/ZzuBNj4JImJGUNJc@gmail.com/
+Any speculative PFN walkers who either only read `struct page[]` or
+attempt to increment page->_refcount if it's not zero.
 
--- 
-Best regards,
-Maksim Davydov
+> Is it solely speculative references via
+> page_ref_add_unless() or are there others?
+
+page_ref_add_unless() needs to be successful before writes can follow;
+speculative reads are always allowed.
+
+> Looking at page_ref_add_unless(), what serialises that against
+> __hugetlb_vmemmap_restore_folio()? I see there's a synchronize_rcu()
+> call in the latter, but what prevents an RCU reader coming in
+> immediately after that?
+
+In page_ref_add_unless(), the condtion `!page_is_fake_head(page) &&
+page_ref_count(page)` returns false before a PTE becomes RO.
+
+For HVO, i.e., a PTE being switched from RW to RO, page_ref_count() is
+frozen (remains zero), followed by synchronize_rcu(). After the
+switch, page_is_fake_head() is true and it appears before
+page_ref_count() is unfrozen (become non-zero), so the condition
+remains false.
+
+For de-HVO, i.e., a PTE being switched from RO to RW, page_ref_count()
+again is frozen, followed by synchronize_rcu(). Only this time
+page_is_fake_head() is false after the switch, and again it appears
+before page_ref_count() is unfrozen. To answer your question, readers
+coming in immediately after that won't be able to see non-zero
+page_ref_count() before it sees page_is_fake_head() being false. IOW,
+regarding whether it is RW, the condition can be false negative but
+never false positive.
+
+> Even if we resolve the BBM issues, we still need to get the
+> synchronisation right so that we don't e.g. attempt a cmpxchg() to a
+> read-only mapping, as the CAS instruction requires write permission on
+> arm64 even if the comparison ultimately fails.
+
+Correct. This applies to x86 as well, i.e., CAS on RO memory crashes
+the kernel, even if CAS would fail otherwise.
+
+> So please help me to understand the basics of HVO before we get bogged
+> down by the block-splitting on arm64.
+
+Gladly. Please let me know if anything from the core MM side is unclear.
 
