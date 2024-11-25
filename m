@@ -1,389 +1,154 @@
-Return-Path: <linux-kernel+bounces-420483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93A189D7B80
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:14:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A04149D7B7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 07:14:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53393281FB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 06:14:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1CAF281EE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 06:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0507517F4F6;
-	Mon, 25 Nov 2024 06:14:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3F916D9DF;
+	Mon, 25 Nov 2024 06:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ywRKjc7w"
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mPmTpsZz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CC616DEB3
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 06:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2087A364D6;
+	Mon, 25 Nov 2024 06:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732515285; cv=none; b=X/iOybz/kCqAEh8texW52LcndA1g491W7DLvSohKzLDdjQ4mFOJhUjlPLBsdMFbHthI3oJZvUfSG2FuRNYPFLAlEIOG8TMw+8n6L4Ps6MscOYdkzAUDu55YITz+OwApEJU6z2Kml30u/GpkzRxszma8YF5ujUAUIdWzGTUIcCfU=
+	t=1732515282; cv=none; b=jzyE1qOQXh+idf11HBLZuznSQ0+eFU5HVwxiiKRAF7e6OZX9iVE7rEGxgHHxWL+QrCzUzD7S/rPgLNsBEYkhu41l3WWhbE4f4ZgSCyS3t5GU0p39Bjku9SGK9DAHSe5dxIsPDwKQdbybVFcPgIRfTn+LM8IypMlekcu/pJpTHNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732515285; c=relaxed/simple;
-	bh=cywJT1P2ID6SjaGpN2h2l0WCULKEWjCHNgrDcPYP9po=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l97Fm/z8NrdL4SVqO8WvmIp4sSCrc9BgdFIltsMGWdHiPDCBq54ZIWxuNn4LsUcUInucPgLvFQyZJMUdCiFxnLwWMRrBwSWRWf1C/gmENaaaQYM6cMtyUINB/X96RWwdr6/Abpn0sUcD/NYgQ15mZ7vopqTILa6VtTGIe4eescI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ywRKjc7w; arc=none smtp.client-ip=209.85.217.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4af20893de2so185956137.2
-        for <linux-kernel@vger.kernel.org>; Sun, 24 Nov 2024 22:14:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732515282; x=1733120082; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=izaxiE/7iH2YFBidpMQ+bdsFs7wgOusWpoiEObVlqYM=;
-        b=ywRKjc7wXRJkFx2W9BwnIg8TmikUB+Vr6n8WQz5elLv/L0Ih4Pp6tcCovn8vr0ecpt
-         M/4fxwnK0eJICf8KEUuzejQ7hBc2xPfstkkPiotvXksAgDc8/yCk2UJDPqU3UvrPwsR/
-         6tSNLO2zOG15eUgtpCbwZLscJBU4AqRqYNUoT0BWvD4daF5OabYJVWGmIW1coyrl3GtY
-         dqeACi8TyHw46mYBU5Nl8Ch0MKx0XQO9XGs+pIbgPHWQ2JZ8T9m1ecwS9VwKNUhZvzeo
-         HDKVuk3OjMbPtUlr58wtH3oxdSRMLd3FIxE7sJeHwTJRRGp74lhHjTJCxDFHoYruWjKW
-         QotA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732515282; x=1733120082;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=izaxiE/7iH2YFBidpMQ+bdsFs7wgOusWpoiEObVlqYM=;
-        b=qxF1U+oy3cnIYyjwNzI/5BcX7AIm6IbwfrqAFQJIxS6V9hZTXPOlslbLh0XPeJ0j1m
-         Y4ZIGdz7PPdtn4ZKAKFUiNIMWJe7z4ysfUYFgJmw5GPMiBnu/wZWoP4AUig4l3JG3KkH
-         8hBj5CJXSgKvIQf0STB3/w+NnlrFyJdYPsdSDyaE7tFxFzSY07LopKaHrvBoXgLK8azO
-         A60QmpyTYovdBmsfQD+4TJfAALR5jzOKrZ3BK9Wi66HFNzhzz/yVoqzpG+UQ3bwM3OpH
-         zxoPyqU/yuoOpUJIPSbmGeY2WP7wJ9CuFNUICMWgZFZ8QpQay4+PCpfxJp9Xqj4Mj0Zy
-         GBAw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+MbxHMF6nq700vCJbrDB72EVsbodNIVL+bkhtVUm9IekOSxjXKD3oaW0ggspJa6qAMAz398D9exzm/jQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1NyBzFhh/qR463yVKoJzw7wWBWwBdY9lJY6s0l3TUiXrbNNKH
-	rtNmc3REPPdeci1lJ3ph7N7TxJkl5EbfNktWZeDIb2xDxlIVJhyghULTbhPmTehN+Rft4I2E46N
-	PpsppYT0TlPFXqhzsGRKLW2XF5nnDYH5fDIn/Cg==
-X-Gm-Gg: ASbGncvvKq2lN/rJ+HoMjJXVfxV9y4XvTKyvURhTKtJJutYPCcuaS0v9e5p0FeDRXtn
-	nORE5oiAAHT0wWTQ1Rn7ivF/yU8KKWtTjjA==
-X-Google-Smtp-Source: AGHT+IHo0k9b09a1pUXUIUBBkTTKUvlF/WMfMbSffUorXACHyHZhvUjBs5iTLTlXMKFvNS3cZCwifZxu/btB52kTp8w=
-X-Received: by 2002:a05:6102:3f49:b0:4a8:ffbb:5531 with SMTP id
- ada2fe7eead31-4addcece627mr10051933137.25.1732515281665; Sun, 24 Nov 2024
- 22:14:41 -0800 (PST)
+	s=arc-20240116; t=1732515282; c=relaxed/simple;
+	bh=ZwinL8/1U53BksoUcwrkFOscCyNv4jQRQn8e4Z7FM/c=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=iXApOBcmFuKIg1kiMKKUB5vH5pEg5oLDxI+tBc1YaCjSKtBjjDUr5ayg+hlcQB3ig846jdKdzE558f6G7PtzEL9DLPvmsCrTpAmU6wVWZpaJ5Okw8X+MHoanQjQopCOT9Ol0ms6fDW87XJD5UZTggOVlmYBmoQND2YuriY2ZEa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mPmTpsZz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31AEEC4CECE;
+	Mon, 25 Nov 2024 06:14:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732515281;
+	bh=ZwinL8/1U53BksoUcwrkFOscCyNv4jQRQn8e4Z7FM/c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mPmTpsZz9Z/TG2HE4ihMvas4pho6Wg5xUfeiWyhwkPdStPe6cRF8QpawUX2YLE1JY
+	 tMdWP8HEkVAP9Tz4D7oljmepnoSOkvuk9eQFWi7fQC4zBOr0gDtTSiVnJK52ToaoQs
+	 4EqoQcNfqjAPT8ZJU8OZlI2+go6s0N+RwTNQQ7TnWzs5IRipONxCMR+9tVJRegwdJB
+	 lWIk45XMod5RGPP6PwWBmsg/ZOXgOvnMLIhZijD+waH/SHESna6eS3pxtbzQ+XoIlA
+	 rSnFbkh5arENyhHbJ+4UWBiGH0LxZEcc1Yv8rtaMXBhO4iCmHcIp9spkL3atgkI9+6
+	 hJXbU8xTGcEzQ==
+Date: Mon, 25 Nov 2024 15:14:37 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Li Huafei <lihuafei1@huawei.com>
+Cc: <acme@kernel.org>, <peterz@infradead.org>, <mingo@redhat.com>,
+ <namhyung@kernel.org>, <mark.rutland@arm.com>,
+ <alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+ <irogers@google.com>, <adrian.hunter@intel.com>,
+ <kan.liang@linux.intel.com>, <dima@secretsauce.net>,
+ <aleksander.lobakin@intel.com>, <linux-perf-users@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] perf probe: Clear all structure fields in
+ clear_perf_{probe, trace}_event()
+Message-Id: <20241125151437.9cb726157de25cfba0a44665@kernel.org>
+In-Reply-To: <20241114105451.90273-1-lihuafei1@huawei.com>
+References: <20241114105451.90273-1-lihuafei1@huawei.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241120-fix-tee_shm-refcount-upstream-v1-0-5da97f584fcd@quicinc.com>
- <20241120-fix-tee_shm-refcount-upstream-v1-3-5da97f584fcd@quicinc.com>
- <CAHUa44Eoxa+NfRF-XCuV-O5uVgtC3UMT0utCLrUZ4rCBREp=pQ@mail.gmail.com>
- <3ab115bf-7ac6-452f-b760-0d631b6e75dd@quicinc.com> <CAFA6WYNBsZ5V6N676yfDgTL4jMeXtEB0xGm5zSq3BFeeCpz9Nw@mail.gmail.com>
- <a4e474c2-80b7-45db-b1a0-37950168edf0@quicinc.com>
-In-Reply-To: <a4e474c2-80b7-45db-b1a0-37950168edf0@quicinc.com>
-From: Sumit Garg <sumit.garg@linaro.org>
-Date: Mon, 25 Nov 2024 11:44:30 +0530
-Message-ID: <CAFA6WYOvMnvdhLvgOzLMyugRLPc62pHdJEGAhhwDJHRrVxCs1Q@mail.gmail.com>
-Subject: Re: [PATCH RFC 3/3] tee: introduce orphan tee_shm and default context
-To: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
-Cc: Jens Wiklander <jens.wiklander@linaro.org>, op-tee@lists.trustedfirmware.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, 25 Nov 2024 at 03:00, Amirreza Zarrabi
-<quic_azarrabi@quicinc.com> wrote:
->
->
-> Hi Sumit,
->
-> Thank you so much for the comemnts :).
->
-> On 11/23/2024 9:32 PM, Sumit Garg wrote:
-> > Hi Amirreza,
-> >
-> > Thanks for proposing this.
-> >
-> > On Fri, 22 Nov 2024 at 06:38, Amirreza Zarrabi
-> > <quic_azarrabi@quicinc.com> wrote:
-> >>
-> >>
-> >> On 11/21/2024 11:08 PM, Jens Wiklander wrote:
-> >>
-> >> Hi Jens,
-> >>
-> >>> Hi Amirreza,
-> >>>
-> >>> On Thu, Nov 21, 2024 at 2:37=E2=80=AFAM Amirreza Zarrabi
-> >>> <quic_azarrabi@quicinc.com> wrote:
-> >>>>
-> >>>> The default context has a lifespan similar to the tee_device.
-> >
-> > Since it's associated with tee_device context, let's call it obvious
-> > via renaming it as device context instead (s/def_ctx/dev_ctx/ in this
-> > patch).
-> >
->
-> Make sense, I'll rename it.
->
-> >>>> It is used as a context for shared memory if the context to which th=
-e
-> >>>> shared memory belongs is released, making the tee_shm an orphan.
-> >>>> This allows the driver implementing shm_unregister to safely make
-> >>>> subsequent calls, such as to a supplicant if needed.
-> >>>>
-> >>>> It also enables users to free the shared memory while the driver is
-> >>>> blocked on unregister_tee_device safely.
-> >>>>
-> >>>> Preferably, this should be used for all driver internal uses, using
-> >>>> teedev_get_def_context rather than calling teedev_open.
-> >
-> > Makes sense to me.
-> >
-> >>>>
-> >>>> Signed-off-by: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
-> >>>> ---
-> >>>>  drivers/tee/optee/core.c    |  2 +-
-> >>>>  drivers/tee/optee/ffa_abi.c |  2 +-
-> >>>>  drivers/tee/optee/smc_abi.c |  2 +-
-> >>>>  drivers/tee/tee_core.c      | 83 +++++++++++++++++++++++++++++-----=
------------
-> >>>>  drivers/tee/tee_private.h   |  3 --
-> >>>>  drivers/tee/tee_shm.c       | 18 ++--------
-> >>>>  include/linux/tee_core.h    | 15 ++++++++
-> >>>>  include/linux/tee_drv.h     |  7 ----
-> >>>>  8 files changed, 73 insertions(+), 59 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
-> >>>> index c75fddc83576..78d43d0c8014 100644
-> >>>> --- a/drivers/tee/optee/core.c
-> >>>> +++ b/drivers/tee/optee/core.c
-> >>>> @@ -173,7 +173,7 @@ void optee_remove_common(struct optee *optee)
-> >>>>
-> >>>>         optee_notif_uninit(optee);
-> >>>>         optee_shm_arg_cache_uninit(optee);
-> >>>> -       teedev_close_context(optee->ctx);
-> >>>> +
-> >>>>         /*
-> >>>>          * The two devices have to be unregistered before we can fre=
-e the
-> >>>>          * other resources.
-> >>>> diff --git a/drivers/tee/optee/ffa_abi.c b/drivers/tee/optee/ffa_abi=
-.c
-> >>>> index f3af5666bb11..6ad94f0788ad 100644
-> >>>> --- a/drivers/tee/optee/ffa_abi.c
-> >>>> +++ b/drivers/tee/optee/ffa_abi.c
-> >>>> @@ -949,7 +949,7 @@ static int optee_ffa_probe(struct ffa_device *ff=
-a_dev)
-> >>>>         optee_shm_arg_cache_init(optee, arg_cache_flags);
-> >>>>         mutex_init(&optee->rpmb_dev_mutex);
-> >>>>         ffa_dev_set_drvdata(ffa_dev, optee);
-> >>>> -       ctx =3D teedev_open(optee->teedev);
-> >>>> +       ctx =3D teedev_get_def_context(optee->teedev);
-> >>>>         if (IS_ERR(ctx)) {
-> >>>>                 rc =3D PTR_ERR(ctx);
-> >>>>                 goto err_rhashtable_free;
-> >>>> diff --git a/drivers/tee/optee/smc_abi.c b/drivers/tee/optee/smc_abi=
-.c
-> >>>> index e9456e3e74cc..c77a3e631d04 100644
-> >>>> --- a/drivers/tee/optee/smc_abi.c
-> >>>> +++ b/drivers/tee/optee/smc_abi.c
-> >>>> @@ -1722,7 +1722,7 @@ static int optee_probe(struct platform_device =
-*pdev)
-> >>>>         mutex_init(&optee->rpmb_dev_mutex);
-> >>>>
-> >>>>         platform_set_drvdata(pdev, optee);
-> >>>> -       ctx =3D teedev_open(optee->teedev);
-> >>>> +       ctx =3D teedev_get_def_context(optee->teedev);
-> >>>>         if (IS_ERR(ctx)) {
-> >>>>                 rc =3D PTR_ERR(ctx);
-> >>>>                 goto err_supp_uninit;
-> >>>> diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
-> >>>> index 93f3b330aec8..805e1336089d 100644
-> >>>> --- a/drivers/tee/tee_core.c
-> >>>> +++ b/drivers/tee/tee_core.c
-> >>>> @@ -57,7 +57,6 @@ struct tee_context *teedev_open(struct tee_device =
-*teedev)
-> >>>>                 goto err;
-> >>>>         }
-> >>>>
-> >>>> -       kref_init(&ctx->refcount);
-> >>>>         ctx->teedev =3D teedev;
-> >>>>         INIT_LIST_HEAD(&ctx->list_shm);
-> >>>>         rc =3D teedev->desc->ops->open(ctx);
-> >>>> @@ -73,36 +72,43 @@ struct tee_context *teedev_open(struct tee_devic=
-e *teedev)
-> >>>>  }
-> >>>>  EXPORT_SYMBOL_GPL(teedev_open);
-> >>>>
-> >>>> -void teedev_ctx_get(struct tee_context *ctx)
-> >>>> +struct tee_context *teedev_get_def_context(struct tee_device *teede=
-v)
-> >>>>  {
-> >>>> -       if (ctx->releasing)
-> >>>> -               return;
-> >>>> +       int rc;
-> >>>> +       struct tee_context *ctx =3D &teedev->def_ctx;
-> >>>>
-> >>>> -       kref_get(&ctx->refcount);
-> >>>> -}
-> >>>> +       ctx->teedev =3D teedev;
-> >>>> +       INIT_LIST_HEAD(&ctx->list_shm);
-> >>>> +       rc =3D teedev->desc->ops->open(ctx);
-> >>>> +       if (rc)
-> >>>> +               return ERR_PTR(rc);
-> >>>
-> >>> I think ctx->teedev and ctx->list_shm must always be initialized or
-> >>> &teedev->def_ctx can't be used in teedev_close_context().
-> >>
-> >> True, but &teedev->def_ctx is never used in teedev_close_context().
-> >> The closing of the &teedev->def_ctx simply ignored. So once opened,
-> >> &teedev->def_ctx will always remain open until the tee_device is alive=
-.
-> >>
-> >>> We could initialize teedev->def_ctx on the first call to teedev_open(=
-)
-> >>> on that tee_device. We need a way to tell the
-> >>> teedev->desc->ops->open() to the backed driver that it's initializing
-> >>> the default context though, or optee_open() can't handle the
-> >>> tee-supplicant case properly.
-> >>>
-> >>
-> >> That's a good point. This way, it is guaranteed that there is one def_=
-ctx
-> >> per teedev. There should be a way to tell the open() callback that it =
-is
-> >> a def_ctx, so it is not registered as a supplicant context.
-> >>
-> >>
-> >>> Should we allow this function to be called more than once for each te=
-edev?
-> >>
-> >> Yes, moving to teedev_open() will fix the issue.
-> >>
-> >>> Do we need serialization in this function if it's called after the
-> >>> driver is probed?
-> >>>
-> >>
-> >> True. I'll make sure there is no race.
-> >>
-> >>>>
-> >>>> -static void teedev_ctx_release(struct kref *ref)
-> >>>> -{
-> >>>> -       struct tee_context *ctx =3D container_of(ref, struct tee_con=
-text,
-> >>>> -                                              refcount);
-> >>>> -       ctx->releasing =3D true;
-> >>>> -       ctx->teedev->desc->ops->release(ctx);
-> >>>> -       kfree(ctx);
-> >>>> +       return ctx;
-> >>>>  }
-> >>>> +EXPORT_SYMBOL_GPL(teedev_get_def_context);
-> >>>>
-> >>>> -void teedev_ctx_put(struct tee_context *ctx)
-> >>>> +void teedev_close_context(struct tee_context *ctx)
-> >>>>  {
-> >>>> -       if (ctx->releasing)
-> >>>> +       struct tee_device *teedev =3D ctx->teedev;
-> >>>> +       struct tee_shm *shm;
-> >>>> +
-> >>>> +       if (ctx =3D=3D &teedev->def_ctx)
-> >>>>                 return;
-> >>>>
-> >>>> -       kref_put(&ctx->refcount, teedev_ctx_release);
-> >>>> -}
-> >>>> +       teedev->desc->ops->release(ctx);
-> >>>>
-> >>>> -void teedev_close_context(struct tee_context *ctx)
-> >>>> -{
-> >>>> -       struct tee_device *teedev =3D ctx->teedev;
-> >>>> +       mutex_lock(&teedev->mutex);
-> >>>> +       list_for_each_entry(shm, &ctx->list_shm, link) {
-> >>>> +               /* Context released. However, shm still holding a te=
-edev reference.
-> >>>> +                * Replace shm->ctx with the default context so that=
- tee_shm_get_from_id()
-> >>>> +                * fails (i.e. it is not accessible from userspace) =
-but shm still
-> >>>> +                * holds a valid context for further clean up, e.g. =
-shm_unregister().
-> >>>> +                */
-> >>>
-> >>> /*
-> >>>  * Please format
-> >>>  * multiline comments
-> >>>  * like this. Please
-> >>>  * keep the lines at
-> >>>  * max 80 columns
-> >>>  * here and at other
-> >>>  * places in the patch-
-> >>>  * set.
-> >>>  */
-> >>>
-> >>
-> >> Ack.
-> >>
-> >>>> +               shm->ctx =3D &teedev->def_ctx;
-> >>>
-> >>> shm->ctx will always point to a valid context, even if it is the
-> >>> default context. It seems that we can always get hold of the correct
-> >>> teedev via shm->ctx->teedev. Do we need "tee: revert removal of
-> >>> redundant teedev in struct tee_shm"?
-> >>>
-> >>
-> >> It was there in case we wanted to use NULL, but with def_ctx, it is no=
-t
-> >> necessary. I am withdrawing that commit. :).
-> >>
-> >>> Shouldn't the shm be removed from the ctx->list_shm and be moved to
-> >>> teedev->def_ctx.list_shm?
-> >
-> > +1
-> >
->
-> Ack.
->
-> >>>
-> >>
-> >> Not really. If we put shm in the teedev->def_ctx.list_shm, by the time
-> >> we are closing the def_ctx, the list is guaranteed to be empty.
-> >>
-> >> However, I understand it is cleaner and more consistent to do that rat=
-her
-> >> than making changes to tee_shm_put().
-> >>
-> >> I'll do it.
-> >>
-> >>>> +       }
-> >>>> +       mutex_unlock(&teedev->mutex);
-> >>>>
-> >>>> -       teedev_ctx_put(ctx);
-> >>>> +       kfree(ctx);
-> >>>>         tee_device_put(teedev);
-> >>>>  }
-> >>>>  EXPORT_SYMBOL_GPL(teedev_close_context);
-> >>>> @@ -946,6 +952,8 @@ struct tee_device *tee_device_alloc(const struct=
- tee_desc *teedesc,
-> >>>>
-> >>>>         teedev->desc =3D teedesc;
-> >>>>         teedev->pool =3D pool;
-> >>>> +       /* Only open default context when teedev_get_def_context() c=
-alled. */
-> >>>> +       teedev->def_ctx.teedev =3D NULL;
-> >
-> > Why don't you open the device context here only? This will associate
-> > it automatically with teedev lifespan and then
-> > teedev_get_def_context() will just return a reference to that.
-> >
-> > -Sumit
-> >
->
-> So my assumption is that the tee_devic_alloc() is called as part of
-> the driver initialization; there is no guarantee that at this time the
-> driver is actually ready to accept any open() callback.
->
+On Thu, 14 Nov 2024 18:54:51 +0800
+Li Huafei <lihuafei1@huawei.com> wrote:
 
-The drivers should be able to handle open() callback since we already
-check for !teedesc->ops->open in the beginning of tee_devic_alloc().
-Also, we need to open a device context for !TEE_DESC_PRIVILEGED such
-that we don't open a supplicant device context there.
+> I added two probe events:
+> 
+>   # perf probe -f -a schedule+8
+>   Added new event:
+>     probe:schedule       (on schedule+8)
+> 
+>   You can now use it in all perf tools, such as:
+> 
+>           perf record -e probe:schedule -aR sleep 1
+> 
+>   # perf probe -f -a schedule+20
+>   Added new event:
+>     probe:schedule_1     (on schedule+20)
+> 
+>   You can now use it in all perf tools, such as:
+> 
+>           perf record -e probe:schedule_1 -aR sleep 1
+> 
+> However, 'perf probe -l' shows the same offset:
+> 
+>   # perf probe -l
+>     probe:schedule       (on schedule+8@kernel/sched/core.c)
+>     probe:schedule_1     (on schedule+8@kernel/sched/core.c)
+> 
+> __show_perf_probe_events() does not clean up the 'pev' content when
+> parsing the rawlist. If the 'pev->offset' is not set while processing
+> the next probe event string, the offset value of the previous event will
+> be used.  After adding debug information, it was found that indeed there
+> was line number information when processing 'probe:schedule_1', so the
+> offset was not set and used the offset from 'probe:schedule'.
+> 
+> To fix this, clear all the fields of the structures in
+> clear_perf_{probe, trace}_event(). not just the allocated fields.
+> 
 
--Sumit
+Looks good to me.
+
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thanks!
+
+> Fixes: d8f9da240495 ("perf tools: Use zfree() where applicable")
+> Signed-off-by: Li Huafei <lihuafei1@huawei.com>
+> ---
+> Changes in v2:
+>  - Do the cleanup in clear_perf_{probe, trace}_event().
+>  - Refine the subject and the commit log.
+> 
+> v1: https://lore.kernel.org/lkml/20241108181909.3515716-1-lihuafei1@huawei.com/
+> ---
+>  tools/perf/util/probe-event.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+> index a17c9b8a7a79..47903bb56fc6 100644
+> --- a/tools/perf/util/probe-event.c
+> +++ b/tools/perf/util/probe-event.c
+> @@ -2376,8 +2376,8 @@ void clear_perf_probe_event(struct perf_probe_event *pev)
+>  			field = next;
+>  		}
+>  	}
+> -	pev->nargs = 0;
+>  	zfree(&pev->args);
+> +	memset(pev, 0, sizeof(*pev));
+>  }
+>  
+>  #define strdup_or_goto(str, label)	\
+> @@ -2475,7 +2475,7 @@ void clear_probe_trace_event(struct probe_trace_event *tev)
+>  		}
+>  	}
+>  	zfree(&tev->args);
+> -	tev->nargs = 0;
+> +	memset(tev, 0, sizeof(*tev));
+>  }
+>  
+>  struct kprobe_blacklist_node {
+> -- 
+> 2.25.1
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
