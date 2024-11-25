@@ -1,126 +1,172 @@
-Return-Path: <linux-kernel+bounces-421488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 048069D8BF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:08:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D789D8BF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:09:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD369284898
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:08:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C606A163F7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFA81B86F6;
-	Mon, 25 Nov 2024 18:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7511B85EC;
+	Mon, 25 Nov 2024 18:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Fdwy0Rt/"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RadMfOcV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="x9oJOupz";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RadMfOcV";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="x9oJOupz"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25CD91B3952
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 18:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0171B4146;
+	Mon, 25 Nov 2024 18:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732558115; cv=none; b=rhR9WP6O6zg40mC/gPRGY8cwKoUarczqmJ1LThXPmlge05hrttBS2lRql/qJJ2YrXZZSfgrx5okxJXur5GEuQkTKJzLjuhr/hYo5GeWoIFiYrngE88QV3ulWPBje2dg0moRambbg8YLRYQa9Cm4HSGa078L0xvVdK4VfhYT+d3w=
+	t=1732558142; cv=none; b=WTWdfz8VvajBHggmc49c6BC5TX5rPRRiAOdzf42ZSgH/3iaC0mf5RECs8jzAQk6jMhtmm6NeW7gcdi70aJWZRayodqED7gKEwZogOi3OfP9/Y+FydS4gk5lmrToF8XZoSNbNql/dCf7FzV7UEuiUeuJ6edyKEJdg+DOnAaA/4mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732558115; c=relaxed/simple;
-	bh=f/8NwLKDNGwA4BBNxjludT6JeLJQpYXupFh0WKIWdEA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m7ElFk/MAPRzBKy8/e4ao+ETNNQGrHFLCX3zRuW9ChL+U8VKLrpClp6CUfcfQvGNRfvaUCSXt1BKkySl7SPE8xrqtgWnGDzn9/cL4CvaviGf4FpkSfCmqOWvweQhySDng77uXg6d3aabQNLXjAs1D0DWfTPKQ7EJ0LuzqRvZRi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Fdwy0Rt/; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cfd3a7e377so6406391a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 10:08:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732558112; x=1733162912; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f/8NwLKDNGwA4BBNxjludT6JeLJQpYXupFh0WKIWdEA=;
-        b=Fdwy0Rt/VHlqgQ0xl07X/D3HQqb15N43TZn9J8LhVyQwlhspRXvcAqme9SzgiKgX/j
-         Msyflet/kAp/RTl1Y0r4MZ/Xf8ZnBhb5EVQ7Gg4IHHm2hP41wl8RA2rzfolCGfIY0/WC
-         NaCw1YL4Kpam7q4fCrValZM5YTM0eRy5dvEM72dFRkFjaXyCYxin1jS/saNht61Gb1TR
-         syAi/+GhoGIi18aeYFr8soAoXKfmjhJwnziXmoHIR5m/YLx50TPC9aR4Ecq4D7dpe2Ib
-         4YqEpXlk/0ZeY7di5Ddx8PSAokd+3dR5/bVJUG+jIzKeI0Zvo6e/sOrOp2PCVxnA3Nsa
-         8ShQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732558112; x=1733162912;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f/8NwLKDNGwA4BBNxjludT6JeLJQpYXupFh0WKIWdEA=;
-        b=O314f0AZtY+nH7FCafbu2a1Ja8cUWmA8LOwzrZz5fgFo1MAOy8VxJOqbiIta1aeWUy
-         KDv88z+33iRi11fOQL7+D69+04ahPaUwGqTKLhbQGU0s4lBUYDKfF5oCkEGLnfjJIU5b
-         UAhhFABdFm3x6vGtARNLkX3Xzolhxznnyw7CNb1wdnpInNuStB13Q0+JJHjWyl7Zz8WP
-         UCf926G8z6N3Z2u0rHJlAVW/fHUW7KN31/BmMizklkTuerdwWDCoLcEcT0QpoZsOdECO
-         qQhvbyS8vnZCwr3ckOrpC7ken0VqlfkCO8X+Y3uGai9yBU+OieGMkYH/i7vtTXWJtTrn
-         bzwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYiyJRHlN2svU1/j19Q/ZdhsuuCKpu3EKGy2VycAe+7VxwRBlLagHuOIC6RYbfQgWbeBS23UioqwMBYEQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA0jgxEkOyunhaw1GqDyOp4IbB5he3gKqjJ/+pHZ0pQEqwbnoL
-	aszpo2ZQUjW4heFtwHdhEF2ceCrg+U4IQftLzLHH+h6oHEEdCa28mpo9jUHwpZ22WDzshKlcHBj
-	bpWZOVNG9RrRBjf2HM3pQClmxWDOUmUPRXMNH
-X-Gm-Gg: ASbGnct+26ZlL0NAAwfbOeRlrccSOYXZIDdxldIldFBslkUmLmNRS6WCq1Avbj+Tyv0
-	WcqZ+PRfjgmEwLU16y5fp9THXppf5nVI=
-X-Google-Smtp-Source: AGHT+IHKMdoCdYVLYstvTLbkIH5an+q5VLUZCM0/VpgrdnIYU/0qaxzK96Z5d9X4Yfsfb2kU+0cF1c0TftMw/R/GZ4w=
-X-Received: by 2002:a05:6402:1e93:b0:5cf:de89:9364 with SMTP id
- 4fb4d7f45d1cf-5d0205f4b61mr11330079a12.10.1732558112236; Mon, 25 Nov 2024
- 10:08:32 -0800 (PST)
+	s=arc-20240116; t=1732558142; c=relaxed/simple;
+	bh=w7kxJO28hJuvu7d/idb2o+h8f2jsfvZ9tNM+W19lsww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hPXa4OXKdPIWqM4KhTfE3WjBRxrh+9aJ/NwyXW7GT4yAvvYM1vfVnREAAxZ37FlBaqtfrCm2GxX/aAeU4Znz+aKj8Ck+Mtq4nWsj/hfYgwsrGxpM5GCAjQ+uN5roM2s66xZUkd1H1Pu0Xh6b24Au38XqtRr+VJwuKKvl7UXaPGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RadMfOcV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=x9oJOupz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RadMfOcV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=x9oJOupz; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 571811F453;
+	Mon, 25 Nov 2024 18:08:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732558138;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c5nBz9JB+d6ohi06eJrf2yvhifSibzaMzqiLfFX/JRA=;
+	b=RadMfOcVRxFTxBUjRKYF2Cr9+6xqNCrqQEOd0ceWi0kKzyieoVEpvB9xj2bmvSuOD2ocwE
+	jIkgVFOopCdQCCZMaUvG+L+Whr6g+qN+5w5NaMzZgjuSgxa9rOJcZEZhKtt2CXCfFhENGs
+	UWeSS6iPycLDHwLtnX5tWRnQoHbg+DM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732558138;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c5nBz9JB+d6ohi06eJrf2yvhifSibzaMzqiLfFX/JRA=;
+	b=x9oJOupzZNTdYjYUit+y+C1PmTOtVKVNR8KMZo7dEiPKJUXqIt+xWI+mU6MruCvCJ/1s0y
+	A+ar97NYr1vinQDA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=RadMfOcV;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=x9oJOupz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732558138;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c5nBz9JB+d6ohi06eJrf2yvhifSibzaMzqiLfFX/JRA=;
+	b=RadMfOcVRxFTxBUjRKYF2Cr9+6xqNCrqQEOd0ceWi0kKzyieoVEpvB9xj2bmvSuOD2ocwE
+	jIkgVFOopCdQCCZMaUvG+L+Whr6g+qN+5w5NaMzZgjuSgxa9rOJcZEZhKtt2CXCfFhENGs
+	UWeSS6iPycLDHwLtnX5tWRnQoHbg+DM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732558138;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c5nBz9JB+d6ohi06eJrf2yvhifSibzaMzqiLfFX/JRA=;
+	b=x9oJOupzZNTdYjYUit+y+C1PmTOtVKVNR8KMZo7dEiPKJUXqIt+xWI+mU6MruCvCJ/1s0y
+	A+ar97NYr1vinQDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3E59413890;
+	Mon, 25 Nov 2024 18:08:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id NpADDzq9RGcwEwAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Mon, 25 Nov 2024 18:08:58 +0000
+Date: Mon, 25 Nov 2024 19:08:57 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Atemu <git@atemu.net>, Luca Stefani <luca.stefani.ge1@gmail.com>,
+	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] btrfs: Don't block system suspend during fstrim
+Message-ID: <20241125180856.GE31418@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20240917203346.9670-1-luca.stefani.ge1@gmail.com>
+ <20240917203346.9670-3-luca.stefani.ge1@gmail.com>
+ <SICOALIt6xFGz_7VCBwGpUxENKZz_3Em604Vvgvh8Pi79wpvimQFBQNkDxa1kE5lwfkOU0ZSYRaiIugTDLAfM1j3HMUgM25s1rgpmmRQ9TI=@atemu.net>
+ <2024111923-capsize-resonant-eed6@gregkh>
+ <wnPVOgJfpl_-T0Kmx_rLagKGYDUVPe2v9-dL75Pn8evLxtS0h1PY3OGUSihwcMAJ4Q5A3heeKnYQZcPaX81_ieEwyKirOcV2ZdutRF8JgrI=@atemu.net>
+ <2024112033-booted-kinswoman-6cb5@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANn89iJ7uOuDCzErfeymGuyaP9ECqjFK5ZF9o3cuvR3+VLWfFg@mail.gmail.com>
- <20241125174608.1484356-1-martin.ottens@fau.de>
-In-Reply-To: <20241125174608.1484356-1-martin.ottens@fau.de>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 25 Nov 2024 19:08:21 +0100
-Message-ID: <CANn89iLeSEVDZv-Nx6RGghSJdpozBAdoU==VQLgH5v+Puc=i0w@mail.gmail.com>
-Subject: Re: [PATCH v2] net/sched: tbf: correct backlog statistic for GSO packets
-To: Martin Ottens <martin.ottens@fau.de>
-Cc: Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, 
-	Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	"open list:TC subsystem" <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024112033-booted-kinswoman-6cb5@gregkh>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: 571811F453
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.71 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[atemu.net,gmail.com,fb.com,toxicpanda.com,suse.com,vger.kernel.org];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:dkim,suse.cz:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.71
+X-Spam-Flag: NO
 
-On Mon, Nov 25, 2024 at 6:46=E2=80=AFPM Martin Ottens <martin.ottens@fau.de=
-> wrote:
->
-> When the length of a GSO packet in the tbf qdisc is larger than the burst
-> size configured the packet will be segmented by the tbf_segment function.
-> Whenever this function is used to enqueue SKBs, the backlog statistic of
-> the tbf is not increased correctly. This can lead to underflows of the
-> 'backlog' byte-statistic value when these packets are dequeued from tbf.
->
-> Reproduce the bug:
-> Ensure that the sender machine has GSO enabled. Configured the tbf on
-> the outgoing interface of the machine as follows (burstsize =3D 1 MTU):
-> $ tc qdisc add dev <oif> root handle 1: tbf rate 50Mbit burst 1514 latenc=
-y 50ms
->
-> Send bulk TCP traffic out via this interface, e.g., by running an iPerf3
-> client on this machine. Check the qdisc statistics:
-> $ tc -s qdisc show dev <oif>
->
-> The 'backlog' byte-statistic has incorrect values while traffic is
-> transferred, e.g., high values due to u32 underflows. When the transfer
-> is stopped, the value is !=3D 0, which should never happen.
->
-> This patch fixes this bug by updating the statistics correctly, even if
-> single SKBs of a GSO SKB cannot be enqueued.
->
-> Fixes: e43ac79a4bc6 ("sch_tbf: segment too big GSO packets")
-> Signed-off-by: Martin Ottens <martin.ottens@fau.de>
+On Wed, Nov 20, 2024 at 01:17:14PM +0100, Greg Kroah-Hartman wrote:
+> On Wed, Nov 20, 2024 at 07:41:32AM +0000, Atemu wrote:
+> > Hi, 
+> > 
+> > 
+> > > What is the git commit id in LInus's tree you are referring to here?
+> > 
+> > It's 69313850dce33ce8c24b38576a279421f4c60996. Apparently marked for backport to 5.15+.
+> 
+> Please see the FAILED emails about why this was not applied, here is
+> one:
+> 	https://lore.kernel.org/r/2024101412-diaphragm-sly-ea40@gregkh
+> 
+> Have you tested and tried this commit out in these older kernels?  If
+> so, can you please send a working version so that we can apply them?
 
-This seems fine, please note we ask for a 24 hours delay between each
-version, to let other reviewers chime in.
-
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-
-Can you also take a look at net/sched/sch_taprio.c, it seems the bug
-has been copy/pasted there as well.
+The conflict was trivial, only adding the linux/freezer.h include. I've
+sent an updated version that applies to 6.6.
 
