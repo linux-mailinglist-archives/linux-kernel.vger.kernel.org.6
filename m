@@ -1,108 +1,131 @@
-Return-Path: <linux-kernel+bounces-421729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C68479D8F3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:40:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F7D59D8F40
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:42:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B6C3168F7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:40:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C782716A720
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72CAA195FE3;
-	Mon, 25 Nov 2024 23:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EC4196D9D;
+	Mon, 25 Nov 2024 23:42:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MWK10U9L"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="fP8Jt5/E"
+Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961DE1946C3
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 23:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D743189F20;
+	Mon, 25 Nov 2024 23:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732578045; cv=none; b=LxSpOvJTehNB8nQhe01KGGRQUGreJ3HZDnVzUHVr47THjI46GReiz2GxhQIKjriyM6ZKi8moHJMr4ZNP65/d/NHmOFA1oRM4uEgxvaxevO7L7XaaBu1i4SIMXCgDtEkMEAr1LvhyTkvYuL3qcAHk+vQlXullq//gxZhdb/MUM6k=
+	t=1732578146; cv=none; b=ZVQcffh60TaS3malLc7khT2FUqenUqiRk2Qvy4J8Qvlll1AL5Ay2ThySgKxZoB4C13bbjDgYrjdNssLvore+Ur52gHmOMG3NbJDAqPiwuHlrWKEXjM1uZuTFTrapO8mtiMOykSdWZx7LLy5VpwVXDi2bHszA4eOr7tvUeXRs51o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732578045; c=relaxed/simple;
-	bh=yqQVvq8lTMFOR8WCOuWvtJi0k78O9tLZ+qeTmTRIjWc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gRjCHanDcW5xdjMItvtua/SUWv6FQRGBnRF3QjtvCfU7J64thMo9XKGahH+lR6yAk6+SsB1M2/1l1gb+VzL/DaIp4mRDxaQ85GVN/aQTsZAb07O3tCOI2KfSC/iEU5rhK/FMf/6iyEvmBk9oJK9Y/hxuWHeSnQS+R1O7UpBpcXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MWK10U9L; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cfbeed072dso6266332a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 15:40:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732578042; x=1733182842; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2RlY2ZMrYaHz582xTT+rxAcAIIF8NSzQOVmJaoBAXy8=;
-        b=MWK10U9Leb/CPT5z9mcQXhekcSooaq09nYLciqyj5BfP8kf3u2Ny20a3QUjKKyk12g
-         FnOm58HPYZ7qrefQd78/33ojSGFIYXM3ifQUsVMvgbMYAfLMendVrglxmaMNrbwoEtoG
-         W5RTon32iqWOdmSNSrB3ttsB8hw54oUFiWXNU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732578042; x=1733182842;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2RlY2ZMrYaHz582xTT+rxAcAIIF8NSzQOVmJaoBAXy8=;
-        b=Xl+MNR0ds041wTpgwtEuv4ojsEP9pgUewykBQca9uZOMESvSAwnz0c7uOBh4H91Inl
-         19rk2NyjdxFYazfAbG1gPmMxDd8t7Kog1HWCNLTkQG2Siez7Qdody4t+aMLK5qsh+0rp
-         6UBA8NNNbM2v7ebXSdclYu1qiP7X8mAKHuDPN9qKuIoIFfPOmO2ybFRRDHa6boIn8IIa
-         xjDVZ/g42KVDWb5TYX89uMQADDhUL5Bc6IPEzzJxppEpbOCOYBcPEwkkLlU2uV9N+VX9
-         fp8LbpvfjqDZLoDbVTCfLt7xGoRmkxHOoZn96MeddNjfiWh4awgKI0oj+lOfJGfFvvjS
-         NcLA==
-X-Gm-Message-State: AOJu0YzWW2Y8KwIPYbcENaHHVppOUGz0m6eDWv7z2CjWTksklAw6LAj3
-	mI2erwQdae0HNdwNQkOjPOmrxswN+1Ip+tjMIsVIENAfQIgJebjRdgqTZ+VBXWbgcKksmK+avW+
-	q68g84w==
-X-Gm-Gg: ASbGnctM//RBFJpG5yli/zTIs+pQSPY8hx/VS396eRyw1Zm1/ahtrYJvaxbQV/fbbR8
-	zmIKsKgofnRgtagBkwDKhU8OUr/L4KAz6SeR2mG5Bz67PK+4OVV7Tsr/JfPqrsZYbcai0AjS8+G
-	9vBjgk+IoczmZXXIp+mu7gm9RF8YwJzg4N/kbFMBRDpufx1NxzxuEo9pLxGzwUqfnqMEYwbfnYp
-	SK8JtzGwefIhhWK/atUGnzmp0XTM5DATEWQ91I1TsSixLLAxENCL3MSQfqXOtV37aDEvqPt40qo
-	QC1cG+DQSaO13Ix0gCwURtlp
-X-Google-Smtp-Source: AGHT+IHlkDIx79pdZ3NEFU3tIxZbJB0dP3B14Bb75JveeeWKxW87NZIAKIqdwf7/eruxQT6eYedlVg==
-X-Received: by 2002:a17:906:b3a5:b0:aa2:c98:a078 with SMTP id a640c23a62f3a-aa50a08cee0mr1158916866b.57.1732578041787;
-        Mon, 25 Nov 2024 15:40:41 -0800 (PST)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa549a5fe40sm251806766b.134.2024.11.25.15.40.39
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Nov 2024 15:40:40 -0800 (PST)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa51bf95ce1so519229666b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 15:40:39 -0800 (PST)
-X-Received: by 2002:a17:907:7795:b0:aa5:31e7:96a with SMTP id
- a640c23a62f3a-aa531e75d44mr806950466b.32.1732578039007; Mon, 25 Nov 2024
- 15:40:39 -0800 (PST)
+	s=arc-20240116; t=1732578146; c=relaxed/simple;
+	bh=4AW3HXF8Zss5Wgx8tbWXkPrXII0o3lYa5kk1FEwbCSo=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=ReWeeYOHKPrVp7dCL1xGEtmZj6hz54sPpYn0jDvjTpDJJ9iDA6koUuAsM0mwnL8JsjXBYXUK/bEIlGRZeoyrLFJEOPukfAh4O3pS0P+RxlkEIkORlcR6zpJl3s1k+UT46M9+Tuk84q+p1Z6oOE92KngfBKPCeeD8SoNmQCQDj4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=fP8Jt5/E; arc=none smtp.client-ip=203.205.221.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1732578130; bh=/KxuIDjoowTbqWmLpQV6jdh8esNO7ZyBc3NaxAGU4Fw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=fP8Jt5/Ewe0q/fhG5A2iHcp2hxYy2QbO+/XjOtRA4A/C47IpzojIudXYCzPneBz/A
+	 mOTNDgEbKTFkD7suGCes77w5lr753mpBhuaSLt7M2xTkM3Xo8mQHICsYztqJqjTV/p
+	 /ghfE3UiKJYRFfQGPQsyQOtDoRp6pRHNm2TeZhJo=
+Received: from pek-lxu-l1.wrs.com ([111.198.227.254])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id A88B2EE5; Tue, 26 Nov 2024 07:42:08 +0800
+X-QQ-mid: xmsmtpt1732578128tfoslh9fx
+Message-ID: <tencent_4D663A3CE9374A970636084B0C75E3768D09@qq.com>
+X-QQ-XMAILINFO: NkHKfw09D6j8kfHQIj0j0buKXojWz+l7bwFvNjd7cBCyCODjlDN/FpPnLQeo9e
+	 ciFokYuteH6Kh9rR7DgaPmxfHhnrPqWfPmSXABKfEviMOBmJdqVfV+0nGnNULc5IfMyikKc1TYJW
+	 4sFxcyahsDOkDyqr7YDRbB5H4lNTjrnZrxoCogKrDckASdC/wyYArITCA/Afvxw6tjjkDc/66WtW
+	 eobyR/tZ+deQwKqGV/AmV29rqUECbjvRUCBMaiQgGwoOOat6D4UNwE/nV1Ws74Y83Rh01fcKx5nM
+	 MH021A7TU3kfJ9xyZCZ9+Lk7wc1ongITfyDUHrmJCWYKzvfb7H7ewtOFMZbhOGFx9LKawgTnTcBw
+	 7E9Fp9OAcmcTOGLvvfAvIVplPUoyzYuHq8cz3uq2Ydg5ZTFERzXGuhX32aC+mxJZtU37Vfuvy38x
+	 xbM5DoYEpARE4byT6rs2Sop53UI1Sk1eQBiGx7y0Ihae6nQBBfE8Tg1SiSeXigaineRttFNUrS4h
+	 gb42GBR1IeC/UHSXIw/xSpbJX5YCw5VDufizlLsy29ZpQY3WxyDJABTwVZSAPEwvrJXRibS0d8Wz
+	 2EiukS8YC9MXOWp+CAZGEN0RzVSL5Oe08rwyGgyn3rWWDTAj54cXHQjut75VK9aXfMaYUxUUKiN1
+	 J2mgiM0eYa7x0iipBDMWRnkWk6ShbdZo6V0VUxQry33u28gPGX0HhifD3Zl5ynf0PE89Nf9Df/Sc
+	 /E3yRG8SKogTC0PXQGgwM3jXa2ZCjLp4m78hbG+1NMV5z9BnTjyaR8h5Hc0EloZVFBq3utBw4c4F
+	 9cCxng2q5B6nnDL/HIi5ZzfQTVS44cHE/xsncNA5adhtIpFX8XA5ZPWPxKjVvUo2qioH6qW4Il4v
+	 S1EgReIDREwiQ+jUDsId7GxRiYAZDxkw==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+028180f480a74961919c@syzkaller.appspotmail.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] hfsplus: restore i_nlink and flags when rename_cat fails
+Date: Tue, 26 Nov 2024 07:42:09 +0800
+X-OQ-MSGID: <20241125234208.3901871-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <674305a3.050a0220.1cc393.003b.GAE@google.com>
+References: <674305a3.050a0220.1cc393.003b.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202411210651.CD8B5A3B98@keescook>
-In-Reply-To: <202411210651.CD8B5A3B98@keescook>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 25 Nov 2024 15:40:22 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjMagH_5-_8KhAOJ+YSjXUR5FELYxFgqtWBHOhKyUzGxA@mail.gmail.com>
-Message-ID: <CAHk-=wjMagH_5-_8KhAOJ+YSjXUR5FELYxFgqtWBHOhKyUzGxA@mail.gmail.com>
-Subject: Re: [GIT PULL] execve updates for v6.13-rc1 (take 2)
-To: Kees Cook <kees@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "Eric W. Biederman" <ebiederm@xmission.com>, 
-	Nir Lichtman <nir@lichtman.org>, Tycho Andersen <tandersen@netflix.com>, 
-	Vegard Nossum <vegard.nossum@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 21 Nov 2024 at 06:53, Kees Cook <kees@kernel.org> wrote:
->
-> Please pull these execve updates for v6.13-rc1 (take 2). I've dropped
-> the argv[0] vs "comm" setting patches. We'll work on the better solution
-> for the next merge window.
+After the rename syscall fails, the unlink syscall triggers a warning in
+drop_nlink() because the i_nlink value is 0.
 
-Yeah, I was pulling this, and then noted that the selftest is now
-documented to be that garbage.
+When unlink succeeds but rename_cat fails in rename, the i_nlink and flags
+values of the inode of the new dentry should be restored.
 
-So I unpulled again.
+Reported-and-tested-by: syzbot+028180f480a74961919c@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=028180f480a74961919c
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/hfsplus/dir.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-           Linus
+diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
+index f5c4b3e31a1c..b489d22409e7 100644
+--- a/fs/hfsplus/dir.c
++++ b/fs/hfsplus/dir.c
+@@ -534,7 +534,7 @@ static int hfsplus_rename(struct mnt_idmap *idmap,
+ 			  struct inode *new_dir, struct dentry *new_dentry,
+ 			  unsigned int flags)
+ {
+-	int res;
++	int res, unlinked_new = 0;
+ 
+ 	if (flags & ~RENAME_NOREPLACE)
+ 		return -EINVAL;
+@@ -543,8 +543,10 @@ static int hfsplus_rename(struct mnt_idmap *idmap,
+ 	if (d_really_is_positive(new_dentry)) {
+ 		if (d_is_dir(new_dentry))
+ 			res = hfsplus_rmdir(new_dir, new_dentry);
+-		else
++		else {
+ 			res = hfsplus_unlink(new_dir, new_dentry);
++			unlinked_new = res == 0 && d_inode(new_dentry)->i_flags & S_DEAD;
++		}
+ 		if (res)
+ 			return res;
+ 	}
+@@ -554,6 +556,12 @@ static int hfsplus_rename(struct mnt_idmap *idmap,
+ 				 new_dir, &new_dentry->d_name);
+ 	if (!res)
+ 		new_dentry->d_fsdata = old_dentry->d_fsdata;
++	else if (unlinked_new) {
++		struct inode *inode = d_inode(new_dentry);
++		set_nlink(inode, inode->i_nlink + 1);
++		inode->i_flags &= ~S_DEAD;
++	}
++
+ 	return res;
+ }
+ 
+-- 
+2.43.0
+
 
