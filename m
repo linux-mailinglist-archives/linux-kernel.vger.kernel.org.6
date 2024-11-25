@@ -1,117 +1,198 @@
-Return-Path: <linux-kernel+bounces-421597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F41B49D8D66
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:31:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AADF1637EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 20:31:14 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8121BC9F0;
-	Mon, 25 Nov 2024 20:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lT4bFiQS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E73C9D8D68
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 21:32:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2F514F9CF
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 20:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C287728713A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 20:31:58 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D4E1B983F;
+	Mon, 25 Nov 2024 20:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aZ2NN0bT"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE8B6F06D
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 20:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732566672; cv=none; b=rRfmryekbIfWyjHHgeXzkp8rh60pWNYIhRrW5NKLUinSx/mr2uOh5dgwbqWGzWJftVAqtCLMEKu1TMMTRocrQRedyjHjD6aD2faxaD1GwvZKgwKgwIMbaRANrGRByRZNOV+gKKdg5tgIqDCWT6XpsVm+dlyiU6EwGc89quNvRTs=
+	t=1732566714; cv=none; b=SEbKwwFHJ/ZSoUwoMnfDvmVogq8RGdem7zWqNggjBArVAY44KYGSVFUkz3SRDifza8fBQg6BFoQhyxeg3C/1nWfXX9Pj7o4/6fr0+jD3BBlp/beXMMLlNT3MBnDtASpF7bAxsAYffy2UiWMZNWQ8uRmm4/ALYbRKFqxryQ3q6QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732566672; c=relaxed/simple;
-	bh=p2ssI5EsbtaTPo1K3sGX1Uf1+9ANLZRHrglRJAtZCco=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LIcwOLwmug9MHNQhcJ7gqs6CrstW5YI9iuI+oB2uxMneLiZvA/iqbnIeUXd10gDyPF92Zg2HKATt+vWHr033iiNAseP0UX9PQWVnjYjTCLia9jQVAnx4AZEEyIItD8PykGwky2/3P1HwuWBEhpU3Omu93otCu0GRMLCzROF33Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lT4bFiQS; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732566671; x=1764102671;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=p2ssI5EsbtaTPo1K3sGX1Uf1+9ANLZRHrglRJAtZCco=;
-  b=lT4bFiQSMWJSYqRs7XIwH9gMFeqRwWaR4pP4Lwkvd97Nd1qdp3OryXnV
-   vVks3/wZ7nlCIfCksEJaTK1poDBHhCPuLRKg3S1FiOhgfwm/rW4H83Y0j
-   yCcQXumfulgGfc6tUqz4KjsFKmYIOxbT8k8EsGEX3DggZ/NXquJXDVe+M
-   SRIzyd0YDtyF6a/glXLqkAaFM2JIOJeG9YKuRRD1JUaUlrXtOK8+tYDCr
-   e3/tpEaAasBx3XcEHxrot0k99ZUa6s2GCr24FhL/F+UEjAweBRUhrMZ/7
-   nHwUHL3uyfYb/qL57GLwmqFq+aZRi98I2C/eYJAPKKhQ1wtEnzqwHAq/D
-   g==;
-X-CSE-ConnectionGUID: EJgc1G6hTvaGDhzvK2WaYg==
-X-CSE-MsgGUID: YvokcrIERSCBH9p3errSlA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="43193850"
-X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
-   d="scan'208";a="43193850"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 12:31:11 -0800
-X-CSE-ConnectionGUID: bCzzwSebTo2LtKp/xtVyog==
-X-CSE-MsgGUID: jD9KFIczRYCUq+khFy67OA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,183,1728975600"; 
-   d="scan'208";a="91801112"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 25 Nov 2024 12:31:09 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tFfje-0006m9-2R;
-	Mon, 25 Nov 2024 20:31:06 +0000
-Date: Tue, 26 Nov 2024 04:30:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: Julien Massot <julien.massot@iot.bzh>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: drivers/remoteproc/rcar_rproc.c:45:20: sparse: sparse: incorrect
- type in argument 1 (different address spaces)
-Message-ID: <202411260438.Tinbxw1D-lkp@intel.com>
+	s=arc-20240116; t=1732566714; c=relaxed/simple;
+	bh=3y6V5xZiKfxWwSM+Q5xnh3mfjccV9GX03ldgQt17L7I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qN71lOVBGhX91PzteWPM85V4wmk/rRDYX5RJQR33qwI2VZHCjI6lpUXr4ZBwOWrQKPtAMy6hGY/1ljn4Q+DhB9UbQFadu1pMqEy2U3oDAJiGbWiWEVTEc4QtUT3fv1r1bDzSba6KRP9ESJHOokQqANTT0wUKStkJ7qN/tI2HmTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aZ2NN0bT; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4668194603cso42291cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 12:31:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732566712; x=1733171512; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1Ab/QR87gHQWLvLxH20mfzD3ANxyoigyKfQaJpRefi4=;
+        b=aZ2NN0bTRM/HkF/o8vdH2vL9fxsxPav6LNTs8LBQO+q/rvVb+AEz0u9yjYbuQkQ2rg
+         /LOBEg3+h+yYzCHzQE+F30yYVrI+6OXH/5cvgSkJdWcu89N9Ean3teK/5OW6e5mGhElD
+         iLa9hTDB56zMyU0F788W5cMdjed9W3BwVbMd0mxDVkffzblvqeqRbVIfgI4emhJ/OAAv
+         B48BC8mkxyxyimwXEyxoAMAIoLktaMsUhxspxI10MQnNCtC237ugi7OHM5dp3qj21jH+
+         YtKwAa4lfYJQRA/bbcJorXgmgz8X/Dl51xwwUUCv8AAMSaUWcQ9JPA+UWBW4eRVdATV5
+         CRyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732566712; x=1733171512;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1Ab/QR87gHQWLvLxH20mfzD3ANxyoigyKfQaJpRefi4=;
+        b=UygFU2utPxdc6PiaXsXIylkznQf2m7XVuHAYbrwJ14qr+Rnm6KgbKpL/M42LwautDA
+         wBJ9Q0ahtbYs0R2qb+14n5oG85zuEfRl1H4oV4xw6szz/cXD9vAqkoF76eoAI2luWDxR
+         82zHBQ2I85CjX7Xp6hD5IjsOR3+SphNOvazyQnEuNbIr94tr9Jd+LBurp/KltB41ghPN
+         17tFoeLm2wvoDK2AyHaUvAtcXRUO9MYTAiaGM45KIF0sDTPpbhB9sSNkimk44MAtkwS3
+         H5gvdJqoFoQ6Fq3Y4uPnyCcg8SipwwddciVNq70z7XNZGvTmq3WQs4cKKIuifE9To0nK
+         a4GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhXTGGUXI3YtJC4qrhEqLukNn/FfgCrdQhHAxSBlv1x0x1Rstk4cfeePSDf57jhmTuIQGAY1RbHn2WRxY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqxsOgjKPhZkU2NStFO3tyo4COkCSZv/54AIff9jNRLlwrddAM
+	H+ZQAgengK9MBj1pk6FrvLih/Fw1TlzouuXKir3EaWrEO2QZpERX4sf2YKAQzrs/eqFe8xxSzct
+	MJ9fwQxjowrhCn0D06g+OiGBl6CA3MBudYAQH
+X-Gm-Gg: ASbGncsk+mFmV60CWL7EX1YVWd2LOYxkvuYsWAAzDdsTrlI7wGwW4ev9h7RtRQQ6QnQ
+	ZhTciSxJXgPclXlh0hz0GTiyX/gmlW/Y=
+X-Google-Smtp-Source: AGHT+IFDJT5MZI5hdeyw/bAOG9V5fSlHAqmK9qtrvQPcwnXLXhuZ0emMvJGoRrA+cEkJPt1VYLUKL0UCigT7m8VN/VY=
+X-Received: by 2002:a05:622a:1c0b:b0:466:9660:18a2 with SMTP id
+ d75a77b69052e-466a4821350mr483581cf.16.1732566711535; Mon, 25 Nov 2024
+ 12:31:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241124074318.399027-1-00107082@163.com> <CAJuCfpHviS-pw=2=BNTxp1TnphjuiqWGgZnq84EHvbz08iQ6eg@mail.gmail.com>
+ <70bad55f.b656.19362cca6ee.Coremail.00107082@163.com> <CAJuCfpHho8se-f4cnvk0g1YLNzhvG3q8QTYmvMmweUnGAhtA=g@mail.gmail.com>
+In-Reply-To: <CAJuCfpHho8se-f4cnvk0g1YLNzhvG3q8QTYmvMmweUnGAhtA=g@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 25 Nov 2024 12:31:39 -0800
+Message-ID: <CAJuCfpEP-xMzHonsE3uV1uYahXehR007B5QX9KjdZdHBWyrXwQ@mail.gmail.com>
+Subject: Re: Abnormal values show up in /proc/allocinfo
+To: David Wang <00107082@163.com>
+Cc: kent.overstreet@linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   9f16d5e6f220661f73b36a4be1b21575651d8833
-commit: 285892a74f1370a12249f765c6a4e3b16194852e remoteproc: Add Renesas rcar driver
-date:   2 years, 11 months ago
-config: mips-randconfig-r122-20241114 (https://download.01.org/0day-ci/archive/20241126/202411260438.Tinbxw1D-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
-reproduce: (https://download.01.org/0day-ci/archive/20241126/202411260438.Tinbxw1D-lkp@intel.com/reproduce)
+On Mon, Nov 25, 2024 at 9:31=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> On Mon, Nov 25, 2024 at 2:10=E2=80=AFAM David Wang <00107082@163.com> wro=
+te:
+> >
+> >
+> > Hi,
+> >
+> > Some update
+> >
+> > I reproduce the abnormal values of "func:compaction_alloc" today, just =
+once. But I have not found a deterministic procedure yet.
+> > Seems to me, it happens when kcompactd starts to work
+> >
+> >     ret_from_fork(100.000% 57/57)
+> >         kthread(100.000% 57/57)
+> >             kcompactd(100.000% 57/57)
+> >                 compact_node(100.000% 57/57)
+> >                     compact_zone(100.000% 57/57)
+> >                         migrate_pages(100.000% 57/57)
+> >                             migrate_pages_batch(100.000% 57/57)
+> >                                 compaction_alloc(100.000% 57/57)
+> >
+> >
+> > Maybe, kcompactd mess up information needed by memory tracking? Just a =
+wild guess.
+> > And those negative signed values, and underflowed unsigned values could=
+ also be the side-effect of memory compaction.
+> > A wilder guess....
+>
+> Ok, thanks! I think that's enough for me to start digging. Will post
+> an update once I find something.
+> Thanks,
+> Suren.
+>
+> >
+> >
+> >
+> > FYI
+> > David
+> >
+> >
+> >
+> >
+> > At 2024-11-25 08:35:54, "Suren Baghdasaryan" <surenb@google.com> wrote:
+> > >On Sat, Nov 23, 2024 at 11:43=E2=80=AFPM David Wang <00107082@163.com>=
+ wrote:
+> > >>
+> > >> Hi,
+> > >>
+> > >> I am running 6.12.0 for a week, and today I notice several strange
+> > >> items in /proc/allocinfo:
+> > >>
+> > >>        -4096 18446744073709551615 mm/filemap.c:3787 func:do_read_cac=
+he_folio
+> > >>  -1946730496 18446744073709076340 mm/filemap.c:1952 func:__filemap_g=
+et_folio
+> > >>   -903294976 18446744073709331085 mm/readahead.c:263 func:page_cache=
+_ra_unbounded
+> > >>   -353054720 18446744073709465421 mm/shmem.c:1769 func:shmem_alloc_f=
+olio
+> > >>  10547565210        0 mm/compaction.c:1880 func:compaction_alloc
+> > >>   -156487680 18446744073709513411 mm/memory.c:1064 func:folio_preall=
+oc
+> > >>  -2422685696 18446744073708960140 mm/memory.c:1062 func:folio_preall=
+oc
+> > >>  -2332479488 18446744073708982163 fs/btrfs/extent_io.c:635 [btrfs] f=
+unc:btrfs_alloc_page_array
+> > >>
+> > >> some values are way too large, seems like corrupted/uninitialized, a=
+nd values for compaction_alloc
+> > >> are inconsistent: non-zero size with zero count.
+> > >>
+> > >> I do not know when those data became this strange, and I have not re=
+boot my system yet.
+> > >> Do you guys need extra information before I reboot my system and sta=
+rted to try reproducing?
+> > >
+> > >Hi David,
+> > >Thanks for reporting. Can you share your .config file? Also, do you
+> > >see these abnormal values shortly after boot or does it take time for
+> > >them to get into abnormal state?
+> > >I'll take a look on Monday and see if there is an obvious issue and if
+> > >I can reproduce this.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411260438.Tinbxw1D-lkp@intel.com/
+Hi David,
+Could you please check if you have this fix:
 
-sparse warnings: (new ones prefixed by >>)
-   drivers/remoteproc/rcar_rproc.c:28:12: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *va @@     got void [noderef] __iomem * @@
-   drivers/remoteproc/rcar_rproc.c:28:12: sparse:     expected void *va
-   drivers/remoteproc/rcar_rproc.c:28:12: sparse:     got void [noderef] __iomem *
->> drivers/remoteproc/rcar_rproc.c:45:20: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *addr @@     got void *va @@
-   drivers/remoteproc/rcar_rproc.c:45:20: sparse:     expected void const volatile [noderef] __iomem *addr
-   drivers/remoteproc/rcar_rproc.c:45:20: sparse:     got void *va
+ed265529d39a "mm/codetag: fix arg in pgalloc_tag_copy alloc_tag_sub"
 
-vim +45 drivers/remoteproc/rcar_rproc.c
+It was merged after v6.12-rc6 and it fixes an accounting bug inside
+pgalloc_tag_copy(), which is used during compaction.
+Thanks,
+Suren.
 
-    40	
-    41	static int rcar_rproc_mem_release(struct rproc *rproc,
-    42					   struct rproc_mem_entry *mem)
-    43	{
-    44		dev_dbg(&rproc->dev, "unmap memory: %pa\n", &mem->dma);
-  > 45		iounmap(mem->va);
-    46	
-    47		return 0;
-    48	}
-    49	
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+https://lore.kernel.org/all/20240906042108.1150526-3-yuzhao@google.com/
+https://lore.kernel.org/all/20241022232440.334820-1-souravpanda@google.com/
+
+> > >Thanks,
+> > >Suren.
+> > >
+> > >>
+> > >>
+> > >> Thanks
+> > >> David
+> > >>
+> > >>
+> > >>
+> > >>
 
