@@ -1,94 +1,64 @@
-Return-Path: <linux-kernel+bounces-421302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 509279D8956
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:28:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B6059D8965
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:32:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3B4A168942
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:31:56 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45F01B3958;
+	Mon, 25 Nov 2024 15:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="flm1/MBD"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86FF5282915
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:28:20 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928CB1B394E;
-	Mon, 25 Nov 2024 15:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="p/SIgu2k";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8FBfrOwm";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="p/SIgu2k";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8FBfrOwm"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09002195390;
-	Mon, 25 Nov 2024 15:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DD217C61;
+	Mon, 25 Nov 2024 15:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732548492; cv=none; b=CjsYBo6Nk5T/7ORsmnDTvddmsyH4jZmiGaYM0mBvBnbOfSXSxcEshqB7f0RIa9P8MqJlk0Lli4mRhQmVJfCtT6amaDu41aNyfisF2aU6nYbPblwD3cA2WROBmH8Tdg+yeeemE4m2rsm2jIqSw0bMLf7oXgW5BbNgDTQcH5xI3f4=
+	t=1732548712; cv=none; b=VFgF+j9KM8BjPUTzan3qoXoi80x0gxZahJcG/V/vEtSbqNDX/tkWTYe6U0zGRCt35PhPvVsR5kaEYTfKPX4ISZ/8CIh0iPIfKR2XzL9mMi4xkYDUwUCR/tDOEoIziShjLqMKVU4i1VOQyFFZUBwGDA23tq88NAMG0adM1wSF6/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732548492; c=relaxed/simple;
-	bh=c4UBsCk/bTZ25+r9/W1hG65cmRH35pO7wv6zElwDRMk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s8SSRAfbrR7JO1+8OnRS/2gWgv18SOHbcsXvZoajVx6dreWBWgOgOh3untkvOhpNs9r9D3/VxNOsClE9AJk5bB+pc+op4XvvXfqmHSn6PMT1iOXrFeTufp4TfnSdkjEM42huzdOVfwGjVoXkPAtSOy53oJWon/9J2+RmhSIN1+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=p/SIgu2k; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8FBfrOwm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=p/SIgu2k; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8FBfrOwm; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 16AEE1F44E;
-	Mon, 25 Nov 2024 15:28:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732548489; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9KkrFmxvAZk1Rs1JZjgXU4+kHt/tNWeqhQeXdQeSI4I=;
-	b=p/SIgu2kCw0aX4s3Qyc7y8CjXir8dI56nDELJVXI9tiUAEQp/YpwX+2eo6wJ1fYj2jsQY8
-	r32vJNua96vFznPtgnYGGjHoJXqVwgyGYyTCglItYfejCOeGkI13h+8Ns5MMMtsp+iSZWS
-	5dxhSac54YFsn4+T2gjRvoxwYNf5yHk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732548489;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9KkrFmxvAZk1Rs1JZjgXU4+kHt/tNWeqhQeXdQeSI4I=;
-	b=8FBfrOwmIGcG9rpu9chvreWMRiX2lpVtyFhOBcmEQPLL09KezCIBRZQfQfn12XEdpb5X28
-	D5uu4hqP0CogPwDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732548489; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9KkrFmxvAZk1Rs1JZjgXU4+kHt/tNWeqhQeXdQeSI4I=;
-	b=p/SIgu2kCw0aX4s3Qyc7y8CjXir8dI56nDELJVXI9tiUAEQp/YpwX+2eo6wJ1fYj2jsQY8
-	r32vJNua96vFznPtgnYGGjHoJXqVwgyGYyTCglItYfejCOeGkI13h+8Ns5MMMtsp+iSZWS
-	5dxhSac54YFsn4+T2gjRvoxwYNf5yHk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732548489;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9KkrFmxvAZk1Rs1JZjgXU4+kHt/tNWeqhQeXdQeSI4I=;
-	b=8FBfrOwmIGcG9rpu9chvreWMRiX2lpVtyFhOBcmEQPLL09KezCIBRZQfQfn12XEdpb5X28
-	D5uu4hqP0CogPwDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E75F013890;
-	Mon, 25 Nov 2024 15:28:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id SLUYOIiXRGd+XQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 25 Nov 2024 15:28:08 +0000
-Message-ID: <87259367-a81d-4e08-8d5e-6db8a540afdb@suse.cz>
-Date: Mon, 25 Nov 2024 16:28:08 +0100
+	s=arc-20240116; t=1732548712; c=relaxed/simple;
+	bh=n093t7DUeKuwj7a+ks7cWRK0o0kCcn3/Fu9MwnngsPk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=obOmqvi8Tu2Y7qPhUfGuauqNLwimeAk8OCMYKFC4nbHDa55yIV2QZ8uM00d+6Chlz1Pb5UTA+vIDG0+nq9qiaPDyhFrAybvVyyToNyZ0PkjnGlUjAnT26u9ZMi5A4iD9ZN8clPgtlAKFUkz+ygRKdPZdeezowJdOAYYf0s91fE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=flm1/MBD; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APBRKnZ016452;
+	Mon, 25 Nov 2024 16:31:22 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	YP8a99fDyJG955EP8lVaVAT87+zHSjvQosHEPzJ1NsY=; b=flm1/MBDqwkwMUbJ
+	QkssTzezfgqvUcF9/eYZKX70ziMyBSdOyfn7eV/U/3uxdVEhXMwPHLtyjsvAMNLL
+	VvCJP0a3eW+PYTjnoCA/PlnHMuyOlMqh92MHd46ef45gfbbPtnzTrHpGEG9usJgV
+	XCGeJnB5sF30r0YCz8LfCRdWCOFEBKhTyHGWMbqMY0JaqIzwgYfWUrv7w4+BTRTj
+	FMn2RgaPaoETXbu+Ni2zZqS5H9islnjiEhmMt76+bQKxXYptQV6Gqz0zGzlYxcKH
+	Trf9z/SbP7KbUUf91ZTCl4yMZJQ+hZfLp8jjp3mExq7k4aiJd95FYE2K1o5DN6ZW
+	rmJf1A==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 433tvndppw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 16:31:22 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E1E2940047;
+	Mon, 25 Nov 2024 16:29:56 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 43FAA2A1043;
+	Mon, 25 Nov 2024 16:28:47 +0100 (CET)
+Received: from [10.129.178.212] (10.129.178.212) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 25 Nov
+ 2024 16:28:46 +0100
+Message-ID: <acf6834f-6851-4daf-85da-076e6ca142db@foss.st.com>
+Date: Mon, 25 Nov 2024 16:28:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,137 +66,251 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.10.y 0/4] fix error handling in mmap_region() and
- refactor (hotfixes)
+Subject: Re: [PATCH 4/5] PCI: stm32: Add PCIe endpoint support for STM32MP25
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: <lpieralisi@kernel.org>, <kw@linux.com>,
+        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
+        <p.zabel@pengutronix.de>, <cassel@kernel.org>,
+        <quic_schintav@quicinc.com>, <fabrice.gasnier@foss.st.com>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20241112203846.GA1856246@bhelgaas>
 Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, stable@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jann Horn <jannh@google.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Linus Torvalds <torvalds@linux-foundation.org>, Peter Xu
- <peterx@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>,
- "David S . Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>,
- "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
- Helge Deller <deller@gmx.de>
-References: <cover.1731670097.git.lorenzo.stoakes@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <cover.1731670097.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
+From: Christian Bruel <christian.bruel@foss.st.com>
+In-Reply-To: <20241112203846.GA1856246@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmx.de];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,oracle.com,google.com,vger.kernel.org,kvack.org,redhat.com,arm.com,kernel.org,davemloft.net,gaisler.com,HansenPartnership.com,gmx.de];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:mid]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On 11/15/24 13:36, Lorenzo Stoakes wrote:
-> Critical fixes for mmap_region(), backported to 5.10.y.
-> 
-> Some notes on differences from upstream:
-> 
-> * We do NOT take commit 0fb4a7ad270b ("mm: refactor
->   map_deny_write_exec()"), as this refactors code only introduced in 6.2.
-> 
-> * We make reference in "mm: refactor arch_calc_vm_flag_bits() and arm64 MTE
->   handling" to parisc, but the referenced functionality does not exist in
->   this kernel.
-> 
-> * In this kernel is_shared_maywrite() does not exist and the code uses
->   VM_SHARED to determine whether mapping_map_writable() /
->   mapping_unmap_writable() should be invoked. This backport therefore
->   follows suit.
-> 
-> * The vma_dummy_vm_ops static global doesn't exist in this kernel, so we
->   use a local static variable in mmap_file() and vma_close().
-> 
-> * Each version of these series is confronted by a slightly different
->   mmap_region(), so we must adapt the change for each stable version. The
->   approach remains the same throughout, however, and we correctly avoid
->   closing the VMA part way through any __mmap_region() operation.
-> 
-> * In 5.10 we must handle VM_DENYWRITE. Since this is done at the top of the
->   file-backed VMA handling logic, and importantly before mmap_file() invocation,
->   this does not imply any additional difficult error handling on partial
->   completion of mapping so has no significant impact.
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
-> Lorenzo Stoakes (4):
->   mm: avoid unsafe VMA hook invocation when error arises on mmap hook
->   mm: unconditionally close VMAs on error
->   mm: refactor arch_calc_vm_flag_bits() and arm64 MTE handling
->   mm: resolve faulty mmap_region() error path behaviour
+On 11/12/24 21:38, Bjorn Helgaas wrote:
+> On Tue, Nov 12, 2024 at 05:19:24PM +0100, Christian Bruel wrote:
+>> Add driver to configure the STM32MP25 SoC PCIe Gen2 controller based on the
+>> DesignWare PCIe core in endpoint mode.
+>> Uses the common reference clock provided by the host.
 > 
->  arch/arm64/include/asm/mman.h | 10 +++--
->  include/linux/mman.h          |  7 +--
->  mm/internal.h                 | 19 ++++++++
->  mm/mmap.c                     | 82 +++++++++++++++++++++--------------
->  mm/nommu.c                    |  9 ++--
->  mm/shmem.c                    |  3 --
->  mm/util.c                     | 33 ++++++++++++++
->  7 files changed, 117 insertions(+), 46 deletions(-)
+>> +++ b/drivers/pci/controller/dwc/Kconfig
 > 
-> --
-> 2.47.0
+>> +config PCIE_STM32_EP
+>> +	tristate "STMicroelectronics STM32MP25 PCIe Controller (endpoint mode)"
+>> +	depends on ARCH_STM32 || COMPILE_TEST
+>> +	depends on PCI_ENDPOINT
+>> +	select PCIE_DW_EP
+>> +	help
+>> +	  Enables endpoint support for DesignWare core based PCIe controller in found
+>> +	  in STM32MP25 SoC.
+>> +
+>> +	  This driver can also be built as a module. If so, the module
+>> +	  will be called pcie-stm32-ep.
+> 
+> Move as for the host mode entry.
+> 
+>> +++ b/drivers/pci/controller/dwc/pcie-stm32-ep.c
+> 
+>> +static const struct of_device_id stm32_pcie_ep_of_match[] = {
+>> +	{ .compatible = "st,stm32mp25-pcie-ep" },
+>> +	{},
+>> +};
+> 
+> Move next to stm32_pcie_ep_driver.
+> 
+>> +static void stm32_pcie_ep_init(struct dw_pcie_ep *ep)
+>> +{
+>> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+>> +	enum pci_barno bar;
+>> +
+>> +	for (bar = BAR_0; bar <= PCI_STD_NUM_BARS; bar++)
+> 
+> Most users just use "bar = 0".  BAR_0 is 0, but there's no real
+> connection with PCI_STD_NUM_BARS, so I think 0 is probably better.
+> 
+> Looks like this should be "bar < PCI_STD_NUM_BARS"?
 
+oops, thanks
+
+> 
+>> +		dw_pcie_ep_reset_bar(pci, bar);
+>> +
+>> +	/* Defer Completion Requests until link started */
+> 
+> Not sure what a Completion Request is.  Is this some internal STM or
+> DWC thing?  Or is this related to Request Retry Status completions for
+> config requests?
+
+this is sysconf bit maps to the app_req_retry_en Synopsys controller 
+signal. "When app_req_retry_en is asserted, the controller completes 
+incoming configuration requess with a CRS"
+
+> 
+>> +	regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
+>> +			   STM32MP25_PCIECR_REQ_RETRY_EN,
+>> +			   STM32MP25_PCIECR_REQ_RETRY_EN);
+>> +}
+> 
+>> +static int stm32_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+>> +				unsigned int type, u16 interrupt_num)
+>> +{
+>> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>> +
+>> +	switch (type) {
+>> +	case PCI_IRQ_INTX:
+>> +		return dw_pcie_ep_raise_intx_irq(ep, func_no);
+>> +	case PCI_IRQ_MSI:
+>> +		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
+>> +	default:
+>> +		dev_err(pci->dev, "UNKNOWN IRQ type\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	return 0;
+> 
+> Is the compiler not smart enough to notice that this is unreachable?
+> 
+>> +static void stm32_pcie_perst_deassert(struct dw_pcie *pci)
+>> +{
+>> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+>> +	struct device *dev = pci->dev;
+>> +	struct dw_pcie_ep *ep = &pci->ep;
+>> +	int ret;
+>> +
+>> +	if (stm32_pcie->link_status == STM32_PCIE_EP_LINK_ENABLED) {
+>> +		dev_dbg(pci->dev, "Link is already enabled\n");
+>> +		return;
+>> +	}
+>> +
+>> +	dev_dbg(dev, "PERST de-asserted by host. Starting link training\n");
+>> +
+>> +	ret = pm_runtime_resume_and_get(dev);
+>> +	if (ret < 0) {
+>> +		dev_err(dev, "pm runtime resume failed: %d\n", ret);
+>> +		return;
+>> +	}
+>> +
+>> +	ret = stm32_pcie_enable_resources(stm32_pcie);
+>> +	if (ret) {
+>> +		dev_err(dev, "Failed to enable resources: %d\n", ret);
+>> +		pm_runtime_put_sync(dev);
+>> +		return;
+>> +	}
+>> +
+>> +	ret = dw_pcie_ep_init_registers(ep);
+>> +	if (ret) {
+>> +		dev_err(dev, "Failed to complete initialization: %d\n", ret);
+>> +		stm32_pcie_disable_resources(stm32_pcie);
+>> +		pm_runtime_put_sync(dev);
+>> +		return;
+>> +	}
+>> +
+>> +	pci_epc_init_notify(ep->epc);
+>> +
+>> +	ret = stm32_pcie_enable_link(pci);
+>> +	if (ret) {
+>> +		dev_err(dev, "PCIe Cannot establish link: %d\n", ret);
+>> +		stm32_pcie_disable_resources(stm32_pcie);
+>> +		pm_runtime_put_sync(dev);
+>> +		return;
+>> +	}
+>> +
+>> +	stm32_pcie->link_status = STM32_PCIE_EP_LINK_ENABLED;
+>> +}
+> 
+>> +static int stm32_add_pcie_ep(struct stm32_pcie *stm32_pcie,
+>> +			     struct platform_device *pdev)
+>> +{
+>> +	struct dw_pcie *pci = stm32_pcie->pci;
+>> +	struct dw_pcie_ep *ep = &pci->ep;
+>> +	struct device *dev = &pdev->dev;
+>> +	int ret;
+>> +
+>> +	ret = regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
+>> +				 STM32MP25_PCIECR_TYPE_MASK,
+>> +				 STM32MP25_PCIECR_EP);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = pm_runtime_resume_and_get(dev);
+>> +	if (ret < 0) {
+>> +		dev_err(dev, "pm runtime resume failed: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	reset_control_assert(stm32_pcie->rst);
+>> +	reset_control_deassert(stm32_pcie->rst);
+>> +
+>> +	ep->ops = &stm32_pcie_ep_ops;
+>> +
+>> +	ret = dw_pcie_ep_init(ep);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to initialize ep: %d\n", ret);
+>> +		pm_runtime_put_sync(dev);
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = stm32_pcie_enable_resources(stm32_pcie);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to enable resources: %d\n", ret);
+>> +		dw_pcie_ep_deinit(ep);
+>> +		pm_runtime_put_sync(dev);
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = dw_pcie_ep_init_registers(ep);
+>> +	if (ret) {
+>> +		dev_err(dev, "Failed to initialize DWC endpoint registers\n");
+>> +		stm32_pcie_disable_resources(stm32_pcie);
+>> +		dw_pcie_ep_deinit(ep);
+>> +		pm_runtime_put_sync(dev);
+>> +		return ret;
+>> +	}
+> 
+> Consider gotos for the error cases with a cleanup block at the end.
+> There's a fair bit of repetition there as more things get initialized,
+> and it's error-prone to extend this in the future.
+> 
+> Same applies in stm32_pcie_perst_deassert().
+> 
+>> +	pci_epc_init_notify(ep->epc);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int stm32_pcie_probe(struct platform_device *pdev)
+>> +{
+>> +	struct stm32_pcie *stm32_pcie;
+>> +	struct dw_pcie *dw;
+>> +	struct device *dev = &pdev->dev;
+>> +	int ret;
+>> +
+>> +	stm32_pcie = devm_kzalloc(dev, sizeof(*stm32_pcie), GFP_KERNEL);
+>> +	if (!stm32_pcie)
+>> +		return -ENOMEM;
+>> +
+>> +	dw = devm_kzalloc(dev, sizeof(*dw), GFP_KERNEL);
+>> +	if (!dw)
+>> +		return -ENOMEM;
+> 
+> Add blank line here.
+> 
+>> +	stm32_pcie->pci = dw;
+> 
+>> +static struct platform_driver stm32_pcie_ep_driver = {
+>> +	.probe = stm32_pcie_probe,
+>> +	.remove_new = stm32_pcie_remove,
+> 
+> .remove().
+> 
+>> +	.driver = {
+>> +		.name = "stm32-ep-pcie",
+>> +		.of_match_table = stm32_pcie_ep_of_match,
+>> +	},
+>> +};
 
