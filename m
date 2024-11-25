@@ -1,146 +1,105 @@
-Return-Path: <linux-kernel+bounces-421700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C62F9D8EAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:48:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F079D8E8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:32:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 319E5284C45
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:48:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E3D916AEAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 22:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F7B1C1F20;
-	Mon, 25 Nov 2024 22:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273F01CD214;
+	Mon, 25 Nov 2024 22:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="QdbKn0WM"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bFWlotJB"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7C316EB4C
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 22:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFC118C018;
+	Mon, 25 Nov 2024 22:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732574903; cv=none; b=IBIgu+pacOIek1D5iIhjhfYVbuAj0s38qkY3fm4Txu58IiTJGh/k8fZPxOViJ+6X0Hi18hS0STPFTIwTM2a178OXgqzvItHGzeLKjZojHOoyPKCC8mvL9PA+ikwzxDIpG6qxqe3JxYRb5FdwOxJ1SdiSf5DRZ7rtaxiEdXAfFFI=
+	t=1732573957; cv=none; b=CtCRkHpKNqkJd9b7yrekswoXGnxRJ56WlenQxudktral9AT4SCT9idNR1kRPCByn0BHvANiu1IeFTUU53pYdmKnQyyVjn92fxZr97Grnn1Bf7j5Q38lLqaOBp5hnQB+ZxdQ12Rrd/z/xQ4QQC/GaZ1wxYvP/pO6hQEzFnJw7lqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732574903; c=relaxed/simple;
-	bh=ZkUASPgJWubPmc+jsWfT0D6LschnMjCKGsoziZSeaCY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SEsAAOYnREnKttiGeml/EKsikERNVCJQO94VQ7ZQhgANltcbE17TUOFdiRhQo6g+7sQy0l4oJmyPyhHCctswhnhcuBWi7APreXAw8SPaKjxuw/KnbGRwSZx2U9s1GGB1HeCRLhUnGg0vZhXzxcy2VOHqjgtk3QdbEoG65lwsMFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=QdbKn0WM; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=TqVNrxG3v2f+O0cNNwlQZrO9juHOFBUp1hcXjRuvHaY=; b=QdbKn0WMKRfwHuuwzSIQW3F1hf
-	Ly32WYxQnhQafH2zt6wIHzwfQILizvdZdG0AEVlgK30YU6dZMWCioFDfGEa9GsbBhIDtOVDAgfwBt
-	ySaluIETsPDVLXz9Eio52POfA+M0GAg1dhtW+0ZoEtWaHYFqNYPZJ80/tp7SkdRsL085Kd5Knh1PW
-	9Kje4pH4eGNdBvdH5hABI37Tdgyt4CXUpO/wzQ2iYD04lxZhddn4fXA0o2+dGKIg1FSoUUU5BejcF
-	n3CwKzMSyXxmdt0JrlXhgTCTm3KlNjN0aPj3xZT+hyKb1F1J1ksanxFaChuiCZouxm9/4NRAdk15M
-	Ew3INqtA==;
-Received: from [187.36.213.55] (helo=[192.168.1.103])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tFhcY-00CspU-GB; Mon, 25 Nov 2024 23:31:54 +0100
-Message-ID: <81d53fbc-966e-4e7e-a89e-541bb61f3431@igalia.com>
-Date: Mon, 25 Nov 2024 19:31:46 -0300
+	s=arc-20240116; t=1732573957; c=relaxed/simple;
+	bh=4TRsrywIbtjl/c6JKC9wgMdaNPJBtQHay9lfaqn9+aE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yd+QROR+JjILq52+48xKDNVqhyydYEhC1YFvqFFVP5+A+saC4vAu6OUiFWpvudRJbqNZKCDB4x2ZZRKGlvNJo/oH1lYQMyjiEvVHVixzO7aE8BIoAKZO3S8m4JC0L7FVjOkq6UR+FXtOIw1LGdsT3AjYqsgwAW0ptnYwbIoKo/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bFWlotJB; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3823eaad37aso3733018f8f.0;
+        Mon, 25 Nov 2024 14:32:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732573954; x=1733178754; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4TRsrywIbtjl/c6JKC9wgMdaNPJBtQHay9lfaqn9+aE=;
+        b=bFWlotJB8i35tD4wJFgi9k2uGRYrynC3Ku/c2cUuKqFwnXBNlVWiASCsmfoGiWw9UA
+         ST65BOJtjKiekfXBxV9KeoyyU3KYszD6fpiI42l2rKY46+ZdFg3J4riSgupZERvKnujS
+         6AMWJIk+N5uSIZSUNMgCj6kUNcnyPrRcnQQ7sUIHuGVIpzBxbCXsYe+INHyB9eJWdPeR
+         6fAy35C4SZIbmUHOTpeX6+vDI/alP97RV9L6YMLzmWwByVXOPvnM7PO3aB9lHBlZN1Ro
+         JiGCsfx6zNeH3u40EhD50lx9zRuMXrtqChmISpVTJAFEImoXVZQXDa84aJgSB5la+X6c
+         l2Qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732573954; x=1733178754;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4TRsrywIbtjl/c6JKC9wgMdaNPJBtQHay9lfaqn9+aE=;
+        b=jVVok/vrQTWkgSTm9XPRzXONupcrTp59xVH+0G5yVY43ZteYONYwzvgNoluPoV2v4K
+         auaQNC1l6dybJKr3x30L2HlzcEIPET4uTS3pUOv/Ou4lE2GlEKzfkLxXgLm2ON662fFZ
+         is2R7suc9wWYkAgIX7PD2Dd99XXv4JDtgH0ThWtWWSkSWVVkr2Vy9zhguvP8r6VMxtog
+         xZN7M76qmDCdgY7/j+yTlzIY4JkLhpL9Awem2S3svRb4AM+R8M+/PNbm/VG1RiVBxNz7
+         BRzUfTzPi7M10gjfaEltWGGTF7uTYklInJKtHMSSUZHJNHSMeonATCBnTpM9NKDWZzd0
+         /4Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCWWBJHMZcnDXX1srsmavV2eYdTT8tG8FZJIbbGdNnTZ6OPJnAddzwRrxGCILVqWgZ6JKFXFE77ahFgGPdOW@vger.kernel.org, AJvYcCWemmjQMCd7bC+fqTMx2qs6OYE7l8ps16D/+qWtFFwas+q5+vhBHOcyIDgHNiLWW+osMf4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyfKrIivSm3leqKAmBKu64b8n8G0K3KYyJ2TfP8uOdb3jIt4Gx
+	paeNabQF02tnhon+9rFisn8gl+ZrkdRRxtEfnQMJELGEGcVd4iOC7Ph1pP/zI6A7vu0v7z4AEG6
+	RhVkg3/7LBfTZX5DRTK8GkE9AxLQ=
+X-Gm-Gg: ASbGncusoMsq99nGyMhCBArQiIe8p9qnq0eBGAqw3l6IrnKif18YeW9IPYdizILfyh9
+	ZUqEoxHCnWPEPZxsI3RHJFe2FXIAdDJsKUMlpJAzJSjMOVbw=
+X-Google-Smtp-Source: AGHT+IHcLSyztw+WyvvdvU1YGVMNVWPtL66vGfR2kLPwi0V8BlgHgiSeamEpI6LCs33pWL2RLg71hxm5o1YeGR8e95o=
+X-Received: by 2002:a5d:47c5:0:b0:37d:43a8:dee0 with SMTP id
+ ffacd0b85a97d-385bfaf0c57mr963099f8f.17.1732573953971; Mon, 25 Nov 2024
+ 14:32:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/5] drm/vkms: Switch to managed for connector
-To: Louis Chauvet <louis.chauvet@bootlin.com>,
- Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
- Melissa Wen <melissa.srw@gmail.com>,
- Haneen Mohammed <hamohammed.sa@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Simona Vetter <simona.vetter@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
- linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
- miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
- seanpaul@google.com, nicolejadeyee@google.com
-References: <20241122-google-vkms-managed-v5-0-1ab60403e960@bootlin.com>
- <20241122-google-vkms-managed-v5-1-1ab60403e960@bootlin.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-In-Reply-To: <20241122-google-vkms-managed-v5-1-1ab60403e960@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241121121712.5633-1-liujing@cmss.chinamobile.com>
+In-Reply-To: <20241121121712.5633-1-liujing@cmss.chinamobile.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Mon, 25 Nov 2024 14:32:22 -0800
+Message-ID: <CAADnVQKKReb7C9xMoMWjCfZU=kfdYCfW3MXjWL00or286SVLzQ@mail.gmail.com>
+Subject: Re: [PATCH] bpftool: Fix the wrong format specifier
+To: liujing <liujing@cmss.chinamobile.com>
+Cc: Quentin Monnet <qmo@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Louis,
+On Thu, Nov 21, 2024 at 4:17=E2=80=AFAM liujing <liujing@cmss.chinamobile.c=
+om> wrote:
+>
+> The type of lines is unsigned int, so the correct format specifier should=
+ be
+> %u instead of %d.
+>
+> Signed-off-by: liujing <liujing@cmss.chinamobile.com>
 
-On 22/11/24 13:27, Louis Chauvet wrote:
-> The current VKMS driver uses non-managed function to create connectors. It
-> is not an issue yet, but in order to support multiple devices easily,
-> convert this code to use drm and device managed helpers.
-> 
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+Please use your full name.
 
-Reviewed-by: Maíra Canal <mcanal@igalia.com>
+Same issue with another patch.
 
-Best Regards,
-- Maíra
-
-> ---
->   drivers/gpu/drm/vkms/vkms_output.c | 12 ++++--------
->   1 file changed, 4 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
-> index 8f4bd5aef087b459d37d0cbbf90fe0145090917a..570823ecb28f589e6323036590ec05a2f633bc9b 100644
-> --- a/drivers/gpu/drm/vkms/vkms_output.c
-> +++ b/drivers/gpu/drm/vkms/vkms_output.c
-> @@ -3,11 +3,11 @@
->   #include "vkms_drv.h"
->   #include <drm/drm_atomic_helper.h>
->   #include <drm/drm_edid.h>
-> +#include <drm/drm_managed.h>
->   #include <drm/drm_probe_helper.h>
->   
->   static const struct drm_connector_funcs vkms_connector_funcs = {
->   	.fill_modes = drm_helper_probe_single_connector_modes,
-> -	.destroy = drm_connector_cleanup,
->   	.reset = drm_atomic_helper_connector_reset,
->   	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
->   	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
-> @@ -75,8 +75,8 @@ int vkms_output_init(struct vkms_device *vkmsdev)
->   		}
->   	}
->   
-> -	ret = drm_connector_init(dev, connector, &vkms_connector_funcs,
-> -				 DRM_MODE_CONNECTOR_VIRTUAL);
-> +	ret = drmm_connector_init(dev, connector, &vkms_connector_funcs,
-> +				  DRM_MODE_CONNECTOR_VIRTUAL, NULL);
->   	if (ret) {
->   		DRM_ERROR("Failed to init connector\n");
->   		return ret;
-> @@ -88,7 +88,7 @@ int vkms_output_init(struct vkms_device *vkmsdev)
->   			       DRM_MODE_ENCODER_VIRTUAL, NULL);
->   	if (ret) {
->   		DRM_ERROR("Failed to init encoder\n");
-> -		goto err_encoder;
-> +		return ret;
->   	}
->   	encoder->possible_crtcs = drm_crtc_mask(crtc);
->   
-> @@ -110,9 +110,5 @@ int vkms_output_init(struct vkms_device *vkmsdev)
->   
->   err_attach:
->   	drm_encoder_cleanup(encoder);
-> -
-> -err_encoder:
-> -	drm_connector_cleanup(connector);
-> -
->   	return ret;
->   }
-> 
-
+pw-bot: cr
 
