@@ -1,118 +1,146 @@
-Return-Path: <linux-kernel+bounces-420875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FCCB9D83E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:54:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 386BE9D8525
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:12:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6443B28AC6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:54:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AD3CB2C99B
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C20C193086;
-	Mon, 25 Nov 2024 10:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA93E194137;
+	Mon, 25 Nov 2024 10:57:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IT1sTtnJ"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DpN/O14Z"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABE62500B5
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 10:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26191925A6;
+	Mon, 25 Nov 2024 10:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732532045; cv=none; b=VUbLKMtNINS9VpQ6tOtWTM7ItEa7g7JUkQWcufAk3MaP1PLbOt6/5Iv6da0g5l15BNmOiUXrnt9IRk++GelRs22vWwud7x94jZNuYt/YE2N2ddOU+1FUk5+faf3OKZObrbLnkWf7vcO1wxtCwTXIlnk2nmVZ7/YLC7T7WuXSkIc=
+	t=1732532279; cv=none; b=GI80YTXq60NScUxQ00QHkKB8Lvf5Id6nQ1Ljs7W5l59KyUUfVZsRDmKT1GavtWxKX+NtivqqYKMkm28voLRI7AroTvh1azBSMW1YeYFsnZIrm16N14n3DHYWyfrdXbIflQRF9GEcG9OlFFKCXPPJ+/eLSK0RoytJM7gIyl+hOtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732532045; c=relaxed/simple;
-	bh=8L9zH37PihLGH7oCVsrqFEdHfvi0SSNWFyXIKGqOkuE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n3797vuHxpCqZBsTI1D9heaWk5fkac0STSeijWcjg9hB5f7TQq673q8ZIFWvL9Ajzwlfko1N4GgXd0hYJmH7PGt5AANyipZsOux4ScU8wu0wh7WL7UVq98U9w5Fcdijyfi6pI+Ln+t2JqSgcdSFYhmwVzmRWb7PyaphB8SNhoWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IT1sTtnJ; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-724d23df764so3166256b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 02:54:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732532043; x=1733136843; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8L9zH37PihLGH7oCVsrqFEdHfvi0SSNWFyXIKGqOkuE=;
-        b=IT1sTtnJu9EudPvG3HAY2qvKplFaruAKy0TH5gHu3XuBhyb8WFgL4P/W4q9izEQ4MA
-         oCR+PgMNx+Kav849O0P4Txkn92w8zfdmcPoaI17qurUaPYYQJ2yGGvDP/3GOuiMjv9bH
-         vR2R4pUwN8AOIpFgq2M0hdd3o/D247rmqNilcdvjbapG88tCUbWPchokF+THj6yZ2UlX
-         LsWwaPtuuyk5DDLcXkNqJShMdyiHbVaS52JVMbPbSLo9SLeZjYbouUfzLMfTT6ytoi9M
-         v2P71FmPTnpKFgx4HR+lMGhMoG8Aewrhly6NoEdEeUX3/Oa6G7ONB2XNpt70WZK1xcxD
-         cQdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732532043; x=1733136843;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8L9zH37PihLGH7oCVsrqFEdHfvi0SSNWFyXIKGqOkuE=;
-        b=RuRKpkZPOcG2UsWuF3Z+z8zTMx+QM5mkuVbqn1aPR5OHY8IE/vFZn8D7zvLmW/yICY
-         uEkn+6XGd2OvM7BSa1Q1mDYbDAutW//k2k+23TYAjuwogjr53/9sNaF+/cEqwqzpMkIG
-         h0T292etd+5HZLAR+TaxhB40IcgBNUN/j0FibwpNnyhON3MV/DqeDlW24SO91tiisuIk
-         YaMeVLlbyeMfQ5i4RrBHeYAQLNZAp/oFCwaRT3UQBoERc5oFK2E9ocIOQO/LC85Vzise
-         xf+rQXhzGukfmywD9YLAqIAaW9M9Kuxoe9m3PMOsNmSlZdFIrWFZupkeFNpkgGf9LVsf
-         Sutw==
-X-Forwarded-Encrypted: i=1; AJvYcCWEk7wiKkwJCiZNl2VKDqqF89YxXo76r0d99j1Fe6dlpAQCYQh0OvClD+/YHquhmpvueZOfNbYzyHHB/sM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzC53k+403c9NgAj4er0HDgizSBoCiGBjaoYAGYiX3a6k7ZWvEw
-	15FiyttS11YtyfvNAPkYQHrWxnkZK+geuoeaJRdV7tIQHAJR3WeH2ClqKXZ4cb6y4NW9HqgSbjj
-	6Hr3utkFyMtMLVA7X5uMb1vuYZVq4WI+UGNi6
-X-Gm-Gg: ASbGnctb1lwtWGw9b+sQK76EkJJcPNFRE/ffHxbjFYCf9zz6BM0OMqKwBVT45AhNJ+a
-	AWnyZttK0U4Eqtc8VH+n/EjNCJ8ADh/V1JbnImPqCzcTPTu1nNaDJK6/9o5zCng==
-X-Google-Smtp-Source: AGHT+IERuM0LZzY0dJqigKtZGi00mi+sHukvtCdMdPwQZlpvTeaerDdXvtmMA7QOtjNPpMI2MiK60GTpWsO+Prx5PLo=
-X-Received: by 2002:a05:6a00:9a3:b0:71e:6ef2:6c11 with SMTP id
- d2e1a72fcca58-724df5eed58mr16441060b3a.9.1732532043443; Mon, 25 Nov 2024
- 02:54:03 -0800 (PST)
+	s=arc-20240116; t=1732532279; c=relaxed/simple;
+	bh=N1L5SqSGI3l/01htDqabkNzop1zQOpYFHPJk5y8R4oQ=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=kGRZhed8t4kmaQE0yl6FfJWfuohe7N4H31bWUF5QfzvtODaILZ9UggWoT9brpqT4dHNYkSogDcKfgW48iJY9d6T6M42rYa2UopCZ1P6TXzbLQ8lYQ60fYJTfJQpIZi9Mt0qGUfg2OZOFQpOiu+dAtOXD0DQbSFB5IvapHLozycg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DpN/O14Z; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APArt7L020204;
+	Mon, 25 Nov 2024 10:57:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=O79W14f0nFtA
+	v9voEbFDMFieyWHopqdkzROh5D5K+DQ=; b=DpN/O14ZlPHtpqAt2RoC9aj1oJoo
+	DK3NnxTtS67KTsicaAN81HLA5J/tfSzGOBzcBlmUAn8aspFjFt/RVr8Foy8bscXa
+	cbxFgzmOmW2gh08gvH6ydlaZ0CA6bWga6GxR4us/5NQgIDA3YemlSy1YTpG71KFH
+	39FLGfPbbTfTDIt5R8Cj6/a+GxKTB81pBsSlRY4g19QvS/N6XKL8iFU4+YeRFBVC
+	bLSWWPAROqqyVESuxwm7renvF3lLLoOTwkEki+pjtHdpLK//5Yh8X2eeaTIuqZkv
+	cm9HS/HH2limX0eHX7EJlI9v8oFMi11wnWsxavJVPOC38WtY+uVRvHFqtQ==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43387jc8a7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 10:57:54 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4APAvoOA031184;
+	Mon, 25 Nov 2024 10:57:50 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 43384m236j-1;
+	Mon, 25 Nov 2024 10:57:50 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4APAvnmV031170;
+	Mon, 25 Nov 2024 10:57:50 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-mukhopad-hyd.qualcomm.com [10.147.244.250])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 4APAvnnT031167;
+	Mon, 25 Nov 2024 10:57:49 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 3978529)
+	id E632C5009E0; Mon, 25 Nov 2024 16:27:48 +0530 (+0530)
+From: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_riteshk@quicinc.com,
+        quic_vproddut@quicinc.com, quic_abhinavk@quicinc.com
+Subject: [PATCH v6 0/2] Enable Display Port for Qualcomm SA8775P-ride platform
+Date: Mon, 25 Nov 2024 16:27:45 +0530
+Message-Id: <20241125105747.6595-1-quic_mukhopad@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Q7HMfCjSXaTu0ZobC8FBoU6h-r0_ZpUG
+X-Proofpoint-GUID: Q7HMfCjSXaTu0ZobC8FBoU6h-r0_ZpUG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ lowpriorityscore=0 clxscore=1015 phishscore=0 malwarescore=0
+ suspectscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0
+ impostorscore=0 mlxscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2411250093
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <67383db1.050a0220.85a0.000e.GAE@google.com> <CADUfDZqBUvm5vUgRHXKjvo=Kk4Ze8xU5tn-wG6J0wmUE6TTREA@mail.gmail.com>
- <20241118185323.37969bcd@kernel.org>
-In-Reply-To: <20241118185323.37969bcd@kernel.org>
-From: Aleksandr Nogikh <nogikh@google.com>
-Date: Mon, 25 Nov 2024 11:53:51 +0100
-Message-ID: <CANp29Y7XjPwy3VxR-naQ-qjMZF63j9kh7fFmVH91HaSJ8i9ZMA@mail.gmail.com>
-Subject: Re: [syzbot] [net?] general protection fault in dev_prep_valid_name
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Caleb Sander <csander@purestorage.com>, 
-	syzbot <syzbot+21ba4d5adff0b6a7cfc6@syzkaller.appspotmail.com>, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	parav@nvidia.com, saeedm@nvidia.com, syzkaller-bugs@googlegroups.com, 
-	tariqt@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 19, 2024 at 3:53=E2=80=AFAM 'Jakub Kicinski' via syzkaller-bugs
-<syzkaller-bugs@googlegroups.com> wrote:
->
-> On Mon, 18 Nov 2024 18:19:23 -0800 Caleb Sander wrote:
-> > Hmm, it seems very unlikely that "mlx5/core: Schedule EQ comp tasklet
-> > only if necessary" could have caused this issue. The commit only
-> > touches the mlx5 driver. Does the test machine have ConnectX NICs? The
-> > commit itself simply moves where tasklet_schedule() is called for the
-> > mlx5_cq_tasklet_cb() tasklet, making it so the tasklet will only be
-> > scheduled to process userspace RDMA completions.
-> > Is it possible that the failure is not consistently reproducible and
-> > the bisection is landing on the wrong commit?
->
-> Yes, most likely bad bisection, I looked at the syzbot docs but I don't
-> see the command for invalidating the bisection results.
->
+This series adds the DPTX0 and DPTX1 nodes, as a part of mdss0
+on Qualcomm SA8775P SoC. It also enables Display Port on Qualcomm
+SA8775P-ride platform.
 
-Thanks for analyzing the bisection!
+---
+This patch depends on following series:
+https://lore.kernel.org/all/20240816-sa8775p-mm-v3-v1-0-77d53c3c0cef@quicinc.com/
+https://lore.kernel.org/all/20241019-patchv3_1-v5-0-d2fb72c9a845@quicinc.com/
+https://lore.kernel.org/all/20241018070706.28980-1-quic_mukhopad@quicinc.com/
 
-It's indeed not possible to cancel the result via an email command.
-I've marked it as invalid using other means and left a comment on the
-corresponding backlog issue:
-https://github.com/google/syzkaller/issues/5414#issuecomment-2497667350
+v6: Fixed review comments from Konrad
+	- Fixed indentation errors in patchset 1.[Konrad]
+	- Updated the register addresses to 8 hex digits comprising of leading zeroes,
+	  in patchset 1.[Konrad]
+	- Shifted the 'status' property of nodes to the end at each node definitions
+	  in patchset 2.[Konrad]
 
---=20
-Aleksandr
+v5: Fixed review comments from Dmitry
+	- Updated the labels of DP connectors 0 and 1 to edp0 and edp1
+	  respectively.[Dmitry]
+	- Update the commit message for patchset 2 mentioning about the
+	  enablement and validation DP controllers of mdss0.[Dmitry]
+
+v4: Fixed review comments from Dmitry
+	- Added p1 region to the register set of both mdss_dp0 and mdss_dp1.[Dmitry]
+	- Validated devicetree against DT schema.[Dmitry]
+
+v3: Fixed review comments from Dmitry and other minor changes to prevent warnings and maintain alignment
+	- Added specific DP connector node for each DP port validated in patchset 2.[Dmitry]
+	- Updated the reg value to 1 for port 1 under mdss_mdp in patchset 1.
+	- Fixed the register address space for mdss0_dp1 and mdss0_dp1_phy in alignment to the 
+	  register address space for mdss0_dp0 and mdss0_dp0_phy, in patchset 1.
+
+v2: Fixed review comments from Dmitry, Konrad and Bjorn
+	- Added a new patchset to separate out the soc and board parts.[Konrad]
+	- Patchset 1 now comprises of the soc parts and patchset 2 includes board specific changes.[Bjorn]
+	- Patchset 2 enables all the DP ports validated on the sa8775p-ride platform.[Bjorn]
+	- Fixed indentation errors in the dtsi file containing the soc information.[Dmitry][Konrad]
+	- Updated clocks to be used by respective PHYs.[Dmitry]
+	- Added mdss0_dp1 device node.[Dmitry]
+	- Updated the names of PHYs using label prefix "mdssM_dpN" for clarity.[Bjorn]
+	- Avoided use of referring any label in the board(dts) file in the dtsi(platform) file.[Bjorn]
+
+Soutrik Mukhopadhyay (2):
+  arm64: dts: qcom: sa8775p: add DisplayPort device nodes
+  arm64: dts: qcom: sa8775p-ride: Enable Display Port
+
+ arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi |  80 ++++++++
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi      | 220 ++++++++++++++++++++-
+ 2 files changed, 299 insertions(+), 1 deletion(-)
+
+-- 
+2.17.1
+
 
