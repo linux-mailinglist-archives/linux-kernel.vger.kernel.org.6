@@ -1,162 +1,197 @@
-Return-Path: <linux-kernel+bounces-420603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF7539D7D1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:43:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF23E9D7D1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:44:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E4F1163666
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:43:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41EFF161D16
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59AA18C03F;
-	Mon, 25 Nov 2024 08:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A271187FFA;
+	Mon, 25 Nov 2024 08:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jKzvuja/"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="a8/SQAv0"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830F218BBBB
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 08:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE49618B475;
+	Mon, 25 Nov 2024 08:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732524227; cv=none; b=pEyJxXMUUQ3NPSFK6pe58WUK8GagQx/pKCQT2MIxGAHpvo24zPJek1t+qx3Fjg22W/2FyydvfIpoXfSpYiRzLst/ZapR+3xZBNj1jJ/Ud2teX9NJfx70AXtRyJvOLAI8mf9+BJCtO/TGEoVEGYT/oQ4NdlSSnrVNqobchvbBTSE=
+	t=1732524254; cv=none; b=JLeththaU6nFet1GMxqAZ8vJYCFmPfFM/Mx6l+dwfwWIDRyRLbbcY0jiRen4tCWKgztamyhQugHIHW4s3/Ew/cRuUp6zMeeLfPNZSEpSXZN3bnuqJ1puKcwcX8d1FzXI/62Ug+1iZDhOxjgqvRm5DicSDGhkMxf9el4uKn6u5JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732524227; c=relaxed/simple;
-	bh=gAVXzRO6flOMUc+jbivLLOShw9D4eUFZeiCNKksrDnw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D9qIFUP99kBWNG7nEsmq7EcIGWk85k2B3rF8vnQ+wHqBgig5yDYfT1TbImzHfKrGJpeMGka3SfPCtojOTxkYUsdiIIZIeWNIkhugFZR7jvvFJmwbGRYik77a0ovgRTUCcSy8zdgn1Sk4G+mVveUywaaacUOMO7LN+IdPh6V//Qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jKzvuja/; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ea304ce809so3530393a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 00:43:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732524225; x=1733129025; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WF1SurkpJR9+d436XSidV3nIHqKYTAhhIXu+fIUsswU=;
-        b=jKzvuja/Z4YlCH0uuK+81dhzQrmSQr0ej49IbhoT270N6OwQkSiFQGSLej0HEIoKJP
-         SEN8JFh6+8mrJy0Jzvzs7NkFbmnQUn7U+x10/rr7EMA62N3ExHUEHRrwsqdpo7mQ/mnP
-         WBz9AB9m7cbJMf59mS8D++rCWpF9DUnN6FshU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732524225; x=1733129025;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WF1SurkpJR9+d436XSidV3nIHqKYTAhhIXu+fIUsswU=;
-        b=r08LuwLjX/jEPM2e2Y29QsgNMm2k65u5jHACV140NG/TZN0uGUhK2w+hEKuEBTEQHy
-         pWtnyB0tWSeQMkhaLJvDBWF2P8mS+PyVFCX28n29IDOXUWPGIZdB1AfcN34Yd4R5hJQs
-         M3Co0XZU/5R5Nbm8Y+pwtdooH5bP2l603uAXOYYGgejQJcpDY55unuwp43AvagvUybiH
-         7TDayKtm6wj0USzyuZGdT7F0YQMB2/5zBxoVJvpoZgCp1YKHCyRG7E2GTvqAyEkyKm/6
-         oZJ66Ga/GAgcJIgE9BD8fadaY5oi41EkA9rvIxWfcp6yALG5JrqJf8t4EnCRgPFcur0H
-         mYUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXjj2//VdtovzbvgbVbTripJ4+9Eg6XNHjyPJlhcd13w1FsqeO3OiJG5T53FRjtBR0SsTmYRXaiWI50458=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQYYH77tmoIH4Rj7YGe4KXyMFwTxvuxHqDY+D3xiFRHItrwidm
-	ZgqdkG4GnBAlhMXitW676FTqVHt/l1gH8nB88mR/kDDeM1o3gPrMkdESPGmO7g==
-X-Gm-Gg: ASbGncs7Uuq8xly5ovPFWGVh6nBGyZcjIuO4gsDwJ6ahp2EvYTIjWc3UKkye65BNMFS
-	RZpXeIplr/kqvB6BYB5181F+nZ9FQvGePAPNMaEDHVEAV1mtOLO9gPdxkN41asOhhsk8bjV+EIN
-	PhdkoJWBblXcR505r99LTDdKNoG9dN9J4CmsTzTX/fZI3pSweSLGO0xzGcQ7ol4kRDuo1b0sddt
-	m+OWKjJTQxa2RpdXzmJNWWrhZFUTLJBSBcws/5nS3xh
-X-Google-Smtp-Source: AGHT+IGwNB4nRJMnNhTbAeM5SVohmmw2VhsVBxq/0MFDU/T8BxbRsqUD7vI2vwEli6Gsw3VQCvNV0A==
-X-Received: by 2002:a17:90a:ec83:b0:2ea:5fa5:fac0 with SMTP id 98e67ed59e1d1-2eb0e332553mr16365914a91.16.1732524224785;
-        Mon, 25 Nov 2024 00:43:44 -0800 (PST)
-Received: from google.com ([2401:fa00:1:10:66a3:d18f:544f:227a])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ead03de64asm9677264a91.41.2024.11.25.00.43.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 00:43:44 -0800 (PST)
-Date: Mon, 25 Nov 2024 16:43:40 +0800
-From: "Sung-Chi, Li" <lschyi@chromium.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
-	Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, chrome-platform@lists.linux.dev,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: mfd: cros-ec: add properties for
- thermal cooling cells
-Message-ID: <Z0Q4vGXbvU3j9H65@google.com>
-References: <20241122-extend_power_limit-v1-0-a3ecd87afa76@chromium.org>
- <20241122-extend_power_limit-v1-2-a3ecd87afa76@chromium.org>
- <4f5sahkxxqb5qonh676igaiadkxv2pbhbibu6wtx4yenplfn4o@yvidi4ujavhr>
- <Z0Pl3muZx716QSed@google.com>
- <c2e9a97e-129d-4a82-9e81-b1391b4b6ff9@kernel.org>
+	s=arc-20240116; t=1732524254; c=relaxed/simple;
+	bh=ngS9NbVV/2REdZo7ltVT8qkR+IjHY4lF+E0xJFke7tA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ec5qIWYEElXdlEqSfttIPn3kL7vAibr8WysjUMn4iRVngDumGeZRStk7ejN3rMuHCGgKEXS4Usew3BnIRlWh/2tomE/Dtxi7BBikNq5NM2z31Bp18A/kfKhoW9oJB6sTqa0cOCn9el9MTIAQKbKmVn0Jm3U8SjlwD8fnESUZ8UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=a8/SQAv0; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AOMa0D8022508;
+	Mon, 25 Nov 2024 08:44:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	vI6d6MCeElNERiIDxbV7GH8wtRkirTmAlq1y3XukUf0=; b=a8/SQAv07SmKFkxh
+	YmGSkp7akEHW7LjwzIIFI9VeJdMQpOU7otyg8ILWtqLSnJLHUPyB4iVNF7q8ayKO
+	VIE7h5MlvAyUL/Lk2qZEFHGVWLxruGpjyGBxjo+m5zO6v7W/0B74fWUNseAjVTYU
+	OhuAu2cnsg4MKvSQg8zmf4xNk5TYyOaQt/+Zgava+1uxOZTt4yh54PGxC/kiZCDH
+	GSmRKOC2vrcky8oSWCUTW1D/NOmuqDixyFHiK6rVOxD+nDheIez4BrZHMUo3IkYC
+	efGD41aQ6vc1h8x0G/LCrvNc3FX5KAV+mXy5Fs5H6KKgsEhQqmyAjJMCLewqGWJ1
+	qsVOQQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4336mxbyb5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 08:44:08 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AP8i7SK007762
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 08:44:07 GMT
+Received: from nalasex01c.na.qualcomm.com (10.47.97.35) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 25 Nov 2024 00:44:06 -0800
+Received: from nalasex01c.na.qualcomm.com ([fe80::5da8:4d0f:c16a:a1d]) by
+ nalasex01c.na.qualcomm.com ([fe80::5da8:4d0f:c16a:a1d%11]) with mapi id
+ 15.02.1544.009; Mon, 25 Nov 2024 00:44:06 -0800
+From: "Renjiang Han (QUIC)" <quic_renjiang@quicinc.com>
+To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        "Vikash Garodia (QUIC)"
+	<quic_vgarodia@quicinc.com>,
+        "bryan.odonoghue@linaro.org"
+	<bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Rob Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor Dooley" <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio" <konradybcio@kernel.org>
+CC: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3 2/4] media: venus: core: add qcs615 platform data
+Thread-Topic: [PATCH v3 2/4] media: venus: core: add qcs615 platform data
+Thread-Index: AQHbPvvPYYY1eWJHr0iQpbQKhF55QLLHqWPg
+Date: Mon, 25 Nov 2024 08:44:06 +0000
+Message-ID: <3b3cab5c583a41d79acc75dd08ca84d6@quicinc.com>
+References: <20241125-add-venus-for-qcs615-v3-0-5a376b97a68e@quicinc.com>
+ <20241125-add-venus-for-qcs615-v3-2-5a376b97a68e@quicinc.com>
+In-Reply-To: <20241125-add-venus-for-qcs615-v3-2-5a376b97a68e@quicinc.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c2e9a97e-129d-4a82-9e81-b1391b4b6ff9@kernel.org>
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: E-QgE2bRToqMOzxDjd5DcfkpuGiEX4cl
+X-Proofpoint-GUID: E-QgE2bRToqMOzxDjd5DcfkpuGiEX4cl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
+ adultscore=0 impostorscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
+ clxscore=1015 suspectscore=0 bulkscore=0 priorityscore=1501
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411250074
 
-On Mon, Nov 25, 2024 at 08:32:19AM +0100, Krzysztof Kozlowski wrote:
-> On 25/11/2024 03:50, Sung-Chi, Li wrote:
-> > On Fri, Nov 22, 2024 at 08:49:14AM +0100, Krzysztof Kozlowski wrote:
-> >> On Fri, Nov 22, 2024 at 11:47:22AM +0800, Sung-Chi Li wrote:
-> >>> The cros_ec supports limiting the input current to act as a passive
-> >>> thermal cooling device. Add the property '#cooling-cells' bindings, such
-> >>> that thermal framework can recognize cros_ec as a valid thermal cooling
-> >>> device.
-> >>>
-> >>> Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
-> >>> ---
-> >>>  Documentation/devicetree/bindings/mfd/google,cros-ec.yaml | 3 +++
-> >>>  1 file changed, 3 insertions(+)
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-> >>> index aac8819bd00b..2b6f098057af 100644
-> >>> --- a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-> >>> +++ b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-> >>> @@ -96,6 +96,9 @@ properties:
-> >>>    '#gpio-cells':
-> >>>      const: 2
-> >>>  
-> >>> +  '#cooling-cells':
-> >>> +    const: 2
-> >>
-> >> This is not a cooling device. BTW, your commit msg is somehow circular.
-> >> "Add cooling to make it a cooling device because it will be then cooling
-> >> device."
-> >>
-> >> Power supply already provides necessary framework for managing charging
-> >> current and temperatures. If this is to stay, you need to explain why
-> >> this is suitable to be considered a thermal zone or system cooling
-> >> device (not power supply or input power cooling).
-> >>
-> >> Best regards,
-> >> Krzysztof
-> >>
-> > 
-> > Thank you, I will rephrase the commit message. The reason to not to use the
-> > managing charging current and temperatures in the power supply framework is
-> > that:
-> > 
-> > - The EC may not have the thermal sensor value for the charger, and there is no
-> >   protocol for getting the thermal sensor value for the charger (there is
-> >   command for reading thermal sensor values, but there is no specification for
-> >   what sensor index is for the charger, if the charger provides thermal value).
-> > - The managing mechanism only take the charger thermal value into account, and
-> >   I would like to control the current based on the thermal condition of the
-> >   whole device.
-> > 
-> > I will include these explanation in the following changes.
-> 
-> 
-> This does not explain me why this is supposed to be thermal zone. I
-> already said it, but let's repeat: This is not a thermal zone. This
-> isn't thermal zone sensor, either.
+On Monday, November 25, 2024 1:35 PM, Renjiang Han wrote:
+> Initialize the platform data and enable venus driver probe of QCS615 SoC.
 
-Hi, I added the explanation in the commit message in v2, in short, I need to use
-different thermal sensors, and need finer thermal controls, so I have to use
-thermal zone. This is included in the v2 commit message.
+Forgot to add Reviewed-by, next version will add Reviewed-by: Bryan O'Donog=
+hue <bryan.odonoghue@linaro.org>
 
-> 
-> 
-> Best regards,
-> Krzysztof
+> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
+> ---
+>  drivers/media/platform/qcom/venus/core.c | 50 ++++++++++++++++++++++++++=
+++++++
+>  1 file changed, 50 insertions(+)
+
+> diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/pla=
+tform/qcom/venus/core.c
+> index 423deb5e94dcb193974da23f9bd2d905bfeab2d9..39d8bcf62fe4f72674746b759=
+94cce6cbaee94eb 100644
+> --- a/drivers/media/platform/qcom/venus/core.c
+> +++ b/drivers/media/platform/qcom/venus/core.c
+> @@ -630,6 +630,55 @@ static const struct venus_resources msm8998_res =3D =
+{
+>  	.fwname =3D "qcom/venus-4.4/venus.mbn",
+>  };
+=20
+> +static const struct freq_tbl qcs615_freq_table[] =3D {
+> +	{ 0, 460000000 },
+> +	{ 0, 410000000 },
+> +	{ 0, 380000000 },
+> +	{ 0, 300000000 },
+> +	{ 0, 240000000 },
+> +	{ 0, 133333333 },
+> +};
+> +
+> +static const struct bw_tbl qcs615_bw_table_enc[] =3D {
+> +	{  972000,  951000, 0, 1434000, 0 },	/* 3840x2160@30 */
+> +	{  489600,  723000, 0,  973000, 0 },	/* 1920x1080@60 */
+> +	{  244800,  370000, 0,	495000, 0 },	/* 1920x1080@30 */
+> +};
+> +
+> +static const struct bw_tbl qcs615_bw_table_dec[] =3D {
+> +	{ 1036800, 1987000, 0, 2797000, 0 },	/* 4096x2160@30 */
+> +	{  489600, 1040000, 0, 1298000, 0 },	/* 1920x1080@60 */
+> +	{  244800,  530000, 0,  659000, 0 },	/* 1920x1080@30 */
+> +};
+> +
+> +static const struct venus_resources qcs615_res =3D {
+> +	.freq_tbl =3D qcs615_freq_table,
+> +	.freq_tbl_size =3D ARRAY_SIZE(qcs615_freq_table),
+> +	.bw_tbl_enc =3D qcs615_bw_table_enc,
+> +	.bw_tbl_enc_size =3D ARRAY_SIZE(qcs615_bw_table_enc),
+> +	.bw_tbl_dec =3D qcs615_bw_table_dec,
+> +	.bw_tbl_dec_size =3D ARRAY_SIZE(qcs615_bw_table_dec),
+> +	.clks =3D {"core", "iface", "bus" },
+> +	.clks_num =3D 3,
+> +	.vcodec0_clks =3D { "vcodec0_core", "vcodec0_bus" },
+> +	.vcodec_clks_num =3D 2,
+> +	.vcodec_pmdomains =3D (const char *[]) { "venus", "vcodec0" },
+> +	.vcodec_pmdomains_num =3D 2,
+> +	.opp_pmdomain =3D (const char *[]) { "cx" },
+> +	.vcodec_num =3D 1,
+> +	.hfi_version =3D HFI_VERSION_4XX,
+> +	.vpu_version =3D VPU_VERSION_AR50,
+> +	.vmem_id =3D VIDC_RESOURCE_NONE,
+> +	.vmem_size =3D 0,
+> +	.vmem_addr =3D 0,
+> +	.dma_mask =3D 0xe0000000 - 1,
+> +	.cp_start =3D 0,
+> +	.cp_size =3D 0x70800000,
+> +	.cp_nonpixel_start =3D 0x1000000,
+> +	.cp_nonpixel_size =3D 0x24800000,
+> +	.fwname =3D "qcom/venus-5.4/venus_s6.mbn", };
+> +
+>  static const struct freq_tbl sdm660_freq_table[] =3D {
+>  	{ 979200, 518400000 },
+>  	{ 489600, 441600000 },
+> @@ -937,6 +986,7 @@ static const struct of_device_id venus_dt_match[] =3D=
+ {
+>  	{ .compatible =3D "qcom,msm8916-venus", .data =3D &msm8916_res, },
+>  	{ .compatible =3D "qcom,msm8996-venus", .data =3D &msm8996_res, },
+>  	{ .compatible =3D "qcom,msm8998-venus", .data =3D &msm8998_res, },
+> +	{ .compatible =3D "qcom,qcs615-venus", .data =3D &qcs615_res, },
+>  	{ .compatible =3D "qcom,sdm660-venus", .data =3D &sdm660_res, },
+>  	{ .compatible =3D "qcom,sdm845-venus", .data =3D &sdm845_res, },
+>  	{ .compatible =3D "qcom,sdm845-venus-v2", .data =3D &sdm845_res_v2, },
+
+> --
+> 2.34.1
+
 
