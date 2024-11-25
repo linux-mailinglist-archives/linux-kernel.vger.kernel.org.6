@@ -1,159 +1,266 @@
-Return-Path: <linux-kernel+bounces-421032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B249D85DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:05:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 767CA9D85E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:06:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB70E169754
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:05:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37082286423
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1939C1A76A4;
-	Mon, 25 Nov 2024 13:05:27 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AA41AB510;
+	Mon, 25 Nov 2024 13:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="V3Fq5c/R"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD6118A6C1
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4368D18D625;
+	Mon, 25 Nov 2024 13:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732539926; cv=none; b=Vh7ZUyCKnypZK/lzIeLc6UcQxGJoeSh41lnpi3yDUBuaSqqIac1K0BYWAPGnv/EE0HvPTwLoAOwP4YjnnIQowARPZchTgqU/+z1tea/iU0bcuAI/j7xl/0qoQ41EPEW8eePfb9WfJ/5jRrUITFwLz8hojvrzl2p2nrAZ0JSh4q0=
+	t=1732540002; cv=none; b=K/X9iDEqcoOw5KL7VYGrMGymXtj+0I0QXijIglTjjIQg+ZMRvU+U3WSEhsvpnkN7OOMju5XwE0Z46uu4ZOMJtMVXmw8qPT1Rk9Q12Z4dA6NajpqFNxb44ywIYpzuoTwwvriQOt2IfRBctLQb/dg0x95BM/Tl5fd6Tp5uVgXtZrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732539926; c=relaxed/simple;
-	bh=EFzcynI/xt/LaI/1hq/ie0RvRp2BG5Lbd88GzxGvUSI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OFFWA+HoiS3pfkE+wYuWm4QN2ZXu52tYjImjYqADMgbvbv9P/kaIudhquaFvFtwv2XhUtqJto28+E8/f8FOAyebXINYXNw8vAV0LPqfhbHExGiwsjhuL6YtIrCJ2JzJc0q2vm7h3UsPwFOBjBFQmVOpNAzDDXYc2NwXIu0vx7Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a79088e7abso44988595ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 05:05:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732539924; x=1733144724;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kOMKV4YUWbwyYTwWXtmPT//Xtz8ymxtP6dUYZK6kaq8=;
-        b=w3+O9BxJuCr4FfTiuTopJClk7g2aruvF7hexKsIWY1qZhHGlYfa2flp+tu/y6086Ms
-         Q2VJT+v+3iFnqUF7MoGGyB/3lnAj/wdl/NEGebELttIEoMCOBORxkhEbSXtzt/Gm/Eed
-         IgDgT4NvXML+CrhDP6iG19SxMEHtovqsq9ylzIiuMk8pz/A/AzNsZgHro52XX2QIzLgP
-         puNX1BwVp0Eav3BRfNvM6BoTgxFVTQnSU+KqZkDL2Le1lHw+8eX+1KEoXm7+WlogwU0z
-         F3Mb16gDOZVT9neHt2QE/h79pw31pqirACh3cuUcJnxJs1OCUE3+thlC+57FD7GhzGh0
-         YQkw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5WBkGPfkd62Qh8jFgPH7omPvPyEMm5vQNAm9BId1K74UAwPnFcf+zAAU5dhajAUt7/G3Cc0VlMrFMceg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywev2qovWVpj7liUeBca8dlWuJihlV+9YrXGEg0EK5bzKxvt1Px
-	0vOfeRv3iA/9Fib7pj2MBHfBo4UqSntQenV0Q0J6n+D/RMG222P+oQev0sc0gIiXzpjNUe4wfUX
-	/E/LfH7JOlmYIBFO6D+f0k0Mtv28cEuw2MiSWM4yQkI2v0QFA3sVPGn8=
-X-Google-Smtp-Source: AGHT+IGBKtJ14iU7MOwx15GPROVJ2moKZr8B2O+fcZA1xpV9LV1AGk0AFqNvqReMsgs5xHtBCJ/MIYEZCONpiUcPupiDJt97Bevx
+	s=arc-20240116; t=1732540002; c=relaxed/simple;
+	bh=63ymZBgIhRHieQGE1s3TsXh4WFym6/lDUnsYvlHbp4w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NCDFMmc4lQhtyWralJ0QAxCm85/sFfEaZVAZy8uADsEhJcXsnskhx3/n86fQUPxJfr3euhFrOhux9Warva5UNlx//lg65M8MB3G10toWH3Fw9jW5zJ52mqwQGwZaO0plfAhTRVhbn/XKTTTdC/WcTtoK1ufa4N6f9e/xmpok2ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=V3Fq5c/R; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APAiYxx021756;
+	Mon, 25 Nov 2024 13:06:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=SW0O5hhp6DzPjtFUzAhfzsYrqYku9NVQyHIUwKJqKbU=; b=V3
+	Fq5c/RyViW9OMJCcVPFNGrriaPuby2YpLnYv82QM0gfHAR8SGNe8C7yaWanki2eB
+	iV8HI1dKVcXf6wb0niGky7HHhW6PuBLCR/pYpjLcx/5Z2XoQDC1peZu5nGU3vGn8
+	cVyhemB5MGyiEcuAGJM8tvspzdYjrCz/1WGpXkISB6abZHY3dfhdJi8J+HKG/I3f
+	+kPt1/3/abaRVUGcRULFHGnHw94S0ubgKXglf/bdLIHeCdMVQYDIPnnJHQVn+H9M
+	MGrA7RQa3NN+x2mkud+tEZeom++XgXyEIWbUIuM1lCcOcUnJSEcAWxkLUQoYg5VY
+	7RWCZ0/W/Is9X/7/vD+Q==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4334rd542f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 13:06:24 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4APD6NlA017795
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 25 Nov 2024 13:06:23 GMT
+Received: from taozha2-gv.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 25 Nov 2024 05:06:20 -0800
+From: Tao Zhang <quic_taozha@quicinc.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Leo Yan
+	<leo.yan@linux.dev>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+CC: Tao Zhang <quic_taozha@quicinc.com>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+Subject: [PATCH v6 0/4] source filtering for multi-port output
+Date: Mon, 25 Nov 2024 21:05:51 +0800
+Message-ID: <20241125130555.19924-1-quic_taozha@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a28:b0:3a7:85ee:fa78 with SMTP id
- e9e14a558f8ab-3a79af9bd40mr136118425ab.18.1732539924064; Mon, 25 Nov 2024
- 05:05:24 -0800 (PST)
-Date: Mon, 25 Nov 2024 05:05:24 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67447614.050a0220.1cc393.007f.GAE@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_evacuate_bucket
-From: syzbot <syzbot+bd56952613b5dae47ca4@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: IC-hJ3IBjW57KPAdo1Txtz-7Exud0jTt
+X-Proofpoint-GUID: IC-hJ3IBjW57KPAdo1Txtz-7Exud0jTt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ bulkscore=0 clxscore=1015 suspectscore=0 priorityscore=1501 malwarescore=0
+ spamscore=0 adultscore=0 impostorscore=0 phishscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411250112
 
-Hello,
+In our hardware design, by combining a funnel and a replicator, it
+implement a hardware device with one-to-one correspondence between
+output ports and input ports. The programming usage on this device
+is the same as funnel. The software uses a funnel and a static
+replicator to implement the driver of this device. Since original
+funnels only support a single output connection and original
+replicator only support a single input connection, the code needs
+to be modified to support this new feature. The following is a
+typical topology diagram of multi-port output mechanism.
+|----------|     |---------|     |----------|   |---------|
+|  TPDM 0  |     | Source0 |     | Source 1 |   | TPDM 1  |
+|----------|     |---------|     |----------|   |---------|
+      |                |                |             |
+      |                |                |             |
+      |      --------- |                |             |
+      |      |                          |             |
+      |      |                          |             |
+      |      |                          |             |
+   \-------------/ ----------------------             |
+    \  Funnel 0 /  |                                  |
+     -----------   |     ------------------------------
+          |        |     |
+          |        |     |
+        \------------------/
+         \    Funnel 1    /     ----|
+          \--------------/          |
+                  |                 |----> Combine a funnel and a
+                  |                 |      static replicator
+          /-----------------\       |
+         /    replicator 0   \  ----|
+        /---------------------\
+             |     |      |
+             |     |      |-----------|
+             |     |---------|        |
+             |               |TPDM0   |TPDM1
+             |            \-----------------/
+             |             \   TPDA 0      /
+             |              \-------------/
+             |                    |
+             |                    |
+             |Source0/1           |
+          \-------------------------------/
+           \           Funnel 2          /
+            \---------------------------/
 
-syzbot found the following issue on:
+Changes in V6:
+1. Optimize the prompt content of the warning log
+when the filter handle is not a trace source.
+-- Suzuki K Poulose
+2. Reset the filter device and fwnode if it is not
+a trace source.
+-- Suzuki K Poulose
 
-HEAD commit:    9f16d5e6f220 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=13260ee8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e92fc420ca55fe33
-dashboard link: https://syzkaller.appspot.com/bug?extid=bd56952613b5dae47ca4
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=124c25c0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=164c25c0580000
+Changes in V5:
+1. Replace "filter-src" with "filter-source" in the
+dt-binding document.
+-- Suzuki K Poulose
+2. Optimize the comments of the patch "coresight:
+Add support for trace filtering by source" due to bad
+example.
+-- Suzuki K Poulose
+3. Correct spelling errors in the patch "coresight:
+Add support for trace filtering by source".
+-- Suzuki K Poulose
+4. Optimize the function "coresight_blocks_source".
+-- Suzuki K Poulose
+5. Add { } in the function "of_coresight_parse_endpoint".
+-- Suzuki K Poulose
+6. Adjust the order of the patches.
+-- Suzuki K Poulose
+7. Adjust the alignment in "coresight-platform.c".
+-- Suzuki K Poulose
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c9f905470542/disk-9f16d5e6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5b4c9cc530ec/vmlinux-9f16d5e6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e0f262e4c35e/bzImage-9f16d5e6.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/8b2fe0894685/mount_0.gz
+Changes in V4:
+1. Use "coresight_get_source(path)" in the function
+"coresight_disable_path_from" instead of explicitly
+passing the source.
+-- Suzuki K Poulose
+2. Optimize the order of the input parameters for
+"_coresight_build_path".
+-- Suzuki K Poulose
+3. Reuse the method "coresight_block_source" in
+"_coresight_build_path".
+-- Suzuki K Poulose
+4. Remove the unnecessary () in "coresight_build_path".
+-- Suzuki K Poulose
+5. Add a helper to check if a device is SOURCE.
+-- Suzuki K Poulose
+6. Adjust the posistion of setting "still_orphan" in
+"coresight_build_path".
+-- Suzuki K Poulose
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+bd56952613b5dae47ca4@syzkaller.appspotmail.com
+Changes in V3:
+1. Rename the function "coresight_source_filter" to
+"coresight_block_source". And refine this function.
+-- Suzuki K Poulose
+2. Rename the parameters of the function
+"coresight_find_out_connection" to avoid confusion.
+-- Suzuki K Poulose
+3. Get the source of path in "coresight_enable_path" and
+"coresight_disable_path".
+-- Suzuki K Poulose
+4. Fix filter source device before skip the port in
+"coresight_orphan_match".
+-- Suzuki K Poulose
+5. Make sure the device still orphan if whter is a filter
+source firmware node but the filter source device is null.
+-- Suzuki K Poulose
+6. Walk through the entire coresight bus and fixup the
+"filter_src_dev" if the source is being removed.
+-- Suzuki K Poulose
+7. Refine the commit description of patch#2.
+-- Suzuki K Poulose
+8. Fix the warning reported by kernel test robot.
+-- kernel test robot.
+9. Use the source device directly if the port has a
+hardcoded filter in "tpda_get_element_size".
+-- Suzuki K Poulose
 
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/bkey_types.h:210!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 UID: 0 PID: 5847 Comm: bch-copygc/loop Not tainted 6.12.0-syzkaller-09073-g9f16d5e6f220 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:bkey_s_c_to_backpointer fs/bcachefs/bkey_types.h:210 [inline]
-RIP: 0010:bch2_get_next_backpointer+0x1316/0x1320 fs/bcachefs/backpointers.c:257
-Code: f9 fd e9 56 f9 ff ff e8 78 58 91 fd 90 0f 0b e8 d0 5a ba 07 e8 6b 58 91 fd 90 0f 0b e8 63 58 91 fd 90 0f 0b e8 5b 58 91 fd 90 <0f> 0b 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc90003dd6c80 EFLAGS: 00010293
-RAX: ffffffff84048765 RBX: 00000000000000b3 RCX: ffff888033fc5a00
-RDX: 0000000000000000 RSI: 00000000000000b3 RDI: 000000000000001c
-RBP: ffffc90003dd6ff8 R08: ffffffff840480a8 R09: 0000000000000000
-R10: 0000000000880000 R11: 0000000000000000 R12: ffff88807dae4000
-R13: 1ffff920007bad9c R14: ffffc90003dd6ed0 R15: ffff88806f8c0160
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055f337ebb000 CR3: 000000007db9a000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bch2_evacuate_bucket+0x113c/0x3620 fs/bcachefs/move.c:708
- bch2_copygc+0x42c9/0x4ca0 fs/bcachefs/movinggc.c:240
- bch2_copygc_thread+0x737/0xc20 fs/bcachefs/movinggc.c:381
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bkey_s_c_to_backpointer fs/bcachefs/bkey_types.h:210 [inline]
-RIP: 0010:bch2_get_next_backpointer+0x1316/0x1320 fs/bcachefs/backpointers.c:257
-Code: f9 fd e9 56 f9 ff ff e8 78 58 91 fd 90 0f 0b e8 d0 5a ba 07 e8 6b 58 91 fd 90 0f 0b e8 63 58 91 fd 90 0f 0b e8 5b 58 91 fd 90 <0f> 0b 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc90003dd6c80 EFLAGS: 00010293
-RAX: ffffffff84048765 RBX: 00000000000000b3 RCX: ffff888033fc5a00
-RDX: 0000000000000000 RSI: 00000000000000b3 RDI: 000000000000001c
-RBP: ffffc90003dd6ff8 R08: ffffffff840480a8 R09: 0000000000000000
-R10: 0000000000880000 R11: 0000000000000000 R12: ffff88807dae4000
-R13: 1ffff920007bad9c R14: ffffc90003dd6ed0 R15: ffff88806f8c0160
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055f337c9a518 CR3: 000000007ce96000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Changes in V2:
+1. Change the reference for endpoint property in dt-binding.
+-- Krzysztof Kozlowski
+2. Change the property name "filter_src" to "filter-src".
+-- Krzysztof Kozlowski
+3. Fix the errors in running 'make dt_binding_check'.
+-- Rob Herring
+4. Pass in the source parameter instead of path.
+-- Suzuki K Poulose
+5. Reset the "filter_src_dev" if the "src" csdev is being removed.
+-- Suzuki K Poulose
+6. Add a warning if the "filter_src_dev" is of not the
+type DEV_TYPE_SOURCE.
+-- Suzuki K Poulose
+7. Optimize the procedure for handling all possible cases.
+-- Suzuki K Poulose
 
+Changes in V1:
+1. Add a static replicator connect to a funnel to implement the
+correspondence between the output ports and the input ports on
+funnels.
+-- Suzuki K Poulose
+2. Add filter_src_dev and filter_src_dev phandle to
+"coresight_connection" struct, and populate them if there is one.
+-- Suzuki K Poulose
+3. To look at the phandle and then fixup/remove the filter_src
+device in fixup/remove connections.
+-- Suzuki K Poulose
+4. When TPDA reads DSB/CMB element size, it is implemented by
+looking up filter src device in the connections.
+-- Suzuki K Poulose
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Tao Zhang (4):
+  dt-bindings: arm: qcom,coresight-static-replicator: Add property for
+    source filtering
+  coresight: Add a helper to check if a device is source
+  coresight: Add support for trace filtering by source
+  coresight-tpda: Optimize the function of reading element size
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ .../arm/arm,coresight-static-replicator.yaml  |  19 ++-
+ drivers/hwtracing/coresight/coresight-core.c  | 113 +++++++++++++++---
+ .../hwtracing/coresight/coresight-platform.c  |  21 ++++
+ drivers/hwtracing/coresight/coresight-tpda.c  |  13 +-
+ include/linux/coresight.h                     |  12 +-
+ 5 files changed, 155 insertions(+), 23 deletions(-)
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+-- 
+2.17.1
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
