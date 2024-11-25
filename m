@@ -1,164 +1,131 @@
-Return-Path: <linux-kernel+bounces-421259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE9EC9D88BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:06:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23A1D9D88C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:07:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D27F116B09D
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:06:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDB7228BAFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C57F1B21B8;
-	Mon, 25 Nov 2024 15:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267321B3941;
+	Mon, 25 Nov 2024 15:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="JZpFYDpv"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="iuV/b5pS"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD571B0F06
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 15:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2461B21BC;
+	Mon, 25 Nov 2024 15:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732547166; cv=none; b=frHLW1JMweHm73T/Wvs48Atp02MQsUNdYsGf/BJJcDVLEstNv+P/+EoOPQB3HImwLM3l3C5Y8o1HsgN+BGUrErMMK+dehStxFgcPpNRMlM/fDncdTPVFKCg2vIK44lt6XICufsFUesV5AcG0QT/OGirWdcoXAT09uGq3GPGDj+I=
+	t=1732547236; cv=none; b=Eq1O1RIwVW2x6/PA7bAefnvcnfekU53gFyM69evs/ZoIp6nPO3WaN8Hcuw2nV6kbsAH6/TYSnyxM/1IQlqlANKud7PTJdDuN5RcW2e2XriYfJa+AeJxSoC4oVr5qjjb0YnkV/3Q9hLYWbN4Y9i6FAsMJX/EV2tb18LpTuIkSnvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732547166; c=relaxed/simple;
-	bh=LxMztgNW0LfIP5/lVtd+yyO75BoseyhoayRS76gWIVU=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=FMcm9/8TL1ShvRva6DKQIuyO4a8+RL/7IdDrFiaPUNC0XT1j0WToolGrz8aYgUnus2OoEa5pIhwkZAGrmCDZ4lgvs8oTzRatupNkzdDGK61QpSGMi1AQXC2PLOlIjUNMU5cBPY5i67u/4bsMRUgQp6a8u5BJHR65l5+zGb1LzuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=JZpFYDpv; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4669eecd88dso2715151cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 07:06:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1732547160; x=1733151960; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Odb6HwBqhVtcHxBeQOFJ5xJTqDGEvgjNBkYIdkylyWg=;
-        b=JZpFYDpvlAAVhar2x21fKe3lZ3TQf8GCZNVsmj01Yt4E4N/PWUa1l+trdnodSxDHaG
-         S3FanrbH3olK6AbR/uP/sH4JLKa9RdV9z/P5cJbnbODJG4WKAYFxnbKWx2JzXT3Mlxr0
-         0NGNYjEDTzon4QGdg/2Q62Y/X7ISFqFNNVNyM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732547160; x=1733151960;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Odb6HwBqhVtcHxBeQOFJ5xJTqDGEvgjNBkYIdkylyWg=;
-        b=Jptvs/wD5VyapZvOJa3rW2ZIruO7VE7+W5OErqHURsVwicvNKnaIk3lOU9MELfG+SC
-         IqDfERL/Lg3qv6iRVqPonfwJWWQB64wpMMXKDZWfPaG7AqjFPSZPbzHDKdauA4VSSo6h
-         47T0jiJM1bu7M1YT3qGVYWcU1Sot6TPdhSTNPN5cJSXqvg8jveXLGRxsOzu07NZiA9eo
-         2P7PXDVfT46m2qA+YsIkgAkWXw5u6ys6SJT1dpPsCA/1ekIS9oeO1JWl1tTS5sIWhzvq
-         CZozUL7UEhXa5VcAygSUwQfHfOPwCv9j86Tq3JMYvTM125A6babpUUef0hANx0mTXd3M
-         L3dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmaUxBWSLMzqFI9DMpqvyzrRqSMecpOuXVw8Yysgn/UI+w7XM1xWIqngraw+yzAjlrNtkKpf4ETxHdXoM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFX4pbF09IcinKPaHDJhc1mYEg7PIModFUenbeVLkX8ctvsiXd
-	ZnjytyI5aBqjra0qi9Mn+GDtymknWMLFUqyzzTpvq8Tj/aQAWAZj7SSQF08umfdRWd56GjR89zJ
-	CHeMN+l3VJTXvbJEVRVo5rIXdOuZNFbIZQn82fw==
-X-Gm-Gg: ASbGncuMheYx4TUZ2wr8OUalL/EeZP68TcH4YUBp7HjDynxeK126Yw9CE0Xk14GkxRg
-	a5bij2PCW9HFgvLrax1bXiDn7BS4kSK2UJA==
-X-Google-Smtp-Source: AGHT+IGqI/9AP9tR1c34m3O1hWJP5tde7AZlFq0uo8d5BqgaPIdV+Ewn2Nb2TMQwz+/g+1aEM9UFoa/p7NSxI+zaQIA=
-X-Received: by 2002:ac8:5d07:0:b0:458:4a68:7d15 with SMTP id
- d75a77b69052e-4653d627dfcmr176791061cf.44.1732547160336; Mon, 25 Nov 2024
- 07:06:00 -0800 (PST)
+	s=arc-20240116; t=1732547236; c=relaxed/simple;
+	bh=w3HF1fXkN5s5Xp596bClIM0GaJVbiWhD8AYO+V3ziTE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ohonz/xWuOSj0UkSa1N9Oc4XEHGgTFx48Gse14oWTThGq1UOzGol2VzI/1IvFm+hwHbg0W/Bp1VoF8NflgztNOX49o4jJqgR9/EAZrP0Kj975ZNQBzg111++6YMGPkxaGhDQK7YsFpjuIWeb/XBUlKBm2NLsOUIRM7whT7VFTCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=iuV/b5pS; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:883a:fbdb:56c3:2e5a:271e:2a92])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6DB506B5;
+	Mon, 25 Nov 2024 16:06:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732547205;
+	bh=w3HF1fXkN5s5Xp596bClIM0GaJVbiWhD8AYO+V3ziTE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=iuV/b5pS/iIMDv0kB38pWMOsvTh82snInPbpggWCxIREIALHWrrQZBRkLIRC/jgKG
+	 hSl8slSMu2M0I6AXyrZ/S+jL8HTR1gSXz2AsbqQXPctARhXPY34LmwjXcf6C9dHb2x
+	 /aJf1KawPKvssjb/H2f78R2W4RXb6jldhyrS82u8=
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Subject: [PATCH v3 0/3] media: i2c: imx219: Fixes for blanking and pixel
+ rate
+Date: Mon, 25 Nov 2024 20:36:24 +0530
+Message-Id: <20241125-imx219_fixes-v3-0-434fc0b541c8@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 25 Nov 2024 16:05:49 +0100
-Message-ID: <CAJfpegvCr7hBSqU8iqKUCZ3i5wUyiiyfbCtP_NO37OGMA2RVPw@mail.gmail.com>
-Subject: [GIT PULL] fuse update for 6.13
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHCSRGcC/3XMQQ7CIBCF4as0rMXAlGJ15T2MMQNMLYsWA4bUN
+ L27tBsTo8t/Ju+bWaLoKbFTNbNI2ScfxhL1rmK2x/FO3LvSDAQoKeDI/TCBPN46P1HipkO0Chs
+ NQrAyeUTaHmVxuZbufXqG+Nr0LNfrHyhLLrhRjbO1blqj6OwdYQqjCRjd3oaBrV6GjyFBfhlQj
+ IMRukUtCJX4YSzL8gbfJKwk8wAAAA==
+X-Change-ID: 20241029-imx219_fixes-bfaac4a56200
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Jai Luthra <jai.luthra@ideasonboard.com>, 
+ David Plowman <david.plowman@raspberrypi.com>, 
+ Naushir Patuck <naush@raspberrypi.com>, Vinay Varma <varmavinaym@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1515;
+ i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
+ bh=w3HF1fXkN5s5Xp596bClIM0GaJVbiWhD8AYO+V3ziTE=;
+ b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBnRJKTgxR8NUu4OpbHekt+P/rtzBOezQbaxVUs4
+ vvKWLSepZmJAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZ0SSkwAKCRBD3pH5JJpx
+ RQ8TD/9YNO+BL3VG5binPw25EeYLgRQUMTs8jLKKQeJCZ2g/uojdp8/3n16/ivji7zG6tcvEw7k
+ xoN703f1B6lDoXEu1p2SRSg+Z3sBtpnkDAg5jhbHvH+ajGdsqAhFV+ClQyme59rM6byQQKkkVuc
+ nMfFRsQKMHJxjIOa/ogEIA2paH0uYyLfpNu6azb6oZf7AINqUB7SO1AxsWdY3Dz8urmvAMyH5rk
+ kezu7lxQmo6U1qlA9HbPu0KIeoMamlnjZc9UsYkoHDU+V1UiXhPahqmo1BcU1oUiaDfPL0W7qno
+ TR+0FBtgzPNHcoFT055zmF2B8yarcEFSgjVMy02E7klcHEV1mAhDKYHofhvMFUAfGOlB+3MvWyP
+ TMPeKh6DGjMyxk12cguPNK3kcuPLWkyxaG4mcjFpp0a7Y2QqnacuHxiOVj64cws9+VvFjJkEI2K
+ nH8zc1LRf6ZPgNhUr7zrjM0AoIw0TZSJ2FoBytTsYX/bu2HzddgNn8kj+v6zkIYHyXYd/tv5dMN
+ YDMyGAc6KjA17pKqwVdUFUEpXrcyKSDtdbtAnDLhQm+zi8N3bb4GINh58JgNjBuPXvNawZJsXa/
+ i+NNaR0JcnsNBjR5NOakb8ouQBtg2ZYACz+3TMEL2FuJNK3oJLcVzxDe1UljPQiaIJ21AplozYg
+ mRCZs0Ax4HWVkyw==
+X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
+ fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
 
-Hi Linus,
+This series has a few fixes for improving h/v blanking and pixel rate
+reporting for the IMX219 sensor.
 
-Please pull from:
+These patches are picked and modified (and squashed where applicable)
+from the rpi-6.6.y vendor tree.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
-tags/fuse-update-6.13
-
-- Add page -> folio conversions (Joanne Koong, Josef Bacik)
-
-- Allow max size of fuse requests to be configurable with a sysctl
-(Joanne Koong)
-
-- Allow FOPEN_DIRECT_IO to take advantage of async code path (yangyun)
-
-- Fix large kernel reads (like a module load) in virtio_fs (Hou Tao)
-
-- Fix attribute inconsistency in case readdirplus (and plain lookup in
-corner cases) is racing with inode eviction (Zhang Tianci)
-
-- Fix a WARN_ON triggered by virtio_fs (Asahi Lina)
-
-Thanks,
-Miklos
+Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
 ---
+Changes in v3:
+- PATCH 3/3: Calculate binning mode to use instead of hardcoding
+  per-resolution
+- Link to v2: https://lore.kernel.org/r/20241121-imx219_fixes-v2-0-7b068a60ea40@ideasonboard.com
 
-Asahi Lina (1):
-      virtiofs: dax: remove ->writepages() callback
-
-Hou Tao (2):
-      virtiofs: use pages instead of pointer for kernel direct IO
-      virtiofs: use GFP_NOFS when enqueuing request through kworker
-
-Joanne Koong (14):
-      fuse: enable dynamic configuration of fuse max pages limit
-(FUSE_MAX_MAX_PAGES)
-      fuse: support folios in struct fuse_args_pages and fuse_copy_pages()
-      fuse: add support in virtio for requests using folios
-      fuse: convert cuse to use folios
-      fuse: convert readlink to use folios
-      fuse: convert readdir to use folios
-      fuse: convert reads to use folios
-      fuse: convert writes (non-writeback) to use folios
-      fuse: convert ioctls to use folios
-      fuse: convert retrieves to use folios
-      fuse: convert writebacks to use folios
-      mm/writeback: add folio_mark_dirty_lock()
-      fuse: convert direct io to use folios
-      fuse: remove pages for requests and exclusively use folios
-
-Josef Bacik (11):
-      fuse: use fuse_range_is_writeback() instead of iterating pages
-      fuse: convert readahead to use folios
-      fuse: convert fuse_send_write_pages to use folios
-      fuse: convert fuse_fill_write_pages to use folios
-      fuse: convert fuse_page_mkwrite to use folios
-      fuse: use kiocb_modified in buffered write path
-      fuse: convert fuse_do_readpage to use folios
-      fuse: convert fuse_writepage_need_send to take a folio
-      fuse: use the folio based vmstat helpers
-      fuse: convert fuse_retrieve to use folios
-      fuse: convert fuse_notify_store to use folios
-
-Zhang Tianci (1):
-      fuse: check attributes staleness on fuse_iget()
-
-yangyun (1):
-      fuse: remove useless IOCB_DIRECT in fuse_direct_read/write_iter
+Changes in v2:
+- PATCH 1/3: Add R-By from Jacopo, Dave
+- PATCH 2/3:
+    - Keep IMX219_PPL_MIN macro value in hex, matching the datasheet
+    - Fix prev_hts calculation, by moving it before updating pad format
+- PATCH 3/3:
+    - Store binning register values in enum binning_mode directly
+    - Remove unnecessary pixel_rate variable in imx219_init_controls()
+- Link to v1: https://lore.kernel.org/r/20241029-imx219_fixes-v1-0-b45dc3658b4e@ideasonboard.com
 
 ---
- Documentation/admin-guide/sysctl/fs.rst |  10 +
- fs/fuse/Makefile                        |   1 +
- fs/fuse/cuse.c                          |  29 ++-
- fs/fuse/dax.c                           |  11 -
- fs/fuse/dev.c                           |  66 +++--
- fs/fuse/dir.c                           |  37 +--
- fs/fuse/file.c                          | 449 ++++++++++++++++++--------------
- fs/fuse/fuse_i.h                        |  68 +++--
- fs/fuse/inode.c                         |  67 ++++-
- fs/fuse/ioctl.c                         |  35 +--
- fs/fuse/readdir.c                       |  33 +--
- fs/fuse/sysctl.c                        |  40 +++
- fs/fuse/virtio_fs.c                     |  77 +++---
- include/linux/mm.h                      |   1 +
- mm/folio-compat.c                       |   6 +
- mm/page-writeback.c                     |  22 +-
- 16 files changed, 578 insertions(+), 374 deletions(-)
- create mode 100644 fs/fuse/sysctl.c
+Dave Stevenson (1):
+      media: i2c: imx219: make HBLANK r/w to allow longer exposures
+
+David Plowman (1):
+      media: i2c: imx219: Correct the minimum vblanking value
+
+Jai Luthra (1):
+      media: i2c: imx219: Scale the pixel rate for analog binning
+
+ drivers/media/i2c/imx219.c | 159 ++++++++++++++++++++++++++++-----------------
+ 1 file changed, 101 insertions(+), 58 deletions(-)
+---
+base-commit: adc218676eef25575469234709c2d87185ca223a
+change-id: 20241029-imx219_fixes-bfaac4a56200
+
+Best regards,
+-- 
+Jai Luthra <jai.luthra@ideasonboard.com>
+
 
