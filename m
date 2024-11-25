@@ -1,154 +1,203 @@
-Return-Path: <linux-kernel+bounces-420887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 351289D83FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:02:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B404163917
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:02:10 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BF1194AD1;
-	Mon, 25 Nov 2024 11:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lEgjRShr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 925869D83FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:03:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8AF3187849
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 11:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D08028B0AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:03:08 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF61194C86;
+	Mon, 25 Nov 2024 11:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QF8bIsW8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cPxFRDaw";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QF8bIsW8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cPxFRDaw"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EAB1922D3;
+	Mon, 25 Nov 2024 11:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732532520; cv=none; b=s3Y36/WbsBWri97MpIVzAdFnMWVkzuc8ViLDUNtVXRX61+zfVjK4lIynz9prumI83XgWmxupmF4YYzGnctkUz08ywjkriuz+TpDZKySg/sjYASDXx8j9d5QGH7MjMxmBaBrELj73b7g9eKmw+WUx3WjeOmMWgbQ7RJa7nBedtdU=
+	t=1732532583; cv=none; b=rItg6+p+eb8QLGI89PeBDFAp8EGwhh72BAvCVONqxaKnzOvteuCcoIyXxNwJjMv4xl9SxJ1gKhag9Ua7ziqskoj3yccQe13G4CwvuOztZ0+NKXi45P9a/QbnGe8uD4xTloijkUUzsjdMxX/KQwj43lEMU9FhRcSEia+KfN/U2+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732532520; c=relaxed/simple;
-	bh=CP3zKWwbrslisE/UbWI1G3xhio1GOyNDf3EQtEW9i0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=neydlamVbMmWTma/CKC/NusJ3aTwao9RdD9UqoVOX1m9kLp/l/ci3Sq8HakgPReoY/p2qsDmLTrXjJFkAyHLXSvdrN1sJAGhnF8GstugnCdEDGdeucmRGDv140NbqFWhyRO7wPLFBlS3E2pTkC9FCfYZvTmBU232X3xmTGw0hro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lEgjRShr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A394AC4CECE;
-	Mon, 25 Nov 2024 11:01:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732532520;
-	bh=CP3zKWwbrslisE/UbWI1G3xhio1GOyNDf3EQtEW9i0w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lEgjRShrCLRpFY9hOj2srl0D/Jz353RVz93aun0r7PdnqHBRuDAimkumEss5nwiJU
-	 1qFx/oGTtOmRtE4FJlS3pcbe8toQds8KePvjNprSVP2UFWnR4twt3E8YrPLc0qR5xb
-	 5MHCM0iB+rPFCW9t9W9bEu0F3LwObYti3kBNGgJNYDfBU+AloYVuq+qaBq6qgnzSf5
-	 z7hCFWxglFAU0iy/v9aGIgB4PtFVIqR8D9M/LmuniceIVDp2unUjngTPZwDtSKOr8H
-	 beL7uOCloKR5KxjsYSGP4TjQI5D4DT48xWvnS0u934OhljTg2EHmQNRcVEao5bY3S/
-	 paFrpzJ0uydQA==
-Date: Mon, 25 Nov 2024 12:01:20 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Bob Beckett <bob.beckett@collabora.com>
-Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	kernel@collabora.com, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Gwendal Grignou <gwendal@chromium.org>
-Subject: Re: [PATCH] nvme-pci: 512 byte aligned dma pool segment quirk
-Message-ID: <Z0RZAKgUA7jS1U_m@ryzen>
-References: <20241112195053.3939762-1-bob.beckett@collabora.com>
+	s=arc-20240116; t=1732532583; c=relaxed/simple;
+	bh=EC8OTNAFrDQnBJNrWVsMD1fjNs6MD0EWoAQPeINzPco=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PkjFMUvRz5jG1CIqsXseiAyeNGLdnhMdAG3HRoNrGVuvDf50NzmyYpya8fidiRx8eWA2BSaaWJ4S6CIFICDXV70ldXToK6KhP+SxVaE26H0pJYbNe1BBF91uCAF/iuU91Pawi8XMSlrGcqm7+6SIsfd7pEo3ueWirYaOQ+Cfhy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QF8bIsW8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cPxFRDaw; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QF8bIsW8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cPxFRDaw; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 49EDE1F381;
+	Mon, 25 Nov 2024 11:02:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732532579; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Ar+9cLAWulcXxRtGsFXKmSM16oo5C1sr63D5/gDwuFU=;
+	b=QF8bIsW8FP8ccdRuQdq/p+Mk0r7rKRfZBge6qR79GZrIa6Z6gYRsVaDthcKm/NaMZqEjBT
+	pHX588FJezA0X1PA2syL4ujyL+bkGGlCO+oczy7RuI8Q4/S9AI4r86SU7sNbi0QAXgZsZB
+	aCqcG48Q6h09Yj9uloMI6+O12SBpenY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732532579;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Ar+9cLAWulcXxRtGsFXKmSM16oo5C1sr63D5/gDwuFU=;
+	b=cPxFRDaw1TAofA3iopLEU926TpIhH4oZwFMIYCrgNHyf3Ucr8ngTZej3HTICFbR6eU2ciV
+	7pp541nAtX6RB6Aw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732532579; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Ar+9cLAWulcXxRtGsFXKmSM16oo5C1sr63D5/gDwuFU=;
+	b=QF8bIsW8FP8ccdRuQdq/p+Mk0r7rKRfZBge6qR79GZrIa6Z6gYRsVaDthcKm/NaMZqEjBT
+	pHX588FJezA0X1PA2syL4ujyL+bkGGlCO+oczy7RuI8Q4/S9AI4r86SU7sNbi0QAXgZsZB
+	aCqcG48Q6h09Yj9uloMI6+O12SBpenY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732532579;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Ar+9cLAWulcXxRtGsFXKmSM16oo5C1sr63D5/gDwuFU=;
+	b=cPxFRDaw1TAofA3iopLEU926TpIhH4oZwFMIYCrgNHyf3Ucr8ngTZej3HTICFbR6eU2ciV
+	7pp541nAtX6RB6Aw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 25FE2137D4;
+	Mon, 25 Nov 2024 11:02:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id E0vqCGNZRGf3AgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 25 Nov 2024 11:02:59 +0000
+Message-ID: <a4bd2aef-6402-49e0-9ad6-f353c5200ee7@suse.cz>
+Date: Mon, 25 Nov 2024 12:02:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112195053.3939762-1-bob.beckett@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 2/6] mm/slub: add sheaf support for batching
+ kfree_rcu() operations
+Content-Language: en-US
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter
+ <cl@linux.com>, David Rientjes <rientjes@google.com>,
+ Pekka Enberg <penberg@kernel.org>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Matthew Wilcox <willy@infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ maple-tree@lists.infradead.org
+References: <20241112-slub-percpu-caches-v1-0-ddc0bdc27e05@suse.cz>
+ <20241112-slub-percpu-caches-v1-2-ddc0bdc27e05@suse.cz>
+ <ZzYsBu_rJWSAcAYf@pc636> <cc7f24b8-4de5-4023-b40b-5f62287aafe8@suse.cz>
+ <Zz3YDI4Bb04opI2d@pc636>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <Zz3YDI4Bb04opI2d@pc636>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[google.com,oracle.com,linux.com,kernel.org,lge.com,linux.dev,gmail.com,infradead.org,kvack.org,vger.kernel.org,lists.infradead.org];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TAGGED_RCPT(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-On Tue, Nov 12, 2024 at 07:50:00PM +0000, Bob Beckett wrote:
-> From: Robert Beckett <bob.beckett@collabora.com>
-> 
-> We initially put in a quick fix of limiting the queue depth to 1
-> as experimentation showed that it fixed data corruption on 64GB
-> steamdecks.
-> 
-> After further experimentation, it appears that the corruption
-> is fixed by aligning the small dma pool segments to 512 bytes.
-> Testing via desync image verification shows that it now passes
-> thousands of verification loops, where previously
-> it never managed above 7.
-> 
-> Currently it is not known why this fixes the corruption.
-> Perhaps it is doing something nasty like using an mmc page
-> as a cache for the prp lists (mmc min. page size is 512 bytes)
-> and not invalidating properly, so that the dma pool change to
-> treats segment list as a stack ends up giving a previous
-> segment in the same cached page.
-> 
-> This fixes the previous queue depth limitation as it fixes
-> the corruption without incurring a 37% tested performance
-> degredation.
-> 
-> Fixes: 83bdfcbdbe5d ("nvme-pci: qdepth 1 quirk")
-> Signed-off-by: Robert Beckett <bob.beckett@collabora.com>
-> ---
->  drivers/nvme/host/nvme.h | 5 +++++
->  drivers/nvme/host/pci.c  | 6 +++---
->  2 files changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-> index 093cb423f536..61bba5513de0 100644
-> --- a/drivers/nvme/host/nvme.h
-> +++ b/drivers/nvme/host/nvme.h
-> @@ -173,6 +173,11 @@ enum nvme_quirks {
->  	 * MSI (but not MSI-X) interrupts are broken and never fire.
->  	 */
->  	NVME_QUIRK_BROKEN_MSI			= (1 << 21),
-> +
-> +	/*
-> +	 * Align dma pool segment size to 512 bytes
-> +	 */
-> +	NVME_QUIRK_DMAPOOL_ALIGN_512		= (1 << 22),
->  };
->  
->  /*
-> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> index 4b9fda0b1d9a..6fcd3bb413c4 100644
-> --- a/drivers/nvme/host/pci.c
-> +++ b/drivers/nvme/host/pci.c
-> @@ -2700,8 +2700,8 @@ static int nvme_setup_prp_pools(struct nvme_dev *dev)
->  		return -ENOMEM;
->  
->  	/* Optimisation for I/Os between 4k and 128k */
-> -	dev->prp_small_pool = dma_pool_create("prp list 256", dev->dev,
-> -						256, 256, 0);
-> +	dev->prp_small_pool = dma_pool_create("prp list 256", dev->dev,256,
-> +				       dev->ctrl.quirks & NVME_QUIRK_DMAPOOL_ALIGN_512 ? 512 : 256, 0);
->  	if (!dev->prp_small_pool) {
->  		dma_pool_destroy(dev->prp_page_pool);
->  		return -ENOMEM;
-> @@ -3449,7 +3449,7 @@ static const struct pci_device_id nvme_id_table[] = {
->  	{ PCI_VDEVICE(REDHAT, 0x0010),	/* Qemu emulated controller */
->  		.driver_data = NVME_QUIRK_BOGUS_NID, },
->  	{ PCI_DEVICE(0x1217, 0x8760), /* O2 Micro 64GB Steam Deck */
-> -		.driver_data = NVME_QUIRK_QDEPTH_ONE },
-> +		.driver_data = NVME_QUIRK_DMAPOOL_ALIGN_512, },
->  	{ PCI_DEVICE(0x126f, 0x2262),	/* Silicon Motion generic */
->  		.driver_data = NVME_QUIRK_NO_DEEPEST_PS |
->  				NVME_QUIRK_BOGUS_NID, },
-> -- 
-> 2.45.2
-> 
-> 
+On 11/20/24 13:37, Uladzislau Rezki wrote:
+> Thank you. Let me try to start moving it into mm/. I am thinking to place
+> it to the slab_common.c file. I am not sure if it makes sense to have a
+> dedicated file name for this purpose.
 
-+CC: Gwendal
+Yeah sounds good. slub.c is becoming rather large and this should not
+interact with SLUB internals heavily anyway, slab_common.c makes sense.
+Thanks!
 
-Since he sent out a patch to revert the original QD=1 quirk,
-claiming that the quirk wasn't needed when using the same
-NVMe to eMMC bridge with another eMMC device.
+> Anyway, share your view if you want to add something. Otherwise i can
+> proceed with that process.
+> 
+> --
+> Uladzislau Rezki
 
-If the quirk is really per eMMC device (from reading about this
-problem, it sure sounds like a controller issue...), but if this
-problem is really eMMC device related, then probably the quirk
-should be applied only for certain eMMC devices instead.
-
-
-Kind regards,
-Niklas
 
