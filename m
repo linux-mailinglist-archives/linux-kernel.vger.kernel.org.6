@@ -1,117 +1,105 @@
-Return-Path: <linux-kernel+bounces-421522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B00029D8C66
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:48:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 348D09D8C62
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:45:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16AEFB2B49F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:45:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2E1D281166
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23961BBBDD;
-	Mon, 25 Nov 2024 18:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B771B983E;
+	Mon, 25 Nov 2024 18:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RFbQKNF/"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="AA+RMvFl"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C67B1B87F7
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 18:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732560294; cv=none; b=s8wU2B6HFe81KsAeCDasAkINP9MjmtNxgFk3noj2BfpmFfEF7GSgkoeD2+1MDbwZatSo+BBoESt3xLytFV7jdtqUrYDLg5PDIwHx2wk3InxMcZKtHJXGkj4k9AG3i/Vu6RqEGNkqyXcowFLAjxv+Z9xXxP370bqxI+xos/Gj75o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732560294; c=relaxed/simple;
-	bh=Q97WxV+deHkaj+EQZVZEyIuB9CBgjeEs11MlkDNh6d4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=POfxkhMdrQHD377jEGzr8ROLMy6g2Kvd4hcy2bTKmfaISpKLLjUOsu6yNmEpDe+JpCgqpgWUgwtI4FYSZVy6WAe8isEkzhr3T5Myw3EpFV9yojQ+tyBDbanVOIHR/BvTg8OZekF+VryEPoxhhOcvW3YK8K9ndgXviloDHGpDWJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dawidn.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RFbQKNF/; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dawidn.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-434a467e970so1891855e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 10:44:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732560291; x=1733165091; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KtpXYqsS0NdiYaBAh0AIOimkoXUPZvaUqei6YAtjyX8=;
-        b=RFbQKNF/Ry1jNF8lzaT5UtqBU9akKhbW1/W+9UokaUopZFclQyaiGgJ+xL4WleUmP1
-         TUYaWvIOz/xVvdXoKUhazmFuzqc7lJtGRgO/CG73Icflie//SNda6LOcJQtSFN0AFAXA
-         Tk6YxHToDBpX85y0AylJhDnBLCasB/QBNnfjPYBFmOFJZY2isFNeM5kv2ExYlD/+7t+r
-         az3eLyD+wUaPPwCp4LVXOF21GoXzkTRbz0sms1hVSVQX6GPEabNZEUMKouRI6/OygjQ0
-         /0Np7MFT2R4yxEn1DFXmdfYd0OgQrHWS9m0xCLdbH9lpILKXUPPwoJHYeMtyQXoBf2iN
-         gg6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732560291; x=1733165091;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KtpXYqsS0NdiYaBAh0AIOimkoXUPZvaUqei6YAtjyX8=;
-        b=qX1Svn/qQUghcY/9emtdWtAyz6olGlN2VwzsH0XrYiFuCad2lXwLfFdE/cFcnXNF+W
-         p5lutD5M/7qNJMO52DqEoHMl3b8YnnC4CoZfA2+Ku1aJuhns+mlMfMlGJTSvJfsi63p7
-         USkNJFUPE+VSum36xGg+nbb5u+ROOa8TwjgwWhH7yWGj64ZLVf7P86jeUHrYx51OW5WH
-         x5K8d3ZLpc9Ul5fSnm+TYJIbzF/s1lp/w/gFCWOjmxoXMeKhEav5xejELkLiPi/CcyLI
-         8npASttxkogcbPDwthoWIpyue8PfrMzdLKCH15BHz7pxdf28Lig1Ea5KqVqlsYbjm23w
-         dpow==
-X-Forwarded-Encrypted: i=1; AJvYcCXoj06yZIQLfx1rcE8Is5lywmAAMu4rqayBTNW/EGNN2/cOsypYvIiio+WVMo1Z4zBin+SV0kFawRQW07g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLmG/bBjeC1GUcaqBGwbZ6fg3zxqr+ajCbSHqQANqGReECMIFR
-	PxIUQDOJ5UOIQjf6lyrRe85DrVgEutpReollBS/2UDCpj9C0tPQtnOXm0Vt2QMAArR2Fdh+IBDg
-	krA==
-X-Google-Smtp-Source: AGHT+IFqAgWsc3cSfksqwNnmQF3h9k00tU70CrRLdR8LZRHhlAR0EBWKX5d2hqziGMkGIQsHG3qViO4UmD0=
-X-Received: from wrbfx7.prod.google.com ([2002:a05:6000:2d07:b0:382:4faa:76a])
- (user=dawidn job=prod-delivery.src-stubby-dispatcher) by 2002:a5d:6487:0:b0:382:4725:7612
- with SMTP id ffacd0b85a97d-38260b4d4f1mr10781274f8f.4.1732560290920; Mon, 25
- Nov 2024 10:44:50 -0800 (PST)
-Date: Mon, 25 Nov 2024 18:44:46 +0000
-In-Reply-To: <20241125184446.1040187-1-dawidn@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4EA1B87F9
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 18:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732560298; cv=pass; b=aSOriaNTCeAu8smGdhbaNkVxmYBxB4w2OY/HodrLIKOd6gvr8DvguORcbAgks3L0HDyREG84JK3YoVvBXUXgYZTK2fUhHy6xhY94FEM8gmgNeEN9rPssCA4Hp4PjHx2ZOI3gYjdgfOpbJQn4uZ+Ga9Iup2rAU11c0sp8L0e2+Vg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732560298; c=relaxed/simple;
+	bh=98971YftLtogfAjqCobFcMvMek8cNjuZQQjyOQpbSeY=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=NhJVz2QDp3HxEnZndEvY2tH0DxEpYrcktNlQyjHqBZt1kvJN6X7rkeywJwUUfcEPjNXat+5NrPD4GPQFaiPdHBo2gJC+fG9W0lVsOklvbM8khdaa2s986157pnKNbzINaj8L6llJFLP2eqb1rGUNEhDvNZg0UWf6O0rGRGC2zCk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=AA+RMvFl; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1732560292; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=hGWx4TzRPgP6AkJUFy4fyun1NIQEmwle/3dktbPpF1sAXufE3DhU8y/NUVDOBYMjFKeXjH6wPrzdo8t2EhhUN1zaKWNeaYS6VcxPws18ouh69h9BwMCqsJKW3xQHMlpAaJxUpnVraCdmSSOK5Bjgqamko0FeiaU9qiLhyM0ilgc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1732560292; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=mPRmRCWPFe8ce+yKDjvgaOMgt7zw/rnMu5Mp1rD7p5Q=; 
+	b=labroysQFaMEhQqaEvSG4RB5BVTPJyPfxSQdPY3qAF8Ij2PSlcRHoUm6wXMZODmXhbZWGy5MuV0NQvH7Mf3+26OiP48vseZe+V9yiyrlLL1pWQrxfOlEZ50Gv/K+rPenbRghzplr+UoGf1P8DWQA5XUHeSOnZikivaiH6Ie2d3k=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732560292;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=mPRmRCWPFe8ce+yKDjvgaOMgt7zw/rnMu5Mp1rD7p5Q=;
+	b=AA+RMvFl4xnYGlEQ1ZTpgmgNlkZHtWxeI3UVLCt3lgzfHnpX/O1xBpPsxRIArPsI
+	IfZcQvKrfD2hIJhgE8R3oQyfSmQCmgF5PIBh+/BKKU/I0gYvL+TGfp2bZCZ+uK9NmCX
+	QoU/D+vPqnoMriLriIpsPBxszQQJQ+dj097xRiPc=
+Received: by mx.zohomail.com with SMTPS id 1732560290720156.73913293865894;
+	Mon, 25 Nov 2024 10:44:50 -0800 (PST)
+Message-ID: <20a1d49a-1f5d-4d3d-b59d-29b9791b72bd@collabora.com>
+Date: Mon, 25 Nov 2024 23:44:46 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241125184446.1040187-1-dawidn@google.com>
-X-Mailer: git-send-email 2.47.0.371.ga323438b13-goog
-Message-ID: <20241125184446.1040187-2-dawidn@google.com>
-Subject: [PATCH 2/2] platform/chrome: cros_ec_proto: remove unnecessary retries
-From: Dawid Niedzwiecki <dawidn@google.com>
-To: Tzung-Bi Shih <tzungbi@kernel.org>, Benson Leung <bleung@chromium.org>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	chromeos-krk-upstreaming@google.com, Dawid Niedzwiecki <dawidn@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, Linux kernel <linux-kernel@vger.kernel.org>
+Subject: Re: userfaultfd: two-step UFFDIO_API always gives -EINVAL
+To: stsp <stsp2@yandex.ru>, Peter Xu <peterx@redhat.com>
+References: <2d35e5f7-2edc-4ef0-b71b-82186c0627b0@yandex.ru>
+ <Z0Se4BuVfqwjeCWV@x1n> <b0818813-5a4c-4621-9810-dc7443a23dd1@yandex.ru>
+ <Z0Ssq15MQd3rimBr@x1n> <da978e8c-2a72-4b7b-ae67-41e6ff0d5089@yandex.ru>
+ <Z0SwOILi4R4g9JBa@x1n> <9b68a811-ffed-4595-83a6-0ef78a7de806@yandex.ru>
+ <Z0S3isgc-QlEF7oW@x1n> <4689f014-2885-42b9-91a4-ff8b8133599f@yandex.ru>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <4689f014-2885-42b9-91a4-ff8b8133599f@yandex.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-Remove the retry of the get protocol info command. It is not needed
-anymore, because RWSIG continue command is send before start of the
-probing. That assures the EC device is ready in RW and there is no
-need to try again because FPMCU is not fully booted.
+On 11/25/24 11:01 PM, stsp wrote:
+> 25.11.2024 20:44, Peter Xu пишет:
+>> Apps who tracks snapshots needs the unmodified pages before being written.
+>> Those cannot rely on kernel resolution because it needs more than "if the
+>> page is written" - it also needs the page data before being written.
+> Say I am writing a frame grabber
+> (not exactly, but very close to).
+> I monitor the video buffer of another
+> process, and "snapshot" it with some
+> frequency. I only need to know what
+> pages were modified, to reduce the
+> bandwidth to an absolute minimum,
+> and if the process is not playing - then
+> to not grab anything until it resumes.
+> UFFD_FEATURE_PAGEFAULT_FLAG_WP
+> works quite well for me already, but
+> I envision a huge boost with
+> UFFD_FEATURE_WP_ASYNC.
+> What would you suggest for that usage
+> scenario?
+The UFFD_FEATURE_WP_ASYNC was designed for exactly this case.
+The IOCTL will return you the modified pages. An example of usage
+can be found in selftest/mm/pagemap_ioctl.c.
 
-Signed-off-by: Dawid Niedzwiecki <dawidn@google.com>
----
- drivers/platform/chrome/cros_ec_proto.c | 9 ---------
- 1 file changed, 9 deletions(-)
-
-diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
-index 4bd17ddefbd6..c7bb9ac87da8 100644
---- a/drivers/platform/chrome/cros_ec_proto.c
-+++ b/drivers/platform/chrome/cros_ec_proto.c
-@@ -366,15 +366,6 @@ static int cros_ec_get_proto_info(struct cros_ec_device *ec_dev, int devidx)
- 	msg->insize = sizeof(*info);
- 
- 	ret = cros_ec_send_command(ec_dev, msg);
--	/*
--	 * Send command once again when timeout occurred.
--	 * Fingerprint MCU (FPMCU) is restarted during system boot which
--	 * introduces small window in which FPMCU won't respond for any
--	 * messages sent by kernel. There is no need to wait before next
--	 * attempt because we waited at least EC_MSG_DEADLINE_MS.
--	 */
--	if (ret == -ETIMEDOUT)
--		ret = cros_ec_send_command(ec_dev, msg);
- 
- 	if (ret < 0) {
- 		dev_dbg(ec_dev->dev,
 -- 
-2.47.0.371.ga323438b13-goog
+BR,
+Muhammad Usama Anjum
 
 
