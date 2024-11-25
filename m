@@ -1,270 +1,231 @@
-Return-Path: <linux-kernel+bounces-421312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67F439D897C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:38:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF88F168A16
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:38:39 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5451B4126;
-	Mon, 25 Nov 2024 15:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kiZv00Gs";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="lr40ago+"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E70D89D897F
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:39:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B6714E2E8;
-	Mon, 25 Nov 2024 15:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732549115; cv=fail; b=lfEkdPW+ol024VPKM7BUxpLc/IE1lZ1+RHaqBg8yOGPQsViA96zEByy0sClhnTgqDfPeZNOsjd7Jq33wWiktgznENjwMG9iZjGlOp5oLL3aTctxMELN7YTEsKkHUADMg0D17+ACPKpL21no8Phkj6/F97qxArwoQBbBuMWwk3Tc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732549115; c=relaxed/simple;
-	bh=Qc7/+xDfVufbDfuFRAevAZrTvYbzg8O8PBTkiyg37SE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=FhlHopWAP/MWE27M9K6vyGlVIWCNWpxXR95QhiQ0vuGJ8aWJi2kb2Bdv30evxveCOCOsqQFg4HOzzrzoI8mvod18z5lc/ObDrqgYv7JpDxoANrFPfeQdKmHvmkKhYei7gEMNtvrkBPMw3efNgGM/WdE8yx4Q2zqIzgU196JRv9E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=kiZv00Gs; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=lr40ago+; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APFUFbW032627;
-	Mon, 25 Nov 2024 15:38:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=rg07o/TxcV/LmeS0Ak
-	upp8HB1+qacQxnF7jM8YAne4E=; b=kiZv00GshhhRPrBu9xy6e2DU/6acJZ5PfY
-	AAXUD3dtQZIQ2WLtP8pOeMMCsfKaFpwqS1PScb0sbgHk1+sEWslRJYVxNXfuW0/m
-	2GB22X+gM1bqyDH2vXcXn54yFnj2z1R+VL9FOBNTZBIhaqcgA4jD0RtpdCuCA67b
-	om667RiqPoQI+/Beb/dNXZynSXKeiO2LaT9u/oyD3GyI3Z/CRiBwXQqB241uZkbS
-	Y55rAmVsmoRxx4PnxsYT6AKbFR9hfU6iX+1PNf0/P9yfK8IoFaJgpzGOAgZF2LnY
-	Wq2PPbsQO0wlHxp4vrjh+FUNlk/h3FZyyc19WsLeQDAAryMkPgTQ==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43385ukdgy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 25 Nov 2024 15:38:26 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4APEkQOY023446;
-	Mon, 25 Nov 2024 15:38:21 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2176.outbound.protection.outlook.com [104.47.57.176])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4335g7nu64-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 25 Nov 2024 15:38:21 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=H0Qs4YEWXB8zhOMXbs/76Zo2pBJ0imfhEX0tLfKInu/MOasecboF0lXkjsZ2SOd3SleyONhn8GOE4gNzcpGOVBYLVQeVC+nqZ9aXSOHNNg0bzMj0f2DR26jKW4TOOCOUpjz4OnYSxH27MjFWa8wp5WMoWjjbuaFRC5t5PWyt6Z1LOvbGBGNafrYLgj6tL7vHaKHDmR3AGHhCvPJhQhVa7EooxRcuoDNjWGw4W/v+bJy2cQ+CFZ56+p7m6fuSsrlgx+YMPqe9zyy6cfi/HiDC+uDHnXz9PqDd9Ne/clqRGRzaDavxyCpl8+a6oWDgu441v7I8vFPudZHyZIHGmL2aWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rg07o/TxcV/LmeS0Akupp8HB1+qacQxnF7jM8YAne4E=;
- b=wQCE9RQ4RJshjvan5Rb/0RvAi10AcN0awsS5OaKXhQBSPhsEQrCCl4lpwNEv1w7/gD81M0BHBPokA1ZFpNgdHafPxXmkD6qGLX4M5eJz4ZH8fmbhLYBqTta+ZtAVfLnSsA7+J0w6CDnRuGJGYRqjksSAliQOuVA0wqcgBg3xkghxP0cW9CGcXAUSqXDECegJqQ8ikDOBervsS1qyaNuKHPJlliI621Rf0QrNFnxK/d8kH+LzWTNphL5zX7RewmC7DwF6zXk6ozWIGTN+ftY/L4tRxH6s/z6pMnqLF+16PPkH3uZKmmp0Ol0g06Vyr7gJ0htxAw83zIy2PTmQlQCMkg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A20ED2859EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:38:58 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235131B395F;
+	Mon, 25 Nov 2024 15:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KG/QFD08"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E34B1B4122;
+	Mon, 25 Nov 2024 15:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732549133; cv=none; b=hlN+dLNxE3Bj7Wvavg2ZSTe0tgTIo9t66nfOTs99TFGzxFo8NlmCId79+sVvGkcvZO/cx4gVyCKg/k6l5bT2+o1st4gTxnU69/YgSGLzIml5lhnegDnoLf9y7nZVheVIDI2+9yBWfRoK/Rz3GPtx79HulWAyiOpplmmg50vCNWs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732549133; c=relaxed/simple;
+	bh=Sme9ditUgQHkaJXoxj2JfK2GPTydrcxm+3DpKcOeTG4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QkjAVBCN3ocEUfXT74dIg7LeoR9cXFanr7NvcKBqxYB/fkrNP71ytTpEwvkSN1Z0Bk2DM0TsjlWFGXb2zLyvrcN5F2PzA+HGiEX9mZouHOxRTWUIUSX7DNgujgemUpFS6um6pXHE4sNFaeMa604qpdd//qeBTHOhZyv0rJ5ZyUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KG/QFD08; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7e6d04f74faso3190124a12.1;
+        Mon, 25 Nov 2024 07:38:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rg07o/TxcV/LmeS0Akupp8HB1+qacQxnF7jM8YAne4E=;
- b=lr40ago+9TRcKZcolV9bLaDHitel47xdxvVxuSmgN13eMUh7TxUTsIyD5bBWhaJv1B2YmMQKfmDg/mTATNbXkKLsi2YlSQStOX93fg+sYY4ltejVRfdHJ3b3A8LOpFgwSqmrGsFh7ZIWVTE4KEprFDrS0JbCoH5ttRLWctTDRPc=
-Received: from DS7PR10MB5134.namprd10.prod.outlook.com (2603:10b6:5:3a1::23)
- by MN2PR10MB4159.namprd10.prod.outlook.com (2603:10b6:208:1d7::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.21; Mon, 25 Nov
- 2024 15:37:56 +0000
-Received: from DS7PR10MB5134.namprd10.prod.outlook.com
- ([fe80::39b2:9b47:123b:fc63]) by DS7PR10MB5134.namprd10.prod.outlook.com
- ([fe80::39b2:9b47:123b:fc63%5]) with mapi id 15.20.8182.019; Mon, 25 Nov 2024
- 15:37:56 +0000
-Date: Mon, 25 Nov 2024 10:37:53 -0500
-From: Chuck Lever <chuck.lever@oracle.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>, Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 00/29] cred: rework {override,revert}_creds()
-Message-ID: <Z0SZ0T3UovP+gOwV@tissot.1015granger.net>
-References: <20241125-work-cred-v2-0-68b9d38bb5b2@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241125-work-cred-v2-0-68b9d38bb5b2@kernel.org>
-X-ClientProxiedBy: CH3P220CA0024.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:610:1e8::30) To DS7PR10MB5134.namprd10.prod.outlook.com
- (2603:10b6:5:3a1::23)
+        d=gmail.com; s=20230601; t=1732549131; x=1733153931; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=7HMd93l2XhUd6boAHs8/96tfHEGlnZQLIbe3woCtHLI=;
+        b=KG/QFD08wxFS67QSKwx/1Myz8hiEYIiPxnPHZkJLrm23dneOhby9LLVC/hiCtd+DOs
+         9X98dt/O/CTePujlABvzao4cDkgoVYwHzUBPu3YqjunNOM1gfFuWiVqmqJklz9Fb5g/R
+         SC6L5OpWVfkwd64rH3Eynq033VM232uLLJ0q8p0saHYBrU20ZglMSQtmQtLuBHAYhwsZ
+         BgQ+A+vyY7aGVOeJYKGzhL3WAMUvNx5vXXdwpe5pJ5GmmrMboNcHAdVOG9ckWziQUljV
+         RsTAwIs2E64ZCj3lKxepA6NLXlviyEE2x6EGCxu1HF2GBOps/TcMzZt5TKxrUK3FjJ8k
+         c8cQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732549131; x=1733153931;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7HMd93l2XhUd6boAHs8/96tfHEGlnZQLIbe3woCtHLI=;
+        b=b1RtcP8X/2MuEhWZ9b2fdh5hX8w27IwS7CjPt+lXSToSADA5HtHsczslfyMwaM5Q1n
+         mvRRnUkPJBEfm7ngr5Stbm6Z3lzwsUlE2hLChd7vLNhOcGpkaSyLf7vOBmXXt9BwlGGy
+         cFvCueC1KMurS6RAbK4bzC+shVbbzrn+U/gbQ+Cvw30pKlaqSC1QwRL4R7gsEVxAWFY0
+         gyNcl+8xTJf5cQC338/OUljz4qKKpdPoVUEWnZUxaTr99w7ATuRExtCAnGMxbvYCY3CF
+         TwAlqsJBUSWmhPNcW4G9OM2FSx5BI1kFVjRlPjnVbNwg02La7nU3lQ6WF8HPgLpuwM74
+         xHBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrQq12PSfsjGTwstxxTHt4o5jH/CQ541cgAGZui1HXFRfNkmu1JhqV+yajxoxK+sk1RlpIyKqeFI1kq3I4@vger.kernel.org, AJvYcCWdl+gs/Aq5BEB96Nlk+QGyeTo+tLU1KEwe30YFj2lZ2ijGnD2jAzsxCb3rMniGIpLYD8NEYYfgc7aoqA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyf1djwvyfOgDzcqWAIfLK5fLn+AwsSmPK0ryyFnU9UYvl/jENa
+	bQd5pEcloY4FU+LCZJzIVk1kmPqTPtxZxK2S38arIuFhYyNn01jk
+X-Gm-Gg: ASbGncuNZJX/n8CLOAX01oy/EhI137wF991TAn5YafMjXkF8P2f6eIN3BQEE0dxr+Gt
+	StFxOHJ24puNruyEuNKbaafToo1bMe90k70PiHdVfnKfGLnBjF5fz6POHrmrg6/FXHGxrJp+g5E
+	JScE8DzU5TyLfqH+aYDQuL4t4kUscEt/vTUfP3dNx/S4rtPnslJHU7xX8vVAnovf8v9jTm6373i
+	SLd/+5Lic7PgF/TXowO6v+sdSUpUdzcmgAhYHD92651R07jjq3g5aX5kdAXpMPZcJDGrKKhwH/F
+	1aom9lvWW41iNxU8dnmBCfw=
+X-Google-Smtp-Source: AGHT+IH16T9jkJyFrSeZ/PuvFVS+40nU9LO1WInhBICnYXlB4w+IbMoUSn3QOAMMeWDTwVfDWF20fA==
+X-Received: by 2002:a17:903:41c2:b0:20c:5d5a:af6f with SMTP id d9443c01a7336-2129fe288bcmr186057005ad.10.1732549130782;
+        Mon, 25 Nov 2024 07:38:50 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dba14fbsm66566835ad.81.2024.11.25.07.38.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 07:38:50 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <370185ed-4418-4c84-a7dc-3faa56edade2@roeck-us.net>
+Date: Mon, 25 Nov 2024 07:38:48 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR10MB5134:EE_|MN2PR10MB4159:EE_
-X-MS-Office365-Filtering-Correlation-Id: 91917889-176f-4274-f7d3-08dd0d672224
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9vOLFhWAuggNJ1rdvD9Q+5EO1v2tzeGPCIQas7ydfhqqDckhZVcKUiXBt2j1?=
- =?us-ascii?Q?8E70J7dqK4kwuDfZTIaCyyOpmNp6gC2mdJ9lUGZp47yZa1ffRKF2WoIS15/t?=
- =?us-ascii?Q?4L0jIJ/SSHLZTjv6J2Bwr+xA3Em89rq3Vt68gkhH9VnDM8GmAsu6LlrH9OU0?=
- =?us-ascii?Q?KHNVTWWOufDpVWgfUa+8gwI96gpFO8cXNxIH5D30dNygLMjrDy8YeIK1j4jS?=
- =?us-ascii?Q?hIcCKgdoHRWjey6Lu+Ldv+XFmTE6jE4Rn9XHbrqmRZVNJZMwmsTqRKp3UE1w?=
- =?us-ascii?Q?UkwlzDy93Ih8jauN+8qWVMXwoZp6IuT+ROjcUqKVAzwOnVHhcmtLEuHTf+7+?=
- =?us-ascii?Q?fMK2EeJ/trVbMeUN47P6HqB9hOWVl56PS50QpRsgXS+c4hJaXYIGRlGEoE+R?=
- =?us-ascii?Q?OGplKhQ3oLsI+vsPA+ziXGjCwLLZxWoSSAMSzd/OtSO0oe5emkoZegosO393?=
- =?us-ascii?Q?Bw4zaQVJJju7wV+JpC8UL+l8DkQI0M9T52kOvVH/HSgpBFdT0fuTbwaJ3gEz?=
- =?us-ascii?Q?gRbF92KW8ByGqo+Bu9VKKBL7EbVi2otjB3ZPn7A1zdjN3S0t5+tNe6JNL13o?=
- =?us-ascii?Q?y5bV6sDZEidV17/uGPBFUOGXuwG6NmOXeZii3g+HUFWV3nIOqic8l0XTVdX8?=
- =?us-ascii?Q?Bvc6dwcqCsQ34S2GtD+j8gc9vmycdrtPigA0TIO+0KQJm7C8ptI4k6GBfNRE?=
- =?us-ascii?Q?anab7az8xNF+U9CwmWIS/yqfIuLkSyTeyQT3e9Y0eA9WBoD6KrtGF0McEIvl?=
- =?us-ascii?Q?sce2YQ2/fDROPt7gxLxfqbYhxRVK5Y2XdyteJ46h07KO+RlpI/MU/+YBDc+P?=
- =?us-ascii?Q?ewYT4DYt1kwRZ7FiK+unYmo0vuyKKtbZ5/l8FkMyo+yI7NEWuY4Km0O34dZV?=
- =?us-ascii?Q?qbfjlJ0K4pSyWgfnbvZ//CI417518YQ8hjBDHQYIY2AnwuciuL9B7gTPu49G?=
- =?us-ascii?Q?fwFSU7+bYcJejbDPOGbtGgRlAqoMiLwhE9qsYC9tB2r+V7n/nVAD2iBTmzfk?=
- =?us-ascii?Q?9cLXT2mWTpw9+por/lBOXDokiNCG5QShmBTQjieQMwtAnXXQyhd436XWNlJX?=
- =?us-ascii?Q?e4dA4lAFdYHoRnavvsaSbL+wqr+fTPwHP9Wbwf2QUpqDI11GKtGH9gHcJLQf?=
- =?us-ascii?Q?Keg8nU/vNnaRUKAg2tCtDMcZCTzoZTZgNibEyYMmO2K0pRGA6J4FTSmbaUO9?=
- =?us-ascii?Q?wSSKt8lSQejfITKGWkxSF4VBbZgQNpUFAEr8AIuYIOmvDziHqWBB7/bJmAki?=
- =?us-ascii?Q?/p625pYwsP1lnwjv9maEX/qmRzk4Ip4bfqFst5JGhXlbwcqq1i4xAT2SVIVK?=
- =?us-ascii?Q?y8c=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR10MB5134.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?slxaNaQjTmknx6kBCJcPlXh6Z3Ov1xpa17o4HI+5Hu4RgYZAt3Tkue7Nx+/X?=
- =?us-ascii?Q?RUqNYn+HMNS2wUcLO2Z/20M/Ea6/KHkz6hmutU/7eCnG9Dir7QRw0ouEpQAl?=
- =?us-ascii?Q?jUzUygJlmXwP1VktYRyBFmir2qP2nruXaNGWx8FjJ11GFB4IhU2u/L5G6ILI?=
- =?us-ascii?Q?O7GQY3sRv1XCABCVxoIyXUGqqdggmmXdt5yXo5dPG8KsVbAxY5n+XQjX6f/N?=
- =?us-ascii?Q?ZTg8J1VG3ZlVRw3DsKkAw0S8o21Zz/XBs94CM+oZKd5tmskt2RFXl7v804Rz?=
- =?us-ascii?Q?kj1XZfY4v+LLPy5a7SN5q+6o50MBCB/ai2CDProNg3uQPkhEEaf/p0NcgaMD?=
- =?us-ascii?Q?Gpqpf+0eyZRnxzDBoU/mfDoCPWPkDqITn+bHjNsXbPmbOAxX5/r2lHmFSakS?=
- =?us-ascii?Q?Oth2YgJ8vWY1hdUgGEgJoDHmHK37DMDDNk9hzZ2xpKWNC4NAgZv+t2mMILff?=
- =?us-ascii?Q?BbFdbQ5WS+KKaEdNmezmy52I5z6TkItBBAizFI0+BXeVcG83coKXlAvnatIp?=
- =?us-ascii?Q?RmNUsiPFoAdSS40iezRFRaaIqSQCsSxpePNxFOxuLf02akVNxmwd6oJ/s8fH?=
- =?us-ascii?Q?32GmBqPvq7RjrEcBadQ1k2hayQ2c18hYO9OEIyn+hYSMhaqy5HG/5FtgS1mL?=
- =?us-ascii?Q?hMzDk9sn8TzQxjlRff15jWgEdsfh7zKDU8Ul2CNa1EiyjdMIfom3hM6iN8aY?=
- =?us-ascii?Q?QR4b0PpZ4LdBwGBFb8LVuI1zoLuexDGg5EVCzpchVeiQTq4TZvtmiR0Q1xTT?=
- =?us-ascii?Q?HOcFe3M+txsmD6V3b6baRxCsuojuodH79E0X2TAxH2x84SynU9Sl3JXcqOR1?=
- =?us-ascii?Q?+vSgn87fZLHiUswcfuWGl4yyvM8LgmMyjd6owzGT+htD8ChU0GrkTVpH76/Y?=
- =?us-ascii?Q?RzClHSbn4XLR53uj1MKTtTmyjXhyKZi1DrL0NY9+bAF9PBVxQ9O2XmtkXP52?=
- =?us-ascii?Q?zuTuQAqqAc1qVDaaQqp29OwwSAPvushFO2FEcyUmchfvtziY73y35QfoF3ze?=
- =?us-ascii?Q?yZXZnY0kpKnJtFrUdP7YaOMir5l4fxN4rBOvuiF0wjAyRFmrzYfvUZq6uZfK?=
- =?us-ascii?Q?sBSkHGLeIa5zH0Sid6qqQomiPUO4iVoTLS+RL/tugz68ASvgODODw7p+mzLR?=
- =?us-ascii?Q?uJgVDrD9xdaKc8k2e3xMJ6Qq59xFo1SqfuehzHdCkgAzZpsXrsJBx+pR5pP4?=
- =?us-ascii?Q?hoyTd+OuF//+6qa4cB0QN6i46wMdZPAb2aqzTvOTgUvmQc9QFHoIyLpxc4le?=
- =?us-ascii?Q?QmBa9U9d7ULMTda+mZOlXUzhISHSMq9l+VCJL02PebJBwQqi1FpNzyfZO/oQ?=
- =?us-ascii?Q?a4BtcpmGx+oP8EoyS6UdJu6rqnkNRwsYUNE9lRJ8VY5/1NB5RoWYpPTLIaxL?=
- =?us-ascii?Q?CFi8FLq4WDptBg5x51SLvnomRIdXF3hMTUQVOo7kd4c7ivSABfDmYgcboEnu?=
- =?us-ascii?Q?FPGINqty/X298xhZwoulphnMqmfxs+kj404nRmMHfqMJGXStO+hKSIlCUpsK?=
- =?us-ascii?Q?fHw1nMLogehvErSOOe8H6F6rUXdjd3Wej8cOgi/zZjGB0Jmg7SAM3M8glYkL?=
- =?us-ascii?Q?jDM5cmKoH0ZrinJow7DrCZtx5Gi4faVaQXXV+tNO?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	kxXCWI5HAMQLgnediDfg754OYcypu03Llvl11tLgkAhuMvh7vQgXJ6bX8VFvzxyb/WdheI0IQqG5aIvc3quG2QgS/D533wZEphrwteg0QBdSBrZ0LTlzxhzKGUETZATByzf8yXQt+nyObV739EGe7R9sMWCbsEi48aWvaYStsqsWwFWv9nDK4/W87QDs0tXTNc6zuj2CWAwCAHHVOUG1eOQ3kQnRbM96eLCupXGAMn7Aa+LFk/bM8YrW+oPUQgc3LVMjUZZK1Oe9nVQHAZfu0vijsui1eVT7W3sWaLVShoi0vmJDtgLGNkfa1HxYW8qF1NuQvmjNuesf1IZsL9mWpS47BQeSF7hHqxstfcgBBwQ3Mc5s1JQ95tuteBthLAMRZvvjlbXdtgvDcb4UHyeL0a20REomHT/9d0qtzF6FVmPo7z6saGm5hF2I3pFkq6R2YM46LA9G0+iMRGv1g6oKyl4jmO7E/kZtDxdEcxKzNt3tdNc+bD5qrzYTg7TfAIOtU8EoaneibyufVMm3nfA3pjXiS3dF7kpV92XGxwhe4Y7bRMBKzUsA+OOdf9BmReajcTyGNcsZ9YuYOcS0k7QB351pAS4sn24SCO0F7gr9Zws=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91917889-176f-4274-f7d3-08dd0d672224
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR10MB5134.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2024 15:37:56.3500
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0a/kFai6YPewr1sAEPzkIveD2P8f3Oee0FcTe2dEOC8HWw+HkEd9aJOSYwAzHS9rnBaBLCztu+Ih1vWsYxJ6VA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR10MB4159
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-11-25_10,2024-11-25_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 suspectscore=0
- mlxlogscore=999 phishscore=0 adultscore=0 malwarescore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2411250131
-X-Proofpoint-GUID: iJscsozRU_JUCkcOVgtOivrBLI_tLV7h
-X-Proofpoint-ORIG-GUID: iJscsozRU_JUCkcOVgtOivrBLI_tLV7h
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/4] hwmon: (acpi_power_meter) Remove redundant
+ 'sensors_valid' variable
+To: Huisong Li <lihuisong@huawei.com>, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: jdelvare@suse.com, liuyonglong@huawei.com, zhanjie9@hisilicon.com,
+ zhenglifeng1@huawei.com
+References: <20241125093415.21719-1-lihuisong@huawei.com>
+ <20241125093415.21719-4-lihuisong@huawei.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20241125093415.21719-4-lihuisong@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 25, 2024 at 03:09:56PM +0100, Christian Brauner wrote:
-> For the v6.13 cycle we switched overlayfs to a variant of
-> override_creds() that doesn't take an extra reference. To this end I
-> suggested introducing {override,revert}_creds_light() which overlayfs
-> could use.
+On 11/25/24 01:34, Huisong Li wrote:
+> The 'sensors_valid' in acpi_power_meter_resource structure is always one
+> after querying power once. The default value of this variable is zero which
+> just ensure user can query power successfully without any time requirement
+> at first time. We can get power and fill the 'sensors_last_updated' field
+> at probing phase to make sure that a valid value is returned to user at
+> first query within the sampling interval. Then this redundant variable can
+> be safely removed.
 > 
-> This seems to work rather well. This series follow Linus advice and
-> unifies the separate helpers and simply makes {override,revert}_creds()
-> do what {override,revert}_creds_light() currently does. Caller's that
-> really need the extra reference count can take it manually.
-> 
+> Signed-off-by: Huisong Li <lihuisong@huawei.com>
 > ---
-> Changes in v2:
-> - Remove confusion around dangling pointer.
-> - Use the revert_creds(old) + put_cred(new) pattern instead of
->   put_cred(revert_creds(old)).
-> - Fill in missing justifications in various commit message why not using
->   a separate reference count is safe.
-> - Make get_new_cred() argument const to easily use it during the
->   conversion.
-> - Get rid of get_new_cred() completely at the end of the series.
-> - Link to v1: https://lore.kernel.org/r/20241124-work-cred-v1-0-f352241c3970@kernel.org
+>   drivers/hwmon/acpi_power_meter.c | 18 +++++++++---------
+>   1 file changed, 9 insertions(+), 9 deletions(-)
 > 
-> ---
-> Christian Brauner (29):
->       tree-wide: s/override_creds()/override_creds_light(get_new_cred())/g
->       cred: return old creds from revert_creds_light()
->       tree-wide: s/revert_creds()/put_cred(revert_creds_light())/g
->       cred: remove old {override,revert}_creds() helpers
->       tree-wide: s/override_creds_light()/override_creds()/g
->       tree-wide: s/revert_creds_light()/revert_creds()/g
->       firmware: avoid pointless reference count bump
->       sev-dev: avoid pointless cred reference count bump
->       target_core_configfs: avoid pointless cred reference count bump
->       aio: avoid pointless cred reference count bump
->       binfmt_misc: avoid pointless cred reference count bump
->       coredump: avoid pointless cred reference count bump
->       nfs/localio: avoid pointless cred reference count bumps
->       nfs/nfs4idmap: avoid pointless reference count bump
->       nfs/nfs4recover: avoid pointless cred reference count bump
->       nfsfh: avoid pointless cred reference count bump
->       open: avoid pointless cred reference count bump
->       ovl: avoid pointless cred reference count bump
->       cifs: avoid pointless cred reference count bump
->       cifs: avoid pointless cred reference count bump
->       smb: avoid pointless cred reference count bump
->       io_uring: avoid pointless cred reference count bump
->       acct: avoid pointless reference count bump
->       cgroup: avoid pointless cred reference count bump
->       trace: avoid pointless cred reference count bump
->       dns_resolver: avoid pointless cred reference count bump
->       cachefiles: avoid pointless cred reference count bump
->       nfsd: avoid pointless cred reference count bump
->       cred: remove unused get_new_cred()
-> 
->  Documentation/security/credentials.rst |  5 ----
->  drivers/crypto/ccp/sev-dev.c           |  2 +-
->  fs/backing-file.c                      | 20 +++++++-------
->  fs/nfsd/auth.c                         |  3 +-
->  fs/nfsd/filecache.c                    |  2 +-
->  fs/nfsd/nfs4recover.c                  |  3 +-
->  fs/nfsd/nfsfh.c                        |  1 -
->  fs/open.c                              | 11 ++------
->  fs/overlayfs/dir.c                     |  4 +--
->  fs/overlayfs/util.c                    |  4 +--
->  fs/smb/server/smb_common.c             | 10 ++-----
->  include/linux/cred.h                   | 26 ++++--------------
->  kernel/cred.c                          | 50 ----------------------------------
->  13 files changed, 27 insertions(+), 114 deletions(-)
-> ---
-> base-commit: e7675238b9bf4db0b872d5dbcd53efa31914c98f
-> change-id: 20241124-work-cred-349b65450082
-> 
-> 
+> diff --git a/drivers/hwmon/acpi_power_meter.c b/drivers/hwmon/acpi_power_meter.c
+> index 95da73858a0b..3500859ff0bf 100644
+> --- a/drivers/hwmon/acpi_power_meter.c
+> +++ b/drivers/hwmon/acpi_power_meter.c
+> @@ -84,7 +84,6 @@ struct acpi_power_meter_resource {
+>   	u64		power;
+>   	u64		cap;
+>   	u64		avg_interval;
+> -	int			sensors_valid;
+>   	unsigned long		sensors_last_updated;
+>   	struct sensor_device_attribute	sensors[NUM_SENSORS];
+>   	int			num_sensors;
+> @@ -316,15 +315,14 @@ static ssize_t set_trip(struct device *dev, struct device_attribute *devattr,
+>   }
+>   
+>   /* Power meter */
+> -static int update_meter(struct acpi_power_meter_resource *resource)
+> +static int update_meter(struct acpi_power_meter_resource *resource, bool check)
+>   {
+>   	unsigned long long data;
+>   	acpi_status status;
+>   	unsigned long local_jiffies = jiffies;
+>   
+> -	if (time_before(local_jiffies, resource->sensors_last_updated +
+> -			msecs_to_jiffies(resource->caps.sampling_time)) &&
+> -			resource->sensors_valid)
+> +	if (check && time_before(local_jiffies, resource->sensors_last_updated +
+> +			msecs_to_jiffies(resource->caps.sampling_time)))
+>   		return 0;
+>   
+>   	status = acpi_evaluate_integer(resource->acpi_dev->handle, "_PMM",
+> @@ -336,7 +334,6 @@ static int update_meter(struct acpi_power_meter_resource *resource)
+>   	}
+>   
+>   	resource->power = data;
+> -	resource->sensors_valid = 1;
+>   	resource->sensors_last_updated = jiffies;
+>   	return 0;
+>   }
+> @@ -349,7 +346,7 @@ static ssize_t show_power(struct device *dev,
+>   	struct acpi_power_meter_resource *resource = acpi_dev->driver_data;
+>   
+>   	mutex_lock(&resource->lock);
+> -	update_meter(resource);
+> +	update_meter(resource, true);
+>   	mutex_unlock(&resource->lock);
+>   
+>   	if (resource->power == UNKNOWN_POWER)
+> @@ -429,7 +426,7 @@ static ssize_t show_val(struct device *dev,
+>   			val = 0;
+>   		break;
+>   	case 6:
+> -		ret = update_meter(resource);
+> +		ret = update_meter(resource, true);
+>   		if (ret)
+>   			return ret;
+>   		ret = update_cap(resource);
+> @@ -699,6 +696,10 @@ static int setup_attrs(struct acpi_power_meter_resource *resource)
+>   		return res;
+>   
+>   	if (resource->caps.flags & POWER_METER_CAN_MEASURE) {
+> +		res = update_meter(resource, false);
+> +		if (res)
+> +			goto error;
+> +
 
-For the patches that touch fs/nfsd/*:
+This forces an update of the meter attribute even if no one reads it
+subsequently for a long period of time. Avoiding that is the whole point
+of the flag. Otherwise every driver using the flag could just read its
+entire set of attributes to avoid it. I don't see the value of this patch,
+sorry. You'd have to explain why it is better to do the unnecessary read
+to avoid the flag.
 
-Acked-by: Chuck Lever <chuck.lever@oracle.com>
+Guenter
 
--- 
-Chuck Lever
 
