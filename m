@@ -1,50 +1,51 @@
-Return-Path: <linux-kernel+bounces-420790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 735459D8314
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:10:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 579BB9D8317
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:10:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40FDA287611
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:10:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BD6D28132D
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A403E199EA8;
-	Mon, 25 Nov 2024 10:08:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2170219D07C;
+	Mon, 25 Nov 2024 10:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WmWSKIYy"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KFH3G9TH"
 Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419081922E1
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 10:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0045C192580
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 10:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732529316; cv=none; b=iCT0QZJXvJU6z6rE+Mbp9uluC6tsQSHL5SILtMEIu6a0eIzDWRnNdc/Y1bdSI02cwHzJBvBOx/g2U40aDXZfUDejloUfmmelEqHskVGGLqn6lIP290fADaasG7Hv/rH8giaE5Zmof0prSY7hCKFUUSFYR8mpQCIkyGQydNihccI=
+	t=1732529316; cv=none; b=YMxgkauLX5B5xP79UxMt4qoqAmwXJdGhUlvM79iXp75rQLj50O4tohwsYhFlKJ7GdZ7cDDmXX3rRJJIbfnPf/3KKVgwrqQTf7T5zVltFSPxK2KoUPKE+j8BawrbOl96fcT42c3YGI0zq3dMtZHL0GB3XK7A5gz9sL26EbQ3aA48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732529316; c=relaxed/simple;
-	bh=zRFTU0CSm45BCgyzjxndpiefx1AXH1El990vWzmV4Xg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZHST6Ebr4Rh3kkfA1D376QePsdvYcMW6eFm0xP4EJqqIfSqWKRVygnaEhImbsCX+lwVg+3DYEDUIy5EPcMZGMN/k8viLsX87qsrE9WtITxvKKAMMuPH4eVe464EtAtRhwiE3WSf+edEre1Hj8dFyO3JMw3g4UTvLqoU1ZSgamng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WmWSKIYy; arc=none smtp.client-ip=90.155.92.199
+	bh=XntE1jaWDB+xU4Kuj4uoGVTcTddYkJE+v3cnM9fHE8w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TQnOTifLfAQQXjh0nrNe7IawpGZa39qNLE9wGyi5txi4O3CCKjTyQ2vxwPd2omGO38CpqqzPLY5TEWNtg8NJHjk8Mzms18bI1gpbn4hoQNQuc35nnV26oEDvBCYXJxxz/wyrQdKiTkzO2hgU9QqWYesc6P7Wdkjfa3A+zU+GA18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KFH3G9TH; arc=none smtp.client-ip=90.155.92.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=desiato.20200630; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=bXmqZfne9wIEAoo4ONpQDgj54jhO/Xmxv8yTtbrY0pg=; b=WmWSKIYyS0X84wqKwhW8CrvIJN
-	r6ShI5FW0t3pCK/0k4oIDB9N2s1pYE9o0cKtV/qQmbbVqF9VKn9ZwtInKPVmU92oXkKnjcqy+ru5d
-	BT2FttN+UjTiqWlCOsI2D3J2KdPAEUfDllzbkDmyJemWsUy0UTRUrEl9vJVDX6NjsndKkclz5071M
-	kanfcAiT35y11lrVbRi8T8rZVkIqMlq6ZmOFQezsBbFo3JB0tSbcQ4gyy5NANbMgANjDaDL/IfHwc
-	4SmjbuN8+uBduxp1OI2qq7kj7affI12F7YYxndSrGFl5C2h97WE3MXC+4NjAxAzMF2rLBGKlpYlML
-	aWDGtJ2w==;
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Reply-To:Content-Type:Content-ID:Content-Description;
+	bh=905CV9ftpKJ0HPQLcIxyrOfAp/IXY8cX6AqTnVswgHw=; b=KFH3G9TH0TK2PRl18yYH2hameh
+	nWg1EV1JfBaNIRnD42sGSmJGgQnz+JVkBjVkqoPRuhHvEMHTl3BeL1SDow+JE7I99qv2WbSQqks5b
+	ozEwm5AfcCqGPVpLR26nLkltBgdd8334QZwxdt8BXcPLMtjBt71BnplqSllAl/q7O/xqxrSjIrOkT
+	TgfR8N7AAKTvP+lrMS3SwUdYgXA1Bnka7RpoNQv3QbmG4dMqUq/APWXaZVtJUBzF/zRwXLU3MHd6H
+	tPnUzfifEc7QTnOBNUtkYRxt2nuI0tAm+CKumkJk6FDVqeHxETwBCqW0TFhYBOAAa02EoXL88cm30
+	ReEQUTgQ==;
 Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
 	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tFW11-000000014f3-04Du;
+	id 1tFW11-000000014f4-04Ku;
 	Mon, 25 Nov 2024 10:08:23 +0000
 Received: from dwoodhou by i7.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tFW0z-000000000kn-0s7a;
+	id 1tFW0z-000000000kq-17au;
 	Mon, 25 Nov 2024 10:08:21 +0000
 From: David Woodhouse <dwmw2@infradead.org>
 To: kexec@lists.infradead.org
@@ -64,10 +65,12 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	Peter Zijlstra <peterz@infradead.org>,
 	jpoimboe@kernel.org,
 	bsz@amazon.de
-Subject: [RFC PATCH v3 00/20] x86/kexec: Add exception handling for relocate_kernel and further yak-shaving
-Date: Mon, 25 Nov 2024 09:54:30 +0000
-Message-ID: <20241125100815.2512-1-dwmw2@infradead.org>
+Subject: [RFC PATCH v3 01/20] x86/kexec: Ensure control_code_page is mapped in kexec page tables
+Date: Mon, 25 Nov 2024 09:54:31 +0000
+Message-ID: <20241125100815.2512-2-dwmw2@infradead.org>
 X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241125100815.2512-1-dwmw2@infradead.org>
+References: <20241125100815.2512-1-dwmw2@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,55 +81,43 @@ Content-Transfer-Encoding: 8bit
 Sender: David Woodhouse <dwmw2@infradead.org>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-Debugging kexec failures is painful, as anything going wrong in execution
-of the critical relocate_kernel() function tends to just lead to a triple
-fault. Thus leading to *weeks* of my life that I won't get back. Having
-hacked something up for my own use, I figured I should share it...
+From: David Woodhouse <dwmw@amazon.co.uk>
 
-Add a CONFIG_KEXEC_DEBUG option which sets up a trivial exception handler
-in that environment, and outputs to the early_printk serial console if
-configured. Currently only I/O-based 8250 serial ports are supported, but
-that could be extended.
+The control_code_page should be explicitly mapped into the identity
+mapped page tables for the relocate_kernel environment. This only seems
+to have worked by luck before, because it tended to be within the same
+2MiB or 1GiB large page already mapped for another reason.
 
-While we're here, clean the code up a little and fix some other problems.
-Most notably, load a suitable GDT on the way back into the kernel after a
-KEXEC_PRESERVE_CONTEXT invocation instead of trusting the called code to
-do so. And explicitly map the control_code_page into the identmap used by
-relocate_kernel() instead of depending on it being in the same superpage
-as something else that gets mapped.
+A subsequent commit will reduce the control_code_page to a single 4KiB
+page instead of a higher-order allocation, and seems to make it much
+*less* likely that we get lucky with its placement. This leads to a
+fault when relocate_kernel() first tries to access the page through its
+identity-mapped virtual address.
 
-I should probably bring the i386 version into line with this, although
-the lack of rip-based addressing makes all the PIC code a bit harder.
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Cc: stable@vger.kernel.org
+---
+ arch/x86/kernel/machine_kexec_64.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-David Woodhouse (20):
-      x86/kexec: Ensure control_code_page is mapped in kexec page tables
-      x86/kexec: Restore GDT on return from preserve_context kexec
-      x86/kexec: Clean up and document register use in relocate_kernel_64.S
-      x86/kexec: Use named labels in swap_pages in relocate_kernel_64.S
-      x86/kexec: Only swap pages for preserve_context mode
-      x86/kexec: Allocate PGD for x86_64 transition page tables separately
-      x86/kexec: Copy control page into place in machine_kexec_prepare()
-      x86/kexec: Invoke copy of relocate_kernel() instead of the original
-      x86/kexec: Move relocate_kernel to kernel .data section
-      x86/kexec: Add data section to relocate_kernel
-      x86/kexec: Drop page_list argument from relocate_kernel()
-      x86/kexec: Eliminate writes through kernel mapping of relocate_kernel page
-      x86/kexec: Clean up register usage in relocate_kernel()
-      x86/kexec: Mark relocate_kernel page as ROX instead of RWX
-      x86/kexec: Add CONFIG_KEXEC_DEBUG option
-      x86/kexec: Debugging support: load a GDT
-      x86/kexec: Debugging support: Load an IDT and basic exception entry points
-      x86/kexec: Debugging support: Dump registers on exception
-      x86/kexec: Add 8250 serial port output
-      [DO NOT MERGE] x86/kexec: Add int3 in kexec path for testing
-
- arch/x86/Kconfig.debug               |   8 +
- arch/x86/include/asm/kexec.h         |  34 +++-
- arch/x86/include/asm/sections.h      |   1 +
- arch/x86/kernel/callthunks.c         |   6 +
- arch/x86/kernel/early_printk.c       |   6 +
- arch/x86/kernel/machine_kexec_64.c   | 127 ++++++++----
- arch/x86/kernel/relocate_kernel_64.S | 385 +++++++++++++++++++++++++++--------
- arch/x86/kernel/vmlinux.lds.S        |  16 +-
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index 9c9ac606893e..b9b6243ee223 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -240,6 +240,12 @@ static int init_pgtable(struct kimage *image, unsigned long start_pgtable)
+ 	if (direct_gbpages)
+ 		info.direct_gbpages = true;
+ 
++	/* Ensure the control code page itself is in the direct map */
++	result = kernel_ident_mapping_init(&info, level4p, start_pgtable + PAGE_SIZE,
++					   start_pgtable + KEXEC_CONTROL_CODE_MAX_SIZE);
++	if (result)
++		return result;
++
+ 	for (i = 0; i < nr_pfn_mapped; i++) {
+ 		mstart = pfn_mapped[i].start << PAGE_SHIFT;
+ 		mend   = pfn_mapped[i].end << PAGE_SHIFT;
+-- 
+2.47.0
 
 
