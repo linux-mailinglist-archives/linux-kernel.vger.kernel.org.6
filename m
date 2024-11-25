@@ -1,80 +1,140 @@
-Return-Path: <linux-kernel+bounces-420594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE7089D7D04
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:38:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77EFE1636B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:38:02 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D34218BB9C;
-	Mon, 25 Nov 2024 08:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vsno5DUB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E2D9D7D09
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:38:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE20218B475
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 08:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7D24B235F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 08:38:28 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CFE18C006;
+	Mon, 25 Nov 2024 08:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rBhIqzTS"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B042418B47C;
+	Mon, 25 Nov 2024 08:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732523880; cv=none; b=FQkiaQArVjID6/Dx0nfrEldUNN+OpKn9TVaa8w6qSS4v50caQgVkApz+08l8I7vg1BHLmt7spsGMcSdPOobTvy/ZFjY9I5+gmkU/7A7dOuz4s41psqeT256U5YxkWa8n/8N3EzgZ/Rcl4w4wq+QqaHXxdrvjmu+Vvdzle/SdWaA=
+	t=1732523905; cv=none; b=SI3nzPKwuWv4L+4e7YXPRjhcjF3Fs4zUEs81uanzdOzG/Nt8H6w1ssVeLwOzLGg8ucgoTU7pQcsuqlT7uKgUQHEwCrMuLxU/aI+SqR3UUsUA4AK8Ei0xqQRr2G4lkQ+LYDUohZdFgARQjteyxKMaGnjz3kgQo4WrIcb5GDgLLwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732523880; c=relaxed/simple;
-	bh=lFy8jCbAa4BewXdTwk2+qDv8pSO5e70DGDXVWy7ZdIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NWfatEoTkwt3Azu7RcFFTDuECagOkBYsyeGGHAdjhkOcSHiXJUnlMjn2Xtc7FRjGmCezAJeGgn5m1r/zmNTxPiZYZzRzBggWBDJgplnTZwXXXsT1ngFKuGFrXgO30LNIRNqr72OfysohCKNJDa/dxxMG1kjLfWagI6vWw6V7zzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vsno5DUB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 818FEC4CECE;
-	Mon, 25 Nov 2024 08:37:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732523880;
-	bh=lFy8jCbAa4BewXdTwk2+qDv8pSO5e70DGDXVWy7ZdIM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Vsno5DUBYpigSJD6VlxPh87VBwhaCezi9Q0OkTpBfsWuVM9NlW4ZfKnQVoEgWtrWO
-	 QXF6Pf104+Lx85jsaoAddG4ffDhme/+Rxa+t31flgoglF4BUfWmhPj1X7YOXJUMKww
-	 0kx7aT2Sc9IptrGqHfbvPJuEvTMpcvJHJHPxqbxYAOg284OFx6RZ+Cvm6XVVzpuuPF
-	 1bczUVjyzKnT3m3q8jLh5iTfHBkfjC7ZKkxw/+RWeV0hwx1fiklJ9rjD2bpo3t6x3u
-	 FF5799IQsaYMZqMWVdaCPWt6ApIuRNW9q9RN0lY3KiRs8rK2AZpv3vzkn6TLxMbmWh
-	 uu3tGQceAnvTg==
-Date: Mon, 25 Nov 2024 09:37:56 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Fernando Fernandez Mancera <ffmancera@riseup.net>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, x86@kernel.org
-Subject: Re: [PATCH RESEND] x86/cpu/topology: remove limit of CPUs due to
- noapic on x86_64
-Message-ID: <Z0Q3ZNoQsoiCAiiA@gmail.com>
-References: <20241124174510.2561-1-ffmancera@riseup.net>
+	s=arc-20240116; t=1732523905; c=relaxed/simple;
+	bh=q6ID1YSLBNj16wmegqD5NXVom8VnfquGhuEwXZg0V8w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VWOQiqTxxpyGWYrZ2kyjqrhtJx2VlwWQx/G4u74hkCc/8506/R3C9hhqlJu2h7fO98S5sVXKKBosR3SpndEgQFS5ukH4wedKxho/B0yACw2EL20dtdAeexMs+LeyttYwE9z1CZArRwT2Imy/+sf90Pw+iN7fq73KaA7i8V4p1ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rBhIqzTS; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=+xt2q+vlfr3bovTTZE4n2ZJgwD+1Q9yVnx7KQddEfLw=; b=rBhIqzTSsTAhNUTC3HCG0ZHFzh
+	Tr7XwCWjtWEDjjGv6219EvUKJ+SX8f8Bv5SB2hT0rkaqnqRhFhvcQ9VsWUwxMgXtTBp/SpIv6RWSM
+	SUBom4kD1xvVzMaGBANBTZrHLo9yXpriKrRngl2Htt8cW4VmyWsgAFWlygP3b0873bhS1Pq4lV0Uk
+	5mhT4oDDfl7xFI9H/Y3EkhGSduzmieIUg3h6LJYoUfT+rmAZcsqj8uOiwQxkL2w9keGom3EuNPm71
+	hBsT0tCkN/IfL6xyAcxqgDjVIMNo8jxHjKA9SqtU1Yih1n2j1G/kfCMsstQQN2yZfdm0HQ+0/cHch
+	XDL0Ctew==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tFUbo-0000000146Q-2Rk2;
+	Mon, 25 Nov 2024 08:38:18 +0000
+Message-ID: <d2dfc0a4-d9dc-4dd2-a669-097dcf3491b5@infradead.org>
+Date: Mon, 25 Nov 2024 00:38:11 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241124174510.2561-1-ffmancera@riseup.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] x86/Documentation: Update algo in init_size
+ description of boot protocol
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Jonathan Corbet <corbet@lwn.net>, Cloud Hsu <cloudhsu@google.com>,
+ Chris Koch <chrisko@google.com>
+References: <20241125083136.1540424-1-andriy.shevchenko@linux.intel.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20241125083136.1540424-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi Andy,
 
-* Fernando Fernandez Mancera <ffmancera@riseup.net> wrote:
+On 11/25/24 12:31 AM, Andy Shevchenko wrote:
+> The init_size description of boot protocol has an example of the runtime
+> start address for the compressed bzImage. For non-relocatable kernel
+> it relies on the pref_address value (if not 0), but for relocatable case
+> only pays respect to the load_addres and kernel_alignment, and it is
+> inaccurate for the latter. Boot loader must consider the pref_address
+> as the Linux kernel relocates to it before being decompressed as nicely
+> described in the commit 43b1d3e68ee7 message.
+> 
+> Due to this inaccuracy some of the bootloaders (*) made a mistake in
+> the calculations and if kernel image is big enough, this may lead to
+> unbootable configurations.
+> 
+> *)
+>   In particular, kexec-tools missed that and resently got a couple of
+>   changes which will be part of v2.0.30 release. For the record,
+>   the 43b1d3e68ee7 fixed only kernel kexec implementation and also missed
+>   to update the init_size description.
+> 
+> While at it, make an example C-like looking as it's done elsewhere in
+> the document and fix indentation, so the syntax highliting will work
+> properly in some editors (vim).
+> 
+> Fixes: 43b1d3e68ee7 ("kexec: Allocate kernel above bzImage's pref_address")
+> Fixes: d297366ba692 ("x86: document new bzImage fields")
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  Documentation/arch/x86/boot.rst | 17 +++++++++++++----
+>  1 file changed, 13 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/arch/x86/boot.rst b/Documentation/arch/x86/boot.rst
+> index 4fd492cb4970..01f08d94e8df 100644
+> --- a/Documentation/arch/x86/boot.rst
+> +++ b/Documentation/arch/x86/boot.rst
+> @@ -896,10 +896,19 @@ Offset/size:	0x260/4
+>  
+>    The kernel runtime start address is determined by the following algorithm::
+>  
+> -	if (relocatable_kernel)
+> -	runtime_start = align_up(load_address, kernel_alignment)
+> -	else
+> -	runtime_start = pref_address
+> +    if ( relocatable_kernel ) {
+> +      if ( load_address < pref_address )
 
-> On x86_64 the command line parameter "noapic" should not limit the
-> number of possible CPUs, as it only limits the use of IRQ sharing or
-> device IRQ remapping. Only on x86_32 the command line parameter
-> "nolapic" limits the number of possible CPUs to one. This restores the
-> behavior previous to the rework of possible CPU management.
+What's up with the extra spaces around ( and ) ... and inconsistent with
+the lines below?
 
-So what's the motivation? Arguably the x86-64 boot option behavior was 
-weird: a working local APIC is very much needed to have an SMP system.
+> +        load_address = pref_address;
+> +      runtime_start = align_up(load_address, kernel_alignment);
+> +    } else {
+> +      runtime_start = pref_address;
+> +    }
+> +
+> +Hence the necessary memory window location and size can be estimated by
+> +a boot loader as::
+> +
+> +    memory_window_start = runtime_start;
+> +    memory_window_size = init_size;
+>  
+>  ============	===============
+>  Field name:	handover_offset
 
-If we want to disable IRQ sharing or device IRQ remapping, then that 
-should have an appropriately named boot command line option. Does some 
-system require that perhaps?
+-- 
+~Randy
 
-Thanks,
-
-	Ingo
 
