@@ -1,181 +1,363 @@
-Return-Path: <linux-kernel+bounces-421492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C7729D8C06
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:12:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D29CB9D8C0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 19:13:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E34C1163E4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:12:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0536163898
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 18:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D62C1B85CA;
-	Mon, 25 Nov 2024 18:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8FA1B81B2;
+	Mon, 25 Nov 2024 18:13:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FJr7tAZw";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J+KW2TZu"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="Eh7sB2GV"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E7A38DE1;
-	Mon, 25 Nov 2024 18:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7BC238DE1;
+	Mon, 25 Nov 2024 18:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732558357; cv=none; b=bJi0wN7/zXGhisXXi0hn1x3KlAK7dq64ZVynb2E9h49HxiRAz3Y7UNdHyAYEaIRTtVo0/sxzpeGW1qYXSpUsYGfOHxm0TIRhYc8hrWfpaYXn5OSzghLGuNs97gJFsT+GyUugHgeRg7y1VOkxQSUHLYiSJIlBB9rxUhLP6sMbiHE=
+	t=1732558407; cv=none; b=lY3QCKTNXPDKQqg/GxXeuYeYUyZUdgR6tyPbr+VllzrlEVQ1kbTVndds1lAUsqchZtH/OCEAl/m74CRskf9is4Z8eA5yag4XgXgMBXmckfwl1jwrVlEbDOl2DwXw1ALifZDCerTgFftAJ/TJ34cykM9eGZ4m0YUtEpjOeuitA3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732558357; c=relaxed/simple;
-	bh=N4vchSy8Zl64B93Fnsqx1t03j9VdeSV7K87AEmnc2/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G1934EFcrNTDopoK/vtyIhoU49uJt0+TpWayfl3g/aLu4ttrG/28tVI9QUE0xEVODhi5VgtxgX12dL2ndS5lutetuxwjrUXp20HnX623UnM2T931MpRO98HTjrha5tC93KxaZbB9VOGK3t8KcvoRLAsYePC5RGfe0ZyFtpmcydU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FJr7tAZw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J+KW2TZu; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 25 Nov 2024 19:12:31 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732558353;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=swhNiyHJLVZ/tCDN+WR+BGp9U1TjaL48sHP3QkPHfdY=;
-	b=FJr7tAZwhke2pll2ixIj7vujmlFpGOFw07DS1w7mH3EoPQ7bvXPIk0nlPTpAodylJG9y8k
-	TThOGa8iRTHb7hGFB34bbAVPngYK15JzCadC3gcN1SSZbmfg6e49WqcNX+J4b34lQClsCr
-	Ge8MYBcx5mpqBzTC/kWBBV8YtriO3u1QFLCivIstCfbG/HCRS74K60amrbzFLWIPvm2KKe
-	eggQDFIIdZvP49SIpKzWGaKi0oPjdjaiw7YHrSCHzOB3m00u3dzxgJx42RN1w5brm6eaMK
-	MjXUD73CJqDSLcMvqDVWiudQ1zpEXAAraUWeiqpS/eyQhi3FrLY6yhvM5J4u+A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732558353;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=swhNiyHJLVZ/tCDN+WR+BGp9U1TjaL48sHP3QkPHfdY=;
-	b=J+KW2TZuZM8lT/JosPKhbxs9a4cytuHEdnQKBqFBax8KO9d3CIrrPIp21kFv1i7etw8q0N
-	pSYwHAObLjuOT/CA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>
-Subject: Re: [PATCH] sparc/pci: Make pci_poke_lock a raw_spinlock_t.
-Message-ID: <20241125181231.XpOsxxHx@linutronix.de>
-References: <20241009161041.1018375-1-bigeasy@linutronix.de>
- <20241009161041.1018375-2-bigeasy@linutronix.de>
- <7656395b-58fc-4874-a9f3-6d934e2ef7ee@roeck-us.net>
- <20241125085314.1iSDFulg@linutronix.de>
- <b776ca37-d51c-47e2-b3bb-aee8e7910630@roeck-us.net>
- <20241125174336.8nEhFXIw@linutronix.de>
- <c77c77d4-7f6e-450c-97d5-39dc50d81b1a@roeck-us.net>
+	s=arc-20240116; t=1732558407; c=relaxed/simple;
+	bh=5J1cKvZbQzubIW7D0sc6crhyx9apabLKhR5beTtPYWA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=VrYbLhb0wfuPZ42BwPDHLZ8kgCGGCHZ6tlvVTCMWmSn5L+OCflzedCFKl44OS6obqQJapwxE/eXkittKTdKRHUZUFKnkkAwMM36q+hGaXjuY0uHL64wwjGUHQaEBm5DvjYuzRi2hc1XqQWWYGT1+VA2PAHykgNmDvcZS3j3wjls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=Eh7sB2GV; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1732558369; x=1733163169; i=wahrenst@gmx.net;
+	bh=Jet1Wflq9Iv5ctweQk8pCStM7oRZw+jWxC+IFe3J/TI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Eh7sB2GVUzx+Fp/nuNzcETxLmaxftOVvTq3OD2M96EE/a5pYFk1m8Asx3mwmmjem
+	 KWf0nwLwmUH6yVQ9lroJO7yoK/2twFwvWSYWSC15y9vwwHsJOdIjCxev0P7+IN2o/
+	 oiY8CVaTahCG0mezp6sXz5sQYrOl1gE2MUAABcngYPAf8osXgXDkxg1Gmlgfc0DVp
+	 rXuPxOpLrF1f2fq+fGhrWVXKw0GbML87+H7g/khoW+vHvI+5Hd+Uv/UT2znrjrsJ4
+	 rPFRhvA+bKGhfO7XjK37ayn90CF5KccQIZAzwLZiuquptEA6G8abgexwx7GNSnwOM
+	 nknQwZ7m8tXFF0A9Gw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.105] ([37.4.251.153]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MsHnm-1tZuJv2YYM-0112NR; Mon, 25
+ Nov 2024 19:12:49 +0100
+Message-ID: <e0595933-d503-492d-ae29-aa3afe90b279@gmx.net>
+Date: Mon, 25 Nov 2024 19:12:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c77c77d4-7f6e-450c-97d5-39dc50d81b1a@roeck-us.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 02/10] dt-bindings: pinctrl: Add RaspberryPi RP1
+ gpio/pinctrl/pinmux bindings
+To: Andrea della Porta <andrea.porta@suse.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof Wilczynski <kw@linux.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
+ <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+ Masahiro Yamada <masahiroy@kernel.org>,
+ Herve Codina <herve.codina@bootlin.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>
+References: <cover.1732444746.git.andrea.porta@suse.com>
+ <9b83c5ee8345e4fe26e942f343305fdddc01c59f.1732444746.git.andrea.porta@suse.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <9b83c5ee8345e4fe26e942f343305fdddc01c59f.1732444746.git.andrea.porta@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:SfcJ1U1ioolYlU08V0tDyUyw2lx+5XKM0Sq15uwms2N2TD3GDtv
+ RVhf4eAAYXTT4NW/+ZEmAcWY7MGGonqdmQnhs4vMhmtMVQEie1Vqrh7Q9sOwzkNx/sAkUMJ
+ E2r/k2YmV0vWRxLK+xRuvMxVtTdxi/Vkbah5D/uGjIn9tTZ2swWok2dWKRjRT4bnxlZoP6a
+ gB///W+fSsqyeAFLDMlXA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:15pj2DQDW1A=;lqF5/uK6uFKXoQv461NDp6cqEvf
+ zxv1eeo0nBr8au2SHLc2y8hHaO3j6sGcJ+LeK20Hya+II31132SKpL45QEWO2E0POm0TdSfKQ
+ TyDAfvmpHFWZYTWU6Mbniv9ue/KxCgWE5PyOo/QhBGTo/SSzQSKOidyxBb4/CmeI5Kq/XStDS
+ w17giBiy9mph61kPzaNciZetzMZPjQZWucNB626gECxeVkwtqurYr086V/s4JA7ULEq7flupl
+ y/zSV8beWOjHaH90GmNtL/iiERlsDWqY5+N6W7mmajxtSMnuEBc2wfh35vlqY0tmUA3r9G/ec
+ 2/LpJkimnjpFfUWa9l9N3keNoynAeL/Z4gRA8qnuloALrL0tHFeWOlrYqMLK6pwKZRmCtEyy1
+ uoq1jbyqVTfHp5cbEJ1m5gj73s+aRbZGqsL1WejalBzti4Jw96DVIrB2YN4RBK26Wxezs3/ph
+ XZvwOsIAQPBkweCgyC9aJ6Sm1RGe80Q1XKFHOAPhJZBZ+im++SKR37AXLPm6BvcrdwJYxqqG0
+ fOTjOCGwJLyt5NwFbXsc5fGC5e/udV5EI672Caihpu3y5dubWK+5jYNzamcc7nwtMUvRCnmdK
+ Bj3bGW9KsLSevZNGQiBExuY3nDfkhWo3NUx7xht5dnIjUX56X3/2sYxu7eJJLA2R3js6b8F0l
+ AKV1Y3Db54hQ7/Zu7MfG80AUChkDJrKOm7Jf61dVxGVKWPvFvD/PvlacOmkfajCQzg0FWH2/O
+ 4aU4gZkUUslvgVwiZZir0dItd4KKJVB1O5tKX5FsaLIjYmGFQC1EKC2CzH/Y4y1St+JVzsElG
+ krgyk1yQpauCZBklvupZeFxjYblsmzSJ36fiXpnd0jTxUHmD4OjmLVubPT/xdC7phg5vKpVbV
+ RuiPiQON99AF5BsrjvWlarIGaMeweTv6v9Rxm/M92DeGsrwhVmdVRri8oqFzNFVSHkrlIZtB+
+ AsVfA8lxEWPzdQeQTieHuFfNXgoXRNgM61fexT2IXwbITLaXj3Qij5OcPdY8z5EesssnS9JMp
+ PBFRU7uYND8rcRYYLSmZj5NqLqCm7NyR//g1OosDoD8/XEy0HgigOfzdo7iQ89m4NfaemTsY+
+ 9mKzssjEw1lIgFWAbFjROw01asuei1
 
-On 2024-11-25 09:59:09 [-0800], Guenter Roeck wrote:
-> On 11/25/24 09:43, Sebastian Andrzej Siewior wrote:
-> > On 2024-11-25 09:01:33 [-0800], Guenter Roeck wrote:
-> > > Unfortunately it doesn't make a difference.
-> > 
-> > stunning. It looks like the exact same error message.
-> > 
-> 
-> I think it uses
-> 
-> #define spin_lock_irqsave(lock, flags)                          \
-> do {                                                            \
->         raw_spin_lock_irqsave(spinlock_check(lock), flags);     \
-> } while (0)
-> 
-> from include/linux/spinlock.h, meaning your patch doesn't really make a difference.
+Hi Andrea,
 
-The difference comes from DEFINE_SPINLOCK vs DEFINE_RAW_SPINLOCK. There
-is the .lock_type init which goes from LD_WAIT_CONFIG to LD_WAIT_SPIN.
-And this is all it matters.
+Am 24.11.24 um 11:51 schrieb Andrea della Porta:
+> Add device tree bindings for the gpio/pin/mux controller that is part of
+> the RP1 multi function device, and relative entries in MAINTAINERS file.
+>
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> ---
+>   .../pinctrl/raspberrypi,rp1-gpio.yaml         | 193 ++++++++++++++++++
+>   MAINTAINERS                                   |   2 +
+>   2 files changed, 195 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/pinctrl/raspberry=
+pi,rp1-gpio.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-g=
+pio.yaml b/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.=
+yaml
+> new file mode 100644
+> index 000000000000..21923d39c1bc
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yam=
+l
+> @@ -0,0 +1,193 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/raspberrypi,rp1-gpio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: RaspberryPi RP1 GPIO/Pinconf/Pinmux Controller submodule
+> +
+> +maintainers:
+> +  - Andrea della Porta <andrea.porta@suse.com>
+> +
+> +description:
+> +  The RP1 chipset is a Multi Function Device containing, among other
+> +  sub-peripherals, a gpio/pinconf/mux controller whose 54 pins are grou=
+ped
+> +  into 3 banks.
+> +  It works also as an interrupt controller for those gpios.
+> +
+> +properties:
+> +  compatible:
+> +    const: raspberrypi,rp1-gpio
+> +
+> +  reg:
+> +    maxItems: 3
+> +    description: One reg specifier for each one of the 3 pin banks.
+> +
+> +  '#gpio-cells':
+> +    description: The first cell is the pin number and the second cell i=
+s used
+> +      to specify the flags (see include/dt-bindings/gpio/gpio.h).
+> +    const: 2
+> +
+> +  gpio-controller: true
+> +
+> +  gpio-ranges:
+> +    maxItems: 1
+> +
+> +  gpio-line-names:
+> +    maxItems: 54
+> +
+> +  interrupts:
+> +    maxItems: 3
+> +    description: One interrupt specifier for each one of the 3 pin bank=
+s.
+> +
+> +  '#interrupt-cells':
+> +    description:
+> +      Specifies the Bank number [0, 1, 2] and Flags as defined in
+> +      include/dt-bindings/interrupt-controller/irq.h.
+> +    const: 2
+> +
+> +  interrupt-controller: true
+> +
+> +patternProperties:
+> +  "-state$":
+> +    oneOf:
+> +      - $ref: "#/$defs/raspberrypi-rp1-state"
+> +      - patternProperties:
+> +          "-pins$":
+> +            $ref: "#/$defs/raspberrypi-rp1-state"
+> +        additionalProperties: false
+> +
+> +$defs:
+> +  raspberrypi-rp1-state:
+> +    allOf:
+> +      - $ref: pincfg-node.yaml#
+> +      - $ref: pinmux-node.yaml#
+> +
+> +    description:
+> +      Pin controller client devices use pin configuration subnodes (chi=
+ldren
+> +      and grandchildren) for desired pin configuration.
+> +      Client device subnodes use below standard properties.
+> +
+> +    properties:
+> +      pins:
+> +        description:
+> +          List of gpio pins affected by the properties specified in thi=
+s
+> +          subnode.
+> +        items:
+> +          pattern: "^gpio([0-9]|[1-5][0-9])$"
+> +
+> +      function:
+> +        enum: [ alt0, alt1, alt2, alt3, alt4, gpio, alt6, alt7, alt8, n=
+one,
+> +                aaud, dcd0, dpi, dsi0_te_ext, dsi1_te_ext, dsr0, dtr0, =
+gpclk0,
+> +                gpclk1, gpclk2, gpclk3, gpclk4, gpclk5, i2c0, i2c1, i2c=
+2, i2c3,
+> +                i2c4, i2c5, i2c6, i2s0, i2s1, i2s2, ir, mic, pcie_clkre=
+q_n,
+> +                pio, proc_rio, pwm0, pwm1, ri0, sd0, sd1, spi0, spi1, s=
+pi2,
+> +                spi3, spi4, spi5, spi6, spi7, spi8, uart0, uart1, uart2=
+, uart3,
+> +                uart4, uart5, vbus0, vbus1, vbus2, vbus3 ]
+> +
+> +        description:
+> +          Specify the alternative function to be configured for the spe=
+cified
+> +          pins.
+> +
+> +      bias-disable: true
+> +      bias-pull-down: true
+> +      bias-pull-up: true
+> +      slew-rate:
+> +        description: 0 is slow slew rate, 1 is fast slew rate
+> +        enum: [ 0, 1 ]
+> +      drive-strength:
+> +        enum: [ 2, 4, 8, 12 ]
+according to the driver in patch 4 the following should also be
+supported by the hardware:
 
-> > > [    1.050499] =============================
-> > > [    1.050801] [ BUG: Invalid wait context ]
-> > > [    1.051200] 6.12.0+ #1 Not tainted
-> > > [    1.051571] -----------------------------
-> > > [    1.051875] swapper/0/1 is trying to lock:
-> > > [    1.052201] 0000000001b694c8 (pci_poke_lock){....}-{3:3}, at: pci_config_read16+0x8/0x80
-> > > [    1.052994] other info that might help us debug this:
-> > > [    1.053331] context-{5:5}
-> > > [    1.053641] 2 locks held by swapper/0/1:
-> > > [    1.053959]  #0: fffff800042b50f8 (&dev->mutex){....}-{4:4}, at: __driver_attach+0x80/0x160
-> > > [    1.054388]  #1: 0000000001d29078 (pci_lock){....}-{2:2}, at: pci_bus_read_config_word+0x18/0x80
-> > > [    1.054793] stack backtrace:
-> > > [    1.055171] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0+ #1
-> > > [    1.055632] Call Trace:
-> > > [    1.055985] [<00000000004e31d0>] __lock_acquire+0xa50/0x3160
-> > > [    1.056329] [<00000000004e63e8>] lock_acquire+0xe8/0x340
-> > > [    1.056645] [<00000000010f0dfc>] _raw_spin_lock_irqsave+0x3c/0x80
-> > > [    1.056966] [<0000000000443828>] pci_config_read16+0x8/0x80
-> > > [    1.057278] [<000000000044442c>] sun4u_read_pci_cfg+0x12c/0x1a0
-> > > [    1.057593] [<0000000000b7657c>] pci_bus_read_config_word+0x3c/0x80
-> > > [    1.057913] [<0000000000b7fa78>] pci_find_capability+0x18/0xa0
-> > > [    1.058228] [<0000000000b794b0>] set_pcie_port_type+0x10/0x160
-> > > [    1.058543] [<0000000000442a98>] pci_of_scan_bus+0x158/0xb00
-> > > [    1.058854] [<00000000010c74a0>] pci_scan_one_pbm+0xd0/0xf8
-> > > [    1.059167] [<0000000000446174>] sabre_probe+0x1f4/0x5c0
-> > > [    1.059476] [<0000000000c13a48>] platform_probe+0x28/0x80
-> > > [    1.059785] [<0000000000c11158>] really_probe+0xb8/0x340
-> > > [    1.060098] [<0000000000c11584>] driver_probe_device+0x24/0xe0
-> > > [    1.060413] [<0000000000c117ac>] __driver_attach+0x8c/0x160
-> > > [    1.060728] [<0000000000c0ef54>] bus_for_each_dev+0x54/0xc0
-> > > 
-> > > The original call trace also included _raw_spin_lock_irqsave(), and
-> > > I don't have CONFIG_PREEMPT_RT enabled in my sparc64 builds to start with.
-> > 
-> > You don't have to. "CONFIG_PROVE_RAW_LOCK_NESTING" looks if you try to
-> > acquire raw_spinlock_t -> spinlock_t. Which it did before I made the
-> > patch.
-> > The pci_lock is from drivers/pci/access.c and is defined as
-> > raw_spinlock_t. And I made pci_poke_lock of the same time. But debug
-> > says 3:3 which suggests LD_WAIT_CONFIG. (No patch applied).
-> > 
-> > > FWIW, I don't understand the value of
-> > > 	pr_warn("context-{%d:%d}\n", curr_inner, curr_inner);
-> > > Why print curr_inner twice ?
-> > 
-> > The syntax was once (or is) inner:outer. If you look from the top, you
-> > have 4 (mutex_t) followed pci_lock (the raw_spinlock_t) 2. You are at
-> > level 2 now and try to acquire spin_lock_t (3).
-> > 
-> 
-> How does that explain the
-> 	context-{5:5}
+input-enable, input-schmitt-enable, output-enable, output-low, output-high
+> +
+> +    additionalProperties: false
+> +
+> +allOf:
+> +  - $ref: pinctrl.yaml#
+> +
+> +required:
+> +  - reg
+> +  - compatible
+> +  - '#gpio-cells'
+> +  - gpio-controller
+> +  - interrupts
+> +  - '#interrupt-cells'
+> +  - interrupt-controller
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    rp1 {
+> +        #address-cells =3D <2>;
+> +        #size-cells =3D <2>;
+> +
+> +        rp1_gpio: pinctrl@c0400d0000 {
+> +            reg =3D <0xc0 0x400d0000  0x0 0xc000>,
+> +                  <0xc0 0x400e0000  0x0 0xc000>,
+> +                  <0xc0 0x400f0000  0x0 0xc000>;
+> +            compatible =3D "raspberrypi,rp1-gpio";
+> +            gpio-controller;
+> +            #gpio-cells =3D <2>;
+> +            interrupt-controller;
+> +            #interrupt-cells =3D <2>;
+> +            interrupts =3D <0 IRQ_TYPE_LEVEL_HIGH>,
+> +                         <1 IRQ_TYPE_LEVEL_HIGH>,
+> +                         <2 IRQ_TYPE_LEVEL_HIGH>;
+> +            gpio-line-names =3D
+> +                   "ID_SDA", // GPIO0
+> +                   "ID_SCL", // GPIO1
+> +                   "GPIO2", "GPIO3", "GPIO4", "GPIO5", "GPIO6",
+> +                   "GPIO7", "GPIO8", "GPIO9", "GPIO10", "GPIO11",
+> +                   "GPIO12", "GPIO13", "GPIO14", "GPIO15", "GPIO16",
+> +                   "GPIO17", "GPIO18", "GPIO19", "GPIO20", "GPIO21",
+> +                   "GPIO22", "GPIO23", "GPIO24", "GPIO25", "GPIO26",
+> +                   "GPIO27",
+> +                   "PCIE_RP1_WAKE", // GPIO28
+> +                   "FAN_TACH", // GPIO29
+> +                   "HOST_SDA", // GPIO30
+> +                   "HOST_SCL", // GPIO31
+> +                   "ETH_RST_N", // GPIO32
+> +                   "", // GPIO33
+> +                   "CD0_IO0_MICCLK", // GPIO34
+> +                   "CD0_IO0_MICDAT0", // GPIO35
+> +                   "RP1_PCIE_CLKREQ_N", // GPIO36
+> +                   "", // GPIO37
+> +                   "CD0_SDA", // GPIO38
+> +                   "CD0_SCL", // GPIO39
+> +                   "CD1_SDA", // GPIO40
+> +                   "CD1_SCL", // GPIO41
+> +                   "USB_VBUS_EN", // GPIO42
+> +                   "USB_OC_N", // GPIO43
+> +                   "RP1_STAT_LED", // GPIO44
+> +                   "FAN_PWM", // GPIO45
+> +                   "CD1_IO0_MICCLK", // GPIO46
+> +                   "2712_WAKE", // GPIO47
+> +                   "CD1_IO1_MICDAT1", // GPIO48
+> +                   "EN_MAX_USB_CUR", // GPIO49
+> +                   "", // GPIO50
+> +                   "", // GPIO51
+> +                   "", // GPIO52
+> +                   ""; // GPIO53
+> +
+> +            rp1-i2s0-default-state {
+> +                function =3D "i2s0";
+> +                pins =3D "gpio18", "gpio19", "gpio20", "gpio21";
+> +                bias-disable;
+> +            };
+> +
+> +            rp1-uart0-default-state {
+> +                txd-pins {
+> +                    function =3D "uart0";
+> +                    pins =3D "gpio14";
+> +                    bias-disable;
+> +                };
+> +
+> +                rxd-pins {
+> +                    function =3D "uart0";
+> +                    pins =3D "gpio15";
+> +                    bias-pull-up;
+> +                };
+> +            };
+> +        };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 75a66e3e34c9..c55d12550246 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -19384,7 +19384,9 @@ RASPBERRY PI RP1 PCI DRIVER
+>   M:	Andrea della Porta <andrea.porta@suse.com>
+>   S:	Maintained
+>   F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
+> +F:	Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
+>   F:	include/dt-bindings/clock/rp1.h
+> +F:	include/dt-bindings/misc/rp1.h
+>
+>   RC-CORE / LIRC FRAMEWORK
+>   M:	Sean Young <sean@mess.org>
 
-This is max value based on context. Your context is a simple process.
-Not handling an interrupt or anything of this kind.
-The culprit is 
-|  swapper/0/1 is trying to lock:
-|  0000000001b694c8 (pci_poke_lock){....}-{3:3}, at: pci_config_read16+0x8/0x80
-
-where you have pci_poke_lock classified as a 3. The context allows a 5
-so based on the context, the 3 would fly. But since pci_lock is a 2 we
-have the splat here.
-
-> which is created from the following ?
-> 	pr_warn("context-{%d:%d}\n", curr_inner, curr_inner);
-> 
-> Again, why print curr_inner twice ?
-
-It is the same syntax as in print_lock_name(). Except here, we don't
-have an outer type. The difference is RCU because it has a lower type
-than a spinlock_t and you can acquire a spinlock_t within an RCU
-section and lockdep is fine with it. It comes yelling once you try this
-with a mutex_t.
-
-> Thanks,
-> Guenter
-
-Sebastian
 
