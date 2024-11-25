@@ -1,124 +1,159 @@
-Return-Path: <linux-kernel+bounces-421179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0227D9D87D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:24:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D73159D877A
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:12:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49B26B3D92E
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:18:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D12C285737
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CC21D5CE3;
-	Mon, 25 Nov 2024 14:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542741B6CF5;
+	Mon, 25 Nov 2024 14:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OQMEcg97"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GMYr8Gm7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A9C1D5ADD;
-	Mon, 25 Nov 2024 14:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A710D1B6CE3;
+	Mon, 25 Nov 2024 14:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732543887; cv=none; b=c+XvYzrXs7p52ePYSGffuPnraZDKRMguFFu8hJpvCZREFMfacpM05b5vm5dp9ByyuiVhRfKT2AB3KJVZ2Lq/GgWj6rzuJei975If9ldE1aozgUTcxG6bb2PRQg0UFwb+GcHDIJSkpMedVBeKcJttjAPGDJ73Qx5+xqf4hE6Lgzc=
+	t=1732543840; cv=none; b=oS9N0CA4dmeFO/LtpyEX1eno4PHgd6pbEa64dxHEFxEJUEryPSiNjGhZklqrFb5X3iEqM1DxvSM18F4V7bomrinjC1sl9CLM+s0U9xXtbDZT6CC0r9BO9IPT1BlM6XkggffDelDm/BsRmHYQpaHzpbeBNPRasq9jD96KSWVsbIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732543887; c=relaxed/simple;
-	bh=Z8CIq8mdbUKG4he8prOindcVT3zUf3cgGXDWEtNgmBQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Fefwg0kNClZe/mopVsNwV/BpHw/Ylb8kEuHGW1/5x8KhKFqxHhi3QWTvab20jElcqFsNNxYSptWgFk6Q86M5InNCi70VQONzSNXqVhjnkG+bZd+/aCEI9fIWqoKGjMbH2oJj3mxpnoR6JzeFAd/Dege41uAWZN6jdmZmJvmtTVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OQMEcg97; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A2DCC4CED2;
-	Mon, 25 Nov 2024 14:11:25 +0000 (UTC)
+	s=arc-20240116; t=1732543840; c=relaxed/simple;
+	bh=bN1vT3x9zxVArM4Cza5XYilQfVfL33GOYfQuhlEcVew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NLpDHNdl012NhOePqbH/494WpsdqeNaD3SscO7j75nB+u9LQ7Qlq2x2hlq2uphzYdPeCJD/26u0pnOulyhj6PPBlmwEcquhPtFFAYAf/nzU86UMIbzcjO9eWSCNxEk4Yj4lZ4ZZ8XrcyflfluXMO9q0EdBHnYsbCAHWhkRvMFT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GMYr8Gm7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B0B9C4CED2;
+	Mon, 25 Nov 2024 14:10:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732543887;
-	bh=Z8CIq8mdbUKG4he8prOindcVT3zUf3cgGXDWEtNgmBQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=OQMEcg974dbG/mmpFBZkWOYRO2yzypusDz383ve4yRhCMwz+MZtIqyVwteN+xx+Rf
-	 rntSMWpPZJReg7OJpGL+v+q9i6RafE6nrS7BkQLb0l4ya1H9rjwDsIFpbAOCHudNHp
-	 3CiqJWam/wx+TVztSiOREBJ7dDBNIGOOkvC4qnkXgN533Zo2qGXJHEwt69+bdWluj/
-	 tzdg6QuDxmrVnpODURTSBKj4HSannKOYQi3UBm4GBQTr2LwVQXZ1VGSUYRF5hlw29/
-	 OtWxa8Vx1nN9zlPQA6m5YBdtNtDMoUwl/Z9q0Lm05rIrDTJQBcrI1k1/M7vBtL7JmI
-	 M+O//Yj67rLyQ==
-From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 25 Nov 2024 15:10:25 +0100
-Subject: [PATCH v2 29/29] cred: remove unused get_new_cred()
+	s=k20201202; t=1732543840;
+	bh=bN1vT3x9zxVArM4Cza5XYilQfVfL33GOYfQuhlEcVew=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GMYr8Gm7B9kDO+eOxSikz3D5J20Uhu/k2A9UhyNW1v8ZONh9yavxdaiIopo0GDOxR
+	 /WUXcilx+26gQLjuITWoYHYnFE1bKsWcjojnWsrmpZyjKuLu+uR8FT3V1Ycp3jgvRI
+	 aydkz1Mb2lSR+nvi28f5RQWp9TliuXo0xysFss8SPgLwSYxb/oO21nO2UcTLj06v8M
+	 cWkQx7kDAhDwpcylLNsy2ld4ftKk1hqkkD3ztRbuhG9NLEGYIfkVlhtQYOORiiAHKk
+	 UJeSjN4yYq0G5G54wyQu1cPAqRXfRdWvkXTp7gDm90ueS67eavXGUl67piIRrhq/wz
+	 fWvTRu0o4ICZA==
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2969ae2c99fso2393244fac.3;
+        Mon, 25 Nov 2024 06:10:40 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVbgnVKoEb4ZF1MhYUh2n8oTYVgqviJghQhUaeU4jEXthh1VYZhI5z4gSNzMXZf4HJf+8hiyEeu9wM=@vger.kernel.org, AJvYcCXjKole97uNIeAIu5vST8yWjl5CjoUkgg2hHCZc+QxdHrBB5i4/CoL//rhaowIRFWLZmtCMvJ5PAsa1OZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFvwMJAV2T8+/vZ4T1BTwI74cHQbBUGM0vOSHppTLzZ7/3caf2
+	CUv0EprJdc80DjHHKyfyEE32Lmq4SWpIrITQjCnRP84KrdEYigrOeDb5AM/z0WM+x1nMtTuLhA+
+	WDLFOQ10dsP+S3s3pP46onfJt918=
+X-Google-Smtp-Source: AGHT+IGZtSQ5evNeuuOQ8u1WsE6nENodwSlmRKxRYWUWaSKo3BgOcZV2CgPdHpcgjy/R8PlvkAYZFfX0OjT2urK2nPw=
+X-Received: by 2002:a05:6871:68a:b0:297:285e:f824 with SMTP id
+ 586e51a60fabf-297285efa25mr10268908fac.10.1732543839773; Mon, 25 Nov 2024
+ 06:10:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241125-work-cred-v2-29-68b9d38bb5b2@kernel.org>
-References: <20241125-work-cred-v2-0-68b9d38bb5b2@kernel.org>
-In-Reply-To: <20241125-work-cred-v2-0-68b9d38bb5b2@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
- Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, 
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.15-dev-355e8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1869; i=brauner@kernel.org;
- h=from:subject:message-id; bh=Z8CIq8mdbUKG4he8prOindcVT3zUf3cgGXDWEtNgmBQ=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS7tHrNnrXyouC3rDw2sT/fGUM6DkmXrZ233uwQc51NN
- c+cnuxXHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABN51cvI8CbpFfP1gMO7DZJ1
- 32a5dp/g/9b06lf3W+GpE/w0/0zb/Z6R4fzaLRcZKieLxR76vfR2lLr2ntQOQQ+WIzYqNquff6j
- 4zAkA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+References: <20241121-sysfs-const-bin_attr-int340x_thermal-v1-1-2436facf9dae@weissschuh.net>
+In-Reply-To: <20241121-sysfs-const-bin_attr-int340x_thermal-v1-1-2436facf9dae@weissschuh.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 25 Nov 2024 15:10:28 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jEEAidAEn4C6eb0ShG06+UQRaYhsFCF9uOiMuO-Gn3Jg@mail.gmail.com>
+Message-ID: <CAJZ5v0jEEAidAEn4C6eb0ShG06+UQRaYhsFCF9uOiMuO-Gn3Jg@mail.gmail.com>
+Subject: Re: [PATCH] thermal: int3400: Remove unneeded data_vault attribute_group
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This helper is not used anymore so remove it.
+On Thu, Nov 21, 2024 at 5:29=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisss=
+chuh.net> wrote:
+>
+> The group only contains a single entry and the conditionals around its
+> lifecycle make clear that this won't change.
+> Remove the unnecessary group.
+>
+> This saves some memory and it's easier to read.
+> The removal of a non-const bin_attribute[] instance is also a
+> preparation for the constification of struct bin_attributes.
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> ---
+>  drivers/thermal/intel/int340x_thermal/int3400_thermal.c | 16 +++--------=
+-----
+>  1 file changed, 3 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c b/dr=
+ivers/thermal/intel/int340x_thermal/int3400_thermal.c
+> index b0c0f0ffdcb046607b4478390f39a77ae316a511..558a08f1727fc48c37181f8d3=
+45e236f879dab27 100644
+> --- a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
+> +++ b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
+> @@ -75,11 +75,6 @@ struct odvp_attr {
+>
+>  static BIN_ATTR_SIMPLE_RO(data_vault);
+>
+> -static struct bin_attribute *data_attributes[] =3D {
+> -       &bin_attr_data_vault,
+> -       NULL,
+> -};
+> -
+>  static ssize_t imok_store(struct device *dev, struct device_attribute *a=
+ttr,
+>                           const char *buf, size_t count)
+>  {
+> @@ -108,10 +103,6 @@ static const struct attribute_group imok_attribute_g=
+roup =3D {
+>         .attrs =3D imok_attr,
+>  };
+>
+> -static const struct attribute_group data_attribute_group =3D {
+> -       .bin_attrs =3D data_attributes,
+> -};
+> -
+>  static ssize_t available_uuids_show(struct device *dev,
+>                                     struct device_attribute *attr,
+>                                     char *buf)
+> @@ -624,8 +615,7 @@ static int int3400_thermal_probe(struct platform_devi=
+ce *pdev)
+>         }
+>
+>         if (!ZERO_OR_NULL_PTR(priv->data_vault)) {
+> -               result =3D sysfs_create_group(&pdev->dev.kobj,
+> -                                           &data_attribute_group);
+> +               result =3D device_create_bin_file(&pdev->dev, &bin_attr_d=
+ata_vault);
+>                 if (result)
+>                         goto free_uuid;
+>         }
+> @@ -648,7 +638,7 @@ static int int3400_thermal_probe(struct platform_devi=
+ce *pdev)
+>  free_sysfs:
+>         cleanup_odvp(priv);
+>         if (!ZERO_OR_NULL_PTR(priv->data_vault)) {
+> -               sysfs_remove_group(&pdev->dev.kobj, &data_attribute_group=
+);
+> +               device_remove_bin_file(&pdev->dev, &bin_attr_data_vault);
+>                 kfree(priv->data_vault);
+>         }
+>  free_uuid:
+> @@ -683,7 +673,7 @@ static void int3400_thermal_remove(struct platform_de=
+vice *pdev)
+>                 acpi_thermal_rel_misc_device_remove(priv->adev->handle);
+>
+>         if (!ZERO_OR_NULL_PTR(priv->data_vault))
+> -               sysfs_remove_group(&pdev->dev.kobj, &data_attribute_group=
+);
+> +               device_remove_bin_file(&pdev->dev, &bin_attr_data_vault);
+>         sysfs_remove_group(&pdev->dev.kobj, &uuid_attribute_group);
+>         sysfs_remove_group(&pdev->dev.kobj, &imok_attribute_group);
+>         thermal_zone_device_unregister(priv->thermal);
+>
+> ---
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- Documentation/security/credentials.rst |  5 -----
- include/linux/cred.h                   | 13 -------------
- 2 files changed, 18 deletions(-)
-
-diff --git a/Documentation/security/credentials.rst b/Documentation/security/credentials.rst
-index 357328d566c803d3d7cde4536185b73a472309bb..2aa0791bcefe4c4a9de149317ffd55921f91a1be 100644
---- a/Documentation/security/credentials.rst
-+++ b/Documentation/security/credentials.rst
-@@ -527,11 +527,6 @@ There are some functions to help manage credentials:
-      This gets a reference on a live set of credentials, returning a pointer to
-      that set of credentials.
- 
-- - ``struct cred *get_new_cred(struct cred *cred);``
--
--     This gets a reference on a set of credentials that is under construction
--     and is thus still mutable, returning a pointer to that set of credentials.
--
- 
- Open File Credentials
- =====================
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index a7df1c759ef00a91ddf3fc448cf05dda843ea5b7..360f5fd3854bddf866abef141cb633ea95c38d73 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -200,19 +200,6 @@ static inline struct cred *get_new_cred_many(struct cred *cred, int nr)
- 	return cred;
- }
- 
--/**
-- * get_new_cred - Get a reference on a new set of credentials
-- * @cred: The new credentials to reference
-- *
-- * Get a reference on the specified set of new credentials.  The caller must
-- * release the reference.
-- */
--static inline struct cred *get_new_cred(const struct cred *cred)
--{
--	struct cred *nonconst_cred = (struct cred *) cred;
--	return get_new_cred_many(nonconst_cred, 1);
--}
--
- /**
-  * get_cred_many - Get references on a set of credentials
-  * @cred: The credentials to reference
-
--- 
-2.45.2
-
+Applied as 6.13-rc material, thanks!
 
