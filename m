@@ -1,188 +1,219 @@
-Return-Path: <linux-kernel+bounces-421360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC8809D8A21
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:20:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B419D8AD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:58:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6495E284C79
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:20:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3DECB36ECC
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D5A1B415B;
-	Mon, 25 Nov 2024 16:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19081B6CE7;
+	Mon, 25 Nov 2024 16:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQQXhKnn"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L53j1MSQ"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE90325771;
-	Mon, 25 Nov 2024 16:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346C31B393A
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 16:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732551625; cv=none; b=rD+JUkHKND2/dsoEWIXuP3ckj4xgYfO2s0Ciw5DTKHhsZEuihkZcieJ8/E3ApjKiU2gscMd8avZYcKHWuL+g7GB1KaKgfvGjO1vX94+rIpG1XJKtaxqqnMJiEQMUj/WJmRvBqC1BrcxY8rBtTyRGA2fiswYumxE+iqzT2uqHwZ8=
+	t=1732551628; cv=none; b=bvVJ/TqJH1+pqS6qDe/wSE+XqwjJkoJbmoJMg0qJ+PnhM8AjvPRoimui1KTi3VHmx5rQ9n6MRD7dW97ONHys+nbrX4IcPrGHsf22vJ6RQZevw5Jpucn/GhPZ0mVXRsoMdqHdiXV6TTkJ53Xw7QGT0NSEOHD9Kn1P3/TZNVD9JHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732551625; c=relaxed/simple;
-	bh=wiJO8EafWrL3t6qlIiyV2F5okSL6L2pFYmTGRurbNkY=;
+	s=arc-20240116; t=1732551628; c=relaxed/simple;
+	bh=jIz6yqv3rQbq9An1NPSJcpLwnbdowJpW7nXb8kiGPyk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A/e+jGioaxEuSiUzV7fYlGSTwg0VRXr1sz9rEDrFw1RbzACoBaLtsAtzketjIn9hR2CmTEVGMwntpdqXnFhzXORog0e17Z1dlZSOi0zxCKEkFIYbqrBE1MFJNLgEtW91Z41GQ4Trno8AlgD4FvY510WDv5ea9EWM7XxUwo2UuLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cQQXhKnn; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6d4184f2a39so33662846d6.3;
-        Mon, 25 Nov 2024 08:20:23 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ORiL0wopCpJU5EuS4yPMM8F61RrdGICOkppfJZlmylkgrayrBp5/OnmgBUBi43HUvO/MnvV/uBCUTUhUpelYHYc3FqaNMLn1zpbzqvanVadUXwyus6bhNFncvRQJkf5QDpkflzZ2vjmm1aenAHLC0RMvji/sejVvQ/ynJO5RxGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L53j1MSQ; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53dd0cb9ce3so4273991e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 08:20:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732551622; x=1733156422; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=kGAJxqXAxllg/W2VuJ5ECjZPkQ6tCWdsZghimeCyrgk=;
-        b=cQQXhKnnvdCnzYrh3TtPYsVjeyWpelW19oiPdCVcCSbzf5Hdt3osXmWgdCMZ5IIfEs
-         G70RerzfCOk4JGAbr4efjCmhc8G2MXz6Afkobb9N1c9kBxkPpH/iSGpixyZKx+cXNpRi
-         xNsiLy1toPMgyJJQNJYCDrTpm9oiUF8CRGc9u2dqWjV3BJ0jxpk1nqyOCnIVHi6WcarO
-         reye+Hzue1Ik9eyRHBKIDJD80wwZJVOpiPNeD5FbjGnB10ravcdR++1CjH/t+UcUKjjx
-         hDIFmN774XzgiHIyOndZdBiM5VcwQ3n7L9gEkUnb9OETDh5MgvdUBsGtFMIJFTZzphDw
-         5AlA==
+        d=linaro.org; s=google; t=1732551624; x=1733156424; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=osAdnzghfwg0ow+DK7g6ijsqkNJWf2271WtACbHNvN0=;
+        b=L53j1MSQHGgd56joGpTEA7/DJSkBcfWhC989ev8vZYvgbiZ5GBay8eXelRyOnAeGZj
+         AmoWG+SQ77R5Id0p9sLwDCit9kCjfXGpK5EGyYtGunO+PVEod9w8HQYjlJF6k+INTh5+
+         qOeP7Rb5Nac2d88nLgHD85oKPq3MSBUPbyf0pGionmscR+7s6CmowkHurwHQiL2cL1KK
+         Po5kEHnbBEi7r/N6/ddnI7IDxzr9M6l99DpdUDXWcOQK2A/MZX8YyyU+p/drmtuldgGR
+         0YOaARv05tGBK7rRYyVR/CIyw5Lqs/47Mx+n5fDVg/u40W1NSD1T/ccmxtVI4LexlBO8
+         6Xlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732551622; x=1733156422;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kGAJxqXAxllg/W2VuJ5ECjZPkQ6tCWdsZghimeCyrgk=;
-        b=cq3S2diEk/LJGUr4xiOLZNb3pTzfgv0msV6QnwfYQQDDEFU4apUGMt2CHR+ep3o3hQ
-         bptqsIp6gyx1iH6OxvQ4wLRZDWdrLBCrvzTC8PX7z+N+Z42gSe2Bl++cRQMqBLS3Hw+u
-         YhxwzMBVbxxNi++4XsmNdfd9oUfAXXNAyL6ejFRKep6G0l0f3i9taRsWjgNc/KrfWPNP
-         JZc2A+Jagl3HbRpR9LBgkbLzszXbLard9UgMRiwPCUGDEyeSXASUVAcXFSrd/GGT6sPK
-         +sR2wZk+wDLQxY1QCAu3mplwPFXK6OxtgBKrPUt3yPedJnm2V0ReBXLOYeMJtqvRqI47
-         AB7g==
-X-Forwarded-Encrypted: i=1; AJvYcCV6oZEyEAf9SdeSfgG6Hn8a7SgD1+9hcSjyaugYYvwdVxX5FuTnU5F+295PFAnK7jYT98+ICZ4FfPkzlP7M8PU=@vger.kernel.org, AJvYcCXODc9hKtx4/Nov8+eI0FLtQ+q4t4iQuJDwmowDNWVx7oCteIF1GAl2YmbXjpb6fub83TNloEFkSnpdDMg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz24B8QB3Jwz7w5Rul/mBbHVJKUJ9oiDuHjhssskjZD5ym9o8I9
-	MImPuv+NIYMGTomqop5SnPH3OBZlHvEWmA2ugKNhEAVtlwsWXpW6
-X-Gm-Gg: ASbGncsFhyiAdoPh4cOFItjNE9Oug8Fwlqwg2fCuOksmH9TQx3KW//B575Iw+MdWMUJ
-	gT/4/fBmJmVKyMKeF1Q6O0sfNX1WAq7xqMVLKT6BhKa+rXLkVjnOBU2nmpimWGo1XNScUh1qWxk
-	UtpekyhcE9m8An7gBDajljBxHEYcMlb29Ynbm4KLtRZIHjrzOKgM3EkuHxceSAsOUkWIPIWKMzg
-	3hAw5NF3rXSfnkcFmVBvvL+QFnf7ji6W8bSL97QTn3DHU1CaEN7ZX4f3wAgigxxLZQFCS+PwNaY
-	kPLZmeQjIKmZXjcRgaMKDmzJNcNJo02PQE+QspcE
-X-Google-Smtp-Source: AGHT+IGPkw8t4N9gDzf9lwkJ1qKoELH7ZpcCc2tznTmePFzUIMnxy8viKSeF32UNYG2rISDhl961FA==
-X-Received: by 2002:a05:6214:508e:b0:6d4:287d:b8d6 with SMTP id 6a1803df08f44-6d450e7c2dfmr232620986d6.18.1732551622507;
-        Mon, 25 Nov 2024 08:20:22 -0800 (PST)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d451ab6198sm44259746d6.68.2024.11.25.08.20.21
+        d=1e100.net; s=20230601; t=1732551624; x=1733156424;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=osAdnzghfwg0ow+DK7g6ijsqkNJWf2271WtACbHNvN0=;
+        b=bd5X75tnXdunz9Xw6KqGxrDASMQomXJAhojJlUPyZdKKFxGsmjZIG8KedLmHxoqiU8
+         6j6pKXh5h0dMrFCzutaoBAoLIdDvIVsQwYhlOodJNMQEqHrJ0x9BzZZuSWFbkCMxVwdm
+         yyD4Qnf0xU7hbVJM+Kb7XHJJP1ZdLIumZVImN480BCW4i0wITA7+EmNnp5mxLMH7Z2Ke
+         +YAvXtTSj+17OmGebCI7lP9MIdqe5e06U2CK2OmlvvcngvmdMSLQjn3S9AMDacr3pJ1V
+         XK2VmFFGQDQ2p+QzPmdkyrrfxd4AOW/BscdJmRtzPVyoVQq9SG7tZ1TceXtiLKDKYkIj
+         Z4gg==
+X-Forwarded-Encrypted: i=1; AJvYcCWMC+myPiEDUboOo8l7M/ruwwe6SnESR4nQT7zMz9WuCwu3jjYNaR7QwrgHGH7qs9UBgKzwR0C/lQfMqDQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcUQwN15lvec8BCuJJyxIUzGYae4oHRp9jPgY3m0gpS0A9CYfi
+	Rm2BQ0r0T0U4ZMGB+Sx4ovbGNlUZaffEviviLz4S/l8iB0eNanJHyJLywGppfyc=
+X-Gm-Gg: ASbGncuLNx9X7Qp1+YMpCOgBOO//ytiAtbNe6RFWzfdJJADb1bF6n3/Co58Uo3W/ggr
+	YXq4M6hdu95/8yH1ryDFQedU4QqVNTkn4wngIbQBG9sbpWWKdQHBHo/5/BOTijKcnKcTLKA1CY+
+	d3h1/wggeq+WlK09zsQ3k5jpYOTr213LB1mkC0XV8Dui06IIXfVueczxfGhSYfR+cJdIkp16YhB
+	BTwa7kqFFvLx/SR8iVgH3Lnw4fKE4jCE5Vn1TxR+drq6SARiKa/YjpkUHiCI8WzYUYuy/XHD0qR
+	0Ry9EV4d3Ud0AYVhYgzdVsn8/uZNzg==
+X-Google-Smtp-Source: AGHT+IGGJmuLAqbWK+ECiMMHIoK9Za26vUdLmxRyMCY0pIIzGmiDusuBm5BdVWv1P0n612BIvLr1ow==
+X-Received: by 2002:a05:6512:224d:b0:53d:a5c8:aaa6 with SMTP id 2adb3069b0e04-53dd36a1186mr5952770e87.13.1732551624397;
+        Mon, 25 Nov 2024 08:20:24 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd2489ac9sm1704981e87.182.2024.11.25.08.20.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 08:20:22 -0800 (PST)
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 73B0B1200043;
-	Mon, 25 Nov 2024 11:20:21 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Mon, 25 Nov 2024 11:20:21 -0500
-X-ME-Sender: <xms:xaNEZ8jgXg6EClOFb0EdNDQapx01hExRBG23E0qN6FB-Q4OLwnz60Q>
-    <xme:xaNEZ1CBr0wBExBiBJNfQN8dAWhalqJDjuHivAJRywRyQ3MfcfhbTvvbeLRDhyDYd
-    C2dcdYwHL81tYuUcw>
-X-ME-Received: <xmr:xaNEZ0FHCOIR1D06brxo3ypPQ_QA28DNBMsYUlJDU0SkzKVZdUNmBnj48qA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrgeehgdekhecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeen
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpeevgffhueevkedutefgveduuedujeefledthffg
-    heegkeekiefgudekhffggeelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
-    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
-    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepudeipdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopehmihhguhgvlhdrohhjvggurgdrshgrnhguoh
-    hnihhssehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhgrsegrshgrhhhilhhinhgr
-    rdhnvghtpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhr
-    sehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpd
-    hrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhmpdhrtghp
-    thhtohepsggvnhhnohdrlhhoshhsihhnsehprhhothhonhdrmhgvpdhrtghpthhtoheprg
-    drhhhinhgusghorhhgsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:xaNEZ9QoWgDXfljotMT4iAiewSfrNSieGrP0EnlgO5FoIDwbFlECbQ>
-    <xmx:xaNEZ5yexd6XKa05cooNYWM1L9-1cqCbFoqk6I4iVjbWgUSWlpoKzg>
-    <xmx:xaNEZ75MW2dAI0LQ8f5LH0eitJbQxgJ2lsixwBzEIDGjsC35SOtYEg>
-    <xmx:xaNEZ2zyl_4NzGbdw7vyeRju93LVm-ecnRhjqfTMPI8zPtLwioSiCQ>
-    <xmx:xaNEZ9gMwBYCS9jL5CZJPQhQ9fhU6-GhOIK2una9n93U4Djii5DR6H9Y>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 25 Nov 2024 11:20:20 -0500 (EST)
-Date: Mon, 25 Nov 2024 08:20:13 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Asahi Lina <lina@asahilina.net>, Danilo Krummrich <dakr@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Janne Grunau <j@jannau.net>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, asahi@lists.linux.dev
-Subject: Re: [PATCH] rust: alloc: Fix `ArrayLayout` allocations
-Message-ID: <Z0SjvVIALIkOE3nj@boqun-archlinux>
-References: <20241123-rust-fix-arraylayout-v1-1-197e64c95bd4@asahilina.net>
- <CANiq72=axLe_WvPohRRpAnmmPOHtwSK1W3e86n7FMF2mao8HUg@mail.gmail.com>
+        Mon, 25 Nov 2024 08:20:23 -0800 (PST)
+Date: Mon, 25 Nov 2024 18:20:21 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: "Renjiang Han (QUIC)" <quic_renjiang@quicinc.com>
+Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
+	"Vikash Garodia (QUIC)" <quic_vgarodia@quicinc.com>, "bryan.odonoghue@linaro.org" <bryan.odonoghue@linaro.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/4] media: venus: core: add qcs615 platform data
+Message-ID: <ro5nx6brovd7inyy6tkrs7newszcxrzymfbsftejgpglz3gs6v@pscij26xmmco>
+References: <20241125-add-venus-for-qcs615-v3-0-5a376b97a68e@quicinc.com>
+ <20241125-add-venus-for-qcs615-v3-2-5a376b97a68e@quicinc.com>
+ <j4nnlbstclwgoy2cr4dvoebd62by7exukvo6nfekg4lt6vi3ib@tevifuxaawua>
+ <da432de1369e4ce799c72ce98c9baaf1@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72=axLe_WvPohRRpAnmmPOHtwSK1W3e86n7FMF2mao8HUg@mail.gmail.com>
+In-Reply-To: <da432de1369e4ce799c72ce98c9baaf1@quicinc.com>
 
-On Sat, Nov 23, 2024 at 06:39:23PM +0100, Miguel Ojeda wrote:
-> On Sat, Nov 23, 2024 at 11:30 AM Asahi Lina <lina@asahilina.net> wrote:
-> >
-> > We were accidentally allocating a layout for the *square* of the object
-> > size due to a variable shadowing mishap.
+On Mon, Nov 25, 2024 at 03:34:19PM +0000, Renjiang Han (QUIC) wrote:
+> On Monday, November 25, 2024 9:36 PM, Dmitry Baryshkov wrote:
+> > On Mon, Nov 25, 2024 at 11:04:50AM +0530, Renjiang Han wrote:
+> > > Initialize the platform data and enable venus driver probe of QCS615 
+> > > SoC.
+> > > 
+> > > Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com> >
+> > > ---
+> > >  drivers/media/platform/qcom/venus/core.c | 50 
+> > > ++++++++++++++++++++++++++++++++
+> > >  1 file changed, 50 insertions(+)
+> > > 
+> > > diff --git a/drivers/media/platform/qcom/venus/core.c 
+> > > b/drivers/media/platform/qcom/venus/core.c
+> > > index 
+> > > 423deb5e94dcb193974da23f9bd2d905bfeab2d9..39d8bcf62fe4f72674746b75994c
+> > > ce6cbaee94eb 100644
+> > > --- a/drivers/media/platform/qcom/venus/core.c
+> > > +++ b/drivers/media/platform/qcom/venus/core.c
+> > > @@ -630,6 +630,55 @@ static const struct venus_resources msm8998_res = {
+> > >  	.fwname = "qcom/venus-4.4/venus.mbn",  };
+> > >  
+> > > +static const struct freq_tbl qcs615_freq_table[] = {
+> > > +	{ 0, 460000000 },
+> > > +	{ 0, 410000000 },
+> > > +	{ 0, 380000000 },
+> > > +	{ 0, 300000000 },
+> > > +	{ 0, 240000000 },
+> > > +	{ 0, 133333333 },
+> > > +};
+> > > +
+> > > +static const struct bw_tbl qcs615_bw_table_enc[] = {
+> > > +	{  972000,  951000, 0, 1434000, 0 },	/* 3840x2160@30 */
+> > > +	{  489600,  723000, 0,  973000, 0 },	/* 1920x1080@60 */
+> > > +	{  244800,  370000, 0,	495000, 0 },	/* 1920x1080@30 */
+> > > +};
+> > > +
+> > > +static const struct bw_tbl qcs615_bw_table_dec[] = {
+> > > +	{ 1036800, 1987000, 0, 2797000, 0 },	/* 4096x2160@30 */
+> > > +	{  489600, 1040000, 0, 1298000, 0 },	/* 1920x1080@60 */
+> > > +	{  244800,  530000, 0,  659000, 0 },	/* 1920x1080@30 */
+> > > +};
+> > > +
+> > > +static const struct venus_resources qcs615_res = {
+> > > +	.freq_tbl = qcs615_freq_table,
+> > > +	.freq_tbl_size = ARRAY_SIZE(qcs615_freq_table),
+> > > +	.bw_tbl_enc = qcs615_bw_table_enc,
+> > > +	.bw_tbl_enc_size = ARRAY_SIZE(qcs615_bw_table_enc),
+> > > +	.bw_tbl_dec = qcs615_bw_table_dec,
+> > > +	.bw_tbl_dec_size = ARRAY_SIZE(qcs615_bw_table_dec),
+> > > +	.clks = {"core", "iface", "bus" },
+> > > +	.clks_num = 3,
+> > > +	.vcodec0_clks = { "vcodec0_core", "vcodec0_bus" },
+> > > +	.vcodec_clks_num = 2,
+> > > +	.vcodec_pmdomains = (const char *[]) { "venus", "vcodec0" },
+> > > +	.vcodec_pmdomains_num = 2,
+> > > +	.opp_pmdomain = (const char *[]) { "cx" },
+> > > +	.vcodec_num = 1,
+> > > +	.hfi_version = HFI_VERSION_4XX,
+> > > +	.vpu_version = VPU_VERSION_AR50,
+> > > +	.vmem_id = VIDC_RESOURCE_NONE,
+> > > +	.vmem_size = 0,
+> > > +	.vmem_addr = 0,
+> > > +	.dma_mask = 0xe0000000 - 1,
+> > > +	.cp_start = 0,
+> > > +	.cp_size = 0x70800000,
+> > > +	.cp_nonpixel_start = 0x1000000,
+> > > +	.cp_nonpixel_size = 0x24800000,
+> > > +	.fwname = "qcom/venus-5.4/venus_s6.mbn",
 > 
-> Good catch, thanks! (Square?)
+> > I really want the firmware discussion of linux-firmware to be solved first,
+> > before we land this patch.
 > 
+> > SHort summary: can we use a single image for all 5.4 platforms (by using
+> > v5 signatures, by using v6 signatures, v3 or any other kind of quirk).
+> Thanks for your comment. We have discussed with the firmware team and
+> other teams if we can use the same firmware binary. The result is we'd better
+> use different firmware files. They should respond in the firmware binary
+> thread. I will push them and hope them respond as quickly as possible and
+> give reasons.
+> > > +};
+> > > +
+> > >  static const struct freq_tbl sdm660_freq_table[] = {
+> > >  	{ 979200, 518400000 },
+> > >  	{ 489600, 441600000 },
+> > > @@ -937,6 +986,7 @@ static const struct of_device_id venus_dt_match[] = {
+> > >  	{ .compatible = "qcom,msm8916-venus", .data = &msm8916_res, },
+> > >  	{ .compatible = "qcom,msm8996-venus", .data = &msm8996_res, },
+> > >  	{ .compatible = "qcom,msm8998-venus", .data = &msm8998_res, },
+> > > +	{ .compatible = "qcom,qcs615-venus", .data = &qcs615_res, },
+> 
+> > The hardware seems to be the same as sc7180, only the frequencies differ.
+> > Can we change the driver in a way that we don't have to add another
+> > compat entry just for the sake of changing freqs / bandwidths?
+> 
+> Thank you for your comment. I agree with you. But based on the Venus code
+> architecturE ANd the distinction between different platforms, I think the
+> current changes are the simplest.
 
-While we are at it, I think it'll be good to add some example/tests for
-those functions of ArrayLayout, for example, the below will catch this:
+Well, it is simplest, correct. But not the best one. There is no plan no
+migrate these platforms to the iris driver. So instead, please improve
+the venus driver instead of just pushing the simplest change. I should
+have been more explicit about it earlier.
 
-I will open a good-first-issue.
+> 
+> > >  	{ .compatible = "qcom,sdm660-venus", .data = &sdm660_res, },
+> > >  	{ .compatible = "qcom,sdm845-venus", .data = &sdm845_res, },
+> > >  	{ .compatible = "qcom,sdm845-venus-v2", .data = &sdm845_res_v2, },
+> > > 
+> > > --
+> > > 2.34.1
+> > > 
+> 
+> > -- 
+> > With best wishes
+> > Dmitry
 
-Regards,
-Boqun
-
------------------------->8
-diff --git a/rust/kernel/alloc/layout.rs b/rust/kernel/alloc/layout.rs
-index 7e0c2f46157b..bb3ce3b2218b 100644
---- a/rust/kernel/alloc/layout.rs
-+++ b/rust/kernel/alloc/layout.rs
-@@ -7,6 +7,7 @@
- use core::{alloc::Layout, marker::PhantomData};
- 
- /// Error when constructing an [`ArrayLayout`].
-+#[derive(Debug)]
- pub struct LayoutError;
- 
- /// A layout for an array `[T; n]`.
-@@ -43,6 +44,20 @@ pub const fn empty() -> Self {
-     /// # Errors
-     ///
-     /// When `len * size_of::<T>()` overflows or when `len * size_of::<T>() > isize::MAX`.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```rust
-+    /// use kernel::alloc::layout::ArrayLayout;
-+    ///
-+    /// // No overflow.
-+    /// let layout = ArrayLayout::<i32>::new(12);
-+    /// assert_eq!(layout.expect("sizeof(i32) * 12 is 48, not overflow").len(), 12);
-+    ///
-+    /// // Overflow, should return `Err`.
-+    /// let layout = ArrayLayout::<i32>::new(isize::MAX as usize);
-+    /// assert!(layout.is_err());
-+    /// ```
-     pub const fn new(len: usize) -> Result<Self, LayoutError> {
-         match len.checked_mul(core::mem::size_of::<T>()) {
-             Some(len) if len <= ISIZE_MAX => {
+-- 
+With best wishes
+Dmitry
 
