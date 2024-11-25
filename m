@@ -1,171 +1,121 @@
-Return-Path: <linux-kernel+bounces-420962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC699D84CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 12:50:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E79216AEF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:50:17 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE7E1A9B43;
-	Mon, 25 Nov 2024 11:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b="GNyc+vZj"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4542C9D8528
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:13:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA59156F5D;
-	Mon, 25 Nov 2024 11:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732535378; cv=pass; b=FUqeuItDYpg54/BobdJeWWZVwduzjADbyNt7MEGqX6Kv15GqS+qT5g7VnSRxhr5yCHgMhqp0cAjAnzt7KZXZTKxve7jLuIfo19SoJ/DYQvxHBSZuOmbSKLw026nMCDkX8rhxzrrcL3/ikMgPcPfx5KO/QNqH8MFh9zZ0UmFyfiM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732535378; c=relaxed/simple;
-	bh=FVbtVmNfGZ+8dYEge5LgAfuUcLjQ+g8OtDywtfq2GiM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pLtlSgbR3DGNYoXpEVb7NjxU0OwgJbglFpJrSNBscuwaMxlwv147log4qPwxE9voCfuKVoEoNRQuqSQQhGAGToDSYZ+wtbsPTk5V1ONFb4tvDw9j2l+ZI/uJo2sIPk8/Zb0M7r1r4KR2evL2m4eWGAC+1dniesLv8UMy1F03d3o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b=GNyc+vZj; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732535355; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=gSqVco1SdeeqGVYardhf7Vk7JtazYaNaHO9FcDfdcl3+rqX0sfB3MLo+cx616m1RNnAp2mpZAY/q0INb4z/lxebERZDFXt3DRUL0xx1Bh9uL7VbbG92c53hTPDMqRM0L5IOEb6H81RNjD5sHsEagWoeE/MuA63m+JAyxBoWsTfE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732535355; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=IYLS7tx8ymYW2bxZ3O6TqYjsBYh8WIsjnDCZUsFd4zk=; 
-	b=MC1bWtSEQ+WKkxLK/tlSdzuubGVg9lPbKNeEgzk5P3rFoxpdX5cNKnXU95h6wTXxjuSUrk5Ryx52zjharH8X3fmgFY1iRBolt1SY/ULI1qvssY5DQk0fPoY4F6IdKMuDQbIQ12IZd4FTH9oREo6vNB+CvF4jjZwc+ZNcZTL+AFk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=laura.nao@collabora.com;
-	dmarc=pass header.from=<laura.nao@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732535354;
-	s=zohomail; d=collabora.com; i=laura.nao@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=IYLS7tx8ymYW2bxZ3O6TqYjsBYh8WIsjnDCZUsFd4zk=;
-	b=GNyc+vZjpUc1S/w3Ntnmn4JCgkTrzRSX3GO60BAXp1PX6edi8AH8uModAwIc5ckH
-	gyUBPecj8i6ykPNUZkJBoA4Fr4wDQfUXyQuA63/s8tOz62rSEoNbM4l6Gpy/UlsZ2zO
-	WJMV0L1tTNJYmy8HNkqYxslwzX3wfa2serwpe/d8=
-Received: by mx.zohomail.com with SMTPS id 1732535352281368.0887091389344;
-	Mon, 25 Nov 2024 03:49:12 -0800 (PST)
-From: Laura Nao <laura.nao@collabora.com>
-To: usama.anjum@collabora.com,
-	shuah@kernel.org
-Cc: gregkh@linuxfoundation.org,
-	kernel@collabora.com,
-	laura.nao@collabora.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	nfraprado@collabora.com,
-	robh@kernel.org
-Subject: Re: [PATCH] selftests: Warn about skipped tests in result summary
-Date: Mon, 25 Nov 2024 12:49:52 +0100
-Message-Id: <20241125114952.21846-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <18721453-75dc-4350-a97f-38debc90639d@collabora.com>
-References: <18721453-75dc-4350-a97f-38debc90639d@collabora.com>
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38431B6084C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 11:50:35 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152B3199FBB;
+	Mon, 25 Nov 2024 11:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bM8LmYuf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2207F376E0;
+	Mon, 25 Nov 2024 11:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732535411; cv=none; b=GrIkAOfqecBeUGvdb6iUGzWFfoUaEsX1yEW25fLzjrET44IoFGri2hWXQ7BkZRePZwsSke8M9jj31+1+cqDKIHgnRBJuHOl4u+Xfku20TNyuTWLnXGUuXkNnyBE7Fr8OUEMSgct38ekmuyjFJZ3BFj89rws4+Ax+YQRaOQG1uTM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732535411; c=relaxed/simple;
+	bh=kSYSImDUvkzfXkaqiB+cnw9SCsDTqsyLlK3fME3dMxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JlZJJF8/gNZiUtU5IraM2Pwl1t5vW+NgohoKB2+tK7SDj7+KLcatjW6zq/E46T3ffxAJrzoyZlsfe2rG0LpWOP8CIcR5bwn1SWBTBEgyQE3+fln0/aSe4/XrfbbV2txnlYtew3s3rcYc6YgXKZ7uzRCVKTn925Oxih5jRRv7yFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bM8LmYuf; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732535409; x=1764071409;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kSYSImDUvkzfXkaqiB+cnw9SCsDTqsyLlK3fME3dMxw=;
+  b=bM8LmYufjsZTbsS1tysY/ttm6jBLJrVZxPu8tiAq/Mh4i1cZtH8k2eaU
+   4rDqcQs/G2pTCtFMdB1n89mBwBseiBUO4rsIGKjmwYbaoORNgXCg7UZv9
+   bjeRGmJd+8S1yjNacS8Nb0coSgkUee0UDPdFh6LmSvAH49Go088E7j/jY
+   qb6EDoLS7r9o7L0eox9JIv0Ohh7b3wcUVqNptHxD+Jkh90SNzgLyyfoxK
+   jCIaIMXA4HUS8ieO6sHxIJQH0nRd8Ejul25bJFlSAYw8XCyndKnt2Yjc5
+   SjFeTLLHBD5wk0MMIDlrEnwfUvpo1BNUfFJvbx35ahhpEf6Uv9IOPWW8A
+   A==;
+X-CSE-ConnectionGUID: rhQKMbmWTxa8Ql/x9J9oJA==
+X-CSE-MsgGUID: zOGUX84DTyyJpsRs0TBc1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="44017392"
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="44017392"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 03:50:08 -0800
+X-CSE-ConnectionGUID: mhL5UBfPSYuWDQnQLKUlgw==
+X-CSE-MsgGUID: 6j3M5iBBQp6hsk0gnibVaQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
+   d="scan'208";a="91589894"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 03:50:05 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tFXbO-00000000joT-27qB;
+	Mon, 25 Nov 2024 13:50:02 +0200
+Date: Mon, 25 Nov 2024 13:50:02 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Alexandre Mergnat <amergnat@baylibre.com>
+Cc: Mark Brown <broonie@kernel.org>, Nicolas Belin <nbelin@baylibre.com>,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v1 1/1] ASoc: mediatek: mt8365: Don't use "proxy" headers
+Message-ID: <Z0RkaqfID9v0age_@smile.fi.intel.com>
+References: <20241031102725.2447711-1-andriy.shevchenko@linux.intel.com>
+ <ZykbMlshvlwCaeGJ@smile.fi.intel.com>
+ <d7bf7863-fd24-4f8e-8cd0-d84867a997bb@sirena.org.uk>
+ <dad2ecb7-e624-49c2-a7d5-0ff53b6a1686@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dad2ecb7-e624-49c2-a7d5-0ff53b6a1686@baylibre.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Shuah and Usama,
-
-On 11/25/24 09:46, Muhammad Usama Anjum wrote:
-> Hi Laura,
+On Mon, Nov 25, 2024 at 12:32:13PM +0100, Alexandre Mergnat wrote:
+> Hello Andy.
 > 
-> Thank you for making change.
+> Actually, after test it, "linux/of_gpio.h" isn't needed at all anymore.
 > 
-> On 11/22/24 11:19 PM, Shuah wrote:
->> On 11/22/24 08:55, Laura Nao wrote:
->>> Update the functions that print the test totals at the end of a selftest
->>> to include a warning message when skipped tests are detected. The
->>> message advises users that skipped tests may indicate missing
->>> configuration options and suggests enabling them to improve coverage.
->>>
->>> Signed-off-by: Laura Nao <laura.nao@collabora.com>
->>> ---
->>> This patch follows up on a previous discussion[1] and aims to highlight
->>> skipped tests for the user's attention.
->>>
->>> [1] https://lore.kernel.org/lkml/2bb2d338-cd00-4ac2-b8bd-5579eae82637@linuxfoundation.org/
->>> ---
->>>    tools/testing/selftests/kselftest.h               | 4 ++++
->>>    tools/testing/selftests/kselftest/ksft.py         | 3 +++
->>>    tools/testing/selftests/kselftest/ktap_helpers.sh | 4 ++++
->>>    3 files changed, 11 insertions(+)
->>>
->>> diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftests/kselftest.h
->>> index 29fedf609611..d3f64b333acd 100644
->>> --- a/tools/testing/selftests/kselftest.h
->>> +++ b/tools/testing/selftests/kselftest.h
->>> @@ -147,6 +147,10 @@ static inline void ksft_set_plan(unsigned int plan)
->>>      static inline void ksft_print_cnts(void)
->>>    {
->>> +    if (ksft_cnt.ksft_xskip > 0)
->>> +        printf(
->>> +            "# Skipped tests detected. Consider enabling relevant config options to improve coverage.\n"
-> Looks good. Printing the number of skipped tests would be an improvement.
-> I'm thinking about a case where some tests got failed and some skipped. Would
-> this warning be useful in that case?
-> 
+> That mean all added include in this patch aren't required.
 
-I believe the warning remains useful, as it helps users identify possible 
-gaps in their configuration - I think that's valuable regardless of the 
-results of other tests.
+Do you mean the driver doesn't not use types from types.h or dev_*() macros
+from dev_printk.h? I don't believe this, sorry.
 
->>
->> I like this. How about printing the number of skipped tests in this
->> message also to make it easy to parse.
->>
->> Same comment on other print messages,
->>
+Basically what you are trying to say is "let's move of_gpio.h implicit
+includes to become something else's problem". It's not what this patch
+intended to do.
 
-Sure, that makes sense. I'll submit a v2 to include the number of skipped 
-tests.
+> On 04/11/2024 22:12, Mark Brown wrote:
+> > On Mon, Nov 04, 2024 at 09:06:26PM +0200, Andy Shevchenko wrote:
+> > > On Thu, Oct 31, 2024 at 12:27:25PM +0200, Andy Shevchenko wrote:
+> > > > Update header inclusions to follow IWYU (Include What You Use)
+> > > > principle.
+> > 
+> > > Hmm... I think we are waiting for somebody to Ack / review this change?
+> > 
+> > Yes.
 
->>> +        );
->>>        if (ksft_plan != ksft_test_num())
->>>            printf("# Planned tests != run tests (%u != %u)\n",
->>>                ksft_plan, ksft_test_num());
->>> diff --git a/tools/testing/selftests/kselftest/ksft.py b/tools/testing/selftests/kselftest/ksft.py
->>> index bf215790a89d..7675a15a1264 100644
->>> --- a/tools/testing/selftests/kselftest/ksft.py
->>> +++ b/tools/testing/selftests/kselftest/ksft.py
->>> @@ -27,6 +27,9 @@ def set_plan(num_tests):
->>>        def print_cnts():
->>> +    if ksft_cnt['skip'] > 0:
->>> +        print("# Skipped tests detected. Consider enabling relevant config options to improve coverage.")
->>> +
->>>        print(
->>>            f"# Totals: pass:{ksft_cnt['pass']} fail:{ksft_cnt['fail']} xfail:0 xpass:0 skip:{ksft_cnt['skip']} error:0"
->>>        )
->>> diff --git a/tools/testing/selftests/kselftest/ktap_helpers.sh b/tools/testing/selftests/kselftest/ktap_helpers.sh
->>> index 79a125eb24c2..a4211221ccd6 100644
->>> --- a/tools/testing/selftests/kselftest/ktap_helpers.sh
->>> +++ b/tools/testing/selftests/kselftest/ktap_helpers.sh
->>> @@ -107,5 +107,9 @@ ktap_finished() {
->>>    }
->>>      ktap_print_totals() {
->>> +    if [ "$KTAP_CNT_SKIP" -gt 0 ]; then
->>> +        echo "# Skipped tests detected. " \
->>> +            "Consider enabling relevant config options to improve coverage."
->>> +    fi
->>>        echo "# Totals: pass:$KTAP_CNT_PASS fail:$KTAP_CNT_FAIL xfail:0 xpass:0 skip:$KTAP_CNT_SKIP error:0"
->>>    }
->>
->> thanks,
->> -- Shuah
->>
-> 
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Thanks,
 
-Laura
 
