@@ -1,88 +1,109 @@
-Return-Path: <linux-kernel+bounces-420667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-420668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEEB79D81CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:11:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B36D59D81F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 10:11:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F375DB232F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:10:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46A32163449
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 09:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C798718FDC2;
-	Mon, 25 Nov 2024 09:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CDC18FDD5;
+	Mon, 25 Nov 2024 09:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZHDQqBz+"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O3K5WG7m"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BCE18FC8C;
-	Mon, 25 Nov 2024 09:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6D118FC89
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 09:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732525823; cv=none; b=I4JwXCRRQbQnUhpqzIuA/pYJhHUxsiX/VZQk1wKKehPc5QJ+issJav+w6pGvVn6CkgiMFaIheKnBJnr78umqdp4gQfcZEg+Z+wAswkybTUWlf+ChiQqgUY2HZBj5XJCEiqdyARLvl1r8rkhnFIsaBaJMy/uFDthTqHc7lcx9A8c=
+	t=1732525884; cv=none; b=huJy+IHSsWIDACls3jpR1fWZ25mfoMcqzJKTpqAvRC5uRqkSOBJbDRvkSGWv8eeK5MuzPGLBfZahmt54b2ibsjtrx5keE8BZIleEsrvRAeUXa7AuXcjBGB0Mgh2UXoQrbv0o1tHtxC3XupJKq2ECzf21SevpCHvP/d0K0+xlysU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732525823; c=relaxed/simple;
-	bh=T5l/crnSH/yazYRVOP6L4UeoDSvfH2frc5oLxWFb9tk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rQGBhxffuvgOR64AyLKVQi9ojOQtIUpr8lmV9muDHHIJrFRIBBFOpfgjIuDRJy8BKoYTO5ACv+30Yg999/oVh+YcLMYi8mNBtda9xl/eZ1iH0MwOdHSEMbgEmFqm6B1seATCEIUbQk5Pl8C7mNnZg3VZ9it+7Rkk3swtC9REEXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZHDQqBz+; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1732525818;
-	bh=T5l/crnSH/yazYRVOP6L4UeoDSvfH2frc5oLxWFb9tk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZHDQqBz+p3aFA1pmZqzhqAhg7x0C7I9ubEAYhXhZXAXw8m7NlQdI2oL6mRbw0ML0f
-	 j4hxJZ7dt1x/SPVFBAtLbi9m8kMikDSMSGlbz256yFvNjPOon5vSloZKkfDwWNwRgR
-	 wj/Lp1vYj+qoZYJ3gkmxYTwesDPFpLg7J2gWtt7ZEAcBBLhmW8W9jRx/q73I5hPj1Z
-	 Z/4uYgRSVVRnsZzboIMElZ7I+FizxehljMmK1zItpmWrlu0TBy19z+5y/ZOMSj0Z98
-	 VKR61041kpKoT+J/BIyho6szecNvYXzqiqS4zTSw4nU1CIT0S/Q69T3rLfm4ipbAc1
-	 mNAd2K/BcUjZA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4977B17E1330;
-	Mon, 25 Nov 2024 10:10:18 +0100 (CET)
-Message-ID: <5d88488c-9ad6-4449-9a6f-b5ebe7e76ae9@collabora.com>
-Date: Mon, 25 Nov 2024 10:10:17 +0100
+	s=arc-20240116; t=1732525884; c=relaxed/simple;
+	bh=wT2QX0BLl+SGVNLChvroK93Yxa+Mm8ft6/n++IH3SKg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CUkfuqWcMPF3VxFDDoB6qOdn/dbWRB8exr/Jr2sNxQnuBjlJMR947/GmJY35ZDUinDUwqso9WQ/nkZCZT+YRScDu0ObCsZsDrZdkz9tuTTrv3lStJliH/vhjry8XU9TID/J8ypd+89gl9PT1eiBobeRwuKDlrECoSzetbrftPyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O3K5WG7m; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3823e45339bso3130025f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 01:11:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732525882; x=1733130682; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wT2QX0BLl+SGVNLChvroK93Yxa+Mm8ft6/n++IH3SKg=;
+        b=O3K5WG7mm/Wg/xhuw1n88U8ZiYPFBM/huCT0K5mNdAogN2McMQsT2l0xXqf0My0Qbe
+         eFVsvzo+258sVQZricwUkvpxasVigyhIWqIiOiFIDAK8crBnZx8Ie5YsHAJlJbhLXjA2
+         TaTCroHUd9zHLcbScwLaQtD1h/ohYJ+n7tBO/9qALh8HSLFq9566ftL87J8QjyCVEvdh
+         Da1QY8jCqeg5Ncp3LSMET5i8jXvCyrCfDpFHEAxX78DgavFVpkEHgf2lK37YDS4alq7Q
+         eiUOxHfxF1mnP4HsKmzJonJzGSRsrCdr4vb0DtiyO+6gzlyiYQbqR+LDR7ZIAQd/ms55
+         c3eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732525882; x=1733130682;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wT2QX0BLl+SGVNLChvroK93Yxa+Mm8ft6/n++IH3SKg=;
+        b=h9H8pdejOwTtAPU15b5bjHWiT7OjRjmBflDKD+w8gmY2YZrHP415N1wKts5VAEwG0H
+         P/c803zvpmZKeyV9WRjmwcs+xI45p5kG5VyovcRVARzqEH+1CoLWdIq36vPSgcN1j8pf
+         7jB6yWy9Thwi89oGejolSWbN5c/2O4zHWBw/hckdXoPwL34XetgcA2x09pPDggUvXsWS
+         4r0GTkWVEeBs5Fb0U6/eYzur2uj3eOLiQqxbrv2JjjZFf1g5httdxzcB/TMQPCBYSsFv
+         4BZdSwpCz15zQ/MnzOBtplRfs/FGWNWbaKB5H4Twl1oHIRgxaHMitugZuphVYXewkZ9h
+         NrmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKsfXpNrMaXqj+hbVmplHsTc3/Audz+1rhwChwSH1DO1GnESUn5H0ES7TuhY/eT292gACFG0y2auP+Kqg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxumuTg0ihPwZKvYR/0XqYPz3ZPNX5EnHz8hP7JDPLFqf87ATpe
+	T7L1Di4XYWpV7xaEAOgxtFXeop5F8N4mE2fV73XwY6uJ6D63EXfuP7dJdh68avwOQB5Hp1jqY8L
+	VkOQfndHP2KzL6pnORDTC/7X+JgIiGwlOZ7gS
+X-Gm-Gg: ASbGncvSSgAD7MnCkRs50iXdE7iw7MhA44Jw1Tc8JN+KHk1D9k6wkG7T+MJJYOiwpjw
+	dzbkvim4NXgos0qLPObAaXN17OnePjB9kXAX5gziqOvtZz1eKbV/v2cUydnz6Ug==
+X-Google-Smtp-Source: AGHT+IH8xUhObePFMXX+6uJ4DZH46fnDECSOgfgui5FdlJfDvg099oVJfy7l8jGXt9Hpo3OEBqlpkGLGHf9ruibw67E=
+X-Received: by 2002:a5d:5849:0:b0:382:59c1:ccdf with SMTP id
+ ffacd0b85a97d-38260bcbb70mr8904576f8f.46.1732525881617; Mon, 25 Nov 2024
+ 01:11:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] arm64: dts: mediatek: Introduce MT8188 Geralt
- platform based Ciri
-To: Fei Shao <fshao@chromium.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <20241124085739.290556-1-fshao@chromium.org>
- <20241124085739.290556-3-fshao@chromium.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241124085739.290556-3-fshao@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241123222849.350287-1-ojeda@kernel.org>
+In-Reply-To: <20241123222849.350287-1-ojeda@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 25 Nov 2024 10:11:09 +0100
+Message-ID: <CAH5fLgiOHnX14CtN2rtC8ssUT03ECLOAGNLYPfA5ELSch9fONg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] rust: use the `build_error!` macro, not the hidden function
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Trevor Gross <tmgross@umich.edu>, 
+	rust-for-linux@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 24/11/24 09:52, Fei Shao ha scritto:
-> Introduce MT8188-based Chromebook Ciri, also known commercially as
-> Lenovo Chromebook Duet (11", 9).
-> 
-> Ciri is a detachable device based on the Geralt design, where Geralt is
-> the codename for the MT8188 platform. Ciri offers 8 SKUs to accommodate
-> different combinations of second-source components, including:
-> - audio codecs (RT5682S and ES8326)
-> - speaker amps (TAS2563 and MAX98390)
-> - MIPI-DSI panels (BOE nv110wum-l60 and IVO t109nw41)
-> 
-> Signed-off-by: Fei Shao <fshao@chromium.org>
+On Sat, Nov 23, 2024 at 11:29=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wr=
+ote:
+>
+> Code and some examples were using the function, rather than the macro. Th=
+e
+> macro is what is documented.
+>
+> Thus move users to the macro.
+>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+I've introduced a few more instances of this in the miscdevices
+series, so you probably want to amend this to also fix those.
 
+Either way:
 
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
