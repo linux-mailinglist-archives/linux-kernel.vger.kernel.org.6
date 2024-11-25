@@ -1,194 +1,189 @@
-Return-Path: <linux-kernel+bounces-421090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 896039D884F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:45:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4236C9D86B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:44:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9CBCB31707
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:35:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 555CEB3216C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8B31ABEC7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CCD21AC448;
 	Mon, 25 Nov 2024 13:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zYVOJg8W"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ISDkCGFD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00C5191F94
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29EF4193072
 	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 13:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732541742; cv=none; b=sjWIkfvES/ztnqxjx+SfSEb0G4Z4jRdu7bFccfnGo8uvbcer3bb1zAva61n7BDVo0j227oydVKJOuAiuDwrTD01yoPItdQ8UOfGcpEw6Msvwwb4jOLekcC98ptl+urW8WhJIcOdqq5EyKNc9BBs3/joM7Z5o+8cb43/El1k3iTw=
+	t=1732541742; cv=none; b=GUC/u6llQeaCMhA0m4F2TgwgrgARWqRptz851iJeszpA9Y7cdGfrIwEAVE+DWyY2TEXeD4X/1U8Ovc/j5yk7ozBI94TwtUKxavkbYNiSPCTugMiHtdqiKsGtbVeXDIhKqvDhkc+mtHQx3H3e9Mo3PzXC+a0AcIaQ6lHv6wW/9lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732541742; c=relaxed/simple;
-	bh=Xnax3nnbKlbGIH0+2FdhHf5Lzp/Gz10a3mU7EoPgK6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eMXcZR5PO9yJ4IW0pflT1/1a5gVpv9Y+RONRqZCTU6EL1Rw0gRsWinz97VuTjzg35822xErWrm8RfHVHdBzb+F8AJrvqAgg79HlJz+SEnyh1n6WlHJVBV2oeq/bWULESwEKe0MZtRyTYc+KyTkihZMC2jiJHNyGCUnT06gIzu3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zYVOJg8W; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ffa974b2b0so28810131fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 05:35:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732541739; x=1733146539; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eq55gZXvy9/PwtHIQWK6REPRRJW0clB3eF4vf3aBdG4=;
-        b=zYVOJg8WFJn1Bz2drgTo8ZFEXXgir6sRDLrbFlBiOL2TCXyhwW+ctKoVB93YpMhKcb
-         HPNv3h6mu3Ctx9KDAzfbGpV07WIYGzaNXLGJr2PrP01PysiHbP4WUUhPTZcYH4AXXF/J
-         gFcpKj+KVpj3bEJH50e4mQfw8JWJv7ryTbiYQwa40+mUKe8MVKxyjZ4CcLEPw2sm/bxq
-         sw51YOLQnUJaTf3GD+T0MYnEeNHEFkdClE5RTvGsrJE7SH1Q98taYWa8I8odhF3rwVo1
-         dTwBiK2A68QFTcRMWxMOqvijlAOSbVGJ0H6amaQFvzTDjt2JF5xrIb9XjaJqJiZsnrPz
-         4PpQ==
+	bh=cad3l12T+TvWHuFm1K0Ch40itouM5UEZZNP2k0qG2yM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U11snFc0unGtJ9kifw+UScV31nxd2X57e+vHOssQL1T//GQ0xwl6d/+ckPLO3xIA3qVB+jSk3+3Lsw/YvKZld3Mr6EdmXytAufe0FHP2l/PoI7bkEbJS1/kIQDXAAnt+ERa+y0fgtPp7T0xpz9qSVvbFDw9jpsE9yiQJ+8OT5Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ISDkCGFD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732541740;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zDTmwp90jKm3TNX5lId2PjTwHKOcHTKosh1yC449G1s=;
+	b=ISDkCGFDSDckq4aWdEBDRoq7rXiJQmitlmRKIAfmswrbL9wDvTiNY0UZw7+/JmD4pnt0i3
+	hJsdHsXZosS2XSU53eUoBnEbfvUNszq/EtNBXglmOTissMo3JZqOrVXU0s6+fn39AlmpoX
+	iNcXBj4CPEDy900DOpSAoaSFw+571Lw=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-314-YaoOiji5PNOhYQfJXhhOzg-1; Mon, 25 Nov 2024 08:35:38 -0500
+X-MC-Unique: YaoOiji5PNOhYQfJXhhOzg-1
+X-Mimecast-MFC-AGG-ID: YaoOiji5PNOhYQfJXhhOzg
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-aa54d1c790cso109051166b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 05:35:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732541739; x=1733146539;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eq55gZXvy9/PwtHIQWK6REPRRJW0clB3eF4vf3aBdG4=;
-        b=ohIWNrV57wTrEZHUK0VuuV6Vbl53Ur6Vn7lIL4Ficdsw2kQxeegQrkuxHBPgrV9FCc
-         6Gj4xVx8ccZ5gSatCpURWff5NQuFk0W+X0M7CeZkgBb/9YKErp9vGD3dZPOdMZChF+1I
-         ivK1H5wg+joCMZ5R/pVvWZkiAXna1RFzo15qPpW528iJHnpV3M6WeHbfLStvrOEJWpoZ
-         qEWgFEHZPsc7Dsza+ZZNn7qo3mk5qIh44bs25IWMSMtP8CH1owr2URz0pATtDkYVFidI
-         iB8ct5n0+zI4fwoTQq9SZrGVanvjTBuOFQaFKw7/63/RJszrPWYdBhuwQPlSFL7b6TDe
-         zyOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJb/+afR8m6rscQpNOQ5SVuObZvE8vVIyrVdCIHCK4BSRA7Fhyj6B91u4HLtuS5IrU+d8vss0imxoQWd0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyG8EYFEOGtCB1DGeNr/Di6JT+O8QW6HOjc6AnG8eGUYtBKVkq0
-	dUFZWAA/yfpGCofxzTWgSC1dhnidNLyPmUedEL+Xxf8gl0fKFKDwf75KG8qHSIU=
-X-Gm-Gg: ASbGncvW7pS/7xxfXl/4TRR/Of72NelmaQ/hX2Nl82zIG2Uo50LKHmjIZvARFfzVpjw
-	4CNaOMQObKpmb/s3ysFxmqMtfNyOFXPUDymloOF8T4TBshomCj0Pnxd5MFz7+gghc5yROYEM+TT
-	DlUQyEr6VpR+He8ItAX7DsWM/UBmrMUqlCJQt6pTNeopaq+4qFECBAMb4BLW16L7ryTIlbZ0H08
-	5Fuvfx9KTzOOophwg83JpGIm6TEA+5zZ83kxEsXwA5i8bob23prlXDKWEQo0aUwxnraQ0B3Qgph
-	p4+iVLoUJMSo7+klBZKCD7xnQ8sdXw==
-X-Google-Smtp-Source: AGHT+IEmknh+qT9gERNxBA5FaXuJ7uJ0coswtKqHWKtFwA98VdPGxuF8kOcXeQSI3HDaZGo1MjIzBA==
-X-Received: by 2002:a2e:bcc5:0:b0:2fa:cc50:3f2 with SMTP id 38308e7fff4ca-2ffa7106027mr62196931fa.5.1732541738965;
-        Mon, 25 Nov 2024 05:35:38 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffa4d1713esm15535551fa.8.2024.11.25.05.35.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        d=1e100.net; s=20230601; t=1732541737; x=1733146537;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zDTmwp90jKm3TNX5lId2PjTwHKOcHTKosh1yC449G1s=;
+        b=ncL8iNeL0n6JI7DJF/HKVwkExM1QHkSU0Gg9UtjUbpZIDlOW7oq9uDTWE66X4m7xn2
+         BCxZ9F50mM8nsqOk10C5g5m7StjhLmjIyK3EYhCugCvQmjYk+39HCgrrBa+6mvR1eiQi
+         rz7iohVE5+xV/GLkrcV6rq25yM3wzerTEC6X0TQma234PU/eQ/TFYi9/vXDoF5NyGfXs
+         rm/v9/ww6B+d7WJG21ky+nIMej0dbx0OYY/27m+o2bN8p/vRSWBLj6coD2mkUEoTNe3V
+         opEHFjGirs+3PQud964zBfCw5z6iNQDgNlfoAV/qvPZwPmGJzu4apHhbqLIrFc6IW9SA
+         QzkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUsaDpaZAO8tFvHG/5l5E5eHkqvYTIXsyNbzvQBWwO8Q6SI6nZq15CQe2NeTglpxzv2ltamDNjnuSyqj80=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGqCs4LUJBzU9NhDvA1PTj8v9kpTaK11eKlEQJj6Asc82tGY0z
+	HR8qen6gtBMUDhVZPtrWd1/4YhxSCvB8LfKZlYFzUGWhrxbNHdkGr4nbik8PDqds7fdF/v9tILx
+	P/xIVnU41DOW4GtG8frlqby8f3kLRe/AOBRFoY2HIUpE7Yd4+ZGDRmgM29nTxkg==
+X-Gm-Gg: ASbGncv/I+VeNVz631PcTNuR3y1wWxS0xMT3wq5Y9SUAXLiSUeINNYTi2DX03KT6oEG
+	F3r12xMhjTKXFRMvIliyopUVgCFUEswcLuKzWJu0RL+zy/PcB7nGimlSUiBOHw2sQCrYmoLXaws
+	Nu4GUg6+2iHlSKEorhC2EkKFMzHx2HGB9UgsMGJJRuEHpuMjAX/qdnkJHYENf1w9qO4ESNeF+PR
+	FA61nYtW42z1g19FTa36o4rzpdywtxKzMfC+toAZEVUzYgZes4BT3rVrEi8CUqUBVq6FJ35L15F
+	X0ieJyknJobyW4fDqEJxTt7WWsyakVQAV9AeJOJ81HNSjJrKW9la09EndQFZ3Mg8FUZNAZqWDjd
+	D6NR35v8rYZ8WZQlIVi7PnVH2
+X-Received: by 2002:a17:906:31d4:b0:aa5:2a5d:a9ae with SMTP id a640c23a62f3a-aa52a5daa30mr1025809466b.18.1732541737632;
         Mon, 25 Nov 2024 05:35:37 -0800 (PST)
-Date: Mon, 25 Nov 2024 15:35:35 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Renjiang Han <quic_renjiang@quicinc.com>
-Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
-	Vikash Garodia <quic_vgarodia@quicinc.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] media: venus: core: add qcs615 platform data
-Message-ID: <j4nnlbstclwgoy2cr4dvoebd62by7exukvo6nfekg4lt6vi3ib@tevifuxaawua>
-References: <20241125-add-venus-for-qcs615-v3-0-5a376b97a68e@quicinc.com>
- <20241125-add-venus-for-qcs615-v3-2-5a376b97a68e@quicinc.com>
+X-Google-Smtp-Source: AGHT+IFPeAcU3srRHAPRLHz6gKNDrae655Mw8opObwcyeH9RznXxR3H6hMx38IGvg80xkP3qKQ6N8w==
+X-Received: by 2002:a17:906:31d4:b0:aa5:2a5d:a9ae with SMTP id a640c23a62f3a-aa52a5daa30mr1025807266b.18.1732541737310;
+        Mon, 25 Nov 2024 05:35:37 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b57bd96sm467413366b.148.2024.11.25.05.35.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 05:35:36 -0800 (PST)
+Message-ID: <ef51192b-4791-4e40-a27a-75318cada779@redhat.com>
+Date: Mon, 25 Nov 2024 14:35:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241125-add-venus-for-qcs615-v3-2-5a376b97a68e@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a
+ subdevice
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, Yunke Cao <yunkec@chromium.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>
+References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
+ <5b5f3bb7-7933-4861-be81-30345e333395@redhat.com>
+ <CANiDSCta62P5+1aR9Ks8c6sd3_grCV3C+Le=UjKGkiohyf0R2g@mail.gmail.com>
+ <20241110151426.GD6002@pendragon.ideasonboard.com>
+ <CANiDSCuRbOEhWi8WtJpJSm5SOjzTRzpk=OTOV_jwbhUQMoXszw@mail.gmail.com>
+ <f2638853-6c0a-49ee-9a80-28fb774cc678@redhat.com>
+ <20241125125629.GB32280@pendragon.ideasonboard.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241125125629.GB32280@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 25, 2024 at 11:04:50AM +0530, Renjiang Han wrote:
-> Initialize the platform data and enable venus driver probe of QCS615
-> SoC.
+Hi,
+
+On 25-Nov-24 1:56 PM, Laurent Pinchart wrote:
+> On Mon, Nov 25, 2024 at 01:31:49PM +0100, Hans de Goede wrote:
+>> Hi Ricardo,
+>>
+>> On 10-Nov-24 5:04 PM, Ricardo Ribalda wrote:
+>>> On Sun, 10 Nov 2024 at 16:14, Laurent Pinchart wrote:
+>>
+>> <snip>
+>>
+>>>>> Can we start powering up the device during try/set fmt and then
+>>>>> implement the format caching as an improvement?
+>>>>
+>>>> This sounds worth trying. We'll need to test it on a wide range of
+>>>> devices though, both internal and external.
+>>
+>> Ack, as mentioned in the other mail which I just send I think
+>> this is worth trying.
+>>
+>>> We still need a plan for asynchronous controls.
+>>
+>> As I mentioned in that other email I think we can do the same there.
+>>
+>> So basically delay powering up the camera from /dev/video# open till
+>> the first moment we actually need to communicate to the camera and
+>> track per file-handle if we did a usb_autopm_get_interface() for
+>> that file-handle and if yes, then do the put-interface on file-handle
+>> close.
+>>
+>>> And we have to decide if we stop supporting the uvc button (maybe we
+>>> can start by moving USB_VIDEO_CLASS_INPUT_EVDEV to staging and see
+>>> what happens?)
+>>
+>> As I mentioned in other threads I do not think that the button
+>> only working changing from:
+>>
+>> "only works when /dev/video# is open"
+>>
+>> to:
+>>
+>> "only works when streaming from /dev/video#"
+>>
+>> (or actually only works when some action on the camera which
+>> requires it to be powered-on has been done).
+>>
+>> is a big deal, since most apps which open /dev/video# for
+>> a longer time will almost always do so to actually do something
+>> with the camera, at which point the button will work just as
+>> before.
+>>
+>> And for apps which only do a short-lived open of /dev/video#
+>> the button does not work with the current code either.
+>>
+>> TL;DR: IMHO it is fine if the button only works when streaming.
 > 
-> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
-> ---
->  drivers/media/platform/qcom/venus/core.c | 50 ++++++++++++++++++++++++++++++++
->  1 file changed, 50 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-> index 423deb5e94dcb193974da23f9bd2d905bfeab2d9..39d8bcf62fe4f72674746b75994cce6cbaee94eb 100644
-> --- a/drivers/media/platform/qcom/venus/core.c
-> +++ b/drivers/media/platform/qcom/venus/core.c
-> @@ -630,6 +630,55 @@ static const struct venus_resources msm8998_res = {
->  	.fwname = "qcom/venus-4.4/venus.mbn",
->  };
->  
-> +static const struct freq_tbl qcs615_freq_table[] = {
-> +	{ 0, 460000000 },
-> +	{ 0, 410000000 },
-> +	{ 0, 380000000 },
-> +	{ 0, 300000000 },
-> +	{ 0, 240000000 },
-> +	{ 0, 133333333 },
-> +};
-> +
-> +static const struct bw_tbl qcs615_bw_table_enc[] = {
-> +	{  972000,  951000, 0, 1434000, 0 },	/* 3840x2160@30 */
-> +	{  489600,  723000, 0,  973000, 0 },	/* 1920x1080@60 */
-> +	{  244800,  370000, 0,	495000, 0 },	/* 1920x1080@30 */
-> +};
-> +
-> +static const struct bw_tbl qcs615_bw_table_dec[] = {
-> +	{ 1036800, 1987000, 0, 2797000, 0 },	/* 4096x2160@30 */
-> +	{  489600, 1040000, 0, 1298000, 0 },	/* 1920x1080@60 */
-> +	{  244800,  530000, 0,  659000, 0 },	/* 1920x1080@30 */
-> +};
-> +
-> +static const struct venus_resources qcs615_res = {
-> +	.freq_tbl = qcs615_freq_table,
-> +	.freq_tbl_size = ARRAY_SIZE(qcs615_freq_table),
-> +	.bw_tbl_enc = qcs615_bw_table_enc,
-> +	.bw_tbl_enc_size = ARRAY_SIZE(qcs615_bw_table_enc),
-> +	.bw_tbl_dec = qcs615_bw_table_dec,
-> +	.bw_tbl_dec_size = ARRAY_SIZE(qcs615_bw_table_dec),
-> +	.clks = {"core", "iface", "bus" },
-> +	.clks_num = 3,
-> +	.vcodec0_clks = { "vcodec0_core", "vcodec0_bus" },
-> +	.vcodec_clks_num = 2,
-> +	.vcodec_pmdomains = (const char *[]) { "venus", "vcodec0" },
-> +	.vcodec_pmdomains_num = 2,
-> +	.opp_pmdomain = (const char *[]) { "cx" },
-> +	.vcodec_num = 1,
-> +	.hfi_version = HFI_VERSION_4XX,
-> +	.vpu_version = VPU_VERSION_AR50,
-> +	.vmem_id = VIDC_RESOURCE_NONE,
-> +	.vmem_size = 0,
-> +	.vmem_addr = 0,
-> +	.dma_mask = 0xe0000000 - 1,
-> +	.cp_start = 0,
-> +	.cp_size = 0x70800000,
-> +	.cp_nonpixel_start = 0x1000000,
-> +	.cp_nonpixel_size = 0x24800000,
-> +	.fwname = "qcom/venus-5.4/venus_s6.mbn",
+> I'm fine with that, we can reconsider if people complain. It would be
+> painful though, as it could mean reverting everything we'll build
+> related to power management from now on until someone notices the new
+> behaviour, which could easily take a year. The risk is low, but the
+> consequences serious.
 
-I really want the firmware discussion of linux-firmware to be solved
-first, before we land this patch.
+I think that if some users complain we can just add a default off module
+option to restore the old behavior for use-cases which somehow depend
+on that.
 
-SHort summary: can we use a single image for all 5.4 platforms (by using
-v5 signatures, by using v6 signatures, v3 or any other kind of quirk).
+Doing an extra usb_autopm_get_interface() + usb_autopm_put_interface()
+at open/close() time if the option is set is easy, and that will just
+render out other get() and put() calls into no-ops.
 
-> +};
-> +
->  static const struct freq_tbl sdm660_freq_table[] = {
->  	{ 979200, 518400000 },
->  	{ 489600, 441600000 },
-> @@ -937,6 +986,7 @@ static const struct of_device_id venus_dt_match[] = {
->  	{ .compatible = "qcom,msm8916-venus", .data = &msm8916_res, },
->  	{ .compatible = "qcom,msm8996-venus", .data = &msm8996_res, },
->  	{ .compatible = "qcom,msm8998-venus", .data = &msm8998_res, },
-> +	{ .compatible = "qcom,qcs615-venus", .data = &qcs615_res, },
+So we always have that route as an escape-hatch.
 
-The hardware seems to be the same as sc7180, only the frequencies
-differ. Can we change the driver in a way that we don't have to add
-another compat entry just for the sake of changing freqs / bandwidths?
+Regards,
 
->  	{ .compatible = "qcom,sdm660-venus", .data = &sdm660_res, },
->  	{ .compatible = "qcom,sdm845-venus", .data = &sdm845_res, },
->  	{ .compatible = "qcom,sdm845-venus-v2", .data = &sdm845_res_v2, },
-> 
-> -- 
-> 2.34.1
-> 
+Hans
 
--- 
-With best wishes
-Dmitry
+
 
