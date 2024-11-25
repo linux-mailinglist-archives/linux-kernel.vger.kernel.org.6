@@ -1,125 +1,118 @@
-Return-Path: <linux-kernel+bounces-421726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71B1E9D8F34
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:34:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3558D9D8F35
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:35:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D8A028A6CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:34:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9F6AB25557
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 23:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959CA1C4A07;
-	Mon, 25 Nov 2024 23:34:04 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D31918DF93;
+	Mon, 25 Nov 2024 23:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UBVnvw/s"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE32115575D
-	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 23:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E992915575D
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 23:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732577644; cv=none; b=oymERr/YZ3KtDRYtSjRvKClaDe+OzNhTFOA4ZyJeR4SS371+TLo5CuEiwxynjhjDcsZsMJO3GBrYUJTNUHg330G2dE/YJddensMiPT2219qDcpw05no1yjAaYm1YJz8As0/rP06BTK29fCAEfWePKIs1RiWye410l/+ZFHVta4M=
+	t=1732577744; cv=none; b=UKQrURio4hRXWsZmWaEEm8za+mAKl71L8kTBu8zXQkC9Hf+Au/JUwdQd99zcucIpnAZsdkY4F+ChtvaBz1pZPI/Sfn5b1zIP2eR2Oz/PQ/CeMZmtFetx6jTwy5B87WL1RnNwye/QuRrlXfdIaCrYwMqgDZZkElpD/25ZZrdFlDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732577644; c=relaxed/simple;
-	bh=rgkpqdqQkvHavA8r6D6Nk7TJzX420Xwq9vCjntuQn+Q=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kikD1xIx4zUDKiHiJ/apehCYo+tDoMlF3lmJz7bM6dlNF9vkEZ3i6CqgJJxFH/VCIr2bK2wIG83s/Ez1WsSHLrjcgbbJ+p2OEkzwVf9Cpu2NkcXrW0jtNhHlKeMQr1S2uL9puXph780wJF+2udObsrRVQVxSi5My+Zhxvc4/HTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a7ace5dd02so29153595ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 15:34:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732577642; x=1733182442;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lqNaDCIYNAGDm8DdpOLHaZPXRGpBbn3nGU7MsIFIGCw=;
-        b=Mq60j9B9bb6pYNiNWOlpOEy8pOybBlo1aYtVbU1XWPw/bDjs2XMPmXqLMaeM7ZTa8E
-         YyxjXEbTvmQZasOU1TL8vqaq7XLPqyuUCdYu0iGl9W+7Borzt2y7Y64qlrajA/+qbcXN
-         kQhMQaLCHxmApBPvCzMsj/iEzCvL4N7lPmYLvnAlkpwVFBx6LSb/Qah2pGRje3qz3I0/
-         1JszVLylcC0NhtF2N2S0BKHE9G8Yxhrz/jwkFJkyOwuEA5GhGynXgcHaU+u+W7NMDPb5
-         hT+4tGo3Xe8glnufI3/VuQxZupUdrl3gVhoGs93Byne+x4+JCpf1z26lthYm70X/cpEe
-         SrDA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7X0xIeCwamaIEaItro0ZZFBBVz6qYYdva9l9nv8vE20vztIwdEoZwl8fkt8vHblSV/WbO6XJYNAkZcB4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxxH2/C0TC50GIlu5y2SeN87H3W9sJjn6kQmiHb3UFuyxxTScI
-	aagfTkWmWRTrznZFHY4o4ran2c3D4OqGdKzMDHl2yqJvNamswcM46IzVobQt/4AYEMaWBFdM24O
-	fHQT45aAgO616f47IwqwmtySCZ2VDH+2xa4Ggt2i/qY68Ub3Z/sEQJ60=
-X-Google-Smtp-Source: AGHT+IFnTudC4Rlie0Zbp02yyIsZP/XWgPyiYGNe+qn3ta2BXhs/9DdBVFVSa9p9PcL+rJpg/KwVtPwTWseiMavDz7uY1dae6hHp
+	s=arc-20240116; t=1732577744; c=relaxed/simple;
+	bh=dUjrthQ0kpDYuAQmNAl7EEvTO2ESLG+qIH5fOFb6xrk=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=d+pv3Ef9V0uDKWWii2Je8NiOwkdUBl43f/OQOr7MgLQjTLhcZ4caAapjVbFp0pMEzTWCIzl9aEJdysA/00PdUgtpL2jyL1qMX2cg95ZLyfWkwVnfNSV5GMNjtwrFFCY+OH1vNbRIRvdgfY8EdC1VG8HKXMwDv3e2rQjmcBkb2DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UBVnvw/s; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732577741;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=LHNkujnPGVOLwcCFJFa4r+dxa8vb//tyNG8mnLtBoKU=;
+	b=UBVnvw/s9w8DeWBOf4C1FK0Bi7Q2GnpHf2UqkKpkf2gZtYLo3uYTN6rRhJkju0gQ9bELe6
+	9fwqIqfUNyRaU2AryDi0tNlQjaAajhPR1f/QtvNE3rUlXHxxOsC7sYN/cKNjuFuJhQ49gm
+	jB+ad1i0qkhbA8rn1pRdrtwEjj9JXyQ=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-325-bKla2iarMFuXwDgE9utLQw-1; Mon,
+ 25 Nov 2024 18:35:36 -0500
+X-MC-Unique: bKla2iarMFuXwDgE9utLQw-1
+X-Mimecast-MFC-AGG-ID: bKla2iarMFuXwDgE9utLQw
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0B5E919560BE;
+	Mon, 25 Nov 2024 23:35:31 +0000 (UTC)
+Received: from localhost (unknown [10.22.80.111])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DD9CE30000DF;
+	Mon, 25 Nov 2024 23:35:29 +0000 (UTC)
+Date: Mon, 25 Nov 2024 20:35:28 -0300
+From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+To: LKML <linux-kernel@vger.kernel.org>,
+	linux-rt-users <linux-rt-users@vger.kernel.org>,
+	stable-rt <stable-rt@vger.kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Carsten Emde <C.Emde@osadl.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Daniel Wagner <daniel.wagner@suse.com>,
+	Tom Zanussi <tom.zanussi@linux.intel.com>,
+	Clark Williams <williams@redhat.com>,
+	Mark Gross <markgross@kernel.org>, Pavel Machek <pavel@denx.de>,
+	Jeff Brady <jeffreyjbrady@gmail.com>,
+	Luis Goncalves <lgoncalv@redhat.com>
+Subject: [ANNOUNCE] 5.10.229-rt121
+Message-ID: <Z0UJwBZwih0WiSMO@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12cc:b0:3a7:7fc0:ee16 with SMTP id
- e9e14a558f8ab-3a79ad787b5mr173421145ab.8.1732577641866; Mon, 25 Nov 2024
- 15:34:01 -0800 (PST)
-Date: Mon, 25 Nov 2024 15:34:01 -0800
-In-Reply-To: <4db729f9-eece-4732-8d6d-405a997ed35c@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67450969.050a0220.1286eb.0006.GAE@google.com>
-Subject: Re: [syzbot] [io-uring?] WARNING in io_pin_pages
-From: syzbot <syzbot+2159cbb522b02847c053@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hello,
+Hello RT-list!
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in io_pin_pages
+I'm pleased to announce the 5.10.229-rt121 stable release.
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6625 at io_uring/memmap.c:146 io_pin_pages+0x149/0x180 io_uring/memmap.c:146
-Modules linked in:
-CPU: 0 UID: 0 PID: 6625 Comm: syz.0.15 Not tainted 6.12.0-rc4-syzkaller-00087-g9788f6363f9a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:io_pin_pages+0x149/0x180 io_uring/memmap.c:146
-Code: 63 fd 4c 89 f8 5b 41 5c 41 5e 41 5f 5d c3 cc cc cc cc e8 0a f9 e8 fc 90 0f 0b 90 49 c7 c7 ea ff ff ff eb de e8 f8 f8 e8 fc 90 <0f> 0b 90 49 c7 c7 b5 ff ff ff eb cc 44 89 f1 80 e1 07 80 c1 03 38
-RSP: 0018:ffffc90002ee7c10 EFLAGS: 00010293
-RAX: ffffffff84abe228 RBX: fff0000000000091 RCX: ffff88806d4c9e00
-RDX: 0000000000000000 RSI: fff0000000000091 RDI: 000000007fffffff
-RBP: 000ffffffffffff0 R08: ffffffff84abe12e R09: 1ffff1100f98b260
-R10: dffffc0000000000 R11: ffffed100f98b261 R12: ffffffffffff0000
-R13: ffffffffffff0000 R14: ffffc90002ee7c80 R15: 1ffff110024de520
-FS:  00007f3e6a15a6c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b3255ffff CR3: 00000000339f8000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __io_uaddr_map+0xfb/0x2d0 io_uring/memmap.c:185
- io_rings_map io_uring/io_uring.c:2632 [inline]
- io_allocate_scq_urings+0x212/0x710 io_uring/io_uring.c:3491
- io_uring_create+0x5b5/0xc00 io_uring/io_uring.c:3713
- io_uring_setup io_uring/io_uring.c:3802 [inline]
- __do_sys_io_uring_setup io_uring/io_uring.c:3829 [inline]
- __se_sys_io_uring_setup+0x2ba/0x330 io_uring/io_uring.c:3823
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f3e6937e759
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f3e6a159fc8 EFLAGS: 00000202 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 00007f3e69535f80 RCX: 00007f3e6937e759
-RDX: 0000000000000000 RSI: 0000000020000400 RDI: 0000000000002c0c
-RBP: 0000000020000400 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000002c0c R15: 0000000000000000
- </TASK>
+This release is just an update to the new stable 5.10.229 version and
+no RT specific changes have been made.
 
+You can get this release via the git tree at:
 
-Tested on:
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
 
-commit:         9788f636 io_uring: sanitise nr_pages for SQ/CQ
-git tree:       https://github.com/isilence/linux.git syz/sanitise-cqsq
-console output: https://syzkaller.appspot.com/x/log.txt?x=1040e778580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f0635751ca15fb7a
-dashboard link: https://syzkaller.appspot.com/bug?extid=2159cbb522b02847c053
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+  branch: v5.10-rt
+  Head SHA1: 7059d5c5491f4f9bd1f7d3db8288bb131117378b
 
-Note: no patches were applied.
+Or to build 5.10.229-rt121 directly, the following patches should be applied:
+
+  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.10.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.10.229.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/5.10/older/patch-5.10.229-rt121.patch.xz
+
+Signing key fingerprint:
+
+  9354 0649 9972 8D31 D464  D140 F394 A423 F8E6 7C26
+
+All keys used for the above files and repositories can be found on the
+following git repository:
+
+   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
+
+Enjoy!
+Luis
+
 
