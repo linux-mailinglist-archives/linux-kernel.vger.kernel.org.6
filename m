@@ -1,94 +1,104 @@
-Return-Path: <linux-kernel+bounces-421233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 842319D88E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:13:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B894D9D8870
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:49:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDE7EB3520F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:48:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CA5328B0E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656E81B218B;
-	Mon, 25 Nov 2024 14:48:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KAJLJDW6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886501B2187;
+	Mon, 25 Nov 2024 14:49:19 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A5E1B0F06;
-	Mon, 25 Nov 2024 14:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A628189902;
+	Mon, 25 Nov 2024 14:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732546118; cv=none; b=QyRg9+k74t5BfzfeLBiD7C/D9LEcJwzdWMNB3WU6ZXwazSAGS1Hb1VK3HV8Uugqny6fAknAN1JDoaYxv/2l9tpzgDEXVK+3BVbIALdP6ZnRTp0b1Vhe5pqTCKb0RQTedfTtkEdNBMR5Pa5AndWjQ7Z9lM6EdFGPrliyroUwfFIU=
+	t=1732546159; cv=none; b=Y3Eg3YSy9vjjFVvxXCygp3TiLGKpEdjzmFd9SUhadGAf8XnEaSRqH3bDRngNh4kOcjR7lq7ZtQcTkDbMQFkSU2mpDCBQZlFuFJccvX1QmTz4rpn3oK6UgyBjTKJKtlaqsAmY6zpYg4okU6hiz7deW4KkRrHjSgqp48UizbTEuEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732546118; c=relaxed/simple;
-	bh=Ss7/4jVC79DesEs7aFakL1oiX65j/1Y68pSYOct0INA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b807uEBIW/KxGsttulOSGZCrW6Xk27qb8pHP3dN4kbmbj63kkWa7EUj287NlAXwyK0bkjhY7QBNUgZRIWSEYlXQSCa25wpKMmGpP2KFXEUxqe9xwKpWmldijJs3dfRCDd7MKpKa712H2ITUtej06zAmn8uawdinXqzrpkmz5UGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KAJLJDW6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69636C4AF0B;
-	Mon, 25 Nov 2024 14:48:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732546118;
-	bh=Ss7/4jVC79DesEs7aFakL1oiX65j/1Y68pSYOct0INA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=KAJLJDW66lyvl2x/GCfiVy04WoK4azLlZfma++BMdYTt7a6fEx+xn+Mb1VMQGxr+c
-	 kE4pNoHIjyW7Jerqq5WuSj7mlXFydHPZtuK13qaY+9wonaSt1p/+28ObAP3BDqYgAy
-	 /nUwsYCLGvbvY1Uj8BZ5dXxqqjorayDTvo/7bnA6HFlH3fOp4gRycpsRsNDr913aB4
-	 5Dwm5vN74YsdVOYFu3t6kD86z7aGvNjksjx3obZKdjC4cl7yxfNf239d38s8nV9XbA
-	 +ln+wc770wVaT+Tha39Vbsv392mxbM44VwHN4rigfb7oWgDaU6GdEPHIniun8NHMUL
-	 ycVstVTIfLmPA==
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-296b567bc30so1380987fac.2;
-        Mon, 25 Nov 2024 06:48:38 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVaLe2pomq8kiq02A2Qk510RCx0Ohb7Nnrng/H4KP2CzFYc49fXTLLSDoWMu31KJHzQM7GNP1afDBpv0Fw=@vger.kernel.org, AJvYcCXDVw4gM3Ma0BbCgHGFbpqlOSVF1FaoBTU0scM+1/qV88hMTBt0SFPv/0H69bUE6UI+Uqzs6W/OwpY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDkK1E/poKp44ijTMI1wNrHrWJiKvxflUfU3kdMFj0X/odm0Py
-	M0cmGoYMxsgdhLeZTiowG0CZBXRLZB2WbZEX2NgRB6iLj5alLUZ9lSLRAWN3wrW5EHPmFTUH6PZ
-	WZhqsOmyAbJ/G1DdFBQK32pmMI5s=
-X-Google-Smtp-Source: AGHT+IFmO1nHhtL3orXGXHyVPhJaTVVe0wF+oHD6JVQrufGmD5J1HD9TRRWlEeGmxbiiOsYlByEV+k5jfag3KNTKeyk=
-X-Received: by 2002:a05:6870:9129:b0:297:686:8ddd with SMTP id
- 586e51a60fabf-29720e3ab8bmr10164892fac.39.1732546117717; Mon, 25 Nov 2024
- 06:48:37 -0800 (PST)
+	s=arc-20240116; t=1732546159; c=relaxed/simple;
+	bh=qHRw4mJYZ51r7U3KQtuYVZftXv8lMYjCUNP70Rurk4U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qAg7msve0fatkxVpVhr1Myl0HqOv5Ab2dBWBKLLLXTqMqQNxdcMk4o8SpvlaE+sLnFKWK1IZoN5acwT3i8tWXAgvpWv5TfmMN2cSX98K39NVJhGIQBHr4fIuPFo1/If2qkfdfiH5i3R0lYrNzjq+QZkeYhsPw5xsxgtH4OmfcZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 0631B30008CA3;
+	Mon, 25 Nov 2024 15:49:11 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id E2FC24E9249; Mon, 25 Nov 2024 15:49:10 +0100 (CET)
+Date: Mon, 25 Nov 2024 15:49:10 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Zorro Lang <zlang@redhat.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH for-next/fixes] arm64/mm: Fix false-positive
+ !virt_addr_valid() for kernel image
+Message-ID: <Z0SOZhtJohCNxX6_@wunner.de>
+References: <90667b2b7f773308318261f96ebefd1a67133c4c.1732464395.git.lukas@wunner.de>
+ <CAMj1kXFvJGHr_iv6bFQfb89XqPFrNWH7-rV7SFy4QBSWXYC4RA@mail.gmail.com>
+ <CAMj1kXER7AbNyUDjtij6Ni0jVRMg11xvyhkCMKAxaKbx=dsgcQ@mail.gmail.com>
+ <Z0RJaU4wjU5WeQb4@wunner.de>
+ <Z0RWcgrQASMIleRn@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125132029.7241-1-patryk.wlazlyn@linux.intel.com>
- <20241125132029.7241-6-patryk.wlazlyn@linux.intel.com> <CAJZ5v0iJ7hca68Pk1g1m=FNX6Psr3Ow-K7fvXZCcRM8PFM7EjQ@mail.gmail.com>
- <883447da-aeca-41ba-99ef-038dd8ddc6b3@linux.intel.com>
-In-Reply-To: <883447da-aeca-41ba-99ef-038dd8ddc6b3@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 25 Nov 2024 15:48:26 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hZ8ajccb=B7P5g1+KJ+tsw5vP-e9ix7j_65WgT34H1XQ@mail.gmail.com>
-Message-ID: <CAJZ5v0hZ8ajccb=B7P5g1+KJ+tsw5vP-e9ix7j_65WgT34H1XQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 5/8] x86/smp native_play_dead: Prefer
- cpuidle_play_dead() over mwait_play_dead()
-To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, rafael.j.wysocki@intel.com, len.brown@intel.com, 
-	artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com, 
-	peterz@infradead.org, tglx@linutronix.de, gautham.shenoy@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z0RWcgrQASMIleRn@J2N7QTR9R3>
 
-On Mon, Nov 25, 2024 at 3:43=E2=80=AFPM Patryk Wlazlyn
-<patryk.wlazlyn@linux.intel.com> wrote:
->
-> > If you first make intel_idle provide :enter_dead() for all CPUs on all
-> > platforms and implement it by calling mwait_play_dead_with_hint(), you
-> > won't need mwait_play_dead() any more.
-> Crossed my mind, but because mwait_play_dead doesn't filter on Intel
-> vendor specifically,
+On Mon, Nov 25, 2024 at 10:50:48AM +0000, Mark Rutland wrote:
+> On Mon, Nov 25, 2024 at 10:54:49AM +0100, Lukas Wunner wrote:
+> > Other arches do not seem to be concerned about this and
+> > let virt_addr_valid() return true for the kernel image.
+> > It's not clear why arm64 is special and needs to return false.
+> > 
+> > However, I agree there's hardly ever a reason to DMA from/to the
+> > .text section.  From a security perspective, constraining this to
+> > .rodata seems reasonable to me and I'll be happy to amend the patch
+> > to that effect if that's the consensus.
+> 
+> Instead, can we update the test to use lm_alias() on the symbols in
+> question? That'll convert a kernel image address to its linear map
+> alias, and then that'll work with virt_addr_valid(), virt_to_phys(),
+> etc.
 
-In practice, it does.
+Do you mean that sg_set_buf() should pass the address to lm_alias()
+if it points into the kernel image?
 
-The vendor check in it is equivalent to "if Intel".
+That would require a helper to determine whether it's a kernel image
+address or not.  It seems we do not have such a cross-architecture
+helper (but maybe I'm missing something).  (I am adding an arm64-specific
+one in the proposed patch.)
 
-> I thought that I might break some edge case.
->
->
-> I am all for simplifying.
+So this doesn't look like a viable approach.
+
+Also, I'd expect pushback against an sg_set_buf() change which is
+only necessary to accommodate arm64.  I'd expect the obvious question
+to be asked, which is why arm64's virt_addr_valid() can't behave like
+any other architecture's.  And honestly I wouldn't know what to answer.
+
+Thanks,
+
+Lukas
 
