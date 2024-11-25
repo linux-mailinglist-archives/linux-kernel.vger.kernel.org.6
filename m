@@ -1,105 +1,156 @@
-Return-Path: <linux-kernel+bounces-421367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA999D8A41
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:26:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8A059D8A8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 17:43:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FE702857AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:26:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34C54B2FEFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 16:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FF51B415D;
-	Mon, 25 Nov 2024 16:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BAC1B4F08;
+	Mon, 25 Nov 2024 16:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q9kaCpQ9"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VlaKL87e"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0C41AAE0B;
-	Mon, 25 Nov 2024 16:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860131B3943
+	for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 16:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732551995; cv=none; b=hQ5UTse7uM868NzKtE5c11X+pZMIQzPTYjUXsKaPk4T8XjQj6R6rszcg4IOEq7zFakJA4MLAFTvddBcV37Lqeetja5i1QJA1Y+UJofjdVxVLvTFGnjZyLjm1jf81/NBpK2W2OEbMe0JmMoq2ijnG3O8ypG+p1WIydgeBc0HW/tY=
+	t=1732552061; cv=none; b=Ky1944DzwzGx45oc1l63rdN+3z/rN5rUmeo3KNcN7geRAUOMPdikHtVLWmQoskEfSOKGH5nsIabLF7AFluFKQu0C9bdVIzf24LS++g9byYsVXn+ThR140DcjZSC4fIdoRdgZV5UMIYgZn7tnbL5g8PX/YEmpW3MAe+GZzJ1he2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732551995; c=relaxed/simple;
-	bh=l1qWIVwvXjEkCYh8peO0L0gffJPk0BmLlnRXYEB1NGg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qH8//xJXAkkZTmOW+PKMIvqOHjgkKqI+60IMySRb/pi95HQLQ6D3NQhFyaJ7nQfJwsKxrVZQoC8mhyLL4VAgcXOxfqL45KpKWAjy0NbGCmViCG2LRTjF2SHgHmhvPRb/AYnxXoPxZiTkguUAqt3wValiEnPMrqmaRgs001XyJ6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q9kaCpQ9; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ea501acd25so825872a91.2;
-        Mon, 25 Nov 2024 08:26:34 -0800 (PST)
+	s=arc-20240116; t=1732552061; c=relaxed/simple;
+	bh=R0SfJyrw7C0KxLOqn1gC0wVxvdRJvYjZ2Aw3X8fWg2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T5aMzO94XliV/Ps2rurW741Z3tRd9RhmbdenKBGzv+zMDxD+0fWCeUNirnDZiv6r0/g2dyZt15xRyraGz27UwXjGknBwD/RWGLG362XGQMHSwMngFU08x08CxsAeD/1QFwpufAFbAN6vtWlj32LMfsY/Lyajmu/QMr3DD5G/amY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VlaKL87e; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ffa49f623cso42437131fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 08:27:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732551994; x=1733156794; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l1qWIVwvXjEkCYh8peO0L0gffJPk0BmLlnRXYEB1NGg=;
-        b=Q9kaCpQ9kHMktGt1EuVvf/m9GuznjTrBoIot2z7JOhK7tk6dkLM5tGBH/+6csrs3lT
-         0MWXrWqrqhBdGXA/zgOtO9TH+obDnVWbhs8oHT48pW8V4eqbM9hIaDOLNw0ob+JrEqqK
-         bqBUZogzJdOrI4eQhQf0qagR+i+Kdb/TNOvg/hFG0jzv7RyQUgryWwiQLGQjDVe7CEBQ
-         UBlerpqJIxaoCg+DYcRK2H9bl9BdDMCwfFXDgUyxy+dYPlX2WtaT2DNtukJKwwuANcqQ
-         Btw89q+z+QJaduTf64FX3UdRATxwohLm6KJfZ84M3MBUXpdf5qy9KkskuUnpI91n0p0Y
-         JscQ==
+        d=linaro.org; s=google; t=1732552058; x=1733156858; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yChQ+Bc3/hLFAIXQy5Qdf3pVGzUQXtJDQxX2P5y2ICQ=;
+        b=VlaKL87ehHzpxul34gLSsW5ZTyFzGpS+H8arNwGCbjDtoYI1kd9VRs6G5d5joRZaQX
+         xXB/COd+UFMIf5kSxolGyh7C8bFAuN3Qm62+Tp+kdhG5xaCwct9i9O5kh/XUUKOLXnzj
+         wbrIgWJ27QZfjEAc15eELznwoogf9IxsoiumGvND/rpxB+zrkDdX08fVBHXdZ427JR1L
+         IgSmYwdt491PETFW+jBXej9uEet+8NPfHDh9yK+b3NX8lymymd1By3BO4zAPXX7GdOUi
+         Qgw+XpSqy1o+EyAjFn/jBYMqR3JRZH2POS4zhAXHiP6ZQRS7RTE8OfWx/VjHs/QqIe8w
+         AXsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732551994; x=1733156794;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l1qWIVwvXjEkCYh8peO0L0gffJPk0BmLlnRXYEB1NGg=;
-        b=k7oW9F3v06KYFUJBxfpZhiKuyZn8dtMLAnFxcSucrSMzAM9x4XmWvPmL1PC2fLNUx6
-         7U8MTxa3BgrbQctOIl6QexM6rfQBL9miuvsU6ajY6ex6hBwCXdOfZSFcjMrIDasWW0wL
-         gBBLmU7CxGUfDo6VOkWwVaeCL52/TBAZIXPW9+pYZsPCYBGWcMwmJy6mGNuhnq5Su9iX
-         5H/RfpJwapx7u86D1sQjEzaBtGQxXr2TAnR64Ja81v/St3Y+BNqrObd7yns6XiK1+Kr3
-         /D/6vpyKBjCNGBN0ul0DW9697ppBp/VyU8Xe9m9BNsknPb2dRtSjUGYnhHL2Z5Dlh1VB
-         ULcw==
-X-Forwarded-Encrypted: i=1; AJvYcCVl8JRDllhkq/ezTpfeLjM1E3e+2ZptU5heXdqhXchAjmhM+jNYAjhDt02Yq7V0MiJ3T1YNu4FvrGy8jdx3Hhw=@vger.kernel.org, AJvYcCWUSNy9dMzqKmPx1R4pJhIIJv56Z8SJiUwviaMQFE4sd53wOSi4KjXlvAVydkD2Ei9z14dR8pOjURBPj1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW0eyYkudKIdbIPkxQUi4qJ2HPyaLE6tWpo6MLbsR0mBkJ4kDy
-	3bORdyM0umjYLYXIf++w4rvRdZ2pL3hcSk8L6phQiV2FpQL7J0Oq2gHfS3xDACU2SDgrq2+nV9q
-	YEMNU/56Qr4TojycHynlGUsT4zw8=
-X-Gm-Gg: ASbGnctZkrrc8yvoReYse17fJ1f1gPnXYTqMwhadbThUOIZTiGeDmbAotcF4ApuqM/w
-	oZuzVtYbEJHVcr/xJKEmVunNA3WV8TN4=
-X-Google-Smtp-Source: AGHT+IF+8fEQeszb1CA+TJE0pUpQ7FhynpOE1PM0+96KcWBP3IR2nn1UVp0S0hnjEA6WnDs/Au1QOKwMAvSC3gQFWPI=
-X-Received: by 2002:a17:90b:2249:b0:2ea:c768:3c52 with SMTP id
- 98e67ed59e1d1-2ede7e68c98mr345414a91.7.1732551993870; Mon, 25 Nov 2024
- 08:26:33 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732552058; x=1733156858;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yChQ+Bc3/hLFAIXQy5Qdf3pVGzUQXtJDQxX2P5y2ICQ=;
+        b=pbd5F7uUGacjv754rkoRN7Ttg8zTQ8IKN2AZ0rtvaRexoDUM8UdKZ8Byc8kjoKSZPe
+         Z52LgRGc8gT5VTm7GABqV3Jdi3Lhp3ce3sdFEJ6D9gCLEXFwGzctISOrRbG/mZwMnuV2
+         HF/h82501XEi6s34UNCTQeRHhIEBX4fOkQCx2C2eGVnyG6uzdujxSuy9HJpsJDmKKsjr
+         sFegb3mEwQTwWK+Fuko4+ZZlcFbTAD9daKf+GMx1SWrpbTO77PBAhzfRjJq0XVtJjSHq
+         KBD2Yp4861eZM1Grbr7gcX7wPURCVPq8ZcNOJglXrGsa7ARbwCkwwhXqAX/gFheJejX4
+         OIhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHIRuOVFTzJCynvjh8/9qFPADyWpONicKrdiaLEomsr02nDR5VoHvIpzc1lnD4F6P7PfY3/GljrfVvKzo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuCVgtIyzXRlow58fyE9J//e00BTWiWxIVyos0Ib1LmcKcDHTd
+	b/UGqihupqk7oUD/vqhk8Ayf4l86CUveNqG9U8+SP8DGrJeHO3jp2IuGf25UY4w=
+X-Gm-Gg: ASbGnctZE0Is5674QZX/fyAt15gKWZ19Z52FTo2Qt2VakVi+83P4bUsQDAuMNEifyD9
+	YAC9pEfBKOwm06+xwQJh38pVoogGnmNX8n6YhbiFTaC/xRG3iEZURAL8TJdyxicfhb9CMfD76j9
+	l3VKD9AQ0zYBaM1Qzb3+ktn8lL5YpGLAYcCCaxHcyIs+uZ/0YR+een3s6UtI2OPZVAz3o6LhEi1
+	QkI/52q8LfGqhQUDVGPgo9ZME45kwN0n2taljbj7WVdeH93e/B+cztEcRkQsQsgolPw3Ytw6zxk
+	0BaFZy1v/NQYrcjhCW/GMOVkF7sbiQ==
+X-Google-Smtp-Source: AGHT+IEPzuV6qF3LRJebCgOSfgvwIUrR22q8orC9Jdgp0xsNFNCHkZEIt9rCIrv8k5TvvcNBZU9pkQ==
+X-Received: by 2002:a2e:a9ab:0:b0:2fb:6057:e67e with SMTP id 38308e7fff4ca-2ffa71a7b0amr69362691fa.32.1732552057728;
+        Mon, 25 Nov 2024 08:27:37 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffa4d3ee22sm15745961fa.43.2024.11.25.08.27.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2024 08:27:36 -0800 (PST)
+Date: Mon, 25 Nov 2024 18:27:34 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: "Renjiang Han (QUIC)" <quic_renjiang@quicinc.com>
+Cc: "bryan.odonoghue@linaro.org" <bryan.odonoghue@linaro.org>, 
+	"Taniya Das (QUIC)" <quic_tdas@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, "Vikash Garodia (QUIC)" <quic_vgarodia@quicinc.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Subject: Re: [PATCH 1/2] clk: qcom: videocc: Use HW_CTRL_TRIGGER flag for
+ video GDSC's
+Message-ID: <rtmrsvtfukekss4cccnuxgzsm53er5mvgsfshx7xvdwn5vsio2@hgiowygrsmgd>
+References: <20241122-switch_gdsc_mode-v1-0-365f097ecbb0@quicinc.com>
+ <20241122-switch_gdsc_mode-v1-1-365f097ecbb0@quicinc.com>
+ <zhco37pigrp4fh5alqx4xfxx3xhjitqlgw552vwiijka22bt4u@sl4ngzypwh4x>
+ <1d9aa2e7-d402-42dc-baa6-155f01b132ca@quicinc.com>
+ <23ho25gl3iwyi2jspb6a2x5bv76fco5pkg2x5ct4gu3c44dbiq@yec6evx5sihm>
+ <eec92088-edfb-4d0c-b81d-9d4f1d968b20@linaro.org>
+ <b411489f9f2441f7a0f936127678e36b@quicinc.com>
+ <CAA8EJpqYSujKXPFkdWcqRpOKZ+dJHQDkYM33Mt5JxuA=Mfs+WQ@mail.gmail.com>
+ <7765000a0f87447e98d827dee5977ca7@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241123-rust-fix-arraylayout-v1-1-197e64c95bd4@asahilina.net>
- <CANiq72=axLe_WvPohRRpAnmmPOHtwSK1W3e86n7FMF2mao8HUg@mail.gmail.com> <Z0SjvVIALIkOE3nj@boqun-archlinux>
-In-Reply-To: <Z0SjvVIALIkOE3nj@boqun-archlinux>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 25 Nov 2024 17:26:20 +0100
-Message-ID: <CANiq72kCWQW1rjdpG-2pxrDJ_oKuTi3A1wyQcAhRRTpNPvV3kQ@mail.gmail.com>
-Subject: Re: [PATCH] rust: alloc: Fix `ArrayLayout` allocations
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Asahi Lina <lina@asahilina.net>, Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Janne Grunau <j@jannau.net>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	asahi@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7765000a0f87447e98d827dee5977ca7@quicinc.com>
 
-On Mon, Nov 25, 2024 at 5:20=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
-rote:
->
-> While we are at it, I think it'll be good to add some example/tests for
-> those functions of ArrayLayout, for example, the below will catch this:
->
-> I will open a good-first-issue.
+On Mon, Nov 25, 2024 at 03:14:27PM +0000, Renjiang Han (QUIC) wrote:
+> On Monday, November 25, 2024 9:55 PM, Dmitry Baryshkov wrote:
+> > On Mon, 25 Nov 2024 at 07:31, Renjiang Han (QUIC) <quic_renjiang@quicinc.com> wrote:
+> > > On Saturday, November 23, 2024 8:17 AM, Bryan O'Donoghue wrote:
+> > > > On 23/11/2024 00:05, Dmitry Baryshkov wrote:
+> > > > > This leaves sm7150, sm8150 and sm8450 untouched. Don't they also 
+> > > > > need to use HW_CTRL_TRIGGER?
+> > >
+> > > > I believe the correct list here is anything that is HFI_VERSION_4XX 
+> > > > in
+> > >
+> > > > You can't apply the second patch in this series without ensuring the 
+> > > > clock controllers for sdm845 and sm7180
+> > >
+> > > > grep HFI_VERSION_4XX drivers/media/platform/qcom/venus/core.c
+> > >
+> > > > drivers/clk/qcom/videocc-sdm845.c
+> > > > drivers/clk/qcom/videocc-sc7180.c
+> > >
+> > > > Hmm.. that's what this patch does, to be fair my other email was flippant.
+> > >
+> > > > This is fine in general, once we can get some Tested-by: for it.
+> > >
+> > > > That's my question - what platforms has this change been tested on ?
+> > >
+> > > > I can do sdm845 but, we'll need to find someone with 7180 to verify IMO.
+> > >
+> > > Thanks for your comment. We have run video case with these two patches on sc7180. The result is fine.
+> 
+> > A single case, a thorough tests, a mixture of suspend&resume while playing video cases?
+> 
+> > Also, can I please reiterate my question: sm7150, sm8150 and sm8450 ?
+> > Should they also be changed to use HW_CTRL_TRIGGER?
+> > Next question, sdm660, msm8996, msm8998: do they support HW_CTRL_TRIGGER?
+> 
+> Thanks for your review. The video playback and recording cases include video
+> pause and resume, and full video playback. The results are fine.
+> Also, this change is only for v4 core (HFI_VERSION_4XX ). Therefore, we have only tested it
+> on platforms using v4 core. We have not tried other platforms.
+> sm7150, sm8150 and sm8450 should not use venus v4 core. So they needn't to use HW_CTRL_TRIGGER.
 
-Indeed, thanks!
+We don't have venus / iris support for those platforms at all.
+This patch is not about venus, it is about the clock drivers. So
+mentioning venus is quite useless here.
+If these platforms will benefit from HW_CTRL_TRIGGER, then we should
+change them at the same time, before somebody even gets venus/iris on
+them.
 
-Cheers,
-Miguel
+-- 
+With best wishes
+Dmitry
 
