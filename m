@@ -1,215 +1,248 @@
-Return-Path: <linux-kernel+bounces-421130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79FDC9D8753
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 15:06:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B419D86C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 14:44:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4F97B2F08F
-	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:51:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D8FE2896F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 25 Nov 2024 13:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584641AE01C;
-	Mon, 25 Nov 2024 13:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18731ABEC6;
+	Mon, 25 Nov 2024 13:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O3wWmygV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="OHhBLlcc"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2061.outbound.protection.outlook.com [40.107.21.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8947419258B;
-	Mon, 25 Nov 2024 13:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732542686; cv=none; b=fuId0AKwHo07kmmz2gmeFbLsdRTdytkwv8qVjWSwKl4Gx/O3OPXmJxo3R6RZyQF/Uup8xHlsEY9cDGZTu/CLD9xUKHKSnYuGILZxhNrrKs+QZXDJodcFKO1qerXnNpZVeuf31woXvCftcJMPdZVUeZhAGJxr88sw6wZGutPGE0k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732542686; c=relaxed/simple;
-	bh=VkFH7lzsZm0p8avmoyb+ItogAr2MM8ASfMCnXRTJ/6w=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DDB/yBxw4oI6gEHu9I/ruo0wW3UqciU/huXOn3mlIv5WRWuaYauktE3Jh9MG4GiNKme5hKOu81Qojl7AgydnTDQGyYNVngEURbYBiAnwBzSPexjyHkV+Lf4LhNmu5E7RSzmkrBzunnXAhtE5SWPAyRT5UFDiL+/zS0dJse0grFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O3wWmygV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84AFEC4CECE;
-	Mon, 25 Nov 2024 13:51:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732542686;
-	bh=VkFH7lzsZm0p8avmoyb+ItogAr2MM8ASfMCnXRTJ/6w=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=O3wWmygVRGdYkw9bSi5IEyaXIGg8Htu2r4PO5ckjzCjrLtiF82XFrqjnEjPB9kGFq
-	 /QfbaLLaH9kweGW3Rcqf5+H+/zBYBbiTSR2d/wuZRnS0DUU6DO5mpGid/tEfvPWWt0
-	 AnnKnKilkDAriQEVzuy3XV0lK4JQ7+2nsQOf5gTaPDfZJgzJwfv68d7/v2pbcYVZpO
-	 HwLb+D4t81UBzvMTRJ75l9Bnx+E2YeIQzMDtclLlnwb/KraHtgwiw/Oy6XHLpD9lMD
-	 F9xFMmPLCEq5FU51LfkMvzI+wCr8RISymjWUHtqy134E0LaCcoyEtJDPKdciA+f1kD
-	 TEgGIbp8UdUdA==
-Message-ID: <90a15478f8cc65c902b898a3200f52658ee455f4.camel@kernel.org>
-Subject: Re: [PATCH 00/26] cred: rework {override,revert}_creds()
-From: Jeff Layton <jlayton@kernel.org>
-To: Christian Brauner <brauner@kernel.org>, Linus Torvalds
-	 <torvalds@linux-foundation.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>,
- 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date: Mon, 25 Nov 2024 08:51:24 -0500
-In-Reply-To: <20241124-work-cred-v1-0-f352241c3970@kernel.org>
-References: 
-	<CAHk-=whoEWma-c-ZTj=fpXtD+1EyYimW4TwqDV9FeUVVfzwang@mail.gmail.com>
-	 <20241124-work-cred-v1-0-f352241c3970@kernel.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 (3.54.1-1.fc41app1) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B79C1ADFEB;
+	Mon, 25 Nov 2024 13:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732542255; cv=fail; b=CC47Om79xXKEOcM7ErUCLZKDkYRmmytvbRUDUMMAOxDRmgsXJ4LJeGJlK7580W1qBug5VSawmLF3ZtveqCuiPQfdRjC8+LMHq/0ZS204ZyrmwK1GaCeFQEuW06aFTpW7lwE/VC9vEOiRXxXqdX2VKwcceQ2Di/515ao0Ky+uR0c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732542255; c=relaxed/simple;
+	bh=vvQXOy9RkY4jnMkA7xEKMlhx8rUmN1bK6n6YENzvPM8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Jze1uxxcowCdn7GPH4FEqwKP2o4PzZ0723qUna3JZcc0LgS2gJv+To1565xOfd5XoWD2S18TnI70bO5RsTUjAfiu8Ko6DQEnFLvxQEWI7vDwe03bre0Mtw0SJ1qleQFxRxGNyepDcp2aIXtiboa4kZ24P6Z+cP9QTzyTfNQ8O1w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=OHhBLlcc; arc=fail smtp.client-ip=40.107.21.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H3pxgxl14NCgjyJMlfQu9/OYjEiis5YgoaUxzNdkOigT+7i+oBEKHAzA81c70hUp27jOeT56uOC0gnD83GDr5PheSC3211RqzGifl0siPeiX2W38SznBIYKvKaClfYlryrFlLh/vUDpHAmAoHohv6ED2T6VcdmB1ztnnHSxPMO9F77sJ9FiYoDI6kpk4FBE/xpp7qyAFUjzeJj7yotV0U9XskCg4Es+vG2b+EJn+5+auIdoI54ACKdhUo+WjKv0mO8u5MdsHg7VZo6csKBgNBJxcS4e5Nbx6VwQoonP88KddkLaWn8W+rYHQOfQ9Wtbe99Ebg2Xr3vgsdE0NEHtFCw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UT0ygFIGNZy8rClncJeTPMnEQilwEgKkNkm99OuKNPU=;
+ b=jL/5gJDq72KHwM9NdBYV+pQEuG+xJD8Q6lIXj0zqjVes+vAmAkawoPTTAopvoXvgRBwJVMsJVadHpKCsoYGSDQ5HEIebCcLllzqlGCx5YuuB5yqud0DJxbywCaCHWf/ayQl8xQ8xyf2ITc+rTg15lFLn6AgDm94bhIHLhie6eVkrlHrrBxWG+iJCj9vbEGRMsuvKR41tl8GTk6Qz5IOCx8sw/iVbsepgDURofsxw9wucOuwLGAcr8CV3ha23PFw89Jkfq7SIbds4aYZa7q127PLtbwmMusE4HlrOHFmKrYpwAM5XUYaz7qidoI373FO7O/gGUdhasHzOzYG7GAvlDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UT0ygFIGNZy8rClncJeTPMnEQilwEgKkNkm99OuKNPU=;
+ b=OHhBLlccQaw85Amb3qC/1zztyJ5HgFcIttOXZIPkUe3pqBZuQ315ffNDmd2qdAzb9X8l0f4oo7kUainVUg1+T6GRd5bVjibHMIQfT5kHeFa210LrkNqL3WI+TDuwfwucvQddVo/+ocqMxAeq5CTazv8PUtHA3gwh/IcQCuEQfQ/Gs37pjHN9SQnZNOOPS9LH4d7U+ACepEsdXn/eYruAqOvh9TdHH8TVYIruDnyQ11LGH2LXl/4mOxLKfS/7aEJpy8hgOWQ6rsq0Mjpa2wFh6KPBg45cDh858l4PcuK0aLkwnTg10EhfFm3/eSkQC3xs69Ff4e3yV13A0ZxI7Fis7g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM0PR0402MB3937.eurprd04.prod.outlook.com (2603:10a6:208:5::22)
+ by VI1PR04MB10050.eurprd04.prod.outlook.com (2603:10a6:800:1db::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.20; Mon, 25 Nov
+ 2024 13:44:10 +0000
+Received: from AM0PR0402MB3937.eurprd04.prod.outlook.com
+ ([fe80::4e37:f56b:8a3e:bff0]) by AM0PR0402MB3937.eurprd04.prod.outlook.com
+ ([fe80::4e37:f56b:8a3e:bff0%4]) with mapi id 15.20.8048.020; Mon, 25 Nov 2024
+ 13:44:10 +0000
+From: carlos.song@nxp.com
+To: o.rempel@pengutronix.de,
+	kernel@pengutronix.de,
+	andi.shyti@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	festevam@gmail.com,
+	frank.li@nxp.com
+Cc: linux-i2c@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] i2c: imx: support DMA defer probing
+Date: Mon, 25 Nov 2024 21:52:43 +0800
+Message-Id: <20241125135243.1612098-1-carlos.song@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AS4P250CA0024.EURP250.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5e3::17) To AM6PR0402MB3944.eurprd04.prod.outlook.com
+ (2603:10a6:209:1c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM0PR0402MB3937:EE_|VI1PR04MB10050:EE_
+X-MS-Office365-Filtering-Correlation-Id: dc6e34d1-3ac5-4243-c8ab-08dd0d573d80
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|7416014|376014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?VQyl4q7aef7d6S0xjtxLRJE0uDlpNk01mLoT2N+xSB8odbxJo9YSG2BWWq6S?=
+ =?us-ascii?Q?mWTjkzJ4CA9/wRRQo3W31boIE51EsGyqtuQezIX4dWveSWOv/V+SfsbeoRQq?=
+ =?us-ascii?Q?axBgfeSBiEzwXs/ix1TuFyj5z5QFJ152GlU/ZoINJyN8qVMZxNIbUgQdYJQW?=
+ =?us-ascii?Q?ov6dXVXPDB6n+hILR42B26tZHQZYd44k8slEGuFxEwZanxJd1zBxvHhL0sjI?=
+ =?us-ascii?Q?9vx+q8lX6lp1e7Hr7hKDvpjS0ZyUXImkhzO0cdCQPhJGC73kjFdx3zxlbhFw?=
+ =?us-ascii?Q?qxEMelf0A/5AgvPhvVUruNwfvy8Xf0vFrs/kbfSRrCKD48TXoCzsNVj5/nGQ?=
+ =?us-ascii?Q?HvqfdYqvn36ArX7h6D+5SafE+vo3vecQXIOefYnuEuxWVC12ru/UQMqeUuPB?=
+ =?us-ascii?Q?P+K04t3jyDspFwt1wyxybfB+MrM0tICaDn6WA4tEF72BFZBEsgVriQfZ4RJG?=
+ =?us-ascii?Q?mCHoCQq0hRog/NlGY24XaqcHZm5YwsdDY67mHDhFxtXsQG0crZoaTV/Qa099?=
+ =?us-ascii?Q?3okH2e9px2zjgcyNFSXggEuB/+S2fL5L2eS+z0mnBy5lt7LxBiGd4EehAWkM?=
+ =?us-ascii?Q?WZxZjJC8lbWiC23vWhp7TBvfjLWLxefIZxFD0/s5F1dZ5QDef+y7vWt7JHOw?=
+ =?us-ascii?Q?2CUki71yF+1c49ElB1XAbZCS8xUefFtennCdqMTQjl+l8jb4jUFH9DPv4TxC?=
+ =?us-ascii?Q?cKKjktMEeO8oyedFpaSP5UFWJAQr6Th1mR2/HI62sq6wrwnpukhub1SmpskY?=
+ =?us-ascii?Q?aiaHiZrf1gbyPzqP3bs/XsqIu5e70X9HJuqup4ZkMCyVBB5F+r25sGzfg/gV?=
+ =?us-ascii?Q?4LIPWOiIkQk9mLpNkSNYwBaI58E69uPCnBC2qKckM+Y+B4NEZiMOz3fLJCKR?=
+ =?us-ascii?Q?c+62mvcjw8DcRDvtNJbHdygg25P1wyflcvrXdvZH/V+taWTExBetXnvVIMYV?=
+ =?us-ascii?Q?jvy1dUZCq/lzWRcBKoqdNUzG8oysldaC9qza53t6ni6I+L8fcp3p+WEr3aUe?=
+ =?us-ascii?Q?rwsp/P/HHl1DOd6bWEk0JKD/v8WE/og9n67iZE5/aicEpXQxYyB2Bc3vf9zs?=
+ =?us-ascii?Q?8Us1lC2mXUOs52sc3sI84QpRNjUBbfx0IdC7aMGwLVDPgs+2+1zG5dhwM1ID?=
+ =?us-ascii?Q?fmctS/Po4YiIhw40FlRPBrqYOgeh8d+/OQNT9xHC6Pj2hfiQezWnATVtqGWC?=
+ =?us-ascii?Q?T6baDntdf1j2fPA+xVwoZa8uuxZqU0yDDl3i4to2Q3IwBYnEQy9cGuDJbQSI?=
+ =?us-ascii?Q?kRK2Rf66dR8VrDpuLa0r0n7eNDOKhD7RU1iGY7m1Y/85Mk8hTs49sOKFIuJX?=
+ =?us-ascii?Q?ZfGS8EYEFTOYAycthzCITcnYRm3k3GaGD/zp3NNCG8FH1d1TM3qXBqRph342?=
+ =?us-ascii?Q?LHgtc/NjD8MyhsUSTGRoUZ1ejreRV/WQ86zEsbDvdExl2qb3fg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR0402MB3937.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?AOjHFBCxy9P19ksN4yYAA8g+rcE6v0Wa0ocL7OTXn3d3NmuLgE7OJBVoJhc3?=
+ =?us-ascii?Q?S/OgGlnlBywD2Otb0aeQMGNf6OTQaVsgOell4TBGCvwpwWWVeVLgEBCbXm0i?=
+ =?us-ascii?Q?VkI06mUDG6bG5rbV52bgf61wiBWE07spEg4/Hf2Vx84wWwAVhl2k85qvVuzB?=
+ =?us-ascii?Q?S+IQ7F4qgYq6O4btVKNoEQjiZ3zcbXTj32D+42+2nAgHzVpKJiUq3KB1MNAl?=
+ =?us-ascii?Q?HyBaxw9aY16rdglAWkQ8WIfDEqO7ECNu28fmntNSC+f5GrdBpkP/REVoXNQy?=
+ =?us-ascii?Q?wlKEK8lUHZUVoh+VV9x48ctc79t4hYjuZ7X5N2tXgZ7FUlQ+hTiCXlTP0FdN?=
+ =?us-ascii?Q?TCI5gCdsUoHsd87J+TKXo6kSwLneCCf4yDRxJ9bOB4/tOxtLJb5C5LTJ2HKw?=
+ =?us-ascii?Q?RI9/ZTH8TonHmsmsMMsz+Cgdt8V1Nyn+P0USOX1sffeNkHp7ykWgPO8JZHq0?=
+ =?us-ascii?Q?fxXjEWZtsjk734Q0Dcdm40IXS/E4xGdHh6tkJR4tLuToU06JlSx+EdwJVK70?=
+ =?us-ascii?Q?xx9gjyWc/t01KLwUyhZhHzsf8pI2oy2fU8hnRB/NXnnxi5XnwPHD132LaBU+?=
+ =?us-ascii?Q?Ji8Txe7rh8nRIDyP5FSBysX3bUGchptXKUf9s1DpXVZoNLa0yAXOOM7M8Jh3?=
+ =?us-ascii?Q?DhlUyYNVJ7Hmv3iXvk4c6bsH8ZN3Zw1WmIQv2WbfaZkZc5HiaaHB7aaPI3gx?=
+ =?us-ascii?Q?yNWsg8GeHMSN3bIhqZhYZ6XmVwvR28PxnKaZKmOcMLwZMubYrPrr9fjA//nm?=
+ =?us-ascii?Q?WowFAJ0V6Sxhvoe52/JXGNNbeAHhDRytu56Wn2uFzT4qdKtUiOAttKOnY7qR?=
+ =?us-ascii?Q?O7PWDJe81ztp1TpCEDtIwKkfQbae5nX7am+3t/S3GR/UtVXfq7sJNahsaN08?=
+ =?us-ascii?Q?cRcnha8Qc4TpxOvj9d/9RXOOussqO77G+BKvvB86YN2hE2ee1blYSaOQ63Y1?=
+ =?us-ascii?Q?hvLhyiGKVNefzVOI6oppn6UVPdZ1HjNuU9uJ0SdhG2tNT66JkbRGAnX7eppu?=
+ =?us-ascii?Q?Rzk43yA00jbGPdQvpUT5lZAfOoF3RQopyjonVfbgdW3Fd1lrEM36JM3DBW8m?=
+ =?us-ascii?Q?9FH93MHSqngCV3eMwIvHyiF3pKiAd3VMOZ3cOinayZcj1B75FlkjamAJrLET?=
+ =?us-ascii?Q?a88f7gjaidsk3V2PIS+f6vorfF72uGfeGf5S2GH2aTg3fXgwU96qwF8NowQT?=
+ =?us-ascii?Q?Zmvm4Jwxm1k+Y/vuJMZDhRgSiX6cLkFpsT2TS2EXUTZJ8/PnJG7iCIWeqlT9?=
+ =?us-ascii?Q?68Nh3zV4FyChbkM5VtJhcLVP9CqnulpGtK8Ji0sMNNXNU+t6WYLOeeit7pBk?=
+ =?us-ascii?Q?JrTkgpDLv8RQKxJVb2maTTqJ9RXAiYoKxsbUTE6apPvHzVXDbh0m5MtXISEG?=
+ =?us-ascii?Q?ZAf+p9P2/orPSddz8xmNWp5eyPPFLecydYdgXS/yYEG28QWiAhgeXAsoSB2e?=
+ =?us-ascii?Q?pUMCEfD1BcUcsIxapY190tazZVqIEmEZn9YTk+bpgpbuZUYSEbnTTjLZ+aFG?=
+ =?us-ascii?Q?44WeinAniN81HKMABai+qlafKKt9kTbLnu0LpirZao2VHLi/b7ju3+JmtCIt?=
+ =?us-ascii?Q?sMWx15RT0NoP+tP7gYoCSijF+67sbKXgXvbWtD0o?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc6e34d1-3ac5-4243-c8ab-08dd0d573d80
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR0402MB3944.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2024 13:44:10.5945
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ROGi/kM4Y78xhF+fM2ccJiG0xMykGZhmNg/QQLjVcDu3I1LSJQ2PGFNL61XrY8Dsk2P43tTLI/Ug9Bj9SN5qhg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB10050
 
-On Sun, 2024-11-24 at 14:43 +0100, Christian Brauner wrote:
-> For the v6.13 cycle we switched overlayfs to a variant of
-> override_creds() that doesn't take an extra reference. To this end I
-> suggested introducing {override,revert}_creds_light() which overlayfs
-> could use.
->=20
-> This seems to work rather well. As Linus correctly points out that we
-> should look into unifying both and simply make {override,revert}_creds()
-> do what {override,revert}_creds_light() currently does. Caller's that
-> really need the extra reference count can take it manually.
->=20
-> This series does all that. Afaict, most callers can be directly
-> converted over and can avoid the extra reference count completely.
->=20
-> Lightly tested.
->=20
-> ---
-> Christian Brauner (26):
->       tree-wide: s/override_creds()/override_creds_light(get_new_cred())/=
-g
->       cred: return old creds from revert_creds_light()
->       tree-wide: s/revert_creds()/put_cred(revert_creds_light())/g
->       cred: remove old {override,revert}_creds() helpers
->       tree-wide: s/override_creds_light()/override_creds()/g
->       tree-wide: s/revert_creds_light()/revert_creds()/g
->       firmware: avoid pointless reference count bump
->       sev-dev: avoid pointless cred reference count bump
->       target_core_configfs: avoid pointless cred reference count bump
->       aio: avoid pointless cred reference count bump
->       binfmt_misc: avoid pointless cred reference count bump
->       coredump: avoid pointless cred reference count bump
->       nfs/localio: avoid pointless cred reference count bumps
->       nfs/nfs4idmap: avoid pointless reference count bump
->       nfs/nfs4recover: avoid pointless cred reference count bump
->       nfsfh: avoid pointless cred reference count bump
->       open: avoid pointless cred reference count bump
->       ovl: avoid pointless cred reference count bump
->       cifs: avoid pointless cred reference count bump
->       cifs: avoid pointless cred reference count bump
->       smb: avoid pointless cred reference count bump
->       io_uring: avoid pointless cred reference count bump
->       acct: avoid pointless reference count bump
->       cgroup: avoid pointless cred reference count bump
->       trace: avoid pointless cred reference count bump
->       dns_resolver: avoid pointless cred reference count bump
->=20
->  drivers/base/firmware_loader/main.c   |  3 +--
->  drivers/crypto/ccp/sev-dev.c          |  2 +-
->  drivers/target/target_core_configfs.c |  3 +--
->  fs/aio.c                              |  3 +--
->  fs/backing-file.c                     | 20 +++++++-------
->  fs/cachefiles/internal.h              |  4 +--
->  fs/nfsd/auth.c                        |  4 +--
->  fs/nfsd/filecache.c                   |  2 +-
->  fs/nfsd/nfs4recover.c                 |  3 +--
->  fs/nfsd/nfsfh.c                       |  1 -
->  fs/open.c                             | 10 ++-----
->  fs/overlayfs/copy_up.c                |  6 ++---
->  fs/overlayfs/dir.c                    |  4 +--
->  fs/overlayfs/util.c                   |  4 +--
->  fs/smb/server/smb_common.c            |  4 +--
->  include/linux/cred.h                  | 14 ++++------
->  kernel/cred.c                         | 50 -----------------------------=
-------
->  kernel/trace/trace_events_user.c      |  3 +--
->  18 files changed, 35 insertions(+), 105 deletions(-)
-> ---
-> base-commit: 228a1157fb9fec47eb135b51c0202b574e079ebf
-> change-id: 20241124-work-cred-349b65450082
->=20
->=20
+From: Carlos Song <carlos.song@nxp.com>
 
-Nice work. Looks like a fairly straightforward changeover and the new
-API seems more intuitive. You can add:
+Return -EPROBE_DEFER when dma_request_slave_channel() because
+DMA driver have not ready yet.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Move i2c_imx_dma_request() before registering I2C adapter to avoid
+infinite loop of .probe() calls to the same driver, see "e8c220fac415
+Revert "i2c: imx: improve the error handling in i2c_imx_dma_request()""
+and "Documentation/driver-api/driver-model/driver.rst".
+
+Use CPU mode to avoid stuck registering i2c adapter when DMA resources
+are unavailable.
+
+Signed-off-by: Carlos Song <carlos.song@nxp.com>
+Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
+---
+ drivers/i2c/busses/i2c-imx.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+index 5ed4cb61e262..ee7070ee9e6e 100644
+--- a/drivers/i2c/busses/i2c-imx.c
++++ b/drivers/i2c/busses/i2c-imx.c
+@@ -397,17 +397,16 @@ static void i2c_imx_reset_regs(struct imx_i2c_struct *i2c_imx)
+ }
+ 
+ /* Functions for DMA support */
+-static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+-						dma_addr_t phy_addr)
++static int i2c_imx_dma_request(struct device *dev, dma_addr_t phy_addr)
+ {
++	struct imx_i2c_struct *i2c_imx = dev_get_drvdata(dev);
+ 	struct imx_i2c_dma *dma;
+ 	struct dma_slave_config dma_sconfig;
+-	struct device *dev = &i2c_imx->adapter.dev;
+ 	int ret;
+ 
+ 	dma = devm_kzalloc(dev, sizeof(*dma), GFP_KERNEL);
+ 	if (!dma)
+-		return;
++		return -ENOMEM;
+ 
+ 	dma->chan_tx = dma_request_chan(dev, "tx");
+ 	if (IS_ERR(dma->chan_tx)) {
+@@ -452,7 +451,7 @@ static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+ 	dev_info(dev, "using %s (tx) and %s (rx) for DMA transfers\n",
+ 		dma_chan_name(dma->chan_tx), dma_chan_name(dma->chan_rx));
+ 
+-	return;
++	return 0;
+ 
+ fail_rx:
+ 	dma_release_channel(dma->chan_rx);
+@@ -460,6 +459,8 @@ static void i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
+ 	dma_release_channel(dma->chan_tx);
+ fail_al:
+ 	devm_kfree(dev, dma);
++
++	return ret;
+ }
+ 
+ static void i2c_imx_dma_callback(void *arg)
+@@ -1803,6 +1804,13 @@ static int i2c_imx_probe(struct platform_device *pdev)
+ 	if (ret == -EPROBE_DEFER)
+ 		goto clk_notifier_unregister;
+ 
++	/* Init DMA config if supported */
++	ret = i2c_imx_dma_request(&pdev->dev, phy_addr);
++	if (ret == -EPROBE_DEFER) {
++		dev_err(&pdev->dev, "DMA not ready, go defer probe!\n");
++		goto clk_notifier_unregister;
++	}
++
+ 	/* Add I2C adapter */
+ 	ret = i2c_add_numbered_adapter(&i2c_imx->adapter);
+ 	if (ret < 0)
+@@ -1817,9 +1825,6 @@ static int i2c_imx_probe(struct platform_device *pdev)
+ 		i2c_imx->adapter.name);
+ 	dev_info(&i2c_imx->adapter.dev, "IMX I2C adapter registered\n");
+ 
+-	/* Init DMA config if supported */
+-	i2c_imx_dma_request(i2c_imx, phy_addr);
+-
+ 	return 0;   /* Return OK */
+ 
+ clk_notifier_unregister:
+-- 
+2.34.1
+
 
