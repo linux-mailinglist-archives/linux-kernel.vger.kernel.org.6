@@ -1,149 +1,196 @@
-Return-Path: <linux-kernel+bounces-422474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 308A29D9A14
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:01:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 447549D9A11
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:00:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5D9828480C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:01:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 057A8282C93
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A641C1D5CDD;
-	Tue, 26 Nov 2024 15:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwU225ko"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28B1282F4;
+	Tue, 26 Nov 2024 15:00:32 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092E278C6D;
-	Tue, 26 Nov 2024 15:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDF978C6D
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 15:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732633260; cv=none; b=dZOaK+OVYv+9BKFla0IRkjwgUYpdcfi94V5CSNkK3jWaIC5UzLIj6NTtTdQg6J6yp0NxQ4WIUdQqrZY0eq5TcmFlU23QbbqoQ+369F3ERofUAyJxF7aZ+TcmK1e10nI8rHUrqfdd+A9FfDI6WjsS7kZ62ZwsCUp1baELpXwydck=
+	t=1732633232; cv=none; b=sSkb4X6crCdWtZn+L/a/qslIezBlCBOQcel+RXmvR2vN6RJcXIB9a71WnxUPbHyzC1nxg2dWAVceb+b76jb9+ettis3SGAEYEzkPfUzUiFQ5vSyjZaXoiKXz1d9ei15AXkBvMSHE3kq3H8R+oq4ZHdiMUpLVWND/2cPnozDYmdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732633260; c=relaxed/simple;
-	bh=NZzthVN5SkVCoTAI/WKvZ9z79jq+ZgEOlT7DZBX4Evc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DCeRcwb/Qs1MMdLiNeWm/R8+rMC+c0ROfmnbMvbv0dT8dD6iuv1FrRq8OeRg1TVpgFGXRHiaKaYIwmRcF+m+xGk5uceiS8sU2djZ+ztDMsUsxi8AvQnKK1pWN4KP91/8L11yozqE6OnhQZisr4goWokDsfxqzhw5TxhVrs8bQb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JwU225ko; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86C1BC4CECF;
-	Tue, 26 Nov 2024 15:00:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732633259;
-	bh=NZzthVN5SkVCoTAI/WKvZ9z79jq+ZgEOlT7DZBX4Evc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=JwU225ko3PUOE7f0K643j8d3l6gXk5/X0t9Kb0cUOxuVf+LtsCMNMAGFr2JitGwfO
-	 SsV1wWMDzojyFxWDOkCa5NaRUaIkQ0n8Z6Rw+UaqpO08vsC2V+hRdemmq0xdbW9d+w
-	 z0espEbReBnDE8Ee/uSo17qCk+5+Gq/ndGBi9CqfraK8qO8iigt0JGxmHxuO9CKQiH
-	 YWcSLbRKNfQe6sCa0pVwHTJ/yTqvASvmZw+o8G2pbr3QvT/iRtaevxZE08TZxpvvew
-	 3VYTd85y4mmxd3Dp1+nSmyt+M0gHBrysrolwukRyaPc7Xzs92DUaoDSBpICGpLrGNp
-	 qvp9irEg0o0dw==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ffa49f623cso56573811fa.1;
-        Tue, 26 Nov 2024 07:00:59 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU2WDKvFHexji203y/CG5i6lTJcE3PhwhiFcpTa4ZQsFlPFcsAcTGsGWNcIm7nH0OmlNc+3fbeV00GBgmfP@vger.kernel.org, AJvYcCUgzlm5b50wLDQaRMLst/ArIWjc5pDAXnZag6rsw/Vq4SjkbbTuMWKmvtTgPop+NvUSfYUuOGNRGf/Z6v4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjtWn3F90IImCM/6qY7BzIPwHTe30LFzvIs1v7YA0MkmhAXIyI
-	lb3PKYMGkw7APAXDGLxe40ksJruRnyHF0z0Gs4KL2bX3waljZqNOrzIiVvqPBw/80sA5p+kRfOk
-	fSwN/rkm3GnSafwBc4HTEuOHNv9c=
-X-Google-Smtp-Source: AGHT+IFZKLqpk2nX/urDuc5LTJL9ji5a+4EoVsoyepR9zHosSRwN3nRtO71BzIO+tcYyqaLjABLdAt5gBeQdlVM0CtU=
-X-Received: by 2002:a05:6512:3b0c:b0:53d:ed3e:4dbb with SMTP id
- 2adb3069b0e04-53ded3e4ed3mr1198443e87.21.1732633258202; Tue, 26 Nov 2024
- 07:00:58 -0800 (PST)
+	s=arc-20240116; t=1732633232; c=relaxed/simple;
+	bh=GC9iqk70tSEgFNqOzMWsBYvRtSMtmUJxKFihz35MT1E=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=If1QRkdEPxXXyZW3mZvxNOBAaiFo/fDGgRwsXu9e8strnCFxalAmF6PiyIwtMGoJ+biYHzboayrxgKU9Sa9DkCHJmMutkMmzlEJHXxGcQ0Pv/2QtpBMsJkTxg6Koj8I6ZskLYoTZZF/VANuNSCajVvomSKxQ9Mk74kBCkDsqNho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a7bfddbfbdso6831885ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 07:00:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732633230; x=1733238030;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=su2WCsY/sMIgvzRO+AQtv1gt0oL6li6aXAIe6ZKuOB0=;
+        b=SsB7r8rbRjPo1FbuA1I0Q1Gcuc7pQTZ1CXm3HZV3HFzaMyhxW4pJjVH2e0Z6QmlJPC
+         LB8ZZ5qOLcKLJ1Y7PclyMNufa7ok/r4xQ77aqmTZ3OZpNYdZjvhbce5ovL+qXKQ6+mr6
+         q/zzqXd9CZzB/AOw4F/1sjNfIQP/07rnZe4/KOGlCU/aRngEK2qxdGuRPrevAd+vcMj9
+         NSDBIbFSYkAac5792Y27PDcWAO4QdUN9tDD5XuvInIWXVCjsFAqUrPFYPYUVRy0T/Ucn
+         IgWozXamrOKM8+P5JSecnPALhA1quLNvMry58AqfBjWLhZYm5wH6ducLP6fq7+IsqK15
+         IfyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXVk2Gmam28fx+jUVrcYkavWdM/eBDlH2U/dZ45MqUuJ7YJS1nBilEvJ7s3f9CuhTr8DW/oCiogDjvJ2io=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyL2VxzVWixexTqWoh3zMrKDpQH0G4X3YGhCdL5Z4c/D/IodYBx
+	+0zGFiD0JxGxNgQ14HnndNs4e+ruvTe+gZv+i+PgcFlgSQsdsuC7kcBO/bwTtCaPiQY0pmJ3baC
+	H4BSJTjnG0PkUbJACESOXniACWUAj9UffZvngMWQrlmY18V1LOHz3Ynk=
+X-Google-Smtp-Source: AGHT+IFLBt1ZGfN48llJgJ2x/XK+b/1cPYvRzEvOmYKtmeQ7bUZx/7BfXb3EMAJEsBYK5W+SCxOcRg3V2/mHXwj8BPdMf9PJG8fh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241123132237.15700-1-sedat.dilek@gmail.com>
-In-Reply-To: <20241123132237.15700-1-sedat.dilek@gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 27 Nov 2024 00:00:22 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQL4Ht5W2qZrx5+ACX7Xc0pr4FRht7jYFyyjUKR1Afi=w@mail.gmail.com>
-Message-ID: <CAK7LNAQL4Ht5W2qZrx5+ACX7Xc0pr4FRht7jYFyyjUKR1Afi=w@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: Fix names of .tmp_vmlinux kallsyms files
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6e02:152d:b0:3a7:8d8e:e730 with SMTP id
+ e9e14a558f8ab-3a79af23627mr152483875ab.22.1732633229653; Tue, 26 Nov 2024
+ 07:00:29 -0800 (PST)
+Date: Tue, 26 Nov 2024 07:00:29 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6745e28d.050a0220.1286eb.001e.GAE@google.com>
+Subject: [syzbot] [ocfs2?] general protection fault in ocfs2_clear_inode
+From: syzbot <syzbot+b61ccbb38392c822082b@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 23, 2024 at 10:22=E2=80=AFPM Sedat Dilek <sedat.dilek@gmail.com=
-> wrote:
->
-> For details, see thread "kbuild-next: .tmp vmlinux syms files"
->
-> INFO: This patch is against Linux v6.12.
->
-> Link: https://lore.kernel.org/all/CA+icZUXvu0Kw8RH1ZGBKgYGG-8u9x8BbsEkjtm=
-4vSVKkXPTg+Q@mail.gmail.com/
+Hello,
 
-This is not the right way to input a commit description.
+syzbot found the following issue on:
+
+HEAD commit:    0a9b9d17f3a7 Merge tag 'pm-6.12-rc8' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=127161a7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c3a3896a92fb300b
+dashboard link: https://syzkaller.appspot.com/bug?extid=b61ccbb38392c822082b
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/4675f27017d1/disk-0a9b9d17.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/880b676fc240/vmlinux-0a9b9d17.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b54f7f03e699/bzImage-0a9b9d17.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b61ccbb38392c822082b@syzkaller.appspotmail.com
+
+RBP: 00007ffc6312dab0 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffc6312eb30
+R13: 00007fc0479f15fc R14: 0000000000044f12 R15: 00007ffc6312eb70
+ </TASK>
+ocfs2: Unmounting device (7,3) on (node local)
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
+CPU: 0 UID: 0 PID: 8245 Comm: syz-executor Not tainted 6.12.0-rc7-syzkaller-00070-g0a9b9d17f3a7 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+RIP: 0010:ocfs2_clear_inode+0x571/0x1430 fs/ocfs2/inode.c:1208
+Code: 48 c1 ea 03 80 3c 02 00 0f 85 b7 07 00 00 49 8b 9e 90 02 00 00 48 b8 00 00 00 00 00 fc ff df 48 8d 7b 08 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 d9 07 00 00 48 8b 7b 08 e8 7c 7b f7 fe 48 8b 4c
+RSP: 0018:ffffc90002fdf890 EFLAGS: 00010212
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff836d638d
+RDX: 0000000000000001 RSI: ffff888079b6d440 RDI: 0000000000000008
+RBP: ffff888079b6cf50 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff888079b6cea0
+R13: 0000000000000000 R14: ffff88802a14c000 R15: ffff888079b6cb38
+FS:  00005555850a7500(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000562453259680 CR3: 000000005e430000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ ocfs2_evict_inode+0x8d6/0x15d0 fs/ocfs2/inode.c:1220
+ evict+0x40c/0x970 fs/inode.c:725
+ iput_final fs/inode.c:1877 [inline]
+ iput fs/inode.c:1903 [inline]
+ iput+0x530/0x890 fs/inode.c:1889
+ __ocfs2_free_slot_info.part.0+0x3e/0x210 fs/ocfs2/slot_map.c:307
+ __ocfs2_free_slot_info fs/ocfs2/slot_map.c:304 [inline]
+ ocfs2_free_slot_info+0x47/0x60 fs/ocfs2/slot_map.c:443
+ ocfs2_delete_osb+0x52/0x1f0 fs/ocfs2/super.c:2502
+ ocfs2_dismount_volume+0x442/0xa00 fs/ocfs2/super.c:1936
+ generic_shutdown_super+0x15f/0x3d0 fs/super.c:642
+ kill_block_super+0x3b/0x90 fs/super.c:1710
+ deactivate_locked_super+0xc1/0x1a0 fs/super.c:473
+ deactivate_super+0xde/0x100 fs/super.c:506
+ cleanup_mnt+0x222/0x450 fs/namespace.c:1373
+ task_work_run+0x151/0x250 kernel/task_work.c:239
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc04797fa47
+Code: a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 a8 ff ff ff f7 d8 64 89 02 b8
+RSP: 002b:00007ffc6312d9f8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007fc04797fa47
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffc6312dab0
+RBP: 00007ffc6312dab0 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffc6312eb30
+R13: 00007fc0479f15fc R14: 0000000000044f12 R15: 00007ffc6312eb70
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:ocfs2_clear_inode+0x571/0x1430 fs/ocfs2/inode.c:1208
+Code: 48 c1 ea 03 80 3c 02 00 0f 85 b7 07 00 00 49 8b 9e 90 02 00 00 48 b8 00 00 00 00 00 fc ff df 48 8d 7b 08 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 d9 07 00 00 48 8b 7b 08 e8 7c 7b f7 fe 48 8b 4c
+RSP: 0018:ffffc90002fdf890 EFLAGS: 00010212
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff836d638d
+RDX: 0000000000000001 RSI: ffff888079b6d440 RDI: 0000000000000008
+RBP: ffff888079b6cf50 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff888079b6cea0
+R13: 0000000000000000 R14: ffff88802a14c000 R15: ffff888079b6cb38
+FS:  00005555850a7500(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055f8a5916131 CR3: 000000005e430000 CR4: 0000000000350ef0
+----------------
+Code disassembly (best guess):
+   0:	48 c1 ea 03          	shr    $0x3,%rdx
+   4:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
+   8:	0f 85 b7 07 00 00    	jne    0x7c5
+   e:	49 8b 9e 90 02 00 00 	mov    0x290(%r14),%rbx
+  15:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  1c:	fc ff df
+  1f:	48 8d 7b 08          	lea    0x8(%rbx),%rdi
+  23:	48 89 fa             	mov    %rdi,%rdx
+  26:	48 c1 ea 03          	shr    $0x3,%rdx
+* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
+  2e:	0f 85 d9 07 00 00    	jne    0x80d
+  34:	48 8b 7b 08          	mov    0x8(%rbx),%rdi
+  38:	e8 7c 7b f7 fe       	call   0xfef77bb9
+  3d:	48                   	rex.W
+  3e:	8b                   	.byte 0x8b
+  3f:	4c                   	rex.WR
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
->
-> Signed-off-by: Sedat Dilek <sedat.dilek@gmail.com>
-> ---
->  scripts/link-vmlinux.sh | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-> index a9b3f34a78d2..c9088436baff 100755
-> --- a/scripts/link-vmlinux.sh
-> +++ b/scripts/link-vmlinux.sh
-> @@ -203,8 +203,8 @@ kallsymso=3D
->  strip_debug=3D
->
->  if is_enabled CONFIG_KALLSYMS; then
-> -       true > .tmp_vmlinux.kallsyms0.syms
-> -       kallsyms .tmp_vmlinux.kallsyms0.syms .tmp_vmlinux0.kallsyms
-> +       true > .tmp_vmlinux0.kallsyms.syms
-> +       kallsyms .tmp_vmlinux0.kallsyms.syms .tmp_vmlinux0.kallsyms
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-If you aim for naming consistency, this should be
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-.tmp_vmlinux0.syms
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-
-
->  fi
->
->  if is_enabled CONFIG_KALLSYMS || is_enabled CONFIG_DEBUG_INFO_BTF; then
-> @@ -231,14 +231,14 @@ if is_enabled CONFIG_KALLSYMS; then
->         # Generate section listing all symbols and add it into vmlinux
->         # It's a four step process:
->         # 0)  Generate a dummy __kallsyms with empty symbol list.
-> -       # 1)  Link .tmp_vmlinux.kallsyms1 so it has all symbols and secti=
-ons,
-> +       # 1)  Link .tmp_vmlinux1.kallsyms so it has all symbols and secti=
-ons,
->         #     with a dummy __kallsyms.
-> -       #     Running kallsyms on that gives us .tmp_kallsyms1.o with
-> +       #     Running kallsyms on that gives us .tmp_vmlinux1.kallsyms.o =
-with
->         #     the right size
-> -       # 2)  Link .tmp_vmlinux.kallsyms2 so it now has a __kallsyms sect=
-ion of
-> +       # 2)  Link .tmp_vmlinux2.kallsyms so it now has a __kallsyms sect=
-ion of
->         #     the right size, but due to the added section, some
->         #     addresses have shifted.
-> -       #     From here, we generate a correct .tmp_vmlinux.kallsyms2.o
-> +       #     From here, we generate a correct .tmp_vmlinux2.kallsyms.o
->         # 3)  That link may have expanded the kernel image enough that
->         #     more linker branch stubs / trampolines had to be added, whi=
-ch
->         #     introduces new names, which further expands kallsyms. Do an=
-other
-> --
-> 2.45.2
->
-
-
---=20
-Best Regards
-Masahiro Yamada
+If you want to undo deduplication, reply with:
+#syz undup
 
