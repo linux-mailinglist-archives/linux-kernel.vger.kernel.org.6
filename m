@@ -1,102 +1,91 @@
-Return-Path: <linux-kernel+bounces-422759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8C9B9D9DCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:05:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62FD0166A17
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:05:26 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354E216F0E8;
-	Tue, 26 Nov 2024 19:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MAYnPjo0"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D3D09D9DCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:06:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146271DD88E;
-	Tue, 26 Nov 2024 19:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732647921; cv=none; b=ur7JEBGLqjX3nwzF84EO5kBdTllxDGNWhIYrFO9ks8X7OLJdT77gETVGYe91uWokUrDz20nPjbyj4bglB3tj2/HzCID/U3H5PNRBagE+42jtpKOJCpeExgX6a3smgTTzbQxdJAf67xWy+yN/QOadWuWV6OMCWq2TyOI0D3t5nLU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732647921; c=relaxed/simple;
-	bh=B/zcRTujLsW/VkO9PiY4m3dGPvpntJBVz+tlHcfNb64=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YtJMSgWTDOFH6KoDvnyJxiLT/0TAUQZnDP1l+D8HYHt1BLZD0ySuNshATFedHub8RR7EjPaDYG63l2EBllNymcljtNkivow6OW4suEDboiwQmWxrvxZ0eqYHkSjWS05pQetUAY5trWmz/BV1nq7fJGG7oHwavF5COtEPL8z6RhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MAYnPjo0; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3D4B140E015E;
-	Tue, 26 Nov 2024 19:05:16 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 3jZrDcgUY59t; Tue, 26 Nov 2024 19:05:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1732647911; bh=KXq8e1dhskd/45vcolUOcVJX3TmXOUzD9iPElXgvT8c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MAYnPjo0vve2LTsftkKYPtRcImDwc/4PTOWzOSS2V4M3E0arRODlepFpu6ioIbiay
-	 TRxyues1NxxvnLCLO29FddeoD1kG7r7MdygGx1PoXV7Fh+ZGuEOvW4KBuCfC5BFxuk
-	 +z23CgKB6ZwQRA6Mk5NzR0rvs1/5lM/n0J5gNuymCOg1o7sLwn6iwDnyiZU7RoCgBS
-	 UXvPwRQ86DvLQeMAFH4kji6sm2rlejWZZthqF/OUKjjDNGEYa9krcZjpNvoZ9XGCh9
-	 1PVFyUNNRXDQ2M/DsrN/4KLfPpykfkoG20+4xIsBw+BmdUmeel/2nI6uKFxOFkZyic
-	 PoAk24IvXgYsGQhaDZ7eXMHzd9c2X1V5TTnfyj7SqddXKko8A1dzHrZ12kw8IYrNmt
-	 /LBiEBJ6D8csmcvU+VjhF0W3qnVgrWLAKOYdJn/OOlLUtBc6+usG9zrLU01xCuVnQn
-	 fSWJIoCfLQPVb5132YZkAy+DXZw+DvyjkqaBQ9LF/qhYon0ulG8XHrb//Yg97k/qIr
-	 EttUIsqtltBViyTkCK6no9YepDuWNv94dCDsmmS9iCuCLE/bGw4b7evlXLwHObroR9
-	 UjY3ZHYW3XMMKa3Th6+s3KwXCdmkyi9xvnqkOxpk1OkqZIMubpLfZgY77EXhNbeksp
-	 ogB/WRlYR2CGpZEq5dRmX7js=
-Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7ECDB2B72F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:05:11 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 572C91DE2DB;
+	Tue, 26 Nov 2024 19:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XnuGWi41"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4297F40E0163;
-	Tue, 26 Nov 2024 19:04:56 +0000 (UTC)
-Date: Tue, 26 Nov 2024 20:04:49 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Xin Li <xin@zytor.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com,
-	corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	luto@kernel.org, peterz@infradead.org, andrew.cooper3@citrix.com
-Subject: Re: [PATCH v3 05/27] KVM: VMX: Disable FRED if FRED consistency
- checks fail
-Message-ID: <20241126190449.GCZ0Yb0SOt09XD4e0d@fat_crate.local>
-References: <20241001050110.3643764-1-xin@zytor.com>
- <20241001050110.3643764-6-xin@zytor.com>
- <20241126153259.GAZ0XqK92lqgV7a475@fat_crate.local>
- <81ad0623-8d9b-4f74-afd5-1ecaaa92ec77@zytor.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CA816F0E8;
+	Tue, 26 Nov 2024 19:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732647905; cv=none; b=qVXou1tO64OWIKNi9yCYue7H6QTMTgwoyLgZRbcldDJ7Ecdx17zyRktgxJiJmllLXRqGfjvkvlV/rlq5mAKSNIQvYRIyMrr5umo/dZVCSe7q8VHSQiAEg+sqw9/BDEHG+MrBza0uu6k8/nKHyZT46kH0IfbHwibOkdIuPLV1klM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732647905; c=relaxed/simple;
+	bh=pEIGDwnyL7MiIoKNvEGS/cLLg78Itlh+7g3BTqwGbLs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sC+YOCI/VDzZ04OvYddiO7cnX83g+d0sN7Kw4bvEyQIcx01tkpBOVCee0RTWXTCQAsVU6gBvWNMrwuHK+E2K+5BlCJ6fuk7zZkHRxp6a6vtHySbqVj71PZWt1pflskT2k9Ccq0BpQek4YUforsiuz5akwZJOZZ22wcNezdU2IMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XnuGWi41; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4274C4CECF;
+	Tue, 26 Nov 2024 19:05:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732647905;
+	bh=pEIGDwnyL7MiIoKNvEGS/cLLg78Itlh+7g3BTqwGbLs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XnuGWi41ZKX9U/C3+WDiKp2Ar+a1up1qv1dUONEb/Z/uGEJzO+C526Cigte6ISpYA
+	 OvMU1lSaHnlm44V+dz2TRAuj/dEfhIyC49UYZ3q8OomoK/aGcapuOB3hbLMoMlJAv1
+	 hK4M3uMep3TgCUunD+SR59Ew/qvFgEUHA++wIwKLgQksR1VhycHT4Yl7JftS7fJu+W
+	 c8fXNT1zzbS9ObZqMGr/TcWzcxuUzfZ+qttDsum0aeA8hQRwzI5oqyvGvAj59sI3yK
+	 xq0IMnhA+UjxWrTpZn9Mka6w4DN4AbGrundzDS5A1tkaeFSqopdcHWOg/FHqVKZ/kS
+	 t27hDpveOoTzA==
+Date: Tue, 26 Nov 2024 16:05:02 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>, Leo Yan <leo.yan@arm.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH V15 0/7] perf/core: Add ability for an event to "pause"
+ or "resume" AUX area tracing
+Message-ID: <Z0Yb3r6GjUZck77r@x1>
+References: <20241114101711.34987-1-adrian.hunter@intel.com>
+ <9bb112f8-0af1-4517-a4b8-bd2edacce07c@intel.com>
+ <Z0YChjympWOZeu1e@x1>
+ <bb2821b7-4440-4ecc-925e-4d78ba60fef8@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <81ad0623-8d9b-4f74-afd5-1ecaaa92ec77@zytor.com>
+In-Reply-To: <bb2821b7-4440-4ecc-925e-4d78ba60fef8@intel.com>
 
-On Tue, Nov 26, 2024 at 10:53:17AM -0800, Xin Li wrote:
-> Already done based on your reply to other patches.
+On Tue, Nov 26, 2024 at 07:56:12PM +0200, Adrian Hunter wrote:
+> On 26/11/24 19:16, Arnaldo Carvalho de Melo wrote:
+> > On Tue, Nov 26, 2024 at 02:59:02PM +0200, Adrian Hunter wrote:
+> >> On 14/11/24 12:17, Adrian Hunter wrote:
+> >>> Note for V15:
+> >>> 	Same as V14 but without kernel patches because they have been
+> >>> 	applied, and updated "missing_features" patch for the new way
+> >>> 	of detecting missing features.
 
-Thx.
+> >> Still apply
+ 
+> > So the kernel part is in, I'll go over this after getting a machine with
+> > a kernel with those features so that I can test it all together.
+ 
+> To be clear, this is just a software feature, so any machine
+> with Intel PT will do. Kernel can be from mainline tree or tip.
 
-> There is a lot of boot_cpu_has() in arch/x86/kvm/, and someone needs to
-> replace them :-P
+Thanks for the clarification, the way I wrote it was ambiguous, maybe
+somebody would think I needed some specific machine with some
+special/new hardware feature (some new Intel PT feature, that is), but I
+understood that this is purely a software/kernel feature, needing only a
+machine with "regular" Intel PT.
 
-There are such all over the tree and it'll happen eventually.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+- Arnaldo
 
