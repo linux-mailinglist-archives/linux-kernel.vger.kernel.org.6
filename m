@@ -1,195 +1,100 @@
-Return-Path: <linux-kernel+bounces-422583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ABD49D9B81
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:34:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC5C49D9B82
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:34:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05B04168981
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:34:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1D28286772
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1971D8DEE;
-	Tue, 26 Nov 2024 16:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE59D1D8E1E;
+	Tue, 26 Nov 2024 16:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="sUnItZTN"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520DA1D63CA;
-	Tue, 26 Nov 2024 16:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O9P5IhGf"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E311D89ED;
+	Tue, 26 Nov 2024 16:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732638841; cv=none; b=OY+LNlhmYn5iFkmf1cEd64AFVclaKayUdUpwPKoDqld/71aOGxx4GugX5bukwAdqAeIW77gJfwGZB0Q3cDFbYgCmOwsdQS1aYBerc3F/vtJTGJbwbG10qx4QI2gp1Wo/47Xa53f9TAtuNnrDGUp2Pw4GXB5yMdmIuwZlukqWmfQ=
+	t=1732638863; cv=none; b=ZWl9Xzs0vbRHahP9bl3iXQ2nHau+v36GAjPFWSYxXXxZmY4Wbjd2l9hIW71df5n7zf66J0v7gOhgYDePI8oUu1SlhMurkEpC44Y20J/FfY+NOucjm38jwEgp3D9PXmH8qpsmMi7DVAQK3FZgpa3Fkzf+olO6oBPZG8bpEkq3LLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732638841; c=relaxed/simple;
-	bh=x+nQwHusXpcnj31rvF2k2BWPkCdcVU2fjxLJ1YARKGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HTAFiy/d231U14vorSlbxeP41fqhTUPq4LfiiLDuNCFcQaeQopSVlcI2KYvALRiW3WqSsOXesMglT6fx19YyczKYwyMyKkn8ya2mQNcEZiHF5s7n8SGBwGHQo37OojlK6ORlYqGJ0GSnddsw5xAShnINEOPANNN87SQ6YXM/eQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=sUnItZTN; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id 0B48720545A9; Tue, 26 Nov 2024 08:33:54 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0B48720545A9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1732638834;
-	bh=vzU0D9wWMC/jVMbki8859Mj7Ksvs6U9VGwiazMGudQ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sUnItZTNiFwekERdEZYDS58A3ZztX9J9J1mRV89cgZG/+pMpYkD9USPSFj0AqrRDz
-	 6+is2Fzc3oEfuYYFr1eWV2XqXvWIQIJMoptdcemsBxkxn1lfL4jilFLgZNz728aBM9
-	 mU/xI8FtUCX4aM34UjykWXssNgBqpuk7ODDP0ido=
-Date: Tue, 26 Nov 2024 08:33:54 -0800
-From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-To: Naman Jain <namjain@linux.microsoft.com>
-Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] uio_hv_generic: Add a check for HV_NIC for send, receive
- buffers setup
-Message-ID: <20241126163354.GA5185@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <20241125125015.1500-1-namjain@linux.microsoft.com>
+	s=arc-20240116; t=1732638863; c=relaxed/simple;
+	bh=81kUDK2FfLp/WGQa7o8TpKjDjzqNKseVMcIR/5Kc37Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X0Hi5GO6+JudbHVRPQTFJLhJSpKruSpm0ZQBbDmeviGrCT8gEoVKSfH387OlEkSTQx5B7chtkpxaCyYWH1W4qAk8EuoVCvFERMRmkOL+kBRsfRCzEcJkk2un7VFCdudq5r29vfDwv+74CZNSZe8DUHxiHb1Yso5X/qQKuT0hJzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O9P5IhGf; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e38939a89bfso5347954276.3;
+        Tue, 26 Nov 2024 08:34:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732638861; x=1733243661; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=81kUDK2FfLp/WGQa7o8TpKjDjzqNKseVMcIR/5Kc37Q=;
+        b=O9P5IhGfCQT7z0e3U66NUd40XwkRjEu4Wh9JoEoyNKofJ5yul+qqMdH1xuuqOLphwe
+         Lc0RZPUl8WfpdEw874juzMkDfzQ1UllQCnEdE7x7ZgvOtYRZPlDcRNS6wER2PZqMBbKj
+         i0g4wYgk9fOhoWuvJYFGfiWh2BimGTplMiFOaqUvZ44gfbiI8m66lam2kMRxpBXFhXs5
+         Y5BlK5/9YHNsceVSfJ8iaocHk3rZm/3K/k/02O+9syuk9APZHlQS/KL2EFM8iiJ1RyO6
+         8P/hK0ObPIqwmck84sOfQ6mQKar2FKX394mKbWTM0rMmg/y90GlykybTTvX9Xa4CidtV
+         McJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732638861; x=1733243661;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=81kUDK2FfLp/WGQa7o8TpKjDjzqNKseVMcIR/5Kc37Q=;
+        b=mH1+OUtDOP24RNVG1dP/C7cWaIkUsn6QjKr4pltTKYbmyNH3pb83WMJmekhRoo/6Fe
+         lKh7NwnmGCwv2lqdOx7GvrgP1BnWCrTAoPOvO+k4eOlmKfpxsWmv6hV2KgTH9u710Nyl
+         XKuakt8tJEJXRMj/KQhmjY8Lt+25UVRO8+fSQS7pi5IIfYh81+Z1v2UKJ9FIun9OuJez
+         I2U4qqpwDzxh+h5z2FnSN+HILxmwCziw7FKhTPt5BhsDVQi0pieTsqox8qdrEll+a5rx
+         gz0gj4NFKVcute0ZzJ+B07wBdNVXMsqq8/ugPA3xhxLah6p1+trKxu4i+ZaGh6ZrokUV
+         TPKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNMRu93Oe/0KkwdPI6/k7rv8lBLxgluq5Rd+uGabrHNrszg6icDmyejyK7cnhVMxIpuR0XedDdOyER@vger.kernel.org, AJvYcCXb9TLqxCimjpHLBxnJtW+8peryD5nt07LthI2looFMArh/w2a+sAZb7BUBbAbq3TlnVLihdWLBcOnnbddN@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTjtdu7uy+RQ6Plmb6nEq0pCEAGOfCe/AZQjTDU0Boica1BgKR
+	+0uoh6zCafhK0r1sT4379MS7csKeFKipinD7CIIfY/lKQKZfiE4t/rwCQOnWOh5DWudLMbx3y8f
+	Fy1ii3r2w63/81D0OZu38vTtcqgs=
+X-Gm-Gg: ASbGncvjt/NdWLmflQJSEXQGLynyf9RJmAhnlDDf2frXdge3koW7bEJ0kp6nZwhmocp
+	lWWpTuGJRyf263Sd0q+skOpK9JA/ADx7T
+X-Google-Smtp-Source: AGHT+IH0rBw+xuH2VbnRPCa0ythGe+vmqwLZcKnDRV9jeUgWhfvMABxWAASqLF5EJD3NVkEYkOzdFIsrWd4Mu4/XXZw=
+X-Received: by 2002:a05:6902:703:b0:e2b:d4c8:c5e9 with SMTP id
+ 3f1490d57ef6-e38f8ad708dmr15164230276.11.1732638860727; Tue, 26 Nov 2024
+ 08:34:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241125125015.1500-1-namjain@linux.microsoft.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20241124-adpdrm-v1-0-3191d8e6e49a@gmail.com> <20241124-adpdrm-v1-3-3191d8e6e49a@gmail.com>
+ <f2181c71-db23-4d94-9afb-cb8f2fc46bea@kernel.org> <3a6fb7fd-eb3d-428b-a37c-f04d81e7fbd0@gmail.com>
+ <e647e8c7-6df9-44f5-abcc-34db74b8e266@kernel.org>
+In-Reply-To: <e647e8c7-6df9-44f5-abcc-34db74b8e266@kernel.org>
+From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Date: Tue, 26 Nov 2024 17:34:09 +0100
+Message-ID: <CAMT+MTSetzODw-cbteQOgEYmEgpiFBVP5eDgjvyHGqofCU=VXg@mail.gmail.com>
+Subject: Re: [PATCH 3/5] gpu: drm: adp: Add a backlight driver for the Summit LCD
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Nick Chan <towinchenmi@gmail.com>, Hector Martin <marcan@marcan.st>, 
+	Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Nov 25, 2024 at 12:50:15PM +0000, Naman Jain wrote:
-> Support for send and receive buffers was added for networking usecases
-> in UIO devices. There is no known usecase of these buffers for devices
-> other than HV_NIC. Add a check for HV_NIC in probe function to avoid
-> memory allocation and GPADL setup which would save 47 MB memory per
-> device type.
-
-Thanks for the patch. How about rephrasing the commit message like this:
-
-Receive and send buffer allocation was originally introduced to support
-DPDK's networking use case. These buffer sizes were further increased to
-meet DPDK performance requirements. However, these large buffers are
-unnecessary for any other UIO use cases.
-
-Restrict the allocation of receive and send buffers only for HV_NIC device
-type, saving 47 MB of memory per device.
-
-> 
-> While at it, fix some of the syntax related issues in the touched code
-> which are reported by "--strict" option of checkpatch.
-> 
-> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
-> ---
->  drivers/uio/uio_hv_generic.c | 86 ++++++++++++++++++------------------
->  1 file changed, 43 insertions(+), 43 deletions(-)
-> 
-> diff --git a/drivers/uio/uio_hv_generic.c b/drivers/uio/uio_hv_generic.c
-> index 3976360d0096..1b19b5647495 100644
-> --- a/drivers/uio/uio_hv_generic.c
-> +++ b/drivers/uio/uio_hv_generic.c
-> @@ -296,51 +296,51 @@ hv_uio_probe(struct hv_device *dev,
->  	pdata->info.mem[MON_PAGE_MAP].size = PAGE_SIZE;
->  	pdata->info.mem[MON_PAGE_MAP].memtype = UIO_MEM_LOGICAL;
->  
-> -	pdata->recv_buf = vzalloc(RECV_BUFFER_SIZE);
-> -	if (pdata->recv_buf == NULL) {
-> -		ret = -ENOMEM;
-> -		goto fail_free_ring;
-> +	if (channel->device_id == HV_NIC) {
-> +		pdata->recv_buf = vzalloc(RECV_BUFFER_SIZE);
-> +		if (!pdata->recv_buf) {
-> +			ret = -ENOMEM;
-> +			goto fail_free_ring;
-> +		}
-> +
-> +		ret = vmbus_establish_gpadl(channel, pdata->recv_buf,
-> +					    RECV_BUFFER_SIZE, &pdata->recv_gpadl);
-> +		if (ret) {
-> +			if (!pdata->recv_gpadl.decrypted)
-> +				vfree(pdata->recv_buf);
-> +			goto fail_close;
-> +		}
-> +
-> +		/* put Global Physical Address Label in name */
-> +		snprintf(pdata->recv_name, sizeof(pdata->recv_name),
-> +			 "recv:%u", pdata->recv_gpadl.gpadl_handle);
-> +		pdata->info.mem[RECV_BUF_MAP].name = pdata->recv_name;
-> +		pdata->info.mem[RECV_BUF_MAP].addr = (uintptr_t)pdata->recv_buf;
-> +		pdata->info.mem[RECV_BUF_MAP].size = RECV_BUFFER_SIZE;
-> +		pdata->info.mem[RECV_BUF_MAP].memtype = UIO_MEM_VIRTUAL;
-> +
-> +		pdata->send_buf = vzalloc(SEND_BUFFER_SIZE);
-> +		if (!pdata->send_buf) {
-> +			ret = -ENOMEM;
-> +			goto fail_close;
-> +		}
-> +
-> +		ret = vmbus_establish_gpadl(channel, pdata->send_buf,
-> +					    SEND_BUFFER_SIZE, &pdata->send_gpadl);
-> +		if (ret) {
-> +			if (!pdata->send_gpadl.decrypted)
-> +				vfree(pdata->send_buf);
-> +			goto fail_close;
-> +		}
-> +
-> +		snprintf(pdata->send_name, sizeof(pdata->send_name),
-> +			 "send:%u", pdata->send_gpadl.gpadl_handle);
-> +		pdata->info.mem[SEND_BUF_MAP].name = pdata->send_name;
-> +		pdata->info.mem[SEND_BUF_MAP].addr = (uintptr_t)pdata->send_buf;
-> +		pdata->info.mem[SEND_BUF_MAP].size = SEND_BUFFER_SIZE;
-> +		pdata->info.mem[SEND_BUF_MAP].memtype = UIO_MEM_VIRTUAL;
->  	}
->  
-> -	ret = vmbus_establish_gpadl(channel, pdata->recv_buf,
-> -				    RECV_BUFFER_SIZE, &pdata->recv_gpadl);
-> -	if (ret) {
-> -		if (!pdata->recv_gpadl.decrypted)
-> -			vfree(pdata->recv_buf);
-> -		goto fail_close;
-> -	}
-> -
-> -	/* put Global Physical Address Label in name */
-> -	snprintf(pdata->recv_name, sizeof(pdata->recv_name),
-> -		 "recv:%u", pdata->recv_gpadl.gpadl_handle);
-> -	pdata->info.mem[RECV_BUF_MAP].name = pdata->recv_name;
-> -	pdata->info.mem[RECV_BUF_MAP].addr
-> -		= (uintptr_t)pdata->recv_buf;
-> -	pdata->info.mem[RECV_BUF_MAP].size = RECV_BUFFER_SIZE;
-> -	pdata->info.mem[RECV_BUF_MAP].memtype = UIO_MEM_VIRTUAL;
-> -
-> -	pdata->send_buf = vzalloc(SEND_BUFFER_SIZE);
-> -	if (pdata->send_buf == NULL) {
-> -		ret = -ENOMEM;
-> -		goto fail_close;
-> -	}
-> -
-> -	ret = vmbus_establish_gpadl(channel, pdata->send_buf,
-> -				    SEND_BUFFER_SIZE, &pdata->send_gpadl);
-> -	if (ret) {
-> -		if (!pdata->send_gpadl.decrypted)
-> -			vfree(pdata->send_buf);
-> -		goto fail_close;
-> -	}
-> -
-> -	snprintf(pdata->send_name, sizeof(pdata->send_name),
-> -		 "send:%u", pdata->send_gpadl.gpadl_handle);
-> -	pdata->info.mem[SEND_BUF_MAP].name = pdata->send_name;
-> -	pdata->info.mem[SEND_BUF_MAP].addr
-> -		= (uintptr_t)pdata->send_buf;
-> -	pdata->info.mem[SEND_BUF_MAP].size = SEND_BUFFER_SIZE;
-> -	pdata->info.mem[SEND_BUF_MAP].memtype = UIO_MEM_VIRTUAL;
-> -
->  	pdata->info.priv = pdata;
->  	pdata->device = dev;
->  
-> 
-> base-commit: 85a2dd7d7c8152cb125712a1ecae1d0a6ccac250
-
-overall change looks good to me.
-
-- Saurabh
+On Mon, 25 Nov 2024 at 16:07, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> BTW, max-brightness is a property of backlight, not panel, I think.
+This is an oled panel, so no separate backlight device, the mipi commands
+just change the pixel brightness. There is prior art in other bindings on having
+the max-brightness property attached to the panel itself.
 
