@@ -1,222 +1,190 @@
-Return-Path: <linux-kernel+bounces-422093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39E5D9D947A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:29:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7099161E66
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:29:55 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110331B87C2;
-	Tue, 26 Nov 2024 09:29:54 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FE599D9490
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:33:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB2E1B413C
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58A52B2C794
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:30:16 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F271B6D04;
+	Tue, 26 Nov 2024 09:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WQdq2LZE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171AF84D0E;
+	Tue, 26 Nov 2024 09:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732613393; cv=none; b=PgPageRdqZMkqbON6uYHfpIdln8kwV30jvce+P4oJf75hAEQ7lApT9Prwz1U3Xe7W74iupDZoNFDeQaTT5QYhjG3z3YV9v/pSw8g0JFQO3ovDZIDwgvLn1PM9DiOYTPSKFqi/UD8JnpRTwalBNG4IPK8ZYJJ8JaonE6x/cHudfI=
+	t=1732613411; cv=none; b=cIQh61RUhJFAqh+oln3tMo7To2WctSaQfjzkygMOyzoDF2UimomM1MPQvTWU+8VstaBixG7aAFcGRhmEODzHwTrChHN6LwSp09wPdCQmmEnr+L+ZWo4UFzXc1OJ6Fy05mr6SmH4ifJiGmI0amuVP6718CxvtZ3aRn37KGb/ZYy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732613393; c=relaxed/simple;
-	bh=+TV9OkllNR5xS/4pW/hZcS8f9O/25pyCeKXiGLdXnfo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=q8JC0w7abqLUFHYErPoozRWGrNR8lPmZDtJGD/idAZhW4zrLOvCwS/5f89C5UwM/FOC3vjcCXwXo6EyGga/7AKbPSuYjXtTujMAe1RVKCwiwW/oz225ND33EzEvARgpt/ARZDksrt926XdpsNaMLhzlpXw/2WjQ/2auYzApC7Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tFrsv-0007BB-JZ; Tue, 26 Nov 2024 10:29:29 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tFrst-000E0I-18;
-	Tue, 26 Nov 2024 10:29:28 +0100
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tFrsu-0001mR-09;
-	Tue, 26 Nov 2024 10:29:28 +0100
-Message-ID: <74d4fc4c6f08fde2d6759633cb2280ecb18cbd91.camel@pengutronix.de>
-Subject: Re: [PATCH 2/2] drm/imagination: add reset control support
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Parthiban Nallathambi <parthiban@linumiz.com>, Frank Binns
- <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>,  Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
- <conor+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 26 Nov 2024 10:29:27 +0100
-In-Reply-To: <20241125-pvr-reset-v1-2-b437b8052948@linumiz.com>
-References: <20241125-pvr-reset-v1-0-b437b8052948@linumiz.com>
-	 <20241125-pvr-reset-v1-2-b437b8052948@linumiz.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1732613411; c=relaxed/simple;
+	bh=9Ay6+imSrXagOd8Xd0hPE8chBJ5GelgKMPvVGoiR2e8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r5Nvp3vXG31B0kQXZZRLB7oyfk2d0L8vyhQfftYZ+R2XAGKyQJzGweSFenE8gbq4R4AFi80IXFf4pmla5Bdh8qIqXpslfNgFq7mvV4ebNgQJr2KcHs9ZDmweTPJwnS5CaCzBDrP3PBXG7Jyj+osQ0dOQ6sDSzbiMwBxegUrCD28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WQdq2LZE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D0A3C4CECF;
+	Tue, 26 Nov 2024 09:30:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732613410;
+	bh=9Ay6+imSrXagOd8Xd0hPE8chBJ5GelgKMPvVGoiR2e8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WQdq2LZE9YTWOxAyv7FnmGEL6ltFHnouW2WMUelybvVewvAWZm15QH/lf4XnmpQIj
+	 rlQos5T4MqJKm0b4DQ+XG/dwzrlSHYISKPwh1eT8EYKMDTbHpep6jNgk2xbMKdFDiJ
+	 hn4GR7SeIgMtyW1i5NZi60c+PAJdj3CDW3nvknu4LQcgmMSBr9kw1YUcB0r0hL6u0b
+	 AfWWeTAU1kj3t137X4AI3F7clejrXfnU7TD+LNP9Sb/TNVQXlciE6FtXt9h8HzQmly
+	 XJFQtHV2onhmWl+5d/rCLPRImcGfpHpSC1OHCVSX9Yh2hwq7dtq9rUmpxlO9EKusN2
+	 dq3Ud11z9oHyg==
+Date: Tue, 26 Nov 2024 10:30:07 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+Cc: Sean Nyekjaer <sean@geanix.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Yannick Fertre <yannick.fertre@foss.st.com>, Philippe Cornu <philippe.cornu@foss.st.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v2 1/3] drm/modes: introduce drm_mode_validate_mode()
+ helper function
+Message-ID: <20241126-silver-skylark-of-expertise-bba576@houat>
+References: <20241125-dsi-relax-v2-0-9113419f4a40@geanix.com>
+ <20241125-dsi-relax-v2-1-9113419f4a40@geanix.com>
+ <20241125-gleaming-anteater-of-perfection-42bd2b@houat>
+ <bfuj6w6hsbfpdw24th6dl3ugvj45op6jb45gx5ab5pulud7hiz@o2zbn45z3lt4>
+ <725aafb8-abfa-40c0-967a-62122206f736@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="ivjgiyez6uyhrxcb"
+Content-Disposition: inline
+In-Reply-To: <725aafb8-abfa-40c0-967a-62122206f736@foss.st.com>
 
-On Mo, 2024-11-25 at 22:07 +0530, Parthiban Nallathambi wrote:
-> On some platforms like Allwinner A133 with GE8300 includes
-> reset control from reset control unit. Add reset control
-> optionally from the devicetree.
+
+--ivjgiyez6uyhrxcb
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 1/3] drm/modes: introduce drm_mode_validate_mode()
+ helper function
+MIME-Version: 1.0
+
+On Tue, Nov 26, 2024 at 09:47:17AM +0100, Raphael Gallais-Pou wrote:
 >=20
-> Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
-> ---
->  drivers/gpu/drm/imagination/pvr_device.h |  8 ++++++++
->  drivers/gpu/drm/imagination/pvr_drv.c    |  5 +++++
->  drivers/gpu/drm/imagination/pvr_power.c  | 16 +++++++++++++++-
->  3 files changed, 28 insertions(+), 1 deletion(-)
+> On 11/26/24 08:36, Sean Nyekjaer wrote:
+> > Hi Maxime,
+> >
+> > On Mon, Nov 25, 2024 at 05:00:56PM +0100, Maxime Ripard wrote:
+> >> Hi Sean,
+> >>
+> >> On Mon, Nov 25, 2024 at 02:49:26PM +0100, Sean Nyekjaer wrote:
+> >>> Check if the required pixel clock is in within .5% range of the
+> >>> desired pixel clock.
+> >>> This will match the requirement for HDMI where a .5% tolerance is all=
+owed.
+> >>>
+> >>> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> >>> ---
+> >>>  drivers/gpu/drm/drm_modes.c | 34 ++++++++++++++++++++++++++++++++++
+> >>>  include/drm/drm_modes.h     |  2 ++
+> >>>  2 files changed, 36 insertions(+)
+> >>>
+> >>> diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
+> >>> index 6ba167a3346134072d100af0adbbe9b49e970769..4068b904759bf80502efd=
+e6e4d977b297f5d5359 100644
+> >>> --- a/drivers/gpu/drm/drm_modes.c
+> >>> +++ b/drivers/gpu/drm/drm_modes.c
+> >>> @@ -1623,6 +1623,40 @@ bool drm_mode_equal_no_clocks_no_stereo(const =
+struct drm_display_mode *mode1,
+> >>>  }
+> >>>  EXPORT_SYMBOL(drm_mode_equal_no_clocks_no_stereo);
+> >>> =20
+> >>> +/**
+> >>> + * drm_mode_validate_mode
+> >>> + * @mode: mode to check
+> >>> + * @rounded_rate: output pixel clock
+> >>> + *
+> >>> + * VESA DMT defines a tolerance of 0.5% on the pixel clock, while the
+> >>> + * CVT spec reuses that tolerance in its examples, so it looks to be=
+ a
+> >>> + * good default tolerance for the EDID-based modes. Define it to 5 p=
+er
+> >>> + * mille to avoid floating point operations.
+> >>> + *
+> >>> + * Returns:
+> >>> + * The mode status
+> >>> + */
+> >>> +enum drm_mode_status drm_mode_validate_mode(const struct drm_display=
+_mode *mode,
+> >>> +					    unsigned long long rounded_rate)
+> >>> +{
+> >>> +	enum drm_mode_status status;
+> >>> +	unsigned long long rate =3D mode->clock * 1000;
+> >>> +	unsigned long long lowest, highest;
+> >>> +
+> >>> +	lowest =3D rate * (1000 - 5);
+> >>> +	do_div(lowest, 1000);
+> >>> +	if (rounded_rate < lowest)
+> >>> +		return MODE_CLOCK_LOW;
+> >>> +
+> >>> +	highest =3D rate * (1000 + 5);
+> >>> +	do_div(highest, 1000);
+> >>> +	if (rounded_rate > highest)
+> >>> +		return MODE_CLOCK_HIGH;
+> >>> +
+> >>> +	return MODE_OK;
+> >>> +}
+> >>> +EXPORT_SYMBOL(drm_mode_validate_mode);
+> Hi Sean, Maxime,
+> >> Thanks a lot for doing that!
+> >>
+> >> I wonder about the naming though (and prototype). I doesn't really
+> >> validates a mode, but rather makes sure that a given rate is a good
+> >> approximation of a pixel clock. So maybe something like
+> >> drm_mode_check_pixel_clock?
+> > Naming is hard :) I will use drm_mode_check_pixel_clock() for V2.
+> >
+> > Would it make sense to have the pixel clock requirement as a input
+> > parameter? For HDMI it is 0.5% and in my case the LVDS panel 10%.
+> >
+> > enum drm_mode_status drm_mode_validate_mode(const struct drm_display_mo=
+de *mode,
+> > 					    unsigned long long rounded_rate, unsigned tolerance)
+> > ?
 >=20
-> diff --git a/drivers/gpu/drm/imagination/pvr_device.h b/drivers/gpu/drm/i=
-magination/pvr_device.h
-> index 6d0dfacb677b..21ec7dd64415 100644
-> --- a/drivers/gpu/drm/imagination/pvr_device.h
-> +++ b/drivers/gpu/drm/imagination/pvr_device.h
-> @@ -23,6 +23,7 @@
->  #include <linux/kernel.h>
->  #include <linux/math.h>
->  #include <linux/mutex.h>
-> +#include <linux/reset.h>
->  #include <linux/spinlock_types.h>
->  #include <linux/timer.h>
->  #include <linux/types.h>
-> @@ -131,6 +132,13 @@ struct pvr_device {
->  	 */
->  	struct clk *mem_clk;
-> =20
-> +	/**
-> +	 * @reset: Optional reset control
-> +	 *
-> +	 * This may be used on some platforms to reset the GPU module/IP.
-> +	 */
-> +	struct reset_control *reset;
-> +
->  	/** @irq: IRQ number. */
->  	int irq;
-> =20
-> diff --git a/drivers/gpu/drm/imagination/pvr_drv.c b/drivers/gpu/drm/imag=
-ination/pvr_drv.c
-> index fb17196e05f4..d9b918410ea9 100644
-> --- a/drivers/gpu/drm/imagination/pvr_drv.c
-> +++ b/drivers/gpu/drm/imagination/pvr_drv.c
-> @@ -36,6 +36,7 @@
->  #include <linux/of_platform.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
-> +#include <linux/reset.h>
->  #include <linux/xarray.h>
-> =20
->  /**
-> @@ -1427,6 +1428,10 @@ pvr_probe(struct platform_device *plat_dev)
->  	pm_runtime_use_autosuspend(&plat_dev->dev);
->  	pvr_watchdog_init(pvr_dev);
-> =20
-> +	pvr_dev->reset =3D devm_reset_control_get_optional_exclusive(&plat_dev-=
->dev, "ahb");
-> +	if (PTR_ERR(pvr_dev->reset) =3D=3D -EPROBE_DEFER)
-> +		return PTR_ERR(pvr_dev->reset);
-
-	pvr_dev->reset =3D devm_reset_control_get_optional_exclusive(&plat_dev->de=
-v, "ahb");
-	if (IS_ERR(pvr_dev->reset))
-		return PTR_ERR(pvr_dev->reset);
-
-Please don't ignore errors. devm_reset_control_get_optional_exclusive()
-returns NULL if the "ahb" reset control isn't specified in the device
-tree, and the reset_control_assert/deassert() functions accept that as
-a non-existing reset, see [1].
-
-[1] https://docs.kernel.org/driver-api/reset.html#optional-resets
-
-> +
->  	err =3D pvr_device_init(pvr_dev);
->  	if (err)
->  		goto err_watchdog_fini;
-> diff --git a/drivers/gpu/drm/imagination/pvr_power.c b/drivers/gpu/drm/im=
-agination/pvr_power.c
-> index ba7816fd28ec..a24ed85f36c7 100644
-> --- a/drivers/gpu/drm/imagination/pvr_power.c
-> +++ b/drivers/gpu/drm/imagination/pvr_power.c
-> @@ -15,6 +15,7 @@
->  #include <linux/mutex.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
-> +#include <linux/reset.h>
->  #include <linux/timer.h>
->  #include <linux/types.h>
->  #include <linux/workqueue.h>
-> @@ -252,6 +253,9 @@ pvr_power_device_suspend(struct device *dev)
->  	clk_disable_unprepare(pvr_dev->sys_clk);
->  	clk_disable_unprepare(pvr_dev->core_clk);
-> =20
-> +	if (!IS_ERR(pvr_dev->reset))
-> +		reset_control_assert(pvr_dev->reset);
-
-	reset_control_assert(pvr_dev->reset);
-
-This just returns 0 if pvr_dev->reset =3D=3D NULL.
-
-> +
->  err_drm_dev_exit:
->  	drm_dev_exit(idx);
-> =20
-> @@ -270,9 +274,15 @@ pvr_power_device_resume(struct device *dev)
->  	if (!drm_dev_enter(drm_dev, &idx))
->  		return -EIO;
-> =20
-> +	if (!IS_ERR(pvr_dev->reset)) {
-> +		err =3D reset_control_reset(pvr_dev->reset);
-> +		if (err)
-> +			goto err_drm_dev_exit;
-> +	}
-
-	err =3D reset_control_reset(pvr_dev->reset);
-	if (err)
-		goto err_drm_dev_exit;
-
-> +
->  	err =3D clk_prepare_enable(pvr_dev->core_clk);
->  	if (err)
-> -		goto err_drm_dev_exit;
-> +		goto err_reset_exit;
-> =20
->  	err =3D clk_prepare_enable(pvr_dev->sys_clk);
->  	if (err)
-> @@ -301,6 +311,10 @@ pvr_power_device_resume(struct device *dev)
->  err_core_clk_disable:
->  	clk_disable_unprepare(pvr_dev->core_clk);
-> =20
-> +err_reset_exit:
-> +	if (!IS_ERR(pvr_dev->reset))
-> +		reset_control_assert(pvr_dev->reset);
-
-err_reset_exit:
-	reset_control_assert(pvr_dev->reset);
-
-> +
->  err_drm_dev_exit:
->  	drm_dev_exit(idx);
-> =20
 >=20
+> IMO adding the tolerance as input parameter is a good idea.=A0 This
+> would useful other than for HDMI pixel clock validation (and LVDS in
+> your case).
 
-regards
-Philipp
+It depends on the intent. If it's justified, why not. If it's to
+workaround another issue, absolutely not. And so, generally speaking, I
+don't think it's a good idea.
+
+Maxime
+
+--ivjgiyez6uyhrxcb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ0WVGgAKCRAnX84Zoj2+
+dt6vAYD/ha6rSzfdB8Hdtt8QyIin6959mZS2o1Kfzj2g79x6jBpKlT0JtMgi//O3
+OUV40OgBfROD6tZDvz9F+STrxg9e7rBW0RrVft6ey02AdwVIWtaNpvVoJEMn/cnG
+vhycHMk+wA==
+=7JWg
+-----END PGP SIGNATURE-----
+
+--ivjgiyez6uyhrxcb--
 
