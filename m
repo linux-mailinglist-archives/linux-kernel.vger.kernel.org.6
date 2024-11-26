@@ -1,146 +1,123 @@
-Return-Path: <linux-kernel+bounces-421875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CA969D914D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 06:18:19 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E67DE16A576
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 05:18:15 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4603581720;
-	Tue, 26 Nov 2024 05:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oWgdd+7e"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 934539D9150
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 06:19:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4C33D6D;
-	Tue, 26 Nov 2024 05:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57F35287B1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 05:19:17 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246BD81720;
+	Tue, 26 Nov 2024 05:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VRh15urY"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B295653;
+	Tue, 26 Nov 2024 05:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732598292; cv=none; b=DA4b7EjzuaSpzadKkoCfWSqNCadwck3Bp1p+5iJKtaD/pGV4LKkj40J/LcDufzjewhTaZvw2wUbiKBm8WyZrUFKCrPlU56VXIZhzcTHzJPQpffEq7mluCsFbI19KF8VnhgB0tg2ZPfcwn6AM2RuMD1ka6Gv5r+5BZa44+N46MSc=
+	t=1732598351; cv=none; b=MECanhRICiDrsvFEeKNxx1vS48zGL8I4d7t5at2W8GeWONcdIU+OWXWkYtIsZTmgHMkcPhdF54VeT6b6rYqUk689dv+4TtmBb43h5UkPGZ/p+Wo3KX6Qn068lBuqPwDm6w+ChLSa8w7qzPeFv2y63MD1vuZFbOzXY2XtA/QlFW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732598292; c=relaxed/simple;
-	bh=ITML5GCZ4QoIaHvbGnJdenWmfVQ7hI79gIhmG7nb28w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=euPtH78RQ/cH9Cbfhkb1YS0VUrVsRuB2MKgur59Mh2EaBwFPoAXx3V94TExk4HamHhK+AqQpqQgPBwIxMeTF6NRRhudXYIua5eCh6ky9MJkJvbp3Tg8jsNWiDpe/O9JC2BjqVgznoIBlN0a+mPH+VStyCiuZmttjDpz1sJgIMIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oWgdd+7e; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APJE7BO023534;
-	Tue, 26 Nov 2024 05:17:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	O/XWCo4/BzHg2lMO92tloK63C1BypGsvrGEGTvkAKsY=; b=oWgdd+7evO7Ar8ms
-	3HPWnxgztMsBfk5twg9V7K78lYn1i7YEC1B6QPgFxUdQM2uGPkKV+CLaaZorTqCD
-	qsj3nv94vfw5Ycpt8HhGYbiL5TuMh2h3ZiUcSs6x3S7JgbOLsF7b6adI0Zwa87Ys
-	cq8vyMlfmGltU24AA6LODh0YEmmnTfkYe7ZZFGeU/Md1FJvx6hnqKbFYe3SRBJk/
-	+U7gswcz0QR25qZiKLQKmltG5pCWf+BsQLqtZxBFNgLByiypEiBMuAx3oT4U63cB
-	9q9R66ssyoeHxiz0q2SUwuPNny7TnGrn45WqtNr1J16+lyHFz8gM3riqdsdySml/
-	WIFcHA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4336cfq01p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 05:17:57 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AQ5HuNJ027223
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 05:17:56 GMT
-Received: from [10.216.8.10] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 25 Nov
- 2024 21:17:52 -0800
-Message-ID: <03c5bf0e-d65b-7ebb-d12d-3f9b3bae2a4c@quicinc.com>
-Date: Tue, 26 Nov 2024 10:47:49 +0530
+	s=arc-20240116; t=1732598351; c=relaxed/simple;
+	bh=SsXKeG4iKHIGl4IQNsH9J1ULRa5IOJVawi5c5nZBkDo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q8GWwFwyQDx/jlaG4rk+7IRqAtyf6usxbAdA3aAIVHx9GLMpr9FiCr75IFbU3GcY0Ysf+ARpYfjmeZKqxe5fLfqe+NRBFiMLT+DVBug8nOkojLTRqByg9N5sxPdEuH1tPTC6lNtCJiNk/D5ATLYDL08rSTWEFNEkAWsts+9430E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VRh15urY; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7e9e38dd5f1so4420520a12.0;
+        Mon, 25 Nov 2024 21:19:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732598349; x=1733203149; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VfgrFkIill8XZ44XmDBIgcIATqnyraRsPjCSbdmLm0M=;
+        b=VRh15urYiZoDkTV/EiAfpEmwCFWvaIs1l14UzuarMGhqOxmEJwZmwQxfq2FQwj9kTE
+         RTkwGsXZNueLiQZDNWu1pQ37Be9nDay6keO0Cbaag0fcHMPb+COtla39uD/eQ2Jk7lT+
+         m+TzSy56PCEltOaigG4IN1+Xy5A62DUEouAOl9J0D+/EHc5cjVhDZSpQTbXa0+wQ6cvR
+         Z9WK6zoJ1dsRfIna/H6CPGS+VjJ6rwCoM/h+hJ3w7w6Y/32zY11/mSR0bmNP/NvkYQm8
+         mSuIYyC5a0yI7+Ymz1MkqctqC3MYmOWjv0iiAtPFc7g2A3PTiPhJYB0oZ95RwIdgtaq1
+         +aew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732598349; x=1733203149;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VfgrFkIill8XZ44XmDBIgcIATqnyraRsPjCSbdmLm0M=;
+        b=GhOAr33XIx0JaqTMSUOK/geQEgjJHK30gT2P0l/MI3sg0J9foZS7TY0m9V1Rv2C3JL
+         K8JO7muabMRdRd+OtQOWVjJRgDZjrr8hpGTDwfndZBKgVq0k6Fq7MwFi0dIAAzD8I4P9
+         k+PFdkxamZunYwct48wXB2bakHd6pdhW4dQU8KqunKxpZqNPg/URQggkJ93TmzSdYZa5
+         dv3domD3zJRXKD5dGNEZfij+/mMny9vV2WAYrsIdyPxfJ3cIhPC6REidkz2ZOsBqJdid
+         MK1keN2exLuPrKXIkuE1+zMTc4N7fa0u29uofD2RkbMYvGujByONJNVeNccvtBOSmgsE
+         mwNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWL6B+PPSOVMNDGpnGc9RywvynaHfRdVYNpceYcjLUjBYHBDPPaZurXS6dTq5HKbJbUYb+u5Ed+UH07uU=@vger.kernel.org, AJvYcCXWs+g8dzZAeXQooo578RHvQd0dCAJp+duWcynk9vP2K9GoFsj9LNeQYpSRqIPFWKjI080/BG7rvWWyeg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjR8bCKLKIeoiEPx+nyjsh/5fot7pxfyk4cgYds5+bGWqJBwWU
+	0HUh9RaaHOIM6wfqO6pSObIKY8IeWp/vi352R+vrFsFrsfgSNroo
+X-Gm-Gg: ASbGncvkiiwZ6i+AvY0iIKwr8D4tgjr4nvRr+CLFPMFcUN0qLEVrq+slU3ys4CUSGXF
+	KI+UXLA03Z8S38XFt6aU76WYx7r4U3JDtBtd9xtB86GFvaRB0/0fKUivU7MSTtwq9PSO2LxVFBY
+	ZZSvPTCCNj2Aqp873QCktJbkipA69L391bDti11yMU3KXEg/nO7dVRq1kbWzRFUMlM+yULIIxOp
+	x7ravGh+8bXxxok+y6cJNDd8jTsoO6dHwV6iRF16025kHi6L7pUihsIi+PodEsj
+X-Google-Smtp-Source: AGHT+IFrJNQcj02XB1WYSEjBx4IyMnzG3hPlXoB2Ggdu/AGwMkwtMpSPMOnxThdC55a44X3wZc9cTA==
+X-Received: by 2002:a05:6a20:6a21:b0:1e0:d0b8:20bb with SMTP id adf61e73a8af0-1e0d0b82440mr6190683637.20.1732598349448;
+        Mon, 25 Nov 2024 21:19:09 -0800 (PST)
+Received: from [192.168.0.203] ([14.139.108.62])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129db87dc9sm75376735ad.7.2024.11.25.21.19.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 21:19:08 -0800 (PST)
+Message-ID: <fa2b0f11-d8bc-4d7c-b6dd-435eeacd6d37@gmail.com>
+Date: Tue, 26 Nov 2024 10:49:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 0/3] Add support for RAS DES feature in PCIe DW
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: sg: fix slab-use-after-free Read in sg_release
 Content-Language: en-US
-To: Shradha Todi <shradha.t@samsung.com>, <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>
-CC: <manivannan.sadhasivam@linaro.org>, <lpieralisi@kernel.org>,
-        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
-        <jingoohan1@gmail.com>, <fancer.lancer@gmail.com>,
-        <yoshihiro.shimoda.uh@renesas.com>, <conor.dooley@microchip.com>,
-        <pankaj.dubey@samsung.com>, <gost.dev@samsung.com>,
-        <quic_nitegupt@quicinc.com>
-References: <CGME20240625094434epcas5p2e48bda118809ccb841c983d737d4f09d@epcas5p2.samsung.com>
- <20240625093813.112555-1-shradha.t@samsung.com>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <20240625093813.112555-1-shradha.t@samsung.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: o3E8-NbYm7y-ZNWzl0rM5wmQQL5XhbzC
-X-Proofpoint-ORIG-GUID: o3E8-NbYm7y-ZNWzl0rM5wmQQL5XhbzC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- spamscore=0 lowpriorityscore=0 phishscore=0 adultscore=0 malwarescore=0
- mlxscore=0 suspectscore=0 mlxlogscore=999 clxscore=1011 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411260042
+To: Bart Van Assche <bvanassche@acm.org>, dgilbert@interlog.com
+Cc: James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzbot+7efb5850a17ba6ce098b@syzkaller.appspotmail.com
+References: <20241120125944.88095-1-surajsonawane0215@gmail.com>
+ <d4695943-51b8-40f2-bf2c-3a6436081887@gmail.com>
+ <dc9ee4e6-5410-4635-9970-d0b2a5d02d81@acm.org>
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+In-Reply-To: <dc9ee4e6-5410-4635-9970-d0b2a5d02d81@acm.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+On 11/25/24 22:33, Bart Van Assche wrote:
+> On 11/25/24 6:30 AM, Suraj Sonawane wrote:
+>> Hello!
+> 
+> Which person are you addressing with this email?
+> 
+I apologize for not clarifying earlier—my email was intended for 
+everyone who might be reviewing the patch.
+
+>> I wanted to follow up on the patch I submitted. I was wondering if you 
+>> had a chance to review it and if there are any comments or feedback.
+> 
+> Sending a ping after 5 days is too quick. I think that you should wait
+> at least a week before sending a ping.
+> 
+
+Thank you for pointing out that sending a follow-up after five days 
+might be too soon. I truly appreciate your guidance on this. The reason 
+for my follow-up is that, as a mentee in the Linux Kernel Bug Fixing 
+Program, I need to include updates on my contributions in my progress 
+report. I’ll make sure to wait at least a week before sending any future 
+follow-ups.
+
+> Bart.
+> 
 
 
-forgot to add the email in the previous mail.
-
-- Krishna chaitanya.
-On 6/25/2024 3:08 PM, Shradha Todi wrote:
-> DesignWare controller provides a vendor specific extended capability
-> called RASDES as an IP feature. This extended capability  provides
-> hardware information like:
->   - Debug registers to know the state of the link or controller.
->   - Error injection mechanisms to inject various PCIe errors including
->     sequence number, CRC
->   - Statistical counters to know how many times a particular event
->     occurred
-> 
-> However, in Linux we do not have any generic or custom support to be
-> able to use this feature in an efficient manner. This is the reason we
-> are proposing this framework. Debug and bring up time of high-speed IPs
-> are highly dependent on costlier hardware analyzers and this solution
-> will in some ways help to reduce the HW analyzer usage.
-> 
-> The debugfs entries can be used to get information about underlying
-> hardware and can be shared with user space. Separate debugfs entries has
-> been created to cater to all the DES hooks provided by the controller.
-> The debugfs entries interacts with the RASDES registers in the required
-> sequence and provides the meaningful data to the user. This eases the
-> effort to understand and use the register information for debugging.
-> 
-> v2: https://lore.kernel.org/lkml/20240319163315.GD3297@thinkpad/T/
-> 
-> v1: https://lore.kernel.org/all/20210518174618.42089-1-shradha.t@samsung.com/T/
-> 
-> Shradha Todi (3):
->    PCI: dwc: Add support for vendor specific capability search
->    PCI: debugfs: Add support for RASDES framework in DWC
->    PCI: dwc: Create debugfs files in DWC driver
-> 
->   drivers/pci/controller/dwc/Kconfig            |   8 +
->   drivers/pci/controller/dwc/Makefile           |   1 +
->   .../controller/dwc/pcie-designware-debugfs.c  | 474 ++++++++++++++++++
->   .../controller/dwc/pcie-designware-debugfs.h  |   0
->   .../pci/controller/dwc/pcie-designware-host.c |   2 +
->   drivers/pci/controller/dwc/pcie-designware.c  |  20 +
->   drivers/pci/controller/dwc/pcie-designware.h  |  18 +
->   7 files changed, 523 insertions(+)
->   create mode 100644 drivers/pci/controller/dwc/pcie-designware-debugfs.c
->   create mode 100644 drivers/pci/controller/dwc/pcie-designware-debugfs.h
-> 
 
