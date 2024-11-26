@@ -1,147 +1,78 @@
-Return-Path: <linux-kernel+bounces-422847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E45B9D9EF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:42:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCF9C165E6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:42:22 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDDF1DFD9E;
-	Tue, 26 Nov 2024 21:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="nrfPjwbI"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76E3C9D9EF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:42:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AD31DF963;
-	Tue, 26 Nov 2024 21:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDB7AB25C26
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:42:39 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFAC1DFD9F;
+	Tue, 26 Nov 2024 21:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kkAN+we7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF681DDA24;
+	Tue, 26 Nov 2024 21:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732657339; cv=none; b=fEwpqqgttsG+b6mu+xwfWzYb4vjkeH7hLIBedgmgK3Sl/V9Uq0e709gwAgtVpiTG0LIhhyBcGQV2xc7U2BCVQWk+85w7kNhDG2gmAXMtJPJxrvxMNVB9K9c09VEf2Biap0jao7T9ATjrdlPH3FUnW0AEARSoiHuAYZmrLfxiniY=
+	t=1732657354; cv=none; b=TQf7L5zsD2y6ATxwMcsOt1wQ5gepAGXSnixCMQpG01DrUzl9aAUmP96Vc9j5A0VQFEpExTxvDGuh9NBhi4fZFIH5FzV9r/gu0UcYAZt4gjOvVIcTsgjKceZna/o7YXdqK0fbfQ+WxXcW65GtjPArHnQX6YUSty89NHI0RLykRzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732657339; c=relaxed/simple;
-	bh=KLOxZqYqAMVocTruSnmp0YRWLPlKl6C/iQVIZbJW18w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jnxiD/KW27mxpWfJ8HTcS0MvJn+CCLaUF5UIZxL9eByJn+xiyVhz6Y4jO8zNzF7v1KpMgfZd5DAL4uCaeYI66AgrGtd9KzLOx8/PcEzwIlSGlS+hdVdyFLIZEaaLEtY1N0c61zp8reQIoqTJT0+98U1vKMJb/2PxtL8Yjn3h1kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=nrfPjwbI; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1732657336;
-	bh=KLOxZqYqAMVocTruSnmp0YRWLPlKl6C/iQVIZbJW18w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nrfPjwbIU85kXd+xpm7HaeyT8NnV9bAFCG9ftOLTlHe9z8yvhTi6q04pTaUqxB21f
-	 xfpv1qTfFpSTbWAU5SupZhHT3CzHIX8/K91kSwGkslgxtoBYdHv2mt5pFA7RbLiDS+
-	 awbYg+e7KKD3MjZX0D3m76rBlgeJfbDC9y6ipLbU=
-Date: Tue, 26 Nov 2024 22:42:15 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btf: Use BIN_ATTR_SIMPLE_RO() to define vmlinux attribute
-Message-ID: <5307ea3b-6720-4ca9-827e-7338f255908f@t-8ch.de>
-References: <20241122-sysfs-const-bin_attr-bpf-v1-1-823aea399b53@weissschuh.net>
- <CAEf4BzbNs=MVNDztRW_76f8aQkm44ykiibqGa2REThWM4dVa_g@mail.gmail.com>
+	s=arc-20240116; t=1732657354; c=relaxed/simple;
+	bh=tqm+x/BfPTba6dFivgaDZmr2zjOA4O7OOY9ZbZ+fLxA=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=tZScb+vWjdGK2R+Nnvfob9yQGuao0fPuPr7HgdKOU2wwQXJ/qkIkqcHPAMRmJWgh4tICZvmac8m8vuLoCnKTwsSe8rvYA+tDLqE3BO5u/PmKybFlBSFJVqAp8kTU+IJ+S6oeUiwSKCL5SAjzAiR48pC8dF/pH5kB58kg8viMqgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kkAN+we7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBBB2C4CECF;
+	Tue, 26 Nov 2024 21:42:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732657353;
+	bh=tqm+x/BfPTba6dFivgaDZmr2zjOA4O7OOY9ZbZ+fLxA=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=kkAN+we7HzKn+8Agd6qVrXhRcJKe14yfypWgeKvBBkvaoFA65AojQvg6ZUduvUVDv
+	 DGRpKdw7GJI5qBope94Y289lURMMU140lrTyShSJ+CWjihyfvMrQx/lK1DyCUTb9zL
+	 Y0yYXo49bf55osuFOlEPZtlm7xjrNkCo6tde8XH7n4q+Tgf0oOQb5sacsi9FXoGvpc
+	 wjjlaWLai9CAjX6HxnDLwnn3wKdtTyRa2k8plieedsRblrIQeyVamfyDq1w5PdQqhk
+	 DR8BkTVTm+fLBA9RlALkiogG5h+kbUhiD1DqPFDDqI9wVw2xL1S7IqokM7NA8Duuy5
+	 75EqzLFtWCP6w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB2033809A00;
+	Tue, 26 Nov 2024 21:42:47 +0000 (UTC)
+Subject: Re: [GIT PULL] Rust bindings for pid namespaces
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20241126-vfs-rust-3af24a3dd7c0@brauner>
+References: <20241126-vfs-rust-3af24a3dd7c0@brauner>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241126-vfs-rust-3af24a3dd7c0@brauner>
+X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.13.rust.pid_namespace
+X-PR-Tracked-Commit-Id: e0020ba6cbcbfbaaa50c3d4b610c7caa36459624
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 9ad8d22f2f3fad7a366c9772362795ef6d6a2d51
+Message-Id: <173265736642.550402.8141463972505864591.pr-tracker-bot@kernel.org>
+Date: Tue, 26 Nov 2024 21:42:46 +0000
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzbNs=MVNDztRW_76f8aQkm44ykiibqGa2REThWM4dVa_g@mail.gmail.com>
 
-On 2024-11-26 13:37:26-0800, Andrii Nakryiko wrote:
-> On Fri, Nov 22, 2024 at 4:57 AM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> >
-> > The usage of the macro allows to remove the custom handler function,
-> > saving some memory. Additionally the code is easier to read.
-> >
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > ---
-> > Something similar can be done to btf_module_read() in kernel/bpf/btf.c.
-> > But doing it here and now would lead to some conflicts with some other
-> > sysfs refactorings I'm doing. It will be part of a future series.
-> > ---
-> >  kernel/bpf/sysfs_btf.c | 21 +++++----------------
-> >  1 file changed, 5 insertions(+), 16 deletions(-)
-> >
-> 
-> Nice, let's simplify. But why change the name to generic "vmlinux" if
-> it's actually btf_vmlinux? Can we keep the original btf-specific name?
+The pull request you sent on Tue, 26 Nov 2024 12:08:27 +0100:
 
-The file in sysfs is named "vmlinux", /sys/kernel/btf/vmlinux.
-This is what needs to be passed to the macro, it will name both the
-variable and the file after it.
+> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.13.rust.pid_namespace
 
-One alternative would be to use __BIN_ATTR_SIMPLE_RO() which allows a
-custom name.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/9ad8d22f2f3fad7a366c9772362795ef6d6a2d51
 
-> 
-> pw-bot: cr
-> 
-> > diff --git a/kernel/bpf/sysfs_btf.c b/kernel/bpf/sysfs_btf.c
-> > index fedb54c94cdb830a4890d33677dcc5a6e236c13f..a24381f933d0b80b11116d05463c35e9fa66acb1 100644
-> > --- a/kernel/bpf/sysfs_btf.c
-> > +++ b/kernel/bpf/sysfs_btf.c
-> > @@ -12,34 +12,23 @@
-> >  extern char __start_BTF[];
-> >  extern char __stop_BTF[];
-> >
-> > -static ssize_t
-> > -btf_vmlinux_read(struct file *file, struct kobject *kobj,
-> > -                struct bin_attribute *bin_attr,
-> > -                char *buf, loff_t off, size_t len)
-> > -{
-> > -       memcpy(buf, __start_BTF + off, len);
-> > -       return len;
-> > -}
-> > -
-> > -static struct bin_attribute bin_attr_btf_vmlinux __ro_after_init = {
-> > -       .attr = { .name = "vmlinux", .mode = 0444, },
-> > -       .read = btf_vmlinux_read,
-> > -};
-> > +static __ro_after_init BIN_ATTR_SIMPLE_RO(vmlinux);
-> >
-> >  struct kobject *btf_kobj;
-> >
-> >  static int __init btf_vmlinux_init(void)
-> >  {
-> > -       bin_attr_btf_vmlinux.size = __stop_BTF - __start_BTF;
-> > +       bin_attr_vmlinux.private = __start_BTF;
-> > +       bin_attr_vmlinux.size = __stop_BTF - __start_BTF;
-> >
-> > -       if (bin_attr_btf_vmlinux.size == 0)
-> > +       if (bin_attr_vmlinux.size == 0)
-> >                 return 0;
-> >
-> >         btf_kobj = kobject_create_and_add("btf", kernel_kobj);
-> >         if (!btf_kobj)
-> >                 return -ENOMEM;
-> >
-> > -       return sysfs_create_bin_file(btf_kobj, &bin_attr_btf_vmlinux);
-> > +       return sysfs_create_bin_file(btf_kobj, &bin_attr_vmlinux);
-> >  }
-> >
-> >  subsys_initcall(btf_vmlinux_init);
-> >
-> > ---
-> > base-commit: 28eb75e178d389d325f1666e422bc13bbbb9804c
-> > change-id: 20241122-sysfs-const-bin_attr-bpf-737286bb9f27
-> >
-> > Best regards,
-> > --
-> > Thomas Weißschuh <linux@weissschuh.net>
-> >
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
