@@ -1,62 +1,44 @@
-Return-Path: <linux-kernel+bounces-422502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19DD59D9A62
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:25:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8182816587C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:24:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE28F1D63C6;
-	Tue, 26 Nov 2024 15:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iEMo2MWz"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 547189D9A67
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:26:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E35E1D45E5;
-	Tue, 26 Nov 2024 15:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19CC428408A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:26:21 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4414A1D61B7;
+	Tue, 26 Nov 2024 15:26:17 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35D01D47DC
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 15:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732634694; cv=none; b=UG1qBVK9n/hSMofXm3DOfGfU9KGSorvyAtiLHLO30dLcEWeNd2dfDTvHKHPqyPgUvj5gAobnJdG/jb44S8B15kQ/jj7LU/4sJNg2ZSstKpcdRoqQDKbXvGR3BPeA8jkUJn4jGXt6+sQmqr5UjjgZ5Ph8hbHz3l8hyhhTg91zQ8E=
+	t=1732634776; cv=none; b=lgV6D4o45iOZ5ITBSLZU0r6PcKvpJyoRS+tUOIgJ1FyNC2VnAoSK75mZTjLeFnEIilJni53/nDc9XFX7HpT06avKB7FfYlQTOZhB94nX3OkrsDZS2Y0Wd1em0yiCfProTQQwrPCJB4BZWBBSrzRnRWyQSDpa/DMXQfsCz8CzCas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732634694; c=relaxed/simple;
-	bh=m8JifkIcWKn2vScoQAglbez3I2ckcKkP5Tw545MTy3s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QiaPEq3GvIO+8ZOpcWDh2wLrKCv9tebKDjTPiCaiyEAMn4CtL9w2ySv0sqwhT7B3OClOIDQLaEx4fx8bpYwKRWyMSSbfSzmtXZoJEXGgvlP2Fu52wsvtji01uZSJ78+afstHegHHi0z2ZJ1rNCSKY/MtlEAFicEBiMHZT6xz+Vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iEMo2MWz; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQEteBo009477;
-	Tue, 26 Nov 2024 15:24:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/1cZnQT68TGHVierbrKfkfuNZesBX//u5csAVytjwqQ=; b=iEMo2MWz5aOUwmva
-	95lAnjY5+9nYXFQduIRGGOjcliMhkeKYrAzbUqY6tMwI1ANGJzQbFjKAwGon+ws3
-	f1HnosXLMCvMu9r4t0Mtk+MNfRJ6MwArhA0w4NiEUCpwr7AwdkK3PlZn1t8vPkWj
-	TQJ1YaIPJHxGYJ2t7Gmo3YbQtBX4BmtHUs19VVyDKSTTMOzNs6pQEAQdXT2WAybs
-	C3m1IQMqX4chw9ygc179PDhJPWcII8zfOKXUUWHVQEJvqJOhSfmUwL4Ui2Rnegfh
-	swU7XQuoB/tTPQWNDgV0TjH08BdypENzIgOwfYTvx8vaKjyj9vGTgohS7FTTiIJo
-	HGKXeg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 435gha82ep-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 15:24:36 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AQFOZMg030262
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 15:24:35 GMT
-Received: from [10.216.49.153] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 26 Nov
- 2024 07:24:29 -0800
-Message-ID: <56b6f58e-e100-4dfd-b764-a9c3f5aad887@quicinc.com>
-Date: Tue, 26 Nov 2024 20:54:26 +0530
+	s=arc-20240116; t=1732634776; c=relaxed/simple;
+	bh=7xoXOs6QFvhqbWGq4HfLEgxp2uxNGgWZlA9EHXy0WVo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bWLKNZ/FX2CicFSKwPl/7TUWfXKaj4JHDhQg5VuShfN6FGCLJYSV3yr1OAfr4hfAq7IcC2KtmBGH+YKe43suVmtxzkbiLxjsLoQ9cKNxhjWsByvAhNb9FSz9Y+irOrdTgJ0rd8xzWZVwIuyj6xuTjNGVf8/F6CQMP+3j0qXHzYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XyQqB5ktvz9v7NV
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 23:05:10 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 860E7140854
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 23:26:03 +0800 (CST)
+Received: from [10.81.211.153] (unknown [10.81.211.153])
+	by APP1 (Coremail) with SMTP id LxC2BwB3Njd96EVnYbpVAg--.124S2;
+	Tue, 26 Nov 2024 16:26:02 +0100 (CET)
+Message-ID: <94ec40b6-79d7-4d23-97c0-951a5faac9c8@huaweicloud.com>
+Date: Tue, 26 Nov 2024 16:25:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,115 +46,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: display/msm: gpu: Document A612 GPU
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Clark <robdclark@gmail.com>,
-        Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
-        "Abhinav
- Kumar" <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241126-qcs615-gpu-dt-v1-0-a87782976dad@quicinc.com>
- <20241126-qcs615-gpu-dt-v1-1-a87782976dad@quicinc.com>
- <680a9f92-1d29-410b-bc63-a998d2d64e9e@kernel.org>
-Content-Language: en-US
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-In-Reply-To: <680a9f92-1d29-410b-bc63-a998d2d64e9e@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v4 5/5] tools/memory-model: Distinguish between syntactic
+ and semantic tags
+To: paulmck@kernel.org
+Cc: Akira Yokosawa <akiyks@gmail.com>, boqun.feng@gmail.com,
+ dhowells@redhat.com, dlustig@nvidia.com, frederic@kernel.org,
+ hernan.poncedeleon@huaweicloud.com, j.alglave@ucl.ac.uk,
+ joel@joelfernandes.org, linux-kernel@vger.kernel.org, lkmm@lists.linux.dev,
+ luc.maranget@inria.fr, npiggin@gmail.com, parri.andrea@gmail.com,
+ peterz@infradead.org, quic_neeraju@quicinc.com, stern@rowland.harvard.edu,
+ urezki@gmail.com, will@kernel.org
+References: <3d72b92a-4935-425c-abd5-ec4631baef2c@huaweicloud.com>
+ <46d291da-ddb9-43b9-bd93-b81aacd5e29c@gmail.com>
+ <7542399d-87c5-4f1c-9d09-6a6f96d148da@huaweicloud.com>
+ <a278c4a9-eae2-491e-8f13-5a87a25dad26@gmail.com>
+ <f1d7a295-ad24-41c8-a431-7d6492d51097@huaweicloud.com>
+ <245e4781-80b2-4e21-b4de-51ffeac9cc39@paulmck-laptop>
+ <02537f27-ac3b-4e2e-80a2-ad57230ac478@paulmck-laptop>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <02537f27-ac3b-4e2e-80a2-ad57230ac478@paulmck-laptop>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1dm9BEiApSTMSpTxBBdyVG4XYFulg3k1
-X-Proofpoint-GUID: 1dm9BEiApSTMSpTxBBdyVG4XYFulg3k1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 phishscore=0 mlxscore=0 malwarescore=0 impostorscore=0
- clxscore=1015 bulkscore=0 priorityscore=1501 suspectscore=0 adultscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411260124
+X-CM-TRANSID:LxC2BwB3Njd96EVnYbpVAg--.124S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYv7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aV
+	CY1x0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
+	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72
+	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4II
+	rI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxAqzxv26xkF7I0En4kS14v26r
+	4a6rW5MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbQVy7UUUUU==
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-On 11/26/2024 7:42 PM, Krzysztof Kozlowski wrote:
-> On 26/11/2024 15:06, Akhil P Oommen wrote:
->> A612 GPU requires an additional smmu_vote clock. Update the bindings to
->> reflect this.
->>
->> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
->> ---
->>  .../devicetree/bindings/display/msm/gpu.yaml       | 28 ++++++++++++----------
->>  1 file changed, 16 insertions(+), 12 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/display/msm/gpu.yaml b/Documentation/devicetree/bindings/display/msm/gpu.yaml
->> index 6ddc72fd85b04537ea270754a897b4e7eb269641..201150d3151b55c26c95832d36f4e02f66060a25 100644
->> --- a/Documentation/devicetree/bindings/display/msm/gpu.yaml
->> +++ b/Documentation/devicetree/bindings/display/msm/gpu.yaml
->> @@ -187,6 +187,7 @@ allOf:
->>              enum:
->>                - qcom,adreno-610.0
->>                - qcom,adreno-619.1
->> +              - qcom,adreno-612.0
+
+
+Am 11/18/2024 um 4:05 PM schrieb Paul E. McKenney:
+> On Fri, Nov 08, 2024 at 10:35:24AM -0800, Paul E. McKenney wrote:
+ >>
+>> And now you know.  ;-)
 > 
-> Keep things ordered.
+> if it is important to
+> get the first three into the current merge window, please rebase them
+> to mainline some time this week
 
-Ack.
+> Over to you!
 
-> 
->>      then:
->>        properties:
->>          clocks:
->> @@ -195,18 +196,21 @@ allOf:
->>  
->>          clock-names:
->>            items:
->> -            - const: core
->> -              description: GPU Core clock
->> -            - const: iface
->> -              description: GPU Interface clock
->> -            - const: mem_iface
->> -              description: GPU Memory Interface clock
->> -            - const: alt_mem_iface
->> -              description: GPU Alternative Memory Interface clock
->> -            - const: gmu
->> -              description: CX GMU clock
->> -            - const: xo
->> -              description: GPUCC clocksource clock
->> +            anyOf:
-> 
-> No, this makes everything total mess. Why xo now is allowed to be first
-> clock?
-> 
-> Drop and explain in commit msg why other devices now get smmu clock.
+Luckily there's no need and we can wait until a new herd release.
 
-I thought it was okay to make this list a bit flexible. Btw, the other
-existing clock-names list for a5x and older gpus uses "anyOf".
-
-I suppose the suggestion is to add a separate clock-names list for A612
-with strict ordering. Is that correct?
-
--Akhil
-
-> 
-> BTW, I am pretty sure this breaks existing platforms.
-> 
-> Best regards,
-> Krzysztof
+Have a lot of fun,
+    jonas
 
 
