@@ -1,163 +1,176 @@
-Return-Path: <linux-kernel+bounces-422546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C4499D9AFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:05:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2616F9D9AF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:04:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94A0D1638A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:05:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B4F9163EDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B0F1D63F6;
-	Tue, 26 Nov 2024 16:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6B31D89F1;
+	Tue, 26 Nov 2024 16:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="HS/uTytg"
-Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GxATP0Be"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A8E3EA69;
-	Tue, 26 Nov 2024 16:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9ED61D86F6;
+	Tue, 26 Nov 2024 16:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732637102; cv=none; b=r7Jw0o1/HCVNR6mOxj9dCAn8fPvqmj5kneZy+VmDuPohj4Gk+7HEz7i9Huh3Vr6yaj0j/upP5brkXt5wuS9usHSXT5QozlhOPxJo0L/O8QnF15Qb1AeXd/EtT6cY68b8QfWMFnqwnbsA1JIg/EqddL4Dm3UORZRaiMbtx9LYH3Y=
+	t=1732637028; cv=none; b=A4qnHVBnlNpKXbXHWzjVJXMQZB1ahUyIpFRnkQgBjVq8wvyCd/qwpnVrjz5N/cgYqbUaWYz/BbAY/1PZk3DUfWDIA/rW8oyq9iXbgM3N6FI/C1/wbIE/nuoaDkLeMQAHQjmPoPZp/N1saGXJjl7t9PmCYUJve1UNVcGdLDB8X9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732637102; c=relaxed/simple;
-	bh=hK3Lvut46ClYBRk6BhyY0n+LHeDgPszEzIEK1PLKjzw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=oLJBZw5vMaggidtPJxLVDQdAcyy/qkCNhS7KlEhYaqi7i+pyfNIeXAV1uPhtwSKIabXE1f3F2eIGKuLA53Clveq/ZxGJExOIwogUmjN4xUlFnGrim7uq05Gt9C0oGGAglvYM89n//L1bzLbwn6+/4YnRQjV8FhOAKLdZNYR6bsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=HS/uTytg; arc=none smtp.client-ip=52.119.213.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1732637101; x=1764173101;
-  h=message-id:date:mime-version:reply-to:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=HRWp5MKfE6uueBU5wQW7RW/Kjbh6R68ifML8DEFIQdE=;
-  b=HS/uTytgsS8Pw2EjDxMN2CrtbZlkMZXid6pNe0bn2P2aHRaTbxkzb6lG
-   5aLKOrvzGkKo0gjE1RBIFoGaFwUFt7IW3VtiucIuOgx+I+TAjwNaMwttX
-   wXGmy4Ptc/M8ne9PwdXrNTyqtL6yQv2nuqF1FLlBeDxJzqmGifji488CM
-   w=;
-X-IronPort-AV: E=Sophos;i="6.12,186,1728950400"; 
-   d="scan'208";a="250358078"
-Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.124.125.2])
-  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 16:04:57 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [10.0.43.254:39943]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.26.13:2525] with esmtp (Farcaster)
- id 704d7f83-a641-4c17-9c05-2a8b2b7eb302; Tue, 26 Nov 2024 16:04:54 +0000 (UTC)
-X-Farcaster-Flow-ID: 704d7f83-a641-4c17-9c05-2a8b2b7eb302
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.126) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Tue, 26 Nov 2024 16:04:54 +0000
-Received: from [192.168.5.6] (10.106.82.29) by EX19D022EUC002.ant.amazon.com
- (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Tue, 26 Nov 2024
- 16:04:53 +0000
-Message-ID: <b8589fbd-733d-42ae-a6a7-8683c77a4817@amazon.com>
-Date: Tue, 26 Nov 2024 16:04:52 +0000
+	s=arc-20240116; t=1732637028; c=relaxed/simple;
+	bh=FpUNHisF0kc5uQOfxRQln2JgUAQH9TL8aMKg2gXJBcs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=K/0sEX+PeUAeC1yEC4Tc5zAGcUfJ/oQdjH0GPGodKmX3mwHwOUJS+KFNnnf0vx5pgdTWzqlYOdQetw/diE6ChY/ysJDwmwJej7kNJDkm6FhBZWMqFjCiXwHKZx66fEiG87zA5FK0Je1o6yjOBxovl1MIWuwxYEkSSeyMMTExw+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GxATP0Be; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6811C4CED2;
+	Tue, 26 Nov 2024 16:03:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732637027;
+	bh=FpUNHisF0kc5uQOfxRQln2JgUAQH9TL8aMKg2gXJBcs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GxATP0BeIVmYie2oYXToHqMcdtk5Wu+PYF9P20B594yHAPHl8PAgokdJVLLxnKPb8
+	 B9oTu7dpac0Yjrn50VG/TdvEEdj16xNdwAZReidgtufbeQWpIpr+wW2QNPsD0u3PGq
+	 oXPn/DNSWBrvM6mOlsMirOnAVOpZpF7m/tsrqUXK55LvOB3hnWVPT9O9QavlCPpZHQ
+	 ZwjrETlRLa6FB5qQ6rqqdwhRwGHwwdKVexKXsevV09kxXfWopNKwE8XCEuQQ0l7F9m
+	 842Hez7MzAZ902PqOG6k7oAcdm8Iojzd/9rMw8j06IwtcCBO6FyaooqKIeB/oSz39Q
+	 n21cMlyAMCG2g==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Andrew Davis <afd@ti.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Balaji Pothunoori <quic_bpothuno@quicinc.com>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	Markus Elfring <elfring@users.sourceforge.net>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Yuesong Li <liyuesong@vivo.com>
+Subject: [GIT PULL] remoteproc updates for v6.13
+Date: Tue, 26 Nov 2024 08:05:20 -0800
+Message-ID: <20241126160536.3286933-1-andersson@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <kalyazin@amazon.com>
-Subject: Re: [RFC PATCH 0/4] KVM: ioctl for populating guest_memfd
-From: Nikita Kalyazin <kalyazin@amazon.com>
-To: David Hildenbrand <david@redhat.com>, <pbonzini@redhat.com>,
-	<corbet@lwn.net>, <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <jthoughton@google.com>, <brijesh.singh@amd.com>, <michael.roth@amd.com>,
-	<graf@amazon.de>, <jgowans@amazon.com>, <roypat@amazon.co.uk>,
-	<derekmn@amazon.com>, <nsaenz@amazon.es>, <xmarcalx@amazon.com>, "Sean
- Christopherson" <seanjc@google.com>, <linux-mm@kvack.org>
-References: <20241024095429.54052-1-kalyazin@amazon.com>
- <08aeaf6e-dc89-413a-86a6-b9772c9b2faf@amazon.com>
- <01b0a528-bec0-41d7-80f6-8afe213bd56b@redhat.com>
- <efe6acf5-8e08-46cd-88e4-ad85d3af2688@redhat.com>
- <55b6b3ec-eaa8-494b-9bc7-741fe0c3bc63@amazon.com>
- <9286da7a-9923-4a3b-a769-590e8824fa10@redhat.com>
- <f55d56d7-0ab9-495f-96bf-9bf642a9762d@redhat.com>
- <03a12598-74aa-4202-a79a-668b45dbcc47@amazon.com>
- <74cbda4a-7820-45a9-a1b2-139da9dae593@redhat.com>
- <8ac0e3e6-5af3-4841-b3ba-ab0458ab355b@amazon.com>
-Content-Language: en-US
-Autocrypt: addr=kalyazin@amazon.com; keydata=
- xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
- JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
- BjLQwD9FsK+SyiCpmmTzBQJj5ki9BQkDwmcAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
- IKmaZPOR1wD/UTcn4GbLC39QIwJuWXW0DeLoikxFBYkbhYyZ5CbtrtAA/2/rnR/zKZmyXqJ6
- ULlSE8eWA3ywAIOH8jIETF2fCaUCzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
- ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
- ZPMFAmPmSL0FCQPCZwACGwwACgkQr5LKIKmaZPNCxAEAxwnrmyqSC63nf6hoCFCfJYQapghC
- abLV0+PWemntlwEA/RYx8qCWD6zOEn4eYhQAucEwtg6h1PBbeGK94khVMooF
-In-Reply-To: <8ac0e3e6-5af3-4841-b3ba-ab0458ab355b@amazon.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D003EUB002.ant.amazon.com (10.252.51.90) To
- EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
 
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
-On 21/11/2024 16:46, Nikita Kalyazin wrote:
-> 
-> 
-> On 20/11/2024 18:29, David Hildenbrand wrote:
->  > Any clue how your new ioctl will interact with the WIP to have shared
->  > memory as part of guest_memfd? For example, could it be reasonable to
->  > "populate" the shared memory first (via VMA) and then convert that
->  > "allocated+filled" memory to private?
-> 
-> Patrick and I synced internally on this.  What may actually work for 
-> guest_memfd population is the following.
-> 
-> Non-CoCo use case:
->   - fallocate syscall to fill the page cache, no page content 
-> initialisation (like it is now)
->   - pwrite syscall to initialise the content + mark up-to-date (mark 
-> prepared), no specific preparation logic is required
-> 
-> The pwrite will have "once" semantics until a subsequent 
-> fallocate(FALLOC_FL_PUNCH_HOLE), ie the next pwrite call will "see" the 
-> page is already prepared and return EIO/ENOSPC or something.
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
 
-I prototyped that to see if it was possible (and it was).  Actually the 
-write syscall can also do the allocation part, so no prior fallocate 
-would be required.  The only thing is there is a cap on how much IO can 
-be done in a single call (MAX_RW_COUNT) [1], but it doesn't look like a 
-significant problem.  Does it sound like an acceptable solution?
+are available in the Git repository at:
 
-[1]: https://elixir.bootlin.com/linux/v6.12.1/source/fs/read_write.c#L507
+  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.13
 
-> 
-> SEV-SNP use case (no changes):
->   - fallocate as above
->   - KVM_SEV_SNP_LAUNCH_UPDATE to initialise/prepare
-> 
-> We don't think fallocate/pwrite have dependencies on current->mm 
-> assumptions that Paolo mentioned in [1], so they should be safe to be 
-> called on guest_memfd from a non-VMM process.
-> 
-> [1]: https://lore.kernel.org/kvm/20241024095429.54052-1- 
-> kalyazin@amazon.com/T/#m57498f8e2fde577ad1da948ec74dd2225cd2056c
-> 
->  > Makes sense. Best we can do is:
->  >
->  > anon: work only on page tables
->  > shmem/guest_memfd: work only on pageacache
->  >
->  > So at least "only one treelike structure to update".
-> 
-> This seems to hold with the above reasoning.
-> 
->  > --
->> Cheers,
->>
->> David / dhildenb 
-> 
+for you to fetch changes up to 44024ebf25918efb8c771e1b496250bc9c4ef893:
 
+  remoteproc: qcom: wcss: Remove double assignment in q6v5_wcss_probe() (2024-11-15 20:36:27 -0800)
+
+----------------------------------------------------------------
+remoteproc updates for v6.13
+
+Make Qualcomm TrustZone Peripherial Authentication Service-remoteproc
+identifier/name human friendly. Add audio DSP support for the Qualcomm
+SAR2130P. Ensure IMEM access in the Qualcomm modem remoteproc driver is
+performed prior to the firmware enabling the XPU and locking us out.
+
+Improve error handling, error logging, compile testing support, and a
+few other stylistic things across a variety of the drivers.
+
+----------------------------------------------------------------
+Andrew Davis (5):
+      remoteproc: k3-dsp: Add compile testing support
+      remoteproc: k3-r5: Add compile testing support
+      remoteproc: k3-r5: Use IO memset to clear TCMs
+      remoteproc: k3-r5: Force cast from iomem address space
+      remoteproc: k3-dsp: Force cast from iomem address space
+
+Arnd Bergmann (1):
+      mailbox, remoteproc: k3-m4+: fix compile testing
+
+Balaji Pothunoori (1):
+      remoteproc: qcom_q6v5_pas: disable auto boot for wpss
+
+Bjorn Andersson (1):
+      remoteproc: qcom: pas: Make remoteproc name human friendly
+
+Dmitry Baryshkov (3):
+      dt-bindings: remoteproc: qcom,sm8350-pas: add SAR2130P aDSP compatible
+      remoteproc: qcom: pas: add minidump_id to SM8350 resources
+      remoteproc: qcom: pas: enable SAR2130P audio DSP support
+
+Joe Hattori (3):
+      remoteproc: qcom: pas: Remove subdevs on the error path of adsp_probe()
+      remoteproc: qcom: adsp: Remove subdevs on the error path of adsp_probe()
+      remoteproc: qcom: wcss: Remove subdevs on the error path of q6v5_wcss_probe()
+
+Krzysztof Kozlowski (11):
+      remoteproc: da8xx: Handle deferred probe
+      remoteproc: da8xx: Simplify with dev_err_probe()
+      remoteproc: ti_k3_r5: Simplify with dev_err_probe()
+      remoteproc: ti_k3_r5: Simplify with scoped for each OF child loop
+      dt-bindings: remoteproc: qcom,sm8550-pas: Add SM8750 ADSP
+      remoteproc: qcom_q6v5_adsp: Simplify with dev_err_probe()
+      remoteproc: qcom_q6v5_mss: Simplify with dev_err_probe()
+      remoteproc: qcom_q6v5_mss: Drop redundant error printks in probe
+      remoteproc: qcom_q6v5_pas: Simplify with dev_err_probe()
+      remoteproc: qcom_q6v5_wcss: Simplify with dev_err_probe()
+      remoteproc: qcom_wcnss_iris: Simplify with dev_err_probe()
+
+Lu Baolu (1):
+      remoteproc: Use iommu_paging_domain_alloc()
+
+Markus Elfring (1):
+      remoteproc: k3: Call of_node_put(rmem_np) only once in three functions
+
+Sibi Sankar (1):
+      remoteproc: qcom_q6v5_mss: Re-order writes to the IMEM region
+
+Uwe Kleine-König (1):
+      remoteproc: Switch back to struct platform_driver::remove()
+
+Yuesong Li (1):
+      remoteproc: qcom: wcss: Remove double assignment in q6v5_wcss_probe()
+
+ .../bindings/remoteproc/qcom,sm8350-pas.yaml       |   3 +
+ .../bindings/remoteproc/qcom,sm8550-pas.yaml       |  48 ++++++---
+ drivers/remoteproc/Kconfig                         |  12 ++-
+ drivers/remoteproc/da8xx_remoteproc.c              |  31 ++----
+ drivers/remoteproc/imx_dsp_rproc.c                 |   2 +-
+ drivers/remoteproc/imx_rproc.c                     |   2 +-
+ drivers/remoteproc/keystone_remoteproc.c           |   2 +-
+ drivers/remoteproc/meson_mx_ao_arc.c               |   2 +-
+ drivers/remoteproc/mtk_scp.c                       |   2 +-
+ drivers/remoteproc/pru_rproc.c                     |   2 +-
+ drivers/remoteproc/qcom_q6v5_adsp.c                |  30 +++---
+ drivers/remoteproc/qcom_q6v5_mss.c                 |  56 ++++------
+ drivers/remoteproc/qcom_q6v5_pas.c                 |  51 ++++-----
+ drivers/remoteproc/qcom_q6v5_wcss.c                | 114 +++++++++------------
+ drivers/remoteproc/qcom_wcnss.c                    |   2 +-
+ drivers/remoteproc/qcom_wcnss_iris.c               |   5 +-
+ drivers/remoteproc/rcar_rproc.c                    |   2 +-
+ drivers/remoteproc/remoteproc_core.c               |   6 +-
+ drivers/remoteproc/remoteproc_virtio.c             |   2 +-
+ drivers/remoteproc/st_remoteproc.c                 |   2 +-
+ drivers/remoteproc/stm32_rproc.c                   |   2 +-
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c          |  10 +-
+ drivers/remoteproc/ti_k3_m4_remoteproc.c           |   6 +-
+ drivers/remoteproc/ti_k3_r5_remoteproc.c           |  83 ++++++---------
+ drivers/remoteproc/wkup_m3_rproc.c                 |   2 +-
+ 25 files changed, 215 insertions(+), 264 deletions(-)
 
