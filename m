@@ -1,76 +1,62 @@
-Return-Path: <linux-kernel+bounces-421848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5287D9D90E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:59:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46B789D90E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 05:04:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE161288F5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 03:59:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C114316A7C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B22984A22;
-	Tue, 26 Nov 2024 03:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A02130A7D;
+	Tue, 26 Nov 2024 04:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="F9mxYniX"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2072.outbound.protection.outlook.com [40.107.236.72])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WJqj2KA4"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7222940D;
-	Tue, 26 Nov 2024 03:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732593566; cv=fail; b=edJIt8xhxEFTM3koMYuyXJoMdQ9rcbq28SvC3FX3bUEQHWxYANLKR8+JGjVXFstCwKonavgSNbyCm6/zkuuVgbxn1ZQqydFaR+SHSjgtrM4JrX89+9a1MoUXSjwv285UQBW+9suOE1hPqPEcsLGGXb7BK9+79Nag32IDL59J+EA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732593566; c=relaxed/simple;
-	bh=hTSb0f7a9irnY0lP7vx0BHaVNy7fvBMFck/b0Gv2bJA=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908D146B5;
+	Tue, 26 Nov 2024 04:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732593867; cv=none; b=Lagxkar0R7T/wiUgESTmWOSVP/IwjNseXT/9HLCZIngAzKZlKwu3k1zq7P6+L48Yv7+u0Ckd4qijaJjZUPutsQd4ahESHeSj3Xs44cEFWbV5+linKwWKPgH5f1dEhyMVCTSFVDeyDGBa1Ceaul42jFE2bAXbr3gkZ2YfLDlIPTc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732593867; c=relaxed/simple;
+	bh=6qSi+MEWtrGesXEq6Cctb2rTO7MnWIvONuEWyJHi8B8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kMJ4Lr1Gg/pNYCDWhDMpE5RRzCh0oIUXxLJ0cJpWStGboiMWQh66AExp13dqekZY2wdmbzTAaZShcgGk08zk9xbAaj5d/qcqQyN9I2zkYUZOy6iaFDUDh3ch8RHOpxu5NUgLIkJf/Mk1he0i3Z5wK0Nef64rv2SJVOM4zGSxSJI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=F9mxYniX; arc=fail smtp.client-ip=40.107.236.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kBw7pW52Lh/cNF/NHSVKeY2wTI7c/xKIAaWnMbbO/vhphjYrG9WXnodc2QUXxOiCls7zKudkvJFgE6ylVObE51I9eTz5UNEsGQ0c2azHsl7CeUGMpGzlJ41HAXXEEnd2n7kHePaAnxa4hvwQs6SfAB6JxuNWR8Svvk8f9jEqkk43Ty8RHiqJOPFKpMFGbU5n/Zf67w1EJgkNAE8cgjWfk3fT7aXqHxfMMDaLsHKFMg44Njso7ZjUYYYotYkCTdOnutQhOd76D+jmz/t3wyQzcAjdvsdixF7v7uAFMt8yZBhSw3RlonHvlRhOBn/BD+BziVhpshnT+XiixdL+ExxZKw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DBJPSBxVgkzbC+wLCIZfApLVh7wEB/aUC0AtF86Rx4Y=;
- b=Ja5P+rCe1O9llmrvYWQfcFcSiJDd4k4glnRU9CViMC7I9O4UWpvdaslySRRYDwy8jei+iREmaEnvcljBLD6DzlbWaO8odAA+bZAXymmWBmedd8tzKNZA5LiSu1j41m0ZpKMIjX70zJjyzTPLX/+C1zL/51ORf7dPQCwKIDJwLyxPjCpG3nqX4ECvNe9S8HInt8jDFCjbe/NMricxc6SYjl93d1oalEtcO2JZcNkK3v6K0TBS4satzho4i+b3ZF83ufXY4PP2oGmMcMUWaFmj9GPgwdMjfgwMsiyMeIJalr7+VaXCEAHruRgEp8ZPtARva9pDViUs7Xhh6FDe9+YJ+Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=amazon.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DBJPSBxVgkzbC+wLCIZfApLVh7wEB/aUC0AtF86Rx4Y=;
- b=F9mxYniXg4vO0O2y0nBl9vqZXv15B15iArZcstaNyPZ8urn+s2CnZR6Eq7igBXmGu2Iv7k6cBDYwjYLwDTx0oPPXzJjz4yujjtTGACTHpPGZoI7mIB7faOrdhO4fm2JVfJ2bhVfClxWReHRRfYJE5BKNEqVYZsxwnf12MCHODvE=
-Received: from BYAPR02CA0009.namprd02.prod.outlook.com (2603:10b6:a02:ee::22)
- by CY5PR12MB6324.namprd12.prod.outlook.com (2603:10b6:930:f::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.21; Tue, 26 Nov
- 2024 03:59:20 +0000
-Received: from CO1PEPF000044EF.namprd05.prod.outlook.com
- (2603:10b6:a02:ee:cafe::67) by BYAPR02CA0009.outlook.office365.com
- (2603:10b6:a02:ee::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8182.17 via Frontend Transport; Tue,
- 26 Nov 2024 03:59:20 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000044EF.mail.protection.outlook.com (10.167.241.69) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8207.12 via Frontend Transport; Tue, 26 Nov 2024 03:59:20 +0000
-Received: from [10.136.45.86] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 25 Nov
- 2024 21:59:03 -0600
-Message-ID: <41d0bc96-2e42-4fa1-85df-a6a93611240c@amd.com>
-Date: Tue, 26 Nov 2024 09:28:49 +0530
+	 In-Reply-To:Content-Type; b=XUxTA36Q8is5D6pzg8JjdroS5+dq30on3kxJ1w73HPw7k/urZEe3MbxtYHugU/eiNK3ioS14yeYhnzrY9H8KDHkyZkPqkBO5yls/f0/kK2vm0C/4VDIflzOsfAUfT3nBPA1LogHX4sdb4bpC8WXVtX5dCeSn5DCQv2aEq7QxZ54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WJqj2KA4; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APFgVGm014266;
+	Tue, 26 Nov 2024 04:04:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Exc1jY3GZrGRngw3e0Q5JtiVIsb5LXeRDCp7NVM+u3U=; b=WJqj2KA4V26uozqp
+	K/TQWmmjmR+iW5QJdDDNLXqk6kfggvEJfRVHQmCtZXORBvoVP6np941dRJWA+dpU
+	oQeFUV3lhXLZyGhwVO30ntrUiGCNzcI9ES3hR3tG+57rrtL+tIYVnCdyfuhWW52g
+	qeMUeyOx5GkG9TuM2VG/4D72BNM3DdCp7NiUo+3wdVkDBYoauIacPSxAngn4mdkJ
+	DmSHimXRj02KPKxLn6XXFPIUWMw8fNvMk2jFLECkjXz8jAtsaw7L7cQTEn8BFakj
+	5tJmpk9peC6I9nBq1RAOmW02WBpdN0obt6Xtbn7vPpNLxM7Bz/JKnR9QLPKYni/E
+	IubzRA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 434nyg2w8a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 04:04:20 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AQ44J6a003865
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 04:04:19 GMT
+Received: from [10.217.217.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 25 Nov
+ 2024 20:04:15 -0800
+Message-ID: <5be1ca54-6a9c-46da-81cc-882ae1596cae@quicinc.com>
+Date: Tue, 26 Nov 2024 09:34:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,130 +64,156 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] [tip: sched/core] sched: Disable PLACE_LAG and
- RUN_TO_PARITY and move them to sysctl
-To: Cristian Prundeanu <cpru@amazon.com>
-CC: <abuehaze@amazon.com>, <alisaidi@amazon.com>, <benh@kernel.crashing.org>,
-	<blakgeof@amazon.com>, <csabac@amazon.com>, <doebel@amazon.com>,
-	<gautham.shenoy@amd.com>, <joseph.salisbury@oracle.com>,
-	<dietmar.eggemann@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-tip-commits@vger.kernel.org>,
-	<mingo@redhat.com>, <peterz@infradead.org>, <x86@kernel.org>
-References: <20241017052000.99200-1-cpru@amazon.com>
- <20241125113535.88583-1-cpru@amazon.com>
+Subject: Re: [PATCH 1/2] clk: qcom: videocc: Use HW_CTRL_TRIGGER flag for
+ video GDSC's
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Renjiang Han <quic_renjiang@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>,
+        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>
+References: <20241122-switch_gdsc_mode-v1-0-365f097ecbb0@quicinc.com>
+ <20241122-switch_gdsc_mode-v1-1-365f097ecbb0@quicinc.com>
+ <zhco37pigrp4fh5alqx4xfxx3xhjitqlgw552vwiijka22bt4u@sl4ngzypwh4x>
+ <1d9aa2e7-d402-42dc-baa6-155f01b132ca@quicinc.com>
+ <23ho25gl3iwyi2jspb6a2x5bv76fco5pkg2x5ct4gu3c44dbiq@yec6evx5sihm>
 Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20241125113535.88583-1-cpru@amazon.com>
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <23ho25gl3iwyi2jspb6a2x5bv76fco5pkg2x5ct4gu3c44dbiq@yec6evx5sihm>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044EF:EE_|CY5PR12MB6324:EE_
-X-MS-Office365-Filtering-Correlation-Id: ea1f27d8-6618-4f53-9ed2-08dd0dceb4aa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TnN3QzdXZzNLYlNtN1Yyam8vbjY2TE1yVjNRRy9WcUhlMGR6Wk1PY2NtMnlH?=
- =?utf-8?B?dnpPenQvRzhCQmFGb0taYWowc3NiMzQ3NUZVM1ZXcFVJb0tzdlNwNTJIekl5?=
- =?utf-8?B?NkVFT2d1R2NTVSs0V0w5YVdJb0pSL0lJZGMzbUMyNkxUUkxrWk0yMWNycjVJ?=
- =?utf-8?B?MWxxOGpTU2lKMkdwL0tmUUFwVnNwN2dYVjRrQTViY25QZFczMWZvaHBCZlIr?=
- =?utf-8?B?ZGRhc25WYVFKOXdrTzZPb05iTHlxWS80dHR5WkF6am9DQzN6bmZSWURtWjNq?=
- =?utf-8?B?UzlNRE96NFdMQUdMc3cxcUg2cnluRUdxRmFuTGVucmIwR1duSjJtQWpOSEZJ?=
- =?utf-8?B?WEd1Uit5YTJYZiswYXNJdmMxVFlkek5TM2JsWmhoWVhFS0Z0cHFlSjBzK1F2?=
- =?utf-8?B?Kys0L3U5NzcyVklMelg2eUxWL1JzUmREaW9IYUVPWmlJSkpxRnJtVWxvZmVh?=
- =?utf-8?B?cXMrRkE5OFM2SEt2SUtUQ0ZYeGtWTGtUZ2RWUzlabDlEcUJDSE5adXVSSFRF?=
- =?utf-8?B?em5OVHg4Mkcyd0l0a05UY3N3elQrKyswK0luR05aMlZCNExlRE8xNUxSdmFq?=
- =?utf-8?B?TzREckdUakJKWmtqUkNsWHFnTFBKUTlVRlhtaXdTekxyeElKcHcrYVczcDVS?=
- =?utf-8?B?V3hnbUMxb0pDaThYWUFEbmZSUXBCUzFTOHBQdE9UUXk2dmt1UjVPKzJTK0J6?=
- =?utf-8?B?b1BRdkJOQmJMTGFTbER2cTA3blJSbVJhNTl2cjVITzdENUM2dzBZUnhtRGFW?=
- =?utf-8?B?bXBMLzdNNHlZTDFOazMwdmRlU2h1bHVtelorc3RjZ0FvT1dkazAxOExlRTVT?=
- =?utf-8?B?VWE4dTZEOXNCUHlzajVobXFWaE1nN1gyREhJcEg1YWNPNzRILzRjRU43WDdm?=
- =?utf-8?B?MUZlYzg4TkVUeXFoR3pVTW9qNTlkYmlYME8yWTlXY1dtYkJXVFJnenBLSita?=
- =?utf-8?B?c1c3NzdoM05lUjZqb3RNK1h5OElCNnFHdkJBZVQvaS9hbFEzVTBkNzl0M0tO?=
- =?utf-8?B?ZHFZZ1cyQWQwT2pwbkZJMWE3MEYvZkVkdmxFbjcwZXUxaDhBVC9YZmdpdDVH?=
- =?utf-8?B?bWJPeUY0bGsrbDZuUi9mcVJUMEhIUVRPWS9jRldGRGdUT2N2U0VDRHhQWE55?=
- =?utf-8?B?TGFiVWJhRG93UmtmTTkyQzlmZU0xNXEzaERqcEpmam1nTDlncFlSZkprcXdi?=
- =?utf-8?B?RGx0bkl5OUk4dkRaUGpuN2NBUnVlVEVJQ1RtOVRXbXJ4MmhwNDlhRmNpZ0tM?=
- =?utf-8?B?eDUwVWRTODNTcUw3SktpOVpva2ZKYnk2aHNzQ05ubFFZYjN1V2dUNU11Zlpr?=
- =?utf-8?B?dVlOZDFRVk1xNWQ2Zlh3TWxXd2Y0U0Z6dm05N2RGZGI3ZklIVHBKVFB4QWJp?=
- =?utf-8?B?YzRzUGtzRitDTlJYTW5WWVJWSUxNSzhNWk5BWk1XcHlMeXl1Z1g3bFNJY1BO?=
- =?utf-8?B?Tmw4eDhHbmZySUhRakMwalBMbldUL3FwUGdTdElTYmVMWmI5K05iVllrWkF4?=
- =?utf-8?B?VzlIRXhjbkFETG53ME8yd050WnY1SjF2Y0p6SnFzVHZ2L0l4SGg1MHk2cnBl?=
- =?utf-8?B?S21UbVRjajZXb05TZGVVMjNLVnVsVFJORVQrQVM4VXMzTTV1QXYrdGh5ZmVK?=
- =?utf-8?B?Y1RxREN4ZmhXZjJ5OGRNZmQyeSs2RDd3dUIyZ0RGcEM5dUhKcWcwb3IxZGY0?=
- =?utf-8?B?SnAyWHRrMTRTWnYzSVFIQTJDanovNTRzTXhCTng5SnlwS01sSWoyQ2pDS0xz?=
- =?utf-8?B?dFgzSW9GUnBnNnVRS2s2aWp1ZlRqWHVVREhkSnB1OEZnRXZrQ1dsdStXam1U?=
- =?utf-8?B?RXFnN3huSVZvbW1NMy9QZGZ5K3FHanUrS1UrR1dxd3lyWW93eWQ3QnZXQWM3?=
- =?utf-8?B?eWUzTHlqZEJvMVdoVjdYMWw1clJ4K3pVUythM2JISm41aE5Ha0lpWEJMMVVU?=
- =?utf-8?Q?AsVw3S+RLUMut6+7+ZhDYdMKeKCuoedx?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2024 03:59:20.0420
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ea1f27d8-6618-4f53-9ed2-08dd0dceb4aa
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044EF.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6324
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: kURCGXSHlK3U5zGc2xV4geoA003bOF5h
+X-Proofpoint-ORIG-GUID: kURCGXSHlK3U5zGc2xV4geoA003bOF5h
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
+ mlxlogscore=999 clxscore=1015 mlxscore=0 adultscore=0 lowpriorityscore=0
+ impostorscore=0 suspectscore=0 malwarescore=0 bulkscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411260031
 
-Hello Cristian,
 
-On 11/25/2024 5:05 PM, Cristian Prundeanu wrote:
-> Here are more results with recent 6.12 code, and also using SCHED_BATCH.
-> The control tests were run anew on Ubuntu 22.04 with the current pre-built
-> kernels 6.5 (baseline) and 6.8 (regression out of the box).
+
+On 11/23/2024 5:35 AM, Dmitry Baryshkov wrote:
+> On Fri, Nov 22, 2024 at 10:25:44PM +0530, Taniya Das wrote:
+>>
+>>
+>> On 11/22/2024 4:29 PM, Dmitry Baryshkov wrote:
+>>> On Fri, Nov 22, 2024 at 04:01:45PM +0530, Renjiang Han wrote:
+>>>> From: Taniya Das <quic_tdas@quicinc.com>
+>>>>
+>>>> The video driver will be using the newly introduced
+>>>
+>>> 'will be' or 'is using'? Or will be using it for these platforms? Is
+>>> there any kind of dependency between two patches in the series?
+>>>
+>> The video driver will not be able to work without the clock side changes.
 > 
-> When updating mysql from 8.0.30 to 8.4.2, the regression grew even larger.
-> Disabling PLACE_LAG and RUN _TO_PARITY improved the results more than
-> using SCHED_BATCH.
+> Will enabling this flag break the video driver until it is updated?
 > 
-> Kernel   | default  | NO_PLACE_LAG and | SCHED_BATCH | mysql
->           | config   | NO_RUN_TO_PARITY |             | version
-> ---------+----------+------------------+-------------+---------
-> 6.8      | -15.3%   |                  |             | 8.0.30
-> 6.12-rc7 | -11.4%   | -9.2%            | -11.6%      | 8.0.30
->           |          |                  |             |
-> 6.8      | -18.1%   |                  |             | 8.4.2
-> 6.12-rc7 | -14.0%   | -10.2%           | -12.7%      | 8.4.2
-> ---------+----------+------------------+-------------+---------
+
+Yes, my understanding is yes it will break. When we first introduced the 
+flag we had got the driver and the clock changes together.
+
+>>
+>>>> dev_pm_genpd_set_hwmode() API to switch the video GDSC to HW and SW
+>>>> control modes at runtime.
+>>>> Hence use HW_CTRL_TRIGGER flag instead of HW_CTRL for video GDSC's for
+>>>> Qualcomm SoC SC7180 and SDM845.
+>>>
+>>> Is it applicable to any other platforms? Why did you select just these
+>>> two?
+>>>
+>>
+>> The V6 version of Video driver is already using them, now the video driver
+>> wants to migrate to v4 version of the HW to use the new flag.
 > 
-> Confidence intervals for all tests are smaller than +/- 0.5%.
+> I mean slightly different issue. We have following drivers:
 > 
-> I expect to have the repro package ready by the end of the week. Thank you
-> for your collective patience and efforts to confirm these results.
-
-Thank you! In the meantime, there is a new enhancement to perf-tool
-being proposed to use the data from /proc/schedstat to profile workloads
-and spot any obvious changes in the scheduling behavior at
-https://lore.kernel.org/lkml/20241122084452.1064968-1-swapnil.sapkal@amd.com/
-
-It applies cleanly on tip:sched/core at tag "sched-core-2024-11-18"
-Would it be possible to use the perf-tool built there to collect
-the scheduling stats for MySQL benchmark runs on both v6.5 and v6.8 and
-share the output of "perf sched stats diff" and the two perf.data files
-recorded?
-
-It would help narrow down the regression if this can be linked to a
-system-wide behavior. Data from a run with NO_PLACE_LAG and
-NO_RUN_TO_PARITY can also help look at metrics that are helping
-improve the performance combared to vanilla v6.8 case. The proposed
-perf-tools changes are arch agnostic and should work on any system
-as long as it has /proc/schedstats with version 15 and above.
-
+> videocc-sa8775p.c - already uses HW_CTRL_TRIGGER
+> videocc-sc7180.c - being converted now
+> videocc-sc7280.c - already uses HW_CTRL_TRIGGER
+> videocc-sdm845.c - being converted now
+> videocc-sm7150.c
+> videocc-sm8150.c
+> videocc-sm8250.c - already uses HW_CTRL_TRIGGER
+> videocc-sm8350.c - already uses HW_CTRL_TRIGGER
+> videocc-sm8450.c
+> videocc-sm8550.c - already uses HW_CTRL_TRIGGER
 > 
-> [..snip..] 
->
+> This leaves sm7150, sm8150 and sm8450 untouched. Don't they also need to
+> use HW_CTRL_TRIGGER?
+> 
+
+Yes, I am okay to add the flag, but looking for the Video SW team to 
+confirm they are well tested on the rest of the platforms.
+
+>>
+>>>>
+>>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>>>> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
+>>>> ---
+>>>>    drivers/clk/qcom/videocc-sc7180.c | 2 +-
+>>>>    drivers/clk/qcom/videocc-sdm845.c | 4 ++--
+>>>>    2 files changed, 3 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/clk/qcom/videocc-sc7180.c b/drivers/clk/qcom/videocc-sc7180.c
+>>>> index d7f84548039699ce6fdd7c0f6675c168d5eaf4c1..dd2441d6aa83bd7cff17deeb42f5d011c1e9b134 100644
+>>>> --- a/drivers/clk/qcom/videocc-sc7180.c
+>>>> +++ b/drivers/clk/qcom/videocc-sc7180.c
+>>>> @@ -166,7 +166,7 @@ static struct gdsc vcodec0_gdsc = {
+>>>>    	.pd = {
+>>>>    		.name = "vcodec0_gdsc",
+>>>>    	},
+>>>> -	.flags = HW_CTRL,
+>>>> +	.flags = HW_CTRL_TRIGGER,
+>>>>    	.pwrsts = PWRSTS_OFF_ON,
+>>>>    };
+>>>> diff --git a/drivers/clk/qcom/videocc-sdm845.c b/drivers/clk/qcom/videocc-sdm845.c
+>>>> index f77a0777947773dc8902c92098acff71b9b8f10f..6dedc80a8b3e18eca82c08a5bcd7e1fdc374d4b5 100644
+>>>> --- a/drivers/clk/qcom/videocc-sdm845.c
+>>>> +++ b/drivers/clk/qcom/videocc-sdm845.c
+>>>> @@ -260,7 +260,7 @@ static struct gdsc vcodec0_gdsc = {
+>>>>    	},
+>>>>    	.cxcs = (unsigned int []){ 0x890, 0x930 },
+>>>>    	.cxc_count = 2,
+>>>> -	.flags = HW_CTRL | POLL_CFG_GDSCR,
+>>>> +	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
+>>>>    	.pwrsts = PWRSTS_OFF_ON,
+>>>>    };
+>>>> @@ -271,7 +271,7 @@ static struct gdsc vcodec1_gdsc = {
+>>>>    	},
+>>>>    	.cxcs = (unsigned int []){ 0x8d0, 0x950 },
+>>>>    	.cxc_count = 2,
+>>>> -	.flags = HW_CTRL | POLL_CFG_GDSCR,
+>>>> +	.flags = HW_CTRL_TRIGGER | POLL_CFG_GDSCR,
+>>>>    	.pwrsts = PWRSTS_OFF_ON,
+>>>>    };
+>>>>
+>>>> -- 
+>>>> 2.34.1
+>>>>
+>>>
+>>
+>> -- 
+>> Thanks & Regards,
+>> Taniya Das.
+> 
 
 -- 
-Thanks and Regards,
-Prateek
-
+Thanks & Regards,
+Taniya Das.
 
