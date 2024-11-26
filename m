@@ -1,144 +1,85 @@
-Return-Path: <linux-kernel+bounces-422780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C403D9D9E14
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:43:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A5669D9E17
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:47:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B683B23B88
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:43:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A17A284457
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7521DE894;
-	Tue, 26 Nov 2024 19:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615081DD87D;
+	Tue, 26 Nov 2024 19:47:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JXMb1yMj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GsbegswW"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066011DAC8A;
-	Tue, 26 Nov 2024 19:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6171C28689
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 19:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732650231; cv=none; b=iaDdX9bcvU905fbsT1nIjNOS1Kr732V10Ukcs91l29oVz0/uaUu8pHQilv/NjFQafimkRWF1fS2o120htv1Ru+vnDgmliuAyoHgVWnXYHqlV00sGYhghUySZfVDIDlPK4dX2EyH4+VToryzYrKZM4Vod9wI74kF21wyZzl10FxQ=
+	t=1732650421; cv=none; b=QiteTNKwyz0F0EYrvf8x+NaWZO+0rtYl1G9J5xVvM4N7vSR5QCzUWuIs2cIzYEZxOQm6KAambPu5vJny4+nZka3AEBK/r/J2U3GBk5RyHG0I2WLzScOv1KDewnABmuq27tfSzOZbST083Hibzf1R19fq0CrecP5NEhjqEGWNwfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732650231; c=relaxed/simple;
-	bh=hUEJ2mm62pyewmPyILbKuAM0dRAk+OMEv4YUZmgG9k0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ho2mzbRN5ZP9Hdeifzp/uZmEtzfdFz70vtVLs/Iba3qVTadTg8N9K/pjHHO1arZXzcTwJ4R/9vLJonV66s7OFBMN8DqfvxHrHJDCUYB6mgZHioE+eWsZAdphD7X8M7zTAze/NeLoGTiS2qElyPT7T49xOyEF7IKtqKZcvmNdTTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JXMb1yMj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A3ADC4CECF;
-	Tue, 26 Nov 2024 19:43:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732650230;
-	bh=hUEJ2mm62pyewmPyILbKuAM0dRAk+OMEv4YUZmgG9k0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JXMb1yMjnE200+j2SCCTKsA8wAY3MsS9Rehl6V8oDpy9FmJ4WYUiYHc7O5IQreKef
-	 Ydsk9IHy6cBId+mF5kGmpzS1WhWkZcF2uYt+6/V8X4ksgPSoTEXTMFI976We6Bs5sz
-	 9I/OT09XyrCsjZ0Wjck0SHOoVt/n4AiBqX2VifVxg3Aeg+eFVdHFid5prsPlILmtKn
-	 9Hh48gxKa+2vyY6YTJNky65u4QAx2XkCfvqj2NO9gQIiuBzeyVmf9RKgCrWQ/cO456
-	 +7pVxPGs3zw2lDvwqJmFKiJsntbxBXP58PwJIhfTAqxn08pQnpYikraXW+fuXr+RX4
-	 cg/GA4nqjI/yA==
-From: SeongJae Park <sj@kernel.org>
-To: Honggyu Kim <honggyu.kim@sk.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Yunjeong Mun <yunjeong.mun@sk.com>,
-	kernel_team@skhynix.com
-Subject: Re: [RFC PATCH] mm/damon: explain "effective quota" on kernel-doc comment
-Date: Tue, 26 Nov 2024 11:43:47 -0800
-Message-Id: <20241126194347.58155-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241126082436.1491-1-honggyu.kim@sk.com>
-References: 
+	s=arc-20240116; t=1732650421; c=relaxed/simple;
+	bh=uE5hUjDKXVrIM3lSxreIifd8IM/XWqg86OFVqiKM64k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sFAvwKdLl+h/1Y0yuldyWM81Jb1Jkelwx80G1DOgkhgxhvZj3vo14rLr3ceSdu0LxfOGUQY4Jtway+msP5sf1uZzUtZOeDURLpKGmaHFTG4PpB9hkQQfsyRVrV9Z+YhYXWrV2QSy1SQwiLz3dAv93GTU2CrEF4OYgc3tggotdfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GsbegswW; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=LEdtzhfyIJj92O4o3FcSBjh2+mwuK1/qe0uMyrqyOKg=; b=GsbegswWZrPbuZKSkgX77DTP2J
+	28oOmomCr62sc9HoSmV9lrREnJxvJ4g76kLcH++uzeNj1CQSuEj7UxNcUT1z7nKFDXLNlvmxHlZMh
+	iqUlWa4cTWUTsn6RED+kSuoswtymNL72HjLJ2FVzUUXybKxX79utaRHpITag/xRCZO4kvLSApXlYl
+	sUTpoH33BSvYgdDe1zpTB2Mod6gXTw+OO+BOZNf4P5SjohNh5FQf9KjDdAgWQSSNpmoG1qiWUoVmt
+	7+diAcaYOpZG5ObgZW8mcnI9L7fdGu4gpA6begU2lMvQB2BIW4nkDKJYtADIBzLgYL+3Sa/s//s7w
+	YMhpiF5A==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tG1WR-00000000OHJ-1PEq;
+	Tue, 26 Nov 2024 19:46:55 +0000
+Date: Tue, 26 Nov 2024 19:46:55 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Carlos Llamas <cmllamas@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>
+Subject: Re: [PATCH v5 4/9] binder: remove struct binder_lru_page
+Message-ID: <Z0Ylr1cJ2AZ6rcXO@casper.infradead.org>
+References: <20241126184021.45292-1-cmllamas@google.com>
+ <20241126184021.45292-5-cmllamas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241126184021.45292-5-cmllamas@google.com>
 
-On Tue, 26 Nov 2024 17:24:33 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
-
-> Hi SeongJae,
+On Tue, Nov 26, 2024 at 06:40:07PM +0000, Carlos Llamas wrote:
+> Remove the redundant struct binder_lru_page concept. Instead, let's use
+> available struct page->lru and page->private members directly to achieve
+> the same functionality. This reduces the maximum memory allocated for
+> alloc->pages from 32768 down to 8192 bytes (aarch64). Savings are per
+> binder instance.
 > 
-> Thanks very much for the quick response.
+> Note that Matthew pointed out that some of the page members used in this
+> patch (e.g. page->lru) are likely going to be removed in the near future
+> [1]. Binder will adopt an alternative solution when this happens.
 
-No problem, all owing to your kind report!
-
-> I think it looks great but I
-> have some minor comments so please see my inline comments below.
-> 
-> Thanks,
-> Honggyu
-> 
-> On Mon, 25 Nov 2024 16:29:21 -0800 SeongJae Park <sj@kernel.org> wrote:
-> > The kernel-doc comment for 'struct damos_quota' describes how "effective
-> > quota" is calculated, but does not explain what it is.  Actually there
-> > was an input[1] about it.  Add the explanation on the comment.
-> > 
-> > [1] https://github.com/damonitor/damo/issues/17#issuecomment-2497525043
-> > 
-> > Cc: Yunjeong Mun <yunjeong.mun@sk.com>
-> > Cc: Honggyu Kim <honggyu.kim@sk.com>
-> > Signed-off-by: SeongJae Park <sj@kernel.org>
-> > ---
-> >  include/linux/damon.h | 10 +++++++---
-> >  1 file changed, 7 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/include/linux/damon.h b/include/linux/damon.h
-> > index a67f2c4940e9..a01bfe2ff616 100644
-> > --- a/include/linux/damon.h
-> > +++ b/include/linux/damon.h
-> > @@ -193,9 +193,13 @@ struct damos_quota_goal {
-> >   * size quota is set, DAMON tries to apply the action only up to &sz bytes
-> >   * within &reset_interval.
-> >   *
-> > - * Internally, the time quota is transformed to a size quota using estimated
-> > - * throughput of the scheme's action.  DAMON then compares it against &sz and
-> > - * uses smaller one as the effective quota.
-> > + * To convince the different types of quotas and goals, DAMON internally
-> > + * converts those into one single size quota called "effective quota".  DAMON
-> 
-> Could we use "effective size quota" instead of "effective quota"?
-> IMHO, it will better give an idea this is related to "esz" in the code,
-> which means effective size.
-
-The above sentence is saying it as one single "size" quota, so calling it
-"effective size quota" here feels like unnecessary duplicates of the word
-("size") to me.  I'd like to keep this sentence as is if you don't really mind.
-
-> 
-> > + * internally uses it as only one real quota.  The convert is made as follows.
-> 
-> (nit) "as only one" can be "as the only one".
-> (another nit) "The convert is made" can be "The conversion is made".
-
-Nice eyes!  I will fix those.
-
-> 
-> > + *
-> > + * The time quota is transformed to a size quota using estimated throughput of
-> > + * the scheme's action.  DAMON then compares it against &sz and uses smaller
-> > + * one as the effective quota.
-> >   *
-> >   * If @goals is not empt, DAMON calculates yet another size quota based on the
-> 
-> We better fix "empt" to "empty" together.
-
-Nice catch!  I will fix so.
-
-> 
-> >   * goals using its internal feedback loop algorithm, for every @reset_interval.
-> > -- 
-> > 2.39.5
-> >
-
-
-Thanks,
-SJ
+It's not just "near future".  page->index is going away if not next
+merge window, then the merge window after.  page->mapping is going to
+follow it, and page->lru after that.  Please find another way now.
 
