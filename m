@@ -1,185 +1,140 @@
-Return-Path: <linux-kernel+bounces-422182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C04A9D9594
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:30:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCB029D957A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:25:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCB7CB2B036
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:26:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7921E283295
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F2A1D432F;
-	Tue, 26 Nov 2024 10:25:44 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5E71CB332;
+	Tue, 26 Nov 2024 10:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aIXXZUJ9"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268A71C3F36;
-	Tue, 26 Nov 2024 10:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD3918FDBA;
+	Tue, 26 Nov 2024 10:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732616744; cv=none; b=Xkro9t02LHIegy2/BLd9pfZQXIkXXQDbDj0Hr8UUddbmVtyS8F9oQt8qBuOpsCiIIvUtm2r/Hd4IvLyOcZsTJPtT6brA2QDE8kNRCP+bciwa57QxjSXc11bXn/H7/ephCGtFBKWSls1IoOyVSErWMmvDrxtD2c2XMQvdaAeWLko=
+	t=1732616725; cv=none; b=kEHO+98q5I5nQ3hEN4uGeAshEeSyZK2giGd9WpO4e94vZe/gFsv5pR0TbRRC/C1aUsR6gSlCavVjaGUsXgDBnp/ZKvN0H4nN6EgWcl9Yb0Uus7F7jDYimzDgMAlRRN1WbbP4LMMDWVsIt7JQJRSiuMWuJ2DZ43ThO/QQUAmy1eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732616744; c=relaxed/simple;
-	bh=fs0tdLUjiZ9ilJD7V6bohMscAEWEo6Ye5zBOhSJnsXo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=go49S8vMWABrDI9oytGoA5uWk65IbhpPJaFtWWNwU+yCaIzpaXIbozhnMPrA+Ppjo4m1H46uyhRXRnmHl65EMGMV7I1nZeVuQ7iR7p83WqVUollvY5sAWJgSk5sqBn6xmWo+n+5t419WfMLlAQdUTfNgFTguA5uDaWz7P/qGtrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XyJ8F1xc4z9v7Vg;
-	Tue, 26 Nov 2024 18:04:29 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id F337E1407AB;
-	Tue, 26 Nov 2024 18:25:30 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwCnwH8HokVnxjpVAg--.1157S2;
-	Tue, 26 Nov 2024 11:25:30 +0100 (CET)
-Message-ID: <d428a5d926d695ebec170e98463f7501a1b00793.camel@huaweicloud.com>
-Subject: Re: [PATCH v6 07/15] digest_cache: Allow registration of digest
- list parsers
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com,  corbet@lwn.net, petr.pavlu@suse.com,
- samitolvanen@google.com, da.gomez@samsung.com,  akpm@linux-foundation.org,
- paul@paul-moore.com, jmorris@namei.org,  serge@hallyn.com,
- shuah@kernel.org, mcoquelin.stm32@gmail.com,  alexandre.torgue@foss.st.com,
- linux-integrity@vger.kernel.org,  linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org,  linux-api@vger.kernel.org,
- linux-modules@vger.kernel.org,  linux-security-module@vger.kernel.org,
- linux-kselftest@vger.kernel.org,  wufan@linux.microsoft.com,
- pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de,  mjg59@srcf.ucam.org,
- pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com, 
- jikos@kernel.org, mkoutny@suse.com, ppavlu@suse.com, petr.vorel@gmail.com, 
- mzerqung@0pointer.de, kgold@linux.ibm.com, Roberto Sassu
- <roberto.sassu@huawei.com>
-Date: Tue, 26 Nov 2024 11:25:07 +0100
-In-Reply-To: <Z0UN9ub0iztWvgLi@bombadil.infradead.org>
-References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
-	 <20241119104922.2772571-8-roberto.sassu@huaweicloud.com>
-	 <Z0UN9ub0iztWvgLi@bombadil.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1732616725; c=relaxed/simple;
+	bh=sN4gMg9uBLGYCgEAiCW2m+6i8yxHMS1uivc2+893cgU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tozmq5MrGd47T4iNetGXJzxVi/IP0ap0s34bwfU/G36atmYPjGntkLDRM8SmY5zUlhEJZmLtryh45OIk8NFzNNQr/SeLjcP970eKUlBJDgJKqZD9t/QYRqp6xkfCSuRUOt4T9a3rEFx9bM/npUfJDQgfCZE8pcf937YZw59uong=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aIXXZUJ9; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ8NhYk011347;
+	Tue, 26 Nov 2024 10:25:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=d1aG/8cN0IYk6bFwJfeq264k7++gwids8Ohxh5FXr
+	fc=; b=aIXXZUJ9dOOQOD/ojeB7NePAJDdsV6tCzFaQei5oRv40EndfEgLs+9saX
+	3iy5djua2u/Sv3l6Uzsq9c74fh537K/EgC+YpJUYo6BSF5ZnSet1qaNbqsLqWJfj
+	VEKLMgFWq3m75EWK5VzosB79TuvR+D8RynJBe2+DyTDIguuyB5FWY306X8xcrRvH
+	KscKlEtIx+BiyEHharg+Je2UZXSNymnIwVdattMBsEy5VLNZrZFXyNx8LnOxhkN9
+	0DeVo+kzm8KNVThsrKjdOWLL11HHXRj4mg5yjC5p0OelJI/humn+K9g4KwWTUl1x
+	NEkJ5tid01GCt12GmXUn/UGSBbmSw==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43389cdbba-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 10:25:20 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ6WcDF010044;
+	Tue, 26 Nov 2024 10:25:19 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 433ukj46rq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 10:25:19 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AQAPGv727198002
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 26 Nov 2024 10:25:16 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 44F8B20077;
+	Tue, 26 Nov 2024 10:25:16 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 20AD320072;
+	Tue, 26 Nov 2024 10:25:16 +0000 (GMT)
+Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 26 Nov 2024 10:25:16 +0000 (GMT)
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>
+Cc: kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] KVM: s390: Couple of small cmpxchg() optimizations
+Date: Tue, 26 Nov 2024 11:25:12 +0100
+Message-ID: <20241126102515.3178914-1-hca@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwCnwH8HokVnxjpVAg--.1157S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGw18KrWxCr48Jw4fWF17Jrb_yoWrZF4xpF
-	4Ykw15KF4vyr1rCayxAa1I93yF9393XrW5WFn5JryrZr4Y9F4Svw1IgF43u3WUGr4DKF1a
-	grs0g343tryDZ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4U
-	JwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	EksDUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQATBGdFMjUCtgAAsH
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 4c_-XVv-4HNHkRdhL1mUIE7TE2BztFhX
+X-Proofpoint-ORIG-GUID: 4c_-XVv-4HNHkRdhL1mUIE7TE2BztFhX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=719
+ adultscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0 clxscore=1015
+ suspectscore=0 bulkscore=0 priorityscore=1501 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411260079
 
-On Mon, 2024-11-25 at 15:53 -0800, Luis Chamberlain wrote:
-> On Tue, Nov 19, 2024 at 11:49:14AM +0100, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > Introduce load_parser() to load a kernel module containing a
-> > parser for the requested digest list format (compressed kernel modules =
-are
-> > supported). Kernel modules are searched in the
-> > /lib/modules/<kernel ver>/security/integrity/digest_cache directory.
-> >=20
-> > load_parser() calls ksys_finit_module() to load a kernel module directl=
-y
-> > from the kernel. request_module() cannot be used at this point, since t=
-he
-> > reference digests of modprobe and the linked libraries (required for IM=
-A
-> > appraisal) might not be yet available, resulting in modprobe execution
-> > being denied.
->=20
-> You are doing a full solution implementation of loading modules in-kernel=
-.
-> Appraisals of modules is just part of the boot process, some module
-> loading may need firmware to loading to get some functinality to work
-> for example some firmware to get a network device up or a GPU driver.
-> So module loading alone is not the only thing which may require
-> IMA appraisal, and this solution only addresses modules. There are other
-> things which may be needed other than firmware, eBPF programs are
-> another example.
+v2:
+- Replace broken WRITE_ONCE(..., 9) with intended WRITE_ONCE(..., 0).
 
-Firmware, eBPF programs and so on are supposed to be verified with
-digest lists (or alternative methods, such as file signatures), once
-the required digest list parsers are loaded.
+v1:
+Use try_cmpxchg() instead of cmpxchg() so compilers with flag output
+operand support (gcc 14 and newer) can generate slightly better code.
 
-The parser is an exceptional case, because user space cannot be
-executed at this point. Once the parsers are loaded, verification of
-everything else proceeds as normal. Fortunately, in most cases kernel
-modules are signed, so digest lists are not required to verify them.
+Also get rid of two cmpxchg() usages on one/two byte memory areas
+which generates inefficient code.
 
-> It sounds more like you want to provide or extend LSM hooks fit your
-> architecture and make kernel_read_file() LSM hooks optionally use it to
-> fit this model.
+bloat-o-meter statistics of the kvm module:
 
-As far as the LSM infrastructure is concerned, I'm not adding new LSM
-hooks, nor extending/modifying the existing ones. The operations the
-Integrity Digest Cache is doing match the usage expectation by LSM (net
-denying access, as discussed with Paul Moore).
+add/remove: 0/0 grow/shrink: 0/11 up/down: 0/-318 (-318)
+Function                                     old     new   delta
+kvm_s390_handle_wait                         886     880      -6
+kvm_s390_gisa_destroy                        226     220      -6
+kvm_s390_gisa_clear                           96      90      -6
+ipte_unlock                                  380     372      -8
+kvm_s390_gisc_unregister                     270     260     -10
+kvm_s390_gisc_register                       290     280     -10
+gisa_vcpu_kicker                             200     190     -10
+account_mem                                  250     232     -18
+ipte_lock                                    416     368     -48
+kvm_s390_update_topology_change_report       174     122     -52
+kvm_s390_clear_local_irqs                    420     276    -144
+Total: Before=316521, After=316203, chg -0.10%
 
-The Integrity Digest Cache is supposed to be used as a supporting tool
-for other LSMs to do regular access control based on file data and
-metadata integrity. In doing that, it still needs the LSM
-infrastructure to notify about filesystem changes, and to store
-additional information in the inode and file descriptor security blobs.
+Heiko Carstens (3):
+  KVM: s390: Use try_cmpxchg() instead of cmpxchg() loops
+  KVM: s390: Remove one byte cmpxchg() usage
+  KVM: s390: Increase size of union sca_utility to four bytes
 
-The kernel_post_read_file LSM hook should be implemented by another LSM
-to verify the integrity of a digest list, when the Integrity Digest
-Cache calls kernel_read_file() to read that digest list. That LSM is
-also responsible to provide the result of the integrity verification to
-the Integrity Digest Cache, so that the latter can give this
-information back to whoever wants to do a digest lookup from that
-digest list and also wants to know whether or not the digest list was
-authentic.
+ arch/s390/include/asm/kvm_host.h | 10 +++++-----
+ arch/s390/kvm/gaccess.c          | 16 ++++++++--------
+ arch/s390/kvm/interrupt.c        | 25 ++++++++-----------------
+ arch/s390/kvm/kvm-s390.c         |  4 ++--
+ arch/s390/kvm/pci.c              |  5 ++---
+ 5 files changed, 25 insertions(+), 35 deletions(-)
 
-> Because this is just for a *phase* in boot, which you've caught because
-> a catch-22 situaton, where you didn't have your parsers loaded. Which is
-> just a reflection that you hit that snag. It doesn't prove all snags
-> will be caught yet.
-
-Yes, that didn't happen earlier, since all the parsers were compiled
-built-in in the kernel. The Integrity Digest Cache already has a
-deadlock avoidance mechanism for digest lists.
-
-Supporting kernel modules opened the road for new deadlocks, since one
-can ask a digest list to verify a kernel module, but that digest list
-requires the same kernel module. That is why the in-kernel mechanism is
-100% reliable, because the Integrity Digest Cache marks the file
-descriptors it opens, and can recognize them, when those file
-descriptors are passed back to it by other LSMs (e.g. through the
-kernel_post_read_file LSM hook).
-
-> And you only want to rely on this .. in-kernel loading solution only
-> early on boot, is there a way to change this over to enable regular
-> operation later?
-
-User space can voluntarily load new digest list parsers, but the
-Integrity Digest Cache cannot rely on it to be done. Also, using
-request_module() does not seem a good idea, since it wouldn't allow the
-Integrity Digest Cache to mark the file descriptor of kernel modules,
-and thus the Integrity Digest Cache could not determine whether or not
-a deadlock is happening.
-
-Thanks
-
-Roberto
+-- 
+2.45.2
 
 
