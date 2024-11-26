@@ -1,118 +1,92 @@
-Return-Path: <linux-kernel+bounces-422061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 381FC9D9402
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:18:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05A3C9D9407
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:19:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC3D1282A43
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:18:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03BF51683AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F10518E362;
-	Tue, 26 Nov 2024 09:18:31 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D174A1B4122;
+	Tue, 26 Nov 2024 09:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Czb+fui7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6578E38DE0
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA121BBBF4
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732612711; cv=none; b=KZuqEhX3tDHBnatyR1fUneGpC0q3SrZXXhrKTyMtyAUnDsuCnhBQMlI5G+k+oXRWGnayCXxnpX+ED3cjzw/9Jyhr8NBtbKQqkluCJ5hBK720uQzgyMgMiSlXwxYYPfGF9xxxl8hV6UviUO4D3CnqvGscBmM8HKIZ/vJM28Z5eZo=
+	t=1732612735; cv=none; b=pPo0lSDu5Z+a2rGrx9mRE5RKlnK56qk2NoJgSavbby+7kH72J5NQm1eSR94tQsaUAiVhBdUmIzJgCxzSYawFzmMzk9wIzKhcv8d3CHSYFHE97MxQeyQABZLH9rR+xUeIRddvGMHwX3dmRa20KwzrNb5WFQ6tew8n2n6AJfW6yoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732612711; c=relaxed/simple;
-	bh=8wJo0FQyMs7z3lb/ouq80c/a0Jaepww/M3knbCWU/CI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qb0G3+uSnuqSF3emdMxmDJakx8FmX/A+4jtSao6M87IbqZVYiapX/xQ/hmHm4aNU7rCMo+j663ErfQ/VYDd3LV6vuZTcxxN1kxAIbxeeFB4K8v9X2GOyw5zroNGDVzM1es0PH6UW3KTklXg2BYZf9sRIyBWDG7kZwkplshBgGDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tFri5-0005E2-I5; Tue, 26 Nov 2024 10:18:17 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tFri3-000Dyd-2H;
-	Tue, 26 Nov 2024 10:18:16 +0100
-Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 1ADB937D7BA;
-	Tue, 26 Nov 2024 09:18:16 +0000 (UTC)
-Date: Tue, 26 Nov 2024 10:18:15 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	linux-arm-kernel@lists.infradead.org, linux-can@vger.kernel.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v2 03/12] can: sun4i_can: continue to use likely() to
- check skb
-Message-ID: <20241126-wooden-cyber-polecat-d96127-mkl@pengutronix.de>
-References: <20241122221650.633981-1-dario.binacchi@amarulasolutions.com>
- <20241122221650.633981-4-dario.binacchi@amarulasolutions.com>
+	s=arc-20240116; t=1732612735; c=relaxed/simple;
+	bh=nkFrveGHjAdm7Zheszf0c6YvWzZ01i1Na0eEUWfYMlQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qHir5cFlmWQddqGDdzz2LGNiVqXkwuYI76Ex74bAEsK5bFgoR6oiTSyPO3z5JzSZ8qmKci8Yw/pi0bVB6eU+oCazR7CTa/B5x9umERPOz2LNGtWW5VM4JkJCNwHPkWmSYgTqiWTtcNFWNV9jhpKCmABnQ2Q5bmt87MgFVgUSmm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Czb+fui7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2B43C4CEDB
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:18:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732612734;
+	bh=nkFrveGHjAdm7Zheszf0c6YvWzZ01i1Na0eEUWfYMlQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Czb+fui7xAdTkp/RO1SNy4f/P7FS1l2Oz5AitucvJ9uCyatAKHoAJzr0n1xKwCMba
+	 TdVNVYa1SO0n7JpNt1IgZB1r9N/9ospPwcRt2J0Kevp+ypjnNAY9+HV2vAiffMFDre
+	 OBRmv674+d+YaMnfhX8tAmb3w0NkL6E0M94s8h5J45jxJ6DvT/TBXWZO5qqiQCwCI0
+	 DCEYJfv61m4QEQx6NSNZHzkfXKs4T6fT9BvpZLKCSozZi61NfvwSj+4OgNiHmGAj1G
+	 F5kNgMSSqbURVPgV+h/G6MZP8qK4nXuIhQuK6k9UOKkp9nRLuHsmWBykfmvyYUuqEW
+	 DPQMrdac/PxzQ==
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5ced377447bso6945189a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 01:18:54 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU52qEitM9O6D4FnbV2eZySF7GxmidmJ9mqpSLuS4t75pSi8u1JSIHUxviA9XC3I/C+qu3hj0IuP/r78Tw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgeQX4+UXfS1KRwcZv4NiGeJjlw7kDh5Ya+7JWa8on0Ke9Z2Rz
+	SKx2Pqv9uR6m+C6Rv6LkdyZK0CJ569fZVfz+z5OHofayrZ+xj+q5ehQ9HIBOamfiCQmQJwgJ8vT
+	dbDkMHj+jo6Htnyvmam9QG6zdEb8=
+X-Google-Smtp-Source: AGHT+IGlFZeO8LFVIO6z3o2ioziX83pkTu+Zzoccwgrvt/Y0+T/DuXypMPfe7ysPBiuo0OCU504nRfaS/blo6DrTDmE=
+X-Received: by 2002:a17:906:3111:b0:aa5:2f8a:b94f with SMTP id
+ a640c23a62f3a-aa52f8ac9c8mr933527766b.54.1732612733263; Tue, 26 Nov 2024
+ 01:18:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fklivl3r3m4v2cbu"
-Content-Disposition: inline
-In-Reply-To: <20241122221650.633981-4-dario.binacchi@amarulasolutions.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
-
-
---fklivl3r3m4v2cbu
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
+ <CAAhV-H6B_-y6ebR=GJmazzukW8Ad-=VRJPvT=ZF+41+rTX7D1w@mail.gmail.com> <20241126072909.nyvqagvmtnivh36w@jpoimboe>
+In-Reply-To: <20241126072909.nyvqagvmtnivh36w@jpoimboe>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 26 Nov 2024 17:18:41 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5=y=vjOQout7Ct87uAL8FaJzUnSHrkRuosWXH_7CwqLw@mail.gmail.com>
+Message-ID: <CAAhV-H5=y=vjOQout7Ct87uAL8FaJzUnSHrkRuosWXH_7CwqLw@mail.gmail.com>
+Subject: Re: [PATCH v4 00/10] Add jump table support for objtool on LoongArch
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Peter Zijlstra <peterz@infradead.org>, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 03/12] can: sun4i_can: continue to use likely() to
- check skb
-MIME-Version: 1.0
 
-On 22.11.2024 23:15:44, Dario Binacchi wrote:
-> Throughout the sun4i_can_err() function, the likely() macro is used to
-> check the skb buffer, except in one instance. This patch makes the code
-> consistent by using the macro in that case as well.
->=20
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Hi, Josh,
 
-I'll apply this one on can-next.
+On Tue, Nov 26, 2024 at 3:29=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.org=
+> wrote:
+>
+> On Sun, Nov 24, 2024 at 01:33:43PM +0800, Huacai Chen wrote:
+> > Series applied, thanks.
+> >
+> > Huacai
+>
+> Please don't merge any objtool code without maintainer acks.
+I'm sorry for that, I'll drop it first, and then wait for Tiezhu's new vers=
+ion.
 
-Marc
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---fklivl3r3m4v2cbu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmdFklUACgkQKDiiPnot
-vG9V2Qf9HACb0LFZ2n5t9mhZxL1lJKrvPrG0+M1I2I+az5Kf1ctouzr1D2tj3UCX
-1jRQnCniUZWRqagu1R3mc6ih6FQwftuCstvdh/J2+wurmgvs6erlza4FytN/vN91
-GzhOEXksFZIJCIKrP0Oj4EOIZZKmc2I8wP3+TV+6V/x+Cb1/yo86+ktgY08/p7CG
-PDxBOBnlCF1lwKu1rAIp5TaEkKAWko7SVo2wDrpdAe5H7YI7KOXJvVfkeZvEN3j7
-U9i2pdrP9SyWt4Iz6nn2fYbVn2Bez6a2XVd9Vg19eMVzpyhrq6zcxjNo5oleXutW
-eve3U2Mo0bP+O0aTxxuAM1H9XDV6dQ==
-=b9xE
------END PGP SIGNATURE-----
-
---fklivl3r3m4v2cbu--
+Huacai
+>
+> --
+> Josh
 
