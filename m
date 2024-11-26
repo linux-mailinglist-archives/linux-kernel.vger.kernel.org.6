@@ -1,314 +1,308 @@
-Return-Path: <linux-kernel+bounces-421797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD3AF9D904C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 03:13:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 539189D904D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 03:14:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 445A616A05D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 02:13:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCA1816A0E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 02:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E676517C96;
-	Tue, 26 Nov 2024 02:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A78179BC;
+	Tue, 26 Nov 2024 02:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F4LKDKkh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="shvOR+0G"
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02olkn2063.outbound.protection.outlook.com [40.92.49.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09EBFDF51;
-	Tue, 26 Nov 2024 02:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F32BA3F;
+	Tue, 26 Nov 2024 02:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.49.63
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732587186; cv=fail; b=oxJdYgLnusuDTiMPDALWd1Exe+kL0ntAlPWW83ZjIvT5wCD+srVK+y5M9RikzqN+LBa7rLgiJQY4ouctDAh6RGt/M511LziWZVlSkFOCekvpMsdudgLiWNOuES34I0rYt2DC5elbAVaEuuy4j+fdMo9oaXk1haOQuPwgrdQFhAs=
+	t=1732587236; cv=fail; b=Ast01jawvlGIXMrU0d1k8KZ/YQ6kNbwrpZ3ZL1FDDc53dXdPbT6HHK/H5M/FpYvK4As+BIYM7gPY/2HIjx4FeIdup/BD0TJNAYQl6bk3lRLoK4TwIX+DbsRSiIcLYgZ88kTGtad1ODrWgi15226vmZv68NDY/1lLlNsKgYEAP1w=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732587186; c=relaxed/simple;
-	bh=aMkLTSkpey5V2vUfQE/fTlIpqAwjEESRBzZBW0XPcM8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=aboi4WUwcfUqLAT9kSmAlRESFg9xNXcpokagYHHdd82KYKVUgkgJY/cnZtwErab1MwD+MA3F5/s1NQaY02JJ1pLBtpWtj6Gfl1PCPS6E2ns2lEd4IvpqCO1PLhGbbBExhmR+NbCb4Z+XFtto7JwfMDKfZPqXtkZxv1bZxBFxBUU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F4LKDKkh; arc=fail smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732587185; x=1764123185;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=aMkLTSkpey5V2vUfQE/fTlIpqAwjEESRBzZBW0XPcM8=;
-  b=F4LKDKkhJAkJX2AKJlvdTXOZ+Wg8YHkG0l8Zw80vcmheTJIbt0sa/6cC
-   WvdHOXdOlQAaYgr2z3MO2+quOHAqqyuTaV5dIJqIxAUxu/wZdALJVhplK
-   tTrmhIRRYEA1jYGXWRc6F/BQDuOmCZ6TJYDV3L+3NgX0Z7r/VPYXltc8G
-   rqyDrtCUAjs66Ivlsj3GY0y3aTNvIb3JwJ2jZhZXgCPFnLf1bDYoSTxai
-   Fy7+rcki3c4fFWh2ubwfoAag/1GzkScwM6mtsTjar9r2UJ+t2LBEy/FAc
-   k4ynQNzvnjlolWulrIolhqKCMpiEAc/Ouzt+XumcojY3nj8P2fyDV/oBW
-   Q==;
-X-CSE-ConnectionGUID: GdC5DHuGSJGANk9JSvBk4Q==
-X-CSE-MsgGUID: BcdPN+sVSj2k+VVroSH43Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="44105724"
-X-IronPort-AV: E=Sophos;i="6.12,184,1728975600"; 
-   d="scan'208";a="44105724"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 18:13:04 -0800
-X-CSE-ConnectionGUID: yU5wcy27SDWY7r+bZ4TxtA==
-X-CSE-MsgGUID: 7Jq4C26bTpO7yTmYO2pffw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,184,1728975600"; 
-   d="scan'208";a="91355041"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 25 Nov 2024 18:13:04 -0800
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 25 Nov 2024 18:13:03 -0800
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 25 Nov 2024 18:13:03 -0800
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.174)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 25 Nov 2024 18:13:03 -0800
+	s=arc-20240116; t=1732587236; c=relaxed/simple;
+	bh=NTO9AUfL8tKup6wRb5HkTjocnvgn3HQFs/fNrqHODmk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=aM1TaZtuCb5dWo5wKqVMmQCKiCowppaeLCOLu6GEKRxB7HCegjp4c06MEchpR8lAQauy3D26nibFmJrvVXBAlu9HcSvWIzlCpIU2oTxQjV/hHaj6/HdiHEzwK4AjsK4/cc0A3QfsDB28LMnMvn5xCwi3+HHjIN0g37MORydFn+M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=shvOR+0G; arc=fail smtp.client-ip=40.92.49.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o3rzp/2giliRqpd6H83ub+a/HcJzbXg9/CmdJHnHnhqA69NbmK9Mv62z5TMMsZ5UZ9dZU8oE9cWa2hc3JYivX5+grdTXra8Q6d2E2imEZ+uRdxTGmjmyKMs6v/vLIcCvkN3j8XYsm9Nv33+EgJUcWaP7/p3havEeLcOEVrsSvzo3qO7jZitn8+RbXDi4WvfwhZ6pB11wFfLcbIw69lqdkPqiqapGmcANl8eAafbdjNjsXBsCAjsvdh7tpjwpD/R5iVOYwqriRQRg+x5AhNSaREFDBgNsZt7Jgyy4iM+Kq2oaT+lHOrqVEilSGMXCDqnv6KG3cEfZwhCBpsA0tDfYvA==
+ b=dotF5BxeKWKPgBGsGABYQJOFgoO7aieJ6kCRLAn9obNzxZo+8KEfCUz5vgTZfb3pDFEDKJrubruN6MWNmjKh5Ty/dIflM8IWRqIjVonDxLseR5yOyLlouszpHX3/HgwdYm1llNq/Et17hRelHfRnlzrD4OmCCyG8XBVE5OG2Hj7Z22wYchN7YB7T3TnKxWYU3mcrDzX3HAw046X8exxARdGRbXPQJEnDxL3SpYD4EDALBQSio3SrHbzINHHRAYGgAVb2RzlGengUIl3qSxqKVczvoTrxFqvuMXnbPBQzWRWHOIIVnYydNCFWe1JowujO2NVZdv7jrIjs2dyFuuVWKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XP807OClU9ArOqB3h8gjUWV8Qk/UN0Y3IHUOymLPP9I=;
- b=A4J1SFal/gtDs36LAxpUHXWfXkqk+TasSYS6INrKEgcaxQaD0hvZHFwEmH/48XN1Jm6trQ4Tb1vfX9RvMkskUlA2Z3ky43jHC+giGbEJnBiG/BXhGyO+uk3F4DonOX5t8xmajJKBiaDjzg4VmSIUgYTapLqvpcB+fCFx525dYeQB+7kvWANiTw4S7ndEVGQs5mOHbLA5ETHALcbTLYwqglw8FOuxyBSiwN1f+amT6W4fx6itFJEHkIQVHcE/m2bszQPi+dWImvssTqRhvSKo5Kdmdb2pV989OX+tooTD88XKyYVpGuokBq66BsmVBgeA0Q3jFb34eI+Ys4NI5jUovA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ0PR11MB5678.namprd11.prod.outlook.com (2603:10b6:a03:3b8::22)
- by CH3PR11MB7675.namprd11.prod.outlook.com (2603:10b6:610:122::10) with
+ bh=Xuc57HnfJBL+YwYiA3ZG+t69/qCS8KK4uT+ZeBtTd5I=;
+ b=vtOcdTzGL0u7i/hjhEa4StajE5UdQsnmudqgCkbWe1eUhS1XUAjXfQT5epzkPXH2E9UkTLTPBnj5REu/g7cn/VDsy2NGnbgkgzbHAT1P92FJglQ896ZJJm2WVxCh8aPuTEXRnGtOvP9gRVzOuNjaYzQSWsQemMu6IQLXg4akcydJrXwsWu8odW5qeqc02wcJuwF9+qWaO2ZKBeDOhvRByMobYLPMUOhbXayywxleHr2b6jT9lh84yFnsq6u9TPFcUaV360V9Zd3KabzJg2404n7Emymd+/FU+cCmA8rZxpqdT7uaKB75lBJNL5UjLG0SsWPCC0pl+H3GnIVLG5i6CA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Xuc57HnfJBL+YwYiA3ZG+t69/qCS8KK4uT+ZeBtTd5I=;
+ b=shvOR+0GtYpzh5U0skVd2LkRs/GMwPxs+e8MpczGIHKb3Hq5AjYjbN+cDrHi2ejv3YHlPJ4GRcu5vcad7yj7XlAdmXqIbXsaqmw22rRN/8otXNEMygSZsp4ENSYzwWwjTdyB94U+Vgj3/HZjFGpM2rwUd+fiY+6YNJ9eHQoAWv9kAa3cOFewvcbrN7wyXSh2JUEdTe1uo1Hd9G5UIyMypR8oBvoOsuav7cS4Io7xtWJ1R7zCq04j+rumT7/IFCud/dd8JeUVMN3/xBIJRHWjPexyh4d6rhNVe7IHTFUJss8Ss9TFULATpkvbxslZaGoDzA1PqLzlzen+aS7YOkxU0Q==
+Received: from VI1PR10MB2016.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:803:36::13)
+ by GV1PR10MB6325.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:5d::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.19; Tue, 26 Nov
- 2024 02:13:00 +0000
-Received: from SJ0PR11MB5678.namprd11.prod.outlook.com
- ([fe80::812:6f53:13d:609c]) by SJ0PR11MB5678.namprd11.prod.outlook.com
- ([fe80::812:6f53:13d:609c%4]) with mapi id 15.20.8182.019; Tue, 26 Nov 2024
- 02:13:00 +0000
-From: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "hannes@cmpxchg.org"
-	<hannes@cmpxchg.org>, "yosryahmed@google.com" <yosryahmed@google.com>,
-	"nphamcs@gmail.com" <nphamcs@gmail.com>, "chengming.zhou@linux.dev"
-	<chengming.zhou@linux.dev>, "usamaarif642@gmail.com"
-	<usamaarif642@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"21cnbao@gmail.com" <21cnbao@gmail.com>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "linux-crypto@vger.kernel.org"
-	<linux-crypto@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>,
-	"clabbe@baylibre.com" <clabbe@baylibre.com>, "ardb@kernel.org"
-	<ardb@kernel.org>, "ebiggers@google.com" <ebiggers@google.com>,
-	"surenb@google.com" <surenb@google.com>, "Accardi, Kristen C"
-	<kristen.c.accardi@intel.com>, "Feghali, Wajdi K"
-	<wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>,
-	"Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Subject: RE: [PATCH v4 01/10] crypto: acomp - Define two new interfaces for
- compress/decompress batching.
-Thread-Topic: [PATCH v4 01/10] crypto: acomp - Define two new interfaces for
- compress/decompress batching.
-Thread-Index: AQHbPXWM22jcCkeyAE6LgM2tVAM8N7LHv8kAgACul1CAAGZgQA==
-Date: Tue, 26 Nov 2024 02:13:00 +0000
-Message-ID: <SJ0PR11MB56786BA58DA2E5C83824CBDAC92F2@SJ0PR11MB5678.namprd11.prod.outlook.com>
-References: <20241123070127.332773-1-kanchana.p.sridhar@intel.com>
- <20241123070127.332773-2-kanchana.p.sridhar@intel.com>
- <Z0RE3Bn1WWANGsvK@gondor.apana.org.au>
- <SJ0PR11MB5678CAD2BB752D97C770031EC92E2@SJ0PR11MB5678.namprd11.prod.outlook.com>
-In-Reply-To: <SJ0PR11MB5678CAD2BB752D97C770031EC92E2@SJ0PR11MB5678.namprd11.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ0PR11MB5678:EE_|CH3PR11MB7675:EE_
-x-ms-office365-filtering-correlation-id: 6ed1365d-77c1-4159-247d-08dd0dbfd9df
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|10070799003|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?dtgBvaqHxUCxM4NID0193JqzkOctcGOMfMMf2EhhC4xlDbY27SaPsyQTmqqF?=
- =?us-ascii?Q?tpnJSgNSNHyTHfJYwp9DNHx0yzbsAIbsBTN0wa0YsnLfCfNOBAxWDKcSFIdk?=
- =?us-ascii?Q?dE8iJno9AlHGiXvLgxl0Wr2i37pr2PutwMB1Z2GmEwAqonmidhIDxC1+qB1E?=
- =?us-ascii?Q?uw90TzK8oib1s3SfWLC4tbuAdU1M9HsE/AGKoLCrAsGwbowfWvy0vhABBiLB?=
- =?us-ascii?Q?gWVC8w/e8l48XIjdADZUzgHMUvkP6qcIGeg0cxeNamrGneubvHwCEeTJd8S7?=
- =?us-ascii?Q?pliMNl5MxwbjTepTdPfubN9kZb6x9Rndd4HBPn3BzGVHaf2tRiKLpqEubcS1?=
- =?us-ascii?Q?/bGwFFdNNWJIHzrqpKiIGGc25ZJv9SB+48D3XHcD49fsWGPPNUH0HcqRDeTT?=
- =?us-ascii?Q?7UQPddu//QWG2DbW9zWCvKliMXlprNg3P2NnVLjvL0BVzzJDa+3+vd4WUgP0?=
- =?us-ascii?Q?5cAB4cSb3w3NBuWIGw6mPS4N7Tw8blWatEZT69sPXNYUgvwg/9FCfWNYPQ7n?=
- =?us-ascii?Q?Rni8goskLmTEcYo3wXi7Nzb1VywFtlcDQXtzXkDZH7z2933umKK6pg7BS6p9?=
- =?us-ascii?Q?vQYZDOA5jZSWFc8PupQGYzPhzSA7T+PZZzkLrOCwFaf1oNAQBToaeafo034R?=
- =?us-ascii?Q?v8yE+j8Q4GQUYWQZXYZdBdPU5njDnS7qd64LOZS0t1WNuBSqDd9/IMsPsNjF?=
- =?us-ascii?Q?ySHiFi7TI7sQzunp5dNcJOpPCL3hWNmfZs0AaIl8eymhEE/bzWSS4yOPSfZy?=
- =?us-ascii?Q?ko7idVFH0RW97WuT+GlG17sYvBTylm4+QHquHE5lzY/u5tUr/cre2JXD0Jk5?=
- =?us-ascii?Q?rK+NdQrdhU0/AoJ4zuvWE/UJOSFn1z9J0KPWjFm4WQHXimNKVyOdkM2X+6PT?=
- =?us-ascii?Q?hGQFRlXwdgJppx4Yf3S+LudMSj+xf4bQMYBjqUP9wVyJtzqxE0Zn+54ZjMYb?=
- =?us-ascii?Q?V9AFUbvZ122A4oIRnkt6qOSU0al58/ah86D5N8lhfVxwKCGTuHMlyWsTPUHJ?=
- =?us-ascii?Q?jWqj0HalTiw84Gnaylo5Va722PXVtD/T3pijP4TzMe0wpbb9fJU8ardAN8Jj?=
- =?us-ascii?Q?MN9XPeOSLV2lFsdrL9B1BiEypxMwmYUQdytR26Q0j6mOH7HrIRbFUOGUgiPO?=
- =?us-ascii?Q?liGPKGZaRBtXC2e6X+t/8nrjMSY8jANYLoJFZ8HvG22YiMCdskJkwU7NEHR8?=
- =?us-ascii?Q?MQSHMt6voNMVpF0fW2ANjiFPtCkY5bk99/zzcyrOA0EbXbi2CCj9wrQiIeIy?=
- =?us-ascii?Q?6GHDGt1s7Q5sYRDNLECju/nLZFOsxkfp1y47gNLp861PCqCz/fnSioeCNm65?=
- =?us-ascii?Q?Kw+z6sYKnEAAXYkCPs6PLvdNoOdeURJrSFQPpkshQAi2KZk62ahR/3SuPwhc?=
- =?us-ascii?Q?igJQna0=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB5678.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(10070799003)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?up0R732uHZN/uZoQwybi5RV6zYe8oj5xOpYTEDGtqB72+fPnWxcQQv4J1OVe?=
- =?us-ascii?Q?s69OIXt2grVq7h3gUfrKXRartr4Awd6KQQl0e0cvhfToHF/IvdH69Z11QnpI?=
- =?us-ascii?Q?26QAx4/fv8yvKT0Df7VDCRmcbdAAralLdq4yy+LGwUw/EIEmmWiCVy7EV4kR?=
- =?us-ascii?Q?5YgU010fu7r1bgh95aSA2gX1FFT21PmnuP4EN8xIL5uSMV/ryloR8ZSQhmRr?=
- =?us-ascii?Q?y5dLc0lAgR9KcnW4/kAtno81u30gbE+XzoMsz/oVM8z57rc0sRszC+WgaVG0?=
- =?us-ascii?Q?XeUuKVstLKg4XL+fpd+z/wjH2akkZGr5RdDS5PqCEqiCLIkLeHBar26/seW8?=
- =?us-ascii?Q?t7bYIpWkkgcigfTyTCnkawDrnDjQfUEtO5dbsjUr95iZCoF+sYtXnC7xn2cY?=
- =?us-ascii?Q?6tbs2sSXFhFgfpO2e/XUMarthRIiuFpGMqX8pJonbRiGMqnTREzo4aWnR3cR?=
- =?us-ascii?Q?EWD5z/RiD/l70gZ39MJCiTyrJvo0QZHVTZ7Y8edc2zS6HrAxWguqRz/d7iua?=
- =?us-ascii?Q?PrlBXzAtC3lPHlsYyQMU5txDfSnv4kA7tCOT/6AdItXLge/ZNv1t52+YMU1d?=
- =?us-ascii?Q?ExBkjnA54IDfdpsG4GJwrsllvQ/jW9HgxIzjgSo3vGsQBL1Iwolxfw21kVLj?=
- =?us-ascii?Q?NpfprlnYf05Lb7HbWmeT6N14lkGdME47DjTMLzM4drGiFOVvgxo8OJO6rrTZ?=
- =?us-ascii?Q?JMvvDpfKeoLYN2/G5NEdiV2M0h9V/sj7MYpENLvsolR5zHdjNV3B3RmJuoke?=
- =?us-ascii?Q?KCAknI8ZtUlr4F11X7Mjpb4Jo2GO3nB7SwsU9K87S+AlY65vVeQB8FmbStcr?=
- =?us-ascii?Q?48yPXDBNCupbtkwmQCHTEI5Ha7Pu2Pq4hznUo4fABYns6L5OSWSbKs3nxUEg?=
- =?us-ascii?Q?xtVnsjZAh669Ng/hKvYMpZIEVsU/fJTD1xnT1LlmupQ/G3DRlqoIHHN27RoB?=
- =?us-ascii?Q?OJ4jRTNHj7ZYl51Pwq5LxRVA93EjV4LEAkOTuB95LOFArOlrlAeusdfIiD+H?=
- =?us-ascii?Q?weovPDV1//f5LH8xrbeN6/Hb7BeA68TqXW1aNxfKN6Rt154hNGE4JTDYViCt?=
- =?us-ascii?Q?itdkljdquy3g70w7elbLUfvH256t8tHcustuySDV4se+M59oX3bFvWl7m28S?=
- =?us-ascii?Q?8uMYfiXVVpe66puVYfyQL8p5NNunotYd7JQjwtzdLNhjoZ2v7r4pUWRd9ZYK?=
- =?us-ascii?Q?96E6iPddOApgB64Z7oMfqCcCQXTzXVvv0KVcX/26JHwTF2SJjZGKrm2I/wkR?=
- =?us-ascii?Q?dtfO+jkqLFKKz32ZtcOUozSR2+8wgUHsNTdkA8mQsODx3kDXwN7MbVjTN4wP?=
- =?us-ascii?Q?3+dcQUI2gk6mU0TbvvkcaKVl9x9xdPHsTo9KMwa19MPL60Zu1EsP9iAPyYQt?=
- =?us-ascii?Q?PhOEAu3wRinnK0E3eioacUJjQoaKHEsRiPo5wHHr/sFVX423ztWGoyOuiAbj?=
- =?us-ascii?Q?Y4+qLfDKNhoafp+w27NT7C23txFKfMLNeZmLlB4lETxLJskLsOZxdcHvABHR?=
- =?us-ascii?Q?fCDsqqKpIYIzgd+kbjzOk774PtegxIqTW3NCk2kVi71SXCdvvMIszEuoAiNy?=
- =?us-ascii?Q?BcIITVPS/OmEccimhjuMM+21KQMpkaiG2XiEcRmCR/6/i3e+JLvn/ptLQZpW?=
- =?us-ascii?Q?kb4bNr7osSp2kkwnc/C7UTrYm2HXAlvPnRMly7oqzEscv0fw0R/IcTRvnoGS?=
- =?us-ascii?Q?CjEpwg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.11; Tue, 26 Nov
+ 2024 02:13:38 +0000
+Received: from VI1PR10MB2016.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8597:8c28:89af:4616]) by VI1PR10MB2016.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8597:8c28:89af:4616%7]) with mapi id 15.20.8182.018; Tue, 26 Nov 2024
+ 02:13:38 +0000
+Message-ID:
+ <VI1PR10MB2016CDFC3A816ADC4F8840EECE2F2@VI1PR10MB2016.EURPRD10.PROD.OUTLOOK.COM>
+Date: Tue, 26 Nov 2024 10:13:28 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] cxl/core: Enable Region creation on x86 with Low
+ Memory Hole
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+ Li Ming <ming4.li@intel.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, Huang Ying <ying.huang@intel.com>,
+ Yao Xingtao <yaoxt.fnst@fujitsu.com>, linux-kernel@vger.kernel.org,
+ linux-cxl@vger.kernel.org
+References: <20241122155226.2068287-1-fabio.m.de.francesco@linux.intel.com>
+ <20241122155226.2068287-3-fabio.m.de.francesco@linux.intel.com>
+ <VI1PR10MB2016115B9C59CA9A74312092CE2E2@VI1PR10MB2016.EURPRD10.PROD.OUTLOOK.COM>
+ <2791149.btlEUcBR6m@fdefranc-mobl3>
+From: Li Ming <ming4.li@outlook.com>
+In-Reply-To: <2791149.btlEUcBR6m@fdefranc-mobl3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: TYAPR01CA0019.jpnprd01.prod.outlook.com (2603:1096:404::31)
+ To VI1PR10MB2016.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:803:36::13)
+X-Microsoft-Original-Message-ID:
+ <23ae8010-6148-4d56-bcfc-224c926757eb@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: VI1PR10MB2016:EE_|GV1PR10MB6325:EE_
+X-MS-Office365-Filtering-Correlation-Id: 82e48c8c-1560-41d8-38d2-08dd0dbfefca
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|6090799003|19110799003|461199028|5072599009|8060799006|15080799006|36102599003|440099028|3412199025|56899033;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MzlHWmxlUmd1OVFFdWxPdlpXaHZWZzZrOVZRcCtuQjdLV1djaDYydW4ycDJz?=
+ =?utf-8?B?NnJvOXEvUnBEaGREQThYTFBEa3BEVmMvQUZwUDhCdjNkRkpoWXBtZ0Q3OFFQ?=
+ =?utf-8?B?KzFTZXdmZWFHS25JWWNraFFxSnBhL1gxMVVCbk1uREhrd3FjRXp2S3lqZDlV?=
+ =?utf-8?B?Z1phY2VxNDRKbjB3OUJJRm5yZ21jRUlsZUhKb2lwcUlkME42T3hocjFSRFpw?=
+ =?utf-8?B?UStvYklCV3FURUNlODNwa0kxRFZlcmpQNnB4ZnRZczREdFhBMGd3YWhZbmgx?=
+ =?utf-8?B?WFdjdjRqUVV4eGd6Q1NIOUlVaHNFRjVYZ2RWamlDRkdSOU5qcFdiTjVrdVk2?=
+ =?utf-8?B?RFZkUEczN0h2U2QrNVh2L1Q0c25sVXlSWnVkSkNVeHdLZ1lrUHBEcVhWRXFs?=
+ =?utf-8?B?eTdyeURjV0Uvb244Uy8zTEUvTVM4ZHg4Z0hIZnozdnpSY213MmczejM1L0lh?=
+ =?utf-8?B?N1lEMVdmWlNsdERrT3ErcWJaaWlFT0NKMytSWEdSbUgrZnRXemhYY211TkNm?=
+ =?utf-8?B?S2lTVGZKbzNBMTY5eCtMWEc5aFI0TG9PVlZaY2N6MFhqU0hYVkFmeFlkZ3Vv?=
+ =?utf-8?B?ZFRxV3ljSjlQRGU5Ujd2aXYrUHFaNVI1TStzNzlWYjlWd01mLzlhRCtoTmVz?=
+ =?utf-8?B?Wm4rdFc1N3ZaZzQ2czZpYmE1Q1U5SkhqZmtSWUxuQzdkY0xMR3EvRG1hUjQ3?=
+ =?utf-8?B?RWhEakc1UTh5QlAwUU91RktBU3VqZ0VZUC95dSt4SjNkN3d2SVNHUmNSMTBw?=
+ =?utf-8?B?dS9NSTJkelJqcTdjdGJFM2hWTDJLMStMRVdVeUFaMTBuWk0vUmU0UzRHUXN3?=
+ =?utf-8?B?aXUvWitORFkxVEhwN2YwcVU5Zms3ZFQ2T3pHOXBNSzR1SjlXUjczU0xDVVUw?=
+ =?utf-8?B?MkphV014bHA2bC9COHBkem5wS2hSd2l0K3l6VWY2Ky80YklONEN6Vkx1cFFp?=
+ =?utf-8?B?czB0UjVRMVRWTXROQVlQZHI0TnRraTRoQXF3czEvMXNzZ3ZXQ2dIbW5JN0h3?=
+ =?utf-8?B?emRLWWNZRUpBYnZBcFY1dCtsSGF6dDNYYzVCaU54K3NNUXZKUzBBVVY2UlZm?=
+ =?utf-8?B?Y2VXemRINkJ5WGtHS1pTWFBNMHgvVXF3SFd0NVhJODB1djl5cHhCYTE3S0RI?=
+ =?utf-8?B?MjJWb2lxaFRpTlcycHVRWWVFclpOcExQU3FPNVZ5VVVtS2tWVjBOUGltY3hr?=
+ =?utf-8?B?dGcvd1NjbUtEVkp5UXJoSUhUcDhjM2dnTm9TMm1OVk1Iem9XdW1kbTlzVW9T?=
+ =?utf-8?B?Wmt3R3RhMzQ4dm80Y2VCRWpIaWJGS0pWQjliQzBBTXNyeDJ3NEVaMWhQNDhj?=
+ =?utf-8?B?blhIK3BIcEhDOE1hclpzTnJQS1g1SmJrQVdzb0ovRXFEUTJ0YkZLUUx3K2ZN?=
+ =?utf-8?B?aVhDUE9QUWRwRWJFUHhrRUltbTYwVlZSeHBDL0pGVUhMMEhvZUxqQkRMaEkr?=
+ =?utf-8?Q?Gp8Q7CCF?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OCtxMkhPWWhYR3FjQWVzbklsZjJNK3lXQkovUnNXcVBJeVpaMFJlajgreWJS?=
+ =?utf-8?B?RnFYTDRZbmkwcFVNbHNDallpRzR5Z0ZMYTc0bm9XV0tJeTAyOWhJNzF4cEQv?=
+ =?utf-8?B?WjROekZMQTQxOVg2ZmxPSksyaUxvRXBsbDVTdytSUjhFUEZXZHJFdWRhd2Yv?=
+ =?utf-8?B?Z3FxcDBVWTZaVFpLYkozOGNwWXdNdjVyajliVEVPdE1STFlzQkg5ekZ4c0F4?=
+ =?utf-8?B?N2kvR1hPck5Da3BRY1RDQ3Rza3EzUHJNZmpRSDZvekFzanBKMTZkSGhnbVZr?=
+ =?utf-8?B?by9YK0xqdDRDMFJDTkM5eFpNQk1rSzU2UU01bldUNnMrT0JYaWhFcEhUbnNu?=
+ =?utf-8?B?Um1MSHBUT0ViT1BvNEROQUZ5WDk3OTV0QjhYQnZCWENNQUJUUGV0TkJ0V3hY?=
+ =?utf-8?B?UmQ5SmJNeDJ3M1JNZXNtT2ZEeURqZlJUN2ZxOGFja0lIcGhsOHlzZUxSeDV5?=
+ =?utf-8?B?MHZQNG05TTE4ZEczQWtqOFhSdnRVamdvOXFIT3lQWTh5Q0NkOWd2TXo5eSsr?=
+ =?utf-8?B?TE9zUWtGYXF3MW5ZcUZRS0UrYUgzamwvTGJGQUt4NCtqblJwbVgxcjdCNU85?=
+ =?utf-8?B?MlY5WFUvdDhDME5OV3NoQUs0SWpEb3pmLytyOFIra3FHZWpuZS9UOTFHazUv?=
+ =?utf-8?B?TG5EL3J3M0JQWlZOdXJGeEdWWlZINkxQTE45V2syYUdUVEl2K1hDSzNMNk83?=
+ =?utf-8?B?dUNBNCtNY1dUbS83S1YrRndTb3FxRmk3d21yZFhoWHJyN2xPcTdsT21vaXF0?=
+ =?utf-8?B?cGR6VVBYVVpBK0IrdXp3RFpraUk1aVZXa0REN0l0ZHZEdUFZU25CbUhXcTFq?=
+ =?utf-8?B?T0ZHWnZ5bGw0Yzd4QW8yUEd5WTVJd3VON0Izb2lHT3l1Y3RISjgvMFpacCtx?=
+ =?utf-8?B?V292bVhJRklyV1NFeGovNmVwSFRrMzB4eTZZM2xZNDZFSE85aFc3RG10RStS?=
+ =?utf-8?B?ZFJhRUo5bDE2dUJmcC9NaGVCVmtKN3hNQWxlbEJOR2JaRnFJLzBMNGhSTUNF?=
+ =?utf-8?B?d1B4SjFuQ1NXdWNnNlV0aTVobDBOaXhTSG5OemRoWXcxaGcwUWVSQ3diTG1H?=
+ =?utf-8?B?SVJwTU1IcDdSZ3lvT3RsUmZsRnlZanVDUVJKc3pWWmRkd05KZXlGVERram5o?=
+ =?utf-8?B?b3lYYmY4ekp4OVpMdkxlV0JDUUtSL0x3bk1RU1FJVVdBU2hTeFY0d2UxbDdn?=
+ =?utf-8?B?MldiMVZDVXFMd0EzUTdVQ29keWhLa21uejJqKzZVQk1PcEttZVVjb1ZMcnAz?=
+ =?utf-8?B?ZWZZMVRSa2MzSGpXdlh1UkhZVGs0QklBQjZUMlpzUnJTNUxRZFBLdFJlRi9J?=
+ =?utf-8?B?RG81c05DblhjNUdmUVFqV0hDWkpnRDhuRGxaL3JaYlN5WTNNNTdDQW9RUW9X?=
+ =?utf-8?B?VEVxbDh3bld1UDNhbFE1Ym1LNGRXTTRKekViaVBGS0lDejEzYlVRbWpVZzQv?=
+ =?utf-8?B?UERkMlBONXMvbmc4Lzl4eEJaMnBoQzJIMURYRW0yYWRZRGl2UXhCY205clZL?=
+ =?utf-8?B?Tms4LysreFR6M0ZRVndRUUEzckFhVjdnRkR3QTM0SzhhTjJhb2U1UHBWNDVY?=
+ =?utf-8?B?QW5XZ1lNQ0ZQYzBzTFFYN2M4TnFBdVdpK2M4N0t3LzJsTkNpNXd0RXhUOWV3?=
+ =?utf-8?Q?N0YIYnetOQmBZ6jMa2DqeiWbebdTUmq521cNiJrZdjTI=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 82e48c8c-1560-41d8-38d2-08dd0dbfefca
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR10MB2016.EURPRD10.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5678.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ed1365d-77c1-4159-247d-08dd0dbfd9df
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Nov 2024 02:13:00.1465
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2024 02:13:38.0607
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: egHpwDVq2yppFYTkdGBadl5nXaatza7PicBioOqo6cZANqBoxYwzEy7r3Szs5OlZCWHiyRwlFWLqOPX2Et05udlmAqIts5mbYAVPC9GZxHo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7675
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB6325
 
-Hi Herbert,
 
-> -----Original Message-----
-> From: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
-> Sent: Monday, November 25, 2024 12:03 PM
-> To: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
-> hannes@cmpxchg.org; yosryahmed@google.com; nphamcs@gmail.com;
-> chengming.zhou@linux.dev; usamaarif642@gmail.com;
-> ryan.roberts@arm.com; ying.huang@intel.com; 21cnbao@gmail.com;
-> akpm@linux-foundation.org; linux-crypto@vger.kernel.org;
-> davem@davemloft.net; clabbe@baylibre.com; ardb@kernel.org;
-> ebiggers@google.com; surenb@google.com; Accardi, Kristen C
-> <kristen.c.accardi@intel.com>; Feghali, Wajdi K <wajdi.k.feghali@intel.co=
-m>;
-> Gopal, Vinodh <vinodh.gopal@intel.com>; Sridhar, Kanchana P
-> <kanchana.p.sridhar@intel.com>
-> Subject: RE: [PATCH v4 01/10] crypto: acomp - Define two new interfaces f=
-or
-> compress/decompress batching.
->=20
->=20
-> > -----Original Message-----
-> > From: Herbert Xu <herbert@gondor.apana.org.au>
-> > Sent: Monday, November 25, 2024 1:35 AM
-> > To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
-> > Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
-> > hannes@cmpxchg.org; yosryahmed@google.com; nphamcs@gmail.com;
-> > chengming.zhou@linux.dev; usamaarif642@gmail.com;
-> > ryan.roberts@arm.com; ying.huang@intel.com; 21cnbao@gmail.com;
-> > akpm@linux-foundation.org; linux-crypto@vger.kernel.org;
-> > davem@davemloft.net; clabbe@baylibre.com; ardb@kernel.org;
-> > ebiggers@google.com; surenb@google.com; Accardi, Kristen C
-> > <kristen.c.accardi@intel.com>; Feghali, Wajdi K
-> <wajdi.k.feghali@intel.com>;
-> > Gopal, Vinodh <vinodh.gopal@intel.com>
-> > Subject: Re: [PATCH v4 01/10] crypto: acomp - Define two new interfaces
-> for
-> > compress/decompress batching.
-> >
-> > On Fri, Nov 22, 2024 at 11:01:18PM -0800, Kanchana P Sridhar wrote:
-> > > This commit adds batch_compress() and batch_decompress() interfaces
-> to:
-> > >
-> > >   struct acomp_alg
-> > >   struct crypto_acomp
-> > >
-> > > This allows the iaa_crypto Intel IAA driver to register implementatio=
-ns for
-> > > the batch_compress() and batch_decompress() API, that can subsequentl=
-y
-> > be
-> > > invoked from the kernel zswap/zram swap modules to
-> > compress/decompress
-> > > up to CRYPTO_BATCH_SIZE (i.e. 8) pages in parallel in the IAA hardwar=
-e
-> > > accelerator to improve swapout/swapin performance.
-> > >
-> > > A new helper function acomp_has_async_batching() can be invoked to
-> > query
-> > > if a crypto_acomp has registered these batch_compress and
-> > batch_decompress
-> > > interfaces.
-> > >
-> > > Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-> > > ---
-> > >  crypto/acompress.c                  |  2 +
-> > >  include/crypto/acompress.h          | 91
-> +++++++++++++++++++++++++++++
-> > >  include/crypto/internal/acompress.h | 16 +++++
-> > >  3 files changed, 109 insertions(+)
-> >
-> > This should be rebased on top of my request chaining patch:
-> >
-> > https://lore.kernel.org/linux-
-> >
-> crypto/677614fbdc70b31df2e26483c8d2cd1510c8af91.1730021644.git.herb
-> > ert@gondor.apana.org.au/
-> >
-> > Request chaining provides a perfect fit for batching.
 
-I wanted to make sure I understand your suggestion: Are you suggesting we
-implement request chaining for "struct acomp_req" similar to how this is be=
-ing
-done for "struct ahash_request" in your patch?
-
-I guess I was a bit confused by your comment about rebasing, which would
-imply a direct use of the request chaining API you've provided for "crypto =
-hash".
-I would appreciate it if you could clarify.
-
-Thanks,
-Kanchana
-
->=20
-> Thanks Herbert. I am working on integrating the request chaining with
-> the iaa_crypto driver, expecting to have this ready for v5.
->=20
+On 11/26/2024 1:22 AM, Fabio M. De Francesco wrote:
+> On Monday, November 25, 2024 9:42:56 AM GMT+1 Li Ming wrote:
+>>
+>> On 11/22/2024 11:51 PM, Fabio M. De Francesco wrote:
+>>> The CXL Fixed Memory Window Structure (CFMWS) describes zero or more Host
+>>> Physical Address (HPA) windows that are associated with each CXL Host
+>>> Bridge. Each window represents a contiguous HPA that may be interleaved
+>>> with one or more targets (CXL v3.1 - 9.18.1.3).
+>>>
+>>> The Low Memory Hole (LMH) of x86 is a range of addresses of physical low
+>>> memory to which systems cannot send transactions. In some cases the size
+>>> of that hole is not compatible with the CXL hardware decoder constraint
+>>> that the size is always aligned to 256M * Interleave Ways.
+>>>
+>>> On those systems, BIOS publishes CFMWS which communicate the active System
+>>> Physical Address (SPA) ranges that map to a subset of the Host Physical
+>>> Address (HPA) ranges. The SPA range trims out the hole, and capacity in
+>>> the endpoint is lost with no SPA to map to CXL HPA in that hole.
+>>>
+>>> In the early stages of CXL Regions construction and attach on platforms
+>>> with Low Memory Holes, cxl_add_to_region() fails and returns an error
+>>> because it can't find any CXL Window that matches a given CXL Endpoint
+>>> Decoder.
+>>>
+>>> Detect Low Memory Holes by comparing Root Decoders and Endpoint Decoders
+>>> ranges: both must start at physical address 0 and end below 4 GB, while
+>>> the Root Decoder ranges end at lower addresses than the matching Endpoint
+>>> Decoders which instead must always respect the above-mentioned CXL hardware
+>>> decoders HPA alignment constraint.
+>>
+>> Hi Fabio,
+>>
+>> Here mentions that the end address must be below 4GB, but I don't find any checking about that in the implementation, is it not needed?
+>>
+> Hi Ming,
+> 
+> Good question, thanks!
+> 
+> While a first version of arch_match_spa() had a check of 'r2->end < SZ_4G',
+> I dropped it for the final one. It ended up out of sync with the commit message.
+> 
+> I think that we don't want that check. I'll rework the commit message for v2.
+> 
+> If the hardware decoders HPA ranges extended beyond the end of Low 
+> Memory, the LMH would still need to be detected and the decoders capacity 
+> would still need to be trimmed to match their corresponding CFMWS range end. 
+>>
+>> [snip]
+>>
+>>
+>>> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+>>> index ac2c486c16e9..3cb5a69e9731 100644
+>>> --- a/drivers/cxl/core/region.c
+>>> +++ b/drivers/cxl/core/region.c
+>>> @@ -836,8 +836,12 @@ static int match_auto_decoder(struct device *dev, void *data)
+>>>  	cxld = to_cxl_decoder(dev);
+>>>  	r = &cxld->hpa_range;
+>>>  
+>>> -	if (p->res && p->res->start == r->start && p->res->end == r->end)
+>>> -		return 1;
+>>> +	if (p->res) {
+>>> +		if (p->res->start == r->start && p->res->end == r->end)
+>>> +			return 1;
+>>> +		if (arch_match_region(p, cxld))
+>>> +			return 1;
+>>> +	}
+>>
+>> I think that it is better to check LMH cases before checking (p->res->start == r->start && p->res->end == r->end).
+>> Per the changelog and the implementation of arch_match_region(), below case should fails but current checking will succeed:
+>> the value of 'p->res->start' is MISALIGNED_CFMWS_RANGE_BASE and the the value of 'p->res->end' is equals to the value of 'r->end'.
+>>
+> I think that the expected "normal" case should always come first. In the expected
+> scenarios the driver deals either with SPA range == HPA range 
+> (e.g, in match_auto_decoder()) or with SPA range that fully contains the HPA range
+> (match_decoder_by_range()). 
+> 
+> If either one of those two cases holds, arch_match_*() helper doesn't need to be
+> called and the match must succeed. 
+> 
+> Besides, other architectures are free to define holes with many constraints that 
+> the driver doesn't want to check first if the expected case is already met.
+>>
+>>>  
+>>>  	return 0;
+>>>  }
+>>> @@ -1414,7 +1418,8 @@ static int cxl_port_setup_targets(struct cxl_port *port,
+>>>  		if (cxld->interleave_ways != iw ||
+>>>  		    cxld->interleave_granularity != ig ||
+>>>  		    cxld->hpa_range.start != p->res->start ||
+>>> -		    cxld->hpa_range.end != p->res->end ||
+>>> +		    (cxld->hpa_range.end != p->res->end &&
+>>> +		     !arch_match_region(p, cxld)) ||
+>>>  		    ((cxld->flags & CXL_DECODER_F_ENABLE) == 0)) {
+>>>  			dev_err(&cxlr->dev,
+>>>  				"%s:%s %s expected iw: %d ig: %d %pr\n",
+>>> @@ -1726,6 +1731,7 @@ static int match_switch_decoder_by_range(struct device *dev, void *data)
+>>>  {
+>>>  	struct cxl_endpoint_decoder *cxled = data;
+>>>  	struct cxl_switch_decoder *cxlsd;
+>>> +	struct cxl_root_decoder *cxlrd;
+>>>  	struct range *r1, *r2;
+>>>  
+>>>  	if (!is_switch_decoder(dev))
+>>> @@ -1735,8 +1741,13 @@ static int match_switch_decoder_by_range(struct device *dev, void *data)
+>>>  	r1 = &cxlsd->cxld.hpa_range;
+>>>  	r2 = &cxled->cxld.hpa_range;
+>>>  
+>>> -	if (is_root_decoder(dev))
+>>> -		return range_contains(r1, r2);
+>>> +	if (is_root_decoder(dev)) {
+>>> +		if (range_contains(r1, r2))
+>>> +			return 1;
+>>> +		cxlrd = to_cxl_root_decoder(dev);
+>>> +		if (arch_match_spa(cxlrd, cxled))
+>>> +			return 1;
+>>
+>> Same as above, what will happen if the root decoder's address range still contains endpoint decoder's address range in LMH cases? should fails or succeed?
+>>
+> If r1 contains r2, there is no LMH and the driver is dealing with the regular, 
+> expected, case. It must succeed.
+> 
+> Think of the arch_match_*() helpers like something that avoid unwanted
+> failures if arch permits exceptions. Before returning errors when the "normal"
+> tests fail, check if the arch allows any exceptions and make the driver
+> ignore that "strange" SPA/HPA misalignment.
+>>
+>> [snip]
+>>
 > Thanks,
-> Kanchana
->=20
-> >
-> > Cheers,
-> > --
-> > Email: Herbert Xu <herbert@gondor.apana.org.au>
-> > Home Page: http://gondor.apana.org.au/~herbert/
-> > PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> 
+> Fabio
+> 
+> 
+
+Understand it, thanks for your explanation.
+
+Ming
+
+> 
+> 
+> 
+
 
