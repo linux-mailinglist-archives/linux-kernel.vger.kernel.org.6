@@ -1,140 +1,132 @@
-Return-Path: <linux-kernel+bounces-422288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C29FB9D9727
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:19:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7B959D9722
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:18:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6554B250B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:18:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE3D028332F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7537E1CFEA4;
-	Tue, 26 Nov 2024 12:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oMZhZaIz"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E72C1CBE8C
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 12:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F801CEE88;
+	Tue, 26 Nov 2024 12:18:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0D91CBE8C
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 12:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732623479; cv=none; b=jlRV1co5kXfZt5V2+zqDvOcZB4UpjBt55bYmlRMxKJqaw2oOxXB42ZY07vxjWIRlJwux5ilib2ZJwGSFCGn5Sb/h7jiv1nhX18I6CLIOuFWpe5P19fZ0jzXfe142RVAwh0tlIUSWfIvKha/j2JY0xPhAjZojBu/gSbp3UYp9/d0=
+	t=1732623498; cv=none; b=eH1kmGbgkKdM4ZL5yZs72ErVBycqys6ePM3PmWBiTaUhurPl5f5PPHMaBIS6Rs2Ec1a/ALSedmfA5sRn4Jqxpc8jPJ12DOFcmuj8ZJqU9azJfUsxnvrmdBjPI/ajD++ijCeGiK3rBo9/Gf82+ojyUhGLuR1r2ho9wetNjt2iJts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732623479; c=relaxed/simple;
-	bh=A6FseKMXYrE/gymKDoYli8XDXiRXwIQNGUcDMIEhP+E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VL40Hlzm2vJivwTCM7FbahXEOMfsppiX5rEyrDoKoNP3hZTqbAsxlgad3g34E5quq5ii5ABOMFaHPkcm9qUkASjEDkJGMv54GfvGNvwkPHy/i2GAB585z55SrMrCiUHkVTzG42CIYlO1GUxFALHGslEopyTtOE+rOwSVZ8KH5S0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oMZhZaIz; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53de79c2be4so1640086e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 04:17:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732623476; x=1733228276; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zIiJZ55i8NdMGDjfrOdk3DfZs/tLxD9oconoLO+oq+A=;
-        b=oMZhZaIzWkPtIelMC3oIlDlHY4MO54NHfOp2+JKR/P9y0xxTVoq+dg77cVwqDIpKCr
-         Zb2Ujjk2AxNe/Y13pbmW0U9CxU9Ipr4KRlZ/b5+B9T5kY4oz+CKXllWJgy77AGxJwhTl
-         c2BZsA9WA43J3yEKdvYVW11FruSTdjjSJbl712MxMcl5ch09nEQtl9AbGKtKpo6HnRJa
-         eHQrB1VPBjUnaYL36S7N7E1F5pNNTsGLxjy/h+ri5DoiAhvoRCpaKCwV6rSE8y/ruWKo
-         SBHSum0SwTgchsu7OR7XmNirzR8CkSawIdMBCaQQJaOTS30Q1oPR30AmRq7ZJM54n5F2
-         tONg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732623476; x=1733228276;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zIiJZ55i8NdMGDjfrOdk3DfZs/tLxD9oconoLO+oq+A=;
-        b=UakxYxJKBz1oZotP1v0bKz5yPJttCRG/OjKmct7r39fYCd1G8HYb8VEcCNLdC0iQp6
-         J3ZpyEzv6yb4cEQ20dkgB4g/tz20nfV7ECi0yCJU2qBAJEHVgmo8WRKrJeNtGtJ7jg/3
-         f8qt0Ba7sdO0WWb5Q03j1Aa6d+yw7lDyLyze/VRODBL98ywltbRXFILvE9BkJUVtKaOC
-         6cGK6CWGXSd9Pna0R+yN2v9a9CmNUNYby/jC67yT/7z17I8/eaCpdYKQkqQft3H9/yGn
-         Vr/rQ+6MxMe0/riz2mrADGiujBaXHWcayc57DEe0eFUEMzxNXu0M1RnThYXZJ2XI0Qr+
-         oT7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUSaLxHimYlPm3oUYnjDiX08W1qHtfPvFKQo/OiwVDywQVzY8hKhADXvQu2rPCgYOc4UbQmRUTyfnyAjXw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJRZsXmjpTMRbXKfwQ2GPiotEqqeaznOzxamcaoALWQzgl5sqF
-	qDyCI7ajvKH2tvn0YnX9XTq/GlXPa3TCQVdJLR3ZuI472VS3VC/72dSpTYBSVwc/Ed+qwo8Hv+/
-	c
-X-Gm-Gg: ASbGncvnR0tuJHwCMNIXRk2rwEUmKMYVv+PIvxHAtws5uVyD1BjGWPzYN18nAuqmOjF
-	/G2wx9SxnX9m+3rZ2MIG1XOwBmz+6kbyy9COQh9DnyIc5sgUNOavxRCSJDB6K/Y6PnRs7s/fbm8
-	3R2nS2PiCuwHYWGI8mGxXmbm0Om8xtSIs5NkJyg/DHk3sn1fRzSVq0yOpQmrHlav8PjuDPQ23+U
-	6RaBn+DmuI1dxigZzcvGWudyGIZc+SNYZpeLTAiFMIMQR1fHwgAle0jXROxZvAbQFIto6gbzefx
-	iYuulzh1vdC65d5HdUTM5RhsQb2HWg==
-X-Google-Smtp-Source: AGHT+IGNnMnzJzSH4csFVqMWLKW+PYj2pG4i5xQYfHjEXv1hvwV2rJVchkFPFu5thqmIhO3VCJ0s5A==
-X-Received: by 2002:a05:6512:3c84:b0:53b:1526:3a63 with SMTP id 2adb3069b0e04-53dd39b564bmr7770105e87.56.1732623475913;
-        Tue, 26 Nov 2024 04:17:55 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd68c64c7sm1790045e87.114.2024.11.26.04.17.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 04:17:54 -0800 (PST)
-Date: Tue, 26 Nov 2024 14:17:51 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Connor Abbott <cwabbott0@gmail.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Subject: Re: [PATCH v2 1/3] drm/msm/mdss: define bitfields for the
- UBWC_STATIC register
-Message-ID: <bclvvuo3i4icx5kraqsvmpdtokx46pnjmdhliz2mhsmdm256vm@rbkwhkhjvjtc>
-References: <20241123-msm-mdss-ubwc-v2-0-41344bc6ef9c@linaro.org>
- <20241123-msm-mdss-ubwc-v2-1-41344bc6ef9c@linaro.org>
- <784a7813-b024-452e-8d7e-8cbaea761bcd@quicinc.com>
+	s=arc-20240116; t=1732623498; c=relaxed/simple;
+	bh=rq4GZqbGJZiK9iIYVLyKZz94uPO93WqM83KGwpYj/+A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=alY0VgGhdR4krOwh/EcN07MLJMWYQ6hWJVSHmMTMBXvssbY2wLOb/nwEoibbMyFS4CtMTPIxddvWTae2uZqb74XlaDlJFu9I3wJHoz12UIQLNdl9Zu5AWMgFO6wNeAsXj506JhhEddfnwSYWXYZUGsR1sqHS9TpbcMy91Khwl1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A889F153B;
+	Tue, 26 Nov 2024 04:18:44 -0800 (PST)
+Received: from [10.1.29.199] (XHFQ2J9959.cambridge.arm.com [10.1.29.199])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B6E433F58B;
+	Tue, 26 Nov 2024 04:18:13 -0800 (PST)
+Message-ID: <7fb6c5a2-b9ae-4a29-a871-2f0bdc636e41@arm.com>
+Date: Tue, 26 Nov 2024 12:18:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <784a7813-b024-452e-8d7e-8cbaea761bcd@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] mm/slab: Avoid build bug for calls to kmalloc with a
+ large constant
+Content-Language: en-GB
+To: Vlastimil Babka <vbabka@suse.cz>, Dave Kleikamp
+ <dave.kleikamp@oracle.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-6-ryan.roberts@arm.com>
+ <44312f4a-8b9c-49ce-9277-5873a94ca1bb@oracle.com>
+ <cb9cabed-0038-42b3-b9fc-c9ba62b12781@suse.cz>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <cb9cabed-0038-42b3-b9fc-c9ba62b12781@suse.cz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 25, 2024 at 06:03:52PM -0800, Abhinav Kumar wrote:
+On 14/11/2024 10:09, Vlastimil Babka wrote:
+> On 11/1/24 21:16, Dave Kleikamp wrote:
+>> When boot-time page size is enabled, the test against KMALLOC_MAX_CACHE_SIZE
+>> is no longer optimized out with a constant size, so a build bug may
+>> occur on a path that won't be reached.
 > 
+> That's rather unfortunate, the __builtin_constant_p(size) part of
+> kmalloc_noprof() really expects things to resolve at compile time and it
+> would be better to keep it that way.
 > 
-> On 11/22/2024 9:44 PM, Dmitry Baryshkov wrote:
-> > Rather than hand-coding UBWC_STATIC value calculation, define
-> > corresponding bitfields and use them to setup the register value.
-> > 
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >   drivers/gpu/drm/msm/msm_mdss.c                 | 38 +++++++++++++++-----------
-> >   drivers/gpu/drm/msm/msm_mdss.h                 |  3 +-
-> >   drivers/gpu/drm/msm/registers/display/mdss.xml | 11 +++++++-
-> >   3 files changed, 34 insertions(+), 18 deletions(-)
-> > 
+> I think it would be better if we based KMALLOC_MAX_CACHE_SIZE itself on
+> PAGE_SHIFT_MAX and kept it constant, instead of introducing
+> KMALLOC_SHIFT_HIGH_MAX only for some sanity checks.
 > 
-> <snip>
-> 
-> > diff --git a/drivers/gpu/drm/msm/registers/display/mdss.xml b/drivers/gpu/drm/msm/registers/display/mdss.xml
-> > index ac85caf1575c7908bcf68f0249da38dccf4f07b6..b6f93984928522a35a782cbad9de006eac225725 100644
-> > --- a/drivers/gpu/drm/msm/registers/display/mdss.xml
-> > +++ b/drivers/gpu/drm/msm/registers/display/mdss.xml
-> > @@ -21,7 +21,16 @@ xsi:schemaLocation="https://gitlab.freedesktop.org/freedreno/ rules-fd.xsd">
-> >   	<reg32 offset="0x00058" name="UBWC_DEC_HW_VERSION"/>
-> > -	<reg32 offset="0x00144" name="UBWC_STATIC"/>
-> > +	<reg32 offset="0x00144" name="UBWC_STATIC">
-> > +		<bitfield name="UBWC_SWIZZLE" low="0" high="2"/>
-> > +		<bitfield name="UBWC_BANK_SPREAD" pos="3"/>
-> > +		<!-- high=5 for UBWC < 4.0 -->
-> > +		<bitfield name="HIGHEST_BANK_BIT" low="4" high="6"/>
-> > +		<bitfield name="UBWC_MIN_ACC_LEN" pos="8"/>
-> 
-> MIN_ACC_LEN OR MALSIZE has 2 bits , bits 8 and 9.
-> 
-> But bit 9 is unused today. Hence we were using it as a 1 or 0 today.
-> 
-> Its unused on all the chipsets I checked. Do you want to continue using the
-> same way or correct this?
+> So if the kernel was built to support 4k to 64k, but booted as 4k, it would
+> still create and use kmalloc caches up to 128k. SLUB should handle that fine
+> (if not, please report it :)
 
-Let's correct it. I will send next iteration.
+So when PAGE_SIZE_MAX=64K and PAGE_SIZE=4K, kmalloc will support up to 128K
+whereas before it only supported up to 8K. I was trying to avoid that since I
+assumed that would be costly in terms of extra memory allocated for those higher
+order buckets that will never be used. But I have no idea how SLUB works in
+practice. Perhaps memory for the cache is only lazily allocated so we won't see
+an issue in practice?
 
--- 
-With best wishes
-Dmitry
+I'm happy to make this change if you're certain it's the right approach; please
+confirm.
+
+> 
+> Maybe we could also stop adding + 1 to PAGE_SHIFT_MAX if it's >=64k, so the
+> cache size is max 64k and not 128k but that should be probably evaluated
+> separately from this series.
+
+I'm inferring from this that perhaps there is a memory cost with having the
+higher orders defined but unused.
+
+Thanks,
+Ryan
+
+> 
+> Vlastimil
+> 
+>> Found compiling drivers/net/ethernet/qlogic/qed/qed_sriov.c
+>>
+>> Signed-off-by: Dave Kleikamp <dave.kleikamp@oracle.com>
+>> ---
+>>
+>> Ryan,
+>>
+>> Please consider incorporating this fix or something similar into your
+>> mm patch in the boot-time pages size patches.
+>>
+>>   include/linux/slab.h | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/include/linux/slab.h b/include/linux/slab.h
+>> index 9848296ca6ba..a4c7507ab8ec 100644
+>> --- a/include/linux/slab.h
+>> +++ b/include/linux/slab.h
+>> @@ -685,7 +685,8 @@ static __always_inline unsigned int __kmalloc_index(size_t size,
+>>   	if (size <= 1024 * 1024) return 20;
+>>   	if (size <=  2 * 1024 * 1024) return 21;
+>>   
+>> -	if (!IS_ENABLED(CONFIG_PROFILE_ALL_BRANCHES) && size_is_constant)
+>> +	if (!IS_ENABLED(CONFIG_ARM64_BOOT_TIME_PAGE_SIZE) &&
+>> +	    !IS_ENABLED(CONFIG_PROFILE_ALL_BRANCHES) && size_is_constant)
+>>   		BUILD_BUG_ON_MSG(1, "unexpected size in kmalloc_index()");
+>>   	else
+>>   		BUG();
+> 
+
 
