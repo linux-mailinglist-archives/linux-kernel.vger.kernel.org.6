@@ -1,186 +1,99 @@
-Return-Path: <linux-kernel+bounces-421757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C59339D8F9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 01:51:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D68AB9D8F9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 01:52:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B22116984D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:51:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AB4FB249BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB118BEA;
-	Tue, 26 Nov 2024 00:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E058F54;
+	Tue, 26 Nov 2024 00:52:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Eahlmu2g"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="umgQduCH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CF07462
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 00:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A5546B5;
+	Tue, 26 Nov 2024 00:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732582295; cv=none; b=JkuM+Zuqz14QMsVAE5u97Z8ZYl3tXPJzFBXQG+Wl68snxjY3KmfpBvSSymELnDW9AyxZkiyN3J4VMkA5id4yf/S5rZ88BFuIEU134huU5jv2FhNMiz3gFzvJFZhI0RpS1joA+oL7t5WsNUZVmyyaRl7knANX1AbnKfBBMDqvLtE=
+	t=1732582339; cv=none; b=IXWJGCImrGGyyZxvnWe1DE3fNWGT2dDyMMdIczCoiC4M4tkfW4ooTH2LtwDxkn+S7UcA7fxtFoZWBcupAJDM8RSM9qtoR8UlgIlXN1lls613v26It/1utWUP6EEzmxFLgppZjvIwCXFBAEWqZHEw+PIb2znUyt7LLQ0FRCDUA0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732582295; c=relaxed/simple;
-	bh=/OQSXRLx7GQtNqvobkAl3y3kuyrJ8L0N5ubKivVpQ6o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AGjZ+E0Rtuno0blCeR460U03cOWmOcX3f2ZN8vV65U21ApXQrmdg5lPhuqYgA+xDuOWzXiNMxDIMZzencSg4+LXJrgH0SImpQozMWzNLcVtuPy7IHGyOXFI3tv6+T7qI2QX3YEn6RfHLgvzPrFYjG2sgVPFeCUCMkrBgMweMMNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Eahlmu2g; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-72483f6e2fbso4396838b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 16:51:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1732582293; x=1733187093; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ux69X+49eIpiVnBg8k3UNWWpm1EHkYEBNcIyQUwAV4w=;
-        b=Eahlmu2gtn/W1g0d8fWA045C43zX2g9Gx8Q3AD7FOoCC80PtJ6joSV5SnSEgxKvLZ6
-         ikb6bEL8TmZ+quaQFLoVP85qDHHBaWlGwGMTPdgSAN+yN8bzgurlwXKvPwB3cJDJkg7a
-         bk619E+HHOcfpFy8rtsAh6oVj+b1ifcjkb9OAlwfch4URXPAaiuBGfWYEqMRWa1i/L44
-         kP0DxorwX1ceMneiyDw6jGEOxCt7W9WAQqAc0n04Z0s8Be1d/Ilh3p6FaejBq0jpyNSh
-         a2vgsuZa+jhNdCyb0JXxUslFXzmmgQP7ddGV2L35HjFhdPqm7oZZQv8F8QsLwP5eu98v
-         p+CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732582293; x=1733187093;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ux69X+49eIpiVnBg8k3UNWWpm1EHkYEBNcIyQUwAV4w=;
-        b=OUtf74XAiJzMxh5hRnThs3LeIpwRJUCydSzmb2iPgXRbIpDGQ3ihrF0g4Y/zZprcPP
-         GocsGRSQz7jPuldues+Zk9kkjoMwx9omQx36k8p5x6Brubl3mh4i83C0uNA6S2zHpx3X
-         cKIOWL+DNL1SeUkyKSMwTZJHkw3diJ9Acg1llI2tW7TSS+sRhDCutP92LlEXfP5HFfG8
-         VydEGALapUvHfh05DSLTymc3SG3qJuY8+00x0t9MT6PhWsT58kJU12rE+Bi5KrfCnKFJ
-         T6Rza/rSpas19nQ5L76RG/iReu29JxqIIOalBKixcUXb4YUPKICIJInsYJ+MauahuCuv
-         junA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhHTN+XqDRmnacMgjDQmFSheEn23HnBBs+SDB0IezRWeH0Od+OkOmXWf9dSsDL5M+bRxXVHusFbrna7iw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwydbfchUzcKRTHClvWX2ibtvvlEvKWSDFxtjQ214/QewNLFccn
-	wwraDFGAwNaRPZBbp/IwGVMNcfmRgm4YfQ44ceqom5zN+ErJTnk5fBaat96p7M4=
-X-Gm-Gg: ASbGncvzgdOLWntjsBQGnUNHhnLXvQfdaCpOvjyXMj8+JuOWrIk6AdCa9gAOLJjeDbF
-	CbxIEBVrmj/rsxijsmewgB2AJRBijRN0903oxBTmgSgB2fQEbLUvp9RhXauVckN7C3lbrNp6Ngi
-	HuW7SfKke6Z5C6GWDcoyeDzjEPWiHKNRLyh8t9xVLkGdDF+zV6B7wkrY6BNHhVhfz9M9genFJqw
-	kg1dne76RPttmnBXl8HlazScFRGfF914iYhU14TDMF2OtGNu2AsWal6nbXziz6HDX/meJLHqOBp
-	it87SedwfzP35/q6J87nL2qQeQ==
-X-Google-Smtp-Source: AGHT+IH2nmNjHpizxTjMNZv5LfLtuqpHTB+V4VE1ngUInkz6TiVhPxUSlkR6a23BR+zT8t0GYrd2zg==
-X-Received: by 2002:a05:6a00:4294:b0:724:e5ab:eda8 with SMTP id d2e1a72fcca58-724e5abf682mr17348842b3a.1.1732582293485;
-        Mon, 25 Nov 2024 16:51:33 -0800 (PST)
-Received: from dread.disaster.area (pa49-180-121-96.pa.nsw.optusnet.com.au. [49.180.121.96])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de477e65sm7082459b3a.53.2024.11.25.16.51.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2024 16:51:32 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tFjnd-0000000368t-1RBT;
-	Tue, 26 Nov 2024 11:51:29 +1100
-Date: Tue, 26 Nov 2024 11:51:29 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Stephen Zhang <starzhangzsd@gmail.com>
-Cc: djwong@kernel.org, dchinner@redhat.com, leo.lilong@huawei.com,
-	wozizhi@huawei.com, osandov@fb.com, xiang@kernel.org,
-	zhangjiachen.jaycee@bytedance.com, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, zhangshida@kylinos.cn
-Subject: Re: [PATCH 0/5] *** Introduce new space allocation algorithm ***
-Message-ID: <Z0UbkWlaEuH9_bXd@dread.disaster.area>
-References: <20241104014439.3786609-1-zhangshida@kylinos.cn>
- <ZyhAOEkrjZzOQ4kJ@dread.disaster.area>
- <CANubcdVbimowVMdoH+Tzk6AZuU7miwf4PrvTv2Dh0R+eSuJ1CQ@mail.gmail.com>
- <Zyi683yYTcnKz+Y7@dread.disaster.area>
- <CANubcdX3zJ_uVk3rJM5t0ivzCgWacSj6ZHX+pDvzf3XOeonFQw@mail.gmail.com>
- <ZzFmOzld1P9ReIiA@dread.disaster.area>
- <CANubcdXv8rmRGERFDQUELes3W2s_LdvfCSrOuWK8ge=cdEhFYA@mail.gmail.com>
- <Zz5ogh1-52n35lZk@dread.disaster.area>
- <CANubcdX2q+HqZTw8v1Eqi560X841fzOFX=BzgVdEi=KwP7eijw@mail.gmail.com>
+	s=arc-20240116; t=1732582339; c=relaxed/simple;
+	bh=B1+ggchJb8GusZDAY26niU/dmeqT4DRum6Nh2NFx7AM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=huqOkPaGAmgfWBAh+MiaTxPnx90f1J1fupeD+LOKIH/63r+tmPHYDgduu7LIDID/szWXaOdN7pAyznB6sxznqsR+Z9DigZ5K4EOoZy/3qfWgxIIyWZhV2kVQhVyFn84oE1ZAaCGdL4pnEuceGfuAd+6Yl4aankclCpWoXQCp6Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=umgQduCH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68BCAC4CECE;
+	Tue, 26 Nov 2024 00:52:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732582338;
+	bh=B1+ggchJb8GusZDAY26niU/dmeqT4DRum6Nh2NFx7AM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=umgQduCHCBujzvVdlYa68l6rdolQMJYXalMOc7Xv+z/Sr924eEOb3KoG3E9Xl93hF
+	 uLm1/E2fyvuVI87zwJ7KAbOddh9mPFXyF3NjpLfGQ2GhbjinV9EhFX1QwqFel0dMTO
+	 +o2gaOroUjMS1vGqt9dI9YoZC4M14s4iGrwyrajKCpLXCXQvG+BIlhYkTVrlJB8mA8
+	 w4C1T0pSYFSU0mRtXcqT3btE1q/HZx54umah3cc9BfYT7zHNk60n3nZ9rEIjiTXcie
+	 idSvDMIq3EYXpkE7uEsPRrKoFCgUQBbc9mxN+8oLPnMxFrEHcjQuaggxcxD6Lq+fcx
+	 508+bPYJr3J/g==
+From: Andrii Nakryiko <andrii@kernel.org>
+To: linux-mm@kvack.org,
+	akpm@linux-foundation.org,
+	urezki@gmail.com,
+	hch@infradead.org
+Cc: vbabka@suse.cz,
+	dakr@kernel.org,
+	mhocko@suse.com,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	ast@kernel.org,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: [PATCH mm/stable] mm: fix vrealloc()'s KASAN poisoning logic
+Date: Mon, 25 Nov 2024 16:52:06 -0800
+Message-ID: <20241126005206.3457974-1-andrii@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANubcdX2q+HqZTw8v1Eqi560X841fzOFX=BzgVdEi=KwP7eijw@mail.gmail.com>
 
-On Thu, Nov 21, 2024 at 03:17:04PM +0800, Stephen Zhang wrote:
-> Dave Chinner <david@fromorbit.com> 于2024年11月21日周四 06:53写道：
-> >
-> > On Sun, Nov 17, 2024 at 09:34:53AM +0800, Stephen Zhang wrote:
-> > > Dave Chinner <david@fromorbit.com> 于2024年11月11日周一 10:04写道：
-> > > >
-> > > > On Fri, Nov 08, 2024 at 09:34:17AM +0800, Stephen Zhang wrote:
-> > > > > Dave Chinner <david@fromorbit.com> 于2024年11月4日周一 20:15写道：
-> > > > > > On Mon, Nov 04, 2024 at 05:25:38PM +0800, Stephen Zhang wrote:
-> > > > > > > Dave Chinner <david@fromorbit.com> 于2024年11月4日周一 11:32写道：
-> > > > > > > > On Mon, Nov 04, 2024 at 09:44:34AM +0800, zhangshida wrote:
-> > > Hi, I have tested the inode32 mount option. To my suprise, the inode32
-> > > or the metadata preferred structure (will be referred to as inode32 for the
-> > > rest reply) doesn't implement the desired behavior as the AF rule[1] does:
-> > >         Lower AFs/AGs will do anything they can for allocation before going
-> > > to HIGHER/RESERVED AFs/AGS. [1]
-> >
-> > This isn't important or relevant to the experiment I asked you to
-> > perform and report the results of.
-> >
-> > I asked you to observe and report the filesystem fill pattern in
-> > your environment when metadata preferred AGs are enabled. It isn't
-> > important whether inode32 exactly solves your problem, what I want
-> > to know is whether the underlying mechanism has sufficient control
-> > to provide a general solution that is always enabled.
-> >
-> > This is foundational engineering process: check your hypothesis work
-> > as you expect before building more stuff on top of them. i.e.
-> > perform experiments to confirm your ideas will work before doing
-> > anything else.
-> >
-> > If you answer a request for an experiment to be run with "theory
-> > tells me it won't work" then you haven't understood why you were
-> > asked to run an experiment in the first place.
-> >
-> 
-> If I understand your reply correctly, then maybe my expression is the
+When vrealloc() reuses already allocated vmap_area, we need to
+re-annotate poisoned and unpoisoned portions of underlying memory
+according to the new size.
 
-You didn't understand my reply correctly.
+Note, hard-coding KASAN_VMALLOC_PROT_NORMAL might not be exactly
+correct, but KASAN flag logic is pretty involved and spread out
+throughout __vmalloc_node_range_noprof(), so I'm using the bare minimum
+flag here and leaving the rest to mm people to refactor this logic and
+reuse it here.
 
-I asked you to stop repeating the same explanation of your algorithm
-in response to every question I asked you.
+Fixes: 3ddc2fefe6f3 ("mm: vmalloc: implement vrealloc()")
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+---
+ mm/vmalloc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I asked you to stop trying to explain why something you just
-learnt about from a subject matter expert wouldn't fix your problem.
-
-I asked you to perform an experiment to confirm behaviour was as
-expected under your problematic workload.
-
-Your reply:
-
-> problem. What I replied before is:
-> 1. I have tested the inode32 option with the metadata preferred AGs
-> enabled(Yeah, I do check if the AG is set with
-> XFS_AGSTATE_PREFERS_METADATA). And with the alternating-
-> punching pattern, I observed that the preferred AG will still get fragmented
-> quickly, but the AF will not.
-> (That's what I meant in the first sentence of my previous reply...)
-
-is simply restating what you said in the previous email that I
-explicitly told you didn't answer the question I was asking you.
-
-Please listen to what I'm asking you to do. You don't need to
-explain anything to me, I just want you to run an experiment and
-report the results.
-
-This isn't a hard thing to do: the inode32 filesystem should fill to
-roughly 50% before it really starts to spill to the lower AGs.
-Record and paste the 'xfs_spaceman -c "freesp -a X"' histograms for
-each AG when the filesystem is a little over half full.
-
-That's it. I don't need you to explain anything to me, I simply want
-to know if the inode32 allocation policy does, in fact, work the way
-it is expected to under your problematic workload.
-
--Dave.
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 7ed39d104201..f009b21705c1 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -4093,7 +4093,8 @@ void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+ 		/* Zero out spare memory. */
+ 		if (want_init_on_alloc(flags))
+ 			memset((void *)p + size, 0, old_size - size);
+-
++		kasan_poison_vmalloc(p + size, old_size - size);
++		kasan_unpoison_vmalloc(p, size, KASAN_VMALLOC_PROT_NORMAL);
+ 		return (void *)p;
+ 	}
+ 
 -- 
-Dave Chinner
-david@fromorbit.com
+2.43.5
+
 
