@@ -1,220 +1,155 @@
-Return-Path: <linux-kernel+bounces-422517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A927B9D9AA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:50:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 422DD164E48
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:50:29 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C99A1D63FD;
-	Tue, 26 Nov 2024 15:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="nW4KO1mL"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2066.outbound.protection.outlook.com [40.107.21.66])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E53CF9D9AA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:50:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5A01C9B7A;
-	Tue, 26 Nov 2024 15:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732636227; cv=fail; b=UvAPq2EQdco9EqGYZ0GkSvgLRlGahKJFHlquIApvlKXbZQCDgQkPvyXMdp2XtXPTrbFWdgcOavW/v5oy8QTbrIxjhF3LdiTWW6vjxYsMyGPRG22AqX2Cf/hKcx92I9umq3LviqCLBjDFwHgc597xw5ZQuHPC7USBgFCnIK8sDMM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732636227; c=relaxed/simple;
-	bh=92WFCF79g7cAArx31aYCblC1zZ3u3/O29FI68X4S+rU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=OgnrdyG2Nemw/V89AE7auiMpDDR6UrAaBR6ngV6rwr2bMqBQ9KZQMTtUnNwRxqOHVzhLgtIBh2SO/X95m8ztawj72n3qQ4LHLV+NXld4PpViTUqPcKz+tZ3AanywsTGIv2fNoyZ+Syl1DWuNaSwrbs5MBSVIqZIEMIvavyVxaKM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=nW4KO1mL; arc=fail smtp.client-ip=40.107.21.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=S8sTrfmjOBvRUyYkkPnRDw4MAyPj5aevy9jXCVT7O4Qp57y7t9sgJ9QWbkljeWnBPyrh0CzjSfS5Bs6dvisYOhwl61R2chZ7c8Wh3nli4jLqMPfhwJHjfN5qjt+8RE9nMIkYK/bf3/NdZl3Y/AyZNlARHp08ULBWNf8oLz8bcTZCvesmZvfLxoaXsgENsLmn7rH0E/nHwXb9xyEe56NN0I7BRJv+XkJP5WYyGduFO5mlnaa17963w/HsY4q8zhjKXg4i2lvZdmTCqb792+9bfAsV35MkwLl4eoxAZEF0ZfGSvnwg0VkP5nlXwi2gTvl8RS4KxGR7EU+q02DLEwHcaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GlF2rH3oYajd2Cdy+hTUYAdRE6nk6CPZi6QgX0EpZsA=;
- b=CAD73BGSewnlDp4s1jYENreyCvG58TeTi3fcONT0swTlyu7BNmel3zpvHCq+fkK7sX5I5z5M7K5INfy/YqDaig/oRVUMbrhLO09iEHknMEV6qttlOSMWyqvxx/5Jmpujuor2jUotChECJpPgSSEPL7WWl+BPwO2EvO59O5WG9SqoU2XGBUbthoHvXA0ABIz8zW40vpyUzTQnjaHeDpgut9l7HdkfN7XX584W12y0PzoWGcp/qTHY4caieRi8EX6/c+Uzv9jASxiV44DcDFzEVPKnGV5/2c30VKN9tocwz9ef9k7B7XPT/gPGSQuiE+2K2v7AvogjiLIXo3C4zVAS1g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=axis.com; dmarc=pass action=none header.from=axis.com;
- dkim=pass header.d=axis.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GlF2rH3oYajd2Cdy+hTUYAdRE6nk6CPZi6QgX0EpZsA=;
- b=nW4KO1mL7QKCG1lJ6s+CDUjswkY9vdUs2yFl10POYCVmOvJyuhaJ4NPOJVetxoZKSbryLu6e90tVbN0cXvvp1A0cNLH7LX0iFY7MkS++3sodGSlMGfVzUSIvinSfoFu2I2MvyYoL/x4XqvuWhOeXgZ3m/QuaH8nLb/pLDTRqIBU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=axis.com;
-Received: from DU0PR02MB9585.eurprd02.prod.outlook.com (2603:10a6:10:41d::20)
- by AS8PR02MB10241.eurprd02.prod.outlook.com (2603:10a6:20b:63d::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.20; Tue, 26 Nov
- 2024 15:50:20 +0000
-Received: from DU0PR02MB9585.eurprd02.prod.outlook.com
- ([fe80::b1a:32b1:13cb:e576]) by DU0PR02MB9585.eurprd02.prod.outlook.com
- ([fe80::b1a:32b1:13cb:e576%7]) with mapi id 15.20.8182.019; Tue, 26 Nov 2024
- 15:50:20 +0000
-Message-ID: <8c60a107-b264-4846-baff-656bcc480a65@axis.com>
-Date: Tue, 26 Nov 2024 16:50:12 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/2] Support for Texas Instruments OPT4060 RGBW Color
- sensor.
-To: Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Cameron
- <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, rickard.andersson@axis.com, kernel@axis.com
-References: <20241126140002.1564564-1-perdaniel.olsson@axis.com>
- <0c5929f6-6210-4b36-95ef-79bc7028b351@kernel.org>
-Content-Language: en-US
-From: Per-Daniel Olsson <perdaniel.olsson@axis.com>
-In-Reply-To: <0c5929f6-6210-4b36-95ef-79bc7028b351@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MM0P280CA0116.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:190:9::33) To AS8PR02MB9577.eurprd02.prod.outlook.com
- (2603:10a6:20b:5a5::12)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA989284C97
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:50:53 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3EDA1D63EA;
+	Tue, 26 Nov 2024 15:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PWBTlRrM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D7F1D61A3
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 15:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732636249; cv=none; b=s1r3Bx7djscUGrbH0dGPgT69sZfyeVIRai0aMqPS9LjIDiX7Z+HMPGqIdBxhvKJiUgbCOorKbjmXQaqABdGxPp/9iNIw47KjeaUSO2PKYAyBu/mCYkmd0guyEpEgNL81WO+PcH+qhHDDXzZQYhldv3LKAkuyIS7/leBSE209r44=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732636249; c=relaxed/simple;
+	bh=laXvtY4a55ACGAH1IApyJlQSRUw2sdwb1O3gMBJNBV4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ddepArROo10UmW2iPpCAmIZOCaddYIQByz848ujgb4FaUQPaSdwZSaMUQeHNQvkJiPplcDx7L40+cL/n/5b7zjdBTgJrInGWbgSxfUh1OQZoSzz1rJ3EDGuf+dif0IxrRmMq/wnS1cCK+5L/HHvfdzaBBnEzJ8mk+Z25CeDdD7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PWBTlRrM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732636246;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bCIgW4A2MDfF24AOQufoWb9ipMkOx9ancvKfw+6WNmQ=;
+	b=PWBTlRrMlmAU1h9BmmC65/HWaX7q9+U56sJdHU2HQ/CrKvuAzTIrFJZDOsTX81yHHDj5om
+	nksQOy3iHbvixOQcyTyd9I2EY7Pe4VMRHHOZG3oYmvNJVJZMXYfvbBA+I5OyRFISk8bK6w
+	/dVDCQ91RyMQ+bJ+TlLt3DF33zpreSo=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-624-Ku1Z91V9P1GmLudWoCXU0w-1; Tue, 26 Nov 2024 10:50:43 -0500
+X-MC-Unique: Ku1Z91V9P1GmLudWoCXU0w-1
+X-Mimecast-MFC-AGG-ID: Ku1Z91V9P1GmLudWoCXU0w
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4667c1c3181so55838041cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 07:50:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732636243; x=1733241043;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bCIgW4A2MDfF24AOQufoWb9ipMkOx9ancvKfw+6WNmQ=;
+        b=UOlQ1v8xcghE5h5ngrB4uY28X0nxUmzdFWXy6HmpKOi0mQ7xnpKfy7TLKiDp3Dg1CB
+         U5dTaWQD/mMiQlqxJ6u+ERTXqltkjHuddkWPhTF8HWbn+xyUnoL57gE34yNRjdGr8VaN
+         +FkWKgFEwOnTNrFTj3o60JcZxo6OLdXZFsKji9XvKJCcijKeebNlXABCngTT81gxaEM8
+         VujM6kNbiDEOYxC4i4nAc4ZWuJFbbRRfyDSnNvFBHJgSyEI/X+RcCynI0pmx/P2m2mwL
+         sUm6anEHq98ZigchR3ZtuRPFXoHn8w2AtYWJjRIp5R0NqV6ny8httOiy91hFhmNtFWGA
+         RIYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVG1xvMQh0JCIIO0s78sF+ci3SShLKCMHP0KYCRFxvdiqgfhvaFqj28GQ4Qa87EC7zPw1t0BjsfUtP/Tuc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT0G3EjyNVB0a0+H5dNLp0RYGasLFwGqunzbnUoFHgwIaDeUDU
+	Xo6yBfwJzAOBrj/NK7XI+TUdwKgWhsxu0dlW0H/SyvEAtcns3Ryo9yil+UdiCfOT7RecCDVvEAQ
+	C1x1ZA3kv6IZIOlFzgqgQI8NW3XHx0CidaCp8t9HYP7Xq3v+dhHDf3TjgjFKCaQ==
+X-Gm-Gg: ASbGncuN/sa7yQGIqT8xj5ZsEyEABQN7rGXCWYCRv/dkwMRj+gx58oVKFJVJ3kEeApm
+	Eer4QBnekoRC+Lfiv/mkYJh14x3DfmqFPOqDBrBqHxBA56hG2neGYDtQNowv2g5kw/9uX+j+8nl
+	qowUtG3DqE+4/fPGi4AjtkjrEpMVeZ+MW23CtO+zG5FbIB5W1pkuDQBRro2Fdke4eJcFtzjnzjm
+	Vjp0XfBnAEe2M99G+GKTvh9tnxXubvuvtQROzhQ70b3W1eAIYzAvABE8xnHIlM4A0bjPIu/77gU
+	dDk6J8JL8TA=
+X-Received: by 2002:ac8:5747:0:b0:460:996b:2896 with SMTP id d75a77b69052e-4653d63721fmr240796991cf.45.1732636243055;
+        Tue, 26 Nov 2024 07:50:43 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEN5S4TgDM+fG/qOPZTtdWIFlTF1kXp4ZhRxCEHUm9zkYOUkskjeKN3z9VxbCU06ZZAX1+ZkQ==
+X-Received: by 2002:ac8:5747:0:b0:460:996b:2896 with SMTP id d75a77b69052e-4653d63721fmr240796741cf.45.1732636242769;
+        Tue, 26 Nov 2024 07:50:42 -0800 (PST)
+Received: from x1n (pool-99-254-114-190.cpe.net.cable.rogers.com. [99.254.114.190])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4668904ac7bsm32309901cf.32.2024.11.26.07.50.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 07:50:42 -0800 (PST)
+Date: Tue, 26 Nov 2024 10:50:40 -0500
+From: Peter Xu <peterx@redhat.com>
+To: stsp <stsp2@yandex.ru>
+Cc: Axel Rasmussen <axelrasmussen@google.com>,
+	Linux kernel <linux-kernel@vger.kernel.org>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Mike Rapoport <rppt@kernel.org>
+Subject: Re: userfaultfd: two-step UFFDIO_API always gives -EINVAL
+Message-ID: <Z0XuUBqBvUvhQzGn@x1n>
+References: <2d35e5f7-2edc-4ef0-b71b-82186c0627b0@yandex.ru>
+ <Z0Se4BuVfqwjeCWV@x1n>
+ <b0818813-5a4c-4621-9810-dc7443a23dd1@yandex.ru>
+ <Z0Ssq15MQd3rimBr@x1n>
+ <da978e8c-2a72-4b7b-ae67-41e6ff0d5089@yandex.ru>
+ <Z0SwOILi4R4g9JBa@x1n>
+ <CAJHvVcgLPhAS583Hp_To1McpvZL2U9cXt+=LKRNcikat3JgMAQ@mail.gmail.com>
+ <cfc58081-c49a-4f30-bb39-966c7f18b9eb@yandex.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR02MB9585:EE_|AS8PR02MB10241:EE_
-X-MS-Office365-Filtering-Correlation-Id: dafc3c16-6979-49d5-14d3-08dd0e3207a0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R0dtRHUwbTkwWTl4TE8zQUx1WnhpbHFaYk51Z0NIZFFWTXAxMUFrVGowSjVa?=
- =?utf-8?B?Z3p4cVUxTEI2SUhyNW9XVi8rTE1uUVNNMVZYcXQ1S1NXNzNoK256SmZYV3Y5?=
- =?utf-8?B?V1dmQ2RoYjJKRm40REFVdWRzNmxJT3Ztd3V1aUplRVhObWFpb3FKSy9WZlB5?=
- =?utf-8?B?aDNDRnJvODVrOXU5SXF4bVdCTDBGM0ZBcmRCMkJZODVnUExBdWdmVXJXbEpR?=
- =?utf-8?B?aU52Q0phQXVIa3NCVnZEL2l2cnExanA5YVNndE9UdFFXbTFmbWlxZlJpWnR2?=
- =?utf-8?B?NnBsemhtdmhxZU42bFFUM0NhVWRWRXkwSmxyQnlFMThSRUMyL0JydjNOb2g5?=
- =?utf-8?B?S1d4Wk5wUzY5ZW1ScXY2NTN4MGRlMU41MjlnTjV3OXZlWFdwdEw2YXpyUURC?=
- =?utf-8?B?d3pqZkYzdWl1T1ZoNWptY1VyMExSNm1VSmVOOW9ITVQxeGlEbmRld2plZUtn?=
- =?utf-8?B?QlpTanoyQitlTU5ncTJlZStURFhucER6SUJrNWFKTUI1NWIzcXlQd3hMTmlp?=
- =?utf-8?B?QXowL2YzRWFJUFlYTHg1S2hpaWhiUE10bGEvQm1YUlhyNnA1bitsdGtxRENE?=
- =?utf-8?B?U3poT1Y0OXBjZG9NejRlYkUvOC9nNGNSQmZNR2wrQ1I5dXduY0h3bnBaZnRn?=
- =?utf-8?B?S2hvN016K00zV1p1VUJESUltR2ZxMzdIMUFoZTkrWjFpYXlGMGNFaHVrMnFE?=
- =?utf-8?B?dzZreDBnTzQ2d2JIS0FRcXFhendiZG9ZQ0lVc1hBR1NjSHdIMklCeEw5MWxj?=
- =?utf-8?B?Kzk2UHUvL2VXSnRuKzFBRy91QXo1K3A1YThFTnJLdEVJcFlHV1NrRFFqc3pI?=
- =?utf-8?B?a0I5c2lQUnFsM0ZoeUJIOEttNnJrOXVLL2gyTGZBVFBBdWhmQmRUK0ZZdVMy?=
- =?utf-8?B?YUVDYXkwS3dUWGRkR01LaWRyeVZQOGgwQ0ltbGFWc3hJNWJtRUtSS1FxQTk4?=
- =?utf-8?B?SFBIeEtoMlF5NTlrNDZjWFRZeTR6NVp0ckcrZUZDd2ZiQWpDcWRJaUQvemta?=
- =?utf-8?B?aWxqMUtZckJLTXVRM3FVdEJIaVJrUk1kZjlMQWZOem55WGFlSjI4U2VPeGxR?=
- =?utf-8?B?bWtia0JVdFpCMUNFbG0vY3JFRVhNblJkRnNoalQrVnIrcmY2NHd0Z2piaWs2?=
- =?utf-8?B?QVovSjBndERDb2R0ZURxa1g5NEdwUFdzUCt1cjNUU3lPdG1VQ2NwZzNDZFB6?=
- =?utf-8?B?OEwvQW4xNjlDdVFXekg5eFdMM1ptTTRTM21yVlAwU1BpYjB6d3JNOURJM1hK?=
- =?utf-8?B?SGdtWHIwYzZvbVMwUWx2Y3Avb0wrd2JVSmNYYWM1NGx3TmoyMTl4cUJIYTMv?=
- =?utf-8?B?THJQaytTTFY0QnRjcjlhZVAzYnJ2ck5UMnpHWHQ1MzIwNHYwSFBNTUd3aFE5?=
- =?utf-8?B?KzlkN0VILysrRXdMU2R6clpOYytUMnpaWGwxZmRmbG1DSm9SUk1NZkdZWmww?=
- =?utf-8?B?NzU4YVo0NmZEeWJzWG4vWkR2RFd0K0pJd3l1QWkvNTg3cGQ1b0NKQitVMVNq?=
- =?utf-8?B?akluY2lNbUcyN1JTVXQyYWRhMStTZzR3cWdOcWNaK2p1TjB0M0JXNk00elg1?=
- =?utf-8?B?Vy9xdHh4ZHFFejlYT0lWUlpMdy80SnVDbG9ScDAwUTZLUVFkUjVNZWtZRUdV?=
- =?utf-8?B?a2dTTHhOWWkwdDhQdWFVb2syNWRGSnpnRHlaNENmcnJRQVpzTVEremxjSnFi?=
- =?utf-8?B?UElJdkNRRU1tQ3NVNUNla0cyRVk4NHNZcW1uRmdyQURvMnNnWG1kTmgwQ1ZX?=
- =?utf-8?B?eEVnNXBxT1NyenljZXFIVWdRaVVEaWhQMkFNaEJwOTVUNVpwTytobEhESWFV?=
- =?utf-8?B?NE9Kc3c5TmhPWW1CNG9xZz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR02MB9585.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?c2hnVzRiRkFOK0hHVWlsYitiSTNHWlRaV0w3M3ozQzd3K3hUTDRkeEhVMUZr?=
- =?utf-8?B?b2ovZFBYaDBoT1F4d0hEREUrR2laY1N5NmtPRllrZ3dLeWZxTUJsM3VTRHJa?=
- =?utf-8?B?R1Z1QUFFcnNydCtuNGljaldoOExUc3pwMjdPOWUrRkYrNG11UnNUc0RpVnRx?=
- =?utf-8?B?TmpMY2kzVEIwRSsremJQQmxNZ0ZZa3E3ZzJ2NHk4bTZSRDVzUFJOZFdpMFpI?=
- =?utf-8?B?UlhXZHpiV3R4VGZWZXFqY2JDOWVBdlVZTnNkN1hLNWRGUldxY0Q3a25oMjNx?=
- =?utf-8?B?bWRramMyL3cxV2VTUWh3VGUveGUvYWd3SE81ajExbkZKUDByRDNPcjVGUWxG?=
- =?utf-8?B?VlNEKy9lZ0J3Z0N3UmZjWEx2ZEdHOXhNQ1BnMmhkSkpYOG9VWFNBN1FUQnRq?=
- =?utf-8?B?WEhxR296a2pwOUcxZUZWRjF0MGk3RXZnbk94ZnkwVno4NEoyclhWeDhEMXdR?=
- =?utf-8?B?MWdrdWJCdERicm9lcWNzblpMZmRNUWJZQnMzU0FXSnJRd2NHNGlINXQ4YWJI?=
- =?utf-8?B?Zmx0UVNqc0d3MWtwUEZYL3F1TlJENkJjZW1qVk1FNG5xd0xhNjBVeHd3ZnAr?=
- =?utf-8?B?VFJKcWNIRDFLZ3QrL2xTR2x4MU8wSHBQMWpBdTVob2s3dG5Ib3Y0ZjFoUHRz?=
- =?utf-8?B?dzUwVFVSWWZoNUF1M3I2V0d3UUgyQVA0U0VuMGxkKzlDSlBNUDBLREtWVnlD?=
- =?utf-8?B?emd1dHpBc2tUei90SVZwYUFRUFZYdm9HNDVxUnBPMnhyd0dhMElUV3V2U0JD?=
- =?utf-8?B?Wmd0VHp3K0FHaVRBanUwVjI0T09URzUvMCtzOGlhcGZYZ1lhTDhxbGhnSFhY?=
- =?utf-8?B?c0tJVXFaYVpGQ1Z0TSt3NE00eVZ0MzJWTk9VZW5qcjhhUjVmQVgwWnR1OXNE?=
- =?utf-8?B?VkkwVm51YXhpTlI2YTFJaEs3UHVPWnZmQlFqemNTMGUzbDliWWZGeTZKbDlB?=
- =?utf-8?B?TDgydWxDZ1V5Q2VWeXNEYXhQaEhic0dKSTBXdGg1ZllCVkxUNmwwMjVNNGhK?=
- =?utf-8?B?N2VEZk80cXp4SkJzYnBZL2dseTBYZUw5VTZsWDJBQ1VVSmZYS0dmN0xtUEJM?=
- =?utf-8?B?NmRCcHlMK2YzM21CalMvb0xwUXFQcVZVN1pjck5OeWVnMU1mZ3QvMDVJcVd1?=
- =?utf-8?B?VnN1aTkrTzRjd0dvd1hUYVd2TnVRVUxKY1RxY0RQOW1Yd24xcWVTVGJpRTFG?=
- =?utf-8?B?MFgyNVdaMFk0dHRlSm1OZ1RjMzNnVGU1RGl4OW16R3BiaTZSZFFVT1ZzWmdB?=
- =?utf-8?B?bjFmWERPQURoRzVhMmhwc3ZtNGlBKysvcGNxenVBckpac1ljUnduUkFSMmF3?=
- =?utf-8?B?SE9JQmlVdGxicTFnRWxWc2c1aWQ3L2FEL3NjVWxoVW1QR3JmWmlyQlpKb2xU?=
- =?utf-8?B?eVFHdk9ibmRIeVZZVDd1ZHVCTW1kaVovZnlMd29MT3pGMVZnTUpGZEhsNmJh?=
- =?utf-8?B?d0VDcXRHSEp0bEcvc2twbWZsZEM0c1pkVzBFWThnaS9aRDhYQzFPd2U0bWRa?=
- =?utf-8?B?NjhDYUJYM3JzK0RXUmVPQ25ycTh3NUhMS1lybFYwTjZpcDBFV2JnVm1qbC9O?=
- =?utf-8?B?VFFRdWwvTTRwTDBBZW1La3hPVUVDWWpxaXVaRHZiZi8rb05XR21jckRNd0xr?=
- =?utf-8?B?cFAzZ053WGN0OWU4NHBvMFpZT21uLzY5R0tGaTU4QXdXUGdhcGJFL0dDS0xu?=
- =?utf-8?B?RVdqNXMyTWMvMWJmWnh1ZE94dFVJRGtnVHdnelNDWXVjS2VUVi9WblRLSDhn?=
- =?utf-8?B?OEdrWkp0ZFUzeGg1TGFPUFc4RTNUcDh2RFF2VzNsb3N1dEhIMEw1VjVjSTIy?=
- =?utf-8?B?YUtJYnhzbjVXbTdRNWJGSW4rdkwzOGpyZ01FTHcwN2Y5UlV6N1FzQmQxcVVR?=
- =?utf-8?B?emtpS1FrZEhjaklPYmFrSElXRkMrb0pQajlBUzk2WjE5NWlDWHNhRkpaVjRM?=
- =?utf-8?B?NXNQbEpmcmNyTUNpU1hONTZJWjN0UTFUd3hvTFlnaUd2UzB1alJCUVZaeWRu?=
- =?utf-8?B?VWZGVEdoSzN2N0Y1Z0RJWDRxYmRXMDhCVHkvSjlhWGVmSGFzNUhGeHNrVW1R?=
- =?utf-8?B?UTFvVmpkMG9ucVN3d2hta3FTMHQyNzBMN0xnNTZETFlCMk44cTAyQzRJcmo1?=
- =?utf-8?Q?/lVo=3D?=
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dafc3c16-6979-49d5-14d3-08dd0e3207a0
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR02MB9577.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2024 15:50:20.5909
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rzQpOoen60qfyHYn6OXDeJ+QE9fiEHhFBA0RSAxh87/R5Zyn+5cnZ7N8DXlHEh5h
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR02MB10241
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cfc58081-c49a-4f30-bb39-966c7f18b9eb@yandex.ru>
 
-On 11/26/24 15:15, Krzysztof Kozlowski wrote:
-> On 26/11/2024 15:00, Per-Daniel Olsson wrote:
->> This patch series adds support for Texas Instruments OPT4060 RGBW Color sensor
->> using the i2c interface.
->>
->> The driver exposes raw adc values for red, green, blue and clear. The
->> illuminance is exposed as a calculated value in lux, the calculation uses the
->> wide spectrum green channel as base. The driver supports scaled values for red,
->> green and blue. The raw values are scaled so that for a particular test light
->> source, typically white, the measurement intensity is the same across the
->> different color channels. Integration time can be configured through sysfs as
->> well. The OPT4060 sensor supports both rising and falling threshold interrupts.
->> These interrupts are exposed as IIO events. The driver also implements an IIO
->> triggered buffer with a trigger for conversion ready interrupts.
->>
->> Changes in v7:
->> - Calculation for scaled values changed to remove normalization.
->> - Fixed alignment in opt4060_write_ev_period(...).
->> - Fixed alignment in opt4060_read_ev_period(...).
->> - Updates state to bool in opt4060_write_event_config(...).
->> - dt-bindings: Define vdd-supply as required.
->> - dt-bindings: Removed description of vdd-supply.
->> - dt-bindings: Removed "Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>"
->>   due to changes.
-> This is a bug surprise. Because you dropped description of vdd-supply?
-> No, that's not a reason to request a re-review.
+On Tue, Nov 26, 2024 at 10:39:19AM +0300, stsp wrote:
+> Please, just why do you have that UFFD_API
+> const? Only to call every screw-up like this
+> one, a sailed ship? :)
+> Why not to add UFFD_API_v2?
+> Then UFFD_API_v3?
+> Full binary and source compatibility is
+> therefore preserved, you only need to
+> update the man page to document the
+> latest one.
 
-I'm sorry for my misstep and for adding to your workload. I wasn't sure what to do
-in this case with late review comments and clearly picked the wrong path. Won't happen
-again.
+We could.  I'd say we only need UFFDIO_FEATURE to fetch the features, if we
+want the interface clean.  I just never feel strongly to add it.
 
-Best regards / Per-Daniel
+"Creating two fds" is indeed awkward, but that isn't too bad either when
+the userapp can easily wrap a function to do that, open+close the fd
+within.  Actually that's what our unit test was doing.
 
-> 
-> Please read submitting patches document.
-> 
-> Keep the tag. I really do not expect more changes to the binding at
-> point of v6 or v7, especially ones so serious that result in dropping tags.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> Best regards,
-> Krzysztof
+int uffd_get_features(uint64_t *features)
+{
+	struct uffdio_api uffdio_api = { .api = UFFD_API, .features = 0 };
+	/*
+	 * This should by default work in most kernels; the feature list
+	 * will be the same no matter what we pass in here.
+	 */
+	int fd = uffd_open(UFFD_USER_MODE_ONLY);
+
+	if (fd < 0)
+		/* Maybe the kernel is older than user-only mode? */
+		fd = uffd_open(0);
+
+	if (fd < 0)
+		return fd;
+
+	if (ioctl(fd, UFFDIO_API, &uffdio_api)) {
+		close(fd);
+		return -errno;
+	}
+
+	*features = uffdio_api.features;
+	close(fd);
+
+	return 0;
+}
+
+-- 
+Peter Xu
 
 
