@@ -1,116 +1,203 @@
-Return-Path: <linux-kernel+bounces-422910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 741149D9FD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 00:45:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D36189D9FD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 00:46:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5C4BB25157
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 23:45:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AA46285E4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 23:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC6861D95A9;
-	Tue, 26 Nov 2024 23:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DA61DFE29;
+	Tue, 26 Nov 2024 23:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IUu5Kvny"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HtSUOt9Z";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="knCl1QIi";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HtSUOt9Z";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="knCl1QIi"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADAC1DFE30
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 23:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92DA3D299;
+	Tue, 26 Nov 2024 23:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732664727; cv=none; b=cQh8BZy9VPY76QHMZgdXlyyuxn8HPMxan8htPP8qvh29xlHBJv/nyI1mQXdWomspDt3E2F7MRRTdK0Y0DLpuA4rhZSwjyKf18jqk1nL/oKtzp8VfwkC4Gq15Jbq3+nJQtAP7535spiGfqq8MTjf3rrmVHJ1n2ZL9PlXDplJmASI=
+	t=1732664761; cv=none; b=nywsKpbEtc7VQItxzGGwD+40el6vD3baMgrz80Q72jKwZi25k07UB+gCznIPQX9AycOZXE9Ww76SnpxAXCpmaLatRVYf2/JbQ9hZjDfHpQA4dnso4jh4yK7fQ1Ih+hk6lMd2CtDyfpA9wnN+W6IiClAJnjoY42a7jIwPxYLJwoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732664727; c=relaxed/simple;
-	bh=VXT7wVN1rHLhIih/1QX0aBa8H8bgdCdyGTEgIzvjv84=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FPwUBvnDSffURENeUucJcEtJCH6w2uuFPxwjtCHHWUqfax7pIOGQ4vvSBIlp8G/MsNXVs5GPPHjE/ZKpdHp93NMqG1mHuYBDnXpYV5VrdRYtl9KcdwixWRr3+Dx6UPEqQpk6cSSopq/jfSaPIhDJ+1p/4SUuzQM8TjZ6VnShphY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IUu5Kvny; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-382610c7116so3388152f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 15:45:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732664722; x=1733269522; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cTIQDR6gO8Gy9gR3S1W7hO6fiHoSmnxEdBfKcw5IXcY=;
-        b=IUu5KvnykpEN5he7ICWm0l3EJpE8/4nD46YhWU0Hfh7/i3UoASQzhD9I6WP04eJ3s6
-         8GkfuZbXWL4D0fEm2HevL7C98r1pJUtdMn22kwuurNYeTO8qFFyEMrOS4e3Yl3Jm5L0K
-         bEuzq6D42xrQ3tf7cR30sCh2SGRzydbQjQenLEgwKOtPU+PivgDDlrnJLAHdanQGx5Tt
-         J/AhgvYc/AWUYFSSF3NsB7JtnWkn/nTaaLqpMba7mpxqB6oCCKZFMqS/VYJeaYALVAxu
-         p9iQtFiVigKptAVFH/RpHhLXE6EcPlmU0EkS1Ai1wA9NaVfXbd82En+KdMRRCvebE+2+
-         wkbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732664722; x=1733269522;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cTIQDR6gO8Gy9gR3S1W7hO6fiHoSmnxEdBfKcw5IXcY=;
-        b=cMBWip09DwddUg4QIo1LmDtQE+H4OZ4iGsc9vpWfhsNYvCdYsqGezNGfFo1ltpK4Zr
-         09tn0kyws/xlNcl51T8WC997yI5ZPiDEd4bhrmrzbZ2KamiDs8CVmwM2ZCb6rFpizqvm
-         IBuAkt4ryERPWgOlHOYxssP19G6BNAFLIHZ4W4R6a+orkO+/nZAeYPgJpRfzAr/P2WU9
-         Kt5tiCaAl3g9Gwrx/OpebzElAbcsCZTC9vpLTVooEYeDVRGLI+3coaLqwLhnpY2Ithpd
-         hznPcZIbknSZZPQ6QRURSo3V3L6bo9sXlKgjQpoYi0Y9LpOWoolKvIUSqOIgqjcdu01X
-         VThA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0t0QzVHjReQvnxk9pamq5CTZDsgicjK3wQzwz85ezm3xvMdsSmHdEp2yvhhbeXzI/8nfxgI/UXUqn1DY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkrWqRkDc3umlVHjuJRI2uAjlscx20Xh2zDbQAeFez5R49SxOy
-	Kt74a1uNjukm0udfFWb/kl6lnBZPueiVjyr4IkRMOa6odYsr37ed0utPFLb8BVQ=
-X-Gm-Gg: ASbGncs7u6SaQ+BkXLFnj3LE0v1bYDCaj6x+3haAcDR4oLeiowCbA+80cxnQqDY1bm7
-	f9k17EQcA8QRV9kBe4N+VPy0m9+V8Z1yeadk75wl6f3DKgusmgXCtAf7VnJs0BHN/pLob25unXq
-	cqqHgPcNX30skVzOoJm8aRQ1tfCacI3BQcpI4fyU/VadsGpxviekD3vjNfMGnsD+fwnQQm1Nahu
-	c5z+FWrzpFOKsKd2m1ac4am4GlXICU1zVnzwn93ONZK48b0mSNipuBtJhxgnec=
-X-Google-Smtp-Source: AGHT+IGgTq9G93zWAnGOsfichoeaSKEevf+t6zRWeozKkzcjQJicK+VxCL2bOFNMReJ5cRUfsxifbA==
-X-Received: by 2002:a05:6000:2c6:b0:382:4a69:ae0e with SMTP id ffacd0b85a97d-385c6eb697cmr583035f8f.14.1732664722646;
-        Tue, 26 Nov 2024 15:45:22 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fafeceesm14595766f8f.37.2024.11.26.15.45.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 15:45:22 -0800 (PST)
-Message-ID: <faae3508-5dce-4c38-a344-1d35186e0909@linaro.org>
-Date: Tue, 26 Nov 2024 23:45:21 +0000
+	s=arc-20240116; t=1732664761; c=relaxed/simple;
+	bh=imzoDdGoUlA4iho1rt7o5uuKgdiKDjDA/QhR36BjxdA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=iHg4I5RSV4Eoz/UL3RSKa7LbeACJ5LK8grn1jbKb4TEMyXAyrxnqQRhIukn3wS1S2vciBl22XlPQ9zbOcfCTxbecdQ8LabYgigZm5UgRt5r0aQ9woDAQ+NuEEQKC6dSwr1CcfrAN+EH9Fg4ea9BfZB/qvRZcqa+T4a22uMfLt3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HtSUOt9Z; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=knCl1QIi; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HtSUOt9Z; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=knCl1QIi; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 92FC92116E;
+	Tue, 26 Nov 2024 23:45:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1732664757; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=imzoDdGoUlA4iho1rt7o5uuKgdiKDjDA/QhR36BjxdA=;
+	b=HtSUOt9Z/xmqnTYRgPT1LO1Aao5htxdkI3Kh/x5y+Xx24WTXr/kb0jsGA3wxEUTv1YFOwu
+	5EQ6GRBAOxocu2xGrbkRiLF8brnSr7kDYzu4yB5PrPjXrW/4CLZKTPi0yjQ8QG+UTTjkXs
+	2z3R+WfQGOOlV7lnpA0m/fA1Pv2prYs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1732664757;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=imzoDdGoUlA4iho1rt7o5uuKgdiKDjDA/QhR36BjxdA=;
+	b=knCl1QIiky4za0UQ5/TLWUwV/LHMLcaOUf946oGj4zAhsWhR5ODmhkgH/Rf2regsPQLklk
+	kYKGoEMdn5hintCA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=HtSUOt9Z;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=knCl1QIi
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1732664757; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=imzoDdGoUlA4iho1rt7o5uuKgdiKDjDA/QhR36BjxdA=;
+	b=HtSUOt9Z/xmqnTYRgPT1LO1Aao5htxdkI3Kh/x5y+Xx24WTXr/kb0jsGA3wxEUTv1YFOwu
+	5EQ6GRBAOxocu2xGrbkRiLF8brnSr7kDYzu4yB5PrPjXrW/4CLZKTPi0yjQ8QG+UTTjkXs
+	2z3R+WfQGOOlV7lnpA0m/fA1Pv2prYs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1732664757;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=imzoDdGoUlA4iho1rt7o5uuKgdiKDjDA/QhR36BjxdA=;
+	b=knCl1QIiky4za0UQ5/TLWUwV/LHMLcaOUf946oGj4zAhsWhR5ODmhkgH/Rf2regsPQLklk
+	kYKGoEMdn5hintCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B094213890;
+	Tue, 26 Nov 2024 23:45:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id N4UYGbNdRmfQHwAAD6G6ig
+	(envelope-from <colyli@suse.de>); Tue, 26 Nov 2024 23:45:55 +0000
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: qcom: gdsc: Add pm_runtime hooks
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-0-b7a2bd82ba37@linaro.org>
- <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-2-b7a2bd82ba37@linaro.org>
- <zhhna2wni4yqhnc2tqfc2ugril3h4kzbyr3ix6vpwrgghwytfa@kjfpff5zdl4z>
- <7a52ca1f-303e-44ae-b750-6aaa521516c3@linaro.org>
- <ava6dkmz5g725skafuqyb4rly3qna5z4bhfmrqgogcmdcubzf3@eu4odajw6e6d>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <ava6dkmz5g725skafuqyb4rly3qna5z4bhfmrqgogcmdcubzf3@eu4odajw6e6d>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH] bcache:fix oops in cache_set_flush
+From: Coly Li <colyli@suse.de>
+In-Reply-To: <0CFF2B9E-4E40-480D-9F3B-F7631FE3CEA5@suse.de>
+Date: Wed, 27 Nov 2024 07:45:38 +0800
+Cc: "mingzhe.zou@easystack.cn" <mingzhe.zou@easystack.cn>,
+ Kent Overstreet <kent.overstreet@gmail.com>,
+ linux-bcache <linux-bcache@vger.kernel.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A86AAB66-C89A-4A37-8416-F9A99D4630D8@suse.de>
+References: <CAAsfc_omvbgaSpmxqPPD9Jf4P2H-fEU97ADfRzJ0jULxGJehwg@mail.gmail.com>
+ <TYZPR02MB78424F31FF023102693D2DB2A65A2@TYZPR02MB7842.apcprd02.prod.outlook.com>
+ <15077D4C-8DE9-4751-9492-51D972B3E4C3@suse.de>
+ <CAAsfc_r_6mZ2HesDOQWU-0F2KXhz=EJ_nHeR4bLanXNnAiduTg@mail.gmail.com>
+ <D5D1CBD5-0031-4285-BE12-910D6898B465@suse.de>
+ <CAAsfc_oTmE2E8pMctiLSwMngVUbtJa4G=KAozzAfztMMc_RMOQ@mail.gmail.com>
+ <0CFF2B9E-4E40-480D-9F3B-F7631FE3CEA5@suse.de>
+To: liequan che <liequanche@gmail.com>
+X-Mailer: Apple Mail (2.3776.700.51)
+X-Rspamd-Queue-Id: 92FC92116E
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_TO(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[easystack.cn,gmail.com,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	APPLE_MAILER_COMMON(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
 
-On 26/11/2024 17:23, Bjorn Andersson wrote:
->> I'm finding with this patch reverted but, keeping the first patch that it
->> pretty much works as you'd want with the caveat that gdsc_register ->
->> gdsc_en -> gdsc_toggle fails the first time.
->>
-> Can you clarify that call graph for me? 
-
-Ah no my apologies, that wasn't the call graph I realised about 2 
-seconds after sending the mail and never corrected the record.
-
-Please see the v3 of this series instead.
-
-https://lore.kernel.org/lkml/20241126-b4-linux-next-24-11-18-clock-multiple-power-domains-v3-0-836dad33521a@linaro.org/
-
----
-bod
 
 
+> 2024=E5=B9=B411=E6=9C=8826=E6=97=A5 23:38=EF=BC=8CColy Li =
+<colyli@suse.de> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+>=20
+>=20
+>> 2024=E5=B9=B411=E6=9C=8819=E6=97=A5 12:19=EF=BC=8Cliequan che =
+<liequanche@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
+>>=20
+>=20
+> [snipped]
+>=20
+>>>> 7. Repartition again, triggering kernel panic again.
+>>>> parted -s --align optimal /dev/nvme2n1 mkpart primary 2048s 1536GiB
+>>>> The same operation was performed on the other two servers, and no
+>>>> panic was triggered.
+>>=20
+>>> I guess this is another undefine operation. I assume the cache =
+device is still references somewhere. A reboot should follow the wipefs.
+>> Your guess is correct. In addition, after erasing the superblock
+>> information in CD rescue mode,
+>> I rebooted into the system where the original panic kernel was =
+located.
+>>=20
+>=20
+> Please try latest upstream kernel and try whether you can see the =
+issue.
+>=20
+> c->root is allocated by __bch_btree_node_alloc(), it doesn=E2=80=99t =
+return NULL pointer.
+
+I need to withdraw the above inaccurate comments. It c->root cannot be =
+NULL from __bch_btree_node_alloc(), but it can be NULL if previous lines =
+failed and went to the error code path.
+
+Thanks to commit 028ddcac477b ("bcache: Remove unnecessary NULL point =
+check in node allocations=E2=80=9D). Could you please to compose a patch =
+to partially revert it? The change is same, but change the commit log to =
+mention that your change partially revert commit 028ddcac477b.
+
+
+Thanks.
+
+Coly Li=
 
