@@ -1,130 +1,163 @@
-Return-Path: <linux-kernel+bounces-422126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCECD9D94CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:45:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 650B7164DC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:45:41 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407171C9B9B;
-	Tue, 26 Nov 2024 09:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="IHe+nIb8"
-Received: from forwardcorp1d.mail.yandex.net (forwardcorp1d.mail.yandex.net [178.154.239.200])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4518B9D94F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:57:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05007186E58;
-	Tue, 26 Nov 2024 09:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.200
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45FC4B285ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:46:51 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B4B1BD9F6;
+	Tue, 26 Nov 2024 09:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AT1cMEnB"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2F05C96;
+	Tue, 26 Nov 2024 09:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732614326; cv=none; b=QzZBU0e6vrL3VQI9lPW4z3V9mdN30X9SA88KOZ/1jjryvQf20rSpNAqVjNCw8IYtMoNV6CPwGLPvZyHi+o3SbXeVCqo74iFZ5fd5l+e4UGHjW5gUhcAmiyln28UF39rD6oY3+PbTjHlw1tGug+aC966gzYEY6KRaKgAu3cCMBzU=
+	t=1732614404; cv=none; b=JCIoG7ZkJXVu6Yzo/+DVY3qoieiSXPvQkN0ABKEMb5/2k4xAcAWvMWxYHSXLbl+1/9Oul8F1jp3zlZTZA1P4a3iMKObE8aUJNo4lCC5mfWFBXvL3pSe5OhFVfyb6ZVMHdeFlUMH0MN+qdHMKi4yiN/l6aCP2ZlX4Xi3Yo+ldyV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732614326; c=relaxed/simple;
-	bh=xEcFfEwlHETqMCT0U9nYdj/pwyvujxBhGVnrL0lLQI0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iZfgjilCvd2hk9dmt/ZP87LYJJqF8KKMrq/D7iDYVJ4wwiehclrBUtW8SLyH79XXrpkcn6UVB7hf6bQCrTa1rJYRXgvLPF//dPj1dwZjKSWoqLtEWSRMmMOfkKtX5amXvcn00vrW+wmhG983UHK8F9ysgpMQlY7u5P2szrRphgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=IHe+nIb8; arc=none smtp.client-ip=178.154.239.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
-Received: from mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:b1cb:0:640:2a1e:0])
-	by forwardcorp1d.mail.yandex.net (Yandex) with ESMTPS id 38A7D60AED;
-	Tue, 26 Nov 2024 12:45:15 +0300 (MSK)
-Received: from davydov-max-lin.yandex.net (unknown [2a02:6bf:8011:701:66e1:20a5:ba04:640b])
-	by mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id 0jUcd53IW8c0-yC1qNN5G;
-	Tue, 26 Nov 2024 12:45:14 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
-	s=default; t=1732614314;
-	bh=KyoTCXQu71t5rLmoRN0LSwqdxR+y7JCS25Le3GwuqDk=;
-	h=Message-Id:Date:In-Reply-To:Cc:Subject:References:To:From;
-	b=IHe+nIb81/VVQj7BBugHT3zXLmZKKoHFPK0qViClJaKMvAcu3aEbQSDKxQJB6YvO7
-	 4RVo6tbixS3AFoYaN1h5VuMpQWZpXl0ccoEPlC8MOxTVLVyrUhVrEApag5BVd/oeJS
-	 zKa4OnURJCsdCKLWWGkci0N7QQqr2DzeqtCfbn1I=
-Authentication-Results: mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
-From: Maksim Davydov <davydov-max@yandex-team.ru>
-To: kvm@vger.kernel.org
-Cc: davydov-max@yandex-team.ru,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	babu.moger@amd.com,
-	seanjc@google.com,
-	mingo@redhat.com,
-	bp@alien8.de,
-	tglx@linutronix.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	jmattson@google.com,
-	pbonzini@redhat.com
-Subject: [PATCH v2 2/2] x86: KVM: Advertise AMD's speculation control features
-Date: Tue, 26 Nov 2024 12:44:24 +0300
-Message-Id: <20241126094424.943192-3-davydov-max@yandex-team.ru>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241126094424.943192-1-davydov-max@yandex-team.ru>
-References: <20241126094424.943192-1-davydov-max@yandex-team.ru>
+	s=arc-20240116; t=1732614404; c=relaxed/simple;
+	bh=sEQaJPPvW2X6+3AFq3uS6HMUoT4YOsXz9iyfneuovQM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mcEZRFNGm6Iz/NHDHci1PcgJ4TlHJYA8xkKJ5/MjAwNYQJjvq8gIsPqLDj9rwKcNMPvGPLBrnl0Y+YVvXlZPiyBxFX606xzP5nvsL5W+f+eToKrAKlga6ioKEXbWsTA0rPF99grRfuXiYzEqPvaJOICm2eALb26DkEK0y6A1zn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AT1cMEnB; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa549f2f9d2so301586066b.3;
+        Tue, 26 Nov 2024 01:46:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732614400; x=1733219200; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=awnAZrvKIYXJxvtoDAboGj0ceKNoH7UCQHZ+qQeKDtc=;
+        b=AT1cMEnBAl0zA4FMf4YWfMwjLh+xfS3mdhsVceH0UONZN8R/Ui0HvYNgllkBlRytTx
+         F+hsT1J6n11pSw8MXeSAFx/IgoPBt1Y1FbwQ9ciaLsBR/QblF2QI8JfSvrWf6lkq3eIU
+         Yk8ZeRWP/h7z/58J+p+Vn+Ub1FjsNa2gy9hNj9KyLndANyrTxLUIU7lnbwbhC1THJwh5
+         1b8I8IaJ28aqYDckhw26cM5ldBVBejw5mz9adlp6EVbavFK8tDNSZPlN1FJBp5h7r58W
+         IPkq4FAAVibn1bSv6Fn3jsiQzrOhj4adNw3ZHVd442ORsRE1bubxkDneTKw6+G/zVlMj
+         N8lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732614400; x=1733219200;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=awnAZrvKIYXJxvtoDAboGj0ceKNoH7UCQHZ+qQeKDtc=;
+        b=kMr4DttRP7914t2fUbvdeNuCNc/eynC6wlg8hZHAK33kcjnd/usqWL5rjjMSOaKb2s
+         nOMmgm4iRvH05RXOi9N9obVRk5qTQ3tUW/CVBkAGAVdNCCYmZy4yJhuVf/+8yZbfLCXf
+         v/TZlPQ4GxPK6JWuAp8IYYfE45FeSo5WljCdqNj6rdSjRAEgchwu22anXu0xI4o38hUT
+         O8mvyT21rcq3G6UwYEMlpD1ckg+tXC4kc8ySbGF0J/2YHU5viVcnG6/gQGD6j+qvC2IW
+         2OrxApc/+xpYcM/wK+cJHCsaqi5ybyzTHp4SNMqdRJGWVhytW6GSGkbKZHh6gL2uG7uz
+         qPAw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4qNQ2ZnU2j6jgp8UgH5Ss1qX9FVF1oWQM6Lub8MQYrSAgY83xGYFTLlAh6VExTmiS0RXyd3XaN/c=@vger.kernel.org, AJvYcCWkQPH0uG5qxKLEiEC8Um6NOt0sl8Jq0dbKt7DcKAtcSar6+93tnGY8QxcqfQwiPMVAkQ8cxHO12YkG8Kbc@vger.kernel.org, AJvYcCX/O7jEI2R4ZgiUXuAH9XHsbkg5Jbe1jth9bhEwbS8m0SFxpuDBG/3APU4BqOuagrqj8jHLWlXg@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQ7uRiSFBzz0S+VRaXQuLBITwfqeqGCv7dz6nLMxVFJCEcL0dg
+	ikcpiyO9/qXTCsKTGsAUYDDvb+0tq2IqqiJG8trpKXVsWEzWT1CC
+X-Gm-Gg: ASbGncuqZ2lmV5iJaYchPre+GXX1NmjDh5+9zZ12+SfvDuBHPj183xyrFKVMoX5Znj7
+	c3YwSyoRtdPxRkapYHTQCpRyFSDPe6yAOV5E14/h/24oDX1kwWaOzzCLF9MGN6leGV9H64JEz7U
+	OJnz2ZV9pwhPoz8k6kw5L1MhsotcOparPbhqUR9TuhFA8gcSVcDH5zYyWUJ+tS071CvcWted10j
+	1rOApI/i9ErTi3uXkqQpoIPYlbVIooTnc5oo9A3aK80761wJlVKN0naQ29YvQtrBI1HQOsvrLzk
+	VwkzHQejt72reheVnSHEi99w9Qed
+X-Google-Smtp-Source: AGHT+IETAgPrDEk67T6ikZ69+OzPEqLXprc1SO8UIPXfuFw9A5Iwuo/Br5aMdfYKuk+Qp3u21F7hDg==
+X-Received: by 2002:a17:906:9ca:b0:aa5:3bcf:20e4 with SMTP id a640c23a62f3a-aa53bcf23c9mr750193866b.32.1732614400405;
+        Tue, 26 Nov 2024 01:46:40 -0800 (PST)
+Received: from [10.10.40.97] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b52f781sm577953466b.108.2024.11.26.01.46.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 01:46:39 -0800 (PST)
+Message-ID: <59a4b096-101b-419d-8a19-1063d759b4e2@gmail.com>
+Date: Tue, 26 Nov 2024 10:46:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/11] iio: adc: ti-ads1119: fix information leak in
+ triggered buffer
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Antoni Pokusinski <apokusinski01@gmail.com>,
+ =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?=
+ <jpaulo.silvagoncalves@gmail.com>, Gregor Boirie <gregor.boirie@parrot.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
+ Francesco Dolcini <francesco.dolcini@toradex.com>, stable@vger.kernel.org
+References: <20241125-iio_memset_scan_holes-v1-0-0cb6e98d895c@gmail.com>
+ <20241125-iio_memset_scan_holes-v1-2-0cb6e98d895c@gmail.com>
+ <20241126085958.GA13577@francesco-nb>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <20241126085958.GA13577@francesco-nb>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-It seems helpful to expose to userspace some speculation control features
-from 0x80000008_EBX function:
-* 16 bit. IBRS always on. Indicates whether processor prefers that
-  IBRS is always on. It simplifies speculation managing.
-* 18 bit. IBRS is preferred over software solution. Indicates that
-  software mitigations can be replaced with more performant IBRS.
-* 19 bit. IBRS provides Same Mode Protection. Indicates that when IBRS
-  is set indirect branch predictions are not influenced by any prior
-  indirect branches.
-* 29 bit. BTC_NO. Indicates that processor isn't affected by branch type
-  confusion. It's used during mitigations setting up.
-* 30 bit. IBPB clears return address predictor. It's used during
-  mitigations setting up.
+On 26/11/2024 09:59, Francesco Dolcini wrote:
+> On Mon, Nov 25, 2024 at 10:16:10PM +0100, Javier Carrasco wrote:
+>> The 'scan' local struct is used to push data to user space from a
+>> triggered buffer, but it has a hole between the sample (unsigned int)
+>> and the timestamp. This hole is never initialized.
+>>
+>> Initialize the struct to zero before using it to avoid pushing
+>> uninitialized information to userspace.
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: a9306887eba4 ("iio: adc: ti-ads1119: Add driver")
+>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+>> ---
+>>  drivers/iio/adc/ti-ads1119.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/iio/adc/ti-ads1119.c b/drivers/iio/adc/ti-ads1119.c
+>> index e9d9d4d46d38..2615a275acb3 100644
+>> --- a/drivers/iio/adc/ti-ads1119.c
+>> +++ b/drivers/iio/adc/ti-ads1119.c
+>> @@ -506,6 +506,8 @@ static irqreturn_t ads1119_trigger_handler(int irq, void *private)
+>>  	unsigned int index;
+>>  	int ret;
+>>  
+>> +	memset(&scan, 0, sizeof(scan));
+> 
+> Did you consider adding a reserved field after sample and just
+> initializing that one to zero?
+> 
+> It seems a trivial optimization not adding much value, but I thought about
+> it, so I'd like to be sure you considered it.
+> 
+> In any case, the change is fine.
+> 
+> Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> 
+> Thanks,
+> Francesco
+> 
 
-Signed-off-by: Maksim Davydov <davydov-max@yandex-team.ru>
----
- arch/x86/include/asm/cpufeatures.h | 3 +++
- arch/x86/kvm/cpuid.c               | 5 +++--
- 2 files changed, 6 insertions(+), 2 deletions(-)
+Hi Francesco, thanks for your review.
 
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index f6be4fd2ead0..ba371d364c58 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -340,7 +340,10 @@
- #define X86_FEATURE_AMD_IBPB		(13*32+12) /* Indirect Branch Prediction Barrier */
- #define X86_FEATURE_AMD_IBRS		(13*32+14) /* Indirect Branch Restricted Speculation */
- #define X86_FEATURE_AMD_STIBP		(13*32+15) /* Single Thread Indirect Branch Predictors */
-+#define X86_FEATURE_AMD_IBRS_ALWAYS_ON	(13*32+16) /* Indirect Branch Restricted Speculation always-on preferred */
- #define X86_FEATURE_AMD_STIBP_ALWAYS_ON	(13*32+17) /* Single Thread Indirect Branch Predictors always-on preferred */
-+#define X86_FEATURE_AMD_IBRS_PREFERRED	(13*32+18) /* Indirect Branch Restricted Speculation is preferred over SW solution */
-+#define X86_FEATURE_AMD_IBRS_SMP	(13*32+19) /* Indirect Branch Restricted Speculation provides Same Mode Protection */
- #define X86_FEATURE_AMD_PPIN		(13*32+23) /* "amd_ppin" Protected Processor Inventory Number */
- #define X86_FEATURE_AMD_SSBD		(13*32+24) /* Speculative Store Bypass Disable */
- #define X86_FEATURE_VIRT_SSBD		(13*32+25) /* "virt_ssbd" Virtualized Speculative Store Bypass Disable */
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 30ce1bcfc47f..5b2d52913b18 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -754,8 +754,9 @@ void kvm_set_cpu_caps(void)
- 	kvm_cpu_cap_mask(CPUID_8000_0008_EBX,
- 		F(CLZERO) | F(XSAVEERPTR) |
- 		F(WBNOINVD) | F(AMD_IBPB) | F(AMD_IBRS) | F(AMD_SSBD) | F(VIRT_SSBD) |
--		F(AMD_SSB_NO) | F(AMD_STIBP) | F(AMD_STIBP_ALWAYS_ON) |
--		F(AMD_PSFD)
-+		F(AMD_SSB_NO) | F(AMD_STIBP) | F(AMD_IBRS_ALWAYS_ON) |
-+		F(AMD_STIBP_ALWAYS_ON) | F(AMD_IBRS_PREFERRED) |
-+		F(AMD_IBRS_SMP) | F(AMD_PSFD) | F(BTC_NO) | F(AMD_IBPB_RET)
- 	);
- 
- 	/*
--- 
-2.34.1
+In this particular case where unsigned int is used for the sample, the
+padding would _in theory_ depend on the architecture. The size of the
+unsigned int is usually 4 bytes, but the standard only specifies that it
+must be able to contain values in the [0, 65535] range i.e. 2 bytes.
+That is indeed theory, and I don't know if there is a real case where a
+new version of Linux is able to run on an architecture that uses 2 bytes
+for an int. I guess there is not, but better safe than sorry.
 
+We could be more specific with u32 for the sample and then add the
+reserved field, but I would still prefer a memset() for this small
+struct. Adding and initializing a reserved field looks a bit artificial
+to me, especially for such marginal gains.
+
+Moreover, the common practice (at least in IIO)is a plain memset() to
+initialize struct holes, and such common patterns are easier to maintain :)
+
+Best regards,
+Javier Carrasco
 
