@@ -1,147 +1,132 @@
-Return-Path: <linux-kernel+bounces-422495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86C609D9A53
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:21:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C66829D9A5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:24:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E135B2998D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:20:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD3BDB2A1D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31AB31D63DE;
-	Tue, 26 Nov 2024 15:20:03 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A468C1D47DC;
+	Tue, 26 Nov 2024 15:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GxBIehmb"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F101D63DD
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 15:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6CA17591
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 15:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732634402; cv=none; b=HZOxODbkM0KFRbDUT1tHHirDWDGykwJl5B/1yn755KrjE87Tvsvy18pbgqv1reKCPEeQJ2z+iqM/ULrpE2Trodb3o4L0PEFl1JNyYUr+eHPlTjsxIgyum1PK8ooEVIP2op1LVYKTG7RKSgidtv5qZLmM2sX7M6w9xAC05F3b4uk=
+	t=1732634464; cv=none; b=IesY7xWNBjvozP7tn0REfbcaJVFZ0U+4jYhJg6zEmICmI0OyfWRQyrvjRGK5ajnMwLd5kiT/dw17Op5z5GC59Zk4ZkY3A9lAVsPcLSeNgRm4nRFBYblmxGc3b+DSiC84ur4V+Cjx3YyDrFc64KZ6ZZVus3fL5FJ7FH/NtEctus4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732634402; c=relaxed/simple;
-	bh=iBvS8Q4mp+jY+05sSnMVfmemUs4gtszHG8LJVq87esM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pcoR9c7kLvdise7n3qxQIaO6JVCov7sSlzhXZB9B9V3Y3xB7J1PVj+gAdZ/O9I6vmzqv1urmuQ3MfRpX1ndrTqf4tqWMyHLYMyCCnj0EOdG5rV51efpRDcdv//gNsiGJOX4LtqqUfLKtG65PuezSBbpT919Uxe5PLdSPlGxvOr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tFxLt-0004um-2L; Tue, 26 Nov 2024 16:19:45 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tFxLr-000GsC-3B;
-	Tue, 26 Nov 2024 16:19:44 +0100
-Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 7042E37DC1A;
-	Tue, 26 Nov 2024 15:19:44 +0000 (UTC)
-Date: Tue, 26 Nov 2024 16:19:44 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, NXP S32 Linux <s32@nxp.com>, 
-	imx@lists.linux.dev, Christophe Lizzi <clizzi@redhat.com>, 
-	Alberto Ruiz <aruizrui@redhat.com>, Enric Balletbo <eballetb@redhat.com>, 
-	Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: can: fsl,flexcan: add S32G2/S32G3
- SoC support
-Message-ID: <20241126-conscious-keen-cricket-c603ff-mkl@pengutronix.de>
-References: <20241125163103.4166207-1-ciprianmarian.costea@oss.nxp.com>
- <20241125163103.4166207-2-ciprianmarian.costea@oss.nxp.com>
- <y2fbsxg4pney2iapzcdooxyz6l3pmw6ms2ddupf637svitelbt@wthu23ld5ryq>
- <20241126-independent-crocodile-of-finesse-106009-mkl@pengutronix.de>
- <01a7de95-24e2-4c75-a818-bbc363e89844@oss.nxp.com>
- <20241126-capable-vagabond-tody-8b3717-mkl@pengutronix.de>
- <1a9281ec-3a4f-4175-8892-ee2e1ce1308a@oss.nxp.com>
- <20241126-aquatic-brawny-shrimp-b3cc0e-mkl@pengutronix.de>
+	s=arc-20240116; t=1732634464; c=relaxed/simple;
+	bh=ouWttTo0AhF1OqG53WNkuxUUpcHxoGrlNCLrfAq57iY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aKHCfqNkqJlk4D2OfrGWDgLzxvSGu6bGIFuvAImT1fZdwKnUfQV0MqChRD0IrSD3duPZ16keZPCjinZILpnSQSEDByMyRwrzJevE+O34cIOCtMdN5Qb28qTR0kXN6QmX2/33VaVHvSL2iYTT1do+75Cs7OQnT861NbWT6r20R0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GxBIehmb; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQD8XtR024921;
+	Tue, 26 Nov 2024 15:20:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=a/41Cw
+	2xsgHHvD6/L1ZIPHaAhRs0kYK1wbiTLE89PDY=; b=GxBIehmbDJmTIeKBxyqskd
+	Lp2bYDBR06lKr/+XjIKZU2mqBqqkPgouonXKI3u7ny8nVQbyENRu6ZzvAB/GYzoO
+	KHaGUExQiy3vbt0T9I2RFvFnDQgh+q2EvxgLz9oTR6nrret0TmvD3dVSZNuNtQ1d
+	mspRlXToNmXwJynQ63BAUjisQcSXjzdFXBTy+PhWxX9Cm5e+ZqLpqA7gwAi5r8d9
+	xLBRHSvzyIjjUcOaAw0Zed7X9hi2sZUOi+1NBazOiJCXO2bfWtyeoAqK+Pun6MBN
+	7AVf43TgxrzS6hxoqzWza8IpN/mtOXWDXhk5xpchDDyQCnTeKjd6R2GryBzhIUWw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43386neqs3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 15:20:46 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AQEnxkh015962;
+	Tue, 26 Nov 2024 15:20:45 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43386neqs1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 15:20:45 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQE04xx008861;
+	Tue, 26 Nov 2024 15:20:44 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 433scrvqxy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 15:20:44 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AQFKiqd21430904
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 26 Nov 2024 15:20:44 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DE8175805F;
+	Tue, 26 Nov 2024 15:20:43 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4B2E158055;
+	Tue, 26 Nov 2024 15:20:41 +0000 (GMT)
+Received: from [9.171.29.84] (unknown [9.171.29.84])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 26 Nov 2024 15:20:40 +0000 (GMT)
+Message-ID: <b62d1b50-d20b-458f-8916-2abe34fe3d1a@linux.ibm.com>
+Date: Tue, 26 Nov 2024 20:50:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4c3bfhrny3ibrg2u"
-Content-Disposition: inline
-In-Reply-To: <20241126-aquatic-brawny-shrimp-b3cc0e-mkl@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Removed unused argument vma from migrate_misplaced_folio
+To: Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, Zi Yan <ziy@nvidia.com>
+References: <20241125075731.176573-1-donettom@linux.ibm.com>
+ <510ac095-89c5-4c3d-b5b7-015d028f7ed2@linux.alibaba.com>
+Content-Language: en-US
+From: Donet Tom <donettom@linux.ibm.com>
+In-Reply-To: <510ac095-89c5-4c3d-b5b7-015d028f7ed2@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: LxnG_fsQXoCJtinHPLFjYNjTjaoaK_sb
+X-Proofpoint-ORIG-GUID: F-1IicA2BkRA-SzMM6hTOyujKkqJCuUX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ mlxlogscore=620 suspectscore=0 impostorscore=0 malwarescore=0 spamscore=0
+ clxscore=1015 adultscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411260121
 
 
---4c3bfhrny3ibrg2u
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 1/3] dt-bindings: can: fsl,flexcan: add S32G2/S32G3
- SoC support
-MIME-Version: 1.0
+On 11/26/24 19:28, Baolin Wang wrote:
+>
+>
+> On 2024/11/25 15:57, Donet Tom wrote:
+>> Commit ee86814b0562 ("mm/migrate: move NUMA hinting fault folio
+>> isolation + checks under PTL") removed the code that had used
+>> the vma argument in migrate_misplaced_folio.
+>>
+>> Since the vma argument was no longer used in migrate_misplaced_folio,
+>> this patch removed it.
+>>
+>> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+>
+> Better to add 'mm:' prefix for the subject line to identify the 
+> subsytem, otherwise look good to me.
 
-On 26.11.2024 16:18:41, Marc Kleine-Budde wrote:
-> On 26.11.2024 17:15:10, Ciprian Marian Costea wrote:
-> > > > > > > +        interrupt-names:
-> > > > > > > +          items:
-> > > > > > > +            - const: mb_0-7
-> > >=20
-> > > I was wondering if it makes sense to have an interrupt name not
-> > > mentioning the exact mailbox numbers, so that the same interrupt name
-> > > can be used for a different IP core, too. On the coldfire SoC the 1st
-> > > IRQ handles mailboxes 0...15.
-> > >=20
-> >=20
-> > I am ok with proposing a more generic name for mailboxes in order to
-> > increase reusability among FlexCAN enabled SoCs.
-> > Further specific mailbox numbers could be mentioned in the actual
-> > S32G2/S32G3 dtsi flexcan node.
-> >=20
-> > One proposal could be:
-> > - mb-1: First Range of Mailboxes
-> > - mb-2: Second Range of Mailboxes
-> >=20
-> > Let me know if you agree to update as proposed in V3.
->=20
-> Looks good to me!
+Thank you. I will send a V2 with the prefix.
 
-Or maybe start with "0", that makes it a bit easier to construct the
-names of the IRQ-names in a for loop.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---4c3bfhrny3ibrg2u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmdF5w0ACgkQKDiiPnot
-vG/5Mwf/eGBgFN+vIvfo3XJx8MISD7x4lthfK2V0T5QUm+wLtfWuQ9SS17/ias4z
-132xH8w85U42mx/wpU6T0TUPRjqGvjg/8bOcMBvEXSJIg85XdtVkaXF8td8TSEj9
-2MutDj3e+B9HcLpOgAj+XvM1oJtc0WR6f7hvrmgndcX60uHNQO8svzbTZS5gWsOi
-wBBCMRPDFJA3d7AqpUBF+LW2hJYdSwR8+yZANIai2yuwTF57RCwHGiEKcEX1t6+5
-n6StCWzQEFeoa4TobF3B4AdhPtJc0/+VREc/wf2GZjsNRvhhkkzYDsl27xbSGSrJ
-OSYBQrKhUw3u0VlKS1FXlbbTTqJzJw==
-=GZO3
------END PGP SIGNATURE-----
-
---4c3bfhrny3ibrg2u--
+>
+> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>
 
