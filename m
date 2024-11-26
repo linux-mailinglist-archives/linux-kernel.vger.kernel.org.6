@@ -1,122 +1,88 @@
-Return-Path: <linux-kernel+bounces-422249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF4439D966B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:46:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CA1F9D966E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:48:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95F332879CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:46:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24147164DDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF471917E6;
-	Tue, 26 Nov 2024 11:46:39 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4471BCA07;
+	Tue, 26 Nov 2024 11:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KnKLmENw"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D034811185;
-	Tue, 26 Nov 2024 11:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0615383BF
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 11:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732621599; cv=none; b=FxZxeHDcUPxxq+NjtclWYLJJJneEv91GqHMAKDFAqZ/qaj3WpOSBtk/DT70F6m2UlPOqbFxcDOgZDzk1ZmE+QYvE86AIMNHimu/NaB3XeuTGk3LmW/AI061BXtufeSL/jWiUQMk/dZix1jrEg3+RfnQjcSvywGwwD4qDz3VubJo=
+	t=1732621682; cv=none; b=e56J5KLQNL7AKqvvN53kd6awL62S4a1VCjhTbavJYEPazxdWsDSOKxAAUHcQX/ah1Y6MhjdcD3qqFD4/2aZx13tIfpxSclpEfcipIKN3xgr/dVY1ga8b/0nmcjPf50cRMpBaZjJDibc7kdmqTf8PUyIYA5gUuG+M7ZeYt0q3gqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732621599; c=relaxed/simple;
-	bh=PZlwZxdHF7frqU3MGDyp+2mGn8PBWwE2iXqb6SNufIM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=s8JEIzUNvzLlujtfrdb1vj+4UqfYrngkUALOXnkimL4GSPd4n4X/1JlnHSwyYqrQ06hjavWZPtbG3OVKuSaADqR3V5ekgXdjQt2XG6KOI6QTMxLF4d2fo//IxSKM1bNFgLlJ6LCynDivYmCa/TZEx/FJzL6fNbGUrS6noFp24Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XyLLq74MwzxVZX;
-	Tue, 26 Nov 2024 19:43:47 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6CABD180105;
-	Tue, 26 Nov 2024 19:46:34 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 26 Nov 2024 19:46:34 +0800
-Message-ID: <caabd226-e80b-4cd7-acdf-0f1355e04b4f@huawei.com>
-Date: Tue, 26 Nov 2024 19:46:33 +0800
+	s=arc-20240116; t=1732621682; c=relaxed/simple;
+	bh=O+FqV8OMdN3xg7Cx37OO0/uu3rSjG/h/PvU+JD7eVho=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SISpX8SPl22NBgak+Nnqq+KvvJ3hwgYKvR/k590hOQqUrHZs2zu/1aZGJ05SaLsEXCb+AGjirRS4UwdUyPM8uesC8w9VeKFHydMg2MJM1wkKABGPoLqMVzcGLt6/wTuRwMnnPVcECdpf/9mw2e8JCiaBCvSi9HccnbAoCfMZzDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KnKLmENw; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732621676;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=OhFXNuDGqV03IdrcsTzT21y3pX95cMRd+6dXrJ+TEew=;
+	b=KnKLmENwKXidKogPNwgZ9BeJCNb0REJTZ+zMQv0eKG2WyYD3qdODHOp0BfkONwOXQeGXuE
+	MEc5uh48dzeLzKwkOS46sn5ruxaUhnYG5qrUuDlg/0ewLLlXpMmLUjJJyjdybG/hQjhnJG
+	dH4W93fufdjVVGs1qtZdl6cVWk4hx/o=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Richard Henderson <richard.henderson@linaro.org>,
+	Matt Turner <mattst88@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-alpha@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] alpha: Remove duplicate included header file
+Date: Tue, 26 Nov 2024 12:47:26 +0100
+Message-ID: <20241126114728.139029-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v4 2/3] page_pool: fix IOMMU crash when driver has
- already unbound
-To: Jesper Dangaard Brouer <hawk@kernel.org>, <davem@davemloft.net>,
-	<kuba@kernel.org>, <pabeni@redhat.com>
-CC: <liuyonglong@huawei.com>, <fanghaiqing@huawei.com>,
-	<zhangkun09@huawei.com>, Robin Murphy <robin.murphy@arm.com>, Alexander Duyck
-	<alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Ilias Apalodimas
-	<ilias.apalodimas@linaro.org>, Eric Dumazet <edumazet@google.com>, Simon
- Horman <horms@kernel.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20241120103456.396577-1-linyunsheng@huawei.com>
- <20241120103456.396577-3-linyunsheng@huawei.com>
- <3366bf89-4544-4b82-83ec-fd89dd009228@kernel.org>
- <27475b57-eda1-4d67-93f2-5ca443632f6b@huawei.com>
- <ac728cc1-2ccb-4207-ae11-527a3ed8fbb6@kernel.org>
- <6233e2c3-3fea-4ed0-bdcc-9a625270da37@huawei.com>
- <554e768b-e990-49ff-bad4-805ee931597f@kernel.org>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <554e768b-e990-49ff-bad4-805ee931597f@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+X-Migadu-Flow: FLOW_OUT
 
-On 2024/11/26 18:22, Jesper Dangaard Brouer wrote:
+Remove duplicate included header file asm/fpu.h
 
-...
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ arch/alpha/lib/fpreg.c | 1 -
+ 1 file changed, 1 deletion(-)
 
->>>
->>> Once the a page is release from a page pool it becomes a normal page,
->>> that adhere to normal page refcnt'ing. That is how it worked before with
->>> page_pool_release_page().
->>> The later extensions with page fragment support and devmem might have
->>> complicated this code path.
->>
->> As page_pool_return_page() and page_pool_destroy() both try to "release"
->> the page concurrently for a specific page, I am not sure how using some
->> simple *atomic* can avoid this kind of concurrency even before page
->> fragment and devmem are supported, it would be good to be more specific
->> about that by using some pseudocode.
->>
-> 
-> Okay, some my simple atomic idea will not work.
-> 
-> NEW IDEA:
-> 
-> So, the my concern in this patchset is that BH-disabling spin_lock pool->destroy_lock is held in the outer loop of page_pool_inflight_unmap() that scans all pages.  Disabling BH for this long have nasty side-effects.
-> 
-> Will it be enough to grab the pool->destroy_lock only when we detect a page that belongs to our page pool?  Of-cause after obtaining the lock. the code need to recheck if the page still belongs to the pool.
-> 
+diff --git a/arch/alpha/lib/fpreg.c b/arch/alpha/lib/fpreg.c
+index 9a238e7536ae..3d32165043f8 100644
+--- a/arch/alpha/lib/fpreg.c
++++ b/arch/alpha/lib/fpreg.c
+@@ -10,7 +10,6 @@
+ #include <linux/preempt.h>
+ #include <asm/fpu.h>
+ #include <asm/thread_info.h>
+-#include <asm/fpu.h>
+ 
+ #if defined(CONFIG_ALPHA_EV6) || defined(CONFIG_ALPHA_EV67)
+ #define STT(reg,val)  asm volatile ("ftoit $f"#reg",%0" : "=r"(val));
+-- 
+2.47.0
 
-That means there will be page_pool_return_page() called between the scanning,
-it seems like a lot like the idea of 'page_pool_get_dma_addr() need to be
-checked to decide if the mapping is already done or not for each page.' as
-there are two cases when page_pool_return_page() is called during scanning:
-1. page_pool_get_dma_addr() returns non-zero dma address, which means the dma
-   unmapping is not done by scanning yet, page_pool_return_page() need to do
-   the dma unmapping before calling put_page()
-2. page_pool_get_dma_addr() returns zero dma address, which means the dma
-   unmapping is done by scanning, page_pool_return_page() just skip the dma
-   unmapping and only call put_page().
-
-It seems there is only one case for scanning:
-1. page_pool_get_dma_addr() for a page_pool owned page returns non-zero dma
-   address, which means page_pool_return_page() is not called for that page yet,
-   scanning will the do the mapping for page_pool_return_page() and reset the
-   dma address of the page to indicate the dma unmapping is done for that page.
-
-It seems there is no case of page_pool owned page having zero dma address during
-scanning, as both page->pp_magic is cleared and dma unmapping is already done in
-page_pool_return_page().
 
