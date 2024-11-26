@@ -1,140 +1,134 @@
-Return-Path: <linux-kernel+bounces-422794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C47809D9E3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:11:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D87319D9E44
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:13:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 935FB283F43
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:11:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5E2C284019
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEA71DED7F;
-	Tue, 26 Nov 2024 20:11:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46F71DF274;
+	Tue, 26 Nov 2024 20:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="d8+r9LOh"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="RR9BpE9d"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021661AAD7
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 20:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD4D1DE8A1;
+	Tue, 26 Nov 2024 20:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732651888; cv=none; b=XNviMbOgwmem504w6mZemc1uSk3A9t3RDa8Kh/Hr5Ah0nEAkljCPcA4m20+lY01tiAEjK/BrvKmiqYJNRNGHn/mWdiLoO+pC7dHHilah8tUeaIgsmWstuCbbUGEC3qB3Ly4/l1gj0HKkruHkcRuFreoBrZ84XdviY9T8YQR+LVk=
+	t=1732651978; cv=none; b=O04XSoF0bEk7Aicn2/BhnUPU/9uOpSpccZDf2uIo0hIl9oiIrPG/lm3GUyzRenhZg76/FIOZrHJlnMPrlKcE3lYhshul4YoMLhKoKV377sion2JDp/Ifoi84uzVMVPNW4xJpNqRwyq48kyPo+aNczilZPKD42VgrW8iMYiUi37s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732651888; c=relaxed/simple;
-	bh=SeH7OIHiUg3z8Wf2hqJkp+pQtUuB6QfuZSWj7tBe97s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MK9mT5GQCGG6OODexR2Y3U2V+moVsh7E+/uosxNMnmTIj2aGEVBhxWgXTM4D7a/izn6LbDQyP1hYSKiQ8PZyfieOmN8mgDbIQO9f6Q4SqgE+sAOferr7KGD9DbIbNVVnQEBLGvxp7SG4Whe8L/EdTJhwMgTLpM7hOsyUvlsNA8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=d8+r9LOh; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d071f70b51so1168026a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 12:11:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732651884; x=1733256684; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wBieZ/H43H1parSNnvMLRoyFZN/PdHvN6lrqybfxtdA=;
-        b=d8+r9LOhkV+JUSTJLowweRNej7tVGFJ1Uoef8EJQa2nWLGVRzylzcaZCwrMK9TtRAb
-         prBNA/yKkxwzDDyxjOtNTIt5R9h0xvPVXol1eHImrrs9YjjZicp8auW8YexgulevTDdQ
-         AOCDTMbWBcym/WNtFn/yqg7W2R4LBp+QRCaZ4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732651884; x=1733256684;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wBieZ/H43H1parSNnvMLRoyFZN/PdHvN6lrqybfxtdA=;
-        b=N11GroMEIPEeJCl0QiHJ7fjeLxbIpdXGMjl0CSkvgEmvt4rIfJGfxL3JicJu0fWvfx
-         lvrtbN5/sFMzmyEfXNiq3RQNFxnaBx7+3KLSFYXzNkoVEBym1TmIZu6+KXHCD1QYHvHR
-         7IJ0qQyVOv45Mm9ACvGAk66NAaIwVsFBJvTlnwETgtfTcRcxNR2HlFRFsyEq3T8VCOCv
-         lVvXnHA2dJXFvlDSZnl9mPXpISFnBdGc+lCVGMApJ0datnpSSqWDqqLLjhIQyDOjkgG3
-         KWz1u+/m6rohwFp4uesMzxgnEjJe6z+OT+H1LvKdeIFJ7/409YY9iaH3eFnd+2bYs+tI
-         qwVA==
-X-Gm-Message-State: AOJu0YzhpMXQqHHtO0jKzW+LYGfB73zNTsbfhBQj5KYfLwW0rBvdNVAk
-	o263bmeIneFql6K8xsc+yMp9ML8SaZqU5ZmO+xkystEQ/fHKIZR4hQc3maS1QpUGwZaoy8fuZXw
-	7TZu+pQ==
-X-Gm-Gg: ASbGncs6biAnIpmaknHBoYwrzY1j2VH+tw1Q4Y5TxZ9ax5KBjAtQwoqS6sgDA4DOu+y
-	PPXyEj1tO857WxErv07dhVamB2RckXUXoHTyyK0bJxapPUqpTIgCSYr9x8Og9H2NW0awyQ5CsiB
-	kzZQ/1N0M1VP5XL8TFHuNcmf84AuqA7ohej0dXfM+SZm/3Bv2VovaJSJetTI8TO58kO5mx1SjVY
-	uYP8FyJFH2NIMS3/bNWW0929N43Z2gq+Nk6RsSz+OMPHHXv8b0HyscdTzuHIfWJMw5qKYzoHXGL
-	Ny6JopUmWyPH7lOPsuMst31k
-X-Google-Smtp-Source: AGHT+IFuablBweluNoAErF8Ts6izUCEqEiWd2XIkTPhB1CIl+koFc48f3twKc4y0CmIZJ86ZwyhYew==
-X-Received: by 2002:a17:906:3299:b0:aa5:2237:67af with SMTP id a640c23a62f3a-aa580edf62dmr18804866b.9.1732651884050;
-        Tue, 26 Nov 2024 12:11:24 -0800 (PST)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa51ae7e5a3sm591107866b.160.2024.11.26.12.11.23
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 12:11:23 -0800 (PST)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa545dc7105so473403666b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 12:11:23 -0800 (PST)
-X-Received: by 2002:a17:907:c0d:b0:a9a:1437:3175 with SMTP id
- a640c23a62f3a-aa58106648cmr22735266b.51.1732651882967; Tue, 26 Nov 2024
- 12:11:22 -0800 (PST)
+	s=arc-20240116; t=1732651978; c=relaxed/simple;
+	bh=dATSUb/cm/H2kE3RhPvnpyA0SxLGuMRfNPzjgnxKGvs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UsGilZzlgAiwwABY3+PMooUhJfCB7Nl2jgPF1mzd81ICPFb0bEcVWrsh1u8U2u86AzouSfwgVk219WRWCXVYdCzx85cDSBycWr9iw+RmYG8M+NtUcu6psh678t3/D/R6QKqlXbBeMjWtX3xt3+dQRfTGyznmXLQxf/Q2kFOXmPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=RR9BpE9d; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=i8SqavSewzD1TGIVT6OBwxDtJQAOeVswFTfEkI2KfEQ=; b=RR9BpE9dyzlXZVn5bRCplQs7Pu
+	I9MpuX+zaOn3ksqFuh4qfwx37eBth1T5mnQW9Gb687ZaDhFKM5goEldB/TxppYhCAw6w90UnPhPoV
+	HO+qhIVaBwyeMeuYgKp2UjVtIXARd9xx2RN5K8raPSeQs659Nha4xBt44791XwDCV/GDfWG8w25cl
+	fi8ZGoT5gXY9bmlKMFbdeAMSI1kp8BAzUe5/rU1G81/13yRD86bm6xUDu+6naGC21NB5Dw0PQLGUZ
+	Z+ANj4Ju2eQRzfBppEpi0Dy2iS7+plve2HupOPafDlT4N3Hh+5XFk7xEUqQ8WB1dUOkHERRgozHch
+	TUMv9u6A==;
+Received: from i5e86190f.versanet.de ([94.134.25.15] helo=phil..)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tG1ux-0002yD-VN; Tue, 26 Nov 2024 21:12:16 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: heiko@sntech.de
+Cc: andy.yan@rock-chips.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org,
+	Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	quentin.schulz@cherry.de
+Subject: [PATCH v2 0/3] drm/rockchip: Add driver for the new DSI2 controller
+Date: Tue, 26 Nov 2024 21:12:10 +0100
+Message-ID: <20241126201213.522753-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202411210651.CD8B5A3B98@keescook> <CAHk-=wjMagH_5-_8KhAOJ+YSjXUR5FELYxFgqtWBHOhKyUzGxA@mail.gmail.com>
- <05F133C4-DB2D-4186-9243-E9E18FCBF745@kernel.org>
-In-Reply-To: <05F133C4-DB2D-4186-9243-E9E18FCBF745@kernel.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 26 Nov 2024 12:11:06 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgEjs8bwSMSpoyFRiUT=_NEFzF8BXFEvYzVQCu8RD=WmA@mail.gmail.com>
-Message-ID: <CAHk-=wgEjs8bwSMSpoyFRiUT=_NEFzF8BXFEvYzVQCu8RD=WmA@mail.gmail.com>
-Subject: Re: [GIT PULL] execve updates for v6.13-rc1 (take 2)
-To: Kees Cook <kees@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "Eric W. Biederman" <ebiederm@xmission.com>, 
-	Nir Lichtman <nir@lichtman.org>, Tycho Andersen <tandersen@netflix.com>, 
-	Vegard Nossum <vegard.nossum@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 25 Nov 2024 at 21:10, Kees Cook <kees@kernel.org> wrote:
->
-> For the new implementation, do you want to wait a full dev cycle for
-> it to bake in -next or should I send what I proposed based on your and
-> Al's suggestions for this merge window?
+This series adds a bridge and glue driver for the DSI2 controller found
+in the rk3588 soc from Rockchip, that is based on a Synopsis IP block.
 
-So honestly, the more I look at our current implementation, the more I
-dislike this code.
+As the manual states:
+The Display Serial Interface 2 (DSI-2) is part of a group of communication
+protocols defined by the MIPI Alliance. The MIPI DSI-2 Host Controller is
+a digital core that implements all protocol functions defined in the
+MIPI DSI-2 Specification.
 
-And it looks like __set_task_comm() is actually buggy right now,
-because while we have a comment in linux/sched.h that says
 
- *   The strscpy_pad() in __set_task_comm() can ensure that the task comm is
- *   always NUL-terminated and zero-padded.
+While the driver structure is very similar to the previous DSI controller,
+the programming model of the core is quite different, with a completely
+new register set.
 
-that isn't actually true, because it looks like sized_strscpy()
-actually adds the final NUL at the end. I think that's because Andrew
-only merged a partial patch series.
+Another notable difference is that the phy interface is variable now too
+in its width and some other settings.
 
-The task_lock() doesn't help that issue, because readers don't take it
-(and never really did: the '%s'+tsk->comm pattern has always existed).
+changes in v2:
+- clean up includes (Diederik)
+- fix Kconfig description (Diederik)
+- constant naming (Diederik)
+- binding fixes (paths, sorting, labels) (Rob)
+- move to use regmap
+- drop custom UPDATE macro and use FIELD_PREP instead
+- use dev_err instead of DRM_DEV_ERROR
 
-End result: I think we should get rid of the pointless task_lock,
-explicitly make sure it's NUL-terminated, and do the actual comm[]
-setup in alloc_bprm() where we make all these decisions anyway.
 
-So something like the attached. But it's *ENTIRELY* untested.  It
-looks ObviouslyCorrect(tm), but hey, things always do until somebody
-finds some obvious bug. If this tests ok, I think it could make 6.13,
-but ...
+Heiko Stuebner (3):
+  drm/bridge/synopsys: Add MIPI DSI2 host controller bridge
+  dt-bindings: display: rockchip: Add schema for RK3588 DW DSI2
+    controller
+  drm/rockchip: Add MIPI DSI2 glue driver for RK3588
 
-And I'm looking at the other uses of bprm->filename for the fdpath
-case, and it's all horrible. Yes, it's the scripting, but it's also
-bprm->exec + AT_EXECFN. So we're passing in those fake pathnames that
-won't actually work if the fd is used for something else, and that I
-think could be used as an attack vector if any user space actually
-trusts them.
+ .../rockchip/rockchip,rk3588-mipi-dsi2.yaml   |  119 ++
+ drivers/gpu/drm/bridge/synopsys/Kconfig       |    6 +
+ drivers/gpu/drm/bridge/synopsys/Makefile      |    1 +
+ .../gpu/drm/bridge/synopsys/dw-mipi-dsi2.c    | 1030 +++++++++++++++++
+ drivers/gpu/drm/rockchip/Kconfig              |   10 +
+ drivers/gpu/drm/rockchip/Makefile             |    1 +
+ .../gpu/drm/rockchip/dw-mipi-dsi2-rockchip.c  |  523 +++++++++
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c   |    2 +
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.h   |    1 +
+ include/drm/bridge/dw_mipi_dsi2.h             |   95 ++
+ 10 files changed, 1788 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip,rk3588-mipi-dsi2.yaml
+ create mode 100644 drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c
+ create mode 100644 drivers/gpu/drm/rockchip/dw-mipi-dsi2-rockchip.c
+ create mode 100644 include/drm/bridge/dw_mipi_dsi2.h
 
-That all looks horrid. I *really* wish we generated the real pathname instead.
+-- 
+2.45.2
 
-Oh well. That's a separate issue.
-
-      Linus
 
