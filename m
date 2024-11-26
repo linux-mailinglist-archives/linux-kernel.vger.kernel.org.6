@@ -1,100 +1,114 @@
-Return-Path: <linux-kernel+bounces-422230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CCF19D9638
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:26:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D00C9D9639
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:26:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 082EDB29A3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:24:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36C8F165B7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7F391CB528;
-	Tue, 26 Nov 2024 11:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A58A1CEAD5;
+	Tue, 26 Nov 2024 11:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pqUCm+4T"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RuqMzKAh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE431CDA04;
-	Tue, 26 Nov 2024 11:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02514139D07;
+	Tue, 26 Nov 2024 11:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732620241; cv=none; b=kS/bRAJFdgvCEwAly+TftP6FfkOqwGHNfyXa99Od7oEgzDitrF/qhe0+u4dICocrFk0YYn7eeGOxmNz/GtroWEl+5gzhWX2lcxqzp7/ag8isavmOUUUxLoiRhTNUmlXiyEjB11b9pVNwoDRdSDjkGBjrm8dTO3pQeSjHlOfUyjo=
+	t=1732620379; cv=none; b=iSFB2uTvq7zftq1q4M71SZobDSmdjRkGtCzyiawHFHrdQknL051MspL+5A+Q1VXcPEoDtQGaL0uFlvL9ucH9f1kxGAyq3z2hdjO7I9VR7Pppyy7nndS+qBn55CH6cpvReR85qJ9lcnQEOJHccQWKyiVTicj1cXMjvnBOrEgNtsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732620241; c=relaxed/simple;
-	bh=NG4Fme6WrdHPchD+F/QXIvlANZyM9NXZWA8t1UaOAjM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O9BjAw+nLoMha87OAtzCA0+8ofvTKp1WyvAKBDJm1koDGUhutJEVe9gomvktePHKDv88wUjSF35ZuXgm38Of6i/I8E38xUTW9Ld2KFnZ/tm1zyMdGV+cwVPLyrZldmJQvD8XfGv7kf2eKWhVmO9Chv8hKLUUmJ/m5LjFJqjxePs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pqUCm+4T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5C86C4CECF;
-	Tue, 26 Nov 2024 11:23:59 +0000 (UTC)
+	s=arc-20240116; t=1732620379; c=relaxed/simple;
+	bh=3uT0PT2l/EMNqqJ+IljppA8Zcm78dK8fD25uA3im1Vo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MRJ+uCxlOIDyMSWIcwNKEHRttz2kyiEix89qECFpwi5gmDtaNL+sgQqJ/ICfEZmooCtg2fsTAipOJnKaTUVk4x2sNxnj/xxzq3Tw8+7PcuFcZb+lr5oOFI9ADyKMudyp2MgA6OU/XHG3icAMM812ZPEzjs+dG0hQtc5t8VVxAT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RuqMzKAh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E69CC4CECF;
+	Tue, 26 Nov 2024 11:26:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732620240;
-	bh=NG4Fme6WrdHPchD+F/QXIvlANZyM9NXZWA8t1UaOAjM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pqUCm+4TlH64jqWW5iqtpjIKF6HqNuNXURbfKBPEFWd0GeoiyhBmzeMFPJ3WJCqfm
-	 B2jhXn8lwWKIr1IYxZjm39YgpH2TD0nI9zc5hXbKqeVuvf56Biom9dKfoXAuNJdguO
-	 H1VTclMj6cUZVmF/qWBatZDctcNcHQDmZPVb3UoQR6iuMPYLOGDdDy4xtGhI9koDJn
-	 zSrl8MAf10hjsaEGyeJNkUiRjti5hOhkgrpxTcTg7c/3Vpd/Srwm0695dCUFSerEJw
-	 idUrdZSheUUuZu6w6gK4h+oxtVuol8+1Y7kLz+hut0dE3kHeCrIQEPFCeQzTfG0nC7
-	 vIB+2qwAI4Gkw==
-Date: Tue, 26 Nov 2024 11:23:56 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: =?iso-8859-1?B?Q3Pza+FzLA==?= Bence <csokas.bence@prolan.hu>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the spi-fixes
- tree
-Message-ID: <eead71a4-c3a4-4a93-b784-db0f2d9df680@sirena.org.uk>
-References: <20241126074525.6131a32b@canb.auug.org.au>
+	s=k20201202; t=1732620378;
+	bh=3uT0PT2l/EMNqqJ+IljppA8Zcm78dK8fD25uA3im1Vo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RuqMzKAhUhEfzY1flCqit/P2+fpsu1IwmCeNO5QcxWSbhmIuWjMdyC1kgxJW+ie5m
+	 Qw2TTnI/OkKRP99w237QnMz9RGpHvUTUkdffwgqnzIs+lnmemqMTF9HX2Y0GnLVWHj
+	 7CBs5By7g4o0UXjDa/tPuaPOdMIRyFpXO0O6JPaa/ANZ5d9yKtmwn175tBEWswpqvU
+	 ptmfLDWBOLuETX83Ep/swMmG1RpnuuZ3qNhXUn9RmWMLYrF6hFIGt8HSxkImDfHrPp
+	 mlxh+MnlscUX1YRWtjeRy2neHnFxx/qrxnisofBAwOD3FneSxoyn66x/UWS/5u+iDw
+	 bzZ3/uqMI3YqA==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs ecryptfs mount api
+Date: Tue, 26 Nov 2024 12:26:04 +0100
+Message-ID: <20241126-vfs-ecryptfs-f20bc3c7b06e@brauner>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8sc0u67vun+wZ30s"
-Content-Disposition: inline
-In-Reply-To: <20241126074525.6131a32b@canb.auug.org.au>
-X-Cookie: Have a taco.
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1571; i=brauner@kernel.org; h=from:subject:message-id; bh=3uT0PT2l/EMNqqJ+IljppA8Zcm78dK8fD25uA3im1Vo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS7bgjsXKFRFXys5z+nddahA3wVSluf+pdml24ofvrQ+ DSXtKlVRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwETeHGX47yfKn/+xhufwxxcP LKW+6DTPt1N0OvqAN+HFyyWLZyxUa2ZkuGJmWzwl+vUS9S1b5Oz0BdKFXIIEv7RsC1stvCdc1uI JEwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
+Hey Linus,
 
---8sc0u67vun+wZ30s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+/* Summary */
+This contains the work to convert ecryptfs to the new mount api.
 
-On Tue, Nov 26, 2024 at 07:45:25AM +1100, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Commit
->=20
->   1c6f3eb4f394 ("spi: atmel-quadspi: Fix register name in verbose logging=
- function")
->=20
-> is missing a Signed-off-by from its author.
+/* Testing */
 
-That's a git bug, the mail had a signoff but git corrupted it on the way
-in.
+gcc version 14.2.0 (Debian 14.2.0-6)
+Debian clang version 16.0.6 (27+b1)
 
---8sc0u67vun+wZ30s
-Content-Type: application/pgp-signature; name="signature.asc"
+All patches have been sitting in linux-next.
+No build failures or warnings were observed.
 
------BEGIN PGP SIGNATURE-----
+/* Conflicts */
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdFr8wACgkQJNaLcl1U
-h9BT8Qf8Ct55RTan5X6waWSVWAaA/8uwrUESUzrG/L+Zg8Jpsv3M7DkRs6WMpII2
-fKuOLzT0KqM6PxEm05uQnzXUTl57WQQ23yec8XRTXhlTApKFL/XPS9MJZBWU2xDW
-rH/n9OPAgO2VMYlbAD+dFM++VcrLOuHnLo9JGQ9+YKPvCixtaoRjusswpcnB+DgI
-Oxs0+pgXL8aA95xPAsFSDu2bA7yPi7QLMkzMO0a3oRkHrZtlBT8VTXQG7/niurdJ
-4TIKa5nrNvQJ7D9OD09TW6tpEXkmVGaX8Xh5lGSzqecgpWUTGN1T9Cm92VfSlRaU
-VrjyiyLOcY7D8Z6b6ZJ5+fdQnyo5yQ==
-=kvMg
------END PGP SIGNATURE-----
+Merge conflicts with mainline
+=============================
 
---8sc0u67vun+wZ30s--
+No known conflicts.
+
+Merge conflicts with other trees
+================================
+
+No known conflicts.
+
+The following changes since commit b4201b51d93eac77f772298a96bfedbdb0c7150c:
+
+  Merge patch series "Convert ecryptfs to use folios" (2024-11-05 17:20:17 +0100)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.13.ecryptfs.mount.api
+
+for you to fetch changes up to 7ff3e945a35ac472c6783403eae1e7519d96f1cf:
+
+  ecryptfs: Fix spelling mistake "validationg" -> "validating" (2024-11-15 11:51:29 +0100)
+
+----------------------------------------------------------------
+vfs-6.13.ecryptfs.mount.api
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      Merge patch series "ecryptfs: convert to the new mount API"
+
+Colin Ian King (1):
+      ecryptfs: Fix spelling mistake "validationg" -> "validating"
+
+Eric Sandeen (2):
+      ecryptfs: Factor out mount option validation
+      ecryptfs: Convert ecryptfs to use the new mount API
+
+ fs/ecryptfs/main.c | 401 +++++++++++++++++++++++++++--------------------------
+ 1 file changed, 205 insertions(+), 196 deletions(-)
 
