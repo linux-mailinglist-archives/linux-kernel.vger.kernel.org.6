@@ -1,331 +1,253 @@
-Return-Path: <linux-kernel+bounces-422635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AEC09D9C43
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:17:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 823709D9C48
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:18:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEE30282718
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:17:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06E5016570D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:18:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DD31DB522;
-	Tue, 26 Nov 2024 17:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4723C1DB372;
+	Tue, 26 Nov 2024 17:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GpRy+KKo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rCHFkhE8"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1261DA0ED;
-	Tue, 26 Nov 2024 17:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB7D1D63FD;
+	Tue, 26 Nov 2024 17:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732641417; cv=none; b=YmBIi9nJPb+aDlKp7h41K6ghPXnhbsFbpVOgHTWYjCx123D/iSQyQxAY7JrlH84B4R5zyRSJ0F8kyMAfgto5U7a0jQRhgadIL3AjxWKzaLkEF8DwoWBpH4dDvD5aE+Fe36dHaLknlr2Z9R8ddaBq8KZtVqJIeArl00fA1aNcAH0=
+	t=1732641529; cv=none; b=fs1ooljml3IRr8w8IJGZA4Ll38GrGBs1synaN16PqgysfAjjJxJN/38oxNwf4dD+Gn26COmoGKSXTrzSTHitUKMylnLNmk12YxNizMv3Kn/14qcX8NurYO8RpJIt8bTtRvFvBzQtQO6AfaemqNgUgIKy/NxU8pUdNf2Fc25e3Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732641417; c=relaxed/simple;
-	bh=BoFX0DFtyDhgk1jysACLSTIFLU8ZzZ2tVfhovrAqrK0=;
+	s=arc-20240116; t=1732641529; c=relaxed/simple;
+	bh=A13X/r8EK4owMjansXWgMglbM7vFAFT46TCkQl2KNvc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eFpTj/KeD91C43WximcEUG824oRBYz83LlVibaNA7UO8TyAcTihPxmhqC+SjPHO28J9aW3GnesGONFmFhae/4o7YEwTnQi9l+nUJTsVFLvc3nHcDteiu6zSiHr9nmHhDWV0YKSor62VCoulVGEANR1t8GEvjwT7wiUMiqJ2ZYIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GpRy+KKo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73616C4CED0;
-	Tue, 26 Nov 2024 17:16:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732641417;
-	bh=BoFX0DFtyDhgk1jysACLSTIFLU8ZzZ2tVfhovrAqrK0=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=EsdYHOYBeqYMSt5HB1hDxj9Vrua2Hu2ajNpBKKtBPyXtsieryyoAJd9iSJKwkbHBM8N8qEFsPXMPgteuKYSL2HiYW6k0b3O3v4a3gOka9gujieuU+CFrrdW7dJ7rlmKEn+9h+VXERMK2SGUU8Acfys9lVPQ5fDIFZ2N5N4LMQq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=rCHFkhE8; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 843BF526;
+	Tue, 26 Nov 2024 18:18:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732641503;
+	bh=A13X/r8EK4owMjansXWgMglbM7vFAFT46TCkQl2KNvc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GpRy+KKoH57jcDK9OWxgUTm7iqspxILcnn7ZMW2GOsVOhQRuVzVm5hpUA5oi88LGv
-	 9sKoBZr6xXI90G1YQRku4DtE42qmJGeECJr55ALsIa0QXfVumHtwIcjbDmmDMhp1AE
-	 +P13OHuulF6MV/uU+16u8kCA/7BynarB32nwJAPm6XfoW/STSpTw2SNtTBc53g5YP/
-	 ak9ZTBOy1DKRW2J5/kGkoaXtpuGL9+EXct9oKweQqcfWHDMyTecwL/qiNpDBYls5gC
-	 ZuYBgR5InrN5hAr1v/BmFBJ8lub4sbFjByscr6Jn9pk1+wMQx4Dx0pknxBejIp7GAC
-	 Q4KKiPM5AOmMg==
-Date: Tue, 26 Nov 2024 14:16:54 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>, Leo Yan <leo.yan@arm.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH V15 0/7] perf/core: Add ability for an event to "pause"
- or "resume" AUX area tracing
-Message-ID: <Z0YChjympWOZeu1e@x1>
-References: <20241114101711.34987-1-adrian.hunter@intel.com>
- <9bb112f8-0af1-4517-a4b8-bd2edacce07c@intel.com>
+	b=rCHFkhE8zOHxmjQkNDlSGkdkt+Hn7rxBxk+QHXVZDdUI972ES9JgFb5Oi086QeWaL
+	 Z1N6jlPOajJJPt81cTtBz9pzADJ5SzuygAgfR47tChCI6qy9avIb7Q1AyyW9RZyHHl
+	 jD34lFw6DUb1NZdgCx6EA92bfsCBKsSefX5PraNY=
+Date: Tue, 26 Nov 2024 19:18:36 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	Yunke Cao <yunkec@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a
+ subdevice
+Message-ID: <20241126171836.GA23391@pendragon.ideasonboard.com>
+References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
+ <5b5f3bb7-7933-4861-be81-30345e333395@redhat.com>
+ <CANiDSCta62P5+1aR9Ks8c6sd3_grCV3C+Le=UjKGkiohyf0R2g@mail.gmail.com>
+ <55c76c99-dc86-41b2-84c6-d2e844530f67@redhat.com>
+ <CANiDSCtvLB=tWb7ZCFCw9gn26R2xHnOf=yTLj+M_4AuQKYvgOQ@mail.gmail.com>
+ <9779fcb0-e28d-4651-b04c-ca492e30c452@redhat.com>
+ <CANiDSCsY_uCRyO2NAmxob12=DSa3h+CXg_MaMWLrjMFz1_Ru-g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9bb112f8-0af1-4517-a4b8-bd2edacce07c@intel.com>
+In-Reply-To: <CANiDSCsY_uCRyO2NAmxob12=DSa3h+CXg_MaMWLrjMFz1_Ru-g@mail.gmail.com>
 
-On Tue, Nov 26, 2024 at 02:59:02PM +0200, Adrian Hunter wrote:
-> On 14/11/24 12:17, Adrian Hunter wrote:
-> > Hi
-> > 
-> > Note for V15:
-> > 	Same as V14 but without kernel patches because they have been
-> > 	applied, and updated "missing_features" patch for the new way
-> > 	of detecting missing features.
+On Tue, Nov 26, 2024 at 05:22:20PM +0100, Ricardo Ribalda wrote:
+> On Mon, 25 Nov 2024 at 15:02, Hans de Goede wrote:
+> > On 25-Nov-24 2:39 PM, Ricardo Ribalda wrote:
+> > > On Mon, 25 Nov 2024 at 13:25, Hans de Goede wrote:
+> > >> On 9-Nov-24 5:29 PM, Ricardo Ribalda wrote:
+> > >>
+> > >> <snip>
+> > >>
+> > >>>> I have been discussing UVC power-management with Laurent, also
+> > >>>> related to power-consumption issues caused by libcamera's pipeline
+> > >>>> handler holding open the /dev/video# node as long as the camera
+> > >>>> manager object exists.
+> > >>
+> > >> <snip>
+> > >>
+> > >>>> Here is what I have in mind for this:
+> > >>>>
+> > >>>> 1. Assume that the results of trying a specific fmt do not change over time.
+> > >>>>
+> > >>>> 2. Only allow userspace to request fmts which match one of the enum-fmts ->
+> > >>>>    enum-frame-sizes -> enum-frame-rates tripplet results
+> > >>>>    (constrain what userspace requests to these)
+> > >>>>
+> > >>>> 3. Run the equivalent of tryfmt on all possible combinations (so the usaul
+> > >>>>    3 levels nested loop for this) on probe() and cache the results
+> > >>>>
+> > >>>> 4. Make try_fmt / set_fmt not poweron the device but instead constrain
+> > >>>>    the requested fmt to one from our cached fmts
+> > >>>>
+> > >>>> 5. On stream-on do the actual power-on + set-fmt + verify that we get
+> > >>>>    what we expect based on the cache, and otherwise return -EIO.
+> > >>>
+> > >>> Can we start powering up the device during try/set fmt and then
+> > >>> implement the format caching as an improvement?
+> > >>
+> > >> Yes, actually looking at how complex this is when e.g. also taking
+> > >> controls into account I think that taking small steps is a good idea.
+> > >>
+> > >> I have lately mostly been working on sensor drivers where delaying
+> > >> applying format settings + all controls to stream-on is normal.
+> > >>
+> > >> So that is the mental model I'm applying to uvc here, but that might
+> > >> not be entirely applicable.
+> > >>
+> > >>> Laurent mentioned that some cameras missbehave if a lot of controls
+> > >>> are set during probing. I hope that this approach does not trigger
+> > >>> those, and if it does it would be easier to revert if we do the work
+> > >>> in two steps.
+> > >>
+> > >> Ack, taking small steps sounds like a good plan.
+> > >>
+> > >> <snip>
+> > >>
+> > >>>> This should also make camera enumeration faster for apps, since
+> > >>>> most apps / frameworks do the whole 3 levels nested loop for this
+> > >>>> on startup, for which atm we go out to the hw, which now instead
+> > >>>> will come from the fmts cache and thus will be much much faster,
+> > >>>> so this should lead to a noticeable speedup for apps accessing UVC
+> > >>>> cameras which would be another nice win.
+> > >>>>
+> > >>>> Downside is that the initial probe will take longer see we do
+> > >>>> all the tryfmt-s there now. But I think that taking a bit longer
+> > >>>> to probe while the machine is booting should not be an issue.
+> > >>>
+> > >>> How do you pretend to handle the controls? Do you plan to power-up the
+> > >>> device during s_ctrl() or set them only during streamon()?
+> > >>> If we power-up the device during s_ctrl we need to take care of the
+> > >>> asynchronous controls (typically pan/tilt/zoom), The device must be
+> > >>> powered until the control finishes, and the device might never reply
+> > >>> control_done if the firmware is not properly implemented.
+> > >>> If we set the controls only during streamon, we will break some
+> > >>> usecases. There are some video conferencing equipment that do homing
+> > >>> during streamoff. That will be a serious API breakage.
+> > >>
+> > >> How to handle controls is a good idea.
+> > >>
+> > >> Based on my sensor experience my initial idea was to just cache them
+> > >> all. Basically make set_ctrl succeed but do not actually do anyhing
+> > >> when the camera is not already powered on and then on stream-on call
+> > >> __v4l2_ctrl_handler_setup() to get all current values applied.
+> > >>
+> > >> But as you indicate that will likely not work well with async controls,
+> > >> although we already have this issue when using v4l2-ctl from the cmdline
+> > >> on such a control and that seems to work fine.
+> > >
+> > > -----
+> > >> Just because we allow
+> > >> the USB connection to sleep, does not mean that the camera cannot finish
+> > >> doing applying the async control.
+> > >>
+> > > Not sure what you mean with this sentence. Could you explain it
+> > > differently? Sorry
+> > >
+> > >> But I can see how some cameras might not like this and having 2 different
+> > >> paths for different controls also is undesirable.
+> > >>
+> > >> Combine that with what Laurent said about devices not liking it when
+> > >> you set too much controls in a short time and I do think we need to
+> > >> immediately apply ctrls.
+> > >>
+> > >> I see 2 ways of doing that:
+> > >>
+> > >> 1. Use pm_runtime_set_autosuspend_delay() with a delay of say 1 second
+> > >> and then on set_ctrl do a pm_runtime_get_sync() +
+> > >> pm_runtime_put_autosuspend() giving the camera 1 second to finish
+> > >> applying the async ctrl (which might not be enough for e.g homing) +
+> > >> also avoid doing suspend + resume all the time if multiple ctrls are send
+> > >
+> > > What about 1.5:
+> > >
+> > > during s_ctrl():
+> > > usb_autopm_get_interface()
+> > > if the control is UVC_CTRL_FLAG_ASYNCHRONOUS.
+> > >        usb_autopm_get_interface()
+> > > set the actual control in the hardware
+> > > usb_autopm_put_interface()
+> > >
+> > > during uvc_ctrl_status_event():
+> > >    usb_autopm_put_interface()
+> >
+> > How do we match this to the usb_autopm_get_interface()
+> > call ? At a minimum we would need some counter to
+> > track pending (not acked through status interrupt urb)
+> > async control requests and only do the put() if that
+> > counter >= 1 (and then decrease the counter).
+> >
+> > We don't want to do unbalanced puts here in case of
+> > buggy cameras sending unexpected / too many
+> > ctrl status events.
+
+We would need a counter indeed, which is a big red flag of bad
+engineering. It will be fragile at best.
+
+> > > during close():
+> > >    send all the missing usb_autopm_put_interface()
+> >
+> > Except for my one remark this is an interesting
+> > proposal.
 > 
-> Still apply
-
-So the kernel part is in, I'll go over this after getting a machine with
-a kernel with those features so that I can test it all together.
-
-- Arnaldo
- 
-> > Hardware traces, such as instruction traces, can produce a vast amount of
-> > trace data, so being able to reduce tracing to more specific circumstances
-> > can be useful.
-> > 
-> > The ability to pause or resume tracing when another event happens, can do
-> > that.
-> > 
-> > These patches add such a facilty and show how it would work for Intel
-> > Processor Trace.
-> > 
-> > Maintainers of other AUX area tracing implementations are requested to
-> > consider if this is something they might employ and then whether or not
-> > the ABI would work for them.  Note, thank you to James Clark (ARM) for
-> > evaluating the API for Coresight.  Suzuki K Poulose (ARM) also responded
-> > positively to the RFC.
-> > 
-> > Changes to perf tools are now (since V4) fleshed out.
-> > 
-> > Please note, Intel® Architecture Instruction Set Extensions and Future
-> > Features Programming Reference March 2024 319433-052, currently:
-> > 
-> > 	https://cdrdv2.intel.com/v1/dl/getContent/671368
-> > 
-> > introduces hardware pause / resume for Intel PT in a feature named
-> > Intel PT Trigger Tracing.
-> > 
-> > For that more fields in perf_event_attr will be necessary.  The main
-> > differences are:
-> > 	- it can be applied not just to overflows, but optionally to
-> > 	every event
-> > 	- a packet is emitted into the trace, optionally with IP
-> > 	information
-> > 	- no PMI
-> > 	- works with PMC and DR (breakpoint) events only
-> > 
-> > Here are the proposed additions to perf_event_attr, please comment:
-> > 
-> > diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
-> > index 0c557f0a17b3..05dcc43f11bb 100644
-> > --- a/tools/include/uapi/linux/perf_event.h
-> > +++ b/tools/include/uapi/linux/perf_event.h
-> > @@ -369,6 +369,22 @@ enum perf_event_read_format {
-> >  	PERF_FORMAT_MAX = 1U << 5,		/* non-ABI */
-> >  };
-> >  
-> > +enum {
-> > +	PERF_AUX_ACTION_START_PAUSED		=   1U << 0,
-> > +	PERF_AUX_ACTION_PAUSE			=   1U << 1,
-> > +	PERF_AUX_ACTION_RESUME			=   1U << 2,
-> > +	PERF_AUX_ACTION_EMIT			=   1U << 3,
-> > +	PERF_AUX_ACTION_NR			= 0x1f << 4,
-> > +	PERF_AUX_ACTION_NO_IP			=   1U << 9,
-> > +	PERF_AUX_ACTION_PAUSE_ON_EVT		=   1U << 10,
-> > +	PERF_AUX_ACTION_RESUME_ON_EVT		=   1U << 11,
-> > +	PERF_AUX_ACTION_EMIT_ON_EVT		=   1U << 12,
-> > +	PERF_AUX_ACTION_NR_ON_EVT		= 0x1f << 13,
-> > +	PERF_AUX_ACTION_NO_IP_ON_EVT		=   1U << 18,
-> > +	PERF_AUX_ACTION_MASK			= ~PERF_AUX_ACTION_START_PAUSED,
-> > +	PERF_AUX_PAUSE_RESUME_MASK		= PERF_AUX_ACTION_PAUSE | PERF_AUX_ACTION_RESUME,
-> > +};
-> > +
-> >  #define PERF_ATTR_SIZE_VER0	64	/* sizeof first published struct */
-> >  #define PERF_ATTR_SIZE_VER1	72	/* add: config2 */
-> >  #define PERF_ATTR_SIZE_VER2	80	/* add: branch_sample_type */
-> > @@ -515,10 +531,19 @@ struct perf_event_attr {
-> >  	union {
-> >  		__u32	aux_action;
-> >  		struct {
-> > -			__u32	aux_start_paused :  1, /* start AUX area tracing paused */
-> > -				aux_pause        :  1, /* on overflow, pause AUX area tracing */
-> > -				aux_resume       :  1, /* on overflow, resume AUX area tracing */
-> > -				__reserved_3     : 29;
-> > +			__u32	aux_start_paused  :  1, /* start AUX area tracing paused */
-> > +				aux_pause         :  1, /* on overflow, pause AUX area tracing */
-> > +				aux_resume        :  1, /* on overflow, resume AUX area tracing */
-> > +				aux_emit          :  1, /* generate AUX records instead of events */
-> > +				aux_nr            :  5, /* AUX area tracing reference number */
-> > +				aux_no_ip         :  1, /* suppress IP in AUX records */
-> > +				/* Following apply to event occurrence not overflows */
-> > +				aux_pause_on_evt  :  1, /* on event, pause AUX area tracing */
-> > +				aux_resume_on_evt :  1, /* on event, resume AUX area tracing */
-> > +				aux_emit_on_evt   :  1, /* generate AUX records instead of events */
-> > +				aux_nr_on_evt     :  5, /* AUX area tracing reference number */
-> > +				aux_no_ip_on_evt  :  1, /* suppress IP in AUX records */
-> > +				__reserved_3      : 13;
-> >  		};
-> >  	};
-> > 
-> > 
-> > Changes in V15:
-> >       perf/x86/intel/pt: Fix buffer full but size is 0 case
-> >       perf/core: Add aux_pause, aux_resume, aux_start_paused
-> >       perf/x86/intel/pt: Add support for pause / resume
-> >       perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
-> > 	Dropped kernel patches because they have been applied
-> > 
-> >       perf tools: Add missing_features for aux_start_paused, aux_pause, aux_resume
-> > 	Re-base on new API probe method of missing feature detection
-> > 	and add probe for aux_action.
-> > 
-> > Changes in V14:
-> >       Dropped KVM patches
-> > 
-> >       perf/x86/intel/pt: Add support for pause / resume
-> > 	Set pt->handle_nmi after configuration is completed instead of during
-> > 
-> > Changes in V13:
-> >       perf/core: Add aux_pause, aux_resume, aux_start_paused
-> > 	Do aux_resume at the end of __perf_event_overflow() so as to trace
-> > 	less of perf itself
-> > 
-> >       perf tools: Add missing_features for aux_start_paused, aux_pause, aux_resume
-> > 	Add error message also in EOPNOTSUPP case (Leo)
-> > 
-> > Changes in V12:
-> > 	Add previously sent patch "perf/x86/intel/pt: Fix buffer full
-> > 	but size is 0 case"
-> > 
-> > 	Add previously sent patch set "KVM: x86: Fix Intel PT Host/Guest
-> > 	mode when host tracing"
-> > 
-> > 	Rebase on current tip plus patch set "KVM: x86: Fix Intel PT Host/Guest
-> > 	mode when host tracing"
-> > 
-> > Changes in V11:
-> >       perf/core: Add aux_pause, aux_resume, aux_start_paused
-> > 	Make assignment to event->hw.aux_paused conditional on
-> > 	(pmu->capabilities & PERF_PMU_CAP_AUX_PAUSE).
-> > 
-> >       perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
-> > 	Remove definition of has_aux_action() because it has
-> > 	already been added as an inline function.
-> > 
-> >       perf/x86/intel/pt: Fix sampling synchronization
-> >       perf tools: Enable evsel__is_aux_event() to work for ARM/ARM64
-> >       perf tools: Enable evsel__is_aux_event() to work for S390_CPUMSF
-> > 	Dropped because they have already been applied
-> > 
-> > Changes in V10:
-> >       perf/core: Add aux_pause, aux_resume, aux_start_paused
-> > 	Move aux_paused into a union within struct hw_perf_event.
-> > 	Additional comment wrt PERF_EF_PAUSE/PERF_EF_RESUME.
-> > 	Factor out has_aux_action() as an inline function.
-> > 	Use scoped_guard for irqsave.
-> > 	Move calls of perf_event_aux_pause() from __perf_event_output()
-> > 	to __perf_event_overflow().
-> > 
-> > Changes in V9:
-> >       perf/x86/intel/pt: Fix sampling synchronization
-> > 	New patch
-> > 
-> >       perf/core: Add aux_pause, aux_resume, aux_start_paused
-> > 	Move aux_paused to struct hw_perf_event
-> > 
-> >       perf/x86/intel/pt: Add support for pause / resume
-> > 	Add more comments and barriers for resume_allowed and
-> > 	pause_allowed
-> > 	Always use WRITE_ONCE with resume_allowed
-> > 
-> > 
-> > Changes in V8:
-> > 
-> >       perf tools: Parse aux-action
-> > 	Fix clang warning:
-> > 	     util/auxtrace.c:821:7: error: missing field 'aux_action' initializer [-Werror,-Wmissing-field-initializers]
-> > 	     821 |         {NULL},
-> > 	         |              ^
-> > 
-> > Changes in V7:
-> > 
-> > 	Add Andi's Reviewed-by for patches 2-12
-> > 	Re-base
-> > 
-> > Changes in V6:
-> > 
-> >       perf/core: Add aux_pause, aux_resume, aux_start_paused
-> > 	Removed READ/WRITE_ONCE from __perf_event_aux_pause()
-> > 	Expanded comment about guarding against NMI
-> > 
-> > Changes in V5:
-> > 
-> >     perf/core: Add aux_pause, aux_resume, aux_start_paused
-> > 	Added James' Ack
-> > 
-> >     perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
-> > 	New patch
-> > 
-> >     perf tools
-> > 	Added Ian's Ack
-> > 
-> > Changes in V4:
-> > 
-> >     perf/core: Add aux_pause, aux_resume, aux_start_paused
-> > 	Rename aux_output_cfg -> aux_action
-> > 	Reorder aux_action bits from:
-> > 		aux_pause, aux_resume, aux_start_paused
-> > 	to:
-> > 		aux_start_paused, aux_pause, aux_resume
-> > 	Fix aux_action bits __u64 -> __u32
-> > 
-> >     coresight: Have a stab at support for pause / resume
-> > 	Dropped
-> > 
-> >     perf tools
-> > 	All new patches
-> > 
-> > Changes in RFC V3:
-> > 
-> >     coresight: Have a stab at support for pause / resume
-> > 	'mode' -> 'flags' so it at least compiles
-> > 
-> > Changes in RFC V2:
-> > 
-> > 	Use ->stop() / ->start() instead of ->pause_resume()
-> > 	Move aux_start_paused bit into aux_output_cfg
-> > 	Tighten up when Intel PT pause / resume is allowed
-> > 	Add an example of how it might work for CoreSight
-> > 
-> > 
-> > Adrian Hunter (7):
-> >       perf tools: Add aux_start_paused, aux_pause and aux_resume
-> >       perf tools: Add aux-action config term
-> >       perf tools: Parse aux-action
-> >       perf tools: Add missing_features for aux_start_paused, aux_pause, aux_resume
-> >       perf intel-pt: Improve man page format
-> >       perf intel-pt: Add documentation for pause / resume
-> >       perf intel-pt: Add a test for pause / resume
-> > 
-> >  tools/include/uapi/linux/perf_event.h      |  11 +-
-> >  tools/perf/Documentation/perf-intel-pt.txt | 596 ++++++++++++++++++-----------
-> >  tools/perf/Documentation/perf-record.txt   |   4 +
-> >  tools/perf/builtin-record.c                |   4 +-
-> >  tools/perf/tests/shell/test_intel_pt.sh    |  28 ++
-> >  tools/perf/util/auxtrace.c                 |  67 +++-
-> >  tools/perf/util/auxtrace.h                 |   6 +-
-> >  tools/perf/util/evsel.c                    | 101 ++++-
-> >  tools/perf/util/evsel.h                    |   1 +
-> >  tools/perf/util/evsel_config.h             |   1 +
-> >  tools/perf/util/parse-events.c             |  10 +
-> >  tools/perf/util/parse-events.h             |   1 +
-> >  tools/perf/util/parse-events.l             |   1 +
-> >  tools/perf/util/perf_event_attr_fprintf.c  |   3 +
-> >  tools/perf/util/pmu.c                      |   1 +
-> >  15 files changed, 594 insertions(+), 241 deletions(-)
-> > 
-> > 
-> > Regards
-> > Adrian
+> I have just upload a patchset implementing this. I tried
+> v4l2-compliance and using the camera app.
 > 
+> I think it looks promissing
+> 
+> Shall we move the discussion there?
+> 
+> https://lore.kernel.org/linux-media/20241126-uvc-granpower-ng-v1-0-6312bf26549c@chromium.org/T/#t
+
+You're sending too many patch series too quickly, even before we can
+come to an agreement on any item being discussed. Experimenting is
+helpful, but if we keep moving the discussion from one series to the
+next, that won't work. Let's keep it here, and focus on one problem at a
+time, or the end result will be slower merging of the patches.
+
+> > Maybe also do a dev_warn() if there are missing
+> > usb_autopm_put_interface() calls pending on close() ?
+> >
+> > > This way:
+> > > - we do not have an artificial delay that might not work for all the use cases
+> > > - cameras with noncompliant async controls will have the same PM
+> > > behaviour as now  (will be powered on until close() )
+> > >
+> > > We do the same with the rest of the actions that require hardware access, like:
+> > > https://lore.kernel.org/linux-media/20220920-resend-powersave-v5-2-692e6df6c1e2@chromium.org/
+> > >
+> > > This way:
+> > > - Apps that do not need to access the hardware, do not wake it up, and
+> > > we do not break usecases.
+> > >
+> > > Next steps will be:
+> > >  - cache the formats
+> > >  - move the actual set_ctrl to streamon... but if we can do that I
+> > > would argue than we can move completely to the control framework.
+> >
+> > Right I had forgotten that the UVC driver does not use the control
+> > framework. I think moving to that would be a prerequisite for moving
+> > the set_ctrl to stream_on.
+
+-- 
+Regards,
+
+Laurent Pinchart
 
