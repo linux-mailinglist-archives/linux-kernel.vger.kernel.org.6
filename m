@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-422145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 067629D9515
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:05:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F13699D952D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:10:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5864F28185A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:05:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B22E9B24F50
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC3D1BC9EE;
-	Tue, 26 Nov 2024 10:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603C51C243D;
+	Tue, 26 Nov 2024 10:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r4qEN8o9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cHp4m4CQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9137195FEF;
-	Tue, 26 Nov 2024 10:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3FA219340F;
+	Tue, 26 Nov 2024 10:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732615515; cv=none; b=jvGDSulGbEEwBSaVy/L2N6rLDNtQvVaGl4gskxvDuskQje30YDfQU892JXtLqBXDu7KhD4nnhACzK4bJN2WPxc1cAYUxeNQOphZCdYpvD+s49zownMbbEKEeLyP+r/sB/kJ3pQZJGee0jryzS1uT6JMEa0eBJ854w0456M/+ns4=
+	t=1732615649; cv=none; b=NRec7fEW5In4X12cqKt6EeL5YXi0J7btGl102DNWirTYvcNu7sc73NFyC8bZeGmQiWKXXRfwpA0hP+I8x2L/CS45yyA3tFmeA/uR3TF41deuUKq4y30KRBIZPCojJxvusuz7nru9Ze4pBgQls6XhM1py5EQuYI52QUlPdqGZL8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732615515; c=relaxed/simple;
-	bh=0IcV8TUAfTMMsEZEHaHtgkBnxg7UHa6ubOK4sgYE7Cc=;
+	s=arc-20240116; t=1732615649; c=relaxed/simple;
+	bh=08V2Ehp1TurYo5xH2DUCZKDhrGeQsLgJSq0tCqQ+IRk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EVtp3ubIMOk5xRQPpSGbGB7LekQE05FDIaPRiLul4+oRNtoWENilfwg6puwaXbo39U+qCCIfrLRX3GwZdIhbKLYsQW62RjdyT5/y1tedssaNIR+p3KWkXlvuwwkwmJDIbwQ8JsV8ooJlYU//YnKIS4dtSjbvAEFCk2HifQyHWG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r4qEN8o9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3BF3C4CECF;
-	Tue, 26 Nov 2024 10:05:11 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=PBgw+LYPqD1BAfJsy2A669RQjLhTlSZ45GbMakdjhkq2s/sYAa8BQclT9fa0VYCZb9NxW1umomhP8fIIxjF/mLPzUuD7r2mqVMlFcSYV+aDv45nTR9rACcYOMCZvFdQexVrtwhYQy0eTx1LUniGbx+v+ofvcd1TCdBH5UXN0qU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cHp4m4CQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CFDBC4CECF;
+	Tue, 26 Nov 2024 10:07:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732615515;
-	bh=0IcV8TUAfTMMsEZEHaHtgkBnxg7UHa6ubOK4sgYE7Cc=;
+	s=k20201202; t=1732615649;
+	bh=08V2Ehp1TurYo5xH2DUCZKDhrGeQsLgJSq0tCqQ+IRk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=r4qEN8o9xIDQ/rFzu0OCGFHSCj3ZEnT5tIiy3vI28/f9KVcSmUsFRsqI7YbB/dI97
-	 R7DyxY4rJ1xM7Nol26EEnfdEDHZHaFLGZZ2j7tfb2cUgE+gIQ9D6MaR18S199gQaEA
-	 q8N3f0+hYmzccT0J140CKRbRHOlLlCQ1sQbmx4g9DKJKbHzv72qJUXeceyfyBDuT1z
-	 buaZMquC3uByaexcx/wZr8Q+IokiwZYbah6urkvoVHf5OLKPXOQSR7eZZ+SV6jeF6z
-	 TZqJBACGA3e21F5D5Jca1M2KMjdYjQgdv40UTD+YcwksTkRoSRHLzO2ZVsMj300TJI
-	 hcdsJjCSvkZdg==
-Message-ID: <9004a82a-56a3-4d88-b0be-7e9d45932607@kernel.org>
-Date: Tue, 26 Nov 2024 11:05:09 +0100
+	b=cHp4m4CQO8jHtjYkTVgeOzAG+TtLbiapq4/NUrSTaMYpHS8M0RijYOYitl/HGbtkV
+	 llUlWZbFdPgfYuP2vhRFGjmIrXkjQmnEHAg9sYBb61hsXN3YCnvXg8iRJigMVQ0NN7
+	 34uQRMw/0J6Q4DPsXvlEh7lP2N5B2Wc3ENCU1CuRBLO5rOyqA4bvKHemn4vUNQY5Vh
+	 mHFi6oluuVfo8YtfLwq1n/aXmHcPoCq1/n8d4LTrs9/684pFYnoY8K6+s1kewGFc+A
+	 RNVfSmmZ+koZLgoKQxtCBHLdgYIKw1Jy8T/BGNHQUFA77xNvSz7DVe0RqVPP+Yy7Te
+	 pbmIbzQ72BX/Q==
+Message-ID: <ad5893a8-d84a-4b36-bf89-08203bba726a@kernel.org>
+Date: Tue, 26 Nov 2024 11:07:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v4] arm64: dts: mt8183: set DMIC one-wire mode on
- Damu
-To: Hsin-Te Yuan <yuanhsinte@chromium.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v3 1/4] dt-bindings: qcom,qcs615-venus: add support for
+ video hardware
+To: Renjiang Han <quic_renjiang@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Hsin-Yi Wang <hsinyi@chromium.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20241126-damu-v4-1-e746eec2cb52@chromium.org>
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_qiweil@quicinc.com
+References: <20241125-add-venus-for-qcs615-v3-0-5a376b97a68e@quicinc.com>
+ <20241125-add-venus-for-qcs615-v3-1-5a376b97a68e@quicinc.com>
+ <kdyhkb3tt2lgfuopz7twxjwpfur6vuezaqlc7s7aozkz6ek2as@m2nvqcb5ww4u>
+ <7df4fded-8c20-4562-9a18-2a122733dfae@quicinc.com>
+ <d11866a7-0d43-4da6-8bee-d72b3e0649aa@kernel.org>
+ <26353cfa-5c74-4b80-933d-f719b0d4f738@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,32 +113,37 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241126-damu-v4-1-e746eec2cb52@chromium.org>
+In-Reply-To: <26353cfa-5c74-4b80-933d-f719b0d4f738@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 26/11/2024 10:57, Hsin-Te Yuan wrote:
-> From: Hsin-Yi Wang <hsinyi@chromium.org>
+On 26/11/2024 10:58, Renjiang Han wrote:
 > 
-> Sets DMIC one-wire mode on Damu.
-> 
-> Fixes: cabc71b08eb5 ("arm64: dts: mt8183: Add kukui-jacuzzi-damu board")
-> Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> On 11/26/2024 5:34 PM, Krzysztof Kozlowski wrote:
+>> On 26/11/2024 09:57, Renjiang Han wrote:
+>>>>> +description:
+>>>>> +  The Venus IP is a video encode and decode accelerator present
+>>>>> +  on Qualcomm platforms
+>>>>> +
+>>>>> +allOf:
+>>>>> +  - $ref: qcom,venus-common.yaml#
+>>>>> +
+>>>>> +properties:
+>>>>> +  compatible:
+>>>>> +    const: qcom,qcs615-venus
+>>>> Please extend sc7180-venus.yaml instead. No need to duplicate
+>>>> unnecessary things.
+>>> Thanks for your review. But I'm sorry I can't get it. The devicetree for
+>>>
+>>> qcs615-venus is in qcs615.dtsi. I'm not sure how to use sc7180-venus.yaml
+>>>
+>>> instead.
+>> DTSI is not relevant here to the bindings. I don't understand the
+>> problem, so not sure what you are asking here about.
+> The opp-table parameters are different in devicetree. Can we also use 
+> the same yaml file?
 
-Where did this happen?
-
-> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-
-And this?
-
-> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
-> ---
-> Changes in v4:
-> - Add Reviewed-by tag back, which is dropped in v3
-
-This resend is very weird. Didn't you get a replies that this was applied?
-
+Please look at existing bindings for other devices.
 
 Best regards,
 Krzysztof
