@@ -1,125 +1,138 @@
-Return-Path: <linux-kernel+bounces-422686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48A3C9D9CF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:56:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECDDC9D9CF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:56:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20540B285B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:56:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B21E2285D41
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78F81DC198;
-	Tue, 26 Nov 2024 17:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE451DD55A;
+	Tue, 26 Nov 2024 17:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P9tP9kc4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CGpCcL44"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE39D299;
-	Tue, 26 Nov 2024 17:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013541DC1A7;
+	Tue, 26 Nov 2024 17:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732643759; cv=none; b=VupR/XvGGAJPbH6oxqwEtpE7yMCWlN8mv4l/dZWHxXEkI04eFPcIljk/XaoHbqL0aQAoPZNcecc43nuFq6pP1x2HunwcocQTSgaI4rkMekkJTiBTbYdVMI+2VhXUo+jW0JnE4N4RGk7TCE1E/DKqrcsIYqaPJmnZdvAfEBobg7U=
+	t=1732643760; cv=none; b=W3t/qXomeVCkXDVCQTLpDBT83hWRlESk2mLkFU4VXPxwlMdymlm6FqyN4NQl9X+bMtniWo/NBnIQ5Gvt8Dy4TNSa5NfXG2GFcERjMBsTdjBsIJFpju5GvZ6msbwHT/m4pX0GfAGDEqQ/+ycSGbAzrUnhRoVz3u00bqEsM9z138Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732643759; c=relaxed/simple;
-	bh=sTKoC9YKhu+oFp76F51sgmnd3VaGGAems4jRqoVjgJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AIcCIsLioQ30NnaFjY9NO6kZyXtWeqxEkVgqyJlOtS/VB89NwGrkj0CLm9OiJMKx+/HY5dc09P/aA3JTM1m2NRv05HpTrDCKEqTbJvA5MXcGt5J4U4IQm5ld3bd5SPC93vXfbEgK+FX7iBsrXmKtZ3xZxQbp8LynCCfHYbVpczM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P9tP9kc4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C682BC4CECF;
-	Tue, 26 Nov 2024 17:55:55 +0000 (UTC)
+	s=arc-20240116; t=1732643760; c=relaxed/simple;
+	bh=yoe2aMfpN0ZQwA0Nsmhpzu/IECyL8ebWI8rzUr9nDcM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qiwm5+rtL5hxFmsGRODP/3vSmwSDqGaMhNt+pZ43M/6/OxtfGjn6pqYCqVFTcE0G1aU4eRS5ToBv3rELpFletjmfCojUGwoyO8NJ5DaDwjMGyNYmbwabhSy4VIgn/8kLQc5WIy6JPjI1a/nwYZGRRH4bd5yzoHRak3yvO7akfmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CGpCcL44; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B93DBC4CED2;
+	Tue, 26 Nov 2024 17:55:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732643758;
-	bh=sTKoC9YKhu+oFp76F51sgmnd3VaGGAems4jRqoVjgJ0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=P9tP9kc45VwSR3Kgvb34ekHuEUF2+b0X76qO1aHly2FoCCy7OVJHDPjMBGzTEMWYy
-	 aZsMhw9IpPtsV/d2IhBeqLlVdjyUREVMCR7nX24UKdaY0eiWh8DPNYtng7hfcWzm4G
-	 jmCbGe96AiwD/4FFm66CE6avYG+Xgrsh1NHpvQi+tXFbBWvQG4riFUQ/ioJVTa8dkD
-	 9mCWmOzXCM+QiBanfcmnfVY6sS+44M7lD3rf/hwc6VX1hkph/J9/JZrO94/gw3hHdX
-	 fUqgk+2NpgZykIBFb5N0rfb3tdHuxSMeHJ+ilRqX9i1DUuZZEUZJJ3HCVqrV+ivP03
-	 mjkNcl+SSoqDw==
-Date: Tue, 26 Nov 2024 17:55:50 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/8] iio: accel: kx022a: Use cleanup.h helpers
-Message-ID: <20241126175550.4a8bedf3@jic23-huawei>
-In-Reply-To: <bda7eaff-1315-46d0-83b4-a14060c2af1c@gmail.com>
-References: <cover.1732105157.git.mazziesaccount@gmail.com>
-	<037985fe50fe79c79b9df95fa7b4e577378f9a60.1732105157.git.mazziesaccount@gmail.com>
-	<20241123164223.25656985@jic23-huawei>
-	<bda7eaff-1315-46d0-83b4-a14060c2af1c@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1732643759;
+	bh=yoe2aMfpN0ZQwA0Nsmhpzu/IECyL8ebWI8rzUr9nDcM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CGpCcL44tIaBfqJ9h8Z6sSrq9vHUy4aknC6G7Yo/7UA9UmZIDIDMX/8kSL4GCCuo6
+	 QV5fzIM7GEq4Ta01ZJzxgDNeG0SFr1FDaCrvwzGS2acld1bmJYq67cwvE6sYlXPloa
+	 21h8NgWZvFUYQD6RyqnVUxqPLACQdFPNO78BzwBxBVo2nw4279WZVO1Ybt9IkJf/Wl
+	 dqPqmO30OHeDEypdbWQ0lJ7KTj+iATvqEI8I9bSa9Scqwz16j338xUMegFUdS6ERpI
+	 hc4lpSrUv8SguVxbCQl0N5ffOqsXIAq0FRMICd4SPqQMd58cNxqElEZ7slI/xfeqcz
+	 Hx+j55aj3Ml6g==
+Date: Tue, 26 Nov 2024 17:55:55 +0000
+From: Conor Dooley <conor@kernel.org>
+To: E Shattow <e@freeshell.de>
+Cc: Jisheng Zhang <jszhang@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/1] riscv: dts: starfive: jh7110-milkv-mars: enable
+ usb0 host function
+Message-ID: <20241126-overlying-estranged-97adaac4d1aa@spud>
+References: <20241126075740.17419-1-e@freeshell.de>
+ <20241126075740.17419-2-e@freeshell.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-
-On Mon, 25 Nov 2024 11:34:36 +0200
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-
-> Hello Jonathan,
-> 
-> Thanks again!
-> 
-> On 23/11/2024 18:42, Jonathan Cameron wrote:
-> > On Thu, 21 Nov 2024 10:20:23 +0200
-> > Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-> >   
-> >> A few functions in KX022A need to use mutex for protecting the
-> >> enabling/disabling of the measurement while configurations are being
-> >> made. Some of the functions can be slightly simplified by using the
-> >> __cleanup based scoped mutexes, which allows dropping the goto based
-> >> unlocking at error path.
-> >>
-> >> Simplify error paths using guard(mutex).
-> >>
-> >> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>  
-> > Now we have guard(), the main reason (I think) for the
-> > combined on + lock and off + unlock paths is gone. So can
-> > we just flatten those and do the locking at caller.  
-> 
-> I did consider this too :)
-> 
-> Why I decided to keep it as it is, (even though we need the extra 
-> mutex_unlock() at certain error path) is because I kind of like the 
-> lock+off and unlock+on functions. This locking does not protect data, 
-> but really a sequence of operations that needs to be done while sensor 
-> is OFF state. It's almost like a doc saying that "please, ensure the 
-> sensor is OFF for the following operations" :)
-
-hmm.  I really don't like them because they are 'unusual'  :)
-
-I'd argue they just ensure a sequence of writes go in as an atomic thing.
-Two of those writes happen to be turn it off and turn it on.
-
-So the data the are protecting is the device internal state data.
-
-> 
-> (Another thing is that we do claim the direct mode in write_raw, and 
-> goto is still handy for releasing it. Scoped guards won't play nicely 
-> with goto. Yes, we could probably use the __cleanup for direct mode, but 
-> I still like the lock+off, unlock+on for the reason above)
-There is a nice new cleanup that David did to make the direct mode
-handling much cleaner.
-
-	if_not_cond_guard(iio_claim_direct_try, indio_dev)
-		return -EBUSY;
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Z5dDKqBsszanwcNU"
+Content-Disposition: inline
+In-Reply-To: <20241126075740.17419-2-e@freeshell.de>
 
 
-> 
-> Yours,
-> 	-- Matti
-> 
+--Z5dDKqBsszanwcNU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Emil,
+
+On Mon, Nov 25, 2024 at 11:57:25PM -0800, E Shattow wrote:
+> Milk-V Mars set JH7110 on-chip USB host mode and vbus pin assignment
+>=20
+> Signed-off-by: E Shattow <e@freeshell.de>
+
+Could you look at this please?
+
+Thanks,
+Conor.
+
+> ---
+>  .../boot/dts/starfive/jh7110-milkv-mars.dts    | 18 +++++++++++++++++-
+>  1 file changed, 17 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts b/arch/ri=
+scv/boot/dts/starfive/jh7110-milkv-mars.dts
+> index 0d248b671d4b..3bd62ab78523 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
+> @@ -53,7 +53,23 @@ &spi0 {
+>  	status =3D "okay";
+>  };
+> =20
+> +&sysgpio {
+> +	usb0_pins: usb0-0 {
+> +		vbus-pins {
+> +			pinmux =3D <GPIOMUX(25, GPOUT_SYS_USB_DRIVE_VBUS,
+> +					      GPOEN_ENABLE,
+> +					      GPI_NONE)>;
+> +			bias-disable;
+> +			input-disable;
+> +			input-schmitt-disable;
+> +			slew-rate =3D <0>;
+> +		};
+> +	};
+> +};
+> +
+>  &usb0 {
+> -	dr_mode =3D "peripheral";
+> +	dr_mode =3D "host";
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&usb0_pins>;
+>  	status =3D "okay";
+>  };
+> --=20
+> 2.45.2
+>=20
+
+--Z5dDKqBsszanwcNU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0YLqwAKCRB4tDGHoIJi
+0sjcAP0XHuNi8u8P9di83xPPA/z8nh20Ql4kpuMWbj0CYh8ibgD+No+pVtoiDPwV
+dh4QqWI+PJHY/AoivxsquLxdzqhPYgg=
+=Tsrh
+-----END PGP SIGNATURE-----
+
+--Z5dDKqBsszanwcNU--
 
