@@ -1,138 +1,122 @@
-Return-Path: <linux-kernel+bounces-422691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3607F9D9D04
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:59:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B63C89D9D06
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:59:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D47EA162CAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:59:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 604B4162B5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:59:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC5BD299;
-	Tue, 26 Nov 2024 17:59:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD34A1DC18F;
+	Tue, 26 Nov 2024 17:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dWpGsXB6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="exa62MBC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48DFD1DDA18;
-	Tue, 26 Nov 2024 17:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6A61DC1A7;
+	Tue, 26 Nov 2024 17:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732643968; cv=none; b=mWGWox7vp7+j1h6+LIAYZyp673gUKoEYPjyrrRcRw7E76CbUWP5uxiwAQtF5CMXguiiIRCg8tLv5NqwmzlDFxGnzbGlk/dRABxSI+jTMxGji1wv4u6R0tFj5IXhVQ1UKo5HjU2ub8Ao9MK4Mcw3i3XauVRPXKxvLJztfu24pdjM=
+	t=1732643981; cv=none; b=hVwUPXlHbqXGn/AZYC4iWcb1mNYbKrr/IaHjz5y353t/2Me0JvhHUzcjl53k7rr8+j8zNIsH/hlp4r6Xi2T5+kAcOeQq8chREEN9/F3IdAiGt4lPuCuLJwGgNKdqRtONePnSZT8kK2EQuxELgNk698N+O9hscD0JfpvljNB1AFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732643968; c=relaxed/simple;
-	bh=NM3GF0xN32aTABQBi5Mj0ioGDDh9e9apDg1yImcCgn0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RFrHe4SOhSV/T7So56SyujQFsTjWHDV0Q3vImQr0LdF42TvUW6NajuYT2gItd4m6Gz8z1NiXCblz8YRRXPUqXWslKXA1VV9I5yM2C0Vg2XlsYGNN5cSxy0EwQVpmYK4TKec0qkYTHmg/i1+CSubVZaPsXn0NlOS3f3140vVD0EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dWpGsXB6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBC7AC4CED3;
-	Tue, 26 Nov 2024 17:59:25 +0000 (UTC)
+	s=arc-20240116; t=1732643981; c=relaxed/simple;
+	bh=BsSU6WljrzcxRmnvGoq3yIGvUt1SZPuGg17fO0jlTrE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AtKiZG2T72NOhSV6ZdQtRE1dWR2EZxMnHdWK/t7LqTO1AztR5zaqR2kQzp2efcbXZFdJiSkc3MY/M0L4k59vHzT/i2X7ND+DFDjEl89kzoyTjfDrhF/5s77CTB1X6TgtPp+tIJ85uTUdTTKTdr2b5b8Rb7+n89W3e/b2rYKBFfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=exa62MBC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2643FC4CECF;
+	Tue, 26 Nov 2024 17:59:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732643967;
-	bh=NM3GF0xN32aTABQBi5Mj0ioGDDh9e9apDg1yImcCgn0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dWpGsXB6ODZuGGJaNJGPLS9JojBHYCb0M8cziC4ZF0gAs88bnpKU+4wP4sy09NOFM
-	 AAvvEUujDVqwt9nrTqwsO4wR9V/FkIEXmwPCRQDiOqncETST7NwW9K3kPctLLmAINu
-	 pIChB5+HKrhiWMrCqpYeiVQd5S+w3+VWeD1dAKcioATZUyNTaECUBZOaM4hehcLR8L
-	 x4182JuTOpPM78EYpfGK6zUVc82c+PNIxc1pvIpnjDN144OhKuqHF3RsGpL+491ea+
-	 PiHw1GUmLK8aJ6ZfB+ytiL6iT9mDs1IXf26TZ0Q6Eiz6wHlEzRWAcSaN9WlL2s+VGc
-	 JEjCjWHtNcnzg==
-Date: Tue, 26 Nov 2024 17:59:23 +0000
-From: Conor Dooley <conor@kernel.org>
-To: E Shattow <e@freeshell.de>
-Cc: Henry Bell <dmoo_dv@protonmail.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/1] riscv: dts: starfive: jh7110-pine64-star64:
- enable usb0 host function
-Message-ID: <20241126-unbraided-underhand-680b9482a24f@spud>
-References: <20241126073836.17208-1-e@freeshell.de>
- <20241126073836.17208-2-e@freeshell.de>
+	s=k20201202; t=1732643980;
+	bh=BsSU6WljrzcxRmnvGoq3yIGvUt1SZPuGg17fO0jlTrE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=exa62MBCsYosaN1yejVJbAYazUVyjJe0WX2Dp7GmCyau3Uwk5O3/vcPW5dseqi7Ov
+	 IDKIgDiQvJwEMS16KoFxir8AJqwBrISLwJ6Z+uhFyxTAkHtxsR0ASEIn+9+OO5yRZT
+	 Hpd3tRsGbkIU4Spwrvs58+8GHt8EwuAgoGuWFj3GeM+72poKGdBAYnnxet23rCIlaS
+	 2J8O+DmQ1eMTYkPer2zUX3gyxSms/ftFcrEMdQZGr0S8eDvjwPqZAwTB7gJSICB0WT
+	 5fdSQ02l5AuoNbdgnKYSSjU1Q8NkXsrdzyOWjBJXxSkyr82pye+L9RpfdqnX6JKDI1
+	 F4dMq0Cd6Y6iQ==
+Date: Tue, 26 Nov 2024 17:59:31 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>, Guillaume Stols
+ <gstols@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ jstephan@baylibre.com, aardelean@baylibre.com, adureghello@baylibre.com
+Subject: Re: [PATCH 2/9] dt-bindings: iio: dac: adi-axi-adc: Add ad7606
+ variant
+Message-ID: <20241126175931.4645dbe3@jic23-huawei>
+In-Reply-To: <20241121-wackiness-threaten-b53d2a27fbd9@spud>
+References: <20241121-ad7606_add_iio_backend_software_mode-v1-0-8a693a5e3fa9@baylibre.com>
+	<20241121-ad7606_add_iio_backend_software_mode-v1-2-8a693a5e3fa9@baylibre.com>
+	<49bc9ec4-f252-4903-b5be-1d35ee8d48be@baylibre.com>
+	<20241121-wackiness-threaten-b53d2a27fbd9@spud>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="/78djKjc2HyFsLhU"
-Content-Disposition: inline
-In-Reply-To: <20241126073836.17208-2-e@freeshell.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Thu, 21 Nov 2024 19:53:53 +0000
+Conor Dooley <conor@kernel.org> wrote:
 
---/78djKjc2HyFsLhU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Thu, Nov 21, 2024 at 10:57:44AM -0600, David Lechner wrote:
+> > On 11/21/24 4:18 AM, Guillaume Stols wrote:  
+> > > A new compatible is added to reflect the specialized version of the HDL
+> > > that is not covered by the IIO backend paradigm: We use the parallel  
+> > 
+> > It still is being used as an IIO backend, so I would leave out the
+> > phrase "that is not covered by the IIO backend paradigm".
+> >   
+> > > interface to write the ADC's registers, and accessing this interface
+> > > requires to use ADI_AXI_REG_CONFIG_RD,ADI_AXI_REG_CONFIG_WR and
+> > > ADI_AXI_REG_CONFIG_CTRL in a custom fashion.
+> > > 
+> > > Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+> > > ---
+> > >  Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml | 7 +++++++
+> > >  1 file changed, 7 insertions(+)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml b/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml
+> > > index e1f450b80db2..43bc0440c678 100644
+> > > --- a/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml
+> > > +++ b/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml
+> > > @@ -17,13 +17,20 @@ description: |
+> > >    interface for the actual ADC, while this IP core will interface
+> > >    to the data-lines of the ADC and handle the streaming of data into
+> > >    memory via DMA.
+> > > +  In some cases, the AXI ADC interface is used to perform specialized
+> > > +  operation to a particular ADC, e.g access the physical bus through
+> > > +  some special register to write ADC registers.
+> > > +  In this case, a different compatible is used, and the driver behaves  
+> > 
+> > Quick, delete the word "driver" before Krzysztof sees it. :-p  
+> 
+> And also perhaps worth mentioning under the --- line that the x in the
+> compatible is not a wildcard, for similar reasons ;)
+Well it is, just one that is used for the IP naming to cover all
+the different ADCs it works with.
 
-Emil,
+"The AXI AD7606x IP core can be used to interface the AD7606B, AD7606C-16,
+AD7606C-18, AD7605-4, AD7606, AD7606-6, AD7606-4, AD7607, AD7608 and AD7609 devices using an FPGA."
 
-On Mon, Nov 25, 2024 at 11:38:17PM -0800, E Shattow wrote:
-> Pine64 Star64 set JH7110 on-chip USB host mode and vbus pin assignment
->=20
+Given that's what ADI calls the IP though we are stuck with it - however
+'wrong' they may be :)
 
-Looks like the same thing here, so same thing here :)
+But agreed, something to call out to keep me away from the x as well!
 
-Thanks,
-Conor.
+Jonathan
 
-> Signed-off-by: E Shattow <e@freeshell.de>
-> ---
->  .../boot/dts/starfive/jh7110-pine64-star64.dts | 18 +++++++++++++++++-
->  1 file changed, 17 insertions(+), 1 deletion(-)
->=20
-> diff --git a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts b/arch=
-/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
-> index fe4a490ecc61..b764d4d92fd9 100644
-> --- a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
-> +++ b/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
-> @@ -80,7 +80,23 @@ &spi0 {
->  	status =3D "okay";
->  };
-> =20
-> +&sysgpio {
-> +	usb0_pins: usb0-0 {
-> +		vbus-pins {
-> +			pinmux =3D <GPIOMUX(25,  GPOUT_SYS_USB_DRIVE_VBUS,
-> +					       GPOEN_ENABLE,
-> +					       GPI_NONE)>;
-> +			bias-disable;
-> +			input-disable;
-> +			input-schmitt-disable;
-> +			slew-rate =3D <0>;
-> +		};
-> +	};
-> +};
-> +
->  &usb0 {
-> -	dr_mode =3D "peripheral";
-> +	dr_mode =3D "host";
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&usb0_pins>;
->  	status =3D "okay";
->  };
-> --=20
-> 2.45.2
->=20
-
---/78djKjc2HyFsLhU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0YMewAKCRB4tDGHoIJi
-0t66AP9HW0g6caIUNUVKF8Jw63De+iutnLDrv834ASt0W0V3GAEAtxo18pDD1ecG
-rfcvf12D+s54jpd8Jz4LCOmqhzdusgs=
-=vZzk
------END PGP SIGNATURE-----
-
---/78djKjc2HyFsLhU--
 
