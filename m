@@ -1,150 +1,148 @@
-Return-Path: <linux-kernel+bounces-422805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F95F9D9E56
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:16:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26F90167DCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:16:38 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3B531DFDBF;
-	Tue, 26 Nov 2024 20:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dcqlEhLy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7D379D9E68
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:32:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B706F1DFD97;
-	Tue, 26 Nov 2024 20:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84BD8285A9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:32:32 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4E21DF243;
+	Tue, 26 Nov 2024 20:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nCjgHONy"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293551A76B7
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 20:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732652171; cv=none; b=PEsz+x78auBLGbWILJfMJ4o+Fsjp8RLQOGTCDyI4rJfw4R1bpwTWbJDZ1SkYQefAMINOtGP0e4+lpWPPPk+xj51KvOrL6+MK5srkAu55rCSXLxWeFpnZ+F+V+j0TfDVV4TbkWnBjCnGfOs6RsWcWd5C/qMdIT4x9BOXejPLZI7o=
+	t=1732653145; cv=none; b=h2n+BmyiB7cyLo5nOyEIQJ//BD1fIwqvAsz2WOuK/mCt3P3kvAU733mV6E07rMEkQrqXllgEqpAHenI6SOnIV1URz8MpTzfoFogBVrfEmLWbxhJ6k+tfgGuHLeME3dB2z7xVsPSjT3qQKEW5oP1ocwvPP2cKosZJyOQcKBdchkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732652171; c=relaxed/simple;
-	bh=qza0Tpv/OZnOr/Qj0ZSV60FrbrGJCP472AgkqiS92Eo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tjfBnptNoESO2xZ369o7xbjMn4RFsieY1YnzGYZsNVUAMough4rFmTuooZoMsr7kMS+Wh/qB0BIvkN8YHIhUhQbZeqf+5fczz9UHQERqNCAjCUdLDWhtUEtmLVgM6mF/FFSNDSKTLgx6fC8lfAR/y7GH/zfcFvTj2UkLvomu7cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dcqlEhLy; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732652170; x=1764188170;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=qza0Tpv/OZnOr/Qj0ZSV60FrbrGJCP472AgkqiS92Eo=;
-  b=dcqlEhLywpVS+KQ0ZioLlcBP6jK8Z1Uj30hjvfb6lD/2rwwsieeF/ZDZ
-   NyTZt6zyiw0IRgiLNTFyb0ZwDXGSdaQv4Nv58sylerscwWXOVTt5a/REv
-   KbUGWMf9F7X8BJddagVFEKdai0aXL+d2P2T9WYJb2PrdqreER0XNs54I9
-   5g0gF6YFM2S6BmE8eMPHQBJA3tWgMoQW/H1rTQyPrIDpUd+7D8TSZKoFo
-   JpFkwEmIe9xsoouprgs4fbjLMUbmvXb/1PfAse4hRDr1j13ZQ9q3R0PgL
-   vj1/P3KSMsQcRY0HRx2E2W4iOYcbIMOrliAeJE887y54xmxDBuivoI4uY
-   A==;
-X-CSE-ConnectionGUID: 3TgMQFjCQQKDUgOwrrJUmA==
-X-CSE-MsgGUID: JfkWvfxhTXOacSAnhzR0zg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="36624228"
-X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
-   d="scan'208";a="36624228"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 12:16:09 -0800
-X-CSE-ConnectionGUID: KskfpBIETOaNv+P79qp4Wg==
-X-CSE-MsgGUID: Hw/We5N/Q3OirSTvMmDW0g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
-   d="scan'208";a="92047584"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost.localdomain) ([10.245.245.172])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 12:16:06 -0800
-From: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	rafael.j.wysocki@intel.com,
-	peterz@infradead.org,
-	dave.hansen@linux.intel.com,
-	gautham.shenoy@amd.com,
-	tglx@linutronix.de,
-	len.brown@intel.com,
-	artem.bityutskiy@linux.intel.com,
-	patryk.wlazlyn@linux.intel.com
-Subject: [PATCH v5 3/3] intel_idle: Provide the default enter_dead() handler
-Date: Tue, 26 Nov 2024 21:15:39 +0100
-Message-ID: <20241126201539.477448-4-patryk.wlazlyn@linux.intel.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241126201539.477448-1-patryk.wlazlyn@linux.intel.com>
-References: <20241126201539.477448-1-patryk.wlazlyn@linux.intel.com>
+	s=arc-20240116; t=1732653145; c=relaxed/simple;
+	bh=nx4h0UfwGy/Xhxwaj52odLilzACf8JBjVoXxa3cImu0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a8BnMXDimGz9ad2ZssO38x9l5hixiXD4EbvQE4AtXAOvdpRcenVv7hhw5iWG3FFGmC0vXBoqYXuxZ/2DvHWblbEsL6L/Jw3kixuj3vhUsJA0OeXEsNHlk92/+C4DcFmbD4LkRKMFUOsKDC9M3WBLWbJcm0XZrHck5Ur9TEsijl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nCjgHONy; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5cfc264b8b6so2536a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 12:32:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732653142; x=1733257942; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UiouVvQy1ysSNzucyHX39VpOdsi6a4Dd/ylDP/YY+tM=;
+        b=nCjgHONy217Oi3mxKCjW1vTvjZ+6XNMPaWmfCD1EnW/8VjXfrPrZMlEkwvoi8p2k0B
+         L9t/Z56X4BzCaqfhyLAyaYmErMuROla9Sk5bw0MObK2toUuTw3DhPn3I65TVmjfZZzcS
+         tYsO7z4PQr7IU2ypSa9QLMG5Tz8JtnKaqYd9EipM20YdvgNCpo1WxuoCGWSwrtyfIqML
+         qZlMPeZgy9NvxaAMDFUYFg246PSo4hidecduyFYoTsg9b27rD5U6IqO9p93vQXbtAnib
+         hszSNuPlsqmRYjYM/j17wY3xefz/bRfHAPv6m+PxdGJYr95cIsVwiGfenOz8qcqJEVTx
+         R8pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732653142; x=1733257942;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UiouVvQy1ysSNzucyHX39VpOdsi6a4Dd/ylDP/YY+tM=;
+        b=HByf6gEf5bmIeBEpuRcsfVoCNkktK4RW8u7HIylx7nv7w+SgmPoc1yLrAYVg95a2av
+         Yog3At1qibFIzycydAoEmsSrbOhCM41iX8p4envvrK7AU+6LKNi1inxC6XZswIg+QAJq
+         lM8sXs8DsyYkId3HaB8Zs1rjMN9UPTa9Akdz/+PJte9Qm7uEgxLOsI2/IFjNAOxyJkjL
+         PO//DYqbBzEXTRYK2jLEfROVBV5RTzqxYZ0IGU7r2wG3przkVsyO+MdvXqSRR9pyu1eA
+         aLSFepXigJ96NMXKHAQhuDpRL0RM6F3VKcGZlXyk/9lnOSY97tP/s35QI1pXfmMdcTwe
+         VGlw==
+X-Forwarded-Encrypted: i=1; AJvYcCVovsDxjTNSMIRwlcec/n5u0iJGpQypx8x4QZvq6+9AwR2rIzbIeMOnuxfZnjl0rzxjtTm8wc1Ro6B7FuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIfxZQh2asFtkxBMKdkUQfBBnHvUNKb6VnvlT/42Nq5O6sBWNQ
+	7qYNhBn8aNUZAYffmpPHJ/3vsZgjHEXZbDLJT9Mt4XQePUxHLwMQtv3VclAt+2IaDKNawkEtlV1
+	V5evG70F0mKgXIrwjM9jd8yo0sBRhNMmFc8vz
+X-Gm-Gg: ASbGncu3WyuY43bszsA/qIq1CBP9yV6JeeYFw5+kMcH08gAeSu0HtAGD7iZ+whTCh8B
+	CbEku/MI7UED4rfuN+ttypIOuuqfDE5E4r8QPbM/Kabn+02pbRAxdFPRDRNM=
+X-Google-Smtp-Source: AGHT+IFLGtY2k1/yQLTkkaMGF/8QTmikGJDbPMCtQvYW3IFdPIMrHqR0uhIysGxFKp0f4Ab0QhOn0doTUEbLkLZBzts=
+X-Received: by 2002:aa7:d80b:0:b0:5d0:3ddd:c773 with SMTP id
+ 4fb4d7f45d1cf-5d0819b8bf8mr11824a12.4.1732653141887; Tue, 26 Nov 2024
+ 12:32:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241119112408.779243-1-abdiel.janulgue@gmail.com>
+ <Zz1sHZLruF5sv7JT@casper.infradead.org> <CAH5fLgiyHGQJxLxigvZDHPJ84s1fw_OXtdhGTd0pv_X3bCZUgA@mail.gmail.com>
+ <Zz4MQO79vVFhgfJZ@tardis.local> <Zz4WFnyTWUDPsH4m@casper.infradead.org>
+In-Reply-To: <Zz4WFnyTWUDPsH4m@casper.infradead.org>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 26 Nov 2024 21:31:46 +0100
+Message-ID: <CAG48ez3YBvSQ0zHY-t8NK2RWthR-GsEv6O5pVwA44LGJaEGeSQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] rust: page: Add support for existing struct page mappings
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>, rust-for-linux@vger.kernel.org, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Valentin Obst <kernel@valentinobst.de>, 
+	open list <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, airlied@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The recent mwait_play_dead code relies on cpuidle driver to call the
-function with the right mwait hint, for the deepest cstate for which the
-driver provides the enter_dead handler.
+On Wed, Nov 20, 2024 at 6:02=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
+> On Wed, Nov 20, 2024 at 08:20:16AM -0800, Boqun Feng wrote:
+> > On Wed, Nov 20, 2024 at 10:10:44AM +0100, Alice Ryhl wrote:
+> > > On Wed, Nov 20, 2024 at 5:57=E2=80=AFAM Matthew Wilcox <willy@infrade=
+ad.org> wrote:
+> > > > We don't have a fully formed destination yet, so I can't give you a
+> > > > definite answer to a lot of questions.  Obviously I don't want to h=
+old
+> > > > up the Rust project in any way, but I need to know that what we're =
+trying
+> > > > to do will be expressible in Rust.
+> > > >
+> > > > Can we avoid referring to a page's refcount?
+> > >
+> > > I don't think this patch needs the refcount at all, and the previous
+> > > version did not expose it. This came out of the advice to use put_pag=
+e
+> > > over free_page. Does this mean that we should switch to put_page but
+> > > not use get_page?
+>
+> Did I advise using put_page() over free_page()?  I hope I didn't say
+> that.  I don't see a reason why binder needs to refcount its pages (nor
+> use a mapcount on them), but I don't fully understand binder so maybe
+> it does need a refcount.
 
-Signed-off-by: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
----
- drivers/idle/intel_idle.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+I think that was me, at
+<https://lore.kernel.org/all/CAG48ez32zWt4mcfA+y2FnzzNmFe-0ns9XQgp=3DQYeFpR=
+sdiCAnw@mail.gmail.com/>.
+Looking at the C binder version, binder_install_single_page() installs
+pages into userspace page tables in a VM_MIXEDMAP mapping using
+vm_insert_page(), and when you do that with pages from the page
+allocator, userspace can grab references to them through GUP-fast (and
+I think also through GUP). (See how vm_insert_page() and
+vm_get_page_prot() don't use pte_mkspecial(), which is pretty much the
+only thing that can stop GUP-fast on most architectures.)
 
-diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
-index ac4d8faa3886..c6874a6dbe95 100644
---- a/drivers/idle/intel_idle.c
-+++ b/drivers/idle/intel_idle.c
-@@ -56,6 +56,7 @@
- #include <asm/mwait.h>
- #include <asm/spec-ctrl.h>
- #include <asm/fpu/api.h>
-+#include <asm/smp.h>
- 
- #define INTEL_IDLE_VERSION "0.5.1"
- 
-@@ -227,6 +228,16 @@ static __cpuidle int intel_idle_s2idle(struct cpuidle_device *dev,
- 	return 0;
- }
- 
-+static __cpuidle void intel_idle_enter_dead(struct cpuidle_device *dev,
-+					    int index)
-+{
-+	struct cpuidle_driver *drv = cpuidle_get_cpu_driver(dev);
-+	struct cpuidle_state *state = &drv->states[index];
-+	unsigned long eax = flg2MWAIT(state->flags);
-+
-+	mwait_play_dead(eax);
-+}
-+
- /*
-  * States are indexed by the cstate number,
-  * which is also the index into the MWAIT hint array.
-@@ -1798,6 +1809,7 @@ static void __init intel_idle_init_cstates_acpi(struct cpuidle_driver *drv)
- 			state->flags |= CPUIDLE_FLAG_TIMER_STOP;
- 
- 		state->enter = intel_idle;
-+		state->enter_dead = intel_idle_enter_dead;
- 		state->enter_s2idle = intel_idle_s2idle;
- 	}
- }
-@@ -2143,10 +2155,12 @@ static void __init intel_idle_init_cstates_icpu(struct cpuidle_driver *drv)
- 		if (intel_idle_max_cstate_reached(cstate))
- 			break;
- 
--		if (!cpuidle_state_table[cstate].enter &&
--		    !cpuidle_state_table[cstate].enter_s2idle)
-+		if (!cpuidle_state_table[cstate].enter)
- 			break;
- 
-+		if (!cpuidle_state_table[cstate].enter_dead)
-+			cpuidle_state_table[cstate].enter_dead = intel_idle_enter_dead;
-+
- 		/* If marked as unusable, skip this state. */
- 		if (cpuidle_state_table[cstate].flags & CPUIDLE_FLAG_UNUSABLE) {
- 			pr_debug("state %s is disabled\n",
--- 
-2.47.1
+My understanding is that the combination VM_IO|VM_MIXEDMAP would stop
+normal GUP, but currently the only way to block GUP-fast is to use
+VM_PFNMAP. (Which, as far as I understand, is also why GPU drivers use
+VM_PFNMAP so much.) Maybe we should change that, so that VM_IO and/or
+VM_MIXEDMAP blocks GUP in the region and causes installed PTEs to be
+marked with pte_mkspecial()?
 
+I am not entirely sure about this stuff, but I was recently looking at
+net/packet/af_packet.c, and I tested that vmsplice() can grab
+references to the high-order compound pages that
+alloc_one_pg_vec_page() allocates with __get_free_pages(GFP_KERNEL |
+__GFP_COMP | __GFP_ZERO | __GFP_NOWARN | __GFP_NORETRY, order),
+packet_mmap() inserts with vm_insert_page(), and free_pg_vec() drops
+with free_pages(). (But that all happens to actually work fine,
+free_pages() actually handles refcounted compound pages properly.)
 
