@@ -1,95 +1,92 @@
-Return-Path: <linux-kernel+bounces-422063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D3C9D9406
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:19:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B70B49D9409
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:19:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFF05282C18
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:19:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5211E2828A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5901BC07A;
-	Tue, 26 Nov 2024 09:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBFBF1ADFEB;
+	Tue, 26 Nov 2024 09:19:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XxHHAf32"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tCEsd9kd"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA431B87C0;
-	Tue, 26 Nov 2024 09:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B5B10E9;
+	Tue, 26 Nov 2024 09:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732612734; cv=none; b=DKC81/v0WtjoM6ILoLub+L5HMoQnE0FurblGNaQNkv+xnudl2m/bT90BEwm+5VyhIIunxP3TvieeIMkvfzLQpK6xhnmJgpFxTVkrrSJhYWLHksRuPpLAON2QwvMfOidAqzvS05JkGiOUcv8T4yRW5/Med/aNQgoKOTYjJSqyUXg=
+	t=1732612785; cv=none; b=h5SnR67UIK//mcvSQ4i3rp97QuBY39RNiALYaaMCe9aEraGnCSa5TxvEvzvOfYITDXz0Nk81WnvqS6xpp9aa6o68PdZbBUwhJugBd62ptcTEjuf7Di2K6ccLBYxK9Qw48WGglGxctCJ0ZMdLBXS2q3lNyapLlXTCS4LDbih9jPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732612734; c=relaxed/simple;
-	bh=H8eF2eXLoEAWy3yZQI4qwWZRVJnCj0BbC/ST/Qo9VCA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TOSY3zH1ZihNMpsV5wNRjqVCr3SwBysFbn7cnh+Ry/Fx01EIDZaHu5kKjPxSJI1/GlGYHtctSfWvgq+LGwysSuTjDWX2dvpq/+eQKkSRXPXL/nGigBXaNHyhcgSYryBwx4qO6pjpPszvaNyoh32YXV/jRlLYViORiCrO6Y0R0/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XxHHAf32; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e2bd7d8aaf8so5065893276.3;
-        Tue, 26 Nov 2024 01:18:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732612732; x=1733217532; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZVDCky70auYLWD6XOWEkaP+WV+CoPiiKjrNT7eFkl2U=;
-        b=XxHHAf32kePwdJMjDzJsm2iBBb81HZmEoDCV2djiRv1Hy2MClhN0rmQxcVAgp1TFoz
-         +c0kd/S+Jg0db0bH0QzcPc1E5SpJhzTaR8rTiBavx0MiNBmQxEhLs8non3acJLLxiiGM
-         P0wGymIv+RvkTNWApgCz+8ANrRmhPzSaVXo8WySjGVkVZ/bD5Vp8wAzSmo6ZrKFXql8F
-         d8El0uKLw7H1eK//gWDqNzIJjpSU4BO1zApeX+RTMbm1UCoDuqXLhmoFUy0hI/ie7+ev
-         YWIgj4XsZ0fMT6bVyDr4TWzmMxhMuOhYkKTerITgLKjw0ngzjp4l2O4Tuma6oUSVVtXs
-         7C4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732612732; x=1733217532;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZVDCky70auYLWD6XOWEkaP+WV+CoPiiKjrNT7eFkl2U=;
-        b=ktwt5HTmI4+CaaZGiEwzVRpSWrA9RrFAnzGgOO7uTMpdrcNWz0FNyjWAkOsV/bBGtA
-         8HZSo4ZtXrW1mhSjDbx5TU3hBWoldFl8SnSWF5uM+vD3kMKbocw/ALGjPc8U8de0RYcQ
-         grkWdk7lk6qMqJ6DQEb3lnlX7TUjudJuWQ6Puc1EPgOgRG1HZjPYJEv7r6dtlKzQAd0U
-         hV5rXMsV97Yr863pA0RLL5jyfHBGkOJUew71ERwnGdbJXXIrJ47sdsfjwGNNjqQJLJUO
-         rAZaD6sKKE1jEFLbpiClMn6QHWOkdbB/OTmkaAMg+0ts1ybKpnQ9Ho4g1ZRrl2UgdiDv
-         O0Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCXuPaTcxnNhAdyOIykZ9XE0X9DgH6FSv5kxgOwXu/qOf9yw+r2MCiwaCoQgnw929pk+II3eX66MfPe2dA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9ud41HD9uUSxpNokVBYm4gBufTIzbZCvejiGK2T6eHG39fp0H
-	KmrMttbdH3Qm4LNXR+ERYr5akUhdesWYk1bR1r2TREYvmUqN8Op+ql93QGFUcaDkraKOBw54tAf
-	t0rz23FgrClCs/FzJV5fXjEsSG5M=
-X-Gm-Gg: ASbGnctvB+/+x+FsdAXG9gsHqMdHkXhZjkiyvL0U0lc5Okic0wayw5bIWsPl5ZO/7cj
-	IyV9rcqgDeslOw3ik6G7m25hFVJgiKjM=
-X-Google-Smtp-Source: AGHT+IHV02X2n+cTXOdwOWnWyjBXRCSdI9G0x+XWqC/yRz8lOxPMnte8V4M5zojwdV+Ku0e8hXCcOj0QHix71W+R8dE=
-X-Received: by 2002:a05:6902:33c6:b0:e38:f11c:f04e with SMTP id
- 3f1490d57ef6-e38f8c27cf1mr11236518276.53.1732612732255; Tue, 26 Nov 2024
- 01:18:52 -0800 (PST)
+	s=arc-20240116; t=1732612785; c=relaxed/simple;
+	bh=0wMhNfjuCKn3KFiqtyzjvXNUsEsAl0GjHojhqpYkvQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ksAHBuyPux5TZtDnTyszKbMGVOHkUA+snsMcxLJAQgC2wuvA3/3qV2bkWvvWnlpQoVj8aWAbUd6LXUkFKm8JEbx2FmfzTlZVT6BIE7g3CkUNZXwLSnatmwLdnC464xjKCtqXgGTc2jbua15THpDnbd4Hcgxt0e9HzBKmnRoTtEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tCEsd9kd; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=20KTCDW3VkmdcqUU6UZT4aexfvWCdFnOYJYEWBp7gtY=; b=tCEsd9kdqE+wBksj3JXO8zSRMG
+	lvQOf/xYvKJvodvMWzmcjTSCVYLr1TWGJOBcVLb439SA9Vg0oLSfAPS8lBhbGZqp/1V5lvccH8fph
+	p7bbLVVT06eV7xfT1NQm44Vv8yN1IAo5rgpqfV8L/QOmuH26G7iyjQT17Lk2bqkS7vXQYcDd4nDvm
+	lNy7eheA0H1mNlTY8SAqEbk6Z7JqXnpuHCddKKDiE0rIr0I0DXpI4cD2BEowDt35xQbKCTIFYXdtc
+	I0/DzNI6HovJKO/TC37iR5T3IbQ/JC+L1XUJCZpiYl1DeXiuzUcOT3RWOkS7XgmaTD1l1/UxrDVU2
+	P8ohPXbA==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tFrjK-0000000DLTw-0Akr;
+	Tue, 26 Nov 2024 09:19:36 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 861223002A2; Tue, 26 Nov 2024 10:19:34 +0100 (CET)
+Date: Tue, 26 Nov 2024 10:19:34 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Matthew Maurer <mmaurer@google.com>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	scott.d.constable@intel.com
+Subject: Re: [PATCH v2 0/2] Rust KCFI support
+Message-ID: <20241126091934.GP39245@noisy.programming.kicks-ass.net>
+References: <20240801-kcfi-v2-0-c93caed3d121@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAP-bSRbCo7=wfUBZ8H7c3Q-7XSG+SB=R4MHHNNGPvBoinsVSZg@mail.gmail.com>
- <CAP-bSRab1C-_aaATfrgWjt9w0fcYUCQCG7u+TCb1FSPSd6CEaA@mail.gmail.com> <20241126065228.GA1133@lst.de>
-In-Reply-To: <20241126065228.GA1133@lst.de>
-From: Chris Bainbridge <chris.bainbridge@gmail.com>
-Date: Tue, 26 Nov 2024 09:18:41 +0000
-Message-ID: <CAP-bSRZehc2BxRC_z5MXKQ6qHNPXPgZoOQTtkiK_CFd494D_Fg@mail.gmail.com>
-Subject: Re: [REGRESSION] ioprio performance hangs, bisected
-To: Christoph Hellwig <hch@lst.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, axboe@kernel.dk, bvanassche@acm.org, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, linux-block@vger.kernel.org, 
-	semen.protsenko@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240801-kcfi-v2-0-c93caed3d121@google.com>
 
-On Tue, 26 Nov 2024 at 06:52, Christoph Hellwig <hch@lst.de> wrote:
->
-> Fortunately fixing this is not only easy but also improves the
-> code in mq-deadline.  Can you test the patch below?
+On Thu, Aug 01, 2024 at 01:35:16PM +0000, Alice Ryhl wrote:
+> The control flow integrity (kCFI) sanitizer is an important sanitizer
+> that is often used in production. This patch series makes it possible to
+> use kCFI and Rust together.
 
-Yes, the patch fixes my test case.
+So about this -- there's a proposal for a modification to kCFI here:
 
-Tested-by: Chris Bainbridge <chris.bainbridge@gmail.com>
+  https://github.com/llvm/llvm-project/pull/117121
+
+And Sami notes that this would break this Rust thing. Assuming all the
+relevant crabs are present on this thread, could you please comment?
+
+
 
