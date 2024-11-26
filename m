@@ -1,146 +1,137 @@
-Return-Path: <linux-kernel+bounces-422539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C58549D9AEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:58:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA7109D9AEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:59:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4CEC1674F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:58:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D695161EA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22261D95BE;
-	Tue, 26 Nov 2024 15:57:31 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32BE1DA2E5;
+	Tue, 26 Nov 2024 15:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KiEpM04z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4042E1D90CB;
-	Tue, 26 Nov 2024 15:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269F81D89F1;
+	Tue, 26 Nov 2024 15:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732636651; cv=none; b=DMPRD3W/p0MRO2CtoZw+yEM2M/QcTf4EilTZGgNwD+W/9mSI6QhOiuwRUh+ifl8jvm/fDXvpWeG+PCwwXhu4wlrv4oAnaYNzWpq0NLoTicYWZv+QM+9ZdrjMZWNYaIfRldc+mCZRomdVXDEqWEUKgoev4solX4lU9WmGDiZ8tiI=
+	t=1732636672; cv=none; b=ZEMiLMWmPmVcsDQDOcmNyqRkAWm325+vHfRN3SwID0FFTH+chvgGEk0jrtO/w1gs8IjvN4golOz7kkc1LnN9XtTqOOoForQTU8g5tU9ltuxU12dslNapmVhuYhaPh0VgiUqUiZYXAOV5k+JQBe2eHXJq4Xv/n2bjmMsDzV4LP5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732636651; c=relaxed/simple;
-	bh=VfjwxKDKbiB7eQGIchcaTxv66YqHuyaSVSFlkGPzPOo=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YPQP6Prh1Y6hjBAIrxuuLFPfg/O2Qmh3iY3owvudzAVEbQJ068MeWs8F5X43mkmbzFBxNGPLdxHNh0GdbQwi1hoTLq8kXS72E6Gbip1u+fgfN59vrNUDEbNApJGcp/tVorp6UimNebKy+LEd6I0syH8KqNLGnN4jf3lR2ja7C28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XyRyt1LFLz6L9F1;
-	Tue, 26 Nov 2024 23:56:54 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 087A51400CB;
-	Tue, 26 Nov 2024 23:57:26 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 26 Nov
- 2024 16:57:25 +0100
-Date: Tue, 26 Nov 2024 15:57:24 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-CC: <linux-efi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, Ard Biesheuvel <ardb@kernel.org>, "Alison
- Schofield" <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Yazen Ghannam <yazen.ghannam@amd.com>, "Terry
- Bowman" <terry.bowman@amd.com>
-Subject: Re: [PATCH v3 5/7] acpi/ghes, cxl: Refactor work registration
- functions to support multiple workqueues
-Message-ID: <20241126155724.0000634c@huawei.com>
-In-Reply-To: <20241119003915.174386-6-Smita.KoralahalliChannabasappa@amd.com>
-References: <20241119003915.174386-1-Smita.KoralahalliChannabasappa@amd.com>
-	<20241119003915.174386-6-Smita.KoralahalliChannabasappa@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1732636672; c=relaxed/simple;
+	bh=ZcRRe+aPriZPzBE2pe1SDdmVBe9BC1ro/wbA3TDf3dw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QtinqQrwcUjBGsKu+REaCrDdz/oZxiUyYKkDm5GynJzDiS7MMAXmeqYs3NLUqamaW8pnCzy7tNOUBgY8OzxLIo+ScuLji7pqvfQECVQOkrBqOb0XrKRqmIyqCrCnc4la9V1JQ9CABNkcLy530Ms9ZXpb0ETfxCKovafX3gkvn6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KiEpM04z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1906C4CECF;
+	Tue, 26 Nov 2024 15:57:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732636671;
+	bh=ZcRRe+aPriZPzBE2pe1SDdmVBe9BC1ro/wbA3TDf3dw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KiEpM04zndVgqXbKC6cHK7B25Wl/3glFJwedSDv8TtNgW051VomjEa/HcmIi5S+cz
+	 1UCvOs72EYUhITwbBTTy19o6jS+13VKy19Hdr0sdXWVTJaI5wplvz0Qndg5A1x3DS3
+	 xCRBfojeoj199cI5aRSccrB1LVMLVR+QN8Fo/CtmhTfpnS0Je8Z+oD4Ml/KFDodm+o
+	 SdfmuSjHc+VMce3qYVAvtmqPmEnlrHRPsmvWdmszWqF+gq2k6s5pdKlarifX6BgtR5
+	 oQFVd10XjYlt9b1vId/df0+GTnZK7WOEQYSL8lVjXt0sp3HbLPDWQGIgFICRVkYx5R
+	 vrNfAbIW24dXQ==
+Message-ID: <e27fee40-eaaa-40d8-b2eb-9e0fc96bf2be@kernel.org>
+Date: Tue, 26 Nov 2024 16:57:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: display/msm: gpu: Document A612 GPU
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>, Rob Clark
+ <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241126-qcs615-gpu-dt-v1-0-a87782976dad@quicinc.com>
+ <20241126-qcs615-gpu-dt-v1-1-a87782976dad@quicinc.com>
+ <680a9f92-1d29-410b-bc63-a998d2d64e9e@kernel.org>
+ <56b6f58e-e100-4dfd-b764-a9c3f5aad887@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <56b6f58e-e100-4dfd-b764-a9c3f5aad887@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, 19 Nov 2024 00:39:13 +0000
-Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com> wrote:
-
-> Refactor the work registration and unregistration functions in GHES to
-> enable reuse across different workqueues. This update lays the foundation
-> for integrating additional workqueues in the CXL subsystem for better
-> modularity and code reuse.
+On 26/11/2024 16:24, Akhil P Oommen wrote:
+>> No, this makes everything total mess. Why xo now is allowed to be first
+>> clock?
+>>
+>> Drop and explain in commit msg why other devices now get smmu clock.
 > 
-> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-> ---
->  drivers/acpi/apei/ghes.c | 34 +++++++++++++++++++++++++---------
->  1 file changed, 25 insertions(+), 9 deletions(-)
+> I thought it was okay to make this list a bit flexible. Btw, the other
+> existing clock-names list for a5x and older gpus uses "anyOf".
 > 
-> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> index 082c409707ba..62ffe6eb5503 100644
-> --- a/drivers/acpi/apei/ghes.c
-> +++ b/drivers/acpi/apei/ghes.c
-> @@ -717,26 +717,42 @@ static void cxl_cper_post_event(enum cxl_event_type event_type,
->  	schedule_work(cxl_cper_work);
->  }
->  
-> -int cxl_cper_register_event_work(struct work_struct *work)
-> +static int cxl_cper_register_work(struct work_struct **work_ptr,
-> +				  spinlock_t *lock,
-> +				  struct work_struct *work)
+> I suppose the suggestion is to add a separate clock-names list for A612
+> with strict ordering. Is that correct?
 
-This is a somewhat strange interface.  It doesn't
-really do anything particularly useful. I'd be tempted to
-just open code this at each call site.
+Yes
 
 
->  {
-> -	if (cxl_cper_work)
-> +	if (*work_ptr)
->  		return -EINVAL;
->  
-> -	guard(spinlock)(&cxl_cper_work_lock);
-> -	cxl_cper_work = work;
-> +	guard(spinlock)(lock);
-> +	*work_ptr = work;
->  	return 0;
->  }
-> -EXPORT_SYMBOL_NS_GPL(cxl_cper_register_event_work, CXL);
->  
-> -int cxl_cper_unregister_event_work(struct work_struct *work)
-> +static int cxl_cper_unregister_work(struct work_struct **work_ptr,
-> +				    spinlock_t *lock,
-> +				    struct work_struct *work)
->  {
-> -	if (cxl_cper_work != work)
-> +	if (*work_ptr != work)
-As above.
-
->  		return -EINVAL;
->  
-> -	guard(spinlock)(&cxl_cper_work_lock);
-> -	cxl_cper_work = NULL;
-> +	guard(spinlock)(lock);
-> +	*work_ptr = NULL;
->  	return 0;
->  }
-> +
-> +int cxl_cper_register_event_work(struct work_struct *work)
-> +{
-> +	return cxl_cper_register_work(&cxl_cper_work, &cxl_cper_work_lock,
-> +				      work);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(cxl_cper_register_event_work, CXL);
-> +
-> +int cxl_cper_unregister_event_work(struct work_struct *work)
-> +{
-> +	return cxl_cper_unregister_work(&cxl_cper_work, &cxl_cper_work_lock,
-> +					work);
-> +}
->  EXPORT_SYMBOL_NS_GPL(cxl_cper_unregister_event_work, CXL);
->  
->  int cxl_cper_kfifo_get(struct cxl_cper_work_data *wd)
-
+Best regards,
+Krzysztof
 
