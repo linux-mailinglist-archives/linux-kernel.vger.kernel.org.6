@@ -1,202 +1,138 @@
-Return-Path: <linux-kernel+bounces-422194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99AFD9D95B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:39:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8803E9D95B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:41:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5783B285827
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:39:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02DBE1631D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489001C878E;
-	Tue, 26 Nov 2024 10:39:05 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222291AC44C
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DB01C4A24;
+	Tue, 26 Nov 2024 10:41:42 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42861B6CE6
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732617544; cv=none; b=UYLClU6DEzZMXUhwdRqfej7bPAp8bnaSS+KbuMO2FseFSS/oHMfu/zVRf+uYr27xHV8V83gvmTKJXiNtBDc4F6Bn2GpP41HKxbRj+y2eijLPHcW/93nebawl0UVeIzBfdoU3yxSBMT5Ri9NgI9S5zpCvfMFYMtD2PsaE6yqu7y0=
+	t=1732617702; cv=none; b=b46ISA84X83hJKFyVVALQAT3imqnUohzjwriII8JGelKzK2M3pjOcxv3+hcxrQN7p0OP5Q6tMu4xYZagsYZFtyIDnoBUXM31yRshGVOZmJaguTxh7qa3r9TSMkZCrgkVoSU0sYFjS5oyTZr1D1J+sf7siV/jHcNHAElebDeVSPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732617544; c=relaxed/simple;
-	bh=sAOxah2M5O3VTEF5UaDJHeSJKF6SfSuYOQ5/5muWQ1E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=d14hsWNrE7NOEJc+fSOpuYEH3ddYC9gbrzYgRhOCD2Iz7i6HJzc291C2TJoMy+olWZM7uxGoQT3jwPXu7xq50b+ASLuHLegKyFStkvb4aPXkyFuumcU6VdsJjliPvNTXZIvaXKWC9hfcbQxI/HsFLdkiQWQFBgtK+XaYVyjPsrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tFsy5-00040B-Pg
-	for linux-kernel@vger.kernel.org; Tue, 26 Nov 2024 11:38:53 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tFsy4-000EXI-2e
-	for linux-kernel@vger.kernel.org;
-	Tue, 26 Nov 2024 11:38:53 +0100
-Received: from dspam.blackshift.org (localhost [127.0.0.1])
-	by bjornoya.blackshift.org (Postfix) with SMTP id 4758737D8E5
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:38:53 +0000 (UTC)
-Received: from hardanger.blackshift.org (unknown [172.20.34.65])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bjornoya.blackshift.org (Postfix) with ESMTPS id B55DB37D8DE;
-	Tue, 26 Nov 2024 10:38:51 +0000 (UTC)
-Received: from [172.20.34.65] (localhost [::1])
-	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id 10e92ff8;
-	Tue, 26 Nov 2024 10:38:51 +0000 (UTC)
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Tue, 26 Nov 2024 11:38:48 +0100
-Subject: [PATCH can v2] can: mcp251xfd: mcp251xfd_get_tef_len(): work
- around erratum DS80000789E 6.
+	s=arc-20240116; t=1732617702; c=relaxed/simple;
+	bh=rZgQ1Njr68VVfkq+9rHYrCubwJeIuwgzf6q8PwPHA+g=;
+	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=J/ZZdq8/9CdAh026xp330nbXxBJq5fy2XBs2qTp/qsCDfnSn2LNoO2njj3MheCWnVGt6KM/DQgV8e9ueaJCGEUdzKuGFKRUgis+Fr1N1mwyahw6vruhHAgJ9ERpHcV0rGb5yihvLGrfzBnhyH4UnUOpE9sNw5f4fpgLJjS7f4cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8DxQK_apUVn8g5JAA--.53087S3;
+	Tue, 26 Nov 2024 18:41:30 +0800 (CST)
+Received: from [10.130.0.149] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMAxTUfZpUVn4W1oAA--.42852S3;
+	Tue, 26 Nov 2024 18:41:29 +0800 (CST)
+Subject: Re: [PATCH v4 01/10] objtool: Handle various symbol types of rodata
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
+ <20241122045005.14617-2-yangtiezhu@loongson.cn>
+ <20241126064458.7ugwqfx5vhnwzvbi@jpoimboe>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <75f6e90b-4d04-5627-395e-58982a84d7c1@loongson.cn>
+Date: Tue, 26 Nov 2024 18:41:29 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20241126064458.7ugwqfx5vhnwzvbi@jpoimboe>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241126-mcp251xfd-fix-length-calculation-v2-1-c2ed516ed6ba@pengutronix.de>
-X-B4-Tracking: v=1; b=H4sIADelRWcC/42NSw6CMBCGr2Jm7RimtiquvIdhUdspNMFC2kIwh
- Lvb4AVc/s9vhcTRc4L7YYXIs09+CEWI4wFMp0PL6G3RICohiUjh24xC0eIsOr9gz6HNHRrdm6n
- XuYyxvlipK7ZEjqHcjJFLc0c8wegATTE7n/IQPzt2pj36EcQfhJmQsL5KKdVLuVt9foylNOU4B
- L+cLEOzbdsXanR7H9oAAAA=
-X-Change-ID: 20241115-mcp251xfd-fix-length-calculation-96d4a0ed11fe
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Thomas Kopp <thomas.kopp@microchip.com>, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: kernel@pengutronix.de, linux-can@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Renjaya Raga Zenta <renjaya.zenta@formulatrix.com>, stable@vger.kernel.org, 
- Marc Kleine-Budde <mkl@pengutronix.de>
-X-Mailer: b4 0.15-dev-355e8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4137; i=mkl@pengutronix.de;
- h=from:subject:message-id; bh=sAOxah2M5O3VTEF5UaDJHeSJKF6SfSuYOQ5/5muWQ1E=;
- b=owEBbQGS/pANAwAKASg4oj56LbxvAcsmYgBnRaU4VE3meW5Zsi1lA7QVHV7mV/CwFhODfSuU/
- mOLDljU3FmJATMEAAEKAB0WIQRQQLqG4LYE3Sm8Pl8oOKI+ei28bwUCZ0WlOAAKCRAoOKI+ei28
- by3CB/4xjcVguRSVVlhQ883UYhPw4qi2dLUgQYoPUvulrvOWYCLbNkNGa93IPRLCsuzYB5dy+wW
- 454nGuNm5IEM8TzvfIShINk9dZR+9a4fZZ55Yu61CUkcDD9+1BZJ/lUPCKqLIqICu4SjGvgsVOU
- xswjLUMABYqHYhDpagV8A+NjiNDJbhWkyD5TQotGV79cY9ErLec/zMER4WoEzyJH+PFJpIpPN7P
- tLwA9eJ6wu8r6MftyBjFpbgqZPCxPfGdXVrpH4trhufwl63u1V5c49ZDSTgkUCw9rcPwNjaVeKo
- 3NRJXlrWGvet4E9OQnDGIOUTDhx+N8obleTpptFlZe/vSBcT
-X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
- fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-CM-TRANSID:qMiowMAxTUfZpUVn4W1oAA--.42852S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7CFy7Kw1Uury5uryDJw1DJwc_yoW8CFWUpF
+	sxtw45Kr4Fyr12gw4IqF4v9F93uws3WF17J3s8WrWrA3sFyF1rKayxGw43Ca4kJrn2vF47
+	Ja1YkryfZrWkA3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
+	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv
+	67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
+	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
+	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8yr
+	W7UUUUU==
 
-Commit b8e0ddd36ce9 ("can: mcp251xfd: tef: prepare to workaround
-broken TEF FIFO tail index erratum") introduced
-mcp251xfd_get_tef_len() to get the number of unhandled transmit events
-from the Transmit Event FIFO (TEF).
+On 11/26/2024 02:44 PM, Josh Poimboeuf wrote:
+> On Fri, Nov 22, 2024 at 12:49:56PM +0800, Tiezhu Yang wrote:
+>> @@ -2094,12 +2095,19 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
+>>  		if (prev_offset && reloc_offset(reloc) != prev_offset + 8)
+>>  			break;
+>>
+>> +		if (reloc->sym->type == STT_SECTION) {
+>> +			/* Addend field in the relocation entry associated with the symbol */
+>> +			offset = reloc_addend(reloc);
+>> +		} else {
+>> +			/* The address of the symbol in the relocation entry */
+>> +			offset = reloc->sym->offset;
+>
+> The comments don't seem helpful.
 
-As the TEF has no head index, the driver uses the TX-FIFO's tail index
-instead, assuming that send frames are completed.
+Will remove it.
 
-When calculating the number of unhandled TEF events, that commit
-didn't take mcp2518fd erratum DS80000789E 6. into account. According
-to that erratum, the FIFOCI bits of a FIFOSTA register, here the
-TX-FIFO tail index might be corrupted.
+>
+> In the case of STT_SECTION, sym->offset is always zero.  Therefore the
+> if-else can be converted to a simple unconditional statement:
+>
+> 	offset = reloc->sym->offset + reloc_addend(reloc);
 
-However here it seems the bit indicating that the TX-FIFO is
-empty (MCP251XFD_REG_FIFOSTA_TFERFFIF) is not correct while the
-TX-FIFO tail index is.
+OK, let me test it.
 
-Assume that the TX-FIFO is indeed empty if:
-- Chip's head and tail index are equal (len == 0).
-- The TX-FIFO is less than half full.
-  (The TX-FIFO empty case has already been checked at the
-   beginning of this function.)
-- No free buffers in the TX ring.
+>
+> 'prev_offset' needs to be updated as well.
 
-If the TX-FIFO is assumed to be empty, assume that the TEF is full and
-return the number of elements in the TX-FIFO (which equals the number
-of TEF elements).
+I am not sure I understand your comment correctly, I can not see
+what should to do about 'prev_offset'.
 
-If these assumptions are false, the driver might read to many objects
-from the TEF. mcp251xfd_handle_tefif_one() checks the sequence numbers
-and will refuse to process old events.
+>
+>> @@ -2137,6 +2145,7 @@ static struct reloc *find_jump_table(struct objtool_file *file,
+>>  {
+>>  	struct reloc *table_reloc;
+>>  	struct instruction *dest_insn, *orig_insn = insn;
+>> +	unsigned long offset;
+>>
+>>  	/*
+>>  	 * Backward search using the @first_jump_src links, these help avoid
+>> @@ -2160,7 +2169,16 @@ static struct reloc *find_jump_table(struct objtool_file *file,
+>>  		table_reloc = arch_find_switch_table(file, insn);
+>>  		if (!table_reloc)
+>>  			continue;
+>> -		dest_insn = find_insn(file, table_reloc->sym->sec, reloc_addend(table_reloc));
+>> +
+>> +		if (table_reloc->sym->type == STT_SECTION) {
+>> +			/* Addend field in the relocation entry associated with the symbol */
+>> +			offset = reloc_addend(table_reloc);
+>> +		} else {
+>> +			/* The address of the symbol in the relocation entry */
+>> +			offset = table_reloc->sym->offset;
+>> +		}
+>
+> Same comment here.
 
-Reported-by: Renjaya Raga Zenta <renjaya.zenta@formulatrix.com>
-Closes: https://patch.msgid.link/CAJ7t6HgaeQ3a_OtfszezU=zB-FqiZXqrnATJ3UujNoQJJf7GgA@mail.gmail.com
-Fixes: b8e0ddd36ce9 ("can: mcp251xfd: tef: prepare to workaround broken TEF FIFO tail index erratum")
-Tested-by: Renjaya Raga Zenta <renjaya.zenta@formulatrix.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
----
-Changes in v2:
-- adjusted patch subject
-- added stable on Cc
-- added Renjaya Raga Zenta's Tested-by
-- Link to RFC: https://patch.msgid.link/20241125-mcp251xfd-fix-length-calculation-v1-1-974445b5f893@pengutronix.de
----
- drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c | 29 ++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
+OK, will do it.
 
-diff --git a/drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c b/drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c
-index d3ac865933fdf6c4ecdd80ad4d7accbff51eb0f8..e94321849fd7e69ed045eaeac3efec52fe077d96 100644
---- a/drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c
-+++ b/drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c
-@@ -21,6 +21,11 @@ static inline bool mcp251xfd_tx_fifo_sta_empty(u32 fifo_sta)
- 	return fifo_sta & MCP251XFD_REG_FIFOSTA_TFERFFIF;
- }
- 
-+static inline bool mcp251xfd_tx_fifo_sta_less_than_half_full(u32 fifo_sta)
-+{
-+	return fifo_sta & MCP251XFD_REG_FIFOSTA_TFHRFHIF;
-+}
-+
- static inline int
- mcp251xfd_tef_tail_get_from_chip(const struct mcp251xfd_priv *priv,
- 				 u8 *tef_tail)
-@@ -147,7 +152,29 @@ mcp251xfd_get_tef_len(struct mcp251xfd_priv *priv, u8 *len_p)
- 	BUILD_BUG_ON(sizeof(tx_ring->obj_num) != sizeof(len));
- 
- 	len = (chip_tx_tail << shift) - (tail << shift);
--	*len_p = len >> shift;
-+	len >>= shift;
-+
-+	/* According to mcp2518fd erratum DS80000789E 6. the FIFOCI
-+	 * bits of a FIFOSTA register, here the TX-FIFO tail index
-+	 * might be corrupted.
-+	 *
-+	 * However here it seems the bit indicating that the TX-FIFO
-+	 * is empty (MCP251XFD_REG_FIFOSTA_TFERFFIF) is not correct
-+	 * while the TX-FIFO tail index is.
-+	 *
-+	 * We assume the TX-FIFO is empty, i.e. all pending CAN frames
-+	 * haven been send, if:
-+	 * - Chip's head and tail index are equal (len == 0).
-+	 * - The TX-FIFO is less than half full.
-+	 *   (The TX-FIFO empty case has already been checked at the
-+	 *    beginning of this function.)
-+	 * - No free buffers in the TX ring.
-+	 */
-+	if (len == 0 && mcp251xfd_tx_fifo_sta_less_than_half_full(fifo_sta) &&
-+	    mcp251xfd_get_tx_free(tx_ring) == 0)
-+		len = tx_ring->obj_num;
-+
-+	*len_p = len;
- 
- 	return 0;
- }
-
----
-base-commit: 9bb88c659673003453fd42e0ddf95c9628409094
-change-id: 20241115-mcp251xfd-fix-length-calculation-96d4a0ed11fe
-
-Best regards,
--- 
-Marc Kleine-Budde <mkl@pengutronix.de>
-
+Thanks,
+Tiezhu
 
 
