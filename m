@@ -1,141 +1,102 @@
-Return-Path: <linux-kernel+bounces-421858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 543599D9101
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 05:20:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD749D90EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 05:05:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A83228AD7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:20:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82ACA28916D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB9F130A7D;
-	Tue, 26 Nov 2024 04:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E7F12C530;
+	Tue, 26 Nov 2024 04:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DOSBmVd1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Au7uwZyn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E50742AA2
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 04:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4053B46B5
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 04:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732594800; cv=none; b=rXhq1cjSZxToJHH2tdNP6Ekz8+WECf69JdpOf+RomfUPV/rnZyQZXBJUA4QxBdhVd+i9Ibaz+qzzcRijtNR1sXb166+ePGlkM0Z3l5rdnUiYNiRO8KqIz26vN83Q8POKbBwM7eGAkBCCOAtXqNnj1mSt2IkAQyiymbJeXRIBYBM=
+	t=1732593935; cv=none; b=ebR+D/M9QT6G6r8qjMZUk6cUapwLKtYZ6wxMuuM4AGOwDKGheu6Y4MFs7cKlH0mKB7N/apuDz1oNtOxsoalR035+6KBli1x7O6qvG5dpefkK8Yqkg6t+dMeUgi90AEFxm7vAnxarEQLHWhPERZdmiQFQL6qeeb6EDo7MbbiGhfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732594800; c=relaxed/simple;
-	bh=5zVAkbu7TJnwT+KXgYyHDWMSKymFzOiIxz+xvgy4emw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ABwmBaLulKWzcYCWuTPpMx3k1AqtgitZ7o4IHz6jEs0OHQoSFbad72HEFV+htjlDWYuLmVZSpzeQJ+lYb8H6K0ghVmMwNbVe/Nhu4UVXEPJyh8IwoaecLKjXYo5+h5eoOGp9sSEG4VO1uZIrU26U0nBQrs7l1GXV+pxtoM84Sh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DOSBmVd1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91270C4CED0
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 04:19:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732594798;
-	bh=5zVAkbu7TJnwT+KXgYyHDWMSKymFzOiIxz+xvgy4emw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DOSBmVd13MrAI37ljg7fkpqOJ8y04GTlxk4jWgXx7DKx36qurdWVjWKp901fyUKdX
-	 bsNe6D00fsn17lYebnExBATygzDE2qLfYz7WVVyqwhot0y9eYvHCT3vfvnBLjOwPnL
-	 uWmqO5DyDoLhIIuv6kOnwL1/621+XAWXQleTaOa+sNzUcVSCOmae8UJg9/k5NmmEh9
-	 Km3d8kQ/i4cyEOwIHlbeZWByANpkgswVH8RZN/Lh+pSjqJKw8oOyL2hx7/F3yJCq6B
-	 BcJwSWbO/UgRaDPcgW3dGOBJSE91fNkpMWnzRn1WrEWLlYNXKmwZDP48wpx4P6vcBL
-	 Lff4jCKxQnaLg==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53ddb99e9dcso2716260e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 20:19:58 -0800 (PST)
-X-Gm-Message-State: AOJu0Yz76IAr7I6hggrdqlCu7oXO8puWMnJvauAxPmuLik6ZtZiNq5Ey
-	3Y46CBE0tnOMmLVYMuaM3hH7PKZGqOPuV5J0mxuC0ZTogN8IRaC/d0WFqEFBUWj4g7b/oOkiiIg
-	Jsu0bduS4KYZ2OIPhK24N5QJUVmE=
-X-Google-Smtp-Source: AGHT+IESHuLroU8rZwtuzByR/0SNVBecspvLNFcjitFZT6/NjPqvK+hX0Ou0sFlu/t+yU0IG6TWQmbmAN7Kpj4YjAyk=
-X-Received: by 2002:a05:6512:3d89:b0:53d:df9b:ffb5 with SMTP id
- 2adb3069b0e04-53ddf9c00bamr3399947e87.13.1732594797275; Mon, 25 Nov 2024
- 20:19:57 -0800 (PST)
+	s=arc-20240116; t=1732593935; c=relaxed/simple;
+	bh=9Ioky8h5RaX3oG5t9KKsk+qxjhyYHEcyDnaNB9Jvh10=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XADbCytUxoLpKppgAEWuHRtwGsG5D2++L/iiCqTkB0ldiEZH3HoEy+Ijz1QJnCdYNL9UrFIbkV6wqVrhLSaLoMRn6O1bLGzHDtNhu31gtMjT8rndSJkUdzlDFusN36Pis4lrNlqzrKauLKes5a8D3AHHjt4dGzox70puCcKJ2Uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Au7uwZyn; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732593934; x=1764129934;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9Ioky8h5RaX3oG5t9KKsk+qxjhyYHEcyDnaNB9Jvh10=;
+  b=Au7uwZynPzznqmX5ty6DGu62OcjXPoTNuB6D8JdOAlztQLtNMVo/88cD
+   773Aab7cXmqcUiw0sREUkWWEN/ZenrPsJdIBqERmRwr/skZZXxrKYbfib
+   WinwonaYFTIByQyRjMgpD8Xj7BAwk/Xfjps87XurXFKOemVtQNwLmBKyP
+   wgHSXLFS+J0ZxO+oyfFF1w8FQKq9F7HRJaR3LinR3SB+LREUhjv75XX5x
+   ji5Ma/NkyvrXG7Y7aZDzkmxE1X8b5wV4mvn+628T7AKWUTS7KOZ+etSsq
+   Ntledg5Szy2trDiTcv59AawMm2MhdL914pC3Gz0gypuUxTFsLPuw+Hdek
+   w==;
+X-CSE-ConnectionGUID: RSgfhJC/RXSAt8p/7wSNbQ==
+X-CSE-MsgGUID: VwiVQQA1SnG9SP8LTPnUMA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="58141085"
+X-IronPort-AV: E=Sophos;i="6.12,184,1728975600"; 
+   d="scan'208";a="58141085"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 20:05:33 -0800
+X-CSE-ConnectionGUID: 4pegDikEQ/qRuKHULf96pQ==
+X-CSE-MsgGUID: IEu/n8W+REK+WD1aQPhvLQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="96541776"
+Received: from liuzhao-optiplex-7080.sh.intel.com (HELO localhost) ([10.239.160.36])
+  by orviesa003.jf.intel.com with ESMTP; 25 Nov 2024 20:05:31 -0800
+Date: Tue, 26 Nov 2024 12:23:39 +0800
+From: Zhao Liu <zhao1.liu@intel.com>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+	bp@alien8.de, rafael@kernel.org, lenb@kernel.org,
+	dave.jiang@intel.com, irenic.rajneesh@gmail.com,
+	david.e.box@intel.com
+Subject: Re: [PATCH 06/11] x86/cpu: Move TSC CPUID leaf definition
+Message-ID: <Z0VNS0MP1bTafUFu@intel.com>
+References: <20241120195327.26E06A69@davehans-spike.ostc.intel.com>
+ <20241120195335.91B979C8@davehans-spike.ostc.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125083736.422081-1-lizhijian@fujitsu.com>
-In-Reply-To: <20241125083736.422081-1-lizhijian@fujitsu.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 26 Nov 2024 13:19:20 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATLK2-KudkKTdHjbVVVf+DNnrSyRasgWiL9akszgggXuA@mail.gmail.com>
-Message-ID: <CAK7LNATLK2-KudkKTdHjbVVVf+DNnrSyRasgWiL9akszgggXuA@mail.gmail.com>
-Subject: Re: [PATCH v2] gitignore: Don't ignore 'tags' directory
-To: Li Zhijian <lizhijian@fujitsu.com>
-Cc: linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>, 
-	Kris Van Hees <kris.van.hees@oracle.com>, rostedt@goodmis.org, 
-	kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241120195335.91B979C8@davehans-spike.ostc.intel.com>
 
-On Mon, Nov 25, 2024 at 5:37=E2=80=AFPM Li Zhijian <lizhijian@fujitsu.com> =
-wrote:
->
-> LKP reported warnings [1] regarding files being ignored:
-
-
-What I meant in the previous reply is LKP is unrelated
-because "make W=3D1" is enough to reproduce these warnings.
-
-
-Applied to linux-kbuild with the following simplified commit log.
-
-
-    W=3D1 builds reported warnings regarding files being ignored:
-         [ snip ]
-
-    Although these files are tracked by Git and the warnings are false
-
-
-Thanks.
-
-
-
-
-
-
->    tools/testing/selftests/arm64/tags/.gitignore: warning: ignored by one=
- of the .gitignore files
->    tools/testing/selftests/arm64/tags/Makefile: warning: ignored by one o=
-f the .gitignore files
->    tools/testing/selftests/arm64/tags/tags_test.c: warning: ignored by on=
-e of the .gitignore files
->
-> These warnings can be reproduced by compiling the kernel with the W=3D1 o=
-ption.
-> Although these files are tracked by Git and the warnings are false
-> positives, adjusting the .gitignore entries will prevent these warnings a=
-nd
-> ensure a smoother script execution.
->
-> [1] https://lore.kernel.org/linux-kselftest/202411251308.Vjm5MzVC-lkp@int=
-el.com/
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+On Wed, Nov 20, 2024 at 11:53:35AM -0800, Dave Hansen wrote:
+> Date: Wed, 20 Nov 2024 11:53:35 -0800
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+> Subject: [PATCH 06/11] x86/cpu: Move TSC CPUID leaf definition
+> 
+> 
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+> 
+> Prepare to use the TSC CPUID leaf definition more widely by moving
+> it to the common header.
+> 
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 > ---
->  .gitignore | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/.gitignore b/.gitignore
-> index 56972adb5031..6c57bb0259c6 100644
-> --- a/.gitignore
-> +++ b/.gitignore
-> @@ -128,6 +128,7 @@ series
->
->  # ctags files
->  tags
-> +!tags/
->  TAGS
->
->  # cscope files
-> --
-> 2.44.0
->
+> 
+>  b/arch/x86/events/intel/pt.c   |    1 +
+>  b/arch/x86/events/intel/pt.h   |    3 ---
+>  b/arch/x86/include/asm/cpuid.h |    1 +
+>  3 files changed, 2 insertions(+), 3 deletions(-)
 
+Reviewed-by: Zhao Liu <zhao1.liu@intel.com>
 
---=20
-Best Regards
-Masahiro Yamada
 
