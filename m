@@ -1,96 +1,78 @@
-Return-Path: <linux-kernel+bounces-421825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 366AF9D909B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:00:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFA949D9095
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 03:59:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E845928D157
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 02:59:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B547828D15E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 02:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9980C74E09;
-	Tue, 26 Nov 2024 02:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F9158222;
+	Tue, 26 Nov 2024 02:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="HtrT5Oz0"
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ot9ymTE9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965D112F585;
-	Tue, 26 Nov 2024 02:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1131C47F53;
+	Tue, 26 Nov 2024 02:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732589981; cv=none; b=CO8iemyZlYIeMnDQBDHv0cheFbHyY8fzfCAuW6RhmWGWU4z0kSO38mPAaPn8SE0HJXUy66+ZPPLe/Cmmpj4mgHMDGfFX8mUiyqD7iwkTnOtZpxofDvqjiFdkfz6sh6PHfVUvXtTdZHyXvIVDlRXtTfxgGLWbh55VR8Cv3JMsBjk=
+	t=1732589972; cv=none; b=AFkfcNWSyXHp2nTXQWOiE6H+SsYnI/TB4lV33PbbIHjKsiO9YN5GRSJCnv49Y21wUlfh8Enfh80LRPAtBAjYI7p+m8Z5q0LXbDbiArQOhfqqb2TVArvTEpvfINPad+2rTATrTZMdAXJZ75pKcMfy8FIJAgD/zCyC5HUwUmHl8C4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732589981; c=relaxed/simple;
-	bh=yMNIfEnFygUQiQ2NXOEDA0IrdLPQPdzFeD5QZDRoRKE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ph2FxkePNXSOWshmkfl5ER8OuBiLU69PeJGqQDElZq0Cs76f+oVp/ZlVzDCZ01v7ijp5yy+1zcserEXWZoEEQjrWxZtzhzSmHQMokZjk2oUWHV2eI5BXPjewA9BKLv76Oo96kRiDR3yyWCQev/2Bpg4tkapOltJCqMz9id+h+qI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=HtrT5Oz0; arc=none smtp.client-ip=80.12.242.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id FlnOtBIVte0OWFlnQt2Cm5; Tue, 26 Nov 2024 03:59:30 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1732589970;
-	bh=J+FJNTnJc4kElKhFDk7mqJ/nB5tWPYGf3iBV9WUPffQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=HtrT5Oz08AfrDqGRQ7qg3usYhQvPVM+dtausm9ZERn1BcY1Y+Be1m0yNSxEyCY9+m
-	 8aBbfrYOYPRJtXzz7ImO71h+XPqLcezJNoopgPjakQNN9SJXZLjXFpXtPTia0sn9XR
-	 /LZOAvjfWhINYmYHQMVMQrKkkW5ZQMs1RsdibpDSURvI43n31opQs+DgBgOOuVeKUx
-	 EYk2rwRp+ZLPxLbdb1VhcZjNmSwFaZli8FEO/uvyJP4I3A64gEeVVZtXDWbgq0OJOU
-	 CzGuzIk8wgs9kMuP64ZVLT9lwNFuxRwa6qE6Z2yVvuVJ++sR+zku5WY9DDPd2lW/uf
-	 uuwO2pRiBBvkw==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 26 Nov 2024 03:59:30 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <629a6722-d723-40be-a3e3-402904737925@wanadoo.fr>
-Date: Tue, 26 Nov 2024 11:59:22 +0900
+	s=arc-20240116; t=1732589972; c=relaxed/simple;
+	bh=Y/llceuyFvWYdu6tV+2xPCVzLsqCdjHOGubb/TAgkp0=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=E2hGSJ79b58/ymA/kcGsTOKcuKXcUf5+NDXLZHZxc0EuhRiXwVGM88Ja72GtsyRUXY+RNMsiOPd7/bUHwnePdGMncQBtw7RMOIsECm7Ba7h8/uzy2dfPBArqZrbIq9kviHLdpTxXtFROlj2XfFGwPIkL7GK8z7LCgNKAtP0xVzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ot9ymTE9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7859C4CECE;
+	Tue, 26 Nov 2024 02:59:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732589971;
+	bh=Y/llceuyFvWYdu6tV+2xPCVzLsqCdjHOGubb/TAgkp0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=Ot9ymTE9KXMscsSH0PAFqgejogNMO+UB+kYQAzRDGB/nHrIFgvRomEm8SdCRmX7gN
+	 +eR3YBVsrVR3e/1LLr/86Ns+gjsTNxdKrnintrAMVySX2d8HPuwk6AXKIsFZsJ0hON
+	 V2cticdnNeAjJXc5zZBYY5FxnS3BjZ1IVyeEiYdq//P0fRpRZpl8bmayOJjl9StjCY
+	 s/e3QJVXfapfZWhKNuIKgDcRDghojJRErDbV8/XlY7vxxtaRQdrQ455+eMgAmx/Oug
+	 8AUa81bRD/Hxe8StL0DTFhpyJCp0vXb/aSPKh/OkcEcNmJ1AVEnWpfTxexoX2jpPCB
+	 W4rWxkPMue+HA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0853809A00;
+	Tue, 26 Nov 2024 02:59:45 +0000 (UTC)
+Subject: Re: [GIT PULL] NVDIMM and DAX for 6.13
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <6740e31574b0e_2de57f294c9@iweiny-mobl.notmuch>
+References: <6740e31574b0e_2de57f294c9@iweiny-mobl.notmuch>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <6740e31574b0e_2de57f294c9@iweiny-mobl.notmuch>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git tags/libnvdimm-for-6.13
+X-PR-Tracked-Commit-Id: f3dd9ae7f03aefa5bb12a4606f3d6cca87863622
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 78a2cbd809ef834b680f2825d3e4c16ec66f8ffa
+Message-Id: <173258998455.4123769.1264709561580076077.pr-tracker-bot@kernel.org>
+Date: Tue, 26 Nov 2024 02:59:44 +0000
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Shen Lichuan <shenlichuan@vivo.com>, Yi Yang <yiyang13@huawei.com>, Vegard Nossum <vegard.nossum@oracle.com>, Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] can: flexcan: Add quirk to handle separate
- interrupt lines for mailboxes
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
- Marc Kleine-Budde <mkl@pengutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-can@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, NXP S32 Linux <s32@nxp.com>,
- imx@lists.linux.dev, Christophe Lizzi <clizzi@redhat.com>,
- Alberto Ruiz <aruizrui@redhat.com>, Enric Balletbo <eballetb@redhat.com>
-References: <20241125163103.4166207-1-ciprianmarian.costea@oss.nxp.com>
- <20241125163103.4166207-3-ciprianmarian.costea@oss.nxp.com>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-In-Reply-To: <20241125163103.4166207-3-ciprianmarian.costea@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Hi Ciprian,
+The pull request you sent on Fri, 22 Nov 2024 14:01:25 -0600:
 
-Thanks for the patch.
+> git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git tags/libnvdimm-for-6.13
 
-On 26/11/2024 at 01:31, Ciprian Costea wrote:
-> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> 
-> Introduce 'FLEXCAN_QUIRK_SECONDARY_MB_IRQ' quirk to handle a FlexCAN
-> hardware module integration particularity where two ranges of mailboxes
-> are controlled by separate hardware interrupt lines.
-> The same 'flexcan_irq' handler is used for both separate mailbox interrupt
-> lines, with no other changes.
-> 
-> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/78a2cbd809ef834b680f2825d3e4c16ec66f8ffa
 
-Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Thank you!
 
-Yours sincerely,
-Vincent Mailhol
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
