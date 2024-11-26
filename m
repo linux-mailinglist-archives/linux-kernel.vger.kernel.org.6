@@ -1,125 +1,130 @@
-Return-Path: <linux-kernel+bounces-422837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB379D9ED7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:25:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3831E9D9ED5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 22:25:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED484B26D77
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:25:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3DB5165AD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E69F1DF96B;
-	Tue, 26 Nov 2024 21:25:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2751DF25D;
+	Tue, 26 Nov 2024 21:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U28rJGjd"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FXFBPRDw"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 943DF1BBBC9;
-	Tue, 26 Nov 2024 21:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E631DF257
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 21:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732656318; cv=none; b=JITbQV/nuCym5iINQboUVDzpoZSf279rlXJEt4WkWfL42ONK/siux95Kv7UnWs/YT6bsZdoQ7yD+Ti+E4K3F5AMe7NksGz3u1EjvDw1wZiWRWm1ukWLLFGv9J7R+RRlWhGtDDdAkbYG5LV3GlzZ3txmiRyPzm57wn8du314T2F4=
+	t=1732656309; cv=none; b=jZQ26dsnXyxi0RoyeGeaBo2QdLODnxaOO/Y2WsaBt/htt+9fWEop0IxUM5FpZ/cExNa2eNg011GketKWxkA+vn6Pd/vsGk+s0L6n1Ij2I478zjByGuglHwasEEP8lplfwAG1G2tM0n7O4bkbZ+2t1MZ5SS97D6LbhwDnb3XVkGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732656318; c=relaxed/simple;
-	bh=xjS1sv7ZycCWokpZNmVAJ4ZyUQYgz7W7vOLsr0yLyTU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FNEfC0nTXc7wFw+BeIzMLgdDyLn0xmLRtG4qNvLe3IaRafeiqnfVowxxetWQusiqCSCB7JN6qJqR0C95u7HF874JchG6jcb3NFhpDguBWNDrPnR27gAy0jonrE0cZpAy9g31v5Gmt2Ad4btTyhV0DsrNLLTzHIbe0E8nBbGFy8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U28rJGjd; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-211fb27cc6bso60274695ad.0;
-        Tue, 26 Nov 2024 13:25:16 -0800 (PST)
+	s=arc-20240116; t=1732656309; c=relaxed/simple;
+	bh=OCbEhyVLJAVes5U0OfNBYmU9gspkQL7a73ulu1r6IXo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c7YgZMnbX7YFg9b2pBVA5k4pspqfJ6oHfDURaJG+G15PjsTgQZ1JsC/TyaZFP0BTmpqgBsdsKr5tU1wRoSU0j8dOjEZY354jeG4fKLd2E55wA6gLDdQ3ffxGAGQflBXG+WpZJk15TzQTnvekHsdwaeptYInkml1PhwpuLLzdsrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FXFBPRDw; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53da209492cso7832151e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 13:25:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732656316; x=1733261116; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=N2TKsl83AnwP2PjSI65VRG64wOcj8ly05hFtripK2Pw=;
-        b=U28rJGjdLS2KLybAYRGXgzL/hG3PIhSNd/mWD+fstTHvtCdJcSiuZdGFf0ngA/4wcK
-         hloxYE5aZbXKVt7BzkjGR+maF5amA4W3DeqYVIokMFPxSSqgqMLosM5lHjbE6d2qWZSj
-         xSXqX2Dxg7rOvQGQFkYBu4IYtH5FLWEpQasueGJXQWRuMQ2GlQ9CPytFiF1ukWD1X8o2
-         LjoPAJE2M4XBB5DPyF3r3aXlSLYeDuYFXyj5/AtlFbSlbBa+iTe4O45kfcMR0iUY21Pz
-         F5uDcqTnzg6jTbaBNV9fQJ4yPU1OAwMVEC4ipyjd2oMFXy1OG7iknbqz+nIFYp12tVxv
-         QQ9g==
+        d=linaro.org; s=google; t=1732656306; x=1733261106; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6h3kJfGGhVM0yFSXEKXnzQX8yDxkzOWLSNwlq2YprHM=;
+        b=FXFBPRDwIOvyE2GEhwJvQoG7+kGD6ElmZUqN09deH6bmfrwRSKCAVjsDDyvaOtNW83
+         MxK5ZnDkf4urTjw6xnCeZO1V/JYI6qX6CDCrKMsizIBg6Jjf6al09IPH5sciL6tDUXFy
+         +Krae5Q8gwmNWhIwBRev77La6p5mr+v1ephNSw65tLREqsKmpXprmhqNYqmyJWOvbxYr
+         9cL6xXkKf7iVvs5bLhy2wjPDwowAnOQ590/JaaghCGge4P813lSLEtKc3e+43q84hJ//
+         uHQQ7RnW4qbxMherUqhj877PLflPHbxpJLNsKsW4ygjX2RCGkJkp3ppnCuHKsmRC+GNI
+         9/Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732656316; x=1733261116;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N2TKsl83AnwP2PjSI65VRG64wOcj8ly05hFtripK2Pw=;
-        b=v3bH60wSL2silyC3KNEd7CJ7g2+St4jliYz6QlW42lFgagbWnRbBJc4ryHEMq0MAfo
-         6/ATm3QPzvVd8C5juWD+7p/57Yt++c4xWef+8ioNgK3sVq8WejLonH8Ms4pWZDsGGFJo
-         mCW3kmcxc8VPUSXmXuZbQeNMFIoGxglf/6lqtj/oupUGvkLYK4xNfx9S8V9P10JnXedc
-         Vf7SQgcpmMh1ieQdF4GecJxgZmnztB7tbunjvXXyic8kO9S+G0LAM2TLNvebOY9baTDD
-         GpOxGtOo6PcbAlv8JYMuqwh9dKp+NZYOfEpSCnJr7Uzay81lWbnBj4KjED0AIplgb8MI
-         Ykmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUlRTaphSc3vjbfUiWwESSLqvw/poXyU2vupnXpkSw7ZGxjOOkHgnQCGkjqg8D35Dj2OUAn4uePGlYv4K0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHGzpAVIrn1pXzeIzwNR1RzOSbbahrchot5O3eLW3kZ4ALGhBf
-	epzlxATomsNFOS3ybghCaGeedvdBt2EAa86bPavN36r8m44kNjo8
-X-Gm-Gg: ASbGncvHPjz8f6J/FmheuUllzeN+PzrgxO+FE8iXs8O/np1xhI7xW5uEpTsDm6GZ3YX
-	IFkcQVWpoqU43GnHeVH5so86zZ+l3w5atrU8UXmmpUepcJh2QiH1Qp5oGDfemWeoa6QIUYa2OLC
-	F7uXZxAiDXedqe4vmBxCzu0X9gvTZ8OcQF5VwmV3z6X3ShXv6VszuQQ1XLbZGXirQh/znNE3aK8
-	ajuc9fpFK0tryIAIhMAH3b/K8hTdUhjnb0T2ImlxZ265JG9MyvOjjnWvw5K9Fi7R8WUBSOTbDEh
-X-Google-Smtp-Source: AGHT+IFiE6mBthTh6/Xk493ZDQ+wpHrF+Kc29cYBJgz9mge4KCwyWFynJxSWYy/r1lnU6AgvZTV/yg==
-X-Received: by 2002:a17:902:ea0e:b0:20b:4f95:932d with SMTP id d9443c01a7336-2150108ca34mr8490985ad.3.1732656315856;
-        Tue, 26 Nov 2024 13:25:15 -0800 (PST)
-Received: from localhost.localdomain ([177.174.195.101])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129db8ca1csm89431075ad.20.2024.11.26.13.25.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 13:25:15 -0800 (PST)
-From: "Rafael V. Volkmer" <rafael.v.volkmer@gmail.com>
-To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: linux-pwm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Rafael V. Volkmer" <rafael.v.volkmer@gmail.com>
-Subject: [PATCH 2/2] pwm: correct pwm->state.enabled handling to allow fops control
-Date: Tue, 26 Nov 2024 18:24:14 -0300
-Message-Id: <20241126212414.15165-1-rafael.v.volkmer@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20230601; t=1732656306; x=1733261106;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6h3kJfGGhVM0yFSXEKXnzQX8yDxkzOWLSNwlq2YprHM=;
+        b=kJG5eyCteq46h36GGKzpfpBgsnIj2S+LFfUgmA6qvMLWkk3GUfg2GjaNFFpCUkCBLj
+         +V6p7uDKSLpRU4rWxB7J3xRPSbavdIfvcy0+zUe5mAx/ZOsIZMi/XV5d3YzCNcVl3YZA
+         0gi0113cVyCCskkwYtdufnZcrj0ni/1fXPijMpTrMPKj+oU44stmZk0VNWNMbl2B8YDN
+         AWObBKFwWiS2TrxRscPxtmrQeVaQkfvcGZ7sxdV+E7dfyq5wl8YMrgptewvBqHwF/Byi
+         EU0jec5EsPcuV83xXnoG1sBNhk1GV6QyDcXND/FUSQDRoOC6qHdUOfIZQyD3qjOyxNYE
+         fpLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQDY3VR+57DTtroy5FLNpbE5jcqc1HvBBqarJq8zUsasMucjBwTxb5iHQJ9MaKaFJlK5PAOdPPB8nUTpk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgUvA3xttIU8e7MTxxplYtKFEPMylTaxvNUftqC0+17Pl573lu
+	IWF+o8kS6iRNH9z02DLbi0c37mEJHnpylsijak7PC2ef5hRHdaa30tzT1tcwMZ79Sy8g05mTNUs
+	Dg8dSa5UHbeSkDlemP/EaKxraGcItcSnQBFwklg==
+X-Gm-Gg: ASbGncv4CT7LYZY65CBqey3C3FT+63GOCcEltJeHv+hK1EZK/tUDm4C4vxNiO34lHxp
+	YluY28/iTAMzvkBlSCVsqL1NIZkYxBA==
+X-Google-Smtp-Source: AGHT+IHSrPR6Pqpyg4e7ER+ek3MH0oeiQVFy40chfxmpilpXRCIjRdoDRTm7U+FqL/Q1H+0po9DrV+HI5wtgsosAtoA=
+X-Received: by 2002:a05:6512:3da3:b0:53d:d3ff:85f1 with SMTP id
+ 2adb3069b0e04-53df00ff18dmr264363e87.42.1732656305985; Tue, 26 Nov 2024
+ 13:25:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240506-imx-pinctrl-optional-v2-0-bdff75085156@geanix.com>
+ <20240506-imx-pinctrl-optional-v2-1-bdff75085156@geanix.com> <49ff070a-ce67-42d7-84ec-8b54fd7e9742@roeck-us.net>
+In-Reply-To: <49ff070a-ce67-42d7-84ec-8b54fd7e9742@roeck-us.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 26 Nov 2024 22:24:55 +0100
+Message-ID: <CACRpkdaBR5mmj43y_80b9jd3TAqRWMdCyD9EP6AY-Y0-asz4TA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] ARM: imx: Allow user to disable pinctrl
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Esben Haabendal <esben@geanix.com>, Russell King <linux@armlinux.org.uk>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Rasmus Villemoes <rasmus.villemoes@prevas.dk>, linux-arm-kernel@lists.infradead.org, 
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ensure pwm->state.enabled is consistently updated during enable and
-disable operations in ehrpwm_pwm_apply() to resolve this issue.
+On Tue, Nov 26, 2024 at 5:17=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> =
+wrote:
+> On Mon, May 06, 2024 at 12:23:53PM +0200, Esben Haabendal wrote:
 
-Previously, when attempting to interact with the ti PWM driver through
-fops, the pwm->state.enabled field was not updated correctly after
-applying enable or disable. This led to a state mismatch where the
-driver's state detection logic prevented disabling the PWM through
-fops once it had been activated.
+> > Making pinctrl drivers and subsequently the pinctrl framework
+> > user-controllable, allows building a kernel without this.
+> > While in many (most) cases, this could make the system unbootable, it
+> > does allow building smaller kernels for those situations where picntrl
+> > is not needed.
+> >
+> > One such situation is when building a kernel for NXP LS1021A systems,
+> > which does not have run-time controllable pinctrl, so pinctrl framework
+> > and drivers are 100% dead-weight.
+> >
+> >
+> > Signed-off-by: Esben Haabendal <esben@geanix.com>
+>
+> This patch didn't update default configurations, meaning PINCTRL is now
+> disabled by affected configurations such as imx_v4_v5_defconfig or
+> imx_v6_v7_defconfig, making pretty much all imx platforms non-bootable
+> unless the default configuration is changed manually.
 
-Signed-off-by: Rafael V. Volkmer <rafael.v.volkmer@gmail.com>
----
- drivers/pwm/pwm-tiehrpwm.c | 2 ++
- 1 file changed, 2 insertions(+)
+Since the patch tries to add default selects for all drivers I suspect this
+oneliner is the culprit:
 
-diff --git a/drivers/pwm/pwm-tiehrpwm.c b/drivers/pwm/pwm-tiehrpwm.c
-index 0125e73b98df..9f939d535440 100644
---- a/drivers/pwm/pwm-tiehrpwm.c
-+++ b/drivers/pwm/pwm-tiehrpwm.c
-@@ -420,6 +420,7 @@ static int ehrpwm_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 	if (!state->enabled) {
- 		if (enabled)
- 			ehrpwm_pwm_disable(chip, pwm);
-+			pwm->state.enabled = false;
- 		return 0;
- 	}
- 
-@@ -429,6 +430,7 @@ static int ehrpwm_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 
- 	if (!enabled)
- 		err = ehrpwm_pwm_enable(chip, pwm);
-+		pwm->state.enabled = true;
- 
- 	return err;
- }
--- 
-2.25.1
+@@ -6,7 +6,6 @@ menuconfig ARCH_MXC
+        select CLKSRC_IMX_GPT
+        select GENERIC_IRQ_CHIP
+        select GPIOLIB
+-       select PINCTRL
+        select PM_OPP if PM
+        select SOC_BUS
+        select SRAM
 
+Should we just add that one line back?
+
+Yours,
+Linus Walleij
 
