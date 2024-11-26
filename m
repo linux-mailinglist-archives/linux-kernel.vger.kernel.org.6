@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-422726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A1189D9D7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:40:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F209D9D7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:40:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA15116757F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:40:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F12631673CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7673F1DE3C6;
-	Tue, 26 Nov 2024 18:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6183E1DE4F8;
+	Tue, 26 Nov 2024 18:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YlGh/mmK"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PZGdWAAC"
 Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8011DDC2E
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 18:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38EC01DE3A3
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 18:40:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732646428; cv=none; b=Xtc426KFwhV9FTHv4lzK62tgFKEF+gnLa8mhCsDLrRrUDHh+AobXaSe9QTNkZI14HxRl2PKMdWRGbmeQXP3AM1iUyNZAznouFAJTB8hVhTuy9Nj0M8FQURdSpTZMYqJWO1kzLr6aFNimI14kA9/QBqYicBzrYY+992pCbG2gHvI=
+	t=1732646430; cv=none; b=IluoMa6N+GeiGEqZi9G0AYlp821Hxg/9RXiEiO9+XehtTu2i+oh52dCO8c62hki9m9xViupnEU3vgQQ7iGPiGX2lyRWhMqAjTWaSIIAjb5xaJzJ5ciik/ktoU+h2B77SSjFdVTcKkj3hMVDb72H5cB4b2Bw+5aAOOJOExz9BBJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732646428; c=relaxed/simple;
-	bh=1b3dMELyLxamvht5e+LV7/lTV4/qEiNlyQkh3+gkwdU=;
+	s=arc-20240116; t=1732646430; c=relaxed/simple;
+	bh=feto92b180sVitSUi6WA4dfzTO6KX//Xofn2Sv0b/xs=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nSG7IjixNcUwv6x9FiQEhajuZZTFkQx/K20Z11nPNf6J9d2cRNvfDe/mNHkV0LT3+e5vf7F82AYm3HM4y5O0mPp5oy3iQwDdn9PYRTAgaGzDnS4ijQUSH29+1d4NJGMojrF8dxkpAuQX0JN7XEkOyMPexfwrYxhk+wlA+C27YlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YlGh/mmK; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=WGYNIjsC0L5PR1MKpvUB2ZGTOVzrnCYGtoo95F/a2WLIH55tVEAfkyS8SJJBb+RaaoVR5eAqyc8HMbAP80yBqSW4YOa5lKhjuQjJ0AKDiIUe/dv6w7IkGQeUYH5DLAhN1yKuvvmsADeoqVdKh6d5KXZOMRT3FD1UzaSVSprGw/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PZGdWAAC; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7eaac1e95ffso5323252a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:40:26 -0800 (PST)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7f80959f894so32971a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:40:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732646426; x=1733251226; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732646428; x=1733251228; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=awrGx+G7Hl/os9Vh+fl4vRm8eJvHryPmjNf0DeKDZHM=;
-        b=YlGh/mmKXVEu4lP2T2PV5LBrqJNvjo7uuKmiIf3UMPl3WKVaBvuenHhhMc4elXv6mJ
-         R1Aym0yoquZXqxBuE7vRUfcy37ea0HP/ELeToOsvPjDGsDcIPKq5On+5HJyazarqQveY
-         axjsGhpRwMCeMYT873Mz/lHpHC0+UB5kBL5V3dKzzVLTQlVJyPoIVzWWdhfU7+keB1OD
-         I6oT9xVrmFDfNtTPYMezEm1F4EC0tbhBHiZ5zdVCL6WXfELGmGGiljcnzjcElcWPWjmN
-         cJq50ov5/wg/B/RptnthpBw+MTPD593jnkM7F/Y4wD43DGJ7cj/JQOdNEXC8EM2xXX+/
-         1JoA==
+        bh=ybt3W/utb4idptlSsffJBzP4pVTicA4UuTKY+AOtES8=;
+        b=PZGdWAACnMUyzakwPSl9KmJ5+3VyOym9QmPv9ME2MUIMW4eab4VHhMeV+CGx0oAA1w
+         hY9y7fcPHma74YhfGzwBwYqd5aQT5S5wfcfYWHOpj2GDeztoSatp3rSuISBCCR1/LuIm
+         entrPXuq02CQktniZ6aFQJn2JyTHW3qQFkpoKIm9eu2rT3hlvY23kmPp1bkEEDCQgsV3
+         bYQZKpqfCm6owalf4o2Jusay7/2MoaZYMkJjr2sGcKqgKuC65SJwnBZp3qqRfE8GB9o0
+         +Sd/YLIAPyIivqui6oceESf8oRth/gkYBTs2xHszg3Vs2ty0flUhuNGYL4sRBubK5T5s
+         AYzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732646426; x=1733251226;
+        d=1e100.net; s=20230601; t=1732646428; x=1733251228;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=awrGx+G7Hl/os9Vh+fl4vRm8eJvHryPmjNf0DeKDZHM=;
-        b=S4TxR1fOguKvKsiDETgb5G3/zxQLLCwGlw8QUW831TI9VbTlu9VvyTDXMvYve9Jfq3
-         OGh0ln3PX9w8SxZp2TK/kVxg6c4Zuws5Kzo0QGt1AVRbhzE43xNh1wZPRiuxcfOy9zrv
-         R2kQNQwiDECUtfEjVdBvdG3WS6hMaQMkyObxzu0d4rJoaOW3MqLjCYTPW78j4HmwFp8O
-         7qDDris6PdtVtPFUO7duyIv38bFs63JKrP3yU7Id09gG6vidhzszVhmBfN953xC7twDS
-         clBGXq+yO9lHb20OyGREduGQrRGrDLBg2W/UJYhiKycUWsC8DiwQMEP3jQNqkEkCVfaz
-         nC+A==
-X-Gm-Message-State: AOJu0YxmFEurlrAHJBN3l1mE4AZQeke+7m9+BoYUb7xLtoaeeG0tcOjH
-	rbV/aYA5l235JmkLxbw4YIGnnbLHAx6xwnoeIC9iDOMb29Ts7z7gfEBbjlvOeEjsesmYr/auz9Y
-	N65F6gymwsA==
-X-Google-Smtp-Source: AGHT+IHDDpNX9GMPQmz8d6u/R0ATzXftiCJYQ3Dt7Ne1B3Je173GsCwR60jDp3J5zjrLR96SKwZIyvCEP+TZ6g==
-X-Received: from pfwo3.prod.google.com ([2002:a05:6a00:1bc3:b0:724:d819:72])
+        bh=ybt3W/utb4idptlSsffJBzP4pVTicA4UuTKY+AOtES8=;
+        b=eVU+s2nm/+SI8WCceCwNq/RfgX+Gn0NCmG6Jo4Ct2vx4hPkaG+5t1ibqHbJJuXnFVa
+         3hiU8w5hkI/MY32wDQyu9cB6ayShlhFLwX2zeYNQX8tfWmZGD9Ayqw2t876W5Y0NCyjP
+         UGj6JiSIcJhOpkqko9DhQeHtHFeZYH5/ZyT1BFaXwA6J2OI8zR+hfgqnTGFzZg2C4WL8
+         wO+b0eBdZrjUk8WWxO22TDLAKjgpkYlN6rH/u3jghqb1tTyLy1hdihUbvQRzXhpHlE8u
+         MAHTMbVo3UAaAllytOkdenaGQXTaZzWWe7MgGEu+/aprFoaXl9/isOys19jsqEgEu6dl
+         OzYg==
+X-Gm-Message-State: AOJu0Yw/NywdNNfcEQk4JTEm5IGuyN2QC2D2Rw4TE9fXpDWA+hS1oFae
+	BDg0yt419dLf1G3hPeE4Wqju+0BX7brS+deOKCu5jCWgpBU3qMs+loEt1SUWiGX38uClUZNpbga
+	czVQqiLE+UQ==
+X-Google-Smtp-Source: AGHT+IFT1a1fQiePaQ1qUbP8EcbwdJ+SyQ0GgRw+Bp/RTCFxiVF9NmX8FOecxW7TMwAhdeR4HvcuLsZDme45eA==
+X-Received: from pgbct7.prod.google.com ([2002:a05:6a02:2107:b0:7fc:1b9c:dcba])
  (user=cmllamas job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:158a:b0:1cf:27bf:8e03 with SMTP id adf61e73a8af0-1e0e0b10997mr656858637.26.1732646426258;
- Tue, 26 Nov 2024 10:40:26 -0800 (PST)
-Date: Tue, 26 Nov 2024 18:40:04 +0000
+ 2002:a05:6a20:729e:b0:1e0:c5f9:75b6 with SMTP id adf61e73a8af0-1e0e13b0786mr455547637.20.1732646428328;
+ Tue, 26 Nov 2024 10:40:28 -0800 (PST)
+Date: Tue, 26 Nov 2024 18:40:05 +0000
 In-Reply-To: <20241126184021.45292-1-cmllamas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,245 +72,147 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241126184021.45292-1-cmllamas@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241126184021.45292-2-cmllamas@google.com>
-Subject: [PATCH v5 1/9] Revert "binder: switch alloc->mutex to spinlock_t"
+Message-ID: <20241126184021.45292-3-cmllamas@google.com>
+Subject: [PATCH v5 2/9] binder: concurrent page installation
 From: Carlos Llamas <cmllamas@google.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
 	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
 	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
 	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>
 Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	Mukesh Ojha <quic_mojha@quicinc.com>
+	David Hildenbrand <david@redhat.com>, Barry Song <v-songbaohua@oppo.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
 
-This reverts commit 7710e2cca32e7f3958480e8bd44f50e29d0c2509.
+Allow multiple callers to install pages simultaneously by switching the
+mmap_sem from write-mode to read-mode. Races to the same PTE are handled
+using get_user_pages_remote() to retrieve the already installed page.
+This method significantly reduces contention in the mmap semaphore.
 
-In preparation for concurrent page installations, restore the original
-alloc->mutex which will serialize zap_page_range_single() against page
-installations in subsequent patches (instead of the mmap_sem).
+To ensure safety, vma_lookup() is used (instead of alloc->vma) to avoid
+operating on an isolated VMA. In addition, zap_page_range_single() is
+called under the alloc->mutex to avoid racing with the shrinker.
 
-Resolved trivial conflicts with commit 2c10a20f5e84a ("binder_alloc: Fix
-sleeping function called from invalid context") and commit da0c02516c50
-("mm/list_lru: simplify the list_lru walk callback function").
+Many thanks to Barry Song who posted a similar approach [1].
 
-Cc: Mukesh Ojha <quic_mojha@quicinc.com>
+Link: https://lore.kernel.org/all/20240902225009.34576-1-21cnbao@gmail.com/ [1]
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Barry Song <v-songbaohua@oppo.com>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
 Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 Signed-off-by: Carlos Llamas <cmllamas@google.com>
 ---
- drivers/android/binder_alloc.c | 46 +++++++++++++++++-----------------
- drivers/android/binder_alloc.h | 10 ++++----
- 2 files changed, 28 insertions(+), 28 deletions(-)
+ drivers/android/binder_alloc.c | 65 +++++++++++++++++++++-------------
+ 1 file changed, 41 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-index a738e7745865..52f6aa3232e1 100644
+index 52f6aa3232e1..f26283c2c768 100644
 --- a/drivers/android/binder_alloc.c
 +++ b/drivers/android/binder_alloc.c
-@@ -169,9 +169,9 @@ struct binder_buffer *binder_alloc_prepare_to_free(struct binder_alloc *alloc,
+@@ -221,26 +221,14 @@ static int binder_install_single_page(struct binder_alloc *alloc,
+ 				      struct binder_lru_page *lru_page,
+ 				      unsigned long addr)
  {
- 	struct binder_buffer *buffer;
++	struct vm_area_struct *vma;
+ 	struct page *page;
+-	int ret = 0;
++	long npages;
++	int ret;
  
--	spin_lock(&alloc->lock);
-+	mutex_lock(&alloc->mutex);
- 	buffer = binder_alloc_prepare_to_free_locked(alloc, user_ptr);
--	spin_unlock(&alloc->lock);
-+	mutex_unlock(&alloc->mutex);
- 	return buffer;
- }
+ 	if (!mmget_not_zero(alloc->mm))
+ 		return -ESRCH;
  
-@@ -597,10 +597,10 @@ struct binder_buffer *binder_alloc_new_buf(struct binder_alloc *alloc,
- 	if (!next)
- 		return ERR_PTR(-ENOMEM);
- 
--	spin_lock(&alloc->lock);
-+	mutex_lock(&alloc->mutex);
- 	buffer = binder_alloc_new_buf_locked(alloc, next, size, is_async);
- 	if (IS_ERR(buffer)) {
--		spin_unlock(&alloc->lock);
-+		mutex_unlock(&alloc->mutex);
+-	/*
+-	 * Protected with mmap_sem in write mode as multiple tasks
+-	 * might race to install the same page.
+-	 */
+-	mmap_write_lock(alloc->mm);
+-	if (binder_get_installed_page(lru_page))
+-		goto out;
+-
+-	if (!alloc->vma) {
+-		pr_err("%d: %s failed, no vma\n", alloc->pid, __func__);
+-		ret = -ESRCH;
+-		goto out;
+-	}
+-
+ 	page = alloc_page(GFP_KERNEL | __GFP_HIGHMEM | __GFP_ZERO);
+ 	if (!page) {
+ 		pr_err("%d: failed to allocate page\n", alloc->pid);
+@@ -248,19 +236,48 @@ static int binder_install_single_page(struct binder_alloc *alloc,
  		goto out;
  	}
  
-@@ -608,7 +608,7 @@ struct binder_buffer *binder_alloc_new_buf(struct binder_alloc *alloc,
- 	buffer->offsets_size = offsets_size;
- 	buffer->extra_buffers_size = extra_buffers_size;
- 	buffer->pid = current->tgid;
--	spin_unlock(&alloc->lock);
-+	mutex_unlock(&alloc->mutex);
- 
- 	ret = binder_install_buffer_pages(alloc, buffer, size);
- 	if (ret) {
-@@ -785,17 +785,17 @@ void binder_alloc_free_buf(struct binder_alloc *alloc,
- 	 * We could eliminate the call to binder_alloc_clear_buf()
- 	 * from binder_alloc_deferred_release() by moving this to
- 	 * binder_free_buf_locked(). However, that could
--	 * increase contention for the alloc->lock if clear_on_free
--	 * is used frequently for large buffers. This lock is not
-+	 * increase contention for the alloc mutex if clear_on_free
-+	 * is used frequently for large buffers. The mutex is not
- 	 * needed for correctness here.
- 	 */
- 	if (buffer->clear_on_free) {
- 		binder_alloc_clear_buf(alloc, buffer);
- 		buffer->clear_on_free = false;
+-	ret = vm_insert_page(alloc->vma, addr, page);
+-	if (ret) {
++	mmap_read_lock(alloc->mm);
++	vma = vma_lookup(alloc->mm, addr);
++	if (!vma || vma != alloc->vma) {
++		__free_page(page);
++		pr_err("%d: %s failed, no vma\n", alloc->pid, __func__);
++		ret = -ESRCH;
++		goto unlock;
++	}
++
++	ret = vm_insert_page(vma, addr, page);
++	switch (ret) {
++	case -EBUSY:
++		/*
++		 * EBUSY is ok. Someone installed the pte first but the
++		 * lru_page->page_ptr has not been updated yet. Discard
++		 * our page and look up the one already installed.
++		 */
++		ret = 0;
++		__free_page(page);
++		npages = get_user_pages_remote(alloc->mm, addr, 1,
++					       FOLL_NOFAULT, &page, NULL);
++		if (npages <= 0) {
++			pr_err("%d: failed to find page at offset %lx\n",
++			       alloc->pid, addr - alloc->buffer);
++			ret = -ESRCH;
++			break;
++		}
++		fallthrough;
++	case 0:
++		/* Mark page installation complete and safe to use */
++		binder_set_installed_page(lru_page, page);
++		break;
++	default:
++		__free_page(page);
+ 		pr_err("%d: %s failed to insert page at offset %lx with %d\n",
+ 		       alloc->pid, __func__, addr - alloc->buffer, ret);
+-		__free_page(page);
+ 		ret = -ENOMEM;
+-		goto out;
++		break;
  	}
--	spin_lock(&alloc->lock);
-+	mutex_lock(&alloc->mutex);
- 	binder_free_buf_locked(alloc, buffer);
--	spin_unlock(&alloc->lock);
-+	mutex_unlock(&alloc->mutex);
+-
+-	/* Mark page installation complete and safe to use */
+-	binder_set_installed_page(lru_page, page);
++unlock:
++	mmap_read_unlock(alloc->mm);
+ out:
+-	mmap_write_unlock(alloc->mm);
+ 	mmput_async(alloc->mm);
+ 	return ret;
  }
- 
- /**
-@@ -893,7 +893,7 @@ void binder_alloc_deferred_release(struct binder_alloc *alloc)
- 	struct binder_buffer *buffer;
- 
- 	buffers = 0;
--	spin_lock(&alloc->lock);
-+	mutex_lock(&alloc->mutex);
- 	BUG_ON(alloc->vma);
- 
- 	while ((n = rb_first(&alloc->allocated_buffers))) {
-@@ -940,7 +940,7 @@ void binder_alloc_deferred_release(struct binder_alloc *alloc)
- 			page_count++;
- 		}
- 	}
--	spin_unlock(&alloc->lock);
-+	mutex_unlock(&alloc->mutex);
- 	kvfree(alloc->pages);
- 	if (alloc->mm)
- 		mmdrop(alloc->mm);
-@@ -964,7 +964,7 @@ void binder_alloc_print_allocated(struct seq_file *m,
- 	struct binder_buffer *buffer;
- 	struct rb_node *n;
- 
--	spin_lock(&alloc->lock);
-+	mutex_lock(&alloc->mutex);
- 	for (n = rb_first(&alloc->allocated_buffers); n; n = rb_next(n)) {
- 		buffer = rb_entry(n, struct binder_buffer, rb_node);
- 		seq_printf(m, "  buffer %d: %lx size %zd:%zd:%zd %s\n",
-@@ -974,7 +974,7 @@ void binder_alloc_print_allocated(struct seq_file *m,
- 			   buffer->extra_buffers_size,
- 			   buffer->transaction ? "active" : "delivered");
- 	}
--	spin_unlock(&alloc->lock);
-+	mutex_unlock(&alloc->mutex);
- }
- 
- /**
-@@ -991,7 +991,7 @@ void binder_alloc_print_pages(struct seq_file *m,
- 	int lru = 0;
- 	int free = 0;
- 
--	spin_lock(&alloc->lock);
-+	mutex_lock(&alloc->mutex);
- 	/*
- 	 * Make sure the binder_alloc is fully initialized, otherwise we might
- 	 * read inconsistent state.
-@@ -1007,7 +1007,7 @@ void binder_alloc_print_pages(struct seq_file *m,
- 				lru++;
- 		}
- 	}
--	spin_unlock(&alloc->lock);
-+	mutex_unlock(&alloc->mutex);
- 	seq_printf(m, "  pages: %d:%d:%d\n", active, lru, free);
- 	seq_printf(m, "  pages high watermark: %zu\n", alloc->pages_high);
- }
-@@ -1023,10 +1023,10 @@ int binder_alloc_get_allocated_count(struct binder_alloc *alloc)
- 	struct rb_node *n;
- 	int count = 0;
- 
--	spin_lock(&alloc->lock);
-+	mutex_lock(&alloc->mutex);
- 	for (n = rb_first(&alloc->allocated_buffers); n != NULL; n = rb_next(n))
- 		count++;
--	spin_unlock(&alloc->lock);
-+	mutex_unlock(&alloc->mutex);
- 	return count;
- }
- 
-@@ -1070,8 +1070,8 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
- 		goto err_mmget;
- 	if (!mmap_read_trylock(mm))
- 		goto err_mmap_read_lock_failed;
--	if (!spin_trylock(&alloc->lock))
--		goto err_get_alloc_lock_failed;
-+	if (!mutex_trylock(&alloc->mutex))
-+		goto err_get_alloc_mutex_failed;
- 	if (!page->page_ptr)
- 		goto err_page_already_freed;
- 
-@@ -1090,7 +1090,7 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
+@@ -1090,7 +1107,6 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
  	trace_binder_unmap_kernel_end(alloc, index);
  
  	list_lru_isolate(lru, item);
--	spin_unlock(&alloc->lock);
-+	mutex_unlock(&alloc->mutex);
+-	mutex_unlock(&alloc->mutex);
  	spin_unlock(&lru->lock);
  
  	if (vma) {
-@@ -1109,8 +1109,8 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
+@@ -1101,6 +1117,7 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
+ 		trace_binder_unmap_user_end(alloc, index);
+ 	}
  
- err_invalid_vma:
- err_page_already_freed:
--	spin_unlock(&alloc->lock);
--err_get_alloc_lock_failed:
 +	mutex_unlock(&alloc->mutex);
-+err_get_alloc_mutex_failed:
  	mmap_read_unlock(mm);
- err_mmap_read_lock_failed:
  	mmput_async(mm);
-@@ -1145,7 +1145,7 @@ void binder_alloc_init(struct binder_alloc *alloc)
- 	alloc->pid = current->group_leader->pid;
- 	alloc->mm = current->mm;
- 	mmgrab(alloc->mm);
--	spin_lock_init(&alloc->lock);
-+	mutex_init(&alloc->mutex);
- 	INIT_LIST_HEAD(&alloc->buffers);
- }
- 
-diff --git a/drivers/android/binder_alloc.h b/drivers/android/binder_alloc.h
-index c02c8ebcb466..33c5f971c0a5 100644
---- a/drivers/android/binder_alloc.h
-+++ b/drivers/android/binder_alloc.h
-@@ -9,7 +9,7 @@
- #include <linux/rbtree.h>
- #include <linux/list.h>
- #include <linux/mm.h>
--#include <linux/spinlock.h>
-+#include <linux/rtmutex.h>
- #include <linux/vmalloc.h>
- #include <linux/slab.h>
- #include <linux/list_lru.h>
-@@ -72,7 +72,7 @@ struct binder_lru_page {
- 
- /**
-  * struct binder_alloc - per-binder proc state for binder allocator
-- * @lock:               protects binder_alloc fields
-+ * @mutex:              protects binder_alloc fields
-  * @vma:                vm_area_struct passed to mmap_handler
-  *                      (invariant after mmap)
-  * @mm:                 copy of task->mm (invariant after open)
-@@ -96,7 +96,7 @@ struct binder_lru_page {
-  * struct binder_buffer objects used to track the user buffers
-  */
- struct binder_alloc {
--	spinlock_t lock;
-+	struct mutex mutex;
- 	struct vm_area_struct *vma;
- 	struct mm_struct *mm;
- 	unsigned long buffer;
-@@ -153,9 +153,9 @@ binder_alloc_get_free_async_space(struct binder_alloc *alloc)
- {
- 	size_t free_async_space;
- 
--	spin_lock(&alloc->lock);
-+	mutex_lock(&alloc->mutex);
- 	free_async_space = alloc->free_async_space;
--	spin_unlock(&alloc->lock);
-+	mutex_unlock(&alloc->mutex);
- 	return free_async_space;
- }
- 
+ 	__free_page(page_to_free);
 -- 
 2.47.0.338.g60cca15819-goog
 
