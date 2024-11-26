@@ -1,152 +1,160 @@
-Return-Path: <linux-kernel+bounces-422689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB7659D9D00
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:58:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6254D9D9D0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:00:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F0602858C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:58:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67455B2A21D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04F61DC720;
-	Tue, 26 Nov 2024 17:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DFB1DD0D5;
+	Tue, 26 Nov 2024 17:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="huA6gbY2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lplMH45K"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A91D299;
-	Tue, 26 Nov 2024 17:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3693D299;
+	Tue, 26 Nov 2024 17:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732643898; cv=none; b=ku51hS5mN7njgKiLAhI35Y/EC1h45nveJvj0bBABDPOOz4bI5x1xVF/TXyiJgnDRHRZIvs+s0mHIfZ4sBuWENc17F3oOq0gnag2xwQWDABKX93EQe+BrnpSsed3lxA/lH8vkoXjYjERmqfjPTXb3iYzfLkrLfioutENsXveSicA=
+	t=1732643965; cv=none; b=s+XBNCActOIcWUfmkFkX1EiBebmO3KJIlMZrBzlkGWwxK2gz4eHPqVAAgoZRR8I8uCml8DSsB5SFq2ZvqWCt/S6rm0+qaonJ/bq8uJqZ4gY55dnXJtKBq2mvxyp7ORjA8XRvOdiGmbL1sHAz7reURdKmAFHFPMq7W25qgWB94vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732643898; c=relaxed/simple;
-	bh=IDyL1pulAzUpnCICZ2IVyP2Lsx+Gle/0XJ4/G7Zn+0k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KVVvrI9o/CaUo+XWYRKVFG3BZuGtGgzU8RavW4VZvW9SOgvZE/TKzS7zb4ArHKe6svXOYtuGZkvkQC3mN2ih/l4eh17q9iGwIMOSWhqNZY/n9Ogtn8Ltd+eoFWvGsubPkFDIBk6ItnJHGjSgkxZfXeb4PW+fJVX3j+IQIXKTrLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=huA6gbY2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B874C4CECF;
-	Tue, 26 Nov 2024 17:58:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732643897;
-	bh=IDyL1pulAzUpnCICZ2IVyP2Lsx+Gle/0XJ4/G7Zn+0k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=huA6gbY2lE5dDy+0x+tm3yHSKuwnCNcQxIyL30aWJTvSZOCU8GkgKdpQmHVLBCT70
-	 bHwN117Wn/ApYDnSBK6Lw+iswXvGAMoa04S6o1T7caJRaiGpI19Z5WVFICqpdtEdNI
-	 Zu+1UFAFP2g7O6fOfvSYtR3Dh2dAtUxeUHaX/rvwxCjj6/80knxXTncrvJfCBwbPBC
-	 gvcRn80elYFOidWYq6zf3TUuj/393MvVRoMaaRynTl5HtSXliJSqC86bSqnwhfJlFj
-	 G3iJTB+7JenPrWAQYGy1B1gSuyGqdnM9UU7akk+XomH93G2zqGJsHYPxNwkC7pu9yp
-	 QP/xganUQ2pEg==
-Date: Tue, 26 Nov 2024 17:58:13 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Ming Yu <a0282524688@gmail.com>
-Cc: tmyu0@nuvoton.com, jic23@kernel.org, lars@metafoo.de, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, cmo@melexis.com,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] dt-bindings: iio: temperature: Add support for
- NCT7718W
-Message-ID: <20241126-shimmer-such-35cf44076981@spud>
-References: <20241126074005.546447-1-tmyu0@nuvoton.com>
- <20241126074005.546447-2-tmyu0@nuvoton.com>
+	s=arc-20240116; t=1732643965; c=relaxed/simple;
+	bh=AePAptw5GNTnJr9g9/5jWQF7IlRxU7KulzI2pSmiQh8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CoLe5HK/X8Ndun1XlqrHss2jvVCdJ1khljqRbkMxqb8lYA4/n/B9pv+DHduWPnMJr472CZHth5VgKBeLDC0HJnnA9a1407dsst9CWl1WtmWZsu+1jQoTvgNWasNC0wgGiB3M5EYygwFocIWQBb4rLwyzNCc3Tx36M6CA2XMQRbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lplMH45K; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ9X6X3013213;
+	Tue, 26 Nov 2024 17:59:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tpIuyVXVx4kLvCmwcAVpsnjn058HMqx3WLUP/HjyD+A=; b=lplMH45KC6PuUPOk
+	8vlq732iDsYYOOKSuc6OoFP3+Gq5VycHou2BPN0Q5O/tj7eElKWoYmmH2nOKRnGs
+	Bd02y3c984sOpqHgtggPJ6jev85iDCD7A9M9h9tOdarUiBSpCJAU8gtWYQN9jtQl
+	NStYEbgzjiwCqFNKkzGPQcTpSlH9JSNLHE0T6eYvkRgWidx3G9qqfL6S7vjXIltI
+	F2UTltELerhcPxNLXDf37CBKA7JNQHua2pYPfg0r+EiqYA0pu2qqrSf3wjC6XAe3
+	7qXBabz4OvL5XvhkG8JEbk9xLEwIktJI1C6ANAT6VP9z1dtdzXCGLr5VanuLUrcN
+	mY6Mag==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4334rd964b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 17:59:14 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AQHxDc0013756
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 17:59:13 GMT
+Received: from [10.216.46.102] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 26 Nov
+ 2024 09:59:09 -0800
+Message-ID: <c2a8984f-e67f-4e29-93ed-32d908ffef58@quicinc.com>
+Date: Tue, 26 Nov 2024 23:29:05 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="dNtPWRtJs9yXj6o/"
-Content-Disposition: inline
-In-Reply-To: <20241126074005.546447-2-tmyu0@nuvoton.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 2/2] arm64: dts: qcom: qcs8300: add TRNG node
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Krzysztof Kozlowski <krzk@kernel.org>,
+        Herbert Xu
+	<herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio" <konradybcio@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>
+References: <20241122074346.4084606-1-quic_yrangana@quicinc.com>
+ <20241122074346.4084606-3-quic_yrangana@quicinc.com>
+ <40c49e6d-dbbd-49cf-b59b-10e10b24da22@kernel.org>
+ <0bdaa2ef-3979-4963-be75-0a5a89728f44@quicinc.com>
+ <2vc6tg77qpi5vz7tmmlwgnlxjg62l6vsipjivygiapl4dhqupv@vrpbk3kcdrd3>
+Content-Language: en-US
+From: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
+In-Reply-To: <2vc6tg77qpi5vz7tmmlwgnlxjg62l6vsipjivygiapl4dhqupv@vrpbk3kcdrd3>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 0rBr0xhn_LdEsmcb02XCF9hedUtcq3ai
+X-Proofpoint-GUID: 0rBr0xhn_LdEsmcb02XCF9hedUtcq3ai
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ bulkscore=0 clxscore=1011 suspectscore=0 priorityscore=1501 malwarescore=0
+ spamscore=0 adultscore=0 impostorscore=0 phishscore=0 mlxlogscore=831
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411260143
 
+On 11/26/2024 4:05 AM, Dmitry Baryshkov wrote:
+> On Sun, Nov 24, 2024 at 09:17:40AM +0530, Yuvaraj Ranganathan wrote:
+>> Hi Krzysztof,
+>>
+>> I sincerely apologize for the inconvenience. I added the "Reviewed-by"
+>> tag without fully understanding its implications. I will remove the tag
+>> in the next patch series.
+> 
+> First of all, please don't top-post. Put your text under the phrases
+> that you are responding to, not at the top of the message. Otherwise the
+> logic is a bit broken.
+> 
+> Second, may I ask, what made you add that tag at all? I went on and
+> checked. Krzysztof didn't repond at all to v3 and didn't respond to v2
+> of this patch. So why?
+> 
+> Third, if you are unsure about what you are doing and as you seem to be
+> using b4 tool, please just use `b4 trailers -u`. It has its own
+> drawbacks so in some cases one should be careful, but at least it
+> doesn't invent tags on its own.
+> 
+>>
+>> Thanks,
+>> Yuvaraj.
+>>
+>> On 11/22/2024 8:30 PM, Krzysztof Kozlowski wrote:
+>>> On 22/11/2024 08:43, Yuvaraj Ranganathan wrote:
+>>>> The qcs8300 SoC has a True Random Number Generator, add the node with
+>>>> the correct compatible set.
+>>>>
+>>>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>>> Reviewed-by: Krzysztof Kozlowski <krzk+dt@kernel.org>
+>>>
+>>> NAK, stop adding fake tags. It is impossible to receive above tag from
+>>> me written that way.
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>
+> 
 
---dNtPWRtJs9yXj6o/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Nov 26, 2024 at 03:40:04PM +0800, Ming Yu wrote:
-> Add devicetree binding document for Nuvoton NCT7718W thermal sensor.
->=20
-> Signed-off-by: Ming Yu <tmyu0@nuvoton.com>
-> ---
->  .../iio/temperature/nuvoton,nct7718.yaml      | 44 +++++++++++++++++++
->  MAINTAINERS                                   |  6 +++
->  2 files changed, 50 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/temperature/nuv=
-oton,nct7718.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/temperature/nuvoton,nc=
-t7718.yaml b/Documentation/devicetree/bindings/iio/temperature/nuvoton,nct7=
-718.yaml
-> new file mode 100644
-> index 000000000000..a3573e3d454d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/temperature/nuvoton,nct7718.y=
-aml
-> @@ -0,0 +1,44 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/temperature/nuvoton,nct7718.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Nuvoton NCT7718W Thermal Sensor IC
-> +
-> +maintainers:
-> +  - Ming Yu <tmyu0@nuvoton.com>
-> +
-> +description:
-> +  https://www.nuvoton.com/resource-files/Nuvoton_NCT7718W_Datasheet_V11.=
-pdf
-> +
-> +properties:
-> +  compatible:
-> +    const: nuvoton,nct7718
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-
-Please add the vdd supply as a required property.
-
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        temp-sensor@4c {
-
-The generic node name is actually temperature-sensor.
+I've added the "Reviewed-by" tag without a proper understanding as I got
+few comments
+(https://lore.kernel.org/all/4009f4ee-2c55-4a4f-8805-eafe7efc0147@kernel.org/)
+ on the earlier patches and tagged the reviewers under "Reviewed-by". I
+sincerely apologize on this and will ensure to avoid such mistakes in
+future.
 
 Thanks,
-Conor.
-
---dNtPWRtJs9yXj6o/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0YMNQAKCRB4tDGHoIJi
-0nokAQDoyXilFegkgBLlN8uAdhsEDKKTDTM7KyXTgD69rrMOQAD8CHTTuHl20Ra7
-tbOHlPE/7Q6aPc/faLPpUVLHe3lfSwU=
-=1jDZ
------END PGP SIGNATURE-----
-
---dNtPWRtJs9yXj6o/--
+Yuvaraj.
 
