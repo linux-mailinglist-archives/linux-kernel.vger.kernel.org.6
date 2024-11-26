@@ -1,117 +1,102 @@
-Return-Path: <linux-kernel+bounces-422757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D34949D9DC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:04:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8C9B9D9DCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:05:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65024168694
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:04:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62FD0166A17
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247281DE4C0;
-	Tue, 26 Nov 2024 19:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354E216F0E8;
+	Tue, 26 Nov 2024 19:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evq0lHqQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MAYnPjo0"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B5C16F0E8;
-	Tue, 26 Nov 2024 19:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146271DD88E;
+	Tue, 26 Nov 2024 19:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732647874; cv=none; b=dOgZL+rjFBs1vOzzfVHxaOGOaRI/Z0b4jjMeQ9Y8kOWiWpP6tUdv4AVKOMbxQg2xhCr+eZPMRAq12Mimx5jyAF9PgwIPhLrjaK5lRPnp6sJ/V+Hrhn9Saux/9kC1ZF1xjHoNEb1bTxkAqjhyW92MYX/bmN7EQB5h2KI8p8vmo8Y=
+	t=1732647921; cv=none; b=ur7JEBGLqjX3nwzF84EO5kBdTllxDGNWhIYrFO9ks8X7OLJdT77gETVGYe91uWokUrDz20nPjbyj4bglB3tj2/HzCID/U3H5PNRBagE+42jtpKOJCpeExgX6a3smgTTzbQxdJAf67xWy+yN/QOadWuWV6OMCWq2TyOI0D3t5nLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732647874; c=relaxed/simple;
-	bh=E18gfvq447oO7905Vj2Agqf4+xGXFE0FgW3F4b7o0Zs=;
+	s=arc-20240116; t=1732647921; c=relaxed/simple;
+	bh=B/zcRTujLsW/VkO9PiY4m3dGPvpntJBVz+tlHcfNb64=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TM2VlsMQ2Mx9hX8h8cOcCyQ8EkMILUEQKS05a42mzsXSrWaMnpJKg0rJ/UUsCsfso+Fk1/ZVYurpTpVf5pxZyCNNmxvxnYHMU606vSqBhQRYC0+zmwHXrxVyEVfN/DDdTKz655i3W5EoQHmYMYFqFyc48AoiOB5r+/SZOqYK2AU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evq0lHqQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0614CC4CECF;
-	Tue, 26 Nov 2024 19:04:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732647873;
-	bh=E18gfvq447oO7905Vj2Agqf4+xGXFE0FgW3F4b7o0Zs=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=YtJMSgWTDOFH6KoDvnyJxiLT/0TAUQZnDP1l+D8HYHt1BLZD0ySuNshATFedHub8RR7EjPaDYG63l2EBllNymcljtNkivow6OW4suEDboiwQmWxrvxZ0eqYHkSjWS05pQetUAY5trWmz/BV1nq7fJGG7oHwavF5COtEPL8z6RhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MAYnPjo0; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3D4B140E015E;
+	Tue, 26 Nov 2024 19:05:16 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 3jZrDcgUY59t; Tue, 26 Nov 2024 19:05:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1732647911; bh=KXq8e1dhskd/45vcolUOcVJX3TmXOUzD9iPElXgvT8c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=evq0lHqQcRyOWBXrClvl/1VAJ8nO2sr/dOC3x1+WlqqujfoTC4ZXYWcwPVbv4gwTy
-	 OlIFx9XYY/w/liF5WJE1p42IrMOx2KrHMc6gcnVrLCaJGdyzXSCMo1Mi3Ffdivj0O1
-	 MSxb7kSw9B0zNQADgLbAdFyKr7+ucf9mLTvuP+5oVxOYGGyBYq+TzlBq/a/1lF8cry
-	 kjXpsCCFcl38DIliPVPFAu7C3QUHNhlXNxNLrbh6SfwA6rlyZiGebaMp+rsDBmB+8s
-	 NYM60vsi3Lia2B4/GrzeutZhCFQLYqENG5UBcXrNqz6UM1R3KMgJwguPZ3yyThIUSi
-	 iYwe37ciSIjJQ==
-Date: Tue, 26 Nov 2024 11:04:31 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com, corbet@lwn.net, petr.pavlu@suse.com,
-	samitolvanen@google.com, da.gomez@samsung.com,
-	akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
-	serge@hallyn.com, shuah@kernel.org, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, linux-integrity@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, wufan@linux.microsoft.com,
-	pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de,
-	mjg59@srcf.ucam.org, pmatilai@redhat.com, jannh@google.com,
-	dhowells@redhat.com, jikos@kernel.org, mkoutny@suse.com,
-	ppavlu@suse.com, petr.vorel@gmail.com, mzerqung@0pointer.de,
-	kgold@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v6 07/15] digest_cache: Allow registration of digest list
- parsers
-Message-ID: <Z0Ybvzy7ianR-Sx9@bombadil.infradead.org>
-References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
- <20241119104922.2772571-8-roberto.sassu@huaweicloud.com>
- <Z0UN9ub0iztWvgLi@bombadil.infradead.org>
- <d428a5d926d695ebec170e98463f7501a1b00793.camel@huaweicloud.com>
+	b=MAYnPjo0vve2LTsftkKYPtRcImDwc/4PTOWzOSS2V4M3E0arRODlepFpu6ioIbiay
+	 TRxyues1NxxvnLCLO29FddeoD1kG7r7MdygGx1PoXV7Fh+ZGuEOvW4KBuCfC5BFxuk
+	 +z23CgKB6ZwQRA6Mk5NzR0rvs1/5lM/n0J5gNuymCOg1o7sLwn6iwDnyiZU7RoCgBS
+	 UXvPwRQ86DvLQeMAFH4kji6sm2rlejWZZthqF/OUKjjDNGEYa9krcZjpNvoZ9XGCh9
+	 1PVFyUNNRXDQ2M/DsrN/4KLfPpykfkoG20+4xIsBw+BmdUmeel/2nI6uKFxOFkZyic
+	 PoAk24IvXgYsGQhaDZ7eXMHzd9c2X1V5TTnfyj7SqddXKko8A1dzHrZ12kw8IYrNmt
+	 /LBiEBJ6D8csmcvU+VjhF0W3qnVgrWLAKOYdJn/OOlLUtBc6+usG9zrLU01xCuVnQn
+	 fSWJIoCfLQPVb5132YZkAy+DXZw+DvyjkqaBQ9LF/qhYon0ulG8XHrb//Yg97k/qIr
+	 EttUIsqtltBViyTkCK6no9YepDuWNv94dCDsmmS9iCuCLE/bGw4b7evlXLwHObroR9
+	 UjY3ZHYW3XMMKa3Th6+s3KwXCdmkyi9xvnqkOxpk1OkqZIMubpLfZgY77EXhNbeksp
+	 ogB/WRlYR2CGpZEq5dRmX7js=
+Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4297F40E0163;
+	Tue, 26 Nov 2024 19:04:56 +0000 (UTC)
+Date: Tue, 26 Nov 2024 20:04:49 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Xin Li <xin@zytor.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com,
+	corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	luto@kernel.org, peterz@infradead.org, andrew.cooper3@citrix.com
+Subject: Re: [PATCH v3 05/27] KVM: VMX: Disable FRED if FRED consistency
+ checks fail
+Message-ID: <20241126190449.GCZ0Yb0SOt09XD4e0d@fat_crate.local>
+References: <20241001050110.3643764-1-xin@zytor.com>
+ <20241001050110.3643764-6-xin@zytor.com>
+ <20241126153259.GAZ0XqK92lqgV7a475@fat_crate.local>
+ <81ad0623-8d9b-4f74-afd5-1ecaaa92ec77@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d428a5d926d695ebec170e98463f7501a1b00793.camel@huaweicloud.com>
+In-Reply-To: <81ad0623-8d9b-4f74-afd5-1ecaaa92ec77@zytor.com>
 
-On Tue, Nov 26, 2024 at 11:25:07AM +0100, Roberto Sassu wrote:
-> On Mon, 2024-11-25 at 15:53 -0800, Luis Chamberlain wrote:
-> 
-> Firmware, eBPF programs and so on are supposed
+On Tue, Nov 26, 2024 at 10:53:17AM -0800, Xin Li wrote:
+> Already done based on your reply to other patches.
 
-Keyword: "supposed". 
+Thx.
 
-> As far as the LSM infrastructure is concerned, I'm not adding new LSM
-> hooks, nor extending/modifying the existing ones. The operations the
-> Integrity Digest Cache is doing match the usage expectation by LSM (net
-> denying access, as discussed with Paul Moore).
+> There is a lot of boot_cpu_has() in arch/x86/kvm/, and someone needs to
+> replace them :-P
 
-If modules are the only proven exception to your security model you are
-not making the case for it clearly.
+There are such all over the tree and it'll happen eventually.
 
-> The Integrity Digest Cache is supposed to be used as a supporting tool
-> for other LSMs to do regular access control based on file data and
-> metadata integrity. In doing that, it still needs the LSM
-> infrastructure to notify about filesystem changes, and to store
-> additional information in the inode and file descriptor security blobs.
-> 
-> The kernel_post_read_file LSM hook should be implemented by another LSM
-> to verify the integrity of a digest list, when the Integrity Digest
-> Cache calls kernel_read_file() to read that digest list.
+-- 
+Regards/Gruss,
+    Boris.
 
-If LSM folks *do* agree that this work is *suplementing* LSMS then sure,
-it was not clear from the commit logs. But then you need to ensure the
-parsers are special snowflakes which won't ever incur other additional
-kernel_read_file() calls.
-
-> Supporting kernel modules opened the road for new deadlocks, since one
-> can ask a digest list to verify a kernel module, but that digest list
-> requires the same kernel module. That is why the in-kernel mechanism is
-> 100% reliable,
-
-Are users of this infrastructure really in need of modules for these
-parsers?
-
-  Luis
+https://people.kernel.org/tglx/notes-about-netiquette
 
