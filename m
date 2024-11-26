@@ -1,173 +1,144 @@
-Return-Path: <linux-kernel+bounces-422438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F02039D99B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:37:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF01A9D99AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:33:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 883D3B2872E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:33:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A51E1281FCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED661D63D4;
-	Tue, 26 Nov 2024 14:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAAB91D5CDD;
+	Tue, 26 Nov 2024 14:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lUbRFCy8"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="c/q26viF"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90FE1D63C3;
-	Tue, 26 Nov 2024 14:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2781D5AC2
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 14:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732631557; cv=none; b=PpN9XoAvdsLn+rbty2Ng6JdNpO+dbhTxeTBAKe/7uRVXI+fOQOlBBHMkconUaIQ0U6FHkz+FHH34V8YibwVFXUMQIrvgW/7I+ZtfxvgyTa8TYYNx1DvoixG4bsKpygtPYRcmaMHR8Jw5wqOGQaNfvVI3RoQPvlHONyBVdUFPgVM=
+	t=1732631571; cv=none; b=Y28FaxlKzllwNK5atteayzLYbhVO4Jjj8swzreoeEXN+7oBMRQOuK3oDkQmc1o7/SBFrin0dj8oLMrcSsBWRIKebZNHPcW4Uc12KQyqpY+X/IgqMgPFvK5EizS21ZdF+BVbbJqmTaqN5p//+VQbCXgQaoxCW5XdK6MZ2QT96S9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732631557; c=relaxed/simple;
-	bh=tZ6X4oREnIGl6HAYFDdpLL5qeg3Z/HDLf14vPOueGwI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PWnYBttFektqbmd2ha79RzcKJUYLdIR4d6q70oN79jjdUQjlNtI98qRx7dGbYB0Jmcn3HE3Aq3aTMtFMrKDLi1s/qtdTk2gg620caMB1IS37USTUlzzbRBP+UN9TyuWd6HvONfDoy1yLIM0vewzE+At2HozMeRwbTy0ljnKLI24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lUbRFCy8; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ9IGMl002756;
-	Tue, 26 Nov 2024 14:32:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0McT3u2UtBYIGESRseYSXbKWBEqm2xZcNgozQTddrsw=; b=lUbRFCy8kfQr/wAF
-	HD/UycUSx5odBQglea4Mc9yqRJv75MJnbGxE2HEwizcnYDt4BdiKN4OPFk8rkoQl
-	hyx3NjEXZo2r8+VwYknMwFUF7R+PTQ4L4chH2OHB+tP2fQokbLej1gmtSl6ojp7G
-	70SL3P7fiPjQ5bGB6WIyVB4CuDpFj+09X04pHA+8ASuZGAfjEvSOrqxhNUSJVbWw
-	AY/Dl8YWPqchFNB4g2r2sHKOHQ97bhy1LMb90injovp3LJp4OstCo+jHV1cUJ4uv
-	JkxVLcCep8sMch2ElI1FD8XQQKbwTN04Ftw24e5QhllTANwEtStcFHHGSKARRIf4
-	qdp/BA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4334rd8n2s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 14:32:21 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AQEWKI8025940
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 14:32:20 GMT
-Received: from [10.216.49.153] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 26 Nov
- 2024 06:32:13 -0800
-Message-ID: <9f25f7bb-9c3e-4c26-ac54-6b467bb1811d@quicinc.com>
-Date: Tue, 26 Nov 2024 20:02:10 +0530
+	s=arc-20240116; t=1732631571; c=relaxed/simple;
+	bh=dQRhJy3Wh/XAeespnPYlzWHTBZvlLsZVW/rgRLQ331k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZSrtOqJukdMPtSp06R9yDYU3alcMmKdmrREdph1Ckp7EHLp19wefTU4gVvY/9m8SCKbhnO6QWrskEfGmnjVliEoTQtfwcNlL3gZma99OK0uUYd/Gg8IMyYBEsRv8238w1XxaYb4ZKLabveiAwZA5mNiPlgLnmkZUsDy2eUNgpD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=c/q26viF; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=J+ieYSkNG6qdtjOppQ0piLEhSHHCuA2LQgzIKmNMU7k=; b=c/q26viF8OKVC2MKdaH6X7QSmt
+	J9jlqCV4YgL35D3gyqySLbyoV0XRwNgGIc4IdEs5u9zt8i3iu7EpK1taJ5A5ccat1hOZib4VP/Qtt
+	H8DLyHAkM7tdQtcqcF6cT2R+diW1czdRdho3SjBsINeiBRilKr1+Vzsy75F/uXfeM6wadQ5/uyUGA
+	Ju58M6kLCrcT1Dww+VLb1H4u84p9GHVVgka9PsFqVFMFA6tPfhxpG1Vi0yD5uU71jLC1SzsSjILhp
+	ybMIdqm8a+Xc1ptPKCcohtIrVWw4I3T8TXmbchrfXPBVIsPdmDB1jO0uk1xgrmJcKSsIOzShMA24u
+	nkyPReoA==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tFwcO-00000001DpV-37NG;
+	Tue, 26 Nov 2024 14:32:44 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E883E3002A2; Tue, 26 Nov 2024 15:32:43 +0100 (CET)
+Date: Tue, 26 Nov 2024 15:32:43 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 02/10] objtool: Handle special cases of dead end insn
+Message-ID: <20241126143243.GN38837@noisy.programming.kicks-ass.net>
+References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
+ <20241122045005.14617-3-yangtiezhu@loongson.cn>
+ <20241126064513.bf6yq56eklyo4xvt@jpoimboe>
+ <bb36374e-aca2-92e1-209d-1524e31147ab@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: display/msm: gpu: Document A612 GPU
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241126-qcs615-gpu-dt-v1-0-a87782976dad@quicinc.com>
- <20241126-qcs615-gpu-dt-v1-1-a87782976dad@quicinc.com>
-Content-Language: en-US
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-In-Reply-To: <20241126-qcs615-gpu-dt-v1-1-a87782976dad@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 0t1pvriL9XgHNuWOVPVa1qeq6-ddHv-x
-X-Proofpoint-GUID: 0t1pvriL9XgHNuWOVPVa1qeq6-ddHv-x
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- bulkscore=0 clxscore=1015 suspectscore=0 priorityscore=1501 malwarescore=0
- spamscore=0 adultscore=0 impostorscore=0 phishscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411260117
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bb36374e-aca2-92e1-209d-1524e31147ab@loongson.cn>
 
-On 11/26/2024 7:36 PM, Akhil P Oommen wrote:
-> A612 GPU requires an additional smmu_vote clock. Update the bindings to
-> reflect this.
+On Tue, Nov 26, 2024 at 06:42:15PM +0800, Tiezhu Yang wrote:
+> On 11/26/2024 02:45 PM, Josh Poimboeuf wrote:
+> > On Fri, Nov 22, 2024 at 12:49:57PM +0800, Tiezhu Yang wrote:
+> > > There are some "unreachable instruction" objtool warnings when compling
+> > > with Clang on LoongArch, this is because the "break" instruction is set
+> > > as dead end due to its type is INSN_BUG in decode_instructions() at the
+> > > beginning, and it does not set insn->dead_end of the "break" instruction
+> > > as false after checking ".rela.discard.reachable" in add_dead_ends(), so
+> > > the next instruction of "break" is marked as unreachable.
+> > > 
+> > > Actually, it can find the reachable instruction after parsing the section
+> > > ".rela.discard.reachable", in some cases, the "break" instruction may not
+> > > be the first previous instruction with scheduling by Machine Instruction
+> > > Scheduler of LLVM, it should find more times and then set insn->dead_end
+> > > of the "break" instruction as false.
+> > > 
+> > > This is preparation for later patch on LoongArch, there is no effect for
+> > > the other archs with this patch.
+> > > 
+> > > Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> > 
+> > I'm having trouble understanding this commit log, is the problem that
+> > the compiler is sometimes inserting code between 'break' and the
+> > unreachable() inline asm?
+> > 
+> > If so, this sounds like a problem that was already solved for x86 with:
+> > 
+> >   bfb1a7c91fb7 ("x86/bug: Merge annotate_reachable() into _BUG_FLAGS() asm")
+> > 
+> > Can you check if that fixes it?
 > 
-> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> ---
->  .../devicetree/bindings/display/msm/gpu.yaml       | 28 ++++++++++++----------
->  1 file changed, 16 insertions(+), 12 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/msm/gpu.yaml b/Documentation/devicetree/bindings/display/msm/gpu.yaml
-> index 6ddc72fd85b04537ea270754a897b4e7eb269641..201150d3151b55c26c95832d36f4e02f66060a25 100644
-> --- a/Documentation/devicetree/bindings/display/msm/gpu.yaml
-> +++ b/Documentation/devicetree/bindings/display/msm/gpu.yaml
-> @@ -187,6 +187,7 @@ allOf:
->              enum:
->                - qcom,adreno-610.0
->                - qcom,adreno-619.1
-> +              - qcom,adreno-612.0
->      then:
->        properties:
->          clocks:
-> @@ -195,18 +196,21 @@ allOf:
->  
->          clock-names:
->            items:
-> -            - const: core
-> -              description: GPU Core clock
-> -            - const: iface
-> -              description: GPU Interface clock
-> -            - const: mem_iface
-> -              description: GPU Memory Interface clock
-> -            - const: alt_mem_iface
-> -              description: GPU Alternative Memory Interface clock
-> -            - const: gmu
-> -              description: CX GMU clock
-> -            - const: xo
-> -              description: GPUCC clocksource clock
-> +            anyOf:
-> +              - const: core
-> +                description: GPU Core clock
-> +              - const: iface
-> +                description: GPU Interface clock
-> +              - const: mem_iface
-> +                description: GPU Memory Interface clock
-> +              - const: alt_mem_iface
-> +                description: GPU Alternative Memory Interface clock
-> +              - const: gmu
-> +                description: CX GMU clock
-> +              - const: xo
-> +                description: GPUCC clocksource clock
-> +              - const: smmu_vote
-> +                description: GPUCC clocksource clock
-
-Forgot to update the description. will fix.
-
--Akhil
-
->  
->          reg-names:
->            minItems: 1
+> I will try, thank you.
 > 
 
+I was poking at the reachable annotations and ended up with this:
+
+--- a/arch/loongarch/include/asm/bug.h
++++ b/arch/loongarch/include/asm/bug.h
+@@ -4,6 +4,7 @@
+ 
+ #include <asm/break.h>
+ #include <linux/stringify.h>
++#include <linux/objtool.h>
+ 
+ #ifndef CONFIG_DEBUG_BUGVERBOSE
+ #define _BUGVERBOSE_LOCATION(file, line)
+@@ -37,21 +38,21 @@
+ 
+ #define ASM_BUG()	ASM_BUG_FLAGS(0)
+ 
+-#define __BUG_FLAGS(flags)					\
+-	asm_inline volatile (__stringify(ASM_BUG_FLAGS(flags)));
++#define __BUG_FLAGS(flags, extra)					\
++	asm_inline volatile (__stringify(ASM_BUG_FLAGS(flags))		\
++			     extra);
+ 
+ #define __WARN_FLAGS(flags)					\
+ do {								\
+ 	instrumentation_begin();				\
+-	__BUG_FLAGS(BUGFLAG_WARNING|(flags));			\
+-	annotate_reachable();					\
++	__BUG_FLAGS(BUGFLAG_WARNING|(flags), ASM_REACHABLE);	\
+ 	instrumentation_end();					\
+ } while (0)
+ 
+ #define BUG()							\
+ do {								\
+ 	instrumentation_begin();				\
+-	__BUG_FLAGS(0);						\
++	__BUG_FLAGS(0, "");					\
+ 	unreachable();						\
+ } while (0)
+ 
 
