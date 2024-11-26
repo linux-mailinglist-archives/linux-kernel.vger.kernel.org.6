@@ -1,77 +1,62 @@
-Return-Path: <linux-kernel+bounces-422319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED45B9D97C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:57:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47C099D97DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:00:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACB70286164
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:57:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D8E728279D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE181D45F0;
-	Tue, 26 Nov 2024 12:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7E71D4605;
+	Tue, 26 Nov 2024 13:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fUyhUpSR"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="e17Ru0lW"
+Received: from lelvem-ot05.ext.ti.com (lelvem-ot05.ext.ti.com [198.47.23.236])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FE41D4169;
-	Tue, 26 Nov 2024 12:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72517489;
+	Tue, 26 Nov 2024 13:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732625863; cv=none; b=bxUg1TcS2Ye/BPtX22bk2JK99METwWUtpMUpteDvsdLqkJSTt4bn4urgxcAX8NJUshNf4SX8uMYdoPdqo7B223qkidAcz3oHsz+MOlQ214EgG+VYkdMr0CrVQeQTlzUKYYBPaW1HeHtnwI5p2KZ8boGWcQqF1sFNDNCjh7TfONA=
+	t=1732626038; cv=none; b=jPNbfCtIJYpcbz1BIsodjxNBZqB1/0BrhSl+b/20O6Dabpbo3RzQ24MMvBCg+Mw3XSM5g2uofyVIAbbFIWFx5W8nBmpZIXrA9bC0cEDQqGO93Ycj1D6Dl7Mphg7o93kJbfU79qrBhs2of7iDkY25Lz0wEhnaHPk9qzZhbLzS9p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732625863; c=relaxed/simple;
-	bh=pAXvbAY21IjprYSWZVB5ThcCCa74QSWQQFIKi5caw4A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Oupy9aytY1Z9EQwHAMl32DVmOZ+sKDiYk8b7fN4bvWXxvlGtloPyEVYzl7F5CSS7mtn/jgWe5NS534oBFThyL6QLbGp0NPpuHC+YEejGs8XDyD9ntsTJCgyXwbufn05Cyd8fGqZ/eniLDSOmbO6DpThgu5UkDuiUJhqZhNaBbLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fUyhUpSR; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6d40ae72d35so38100346d6.1;
-        Tue, 26 Nov 2024 04:57:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732625860; x=1733230660; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kPMLzMmK0KKzaO0NVovKhOpAnvw6uWElGaIczBWn2T0=;
-        b=fUyhUpSRWCJbEmpk/f5hx/0MSSZWuCc3adItJWi+Qnd/TC4R88RavSfDQYASEXQcCX
-         Mf5kSs1F1cYMKxjHoq5ZfclGnf8rydyA7mohTmvcUj2Im8uAKhKdpEUOxKMPPvqyF9nb
-         ILRXIlBSX52h8edM4zg4Bh0EIhzd0MvgLWXv5Od+9q0xlrezDgkSmxH49N91IC5/sO71
-         u+IxoPluYMsyyfGVD/FzkjHSQJx7jLoqTaBWDMl6g5OzpcFKA2t47PicVO3ixuGXcB4n
-         fsJnBZWzgAkv+BO0npBhJ/fsxlH8k9Ky2MqT7ESf2Zfb6k31D+s/GoyVEMHelA283SoG
-         EKlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732625860; x=1733230660;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kPMLzMmK0KKzaO0NVovKhOpAnvw6uWElGaIczBWn2T0=;
-        b=TCiU+isjf8o6ph2DfKDFWTIZyfNZ/utHu/9cmqD37aIvw9Gz0ovz25U33wR0wdjDPp
-         p4o+vJ5gBTGuVDVavzbilU/xSQlTHm8fbDpglfbX79NarXSLW2AR6bgPlwEv0pE6umGS
-         NgLWIcf4Jx3GecWWYWKFZrVNGWDUSGKlAKKP5QTFilOTTBnPhiihWf8GriqTjFUtgHWd
-         XNABDIUuKczWVoF6E78+3OWgyxl9wArklyjPOzxxlfKujLvELwxELU6GPjI/2W+WpV7L
-         F/c5ChTuacgh2aHh7S1HZxl9LDiW0vNc2AVfYYgtIpAk2LTmMYHD7qy0Ea02SXz1D8Qj
-         9tlg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEuYR2nSZwzIbgoZl/ktkhjtJzWkvYqNmPsKg6IqodDPV5L+UeHivpDZ7J21CqZUHZhBz+r4+qt3lcXrQ=@vger.kernel.org, AJvYcCVzLZmfu4Nx1ejvYFalpbHif05e1NTe7pcSkB8byd4ui2fjzW/fbAoF/x+1QLx0hB00LbctIHWnjf7dUOWxXkM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUpsgBNWxo4ptRV/mn6waoP8egXvEclOp5nS80XpLU4VF52CTr
-	RN95qNJGlPI8Ld+OcHZnY+VMK01KCMX7EOCOedlKlt0fgIi3V/Ku
-X-Gm-Gg: ASbGnctQZ3pCjIwXhBZuwyUDOnXAZUkGYpl8K5ojink6u6uiDMlnJjcEOD3au1StBBS
-	sgbFIKzoAcgucf1eqnU2L0lbiJIdrbMtw0trPBh/H/hnOBv8LItKPyOoBtW7fnGCOz+YLmLaKSi
-	As0CgOWnms/7v5P7DmeEtxsRC6lc5hqJCOGJeWf7ITfqxEDLyowwDlYv6wpFX3ZwD8ogdnAVvot
-	LRzXN+km8CZ13DQcFHS/exkvnMnmQIs5MGAJDmuSTY0o+2WTNBlCQ==
-X-Google-Smtp-Source: AGHT+IFnP2Gi8gvg7R66MTjJ+gzk2OF2AsbQsoaxzJZu2XBdwQXekD9jcmse+lTjI945O7/0K3D1Mw==
-X-Received: by 2002:ad4:5fca:0:b0:6d4:12af:be77 with SMTP id 6a1803df08f44-6d451345773mr282199186d6.38.1732625860511;
-        Tue, 26 Nov 2024 04:57:40 -0800 (PST)
-Received: from [10.100.121.195] ([152.193.78.90])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d451b23e25sm54289396d6.89.2024.11.26.04.57.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 04:57:40 -0800 (PST)
-Message-ID: <20215f63-e2e6-4f9a-bbbe-d7535c5ce9d2@gmail.com>
-Date: Tue, 26 Nov 2024 04:57:36 -0800
+	s=arc-20240116; t=1732626038; c=relaxed/simple;
+	bh=rb4RKEfu0UEtBVz6z1dX9J6uuYRBunQZLoY/ueS2YSQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=P+3xTOLXST2DjilIgoO/FMmFCb3jglGxnk/7CjlBe8DyoELVZp37pqpYGTsDsDSMQJnfx6OCcTRVWiFjrRpfgJJCZkHLUezSfJKf9xL5cbNZhw/tB3N0kZ+SO7BzXNST0I9Ln7JQ8322rH3f8g7im09wM/cpX/HEyFS+oeXbSn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=e17Ru0lW; arc=none smtp.client-ip=198.47.23.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelvem-ot05.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4AQCwYKb675617
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 26 Nov 2024 06:58:34 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1732625914;
+	bh=J0JZ8DiQ4nkkyJ4v4OOJuFMwA5FpDWZfEAp+egaaJ/U=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=e17Ru0lW+ltXO0ID357PPUFJetmCJqUhSb40sfMFUG6PK4pAlkQ2w6zaxAP7bsWm6
+	 +6/bTppQj4KWTgKH+HpzpW+/oQdk6FNSKIybzgrhrWdG4SwiR1ffl5BzUjTL0BJOwt
+	 kh44V6Bbgm+cN/C4wfyXk9dPAKMFOlrPfaA27o/8=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AQCwY0a026953;
+	Tue, 26 Nov 2024 06:58:34 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 26
+ Nov 2024 06:58:34 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 26 Nov 2024 06:58:34 -0600
+Received: from [10.24.69.142] ([10.24.69.142])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AQCwUaP106029;
+	Tue, 26 Nov 2024 06:58:30 -0600
+Message-ID: <8fe8eb6c-2ec7-4f07-9043-99a8d87e2613@ti.com>
+Date: Tue, 26 Nov 2024 18:28:29 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,108 +64,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v3 0/2] Improve ath10k flush queue mechanism
-To: Remi Pommarel <repk@triplefau.lt>, ath10k@lists.infradead.org,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
- Cedric Veilleux <veilleux.cedric@gmail.com>,
- Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
-References: <cover.1732293922.git.repk@triplefau.lt>
+Subject: Re: [PATCH 2/2] dmaengine: ti: k3-udma: Add TX channel data in AM62A
+ CSIRX DMSS
+To: Conor Dooley <conor@kernel.org>
+CC: <peter.ujfalusi@gmail.com>, <vkoul@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>,
+        <j-choudhary@ti.com>, <vigneshr@ti.com>
+References: <20241125083914.2934815-1-vaishnav.a@ti.com>
+ <20241125083914.2934815-2-vaishnav.a@ti.com>
+ <20241125-hardener-jockey-d8d57f6a9430@spud>
 Content-Language: en-US
-From: James Prestwood <prestwoj@gmail.com>
-In-Reply-To: <cover.1732293922.git.repk@triplefau.lt>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Vaishnav Achath <vaishnav.a@ti.com>
+In-Reply-To: <20241125-hardener-jockey-d8d57f6a9430@spud>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Remi,
+Hi Conor,
 
-On 11/22/24 8:48 AM, Remi Pommarel wrote:
-> It has been reported [0] that a 3-4 seconds (actually up to 5 sec) of
-> radio silence could be observed followed by the error below on ath10k
-> devices:
->
->   ath10k_pci 0000:04:00.0: failed to flush transmit queue (skip 0 ar-state 1): 0
->
-> This is due to how the TX queues are flushed in ath10k. When a STA is
-> removed, mac80211 need to flush queues [1], but because ath10k does not
-> have a lightweight .flush_sta operation, ieee80211_flush_queues() is
-> called instead effectively blocking the whole queue during the drain
-> causing this radio silence. Also because ath10k_flush() waits for all
-> queued to be emptied, not only the flushed ones it could more easily
-> take up to 5 seconds to finish making the whole situation worst.
->
-> The first patch of this series adds a .flush_sta operation to flush only
-> specific STA traffic avoiding the need to stop whole queues and should
-> be enough in itself to fix the reported issue.
->
-> The second patch of this series is a proposal to improve ath10k_flush so
-> that it will be less likely to timeout waiting for non related queues to
-> drain.
->
-> The abose kernel warning could still be observed (e.g. flushing a dead
-> STA) but should be now harmless.
->
-> [0]: https://lore.kernel.org/all/CA+Xfe4FjUmzM5mvPxGbpJsF3SvSdE5_wgxvgFJ0bsdrKODVXCQ@mail.gmail.com/
-> [1]: commit 0b75a1b1e42e ("wifi: mac80211: flush queues on STA removal")
+On 26/11/24 00:01, Conor Dooley wrote:
+> On Mon, Nov 25, 2024 at 02:09:14PM +0530, Vaishnav Achath wrote:
+>> J722S/AM67 uses the same BCDMA CSIRX IP as AM62A, but it supports
+>> TX channels as well in addition to RX.
+> 
+> This doesn't make sense. You say that the am62a doesn't have a tx
+> channel ("but it supports TX as well") but then modify the struct for
+> the am62a to add a tx channel. Does that not break things on the am62a?
+> 
 
-I saw in the original report that it indicated it was only for AP mode 
-but after seeing this and checking some of our clients I saw that this 
-is also happening in station mode too. I only have clients on 6.2 and 
-6.8. I can confirm its not occurring on 6.2, but is on 6.8. I also tried 
-your set of patches but did not notice any behavior difference with or 
-without them. When it happens, its always just after a roam scan, ~4 
-seconds go by and we get the failure followed by a "Connection to AP 
-<mac> lost". Oddly the MAC address is all zeros.
+Thank you for the review, I have sent a v2 of this series adding new 
+compatible as suggested, after looking at it again, the J722S BCDMA CSI
+is more similar to J721S2 in terms of having RX and TX support, so 
+updated in that way.
 
-Nov 25 09:09:50 iwd[16256]: src/station.c:station_start_roam() Using 
-cached neighbor report for roam
-Nov 25 09:09:54 kernel: ath10k_pci 0000:02:00.0: failed to flush 
-transmit queue (skip 0 ar-state 1): 0
-Nov 25 09:09:54 iwd[16256]: src/netdev.c:netdev_mlme_notify() MLME 
-notification Del Station(20)
-Nov 25 09:09:54 iwd[16256]: src/netdev.c:netdev_link_notify() event 16 
-on ifindex 7
-Nov 25 09:09:54 iwd[16256]: src/netdev.c:netdev_mlme_notify() MLME 
-notification Deauthenticate(39)
-Nov 25 09:09:54 iwd[16256]: src/netdev.c:netdev_deauthenticate_event()
-Nov 25 09:09:54 iwd[16256]: src/netdev.c:netdev_mlme_notify() MLME 
-notification Disconnect(48)
-Nov 25 09:09:54 iwd[16256]: src/netdev.c:netdev_disconnect_event()
-Nov 25 09:09:54 iwd[16256]: Received Deauthentication event, reason: 4, 
-from_ap: false
-Nov 25 09:09:54 kernel: wlan0: Connection to AP 00:00:00:00:00:00 lost
+The below changes did not really break AM62A since the driver checks 
+hardware capability registers (TCHAN_CNT) to detect presence of TX 
+channels and then only use the Output Event Steering(OES) data below.
 
-Other times, the above logs are preceded by this:
+V2:
 
-Nov 26 00:25:25 kernel: ath10k_pci 0000:02:00.0: failed to flush sta txq 
-(sta ca:55:b8:7a:91:4b skip 0 ar-state 1): 0
+https://lore.kernel.org/all/20241126125158.37744-1-vaishnav.a@ti.com/
 
-Note, the above logs are with your patches applied. Maybe this is a 
-separate issue? Or do you think its related?
+Thanks and Regards,
+Vaishnav
 
-Thanks,
-
-James
-
->
-> V3:
->    - Initialize empty to true to fix smatch error
->
-> V2:
->    - Add Closes tag
->    - Use atomic instead of spinlock for per sta pending frame counter
->    - Call ath10k_htt_tx_sta_dec_pending within rcu
->    - Rename pending_per_queue[] to num_pending_per_queue[]
->
-> Remi Pommarel (2):
->    wifi: ath10k: Implement ieee80211 flush_sta callback
->    wifi: ath10k: Flush only requested txq in ath10k_flush()
->
->   drivers/net/wireless/ath/ath10k/core.h   |  2 +
->   drivers/net/wireless/ath/ath10k/htt.h    | 11 +++-
->   drivers/net/wireless/ath/ath10k/htt_tx.c | 49 +++++++++++++++-
->   drivers/net/wireless/ath/ath10k/mac.c    | 75 ++++++++++++++++++++----
->   drivers/net/wireless/ath/ath10k/txrx.c   | 11 ++--
->   5 files changed, 127 insertions(+), 21 deletions(-)
->
+> 
+>> Add the BCDMA TCHAN information
+>> in the am62a_dmss_csi_soc_data so as to support all the platforms in the
+>> family with same compatible. UDMA_CAP2_TCHAN_CNT indicates the presence
+>> of TX channels and it will be 0 for platforms without TX support.
+>>
+>> Signed-off-by: Vaishnav Achath <vaishnav.a@ti.com>
+>> ---
+>>
+>> CSI2RX capture test results on J722S EVM with IMX219:
+>> https://gist.github.com/vaishnavachath/e2eaed62ee8f53428ee9b830aaa02cc3
+>>
+>>   drivers/dma/ti/k3-udma.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/dma/ti/k3-udma.c b/drivers/dma/ti/k3-udma.c
+>> index b3f27b3f9209..4130f50979d4 100644
+>> --- a/drivers/dma/ti/k3-udma.c
+>> +++ b/drivers/dma/ti/k3-udma.c
+>> @@ -4340,6 +4340,8 @@ static struct udma_match_data j721e_mcu_data = {
+>>   
+>>   static struct udma_soc_data am62a_dmss_csi_soc_data = {
+>>   	.oes = {
+>> +		.bcdma_tchan_data = 0x800,
+>> +		.bcdma_tchan_ring = 0xa00,
+>>   		.bcdma_rchan_data = 0xe00,
+>>   		.bcdma_rchan_ring = 0x1000,
+>>   	},
+>> -- 
+>> 2.34.1
+>>
 
