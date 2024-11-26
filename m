@@ -1,173 +1,98 @@
-Return-Path: <linux-kernel+bounces-422683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A3DC9D9CE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:52:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB6899D9CEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:53:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5078A284405
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:52:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 710D4284568
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BC71DC05F;
-	Tue, 26 Nov 2024 17:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BDBB1DC197;
+	Tue, 26 Nov 2024 17:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uRD1dSon"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aorIiGYt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF47E182BC;
-	Tue, 26 Nov 2024 17:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E961182BC;
+	Tue, 26 Nov 2024 17:53:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732643543; cv=none; b=lAthDVjtR7WqBPeWiWp4YlNoRgf9E6bLohUQtUV8N4BxDRztMVqU9v0a1+xQW0bZOhWqctDopkBDzpISak5Ns2k+hyIVXjy87HzxxvyDnqVAorV/baTW1TToBA72g07wDwiEZMZYaxikaajJjSWhuZhXqPR7NgPHZBq4OyKO+F4=
+	t=1732643590; cv=none; b=Pm35xLZtyHEEig5GT5rmPrvCmSndq7nLtkb5/GCrOHeNgfrZUjYT4A4MMioCgNkRX8ctcmsZFSZM059B1ZErWsoiuRR99xvJymI9eHowS6X39/rqw/QEY7fbgYs1i0DG6PkuOSudZ4fKkcBxjymVEs8BScklEdZ6ANnHQXOvdKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732643543; c=relaxed/simple;
-	bh=2OlL0GsjxaKsdejys6yGzAHyzOBtwoE5UhPw64LeQTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UEIEAmom4Tnn95ZmU7SlCuhse7olE1FV69RIIz1k70msK26F8IutiM9u5LyG8RKQL74pjGoxvv1wg3+mdWw1ZQRj2wy7UfkXPKSozRAww9wKrSgjDbUSrsrtoaAJK+muZ3Faf/tBY2KmkaFfrHjqepwpRNIA2/vEjnCrIR1i0IE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uRD1dSon; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51F28C4CECF;
-	Tue, 26 Nov 2024 17:52:18 +0000 (UTC)
+	s=arc-20240116; t=1732643590; c=relaxed/simple;
+	bh=NehC+ymsbPFPPJe4qVuy3PA7quIwdBzhzboTVNy83O8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VYHvSLCybB/saRwjdMf6xgUX4tBDtStA6CAmO3K9ImC4H9CYmtxnEI2z8MSknSlkHRzYLhE4fopOYlZrjt5Xo0u/Wc4XXcxnsb6iPvSK++46zLX7h9MbVB7jgSuQ9pq/pyw8Q0VedALyQJ14//vadjVPZrfSDZHAA0INLjkessk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aorIiGYt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF56AC4CED0;
+	Tue, 26 Nov 2024 17:53:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732643543;
-	bh=2OlL0GsjxaKsdejys6yGzAHyzOBtwoE5UhPw64LeQTI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uRD1dSonxcxCzafOhwLWHrsnUfqvFtGBfYuwmHBBxTcWXCsNW2yFCWaprM6iai/Za
-	 z8jconqnO9bm3xzHXJWtuznKRMTOruscBm080Cc133OwJj5fIAgTmqKrggvqPIg4X3
-	 0q98ZdxG028OTGVrdRKaE0c1+yjHbiUBnExjU89m2Qix/tpzTPpT1fqWoW2SdlnWcN
-	 V1vNLZyAl3McXHsOumSQqZPXCyX3R72kuyg/wR4XunWfKZL4KKPx5ryVDYgX0+/av6
-	 F1k7hl5vAyNcvtEEH+j+/grD+/Z8Logk+Axxwz+doHNTRX8+6r4PmFUnl7gwiAfiY0
-	 nuO/oStPs5VIQ==
-Date: Tue, 26 Nov 2024 17:52:14 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/8] iio: gts: Simplify using __free
-Message-ID: <20241126175214.76609ba9@jic23-huawei>
-In-Reply-To: <964035d9-cccd-4e12-af71-00ca39cc3596@gmail.com>
-References: <cover.1732105157.git.mazziesaccount@gmail.com>
-	<5efc30d832275778d1f48d7e2c75b1ecc63511d5.1732105157.git.mazziesaccount@gmail.com>
-	<20241123163713.2ec03a37@jic23-huawei>
-	<964035d9-cccd-4e12-af71-00ca39cc3596@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1732643590;
+	bh=NehC+ymsbPFPPJe4qVuy3PA7quIwdBzhzboTVNy83O8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aorIiGYth73xyfIGQblyPd2La7YxQE6w8xxfLLyL59BAoU/09Ue8aNqiI+RhuuZb4
+	 LLFwb0RO0PxqYflMp98eVEWpLcc/zq1zs//jTzLbVwFm2XogBwXaU6T+w6zgGPYdbd
+	 YDci2mxHI6BY6ave/gBGKANsUioNT17f7S8b6pPevqvwtGg8L3UkHQdgOr7kFhGF8b
+	 fVv2AjDm103zy/65GNzymBKNgGlL60pJ1SHTPQmSkVuBTURgu7yQ+UbtBo0WpG4nMs
+	 Zt2mW6OvtpJqVn2eNOLtmAk/j7Xkq2cwLmhtEGkOc8tAkw7ovCAwuoR9cNu6p6bx5O
+	 sA4ukR+wCkzVQ==
+Date: Tue, 26 Nov 2024 17:53:04 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
+	geert+renesas@glider.be, magnus.damm@gmail.com,
+	gregkh@linuxfoundation.org, yoshihiro.shimoda.uh@renesas.com,
+	christophe.jaillet@wanadoo.fr, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v2 11/15] dt-bindings: reset: renesas,rzg2l-usbphy-ctrl:
+ Document RZ/G3S support
+Message-ID: <20241126-algorithm-wiring-b4339a222536@spud>
+References: <20241126092050.1825607-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241126092050.1825607-12-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-
-On Mon, 25 Nov 2024 11:16:22 +0200
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-
-> Hi Jonathan,
-> 
-> Thanks once again for the review :)
-> 
-> On 23/11/2024 18:37, Jonathan Cameron wrote:
-> > On Thu, 21 Nov 2024 10:20:07 +0200
-> > Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-> >   
-> >> The error path in the gain_to_scaletables() uses goto for unwinding an
-> >> allocation on failure. This can be slightly simplified by using the
-> >> automated free when exiting the scope.
-> >>
-> >> Use __free(kfree) and drop the goto based error handling.
-> >>
-> >> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> >>
-> >> ---
-> >>
-> >> Revision history:
-> >>    v1 => v2:
-> >>    - patch number changed because a change was added to the series.
-> >>    - rebased on iio/testing to avoid conflicts with queued fixes
-> >> ---
-> >>   drivers/iio/industrialio-gts-helper.c | 19 ++++++++-----------
-> >>   1 file changed, 8 insertions(+), 11 deletions(-)
-> >>
-> >> diff --git a/drivers/iio/industrialio-gts-helper.c b/drivers/iio/industrialio-gts-helper.c
-> >> index 291c0fc332c9..602d3d338e66 100644
-> >> --- a/drivers/iio/industrialio-gts-helper.c
-> >> +++ b/drivers/iio/industrialio-gts-helper.c
-> >> @@ -4,6 +4,7 @@
-> >>    * Copyright (c) 2023 Matti Vaittinen <mazziesaccount@gmail.com>
-> >>    */
-> >>   
-> >> +#include <linux/cleanup.h>
-> >>   #include <linux/device.h>
-> >>   #include <linux/errno.h>
-> >>   #include <linux/export.h>
-> >> @@ -167,8 +168,8 @@ static int iio_gts_gain_cmp(const void *a, const void *b)
-> >>   
-> >>   static int gain_to_scaletables(struct iio_gts *gts, int **gains, int **scales)
-> >>   {
-> >> -	int i, j, new_idx, time_idx, ret = 0;
-> >> -	int *all_gains;
-> >> +	int ret, i, j, new_idx, time_idx;
-> >> +	int *all_gains __free(kfree) = NULL;  
-> > See the docs in cleanup.h (added recently).
-> > 
-> > Constructor and destructor should go together.   Dan wrote good docs on this
-> > (which are now in cleanup.h) so I'll not go into why!  
-> 
-> I went through the cleanup.h, and noticed the nice explanation for the 
-> pitfall where we have multiple "scoped operations" with specific 
-> ordering required. I didn't see other reasoning beyond that - I do hope 
-> I didn't miss anything.
-> 
-> I find introducing variables mid-function very confusing. Only exception 
-> for this has been introducing temporary variables at the start of a 
-> block, to reduce the scope. I would still like to avoid this when it 
-> isn't absolutely necessary, as it bleeds my eyes :)
-> 
-> I really don't see why we would have other cleanups which required 
-> specific ordering with the allocated "all_gains".
-> 
-> Anyways, if you think we really have a problem here, would it then 
-> suffice if I moved the:
-> 
->          gain_bytes = array_size(gts->num_hwgain, sizeof(int));
->          all_gains = kcalloc(gts->num_itime, gain_bytes, GFP_KERNEL);
->          if (!all_gains)
->                  return -ENOMEM;
-> 
-> to the beginning of the function, and the "int *all_gains __free(kfree) 
-> = NULL;" as last variable declaration?
-> 
-
-No.  You need to follow the standard way. It is something we are
-all getting used to, but all use of cleanup.h needs to follow same rules
-so that reviewers find it easy to review once they are seeing lots of
-instances of it.
-
-Many indeed find this ugly but reality is it's happening all over the place
-just usually hidden in a macro.  From cleanup.h look at how
-guard() works for instance.
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="/lz60/Ptmbm26ZvV"
+Content-Disposition: inline
+In-Reply-To: <20241126092050.1825607-12-claudiu.beznea.uj@bp.renesas.com>
 
 
-Jonathan
+--/lz60/Ptmbm26ZvV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> (This is not optimal as we will then do the allocation even if 
-> converting gains to scales failed - but I don't think this is a real 
-> problem as this should never happen after the driver is proven working 
-> for the first time).
-> 
-> > Upshot is this goes where you do the kcalloc, not up here.  
-> 
-> *whining* "but, but, but ... it is ugly..." :)
+On Tue, Nov 26, 2024 at 11:20:46AM +0200, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> The Renesas RZ/G3S USB PHY control block is similar with the one found on
+> the Renesas RZ/G2L. Add documentation for it.
+>=20
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-:)  It won't look ugly after a few years!
-> 
-> Yours,
-> 	-- Matti
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
+--/lz60/Ptmbm26ZvV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0YLAAAKCRB4tDGHoIJi
+0prBAQDBbakfQEYNvZfj558SOgCPRr+erB7IDZqbZqJxAKQx7AEA3xTKW2+0Eruc
+7HuLCJAmCAFoNyfoAYEo0UE8SD80MA8=
+=CybG
+-----END PGP SIGNATURE-----
+
+--/lz60/Ptmbm26ZvV--
 
