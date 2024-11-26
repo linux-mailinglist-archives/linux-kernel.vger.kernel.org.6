@@ -1,641 +1,467 @@
-Return-Path: <linux-kernel+bounces-422581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E3B69D9B7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:31:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A759D9BD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:51:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1097728659A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:31:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89535B259CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86F31D8E18;
-	Tue, 26 Nov 2024 16:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DD01D8DEE;
+	Tue, 26 Nov 2024 16:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cHNEH/ql"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b="LQjP8ytJ"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84B21D5CF2;
-	Tue, 26 Nov 2024 16:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B66C1D89E4
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 16:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732638684; cv=none; b=fHTECVZ42aKWO5OJY+R65SLGWjjF/AmGAbnV63kKGnt2BXviSGef7qrTa7R1U+xlmtZBEtobENz7xUqnwRsfRX9RfFzmjE9c+5LhFgL/KW8utTp/gDq64WSolIMlSzVnFIxks87JX1yxh/NAFYvdaMNmK18scwKq44MBTLgJsF8=
+	t=1732638725; cv=none; b=t4HTMZaMHoe6t4S3fRkTrHHC7t9Nx/nkG9/fdJggTHQKIeTKqfyydfyVeImxo+5uOUaP497oKF65LywDD2wFnR8kNiU9onZc+jIoIDp8c+bfbUeftvH8zqwO7B2qOrUHiTbW2pVN+leMouHArOXhJPNce4rLrYjZ+xB1dhQ+K94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732638684; c=relaxed/simple;
-	bh=YPZ/nrXfWLlvPyae+xXhUJ/vqCHg6stIsADtHffMLK4=;
-	h=Date:Message-ID:From:Subject:To:Cc:In-Reply-To:References; b=hodEEZhVQ3SZHOUMLPxeWg4iT2t/tE3du2VNyoc0vWUs50miGyU1KHR5Fvb7DB4SCTv0U2ECTVGrSbFT34deQWB9EzA4lrTs1BcbT+hGDyH1zsyn584vCwRY/d0t2m4skaxlprIAB/yPYGEejqlJX7v4VkF6BSvFZFaDHzVNzCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cHNEH/ql; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-434a8b94fb5so3542435e9.0;
-        Tue, 26 Nov 2024 08:31:20 -0800 (PST)
+	s=arc-20240116; t=1732638725; c=relaxed/simple;
+	bh=PrNp76wW8HMdwH0cwCP+PHr9l8/sVTx4zF/LTTvbmUQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mGvzD2AygnNTR87fcYbiLyaO4uEYp4QlU/xf4qfHibLpizNXJzznsqQdgv08VFmceqzl7vi9qGxmqAanEp2HBl8dNB8is0LoH78IngkAzkic6Qi2jUknwO7G4B8NCPA90kXA024yMwcUlk7CEZfiK2WbV2mW4DDxKwbHrPOFZ7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=none smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b=LQjP8ytJ; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ursulin.net
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53dee064f00so1002600e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 08:32:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732638679; x=1733243479; darn=vger.kernel.org;
-        h=references:in-reply-to:cc:to:subject:from:message-id:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nwIaiBddT3mFLtSXflg2Wrqvjbj9Ju7p7iLkF6EyqhE=;
-        b=cHNEH/qloOzRR3hZfcXJdY4IhlKP2WK7x7JltGJcudMKjU2vydl+KN3+5RzQq4Bma+
-         fb0fXFzSDgY4x26ZqCwqwcRPf/irq+kgmipSqd62hKKtDrz9kNQVamBM4mmWzgf8y4g8
-         m114LNzrOEMOutF28X7PeFZ2WLqZSSYZKv2OXw+c+X4+B2mhU2Tk8LYl3xX90KfcxdUX
-         GvGFzx9ag/homhlQV4LhIYO/jH5kOlZByZMHKCxnNUaXWAKy/R6qm9nrEWPu3c83h7qX
-         hYD35TbyGnAPOUFWWpXoLsgHMofMNVfzQW5GP3E9921c915Fe2PWZ8h0hQuIccjAtfOT
-         +zLQ==
+        d=ursulin-net.20230601.gappssmtp.com; s=20230601; t=1732638721; x=1733243521; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QcAfZ/tKcd525WHKqiM6C8xW9bMVu4dmgphDhQobdbA=;
+        b=LQjP8ytJp1Cmsopulk7X28VBTqMRbZaN16Y5VtlI/L0ONC3xww3y0gPdkFMLVqEd5l
+         FQQuRdoFPwa3UZYYDUG3vCuvA0qfTxVFzpEC7DAlqYN2NEovHQydJ0W3u94pAWwLoLqF
+         I8/PZ/PpTdZI7RbHb7JZj+mHMDAT098OU0yLinOmo4WaEgMdzsreCT/okH28eBRLMcOd
+         1E6jr/MEdBvUomYbsYx+LtBGBrfY5/G25opEkUgOohDs7QEBg1FdcarYjR+h3T2NleIw
+         /45Vas219zA2yHg1roIZj+s5tH91ePanti6UwDQpkCCX9wtcM4Wh5PjHDjgP5qwMhJL4
+         xyBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732638679; x=1733243479;
-        h=references:in-reply-to:cc:to:subject:from:message-id:date
+        d=1e100.net; s=20230601; t=1732638721; x=1733243521;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nwIaiBddT3mFLtSXflg2Wrqvjbj9Ju7p7iLkF6EyqhE=;
-        b=QWkTQ4hzOGewnZggdXScYURDeihr61jI7xnWR1tpNRBKw+zuifxR6/ea51yJvU6Pcb
-         m0mlD7lVVF1grU8F4povPKqlQv7AFwsZCL8fI6TxXBKowulvQMCYdfFyyoTMnh9e5niO
-         ltPPDoJ6DvcN24Hi/T2xX7/jb2dmULgdzz4NO75h8fXQjy8zpOqnMvBjEHOSOpdWSA1C
-         HUJOmateD13JWufcVzJdjIBid1CrKJ6370BW6uupGMaZ4BuDw89UqW6vz2WANYbJ18JP
-         1IrZjzlnl8bK5fvhZig3Nhn7/blvkuLb+tRncMjuxkn508Cdu0cAAIiu42WYP9RsHKpi
-         Z0jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVN9uoZw896Mveq43AMV9lvcABlDmTZKVj9YQpJZgRgVu2wutC2HNE6A2T2gDRrP/JIR61J+Z7yagewaQ==@vger.kernel.org, AJvYcCVZEdXtebUw/iJTNHF0oimaLphItFqT0grW7t6MHgKa9eZrCbkjcNRD25EHJkZlSVXZtq024+xUSgQ=@vger.kernel.org, AJvYcCWyx3H1eLCnxnOlbr/w2oYIGwq8X9i65AhRHsbI+YoN6WOSdpjXOyRXFm02T3d3QsYl60TcRkvOdgI=@vger.kernel.org, AJvYcCXFAdfZydAl1uP2xQuD7rFqFDWIRbc998Eh+nhqHIUyA955+DUEKoEIB6kfZi4LSng3z8c8rh139GIB/7OJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjA62AlKFaWdN74QDm6OzOr6OxfYn6Wl677BNSeCpwqXmAdOuF
-	Vs4Lah044y2R4msm7EAjvaCtkObIbPYdlbQCU8jd4I8hwWBazuJF
-X-Gm-Gg: ASbGncvH6VmAuWUpYlYPcKgv5p8iXIPei56wm2eLZgOv5KmLaU0MnkQRH6/cWnf16xn
-	TUgYJ4g/683z/APRkDrv2azNfcBfF7fZy0z0HXGsUUbkXvqD4IyIa4zW8X+GTRib9qLU/2VgEIg
-	9TT4llUInUUnJAxTDMu8DV9/ZXomjLuwYGdg5qDM156ng625UF/gfHUdmPceRbZONt1DSOhh5MD
-	HE+c0J1cCjpH/f6pviI9C6nzHWXCOct+qRPc/DFikR2TzAT92u/EVB4z+v96tYOoHJHYS5Zl0+2
-	kPE80ILhbwPazcIZhAv5
-X-Google-Smtp-Source: AGHT+IHy4wieiFcYvFYWBnqKf04vmEPSC9bKpTWjSfnb5coiOQmUQinghYjFFImtf0nhIzTDHApAiw==
-X-Received: by 2002:a05:600c:4510:b0:434:9f77:e1dd with SMTP id 5b1f17b1804b1-434a4e6ecbdmr33700265e9.5.1732638678552;
-        Tue, 26 Nov 2024 08:31:18 -0800 (PST)
-Received: from localhost (host-82-56-18-47.retail.telecomitalia.it. [82.56.18.47])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4349ea54e13sm88354755e9.34.2024.11.26.08.31.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 08:31:18 -0800 (PST)
-Date: Tue, 26 Nov 2024 17:31:16 +0100
-Message-ID: <9b2f3557dc93c4b75752f812e2645262@gmail.com>
-From: Matteo Martelli <matteomartelli3@gmail.com>
-Subject: Re: [PATCH v5 2/5] iio: consumers: copy/release available info from
- producer to fix race
-To: Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@intel.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Lars-Peter Clausen
-	<lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>,
-	Alisa-Dariana Roman <alisa.roman@analog.com>, Christian Eggers
-	<ceggers@arri.de>, Peter Rosin <peda@axentia.se>, Paul Cercueil
-	<paul@crapouillou.net>, Sebastian Reichel <sre@kernel.org>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-pm@vger.kernel.org
-In-Reply-To: <20241123141320.326b3340@jic23-huawei>
-References: <173031260171.39393.109639772708550094@njaxe.localdomain>
-	<20241030203050.5cdf3450@jic23-huawei>
-	<173037398492.12348.265826723028347056@njaxe.localdomain>
-	<20241031143129.0000014e@Huawei.com>
-	<173039799203.1353.4404042832923090619@njaxe.localdomain>
-	<b56ba6a0db195ad44158509f3adb157b@gmail.com>
-	<ZzsVOGvzgNTvuEtD@smile.fi.intel.com>
-	<e56a8f3c81429c465e87a3abcccec1b4@gmail.com>
-	<Zztlz08Wm-mGdy7p@smile.fi.intel.com>
-	<65e16f628245a78da5c9d870d6c5c5a9@gmail.com>
-	<Zzx_C60W48ujpis9@smile.fi.intel.com> <20241123141320.326b3340@jic23-huawei>
+        bh=QcAfZ/tKcd525WHKqiM6C8xW9bMVu4dmgphDhQobdbA=;
+        b=Rv+9CNJMeSdK1teDsCbJywHyPd7093n1qNP/Eg97CqsyjVeWknlFYvzfAmcCucqkdx
+         r+U3yQqCpLeonqamGGPE4lTiWu8kp2yl7M1KlEc0wbYU3HU8Y1FkP4faqmdSo2qhcsMq
+         CRkzP4ulys0IjKAvWaLzSoXsCw9lKNnYOl41AkaiVUu1IiTIuKXkzDwWTK2UI36Sq/lL
+         bVhJQTUUMb6EjhXYRVqpzRzuzUAcjqAkKFd1foskfOy+HrjhFDWGAJ1rdpYn/D9UCCMG
+         CgsQljuUC2htroM1Cluxt7xxOhe78gWjJngQM4UG2yd9DojMXMkIfCRtyhU6J5OueMrm
+         ZPxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWAHaWOVM6ZBD83SkUEhPG2tjS7nME44u4GzWdc5q1v7QhsxOagWGjN3Y2vLrA+H5MKqkw1j/l6lWYbFw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMkGMiMi3pr1kxaBmT8H/TiOUDB8TaP281NZz1QOOB1YsFBbZF
+	+w6LHVOmjPeEJNNpWljTrNrMMCsqgHhEwZChitEFVAYh3uW5sMA3/jY0ejjEtkw=
+X-Gm-Gg: ASbGncuEtGMf1v2lv7XSgiy5fdcyKBXGPUnIT8rH7w6fPRnonm1SeiNbRe0JzdxuBWW
+	izyLLn3fJLAd3LBa8Pxjun36X+2H46MU6HpFtzspr0ExRlUeFGOfB2X0omqIfKkDMKO5yBygDwQ
+	Mgdd3NWDeeuRBgPYFvgFnlv/kQcYlLn+h9EDnkvQAuLy5RU5IfbasXb+fwcStaFxLI15ctg176T
+	1ry7aCyaWtukmcxbpVAMmlMpaWtSHrOzCWjVXzmPdVMZbX42QjPnOxgBSSAjH0+TA==
+X-Google-Smtp-Source: AGHT+IHKO8ti+rz+kvxis090tT7KPzGdlvrJ57ALl4kHSoxZZCrQaPQqNO7/LylzDOre3sTlVrGIoQ==
+X-Received: by 2002:a05:6512:3f1f:b0:53d:e5f0:32de with SMTP id 2adb3069b0e04-53de5f0356cmr5115092e87.51.1732638721084;
+        Tue, 26 Nov 2024 08:32:01 -0800 (PST)
+Received: from [192.168.0.101] ([90.241.98.187])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4349e117bf5sm89514735e9.18.2024.11.26.08.31.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 08:32:00 -0800 (PST)
+Message-ID: <2ffb2f37-f9b4-41b5-8de6-8fe0aac7e329@ursulin.net>
+Date: Tue, 26 Nov 2024 16:31:59 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/sched: Extend and update documentation
+To: Philipp Stanner <pstanner@redhat.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Jonathan Corbet <corbet@lwn.net>, Luben Tuikov <ltuikov89@gmail.com>,
+ Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, =?UTF-8?Q?Christian_K=C3=B6nig?=
+ <christian.koenig@amd.com>
+References: <20241115103548.90605-2-pstanner@redhat.com>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tursulin@ursulin.net>
+In-Reply-To: <20241115103548.90605-2-pstanner@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, 23 Nov 2024 14:13:20 +0000, Jonathan Cameron <jic23@kernel.org> wrote:
-> On Tue, 19 Nov 2024 14:05:31 +0200
-> Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
-> 
-> > On Tue, Nov 19, 2024 at 12:25:18PM +0100, Matteo Martelli wrote:
-> > > On Mon, 18 Nov 2024 18:05:35 +0200, Andy Shevchenko <andriy.shevchenko@intel.com> wrote:  
-> > > > On Mon, Nov 18, 2024 at 03:45:25PM +0100, Matteo Martelli wrote:  
-> > > > > On Mon, 18 Nov 2024 12:21:44 +0200, Andy Shevchenko <andriy.shevchenko@intel.com> wrote:  
-> > > > > > On Fri, Nov 15, 2024 at 03:25:06PM +0100, Matteo Martelli wrote:  
-> > > > > > > On Thu, 31 Oct 2024 19:06:32 +0100, Matteo Martelli <matteomartelli3@gmail.com> wrote:  
-> > > > > > > > Quoting Jonathan Cameron (2024-10-31 15:31:29)  
-> > > > > > > > > On Thu, 31 Oct 2024 12:26:24 +0100
-> > > > > > > > > Matteo Martelli <matteomartelli3@gmail.com> wrote:  
-> > > > > > > > > > Quoting Jonathan Cameron (2024-10-30 21:30:50)  
-> > > > > > > > > > > On Wed, 30 Oct 2024 19:23:21 +0100
-> > > > > > > > > > > Matteo Martelli <matteomartelli3@gmail.com> wrote:  
-> > > > > > > > > > > > Quoting Andy Shevchenko (2024-10-30 15:47:50)    
-> > > > > > > > > > > > > On Mon, Oct 21, 2024 at 02:54:15PM +0200, Matteo Martelli wrote:      
-> > 
-> > > > > > > > > > > > > > Consumers need to call the producer's read_avail_release_resource()
-> > > > > > > > > > > > > > callback after reading producer's available info. To avoid a race
-> > > > > > > > > > > > > > condition with the producer unregistration, change inkern
-> > > > > > > > > > > > > > iio_channel_read_avail() so that it copies the available info from the
-> > > > > > > > > > > > > > producer and immediately calls its release callback with info_exists
-> > > > > > > > > > > > > > locked.
-> > > > > > > > > > > > > > 
-> > > > > > > > > > > > > > Also, modify the users of iio_read_avail_channel_raw() and
-> > > > > > > > > > > > > > iio_read_avail_channel_attribute() to free the copied available buffers
-> > > > > > > > > > > > > > after calling these functions. To let users free the copied buffer with
-> > > > > > > > > > > > > > a cleanup pattern, also add a iio_read_avail_channel_attr_retvals()
-> > > > > > > > > > > > > > consumer helper that is equivalent to iio_read_avail_channel_attribute()
-> > > > > > > > > > > > > > but stores the available values in the returned variable.      
-> > 
-> > ...
-> > 
-> > > > > > > > > > > > > > +static void dpot_dac_read_avail_release_res(struct iio_dev *indio_dev,
-> > > > > > > > > > > > > > +                                         struct iio_chan_spec const *chan,
-> > > > > > > > > > > > > > +                                         const int *vals, long mask)
-> > > > > > > > > > > > > > +{
-> > > > > > > > > > > > > > +     kfree(vals);
-> > > > > > > > > > > > > > +}
-> > > > > > > > > > > > > > +
-> > > > > > > > > > > > > >  static int dpot_dac_write_raw(struct iio_dev *indio_dev,
-> > > > > > > > > > > > > >                             struct iio_chan_spec const *chan,
-> > > > > > > > > > > > > >                             int val, int val2, long mask)
-> > > > > > > > > > > > > > @@ -125,6 +132,7 @@ static int dpot_dac_write_raw(struct iio_dev *indio_dev,
-> > > > > > > > > > > > > >  static const struct iio_info dpot_dac_info = {
-> > > > > > > > > > > > > >       .read_raw = dpot_dac_read_raw,
-> > > > > > > > > > > > > >       .read_avail = dpot_dac_read_avail,
-> > > > > > > > > > > > > > +     .read_avail_release_resource = dpot_dac_read_avail_release_res,
-> > > > > > > > > > > > > >       .write_raw = dpot_dac_write_raw,
-> > > > > > > > > > > > > >  };      
-> > > > > > > > > > > > > 
-> > > > > > > > > > > > > I have a problem with this approach. The issue is that we allocate
-> > > > > > > > > > > > > memory in one place and must clear it in another. This is not well
-> > > > > > > > > > > > > designed thingy in my opinion. I was thinking a bit of the solution and
-> > > > > > > > > > > > > at least these two comes to my mind:
-> > > > > > > > > > > > > 
-> > > > > > > > > > > > > 1) having a special callback for .read_avail_with_copy (choose better
-> > > > > > > > > > > > > name) that will dump the data to the intermediate buffer and clean it
-> > > > > > > > > > > > > after all;
-> > > > > > > > > > > > > 
-> > > > > > > > > > > > > 2) introduce a new type (or bit there), like IIO_AVAIL_LIST_ALLOC.      
-> > > > > > > > > > > > 
-> > > > > > > > > > > > Could you elaborate more about these potential solutions? Maybe with some
-> > > > > > > > > > > > usage examples?
-> > > > > > > > > > > > 
-> > > > > > > > > > > > If I get it correctly, in both cases you are suggesting to pass ownership
-> > > > > > > > > > > > of the vals buffer to the caller, iio_read_channel_info_avail() in this
-> > > > > > > > > > > > case, so that it would take care of freeing the buffer after calling
-> > > > > > > > > > > > iio_format_after_*(). We considered this approach during an initial
-> > > > > > > > > > > > discussion with Jonathan (see read_avail_ext() in [1]), where he suggested
-> > > > > > > > > > > > to let the driver keep the release control through a callback for two
-> > > > > > > > > > > > reasons:
-> > > > > > > > > > > > 
-> > > > > > > > > > > > 1) Apparently it's a bad pattern to pass the buffer ownership to the core,
-> > > > > > > > > > > >    maybe Jonathan can elaborate why? The risk I can think of is that the driver
-> > > > > > > > > > > >    could still keep the buffer copy in its private data after giving it away,
-> > > > > > > > > > > >    resulting in fact in a double ownership. However I think it would be clear
-> > > > > > > > > > > >    enough in this case that the copy should be handled by the caller, or maybe
-> > > > > > > > > > > >    not?    
-> > > > > > > > > > > Mostly the lack of desire to have to copy for the 95% of cases where it's
-> > > > > > > > > > > not needed and that it prevents any optimization like you mention.    
-> > > > > > > > > > 
-> > > > > > > > > > I think the suggestion here is to add an additional .read_avail_with_copy()
-> > > > > > > > > > without replacing the original .read_avail(), so all the current drivers that
-> > > > > > > > > > use a constant avail list would not be affected.  
-> > 
-> > > > > > Yes.  
-> > 
-> > > > > > > > > > And I think this was the same
-> > > > > > > > > > idea for the additional read_avail_ext() or the additional argument for the
-> > > > > > > > > > read_avail() we were considering in [1]. So I would think that
-> > > > > > > > > > iio_read_channel_info_avail() would do something like the following:
-> > > > > > > > > > 
-> > > > > > > > > >     if (indio_dev->info->read_avail_with_copy)
-> > > > > > > > > >         indio_dev->info->read_avail_with_copy(vals);
-> > > > > > > > > >     else
-> > > > > > > > > >         indio_dev->info->read_avail(vals);
-> > > > > > > > > > 
-> > > > > > > > > >     ...
-> > > > > > > > > >     iio_format_avail_list(vals);
-> > > > > > > > > >     ...
-> > > > > > > > > > 
-> > > > > > > > > >     if (indio_dev->info->read_avail_with_copy)
-> > > > > > > > > >         kfree(vals);  
-> > > > > > 
-> > > > > > Right. At least that's what I see can be done with the existing users.
-> > > > > >   
-> > > > > > > > > Ok, sure that would work, but...
-> > > > > > > > > 
-> > > > > > > > > I don't really see this as being much less fragile than
-> > > > > > > > > the existing solution + in cases that we do have where
-> > > > > > > > > only some available are not const we will have to copy them
-> > > > > > > > > all.
-> > > > > > > > > 
-> > > > > > > > > If anything it's more complex than making it a driver problem
-> > > > > > > > > to provide the release call however it wants to do it.  
-> > > > > > 
-> > > > > > ...but make a driver to allocate what's needed as well then.
-> > > > > >   
-> > > > > > > > > > And the drivers would choose whether to define the read_avail or the
-> > > > > > > > > > read_avail_with_copy.  
-> > > > > > 
-> > > > > > Either way drivers should know what to do with a data supplied to read_aval().
-> > > > > > In one case we assume the [simple] workflow in the core, in the other we all
-> > > > > > rely on the driver. Current approach makes a mix of these two. And that's what
-> > > > > > I don't like.  
-> > > > > 
-> > > > > If I understand your concern correctly, you are referring to the inkern
-> > > > > iio_channel_read_avail() that makes the allocation for the consumer's
-> > > > > buffer copy and you are suggesting that such copy should be done by the
-> > > > > consumer driver code itself, this to be consistent with the producer
-> > > > > drivers which directly handle the allocation of the copy.  
-> > > > 
-> > > > One of the options, yes.
-> > > >   
-> > > > > One thing to notice is that the inkern iio_channel_read_avail() does
-> > > > > together producer->read_avail() + copy + producer->read_avail_release()
-> > > > > with info_exists locked. Also, the consumer driver would need to know
-> > > > > the avail buffer size to allocate the buffer copy prior the
-> > > > > iio_channel_read_avail() call, but such size is unknown before calling
-> > > > > the actual producer's read_avail(). This would mean calling the
-> > > > > producer's read_avail() and read_avail_release() callbacks separately
-> > > > > without the lock held, with the risk of a memleak if the producer is
-> > > > > unregistered between those calls.  
-> > > > 
-> > > > Thanks for explaining this, but it even more makes me think that the design
-> > > > is broken and your approach is rather a hack. So, what's the problem to
-> > > > make IIO core to take care of the allocating and cleaning then without driver
-> > > > being involved? Yes, this might require a hint from the driver on what to copy
-> > > > if we want to avoid copying everything.  
-> > > 
-> > > I am not particularly against it, other than the concerns that have
-> > > emerged during this (and previous) discussion. Let me summarize them:  
-> > 
-> > Thank you for a very good summary and fix-N proposals. I think I have nothing
-> > to add and we should wait for Jonathan to finally choose (or propose a fix-N+1)
-> > here.
-> Agreed. This is very useful enumeration of various options with plenty
-> of details!
-> 
-> One absolute key thing to note here is we should not care at all what
-> inkern does for it's handling internally of the available lists.  The big
-> ABI question is all about consumers drivers directly using the resulting list of
-> available values.  The use in the IIO core and the inkern helpers should
-> naturally follow.
-> 
-> 
-> > 
-> > > fix-1) the current one. Your concerns are:
-> > >     * for consumers the copy allocation is taken care by the inkern API
-> > >       but the release is handled by the consumer driver code, making it
-> > >       a fragile design.
-> 
-> So this was something I'm not sure I agree with.  There are plenty
-> of get / release patterns out there. This is just another one of those
-> but perhaps it doesn't 'smell' enough like that.
-> 
-> Perhaps think of it as
-> 
-> int *iio_channel_avail_get()
-> void iio_channel_avail_release()
-> 
-> We could perhaps make it look more standard using a cookie rather than
-> reconstructing the equivalent data at the release call.
 
-Would this imply that also the read_info callback provided by the
-iio_info struct should be replaced? Something like info->get_avail()
-returning a iio_avail_cookie instead of info->read_avail(const int **vals)?
-* If yes, that would be a big impact in the current code as all
-iio drivers defining read_avail would need to be changed (I am not
-against it but better consider it).
-* If no, then I find odd that iio_info->avail_release(cookie) gets a
-cookie that has been allocated outside the provider driver: the read
-functions gives something to the user and its corresponing release
-handle another type of object (even it's just a wrapper). Is this the
-usual pattern for cookies?
+On 15/11/2024 10:35, Philipp Stanner wrote:
+> The various objects defined and used by the GPU scheduler are currently
+> not fully documented. Furthermore, there is no documentation yet
+> informing drivers about how they should handle timeouts.
+> 
+> Add documentation describing the scheduler's objects and timeout
+> procedure. Consistently, update drm_sched_backend_ops.timedout_job()'s
+> documentation.
+> 
+> Co-developed-by: Christian König <christian.koenig@amd.com>
+> Signed-off-by: Christian König <christian.koenig@amd.com>
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> ---
+> I shamelessly stole- ahm, borrowed this documentation patch that
+> Christian had submitted a year ago:
+> 
+> https://lore.kernel.org/dri-devel/20231116141547.206695-1-christian.koenig@amd.com/
+> 
+> I took feedback from last year into account where applicable, but it's
+> probably a good idea if you all take a close look again.
+> 
+> P.
+> ---
+>   Documentation/gpu/drm-mm.rst           |  36 +++++
+>   drivers/gpu/drm/scheduler/sched_main.c | 200 ++++++++++++++++++++++---
+>   include/drm/gpu_scheduler.h            |  16 +-
+>   3 files changed, 225 insertions(+), 27 deletions(-)
+> 
+> diff --git a/Documentation/gpu/drm-mm.rst b/Documentation/gpu/drm-mm.rst
+> index d55751cad67c..95ee95fd987a 100644
+> --- a/Documentation/gpu/drm-mm.rst
+> +++ b/Documentation/gpu/drm-mm.rst
+> @@ -556,12 +556,48 @@ Overview
+>   .. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
+>      :doc: Overview
+>   
+> +Job Object
+> +----------
+> +
+> +.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
+> +   :doc: Job Object
+> +
+> +Entity Object
+> +-------------
+> +
+> +.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
+> +   :doc: Entity Object
+> +
+> +Hardware Fence Object
+> +---------------------
+> +
+> +.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
+> +   :doc: Hardware Fence Object
+> +
+> +Scheduler Fence Object
+> +----------------------
+> +
+> +.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
+> +   :doc: Scheduler Fence Object
+> +
+> +Scheduler and Run Queue Objects
+> +-------------------------------
+> +
+> +.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
+> +   :doc: Scheduler and Run Queue Objects
+> +
+>   Flow Control
+>   ------------
+>   
+>   .. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
+>      :doc: Flow Control
+>   
+> +Error and Timeout handling
+> +--------------------------
+> +
+> +.. kernel-doc:: drivers/gpu/drm/scheduler/sched_main.c
+> +   :doc: Error and Timeout handling
+> +
+>   Scheduler Function References
+>   -----------------------------
+>   
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+> index e97c6c60bc96..76eb46281985 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -24,28 +24,155 @@
+>   /**
+>    * DOC: Overview
+>    *
+> - * The GPU scheduler provides entities which allow userspace to push jobs
+> - * into software queues which are then scheduled on a hardware run queue.
+> - * The software queues have a priority among them. The scheduler selects the entities
+> - * from the run queue using a FIFO. The scheduler provides dependency handling
+> - * features among jobs. The driver is supposed to provide callback functions for
+> - * backend operations to the scheduler like submitting a job to hardware run queue,
+> - * returning the dependencies of a job etc.
+> + * The GPU scheduler is shared infrastructure intended to help drivers managing
+> + * command submission to their hardware.
+>    *
+> - * The organisation of the scheduler is the following:
+> + * To do so, it offers a set of scheduling facilities that interact with the
+> + * driver through callbacks which the latter can register.
+>    *
+> - * 1. Each hw run queue has one scheduler
+> - * 2. Each scheduler has multiple run queues with different priorities
+> - *    (e.g., HIGH_HW,HIGH_SW, KERNEL, NORMAL)
+> - * 3. Each scheduler run queue has a queue of entities to schedule
+> - * 4. Entities themselves maintain a queue of jobs that will be scheduled on
+> - *    the hardware.
+> + * In particular, the scheduler takes care of:
+> + *   - Ordering command submissions
+> + *   - Signalling DMA fences, e.g., for finished commands
+> + *   - Taking dependencies between command submissions into account
+> + *   - Handling timeouts for command submissions
+>    *
+> - * The jobs in a entity are always scheduled in the order that they were pushed.
+> + * All callbacks the driver needs to implement are restricted by DMA-fence
+> + * signaling rules to guarantee deadlock free forward progress. This especially
+> + * means that for normal operation no memory can be allocated in a callback.
+> + * All memory which is needed for pushing the job to the hardware must be
+> + * allocated before arming a job. It also means that no locks can be taken
+> + * under which memory might be allocated as well.
+>    *
+> - * Note that once a job was taken from the entities queue and pushed to the
+> - * hardware, i.e. the pending queue, the entity must not be referenced anymore
+> - * through the jobs entity pointer.
+> + * Memory which is optional to allocate, for example for device core dumping or
+> + * debugging, *must* be allocated with GFP_NOWAIT and appropriate error
+> + * handling if that allocation fails. GFP_ATOMIC should only be used if
+> + * absolutely necessary since dipping into the special atomic reserves is
+> + * usually not justified for a GPU driver.
+> + *
+> + * Note especially the following about the scheduler's historic background that
+> + * lead to sort of a double role it plays today:
+> + *
+> + * In classic setups N entities share one scheduler, and the scheduler decides
+> + * which job to pick from which entity and move it to the hardware ring next
+> + * (that is: "scheduling").
+> + *
+> + * Many (especially newer) GPUs, however, can have an almost arbitrary number
+> + * of hardware rings and it's a firmware scheduler which actually decides which
+> + * job will run next. In such setups, the GPU scheduler is still used (e.g., in
+> + * Nouveau) but does not "schedule" jobs in the classical sense anymore. It
+> + * merely serves to queue and dequeue jobs and resolve dependencies. In such a
+> + * scenario, it is recommended to have one scheduler per entity.
+> + */
+> +
+> +/**
+> + * DOC: Job Object
+> + *
+> + * The base job object (drm_sched_job) contains submission dependencies in the
+> + * form of DMA-fence objects. Drivers can also implement an optional
+> + * prepare_job callback which returns additional dependencies as DMA-fence
+> + * objects. It's important to note that this callback can't allocate memory or
+> + * grab locks under which memory is allocated.
 
-> 
-> struct iio_avail_cookie {
-> 	const int *avail;
-> 	void *provider_priv;
-> // see later for a maybe...
-> 	struct iio_dev *indio_dev;
-> };
-> 
-> const int *iio_avail_from_cookie(struct iio_avail_cookie *cookie)
-> {
-> 	return cookie->avail;
-> }
->
+AFAICT amdgpu_prepare_job can allocate memory. Maybe that is okay 
+because scheduler workqueue is nowadays marked as WQ_MEM_RECLAIM but in 
+general it would be more logical if it wasn't allocating. It does not 
+seem an easy job to make it stop doing so. Perhaps Christian has 
+something planned here?
 
-I suppose that struct iio_avail_cookie and their access functions like
-iio_avail_from_cookie would be define in iio.h as they are required for
-producer drivers too. Correct?
+> + *
+> + * Drivers should use this as base class for an object which contains the
+> + * necessary state to push the command submission to the hardware.
+> + *
+> + * The lifetime of the job object needs to last at least from submitting it to
+> + * the scheduler (through drm_sched_job_arm()) until the scheduler has invoked
+> + * drm_sched_backend_ops.free_job() and, thereby, has indicated that it does
+> + * not need the job anymore. Drivers can of course keep their job object alive
+> + * for longer than that, but that's outside of the scope of the scheduler
+> + * component.
+> + *
+> + * Job initialization is split into two stages:
+> + *   1. drm_sched_job_init() which serves for basic preparation of a job.
+> + *      Drivers don't have to be mindful of this function's consequences and
+> + *      its effects can be reverted through drm_sched_job_cleanup().
+> + *   2. drm_sched_job_arm() which irrevokably arms a job for execution. This
 
-> 
-> struct iio_avail_cookie *iio_channel_avail_get(struct iio_dev, struct iio_chan_spec)
-> {
-> 	allocate a cookie and fill it in.
-> }
-> 
-> and code would always explicitly release after it is done with the cookie.
-> 
-> Something like
-> 
-> void iio_channel_avail_release(struct iio_dev *iio_dev, struct iio_avail_cookie *cookie)
-> // could even move the iio_dev pointer into the cookie, so it becomes
-> // iio_channel_avail_release(struct iio_avail_cookie *cookie) and suitable for __free magic.
-> {
-> 	if (iio_dev->info->avail_release)
-> 		iio_dev->info->avail_release(cookie);
-> 	kfree(cookie);
-> 	/*
-> 	 * Could add optimizations around cookie handling to avoid alloc + free in most cases
-> 	 * or use an object pool.
-> 	 */
-> }
+irrevocably
 
-Do these two functions refer to inkern consumer APIs? Would
-iio_channel_avail_get() replace the current inkern
-iio_read_avail_channel_attribute()? In that case I think
-iio_channel_avail_get() would copy the cookie (and its inner avail
-buffer) from the provider driver, or allocate a new cookie with the
-copied avail buffer if info->read_avail() is kept unchanged, and
-immediately call the provider info->avail_release(cookie) to do
-copy+release with info_exist_lock locked. At that point
-iio_channel_avail_release() would only need to call
-kfree(iio_avail_from_cookie(cookie)) and kfree(cookie).
+(Btw I did not do a full read, just came here for prepare_job 
+clarifications.)
 
-> 
-> The current proposal just avoid the need for a cookie as for all known cases so far
-> provider_priv could == the channel requested.
-> 
-> 
-> > >     * consumers and producers manage the allocation differently, the
-> > >       first handles it via the inkern API, the second one in the
-> > >       producer driver code, making it inconsistent.
-> 
-> The inkern API changes are mostly an attempt to reduce boiler plate. The only
-> case we really should be worrying about to my mind is the consumer wanting
-> to access the full available list. 
-> 
-> > > 
-> > > fix-2) adding a read_avail_with_copy(): a driver with both const avail
-> > > lists and mutable avail lists would always return a copy for all of
-> > > them, including the const ones. Example above.
-> 
-> Hmm. So this could work but with the firm rule that a provider must never
-> provide both options and a core check on drivers to enforce that probe.
-> Any existing consumers must be modified to try both paths
-> (read_avail_with_copy then read_avail) to avoid regressions.
-> 
-> For future code, if we miss a case that doesn't do this then the upshot
-> is that the call will fail and the consumer needs fixing but at least
-> it is not a regression because it will never have worked for that
-> particular consumer + producer pair.  Not too horrible, but I'm not
-> really seeing it as better than option 1.
-> 
-> > > 
-> > > fix-3) adding a release_avail return param to read_avail(): this would
-> > > require a change to all the drivers using it. Also it
-> > > looks to me an unusual pattern, are there other similar patterns around
-> > > the codebase? Example below.
-> 
-> No advantage that I can see vs an explicit get / release where the
-> release may do nothing if there was no allocation.
-> 
-> > > 
-> > > fix-4) adding a new enum variant to the avail type like
-> > > IIO_AVAIL_LIST_ALLOC: to me this looks hacky as it mixes the logic type
-> > > of the data structure and how it is handled in memory. I think the
-> > > latter should better fit in a different field, however this modification
-> > > would have little impact in the current code. Example below.
-> 
-> This one I really don't like. Needs non obvious / subtle handling in the
-> consumer drivers.
-> 
-> > > 
-> > > So far these alternatives only consider moving the release of the copy
-> > > buffer in the IIO core but not its allocation.
-> 
-> I'm confused.  Moving it in, or out of the core?  What does this mean
-> for a consumer driver after the avail list?
-> 
-> > You also suggest to make
-> > > the IIO core take care of the copy allocation. The problem I see with
-> > > this is that if the copy is handled outside the driver it could take
-> > > place concurrently with the modification of the original buffer since it
-> > > would not be locked by driver private mutex, thus making the copy
-> > > useless. This might be worked around by adding an additional optional
-> > > callback (e.g. read_avail_will_copy/read_avail_is_mutable) to just take
-> > > the size and check if a copy will be provided, so maybe something like:
-> > > 
-> > > fix-5) iio_read_channel_info_avail():
-> 
-> This is picking on the wrong code for this discussion.  Use
-> iio_read_avail_channel_attribute() for example because that's the one
-> where ABI matters.  Anything within the IIO core is just a question of
-> 'niceness' it isn't important like a function called by a consumer driver.
-> 
-> Code of a consumer driver will be similar to this however.  A few things
-> would be needed to make this pattern work.
->  
-> > > {
-> > >     ...
-> > >     int *vals;
-> > >     bool copy = false;
-> > >     if (indio_dev->info->read_avail_will_copy) {
-> > >         copy = indio_dev->info->read_avail_will_copy(..., &length, ...);
-> 
-> return length as 0 can reasonably mean we don't need to allocate.
-> That value must be the maximum possible size that can ever be needed, not the
-> current one.
-> 
-> > >         if (copy) {
-> > >             vals = kcalloc(length, sizeof(int), GFP_KERNEL);
-> > >         }
-> > >     }
-> > > 
-> > >     indio_dev->info->read_avail(&vals, ...);
-> 
-> For iio_read_avail_channel_attribute it will a little fiddlier but end result
-> is the same but done under the exist lock. If the device went away before this
-> call then we will get an error, otherwise this will fill vals and provide
-> the right length. 
-> 
-> > > 
-> > >     if (ret < 0)
-> > >             return ret;
-> > >     switch (ret) {
-> > >     case IIO_AVAIL_LIST:
-> > >             ret = iio_format_avail_list(buf, vals, type, length);
-> > >     case IIO_AVAIL_RANGE:
-> > >             ret = iio_format_avail_range(buf, vals, type);
-> > >     default:
-> > >             ret = -EINVAL;
-> > >     }
-> > > 
-> > >     if (copy)
-> > >         kfree(vals);
-> > > }
-> > > 
-> > > If I am not missing anything this could work and maybe it could also
-> > > avoid the double copy on the consumers but would require all of them to
-> > > wrap the read_avail_will_copy(). Also, I find it quite a weird pattern
-> > > that in some cases vals would be an input buffer to be filled and in
-> > > other cases it would be a return argument pointing to the const buffer
-> > > stored inside the driver. At least I wouldn't say it's more robust than
-> > > the current fix-1.
-> Agreed. It works, but I'm not seeing the advantage and the multiple use
-> of the vals parameter is too subtle to be maintainable.
-> 
-> > > 
-> > > All these alternatives also prevents some potential optimization already
-> > > mentioned before. Reporting it again as it is now lost in the mess below:
-> > >     Some driver might want to avoid allocating a new copy of a big table if
-> > >     the race does not occur (e.g. with additional checks on buffer access
-> > >     code) and thus wouldn't call a free() in the release callback.
-> > > 
-> > > In the end I don't find any of the above alternatives to provide an
-> > > obvious better solution.
-> 
-> Agreed.  My only question vs just taking the existing solution is whether
-> it makes sense to use a more explicit struct iio_avail_cookie
-> to hold all the info that we pass to release.  I don't particularly like
-> that we'll end up allocating that cookie structure but it would make it more
-> like a typical get / release and perhaps closer to what readers would
-> expect to see?
-> 
-> What do you think?
+Regards,
 
-I cannot answer about what readers would expect since I am quite new to
-kernel internals and I was not aware about the cookie pattern myself.
-However, I agree that it seems more clear than the current solution but
-only if it's going to replace the iio_info read_avail() callback,
-otherwise I think that only using the cookie on the release callback
-would make it even more confusing. It is worth noting that in that case
-all current provider drivers defining the read_avail callback should be
-changed.
+Tvrtko
 
-> 
-> Jonathan
-> 
-> > >   
-> > > > > > > > > > What I was referring to is that, back then, you mentioned you would have
-> > > > > > > > > > preferred to avoid passing ownership of the buffer around:
-> > > > > > > > > >   
-> > > > > > > > > > > That's a corner case we should think about closing. Would require an indicator
-> > > > > > > > > > > to read_avail that the buffer it has been passed is a snapshot that it should
-> > > > > > > > > > > free on completion of the string building.  I don't like passing ownership
-> > > > > > > > > > > of data around like that, but it is fiddly to do anything else given
-> > > > > > > > > > > any simple double buffering is subject to race conditions.    
-> > > > > > > > > > 
-> > > > > > > > > > I guess there is some other reason other than avoiding the copy when not
-> > > > > > > > > > necessary, since by introducing an additional function or argument or return
-> > > > > > > > > > type, most of the unnecessary copies would already be avoided right?  
-> > > > > > > > > 
-> > > > > > > > > It's not a strong reason beyond limiting scope of clever design +
-> > > > > > > > > the key bit my mind is that the above is not substantially simpler and
-> > > > > > > > > reduces our flexibility.
-> > > > > > > > >   
-> > > > > > > > > > Anyway any of this solutions would still prevent the potential optimizations of
-> > > > > > > > > > point 2). It's worth mentioning that those kind of optimizations are currently
-> > > > > > > > > > not adopted by any driver.  
-> > > > > > > > > 
-> > > > > > > > > That one indeed not, but mixing dynamic and non dynamic is something
-> > > > > > > > > you do in your pac1921 patch.  
-> > > > > > > > 
-> > > > > > > > Good point! I didn't think about it, or more likely I forgot, that with an
-> > > > > > > > additional read_avail_with_copy() used as in the example you cannot mix dynamic
-> > > > > > > > and non dynamic available lists, thus those drivers that need at least one
-> > > > > > > > dynamic available list would always copy all of them as they need to rely to
-> > > > > > > > the read_avail_with_copy(). I guess this could be worked around with an
-> > > > > > > > additional return argument for the read_avail() or an additional type like the
-> > > > > > > > IIO_AVAIL_LIST_ALLOC suggested by Andy to signal the caller it needs to free
-> > > > > > > > the list after use. However, I think they would introduce a more invasive
-> > > > > > > > change in the current API compared to an additional optional callback,  
-> > > > > > 
-> > > > > > It even sounds originally that it should be more invasive, so I don't think it's
-> > > > > > a problem here.  
-> > > > > 
-> > > > > In the hope it helps the discussion let me provide examples for the
-> > > > > additional two options we have other than the current
-> > > > > read_avail_release_resource() (fix-1) and the read_avail_with_copy()
-> > > > > (fix-2) already shown above:  
-> > > > 
-> > > > Thanks!
-> > > >   
-> > > > > fix-3) iio_read_channel_info_avail():
-> > > > > {
-> > > > >     ...
-> > > > >     bool release_avail = false;
-> > > > > 
-> > > > >     ret = indio_dev->info->read_avail(vals, ..., &release_avail);
-> > > > > 
-> > > > >     ...
-> > > > >     ret = iio_format_avail_list(vals, ...);
-> > > > >     ...
-> > > > > 
-> > > > >     if (release_avail)
-> > > > >         kfree(vals);
-> > > > > 
-> > > > >     return ret;
-> > > > > }
-> > > > > 
-> > > > > 
-> > > > > fix-4) iio_read_channel_info_avail():
-> > > > > {
-> > > > >     ...
-> > > > >     indio_dev->info->read_avail(vals, ...);
-> > > > > 
-> > > > >     if (ret < 0)
-> > > > >             return ret;
-> > > > >     switch (ret) {
-> > > > >     case IIO_AVAIL_LIST_ALLOC:
-> > > > >             ret = iio_format_avail_list(buf, vals, type, length);
-> > > > >             kfree(vals);
-> > > > >             return ret;
-> > > > >     case IIO_AVAIL_LIST:
-> > > > >             return iio_format_avail_list(buf, vals, type, length);
-> > > > >     case IIO_AVAIL_RANGE:
-> > > > >             return iio_format_avail_range(buf, vals, type);
-> > > > >     default:
-> > > > >             return -EINVAL;
-> > > > >     }
-> > > > > }
-> > > > >   
-> > > > > > > > so I agree that the current release callback is still a better option.  
-> > > > > > 
-> > > > > > I disagree on this as I pointed above why.
-> > > > > >   
-> > > > > > > > > > > > 2) Some driver might want to avoid allocating a new copy of a big table if
-> > > > > > > > > > > >    the race does not occur (e.g. with additional checks on buffer access
-> > > > > > > > > > > >    code) and thus wouldn't call a free() in the release callback.
-> > > > > > > > > > > >     
-> > > > > > > > > > > > > In any case it looks fragile and not scalable. I propose to drop this
-> > > > > > > > > > > > > and think again.      
-> > > > > > > > > > > > 
-> > > > > > > > > > > > I see your concerns, I am open to reconsider this in case we come up with
-> > > > > > > > > > > > better solution after addressing the points above.
-> > > > > > > > > > > >     
-> > > > > > > > > > > > > Yes, yes, I'm fully aware about the problem you are trying to solve and
-> > > > > > > > > > > > > agree on the report, I think this solution is not good enough.  
-> > > > > > > > > > > > 
-> > > > > > > > > > > > [1]: https://lore.kernel.org/linux-iio/20240729211100.0d602d6e@jic23-huawei/  
-> > > > > > > > > > 
-> > > > > > > > > > I hope I've brought a little more clarity to the discussion by providing some
-> > > > > > > > > > history instead of making it more confusing.  
-> > > > > > > > > 
-> > > > > > > > > Sure, the code example in particular is useful.  
-> > > > > > > 
-> > > > > > > Just a friendly reminder this has been sitting for a while, any news or
-> > > > > > > additional considerations?  
-> > > > > > 
-> > > > > > Moving the allocation control to the drivers will satisfy me as well, however
-> > > > > > it makes even more duplication of the code, but at least it will be cleaner
-> > > > > > design-wise in my opinion.  
-> > > > > 
-> > > > > Would it work with the constraints on the info_exists lock mentioned
-> > > > > above?  
-> > > > 
-> > > > None of the given examples (fix-N) provides a lock, so I have no clue how it's
-> > > > involved here. May be you can elaborate more?  
-> > > 
-> > > I thought that with "Moving the allocation control to the drivers" you
-> > > were referring to the option (not included among fix-N) to move the
-> > > allocation of the consumer copy from the inkern iio_channel_read_avail()
-> > > to the consumer drivers themselves. You elaborated this point above
-> > > where I answered with the concerns about the info_exists lock that
-> > > should be addressed.
-> > >   
-> > > > > > In any case the last word is on Jonathan.  
-> > 
-> 
-Best regards,
-Matteo Martelli
+> + *      activates the job's fence, i.e., it registers the callbacks. Thus,
+> + *      inevitably, the callbacks will access the job and its memory at some
+> + *      point in the future. This means that once drm_sched_job_arm() has been
+> + *      called, the job structure has to be valid until the scheduler invoked
+> + *      drm_sched_backend_ops.free_job().
+> + *
+> + * It's important to note that after arming a job drivers must follow the
+> + * DMA-fence rules and can't easily allocate memory or takes locks under which
+> + * memory is allocated.
+> + */
+> +
+> +/**
+> + * DOC: Entity Object
+> + *
+> + * The entity object (drm_sched_entity) which is a container for jobs which
+> + * should execute sequentially. Drivers should create an entity for each
+> + * individual context they maintain for command submissions which can run in
+> + * parallel.
+> + *
+> + * The lifetime of the entity *should not* exceed the lifetime of the
+> + * userspace process it was created for and drivers should call the
+> + * drm_sched_entity_flush() function from their file_operations.flush()
+> + * callback. It is possible that an entity object is not alive anymore
+> + * while jobs previously fetched from it are still running on the hardware.
+> + *
+> + * This is done because all results of a command submission should become
+> + * visible externally even after a process exits. This is normal POSIX
+> + * behavior for I/O operations.
+> + *
+> + * The problem with this approach is that GPU submissions contain executable
+> + * shaders enabling processes to evade their termination by offloading work to
+> + * the GPU. So when a process is terminated with a SIGKILL the entity object
+> + * makes sure that jobs are freed without running them while still maintaining
+> + * correct sequential order for signaling fences.
+> + */
+> +
+> +/**
+> + * DOC: Hardware Fence Object
+> + *
+> + * The hardware fence object is a DMA-fence provided by the driver as result of
+> + * running jobs. Drivers need to make sure that the normal DMA-fence semantics
+> + * are followed for this object. It's important to note that the memory for
+> + * this object can *not* be allocated in drm_sched_backend_ops.run_job() since
+> + * that would violate the requirements for the DMA-fence implementation. The
+> + * scheduler maintains a timeout handler which triggers if this fence doesn't
+> + * signal within a configurable amount of time.
+> + *
+> + * The lifetime of this object follows DMA-fence refcounting rules. The
+> + * scheduler takes ownership of the reference returned by the driver and
+> + * drops it when it's not needed any more.
+> + */
+> +
+> +/**
+> + * DOC: Scheduler Fence Object
+> + *
+> + * The scheduler fence object (drm_sched_fence) which encapsulates the whole
+> + * time from pushing the job into the scheduler until the hardware has finished
+> + * processing it. This is internally managed by the scheduler, but drivers can
+> + * grab additional reference to it after arming a job. The implementation
+> + * provides DMA-fence interfaces for signaling both scheduling of a command
+> + * submission as well as finishing of processing.
+> + *
+> + * The lifetime of this object also follows normal DMA-fence refcounting rules.
+> + * The finished fence is the one normally exposed to the outside world, but the
+> + * driver can grab references to both the scheduled as well as the finished
+> + * fence when needed for pipelining optimizations.
+> + */
+> +
+> +/**
+> + * DOC: Scheduler and Run Queue Objects
+> + *
+> + * The scheduler object itself (drm_gpu_scheduler) does the actual work of
+> + * selecting a job and pushing it to the hardware. Both FIFO and RR selection
+> + * algorithm are supported, but FIFO is preferred for many use cases.
+> + *
+> + * The lifetime of the scheduler is managed by the driver using it. Before
+> + * destroying the scheduler the driver must ensure that all hardware processing
+> + * involving this scheduler object has finished by calling for example
+> + * disable_irq(). It is *not* sufficient to wait for the hardware fence here
+> + * since this doesn't guarantee that all callback processing has finished.
+> + *
+> + * The run queue object (drm_sched_rq) is a container for entities of a certain
+> + * priority level. This object is internally managed by the scheduler and
+> + * drivers shouldn't touch it directly. The lifetime of a run queue is bound to
+> + * the scheduler's lifetime.
+>    */
+>   
+>   /**
+> @@ -72,6 +199,43 @@
+>    * limit.
+>    */
+>   
+> +/**
+> + * DOC: Error and Timeout handling
+> + *
+> + * Errors schould be signaled by using dma_fence_set_error() on the hardware
+> + * fence object before signaling it. Errors are then bubbled up from the
+> + * hardware fence to the scheduler fence.
+> + *
+> + * The entity allows querying errors on the last run submission using the
+> + * drm_sched_entity_error() function which can be used to cancel queued
+> + * submissions in drm_sched_backend_ops.run_job()  as well as preventing
+> + * pushing further ones into the entity in the driver's submission function.
+> + *
+> + * When the hardware fence doesn't signal within a configurable amount of time
+> + * drm_sched_backend_ops.timedout_job() gets invoked. The driver should then
+> + * follow the procedure described in that callback's documentation.
+> + * (TODO: The timeout handler should probably switch to using the hardware
+> + * fence as parameter instead of the job. Otherwise the handling will always
+> + * race between timing out and signaling the fence).
+> + *
+> + * The scheduler also used to provided functionality for re-submitting jobs
+> + * and, thereby, replaced the hardware fence during reset handling. This
+> + * functionality is now marked as deprecated. This has proven to be
+> + * fundamentally racy and not compatible with DMA-fence rules and shouldn't be
+> + * used in new code.
+> + *
+> + * Additionally, there is the function drm_sched_increase_karma() which tries
+> + * to find the entity which submitted a job and increases its 'karma' atomic
+> + * variable to prevent resubmitting jobs from this entity. This has quite some
+> + * overhead and resubmitting jobs is now marked as deprecated. Thus, using this
+> + * function is discouraged.
+> + *
+> + * Drivers can still recreate the GPU state in case it should be lost during
+> + * timeout handling *if* they can guarantee that forward progress will be made
+> + * and this doesn't cause another timeout. But this is strongly hardware
+> + * specific and out of the scope of the general GPU scheduler.
+> + */
+> +
+>   #include <linux/wait.h>
+>   #include <linux/sched.h>
+>   #include <linux/completion.h>
+> diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
+> index 9c437a057e5d..c52363453861 100644
+> --- a/include/drm/gpu_scheduler.h
+> +++ b/include/drm/gpu_scheduler.h
+> @@ -417,8 +417,8 @@ struct drm_sched_backend_ops {
+>   	struct dma_fence *(*run_job)(struct drm_sched_job *sched_job);
+>   
+>   	/**
+> -	 * @timedout_job: Called when a job has taken too long to execute,
+> -	 * to trigger GPU recovery.
+> +	 * @timedout_job: Called when a hardware fence didn't signal within a
+> +	 * configurable amount of time. Triggers GPU recovery.
+>   	 *
+>   	 * This method is called in a workqueue context.
+>   	 *
+> @@ -429,9 +429,8 @@ struct drm_sched_backend_ops {
+>   	 *    scheduler thread and cancel the timeout work, guaranteeing that
+>   	 *    nothing is queued while we reset the hardware queue
+>   	 * 2. Try to gracefully stop non-faulty jobs (optional)
+> -	 * 3. Issue a GPU reset (driver-specific)
+> -	 * 4. Re-submit jobs using drm_sched_resubmit_jobs()
+> -	 * 5. Restart the scheduler using drm_sched_start(). At that point, new
+> +	 * 3. Issue a GPU or context reset (driver-specific)
+> +	 * 4. Restart the scheduler using drm_sched_start(). At that point, new
+>   	 *    jobs can be queued, and the scheduler thread is unblocked
+>   	 *
+>   	 * Note that some GPUs have distinct hardware queues but need to reset
+> @@ -447,16 +446,15 @@ struct drm_sched_backend_ops {
+>   	 * 2. Try to gracefully stop non-faulty jobs on all queues impacted by
+>   	 *    the reset (optional)
+>   	 * 3. Issue a GPU reset on all faulty queues (driver-specific)
+> -	 * 4. Re-submit jobs on all schedulers impacted by the reset using
+> -	 *    drm_sched_resubmit_jobs()
+> -	 * 5. Restart all schedulers that were stopped in step #1 using
+> +	 * 4. Restart all schedulers that were stopped in step #1 using
+>   	 *    drm_sched_start()
+>   	 *
+>   	 * Return DRM_GPU_SCHED_STAT_NOMINAL, when all is normal,
+>   	 * and the underlying driver has started or completed recovery.
+>   	 *
+>   	 * Return DRM_GPU_SCHED_STAT_ENODEV, if the device is no longer
+> -	 * available, i.e. has been unplugged.
+> +	 * available, for example if it has been unplugged or failed to
+> +	 * recover.
+>   	 */
+>   	enum drm_gpu_sched_stat (*timedout_job)(struct drm_sched_job *sched_job);
+>   
 
