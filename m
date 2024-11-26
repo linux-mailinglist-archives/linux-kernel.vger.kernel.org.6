@@ -1,141 +1,171 @@
-Return-Path: <linux-kernel+bounces-422310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C38279D9777
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:51:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 287A5165E21
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:51:20 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BE61D47AE;
-	Tue, 26 Nov 2024 12:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="TTPpw5YI"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03A2F9D976D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:49:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1731CDFBE;
-	Tue, 26 Nov 2024 12:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7114285C8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:49:23 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2972D1CEE8A;
+	Tue, 26 Nov 2024 12:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b20KNGKv"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9EE36C;
+	Tue, 26 Nov 2024 12:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732625460; cv=none; b=m7scbi3PkU6GKHHNMvZRAtDuBGLXE1QAXX9fUhw134Ejm++HC7Hl8qJRfyu+ggikPMP8U1CDckVmbOIe/oDsE47nzhPUm4zHxC7UabXpHG4RvZb0tTKWqRfSn2CW2uUb7SP6oE/1NZE2KQBpvQWMTLoqG8JZikKAnIaVCFB0pXk=
+	t=1732625356; cv=none; b=RXc5BbjSIcVxka9D54dbTOP/NdTr68dqqWiF4NmelXYbACIG3X0D+mxhkcjNre9lyO3ooY7NW5+7MArlLff0+m76nVZDyeLQb/Gm08JRoc66CGEcBMVA5jWBktUCKttC7hyh2Nvwn2ZE8csD8UgpTHHM5XJm8xtLiKOQvIRWx44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732625460; c=relaxed/simple;
-	bh=ArR5+21AA93ZEfayM9mvETGHY7Aj5xShHAv/zV45HSU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CVjbZxEPmHvxXG8MRcz3pdLy+zGZ387IO0TRFkUJzTRTaOzFULawaxJoCMjIy62+s4coTPSDdFXCzKo2Kcf8mDKPdiuF0AzkE8xkqS9/WbH6EoXwF/8shGFEV9iIpjZ2pUtxiL55HIcCV4+ng2UFZAqF8Sv3noEjBFtmf3A51us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=TTPpw5YI; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 112eb9ceabf511efbd192953cf12861f-20241126
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=ddGXrlsNVofZVqtyw9ZyO42fEPecY4EOHW94yOtt3ck=;
-	b=TTPpw5YIT1xQDTVz3JmLjcgvxakL1CmHl4WC4rUfMOA1IqSq7GRchP+yJsXu+LNR/hrs7lo61E9gShBLsyuDjTBCiL4p3VsquugBmt3JjbiY2SZRd5a47T2HDDcjAstYblMJN28OC3iwiiSZOpYSLskDi8ejI0WOBkJnmIbtAsM=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.44,REQID:ce220c78-975f-4fcc-811a-b79e5b409a4c,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-25
-X-CID-META: VersionHash:464815b,CLOUDID:b8274ee0-1fe5-4c4a-bdf3-d07f9790da32,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0,EDM:-3,IP
-	:nil,URL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 112eb9ceabf511efbd192953cf12861f-20241126
-Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
-	(envelope-from <andy-ld.lu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1899476045; Tue, 26 Nov 2024 20:50:51 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Tue, 26 Nov 2024 20:50:49 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Tue, 26 Nov 2024 20:50:49 +0800
-From: Andy-ld Lu <andy-ld.lu@mediatek.com>
-To: <ulf.hansson@linaro.org>, <angelogioacchino.delregno@collabora.com>,
-	<matthias.bgg@gmail.com>, <avri.altman@wdc.com>, <adrian.hunter@intel.com>,
-	<wenbin.mei@mediatek.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	Andy-ld Lu <andy-ld.lu@mediatek.com>
-Subject: [PATCH v2 2/2] mmc: mtk-sd: Add support for ignoring cmd response CRC
-Date: Tue, 26 Nov 2024 20:48:23 +0800
-Message-ID: <20241126125041.16071-3-andy-ld.lu@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241126125041.16071-1-andy-ld.lu@mediatek.com>
-References: <20241126125041.16071-1-andy-ld.lu@mediatek.com>
+	s=arc-20240116; t=1732625356; c=relaxed/simple;
+	bh=VUoMqXVLY+GmVKqlO0TpKf0FJrvF6KvhdzOUouz0N/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MBtBeQL1E3WnOzIaJKgraXwLmG8rDsLFSgyTJFMflsOFet/6FiaWmxmIMeg7Q+JXF1lOP9Q1wbgepZbgl4CHFvyx3ywDBVMuVZn13SE5u40HG/70yHdd5K/NkRCU2vMZhJqsY3joxPkix2XeKrH6wmhee8K6DT/0YH0UUzZwHtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b20KNGKv; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53ddd4705f8so2734321e87.0;
+        Tue, 26 Nov 2024 04:49:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732625353; x=1733230153; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=arVq5sYPtBHjzPOt7CSX/eUWHNFhe4Yu0pMFs73XXFc=;
+        b=b20KNGKvaT0M0cznNB5nOBRBUQXvLMT20fOPWbmihLSHqVLqBDCjh4PmEeTNGcweqd
+         kGES+YRYm5zYBVNad0j2T4qiaV8+RI/nr7OKlNe2ADerbVJeu/4gj/UjCocBJAjpDFW9
+         itzhhvnYaXuy/QVncyIM4Uuys2N1Cj4ugt+8sWjx7NQDgljOVZm1BUKohulHzRhe9caF
+         HAqLRWL6ZOJn6Fh3PQQl5uztZPCACCTOvd6MVG5p4aFl5RH+BLRZ7EnsMnZlLLu+kykX
+         bMkoaEf/N1njLdf9IN/pjw31EMFCsXkjxjO4nvNTPUKGY86ZHV4Wp2OwepR/qC9kOiqq
+         ZthA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732625353; x=1733230153;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=arVq5sYPtBHjzPOt7CSX/eUWHNFhe4Yu0pMFs73XXFc=;
+        b=Gjxc0pbf7QWOWkJntiXMtuSES+kUbxJCW3D2mqr9M99bPa5Vm+sLMHQT8eY6x2CTfo
+         CQoL+Fxt4KcHCGLTPxAEl0XabtNevOlmd1dpvYCNcGq+Jt4xXi0pl83B6gC1210dLksD
+         z2kL4u5PagiCPLVrT69DizzQVgrHUX1osB1UlQvq5Xbrv4zmIcatMl4os6FfFe2nzs16
+         S2nJjG/AsZLEbAoXsZCz+hsgDP18pmkOMaq7ifAHyNLuS9ZwcPFgmlAzEaBtsIhG0yh+
+         8eqXVt/DbuO3upKHBgdzqJUC7kogZVcRvnOX7bOk7X2E5OA/RtSsh6AGSWReMky3tZU0
+         n3nw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6A0s9NKQ8jxdbhSAOKgT/trffxDyzmL1Igp61R+7c5Y2dkJZtNqOwmBIWuMRcQuiIvpmtQwg0SkcgW/E1@vger.kernel.org, AJvYcCWlsZ1FYZDoXHiECtQs6/NVdnuoyv+yYJ1MTcUX30+kQAwAIoAHpQltDNZInXoUOt3fn+BKzKXLvVsKCdDy@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv44NCwrGkgiPFbhIyC1OVnygqsooA1EeFYBsEg05aEm2tjOjs
+	5Xlk3cyCLlcrntTztfDiEgHaWOG+/G7HVOtsw7i62PWsDkVQ6aOKB01i7EbO
+X-Gm-Gg: ASbGncstkfTc28YFUhuz68o4C8xkX61cIzWTubcIUBrJqP+2U5HVo+suTdZjyrM9qan
+	G9HdNFdZ8Jr+80rpu9PTk8X8F2t57UUYm6lDgWS5NlsixSSXk3h8I6BMcZ3Htm6lgZcAvoa3TyN
+	zZZc0q/9Xyq1MARou54IUfyHK5gFqlHuhyk8ElIIgS+sVLBEYg9+F8enfga65U2pY8WHDrxIl+0
+	pX5gEc0XCQHXwZq55NKO0T55Dd3A8ijEUw7fDXKsuHZzD5hYveDSQz/p01fdGEIzn08PLQhL4HU
+	vx9+mwpq
+X-Google-Smtp-Source: AGHT+IFVpS4FmtsdmagtZddlo7pfwq3eSDGmyAJK0KYwfojtIIFI/sDvVOq140czgbRRX3zvdTroeA==
+X-Received: by 2002:a05:6512:3b06:b0:53d:d06c:cdf8 with SMTP id 2adb3069b0e04-53de8800269mr1074256e87.1.1732625352549;
+        Tue, 26 Nov 2024 04:49:12 -0800 (PST)
+Received: from [130.235.83.196] (nieman.control.lth.se. [130.235.83.196])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd2497e60sm2004772e87.256.2024.11.26.04.49.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 04:49:11 -0800 (PST)
+Message-ID: <6777d050-99a2-4f3c-b398-4b4271c427d5@gmail.com>
+Date: Tue, 26 Nov 2024 13:49:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--4.369700-8.000000
-X-TMASE-MatchedRID: yALcya1h5KX7W7/9wscjdRuZoNKc6pl+ju+GX08gELBKda7Cp9A+RkJW
-	dVOufBPR/KZpBkEBJHqIY8ivHy/5E6XzgcphDfm8A9lly13c/gHt/okBLaEo+C8zQZ2rR/Op0Fi
-	DqDlQgH4SIx4SDL9Y5uuLFZZYlisfHxPMjOKY7A8LbigRnpKlKZx+7GyJjhAUI51nWVDVVfWhFL
-	FIsK0Cw+lupQ5Bsw7jcU72BTeNXW5Nk8cAoC9YSLojLyfylXvJqPdSBhdySgg0qsN/ix5JTJi88
-	butrgo98jae4OD13tAV7Mc+rowcVKtX/F0pBwVJjSV5hDFby7aUTGVAhB5EbQ==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--4.369700-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP: 78C610F20AEBBD1AD5EEE534EEE4D7022F688123028ED1F227EEF820CA4E8EB82000:8
+User-Agent: Mozilla Thunderbird
+Subject: Re: Regression in NFS probably due to very large amounts of readahead
+To: Jan Kara <jack@suse.cz>
+Cc: Philippe Troin <phil@fifi.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
+ <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
+ <4bb8bfe1-5de6-4b5d-af90-ab24848c772b@gmail.com>
+ <20241126103719.bvd2umwarh26pmb3@quack3>
+Content-Language: en-US
+From: Anders Blomdell <anders.blomdell@gmail.com>
+In-Reply-To: <20241126103719.bvd2umwarh26pmb3@quack3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The current process flow does not handle MMC requests that are indicated
-to ignore the command response CRC. For instance, cmd12 and cmd48 from
-mmc_cqe_recovery() are marked to ignore CRC, but they are not matched to
-the appropriate response type in msdc_cmd_find_resp(). As a result, they
-are defaulted to 'MMC_RSP_NONE', which means no response is expected.
 
-This commit applies the flag 'MMC_RSP_R1B_NO_CRC' to fix the response type
-setting in msdc_cmd_find_resp() and adds the logic to ignore CRC in
-msdc_cmd_done().
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Andy-ld Lu <andy-ld.lu@mediatek.com>
----
- drivers/mmc/host/mtk-sd.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+On 2024-11-26 11:37, Jan Kara wrote:
+> On Tue 26-11-24 09:01:35, Anders Blomdell wrote:
+>> On 2024-11-26 02:48, Philippe Troin wrote:
+>>> On Sat, 2024-11-23 at 23:32 +0100, Anders Blomdell wrote:
+>>>> When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
+>>>> we got terrible performance (lots of nfs: server x.x.x.x not
+>>>> responding).
+>>>> What triggered this problem was virtual machines with NFS-mounted
+>>>> qcow2 disks
+>>>> that often triggered large readaheads that generates long streaks of
+>>>> disk I/O
+>>>> of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache
+>>>> area of the
+>>>> machine.
+>>>>
+>>>> A git bisect gave the following suspect:
+>>>>
+>>>> git bisect start
+>>>
+>>> 8< snip >8
+>>>
+>>>> # first bad commit: [7c877586da3178974a8a94577b6045a48377ff25]
+>>>> readahead: properly shorten readahead when falling back to
+>>>> do_page_cache_ra()
+>>>
+>>> Thank you for taking the time to bisect, this issue has been bugging
+>>> me, but it's been non-deterministic, and hence hard to bisect.
+>>>
+>>> I'm seeing the same problem on 6.11.10 (and earlier 6.11.x kernels) in
+>>> slightly different setups:
+>>>
+>>> (1) On machines mounting NFSv3 shared drives. The symptom here is a
+>>> "nfs server XXX not responding, still trying" that never recovers
+>>> (while the server remains pingable and other NFSv3 volumes from the
+>>> hanging server can be mounted).
+>>>
+>>> (2) On VMs running over qemu-kvm, I see very long stalls (can be up to
+>>> several minutes) on random I/O. These stalls eventually recover.
+>>>
+>>> I've built a 6.11.10 kernel with
+>>> 7c877586da3178974a8a94577b6045a48377ff25 reverted and I'm back to
+>>> normal (no more NFS hangs, no more VM stalls).
+>>>
+>> Some printk debugging, seems to indicate that the problem
+>> is that the entity 'ra->size - (index - start)' goes
+>> negative, which then gets cast to a very large unsigned
+>> 'nr_to_read' when calling 'do_page_cache_ra'. Where the true
+>> bug is still eludes me, though.
+> 
+> Thanks for the report, bisection and debugging! I think I see what's going
+> on. read_pages() can go and reduce ra->size when ->readahead() callback
+> failed to read all folios prepared for reading and apparently that's what
+> happens with NFS and what can lead to negative argument to
+> do_page_cache_ra(). Now at this point I'm of the opinion that updating
+> ra->size / ra->async_size does more harm than good (because those values
+> show *desired* readahead to happen, not exact number of pages read),
+> furthermore it is problematic because ra can be shared by multiple
+> processes and so updates are inherently racy. If we indeed need to store
+> number of read pages, we could do it through ractl which is call-site local
+> and used for communication between readahead generic functions and callers.
+> But I have to do some more history digging and code reading to understand
+> what is using this logic in read_pages().
+> 
+> 								Honza
+Good, look forward to a quick revert, and don't forget to CC GKH, so I get kernels recent  that work ASAP.
 
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index efb0d2d5716b..e2c385853eef 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -1097,11 +1097,12 @@ static inline u32 msdc_cmd_find_resp(struct msdc_host *host,
- 	u32 resp;
- 
- 	switch (mmc_resp_type(cmd)) {
--		/* Actually, R1, R5, R6, R7 are the same */
-+	/* Actually, R1, R5, R6, R7 are the same */
- 	case MMC_RSP_R1:
- 		resp = 0x1;
- 		break;
- 	case MMC_RSP_R1B:
-+	case MMC_RSP_R1B_NO_CRC:
- 		resp = 0x7;
- 		break;
- 	case MMC_RSP_R2:
-@@ -1351,7 +1352,8 @@ static bool msdc_cmd_done(struct msdc_host *host, int events,
- 			 * CRC error.
- 			 */
- 			msdc_reset_hw(host);
--		if (events & MSDC_INT_RSPCRCERR) {
-+		if (events & MSDC_INT_RSPCRCERR &&
-+		    mmc_resp_type(cmd) != MMC_RSP_R1B_NO_CRC) {
- 			cmd->error = -EILSEQ;
- 			host->error |= REQ_CMD_EIO;
- 		} else if (events & MSDC_INT_CMDTMO) {
--- 
-2.46.0
+Regards
+
+/Anders
 
 
