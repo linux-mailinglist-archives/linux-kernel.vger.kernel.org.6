@@ -1,119 +1,106 @@
-Return-Path: <linux-kernel+bounces-422364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81CFA9D98AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:39:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1BAF9D98AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:40:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13E66B25C2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:38:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B054163390
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E7B193408;
-	Tue, 26 Nov 2024 13:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25B1DF49;
+	Tue, 26 Nov 2024 13:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lFAx0j8G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="cGTHpe+P"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD04DF49;
-	Tue, 26 Nov 2024 13:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36E7C8EB;
+	Tue, 26 Nov 2024 13:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732628329; cv=none; b=WDxBsRi7Z024Y1X3x7wJCI0qq4u4r7AtKFkcHgUJG03oo71uSyPl71USqt1QESfzrYq7/1MZJIekep6tvemMC0MpcHqaTkqQHlyRuNZ5YFWNxxc+qG+AJmskMuqtznVt3Ss6vcF1J+FdlfXc4ZrAKmoubcKaNzkvdXSnIeAUTUE=
+	t=1732628394; cv=none; b=pdESCFL5F5VX/aKO5HLDHX5LaQhiqPfarkSs8uU7qhtCrDW7hoAz+OhAMMTVdzFUcafKjf4eZmxtTvEc3jY791x0YBNkz4rUQiZrGL10i0biCwOr3znhViAi4YfxNgVrgADSn5S/OBegrHQMFy4anPhy9ix9UF20jXAuLQFm6R8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732628329; c=relaxed/simple;
-	bh=touT8z8p3S9/mxKICugSQjhxj2tpuIzKkQGJAkiR0gY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LUg9TlSjmpzvtYeg/hbUGRYWx7lDzoAaykZEC0mkwfe3CZYf7GOxfZZRFYOrP43+dNaVUMFDwvPW2fREIGCANVe58sd4nP730fLue1n5ikpdkKuEz9nvrpjt/bp6to1ubTT2Z7omwxBFdXGgUbNVbMO00916f1em1mbLrPvTKbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lFAx0j8G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F1C3C4AF0B;
-	Tue, 26 Nov 2024 13:38:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732628328;
-	bh=touT8z8p3S9/mxKICugSQjhxj2tpuIzKkQGJAkiR0gY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lFAx0j8GGys3A+x90j7upvkksAVYIiTHFRbXDggf0Z3IVOueI23C1SdqHeaBZfi/a
-	 Nsl1bT3jFMgUtAM5yBbwoZpdx+BhkPxMzg0bjLKuSvg/fvAsH02BpVIHge9Jqu7wzK
-	 DbtD0XJFuH6r12VkPU8MGlF8l8ziyfD4Ogffwg6ncN/3twsffurWKmOnHjD4BvYOex
-	 lGu/KtMRRb+GoTRLQFUNrAxcp2MBtDFu1+GSs8PadYTa6CHcewa58fMq2Cx6yaTz/w
-	 r2FtItLf0UTrXSCphRc4vKHmVQ+l/fLrWVaANX/ld1nt/AWleEL5u3EsLtVQarkTy4
-	 9kwC6HFL9ROyw==
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2964645d2b7so3285722fac.2;
-        Tue, 26 Nov 2024 05:38:48 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUSREB4UY6mDnnkn9guKQsJjluLiDH6phC18cYCBpjIodaDH1Klohjyf/srAVponnMRnsId9HDi/+0=@vger.kernel.org, AJvYcCXzS3M08u5NGW2yxLG648ZDASuRPBz/xV+WRc3EuvibHO5w6OYqtHUA9kVSWSwMXuWYKW8xSVNgasNfeYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHHmFWU4qE/aUnFucHQyTmY6IXXrgTAef4QCzdDpGSi0B+N9Hn
-	vDAZ9wim2s3hVr5U876SfpQudcvoly/ppOZU4VPDIQVsgY+eDAEJRAoHN5gZqNgmyG3aS3qv67h
-	t+7gGeDj5e0VQhjxqehRtjRY1krw=
-X-Google-Smtp-Source: AGHT+IF0lVvSotCIYasXWA7nKkHlZh1zojmHVnpTTi/0sIoFfoe6ka8JGuaxIVMbklysAwWfpj0bdZbIU7hohDehKBM=
-X-Received: by 2002:a05:6870:2249:b0:288:18a0:e169 with SMTP id
- 586e51a60fabf-29720c59d04mr14620782fac.19.1732628327689; Tue, 26 Nov 2024
- 05:38:47 -0800 (PST)
+	s=arc-20240116; t=1732628394; c=relaxed/simple;
+	bh=E9pUbK72JOvDbvWr6iCrPeY/6XaWCCuTh5wTNQ0T4+E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kmqf/DCUUnaCBI9pDH/dcIfSchBtUFaSUh91/BPixY/7BIYVII93uqtmt9akAyP3+dtFt5t1pLSwGp+EHL3hT5ffCj7i1naetGz926UTsqeJA+mHSkVcgvkpUWrrHhQgsSc4RxePj/kyWi4czorwNLvh7VULHWSkr6SzYffyEVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=cGTHpe+P; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=tN0r84mltrzWKXImKJPU4zA3MIm8jfWmB/JmJnj+81A=; b=cGTHpe+PbK5cetpMFRQwt0vOma
+	IKOaMrbpCHEttoujvWhb+esxr/IJylAxWpnIf6oPVztXWgiIozWpdwCcf5nlzE+qPrPWhc2VhAZEJ
+	9lMJA34Trj5JhmDmUP8Kjgrua3Ij5DkAvWZnZJfr2pA8XO0cCIp4Ip3e64gcjWnzrTZcwJXIPKkku
+	0ehWv/PL65V1Tqft1Arq2nPDfKaWG+a/8EcBFJRI6vlcEpojC8hjuayzHEWJC2ckVroBpSWKBYbsF
+	fEiNoXJMQXoQXWkUO7WmkS4XTFm15tcnvC+A5qasNX5771F3SNdgtXBC2+igR8zN20Zb/jSMKGS/N
+	S3umjoAw==;
+Received: from i5e86190f.versanet.de ([94.134.25.15] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tFvmZ-0008Sx-N7; Tue, 26 Nov 2024 14:39:11 +0100
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Diederik de Haas <didi.debian@cknow.org>
+Cc: andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andrzej.hajda@intel.com, neil.armstrong@linaro.org,
+ rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ quentin.schulz@cherry.de, Heiko Stuebner <heiko.stuebner@cherry.de>
+Subject: Re: [PATCH 3/3] drm/rockchip: Add MIPI DSI2 glue driver for RK3588
+Date: Tue, 26 Nov 2024 14:39:10 +0100
+Message-ID: <9368781.CDJkKcVGEf@diego>
+In-Reply-To: <D5F4UD59MUJG.2HFCTRSPELO98@cknow.org>
+References:
+ <20241106123304.422854-1-heiko@sntech.de>
+ <20241106123304.422854-4-heiko@sntech.de>
+ <D5F4UD59MUJG.2HFCTRSPELO98@cknow.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125132029.7241-1-patryk.wlazlyn@linux.intel.com>
- <20241125132029.7241-6-patryk.wlazlyn@linux.intel.com> <CAJZ5v0iJ7hca68Pk1g1m=FNX6Psr3Ow-K7fvXZCcRM8PFM7EjQ@mail.gmail.com>
- <883447da-aeca-41ba-99ef-038dd8ddc6b3@linux.intel.com> <CAJZ5v0hZ8ajccb=B7P5g1+KJ+tsw5vP-e9ix7j_65WgT34H1XQ@mail.gmail.com>
- <a8d53d86-d658-4e18-bfd6-b37a2656b180@linux.intel.com> <CAJZ5v0iA==dmnPbs6BNV_taDD9hRWbwOhiCWsi0BjKzVVdihdg@mail.gmail.com>
- <706408b6-fd2c-475a-bde6-c95d0cab7360@linux.intel.com>
-In-Reply-To: <706408b6-fd2c-475a-bde6-c95d0cab7360@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 26 Nov 2024 14:38:36 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0ho0=7naGEtEv_jO0dK3ESexL+4B7_D0dRXNhr7fn+ORQ@mail.gmail.com>
-Message-ID: <CAJZ5v0ho0=7naGEtEv_jO0dK3ESexL+4B7_D0dRXNhr7fn+ORQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 5/8] x86/smp native_play_dead: Prefer
- cpuidle_play_dead() over mwait_play_dead()
-To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, rafael.j.wysocki@intel.com, len.brown@intel.com, 
-	artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com, 
-	peterz@infradead.org, tglx@linutronix.de, gautham.shenoy@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Nov 26, 2024 at 2:10=E2=80=AFPM Patryk Wlazlyn
-<patryk.wlazlyn@linux.intel.com> wrote:
->
-> >>>>> If you first make intel_idle provide :enter_dead() for all CPUs on =
-all
-> >>>>> platforms and implement it by calling mwait_play_dead_with_hint(), =
-you
-> >>>>> won't need mwait_play_dead() any more.
-> >>>> Crossed my mind, but because mwait_play_dead doesn't filter on Intel
-> >>>> vendor specifically,
-> >>>
-> >>> In practice, it does.
-> >>>
-> >>> The vendor check in it is equivalent to "if Intel".
-> >>
-> >> Actually, what about INTEL_IDLE=3Dn?
-> >> We might hit acpi_idle, which would call mwait_play_dead_with_hint() n=
-ow, but
-> >> if we don't, don't we want to try mwait_play_dead before hlt or is it =
-too
-> >> unrealistic to happen?
-> >
-> > In that case the hint to use would not be known anyway, so
-> > hlt_play_dead() is the right choice IMV.
->
-> Fair, it's not known, but we could fallback to the old, cpuid leaf 0x5 ba=
-sed
-> algorithm, which works on a lot of hardware.
->
-> That being said, I think it's cleaner to get rid of the old algorithm ent=
-irely
-> and rely on idle drivers to do the right thing from this point forward.
->
-> If we could bring the CPU out of the mwait loop into the hlt loop somehow=
- (via
-> interrupt for example) we could remove the old kexec hack altogether.
+Hi,
 
-Well, the problem is that CPUs may be woken up from MWAIT waits for
-various reasons and the reason for a given wakeup is not known a
-priori.
+Am Mittwoch, 6. November 2024, 14:33:25 CET schrieb Diederik de Haas:
+> > +#define IPI_DEPTH_5_6_5_BITS		0x02
+> > +#define IPI_DEPTH_6_BITS		0x03
+> > +#define IPI_DEPTH_8_BITS		0x05
+> > +#define IPI_DEPTH_10_BITS		0x06
+> 
+> Possibly dumb remark (sorry):
+> drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c also defines these
+> values, so wouldn't it be better if they're defined in 1 place?
+
+they are quite device-specific, so for me it doesn't really make sense
+to try to centralize them. I.e. these are the values that need to go into
+the GRF register to select a specific depth and are more or less the
+same by chance.
+
+I still remember quite well the answer to why Rockchip hardware engineers
+sometimes shuffle around similar grf entries between socs "because they
+want to" ;-)
+
+At least for the rk3576, they seem to stay the same for now, though part
+of me just expects the values to change in the future.
+
+So personally I'd like to keep them where they are :-)
+
+Heiko
+
+
 
