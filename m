@@ -1,142 +1,122 @@
-Return-Path: <linux-kernel+bounces-422764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BE219D9DDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:11:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3AB09D9DDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:11:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80975B2195E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:10:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CA03163621
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAC41DE4C7;
-	Tue, 26 Nov 2024 19:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2FA1DE2D3;
+	Tue, 26 Nov 2024 19:11:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pzCrnJjN";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Z8DL4VFF"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m3vpRtxT"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9979516F0E8;
-	Tue, 26 Nov 2024 19:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388C016F0E8
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 19:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732648239; cv=none; b=OXsy0uSO011KYBNNAztxHpl6LoPhcRCmzOx7YEX25MRoQLl5qIWnl6zTR316YO73c8NUDCrfxd2gZJsrIO3yj58jwOkJCJL+PiFX7SF+BnrVIDR2znTdGhwdCom/o6PC2At7UnCFcD/0uWmwV0qnVCLXLSFN3Bfhbd7GKbgHZX0=
+	t=1732648293; cv=none; b=JAeMLw5PSHpXFUKIPiuKT6GQVileq8/ceYbyJTq9/JO8fm0D/ak0JGPvkvZNhrjQPjQKewubJr7RHTc0HvCgoh/bROEJXPI8cUNv8pGOwrjPADNOe5+u5gQVdIGFvQAuziDBsHKbKLIcLjWf1rG1zPwpsAo1VRZeMzxLBm0yhzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732648239; c=relaxed/simple;
-	bh=JOHJmp5WW4ejGgVC5EV8U4eM4KtgEjJCcdvggW8sJMI=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=L5NZMY6EXLmm+D40xJsfnEyUPVPptLfYkbA15TnJb/r/Hu7h/OmMHfb0jCgTwEtzu748cZUvrzDiyV+CNO/UFdzQ/57DQCx9W7bV+Zs9JXI+PIipkG5i57ZA6r8BYmrKdba9p44rMvypxdx6k/lSYI4WgzbQbCyaTdetk806x1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pzCrnJjN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Z8DL4VFF; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 26 Nov 2024 19:10:34 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732648235;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JAjiz4z6eaIdVpBbx0+i+piPgSWWWTXgTEOEVv9t9TA=;
-	b=pzCrnJjNjWUiWPstzTCJxpul3A4Eb1NkEoEh376Q0LC1Ta+rgz7ALhNs1EbNo96hlzX0Lq
-	Hk+lmB4x1zMQ0TQesfP2UeIuuX+ivgcZH6TtTf5F2DVNFredbuBv9eFPr2G8Ke80dd05o/
-	7IhPpaliCcMSHokb6U1c913LYtiwFMWyZxnUWdRrQpYrc/56Sx0NQoa9sNv4gcds75qtTD
-	8Naqi+kPC+IYdBGh5Rt12GCyHu111hhUsG/pDF/utSixVKlHYDywEX+NxJ4SCa3IYiZBhB
-	eMFmNycrW9E243BcuZdcgGD80ptttgM5hjhqz+jlBp72V+zBOvdVU/AagCCa+w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732648235;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JAjiz4z6eaIdVpBbx0+i+piPgSWWWTXgTEOEVv9t9TA=;
-	b=Z8DL4VFFfGP7Gb1okUjqjjymIoV3e9MR2s1wzGKp4QrhFy3qqQofv4jG/xhFWzE45nRhm3
-	G69YBeFw4PWQn4CA==
-From: "tip-bot2 for Russell King (Oracle)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/urgent] irqchip/irq-mvebu-sei: Move misplaced select()
- callback to SEI CP domain
-Cc: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
- Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <E1tE6bh-004CmX-QU@rmk-PC.armlinux.org.uk>
-References: <E1tE6bh-004CmX-QU@rmk-PC.armlinux.org.uk>
+	s=arc-20240116; t=1732648293; c=relaxed/simple;
+	bh=K736zKbrekQE3Hk8QsXEc1yrui4hDnXwadMOX6Abm7w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kecTMoZgT9CTl/ICafqlxgtKUqQMrcgLL/d6Qcw/T1YjtJBRV6J1d8aVaat98Z+2ByZwxYQRM/7OJdbE0pD885W8G/2RC6fY7jhpGEsSMeFbzkptCNl3kMVjnpgdqMpQrVV91WqtaNMQa+Py90Lo+dW1YoVkykYKz8tYkBcG5iU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=m3vpRtxT; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-211f1a46f7fso13395ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 11:11:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732648291; x=1733253091; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=TuNkjbgKSNF4zJxEyTXA0iGdHILBTGiqQMOX5EilRcI=;
+        b=m3vpRtxT/egpXPjlVkKoe1C3d0WmQR8gK5GF8vozQ9QjBrrEsLISxz36Xbru0fQqn8
+         u4hzl5DE312ma8qEOjbVj/12x7sCvOZxqJoGMddDOokSW7QigDxwjXemEfv6jSYnKPUc
+         Tqyf8o5RqoAbcyU3ieH4s2DYEdjJjG98Kr9MDig1b2tVV+jELUHHsfTgGptcQnT/QAod
+         WrewtCynaUilDOeYcL8LqMV6HfupgqMu0lr0Hb96mFT7d9NTAGhamhbfGemqvXJyV3fi
+         Pl2L2bJYNuWopVJXJtDRtyfiu+n88gZKqGCQyOJ/rD2piQDgy6Pap/ma24G8OdWZvZK2
+         xdHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732648291; x=1733253091;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TuNkjbgKSNF4zJxEyTXA0iGdHILBTGiqQMOX5EilRcI=;
+        b=m46Tm6YI6pwEZp9U7+MRqO+S3kTCG+s/BMwC5MbG6Wmeh4W+GQmP6rEuCmPp4AWfX6
+         USi9tnB9H7m1mlaJUxe3SeraO5v31LgOQvzZkbnsgxC5ILBH4GQ6rB4uoYpuIT6Ct3Eg
+         fIphsaAkT4l6R9Wg0vu/SOjo5d7bCJ0ObC2z8miAl1HW//wtv3zu3gQDsBbAHuv0ynzd
+         JRKZhG+yzaZbAp4TnVv8zccFt1dxogDKielHRcmJ6NRqALTgK0mhf406zfFgE9HQ6E5T
+         PbkzzkiionDbgtkGBalQjwpFawwMt5JonOh9MaToEpnyjCUYxxAps1cXqlsY9u93iI4I
+         GHZw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4stSn2Nu4zWcGq1rgokg20GFcB+i55xJTv6OL27ZYenqjpaPThlnqjQzV4FCSNDeB70YGJqp+zyekiTs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOh5+QfGhLT9U+LqgGYToLj1uC6gwTbXZPlMDaznDrGCW874VY
+	RG3drNmJZSxEVjv5Sc8SPcDApe81SFB4h6E8T3mAmkZ/vHtLGKJAof3ml6TTug==
+X-Gm-Gg: ASbGnculvXBrlt0SwqiYaRyefE0oWWCGvLmpllm3R/UYU42DV777ty4/C2Zn22K80jI
+	SbNR85B0fjGqWkTuE3nv4SUMu/kM/gXHv7g6XECLpi/uGDj4Ojr0qRYp4QrRpdAOGullwW19ws8
+	/9LNI1zcSP1/tUBIJAtq7aElxLMnzceLSXitroXRhZ1mGbTNN+Ew7b4p2N4EIOoTOyujRM+MwwK
+	e6IT+rasEmAllnqxnBSIYO7S+zUA9RKVowVifbCMxlED0u6iBcryVtDy8levfwONvymDk0Dh8uA
+	Tx7b0ja9D/N+
+X-Google-Smtp-Source: AGHT+IFeAPI41yigRf2xWWG755mVZhZEtqGxDJO0fLexMDYuGaMHS67a9BqB6i+jHF7ppIs2ioXD+w==
+X-Received: by 2002:a17:903:947:b0:20b:a6f5:2770 with SMTP id d9443c01a7336-215022bf562mr164815ad.6.1732648291418;
+        Tue, 26 Nov 2024 11:11:31 -0800 (PST)
+Received: from google.com (226.75.127.34.bc.googleusercontent.com. [34.127.75.226])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ead02ea3e9sm12802274a91.4.2024.11.26.11.11.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 11:11:30 -0800 (PST)
+Date: Tue, 26 Nov 2024 19:11:26 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>
+Subject: Re: [PATCH v5 9/9] binder: use per-vma lock in page reclaiming
+Message-ID: <Z0YdXqS-rARwYI5L@google.com>
+References: <20241126184021.45292-1-cmllamas@google.com>
+ <20241126184021.45292-10-cmllamas@google.com>
+ <CAJuCfpH+B1HrzXtM_3+H9m8NPkTzAX8S4oSwhTEW+07g9JceeQ@mail.gmail.com>
+ <CAJuCfpHdYPf-WgheBSCK6Md1WakEy_XCiPrw6xTFmPHr7TgnqA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173264823499.412.10177145065774712407.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpHdYPf-WgheBSCK6Md1WakEy_XCiPrw6xTFmPHr7TgnqA@mail.gmail.com>
 
-The following commit has been merged into the irq/urgent branch of tip:
+On Tue, Nov 26, 2024 at 10:46:03AM -0800, Suren Baghdasaryan wrote:
+> On Tue, Nov 26, 2024 at 10:45 AM Suren Baghdasaryan <surenb@google.com> wrote:
+> >
+> > You did add a clarifying comment I asked for in
+> > https://lore.kernel.org/all/CAJuCfpESdY4L_sSwiCYVCX+5y1WOuAjLNPw35pEGzTSyoHFYPA@mail.gmail.com/
+> 
+> s/did/did not
 
-Commit-ID:     12aaf67584cf19dc84615b7aba272fe642c35b8b
-Gitweb:        https://git.kernel.org/tip/12aaf67584cf19dc84615b7aba272fe642c35b8b
-Author:        Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-AuthorDate:    Thu, 21 Nov 2024 12:48:25 
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 26 Nov 2024 19:58:27 +01:00
+Oh, I added the comment to patch 5/9 since it fits better there (sorry
+that I forgot to mention this). Now the kerneldoc section reads:
 
-irqchip/irq-mvebu-sei: Move misplaced select() callback to SEI CP domain
++ * @mapped:             whether the vm area is mapped, each binder instance is
++ *                      allowed a single mapping throughout its lifetime
 
-Commit fbdf14e90ce4 ("irqchip/irq-mvebu-sei: Switch to MSI parent")
-introduced in v6.11-rc1 broke Mavell Armada platforms (and possibly others)
-by incorrectly switching irq-mvebu-sei to MSI parent.
+... and the vma check now has the following comment:
 
-In the above commit, msi_parent_ops is set for the sei->cp_domain, but
-rather than adding a .select method to mvebu_sei_cp_domain_ops (which is
-associated with sei->cp_domain), it was added to mvebu_sei_domain_ops which
-is associated with sei->sei_domain, which doesn't have any
-msi_parent_ops. This makes the call to msi_lib_irq_domain_select() always
-fail.
++       /* ensure the vma corresponds to the binder mapping */
++       if (vma && !binder_alloc_is_mapped(alloc))
+                goto err_invalid_vma;
 
-This bug manifests itself with the following kernel messages on Armada 8040
-based systems:
-
- platform f21e0000.interrupt-controller:interrupt-controller@50: deferred probe pending: (reason unknown)
- platform f41e0000.interrupt-controller:interrupt-controller@50: deferred probe pending: (reason unknown)
-
-Move the select callback to mvebu_sei_cp_domain_ops to cure it.
-
-Fixes: fbdf14e90ce4 ("irqchip/irq-mvebu-sei: Switch to MSI parent")
-Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/all/E1tE6bh-004CmX-QU@rmk-PC.armlinux.org.uk
----
- drivers/irqchip/irq-mvebu-sei.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/irqchip/irq-mvebu-sei.c b/drivers/irqchip/irq-mvebu-sei.c
-index f8c70f2..065166a 100644
---- a/drivers/irqchip/irq-mvebu-sei.c
-+++ b/drivers/irqchip/irq-mvebu-sei.c
-@@ -192,7 +192,6 @@ static void mvebu_sei_domain_free(struct irq_domain *domain, unsigned int virq,
- }
- 
- static const struct irq_domain_ops mvebu_sei_domain_ops = {
--	.select	= msi_lib_irq_domain_select,
- 	.alloc	= mvebu_sei_domain_alloc,
- 	.free	= mvebu_sei_domain_free,
- };
-@@ -306,6 +305,7 @@ static void mvebu_sei_cp_domain_free(struct irq_domain *domain,
- }
- 
- static const struct irq_domain_ops mvebu_sei_cp_domain_ops = {
-+	.select	= msi_lib_irq_domain_select,
- 	.alloc	= mvebu_sei_cp_domain_alloc,
- 	.free	= mvebu_sei_cp_domain_free,
- };
+This was the feedback right?
 
