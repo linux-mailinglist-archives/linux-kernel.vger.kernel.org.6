@@ -1,119 +1,81 @@
-Return-Path: <linux-kernel+bounces-422478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95EA49D9A22
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:03:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17CA01621AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:03:40 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1701D61A5;
-	Tue, 26 Nov 2024 15:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0qRSqXui";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="me/O3mCh"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 863279D9A25
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:05:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0105F194080;
-	Tue, 26 Nov 2024 15:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CB1428231E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:05:30 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8331D61A4;
+	Tue, 26 Nov 2024 15:05:25 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572D478C6D;
+	Tue, 26 Nov 2024 15:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732633416; cv=none; b=f5N/v6F+sBHj6YxopZmAv/fRj4/s8PYbio9V5ZxUpUM4zbKHJu6g7wnoDFnsK9gCtmHas9kzay4Ekw9Aow3CtS2PmjsRpuKRwlkHwygqxyogWJSOYDPhtn4o8s8Ij99tQWh3gpQVpGJ9k+BClwgczSnQFzVrBVjjyRB2NYUF9Jo=
+	t=1732633525; cv=none; b=Hw8UFWH/o7jz0D7Da3zU/4adGb650J6+nEkcxQVyINLo0HSxdYoIVuKDW36FtJjwwExnMbss1SfaAj0o5SwRcR4Rpf2s+sFIAnszDfDuWnCJsyXUyL2WjpBqyIsbnsML6M59gjwxQTWHhzoOdNCSifCkQifueWHifqk7NPs9Wco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732633416; c=relaxed/simple;
-	bh=q1h7SByQ7GQP7MMiC+0DryV20kNggyhmkuzAAcwSlJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mHZH+OkyDqmAIE0eEaI++8p0qOmnqt0pGDxPLlGVPCdXOXmPUfGU2TF/g0nYi/ZENR2mP0UQeH3XsDnNXQp/7vr54jUiP8vgobgoMs0LjjtpiG5/rUKo8xCzrq0HA8y67XGAqQcURHAR0YaSyVNCJVAPDVqkciGUQtW98Ldjw6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0qRSqXui; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=me/O3mCh; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 26 Nov 2024 16:03:31 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732633413;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yuzWLJOLOSj45DFP2QwtkJKfcCrxhdccXghvTUPt3Xc=;
-	b=0qRSqXuibRgljbtykCbb/Cr51LVs6RXQj/bR9vTbxFjnRlon62MntHAIo/7EdjeC4yJddl
-	P0C/Y3mCLfzzdOx3fL8cDg4CsJpBiOH55JS9hu6cWjr35lgUIxMfPhrLmm+ekzkyivAwin
-	xrt4NEslxHJDPc4HTlsYXHwG00dTJudx/0z1dl3xOWpJg/61LrnkB59vpJ6s0flTBToYsS
-	70WxYwkNBjoRE54saX26ENSkWnW8XvCTGgdrUyQBccqy94e9YQllWsD+mh1teNIRNQ+OH0
-	R36k7kcBOypEM1ppxPVtInk8yx92UJE113idL4heJJkdgh2Q5LchLc/gNhLvbw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732633413;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yuzWLJOLOSj45DFP2QwtkJKfcCrxhdccXghvTUPt3Xc=;
-	b=me/O3mChBNdt7tFoFZ7jxGuyt53A0s89YdyFK3oBVVZBHEpx5yBVzgn+1Wy3HyDo9uLLpy
-	+u32TM1EylsL8HBw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: syzbot <syzbot+919877893c9d28162dc2@syzkaller.appspotmail.com>,
-	boqun.feng@gmail.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	hdanton@sina.com, hpa@zytor.com, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, longman@redhat.com, mingo@redhat.com,
-	paul@xen.org, pbonzini@redhat.com, seanjc@google.com,
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Subject: Re: [syzbot] [kvm?] WARNING: locking bug in kvm_xen_set_evtchn_fast
-Message-ID: <20241126150331.E3qHY1JP@linutronix.de>
-References: <6745da06.050a0220.1286eb.0018.GAE@google.com>
- <391f1c231cfce2c4107494b47114ed049c4d6266.camel@infradead.org>
+	s=arc-20240116; t=1732633525; c=relaxed/simple;
+	bh=Wtj0iHEWSc1uXsdNhe3JmDSAZqsE7SiTrkV+RPD/7qw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jeyVOz13rH4mcpkwWBo9FH5KjzWhi+lRntaDsccbHeYkDFzMVXh6fyK8gAkCgqkP1K9JEQIFyHRV/9BWggNPQ5PXSzbtVbCLtx9uWTsd3RpyPw1eyjGIefprG8PAbshQw0krwy1qH3MYbm9J6GpLUKNe9ELQL7f46i+CiyE13ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XyQmR1FxCz6K8qx;
+	Tue, 26 Nov 2024 23:02:47 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7D6E41400CB;
+	Tue, 26 Nov 2024 23:05:21 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 26 Nov
+ 2024 16:05:20 +0100
+Date: Tue, 26 Nov 2024 15:05:19 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+CC: <linux-efi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, Ard Biesheuvel <ardb@kernel.org>, "Alison
+ Schofield" <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Yazen Ghannam <yazen.ghannam@amd.com>, "Terry
+ Bowman" <terry.bowman@amd.com>
+Subject: Re: [PATCH v3 1/7] efi/cper, cxl: Prefix protocol error struct and
+ function names with cxl_
+Message-ID: <20241126150519.0000613f@huawei.com>
+In-Reply-To: <20241119003915.174386-2-Smita.KoralahalliChannabasappa@amd.com>
+References: <20241119003915.174386-1-Smita.KoralahalliChannabasappa@amd.com>
+	<20241119003915.174386-2-Smita.KoralahalliChannabasappa@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <391f1c231cfce2c4107494b47114ed049c4d6266.camel@infradead.org>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 2024-11-26 14:49:40 [+0000], David Woodhouse wrote:
-> On Tue, 2024-11-26 at 06:24 -0800, syzbot wrote:
-> > syzbot has bisected this issue to:
-> >=20
-> > commit 560af5dc839eef08a273908f390cfefefb82aa04
-> > Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> > Date:=C2=A0=C2=A0 Wed Oct 9 15:45:03 2024 +0000
-> >=20
-> > =C2=A0=C2=A0=C2=A0 lockdep: Enable PROVE_RAW_LOCK_NESTING with PROVE_LO=
-CKING.
->=20
-> That's not it; this has always been broken with PREEMPT_RT I think.
-> There was an attempt to fix it in
-> https://lore.kernel.org/all/20240227115648.3104-8-dwmw2@infradead.org/
->=20
-> I'll dust that off and try again.
+On Tue, 19 Nov 2024 00:39:09 +0000
+Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com> wrote:
 
-Oh thank you. The timer has been made to always expire in hardirq due to
-HRTIMER_MODE_ABS_HARD, this is why you see the splat. If the hardirq
-invocation is needed/ possible then the callback needs to be updated.
+> Rename the protocol error struct from struct cper_sec_prot_err to
+> struct cxl_cper_sec_prot_err and cper_print_prot_err() to
+> cxl_cper_print_prot_err() to maintain naming consistency. No
+> functional changes.
+> 
+> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+Hi Smita,
 
-The linked patch has this hunk:
-|-	read_lock_irqsave(&gpc->lock, flags);
-|+	local_irq_save(flags);
-|+	if (!read_trylock(&gpc->lock)) {
-=E2=80=A6
-|+		if (in_interrupt())
-|+			goto out;
-|+
-|+		read_lock(&gpc->lock);
-
-This does not work. If interrupts are disabled (due to local_irq_save())
-then read_lock() must not be used. in_interrupt() does not matter.
-
-Side note: Using HRTIMER_MODE_ABS would avoid the splat at the cost that
-on PREEMPT_RT the timer will be invoked in softirq context (as with
-HRTIMER_MODE_ABS_SOFT on !PREEMPT_RT). There is no changed behaviour on
-!PREEMPT_RT.
-
-Sebastian
+Seems sensible to me.
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
