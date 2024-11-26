@@ -1,47 +1,38 @@
-Return-Path: <linux-kernel+bounces-422090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D10F9D9495
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:35:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A0BF9D9475
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:29:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB914B2D9E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:28:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCBCD167F65
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A491B87F6;
-	Tue, 26 Nov 2024 09:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4w/aQnx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BAD1BDA89;
+	Tue, 26 Nov 2024 09:28:20 +0000 (UTC)
+Received: from out28-171.mail.aliyun.com (out28-171.mail.aliyun.com [115.124.28.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A60CA6F;
-	Tue, 26 Nov 2024 09:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61811B4122;
+	Tue, 26 Nov 2024 09:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732613224; cv=none; b=XB0hUDzVghV+MbUTWDi9JlSRllMfVzgpUlO4Jp6Dy0tQtC5M5ysOO4WP5ZN9NdycVlzJE/Y2AHbQ2pKSDzl3Rc8fx32LiJqUl1naC5ibYUtmyMdBIJaRhPVZUOdBTYXdb0gNTBxtKeqFOmNObNXLDIXEw8z6nl11XDUZm9oR3Bs=
+	t=1732613299; cv=none; b=nGHiUV0QGNFkQXNff5WTj2CA7AnChqU0xaJpCBFzNoF9/TW/TLNOQtYxMnS/0QD0pKGjgTTvflvGdfw+jjXtPddIDdzW76OkSF7GlyH5Ep32Orpm05SEJbna+9wY7mT0nw3LSIctC8u/Z2V7kIgUHeQwUnCr7UqQfCgPfHMNtJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732613224; c=relaxed/simple;
-	bh=x656kF4jrd4Um4YmfXKsmUHTp7WJkWHU+4WvfVz3peE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H3BKR/5riXRFEeJWa/blL1ZNlHfYTiCu0Z0ewHbzm4hBq5fvHOMr/W6/zkbnJUYmAkM0sMV3ciTpUdfXtzK2oiY6oBaW+pr4MxGE91IC5O5PLwKgRrFbOf1eRUWHWvVb0+MrKPttyD3rPU3p+iPD8L+mIa7aYQYMGaoieedHJt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4w/aQnx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3DE7C4CECF;
-	Tue, 26 Nov 2024 09:26:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732613223;
-	bh=x656kF4jrd4Um4YmfXKsmUHTp7WJkWHU+4WvfVz3peE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=L4w/aQnxBpNxMa6skuoIHQ7HXEzlTs+tusvPXr4EfiaKrJZsX70A9BwYuHIMfwgKZ
-	 Re2eGHdVuURQfCCW7DbD/q+J4LNbBGSDGEjWL0h17YdFD+nb4QO9shJeSJDF0CXMa1
-	 AjWRNRTuoTl1aJkHI40IfFEa2bKzlslFeGGFPKYMYk13p85KouGMNvyWAA4NPaJjXU
-	 4B5l0pR6l9ohhKSG6lHOywCG4FL8kCRdeTVhjscM+g92GtnJWljdb9MHOiXYVrBqRW
-	 4cwSkiCzK5g9PM40wDvyxzKpinTFOrL+CADhfLmlQFEiIzUohXDSeB7s0BbbsfWF42
-	 LFnOlZnIwGiFA==
-Message-ID: <03b6f863-ccdd-4e07-9574-ee9dd7c20ab5@kernel.org>
-Date: Tue, 26 Nov 2024 10:26:57 +0100
+	s=arc-20240116; t=1732613299; c=relaxed/simple;
+	bh=SZuyiSGsWlPw7HX0P6RnRL4kdpkTcv0tnCESV6ZJV4A=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=lLNrkQskFZQ7Ft1HB8UL5JRI1mo1oMRmQf9bA+ZzXnccX2KrCEhXp4p4jzRJ4PBS1iGA6r8UNqn6pQQKNZh7IJR3UG3VFGssklIn+HoSMMlkX2+XZJn+1oYkVKNxB021rNZEfbxSZvfepy+zzAWg3zant0rbzJPfTfHuvnDTP/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com; spf=pass smtp.mailfrom=motor-comm.com; arc=none smtp.client-ip=115.124.28.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motor-comm.com
+Received: from 10.0.2.15(mailfrom:Frank.Sae@motor-comm.com fp:SMTPD_---.aNBBMub_1732613289 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Tue, 26 Nov 2024 17:28:10 +0800
+Message-ID: <a48d76ac-db08-46d5-9528-f046a7b541dc@motor-comm.com>
+Date: Tue, 26 Nov 2024 17:28:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,94 +40,177 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] arm64: dts: qcom: qcs615: add SDHC1 and SDHC2
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Yuanjie Yang <quic_yuanjiey@quicinc.com>, ulf.hansson@linaro.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- bhupesh.sharma@linaro.org, andersson@kernel.org, konradybcio@kernel.org,
- linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- quic_tingweiz@quicinc.com
-References: <20241122065101.1918470-1-quic_yuanjiey@quicinc.com>
- <20241122065101.1918470-2-quic_yuanjiey@quicinc.com>
- <7c0c1120-c2b2-40dd-8032-339cc4d4cda4@oss.qualcomm.com>
- <frjnnd7bvrdn5frfo4xnz35rb5zxa33eayu3oc5wux7casay64@t2tfbsf5jrva>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH net-next v2 05/21] motorcomm:yt6801: Implement the
+ fxgmac_start function
+From: Frank Sae <Frank.Sae@motor-comm.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ xiaogang.fan@motor-comm.com, fei.zhang@motor-comm.com, hua.sun@motor-comm.com
+References: <20241120105625.22508-1-Frank.Sae@motor-comm.com>
+ <20241120105625.22508-6-Frank.Sae@motor-comm.com>
+ <95675880-1b93-4916-beee-e5feb6531009@lunn.ch>
+ <ba24293a-77b1-4106-84d2-81ff343fc90f@motor-comm.com>
+ <82e1860b-cbbf-4c82-9f1b-bf4a283e3585@lunn.ch>
+ <43341290-15e3-4784-9b69-7f3f13f34e01@motor-comm.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <frjnnd7bvrdn5frfo4xnz35rb5zxa33eayu3oc5wux7casay64@t2tfbsf5jrva>
+In-Reply-To: <43341290-15e3-4784-9b69-7f3f13f34e01@motor-comm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 26/11/2024 01:07, Dmitry Baryshkov wrote:
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->>> index 590beb37f441..37c6ab217c96 100644
->>> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->>> @@ -399,6 +399,65 @@ qfprom: efuse@780000 {
->>>  			#size-cells = <1>;
->>>  		};
->>>  
->>> +		sdhc_1: mmc@7c4000 {
->>> +			compatible = "qcom,qcs615-sdhci", "qcom,sdhci-msm-v5";
->>> +			reg = <0x0 0x007c4000 0x0 0x1000>,
->>> +			      <0x0 0x007c5000 0x0 0x1000>;
->>> +			reg-names = "hc",
->>> +				    "cqhci";
->>
->> There's an "ice" region at 0x007c8000
+
+
+On 2024/11/26 11:15, Frank Sae wrote:
+> Hi Andrew,
 > 
-> Shouldn't ice now be handled by a separate device?
-It should and UFS bindings expect that. However I am not sure if MMC was
-improved to support external ICE device.  Also for example on SM8550 the
-ICE has entirely different (further) address space, so it also suggests
-it is separate device. Here address space looks almost continuous.
+> On 2024/11/25 22:18, Andrew Lunn wrote:
+>>>> RGMII is unusual, you normally want RGMII_ID. Where are the 2ns delays
+>>>> added?
+>>>>
+>>>
+>>> Yes, you are right. PHY_INTERFACE_MODE_RGMII should be PHY_INTERFACE_MODE_RGMII_ID.
+>>> YT6801 NIC integrated with YT8531S phy, and the 2ns delays added in the phy driver.
+>>> https://elixir.bootlin.com/linux/v6.12/source/drivers/net/phy/motorcomm.c#L895
+>>
+>> But if you pass PHY_INTERFACE_MODE_RGMII to the PHY it is not adding
+>> the 2ns delay. So how does this work now?
+> 
+> I'm sorry. Maybe PHY_INTERFACE_MODE_RGMII is enough.
+> YT6801 is a pcie NIC chip that integrates one yt8531s phy.
+> Therefore, a delay of 2ns is unnecessary, as the hardware has
+>  already ensured this.
+
+YT6801 looks like that:
+
+                      ||                      
+  ********************++**********************
+  *            | PCIE Endpoint |             *
+  *            +---------------+             *
+  *                | GMAC |                  *
+  *                +--++--+      YT6801      *
+  *                  |**|                    *
+  *         GMII --> |**| <-- MDIO           *
+  *                 +-++--+                  *
+  *                 | PHY |                  *
+  *                 +--++-+                  *
+  *********************||*********************
+
+yt8531s phy driver not support GMII.
 
 
-Best regards,
-Krzysztof
+> 
+>>
+>>>>> +int fxgmac_start(struct fxgmac_pdata *pdata)
+>>>>> +{
+>>>>> +	struct fxgmac_hw_ops *hw_ops = &pdata->hw_ops;
+>>>>> +	u32 val;
+>>>>> +	int ret;
+>>>>> +
+>>>>> +	if (pdata->dev_state != FXGMAC_DEV_OPEN &&
+>>>>> +	    pdata->dev_state != FXGMAC_DEV_STOP &&
+>>>>> +	    pdata->dev_state != FXGMAC_DEV_RESUME) {
+>>>>> +		yt_dbg(pdata, " dev_state err:%x\n", pdata->dev_state);
+>>>>> +		return 0;
+>>>>> +	}
+>>>>> +
+>>>>> +	if (pdata->dev_state != FXGMAC_DEV_STOP) {
+>>>>> +		hw_ops->reset_phy(pdata);
+>>>>> +		hw_ops->release_phy(pdata);
+>>>>> +		yt_dbg(pdata, "reset phy.\n");
+>>>>> +	}
+>>>>> +
+>>>>> +	if (pdata->dev_state == FXGMAC_DEV_OPEN) {
+>>>>> +		ret = fxgmac_phy_connect(pdata);
+>>>>> +		if (ret < 0)
+>>>>> +			return ret;
+>>>>> +
+>>>>> +		yt_dbg(pdata, "fxgmac_phy_connect.\n");
+>>>>> +	}
+>>>>> +
+>>>>> +	phy_init_hw(pdata->phydev);
+>>>>> +	phy_resume(pdata->phydev);
+>>>>
+>>>> The MAC should not be doing this.
+>>>
+>>> Does this mean deleting 'phy_resume(pdata->phydev)'?
+>>
+>> There are only a few phylib API calls you should be using
+>>
+>> phy_connect() or one of its variants.
+>> phy_start()
+>> phy_stop()
+>> phy_disconnect()
+>>
+>> Those four are the core. Those should be all you need to minimum
+>> support.
+>>
+>> phy_support_asym_pause()
+>> phy_support_eee()
+>> phy_speed_up()
+>> phy_speed_down()
+>>
+>> and these are just nice to have to let phylib know about things the
+>> MAC supports, so phylib can manage the PHY to make them available to
+>> the MAC. This is the API between the MAC driver and phylib. phylib
+>> will then manage the PHY. Any time you want to use a phy_* function,
+>> look to see if other MAC drivers do. If they don't you should not
+>> either.
+> 
+> Tanks for your clear explanation.
+> 
+>>
+>>>>> +	hw_ops->pcie_init(pdata);
+>>>>> +	if (test_bit(FXGMAC_POWER_STATE_DOWN, &pdata->powerstate)) {
+>>>>> +		yt_err(pdata,
+>>>>> +		       "fxgmac powerstate is %lu when config power up.\n",
+>>>>> +		       pdata->powerstate);
+>>>>> +	}
+>>>>> +
+>>>>> +	hw_ops->config_power_up(pdata);
+>>>>> +	hw_ops->dismiss_all_int(pdata);
+>>>>> +	ret = hw_ops->init(pdata);
+>>>>> +	if (ret < 0) {
+>>>>> +		yt_err(pdata, "fxgmac hw init error.\n");
+>>>>> +		return ret;
+>>>>> +	}
+>>>>> +
+>>>>> +	fxgmac_napi_enable(pdata);
+>>>>> +	ret = fxgmac_request_irqs(pdata);
+>>>>> +	if (ret < 0)
+>>>>> +		return ret;
+>>>>> +
+>>>>> +	/* Config interrupt to level signal */
+>>>>> +	val = rd32_mac(pdata, DMA_MR);
+>>>>> +	fxgmac_set_bits(&val, DMA_MR_INTM_POS, DMA_MR_INTM_LEN, 2);
+>>>>> +	fxgmac_set_bits(&val, DMA_MR_QUREAD_POS, DMA_MR_QUREAD_LEN, 1);
+>>>>> +	wr32_mac(pdata, val, DMA_MR);
+>>>>> +
+>>>>> +	hw_ops->enable_mgm_irq(pdata);
+>>>>> +	hw_ops->set_interrupt_moderation(pdata);
+>>>>> +
+>>>>> +	if (pdata->per_channel_irq) {
+>>>>> +		fxgmac_enable_msix_irqs(pdata);
+>>>>> +		ret = fxgmac_phy_irq_enable(pdata, true);
+>>>>> +		if (ret < 0)
+>>>>> +			goto dis_napi;
+>>>>> +	}
+>>>>> +
+>>>>> +	fxgmac_enable_rx_tx_ints(pdata);
+>>>>> +	phy_speed_up(pdata->phydev);
+>>>>> +	genphy_soft_reset(pdata->phydev);
+>>>>
+>>>> More things the MAC driver should not be doing.
+>>>
+>>> Does this mean deleting 'phy_speed_up(pdata->phydev);' and 'genphy_soft_reset(pdata->phydev);' ?
+>>
+>> Two things here:
+>>
+>> phy_speed_up()/phy_speed_down() is part of suspend/resume when using
+>> WoL. This code has nothing to do with that. So why is it here?
+>>
+>> There should not be any need to call genphy_soft_reset(). You should
+>> figure out why you need it, because it could be a PHY driver bug, or a
+>> MAC driver bug.
+>>
+>> 	Andrew
 
