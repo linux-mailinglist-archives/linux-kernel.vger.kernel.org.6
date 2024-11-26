@@ -1,220 +1,283 @@
-Return-Path: <linux-kernel+bounces-422631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A1279D9C44
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:17:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD9A59D9C3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:16:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B395B2ADD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:13:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA006B28E50
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CCB21DB344;
-	Tue, 26 Nov 2024 17:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A51D1DC046;
+	Tue, 26 Nov 2024 17:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="YZ8Q87/T"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hN20c86l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4231DAC9A;
-	Tue, 26 Nov 2024 17:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377041D9359;
+	Tue, 26 Nov 2024 17:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732641179; cv=none; b=WdigovxofuqlHryRcQc3rDC1h6sYtxS+cXauwio3LpQYVr1TxupZJrVUrkmhG1Ybt0XkSbVQNUqGhpjPdVTQsRH/Dht1sHHwmDjWdZ3+fOf4aKsumN2ZtvvqvNzDvX3mvDeGFOA0iY7D/CcX4cvQkmvslOxhSAqYBJi7AKV7MQw=
+	t=1732641165; cv=none; b=l7CTdj9EUMcviaU4ndBX7rbG2dqY1a1RHJi6+y4vIoTp1dYP6x7vXZLYtJacinXaXodmDHVbs4lKDPxxUCWSpq4psCef5s8wd8d/MWjlwI7nLsJgrchs0onDYbSeV6lDOGNQWRwUc1xqsQuUWrxCFZ3h5lvgzSJwld668hOTgRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732641179; c=relaxed/simple;
-	bh=vBrZ1TD6r9ZT8Aew9EMJG7ITF9PIhI0eYbRZUE9I3VA=;
-	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:
-	 In-Reply-To:References:Date; b=sZDCodPgZTlxwoyez0xFjrnSrKjzZkvaRAf4VAzvbMLK4idr6XpKKDzHA7lnV1ecS3JnyQMLN8r+fznytDfE4OE1zKaGJ9o1DPJZxopHkpOuF+rGwqssGwtcKkq0cZJYbU0j+Y+PExmIUdj1V/cnUiCD7pawRi2wHz/PUV8POHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=YZ8Q87/T; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
-	s=s31663417; t=1732641150; x=1733245950; i=frank-w@public-files.de;
-	bh=yNyGaumd9fBkrkwAwUTp9qtev4su6MGtuYwAhBQL1SY=;
-	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
-	 Content-Type:In-Reply-To:References:Date:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=YZ8Q87/T8LtKYdw9sTFOtOkTSCFwvyoo0KxHoOttWC2PZ1xZ/hpxkarZkS7zR+Yf
-	 /GKa94ff7GHD7Ck03W5Vg4elV9XL6HPnGhR5tVybMlA2yrYYgre47dImXrA4/MWLR
-	 nk3xx1+BVSaLQC0OWjX+5584gSysItbB/5gYsUzFDgBsumHpd0DZAikE0h9/uFrnG
-	 kyq88R5XuCfVyxCC6M2kImuKExaHTeuJuIzkktxiiLK8cST9slaGbYMlh5TkQBmaW
-	 GsKNjKeGphE+7P6m2Rc90DKihgMbUhEXwBM1AZuDN+dlnDafjYDqWn+BnVlfDPEQ3
-	 AE1AGmXArXyoxuAgFQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [217.61.149.83] ([217.61.149.83]) by
- trinity-msg-rest-gmx-gmx-live-5cd5dd5458-76g2w (via HTTP); Tue, 26 Nov 2024
- 17:12:30 +0000
+	s=arc-20240116; t=1732641165; c=relaxed/simple;
+	bh=NRDBa0+SeI0FL7eFylhvko+OWTwv/c97DOoTCW1x5NE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t5rCZnixxHFpbNa8BEsK8Jk6fuBq3X+bGzkwPkvks0FP7bkuoiS7YU+wTb5cYsJYgxc5JcIPf1ZKYuIuBT6ESt2oC/ajYcDNFYghTU0/LAmTu3HqqxM4M/JnN0CAFbvVQnCwPzI6RUkAhM7WRp/Oe3Rgg4On+ZVP5raDahSh3yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hN20c86l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89C71C4CECF;
+	Tue, 26 Nov 2024 17:12:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732641165;
+	bh=NRDBa0+SeI0FL7eFylhvko+OWTwv/c97DOoTCW1x5NE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hN20c86lFJhb1jralK10hAtIrLT13Jv5VckYLcvs2YzxZGhx3PbiiQ4fl7G25cdWv
+	 pMqc5WZfnfYMRiaF+PO/yowO2X1iYC9v2zEp19lHZwx6wYM1Es1tOlC83qp3+DI/DM
+	 sBLEdbY8cmwUjIeZsWe/kAGvS6h59UarwgJm6FMkrUnm6le6F1b+hbsWjIgZW82Qt0
+	 Zi3vwG/jQ+IhDTG/M4W/y1VVQnsziCFp1mwjLR9dUGY9vyqgVkdJZ7nAR+ZX9UogYq
+	 MsufxjH+Cue0hyxNZCZUYFEPh8RVOn2ohkY+ZEpZCO4bVaxF08Qum4T67WqlKMPZep
+	 6AH7m0BxHLGMQ==
+Date: Tue, 26 Nov 2024 14:12:42 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] perf trace: Add tests for BTF general augmentation
+Message-ID: <Z0YBiu9XdstHmjWr@x1>
+References: <20241123005512.342079-1-howardchu95@gmail.com>
+ <20241123005512.342079-2-howardchu95@gmail.com>
+ <Z0X8KJd5LYrgUJUh@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <trinity-54cf8e30-52e9-4501-9160-530e5fe3bdca-1732641150465@trinity-msg-rest-gmx-gmx-live-5cd5dd5458-76g2w>
-From: Frank Wunderlich <frank-w@public-files.de>
-To: masahiroy@kernel.org
-Cc: re@w6rz.net, nicolas@fjasle.eu, nathan@kernel.org,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Aw: Re: build issue in builddeb (dpkg-checkbuilddeps: error: Unmet
- build dependencies: libssl-dev) in 6.12
-Content-Type: text/plain; charset=UTF-8
-In-Reply-To: <CAK7LNAQuE_e2XrRA7r=o8p-Vjqi3OAii1z99E+GdacvMdw6-5w@mail.gmail.com>
-Importance: normal
-References: <trinity-6989b089-36ba-4f0b-a924-f175377209c3-1732208954843@trinity-msg-rest-gmx-gmx-live-86dc4689bd-wks9v>
- <CAK7LNAQuE_e2XrRA7r=o8p-Vjqi3OAii1z99E+GdacvMdw6-5w@mail.gmail.com>
-Date: Tue, 26 Nov 2024 17:12:30 +0000
-Sensitivity: Normal
-Content-Transfer-Encoding: quoted-printable
-X-Priority: 3
-X-UI-CLIENT-META-MAIL-DROP: W10=
-X-Provags-ID: V03:K1:pJy+qtsZJf9qcerPjxpAQi2FwhzINl3YxeJdjuk15EAxMlCgHLWIn2aJah1xKenPVkJF8
- iKAw9d7SqiEX6haaBnTlhYxGLQqFBFsm5SguGr//OqAM6CZa2Kw8yFFjY1+wX21VzQouD4BpxYG4
- CYeXiLALNI1+4riIqYELDVDaRlJtcaUjjRVDqMp+xakNjkPNXyLC+hc8eWmofZOVjHgUax8YIhRO
- +BHUMfj3KCM+PwGoDEzPQwGHVv/GPrnWA9XKMjIcGozo7h7voAj/aGW64QQ8Lskp5RDcuUKBnqQ+
- ccg11i1QYS6vLjCa+WvWDrpCoyEV+fZ267J0xa6ihHHsxKbrKwTnyNdkGYfV2O5aYQ=
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:xb9nkZiBeVM=;7sI5w/4w9GPjEOgiN85llw0qpPu
- eJ9wfU0wPAKjGOlNbVMeuYVvQkksiB7VUJ25YrbUTdEf0eR48zBbWfMxQp/gXm5x5tZYXrzMe
- /Q9+TNC1WTO+GODXGtTYF7Q/luSEXta6Tq95X+Rso3nZMhjVXvoYP9e//ORw4A54SXzQJVdZH
- toofvXBDuG+3DT7x7hQVM0H8H4AAMvYskOd0k/0/tQorfxaCdzU4vuHQJokvuDJStK3kEDlgq
- 5Kjxo6mMBFqAkricy2/a6KLpKDq88RduUDBetuU3uUQBT30teg0VQI2Yw+v6wWzpGtrtluRBC
- WeMgJZxHtBsUlkVNZ3DSm4Fp6SSeshrTRWYKVfWYWkHaHTEdPQFVMA1KWb2mu1g1vausifM37
- bjFiZXJotuEaebm7i8OIxupJKqI75lOr6k3xyN1Y9Elo3JAfGQFf+yMNbqnw1m4Zgwqa6kYZp
- CWdyv8ioSbhFdlUJXgNYjwYmDXAD4ww48+ImuHQW0cmUR9jFV1xfhzHdEs+MLBBT8lXaU8KpL
- jeYYbtmWM4M2gTp/KZgmD2ehcQExnaUolmMDK4rIFdkSJdl/8k6JmzXF1IhtoiSJeL7b0Z4Ou
- KjMsp7qb7sGbo1EekRthM5HeKGIYXKbdoWS+F4jDhUJwWCJuiytltZuQT0vsksbpcYEvoFaFZ
- 7YdKlo02wqy7ty4Jxqq65QFonw7+lSwzYStcRyUvlg==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z0X8KJd5LYrgUJUh@x1>
 
-&gt; Gesendet: Donnerstag, 21=2E November 2024 um 23:09
-&gt; Von: "Masahiro Yamada" <masahiroy@kernel=2Eorg>
-&gt; An: "Frank Wunderlich" <frank-w@public-files=2Ede>
-&gt; CC: re@w6rz=2Enet, nicolas@fjasle=2Eeu, nathan@kernel=2Eorg, linux-kb=
-uild@vger=2Ekernel=2Eorg, linux-kernel@vger=2Ekernel=2Eorg
-&gt; Betreff: Re: build issue in builddeb (dpkg-checkbuilddeps: error: Unm=
-et build dependencies: libssl-dev) in 6=2E12
-&gt;
-&gt; On Fri, Nov 22, 2024 at 2:09=E2=80=AFAM Frank Wunderlich
-&gt; <frank-w@public-files=2Ede> wrote:
-&gt; &gt;
-&gt; &gt; Hi,
-&gt; &gt;
-&gt; &gt; i noticed this issue with debian package build-system in final 6=
-=2E12=2E
-&gt; &gt;
-&gt; &gt; LOCALVERSION=3D-main board=3Dbpi-r2 ARCH=3Darm CROSS_COMPILE=3Dc=
-cache arm-linux-gnueabihf-
-&gt; &gt; make[1]: Entering directory '/media/data_ext/git/kernel/build'
-&gt; &gt;   GEN     debian
-&gt; &gt; dpkg-buildpackage --build=3Dbinary --no-pre-clean --unsigned-cha=
-nges -R'make -f debian/rules' -j1 -a$(cat debian/arch)
-&gt; &gt; dpkg-buildpackage: info: source package linux-upstream
-&gt; &gt; dpkg-buildpackage: info: source version 6=2E12=2E0-00061-g837897=
-c10f69-3
-&gt; &gt; dpkg-buildpackage: info: source distribution noble
-&gt; &gt; dpkg-buildpackage: info: source changed by frank <frank@frank-u2=
-4>
-&gt; &gt; dpkg-buildpackage: info: host architecture armhf
-&gt; &gt;  dpkg-source --before-build =2E
-&gt; &gt; dpkg-checkbuilddeps: error: Unmet build dependencies: libssl-dev
-&gt;=20
-&gt; This error message means, you need to install "libssl-dev:armhf"
-&gt;=20
-&gt;=20
-&gt; &gt; dpkg-buildpackage: warning: build dependencies/conflicts unsatis=
-fied; aborting
-&gt; &gt; dpkg-buildpackage: warning: (Use -d flag to override=2E)
-&gt; &gt; make[3]: *** [/media/data_ext/git/kernel/BPI-R2-4=2E14/scripts/M=
-akefile=2Epackage:126: bindeb-pkg] Error 3
-&gt; &gt;
-&gt; &gt; it was ok in at least rc1 and libssl-dev is installed
-&gt;=20
-&gt;=20
-&gt; Presumably, you already installed libssl-dev for your build machine
-&gt; (i=2Ee=2E "libssl-dev:amd64" if your build machine is x86_64)=2E
-&gt;=20
-&gt; But, you have not installed "libssl-dev" for the architecture
-&gt; your are building for (i=2Ee, "libssl-dev:armhf")
+On Tue, Nov 26, 2024 at 01:49:44PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Fri, Nov 22, 2024 at 04:55:10PM -0800, Howard Chu wrote:
+> > Currently, we only have perf trace augmentation tests for enum
+> > arguments. This patch adds tests for more general syscall arguments,
+> > such as struct pointers, strings, and buffers.
+> 
+> scripts/checkpatch.pl has some warnings here I think we can address
+> easily, some not so much, like the SPDX that we need to add logic to
+> 'perf test' to noticed its the SPDX and skip it, looking at the next
+> line for the test description.
+> 
+> 
+> The long lines we can just make them multiple lines with the first ones
+> ending in \
 
-Hi
+And while testing it with -vv:
 
-thank you for answer, why is this lib required for the arch? it makes my p=
-ipeline very complex
-just to add the repos for the arch=2E=2E=2Eseems the lib is not yet used, =
-only checked if installed=2E
+root@number:~# perf test -vv btf
+110: perf trace BTF general tests:
+--- start ---
+test child forked, pid 242944
+Testing perf trace's string augmentation
+grep: warning: stray \ before /
+Testing perf trace's buffer augmentation
+grep: warning: stray \ before /
+Testing perf trace's struct augmentation
+grep: warning: stray \ before /
+---- end(0) ----
+110: perf trace BTF general tests                                    : Ok
+root@number:~#
 
-looks like ubuntu 24 seems to have changed the sources=2Elist for apt, so =
-there is no single-line to
-be added
+The long lines can be solved like:
 
-this is the default apt-source in ubuntu 24:
++++ b/tools/perf/tests/shell/trace_btf_general.sh
+@@ -17,7 +17,8 @@ trap cleanup EXIT TERM INT HUP
+ 
+ trace_test_string() {
+   echo "Testing perf trace's string augmentation"
+-  if ! perf trace -e renameat* --max-events=1 -- mv ${file1} ${file2} 2>&1 | grep -q -E " +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +mv\/[0-9]+ renameat(2)?\(olddfd: .*, oldname: \"${file1}\", newdfd: .*, newname: \"${file2}\", flags: .*\) += +[0-9]+$"
++  if ! perf trace -e renameat* --max-events=1 -- mv ${file1} ${file2} 2>&1 | \
++     grep -q -E " +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +mv\/[0-9]+ renameat(2)?\(olddfd: .*, oldname: \"${file1}\", newdfd: .*, newname: \"${file2}\", flags: .*\) += +[0-9]+$"
+   then
+     echo "String augmentation test failed"
+     err=1
 
-$ cat /etc/apt/sources=2Elist=2Ed/ubuntu=2Esources
-Types: deb
-URIs: http://de=2Earchive=2Eubuntu=2Ecom/ubuntu/
-Suites: noble noble-updates noble-backports
-Components: main restricted universe multiverse
-Signed-By: /usr/share/keyrings/ubuntu-archive-keyring=2Egpg
+And that " +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +mv\/[0-9]+ : +"
 
-Types: deb
-URIs: http://security=2Eubuntu=2Ecom/ubuntu/
-Suites: noble-security
-Components: main restricted universe multiverse
-Signed-By: /usr/share/keyrings/ubuntu-archive-keyring=2Egpg
+part is common to several such greps, so you could have it as:
 
-if i just add the arches
+prefix=" +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +mv\/[0-9]+ : +"
 
-sudo dpkg --add-architecture armhf
-sudo dpkg --add-architecture arm64
+And then use
 
-apt seems to add the repos on update, but i still cannot install the packa=
-ges
+grep -q -E "%{prefix}mv\/[0-9]+ renameat(2)?\(olddfd: .*, oldname: \"${file1}\", newdfd: .*, newname: \"${file2}\", flags: .*\) += +[0-9]+$"
 
-$ LANG=3DC sudo apt install libssl-dev:armhf
-Reading package lists=2E=2E=2E Done
-Building dependency tree=2E=2E=2E Done
-Reading state information=2E=2E=2E Done
-E: Unable to locate package libssl-dev:armhf
+Or, since this part isn't interesting for what this test checks, BPF
+augmentation, we could make it all more compact, i.e.:
 
-$ LANG=3DC sudo apt install libssl-dev:arm64
-Reading package lists=2E=2E=2E Done
-Building dependency tree=2E=2E=2E Done
-Reading state information=2E=2E=2E Done
-E: Unable to locate package libssl-dev:arm64
+From the default that is:
 
-if i revert the commit below, my build is successful without installing th=
-e lib=2E
+root@number:~# rm -f before after ; touch before ; perf trace -e renameat2 mv before after
+     0.000 ( 0.037 ms): mv/243278 renameat2(olddfd: CWD, oldname: "before", newdfd: CWD, newname: "after", flags: NOREPLACE) = 0
+root@number:~# 
 
-afaik the -dev are source-packages (headers) which should be architecture =
-independ, or am i missing something?
+We point perf to a temporary config file, using mktemp, then tell it to
+not output the stuff we don't need while test BPF augmentation, making
+the output more compact and thus the regexps in the perf test shorter.
 
-regards Frank
+With this we also test setting the "PERF_CONFIG" environment variable
+and, 'perf config' and 'perf trace' output customization code:
 
-&gt; &gt;
-&gt; &gt; basicly i use this command after setting crosscompiler
-&gt; &gt;
-&gt; &gt; LOCALVERSION=3D"${gitbranch}" board=3D"$board" KDEB_COMPRESS=3Dg=
-zip make bindeb-pkg
-&gt; &gt;
-&gt; &gt; if i Revert "kbuild: deb-pkg: add pkg=2Elinux-upstream=2Enokerne=
-lheaders build profile"
-&gt; &gt;
-&gt; &gt; i can compile again=2E=2Eany idea why this happens? my build-sys=
-tem is ubuntu 24=2E4 and github actions with ubuntu-latest=2E
-&gt; &gt;
-&gt; &gt; https://github=2Ecom/frank-w/BPI-Router-Linux/actions/runs/11955=
-322294/job/33327423877
-&gt; &gt;
-&gt; &gt; regards Frank</frank@frank-u24>
-&gt;=20
-&gt;=20
-&gt;=20
-&gt; --=20
-&gt; Best Regards
-&gt; Masahiro Yamada
-&gt; </frank-w@public-files=2Ede></frank-w@public-files=2Ede></masahiroy@k=
-ernel=2Eorg>
+root@number:~# export PERF_CONFIG=my-tmp-perf-config
+root@number:~# perf config trace.show_arg_names=false
+root@number:~# cat my-tmp-perf-config 
+# this file is auto-generated.
+[trace]
+	show_arg_names = false
+root@number:~# rm -f before after ; touch before ; perf trace -e renameat2 mv before after
+     0.000 ( 0.032 ms): :243836/243836 renameat2(CWD, "before", CWD, "after", NOREPLACE)                     = 0
+root@number:~# perf config trace.show_duration=false
+root@number:~# rm -f before after ; touch before ; perf trace -e renameat2 mv before after
+     0.000 mv/243871 renameat2(CWD, "before", CWD, "after", NOREPLACE)                     = 0
+root@number:~# perf config trace.show_timestamp=false
+root@number:~# rm -f before after ; touch before ; perf trace -e renameat2 mv before after
+:243888/243888 renameat2(CWD, "before", CWD, "after", NOREPLACE)                     = 0
+root@number:~# perf config trace.args_alignment=0
+root@number:~# rm -f before after ; touch before ; perf trace -e renameat2 mv before after
+mv/243925 renameat2(CWD, "before", CWD, "after", NOREPLACE) = 0
+root@number:~# cat my-tmp-perf-config 
+# this file is auto-generated.
+[trace]
+	show_arg_names = false
+	show_duration = false
+	show_timestamp = false
+	args_alignment = 0
+root@number:~#  
+> 
+> ⬢ [acme@toolbox perf-tools-next]$ rm -f 0001-* ; git format-patch --no-cover-letter HEAD~ ; scripts/checkpatch.pl 0001-*
+> 0001-perf-trace-Add-tests-for-BTF-general-augmentation.patch
+> WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
+> #31: 
+> new file mode 100755
+> 
+> WARNING: Missing or malformed SPDX-License-Identifier tag in line 2
+> #37: FILE: tools/perf/tests/shell/trace_btf_general.sh:2:
+> +# perf trace BTF general tests
+> 
+> WARNING: Misplaced SPDX-License-Identifier tag - use line 2 instead
+> #38: FILE: tools/perf/tests/shell/trace_btf_general.sh:3:
+> +# SPDX-License-Identifier: GPL-2.0
+> 
+> WARNING: line length of 252 exceeds 100 columns
+> #55: FILE: tools/perf/tests/shell/trace_btf_general.sh:20:
+> +  if ! perf trace -e renameat* --max-events=1 -- mv ${file1} ${file2} 2>&1 | grep -q -E " +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +mv\/[0-9]+ renameat(2)?\(olddfd: .*, oldname: \"${file1}\", newdfd: .*, newname: \"${file2}\", flags: .*\) += +[0-9]+$"
+> 
+> WARNING: line length of 203 exceeds 100 columns
+> #65: FILE: tools/perf/tests/shell/trace_btf_general.sh:30:
+> +  if ! perf trace -e write --max-events=1 -- echo "${buffer}" 2>&1 | grep -q -E " +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +echo\/[0-9]+ write\(fd: [0-9]+, buf: ${buffer}.*, count: [0-9]+\) += +[0-9]+$"
+> 
+> WARNING: line length of 275 exceeds 100 columns
+> #74: FILE: tools/perf/tests/shell/trace_btf_general.sh:39:
+> +  if ! perf trace -e clock_nanosleep --force-btf --max-events=1 -- sleep 1 2>&1 | grep -q -E " +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +sleep\/[0-9]+ clock_nanosleep\(rqtp: \(struct __kernel_timespec\)\{\.tv_sec = \(__kernel_time64_t\)1,\}, rmtp: 0x[0-9a-f]+\) += +[0-9]+$"
+> 
+> total: 0 errors, 6 warnings, 68 lines checked
+> 
+> NOTE: For some of the reported defects, checkpatch may be able to
+>       mechanically convert to the typical style using --fix or --fix-inplace.
+> 
+> 0001-perf-trace-Add-tests-for-BTF-general-augmentation.patch has style problems, please review.
+> 
+> NOTE: If any of the errors are false positives, please report
+>       them to the maintainer, see CHECKPATCH in MAINTAINERS.
+> ⬢ [acme@toolbox perf-tools-next]$
+> 
+> > Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> > ---
+> >  tools/perf/tests/shell/trace_btf_general.sh | 68 +++++++++++++++++++++
+> >  1 file changed, 68 insertions(+)
+> >  create mode 100755 tools/perf/tests/shell/trace_btf_general.sh
+> > 
+> > diff --git a/tools/perf/tests/shell/trace_btf_general.sh b/tools/perf/tests/shell/trace_btf_general.sh
+> > new file mode 100755
+> > index 000000000000..7bcca81a40d8
+> > --- /dev/null
+> > +++ b/tools/perf/tests/shell/trace_btf_general.sh
+> > @@ -0,0 +1,68 @@
+> > +#!/bin/bash
+> > +# perf trace BTF general tests
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +
+> > +err=0
+> > +set -e
+> > +
+> > +. "$(dirname $0)"/lib/probe.sh
+> > +skip_if_no_perf_trace || exit 2
+> > +
+> > +file1=$(mktemp /tmp/file1_XXXXX)
+> > +file2=$(echo $file1 | sed 's/file1/file2/g')
+> > +
+> > +buffer="the content of the buffer"
+> > +
+> > +trap cleanup EXIT TERM INT HUP
+> > +
+> > +trace_test_string() {
+> > +  echo "Testing perf trace's string augmentation"
+> > +  if ! perf trace -e renameat* --max-events=1 -- mv ${file1} ${file2} 2>&1 | grep -q -E " +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +mv\/[0-9]+ renameat(2)?\(olddfd: .*, oldname: \"${file1}\", newdfd: .*, newname: \"${file2}\", flags: .*\) += +[0-9]+$"
+> > +  then
+> > +    echo "String augmentation test failed"
+> > +    err=1
+> > +  fi
+> > +}
+> > +
+> > +trace_test_buffer() {
+> > +  echo "Testing perf trace's buffer augmentation"
+> > +  # echo will insert a newline (\10) at the end of the buffer
+> > +  if ! perf trace -e write --max-events=1 -- echo "${buffer}" 2>&1 | grep -q -E " +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +echo\/[0-9]+ write\(fd: [0-9]+, buf: ${buffer}.*, count: [0-9]+\) += +[0-9]+$"
+> > +  then
+> > +    echo "Buffer augmentation test failed"
+> > +    err=1
+> > +  fi
+> > +}
+> > +
+> > +trace_test_struct_btf() {
+> > +  echo "Testing perf trace's struct augmentation"
+> > +  if ! perf trace -e clock_nanosleep --force-btf --max-events=1 -- sleep 1 2>&1 | grep -q -E " +[0-9]+\.[0-9]+ +\( *[0-9]+\.[0-9]+ ms\): +sleep\/[0-9]+ clock_nanosleep\(rqtp: \(struct __kernel_timespec\)\{\.tv_sec = \(__kernel_time64_t\)1,\}, rmtp: 0x[0-9a-f]+\) += +[0-9]+$"
+> > +  then
+> > +    echo "BTF struct augmentation test failed"
+> > +    err=1
+> > +  fi
+> > +}
+> > +
+> > +cleanup() {
+> > +	rm -rf ${file1} ${file2}
+> > +}
+> > +
+> > +trap_cleanup() {
+> > +	echo "Unexpected signal in ${FUNCNAME[1]}"
+> > +	cleanup
+> > +	exit 1
+> > +}
+> > +
+> > +trace_test_string
+> > +
+> > +if [ $err = 0 ]; then
+> > +  trace_test_buffer
+> > +fi
+> > +
+> > +if [ $err = 0 ]; then
+> > +  trace_test_struct_btf
+> > +fi
+> > +
+> > +cleanup
+> > +
+> > +exit $err
+> > -- 
+> > 2.43.0
 
