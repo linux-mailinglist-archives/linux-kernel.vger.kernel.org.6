@@ -1,337 +1,162 @@
-Return-Path: <linux-kernel+bounces-421896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 153379D91A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 07:07:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B799D91A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 07:07:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB88328345C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 06:07:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEDD6284B7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 06:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01F712CDA5;
-	Tue, 26 Nov 2024 06:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D27180A80;
+	Tue, 26 Nov 2024 06:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bgx9PYo8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="X9H8PKkD"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04618831
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 06:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91C2B67A;
+	Tue, 26 Nov 2024 06:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732601232; cv=none; b=sVXkwWP/stQMHfSsRTCoKWwbO4QGpkVhiD3e1hx+/vFlw53LPqCsP5hOkL8UbRhsZo1b0EWwjVWlQpur3I93l1aV+qMTX8UOa1Z+6sq1y1W31ligV0lq3DatInANS3l9zg85xTfq0C6M1svc6bqWwv5/zqB8RtSrWE8Yj81RPz0=
+	t=1732601244; cv=none; b=pLrmbi8qZKxV+miPy/6ZrI1oI0+Uhlnyo3oripwcOsfWb68R/ZCYSjYfuwvh9/da8GDR7FerFOBQcBtzDd+sZSCt02Zkz6IAMmH8zgUIdrfgqWDwhw0LwnsBtMNbUzg195yYQLpriMLEBwGunyBwIqNLw3qIGumm5A9CZUsLnE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732601232; c=relaxed/simple;
-	bh=hrf3W8lHPddH4cWex2WfhaNRVrC1KqJ53LdbppqHZLc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UEU1yyo+F3i7HtW+p7Qp5r2p9KMtfoVmFlEsF8ti7nfImZdaZ+yOMfe2gK8gLOjfpgrF0HpR9z2Zpw2HRmiS1QIFrzFVdOCmvJqOlxe86az+E6HDP2AJ71imE4ZH3nS+SkespI714HTjcoy22oMhwDvNt+JAOKxhLr0sYPgA3to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bgx9PYo8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24F15C4CECF;
-	Tue, 26 Nov 2024 06:07:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732601231;
-	bh=hrf3W8lHPddH4cWex2WfhaNRVrC1KqJ53LdbppqHZLc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bgx9PYo8X2dr74COFlGTXZndtxERI4//9waYwwrKcFY1+mmm/rpN5nbKVvx0St611
-	 amp1caLgmEBLjtVynp4xIGUgc4W//t33OqwoWv6RRG0gwFRWl3LLYQclUgLLirGciS
-	 7HKtSP+OvfK/wJAEJYj+8S09XZteKc0LuPVpPcWvdhQv4U4mGHAFUbCxaWZRIlGGKi
-	 zG7JxAaeAkHVYkI2DuK6x17lD3vqOFbsnsNbLHb7AkzT+lPTRsz8Nhr4wi1WMtazd7
-	 eOo/SLL5iirYRadAyKEcbErhmpHvtAZsGlOcOKgXfpIlIZ9Zw8akGuL51NetI1XEk7
-	 W4uJkVDmJDj+Q==
-Date: Mon, 25 Nov 2024 22:07:09 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Chun-Tse Shao <ctshao@google.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@redhat.com>, Ian Rogers <irogers@google.com>
-Subject: Re: [PATCH v2] perf lock: Fix parse_lock_type which only retrieve
- one lock flag
-Message-ID: <Z0VljcVm4ni-lJrE@google.com>
-References: <20241122002752.4179915-1-ctshao@google.com>
+	s=arc-20240116; t=1732601244; c=relaxed/simple;
+	bh=+HWrRkTdbjhxXG0xXMS9wmlqvxmySwdEy/T9nnHsPmk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=k4DYukmeXb4DgJp2OXnbzUoCq1tU4rILjE6tXh6XP6XHitrnQbI1uaqD83dIO+iEvUEuaiR4gdhwqFnAXISoPeYWs1JHm4Gz7Kx6sYd2CW3vy2XSs1MRl3rwHyrBSzOaqL1IeCjQLbqAvqrWttrSxmTKjh7J7cz6K9eF9uL7Cek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=X9H8PKkD; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APF3THu010588;
+	Tue, 26 Nov 2024 06:07:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	SDRfD1QZZfOjdKgfjD6syC3clpJjQUFoRuZVkQlNyB8=; b=X9H8PKkDDllM1otl
+	+p6OIvMOhiDG3KfqCRAaLZWEBFd3qEthGNvs7/2mPL7ZEvXU+HTpKlD2cPkwrOOT
+	1q9FPKG9wsgb7XHzFe/IPA701u5t+l4kfj9NuGiL8HRV9dBQzF9nr+yzE+9JrmUV
+	DW78f8ibPTicgwUzx+6HW17/4yWF2p7JK/JIuRro1Y7siLu6GLFMewE9UfXzuI5A
+	vE2Y9ab9i996lHhaaw64aQqzCEJX7MuJj6rHJhZT0fPF8djwrVyYjkyUigi4d8eg
+	lFGyh1GtXHCuql/HEfyRDCxXTJ8+9EJQCV4LPzOAejCHkIx41Qwyz058/1msgGXe
+	hJpcaw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 434mx739wt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 06:07:17 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AQ67GCS011333
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 06:07:16 GMT
+Received: from [10.231.216.103] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 25 Nov
+ 2024 22:07:12 -0800
+Message-ID: <8c60696c-df14-4300-8a92-59eb134a96d2@quicinc.com>
+Date: Tue, 26 Nov 2024 14:07:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241122002752.4179915-1-ctshao@google.com>
-
-Hello,
-
-On Fri, Nov 22, 2024 at 12:27:51AM +0000, Chun-Tse Shao wrote:
-> `parse_lock_type` can only add the first lock flag in `lock_type_table`
-> given input `str`. For example, for `Y rwlock`, it only adds `rwlock:R`
-> into this perf session. Another example is for `-Y mutex`, it only adds
-> the mutex without `LCB_F_SPIN` flag. The patch fixes this issue, makes
-> sure both `rwlock:R` and `rwlock:W` will be added with `-Y rwlock`, and
-> so on.
-> 
-> Testing:
->   $ ./perf lock con -ab -Y mutex,rwlock -- perf bench sched pipe
->   # Running 'sched/pipe' benchmark:
->   # Executed 1000000 pipe operations between two processes
-> 
->        Total time: 8.425 [sec]
-> 
->          8.425402 usecs/op
->            118688 ops/sec
->    contended   total wait     max wait     avg wait         type   caller
-> 
->          194      1.68 ms     44.16 us      8.66 us        mutex   pipe_read+0x57
->           10    423.03 us     44.27 us     42.30 us     rwlock:W   do_exit+0x365
->           54    254.67 us     58.87 us      4.72 us        mutex   pipe_write+0x50
->           21    146.64 us     11.54 us      6.98 us        mutex   pipe_read+0x282
->           10    141.27 us     20.62 us     14.13 us     rwlock:W   release_task+0x6f
->            5     58.92 us     16.37 us     11.78 us        mutex   do_epoll_wait+0x24d
->            3     29.81 us     17.66 us      9.94 us        mutex   do_epoll_ctl+0x6c1
->            4     26.82 us     11.02 us      6.70 us        mutex   do_epoll_wait+0x24d
->            2     18.32 us     12.49 us      9.16 us     rwlock:W   do_epoll_wait+0x255
->            1     11.34 us     11.34 us     11.34 us     rwlock:W   ep_done_scan+0x2d
->            1     11.02 us     11.02 us     11.02 us     rwlock:R   mm_update_next_owner+0x4e
->            1     10.60 us     10.60 us     10.60 us     rwlock:W   do_epoll_ctl+0xb65
->            1      9.90 us      9.90 us      9.90 us     rwlock:W   do_exit+0x365
-> 
-> Fixes: d783ea8f62c4 ("perf lock contention: Simplify parse_lock_type()")
-> Signed-off-by: Chun-Tse Shao <ctshao@google.com>
-> ---
->  tools/perf/builtin-lock.c | 93 ++++++++++++++++++++++++++-------------
->  1 file changed, 62 insertions(+), 31 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
-> index 062e2b56a2ab..052dbf423efd 100644
-> --- a/tools/perf/builtin-lock.c
-> +++ b/tools/perf/builtin-lock.c
-> @@ -15,6 +15,7 @@
->  #include "util/lock-contention.h"
->  #include "util/bpf_skel/lock_data.h"
->  
-> +#include <string.h>
->  #include <subcmd/pager.h>
->  #include <subcmd/parse-options.h>
->  #include "util/trace-event.h"
-> @@ -1575,8 +1576,13 @@ static void sort_result(void)
->  
->  static const struct {
->  	unsigned int flags;
-> -	const char *str;
-> +	/* Name of the lock. */
->  	const char *name;
-
-I think this is the name of flag or access - read or write.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] dt-bindings: qcom,qcs615-venus: add support for
+ video hardware
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        "Vikash Garodia (QUIC)"
+	<quic_vgarodia@quicinc.com>,
+        "bryan.odonoghue@linaro.org"
+	<bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Rob Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor Dooley" <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio" <konradybcio@kernel.org>,
+        "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>,
+        "linux-arm-msm@vger.kernel.org"
+	<linux-arm-msm@vger.kernel.org>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        <quic_qiweil@quicinc.com>
+References: <20241125-add-venus-for-qcs615-v3-0-5a376b97a68e@quicinc.com>
+ <20241125-add-venus-for-qcs615-v3-1-5a376b97a68e@quicinc.com>
+ <jovwobfcbc344eqrcgxeaxlz2mzgolxqaldvxzmvp5p3rxj3se@fudhzbx5hf2e>
+ <18cc654b4377463e8783de0b4659a27d@quicinc.com>
+ <474cef98-4644-4838-b07c-950ad7515b73@kernel.org>
+Content-Language: en-US
+From: Renjiang Han <quic_renjiang@quicinc.com>
+In-Reply-To: <474cef98-4644-4838-b07c-950ad7515b73@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: TNsundR9O5LDhgsB0fZOALBLJ2OuwCdd
+X-Proofpoint-ORIG-GUID: TNsundR9O5LDhgsB0fZOALBLJ2OuwCdd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ mlxlogscore=856 malwarescore=0 adultscore=0 spamscore=0 mlxscore=0
+ bulkscore=0 phishscore=0 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411260048
 
 
-> +	/*
-> +	 * Name of the group this lock belongs to.
-> +	 * For example, both rwlock:R and rwlock:W belong to rwlock.
-> +	 */
-> +	const char *group;
+On 11/25/2024 11:55 PM, Krzysztof Kozlowski wrote:
+> On 25/11/2024 16:49, Renjiang Han (QUIC) wrote:
+>>>> +  video-decoder:
+>>>> +    type: object
+>>>> +
+>>>> +    additionalProperties: false
+>>>> +
+>>>> +    properties:
+>>>> +      compatible:
+>>>> +        const: venus-decoder
+>>>> +
+>>>> +    required:
+>>>> +      - compatible
+>>>> +
+>>>> +  video-encoder:
+>>>> +    type: object
+>>> Both nodes are useless - no resources here, nothing to control.
+>>> Do not add nodes just to instantiate Linux drivers. Drop them.
+>> Do you mean I should remove video-decoder and video-encoder from here?
+> Yes, that's my suggestion.
+>
+>> If so, do I also need to remove these two nodes from the dtsi file and add
+> Yes
+>
+>> them in the qcs615-ride.dts file?
+> Well, no, how would it pass dtbs_check?
+>
+> Don't add nodes purely for Linux driver instantiation.
+OK, I got it. I'll update like this. If video-decoder and video-encoder are
 
-And this is the name of the lock (type) - rwlock or rwsem.
+removed from dtsi file and not added to qcs615-ride.dts file, then the
 
+video decoder and encoder functions will not be available on the qcs615
 
->  } lock_type_table[] = {
->  	{ 0,				"semaphore",	"semaphore" },
->  	{ LCB_F_SPIN,			"spinlock",	"spinlock" },
-> @@ -1591,42 +1597,38 @@ static const struct {
->  	{ LCB_F_PERCPU | LCB_F_WRITE,	"pcpu-sem:W",	"percpu-rwsem" },
->  	{ LCB_F_MUTEX,			"mutex",	"mutex" },
->  	{ LCB_F_MUTEX | LCB_F_SPIN,	"mutex",	"mutex" },
-> -	/* alias for get_type_flag() */
-> -	{ LCB_F_MUTEX | LCB_F_SPIN,	"mutex-spin",	"mutex" },
->  };
->  
-> -static const char *get_type_str(unsigned int flags)
-> +static const char *get_type_name(unsigned int flags)
->  {
->  	flags &= LCB_F_MAX_FLAGS - 1;
->  
->  	for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
->  		if (lock_type_table[i].flags == flags)
-> -			return lock_type_table[i].str;
-> +			return lock_type_table[i].name;
->  	}
->  	return "unknown";
->  }
->  
-> -static const char *get_type_name(unsigned int flags)
-> +static const char *get_type_group(unsigned int flags)
->  {
->  	flags &= LCB_F_MAX_FLAGS - 1;
->  
->  	for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
->  		if (lock_type_table[i].flags == flags)
-> -			return lock_type_table[i].name;
-> +			return lock_type_table[i].group;
->  	}
->  	return "unknown";
->  }
->  
-> -static unsigned int get_type_flag(const char *str)
-> +static unsigned int get_type_flags_by_name(const char *name)
->  {
->  	for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
-> -		if (!strcmp(lock_type_table[i].name, str))
-> -			return lock_type_table[i].flags;
-> -	}
-> -	for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
-> -		if (!strcmp(lock_type_table[i].str, str))
-> +		if (!strcmp(lock_type_table[i].name, name))
->  			return lock_type_table[i].flags;
->  	}
-> +
-> +	pr_err("Unknown lock flags: %s\n", name);
+platform. So I think these two nodes should be added to the
 
-I'm not sure if there will be another caller, but it seems better to
-have this error message in the parse function directly.
+qcs615-ride.dts file to ensure that the qcs615 platform can enable the
 
+video decoder and encoder functions.
+> Best regards,
+> Krzysztof
 
->  	return UINT_MAX;
->  }
->  
-> @@ -1732,7 +1734,8 @@ static void print_lock_stat_stdio(struct lock_contention *con, struct lock_stat
->  
->  	switch (aggr_mode) {
->  	case LOCK_AGGR_CALLER:
-> -		fprintf(lock_output, "  %10s   %s\n", get_type_str(st->flags), st->name);
-> +		fprintf(lock_output, "  %10s   %s\n",
-> +			get_type_name(st->flags), st->name);
->  		break;
->  	case LOCK_AGGR_TASK:
->  		pid = st->addr;
-> @@ -1742,7 +1745,7 @@ static void print_lock_stat_stdio(struct lock_contention *con, struct lock_stat
->  		break;
->  	case LOCK_AGGR_ADDR:
->  		fprintf(lock_output, "  %016llx   %s (%s)\n", (unsigned long long)st->addr,
-> -			st->name, get_type_name(st->flags));
-> +			st->name, get_type_group(st->flags));
->  		break;
->  	case LOCK_AGGR_CGROUP:
->  		fprintf(lock_output, "  %s\n", st->name);
-> @@ -1783,7 +1786,8 @@ static void print_lock_stat_csv(struct lock_contention *con, struct lock_stat *s
->  
->  	switch (aggr_mode) {
->  	case LOCK_AGGR_CALLER:
-> -		fprintf(lock_output, "%s%s %s", get_type_str(st->flags), sep, st->name);
-> +		fprintf(lock_output, "%s%s %s",
-> +			get_type_name(st->flags), sep, st->name);
->  		if (verbose <= 0)
->  			fprintf(lock_output, "\n");
->  		break;
-> @@ -1795,7 +1799,7 @@ static void print_lock_stat_csv(struct lock_contention *con, struct lock_stat *s
->  		break;
->  	case LOCK_AGGR_ADDR:
->  		fprintf(lock_output, "%llx%s %s%s %s\n", (unsigned long long)st->addr, sep,
-> -			st->name, sep, get_type_name(st->flags));
-> +			st->name, sep, get_type_group(st->flags));
->  		break;
->  	case LOCK_AGGR_CGROUP:
->  		fprintf(lock_output, "%s\n",st->name);
-> @@ -2338,41 +2342,68 @@ static bool add_lock_type(unsigned int flags)
->  	unsigned int *tmp;
->  
->  	tmp = realloc(filters.types, (filters.nr_types + 1) * sizeof(*filters.types));
-> -	if (tmp == NULL)
-> +	if (tmp == NULL) {
-> +		pr_err("Failed to add lock flags: %u\n", flags);
->  		return false;
-> +	}
->  
->  	tmp[filters.nr_types++] = flags;
->  	filters.types = tmp;
->  	return true;
->  }
->  
-> -static int parse_lock_type(const struct option *opt __maybe_unused, const char *str,
-> -			   int unset __maybe_unused)
-> +static int parse_lock_type(const struct option *opt __maybe_unused,
-> +			   const char *str, int unset __maybe_unused)
->  {
->  	char *s, *tmp, *tok;
-> -	int ret = 0;
->  
->  	s = strdup(str);
->  	if (s == NULL)
->  		return -1;
->  
-> -	for (tok = strtok_r(s, ", ", &tmp); tok; tok = strtok_r(NULL, ", ", &tmp)) {
-> -		unsigned int flags = get_type_flag(tok);
-> +	for (tok = strtok_r(s, ", ", &tmp); tok;
-> +	     tok = strtok_r(NULL, ", ", &tmp)) {
+-- 
+Best Regards,
+Renjiang
 
-I think you changed this because of the 80 column limit.  But I think
-it's recently increased to 100 so you don't need to change this line
-uncessarily.
-
-Other lines containing actual changes may be accceptable.  It's up to
-you but I generally prefer smaller changes.
-
-
-> +		bool found = false;
->  
-> -		if (flags == -1U) {
-> -			pr_err("Unknown lock flags: %s\n", tok);
-> -			ret = -1;
-> -			break;
-> +		/* `tok` is a lock name if it contains ':'. */
-> +		if (strchr(tok, ':')) {
-> +			unsigned int flags = get_type_flags_by_name(tok);
-> +
-> +			if (flags == UINT_MAX || !add_lock_type(flags)) {
-> +				free(s);
-> +				return -1;
-> +			}
-> +			continue;
->  		}
->  
-> -		if (!add_lock_type(flags)) {
-> -			ret = -1;
-> -			break;
-> +		/* Otherwise look up flags by lock group */
-> +		/*
-> +		 * By documentation, `percpu-rwmem` should be `pcpu-sem`.
-> +		 * For backward compatibility, we replace pcpu-sem with percpu-rwmem.
-> +		 */
-> +		if (!strcmp(tok, "pcpu-sem"))
-> +			tok = (char *)"percpu-rwsem";
-
-Can you please split this into a separate fix?
-
-Thanks,
-Namhyung
-
-> +
-> +		for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
-> +			if (!strcmp(lock_type_table[i].group, tok)) {
-> +				if (add_lock_type(lock_type_table[i].flags)) {
-> +					found = true;
-> +				} else {
-> +					free(s);
-> +					return -1;
-> +				}
-> +			}
-> +		}
-> +
-> +		if (!found) {
-> +			pr_err("Unknown lock flags: %s\n", tok);
-> +			free(s);
-> +			return -1;
->  		}
->  	}
->  
->  	free(s);
-> -	return ret;
-> +	return 0;
->  }
->  
->  static bool add_lock_addr(unsigned long addr)
-> -- 
-> 2.47.0.371.ga323438b13-goog
-> 
 
