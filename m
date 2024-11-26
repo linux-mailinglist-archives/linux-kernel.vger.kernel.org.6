@@ -1,194 +1,190 @@
-Return-Path: <linux-kernel+bounces-422033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 035FE9D9398
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:52:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D38A9D9389
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:47:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57CC7B22AC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:52:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3151165E37
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E091A4AB3;
-	Tue, 26 Nov 2024 08:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C6D1B0F0F;
+	Tue, 26 Nov 2024 08:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="8Els/mG8"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YUfPyeqU";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WI9DSH9W";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YUfPyeqU";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WI9DSH9W"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29D81A2C04
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 08:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9D917BA0;
+	Tue, 26 Nov 2024 08:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732611144; cv=none; b=cWif0+uV1DQWDIDf6LQEIjjfJV9x9MxSzshtBpzSMRFTN+nd4oLHT/uolAOk0x8+d+3t5e/DGjVH6beJG81AzZ67N0AdjGp8Y+HKBF+NU4YHxmBfxrbDWiEYqKWtB3r1x3H2s8sJBKX+PwvJCSTQfC98tAbjzYUVDOmxItSzqCo=
+	t=1732610869; cv=none; b=LiAuGmwbRPT02Qp+guVRcOjHvDDRRAEaXjaGAblHsS05k6y9Epb18UXPXsa4T0uOGfAXuQq5nOm45dZNJu2lQGf8CAfQdr1Oi7xQJQlu5rPehZR2EwerJHFcguceWvP9DOu/vb9URT1Y8fTkMJgHywgkHAug4jJpEgATx0Bf3cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732611144; c=relaxed/simple;
-	bh=W5+hd9ZP+R8yAZC04TJTdErn6a+DyR6igiMSeCrnYh4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pvlIgoJWwy9x/kPS6+pzgHmXiXhUbdpqfZKQF4SjfYWRgDrSJaIREJEg3c8qA41Oyivrv9vukgmE0ELKEKRqq9AGS52S6GdiNJwJrqli0xRDamclKfBnbVqInQd0aDpSdCfFJplXiNYLKwHX+oLLvKNom0irij24o7cQJFTI4qQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=8Els/mG8; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ0l64w000476;
-	Tue, 26 Nov 2024 09:51:25 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	8jxIHGeNhIdRyq1hTjMruj+uZWn6hIrTILsLNytxbPs=; b=8Els/mG8lomYzWTA
-	SH/GmSoMEy8/ORL68+wQ8SuoxcDHsKn1HY1YWW0pJrw/wTmlYhPdNFAylL+JCxZC
-	cPDGnBtAjc4bPIdZSO53tmt4ifuSMZvzbgr/PjN96mlKOPQQO9owzHALyvO2jHBC
-	yPUnnRmZE7wi9FmqxwPasCjyTDp6sMpO1jXWPzgjlx/OElCaLBGjCAqL45Bh3dKM
-	mZCyBOcNr7Ea3CQNRSirzFdh8K14zEpy8wOKNwE9fUJUaP/PkT2lRSBKjDxomNVP
-	D9yF3Oy6GkOSje7ITKMQNDgo8FSMyN/fScqkkyeS7hHMKBtyfRhab2Jn+FkXCd/P
-	5y7Imw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4335bkv4tp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 09:51:25 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 21B2440057;
-	Tue, 26 Nov 2024 09:49:44 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 33D08269E1E;
-	Tue, 26 Nov 2024 09:47:19 +0100 (CET)
-Received: from [10.129.178.23] (10.129.178.23) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 26 Nov
- 2024 09:47:18 +0100
-Message-ID: <725aafb8-abfa-40c0-967a-62122206f736@foss.st.com>
-Date: Tue, 26 Nov 2024 09:47:17 +0100
+	s=arc-20240116; t=1732610869; c=relaxed/simple;
+	bh=bM7I5pk4wqPLNuFim9xANyoe5nNSDxH6zY2FUULVkRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tU6vpzskHHeKB7YKKvt2wclKKmt3dQmbo6Q2hSATyAi4mFdPuL3+kBX+NTrooSXsksS0j/2MR7+oVGNXXSWdy6l2Xvk2JFh8YUD96xNtAciJSCPiHbJrZQmOossgqqLzJSpGN6+ySkHhxLxT56athXRJyO9oNnSksoao0rF6nM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YUfPyeqU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WI9DSH9W; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YUfPyeqU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WI9DSH9W; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 50EB52115E;
+	Tue, 26 Nov 2024 08:47:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732610865; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S6l7f0A6K6sgvMnsO7s3WGbKUw6qzbSJBXBYGeybt1M=;
+	b=YUfPyeqUPB0xkCkB/eRR2TXB9+TQmwSL+HfmTMDLYlQ0RaBQvTWTkGs4vbtqIQesHrA+xS
+	L8nNzo7V8gbYvCjm574nVFZJXnKBjQ+YzmeUEsQ4gy+/VoYwwZX22/7JFXCqL9HQbouRJq
+	pPUJjbJSVOiOSh9yYyZ8vF0xoueZAWw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732610865;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S6l7f0A6K6sgvMnsO7s3WGbKUw6qzbSJBXBYGeybt1M=;
+	b=WI9DSH9WJOUdIyRvLuIVVy21zix30ELZ5Zpi1kiwu5IjEJn72x/jj7vtyYxQSUo/YrntT0
+	n2aPwwFjJJUFt2CA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=YUfPyeqU;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=WI9DSH9W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732610865; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S6l7f0A6K6sgvMnsO7s3WGbKUw6qzbSJBXBYGeybt1M=;
+	b=YUfPyeqUPB0xkCkB/eRR2TXB9+TQmwSL+HfmTMDLYlQ0RaBQvTWTkGs4vbtqIQesHrA+xS
+	L8nNzo7V8gbYvCjm574nVFZJXnKBjQ+YzmeUEsQ4gy+/VoYwwZX22/7JFXCqL9HQbouRJq
+	pPUJjbJSVOiOSh9yYyZ8vF0xoueZAWw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732610865;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S6l7f0A6K6sgvMnsO7s3WGbKUw6qzbSJBXBYGeybt1M=;
+	b=WI9DSH9WJOUdIyRvLuIVVy21zix30ELZ5Zpi1kiwu5IjEJn72x/jj7vtyYxQSUo/YrntT0
+	n2aPwwFjJJUFt2CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 45FFC139AA;
+	Tue, 26 Nov 2024 08:47:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id e2oTETGLRWeEeAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 26 Nov 2024 08:47:45 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id E0897A08CA; Tue, 26 Nov 2024 09:47:44 +0100 (CET)
+Date: Tue, 26 Nov 2024 09:47:44 +0100
+From: Jan Kara <jack@suse.cz>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: linux-ext4@vger.kernel.org, Jan Kara <jack@suse.com>,
+	Ritesh Harjani <ritesh.list@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Baokun Li <libaokun1@huawei.com>,
+	Disha Goel <disgoel@linux.ibm.com>
+Subject: Re: [PATCH v2 1/2] quota: flush quota_release_work upon quota
+ writeback
+Message-ID: <20241126084744.fjnl3mmgme2mqhh2@quack3>
+References: <20241121123855.645335-1-ojaswin@linux.ibm.com>
+ <20241121123855.645335-2-ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] drm/modes: introduce drm_mode_validate_mode()
- helper function
-To: Sean Nyekjaer <sean@geanix.com>, Maxime Ripard <mripard@kernel.org>
-CC: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann
-	<tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec
-	<jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Yannick
- Fertre <yannick.fertre@foss.st.com>,
-        Philippe Cornu
-	<philippe.cornu@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20241125-dsi-relax-v2-0-9113419f4a40@geanix.com>
- <20241125-dsi-relax-v2-1-9113419f4a40@geanix.com>
- <20241125-gleaming-anteater-of-perfection-42bd2b@houat>
- <bfuj6w6hsbfpdw24th6dl3ugvj45op6jb45gx5ab5pulud7hiz@o2zbn45z3lt4>
-Content-Language: en-US
-From: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-In-Reply-To: <bfuj6w6hsbfpdw24th6dl3ugvj45op6jb45gx5ab5pulud7hiz@o2zbn45z3lt4>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241121123855.645335-2-ojaswin@linux.ibm.com>
+X-Rspamd-Queue-Id: 50EB52115E
+X-Spam-Score: -2.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,suse.com,gmail.com,huawei.com,linux.ibm.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
+On Thu 21-11-24 18:08:54, Ojaswin Mujoo wrote:
+> One of the paths quota writeback is called from is:
+> 
+> freeze_super()
+>   sync_filesystem()
+>     ext4_sync_fs()
+>       dquot_writeback_dquots()
+> 
+> Since we currently don't always flush the quota_release_work queue in
+> this path, we can end up with the following race:
+> 
+>  1. dquot are added to releasing_dquots list during regular operations.
+>  2. FS Freeze starts, however, this does not flush the quota_release_work queue.
+>  3. Freeze completes.
+>  4. Kernel eventually tries to flush the workqueue while FS is frozen which
+>     hits a WARN_ON since transaction gets started during frozen state:
+> 
+>   ext4_journal_check_start+0x28/0x110 [ext4] (unreliable)
+>   __ext4_journal_start_sb+0x64/0x1c0 [ext4]
+>   ext4_release_dquot+0x90/0x1d0 [ext4]
+>   quota_release_workfn+0x43c/0x4d0
+> 
+> Which is the following line:
+> 
+>   WARN_ON(sb->s_writers.frozen == SB_FREEZE_COMPLETE);
+> 
+> Which ultimately results in generic/390 failing due to dmesg
+> noise. This was detected on powerpc machine 15 cores.
+> 
+> To avoid this, make sure to flush the workqueue during
+> dquot_writeback_dquots() so we dont have any pending workitems after
+> freeze.
+> 
+> Reported-by: Disha Goel <disgoel@linux.ibm.com>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
-On 11/26/24 08:36, Sean Nyekjaer wrote:
-> Hi Maxime,
->
-> On Mon, Nov 25, 2024 at 05:00:56PM +0100, Maxime Ripard wrote:
->> Hi Sean,
->>
->> On Mon, Nov 25, 2024 at 02:49:26PM +0100, Sean Nyekjaer wrote:
->>> Check if the required pixel clock is in within .5% range of the
->>> desired pixel clock.
->>> This will match the requirement for HDMI where a .5% tolerance is allowed.
->>>
->>> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
->>> ---
->>>  drivers/gpu/drm/drm_modes.c | 34 ++++++++++++++++++++++++++++++++++
->>>  include/drm/drm_modes.h     |  2 ++
->>>  2 files changed, 36 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
->>> index 6ba167a3346134072d100af0adbbe9b49e970769..4068b904759bf80502efde6e4d977b297f5d5359 100644
->>> --- a/drivers/gpu/drm/drm_modes.c
->>> +++ b/drivers/gpu/drm/drm_modes.c
->>> @@ -1623,6 +1623,40 @@ bool drm_mode_equal_no_clocks_no_stereo(const struct drm_display_mode *mode1,
->>>  }
->>>  EXPORT_SYMBOL(drm_mode_equal_no_clocks_no_stereo);
->>>  
->>> +/**
->>> + * drm_mode_validate_mode
->>> + * @mode: mode to check
->>> + * @rounded_rate: output pixel clock
->>> + *
->>> + * VESA DMT defines a tolerance of 0.5% on the pixel clock, while the
->>> + * CVT spec reuses that tolerance in its examples, so it looks to be a
->>> + * good default tolerance for the EDID-based modes. Define it to 5 per
->>> + * mille to avoid floating point operations.
->>> + *
->>> + * Returns:
->>> + * The mode status
->>> + */
->>> +enum drm_mode_status drm_mode_validate_mode(const struct drm_display_mode *mode,
->>> +					    unsigned long long rounded_rate)
->>> +{
->>> +	enum drm_mode_status status;
->>> +	unsigned long long rate = mode->clock * 1000;
->>> +	unsigned long long lowest, highest;
->>> +
->>> +	lowest = rate * (1000 - 5);
->>> +	do_div(lowest, 1000);
->>> +	if (rounded_rate < lowest)
->>> +		return MODE_CLOCK_LOW;
->>> +
->>> +	highest = rate * (1000 + 5);
->>> +	do_div(highest, 1000);
->>> +	if (rounded_rate > highest)
->>> +		return MODE_CLOCK_HIGH;
->>> +
->>> +	return MODE_OK;
->>> +}
->>> +EXPORT_SYMBOL(drm_mode_validate_mode);
-Hi Sean, Maxime,
->> Thanks a lot for doing that!
->>
->> I wonder about the naming though (and prototype). I doesn't really
->> validates a mode, but rather makes sure that a given rate is a good
->> approximation of a pixel clock. So maybe something like
->> drm_mode_check_pixel_clock?
-> Naming is hard :) I will use drm_mode_check_pixel_clock() for V2.
->
-> Would it make sense to have the pixel clock requirement as a input
-> parameter? For HDMI it is 0.5% and in my case the LVDS panel 10%.
->
-> enum drm_mode_status drm_mode_validate_mode(const struct drm_display_mode *mode,
-> 					    unsigned long long rounded_rate, unsigned tolerance)
-> ?
+Thanks. Since this patch is independent, I've picked it up into my tree
+(will push it to Linus for rc2).
 
-
-IMO adding the tolerance as input parameter is a good idea.  This would useful
-other than for HDMI pixel clock validation (and LVDS in your case).
-
-Best regards,
-Raphaël
-
->
-> And maybe a drm_mode_validate_mode_hdmi() with the default tolerance of
-> .5%?
->> We probably need some kunit tests here too.
-> Good idea, will be my first :)
->
-> /Sean
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
