@@ -1,87 +1,147 @@
-Return-Path: <linux-kernel+bounces-422008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 344EE9D9334
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:21:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 860CD9D9337
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:22:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CED416609D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:22:53 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0BD1AC44C;
+	Tue, 26 Nov 2024 08:22:50 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A478BB21F59
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:21:11 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3252719FA7C;
-	Tue, 26 Nov 2024 08:21:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BE815E5A6
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 08:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837F61A00F4;
+	Tue, 26 Nov 2024 08:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732609265; cv=none; b=oQtgaiD75JKAIunx/mhqXSdyCGm3gEZVkjS5vFSYn9SddYjkdqaE+/Sb29v3SsH/emfqxXi6EcA9BI5B0Iwhedb9Xss1MhFC4meKAwyi+XJVEiw4wZGJdY+khQHY2bvTk11chh+hDU7IuBxp1rD/Y1G+/6MQVX12cAFadnOV33Q=
+	t=1732609370; cv=none; b=fdIyKvu8A5l4r14PYMqCBEIChRFs0EEk89spZX+OGnaA1COpD4R9MuKrE3BnGHtVvqqStkcb79f0kVChLdzLh8eflIk1Xvn6xGlFGz6odpZS6zWVRYVhMld4NUmci3o9QUHEjyZrEz6yqHBeGtDSSnHrkgzBBzIVkYLxjo8m6mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732609265; c=relaxed/simple;
-	bh=h9nxMfZoyZaKDKdbndcWcPk8FhPa2LWsvLlV1sQAuzE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=KQn41R6ld1ZOfAz8+PKE6VE3n1RA8inmrdxlNUb4/wOGc0ISD7c/O/CUHW7W/N0Bya0rN2icWbRE+k01RsRXDitH8tHX4Q/8SRO08QfAo84uqd2UpxTaYGXflaFDg7UfUZaoeuJxQb/tX/v/DITnWl4GaNbPnQJbwuhfWgonWRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a7bdd00353so5967985ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 00:21:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732609263; x=1733214063;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B5+ka/LQkUtx8jqUI9tIQHYyI9Y3XI1v2clXWRUx1l4=;
-        b=ByA9A+Z6NA867aokloxZAuI45QxedbyN8h/7TOcn5+LldsZJU2Zm4rlBy8hxjRhljz
-         xYgIbmlrL8POMDh92oViesLIKar6BGZXUTtmBzrjGWveLP49pMdb70oIt8zjnyrReO5m
-         R0uHmAsSnZEmdg/2xpLLvHC3OUXK2D3ANkqJ5cdeQx+fxET8A3FIqaBfuKMlMs9uuqeE
-         U0Kr7lEBR8xoECGKroYtWtZoPD7L5N0ooR6J41oHTZ7EjLjBSrFrLSvXgeeUnH78DW43
-         DQuPIAIe302rT+U7F9R+1FtzzRQ3dDh8lu+R0zMZql6MDJYXL67O3jJjW7SnjzaNJRtQ
-         BTiA==
-X-Forwarded-Encrypted: i=1; AJvYcCXJu6paguJMhqH5gCsrcm1WjbUo98TRBrzF6KsBWbzacXle9Ctyjw4SbHZNfeTLUnPyxqbmkIZLrw+QKgI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMPykVBtuqmkv4VaytjcL2L1ktHCHVSJPH2s4qYmn8QHB62eqO
-	VLwLrBVoHcehmEF5Yaz7gJiEaIfWl9HFB8y6LmzRIwyqEHHV4qqe67VDw1r48STUNlSkgwO4LmI
-	h3CbJJK2EzTV241KUWi075RlxcYU3NA4HgnQr7IyyXWhSPJQj+jIXayQ=
-X-Google-Smtp-Source: AGHT+IFwXL3nob77/IIe9In4L7I/CoaFe/f9qVhfnO9G/KT25rpwIjIeOzOQaytVB9bG1dp+fBiIOw82HsNZhZhKXDTsj0eolgY1
+	s=arc-20240116; t=1732609370; c=relaxed/simple;
+	bh=NZzFxGiqYDUqL29nURG2k2e9QAvCV2Jo0ezb0nUvxqA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nCZ24PuaSpoMF+NkD0MEW1KOVypAHbGNPgShg6Q6XvZ8S2uDCp6/lNPHrDTTqBo8mx70yJLOdWxMenLsliEnvvavRcPRRfGJQEuu2DUrLvIu0AosXbBnsMsbuJzDRQ6EwWZvRpndUsYvE5Q9SxEBfocOtg4QypgsJovoKNUD0Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XyFrH24FZz10WNr;
+	Tue, 26 Nov 2024 16:20:31 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 94B9718009B;
+	Tue, 26 Nov 2024 16:22:39 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 26 Nov 2024 16:22:39 +0800
+Message-ID: <6233e2c3-3fea-4ed0-bdcc-9a625270da37@huawei.com>
+Date: Tue, 26 Nov 2024 16:22:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a62:b0:3a7:6f1c:a084 with SMTP id
- e9e14a558f8ab-3a79afec520mr192599725ab.23.1732609262857; Tue, 26 Nov 2024
- 00:21:02 -0800 (PST)
-Date: Tue, 26 Nov 2024 00:21:02 -0800
-In-Reply-To: <1806e4a5-7e78-4264-87af-2468289e34af@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <674584ee.050a0220.1286eb.0013.GAE@google.com>
-Subject: Re: [syzbot] [io-uring?] WARNING in io_pin_pages
-From: syzbot <syzbot+2159cbb522b02847c053@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v4 2/3] page_pool: fix IOMMU crash when driver has
+ already unbound
+To: Jesper Dangaard Brouer <hawk@kernel.org>, <davem@davemloft.net>,
+	<kuba@kernel.org>, <pabeni@redhat.com>
+CC: <liuyonglong@huawei.com>, <fanghaiqing@huawei.com>,
+	<zhangkun09@huawei.com>, Robin Murphy <robin.murphy@arm.com>, Alexander Duyck
+	<alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Ilias Apalodimas
+	<ilias.apalodimas@linaro.org>, Eric Dumazet <edumazet@google.com>, Simon
+ Horman <horms@kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20241120103456.396577-1-linyunsheng@huawei.com>
+ <20241120103456.396577-3-linyunsheng@huawei.com>
+ <3366bf89-4544-4b82-83ec-fd89dd009228@kernel.org>
+ <27475b57-eda1-4d67-93f2-5ca443632f6b@huawei.com>
+ <ac728cc1-2ccb-4207-ae11-527a3ed8fbb6@kernel.org>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <ac728cc1-2ccb-4207-ae11-527a3ed8fbb6@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Hello,
+On 2024/11/25 23:25, Jesper Dangaard Brouer wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+...
 
-Reported-by: syzbot+2159cbb522b02847c053@syzkaller.appspotmail.com
-Tested-by: syzbot+2159cbb522b02847c053@syzkaller.appspotmail.com
+>>>> +
+>>>>    void page_pool_destroy(struct page_pool *pool)
+>>>>    {
+>>>>        if (!pool)
+>>>> @@ -1139,6 +1206,8 @@ void page_pool_destroy(struct page_pool *pool)
+>>>>         */
+>>>>        synchronize_rcu();
+>>>>    +    page_pool_inflight_unmap(pool);
+>>>> +
+>>>
+>>> Reaching here means we have detected in-flight packets/pages.
+>>>
+>>> In "page_pool_inflight_unmap" we scan and find those in-flight pages to
+>>> DMA unmap them. Then below we wait for these in-flight pages again.
+>>> Why don't we just "release" (page_pool_release_page) those in-flight
+>>> pages from belonging to the page_pool, when we found them during scanning?
+>>>
+>>> If doing so, we can hopefully remove the periodic checking code below.
+>>
+>> I thought about that too, but it means more complicated work than just
+>> calling the page_pool_release_page() as page->pp_ref_count need to be
+>> converted into page->_refcount for the above to work, it seems hard to
+>> do that with least performance degradation as the racing against
+>> page_pool_put_page() being called concurrently.
+>>
+> 
+> Maybe we can have a design that avoid/reduce concurrency.  Can we
+> convert the suggested pool->destroy_lock into an atomic?
+> (Doing an *atomic* READ in page_pool_return_page, should be fast if we
+> keep this cache in in (cache coherence) Shared state).
+> 
+> In your new/proposed page_pool_return_page() when we see the
+> "destroy_cnt" (now atomic READ) bigger than zero, then we can do nothing
+> (or maybe we need decrement page-refcnt?), as we know the destroy code
 
-Tested on:
+Is it valid to have a page->_refcount of zero when page_pool still own
+the page if we only decrement page->_refcount and not clear page->pp_magic?
+What happens if put_page() is called from other subsystem for a page_pool
+owned page, isn't that mean the page might be returned to buddy page
+allocator, causing use-after-free problem?
 
-commit:         1b7520dd io_uring: check for overflows in io_pin_pages
-git tree:       https://github.com/isilence/linux.git syz/sanitise-cqsq
-console output: https://syzkaller.appspot.com/x/log.txt?x=17b85ff7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f0635751ca15fb7a
-dashboard link: https://syzkaller.appspot.com/bug?extid=2159cbb522b02847c053
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> will be taking care of "releasing" the pages from the page pool.
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+If page->_refcount is not decremented in page_pool_return_page(), how
+does page_pool_destroy() know if a specific page have been called with
+page_pool_return_page()? Does an extra state is needed to indicate that?
+
+And there might still be concurrency between checking/handling of the extra
+state in page_pool_destroy() and the setting of extra state in
+page_pool_return_page(), something like lock might still be needed to avoid
+the above concurrency.
+
+> 
+> Once the a page is release from a page pool it becomes a normal page,
+> that adhere to normal page refcnt'ing. That is how it worked before with
+> page_pool_release_page().
+> The later extensions with page fragment support and devmem might have
+> complicated this code path.
+
+As page_pool_return_page() and page_pool_destroy() both try to "release"
+the page concurrently for a specific page, I am not sure how using some
+simple *atomic* can avoid this kind of concurrency even before page
+fragment and devmem are supported, it would be good to be more specific
+about that by using some pseudocode.
+
+I looked at it more closely, previously page_pool_put_page() seemed to
+not be allowed to be called after page_pool_release_page() had been
+called for a specific page mainly because of concurrently checking/handlig
+and clearing of page->pp_magic if I understand it correctly:
+https://elixir.bootlin.com/linux/v5.16.20/source/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c#L5316
 
