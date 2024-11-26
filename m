@@ -1,305 +1,125 @@
-Return-Path: <linux-kernel+bounces-422144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17FB19D9509
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:02:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A827E9D9534
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:11:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBB5F2815BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:02:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B90DB2857D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA431CBEA4;
-	Tue, 26 Nov 2024 10:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA461CB518;
+	Tue, 26 Nov 2024 10:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XKoQ/KWL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="1Ktq5vjJ"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897191C4A24;
-	Tue, 26 Nov 2024 10:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BD01B85E4;
+	Tue, 26 Nov 2024 10:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732615321; cv=none; b=p2jx7ayetMBOrVRb9iVs9/PNRdLI7tjbqu3RIlfkF+dlWa9/T3E1p1fugmUNpHg5euAvY1a200tKG2R5EWptpq5di1lSAdPNK49wbS25b6/Y4PLeH6e84YRepeJOaHK3VLpw39Lq7K/RHJP4vg+28fU3d73mFze1ZC7UdcfA2Qk=
+	t=1732615747; cv=none; b=aoEQB2GMeyDZcGyJciX/569Ajm8GLhAGiF33eevPmUy++W3ZLsWE7ilMwacGG6R3qoJEwL/wLNCsACOIiyZs9PkyXkpf9t9vIQWyCePJbXOUL8/LU12eHJnydPSI7UJHQRtlLxOGwHwwpvv3FT6Fr8Gsw0Kfcastfk6ex/cqufE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732615321; c=relaxed/simple;
-	bh=ohdZswumxjmwp+9vryItun/bUoWnAbE6VsKuD46th6E=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gr4kY8vgToRZ7QpdqBJj4dof5bULzjSUkK4j/lOi7zJu2xgAEq2WrX54pTyEhYaCfRuCkEcUtwDGoCxMI7UXpmqi1BI6myHBf2g2nUz0RuvT4mhhGVz4Swave1UNT3HbwiCYQIkqnYN2MtEXVjOdgJ1PHujI8riDRt1YwkbUFLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XKoQ/KWL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4APLkO9K032678;
-	Tue, 26 Nov 2024 10:01:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qt/HYl+Hs3GgDQhyOFzL0KP8RHe4jjXFmYOWaf2hftI=; b=XKoQ/KWLs5bPS2y0
-	3hp8W0iA/LRmVz82rVV4AJ9RaGqWVg260O7DvRRCsi+C2eB4yOr8Omh4PBBjSHSa
-	T+xzCwMgIMziKhm/eQU4q7b4XMgas7+HC/YC7flsCwGYUIAJ3UTpyVgQw8Cbc34c
-	MdGDWzYx9hp5ihys0j/X3a4QgFxOzyFu4wEYY7OSe5//QifEDhipDH9THUVTF4vK
-	vHlu6oKbSghsN2kYrwN38jsIv7CGtOwvEuPoL8IQ5yuvSipXdOxpFMnHXsI4tphk
-	CxrK0e5PI8duvupxE4tI/+AFaiJbbBuPCDda7fVQJ/3br8WMXGkkBlFENpVTqDv2
-	BJz9LQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 433626fpgx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 10:01:55 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AQA1sXc008608
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 26 Nov 2024 10:01:54 GMT
-Received: from hu-vikramsa-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 26 Nov 2024 02:01:48 -0800
-From: Vikram Sharma <quic_vikramsa@quicinc.com>
-To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>
-Subject: [PATCH v4 2/2] media: qcom: camss: Restructure camss_link_entities
-Date: Tue, 26 Nov 2024 15:31:26 +0530
-Message-ID: <20241126100126.2743795-3-quic_vikramsa@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241126100126.2743795-1-quic_vikramsa@quicinc.com>
-References: <20241126100126.2743795-1-quic_vikramsa@quicinc.com>
+	s=arc-20240116; t=1732615747; c=relaxed/simple;
+	bh=RJQ2Ith3kfvkd77GXLCJbyKVRPntbpM7zCWWMZwykGk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qs13LH9Bx0iVeHq1bbk3zxENpys/SayXqOiU3+FYnvgM4DjypC7/Div/r90i2VgBK+s+tf+g3d+XmuU4VKI9tTuE5YqbbXcUwR5O5/Yxr/5wAzcg52E1+EveMpe5t7wUbUbqKm638tp2hxkJcBJpO1Qn/nSKHhih8hfDad072Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=1Ktq5vjJ; arc=none smtp.client-ip=212.227.17.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1732615736; x=1733220536;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=UqgJ48Ha4CrAwJTSYwvED1Nl9FQ6CTIHGQ+zfspe6IA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=1Ktq5vjJs8SKXb8MjMkwRf+TAsbfo98EFk1dN/yqEy41XQSBv3+nDnzWTVZgGsPz
+	 Cay/sWrRSq2fMBr5FOshX/Zm/bis6HmiDrihwONJNCg94hpqmOGRjfG8b/ctnsFSr
+	 J1XuZez8HbZslCE0q62V3qTHLL3Jb1ubA+Ofq359OKByqkypqz1pbPOgT62G1d7a9
+	 TFy7CnLzYs4Njjh8zBunj+7rdw5bINkRhQyICWyOCd2GBRMfGvJTBxJnMFTdRUWiS
+	 IHoC2tFQZxZ/x/fx4yhpy9b2Ot/MvC0ShjTQGrn8Qrddf3JdRVlGB4yffB4I+Kx3H
+	 FhLis5fFexfacutdiQ==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.0.128] ([91.64.229.215]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MsI0K-1ta9Je12z4-012Kg7; Tue, 26 Nov 2024 11:03:08 +0100
+Message-ID: <1fb0ffd8-1e11-4d9e-a935-29ea4e30c8fd@oldschoolsolutions.biz>
+Date: Tue, 26 Nov 2024 11:03:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: DzTi3A_0zdsKMs-p5rjos0sk-GtO2Yaz
-X-Proofpoint-ORIG-GUID: DzTi3A_0zdsKMs-p5rjos0sk-GtO2Yaz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 clxscore=1015 phishscore=0 spamscore=0 adultscore=0
- impostorscore=0 mlxscore=0 malwarescore=0 suspectscore=0 mlxlogscore=999
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411260079
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: arm: qcom: Add HP Omnibook X 14
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Douglas Anderson <dianders@chromium.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Kalle Valo <kvalo@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+References: <20241124-hp-omnibook-x14-v1-0-e4262f0254fa@oldschoolsolutions.biz>
+ <20241124-hp-omnibook-x14-v1-1-e4262f0254fa@oldschoolsolutions.biz>
+ <dgilzuguxfvzqndp4rjm4hlhejgporfvollk4sqwquk34g4pka@dinzg2kfk4x2>
+Content-Language: en-US
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <dgilzuguxfvzqndp4rjm4hlhejgporfvollk4sqwquk34g4pka@dinzg2kfk4x2>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:p95dLl39HAqGZyMZQe3at5sITGCOt38D4bkBO1HRwGKLBRasN+l
+ miro5BoYdM1w3n66ThYdEwzBMMV/X5cVGMQKSKjAqCvl56jp526rZjoffmPRBm4oKlfZZiX
+ PNHMfTivmIFPnk9f04D8kBEWxdJpB/FSrtFMXo/bDSwFIlWohIaVIBiK2/uoEWcLJR7eZiO
+ OQeUjc1mXLQOcuIsjCfww==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ednO9n8r/EU=;gd64rDU5CeD9q8OXZ07cJ8nS/cq
+ HTwBkGUWAAv2XQqsSyPTDB53g95gwccN3TIdPaP43CCXWXnBWT6BwzkDO0hPD+gNWY/7qBNkm
+ 2uayGSeCTC+SnvuNNrAJH2vVgSX1tN9iU630xpIL3eiw7MvAb4mPFol4aJU1nSoeFiBQ5x8ce
+ 0xaO0m4c6SMYq2E6tP1a/oREw6AWLTO8irGAl7V85ZmCrUimTqQPeYc9Lr/FjY90TMgdGJwho
+ vHvYgNfVL1vh8Ktu6A1CqhMfGZYbz778BxVrH4Ml2VwegupT+2b03vxV/NrUxAmdnsxC7JdON
+ PGLBdpia7zEJzWEn1oph1DVxfdnpwCND/Doq9uBd8C7E2LY0mCH8iXr/QwUt1bDFpYjaXscwt
+ mT46PyH/6hB/PY5jIoSt4AokalEZYjZ7EKotj0HA6AY59C0Qi2IsP38OfIJWwbplLr3V1w+aK
+ OIiss+X6bfoZ8QD5IyNmU6QpB5VkxLCL936Oa6VhvIN6+43XocpRKgCEeVdif76Lt4bK7NoCc
+ 5RmENrsJ+Ybn0jusQ+apOOuWN7jdTTAXuRoV4vG7tveNK4RZ74Hc0AB2kC5BW0cSi1Uvg+slc
+ wug+VzTngAu6Gmekuqcu2GIQrdn4DKXlVC/A4VGVo7QMoCVQZVPJhzWtDNeVxgNFDXoujZUHH
+ fUccx7KypfhQfF8lWuFMTrDPUhqbKS6hMjLQimcRWypawtcIDONw3MUZD5QOL+1Z022y6yRz5
+ Ak00/6xGiil9jgn/TGCxPz4b5GTYGW2eOFztZR+AXuhX8PlOEucPoFgyGYtTQcF4QxJQIzA5j
+ e/4BtIZhewYLBUHvMSHCycdZPJ6eMCz4mfdgK02q+PmAZlEoAzqPP2v6BwZMHKozJIq8l2xXZ
+ 58Zf0hOmKruwtLzOU3G+sUkSF6IVMrvbe/JXzo+6Hi/aUACxD2InsxZrYZaO4OToT908JZHt/
+ 6YftJIhRoCt2vwUVuC++1sEy6x5ej/tMB1kO7u18qogYaIwVdfyS3kwMfiDSZ9j4k9ZdS+3Ji
+ SKtGq9Xajn1eoKbu3WLM5+lr9TNIE0tme2Ln3dz
 
-Refactor the camss_link_entities function by breaking it down into
-three distinct functions. Each function will handle the linking of
-a specific entity separately.
-SC7280 and later targets mandates for 1:1 linking for csid -> vfe.
-i.e. csid0 can be mapped to vfe0 only.
+On 26.11.24 08:34, Krzysztof Kozlowski wrote:
 
-Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
-Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
-Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
- drivers/media/platform/qcom/camss/camss.c | 155 ++++++++++++++--------
- 1 file changed, 103 insertions(+), 52 deletions(-)
-
-diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-index 6824ffbdf4a8..67fb11cbe865 100644
---- a/drivers/media/platform/qcom/camss/camss.c
-+++ b/drivers/media/platform/qcom/camss/camss.c
-@@ -1994,7 +1994,6 @@ static int camss_init_subdevices(struct camss *camss)
- }
- 
- /*
-- * camss_link_entities - Register subdev nodes and create links
-  * camss_link_err - print error in case link creation fails
-  * @src_name: name for source of the link
-  * @sink_name: name for sink of the link
-@@ -2012,14 +2011,64 @@ inline void camss_link_err(struct camss *camss,
- }
- 
- /*
-- * camss_link_entities - Register subdev nodes and create links
-+ * camss_link_entities_csid - Register subdev nodes and create links
-  * @camss: CAMSS device
-  *
-  * Return 0 on success or a negative error code on failure
-  */
--static int camss_link_entities(struct camss *camss)
-+static int camss_link_entities_csid(struct camss *camss)
- {
--	int i, j, k;
-+	struct media_entity *src_entity;
-+	struct media_entity *sink_entity;
-+	int ret, line_num;
-+	u16 sink_pad;
-+	u16 src_pad;
-+	int i, j;
-+
-+	for (i = 0; i < camss->res->csid_num; i++) {
-+		if (camss->ispif)
-+			line_num = camss->ispif->line_num;
-+		else
-+			line_num = camss->vfe[i].res->line_num;
-+
-+		src_entity = &camss->csid[i].subdev.entity;
-+		for (j = 0; j < line_num; j++) {
-+			if (camss->ispif) {
-+				sink_entity = &camss->ispif->line[j].subdev.entity;
-+				src_pad = MSM_CSID_PAD_SRC;
-+				sink_pad = MSM_ISPIF_PAD_SINK;
-+			} else {
-+				sink_entity = &camss->vfe[i].line[j].subdev.entity;
-+				src_pad = MSM_CSID_PAD_FIRST_SRC + j;
-+				sink_pad = MSM_VFE_PAD_SINK;
-+			}
-+
-+			ret = media_create_pad_link(src_entity,
-+						    src_pad,
-+						    sink_entity,
-+						    sink_pad,
-+						    0);
-+			if (ret < 0) {
-+				camss_link_err(camss, src_entity->name,
-+					       sink_entity->name,
-+					       ret);
-+				return ret;
-+			}
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * camss_link_entities_csiphy - Register subdev nodes and create links
-+ * @camss: CAMSS device
-+ *
-+ * Return 0 on success or a negative error code on failure
-+ */
-+static int camss_link_entities_csiphy(struct camss *camss)
-+{
-+	int i, j;
- 	int ret;
- 
- 	for (i = 0; i < camss->res->csiphy_num; i++) {
-@@ -2039,66 +2088,68 @@ static int camss_link_entities(struct camss *camss)
- 		}
- 	}
- 
--	if (camss->ispif) {
--		for (i = 0; i < camss->res->csid_num; i++) {
--			for (j = 0; j < camss->ispif->line_num; j++) {
--				ret = media_create_pad_link(&camss->csid[i].subdev.entity,
--							    MSM_CSID_PAD_SRC,
--							    &camss->ispif->line[j].subdev.entity,
--							    MSM_ISPIF_PAD_SINK,
-+	return 0;
-+}
-+
-+/*
-+ * camss_link_entities_ispif - Register subdev nodes and create links
-+ * @camss: CAMSS device
-+ *
-+ * Return 0 on success or a negative error code on failure
-+ */
-+static int camss_link_entities_ispif(struct camss *camss)
-+{
-+	int i, j, k;
-+	int ret;
-+
-+	for (i = 0; i < camss->ispif->line_num; i++) {
-+		for (k = 0; k < camss->res->vfe_num; k++) {
-+			for (j = 0; j < camss->vfe[k].res->line_num; j++) {
-+				struct v4l2_subdev *ispif = &camss->ispif->line[i].subdev;
-+				struct v4l2_subdev *vfe = &camss->vfe[k].line[j].subdev;
-+
-+				ret = media_create_pad_link(&ispif->entity,
-+							    MSM_ISPIF_PAD_SRC,
-+							    &vfe->entity,
-+							    MSM_VFE_PAD_SINK,
- 							    0);
- 				if (ret < 0) {
--					camss_link_err(camss,
--						       camss->csid[i].subdev.entity.name,
--						       camss->ispif->line[j].subdev.entity.name,
-+					camss_link_err(camss, ispif->entity.name,
-+						       vfe->entity.name,
- 						       ret);
- 					return ret;
- 				}
- 			}
- 		}
--
--		for (i = 0; i < camss->ispif->line_num; i++)
--			for (k = 0; k < camss->res->vfe_num; k++)
--				for (j = 0; j < camss->vfe[k].res->line_num; j++) {
--					struct v4l2_subdev *ispif = &camss->ispif->line[i].subdev;
--					struct v4l2_subdev *vfe = &camss->vfe[k].line[j].subdev;
--
--					ret = media_create_pad_link(&ispif->entity,
--								    MSM_ISPIF_PAD_SRC,
--								    &vfe->entity,
--								    MSM_VFE_PAD_SINK,
--								    0);
--					if (ret < 0) {
--						camss_link_err(camss, ispif->entity.name,
--							       vfe->entity.name,
--							       ret);
--						return ret;
--					}
--				}
--	} else {
--		for (i = 0; i < camss->res->csid_num; i++)
--			for (k = 0; k < camss->res->vfe_num; k++)
--				for (j = 0; j < camss->vfe[k].res->line_num; j++) {
--					struct v4l2_subdev *csid = &camss->csid[i].subdev;
--					struct v4l2_subdev *vfe = &camss->vfe[k].line[j].subdev;
--
--					ret = media_create_pad_link(&csid->entity,
--								    MSM_CSID_PAD_FIRST_SRC + j,
--								    &vfe->entity,
--								    MSM_VFE_PAD_SINK,
--								    0);
--					if (ret < 0) {
--						camss_link_err(camss, csid->entity.name,
--							       vfe->entity.name,
--							       ret);
--						return ret;
--					}
--				}
- 	}
- 
- 	return 0;
- }
- 
-+/*
-+ * camss_link_entities - Register subdev nodes and create links
-+ * @camss: CAMSS device
-+ *
-+ * Return 0 on success or a negative error code on failure
-+ */
-+static int camss_link_entities(struct camss *camss)
-+{
-+	int ret;
-+
-+	ret = camss_link_entities_csiphy(camss);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = camss_link_entities_csid(camss);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (camss->ispif)
-+		ret = camss_link_entities_ispif(camss);
-+
-+	return ret;
-+}
-+
- /*
-  * camss_register_entities - Register subdev nodes and create links
-  * @camss: CAMSS device
--- 
-2.25.1
-
+> On Sun, Nov 24, 2024 at 02:20:15PM +0100, Jens Glathe wrote:
+>> Add compatible values for the HP Omnibook X Laptop 14-fe0750ng,
+>> using "hp,omnibook-x14"
+>>
+>> The laptop is based on the Snapdragon X Elite (x1e80100) SoC.
+>>
+>> PDF link: https://www8.hp.com/h20195/V2/GetPDF.aspx/c08989140
+>>
+>> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+>> ---
+>>   Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
+>>   1 file changed, 1 insertion(+)
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+> Best regards,
+> Krzysztof
+>
+Thanks!
 
