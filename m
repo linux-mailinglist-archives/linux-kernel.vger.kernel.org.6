@@ -1,170 +1,186 @@
-Return-Path: <linux-kernel+bounces-422318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 080F79D97E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:04:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED45B9D97C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:57:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7A20B27CAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:56:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACB70286164
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707A61D4613;
-	Tue, 26 Nov 2024 12:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE181D45F0;
+	Tue, 26 Nov 2024 12:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tUZNBKqo"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fUyhUpSR"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FE21D4340
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 12:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FE41D4169;
+	Tue, 26 Nov 2024 12:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732625785; cv=none; b=fm6nbZ71pV3MQLhaeX8IV8M53F88fsVumfxV4GrfE2L/65qpCxbR89LVCrxJSlGPX4ibJqoJn1QR48ED4jYjxa1oJmDJ9hCPm11qgvDLHazwjDXmocqOam09+Hb5JDf7DH3JpE2fuOmsMj8ZuPIuVLnjNM5dcT3pi8OPkE4IJJc=
+	t=1732625863; cv=none; b=bxUg1TcS2Ye/BPtX22bk2JK99METwWUtpMUpteDvsdLqkJSTt4bn4urgxcAX8NJUshNf4SX8uMYdoPdqo7B223qkidAcz3oHsz+MOlQ214EgG+VYkdMr0CrVQeQTlzUKYYBPaW1HeHtnwI5p2KZ8boGWcQqF1sFNDNCjh7TfONA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732625785; c=relaxed/simple;
-	bh=TfjTGWQaDFmp9+wS6+9ipI5j9jCprYMO03bsaV8msQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fArYyvnd48PSrfqbngv/lTvGfudNJijdgdE6G1nBYb3QRz0ncABHIH6rgJgfUBNWwzZHwcrQIEPaX8eHtRjNcWWcnqJ3GVWW+YeouHQat6vtTGbd+THlBPJDkE+THgqqZ028FvWdfcJ8dFM2YZE+E7+lugNEuf/f780Sud2MQKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tUZNBKqo; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21269c8df64so56754135ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 04:56:24 -0800 (PST)
+	s=arc-20240116; t=1732625863; c=relaxed/simple;
+	bh=pAXvbAY21IjprYSWZVB5ThcCCa74QSWQQFIKi5caw4A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Oupy9aytY1Z9EQwHAMl32DVmOZ+sKDiYk8b7fN4bvWXxvlGtloPyEVYzl7F5CSS7mtn/jgWe5NS534oBFThyL6QLbGp0NPpuHC+YEejGs8XDyD9ntsTJCgyXwbufn05Cyd8fGqZ/eniLDSOmbO6DpThgu5UkDuiUJhqZhNaBbLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fUyhUpSR; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6d40ae72d35so38100346d6.1;
+        Tue, 26 Nov 2024 04:57:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732625783; x=1733230583; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YY215mVBF/BsyIyjPcQ5YdAmE/7mcXahP/kNz5RyMwA=;
-        b=tUZNBKqoYN5o9F2YcDoN5qwCVmv5Leka0vhz1kNI1bZLv13ecMRELbhRCZZ3XUi/jp
-         HUqytxkeMOtxdO801G1fYdEC1Auy8x9BMlbqp/uCMBbPAjwl/c1iFDdypFHUTvJhRbAD
-         6uNSTiUfOCRGL2lL0eoymokAJTVataOZvUSg3XfdtCNxN3wzi+foKhfzG5ZG5yI33Lpj
-         Y6g08Lc1PQ4NpwAH41U0qLfDAN+evzz+rrGfi+CoZw8X94/j52kwKh3R1TRxgI2ryfzb
-         bJkyTo1vURXOJew30cq87YH1R8usbHFAu+bsmzDDypXFjxshJX8Bb1rsJwnsNfyy7gQ5
-         5MWQ==
+        d=gmail.com; s=20230601; t=1732625860; x=1733230660; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kPMLzMmK0KKzaO0NVovKhOpAnvw6uWElGaIczBWn2T0=;
+        b=fUyhUpSRWCJbEmpk/f5hx/0MSSZWuCc3adItJWi+Qnd/TC4R88RavSfDQYASEXQcCX
+         Mf5kSs1F1cYMKxjHoq5ZfclGnf8rydyA7mohTmvcUj2Im8uAKhKdpEUOxKMPPvqyF9nb
+         ILRXIlBSX52h8edM4zg4Bh0EIhzd0MvgLWXv5Od+9q0xlrezDgkSmxH49N91IC5/sO71
+         u+IxoPluYMsyyfGVD/FzkjHSQJx7jLoqTaBWDMl6g5OzpcFKA2t47PicVO3ixuGXcB4n
+         fsJnBZWzgAkv+BO0npBhJ/fsxlH8k9Ky2MqT7ESf2Zfb6k31D+s/GoyVEMHelA283SoG
+         EKlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732625783; x=1733230583;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1732625860; x=1733230660;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YY215mVBF/BsyIyjPcQ5YdAmE/7mcXahP/kNz5RyMwA=;
-        b=Sb7tB0JR3LJxWOsfNH0g7OU9RXa/HVtOhA6p6FiNQw0DIpmT5NHrRQr7aqSnCXU/sE
-         Rw9sv/E9dSuBeqUfy90fyus7fovLVfXDmEUgTbwPf2iYICCtw87xaL0PFL7FaC8/6Ljl
-         bvRmzU+lhmVyirfR2yuZGtCuTqsw01lcRGduDPIgnU5b31uaAlf7GLj5m+uhqMc6vvb2
-         OCAwAHw0CzGbahMOD9vc4mpFw26ypWpl5XtaMnwLq6agJoyluxC/LJC4XoC0xRkxtXFO
-         9B4/xuYm9pPtNU2qCQWi09NmtE8EB5vFBKP7jpg4c2zgshVMm4cyWwGsINtFB/zJuHWO
-         Fr/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXEcmrckyrKyzVD0NVvLCWmXpfl1wk5Gn8aaqlFGsGU9rWcdLCJWTFblchb8KODPK/2LcHry2HzzGc8Q3g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyS7IfH6s57ZbyXigvzDLzq0IOnK7tDKqJrxS6gDhcjmW90ivVA
-	UB5h9zXLFMIyaffAZSaY1q3hyJVYygTIIsJWxApTdXOTctyp3an2IyTta0ohbw==
-X-Gm-Gg: ASbGnctTyOU87io8kf7BHkXCTUwnoB7XzU9+kNE8/pEWd28Gbn+QAaunqNbLCuKQgYN
-	PIYv5IUu/4V9BK/EDuH2nkl5BoiUFOBgsuiCQPxA9n92eil+USAgC8fVXwFK2on3ZVzDfcY1q6u
-	wH3xHqAfQKPfc1WNvXhqg+XH/xNRVT+jI/HyiFdhoFDKh2ipHuMbw+io5M726ha1gafTJ5La5Il
-	d7tEgcwMnCLI4wWGlM5SQcVVNsW/ZUO2vcLCp69ypiyhqoOEfhexgm+JlGt
-X-Google-Smtp-Source: AGHT+IFGZO6YwIydzhnaKn6anetOGg2+48yG+FxdkhfkcKfSo66F6npaVl3d/51tMhwslnENrkjuQA==
-X-Received: by 2002:a17:902:fc4f:b0:20c:9821:69af with SMTP id d9443c01a7336-2129f797977mr204224095ad.45.1732625783658;
-        Tue, 26 Nov 2024 04:56:23 -0800 (PST)
-Received: from thinkpad ([120.60.136.64])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc2210dsm83601765ad.245.2024.11.26.04.56.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 04:56:23 -0800 (PST)
-Date: Tue, 26 Nov 2024 18:26:18 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: sm8650: Add 'global' interrupt to
- the PCIe RC nodes
-Message-ID: <20241126125618.v7spvqvm4cdqpa5g@thinkpad>
-References: <20241126-topic-sm8x50-pcie-global-irq-v1-0-4049cfccd073@linaro.org>
- <20241126-topic-sm8x50-pcie-global-irq-v1-3-4049cfccd073@linaro.org>
+        bh=kPMLzMmK0KKzaO0NVovKhOpAnvw6uWElGaIczBWn2T0=;
+        b=TCiU+isjf8o6ph2DfKDFWTIZyfNZ/utHu/9cmqD37aIvw9Gz0ovz25U33wR0wdjDPp
+         p4o+vJ5gBTGuVDVavzbilU/xSQlTHm8fbDpglfbX79NarXSLW2AR6bgPlwEv0pE6umGS
+         NgLWIcf4Jx3GecWWYWKFZrVNGWDUSGKlAKKP5QTFilOTTBnPhiihWf8GriqTjFUtgHWd
+         XNABDIUuKczWVoF6E78+3OWgyxl9wArklyjPOzxxlfKujLvELwxELU6GPjI/2W+WpV7L
+         F/c5ChTuacgh2aHh7S1HZxl9LDiW0vNc2AVfYYgtIpAk2LTmMYHD7qy0Ea02SXz1D8Qj
+         9tlg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEuYR2nSZwzIbgoZl/ktkhjtJzWkvYqNmPsKg6IqodDPV5L+UeHivpDZ7J21CqZUHZhBz+r4+qt3lcXrQ=@vger.kernel.org, AJvYcCVzLZmfu4Nx1ejvYFalpbHif05e1NTe7pcSkB8byd4ui2fjzW/fbAoF/x+1QLx0hB00LbctIHWnjf7dUOWxXkM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUpsgBNWxo4ptRV/mn6waoP8egXvEclOp5nS80XpLU4VF52CTr
+	RN95qNJGlPI8Ld+OcHZnY+VMK01KCMX7EOCOedlKlt0fgIi3V/Ku
+X-Gm-Gg: ASbGnctQZ3pCjIwXhBZuwyUDOnXAZUkGYpl8K5ojink6u6uiDMlnJjcEOD3au1StBBS
+	sgbFIKzoAcgucf1eqnU2L0lbiJIdrbMtw0trPBh/H/hnOBv8LItKPyOoBtW7fnGCOz+YLmLaKSi
+	As0CgOWnms/7v5P7DmeEtxsRC6lc5hqJCOGJeWf7ITfqxEDLyowwDlYv6wpFX3ZwD8ogdnAVvot
+	LRzXN+km8CZ13DQcFHS/exkvnMnmQIs5MGAJDmuSTY0o+2WTNBlCQ==
+X-Google-Smtp-Source: AGHT+IFnP2Gi8gvg7R66MTjJ+gzk2OF2AsbQsoaxzJZu2XBdwQXekD9jcmse+lTjI945O7/0K3D1Mw==
+X-Received: by 2002:ad4:5fca:0:b0:6d4:12af:be77 with SMTP id 6a1803df08f44-6d451345773mr282199186d6.38.1732625860511;
+        Tue, 26 Nov 2024 04:57:40 -0800 (PST)
+Received: from [10.100.121.195] ([152.193.78.90])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d451b23e25sm54289396d6.89.2024.11.26.04.57.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 04:57:40 -0800 (PST)
+Message-ID: <20215f63-e2e6-4f9a-bbbe-d7535c5ce9d2@gmail.com>
+Date: Tue, 26 Nov 2024 04:57:36 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241126-topic-sm8x50-pcie-global-irq-v1-3-4049cfccd073@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH v3 0/2] Improve ath10k flush queue mechanism
+To: Remi Pommarel <repk@triplefau.lt>, ath10k@lists.infradead.org,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+ Cedric Veilleux <veilleux.cedric@gmail.com>,
+ Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
+References: <cover.1732293922.git.repk@triplefau.lt>
+Content-Language: en-US
+From: James Prestwood <prestwoj@gmail.com>
+In-Reply-To: <cover.1732293922.git.repk@triplefau.lt>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 26, 2024 at 11:22:51AM +0100, Neil Armstrong wrote:
-> Qcom PCIe RC controllers are capable of generating 'global' SPI interrupt
-> to the host CPUs. This interrupt can be used by the device driver to
-> identify events such as PCIe link specific events, safety events, etc...
-> 
-> Hence, add it to the PCIe RC node along with the existing MSI interrupts.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+Hi Remi,
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On 11/22/24 8:48 AM, Remi Pommarel wrote:
+> It has been reported [0] that a 3-4 seconds (actually up to 5 sec) of
+> radio silence could be observed followed by the error below on ath10k
+> devices:
+>
+>   ath10k_pci 0000:04:00.0: failed to flush transmit queue (skip 0 ar-state 1): 0
+>
+> This is due to how the TX queues are flushed in ath10k. When a STA is
+> removed, mac80211 need to flush queues [1], but because ath10k does not
+> have a lightweight .flush_sta operation, ieee80211_flush_queues() is
+> called instead effectively blocking the whole queue during the drain
+> causing this radio silence. Also because ath10k_flush() waits for all
+> queued to be emptied, not only the flushed ones it could more easily
+> take up to 5 seconds to finish making the whole situation worst.
+>
+> The first patch of this series adds a .flush_sta operation to flush only
+> specific STA traffic avoiding the need to stop whole queues and should
+> be enough in itself to fix the reported issue.
+>
+> The second patch of this series is a proposal to improve ath10k_flush so
+> that it will be less likely to timeout waiting for non related queues to
+> drain.
+>
+> The abose kernel warning could still be observed (e.g. flushing a dead
+> STA) but should be now harmless.
+>
+> [0]: https://lore.kernel.org/all/CA+Xfe4FjUmzM5mvPxGbpJsF3SvSdE5_wgxvgFJ0bsdrKODVXCQ@mail.gmail.com/
+> [1]: commit 0b75a1b1e42e ("wifi: mac80211: flush queues on STA removal")
 
-- Mani
+I saw in the original report that it indicated it was only for AP mode 
+but after seeing this and checking some of our clients I saw that this 
+is also happening in station mode too. I only have clients on 6.2 and 
+6.8. I can confirm its not occurring on 6.2, but is on 6.8. I also tried 
+your set of patches but did not notice any behavior difference with or 
+without them. When it happens, its always just after a roam scan, ~4 
+seconds go by and we get the failure followed by a "Connection to AP 
+<mac> lost". Oddly the MAC address is all zeros.
 
-> ---
->  arch/arm64/boot/dts/qcom/sm8650.dtsi | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> index 01ac3769ffa62ffb83c5c51878e2823e1982eb67..f394fadf11f9ac1f781d31f514946bd5060fa56f 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-> @@ -2233,7 +2233,8 @@ pcie0: pcie@1c00000 {
->  				     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>,
-> -				     <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
-> +				     <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
->  			interrupt-names = "msi0",
->  					  "msi1",
->  					  "msi2",
-> @@ -2241,7 +2242,8 @@ pcie0: pcie@1c00000 {
->  					  "msi4",
->  					  "msi5",
->  					  "msi6",
-> -					  "msi7";
-> +					  "msi7",
-> +					  "global";
->  
->  			clocks = <&gcc GCC_PCIE_0_AUX_CLK>,
->  				 <&gcc GCC_PCIE_0_CFG_AHB_CLK>,
-> @@ -2365,7 +2367,8 @@ pcie1: pcie@1c08000 {
->  				     <GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>,
-> -				     <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
-> +				     <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>;
->  			interrupt-names = "msi0",
->  					  "msi1",
->  					  "msi2",
-> @@ -2373,7 +2376,8 @@ pcie1: pcie@1c08000 {
->  					  "msi4",
->  					  "msi5",
->  					  "msi6",
-> -					  "msi7";
-> +					  "msi7",
-> +					  "global";
->  
->  			clocks = <&gcc GCC_PCIE_1_AUX_CLK>,
->  				 <&gcc GCC_PCIE_1_CFG_AHB_CLK>,
-> 
-> -- 
-> 2.34.1
-> 
+Nov 25 09:09:50 iwd[16256]: src/station.c:station_start_roam() Using 
+cached neighbor report for roam
+Nov 25 09:09:54 kernel: ath10k_pci 0000:02:00.0: failed to flush 
+transmit queue (skip 0 ar-state 1): 0
+Nov 25 09:09:54 iwd[16256]: src/netdev.c:netdev_mlme_notify() MLME 
+notification Del Station(20)
+Nov 25 09:09:54 iwd[16256]: src/netdev.c:netdev_link_notify() event 16 
+on ifindex 7
+Nov 25 09:09:54 iwd[16256]: src/netdev.c:netdev_mlme_notify() MLME 
+notification Deauthenticate(39)
+Nov 25 09:09:54 iwd[16256]: src/netdev.c:netdev_deauthenticate_event()
+Nov 25 09:09:54 iwd[16256]: src/netdev.c:netdev_mlme_notify() MLME 
+notification Disconnect(48)
+Nov 25 09:09:54 iwd[16256]: src/netdev.c:netdev_disconnect_event()
+Nov 25 09:09:54 iwd[16256]: Received Deauthentication event, reason: 4, 
+from_ap: false
+Nov 25 09:09:54 kernel: wlan0: Connection to AP 00:00:00:00:00:00 lost
 
--- 
-மணிவண்ணன் சதாசிவம்
+Other times, the above logs are preceded by this:
+
+Nov 26 00:25:25 kernel: ath10k_pci 0000:02:00.0: failed to flush sta txq 
+(sta ca:55:b8:7a:91:4b skip 0 ar-state 1): 0
+
+Note, the above logs are with your patches applied. Maybe this is a 
+separate issue? Or do you think its related?
+
+Thanks,
+
+James
+
+>
+> V3:
+>    - Initialize empty to true to fix smatch error
+>
+> V2:
+>    - Add Closes tag
+>    - Use atomic instead of spinlock for per sta pending frame counter
+>    - Call ath10k_htt_tx_sta_dec_pending within rcu
+>    - Rename pending_per_queue[] to num_pending_per_queue[]
+>
+> Remi Pommarel (2):
+>    wifi: ath10k: Implement ieee80211 flush_sta callback
+>    wifi: ath10k: Flush only requested txq in ath10k_flush()
+>
+>   drivers/net/wireless/ath/ath10k/core.h   |  2 +
+>   drivers/net/wireless/ath/ath10k/htt.h    | 11 +++-
+>   drivers/net/wireless/ath/ath10k/htt_tx.c | 49 +++++++++++++++-
+>   drivers/net/wireless/ath/ath10k/mac.c    | 75 ++++++++++++++++++++----
+>   drivers/net/wireless/ath/ath10k/txrx.c   | 11 ++--
+>   5 files changed, 127 insertions(+), 21 deletions(-)
+>
 
