@@ -1,113 +1,185 @@
-Return-Path: <linux-kernel+bounces-422109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F344F9D94AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:37:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E697A9D94B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:39:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B1A7161D5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:39:33 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B391C1BD517;
+	Tue, 26 Nov 2024 09:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MuNiPXT0"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4E93282938
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:37:52 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562661CACE2;
-	Tue, 26 Nov 2024 09:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WPe9DJ4g"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144D61C5799
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB681B0F26;
+	Tue, 26 Nov 2024 09:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732613849; cv=none; b=TwbKiCe4o5Ey6V7tc0OakypU/fV2L1niisTV7p3jQgCaHoYitaG927gzUNYPFF6QTci+frPZ0VwHtqg40vVvsCsVXsaZbdCgz0dSaOr8BsedZmTldOM8TtPs306JcvI/smPoSyb32WSVxpPrfa4o2epOJgOY2JUrvR9RfOYXMEE=
+	t=1732613967; cv=none; b=q+lbxG1ehKfnaFcbc1pMtcsah6eOBWnvO8GFB6x3DbGLqYFwE9jupAyPSnDbezUkchUODZDKwfPTg0eph5OHoEdY1IRnevJmZazwnKQwpamkA+7JKdyempSbWdQXH6LADOzMNraIuoMt8Zb7jqvvmpVtle48qUL4iFPDUEJNEGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732613849; c=relaxed/simple;
-	bh=Zz1N+l6E70WWiNX/9XD8+LoKg4IlcjQah9g89ADPBs8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tSz+m0lpRHrVs2n5OX7FKjzr2abKPpXo1xfyOVtcyNdyvE3Cn3vynJekMJuuA2P8C6wQVhKPZKafL9oWODBhTGZOm5VY0vHIHrnzQeQ7VVOR19cxlRLEk4XbErwEW555mSE3xOfTI8OZr6hzkwMP6r/WKhUldqgrSElv7qfh2lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WPe9DJ4g; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38248b810ffso4113813f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 01:37:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732613845; x=1733218645; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e2p/ybNbBpC5vQLx8bPdGGCOJ0xWaPNm6a3S5LA53V8=;
-        b=WPe9DJ4gF2Tp7nX8/+z3fC/IjGA+fkw0rL1w/2+aB08f/B9Si7yR66lQiF+qorf9EQ
-         Cy+Mp31096/ixsVAf8T1K7HGZlQDWzRQRu5aWVa7ZXDocL9atgJZEweMqded76IHmFTc
-         RlUnkRpMo+LOLjH4DSsHZp54gfEFmpac24+hgg3LbiTfW4fittIGfz4qkY+PH+Y7b4Oa
-         /n/FsGotSvJx1lKdMIjCsCZgC4raTOccEJQd9UNsaQYhWagoEsTjRI2QRCfvB+PTKpRD
-         CX+LqrJndQdSLFJndGc4sNfGj/yYeDuttTrTOeZNSwtv6HG8BXnnqQ6B3vMt+Q3yeA90
-         fg1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732613845; x=1733218645;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e2p/ybNbBpC5vQLx8bPdGGCOJ0xWaPNm6a3S5LA53V8=;
-        b=UJ8/C13wy3zCDQu0mNlhpNbIZfuUxy+XhMn0uVYzaXQFKWpGsJJfIyPFzKGYBjsY0T
-         byjuVdjAqaRrrDX1J+l0eGwA4939p6nu7JET2lT7gwkaV+OxhFi9zil4DjNhrHZOdYTe
-         R19l9XNL1tMjcDePVSBuMZIqcmjlXAKd5lvuDs5Fi7DUPMd9c4Cu9V2A/MjgFHKapaqX
-         wPZJHkYa1YfoACvnKRVcs2k00Rwhqvd3MyJCXi0yPEiHrk1rCUa6xjG1AadGoMes7rCa
-         /P7Xmq9ltzddeUWXekI1Oob0gyfKxXMH7ARkMQhQRhtKFIygEjrANeXxxTOPSbfWrRzx
-         dXyg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2Yie4TrCrtRbMj9zmrYOE0bzd9PEY4nhDevUXePR2C0HI7In9++zw9FNriiNHdIbFpF1hl4Y2XNrpBSc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWCjJCmn6Jwn0qZkOSIY/APDLNEiDwAKXi+gr9We7hkWVfhT1N
-	Pdgoti1ddqNPzh2cdjUtqJAmnyayrGn4er5sWcr0LwO65RtT90LxvqL4cgmEdTOir7RHSFoUaks
-	Pnov07UMpLLVWe8/cW3YXhBQ4fGHrfyrMeQiu
-X-Gm-Gg: ASbGncu+ODSb/Ywz0g3q4E4vurJeXAYavXKD/ejQsva14BXt7gSHh9STan9okEhad09
-	wW6OfW7jdinwqiraz2PPptYTS0x/Fb0+HEpGNG8kxdyxEPFO6CvkjzW6hLuxJuQ==
-X-Google-Smtp-Source: AGHT+IH8A0G5C+cZTzzzIP3ak0uqe9oHKIgIRpU4gmY54XBEkS7vQyL1q7QM0+P76QmbcWawrl24eZatP6rR2eV9ysc=
-X-Received: by 2002:a05:6000:2d01:b0:382:346b:3675 with SMTP id
- ffacd0b85a97d-38260bcbc58mr12390804f8f.46.1732613845454; Tue, 26 Nov 2024
- 01:37:25 -0800 (PST)
+	s=arc-20240116; t=1732613967; c=relaxed/simple;
+	bh=r+oYFhQDu206kh8rtpczYlIqikTcn2nqOwmDgEWMDZ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fIkFjHHf4SNkq+lar9Fem2sHYFeqhX8W2OnaCB5iDjbm0+yvp0ENoNU+iLWEF3VMb3/xCa4k8uA8oxxA0R3VQ9imnb7/PdeUx028E/KnL664RIli9dz58J1UfljlFIyafn8tEWPV6xDNr42+6QjtVPWo3Ox9VaXx/AaYCJ2TcrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MuNiPXT0; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ99pdh028937;
+	Tue, 26 Nov 2024 09:39:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	G02s6ZvHBVRG3S+Aqq0TT6fCgdbpyTvJwDs0wiqPkZE=; b=MuNiPXT0SEZs0O59
+	WK4owFc9yvf/uEAtIEkEvnlKLCU32b7LfXigMT6CWlfj01cPPM56S8UXN59K92ll
+	POPiTpz9wMmFldVRKmAMQCeQ1peQxcu/SlubnmIp1HwajEozNy2avE2+S41H5IhG
+	uArWnTt3uw2eeZQqz3lBsQNYFzFKBkZF4qqviMYfTet98/2n45Wet+4ezgXp/hk/
+	ZPeTDe/x6YVrwQykC0iysRNolt6T4okSNoV3036JwWR0OByWJvAKTQPEMtuZCB+a
+	u9GGfPebhxZL+FhUORLKmJ7Vi8g2DM1DBdXoVS2wmpq28aS68DQZOTHzD347BHPS
+	jEc5MA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 435bf5g2t5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 09:39:21 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AQ9dLe2018007
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 09:39:21 GMT
+Received: from [10.231.216.103] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 26 Nov
+ 2024 01:39:17 -0800
+Message-ID: <729add5f-1478-4b0e-84a1-3e33f153d58b@quicinc.com>
+Date: Tue, 26 Nov 2024 17:39:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801-kcfi-v2-0-c93caed3d121@google.com> <20241126091934.GP39245@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241126091934.GP39245@noisy.programming.kicks-ass.net>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 26 Nov 2024 10:37:13 +0100
-Message-ID: <CAH5fLghmqO8jAuZm5NUOP8Sf1Nzqdk6PXknozSF0oCE00z2pgw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] Rust KCFI support
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Sami Tolvanen <samitolvanen@google.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Matthew Maurer <mmaurer@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	scott.d.constable@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] dt-bindings: qcom,qcs615-venus: add support for
+ video hardware
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        "Vikash Garodia (QUIC)"
+	<quic_vgarodia@quicinc.com>,
+        "bryan.odonoghue@linaro.org"
+	<bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Rob Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor Dooley" <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio" <konradybcio@kernel.org>,
+        "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>,
+        "linux-arm-msm@vger.kernel.org"
+	<linux-arm-msm@vger.kernel.org>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        <quic_qiweil@quicinc.com>
+References: <20241125-add-venus-for-qcs615-v3-0-5a376b97a68e@quicinc.com>
+ <20241125-add-venus-for-qcs615-v3-1-5a376b97a68e@quicinc.com>
+ <jovwobfcbc344eqrcgxeaxlz2mzgolxqaldvxzmvp5p3rxj3se@fudhzbx5hf2e>
+ <18cc654b4377463e8783de0b4659a27d@quicinc.com>
+ <474cef98-4644-4838-b07c-950ad7515b73@kernel.org>
+ <8c60696c-df14-4300-8a92-59eb134a96d2@quicinc.com>
+ <b2729bde-a12c-4662-897b-18bbea66d2f6@kernel.org>
+Content-Language: en-US
+From: Renjiang Han <quic_renjiang@quicinc.com>
+In-Reply-To: <b2729bde-a12c-4662-897b-18bbea66d2f6@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: _i6MVz5Du2hP-4CJrfTyFxb9vzOSRepH
+X-Proofpoint-GUID: _i6MVz5Du2hP-4CJrfTyFxb9vzOSRepH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ suspectscore=0 clxscore=1015 mlxlogscore=947 spamscore=0 malwarescore=0
+ adultscore=0 bulkscore=0 priorityscore=1501 lowpriorityscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411260076
 
-On Tue, Nov 26, 2024 at 10:19=E2=80=AFAM Peter Zijlstra <peterz@infradead.o=
-rg> wrote:
->
-> On Thu, Aug 01, 2024 at 01:35:16PM +0000, Alice Ryhl wrote:
-> > The control flow integrity (kCFI) sanitizer is an important sanitizer
-> > that is often used in production. This patch series makes it possible t=
-o
-> > use kCFI and Rust together.
->
-> So about this -- there's a proposal for a modification to kCFI here:
->
->   https://github.com/llvm/llvm-project/pull/117121
->
-> And Sami notes that this would break this Rust thing. Assuming all the
-> relevant crabs are present on this thread, could you please comment?
 
-Thanks for sharing this link. I'll leave a comment.
+On 11/26/2024 2:42 PM, Krzysztof Kozlowski wrote:
+> On 26/11/2024 07:07, Renjiang Han wrote:
+>> On 11/25/2024 11:55 PM, Krzysztof Kozlowski wrote:
+>>> On 25/11/2024 16:49, Renjiang Han (QUIC) wrote:
+>>>>>> +  video-decoder:
+>>>>>> +    type: object
+>>>>>> +
+>>>>>> +    additionalProperties: false
+>>>>>> +
+>>>>>> +    properties:
+>>>>>> +      compatible:
+>>>>>> +        const: venus-decoder
+>>>>>> +
+>>>>>> +    required:
+>>>>>> +      - compatible
+>>>>>> +
+>>>>>> +  video-encoder:
+>>>>>> +    type: object
+>>>>> Both nodes are useless - no resources here, nothing to control.
+>>>>> Do not add nodes just to instantiate Linux drivers. Drop them.
+>>>> Do you mean I should remove video-decoder and video-encoder from here?
+>>> Yes, that's my suggestion.
+>>>
+>>>> If so, do I also need to remove these two nodes from the dtsi file and add
+>>> Yes
+>>>
+>>>> them in the qcs615-ride.dts file?
+>>> Well, no, how would it pass dtbs_check?
+>>>
+>>> Don't add nodes purely for Linux driver instantiation.
+>> OK, I got it. I'll update like this. If video-decoder and video-encoder are
+>>
+>> removed from dtsi file and not added to qcs615-ride.dts file, then the
+>>
+>> video decoder and encoder functions will not be available on the qcs615
+>>
+>> platform. So I think these two nodes should be added to the
+>>
+>> qcs615-ride.dts file to ensure that the qcs615 platform can enable the
+>>
+>> video decoder and encoder functions.
+> You just repeated the same sentences. Address my comment instead - empty
+> device nodes should not be used just to instantiate Linux device drivers.
 
-Alice
+Thanks for your reply. I agree with your comment. The two nodes 
+video-decoder and
+
+video-encoder should not be placed in the devicetree. But this is 
+affected by the venus
+
+driver. On the old platform, some only need to enable the video-decoder 
+function or
+
+only enable the video-encoder function. So these two nodes were added to the
+
+devicetree at that time. For new platforms, the iris driver will be used 
+in the future,
+
+and this situation will not occur.
+
+> Best regards,
+> Krzysztof
+
+-- 
+Best Regards,
+Renjiang
+
 
