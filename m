@@ -1,193 +1,156 @@
-Return-Path: <linux-kernel+bounces-422902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4322A9D9FBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 00:40:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2FAC16842B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 23:39:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEB91DF992;
-	Tue, 26 Nov 2024 23:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="JYRQAKhb"
-Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011043.outbound.protection.outlook.com [40.107.74.43])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF5DC9DA010
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 01:41:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802D51DFE09
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 23:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732664397; cv=fail; b=mj/BoxhEUy6l4Hm2CLCQnW2rF4g8GTYiYjmpQFUYGXcnlx8az2Fv/KzrUiqKfuVOrLsbk4P/PXUEwRWr5O4uqeKmU5eT4VBX39sBDJ2Lm87DI6wSNQSdl+0ATFEkPbxrsR1cnDjpzuLwpnLaU/kdx/JlFhgNnqS2S3/N26Nbjx0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732664397; c=relaxed/simple;
-	bh=14ThX4Mcj7ILp0+KFR+klE8BBOM8eBpqYFqZDKLC0mE=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=HIFK5hAPFJUJhALtkTkI7usRkk9sNcdecP2UgO4BumiWUnrRfYSEU5QOzTRazOJ6OkPd1/ktXn8Jb9Tw4xT21p3jSVADE/5xbv8hCpQ0mC//ryg+hbKcQTkvvst6GbyVq0XAEw1hlNoxiuqSV1fnNkMfuw65RX6KMgOnzj9EKn4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=JYRQAKhb; arc=fail smtp.client-ip=40.107.74.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iUyXCi6H5XBx4b0pc/X7FCrmo+TrIoktlWKRxOM8UVD9S40DXOYdwf9xEtC2FiOLCkn2payaEnyxgQnFanxP2X1ax4s/ofga4JL+RBcbh89LsCILIVjYuglfzauaMQLcw1KxgUVYCtDQ64w2AaPkr2jWPfp/d9jwh4Nk2rAlduIlUiNz8x52X/fnxvskaNZQcJBszUYZQjsDf0bXCNFfapC8H7Iyb9wwKWRoGLPSOPmy0w09U9ZonndhUtAvbUWpIOC6udCu3vuQMPkcaiISvYjyGRWBIgLpPoDGjctxgj374eTRHdo/pVCB7X5GChrZdXnzUM4JdA4bTXFb0FlMZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xrGISA2//XTBz73phpzO1xWI7utSIsdHpGmeaf2d6Ws=;
- b=AGvorFnDVFtrU0kS2Xf2IK2sRI7pTOgy/vT9vh8QY4s/Jcuq3e225VQsKwTdUVhBEAQHjbkl8tfdbSsa47aZS51qLTwu1ztF/ougbf+pMWJlZ5tJupDCgerfwsMWA9a3TFxv77s1zC5MCxnBHP5RViDtkHjVGr/RPb3zw5QgITlpo5y+NhttAJdq7iurP/jv7AaQHb/Xyhlk46SXNGGlmhH+PGz4l06jafQruPSF4sXsMSFomiyAl4/FCNVMxcvsoIzxz6aTVfcsKhOwp4jz1aoahtuuaJ1gAPEZaj04RDTSOyt84T8BguQ+KBYSHTYcmKnXXesMRHyvely8/lvMyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xrGISA2//XTBz73phpzO1xWI7utSIsdHpGmeaf2d6Ws=;
- b=JYRQAKhbmk/QWX6WWI8nHzLMcktrs7COC8Rle6rlfZAIFl9Kqa5Jo8afopDZnRHLwj+1kkVCCj1AraY8QoCCuCEOK7Ij0TjNOY0Wbq9R53V7K5L1lKo5WLG7mLe+E7H6R2LJyF3qUr/kjZkwZx6kLWIZnr1WVfs41u2KahCI6zI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11) by TYRPR01MB13294.jpnprd01.prod.outlook.com
- (2603:1096:405:113::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.13; Tue, 26 Nov
- 2024 23:39:49 +0000
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11%4]) with mapi id 15.20.8207.010; Tue, 26 Nov 2024
- 23:39:49 +0000
-Message-ID: <87ed2xwomy.wl-kuninori.morimoto.gx@renesas.com>
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	dri-devel@lists.freedesktop.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 393EAB21DDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 27 Nov 2024 00:41:39 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5E02F5E;
+	Wed, 27 Nov 2024 00:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b="M/NIAOAn"
+Received: from sonic308-19.consmr.mail.ir2.yahoo.com (sonic308-19.consmr.mail.ir2.yahoo.com [77.238.178.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D078A23
+	for <linux-kernel@vger.kernel.org>; Wed, 27 Nov 2024 00:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.238.178.147
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732668093; cv=none; b=PbrtKWU/P2nHkOKFB8CjXNw3tJtioOTyjbUxAG89YZWPrmi/GY7DGPc4evJfs2tZ13O55NGU34PZVpHe6ID0mxONeub4gmLFKm+LnYdkG7iBoaYuOun4qv8a0cFaGYiu+6FeOs8G1STknshKwKZOgnygbrZafLb3UBpUHTbcIIk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732668093; c=relaxed/simple;
+	bh=wSnTftQjXX6IVevyMrORMn78ByIlh5J0F8vJt1MQnXk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:References; b=WFN2MwOjJj9/6OcRfXrpwEaJm1AUVM5wuKhCMNaxdgIvL6WWHLp5LL8mD/YsfxdRr/Mir13VN/+TioI4o9OiBSAKSLCX+B1Coj9IStugKyVe4JpreULmoAGZYCC61pFX9cHVJ47U2M/E/mL6qv2fp1kRO9ybOntdttz8oXvYQ3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com; spf=pass smtp.mailfrom=rocketmail.com; dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b=M/NIAOAn; arc=none smtp.client-ip=77.238.178.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rocketmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rocketmail.com; s=s2048; t=1732668089; bh=MgL+Y0R2nrnBm7+Isag/O8JP2FWkBIMIsTL0WZZiGH0=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=M/NIAOAn3ruCV7z6dRLdutBnZ8BLb81OyDT47srxjJS2uwvasv25BOOD6xwIP7Z+FSgUWu3lRwZ0IcDBP5LmIQkO1YP0tcW0UtWxzQF31B9tErUJgUHO8NEnGCRWiJ791W+bIFTnPSRzMYwt2MSwDv1Z5dIKaihGhLTcpPfVEoT/duLo1bM90cvnbmqg9xJMvHDNMltWbk5+uUO6bnxilTNISuc6paOmLjEN/BIl0k55qILPwB44atJJpfvolT0+iNyV9b/g86gCXGgWOQJ6q7gzSXcHIEzUJLLPsZSUdc020TUropkJdqxNP1DqKEiP7AQl13ltBugMRl81sYZikQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1732668089; bh=U6g9YrwUFR8HK/08C6+pKVe3owJZ1PezKgNL3Fr0M1Q=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=e7IcudU9v4D1XIICAj44qv7VuNRCKxL+sPMrfhO3VrEaEJFOEzb2HhkIvHf3yAWuQkXwG51jPKl7y/LwZlJWhqW4s/cmjk8XvYO/FQkfttwDKecDXEgh/3vIcm8Bkzq2dpQ0kPv/vD+mVFuYdY93ajPa50AcoanMzS6BK4VOliGAZL9Xf9o77vnrfgY9Y6b97BskgnYTDeRMhljTeDg+UsxXrUhsuYolw4U3GBGLa7tFIINj/KplrF6HOjDZsh9c88D4Q/t2QPcl8qmClTtMGNri3il4olQ+U1EWSJSQyOXVBkL2N7tf/WCvalU6q6l65udjOzMussFylMdCRZNMxg==
+X-YMail-OSG: 9rcZ73MVM1m1cw2dukGKTtFNYFlxJ03MMqfvacqEXKJIetLz2Dn4pzvbsaIJjr8
+ diA1MEl3.gXJWdaFVtH.Nhi591wJG.Q8zZbMA2McImuPvQp0ChT78flK3tQf44d.lsm4i3ZIDwMr
+ IBSzgEhFSZECZz7ainjEONQJX2Nlft6WPCAmnPMn5aHyULmtbNlskmxfRtuYqHK_p9VEwU_3Rti0
+ F8wx5.bvWPgCS0q1HEJQoVi0X024gtkFRmL.Ts5g4Btg8k_sBoVsCXHU.n7gb4LRddd0kIZ6Z2b0
+ WlpADe81f78d3huAkQw4e7vHhZHTbGIGHqwPZO9kPLEPtKx28gVggV6oawdPghvRd4aA9maZy19o
+ q5LLN4IIbp9v4mVa96jPQ2uwAMZLi8r5VKQQv8e3ewckF_3JRbcyPMnDr4cHmSyMxbv97qqXtQXn
+ P3gAts_jGn.SavlNgGN_9eh2U04.KUk9VgC1ooVywb1KZ4t7bBLa6d7G7Tf4zbD7e9u8c1RMN_H1
+ Ma7FYhUCAQmMVpnhpAuCY45DTXGO7_40qO_iQxLeXvRJ_EJ2LQchMSP_orfse1OOtCNGtKxyw8As
+ EiGN2EA2xSJY6FXHe10NLs_NWVXnexnrORdnVqpfkuLu_SLkZQBzRgZKGsmTZtoGQCvvyHcObKAB
+ Cf6QTOzGIEDiRCfAbKxkgAPGuf0IXn5ooLsJetAs2oCN..5VfJJuwCMUHSBcEfxmoOk9jyU_cZQR
+ gdDsjjU66EUny5HN9t3cxGOzYxKPrqFJ5Ash8ZU8B1ghS.e3i1._WO3.F.Fv.E1PmbGR9ECRSEId
+ fNww4KyXYxf.iLUDkaR4CrVpnqJX.iSoeH6_U.V89vtUbE1akxFV92QZeAZXQibfMhHFkxCgbroo
+ M0GTnvuXM6vqKXHbpkRwonHRDz7bdRPYZq0UWS5CK5fH4vj.ok7qq1wF.0hgSlSlFe402pnazfKu
+ PWu6tOwMsP47JG1jkFyu4YdWQ6Tdg.97mKbDrWGvUeSF_qSLe6XkZoljkkFGHqtpugnRDbpoRuh7
+ eW5U2M5BgRT65nyyAqSTxGjFmcUKoOExNYKkUUKZRP4IHN1wyCDemimcIGJXTzLOeyaSgx7VDUBU
+ vvLgrS9a64dzx7.0JH6kNtHu6sszxGfFuKjW_L4fhVxKUSb6b053NK9ysKThp2OGnlNo0Z1aVJaH
+ 19S5aOSHYHU7LOeZvws35G_Ek3_YBj6wCmrYST2NB.XtSkFchSOaizece1cKlmMri7nl_5jq2wS1
+ 08EtjbZc7VczTyKkSRGXasBobNBaScwxJGuo7AdxTvuWB4fcgcE0uVfeWaodf7MY2DoVRBPzFmEF
+ 72q9gYhiTS_x_HaKEsEHWTVGJVH2MEnE.vecZ_p0YMYX5Y2nphpVpv4sQbcQVyr6xwI0NEw6ZknF
+ p.lvM3SPiUOv57UadyAZ_LM.G8qyfFHDj9Tl5yFskbhElgJikBWn2kNYCHNnSS3cvSXfWM5SuG67
+ EZxxYbYuBT7Oosz3JoHqIFw4iSEAiIJCoz2baEu8GttIUg1nCrrWDJ36BK.rgQByTy7MRGve5YKD
+ bktKfaGNiwXCa2Bu8KVW8D9bIpGgWK2KCUR8evrhmNbtKgUCs64GL48DrOWn5858ecPMP4gH08yY
+ .qI3JlvuGNDWzpVQDo8rpSkMhDVKFhtju_KUkvcrx8456OWL_ga57I7wan1YpSwnzZ5XreAYj254
+ hfrLlvCKUwdxdwzEznlwbLKQj8VmWeGWW3ddCOVCz3L3Y952GgEzyS6bOJtTEATqOWXLRl09w_vC
+ GnIjCOQOzL654s4rnYpSSk_fUMZi0FxpJXquFwizRWin3yJm4o3MTkqEl.QHkRhIgbQfuaOtHuLz
+ M6UMCP7gSSdg2s8gkblND_gmIXLPBhC14_o7NhvujQaR.Wtdr3StfwP_iF1Ot5qgzKwjrEsL7z0C
+ x1ZGH3.BvUwJVu5UPv6PA6mJgwHr_nCVOALBrqrQeBa1Fpm.hd7q2CdVJuOYYDe2V1NBpbPh63Yz
+ OrWOTuk1P7U9sg3wREOOOV2yVtTq.Uf3RAvLMcPd0YrQFsaRkmOEIvjLm5gbwCaR981m6hy1iHJn
+ Pey6gumWXbzG7e5YVWziw9XR5.MCf5OFQByW.QlOZmsT7JfkLQJuT4VLqk_uJl9jcUSt2iPzHFkr
+ angyWaHh5Wfr3qozEXz9Zehn9rAdzT1YPzywF62TsHgrl0ENeXNxnc5OlhOPqKrfNTYNmbzj.FdQ
+ oK4XguY8PxzCtNnctAseOkxDK_CTDaBW1MgNrLHYVuB4pk.3Kg8ixtHiE9fpjTCfeTe5eypKcz7p
+ DChlbRRJdFGCrnUh3Y4xUDu.XfvoQhQDCmWkctFRjVQ--
+X-Sonic-MF: <jahau@rocketmail.com>
+X-Sonic-ID: f08bebbc-9d09-4fe1-97ea-51ff3b275371
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ir2.yahoo.com with HTTP; Wed, 27 Nov 2024 00:41:29 +0000
+Received: by hermes--production-ir2-c694d79d9-qp6kn (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d91172f74165254868bee18e8bab607a;
+          Tue, 26 Nov 2024 23:40:38 +0000 (UTC)
+From: Jakob Hauser <jahau@rocketmail.com>
+To: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>
+Cc: David Laight <david.laight@aculab.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v7 0/3] gpu: drm: replace of_graph_get_next_endpoint()
-In-Reply-To: <20241126123253.GF5461@pendragon.ideasonboard.com>
-References: <87o722sg6y.wl-kuninori.morimoto.gx@renesas.com>
-	<20241126123253.GF5461@pendragon.ideasonboard.com>
-User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
-Content-Type: text/plain; charset=US-ASCII
-Date: Tue, 26 Nov 2024 23:39:49 +0000
-X-ClientProxiedBy: TYCP286CA0189.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:382::15) To TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11)
+	Jakob Hauser <jahau@rocketmail.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] iio: magnetometer: yas530: Use signed integer type for clamp limits
+Date: Wed, 27 Nov 2024 00:40:21 +0100
+Message-Id: <20241126234021.19749-1-jahau@rocketmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|TYRPR01MB13294:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1d24ef3f-9c23-48c6-c9a2-08dd0e739e40
-X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|52116014|7416014|376014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?oASopSw0h7R2mAl+SMSFogbezEuw6pIlqX2UwJ7RvqVzWSHIWsZGjtwKGoX+?=
- =?us-ascii?Q?eEYdxFWgMh3I/bLDqTCFrq5j3TKI81OGZEJohAFl1Z8sLKli2zifO27nrBU7?=
- =?us-ascii?Q?FFOx11eh2tNYy0oSncVjTtP8BnGoEX9oV6XzxzYA8dK/4rCqw5Q0q6JZG85/?=
- =?us-ascii?Q?K4cBEADoWQr2CcR5sfzJE/Glt3x/BRLdcrNScjitkkPGbBlXbSjNK9sRIwzE?=
- =?us-ascii?Q?k6D26x26sSSClUF5y2Vv2S1HGUn6/s2Fb7yp17GEqZfsy5KDGKtojNkqOk8n?=
- =?us-ascii?Q?D2HUJpjZCw+Ijz0db1EQt+PUzyECESYD5e8pMkMChw37T5Fcl5e9Q+sxbFRF?=
- =?us-ascii?Q?zwEGYxrWBIKJ3oPQLJeZMKy1pgh5CCuGs+eX8mC+EDbtlISNbRjKZUSR/ElL?=
- =?us-ascii?Q?1GasClfmI9TUXBIo14m47xFqWRVmH22K3glRWMPKgLCftXIlI2Vwj09k6Mv8?=
- =?us-ascii?Q?NYuh7SgGdHjgDuq3oqabv5EWiOXgL28j4yNkpSVrNvEHBmVLJp8jvaNqbvQw?=
- =?us-ascii?Q?yW0l424GTc1ov02LuKMkQAUtavZgcsfzRCOv/87f4BOstWdTo9sGr6ANygIf?=
- =?us-ascii?Q?blF2dFra/u6uFbBga7aKf4paQ0+5purjeieDsvzt1Ini7Bv0ETMopdrG5Bql?=
- =?us-ascii?Q?y8P8IltNMoNscAYUxcn1Ki02LaE/FAlbuiQHvyJUdc3F/EpenBXlcI3zN4Sl?=
- =?us-ascii?Q?YgrisKBV2krBZzgI9NK6dNXySoZpc2Cws8sFVcQBkbMf7IGW8f9YFeBTmO7H?=
- =?us-ascii?Q?ecl6iUgRY1LnT/4/fI8xSA30XfuvGeedIyk6W5Yuh854stHckTIHRpMqwJxb?=
- =?us-ascii?Q?XtqxD4Grwym+eg9n5abYYPPEdQujefe0AaKbVpJkz2LyFHMODAIe6PAIiPIi?=
- =?us-ascii?Q?xAmIn5anT+QKCrgfDPjU3jiX+HPdQfbU8rKrMYlNwX1xAbpX8niVtgVsqP9h?=
- =?us-ascii?Q?R1Jh5tmOqXBGKTeRSwjeDTBEFU9BJJzfE9Urg8zpCgVFl67o232g+gk+bOUm?=
- =?us-ascii?Q?3CGPqCNjlvbeFRfGC01cBbcldpPhIGuF0XXV5E7IQtX8t36xihjumC93pMK3?=
- =?us-ascii?Q?kTG1MuEyYbD45m41huosH6bHkdoToVRTg7Xjy9Q3VISxKEDj0Kzz4aqegYl1?=
- =?us-ascii?Q?zSMcYAkYmq/TjWMzJ2YTYeUe1pJdNjtQSP2F4cUq/nHB2VgHVMWARUn0sA6u?=
- =?us-ascii?Q?+I69sbnvVKhMmJAQ3CQY47vJ9mQWzSL0KkTmFXlzlxu9Mzd7guRkY6wiVFZ7?=
- =?us-ascii?Q?zVX80OcoDZbQUxDODdcSFpedBDV9DFiZbRdLnkm5Lezddv6woyN2ou9QV/Bb?=
- =?us-ascii?Q?RNHEzWWqpFpRc0kBjtOOUUaogVIjEcsrTiXTZbdzwy7CCO0pP3LnyP83uNk/?=
- =?us-ascii?Q?OoSgDYhq8u9yDfq21z9ik6s7o0nrM9j2oTz3VFS3edJXfI+xnw=3D=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?Bqo+jeAO13DU1f1AG123vO8c+VMIrw4dN/zCo33HcyyKST1T5+iNqM8ed4f/?=
- =?us-ascii?Q?/DvD7436vk6X3u81cU1IcQAvTSL+8S8f5utShDaOYmry9jpibaIUGk+DBeCx?=
- =?us-ascii?Q?uVkydfeGGH84ZNhTHpY/2OyJIdkRXoXPnqSOLlEXhVWO7yLv39MzC2XXqT7f?=
- =?us-ascii?Q?8s5nAmIUfmE0qhqQrYL8kWUjVvOBLEGwFasgwmTcL5V3C5EGePSgrPX9dMaY?=
- =?us-ascii?Q?y8Ubx6IRg66tQOgdwM65d4D5EcaRC1SjhkGHhp04wvcD/hij1M0+otPERQId?=
- =?us-ascii?Q?HreLetvjZ6bFSq3e4vS/rUwIN4XKN8/Wd9ELrG4Q/Z+Xi01ms8WTwTprnUXP?=
- =?us-ascii?Q?64NtSkg19xvT4x36mNqxsU35M0qB4tsBjHDnj5WECu5wk361VKs9C5AoHuWh?=
- =?us-ascii?Q?YiK2NINZtWTUgMnXTOvL/3q3gYFzWffzW1RraS6+kKHI49Ui0wsD1yd+AZq+?=
- =?us-ascii?Q?nhin1rPE1BnwW79JzcseKYGaao8ninbtRITymNqGyS+phf49PD1KDkBU8JtK?=
- =?us-ascii?Q?0lYjTz/QrwtDwUdX9pOeYyVs0xN48uMclOiV51kwAYLjuM2LILsN9WcYsjtx?=
- =?us-ascii?Q?AdBJX2sfYloPOf424qWufnFb3MvPZEXs+ZoZPvlSUQdtfRTYAm3J3Z5qv4VP?=
- =?us-ascii?Q?yF4S/jC1uXNW1vzQvksHGOVYDi4mps73cZErvrwfLy+TL3HcB+G5K9gOcr7f?=
- =?us-ascii?Q?Ok6qWUE3Sxb8Y+inxR81h1HIq2nTktu+RYA3/fcDVmuHy3S1gLgHR2W+/MAl?=
- =?us-ascii?Q?BWp6bJOgVwr3yV5RzeurCR+0dBSY7uuWOxZ3fq37+lTC//l4hdQbr9a5nMX+?=
- =?us-ascii?Q?0Z2of8VPoMqIeoxpyGZhjz4lv4FSbAMpjOuSukko+E7c1Z8oTwAIUv1Kdiyy?=
- =?us-ascii?Q?+i7By9rZd61kRse9TDt733a89mIHotH6o5/1uMFBxwIXVJ0kp3KKQ3oQDAb9?=
- =?us-ascii?Q?HvQ/Mzei4CqJ98/4TRdJRwo/XMpGzbndhoB4CBEOqPrihTXDSHPQns4hyQkZ?=
- =?us-ascii?Q?G7jPVQkdvPDelRZiRVmr6yN069lPfZb3HjW6tDIDWkdIiCkokt+rrxntvLVM?=
- =?us-ascii?Q?j+cPD0sdY0DbDBt3zJBflSVlagHI3z0bxLy7y9HZp01f140B6XW6Uykl6Gtx?=
- =?us-ascii?Q?nUIBqKWeudg75RPDknhva42WM5RCXwY3YCAtT6Yylow/T37rj4nzYRh9p313?=
- =?us-ascii?Q?YbKo+hrNQ6t39oohCfm8OlZSyj/KxSotppaYKVHQEILuBvk2Oz1t5Wv3HFsm?=
- =?us-ascii?Q?cud038TAPoxdEAP8ccR+QAILsUVSWBmG0VTCv3uz5qg8O0mj3KjNSzmDnScz?=
- =?us-ascii?Q?vDMvg4+jGazwkoel5KuI3D/rtJU28EwAlk5HJdIvTKvo0M0GNnENBeWKbiTL?=
- =?us-ascii?Q?vSNjIl34p8CNJN+nqXOTOUvLXyhmbrjxCMieeJTB5/S//siCT6J68NJqhoB9?=
- =?us-ascii?Q?fDyDRMDDlyrX210JnThSjbK6mcBJ5O0W/1bjkuXxrm5UE0pZq+M0CtQSVHZC?=
- =?us-ascii?Q?4/gUI6hnLHQwlULsSScl4+IZIda6z6NbbNiJGPDeaiI7nVKnsX+FaZeq9x/3?=
- =?us-ascii?Q?ufbVJ5lQ9UJOwzij70KmzBPIi9umddcVtmRLdkLW9xDyop6vkWuLNjs9JIIZ?=
- =?us-ascii?Q?PFt4xQ6tNYlC7j1QiqKt6tA=3D?=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d24ef3f-9c23-48c6-c9a2-08dd0e739e40
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2024 23:39:49.6688
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 73yf712a/J0Epd9Z9DkPQwnEd0wfSKc00f5DH7TlNmaWp3bYk9EZfCzVM3tQFzjqqDCYe367bwfrI8HSQmaGQlVq5v32JnHTv+u18rs6/hfxS8Y+tLhegTEACEXbJk6D
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB13294
+Content-Transfer-Encoding: 8bit
+References: <20241126234021.19749-1-jahau.ref@rocketmail.com>
 
+In the function yas537_measure() there is a clamp_val() with limits of
+-BIT(13) and  BIT(13) - 1. The input clamp value h[] is of type s32. The BIT()
+is of type unsigned long integer due to its define in include/vdso/bits.h.
+The lower limit -BIT(13) is recognized as -8192 but expressed as an unsigned
+long integer. The size of an unsigned long integer differs between 32-bit and
+64-bit architectures. Converting this to type s32 may lead to undesired
+behavior.
 
-Hi Laurent
+Declaring a signed integer with a value of BIT(13) allows to use it more
+specifically as a negative value on the lower clamp limit.
 
-Thank you for the reply
+While at it, replace all BIT(13) in the function yas537_measure() by the signed
+integer.
 
-> > Hi Maarten, Maxime, Thomas
-> > Cc Laurent
-> > 
-> > The patch has been created as 1 patch for "drivers/gpu/drm", but this time
-> > I have finely disassembled the patch into 3 patches.
-> 
-> Thomas has merged v6 in drm-misc in commit 17558f97fe62fbe14757880a0aa998bfd194ea95
-
-Yeah, I have noticed about it, and could find it on linux-next/master
-before, but can't today. So I thought it was rejected for some reasons...
-
-Thank you for your help !!
-
-Best regards
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202411230458.dhZwh3TT-lkp@intel.com/
+Fixes: 65f79b501030 ("iio: magnetometer: yas530: Add YAS537 variant")
+Cc: David Laight <david.laight@aculab.com>
+Signed-off-by: Jakob Hauser <jahau@rocketmail.com>
 ---
-Kuninori Morimoto
+The patch is based on torvalds/linux v6.12.
+
+The calculation lines h[0], h[1] and h[2] exceed the limit of 80 characters per
+line. In terms of readability I would prefer to keep it that way.
+---
+ drivers/iio/magnetometer/yamaha-yas530.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/iio/magnetometer/yamaha-yas530.c b/drivers/iio/magnetometer/yamaha-yas530.c
+index 65011a8598d3..938b35536e0d 100644
+--- a/drivers/iio/magnetometer/yamaha-yas530.c
++++ b/drivers/iio/magnetometer/yamaha-yas530.c
+@@ -372,6 +372,7 @@ static int yas537_measure(struct yas5xx *yas5xx, u16 *t, u16 *x, u16 *y1, u16 *y
+ 	u8 data[8];
+ 	u16 xy1y2[3];
+ 	s32 h[3], s[3];
++	int half_range = BIT(13);
+ 	int i, ret;
+ 
+ 	mutex_lock(&yas5xx->lock);
+@@ -406,13 +407,13 @@ static int yas537_measure(struct yas5xx *yas5xx, u16 *t, u16 *x, u16 *y1, u16 *y
+ 	/* The second version of YAS537 needs to include calibration coefficients */
+ 	if (yas5xx->version == YAS537_VERSION_1) {
+ 		for (i = 0; i < 3; i++)
+-			s[i] = xy1y2[i] - BIT(13);
+-		h[0] = (c->k *   (128 * s[0] + c->a2 * s[1] + c->a3 * s[2])) / BIT(13);
+-		h[1] = (c->k * (c->a4 * s[0] + c->a5 * s[1] + c->a6 * s[2])) / BIT(13);
+-		h[2] = (c->k * (c->a7 * s[0] + c->a8 * s[1] + c->a9 * s[2])) / BIT(13);
++			s[i] = xy1y2[i] - half_range;
++		h[0] = (c->k *   (128 * s[0] + c->a2 * s[1] + c->a3 * s[2])) / half_range;
++		h[1] = (c->k * (c->a4 * s[0] + c->a5 * s[1] + c->a6 * s[2])) / half_range;
++		h[2] = (c->k * (c->a7 * s[0] + c->a8 * s[1] + c->a9 * s[2])) / half_range;
+ 		for (i = 0; i < 3; i++) {
+-			clamp_val(h[i], -BIT(13), BIT(13) - 1);
+-			xy1y2[i] = h[i] + BIT(13);
++			clamp_val(h[i], -half_range, half_range - 1);
++			xy1y2[i] = h[i] + half_range;
+ 		}
+ 	}
+ 
+-- 
+2.43.0
+
 
