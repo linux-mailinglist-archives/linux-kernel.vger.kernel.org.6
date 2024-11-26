@@ -1,138 +1,149 @@
-Return-Path: <linux-kernel+bounces-421740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D9F9D8F68
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 01:03:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7BC49D8F70
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 01:06:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 858D2B257CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:03:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 727C2B2660A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:06:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DE1629;
-	Tue, 26 Nov 2024 00:03:37 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C840E23D7;
+	Tue, 26 Nov 2024 00:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NHtWPsj3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB31137E;
-	Tue, 26 Nov 2024 00:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1394B161;
+	Tue, 26 Nov 2024 00:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732579416; cv=none; b=cUczhQfH/TEqGvawAJNiqPKLavl3df1TQ17/mAOPEqYFn5APLf6bYqRtrQF3fhoexRkluZ9/JNfzDGnJSf/8shDmyMRfAciGcmyLZ2uW9h1guZRnm00n/MnULSg5HKgI4qTFpgCqRX+yfZ08doeFIzwQUuifA0/y+faHTK7QEnI=
+	t=1732579575; cv=none; b=siBkNM+N3L3AS2Fww9k8Iww+OR1ih7PBvuWkxP/HlyPtoLHbnCh8sPbt1LDimCTS71RZXdfx6KzZzIHEGg6APz+BvT4w+lbdBcHmLYac3vVoSWx97RZ+FfSRth91rBOJZTC5eM3hR0mQZxChOyfLFedGOFZ1uRDhTM3Z/bMOzyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732579416; c=relaxed/simple;
-	bh=BEiUsKmYO0eWOyQLroD2MlMy6oITnYJV3hPYYK2gNGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VdBIVzeYGvJj19rKIfKnb6GM1mzaPqgpu/bOCIXHdoijtViAuZIhQThAYobYWBnOcw8uGZHmEWAN+q40o5FwpS/SxCiQoIMKQcjh95aTg573Hb+uOgiwFHezn6nNn5mV/5VsS6+UXW5EwbKUxGeygQDUAkKLbFP+hafVPp7rn8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C309C4CECE;
-	Tue, 26 Nov 2024 00:03:34 +0000 (UTC)
-Date: Mon, 25 Nov 2024 19:04:22 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar
- <mingo@redhat.com>, Masami Hiramatsu <mhiramat@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH] x86/ftrace: fix boot time slowdown
-Message-ID: <20241125190422.7372fc2c@gandalf.local.home>
-In-Reply-To: <20241124140705.2883-1-rppt@kernel.org>
-References: <20241124140705.2883-1-rppt@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732579575; c=relaxed/simple;
+	bh=vrRKihhsrhqCl3rAoB+x53rxs7JaO8EdE8B7zyiayBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YJfS4l2cSMDpUOS5TH6P7hLNaRnWRXaVqydrqc/PYxg+QcZ6l+/NmpeobpQ4Z7R8N/pSXP4ZqglgMXnzpRjZYqM2C18QWn6fZYwz6yWt/Y+6jdGFQittyEq93mgqebA/Wn1HzaH6+Ynx2wfhLThOvo5/qhIecJDrxY0AzX0RJ7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NHtWPsj3; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732579573; x=1764115573;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vrRKihhsrhqCl3rAoB+x53rxs7JaO8EdE8B7zyiayBU=;
+  b=NHtWPsj36I/MZ0WmrAF81YgBt76PvNXen6HCvJoolNNO9QS8xxSPbBcN
+   z9Gy1sZd+VpFrLLJKQd5+/cNoQ81LH+T9g6oHmX0bqpjVle63JOX4Zc1k
+   g74u0kPRKzvfstE8t2ZW6h/cXPiVmOtbmfqEVuBi+NaQ/UXZ1cKkEmIdO
+   buhi165psLTrntOGrcZMzigARK+ZEiS+ihJMwmvPE9Dsf3NEjDcpIRkzR
+   dJRP3MDbkgf+29qFiB68feh9o9wfUrkOprFCtzeoEFYeeukf6kEMUsd9N
+   nKPUxbHYuCmocYZcTpMfenqUSTFTZGfZI/HDNbH9emprsVW5SJPN6up0y
+   Q==;
+X-CSE-ConnectionGUID: GhhPh86rSqeaLRRc8Rec3w==
+X-CSE-MsgGUID: Zh3/kPVeTmWyZ7M4juQ8Pw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="35567880"
+X-IronPort-AV: E=Sophos;i="6.12,184,1728975600"; 
+   d="scan'208";a="35567880"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 16:06:12 -0800
+X-CSE-ConnectionGUID: za6kESCNSF+4W0HO68MYwQ==
+X-CSE-MsgGUID: 1wPFI6ZMQsy74p/HsKNWwg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,184,1728975600"; 
+   d="scan'208";a="122286713"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 25 Nov 2024 16:06:07 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tFj5f-0006ur-2T;
+	Tue, 26 Nov 2024 00:06:03 +0000
+Date: Tue, 26 Nov 2024 08:06:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Song Liu <song@kernel.org>, bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, kernel-team@meta.com, andrii@kernel.org,
+	eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net,
+	martin.lau@linux.dev, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com,
+	amir73il@gmail.com, repnop@google.com, jlayton@kernel.org,
+	josef@toxicpanda.com, mic@digikod.net, gnoack@google.com,
+	Song Liu <song@kernel.org>
+Subject: Re: [PATCH v3 fanotify 1/2] fanotify: Introduce fanotify filter
+Message-ID: <202411260746.XEdTrLMj-lkp@intel.com>
+References: <20241122225958.1775625-2-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241122225958.1775625-2-song@kernel.org>
 
-On Sun, 24 Nov 2024 16:07:05 +0200
-Mike Rapoport <rppt@kernel.org> wrote:
+Hi Song,
 
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> 
-> Steven Rostedt reported slowdown by over 30ms caused by commit 9bfc4824fd48
-> ("x86/module: prepare module loading for ROX allocations of text")
-> 
->   Before:
-> 
->    # cat /sys/kernel/tracing/dyn_ftrace_total_info
->   57695 pages:231 groups: 9
->   ftrace boot update time = 14733459 (ns)
->   ftrace module total update time = 449016 (ns)
-> 
->   After:
-> 
->    # cat /sys/kernel/tracing/dyn_ftrace_total_info
->   57708 pages:231 groups: 9
->   ftrace boot update time = 47195374 (ns)
->   ftrace module total update time = 592080 (ns)
-> 
-> The slowdown happened because initial patching of kernel code for ftrace
-> was switched from text_poke_early() to text_poke() to accommodate ftrace
-> updates of module text allocated as ROX.
-> 
-> Restore the use of text_poke_early() for boot time patching of the kernel
-> code.
-> 
-> Reported-by: Steven Rostedt <rostedt@goodmis.org>
+kernel test robot noticed the following build warnings:
 
-Tested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+[auto build test WARNING on jack-fs/fsnotify]
+[also build test WARNING on linus/master v6.12 next-20241125]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
--- Steve
+url:    https://github.com/intel-lab-lkp/linux/commits/Song-Liu/fanotify-Introduce-fanotify-filter/20241125-110818
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify
+patch link:    https://lore.kernel.org/r/20241122225958.1775625-2-song%40kernel.org
+patch subject: [PATCH v3 fanotify 1/2] fanotify: Introduce fanotify filter
+config: x86_64-randconfig-123-20241125 (https://download.01.org/0day-ci/archive/20241126/202411260746.XEdTrLMj-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241126/202411260746.XEdTrLMj-lkp@intel.com/reproduce)
 
-> Closes: https://lore.kernel.org/all/20241118132501.4eddb46c@gandalf.local.home
-> Fixes: 9bfc4824fd48 ("x86/module: prepare module loading for ROX allocations of text")
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> ---
->  arch/x86/kernel/ftrace.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
-> index 4dd0ad6c94d6..9e50288abbaa 100644
-> --- a/arch/x86/kernel/ftrace.c
-> +++ b/arch/x86/kernel/ftrace.c
-> @@ -111,7 +111,7 @@ static int ftrace_verify_code(unsigned long ip, const char *old_code)
->   */
->  static int __ref
->  ftrace_modify_code_direct(unsigned long ip, const char *old_code,
-> -			  const char *new_code)
-> +			  const char *new_code, struct module *mod)
->  {
->  	int ret = ftrace_verify_code(ip, old_code);
->  	if (ret)
-> @@ -120,6 +120,8 @@ ftrace_modify_code_direct(unsigned long ip, const char *old_code,
->  	/* replace the text with the new text */
->  	if (ftrace_poke_late) {
->  		text_poke_queue((void *)ip, new_code, MCOUNT_INSN_SIZE, NULL);
-> +	} else if (!mod) {
-> +		text_poke_early((void *)ip, new_code, MCOUNT_INSN_SIZE);
->  	} else {
->  		mutex_lock(&text_mutex);
->  		text_poke((void *)ip, new_code, MCOUNT_INSN_SIZE);
-> @@ -145,7 +147,7 @@ int ftrace_make_nop(struct module *mod, struct dyn_ftrace *rec, unsigned long ad
->  	 * just modify the code directly.
->  	 */
->  	if (addr == MCOUNT_ADDR)
-> -		return ftrace_modify_code_direct(ip, old, new);
-> +		return ftrace_modify_code_direct(ip, old, new, mod);
->  
->  	/*
->  	 * x86 overrides ftrace_replace_code -- this function will never be used
-> @@ -164,7 +166,7 @@ int ftrace_make_call(struct dyn_ftrace *rec, unsigned long addr)
->  	new = ftrace_call_replace(ip, addr);
->  
->  	/* Should only be called when module is loaded */
-> -	return ftrace_modify_code_direct(rec->ip, old, new);
-> +	return ftrace_modify_code_direct(rec->ip, old, new, NULL);
->  }
->  
->  /*
-> 
-> base-commit: 9f16d5e6f220661f73b36a4be1b21575651d8833
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411260746.XEdTrLMj-lkp@intel.com/
 
+sparse warnings: (new ones prefixed by >>)
+>> fs/notify/fanotify/fanotify_filter.c:271:21: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct fanotify_filter_hook *filter_hook @@     got struct fanotify_filter_hook [noderef] __rcu *filter_hook @@
+   fs/notify/fanotify/fanotify_filter.c:271:21: sparse:     expected struct fanotify_filter_hook *filter_hook
+   fs/notify/fanotify/fanotify_filter.c:271:21: sparse:     got struct fanotify_filter_hook [noderef] __rcu *filter_hook
+   fs/notify/fanotify/fanotify_filter.c: note: in included file (through include/linux/kobject.h, include/linux/fanotify.h):
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+--
+>> fs/notify/fanotify/fanotify.c:1015:63: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct fanotify_filter_hook *filter_hook @@     got struct fanotify_filter_hook [noderef] __rcu *filter_hook @@
+   fs/notify/fanotify/fanotify.c:1015:63: sparse:     expected struct fanotify_filter_hook *filter_hook
+   fs/notify/fanotify/fanotify.c:1015:63: sparse:     got struct fanotify_filter_hook [noderef] __rcu *filter_hook
+
+vim +271 fs/notify/fanotify/fanotify_filter.c
+
+   262	
+   263	/*
+   264	 * fanotify_filter_del - Delete a filter from fsnotify_group.
+   265	 */
+   266	void fanotify_filter_del(struct fsnotify_group *group)
+   267	{
+   268		struct fanotify_filter_hook *filter_hook;
+   269	
+   270		fsnotify_group_lock(group);
+ > 271		filter_hook = group->fanotify_data.filter_hook;
+   272		if (!filter_hook)
+   273			goto out;
+   274	
+   275		rcu_assign_pointer(group->fanotify_data.filter_hook, NULL);
+   276		fanotify_filter_hook_free(filter_hook);
+   277	
+   278	out:
+   279		fsnotify_group_unlock(group);
+   280	}
+   281	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
