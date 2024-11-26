@@ -1,149 +1,193 @@
-Return-Path: <linux-kernel+bounces-422657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D649D9C89
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:27:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01ACB9D9C8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:27:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8C0016763D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:27:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4B7F280FF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE2B1DD0D4;
-	Tue, 26 Nov 2024 17:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A40C1DDC0A;
+	Tue, 26 Nov 2024 17:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aR7nF6ns"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fm6RLIjI"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3911DC198;
-	Tue, 26 Nov 2024 17:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD771DACBF;
+	Tue, 26 Nov 2024 17:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732641981; cv=none; b=MaXKJlyELbrZa82F5WJfTaBb7UkktaMSUARBscmrxjqZKYWk//c9YzWtzj50JZ+Aj0gctyoQ0uKMusIeiIvSURC7xntpFfsM+VONkI84XXl3Xl2zyRgDjPO+F7UY18+T5O+uwon8rnEji92WJ+MeZe4yIvqezUF7GofJtfwbOjk=
+	t=1732642033; cv=none; b=Fnh6UEm6jxZ8mVWBjFiEPCxOfp4WuC9EokyC+RIzei/2YDeMtVlmJ7vklgvzVL2cjqA9iwsi7vw1pto350R2H9POC2npHdZpzrfNWut4sPam0RaXj/UrM3SiuV1SiGSdssR7LSQjanrpyiHRSXeb/br0tJasrDIdqnMwOEG3nKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732641981; c=relaxed/simple;
-	bh=uuol9S7Wb+mpmGwMh8nS26lktMF+KT82jsiXhvL+wAs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tTye5Wf2SkDj36+j6JXrOYz1WelQFPQwTd7ACaJS3dvOqS5d3hpy7+nB0mNzcW2hh//RSQ99BOU5rOSMGlPqkV3rDjASaVY5QF7mRemyzOanVZ7j4nB1pequJ/l3UDoh6XhEdyXkubq2koh+1qJ39/wivyrMxUkCKnRd9jJKTw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aR7nF6ns; arc=none smtp.client-ip=209.85.167.53
+	s=arc-20240116; t=1732642033; c=relaxed/simple;
+	bh=15Ie3c0nMKk7FwI6ERY8A7cw9NxduQnjCWk/i7XFKAA=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QFyIGrGDis6hMEUfrYCPeH2u4JnoQBbkHnVNeY9YuPt/hdDke/4vGwF1EMICSJXBXuyiPHSEOhNlk9rshJZm41J8yXzpEuoH2JkAxifFtCwdyFD5bqtzgc6CcPJv5x9PEF3ngYcdbSow5hdpm8H8zqwBcbMxctFHeJkSJwIHkdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fm6RLIjI; arc=none smtp.client-ip=209.85.215.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53dd0cb9ce3so5371941e87.3;
-        Tue, 26 Nov 2024 09:26:19 -0800 (PST)
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7f71f2b136eso4750416a12.1;
+        Tue, 26 Nov 2024 09:27:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732641978; x=1733246778; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mbotIOfnAlUpiXN0cwY6JBmQStHByFNUpy3SVfR48QQ=;
-        b=aR7nF6ns5pj0kr/3V4W3V1jJBNeJQ2N8gEFfZdPajNJFet4fpkFSeZqKcB/GhgsOPO
-         d6FH7EHEQ5ztzwOXHwmvZxPzfFicAc45DNLaJ+55Y1fNEYnfrvxIm544waCCJva8eVmF
-         adp8MIfaqaxhEo9NQPJqbsF4GrigUz7uuuNi9CWnaX0WcijPVlFf2zcJ/vmcrl8LWcTm
-         HFwoTJv5OUGpFHd2vR2PWDkaHU5TBnrkcBYlrZqMy2r+ApPnFhm/4yEtgSoy6zjuwqCl
-         WeZLR7j1Izz7CkOgLQqpqCvQqUtvLIYWRZCGkeoY8mSYlhE1g1163eRhwqhSv3wq5RjR
-         xmOg==
+        d=gmail.com; s=20230601; t=1732642032; x=1733246832; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NatBUjdFy+3pOZ5W0mNTPAtwCcyaMloJIAxq7lkMslY=;
+        b=Fm6RLIjI9gkfTRwmfde8BYH/ar2JgDD1lThT6GMHUnvqPllOIK4qdIMBLF8Md6AjV3
+         GBVbOnGOmKDFHDBVuz0GFCc1+TCcD0LLwYhyIrfXIq4dhTl3oZmX/7jQeTXTAbuuRdhZ
+         gbmWkU/tN/LNgG7B/i8yGdof1jDMX+IpK71lyOnSmf+p5I6++Y9kxnF2TWurqhjg1h5/
+         7YolB1dlD38vVdswbOE2WneK3mfU6Vg8AVUhxP/ErgkgYga30VowtQ/Ox7iBeqe8R8UW
+         FBSXCzUlXgOImeQIneNShLidD8x1bGlgxtuf5xIFLzJZ4Jo4vBYRZNu9guWSBB6avSwd
+         NiiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732641978; x=1733246778;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mbotIOfnAlUpiXN0cwY6JBmQStHByFNUpy3SVfR48QQ=;
-        b=XRyWzSihtkHHO3D+VZdkaJDwE4IlJFxq5YQz+1jnfj4XSQUTEsXEDpdzlwBxpUcyVl
-         YvoXUkB+ECZ3fSTmmMi2e8/ncAfM50l1A8/UCNICMkhDvDNwZVLNeNgwUV9dw8hF+U8U
-         dFVqJ9Blbkt5kPoYciwuZWeG+AiU81TujMbUnTxWsFEAA29rzWzHJZpQZdJbaFEjvi/c
-         /g4ZJt4WkkyhjY8gtfTr2jI5hlna3M7OAljPpLQE6OXTP+tfB0/xKq3guJzaWuE+YRhc
-         W85h2X4rjptuGGB4GhLf4qE/w3fTXrIsd8ZCRh3uUzgXfq8K6xfg8S4CVG9gFtFAJaaw
-         gDDg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1G5OgqtEYVSxdaG2kXZ4sYoTBSv1hqRXJ/lbZjIWdyHrx1DpRB7J9JNUC8w+/0/zk0JnHPWEXwsGJLRcJ@vger.kernel.org, AJvYcCV3m+JKnzqr3UNbz0JDiLTbqpVcnA6gOHyscoGWe3Kxr4NyAkTBYmPNDg+okvrMS8JpWmqNasuLLYSoQvyL@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXbm8OJHPTO5HF4Dou+2ayxsq3+zLbDOhhQ2ydbwu42uc3JOgD
-	O0+kOy0sRuSoTO52Hx3yWGi6K4ZbY0GS0PbOqQ8Kc+4ypgUocRbW
-X-Gm-Gg: ASbGncuITVfvzWqsBbdR8j1zjChS/76posLhPJD8pFNs0XNDyyeqW2ndzWL5NOMgBOW
-	NgFRN4xNDOcZVCntM0whLhAGBVZACkP4DwE5UrwOTT8/w9EklLhk0n1V0SVVko8SL8BHXZNEi/t
-	q/q47DCnAGsC26iXbrB9mRv7onoFImXyuvZtwC/pPrfWKYcLb+sgSsku0IRXVbHxopOdTMteUkQ
-	m1tYbht1cotQEtzn+UsOMMBVgMva3Mp9qNGTIoGWopgYFxVVKuScfp7UX2llhcGUDW2FtNFG9b6
-	rxbGfI8yK9BV2VBcPe+sgyJU
-X-Google-Smtp-Source: AGHT+IEtv4oFJfiSacSbN3zNtp7opyl3x9b+XbgiIuNfyCw+fad4RwfteGd/8dhj4mLs9xnvqQ2raQ==
-X-Received: by 2002:a05:6512:3052:b0:53d:edf6:96e2 with SMTP id 2adb3069b0e04-53dedf697d4mr903126e87.11.1732641978019;
-        Tue, 26 Nov 2024 09:26:18 -0800 (PST)
-Received: from ?IPV6:2a00:801:2f0:b124:4cc6:80e8:d57e:220? ([2a00:801:2f0:b124:4cc6:80e8:d57e:220])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd2451a3csm2052062e87.82.2024.11.26.09.26.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 09:26:16 -0800 (PST)
-Message-ID: <569d0df0-71d5-4227-aa28-e57cd60bc9f1@gmail.com>
-Date: Tue, 26 Nov 2024 18:26:13 +0100
+        d=1e100.net; s=20230601; t=1732642032; x=1733246832;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NatBUjdFy+3pOZ5W0mNTPAtwCcyaMloJIAxq7lkMslY=;
+        b=rRd7DVTMkdV7xrOWs9WNDjk3N1bUhFnBh18YD9XwY4MjkcdX8bFqbL6ZxPs3hJ3YDm
+         xIuP8GThk2+0ScSglQ1OxxwT6c4l9DTQ+ze4PHVXkEm9spSueJ/huS9XR4oCkI1/Jt03
+         APr4A/AS744gxi95UPThtWM5kQzQWhUVTYl9dfV51aRCVOxdUMoB17GMy0MLaQNMGpvJ
+         APZ+DDakYBzMPKeU+7dkUfzjuIiuBPDBX3U2xbFKRA5sFYQA71rqbMdv4ihAm9P2egTr
+         E8cXGI303CfPt4iTuAMRj4xy6w+BJeJ+yVcNvqxNAELtyrm4qtid93oY7w/ECn4xsJzB
+         8/Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCWl10Bryk3QxtTB8EjASSc6VxM7yU+t0C8bsZx6mU6vCe1q4ud/ttXOmHUtkeknS/9lsBAyVKf4gX0=@vger.kernel.org, AJvYcCX68BllZrhgO+QDcQlOM087U4yq/yUBOfTxPI+2jpy+QFGOfpHsg5PLdc9Vo0m5UXBv/ZHdjBAV+vyMQjC5@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzAsDSZSrsB32eiwRZmUuu7JeUuPu6jnaVv9ikE7jBmDFXemHE
+	aFIDDuIiUqz7Ad8aPgWAF5rLxwAhUMnCenBAvn3BmrMEcbXCRrIc
+X-Gm-Gg: ASbGncvb/113dlokmBdNnB020GUXRhwblpaBfpFoQ6m+JaVGftLbRGeOk6xJlx1C32P
+	B2GHjRjx7MOpTXdzUuyUy3W2bz7AgelHfzc4Wd0oUfnk4gTNrku2WfRV7sFjj+Buv2pmbjciwNX
+	sRHR9C0dw+1KiMlXttRYGJQQk0XBOJA0ZYdVOfPXAu28A20PIfRYxg7GbA19Jj3I2XvR0Uz3Ooi
+	DOyhyRvu39N+LG/T/Wlra2OBVjEhzf3V59YZrc7tVTeTiIIZKIt6A==
+X-Google-Smtp-Source: AGHT+IE4F39SUwpnVdVJgUqEIrLanQrTvy1ank0oKkqfYwUXI4hYQTFsAczXPZZshnMFcsaaEP9RtQ==
+X-Received: by 2002:a05:6a21:33a9:b0:1e0:c0fa:e088 with SMTP id adf61e73a8af0-1e0e0b4e91bmr325771637.18.1732642031498;
+        Tue, 26 Nov 2024 09:27:11 -0800 (PST)
+Received: from smc-140338-bm01 ([149.97.161.244])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcc3fb290sm8977528a12.74.2024.11.26.09.27.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 09:27:10 -0800 (PST)
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Tue, 26 Nov 2024 17:27:08 +0000
+To: shiju.jose@huawei.com
+Cc: dave.jiang@intel.com, dan.j.williams@intel.com,
+	jonathan.cameron@huawei.com, alison.schofield@intel.com,
+	nifan.cxl@gmail.com, vishal.l.verma@intel.com, ira.weiny@intel.com,
+	dave@stgolabs.net, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+	tanxiaofei@huawei.com, prime.zeng@hisilicon.com
+Subject: Re: [PATCH v4 1/6] cxl/events: Update Common Event Record to CXL
+ spec rev 3.1
+Message-ID: <Z0YE7C5NkyydjiRR@smc-140338-bm01>
+References: <20241120093745.1847-1-shiju.jose@huawei.com>
+ <20241120093745.1847-2-shiju.jose@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Regression in NFS probably due to very large amounts of readahead
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Jan Kara <jack@suse.cz>, Philippe Troin <phil@fifi.org>,
- Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.de>
-References: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
- <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
- <4bb8bfe1-5de6-4b5d-af90-ab24848c772b@gmail.com>
- <20241126103719.bvd2umwarh26pmb3@quack3>
- <20241126150613.a4b57y2qmolapsuc@quack3>
- <fba6bc0c-2ea8-467c-b7ea-8810c9e13b84@gmail.com>
- <Z0X9hnjBEWXcVms-@casper.infradead.org>
-Content-Language: en-US
-From: Anders Blomdell <anders.blomdell@gmail.com>
-In-Reply-To: <Z0X9hnjBEWXcVms-@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241120093745.1847-2-shiju.jose@huawei.com>
 
-
-
-On 2024-11-26 17:55, Matthew Wilcox wrote:
-> On Tue, Nov 26, 2024 at 04:28:04PM +0100, Anders Blomdell wrote:
->> On 2024-11-26 16:06, Jan Kara wrote:
->>> Hum, checking the history the update of ra->size has been added by Neil two
->>> years ago in 9fd472af84ab ("mm: improve cleanup when ->readpages doesn't
->>> process all pages"). Neil, the changelog seems as there was some real
->>> motivation behind updating of ra->size in read_pages(). What was it? Now I
->>> somewhat disagree with reducing ra->size in read_pages() because it seems
->>> like a wrong place to do that and if we do need something like that,
->>> readahead window sizing logic should rather be changed to take that into
->>> account? But it all depends on what was the real rationale behind reducing
->>> ra->size in read_pages()...
->>
->> My (rather limited) understanding of the patch is that it was intended to read those pages
->> that didn't get read because the allocation of a bigger folio failed, while not redoing what
->> readpages already did; how it was actually going to accomplish that is still unclear to me,
->> but I even don't even quite understand the comment...
->>
->> 	/*
->> 	 * If there were already pages in the page cache, then we may have
->> 	 * left some gaps.  Let the regular readahead code take care of this
->> 	 * situation.
->> 	 */
->>
->> the reason for an unchanged async_size is also beyond my understanding.
+On Wed, Nov 20, 2024 at 09:37:40AM +0000, shiju.jose@huawei.com wrote:
+> From: Shiju Jose <shiju.jose@huawei.com>
 > 
-> This isn't because we couldn't allocate a folio, this is when we
-> allocated folios, tried to read them and we failed to submit the I/O.
-> This is a pretty rare occurrence under normal conditions.
+> CXL spec 3.1 section 8.2.9.2.1 Table 8-42, Common Event Record format has
+> updated with Maintenance Operation Subclass information.
+The table reference is incorrect, should be Table 8-43 based on spec r3.1,
+v1.0, Auguest 7, 2023.
 
-I beg to differ, the code is reached when there is
-no folio support or ra->size < 4 (not considered in
-this discussion) or falling throug when !err, err
-is set by:
+Other than that,
 
-         err = ra_alloc_folio(ractl, index, mark, order, gfp);
-                 if (err)
-                         break;
 
-isn't the reading done by:
+Reviewed-by: Fan Ni <fan.ni@samsung.com>
 
-         read_pages(ractl);
+> 
+> Add updates for the above spec change in the CXL events record and CXL
+> common trace event implementations.
+> 
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+> ---
+>  drivers/cxl/core/trace.h | 13 +++++++++----
+>  include/cxl/event.h      |  3 ++-
+>  2 files changed, 11 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
+> index 8389a94adb1a..7305974e2301 100644
+> --- a/drivers/cxl/core/trace.h
+> +++ b/drivers/cxl/core/trace.h
+> @@ -166,11 +166,13 @@ TRACE_EVENT(cxl_overflow,
+>  #define CXL_EVENT_RECORD_FLAG_MAINT_NEEDED	BIT(3)
+>  #define CXL_EVENT_RECORD_FLAG_PERF_DEGRADED	BIT(4)
+>  #define CXL_EVENT_RECORD_FLAG_HW_REPLACE	BIT(5)
+> +#define CXL_EVENT_RECORD_FLAG_MAINT_OP_SUB_CLASS_VALID	BIT(6)
+>  #define show_hdr_flags(flags)	__print_flags(flags, " | ",			   \
+>  	{ CXL_EVENT_RECORD_FLAG_PERMANENT,	"PERMANENT_CONDITION"		}, \
+>  	{ CXL_EVENT_RECORD_FLAG_MAINT_NEEDED,	"MAINTENANCE_NEEDED"		}, \
+>  	{ CXL_EVENT_RECORD_FLAG_PERF_DEGRADED,	"PERFORMANCE_DEGRADED"		}, \
+> -	{ CXL_EVENT_RECORD_FLAG_HW_REPLACE,	"HARDWARE_REPLACEMENT_NEEDED"	}  \
+> +	{ CXL_EVENT_RECORD_FLAG_HW_REPLACE,	"HARDWARE_REPLACEMENT_NEEDED"	},  \
+> +	{ CXL_EVENT_RECORD_FLAG_MAINT_OP_SUB_CLASS_VALID,	"MAINT_OP_SUB_CLASS_VALID" }	\
+>  )
+>  
+>  /*
+> @@ -197,7 +199,8 @@ TRACE_EVENT(cxl_overflow,
+>  	__field(u16, hdr_related_handle)			\
+>  	__field(u64, hdr_timestamp)				\
+>  	__field(u8, hdr_length)					\
+> -	__field(u8, hdr_maint_op_class)
+> +	__field(u8, hdr_maint_op_class)				\
+> +	__field(u8, hdr_maint_op_sub_class)
+>  
+>  #define CXL_EVT_TP_fast_assign(cxlmd, l, hdr)					\
+>  	__assign_str(memdev);				\
+> @@ -209,17 +212,19 @@ TRACE_EVENT(cxl_overflow,
+>  	__entry->hdr_handle = le16_to_cpu((hdr).handle);			\
+>  	__entry->hdr_related_handle = le16_to_cpu((hdr).related_handle);	\
+>  	__entry->hdr_timestamp = le64_to_cpu((hdr).timestamp);			\
+> -	__entry->hdr_maint_op_class = (hdr).maint_op_class
+> +	__entry->hdr_maint_op_class = (hdr).maint_op_class;			\
+> +	__entry->hdr_maint_op_sub_class = (hdr).maint_op_sub_class
+>  
+>  #define CXL_EVT_TP_printk(fmt, ...) \
+>  	TP_printk("memdev=%s host=%s serial=%lld log=%s : time=%llu uuid=%pUb "	\
+>  		"len=%d flags='%s' handle=%x related_handle=%x "		\
+> -		"maint_op_class=%u : " fmt,					\
+> +		"maint_op_class=%u maint_op_sub_class=%u : " fmt,		\
+>  		__get_str(memdev), __get_str(host), __entry->serial,		\
+>  		cxl_event_log_type_str(__entry->log),				\
+>  		__entry->hdr_timestamp, &__entry->hdr_uuid, __entry->hdr_length,\
+>  		show_hdr_flags(__entry->hdr_flags), __entry->hdr_handle,	\
+>  		__entry->hdr_related_handle, __entry->hdr_maint_op_class,	\
+> +		__entry->hdr_maint_op_sub_class,	\
+>  		##__VA_ARGS__)
+>  
+>  TRACE_EVENT(cxl_generic_event,
+> diff --git a/include/cxl/event.h b/include/cxl/event.h
+> index 0bea1afbd747..e1d485ad376b 100644
+> --- a/include/cxl/event.h
+> +++ b/include/cxl/event.h
+> @@ -18,7 +18,8 @@ struct cxl_event_record_hdr {
+>  	__le16 related_handle;
+>  	__le64 timestamp;
+>  	u8 maint_op_class;
+> -	u8 reserved[15];
+> +	u8 maint_op_sub_class;
+> +	u8 reserved[14];
+>  } __packed;
+>  
+>  struct cxl_event_media_hdr {
+> -- 
+> 2.43.0
+> 
 
-which does not set err!
-
-/Anders
+-- 
+Fan Ni (From gmail)
 
