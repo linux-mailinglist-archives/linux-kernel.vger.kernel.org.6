@@ -1,137 +1,121 @@
-Return-Path: <linux-kernel+bounces-422811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 493E89D9E7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:47:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 583DD9D9E88
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:48:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF7A216462C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:47:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F360D16458F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8A11DF72C;
-	Tue, 26 Nov 2024 20:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62091DFD9D;
+	Tue, 26 Nov 2024 20:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P1tZ6HHP"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R9mYAE09"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728B3946C;
-	Tue, 26 Nov 2024 20:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C99F1DB958;
+	Tue, 26 Nov 2024 20:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732654065; cv=none; b=guLlJsutemi31AERSxd6ligIe++tXMsTAG3I5osGE2/ow6RZQuDoybst82OCphGN7WEgsUFTntqOgBt/g0QI1PCNBDKLRzpOrYjfWI7UNd5Fk8fCrXASYQyZ3fArR36WnIHZx947lfVIPo/fgpKgNLbh69KePp6n9fgeePtQmaM=
+	t=1732654094; cv=none; b=gK9ir6KC+pM9iQXWCNXguu1jxXJ/H7udTgPReMBHn4XPCd+CFUPci5a+2LFMSi387ON1h9fzlozOPx0nJiwmjeLAxWDuJLAIXPEsyVVYz/nz6oGh7NiUn+R4AWYxVEg9P4wqEcAikVXnDPLy6Zx0yQf8mXr2ZItPKhKyVOS0ntg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732654065; c=relaxed/simple;
-	bh=faBfcmymGPSFibu9nkUfQwNarQQpruvPOzB3wGv4z0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qwZ1RGSWnYMPVsKONy79csuDmqmZqNrVgtdMO7ty/3hxAKjkvWZYjJtXaB0Z6A0drEvSnRw6IU1BoNKKd2djCl6xlg9D9ZWVuZiVowNdH3DBKuPXd//3+sr2VMGFg6TT2GaLQbUET8AsAa+AGFC7olWAVTksHFJKFk0jBbBNjaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P1tZ6HHP; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7ee020ec76dso5222753a12.3;
-        Tue, 26 Nov 2024 12:47:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732654064; x=1733258864; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BrfGITBt+MpPudeTvWz/BGOrTPxjx+M/EOPqV0lY91c=;
-        b=P1tZ6HHPc9pZS2/sbMYn0rQf6XNuaskRE1jCzy4sx9SEMcwkGeiInFAeV07GEQOLNr
-         FQyD3xABBH49QTxTzhJ5I7fWP5nxkHXAATyP6tXnS0jdBrb+0SRLPt6mDBrPA64YxRBn
-         6y0lbb6nDIoUGFQnnJNBfDixY4XTSFmq2bBpu2DpaSS+Z7M21Is+RHZmWovfPKkV3zpx
-         qrzxOi9cbcPEv/fvfUauloi6mI751CRB4IRe6ghthFxWiI587TPTBNTqV6JNYE1LukHP
-         5a+aTbKC1V8UZ7+b8GiorkZcp1ZFQOjKa0vaPqF4QFsjW0B/pWlooc8uvcLtK9DURgjD
-         Mtsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732654064; x=1733258864;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BrfGITBt+MpPudeTvWz/BGOrTPxjx+M/EOPqV0lY91c=;
-        b=wOAu4gyxj2LYbZmpYjvG65UWoy2tftwcChtNoke18eHMzQBhFS/QgX2TDyrj5vf3Tc
-         P6o8BbYUlM15RZ9x6xmjpHXYFakXXUqOz8a6FgdllICo376t54RQ4k2xZgkti+eCs+IG
-         BQ54ZHDa26zJF8bi9N9vGJxIknLfy617KRGjjSsjBjwStDay+blz1gqZsMcOA8AbzjGb
-         sqE/GDJgKOpBtzLrCfV0+N31RS+BqPwcnKcB2r/IENbDsjmK3MbsgYQEmC5SznLbDEDQ
-         b/RhcWSKmxsIskyUS/mGjZ8jnSTbJKkfbXYjDXWz74n7cQw6CBu5981K/imLPCNHTS1Q
-         wseg==
-X-Forwarded-Encrypted: i=1; AJvYcCUm1xK2nl9jd++1csBOEG+0e8SUOpek1Q29HmtVEvJK1GyQgpO23GoQQVAxOO/mHUGHZ9dh9U50OA0BklK4vH51F4MK@vger.kernel.org, AJvYcCVYCsngNxz8IFlaL/XWG663LH2eFP9cEAg8r8FBQI/35bN/8KjlR3x1VV2TINeB5MTaff4=@vger.kernel.org, AJvYcCWgt1dK2v2G9yhYzE268JOh8lo2W07D2OaNo7DPuSHR8T48oUUwZyDQ/EQGTmoUa2d/kbrRLGShA8A+nwBu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu2be70I3FEkI2kyRiGJ16awWImOSXUlJteNVH4LWIeN0/LqjH
-	phpUqqvl1pJqb4JfBNxTlOyHYOulL7/8OEZhAf8FYhTpcY1qE1ts
-X-Gm-Gg: ASbGncuei2z+SfyYUqDkVIeZWEWJci6MDLWHrwbqHlqEg8Zjl/d+Xs9rL0Qq3ezs5s7
-	qym7L1viU7ALebve1E6F1DBK0Ga//EFkzd1lIaIox/K/yR8u8M+8CNtGttydu71pPb6g/sBhxJu
-	/7fg5/AuYm2jf2ne84PAWvwQROWM3n+n3pb0dKeFzwp1z6PfPDAwGjGZ9Dv4O1QDr3nf/zn20+Q
-	anc4aJ0ixCHuLxi8kyIqLDwQBEK5FpEx0rAwmvLQk7Bm7RvA2k=
-X-Google-Smtp-Source: AGHT+IHZkU5tXESbsQSufn4K2TA1C1VRT8pQfJ+DevuvUAtbNf2cvrlWnN7YFd0lhrglkU4YceNZQg==
-X-Received: by 2002:a05:6a21:78b:b0:1e0:df27:10b9 with SMTP id adf61e73a8af0-1e0e0b004c3mr1123625637.18.1732654063605;
-        Tue, 26 Nov 2024 12:47:43 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:5155:e4b9:67db:7078])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de47e941sm8824806b3a.78.2024.11.26.12.47.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 12:47:43 -0800 (PST)
-Date: Tue, 26 Nov 2024 12:47:39 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Michael Jeanson <mjeanson@efficios.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Jordan Rife <jrife@google.com>, linux-trace-kernel@vger.kernel.org,
-	Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [RFC PATCH 4/5] tracing: Remove conditional locking from
- __DO_TRACE()
-Message-ID: <Z0Yz6xffDjL6m_KZ@google.com>
-References: <20241123153031.2884933-1-mathieu.desnoyers@efficios.com>
- <20241123153031.2884933-5-mathieu.desnoyers@efficios.com>
- <CAHk-=whTjKsV5jYyq5yAxn7msQuyFdr9LB1vXcF6dOw2tubkWA@mail.gmail.com>
- <d36281ef-bb8f-4b87-9867-8ac1752ebc1c@efficios.com>
- <20241125142606.GG38837@noisy.programming.kicks-ass.net>
- <c70b4864-737b-4604-a32e-38e0b087917d@intel.com>
- <CAHk-=wjcCQ4-0f68bWMLuFnj9r9Hwg4YnXDBg8-K7z6ygq=iEQ@mail.gmail.com>
- <20241126084556.GI38837@noisy.programming.kicks-ass.net>
- <CAHk-=wg9yCQeGK+1MdSd3RydYApkPuVnoXa0TOGiaO388Nhg0g@mail.gmail.com>
+	s=arc-20240116; t=1732654094; c=relaxed/simple;
+	bh=ZBU8Fy8Sv/FwJD6yKpClEj3SItHuR1C5MYFPcenYJWs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=s4clrTtUNVYnDs32OErz2LIerpXVhPACE7CGLPucpQzev4m0XprwB8KY2w68LuQ3lbWfuUiWdxHCD0ECSF2n0vZh1pOF/QxMaqz7rvro8WeaxLfVSZWjXFq2yUKESMVsGONKIoPXtH5mJMZ+ql9nYcZ+37Pf/mnsOC1NmBoCz+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R9mYAE09; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A5207C4CECF;
+	Tue, 26 Nov 2024 20:48:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732654093;
+	bh=ZBU8Fy8Sv/FwJD6yKpClEj3SItHuR1C5MYFPcenYJWs=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=R9mYAE09x8YrOnYi92GSKx1q4f2idlS5Lh2wBvoWVjn8CkHf4dYC4rkk3PmgRsnDP
+	 S2MzaitHsbalovHD1L6GQBp+BNjXs5CcOnRGlS9DJ8F9DPgEUfkw8MIGWuxHm6Bpgs
+	 eEfmDm5CrF/LkXUyoskHg9YI08sBv5uPM+4loheiDVR7fzdRoXhlWx064VzUq+x4gL
+	 kqmDoTiXXDQABaEWlRp03e26NAQXO8iXvqSv4oEbWHFhaAdJvgCOCSrVf+KjStgZYw
+	 /CAYvzfZ4pUpnruipS1ayaKaCBP/uOrCppMM1mPjBItHP5hs+FtVp91bJihfqe50q9
+	 5rJyNXjs5cEig==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D5EFD65525;
+	Tue, 26 Nov 2024 20:48:13 +0000 (UTC)
+From: Sasha Finkelstein via B4 Relay <devnull+fnkl.kernel.gmail.com@kernel.org>
+Subject: [PATCH 0/4] Driver for Apple Z2 touchscreens.
+Date: Tue, 26 Nov 2024 21:47:58 +0100
+Message-Id: <20241126-z2-v1-0-c43c4cc6200d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wg9yCQeGK+1MdSd3RydYApkPuVnoXa0TOGiaO388Nhg0g@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP4zRmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQyMT3Soj3WQDQ6MkUyOL1ESDFCWgwoKi1LTMCrAh0bG1tQDHCvI+VAA
+ AAA==
+X-Change-ID: 20241124-z2-c012b528ea0d
+To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Henrik Rydberg <rydberg@bitmath.org>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Sasha Finkelstein <fnkl.kernel@gmail.com>, 
+ Janne Grunau <j@jannau.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732654092; l=1728;
+ i=fnkl.kernel@gmail.com; s=20241124; h=from:subject:message-id;
+ bh=ZBU8Fy8Sv/FwJD6yKpClEj3SItHuR1C5MYFPcenYJWs=;
+ b=EPyBrRhCz60QqrUaFxi1MkFuNhZO6e8bc/6+SNKD6Cylw/79q7NOFNe9CUIP+7jIQEFDrFVIc
+ fsNWUEUOiIZCm7qEFDH18CdE4WrB+YB2/Z0k3HvMNvnkl3oL8QRhHrh
+X-Developer-Key: i=fnkl.kernel@gmail.com; a=ed25519;
+ pk=aSkp1PdZ+eF4jpMO6oLvz/YfT5XkBUneWwyhQrOgmsU=
+X-Endpoint-Received: by B4 Relay for fnkl.kernel@gmail.com/20241124 with
+ auth_id=283
+X-Original-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Reply-To: fnkl.kernel@gmail.com
 
-On Tue, Nov 26, 2024 at 10:13:43AM -0800, Linus Torvalds wrote:
-> On Tue, 26 Nov 2024 at 00:46, Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > Using that (old) form results in:
-> >
-> >     error: control reaches end of non-void function [-Werror=return-type]
-> 
-> Ahh. Annoying, but yeah.
-> 
-> > Except of course, now we get that dangling-else warning, there is no
-> > winning this :-/
-> 
-> Well, was there any actual problem with the "jump backwards" version?
-> Przemek implied some problem, but ..
+Hi.
 
-No, it was based on my feedback with "jump backwards" looking confusing
-to me.  But if it gets rid of a warning then we should use it instead.
+This series adds support for Apple touchscreens using the Z2 protocol.
+Those are used as the primary touchscreen on mobile Apple devices, and for the
+touchbar on laptops using the M-series chips. (T1/T2 laptops have a coprocessor
+in charge of speaking Z2 to the touchbar).
 
-Thanks.
+Originally sent as a RFC at https://lore.kernel.org/all/20230223-z2-for-ml-v1-0-028f2b85dc15@gmail.com/
+The changes since then mostly address the review feedback, but also
+add another machine that has this specific controller.
 
--- 
-Dmitry
+The extra gpio needed to be toggled turned out to be a quirk of the
+j293, normal CS is unusable on it, and a gpio has to be used instead.
+(j493 does not have this quirk)
+
+Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
+---
+Sasha Finkelstein (4):
+      dt-bindings: input: touchscreen: Add Z2 controller
+      input: apple_z2: Add a driver for Apple Z2 touchscreens
+      arm64: dts: apple: Add touchbar digitizer nodes
+      MAINTAINERS: Add entries for Apple Z2 touchscreen driver
+
+ .../input/touchscreen/apple,z2-multitouch.yaml     |  83 ++++
+ MAINTAINERS                                        |   2 +
+ arch/arm64/boot/dts/apple/t8103-j293.dts           |  24 +
+ arch/arm64/boot/dts/apple/t8103.dtsi               |  19 +
+ arch/arm64/boot/dts/apple/t8112-j493.dts           |  20 +
+ arch/arm64/boot/dts/apple/t8112.dtsi               |  14 +
+ drivers/input/touchscreen/Kconfig                  |  13 +
+ drivers/input/touchscreen/Makefile                 |   1 +
+ drivers/input/touchscreen/apple_z2.c               | 495 +++++++++++++++++++++
+ 9 files changed, 671 insertions(+)
+---
+base-commit: 9f16d5e6f220661f73b36a4be1b21575651d8833
+change-id: 20241124-z2-c012b528ea0d
+
+
 
