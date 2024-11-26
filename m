@@ -1,262 +1,191 @@
-Return-Path: <linux-kernel+bounces-422626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EC809D9C1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:10:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD15E9D9C20
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:10:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE624164BA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:10:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E8A1284DED
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210471DA0F1;
-	Tue, 26 Nov 2024 17:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2551DA2E5;
+	Tue, 26 Nov 2024 17:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rnQh5BR4"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SJbV9nWX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93EA1D9320
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 17:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39331D9359
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 17:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732641037; cv=none; b=TIZtK9jEdKLI0Nj5gPacXlfudduML4g06AAwiYZVL/j7lZItyiImxaDktQka30SqEn4fkAiTHbfERgl8615JA91CM7SUnPMLb4uDrgY/ebRy8QdyuEMT9pzBXSqEAKZ7MX+61VInPZCtB2qhDvjTon/WkyAsbZGXXp9VzG3y6dU=
+	t=1732641053; cv=none; b=ZZLDOvUwSJZmTdUYPDFm+f079oLrNYSJh2H9NomVGyk/To3TKBsFs/W8B2nzqpiBP5bQxD898kLJnPmOEVsOcwf1BXpA8ACnhnxyc6qOopifEoBSgjoOKM24ht1+uF38Kx+DhjV1u2bJD+WlKIAhxF+phqV6RN4PDBn9Ejo33ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732641037; c=relaxed/simple;
-	bh=ZadRCC8tqLysiaMrkETTX6zNuqvKdYsEzZ/9YqDrh/s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=czZ+5Wa2diTbe02G9l//PXnw8N0X2mthTxYgltaoFubd1Sf+fVj0k5PBQ/qlkf54RS0qKfdfjrfcKUrpUkzjk4Oi23AktNZV8jIc6ncQp9KE+3jhoYNzcnhkrCHOsmcxuBDb+Kq0iuEXOpydIYS4mK6q3mc6ITbJ9CQYnpFlO/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rnQh5BR4; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-466ab386254so207791cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:10:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732641034; x=1733245834; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E8U/hFBjG8qULz+0EjdB4XUzx545IeyejaR/l6dTWKk=;
-        b=rnQh5BR4NH5fysrE7H9T39yXjgOsl9tnF82bfBECgoibFoTfHYjuB4HFp5v5wXaL9I
-         tiHUaya+QCMI7t0P6qjzh6bMLK/QXtvIOaVs3Cisp5VZXkYMbUAwBJ6FxeqDa38RKNVT
-         HEM3IfWy54UMk/iAzuT97BsEelDrhu5RRKYhrAVDwIrxuAQMjR27FX/JY9TK/OnG4wat
-         WoBKre2kdwYv0ZpSnxKoIvYoBBHWVyNMi6NhtnejkvBQpFV5OMj+aLxCB3cYMvPKz9Q0
-         ukLJ9QmRaUPquY/v/h23gy0hwk7k8AEEG84Qda8yhJKEd6SC70Hll+6XwDSt+qwwk1Wl
-         l8bw==
+	s=arc-20240116; t=1732641053; c=relaxed/simple;
+	bh=ZyGBNBNeIbh195o6EdpIawljBTKhqraCODqJVGMKWF8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nNwRwdwCC2Kb8gF1c1uAGCxKbYG9v/OmycgqOpEER8VQMYhgxYe2hJ0JYfSLUt9v9vuTPdPh5PpzhGaLwlRbf5URmLkM9VZXG0p3whRxN0ZcZM23HWmJkAhyUR7icfj7tquURtI5xZilVY8ECFnhb/tbrZnK432nJm2PhqZBAe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SJbV9nWX; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732641050;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pg1WH4/I0jZVgF7EzjYgTyBHdR/uKOZ3f0DDPVvbwns=;
+	b=SJbV9nWX8BQay8LTazbFGE2EBPk+KsZjsYwH5mDIAl0bmu4LsqmxWF7u5KQeNozV9rcunL
+	AVFUswKcnLLlIJ8DXaFDpqgzD2AOX7OAM9+KtIlj1gNsJZK16CSDX8t4I4ZVEUTY1m1jpP
+	nFlY+9CjH8Yzns/cb/dHY6XgGLzpwuQ=
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
+ [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-120-ebZcfWeSMLCUF1FL-CG8bw-1; Tue, 26 Nov 2024 12:10:48 -0500
+X-MC-Unique: ebZcfWeSMLCUF1FL-CG8bw-1
+X-Mimecast-MFC-AGG-ID: ebZcfWeSMLCUF1FL-CG8bw
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-841a54a6603so245635339f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:10:48 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732641034; x=1733245834;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E8U/hFBjG8qULz+0EjdB4XUzx545IeyejaR/l6dTWKk=;
-        b=XHPxrcgEnZwi2voImmBvsEEjkjpd9v+3vvwl4Cf+O9J+rf/LW+m+2WU2MNPOUcD4sq
-         fQGUdIGGAn0G/oy/wlxfEhqyOl+PH4aOPVoH6qkm8PKw1rWvjfcX+jB9/Bc7CSTv26+g
-         ltRXopEutog8SY0A9tx6653II7mDn/q/WlyIhii/ck399mzwajFA1r8bgQyG96Dn2WKV
-         nTaVXsNkvxFasxd2FBEbaNC8/pluUfxLz3+KtkV+8jaZEfFFLHBctjkrUR0DdJ4eVlYl
-         cNWqJna0U8z7R6TI4mvWU9/DLKnY9xnm/lbSpyKxYGifSv8MwJDzHEgprqHdfqngsx6w
-         Dyew==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ+s0blTx8rOjBeU4PNUKnSNlZphjN8j9dLH2QS9ni5V0Yu18RmGYfiOkebiwwe6BPYIxAiUM+XUeTobs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyneKFXm2GoboWSByI7DqJ4CApFnusMHE7Fyu146tih6RZIPNw1
-	jgHRqXLKUoyS8iAj7aHcGQRr2/2I1cRgVhg4VrpsN10ppQ8IhBZfgz7DNqu391A5ps8vVBTPjuq
-	JA9et2y6Tyjkq/ksMxJe4UJwPIx+DGVFKGVou6Z6UCL/6KA1ndFblL8c=
-X-Gm-Gg: ASbGncvYbTzsGfRnaZMm8dTDhnAVVIdbRJmgqHjPolbfwzfX9W2YLyUj+pP2w+YNScS
-	RPHhTItR5a5Ld9hieHOFkQZHqiitpe6vCfZsHCWCZ4I0uEiNwL5zfFJrgCDaH4A==
-X-Google-Smtp-Source: AGHT+IE7Qo5YquEhKeActaNEVW8aKR/6pVLZrbUpuoLWfXQZ4aMCF5bLyja5g54P+1GZYvfvqhOLAcQHtLZAOLXx5Jc=
-X-Received: by 2002:a05:622a:2996:b0:466:91fd:74c4 with SMTP id
- d75a77b69052e-466a46b99edmr3849211cf.0.1732641034218; Tue, 26 Nov 2024
- 09:10:34 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732641048; x=1733245848;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pg1WH4/I0jZVgF7EzjYgTyBHdR/uKOZ3f0DDPVvbwns=;
+        b=IIacBDfGlB8WokgtVG02C4n1AkpeaWcEU43TOl4J6d+L2XvQQ1NgujSDSVpYy6WzW8
+         T30DV9rkv+T41aN80SvcfGRrgnBLlGBG9JEmIK4tmi83q4NyRvtMv7t8Q+f3iTvUGKjJ
+         j9ujsevokzwbr/TGW0GdlVgL+s0V7PuzrPHSgMNzsTH7DQlC3+pTTNEAoRErvlKdsBqb
+         8Ih+6xBiamiWE/NVjHz4qLdZFdiikzxnqkHRdrK6AYROsV9+LSBY+B0Yu/5wXQ1lLJjY
+         sn60ZnHVfVbuunS18t4lVOrp7RyJZmvqTtFO4RBml/RrrWWOt8qKihvpuDDdVgGD9Yt9
+         6ldQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5EOkgu2V+bVC6LkfW8yIJHir3///ieuyFPbZbSPLJbXUNrKgZJ9CKVJ6oIFcFaHBtRYlGeSbfGhGAvzo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyp1vtX0kyi4kkM0N/imaz6U/92CN5Z1iBjOzPx+wmXW0sfAC7s
+	R12fN6NUtM8gCMpb6LpwCCYW3nNaKplVixE9Oe6tlw5KkzorpquNo6igDw60Qh/tbmUOtCRHgMZ
+	63B4lPNBe5GOEP4HwE10ChLv/bVoHqKc9XkniwvwEXrSgE/E2JRHPXns+seWvqg==
+X-Gm-Gg: ASbGncsMLMxUPcFq115iHNxm9X5GzG9ey9F51zPWg+nR3jjTaWNT+jwQ97R3J1IKL95
+	+92ar1M5SYgO4IiWCZKRjysGM0JHfYy8oYI63WOMeytU3HGiSU8Yr8S2tfmVPtuVlTVtLm1PqzO
+	mjZfEKqvcFO/Y9l6PQm1Op/EIOnoml0HnYhneB2H7jmIgD5KYxaM1kHPyb7pSFOgGFwND4Iurak
+	cC8EL4BFrvQ7aVEEfUi/3I7aXPiUmonNknGrPXzJMi83h/b0q4=
+X-Received: by 2002:a05:6e02:16ce:b0:3a7:8a39:269e with SMTP id e9e14a558f8ab-3a79aeea927mr188257275ab.18.1732641047472;
+        Tue, 26 Nov 2024 09:10:47 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG6K6UNamiK6O/nxV7SHYbjCV/fiYY963jqY0jKdci5faeUGnSMsVF/gMvDkGoJTCkuUhR9iw==
+X-Received: by 2002:a05:6e02:16ce:b0:3a7:8a39:269e with SMTP id e9e14a558f8ab-3a79aeea927mr188256395ab.18.1732641046931;
+        Tue, 26 Nov 2024 09:10:46 -0800 (PST)
+Received: from [192.168.40.164] ([70.105.235.240])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e1efbcaa5bsm1792326173.78.2024.11.26.09.10.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 09:10:46 -0800 (PST)
+Message-ID: <07252361-8886-4284-bdba-55c3fe728831@redhat.com>
+Date: Tue, 26 Nov 2024 12:10:24 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241124074318.399027-1-00107082@163.com> <CAJuCfpHviS-pw=2=BNTxp1TnphjuiqWGgZnq84EHvbz08iQ6eg@mail.gmail.com>
- <70bad55f.b656.19362cca6ee.Coremail.00107082@163.com> <CAJuCfpHho8se-f4cnvk0g1YLNzhvG3q8QTYmvMmweUnGAhtA=g@mail.gmail.com>
- <CAJuCfpEP-xMzHonsE3uV1uYahXehR007B5QX9KjdZdHBWyrXwQ@mail.gmail.com>
- <51c19b31.eaf.193660912f7.Coremail.00107082@163.com> <337c721a.70d1.1936753c377.Coremail.00107082@163.com>
-In-Reply-To: <337c721a.70d1.1936753c377.Coremail.00107082@163.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 26 Nov 2024 09:10:23 -0800
-Message-ID: <CAJuCfpHZhMwK8jOz_evvvD8CaNxxaaRQEx0Qv_yPp4ZA_DkXeg@mail.gmail.com>
-Subject: Re: Abnormal values show up in /proc/allocinfo
-To: David Wang <00107082@163.com>
-Cc: kent.overstreet@linux.dev, linux-kernel@vger.kernel.org, yuzhao@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/1] KVM: arm64: Map GPU memory with no struct pages
+Content-Language: en-US
+To: ankita@nvidia.com, jgg@nvidia.com, maz@kernel.org,
+ oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com,
+ yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org,
+ ryan.roberts@arm.com, shahuang@redhat.com, lpieralisi@kernel.org
+Cc: aniketa@nvidia.com, cjia@nvidia.com, kwankhede@nvidia.com,
+ targupta@nvidia.com, vsethi@nvidia.com, acurrid@nvidia.com,
+ apopple@nvidia.com, jhubbard@nvidia.com, danw@nvidia.com, zhiw@nvidia.com,
+ mochs@nvidia.com, udhoke@nvidia.com, dnigam@nvidia.com,
+ alex.williamson@redhat.com, sebastianene@google.com, coltonlewis@google.com,
+ kevin.tian@intel.com, yi.l.liu@intel.com, ardb@kernel.org,
+ akpm@linux-foundation.org, gshan@redhat.com, linux-mm@kvack.org,
+ kvmarm@lists.linux.dev, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20241118131958.4609-1-ankita@nvidia.com>
+From: Donald Dutile <ddutile@redhat.com>
+In-Reply-To: <20241118131958.4609-1-ankita@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 25, 2024 at 11:17=E2=80=AFPM David Wang <00107082@163.com> wrot=
-e:
->
-> Hi,
->
->
-> At 2024-11-26 09:14:50, "David Wang" <00107082@163.com> wrote:
-> >
-> >Hi,
-> >
-> >
-> >
-> >At 2024-11-26 04:31:39, "Suren Baghdasaryan" <surenb@google.com> wrote:
-> >>
-> >>Hi David,
-> >>Could you please check if you have this fix:
-> >>
-> >>ed265529d39a "mm/codetag: fix arg in pgalloc_tag_copy alloc_tag_sub"
-> >>
-> >>It was merged after v6.12-rc6 and it fixes an accounting bug inside
-> >>pgalloc_tag_copy(), which is used during compaction.
-> >>Thanks,
-> >>Suren.
-> >>
-> >>
-> >>https://lore.kernel.org/all/20240906042108.1150526-3-yuzhao@google.com/
-> >>https://lore.kernel.org/all/20241022232440.334820-1-souravpanda@google.=
-com/
-> >
-> >
-> >No, ed265529d39a is not in 6.12.0; It is now in Linus' tree.
-> >I will pull the code and make some tests.
-> >
-> >Will update later.
->
->
-> I build a kernel based on a tree with top commit 9f16d5e6f220,
-> no abnormal value observed for compaction_alloc:
->
-> $ sudo cat /proc/allocinfo  | grep compaction_alloc
->            0        0 mm/compaction.c:1880 func:compaction_alloc 250098
-> (The last column is accumulative call counters I patched with my system, =
-meaning compaction_alloc do happen)
->
->
-> But,  still got underflowed values:
->
->        -4096 18446744073709551615 mm/filemap.c:3788 func:do_read_cache_fo=
-lio 18
->    -86241280 18446744073709530561 mm/filemap.c:1951 func:__filemap_get_fo=
-lio 8691015
->
-> Finally a procedure to reproduce it:  (thanks for the tip about compact_m=
-emory)
-> 1. populate file caches, e.g. grep something in kernel source.
-> 2. echo 1 >/proc/sys/vm/compact_memory
-> 3. echo 3 > /proc/sys/vm/drop_caches
->
-> There would be negative values show up.
-> A simple python script to check abnormal values:
->
-> with open("/proc/allocinfo") as f:
->     for l in f:
->         try:
->             vs  =3D l.split()
->             v1, v2 =3D int(vs[0]), int(vs[1])
->             if v1<0 or v2<0 or (v1=3D=3D0 and v2!=3D0) or (v1!=3D0 and v2=
-=3D=3D0): print l,
->         except: pass
->
->
-> Most likely, memory release is accounted *twice* for those memory.
-> Reading through the code, I feel the most suspected code would be:
->     clear_page_tag_ref(&old->page);
-> This line of code may not work as expected.
->
-> The code in pgalloc_tag_copy involves too many low level plumbing details=
-, I think it
-> is simpler to just implement a *swap* logic: just swap the tags.
->
-> I made following changes and it works, no abnormal values detected, so fa=
-r.
-> (pgalloc_tag_copy should be renamed to pgalloc_tag_swap)
->
->
-> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-> index 2414a7ee7ec7..7d6d1015f4b1 100644
-> --- a/lib/alloc_tag.c
-> +++ b/lib/alloc_tag.c
-> @@ -191,24 +192,30 @@ void pgalloc_tag_split(struct folio *folio, int old=
-_order, int new_order)
->
->  void pgalloc_tag_copy(struct folio *new, struct folio *old)
->  {
-> -       union pgtag_ref_handle handle;
-> -       union codetag_ref ref;
-> -       struct alloc_tag *tag;
-> +       union pgtag_ref_handle handle_new, handle_old;
-> +       union codetag_ref ref_new, ref_old;
-> +       struct alloc_tag *tag_new, *tag_old;
->
-> -       tag =3D pgalloc_tag_get(&old->page);
-> -       if (!tag)
-> +       tag_old =3D pgalloc_tag_get(&old->page);
-> +       if (!tag_old)
-> +               return;
-> +       tag_new =3D pgalloc_tag_get(&new->page);
-> +       if (!tag_new)
->                 return;
->
-> -       if (!get_page_tag_ref(&new->page, &ref, &handle))
-> +       if (!get_page_tag_ref(&old->page, &ref_old, &handle_old))
-> +               return;
-> +       if (!get_page_tag_ref(&new->page, &ref_new, &handle_new))
->                 return;
->
-> -       /* Clear the old ref to the original allocation tag. */
-> -       clear_page_tag_ref(&old->page);
-> -       /* Decrement the counters of the tag on get_new_folio. */
-> -       alloc_tag_sub(&ref, folio_size(new));
-> -       __alloc_tag_ref_set(&ref, tag);
-> -       update_page_tag_ref(handle, &ref);
-> -       put_page_tag_ref(handle);
-> +       /* swap tag */
-> +       __alloc_tag_ref_set(&ref_new, tag_old);
-> +       update_page_tag_ref(handle_new, &ref_new);
-> +       put_page_tag_ref(handle_new);
-> +
-> +       __alloc_tag_ref_set(&ref_old, tag_new);
-> +       update_page_tag_ref(handle_old, &ref_old);
-> +       put_page_tag_ref(handle_old);
->  }
+My email client says this patch: [PATCH v2 1/1] KVM: arm64: Allow cacheable stage 2 mapping using VMA flags
+   is part of a thread for this titled patchPATCH.  Is it?
 
-Hi David,
-Thanks for the investigation. I think your suggestion should work fine
-and it's simpler than what we do now. It will swap not only counters
-but allocation locations as well, however I think we already do that
-when we call __alloc_tag_ref_set(). So, instead of clearing the
-original tag, decrementing the new tag's counter (to compensate for
-its own allocation) and reassigning the old tag to the new counter,
-you simply swap the tags. That seems fine to me.
-However I think there is still a bug where some get_new_folio()
-callback does not increment the new folio's counters and that's why we
-get an underflow when calling alloc_tag_sub(). I'll try to reproduce
-on my side and see what's going on there.
-Thanks,
-Suren.
+The description has similarities to above description, but some adds, some drops.
 
->
->  static void shutdown_mem_profiling(bool remove_file)
->
->
->
-> FYI
-> David
->
->
-> >
-> >Thanks~
-> >David
-> >
-> >>
-> >>> > >Thanks,
-> >>> > >Suren.
-> >>> > >
-> >>> > >>
-> >>> > >>
-> >>> > >> Thanks
-> >>> > >> David
-> >>> > >>
-> >>> > >>
-> >>> > >>
-> >>> > >>
+So, could you clean these two up into (a) a series, or (b) single, separate PATCH's?
+
+Thanks.
+
+- Don
+
+On 11/18/24 8:19 AM, ankita@nvidia.com wrote:
+> From: Ankit Agrawal <ankita@nvidia.com>
+> 
+> Grace based platforms such as Grace Hopper/Blackwell Superchips have
+> CPU accessible cache coherent GPU memory. The current KVM code
+> prevents such memory to be mapped Normal cacheable and the patch aims
+> to solve this use case.
+> 
+> Today KVM forces the memory to either NORMAL or DEVICE_nGnRE
+> based on pfn_is_map_memory() and ignores the per-VMA flags that
+> indicates the memory attributes. This means there is no way for
+> a VM to get cachable IO memory (like from a CXL or pre-CXL device).
+> In both cases the memory will be forced to be DEVICE_nGnRE and the
+> VM's memory attributes will be ignored.
+> 
+> The pfn_is_map_memory() is thus restrictive and allows only for
+> the memory that is added to the kernel to be marked as cacheable.
+> In most cases the code needs to know if there is a struct page, or
+> if the memory is in the kernel map and pfn_valid() is an appropriate
+> API for this. Extend the umbrella with pfn_valid() to include memory
+> with no struct pages for consideration to be mapped cacheable in
+> stage 2. A !pfn_valid() implies that the memory is unsafe to be mapped
+> as cacheable.
+> 
+> Also take care of the following two cases that are unsafe to be mapped
+> as cacheable:
+> 1. The VMA pgprot may have VM_IO set alongwith MT_NORMAL or MT_NORMAL_TAGGED.
+>     Although unexpected and wrong, presence of such configuration cannot
+>     be ruled out.
+> 2. Configurations where VM_MTE_ALLOWED is not set and KVM_CAP_ARM_MTE
+>     is enabled. Otherwise a malicious guest can enable MTE at stage 1
+>     without the hypervisor being able to tell. This could cause external
+>     aborts.
+> 
+> The GPU memory such as on the Grace Hopper systems is interchangeable
+> with DDR memory and retains its properties. Executable faults should thus
+> be allowed on the memory determined as Normal cacheable.
+> 
+> Note when FWB is not enabled, the kernel expects to trivially do
+> cache management by flushing the memory by linearly converting a
+> kvm_pte to phys_addr to a KVA, see kvm_flush_dcache_to_poc(). This is
+> only possibile for struct page backed memory. Do not allow non-struct
+> page memory to be cachable without FWB.
+> 
+> The changes are heavily influenced by the insightful discussions between
+> Catalin Marinas and Jason Gunthorpe [1] on v1. Many thanks for their
+> valuable suggestions.
+> 
+> Applied over next-20241117 and tested on the Grace Hopper and
+> Grace Blackwell platforms by booting up VM and running several CUDA
+> workloads. This has not been tested on MTE enabled hardware. If
+> someone can give it a try, it will be very helpful.
+> 
+> v1 -> v2
+> 1. Removed kvm_is_device_pfn() as a determiner for device type memory
+>     determination. Instead using pfn_valid()
+> 2. Added handling for MTE.
+> 3. Minor cleanup.
+> 
+> Link: https://lore.kernel.org/lkml/20230907181459.18145-2-ankita@nvidia.com [1]
+> 
+> Ankit Agrawal (1):
+>    KVM: arm64: Allow cacheable stage 2 mapping using VMA flags
+> 
+>   arch/arm64/include/asm/kvm_pgtable.h |   8 +++
+>   arch/arm64/kvm/hyp/pgtable.c         |   2 +-
+>   arch/arm64/kvm/mmu.c                 | 101 +++++++++++++++++++++------
+>   3 files changed, 87 insertions(+), 24 deletions(-)
+> 
+
 
