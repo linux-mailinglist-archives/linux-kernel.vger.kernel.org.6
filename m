@@ -1,199 +1,219 @@
-Return-Path: <linux-kernel+bounces-422147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89FE09D9522
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:08:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23F141664B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:08:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7826E1BFE0C;
-	Tue, 26 Nov 2024 10:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZNLNE8qZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAE4F9D9525
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:08:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3401B4F08
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A19A728141B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:08:54 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7E51C7B8D;
+	Tue, 26 Nov 2024 10:08:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8299F19340F;
+	Tue, 26 Nov 2024 10:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732615716; cv=none; b=k2CxhPW4Iwap3uNsHe0esZx00g/ZHfJyyjwRj3hs838JKtBC06l0vm3Iqg7B96Eva1HxJZtcPcAnfSnNTrSCX0q8xuY6ar5bbg5lVrctlpWNE/DdmSGXJ2iqVJNsyvdS5U96OSil/XJk6CeWdBRfaWI8QVovj+fX4PX7NFoP0ok=
+	t=1732615722; cv=none; b=q/0SOyTNvfexWAAWgmnWuoE+aIc39k5TP+op85qz1er4O9iBrm7ASY4eF2Y85ZX8sTLPSsdIUvYYgxNnjmyluLtj/0qIf9mzabPsRcq3feg/LKz4HyTBfZINHIk1nm9nDSkExycBTfhunWT4zIBBPQeIlM05m9NE1YsNKuKwdTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732615716; c=relaxed/simple;
-	bh=5lJZ/nF8cuFm2xPe38in1zalOui1QM9koL2E5RnWTsI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=h44Oqle1FEeRMidOCD1l8aj0zNLsGhMQK+nyETnU7r7q7GVuAalV8w/nn1vKYllX0K1OqSg9ipSpAiosXGz+EQ23sCwMtE5Jq5N/9a/sBuOlFkeeHX7atm9E8HRtMZqXlO9hTRI9E9DntPMxc3RlhvVPcGeCyns2hHQ22DgCHu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZNLNE8qZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732615713;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Fq9q0biky9OpRw0dbtbwOh/TCxHi9sqzOOofCo6yTKw=;
-	b=ZNLNE8qZ+drDfzeYl7JBXprUK5fln4N0Zrv/6PMKDJoTz6TbjJuMmHd0zGUqxCKxT6GDDs
-	VLjIlEP0O0hR0hto5uV1563deLc7D/M5ILfrXiz43/CUDjjOyKNJHbigmiYJBqRx2zzr8i
-	PP0U+ABT1dBi/v/g/eY7cYI/A4ipIYc=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-393-1TMbgP29OLCVA2dmw90Cvg-1; Tue, 26 Nov 2024 05:08:27 -0500
-X-MC-Unique: 1TMbgP29OLCVA2dmw90Cvg-1
-X-Mimecast-MFC-AGG-ID: 1TMbgP29OLCVA2dmw90Cvg
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-434a0c4643eso2370865e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 02:08:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732615706; x=1733220506;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Fq9q0biky9OpRw0dbtbwOh/TCxHi9sqzOOofCo6yTKw=;
-        b=hLwn7m/auD7eIBuFbFJDSlKBwYGQnWEfoijTqPKXoL0B5shuG5EgoNVu6GkA65To4n
-         wnXtZuCysGI6suUE6V3qnwFNNwlvY8PjG4OuatjclwySJKk11DMuM7MoDpiYgsf1XXfN
-         GFOaCvl+FTJSD0kB7hEoxIPdTB7ElV5M5tcPnKP392mLKR3YhUsyRDtbnIAEkMGaUWF9
-         Bw36/OtGX/C3XKH8sc3JTdVKNjdE2cC0e7wKgFyKJ/HnDPkmZ0N3PUjqxztFFGn2kEw1
-         diE7Be98L9JMZRcoU9SpT+JYk8klz/IfDuM4qirRcabbgRIDh6sxWi1yQOrsPAsJL0oq
-         ajig==
-X-Forwarded-Encrypted: i=1; AJvYcCWlwemSUNayRh2NN5s05f/1GI3Gzx4TpBUyNcOzlx4bQW8dLPPtgsI0EVJfHVM1AiuVcqLoCeu9CuTrp7w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznlmWtNkcY6fLulGII82dhKzgkour4XRyD2tUcbU+p/GVjAJIl
-	Q6OERTdAAPTMmHyP/hNQ78ZtbLWrN5bnotj7GSYRcsaVt0qrCfEUELqq2s2cqRHTnat2FLkYkH5
-	EeKwZkjYLpotvo6lTImDrPuFSBr3tyCsoI/0IaWUwSbo+T9uiRYa76c6X+gDUYQ==
-X-Gm-Gg: ASbGncuPi5/x2G4JnjHcHAshss4NLx0eCRPuqXleaoT9VzqBjHGUVbIdxRO1mEi88AW
-	D4BbUWaOvfZ8hpU5XF0G60KHJJk0jbxfmEk9aHnqb+PwGQLXGrA4MHxre4CTExbVmK6mqNpqJUo
-	vyTerWjQKK9u497T2k+Z1/GmGdQUO9maXFmqiQ1bWP887Epq7dMm7VPLP46Fm8NSyZyrQ0WTrjP
-	DI/tlOYDy3DhdromUOXBz/rlMzlE1LUgvaiDK6vtdjxepFHiPIJjf8g+a8hSTSJG/p6tCwT8cmt
-	u1lNhHrFblup2mN4
-X-Received: by 2002:a05:600c:5490:b0:42c:b63d:df3 with SMTP id 5b1f17b1804b1-434a35089e5mr13353305e9.0.1732615706552;
-        Tue, 26 Nov 2024 02:08:26 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGcdvb3S8cnPM7PxynTPeWCPWcNAxtPzHc8ZlB/++BpaqHt+EG4RUx3doFnbJGVCosm9yICXg==
-X-Received: by 2002:a05:600c:5490:b0:42c:b63d:df3 with SMTP id 5b1f17b1804b1-434a35089e5mr13353195e9.0.1732615706130;
-        Tue, 26 Nov 2024 02:08:26 -0800 (PST)
-Received: from [192.168.1.51] (50.red-83-45-91.dynamicip.rima-tde.net. [83.45.91.50])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fb4ecd8sm12851203f8f.60.2024.11.26.02.08.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 02:08:25 -0800 (PST)
-From: Enric Balletbo i Serra <eballetb@redhat.com>
-Date: Tue, 26 Nov 2024 11:08:19 +0100
-Subject: [PATCH] arm64: dts: ti: k3-am69-sk: Add USB SuperSpeed support
+	s=arc-20240116; t=1732615722; c=relaxed/simple;
+	bh=pIt8Uh7XfClRERpzHEdF1fpO0FNx1DOyLTgTCn5QUQE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AJWfZw/BMDhxKrM66J8tv8eZraCksi9tqEngh77TEdip9jV5CzjdnqACKUqb8R3lYMHvi6OXZKN5WqOCHbcGWM1Bh6/hIMor6iLmESz5ikdTI9nLQMZby/6SNaBZCTk0qzb5ZWypmF8b1iQTkwTPOzscmoj8HHczviMTit0EDoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D90021682;
+	Tue, 26 Nov 2024 02:09:08 -0800 (PST)
+Received: from [10.57.89.250] (unknown [10.57.89.250])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 002A03F5A1;
+	Tue, 26 Nov 2024 02:08:34 -0800 (PST)
+Message-ID: <7a674595-5392-4b5b-9614-79a3e9fd2773@arm.com>
+Date: Tue, 26 Nov 2024 10:08:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 06/57] mm: Remove PAGE_SIZE compile-time constant
+ assumption
+Content-Language: en-GB
+To: Vlastimil Babka <vbabka@suse.cz>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christoph Lameter <cl@linux.com>, David Hildenbrand <david@redhat.com>,
+ David Rientjes <rientjes@google.com>, Greg Marsden
+ <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
+ Michal Hocko <mhocko@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>,
+ Miroslav Benes <mbenes@suse.cz>, Pekka Enberg <penberg@kernel.org>,
+ Richard Weinberger <richard@nod.at>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Will Deacon <will@kernel.org>
+Cc: cgroups@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-mtd@lists.infradead.org
+References: <20241014105514.3206191-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-1-ryan.roberts@arm.com>
+ <20241014105912.3207374-6-ryan.roberts@arm.com>
+ <d9089ef0-3abd-4148-949c-cab66890b98b@suse.cz>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <d9089ef0-3abd-4148-949c-cab66890b98b@suse.cz>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241126-am69sk-dt-usb-v1-1-aa55aed7b89e@redhat.com>
-X-B4-Tracking: v=1; b=H4sIABKeRWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDQyMz3cRcM8vibN2UEt3S4iRdC0tDC4PUNFOLNIsUJaCegqLUtMwKsHn
- RsbW1AD6mwZFfAAAA
-X-Change-ID: 20241126-am69sk-dt-usb-89180ef58f8d
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Dasnavis Sabiya <sabiya.d@ti.com>, 
- Enric Balletbo i Serra <eballetb@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732615705; l=2485;
- i=eballetb@redhat.com; s=20241113; h=from:subject:message-id;
- bh=bT/35JMF1+qLpDfXB2Q3jx1Ol/t4nxsjkwGX8bY51Jo=;
- b=7jrfrXs1ya8OfzpPtuUbESrW1gPpkkr97NF+q5NtsQDPkoHtxktfWvCWP3xFRyuifAGaqF1sa
- CY6Hs9aSQoPAGPlL1ge9DEYSisj6VWHBHQ2Kv9gb5vkRvlYiHceUzg3
-X-Developer-Key: i=eballetb@redhat.com; a=ed25519;
- pk=xAM6APjLnjm98JkE7JdP1GytrxFUrcDLr+fvzW1Dlyw=
 
-From: Dasnavis Sabiya <sabiya.d@ti.com>
+Hi Vlastimil,
 
-AM69 SK board has two stacked USB3 connectors:
-   1. USB3 (Stacked TypeA + TypeC)
-   2. USB3 TypeA Hub interfaced through TUSB8041.
+Sorry about the slow response to your review of this series - I'm just getting
+to it now. Comment's below...
 
-The board uses SERDES0 Lane 3 for USB3 IP. So update the
-SerDes lane info for PCIe and USB. Add the pin mux data
-and enable USB 3.0 support with its respective SERDES settings.
+On 14/11/2024 10:17, Vlastimil Babka wrote:
+> On 10/14/24 12:58, Ryan Roberts wrote:
+>> To prepare for supporting boot-time page size selection, refactor code
+>> to remove assumptions about PAGE_SIZE being compile-time constant. Code
+>> intended to be equivalent when compile-time page size is active.
+>>
+>> Refactor "struct vmap_block" to use a flexible array for used_mmap since
+>> VMAP_BBMAP_BITS is not a compile time constant for the boot-time page
+>> size case.
+>>
+>> Update various BUILD_BUG_ON() instances to check against appropriate
+>> page size limit.
+>>
+>> Re-define "union swap_header" so that it's no longer exactly page-sized.
+>> Instead define a flexible "magic" array with a define which tells the
+>> offset to where the magic signature begins.
+>>
+>> Consider page size limit in some CPP condditionals.
+>>
+>> Wrap global variables that are initialized with PAGE_SIZE derived values
+>> using DEFINE_GLOBAL_PAGE_SIZE_VAR() so their initialization can be
+>> deferred for boot-time page size builds.
+>>
+>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>> ---
+>>
+>> ***NOTE***
+>> Any confused maintainers may want to read the cover note here for context:
+>> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
+>>
+>>  drivers/mtd/mtdswap.c         |  4 ++--
+>>  include/linux/mm.h            |  2 +-
+>>  include/linux/mm_types_task.h |  2 +-
+>>  include/linux/mmzone.h        |  3 ++-
+>>  include/linux/slab.h          |  7 ++++---
+>>  include/linux/swap.h          | 17 ++++++++++++-----
+>>  include/linux/swapops.h       |  6 +++++-
+>>  mm/memcontrol.c               |  2 +-
+>>  mm/memory.c                   |  4 ++--
+>>  mm/mmap.c                     |  2 +-
+>>  mm/page-writeback.c           |  2 +-
+>>  mm/slub.c                     |  2 +-
+>>  mm/sparse.c                   |  2 +-
+>>  mm/swapfile.c                 |  2 +-
+>>  mm/vmalloc.c                  |  7 ++++---
+>>  15 files changed, 39 insertions(+), 25 deletions(-)
+>>
+> 
+>> --- a/include/linux/swap.h
+>> +++ b/include/linux/swap.h
+>> @@ -132,10 +132,17 @@ static inline int current_is_kswapd(void)
+>>   * bootbits...
+>>   */
+>>  union swap_header {
+>> -	struct {
+>> -		char reserved[PAGE_SIZE - 10];
+>> -		char magic[10];			/* SWAP-SPACE or SWAPSPACE2 */
+>> -	} magic;
+>> +	/*
+>> +	 * Exists conceptually, but since PAGE_SIZE may not be known at compile
+>> +	 * time, we must access through pointer arithmetic at run time.
+>> +	 *
+>> +	 * struct {
+>> +	 * 	char reserved[PAGE_SIZE - 10];
+>> +	 * 	char magic[10];			   SWAP-SPACE or SWAPSPACE2
+>> +	 * } magic;
+>> +	 */
+>> +#define SWAP_HEADER_MAGIC	(PAGE_SIZE - 10)
+>> +	char magic[1];
+> 
+> I wonder if it makes sense to even keep this magic field anymore.
+> 
+>>  	struct {
+>>  		char		bootbits[1024];	/* Space for disklabel etc. */
+>>  		__u32		version;
+>> @@ -201,7 +208,7 @@ struct swap_extent {
+>>   * Max bad pages in the new format..
+>>   */
+>>  #define MAX_SWAP_BADPAGES \
+>> -	((offsetof(union swap_header, magic.magic) - \
+>> +	((SWAP_HEADER_MAGIC - \
+>>  	  offsetof(union swap_header, info.badpages)) / sizeof(int))
+>>  
+>>  enum {
+> 
+> <snip>
+> 
+>> --- a/mm/swapfile.c
+>> +++ b/mm/swapfile.c
+>> @@ -2931,7 +2931,7 @@ static unsigned long read_swap_header(struct swap_info_struct *p,
+>>  	unsigned long swapfilepages;
+>>  	unsigned long last_page;
+>>  
+>> -	if (memcmp("SWAPSPACE2", swap_header->magic.magic, 10)) {
+>> +	if (memcmp("SWAPSPACE2", &swap_header->magic[SWAP_HEADER_MAGIC], 10)) {
+> 
+> I'd expect static checkers to scream here because we overflow the magic[1]
+> both due to copying 10 bytes into 1 byte array and also with the insane
+> offset. Hence my suggestion to drop the field and use purely pointer arithmetic.
 
-Signed-off-by: Dasnavis Sabiya <sabiya.d@ti.com>
-Signed-off-by: Enric Balletbo i Serra <eballetb@redhat.com>
----
-I've been carrying this patch for quite long time in my builds to have
-support for USB on my AM69-SK board without problems. For some reason this
-patch was never send to upstream or I couldn't find it. So I took the
-opportunity, now that I rebased my build, to send upstream.
+Yeah, good point. I'll remove magic[] and use pointer arithmetic.
 
-I have maintained the original author of the downstream patch as is
-basically his work.
----
- arch/arm64/boot/dts/ti/k3-am69-sk.dts | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+> 
+>>  		pr_err("Unable to find swap-space signature\n");
+>>  		return 0;
+>>  	}
+>> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+>> index a0df1e2e155a8..b4fbba204603c 100644
+> 
+> Hm I'm actually looking at yourwip branch which also has:
+> 
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -969,7 +969,7 @@ static inline int get_order_from_str(const char *size_str)
+>         return -EINVAL;
+>  }
+> 
+> -static char str_dup[PAGE_SIZE] __initdata;
+> +static char str_dup[PAGE_SIZE_MAX] __initdata;
+>  static int __init setup_thp_anon(char *str)
+>  {
+>         char *token, *range, *policy, *subtoken;
+> 
+> Why PAGE_SIZE_MAX? Isn't this the same case as "mm/memcontrol: Fix seq_buf
+> size to save memory when PAGE_SIZE is large"
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am69-sk.dts b/arch/arm64/boot/dts/ti/k3-am69-sk.dts
-index 1e36965a14032ca07143230855e04b9549f1d0d1..72797f4b689c1d069bf395d6d4fe1846dc4e4297 100644
---- a/arch/arm64/boot/dts/ti/k3-am69-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am69-sk.dts
-@@ -484,6 +484,12 @@ J784S4_IOPAD(0x09C, PIN_OUTPUT, 0) /* (AF35) MCAN7_TX */
- 		>;
- 	};
- 
-+	main_usbss0_pins_default: main-usbss0-default-pins {
-+		pinctrl-single,pins = <
-+			J784S4_IOPAD(0x0EC, PIN_OUTPUT, 6) /* (AN37) TIMER_IO1.USB0_DRVVBUS */
-+		>;
-+	};
-+
- };
- 
- &wkup_pmx0 {
-@@ -1299,6 +1305,14 @@ serdes0_pcie_link: phy@0 {
- 		cdns,phy-type = <PHY_TYPE_PCIE>;
- 		resets = <&serdes_wiz0 1>, <&serdes_wiz0 2>, <&serdes_wiz0 3>;
- 	};
-+
-+	serdes0_usb_link: phy@3 {
-+		reg = <3>;
-+		cdns,num-lanes = <1>;
-+		#phy-cells = <0>;
-+		cdns,phy-type = <PHY_TYPE_USB3>;
-+		resets = <&serdes_wiz0 4>;
-+	};
- };
- 
- &serdes_wiz1 {
-@@ -1339,3 +1353,22 @@ &pcie3_rc {
- 	phy-names = "pcie-phy";
- 	num-lanes = <1>;
- };
-+
-+&usb_serdes_mux {
-+	idle-states = <0>; /* USB0 to SERDES0 */
-+};
-+
-+&usbss0 {
-+	status = "okay";
-+	pinctrl-0 = <&main_usbss0_pins_default>;
-+	pinctrl-names = "default";
-+	ti,vbus-divider;
-+};
-+
-+&usb0 {
-+	status = "okay";
-+	dr_mode = "host";
-+	maximum-speed = "super-speed";
-+	phys = <&serdes0_usb_link>;
-+	phy-names = "cdns3,usb3-phy";
-+};
+Hmm, you're probably right. I had a vague notion that "str", as passed into the
+function, was guarranteed to be no bigger than PAGE_SIZE (perhaps I'm wrong). So
+assumed that's where the original definition of str_dup[PAGE_SIZE] was coming from.
 
----
-base-commit: 7eef7e306d3c40a0c5b9ff6adc9b273cc894dbd5
-change-id: 20241126-am69sk-dt-usb-89180ef58f8d
+But I think your real question is "should the max size of str be a function of
+PAGE_SIZE?". I think it could; there are more page orders that can legitimately
+be described when the page size is bigger (at least for arm64). But in practice,
+I'd expect any sane string for any page size to be easily within 4K.
 
-Best regards,
--- 
-Enric Balletbo i Serra <eballetb@redhat.com>
+So on that basis, I'll take your advice; changing this buffer to be 4K always.
+
+Thanks,
+Ryan
+
 
 
