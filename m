@@ -1,258 +1,136 @@
-Return-Path: <linux-kernel+bounces-422453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 717719D99D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:44:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8730D9D99D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:44:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32C9B2828C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:44:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30061166423
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168F21D61BC;
-	Tue, 26 Nov 2024 14:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8391D5CEE;
+	Tue, 26 Nov 2024 14:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qcvLQa8U"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uTHUZbr7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3390ABE46;
-	Tue, 26 Nov 2024 14:44:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6FDBE46;
+	Tue, 26 Nov 2024 14:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732632272; cv=none; b=thykGGN51kZjWbS2BkGaWrIYxNjKMBMtmcKrw7StFPOscI+zPckeepv1cmmt8XfOdjNX1diVzR2Crn/TxY+EgLIZN7MQy7i0HMSNC0BKrNZG8/wxd8zNzgz9kUL2Nahdq+C+M5THSJgmUb7N/3ZHP8ImlAqmruPKWQTnn8EdQzo=
+	t=1732632268; cv=none; b=G2RUFs8X2AO/XyEABaNx4DsUBdhIebWXSixCXBJzReDsHwUHm2Y0gwMPFZzIm1MEw5kD1UbS9tWud56wzYA8AtfckMLtgRmQ+Ey9AA44N1leMOEVkTJ+yrK7+q3ozC3L9UqQxG+iEW29Y7d0FcSO2Xd8IKjyLNEgMqyY2tYlXVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732632272; c=relaxed/simple;
-	bh=Rp1i+YK9SNFf15Z19uehbh8DuABXEgZ7TwsuCaYXqak=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rGgrxm/FVlkxarlKSInIm5w4sZPsINYOoNhPbp6qEjgXWC+Fwk4megx7hXXhGzZJlCLrses34See6xWaX7DS6SmemUdguk2VsTUprj3IgKCVQ4uuTvzqbdfLNJk0XUTYkBarcxZP/smXWJ6WP/kFXXZ2lxqTitq2ePcG9IQ0Ldo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qcvLQa8U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2776C4CEDC;
-	Tue, 26 Nov 2024 14:44:31 +0000 (UTC)
+	s=arc-20240116; t=1732632268; c=relaxed/simple;
+	bh=XYzOG08t1vD7d1OJKr/DTskWOi8KsmwLcNSz/fcdhCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pS3C9m0Ji747G6PGYNF357QTBM3zqzdqNUVnmZiJirYPnA8HqmbsvQnEqzU9pCL4OnlJvyz1UP4WaIKPTqphrFRTh7AwScW5NpzhPxs6ablIDMHpsfLhxiGayf3sXAXcYjNpBFEYWrVXit0JOPyUTFU4sXeQOha8QgozkKAiQLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uTHUZbr7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A59EC4CECF;
+	Tue, 26 Nov 2024 14:44:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732632271;
-	bh=Rp1i+YK9SNFf15Z19uehbh8DuABXEgZ7TwsuCaYXqak=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=qcvLQa8UILu+IXYCyCKgwQ+6at8fPzw90s/e082v9PVuTmwA3oc0qCwf3IxAKL6Yh
-	 xrIObF09eu/ufCmad8Ob466LyVLoLTdH0UnZj1o1A3aIqpGnnEsOhfzEx9j6d1G5mJ
-	 gTPfWxmYTLV0AHRjKQa2seov9LTvWWKxGUVCjlyiuR+H1UD6oyoQuxsA3p8+qb5AN5
-	 /b2Bpa+ayaNkXWp7u1i8LFLZVCC/C9dwedt5o2FRvw0BonI9oIR9ZFFd06Cd9W5m6A
-	 fCX10JmKSjnsOHatMVJRzK18amO9qtzAorzyB8LSfiE3ODPyzvTyE68x5e9IMNTruw
-	 JgAHemVwXtlOw==
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e382589e8fdso5584039276.0;
-        Tue, 26 Nov 2024 06:44:31 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU7Pi2RW6CjD+UCq8hewZ/7Zk/9e4BLp8PpfBYEXCGJUfKNupN7jnugOaigivW6cRM6w1WvSffrDbIk@vger.kernel.org, AJvYcCUWamdOxHaPf26GWnT6rdRxrMjU2yx26S3xv5vD2jpFfRA1dre9wKKH27Y5xYYclzoBI26gBs0cZi1U@vger.kernel.org, AJvYcCVr/udCGztPYnyha+g6mo9ODyViIb8TNM1ZyHlEw213rjaGZBxeacmlf9hVSKnl6qcTxt7T9I0Iw7uYO0tpxes=@vger.kernel.org, AJvYcCXazFO+e4oh1U0bjBoITa8ZyBo1ckOrz/jqa57DPfwuxU21ZtwQMW5iq5tbgWouKSpxH1k0KnFlpY/FU7Qs@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp3dhtjJH1toniHW2+ZX5664FoO15KLzUBSiULSppkQg2w2NcJ
-	xDHWbjyv3sLnpweBjmOEmCOFCmEsNfUCttCX04c7kam5BJkH4Vm0EaEvPVe+aLrLApOf64Bs+gP
-	Vrond5cWem2agyOjgM0bazFYVBg==
-X-Google-Smtp-Source: AGHT+IFmFJWf1WU6vBi8vHbFV0pukUSqPQpDYvejuGLEmStp7nUfeWncTakw2iHQ5OwZwQV3oIpkHHmir4p5muQOzRI=
-X-Received: by 2002:a05:6902:278a:b0:e38:b48b:5fc3 with SMTP id
- 3f1490d57ef6-e38f8be3986mr13689567276.32.1732632270826; Tue, 26 Nov 2024
- 06:44:30 -0800 (PST)
+	s=k20201202; t=1732632265;
+	bh=XYzOG08t1vD7d1OJKr/DTskWOi8KsmwLcNSz/fcdhCk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uTHUZbr785vhaP9Sn348E5w4ewf8XKs3G3poomBuYD2lj/vTZ/LZKTXD0Lc+Hef3r
+	 qEkGst4+Cd5BgdiWI6Wl6TkNDau828baWloNKjG95axZ5E/SZIef5CSCBuDO69IvCp
+	 vQmCdthNb5dU48GWOfrU07HR0wDKBe6h+7Be0u7IZkINUIkuBXafCrm0TBSkrfFGZ1
+	 oOSONZgh+TAwSjv/DGeRuWu5E85FKue7u1SE/CpBzYzSID+uj1XikZyC4uTqA/DGgC
+	 QM66B2eI6YJRBCsfHDiec0JKS/CYcZbECSYLVpZw0m697mHoEsGLwT00R424+Eh4Lv
+	 CETf6qDUmyz/w==
+Message-ID: <015ca99c-e3bd-4e45-8d92-0e0f4de6aacc@kernel.org>
+Date: Tue, 26 Nov 2024 15:44:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022213221.2383-1-dakr@kernel.org> <20241022213221.2383-16-dakr@kernel.org>
- <20241022234712.GB1848992-robh@kernel.org> <ZxibWpcswZxz5A07@pollux>
- <20241023142355.GA623906-robh@kernel.org> <Zx9kR4OhT1pErzEk@pollux>
- <CAL_JsqLVdoQNSSDCfGcf0wCZE9VQphRhHKANxhpei_UoFzkN9g@mail.gmail.com> <Z0XBbLb8NRQg_dek@cassiopeiae>
-In-Reply-To: <Z0XBbLb8NRQg_dek@cassiopeiae>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 26 Nov 2024 08:44:19 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+TV486zw=hAWkFnNbPeA08mJh_4kVVJLSXiYkzWcOVDg@mail.gmail.com>
-Message-ID: <CAL_Jsq+TV486zw=hAWkFnNbPeA08mJh_4kVVJLSXiYkzWcOVDg@mail.gmail.com>
-Subject: Re: [PATCH v3 15/16] rust: platform: add basic platform device /
- driver abstractions
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com, 
-	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net, 
-	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, 
-	daniel.almeida@collabora.com, saravanak@google.com, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/3] Add clock controller support for Spacemit K1
+To: Haylen Chu <heylenay@4d2.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Haylen Chu <heylenay@outlook.com>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Inochi Amaoto <inochiama@outlook.com>, Chen Wang <unicornxdotw@foxmail.com>,
+ Jisheng Zhang <jszhang@kernel.org>
+References: <20241126143125.9980-2-heylenay@4d2.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241126143125.9980-2-heylenay@4d2.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 26, 2024 at 6:39=E2=80=AFAM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> On Wed, Oct 30, 2024 at 07:23:47AM -0500, Rob Herring wrote:
-> > On Mon, Oct 28, 2024 at 5:15=E2=80=AFAM Danilo Krummrich <dakr@kernel.o=
-rg> wrote:
-> > >
-> > > On Wed, Oct 23, 2024 at 09:23:55AM -0500, Rob Herring wrote:
-> > > > On Wed, Oct 23, 2024 at 08:44:42AM +0200, Danilo Krummrich wrote:
-> > > > > On Tue, Oct 22, 2024 at 06:47:12PM -0500, Rob Herring wrote:
-> > > > > > On Tue, Oct 22, 2024 at 11:31:52PM +0200, Danilo Krummrich wrot=
-e:
-> > > > > > > +///     ]
-> > > > > > > +/// );
-> > > > > > > +///
-> > > > > > > +/// impl platform::Driver for MyDriver {
-> > > > > > > +///     type IdInfo =3D ();
-> > > > > > > +///     const ID_TABLE: platform::IdTable<Self::IdInfo> =3D =
-&OF_TABLE;
-> > > > > > > +///
-> > > > > > > +///     fn probe(
-> > > > > > > +///         _pdev: &mut platform::Device,
-> > > > > > > +///         _id_info: Option<&Self::IdInfo>,
-> > > > > > > +///     ) -> Result<Pin<KBox<Self>>> {
-> > > > > > > +///         Err(ENODEV)
-> > > > > > > +///     }
-> > > > > > > +/// }
-> > > > > > > +///```
-> > > > > > > +/// Drivers must implement this trait in order to get a plat=
-form driver registered. Please refer to
-> > > > > > > +/// the `Adapter` documentation for an example.
-> > > > > > > +pub trait Driver {
-> > > > > > > +    /// The type holding information about each device id su=
-pported by the driver.
-> > > > > > > +    ///
-> > > > > > > +    /// TODO: Use associated_type_defaults once stabilized:
-> > > > > > > +    ///
-> > > > > > > +    /// type IdInfo: 'static =3D ();
-> > > > > > > +    type IdInfo: 'static;
-> > > > > > > +
-> > > > > > > +    /// The table of device ids supported by the driver.
-> > > > > > > +    const ID_TABLE: IdTable<Self::IdInfo>;
-> > > >
-> > > > Another thing. I don't think this is quite right. Well, this part i=
-s
-> > > > fine, but assigning the DT table to it is not. The underlying C cod=
-e has
-> > > > 2 id tables in struct device_driver (DT and ACPI) and then the bus
-> > > > specific one in the struct ${bus}_driver.
-> > >
-> > > The assignment of this table in `Adapter::register` looks like this:
-> > >
-> > > `pdrv.driver.of_match_table =3D T::ID_TABLE.as_ptr();`
-> > >
-> > > What do you think is wrong with this assignment?
-> >
-> > Every bus implementation will need the DT and ACPI tables, so they
-> > should not be declared and assigned in platform driver code, but in
-> > the generic device/driver abstractions just like the underlying C
-> > code. The one here should be for platform_device_id. You could put all
-> > 3 tables here, but that's going to be a lot of duplication I think.
->
-> That's indeed true. But I'm not sure that at this point we need a general=
-ized
-> `Driver` abstraction just for assigning the DT and ACPI tables.
+On 26/11/2024 15:31, Haylen Chu wrote:
+> The clock tree of Spacemit K1 is managed by several independent
+> controllers in different SoC parts. In this series, all clock hardwares
+> in APBS, MPMU, APBC and APMU, are implemented. With some changes to UART
+> driver, CPU cores and UARTs could be brought up (see below). More clocks
+> will be implemented later soon.
+> 
+> No device tree changes are included since Spacemit K1 UART needs two
+> clocks to operate, but for now the driver gets only one. I would like to
+> defer the changes until this is resolved.
+> 
+> This driver has been tested on BananaPi-F3 board and successfully
+> brought up I2C, RTC, mmc and ethernet controllers. A clock tree dump
+> could be obtained here[1].
+> 
+> [1]: https://gist.github.com/heylenayy/ebc6316692dd3aff56575dbf0eb4f1a9
+> 
+> Link: https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb
+> 
+> Changed from v2
+> - dt-binding fixes
+What fixes? Be specific, what did you change?
 
-Why not? Practically *every* non-discoverable bus type needs that.
-That's essentially everything except USB and PCI.
-
-> Maybe it's better to do this in a subsequent series?
-
-Sure, but only because there will be a limited number of users to fix.
-It looks to me like things are designed for exactly 1 IdInfo
-type/table per driver and that's not a correct assumption.
-
-> > > > > > > +
-> > > > > > > +    /// Platform driver probe.
-> > > > > > > +    ///
-> > > > > > > +    /// Called when a new platform device is added or discov=
-ered.
-> > > > > > > +    /// Implementers should attempt to initialize the device=
- here.
-> > > > > > > +    fn probe(dev: &mut Device, id_info: Option<&Self::IdInfo=
->) -> Result<Pin<KBox<Self>>>;
-> > > > > > > +
-> > > > > > > +    /// Find the [`of::DeviceId`] within [`Driver::ID_TABLE`=
-] matching the given [`Device`], if any.
-> > > > > > > +    fn of_match_device(pdev: &Device) -> Option<&of::DeviceI=
-d> {
-> > > > > >
-> > > > > > Is this visible to drivers? It shouldn't be.
-> > > > >
-> > > > > Yeah, I think we should just remove it. Looking at struct of_devi=
-ce_id, it
-> > > > > doesn't contain any useful information for a driver. I think when=
- I added this I
-> > > > > was a bit in "autopilot" mode from the PCI stuff, where struct pc=
-i_device_id is
-> > > > > useful to drivers.
-> > > >
-> > > > TBC, you mean other than *data, right? If so, I agree.
-> > >
-> > > Yes.
-> > >
-> > > >
-> > > > The DT type and name fields are pretty much legacy, so I don't thin=
-k the
-> > > > rust bindings need to worry about them until someone converts Sparc=
- and
-> > > > PowerMac drivers to rust (i.e. never).
-> > > >
-> > > > I would guess the PCI cases might be questionable, too. Like DT, dr=
-ivers
-> > > > may be accessing the table fields, but that's not best practice. Al=
-l the
-> > > > match fields are stored in pci_dev, so why get them from the match
-> > > > table?
-> > >
-> > > Fair question, I'd like to forward it to Greg. IIRC, he explicitly re=
-quested to
-> > > make the corresponding struct pci_device_id available in probe() at K=
-angrejos.
-
-Making it available is not necessarily the same thing as passing it in
-via probe. I agree it may need to be available in probe(), but that
-can be an explicit call to get it.
-
-> > Which table gets passed in though? Is the IdInfo parameter generic and
-> > can be platform_device_id, of_device_id or acpi_device_id? Not sure if
-> > that's possible in rust or not.
->
-> Not sure I can follow you here.
->
-> The `IdInfo` parameter is of a type given by the driver for driver specif=
-ic data
-> for a certain ID table entry.
->
-> It's analogue to resolving `pci_device_id::driver_data` in C.
-
-As I said below, the PCI case is simpler than for platform devices.
-Platform devices have 3 possible match tables. The *_device_id type we
-end up with is determined at runtime (because matching is done at
-runtime), so IdInfo could be any of those 3 types. Is the exact type
-opaque to probe() and will that magically work in rust? Or do we need
-to pass in the 'driver_data' ptr (or reference) itself? The matched
-driver data is generally all the driver needs or cares about. We can
-probably assume that it is the same type no matter which match table
-is used whether it is platform_device_id::driver_data,
-of_device_id::data, or acpi_device_id::driver_data. Nothing in the C
-API guarantees that, but that's just best practice. Best practice in C
-looks like this:
-
-my_probe()
-{
-  struct my_driver_data *data =3D device_get_match_data();
-  ...
-}
-
-device_get_match_data() is just a wrapper to handle the 3 possible match ta=
-bles.
-
-The decision for rust is whether we pass in "data" to probe or have an
-explicit call. There is a need to get to the *_device_id entry, but
-that's the exception. I would go as far as saying we may never need
-that in rust drivers.
-
-Rob
-
-> > PCI is the exception, not the rule here, in that it only matches with
-> > pci_device_id. At least I think that is the case currently, but it is
-> > entirely possible we may want to do ACPI/DT matching like every other
-> > bus. There are cases where PCI devices are described in DT.
-> >
-> > Rob
-> >
+Best regards,
+Krzysztof
 
