@@ -1,357 +1,367 @@
-Return-Path: <linux-kernel+bounces-422442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9409D99B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:37:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F9E9D99B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:36:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70DC8B243A7
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 827C82832A0
 	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F304A1D5CE8;
-	Tue, 26 Nov 2024 14:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F4PxRDSx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406591D5CF2;
+	Tue, 26 Nov 2024 14:36:33 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49578BE46;
-	Tue, 26 Nov 2024 14:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817381D47AF
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 14:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732631792; cv=none; b=ajQ2IrUaoHtKG4WPRwGlLXxJnpnozBxuYVguzdRTa4wCDcATf51upkBXY6jgtiQWw6NT/LDdOI6y8FsYo8TATpqtMeabyD3sToxmATgFAui7XIj1GXQ8CFxP2glGP/NiDaH1KwlYzlf3D0Q4FoEfHM3cOCKLt6xbJ0fRDayMKfw=
+	t=1732631792; cv=none; b=cUr0CptivmR04CWidLjV1KTM3gcFdAksfJwl8ZfEOQoHdbawdaPFOCgBI3td9RzdATe3cp1xKRv6GZXkOjxCKG4EH3oJ/tu1iG//wgZc9lea2wmxP7prNvViL5MBOUnRFo6f4Eu3SM0WrUQNrl26j072IXxeT5wb51eHLWxW6pU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732631792; c=relaxed/simple;
-	bh=JzXU9P99AoLbjBAGR3owoxTTsTfX3Nf4vjrC0RWhLP8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hl6yW9Q8/ULseSpfpfyfAk0M6aCFZAZUtKfKunqqYRpMd+3idXNW0Ge/LAICjIl8V7sRC4RNfya2ZZzKrs6NAua1RyvvxpS7zqJ7IULyG1cyl4sZsH23WYoccTT+HSRNcsGNtkbKyQxsuCmKBrbFSy+p0xzHd9dGZvGGoxITBrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F4PxRDSx; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732631790; x=1764167790;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JzXU9P99AoLbjBAGR3owoxTTsTfX3Nf4vjrC0RWhLP8=;
-  b=F4PxRDSx81A22eIT4mydQPZczfsjBlA9xdCaUJf1NTgD4mqnsJHr0p12
-   GkSEatmLMOHgRx5s2GWtqBOAQ3eQgYmw3Zh+4ZjjzWuWKnMmv7XHCfzFN
-   B9mXHP2qo9J7/rbh6GBFpBqZRVDjkfK0B3HQVnMOKzgTaTwFk96EpIRKP
-   PxGM9HuXH2npDWgWfT7SX+S8+j2YBZhi+AIGsTaeAZEqeeyEpEpr1SmZ5
-   06UB8MTrOdfXhqI12yqHvpxT5veiGJlW8F1DwSs+UUC8NQmGNKjYEMY0X
-   TwIrSukFGUMqIL3VzivhQHmx7dqlMRVQNxJM8FEVDY5L+8n1RUv18ftcd
-   Q==;
-X-CSE-ConnectionGUID: Yog4g+YHR3OaOnvjPbBkcg==
-X-CSE-MsgGUID: W90zYwE1RvCYImoaH/mkEw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="36721744"
-X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
-   d="scan'208";a="36721744"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 06:36:29 -0800
-X-CSE-ConnectionGUID: TysiTX2+TTOav5xFiJH8Vg==
-X-CSE-MsgGUID: q5eQ2L3yTROPnkk4j9RfSw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
-   d="scan'208";a="91249597"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 06:36:27 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id DC4C011F89A;
-	Tue, 26 Nov 2024 16:36:24 +0200 (EET)
-Date: Tue, 26 Nov 2024 14:36:24 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Naushir Patuck <naush@raspberrypi.com>,
-	Vinay Varma <varmavinaym@gmail.com>
-Subject: Re: [PATCH v3 3/3] media: i2c: imx219: Scale the pixel rate for
- analog binning
-Message-ID: <Z0Xc6FYyYdLTUfll@kekkonen.localdomain>
-References: <20241125-imx219_fixes-v3-0-434fc0b541c8@ideasonboard.com>
- <20241125-imx219_fixes-v3-3-434fc0b541c8@ideasonboard.com>
+	bh=JkWiPuGbsRmxY/4TCBLyQ6LHLdUEMNuofuVdplXHy1Q=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=F7ZqveEyx+LT5TVSyVFdVEgy50ZGlSVmhTVfJZ+wioRTdi+qvqjs4PvbCp+JqKasHiju2LoO8A3hrJLAb1HYbQ1sANGUtNDfKc+oIHv8MmluW/p6qvyVpROCzOIsbMJU5qJ+ZA1vXNU4MSo/Vsk5q0Dyx23DG1VZ8JhKAAikkbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-841a54a6603so217574139f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 06:36:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732631790; x=1733236590;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3tqfRNzH64ajg6sb1Q/f3N5cNiFWUjatFOU9F9Kh2hA=;
+        b=QNq/zxVKeYg5/ZapxSUSpN42ArGCtyNXNMBFSNuGP09Q4/Jxwae+crFIlzGK7spuLS
+         IXKnaF/yCDeEAaLRMj13H0UNQ1BfGPrqUs8h+eaZJa5TIhuvUMieZ1o+2duKmTsad6ZF
+         G38JIOORQED63IAfxXbGFtWFojCy/tBdGvKwdkeIv3hur+76086AaInaCVOX0CqMYNuQ
+         nY0nqyPiQmB/5T7oiTJ47mC2VwPExcJVm/YCk3iIxuQEZ28VCb1KAGN5PU5x5tVbxOLX
+         ltb2uIyw/iV7FRCefkWSIZ9Ct1HIGF9U/DCEwmas5/dB4TzQWriOJ0z23ftFd6i+jx7f
+         d7Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgwJXP5lj2AtTScHFCp8k0AmBzSG/Qe12zk1n4F94jt7W18Wx9YSsae4HCRJPHMUCLl4CozRWOD9gZq/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzX9urv6j3SNsdsdnxURpuvQqQNW2HL7rdP8LaMdyb2idbrdXyv
+	tvxioOJQoYDXHyNRjj1p0VuzZ+rlPl46LjZzuC7x6XdIBA0CCvOGcMatl3wbq40avOPArv9xmEK
+	Y6RPyaIx30T3KHdPrywDMKB2L0UOuk1AJQt1qqvjw1QRPfvCMI4xUig4=
+X-Google-Smtp-Source: AGHT+IEKH9pp8BNlTnl8ttMYDt/9wl+Qouyr/McrIuU6rGILui1G9FDqMGvyKqza7ZdDCyyx8fXMOHEiDs0egv/JZMkm0Px8bnMd
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241125-imx219_fixes-v3-3-434fc0b541c8@ideasonboard.com>
+X-Received: by 2002:a05:6e02:184a:b0:3a7:776e:93fb with SMTP id
+ e9e14a558f8ab-3a79ad10bd3mr205470205ab.8.1732631789681; Tue, 26 Nov 2024
+ 06:36:29 -0800 (PST)
+Date: Tue, 26 Nov 2024 06:36:29 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6745dced.050a0220.1286eb.0019.GAE@google.com>
+Subject: [syzbot] [v9fs?] BUG: stack guard page was hit in io_uring_enter
+From: syzbot <syzbot+f86e49ba96853e315c26@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, ericvh@kernel.org, linux-kernel@vger.kernel.org, 
+	linux_oss@crudebyte.com, lucho@ionkov.net, syzkaller-bugs@googlegroups.com, 
+	v9fs@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Jai,
+Hello,
 
-On Mon, Nov 25, 2024 at 08:36:27PM +0530, Jai Luthra wrote:
-> When the analog binning mode is used for high framerate operation,
-> the pixel rate is effectively doubled. Account for this when setting up
-> the pixel clock rate, and applying the vblank and exposure controls.
-> 
-> The previous logic only used analog binning for 8-bit modes, but normal
-> binning limits the framerate on 10-bit 480p [1]. So with this patch we
-> switch to using special binning (with 2x pixel rate) for all formats of
-> 480p mode and 8-bit 1232p.
-> 
-> [1]: https://github.com/raspberrypi/linux/issues/5493
-> 
-> Co-developed-by: Naushir Patuck <naush@raspberrypi.com>
-> Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
-> Co-developed-by: Vinay Varma <varmavinaym@gmail.com>
-> Signed-off-by: Vinay Varma <varmavinaym@gmail.com>
-> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> ---
->  drivers/media/i2c/imx219.c | 120 ++++++++++++++++++++++++++++-----------------
->  1 file changed, 76 insertions(+), 44 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> index 970e6362d0ae3a9078daf337155e83d637bc1ca1..39b85cdee58318b080c867afd68ca33d14d3eda7 100644
-> --- a/drivers/media/i2c/imx219.c
-> +++ b/drivers/media/i2c/imx219.c
-> @@ -149,6 +149,12 @@
->  #define IMX219_PIXEL_ARRAY_WIDTH	3280U
->  #define IMX219_PIXEL_ARRAY_HEIGHT	2464U
->  
-> +enum binning_mode {
-> +	BINNING_NONE = IMX219_BINNING_NONE,
-> +	BINNING_X2 = IMX219_BINNING_X2,
-> +	BINNING_ANALOG_X2 = IMX219_BINNING_X2_ANALOG,
-> +};
-> +
->  /* Mode : resolution and related config&values */
->  struct imx219_mode {
->  	/* Frame width */
-> @@ -337,6 +343,10 @@ struct imx219 {
->  
->  	/* Two or Four lanes */
->  	u8 lanes;
-> +
-> +	/* Binning mode */
-> +	enum binning_mode bin_h;
-> +	enum binning_mode bin_v;
->  };
->  
->  static inline struct imx219 *to_imx219(struct v4l2_subdev *_sd)
-> @@ -362,6 +372,36 @@ static u32 imx219_get_format_code(struct imx219 *imx219, u32 code)
->  	return imx219_mbus_formats[i];
->  }
->  
-> +static u32 imx219_get_format_bpp(const struct v4l2_mbus_framefmt *format)
-> +{
-> +	switch (format->code) {
-> +	case MEDIA_BUS_FMT_SRGGB8_1X8:
-> +	case MEDIA_BUS_FMT_SGRBG8_1X8:
-> +	case MEDIA_BUS_FMT_SGBRG8_1X8:
-> +	case MEDIA_BUS_FMT_SBGGR8_1X8:
-> +		return 8;
-> +
-> +	case MEDIA_BUS_FMT_SRGGB10_1X10:
-> +	case MEDIA_BUS_FMT_SGRBG10_1X10:
-> +	case MEDIA_BUS_FMT_SGBRG10_1X10:
-> +	case MEDIA_BUS_FMT_SBGGR10_1X10:
-> +	default:
-> +		return 10;
-> +	}
-> +}
-> +
-> +static int imx219_get_rate_factor(struct imx219 *imx219)
-> +{
-> +	switch (imx219->bin_v) {
-> +	case BINNING_NONE:
-> +	case BINNING_X2:
-> +		return 1;
-> +	case BINNING_ANALOG_X2:
-> +		return 2;
+syzbot found the following issue on:
 
-FWIW, what the CCS driver does is that it exposes different horizontal
-blanking ranges for devices that use analogue binning. The rate is really
-about reading pixels and with analogue binning the rate is the same, it's
-just that fewer pixels are being (digitally) read (as they are binned). I
-wonder if this would be a workable approach for this sensor, too. Of course
-if the LLP behaves differently for this sensor, then we should probably
-just accept that.
+HEAD commit:    05b92660cdfe Merge tag 'pci-v6.12-fixes-2' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=155e9630580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=728f7ffd25400452
+dashboard link: https://syzkaller.appspot.com/bug?extid=f86e49ba96853e315c26
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-> +	}
-> +	return -EINVAL;
-> +}
-> +
->  /* -----------------------------------------------------------------------------
->   * Controls
->   */
-> @@ -373,10 +413,12 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
->  	struct i2c_client *client = v4l2_get_subdevdata(&imx219->sd);
->  	const struct v4l2_mbus_framefmt *format;
->  	struct v4l2_subdev_state *state;
-> +	int rate_factor;
+Unfortunately, I don't have any reproducer for this issue yet.
 
-u32?
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-05b92660.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/240ba8a2a878/vmlinux-05b92660.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fed8acdd322e/bzImage-05b92660.xz
 
->  	int ret = 0;
->  
->  	state = v4l2_subdev_get_locked_active_state(&imx219->sd);
->  	format = v4l2_subdev_state_get_format(state, 0);
-> +	rate_factor = imx219_get_rate_factor(imx219);
->  
->  	if (ctrl->id == V4L2_CID_VBLANK) {
->  		int exposure_max, exposure_def;
-> @@ -405,7 +447,7 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
->  		break;
->  	case V4L2_CID_EXPOSURE:
->  		cci_write(imx219->regmap, IMX219_REG_EXPOSURE,
-> -			  ctrl->val, &ret);
-> +			  ctrl->val / rate_factor, &ret);
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f86e49ba96853e315c26@syzkaller.appspotmail.com
 
-Isn't the exposure in lines? It shouldn't be affected by the rate change,
-shouldn't it?
+BUG: TASK stack guard page was hit at ffffc90001717fd8 (stack is ffffc90001718000..ffffc90001720000)
+Oops: stack guard page: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 3 UID: 0 PID: 8268 Comm: syz.0.692 Not tainted 6.12.0-rc5-syzkaller-00291-g05b92660cdfe #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:unwind_next_frame+0x76/0x20c0 arch/x86/kernel/unwind_orc.c:470
+Code: 41 5f c3 cc cc cc cc 49 8d 6d 48 48 b8 00 00 00 00 00 fc ff df 48 89 ea 48 c1 ea 03 80 3c 02 00 0f 85 00 18 00 00 49 8b 45 48 <48> 89 44 24 08 49 8d 45 38 48 89 c2 48 89 04 24 48 b8 00 00 00 00
+RSP: 0018:ffffc90001717fe8 EFLAGS: 00010046
+RAX: ffffffff813d7404 RBX: 0000000000000001 RCX: ffffc90001718140
+RDX: 1ffff920002e301e RSI: ffff888022fc0000 RDI: ffffc900017180a8
+RBP: ffffc900017180f0 R08: 0000000000000001 R09: 0000000000000000
+R10: ffffc900017180a8 R11: 0000000000000000 R12: fffff520002e3017
+R13: ffffc900017180a8 R14: ffffc900017180a8 R15: ffffc900017180b0
+FS:  00007f483b1d36c0(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffc90001717fd8 CR3: 000000004e7f6000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <#DF>
+ </#DF>
+ <TASK>
+ __unwind_start+0x45f/0x7f0 arch/x86/kernel/unwind_orc.c:760
+ unwind_start arch/x86/include/asm/unwind.h:64 [inline]
+ arch_stack_walk+0x74/0x100 arch/x86/kernel/stacktrace.c:24
+ stack_trace_save+0x95/0xd0 kernel/stacktrace.c:122
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:319 [inline]
+ __kasan_slab_alloc+0x89/0x90 mm/kasan/common.c:345
+ kasan_slab_alloc include/linux/kasan.h:247 [inline]
+ slab_post_alloc_hook mm/slub.c:4085 [inline]
+ slab_alloc_node mm/slub.c:4134 [inline]
+ kmem_cache_alloc_noprof+0x121/0x2f0 mm/slub.c:4141
+ radix_tree_node_alloc.constprop.0+0x1e8/0x350 lib/radix-tree.c:253
+ idr_get_free+0x528/0xa40 lib/radix-tree.c:1506
+ idr_alloc_u32+0x191/0x2f0 lib/idr.c:46
+ idr_alloc+0xc1/0x130 lib/idr.c:87
+ p9_tag_alloc+0x394/0x870 net/9p/client.c:321
+ p9_client_prepare_req+0x19f/0x4d0 net/9p/client.c:644
+ p9_client_rpc+0x1c3/0xc10 net/9p/client.c:691
+ p9_client_read_once+0x24f/0x820 net/9p/client.c:1575
+ p9_client_read+0x13f/0x1b0 net/9p/client.c:1534
+ v9fs_issue_read+0x115/0x310 fs/9p/vfs_addr.c:74
+ netfs_retry_read_subrequests fs/netfs/read_retry.c:60 [inline]
+ netfs_retry_reads+0x153a/0x1d00 fs/netfs/read_retry.c:232
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_dispatch_unbuffered_reads fs/netfs/direct_read.c:103 [inline]
+ netfs_unbuffered_read fs/netfs/direct_read.c:127 [inline]
+ netfs_unbuffered_read_iter_locked+0x12f6/0x19b0 fs/netfs/direct_read.c:221
+ netfs_unbuffered_read_iter+0xc5/0x100 fs/netfs/direct_read.c:256
+ v9fs_file_read_iter+0xbf/0x100 fs/9p/vfs_file.c:361
+ io_iter_do_read io_uring/rw.c:771 [inline]
+ __io_read+0x320/0x1190 io_uring/rw.c:865
+ io_read+0x1e/0x70 io_uring/rw.c:943
+ io_issue_sqe+0x175/0x13d0 io_uring/io_uring.c:1739
+ io_queue_sqe io_uring/io_uring.c:1953 [inline]
+ io_submit_sqe io_uring/io_uring.c:2209 [inline]
+ io_submit_sqes+0x9b4/0x2530 io_uring/io_uring.c:2324
+ __do_sys_io_uring_enter+0xc0f/0x1170 io_uring/io_uring.c:3343
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f483a37e719
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f483b1d3038 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+RAX: ffffffffffffffda RBX: 00007f483a536058 RCX: 00007f483a37e719
+RDX: 0000000000000000 RSI: 0000000000000567 RDI: 0000000000000007
+RBP: 00007f483a3f132e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f483a536058 R15: 00007ffc2e04f068
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:unwind_next_frame+0x76/0x20c0 arch/x86/kernel/unwind_orc.c:470
+Code: 41 5f c3 cc cc cc cc 49 8d 6d 48 48 b8 00 00 00 00 00 fc ff df 48 89 ea 48 c1 ea 03 80 3c 02 00 0f 85 00 18 00 00 49 8b 45 48 <48> 89 44 24 08 49 8d 45 38 48 89 c2 48 89 04 24 48 b8 00 00 00 00
+RSP: 0018:ffffc90001717fe8 EFLAGS: 00010046
+RAX: ffffffff813d7404 RBX: 0000000000000001 RCX: ffffc90001718140
+RDX: 1ffff920002e301e RSI: ffff888022fc0000 RDI: ffffc900017180a8
+RBP: ffffc900017180f0 R08: 0000000000000001 R09: 0000000000000000
+R10: ffffc900017180a8 R11: 0000000000000000 R12: fffff520002e3017
+R13: ffffc900017180a8 R14: ffffc900017180a8 R15: ffffc900017180b0
+FS:  00007f483b1d36c0(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffc90001717fd8 CR3: 000000004e7f6000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	41 5f                	pop    %r15
+   2:	c3                   	ret
+   3:	cc                   	int3
+   4:	cc                   	int3
+   5:	cc                   	int3
+   6:	cc                   	int3
+   7:	49 8d 6d 48          	lea    0x48(%r13),%rbp
+   b:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  12:	fc ff df
+  15:	48 89 ea             	mov    %rbp,%rdx
+  18:	48 c1 ea 03          	shr    $0x3,%rdx
+  1c:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
+  20:	0f 85 00 18 00 00    	jne    0x1826
+  26:	49 8b 45 48          	mov    0x48(%r13),%rax
+* 2a:	48 89 44 24 08       	mov    %rax,0x8(%rsp) <-- trapping instruction
+  2f:	49 8d 45 38          	lea    0x38(%r13),%rax
+  33:	48 89 c2             	mov    %rax,%rdx
+  36:	48 89 04 24          	mov    %rax,(%rsp)
+  3a:	48                   	rex.W
+  3b:	b8 00 00 00 00       	mov    $0x0,%eax
 
->  		break;
->  	case V4L2_CID_DIGITAL_GAIN:
->  		cci_write(imx219->regmap, IMX219_REG_DIGITAL_GAIN,
-> @@ -422,7 +464,7 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
->  		break;
->  	case V4L2_CID_VBLANK:
->  		cci_write(imx219->regmap, IMX219_REG_VTS,
-> -			  format->height + ctrl->val, &ret);
-> +			  (format->height + ctrl->val) / rate_factor, &ret);
 
-The same for vertical blanking.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
->  		break;
->  	case V4L2_CID_HBLANK:
->  		cci_write(imx219->regmap, IMX219_REG_HTS,
-> @@ -463,7 +505,8 @@ static const struct v4l2_ctrl_ops imx219_ctrl_ops = {
->  
->  static unsigned long imx219_get_pixel_rate(struct imx219 *imx219)
->  {
-> -	return (imx219->lanes == 2) ? IMX219_PIXEL_RATE : IMX219_PIXEL_RATE_4LANE;
-> +	return ((imx219->lanes == 2) ? IMX219_PIXEL_RATE :
-> +		IMX219_PIXEL_RATE_4LANE) * imx219_get_rate_factor(imx219);
->  }
->  
->  /* Initialize control handlers */
-> @@ -592,29 +635,12 @@ static int imx219_set_framefmt(struct imx219 *imx219,
->  {
->  	const struct v4l2_mbus_framefmt *format;
->  	const struct v4l2_rect *crop;
-> -	unsigned int bpp;
-> -	u64 bin_h, bin_v;
-> +	u32 bpp;
->  	int ret = 0;
->  
->  	format = v4l2_subdev_state_get_format(state, 0);
->  	crop = v4l2_subdev_state_get_crop(state, 0);
-> -
-> -	switch (format->code) {
-> -	case MEDIA_BUS_FMT_SRGGB8_1X8:
-> -	case MEDIA_BUS_FMT_SGRBG8_1X8:
-> -	case MEDIA_BUS_FMT_SGBRG8_1X8:
-> -	case MEDIA_BUS_FMT_SBGGR8_1X8:
-> -		bpp = 8;
-> -		break;
-> -
-> -	case MEDIA_BUS_FMT_SRGGB10_1X10:
-> -	case MEDIA_BUS_FMT_SGRBG10_1X10:
-> -	case MEDIA_BUS_FMT_SGBRG10_1X10:
-> -	case MEDIA_BUS_FMT_SBGGR10_1X10:
-> -	default:
-> -		bpp = 10;
-> -		break;
-> -	}
-> +	bpp = imx219_get_format_bpp(format);
->  
->  	cci_write(imx219->regmap, IMX219_REG_X_ADD_STA_A,
->  		  crop->left - IMX219_PIXEL_ARRAY_LEFT, &ret);
-> @@ -625,28 +651,8 @@ static int imx219_set_framefmt(struct imx219 *imx219,
->  	cci_write(imx219->regmap, IMX219_REG_Y_ADD_END_A,
->  		  crop->top - IMX219_PIXEL_ARRAY_TOP + crop->height - 1, &ret);
->  
-> -	switch (crop->width / format->width) {
-> -	case 1:
-> -	default:
-> -		bin_h = IMX219_BINNING_NONE;
-> -		break;
-> -	case 2:
-> -		bin_h = bpp == 8 ? IMX219_BINNING_X2_ANALOG : IMX219_BINNING_X2;
-> -		break;
-> -	}
-> -
-> -	switch (crop->height / format->height) {
-> -	case 1:
-> -	default:
-> -		bin_v = IMX219_BINNING_NONE;
-> -		break;
-> -	case 2:
-> -		bin_v = bpp == 8 ? IMX219_BINNING_X2_ANALOG : IMX219_BINNING_X2;
-> -		break;
-> -	}
-> -
-> -	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_H, bin_h, &ret);
-> -	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_V, bin_v, &ret);
-> +	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_H, imx219->bin_h, &ret);
-> +	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_V, imx219->bin_v, &ret);
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Please run:
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-$ ./scripts/checkpatch.pl --strict --max-line-length=80
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
->  
->  	cci_write(imx219->regmap, IMX219_REG_X_OUTPUT_SIZE,
->  		  format->width, &ret);
-> @@ -851,6 +857,27 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
->  		int exposure_max;
->  		int exposure_def;
->  		int hblank;
-> +		int pixel_rate;
-> +		u32 bpp = imx219_get_format_bpp(format);
-> +		enum binning_mode binning = BINNING_NONE;
-> +
-> +		/*
-> +		 * For 8-bit formats, analog horizontal binning is required,
-> +		 * else the output image is garbage.
-> +		 * For 10-bit formats, analog horizontal binning is optional,
-> +		 * but still useful as it doubles the effective framerate.
-> +		 * We can only use it with width <= 1624, as for higher values
-> +		 * there are blocky artefacts.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-This comment would benefit from rewrapping.
-
-> +		 *
-> +		 * Vertical binning should match the horizontal binning mode.
-> +		 */
-> +		if (bin_h == 2 && (format->width <= 1624 || bpp == 8))
-> +			binning = BINNING_ANALOG_X2;
-> +		else
-> +			binning = BINNING_X2;
-> +
-> +		imx219->bin_h = (bin_h == 2) ? binning : BINNING_NONE;
-> +		imx219->bin_v = (bin_v == 2) ? binning : BINNING_NONE;
-
-It'd be also nice to move the state information to sub-device state.
-
->  
->  		/* Update limits and set FPS to default */
->  		__v4l2_ctrl_modify_range(imx219->vblank, IMX219_VBLANK_MIN,
-> @@ -879,6 +906,11 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
->  					 IMX219_PPL_MAX - mode->width,
->  					 1, IMX219_PPL_MIN - mode->width);
->  		__v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
-> +
-> +		/* Scale the pixel rate based on the mode specific factor */
-> +		pixel_rate = imx219_get_pixel_rate(imx219);
-> +		__v4l2_ctrl_modify_range(imx219->pixel_rate, pixel_rate,
-> +					 pixel_rate, 1, pixel_rate);
->  	}
->  
->  	return 0;
-> 
-
--- 
-Kind regards,
-
-Sakari Ailus
+If you want to undo deduplication, reply with:
+#syz undup
 
