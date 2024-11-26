@@ -1,141 +1,173 @@
-Return-Path: <linux-kernel+bounces-422710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B09649D9D46
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:21:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1832D9D9D4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:23:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7156B23745
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:21:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FA4AB215FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40E61DDA3F;
-	Tue, 26 Nov 2024 18:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9840E1DDA36;
+	Tue, 26 Nov 2024 18:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f2jWfzqu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dulFAUD8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C371DC19D;
-	Tue, 26 Nov 2024 18:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F201B1DB361
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 18:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732645285; cv=none; b=txenIg7O2UYMS5QoPuVi7KTn+FHcbJJQld9m1jbeLWgWs+BptOX+cDNW/PPl7LkKjL+yOWk4h2D8zU/EPXxtkzvrjkuxJUp6uBSfI8lk8I8qcBnfFAdgFI5lgptNkc7CAWltUtQravXsKQEvn2Qww+aJ4j/i5s2K08UvOw1W3Ko=
+	t=1732645418; cv=none; b=iy+UPmpu3svWfxsMzkLNHb8h3VJT/FtlH5RNkENl/wqf7Isy7p+CDioV1EINjzORPfz2Iv6QhqFMndcu8CzJ17lszBSed6FreFSI2B5f2GJgvjqi8A5ec4TuK+LETZC47gEJ/A80Mfdq0wKv2tZXUtgbVLGGrSRsfOW1U8xe73c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732645285; c=relaxed/simple;
-	bh=aYpJqi2ZUZUQP64G0QKJQ92EvvD7/P/coIAeXaPIROo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rLTjYbhKEhwAbVEjxF9ZQvVswIS+bTUlo0JxYo54bnU7spkQHVu8RoooYUeSY4FZKJY4NZS6my0E5YvPFAJrK/8K6HL21x06hi9yWmqoLrDsgl6z/LROFFrT2X2M+WJ2pDU4MBt27g60GgJqTgnfwUKJvIeKYP8J3klfw0acyi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f2jWfzqu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 899D0C4CECF;
-	Tue, 26 Nov 2024 18:21:20 +0000 (UTC)
+	s=arc-20240116; t=1732645418; c=relaxed/simple;
+	bh=uL4h8AivCvP+xLS42wtF6z/lYnpiZgfmM3LoAprgmZM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qvXZwML/o/XuIsJaBZYiABMyt/qlUBkTUdJoXQ72jmGzBcSGQW5DPVKehqWwuAe1K1UZsZRNWWmGb8lmDCn8VpKHV2kag8obrlAJcFmLDwu9be1ubW5rWiCtYe/32KRYbwyex7bG91MRK8pZb85NgwZxpbBNpNTgq16jjLS/dc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dulFAUD8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60619C4CECF;
+	Tue, 26 Nov 2024 18:23:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732645284;
-	bh=aYpJqi2ZUZUQP64G0QKJQ92EvvD7/P/coIAeXaPIROo=;
+	s=k20201202; t=1732645417;
+	bh=uL4h8AivCvP+xLS42wtF6z/lYnpiZgfmM3LoAprgmZM=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=f2jWfzquJVNZLOuwfn+yvtB+iPqsmVcoYgNML9rfT/FBW1vvR7uh91igxHewVVazf
-	 Qood18mxlsXBQQIDCOwLstmIffrqi2cl8fQ9cw5OA/L8hFMZcs6Az+BY4JtY1MhIMz
-	 ds0zya42vKifA9zsnOzIMEsVt9VvDJfHDITVHvgY9WyWEFXxsLFEzx7vbGRHipBgpW
-	 KZdAaMTfUyx6pFHrIDdeIgWx20K/q1R4TPoU3+1JXxP8ScWDM3/mv7EWcvoyebuQdk
-	 b28G2EKjfOhyOaOscsuyJqYW0h1AWqRbP3Br4V3/GtCjEQP/1HEJByZGMQejaJ6ZbI
-	 UrQQUSNCATa+A==
-Date: Tue, 26 Nov 2024 18:21:16 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Guillaume Stols <gstols@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, dlechner@baylibre.com, jstephan@baylibre.com,
- aardelean@baylibre.com, adureghello@baylibre.com
-Subject: Re: [PATCH 3/9] iio:adc: ad7606: Move the software mode
- configuration
-Message-ID: <20241126182116.3ef16e2a@jic23-huawei>
-In-Reply-To: <20241121-ad7606_add_iio_backend_software_mode-v1-3-8a693a5e3fa9@baylibre.com>
-References: <20241121-ad7606_add_iio_backend_software_mode-v1-0-8a693a5e3fa9@baylibre.com>
-	<20241121-ad7606_add_iio_backend_software_mode-v1-3-8a693a5e3fa9@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	b=dulFAUD8D7wyKtstJm4fzw1Ox9MNiTqX/JsCiGmGeRSuJ6UCSbW+2SujGxuwkhsxr
+	 8nh2b57UZPvWrz/WlszFbHR4kecnUuiheHWkpJyr6SBBpnApAOSQZ85oqmDyX71NDR
+	 Bi2yWi77Qa9stTcsnf3snoFj7oZ/Wx4tSr1xdqhrQHmL9FCcMo+Imm1/2578D8L8Hr
+	 owCBs1InysJA5r9cRluAoa63il0uSvKnUiHgGoHOUSuIhMigKpP7enx6F7RXxgeXUz
+	 +ivv7stZiDa3qHnWnUMkNeBYHe2AqUdvttaRLvUojjRzvo+hYwbhdQJxSlvBSk7y1S
+	 fT4D6F0SVy8WA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tG0Dn-00G5HI-3S;
+	Tue, 26 Nov 2024 18:23:35 +0000
+Date: Tue, 26 Nov 2024 18:23:34 +0000
+Message-ID: <86cyihvopl.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Eliav Farber <farbere@amazon.com>
+Cc: <catalin.marinas@arm.com>,
+	<will@kernel.org>,
+	<akpm@linux-foundation.org>,
+	<bhe@redhat.com>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>,
+	<jonnyc@amazon.com>
+Subject: Re: [PATCH] arm64: kexec: Check if IRQ is already masked before masking
+In-Reply-To: <20241126050509.4426-1-farbere@amazon.com>
+References: <20241126050509.4426-1-farbere@amazon.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: farbere@amazon.com, catalin.marinas@arm.com, will@kernel.org, akpm@linux-foundation.org, bhe@redhat.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, jonnyc@amazon.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, 21 Nov 2024 10:18:25 +0000
-Guillaume Stols <gstols@baylibre.com> wrote:
+Thanks Catalin for pointing me to this patch.
 
-> This is a preparation for the intoduction of the sofware functions in
-> the iio backend version of the driver.
-> The software mode configuration must be executed once the channels are
-> configured, and the number of channels is known. This is not the case
-> before iio-backend's configuration is called, and iio backend version of
-> the driver does not have a timestamp channel.
-> Also the sw_mode_config callback is configured during the
-> iio-backend configuration.
-> For clarity purpose, I moved the entire block instead of just the
-> concerned function calls.
+On Tue, 26 Nov 2024 05:05:09 +0000,
+Eliav Farber <farbere@amazon.com> wrote:
 > 
-> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+> During machine kexec, the function machine_kexec_mask_interrupts() is
+> responsible for masking all interrupts. However, the current
+> implementation unconditionally calls the irq_mask() function for each
+> interrupt descriptor, even if the interrupt is already masked.
+> 
+> This commit adds a check to verify if the interrupt is not already
+> masked before calling the irq_mask() function. This change avoids
+> redundant masking operations and potential issues that might arise from
+> attempting to mask an already masked interrupt.
+> 
+> A specific issue was observed in the crash kernel flow after unbinding a
+> device (prior to kexec) that used a GPIO as an IRQ source. The warning
+> was triggered by the gpiochip_disable_irq() function, which attempted to
+> clear the FLAG_IRQ_IS_ENABLED flag when FLAG_USED_AS_IRQ was not set:
+> 
+> ```
+> void gpiochip_disable_irq(struct gpio_chip *gc, unsigned int offset)
+> {
+> 	struct gpio_desc *desc = gpiochip_get_desc(gc, offset);
+> 
+> 	if (!IS_ERR(desc) &&
+> 	    !WARN_ON(!test_bit(FLAG_USED_AS_IRQ, &desc->flags)))
+> 		clear_bit(FLAG_IRQ_IS_ENABLED, &desc->flags);
+> }
+> ```
+> 
+> This issue began after commit a8173820f441 ("gpio: gpiolib: Allow GPIO
+> IRQs to lazy disable"), which replaced IRQ disable/enable hooks with
+> mask/unmask hooks in some cases. The irq_disable hook was protected
+> against disabling an already disabled IRQ, but the irq_mask hook in
+> machine_kexec_mask_interrupts() was not.
+> 
+> When a driver that uses a GPIO-irq is unbound, the corresponding IRQ is
+> released, invoking __irq_disable() and irq_state_set_masked().
+> Subsequently, machine_kexec_mask_interrupts() attempts to call the
+> chip->irq_mask() function again. This invokes gpiochip_irq_mask() and
+> gpiochip_disable_irq(), and since FLAG_USED_AS_IRQ has already been
+> cleared, this results in a warning being printed.
+> 
+> Signed-off-by: Eliav Farber <farbere@amazon.com>
 > ---
->  drivers/iio/adc/ad7606.c | 25 ++++++++++++++-----------
->  1 file changed, 14 insertions(+), 11 deletions(-)
+>  arch/arm64/kernel/machine_kexec.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-> index 893b93b86aa7..828603ed18f6 100644
-> --- a/drivers/iio/adc/ad7606.c
-> +++ b/drivers/iio/adc/ad7606.c
-> @@ -1246,17 +1246,6 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
->  			return -ERESTARTSYS;
->  	}
+> diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
+> index 82e2203d86a3..6f56ec676844 100644
+> --- a/arch/arm64/kernel/machine_kexec.c
+> +++ b/arch/arm64/kernel/machine_kexec.c
+> @@ -230,7 +230,7 @@ static void machine_kexec_mask_interrupts(void)
+>  		    chip->irq_eoi)
+>  			chip->irq_eoi(&desc->irq_data);
 >  
-> -	st->write_scale = ad7606_write_scale_hw;
-> -	st->write_os = ad7606_write_os_hw;
-> -
-> -	ret = ad7606_sw_mode_setup(indio_dev);
-Isn't this the only call to this function?
+> -		if (chip->irq_mask)
+> +		if (chip->irq_mask && !irqd_irq_masked(&desc->irq_data))
+>  			chip->irq_mask(&desc->irq_data);
 
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = ad7606_chan_scales_setup(indio_dev);
-> -	if (ret)
-> -		return ret;
-> -
->  	/* If convst pin is not defined, setup PWM. */
->  	if (!st->gpio_convst) {
->  		st->cnvst_pwm = devm_pwm_get(dev, NULL);
-> @@ -1334,6 +1323,20 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
->  			return ret;
->  	}
->  
-> +	st->write_scale = ad7606_write_scale_hw;
-> +	st->write_os = ad7606_write_os_hw;
-> +
-> +	st->sw_mode_en = st->chip_info->sw_setup_cb &&
-> +			 device_property_present(st->dev, "adi,sw-mode");
-> +	if (st->sw_mode_en) {
-> +		indio_dev->info = &ad7606_info_sw_mode;
-> +		st->chip_info->sw_setup_cb(indio_dev);
+Maybe a slightly better approach would be to simplify this code for
+something that actually uses the kernel infrastructure:
 
-Where did this callback come from?
+diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
+index 82e2203d86a31..9b48d952df3ec 100644
+--- a/arch/arm64/kernel/machine_kexec.c
++++ b/arch/arm64/kernel/machine_kexec.c
+@@ -230,11 +230,8 @@ static void machine_kexec_mask_interrupts(void)
+ 		    chip->irq_eoi)
+ 			chip->irq_eoi(&desc->irq_data);
+ 
+-		if (chip->irq_mask)
+-			chip->irq_mask(&desc->irq_data);
+-
+-		if (chip->irq_disable && !irqd_irq_disabled(&desc->irq_data))
+-			chip->irq_disable(&desc->irq_data);
++		irq_set_status_flags(i, IRQ_DISABLE_UNLAZY);
++		irq_disable(desc);
+ 	}
+ }
+ 
+This is of course untested.
 
-Looks like this and the next patch need tidying up so each does
-one distinct thing.
+But a *much* better approach would be to have a way to turn the
+irqchip off altogether and stop this silly "walk 1000s of interrupts
+for no purpose". Unfortunately, we don't have a good way to do this
+today.
 
-> +	}
-> +
-> +	ret = ad7606_chan_scales_setup(indio_dev);
-> +	if (ret)
-> +		return ret;
-> +
->  	return devm_iio_device_register(dev, indio_dev);
->  }
->  EXPORT_SYMBOL_NS_GPL(ad7606_probe, IIO_AD7606);
-> 
+Thanks,
 
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
