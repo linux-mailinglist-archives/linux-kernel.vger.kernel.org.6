@@ -1,78 +1,84 @@
-Return-Path: <linux-kernel+bounces-421992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E7E9D92FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:01:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 602FA9D9302
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:02:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0FB928178A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:01:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1F9FB24746
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 08:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E51194A44;
-	Tue, 26 Nov 2024 08:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62ED71ABEBF;
+	Tue, 26 Nov 2024 08:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WI8KUgV3"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I35rT2WP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7E6143748;
-	Tue, 26 Nov 2024 08:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82885143748
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 08:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732608103; cv=none; b=k/ssENpniGXVpl3mGz/l+0IGwsTVeGRKY0aR8P0VlwpqepXuA1FVMNLneXNEL0o6A1aqyX799PXA4E7MT/d2MGElIIhucz3W4UrjMimKMb0llZtMBk0ZKKPK4JljJxjHWs+yoBNgYNkd3DehpAwvJioQnHlt3Yg0Gl12MVeyBN4=
+	t=1732608112; cv=none; b=apOt4laioTPy2xUyqsS/VGaGAD5OneUDEf8/OfHLxL7md+Q6PUFR3EBvV9Mag/SvIYlXX5428TrLvYJpC7+q9OJjlStsm4VXMy5CGRXovjf8UP5Gzi5dfn54/+yICeotJDciOly9F74+KzQCp7grEVnadyOESMqzKRiplaI+aXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732608103; c=relaxed/simple;
-	bh=Qr/taxXz3vGfl/Nx+zsxIithDFdRIadoA3c15spbSLc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=NJ8tSWml/SE0oxggVnEBVOCnJ8f3yaFZEeOq5hOyqZ0HxRavQhWznTastf9ZTG5bwJefXa6yD8FjeDZAbocwZB0lESKZOf+vcn4BnzMO5pd855/HHrAAiB2pgpInLNxKOxnl2JGCSAP7S9rLbjS1Wjlzp38LIkqt++xJKPnaxaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WI8KUgV3; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ffc76368c6so25678831fa.0;
-        Tue, 26 Nov 2024 00:01:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732608099; x=1733212899; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=TLhcUgcaehzCh657DFQOY7eTZBplqKp16QE7H3wG/RI=;
-        b=WI8KUgV3k/vm8f45by5qTUXPXsu8SuTQTJle5glaKkq8a7puSNHTjNu76j0xKNqwzd
-         NRMuGRDxd9CjNO+tKM0UOL3LPlY07YY/Q1qIE6Qcyv3PRE8tGrjC4T3HrqLTPQXNUGDL
-         PaoNUg3QVkqT2mCXbm4LSuTkeJt/vvZn8IasOToANmbwGGWHPPkfXJSoPFe/SX4aAQEm
-         k3YpQd41R2YRu5Cc7CpE9Ul4NMU8+IH7jPUIM4wmyY0aYoy6F3+mx0hgo4QiQtuj1aks
-         43DahBQbXaWsywQ3jNvOtNJ4XeHQpviH7pIWxbytDpV7x/fUUGI3cQNgtwmrnbo8sy5r
-         NbtA==
+	s=arc-20240116; t=1732608112; c=relaxed/simple;
+	bh=HClPhchoZHieJ4PXk0ZPMDdo+jy31usGVuk4vyKuzbI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s8ezrb0Y+fQGcGAa2OSXHwCkE7v8wvUuabJzYNyFgEA1EO4Kdcb0bdNUMWK9bk/FlNdN5uCXN4Ax/XevohUzwvZ8lqsn9I6CZ7j+E4j7cdlcViYjKat1STIb1Cf2ehpUz943cSVFvLj4I/Bc81dOtHLsPAz3AtMU6UIRCMk52TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I35rT2WP; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732608109;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lAfqafsxwrqLArJ1cwO4NK3iIDoMu1BiTOyHhDVtA1I=;
+	b=I35rT2WP5st8oh6fMLR4DwWfPbPiEJ8ZmVH+1gnRBSnkhiEWkpZRcP0rW2hO+nDspNI75j
+	6igcNdPzFIIXt9OXYHCSAKLRj3R2gA/rDD8pLdqVl9XTxW+DBUp+M2M/xfxCA4h7IY5EXK
+	EamCkQPh7LC556GxoclOR+Enrf67FUg=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-503-hWS5zRhdOQ64eY1qB1xGFw-1; Tue, 26 Nov 2024 03:01:47 -0500
+X-MC-Unique: hWS5zRhdOQ64eY1qB1xGFw-1
+X-Mimecast-MFC-AGG-ID: hWS5zRhdOQ64eY1qB1xGFw
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4315e8e9b1cso29751925e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 00:01:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732608099; x=1733212899;
+        d=1e100.net; s=20230601; t=1732608106; x=1733212906;
         h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TLhcUgcaehzCh657DFQOY7eTZBplqKp16QE7H3wG/RI=;
-        b=XPplNLIa722m1pcE+yCnyFmLhzzHi78WhyObTy6uyTpZbyukwoxYo1xpFl3ji+rNWQ
-         lLcF7zuCqWEO+4cHV2Qj1fZINl+RsY2yzOtjpPo3bX0DU0b4q9ifd+Nhlf7LVCpPqpb/
-         27EEhR0d/6lMh8OyLJT42SyDcDTRSeH05bIspxNAHXjdUwePFa7j2twCHAR2owL7G8Jk
-         m/iW6GvXcbUHLciGQT8/O0EXUUHCI+/LXrPpjFXewSwPScBShj6vFqwIQjkEF57wBHTW
-         N19R0jxQm8KryNiVjvAwarCs7MJedKOZFf5FloMzSlUipLtvweM7H+QB+ig/Z+piResB
-         ceyg==
-X-Forwarded-Encrypted: i=1; AJvYcCWkWyuoaKNsM3jXDjUeL4/psXcF1sPdJTa8yp8mSXTgE3UhUb+9ySWjw1s7cdjRawj78r/v1a/uEq9cPNXO@vger.kernel.org, AJvYcCXhV3svlFrf6OWYJwA/9pDlMUBbS35ix7oNldq+oEPAm/deLUkjQv3LftNlG3jUmSSDcjMvgaAzwF91L939@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywavzgi1lRZhB4jNW6astvHd//k5/IuMEJ/gdfXWs7rn5HJLTD0
-	QrsIh3cjCAKrS8TWURK07O3yOBnQG63+SBccb9VvHiNtK/p6N+GL
-X-Gm-Gg: ASbGncsF3eBBaSWdDjekXzh6x/NiwXiXWXhGfj3f7Jfkk7fPXctETg0Zso21XXR5dH0
-	AhfJmXfQNpkTPbkvRNJ4VI9xUM7XFTpGolepnnjv6de5f8OyIbr3UbS+RmMrBegi7I/7bRYfATV
-	wS0ry3ygDpMbg5NyLMGi5qYwxoL4PmkNqBukpW7f/bD1AVUzW3UxMV3+Jk+a8ToxxJGj/gfPYLd
-	OX9dSBJ/9CEcEmM14ISDp1EfP8S1Ni7xPv7KP/QMEgpdozjFB8KBj5Rs8SztpfjrINCp1Gsdb1n
-	It9Xj5qDdezPHFisxWfnsll+MfU=
-X-Google-Smtp-Source: AGHT+IE4dWqX6FYS8GpTyQPwG7QbFUjZkKoqX8mHebeNCaYOS/7Fu3gJfNC6CUKQ2XORHy1/kXb/oA==
-X-Received: by 2002:a05:651c:888:b0:2fb:3df8:6a8c with SMTP id 38308e7fff4ca-2ffa71259cdmr113863541fa.23.1732608098684;
-        Tue, 26 Nov 2024 00:01:38 -0800 (PST)
-Received: from ?IPV6:2a00:801:2f3:e48d:c8bb:deb3:99d1:7504? ([2a00:801:2f3:e48d:c8bb:deb3:99d1:7504])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffa538f23csm17380591fa.111.2024.11.26.00.01.36
+        bh=lAfqafsxwrqLArJ1cwO4NK3iIDoMu1BiTOyHhDVtA1I=;
+        b=jSTE8s/WHdPmVI/5HbzsRlnyBuHmvGD0hWmxFRkG4TMZCH5tbzR6vr3MoVSYQZzYhI
+         lrO2Za4UCFO8ZCg7XLsX/4fM8XLXUv9K1C9E8Kt6Gu4ZTjnb9TYxQunYf9sgZV8v5tD4
+         wqQ/JvKcSKKpEqPPiNNTZ9yI8FNmjRTvSSVU8hbBVeH4v4FDVnHMw2MRSR6zq+g9zhra
+         xPRsDrXCdGMBwG3v9VbUI0RTqsorVir2WrMoPXbbc+xHO0VlVEbOj46CNBwf6W6xRGYN
+         bzKWpDvJxPq364gXfr+Px+YEfWJwjB3oG8zPE3LE5+RypShBaWQvTWrzN7dBeWD5nw3S
+         /YLg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3MVx/TX1KXA75gqT5kfnJQhg+afmtSecMItL7spNYSXjCsKr6ci4bVRLkIulSUFZlqzlJeHB14NeCWgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKU3zoHpFwjibiSjiUQjRirFRhXqIK9Vo4a90hnO97O/N4P/py
+	qiEeuXFdGAxPu1qyB8DVq3PgQHYdBSpRZAP5v36i5/tqcerHTFggWt909Q/R5AcXF38Enl90xo0
+	euIcN/PULQe5R3+ZHdDpXt8y+WwskLEPw2GiC1GHoxwHjLirC1l/xF86j9ia4cw==
+X-Gm-Gg: ASbGncukK6GbWig+8pSm9xrR2r5X5uMCRfRTxYSkgWr0lUdxmdusVbAfUHrxs/eBcuX
+	j3y1zF6Baa4obhVeSGOMA/lk9A28TcV2W7OsRw6ElCTH48nc066VdEejM+JNRViCHCRbimxZwug
+	w5vVN+PRmIj1Z14DoZ42JU4A6k/z6qXAZ1DvWQKFC2L6jgjTTeyQElSl9FI36T89kScqmS2TkC1
+	cQXaRMdS3m7KfQdKX0/GossOzgdh5DkNLQ8xZA2QVsTKltzgSP/kx/fFfkHRTvn9HCe+ZgBX4Rz
+X-Received: by 2002:a05:600c:5253:b0:434:9e17:190c with SMTP id 5b1f17b1804b1-434a4dfa99emr15576475e9.0.1732608106695;
+        Tue, 26 Nov 2024 00:01:46 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG3Zs+v/tKW0ky58iJbPzmLtmmXAe1KS/DiR3119yAT3rtX8xL7zpJ9OBnWLqLvIaKIGk8HBA==
+X-Received: by 2002:a05:600c:5253:b0:434:9e17:190c with SMTP id 5b1f17b1804b1-434a4dfa99emr15576215e9.0.1732608106313;
+        Tue, 26 Nov 2024 00:01:46 -0800 (PST)
+Received: from [192.168.88.24] (146-241-94-87.dyn.eolo.it. [146.241.94.87])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fafedbcsm12725815f8f.41.2024.11.26.00.01.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 00:01:38 -0800 (PST)
-Message-ID: <4bb8bfe1-5de6-4b5d-af90-ab24848c772b@gmail.com>
-Date: Tue, 26 Nov 2024 09:01:35 +0100
+        Tue, 26 Nov 2024 00:01:45 -0800 (PST)
+Message-ID: <afe444bb-5419-47db-8b2e-b51945dae752@redhat.com>
+Date: Tue, 26 Nov 2024 09:01:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,68 +86,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Regression in NFS probably due to very large amounts of readahead
-To: Philippe Troin <phil@fifi.org>, Jan Kara <jack@suse.cz>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
- <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
+Subject: Re: [PATCH 07/11] ipv4: reorder capability check last
+To: cgzones@googlemail.com, linux-security-module@vger.kernel.org
+Cc: Eric Dumazet <edumazet@google.com>, "David S. Miller"
+ <davem@davemloft.net>, David Ahern <dsahern@kernel.org>,
+ Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
+ Serge Hallyn <serge@hallyn.com>, Julia Lawall <Julia.Lawall@inria.fr>,
+ Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, cocci@inria.fr
+References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
+ <20241125104011.36552-6-cgoettsche@seltendoof.de>
 Content-Language: en-US
-From: Anders Blomdell <anders.blomdell@gmail.com>
-In-Reply-To: <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241125104011.36552-6-cgoettsche@seltendoof.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 11/25/24 11:39, Christian Göttsche wrote:
+> capable() calls refer to enabled LSMs whether to permit or deny the
+> request.  This is relevant in connection with SELinux, where a
+> capability check results in a policy decision and by default a denial
+> message on insufficient permission is issued.
+> It can lead to three undesired cases:
+>   1. A denial message is generated, even in case the operation was an
+>      unprivileged one and thus the syscall succeeded, creating noise.
+>   2. To avoid the noise from 1. the policy writer adds a rule to ignore
+>      those denial messages, hiding future syscalls, where the task
+>      performs an actual privileged operation, leading to hidden limited
+>      functionality of that task.
+>   3. To avoid the noise from 1. the policy writer adds a rule to permit
+>      the task the requested capability, while it does not need it,
+>      violating the principle of least privilege.
+> 
+> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+> ---
+>  net/ipv4/tcp.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+> index 0d704bda6c41..bd3d7a3d6655 100644
+> --- a/net/ipv4/tcp.c
+> +++ b/net/ipv4/tcp.c
+> @@ -3406,8 +3406,8 @@ EXPORT_SYMBOL(tcp_disconnect);
+>  
+>  static inline bool tcp_can_repair_sock(const struct sock *sk)
+>  {
+> -	return sockopt_ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN) &&
+> -		(sk->sk_state != TCP_LISTEN);
+> +	return (sk->sk_state != TCP_LISTEN) &&
+> +	       sockopt_ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN);
+>  }
+>  
+>  static int tcp_repair_set_window(struct tcp_sock *tp, sockptr_t optbuf, int len)
 
+The code change IMHO makes sense, but the commit message looks quite
+unrelated to this specific change, please re-word it describing this
+change helps capability validation.
 
-On 2024-11-26 02:48, Philippe Troin wrote:
-> On Sat, 2024-11-23 at 23:32 +0100, Anders Blomdell wrote:
->> When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
->> we got terrible performance (lots of nfs: server x.x.x.x not
->> responding).
->> What triggered this problem was virtual machines with NFS-mounted
->> qcow2 disks
->> that often triggered large readaheads that generates long streaks of
->> disk I/O
->> of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache
->> area of the
->> machine.
->>
->> A git bisect gave the following suspect:
->>
->> git bisect start
-> 
-> 8< snip >8
-> 
->> # first bad commit: [7c877586da3178974a8a94577b6045a48377ff25]
->> readahead: properly shorten readahead when falling back to
->> do_page_cache_ra()
-> 
-> Thank you for taking the time to bisect, this issue has been bugging
-> me, but it's been non-deterministic, and hence hard to bisect.
-> 
-> I'm seeing the same problem on 6.11.10 (and earlier 6.11.x kernels) in
-> slightly different setups:
-> 
-> (1) On machines mounting NFSv3 shared drives. The symptom here is a
-> "nfs server XXX not responding, still trying" that never recovers
-> (while the server remains pingable and other NFSv3 volumes from the
-> hanging server can be mounted).
-> 
-> (2) On VMs running over qemu-kvm, I see very long stalls (can be up to
-> several minutes) on random I/O. These stalls eventually recover.
-> 
-> I've built a 6.11.10 kernel with
-> 7c877586da3178974a8a94577b6045a48377ff25 reverted and I'm back to
-> normal (no more NFS hangs, no more VM stalls).
-> 
-> Phil.
-Some printk debugging, seems to indicate that the problem
-is that the entity 'ra->size - (index - start)' goes
-negative, which then gets cast to a very large unsigned
-'nr_to_read' when calling 'do_page_cache_ra'. Where the true
-bug is still eludes me, though.
+Additionally it looks the net patches don't depend on other patches in
+this series, so it would simplify the merging if you would resubmit them
+separately targeting the net-next tree explicitly (add 'net-next' in the
+subj prefix).
 
-/Anders
+Note that the net-next tree is currently closed for the merge window, it
+will reopen around ~2 Dec.
+
+Please have a look at:
+
+https://elixir.bootlin.com/linux/v6.12/source/Documentation/process/maintainer-netdev.rst
+
+for more details.
+
+Thanks,
+
+Paolo
+
 
