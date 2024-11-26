@@ -1,136 +1,168 @@
-Return-Path: <linux-kernel+bounces-422270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC0C9D96DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:58:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E969D96D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:57:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2AB9B283E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:57:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D056286889
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6B81CF2A5;
-	Tue, 26 Nov 2024 11:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594821CF2A0;
+	Tue, 26 Nov 2024 11:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HkH9Fpj8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ApXnpQsn"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875CB1C4616;
-	Tue, 26 Nov 2024 11:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D581CCB50;
+	Tue, 26 Nov 2024 11:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732622253; cv=none; b=r06IoI9359wxkoK/P/EOSg0/3vwCVE+cDS84wHT0NSG63hM75qB83uZZ+2wlYI+xj0eAzSNQMrIZstE+T5b0aq+tAqiijvuySFcksLm+PNITfpgqy/2dLcov0xn29noqGQgdrKZ77MEdtvNjyps8ZjmhgeOzIYyW50jUHjwFHXU=
+	t=1732622265; cv=none; b=ECfmWiM8v4ByDcxGCctD8eFuSWz/rnxFasb0WE+C3gPa4048R/D7c/XaGFfccLjJESZjW/OU5/RGSu2YYw+OMwWu5FinOnYUK44Ravqb8kTwMv1HmdcHO4/4w1gjZXRShN8zBRbUfnL1x4F4SPEl4pg27jumwc9ET0QvHZDFcws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732622253; c=relaxed/simple;
-	bh=bCmiey7MuLrfGe8OToFkl8ukLY928J1c7ekJ8N9Jf7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hlD+Jl8aq+7zheY523PTL92EaBJuoJTFoW237ix2KKXUmxPmnwh80MkRXzR1mRsdZbCIww/sNhfTdsVVvaKrxOPUAo7jH43gyO367UjIrLB25YHTZ1ytl3uLzKIeN1Az0wRGK4bdXnq+4sBJoaL/tf5DqLUTuWJEKqM/oL3lc5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HkH9Fpj8; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732622251; x=1764158251;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=bCmiey7MuLrfGe8OToFkl8ukLY928J1c7ekJ8N9Jf7k=;
-  b=HkH9Fpj8V0CQvVCXID1KbliXgRo8zGhufCTbzUb6vBv5t9VuLxh38hPT
-   AzyrOM2HZBYCEzWgCA1C6tHtnq4wYo6K44jJHHnlbKug0PmmJK6Qqf61h
-   PbEipXUqNmJGLwfnG8DgbRY0lwGEry6C/UVFqy8dMuVqacZPlpMS/46wv
-   XH2PGQgOAxDXZVIYPySVHxF/yRQIhhagC3lP8Lf1hLm7+f8PZejJL1l7n
-   jxFsNsYbF9y520NFDxYiZA9RKHhH4YoeCmkWNNH5L8SeXJGGy8Q8A2QKk
-   RVDsizTBQWzTwlVVus/Wnyg/lMi1KXcG5dJcVOYuPDqhVb7WSf3fx46m9
-   g==;
-X-CSE-ConnectionGUID: c4RWSLQXSu6+6J9/9trbpg==
-X-CSE-MsgGUID: slPNkdQTTry636kuWYsq7Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="43842958"
-X-IronPort-AV: E=Sophos;i="6.12,185,1728975600"; 
-   d="scan'208";a="43842958"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 03:57:30 -0800
-X-CSE-ConnectionGUID: O8YyPQNKRoGY6WezPCr9cg==
-X-CSE-MsgGUID: arcrmDY3SNS0WrkxpwqQFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,185,1728975600"; 
-   d="scan'208";a="95688928"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 03:57:29 -0800
-Message-ID: <113cb538-f337-464e-9854-3a6dcb5b95e6@intel.com>
-Date: Tue, 26 Nov 2024 13:57:23 +0200
+	s=arc-20240116; t=1732622265; c=relaxed/simple;
+	bh=NEruHpdky6RjOpdxUlQi3nrzYq6eDv/Xm8t/qbknvO4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E5xbCqonn4PTuepys6430Vw9W1G/YgyYuHRNbH3XjEld7AR5S4cEPznP+sevS03YifxyUQ1zzCFzZE9eA/fTt8cNRFOi28z8BO5yAl8WZUa7VV352m3tkVpVZZoBynwGxZQ2RSajW5V/cFJTfSeNlXC5q24YxbFPAR3GMWznRvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ApXnpQsn; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQ1aGSa024921;
+	Tue, 26 Nov 2024 11:57:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=8w6NQL
+	t5c13D3GWEe98oQDkzAsHadgr/o2tyGHrq9Ts=; b=ApXnpQsnChgH+LsJyg/u1Y
+	IInC68bP3c9udCij8rYq6LZYV6e4yQP/UPQXuluE2xP+V+3Wh7AZlgY+gJyd7iPh
+	tLX0idSaqYzPHlmT/C3reFyPGiqO9Uo4fe2pdBDTkafFZba1w8rCUQGoTuM4TUDu
+	cHWtb4757W9hIJICzcaOyiLGRHRKtSQb5R/zn9BsRiJubGQMsDEAPAI4ZF6napqL
+	4zIms4u8Ls2bI8bRmT6N5W8hjRMHfSSpPmL/XWa54sfCz8S8zuzyJO6GwnPJJozF
+	/WgP6UmhQ/19+BGeBobmiwJSP6U4ddOOXFZA91IYkzmoiQkesYy4wFUFe3hxbU6w
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43386ndqnq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 11:57:41 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQBumsR000843;
+	Tue, 26 Nov 2024 11:57:38 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 433sryaa3y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 11:57:38 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AQBvYev19923430
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 26 Nov 2024 11:57:34 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9D4D02004E;
+	Tue, 26 Nov 2024 11:57:34 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6B2BC2004D;
+	Tue, 26 Nov 2024 11:57:34 +0000 (GMT)
+Received: from p-imbrenda (unknown [9.152.224.66])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 26 Nov 2024 11:57:34 +0000 (GMT)
+Date: Tue, 26 Nov 2024 12:57:32 +0100
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Janosch Frank
+ <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] KVM: s390: Increase size of union sca_utility to
+ four bytes
+Message-ID: <20241126125732.1889fb09@p-imbrenda>
+In-Reply-To: <20241126102515.3178914-4-hca@linux.ibm.com>
+References: <20241126102515.3178914-1-hca@linux.ibm.com>
+	<20241126102515.3178914-4-hca@linux.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mmc: core: Further prevent card detect during shutdown
-To: Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
- Anthony Pighin <anthony.pighin@nokia.com>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241125122446.18684-1-ulf.hansson@linaro.org>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20241125122446.18684-1-ulf.hansson@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: s9wc8hiXqEJuDAANPimd1KeecB2kZbzr
+X-Proofpoint-ORIG-GUID: s9wc8hiXqEJuDAANPimd1KeecB2kZbzr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ mlxlogscore=999 suspectscore=0 impostorscore=0 malwarescore=0 spamscore=0
+ clxscore=1015 adultscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411260097
 
-On 25/11/24 14:24, Ulf Hansson wrote:
-> Disabling card detect from the host's ->shutdown_pre() callback turned out
-> to not be the complete solution. More precisely, beyond the point when the
-> mmc_bus->shutdown() has been called, to gracefully power off the card, we
-> need to prevent card detect. Otherwise the mmc_rescan work may poll for the
-> card with a CMD13, to see if it's still alive, which then will fail and
-> hang as the card has already been powered off.
+On Tue, 26 Nov 2024 11:25:15 +0100
+Heiko Carstens <hca@linux.ibm.com> wrote:
+
+> kvm_s390_update_topology_change_report() modifies a single bit within
+> sca_utility using cmpxchg(). Given that the size of the sca_utility union
+> is two bytes this generates very inefficient code. Change the size to four
+> bytes, so better code can be generated.
 > 
-> To fix this problem, let's disable mmc_rescan prior to power off the card
-> during shutdown.
+> Even though the size of sca_utility doesn't reflect architecture anymore
+> this seems to be the easiest and most pragmatic approach to avoid
+> inefficient code.
 > 
-> Reported-by: Anthony Pighin <anthony.pighin@nokia.com>
-
-Could add a closes tag here
-
-> Fixes: 66c915d09b94 ("mmc: core: Disable card detect during shutdown")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
-
+> Acked-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+> Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
 > ---
->  drivers/mmc/core/bus.c  | 2 ++
->  drivers/mmc/core/core.c | 3 +++
->  2 files changed, 5 insertions(+)
+>  arch/s390/include/asm/kvm_host.h | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/mmc/core/bus.c b/drivers/mmc/core/bus.c
-> index 9283b28bc69f..1cf64e0952fb 100644
-> --- a/drivers/mmc/core/bus.c
-> +++ b/drivers/mmc/core/bus.c
-> @@ -149,6 +149,8 @@ static void mmc_bus_shutdown(struct device *dev)
->  	if (dev->driver && drv->shutdown)
->  		drv->shutdown(card);
+> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
+> index 1cd8eaebd3c0..1cb1de232b9e 100644
+> --- a/arch/s390/include/asm/kvm_host.h
+> +++ b/arch/s390/include/asm/kvm_host.h
+> @@ -95,10 +95,10 @@ union ipte_control {
+>  };
 >  
-> +	__mmc_stop_host(host);
-> +
->  	if (host->bus_ops->shutdown) {
->  		ret = host->bus_ops->shutdown(host);
->  		if (ret)
-> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-> index a499f3c59de5..d996d39c0d6f 100644
-> --- a/drivers/mmc/core/core.c
-> +++ b/drivers/mmc/core/core.c
-> @@ -2335,6 +2335,9 @@ void mmc_start_host(struct mmc_host *host)
+>  union sca_utility {
+> -	__u16 val;
+> +	__u32 val;
+
+I know I said the patch was fine but I realised now that I would like a
+short comment here explaining that 32 bits allows for more efficient
+code
+
+you can add it when picking, no need to send a v3
+
+>  	struct {
+> -		__u16 mtcr : 1;
+> -		__u16 reserved : 15;
+> +		__u32 mtcr : 1;
+> +		__u32	   : 31;
+>  	};
+>  };
 >  
->  void __mmc_stop_host(struct mmc_host *host)
->  {
-> +	if (host->rescan_disable)
-> +		return;
-> +
->  	if (host->slot.cd_irq >= 0) {
->  		mmc_gpio_set_cd_wake(host, false);
->  		disable_irq(host->slot.cd_irq);
+> @@ -107,7 +107,7 @@ struct bsca_block {
+>  	__u64	reserved[5];
+>  	__u64	mcn;
+>  	union sca_utility utility;
+> -	__u8	reserved2[6];
+> +	__u8	reserved2[4];
+>  	struct bsca_entry cpu[KVM_S390_BSCA_CPU_SLOTS];
+>  };
+>  
+> @@ -115,7 +115,7 @@ struct esca_block {
+>  	union ipte_control ipte_control;
+>  	__u64   reserved1[6];
+>  	union sca_utility utility;
+> -	__u8	reserved2[6];
+> +	__u8	reserved2[4];
+>  	__u64   mcn[4];
+>  	__u64   reserved3[20];
+>  	struct esca_entry cpu[KVM_S390_ESCA_CPU_SLOTS];
 
 
