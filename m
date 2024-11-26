@@ -1,138 +1,202 @@
-Return-Path: <linux-kernel+bounces-422193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B518B9D95AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:38:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99AFD9D95B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:39:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BB6F28509D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:38:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5783B285827
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112C61C8FBA;
-	Tue, 26 Nov 2024 10:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xMxj/S/t"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489001C878E;
+	Tue, 26 Nov 2024 10:39:05 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CAF1C4A13
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222291AC44C
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732617462; cv=none; b=bzFJrFt9JdIdyCE+257l3QtIRBueW8pxf+ajfFVErgNQMX5KRJGjM1W9DauqywYnaD9oCB8wzlAUIrr7+imTkhDqD3Fyz03C2El9Jo13s29nrWAn6YBgaJ5xaZ4Yn31e6l9BZgWF0DoB3EGIHWkybHmavdmQ0pa4rGHsEmR5PoY=
+	t=1732617544; cv=none; b=UYLClU6DEzZMXUhwdRqfej7bPAp8bnaSS+KbuMO2FseFSS/oHMfu/zVRf+uYr27xHV8V83gvmTKJXiNtBDc4F6Bn2GpP41HKxbRj+y2eijLPHcW/93nebawl0UVeIzBfdoU3yxSBMT5Ri9NgI9S5zpCvfMFYMtD2PsaE6yqu7y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732617462; c=relaxed/simple;
-	bh=bsvH9kSUCwHWawfblNJ3PAi3vG5GvJUBddlpJRrsx3g=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=G5iBBNytFWy9JCZ64xbaBQ2jxKpL6SYflltCEbFbUFKuYXfaLymBZtiwoXI8F5Mw/PJoFkhqkZViaUvJYE4t/FAp6tfXZb1fzkEzAb/vUR/oraAqBLYtJz2c3zDbv5V/YUNe/8Hj5qIq/CmsglurV7Y0H6TVCrg9L0zilzpzwFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xMxj/S/t; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53dd8b7796dso4004796e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 02:37:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732617457; x=1733222257; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=DL8n6YXE9oeQeCSKnUhWjhtX76X8Z5GX8Xt7bIlqK5s=;
-        b=xMxj/S/tOPbUkbqCLLckSQb5XvgUMAJfI2BfNGc00Q775+EYirZitoj16d630Y9gWT
-         TWdvQibP0Ef8eStRRoeVtbp/NdlKkZo1Gls7JkLDT+aZkXbolf/vI+RlhJKvkHvdEoji
-         5CCGTQSuNiaT2IwQ0gbDO5+8ahH1S4im04Z4+f9cfl4rFEtfGUpb9w0mWDsdqjASPMHd
-         isF+Uf8EQnHa7XSX86QQD4Tzmx+kPzXS/W8aFv+ypRuLOQh5B7xoOV5b2JB6i36ayCx4
-         3M4u+kKZJvry9z9YniN2zuoloB1ZucvNiw+Xit7WpXun2fcVQVWtVWgv5cPVpDR6Kif+
-         upKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732617457; x=1733222257;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DL8n6YXE9oeQeCSKnUhWjhtX76X8Z5GX8Xt7bIlqK5s=;
-        b=tMK3MVX2XtazJ75CBSl0Nse3T1rkH1V/nygGALfQjixS2mfU1TgCoBjC0YLPoJGrVb
-         1OSNuNcVKPaonxhEfTtQAzm2m++qcIZy3eO30eWHVHkPeJipbmVD+rEBW+ESblD13amH
-         SfLmddZMtUBxKxcOpIUkvarCEI0JKCrfFxkIt+nGr9kt0s39hjmjaNKmjVtU/UcVHlaX
-         PkUGPN8tfVP7etV8VVe3F9hSOow2qs+HG7kR6ehednZaV883UbBbzHftO+i52U28UPqI
-         dg4gap6lpf2l44824tqP3U6dvu18+ITprG7ynDHggkYHjbv/Jxy9gt5BClbIN1ZTy9Lc
-         Ohhw==
-X-Forwarded-Encrypted: i=1; AJvYcCUy0sRtYjyNoxx+c59MRhH7bJwKxIBVTKqz+fRZ0v4eMz+gM8wdGCft500FA/KhdAaHj+wp0MJDVIcMFTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCV2y3z8Cj0tbBT8VZ3WiVybHAv0KEuhYmZFn23mtAHaEFc+AC
-	g53gMADl6Ej48IIgk9F/KKuDbjSqMw4suPRtCyXBqT9YziB/UJFXGjWQUYSO5lw=
-X-Gm-Gg: ASbGnctYB3GVy00PKvhqIRpBa3LQN228MFoj5cOJofe4JRezO6v3ggMeOPe499wGAwe
-	oJO15UD9JXgjfIfHenjlKFhEODq2XwwWKB/jF3LvVC2ahbyDEEHsueZavsKAc+B6N9IeT28X+qy
-	DVwW6IjiYJ2MifPG0JkPiqaiiTXoGpuJQhnaDlGXvik3CaHhPcypjOotZuSjJk+WYVhUJ5ItGNW
-	EYRqr9EDq0pdeJENV6vjVN9aqeoRmMt7a5sLAeGoibEdHyk9Bb9sg5H7qPjECqfB6x2sZrkSI+s
-	XXaDD3vx/GwThg==
-X-Google-Smtp-Source: AGHT+IGm9T8BP8eFPLu32fca54MvgO0F+vLQWk0tpYQ0ycW//DTGAHcftsM6xJdvIIJ/40Jr4imMYA==
-X-Received: by 2002:a05:6512:39cb:b0:53d:ec92:2968 with SMTP id 2adb3069b0e04-53dec922a7cmr947039e87.17.1732617457163;
-        Tue, 26 Nov 2024 02:37:37 -0800 (PST)
-Received: from [192.168.0.172] (88-127-185-239.subs.proxad.net. [88.127.185.239])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fad658esm13229915f8f.8.2024.11.26.02.37.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 02:37:36 -0800 (PST)
-Message-ID: <49fa1677-db35-497b-afae-caa5dccf3747@baylibre.com>
-Date: Tue, 26 Nov 2024 11:37:26 +0100
+	s=arc-20240116; t=1732617544; c=relaxed/simple;
+	bh=sAOxah2M5O3VTEF5UaDJHeSJKF6SfSuYOQ5/5muWQ1E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=d14hsWNrE7NOEJc+fSOpuYEH3ddYC9gbrzYgRhOCD2Iz7i6HJzc291C2TJoMy+olWZM7uxGoQT3jwPXu7xq50b+ASLuHLegKyFStkvb4aPXkyFuumcU6VdsJjliPvNTXZIvaXKWC9hfcbQxI/HsFLdkiQWQFBgtK+XaYVyjPsrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tFsy5-00040B-Pg
+	for linux-kernel@vger.kernel.org; Tue, 26 Nov 2024 11:38:53 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tFsy4-000EXI-2e
+	for linux-kernel@vger.kernel.org;
+	Tue, 26 Nov 2024 11:38:53 +0100
+Received: from dspam.blackshift.org (localhost [127.0.0.1])
+	by bjornoya.blackshift.org (Postfix) with SMTP id 4758737D8E5
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:38:53 +0000 (UTC)
+Received: from hardanger.blackshift.org (unknown [172.20.34.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bjornoya.blackshift.org (Postfix) with ESMTPS id B55DB37D8DE;
+	Tue, 26 Nov 2024 10:38:51 +0000 (UTC)
+Received: from [172.20.34.65] (localhost [::1])
+	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id 10e92ff8;
+	Tue, 26 Nov 2024 10:38:51 +0000 (UTC)
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Date: Tue, 26 Nov 2024 11:38:48 +0100
+Subject: [PATCH can v2] can: mcp251xfd: mcp251xfd_get_tef_len(): work
+ around erratum DS80000789E 6.
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] ASoc: mediatek: mt8365: Don't use "proxy" headers
-From: Alexandre Mergnat <amergnat@baylibre.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mark Brown <broonie@kernel.org>, Nicolas Belin <nbelin@baylibre.com>,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-References: <20241031102725.2447711-1-andriy.shevchenko@linux.intel.com>
- <ZykbMlshvlwCaeGJ@smile.fi.intel.com>
- <d7bf7863-fd24-4f8e-8cd0-d84867a997bb@sirena.org.uk>
- <dad2ecb7-e624-49c2-a7d5-0ff53b6a1686@baylibre.com>
- <Z0RkaqfID9v0age_@smile.fi.intel.com>
- <ed50c130-076c-4697-9f11-fe602c7ca03d@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <ed50c130-076c-4697-9f11-fe602c7ca03d@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241126-mcp251xfd-fix-length-calculation-v2-1-c2ed516ed6ba@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIADelRWcC/42NSw6CMBCGr2Jm7RimtiquvIdhUdspNMFC2kIwh
+ Lvb4AVc/s9vhcTRc4L7YYXIs09+CEWI4wFMp0PL6G3RICohiUjh24xC0eIsOr9gz6HNHRrdm6n
+ XuYyxvlipK7ZEjqHcjJFLc0c8wegATTE7n/IQPzt2pj36EcQfhJmQsL5KKdVLuVt9foylNOU4B
+ L+cLEOzbdsXanR7H9oAAAA=
+X-Change-ID: 20241115-mcp251xfd-fix-length-calculation-96d4a0ed11fe
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Thomas Kopp <thomas.kopp@microchip.com>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: kernel@pengutronix.de, linux-can@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Renjaya Raga Zenta <renjaya.zenta@formulatrix.com>, stable@vger.kernel.org, 
+ Marc Kleine-Budde <mkl@pengutronix.de>
+X-Mailer: b4 0.15-dev-355e8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4137; i=mkl@pengutronix.de;
+ h=from:subject:message-id; bh=sAOxah2M5O3VTEF5UaDJHeSJKF6SfSuYOQ5/5muWQ1E=;
+ b=owEBbQGS/pANAwAKASg4oj56LbxvAcsmYgBnRaU4VE3meW5Zsi1lA7QVHV7mV/CwFhODfSuU/
+ mOLDljU3FmJATMEAAEKAB0WIQRQQLqG4LYE3Sm8Pl8oOKI+ei28bwUCZ0WlOAAKCRAoOKI+ei28
+ by3CB/4xjcVguRSVVlhQ883UYhPw4qi2dLUgQYoPUvulrvOWYCLbNkNGa93IPRLCsuzYB5dy+wW
+ 454nGuNm5IEM8TzvfIShINk9dZR+9a4fZZ55Yu61CUkcDD9+1BZJ/lUPCKqLIqICu4SjGvgsVOU
+ xswjLUMABYqHYhDpagV8A+NjiNDJbhWkyD5TQotGV79cY9ErLec/zMER4WoEzyJH+PFJpIpPN7P
+ tLwA9eJ6wu8r6MftyBjFpbgqZPCxPfGdXVrpH4trhufwl63u1V5c49ZDSTgkUCw9rcPwNjaVeKo
+ 3NRJXlrWGvet4E9OQnDGIOUTDhx+N8obleTpptFlZe/vSBcT
+X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
+ fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+Commit b8e0ddd36ce9 ("can: mcp251xfd: tef: prepare to workaround
+broken TEF FIFO tail index erratum") introduced
+mcp251xfd_get_tef_len() to get the number of unhandled transmit events
+from the Transmit Event FIFO (TEF).
 
+As the TEF has no head index, the driver uses the TX-FIFO's tail index
+instead, assuming that send frames are completed.
 
-On 26/11/2024 11:29, Alexandre Mergnat wrote:
-> On 25/11/2024 12:50, Andy Shevchenko wrote:
->> On Mon, Nov 25, 2024 at 12:32:13PM +0100, Alexandre Mergnat wrote:
->>> Hello Andy.
->>>
->>> Actually, after test it, "linux/of_gpio.h" isn't needed at all anymore.
->>>
->>> That mean all added include in this patch aren't required.
->> Do you mean the driver doesn't not use types from types.h or dev_*() macros
->> from dev_printk.h? I don't believe this, sorry.
-> 
->>
->> Basically what you are trying to say is "let's move of_gpio.h implicit
->> includes to become something else's problem". It's not what this patch
->> intended to do.
-> 
-> I'm just saying that I've test a build/boot with "linux/of_gpio.h" removed and without all
-> include added in you patch. My understand is "linux/of_gpio.h" act as proxy
-> for the includes added in your patch, my first idea was "if I remove it, build should fail cause
-> of lack of other includes". I can understand these missing includes are mandatory, that
-> probably means there is another proxy header ?
-> Maybe my test isn't consistent because it isn't possible to clear all proxy ?
-> 
-> If that's the case, consider my review-by.
+When calculating the number of unhandled TEF events, that commit
+didn't take mcp2518fd erratum DS80000789E 6. into account. According
+to that erratum, the FIFOCI bits of a FIFOSTA register, here the
+TX-FIFO tail index might be corrupted.
 
-Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
+However here it seems the bit indicating that the TX-FIFO is
+empty (MCP251XFD_REG_FIFOSTA_TFERFFIF) is not correct while the
+TX-FIFO tail index is.
 
-> I've validated some include manually. Are you using a script to parse the file and raise all 
-> necessary "linux/*" include ?
+Assume that the TX-FIFO is indeed empty if:
+- Chip's head and tail index are equal (len == 0).
+- The TX-FIFO is less than half full.
+  (The TX-FIFO empty case has already been checked at the
+   beginning of this function.)
+- No free buffers in the TX ring.
 
+If the TX-FIFO is assumed to be empty, assume that the TEF is full and
+return the number of elements in the TX-FIFO (which equals the number
+of TEF elements).
+
+If these assumptions are false, the driver might read to many objects
+from the TEF. mcp251xfd_handle_tefif_one() checks the sequence numbers
+and will refuse to process old events.
+
+Reported-by: Renjaya Raga Zenta <renjaya.zenta@formulatrix.com>
+Closes: https://patch.msgid.link/CAJ7t6HgaeQ3a_OtfszezU=zB-FqiZXqrnATJ3UujNoQJJf7GgA@mail.gmail.com
+Fixes: b8e0ddd36ce9 ("can: mcp251xfd: tef: prepare to workaround broken TEF FIFO tail index erratum")
+Tested-by: Renjaya Raga Zenta <renjaya.zenta@formulatrix.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+---
+Changes in v2:
+- adjusted patch subject
+- added stable on Cc
+- added Renjaya Raga Zenta's Tested-by
+- Link to RFC: https://patch.msgid.link/20241125-mcp251xfd-fix-length-calculation-v1-1-974445b5f893@pengutronix.de
+---
+ drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c | 29 ++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c b/drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c
+index d3ac865933fdf6c4ecdd80ad4d7accbff51eb0f8..e94321849fd7e69ed045eaeac3efec52fe077d96 100644
+--- a/drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c
++++ b/drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c
+@@ -21,6 +21,11 @@ static inline bool mcp251xfd_tx_fifo_sta_empty(u32 fifo_sta)
+ 	return fifo_sta & MCP251XFD_REG_FIFOSTA_TFERFFIF;
+ }
+ 
++static inline bool mcp251xfd_tx_fifo_sta_less_than_half_full(u32 fifo_sta)
++{
++	return fifo_sta & MCP251XFD_REG_FIFOSTA_TFHRFHIF;
++}
++
+ static inline int
+ mcp251xfd_tef_tail_get_from_chip(const struct mcp251xfd_priv *priv,
+ 				 u8 *tef_tail)
+@@ -147,7 +152,29 @@ mcp251xfd_get_tef_len(struct mcp251xfd_priv *priv, u8 *len_p)
+ 	BUILD_BUG_ON(sizeof(tx_ring->obj_num) != sizeof(len));
+ 
+ 	len = (chip_tx_tail << shift) - (tail << shift);
+-	*len_p = len >> shift;
++	len >>= shift;
++
++	/* According to mcp2518fd erratum DS80000789E 6. the FIFOCI
++	 * bits of a FIFOSTA register, here the TX-FIFO tail index
++	 * might be corrupted.
++	 *
++	 * However here it seems the bit indicating that the TX-FIFO
++	 * is empty (MCP251XFD_REG_FIFOSTA_TFERFFIF) is not correct
++	 * while the TX-FIFO tail index is.
++	 *
++	 * We assume the TX-FIFO is empty, i.e. all pending CAN frames
++	 * haven been send, if:
++	 * - Chip's head and tail index are equal (len == 0).
++	 * - The TX-FIFO is less than half full.
++	 *   (The TX-FIFO empty case has already been checked at the
++	 *    beginning of this function.)
++	 * - No free buffers in the TX ring.
++	 */
++	if (len == 0 && mcp251xfd_tx_fifo_sta_less_than_half_full(fifo_sta) &&
++	    mcp251xfd_get_tx_free(tx_ring) == 0)
++		len = tx_ring->obj_num;
++
++	*len_p = len;
+ 
+ 	return 0;
+ }
+
+---
+base-commit: 9bb88c659673003453fd42e0ddf95c9628409094
+change-id: 20241115-mcp251xfd-fix-length-calculation-96d4a0ed11fe
+
+Best regards,
 -- 
-Regards,
-Alexandre
+Marc Kleine-Budde <mkl@pengutronix.de>
+
+
 
