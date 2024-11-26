@@ -1,65 +1,47 @@
-Return-Path: <linux-kernel+bounces-422115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF7ED9D94BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:42:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7394516440F
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:42:30 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E4A1BC9FE;
-	Tue, 26 Nov 2024 09:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="f4g0+9GD"
-Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 421D49D94BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:42:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD111BC063
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDC45282636
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:42:51 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0D91C2323;
+	Tue, 26 Nov 2024 09:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NgOFMGQi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DDA1BC9EE;
+	Tue, 26 Nov 2024 09:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732614150; cv=none; b=ZtQg9cwkIjRQBMC8F4hqUtbnBaCEnldNa/P1bzrt76mi18C9LMBK06PhVZHbaBuDKGF32p+TJlWbLNn9CnnYnjtjyJ/0c7DM0VVzZNw3VCZ0tUWigiMB9Cr/7W+xadtd3y192IKLOitjBUketiTj1v8hYobuYG6yAf5sbCU9Qo0=
+	t=1732614161; cv=none; b=ZNU/RLb2LQoS4Yhe4wk+E3TlpWLF8+YVTBM/0iTe8E9JcXrIRy6BUSEVGqB1qtAsM21fsgLRe6HS2+KEsU+JNMKsYjK7/tEjo09hcSi0H6kTiGv86TVF8Yv76f2qGtSv+xPeH9WOCBcIW5wY5Ts9dWLuTROcfa2m89sKiJQUO1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732614150; c=relaxed/simple;
-	bh=oZ1V4vxuGuPJ4NWtIPdUqCuYLvnjiunTez6SrHPrbUo=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=W/C3PN8V2azpV22mAA404BV8K6ymlzCqHowKC4kldU5bD1aw0i6xBIQmO/WhnnrPIBnOmlUWIOottDMbiettTGuZJrQKVk/6RppdiIxtrS5cdqWUOs9yTYwpJBS/bOEm86NosTkWQwHKn8uB1ToXhxOB4Uak1FAqoSmqTSxCZwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=f4g0+9GD; arc=none smtp.client-ip=44.202.169.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
-Received: from eig-obgw-6006a.ext.cloudfilter.net ([10.0.30.182])
-	by cmsmtp with ESMTPS
-	id Fh7it53QliA19Fs5TttZkn; Tue, 26 Nov 2024 09:42:27 +0000
-Received: from md-in-79.webhostbox.net ([43.225.55.182])
-	by cmsmtp with ESMTPS
-	id Fs5QtPab4fkSoFs5StqwiE; Tue, 26 Nov 2024 09:42:26 +0000
-X-Authority-Analysis: v=2.4 cv=dtLdCUg4 c=1 sm=1 tr=0 ts=67459802
- a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
- a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=-pn6D5nKLtMA:10
- a=f_B5aOHfkBoSN7RXA7sA:9 a=QEXdDO2ut3YA:10 a=ZCPYImcxYIQFgLOT52_G:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=yZTKBGpgZf4XrglD2qS6e5aAZ3GC73kLE5Jc5m/+dAo=; b=f4g0+9GDPOzz75ZfRU1iGvo9Da
-	Kd3j9Kp8gp9z2h+xkawGHunTbemVrWVs1y3BuhTJBH22jkZkQdgk7ih6zbaZemLd+6BTB9cili7+9
-	dX6mf8b1mPr3+ubA/7Js6NT01UIGsRh4SKmMXDuRly4UNUMOBDMk7TF/khDM1yXWIojaRgd5B/Kc7
-	14dWo43PqSCvvBFDsRWwZeNulxnBk08XylH/+f4b1JBnsxGr5omZkJL4yXTX42gZNfzvRc8maoXqs
-	AzaHjW95uuCygwuAkftjrxOF7kxeRmj+Q2zX1X0qpfepyN9abHp/HYm9znxkf9l19xl8UQci45sHB
-	zKD9lOkw==;
-Received: from [122.165.245.213] (port=37436 helo=[192.168.1.5])
-	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <parthiban@linumiz.com>)
-	id 1tFs5H-0042ui-2L;
-	Tue, 26 Nov 2024 15:12:15 +0530
-Message-ID: <34590e17-92be-405e-a072-e86d0dcb7234@linumiz.com>
-Date: Tue, 26 Nov 2024 15:12:10 +0530
+	s=arc-20240116; t=1732614161; c=relaxed/simple;
+	bh=pA/tym/dkQ9gpPtQnd/aNC1lkLyvHcu609VUgy4C+BA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FNoeHlReEUOFspPZfiLa1v7MmdgvGV/r4ql5uohSZ8My4P9Gp1aMT8jeCHbm443G06xYKCf/Ko/JAYbc65yM/wVI1tbvSxRqCZCN9WHFDLRpicvrdb2++3TlMHvSRERngowkUrg80nMhrwJ1jpOsWVAHxyqmNyZFOGu3ju5c4IQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NgOFMGQi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39A1FC4CECF;
+	Tue, 26 Nov 2024 09:42:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732614161;
+	bh=pA/tym/dkQ9gpPtQnd/aNC1lkLyvHcu609VUgy4C+BA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NgOFMGQimvIIrFniP5cNzG1gUIFt+QCLKk1/i6naSFnno5WBETswLGfj/DgCVWDc4
+	 +qyGtUnftrHv25C4e2uJFOaEDwSrnJjJPkmVv3vl3oFuAl4NqJ8fk9LYknePn8Zc11
+	 ksHSUMZ7DIvXtv6Xd1Ncam1wYa2Dj5FNTu3SqkMNtaubuh6pjf235749NfOB83E2kV
+	 XrQJ/kZ8KIGwraAJbZRG/FTcYaLh7gzoj070zKVWtmZM4a4e3wJhHz15aATShRNeoN
+	 tFWbGU8rF/Ynm4+dgmIlRmdluQpLu3+evpLFsBewS7p8AnfldWMOoAMK71tivIVBVi
+	 NPzkGZlX1ErpA==
+Message-ID: <436145fd-d65f-44ec-b950-c434775187ca@kernel.org>
+Date: Tue, 26 Nov 2024 10:42:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,73 +49,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: parthiban@linumiz.com, Frank Binns <frank.binns@imgtec.com>,
- Matt Coster <matt.coster@imgtec.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: gpu: add reset control property
-To: Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor@kernel.org>
-References: <20241125-pvr-reset-v1-0-b437b8052948@linumiz.com>
- <20241125-pvr-reset-v1-1-b437b8052948@linumiz.com>
- <20241125-dress-disliking-2bf22dd4450e@spud>
- <ec0c0a4f-9555-42bb-adac-3ba574fe82cc@linumiz.com>
- <42a9cd04-135b-40e9-ab42-a4a4a4f3ae27@kernel.org>
+Subject: Re: [PATCH v3 1/4] dt-bindings: qcom,qcs615-venus: add support for
+ video hardware
+To: Renjiang Han <quic_renjiang@quicinc.com>
+Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ "Vikash Garodia (QUIC)" <quic_vgarodia@quicinc.com>,
+ "bryan.odonoghue@linaro.org" <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ quic_qiweil@quicinc.com
+References: <20241125-add-venus-for-qcs615-v3-0-5a376b97a68e@quicinc.com>
+ <20241125-add-venus-for-qcs615-v3-1-5a376b97a68e@quicinc.com>
+ <jovwobfcbc344eqrcgxeaxlz2mzgolxqaldvxzmvp5p3rxj3se@fudhzbx5hf2e>
+ <18cc654b4377463e8783de0b4659a27d@quicinc.com>
+ <474cef98-4644-4838-b07c-950ad7515b73@kernel.org>
+ <8c60696c-df14-4300-8a92-59eb134a96d2@quicinc.com>
+ <b2729bde-a12c-4662-897b-18bbea66d2f6@kernel.org>
+ <729add5f-1478-4b0e-84a1-3e33f153d58b@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Parthiban <parthiban@linumiz.com>
-Organization: Linumiz
-In-Reply-To: <42a9cd04-135b-40e9-ab42-a4a4a4f3ae27@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <729add5f-1478-4b0e-84a1-3e33f153d58b@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - linumiz.com
-X-BWhitelist: no
-X-Source-IP: 122.165.245.213
-X-Source-L: No
-X-Exim-ID: 1tFs5H-0042ui-2L
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.5]) [122.165.245.213]:37436
-X-Source-Auth: parthiban@linumiz.com
-X-Email-Count: 2
-X-Org: HG=dishared_whb_net_legacy;ORG=directi;
-X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfPBVSLMntzANpkop4JTsplojn+SbR5Y8jlYN7WzQNwYvq1H4vPUQ7uZ6R3GSBMYCrOJ5rpA5ad8MWvK5+xcXxCvgexoUZvt6g+viNxnviWLyvtyOlkLl
- WCXpTQp75Nlp9YD676JWanOzm36DoB1wg9gKhQNu5GaTX12cxTVYemmknkfJ7Z/6oNLdrIXmTn4vXi0qZvJ2WiZWgOcBWagp7MQ=
 
-On 11/26/24 3:02 PM, Krzysztof Kozlowski wrote:
-> On 26/11/2024 04:46, Parthiban wrote:
->> On 11/25/24 11:37 PM, Conor Dooley wrote:
->>> On Mon, Nov 25, 2024 at 10:07:03PM +0530, Parthiban Nallathambi wrote:
->>>> GE8300 in Allwinner A133 have reset control from the ccu.
->>>> Add the resets property as optional one to control it.
+On 26/11/2024 10:39, Renjiang Han wrote:
+>>>>> If so, do I also need to remove these two nodes from the dtsi file and add
+>>>> Yes
+>>>>
+>>>>> them in the qcs615-ride.dts file?
+>>>> Well, no, how would it pass dtbs_check?
+>>>>
+>>>> Don't add nodes purely for Linux driver instantiation.
+>>> OK, I got it. I'll update like this. If video-decoder and video-encoder are
 >>>
->>> There's no specific compatible here for an a133, but the binding
->>> requires one. Where is your dts patch?
->> A133 GPU is still work in progress in both Kernel and Mesa3D. Also power
->> domain support needs an additional driver.
->>
->> But reset control is independent of those changes. Should reset control
->> needs to be clubbed GPU dts changes?
-> How is it independent? Are you adding it for the new platforms? If yes,
-> then it is part of new platforms. Don't add properties which are not used.
-Thanks for the review. Will address the points together when adding support
-for GE8300 GPU.
-
-Thanks,
-Parthiban
-
+>>> removed from dtsi file and not added to qcs615-ride.dts file, then the
+>>>
+>>> video decoder and encoder functions will not be available on the qcs615
+>>>
+>>> platform. So I think these two nodes should be added to the
+>>>
+>>> qcs615-ride.dts file to ensure that the qcs615 platform can enable the
+>>>
+>>> video decoder and encoder functions.
+>> You just repeated the same sentences. Address my comment instead - empty
+>> device nodes should not be used just to instantiate Linux device drivers.
 > 
-> Best regards,
-> Krzysztof
+> Thanks for your reply. I agree with your comment. The two nodes 
+> video-decoder and
+> 
+> video-encoder should not be placed in the devicetree. But this is 
+> affected by the venus
+> 
+> driver. On the old platform, some only need to enable the video-decoder 
+> function or
+> 
+> only enable the video-encoder function. So these two nodes were added to the
+> 
+> devicetree at that time. For new platforms, the iris driver will be used 
+> in the future,
+> 
+> and this situation will not occur.
+These are new bindings, for new device, so please fix your driver. We
+had similar talk long time ago and answer was that it's a legacy driver
+which won't be developed. This means also no new devices. If you bring
+new devices to old driver, instead of to new iris, then it means you
+still develop old driver. Fix the old driver.
 
+
+Best regards,
+Krzysztof
 
