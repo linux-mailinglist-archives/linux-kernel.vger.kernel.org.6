@@ -1,154 +1,113 @@
-Return-Path: <linux-kernel+bounces-422311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E31F59D9779
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:52:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 056599D977D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:52:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F82D285CFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:52:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF97A2854CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:52:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8DF31CEE92;
-	Tue, 26 Nov 2024 12:51:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B773A194A66;
+	Tue, 26 Nov 2024 12:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b="ho+hNTOD"
-Received: from a.mx.secunet.com (a.mx.secunet.com [62.96.220.36])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="b3O5saHG"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB357194A66;
-	Tue, 26 Nov 2024 12:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.96.220.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35FF11CDFBE;
+	Tue, 26 Nov 2024 12:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732625514; cv=none; b=UxLxr3ZHZ2dAGJAUZAtTn8MvQ8hKvsPbAC+jjUW04H8anRN8LeiVibJrNU6kjAC6F3YPAyhfFrQbQsnnR9+Y9Aj1i/MKKgf8xHpSRPTckX4vR7L1AsrQQdK9sDnlfl7URWI3w9NmW9MFjbs6csXsx5I0U4+5i+9QG+cWwOZ+3uA=
+	t=1732625529; cv=none; b=aElvB89JpsW/mKNeNPU941BGlgtFog16mvSTewSzpgxglxFDCKQgAXlG5Nj7HVuFZSCGQrTJzk/j1tHW/4EkJdc0rOdo77VHxCrA22yXD6vwTkqaIUdqMdiZoQfjMHYRUPiXoEX5IFyAlX/7RjXCyAn013s3qxgZJ+UuIINNWGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732625514; c=relaxed/simple;
-	bh=8LGlOIUGhQV0u96KZLm1OBFo+UPE9uRQUj6RRD1HUIg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TCZJmzI9in5iPiv2ga2b2p+WrCpUFd0yIYt02Ju9+7KgE4QQ1P09ERmoqL5qQqjPwMGyI3ic1ltJxptuuqB7DMClRKgrNrWu8r4IHBEfZk4wkNaj8sIfTAosCgYMObT2uGKPlg7oX96BEaZMwx3Sbwyd2ct1M/FQVK07ZjAw2fA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com; spf=pass smtp.mailfrom=secunet.com; dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b=ho+hNTOD; arc=none smtp.client-ip=62.96.220.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=secunet.com
-Received: from localhost (localhost [127.0.0.1])
-	by a.mx.secunet.com (Postfix) with ESMTP id 6C412206E9;
-	Tue, 26 Nov 2024 13:51:43 +0100 (CET)
-X-Virus-Scanned: by secunet
-Received: from a.mx.secunet.com ([127.0.0.1])
-	by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id lYgrauiUCBbs; Tue, 26 Nov 2024 13:51:42 +0100 (CET)
-Received: from cas-essen-02.secunet.de (rl2.secunet.de [10.53.40.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by a.mx.secunet.com (Postfix) with ESMTPS id CF749201AE;
-	Tue, 26 Nov 2024 13:51:42 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 a.mx.secunet.com CF749201AE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=secunet.com;
-	s=202301; t=1732625502;
-	bh=Z5mXv8QGvkVhiIVXeNoGTPBJEBa77o+JeFI9zmSaylI=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To:From;
-	b=ho+hNTODkgxwtwi0boZnCwU3BbIwM91nzdEaQyxMrAX/dSgBMKDkwSUCelfKcdvHj
-	 00zq4GQYOkxsTm28Sza3XAAmN5E80r9a3CbL1jDtUfo/f22JWNbLRHVbjVNrlOLE1l
-	 nZjffMsVhWmb9r0xUyiyTxNBRQHUNwaVziHQRHsuh9ugi2bT0ReqbL8EJJmgG3E669
-	 sH0Z3V/WPQg0lkcUfDCvDerl52SDJJom3GuvwzRvDY7lVW+meJuySdLiTixnvuAdZp
-	 lh2pfAT7/6i2OmrlV2z9ZWRU/RWip35bejeNZRWx4DfjZj3yOjOse7S+JWvECts7+3
-	 85P1azXhgCeFw==
-Received: from mbx-essen-02.secunet.de (10.53.40.198) by
- cas-essen-02.secunet.de (10.53.40.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 26 Nov 2024 13:51:42 +0100
-Received: from gauss2.secunet.de (10.182.7.193) by mbx-essen-02.secunet.de
- (10.53.40.198) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 26 Nov
- 2024 13:51:42 +0100
-Received: by gauss2.secunet.de (Postfix, from userid 1000)
-	id 41F183184178; Tue, 26 Nov 2024 13:51:42 +0100 (CET)
-Date: Tue, 26 Nov 2024 13:51:42 +0100
-From: Steffen Klassert <steffen.klassert@secunet.com>
-To: Ilia Lin <ilia.lin@kernel.org>
-CC: <leonro@nvidia.com>, <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-	<dsahern@kernel.org>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] xfrm: Add pre-encap fragmentation for packet offload
-Message-ID: <Z0XEXqe38O5lcsq5@gauss3.secunet.de>
-References: <20241124093531.3783434-1-ilia.lin@kernel.org>
+	s=arc-20240116; t=1732625529; c=relaxed/simple;
+	bh=9eLbBmVDRr8FiRqYc3AmWUBXlPkASUxroR/sxaycl+4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IkR6PGv86AGXdeZ0gxg770/DOImUgaOiNu7JqNeBeAdnW2FNCv7u2r2uBlLSnq0HllKc1Cn7uJdXx2FmGrNA1dTMvwIgoMef8Lqdv/p09RVgA8Y8J2gLfMK/7Lg1q94uN6l/K+vlNQ/qaSIpjPCjzrTFc5O9zR66DaxWUxLjpYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=b3O5saHG; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4AQCq3Cg836590
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 26 Nov 2024 06:52:03 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1732625523;
+	bh=9geHmMV6aN5aTzxUudRlkCnXCH0ILLe3Yy/urstaKwk=;
+	h=From:To:CC:Subject:Date;
+	b=b3O5saHGIP7YYBvPT2fieFEmuAoq9TOgZkvzwS87Uprx5HpHhlBndGJn559wpond5
+	 q9s2F8H/k74GoqJ+s2ipkliODUPjSm5nE0pfHwmOlGT4uOrmG0UEgwUO4ZqpfBYIyx
+	 KVXm5OmGNJZWHzdho1UHTWwV4NcXYbzvEYDSkyeo=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4AQCq2of018836
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 26 Nov 2024 06:52:02 -0600
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 26
+ Nov 2024 06:52:02 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 26 Nov 2024 06:52:02 -0600
+Received: from uda0490681.. ([10.24.69.142])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AQCpwjn100089;
+	Tue, 26 Nov 2024 06:51:59 -0600
+From: Vaishnav Achath <vaishnav.a@ti.com>
+To: <peter.ujfalusi@gmail.com>, <vkoul@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>, <j-choudhary@ti.com>,
+        <vigneshr@ti.com>, <vaishnav.a@ti.com>
+Subject: [PATCH v2 1/2] dt-bindings: dma: ti: k3-bcdma: Add J722S CSI BCDMA
+Date: Tue, 26 Nov 2024 18:21:57 +0530
+Message-ID: <20241126125158.37744-1-vaishnav.a@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241124093531.3783434-1-ilia.lin@kernel.org>
-X-ClientProxiedBy: cas-essen-02.secunet.de (10.53.40.202) To
- mbx-essen-02.secunet.de (10.53.40.198)
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Sun, Nov 24, 2024 at 11:35:31AM +0200, Ilia Lin wrote:
-> In packet offload mode the raw packets will be sent to the NiC,
-> and will not return to the Network Stack. In event of crossing
-> the MTU size after the encapsulation, the NiC HW may not be
-> able to fragment the final packet.
-> Adding mandatory pre-encapsulation fragmentation for both
-> IPv4 and IPv6, if tunnel mode with packet offload is configured
-> on the state.
-> 
-> Signed-off-by: Ilia Lin <ilia.lin@kernel.org>
-> ---
->  net/ipv4/xfrm4_output.c | 31 +++++++++++++++++++++++++++++--
->  net/ipv6/xfrm6_output.c |  8 ++++++--
->  2 files changed, 35 insertions(+), 4 deletions(-)
-> 
-> diff --git a/net/ipv4/xfrm4_output.c b/net/ipv4/xfrm4_output.c
-> index 3cff51ba72bb0..a4271e0dd51bb 100644
-> --- a/net/ipv4/xfrm4_output.c
-> +++ b/net/ipv4/xfrm4_output.c
-> @@ -14,17 +14,44 @@
->  #include <net/xfrm.h>
->  #include <net/icmp.h>
->  
-> +static int __xfrm4_output_finish(struct net *net, struct sock *sk, struct sk_buff *skb)
-> +{
-> +	return xfrm_output(sk, skb);
-> +}
-> +
->  static int __xfrm4_output(struct net *net, struct sock *sk, struct sk_buff *skb)
->  {
-> -#ifdef CONFIG_NETFILTER
-> -	struct xfrm_state *x = skb_dst(skb)->xfrm;
-> +	struct dst_entry *dst = skb_dst(skb);
-> +	struct xfrm_state *x = dst->xfrm;
-> +	unsigned int mtu;
-> +	bool toobig;
->  
-> +#ifdef CONFIG_NETFILTER
->  	if (!x) {
->  		IPCB(skb)->flags |= IPSKB_REROUTED;
->  		return dst_output(net, sk, skb);
->  	}
->  #endif
->  
-> +	if (x->props.mode != XFRM_MODE_TUNNEL || x->xso.type != XFRM_DEV_OFFLOAD_PACKET)
-> +		goto skip_frag;
-> +
-> +	mtu = xfrm_state_mtu(x, dst_mtu(skb_dst(skb)));
-> +
-> +	toobig = skb->len > mtu && !skb_is_gso(skb);
-> +
-> +	if (!skb->ignore_df && toobig && skb->sk) {
-> +		xfrm_local_error(skb, mtu);
-> +		kfree_skb(skb);
-> +		return -EMSGSIZE;
-> +	}
-> +
-> +	if (toobig) {
-> +		IPCB(skb)->frag_max_size = mtu;
-> +		return ip_do_fragment(net, sk, skb, __xfrm4_output_finish);
-> +	}
+J722S CSI BCDMA is similar to J721S2 CSI BCDMA and
+supports both RX and TX channels. Add an entry for
+J722S CSIRX BCDMA.
 
-This would fragment the packet even if the DF bit is set.
+Signed-off-by: Vaishnav Achath <vaishnav.a@ti.com>
+---
 
-Please no further packet offload stuff in generic code.
+V1->V2:
+  * Address review from Conor to add new J722S compatible
+  * J722S BCDMA is more similar to J721S2 in terms of RX/TX support,
+  add an entry alongside J721S2 instead of modifying AM62A.
+
+V1: https://lore.kernel.org/all/20241125083914.2934815-1-vaishnav.a@ti.com/
+
+ Documentation/devicetree/bindings/dma/ti/k3-bcdma.yaml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/dma/ti/k3-bcdma.yaml b/Documentation/devicetree/bindings/dma/ti/k3-bcdma.yaml
+index 27b8e1636560..37832c71bd8e 100644
+--- a/Documentation/devicetree/bindings/dma/ti/k3-bcdma.yaml
++++ b/Documentation/devicetree/bindings/dma/ti/k3-bcdma.yaml
+@@ -196,7 +196,9 @@ allOf:
+       properties:
+         compatible:
+           contains:
+-            const: ti,j721s2-dmss-bcdma-csi
++            enum:
++              - ti,j721s2-dmss-bcdma-csi
++              - ti,j722s-dmss-bcdma-csi
+     then:
+       properties:
+         ti,sci-rm-range-bchan: false
+-- 
+2.34.1
+
 
