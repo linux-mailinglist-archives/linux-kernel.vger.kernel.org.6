@@ -1,121 +1,222 @@
-Return-Path: <linux-kernel+bounces-422208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE4999D95E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:59:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA50B9D95E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:00:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 543C91654B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:00:14 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35CB1CDA04;
+	Tue, 26 Nov 2024 11:00:14 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9769A28406B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:59:51 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7494B1CCB4A;
-	Tue, 26 Nov 2024 10:59:49 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3AD0366
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1943176AC8
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 11:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732618789; cv=none; b=caWKjalO2ak1E1KqVaELK1RQCnYYRV247wLOThElumCzYFN7IJRnUvKgcG3UB94Jg2TuQw3qVPvoPzSiEYXBNeHKHrZQ/S4/Hx/FWDWkYBRLV0YMAsqWqzCaem3GAvnT0hCqKElwD5KsskKd+0fPWZTijQtz6Z940JftRqiQ6Fk=
+	t=1732618814; cv=none; b=ByzJQgmK9eGq7zFW6NAWYcKnvO1CUAKgAxFbyXyYiTVJqIpT0W74v9QGvggHOGRLl+texuG1+Gxwrp0HMpZAWY4bEq7t2t+8qp3f5zJZGTpPUdqCxq4jGXkdKLgMncDAcaWTkapKi4WD/Map87uqLCQFKPallJrv+5VUleTZWg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732618789; c=relaxed/simple;
-	bh=pn3hshJJuW2AeozIfKZHO8qigP7wcHwajqEgpMjFrWo=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=rcjWviLjboOXZXpxwThL5YRpXS9Qx8sId7ahjAvQ0cGSwYbu1Zuydw9AGtRD8oYp5Ai7fkQ465PhMKRZAG4S/kvwVunQPLUP8v5InAU6OOyfwQZgTZp5fBJR+oyr0IYtwEpRvZ19YiFMTOigHVJNdWenm9fh1F0Ho/6zidV7Xeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8CxC+IdqkVnHBFJAA--.11359S3;
-	Tue, 26 Nov 2024 18:59:41 +0800 (CST)
-Received: from [10.130.0.149] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMAxlsAaqkVn13FoAA--.43199S3;
-	Tue, 26 Nov 2024 18:59:38 +0800 (CST)
-Subject: Re: [PATCH v4 03/10] objtool: Handle different entry size of rodata
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
- <20241122045005.14617-4-yangtiezhu@loongson.cn>
- <20241126070214.26gj5fnsjx5b5vp3@jpoimboe>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <e56d48c6-172d-5b31-86de-98384fe58e98@loongson.cn>
-Date: Tue, 26 Nov 2024 18:59:38 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+	s=arc-20240116; t=1732618814; c=relaxed/simple;
+	bh=KZOy2PsGSLeRARy7LZDQ2bm+JG1QxNV2pkuwwj66+wk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y0Q87umXobjb7mVsw4h5sgHQq8ksThiB/Px5shr4CwMqSKptO56x62Y9e4umhGwjBED8ZWP19A6nSEz2r7uR0R+Pfche+VtJ6aHdXIzWzxn5uxRYYpr23Ou5ZeJyv8zE/e5oQ/PN4K3DHh4cy3FAqHdzrz2SS8AEjYF84+V5ExY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tFtIG-0004nI-4y; Tue, 26 Nov 2024 11:59:44 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tFtIE-000EZ5-2X;
+	Tue, 26 Nov 2024 11:59:43 +0100
+Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 2BC9A37D91F;
+	Tue, 26 Nov 2024 10:59:43 +0000 (UTC)
+Date: Tue, 26 Nov 2024 11:59:42 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, NXP S32 Linux <s32@nxp.com>, 
+	imx@lists.linux.dev, Christophe Lizzi <clizzi@redhat.com>, 
+	Alberto Ruiz <aruizrui@redhat.com>, Enric Balletbo <eballetb@redhat.com>, 
+	Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: can: fsl,flexcan: add S32G2/S32G3
+ SoC support
+Message-ID: <20241126-independent-crocodile-of-finesse-106009-mkl@pengutronix.de>
+References: <20241125163103.4166207-1-ciprianmarian.costea@oss.nxp.com>
+ <20241125163103.4166207-2-ciprianmarian.costea@oss.nxp.com>
+ <y2fbsxg4pney2iapzcdooxyz6l3pmw6ms2ddupf637svitelbt@wthu23ld5ryq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241126070214.26gj5fnsjx5b5vp3@jpoimboe>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qMiowMAxlsAaqkVn13FoAA--.43199S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7KryxJFWrGF1rXF4UKrWkKrX_yoW8XFy5pF
-	4UCw4Iqrn5XrW7K3ZFyr1UWa4fXw42qryxJr95CFy8tFnxXrnYqF4fCas0yFyjgrn09ayI
-	vw4qqr1rCayDZFXCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv
-	67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
-	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
-	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jY
-	SoJUUUUU=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dfsenyb7jvpat5a3"
+Content-Disposition: inline
+In-Reply-To: <y2fbsxg4pney2iapzcdooxyz6l3pmw6ms2ddupf637svitelbt@wthu23ld5ryq>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 11/26/2024 03:02 PM, Josh Poimboeuf wrote:
-> On Fri, Nov 22, 2024 at 12:49:58PM +0800, Tiezhu Yang wrote:
->> @@ -2107,8 +2112,15 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
->>  		if (reloc != table && reloc == next_table)
->>  			break;
->>
->> +		/* Handle the special cases compiled with Clang on LoongArch */
->
-> This comment is not helpful at all.  A comment is only needed if the
-> code is not already obvious.  In that case it should describe what is
-> being done and why.
 
-Will remove it.
+--dfsenyb7jvpat5a3
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 1/3] dt-bindings: can: fsl,flexcan: add S32G2/S32G3
+ SoC support
+MIME-Version: 1.0
 
->> +		if (file->elf->ehdr.e_machine == EM_LOONGARCH &&
->> +		    reloc_type(reloc) == R_LARCH_32_PCREL)
->> +			rodata_entry_size = 4;
->> +		else
->> +			rodata_entry_size = 8;
->
-> Is this really loongarch-specific or is it only related to the size of
-> the reloc?
+On 26.11.2024 08:19:04, Krzysztof Kozlowski wrote:
+> On Mon, Nov 25, 2024 at 06:31:00PM +0200, Ciprian Costea wrote:
+> > From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+> >=20
+> > Add S32G2/S32G3 SoCs compatible strings.
+> >=20
+> > A particularity for these SoCs is the presence of separate interrupts f=
+or
+> > state change, bus errors, MBs 0-7 and MBs 8-127 respectively.
+> >=20
+> > Increase maxItems of 'interrupts' to 4 for S32G based SoCs and keep the
+> > same restriction for other SoCs.
+> >=20
+> > Also, as part of this commit, move the 'allOf' after the required
+> > properties to make the documentation easier to read.
+> >=20
+> > Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
+>=20
+> You made multiple changes afterwards, which invalidated the review. See
+> submitting-patches which explain what to do in such case.
+>=20
+> > ---
+> >  .../bindings/net/can/fsl,flexcan.yaml         | 46 +++++++++++++++++--
+> >  1 file changed, 42 insertions(+), 4 deletions(-)
+>=20
+> ...
+>=20
+> >      maxItems: 2
+> > @@ -136,6 +143,37 @@ required:
+> >    - reg
+> >    - interrupts
+> > =20
+> > +allOf:
+> > +  - $ref: can-controller.yaml#
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: nxp,s32g2-flexcan
+> > +    then:
+> > +      properties:
+> > +        interrupts:
+> > +          items:
+> > +            - description:
+> > +                Message Buffer interrupt for mailboxes 0-7
+>=20
+> Keep it in one line.
 
-This is related with the reloc type, but it may be wrong to only
-check the reloc type to assign the value of rodata_entry_size,
-becasue the value of reloc type for different archs may be same,
-so it needs to check ehdr.e_machine and relocation type.
+According to the excel sheet the IRQ is also for the enhanced RX FIFO.
 
-> Can this be abstracted out to a reloc_size() function like
-> so?
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git/tree/tools/objtool/klp-diff.c?h=objtool-diff#n834
->
-> maybe it could live in elf.h.
+>=20
+> > +            - description:
+> > +                Interrupt indicating that the CAN bus went to Buss Off=
+ state
+>=20
+> s/Interrupt indicating that//
+> Buss Off state status?
 
-OK, if I understand your comment correctly, this should be an
-arch-specific function defined in 
-tools/objtool/arch/*/include/arch/elf.h, otherwise it also needs to 
-check ehdr.e_machine
-in tools/objtool/include/objtool/elf.h.
+What about: "Device went into Bus Off state"
 
-Thanks,
-Tiezhu
+However from the excel sheet I read it as a device changes state, to Bus
+Off, finished Bus Off or transition from error counters from < 96 to >=3D 9=
+6.
 
+So "Device state change" would be a more complete description?
+
+> > +            - description:
+> > +                Interrupt indicating that errors were detected on the =
+CAN bus
+>=20
+> Error detection?
+>=20
+> > +            - description:
+> > +                Message Buffer interrupt for mailboxes 8-127 (ored)
+
+nitpick: all these different events for the other interrupts are ored,
+so IMHO you can omit the "(ored)".
+
+> > +        interrupt-names:
+> > +          items:
+> > +            - const: mb_0-7
+>=20
+> Choose one: either underscores or hyphens. Keep it consistent in your
+> bindings.
+
+> > +            - const: state
+> > +            - const: berr
+
+The order of IRQ names is not consistent with the description.
+
+> > +            - const: mb_8-127
+>=20
+> Choose one: either underscores or hyphens. Keep it consistent in your
+> bindings.
+>=20
+> > +      required:
+> > +        - compatible
+> > +        - reg
+> > +        - interrupts
+> > +        - interrupt-names
+>=20
+> What happened to "else:"? Why all other devices now have up to 4 interrup=
+ts?
+
+Do you already have a dtsi snippet for the flexcan nodes? Please make
+sure that the interrupts are correctly mapped.
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--dfsenyb7jvpat5a3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmdFqhsACgkQKDiiPnot
+vG/LTgf+Mwp1q1vMJAIFstJubBhTvSCwOJbyA++jfcLd3MuPutHUalDu0aHMeb77
+A9Us5XLu3d3zwqFhPmSBC2pZYS/71wq7193lTCvD3W/PFx5o5NjHv8QK5Zr2zYIM
+hPVDVWPPJHHLp/sqKCfpOWUbyXvedKLAmtqcSjk11iUiUHisiMUWpgX6KQ9X/a/2
+bIYYgHBm9EVitdDY49MzdwJH6+tE+xZ9qsfrgEgT1QpGDoD1TErBuijcAyxn/LW6
+XSsLhDu/HDsmV499Wj9lSuaHo1+E8Zm6Yy0XVJWdOOO4VisvVOkbFbP51NcEPyez
+7RhKu4VQEpP+m49vw8rQT+wEIy6Vjg==
+=KwpE
+-----END PGP SIGNATURE-----
+
+--dfsenyb7jvpat5a3--
 
