@@ -1,144 +1,173 @@
-Return-Path: <linux-kernel+bounces-422682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76CA59D9CE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:51:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A3DC9D9CE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:52:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 328932841F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:51:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5078A284405
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094FA1DBB3A;
-	Tue, 26 Nov 2024 17:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BC71DC05F;
+	Tue, 26 Nov 2024 17:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZqZyTvwh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uRD1dSon"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65FCE182BC;
-	Tue, 26 Nov 2024 17:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF47E182BC;
+	Tue, 26 Nov 2024 17:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732643456; cv=none; b=hqZ4luFU5ceyydpri9wIIorXe7sB6WCOmA1LxWDlXLI4AGCCo+HrDtJO0ZDM/QtLH7EE37oA/OJemkFDse03vaUlaesulpGIs8ot5lppWJN0No9Vr2Klt759cG3Vyl2YQnwO2zFtvEP/UtpQmqMFNnTeU+pClmTSOAVV1xaSsDo=
+	t=1732643543; cv=none; b=lAthDVjtR7WqBPeWiWp4YlNoRgf9E6bLohUQtUV8N4BxDRztMVqU9v0a1+xQW0bZOhWqctDopkBDzpISak5Ns2k+hyIVXjy87HzxxvyDnqVAorV/baTW1TToBA72g07wDwiEZMZYaxikaajJjSWhuZhXqPR7NgPHZBq4OyKO+F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732643456; c=relaxed/simple;
-	bh=1DHm33+nWlMW/ddeJDObXBwfsVPCV4BRLDeq6xv2wko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ieHkdmxs4zzWSb85wV4NoxjDxVDW1NpMxALTlj8NsOk6Xa29tbHLR0CAwSpisV2Gz/B0fJX7AloFOLUUdOfpZXOde5/i+n+5CXbo8Qt2K7/TMCHVpLECZau9NYqfgdQNK8BtY/pNxajPRrUt8OhWNr0DPNmGBS+xAEfXUdJJaEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZqZyTvwh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D032C4CED0;
-	Tue, 26 Nov 2024 17:50:52 +0000 (UTC)
+	s=arc-20240116; t=1732643543; c=relaxed/simple;
+	bh=2OlL0GsjxaKsdejys6yGzAHyzOBtwoE5UhPw64LeQTI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UEIEAmom4Tnn95ZmU7SlCuhse7olE1FV69RIIz1k70msK26F8IutiM9u5LyG8RKQL74pjGoxvv1wg3+mdWw1ZQRj2wy7UfkXPKSozRAww9wKrSgjDbUSrsrtoaAJK+muZ3Faf/tBY2KmkaFfrHjqepwpRNIA2/vEjnCrIR1i0IE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uRD1dSon; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51F28C4CECF;
+	Tue, 26 Nov 2024 17:52:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732643455;
-	bh=1DHm33+nWlMW/ddeJDObXBwfsVPCV4BRLDeq6xv2wko=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZqZyTvwhXugY0c+2UWdmDVxUgh7efgeOon4J4wUR5uRQQm2ZEqtDgEhkFBQFGECct
-	 MkLhICN7p0cfzrPw1ctoTKxvtHXqfY2im98LWnrF9iA+IMy6p4e/b0HAK7533EPxVq
-	 IJMUh0a3EJmAAzqdHeA/Xhy1cOJq2Lue6UR7WDZaudS8c3QdBO7jgBIM80G2fvhJKu
-	 k70cw/W4kWIAdR0QgCGyKkYSUWafRF9JfYdwQYqcuw97EoLl5PE7FooZQVF90P6d1S
-	 +XK4eF9d17hvPqgtYTQu5PpZWsK0RIXspm/jkjwBpmsvoLZjn/nqPyURKLMuJaeIOQ
-	 Jb1LJjV/eyyJA==
-Date: Tue, 26 Nov 2024 17:50:50 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Chen-Yu Tsai <wens@kernel.org>
-Cc: Wojciech Macek <wmacek@chromium.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Chen-Yu Tsai <wenst@chromium.org>, Rafal Milecki <rafal@milecki.pl>,
-	Hsin-Yi Wang <hsinyi@chromium.org>,
-	Sean Wang <sean.wang@mediatek.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: arm: mediatek: Add MT8186 Starmie
- Chromebooks
-Message-ID: <20241126-angles-unequal-3578ea6bb01b@spud>
-References: <20241125082130.2390310-1-wmacek@chromium.org>
- <20241125082130.2390310-2-wmacek@chromium.org>
- <20241125-snowcap-sulphate-34944bd70cf3@spud>
- <CAGb2v655Bfx44XBPH24FKuEFTJ3ngjbAPEpNBn5vyLZfNGKt+Q@mail.gmail.com>
+	s=k20201202; t=1732643543;
+	bh=2OlL0GsjxaKsdejys6yGzAHyzOBtwoE5UhPw64LeQTI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uRD1dSonxcxCzafOhwLWHrsnUfqvFtGBfYuwmHBBxTcWXCsNW2yFCWaprM6iai/Za
+	 z8jconqnO9bm3xzHXJWtuznKRMTOruscBm080Cc133OwJj5fIAgTmqKrggvqPIg4X3
+	 0q98ZdxG028OTGVrdRKaE0c1+yjHbiUBnExjU89m2Qix/tpzTPpT1fqWoW2SdlnWcN
+	 V1vNLZyAl3McXHsOumSQqZPXCyX3R72kuyg/wR4XunWfKZL4KKPx5ryVDYgX0+/av6
+	 F1k7hl5vAyNcvtEEH+j+/grD+/Z8Logk+Axxwz+doHNTRX8+6r4PmFUnl7gwiAfiY0
+	 nuO/oStPs5VIQ==
+Date: Tue, 26 Nov 2024 17:52:14 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/8] iio: gts: Simplify using __free
+Message-ID: <20241126175214.76609ba9@jic23-huawei>
+In-Reply-To: <964035d9-cccd-4e12-af71-00ca39cc3596@gmail.com>
+References: <cover.1732105157.git.mazziesaccount@gmail.com>
+	<5efc30d832275778d1f48d7e2c75b1ecc63511d5.1732105157.git.mazziesaccount@gmail.com>
+	<20241123163713.2ec03a37@jic23-huawei>
+	<964035d9-cccd-4e12-af71-00ca39cc3596@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="a8AIRgZYs3rO0/Bl"
-Content-Disposition: inline
-In-Reply-To: <CAGb2v655Bfx44XBPH24FKuEFTJ3ngjbAPEpNBn5vyLZfNGKt+Q@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+On Mon, 25 Nov 2024 11:16:22 +0200
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+
+> Hi Jonathan,
+> 
+> Thanks once again for the review :)
+> 
+> On 23/11/2024 18:37, Jonathan Cameron wrote:
+> > On Thu, 21 Nov 2024 10:20:07 +0200
+> > Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+> >   
+> >> The error path in the gain_to_scaletables() uses goto for unwinding an
+> >> allocation on failure. This can be slightly simplified by using the
+> >> automated free when exiting the scope.
+> >>
+> >> Use __free(kfree) and drop the goto based error handling.
+> >>
+> >> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> >>
+> >> ---
+> >>
+> >> Revision history:
+> >>    v1 => v2:
+> >>    - patch number changed because a change was added to the series.
+> >>    - rebased on iio/testing to avoid conflicts with queued fixes
+> >> ---
+> >>   drivers/iio/industrialio-gts-helper.c | 19 ++++++++-----------
+> >>   1 file changed, 8 insertions(+), 11 deletions(-)
+> >>
+> >> diff --git a/drivers/iio/industrialio-gts-helper.c b/drivers/iio/industrialio-gts-helper.c
+> >> index 291c0fc332c9..602d3d338e66 100644
+> >> --- a/drivers/iio/industrialio-gts-helper.c
+> >> +++ b/drivers/iio/industrialio-gts-helper.c
+> >> @@ -4,6 +4,7 @@
+> >>    * Copyright (c) 2023 Matti Vaittinen <mazziesaccount@gmail.com>
+> >>    */
+> >>   
+> >> +#include <linux/cleanup.h>
+> >>   #include <linux/device.h>
+> >>   #include <linux/errno.h>
+> >>   #include <linux/export.h>
+> >> @@ -167,8 +168,8 @@ static int iio_gts_gain_cmp(const void *a, const void *b)
+> >>   
+> >>   static int gain_to_scaletables(struct iio_gts *gts, int **gains, int **scales)
+> >>   {
+> >> -	int i, j, new_idx, time_idx, ret = 0;
+> >> -	int *all_gains;
+> >> +	int ret, i, j, new_idx, time_idx;
+> >> +	int *all_gains __free(kfree) = NULL;  
+> > See the docs in cleanup.h (added recently).
+> > 
+> > Constructor and destructor should go together.   Dan wrote good docs on this
+> > (which are now in cleanup.h) so I'll not go into why!  
+> 
+> I went through the cleanup.h, and noticed the nice explanation for the 
+> pitfall where we have multiple "scoped operations" with specific 
+> ordering required. I didn't see other reasoning beyond that - I do hope 
+> I didn't miss anything.
+> 
+> I find introducing variables mid-function very confusing. Only exception 
+> for this has been introducing temporary variables at the start of a 
+> block, to reduce the scope. I would still like to avoid this when it 
+> isn't absolutely necessary, as it bleeds my eyes :)
+> 
+> I really don't see why we would have other cleanups which required 
+> specific ordering with the allocated "all_gains".
+> 
+> Anyways, if you think we really have a problem here, would it then 
+> suffice if I moved the:
+> 
+>          gain_bytes = array_size(gts->num_hwgain, sizeof(int));
+>          all_gains = kcalloc(gts->num_itime, gain_bytes, GFP_KERNEL);
+>          if (!all_gains)
+>                  return -ENOMEM;
+> 
+> to the beginning of the function, and the "int *all_gains __free(kfree) 
+> = NULL;" as last variable declaration?
+> 
+
+No.  You need to follow the standard way. It is something we are
+all getting used to, but all use of cleanup.h needs to follow same rules
+so that reviewers find it easy to review once they are seeing lots of
+instances of it.
+
+Many indeed find this ugly but reality is it's happening all over the place
+just usually hidden in a macro.  From cleanup.h look at how
+guard() works for instance.
 
 
---a8AIRgZYs3rO0/Bl
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Jonathan
 
-On Tue, Nov 26, 2024 at 12:36:08PM +0800, Chen-Yu Tsai wrote:
-> On Tue, Nov 26, 2024 at 2:34=E2=80=AFAM Conor Dooley <conor@kernel.org> w=
-rote:
-> >
-> > On Mon, Nov 25, 2024 at 08:21:28AM +0000, Wojciech Macek wrote:
-> > > Add an entry for the MT8186 based Starmie Chromebooks, also known as =
-the
-> > > ASUS Chromebook Enterprise CM30 Detachable (CM3001). The device is
-> > > a tablet style chromebook.
-> > >
-> > > Signed-off-by: Wojciech Macek <wmacek@chromium.org>
-> > > ---
-> > >
-> > > Changelog v2-v1:
-> > >  - Fixed items/const bidings description in mediatek.yaml
-> > >
-> > >  Documentation/devicetree/bindings/arm/mediatek.yaml | 13 +++++++++++=
-++
-> > >  1 file changed, 13 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Do=
-cumentation/devicetree/bindings/arm/mediatek.yaml
-> > > index 1d4bb50fcd8d9..6191a5320c148 100644
-> > > --- a/Documentation/devicetree/bindings/arm/mediatek.yaml
-> > > +++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
-> > > @@ -263,6 +263,19 @@ properties:
-> > >            - const: google,steelix-sku196608
-> > >            - const: google,steelix
-> > >            - const: mediatek,mt8186
-> > > +      - description: Google Starmie (ASUS Chromebook Enterprise CM30=
- (CM3001))
-> > > +        items:
-> > > +          - const: google,starmie-sku0
-> > > +          - const: google,starmie-sku2
-> > > +          - const: google,starmie-sku3
-> >
-> > Compatible order here is back to making little sense. Why is the oldest
-> > SKU, in both cases, appearing first?
->=20
-> FWIW the SKU number has no particular ordering. They were released togeth=
-er.
-> SKU denotes different configurations (memory, storage, touchscreen and ot=
-her
-> component options). OOTH revisions would actually have chronological mean=
-ing.
+> (This is not optimal as we will then do the allocation even if 
+> converting gains to scales failed - but I don't think this is a real 
+> problem as this should never happen after the driver is proven working 
+> for the first time).
+> 
+> > Upshot is this goes where you do the kcalloc, not up here.  
+> 
+> *whining* "but, but, but ... it is ugly..." :)
 
-I see, that's fine then I suppose.
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+:)  It won't look ugly after a few years!
+> 
+> Yours,
+> 	-- Matti
 
-Cheers,
-Conor.
-
---a8AIRgZYs3rO0/Bl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0YKegAKCRB4tDGHoIJi
-0v3ZAP9s6/k+4zLgrMT7vndOHggRKcA/mY2xxhRmyiJtJNDvgwEAhWO7UfTEpvj4
-HibsduIJN6ZIFYDBYKi7+ZDbhZUKqQI=
-=cu+D
------END PGP SIGNATURE-----
-
---a8AIRgZYs3rO0/Bl--
 
