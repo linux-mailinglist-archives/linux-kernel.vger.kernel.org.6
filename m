@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-422332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB8BC9D9810
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:12:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A509D980B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:10:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37AE9B2A2BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:09:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2C4016311F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39F21D4354;
-	Tue, 26 Nov 2024 13:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401DB1D45EF;
+	Tue, 26 Nov 2024 13:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aSawjxQo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TQ8SeIu3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10ACB2F32;
-	Tue, 26 Nov 2024 13:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD2D2F32;
+	Tue, 26 Nov 2024 13:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732626571; cv=none; b=W4A+6Ma2KA5MnnhWRs+vsmup0Aj1vGZNXV/dL936+BvpD61syj2jkxsmcg2MCO4GxuhxndFhe4diIM7tgeGzWxmwWGrJd3rfeMQ2yvUm+gCA08RHoc3XvS+6GyQyyvof8exbbJSO8PXjxSje8z/TbP+QHE2RYO7zBYm3HNvXE3o=
+	t=1732626626; cv=none; b=hffbzqjeHf/DgHzviBfcgvi1iV1OSzO32ZdzohXLXu5JlLTmEdCbnqG/A53pnxfiftxaPx71UQXYlYEByJlY9zIYx17WYaqqjlGzU59gMibL4fcUhCUAoDRr6nnjgYIh5eShWNayPZEn9mA3bZtXr/+CEQGmI5tsBvCZxr9IYX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732626571; c=relaxed/simple;
-	bh=l/a9+u1Z59XnAVj0KBuyUltnf6pNT7RrDFDLZh6hxOE=;
+	s=arc-20240116; t=1732626626; c=relaxed/simple;
+	bh=1OD/sS92a2krXuM4uujLs3lV6TX2gz9Vq9QjNdCTj+g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tGJJ73XuMx+3rXDouKZeiKKk4lrcLLtjH/j8MVv7XocyPYNFiFsXashROpyFbb05ifmL0Ro5YS7oRR28TYtIo5g5TCZS9hot4WkjWSh+d3OZE4yN9YHKSlD3sAyC83oFLVJbT06w+8Cic0t86Gt6JeIuUbdewp+n1KZEW4Rad6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aSawjxQo; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 In-Reply-To:Content-Type; b=RwEjfqQbzqz9/eZHPSnVKShMLrswYKd1Z0M3/Lb5cxLYFhIeLDRrtyOpdT/QbsUqyYh66I/J7mw1gqLXfwHOR/DV8+FRZAOYidt85e7Y9t/6AEP5IruiJ8xXw+L5zEXTZF/vdJGHh2Ivvz+mUQJ7yjJky7mP8zH0e7BfdxsxWXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TQ8SeIu3; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732626569; x=1764162569;
+  t=1732626626; x=1764162626;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=l/a9+u1Z59XnAVj0KBuyUltnf6pNT7RrDFDLZh6hxOE=;
-  b=aSawjxQoDkP8m1agieVQGxa6tNIzvNwgUUols6n8EQfCkJQdsBKx7O9J
-   ys8AVa9N4RAJMRHroq5XOOJ7nYQSkDXIkqb0MefEPtlhkXZq+rPdVJjQ9
-   fv0I3Gk70HmKk3ZvYw7GCNUe6iGsQKMBfjPT38EDpNyTJwlNc/SdTPKYG
-   CuceRLN5GwTNciex8oik9oYxsOLx/ppd3MkDBa4aec2o94Y8lfFewafpa
-   Onw2EQ7/RwDxI4pI3zWVU+Ul0/OBGAy6JOtIGzUqqUtjs66srJX60HbrH
-   /PYJmOmm9Z5aGJhem8B+oZFvQtDeEigtPr8kk8q36ck2OkPegDDr34JaL
-   w==;
-X-CSE-ConnectionGUID: RCnYc27PS8e7HrvHwl3FMA==
-X-CSE-MsgGUID: rNqj3ForTUuPOtYuasy6dw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="50193174"
+  bh=1OD/sS92a2krXuM4uujLs3lV6TX2gz9Vq9QjNdCTj+g=;
+  b=TQ8SeIu3v+4DyeTqdAxfAP9+/Aer4C1K/wjpuUMz328xWpVvCY6LOx3s
+   bzLH2F41WgtiQoAU8yrflrsEn915/m/PqWRcTYEXJbMGeJSLTd7S8J8Nk
+   Dp73qzzLeeYdsswK7u8KbkS/5CsvOlDG28q3hLZl6hWECcaO/tzy50YDr
+   j4Z5JmxDn/utoh1Xxyin+qjwoF8wnr1Dy6+BptL6L5t3sIo+1yKSK6jES
+   GAN3c1Y/I78PcSRzgRbVTdTIbq/hsqTtPKzowD5dJecN6LT/avUzdWhOJ
+   wbiqGxb6Ls1yv+IsRCzXyEZuXs0cBpYf2uuA5KdmsA7Wm+8XVUmqLhthk
+   A==;
+X-CSE-ConnectionGUID: usVuv1mJSLaAkoYTbfgmmg==
+X-CSE-MsgGUID: LCaJELWFSkigrFv3at13mw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="32942266"
 X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
-   d="scan'208";a="50193174"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 05:09:29 -0800
-X-CSE-ConnectionGUID: FcSE1Y73Sg6T9hxQi2eCpQ==
-X-CSE-MsgGUID: pL/lCiXySQern+h3FXVqYQ==
+   d="scan'208";a="32942266"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 05:10:25 -0800
+X-CSE-ConnectionGUID: C/+eW+SeRx+SjjCjwcyQyA==
+X-CSE-MsgGUID: BtKDLzmfSGqMSmpMSO0lYw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
-   d="scan'208";a="96034742"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 05:09:25 -0800
-Message-ID: <63eb3609-33fc-41d0-9ffa-46ae3638ec92@intel.com>
-Date: Tue, 26 Nov 2024 15:09:16 +0200
+   d="scan'208";a="91779150"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO [10.245.245.172]) ([10.245.245.172])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 05:10:21 -0800
+Message-ID: <706408b6-fd2c-475a-bde6-c95d0cab7360@linux.intel.com>
+Date: Tue, 26 Nov 2024 14:10:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,73 +66,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf intel-pt: cleanup unneeded return variable in
- intel_pt_text_poke()
-To: guanjing <guanjing@cmss.chinamobile.com>, peterz@infradead.org,
- mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- irogers@google.com, kan.liang@linux.intel.com, algonell@gmail.com
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241121111414.33760-1-guanjing@cmss.chinamobile.com>
+Subject: Re: [RFC PATCH v4 5/8] x86/smp native_play_dead: Prefer
+ cpuidle_play_dead() over mwait_play_dead()
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ rafael.j.wysocki@intel.com, len.brown@intel.com,
+ artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com,
+ peterz@infradead.org, tglx@linutronix.de, gautham.shenoy@amd.com
+References: <20241125132029.7241-1-patryk.wlazlyn@linux.intel.com>
+ <20241125132029.7241-6-patryk.wlazlyn@linux.intel.com>
+ <CAJZ5v0iJ7hca68Pk1g1m=FNX6Psr3Ow-K7fvXZCcRM8PFM7EjQ@mail.gmail.com>
+ <883447da-aeca-41ba-99ef-038dd8ddc6b3@linux.intel.com>
+ <CAJZ5v0hZ8ajccb=B7P5g1+KJ+tsw5vP-e9ix7j_65WgT34H1XQ@mail.gmail.com>
+ <a8d53d86-d658-4e18-bfd6-b37a2656b180@linux.intel.com>
+ <CAJZ5v0iA==dmnPbs6BNV_taDD9hRWbwOhiCWsi0BjKzVVdihdg@mail.gmail.com>
 Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20241121111414.33760-1-guanjing@cmss.chinamobile.com>
+From: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+In-Reply-To: <CAJZ5v0iA==dmnPbs6BNV_taDD9hRWbwOhiCWsi0BjKzVVdihdg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 21/11/24 13:14, guanjing wrote:
-> Removed Unneeded variable: "ret".
-> 
-> Since the function intel_pt_text_poke() always returns zero,
-> drop the return value and change the function to the void type.
-> 
-> Signed-off-by: guanjing <guanjing@cmss.chinamobile.com>
+>>>>> If you first make intel_idle provide :enter_dead() for all CPUs on all
+>>>>> platforms and implement it by calling mwait_play_dead_with_hint(), you
+>>>>> won't need mwait_play_dead() any more.
+>>>> Crossed my mind, but because mwait_play_dead doesn't filter on Intel
+>>>> vendor specifically,
+>>>
+>>> In practice, it does.
+>>>
+>>> The vendor check in it is equivalent to "if Intel".
+>>
+>> Actually, what about INTEL_IDLE=n?
+>> We might hit acpi_idle, which would call mwait_play_dead_with_hint() now, but
+>> if we don't, don't we want to try mwait_play_dead before hlt or is it too
+>> unrealistic to happen?
+>
+> In that case the hint to use would not be known anyway, so
+> hlt_play_dead() is the right choice IMV.
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Fair, it's not known, but we could fallback to the old, cpuid leaf 0x5 based
+algorithm, which works on a lot of hardware.
 
-> ---
->  tools/perf/util/intel-pt.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-> index 30be6dfe09eb..a13add0e0be4 100644
-> --- a/tools/perf/util/intel-pt.c
-> +++ b/tools/perf/util/intel-pt.c
-> @@ -3391,7 +3391,7 @@ static int intel_pt_find_map(struct thread *thread, u8 cpumode, u64 addr,
->  }
->  
->  /* Invalidate all instruction cache entries that overlap the text poke */
-> -static int intel_pt_text_poke(struct intel_pt *pt, union perf_event *event)
-> +static void intel_pt_text_poke(struct intel_pt *pt, union perf_event *event)
->  {
->  	u8 cpumode = event->header.misc & PERF_RECORD_MISC_CPUMODE_MASK;
->  	u64 addr = event->text_poke.addr + event->text_poke.new_len - 1;
-> @@ -3402,7 +3402,6 @@ static int intel_pt_text_poke(struct intel_pt *pt, union perf_event *event)
->  	struct machine *machine = pt->machine;
->  	struct intel_pt_cache_entry *e;
->  	u64 offset;
-> -	int ret = 0;
->  
->  	addr_location__init(&al);
->  	if (!event->text_poke.new_len)
-> @@ -3443,7 +3442,6 @@ static int intel_pt_text_poke(struct intel_pt *pt, union perf_event *event)
->  	}
->  out:
->  	addr_location__exit(&al);
-> -	return ret;
->  }
->  
->  static int intel_pt_process_event(struct perf_session *session,
-> @@ -3522,7 +3520,7 @@ static int intel_pt_process_event(struct perf_session *session,
->  		err = intel_pt_context_switch(pt, event, sample);
->  
->  	if (!err && event->header.type == PERF_RECORD_TEXT_POKE)
-> -		err = intel_pt_text_poke(pt, event);
-> +		intel_pt_text_poke(pt, event);
->  
->  	if (intel_pt_enable_logging && intel_pt_log_events(pt, sample->time)) {
->  		intel_pt_log("event %u: cpu %d time %"PRIu64" tsc %#"PRIx64" ",
+That being said, I think it's cleaner to get rid of the old algorithm entirely
+and rely on idle drivers to do the right thing from this point forward.
+
+If we could bring the CPU out of the mwait loop into the hlt loop somehow (via
+interrupt for example) we could remove the old kexec hack altogether.
+
 
 
