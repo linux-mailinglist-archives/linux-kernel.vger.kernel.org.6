@@ -1,418 +1,297 @@
-Return-Path: <linux-kernel+bounces-422466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B2469D99FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:54:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6EF29D9A02
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:55:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DFB7B22E3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:53:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 691F71633F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C321D5ADB;
-	Tue, 26 Nov 2024 14:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A79C1D27B2;
+	Tue, 26 Nov 2024 14:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Yrrl3lcl";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="VtMYMWuS"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zBjXJGjx"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E1017C7B1;
-	Tue, 26 Nov 2024 14:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732632826; cv=fail; b=ZwSybq5iUtgmA/Nzbd98+lM32iwkULgyKUWpduMs+9iqnK/pe7nSjdfl5wVd3+7ldzGQgWxRPinnz+1Ff2MzXqlLoNXN4MFMKM3C3/y7Tr24WEOdGdiVcLgKL+m8kuXlKffPMu76vCvOpPDlUZ0wpXOdPZMw46gzFm7TJ5UmU2k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732632826; c=relaxed/simple;
-	bh=fIWcxXr4oXxB9r+YhWW7C1HRyF8l2oMfdp35k9/cvDU=;
-	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=gjTlAMOcYhD13YB1+S0gkKTTMpKyiwVMjFYDxTXIDmkDPbEoXb7yfer3yg5QjSm9xkGsxOwnhVszJitt9syHrzSydn49rLwUS50VH3CTawPZkET4JnRn8+KpfaZGEZl7MKTVZnML/VwaPwIvwtA/Lr4YVqQ8TGuoA9onG8MVnNI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Yrrl3lcl; dkim=fail (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=VtMYMWuS reason="signature verification failed"; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQDLSfG007239;
-	Tue, 26 Nov 2024 14:53:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=corp-2023-11-20; bh=vDvDnNTG+XKCX7zv
-	Srp/aGbm8w3g0bKMQBu0guANr4M=; b=Yrrl3lcl6eI19q/0cOKgvLMLM3WBBZU4
-	JKYfeTZkdyWqvQRsrKnWlx+oxwd1bpTmkw5xmWdK2Dv3ad+CX0AWcPk7FVUBKitz
-	JM7HV8kjgwhvgqIyzjxX74MdZyabpceKuZ2raW4SC6b7BQ9mmEmeX+pAXJCkP2Xd
-	4sKfJ4FCKLketgX8IATpqtkIG6W77hLTkGPSUjMgNqf14X+CPM584cN9khFkYBGY
-	ZmylaSeRwmm2s8QLX66XL0JXb1vfgYwvzJ+Si6YizmcsX/rXn0XaxtVaKtV5S5bi
-	qnpz32b38e/l/J5xySASGycK0g5zkk4iB9i+62XyHnYWLglt8IN1+A==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43385unn3r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 26 Nov 2024 14:53:39 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQDxYl5002602;
-	Tue, 26 Nov 2024 14:53:38 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2169.outbound.protection.outlook.com [104.47.55.169])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4335g98pky-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 26 Nov 2024 14:53:38 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bS7Xe8kQgMmQVjm16qlUw1q6W+lv+dycSghTeC2lkQzMyfIU8euVH3dom7OFqiMvdLRXHgqQWmf1cJdWCB8PkrLXYHDm4wOGoshnN4wOHNAGr0O95dFjUll02z3LHTCX1peEr8YACQI69647FJCIMUsJEbtKBvxigKA11i6ucu0y8jRofYG2uatwRO8R4bmhacb/Ol5sOIIumwTT/qjPnLZAjT83jOqBM8hrVjV4317qzidb1I+31EVrRhorMB4hPOLSr8dK36HxQaLK5m9BgH4rLdiXX5QXlzRion7oWM8uKwzlqN9OF2rq0koXomaMWCFfar8czopWBAQReViyvg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uEWnpCVluIxN4ixe6/f4tdlwsinJXl3JLW3ZfKWjadQ=;
- b=yZps+p6PkaHyHMFb95gNzCdaQekc/mM5ki6oxlCmsSG5DNuypk29cJGbF0YDHMBj7VRdr/BQMk52AIDqAHsWpms7PDj/Ls2cb5WBYaD6JFN66tidsbMPWsN2+Vnn2eASkw/OefM0GCMXyfWamoJrT82wVCAqelf8SBmZvLulGctg3chcUX96cPMEYKBEMmhBTHOFjIFrPHopbJkuerDDd5i8QFHTbc1eAML8pTGnquvlM4w+665zaxsOt0JgSAG6x7IwZg7bZZNYU9NppycqZe74sDb4J9h02kJtL8Cj8q3isIw0nPqnbFWi5o7A6rh/kyc9Z9zUQy9LTXhwVC9B/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A3F28F5
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 14:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732632901; cv=none; b=f8YIYAV/u9cTWQ6eGyKn/4YtvyfQCQ3e1QQMQiQDxXGaS0OJJyVfAJBDjgv9L7SoQZhbvSGHwANPlKsOrDxd3CRvLCTxeCq7OiW41zQoj3Tdlm+ePV0oh3AsaBKTwsrdfkES0tk1Uz9+VhDt2ni3YrBHiQIRP4y2r59mKx8wbbA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732632901; c=relaxed/simple;
+	bh=Vgk5vMztpuW39B3/RJIEbB8yW9MZkMS+0PiPPkccvMA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jxUvZM1GR2tEIR2ujrm5P+TBkjjNkHiojbM1FU5eWaCrwh9oH7zfiq07k1EqdVnTPcfjxTyAm6UK3LAPapSjR/7Zu0xZ3MjyBXXKD5oJE9y0jUScrqheuDj1cLRFJD+KOJt0Mje11m8skstZUipr7cQI64skfKC468Yr0jGw2EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zBjXJGjx; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ffb5b131d0so32906701fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 06:54:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uEWnpCVluIxN4ixe6/f4tdlwsinJXl3JLW3ZfKWjadQ=;
- b=VtMYMWuSvgoqoFUzLyeVnTXBg7+PuEl8qrPki+WFlqppZ7JtLcxcGoxKEXMqoJAVoVR+Fb/3R9khipVFTsBYOBb5SkBDq73UNL0yYV0jxixmmHtWoljT/GFLD90AQir/tlQckcaqgE5l+67OT9oZFyBoIG7N0JETnxDOfEn56rk=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by IA1PR10MB7448.namprd10.prod.outlook.com (2603:10b6:208:44d::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.19; Tue, 26 Nov
- 2024 14:53:35 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90%4]) with mapi id 15.20.8182.019; Tue, 26 Nov 2024
- 14:53:34 +0000
-Date: Tue, 26 Nov 2024 09:53:32 -0500
-From: Chuck Lever <chuck.lever@oracle.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeff Layton <jlayton@kernel.org>
-Subject: [GIT PULL] NFSD changes for v6.13
-Message-ID: <Z0Xg7A1J/CkYiENR@tissot.1015granger.net>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: CH0PR04CA0019.namprd04.prod.outlook.com
- (2603:10b6:610:76::24) To BN0PR10MB5128.namprd10.prod.outlook.com
- (2603:10b6:408:117::24)
+        d=google.com; s=20230601; t=1732632898; x=1733237698; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1AZA8FM+l5iP0RJpernJtbbqPv2FiJBaVBY47mpJaAY=;
+        b=zBjXJGjx5E2BEZjOtl65SSnm7emaMs193Q0e0Z93t/fKubN4hObil24qogGR6YqxYe
+         unD7HJxjqIbnyXs/EElA5j2wlNmgiyt88YOi9ngyyxrKCtvE1Rf/45k5tzfUDp+svrK+
+         36Kw19j+9stn8AOFTRnm0X3+g18orOhvkqrpMEktv0c3R5xs/EFU9MmaF3hTFMqXGohN
+         AYQZYEcCtCi2/06Kl2H9VVMTyMKVSl3aGKbf24aiB3n8vSw++WLpbqFXFxAFCBZineOU
+         GpbsrxZaBwSjPXysFa5jWEY3RV0fwn7ABtA/H9U3nYZHlb+WSw9TtY1HAeiBMudFF01m
+         iLRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732632898; x=1733237698;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1AZA8FM+l5iP0RJpernJtbbqPv2FiJBaVBY47mpJaAY=;
+        b=kiSCWv2isuC5onmpr8l7wj7qELYjjCq3ovi5wFxbdWVEtSwV6oYIA2fRUWSw1yobA5
+         pdfzBBZvPcJH1eo7k8XyuE/uzJPduR7Ec600DF1yZQiaJYdz0E+qeekzQf7Is163k9Nd
+         UP4/d4Nk5hP8Qp2K9hQxyYANgZoQwKjLPbwrCNGb6qsQQeGXOkHA6CEHSTBCNVhcQH24
+         POab7CIjdp/YSUrFajpu55bWymSkrJvA7hIahhD0anEsAoHMU/7sZN8w8ZqGOsuEp7ki
+         2qv6NYJDEaHB6krUumaU0dc9b/0eRXMUuk1NGISCO27+NdT4Mm2Dhr5/EtybgxIDpCfm
+         eBfw==
+X-Forwarded-Encrypted: i=1; AJvYcCVWT5KzU3gSd31RsDUoFzSGPuifGFII3vB+woWqTSck4Jn3rWV+mrqmsbk59CjScfXle0m5FKJkqjorTpo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFxyHiCz33fDbwgZF1WqqiuCBhFW3bUj9U7QfvutCwaAsKNYfc
+	eLQsTBr9Cvx6iYmzBOAUJyctNn2j3cQezizwr/ZpdZO0VecRQMiwO6RgIJvLxlRU2P/GUELkF/G
+	BRh0TmqbzIriomC7XVhN85EsX1Pg5z4CnKHhP
+X-Gm-Gg: ASbGncvhPVQUmKxL4yUacBhpZp0q2IxYDJ9UoiMsd4s8ObDnPMITR2cN8szfDRLuCoE
+	xdojzyR43oy65LDWlD76KQwEY2DiDF2ujLBx6OmWgUGpJ572d3+C9LRxvv9eyRQ==
+X-Google-Smtp-Source: AGHT+IHUPBesqwnsXJbLIg1jWqwUB9wb3vfXmxC1R6SB/byhyRlV7jiJBkOzEnG/DW6tW+JBN+8ZZXoPv4wuScUQORI=
+X-Received: by 2002:a2e:7a0e:0:b0:2ff:a928:a23e with SMTP id
+ 38308e7fff4ca-2ffa928a3ebmr66489181fa.25.1732632897325; Tue, 26 Nov 2024
+ 06:54:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|IA1PR10MB7448:EE_
-X-MS-Office365-Filtering-Correlation-Id: 86100c9e-e931-43d3-1371-08dd0e2a1a26
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?n+7tgm4BSt7gP2XOO5At+VkhU7A65qi8MRabbZevG5xxlro7DgH/qDroAA?=
- =?iso-8859-1?Q?5YHbHy/vp2ZVXLdqA1PwzXTqvs1VlVUpT6gYU8/bYJMYbbUy+Sbwbj7KdW?=
- =?iso-8859-1?Q?yEFpItn8TVFu4umTirrAHUujEKMiDMQY7g4bL9rPGG7/f1J7VLGQAMmJfv?=
- =?iso-8859-1?Q?d1fWrXC1pDC6KpzpvI7KQzVV+wM+NEC3Nmc5ZHtQPnJA9c6HB2bd2sBWVe?=
- =?iso-8859-1?Q?Vw8BDCXeSi+6aqhCYySL1nkPBPjSrEhrGIiNaBmsN7NNMLc4/P6dUwk1oS?=
- =?iso-8859-1?Q?tcffzuk9lptRH5vMhFF6BIzFVFYeZnwev82HAHyVuCUqIpuqG+4f3bo0eR?=
- =?iso-8859-1?Q?hramora1ghONnlosIGN4JH6Q+DV7Pc9q8mPuw2llN9yRe18o+dJS+5FLws?=
- =?iso-8859-1?Q?mkj482Qk81KfG5MW5PDYEaMueyqFINbwYnuzA9HSqL7MrVPAVFgyi9dQYw?=
- =?iso-8859-1?Q?pFDvB1jqJocGN+PqM4GxaP93kmBGitWAEU2kTBU4AJALeeT3IvcYWGd2p1?=
- =?iso-8859-1?Q?0rbNdfINi4h5GeSz8FcGYEuY/aGI+QxES4Csg299Vt+LVKbazsFgd901MS?=
- =?iso-8859-1?Q?mz/pkj2xpR8NwSetgLnQWwimTI3/71p5AMc9EP7NrJYWe8IU0iUoHn5BB+?=
- =?iso-8859-1?Q?bJxIbmKLBIu+zlYILuJbE8w76DmAMx+DeQLGzGi4IOb4GFnnYPoINgoO2Z?=
- =?iso-8859-1?Q?PiIdZNaixTJ84Hde3PN/VeFvLKpNJ+ZjRlFjkaWtcEu9XA3AOmzg5jMrs7?=
- =?iso-8859-1?Q?agpKdHzwEhrAtRHOJ+NzUhpiRMz0vHXJ0Tt5MdJsKQBbK0fKoR4/H1nZbr?=
- =?iso-8859-1?Q?GPVnF+8FwtMCwOBOvZdx/Ehh7Hvc7lB4qwFWeT+gDHE7geTWjtMsBpmaWz?=
- =?iso-8859-1?Q?eTLlxrWmPK9/ZmK5zPsq/4oDR7exo6pQKgpRBxnSct2jwn6Kf3g3s++XtL?=
- =?iso-8859-1?Q?nG7ZcnqOXDXVtAsFX721GBBt1YnYAIUfuoxp6jlIevGIZo8GXSqFsfurvX?=
- =?iso-8859-1?Q?2KeCqTw4mRhA+pCQHicQai6Dx6hRMytdZmIs2PatntRAiNyCAoCW/Jv8xf?=
- =?iso-8859-1?Q?98GmRnu7aNVoulS/sVU2/ueGQgVvRUHkFkyj1R9/3QZJktxSJmMFoMnaCx?=
- =?iso-8859-1?Q?ino8BNtj1jnwaGibTIm7Rt4t32mPbKSfTpfnQmo7zsUTc06/KZys/IlTqR?=
- =?iso-8859-1?Q?m2gJ66YXENtpyGuoGkiogGpecK5D9w8ZiMivZjegx0QFj5Y7H/amV/5Aba?=
- =?iso-8859-1?Q?IoXGUHpDtxGzGYqkNu9wouyl9uINocPRLj5sWiAiMCYReAGNlLcP0azG13?=
- =?iso-8859-1?Q?QvB6mI39XvMnAIx7pmjcMzuzWj7jCTYechOt2PeidSwY8nf5vFcd3JQDGF?=
- =?iso-8859-1?Q?lKKKlHdSJcfgTyGCUwLg8WLXWJ1eIOI90HPAaXYFkB17d2qOqsG5M=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?Bf5T1/RhfkCms9MM1/fGhnk9fXaeDuqdsTGtr7IeB9uGw0SJo9NNR8unN+?=
- =?iso-8859-1?Q?Prguvimz1m7S9YhYlxQt08/CbFSRz2BAZRvW/Kz0NXQ8we0v8NyoBACBr3?=
- =?iso-8859-1?Q?XoG8fiKo3gEZqGUXQk1NocWYKtxLUzAmp2dyAtdJbC6/YQ6UOYM3ZUqoq3?=
- =?iso-8859-1?Q?E5CZzxJ7rK5fsJaDlxCdOOp6TwKhAoaUTHJJiJj53BJ8hXlRvQob0SuhCj?=
- =?iso-8859-1?Q?S3T4V0GPEa2q6/LgumEw7qSkffayFpQOtPLK95gwCVig5qCwMXKqxM5jJ7?=
- =?iso-8859-1?Q?SVE2dBnel7Gv8MFjmOyjr59241zQccsXnbluzBuqKN3YqMhP6+WGalzwEo?=
- =?iso-8859-1?Q?Zpb9H6ms/ip9M60MioDrG7f+BIme9BpjOOA+QKwm4OebczXSaAkIIgpLw2?=
- =?iso-8859-1?Q?NskIlggV+nfgZStkw1MVViI3oA4katkhVg9iMmYLlsn8wyScqp0t6oHldk?=
- =?iso-8859-1?Q?bwxDtzxshRdm5JdjaFKSchUW1I8sQRukyFLBEDWb7jbdhYqyYX7Bbtp2jG?=
- =?iso-8859-1?Q?4yMqrMRkvODzSqsdPO0ND0qFuPgTtLlF90GcUe8tLF1FHivLeWaE+n0UR9?=
- =?iso-8859-1?Q?HLAxSxQk+hBqop1lIP3xXb1cx3+tESA1in/Tse5sPxztPsAkRhqKYT9y9g?=
- =?iso-8859-1?Q?8qn5c81DX9+HsWvujQ2BE0SP5DTgfK66ZZPn1lQBgjy69KAoWjTdRJ6LFp?=
- =?iso-8859-1?Q?5Pyl7xo4CKQbFBsmrI/411cehcJw/Msx+YSyvGrfJFX2OYIL4fGLV0s7wC?=
- =?iso-8859-1?Q?QLTTHhLGuYsXPYEYbGwp/Q7/K4QkYSHWXYCyvqx0/nUNNT5w4H6MtGDvs4?=
- =?iso-8859-1?Q?kp+AXpKXuhdmsvBg4IyDXn2edAj/ShfNGkjv9kB4KECI/MR3i2frxCArTR?=
- =?iso-8859-1?Q?eX9j3MqAXg5zd/Du7UOCn/rVirQIyQZRwWV1wEK/3a+XAcRhGYXuL0mwzc?=
- =?iso-8859-1?Q?/UaRPGD9zju2OVmKCWIA5CRRvr/+fgjnLT+53qtyDEltDZizfFlapOuqW4?=
- =?iso-8859-1?Q?rlux11U8IoOhTqviIM6hrUWSzISOXGJbi7SewA3axQQv3iLQ/QHhRQ9SBu?=
- =?iso-8859-1?Q?ajFwSkvdxl5FWBmIysn/tFT9giArY+gOF0OIAwr1qM205p5WSQfgPsG+hs?=
- =?iso-8859-1?Q?yw67tkc7usWeyuzhmp0fbhdRnCNru1DWodSrS+K91xQO4uZPajj11Qf8l/?=
- =?iso-8859-1?Q?YrwxSi55IcRhyMctOwuqtX8gVDQl8syKfkpGWT3qH9JVovrSjLsOs1bWF7?=
- =?iso-8859-1?Q?Z6lAIQhx/su+lc1Surp7nV/eX4lUi9JHOfnEp5gLz3AMyYCVg0t+QqeJE7?=
- =?iso-8859-1?Q?NnFkpeo3d6kGTK9K8XDomR7v1DXMn/36RPtspaiMKtduTzGkiaIcwgeL9M?=
- =?iso-8859-1?Q?Wi+Sv2WPGyEvgqgtVFxIamQov0CC7MRBMceq/m93qaymHjGTzsjSIlUvZl?=
- =?iso-8859-1?Q?mdXf8DB9CLQ0PcCwzOeEgmoZ0pPQAYafZsJ5JmfaW5+KLJ3wtrJojlhfas?=
- =?iso-8859-1?Q?aAjkfagpkpykqG1I2j/nkBMO27teObrgZWXpWDukWL14PYApgMt6iUHg6Z?=
- =?iso-8859-1?Q?W9q30m36jctfZPs/VLCwT5MBUKXKR6ljRzbgXN7XLPnHUH+/T9CItGDqhk?=
- =?iso-8859-1?Q?Q48rWnID++FzKcUmenrGGs+JkwSPdOZxiS?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	OnaVtgvJWBXIa7vtJ/vPCOiclntN9vPQ2iqaSYoWjHzRfVerjLbHuVbROgItEuGi9NbxFVrDFV8BcdKBhKmj9HxWoek+0QpA5gkJg+Xofd0NxcpDf7mksOdF22Y/SB5o1IxmolmVsqTJGjBK4zW8T+0RIwu5eOl3xsh5UCE6WcCtBvY4HVNpZYNu7onUWe6g3aBzPIvyV6ljvlJZVYTIFi2aS2fcjqREJTdZ1CNF/cKUtDHhdOSqwjhYQcu7pMl09fiHW/QalS2FY18+0gvE00dn/mXHhUMUm9zV42TxsFyAb3UcPTjW4SzRjzizw8MG8i+sCOPdjtQIAfxKlKDJD8kgPcnKpv5z3TpJPmnThJfmqdqQRRemXlPiDWuHdB8stKJUYHtzvft5W8urkamnqByMSWdp0/e96KJjp+hFx6+1v7AIIY7TMIGl/kmcGFe/Qb53Q1YZ5aZLK5xA+eOSqLb9tGqfTRT1Z1we9/RaexELa2TQDHrmehueplMDW+zr8gZBMaOdl1IdPAepj1jrJlcT4zv2bohWaUC/8n1A9q/fv94bdXdv6QTJgbHlkYPYK7E1/rWXT/j6gW0HSWSbNJA78LWytwWQgwiZnuqMX6M=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 86100c9e-e931-43d3-1371-08dd0e2a1a26
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2024 14:53:34.8978
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7PL7NoT9Ps4IOIWSK5YlgoiFr74Q3RguSa0Wj7SH+2k0onLjHtpMxvOF6hwR4TuRu8dHbAMmxFZtVn4XK7TD0Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB7448
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-11-26_12,2024-11-26_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
- phishscore=0 adultscore=0 suspectscore=0 malwarescore=0 bulkscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2409260000 definitions=main-2411260120
-X-Proofpoint-GUID: TsHSUmc6SDZGG2iYqGkWCNmQN9OHI1CL
-X-Proofpoint-ORIG-GUID: TsHSUmc6SDZGG2iYqGkWCNmQN9OHI1CL
+References: <6745e035.050a0220.1286eb.001b.GAE@google.com>
+In-Reply-To: <6745e035.050a0220.1286eb.001b.GAE@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 26 Nov 2024 15:54:46 +0100
+Message-ID: <CACT4Y+azwfrE3uz6A5ZErov5YN2LYBN5KrsymBerT36VU8qzBA@mail.gmail.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-out-of-bounds Read in xfrm_state_find
+To: syzbot <syzbot+5f9f31cb7d985f584d8e@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, herbert@gondor.apana.org.au, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, steffen.klassert@secunet.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus -
+On Tue, 26 Nov 2024 at 15:50, syzbot
+<syzbot+5f9f31cb7d985f584d8e@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    7758b206117d Merge tag 'tracefs-v6.12-rc6' of git://git.ke..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17cb2e30580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c0b2fb415081f288
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5f9f31cb7d985f584d8e
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/85d17d41a04f/disk-7758b206.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/4c5dbadde61f/vmlinux-7758b206.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/63b589fd77fc/bzImage-7758b206.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+5f9f31cb7d985f584d8e@syzkaller.appspotmail.com
+>
+> ==================================================================
+> BUG: KASAN: slab-out-of-bounds in __xfrm_state_lookup_all net/xfrm/xfrm_state.c:1045 [inline]
+> BUG: KASAN: slab-out-of-bounds in xfrm_state_find+0x6578/0x68c0 net/xfrm/xfrm_state.c:1288
+> Read of size 8 at addr ffff88802e87a6c0 by task syz.2.4311/22836
+>
+> CPU: 1 UID: 0 PID: 22836 Comm: syz.2.4311 Not tainted 6.12.0-rc6-syzkaller-00099-g7758b206117d #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+>  print_address_description mm/kasan/report.c:377 [inline]
+>  print_report+0xc3/0x620 mm/kasan/report.c:488
+>  kasan_report+0xd9/0x110 mm/kasan/report.c:601
+>  __xfrm_state_lookup_all net/xfrm/xfrm_state.c:1045 [inline]
+>  xfrm_state_find+0x6578/0x68c0 net/xfrm/xfrm_state.c:1288
 
-The following changes since commit 2d5404caa8c7bb5c4e0435f94b28834ae5456623:
+If I am reading the code correctly,
+net->xfrm.xfrm_state_hash_generation seqlock will ensure that
+xfrm_state_find will retry on hash table resize, but it does ensure
+consistency between the table pointer and size, so xfrm_state_find
+still does out-of-bounds access, which can cause e.g. paging fault
+before we retry.
 
-  Linux 6.12-rc7 (2024-11-10 14:19:35 -0800)
+A possible way to solve this is to collect all table data (pointers,
+size masks, etc) into a single struct and publish a pointer to a new
+struct atomically. Then xfrm_state_find can read a consistent copy of
+all fields (either old or new). Then we also don't need the seqlock,
+just rcu for lifetime protection.
 
-are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git tags/nfsd-6.13
 
-for you to fetch changes up to 583772eec7b0096516a8ee8b1cc31401894f1e3a:
 
-  nfsd: allow for up to 32 callback session slots (2024-11-18 20:23:13 -0500)
-
-----------------------------------------------------------------
-NFSD 6.13 Release Notes
-
-Jeff Layton contributed a scalability improvement to NFSD's NFSv4
-backchannel session implementation. This improvement is intended to
-increase the rate at which NFSD can safely recall NFSv4 delegations
-from clients, to avoid the need to revoke them. Revoking requires
-a slow state recovery process.
-
-A wide variety of bug fixes and other incremental improvements make
-up the bulk of commits in this series. As always I am grateful to
-the NFSD contributors, reviewers, testers, and bug reporters who
-participated during this cycle.
-
-----------------------------------------------------------------
-Al Viro (1):
-      nfsd: get rid of include ../internal.h
-
-Chuck Lever (49):
-      NFSD: Prevent a potential integer overflow
-      svcrdma: Address an integer overflow
-      NFSD: Remove unused function parameter
-      xdrgen: Exit status should be zero on success
-      xdrgen: Clean up type_specifier
-      xdrgen: Rename "variable-length strings"
-      xdrgen: Rename enum's declaration Jinja2 template
-      xdrgen: Rename "enum yada" types as just "yada"
-      xdrgen: Implement big-endian enums
-      xdrgen: Refactor transformer arms
-      xdrgen: Track constant values
-      xdrgen: Keep track of on-the-wire data type widths
-      xdrgen: XDR widths for enum types
-      xdrgen: XDR width for fixed-length opaque
-      xdrgen: XDR width for variable-length opaque
-      xdrgen: XDR width for a string
-      xdrgen: XDR width for fixed-length array
-      xdrgen: XDR width for variable-length array
-      xdrgen: XDR width for optional_data type
-      xdrgen: XDR width for typedef
-      xdrgen: XDR width for struct types
-      xdrgen: XDR width for pointer types
-      xdrgen: XDR width for union types
-      xdrgen: Add generator code for XDR width macros
-      xdrgen: emit maxsize macros
-      xdrgen: Add a utility for extracting XDR from RFCs
-      NFSD: Replace use of NFSD_MAY_LOCK in nfsd4_lock()
-      NFSD: Remove dead code in nfsd4_create_session()
-      NFSD: Remove a never-true comparison
-      NFSD: Prevent NULL dereference in nfsd4_process_cb_update()
-      NFSD: Remove unused results in nfsd4_encode_pathname4()
-      NFSD: Remove unused values from nfsd4_encode_components_esc()
-      NFSD: Cap the number of bytes copied by nfs4_reset_recoverydir()
-      lockd: Remove unused typedef
-      lockd: Remove unnecessary memset()
-      lockd: Remove some snippets of unfinished code
-      lockd: Remove unused parameter to nlmsvc_testlock()
-      lockd: Remove unneeded initialization of file_lock::c.flc_flags
-      xdrgen: Remove tracepoint call site
-      xdrgen: Remove check for "nfs_ok" in C templates
-      xdrgen: Update the files included in client-side source code
-      xdrgen: Remove program_stat_to_errno() call sites
-      NFSD: Add a tracepoint to record canceled async COPY operations
-      NFSD: Fix nfsd4_shutdown_copy()
-      NFSD: Free async copy information in nfsd4_cb_offload_release()
-      NFSD: Handle an NFS4ERR_DELAY response to CB_OFFLOAD
-      NFSD: Block DESTROY_CLIENTID only when there are ongoing async COPY operations
-      NFSD: Add a laundromat reaper for async copy state
-      NFSD: Add nfsd4_copy time-to-live
-
-Jeff Layton (8):
-      nfsd: drop inode parameter from nfsd4_change_attribute()
-      nfsd: drop the ncf_cb_bmap field
-      nfsd: drop the nfsd4_fattr_args "size" field
-      nfsd: have nfsd4_deleg_getattr_conflict pass back write deleg pointer
-      nfsd: new tracepoint for after op_func in compound processing
-      nfsd: remove nfsd4_session->se_bchannel
-      nfsd: make nfsd4_session->se_flags a bool
-      nfsd: allow for up to 32 callback session slots
-
-Julia Lawall (1):
-      nfsd: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-
-Mike Snitzer (1):
-      nfs_common: must not hold RCU while calling nfsd_file_put_local
-
-NeilBrown (3):
-      nfsd: refine and rename NFSD_MAY_LOCK
-      nfsd: Don't fail OP_SETCLIENTID when there are too many clients.
-      nfsd: make use of warning provided by refcount_t
-
-Pali Rohár (3):
-      lockd: Fix comment about NLMv3 backwards compatibility
-      nfsd: Fill NFSv4.1 server implementation fields in OP_EXCHANGE_ID response
-      nfsd: Fix NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT
-
-Thorsten Blum (1):
-      NFSD: Remove unnecessary posix_acl_entry pointer initialization
-
-Yang Erkun (4):
-      nfsd: make sure exp active before svc_export_show
-      SUNRPC: make sure cache entry active before cache_show
-      nfsd: release svc_expkey/svc_export with rcu_work
-      nfsd: fix nfs4_openowner leak when concurrent nfsd4_open occur
-
-Ye Bin (1):
-      svcrdma: fix miss destroy percpu_counter in svc_rdma_proc_init()
-
- MAINTAINERS                                                                                      |   1 +
- fs/lockd/clntxdr.c                                                                               |   5 ++-
- fs/lockd/svc4proc.c                                                                              |  20 +++------
- fs/lockd/svclock.c                                                                               |   2 +-
- fs/lockd/svcproc.c                                                                               |  15 +------
- fs/lockd/xdr4.c                                                                                  |   2 -
- fs/nfs_common/nfslocalio.c                                                                       |   8 ++--
- fs/nfsd/export.c                                                                                 |  57 ++++++++++++++++++++----
- fs/nfsd/export.h                                                                                 |   7 +--
- fs/nfsd/filecache.c                                                                              |  19 ++++----
- fs/nfsd/filecache.h                                                                              |   2 +-
- fs/nfsd/lockd.c                                                                                  |  13 +++++-
- fs/nfsd/nfs4acl.c                                                                                |   2 -
- fs/nfsd/nfs4callback.c                                                                           | 139 +++++++++++++++++++++++++++++++++++++++++++----------------
- fs/nfsd/nfs4proc.c                                                                               | 103 +++++++++++++++++++++++++++++++++++++++-----
- fs/nfsd/nfs4recover.c                                                                            |   3 +-
- fs/nfsd/nfs4state.c                                                                              | 127 +++++++++++++++++++++++++++++++++++-------------------
- fs/nfsd/nfs4xdr.c                                                                                |  73 ++++++++++++++++++-------------
- fs/nfsd/nfsfh.c                                                                                  |  41 ++++++++++--------
- fs/nfsd/nfsfh.h                                                                                  |   3 +-
- fs/nfsd/state.h                                                                                  |  40 +++++++++++------
- fs/nfsd/trace.h                                                                                  |  29 +++++++++++--
- fs/nfsd/vfs.c                                                                                    |  26 +++--------
- fs/nfsd/vfs.h                                                                                    |   6 +--
- fs/nfsd/xdr4.h                                                                                   |   8 ++++
- include/linux/lockd/lockd.h                                                                      |   6 +--
- include/linux/lockd/xdr.h                                                                        |   2 -
- include/linux/nfslocalio.h                                                                       |  18 ++++++--
- include/linux/sunrpc/xdr.h                                                                       |  21 +++++++++
- include/linux/sunrpc/xdrgen/_defs.h                                                              |   9 ++++
- net/sunrpc/cache.c                                                                               |   4 +-
- net/sunrpc/xprtrdma/svc_rdma.c                                                                   |  19 +++++---
- net/sunrpc/xprtrdma/svc_rdma_recvfrom.c                                                          |   8 +++-
- tools/net/sunrpc/extract.sh                                                                      |  11 +++++
- tools/net/sunrpc/xdrgen/README                                                                   |  17 ++++++++
- tools/net/sunrpc/xdrgen/generators/__init__.py                                                   |   4 ++
- tools/net/sunrpc/xdrgen/generators/enum.py                                                       |  30 ++++++++++---
- tools/net/sunrpc/xdrgen/generators/pointer.py                                                    |  26 ++++++++---
- tools/net/sunrpc/xdrgen/generators/struct.py                                                     |  26 ++++++++---
- tools/net/sunrpc/xdrgen/generators/typedef.py                                                    |  28 +++++++++---
- tools/net/sunrpc/xdrgen/generators/union.py                                                      |  52 +++++++++++++++++-----
- tools/net/sunrpc/xdrgen/grammars/xdr.lark                                                        |   6 ++-
- tools/net/sunrpc/xdrgen/subcmds/definitions.py                                                   |  24 +++++++++--
- tools/net/sunrpc/xdrgen/subcmds/source.py                                                        |   3 +-
- tools/net/sunrpc/xdrgen/templates/C/enum/declaration/close.j2                                    |   4 --
- tools/net/sunrpc/xdrgen/templates/C/enum/declaration/enum.j2                                     |   4 ++
- tools/net/sunrpc/xdrgen/templates/C/enum/decoder/enum.j2                                         |   2 +-
- tools/net/sunrpc/xdrgen/templates/C/enum/decoder/enum_be.j2                                      |  14 ++++++
- tools/net/sunrpc/xdrgen/templates/C/enum/definition/close.j2                                     |   1 +
- tools/net/sunrpc/xdrgen/templates/C/enum/definition/close_be.j2                                  |   3 ++
- tools/net/sunrpc/xdrgen/templates/C/enum/encoder/enum.j2                                         |   2 +-
- tools/net/sunrpc/xdrgen/templates/C/enum/encoder/enum_be.j2                                      |  14 ++++++
- tools/net/sunrpc/xdrgen/templates/C/enum/maxsize/enum.j2                                         |   2 +
- tools/net/sunrpc/xdrgen/templates/C/pointer/decoder/{variable_length_string.j2 => string.j2}     |   0
- tools/net/sunrpc/xdrgen/templates/C/pointer/definition/{variable_length_string.j2 => string.j2}  |   0
- tools/net/sunrpc/xdrgen/templates/C/pointer/encoder/{variable_length_string.j2 => string.j2}     |   0
- tools/net/sunrpc/xdrgen/templates/C/pointer/maxsize/pointer.j2                                   |   3 ++
- tools/net/sunrpc/xdrgen/templates/C/program/decoder/result.j2                                    |   4 --
- tools/net/sunrpc/xdrgen/templates/C/source_top/client.j2                                         |   9 +++-
- tools/net/sunrpc/xdrgen/templates/C/struct/decoder/{variable_length_string.j2 => string.j2}      |   0
- tools/net/sunrpc/xdrgen/templates/C/struct/definition/{variable_length_string.j2 => string.j2}   |   0
- tools/net/sunrpc/xdrgen/templates/C/struct/encoder/{variable_length_string.j2 => string.j2}      |   0
- tools/net/sunrpc/xdrgen/templates/C/struct/maxsize/struct.j2                                     |   3 ++
- tools/net/sunrpc/xdrgen/templates/C/typedef/declaration/{variable_length_string.j2 => string.j2} |   0
- tools/net/sunrpc/xdrgen/templates/C/typedef/decoder/{variable_length_string.j2 => string.j2}     |   0
- tools/net/sunrpc/xdrgen/templates/C/typedef/definition/{variable_length_string.j2 => string.j2}  |   0
- tools/net/sunrpc/xdrgen/templates/C/typedef/encoder/{variable_length_string.j2 => string.j2}     |   0
- tools/net/sunrpc/xdrgen/templates/C/typedef/maxsize/basic.j2                                     |   3 ++
- tools/net/sunrpc/xdrgen/templates/C/typedef/maxsize/fixed_length_opaque.j2                       |   2 +
- tools/net/sunrpc/xdrgen/templates/C/typedef/maxsize/string.j2                                    |   2 +
- tools/net/sunrpc/xdrgen/templates/C/typedef/maxsize/variable_length_array.j2                     |   2 +
- tools/net/sunrpc/xdrgen/templates/C/typedef/maxsize/variable_length_opaque.j2                    |   2 +
- tools/net/sunrpc/xdrgen/templates/C/union/decoder/case_spec_be.j2                                |   2 +
- tools/net/sunrpc/xdrgen/templates/C/union/decoder/{variable_length_string.j2 => string.j2}       |   0
- tools/net/sunrpc/xdrgen/templates/C/union/encoder/case_spec_be.j2                                |   2 +
- tools/net/sunrpc/xdrgen/templates/C/union/maxsize/union.j2                                       |   3 ++
- tools/net/sunrpc/xdrgen/xdr_ast.py                                                               | 311 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---------------
- tools/net/sunrpc/xdrgen/xdrgen                                                                   |   4 +-
- 78 files changed, 1115 insertions(+), 348 deletions(-)
- create mode 100755 tools/net/sunrpc/extract.sh
- delete mode 100644 tools/net/sunrpc/xdrgen/templates/C/enum/declaration/close.j2
- create mode 100644 tools/net/sunrpc/xdrgen/templates/C/enum/declaration/enum.j2
- create mode 100644 tools/net/sunrpc/xdrgen/templates/C/enum/decoder/enum_be.j2
- create mode 100644 tools/net/sunrpc/xdrgen/templates/C/enum/definition/close_be.j2
- create mode 100644 tools/net/sunrpc/xdrgen/templates/C/enum/encoder/enum_be.j2
- create mode 100644 tools/net/sunrpc/xdrgen/templates/C/enum/maxsize/enum.j2
- rename tools/net/sunrpc/xdrgen/templates/C/pointer/decoder/{variable_length_string.j2 => string.j2} (100%)
- rename tools/net/sunrpc/xdrgen/templates/C/pointer/definition/{variable_length_string.j2 => string.j2} (100%)
- rename tools/net/sunrpc/xdrgen/templates/C/pointer/encoder/{variable_length_string.j2 => string.j2} (100%)
- create mode 100644 tools/net/sunrpc/xdrgen/templates/C/pointer/maxsize/pointer.j2
- rename tools/net/sunrpc/xdrgen/templates/C/struct/decoder/{variable_length_string.j2 => string.j2} (100%)
- rename tools/net/sunrpc/xdrgen/templates/C/struct/definition/{variable_length_string.j2 => string.j2} (100%)
- rename tools/net/sunrpc/xdrgen/templates/C/struct/encoder/{variable_length_string.j2 => string.j2} (100%)
- create mode 100644 tools/net/sunrpc/xdrgen/templates/C/struct/maxsize/struct.j2
- rename tools/net/sunrpc/xdrgen/templates/C/typedef/declaration/{variable_length_string.j2 => string.j2} (100%)
- rename tools/net/sunrpc/xdrgen/templates/C/typedef/decoder/{variable_length_string.j2 => string.j2} (100%)
- rename tools/net/sunrpc/xdrgen/templates/C/typedef/definition/{variable_length_string.j2 => string.j2} (100%)
- rename tools/net/sunrpc/xdrgen/templates/C/typedef/encoder/{variable_length_string.j2 => string.j2} (100%)
- create mode 100644 tools/net/sunrpc/xdrgen/templates/C/typedef/maxsize/basic.j2
- create mode 100644 tools/net/sunrpc/xdrgen/templates/C/typedef/maxsize/fixed_length_opaque.j2
- create mode 100644 tools/net/sunrpc/xdrgen/templates/C/typedef/maxsize/string.j2
- create mode 100644 tools/net/sunrpc/xdrgen/templates/C/typedef/maxsize/variable_length_array.j2
- create mode 100644 tools/net/sunrpc/xdrgen/templates/C/typedef/maxsize/variable_length_opaque.j2
- create mode 100644 tools/net/sunrpc/xdrgen/templates/C/union/decoder/case_spec_be.j2
- rename tools/net/sunrpc/xdrgen/templates/C/union/decoder/{variable_length_string.j2 => string.j2} (100%)
- create mode 100644 tools/net/sunrpc/xdrgen/templates/C/union/encoder/case_spec_be.j2
- create mode 100644 tools/net/sunrpc/xdrgen/templates/C/union/maxsize/union.j2
-
--- 
-Chuck Lever
+>  xfrm_tmpl_resolve_one net/xfrm/xfrm_policy.c:2507 [inline]
+>  xfrm_tmpl_resolve net/xfrm/xfrm_policy.c:2558 [inline]
+>  xfrm_resolve_and_create_bundle+0x4bc/0x3650 net/xfrm/xfrm_policy.c:2852
+>  xfrm_lookup_with_ifid+0x259/0x1df0 net/xfrm/xfrm_policy.c:3186
+>  xfrm_lookup net/xfrm/xfrm_policy.c:3315 [inline]
+>  xfrm_lookup_route+0x3b/0x200 net/xfrm/xfrm_policy.c:3326
+>  ip6_dst_lookup_flow+0x15c/0x1d0 net/ipv6/ip6_output.c:1265
+>  rawv6_sendmsg+0xd5a/0x43d0 net/ipv6/raw.c:898
+>  inet_sendmsg+0x119/0x140 net/ipv4/af_inet.c:853
+>  sock_sendmsg_nosec net/socket.c:729 [inline]
+>  __sock_sendmsg net/socket.c:744 [inline]
+>  ____sys_sendmsg+0x98c/0xc90 net/socket.c:2607
+>  ___sys_sendmsg+0x135/0x1e0 net/socket.c:2661
+>  __sys_sendmmsg+0x1a1/0x450 net/socket.c:2747
+>  __do_sys_sendmmsg net/socket.c:2776 [inline]
+>  __se_sys_sendmmsg net/socket.c:2773 [inline]
+>  __x64_sys_sendmmsg+0x9c/0x100 net/socket.c:2773
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f64b277e719
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f64b3632038 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
+> RAX: ffffffffffffffda RBX: 00007f64b2936058 RCX: 00007f64b277e719
+> RDX: 0000000000000021 RSI: 0000000020000480 RDI: 000000000000000e
+> RBP: 00007f64b27f139e R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000000 R14: 00007f64b2936058 R15: 00007ffe9a51e4e8
+>  </TASK>
+>
+> Allocated by task 5916:
+>  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+>  poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+>  __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+>  kasan_kmalloc include/linux/kasan.h:257 [inline]
+>  __do_kmalloc_node mm/slub.c:4264 [inline]
+>  __kmalloc_noprof+0x1e8/0x400 mm/slub.c:4276
+>  kmalloc_noprof include/linux/slab.h:882 [inline]
+>  kzalloc_noprof include/linux/slab.h:1014 [inline]
+>  xfrm_hash_alloc+0xd1/0x100 net/xfrm/xfrm_hash.c:21
+>  xfrm_hash_resize+0x8c/0x22a0 net/xfrm/xfrm_state.c:168
+>  process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+>  process_scheduled_works kernel/workqueue.c:3310 [inline]
+>  worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+>  kthread+0x2c1/0x3a0 kernel/kthread.c:389
+>  ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>
+> The buggy address belongs to the object at ffff88802e87a600
+>  which belongs to the cache kmalloc-128 of size 128
+> The buggy address is located 64 bytes to the right of
+>  allocated 128-byte region [ffff88802e87a600, ffff88802e87a680)
+>
+> The buggy address belongs to the physical page:
+> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff88802e87a900 pfn:0x2e87a
+> anon flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+> page_type: f5(slab)
+> raw: 00fff00000000000 ffff88801b041a00 0000000000000000 dead000000000001
+> raw: ffff88802e87a900 000000008010000f 00000001f5000000 0000000000000000
+> page dumped because: kasan: bad access detected
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 5825, tgid 5825 (syz-executor), ts 54933774480, free_ts 54907017929
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1537
+>  prep_new_page mm/page_alloc.c:1545 [inline]
+>  get_page_from_freelist+0xf7d/0x2d10 mm/page_alloc.c:3457
+>  __alloc_pages_noprof+0x223/0x25a0 mm/page_alloc.c:4733
+>  alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
+>  alloc_slab_page mm/slub.c:2412 [inline]
+>  allocate_slab mm/slub.c:2578 [inline]
+>  new_slab+0x2c9/0x410 mm/slub.c:2631
+>  ___slab_alloc+0xdac/0x1880 mm/slub.c:3818
+>  __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
+>  __slab_alloc_node mm/slub.c:3961 [inline]
+>  slab_alloc_node mm/slub.c:4122 [inline]
+>  __kmalloc_cache_noprof+0x2b4/0x300 mm/slub.c:4290
+>  kmalloc_noprof include/linux/slab.h:878 [inline]
+>  __hw_addr_create net/core/dev_addr_lists.c:60 [inline]
+>  __hw_addr_add_ex+0x3c8/0x7c0 net/core/dev_addr_lists.c:118
+>  __dev_mc_add net/core/dev_addr_lists.c:867 [inline]
+>  dev_mc_add+0xb6/0x110 net/core/dev_addr_lists.c:885
+>  igmp6_group_added+0x395/0x480 net/ipv6/mcast.c:681
+>  __ipv6_dev_mc_inc+0x72a/0xc10 net/ipv6/mcast.c:950
+>  ipv6_add_dev+0xb04/0x13f0 net/ipv6/addrconf.c:471
+>  addrconf_notify+0x53e/0x19c0 net/ipv6/addrconf.c:3655
+>  notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
+>  call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1996
+> page last free pid 58 tgid 58 stack trace:
+>  reset_page_owner include/linux/page_owner.h:25 [inline]
+>  free_pages_prepare mm/page_alloc.c:1108 [inline]
+>  free_unref_page+0x5f4/0xdc0 mm/page_alloc.c:2638
+>  __put_partials+0x14c/0x170 mm/slub.c:3145
+>  qlink_free mm/kasan/quarantine.c:163 [inline]
+>  qlist_free_all+0x4e/0x120 mm/kasan/quarantine.c:179
+>  kasan_quarantine_reduce+0x192/0x1e0 mm/kasan/quarantine.c:286
+>  __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:329
+>  kasan_slab_alloc include/linux/kasan.h:247 [inline]
+>  slab_post_alloc_hook mm/slub.c:4085 [inline]
+>  slab_alloc_node mm/slub.c:4134 [inline]
+>  kmem_cache_alloc_node_noprof+0x153/0x310 mm/slub.c:4186
+>  __alloc_skb+0x2b1/0x380 net/core/skbuff.c:668
+>  alloc_skb include/linux/skbuff.h:1322 [inline]
+>  nlmsg_new include/net/netlink.h:1015 [inline]
+>  rtmsg_ifinfo_build_skb+0x81/0x280 net/core/rtnetlink.c:4099
+>  rtmsg_ifinfo_event net/core/rtnetlink.c:4141 [inline]
+>  rtmsg_ifinfo_event net/core/rtnetlink.c:4131 [inline]
+>  rtmsg_ifinfo+0x9f/0x1a0 net/core/rtnetlink.c:4150
+>  netdev_state_change net/core/dev.c:1380 [inline]
+>  netdev_state_change+0x12f/0x150 net/core/dev.c:1371
+>  linkwatch_do_dev+0x12b/0x160 net/core/link_watch.c:177
+>  __linkwatch_run_queue+0x233/0x690 net/core/link_watch.c:234
+>  linkwatch_event+0x8f/0xc0 net/core/link_watch.c:277
+>  process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+>  process_scheduled_works kernel/workqueue.c:3310 [inline]
+>  worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+>  kthread+0x2c1/0x3a0 kernel/kthread.c:389
+>
+> Memory state around the buggy address:
+>  ffff88802e87a580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>  ffff88802e87a600: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> >ffff88802e87a680: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>                                            ^
+>  ffff88802e87a700: 00 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc
+>  ffff88802e87a780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ==================================================================
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion visit https://groups.google.com/d/msgid/syzkaller-bugs/6745e035.050a0220.1286eb.001b.GAE%40google.com.
 
