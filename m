@@ -1,180 +1,153 @@
-Return-Path: <linux-kernel+bounces-422422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F18D59D9972
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:17:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD41A9D9978
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:19:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBEA6168534
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:17:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6090F161EF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8841D5AB7;
-	Tue, 26 Nov 2024 14:17:16 +0000 (UTC)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25DEA1D5163;
+	Tue, 26 Nov 2024 14:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MkwT/R/h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1736AD515;
-	Tue, 26 Nov 2024 14:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738DF8F7D;
+	Tue, 26 Nov 2024 14:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732630635; cv=none; b=JCekQQOWVfoIjhfjyfi1myw9VDESCbEa76kpAxBwq2FnYj9R3Umyj4e8ex6SPkQ+raM7Zsj6QVzAgsD/1Src9MWKqqwOeEBhZw0IHo+Qb7iC7/4INBVSAJHwj7XSiVHHD7nrLhTG6F9zDylTyaHIPstMcGzhS53TBDzfQTI8n1U=
+	t=1732630763; cv=none; b=uSpK9+7GevsxZahUfXecs3I8RrG0FXUSJLRkZmHnN1O7xNXpz01rqykN2aCaQPKFTboDLLyq2lB92QNooHOXBLwxDISAq4irBtf4otW1+rW70x+rc5PyWl+PV1yNqD83gW9Bylpd1D1U3ZFxv2KXLvwYUqHAssc1hanwQ3bovLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732630635; c=relaxed/simple;
-	bh=Af8h1x2GkRXVSShLvaf0DhS8aMbO/cKYrKI0lw1igO8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NIOcc5p18hVb/ZpJSCMop8J4/yCyHlAms2MNnx9Lw7oBsOXBw8W20fffezW2eVRP4VCVE1SD8aaFxcSdLZ+88F4RVnFXC5yMtRrzhljU/QK8jlDr1BZIGStMWOOe9mrPUe/unm7kqWfhWrwMCIVqeN2VD7BzNf1f9CkFcTCgYgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6eeb2680092so56530477b3.1;
-        Tue, 26 Nov 2024 06:17:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732630632; x=1733235432;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DMlKAosx+8F5oQA944QEaviPdmzNr2nURUNr2vUH2Fg=;
-        b=cPyTszDipHNPhx1JvUT91zmmYnq1JdRRZOFWU1Wuq/IvZzIq+V6q8RQqiD3By5W7zp
-         D3LAQBBrTpiUhm0jOE5e1NXbz1MAH0oENuwuUgAWGYr85F5wmKE2pvR6nMDFukKdM2Ih
-         wwKZLjDy7QVALWTl210Q8+KHZ0oH5e28QF6KnCn/kSapYUY8Z6pS+2CFeEhZOvH0mKLt
-         h0EVcxPYgtM9riMvNu76MqTFBroyQLkNd1UUpgZIpMjwO6F4oZh4DnTvv5I/bTB+4xHQ
-         Cacv27MNaW9suUHoL7xED1e9qZBlpemPVxwx3GVsQjCKkh0CLu2WoKxQuK+GvDwZtFGh
-         slhg==
-X-Forwarded-Encrypted: i=1; AJvYcCVw3eGkmVXqmfPZ7R7GwwA1MwpgSZ/Qv7a0RrUlXjzUQvAWlTaTkLqgQR9kQSkQQSMxzRRSiwKzokbaN7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1/E37FhOcQS2VhiHo/uHdITs3jqNo7DkIuF2doqianoI7qWFL
-	/sFfu6QacXBZE14yXWLCjlQkiVojbuiPrwlxS0N2j34YKwFswmqi4e1RI4Sb
-X-Gm-Gg: ASbGncuTbQ7cne7lnALjYT5wI4wCqDR1/Hf7bNK7SYSo6NqIlQEm0394db0SjWlRXJf
-	6Zk2mfF1YHjG9pbyREMWE3AVB5Nf9IJS7sHScxas2Yn3IbG3CqaUTpLo3DJ7gLTMV1/ik6+DLlQ
-	Btt8fBCUs84DT4oQOvnG3X0z0djHz8nQhIFM1/6Y3E0FYkmdLgF9dR2962MEeMnqWtHNQ4IlkKM
-	acITh+M9zKkBGCX5eKtodQxKFi6Dqm1eE6kQDadwga0kucXjEMvPHgBS+MEWgSaXddXa0D14JmZ
-	nPl1MiVXsGxAwmj5
-X-Google-Smtp-Source: AGHT+IFBchqzOT0RNGF3KcSaIzd2T7wuyqBh2cE/WpfXrfrI1EMnCRKUUnKTc+qC/InZyC8KP2I2Cg==
-X-Received: by 2002:a05:690c:4512:b0:6e3:ca30:25f with SMTP id 00721157ae682-6eee08e8ce4mr163739067b3.25.1732630632459;
-        Tue, 26 Nov 2024 06:17:12 -0800 (PST)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eee00835e1sm22950947b3.93.2024.11.26.06.17.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 06:17:12 -0800 (PST)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6ee7a48377cso52524837b3.3;
-        Tue, 26 Nov 2024 06:17:12 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWj1SCjrkHHrbVsKxQpmZ1e3eU3nPgWKyKQ20hP5Lu+Fy5Xv4ZifZRK0UyU84JLnqpvG81kH2Tej/Vaw4c=@vger.kernel.org
-X-Received: by 2002:a05:690c:3193:b0:6ee:f2fa:b8a3 with SMTP id
- 00721157ae682-6eef2fab97emr74621687b3.5.1732630631703; Tue, 26 Nov 2024
- 06:17:11 -0800 (PST)
+	s=arc-20240116; t=1732630763; c=relaxed/simple;
+	bh=hx3KkNJJWQgAgwnAAG9TOmPWE+HQ2sGGMQzGQxEUIeA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iS8ONl3RAVPN00mU/tvuIdqSeXM0GWpoA9E0xcHaZ4i+zz2PPChfCcCXtaDhZmpIRAAot/jkl3LvURD53jtvSbxyBUHY8KNJFys/R4bjlPH1IO1nKWpyVam7bgH/TtgVrHFUgvYf928z0ZoZeanhdCiLjhiBb6EQSGs5EAGMKa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MkwT/R/h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77C10C4CED2;
+	Tue, 26 Nov 2024 14:19:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732630763;
+	bh=hx3KkNJJWQgAgwnAAG9TOmPWE+HQ2sGGMQzGQxEUIeA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MkwT/R/hmTffZFOysun70nYfj0e1tOd9apQ7w9TwegciccuLPzgoYOcXkPdicsTBG
+	 cceBO39wm7cPi9ALnKl5h1I5C8XRJkxF6QNQnp7jKhhu4+LEgr/WvDaaryEorQf0dW
+	 0ci08yxaoZ8vg0LO3LWXqfMgFz2bh7QratJX+CIvq/SYH8E/d+lRzLnm3+5SFxZYZm
+	 2XhHvdjsONVlki1UVt6Ka12qTAXIo7nwWkqJpi+z4VoHMSE+Nmz0egU2uGCrelH7Go
+	 qffovnpRNb3GALm/kGSjV/1JxVj4uHxq6Lc+98DOFafcI1bVS9PydEre2oXMnqA8VE
+	 U1etyFyDM64DA==
+Message-ID: <8399720e-2a91-4374-b049-ff1d7e66d83e@kernel.org>
+Date: Tue, 26 Nov 2024 15:19:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022151838.26f9925fb959.Ia80b55e934bbfc45ce0df42a3233d34b35508046@changeid>
- <CAMuHMdWu_9-L2Te101w8hU7H_2yobJFPXSwwUmGHSJfaPWDKiQ@mail.gmail.com>
- <CAMuHMdXbnZc7rYc7ibRNWY6EfRLh-7g0yDeZ3Zk5OXCQ9Cr=cA@mail.gmail.com> <8221a4a01cb838159828961b6d8d99753ecc31b9.camel@sipsolutions.net>
-In-Reply-To: <8221a4a01cb838159828961b6d8d99753ecc31b9.camel@sipsolutions.net>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 26 Nov 2024 15:16:59 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXbCaMBwjrb+ZJj+MMQvOm8Y=xKfaxVhYVb79WyO4Z-4Q@mail.gmail.com>
-Message-ID: <CAMuHMdXbCaMBwjrb+ZJj+MMQvOm8Y=xKfaxVhYVb79WyO4Z-4Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] debugfs: add small file operations for most files
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, linux-m68k <linux-m68k@lists.linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: dma: ti: k3-bcdma: Add J722S CSI
+ BCDMA
+To: Vaishnav Achath <vaishnav.a@ti.com>, peter.ujfalusi@gmail.com,
+ vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ dmaengine@vger.kernel.org, devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, u-kumar1@ti.com, j-choudhary@ti.com,
+ vigneshr@ti.com
+References: <20241126125158.37744-1-vaishnav.a@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241126125158.37744-1-vaishnav.a@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Johannes,
+On 26/11/2024 13:51, Vaishnav Achath wrote:
+> J722S CSI BCDMA is similar to J721S2 CSI BCDMA and
+> supports both RX and TX channels. Add an entry for
+> J722S CSIRX BCDMA.
 
-On Tue, Nov 26, 2024 at 10:37=E2=80=AFAM Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Tue, 2024-11-26 at 09:38 +0100, Geert Uytterhoeven wrote:
-> > > Thanks for your patch, which is now commit 8dc6d81c6b2acc43 ("debugfs=
-:
-> > > add small file operations for most files") upstream.
->
-> Or rather "no thanks" ;-)
->
-> > > > +#define DEBUGFS_FSDATA_IS_SHORT_FOPS_BIT BIT(1)
-> > >
-> > > As the minimum alignment is 2 on m68k, you cannot use bit 1 in pointe=
-rs
-> > > for your own private use.
->
-> D'oh. Sorry about that. Though honestly even if I _had_ seen such a
-> comment deep in maple tree code, on that struct I'd probably have
-> assumed it's because there's no pointer in it and thus no alignment
-> anyway...
->
-> But sounds like you're pointers don't need to be naturally aligned, and
-> so 2-byte alignment is sufficient.
->
-> I guess we _could_ solve that by __aligned(4) on the fops structs, but
-> ... I'm not sure that makes sense.
->
-> > Reverting commit 8dc6d81c6b2acc43 fixes the issue,
->
-> Clearly. Though have to also revert the related patch in wireless :)
->
-> > and reduces the
-> > atari_defconfig kernel size by 447 bytes, according to bloat-o-meter.
->
-> Well, fair point, but if we care about size then we can win back more
-> than this by converting about a handful of debugfs files to short ops,
-> and if there are no debugfs files then we wouldn't need debugfs either,
-> I'd think.
->
-> So I think in a way the size argument goes the other way (with a little
-> bit of extra work), if that was meant to be an argument at all? :-)
+Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
 
-Assuming non-wireless drivers can be converted, too?  As none of the
-classical m68k machines support wireless, so far nothing is gained...
+> 
+> Signed-off-by: Vaishnav Achath <vaishnav.a@ti.com>
+> ---
+> 
+> V1->V2:
+>   * Address review from Conor to add new J722S compatible
+>   * J722S BCDMA is more similar to J721S2 in terms of RX/TX support,
+>   add an entry alongside J721S2 instead of modifying AM62A.
+> 
+> V1: https://lore.kernel.org/all/20241125083914.2934815-1-vaishnav.a@ti.com/
+> 
+>  Documentation/devicetree/bindings/dma/ti/k3-bcdma.yaml | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/dma/ti/k3-bcdma.yaml b/Documentation/devicetree/bindings/dma/ti/k3-bcdma.yaml
+> index 27b8e1636560..37832c71bd8e 100644
+> --- a/Documentation/devicetree/bindings/dma/ti/k3-bcdma.yaml
+> +++ b/Documentation/devicetree/bindings/dma/ti/k3-bcdma.yaml
+> @@ -196,7 +196,9 @@ allOf:
+>        properties:
+>          compatible:
+>            contains:
+> -            const: ti,j721s2-dmss-bcdma-csi
+> +            enum:
+> +              - ti,j721s2-dmss-bcdma-csi
+> +              - ti,j722s-dmss-bcdma-csi
 
-> From: Johannes Berg <johannes.berg@intel.com>
-> Date: Tue, 26 Nov 2024 10:29:23 +0100
-> Subject: [PATCH] fs: debugfs: differentiate short fops with proxy ops
->
-> Geert reported that my previous short fops debugfs changes
-> broke m68k, because it only has mandatory alignement of two,
-> so we can't stash the "is it short" information into the
-> pointer (as we already did with the "is it real" bit.)
->
-> Instead, exploit the fact that debugfs_file_get() called on
-> an already open file will already find that the fsdata is
-> no longer the real fops but rather the allocated data that
-> already distinguishes full/short ops, so only open() needs
-> to be able to distinguish. We can achieve that by using two
-> different open functions.
->
-> Unfortunately this requires another set of full file ops,
-> increasing the size by 536 bytes (x86-64), but that's still
+This compatible was never documented. There is no dependency here, no
+cover letter explaining where is this compatible introduced.
 
-226 on m68k.
 
-> a reasonable trade-off given that only converting some of
-> the wireless stack gained over 28k. This brings the total
-> cost of this to around 1k, for wins of 28k (all x86-64).
->
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Link: https://lore.kernel.org/CAMuHMdWu_9-L2Te101w8hU7H_2yobJFPXSwwUmGHSJ=
-faPWDKiQ@mail.gmail.com
-> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 
-Thanks, that fixed the issue!
-Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Best regards,
+Krzysztof
 
