@@ -1,320 +1,243 @@
-Return-Path: <linux-kernel+bounces-422577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 930069D9B5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:25:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 621FD9D9B63
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:26:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53A71283889
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:25:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7DE01667AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC59D1D88BF;
-	Tue, 26 Nov 2024 16:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89421D89F0;
+	Tue, 26 Nov 2024 16:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="aHfa7Xbg"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazolkn19010007.outbound.protection.outlook.com [52.103.11.7])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pdcJirh+"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00918BE46
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 16:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.11.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732638344; cv=fail; b=PQ+lLBOg2mil4mrfr0zhEIEmGAuw0TLMecKrG3fYjgLpxPaTlMDFFArdVJzxGv7O1QCOD+yvCDBuJDp5YBrhv2JHricrq84x1CgTCqcl9ylbGbinQiVaA2v2lTZmRJ3ogNz+9b2nhcU6knFKx76pVypo5CVoxOG/HDSdUNFFE9c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732638344; c=relaxed/simple;
-	bh=5SrVMorzE4PHK3aIoNBCD2x1xoYiNH4s1ddaSVc/Bhk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=olYKShf6k1ptlnHGPWflSrI+iY1XMXUxg9W2pd5niZtGFkNODW7lrLbJ1SO9EruoCLhERTiSgZ7YoEtzYYu//sqe+KVHSg0F5mWSxXZ9KfEs05oxVzWQmyCBHFHHxkSLPYUmolUpyM9TahNl9Y4fTYBJjKskSRMHNcDD1jtwEWM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=aHfa7Xbg; arc=fail smtp.client-ip=52.103.11.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LRPImrE2+ghKA3Wb402H4i9N/Hqk685rHGB5LV0h9m/6JK6t9DYnPCOmlWqm8brXQ1mILrFxaZ0QeuONGWcJVjqGYfz5QkZUO5Z6ZMVBM7bquS9TFoSjyGk5OOn6EXNt/fd30zzFwkpzidGiyVzHWS741eSb31Rg26SYghj1erle0WwIvh8isXVxvBT1Y/F3kioevkpuRE9nJaU5v1DrHBkTVl7loF47oiVv2/p1ParS5t2s4XEjw9D6w9m4dXJYOCBAU99s8xEvRxgoaPDLtYh/Dc/Dk4YFqnRoEpdgtLVjmTr+zB8cw75ZJ1iN3yD7DR9U5qO73Pll/KkUSTBM4Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1+JZMhtD0eTQxFo2MDJXbJPB40Y/9TN7VHJ0nmw1t+U=;
- b=dDSTA2SDyP7ni3+suzB7ARMi5e4m0orz6HGaEZlxjQ06ts3z3N+4d/m+KEHuVE8irGjOAWgz7KZbV4Fi1Gz2cM/DGcQOkpLnebew/b1bULcmNXwu+5vW0b/IlL8PzZMF/pZLru9qiwVIN2eMHVgYyBOotiz7j8yWe+IIooYdlbFgoAR63t5HMm1OdPOd5PaufEO4LqsYShGzAVWVILzLJ+ST5N5jOkrf+Xv7ktu0TxAMs/elb6Wdbwv7k7YArtkVikyNuvS31Zfij/onC+j+rBaH1YUpRRt7LZ5YeqXFk775PCCLJs6PJQf06F6UYelplcxv9Nzdk1WWOlCR5pVCgQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1+JZMhtD0eTQxFo2MDJXbJPB40Y/9TN7VHJ0nmw1t+U=;
- b=aHfa7Xbg028FtG+N+7PeCX+dncMQc+Z4l1YvP0+gvngQ+uRc+vgMW1tUEvy8h0eJX98X/S3XAJLiMihv+4cyalQvIxOghJYjLP7mCsZvPgU3tLNMBR6sqji1KHIGNrvMIMpHuXxNvGzvDQ1WjAOI7BJdYYNIC1sZxU6Bd3n2uoPAtmlDkAxFzIajE3exHymJ4Xr4uOrAUAcYE7Xuf/gZ/aKceJ0oM6hfIVOzH/OJwnatVJdAxVA/yiXXhJ5fwEAKYvWpBRZu0DdjUpuw2mHVDAqQVgqedoJzEPegzIHHqV2RkRxUziU1n0ybtAUeU0/UUKdeghI9EVBFNnXIwUWhHA==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by BY5PR02MB6502.namprd02.prod.outlook.com (2603:10b6:a03:1da::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.21; Tue, 26 Nov
- 2024 16:25:38 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%7]) with mapi id 15.20.8182.018; Tue, 26 Nov 2024
- 16:25:38 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Steve Wahl <steve.wahl@hpe.com>, Ingo Molnar <mingo@redhat.com>, Peter
- Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent
- Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
-	<dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall
-	<bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider
-	<vschneid@redhat.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, K Prateek Nayak <kprateek.nayak@amd.com>,
-	Vishal Chourasia <vishalc@linux.ibm.com>, samir <samir@linux.ibm.com>
-CC: Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>
-Subject: RE: [PATCH v2] sched/topology: improve topology_span_sane speed
-Thread-Topic: [PATCH v2] sched/topology: improve topology_span_sane speed
-Thread-Index: AQHbK9UxGRUfYyJZJUmyjFPUnGtxo7LJ5JnA
-Date: Tue, 26 Nov 2024 16:25:38 +0000
-Message-ID:
- <SN6PR02MB4157493E8AF5661DED4D2A1ED42F2@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20241031200431.182443-1-steve.wahl@hpe.com>
-In-Reply-To: <20241031200431.182443-1-steve.wahl@hpe.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|BY5PR02MB6502:EE_
-x-ms-office365-filtering-correlation-id: 0e76fd96-18ef-459e-f6b8-08dd0e36f6ce
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8062599003|19110799003|461199028|8060799006|15080799006|3412199025|440099028|10035399004|102099032;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?rtxRqGXkzvMa+BTNu223x0hmSQd9ldIcIM3iv5v7s8xKuzze2UTU0atf6b+I?=
- =?us-ascii?Q?4xFXQnbz12Pc1IDycWrY7Wp1UBCu7rpk9SMlVcEB0M6i6v533Ju8KxTnTKRz?=
- =?us-ascii?Q?j47gFsO/PMwDIF2Xegm411+FVP4VfnN5c6gv5AytkZQBW348ydB4+dF6qTXc?=
- =?us-ascii?Q?PIYtgvxTcdVMw411bzQyQOa5IPDwg1tselyXNBwFSJeyR0vV02yQNfl96Nmb?=
- =?us-ascii?Q?t4j/QRwTVkm4r0omulgGu3YE5UhYnRNsRWaLa/Imx847gY1N1BP86Wy0FJQu?=
- =?us-ascii?Q?uY4PtmNS0hVFf2WgXcelQkiavc7dps9kBa5iOqbitmX23MQbhwc5XzmltEnP?=
- =?us-ascii?Q?/4IOy6XfU28DA+5fcvBG+mFMFdkgAqc88D5BnVcheYYmvjyICzz9QGUt+EAE?=
- =?us-ascii?Q?8gLTDU0/aABkWZoX6DjkOysIRUoLow7iHkJPuX51sl4oAaF2WlsjXtVylFCm?=
- =?us-ascii?Q?60CNN43pjwntZsCDDuz5UBQVIf9WB5mZxLupEE5knRhX98Tktf/LzjsmTZje?=
- =?us-ascii?Q?hg+DVjcie6MmFA+M+HJ8/w3tncLeyPV7zQuNrpXMnVvkobHl8lDs5ZaC5ThE?=
- =?us-ascii?Q?t2sBP9szkDQXK4edF/MIITerVZ9Nt0qjJNn19ZBOQEg+SJdJ50kDmluoZgKs?=
- =?us-ascii?Q?BqIynzV6qPmIgfEvsk17ktlfaf9tsSpBwKTE2GLTE1yyEJKWcpuZpYz2lFqy?=
- =?us-ascii?Q?coKjkx9t7JsH6+OqiPQQrlMRgQN9nnUqy9e0FY8DhvPKoWsG+6vaZhcro9kg?=
- =?us-ascii?Q?GnVjIJDWk8HN8XD845R2rwTduqErhr2ukqZa2+tXAEM1nkVdU/BI0BAYAgT/?=
- =?us-ascii?Q?ADlbRuyh0jEATQYjAbwsSZXZm+mSX3kx8JiLHpBqgqxXtz2lf5OsO95g99Gb?=
- =?us-ascii?Q?ml+to3xFXk04/cNQO2hwHqCqpI2uG2j1q34n0hm1FriwBF6YIDXhuVYpNh1C?=
- =?us-ascii?Q?it2+gnb/u3tZXp8sZvhuLnJre9BOEWkw36MfpmRNjW1GtadCp+hG+WhM/n/F?=
- =?us-ascii?Q?NqrN20TGcsxcCLldyFO7boYmqTsMQ3jxTB/UeWm4kXRxvJ1U+cMPd2NaUfpn?=
- =?us-ascii?Q?dzQaUFFKpzaoJ5wK+DhFnVd+SgI2KJH4oh8KvHeKlFYmR6mMgjk=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?cpeI0GVbLawquh0FCT1EsUMPdava3mLdVV7V3i5w8BQ/pSjw3svHK9Bl3PfP?=
- =?us-ascii?Q?AI+VvTpzYrz4p+4Y6RYtyV7u9v433wg5qSzfcWWYorAJeviCfjBtXieLdyfW?=
- =?us-ascii?Q?QiiPYx3WvFoYsZE3SFtdKuiwwF0dKOcEtzKp9wALSJMefHtyXsNvY21Rbtyl?=
- =?us-ascii?Q?g6qjSQbQXVL8LvyFxatnRTPDU2JjKAkVgs0sujRwyag0fP6oBGsvyFgL3isu?=
- =?us-ascii?Q?YvjG4uaYhORg5ZJJk4BnXKeLTtHclDDzY1X9qxafj6kamumRqwncjbkj23Gq?=
- =?us-ascii?Q?MHnT+mPAPQfVfSGxlaEqghVqlHqsv3FtThEhUg2vdINhGBveFB+YRlzt2tY0?=
- =?us-ascii?Q?qS7vHqU0lY7hdhPBYd+Gipo7+E4uiG0ouvYua1KV8IgQQEsdHgOPcKF9VhX4?=
- =?us-ascii?Q?xZbiWIQRGYSu+OL5ryn0FQUsct1om2wwAWhdJ+oSPPPy/+yZYvDBF5/czK+y?=
- =?us-ascii?Q?diF4uatbIVBI6V8LRDk5OncgdAOiX5CLPWCQN4Jj54cMdhdIopGO+FYJwtdm?=
- =?us-ascii?Q?ejyPnyXj+PevTO8e9MaguSEFRn0IOYArnMa56eE7kQvWZ74CvayS7+px6AeV?=
- =?us-ascii?Q?/gXcKR2HRyT19xnN45lYuos/6392bbweAVmHBO3QhxeTSXFQMUjjphO5Au+e?=
- =?us-ascii?Q?QPtYJzIKjTwSt0ex/Mdn3/rVX+5jhez+PwHJeM9g/Px27/H8GKbraYCbqysP?=
- =?us-ascii?Q?qGlwhICFH0HPaD5Rhw6HTVt/y2VY0+7Ry4i++HNx8xsoyX6INMOiq8LqFCm+?=
- =?us-ascii?Q?JaDIY/lbx/Z8jV7QuLVKTemnRj/9n4JjxYXipR71CCQPcC7Q+5+4ItNVWxuX?=
- =?us-ascii?Q?oCGVP/RcDo0SiwEyhSrPXmEQnfxGVidK869n8cQJCpyrxMLRIC1oa5L8wwFh?=
- =?us-ascii?Q?v2o/sCZZ4aX9HAcqxC5/N7mPHX9Th2NDwPsUS/6F7vi2ecwmQBoIdAVZ5cGi?=
- =?us-ascii?Q?Zl8NXG8JYtRsOCLU3+21KW4lXDjFxZ1kCwfIbJOx+Z8Q2mMBDD9RDDVv68He?=
- =?us-ascii?Q?3ySaSUbeEIVHin+Ix5RmteNc18YDd9PmHViUCdvJM8HtdBw+s/CGlzINmh/3?=
- =?us-ascii?Q?v1oEQVLIo/2/BuscQo+oK/N/sjlgHepB21wRVD5a9WI0AA7joimTVBo1cZrh?=
- =?us-ascii?Q?4KxJ3yZ4Y1Fmud+8EK3ydngW203YDCb1uI/YohZJ/HOdWUo4u12+Bfi+z2uY?=
- =?us-ascii?Q?ALMD+57bgrVTEOGQVotZi+AcFideiGsQ/GCncgTfchg9js0H1Fram4CvNg4?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CDB1D79A5;
+	Tue, 26 Nov 2024 16:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732638401; cv=none; b=f/A4FjMYe55zxFgO2yygnkTjDAdUCOPFW1AQLv2LyuygIpXDuczo2/+0s+4YAFyV9aVjX6P2sQSlp7Q0VpEcaUuVk0ws74iTvCiVERrtwXwIb2soTaUrwqcPDvjxcVsnIFVqqFrfTCZQXszhlBGTSW+2nuG9+eyZaA6GC4G6ENM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732638401; c=relaxed/simple;
+	bh=lCGF3NAROvgMIvnAnKBCmU24MOERjJsAjVo91yLSYzs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ha+3yjmRvuhtW5P8RVKJy5ogFQTni45G6tryZ2QuaK/AzB+s7v2thMKvvR2rUol0rskQvyB8BJRl/Zo/qqkJgIvY6jpC72iESUsMNIYdU78ucMtwPD3vofXlrHEZ6UKZL/+UVnyWRROm1rmf7PV3KBrLOgZgMjgKA5VBLivU8sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pdcJirh+; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3nGzu7F76p+KlNn2SibAq1y+wddgg3vYvQ/nE4aT/g4=; b=pdcJirh+ebI7cJvDw2wme0HRPm
+	gpu4GWmo+QHSYS7DkyqRZxIsWu92rjFW8nTU1vJOuhNNKUX4ge4lzY5lXxDa8d0dZ9Q7nuC8x+bTz
+	uPDdnXVkl0XARnxFY2sMsi7P6WLXVKMqRcM1OJoetbjqnqgqe3rrCYww1AxVqu03LXStOM65VL8vE
+	QXrairx7Oz+45VqRy4EltB+jOlC/RfQOJ9cdU1whKvU0RBecMXh/+obm7z7C+5Z/5nQevXQTIPXxp
+	aSU0o1D9JtBbTyfNCri4xzv6T3E5PbXYgITWGhwTa9CZ4XDMhB4cYVHUBI0kEuESu4AkAId/IczUu
+	DnXx6Edw==;
+Received: from 54-240-197-236.amazon.com ([54.240.197.236] helo=edge-m3-r3-142.e-iad51.amazon.com)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tFyOS-00000000Auk-2DJK;
+	Tue, 26 Nov 2024 16:26:30 +0000
+Message-ID: <e61a1f1c7209de3d5ce07abd3c102ff5ad82ac2d.camel@infradead.org>
+Subject: Re: [syzbot] [kvm?] WARNING: locking bug in kvm_xen_set_evtchn_fast
+From: David Woodhouse <dwmw2@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: syzbot <syzbot+919877893c9d28162dc2@syzkaller.appspotmail.com>, 
+ boqun.feng@gmail.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ hdanton@sina.com,  hpa@zytor.com, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  longman@redhat.com, mingo@redhat.com,
+ paul@xen.org, pbonzini@redhat.com,  seanjc@google.com,
+ syzkaller-bugs@googlegroups.com, tglx@linutronix.de,  x86@kernel.org
+Date: Tue, 26 Nov 2024 16:26:28 +0000
+In-Reply-To: <20241126150331.E3qHY1JP@linutronix.de>
+References: <6745da06.050a0220.1286eb.0018.GAE@google.com>
+	 <391f1c231cfce2c4107494b47114ed049c4d6266.camel@infradead.org>
+	 <20241126150331.E3qHY1JP@linutronix.de>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-f5COM2/publ2/LaHqxAP"
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e76fd96-18ef-459e-f6b8-08dd0e36f6ce
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Nov 2024 16:25:38.8081
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR02MB6502
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-From: Steve Wahl <steve.wahl@hpe.com> Sent: Thursday, October 31, 2024 1:05=
- PM
->=20
-> Use a different approach to topology_span_sane(), that checks for the
-> same constraint of no partial overlaps for any two CPU sets for
-> non-NUMA topology levels, but does so in a way that is O(N) rather
-> than O(N^2).
->=20
-> Instead of comparing with all other masks to detect collisions, keep
-> one mask that includes all CPUs seen so far and detect collisions with
-> a single cpumask_intersects test.
->=20
-> If the current mask has no collisions with previously seen masks, it
-> should be a new mask, which can be uniquely identified ("id") by the
-> lowest bit set in this mask.  Mark that we've seen a mask with this
-> id, and add the CPUs in this mask to the list of those seen.
->=20
-> If the current mask does collide with previously seen masks, it should
-> be exactly equal to a mask seen before, identified once again by the
-> lowest bit the current mask has set.  It's an error if we haven't seen
-> a mask with that id, or if the current mask doesn't match the one we
-> get by looking up that id.
->=20
-> Move the topology_span_sane() check out of the existing topology level
-> loop, let it do its own looping to match the needs of this algorithm.
->=20
-> On a system with 1920 processors (16 sockets, 60 cores, 2 threads),
-> the average time to take one processor offline is reduced from 2.18
-> seconds to 1.01 seconds.  (Off-lining 959 of 1920 processors took
-> 34m49.765s without this change, 16m10.038s with this change in place.)
->=20
-> Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
-> ---
->=20
-> Version 2: Adopted suggestion by K Prateek Nayak that removes an array an=
-d
-> simplifies the code, and eliminates the erroneous use of
-> num_possible_cpus() that Peter Zijlstra noted.
->=20
-> Version 1 discussion:
-> https://lore.kernel.org/all/20241010155111.230674-1-steve.wahl@hpe.com/=20
->=20
->  kernel/sched/topology.c | 73 +++++++++++++++++++++++++++--------------
->  1 file changed, 48 insertions(+), 25 deletions(-)
->=20
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index 9748a4c8d668..6a2a3e91d59e 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -2356,35 +2356,58 @@ static struct sched_domain *build_sched_domain(st=
-ruct sched_domain_topology_leve
->=20
->  /*
->   * Ensure topology masks are sane, i.e. there are no conflicts (overlaps=
-) for
-> - * any two given CPUs at this (non-NUMA) topology level.
-> + * any two given CPUs on non-NUMA topology levels.
->   */
-> -static bool topology_span_sane(struct sched_domain_topology_level *tl,
-> -			      const struct cpumask *cpu_map, int cpu)
-> +static bool topology_span_sane(const struct cpumask *cpu_map)
->  {
-> -	int i =3D cpu + 1;
-> +	struct sched_domain_topology_level *tl;
-> +	struct cpumask *covered, *id_seen;
-> +	int cpu;
->=20
-> -	/* NUMA levels are allowed to overlap */
-> -	if (tl->flags & SDTL_OVERLAP)
-> -		return true;
-> +	lockdep_assert_held(&sched_domains_mutex);
-> +	covered =3D sched_domains_tmpmask;
-> +	id_seen =3D sched_domains_tmpmask2;
-> +
-> +	for_each_sd_topology(tl) {
-> +
-> +		/* NUMA levels are allowed to overlap */
-> +		if (tl->flags & SDTL_OVERLAP)
-> +			continue;
-> +
-> +		cpumask_clear(covered);
-> +		cpumask_clear(id_seen);
->=20
-> -	/*
-> -	 * Non-NUMA levels cannot partially overlap - they must be either
-> -	 * completely equal or completely disjoint. Otherwise we can end up
-> -	 * breaking the sched_group lists - i.e. a later get_group() pass
-> -	 * breaks the linking done for an earlier span.
-> -	 */
-> -	for_each_cpu_from(i, cpu_map) {
->  		/*
-> -		 * We should 'and' all those masks with 'cpu_map' to exactly
-> -		 * match the topology we're about to build, but that can only
-> -		 * remove CPUs, which only lessens our ability to detect
-> -		 * overlaps
-> +		 * Non-NUMA levels cannot partially overlap - they must be either
-> +		 * completely equal or completely disjoint. Otherwise we can end up
-> +		 * breaking the sched_group lists - i.e. a later get_group() pass
-> +		 * breaks the linking done for an earlier span.
->  		 */
-> -		if (!cpumask_equal(tl->mask(cpu), tl->mask(i)) &&
-> -		    cpumask_intersects(tl->mask(cpu), tl->mask(i)))
-> -			return false;
-> +		for_each_cpu(cpu, cpu_map) {
-> +			const struct cpumask *tl_cpu_mask =3D tl->mask(cpu);
-> +			int id;
-> +
-> +			/* lowest bit set in this mask is used as a unique id */
-> +			id =3D cpumask_first(tl_cpu_mask);
-> +
-> +			/* if this mask doesn't collide with what we've already seen */
-> +			if (!cpumask_intersects(tl_cpu_mask, covered)) {
-> +				/* Really odd case when cpu !=3D id, likely not sane */
-> +				if ((cpu !=3D id) && !cpumask_equal(tl_cpu_mask, tl->mask(id)))
-> +					return false;
-> +				if (cpumask_test_and_set_cpu(id, id_seen))
-> +					return false;
-> +				cpumask_or(covered, tl_cpu_mask, covered);
-> +			} else if ((!cpumask_test_cpu(id, id_seen)) ||
-> +				    !cpumask_equal(tl->mask(id), tl_cpu_mask)) {
-> +				/*
-> +				 * a collision with covered should have exactly matched
-> +				 * a previously seen mask with the same id
-> +				 */
-> +				return false;
-> +			}
-> +		}
->  	}
-> -
->  	return true;
->  }
->=20
-> @@ -2417,9 +2440,6 @@ build_sched_domains(const struct cpumask *cpu_map, =
-struct sched_domain_attr *att
->  		sd =3D NULL;
->  		for_each_sd_topology(tl) {
->=20
-> -			if (WARN_ON(!topology_span_sane(tl, cpu_map, i)))
-> -				goto error;
-> -
->  			sd =3D build_sched_domain(tl, cpu_map, attr, sd, i);
->=20
->  			has_asym |=3D sd->flags & SD_ASYM_CPUCAPACITY;
-> @@ -2433,6 +2453,9 @@ build_sched_domains(const struct cpumask *cpu_map, =
-struct sched_domain_attr *att
->  		}
->  	}
->=20
-> +	if (WARN_ON(!topology_span_sane(cpu_map)))
-> +		goto error;
-> +
->  	/* Build the groups for the domains */
->  	for_each_cpu(i, cpu_map) {
->  		for (sd =3D *per_cpu_ptr(d.sd, i); sd; sd =3D sd->parent) {
-> --
-> 2.26.2
->=20
 
-FWIW, I tried this patch against linux-next-20241107 in an Azure public clo=
-ud
-VM (x86/x64) with 832 vCPUs (8 sockets * 52 cores/node * 2 threads/core).
+--=-f5COM2/publ2/LaHqxAP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In a simple test taking a single CPU offline and back online, the elapsed t=
-ime
-is about 0.61 seconds without the patch. With the patch, this is reduced to
-0.29 seconds. These times are stable across multiple iterations, and the
-improvement is consistent with what you reported.
+On Tue, 2024-11-26 at 16:03 +0100, Sebastian Andrzej Siewior wrote:
+> On 2024-11-26 14:49:40 [+0000], David Woodhouse wrote:
+> > On Tue, 2024-11-26 at 06:24 -0800, syzbot wrote:
+> > > syzbot has bisected this issue to:
+> > >=20
+> > > commit 560af5dc839eef08a273908f390cfefefb82aa04
+> > > Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> > > Date:=C2=A0=C2=A0 Wed Oct 9 15:45:03 2024 +0000
+> > >=20
+> > > =C2=A0=C2=A0=C2=A0 lockdep: Enable PROVE_RAW_LOCK_NESTING with PROVE_=
+LOCKING.
+> >=20
+> > That's not it; this has always been broken with PREEMPT_RT I think.
+> > There was an attempt to fix it in
+> > https://lore.kernel.org/all/20240227115648.3104-8-dwmw2@infradead.org/
+> >=20
+> > I'll dust that off and try again.
+>=20
+> Oh thank you. The timer has been made to always expire in hardirq due to
+> HRTIMER_MODE_ABS_HARD, this is why you see the splat. If the hardirq
+> invocation is needed/ possible then the callback needs to be updated.
+>=20
+> The linked patch has this hunk:
+> > -	read_lock_irqsave(&gpc->lock, flags);
+> > +	local_irq_save(flags);
+> > +	if (!read_trylock(&gpc->lock)) {
+> =E2=80=A6
+> > +		if (in_interrupt())
+> > +			goto out;
+> > +
+> > +		read_lock(&gpc->lock);
+>=20
+> This does not work. If interrupts are disabled (due to local_irq_save())
+> then read_lock() must not be used. in_interrupt() does not matter.
 
-My test is pretty limited. I mainly wanted to confirm that nothing unexpect=
-ed
-happens in a VM on the Hyper-V hypervisor. So,=20
 
-Tested-by: Michael Kelley <mhklinux@outlook.com>
+Right. At the end of that discussion, I think I concluded that if we
+make it use read_trylock() and fall back to the slow path, then it
+doesn't actually need to disable interrupts at all anyway.
+
+> Side note: Using HRTIMER_MODE_ABS would avoid the splat at the cost that
+> on PREEMPT_RT the timer will be invoked in softirq context (as with
+> HRTIMER_MODE_ABS_SOFT on !PREEMPT_RT). There is no changed behaviour on
+> !PREEMPT_RT.
+
+Ah, shiny. If that *only* pushes it to softirq context for PREEMPT_RT
+and leaves it in hardirq context for everything else, I think that's a
+good choice.
+
+I'll have a quick look at eliminating the _irqsave completely though,
+as it may be beenficial.
+
+--=-f5COM2/publ2/LaHqxAP
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
+ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
+EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
+FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
+aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
+VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
+aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
+ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
+QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
+rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
+ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
+U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
+DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
+BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
+dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
+BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
+QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
+CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
+xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
+IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
+kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
+eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
+KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
+1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
+OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
+x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
+5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
+DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
+UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
+MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
+ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
+oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
+SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
+xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
+RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
+bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
+NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
+KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
+5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
+C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
+gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
+VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
+MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
+by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
+b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
+BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
+QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
+c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
+AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
+qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
+v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
+Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
+tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
+Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
+YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
+ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
+IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
+ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
+GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
+h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
+9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
+P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
+2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
+BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
+7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
+lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
+lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
+AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
+Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
+FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
+BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
+cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
+aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
+LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
+BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
+cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
+Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
+lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
+WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
+hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
+IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
+dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
+NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
+xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQxMTI2MTYyNjI4WjAvBgkqhkiG9w0BCQQxIgQgcUwD0HMa
+VRagoP1J+RrXgpz58G5RAUPKzZpz4THK+v4wgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
+BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
+A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
+DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
+MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
+Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
+lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgBmEy0hEyvyK6a8adGxSITTpWY9tVVZco1n
+2VxpJ/7iB4lAFHT7tIE1c7PpW8OZOa6OohMfdI9rQd/iEpaL/lQzy51ws0aO2d8yTYAB4jirUibK
++aCOJP1obbxG/E0qGkIDthyGyXHkzYHBsP+W9cyqMhrSib+uCTEUsS+4D5+55kGlBiTlWCX+AAbt
+37prsYlkBmv/AIGdfAv9XIIge3gFFhluYdGMJfz0ozVRZk2C6kVrLw/Qyop8wDqrSJJ0AmldE8xy
+zdwz22bwgw3O4nJegnLFmRbzjw1+UZwUnKI4EwZqU/WPlMHDLsmpy3xnYc/PNFy01kiv4U56iYd4
+rpx7QxoZA//VMnGvS6wtWFJHjEagCCzrETopp8jNwcDTmwjQngE5gong52y+oPLUObpkIW5HlzYy
+0Ivtrph8u1yiY2+bgGT5ppy7RMjacS1RF0/Nkl486LJ/Hl7LjI6blzC0LYGiLYfAteLJQsjH02LZ
+X1HfUzKpHAljdpdHqh7zYhpcnzuZ+hH4H/QrZ8XrkxdKRqLPhNb06zGm6Goo8rmv4bzrXVT5zI6Q
+4zIePka618XG5vhd/vkBvnGuGGS4cLg8D2qGGK7lqdLWm7OeAJfCPWdRzLouN8Ujk7eAPWCxNypO
+k33VWY9GqURtGYHryIKzYH2G1K9YpWFhEPgccj8/SQAAAAAAAA==
+
+
+--=-f5COM2/publ2/LaHqxAP--
 
