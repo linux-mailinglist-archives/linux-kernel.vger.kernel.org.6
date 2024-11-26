@@ -1,208 +1,146 @@
-Return-Path: <linux-kernel+bounces-421888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F20A9D9176
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 06:44:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D429D9178
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 06:45:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0752FB22CAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 05:44:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1D722843D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 05:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E3C18A943;
-	Tue, 26 Nov 2024 05:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DCC13B29F;
+	Tue, 26 Nov 2024 05:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="dmVfWxJR"
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010048.outbound.protection.outlook.com [52.101.228.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bRGWo8WJ"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99370187FE0
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 05:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732599855; cv=fail; b=AFIHryA6E8A4F8FbOlh0l8h2+7x2tUjAJJg/LeeGViqrycOKTWVG44niWaPPQSNzClFNkR7hGiUREGaowvJ6WcgXNd+5D3IOVbiAzQBwxmM8XZo7gG0IsjjTLxSC3XRgBx2QOKr3SRPi+9NT6WNgxer9/km8PLLGy3VvyWhIHYE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732599855; c=relaxed/simple;
-	bh=yNIpmLkYPr2QfhJArKt0BOK2DT/2ljwIzt+vZPOYk3Y=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=qMGPcW1LQN9KkBH7e7sf/scDx2JaP1jH6L9m4qra/UPvy4GF60wN2gGAjVsjrUSHEXHCmDzkorx+UUXcJ9P+/efKm8VeQIXd8mTaD4gdFfMFtxlDzKkMQ/lemB+yaqYZYPZAhT1T0mWrCKcyg+3bop9h+srwWt7zDtqqbUiJr7M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=dmVfWxJR; arc=fail smtp.client-ip=52.101.228.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vAgE31MaP0UOWS4wf73IwQM5o1OgDXnN1H2MCG8Uml+c9A34SQ7w577VSJ6m0vRl13EihnlhLmunWj3qzCXmJDRqf3zztD0kdTEhpTO+zvetazgzvx+dy1BMjs0znAAnyqd/8mOEcfKvw1AYdUING8exi/l7K+zPqIdzRbvIfJIZSe+0iTFLDxqOMyQUmVBnrUI2Nra0WsI3khZL2gV+I15b2/d/hy2TPJvJGLE27zmc3G3DgyewmPT/6eO+3zi6ntIbRS7RQqvd0IaHU0oRXIHYZ1kLviS3YqvbJ4pETTLn3wO52tSBDldN2qja2G1aounbbxQ2lQTjCnJOG5Towg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hoHIILdYdhgVrOmGGY+QnF/mZRsWpc5tN0JFEJlLxFg=;
- b=xkvDBmyonHrd8HlGVdYjK3zxQmqQIkN5FGU8elr+FgKBvwA2Uy0FAKnuJm7uEbNtCiQ9LZpTIZIE+R+Lu8gOeXblr4gdchdvD1pnWzxRA59DxDTukpunSoWIVgHypwiqehmzd8CGC5MrXm662Mh7G3tXbEdeXdQc4hmW0Kd7Ua13AGsHH041i1Bmj/3rcV6CmHPe04BDJVrUex4kiJFliyij3rogN3gc7KalSecKKGDhz5K430gEnrntyGwzbqyxiPuCImSpfnEAwLKstMPVOHZAIk6PCDPtjv+yTpY4OCEReVWS/OZ4s7I940iIdNfZuf5yNHI8tg/rbxxWdcroPQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hoHIILdYdhgVrOmGGY+QnF/mZRsWpc5tN0JFEJlLxFg=;
- b=dmVfWxJRZYT8J5XLg5iDx36eyGr3REBl7fGLkSh3ylfHRbPjG9+GqSf0/k34ieU/B4Zds+/GfXmV3cpWeNqYnBiiE+JKF10222zcO2DHzRIJPO9xLD50umEhF4kE/60bgS/KJ7lwpqcnlHqXNvIS6Ve9nTYHhKAQ2UhwScR7SB4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11) by OS3PR01MB5926.jpnprd01.prod.outlook.com
- (2603:1096:604:b5::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.20; Tue, 26 Nov
- 2024 05:44:11 +0000
-Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
- ([fe80::c568:1028:2fd1:6e11%4]) with mapi id 15.20.8182.019; Tue, 26 Nov 2024
- 05:44:11 +0000
-Message-ID: <87jzcqsg5x.wl-kuninori.morimoto.gx@renesas.com>
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH v7 3/3] gpu: drm: tiny: replace of_graph_get_next_endpoint()
-User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
-To: Rob Herring <robh@kernel.org>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Alexey Brodkin <abrodkin@synopsys.com>
-Cc: dri-devel@lists.freedesktop.org,
-	Broadcom internal kernel review
- list <bcm-kernel-feedback-list@broadcom.com>,
-	linux-kernel@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-In-Reply-To: <87o722sg6y.wl-kuninori.morimoto.gx@renesas.com>
-References: <87o722sg6y.wl-kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 26 Nov 2024 05:44:10 +0000
-X-ClientProxiedBy: TYCP301CA0002.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:400:386::20) To TYCPR01MB10914.jpnprd01.prod.outlook.com
- (2603:1096:400:3a9::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADCDE8831
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 05:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732599938; cv=none; b=aJy1Cj610JpWvx6jgmm6/FrUo4oMs4at/bIKyDEfftt3LeJU8GR4JKP6amqwCSiCtT+N0iyR5AyPLe+O89KOoJVoHgIk3XjTCuy6DGkECexDd9M8d0FLzQbxwIifLiyd3nRXFd5BXDK5Nx1o2f0HVueBooakYNHuYplHcQg2ST0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732599938; c=relaxed/simple;
+	bh=LduKrUiuF+o4ID5hULsbw3YjGls8uuInoe2CDUqrjnE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ozyWMAehRxktaxMhtSC9Yc7EDVJoEFjobEuuWuYOaiGmQUL4RYEI/Jg/PMs0RfSdXk1GpIWGAu1eJeyjx4R0rjkRYevNFF5dtoTFViKgXMPJ8/mNLg1IHwCsHs23hitDrW7+uEtISAj85kwQf3wXjm4eU3i85xN3RVD4Wvnq10I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bRGWo8WJ; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7251ce598adso478667b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 21:45:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732599935; x=1733204735; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ru8A8FYea7pWk45ZPv+cLA69r/6TsIev+AJUTgUfZ+o=;
+        b=bRGWo8WJxb23tBA4xwr0/64TqF8c63yT94NYh3lUJB6ihPMJi/HKi6o04Bjpl9/lio
+         W7jF5TX5E7eaWlgvQ85cHnD8YOBuo1MMaZEJFjpCTdnZrLCkst9UZoLPmo8oiExm8oSE
+         kThWDQI64P5xa4hKkusGX1fSMyqYqLR0OC+LwEle/UG4FZv8VihxMFKVaNe/Ap3tupM7
+         gl5CDXrnxHyOJn2/pJ0aDVK1Ye+0kEpYJb0dPQ5ASFF1xkdI0bMGmqKAAdtiXQ5ysRxj
+         FGDL+HCx7ZMDavP6BIetAmLWMzGtzlVNbgoQrvKsj8O8Xiammk/ezjei9oxayPgd8omn
+         leWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732599935; x=1733204735;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ru8A8FYea7pWk45ZPv+cLA69r/6TsIev+AJUTgUfZ+o=;
+        b=dkX5XERLMv5UZl31GGs5i9NcS8cJkNx+Ycz9BPIAmsAqBG0oaMABwRowQM0Y0Nh5ht
+         KfufLGsRZlBEAJt6qgHu8r2qrid/aF/GmSDG0F0IAjaxFXgsX4fhYkH9TkDCg9mP27yI
+         ak76wkW58IHlAzxuZgMTgbyswY8bwVMQ/Pm1fYds5Tk+MwEHtP1MJRyfLiabr/6YStDR
+         2nG+GtSzGKDjZxSXPID0L5Qao4f0ejck3/bIwH3nh2uBVot9R+RLHJxRqWSyHCCVRRn9
+         yIMVl3km0QBCvScRxbJV77yX3PxSEsZDNYTF4eQI1kJ8jd9ot+M+zb6jnuI++naxEaKa
+         035Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUVA95JUDqkZ8GnqseIpbsrsRNGRzv1jy/IJVcihLxUnVhF2o8IylmkNFEx/FPDdDPVAAKOqFpu1Vt6EeY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yycmay3W5DMxgUkQrpKg2KTPIhidNNRi7g94Phknvlu4Bg/uKKx
+	ydAmskBxl4fRmVpfydDMxWQBz2Anjn+VAHZpU6SswrAVhDC2cXC3ww1zROg4yg==
+X-Gm-Gg: ASbGnct/Gcpsd0kbbyEqLmbhXNCWL6R+AdLAkJCJCAx2snxvQNvY7N4zauGjZB+3EsG
+	5uKyL05Y4eQJZYkgtqRAULEAFnvknNCdnrLBz3or7iyLop6D9oI94quRihv0ON3uRIStHEi2l6T
+	thbqZYUterHDtb7/Wl6fMw/q/0siJof6U5r8/78WjjRpb1jl65irUXJAxcrtuMSjxiCLHD2ngh+
+	XQPj8bY2DX5DOn1scGp/vmSUvOoF1DMgMV6sKvBVUTZplm2bjJmLM+gv7k1lWI=
+X-Google-Smtp-Source: AGHT+IEBdAbqM+xFjnu+5Y3RUrCVenb/3lk9NHI94YHgWcVczPs6/2qW10NRSJW4WAL4o0zVcC2bbg==
+X-Received: by 2002:a05:6a00:244e:b0:71d:f510:b791 with SMTP id d2e1a72fcca58-724df5ee500mr20478083b3a.12.1732599935009;
+        Mon, 25 Nov 2024 21:45:35 -0800 (PST)
+Received: from thinkpad ([220.158.156.172])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de454ae5sm7505161b3a.7.2024.11.25.21.45.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Nov 2024 21:45:34 -0800 (PST)
+Date: Tue, 26 Nov 2024 11:15:29 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Md Sadre Alam <quic_mdalam@quicinc.com>
+Cc: miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+	bbrezillon@kernel.org, linux-mtd@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	quic_srichara@quicinc.com, quic_varada@quicinc.com,
+	quic_nainmeht@quicinc.com, quic_laksd@quicinc.com
+Subject: Re: [PATCH v2 3/3] mtd: rawnand: qcom: Fix read len for onfi param
+ page
+Message-ID: <20241126054529.ewoajuaor4wpa4xe@thinkpad>
+References: <20241122085933.2663927-1-quic_mdalam@quicinc.com>
+ <20241122085933.2663927-4-quic_mdalam@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|OS3PR01MB5926:EE_
-X-MS-Office365-Filtering-Correlation-Id: 80ae59d6-1507-41b1-5864-08dd0ddd5a5b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|7416014|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?chiI5/w/2l4Uk1KwW+8DFUlKyRGlQeRhdUNi8a3DWgW07AgXREcmgTaWI2gB?=
- =?us-ascii?Q?5MlOw0bGoVTqZPY7Hgx/O5n5/NKb7wYioMtZ++uQ2FxkmOI3GOIuQu7aE3YQ?=
- =?us-ascii?Q?xwrunqKnprpKMc91LUic4mXfz3PM1uLnXaiiLeABs1D2YknhoN24fqJJFJaO?=
- =?us-ascii?Q?378q9d34ykcXISbm80PAVOQIuJ+jg8JkDRhR9W6eWZu+uvM1c6PW6mqpQgV8?=
- =?us-ascii?Q?g20A+h3Aq8o5GzaNwQPJ1j7K1l9SoCj2a5XQn9Q4FPDTl7bSAmKCeekFaUOt?=
- =?us-ascii?Q?eiv83qhQt8X1EDLGWjRhQPVGyaKhUymDtP9xMzfiwKbPm0xO9s7tawCpp0J/?=
- =?us-ascii?Q?zlDeu8By+IH2/w7pj6F1bQYNQoZcsyAjCM5n+ZfQmRm4yeatX5Rz1+9CaTyG?=
- =?us-ascii?Q?qATOW6wtMd0MPvuqF5gpH76RmZFvu+E3Owyqs3+tx8u0ojJak5TuV7wN3mTV?=
- =?us-ascii?Q?j4IFK3C+G4084Zg0RI+iXCzRUB2XOTSYADXb6A0+kIn+y+rb3NCUTdYPTt/h?=
- =?us-ascii?Q?tn7LDFT4mqV6n0AJATG8qDaEK8wNiyNnIxag30OLPzwQEWYzyQVv0zKKBWPY?=
- =?us-ascii?Q?mFW7dQcxxUcWGKzIpeRN6JVyJdVVoKctU5MM8hAmIidcOtvGMLg7xw9/dR8t?=
- =?us-ascii?Q?xvM14OvhgMRMELEJz2fFlxT8kri2hYuyG5KTzGaG62DdCMARZYDfmsne9L+y?=
- =?us-ascii?Q?1+2T9+hLFh9lOrg7o+rjoh5bj3sNqv9Vaky6M5TulEK1eSIpYfm90V/cZBRq?=
- =?us-ascii?Q?pHB8IswjrBthQCp7lBvQXYl5CmPByWWxGzPFhAAoppG3qP8mb2ITt74Emowm?=
- =?us-ascii?Q?TrXP/CJxnjvQ58hS+sr0Q3zoqqn0O3gPHpbf1QOC3U4NrcwxOFq2CxGfd7Er?=
- =?us-ascii?Q?J7eEW3z1T8KN8Hc0OFrH5/00xfnvHC/cJXCaK3K75lS5aTY4oJmknZha6Th0?=
- =?us-ascii?Q?AMtvMNNijPFqORRpsfJc8blYjzDPiN1leuLjgyMFYTOncNShWJCaZUwy4HF0?=
- =?us-ascii?Q?OQU61HdOjfHYBS9C6SGNJsbS/wpu743rRxFgbmVli2MeBBLWgENVHs+2EF97?=
- =?us-ascii?Q?P6DqhQJnd2IffMocrNR+sM7T5uD27/38s73JcGzbXTj5bcFTocXXDJV/19FX?=
- =?us-ascii?Q?neDZTkijoVVCFS2kcFmisolM27d8XKc35EbhX68wylu9bjqp/r6UAZyw0/wn?=
- =?us-ascii?Q?59rwmkbuW4eNaAuOhKd49p64AmLK0yryGNei2TqDrcUu6Yd4xELfamoOIJvd?=
- =?us-ascii?Q?XYVAf172FF3As1LdL+g8HN3suABhokkxkjJUGTpO/7Kwla1z6dMz8dmO5iH4?=
- =?us-ascii?Q?DsSFk8CBDcJOHBX6tRSg10ynYikg/j1ARrcnLMNnCz7htU2M4ff3/FCAB28I?=
- =?us-ascii?Q?4d7V9Hp2DsFvsCo7Hlm5T0jBM9sn5JnpW9+OdQz18vL1+PUym81i3xwipFk4?=
- =?us-ascii?Q?NAheWjq/AiA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(7416014)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xHxja6nzfR5U68UfrV6ICvNhFWPZKKZJY+vG51sIQpa0FZzFbuy379JnJOva?=
- =?us-ascii?Q?yScTXrDSkOkJWnerY6g33C1hUXAxJm8rmEeGbe/3YyD1BNrwVkAxKPCrF0FM?=
- =?us-ascii?Q?xokcu0ZO77p68jLkQwpanAHzNIaIOiublbdcsWPdsTvuPgFRtoXgwK64OY2g?=
- =?us-ascii?Q?3HKyuuAYV6eW5heL74ztsmTAZwOkR8RdmXsFH1U/d6zdA8Wo6MtAEyBTPQVM?=
- =?us-ascii?Q?laMzZBEBcCoSyna9B6BpGN32A0nanfD/Ge7BznYyol8J0mvpfAMVVyqPn3/q?=
- =?us-ascii?Q?JuUD2nw3KuBBFmEGxHMbTB8LpDcrVi5fPVAQbVzE+KfyjYwh4SJ9DSB+oGAT?=
- =?us-ascii?Q?p59rCNDxTrjUUQ7WyWdZHbZg40A1ZbLshFE+QzZluQKKQe201pXnIt8jLRpE?=
- =?us-ascii?Q?X7j2T5WTehia+H2ez0tsK2mVI1UBRHQCnq4kQ7Sl2hIBtIsii4TTr9Jm8l26?=
- =?us-ascii?Q?c87n1/i6jpX5ZPQNjrN1EBMPcfBBs3jIvXf/DlxMlPmiI+qO3zvlIZ82boaT?=
- =?us-ascii?Q?SoGV4fsAtpO5NWtHVvhqFeYQg+d0mfaTYv7zIiPcXYg/smta/OW70cMN3UR6?=
- =?us-ascii?Q?T5f3vRHsODYipo4CwUhmjcoDOxUUmZ0ihXTOfgqiuNtd0Sfgq48dpRMUEGZc?=
- =?us-ascii?Q?brU8B1JPKteWaz3IwPYbq15+tLUaPQu0LAQogoitTWD1lqd0NPFkNHtICVBR?=
- =?us-ascii?Q?udpbLbsbT+WijAuOm7OpkO/Y2gYybhv7W31aM4p/pAtqlKeOwaKRNkgBbx8L?=
- =?us-ascii?Q?tGZ2tVttMvEsdVFfFQOi6rlIVRGQ0UEzTU7fo0vZW0es19ocN++dk0IX0xiu?=
- =?us-ascii?Q?Sm5kN1eK1+FDL5CYWP/Q2HQH0tskdxd1MbXaAkCso9q2fVU+RsW00jZlcCJx?=
- =?us-ascii?Q?MlNJBhHuIxruo0YwtxwFFuKgCilcc/yb7jCrS0GXeRnfUFBl3Ty0CoHqOeFG?=
- =?us-ascii?Q?/micRkrefGs8yvPi+0ANPbf6U99wEWDcLJxSataMsf0dBsHlyAyHG/pQQPld?=
- =?us-ascii?Q?L5JFKZdKhcTDM0dinOVb+22oVN0Df7hk0EZk4/h8afbslYxY50NzmBVaGfRs?=
- =?us-ascii?Q?wgjEyikvD5dnEV9oDHEmchJX2brDnnufkdUKIb4SddlTbClGLuBGoJuP7Oy/?=
- =?us-ascii?Q?IGiqj5CJxhQ7DFqEH6LarloGIGswkjToO6Lzeo81qCbTp4BaXXUAx1PsGv9V?=
- =?us-ascii?Q?bxW/kA8cuP+056aUWij6oZlrNCUYSuny54xlV0i5+C0vUx2t0CXJfyJC1IXG?=
- =?us-ascii?Q?WgJooKLNBMUSJbl8h6KqWUUduB78o1C6ONo21q7fqRJmstKotHDb/H2xtkw4?=
- =?us-ascii?Q?vD1s6o6cD+xS3DTvUqDrEoCOkXvN3DG/9vvNCoy+MRn9ocoOwYkSwn0RfPhP?=
- =?us-ascii?Q?WD7pnvy/hj2SRVD2gJxozDS30C4CZDFGvV27cktl3+9K9WLgVzIO7QZNGnH/?=
- =?us-ascii?Q?aEcBIC7vI7AzZZENzayGe4t8Yihw3HpBDXjwjNMM+gq63qqLOnI67ZmS7my/?=
- =?us-ascii?Q?aD1WU3Ti1/zNUYtMhDoTIP4S5S296fOinCV2oWKYjkM9b1A8c23sTMbCRWzJ?=
- =?us-ascii?Q?vgQ/7SKWGo3OdstAQxPGAXN00Bxo7253zQd/1Typw6y7tZRz1D2D69nHAREu?=
- =?us-ascii?Q?GMAfTkHyf9WEs+BB2PvHjMo=3D?=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 80ae59d6-1507-41b1-5864-08dd0ddd5a5b
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2024 05:44:11.2286
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nfCsvzubk35NFUWJl9ko97vJytXpnOoQ4EY/T+LsBrwM6g9Z+cw51IToNoyZ+0zWCHe5v66+wmb8nRmYqkKh2x9HQ5lVuJfcf2H+sOUe7Ycsbx0CuPm+nSKMPJiZVCqh
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB5926
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241122085933.2663927-4-quic_mdalam@quicinc.com>
 
-From DT point of view, in general, drivers should be asking for a
-specific port number because their function is fixed in the binding.
+On Fri, Nov 22, 2024 at 02:29:33PM +0530, Md Sadre Alam wrote:
+> The minimum size to fetch the data from device to QPIC buffer
+> is 512-bytes. If size is less than 512-bytes the data will not be
+> protected by ECC as per QPIC standard. So while reading onfi parameter
+> page from NAND device setting nandc->buf_count = 512.
 
-of_graph_get_next_endpoint() doesn't match to this concept.
+s/setting/set
 
-Simply replace
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 89550beb098e ("mtd: rawnand: qcom: Implement exec_op()")
+> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
 
-        - of_graph_get_next_endpoint(xxx, NULL);
-        + of_graph_get_endpoint_by_regs(xxx, 0, -1);
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/tiny/arcpgu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+- Mani
 
-diff --git a/drivers/gpu/drm/tiny/arcpgu.c b/drivers/gpu/drm/tiny/arcpgu.c
-index 81abedec435db..b2dc02df74f89 100644
---- a/drivers/gpu/drm/tiny/arcpgu.c
-+++ b/drivers/gpu/drm/tiny/arcpgu.c
-@@ -289,7 +289,7 @@ static int arcpgu_load(struct arcpgu_drm_private *arcpg=
-u)
- 	 * There is only one output port inside each device. It is linked with
- 	 * encoder endpoint.
- 	 */
--	endpoint_node =3D of_graph_get_next_endpoint(pdev->dev.of_node, NULL);
-+	endpoint_node =3D of_graph_get_endpoint_by_regs(pdev->dev.of_node, 0, -1)=
-;
- 	if (endpoint_node) {
- 		encoder_node =3D of_graph_get_remote_port_parent(endpoint_node);
- 		of_node_put(endpoint_node);
---=20
-2.43.0
+> ---
+> 
+> Change in [v2]
+> 
+> * Set buf_count to 512 in the parameter page read
+> 
+> Change in [v1]
+> 
+> * This patch was not included in v1
+> 
+>  drivers/mtd/nand/raw/qcom_nandc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
+> index 31ec3db1246d..e1dca4857754 100644
+> --- a/drivers/mtd/nand/raw/qcom_nandc.c
+> +++ b/drivers/mtd/nand/raw/qcom_nandc.c
+> @@ -2926,7 +2926,7 @@ static int qcom_param_page_type_exec(struct nand_chip *chip,  const struct nand_
+>  		write_reg_dma(nandc, NAND_DEV_CMD1, 1, NAND_BAM_NEXT_SGL);
+>  	}
+>  
+> -	nandc->buf_count = len;
+> +	nandc->buf_count = 512;
+>  	memset(nandc->data_buffer, 0xff, nandc->buf_count);
+>  
+>  	config_nand_single_cw_page_read(chip, false, 0);
+> -- 
+> 2.34.1
+> 
 
+-- 
+மணிவண்ணன் சதாசிவம்
 
