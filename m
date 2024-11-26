@@ -1,162 +1,96 @@
-Return-Path: <linux-kernel+bounces-422381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A4459D98E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:52:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 659F99D98EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:56:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0118165686
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:52:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E885162E85
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBB9946C;
-	Tue, 26 Nov 2024 13:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678C91D5147;
+	Tue, 26 Nov 2024 13:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iMk31KA4"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iZnPJa7Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D551D5141;
-	Tue, 26 Nov 2024 13:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1399946C;
+	Tue, 26 Nov 2024 13:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732629117; cv=none; b=DVy4DI9HzkQXMjhdVoo7RV2W5RJtsg9SWL5E5/3y6fg7yuwJ7SaMOB02CUBqesxXrQ8OjQynpGmIwX99baqPqUQ4bSBShQXrV8MuBuRapLM73mrxLgMu934+/Yb+Y7IgTLZuyft+1x6ImUd9ihMrcInHIrt/Iz/GauUanAqvmQw=
+	t=1732629375; cv=none; b=UsWcbbaEAHeG1St3BG/CGzVYuSrEmriEg+dTSF3ZU5L0r80ZaSJ59vwH6Sq4itEPJ4OG1GU888ByV3GSB0+pdAgAGbSvXMrgVTpRYQRYGq5QD5XmtMPS9oiEBdjH9XFGEHRaoNzt/zmmxQCwLHtYDEDrgsdljlHkqqk5RQbHA4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732629117; c=relaxed/simple;
-	bh=sKrvlOPesv77TlSL9413G4Rac8qAXlk2aa10I1b2xyM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PVylXAqHGTYYn7uRrzRPBcgbYopM7SVUfMrH8g0fIJ5ywmltGAn8hEqLt5nFwj0g1zpyzZ5XJMPHA4OesSIlIaiklBQNhUQ6DNqES9LhwYKbeNegmOt3MdUYx/gfZ13DM7UzUa7jfLfg04CRxjncA7E5xs75jqofsaKaFE8IqqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iMk31KA4; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e387195210eso778473276.0;
-        Tue, 26 Nov 2024 05:51:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732629115; x=1733233915; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sviPRUSfrka/SQ3zY8lPjm+9lMwQh6QA6YYYw9K4wuU=;
-        b=iMk31KA4eS+bQAK0oigz+sjxX9SEy7FQP5Cgs5JWR4n09B8oYW7jV+1fLhHqT549db
-         aBvNfpzUHyMuv/iGVHyOE8QdyYml6pVbuQ9kKLqYdRjq+PLYHML5FbhAHY/L1o5RMc7y
-         KrBhxR1PIZx2T3jTWOkUm20PK5Zxi4nEKPfM7/oY3s0QeoD4k+KhrUYGW0uWJcFTLWeQ
-         gtL/77secRvXPHwqW9ToMO9+9TGTAYuY31GJVGkXAmfpa2aTo2+jW/5tEciiC+nGss/p
-         8EXYcmV2WpKIo+5Ac6X0FNHHma88vrhOBbovuoaLbX9X8QDc5P01eJ3Qc3de6gI8BzFx
-         P7AQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732629115; x=1733233915;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sviPRUSfrka/SQ3zY8lPjm+9lMwQh6QA6YYYw9K4wuU=;
-        b=ZZVnC5nm2QGqITz8itljtAkPUkUEsmFVpTPGVuACsKN1qpptse0FtMzJ5xPnBoh/kI
-         7pfmPPqFvSXXULGB/LDCgK7Fct7DUaHufOm8entS0GjWKKBKjaUx4/gcBYyRNbBtTbVZ
-         v5h/jz/+J7M1kD0ECFM8fW8lDVQjYMDs2Qo1Asr/oz+5bP04F0SknOK823WA8jP0WAil
-         C7DCw7akwhWhN3ZA4EN6UgcJ8kHoa4lRk0ezCz7dSh1wX7HfErS8Q+Cf6EJJXsAHZOSh
-         8iDfS5OX+v1yDzIccC1TzxRvY0jwkVRZkFFxAwn1wg9G1DjWrxdINjPM2bDCf7bdOcYN
-         VLzw==
-X-Forwarded-Encrypted: i=1; AJvYcCW7em9AIUI4fzo47upUShiHhqjAdJK0Hy6xVS2RlTVruocCOMcR1Zq2xm/Cu6p7JVVEdcZmX2ANuaLxeYyn@vger.kernel.org, AJvYcCXkL/nUQKuicTNgqvrgYmxwRgpFVHIYjSi7Lp81wBDum4bCP/I5LA2zXFIgRx8Kc0mFqzyIUE0++zg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8Yo1+d0qqfzT/gcsyY6kor0k4O7T9rttSbzY8FTcdf4k+5EJA
-	TCSUfOvluR6UazSnoHpMyX1BUy9wzjjZPdGom6FB4/aURG06srEAERZhs1wdvguRxK75ClpOS0R
-	wEvMYkatC4GkCNW3ens+srejDMNI=
-X-Gm-Gg: ASbGncuquN3peg5b6Vs6rKlVrPZnNGsy+0JA8FgcwOavWTlgAxFMflhCHyjYhlmX3Kr
-	goTHABxegZmTMC91b5HCqgbkK9qUzhrU=
-X-Google-Smtp-Source: AGHT+IFVYU9X+d8m5ZR2n8v9ncMCmGTgOGxMQIgqcc/5jxtWKiqMBm2lmpnCHSrpEPd/XKz5lE2YrO4Y+mG1zUXaH+o=
-X-Received: by 2002:a05:690c:2b93:b0:6dd:c5d4:8ad5 with SMTP id
- 00721157ae682-6ef22795e6emr12757467b3.2.1732629114933; Tue, 26 Nov 2024
- 05:51:54 -0800 (PST)
+	s=arc-20240116; t=1732629375; c=relaxed/simple;
+	bh=ZAsbaqEaGI/WKQrfcJuQo3mVRFqOYmUFMiOfVZxFjiM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LFQ30QkGif80HY/kGPiOI1HXl2Qlk80lXyZb3Yd3I78E65UzdlmEO7/npns0rYTkCeIjRk7dK7rRlVO9tM84Pms/ug+AyhEqDb8U4WYmaZiVGtn1YaKceCkZOf2vN2AieHvPCPelkj2vYwmaQdhRDR+TJCyfljifuQl+/RzcbpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iZnPJa7Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D33A9C4CECF;
+	Tue, 26 Nov 2024 13:56:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732629375;
+	bh=ZAsbaqEaGI/WKQrfcJuQo3mVRFqOYmUFMiOfVZxFjiM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iZnPJa7Y3I9EwedTFWfCLbMpqcI3A/Fy5upycSjL/CuBM89JRYoJ0LdiKzWThTvHD
+	 D4kPsujI12LkclqAUu/WCthTDzQABSzqjrAsC+H1fVkda+CmagWQWkHWU2EFN5VKYe
+	 HpCmghotnYvyppNEKMXT+nFKmudvIueKtBIiWArApdmUhXkReIQRvZ25HPGdqCNKAj
+	 EGiSZwkFWrODoI/zKwM9sByPulgBtOEgB6hZUJk9Pe5BvgNc1sAT3yDQ1YJn04d45N
+	 4qrDgGdFM32uipwXcczqzLw508nDDpEpuyxS3uI4+S7NEFnVbf+JEbzGBVoA0nwQEU
+	 uoF80nn7Y8fqw==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Naveen N Rao <naveen@kernel.org>
+Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH 0/6] kprobes: tracing/probes: Fix and cleanup to use guard
+Date: Tue, 26 Nov 2024 22:56:10 +0900
+Message-ID: <173262937038.8323.5774362855789721936.stgit@devnote2>
+X-Mailer: git-send-email 2.43.0
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241117182651.115056-1-l.rubusch@gmail.com> <20241117182651.115056-6-l.rubusch@gmail.com>
- <20241124180733.2925eaa7@jic23-huawei>
-In-Reply-To: <20241124180733.2925eaa7@jic23-huawei>
-From: Lothar Rubusch <l.rubusch@gmail.com>
-Date: Tue, 26 Nov 2024 14:51:19 +0100
-Message-ID: <CAFXKEHZdp7cSnE8fj8y9ek0x6zev3Up918B-Ox=WS0bv9KhviA@mail.gmail.com>
-Subject: Re: [PATCH v2 05/22] iio: accel: adxl345: measure right-justified
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, eraretuya@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Dear IIO Mailing-List, Hi Jonathan!
+Hi,
 
-Thank you so much for the review. As you probably saw, most (all?) of
-my commits have a huge invisible question mark attached. Most of my
-questions you answered clearly. On particular topics I'd like to get
-back, though. Generally I will try to apply the requested changes to
-best of my understanding.
+This series fixes eprobes and cleanup kprobes and probe events in ftrace
+to use guard() and scoped_guard() instead of pairs of mutex locks.
 
-On Sun, Nov 24, 2024 at 7:07=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
- wrote:
->
-> On Sun, 17 Nov 2024 18:26:34 +0000
-> Lothar Rubusch <l.rubusch@gmail.com> wrote:
->
-> > Make measurements right-justified, since it is the default for the
-> > driver and sensor. By not setting the ADXL345_DATA_FORMAT_JUSTIFY bit,
-> > the data becomes right-judstified. This was the original setting, there
-> > is no reason to change it to left-justified, where right-justified
-> > simplifies working on the registers.
->
-> Surely this can't be changed independent of other changes as it will
-> change the format of the data we are processing?
->
-> Each change must stand on it's own so that I can apply up to any
-> point in your patch set and have everything continue to work.
+Some locks are still not using guard(). We need some more work to complete.
 
-This is probably not quite clear. Originally the driver was
-right-justified. One of my last commits
-(f68ebfe1501bf1110eebf5e968c4d9186cba8706) changed the driver to work
-with left-justified measurements. So, I feel changing the orginal
-behavior is wrong, and here I try to re-establish the original driver
-behavior.
+Thanks,
 
-When looking at the datasheet right-justified data seems to be easier
-to handle, but I don't have any personal preference.
+---
 
-Lothar
+Masami Hiramatsu (Google) (6):
+      tracing/eprobe: Fix to release eprobe when failed to add dyn_event
+      kprobes: Adopt guard() and scoped_guard()
+      tracing/kprobe: Adopt guard() and scoped_guard()
+      tracing/uprobe: Adopt guard() and scoped_guard()
+      tracing/eprobe: Adopt guard() and scoped_guard()
+      tracing/dynevent: Adopt guard() and scoped_guard()
 
-[...]
-> > ---
-> >  drivers/iio/accel/adxl345_core.c | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl3=
-45_core.c
-> > index 2b62e79248..926e397678 100644
-> > --- a/drivers/iio/accel/adxl345_core.c
-> > +++ b/drivers/iio/accel/adxl345_core.c
-> > @@ -184,8 +184,13 @@ int adxl345_core_probe(struct device *dev, struct =
-regmap *regmap,
-> >       struct adxl34x_state *st;
-> >       struct iio_dev *indio_dev;
-> >       u32 regval;
-> > +
-> > +     /* NB: ADXL345_DATA_FORMAT_JUSTIFY or 0:
->         /*
->          * NB: AD...
->
-> is the multiline comment style all IIO drivers use (and most of the kerne=
-l
-> except for networking.
->
-> > +      * do right-justified: 0, then adjust resolution according to 10-=
-bit
-> > +      * through 13-bit in channel - this is the default behavior, and =
-can
-> > +      * be modified here by oring ADXL345_DATA_FORMAT_JUSTIFY
-> > +      */
-> >       unsigned int data_format_mask =3D (ADXL345_DATA_FORMAT_RANGE |
-> > -                                      ADXL345_DATA_FORMAT_JUSTIFY |
-> >                                        ADXL345_DATA_FORMAT_FULL_RES |
-> >                                        ADXL345_DATA_FORMAT_SELF_TEST);
-> >       int ret;
->
+
+ kernel/kprobes.c              |  205 ++++++++++++++++++-----------------------
+ kernel/trace/trace_dynevent.c |   12 +-
+ kernel/trace/trace_eprobe.c   |   31 +++---
+ kernel/trace/trace_kprobe.c   |   18 +---
+ kernel/trace/trace_uprobe.c   |   15 +--
+ 5 files changed, 121 insertions(+), 160 deletions(-)
+
+--
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
