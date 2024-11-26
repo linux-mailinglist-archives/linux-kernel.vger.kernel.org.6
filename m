@@ -1,101 +1,129 @@
-Return-Path: <linux-kernel+bounces-422152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F38A29D9537
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:11:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5EA49D9543
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:14:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9F022822B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:11:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC3A1284B13
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0201C0DF3;
-	Tue, 26 Nov 2024 10:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QtWnebvV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73201C1F02;
+	Tue, 26 Nov 2024 10:14:54 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1001BC063
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44B3192D8C
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732615890; cv=none; b=jjaZZnybfSy+xfDByJQUm+4nM4eS5eHLB20bKvY5UUAhMbS4eb2Z4/sXkryuWBqp3TGSVm0QQJ/q3zbPhi6P7WbOU/5mWFlZh+bA0YrfgSLh0WBekksyKqItx9o7wdA3oxa+SpxXCQJ6fV2e9Cz4q0d7xnSkvtMe6FRxQS2LsRA=
+	t=1732616094; cv=none; b=KvlcMTb/bgpAemmbYBxaYCeDbuXMPXT5t1I/7oKKrp432eLQ+tt31RoEQBMWSZ0czhOiLS0hIv/HyUc8jaA3LCA+WBYbhwRondf1M4eDo3UfetuQgJfhqN2a7w4TPwVrTK4Eaoc3GeN9ncBj+SoWxRtwB4HNHsTLXLgLCnEwpvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732615890; c=relaxed/simple;
-	bh=XtbX0PNcobErADKIQDXW4UOVM2C45/klHQncpw6bRBQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hWamCMp71mTlBY7c9g/BRB4M80AEad0xWJZIb+EodNhX/VH0zjZGIhvGmEnGZYBw7yaezfCV4DQHx2S4UiNvBdcgTblyAOyc5xgTmFOipVsJsdIt1t2iXtMYkMyfBdlCHkhpfqAM1TqHgOi2wMHz2b3cKrfDjp9edBQPbaFJhdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QtWnebvV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 420BAC4CECF;
-	Tue, 26 Nov 2024 10:11:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732615889;
-	bh=XtbX0PNcobErADKIQDXW4UOVM2C45/klHQncpw6bRBQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QtWnebvVoGDTn95WHRvF3nWB+VaeBn3skCEuVfaHemk4zfP7d+eMCAoJnWwDKcFeo
-	 qwg7jY0cAlw1cLSjxEi0WFZF50qH+bFvn2OmmMNwXbP8qw91AnfWK+nZEgyH6D+x9W
-	 04/icMOwr8lbpKOWrQCbqKa573ZRQH1jAJJ8fPEs8RBf6ocnC8z/UeDILZDLYY8W6e
-	 KlGjJK9N12tbhydzaQWxrGRT2QwXDvxPQuDE2wa0dtRRQnuEu01Ibn3Bklh6ay+J9J
-	 3RSe3TE+9PD0x/vvexXUyUH2H607XEs1dwUaMCP5N6N5+zSjnOl0vyI34yrYzqDvRi
-	 SPSzGF0O1HbCQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	stgraber@stgraber.org,
-	tycho@tycho.pizza,
-	cyphar@cyphar.com,
-	yun.zhou@windriver.com,
-	joel.granados@kernel.org,
-	rostedt@goodmis.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] pid_namespace: namespacify sysctl kernel.pid_max
-Date: Tue, 26 Nov 2024 11:11:22 +0100
-Message-ID: <20241126-gulasch-hochland-7c3830e8214c@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241122132459.135120-1-aleksandr.mikhalitsyn@canonical.com>
-References: <20241122132459.135120-1-aleksandr.mikhalitsyn@canonical.com>
+	s=arc-20240116; t=1732616094; c=relaxed/simple;
+	bh=Nno67BeYNovrN9wiEnxv2HcLJ/Vh7Odgeauech87qOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BphdhO05M6xwWMmK9rw2reEmCHJYXS5hTG70lGSLWDju8N6ES1pdI7MWaXhwaaotOdtrJO6vTzwBnHDxu1sjbUb/Alh04RA+es1Y+NwH7itrdCjnKh+zMQujhP9knAYLjTEJXMNTyLPB4cpQV3qteh3f0/xfv6Bsdae/jGC+Bkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tFsaY-0002Se-Eo; Tue, 26 Nov 2024 11:14:34 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tFsaU-000EQd-2H;
+	Tue, 26 Nov 2024 11:14:31 +0100
+Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id F373837D89F;
+	Tue, 26 Nov 2024 10:14:30 +0000 (UTC)
+Date: Tue, 26 Nov 2024 11:14:30 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
+	Akshay Bhat <akshay.bhat@timesys.com>, Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+	Chen-Yu Tsai <wens@csie.org>, "David S. Miller" <davem@davemloft.net>, 
+	Dong Aisheng <b29396@freescale.com>, Fengguang Wu <fengguang.wu@intel.com>, 
+	Gerhard Bertelsmann <info@gerhard-bertelsmann.de>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	"Ji-Ze Hong (Peter Hong)" <peter_hong@fintek.com.tw>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Marek Vasut <marex@denx.de>, Maxime Ripard <mripard@kernel.org>, 
+	Oliver Hartkopp <oliver.hartkopp@volkswagen.de>, Samuel Holland <samuel@sholland.org>, 
+	Sebastian Haas <haas@ems-wuensche.com>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Varka Bhadram <varkabhadram@gmail.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Wolfgang Grandegger <wg@grandegger.com>, linux-arm-kernel@lists.infradead.org, linux-can@vger.kernel.org, 
+	linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v2 00/12] Fix {rx,tx}_errors CAN statistics
+Message-ID: <20241126-smooth-convivial-elephant-afdf93-mkl@pengutronix.de>
+References: <20241122221650.633981-1-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1306; i=brauner@kernel.org; h=from:subject:message-id; bh=XtbX0PNcobErADKIQDXW4UOVM2C45/klHQncpw6bRBQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS7zju1pSOtTfLdTBXtmy+2aX+/XzNX+cj86fOjdbek9 FkeXnnsYEcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBEroQz/E9rTO3wLvy2LXfb roVXGfk5p5g6673+dXzSyy+HRRLuaH9i+Cvo9Cj+SM+u6Wb7vd6X3tj/XnN9imJfiOeOS5dEL39 8wswIAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="da6pwqywlractjoy"
+Content-Disposition: inline
+In-Reply-To: <20241122221650.633981-1-dario.binacchi@amarulasolutions.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, 22 Nov 2024 14:24:57 +0100, Alexander Mikhalitsyn wrote:
-> this is just a rebase/small rework of original Christian Brauner's series
-> from:
-> https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/log/?h=pid_max_namespacing
-> 
-> Christian kindly allowed me to take these patches and resend after small modifications.
-> 
-> Current tree:
-> https://github.com/mihalicyn/linux/commits/pid_max_namespacing
-> 
-> [...]
 
-Applied to the kernel.pid branch of the vfs/vfs.git tree.
-Patches in the kernel.pid branch should appear in linux-next soon.
+--da6pwqywlractjoy
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 00/12] Fix {rx,tx}_errors CAN statistics
+MIME-Version: 1.0
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+On 22.11.2024 23:15:41, Dario Binacchi wrote:
+> This series extends the patch 4d6d26537940 ("can: c_can: fix {rx,tx}_erro=
+rs statistics"),
+> already merged into the mainline, to other CAN devices that similarly do
+> not correctly increment the error counters for reception/transmission.
+>=20
+> Changes in v2:
+> - Fix patches 7 through 12 to ensure that statistics are updated even
+>   if the allocation of skb fails.
+> - Add five new patches (i. e. 1-5), created during the further analysis
+>   of the code while correcting patches from the v1 series (i. e. 7-12).
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Applied with some changes to linux-can, omitted patch 3, it will to into
+linux-can-next.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Marc
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: kernel.pid
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-[1/2] pid: allow pid_max to be set per pid namespace
-      https://git.kernel.org/vfs/vfs/c/b7e4772ef1dc
-[2/2] tests/pid_namespace: add pid_max tests
-      https://git.kernel.org/vfs/vfs/c/bef328352883
+--da6pwqywlractjoy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmdFn30ACgkQKDiiPnot
+vG8pLQf/UFjvNxQqVJYbsWq3rJ4rmpk7ymlvoleDl/fOsThzD0wAe+OmS+jhUXp6
+TKnIgvkkOGjanvES0XAZ9fzT2Tq9ZHhoqgkQ6hpEO1ucHNIYmmHoxzn28uwMwIC1
+J2+mv+RpeuHmdxm6AHSpMuealRAJwvACkVt6T0NSo2Y+4IRr+Q4bstz9apTveLmQ
+0qo84F9Jx9FOHx+cIMFo5HapZunJ0+5XNB2aE8hBI9/fzVLmaUi2jEgnFzntm4w0
+LsSoBk29gCF91y92aN7yKxusYMsj1Yk6sfm/eo9Gedj2XyKBRmDbeVId9QKJl/T/
+iF9zp/mPHcphVj5Hd2THnX97ukngPQ==
+=U/LH
+-----END PGP SIGNATURE-----
+
+--da6pwqywlractjoy--
 
