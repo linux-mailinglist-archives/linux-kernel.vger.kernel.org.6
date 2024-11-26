@@ -1,176 +1,88 @@
-Return-Path: <linux-kernel+bounces-422708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCE7A9D9D40
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:20:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F7839D9D42
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:21:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C8A1B21F63
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:20:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBF7E1636E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B791DD879;
-	Tue, 26 Nov 2024 18:20:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gr/MOB9A"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421E91DD884;
+	Tue, 26 Nov 2024 18:21:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9CABA3F
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 18:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4A2BA3F
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 18:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732645239; cv=none; b=JCy7wAA9qnrJNB9gb7MR+/jDVwm1HASvKqUA4UA382nrR0wBscv6kbYOZSSK4SCfa45PLW442nRNAwG/kE1dgVCxda3y1icFe/Ef9xUfXEEA0783cy3nAkmu4ZaYsF4iuQVoMHiHfA4sMwe0z6UH3Qbc896fU26T5lrskHwJ0a0=
+	t=1732645265; cv=none; b=PlbZKz58XdbSqBqCiMebaVDbYnXPBsT17MNgjjvnwmeavinSLL7cDVZOkL2zM2GsLeWqhRw93riwy3bMbcSD5hbIz/FvL0zqgq+20bYdbnT+EDcByY1Sij/NASxMaxtjlcaZIDHSQpklAAyRgxOTj+Yo7j60u7XoQUsJpy3cB9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732645239; c=relaxed/simple;
-	bh=gEOmfxCi0/kNKWZfQ/cVVD/Zd9DadeuVFE8hxNNpyWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UVQMbP43ZLWQsFB/HeAiQFwKRVGMM/IVgJ38hqYq+38qMy2dTbZHVF1jiibaXwUcJqKqMn+S7cZsF+WUOgFx5jywf0dOpoGD1/4+ZkU0B9MxLIrD6fN/pdXAOIIjf6U1ZckQPScKaAc/s7gzvfT5SszrZnEcrG+EE+BqpGeuSQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gr/MOB9A; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 232041BF204;
-	Tue, 26 Nov 2024 18:20:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732645234;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KkyX2X06zytO6TVv+IA60LIOSPbrut56J3+dT2CsRNk=;
-	b=gr/MOB9A27zuKSxyCt1Ej81XTVN09nS14dcV6OIEWYZG3VXj7rcz9Sa7YaaLZ07nQqued6
-	t4nniGxLKyqSb9vrwxwqVYGYntcr3lTcctJgUsfgLD8D2mqahwfDlvwB1y8txa8aM8pLKm
-	IMg5xNu6EXE0WEjyVOHtWan3jRhehPNPhS9aA1/gXGhAi1frngwpe30y1pyg0sMsuFt7xY
-	FYKOh27uKCFG3UhU7WEwh+aOz+VToTkMPQYmZm3LWHJp3XXJLbJq7tgoYNV5kkQUzPbZ2R
-	MYesXwGVUa2d0Bc2cjR7D4In4KkiWfKEvQ5AxlcdfCBIwDCmiHbz1m2Qy21lcA==
-Date: Tue, 26 Nov 2024 19:20:31 +0100
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Nikolaus Voss <nv@vosn.de>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>, Liu Ying
- <victor.liu@nxp.com>, Fabio Estevam <festevam@denx.de>, Marek Vasut
- <marex@denx.de>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie
- <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- nikolaus.voss@haag-streit.com, Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH] drm: bridge: fsl-ldb: fixup mode on freq mismatch
-Message-ID: <20241126192031.34884a76@booty>
-In-Reply-To: <20241126172610.AD8B51622C@mail.steuer-voss.de>
-References: <20241126172610.AD8B51622C@mail.steuer-voss.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732645265; c=relaxed/simple;
+	bh=F51TgaLk9uQj6zjDSSBkBm6w5S/n7KdJOxvEpnNIol8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=mk9EDPrhJtSUw+ku4Go7napiYIy68Im0qtFrjbUGBzStL4qw1jeIfg54mBjTZVsliO5je+CUY0KJzlFoBV6oK56E2N6xHhghsWTGWKsVY+W425+7n4lyfk7v9QzRjG2OgKwzU2eAs0mxwYkHmPXz0anB93ZSUrNoTe4LPUzQdbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a743d76ed9so364625ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:21:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732645263; x=1733250063;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qoOBTuXmZMONzSpeUHAe5nMhij4O/OjASPmXiAfcFJ0=;
+        b=bRMw0H7sHXmaYc+sGImXfZlFn8qatspf6FvBllTiAVTZCXB3BZBEitERsPqVBp6f2H
+         nC9yNzbSDfFx+E/bmBlLwyjh3HLkhkO3ATuPZkzTNIJ6b5McbpF9GNKevSRtwYhfQzYy
+         CzXcxBrVkq67Y0C4w2U/KIJr2R9Oq1yESh+KJlDM8JsYTA+PWlRy8r37MXnUwM0AXwag
+         CD5JSx4Eze0sxKto8e1cU1pMyysG6IH2cjC3Huu4wrXMJfIxaMzpwketJBQHpzTut6C6
+         6zW2fvyC0VnS/RMTq9eEPimBUiIS1Ma07W2nlQKaHD3DytX9RPeuFU0ce1wT8aIJyYCF
+         a56Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXn7Hc2FxVThuDcxpXfHHz7xXu4jH/+lRZDkkLaPeK5HI72eYBqPuB1avxpjJlRN65BnZLvtRFR3WcDnD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0CXRWIE8Jqh8F4Aa5CwtX+4RbWGT6jguZNlgV0nEQfz+dyq81
+	RVFsTHkDMkwSHNY4IxAVOBc/MpJSe7qnTKcXMN63ypvpIEGDlTJ6kjj8sgMkBBmD2iau1yGZt+c
+	rRMrgmIrwPWYbNMjEyIeQnF7wOUcItNgEGjUDA9wf/eNAznspElQqjm4=
+X-Google-Smtp-Source: AGHT+IHr6y+DblGQxKReJZn1KE5Jw+j2+buY/3AUa/LxGVAj+eCSoMZ3vbMBxMwGDLazwUo8ZaHvFCD/unJNQDa9ElLxKRsPw7/x
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: luca.ceresoli@bootlin.com
+X-Received: by 2002:a05:6e02:168b:b0:3a7:abdb:4a37 with SMTP id
+ e9e14a558f8ab-3a7c523e8acmr1911585ab.8.1732645263694; Tue, 26 Nov 2024
+ 10:21:03 -0800 (PST)
+Date: Tue, 26 Nov 2024 10:21:03 -0800
+In-Reply-To: <20241126172834.78149-1-leocstone@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6746118f.050a0220.21d33d.001d.GAE@google.com>
+Subject: Re: [syzbot] [f2fs?] WARNING in f2fs_rename2
+From: syzbot <syzbot+82064afd8bd59070fc22@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, leocstone@gmail.com, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, yuchao0@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 
-+Cc: Miqu=C3=A8l, who is actively working on imx8mp video clock rates.
+Hello,
 
-On Tue, 26 Nov 2024 16:45:54 +0100
-Nikolaus Voss <nv@vosn.de> wrote:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> LDB clock has to be a fixed multiple of the pixel clock.
-> As LDB and pixel clock are derived from different clock sources
-> (at least on imx8mp), this constraint cannot be satisfied for
-> any pixel clock, which leads to flickering and incomplete
-> lines on the attached display.
->=20
-> To overcome this, check this condition in mode_fixup() and
-> adapt the pixel clock accordingly.
->=20
-> Cc: <stable@vger.kernel.org>
->=20
-> Signed-off-by: Nikolaus Voss <nv@vosn.de>
-> ---
->  drivers/gpu/drm/bridge/fsl-ldb.c | 40 ++++++++++++++++++++++++++++----
->  1 file changed, 36 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fs=
-l-ldb.c
-> index 0e4bac7dd04ff..e341341b8c600 100644
-> --- a/drivers/gpu/drm/bridge/fsl-ldb.c
-> +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
-> @@ -104,12 +104,14 @@ static inline struct fsl_ldb *to_fsl_ldb(struct drm=
-_bridge *bridge)
->  	return container_of(bridge, struct fsl_ldb, bridge);
->  }
-> =20
-> +static unsigned int fsl_ldb_link_freq_factor(const struct fsl_ldb *fsl_l=
-db)
-> +{
-> +	return fsl_ldb_is_dual(fsl_ldb) ? 3500 : 7000;
-> +}
-> +
->  static unsigned long fsl_ldb_link_frequency(struct fsl_ldb *fsl_ldb, int=
- clock)
->  {
-> -	if (fsl_ldb_is_dual(fsl_ldb))
-> -		return clock * 3500;
-> -	else
-> -		return clock * 7000;
-> +	return clock * fsl_ldb_link_freq_factor(fsl_ldb);
->  }
-> =20
->  static int fsl_ldb_attach(struct drm_bridge *bridge,
-> @@ -121,6 +123,35 @@ static int fsl_ldb_attach(struct drm_bridge *bridge,
->  				 bridge, flags);
->  }
-> =20
-> +static bool fsl_ldb_mode_fixup(struct drm_bridge *bridge,
-> +				const struct drm_display_mode *mode,
-> +				struct drm_display_mode *adjusted_mode)
-> +{
-> +	const struct fsl_ldb *fsl_ldb =3D to_fsl_ldb(bridge);
-> +	unsigned long requested_link_freq =3D
-> +		mode->clock * fsl_ldb_link_freq_factor(fsl_ldb);
-> +	unsigned long freq =3D clk_round_rate(fsl_ldb->clk, requested_link_freq=
-);
-> +
-> +	if (freq !=3D requested_link_freq) {
-> +		/*
-> +		 * this will lead to flicker and incomplete lines on
-> +		 * the attached display, adjust the CRTC clock
-> +		 * accordingly.
-> +		 */
-> +		int pclk =3D freq / fsl_ldb_link_freq_factor(fsl_ldb);
-> +
-> +		if (adjusted_mode->clock !=3D pclk) {
-> +			dev_warn(fsl_ldb->dev, "Adjusted pixel clk to match LDB clk (%d kHz -=
-> %d kHz)!\n",
-> +				 adjusted_mode->clock, pclk);
-> +
-> +			adjusted_mode->clock =3D pclk;
-> +			adjusted_mode->crtc_clock =3D pclk;
-> +		}
-> +	}
-> +
-> +	return true;
-> +}
-> +
->  static void fsl_ldb_atomic_enable(struct drm_bridge *bridge,
->  				  struct drm_bridge_state *old_bridge_state)
->  {
-> @@ -280,6 +311,7 @@ fsl_ldb_mode_valid(struct drm_bridge *bridge,
-> =20
->  static const struct drm_bridge_funcs funcs =3D {
->  	.attach =3D fsl_ldb_attach,
-> +	.mode_fixup =3D fsl_ldb_mode_fixup,
->  	.atomic_enable =3D fsl_ldb_atomic_enable,
->  	.atomic_disable =3D fsl_ldb_atomic_disable,
->  	.atomic_duplicate_state =3D drm_atomic_helper_bridge_duplicate_state,
+Reported-by: syzbot+82064afd8bd59070fc22@syzkaller.appspotmail.com
+Tested-by: syzbot+82064afd8bd59070fc22@syzkaller.appspotmail.com
 
+Tested on:
 
+commit:         7eef7e30 Merge tag 'for-6.13/dm-changes' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=172a0dc0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b5a5b40f7e7e7d63
+dashboard link: https://syzkaller.appspot.com/bug?extid=82064afd8bd59070fc22
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14279530580000
 
---=20
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Note: testing is done by a robot and is best-effort only.
 
