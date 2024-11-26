@@ -1,126 +1,112 @@
-Return-Path: <linux-kernel+bounces-422342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193109D9870
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:22:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17E589D988A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:28:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA8222840C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:22:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEA2DB28B6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5201D516E;
-	Tue, 26 Nov 2024 13:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538DF1D5140;
+	Tue, 26 Nov 2024 13:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MLdIGSG5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ahHS9jmn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656F51D5151;
-	Tue, 26 Nov 2024 13:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80821CEE96;
+	Tue, 26 Nov 2024 13:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732627311; cv=none; b=PSCca/NNu/nlJJhE4bPxvIUzkDnT9T/667Ua/5OaCxObcfY1wooZfqqo6zJfZe6K7yMzFcXxTJxv5qwUbv9dMlO32/appI/fFTjiBA3gJd8Ln1OZ6JrmbujWmNpx0OoJ/tEZT/5POjM//NtBiD3dHN+Wv/ijOsBuXS21Kl8YU9c=
+	t=1732627345; cv=none; b=NRW3d1tVG360Xo1g7PeqfO6NiYLkKZGrfwzDg/Pk3dE3gMfVLltMTshooEbuvjRgLTSYWIK7l4+KTAnPXS1XPEO9wu4DKGv/CmPjsi381s+4jO5DvBJppLmvztBfvOJrkPn6aY0qscikth6TRRgo9Pa2z0uSmXg2xV8TpITUi9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732627311; c=relaxed/simple;
-	bh=r7WixRalsMhPOVvhc77DI2Yr24fjHE72bC6gsIMtJyY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L+09PEXdjjcuCthZVCzJ3CEcg+dVZyfUDEZSF3NG6Tp3iWl36BoOSRkW6lneJpfIH8dJeN7c0ulTbo2/rk3jhKytw89CU1rDPsUOC0uyBwYJLJjYTsUjfbd3y37DA+f71czUHJQoGos+wNxNDHwzcaocSsSh4j7ffcSnht7dd7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MLdIGSG5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49B3FC4AF09;
-	Tue, 26 Nov 2024 13:21:50 +0000 (UTC)
+	s=arc-20240116; t=1732627345; c=relaxed/simple;
+	bh=RzAX0nZKTrlawErV82aO5uN+J0u44XEx+6Xw+tktJ1k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Iv5C7p+pcKId/7h0Gv/OksYK88DEHHmTe157nRPmmLkT2zWaUDaNOX0sksWB+DmUtS07uGFhdHsAmFjKPbAYu5eBdShy9ZvKLzcHI0+lPgw5TV7iKptWO5IrQS3U16l26rv4YN8yhEfPzEGW2YVzrzVwdFPgcTBe4XefoVKkKBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ahHS9jmn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E9E0C4CED0;
+	Tue, 26 Nov 2024 13:22:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732627311;
-	bh=r7WixRalsMhPOVvhc77DI2Yr24fjHE72bC6gsIMtJyY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MLdIGSG5gufIjX6wy+iMi+jmUtoBFw6sFScNNNMe+IKmP0B75VZbJDsDkfvkwZROC
-	 iN5CedH370QQwomB5bvVsKGqiX6kXXx5b0DkbUfkv47Mqm0yeaoiiyn9q5GBu1kSLg
-	 INHAIZlt9uxB4EoD/kiM8h+C2i104eJCHcuxgD7aU/+whYP7r5ltYuFjVIg98H64yP
-	 D+LcNELTpebOUJ7NKvljwcK2hAAZoxS92GkeGDboazb+dXkWPWIMdt9I/zMchJjcKD
-	 FUlW3Tg0FuHANpD6EIe/yxRNdSy+6N+45w5Cwl9ZjG/+zsPgAushp9YhMPEI9/UhqU
-	 jDaxCWMPEuxYg==
-Date: Tue, 26 Nov 2024 15:21:45 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Ilia Lin <ilia.lin@kernel.org>, herbert@gondor.apana.org.au,
-	David Miller <davem@davemloft.net>, dsahern@kernel.org,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, netdev@vger.kernel.org,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] xfrm: Add pre-encap fragmentation for packet offload
-Message-ID: <20241126132145.GA1245331@unreal>
-References: <20241124093531.3783434-1-ilia.lin@kernel.org>
- <20241124120424.GE160612@unreal>
- <CA+5LGR2n-jCyGbLy9X5wQoUT5OXPkAc3nOr9bURO6=9ObEZVnA@mail.gmail.com>
- <20241125194340.GI160612@unreal>
- <CA+5LGR0e677wm5zEx9yYZDtsCUL6etMoRB2yF9o5msqdVOWU8w@mail.gmail.com>
- <20241126083513.GL160612@unreal>
- <Z0XGMxSou3AZrB2f@gauss3.secunet.de>
+	s=k20201202; t=1732627345;
+	bh=RzAX0nZKTrlawErV82aO5uN+J0u44XEx+6Xw+tktJ1k=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ahHS9jmnH1A4j+x4GPHupX7yE+t+oFAu0ynSPNXVLXC2VC3N1uyrrMZB5aQ+AGjCB
+	 /oze64U31/jBXdES5S7lVyytWti0Q4i1RVSoQuH5EboHcENe90H/9GnC4Qgx0JJdb1
+	 h8l+SIaQoWn0hZXo0s1EjoO3FCgOwz5g2swrY3NnnaB288XGaWSmLppwgGlT85KMDN
+	 H8V5NL0fIWCxfEJYRKBaIsO4SuvC6csA90o9MEsdKcK3cBXqtME8GQTksziGHyYn/O
+	 BrKvsNIMzm1sQPAMJqnDPTvuoo8/zv9B9IvAKPTF67Z1FHPJCqbWU5cvfKnLmnQJSv
+	 TH8z63g0JBqwQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Jens Axboe <axboe@kernel.dk>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] cred: fold get_new_cred_many() into get_cred_many()
+Date: Tue, 26 Nov 2024 14:22:16 +0100
+Message-ID: <20241126-zaunpfahl-wovon-c3979b990a63@brauner>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1375; i=brauner@kernel.org; h=from:subject:message-id; bh=RzAX0nZKTrlawErV82aO5uN+J0u44XEx+6Xw+tktJ1k=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS7nu7sNEn8b3oqcCVTt99j93ivHbt0VxZde2lR+ND86 m0efvZZHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABMx3MHIsMj+Avd0TwfehQxf mxqcjx6LNHdccf79E7Fbjx+UsBXue8jI0KopH+7zy8dxk+6J+vtvYta+9J+mPPNIziuR1afF5v5 pYQMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z0XGMxSou3AZrB2f@gauss3.secunet.de>
 
-On Tue, Nov 26, 2024 at 01:59:31PM +0100, Steffen Klassert wrote:
-> On Tue, Nov 26, 2024 at 10:35:13AM +0200, Leon Romanovsky wrote:
-> > On Tue, Nov 26, 2024 at 09:09:03AM +0200, Ilia Lin wrote:
-> > > On Mon, Nov 25, 2024 at 9:43 PM Leon Romanovsky <leon@kernel.org> wrote:
-> > > >
-> > > > On Mon, Nov 25, 2024 at 11:26:14AM +0200, Ilia Lin wrote:
-> > > > > On Sun, Nov 24, 2024 at 2:04 PM Leon Romanovsky <leon@kernel.org> wrote:
-> > > > > >
-> > > > > > On Sun, Nov 24, 2024 at 11:35:31AM +0200, Ilia Lin wrote:
-> > > > > > > In packet offload mode the raw packets will be sent to the NiC,
-> > > > > > > and will not return to the Network Stack. In event of crossing
-> > > > > > > the MTU size after the encapsulation, the NiC HW may not be
-> > > > > > > able to fragment the final packet.
-> > > > > >
-> > > > > > Yes, HW doesn't know how to handle these packets.
-> > > > > >
-> > > > > > > Adding mandatory pre-encapsulation fragmentation for both
-> > > > > > > IPv4 and IPv6, if tunnel mode with packet offload is configured
-> > > > > > > on the state.
-> > > > > >
-> > > > > > I was under impression is that xfrm_dev_offload_ok() is responsible to
-> > > > > > prevent fragmentation.
-> > > > > >
-> > > https://elixir.bootlin.com/linux/v6.12/source/net/xfrm/xfrm_device.c#L410
-> > > > >
-> > > > > With my change we can both support inner fragmentation or prevent it,
-> > > > > depending on the network device driver implementation.
-> > > >
-> > > > The thing is that fragmentation isn't desirable thing. Why didn't PMTU
-> > > > take into account headers so we can rely on existing code and do not add
-> > > > extra logic for packet offload?
-> > > 
-> > > I agree that PMTU is preferred option, but the packets may be routed from
-> > > a host behind the VPN, which is unaware that it transmits into an IPsec
-> > > tunnel,
-> > > and therefore will not count on the extra headers.
-> > 
-> > My basic web search shows that PMTU works correctly for IPsec tunnels too.
-> 
-> Yes, at least SW and crypto offload IPsec PMTU works correctly.
-> 
-> > 
-> > Steffen, do we need special case for packet offload here? My preference is
-> > to make sure that we will have as less possible special cases for packet
-> > offload.
-> 
-> Looks like the problem on packet offload is that packets
-> bigger than MTU size are dropped before the PMTU signaling
-> is handled.
+There's no need for this to be a separate helper.
 
-But PMTU should be less or equal to MTU, even before first packet was
-sent. Otherwise already first packet will be fragmented.
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Putting this on top of kernel.cred. 
+---
+ include/linux/cred.h | 17 ++---------------
+ 1 file changed, 2 insertions(+), 15 deletions(-)
 
-Thanks
+diff --git a/include/linux/cred.h b/include/linux/cred.h
+index 360f5fd3854b..0c3c4b16b469 100644
+--- a/include/linux/cred.h
++++ b/include/linux/cred.h
+@@ -186,20 +186,6 @@ static inline const struct cred *revert_creds(const struct cred *revert_cred)
+ 	return override_cred;
+ }
+ 
+-/**
+- * get_new_cred_many - Get references on a new set of credentials
+- * @cred: The new credentials to reference
+- * @nr: Number of references to acquire
+- *
+- * Get references on the specified set of new credentials.  The caller must
+- * release all acquired references.
+- */
+-static inline struct cred *get_new_cred_many(struct cred *cred, int nr)
+-{
+-	atomic_long_add(nr, &cred->usage);
+-	return cred;
+-}
+-
+ /**
+  * get_cred_many - Get references on a set of credentials
+  * @cred: The credentials to reference
+@@ -220,7 +206,8 @@ static inline const struct cred *get_cred_many(const struct cred *cred, int nr)
+ 	if (!cred)
+ 		return cred;
+ 	nonconst_cred->non_rcu = 0;
+-	return get_new_cred_many(nonconst_cred, nr);
++	atomic_long_add(nr, &nonconst_cred->usage);
++	return cred;
+ }
+ 
+ /*
+-- 
+2.45.2
 
 
