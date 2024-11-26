@@ -1,92 +1,97 @@
-Return-Path: <linux-kernel+bounces-422065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B70B49D9409
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:19:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DE289D940D
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:20:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5211E2828A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:19:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A98AA1682EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBFBF1ADFEB;
-	Tue, 26 Nov 2024 09:19:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62EAE1B394E;
+	Tue, 26 Nov 2024 09:20:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tCEsd9kd"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eq1Ul6ln"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B5B10E9;
-	Tue, 26 Nov 2024 09:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3211369B6;
+	Tue, 26 Nov 2024 09:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732612785; cv=none; b=h5SnR67UIK//mcvSQ4i3rp97QuBY39RNiALYaaMCe9aEraGnCSa5TxvEvzvOfYITDXz0Nk81WnvqS6xpp9aa6o68PdZbBUwhJugBd62ptcTEjuf7Di2K6ccLBYxK9Qw48WGglGxctCJ0ZMdLBXS2q3lNyapLlXTCS4LDbih9jPs=
+	t=1732612820; cv=none; b=MP+6vPjJTuJT0cDcnej0BSrLk9pjXNBiPYEPlo05RrXmB/S42qIXTtfDGWSmXsqXyxO15e6DoOK4X3RxprupUv4GLH0wY6GTbinjneIPVB0uy/FG2oZkek28C6BijvstF+Kn8jbuMu+vC+pDf9OYjEqCle8JTzCOQBE3kHAfzFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732612785; c=relaxed/simple;
-	bh=0wMhNfjuCKn3KFiqtyzjvXNUsEsAl0GjHojhqpYkvQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ksAHBuyPux5TZtDnTyszKbMGVOHkUA+snsMcxLJAQgC2wuvA3/3qV2bkWvvWnlpQoVj8aWAbUd6LXUkFKm8JEbx2FmfzTlZVT6BIE7g3CkUNZXwLSnatmwLdnC464xjKCtqXgGTc2jbua15THpDnbd4Hcgxt0e9HzBKmnRoTtEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tCEsd9kd; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=20KTCDW3VkmdcqUU6UZT4aexfvWCdFnOYJYEWBp7gtY=; b=tCEsd9kdqE+wBksj3JXO8zSRMG
-	lvQOf/xYvKJvodvMWzmcjTSCVYLr1TWGJOBcVLb439SA9Vg0oLSfAPS8lBhbGZqp/1V5lvccH8fph
-	p7bbLVVT06eV7xfT1NQm44Vv8yN1IAo5rgpqfV8L/QOmuH26G7iyjQT17Lk2bqkS7vXQYcDd4nDvm
-	lNy7eheA0H1mNlTY8SAqEbk6Z7JqXnpuHCddKKDiE0rIr0I0DXpI4cD2BEowDt35xQbKCTIFYXdtc
-	I0/DzNI6HovJKO/TC37iR5T3IbQ/JC+L1XUJCZpiYl1DeXiuzUcOT3RWOkS7XgmaTD1l1/UxrDVU2
-	P8ohPXbA==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tFrjK-0000000DLTw-0Akr;
-	Tue, 26 Nov 2024 09:19:36 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 861223002A2; Tue, 26 Nov 2024 10:19:34 +0100 (CET)
-Date: Tue, 26 Nov 2024 10:19:34 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Matthew Maurer <mmaurer@google.com>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	scott.d.constable@intel.com
-Subject: Re: [PATCH v2 0/2] Rust KCFI support
-Message-ID: <20241126091934.GP39245@noisy.programming.kicks-ass.net>
-References: <20240801-kcfi-v2-0-c93caed3d121@google.com>
+	s=arc-20240116; t=1732612820; c=relaxed/simple;
+	bh=U7n/SI5fUPd2Az9BoDV51BCYY+KeSeeSp7nFWQ/q+aI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=F3nYNCiFwHr/ShFKsP6ZQAR+YUOU6liqPKqGJywucFwymy0kNNdjcEzHKAn5+sLSZzCuoLaq/VJkrqqIRiROgmJm4d9SpF3cMm0xhD5LkZIBetK2I2jMt3PhVeLyYukJqC0IFywP4dy3pwqdkIPhszXxw+QcX0aqNt88PAvfHmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eq1Ul6ln; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32E07C4CECF;
+	Tue, 26 Nov 2024 09:20:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732612820;
+	bh=U7n/SI5fUPd2Az9BoDV51BCYY+KeSeeSp7nFWQ/q+aI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Eq1Ul6lnKBWRiRGsp0bobP+YIsFPdqPImMLsPamoHc3qARhLqo3ur81Ad23gvsS1x
+	 evU8IxMttCAmtIXyNHZwZm0ms12DZHn9gOR/NzdUFVoCB1hWtzXU2gYL5zSrchlX3t
+	 W935l8e10ub+nwMSmTDVAz0mGTuw0v1q/NIrgY6FyWp2squbWhFkiD437zmWLCz2jk
+	 uh7w2sisvcwwxYeUwJSaobjwKfvvpeF3LbS5mAkaOp8kgfz4j1EKgpMXnM1r9qqdO+
+	 /jSmMZWIQYnr3lrpb/bRftzDUeIq3pU84SPFusaK50P285TmpUcRlq7Vh26SmDlUWS
+	 RErLUZOksnF3A==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33CFA3809A00;
+	Tue, 26 Nov 2024 09:20:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801-kcfi-v2-0-c93caed3d121@google.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v5 0/3] Correcting switch hardware versions and reported
+ speeds
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173261283301.319179.8241614994129494508.git-patchwork-notify@kernel.org>
+Date: Tue, 26 Nov 2024 09:20:33 +0000
+References: <20241120075624.499464-1-justinlai0215@realtek.com>
+In-Reply-To: <20241120075624.499464-1-justinlai0215@realtek.com>
+To: Justin Lai <justinlai0215@realtek.com>
+Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, andrew+netdev@lunn.ch, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, horms@kernel.org, michal.kubiak@intel.com,
+ pkshih@realtek.com, larry.chiu@realtek.com
 
-On Thu, Aug 01, 2024 at 01:35:16PM +0000, Alice Ryhl wrote:
-> The control flow integrity (kCFI) sanitizer is an important sanitizer
-> that is often used in production. This patch series makes it possible to
-> use kCFI and Rust together.
+Hello:
 
-So about this -- there's a proposal for a modification to kCFI here:
+This series was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-  https://github.com/llvm/llvm-project/pull/117121
+On Wed, 20 Nov 2024 15:56:21 +0800 you wrote:
+> This patch set mainly involves correcting switch hardware versions and
+> reported speeds.
+> Details are as follows:
+> 1. Refactor the rtase_check_mac_version_valid() function.
+> 2. Correct the speed for RTL907XD-V1
+> 3. Corrects error handling of the rtase_check_mac_version_valid()
+> 
+> [...]
 
-And Sami notes that this would break this Rust thing. Assuming all the
-relevant crabs are present on this thread, could you please comment?
+Here is the summary with links:
+  - [net,v5,1/3] rtase: Refactor the rtase_check_mac_version_valid() function
+    https://git.kernel.org/netdev/net/c/a1f8609ff1f6
+  - [net,v5,2/3] rtase: Correct the speed for RTL907XD-V1
+    https://git.kernel.org/netdev/net/c/c1fc14c4df80
+  - [net,v5,3/3] rtase: Corrects error handling of the rtase_check_mac_version_valid()
+    https://git.kernel.org/netdev/net/c/a01cfcfda5cc
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
 
