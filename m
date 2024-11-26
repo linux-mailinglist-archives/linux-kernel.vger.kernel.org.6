@@ -1,345 +1,143 @@
-Return-Path: <linux-kernel+bounces-422320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC9E9D97CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:59:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 615849D97D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:59:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACC8E285F18
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:59:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26B80285ED2
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 12:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824001D45FC;
-	Tue, 26 Nov 2024 12:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA701D4613;
+	Tue, 26 Nov 2024 12:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SM8e16LO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b="YTA8Di+B"
+Received: from a.mx.secunet.com (a.mx.secunet.com [62.96.220.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614951D4169;
-	Tue, 26 Nov 2024 12:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12061D4340;
+	Tue, 26 Nov 2024 12:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.96.220.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732625955; cv=none; b=N8+yPb2M9DAjHNvQX0qXwv/n+W/++hsdIzhhMqcCs/m3XBDrsHPlKo82ixDZHKV5Y1rii0EYjaKvoGupS0GxNLYOXS95XNDhBfKN9sXgZclwGMwFa7W2Y/mG3j+NICmOpYoswMNaY2e6X3+rFdJfyMQdt7GamQabeAVaHUsT7oE=
+	t=1732625977; cv=none; b=tAwir90hsoqmPmYzysrthIWyWn0Rt6nImXOykPciVn4ikHI/7GYnP+5jtXhWuLf4oFUPkqsmthWBv2Pgb0aMn7DDRgUugbGkVvSBg8IbnC1fqbEWVu7XkFDPLVTX+tiZYY7HNKRcqQ2ZhHJBdirwNDhpf6sIBLDYnkLqeT/Rbds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732625955; c=relaxed/simple;
-	bh=fsaOC/+JPOgtwlDwpkvd9NvolL4P4q4NK24BU2LbZrc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MEK4BKcdKMVd3SHUNUq/jImiJu83Kdi7umIt34lsfEktVegQ3f1GUdp9R/U8e5KVPcAAObgGnYMDjSwcK6ZM38JGvbU0wtB8WwSQASd67A/kDdivS4K52MvNX2TU/Vy/hGcUxcKVb7dfdIABUE9I4n39g+ERL1FqqV4WlZkyVPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SM8e16LO; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732625953; x=1764161953;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=fsaOC/+JPOgtwlDwpkvd9NvolL4P4q4NK24BU2LbZrc=;
-  b=SM8e16LOKYZiFN97pP4stRyOGLG3sbgQFrARU9MB2H5NFhGV0B6B+qAO
-   5ygx6zYbwS3ElNeZtoJUM+dhl05yMfaGR/HTw1gSdYHOwgZs5+mHLwTCW
-   h1bWzXPBMGcw2OI/KplFZko0TyMJXfikaZrVzqVcXntHRbLP6UwND7l1A
-   n4f3W7x6EhpAhQyPsIJpDMvuZAaZuqethPlyRS6fd229Ln56dhgGuNikQ
-   ke30s/v4cE/BZI1onLHYNUzCJetwac8p9uzRw7JEx8sl9BIy8yRdcTlCh
-   MVzBaRckUN6hXDYlHnOo/xIUAyQAZraYfvLqCIaqS66aKYWuCnyc1QHX1
-   w==;
-X-CSE-ConnectionGUID: cXWb1p6rRnqnHLMUwO4MuA==
-X-CSE-MsgGUID: WlELuNg7QRGyKr8RxN3DBw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="36445304"
-X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
-   d="scan'208";a="36445304"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 04:59:12 -0800
-X-CSE-ConnectionGUID: BW970He9TCSnX/PnepyHog==
-X-CSE-MsgGUID: vRXzaO8rTvaYkN2mZeVxrw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
-   d="scan'208";a="92079702"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 04:59:10 -0800
-Message-ID: <9bb112f8-0af1-4517-a4b8-bd2edacce07c@intel.com>
-Date: Tue, 26 Nov 2024 14:59:02 +0200
+	s=arc-20240116; t=1732625977; c=relaxed/simple;
+	bh=cnvnj0VfxIvQRO2vsdi0eRPwYK1wWOUyT57uL5dMTLQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Atu/KbiWU0tI4e7FVnIZ8wmUkLtnA4QnxPoACd5mvkgomX8DirJSqnr7o7NCTa6+RmM0E+KrMgPOYWBfGV6yxlF1XrAZMql+cVxVq6JG0s4Bq87+OM2d/36965tEnEGVhIaonyDzlC+C5CJ36EADQAIK3gmfHQb5gIaaFCXwk9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com; spf=pass smtp.mailfrom=secunet.com; dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b=YTA8Di+B; arc=none smtp.client-ip=62.96.220.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=secunet.com
+Received: from localhost (localhost [127.0.0.1])
+	by a.mx.secunet.com (Postfix) with ESMTP id E24C5207CA;
+	Tue, 26 Nov 2024 13:59:32 +0100 (CET)
+X-Virus-Scanned: by secunet
+Received: from a.mx.secunet.com ([127.0.0.1])
+	by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id L1OXqsNFQURN; Tue, 26 Nov 2024 13:59:32 +0100 (CET)
+Received: from cas-essen-02.secunet.de (rl2.secunet.de [10.53.40.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by a.mx.secunet.com (Postfix) with ESMTPS id 06E99207BB;
+	Tue, 26 Nov 2024 13:59:32 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 a.mx.secunet.com 06E99207BB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=secunet.com;
+	s=202301; t=1732625972;
+	bh=MZSNHrkoFWQwpMSZYUXRA/Mg+7OUMb1wtcBhBpfF0m0=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To:From;
+	b=YTA8Di+B1fnLRKo6JFQ9iUjCSJwKEvH7enJVv3F4Q5DZ3IITOBdrKOV44m0P4rayn
+	 B9mcEXJUCaaFrbH1WAtKYkHCviUMjtcxEsCNgdON8glUFKv9ilUSz0mPfzTNrWCi2Q
+	 tvbx92q0BAgdjq5SacNCER8C0O+D8079TUluG32B5ea92KP6IDcPVFGuey1oImHjGT
+	 fCwSM/0vJ0HbMyE0vhh8vNSd9yPi7GNQIbrOplJtJj0tY0T+6N5uLSUzxDAsAC2axd
+	 RPQbs5FDvbFcg7ZMs/ekvHCSfSmPN/2+PNyvdhMjFXC6MRZ+FD4x5ABCCw3Pq0vsKk
+	 Xo0fEy2zAgr+A==
+Received: from mbx-essen-02.secunet.de (10.53.40.198) by
+ cas-essen-02.secunet.de (10.53.40.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 26 Nov 2024 13:59:31 +0100
+Received: from gauss2.secunet.de (10.182.7.193) by mbx-essen-02.secunet.de
+ (10.53.40.198) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 26 Nov
+ 2024 13:59:31 +0100
+Received: by gauss2.secunet.de (Postfix, from userid 1000)
+	id 393393184178; Tue, 26 Nov 2024 13:59:31 +0100 (CET)
+Date: Tue, 26 Nov 2024 13:59:31 +0100
+From: Steffen Klassert <steffen.klassert@secunet.com>
+To: Leon Romanovsky <leon@kernel.org>
+CC: Ilia Lin <ilia.lin@kernel.org>, <herbert@gondor.apana.org.au>, "David
+ Miller" <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
+	<netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] xfrm: Add pre-encap fragmentation for packet offload
+Message-ID: <Z0XGMxSou3AZrB2f@gauss3.secunet.de>
+References: <20241124093531.3783434-1-ilia.lin@kernel.org>
+ <20241124120424.GE160612@unreal>
+ <CA+5LGR2n-jCyGbLy9X5wQoUT5OXPkAc3nOr9bURO6=9ObEZVnA@mail.gmail.com>
+ <20241125194340.GI160612@unreal>
+ <CA+5LGR0e677wm5zEx9yYZDtsCUL6etMoRB2yF9o5msqdVOWU8w@mail.gmail.com>
+ <20241126083513.GL160612@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V15 0/7] perf/core: Add ability for an event to "pause" or
- "resume" AUX area tracing
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Kan Liang <kan.liang@linux.intel.com>, Leo Yan <leo.yan@arm.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-References: <20241114101711.34987-1-adrian.hunter@intel.com>
-Content-Language: en-US
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20241114101711.34987-1-adrian.hunter@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241126083513.GL160612@unreal>
+X-ClientProxiedBy: cas-essen-01.secunet.de (10.53.40.201) To
+ mbx-essen-02.secunet.de (10.53.40.198)
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
 
-On 14/11/24 12:17, Adrian Hunter wrote:
-> Hi
+On Tue, Nov 26, 2024 at 10:35:13AM +0200, Leon Romanovsky wrote:
+> On Tue, Nov 26, 2024 at 09:09:03AM +0200, Ilia Lin wrote:
+> > On Mon, Nov 25, 2024 at 9:43 PM Leon Romanovsky <leon@kernel.org> wrote:
+> > >
+> > > On Mon, Nov 25, 2024 at 11:26:14AM +0200, Ilia Lin wrote:
+> > > > On Sun, Nov 24, 2024 at 2:04 PM Leon Romanovsky <leon@kernel.org> wrote:
+> > > > >
+> > > > > On Sun, Nov 24, 2024 at 11:35:31AM +0200, Ilia Lin wrote:
+> > > > > > In packet offload mode the raw packets will be sent to the NiC,
+> > > > > > and will not return to the Network Stack. In event of crossing
+> > > > > > the MTU size after the encapsulation, the NiC HW may not be
+> > > > > > able to fragment the final packet.
+> > > > >
+> > > > > Yes, HW doesn't know how to handle these packets.
+> > > > >
+> > > > > > Adding mandatory pre-encapsulation fragmentation for both
+> > > > > > IPv4 and IPv6, if tunnel mode with packet offload is configured
+> > > > > > on the state.
+> > > > >
+> > > > > I was under impression is that xfrm_dev_offload_ok() is responsible to
+> > > > > prevent fragmentation.
+> > > > >
+> > https://elixir.bootlin.com/linux/v6.12/source/net/xfrm/xfrm_device.c#L410
+> > > >
+> > > > With my change we can both support inner fragmentation or prevent it,
+> > > > depending on the network device driver implementation.
+> > >
+> > > The thing is that fragmentation isn't desirable thing. Why didn't PMTU
+> > > take into account headers so we can rely on existing code and do not add
+> > > extra logic for packet offload?
+> > 
+> > I agree that PMTU is preferred option, but the packets may be routed from
+> > a host behind the VPN, which is unaware that it transmits into an IPsec
+> > tunnel,
+> > and therefore will not count on the extra headers.
 > 
-> Note for V15:
-> 	Same as V14 but without kernel patches because they have been
-> 	applied, and updated "missing_features" patch for the new way
-> 	of detecting missing features.
+> My basic web search shows that PMTU works correctly for IPsec tunnels too.
 
-Still apply
+Yes, at least SW and crypto offload IPsec PMTU works correctly.
 
 > 
-> Hardware traces, such as instruction traces, can produce a vast amount of
-> trace data, so being able to reduce tracing to more specific circumstances
-> can be useful.
-> 
-> The ability to pause or resume tracing when another event happens, can do
-> that.
-> 
-> These patches add such a facilty and show how it would work for Intel
-> Processor Trace.
-> 
-> Maintainers of other AUX area tracing implementations are requested to
-> consider if this is something they might employ and then whether or not
-> the ABI would work for them.  Note, thank you to James Clark (ARM) for
-> evaluating the API for Coresight.  Suzuki K Poulose (ARM) also responded
-> positively to the RFC.
-> 
-> Changes to perf tools are now (since V4) fleshed out.
-> 
-> Please note, Intel® Architecture Instruction Set Extensions and Future
-> Features Programming Reference March 2024 319433-052, currently:
-> 
-> 	https://cdrdv2.intel.com/v1/dl/getContent/671368
-> 
-> introduces hardware pause / resume for Intel PT in a feature named
-> Intel PT Trigger Tracing.
-> 
-> For that more fields in perf_event_attr will be necessary.  The main
-> differences are:
-> 	- it can be applied not just to overflows, but optionally to
-> 	every event
-> 	- a packet is emitted into the trace, optionally with IP
-> 	information
-> 	- no PMI
-> 	- works with PMC and DR (breakpoint) events only
-> 
-> Here are the proposed additions to perf_event_attr, please comment:
-> 
-> diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
-> index 0c557f0a17b3..05dcc43f11bb 100644
-> --- a/tools/include/uapi/linux/perf_event.h
-> +++ b/tools/include/uapi/linux/perf_event.h
-> @@ -369,6 +369,22 @@ enum perf_event_read_format {
->  	PERF_FORMAT_MAX = 1U << 5,		/* non-ABI */
->  };
->  
-> +enum {
-> +	PERF_AUX_ACTION_START_PAUSED		=   1U << 0,
-> +	PERF_AUX_ACTION_PAUSE			=   1U << 1,
-> +	PERF_AUX_ACTION_RESUME			=   1U << 2,
-> +	PERF_AUX_ACTION_EMIT			=   1U << 3,
-> +	PERF_AUX_ACTION_NR			= 0x1f << 4,
-> +	PERF_AUX_ACTION_NO_IP			=   1U << 9,
-> +	PERF_AUX_ACTION_PAUSE_ON_EVT		=   1U << 10,
-> +	PERF_AUX_ACTION_RESUME_ON_EVT		=   1U << 11,
-> +	PERF_AUX_ACTION_EMIT_ON_EVT		=   1U << 12,
-> +	PERF_AUX_ACTION_NR_ON_EVT		= 0x1f << 13,
-> +	PERF_AUX_ACTION_NO_IP_ON_EVT		=   1U << 18,
-> +	PERF_AUX_ACTION_MASK			= ~PERF_AUX_ACTION_START_PAUSED,
-> +	PERF_AUX_PAUSE_RESUME_MASK		= PERF_AUX_ACTION_PAUSE | PERF_AUX_ACTION_RESUME,
-> +};
-> +
->  #define PERF_ATTR_SIZE_VER0	64	/* sizeof first published struct */
->  #define PERF_ATTR_SIZE_VER1	72	/* add: config2 */
->  #define PERF_ATTR_SIZE_VER2	80	/* add: branch_sample_type */
-> @@ -515,10 +531,19 @@ struct perf_event_attr {
->  	union {
->  		__u32	aux_action;
->  		struct {
-> -			__u32	aux_start_paused :  1, /* start AUX area tracing paused */
-> -				aux_pause        :  1, /* on overflow, pause AUX area tracing */
-> -				aux_resume       :  1, /* on overflow, resume AUX area tracing */
-> -				__reserved_3     : 29;
-> +			__u32	aux_start_paused  :  1, /* start AUX area tracing paused */
-> +				aux_pause         :  1, /* on overflow, pause AUX area tracing */
-> +				aux_resume        :  1, /* on overflow, resume AUX area tracing */
-> +				aux_emit          :  1, /* generate AUX records instead of events */
-> +				aux_nr            :  5, /* AUX area tracing reference number */
-> +				aux_no_ip         :  1, /* suppress IP in AUX records */
-> +				/* Following apply to event occurrence not overflows */
-> +				aux_pause_on_evt  :  1, /* on event, pause AUX area tracing */
-> +				aux_resume_on_evt :  1, /* on event, resume AUX area tracing */
-> +				aux_emit_on_evt   :  1, /* generate AUX records instead of events */
-> +				aux_nr_on_evt     :  5, /* AUX area tracing reference number */
-> +				aux_no_ip_on_evt  :  1, /* suppress IP in AUX records */
-> +				__reserved_3      : 13;
->  		};
->  	};
-> 
-> 
-> Changes in V15:
->       perf/x86/intel/pt: Fix buffer full but size is 0 case
->       perf/core: Add aux_pause, aux_resume, aux_start_paused
->       perf/x86/intel/pt: Add support for pause / resume
->       perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
-> 	Dropped kernel patches because they have been applied
-> 
->       perf tools: Add missing_features for aux_start_paused, aux_pause, aux_resume
-> 	Re-base on new API probe method of missing feature detection
-> 	and add probe for aux_action.
-> 
-> Changes in V14:
->       Dropped KVM patches
-> 
->       perf/x86/intel/pt: Add support for pause / resume
-> 	Set pt->handle_nmi after configuration is completed instead of during
-> 
-> Changes in V13:
->       perf/core: Add aux_pause, aux_resume, aux_start_paused
-> 	Do aux_resume at the end of __perf_event_overflow() so as to trace
-> 	less of perf itself
-> 
->       perf tools: Add missing_features for aux_start_paused, aux_pause, aux_resume
-> 	Add error message also in EOPNOTSUPP case (Leo)
-> 
-> Changes in V12:
-> 	Add previously sent patch "perf/x86/intel/pt: Fix buffer full
-> 	but size is 0 case"
-> 
-> 	Add previously sent patch set "KVM: x86: Fix Intel PT Host/Guest
-> 	mode when host tracing"
-> 
-> 	Rebase on current tip plus patch set "KVM: x86: Fix Intel PT Host/Guest
-> 	mode when host tracing"
-> 
-> Changes in V11:
->       perf/core: Add aux_pause, aux_resume, aux_start_paused
-> 	Make assignment to event->hw.aux_paused conditional on
-> 	(pmu->capabilities & PERF_PMU_CAP_AUX_PAUSE).
-> 
->       perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
-> 	Remove definition of has_aux_action() because it has
-> 	already been added as an inline function.
-> 
->       perf/x86/intel/pt: Fix sampling synchronization
->       perf tools: Enable evsel__is_aux_event() to work for ARM/ARM64
->       perf tools: Enable evsel__is_aux_event() to work for S390_CPUMSF
-> 	Dropped because they have already been applied
-> 
-> Changes in V10:
->       perf/core: Add aux_pause, aux_resume, aux_start_paused
-> 	Move aux_paused into a union within struct hw_perf_event.
-> 	Additional comment wrt PERF_EF_PAUSE/PERF_EF_RESUME.
-> 	Factor out has_aux_action() as an inline function.
-> 	Use scoped_guard for irqsave.
-> 	Move calls of perf_event_aux_pause() from __perf_event_output()
-> 	to __perf_event_overflow().
-> 
-> Changes in V9:
->       perf/x86/intel/pt: Fix sampling synchronization
-> 	New patch
-> 
->       perf/core: Add aux_pause, aux_resume, aux_start_paused
-> 	Move aux_paused to struct hw_perf_event
-> 
->       perf/x86/intel/pt: Add support for pause / resume
-> 	Add more comments and barriers for resume_allowed and
-> 	pause_allowed
-> 	Always use WRITE_ONCE with resume_allowed
-> 
-> 
-> Changes in V8:
-> 
->       perf tools: Parse aux-action
-> 	Fix clang warning:
-> 	     util/auxtrace.c:821:7: error: missing field 'aux_action' initializer [-Werror,-Wmissing-field-initializers]
-> 	     821 |         {NULL},
-> 	         |              ^
-> 
-> Changes in V7:
-> 
-> 	Add Andi's Reviewed-by for patches 2-12
-> 	Re-base
-> 
-> Changes in V6:
-> 
->       perf/core: Add aux_pause, aux_resume, aux_start_paused
-> 	Removed READ/WRITE_ONCE from __perf_event_aux_pause()
-> 	Expanded comment about guarding against NMI
-> 
-> Changes in V5:
-> 
->     perf/core: Add aux_pause, aux_resume, aux_start_paused
-> 	Added James' Ack
-> 
->     perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
-> 	New patch
-> 
->     perf tools
-> 	Added Ian's Ack
-> 
-> Changes in V4:
-> 
->     perf/core: Add aux_pause, aux_resume, aux_start_paused
-> 	Rename aux_output_cfg -> aux_action
-> 	Reorder aux_action bits from:
-> 		aux_pause, aux_resume, aux_start_paused
-> 	to:
-> 		aux_start_paused, aux_pause, aux_resume
-> 	Fix aux_action bits __u64 -> __u32
-> 
->     coresight: Have a stab at support for pause / resume
-> 	Dropped
-> 
->     perf tools
-> 	All new patches
-> 
-> Changes in RFC V3:
-> 
->     coresight: Have a stab at support for pause / resume
-> 	'mode' -> 'flags' so it at least compiles
-> 
-> Changes in RFC V2:
-> 
-> 	Use ->stop() / ->start() instead of ->pause_resume()
-> 	Move aux_start_paused bit into aux_output_cfg
-> 	Tighten up when Intel PT pause / resume is allowed
-> 	Add an example of how it might work for CoreSight
-> 
-> 
-> Adrian Hunter (7):
->       perf tools: Add aux_start_paused, aux_pause and aux_resume
->       perf tools: Add aux-action config term
->       perf tools: Parse aux-action
->       perf tools: Add missing_features for aux_start_paused, aux_pause, aux_resume
->       perf intel-pt: Improve man page format
->       perf intel-pt: Add documentation for pause / resume
->       perf intel-pt: Add a test for pause / resume
-> 
->  tools/include/uapi/linux/perf_event.h      |  11 +-
->  tools/perf/Documentation/perf-intel-pt.txt | 596 ++++++++++++++++++-----------
->  tools/perf/Documentation/perf-record.txt   |   4 +
->  tools/perf/builtin-record.c                |   4 +-
->  tools/perf/tests/shell/test_intel_pt.sh    |  28 ++
->  tools/perf/util/auxtrace.c                 |  67 +++-
->  tools/perf/util/auxtrace.h                 |   6 +-
->  tools/perf/util/evsel.c                    | 101 ++++-
->  tools/perf/util/evsel.h                    |   1 +
->  tools/perf/util/evsel_config.h             |   1 +
->  tools/perf/util/parse-events.c             |  10 +
->  tools/perf/util/parse-events.h             |   1 +
->  tools/perf/util/parse-events.l             |   1 +
->  tools/perf/util/perf_event_attr_fprintf.c  |   3 +
->  tools/perf/util/pmu.c                      |   1 +
->  15 files changed, 594 insertions(+), 241 deletions(-)
-> 
-> 
-> Regards
-> Adrian
+> Steffen, do we need special case for packet offload here? My preference is
+> to make sure that we will have as less possible special cases for packet
+> offload.
 
+Looks like the problem on packet offload is that packets
+bigger than MTU size are dropped before the PMTU signaling
+is handled.
 
