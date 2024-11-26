@@ -1,171 +1,218 @@
-Return-Path: <linux-kernel+bounces-422047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C6A29D93C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:04:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 788489D93C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:05:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B3ACB2610D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:04:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33D13280DB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A99C1ABEBF;
-	Tue, 26 Nov 2024 09:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767C11B413C;
+	Tue, 26 Nov 2024 09:05:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VurHXpDa"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="13vWsjDH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="j/0VTlI7";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SDIrGaJF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="JUKaAptb"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB0728FF
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3CF17BB6;
+	Tue, 26 Nov 2024 09:05:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732611847; cv=none; b=DauOKnIOoFc0n9bdzFs+PeQf/UFlWxsiPBqb1J9WT9zb6BhGbnQe4VsuJzMpqryq2SFnDk8GO9XKeYbJD4O2647BYX6ZHyRHDA05SX6rGgkaGrOTHQoRe5tl3zEeJl6wcT7pKCkH3s7cpwQPj5hJ2crIwLxU7+jO1/DTAuBOSC8=
+	t=1732611910; cv=none; b=fN+96xz41fimvvADMN58HZ1b0cMU1L9g/Eu2Uxcm8hlLYpGhSLig7nkngFjhU1l89ilUWc5XTW5FCEz6drDH3urephy6NmbX3WK5I8C6RKQfdj1wEjcX0tMNJFLMgpAsaNaUKdY9nI8goyTLD9+W45/IMOSFUVvkdpOtfHJEPIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732611847; c=relaxed/simple;
-	bh=ZWmrGQ6M26BhXo9m6RKEZU+fsqbwL7LzDsPFnAheZho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H0s9Wqcy1uX5n3Gah732N8pa00KCc4DfMPjDxgTooTzq/voxuG6/NeBeQBwQYkG6kKvVCjQv87Jdc4+K/jbQoW9u/Ck6jUGPD6tOrxfdN9gdmnTrwBF7PK98TaZrpuMYaik4vwabhHWQ8OEY8VQu/Vmbb/qAuzwBxLDrQ3M4Lu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VurHXpDa; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732611845;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1732611910; c=relaxed/simple;
+	bh=/WMVsvejPM5SedIEZ9qbcp97P1LhcTtYG6MsBhrKCos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dL3xxV0GPp6ljK60ghB6GKwfcvUUCLRrIG1JckChH8vj6d+wxVoq/sTbuOYlMepC/5T4SvtbXkcIqU2CfkFGvBK3NS/4hPy8Qqm+SV7N3TPKrOAntqRy4TfO7/zsAneZ0eZ1nuxEYO1q/QyH4OZdaNCfx9TXWR3Geiqjd8Dq8nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=13vWsjDH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=j/0VTlI7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SDIrGaJF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=JUKaAptb; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E6FA11F457;
+	Tue, 26 Nov 2024 09:04:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732611898; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=im/8o06WdRL6AvUGxWnBVgqT+amoAsT42x2YeIRHNPI=;
-	b=VurHXpDaRTtY46UE8xiir02F4tL7Fn5/zAePHR1iaHClCa09mihb7dSI4uhdKCWSVbqZuB
-	FTs+FNlONUoZDtNNtp+2HLqudraSF732F1o5xftAkoPqDMcMaO4Vt8C1xOaI2qKu2MPOdQ
-	e2ocHcjrGAANHoNVRn1GttucCMZc5jk=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-422-8tjGj6zUOmulrYcsQzg3FA-1; Tue, 26 Nov 2024 04:04:02 -0500
-X-MC-Unique: 8tjGj6zUOmulrYcsQzg3FA-1
-X-Mimecast-MFC-AGG-ID: 8tjGj6zUOmulrYcsQzg3FA
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4349df2d87dso21264055e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 01:04:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732611841; x=1733216641;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=im/8o06WdRL6AvUGxWnBVgqT+amoAsT42x2YeIRHNPI=;
-        b=HMNvZhra3L9W2MQ9+vOh7wI2mDzfyR1oHPRMGkREhw2A6znLET6mee0qYz5nikp4sM
-         rw1MbfbcF0NHGgKHu/LJ1voNmcifECIe+6AuOWArSUPaxS9z6OfxocfHN4T2jpcLs2hC
-         JkKE1uOQQg7oYvqxC3r8mmkBycM2yqeXYs8KnKENraqrbRCUYGCnFLByhrT8rJaVLXGS
-         x/tIMlTFa4ooxjhxb82tFOTcFgFIhwvPSvu0vuc1PnX7pdDF5PUfswEcUPI4jmKB9dDD
-         UUb24GEdGu6d54LjeGU8yCXzhO7qUSDl8uVVo9w/F2ScCGud9fsgfCDx/Hce8tKF+Lh4
-         1xJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXz/PgvQYe9I9AAMbIsAN+5cybM9rFq4csOTgXDcyInMXwVBSO5i6LT3TMzxRfcAclKWMd4+lRlQqOzkaA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj1gqPO4Nk+RjO8kRVXA1HET8Jn6F7RWtYg2hZpIXAKngIAoyH
-	RES+RKUnmDPtb+9Vaw8+ZCDE1NFZBguT8JOtf/4lTm0rtH2aSPBd2rZXjDTP4ehKng/qvOVZmX7
-	xu9L3MYq1vLe95DIRYQQqHG7CQrTvrnjc0ufemJmUPLxqvDNKYRAN7r/ncuQkfg==
-X-Gm-Gg: ASbGncuia4Hp7VYa/C8vt5uzrEJB5W5AKwazlKs69O0Lx8ilStFQ5Ra8Eh4bClUSkFb
-	EZGlwzxGf7fD8Fc1gZKm1SvbaB46UZtRtLiwwkibTI98v1S5MeMzV8oydO9WZGLaN2sm94lx1KF
-	xjqOSa0idbC8brhm+tzZ0RaFbbvTMpOCFbFuWvA8UM+wQQag53kdkyQBx1eq+IY2d3KbrXsbR/5
-	fAWaxtu7RYHB9jLCmcjl/1BDJzp0+2X9vPfHT6V718s08guUVhJHX1FNBEzPvi/MSPx1+u5Edyh
-	UcLWcbc1YqmkSw==
-X-Received: by 2002:a05:600c:a49:b0:431:4f29:9539 with SMTP id 5b1f17b1804b1-433ce4af26bmr148804045e9.32.1732611840677;
-        Tue, 26 Nov 2024 01:04:00 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHqku7owNzsRW4AuiyjR+T5rbYPu8TV/N4RKw6ZJEgH4GkTL9H/M9yM3mzoUSyueykAQvBQkA==
-X-Received: by 2002:a05:600c:a49:b0:431:4f29:9539 with SMTP id 5b1f17b1804b1-433ce4af26bmr148803685e9.32.1732611840280;
-        Tue, 26 Nov 2024 01:04:00 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fafeceesm12715211f8f.37.2024.11.26.01.03.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 01:03:59 -0800 (PST)
-Message-ID: <fe2a253c-4b2f-4cb3-b58d-66192044555f@redhat.com>
-Date: Tue, 26 Nov 2024 10:03:58 +0100
+	bh=5f2eYYsgbnilvvGv6kfWZlrURuKYE01nYMXFSZO+CyA=;
+	b=13vWsjDHYhzBdkOBOoIQkx+BvDRwbpr2ckJZHYzqPlkTOteDMLKN0gZFYMhHdOVPi/rOZR
+	J8r8zdtq8C4cLlSdcQLKRs1QVETa65EwLozWKdwTuBPLNS3x+7gXY6GEEDoja+vG8sNNyM
+	TUBIHfTczZmHZB0kYc2FSSw23X3/Vjs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732611898;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5f2eYYsgbnilvvGv6kfWZlrURuKYE01nYMXFSZO+CyA=;
+	b=j/0VTlI7AqtNlJi9JfRfu1dVpcmDT0no/zhK9WpEVWJdRV9WaRQBVfgP8TmWHLrcyAxR7z
+	ySIn+Zr7nYydLNDQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=SDIrGaJF;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=JUKaAptb
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732611892; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5f2eYYsgbnilvvGv6kfWZlrURuKYE01nYMXFSZO+CyA=;
+	b=SDIrGaJFSoldVSKU7nrTtrHBmgysZ733lurbpggrrr4ZJRil47McBPVjHWaJ2QRNVCsPOF
+	ILnHoCm/P040GUV3YEUIHfQwuv60c8Qus4q2U5x2Wy0/nxzwIqaj4c4zajTiZxGFNO4bl4
+	RUvQtCO/MGEdcAI8nHJtwM/xE7EiEs0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732611892;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5f2eYYsgbnilvvGv6kfWZlrURuKYE01nYMXFSZO+CyA=;
+	b=JUKaAptbJW2PELHPxN8u8f4fKPEplHyIdYtrawAecksFnjjLgmmGcAiF1ztINIYDwkUXrO
+	W7Tei+zun/R1A8Ag==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D7E5713890;
+	Tue, 26 Nov 2024 09:04:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id EpZpNDSPRWcDfgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 26 Nov 2024 09:04:52 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 8E42CA08CA; Tue, 26 Nov 2024 10:04:52 +0100 (CET)
+Date: Tue, 26 Nov 2024 10:04:52 +0100
+From: Jan Kara <jack@suse.cz>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: linux-ext4@vger.kernel.org, Jan Kara <jack@suse.com>,
+	Ritesh Harjani <ritesh.list@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Baokun Li <libaokun1@huawei.com>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v2 2/2] ext4: protect ext4_release_dquot against freezing
+Message-ID: <20241126090452.ohggr3daqskllxjk@quack3>
+References: <20241121123855.645335-1-ojaswin@linux.ibm.com>
+ <20241121123855.645335-3-ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panic: remove spurious empty line to clean warning
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- patches@lists.linux.dev, stable@vger.kernel.org
-References: <20241125233332.697497-1-ojeda@kernel.org>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <20241125233332.697497-1-ojeda@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241121123855.645335-3-ojaswin@linux.ibm.com>
+X-Rspamd-Queue-Id: E6FA11F457
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[vger.kernel.org,suse.com,gmail.com,huawei.com,suse.cz];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	SEM_URIBL_UNKNOWN_FAIL(0.00)[suse.cz:server fail];
+	SEM_URIBL_FRESH15_UNKNOWN_FAIL(0.00)[suse.cz:server fail,suse.com:query timed out];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.51
+X-Spam-Flag: NO
 
-On 26/11/2024 00:33, Miguel Ojeda wrote:
-> Clippy in the upcoming Rust 1.83.0 spots a spurious empty line since the
-> `clippy::empty_line_after_doc_comments` warning is now enabled by default
-> given it is part of the `suspicious` group [1]:
+On Thu 21-11-24 18:08:55, Ojaswin Mujoo wrote:
+> Protect ext4_release_dquot against freezing so that we
+> don't try to start a transaction when FS is frozen, leading
+> to warnings.
 > 
->      error: empty line after doc comment
->         --> drivers/gpu/drm/drm_panic_qr.rs:931:1
->          |
->      931 | / /// They must remain valid for the duration of the function call.
->      932 | |
->          | |_
->      933 |   #[no_mangle]
->      934 | / pub unsafe extern "C" fn drm_panic_qr_generate(
->      935 | |     url: *const i8,
->      936 | |     data: *mut u8,
->      937 | |     data_len: usize,
->      ...   |
->      940 | |     tmp_size: usize,
->      941 | | ) -> u8 {
->          | |_______- the comment documents this function
->          |
->          = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#empty_line_after_doc_comments
->          = note: `-D clippy::empty-line-after-doc-comments` implied by `-D warnings`
->          = help: to override `-D warnings` add `#[allow(clippy::empty_line_after_doc_comments)]`
->          = help: if the empty line is unintentional remove it
+> Further, avoid taking the freeze protection if a transaction
+> is already running so that we don't need end up in a deadlock
+> as described in
 > 
-> Thus remove the empty line.
-
-Thanks for this patch, it looks good to me.
-
-Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
-
+>   46e294efc355 ext4: fix deadlock with fs freezing and EA inodes
 > 
-> Cc: stable@vger.kernel.org
-> Fixes: cb5164ac43d0 ("drm/panic: Add a QR code panic screen")
-> Link: https://github.com/rust-lang/rust-clippy/pull/13091 [1]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+
+Looks good to me (the 0-day reports seem to be due to wrong merge). Feel
+free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > ---
-> I added the Fixes and stable tags since it would be nice to keep the 6.12 LTS
-> Clippy-clean (since that one is the first that supports several Rust compilers).
+>  fs/ext4/super.c | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
 > 
->   drivers/gpu/drm/drm_panic_qr.rs | 1 -
->   1 file changed, 1 deletion(-)
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 16a4ce704460..f7437a592359 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -6887,12 +6887,25 @@ static int ext4_release_dquot(struct dquot *dquot)
+>  {
+>  	int ret, err;
+>  	handle_t *handle;
+> +	bool freeze_protected = false;
+> +
+> +	/*
+> +	 * Trying to sb_start_intwrite() in a running transaction
+> +	 * can result in a deadlock. Further, running transactions
+> +	 * are already protected from freezing.
+> +	 */
+> +	if (!ext4_journal_current_handle()) {
+> +		sb_start_intwrite(dquot->dq_sb);
+> +		freeze_protected = true;
+> +	}
+>  
+>  	handle = ext4_journal_start(dquot_to_inode(dquot), EXT4_HT_QUOTA,
+>  				    EXT4_QUOTA_DEL_BLOCKS(dquot->dq_sb));
+>  	if (IS_ERR(handle)) {
+>  		/* Release dquot anyway to avoid endless cycle in dqput() */
+>  		dquot_release(dquot);
+> +		if (freeze_protected)
+> +			sb_end_intwrite(dquot->dq_sb);
+>  		return PTR_ERR(handle);
+>  	}
+>  	ret = dquot_release(dquot);
+> @@ -6903,6 +6916,10 @@ static int ext4_release_dquot(struct dquot *dquot)
+>  	err = ext4_journal_stop(handle);
+>  	if (!ret)
+>  		ret = err;
+> +
+> +	if (freeze_protected)
+> +		sb_end_intwrite(dquot->dq_sb);
+> +
+>  	return ret;
+>  }
+>  
+> -- 
+> 2.43.5
 > 
-> diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
-> index 09500cddc009..ef2d490965ba 100644
-> --- a/drivers/gpu/drm/drm_panic_qr.rs
-> +++ b/drivers/gpu/drm/drm_panic_qr.rs
-> @@ -929,7 +929,6 @@ fn draw_all(&mut self, data: impl Iterator<Item = u8>) {
->   /// * `tmp` must be valid for reading and writing for `tmp_size` bytes.
->   ///
->   /// They must remain valid for the duration of the function call.
-> -
->   #[no_mangle]
->   pub unsafe extern "C" fn drm_panic_qr_generate(
->       url: *const i8,
-> 
-> base-commit: b7ed2b6f4e8d7f64649795e76ee9db67300de8eb
-> --
-> 2.47.0
-> 
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
