@@ -1,336 +1,139 @@
-Return-Path: <linux-kernel+bounces-422808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 534B69D9E6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:36:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 983289D9E79
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 21:43:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97AF2B23F0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:36:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79AAAB26089
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 20:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730DD1DF251;
-	Tue, 26 Nov 2024 20:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F0C1DED68;
+	Tue, 26 Nov 2024 20:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="WBHFgiRk"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="doXOCRiu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895448831;
-	Tue, 26 Nov 2024 20:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732653355; cv=pass; b=rfSsn9hOsS+alSWRSG0WmRb8wlmuhN+QuaZCE7pMfCzgmLWja7efBaPuDPHc0JjwE6zEWnyxUJeA0nTNMOsh4+1qzK/86NY1qKlRmYO095MAcWSm6DZhNXGFcha9O+toc7/+XvsXJhmQXOhXFEhygMcnzgR614I7eu+6EdVjLuA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732653355; c=relaxed/simple;
-	bh=oYOtntpDvZDcAE1axDzAgwBAetq/xAM+8HYHGR6qVnc=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=T46VP8ODJUC7ZFlBqL5Y0pXdxXX8RaNT9f0O9fFsGaZVf4xJ8uB8fxSIuLKIRC1febdzVG+2rJSmVVI6bWYZyBk1HUs9v1UPkUgBO1hBUBXGv3Uafo6ktnIojftZNf6ZeOuErGFtX+sYThYYKCXgSWlr9Q4k2yzoOrkgojVNr7w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=WBHFgiRk; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732653310; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=d41CKAubd5L90gTgWCJQBtLtwpcTZlFqvUjYkFrqXiiU00ThSJfV2QtBcIVXiPK/6CCw97tpVR9tqdDqwfucR+V7kVW/Z5R1krfn2rGOMXakDwMQL392cBoK74jQD5HJemUr3PzkJ5H6pG7joQtQTq2Dg6pR82wv8ksxJiZhxfY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732653310; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=SAJtL7Uot7Tvvtn5TFr/p1Mn40JIW9WD6CuXpqLxZAY=; 
-	b=AGde0CyTeA4rr1E7VxgoJ7LYTjH52zK90bzjRFnfrApO9NPI81TwuCRchYYiPm6jOs6XIh+zOsVduoFBtSiQxW19xmk7gTxiVWQq0YSqDxjCmP6h9Thq7Yk1BGXbZEUDjLW76IFxibH7uoOEppRq8L7vWOdLmUobT9R5xCHZqVU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732653310;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=SAJtL7Uot7Tvvtn5TFr/p1Mn40JIW9WD6CuXpqLxZAY=;
-	b=WBHFgiRklD+93GzjOJFOjK31F8UnV2wY6LiY5nmux0uute+Y+xdyPSJoh0OTUAVW
-	b3v4HnMq4b8q1P/VaNKOMbwfDXO05qA1D2zJF1REiOw+ZfBMGDwQABktRxoLx5y83x9
-	ACGas3AMdCdtf0WsSGf0NN89gkYoe2Mwy5kCWd6c=
-Received: by mx.zohomail.com with SMTPS id 1732653306963110.44702479474108;
-	Tue, 26 Nov 2024 12:35:06 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF438831;
+	Tue, 26 Nov 2024 20:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732653801; cv=none; b=fABbry36qR65nQCcxBRZZo5Dsk6XCcd9IC6a3WFsVGzmcz6obBCl/zG+jmJKoCz3AT+KwdQ21zdO4siPGRWA0JDYmqwHS2fqkVTBN6llUA8GsI1dTJn9GXHSglypFyk1TrbX6aH/DdtxKG0YVlUrBA8GJuS9fcE8BI1UI5ENdqc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732653801; c=relaxed/simple;
+	bh=/M6nrZ8/zOV0HJkhNSsy+3xCar9R3UKeeL0bjP0pyQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=HELuYiz+Dq/gFJ6JOYoYZ5P8UwkbmIO4J2q+LKH31CMTldkHraUcZAU7laW1pckT4vhrS2vxwQCsLy+kSvM2XR7BJ0KzsYgdYykTzwao8uIXBbAy5CktG49ndJerZRr93fb8LNiUS2DfwavrFssAXusnoWiN7mFVuy4eSLUTJ+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=doXOCRiu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C280AC4CECF;
+	Tue, 26 Nov 2024 20:43:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732653801;
+	bh=/M6nrZ8/zOV0HJkhNSsy+3xCar9R3UKeeL0bjP0pyQI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=doXOCRiu/Zjf30f5FKqcQba6vTE1T8OradgNvFa48alLNp1h4wzMOYV/5j3+8yPm9
+	 NcTBALs1ozS3SW4lm5HCGDtWLhxTaB9y4wLXz6IRbc9BaZlqMhRRvuTwsUGlbAdi2c
+	 Hrcr3LIuwsnnguj0aUsoGyyZHi07QQ6d+nUiVjhMhN4PLesr3Uyp1jlBAt/Ol6kg+K
+	 gjrnEgMusW5WvXH1y4evhozML33+owJsW9AGkW06PblNeUsOOPJy/6ebkl/6KLg1/y
+	 YxPQfVZUpI1MfWTWEIJq/UBXeJXNJHyV/vQiCheF8psmKJM4hWYQZl0qZ0ggqDm5iT
+	 VVRiWGpz5qXHw==
+Date: Tue, 26 Nov 2024 17:43:18 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Michel Lind <michel@michel-slm.name>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>,
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH 1/1 perf-tools] perf MANIFEST: Add
+ arch/*/include/uapi/asm/bpf_perf_event.h to the perf tarball
+Message-ID: <Z0Yy5u42Q1hWoEzz@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [WIP RFC v2 04/35] rust: drm/kms: Introduce the main
- ModeConfigObject traits
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20240930233257.1189730-5-lyude@redhat.com>
-Date: Tue, 26 Nov 2024 17:34:50 -0300
-Cc: dri-devel@lists.freedesktop.org,
- rust-for-linux@vger.kernel.org,
- Asahi Lina <lina@asahilina.net>,
- Danilo Krummrich <dakr@kernel.org>,
- mcanal@igalia.com,
- airlied@redhat.com,
- zhiw@nvidia.com,
- cjia@nvidia.com,
- jhubbard@nvidia.com,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@redhat.com>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- open list <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <4D4D46ED-62C0-4B6A-A560-68D5F546AE21@collabora.com>
-References: <20240930233257.1189730-1-lyude@redhat.com>
- <20240930233257.1189730-5-lyude@redhat.com>
-To: Lyude Paul <lyude@redhat.com>
-X-Mailer: Apple Mail (2.3826.200.121)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Lyude,
+Needed to build tools/lib/bpf/ on various arches other than x86_64,
+notably arm64 when using the perf tarballs generated by:
 
-> On 30 Sep 2024, at 20:09, Lyude Paul <lyude@redhat.com> wrote:
->=20
-> The KMS API has a very consistent idea of a "mode config object", =
-which
-> includes any object with a drm_mode_object struct embedded in it. =
-These
-> objects have their own object IDs which DRM exposes to userspace, and =
-we
-> introduce the ModeConfigObject trait to represent any object matching =
-these
-> characteristics.
->=20
-> One slightly less consistent trait of these objects however: some mode
-> objects have a reference count, while others don't. Since rust =
-requires
-> that we are able to define the lifetime of an object up-front, we =
-introduce
-> two other super-traits of ModeConfigObject for this:
->=20
-> * StaticModeObject - this trait represents any mode object which does =
-not
->  have a reference count of its own. Such objects can be considered to
->  share the lifetime of their parent KMS device
-> * RcModeObject - this trait represents any mode object which does have =
-its
->  own reference count. Objects implementing this trait get a free =
-blanket
->  implementation of AlwaysRefCounted, and as such can be used with the =
-ARef
->  container without us having to implement AlwaysRefCounted for each
->  individual mode object.
->=20
-> This will be able to handle most lifetimes we'll need with one =
-exception:
-> it's entirely possible a driver may want to hold a "owned" reference =
-to a
-> static mode object. We allow for this by introducing the KmsRef =
-container,
-> which grabs an owned refcount to the parent KMS device of a
-> StaticModeObject and holds a pointer to said object - essentially =
-allowing
-> it to act identically to an owned refcount by preventing the device's
-> lifetime from ending until the KmsRef is dropped. I choose not to use
-> AlwaysRefCounted for this as holding a refcount to the device has its =
-own
-> set of implications since if you forget to drop the KmsRef the device =
-will
-> never be destroyed.
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
-> rust/bindings/bindings_helper.h |   1 +
-> rust/kernel/drm/kms.rs          | 107 ++++++++++++++++++++++++++++++++
-> 2 files changed, 108 insertions(+)
->=20
-> diff --git a/rust/bindings/bindings_helper.h =
-b/rust/bindings/bindings_helper.h
-> index 9803e0ecac7c1..ba1871b05b7fa 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -17,6 +17,7 @@
-> #include <drm/drm_gem.h>
-> #include <drm/drm_gem_framebuffer_helper.h>
-> #include <drm/drm_gem_shmem_helper.h>
-> +#include <drm/drm_mode_object.h>
-> #include <drm/drm_ioctl.h>
-> #include <kunit/test.h>
-> #include <linux/blk-mq.h>
-> diff --git a/rust/kernel/drm/kms.rs b/rust/kernel/drm/kms.rs
-> index d3558a5eccc54..f1a8ba4b7e296 100644
-> --- a/rust/kernel/drm/kms.rs
-> +++ b/rust/kernel/drm/kms.rs
-> @@ -228,3 +228,110 @@ impl<T, K> KmsDriver for T
-> where
->     T: Driver<Kms =3D K>,
->     K: Kms<Driver =3D T> {}
-> +
-> +/// A modesetting object in DRM.
-> +///
-> +/// This is any type of object where the underlying C object contains =
-a [`struct drm_mode_object`].
-> +///
-> +/// [`struct drm_mode_object`]: srctree/include/drm/drm_mode_object.h
-> +pub trait ModeObject: Sealed + Send + Sync {
+  $ make help | grep perf-
+    perf-tar-src-pkg    - Build the perf source tarball with no compression
+    perf-targz-src-pkg  - Build the perf source tarball with gzip compression
+    perf-tarbz2-src-pkg - Build the perf source tarball with bz2 compression
+    perf-tarxz-src-pkg  - Build the perf source tarball with xz compression
+    perf-tarzst-src-pkg - Build the perf source tarball with zst compression
+  $
 
-Can you briefly document why these bounds are needed?
+Building with BPF support was opt-in in perf for a long time, and
+testing it via the tarball main kernel Makefile targets in an
+architecture other than x86_64 was an odd case.
 
-> +    /// The parent driver for this [`ModeObject`].
-> +    type Driver: KmsDriver;
-> +
-> +    /// Return the [`Device`] for this [`ModeObject`].
-> +    fn drm_dev(&self) -> &Device<Self::Driver>;
-> +
-> +    /// Return a pointer to the [`struct drm_mode_object`] for this =
-[`ModeObject`].
-> +    ///
-> +    /// [`struct drm_mode_object`]: =
-(srctree/include/drm/drm_mode_object.h)
-> +    fn raw_mode_obj(&self) -> *mut bindings::drm_mode_object;
-> +}
-> +
-> +/// A trait for modesetting objects which don't come with their own =
-reference-counting.
-> +///
-> +/// Some [`ModeObject`] types in DRM do not have a reference count. =
-These types are considered
-> +/// "static" and share the lifetime of their parent [`Device`]. To =
-retrieve an owned reference to
-> +/// such types, see [`KmsRef`].
-> +///
-> +/// # Safety
-> +///
-> +/// This trait must only be implemented for modesetting objects which =
-do not have a refcount within
-> +/// their [`struct drm_mode_object`], otherwise [`KmsRef`] can't =
-guarantee the object will stay
-> +/// alive.
-> +///
-> +/// [`struct drm_mode_object`]: =
-(srctree/include/drm/drm_mode_object.h)
-> +pub unsafe trait StaticModeObject: ModeObject {}
-> +
-> +/// An owned reference to a [`StaticModeObject`].
-> +///
-> +/// Note that since [`StaticModeObject`] types share the lifetime of =
-their parent [`Device`], the
-> +/// parent [`Device`] will stay alive as long as this type exists. =
-Thus, users should be aware that
-> +/// storing a [`KmsRef`] within a [`ModeObject`] is a circular =
-reference.
-> +///
-> +/// # Invariants
-> +///
-> +/// `self.0` points to a valid instance of `T` throughout the =
-lifetime of this type.
-> +pub struct KmsRef<T: StaticModeObject>(NonNull<T>);
-> +
-> +// SAFETY: Owned references to DRM device are thread-safe.
-> +unsafe impl<T: StaticModeObject> Send for KmsRef<T> {}
-> +unsafe impl<T: StaticModeObject> Sync for KmsRef<T> {}
-> +
-> +impl<T: StaticModeObject> From<&T> for KmsRef<T> {
-> +    fn from(value: &T) -> Self {
-> +        // We will drop the reference we leak here in Drop
-> +        value.drm_dev().inc_ref();
-> +
-> +        Self(value.into())
-> +    }
-> +}
-> +
-> +impl<T: StaticModeObject> Drop for KmsRef<T> {
-> +    fn drop(&mut self) {
-> +        // SAFETY: We're reclaiming the reference we leaked in =
-From<&T>
-> +        drop(unsafe { ARef::from_raw(self.drm_dev().into()) })
-> +    }
-> +}
-> +
-> +impl<T: StaticModeObject> Deref for KmsRef<T> {
-> +    type Target =3D T;
-> +
-> +    fn deref(&self) -> &Self::Target {
-> +        // SAFETY: We're guaranteed object will point to a valid =
-object as long as we hold dev
-> +        unsafe { self.0.as_ref() }
-> +    }
-> +}
-> +
-> +impl<T: StaticModeObject> Clone for KmsRef<T> {
-> +    fn clone(&self) -> Self {
-> +        self.drm_dev().inc_ref();
-> +
-> +        Self(self.0)
-> +    }
-> +}
-> +
-> +/// A trait for [`ModeObject`] which is reference counted.
-> +///
-> +/// This trait is implemented by DRM for any [`ModeObject`] which has =
-a reference count provided by
-> +/// [`struct drm_mode_object`]. It provides a common implementation =
-of [`AlwaysRefCounted`], since
-> +/// all [`RcModeObject`] types use the same functions for =
-refcounting.
-> +///
-> +/// # Safety
-> +///
-> +/// The [`ModeObject`] must initialize the refcount in its [`struct =
-drm_mode_object`] field.
-> +///
-> +/// [`struct drm_mode_object`]: =
-(srctree/include/drm/drm_mode_object.h)
-> +pub unsafe trait RcModeObject: ModeObject {}
-> +
-> +unsafe impl<T: RcModeObject> AlwaysRefCounted for T {
-> +    fn inc_ref(&self) {
-> +        // SAFETY: FFI call with no special requirements
-> +        unsafe { bindings::drm_mode_object_get(self.raw_mode_obj()) }
+I had noticed this at some point earlier this year while cross building
+perf to some arches, including arm64, but it fell thru the cracks, see
+the Link tag below.
 
-Well, at least the pointer has to be valid. I assume that passing =
-core::ptr::null_mut() here will crash,
-for example. Also, do we have to worry about races? T is Sync, so I =
-assume you mean to have
-this call reachable from multiple threads.
+Fix it now by adding those arch/*/include/uapi/asm/bpf_perf_event.h
+files to the MANIFEST file used in building the perf source tarball.
 
-The kref docs seem to indicate this is not a problem:
+Tested with:
 
-```
-This way, it doesn=E2=80=99t matter what order the two threads handle =
-the data, the kref_put() handles knowing when the data is not referenced =
-any more and releasing it. The kref_get() does not require a lock, since =
-we already have a valid pointer that we own a refcount for. The put =
-needs no lock because nothing tries to get the data without already =
-holding a pointer.
-```
+  perfbuilder@number:~$ time dm debian:experimental-x-arm64
+     1    21.60 debian:experimental-x-arm64   : Ok   aarch64-linux-gnu-gcc (Debian 14.1.0-5) 14.1.0  flex 2.6.4
+  BUILD_TARBALL_HEAD=d31a974f6edc576f84c35be9526fec549a3b3520
+  $
+  $ git log --oneline -1 d31a974f6edc576f84c35be9526fec549a3b3520
+  d31a974f6edc576f (HEAD -> perf-tools-next) perf MANIFEST: Add arch/*/include/uapi/asm/bpf_perf_event.h to the perf tarball
+  $
 
-Regardless, IMHO it=E2=80=99s good to document it here as well.
-=20
-> +    }
-> +
-> +    unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
-> +        // SAFETY: We never expose modesetting objects in our =
-interfaces to users before they're
-> +        // initialized
-> +        unsafe { =
-bindings::drm_mode_object_put(obj.as_ref().raw_mode_obj()) }
+That was previously failing:
 
-Same here, pointer must be valid.
+  perfbuilder@number:~$ grep debian:experimental-x-arm64 dm.log.old/summary
+  19     4.80 debian:experimental-x-arm64   : FAIL gcc version 14.1.0 (Debian 14.1.0-5)
+  $
+  perfbuilder@number:~$ grep -B6 'Error 1' dm.log.old/debian:experimental-x-arm64
+  In file included from /git/perf-6.12.0-rc6/tools/include/uapi/linux/bpf_perf_event.h:11,
+                   from libbpf.c:36:
+  /git/perf-6.12.0-rc6/tools/include/uapi/asm/bpf_perf_event.h:2:10: fatal error: ../../arch/arm64/include/uapi/asm/bpf_perf_event.h: No such file or directory
+      2 | #include "../../arch/arm64/include/uapi/asm/bpf_perf_event.h"
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  compilation terminated.
+  make[4]: *** [/git/perf-6.12.0-rc6/tools/build/Makefile.build:105: /tmp/build/perf/libbpf/staticobjs/libbpf.o] Error 1
+  perfbuilder@number:~$
 
-> +    }
-> +}
-> --=20
-> 2.46.1
->=20
->=20
+Fixes: 9eea8fafe33eb708 ("libbpf: fix __arg_ctx type enforcement for perf_event programs")
+Closes: https://lore.kernel.org/all/Z0UNRCRYKunbDYxP@hyperscale.parallels
+Reported-by: Michel Lind <michel@michel-slm.name>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>
+Link: https://lore.kernel.org/bpf/ZfyEgoG3JFiOs2Fs@x1/
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/MANIFEST | 1 +
+ 1 file changed, 1 insertion(+)
 
-=E2=80=94 Daniel
+diff --git a/tools/perf/MANIFEST b/tools/perf/MANIFEST
+index dc42de1785cee715..908165fcec7de3c4 100644
+--- a/tools/perf/MANIFEST
++++ b/tools/perf/MANIFEST
+@@ -1,5 +1,6 @@
+ arch/arm64/tools/gen-sysreg.awk
+ arch/arm64/tools/sysreg
++arch/*/include/uapi/asm/bpf_perf_event.h
+ tools/perf
+ tools/arch
+ tools/scripts
+-- 
+2.47.0
 
 
