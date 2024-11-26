@@ -1,135 +1,178 @@
-Return-Path: <linux-kernel+bounces-422501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 569A59D9A60
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:24:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19DD59D9A62
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:25:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4A68B2B269
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:23:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8182816587C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A0C1D61A1;
-	Tue, 26 Nov 2024 15:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE28F1D63C6;
+	Tue, 26 Nov 2024 15:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dx+nGmh8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iEMo2MWz"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6440D1D54CF;
-	Tue, 26 Nov 2024 15:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E35E1D45E5;
+	Tue, 26 Nov 2024 15:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732634590; cv=none; b=AeCKPAWQVON93XjXGO078rynogHz+lxC1UqHTCyINL2F45INo5b4JWuJmztgz1KfYw1KzAINPGx7+AO/kf1h19YjtqsxTrFINkYPbjfCBpXs4qgYKa4qMlArrrTF5TzYP9sQlc2tCoTibuqVjcUTKzSMUnSCLodlKyCkG0Dbc9Y=
+	t=1732634694; cv=none; b=UG1qBVK9n/hSMofXm3DOfGfU9KGSorvyAtiLHLO30dLcEWeNd2dfDTvHKHPqyPgUvj5gAobnJdG/jb44S8B15kQ/jj7LU/4sJNg2ZSstKpcdRoqQDKbXvGR3BPeA8jkUJn4jGXt6+sQmqr5UjjgZ5Ph8hbHz3l8hyhhTg91zQ8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732634590; c=relaxed/simple;
-	bh=BRSfxCCbOwhi2VADRh6D9j6oW5F0hLtYWnvHVw2D4Ok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GMmExANA/m+ZZYofEwSLhCBiYWK23eLRZ/Qwdbjzn8s/Uz05NMCMqEMFcEagbEHM76Y5QDTanmBjaj8Fzo34Zc8ou/WWw4Znz7fPXAXSjPlBttc8NKHbRRk4iJAcOx1NiJrV0HklJOoqsCdr6JH6Q6TdTvLnn1Cm9xnN6RyX6ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dx+nGmh8; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732634588; x=1764170588;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BRSfxCCbOwhi2VADRh6D9j6oW5F0hLtYWnvHVw2D4Ok=;
-  b=dx+nGmh866NMJ10Tg1nsKlLBgD3mDDZzwdoWfw/kZhdxYzIpG2tadKTz
-   afUGkC9SUjB+yg3FbweK70maJyKCz1l5G3m0OCILxELlr2oMkGzLG+MXf
-   I2YSlZkSQ5xcmtSDJ7rtfHUI7uEMkwTvDiEq5V/aA7idOTbvSO726/Ldy
-   912qZVQx2InkEDrH0uMdhzgB2ljuCi69sVXjPzhiD1wbAiTMh+LpIBMp4
-   RWgiCXITUoyLs4ecIyWULgI8VjwUFvywVNzScsPfpvQ4dZLmw76ayD5eC
-   KlJh4F46wzSeMleBE60Yu4HRTJmideCgcGO+/T9YYZjX5TzD3itFc58/x
-   w==;
-X-CSE-ConnectionGUID: SVCN5uZATneZegSmZm0V/Q==
-X-CSE-MsgGUID: avPopEO0RbWgX59trlVKxA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11268"; a="32859266"
-X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
-   d="scan'208";a="32859266"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 07:23:07 -0800
-X-CSE-ConnectionGUID: uzI9OrRkRESc0LNpJIAMGg==
-X-CSE-MsgGUID: QH5wPg5HS+SufPvb1ivXHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,186,1728975600"; 
-   d="scan'208";a="122496182"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 07:23:04 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tFxP3-00000001JiU-3m2Z;
-	Tue, 26 Nov 2024 17:23:01 +0200
-Date: Tue, 26 Nov 2024 17:23:01 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Alexandre Mergnat <amergnat@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Nicolas Belin <nbelin@baylibre.com>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v1 1/1] ASoc: mediatek: mt8365: Don't use "proxy" headers
-Message-ID: <Z0Xn1fMvuwR4KQbb@smile.fi.intel.com>
-References: <20241031102725.2447711-1-andriy.shevchenko@linux.intel.com>
- <ZykbMlshvlwCaeGJ@smile.fi.intel.com>
- <d7bf7863-fd24-4f8e-8cd0-d84867a997bb@sirena.org.uk>
- <dad2ecb7-e624-49c2-a7d5-0ff53b6a1686@baylibre.com>
- <Z0RkaqfID9v0age_@smile.fi.intel.com>
- <ed50c130-076c-4697-9f11-fe602c7ca03d@baylibre.com>
- <49fa1677-db35-497b-afae-caa5dccf3747@baylibre.com>
+	s=arc-20240116; t=1732634694; c=relaxed/simple;
+	bh=m8JifkIcWKn2vScoQAglbez3I2ckcKkP5Tw545MTy3s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QiaPEq3GvIO+8ZOpcWDh2wLrKCv9tebKDjTPiCaiyEAMn4CtL9w2ySv0sqwhT7B3OClOIDQLaEx4fx8bpYwKRWyMSSbfSzmtXZoJEXGgvlP2Fu52wsvtji01uZSJ78+afstHegHHi0z2ZJ1rNCSKY/MtlEAFicEBiMHZT6xz+Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iEMo2MWz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQEteBo009477;
+	Tue, 26 Nov 2024 15:24:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/1cZnQT68TGHVierbrKfkfuNZesBX//u5csAVytjwqQ=; b=iEMo2MWz5aOUwmva
+	95lAnjY5+9nYXFQduIRGGOjcliMhkeKYrAzbUqY6tMwI1ANGJzQbFjKAwGon+ws3
+	f1HnosXLMCvMu9r4t0Mtk+MNfRJ6MwArhA0w4NiEUCpwr7AwdkK3PlZn1t8vPkWj
+	TQJ1YaIPJHxGYJ2t7Gmo3YbQtBX4BmtHUs19VVyDKSTTMOzNs6pQEAQdXT2WAybs
+	C3m1IQMqX4chw9ygc179PDhJPWcII8zfOKXUUWHVQEJvqJOhSfmUwL4Ui2Rnegfh
+	swU7XQuoB/tTPQWNDgV0TjH08BdypENzIgOwfYTvx8vaKjyj9vGTgohS7FTTiIJo
+	HGKXeg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 435gha82ep-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 15:24:36 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AQFOZMg030262
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 15:24:35 GMT
+Received: from [10.216.49.153] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 26 Nov
+ 2024 07:24:29 -0800
+Message-ID: <56b6f58e-e100-4dfd-b764-a9c3f5aad887@quicinc.com>
+Date: Tue, 26 Nov 2024 20:54:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <49fa1677-db35-497b-afae-caa5dccf3747@baylibre.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: display/msm: gpu: Document A612 GPU
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Clark <robdclark@gmail.com>,
+        Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
+        "Abhinav
+ Kumar" <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241126-qcs615-gpu-dt-v1-0-a87782976dad@quicinc.com>
+ <20241126-qcs615-gpu-dt-v1-1-a87782976dad@quicinc.com>
+ <680a9f92-1d29-410b-bc63-a998d2d64e9e@kernel.org>
+Content-Language: en-US
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <680a9f92-1d29-410b-bc63-a998d2d64e9e@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 1dm9BEiApSTMSpTxBBdyVG4XYFulg3k1
+X-Proofpoint-GUID: 1dm9BEiApSTMSpTxBBdyVG4XYFulg3k1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ lowpriorityscore=0 phishscore=0 mlxscore=0 malwarescore=0 impostorscore=0
+ clxscore=1015 bulkscore=0 priorityscore=1501 suspectscore=0 adultscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411260124
 
-On Tue, Nov 26, 2024 at 11:37:26AM +0100, Alexandre Mergnat wrote:
-> On 26/11/2024 11:29, Alexandre Mergnat wrote:
-> > On 25/11/2024 12:50, Andy Shevchenko wrote:
-> > > On Mon, Nov 25, 2024 at 12:32:13PM +0100, Alexandre Mergnat wrote:
+On 11/26/2024 7:42 PM, Krzysztof Kozlowski wrote:
+> On 26/11/2024 15:06, Akhil P Oommen wrote:
+>> A612 GPU requires an additional smmu_vote clock. Update the bindings to
+>> reflect this.
+>>
+>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>> ---
+>>  .../devicetree/bindings/display/msm/gpu.yaml       | 28 ++++++++++++----------
+>>  1 file changed, 16 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/msm/gpu.yaml b/Documentation/devicetree/bindings/display/msm/gpu.yaml
+>> index 6ddc72fd85b04537ea270754a897b4e7eb269641..201150d3151b55c26c95832d36f4e02f66060a25 100644
+>> --- a/Documentation/devicetree/bindings/display/msm/gpu.yaml
+>> +++ b/Documentation/devicetree/bindings/display/msm/gpu.yaml
+>> @@ -187,6 +187,7 @@ allOf:
+>>              enum:
+>>                - qcom,adreno-610.0
+>>                - qcom,adreno-619.1
+>> +              - qcom,adreno-612.0
+> 
+> Keep things ordered.
 
-...
+Ack.
 
-> > > > Actually, after test it, "linux/of_gpio.h" isn't needed at all anymore.
-> > > > 
-> > > > That mean all added include in this patch aren't required.
-> > > Do you mean the driver doesn't not use types from types.h or dev_*() macros
-> > > from dev_printk.h? I don't believe this, sorry.
-> > 
-> > > 
-> > > Basically what you are trying to say is "let's move of_gpio.h implicit
-> > > includes to become something else's problem". It's not what this patch
-> > > intended to do.
-> > 
-> > I'm just saying that I've test a build/boot with "linux/of_gpio.h" removed and without all
-> > include added in you patch. My understand is "linux/of_gpio.h" act as proxy
-> > for the includes added in your patch, my first idea was "if I remove it, build should fail cause
-> > of lack of other includes". I can understand these missing includes are mandatory, that
-> > probably means there is another proxy header ?
-> > Maybe my test isn't consistent because it isn't possible to clear all proxy ?
-> > 
-> > If that's the case, consider my review-by.
+> 
+>>      then:
+>>        properties:
+>>          clocks:
+>> @@ -195,18 +196,21 @@ allOf:
+>>  
+>>          clock-names:
+>>            items:
+>> -            - const: core
+>> -              description: GPU Core clock
+>> -            - const: iface
+>> -              description: GPU Interface clock
+>> -            - const: mem_iface
+>> -              description: GPU Memory Interface clock
+>> -            - const: alt_mem_iface
+>> -              description: GPU Alternative Memory Interface clock
+>> -            - const: gmu
+>> -              description: CX GMU clock
+>> -            - const: xo
+>> -              description: GPUCC clocksource clock
+>> +            anyOf:
+> 
+> No, this makes everything total mess. Why xo now is allowed to be first
+> clock?
+> 
+> Drop and explain in commit msg why other devices now get smmu clock.
 
-> Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
+I thought it was okay to make this list a bit flexible. Btw, the other
+existing clock-names list for a5x and older gpus uses "anyOf".
 
-Thank you!
-Mark, would be enough to apply the change?
+I suppose the suggestion is to add a separate clock-names list for A612
+with strict ordering. Is that correct?
 
-> > I've validated some include manually. Are you using a script to parse
-> > the file and raise all necessary "linux/*" include ?
+-Akhil
 
--- 
-With Best Regards,
-Andy Shevchenko
-
+> 
+> BTW, I am pretty sure this breaks existing platforms.
+> 
+> Best regards,
+> Krzysztof
 
 
