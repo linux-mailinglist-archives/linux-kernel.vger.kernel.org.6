@@ -1,73 +1,67 @@
-Return-Path: <linux-kernel+bounces-422700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA3559D9D22
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:09:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D7799D9D28
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:13:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 442D51618D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:09:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3379FB22B80
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81341DDA0E;
-	Tue, 26 Nov 2024 18:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869601DD9AB;
+	Tue, 26 Nov 2024 18:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EqFjblAH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFnY6pgS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13AA611187;
-	Tue, 26 Nov 2024 18:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D655C11187;
+	Tue, 26 Nov 2024 18:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732644590; cv=none; b=nr18EGvAbUFZYtcw/JgbWYQXqtZirtK8OJ3fxUaHLvCyACt4iw/Tau1yhmuK6w6Ss2HFAFrzX/hnGaoJs5u+2ol4pBOYu0GURJbLqQS/LBgv9AS72i8rF8rI8LtG0unGZpN9jPQSrnwBH/WPD4BFhtyANAlECzDlIyeSCoRS2WY=
+	t=1732644755; cv=none; b=n6qKhM/9E6xJXuqKC9xGBl7fBXKkjzziz1ScBFAjnWvlxSPGX1myPxFRs5CjftMHdYLT0sri0+IvPVM6ecBT+OEGNv71luI5HJD8900ZklXgZp7rfJFC7l3nDGgkf5rcBauzVRCs7i8NGP4RFP70gsaRFc739H7XE7Kb6L+3uFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732644590; c=relaxed/simple;
-	bh=Dn68kwfusM/F6PFzcK9RRMgIKLG8Q2p95XVK2fHrCpI=;
+	s=arc-20240116; t=1732644755; c=relaxed/simple;
+	bh=JpFz0akJMPNHum+sk0nTfJd76Mo2Hn9b+Le2jMIwLko=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HdOb3CRsqfe9fYx8NLvdSWQtqA9LkkEO+B9/qVDmz4PC4Y5th0HlDAIA6e+i1PvExQYncUdHqwQSt14MftlBHKY3W7BCpgBc5dryCfvpWsxGJMbxGWa9vpJ/WcjYVKySLUL34scJqwIZcRtQQrWsWc3lJTdzQcJXAiLfYrbyG1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EqFjblAH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B27BBC4CECF;
-	Tue, 26 Nov 2024 18:09:45 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=h4Fmj1z8Bgm4wOrkoOcFRq5ghDiu2sYo375iMTc7YVINzR1PFS7DCAvMgeSDpC+kJe3HJmEkksBewwM2ZMEjkgAB8OjXXAudnAzWgQw8LVV5a1AyE7wiqJ54fhM0t3VX5z/d21g9oGY3p4EKFYd0dqeqRo0rZz/UzDWxGqZJ4Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFnY6pgS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96788C4CECF;
+	Tue, 26 Nov 2024 18:12:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732644589;
-	bh=Dn68kwfusM/F6PFzcK9RRMgIKLG8Q2p95XVK2fHrCpI=;
+	s=k20201202; t=1732644754;
+	bh=JpFz0akJMPNHum+sk0nTfJd76Mo2Hn9b+Le2jMIwLko=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EqFjblAHK+acST9EGdraw8bb/dxcuETdMlcHHy2i1lRe1YVc5tLv+qNV31V6Ab/fU
-	 IcrBVFs5YMywsHEUWNBWXWYDqHdQLGadZVOxLIoo+npNxHP62hOvbpPxwvC6jr1dDZ
-	 b1gy3AwfIi0HyO7znaTYGuIS92IrJUuIfkAg3fiiPVBlgoOnO8DfZqLoHtqYBXeqTS
-	 W+mUh9K6EAxwZLXGOyDtqxWVScl7Opw9Ms4Seyj8uidgfsZSRQ0HXA9GZNALdX/3EN
-	 PEdlmZsoef3RyvyalQg2Nm6tJfL2C9jEk6dNSRQdz5PidL7KZOgVxjhzxzD9ADbsee
-	 yb2EMIaRpeYog==
-Date: Tue, 26 Nov 2024 18:09:43 +0000
+	b=YFnY6pgSUcJClHffVaQg1C0FaOeog58eqj37DHSrJBrnNYrBVqi5fkErlh5avzuA0
+	 +ZS6hmzWcQ4i1IvhJTmnpeN1iSX/8cQquSnMj6nyb4OI60XusHiJ4/Wirruyp+obPW
+	 tPRQYrNbxL53BOqIBJ1e+L77DYCyr9Gs0elrlweMQQn3wRq8VMyQOdNtq667+/HP+M
+	 Embx/xJQnznlpb9ne391nh+c80e7HyJLJiaETuXO7G8ddvmsZYKs15WthzbXTO1UuR
+	 jN+sT/oFoR3C3EWTVrUZwASpLSpyuHU1xkCLhbGTpCl+6F3NhfF0S5BJ8iB4CEJBb5
+	 UnPxKXOfDibIw==
+Date: Tue, 26 Nov 2024 18:12:29 +0000
 From: Conor Dooley <conor@kernel.org>
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Guillaume Stols <gstols@baylibre.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Nuno Sa <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 1/9] dt-bindings: misc: Describe TI FPC202 dual port
- controller
-Message-ID: <20241126-precinct-corrode-516d3a476479@spud>
-References: <20241125-fpc202-v3-0-34e86bcb5b56@bootlin.com>
- <20241125-fpc202-v3-1-34e86bcb5b56@bootlin.com>
- <20241125-overhand-economist-5a3fc6339265@spud>
- <2072150.UuDqf3iUMg@fw-rgant>
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, jstephan@baylibre.com,
+	aardelean@baylibre.com, adureghello@baylibre.com
+Subject: Re: [PATCH 2/9] dt-bindings: iio: dac: adi-axi-adc: Add ad7606
+ variant
+Message-ID: <20241126-tiptoeing-humiliate-8c88f185942f@spud>
+References: <20241121-ad7606_add_iio_backend_software_mode-v1-0-8a693a5e3fa9@baylibre.com>
+ <20241121-ad7606_add_iio_backend_software_mode-v1-2-8a693a5e3fa9@baylibre.com>
+ <49bc9ec4-f252-4903-b5be-1d35ee8d48be@baylibre.com>
+ <20241121-wackiness-threaten-b53d2a27fbd9@spud>
+ <20241126175931.4645dbe3@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,80 +69,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="hkZzaXn6Nj+Xev9H"
+	protocol="application/pgp-signature"; boundary="mtIRv2w5CtHuPvfM"
 Content-Disposition: inline
-In-Reply-To: <2072150.UuDqf3iUMg@fw-rgant>
+In-Reply-To: <20241126175931.4645dbe3@jic23-huawei>
 
 
---hkZzaXn6Nj+Xev9H
-Content-Type: text/plain; charset=utf-8
+--mtIRv2w5CtHuPvfM
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 26, 2024 at 09:05:42AM +0100, Romain Gantois wrote:
-> Hello Conor,
+On Tue, Nov 26, 2024 at 05:59:31PM +0000, Jonathan Cameron wrote:
+> On Thu, 21 Nov 2024 19:53:53 +0000
+> Conor Dooley <conor@kernel.org> wrote:
 >=20
-> On lundi 25 novembre 2024 19:26:35 heure normale d=E2=80=99Europe central=
-e Conor Dooley wrote:
-> > On Mon, Nov 25, 2024 at 09:45:15AM +0100, Romain Gantois wrote:
-> > > The FPC202 dual port controller serves as a low speed signal aggregat=
-or
-> > > for
-> ...
-> > > +
-> > > +required:
-> > > +  - compatible
-> > > +  - gpio-controller
-> > > +  - "#gpio-cells"
-> > > +  - reg
-> > > +  - "#address-cells"
-> > > +  - "#size-cells"
-> > > +  - i2c@0
-> > > +  - i2c@1
+> > On Thu, Nov 21, 2024 at 10:57:44AM -0600, David Lechner wrote:
+> > > On 11/21/24 4:18 AM, Guillaume Stols wrote: =20
+> > > > A new compatible is added to reflect the specialized version of the=
+ HDL
+> > > > that is not covered by the IIO backend paradigm: We use the paralle=
+l =20
+> > >=20
+> > > It still is being used as an IIO backend, so I would leave out the
+> > > phrase "that is not covered by the IIO backend paradigm".
+> > >  =20
+> > > > interface to write the ADC's registers, and accessing this interface
+> > > > requires to use ADI_AXI_REG_CONFIG_RD,ADI_AXI_REG_CONFIG_WR and
+> > > > ADI_AXI_REG_CONFIG_CTRL in a custom fashion.
+> > > >=20
+> > > > Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+> > > > ---
+> > > >  Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml | 7 +++=
+++++
+> > > >  1 file changed, 7 insertions(+)
+> > > >=20
+> > > > diff --git a/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.=
+yaml b/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml
+> > > > index e1f450b80db2..43bc0440c678 100644
+> > > > --- a/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml
+> > > > +++ b/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml
+> > > > @@ -17,13 +17,20 @@ description: |
+> > > >    interface for the actual ADC, while this IP core will interface
+> > > >    to the data-lines of the ADC and handle the streaming of data in=
+to
+> > > >    memory via DMA.
+> > > > +  In some cases, the AXI ADC interface is used to perform speciali=
+zed
+> > > > +  operation to a particular ADC, e.g access the physical bus throu=
+gh
+> > > > +  some special register to write ADC registers.
+> > > > +  In this case, a different compatible is used, and the driver beh=
+aves =20
+> > >=20
+> > > Quick, delete the word "driver" before Krzysztof sees it. :-p =20
 > >=20
-> > btw, why are both downstream ports required?
+> > And also perhaps worth mentioning under the --- line that the x in the
+> > compatible is not a wildcard, for similar reasons ;)
 >=20
-> It's because both downstream ports are always present in an FPC202 unit
-> so in my opinion, it doesn't make sense to describe an FPC202 with only o=
-ne
-> downstream port.
->=20
-> I suppose you could also consider that ports would only be described in t=
-he DT
-> if they were connected to something in the hardware, but I don't think it=
- would
-> make sense to use an FPC202 in this way. After all, the whole point of th=
-is
-> component is to act as an I2C ATR and low-speed signal aggregator for
-> downstream devices which would have address collisions if you placed them
-> on the same I2C bus.
->=20
-> But then again, you could consider that DT bindings should only describe =
-what is
-> possible, and not only what makes sense as a use case. I don't really kno=
-w how to
-> answer this question myself, so I'll refer to the maintainers' opinions.
+> Well it is, just one that is used for the IP naming to cover all
+> the different ADCs it works with.
 
-I don't really know what how this device works, which is why I am asking
-questions. If there is no use case were someone would only wire up one
-of the downstream ports then making both required is fine. I was just
-thinking that someone might only hook devices up to one side of it and
-leave the other unused entirely. Seemed like it could serve its role
-without both sides being used based on the diagram in
-https://docs.kernel.org/i2c/i2c-address-translators.html
-unless it is not possible for the atr to share the "parent" i2c bus with
-other devices?
+In "our" terms, when talking about bindings, is not a wildcard.
+As you say below, the x refers to a specific IP that works with several
+different ADCs, rather than attempting to use a single compatible for
+multiple different IPs.
 
---hkZzaXn6Nj+Xev9H
+> "The AXI AD7606x IP core can be used to interface the AD7606B, AD7606C-16,
+> AD7606C-18, AD7605-4, AD7606, AD7606-6, AD7606-4, AD7607, AD7608 and AD76=
+09 devices using an FPGA."
+>=20
+> Given that's what ADI calls the IP though we are stuck with it - however
+> 'wrong' they may be :)
+>=20
+> But agreed, something to call out to keep me away from the x as well!
+>=20
+> Jonathan
+>=20
+
+--mtIRv2w5CtHuPvfM
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0YO5wAKCRB4tDGHoIJi
-0peVAP0Tx4IuAFRG1f+DIwASl/6j0oDlZVMHvalzkyIQp7Ma4QD/WL2qSBDyyW3P
-hTovWdSEjm5sUQSwdUr2MU+1r5AGpgo=
-=Hc1y
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ0YPjQAKCRB4tDGHoIJi
+0o0mAP9eMQn+s7a+nwThGQcGXUZk3MxtSyhd97ETN+/FCdpAnwD/TjydttMpZlx7
+H0cHGADUZ/iWOgOCSL15f0/lAuASKQE=
+=+O5v
 -----END PGP SIGNATURE-----
 
---hkZzaXn6Nj+Xev9H--
+--mtIRv2w5CtHuPvfM--
 
