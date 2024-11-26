@@ -1,127 +1,127 @@
-Return-Path: <linux-kernel+bounces-422111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C959D94B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:39:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EFE99D94D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:47:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF32016227C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:39:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE92BB2FA71
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 09:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00BF1BD507;
-	Tue, 26 Nov 2024 09:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FC61BCA0D;
+	Tue, 26 Nov 2024 09:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MFKsGixv"
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LVv9XbTo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C700E1B87DC;
-	Tue, 26 Nov 2024 09:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307C21BC069
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 09:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732613981; cv=none; b=PLzOkhfucPhhoto2bkpKIJQ5MDkMFpZSCOpZbIZp4F83yUkOPfiJGCzkZgra8L/FUT8TqYeGwP8G2X3k5P1p23jOexlfyp8PIymJLKfH/2/HDeVytrDbVGJOEm7BBGJklVr7VMSUhtAZOay65meqZajsiFLWARFOTGZaSd4DAps=
+	t=1732614078; cv=none; b=eMeAtKENT+Wnkjrb3R4PFRPonNBXPEeoPFPJglnvIHUQD5bHnciCar/EIoW/O3rv+fpjOwhtZaMsHMV7ZQWlN9mWnWwQUaPsvCz7oAyQm3e8vJgltSFkjtHOyMJv8IWqHw3dB0kt9F6lPKusfCAvnCHduBftBnMr89jJ1l9UBpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732613981; c=relaxed/simple;
-	bh=x5vz3UvNPlBdlG60StyTVo9p138kaUqViCWZ0XC3kVs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sLe/Ms15hYMHhgXMAQId4qOgq244XzkRmdpnVJ10qCwcoUB1nVZIgqZ6XJTGE8JIVZnDroJyquZofgpCtTan162WrCH3rir8zsWArOsy1Jr7DL8+yI2JksUAupvKYT6fx0dZFeHn3zYY/ryqPsGySu5QaaIXzFmw9tYLE5ty5eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MFKsGixv; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3ea55a2a38bso584732b6e.1;
-        Tue, 26 Nov 2024 01:39:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732613979; x=1733218779; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5VqTNP1l3I0fkOuZ3WrWUQyb1/49E8EQXioZGwnik0g=;
-        b=MFKsGixvD+9eJSCnbOjLSu8R1F3nLmWN5vBUZVVms4M1hzpOl4hRj6k49N0oFfXXMB
-         Mf9pqyGkwYlWMdAes3JlxwpWyi6k/q9D/l2R2jB248F23QsM+ya/4Y5VjvzvqkMnf/o1
-         x6N9JKQ9NqA+doG29aPJXWG6XKIMwwkthWt6d519JJcbQ+GF1A9SHoMTnk/hvcRF6tPm
-         u5FriqD3nxf2zZRfvO8to/YRT+xYHIdE3q4uRCcsyCV2zeOEnSw6muLkS/Q2vvAZbvDr
-         fX7U6W1QCuEhmpd7xF3rOMT/+3q1xteiAwgSu1lrVMCQMY5bu2rRJidX/rGmbS/Shlz3
-         cM5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732613979; x=1733218779;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5VqTNP1l3I0fkOuZ3WrWUQyb1/49E8EQXioZGwnik0g=;
-        b=rS53xcxawP3F3Ol1kTFgEl4ljZ19LmGUbHZLqS8/3VZ/o5UPMDJbjuWS55QcZSrYPP
-         hx+hqD5UQ5UjYThtPLaCPjvaSjL/+Fgt7tXwhrlMEVV5X9RKMDJtHfQ4gK43TANkpaZ4
-         OkwmZj3ZYygFlyRW8L9M9BnSBru3LdQ08T4mSOd8TTiQev7s+99K8iOpc/DmjtC4WxDC
-         thiJs5M61EQvM1NUAIzUiZ8kMXy1vkWNMuxbmnp0ISX/2mGiH+y3XC64OYnOXrKJZ2M3
-         BvYOVx/Wzh2W2/Z2yYsLwX4x/9gKVPGQ5SLpu1i2DryzXQyT13fjyu3daxWPshx7T9r7
-         Jh3A==
-X-Forwarded-Encrypted: i=1; AJvYcCX1vNpXOiBDTudc0bOU191ejyB/pojWSkZ29L5T9gCsbp5H6D4FT7dkKCBK2JO18J59Wgf+BVO0Wm/mWYQG@vger.kernel.org, AJvYcCX6wtAs7U0kwd/49WgPA/lIVK8AjUTghnmIN2aIj5jwdHgu2qwUTNy5DfBM7kRv//EHz58DLDDEV9U3@vger.kernel.org, AJvYcCXhRUdhCrKLZj/vEe2im7T7oOKCcQSVMKcae+rkI/OAf7qW71M+mqxyLHyRaGNU4mwapnUc5Lcx@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ1jHbxdEmJosLKbPz+BT2aOwb6QBeKunoguYjRPj0Y4iO4pJZ
-	FSrEK9MGPpT6xxQUwhmkhs/XvOaQD9j5OFd0c/1c9C9f3yQDFHzW
-X-Gm-Gg: ASbGncvUx5cKifdopJVgOdfWOqhSCGgTj+Jv+Ee+F9KAD6Ip+B8RrbNc5kKP7yVDCwG
-	4GbT5PBmwVmkHS21ZqTqNwlin43YhfeKPPc9rQ1Kc6wHMNP7ITbP5+8/UoUm+DN84zWLFdueK1B
-	oOHAUZ9ZVqAk7AH+8Q72yJNu/iz0FeAQudN/p4ih3Y0fJdVj0MvJiySwZu3rmlnKxnCTRHCK8u2
-	pK4mDHurBTXlqilo/4zUbCUkgmn1fZvVbAt8LjA5VRV6sXNemdb/qm5/TniN9JCL6+qtl1DLRQT
-	rF3X66GGegtpONqpdfhTahRvJXrO
-X-Google-Smtp-Source: AGHT+IGrPjDu68pnnnryOtllFazbBZWaKbpvb8qp33lzobhDwUA1rKma6IACU9y0c2nXW4nq4Bk1hA==
-X-Received: by 2002:a05:6808:2395:b0:3e7:5cfa:87d1 with SMTP id 5614622812f47-3e915aef033mr13135476b6e.27.1732613978760;
-        Tue, 26 Nov 2024 01:39:38 -0800 (PST)
-Received: from [192.168.0.100] (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de531247sm8159148b3a.104.2024.11.26.01.39.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 01:39:38 -0800 (PST)
-Message-ID: <75e4881c-8b04-4b57-ab0d-e7eb18b31a84@gmail.com>
-Date: Tue, 26 Nov 2024 17:39:31 +0800
+	s=arc-20240116; t=1732614078; c=relaxed/simple;
+	bh=r9OdyuisfODo21e6dDcPEBT9eEaMBrGCdnaFDAeXrPI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GbU0U8Q0pPWnGEud7VtKDUxSRD9GDTtSn+jTfAs6HpaEzFoZQC05SFbv4fd/xrozf6YoNBsT9zqtriDRGTSuQAdTcaNpIsVk8rCHcFDbBIYOj63SVX0e1AqM8z8gNxa/kyzUup64XmlWLcOkwPE+qsc7kA+I8Gk/T2Y8BzFPkgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LVv9XbTo; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732614077; x=1764150077;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=r9OdyuisfODo21e6dDcPEBT9eEaMBrGCdnaFDAeXrPI=;
+  b=LVv9XbToOmA9xX4ZXWx3U4ea1VqLi+XyPYkAHFbwC3gzkm7vyTBfIvDm
+   nlw8FQzJBZvkhq4UjBntSu5CC86qM6hfY86omJknzYTnHp56USE3UH1je
+   W3KmSWqjBcWIwzuuf7LI7nF49vgoNYO8WhNnyTzU5qH6L5FU8m+EU9nUK
+   mWbalePMdmvSVEcmlIfGvbHN58y89nOW/qP/zmdmS4Pktv6dVYBcPn+1X
+   lpzzkTunYebrk5fsOpiv9YayFnTRhgs1z8sTjJnrgT19cNsQTO846voux
+   6bMsmXbPdx4g9Ia0jT8oTBFDiTNYRNn+nBIoR8vYpI/OnhmNJ5fe390aA
+   g==;
+X-CSE-ConnectionGUID: xPsJx2qKTRaD1WyVWa0A0Q==
+X-CSE-MsgGUID: oovI521zSRiqz/347m5/fQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11267"; a="32135557"
+X-IronPort-AV: E=Sophos;i="6.12,185,1728975600"; 
+   d="scan'208";a="32135557"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2024 01:41:16 -0800
+X-CSE-ConnectionGUID: iKyZx3eATMqg6BagnRRgaw==
+X-CSE-MsgGUID: Ipu79WXaS5K0MVW2bIA3+Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,185,1728975600"; 
+   d="scan'208";a="96485714"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 26 Nov 2024 01:41:14 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tFs4F-0007Cp-2L;
+	Tue, 26 Nov 2024 09:41:11 +0000
+Date: Tue, 26 Nov 2024 17:40:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Paul Moore <paul@paul-moore.com>, Kees Cook <keescook@chromium.org>,
+	Serge Hallyn <serge@hallyn.com>,
+	John Johansen <john.johansen@canonical.com>
+Subject: security/lsm_syscalls.c:31:1: sparse: sparse: Using plain integer as
+ NULL pointer
+Message-ID: <202411261712.iIifCLEW-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] net: stmmac: dwmac-nuvoton: Add dwmac glue for
- Nuvoton MA35 family
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
- alexandre.torgue@foss.st.com, joabreu@synopsys.com, ychuang3@nuvoton.com,
- schung@nuvoton.com, yclu4@nuvoton.com, peppe.cavallaro@st.com,
- linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- openbmc@lists.ozlabs.org, linux-stm32@st-md-mailman.stormreply.com
-References: <20241118082707.8504-1-a0987203069@gmail.com>
- <20241118082707.8504-4-a0987203069@gmail.com>
- <klp4a7orsswfvh7s33575glcxhlwql2b7otrpchvucajydihsi@dqdkugwf5ze5>
-Content-Language: en-US
-From: Joey Lu <a0987203069@gmail.com>
-In-Reply-To: <klp4a7orsswfvh7s33575glcxhlwql2b7otrpchvucajydihsi@dqdkugwf5ze5>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Dear Uwe,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   7eef7e306d3c40a0c5b9ff6adc9b273cc894dbd5
+commit: a04a1198088a1378d0389c250cc684f649bcc91e LSM: syscalls for current process attributes
+date:   1 year ago
+config: s390-randconfig-r132-20241126 (https://download.01.org/0day-ci/archive/20241126/202411261712.iIifCLEW-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20241126/202411261712.iIifCLEW-lkp@intel.com/reproduce)
 
-Thank you for the details!
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411261712.iIifCLEW-lkp@intel.com/
 
-Uwe Kleine-König 於 11/20/2024 10:56 PM 寫道:
-> Hello,
->
-> On Mon, Nov 18, 2024 at 04:27:07PM +0800, Joey Lu wrote:
->> +static struct platform_driver nuvoton_dwmac_driver = {
->> +	.probe  = nuvoton_gmac_probe,
->> +	.remove_new = stmmac_pltfr_remove,
-> Please use .remove instead of .remove_new.
->
-> Thanks
-> Uwe
+sparse warnings: (new ones prefixed by >>)
+>> security/lsm_syscalls.c:31:1: sparse: sparse: Using plain integer as NULL pointer
+>> security/lsm_syscalls.c:31:1: sparse: sparse: Using plain integer as NULL pointer
+   security/lsm_syscalls.c:53:1: sparse: sparse: Using plain integer as NULL pointer
+   security/lsm_syscalls.c:53:1: sparse: sparse: Using plain integer as NULL pointer
+   security/lsm_syscalls.c:53:1: sparse: sparse: Using plain integer as NULL pointer
+   security/lsm_syscalls.c:53:1: sparse: sparse: Using plain integer as NULL pointer
 
-I will use .remove instead.
+vim +31 security/lsm_syscalls.c
 
-Thanks!
+    19	
+    20	/**
+    21	 * sys_lsm_set_self_attr - Set current task's security module attribute
+    22	 * @attr: which attribute to set
+    23	 * @ctx: the LSM contexts
+    24	 * @size: size of @ctx
+    25	 * @flags: reserved for future use
+    26	 *
+    27	 * Sets the calling task's LSM context. On success this function
+    28	 * returns 0. If the attribute specified cannot be set a negative
+    29	 * value indicating the reason for the error is returned.
+    30	 */
+  > 31	SYSCALL_DEFINE4(lsm_set_self_attr, unsigned int, attr, struct lsm_ctx __user *,
+    32			ctx, size_t, size, u32, flags)
+    33	{
+    34		return security_setselfattr(attr, ctx, size, flags);
+    35	}
+    36	
 
-BR,
-
-Joey
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
