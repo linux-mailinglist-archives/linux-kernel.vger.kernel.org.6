@@ -1,88 +1,141 @@
-Return-Path: <linux-kernel+bounces-422709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F7839D9D42
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:21:11 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B09649D9D46
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 19:21:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBF7E1636E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:21:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7156B23745
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 18:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421E91DD884;
-	Tue, 26 Nov 2024 18:21:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40E61DDA3F;
+	Tue, 26 Nov 2024 18:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f2jWfzqu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4A2BA3F
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 18:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C371DC19D;
+	Tue, 26 Nov 2024 18:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732645265; cv=none; b=PlbZKz58XdbSqBqCiMebaVDbYnXPBsT17MNgjjvnwmeavinSLL7cDVZOkL2zM2GsLeWqhRw93riwy3bMbcSD5hbIz/FvL0zqgq+20bYdbnT+EDcByY1Sij/NASxMaxtjlcaZIDHSQpklAAyRgxOTj+Yo7j60u7XoQUsJpy3cB9w=
+	t=1732645285; cv=none; b=txenIg7O2UYMS5QoPuVi7KTn+FHcbJJQld9m1jbeLWgWs+BptOX+cDNW/PPl7LkKjL+yOWk4h2D8zU/EPXxtkzvrjkuxJUp6uBSfI8lk8I8qcBnfFAdgFI5lgptNkc7CAWltUtQravXsKQEvn2Qww+aJ4j/i5s2K08UvOw1W3Ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732645265; c=relaxed/simple;
-	bh=F51TgaLk9uQj6zjDSSBkBm6w5S/n7KdJOxvEpnNIol8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mk9EDPrhJtSUw+ku4Go7napiYIy68Im0qtFrjbUGBzStL4qw1jeIfg54mBjTZVsliO5je+CUY0KJzlFoBV6oK56E2N6xHhghsWTGWKsVY+W425+7n4lyfk7v9QzRjG2OgKwzU2eAs0mxwYkHmPXz0anB93ZSUrNoTe4LPUzQdbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a743d76ed9so364625ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:21:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732645263; x=1733250063;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qoOBTuXmZMONzSpeUHAe5nMhij4O/OjASPmXiAfcFJ0=;
-        b=bRMw0H7sHXmaYc+sGImXfZlFn8qatspf6FvBllTiAVTZCXB3BZBEitERsPqVBp6f2H
-         nC9yNzbSDfFx+E/bmBlLwyjh3HLkhkO3ATuPZkzTNIJ6b5McbpF9GNKevSRtwYhfQzYy
-         CzXcxBrVkq67Y0C4w2U/KIJr2R9Oq1yESh+KJlDM8JsYTA+PWlRy8r37MXnUwM0AXwag
-         CD5JSx4Eze0sxKto8e1cU1pMyysG6IH2cjC3Huu4wrXMJfIxaMzpwketJBQHpzTut6C6
-         6zW2fvyC0VnS/RMTq9eEPimBUiIS1Ma07W2nlQKaHD3DytX9RPeuFU0ce1wT8aIJyYCF
-         a56Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXn7Hc2FxVThuDcxpXfHHz7xXu4jH/+lRZDkkLaPeK5HI72eYBqPuB1avxpjJlRN65BnZLvtRFR3WcDnD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0CXRWIE8Jqh8F4Aa5CwtX+4RbWGT6jguZNlgV0nEQfz+dyq81
-	RVFsTHkDMkwSHNY4IxAVOBc/MpJSe7qnTKcXMN63ypvpIEGDlTJ6kjj8sgMkBBmD2iau1yGZt+c
-	rRMrgmIrwPWYbNMjEyIeQnF7wOUcItNgEGjUDA9wf/eNAznspElQqjm4=
-X-Google-Smtp-Source: AGHT+IHr6y+DblGQxKReJZn1KE5Jw+j2+buY/3AUa/LxGVAj+eCSoMZ3vbMBxMwGDLazwUo8ZaHvFCD/unJNQDa9ElLxKRsPw7/x
+	s=arc-20240116; t=1732645285; c=relaxed/simple;
+	bh=aYpJqi2ZUZUQP64G0QKJQ92EvvD7/P/coIAeXaPIROo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rLTjYbhKEhwAbVEjxF9ZQvVswIS+bTUlo0JxYo54bnU7spkQHVu8RoooYUeSY4FZKJY4NZS6my0E5YvPFAJrK/8K6HL21x06hi9yWmqoLrDsgl6z/LROFFrT2X2M+WJ2pDU4MBt27g60GgJqTgnfwUKJvIeKYP8J3klfw0acyi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f2jWfzqu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 899D0C4CECF;
+	Tue, 26 Nov 2024 18:21:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732645284;
+	bh=aYpJqi2ZUZUQP64G0QKJQ92EvvD7/P/coIAeXaPIROo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=f2jWfzquJVNZLOuwfn+yvtB+iPqsmVcoYgNML9rfT/FBW1vvR7uh91igxHewVVazf
+	 Qood18mxlsXBQQIDCOwLstmIffrqi2cl8fQ9cw5OA/L8hFMZcs6Az+BY4JtY1MhIMz
+	 ds0zya42vKifA9zsnOzIMEsVt9VvDJfHDITVHvgY9WyWEFXxsLFEzx7vbGRHipBgpW
+	 KZdAaMTfUyx6pFHrIDdeIgWx20K/q1R4TPoU3+1JXxP8ScWDM3/mv7EWcvoyebuQdk
+	 b28G2EKjfOhyOaOscsuyJqYW0h1AWqRbP3Br4V3/GtCjEQP/1HEJByZGMQejaJ6ZbI
+	 UrQQUSNCATa+A==
+Date: Tue, 26 Nov 2024 18:21:16 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Guillaume Stols <gstols@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, dlechner@baylibre.com, jstephan@baylibre.com,
+ aardelean@baylibre.com, adureghello@baylibre.com
+Subject: Re: [PATCH 3/9] iio:adc: ad7606: Move the software mode
+ configuration
+Message-ID: <20241126182116.3ef16e2a@jic23-huawei>
+In-Reply-To: <20241121-ad7606_add_iio_backend_software_mode-v1-3-8a693a5e3fa9@baylibre.com>
+References: <20241121-ad7606_add_iio_backend_software_mode-v1-0-8a693a5e3fa9@baylibre.com>
+	<20241121-ad7606_add_iio_backend_software_mode-v1-3-8a693a5e3fa9@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:168b:b0:3a7:abdb:4a37 with SMTP id
- e9e14a558f8ab-3a7c523e8acmr1911585ab.8.1732645263694; Tue, 26 Nov 2024
- 10:21:03 -0800 (PST)
-Date: Tue, 26 Nov 2024 10:21:03 -0800
-In-Reply-To: <20241126172834.78149-1-leocstone@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6746118f.050a0220.21d33d.001d.GAE@google.com>
-Subject: Re: [syzbot] [f2fs?] WARNING in f2fs_rename2
-From: syzbot <syzbot+82064afd8bd59070fc22@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, leocstone@gmail.com, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, yuchao0@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Thu, 21 Nov 2024 10:18:25 +0000
+Guillaume Stols <gstols@baylibre.com> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> This is a preparation for the intoduction of the sofware functions in
+> the iio backend version of the driver.
+> The software mode configuration must be executed once the channels are
+> configured, and the number of channels is known. This is not the case
+> before iio-backend's configuration is called, and iio backend version of
+> the driver does not have a timestamp channel.
+> Also the sw_mode_config callback is configured during the
+> iio-backend configuration.
+> For clarity purpose, I moved the entire block instead of just the
+> concerned function calls.
+> 
+> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+> ---
+>  drivers/iio/adc/ad7606.c | 25 ++++++++++++++-----------
+>  1 file changed, 14 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
+> index 893b93b86aa7..828603ed18f6 100644
+> --- a/drivers/iio/adc/ad7606.c
+> +++ b/drivers/iio/adc/ad7606.c
+> @@ -1246,17 +1246,6 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
+>  			return -ERESTARTSYS;
+>  	}
+>  
+> -	st->write_scale = ad7606_write_scale_hw;
+> -	st->write_os = ad7606_write_os_hw;
+> -
+> -	ret = ad7606_sw_mode_setup(indio_dev);
+Isn't this the only call to this function?
 
-Reported-by: syzbot+82064afd8bd59070fc22@syzkaller.appspotmail.com
-Tested-by: syzbot+82064afd8bd59070fc22@syzkaller.appspotmail.com
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = ad7606_chan_scales_setup(indio_dev);
+> -	if (ret)
+> -		return ret;
+> -
+>  	/* If convst pin is not defined, setup PWM. */
+>  	if (!st->gpio_convst) {
+>  		st->cnvst_pwm = devm_pwm_get(dev, NULL);
+> @@ -1334,6 +1323,20 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
+>  			return ret;
+>  	}
+>  
+> +	st->write_scale = ad7606_write_scale_hw;
+> +	st->write_os = ad7606_write_os_hw;
+> +
+> +	st->sw_mode_en = st->chip_info->sw_setup_cb &&
+> +			 device_property_present(st->dev, "adi,sw-mode");
+> +	if (st->sw_mode_en) {
+> +		indio_dev->info = &ad7606_info_sw_mode;
+> +		st->chip_info->sw_setup_cb(indio_dev);
 
-Tested on:
+Where did this callback come from?
 
-commit:         7eef7e30 Merge tag 'for-6.13/dm-changes' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=172a0dc0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b5a5b40f7e7e7d63
-dashboard link: https://syzkaller.appspot.com/bug?extid=82064afd8bd59070fc22
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14279530580000
+Looks like this and the next patch need tidying up so each does
+one distinct thing.
 
-Note: testing is done by a robot and is best-effort only.
+> +	}
+> +
+> +	ret = ad7606_chan_scales_setup(indio_dev);
+> +	if (ret)
+> +		return ret;
+> +
+>  	return devm_iio_device_register(dev, indio_dev);
+>  }
+>  EXPORT_SYMBOL_NS_GPL(ad7606_probe, IIO_AD7606);
+> 
+
 
