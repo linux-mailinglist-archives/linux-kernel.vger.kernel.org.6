@@ -1,118 +1,107 @@
-Return-Path: <linux-kernel+bounces-422378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A3319D98D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:48:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B245A9D98DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:50:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3F42283ECC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:48:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AB381647D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB4E1D515E;
-	Tue, 26 Nov 2024 13:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40A11D515E;
+	Tue, 26 Nov 2024 13:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="IvPnTxHO"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="OJjBfNEB"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE631CEE96;
-	Tue, 26 Nov 2024 13:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7998B1CEAC7;
+	Tue, 26 Nov 2024 13:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732628918; cv=none; b=XOV1kw7if2D4dM+mBBm3z+zqAOgP4sZmhqJv2GA25DuMCWjjt2UeyXDG3GOW2r6q0i+ZEoFjlKTRjn+7ST4KQ4VN+Qo+73DjW9KQffwZt7svTxAjp8NWFsqxkh1HNCSfjBu2Fs4qFp0jMK5FIxuf7kb5FZhgrdqGc9iK9Z4KGNw=
+	t=1732629004; cv=none; b=fg3oY5rO8LcN+pNp4px82vGcwuWrqdkgj525Lo09Z+aljdSOUn+PVewdNE/DXKu1KwCeUCvAaopAiZjMQS4wpaHucnJFVMKuWxWifpovwKODdAASkdRaaQliyUzVwUkssyu30rPcurdcutGIbtRQwCH9APhyJADGvX920fVKzCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732628918; c=relaxed/simple;
-	bh=ZKAvOwXr3qv93aa+cn8GDQk5NMxPHbHgo7mMdqPthRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KmEDgayj0wVBGl3LQjOK+/c4GaO+wvRRIQp/YTadeLzzbXVXRRy8p9P9wG2YwdKuskAmeACydtbH7Tk2AXgAsxhUG+l6LMs6YlysgaRMfbI/Bj+5JWfKgiawPUCGWe792rltH0nqdDp3OwzgvQ/gRQynGiyoJtq4ibz630Riil0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=IvPnTxHO; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=amZclqVZR4wTjHpzUyfdqRGzrVfZK9pbXNx6aTcQ9OY=; b=IvPnTxHOFuDkabpNSUxQ2IoWcs
-	9jLgd0ZMP4nYd1iWsIF5xNNdsgATmuiYiOUNKuUmmd+AiS1MwL1wSWWBcdxCqL8GteUjng7Bla0lv
-	nZoKOVyJgsHO1V8kgzPzMMT6zOSKaUdemh79NFcHk4xVYjV3zqY5H5gs0EDjMCcp7Ek8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tFvvP-00EWFb-Qx; Tue, 26 Nov 2024 14:48:19 +0100
-Date: Tue, 26 Nov 2024 14:48:19 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Frank Sae <Frank.Sae@motor-comm.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, xiaogang.fan@motor-comm.com,
-	fei.zhang@motor-comm.com, hua.sun@motor-comm.com
-Subject: Re: [PATCH net-next v2 05/21] motorcomm:yt6801: Implement the
- fxgmac_start function
-Message-ID: <fde04f06-df39-41a8-8f74-036e315e9a8b@lunn.ch>
-References: <20241120105625.22508-1-Frank.Sae@motor-comm.com>
- <20241120105625.22508-6-Frank.Sae@motor-comm.com>
- <95675880-1b93-4916-beee-e5feb6531009@lunn.ch>
- <ba24293a-77b1-4106-84d2-81ff343fc90f@motor-comm.com>
- <82e1860b-cbbf-4c82-9f1b-bf4a283e3585@lunn.ch>
- <43341290-15e3-4784-9b69-7f3f13f34e01@motor-comm.com>
- <a48d76ac-db08-46d5-9528-f046a7b541dc@motor-comm.com>
+	s=arc-20240116; t=1732629004; c=relaxed/simple;
+	bh=LDHKlvSWEbzHB5vUhCPiMjAvRh/HoM1F8Ra5jPRv8G4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NF2L4PReZEF/rKEKKIw5Xbbkfje38cqsS5nqmTPmWZG/VCsJ3XNIdUwL06/orIrwBedifso9CMT5Nlk/BH4NygEfYPqKg5Bp8PzYp2acg/1DctfX3EvmVoMI6HYGbaaUsyAMMWU+IUmRXEZ7YJKvrjnLqTOrfEmSfK/Zhx6nY9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=OJjBfNEB; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4XyP8T6K1QzlgVXv;
+	Tue, 26 Nov 2024 13:50:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1732628997; x=1735220998; bh=LDHKlvSWEbzHB5vUhCPiMjAv
+	Rh/HoM1F8Ra5jPRv8G4=; b=OJjBfNEBslumokxQFw1dfLQb8NXjU+aVp+D3qSML
+	YB64gfylUqbxQkDErbzUNySWz6Dun0eCXO9c5nfPCyxj5g03th/gV1rsBdS0dPZZ
+	YGSRKJDN7YkWgMG2scpW0LdXb9oEPQJDOOifKr17r1NalOHGVZUO9I37VEhroaIL
+	bRoGb1M8Z60+EwvkcMRrUA/fRuHAg3z4lXgYX0QqPOsZuccUpKG20gu13euudLz2
+	D1CUMC9jVdGqdI1cDv4ggffGjcDdxkN3D5RrpRcp2msZsVym0v718+2ueRDLJac+
+	U2F6e5SS75jZjRtj+t6Js3dD8vTNKpyolgB24iw3j4hTDA==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id YunbblsNHGzo; Tue, 26 Nov 2024 13:49:57 +0000 (UTC)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4XyP8K3vpBzlgTWG;
+	Tue, 26 Nov 2024 13:49:53 +0000 (UTC)
+Message-ID: <ed22e2ea-bf28-4eba-bfb1-afe9f79dc3b7@acm.org>
+Date: Tue, 26 Nov 2024 05:49:50 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a48d76ac-db08-46d5-9528-f046a7b541dc@motor-comm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: Don't wait for completion of in-flight requests
+To: John Garry <john.g.garry@oracle.com>, Qiang Ma <maqianga@uniontech.com>,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+ axboe@kernel.dk, dwagner@suse.de, ming.lei@redhat.com, hare@suse.de
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241126115008.31272-1-maqianga@uniontech.com>
+ <7c95b86b-68a0-41f8-a09c-3cb4b06fe61a@oracle.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <7c95b86b-68a0-41f8-a09c-3cb4b06fe61a@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 26, 2024 at 05:28:08PM +0800, Frank Sae wrote:
-> 
-> 
-> On 2024/11/26 11:15, Frank Sae wrote:
-> > Hi Andrew,
-> > 
-> > On 2024/11/25 22:18, Andrew Lunn wrote:
-> >>>> RGMII is unusual, you normally want RGMII_ID. Where are the 2ns delays
-> >>>> added?
-> >>>>
-> >>>
-> >>> Yes, you are right. PHY_INTERFACE_MODE_RGMII should be PHY_INTERFACE_MODE_RGMII_ID.
-> >>> YT6801 NIC integrated with YT8531S phy, and the 2ns delays added in the phy driver.
-> >>> https://elixir.bootlin.com/linux/v6.12/source/drivers/net/phy/motorcomm.c#L895
-> >>
-> >> But if you pass PHY_INTERFACE_MODE_RGMII to the PHY it is not adding
-> >> the 2ns delay. So how does this work now?
-> > 
-> > I'm sorry. Maybe PHY_INTERFACE_MODE_RGMII is enough.
-> > YT6801 is a pcie NIC chip that integrates one yt8531s phy.
-> > Therefore, a delay of 2ns is unnecessary, as the hardware has
-> >  already ensured this.
-> 
-> YT6801 looks like that:
-> 
->                       ||                      
->   ********************++**********************
->   *            | PCIE Endpoint |             *
->   *            +---------------+             *
->   *                | GMAC |                  *
->   *                +--++--+      YT6801      *
->   *                  |**|                    *
->   *         GMII --> |**| <-- MDIO           *
->   *                 +-++--+                  *
->   *                 | PHY |                  *
->   *                 +--++-+                  *
->   *********************||*********************
-> 
-> yt8531s phy driver not support GMII.
+On 11/26/24 4:21 AM, John Garry wrote:
+> On 26/11/2024 11:50, Qiang Ma wrote:
+>> diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+>> index adee6f60c966..0a2d5d9327fc 100644
+>> --- a/drivers/scsi/scsi_lib.c
+>> +++ b/drivers/scsi/scsi_lib.c
+>> @@ -2065,7 +2065,7 @@ int scsi_mq_setup_tags(struct Scsi_Host *shost)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tag_set->queue_depth =3D shost->can_que=
+ue;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tag_set->cmd_size =3D cmd_size;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tag_set->numa_node =3D dev_to_node(shos=
+t->dma_dev);
+>> -=C2=A0=C2=A0=C2=A0 tag_set->flags =3D BLK_MQ_F_SHOULD_MERGE;
+>> +=C2=A0=C2=A0=C2=A0 tag_set->flags =3D BLK_MQ_F_SHOULD_MERGE | BLK_MQ_=
+F_STACKING;
+>=20
+> This should not be set for all SCSI hosts. Some SCSI hosts rely on=20
+> bf0beec0607d.
 
-Is it really GMII? If so, add GMII to the yt8531 driver.
+Are there any SCSI hosts for which it is safe to set this flag? To me
+the above change looks like a hack that should not be merged at all. Did
+I perhaps overlook something?
 
-Often this is described as PHY_INTERFACE_MODE_INTERNAL, meaning it
-does not matter what is being used between the MAC and the PHY, it is
-internal to the SoC. You might want to add that to the PHY driver.
+Thanks,
 
-	Andrew
+Bart.
+
 
