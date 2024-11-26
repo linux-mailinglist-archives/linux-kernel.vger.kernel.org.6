@@ -1,175 +1,317 @@
-Return-Path: <linux-kernel+bounces-422174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C79C89D957D
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:25:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DA109D957F
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 11:25:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACF24B290BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:23:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4BA8B2BD04
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 10:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E560318FDBA;
-	Tue, 26 Nov 2024 10:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492201CCB50;
+	Tue, 26 Nov 2024 10:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PkhxSiNM"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="V6V9czr/"
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010070.outbound.protection.outlook.com [52.101.228.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC801CD219
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 10:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732616582; cv=none; b=TLM3EZn9EZnn2Vk7y1l8cjek4OmMkPSULvxm9Nyx8H6xiNJV9DOv1+iWYAecmCVuVMzrkWXOoWebK0wEjXN0E0wy1qk0IrGmcf20ieloB8GrH2tOLi8lIT0ooZvUlUE1cCDt5IUjUhDVyG394vWh6G9DiDR60guyjU53oCn0eog=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732616582; c=relaxed/simple;
-	bh=WD2Ififyc67QT7itZr9mWxPZ1InWr4O/7CEhRE0kxnc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BMsxL4Q8Ru43DUpCDtYLUBqaPhJFcupktW7r0CjfoGb0r4q3/tsUW1usla5EO5u+svJ/VL4Jsxjtasj9wDrXRBh0O3U3h0FIrjxZKpg0UAyAiEcjeGiVUbq9y/L84UByzEMw6dzJwYTAXp96Bs4hpWbglolubxQsD31KgLKBofo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PkhxSiNM; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53deeb6d986so43689e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 02:23:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732616578; x=1733221378; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0U6DI9UiS7mCrw7uF6OaC1EisPMexi0/iLw96bOdlu0=;
-        b=PkhxSiNMgp/MVtG/H+dKZMfu8VKIgEEuHFh4Z8tcu3/jO36KLLLg0/VNTq4ua0gvce
-         Sb3iOHQ9thuf+xVsDGRxmc9+kgo+e7Hq6vgS+rCQxHwX3qnza7d2/TYjl/AgLX2VgYCY
-         LGtCz1kI434/SEU5BzN0hu0F/AvQPUoBmMPcRL4haQMQhrDkmj592Z3UxHBXsDs2G/na
-         7QtCWneDn8gAE4K4P/LldmTmBJx7YMBogSbqWxWObByb6wJuiTvBEM43Hx+nDvrQTvPO
-         JTCRf+r11n/93EgERgjH8oZWG+cLwLLooWWGV8GpUxrMJIa3YMIEcOEjQhBc9yo0v07J
-         Rr/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732616578; x=1733221378;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0U6DI9UiS7mCrw7uF6OaC1EisPMexi0/iLw96bOdlu0=;
-        b=lx4sSqxMZSP9wqXBJJV4fGofN4DAzxkeH4M4wsDmWUeFgSNuzxTvyEqy9ibtpDpqhH
-         Bi8jXHzOpJqdDBwDKZ498qDjDLOg2hQpiVTx5GL8zO8oCQFGqguUB6ui1kjNBpb9UWa1
-         vXpyL7XHuCxCKSsaLJPoF/TNrn032h7xVmS0Kf4XhclA89sCK4mrENM9XfJaZGKDCbTV
-         XDMvdnXA5bWyUbmcMqsXSUZNbjaBA/FGxoD/A+/aW0RePG6AV3pD+pJl1KO9+uvjgU9w
-         q9yi8vIL5lU5oj51qjssFid0bsO7W+RStqOpfG2ce6JC5CE3EvLvHPtbvbz11b0ylA2y
-         np3w==
-X-Forwarded-Encrypted: i=1; AJvYcCV98bw7gxL4TED471buYBLuGxIFWgXNYb5AXyFMyNOqJuaIJSMAmbVFcg3Q4xuV+HZ2X0HqyaObeWyN0oo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMhEUUGP701Gw+5Q5MxjU/wYVXYcvI7acexyI+GrikWZPrjkfl
-	Hs8M+DLaTTO1rVTvMVwYNLnaJWnjW4ygF2QqKsZ3n6ztZRFjXHqVo4CK39fNCIw=
-X-Gm-Gg: ASbGnctvMZhvF1vdimGz4T88Mo0sNQh8pIViNomGZJZIbiSlOu7hRDF4Gjgo5QGpeSn
-	q9f0CaIFTN7NgkqMOQciSeu6JB1eb7PzZaQvwLUfLwKjZ0ApAA6C2x6RS7PY6aks4U1UojVxUnt
-	IudaBFjvy7e9+auFz3Yi3j8J35gNw46P1qeliiYoc2aP4clDc1JVR/D+EAOJvZvUxEv9uNHtk8S
-	Gg8+oLK6ZQw28RaT228kOoA4TjpbR5EbdHrcUFHhj76I8NDKZ1LXHklYxy5XELq2hnLFjU=
-X-Google-Smtp-Source: AGHT+IFaLK9Pd5Um5Yaikuh0FrdV/CYyyTM3uVzHgbDOgQuibopiqUgJ00t+FAWEy2IzhwY/faRjag==
-X-Received: by 2002:ac2:5de2:0:b0:53d:d434:500a with SMTP id 2adb3069b0e04-53dd4345056mr5681073e87.5.1732616578454;
-        Tue, 26 Nov 2024 02:22:58 -0800 (PST)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b01e1046sm228378075e9.4.2024.11.26.02.22.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 02:22:58 -0800 (PST)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Tue, 26 Nov 2024 11:22:51 +0100
-Subject: [PATCH 3/3] arm64: dts: qcom: sm8650: Add 'global' interrupt to
- the PCIe RC nodes
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBBA1BFE0C;
+	Tue, 26 Nov 2024 10:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732616606; cv=fail; b=EIrmQT/FGaS/5DZZDK5wGRVqmVL2X5y7vYCqshHERQo0Ag8Zh+T+pZqo94uweDKEE7ciBnN9keUE+rGCC8xCkrTTKvJmXwZ99W3HASEvJdU9bbt9DzYCtow5XVNTd229AgO/AdUDHWJFDxbxR6NN2xpRr94F7yxif2TU8pD7FrA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732616606; c=relaxed/simple;
+	bh=U7IJ6mWhS3rr9dXtXhojinGB5mT6H4ByevWexNkTjc0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=i0YEIOo4qMv3QNzF9Zk36ryCfpadkDh+dBsnYtD3pPxChwunc2VNgQnBBQqTyzlsmBC6WJglzL0+F4nbr21lC2h0nUDVbjoUSRNVIKG4HbPH39AXQ2VFI5ccTBQJetHGpFStdQ1QWOw+su8g+5W830ePenP3x0gClm50aAH3X5w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=V6V9czr/; arc=fail smtp.client-ip=52.101.228.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=S1cit3xagZptxEeZAiaqk8Gl+payXxvkfBIwuvkr/ZhwlNfiCP6VGt/jqaRCcaVV4wYLBo+VXWtiUjFoy3wtfIGZzh1jGp46Tyc24+KDzc50q1lTB9nqtOkOUkozdHbbf71iAG3liwoIbce0PZ5p0lFyejUmdcvCCthaiNLjs4FaruxcNy7KT8CrTuJ12QRbKjvVQQtHKgh9de29VkmTtPscXkAohojCj3xG36zfXqqU5hvEjnjL2Q0tna8T0nXedZE7nacJr8Ed3hWjJnVpDRCMBCMntMwExAln1MBsth1+/K43RO+FKTCGQo2u2Q8cNMZBI4PXHjGfJdRYyd5Htg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dE8QcP644uTUsP76Ro6Yl/9c2ACCMXIgyyq/OUoBQ9U=;
+ b=nsdSSyefbuXEx4ROZhQWLE2xTW4XmmUG1ZKeJbBp0R1hBVVy96N2Ab/TTefLlDMPGRh/r9Apii9VP22gddWUH4OZlRox6pwx90YMVTUb8ciDT/PrSOxlesGEV9I7mf4rxycaW2pquNxvSb3H/5tu24hBkfO2eQF3Ncrb8SYHDeH4upfJsOc0AKeRkjScCfCD++ePpFFZ7YcOktJa2nrofN5kgkpWSR2LKaGs541JZGo+dx/YHBW9sx5Td1fvH0KcAlWlNLW6kslEja2NxREDMhv47O4DcXxi5tchL39yQBlMdo7p4JNCg2YgDF5t6y1H6jvai5emc7OodF0DraKGWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dE8QcP644uTUsP76Ro6Yl/9c2ACCMXIgyyq/OUoBQ9U=;
+ b=V6V9czr/heUcKWMhofTgdwhNdt202v4cTFpXnFE0a9uI/8S7gBrswKoOHi/tXt+COnyWBveiasxdmeGJqX0qHOBGOIAar6/Et92kHo1hIat7lnP0XNICmO/BcZ25BIw8bdVQY1XJ+hsEuS0HWQu62A/gVOVasIZiQyR+Zs/B0pQ=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by OS3PR01MB10326.jpnprd01.prod.outlook.com (2603:1096:604:1fa::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.20; Tue, 26 Nov
+ 2024 10:23:17 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%5]) with mapi id 15.20.8182.019; Tue, 26 Nov 2024
+ 10:23:17 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Tommaso Merciai <tomm.merciai@gmail.com>, laurent.pinchart
+	<laurent.pinchart@ideasonboard.com>
+CC: Kieram Bingham <kieran.bingham+renesas@ideasonboard.com>, David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
+Subject: RE: hints around rcar_lvds.c :)
+Thread-Topic: hints around rcar_lvds.c :)
+Thread-Index: AQHbP+wmeo3akYZTEEyehR1OdpPnK7LJWnkw
+Date: Tue, 26 Nov 2024 10:23:17 +0000
+Message-ID:
+ <TY3PR01MB1134637A719B9278566422667862F2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <Z0WfwMJVCQOEZM3c@tom-desktop>
+In-Reply-To: <Z0WfwMJVCQOEZM3c@tom-desktop>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS3PR01MB10326:EE_
+x-ms-office365-filtering-correlation-id: a9845fb0-6a51-457f-84a9-08dd0e045808
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?7xYeX8TzhDPEA7YOsDeGkSkCffGO+SSPCD2fX4miUvdKRBz+ju98VFUvsnwR?=
+ =?us-ascii?Q?DPfFSDM/qLH65QOXEjbuq4s05PIWKhkUM60NWzpGcQTt6g3BC0GpMVxfJw5W?=
+ =?us-ascii?Q?EQeoTXHrp94c0UQv4BGnWImydJzTNLM/VakWOyRilnvS1pjqJlkECbttVH76?=
+ =?us-ascii?Q?O4p9cuIOp29QtVRmPLUupnKTVQ6sxm2IIwcA4lIV+Tw4rQONWS7bS6Rl9VD9?=
+ =?us-ascii?Q?2q7ggrZJW2Rh7QifvZFDp6ZPqCn6nnmoTyX2EobT8WGdjz/hDwUxIELkOye0?=
+ =?us-ascii?Q?VksgkBvvVBpDn1VN0LtNW6vcqse5/4LDoqzv9Ki+Rq/Z6Or5FKPmhYZWqCRu?=
+ =?us-ascii?Q?EcaB83nvYrALuYX22Df594RIJW7tSXe2v300FnayghQ6b1Sv3DraepzsI8z7?=
+ =?us-ascii?Q?rytW/2X/Wadr9DWO4EnWbRiFBRGiyVOm4lwv7whS6v1iyp0IdW1W2t2zPJks?=
+ =?us-ascii?Q?D/Up+0pT5GzTdlNeGJNZkl2W3sLaQocVVEW509UkgsbR61yAS5A4kGZeIxfu?=
+ =?us-ascii?Q?XGUKKpvEQcGI6x2SgCfN/PhIWwQ6HzJy4pYYIdRCgrA7D5WfjS7dWwQF/JfP?=
+ =?us-ascii?Q?dQ11NSSTu4971cH1J8oo0iFEJJI6G6b1Qz7qn9K0X+Bd2o1E8g+hDqD7oNfb?=
+ =?us-ascii?Q?Jh3nVNVyf5lBQSuNfPMuBHJq2onGj6u2HuX5vuuayjeMQT4RddAkWM6mv+73?=
+ =?us-ascii?Q?uJWM30AR1OJ1eR/OEgYqGuwkCgBOQ+JzLnPWVUv2Z/7rKys741fnkts+BuJV?=
+ =?us-ascii?Q?xb4rgTFKBMgaheDz5053M+DVIGtboHgjzrWH9iMd36hvdXaY560qGb3+I/Jq?=
+ =?us-ascii?Q?BirYcOTthMOyj3wCd8xPCSGrYL23r0qfoiGsmfzC+z+plIpkG3AMysV7bz8M?=
+ =?us-ascii?Q?cLT7psrf4KsCqtmFp3I/S2FM9EdgjxpH1/g3aVmbkM35b3KgW/ZBhsnSuSx0?=
+ =?us-ascii?Q?l+uyjUiQppORxgJ7fK2BH99YxZY9cfjxQGihKzpDO8S98Xk98L2B9Zcyne3U?=
+ =?us-ascii?Q?txencqczgOKe22FpFN/Gs1XvSrZpmuPckUD7MJt/EWOipZtJFDA99myqguOt?=
+ =?us-ascii?Q?lVkxoEabRwoI7qqUT40asJyk8kmfLISrlU6hbPhUI4iKxPTPN69on7aE4lSV?=
+ =?us-ascii?Q?CTVtl/S7l9TFhPMNBiCWxXxAf4XjUZfJAa/8CR9nhCbKEJf8vb0A4UhuBZd2?=
+ =?us-ascii?Q?NoZsc5hMZ5Sbc6jqIBHv8CP3dZka7ul7DAS+N9owyNHdep/donO60wCdy7Og?=
+ =?us-ascii?Q?mpNg/PdRG4E2XMk2+89O57RnJeYzkI++V+YInPI3apOUZXDcPoV1xki0n+MQ?=
+ =?us-ascii?Q?niprgF5FHzRth6yZhuG/m34b83eAkfJ4ZStEjz8XFUvaCu7fTTQ2EjmHU0/A?=
+ =?us-ascii?Q?QPKopzTudfBYGVplqxSUBR6ufqT+J4JIg5q0hIB0xskIajmmGQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?yXtqTUeq0KOGUETa6ZgJViKulfj6e886tLVpzI8v13rU1pzMO7QrCpz/fsbn?=
+ =?us-ascii?Q?9bCtTh6TSaIM3AWhBDfqD8Eb9qdkOo0BXB56eaxgrO4nfGDYNyA6IYgTJikX?=
+ =?us-ascii?Q?y6xq9UoRrxmEtHyOGwDuj6XqNy0nXPuAkxfozxglRgYaYsUqz0OC4SgHmt6x?=
+ =?us-ascii?Q?hB5u9JjmJjttgXgEuGzmkdtNxt6xJhU3dg2T1/PQM0R276uBsbpcA3sw1Fet?=
+ =?us-ascii?Q?ctPUo6nxpTw9mfzscRcwT5bD496X7lnIhFT7FuOl2Nxo9DeaYL00zdRUzgU9?=
+ =?us-ascii?Q?+Kw3KnEjsjRfIRe9YVytFonJl3Dt+agpfUUEGMlQQRerY/wUzGNZdUmrdCTF?=
+ =?us-ascii?Q?zRigNkp89NEw0EPFF2Ht400lKBrdxBdhMzFxMHhVesRTpGYOhc4yUpmll2bZ?=
+ =?us-ascii?Q?EWQb4+jLpbgYk8qtgB24T31R0FhxKeeG1jdpYmjF3M2JXUSYPKCKqAOZd+ai?=
+ =?us-ascii?Q?zvnjX5jJ2oo004IcDmSbX5Ujv7QEnZw674XdpnHtPiYpsqy5wJIAwc/0wFEe?=
+ =?us-ascii?Q?6ApXjPypAU7+Qxmg7vRJdpcIVYQvY2uy/u6LSxPfQCmVyuuyeNFjBZO8azSF?=
+ =?us-ascii?Q?jUZ35pGd+ANDQJKwhlU1TwmCPQLY3LTuO6EgBAtm/uaGSVwiGY0JRZyML0Wi?=
+ =?us-ascii?Q?MB8n+zKlWaiDTVvlBuvSIwJp1U0TZ8/H9oCJVTxdPuwydnTxqgqDkmNDNgwr?=
+ =?us-ascii?Q?+ftfQwBTT0jwZcoTMzjS85924sc+4uKuK8gtNw+huFMXaY9GSc47MCVJ+b7V?=
+ =?us-ascii?Q?kN/BoOdvMDv9TPt1FIjcjOZTuOi2BbpK6Rj5pZvLWFn4DWGBK7FnnZbHoYOb?=
+ =?us-ascii?Q?gDlIqF4Hw0EcLnikY98l/E4bP4u7ufqfvU2nye+HjPPjPPsF799WBg+CIZeM?=
+ =?us-ascii?Q?qGvP6vQSkuVb6gH7NDcl7exMk5ouP9V8HpqpNimqRcjCdCS7loc/PzFQPqpl?=
+ =?us-ascii?Q?E8DQ0yVGNKBm4l5SlVhk/M5J3gxFK62H1O96/qFgHyjsc9HN0a0PXqFewc9u?=
+ =?us-ascii?Q?I5gbh6kKbKO84McBgrIY4WMTjXu4fviHF1RNGBSiYjIgXT0NjuTYXD7VIjKJ?=
+ =?us-ascii?Q?mkUTAsDRw3e/+9jdYuqkiMGx7CVy6Cu3WPGZpL6F2ZkhEnCI43puWp6Cf/tJ?=
+ =?us-ascii?Q?g/1nYW16ngahZG1LyZabx+PTh7km40rmyH8Px2236H7i+/b1pkKLwIZ8zeo2?=
+ =?us-ascii?Q?/fAe+0P2u5CEgpiMlkU4j3meljAaKIoqRbWuiIUow8g4qxGOYvz1v7iXjqob?=
+ =?us-ascii?Q?010xVyusbFE6Pc+o7vRdCJGkvrjzYNr1zBwYL1ZtL1IUvxfPD1qj+gJDgMiz?=
+ =?us-ascii?Q?en9EoSYASPmWYDXCIAfyef5+Pi+ALIMaBzztBDeULTgkcrzVKavi0ASsd8+g?=
+ =?us-ascii?Q?+kld0FG88JZpNJ8krGp8I/BMjPeWWqFWEtO17oQDodWlO53M7BbDz4H1PJUD?=
+ =?us-ascii?Q?vi1UwwQ8Xtv6qZMoH8LbOUzzdb7Y06dt1MdfAURW7PJxvYFbC6xvi96AWrDE?=
+ =?us-ascii?Q?nqTqpmp9imBSLbTRM77ww/5bF14R1vgnS4B7NdlpzNIt40mFKE34B+b13x39?=
+ =?us-ascii?Q?LFxRzKqieeQ9mM90+0USA/lH90ZbrVWGKztbroy0u9BV2a28rmxlpyBLX37K?=
+ =?us-ascii?Q?AQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241126-topic-sm8x50-pcie-global-irq-v1-3-4049cfccd073@linaro.org>
-References: <20241126-topic-sm8x50-pcie-global-irq-v1-0-4049cfccd073@linaro.org>
-In-Reply-To: <20241126-topic-sm8x50-pcie-global-irq-v1-0-4049cfccd073@linaro.org>
-To: Bjorn Helgaas <bhelgaas@google.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1995;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=WD2Ififyc67QT7itZr9mWxPZ1InWr4O/7CEhRE0kxnc=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBnRaF+2QmFQqhnVY1DSzumR+/6knam238u03MuV636
- /zgDejCJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZ0WhfgAKCRB33NvayMhJ0X24D/
- wMmt7rkM44OWagYOI9CEjt33RIgQwB1KHAvRxNWq/m5WeGtPfR8rJDFm/u1QS+yDvJETaZXzoFUVhe
- eA6PMLxkFR1l/wHU1t+F1O4uzs5k5/Qrq7cOVk+ZeBTL8nrdEmmIgjyUGz8e6IRnahlgR63BN6g1yF
- unDY/rC6asESMyweqW2OwAYgVqPIfe5Zlv2M8ydNoQat6SR15is5mVWeCmWHb4MljcDyOI+IByP/nu
- NV8Y34YAu3b1Zox4VF6BQhvo0hQmhz6UVH3/nCVSgfAz7ZHzdpECfVvWUhzoVfo2youChlGSU1mTLA
- vJRNJy8BS5viN5xmb/IlUG/JhSgx5G+PAMW7DPERUJsmxQuGUYuX8WO4wpTq9cPOZBtQol8A9p/FNr
- usm/qF4CenijJlcpOK1XdCNQxTP/jf5vwVO3pXqC6qBMpr1XyGDbVatomQj9PcYWUWClNXYvAFfAwK
- 3juOOxZneew3bjBZd43FX6se8hRRQBa9eOZyX/9rCAjQ7hAdtv+icL1KqqgpHFIYsiTwbU9xvFueDV
- jq/KqXAOWHymXRcoWbetS2JV3EIGXjeEnY8NarRTubdE27KlVvya/lddZFIW8OD/pZfK9ZLeBzhMrZ
- vMpRg06HJ67f7FuMOfJYk2KXN/uXHrZRbNxQE9pkJVTen8lFmo7eYqRiMz7Q==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a9845fb0-6a51-457f-84a9-08dd0e045808
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Nov 2024 10:23:17.5955
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: FWJgv9N6e+2lPs9SpSnkhs1/NZ+DLktLxlYBHKhvSEaiBrv/mFZLM4tAuQZnRaUXD4ZQ1WVNdbf+ECy5Bw3Dv7fTeC4tflL6DBscMXpbRJ8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB10326
 
-Qcom PCIe RC controllers are capable of generating 'global' SPI interrupt
-to the host CPUs. This interrupt can be used by the device driver to
-identify events such as PCIe link specific events, safety events, etc...
++ renesas-soc
 
-Hence, add it to the PCIe RC node along with the existing MSI interrupts.
-
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- arch/arm64/boot/dts/qcom/sm8650.dtsi | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-index 01ac3769ffa62ffb83c5c51878e2823e1982eb67..f394fadf11f9ac1f781d31f514946bd5060fa56f 100644
---- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-@@ -2233,7 +2233,8 @@ pcie0: pcie@1c00000 {
- 				     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
-+				     <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "msi0",
- 					  "msi1",
- 					  "msi2",
-@@ -2241,7 +2242,8 @@ pcie0: pcie@1c00000 {
- 					  "msi4",
- 					  "msi5",
- 					  "msi6",
--					  "msi7";
-+					  "msi7",
-+					  "global";
- 
- 			clocks = <&gcc GCC_PCIE_0_AUX_CLK>,
- 				 <&gcc GCC_PCIE_0_CFG_AHB_CLK>,
-@@ -2365,7 +2367,8 @@ pcie1: pcie@1c08000 {
- 				     <GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
-+				     <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 306 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "msi0",
- 					  "msi1",
- 					  "msi2",
-@@ -2373,7 +2376,8 @@ pcie1: pcie@1c08000 {
- 					  "msi4",
- 					  "msi5",
- 					  "msi6",
--					  "msi7";
-+					  "msi7",
-+					  "global";
- 
- 			clocks = <&gcc GCC_PCIE_1_AUX_CLK>,
- 				 <&gcc GCC_PCIE_1_CFG_AHB_CLK>,
-
--- 
-2.34.1
-
+> -----Original Message-----
+> From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On Behalf Of To=
+mmaso Merciai
+> Sent: 26 November 2024 10:15
+> To: laurent.pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Kieram Bingham <kieran.bingham+renesas@ideasonboard.com>; David Airli=
+e <airlied@gmail.com>; Simona
+> Vetter <simona@ffwll.ch>; dri-devel@lists.freedesktop.org; linux-kernel@v=
+ger.kernel.org
+> Subject: hints around rcar_lvds.c :)
+>=20
+> Hi Laurent, All,
+>=20
+> Sorry for bothering.
+> Looking for some feedback :)
+>=20
+> I have a similar rcar_lvds.c IP's to handle but in my case:
+> I have lvds0 and lvds1 that are sharing some common regs (lvds_cmn).
+>=20
+>  ----------------------
+> |    -------------     |
+> |   |lvds_cmn_regs|    |
+> |    -------------     |
+> |                      |
+> |    -----------       |
+> |   | lvds0_regs |     |-----> ch0
+> |    ------------      |
+> |                      |
+> |    -----------       |
+> |   | lvds1_regs |     |-----> ch1
+> |    ------------      |
+>  ----------------------
+>=20
+>=20
+> So I'm checking 2 drm dts/driver architecture:
+>=20
+> 1st architecture:
+>  - Using a single lvds driver to handle both lvds0 and lvds1.
+>=20
+> 		 ----------------------
+> 		|                      |
+> 		|                      |
+> 		|                      |
+> du_lvds0 ------>|                      |----> ch0_lvds
+> 		|      lvds_bridge     |
+> 		|                      |
+> 		|                      |
+> du_lvds1 ------>|                      |----> ch1_lvds
+> 		|                      |
+> 		 ----------------------
+>=20
+>=20
+> Issue:
+>=20
+> Problem here is the 1 single link 2ch mode.
+> lvds0 and lvds1 can drive 2 display with 2 differents fb (fb0 and fb1).
+>=20
+> Having a single drm_bridge to drive both channel give me the following is=
+sue:
+>=20
+> In single link 2ch mode when for the first time the du encoder drm_attach=
+() the lvds bridge to the
+> encoder(du) all goes fine and fb0 is created correctly.
+>=20
+> Then again the du encoder is trying again to drm_attach() the lvds bridge=
+ but this return -EBUSY
+> obviously because is already attached.
+>=20
+> Then I think this is not the way to follow because I need 2 drm_bridges f=
+rom the same drm drive, and I
+> think this is not correct.
+> ----------
+>=20
+> 2nd architecture:
+>  - Follow rcar_lvds.c way using 2 nodes for lvds0 and lvds1:
+>=20
+> 		 ------------
+> du_lvds0 -----> |lvds0_bridge|----> ch0_lvds
+> 		 ------------
+>=20
+> 		 ------------
+> du_lvds1 -----> |lvds1_bridge|----> ch1_lvds
+> 		 ------------
+>=20
+> Issue:
+> I thinks this is an optimal approach but in my case here the problem is t=
+hat lvds0 and lvds1 share a
+> set of common registers some common clocks and common reset:
+>=20
+> My plan is to manipulate those common regs (lvds_cmn) using compatible =
+=3D "simple-mfd", "syscon"; as
+> follow:
+>=20
+> lvds_cmn: lvds-cmn {
+> 	compatible =3D "simple-mfd", "syscon";
+> 	reg =3D <common_regs>;
+>=20
+> 	lvds0: lvds0-encoder {
+>=20
+> 		ports {
+> 			#address-cells =3D <1>;
+> 			#size-cells =3D <0>;
+> 			clocks =3D <&common_clk>, <&dotclok0>, <&phyclock0>;
+> 			resets =3D <&common_rst>;
+>=20
+> 			port@0 {
+> 				reg =3D <0>;
+> 				lvds0_in: endpoint {
+> 					remote-endpoint =3D <&du_out_lvds0>;
+> 				};
+> 			};
+>=20
+> 			port@1 {
+> 				reg =3D <1>;
+> 				lvds_ch0: endpoint {
+> 				};
+> 			};
+> 		};
+> 	};
+>=20
+> 	lvds1: lvds1-encoder {
+>=20
+> 		ports {
+> 			#address-cells =3D <1>;
+> 			#size-cells =3D <0>;
+> 			clocks =3D <&common_clk>, <&dotclok1>, <&phyclock1>;
+>                         resets =3D <&common_rst>;
+>=20
+> 			port@0 {
+> 				reg =3D <0>;
+> 				lvds1_in: endpoint {
+> 					remote-endpoint =3D <&du_out_lvds1>;
+> 				};
+> 			};
+>=20
+> 			port@1 {
+> 				reg =3D <1>;
+> 				lvds_ch1: endpoint {
+> 				};
+> 			};
+> 		};
+> 	};
+> };
+> ----------
+>=20
+> I'm asking to find the best way to represent those IP's.
+> What do you think?
+> Any hints/tips would be nice.
+> Thanks in advance.
+>=20
+> Thanks & Regards,
+> Tommaso
 
