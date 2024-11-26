@@ -1,95 +1,78 @@
-Return-Path: <linux-kernel+bounces-422504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6050E9D9A6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:29:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D810B9D9A6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:28:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64DB5B22554
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:27:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F819165A77
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 15:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846061D61A5;
-	Tue, 26 Nov 2024 15:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4A31D63C6;
+	Tue, 26 Nov 2024 15:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="t6ZbDx2i";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XtWgePsm";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rHgs3+NI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KIoAM/tv"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IIDPG36Y"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997431D47DC
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 15:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7391D45E5;
+	Tue, 26 Nov 2024 15:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732634849; cv=none; b=Edwbb1zYnCbgxB5JRtl9vPGyYjrueaF4K6FiWizI23Cph68rrHKj/d/U9WaugnM8JEp3ENSzjNi2o0sdPJe+4vJwqc3Pf2AEnuQJPoAolcz/XKOxFVsRrelF4tba7ZfPrwQC4iBDsFnSI47qTsm/ZaR6YIiAeML7DeFTWCHsDdQ=
+	t=1732634889; cv=none; b=CSCXxstL9HULe9169w+Y6LunHbUOdW6cabFsuiqPJcgN5Ud+fZG2DhLjh620mwxNSxtxm6NXFfVhvYVxHN4nnIX1vFBbacXtMbX+kNMQmKGLF7GExCaJ2gfEElJ2Kc/t5ZjfbRQBgqKEowzDzLs+5hSR1uCKx0AZy0MiXq8U6f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732634849; c=relaxed/simple;
-	bh=W/DUeEbmLZMkcpi542rcgkiblMV0Id21LYPi9LfqoIs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=eVqtIRC2CMWLL+YSFmm0SBlrpkrjsgX9p+TzMW5/9+GJI9NW0wjriTx7BOeH5/7cT0pmglC3XUxgdW92cCC45Wfmax0JG6eQMYxG/4IgWUkERq0LcFIkNAY8IPdwY3J/WvZMcQgIAVjkSagJF7IRztTiW0FhDbWZrhjiUtyAKIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=t6ZbDx2i; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XtWgePsm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rHgs3+NI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KIoAM/tv; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 575851F750;
-	Tue, 26 Nov 2024 15:27:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732634844; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=A4DgMpMQcHaicV7qzhrooFxm0LSeTCsYPO16RJiC4qg=;
-	b=t6ZbDx2ibBq1e4VBUC6DyCWZ2pvireqPfUiThJvGkB5rELQfkB9SH098rSoiY3Pvg9pSVJ
-	EqQdfbJp/LpIPwUl0rBHoLqUUbHHfAVOsHf9rNuPpcSVGn0JXROm5YJg/54obdiF//QJUI
-	MCvgXHYBAF0URDk/dKW9w3727HiEQsc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732634844;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=A4DgMpMQcHaicV7qzhrooFxm0LSeTCsYPO16RJiC4qg=;
-	b=XtWgePsmHo7rfNDVokizDxEbzJ9droo45bx9L0YWNE8fiQWOE711bzTww5RXWH0oIrKpFP
-	gIjgYJ7S3MjCS0Cg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=rHgs3+NI;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="KIoAM/tv"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732634843; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=A4DgMpMQcHaicV7qzhrooFxm0LSeTCsYPO16RJiC4qg=;
-	b=rHgs3+NIo8CPXI2oFtvzxcAcdL8IvY1qmwfOBjbSR4uZgykFcJW5jT2qZeoeFDX7GCN0Y4
-	05o8lBD8QLrceSmPQLs+Gb9WO0lH6S0+yYoWXFJ2xZnisPTpOd5WCDM9cv3FZHENFFmyIG
-	nFT5TGGLIfA8nL+LsYVxJVOatzFj7Aw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732634843;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=A4DgMpMQcHaicV7qzhrooFxm0LSeTCsYPO16RJiC4qg=;
-	b=KIoAM/tvmqigLgesJpTKmgvd4GWB/gMjZ2B95kP9uqX4F2i6Pk3GbIqwZRe0GViDq/GR3z
-	356jou0xnkvlQUAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 41A4013890;
-	Tue, 26 Nov 2024 15:27:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id V7GdD9voRWfCDAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 26 Nov 2024 15:27:23 +0000
-Message-ID: <36577539-bff6-476e-8d6b-ca20e3de2391@suse.cz>
-Date: Tue, 26 Nov 2024 16:27:23 +0100
+	s=arc-20240116; t=1732634889; c=relaxed/simple;
+	bh=HOpoppkXfOx5jjRlXowirkrqsPFmSBTHZJ4g/BkEY10=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=etDJHZrYYC73UVq5qnuZprQbtEOD1DbD17grjfGKQgPhbOsSAH62kUxiUSkbiEELeaW6K6WU/MmyuvQZoXB1MOYZ+v9bWJsmbJNl3RFGq5j/IW4CKO3QpCr7znBtI//m+DeQHhp3J0Vr7x+24pUEgOAWmFGMP4Wp/0xEl0p6b6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IIDPG36Y; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ffc81cee68so19707461fa.0;
+        Tue, 26 Nov 2024 07:28:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732634886; x=1733239686; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hL92joE2utUXDrWBWHIFKxahnMA5d997Re4iaT4oJkY=;
+        b=IIDPG36Y/jlZFqchNL3UVIw44ysZsPXtUYPyjRddN9hv21i9DpXwTV0duDN2nAPlip
+         /sjlq1RN/L19+GHMX/18Qv/8/a+wVf2peZs3qCBryPySILpvH3rfcfzMSzu20t709onq
+         X6u8jwnytUyaOem5bhtLxuh7cdE5dggWcH9VXHSvnbDVW0czPFUBpYVhNdekBpt3dxpZ
+         86SD8+V+qKAkjUXSvFVtT82ac93y/etYB50TjwP3SStio5ZDCySisZbJ0+7H4nhsWgFK
+         vQ3aOpvpJ41YuqnU23FekbK+oBZDUAihoyxJnfAcFfEGsCNMbGAXaExexglwfFhmMVwH
+         p/nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732634886; x=1733239686;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hL92joE2utUXDrWBWHIFKxahnMA5d997Re4iaT4oJkY=;
+        b=XCRphnRCmfkwpCKiOsHMtSXbwBo5T1XhEVLSoXVeUDlMIRtmL3shS/OkyfbENCuWct
+         aCvx38fdzFF1FOUfhlMF5vXu/BiLgR9cLJBAZ+KHRoRebcA56Ctcjhw33ePCfC+4owRA
+         y4hiSD0DLDihaMMIgWDe59SPuVhZQggMPbYPSMAzQpBtNBmxpDe4GpLppDQlthaXcLpf
+         mOGkFyuspwL+EDpkt7RfhP1jqfS3vgSsQOBVTaZt775kKruE2cjegJnBTzMHSChefz0i
+         FVaKeRTKZTjyxLRGnLJC59J89X2MzZ0NgJ7otOH3ptP5DO0xhO0BxrizQ2i1sVNSWkS4
+         rY3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVmG2+zGTLeIpsiXF1/k8ppW8MyQDYd4DDrMuqzh56TOkN2AXDsvoHvJgKFO1IJjf9xfUGeaTB8wR5qHaY5@vger.kernel.org, AJvYcCXsCTdCzeuEqbdDyKUO1//MnBAxKGcyCbAoY6JjbOAhp34wpYNcVSI+mWNVofMw08/qLzTc1q0KFBpBe9zu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl4TxFdBwtH5YzEiWSX1vNkHworxU3qD9c82LL3ad6mDhkgF29
+	3G4+ikq785PmP8FXwgWly1k+rHwSI62npTXGCp0QpBeITEVJ9Zbq
+X-Gm-Gg: ASbGncvC/yQ/fCxItfowP4udUyC9OAnGbw+ZOq7uj6xnkY/re1mEp2vRecOsCLmmDMI
+	iBN3IdP9UX4mutQ8MneYSYgq4aTivKjCG5EBKhdhveChQDPe6QagYqGdQWoADxQfPzefxdjZIFc
+	d4Hjv2KcVGpGkh/PSEOjMKVKO7awqm0Qd8DJeuaataEoVZT1DUHZRI7peko2RrBV7e6KKWCSUqf
+	Ou4cAQBhNPFOz64LTOhzm63fuYicjerx4+u3BbASLZDdhTQOK2HxLaVzLonnokPiKw8U7aW2YKz
+	x0O+giXu
+X-Google-Smtp-Source: AGHT+IF3odjqvL+3f50N+hGfNnykpAnmeU9HNEIgrF/jthnjL150g9fKJV14VNDDx4LXOZ5E9j/TEg==
+X-Received: by 2002:a05:651c:199f:b0:2ff:d15d:649 with SMTP id 38308e7fff4ca-2ffd15d06ddmr12400911fa.31.1732634886074;
+        Tue, 26 Nov 2024 07:28:06 -0800 (PST)
+Received: from [130.235.83.196] (nieman.control.lth.se. [130.235.83.196])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffa4d171absm18923671fa.15.2024.11.26.07.28.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Nov 2024 07:28:04 -0800 (PST)
+Message-ID: <fba6bc0c-2ea8-467c-b7ea-8810c9e13b84@gmail.com>
+Date: Tue, 26 Nov 2024 16:28:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,199 +80,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] mm/slab: Avoid build bug for calls to kmalloc with a
- large constant
+Subject: Re: Regression in NFS probably due to very large amounts of readahead
+To: Jan Kara <jack@suse.cz>
+Cc: Philippe Troin <phil@fifi.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.de>
+References: <49648605-d800-4859-be49-624bbe60519d@gmail.com>
+ <3b1d4265b384424688711a9259f98dec44c77848.camel@fifi.org>
+ <4bb8bfe1-5de6-4b5d-af90-ab24848c772b@gmail.com>
+ <20241126103719.bvd2umwarh26pmb3@quack3>
+ <20241126150613.a4b57y2qmolapsuc@quack3>
 Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Dave Kleikamp <dave.kleikamp@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>,
- David Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241014105912.3207374-1-ryan.roberts@arm.com>
- <20241014105912.3207374-6-ryan.roberts@arm.com>
- <44312f4a-8b9c-49ce-9277-5873a94ca1bb@oracle.com>
- <cb9cabed-0038-42b3-b9fc-c9ba62b12781@suse.cz>
- <7fb6c5a2-b9ae-4a29-a871-2f0bdc636e41@arm.com>
- <9675f4f0-6290-43aa-bf17-6b9c2b461485@suse.cz>
- <69746c3a-72af-4c28-8f04-bcfae7a78107@arm.com>
- <ba2a3841-6dbc-4920-81f9-2fc0518ec1d3@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <ba2a3841-6dbc-4920-81f9-2fc0518ec1d3@suse.cz>
-Content-Type: text/plain; charset=UTF-8
+From: Anders Blomdell <anders.blomdell@gmail.com>
+In-Reply-To: <20241126150613.a4b57y2qmolapsuc@quack3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 575851F750
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[arm.com,oracle.com,linux-foundation.org,linux.com,google.com,gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-On 11/26/24 16:09, Vlastimil Babka wrote:
-> On 11/26/24 15:53, Ryan Roberts wrote:
->> On 26/11/2024 12:36, Vlastimil Babka wrote:
->>> On 11/26/24 13:18, Ryan Roberts wrote:
->>>> On 14/11/2024 10:09, Vlastimil Babka wrote:
->>>>> On 11/1/24 21:16, Dave Kleikamp wrote:
->>>>>> When boot-time page size is enabled, the test against KMALLOC_MAX_CACHE_SIZE
->>>>>> is no longer optimized out with a constant size, so a build bug may
->>>>>> occur on a path that won't be reached.
+
+
+On 2024-11-26 16:06, Jan Kara wrote:
+> On Tue 26-11-24 11:37:19, Jan Kara wrote:
+>> On Tue 26-11-24 09:01:35, Anders Blomdell wrote:
+>>> On 2024-11-26 02:48, Philippe Troin wrote:
+>>>> On Sat, 2024-11-23 at 23:32 +0100, Anders Blomdell wrote:
+>>>>> When we (re)started one of our servers with 6.11.3-200.fc40.x86_64,
+>>>>> we got terrible performance (lots of nfs: server x.x.x.x not
+>>>>> responding).
+>>>>> What triggered this problem was virtual machines with NFS-mounted
+>>>>> qcow2 disks
+>>>>> that often triggered large readaheads that generates long streaks of
+>>>>> disk I/O
+>>>>> of 150-600 MB/s (4 ordinary HDD's) that filled up the buffer/cache
+>>>>> area of the
+>>>>> machine.
 >>>>>
->>>>> That's rather unfortunate, the __builtin_constant_p(size) part of
->>>>> kmalloc_noprof() really expects things to resolve at compile time and it
->>>>> would be better to keep it that way.
+>>>>> A git bisect gave the following suspect:
 >>>>>
->>>>> I think it would be better if we based KMALLOC_MAX_CACHE_SIZE itself on
->>>>> PAGE_SHIFT_MAX and kept it constant, instead of introducing
->>>>> KMALLOC_SHIFT_HIGH_MAX only for some sanity checks.
->>>>>
->>>>> So if the kernel was built to support 4k to 64k, but booted as 4k, it would
->>>>> still create and use kmalloc caches up to 128k. SLUB should handle that fine
->>>>> (if not, please report it :)
+>>>>> git bisect start
 >>>>
->>>> So when PAGE_SIZE_MAX=64K and PAGE_SIZE=4K, kmalloc will support up to 128K
->>>> whereas before it only supported up to 8K. I was trying to avoid that since I
->>>> assumed that would be costly in terms of extra memory allocated for those higher
->>>> order buckets that will never be used. But I have no idea how SLUB works in
->>>> practice. Perhaps memory for the cache is only lazily allocated so we won't see
->>>> an issue in practice?
->>> 
->>> Yes the e.g. 128k slabs themselves will be lazily allocated. There will be
->>> some overhead with the management structures (struct kmem_cache etc) but
->>> much smaller.
->>> To be completely honest, some extra overhead might come to be when the slabs
->>> are allocated ans later the user frees those allocations. kmalloc_large()
->>> wwould return them immediately, while a regular kmem_cache will keep one or
->>> more per cpu for reuse. But if that becomes a visible problem we can tune
->>> those caches to discard slabs more aggressively.
->> 
->> Sorry to keep pushing on this, now that I've actually looked at the code, I feel
->> I have a slightly better understanding:
->> 
->> void *kmalloc_noprof(size_t size, gfp_t flags)
->> {
->> 	if (__builtin_constant_p(size) && size) {
->> 		
->> 		if (size > KMALLOC_MAX_CACHE_SIZE)
->> 			return __kmalloc_large_noprof(size, flags); <<< (1)
->> 
->> 		index = kmalloc_index(size);
->> 		return __kmalloc_cache_noprof(...);   <<< (2)
->> 	}
->> 	return __kmalloc_noprof(size, flags);   <<< (3)
->> }
->> 
->> So if size and KMALLOC_MAX_CACHE_SIZE are constant, we end up with this
->> resolving either to a call to (1) or (2), decided at compile time. If
->> KMALLOC_MAX_CACHE_SIZE is not constant, (1), (2) and the runtime conditional
->> need to be kept in the function.
->> 
->> But intuatively, I would have guessed that given the choice between the overhead
->> of keeping that runtime conditional vs keeping per-cpu slab caches for extra
->> sizes between 16K and 128K, then the runtime conditional would be preferable. I
->> would guess that quite a bit of memory could get tied up in those caches?
->> 
->> Why is your preference the opposite? What am I not understanding?
+>>>> 8< snip >8
+>>>>
+>>>>> # first bad commit: [7c877586da3178974a8a94577b6045a48377ff25]
+>>>>> readahead: properly shorten readahead when falling back to
+>>>>> do_page_cache_ra()
+>>>>
+>>>> Thank you for taking the time to bisect, this issue has been bugging
+>>>> me, but it's been non-deterministic, and hence hard to bisect.
+>>>>
+>>>> I'm seeing the same problem on 6.11.10 (and earlier 6.11.x kernels) in
+>>>> slightly different setups:
+>>>>
+>>>> (1) On machines mounting NFSv3 shared drives. The symptom here is a
+>>>> "nfs server XXX not responding, still trying" that never recovers
+>>>> (while the server remains pingable and other NFSv3 volumes from the
+>>>> hanging server can be mounted).
+>>>>
+>>>> (2) On VMs running over qemu-kvm, I see very long stalls (can be up to
+>>>> several minutes) on random I/O. These stalls eventually recover.
+>>>>
+>>>> I've built a 6.11.10 kernel with
+>>>> 7c877586da3178974a8a94577b6045a48377ff25 reverted and I'm back to
+>>>> normal (no more NFS hangs, no more VM stalls).
+>>>>
+>>> Some printk debugging, seems to indicate that the problem
+>>> is that the entity 'ra->size - (index - start)' goes
+>>> negative, which then gets cast to a very large unsigned
+>>> 'nr_to_read' when calling 'do_page_cache_ra'. Where the true
+>>> bug is still eludes me, though.
+>>
+>> Thanks for the report, bisection and debugging! I think I see what's going
+>> on. read_pages() can go and reduce ra->size when ->readahead() callback
+>> failed to read all folios prepared for reading and apparently that's what
+>> happens with NFS and what can lead to negative argument to
+>> do_page_cache_ra(). Now at this point I'm of the opinion that updating
+>> ra->size / ra->async_size does more harm than good (because those values
+>> show *desired* readahead to happen, not exact number of pages read),
+>> furthermore it is problematic because ra can be shared by multiple
+>> processes and so updates are inherently racy. If we indeed need to store
+>> number of read pages, we could do it through ractl which is call-site local
+>> and used for communication between readahead generic functions and callers.
+>> But I have to do some more history digging and code reading to understand
+>> what is using this logic in read_pages().
 > 
-> +CC more slab people.
+> Hum, checking the history the update of ra->size has been added by Neil two
+> years ago in 9fd472af84ab ("mm: improve cleanup when ->readpages doesn't
+> process all pages"). Neil, the changelog seems as there was some real
+> motivation behind updating of ra->size in read_pages(). What was it? Now I
+> somewhat disagree with reducing ra->size in read_pages() because it seems
+> like a wrong place to do that and if we do need something like that,
+> readahead window sizing logic should rather be changed to take that into
+> account? But it all depends on what was the real rationale behind reducing
+> ra->size in read_pages()...
 > 
-> So the above is an inline function, but constructed in a way that it should,
-> without further inline code, become
-> - a call to __kmalloc_large_noprof() for build-time constant size larger
-> than KMALLOC_MAX_CACHE_SIZE
-> - a call to __kmalloc_cache_noprof() for build-time constant size smaller
-> than KMALLOC_MAX_CACHE_SIZE, where the cache is picked from an array with
-> compile-time calculated index
-> - call to __kmalloc_noprof() for non-constant sizes otherwise
-> 
-> If KMALLOC_MAX_CACHE_SIZE stops being build-time constant, the sensible way
-> to handle it would be to #ifdef or otherwise compile out away the whole "if
-> __builtin_constant_p(size)" part and just call __kmalloc_noprof() always, so
-> we don't blow the inline paths with a KMALLOC_MAX_CACHE_SIZE check leading
-> to choice between calling __kmalloc_large_noprof() or __kmalloc_cache_noprof().
+> 								Honza
+My (rather limited) understanding of the patch is that it was intended to read those pages
+that didn't get read because the allocation of a bigger folio failed, while not redoing what
+readpages already did; how it was actually going to accomplish that is still unclear to me,
+but I even don't even quite understand the comment...
 
-Or maybe we could have PAGE_SIZE_MAX derived KMALLOC_MAX_CACHE_SIZE_MAX
-behave as the code above currently does with KMALLOC_MAX_CACHE_SIZE, and
-additionally have PAGE_SIZE_MIN derived KMALLOC_MAX_CACHE_SIZE_MIN, where
-build-time-constant size larger than KMALLOC_MAX_CACHE_SIZE_MIN (which is a
-compile-time test) is redirected to __kmalloc_noprof() for a run-time test.
+	/*
+	 * If there were already pages in the page cache, then we may have
+	 * left some gaps.  Let the regular readahead code take care of this
+	 * situation.
+	 */
 
-That seems like the optimum solution :)
+the reason for an unchanged async_size is also beyond my understanding.
 
-> I just don't believe we would waste so much memory with caches the extra
-> sizes for sizes between 16K and 128K, so would do that suggestion only if
-> proven wrong. But I wouldn't mind it that much if you chose it right away.
-> The solution earlier in this thread to patch __kmalloc_index() would be
-> worse than either of those two alternatives though.
-
-
+/Anders
 
