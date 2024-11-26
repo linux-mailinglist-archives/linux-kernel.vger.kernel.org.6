@@ -1,169 +1,146 @@
-Return-Path: <linux-kernel+bounces-421734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A6019D8F5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 01:00:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D0D09D8F5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 01:00:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5B9916A85E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:00:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE4762849AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 00:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23D612F5A5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86F75028C;
 	Tue, 26 Nov 2024 00:00:29 +0000 (UTC)
 Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5ACCB652
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A932C95
 	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 00:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732579229; cv=none; b=W+5SoElOW6HiEmucE9XCPisky8d3FUYyBSs6ks7NV8S177GPmh+19I3H/uvbsEBTYscxkZf3GQuoJhacxFz9Trd3/w2pmBtLaLF769H2k7lozIMKvXi6Wt/NJkfIyd/fgB0DXn6p1iZLTQrRWFlynfGBG7ZKsBC9JwjU6/lGaOw=
+	t=1732579229; cv=none; b=dNBBBPkgN79ln0yT8kSMArtkfIkgCdfqkCPHMKod9rkL5YvFkW4SThoiEVMOBeBquEjiQl9zAPmW695j398rlGVn7uk3+MvFh/SIG3GEVm00rw5DC9jGI7h5mpMLayBxEnGZUMa5nE71o1ChguCNTGYy/WhKm3/hlPBsgrf6Hbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732579229; c=relaxed/simple;
-	bh=DrDj1QnSaXb9gP/ddPpMjwe9GWEB9Z5CV4wUQVaggsc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=CNwC4DlyC3TZBJ5t/PU38tIznK2oBmE7R+w7gD8iSjEjDJDp0sT7VbbnN9Nx58iNY7c01fJnyM9joSXN5hwIsunmsIJ5dSuY3SEEq3w/fdDALLl/ae/kX6cRaYdXKx+1xJUCHYJ07qnYnyvEatPH3sSLKW7t+DySik8AWM5xBys=
+	bh=saG60/wynrS6wXxgMC6P/mn7yXxobC6yhLIvsWevzXQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=a68vvwUWr6H6l0CxkaNZ0Y1N7kehVw5bz35GsnTbNTwtKgQ7qVYdeO4YRRDoh7L1WecuLP30r+cdDOR2wgukmulc/tOZMdqw88TMv056A0ChMrPVIL3WlY68oo7PFCx04jfOiTMEfHWKLxxHDrlmrfXGvbVDsH0hyZOlwD7qAPs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a7807feadfso50320315ab.2
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a7b30b03ddso20795495ab.3
         for <linux-kernel@vger.kernel.org>; Mon, 25 Nov 2024 16:00:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732579226; x=1733184026;
+        d=1e100.net; s=20230601; t=1732579227; x=1733184027;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=yUtWS5qjzF/HtNV8zGu1x5TqkoyxEFzPV4ZzyOZxIF0=;
-        b=Jdkbji1u1hWV4nsvPt5axSN7eH1F/JT8ap01VdMeVlHYMCxeTHH9RDtT5GeD+C5SJR
-         6cZpLPELB2l5ujo5iHaZBOgFZ/5V3hEDs5r5+sa4/SHGt8sE/1RKGc2QjHjei/YJcCb4
-         SvVUX043Tq9EIx6SQojOhbHulwyIADmZQJJxpj3wuFUWBh7ZxokxWwzDGKwxAGWamWi5
-         6HZetESgRajCt4qVOquz2AkSFPeeyNoyu34nyZcz9edjTPQQ1HSsBPd4uQOdbeO6mK/L
-         RISJkae6azwudP7AvvDM8E+xl+oBRU8du4rrbU8YStYW3DSJsL1EPzRV7ehKqyFv2ZmL
-         GzAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVY314Hta+exqqBPdqM7bb1ylT0uOja4R9Kq4GHk4nwVUaN/qn9ioep0PeYzgFqd7txGsCrHdQUUygUcgo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9J9n441vjkW1hTHd4lp9QrXT7q2Yjp/W/Y4yPe8tc11oMrtOC
-	Z9uwOBQ8PAh0rWW6K4biCOiRtwiAfjrG03IJPEEv2+GP7CPjuihrB4RL4HbgrE/Rl7tJCzhxM2d
-	hJXI2OnWkChOPS3mFqwXQ8Crqws4q4+wb8DseOprlQ3LWXFk4f1PKOe4=
-X-Google-Smtp-Source: AGHT+IHO24vWuGFU2CS94uRrLsz4ctDQI2CFfReVD+W/pef2JKJZ4T3zRuXmo737AJc1/wGbLLyZ6zlQeTAm31SHMCKrr5n2zmwE
+        bh=gTxVRndIzMFiQrildLnogrEKpcut5mHcfiaAF0ID0rA=;
+        b=sevG5rrJO6N9MNhCUOWKFXQdCm50aVM18lhEhBh+OqizTGPnz08g8lv+PCeW28DE/o
+         01W+Dn5La8NqMZaLU6Z1uXWjp5ko+4sxdPDTFD9RFkXNbU9w0zMjdeobrYZcNuhdcsHO
+         p8a/NhOZJ8ycAMgpL2oZP5MOILTBjADORzOiR+ktHpUNwf9/JMLrHjmHhIdokcn7vKul
+         X3jNE/bRml4KGq5nDxHi7bcJ9y/QtdNAwwuqNH3lQFLLco+WZf3exoG0M/YcWrnghz1X
+         GRrU99ralMbbpiB3KsvyYTXgtRA9RkdPUEyvkilD/RL7sVX/1V26zIoEzO1cjgryeNuE
+         ABfg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZRYmDREbenRa8v9ERC3tHTAqq+yVcmcjhTHicL1jheaC30+3D0AjKZu0YDP8s13qKfWGXYT9oIbtNWIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy77Oajvh0c6Agq0n88vdTXE8n1Qm1QaAwGV4XNdYO6bjCmBkEH
+	8x/77I4L1a5gf/w6+ncxHxK3esCqhcwmQLceAoq0P2F49yqYmc+Hwa4sXl/mgu4TomueHCxx/X4
+	ZhN32t3zJkN8aue0bo3pnNRjVBuu4aT18cadlpFrt1TRhgBjG7bYKcsc=
+X-Google-Smtp-Source: AGHT+IEMqiYCWGRgxuA2PHH/ajse1RTikx/7/IqR5pUYZN/QScPO1Ga1UzSCPwcyjtT3flf9LV4CouoWbQSzenkRWhWZWlqNJzAR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a62:b0:3a7:6f1c:a084 with SMTP id
- e9e14a558f8ab-3a79afec520mr177867135ab.23.1732579226543; Mon, 25 Nov 2024
+X-Received: by 2002:a05:6e02:156f:b0:3a7:66e0:a98a with SMTP id
+ e9e14a558f8ab-3a79adc71b2mr152777095ab.9.1732579226839; Mon, 25 Nov 2024
  16:00:26 -0800 (PST)
 Date: Mon, 25 Nov 2024 16:00:26 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67450f9a.050a0220.21d33d.0002.GAE@google.com>
-Subject: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_trans_start_alloc_update
-From: syzbot <syzbot+f02ee424846cc4e04e04@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <67450f9a.050a0220.21d33d.0003.GAE@google.com>
+Subject: [syzbot] [f2fs?] WARNING in f2fs_rename2
+From: syzbot <syzbot+82064afd8bd59070fc22@syzkaller.appspotmail.com>
+To: chao@kernel.org, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, yuchao0@huawei.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    06afb0f36106 Merge tag 'trace-v6.13' of git://git.kernel.o..
+HEAD commit:    228a1157fb9f Merge tag '6.13-rc-part1-SMB3-client-fixes' o..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=124736e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ef9abe59471e0aee
-dashboard link: https://syzkaller.appspot.com/bug?extid=f02ee424846cc4e04e04
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1374b6e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=402159daa216c89d
+dashboard link: https://syzkaller.appspot.com/bug?extid=82064afd8bd59070fc22
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=164736e8580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12347b78580000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1774b6e8580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1335975f980000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/25d599464308/disk-06afb0f3.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0846a79f5c2a/vmlinux-06afb0f3.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a69b15a49da1/bzImage-06afb0f3.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/da403496381c/mount_0.gz
+disk image: https://storage.googleapis.com/syzbot-assets/d32a8e8c5aae/disk-228a1157.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/28d5c070092e/vmlinux-228a1157.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/45af4bfd9e8e/bzImage-228a1157.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/1e2338334d9b/mount_0.gz
+
+The issue was bisected to:
+
+commit 4c8ff7095bef64fc47e996a938f7d57f9e077da3
+Author: Chao Yu <yuchao0@huawei.com>
+Date:   Fri Nov 1 10:07:14 2019 +0000
+
+    f2fs: support data compression
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=150076e8580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=170076e8580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=130076e8580000
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f02ee424846cc4e04e04@syzkaller.appspotmail.com
+Reported-by: syzbot+82064afd8bd59070fc22@syzkaller.appspotmail.com
+Fixes: 4c8ff7095bef ("f2fs: support data compression")
 
-=====================================================
-BUG: KMSAN: uninit-value in bch2_alloc_to_v4_mut_inlined fs/bcachefs/alloc_background.c:447 [inline]
-BUG: KMSAN: uninit-value in bch2_trans_start_alloc_update_noupdate fs/bcachefs/alloc_background.c:472 [inline]
-BUG: KMSAN: uninit-value in bch2_trans_start_alloc_update+0x674/0x14b0 fs/bcachefs/alloc_background.c:487
- bch2_alloc_to_v4_mut_inlined fs/bcachefs/alloc_background.c:447 [inline]
- bch2_trans_start_alloc_update_noupdate fs/bcachefs/alloc_background.c:472 [inline]
- bch2_trans_start_alloc_update+0x674/0x14b0 fs/bcachefs/alloc_background.c:487
- bch2_trigger_pointer fs/bcachefs/buckets.c:588 [inline]
- __trigger_extent+0x2425/0x6810 fs/bcachefs/buckets.c:740
- bch2_trigger_extent+0x90e/0x11a0 fs/bcachefs/buckets.c:869
- bch2_key_trigger fs/bcachefs/bkey_methods.h:87 [inline]
- bch2_key_trigger_old fs/bcachefs/bkey_methods.h:101 [inline]
- btree_update_nodes_written_trans fs/bcachefs/btree_update_interior.c:651 [inline]
- btree_update_nodes_written fs/bcachefs/btree_update_interior.c:723 [inline]
- btree_interior_update_work+0x1661/0x4870 fs/bcachefs/btree_update_interior.c:861
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Uninit was stored to memory at:
- memcpy_u64s_small fs/bcachefs/util.h:393 [inline]
- bkey_reassemble fs/bcachefs/bkey.h:513 [inline]
- btree_key_cache_create fs/bcachefs/btree_key_cache.c:259 [inline]
- btree_key_cache_fill+0x13da/0x3d60 fs/bcachefs/btree_key_cache.c:309
- bch2_btree_path_traverse_cached+0x988/0xe20 fs/bcachefs/btree_key_cache.c:361
- bch2_btree_path_traverse_one+0x749/0x47b0 fs/bcachefs/btree_iter.c:1159
- bch2_btree_path_traverse fs/bcachefs/btree_iter.h:247 [inline]
- bch2_btree_iter_peek_slot+0x10b7/0x3950 fs/bcachefs/btree_iter.c:2629
- __bch2_bkey_get_iter fs/bcachefs/btree_iter.h:575 [inline]
- bch2_bkey_get_iter fs/bcachefs/btree_iter.h:589 [inline]
- bch2_trans_start_alloc_update_noupdate fs/bcachefs/alloc_background.c:464 [inline]
- bch2_trans_start_alloc_update+0x3d8/0x14b0 fs/bcachefs/alloc_background.c:487
- bch2_trigger_pointer fs/bcachefs/buckets.c:588 [inline]
- __trigger_extent+0x2425/0x6810 fs/bcachefs/buckets.c:740
- bch2_trigger_extent+0x90e/0x11a0 fs/bcachefs/buckets.c:869
- bch2_key_trigger fs/bcachefs/bkey_methods.h:87 [inline]
- bch2_key_trigger_old fs/bcachefs/bkey_methods.h:101 [inline]
- btree_update_nodes_written_trans fs/bcachefs/btree_update_interior.c:651 [inline]
- btree_update_nodes_written fs/bcachefs/btree_update_interior.c:723 [inline]
- btree_interior_update_work+0x1661/0x4870 fs/bcachefs/btree_update_interior.c:861
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Uninit was created at:
- ___kmalloc_large_node+0x22c/0x370 mm/slub.c:4219
- __kmalloc_large_node_noprof+0x3f/0x1e0 mm/slub.c:4236
- __do_kmalloc_node mm/slub.c:4252 [inline]
- __kmalloc_node_noprof+0x9d6/0xf50 mm/slub.c:4270
- __kvmalloc_node_noprof+0xc0/0x2d0 mm/util.c:658
- btree_node_data_alloc fs/bcachefs/btree_cache.c:153 [inline]
- __bch2_btree_node_mem_alloc+0x2be/0xa80 fs/bcachefs/btree_cache.c:198
- bch2_fs_btree_cache_init+0x4e4/0xb50 fs/bcachefs/btree_cache.c:653
- bch2_fs_alloc fs/bcachefs/super.c:917 [inline]
- bch2_fs_open+0x4d3a/0x5b40 fs/bcachefs/super.c:2065
- bch2_fs_get_tree+0x983/0x22d0 fs/bcachefs/fs.c:2157
- vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
- do_new_mount+0x71f/0x15e0 fs/namespace.c:3507
- path_mount+0x742/0x1f10 fs/namespace.c:3834
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x722/0x810 fs/namespace.c:4034
- __x64_sys_mount+0xe4/0x150 fs/namespace.c:4034
- x64_sys_call+0x39bf/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:166
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 1 UID: 0 PID: 75 Comm: kworker/u8:5 Not tainted 6.12.0-syzkaller-07834-g06afb0f36106 #0
+F2FS-fs (loop0): Mounted with checkpoint version = 48b305e4
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5835 at fs/inode.c:407 drop_nlink+0xc4/0x110 fs/inode.c:407
+Modules linked in:
+CPU: 1 UID: 0 PID: 5835 Comm: syz-executor143 Not tainted 6.12.0-syzkaller-08446-g228a1157fb9f #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: btree_update btree_interior_update_work
-=====================================================
+RIP: 0010:drop_nlink+0xc4/0x110 fs/inode.c:407
+Code: bb 70 07 00 00 be 08 00 00 00 e8 27 d8 e5 ff f0 48 ff 83 70 07 00 00 5b 41 5c 41 5e 41 5f 5d c3 cc cc cc cc e8 9d 40 7e ff 90 <0f> 0b 90 eb 83 44 89 e1 80 e1 07 80 c1 03 38 c1 0f 8c 5c ff ff ff
+RSP: 0018:ffffc90003e377d0 EFLAGS: 00010293
+RAX: ffffffff82170c43 RBX: 1ffff1100efa8122 RCX: ffff88802cca0000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff82170bc3 R09: 1ffff1100efa81af
+R10: dffffc0000000000 R11: ffffed100efa81b0 R12: ffff888077d40910
+R13: dffffc0000000000 R14: ffff888077d408c8 R15: dffffc0000000000
+FS:  000055558e8f7380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000066c7e0 CR3: 000000007ac16000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ f2fs_i_links_write fs/f2fs/f2fs.h:3127 [inline]
+ f2fs_rename fs/f2fs/namei.c:999 [inline]
+ f2fs_rename2+0x1b6c/0x2c30 fs/f2fs/namei.c:1272
+ vfs_rename+0xbdb/0xf00 fs/namei.c:5067
+ do_renameat2+0xd94/0x13f0 fs/namei.c:5224
+ __do_sys_renameat2 fs/namei.c:5258 [inline]
+ __se_sys_renameat2 fs/namei.c:5255 [inline]
+ __x64_sys_renameat2+0xce/0xe0 fs/namei.c:5255
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fea51a18679
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd47104348 EFLAGS: 00000246 ORIG_RAX: 000000000000013c
+RAX: ffffffffffffffda RBX: 00007ffd47104518 RCX: 00007fea51a18679
+RDX: 0000000000000004 RSI: 00000000200000c0 RDI: 0000000000000005
+RBP: 00007fea51a9b610 R08: 0000000000000000 R09: 00007ffd47104518
+R10: 0000000020000100 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffd47104508 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
 
 
 ---
@@ -173,6 +150,7 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
