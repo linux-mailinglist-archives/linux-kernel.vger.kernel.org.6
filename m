@@ -1,187 +1,135 @@
-Return-Path: <linux-kernel+bounces-422612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD5E9D9BD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:51:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72B8A9D9BDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:52:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62445281D44
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:51:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3886B281E85
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30691D9320;
-	Tue, 26 Nov 2024 16:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0D11D90CB;
+	Tue, 26 Nov 2024 16:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="biBcPkno"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nfT1tt38"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3975137E;
-	Tue, 26 Nov 2024 16:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB96137E;
+	Tue, 26 Nov 2024 16:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732639864; cv=none; b=mTp1g7rLGUlYBhGNJEtx+kP33aLzzycShqMPzghxNVGNDp8457SBCn9qzvYX8+Dry893p3zNhteHqIQN6YDy3Eb5Q03rPOcVFf3MXR4XXMpjhclCys6JQoseoPExJb/a5HhMlL4CY+Sq4b+xdB7OlXvR4i3sMvehuS5HlTwJoF0=
+	t=1732639947; cv=none; b=cZz3JoKx9BIWbGH18o3qua4kebumgx0Yhi7CUeRzKHcr+s19g9Wal01HFSRf0nEtsmHVVfxFfYDvt3I45lSZsQmZ6SaFIWwwtBXgwfDyHersM1zDUBsLUOOIL+IaN4BQ09ojmMoK7dAa0AhqsnvQ9pxkCBYYMym1dhsDOnYJbyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732639864; c=relaxed/simple;
-	bh=V+dH9H21RIpYrJrDfuVCvopbIIXZbfcyVzRClAabaAc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DeKo1i4jCiKRXdSO6r+oW9IPHJe5tLiM8Q3kce0QOaXYsQEkthA3s6YROLwfKTMqBwn2G+CvGgurKsKKAtQEMo/NFw0F7HayJKkqKG95wfLh1nWSqdF2ZkbiQc/tGyV1rZQcxbOSZWQgLPjvjz292ZS85OM8fGo26te+w4SIccE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=biBcPkno; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4728E526;
-	Tue, 26 Nov 2024 17:50:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732639836;
-	bh=V+dH9H21RIpYrJrDfuVCvopbIIXZbfcyVzRClAabaAc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=biBcPknolI9T+EGcEhncpFgyMNDPdIKzkmlRE+8joh7faCWRjDkw+zafeHcs8CGkx
-	 NufaQXryFJGRh1usjKqyoLjG5chjVB/SPMnPdE/NRnm5RsmgmstnXXoFTcUDzjFZAw
-	 iN6Vd5OS7tWcrnuiPeqn1U8ezfFPW+R/zWikR9uI=
-Date: Tue, 26 Nov 2024 18:50:49 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Armin Wolf <W_Armin@gmx.de>, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, Yunke Cao <yunkec@chromium.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>, stable@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v3 0/8] media: uvcvideo: Implement the Privacy GPIO as a
- evdev
-Message-ID: <20241126165049.GH5461@pendragon.ideasonboard.com>
-References: <CANiDSCtjpPG3XzaEOEeczZWO5gL-V_sj_Fv5=w82D6zKC9hnpw@mail.gmail.com>
- <20241114230630.GE31681@pendragon.ideasonboard.com>
- <CANiDSCt_bQ=E1fkpH1SAft1UXiHc2WYZgKDa8sr5fggrd7aiJg@mail.gmail.com>
- <d0dd293e-550b-4377-8a73-90bcfe8c2386@redhat.com>
- <CANiDSCvS1qEfS9oY=R05YhdRQJZmAjDCxVXxfVO4-=v4W1jTDg@mail.gmail.com>
- <5a199058-edab-4f9d-9e09-52305824f3bf@redhat.com>
- <20241125131428.GD32280@pendragon.ideasonboard.com>
- <233eaf78-49f1-43c1-b320-c75cfc04103f@redhat.com>
- <20241125213521.GV19381@pendragon.ideasonboard.com>
- <CANiDSCvfnNKG8KUQEeBsr3JhWjUE+nBr4BTaR-sfaQQV9ZqSwQ@mail.gmail.com>
+	s=arc-20240116; t=1732639947; c=relaxed/simple;
+	bh=SzEvCuYzq6nHjIopg144ZTJlITtvJlpA+aaAZ8oGAg4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DfU/NIM1IKV/0cRNz1mggA5IeSbcxPA+lguxsYyxGH92Y1rHU5WGFqihHg5a2KGwZI7aAodhHTyyWwZuBuN5NtLB407ZjtL3eajim2Hb2D9ndqYEWga+XxMO7GuZcsxWc3WnD8V6jXsExt53T7st8fvOZWJ9gn5YxMY8zzaU0Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nfT1tt38; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84527C4CECF;
+	Tue, 26 Nov 2024 16:52:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732639946;
+	bh=SzEvCuYzq6nHjIopg144ZTJlITtvJlpA+aaAZ8oGAg4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nfT1tt38tUJAV01LOaL7cvaZsRm2m/DZXcBfZLIE21aRzyzgWcO0zNN11sa27+k1e
+	 K36G1B5GbqOXY1RMRgvE8SX9vaVqzf5RBPUFHw7LIHpGQ+G9If7X4rRuHeeN280f0a
+	 f4Yt5FaipfwHAljDV/XnwctYMO5CtFRaYfiFEg76RS/XP4fTyKoHYMVWqRQUeeU0K7
+	 nK6kMW+Yn0ck4DpZRdq9AtY382uLKaQ0BpVvNsDHZK+dyCBKCmo5FIC2pNmgjbOMS8
+	 AM4E72kjb582jyhstKm+40TMJ2ZNGSsFLPs/Y3CJakd8EEvU96yPtYwKedshhorkvE
+	 yh+Am98mm+U6g==
+Message-ID: <d966732c-94d1-478c-94d3-6565285192eb@kernel.org>
+Date: Tue, 26 Nov 2024 17:52:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CANiDSCvfnNKG8KUQEeBsr3JhWjUE+nBr4BTaR-sfaQQV9ZqSwQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] gpu: drm: adp: Add a backlight driver for the Summit
+ LCD
+To: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Cc: Nick Chan <towinchenmi@gmail.com>, Hector Martin <marcan@marcan.st>,
+ Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241124-adpdrm-v1-0-3191d8e6e49a@gmail.com>
+ <20241124-adpdrm-v1-3-3191d8e6e49a@gmail.com>
+ <f2181c71-db23-4d94-9afb-cb8f2fc46bea@kernel.org>
+ <3a6fb7fd-eb3d-428b-a37c-f04d81e7fbd0@gmail.com>
+ <e647e8c7-6df9-44f5-abcc-34db74b8e266@kernel.org>
+ <CAMT+MTSetzODw-cbteQOgEYmEgpiFBVP5eDgjvyHGqofCU=VXg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CAMT+MTSetzODw-cbteQOgEYmEgpiFBVP5eDgjvyHGqofCU=VXg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 26, 2024 at 05:27:57PM +0100, Ricardo Ribalda wrote:
-> On Mon, 25 Nov 2024 at 22:35, Laurent Pinchart wrote:
-> > On Mon, Nov 25, 2024 at 03:41:19PM +0100, Hans de Goede wrote:
-> > > On 25-Nov-24 2:14 PM, Laurent Pinchart wrote:
-> > > > On Mon, Nov 25, 2024 at 01:01:14PM +0100, Hans de Goede wrote:
-> > > >> On 18-Nov-24 5:47 PM, Ricardo Ribalda wrote:
-> > > >>> On Mon, 18 Nov 2024 at 16:43, Hans de Goede wrote:
-> > > >>>> On 15-Nov-24 9:20 AM, Ricardo Ribalda wrote:
-> > > >>>>> On Fri, 15 Nov 2024 at 00:06, Laurent Pinchart wrote:
-> > >
-> > > <snip>
-> > >
-> > > >>>>>> Is there any ACPI- or WMI-provided information that could assist with
-> > > >>>>>> associating a privacy GPIO with a camera ?
-> > > >>
-> > > >> I just realized I did not answer this question from Laurent
-> > > >> in my previous reply.
-> > > >>
-> > > >> No unfortunately there is no ACPI- or WMI-provided information that
-> > > >> could assist with associating ACPI/WMI camera privacy controls with
-> > > >> a specific camera. Note that these are typically not exposed as a GPIO,
-> > > >> but rather as some vendor firmware interface.
-> > > >>
-> > > >> Thinking more about this I'm starting to believe more and more
-> > > >> that the privacy-control stuff should be handled by libcamera
-> > > >> and then specifically by the pipeline-handler, with some helper
-> > > >> code to share functionality where possible.
-> > > >>
-> > > >> E.g. on IPU6 equipped Windows laptops there may be some ACPI/WMI
-> > > >> driver which provides a /dev/input/event# SW_CAMERA_LENS_COVER node.
-> > > >
-> > > > Using an event device means that the user would need permissions to
-> > > > access it. Would distributions be able to tell the device apart from
-> > > > other event devices such as mouse/keyboard, where a logged user may not
-> > > > have permission to access all event devices in a multi-seat system ?
-> > >
-> > > input events modaliases contain a lot of info, including what sort
-> > > of events they report, e.g. :
-> > >
-> > > [hans@shalem uvc]$ cat /sys/class/input/input36/modalias
-> > > input:b0003v046Dp405Ee0111-e0,1,2,3,4,11,14,k71,72,73,74,75,77,78,79,7A,7B,7C,7D,7E,7F,80,81,82,83,84,85,86,87,88,89,8A,8B,8C,8E,8F,90,96,98,9B,9C,9E,9F,A1,A3,A4,A5,A6,A7,A8,A9,AB,AC,AD,AE,B0,B1,B2,B3,B4,B5,B6,B7,B8,B9,BA,BB,BC,BD,BE,BF,C0,C1,C2,CC,CE,CF,D0,D1,D2,D4,D8,D9,DB,DF,E0,E1,E4,E5,E6,E7,E8,E9,EA,EB,F0,F1,F4,100,110,111,112,113,114,115,116,117,118,119,11A,11B,11C,11D,11E,11F,161,162,166,16A,16E,172,174,176,177,178,179,17A,17B,17C,17D,17F,180,182,183,185,188,189,18C,18D,18E,18F,190,191,192,193,195,197,198,199,19A,19C,1A0,1A1,1A2,1A3,1A4,1A5,1A6,1A7,1A8,1A9,1AA,1AB,1AC,1AD,1AE,1AF,1B0,1B1,1B7,1BA,240,241,242,243,244,245,246,247,248,249,24A,24B,24C,24D,250,251,260,261,262,263,264,265,r0,1,6,8,B,C,a20,m4,l0,1,2,3,4,sfw
-> > >
-> > > So I believe that we can create a udev rule which matches on input
-> > > devices with SW_CAMERA_LENS_COVER functionality and set a uaccess
-> > > tag on those just like it is done for /dev/video# nodes.
-> > >
-> > > Or we can just use a specific input-device-name (sub) string
-> > > and match on that.
-> > >
-> > > This may require using a separate input_device with just
-> > > the SW_CAMERA_LENS_COVER functionality in some of the laptop
-> > > ACPI / WMI drivers, but that is an acceptable compromise IMHO.
-> >
-> > As long as it's doable I'm OK with it.
-> >
-> > > (we don't want to report privacy sensitive input events on
-> > > these nodes to avoid keylogging).
-> > >
-> > > > Would compositors be able to ignore the device to let libcamera handle
-> > > > it ?
-> > >
-> > > input devices can be opened multiple times and we want the compositor
-> > > to also open it to show camera on/off OSD icons / messages.
-> >
-> > I'm not sure we want that though, as the event should be associated with
-> > a particular camera in messages. It would be better if it still went
-> > through libcamera and pipewire.
-> 
-> For OSD we do not necessarily need to know what camera the GPIO is
-> associated with.
-> 
-> We just want to give instant feedback about a button on their device.
-> Eg in ChromeOS we just say: "camera off" not "user facing camera off"
+On 26/11/2024 17:34, Sasha Finkelstein wrote:
+> On Mon, 25 Nov 2024 at 16:07, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> BTW, max-brightness is a property of backlight, not panel, I think.
+> This is an oled panel, so no separate backlight device, the mipi commands
+> just change the pixel brightness. There is prior art in other bindings on having
+> the max-brightness property attached to the panel itself.
 
-That may be true of Chrome OS, but in general, other systems may want to
-provide more detailed information. I wouldn't model the API and
-architecture just on Chrome OS.
+Where? git grep gave me only one result for bindings - old Samsung panel
+from 15 years ago. If you refer to this one, then use it as example for
+the bindings with similar explanation as the commit introducing brightness?
 
-> > > If opened multiple times all listeners will get the events.
-> > >
-> > > >>>>>> We could include the evdev in the MC graph. That will of course only be
-> > > >>>>>> possible if the kernel knows about that association in the first place.
-> > > >>>>>> At least the 1st category of devices would benefit from this.
-> > > >>>>
-> > > >>>> Yes I was thinking about adding a link to the MC graph for this too.
-> > > >>>>
-> > > >>>> Ricardo I notice that in this v3 series you still create a v4l2-subdev
-> > > >>>> for the GPIO handling and then add an ancillary link for the GPIO subdev
-> > > >>>> to the mc-graph. But I'm not sure how that is helpful. Userspace would
-> > > >>>> still need to do parent matching, but then match the evdev parent to
-> > > >>>> the subdev after getting the subdev from the mc. In that case it might
-> > > >>>> as well look at the physical (USB-interface) parent of the MC/video
-> > > >>>> node and do parent matching on that avoiding the need to go through
-> > > >>>> the MC at all.
-> > > >>>>
-> > > >>>> I think using the MC could still be useful by adding a new type of
-> > > >>>> ancillary link to the MC API which provides a file-path as info to
-> > > >>>> userspace rather then a mc-link and then just directly provide
-> > > >>>> the /dev/input/event# path through this new API?
-> > > >
-> > > > I don't think we need that. MC can model any type of entity and report
-> > > > the device major:minor. That plus ancillary links should give us most of
-> > > > what we need, the only required addition should be a new MC entity
-> > > > function.
-> > >
-> > > Ah interesting yes that should work nicely.
-
--- 
-Regards,
-
-Laurent Pinchart
+Best regards,
+Krzysztof
 
