@@ -1,107 +1,121 @@
-Return-Path: <linux-kernel+bounces-422556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 875D59D9B28
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:16:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CACB79D9B2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 17:17:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D49C28377C
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:16:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7347C167123
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 16:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBAD1D63EF;
-	Tue, 26 Nov 2024 16:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B97D1D86F6;
+	Tue, 26 Nov 2024 16:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="gIdgHF41"
-Received: from forward501b.mail.yandex.net (forward501b.mail.yandex.net [178.154.239.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oh14bPNz"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBD92FB6
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 16:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D291CEE97;
+	Tue, 26 Nov 2024 16:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732637788; cv=none; b=BapnZqrxowCZeNx9reLAjUXHIpwX0JobNuXOg6Gcp5ATKct0hMKyzuFVvm6a49U9FWMpt2i+F+BwLMxhRhQgkW51DmbhfzUnG9UajLBFDtkc1fIXubcJhtSD218YLzKWTbGjhMdZRcC+jkVTpLISMqu6QBkc/mvHFMmiOdTDLyE=
+	t=1732637841; cv=none; b=YZKf5i4wZVuhI/57tE6Jj6G0XJ/rOPczGfyoMJmSdx/4U9WTINq+dJuxMjT2TltQl8GEGEv2z4R0tCy0Q2XIxiWGr1vUGaefusGN67Wgz6P429snE3FXiJFFvP9ujXgsHNlwR/Ty9ZP1RX4tNmU+J7aa/smj+fdfUhQsbbG4WlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732637788; c=relaxed/simple;
-	bh=SZvEzt6nyOq5bSimQ41p73CSvJoxAYoNC1GBX6ld/K8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JDSEaFoDHrd3jeSFvJ7Uv1t7+5gRNTkHy+kNrn6Mt5WknGqW81TScOG5Md/plVtHmoiYR+13JEuoDZ4n+ViryVnrtN8dH8aOYDwMgZ2FZPU4jb2LZ1GiPJXR78VthVAhFhQL33VXmXuGoRAyDEOsQE1F3IUX/vAQuauzb5tPQfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=gIdgHF41; arc=none smtp.client-ip=178.154.239.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net [IPv6:2a02:6b8:c10:2222:0:640:c513:0])
-	by forward501b.mail.yandex.net (Yandex) with ESMTPS id 650BC61388;
-	Tue, 26 Nov 2024 19:16:20 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id JGbrA8tOdW20-nqKT82Ga;
-	Tue, 26 Nov 2024 19:16:19 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1732637779; bh=P/Y7odP+QjVmPcorcmrQEldQhT8hxD9z3LXLCV/3hF8=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=gIdgHF41RL+sLPSbyMRrHe2jdzNlVkbK4IMsxE0GuBu9dgxpTzvM5BtAiDrDPLIy2
-	 LWxo0KlITR3huGxrM8KwwbXmqOGR8ur0wRquiQC3heHM0pqoViLhipJhTlXOTMrlOS
-	 DU+zzS3IOuY8gZhOWZpT7dARaUC8XHkEy6wH2d/w=
-Authentication-Results: mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <3d4c1c59-4b01-4fa3-af84-e2d84f4ebf44@yandex.ru>
-Date: Tue, 26 Nov 2024 19:16:19 +0300
+	s=arc-20240116; t=1732637841; c=relaxed/simple;
+	bh=t1uBQW+oI0CzJFAUHppB/Jtuu9jM/2ue+emxeR+cC/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SRGXdU5IuA1wrLgQz37apcLk/hTmHM8fQ+9A/lDpqciZeI5J5V7gLakP57NBC19IDjyVONAPuL2+QJlCm7ZzCPT0znkM52MWkxXvctzuVE8x0VKYTCFO5CSWn+09+leFffEf89IV8B93itiuAJldmn3ldlacjgUNM7eKHg7hx5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oh14bPNz; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-21200c749bfso57182445ad.1;
+        Tue, 26 Nov 2024 08:17:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732637840; x=1733242640; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dotO4c05j+1ByFMdhxgy6HIjtPrpikGEeV7kKdyEfIQ=;
+        b=Oh14bPNz//MqwiITqj88jUT2TlxQobm6QUXilofq7tdIcrFmK5fGW5aNNHAfpaQ6Jp
+         RvkNKzpmT2eHvJjKpo/g0ZPmJFEx0ht3tJol3HSc9Mhrl/W3CwSgnJ9ChP6shuYu+TVO
+         L1K8TuZE6vS+/AWcRc1WAfqGNu6PK1uGbXX++cXXpcZec6gF6kB0C8t6LNPpHHNIQcb/
+         N+wE4cPuFfVobycKsi20nxYQGGpPvBiVj4V4Ow3WfTrTin+wduC4h1eR6E/u9ergOK4j
+         mHHkTKS29s438UOxvlj63EZEvQ9X1l9cXFC/iheKIeCFdh4GnU0ejyDYXh5Yz31ZrBds
+         mCFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732637840; x=1733242640;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dotO4c05j+1ByFMdhxgy6HIjtPrpikGEeV7kKdyEfIQ=;
+        b=FwW8qxqXVH7FMAAL/9YKMN7dvk5htHhpuM4Wpo2r3UIwiQtxKgc2MQQa0bVwGZfxXx
+         oX2yFKn8tzrlBKoqa/kta3gKidRbkjB4V95JE17hLJ6O4GJg3yeKCbL5brmAJf+cmDgm
+         +X8vjBtQqE9mWcZME9uC5nk7vfucTPzbAn57NwkhBPu8+1jk3D+f4MDOEcqZptF8BFvh
+         PNRMR2/JFB2HLJqiLgBFDhBtSV2ifC9kvk5kvi+UxB+Eo/YHCybGjG3a4g/qb0krOC3E
+         6UuGqQTC2ac2vPiPILx6Poeuz+RmN6K+evRQElrmxn4dojwVJHWfE+CVIghfroA19IbH
+         J5qw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJBkGZWXcDiyM5HdW6P+U7mwi9oP8zthIFqEXEa4tdO4pJDpX0Kjn/PMLFgEeE3XXreaV42kCC7H+d@vger.kernel.org, AJvYcCXsDDe97keNxoNcwhCwdTQuIB9R92udT3oGncsB5yfnw5B+fWTYIIKD/MMlkSbWPdq2kpqF3jWX99cFV62i@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGKQrFkfwQV5l/hvbMIMBR5A/zQy5NYy4SwmkdagkUiUk5zRoq
+	Pi0DXV5Xe1AbHCC7EvQn91yqUFjiB1fA4qDadVnHj+SqKlB9Fwz8
+X-Gm-Gg: ASbGncudwNkDp/JlKsUmpYx85u249LpTVm/feUS9V4vX+n0YkDRYIMwYYmD4SebQmMV
+	+ALx5EEBjpV9jn5Kx7VZHQfCkAOXaWZnbjJUON7A/tIArramkR/prbaAE7jR7/2zp18oLZhD8IA
+	RZtjqgEU7bO7jCC1g11wq3P5XjlBmmKrbUBM205BQKEn23ytdWTYliMHEls2yC4piVYURxm2iIj
+	SDBSj75qwjk9H8mChIIQPATwyZhqnGJ9/aAEP6Se7KANm+g88IkY/2aQJlig4U=
+X-Google-Smtp-Source: AGHT+IHIE2SReZTJ4Qu4Z8qk2ImmULTwKv8+/GkwDFaH8Bgy3Ec6rGlXL8O9cvmqAvZCw7gJDtDStQ==
+X-Received: by 2002:a17:903:32c1:b0:20b:8bd0:7387 with SMTP id d9443c01a7336-2129f28f81amr257582205ad.52.1732637839561;
+        Tue, 26 Nov 2024 08:17:19 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc22a4asm86521855ad.261.2024.11.26.08.17.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 08:17:18 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Tue, 26 Nov 2024 08:17:17 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Esben Haabendal <esben@geanix.com>
+Cc: Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] ARM: imx: Allow user to disable pinctrl
+Message-ID: <49ff070a-ce67-42d7-84ec-8b54fd7e9742@roeck-us.net>
+References: <20240506-imx-pinctrl-optional-v2-0-bdff75085156@geanix.com>
+ <20240506-imx-pinctrl-optional-v2-1-bdff75085156@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: userfaultfd: two-step UFFDIO_API always gives -EINVAL
-Content-Language: en-US
-To: Peter Xu <peterx@redhat.com>
-Cc: Muhammad Usama Anjum <Usama.Anjum@collabora.com>,
- Linux kernel <linux-kernel@vger.kernel.org>
-References: <Z0Se4BuVfqwjeCWV@x1n>
- <b0818813-5a4c-4621-9810-dc7443a23dd1@yandex.ru> <Z0Ssq15MQd3rimBr@x1n>
- <da978e8c-2a72-4b7b-ae67-41e6ff0d5089@yandex.ru> <Z0SwOILi4R4g9JBa@x1n>
- <9b68a811-ffed-4595-83a6-0ef78a7de806@yandex.ru> <Z0S3isgc-QlEF7oW@x1n>
- <4689f014-2885-42b9-91a4-ff8b8133599f@yandex.ru>
- <20a1d49a-1f5d-4d3d-b59d-29b9791b72bd@collabora.com>
- <2dd0bcee-a594-4de9-b499-a8ad37be155c@yandex.ru> <Z0XvwitcZ6ujoV9Y@x1n>
-From: stsp <stsp2@yandex.ru>
-In-Reply-To: <Z0XvwitcZ6ujoV9Y@x1n>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240506-imx-pinctrl-optional-v2-1-bdff75085156@geanix.com>
 
-26.11.2024 18:56, Peter Xu пишет:
-> This doesn't sound like the right thing to do.. as the fd (returned from
-> syscall(userfaultfd)) should be linked to a specific mm.  If the parent
-> invoked that syscall, it's linked to the parent address space, not child.
-> You may want to do syscall(userfalut) in child process, then pass it over
-> with scm rights.  Otherwise IIUC the trap will be armed on parent virtual
-> address space.
-Ok, thanks for info.
-man page doesn't seem to describe
-the multi-process case, so both fork()
-and SCM_RIGHTS were just a guesses
-on my side, one of which worked.
-Probably something to add to the doc.
+On Mon, May 06, 2024 at 12:23:53PM +0200, Esben Haabendal wrote:
+> Making pinctrl drivers and subsequently the pinctrl framework
+> user-controllable, allows building a kernel without this.
+> While in many (most) cases, this could make the system unbootable, it
+> does allow building smaller kernels for those situations where picntrl
+> is not needed.
+> 
+> One such situation is when building a kernel for NXP LS1021A systems,
+> which does not have run-time controllable pinctrl, so pinctrl framework
+> and drivers are 100% dead-weight.
+> 
+> 
+> Signed-off-by: Esben Haabendal <esben@geanix.com>
 
-The last problem I had (last one, I promise! :)
-is that if I remove O_NONBLOCK, then
-the entire app hangs. It turns out, w/o
-O_NONBLOCK, userfaultfd's fd awakes
-the select() call with the ready-to-read
-descriptor at the very beginning, long
-before any fault is detected. Then it
-goes to read() and blocks forever. My
-code is not prepared for read() blocking
-after select().
-I then checked and double-checked
-and re-checked that with O_NONBLOCK
-nothing like that happens at all: select()
-is not awaken until the faults are coming.
-It could be that select awakes anyway
-but read() doesn block, but no, its not
-the case. In nonblock mode select()
-awakes only when it should. And in
-blocking mode - it awakes immediately,
-leading to a hang.
-Is this a bug?
+This patch didn't update default configurations, meaning PINCTRL is now
+disabled by affected configurations such as imx_v4_v5_defconfig or
+imx_v6_v7_defconfig, making pretty much all imx platforms non-bootable
+unless the default configuration is changed manually.
+
+Guenter
 
