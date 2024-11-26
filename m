@@ -1,153 +1,98 @@
-Return-Path: <linux-kernel+bounces-421839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-421840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE8479D90C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:46:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AC0D9D90CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 04:50:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B232287F7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 03:46:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3EC2B24474
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 03:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D126BB5B;
-	Tue, 26 Nov 2024 03:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395A142A80;
+	Tue, 26 Nov 2024 03:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b="oUmp80/1"
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="R3WKrDKY"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677263FB31
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 03:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC771A28D
+	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 03:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732592780; cv=none; b=iIrbSNwLNNWYsqWbXLP1WtqQJvrRWCYGKhDDwvkd3N5hGosa9CkRBT6WfskAgMiRMdc33+ZBRJT5vgQMR+LH2+PxU8FLqP7RZKTVfNPjiEj7M/yt4TPdpOn9DwSjOL2SQ94HmLwH56rs0CHnzNqKDzgkrzhn3bxkjPu1Ogyv+s0=
+	t=1732593001; cv=none; b=pJPjcQerHR4eIHddx+dpLz2aF991yxV5Kc28MeCnNYYBccIBplMNvHJXeiGm2YDRvYW/B2Is1AERMLPczEwytxFOU5Os04fSQMMoxsQKmiufu9O7lLwBKQe6l4lHBsJAKTr6Tlo9qjEt77OzChD0I68yjloLPcfchkjjQjIAwyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732592780; c=relaxed/simple;
-	bh=YSkrqxKh9N5elFAjOCiYXy17rR2p3vfhcaMtMubZGys=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=jE/KfJTXCei32SWsyIRzTEWTjgDgpfdPJcGfavw968Kdp3RizV3CqarEuUKPBio5uZo3ylEe2toKKpPrP6O9v3p0228fQfgKq0Er+JpNN8wsQ9otm0cD/TZkpAiuK1bFJYpm4j6RQRemglUsWKU53ScYph1ZsP6WkfODzJAbYS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com; spf=pass smtp.mailfrom=linumiz.com; dkim=pass (2048-bit key) header.d=linumiz.com header.i=@linumiz.com header.b=oUmp80/1; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linumiz.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linumiz.com
-Received: from eig-obgw-6007a.ext.cloudfilter.net ([10.0.30.247])
-	by cmsmtp with ESMTPS
-	id FizvtPnUPg2lzFmWntnEse; Tue, 26 Nov 2024 03:46:17 +0000
-Received: from md-in-79.webhostbox.net ([43.225.55.182])
-	by cmsmtp with ESMTPS
-	id FmWktKiK5XDcgFmWmt1ryD; Tue, 26 Nov 2024 03:46:16 +0000
-X-Authority-Analysis: v=2.4 cv=MedquY/f c=1 sm=1 tr=0 ts=67454488
- a=LfuyaZh/8e9VOkaVZk0aRw==:117 a=kofhyyBXuK/oEhdxNjf66Q==:17
- a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=-pn6D5nKLtMA:10 a=vU9dKmh3AAAA:8
- a=Uhfq17CCtucz6BUgXkYA:9 a=QEXdDO2ut3YA:10 a=rsP06fVo5MYu2ilr0aT5:22
- a=ZCPYImcxYIQFgLOT52_G:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=linumiz.com
-	; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:To:Subject:Cc:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=EpVOpGc4bJDTukR4641wyoZUQ4tkmW15trkijARXKjE=; b=oUmp80/1hLyTPIV/hVQpxZ79Y/
-	gJSI0jk/GnzimzQi+FvvxMT8ObK3qQFjXdUblR6oWeKbqu0LRORQceJJ6atxp9+WaIqHs/Ivw/LRV
-	9H9teytC78wPq2Y8+YE6PEjUPRYq0kPl6/BxIU3z46s51nBUXZ8MDBSVuYg/sc5BbG+qj5zpKDHR8
-	28DgJW4lWsTjsqvefcup0KcP4lTx8J07KKB3OXrFFjC+KPQRjEE0a5hqtrKQ241TO9FgtX7ZrzM14
-	phf7hHHDnHpgynzGbGChboT/YjRTjzBqAv9ysTY3lxB0pPfH9/VZoiyB6fNWDO81leXjCgnf101fi
-	bHblG8sA==;
-Received: from [122.165.245.213] (port=40090 helo=[192.168.1.5])
-	by md-in-79.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <parthiban@linumiz.com>)
-	id 1tFmWe-003Oct-33;
-	Tue, 26 Nov 2024 09:16:08 +0530
-Message-ID: <ec0c0a4f-9555-42bb-adac-3ba574fe82cc@linumiz.com>
-Date: Tue, 26 Nov 2024 09:16:05 +0530
+	s=arc-20240116; t=1732593001; c=relaxed/simple;
+	bh=QYc6U6l2LP084zljP9h6GyNy4Bv4iwI/lb8bqGR+7f0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DzopwjMxz7Wk3E7LTy+66heKKTnTPzmXfz9ysUq5+ZF1TMWaa7u2LWow2gvVQbtTU11LkaL4vQY9U5ssT14PRlC5S/WTisrNcnLhUpKq+Nz/4UZCszAIWpWKkhUqNH9n3akPEdSt1T62lNob07MxPFp8eCCPccWfxX+9mVZQdRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=R3WKrDKY; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1732592993;
+	bh=1GDroj8cvLi8AxibFvo2uc0aSiYUK5hkkTcQYG+0QMU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=R3WKrDKYw/ByHHEa3PtgTcc8Xvh/auZj8U5ShHkBVdPy++QKCXrk6InR/jlQz2g46
+	 Ho3w7cBt7fIt75TfsDMPoccD5p0suflRBhbppyLZX0SOea3+KT1vLVP6q4j+hA7TNd
+	 QtKRqI0xD++3UaInC37uz3VJIV+X8ZM3in0MRSbQEwzqA++giq9uCV9m7G/E1Av0jC
+	 2j6tYOINNtTiSI3JxBWbOh0dyPlF/OyYE7voVaU7kBqyNlwf1Bj3YxOaFjgRX5JLiN
+	 oBNtQU0aNHOTFz9t5zgiM+A/yBhv09Us81gDkbiOP93txeBtDtCFzbtpqfwPhV3SYX
+	 BqQqPONaaOXRA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xy7r163rdz4wcy;
+	Tue, 26 Nov 2024 14:49:53 +1100 (AEDT)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Segher Boessenkool <segher@kernel.crashing.org>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ geert@linux-m68k.org, arnd@arndb.de
+Subject: Re: [RFC PATCH 01/10] powerpc/chrp: Remove CHRP support
+In-Reply-To: <20241114210418.GM29862@gate.crashing.org>
+References: <20241114131114.602234-1-mpe@ellerman.id.au>
+ <20241114210418.GM29862@gate.crashing.org>
+Date: Tue, 26 Nov 2024 14:49:49 +1100
+Message-ID: <87mshm7ixu.fsf@mpe.ellerman.id.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: parthiban@linumiz.com, Frank Binns <frank.binns@imgtec.com>,
- Matt Coster <matt.coster@imgtec.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: gpu: add reset control property
-To: Conor Dooley <conor@kernel.org>
-References: <20241125-pvr-reset-v1-0-b437b8052948@linumiz.com>
- <20241125-pvr-reset-v1-1-b437b8052948@linumiz.com>
- <20241125-dress-disliking-2bf22dd4450e@spud>
-Content-Language: en-US
-From: Parthiban <parthiban@linumiz.com>
-Organization: Linumiz
-In-Reply-To: <20241125-dress-disliking-2bf22dd4450e@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - md-in-79.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - linumiz.com
-X-BWhitelist: no
-X-Source-IP: 122.165.245.213
-X-Source-L: No
-X-Exim-ID: 1tFmWe-003Oct-33
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.5]) [122.165.245.213]:40090
-X-Source-Auth: parthiban@linumiz.com
-X-Email-Count: 1
-X-Org: HG=dishared_whb_net_legacy;ORG=directi;
-X-Source-Cap: bGludW1jbWM7aG9zdGdhdG9yO21kLWluLTc5LndlYmhvc3Rib3gubmV0
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfFzmQz6jtcOph3QZm/q0wwkvEOyShcQPjQm+2Mnlvdc6zVhtVxHzcv/ZpCV0fy4l3kyGWTNJT1WKTZr1IC4rQV145BBCwvy9o9QXoDCo/OYm19EdRfwC
- Mnqy58ucCNdfkDu9giHZV2bKEKyQK1NgUkr8SRCgxtZnpGq2+ONWK8KsNoFRFzj28isfiUXlb/+hSjPW7orohqIxqEH/KIlkdsw=
+Content-Type: text/plain
 
-On 11/25/24 11:37 PM, Conor Dooley wrote:
-> On Mon, Nov 25, 2024 at 10:07:03PM +0530, Parthiban Nallathambi wrote:
->> GE8300 in Allwinner A133 have reset control from the ccu.
->> Add the resets property as optional one to control it.
-> 
-> There's no specific compatible here for an a133, but the binding
-> requires one. Where is your dts patch?
-A133 GPU is still work in progress in both Kernel and Mesa3D. Also power
-domain support needs an additional driver.
+Segher Boessenkool <segher@kernel.crashing.org> writes:
+> On Fri, Nov 15, 2024 at 12:11:04AM +1100, Michael Ellerman wrote:
+>> CHRP (Common Hardware Reference Platform) was a standard developed by
+>> IBM & Apple for PowerPC-based systems.
+>> 
+>> The standard was used in the development of some machines but never
+>> gained wide spread adoption.
+>> 
+>> The Linux CHRP code only supports a handful of machines, all 32-bit, eg.
+>> IBM B50, bplan/Genesi Pegasos/Pegasos2, Total Impact briQ, and possibly
+>> some from Motorola? No Apple machines should be affected.
+>> 
+>> All of those mentioned above are over or nearing 20 years old, and seem
+>> to have no active users.
+>
+> This was used by all non-IBM 970 systems as well.  The last was SLOF on
+> JS20 and JS21, about 20 years ago yes, and I doubt anyone uses it still
+> (I don't).
 
-But reset control is independent of those changes. Should reset control
-needs to be clubbed GPU dts changes?
+By "this" you mean the CHRP standard?
 
-Thanks,
-Parthiban
-> 
->>
->> Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
->> ---
->>  Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
->> index 256e252f8087..bb607d4b1e07 100644
->> --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
->> +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
->> @@ -37,6 +37,9 @@ properties:
->>    power-domains:
->>      maxItems: 1
->>  
->> +  resets:
->> +    maxItems: 1
->> +
->>  required:
->>    - compatible
->>    - reg
->>
->> -- 
->> 2.39.2
->>
+At least in Linux the "CHRP" platform has always been 32-bit only AFAIK.
 
+My memory is that JS20/JS21 used the "maple" platform, which was a
+64-bit only bare-metal platform, possibly it was actually == CHRP, but
+we didn't call it that in Linux.
+
+But maybe I'm wrong, you were more involved than me back than, and it
+was a long time ago :)
+
+cheers
 
