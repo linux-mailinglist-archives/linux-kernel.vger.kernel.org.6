@@ -1,106 +1,150 @@
-Return-Path: <linux-kernel+bounces-422339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-422340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 150AD9D9823
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:18:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B44499D982C
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 14:19:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A14B16474A
+	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:19:24 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309AA1D5145;
+	Tue, 26 Nov 2024 13:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="bvD8CEB2"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7B1F283981
-	for <lists+linux-kernel@lfdr.de>; Tue, 26 Nov 2024 13:18:43 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25AC1D5141;
-	Tue, 26 Nov 2024 13:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LjXmzCdv"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B4C1D4613
-	for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 13:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913E71D27BB;
+	Tue, 26 Nov 2024 13:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732627117; cv=none; b=pPgynt1wu/taxCUaKzB7/A/NL4hEEv/Y+dMtFgw6QwUgTrNyQw5PCGmXpgxDUznXhgta9C86nI1geaZNPkSURh35fDywId2KoJYzpZoYtasjBhzZJVFQHpBMbjFHDPKMdjnCKLgB/FoOSqcuUsawqZYpnyy6HLJ1fp7NVcDnI7E=
+	t=1732627159; cv=none; b=RXloVkLLBnK5wifpfQPihzUThWLtnAvv/jZ9vdXsWAtTmcm6+U/xArbWBqti8HXwu8sno6DHO5T31+2N79hmuUY3n/3g3x5KiHoeiK3QnPZ2syM151iEwZ33zo9lqcSGMyFyWSRZPF6HrQyBDvcxIKkCQAkTK8UTIC/Qu9+Zcb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732627117; c=relaxed/simple;
-	bh=XvOczRYBHnqj6D4ESxktzkTKZPxGuV4JkG6dG5SfdTE=;
+	s=arc-20240116; t=1732627159; c=relaxed/simple;
+	bh=9n3DMWiNfsEPU/+nTL+NGjyuioKCWO5RjIWhEr0S1Dc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ioWN8LmyrkwWTKuB0vKTo5x//2pQ/nouWOT0Jet11hU70/csETh9b/2pyoMMLXoJ63t04h0CsQgibEox4VryJDv89YjC/4oNykLnQvPsBzGTSY1qgSRARHD8N81Jaf34krzRxjreFjHIVrHy6sRY33uv7ne0ElL4mux/6y5kH5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LjXmzCdv; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-434a7ee3d60so2681315e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 26 Nov 2024 05:18:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1732627114; x=1733231914; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EaXfKxew919ViwJMv5co2YOm9WoJznHpNhie1VQ2zKc=;
-        b=LjXmzCdvIScCjXsJrKI7BUlXw/ogvQqZrE7ogbKCfawG7sPVTW/r2yLzkHRjgoFOAl
-         Ju+jLwmC9/OZ22gOeC42n+91AOxESV2xd45CXrzGxdwuefih23ZMZJO0ZMqMcy2R3mwA
-         0DcC2wGHhm+SScrURizhrfX5bwnrhQd4/Xvl1+pyaVNeKD7pwl87GtVzyFVtPi84jdJC
-         JLudHHyA3kcZIdVP0fE1atuifeeTjT0e7i7lpB5fwd7/LL7yGMaFHhz7qRyTnev4cS9p
-         /hJWaX3YsNlqD9j0oQTErqM0IbimmTe4jLY2PenWig8HVfUAo63b6En3u7MToe9VC5Eh
-         lG1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732627114; x=1733231914;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EaXfKxew919ViwJMv5co2YOm9WoJznHpNhie1VQ2zKc=;
-        b=OKdZlP6qR9yCPWKY3Gx8iDAqfaz2zdkXDCkGfogeFyMG8yG/RNzn+cjduFuPYdcPgJ
-         sEEDjzi6dw3+YfYTTrg+S05hE5dYEz0N+jC8Yo2bDDhkjM7Ysihpq4jbE7xo05U6lg6g
-         07lEXq39IBkWZ3eHz+eoa9cSThlZZID5ukDDt8D1ENmq1DqFIFyLh8dG4jl85klG4O8A
-         7nUGEUu96NsXkdsAMdFQUbsrJAEvsJz4G0AX6dlOOASA8Mv/60ql3QWjpWu2ADg5XDVx
-         JDJo/hC/hC4p6zd54gJ6e1E5+75X6K7Nf75UbLsAaXYimRf7HIwDyF3oMM5GKQW2C192
-         DbGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUK0xOAingiTsifbtFjUHPi7bCmrxkfWSnzGzkKKs4Ytp2ignp/EEIAq9//SWDLGIH5zewYqsg3w2NRLuM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr5NIVlqBze49nFaGmcu6Wvw/ah4pRH0Mrtn79bdXMPjV4YSsM
-	mdaBGIwHTDBbYzzpQqP0ePmONnyF9sWC6Hhz8LLsvLD/e0Hvp1FXf3QZaNcJFLE=
-X-Gm-Gg: ASbGncuRrsbDpklT933qp0DZgfPygZUjPR8DkdEYvLmuNrG8pGBfJazedvqvxYz3O1i
-	h98pEuyblIEGpBxsKdb1+FDK+Ew5I+ss08x33uW4j9rHA/rliKGm+7LIi2SEZGvLlXw8xW5JyvP
-	Zm/ppjR9AHKtV3UpIA08v+E4wFYxCt737qeWAl1QP0uVk3Wh6XG52O8BYT7/8Yp2geSxC9i0rHW
-	YsZ2B6yd5/0KFMxQ5nO0CwkfPVIIDtyDmkUHHu6nZESaKeOrhI=
-X-Google-Smtp-Source: AGHT+IFqrzqPLKiXN8EGHTiOqvtymXHH3HCsdhZtbH4hWUr3e3NQjnGkP9XHsrV6DaHZ2smDfxKoOg==
-X-Received: by 2002:a05:600c:8a9:b0:42c:b67b:816b with SMTP id 5b1f17b1804b1-434a4e56629mr27530185e9.1.1732627113846;
-        Tue, 26 Nov 2024 05:18:33 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4349e80e51esm82131645e9.33.2024.11.26.05.18.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 05:18:33 -0800 (PST)
-Date: Tue, 26 Nov 2024 14:18:30 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: George Guo <dongtai.guo@linux.dev>
-Cc: jpoimboe@kernel.org, jikos@kernel.org, mbenes@suse.cz,
-	joe.lawrence@redhat.com, shuah@kernel.org,
-	live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org, George Guo <guodongtai@kylinos.cn>
-Subject: Re: [PATCH livepatch/master v1 2/2] selftests/livepatch: Replace
- hardcoded module name with variable in test-callbacks.sh
-Message-ID: <Z0XKpjs53Da5nEvU@pathway.suse.cz>
-References: <20241125112812.281018-1-dongtai.guo@linux.dev>
- <20241125112812.281018-2-dongtai.guo@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pp/OgaZsTMGbCbAIPnYZ9i4DuyWBPtCVWakcafZqaZmiQhKCoxrPKA/+e1jQCakqHq1d/b4378cSQzmmgNUDSfaqepNkQXTXui9A/b5i5lW2qKheXFgVFNgQJyEiaPUKr6SRoFyJ4/TC+ME7yFbQKyAen+K8bc1WQ/phgxC/EOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=bvD8CEB2; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1732627155;
+	bh=9n3DMWiNfsEPU/+nTL+NGjyuioKCWO5RjIWhEr0S1Dc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bvD8CEB2NRi1y2GiRlZ/hRTRGq2xk1RfRWFfRYFeuKXpFRenr6DFgfgew/G/KX1gl
+	 /on3JSQivwHfYIvJ8MKYAFgR1NIuv6aLsoZ6HYDwPeHPp2bXthUlabI/b4yVSTd5WK
+	 tmTEhyVYAr+ohPd1YiBSpIwQDFhN/OgGJyLGq4iX6thE7WcmjRPcx/WQH5WybmzpvE
+	 6pYa2nRyQWPWzp/urldLb92YAS//GDqlziYlW3UIrG0v/hyzUjJmX17VC8jTBxG4dJ
+	 MOtYzDF8vL2zqa+vbKw07tl8sNsZB5YkXYuPPgDkVNjDpUs5dLtTaB5j9HB8IWGSFW
+	 zOWmQahCPhESg==
+Received: from notapiano (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 96A9717E3663;
+	Tue, 26 Nov 2024 14:19:13 +0100 (CET)
+Date: Tue, 26 Nov 2024 08:19:11 -0500
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Alexandre Mergnat <amergnat@baylibre.com>,
+	Balsam CHIHI <bchihi@baylibre.com>, kernel@collabora.com,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Hsin-Te Yuan <yuanhsinte@chromium.org>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Bernhard =?utf-8?Q?Rosenkr=C3=A4nzer?= <bero@baylibre.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/5] thermal/drivers/mediatek/lvts: Disable monitor mode
+ during suspend
+Message-ID: <e3e9020b-f3d5-42bb-bf1e-6aa8da2d1708@notapiano>
+References: <20241125-mt8192-lvts-filtered-suspend-fix-v1-0-42e3c0528c6c@collabora.com>
+ <20241125-mt8192-lvts-filtered-suspend-fix-v1-1-42e3c0528c6c@collabora.com>
+ <600f9d78-bdc8-4133-bb43-06d798bcd543@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241125112812.281018-2-dongtai.guo@linux.dev>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <600f9d78-bdc8-4133-bb43-06d798bcd543@collabora.com>
 
-On Mon 2024-11-25 19:28:12, George Guo wrote:
-> From: George Guo <guodongtai@kylinos.cn>
+On Tue, Nov 26, 2024 at 10:43:55AM +0100, AngeloGioacchino Del Regno wrote:
+> Il 25/11/24 22:20, Nícolas F. R. A. Prado ha scritto:
+> > When configured in filtered mode, the LVTS thermal controller will
+> > monitor the temperature from the sensors and trigger an interrupt once a
+> > thermal threshold is crossed.
+> > 
+> > Currently this is true even during suspend and resume. The problem with
+> > that is that when enabling the internal clock of the LVTS controller in
+> > lvts_ctrl_set_enable() during resume, the temperature reading can glitch
+> > and appear much higher than the real one, resulting in a spurious
+> > interrupt getting generated.
+> > 
+> > Disable the temperature monitoring and give some time for the signals to
+> > stabilize during suspend in order to prevent such spurious interrupts.
+> > 
+> > Cc: stable@vger.kernel.org
+> > Reported-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+> > Closes: https://lore.kernel.org/all/20241108-lvts-v1-1-eee339c6ca20@chromium.org/
+> > Fixes: 8137bb90600d ("thermal/drivers/mediatek/lvts_thermal: Add suspend and resume")
+> > Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> > ---
+> >   drivers/thermal/mediatek/lvts_thermal.c | 36 +++++++++++++++++++++++++++++++--
+> >   1 file changed, 34 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
+> > index 1997e91bb3be94a3059db619238aa5787edc7675..a92ff2325c40704adc537af6995b34f93c3b0650 100644
+> > --- a/drivers/thermal/mediatek/lvts_thermal.c
+> > +++ b/drivers/thermal/mediatek/lvts_thermal.c
+> > @@ -860,6 +860,32 @@ static int lvts_ctrl_init(struct device *dev, struct lvts_domain *lvts_td,
+> >   	return 0;
+> >   }
+> > +static void lvts_ctrl_monitor_enable(struct device *dev, struct lvts_ctrl *lvts_ctrl, bool enable)
+> > +{
+> > +	/*
+> > +	 * Bitmaps to enable each sensor on filtered mode in the MONCTL0
+> > +	 * register.
+> > +	 */
+> > +	u32 sensor_filt_bitmap[] = { BIT(0), BIT(1), BIT(2), BIT(3) };
+> > +	u32 sensor_map = 0;
+> > +	int i;
+> > +
+> > +	if (lvts_ctrl->mode != LVTS_MSR_FILTERED_MODE)
+> > +		return;
+> > +
 > 
-> Replaced the hardcoded module name test_klp_callbacks_demo in the
-> pre_patch_callback log message with the variable $MOD_LIVEPATCH.
+> That's easier and shorter:
 > 
-> Signed-off-by: George Guo <guodongtai@kylinos.cn>
+> static void lvts_ctrl_monitor_enable( .... )
+> {
+> 	/* Bitmap to enable each sensor on filtered mode in the MONCTL0 register */
+> 	const u32 sensor_map = GENMASK(3, 0);
+> 
+> 	if (lvts_ctrl->mode != LVTS_MSR_FILTERED_MODE)
+> 		return;
+> 
+> 	/* Bits 0-3: Sensing points - Bit 9: Single point access flow */
+> 	if (enable)
+> 		writel(sensor_map | BIT(9), LVTS_MONCTL0(lvts_ctrl->base));
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+Wait, no, here you're enabling all the sensors in the controller. We only want
+to enable ones that are valid, otherwise we might get garbage data and irqs from
+sensors that aren't actually there. That's why I use the
+lvts_for_each_valid_sensor() helper in this patch.
 
-Best Regards,
-Petr
+Thanks,
+Nícolas
 
